@@ -838,6 +838,13 @@ the full distribution is used for validation.
 \subsection{Second stage: short-run experimental moments}
 \label{sec:secondstage}
 
+\nw{\emph{Method note.} These are partial-equilibrium \textbf{cohort}
+experiments, not transition paths. A trial of two hundred people does not move
+the tax rate or the drug price, so prices are held at their benchmark values; the
+household problem \emph{is} re-solved, because each arm changes the rules a
+forward-looking household faces. Only the aggregate policy counterfactuals of
+R1 3(d) need a transition solver.}
+
 Referee~2 (C1): ``all of the welfare results rest on whether the model has an
 accurate elasticity of drug use to housing access''. Referee~3 and the AE (A13)
 say the same independently. Referee~1 (2d, 2e) asks for policy-relevant
@@ -1330,7 +1337,7 @@ work that are already scoped: the \textbf{recalibration}, the
 Ref & Loose end & What it actually needs\\
 \midrule
 \endhead
-R1 3(d) & Transition paths & \textbf{Code that does not exist.} The one genuinely large build. Everything in \S\ref{sec:secondstage} sits behind it, so it is not optional\\
+R1 3(d) & Transition paths & \textbf{Code that does not exist.} The one genuinely large build. It affects the aggregate policy counterfactuals only --- the second-stage moments are partial-equilibrium cohort experiments and are already built\\
 R1 4(c) & Compliance, stigma and administrative cost of drug testing & \textbf{A number and a budget line.} The \$1--2bn testing estimate has to enter the government constraint, not a dismissive footnote. No source chosen yet\\
 R2 C3 / AE A6 & Parental anxiety; intergenerational language without linkages & \textbf{A decision.} Delete the language, or add a warm-glow term at one parental age. Recommendation: the warm-glow term --- one line of utility, answers both\\
 R1 sm.\ 1 & Maximum experimentation age & \textbf{A diagnostic and possibly a defence.} If dropping it piles use onto the old, that has to be explained rather than assumed away\\
@@ -1356,11 +1363,13 @@ Three things gate almost everything above.
 \begin{enumerate}
 \item \textbf{The first-stage calibration converging.} Unblocks R1 2(a), 2(b),
 2(c), 1(d), R2 C4, R3 M2b, AE A12 at once.
-\item \textbf{The transition-path solver.} Unblocks R1 3(d) \emph{and} the whole
-of \S\ref{sec:secondstage}, which is R2 C1, R3 and AE A13 --- what all three
-independently call the crux.
+\item \nw{\textbf{The second-stage calibration}, which is built and needs only a
+converged benchmark to run against. This is R2 C1, R3 and AE A13 --- what all
+three independently call the crux --- and it is a partial-equilibrium cohort
+experiment, so it does \emph{not} wait on the transition solver.}
 \item \textbf{The counterfactuals.} Unblock AE A9, A18, R2 C6, R3 m3, R1 3(c),
-4(d).
+4(d). \nw{Then the transition-path solver for R1 3(d), which is the one large
+build left and affects only the aggregate policy experiments.}
 \end{enumerate}
 
 Everything else on the outstanding lists is either writing or a single cheap run.

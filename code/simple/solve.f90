@@ -634,7 +634,27 @@ end subroutine voucher_probs
 ! Backward induction.
 !===============================================================================
 subroutine solve_household()
-    integer :: j, ia, iy, ie, id, iv, im
+    integer :: j
+
+    V(:,:,:,:,:,:,n_age+1) = 0.0_dp
+
+    do j = n_age, 1, -1
+        call build_EV(j)
+        call solve_age(j)
+    end do
+end subroutine solve_household
+
+
+!===============================================================================
+! One age step, given EV already built for that age.
+!
+! Factored out of solve_household so the transition solver can drive it against
+! an arbitrary continuation -- along a path, V_{j,t} is solved against
+! V_{j+1,t+1}, which is not this economy's own next-period value function.
+!===============================================================================
+subroutine solve_age(j)
+    integer, intent(in) :: j
+    integer :: ia, iy, ie, id, iv, im
     integer :: ihp, ireg, itr, iap, ielig, ic, nc
     integer :: best_a, best_h, best_reg, best_tr
     real(dp) :: res, Rr, Rt, cc, vv, val, best, phi
@@ -651,12 +671,6 @@ subroutine solve_household()
     ! the housing term, which is h_pow(ihp)
     akcon = (alpha_u/(alpha_u+gamma_u))**alpha_u &
           * (gamma_u/((alpha_u+gamma_u)*p_v))**gamma_u
-
-    V(:,:,:,:,:,:,n_age+1) = 0.0_dp
-
-    do j = n_age, 1, -1
-
-        call build_EV(j)
 
         !$omp parallel do collapse(4) &
         !$omp   private(ia,iy,ihp,ireg,itr,iap,ielig,ic,nc, &
@@ -825,8 +839,6 @@ subroutine solve_household()
         end do
         end do
         !$omp end parallel do
-
-    end do
-end subroutine solve_household
+end subroutine solve_age
 
 end module solve

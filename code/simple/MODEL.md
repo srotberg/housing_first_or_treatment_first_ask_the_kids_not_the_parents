@@ -196,6 +196,15 @@ and the calibration has not converged. Do not read the aggregates as results.
 
 ## 5. Two Fortran traps, both hit here
 
+**Fortran is case-insensitive, and this has now bitten four times.** `J`/`j`,
+`M`/`mom`, `r`/`R` and `Phi`/`phi`. The `r`/`R` one is the instructive case: a
+local `real(dp) :: R` in `solve_household` silently captured every `r*a_grid(ia)`
+in that routine, so capital income was read from an uninitialised variable and
+then from whatever the previous asset iteration left behind. It compiled, it ran,
+and it produced plausible numbers. **Module-level names are now long enough that
+nothing shadows them by accident** — `r_free`, `n_age`, `j_ret`, `j_exp`, `mom`,
+`dist_t` — and any new one should follow.
+
 **Module parameters collide with loop variables — Fortran is case-insensitive.** A local
 `integer :: j` shadows a use-associated `J`, so `do j = J, 1, -1` silently starts from an
 uninitialized value. Symptom: a solve returning in 0.000 s leaving `V = 0`, then a segfault

@@ -1,11 +1,11 @@
 # Simplified HF/TF model
 FC      = gfortran
 FFLAGS  = -O3 -march=native -funroll-loops -flto -fopenmp
-COMMON  = params.f90 solve.f90 equilibrium.f90 calibrate.f90 mechanism.f90 experiment.f90 fiscal.f90
+COMMON  = params.f90 solve.f90 equilibrium.f90 calibrate.f90 mechanism.f90 experiment.f90 fiscal.f90 transition.f90
 SRC     = $(COMMON) main.f90
 TARGET  = hftf_simple
 
-all: $(TARGET) calib mech exper check diag ext
+all: $(TARGET) calib mech exper check diag ext trans
 
 $(TARGET): $(SRC)
 	$(FC) $(FFLAGS) $(SRC) -o $(TARGET)
@@ -28,6 +28,9 @@ diag: $(COMMON) diag_check.f90
 ext: $(COMMON) ext_main.f90
 	$(FC) $(FFLAGS) $(COMMON) ext_main.f90 -o hftf_ext
 
+trans: $(COMMON) trans_main.f90
+	$(FC) $(FFLAGS) $(COMMON) trans_main.f90 -o hftf_trans
+
 # stricter build for debugging; -fcheck=all catches out-of-bounds indexing
 debug: $(SRC)
 	$(FC) -O0 -g -fbacktrace -fcheck=all $(SRC) -o $(TARGET)_debug
@@ -39,5 +42,5 @@ run: $(TARGET)
 	OMP_NUM_THREADS=4 GFORTRAN_UNBUFFERED_ALL=1 ./$(TARGET)
 
 clean:
-	rm -f *.mod $(TARGET) $(TARGET)_debug hftf_calib hftf_mech hftf_exper check_hours diag_check hftf_ext
+	rm -f *.mod $(TARGET) $(TARGET)_debug hftf_calib hftf_mech hftf_exper check_hours diag_check hftf_ext hftf_trans
 .PHONY: all debug run clean calib mech
