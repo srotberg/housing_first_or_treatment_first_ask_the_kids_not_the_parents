@@ -1,0 +1,553 @@
+\documentclass[11pt]{article}
+\input{preamble}
+
+\begin{document}
+
+\lettertitle{Response to Referee 1}{Comments in order, responses in red}
+
+Thank you for a report that was detailed enough to rebuild the paper from. You
+ordered your comments by importance as 2, 1, 4, 3, and the revision has followed
+that ordering: the quantification was rebuilt first, and it turned up errors in
+the previous version that we set out below rather than leaving you to find.
+
+%======================================================================
+\section*{1. Model}
+
+\cmt{1(a)}{Mental health is largely absent}
+\begin{referee}
+``Mental health is central to the economic and policy environment being studied,
+but it is largely absent from the model. \dots It seems to me that mental health
+contributing to drug use and addiction as well as homelessness would weaken TF
+dramatically as a policy.''
+\end{referee}
+\begin{response}
+Added. Serious mental illness is a persistent binary state that raises the
+propensity to use, lowers employment, and raises the risk of homelessness. Onset
+has an age profile estimated from the age of onset distribution, and it is raised
+by substance use disorder, so the self medication channel runs in both directions.
+The state is identified by four moments: prevalence in the population, the share
+of the homeless population with a severe disorder, the unemployment rate
+conditional on it, and the co occurrence of substance use disorder with it.
+
+Two things are worth flagging.
+
+First, this addition also fixes your comment 2(c)(ii). A model whose only source
+of persistence is an income process ages people out of homelessness, which is
+what produced the 73.1 against 48.1 per cent miss at ages 26 to 44. A chronic
+illness state generates a persistently homeless older population, which is the
+mechanism the data are pointing at.
+
+Second, we deliberately did \emph{not} add a channel from housing to mental
+health recovery, and we want to state the reason because its absence looks like
+an omission. Two independent designs say the channel is not there. The At Home /
+Chez Soi trial finds housing moves mental illness symptom severity by nothing at
+any wave, with point estimates of $-0.96$, $-0.51$, $0.18$ and $0.57$, none
+significant, and moves substance use problem severity by nothing either.
+Costantini (2025) finds Housing First has \emph{no} effect on mental health care
+utilisation and attributes his mortality effect to shelter and to safer injection
+instead. Housing improves mental health \emph{outcomes} in these trials through
+condition specific quality of life, which the model has no state for, but not
+through symptom severity or recovery.
+
+On your prediction that mental illness will weaken Treatment First: that is now a
+testable statement rather than a conjecture, and we report the answer rather than
+the one we would prefer.
+\end{response}
+
+\cmt{1(b)}{Treatment First contains no treatment}
+\begin{referee}
+``One of the goals of TF as a policy is to encourage addicts to seek treatment for
+their addiction (it is even in the name of the policy!). However, this mechanism
+is ruled out in the model by the assumption that recovery is random. I found the
+argument for ruling out any possibility of this mechanism to be fairly weak given
+its centrality to one of the two policies studied.''
+\end{referee}
+\begin{response}
+\concede This was the most damaging sentence in any of the four reports and it was
+correct. The previous draft's defence, that quitting is largely outside the
+immediate control of the person with the disorder, is an argument for making
+treatment \emph{costly and imperfect}, not for making it impossible.
+
+Households with a substance use disorder now choose whether to take up treatment,
+and take up raises the recovery hazard. The cost is in utility rather than in
+resources, and the reason is worth stating: a resource cost comes out of the same
+budget that buys food and rent, so the households with the strongest case for
+treatment, the poorest, would be exactly the ones who could not afford it. That is
+an artefact of the modelling choice, not a feature of the world.
+
+The utility cost is identified by treatment take up among people with a substance
+use disorder, roughly a quarter in NSDUH. This matters because the entire
+Treatment First result now runs through a parameter that previously had no source
+at all.
+
+You expect this to strengthen Treatment First relative to Housing First. We report
+what the model produces.
+\end{response}
+
+\cmt{1(c)}{The drug price is fixed at one}
+\begin{referee}
+``However, in the model, the drug price appears to be fixed at one and does not
+adjust in the policy counterfactuals. \dots this seems like a strong assumption
+that either should be relaxed or better defended.''
+\end{referee}
+\begin{response}
+Relaxed. The drug price now clears a supply curve, and the Associate Editor and
+Referee~3 comment M2d ask for the same thing. Referee~3's version is sharper: he
+points out that one cannot simultaneously normalise the price to one and vary it
+to compute a price elasticity. He is right, and the normalisation is now explicit
+about what it does. The price of drugs is the numeraire of the first stage of the
+calibration, and a scale parameter of the supply curve is renormalised at each
+market clearing so that the benchmark is invariant to the supply elasticity. The
+price is then free to move in every counterfactual.
+
+Your point about offsetting is exactly what happens: a policy that reduces the
+number of users lowers demand and lowers the price, which partially offsets the
+reduction. The size of the offset depends on the elasticity of drug supply.
+Because that elasticity is doing real work, we have gone to some length to
+discipline it rather than assume it. The one directly measured estimate in any
+drug market is Hansen, Miller and Weber (2017) on the 2015 Washington marijuana
+tax reform, where consumers bear 44 per cent of an additional retail tax against a
+demand elasticity near minus one, implying a supply elasticity near 0.79.
+Estimates for cigarettes and gasoline sit nearer 3.6. We take 2 as the baseline
+and report the range.
+
+We also explain why the frequently quoted RAND figure of minus 3.6 is not the
+right object. A negative supply elasticity reflects enforcement swamping, where a
+larger market dilutes per unit enforcement risk. Caulkins and Reuter note that
+swamping ``pertains to total drug volume \dots not just or primarily drug specific
+market volume'', so it operates on the aggregate market. Our counterfactuals move
+one market and leave aggregate volume essentially unchanged, so the force is not
+active at our margin.
+\end{response}
+
+\cmt{1(d)}{Show that the mortality channel is the quantitatively important one}
+\begin{referee}
+``\dots it seems possible that the labor-market and income-risk consequences of
+drug use could also generate a low-income concentration of drug use. The paper
+should demonstrate that the claimed mortality/value-of-life channel is actually
+the quantitatively important one. A simple way to do this would be to compare the
+relationship between income and drug use in the baseline model to an otherwise
+similar version of the model in which mortality is not affected by drug use.''
+\end{referee}
+\begin{response}
+Done as you specify, and this comment turned out to matter far more than we
+expected, so we want to be direct about what it uncovered.
+
+There is now a channel shutdown ladder that re solves the model with one channel
+disabled at a time and reports the income gradient of drug use in each. Your
+proposed design, mortality not affected by use, is the first rung.
+
+\concede The uncomfortable part. When we rebuilt the calibration from primary
+data we found that the previous version was \emph{biased in your favour on both
+sides at once}:
+
+\begin{itemize}
+\item The unemployment rate given a substance use disorder was set at 26.9 per
+cent with no traceable provenance. Measured in the 2024 NSDUH microdata for ages
+26 and above, weighted, it is 16.25 per cent. The old figure implied a relative
+risk of 5.49 against an overall rate of 4.9 per cent; the data give 2.44. The
+employment channel was running about 2.25 times too strong.
+\item The homelessness mortality multiplier was a single flat 1.6. Baggett et al.
+(2013) give race adjusted rate ratios of 8.6 for men and 9.6 for women at ages 25
+to 44, 4.5 at 45 to 64 and 1.1 at 65 to 84. The mortality channel was running at
+roughly a fifth of measured strength, and the age profile was missing entirely.
+\end{itemize}
+
+So the previous calibration overweighted the labour market channel and
+underweighted the mortality channel. Your rival hypothesis was being handed the
+advantage by a calibration error, and the paper's own claim was being tested
+against a version of the model that could not have supported it honestly. Both
+are fixed, the multiplier is now age varying, and the ladder is run on the
+corrected calibration.
+
+We also add the diagnostic you say you would find more intuitive than a toy
+example, and drop the reliance on the static appendix for this purpose (see 1(e)).
+\end{response}
+
+\cmt{1(e)}{The appendix is disorganised and claims more than it establishes}
+\begin{referee}
+``\dots the appendix is useful for developing intuition, but I found it somewhat
+disorganized and narrower than the surrounding discussion suggests. The results
+are derived in very specific static settings, while the main model is dynamic \dots
+the appendix should be reorganized and made more precise and the main text
+discussion should describe it more clearly as intuition rather than as a general
+proof of the model's mechanism.''
+\end{referee}
+\begin{response}
+Accepted. The static appendix could not establish a claim about continuation
+values, which is what the paper's mechanism is, so describing it as a proof was
+overreach.
+
+It is replaced by a stripped down \emph{dynamic} model in the body: two periods,
+one asset, a binary use choice, a binary housing outcome, and a survival
+probability that depends on both. Small enough to solve by hand, and it delivers
+three results the paper actually needs: the sign of the income gradient of use
+under a mortality penalty against a proportional income penalty; the opposing
+signs of the value of life and moral hazard effects of housing; and the positive
+cross partial of welfare in generosity and conditionality, which is the paper's
+headline stated as a comparative static. The Associate Editor and Referee~3 both
+ask for the same section.
+
+The old static material is retained in the appendix, tightened, and relabelled as
+intuition.
+\end{response}
+
+%======================================================================
+\section*{2. Calibration and quantification}
+
+\cmt{2(a)}{Model fit never reported}
+\begin{referee}
+``\dots a notable omission is the model fit. That is, the author never reports the
+model's moments even though they would naturally fit in the table. The closest
+that the author comes to reporting these moments are by saying, `My benchmark
+closely matches all calibration targets.' This is incredibly vague.''
+\end{referee}
+\begin{response}
+\concede Accepted without qualification, and we agree with the diagnosis in 2(b)
+that this omission is what made the rest of the quantification impossible to
+assess.
+
+The calibration table reports target, model value and gap for all 24 targeted
+moments. Two further moments are held out of the calibration entirely and reported
+as validation. The phrase ``closely matches'' does not appear.
+\end{response}
+
+\cmt{2(b)}{Untargeted misses framed too positively}
+\begin{referee}
+``I find these tables to broadly demonstrating that the model misses substantially
+across the most important dimensions presented. \dots most problematic in my eyes
+is that the author frames the model as having done a reasonably good job of
+matching these moments. \dots Without being able to verify myself \dots I cannot
+help but question both the fit of the calibration and also the entire
+quantification exercise.''
+\end{referee}
+\begin{response}
+Accepted. The framing was not defensible and the new section does not attempt it.
+Where the model misses, the miss is stated, and the text says what the miss would
+do to the policy conclusion if it is real.
+
+We would rather report a smaller number of honest validation targets than a large
+number of moments with favourable framing, so the untargeted section is shorter
+than the previous one and each entry says explicitly what it is testing.
+\end{response}
+
+\cmt{2(c)(i)}{Homeless and users are too poor and too detached from work}
+\begin{referee}
+``In the model, all homeless individuals are unemployed, compared with 40 to 52
+percent in the data, and average income among the homeless is essentially zero,
+compared with 19.1 percent of average income in the data. Similarly, the average
+income of drug users is 41 percent of average income in the model, compared with
+74 percent in the data. \dots a model in which these groups are much poorer and
+less attached to employment than in the data may evaluate HF and TF at the wrong
+margins.''
+\end{referee}
+\begin{response}
+The substance of this is right and it is now addressed at the source: the homeless
+income ratio of 19.1 per cent is a calibration \emph{target} rather than an
+untargeted moment, and so are the income ratios for drug users and for people with
+a substance use disorder. A transitory expense shock lets households become
+homeless without first being driven to the corner of the state space, which is
+what produced the degenerate income and employment profile you describe.
+
+\correction On the drug user comparison specifically, there is a population
+mismatch in the numbers as stated. The figure of roughly 74 per cent is computed
+over people with a use \emph{disorder}. The model figure of 41 per cent is over
+people who \emph{use}. Measured consistently in NSDUH for ages 26 and above, the
+data give 0.951 for users and 0.687 for moderate or severe disorder.
+
+We think targeting both is a sharper test than the one you proposed, and it makes
+a point the paper wants to make anyway: drug \emph{use} is close to income
+neutral, and it is \emph{progression} to disorder that concentrates at the bottom.
+That is the object the mechanism is about. Both are now targets.
+\end{response}
+
+\cmt{2(c)(ii)}{The model's homeless are too young}
+\begin{referee}
+``In the model, 73.1 percent of homeless individuals are between ages 26 and 44,
+compared with 48.1 percent in the California data. Conversely, only 9.3 percent of
+the model's homeless population is age 55 or older, compared with 27.1 percent in
+the data. \dots If the model shifts homelessness toward younger ages, it may
+overstate the long-run labor-market and addiction-response channels while
+understating the role of policies for older homeless individuals.''
+\end{referee}
+\begin{response}
+Agreed, and the diagnosis of the consequence is right, which is why this mattered
+more than a distributional cosmetic.
+
+Three changes bear on it. Mental illness supplies a persistent state that does not
+resolve with age and therefore generates a chronically homeless older population,
+which an income process alone cannot do. The homelessness mortality multiplier is
+now age varying, so the model no longer implicitly kills the older homeless at a
+uniform rate. And the age profile of the homeless population is now reported as a
+validation moment rather than being folded into a table of successes.
+\end{response}
+
+\cmt{2(d)}{Match the policy relevant elasticities}
+\begin{referee}
+``Relevant objects include the response of drug use to voucher generosity or
+conditionality, the response of homelessness to voucher access, the response of
+labor supply and employment to vouchers, and the response of recovery or addiction
+persistence to housing status. \dots the RCT literature cited in the introduction
+may provide identified elasticities that the model can match.''
+\end{referee}
+\begin{response}
+This is the request that all four reports converge on and it is the core of the
+new quantification.
+
+The response of recovery to housing status is targeted directly from Milby et al.
+(2005), whose two arms differ in housing access for homeless adults with a
+substance use disorder. The contrast between arms identifies the treatment effect;
+the level in the no housing arm, 18.7 per cent of weeks abstinent, identifies how
+costly abstention is for a household that already has a disorder. That second
+parameter was previously asserted rather than measured.
+
+The response of homelessness to voucher access, and of three year mortality to
+voucher access, are validated against Costantini (2025), untargeted, in the form
+of a Wald ratio that matches his estimand rather than a hazard calculation that
+does not. Details in the letter to the Associate Editor under A14.
+
+One tension in this literature is worth stating because it is productive rather
+than awkward. Milby finds housing raises abstinence; At Home / Chez Soi finds
+unconditional housing does nothing to substance use. Milby's housing was
+\emph{contingent on abstinence} and At Home / Chez Soi's was \emph{unconditional}.
+Contingency is doing the work, not housing. That distinction is exactly what this
+paper is about, and the two trials together are better evidence for it than either
+alone.
+\end{response}
+
+\cmt{2(e)}{The price elasticity moment is not replicable}
+\begin{referee}
+``\dots I found the description of the calculation of this moment to be extremely
+vague, to the extent that I would not be able to replicate it. This should be
+clarified. I would appreciate an appendix describing the model definitions of the
+moments more thoroughly in general.''
+\end{referee}
+\begin{response}
+There is now an appendix that gives, for every moment, the exact model object, the
+data source with its vintage, and the script in the replication package that
+produces the data value from the public file. Nothing is described in prose only.
+\end{response}
+
+\cmt{2(f)}{Show identification numerically, and show robustness to the elasticity range}
+\begin{referee}
+``I did find the identification explanation in Section 4.2 to be quite helpful.
+\dots I would like this to also be shown numerically. This could be done in many
+ways: reporting the Jacobian of the moment vector with respect to the parameter
+vector, reporting the sensitivity statistic from Andrews, Gentzkow, and Shapiro
+(2017), through a figure showing how perturbing parameters locally around the
+baseline calibration affects the associated moments. \dots take the elasticity of
+drug use with respect to price which has a range of plausible estimates from
+$-0.36$ to $-0.9$ \dots whether or not the results are robust to this choice \dots
+should be demonstrated.''
+\end{referee}
+\begin{response}
+Both parts. The identification argument is now shown as a perturbation figure:
+each parameter is moved locally around the calibrated point and the response of
+every moment is plotted, so a reader can see which moment is informative about
+which parameter rather than taking our word for it. We report the Jacobian in the
+appendix.
+
+The price elasticity is re calibrated at the endpoints of your stated range,
+$-0.36$ and $-0.9$, and the policy experiments are re run at each. The results are
+reported as a robustness table rather than a footnote. The same treatment is given
+to the other imprecisely measured targets, which is your comment 4(d).
+\end{response}
+
+%======================================================================
+\section*{3. Policy analysis}
+
+\cmt{3(a)}{Loss of consortium is not integrated into the model}
+\begin{referee}
+``If premature deaths impose welfare losses on other individuals, then these
+losses should in principle affect the value of life and agents' decisions (such as
+the decision to use drugs). Instead, the paper adds the loss-of-consortium effect
+only after solving the model. I find this to be an internal inconsistency.''
+\end{referee}
+\begin{response}
+\concede Accepted. The adjustment is deleted.
+
+In its place, following Referee~2's comment C2, a disutility from the size of the
+homeless population enters period utility, where households internalise it as they
+internalise everything else. The welfare ranking is therefore produced by the
+model rather than added to it, which is what your objection actually demanded. It
+is calibrated to a moment rather than chosen, and it gives Referee~3's comment
+M2c, where is the market failure if use is rational, an explicit answer inside the
+model.
+\end{response}
+
+\cmt{3(b)}{The adjustment is ad hoc and a truly conservative value is zero}
+\begin{referee}
+``$\kappa_{cons}$ was plucked out of thin air, yet makes an enormous impact on the
+final policy rankings. To play devil's advocate on the point that the chosen value
+was conservative, a truly conservative value for a parameter plucked out of thin
+air such as this would be zero, which results in a different policy
+recommendation.''
+\end{referee}
+\begin{response}
+\concede This is unanswerable and we do not attempt an answer. The parameter is
+gone.
+\end{response}
+
+\cmt{3(c)}{Tone down the language}
+\begin{referee}
+``Universal TF is not unambiguously preferred under all welfare criteria
+considered in the paper. \dots An example of language that should be softened is
+the conclusion's statement that the debate is resolved in favor of universal TF.''
+\end{referee}
+\begin{response}
+Accepted. The claim that the debate is resolved is removed.
+
+The headline is now a statement about the interaction rather than about a winner:
+generosity dominates conditionality, and conditionality pays once the benefit
+being conditioned on is guaranteed rather than rationed. That is a claim about a
+cross partial, it is what the stylised model in section 2 proves, and it does not
+require a welfare ranking between two universal regimes to survive.
+
+Following the Associate Editor's suggestion, welfare and mortality are reported as
+two dimensions rather than combined through a single parameter, so a reader who
+weights them differently from us can read off their own ranking.
+\end{response}
+
+\cmt{3(d)}{Solve proper transition paths}
+\begin{referee}
+``The author should solve for proper transition paths. \dots I find the current
+strategy, of a several-period PE adjustment, to be a half-measure that is limited
+in its informativeness and opens up more questions than it answers.''
+\end{referee}
+\begin{response}
+Done. This became feasible once the housing market general equilibrium was cut at
+the Associate Editor's request: a transition path now iterates on the labour
+income tax and the drug price alone.
+
+The path matters for the paper's interpretation of the trial evidence, which is
+why the half measure was not good enough. Housing responds within a year while
+substance use disorder adjusts over a decade, so a three year experiment is well
+powered on housing and badly powered on use, whatever the long run effect. That
+argument requires an actual path, not an assertion.
+\end{response}
+
+%======================================================================
+\section*{4. Sensitivity}
+
+\cmt{4(a)}{Imperfect detection}
+\begin{referee}
+``TF assumes that drug use is perfectly observed and perfectly enforceable. \dots
+If drug use were imperfectly observed, this would likely reduce the effectiveness
+of TF. The paper should analyze the sensitivity of the results to imperfect
+detection.''
+\end{referee}
+\begin{response}
+Added, and structured so the previous specification is a corner rather than a
+special case bolted on. Each voucher holder faces a per period probability of
+being tested; detection can only occur if a test occurred; and the detection
+probability conditional on a test is below one. The old model is the point where
+the testing probability equals one and detection is certain.
+\end{response}
+
+\cmt{4(b)}{False positives}
+\begin{referee}
+``\dots the paper should consider the consequences of false positives. If some
+non-users lose voucher access because of erroneous tests, then TF may impose
+substantial costs on individuals who are not violating the sobriety requirement.''
+\end{referee}
+\begin{response}
+Added as a second parameter in the same kernel. This one is analytically
+interesting, because it attacks Treatment First at its strongest point: the value
+of the guarantee. A false positive rate converts a guaranteed benefit into a risky
+one for households who are complying, which is exactly the property that the
+paper's cross partial says makes conditionality valuable. We report the rate at
+which the advantage of universal Treatment First is eliminated.
+\end{response}
+
+\cmt{4(c)}{Compliance costs, stigma, administrative burden}
+\begin{referee}
+``I found the argument that drug tests would cost only billions of dollars per
+year to implement to both be most likely a massive underestimation that ignored
+administrative overhead and assumed far more efficiency than is warranted of
+government policy, and also to be too large a number to entirely ignore in the
+first place.''
+\end{referee}
+\begin{response}
+Both halves of this are right and the footnote is gone. Testing now has a per test
+cost that enters the government budget constraint, where it competes with
+everything else the government pays for, and it scales with the testing
+probability so that a more thorough enforcement regime is more expensive. The
+sensitivity runs over the cost per test as well as over the testing frequency.
+\end{response}
+
+\cmt{4(d)}{Sensitivity to hard to identify parameters}
+\begin{referee}
+``The paper should report sensitivity to parameters that are critical for the
+policy analysis yet are difficult to identify such as the parameters governing
+addiction transitions, recovery probabilities, addiction-related mortality,
+homelessness-related mortality, and the employment consequences of addiction and
+homelessness.''
+\end{referee}
+\begin{response}
+Done as a sensitivity ladder over exactly this list, and it doubles as the
+numerical identification evidence you ask for in 2(f).
+
+Two of these parameters are no longer free in the way they were. The homelessness
+mortality multiplier is now an age profile taken from Baggett et al.\ rather than
+a single number, and the employment consequence of substance use disorder is
+measured in NSDUH rather than assumed. The substance use disorder mortality
+multiplier is still calibrated internally, to the price elasticity of
+participation, but it is now reported against the standardised mortality ratio
+range of 2.5 to 9.8 in Degenhardt et al., so a reader can see whether the level
+the elasticity chose is consistent with the mortality evidence. That comparison is
+not a target, and disagreement would be a finding.
+\end{response}
+
+%======================================================================
+\section*{Smaller comments and typos}
+
+\cmt{S1}{Why a maximum experimentation age?}
+\begin{referee}
+``I do not understand why there is assumed to be an age at which drug
+experimentation will not occur. This seems inconsistent with Table 4(a), which
+shows U-shaped drug use by age.''
+\end{referee}
+\begin{response}
+\correction There is a distinction here that the previous draft failed to make
+clear enough for the objection to land where it should, so we take the blame for
+the confusion rather than the referee.
+
+The cap is on \emph{initiation}, not on \emph{use}. A household that acquires a
+substance use disorder at 40 continues to use at 65, so a cap on initiation is
+consistent with positive and even rising use at older ages. The two objects are
+different and the previous draft used the word ``experimentation'' for both.
+
+That said, the underlying discomfort is legitimate: a hard truncation is an
+unattractive way to represent a smooth empirical regularity, and it was doing work
+in the calibration. It has been replaced by an age profile in the initiation
+hazard estimated from the age of onset data, which delivers the same concentration
+of initiation in early adulthood without a discontinuity, and removes a free
+parameter.
+\end{response}
+
+\cmt{S2}{Tables should show levels and percentage changes}
+\begin{referee}
+``The results tables would be easier to interpret if they included both percentage
+changes and baseline/counterfactual levels for the main policy outcomes.''
+\end{referee}
+\begin{response}
+Done. Every results table now reports the benchmark level, the counterfactual
+level, and the change.
+\end{response}
+
+\cmt{S3 to S10}{Typographical corrections}
+\begin{referee}
+``well-aware'' should be ``well aware''; equation (9) should end with a comma;
+remove the comma after the citation in calibration target 19; footnote 7 ``our
+calibration'' should be singular; the Abramson citation lists forthcoming twice;
+``Kinneruda'' and ``Kragh-S\o rensena'' carry spurious trailing letters; Goering et
+al.\ has ``Guido. Powell ,''; Degenhardt et al.\ has ``Hamamd Ali'' for
+``Hammad''.
+\end{referee}
+\begin{response}
+All corrected. The bibliography has been rebuilt from the publishers' records
+rather than corrected entry by entry, since the pattern of errors suggested the
+source file was unreliable. Thank you for reading it that carefully.
+\end{response}
+
+\end{document}

@@ -1,0 +1,245 @@
+\documentclass[11pt]{article}
+\input{preamble}
+
+\begin{document}
+
+\lettertitle{Response to Referee 2}{Conceptual and detail concerns, responses in red}
+
+Thank you for the report, and in particular for the two welfare margins in your
+second paragraph. One of them has become a feature of the revised model and the
+other has become an intergenerational linkage that the Associate Editor
+independently asked for. Both changes came from this report.
+
+%======================================================================
+\section*{Conceptual concerns}
+
+\cmt{C1}{The welfare results rest on the elasticity of drug use to housing access}
+\begin{referee}
+``\dots all of the welfare results rest on whether the model has an accurate
+elasticity of drug use to housing access. The only empirical drug use elasticity
+mentioned is a price elasticity of drug use participation, but it isn't clear to
+me that this provides enough or the correct discipline for these policy
+experiments. I would like to see that the model matches some evidence on the
+response of drug use to housing access (see Milby, et al (2005) for cocaine users,
+but there are many papers on this topic.)''
+\end{referee}
+\begin{response}
+This is the crux, Referee~3 and the Associate Editor agree, and it is now a
+calibration target rather than an untested implication.
+
+Milby et al.\ (2005) is the right trial for it, and it turns out to identify two
+things rather than one, which resolved a separate problem in the model.
+
+\begin{itemize}
+\item The \emph{contrast between arms} identifies the response of abstinence to
+housing access, which is your requested elasticity.
+\item The \emph{level in the no housing arm}, 4.48 consecutive weeks abstinent out
+of 24, or 18.7 per cent among homeless adults with a substance use disorder,
+identifies how costly abstention is for a household that already has the disorder.
+That parameter was previously asserted to be small enough to keep the drug choice
+interior, which is a statement about numerical convenience rather than about data.
+It also left the housing access moment undefined: if abstention is impossible for
+a household with a disorder, the no housing arm abstains zero per cent of the time
+and the ratio between arms is zero over zero.
+\end{itemize}
+
+One tension in this literature is worth reporting, because it looks like a
+contradiction and is not. Milby finds housing raises abstinence. The At Home /
+Chez Soi trial finds unconditional housing does nothing to substance use problem
+severity, 1.04 with a confidence interval of 0.89 to 1.21. Milby's housing was
+\emph{contingent on abstinence}; At Home / Chez Soi's was \emph{unconditional}.
+Contingency is doing the work, not housing. That distinction is exactly the
+paper's subject, and the two trials together are better evidence for it than
+either alone. This is now in the text.
+\end{response}
+
+\cmt{C2}{A large homeless population is a negative externality}
+\begin{referee}
+``\dots a large homeless population, especially if many are addicted to drugs,
+creates a negative externality beyond the fiscal burden of providing services.
+\dots One structural rental housing paper that considers the negative externality
+of homelessness (though doesn't have drug addiction) is Corbae, et al (2024).
+\dots the externality seems very easy to introduce into the current model (though
+would require a new calibration moment).''
+\end{referee}
+\begin{response}
+Adopted, and it does more work than you may have anticipated, because it lets us
+delete something that three of the four reports objected to.
+
+A disutility from the size of the homeless population now enters period utility.
+This replaces the loss of consortium adjustment entirely. Referee~1's comments 3(a)
+and 3(b) said that adjustment was applied after the model was solved, was
+therefore internally inconsistent, and rested on a parameter whose conservative
+value is zero. The Associate Editor's comment A9 said the same. Your externality
+answers all of those objections at once, because it sits \emph{inside} the value
+function where households internalise it.
+
+It also gives Referee~3's comment M2c a concrete answer. He asks where the market
+failure comes from if drug use is rational and forward looking. There are now two
+answers in the model: the fiscal externality, which was always there, and this
+one, which is not fiscal and which no individual household internalises when it
+chooses whether to use.
+
+On Corbae, Glover and Nattinger: we cite them, and we are explicit about what
+does and does not transfer. Their externality is about neighbourhood housing
+\emph{quality} and is identified off rent decontrol, so their functional form is
+not the right one to import. What transfers is the identification logic. We use a
+contingent valuation approach for the calibration moment instead.
+\end{response}
+
+\cmt{C3}{Parents suffer anxiety about their children}
+\begin{referee}
+``\dots parents suffer anxiety that their children may become drug addicts and/or
+homeless in adulthood. \dots the dynastic element seems like more of a stretch,
+but could be discussed (I think it would only amplify the welfare gains from
+reducing addiction).''
+\end{referee}
+\begin{response}
+We have done more than discuss it, because the Associate Editor's comment A6
+pushes in the same direction from a different angle: he objects that the previous
+draft discussed intergenerational transmission in section 4.1.3 without any
+intergenerational linkage in the model, which made the discussion decorative.
+Your comment supplies exactly the linkage that would make it load bearing.
+
+Newborn productivity is now drawn from a parent's productivity through a
+persistent process, and the parent's period utility carries a warm glow term in
+the expected newborn value of their child. This is the cheapest structure that
+makes the transmission real: it does not require tracking dynasties or adding a
+state, and it means the persistence parameter matters for welfare rather than
+appearing only in a sentence.
+
+We report results with the warm glow weight set to zero as well, so a reader can
+see how much of the welfare result rests on it. Your prediction is that it
+amplifies rather than reverses, and that is also our prior, but it is now
+something the paper shows rather than something we assert. The weight itself is
+disciplined against the literature on altruism towards children rather than
+chosen.
+\end{response}
+
+\cmt{C4}{The rich model is a black box; show the policy functions}
+\begin{referee}
+``\dots it can be a bit of a black box. It would be helpful to have a section
+where the mechanisms of the model are explored more thoroughly. For example, it
+would be useful to show and explain intuitively a plot of the drug use policy
+function for addicts and non-addicts as their income and wealth vary.''
+\end{referee}
+\begin{response}
+Done, as the figure you describe, and it is now part of a broader mechanism
+section that also serves Referee~1's comment 1(d) and Referee~3's comment M2b.
+
+The section has three parts: the policy function figure you ask for; a channel
+shutdown ladder that re solves the model with one channel disabled at a time and
+reports what happens to the income gradient of use; and a decomposition of the
+sources of the externality. The three together are the paper's answer to the
+charge that the model is opaque, and they replace the static appendix that
+Referee~1 found was claiming more than it established.
+\end{response}
+
+\cmt{C5}{The utility specification bakes in an income contingent gain or loss}
+\begin{referee}
+``It would also help to further explain the importance of the period utility
+specification in (13) which, I think, implies that drug addiction is more
+attractive for low income people \dots it also bakes in an income-contingent
+gain/loss from becoming addicted by shifting the utility weight towards drug
+consumption away from non-drug consumption and housing.''
+\end{referee}
+\begin{response}
+\concede You and Referee~3, in his comment M2a, identify the same problem, and it
+is a serious one: the previous specification made reducing substance use disorder
+and expanding housing mechanical welfare complements even with no incentive effect
+at all. Since the complementarity between generosity and conditionality is the
+paper's headline result, the specification was doing the work that the economics
+was supposed to do.
+
+Preferences are now \emph{fixed} across substance use disorder status: one set of
+weights, one subsistence parameter. Nothing about the utility function changes when
+a household acquires the disorder.
+
+The Associate Editor suggested a milder version, keeping the weights invariant but
+letting the subsistence parameter vary by status. We tried that and it does not
+reproduce the target the specification was carrying, namely the gap between 44 per
+cent of income spent on drugs among people with a disorder and 11 per cent among
+experimenters: the subsistence parameter shifts the level of drug spending, but
+the ratio is governed by the curvature of the subsistence term, and opening a
+fourfold gap by moving it drives experimenters to a corner.
+
+With fully fixed preferences that gap has to emerge endogenously, and it does,
+from forward looking restraint. A household without a disorder limits its use
+because use raises the probability of acquiring one. A household that already has
+one faces no such margin. The spending gap becomes a prediction rather than an
+assumption, and the welfare complementarity becomes an incentive effect rather
+than an artefact of the utility function. This is a stronger result than the one
+it replaces and we are grateful for the push.
+\end{response}
+
+\cmt{C6}{Optimal voucher design, and $\chi_H$ looks high}
+\begin{referee}
+``The parameter $\chi_H$ governs the fiscal cost of having somebody unhoused and
+appears pretty high at 25\% of average income. Would there be significant further
+welfare gains from broadening the voucher program by making higher incomes
+eligible or covering more of the rent (with the drug-free contingency)? My
+(perhaps wrong) reading is that the cost of having somebody unhoused is
+significantly higher than the rent on the smallest housing unit.''
+\end{referee}
+\begin{response}
+Your reading is correct, it is not wrong, and it is the mechanism behind the near
+self financing result. The paper should be transparent about that rather than let
+it emerge as a surprise, so it is now stated in the text where the result is
+presented, and the sensitivity is in the body rather than an appendix.
+
+On the level of $\chi_H$, the Associate Editor's comment A15 points to Abramson
+and Van Nieuwerburgh as a comparison. Having read their paper, there is a point of
+fact worth recording: their 2{,}500 dollars per household per month for the
+literally homeless, and half that for the doubled up, is an \emph{assumption}
+inside their calibration, stated as such with components listed in their footnote
+11, rather than an independent estimate. So it cannot validate our number. We
+report the comparison, because a reader will want it, described accurately as a
+comparison of two calibration choices. Blended across their two groups it comes to
+about 1{,}775 dollars per month.
+
+On optimal design, we now run the continuous sweep that Referee~3's minor comment
+3 also asks for: the probability of voucher receipt is varied from the benchmark
+to universal, and welfare, homelessness, use and the labour tax are plotted along
+it. This shows whether universal provision is optimal or merely a corner, which is
+his question, and it shows where the gains from broadening eligibility run out,
+which is yours. We run the sweep separately with and without the sobriety
+condition, so the cross partial that the paper's headline rests on is visible as
+the gap between two curves rather than as a comparison of four table cells.
+\end{response}
+
+%======================================================================
+\section*{Detail concerns}
+
+\cmt{D1}{The housing grid}
+\begin{referee}
+``\dots the housing grid. It has seven values but only three are calibrated \dots
+The full grid is then listed in footnote 4 rather than a calibration table. My
+assumption before seeing the grid was that the bounds were calibrated and then the
+sizes were distributed uniformly \dots But they are not uniformly spread out, at
+least in levels or ratios. So, how are the housing levels being chosen and does it
+matter for results? Could they just be spread uniformly without affecting the
+calibration and policy conclusions? If not then I think they need to be included as
+parameters in the calibration.''
+\end{referee}
+\begin{response}
+The honest answer to the original question is that the grid was not chosen by a
+principle we could defend, which is why the footnote existed. The revision removes
+the problem rather than justifying it.
+
+With homeownership cut at the Associate Editor's request in his comment A4, the
+housing state is homeless plus three rental sizes. Every point of that grid is now
+pinned by a moment, and the moments are the size distribution of occupied units
+from the American Community Survey, tenure by bedrooms: 13.21, 24.12 and 62.67 per
+cent across zero to one, two, and three or more bedrooms. All households rather
+than renters only, because the model has no homeownership and housing is a pure
+flow, so an owner's analogue is imputed rent and the distribution over all
+occupied units is the right object. The middle category is the residual and is not
+targeted.
+
+The grid now appears in the calibration table with its moments, not in a footnote.
+As a by product, the two housing cost burden moments that previously identified
+the grid are freed to serve as out of sample validation, which is a stronger thing
+to show than a moment the grid was fitted to.
+\end{response}
+
+\end{document}
