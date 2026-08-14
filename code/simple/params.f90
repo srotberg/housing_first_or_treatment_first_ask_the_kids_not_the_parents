@@ -139,6 +139,18 @@ module params
     real(dp) :: psi1 = 1.0_dp
     real(dp) :: drug_supply_elasticity = 50.0_dp   ! baseline: near-horizontal
     real(dp) :: psi2 = 1.02_dp
+    ! psi1 is a pure NORMALISATION: it has no independent meaning and is pinned
+    ! by the requirement that p_v = 1 at the benchmark. During the first stage
+    ! the benchmark is still moving every sweep, so pinning psi1 once at the
+    ! start and then letting p_v float against it is simply wrong: participation
+    ! travels from about 0.2% to 5%, and p_v drifts about 7% away from 1.
+    !
+    ! With pin_pv = 1 the first stage holds p_v = 1 and RE-normalises psi1 each
+    ! time the equilibrium clears, so the drug price is 1 in the benchmark by
+    ! construction and the second stage inherits a correctly normalised supply
+    ! curve. p_v then moves only where it should: counterfactuals and the
+    ! second-stage price elasticity.
+    integer :: pin_pv = 1
 
     !-- taxes and transfers ---------------------------------------------------
     real(dp) :: tau_l = 0.85_dp                 ! level parameter, HSV form

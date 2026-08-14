@@ -204,7 +204,12 @@ subroutine solve_equilibrium(maxit, tol, verbose)
         ! ---- drug market ----------------------------------------------------
         ! psi1 is normalised at the benchmark so that p_v = 1 there; thereafter
         ! p_v moves with demand at the calibrated supply elasticity.
-        if (A%drugq > 0.0_dp) then
+        if (pin_pv == 1) then
+            ! first stage: p_v IS the numeraire. Re-normalise psi1 instead of
+            ! letting the price float against a stale one.
+            if (A%drugq > 0.0_dp) psi1 = 1.0_dp / A%drugq**(psi2 - 1.0_dp)
+            pv_new = 1.0_dp
+        else if (A%drugq > 0.0_dp) then
             pv_new = psi1 * A%drugq**(psi2 - 1.0_dp)
         else
             pv_new = p_v

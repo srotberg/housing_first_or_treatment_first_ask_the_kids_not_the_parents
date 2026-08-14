@@ -235,9 +235,15 @@ end function housing_access_ratio
 !===============================================================================
 function price_elasticity() result(eps)
     real(dp) :: eps, dlp, p0, q0, q1
+    integer  :: keep_pin
     type(agg_t) :: A
     dlp = 0.10_dp
     p0  = p_v
+    ! the whole point here is to MOVE p_v, so the first-stage pin has to come
+    ! off; solve_household is called directly rather than through the
+    ! equilibrium loop, but unpinning keeps the intent explicit and protects
+    ! against anyone routing this through solve_equilibrium later
+    keep_pin = pin_pv; pin_pv = 0
 
     call solve_household(); call build_distribution_eq(); call compute_aggregates(A)
     q0 = A%users/max(A%pop, 1.0e-12_dp)
@@ -247,6 +253,7 @@ function price_elasticity() result(eps)
     q1 = A%users/max(A%pop, 1.0e-12_dp)
 
     p_v = p0
+    pin_pv = keep_pin
     call solve_household(); call build_distribution_eq()
 
     if (q0 <= 0.0_dp .or. q1 <= 0.0_dp) then
