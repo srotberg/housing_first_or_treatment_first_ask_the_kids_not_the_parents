@@ -106,6 +106,44 @@ def from_ssa(path, w_male):
     return rows
 
 
+def from_ssa_xlsx(path):
+    """
+    SSA table4c6 saved as .xlsx. Seven numeric columns per data row:
+
+        age, m_qx, m_lx, m_ex, f_qx, f_lx, f_ex
+
+    The lx columns are what make this the best of the SSA routes. Averaging
+    male and female qx with equal weights is wrong -- by the mid-eighties the
+    survivor populations differ by a wide margin, so the sexes do not contribute
+    equally to deaths at that age. The correct both-sexes hazard is the ratio of
+    total deaths to total survivors,
+
+        q(x) = ( lM(x)*qM(x) + lF(x)*qF(x) ) / ( lM(x) + lF(x) ),
+
+    which is what this does. Both sexes carry a radix of 100,000, so this
+    assumes an equal sex ratio at birth; the true ratio is about 1.05 male per
+    female, an error far smaller than the equal-weight one it replaces.
+    """
+    import openpyxl
+    ws = openpyxl.load_workbook(path, data_only=True).worksheets[0]
+    rows = {}
+    for rec in ws.iter_rows(values_only=True):
+        nums = [c for c in rec if isinstance(c, (int, float))]
+        if len(nums) < 7:
+            continue
+        age, m_qx, m_lx, _m_ex, f_qx, f_lx = nums[0], nums[1], nums[2], nums[3], nums[4], nums[5]
+        if age != int(age):
+            continue
+        age = int(age)
+        if not (AGE_LO <= age <= AGE_HI):
+            continue
+        denom = m_lx + f_lx
+        if denom <= 0:
+            continue
+        rows[age] = (m_lx * m_qx + f_lx * f_qx) / denom
+    return rows
+
+
 def from_csv(path):
     rows = {}
     with open(path, encoding="utf-8", errors="replace") as fh:
@@ -128,6 +166,8 @@ def main():
     g = p.add_mutually_exclusive_group(required=True)
     g.add_argument("--hmd", metavar="FILE")
     g.add_argument("--ssa", metavar="FILE")
+    g.add_argument("--ssa-xlsx", metavar="FILE",
+                   help="SSA table4c6 as .xlsx; combines the sexes by lx weight")
     g.add_argument("--csv", metavar="FILE")
     p.add_argument("--year", type=int, default=None,
                    help="HMD only: which calendar year to take")
@@ -139,6 +179,8 @@ def main():
         rows, src = from_hmd(a.hmd, a.year), f"HMD {a.hmd}"
     elif a.ssa:
         rows, src = from_ssa(a.ssa, a.sex_weights), f"SSA {a.ssa}"
+    elif a.ssa_xlsx:
+        rows, src = from_ssa_xlsx(a.ssa_xlsx), f"SSA xlsx {a.ssa_xlsx} (lx-weighted)"
     else:
         rows, src = from_csv(a.csv), f"CSV {a.csv}"
 
