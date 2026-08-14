@@ -171,8 +171,20 @@ module params
     real(dp) :: kappa_r   = 0.3_dp              ! tenant contribution rate
     real(dp) :: prob_V    = 0.06_dp             ! lottery probability (1.0 = universal)
     integer  :: policy_TF = 0                   ! 0 = Housing First, 1 = Treatment First
-    real(dp) :: detect_prob = 1.0_dp            ! P(drug use detected) under TF
-    real(dp) :: false_pos   = 0.0_dp            ! P(clean agent flagged) under TF
+    ! Enforcement under Treatment First is now COSTLY, and costly in the way the
+    ! programme actually is: each voucher holder faces a per-period probability
+    ! of being tested, each test costs the government money, and detection can
+    ! only happen if a test happened. Effective detection is test_prob*detect_prob,
+    ! so the previous behaviour is the test_prob = 1 corner.
+    ! R1's comment 4(c) says the $1-2bn testing estimate is too large to relegate
+    ! to a dismissive footnote; this puts it in the budget constraint where it
+    ! competes with everything else the government pays for.
+    real(dp) :: test_prob   = 1.0_dp            ! P(tested | holds a voucher), TF
+    ! Cost per test. A urine panel runs about $40; quarterly testing is roughly
+    ! $160 a year against average earnings near $70,000.
+    real(dp) :: test_cost   = 0.0023_dp         ! share of average income, per year
+    real(dp) :: detect_prob = 1.0_dp            ! P(use detected | tested)
+    real(dp) :: false_pos   = 0.0_dp            ! P(clean agent flagged | tested)
 
     !-- SUD process -----------------------------------------------------------
     real(dp) :: pi_d_low    = 0.02_dp           ! annual hazard of SUD given any use
@@ -351,7 +363,19 @@ module params
     integer :: on_homeless_fb = 1               ! arm 3: homelessness feedback
 
     !-- fiscal ----------------------------------------------------------------
-    real(dp) :: chi_H = 0.252_dp                ! fiscal cost per homeless person
+    ! Fiscal cost per homeless household per year, as a share of average income.
+    ! The homeless state h_1 is LITERAL homelessness -- shelters and the street,
+    ! not doubling up -- so the matching figure in Abramson and Van Nieuwerburgh
+    ! (2024, NBER w32582, p.30) is their $2,500 per household per month for the
+    ! literally homeless, NOT the $1,775 they blend across the literally homeless
+    ! and the doubled-up. $30,000 a year against the model's $70,000 average
+    ! income gives 0.4286. Components, their footnote 11: shelters, social
+    ! services, extra policing, hospital emergency care.
+    !
+    ! Note the direction of travel. R2 and R3 both judged the previous 0.252 too
+    ! HIGH; the best structural number in the literature is 70% higher again, and
+    ! its authors call it conservative.
+    real(dp) :: chi_H = 0.4286_dp
     real(dp) :: chi_D = 0.212_dp                ! fiscal cost per person with SUD
     real(dp) :: cfloor_share = 0.10_dp          ! food-stamp consumption floor
 
@@ -371,6 +395,13 @@ module params
     integer,  allocatable :: pol_reg(:,:,:,:,:,:,:) ! drug regime
     integer,  allocatable :: pol_tr(:,:,:,:,:,:,:)  ! treatment take-up
     real(dp), allocatable :: pol_l(:,:,:,:,:,:,:)   ! hours worked (continuous)
+    ! Benchmark hours, held for the deadweight-loss decomposition. When
+    ! freeze_hours = 1 the household is forced to work pol_lb and re-optimises
+    ! everything else, which is what shuts the labour-supply RESPONSE to the tax
+    ! without touching preferences. Raising omega_l instead does NOT do this --
+    ! it makes leisure overwhelmingly valuable and sends hours to the corner.
+    real(dp), allocatable :: pol_lb(:,:,:,:,:,:,:)
+    integer :: freeze_hours = 0
     real(dp), allocatable :: pol_c(:,:,:,:,:,:,:)
     real(dp), allocatable :: pol_v(:,:,:,:,:,:,:)
     real(dp), allocatable :: dist(:,:,:,:,:,:,:)
@@ -410,10 +441,11 @@ subroutine setup_grids()
         else
             age_prof(i) = 0.0_dp
         end if
-        ! smooth increasing hazard, replace with US life-table input
+        ! fallback only; load_life_table() overwrites this if the file is present
         surv_base(i) = 1.0_dp - min(0.99_dp, 0.0005_dp*exp(0.075_dp*real(i,dp)))
     end do
     surv_base(n_age) = 0.0_dp
+    call load_life_table()
 
     psi2 = 1.0_dp + 1.0_dp/drug_supply_elasticity
 
@@ -443,6 +475,62 @@ end subroutine setup_grids
 
 
 !-- mental-health transitions, separately for clean and SUD households -------
+!===============================================================================
+! Baseline survival from a US life table, if one has been supplied.
+!
+! R3's comment M1b asks for the empirical basis of the survival hazards to be
+! transparent, and a smooth exponential fitted to nothing is not that. The right
+! source is the CDC period life table (Arias et al., United States Life Tables)
+! or the SSA equivalent.
+!
+! Expected file: data/us_life_table.csv, one record per line,
+!
+!     age,qx
+!
+! with age in YEARS (26 through 85 is what the model uses) and qx the
+! probability of dying within one year at that exact age, for the total
+! population. Anything outside 26-85 is ignored; any age not supplied keeps the
+! fallback. A missing file is not an error -- it prints a warning and the
+! fallback stands -- because the model has to run before the file arrives.
+!===============================================================================
+subroutine load_life_table()
+    integer  :: u, ios, age, i, nread
+    real(dp) :: qx
+    character(len=256) :: line
+    logical  :: there
+
+    inquire(file='../../data/us_life_table.csv', exist=there)
+    if (.not. there) inquire(file='data/us_life_table.csv', exist=there)
+    if (.not. there) then
+        write(*,'(A)') ' NOTE: data/us_life_table.csv not found; survival is the'
+        write(*,'(A)') '       smooth fallback hazard, which is NOT a data source.'
+        return
+    end if
+
+    open(newunit=u, file='../../data/us_life_table.csv', status='old', iostat=ios)
+    if (ios /= 0) open(newunit=u, file='data/us_life_table.csv', status='old', iostat=ios)
+    if (ios /= 0) return
+
+    nread = 0
+    do
+        read(u,'(A)',iostat=ios) line
+        if (ios /= 0) exit
+        if (len_trim(line) == 0) cycle
+        if (line(1:1) < '0' .or. line(1:1) > '9') cycle      ! header
+        read(line,*,iostat=ios) age, qx
+        if (ios /= 0) cycle
+        i = age - 25                                          ! model age 1 = real 26
+        if (i >= 1 .and. i <= n_age) then
+            surv_base(i) = 1.0_dp - min(1.0_dp, max(0.0_dp, qx))
+            nread = nread + 1
+        end if
+    end do
+    close(u)
+    surv_base(n_age) = 0.0_dp        ! nobody survives the last model age
+    write(*,'(A,I0,A)') ' life table loaded: ', nread, ' ages from data/us_life_table.csv'
+end subroutine load_life_table
+
+
 subroutine build_mh_trans()
     real(dp) :: on_d
     if (include_mental_health == 1) then
@@ -494,11 +582,13 @@ subroutine alloc_all()
     allocate(pol_reg(NA,NY,NE,ND,NV,NM,n_age))
     allocate(pol_tr(NA,NY,NE,ND,NV,NM,n_age))
     allocate(pol_l (NA,NY,NE,ND,NV,NM,n_age))
+    allocate(pol_lb(NA,NY,NE,ND,NV,NM,n_age))
     allocate(pol_c (NA,NY,NE,ND,NV,NM,n_age))
     allocate(pol_v (NA,NY,NE,ND,NV,NM,n_age))
     allocate(dist  (NA,NY,NE,ND,NV,NM,n_age))
     V = 0.0_dp; dist = 0.0_dp
     pol_a = 1; pol_h = 1; pol_reg = 1; pol_tr = 0; pol_l = 0.0_dp
+    pol_lb = 0.0_dp
     pol_c = 0.0_dp; pol_v = 0.0_dp
 end subroutine alloc_all
 

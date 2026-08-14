@@ -192,11 +192,13 @@ subroutine decompose_externalities(bump_frac, verbose, cev_out)
     type(agg_t) :: A
     real(dp) :: pid0, taul0, pv0, kx0, avg0, med0, w0, w1
     real(dp) :: w_notax, w_nodwl, w_nodis, w_nopv, w_noscale
+    real(dp) :: c_tot, c_notax, c_nodwl
 
     !-- benchmark -------------------------------------------------------------
     call solve_equilibrium(40, 1.0e-4_dp, .false.)
     call compute_aggregates(A)
     w0    = newborn_value()
+    pol_lb = pol_l                 ! benchmark labour supply, for the DWL arm
     pid0  = pi_d_low
     taul0 = tau_l;  pv0 = p_v;  kx0 = kappa_ext
     avg0  = avg_income; med0 = median_income
@@ -210,9 +212,10 @@ subroutine decompose_externalities(bump_frac, verbose, cev_out)
     call freeze_and_solve(taul0, pv0, kx0, avg0, med0, .true., .false., .false., .false.)
     w_notax = newborn_value()
 
-    !-- (b) alone: tax moves, but hours are held at their benchmark values ----
-    ! omega_l is raised without bound so leisure is effectively fixed, which
-    ! shuts the labour-supply response without touching anything else
+    !-- tax moves, but hours cannot respond ----------------------------------
+    ! This arm isolates the MECHANICAL transfer: the household pays the higher
+    ! tax but is not allowed to answer it by working less, so no distortion is
+    ! created. The deadweight loss is then the residual, w1 vs this.
     call freeze_and_solve(taul0, pv0, kx0, avg0, med0, .false., .false., .false., .true.)
     w_nodwl = newborn_value()
 
@@ -232,13 +235,22 @@ subroutine decompose_externalities(bump_frac, verbose, cev_out)
     pi_d_low = pid0
     call solve_equilibrium(40, 1.0e-4_dp, .false.)
 
-    cev_out(1) = cev(w1,        w0)
-    cev_out(2) = cev(w1,        w0) - cev(w_notax,   w0)   ! fiscal, total
-    cev_out(3) = cev(w_nodwl,   w0) - cev(w_notax,   w0)   ! of which deadweight
-    cev_out(2) = cev_out(2) - cev_out(3)                   ! mechanical remainder
-    cev_out(4) = cev(w1,        w0) - cev(w_nodis,   w0)
-    cev_out(5) = cev(w1,        w0) - cev(w_nopv,    w0)
-    cev_out(6) = cev(w1,        w0) - cev(w_noscale, w0)
+    ! Every CEV is measured against the SAME benchmark policies -- which is the
+    ! state the model is in now, after the restore above -- so the channels are
+    ! in comparable units. cev(w1,w0) is the same number six times over, and a
+    ! single call is forty full value-function rebuilds, so compute it once.
+    c_tot   = cev(w1,        w0)
+    c_notax = cev(w_notax,   w0)
+    c_nodwl = cev(w_nodwl,   w0)
+
+    cev_out(1) = c_tot
+    ! hours frozen: the tax moves but creates no distortion -> MECHANICAL
+    cev_out(2) = c_nodwl - c_notax
+    ! letting hours respond on top of that is the DEADWEIGHT LOSS
+    cev_out(3) = c_tot   - c_nodwl
+    cev_out(4) = c_tot - cev(w_nodis,   w0)
+    cev_out(5) = c_tot - cev(w_nopv,    w0)
+    cev_out(6) = c_tot - cev(w_noscale, w0)
 
     if (verbose) call print_externalities(cev_out, bump_frac)
 end subroutine decompose_externalities
@@ -256,11 +268,14 @@ subroutine freeze_and_solve(taul0, pv0, kx0, avg0, med0, &
     if (present(fix_scale)) sc = fix_scale
 
     om0 = omega_l; kx_save = kappa_ext
-    if (fix_hours) omega_l = 1.0e6_dp     ! leisure becomes effectively rigid
+    ! pol_lb was filled from the BENCHMARK solve before the hazard was bumped,
+    ! so freeze_hours holds labour supply at its benchmark schedule
+    if (fix_hours) freeze_hours = 1
     if (fix_dis)   kappa_ext = 0.0_dp
 
     call solve_equilibrium_frozen(taul0, pv0, avg0, med0, fix_tax, fix_pv, sc)
 
+    freeze_hours = 0
     omega_l = om0; kappa_ext = kx_save
     if (kx0 > 1.0e30_dp) continue
 end subroutine freeze_and_solve
@@ -282,6 +297,9 @@ subroutine print_externalities(c, bump_frac)
     write(*,'(A)') '  ---------------------------------------------------------------'
     write(*,'(A,F12.6,A)') '   sum of the five externality channels : ', &
         100.0_dp*sum(c(2:NCH)), ' %'
+    write(*,'(A)') '   Channels c-e are each measured with the other channels LIVE,'
+    write(*,'(A)') '   so they need not sum to the total and the sum is a diagnostic,'
+    write(*,'(A)') '   not a decomposition. a and b do add up: they are a nested pair.'
     write(*,'(A)') '  ==============================================================='
 end subroutine print_externalities
 

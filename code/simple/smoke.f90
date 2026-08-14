@@ -26,7 +26,7 @@ program smoke
     type(agg_t) :: A
     real(dp), allocatable :: D0(:,:,:,:,:,:,:), D1(:,:,:,:,:,:,:)
     real(dp) :: tot, mx, vmin, negmass, mass
-    integer  :: nfail, j, ia, iy, ie, id, iv, im
+    integer  :: nfail, j, ia, iy, ie, id, iv, im, nfr
 
     nfail = 0
     call setup_grids(); call alloc_all(); call alloc_solve(); call init_targets()
@@ -159,6 +159,37 @@ program smoke
     end if
     write(*,'(A)') '      (these are only expected to vanish after solve_equilibrium;'
     write(*,'(A)') '       this run solves the household problem once, so they will not)'
+
+    !-- 8. freeze_hours really freezes hours --------------------------------
+    ! The deadweight-loss arm of the externality decomposition depends on this
+    ! entirely. The first implementation raised omega_l to 1e6 and called that
+    ! "rigid leisure", which does not hold hours at the benchmark -- it makes
+    ! leisure overwhelmingly valuable and sends hours to the corner, so the arm
+    ! measured the wrong counterfactual. Assert the property directly.
+    write(*,'(A)') ''
+    write(*,'(A)') ' 8. freeze_hours holds labour supply at the benchmark schedule'
+    pol_lb = pol_l
+    freeze_hours = 1
+    call solve_household()
+    mx = 0.0_dp; nfr = 0
+    do j = 1, n_age-1
+    do im = 1, NM; do iv = 1, NV; do id = 1, ND
+    do ie = 1, NE; do iy = 1, NY; do ia = 1, NA
+        if (j >= j_ret .or. ie /= 1) cycle          ! hours are a choice only here
+        nfr = nfr + 1
+        mx  = max(mx, abs(pol_l(ia,iy,ie,id,iv,im,j) &
+                        - pol_lb(ia,iy,ie,id,iv,im,j)))
+    end do; end do; end do
+    end do; end do; end do
+    end do
+    freeze_hours = 0
+    write(*,'(A,I0)')      '      states with an hours choice : ', nfr
+    write(*,'(A,ES13.5)')  '      max |hours - benchmark|     : ', mx
+    if (mx > 1.0e-12_dp) then
+        write(*,'(A)') '      FAIL: hours moved despite freeze_hours = 1'
+        nfail = nfail + 1
+    end if
+    call solve_household()          ! restore the free-hours solution
 
     write(*,'(A)') ''
     if (nfail == 0) then

@@ -244,9 +244,18 @@ subroutine solve_path(maxit, tol, verbose)
     logical,  intent(in) :: verbose
     type(agg_t) :: A_t(T_path)
     integer  :: it, t
-    real(dp) :: err, damp, dpv, taul_new, pv_new
+    real(dp) :: err, damp, dpv, taul_new, pv_new, err_prev
 
-    damp = 0.20_dp
+    ! ADAPTIVE damping. A fixed damp = 0.20 cost roughly ten times more
+    ! iterations than the problem needs: the first structural run contracted at
+    ! 0.82 per iteration, and for a damped update 1 - damp*(1-rho) that implies
+    ! the undamped price map has modulus near 0.1, i.e. it is already strongly
+    ! contracting on its own. Damping is still worth having -- the tax and the
+    ! drug price are solved jointly and the pair can overshoot -- so rather than
+    ! removing it, raise it while the residual is falling and cut it hard the
+    ! moment it rises. That keeps the safety and recovers the speed.
+    damp     = 0.35_dp
+    err_prev = huge(1.0_dp)
 
     ! start from a linear interpolation between the endpoints -- with the drug
     ! supply near-horizontal the price barely moves, so this is already close
@@ -293,9 +302,20 @@ subroutine solve_path(maxit, tol, verbose)
             HD_t(t)   = HD_t(t)   + damp*(A_t(t)%hl_sud /max(A_t(t)%pop,1.0e-12_dp) - HD_t(t))
         end do
 
-        if (verbose) write(*,'(A,I3,A,ES11.3,A,F8.4,A,F8.4)') &
+        if (verbose) write(*,'(A,I3,A,ES11.3,A,F8.4,A,F8.4,A,F5.2)') &
             '  path iter ', it, '   err = ', err, &
-            '   tau_l(1) = ', taul_t(1), '   tau_l(T) = ', taul_t(T_path)
+            '   tau_l(1) = ', taul_t(1), '   tau_l(T) = ', taul_t(T_path), &
+            '   damp = ', damp
+
+        ! residual falling -> the map is behaving, take bigger steps;
+        ! residual rising -> back off hard. The cap stays below 1 so the update
+        ! never becomes a pure fixed-point iteration.
+        if (err < err_prev) then
+            damp = min(0.90_dp, damp*1.4_dp)
+        else
+            damp = max(0.05_dp, damp*0.4_dp)
+        end if
+        err_prev = err
 
         if (err < tol) then
             if (verbose) write(*,'(A,I0,A)') '  path converged in ', it, ' iterations'
