@@ -554,7 +554,7 @@ subroutine calibration_sweep(step, nbis)
     call bump(mh_b_ratio,      gap(18),-1.0_dp, step, 0.02_dp,   1.00_dp)
     ! bigger Stone-Geary endowment for a household with SUD -> abstaining costs
     ! it less -> more of them abstain
-    call bump(b_dm(2,1),       gap(24),+1.0_dp, step, 1.0e-5_dp, 5.0_dp)
+    ! b_dm(2,1) is BRACKETED, not bumped -- see bisect_on case (8)
     ! more weight on leisure -> fewer hours
     call bump(omega_l,         gap(19),-1.0_dp, step, 0.01_dp,   5.00_dp)
 
@@ -636,6 +636,8 @@ subroutine bisect_on(which, target_val, iters)
         lo = log(1.0e-4_dp); hi = log(20.0_dp);   rising = .false. ! more stigma, less take-up
     case (7)
         lo = log(2.0e-3_dp); hi = log(0.60_dp);   rising = .true.  ! faster conversion, more SUD
+    case (8)
+        lo = log(1.0e-5_dp); hi = log(5.0_dp);    rising = .true.  ! more b, abstention cheaper
     end select
 
     do k = 1, iters
@@ -648,6 +650,7 @@ subroutine bisect_on(which, target_val, iters)
         case (5); aleph       = exp(mid)
         case (6); treat_ucost = exp(mid)
         case (7); pi_d_low    = exp(mid)
+        case (8); b_dm(2,1)   = exp(mid)
         end select
         call refresh_utility_constants()
         call solve_household(); call build_distribution_eq()
@@ -670,6 +673,24 @@ subroutine bisect_on(which, target_val, iters)
                 return
             end if
             call compute_moments(A); fmid = mom(21)%model
+        ! pi_d_low -> SUD rate. This case was MISSING from this select, so
+        ! bisect_on(7) tested a stale fmid left over from the previous
+        ! iteration and the bracket it produced was meaningless. pi_d_low is
+        ! the conversion hazard from use to disorder, which is not a parameter
+        ! that can be allowed to drift.
+        case (7); fmid = 100.0_dp*A%sud/max(A%pop,1.0e-12_dp)
+        ! b_dm(2,1) -> abstention among the homeless with SUD (Milby's no
+        ! housing arm). Step like in b, exactly as participation is in b_dm(1,1):
+        ! abstention is impossible until b clears a threshold and then rises
+        ! quickly, so a proportional bump cannot find it and the moment sits at
+        ! 0.000 sweep after sweep while the parameter creeps by 20 per cent.
+        case (8)
+            if (A%sud      <= 1.0e-8_dp*max(A%pop,1.0e-12_dp) .or. &
+                A%homeless <= 1.0e-8_dp*max(A%pop,1.0e-12_dp)) then
+                write(*,'(A)') '      (abstention bracket skipped: no homeless SUD mass)'
+                return
+            end if
+            call compute_moments(A); fmid = mom(24)%model
         end select
         if ((fmid > target_val) .eqv. rising) then
             hi = mid
@@ -687,6 +708,7 @@ subroutine bisect_on(which, target_val, iters)
     case (5); aleph       = exp(mid)
     case (6); treat_ucost = exp(mid)
     case (7); pi_d_low    = exp(mid)
+    case (8); b_dm(2,1)   = exp(mid)
     end select
     call refresh_utility_constants()
 end subroutine bisect_on
@@ -714,6 +736,7 @@ subroutine polish_levels(nbis)
         call bisect_on(1, mom(1)%target,  nbis)   ! b          -> participation
         call bisect_on(7, mom(2)%target,  nbis)   ! pi_d_low   -> SUD rate
         call bisect_on(2, mom(3)%target,  nbis)   ! h_homeless -> homelessness
+        call bisect_on(8, mom(24)%target, nbis)   ! b_dm(2,1)  -> abstention
         ! 8 rather than 12: prices barely move between polish rounds, so the
         ! extra iterations bought precision on an object already converged
         call solve_equilibrium(8, 3.0e-3_dp, .false.)
