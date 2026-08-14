@@ -56,7 +56,22 @@ subroutine init_targets()
     ! roughly cancels in the ratio.
     mom(3) = mom_t('homelessness rate (%)      ',  0.399_dp, 0.0_dp, 1.0_dp)
     mom(4) = mom_t('unemployment rate (%)      ',  4.90_dp, 0.0_dp, 1.0_dp)
-    mom(5) = mom_t('unemp rate | SUD (%)       ', 26.90_dp, 0.0_dp, 1.0_dp)
+    ! MEASURED, not asserted. NSDUH 2024 microdata, ages 26+, unemployment
+    ! over the labour force, weighted by analwt2_c:
+    !   everyone                 6.65%
+    !   no drug use disorder     6.04%
+    !   any drug use disorder   12.72%
+    !   moderate/severe drug UD 16.25%   <- the model's SUD concept
+    ! The old 26.90% had no provenance and implied a relative risk of 5.49
+    ! against an overall rate of 4.9%; the data says 2.44. So the model's
+    ! SUD-to-employment channel was roughly 2.25 times too strong.
+    !
+    ! That matters beyond one moment. R1's rival hypothesis is that the
+    ! employment channel does the work rather than mortality. The model was
+    ! biased TOWARD that reading on both sides at once: this channel too
+    ! strong, and the mortality channel running at about a fifth of its
+    ! measured strength before today's life table and multiplier fixes.
+    mom(5) = mom_t('unemp rate | SUD (%)       ', 16.25_dp, 0.0_dp, 1.0_dp)
     ! DRUG use disorder among the homeless, 21.7% (Gutwinski et al. 2021). The
     ! paper's 37% target sits on the ALCOHOL figure (36.7%) from the same
     ! evidence base, but the model is about drug use.

@@ -90,73 +90,72 @@ factor of four.
 
 ---
 
-## 3. A genuine tension in the SUD–employment link — INVESTIGATE
+## 3. RESOLVED: the SUD to employment channel was 2.25 times too strong
 
-NSDUH gives the gradient directly, aged 26+, 2023:
+The full NSDUH 2024 public use file settles it. Ages 26+, unemployment over the
+labour force, weighted by `analwt2_c`, using `svyrdudany` for severity and
+`irwrkstat` for employment:
 
-| employment | drug use disorder | all SUD |
+| group | unemployment rate |
+|---|---:|
+| everyone | 6.65% |
+| no drug use disorder | 6.04% |
+| any drug use disorder | 12.72% |
+| **moderate or severe drug UD** | **16.25%** |
+
+**The model targeted 26.90%, which had no provenance.** Against an overall rate
+of 4.9% that implies a relative risk of 5.49; the data says 2.44. Target
+corrected to 16.25%.
+
+Two checks that the number is right. The table based estimate in the previous
+version of this section, backed out of tables 5.4A and 5.4B by Bayes, gave
+12.52% for any drug use disorder against 12.72% in the microdata, so that method
+was sound. And the ordering is monotone in severity, 6.04 to 12.72 to 16.25,
+which is what it should be.
+
+**Why this matters beyond one moment.** R1's rival hypothesis is that the SUD to
+employment channel does the work rather than mortality. The model was biased
+toward that reading on both sides at once: this channel 2.25 times too strong,
+and the mortality channel running at roughly a fifth of its measured strength
+before the life table and the age varying multipliers went in. Correcting both
+moves against R1, and now from measurement rather than assertion.
+
+Also measured from the same file, ages 26+:
+
+| moment | data | model target |
 |---|---:|---:|
-| Full-time | 8.3% | 18.5% |
-| Part-time | 8.3% | 16.4% |
-| Unemployed | **19.2%** | 28.3% |
-| Other (not in labour force) | 8.0% | 13.1% |
-| total | 8.6% | 16.6% |
+| SUD income / average, moderate or severe | 71.1% | 68.7% |
+| labour force participation, moderate or severe | 65.8% | untargeted |
+| labour force participation, no disorder | 61.5% | untargeted |
 
-Relative risk of drug use disorder, unemployed against the population: **2.23×**.
+The income ratio nearly hits its target unprompted, which is a genuine check on
+`prod_pen_d`. Participation is slightly HIGHER among those with a disorder,
+which is worth knowing: the SUD penalty runs through unemployment conditional on
+participating, not through dropping out.
 
-The model targets the *reverse* conditioning, `unemp rate | SUD = 26.9%` against
-an overall rate of 4.9% — a relative risk of **5.5×**. By Bayes those are the
-same object, and 5.5 against 2.23 is a factor of 2.5 apart.
+Unemployment given moderate or severe drug UD also falls with age, 21.6% at 26
+to 29, 15.5% at 35 to 49, 10.7% at 50 to 64, which is the same shape as the
+mortality multipliers.
 
-Two caveats before concluding the target is wrong. NSDUH's "unemployed" is
-self-reported and not the BLS concept. And the model's SUD is narrower than
-NSDUH's drug use disorder — marijuana is 5.5 of the 8.6 points, and severe
-disorders plausibly carry a steeper employment gradient than marijuana does. So
-the true comparison for the model's concept lies somewhere above 2.23.
+---
 
-### Computed from the published tables
+## 3b. TEDS-A 2022, the treatment admission joint distribution
 
-Tables 5.4A (counts) and 5.4B (rates) together give the joint, ages 26+, 2023.
-Dividing counts by rates recovers each employment cell's population:
+999,619 admissions aged 25+. Selected on entering publicly funded treatment, so
+useful for ratios rather than levels.
 
-| cell | population (000s) | with DUD (000s) | DUD rate |
-|---|---:|---:|---:|
-| full-time | 107,759 | 8,944 | 8.3% |
-| part-time | 23,145 | 1,921 | 8.3% |
-| unemployed | 8,099 | 1,555 | 19.2% |
-| other | 85,500 | 6,840 | 8.0% |
+| | |
+|---|---:|
+| homeless at admission | 14.5% |
+| co-occurring psychiatric problem | 43.1% of those answering |
+| unemployed | 30.8% |
+| **among the homeless: unemployed** | **50.2%** |
+| among the homeless: not in the labour force | 41.1% |
+| among the homeless: working at all | 6.6% |
 
-- unemployment rate overall (U / [FT+PT+U]): **5.83%**
-- **unemployment rate given drug use disorder: 12.52%**
-- relative risk **2.15x**, against the model's implied **5.49x**
-
-**So 26.9% is roughly 2.15x the NSDUH figure for ANY drug use disorder.** But
-the model's concept is moderate/severe, which is worse-off than the average
-case, so the true comparison is higher than 12.52%. An extreme upper bound —
-assuming every unemployed person with a disorder has a moderate/severe one —
-puts it near 31%. So 26.9% is not refuted; it sits at the very top of the
-plausible range and requires nearly all disorder-related unemployment to fall
-in the severe tail.
-
-### Getting the exact number — one variable
-
-No published table crosses severity with employment, so this needs microdata.
-`data/NSDUH_2024.dta` already has severity (`svyrdudany`) and the weight, but
-the extract dropped employment. Add **`irwrkstat`** (1 full-time, 2 part-time,
-3 unemployed, 4 other/NILF) to the same `keep` list and re-export, or compute it
-in Stata directly:
-
-```stata
-use "NSDUH_2024.dta", clear
-keep if age3 >= 7                             // ages 26+
-gen byte modsev = inlist(svyrdudany, 2, 3)    // moderate/severe drug UD
-gen byte inlf   = inlist(irwrkstat, 1, 2, 3)  // labour force
-gen byte unemp  = irwrkstat == 3
-tab modsev if inlf [aw=analwt2_c], summarize(unemp) means
-```
-
-The `modsev == 1` mean is the moment. Check `tab irwrkstat` first — some
-vintages name it `irwrkstat18`.
+The last line is the useful one. Among people entering treatment who are
+homeless, 6.6% work at all. That is a direct check on the model's homelessness
+to employment penalty, and it is far more severe than the SUD penalty alone.
 
 ---
 
