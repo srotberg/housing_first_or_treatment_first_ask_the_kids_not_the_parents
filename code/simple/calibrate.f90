@@ -45,7 +45,16 @@ subroutine init_targets()
     ! The paper's 4% and 2% were built for ages 18+ on a different construction.
     mom(1) = mom_t('drug participation (%)     ',  5.13_dp, 0.0_dp, 1.0_dp)
     mom(2) = mom_t('SUD rate (%)               ',  3.68_dp, 0.0_dp, 1.0_dp)
-    mom(3) = mom_t('homelessness rate (%)      ',  0.30_dp, 0.0_dp, 1.0_dp)
+    ! HUD PIT 2024, converted to HOUSEHOLDS -- the model's agent is a household,
+    ! so the person count is the wrong unit. 467,020 homeless individuals (one
+    ! household each) plus 57,563 homeless family households = 524,583, against
+    ! 131,332,360 occupied units (ACS B25042). The person rate is 0.195%, which
+    ! is what makes this look like a doubling; it is a unit conversion, not a
+    ! change of concept. 2023 vintage to match the ACS, NSDUH and HUD files.
+    ! The model covers ages 26-85, ~94% of US households, and unaccompanied
+    ! youth are a similar share of the homeless count, so the restriction
+    ! roughly cancels in the ratio.
+    mom(3) = mom_t('homelessness rate (%)      ',  0.399_dp, 0.0_dp, 1.0_dp)
     mom(4) = mom_t('unemployment rate (%)      ',  4.90_dp, 0.0_dp, 1.0_dp)
     mom(5) = mom_t('unemp rate | SUD (%)       ', 26.90_dp, 0.0_dp, 1.0_dp)
     ! DRUG use disorder among the homeless, 21.7% (Gutwinski et al. 2021). The
