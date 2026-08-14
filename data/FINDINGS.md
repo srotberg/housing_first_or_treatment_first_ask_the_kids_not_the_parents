@@ -1,0 +1,186 @@
+# What the data files say, and what has to change because of them
+
+Six files arrived on 14 Aug 2026. This is what is in them, what it implies for
+the calibration, and which decisions are still open. Nothing here is wired into
+`calibrate.f90` yet — the changes are batched deliberately, because each new
+target costs a full calibration restart.
+
+Sources, all in `data/` or reproducible from the scripts there:
+
+| file | source | script |
+|---|---|---|
+| `us_life_table.csv` | SSA period life table `oact/STATS/table4c6` | `make_life_table.py --ssa-xlsx` |
+| `us_housing_dist.csv` | ACS B25042, Tenure by Bedrooms, 2023 | `make_housing_dist.py` |
+| — | NBER w32582, Abramson & Van Nieuwerburgh (2024) | read directly |
+| — | HUD Picture of Subsidized Households, 2023 | read directly |
+| — | HUD PIT counts by state, 2007–2024 | read directly |
+| — | NSDUH 2023 detailed tables | `nq.py` in scratchpad |
+
+---
+
+## 1. The homelessness rate target is too high — DECISION NEEDED
+
+The homeless state is literal homelessness (shelters and the street, not
+doubling up). HUD's point-in-time count is *the* measure of that.
+
+| year | PIT count | % of population | chronic | unsheltered |
+|---|---:|---:|---:|---:|
+| 2024 | 771,480 | **0.229%** | 0.050% | 35.5% |
+| 2023 | 653,104 | 0.195% | 0.046% | 39.3% |
+| 2022 | 582,462 | 0.175% | 0.042% | 40.1% |
+| 2020 | 580,466 | 0.175% | 0.036% | 38.9% |
+| 2019 | 567,715 | 0.173% | 0.032% | 37.2% |
+| 2016 | 549,928 | 0.170% | 0.027% | 32.1% |
+
+**The current target of 0.30% is above every year on record**, including 2024's
+all-time high. 2021 is depressed by pandemic counting disruption and should be
+ignored.
+
+Options:
+- **0.229%** — 2024, the most recent, and the year the other files describe.
+- **~0.19%** — a pre-2022 average, arguably the steady state the model represents.
+- Keep 0.30% and document it as something other than PIT literal homelessness,
+  which contradicts the concept decision.
+
+There is a real conceptual wrinkle either way. The model period is a year and
+the homeless state persists for a full period, so a household in `h_1` is
+homeless for a year. Most actual spells are far shorter. The PIT stock is the
+closer analogue of the two, but the model cannot represent a three-month spell
+at all, and that is worth a sentence in the paper rather than a silent choice.
+
+### Abramson and Van Nieuwerburgh's 0.6% is not this number
+
+They put the literally homeless at 0.6% of the population, which is **2.6× the
+2024 PIT count**. Almost certainly an annual-flow rather than point-in-time
+measure. This does *not* disturb `chi_H`: their \$2,500 is a per-household-month
+rate, so \$30,000 per homeless-household-year holds regardless of how many
+households there are. But a referee comparing total fiscal outlays will find
+ours roughly half theirs, and the reason is the rate concept, not the cost.
+
+---
+
+## 2. The SUD definition is not written down — and it matters
+
+NSDUH 2023, aged 26+ (the model's population), past-year disorder:
+
+| measure | rate |
+|---|---:|
+| Substance use disorder, all (incl. alcohol) | 16.6% |
+| Drug use disorder (incl. marijuana) | 8.6% |
+| Marijuana use disorder | 5.5% |
+| Prescription psychotherapeutics | 2.9% |
+| Methamphetamine | 0.8% |
+| Cocaine | 0.5% |
+| Heroin | 0.3% |
+
+The model's target is **3.68%**, which sits close to drug use disorder
+*excluding* marijuana (roughly 3.1%, the categories overlap so they do not sum).
+That is almost certainly the intended concept, but it is nowhere stated, and the
+gap between 3.68% and 16.6% is large enough that a referee who assumes the
+NSDUH headline will think the model is off by a factor of four. **Write the
+definition down explicitly** whatever else changes.
+
+---
+
+## 3. A genuine tension in the SUD–employment link — INVESTIGATE
+
+NSDUH gives the gradient directly, aged 26+, 2023:
+
+| employment | drug use disorder | all SUD |
+|---|---:|---:|
+| Full-time | 8.3% | 18.5% |
+| Part-time | 8.3% | 16.4% |
+| Unemployed | **19.2%** | 28.3% |
+| Other (not in labour force) | 8.0% | 13.1% |
+| total | 8.6% | 16.6% |
+
+Relative risk of drug use disorder, unemployed against the population: **2.23×**.
+
+The model targets the *reverse* conditioning, `unemp rate | SUD = 26.9%` against
+an overall rate of 4.9% — a relative risk of **5.5×**. By Bayes those are the
+same object, and 5.5 against 2.23 is a factor of 2.5 apart.
+
+Two caveats before concluding the target is wrong. NSDUH's "unemployed" is
+self-reported and not the BLS concept. And the model's SUD is narrower than
+NSDUH's drug use disorder — marijuana is 5.5 of the 8.6 points, and severe
+disorders plausibly carry a steeper employment gradient than marijuana does. So
+the true comparison for the model's concept lies somewhere above 2.23.
+
+Still: **the 26.9% target needs a provenance**, and if it cannot be sourced it
+should be replaced by the NSDUH gradient, which is measured on the right
+population and is the cleaner identification of `kappa_ue_d` in any case.
+
+---
+
+## 4. `kappa_r` validates almost exactly — no change
+
+HUD Picture of Subsidized Households, 2023, US total:
+
+- Average family expenditure: \$452/month
+- Household income: \$18,483/year = \$1,540/month
+- **Tenant contribution: 29.35%**, against the model's `kappa_r = 0.30`.
+
+That is a direct hit on a parameter that was set by statute rather than fitted,
+and it is worth reporting as validation.
+
+Also from the same file, all usable as untargeted validation:
+
+| statistic | value | bears on |
+|---|---:|---|
+| HUD expenditure | \$1,135/month | voucher size |
+| Wages are the major income source | 24% | voucher-holder employment |
+| Other sources (SS/SSI/DI) major | 67% | `di_coverage` |
+| Head or spouse has a disability | 39% | `di_coverage` |
+| Unit size 0–1 / 2 / 3+ bedrooms | 46 / 29 / 25% | housing choice given voucher |
+| Same, all US households (B25042) | 13 / 24 / 63% | — |
+
+Voucher holders are dramatically concentrated in small units, and only a quarter
+of them have wages as their main income. Both are strong untargeted checks on
+whether the model puts the right households into vouchers.
+
+### A tension worth resolving: `prob_V`
+
+Average months on the waiting list: **25**. Average months since moving in: 123.
+
+`prob_V = 0.06` is an annual lottery hazard, implying an expected wait of 16.7
+years, or 200 months — eight times the observed figure. The 25 months is
+selected (it is measured among those who received a unit) and stock-sampled, so
+it is a lower bound on the true wait. But a factor of eight is not explained by
+selection alone, and `prob_V` is currently identified only by the recipients-to-
+eligible stock ratio, which a long tenure can reproduce at almost any hazard.
+The waiting time is the moment that separates them.
+
+---
+
+## 5. Housing grid — done
+
+ACS B25042, occupied units, 2023, N = 131,332,360: **13.21 / 24.12 / 62.67%**
+across {0,1}, {2}, {3+} bedrooms. Now targeted by `h_small` and `h_spread`;
+the two housing-cost moments are demoted to untargeted validation.
+
+All households, not renters: the model has no homeownership, housing is a pure
+flow at `p_r h`, so an owner's analogue is imputed rent. The choice is worth
+2.4× on the small bin (renters alone give 32.35%).
+
+---
+
+## 6. Survival — done
+
+SSA period life table, ages 26–85, sexes combined by survivor weight. The
+placeholder understated mortality badly: q at 85 was 0.045 against an actual
+0.081. Closes R3 M1b.
+
+---
+
+## Still outstanding
+
+- **SCF bottom-50% net worth share.** Would discipline the bottom of the wealth
+  distribution, which is where the homelessness margin lives. `wealth/GDP = 3`
+  is a standard target and stays; this would sit alongside it, not replace it.
+- **CDC WONDER drug-overdose mortality by single-year age.** `aleph` is
+  currently calibrated to a \$7.5m VSL and SUD excess mortality is *inferred*
+  rather than measured. Measuring it directly would make the paper's central
+  mechanism an input instead of an output.
+- **NSDUH reasons for not receiving treatment** (Table 5.35B) — separates cost
+  from stigma, which is what `treat_ucost` is meant to be. Extracted but not yet
+  read against the parameter.
