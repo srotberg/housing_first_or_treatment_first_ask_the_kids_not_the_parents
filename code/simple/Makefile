@@ -32,8 +32,11 @@ ext: $(COMMON) ext_main.f90
 debug: $(SRC)
 	$(FC) -O0 -g -fbacktrace -fcheck=all $(SRC) -o $(TARGET)_debug
 
+# GFORTRAN_UNBUFFERED_ALL is not optional for long runs: libgfortran buffers
+# its own output and stdbuf cannot reach it, so a multi-hour calibration writes
+# literally zero bytes until a buffer fills. Verified with /proc/<pid>/io.
 run: $(TARGET)
-	OMP_NUM_THREADS=4 ./$(TARGET)
+	OMP_NUM_THREADS=4 GFORTRAN_UNBUFFERED_ALL=1 ./$(TARGET)
 
 clean:
 	rm -f *.mod $(TARGET) $(TARGET)_debug hftf_calib hftf_mech hftf_exper check_hours diag_check hftf_ext
