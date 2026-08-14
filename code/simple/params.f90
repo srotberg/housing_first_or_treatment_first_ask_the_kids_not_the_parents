@@ -522,6 +522,12 @@ module params
     ! it makes leisure overwhelmingly valuable and sends hours to the corner.
     real(dp), allocatable :: pol_lb(:,:,:,:,:,:,:)
     integer :: freeze_hours = 0
+    ! Benchmark drug regime, for the safety-net experiment. freeze_drug = 1
+    ! holds the use decision at its benchmark schedule while everything else
+    ! re-optimises, which is what isolates the ADDICTION margin of moral hazard
+    ! from the ordinary consumption-smoothing one.
+    integer, allocatable :: pol_regb(:,:,:,:,:,:,:)
+    integer :: freeze_drug = 0
     real(dp), allocatable :: pol_c(:,:,:,:,:,:,:)
     real(dp), allocatable :: pol_v(:,:,:,:,:,:,:)
     real(dp), allocatable :: dist(:,:,:,:,:,:,:)
@@ -890,12 +896,13 @@ subroutine alloc_all()
     allocate(pol_tr(NA,NY,NE,ND,NV,NM,n_age))
     allocate(pol_l (NA,NY,NE,ND,NV,NM,n_age))
     allocate(pol_lb(NA,NY,NE,ND,NV,NM,n_age))
+    allocate(pol_regb(NA,NY,NE,ND,NV,NM,n_age))
     allocate(pol_c (NA,NY,NE,ND,NV,NM,n_age))
     allocate(pol_v (NA,NY,NE,ND,NV,NM,n_age))
     allocate(dist  (NA,NY,NE,ND,NV,NM,n_age))
     V = 0.0_dp; dist = 0.0_dp
     pol_a = 1; pol_h = 1; pol_reg = 1; pol_tr = 0; pol_l = 0.0_dp
-    pol_lb = 0.0_dp
+    pol_lb = 0.0_dp; pol_regb = 1
     pol_c = 0.0_dp; pol_v = 0.0_dp
 end subroutine alloc_all
 
