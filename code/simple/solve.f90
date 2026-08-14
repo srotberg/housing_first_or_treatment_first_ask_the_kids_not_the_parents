@@ -889,6 +889,11 @@ subroutine solve_age(j)
                         do ireg = 1, NREG
                             ! a clean household past j_exp cannot initiate use
                             if (id == 1 .and. j > j_exp .and. ireg > 1) cycle
+                            ! drug regime held at its benchmark value: this
+                            ! RESTRICTS the choice set rather than adding a term,
+                            ! so the Bellman identity still holds exactly
+                            if (freeze_drug == 1 .and. &
+                                ireg /= pol_regb(ia,iy,ie,id,iv,im,j)) cycle
 
                             warm = -1.0_dp     ! hours are increasing in a'
 
