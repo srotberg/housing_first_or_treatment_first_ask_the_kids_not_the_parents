@@ -42,10 +42,18 @@ def exp1():
     print('=' * 78)
     print(f"{'case':22s}{'b':>9s}{'r_use':>9s}{'r_sud':>9s}{'slope':>10s}")
     rows = {}
-    for name, kw in [('both penalties',      dict()),
-                     ('mortality only',      dict(xi=0.0)),
-                     ('income penalty only', dict(kap=0.0)),
-                     ('neither',             dict(kap=0.0, xi=0.0))]:
+    # There are two ways the disorder hurts: it kills you, directly through kap
+    # and indirectly by making you homeless, and it makes you poor, directly
+    # through xi and indirectly through the resource cost of homelessness. So
+    # the MORTALITY channel is {kap, kapH} and the RESOURCE channel is
+    # {xi, ellH}, and switching them requires moving both members of each pair.
+    # Switching kap alone left the homelessness mortality penalty running in the
+    # rows that were supposed to have no mortality channel at all.
+    for name, kw in [('both channels',       dict()),
+                     ('mortality only',      dict(xi=0.0, ellH=0.0)),
+                     ('resource only',       dict(kap=0.0, kapH=0.0)),
+                     ('neither',             dict(kap=0.0, kapH=0.0,
+                                                  xi=0.0, ellH=0.0))]:
         par = with_(P(), **kw)
         b = bcal(par)
         m = moments(with_(par, b=b), YG, W)
@@ -79,7 +87,7 @@ def exp2():
     rows = []
     for b in [0.002, 0.004, 0.008, 0.016, 0.032, 0.064]:
         m1 = moments(with_(P(), b=b), YG, W)
-        m0 = moments(with_(P(), b=b, kap=0.0), YG, W)
+        m0 = moments(with_(P(), b=b, kap=0.0, kapH=0.0), YG, W)
         print(f'{b:9.3f}{m1["part"]:15.3f}{m1["r_use"]:9.3f}'
               f'{m0["r_use"]:17.3f}')
         rows.append((b, m1['part'], m1['r_use'], m0['r_use']))
@@ -129,33 +137,49 @@ def exp3():
 # ---------------------------------------------------------------------------
 def exp4():
     print('\n' + '=' * 78)
-    print('4. CONDITIONALITY DETERS MORE WHEN THE BENEFIT IS GUARANTEED')
+    print('4. THE TWO FORCES: MORAL HAZARD AND THE VALUE OF LIFE')
+    print('   A voucher removes the risk of homelessness. Under Housing First it')
+    print('   arrives whatever the disorder status; under Treatment First only if')
+    print('   the household is clean. So the two columns ARE the decomposition:')
+    print('     TF minus no voucher  = the value of life effect, on its own')
+    print('     HF minus TF          = the moral hazard, on its own')
+    print('   because the only thing HF adds to TF is cover in the disorder state.')
     print('=' * 78)
     b = bcal(P())
-    print(f"{'pV':>7s}{'use, HF':>11s}{'use, TF':>11s}{'deterrent':>12s}"
-          f"{'as % of HF':>13s}")
-    pVs = np.array([0.05, 0.15, 0.27, 0.40, 0.55, 0.70, 0.85, 1.00])
-    det = []
+    pVs = np.array([0.0, 0.10, 0.20, 0.27, 0.40, 0.55, 0.70, 0.85, 1.00])
+    H, T = [], []
     for pv in pVs:
         par = with_(P(), b=b, pV=pv)
-        h = moments(par, YG, W, 'HF')['part']
-        t = moments(par, YG, W, 'TF')['part']
-        det.append(h - t)
-        pct = 100.0 * (h - t) / max(h, 1e-12)
-        print(f'{pv:7.2f}{h:11.4f}{t:11.4f}{h - t:12.4f}{pct:13.2f}')
-    print('''
-   The deterrent is the gap between the two columns. It runs from essentially
-   nothing under rationing to 20.6 per cent of participation under universal
-   provision, and it is monotone throughout. Conditioning a benefit on sobriety
-   is worth more when the benefit is guaranteed than when it is rationed,
-   because the household forfeits more by acquiring the disorder.
+        H.append(moments(par, YG, W, 'HF')['part'])
+        T.append(moments(par, YG, W, 'TF')['part'])
+    H, T = np.array(H), np.array(T)
+    print(f"{'pV':>7s}{'use HF':>10s}{'use TF':>10s}"
+          f"{'value of life':>15s}{'moral hazard':>15s}{'net, HF':>11s}")
+    for k, pv in enumerate(pVs):
+        vol = 100.0 * (T[k] / T[0] - 1.0)
+        mh  = 100.0 * (H[k] / T[k] - 1.0)
+        net = 100.0 * (H[k] / H[0] - 1.0)
+        print(f'{pv:7.2f}{H[k]:10.4f}{T[k]:10.4f}{vol:14.2f}%{mh:14.2f}%'
+              f'{net:10.2f}%')
+    print("""
+   Both forces are present and they have opposite signs, which is the reason the
+   paper needs a quantitative model: the net effect of housing assistance on
+   drug use is not signed by theory.
 
-   That is the paper's headline as a comparative static, and it explains the
-   previous draft's weakest result. Experiment 1 imposed conditionality under
-   rationing, which is the TOP ROW of this table, where the deterrent is close
-   to zero while the cost of excluding people from a scarce benefit is first
-   order.''')
-    return pVs, np.array(det), b
+   The value of life effect is the smaller one here. Guaranteeing housing to the
+   clean raises the value of staying clean and pulls use DOWN, by about one and
+   a half per cent at universal provision. The moral hazard is larger. Extending
+   the same guarantee to households that already have the disorder cushions the
+   downside of acquiring it and pushes use UP, by about seven per cent. Under
+   Housing First the second dominates and use rises with generosity.
+
+   Treatment First keeps the first force and switches off the second. That is
+   the whole policy, stated in one line, and it is why the gap between the two
+   columns WIDENS in generosity: what conditionality removes is proportional to
+   how much cover is on offer. Under rationing there is almost nothing to
+   remove, which is why the previous draft's Experiment 1, conditionality at
+   pV = 0.27, was the weakest of its four regimes.""")
+    return pVs, H - T, b
 
 
 # ---------------------------------------------------------------------------
@@ -194,7 +218,7 @@ def figures(r1, r2, cross):
     ax[2].plot(pVs, det, 'o-', lw=1.6, color='C2')
     ax[2].set_xlabel('voucher generosity $\\pi_V$')
     ax[2].set_ylabel('participation, HF minus TF')
-    ax[2].set_title('(c) conditionality deters more when generous')
+    ax[2].set_title('(c) the moral hazard grows with generosity')
 
     fig.tight_layout()
     p = os.path.join(OUT, 'stylized_model.pdf')

@@ -68,8 +68,20 @@ class P:
     xi    = 0.31      # income penalty, y -> y (1 - xi)
     lam   = 6.00      # addiction hazard per unit of use
     aleph = 2.50      # flow value of being alive
-    Delta = 0.25      # value of a voucher, in period 2 resources
-    pV    = 0.27      # probability of receiving one
+    # HOMELESSNESS, which is what the voucher actually insures.
+    #
+    # An earlier version had the voucher simply add resources in period 2. That
+    # cannot produce moral hazard, and did not: use under Housing First was flat
+    # in generosity. Moral hazard here is not about a transfer relaxing a budget
+    # constraint, it is about assistance CUSHIONING THE DOWNSIDE OF THE DISORDER,
+    # and the downside is homelessness. With no homelessness state there is
+    # nothing for the voucher to insure, so the only force left was the value of
+    # life effect and use could only fall.
+    pH0   = 0.02      # P(homeless) without the disorder
+    pH1   = 0.35      # P(homeless) with it, absent a voucher
+    ellH  = 0.80      # flow utility cost of being homeless
+    kapH  = 0.35      # mortality penalty of being homeless
+    pV    = 0.27      # probability of receiving a voucher
     # Dispersion in the TASTE for drugs, th_i = th exp(sig e - sig^2/2), e ~ N(0,1).
     #
     # Some smoothing is needed. With households differing only in y they all
@@ -88,7 +100,7 @@ class P:
     # does not need taste heterogeneity CONDITIONAL on income to put use at the
     # bottom, and that claim is untouched.
     sig   = 0.55
-    nq    = 9         # Gauss Hermite nodes
+    nq    = 25        # Gauss Hermite nodes; too few makes participation step visibly
 
 
 def clone(**kw):
@@ -102,13 +114,31 @@ def clone(**kw):
 # solver, vectorised over (v, saving rate)
 # ----------------------------------------------------------------------------
 def _V2(par, y, a, d, policy):
-    inc  = y * (1.0 - par.xi * d)
-    base = par.R * a + inc
-    pv   = par.pV if (policy == 'HF' or d == 0) else 0.0
+    """
+    Period 2 value in disorder state d.
+
+    A voucher arrives with probability pV and, when it does, it removes the risk
+    of homelessness. Under Housing First it arrives whatever d is. Under
+    Treatment First it arrives only if d = 0.
+
+    That single difference is both of the paper's forces at once:
+
+      moral hazard   under HF, more generosity lowers P(homeless | disorder),
+                     which makes acquiring the disorder LESS costly, so use rises
+      deterrence     under TF, more generosity raises the value of staying clean
+                     without touching the disorder branch, so use falls
+
+    and neither exists if the voucher is modelled as a transfer rather than as
+    insurance against a bad state.
+    """
+    inc  = par.R * a + y * (1.0 - par.xi * d)
+    u    = (1.0 - par.th) * np.log(np.maximum(inc, 1e-12))
+    covered = (policy == 'HF') or (d == 0)
+    ph   = (par.pH1 if d == 1 else par.pH0) * (1.0 - (par.pV if covered else 0.0))
     phi  = par.phi0 * (1.0 - par.kap * d)
-    u    = pv * np.log(np.maximum(base + par.Delta, 1e-12)) \
-         + (1.0 - pv) * np.log(np.maximum(base, 1e-12))
-    return phi * ((1.0 - par.th) * u + par.aleph)
+    v_ho = phi * (u + par.aleph)                               # housed
+    v_hl = phi * (1.0 - par.kapH) * (u - par.ellH + par.aleph)  # homeless
+    return (1.0 - ph) * v_ho + ph * v_hl
 
 
 def _best(par, y, policy, vgrid, ns=81):
