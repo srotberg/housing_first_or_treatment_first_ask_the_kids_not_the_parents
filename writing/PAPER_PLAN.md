@@ -56,15 +56,48 @@ Roman numerals are the paper. The right column is what has to exist first.
 | 11 | Sensitivity | recalibrations at the endpoints |
 | 12 | Conclusion | written last |
 
-### §3 is the section that buys the most goodwill
+### §3 and §7 are a pair, and only one referee asked for §3
 
-The AE asks for it (A1), R1 asks for it (1e), R3 asks for it (M1a). It replaces
-the static appendix R1 said was claiming more than it established, and it has to
-be **dynamic**, because the paper's mechanism is about continuation values and a
-static model cannot represent one.
+Be accurate about who asked for what, because it changes how much §3 is worth.
+
+* **AE, A1**, asks for a simplified model section in the body. This is item one
+  under his first heading, and the editor has said the paper returns to the same
+  AE.
+* **R1, 1(e)**, asks for the *existing static appendix* to be tightened and
+  relabelled as intuition. That is not a request for a new section in the body.
+* **R3, M1(a)**, asks for stylised **facts**, not a stylised model. That is §2.
+* **R1, 1(d)**, states a preference *against* a toy model for one specific
+  purpose: "I would find this more intuitive than a toy example that abstracts
+  from dynamic savings decisions." He wants the channel shutdown ladder.
+
+So §3 rests on the AE alone, and R1 actively prefers §7 for the mortality claim.
+That argues for a **short** §3 whose job is different from §7's, not a long one.
+
+**The division of labour.** §7 gives magnitude in the calibrated economy: shut
+the mortality channel, the income gradient of use moves from one number to
+another. No stylised model can produce that, and it is the evidence R1 asked for.
+What §7 cannot give is the *reason* a mortality penalty generates a negative
+gradient while a proportional income penalty generates a positive one, which is
+an analytical statement about how the continuation value scales in permanent
+income. Nor can it give the cross partial as a theorem rather than as one number
+in one calibration, which matters because R2's C5 and R3's M2a both charged that
+the old headline was an artefact of the utility function.
+
+The other argument for §3 is **ordering, not evidence**. The AE's complaint is
+that the moving parts obscure the economics. §7 arrives after twenty pages of
+model and calibration, by which point a reader who was going to get lost is lost.
+
+**So: two or three pages, proofs in the appendix, and make §3 and §7 correspond
+one to one.** A table mapping proposition to prediction to the channel §7 shuts
+to what the model gives. That way §3 stops being decoration and §7 stops being a
+list of numbers, because the ladder becomes the test of the propositions.
 
 Two periods, one asset, a binary use choice, a binary housing outcome, and a
-survival probability that depends on both. Three propositions:
+survival probability that depends on both. **Keep the asset**: R1's objection to
+the old appendix was that it abstracted from savings, and here savings makes the
+continuation value rise faster in permanent income, so it strengthens Proposition
+1 rather than complicating it. Say that explicitly and his objection becomes a
+supporting argument. Three propositions:
 
 1. **The income gradient.** Use falls in permanent income when the penalty for
    use is a mortality risk, and rises in permanent income when the penalty is a
@@ -104,11 +137,22 @@ universal regimes to survive.
    $-4.6$pp, and the expiring sobriety conditioned voucher against his null. Both
    as Wald ratios, both untargeted.
 
-### §7 Mechanisms is the intuition section
+### §7 Mechanisms is where the intuition is actually established
 
 Three parts: the drug use policy function by income and wealth (R2's C4), the
 channel shutdown ladder (R1's 1d, R3's M2b), and the externality decomposition
 (R3's M2c). Never run. This is the largest single block of unexecuted compute.
+
+It opens with the correspondence table, so the reader sees the ladder as a test
+rather than a list:
+
+| §3 | Prediction | Channel shut in §7 | Model |
+|---|---|---|---|
+| Prop 1 | gradient of use in income is negative under a mortality penalty, positive under a proportional income penalty | mortality not affected by use | |
+| Prop 2 | vouchers move use in two directions, opposite signs | value of life effect, then the budget effect, separately | |
+| Prop 3 | the conditionality effect grows with generosity | the generosity sweep run with and without the sobriety condition | |
+
+Row 3 is also §8's main figure, so the exhibit does double duty.
 
 ### §8 keeps two experiments, plus the sweep
 
