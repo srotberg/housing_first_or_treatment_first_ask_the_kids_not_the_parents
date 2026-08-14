@@ -7,11 +7,12 @@ WHAT IS TARGETED, AND WHAT IS DELIBERATELY NOT
     kap      price elasticity of participation          -0.45
     lam      share of users who acquire the disorder    71.7 %
     xi       income with the disorder / average          0.687
-    pH0      homelessness rate                           0.399 %
-    pH_d     share of the homeless with the disorder     21.7 %
+    pr       housing spending / income                    21.2 %
+    dis_hl   homelessness rate                           0.399 %
     aleph    value of a statistical life / PERIOD income  5.36
 
-    HELD OUT: income of USERS / average                  0.951
+    HELD OUT  income of USERS / average                  0.951
+    HELD OUT  share of the homeless with the disorder    21.7 %
 
 The income gradient of USE is never targeted. It is the fact the mechanism is
 supposed to explain, so fitting it would make the exercise circular. Everything
@@ -48,17 +49,28 @@ W  = np.exp(-0.5 * ((np.log(YG) + 0.5 * 0.75**2) / 0.75)**2)
 # Targeting 107 asks for a value of life twenty times too large, which makes the
 # marginal mortality cost of drug use so big that nobody uses anywhere in the
 # parameter space, and the fit dies with participation at zero.
-TARGET = dict(part=0.0513, spend=0.11, elast_p=-0.45, prog=0.717, r_sud=0.687,
-              homeless=0.00399, sud_of_homeless=0.217, vsl=5.36)
+# The progression target is a TRANSITION rate, not the cross sectional ratio.
+#
+# NSDUH gives 5.13 per cent using and 3.68 per cent with a disorder, and 3.68 /
+# 5.13 = 0.717 is tempting. It is the wrong object here: those are stocks
+# measured in one cross section, while this model's period 1 households use and
+# its period 2 households carry the disorder, so the model analogue is a flow
+# over one period. Targeting 0.717 asks the model to convert 72 per cent of
+# users within a single period, which needs an addiction hazard so high that
+# nobody uses enough to be exposed to it, and the fit stalls with progression at
+# 8 per cent. The full model's annual hazard given any use is 2 per cent, so
+# over a twenty year period 1 - 0.98^20 = 0.332.
+TARGET = dict(part=0.0513, spend=0.11, elast_p=-0.45, prog=0.332, r_sud=0.687,
+              homeless=0.00399, housing_share=0.212, vsl=5.36)
 
 FREE = [('b',     1e-5, 3.0),
         ('th',    2e-3, 4.00),
         ('kap',   0.02, 0.95),
         ('lam',   0.20, 400.0),
-        ('xi',    0.01, 0.85),
-        ('pH0',   1e-5, 0.20),
-        ('pH_d',  1.0,  120.0),
-        ('aleph', 0.20, 400.0)]
+        ('xi',      0.01, 0.85),
+        ('pr',      0.02, 0.60),
+        ('dis_hl',  0.02, 6.00),
+        ('aleph',   0.20, 400.0)]
 
 LABEL = {'part': 'drug participation rate',
          'elast_p': 'price elasticity of participation',
@@ -67,7 +79,8 @@ LABEL = {'part': 'drug participation rate',
          'homeless': 'homelessness rate',
          'sud_of_homeless': 'share of homeless with the disorder',
          'vsl': 'value of a statistical life / mean income',
-         'spend': 'drug spending / income, among users'}
+         'spend': 'drug spending / income, among users',
+         'housing_share': 'housing spending / income'}
 
 
 def stats(par, ygrid=None, w=None):
@@ -137,12 +150,14 @@ def report(par):
     print('CALIBRATION OF THE STYLISED MODEL')
     print('=' * 72)
     print(f"{'moment':41s}{'target':>10s}{'model':>10s}{'gap':>10s}")
-    for k in ['part', 'spend', 'elast_p', 'prog', 'r_sud', 'homeless',
-              'sud_of_homeless', 'vsl']:
+    for k in ['part', 'spend', 'elast_p', 'prog', 'r_sud', 'housing_share',
+              'homeless', 'vsl']:
         print(f'{LABEL[k]:41s}{TARGET[k]:10.4f}{m[k]:10.4f}{m[k]-TARGET[k]:10.4f}')
     print('-' * 72)
-    print(f"{'HELD OUT: income of users / average':41s}{0.951:10.4f}"
+    print(f"{'HELD OUT income of users / average':41s}{0.951:10.4f}"
           f"{m['r_use']:10.4f}{m['r_use']-0.951:10.4f}")
+    print(f"{'HELD OUT share of homeless w/ disorder':41s}{0.217:10.4f}"
+          f"{m['sud_of_homeless']:10.4f}{m['sud_of_homeless']-0.217:10.4f}")
     print('-' * 72)
     print('  ' + '   '.join(f'{n}={getattr(par,n):.4g}' for n, _, _ in FREE))
     return m
@@ -152,8 +167,8 @@ def jacobian(par, rel=0.08):
     """Elasticity of each moment to each parameter. R1's comment 2(f), on the
     small model where it fits on one screen."""
     names = [f[0] for f in FREE]
-    moms = ['part', 'spend', 'elast_p', 'prog', 'r_sud', 'homeless',
-            'sud_of_homeless', 'vsl', 'r_use']
+    moms = ['part', 'spend', 'elast_p', 'prog', 'r_sud', 'housing_share',
+            'homeless', 'vsl', 'r_use', 'sud_of_homeless']
     base = stats(par)
     print('\n' + '=' * 86)
     print('IDENTIFICATION: elasticity of each moment to each parameter')
@@ -178,9 +193,9 @@ def jacobian(par, rel=0.08):
 # left free to differ, and it differs because of the mechanism rather than
 # because one configuration was allowed a better fit.
 CONFIGS = [
-    ('both channels',  {},                               ['b', 'th', 'kap']),
-    ('mortality only', dict(xi=0.0, u1=P.u0, ellH=0.0),  ['b', 'th', 'kap']),
-    ('resource only',  dict(kap=0.0, kapH=0.0),          ['b', 'th', 'xi']),
+    ('both channels',  {},                                   ['b', 'th', 'kap']),
+    ('mortality only', dict(xi=0.0, u1=P.u0, dis_hl=0.02),    ['b', 'th', 'kap']),
+    ('resource only',  dict(kap=0.0, kapH=0.0),               ['b', 'th', 'xi']),
 ]
 
 
