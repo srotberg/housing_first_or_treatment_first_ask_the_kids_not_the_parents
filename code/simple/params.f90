@@ -231,6 +231,19 @@ module params
     ! Onset is now CALIBRATED to the SMI prevalence rather than derived from it,
     ! because onset is no longer the same for everyone: SUD raises it.
     real(dp) :: mh_onset    = 0.0039_dp
+    ! Age PROFILE of SMI onset. Same shape/level split as the mortality
+    ! multipliers: the shape is data, the level stays calibrated to the 5.5%
+    ! prevalence target, so identification is unchanged.
+    !   mh_onset_age(j) = mh_onset * shape_mh(j)
+    ! A flat onset against a flat recovery drives prevalence toward its steady
+    ! state from below, so the model produced a profile that RISES with age.
+    ! NSDUH has SMI falling from 11.0% at 26-29 to 1.4% at 65+, a factor of
+    ! eight. The model hit the average and had the shape backwards, which
+    ! misplaces the mental-health channel -- and everything it feeds, employment,
+    ! homelessness and mortality -- across the life cycle.
+    real(dp) :: shape_mh(n_age)
+    real(dp) :: mh_onset_age(n_age)
+    real(dp) :: smi_prev0 = -1.0_dp             ! SMI prevalence at age 26, from data
     ! SUD RAISES THE HAZARD OF SERIOUS MENTAL ILLNESS. Substance-induced
     ! psychosis converts to schizophrenia or bipolar disorder at a pooled rate
     ! near 25% (Murrie et al., Schizophrenia Bulletin), and in the Danish
@@ -258,6 +271,21 @@ module params
     real(dp) :: kappa_ue_m  = 0.35_dp      ! calibrated: employment rate given SMI
     ! Standardised mortality ratios for SMI are roughly 2-3, corresponding to
     ! 10-20 years of life expectancy lost. 1.3 was far too low.
+    ! SMI mortality multiplier. CONSTANT in age, and that is a finding rather
+    ! than a default: unlike SUD and homelessness, whose multipliers collapse
+    ! with age, the mental-illness ratio is flat. Olfson et al. (2015, JAMA
+    ! Psychiatry), US Medicaid schizophrenia cohort, give all-cause SMRs of 3.6
+    ! at 20-34, 3.4 at 35-54 and 4.0 at 55-64 -- if anything rising.
+    !
+    ! The LEVEL is a judgement between three sources measuring different
+    ! populations. Walker, McGee and Druss (2015) pool 148 studies of ANY mental
+    ! disorder and get 2.22. Olfson's 3.4-4.0 is schizophrenia alone, roughly 1%
+    ! of the population, inside Medicaid. Colton and Manderscheid (2006) get
+    ! about 3.2 for public mental-health clients across eight states. This
+    ! model's poor-mental-health state is SMI at 5.5% prevalence: broader than
+    ! schizophrenia, far narrower than any mental disorder. 2.50 sits between
+    ! Walker's broad figure and Olfson's narrow one, which is where 5.5%
+    ! prevalence belongs. Worth a sensitivity run at 3.2.
     real(dp) :: kappa_phi_m = 2.50_dp
     ! SUD recovery multiplier with SMI. Dual-diagnosis cohorts relapse at 39.8%
     ! against 26.4% without a co-occurring disorder (odds ratio 1.85 for
@@ -497,6 +525,9 @@ subroutine setup_grids()
     call load_mortality_multipliers()
     call refresh_mortality_multipliers()
 
+    shape_mh = 1.0_dp           ! flat fallback reproduces the old behaviour
+    call load_mh_onset_shape()
+
     psi2 = 1.0_dp + 1.0_dp/drug_supply_elasticity
 
     !-- collapse the nested Cobb-Douglas into a single product, and hoist every
@@ -643,6 +674,56 @@ subroutine refresh_mortality_multipliers()
 end subroutine refresh_mortality_multipliers
 
 
+!===============================================================================
+! Age profile of SMI onset, and the SMI share of newborns.
+!
+! Expected file: data/us_mh_onset_shape.csv, header then
+!     age,shape_mh_onset,implied_onset,smi_prevalence
+!===============================================================================
+subroutine load_mh_onset_shape()
+    integer  :: u, ios, age, i, nread
+    real(dp) :: sh, onset, prev
+    character(len=256) :: line
+    logical  :: there
+
+    inquire(file='../../data/us_mh_onset_shape.csv', exist=there)
+    if (.not. there) then
+        write(*,'(A)') ' NOTE: data/us_mh_onset_shape.csv not found; SMI onset is'
+        write(*,'(A)') '       FLAT in age, which inverts the observed profile.'
+        return
+    end if
+    open(newunit=u, file='../../data/us_mh_onset_shape.csv', status='old', iostat=ios)
+    if (ios /= 0) return
+    nread = 0
+    do
+        read(u,'(A)',iostat=ios) line
+        if (ios /= 0) exit
+        if (len_trim(line) == 0) cycle
+        if (line(1:1) < '0' .or. line(1:1) > '9') cycle
+        read(line,*,iostat=ios) age, sh, onset, prev
+        if (ios /= 0) cycle
+        i = age - 25
+        if (i >= 1 .and. i <= n_age) then
+            shape_mh(i) = max(0.0_dp, sh)
+            if (i == 1) smi_prev0 = min(0.9_dp, max(0.0_dp, prev))
+            nread = nread + 1
+        end if
+    end do
+    close(u)
+    write(*,'(A,I0,A,F6.3)') ' SMI onset shape loaded: ', nread, &
+        ' ages, prevalence at 26 = ', smi_prev0
+end subroutine load_mh_onset_shape
+
+
+!-- rebuild the onset profile from the calibrated level ----------------------
+subroutine refresh_mh_onset()
+    integer :: i
+    do i = 1, n_age
+        mh_onset_age(i) = mh_onset*shape_mh(i)
+    end do
+end subroutine refresh_mh_onset
+
+
 subroutine build_mh_trans()
     real(dp) :: on_d
     if (include_mental_health == 1) then
@@ -655,19 +736,35 @@ subroutine build_mh_trans()
         mh_trans = 0.0_dp; mh_trans(1,1) = 1.0_dp; mh_trans(2,1) = 1.0_dp
         mh_trans_d = mh_trans
     end if
-    ! newborns are drawn from the clean-household ergodic distribution
-    call ergodic(NM, mh_trans, mh_dist0)
+    call refresh_mh_onset()
+    ! Newborns enter at real age 26, so their SMI share is the DATA prevalence
+    ! at 26, not the ergodic of the age-1 transition matrix. With onset now
+    ! declining in age, the ergodic understates it badly -- it gives 4.7%
+    ! against 11-13% observed -- and the whole profile would start from the
+    ! wrong level.
+    if (smi_prev0 > 0.0_dp .and. include_mental_health == 1) then
+        mh_dist0(1) = 1.0_dp - smi_prev0
+        mh_dist0(2) = smi_prev0
+    else
+        call ergodic(NM, mh_trans, mh_dist0)
+    end if
 end subroutine build_mh_trans
 
 
 !-- P(m' | m, d): SUD raises the onset hazard --------------------------------
-pure function pm_of(id, im, imp) result(p)
-    integer, intent(in) :: id, im, imp
-    real(dp) :: p
-    if (id == 2) then
-        p = mh_trans_d(im,imp)
+pure function pm_of(id, im, imp, j) result(p)
+    integer, intent(in) :: id, im, imp, j
+    real(dp) :: p, on
+    if (include_mental_health /= 1) then
+        if (imp == 1) then; p = 1.0_dp; else; p = 0.0_dp; end if
+        return
+    end if
+    if (im == 1) then
+        on = mh_onset_age(j)
+        if (id == 2) on = min(0.99_dp, on*mh_onset_sud)
+        if (imp == 1) then; p = 1.0_dp - on; else; p = on; end if
     else
-        p = mh_trans(im,imp)
+        if (imp == 1) then; p = mh_recover; else; p = 1.0_dp - mh_recover; end if
     end if
 end function pm_of
 
