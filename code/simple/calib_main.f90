@@ -42,7 +42,11 @@ program calib_main
     call normalise_drug_supply()
 
     best_gap = 1.0e30_dp
-    step = 0.35_dp
+    ! Gentler than 0.35. With the level moments now BRACKETED rather than
+    ! bumped, the proportional steps only carry composition moments, so there is
+    ! no longer any reason to move fast: large steps were what made the sweep
+    ! overshoot and oscillate. Slower and monotone beats fast and thrashing.
+    step = 0.20_dp
     call save_params(best_par)
 
     do sweep = 1, max_sweeps
@@ -65,7 +69,7 @@ program calib_main
             best_gap = max_gap()
             call save_params(best_par)     ! keep the best vector, not the last
         else
-            step = max(0.15_dp, step*0.7_dp)   ! back off when it stops improving
+            step = max(0.06_dp, step*0.7_dp)   ! back off when it stops improving
         end if
 
         if (max_gap() < 0.02_dp) then
