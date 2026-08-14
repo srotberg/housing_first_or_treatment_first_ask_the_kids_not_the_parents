@@ -54,7 +54,6 @@ module experiment
 
     real(dp), parameter :: target_price_elast = -0.63_dp
     real(dp), parameter :: target_vsl_musd    = 7.5_dp   ! Viscusi-Aldy, EPA
-    real(dp), parameter :: us_avg_income_usd  = 70000.0_dp
 
     ! benchmark state, saved so every arm starts from the same place
     real(dp), allocatable :: dist_bm(:,:,:,:,:,:,:)
@@ -258,70 +257,6 @@ function price_elasticity() result(eps)
 end function price_elasticity
 
 
-!===============================================================================
-! Model-implied value of a statistical life.
-!
-! VSL is the marginal rate of substitution between consumption and the survival
-! probability. Along the household's own optimum, dV/dphi = beta*EV and
-! dV/dc = u_c, so VSL = beta*EV/u_c in model consumption units; converting at
-! the model's own average income against US average labour income puts it in
-! dollars. Mass-weighted over the working-age population.
-!
-! EV is a single table overwritten once per age, so it is rebuilt age by age
-! here, working backwards exactly as the solve does.
-!===============================================================================
-function model_vsl() result(vsl_musd)
-    real(dp) :: vsl_musd
-    integer  :: j, ia, iy, ie, id, iv, im, iap, ihp, ireg, itr, ielig
-    real(dp) :: m, mass, acc, cc, vv, comp, uc, ygross, bb
-
-    mass = 0.0_dp; acc = 0.0_dp
-
-    do j = n_age-1, 1, -1
-        call build_EV(j)
-        do im = 1, NM
-        do iv = 1, NV
-        do id = 1, ND
-        do ie = 1, NE
-        do iy = 1, NY
-        do ia = 1, NA
-            if (j >= j_ret) cycle
-            m = dist(ia,iy,ie,id,iv,im,j)
-            if (m <= 0.0_dp) cycle
-            iap  = pol_a(ia,iy,ie,id,iv,im,j)
-            ihp  = pol_h(ia,iy,ie,id,iv,im,j)
-            ireg = pol_reg(ia,iy,ie,id,iv,im,j)
-            itr  = pol_tr(ia,iy,ie,id,iv,im,j)
-            cc   = pol_c(ia,iy,ie,id,iv,im,j)
-            vv   = pol_v(ia,iy,ie,id,iv,im,j)
-            if (cc <= 0.0_dp) cycle
-            bb   = b_of(id, im, ihp)
-
-            ygross = income_gross(j, iy, ie, id, im, hours_of(j, ie, pol_l(ia,iy,ie,id,iv,im,j)))
-            if (ygross + max(0.0_dp, r_free*a_grid(ia)) < kappa_V*median_income) then
-                ielig = 1
-            else
-                ielig = 0
-            end if
-
-            comp = cc**alpha_u * h_pow(ihp) * (vv + bb)**gamma_u
-            if (comp <= 0.0_dp) cycle
-            uc = alpha_u * comp**(1.0_dp - sigma) / cc
-
-            acc  = acc + m*beta*EV(iap,ihp,iy,ie,id,ireg,itr,ielig,iv,im)/uc
-            mass = mass + m
-        end do
-        end do
-        end do
-        end do
-        end do
-        end do
-    end do
-
-    ! model consumption units -> dollars, at the model's own average income
-    vsl_musd = (acc/max(mass,1.0e-12_dp)) * us_avg_income_usd &
-             / max(avg_income, 1.0e-12_dp) / 1.0e6_dp
-end function model_vsl
 
 
 !===============================================================================

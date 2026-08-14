@@ -21,8 +21,8 @@ module calibrate
     ! co-occurring SUD rate among adults with SMI.
     real(dp) :: mh_b_ratio = 0.25_dp
 
-    integer, parameter :: NMOM = 22
-    integer, parameter :: NPAR = 20   ! calibrated parameters, for the snapshot
+    integer, parameter :: NMOM = 23
+    integer, parameter :: NPAR = 21   ! calibrated parameters, for the snapshot
 
     type :: mom_t
         character(len=28) :: name
@@ -127,6 +127,19 @@ subroutine init_targets()
     ! the base onset rate has to be calibrated to hold prevalence at its data
     ! value while the SUD multiplier operates.
     mom(22) = mom_t('SMI prevalence (%)          ',  5.50_dp, 0.0_dp, 1.0_dp)
+    ! THE VALUE OF LIFE, and why it moved.
+    ! aleph used to be calibrated to the SUD income ratio, which pins its effect
+    ! on WHO uses drugs but says nothing about its LEVEL. The structural smoke
+    ! test found that at those parameters 64.6% of the population had V < 0 --
+    ! they would rather be dead. For those households the mortality cost of drug
+    ! use is a mortality BENEFIT, which silently inverts the paper's central
+    ! mechanism for exactly the people the policy targets.
+    ! aleph is now pinned externally by the model-implied value of a statistical
+    ! life, $7.5m (Viscusi and Aldy 2003; EPA 2010), which is the paper's own
+    ! stated approach and which disciplines the level. The SUD income ratio moves
+    ! to prod_pen_d -- the direct wage penalty the AE asks about in A20 -- so it
+    ! is still targeted, and prod_pen_d = 1 becomes the robustness run.
+    mom(23) = mom_t('model VSL ($m)              ',  7.50_dp, 0.0_dp, 1.0_dp)
 end subroutine init_targets
 
 
@@ -261,6 +274,7 @@ subroutine compute_moments(A)
     mom(20)%model = 100.0_dp*burden30/p
     mom(21)%model = 100.0_dp*treated_sud/max(sud_m, 1.0e-12_dp)
     mom(22)%model = 100.0_dp*A%poormh/p
+    mom(23)%model = model_vsl()
 end subroutine compute_moments
 
 
@@ -337,6 +351,29 @@ subroutine print_moments(header)
 end subroutine print_moments
 
 
+!-- the share of the population that would rather be dead ---------------------
+! Death is worth zero, so V < 0 means a household strictly prefers it, and drug
+! mortality becomes a reward rather than a deterrent. Printed every sweep because
+! it is a property no single moment guards and because it silently inverts the
+! paper's central mechanism when it goes wrong.
+function mass_negative_V() result(f)
+    real(dp) :: f, m, tot, neg
+    integer  :: j, ia, iy, ie, id, iv, im
+    tot = 0.0_dp; neg = 0.0_dp
+    do j = 1, n_age
+    do im = 1, NM; do iv = 1, NV; do id = 1, ND
+    do ie = 1, NE; do iy = 1, NY; do ia = 1, NA
+        m = dist(ia,iy,ie,id,iv,im,j)
+        if (m <= 0.0_dp) cycle
+        tot = tot + m
+        if (V(ia,iy,ie,id,iv,im,j) < 0.0_dp) neg = neg + m
+    end do; end do; end do
+    end do; end do; end do
+    end do
+    f = neg/max(tot,1.0e-12_dp)
+end function mass_negative_V
+
+
 function max_gap() result(g)
     real(dp) :: g
     integer  :: i
@@ -367,7 +404,8 @@ end function max_gap
 !   h_small            share with housing cost > 50%           +
 !   h_spread           share with housing cost > 30%           +
 !   treat_ucost        treatment take-up given SUD             -
-!   aleph              SUD income / average income            -
+!   aleph              model VSL ($7.5m)                       +
+!   prod_pen_d         SUD income / average income             +
 !   di_coverage        SMI share of the homeless              -
 !   mh_b_ratio         SUD rate given SMI                     -
 !   kappa_ue_m         unemployment rate given SMI            -
@@ -430,10 +468,10 @@ subroutine calibration_sweep(step, nbis)
     call bump(h_spread,        gap(20),+1.0_dp, step, 1.05_dp,   3.00_dp)
     ! more stigma -> less take-up
     call bump(treat_ucost,     gap(21),-1.0_dp, step, 1.0e-4_dp, 20.0_dp)
-    ! Higher flow value of life makes the rich abstain, so both income ratios
-    ! fall. aleph is assigned to the SUD ratio because that gradient is the
-    ! steep one and so is the more informative of the two.
-    call bump(aleph,           gap(12),-1.0_dp, step, 0.5_dp,    5.0e3_dp)
+    ! The SUD income ratio moves to the direct wage penalty, freeing aleph for
+    ! the VSL target below. The AE asks about this penalty in A20; calibrating it
+    ! is better discipline than asserting 1.0, and 1.0 becomes the robustness run.
+    call bump(prod_pen_d,      gap(12),+1.0_dp, step, 0.30_dp,   1.00_dp)
     ! wider DI coverage keeps more of the SMI population housed (IZ's zeta_di)
     call bump(di_coverage,     gap(13),-1.0_dp, step, 0.05_dp,   3.00_dp)
     call bump(kappa_ue_m,      gap(14),-1.0_dp, step, 0.05_dp,   1.00_dp)
@@ -456,6 +494,7 @@ subroutine calibration_sweep(step, nbis)
     call bisect_on(3, mom(16)%target, nbis)   ! beta        -> wealth / GDP
     call bisect_on(2, mom(3)%target,  nbis)   ! h_homeless  -> homelessness rate
     call bisect_on(4, mom(22)%target, nbis)   ! mh_onset    -> SMI prevalence
+    call bisect_on(5, mom(23)%target, nbis)   ! aleph       -> model VSL
     call bisect_on(1, mom(1)%target,  nbis)   ! b           -> participation
 end subroutine calibration_sweep
 
@@ -505,6 +544,8 @@ subroutine bisect_on(which, target_val, iters)
         lo = log(0.900_dp);  hi = log(0.9990_dp); rising = .true.
     case (4)
         lo = log(1.0e-5_dp); hi = log(0.20_dp);   rising = .true.
+    case (5)
+        lo = log(1.0_dp);    hi = log(1.0e5_dp);  rising = .true.
     end select
 
     do k = 1, iters
@@ -514,6 +555,7 @@ subroutine bisect_on(which, target_val, iters)
         case (2); h_homeless = exp(mid)
         case (3); beta       = exp(mid)
         case (4); mh_onset    = exp(mid)
+        case (5); aleph       = exp(mid)
         end select
         call refresh_utility_constants()
         call solve_household(); call build_distribution_eq()
@@ -523,6 +565,7 @@ subroutine bisect_on(which, target_val, iters)
         case (2); fmid = 100.0_dp*A%homeless/max(A%pop,1.0e-12_dp)
         case (3); fmid = A%wealth/max(A%gdp,1.0e-12_dp)
         case (4); fmid = 100.0_dp*A%poormh/max(A%pop,1.0e-12_dp)
+        case (5); fmid = model_vsl()
         end select
         if ((fmid > target_val) .eqv. rising) then
             hi = mid
@@ -537,6 +580,7 @@ subroutine bisect_on(which, target_val, iters)
     case (2); h_homeless = exp(mid)
     case (3); beta       = exp(mid)
     case (4); mh_onset    = exp(mid)
+    case (5); aleph       = exp(mid)
     end select
     call refresh_utility_constants()
 end subroutine bisect_on
@@ -551,7 +595,7 @@ subroutine save_params(v)
     v = [ b_dm(1,1), pi_d_low, h_homeless, pi_eu_base, kappa_ue_d, &
           recover_mult_hl, prob_V, theta_v, theta_h, h_small, aleph, &
           di_coverage, kappa_ue_m, prod_pen_m, beta, cfloor_share, mh_b_ratio, &
-          h_spread, treat_ucost, mh_onset ]
+          h_spread, treat_ucost, mh_onset, prod_pen_d ]
 end subroutine save_params
 
 subroutine load_params(v)
@@ -561,6 +605,7 @@ subroutine load_params(v)
     theta_h=v(9);    h_small=v(10);   aleph=v(11);      di_coverage=v(12)
     kappa_ue_m=v(13);prod_pen_m=v(14);beta=v(15);       cfloor_share=v(16)
     mh_b_ratio=v(17);h_spread=v(18);  treat_ucost=v(19); mh_onset=v(20)
+    prod_pen_d=v(21)
     call refresh_utility_constants()
 end subroutine load_params
 
