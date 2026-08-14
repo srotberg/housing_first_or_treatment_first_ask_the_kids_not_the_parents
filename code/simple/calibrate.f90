@@ -17,7 +17,7 @@ module calibrate
     use equilibrium
     implicit none
 
-    integer, parameter :: NMOM = 12
+    integer, parameter :: NMOM = 15
 
     type :: mom_t
         character(len=28) :: name
@@ -56,6 +56,19 @@ subroutine init_targets()
     ! data/nsduh_gradients.py.
     mom(11) = mom_t('drug user income / avg (%)  ', 95.10_dp, 0.0_dp, 1.0_dp)
     mom(12) = mom_t('SUD income / avg (%)        ', 68.70_dp, 0.0_dp, 1.0_dp)
+    ! ---- serious mental illness -------------------------------------------
+    ! SMI share of the homeless: Gutwinski et al. (2021, PLOS Medicine) pool 39
+    ! studies of homeless people in high-income countries and find 12.4%
+    ! schizophrenia-spectrum and 12.6% major depression, so about 25% with a
+    ! severe disorder against 5.5% in the adult population -- a relative risk
+    ! near 4.5. This identifies the PERSISTENCE of the SMI state.
+    mom(13) = mom_t('SMI share of homeless (%)   ', 25.00_dp, 0.0_dp, 1.0_dp)
+    ! Employment rate given SMI: 22-40% for high-disability diagnoses; about a
+    ! fifth of people with schizophrenia are in work. Midpoint 30%.
+    mom(14) = mom_t('employment rate | SMI (%)   ', 30.00_dp, 0.0_dp, 1.0_dp)
+    ! Homeless income relative to average -- R1 comment 2(c)(i), 19.1% in the
+    ! linked administrative data of Meyer et al.
+    mom(15) = mom_t('homeless income / avg (%)   ', 19.10_dp, 0.0_dp, 1.0_dp)
 end subroutine init_targets
 
 
@@ -67,6 +80,7 @@ subroutine compute_moments(A)
     real(dp) :: sud_unemp, sud_work, hl_sud, elig, vouch_elig
     real(dp) :: spend_sud, inc_sud
     real(dp) :: hcost, totinc, burden50, users_inc, users_m, sud_inc, sud_m
+    real(dp) :: hl_smi, smi_work, smi_emp, hl_inc, hl_m
 
     p = max(A%pop, 1.0e-12_dp)
     sud_unemp = 0.0_dp; sud_work = 0.0_dp; hl_sud = 0.0_dp
@@ -74,6 +88,8 @@ subroutine compute_moments(A)
     spend_sud = 0.0_dp; inc_sud = 0.0_dp
     hcost = 0.0_dp; totinc = 0.0_dp; burden50 = 0.0_dp
     users_inc = 0.0_dp; users_m = 0.0_dp; sud_inc = 0.0_dp; sud_m = 0.0_dp
+    hl_smi = 0.0_dp; smi_work = 0.0_dp; smi_emp = 0.0_dp
+    hl_inc = 0.0_dp; hl_m = 0.0_dp
 
     do j = 1, n_age
     do im = 1, NM
@@ -95,6 +111,17 @@ subroutine compute_moments(A)
 
         ! SUD share of the homeless
         if (ihp == 1 .and. id == 2) hl_sud = hl_sud + m
+
+        ! serious mental illness
+        if (ihp == 1) then
+            hl_m   = hl_m + m
+            hl_inc = hl_inc + m*ygross
+            if (im == 2) hl_smi = hl_smi + m
+        end if
+        if (im == 2 .and. j < j_ret) then
+            smi_work = smi_work + m
+            if (ie == 1) smi_emp = smi_emp + m
+        end if
 
         ! voucher take-up among the income-eligible
         if (ygross + max(0.0_dp, r*a_grid(ia)) < kappa_V*median_income) then
@@ -146,6 +173,10 @@ subroutine compute_moments(A)
     mom(11)%model = 100.0_dp*(users_inc/max(users_m,1.0e-12_dp)) &
                             /max(totinc/p, 1.0e-12_dp)
     mom(12)%model = 100.0_dp*(sud_inc/max(sud_m,1.0e-12_dp)) &
+                            /max(totinc/p, 1.0e-12_dp)
+    mom(13)%model = 100.0_dp*hl_smi/max(hl_m, 1.0e-12_dp)
+    mom(14)%model = 100.0_dp*smi_emp/max(smi_work, 1.0e-12_dp)
+    mom(15)%model = 100.0_dp*(hl_inc/max(hl_m,1.0e-12_dp)) &
                             /max(totinc/p, 1.0e-12_dp)
 end subroutine compute_moments
 
@@ -251,6 +282,9 @@ end function max_gap
 !   theta_h            housing cost / income (aggregate)      +
 !   p_rent             share with housing cost > 50%          +
 !   aleph              SUD income / average income            -
+!   mh_recover         SMI share of the homeless              -
+!   kappa_ue_m         employment rate given SMI              +
+!   prod_pen_m         homeless income / average income       +
 !===============================================================================
 subroutine calibration_sweep(step)
     real(dp), intent(in) :: step
@@ -269,9 +303,18 @@ subroutine calibration_sweep(step)
     ! fall. aleph is assigned to the SUD ratio because that gradient is the
     ! steep one and so is the more informative of the two.
     call bump(aleph,           gap(12),-1.0_dp, step, 0.5_dp,    5.0e3_dp)
+    ! more persistent SMI -> the SMI stock accumulates in homelessness
+    call bump(mh_recover,      gap(13),-1.0_dp, step, 0.01_dp,   0.60_dp)
+    call bump(kappa_ue_m,      gap(14),+1.0_dp, step, 0.05_dp,   1.00_dp)
+    call bump(prod_pen_m,      gap(15),+1.0_dp, step, 0.05_dp,   1.00_dp)
 
     ! keep derived quantities consistent with the parameters just moved
     pi_d_high = heavy_ratio * pi_d_low
+    ! keep SMI prevalence at its data value while persistence moves
+    mh_onset = mh_recover*smi_prevalence/(1.0_dp - smi_prevalence)
+    mh_trans(1,1) = 1.0_dp - mh_onset;  mh_trans(1,2) = mh_onset
+    mh_trans(2,1) = mh_recover;         mh_trans(2,2) = 1.0_dp - mh_recover
+    call ergodic(NM, mh_trans, mh_dist0)
     call refresh_utility_constants()
 end subroutine calibration_sweep
 
@@ -328,6 +371,10 @@ subroutine print_params()
     write(*,'(A,ES12.4)') '   theta_h         : ', theta_h
     write(*,'(A,ES12.4)') '   p_rent          : ', p_rent
     write(*,'(A,ES12.4)') '   aleph           : ', aleph
+    write(*,'(A,ES12.4)') '   mh_recover      : ', mh_recover
+    write(*,'(A,ES12.4)') '   mh_onset (deriv): ', mh_onset
+    write(*,'(A,ES12.4)') '   kappa_ue_m      : ', kappa_ue_m
+    write(*,'(A,ES12.4)') '   prod_pen_m      : ', prod_pen_m
     write(*,'(A)') '  ----------------------------------------------------'
 end subroutine print_params
 

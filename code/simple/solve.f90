@@ -77,6 +77,8 @@ pure function income_gross(j, iy, ie, id, im) result(y)
         y = y_grid(iy) * age_prof(j) * prod            ! employed
     else if (ie == 2) then
         y = ui_replace * y_grid(iy) * age_prof(j)      ! UI, first year only
+    else if (im == 2 .and. include_disability == 1) then
+        y = disab_income * avg_income                  ! disability, SMI only
     else
         y = 0.0_dp                                     ! no UI: food stamps only
     end if

@@ -122,13 +122,30 @@ module params
     ! penalty is what generates EMPLOYED homeless households with positive but
     ! low income -- R1 comment 2(c)(i) -- which an unemployment effect alone
     ! cannot do.
-    real(dp) :: mh_onset    = 0.010_dp     ! good -> poor per year
-    real(dp) :: mh_recover  = 0.100_dp     ! poor -> good per year
-    real(dp) :: prod_pen_m  = 0.55_dp      ! productivity multiplier, poor MH
+    ! The state is SERIOUS MENTAL ILLNESS, not "any mental illness". That is the
+    ! concept that drives chronic homelessness and disability, and it is the
+    ! Imrohoroglu-Zhao channel: in their model labour shocks generate short
+    ! homeless spells while health shocks generate chronic homelessness, with
+    ! expanded disability income the effective policy for the chronic group.
+    !
+    ! smi_prevalence pins the ergodic share; mh_onset is DERIVED from it and
+    ! mh_recover, so persistence can be calibrated without breaking prevalence.
+    real(dp) :: smi_prevalence = 0.055_dp  ! SMI among US adults, NSDUH 2023
+    real(dp) :: mh_recover  = 0.100_dp     ! calibrated: SMI share of the homeless
+    real(dp) :: mh_onset                   ! derived: recover*p/(1-p)
+    real(dp) :: prod_pen_m  = 0.55_dp      ! calibrated: homeless income/average
     real(dp) :: prod_pen_d  = 0.80_dp      ! productivity multiplier, SUD (AE A20)
-    real(dp) :: kappa_ue_m  = 0.65_dp      ! job-finding multiplier, poor MH
-    real(dp) :: kappa_phi_m = 1.30_dp      ! mortality multiplier, poor MH
+    real(dp) :: kappa_ue_m  = 0.35_dp      ! calibrated: employment rate given SMI
+    ! Standardised mortality ratios for SMI are roughly 2-3, corresponding to
+    ! 10-20 years of life expectancy lost. 1.3 was far too low.
+    real(dp) :: kappa_phi_m = 2.50_dp
     real(dp) :: rec_mult_m  = 0.50_dp      ! SUD recovery multiplier, poor MH
+    ! Disability income for the non-employed with SMI. Roughly two-thirds of
+    ! people with schizophrenia receive federal disability insurance, so giving
+    ! this group zero income overstates their homelessness. Also the margin
+    ! Imrohoroglu-Zhao find effective for the chronically homeless.
+    real(dp) :: disab_income = 0.25_dp     ! share of average income
+    integer  :: include_disability = 1
     real(dp) :: mh_dist0(NM)               ! newborn distribution over MH
     integer  :: include_mental_health = 1
 
@@ -233,6 +250,9 @@ subroutine setup_grids()
     end do
 
     !-- mental-health transition and its ergodic newborn distribution --------
+    ! onset is implied by the target prevalence and the recovery rate, so
+    ! calibrating persistence never moves the prevalence off its data value
+    mh_onset = mh_recover*smi_prevalence/(1.0_dp - smi_prevalence)
     if (include_mental_health == 1) then
         mh_trans(1,1) = 1.0_dp - mh_onset;   mh_trans(1,2) = mh_onset
         mh_trans(2,1) = mh_recover;          mh_trans(2,2) = 1.0_dp - mh_recover
