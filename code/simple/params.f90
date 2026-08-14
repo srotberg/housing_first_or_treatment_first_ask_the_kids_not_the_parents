@@ -291,6 +291,26 @@ module params
     ! European rather than US; 30.3% protest zeros; and the elicited change is
     ! eliminating homelessness rather than a marginal change.
     real(dp) :: wtp_end_homelessness = 0.002_dp
+    ! ...but that amount buys elimination of the EUROPEAN homelessness rate, not
+    ! the model's. The WTP has to be normalised per unit of homelessness before
+    ! it can be applied to a different rate, otherwise the same euro figure would
+    ! imply a different disamenity in every economy it is transplanted into.
+    !
+    ! Reference rate: FEANTSA counts roughly 700,000 people sleeping rough or in
+    ! shelter across the EU at the time of the survey (2017), against a
+    ! population near 440 million, so about 0.16%. The 2023 overview reports
+    ! ~895,000, but part of that rise is improved measurement, and the survey was
+    ! fielded in 2017. Take 0.18% as the central value and sweep 0.15-0.22%: the
+    ! implied kappa_ext is inversely proportional to it, so this is the single
+    ! most consequential judgement in the disamenity calibration and it should be
+    ! reported as a range, not a point.
+    !
+    ! Composition: the disamenity is weighted by omega_ext on the homeless with
+    ! SUD, so the reference bundle is H_ref*(1 + omega_ext*sud_share_ref), with
+    ! the drug use disorder share of the homeless taken from the same pooled
+    ! high-income-country evidence used for the model's own target.
+    real(dp) :: wtp_ref_homeless_rate = 0.0018_dp
+    real(dp) :: wtp_ref_sud_share     = 0.217_dp
     real(dp) :: H_agg     = 0.0_dp              ! aggregate homelessness rate
     real(dp) :: HD_agg    = 0.0_dp              ! homeless AND SUD, share of population
 

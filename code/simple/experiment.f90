@@ -486,15 +486,23 @@ end subroutine calibrate_kappa_phi_d
 ! contingent-valuation number is non-spatial and is about the aggregate, which
 ! is what the model has.
 !
-! The mapping. Removing the disamenity is worth kappa_ext*(H + omega_ext*HD)
-! utils; the household would pay wtp*c of consumption for it. Equating,
+! The mapping, and the correction that matters. Removing the disamenity is worth
+! kappa_ext*(H + omega_ext*HD) utils and the household would pay wtp*c of
+! consumption for it, so
 !
-!     kappa_ext = wtp * E[c*u_c] / (H + omega_ext*HD),
+!     kappa_ext = wtp * E[c*u_c] / (H_ref + omega_ext*HD_ref).
 !
-! with the expectation taken over the benchmark distribution. Since kappa_ext
-! enters period utility additively and is zero at the benchmark, the aggregates
-! on the right-hand side do not depend on it, so this is a one-shot calculation
-! rather than a fixed point.
+! The denominator is the EUROPEAN homelessness rate the survey respondents were
+! valuing, NOT the model's own. Using the model's rate would be wrong: the same
+! EUR 57 would then imply a different disamenity in every economy it was
+! transplanted into, mechanically making the externality small wherever
+! homelessness is rare and large wherever it is common, which is the opposite of
+! what a per-unit valuation means. Normalising by the reference rate gives a
+! price per unit of homelessness, which is transferable.
+!
+! Since kappa_ext enters period utility additively and is zero at the benchmark,
+! E[c*u_c] does not depend on it, so this is one calculation rather than a fixed
+! point.
 !===============================================================================
 function kappa_ext_from_wtp() result(kx)
     real(dp) :: kx
@@ -526,10 +534,14 @@ function kappa_ext_from_wtp() result(kx)
     end do; end do; end do
     end do
 
+    ! the model's own rates, kept for the report
     H  = H /max(mass,1.0e-12_dp)
     HD = HD/max(mass,1.0e-12_dp)
+
+    ! ...but the price per unit of homelessness is set by the rate the
+    ! respondents were actually valuing
     kx = wtp_end_homelessness * (acc/max(mass,1.0e-12_dp)) &
-       / max(H + omega_ext*HD, 1.0e-12_dp)
+       / max(wtp_ref_homeless_rate*(1.0_dp + omega_ext*wtp_ref_sud_share), 1.0e-12_dp)
 end function kappa_ext_from_wtp
 
 
@@ -564,8 +576,10 @@ subroutine report_second_stage()
     kx = kappa_ext_from_wtp()
     write(*,'(A)') '  ------------------------------------------------------------'
     write(*,'(A,ES12.4)') '   kappa_ext implied by WTP to end homelessness: ', kx
-    write(*,'(A,F8.3,A)') '     (from ', 100.0_dp*wtp_end_homelessness, &
-        '% of annual income, Loubiere et al. contingent valuation)'
+    write(*,'(A,F8.3,A)') '     from ', 100.0_dp*wtp_end_homelessness, &
+        '% of annual income (Loubiere et al. contingent valuation),'
+    write(*,'(A,F8.3,A)') '     normalised by a European reference rate of ', &
+        100.0_dp*wtp_ref_homeless_rate, '% homeless'
     write(*,'(A,ES12.4)') '   kappa_ext currently in force                : ', kappa_ext
     write(*,'(A)') '  ============================================================'
 end subroutine report_second_stage

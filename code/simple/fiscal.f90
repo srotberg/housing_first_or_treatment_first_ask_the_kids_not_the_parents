@@ -309,8 +309,15 @@ subroutine report_welfare_units(pv_per_case)
     write(*,'(A,F11.4)') '     annuitised                                 : ', flow_per_case
     write(*,'(A,F9.3,A)') '   FISCAL externality, per capita               : ', &
         100.0_dp*fisc_pc/max(cbar,1.0e-12_dp), ' % of average consumption'
+    ! the disamenity at the MODEL's homelessness rate, priced per unit from the
+    ! European reference rate -- not the raw survey figure, which valued a
+    ! different quantity of homelessness
     write(*,'(A,F9.3,A)') '   DISAMENITY, per capita                       : ', &
-        100.0_dp*wtp_end_homelessness, ' % of income (contingent valuation)'
+        100.0_dp*wtp_end_homelessness*(H + omega_ext*HD) &
+        /max(wtp_ref_homeless_rate*(1.0_dp+omega_ext*wtp_ref_sud_share),1.0e-12_dp), &
+        ' % of income'
+    write(*,'(A,F9.3,A,F9.3,A)') '     (survey valued ', &
+        100.0_dp*wtp_ref_homeless_rate, '% homeless; the model has ', 100.0_dp*H, '%)'
     write(*,'(A)') '  ----------------------------------------------------------------------'
     write(*,'(A)') '   Read the two together: the fiscal channel is measured inside the'
     write(*,'(A)') '   model and needs no free parameter; the disamenity rests on a stated'
