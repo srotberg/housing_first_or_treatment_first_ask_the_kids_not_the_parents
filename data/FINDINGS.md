@@ -220,6 +220,74 @@ placeholder understated mortality badly: q at 85 was 0.045 against an actual
 
 ---
 
+## 10. The homelessness mortality penalty was five times too small
+
+Baggett et al. (2013, JAMA Intern Med), Boston Health Care for the Homeless,
+race-adjusted all-cause mortality rate ratios against the Massachusetts general
+population:
+
+| age | men | women |
+|---|---:|---:|
+| 25-44 | **8.6** (7.4-9.9) | **9.6** (7.4-12.4) |
+| 45-64 | 4.5 (4.1-4.9) | ~4.5 (3.6-5.6) |
+| 65-84 | 1.1 (0.9-1.4) | ~1.1 (0.7-1.8) |
+
+`kappa_phi_h` was **1.6, flat across all ages**. That was wrong twice: five
+times too small at prime ages, and the wrong shape. A constant multiplier large
+enough to match the young implies a 41% annual death rate for a homeless
+80-year-old.
+
+Their ratio is the TOTAL for homeless adults, most of whom also have SUD, and
+the model already carries a separate `kappa_phi_d = 6.9`. Using 9.1 directly
+would stack the two and count SUD mortality twice, giving 59x. Netting out the
+SUD composition,
+
+    RR_total = kappa_phi_h * [ (1-s) + s*kappa_phi_d ],   s = 0.217
+
+leaves **3.99 / 1.97 / 0.48**. The 65+ figure is floored at 1.0: read literally
+it says homelessness protects the old, which is survivor selection rather than a
+causal effect, and the model cannot represent selection on unobserved frailty.
+Flooring understates the mortality channel rather than inventing a protective
+one.
+
+Now implemented as `kappa_phi_h_age(n_age)`.
+
+Also from Baggett, usable as validation: drug overdose is 35% of deaths among
+homeless 25-44 year olds, at rates 16 to 24 times the general population;
+opioids are implicated in 81% of overdose deaths.
+
+---
+
+## 11. National homelessness by age, and system dynamics
+
+PIT 2024. The 65+ column is named **"Over 64"**, which is why a first pass
+stopped at 64.
+
+| band | homeless | population | rate | **share of homeless** |
+|---|---:|---:|---:|---:|
+| 25-34 | 146,859 | 46,453,864 | 0.3161% | 26.0% |
+| 35-44 | 153,849 | 45,539,224 | 0.3378% | 27.2% |
+| 45-54 | 118,740 | 40,780,356 | 0.2912% | 21.0% |
+| 55-64 | 104,007 | 41,661,725 | 0.2496% | 18.4% |
+| 65-84 | 42,147 | 54,744,775 | 0.0770% | 7.5% |
+| total | 565,602 | 229,179,944 | 0.2468% | 100% |
+
+The rate peaks at 35-44 and collapses by a factor of 4.4 after 65, which is the
+same selection story as the mortality ratios.
+
+HUD System Performance Measures, national, give three more untargeted moments:
+
+| measure | 2020 | 2022 | 2024 |
+|---|---:|---:|---:|
+| **returns to homelessness within 24 months** | 19.7% | 16.6% | **17.4%** |
+| increase in total income, system leavers | 34.1% | 31.9% | 32.9% |
+| increase in earned income, system leavers | 15.5% | 14.2% | 14.8% |
+
+Returns within 24 months is the one that matters: nothing in the calibration
+currently disciplines exit and re-entry, and the model produces it endogenously.
+
+---
+
 ## Still outstanding
 
 - **SCF bottom-50% net worth share.** Would discipline the bottom of the wealth
@@ -355,6 +423,74 @@ the payment standard.
 
 The waiting time for tenant-based vouchers is **29 months**, which sharpens
 rather than resolves the `prob_V` tension in section 4: 0.06 implies 200.
+
+---
+
+## 10. The homelessness mortality penalty was five times too small
+
+Baggett et al. (2013, JAMA Intern Med), Boston Health Care for the Homeless,
+race-adjusted all-cause mortality rate ratios against the Massachusetts general
+population:
+
+| age | men | women |
+|---|---:|---:|
+| 25-44 | **8.6** (7.4-9.9) | **9.6** (7.4-12.4) |
+| 45-64 | 4.5 (4.1-4.9) | ~4.5 (3.6-5.6) |
+| 65-84 | 1.1 (0.9-1.4) | ~1.1 (0.7-1.8) |
+
+`kappa_phi_h` was **1.6, flat across all ages**. That was wrong twice: five
+times too small at prime ages, and the wrong shape. A constant multiplier large
+enough to match the young implies a 41% annual death rate for a homeless
+80-year-old.
+
+Their ratio is the TOTAL for homeless adults, most of whom also have SUD, and
+the model already carries a separate `kappa_phi_d = 6.9`. Using 9.1 directly
+would stack the two and count SUD mortality twice, giving 59x. Netting out the
+SUD composition,
+
+    RR_total = kappa_phi_h * [ (1-s) + s*kappa_phi_d ],   s = 0.217
+
+leaves **3.99 / 1.97 / 0.48**. The 65+ figure is floored at 1.0: read literally
+it says homelessness protects the old, which is survivor selection rather than a
+causal effect, and the model cannot represent selection on unobserved frailty.
+Flooring understates the mortality channel rather than inventing a protective
+one.
+
+Now implemented as `kappa_phi_h_age(n_age)`.
+
+Also from Baggett, usable as validation: drug overdose is 35% of deaths among
+homeless 25-44 year olds, at rates 16 to 24 times the general population;
+opioids are implicated in 81% of overdose deaths.
+
+---
+
+## 11. National homelessness by age, and system dynamics
+
+PIT 2024. The 65+ column is named **"Over 64"**, which is why a first pass
+stopped at 64.
+
+| band | homeless | population | rate | **share of homeless** |
+|---|---:|---:|---:|---:|
+| 25-34 | 146,859 | 46,453,864 | 0.3161% | 26.0% |
+| 35-44 | 153,849 | 45,539,224 | 0.3378% | 27.2% |
+| 45-54 | 118,740 | 40,780,356 | 0.2912% | 21.0% |
+| 55-64 | 104,007 | 41,661,725 | 0.2496% | 18.4% |
+| 65-84 | 42,147 | 54,744,775 | 0.0770% | 7.5% |
+| total | 565,602 | 229,179,944 | 0.2468% | 100% |
+
+The rate peaks at 35-44 and collapses by a factor of 4.4 after 65, which is the
+same selection story as the mortality ratios.
+
+HUD System Performance Measures, national, give three more untargeted moments:
+
+| measure | 2020 | 2022 | 2024 |
+|---|---:|---:|---:|
+| **returns to homelessness within 24 months** | 19.7% | 16.6% | **17.4%** |
+| increase in total income, system leavers | 34.1% | 31.9% | 32.9% |
+| increase in earned income, system leavers | 15.5% | 14.2% | 14.8% |
+
+Returns within 24 months is the one that matters: nothing in the calibration
+currently disciplines exit and re-entry, and the model produces it endogenously.
 
 ---
 
