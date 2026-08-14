@@ -439,6 +439,79 @@ function kappa_ext_from_wtp() result(kx)
 end function kappa_ext_from_wtp
 
 
+!===============================================================================
+! Validity check on the mortality profiles.
+!
+! kappa_phi_d and kappa_phi_h vary by age, but the literature reports a SINGLE
+! standardised mortality ratio. The comparable object is therefore the model's
+! own age-weighted SMR: total deaths in the group divided by the deaths that
+! same group would suffer at baseline hazards. Weighting by the MODEL's age
+! distribution of SUD and of homelessness is the point -- an unweighted average
+! over ages would compare a profile against a statistic computed on a
+! population that is heavily concentrated in its young end.
+!
+! Reported against the two sources the profiles were built from, so a reader can
+! see whether the level the price elasticity chose is consistent with the
+! mortality evidence. These are NOT targets; disagreement is the finding.
+!===============================================================================
+subroutine report_mortality_validation()
+    integer  :: j, ia, iy, ie, id, iv, im, ihp
+    real(dp) :: m, q0, q1
+    real(dp) :: d_num, d_den, h_num, h_den, m_num, m_den, mass_d, mass_h
+
+    d_num = 0.0_dp; d_den = 0.0_dp; mass_d = 0.0_dp
+    h_num = 0.0_dp; h_den = 0.0_dp; mass_h = 0.0_dp
+    m_num = 0.0_dp; m_den = 0.0_dp
+
+    do j = 1, n_age-1
+    do im = 1, NM; do iv = 1, NV; do id = 1, ND
+    do ie = 1, NE; do iy = 1, NY; do ia = 1, NA
+        m = dist(ia,iy,ie,id,iv,im,j)
+        if (m <= 0.0_dp) cycle
+        ihp = pol_h(ia,iy,ie,id,iv,im,j)
+        q0  = 1.0_dp - surv_base(j)                      ! baseline hazard
+        q1  = 1.0_dp - survival(j, ihp, id, im)          ! actual hazard
+        if (id == 2) then
+            d_num = d_num + m*q1; d_den = d_den + m*q0; mass_d = mass_d + m
+        end if
+        if (ihp == 1) then
+            h_num = h_num + m*q1; h_den = h_den + m*q0; mass_h = mass_h + m
+        end if
+        if (im == 2) then
+            m_num = m_num + m*q1; m_den = m_den + m*q0
+        end if
+    end do; end do; end do
+    end do; end do; end do
+    end do
+
+    write(*,'(A)') ''
+    write(*,'(A)') '  ============ mortality profiles: model vs data ============'
+    write(*,'(A)') '   Age-weighted SMR, using the model''s own age distribution.'
+    write(*,'(A)') '   UNTARGETED -- the profiles are data, the SUD level is set by'
+    write(*,'(A)') '   the price elasticity, so agreement here is a real check.'
+    write(*,'(A)') '  -----------------------------------------------------------'
+    if (d_den > 0.0_dp) then
+        write(*,'(A,F7.2,A)') '   SUD, model SMR          : ', d_num/d_den, &
+            '   data 2.5-9.8 (Degenhardt et al. 2011)'
+    else
+        write(*,'(A)') '   SUD, model SMR          : UNDEFINED (no SUD mass)'
+    end if
+    if (h_den > 0.0_dp) then
+        write(*,'(A,F7.2,A)') '   homeless, model SMR     : ', h_num/h_den, &
+            '   data ~9.1 at 25-44, 4.5 at 45-64, 1.1 at 65+ (Baggett 2013)'
+    else
+        write(*,'(A)') '   homeless, model SMR     : UNDEFINED (nobody homeless)'
+    end if
+    if (m_den > 0.0_dp) &
+        write(*,'(A,F7.2,A)') '   poor mental health SMR  : ', m_num/m_den, &
+            '   flat kappa_phi_m, not yet age-varying'
+    write(*,'(A,F7.3,A,F7.3,A)') '   mass: SUD ', 100.0_dp*mass_d, &
+        ' %,  homeless ', 100.0_dp*mass_h, ' %'
+    write(*,'(A,F7.2)') '   peak-age SUD multiplier (the calibrated level) : ', kappa_phi_d
+    write(*,'(A)') '  ==========================================================='
+end subroutine report_mortality_validation
+
+
 subroutine report_second_stage()
     real(dp) :: a_nh, a_nach, a_ach, h_nh, h_nach, h_ach
     real(dp) :: eps, vsl, kx
@@ -490,6 +563,7 @@ subroutine report_second_stage()
         100.0_dp*wtp_ref_homeless_rate, '% homeless'
     write(*,'(A,ES12.4)') '   kappa_ext currently in force                : ', kappa_ext
     write(*,'(A)') '  ============================================================'
+    call report_mortality_validation()
 end subroutine report_second_stage
 
 end module experiment
