@@ -55,11 +55,20 @@ module params
     ! ratio, and cuts the inner loop by a third.
     integer, parameter :: NREG = 2
 
-    ! Labour supply. R3 wants it for the welfare cost of financing via labour
-    ! taxes; the AE questions whether it matters. Kept, but on a coarse grid --
-    ! it is a CHOICE, not a state, so the cost is a factor NL on the inner loop.
-    integer, parameter :: NL = 4
-    real(dp) :: l_grid(NL)                      ! hours worked, fraction of time
+    ! Labour supply is CONTINUOUS, pinned by the intratemporal FOC as in the
+    ! original code: equate the marginal utility of the extra after-tax wage to
+    ! the marginal utility of leisure, and bracket the root by the sign of the
+    ! difference. Given a', hours affect only the flow payoff, never the
+    ! continuation value, so the FOC is a scalar solve that never touches the EV
+    ! table.
+    !
+    ! One thing the original does not do and this does: the residual is not
+    ! monotone, because the food-stamp and voucher clawbacks kink the budget in
+    ! hours, so a single bisection on [0,1] can land on the wrong local optimum.
+    ! The interval is split at the kinks and each piece solved exactly. See the
+    ! header of solve.f90.
+    real(dp), parameter :: hours_tol = 1.0e-8_dp
+    integer,  parameter :: hours_maxit = 60
 
     !-- preferences -----------------------------------------------------------
     real(dp), parameter :: sigma   = 2.0_dp     ! CRRA
@@ -234,7 +243,7 @@ module params
     integer,  allocatable :: pol_h(:,:,:,:,:,:,:)   ! index into h_grid
     integer,  allocatable :: pol_reg(:,:,:,:,:,:,:) ! drug regime
     integer,  allocatable :: pol_tr(:,:,:,:,:,:,:)  ! treatment take-up
-    integer,  allocatable :: pol_l(:,:,:,:,:,:,:)   ! index into l_grid (hours)
+    real(dp), allocatable :: pol_l(:,:,:,:,:,:,:)   ! hours worked (continuous)
     real(dp), allocatable :: pol_c(:,:,:,:,:,:,:)
     real(dp), allocatable :: pol_v(:,:,:,:,:,:,:)
     real(dp), allocatable :: dist(:,:,:,:,:,:,:)
@@ -252,11 +261,6 @@ subroutine setup_grids()
     amax = 40.0_dp
     do i = 1, NA
         a_grid(i) = amax * ( real(i-1,dp)/real(NA-1,dp) )**3.0_dp
-    end do
-
-    !-- labour supply grid ---------------------------------------------------
-    do i = 1, NL
-        l_grid(i) = 0.20_dp + 0.60_dp*real(i-1,dp)/real(NL-1,dp)   ! 0.20 .. 0.80
     end do
 
     !-- housing: homeless plus three rental sizes ----------------------------
@@ -336,7 +340,7 @@ subroutine alloc_all()
     allocate(pol_v (NA,NY,NE,ND,NV,NM,n_age))
     allocate(dist  (NA,NY,NE,ND,NV,NM,n_age))
     V = 0.0_dp; dist = 0.0_dp
-    pol_a = 1; pol_h = 1; pol_reg = 1; pol_tr = 0; pol_l = 1
+    pol_a = 1; pol_h = 1; pol_reg = 1; pol_tr = 0; pol_l = 0.0_dp
     pol_c = 0.0_dp; pol_v = 0.0_dp
 end subroutine alloc_all
 
@@ -344,11 +348,12 @@ end subroutine alloc_all
 !-- survival probability, given chosen housing and SUD status ----------------
 ! hours are a choice only for the employed of working age; everyone else
 ! supplies zero and consumes full leisure
-pure function hours_of(j, ie, il) result(h)
-    integer, intent(in) :: j, ie, il
+pure function hours_of(j, ie, hstar) result(h)
+    integer,  intent(in) :: j, ie
+    real(dp), intent(in) :: hstar
     real(dp) :: h
     if (j < j_ret .and. ie == 1) then
-        h = l_grid(il)
+        h = hstar
     else
         h = 0.0_dp
     end if

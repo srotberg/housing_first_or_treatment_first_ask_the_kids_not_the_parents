@@ -85,11 +85,15 @@ subroutine init_targets()
     ! linked administrative data of Meyer et al.
     mom(15) = mom_t('homeless income / avg (%)   ', 19.10_dp, 0.0_dp, 1.0_dp)
     ! ---- previously unjustified parameters, now attached to moments --------
-    ! beta: net worth / income for RENTERS, SCF 2022 (ages 26-85) = 2.12.
-    ! Not the all-household 7.34, which is mostly housing equity this model
-    ! cannot hold: with no homeownership and a fixed 3% return, financial
-    ! assets alone cannot reach 7x income at any discount factor.
-    mom(16) = mom_t('net worth / income          ',  2.12_dp, 0.0_dp, 1.0_dp)
+    ! beta: aggregate WEALTH-TO-GDP, with GDP measured as all factor income
+    ! (labour earnings plus the return on the capital stock) and transfers
+    ! excluded. Three is the standard US ratio of the private capital stock to
+    ! annual output and is the moment a life-cycle discount factor is normally
+    ! pinned by. It is the right target here rather than the SCF's 7.3 net
+    ! worth to *household income* ratio, whose denominator is a household
+    ! income concept and whose numerator is mostly housing equity that a model
+    ! without homeownership cannot hold.
+    mom(16) = mom_t('wealth / GDP                ',  3.00_dp, 0.0_dp, 1.0_dp)
     ! cfloor_share: SNAP benefits as a share of GDP, FY2023 (paper target 21)
     mom(17) = mom_t('food stamps / labour income ',  0.42_dp, 0.0_dp, 1.0_dp)
     ! Co-occurring SUD among adults with SMI, age-matched to the model from the
@@ -173,7 +177,7 @@ subroutine compute_moments(A)
         wealth = wealth + m*a_grid(ia)
         if (j < j_ret .and. ie == 1) then
             hrs_m = hrs_m + m
-            hrs   = hrs + m*l_grid(pol_l(ia,iy,ie,id,iv,im,j))
+            hrs   = hrs + m*hours_of(j, ie, pol_l(ia,iy,ie,id,iv,im,j))
         end if
 
         ! housing burden, over ALL households
@@ -225,7 +229,7 @@ subroutine compute_moments(A)
     mom(14)%model = 100.0_dp*(1.0_dp - smi_emp/max(smi_work, 1.0e-12_dp))
     mom(15)%model = 100.0_dp*(hl_inc/max(hl_m,1.0e-12_dp)) &
                             /max(totinc/p, 1.0e-12_dp)
-    mom(16)%model = wealth/max(totinc, 1.0e-12_dp)
+    mom(16)%model = A%wealth/max(A%gdp, 1.0e-12_dp)
     mom(17)%model = 100.0_dp*exp_light/max(exp_m, 1.0e-12_dp)
     mom(17)%model = 100.0_dp*A%food/max(A%labinc, 1.0e-12_dp)
     mom(18)%model = 100.0_dp*smi_sud/max(smi_m, 1.0e-12_dp)

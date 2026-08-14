@@ -26,6 +26,7 @@ module equilibrium
         real(dp) :: ss=0, ui=0, food=0, vouchers=0
         real(dp) :: homeless=0, sud=0, users=0, unemp=0, drugq=0, poormh=0, hl_sud=0
         real(dp) :: assets_dead=0, consumption=0, treated=0
+        real(dp) :: wealth=0, gdp=0
         real(dp) :: govt_outlay=0, tax_rev=0
     end type agg_t
 
@@ -75,6 +76,7 @@ subroutine compute_aggregates(A)
             A%ss = A%ss + m*ygross
         end if
 
+        A%wealth = A%wealth + m*a_grid(ia)
         A%capinc = A%capinc + m*capinc_j
         A%captax = A%captax + m*0.15_dp*max(0.0_dp, capinc_j)
 
@@ -110,6 +112,12 @@ subroutine compute_aggregates(A)
     end do
     end do
     end do
+
+    ! GDP = all factor income: labour earnings of the employed plus the return
+    ! on the capital stock. Transfers (SS, UI, DI, food stamps, vouchers) are
+    ! redistribution, not output, and are excluded. Wealth/GDP is the beta
+    ! target -- see CALIBRATION.md.
+    A%gdp = A%labinc + A%capinc
 
     A%govt_outlay = A%ss + A%food + A%vouchers &
                   + chi_H*A%homeless + chi_D*A%sud + G_public
