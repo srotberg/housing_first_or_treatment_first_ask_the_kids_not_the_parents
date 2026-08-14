@@ -16,7 +16,8 @@ between two models that agree on participation, spending and the price
 elasticity, and then reports:
 
     r_use          income of users / average, the gradient       POINT 1
-    moral hazard   participation at universal HF against none    POINT 2
+    moral hazard   universal HF against universal TF             POINT 2
+    value of life  universal TF against no voucher at all
 
 A piece is worth keeping if it moves one of them by more than a couple of
 points. Everything else is decoration.
@@ -39,9 +40,22 @@ def headline(par, refit=True):
     m0 = stats(with_(par, pV=0.0, policy='HF'))
     m1 = stats(with_(par, pV=1.0, policy='HF'))
     mt = stats(with_(par, pV=1.0, policy='TF'))
-    mh = 100.0 * (m1['part'] / max(m0['part'], 1e-12) - 1.0)
-    tf = 100.0 * (mt['part'] / max(m0['part'], 1e-12) - 1.0)
-    return stats(par)['r_use'], mh, tf, par
+    # THE MORAL HAZARD IS HF AGAINST TF, NOT HF AGAINST NO VOUCHER.
+    #
+    # HF against no voucher is the NET of two forces, and it is near zero
+    # because they nearly cancel. Reporting that as the moral hazard, which an
+    # earlier version of this file did, makes the model look as though it has
+    # none at all when in fact it has an enormous one:
+    #
+    #   value of life   TF against no voucher    -56 per cent
+    #   moral hazard    HF against TF           +134 per cent
+    #   net             HF against no voucher      +3 per cent
+    #
+    # The near cancellation IS the argument. Neither force is small and theory
+    # does not sign their sum.
+    vol = 100.0 * (mt['part'] / max(m0['part'], 1e-12) - 1.0)
+    mh = 100.0 * (m1['part'] / max(mt['part'], 1e-12) - 1.0)
+    return stats(par)['r_use'], mh, vol, par
 
 
 ABLATIONS = [
@@ -68,8 +82,8 @@ if __name__ == '__main__':
     print('   every row is refitted to the same participation, spending and')
     print('   price elasticity, so the rows differ only in the mechanism')
     print('=' * 78)
-    print(f"{'switched off':42s}{'r_use':>9s}{'HF moral':>10s}{'TF':>8s}")
-    print(f"{'':42s}{'':>9s}{'hazard %':>10s}{'%':>8s}")
+    print(f"{'switched off':40s}{'r_use':>9s}{'moral':>9s}{'value of':>10s}")
+    print(f"{'':40s}{'':>9s}{'hazard %':>9s}{'life %':>10s}")
     ref = None
     for name, kw in ABLATIONS:
         r, mh, tf, _ = headline(with_(base, **kw))
@@ -77,10 +91,10 @@ if __name__ == '__main__':
             ref = (r, mh, tf)
             flag = ''
         else:
-            moved = abs(r - ref[0]) > 0.02 or abs(mh - ref[1]) > 2.0
+            moved = (abs(r - ref[0]) > 0.02 or abs(mh - ref[1]) > 8.0
+                     or abs(tf - ref[2]) > 8.0)
             flag = '   KEEP' if moved else '   cut?'
-        print(f'{name:42s}{r:9.3f}{mh:10.2f}{tf:8.2f}{flag}')
+        print(f'{name:40s}{r:9.3f}{mh:9.1f}{tf:10.1f}{flag}')
     print('-' * 78)
-    print('   r_use below one is the paper\'s central fact: drug use sits at the')
-    print('   bottom of the income distribution. A positive HF moral hazard is')
-    print('   the second: unconditional housing assistance raises use.')
+    print('   r_use below one is the first fact: drug use sits at the\nbottom of the income distribution.')
+    print('   The second is that the two policy forces are both large and\nopposite, so theory does not sign their sum.')
