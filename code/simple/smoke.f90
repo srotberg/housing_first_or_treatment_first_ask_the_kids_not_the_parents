@@ -117,6 +117,27 @@ program smoke
         nfail = nfail + 1
     end if
 
+    !-- 4b. THE BELLMAN IDENTITY --------------------------------------------
+    ! The strongest check available on solve_household: recompute the objective
+    ! at the STORED policy -- budget, flow payoff and continuation reassembled
+    ! independently of the search -- and compare it with the stored value.
+    ! Anything wrong in how those three are put together shows up here. It is
+    ! the check that would have caught the r/R shadowing bug on its first run
+    ! rather than after a brute-force harness went looking.
+    write(*,'(A)') ''
+    write(*,'(A)') ' 4b. Bellman identity: V equals the objective at the stored policy'
+    call check_bellman(mx, tot)
+    write(*,'(A,ES13.5)') '      max |V - objective(policy)| : ', mx
+    write(*,'(A,ES13.5)') '      max |budget residual|       : ', tot
+    if (mx > 1.0e-8_dp) then
+        write(*,'(A)') '      FAIL: the value function and the policy disagree'
+        nfail = nfail + 1
+    end if
+    if (tot > 1.0e-9_dp) then
+        write(*,'(A)') '      FAIL: c + p_v*v + a'' does not equal resources'
+        nfail = nfail + 1
+    end if
+
     !-- 5. the fiscal recursion runs and returns finite numbers -------------
     write(*,'(A)') ''
     write(*,'(A)') ' 5. the fiscal present-value recursion'
