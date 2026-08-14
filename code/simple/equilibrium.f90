@@ -27,7 +27,7 @@ module equilibrium
         real(dp) :: ss=0, ui=0, food=0, vouchers=0
         real(dp) :: homeless=0, sud=0, users=0, unemp=0, drugq=0, poormh=0, hl_sud=0
         real(dp) :: assets_dead=0, consumption=0, treated=0
-        real(dp) :: wealth=0, gdp=0
+        real(dp) :: wealth=0, gdp=0, med=0
         real(dp) :: govt_outlay=0, tax_rev=0
     end type agg_t
 
@@ -41,7 +41,16 @@ subroutine compute_aggregates(A)
     type(agg_t), intent(out) :: A
     integer  :: j, ia, iy, ie, id, iv, im, ihp, ireg, itr, iap
     real(dp) :: m, ygross, ynet, vouch, res, phi, food_j, cc, vv, capinc_j
+    ! income histogram, for the MEDIAN. Voucher eligibility is 50% of median
+    ! income and the median was standing in as the mean, which in a skewed
+    ! income distribution overstates the eligible population substantially.
+    integer,  parameter :: NBIN = 4000
+    real(dp) :: hist(NBIN), top, inc_j, cum
+    integer  :: ib
 
+
+    hist = 0.0_dp
+    top  = 8.0_dp*max(avg_income, 1.0e-6_dp)
 
     do j = 1, n_age
     do im = 1, NM
@@ -79,6 +88,11 @@ subroutine compute_aggregates(A)
 
         A%wealth = A%wealth + m*a_grid(ia)
         A%capinc = A%capinc + m*capinc_j
+
+        ! the means-tested income concept: gross earnings plus gross capital income
+        inc_j = ygross + max(0.0_dp, capinc_j)
+        ib    = min(NBIN, 1 + int(inc_j/top*real(NBIN,dp)))
+        hist(ib) = hist(ib) + m
         A%captax = A%captax + m*0.15_dp*max(0.0_dp, capinc_j)
 
         ! food stamps: fills the gap up to the consumption floor
@@ -119,6 +133,16 @@ subroutine compute_aggregates(A)
     ! redistribution, not output, and are excluded. Wealth/GDP is the beta
     ! target -- see CALIBRATION.md.
     A%gdp = A%labinc + A%capinc
+
+    ! median of the means-tested income distribution
+    cum = 0.0_dp; A%med = 0.0_dp
+    do ib = 1, NBIN
+        cum = cum + hist(ib)
+        if (cum >= 0.5_dp*A%pop) then
+            A%med = (real(ib,dp) - 0.5_dp)/real(NBIN,dp)*top
+            exit
+        end if
+    end do
 
     A%govt_outlay = A%ss + A%food + A%vouchers &
                   + chi_H*A%homeless + chi_D*A%sud + G_public
@@ -199,7 +223,7 @@ subroutine solve_equilibrium(maxit, tol, verbose)
         H_new   = A%homeless / max(A%pop, 1.0e-12_dp)
         HD_new  = A%hl_sud   / max(A%pop, 1.0e-12_dp)
         avg_new = (A%labinc + A%ss) / max(A%pop, 1.0e-12_dp)
-        med_new = avg_new          ! placeholder: replace with a true median
+        med_new = A%med
 
         ! relative residuals: the discrete choice set makes threshold rules
         ! (food-stamp floor, voucher eligibility) chatter, so an absolute

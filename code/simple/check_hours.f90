@@ -59,7 +59,7 @@ program check_hours
                 else
                     vcap = 0.0_dp
                 end if
-                base = a_grid(ia) + bequest + r_free*a_grid(ia)
+                base = a_grid(ia) + bequest + (1.0_dp-tau_k)*r_free*a_grid(ia)
                 if (ihp > 1) base = base - p_rent*h_grid(ihp)
 
                 do itr = 0, 1

@@ -124,6 +124,10 @@ module params
     !-- taxes and transfers ---------------------------------------------------
     real(dp) :: tau_l = 0.85_dp                 ! level parameter, HSV form
     real(dp), parameter :: xi_tax = 0.85_dp     ! progressivity
+    ! Capital income tax. The government was collecting this in the revenue
+    ! identity while households received capital income gross, so the budget
+    ! constraint and the government budget disagreed about the same dollar.
+    real(dp), parameter :: tau_k = 0.15_dp
     ! Accidental bequests. Redistributing them as a uniform lump sum is a large
     ! unconditional transfer to the poor with welfare consequences of its own,
     ! which would contaminate every policy comparison in the paper. They go into
