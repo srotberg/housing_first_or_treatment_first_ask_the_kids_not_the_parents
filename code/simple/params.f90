@@ -43,7 +43,14 @@ module params
     real(dp), parameter :: sigma   = 2.0_dp     ! CRRA
     real(dp), parameter :: theta_h = 0.20_dp    ! Cobb-Douglas weight on housing
     real(dp) :: theta_v = 0.10_dp               ! weight on drugs -- SAME for d=0 and d=1
-    real(dp) :: b_sg    = 1.0e-4_dp             ! Stone-Geary shifter on drugs
+    ! Stone-Geary shifter, BY SUD STATUS (the AE's suggestion). Cobb-Douglas
+    ! weights stay invariant to SUD -- so reducing SUD does not mechanically
+    ! raise utility from c and h, which is R2/R3's objection -- but b does vary.
+    ! A single b cannot match both moments: large b deters clean agents by
+    ! pushing the unconstrained v* below zero, which also drives SUD drug
+    ! spending to the corner. b_d(1) pins participation, b_d(2) keeps the
+    ! interior solution so theta_v pins the 44% expenditure share.
+    real(dp) :: b_d(ND) = [4.0e-1_dp, 1.0e-3_dp]
     real(dp) :: aleph   = 3.0_dp                ! flow value of being alive (VSL normalisation)
     real(dp) :: beta    = 0.96_dp
 
@@ -134,7 +141,7 @@ module params
     real(dp), allocatable :: pol_v(:,:,:,:,:,:)
     real(dp), allocatable :: dist(:,:,:,:,:,:)
     ! precomputed powers, to keep pow() out of the inner loop
-    real(dp) :: h_pow(NH), b_pow, alpha_u, beta_u, gamma_u
+    real(dp) :: h_pow(NH), alpha_u, beta_u, gamma_u
 
 contains
 
@@ -187,7 +194,6 @@ subroutine setup_grids()
     do i = 1, NH
         h_pow(i) = h_grid(i)**beta_u
     end do
-    b_pow = b_sg**gamma_u
 
     m = 0.0_dp
     do i = 1, NY

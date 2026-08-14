@@ -42,13 +42,13 @@ end subroutine alloc_solve
 
 
 !-- flow utility. hp is the PRECOMPUTED h**beta_u for the chosen unit ---------
-pure function util(c, hp, v) result(u)
-    real(dp), intent(in) :: c, hp, v
+pure function util(c, hp, v, bb) result(u)
+    real(dp), intent(in) :: c, hp, v, bb
     real(dp) :: u, comp
     if (c <= 0.0_dp) then
         u = -1.0e12_dp; return
     end if
-    comp = c**alpha_u * hp * (v + b_sg)**gamma_u
+    comp = c**alpha_u * hp * (v + bb)**gamma_u
     if (comp <= 0.0_dp) then
         u = -1.0e12_dp; return
     end if
@@ -281,8 +281,8 @@ subroutine solve_household()
                                 if (R <= 0.0_dp) exit      ! a_grid is increasing
 
                                 ! closed-form Cobb-Douglas split of R over (c, v)
-                                Rt = R + p_v*b_sg
-                                v_unc = gamma_u/(alpha_u+gamma_u) * Rt/p_v - b_sg
+                                Rt = R + p_v*b_d(id)
+                                v_unc = gamma_u/(alpha_u+gamma_u) * Rt/p_v - b_d(id)
 
                                 select case (ireg)
                                 case (1)
@@ -296,7 +296,7 @@ subroutine solve_household()
                                 cc = R - p_v*vv
                                 if (cc <= 0.0_dp) cycle
 
-                                val = util(cc, h_pow(ihp), vv) &
+                                val = util(cc, h_pow(ihp), vv, b_d(id)) &
                                     + beta*phi*EV(iap,ihp,iy,ie,id,ireg,itr,ielig,iv)
 
                                 if (val > best) then

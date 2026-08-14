@@ -126,7 +126,7 @@ function max_gap() result(g)
     integer  :: i
     g = 0.0_dp
     do i = 1, NMOM
-        g = max(g, abs(mom(i)%model - mom(i)%target)/max(1.0_dp, abs(mom(i)%target)))
+        g = max(g, abs(mom(i)%model - mom(i)%target)/max(abs(mom(i)%target), 1.0e-8_dp))
     end do
 end function max_gap
 
@@ -138,7 +138,7 @@ end function max_gap
 !
 !   parameter          primary moment                 sign of dM/dparam
 !   -----------------  -----------------------------  -----------------
-!   b_sg               drug participation                    -
+!   b_d(1)  (clean)    drug participation                    -
 !   pi_d_low           SUD rate                              +
 !   h_homeless         homelessness rate                     +
 !   pi_eu_base         unemployment rate                     +
@@ -150,7 +150,7 @@ end function max_gap
 subroutine calibration_sweep(step)
     real(dp), intent(in) :: step
 
-    call bump(b_sg,            gap(1), -1.0_dp, step, 1.0e-6_dp, 5.0_dp)
+    call bump(b_d(1),          gap(1), -1.0_dp, step, 1.0e-5_dp, 20.0_dp)
     call bump(pi_d_low,        gap(2), +1.0_dp, step, 1.0e-6_dp, 0.9_dp)
     call bump(h_homeless,      gap(3), +1.0_dp, step, 1.0e-5_dp, h_grid(2)*0.95_dp)
     call bump(pi_eu_base,      gap(4), +1.0_dp, step, 1.0e-4_dp, 0.9_dp)
@@ -168,8 +168,10 @@ end subroutine calibration_sweep
 function gap(i) result(g)
     integer, intent(in) :: i
     real(dp) :: g
-    ! relative gap, clipped so one wild moment cannot throw a parameter
-    g = (mom(i)%model - mom(i)%target)/max(1.0_dp, abs(mom(i)%target))
+    ! TRUE relative gap. Normalising by max(1, target) understates misses on
+    ! small targets -- homelessness at 0.3% looked like a gap of 0.29 when the
+    ! model was off by a factor of 40.
+    g = (mom(i)%model - mom(i)%target)/max(abs(mom(i)%target), 1.0e-8_dp)
     g = min(max(g, -1.0_dp), 1.0_dp)
 end function gap
 
@@ -180,8 +182,10 @@ subroutine bump(par, g, sgn, step, lo, hi)
     real(dp), intent(in)    :: g, sgn, step, lo, hi
     real(dp) :: fac
     ! model above target and dM/dpar > 0  =>  reduce the parameter
+    ! parameters like b_d(1) must move orders of magnitude, so allow a wide
+    ! multiplicative step rather than the +-15% a narrow clamp would permit
     fac = 1.0_dp - sgn*step*g
-    fac = min(max(fac, 0.5_dp), 2.0_dp)
+    fac = min(max(fac, 0.4_dp), 2.5_dp)
     par = min(max(par*fac, lo), hi)
 end subroutine bump
 
@@ -195,13 +199,13 @@ subroutine refresh_utility_constants()
     do i = 1, NH
         h_pow(i) = h_grid(i)**beta_u
     end do
-    b_pow = b_sg**gamma_u
 end subroutine refresh_utility_constants
 
 
 subroutine print_params()
     write(*,'(A)') '  -------------------- parameters --------------------'
-    write(*,'(A,ES12.4)') '   b_sg            : ', b_sg
+    write(*,'(A,ES12.4)') '   b_d(1) clean    : ', b_d(1)
+    write(*,'(A,ES12.4)') '   b_d(2) SUD      : ', b_d(2)
     write(*,'(A,ES12.4)') '   pi_d_low        : ', pi_d_low
     write(*,'(A,ES12.4)') '   h_homeless      : ', h_homeless
     write(*,'(A,ES12.4)') '   pi_eu_base      : ', pi_eu_base
