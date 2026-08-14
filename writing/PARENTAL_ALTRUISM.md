@@ -1,4 +1,57 @@
-# Parental anxiety about children: how to make it endogenous
+# Parental anxiety about children
+
+**Read §0 first. This document was written in response to a question about
+whether the channel *could* be made endogenous. It can. But neither referee
+asked for it, and the recommendation is not to build it.**
+
+---
+
+## 0. What was actually asked
+
+Two different comments were run together here. They are not the same request.
+
+**R2 ranks his own two suggestions and tells you to skip this one:**
+
+> Of these two, the externality seems very easy to introduce into the current
+> model (though would require a new calibration moment), **while the dynastic
+> element seems like more of a stretch, but could be discussed** (I think it
+> would only amplify the welfare gains from reducing addiction).
+
+So: build the homelessness externality; *discuss* parental altruism. He even
+supplies the conclusion to state — it would only amplify the results.
+
+**The AE (comment A6) is making a different point entirely:**
+
+> Why is there a discussion on intergenerational transmission in Section 4.1.3,
+> without intergenerational linkages?
+
+Section 4.1.3 specifies log x' = rho_x log x + eps with rho_x = 0.5, but section
+3.12 draws newborn productivity from the *unconditional* distribution. The
+process constructs the stationary distribution of types and nothing else. That is
+a writing inconsistency, not a request for a mechanism.
+
+**Recommended response, total cost near zero:**
+
+1. **R2's parental anxiety — one paragraph.** Parental altruism is an omitted
+   welfare channel; because these policies reduce next-generation SUD and
+   homelessness, incorporating it would amplify the measured gains; it is not
+   modelled because it requires a dynastic framework with its own calibration.
+   Cite Corbae, Glover and Nattinger (2024).
+2. **AE comment A6 — one sentence.** Either delete the intergenerational framing
+   from 4.1.3 or state that rho_x constructs the stationary distribution of
+   permanent types and does not link individual parents to individual children.
+3. **R2's FIRST margin — actually build it.** The homelessness externality is the
+   one he asked for, and it is the replacement for kappa_cons that answers R1's
+   internal-consistency objection. Implemented as `kappa_ext` but currently zero;
+   it still needs its calibration moment. **This is the real outstanding task
+   from R2's comment.**
+
+The design below is a genuine option if the intergenerational channel is ever
+wanted for its own sake. It is not the response to these reports.
+
+---
+
+## How to make it endogenous, if ever wanted
 
 R2's second welfare channel:
 
