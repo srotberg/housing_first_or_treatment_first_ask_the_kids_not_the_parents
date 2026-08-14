@@ -950,6 +950,10 @@ subroutine solve_age(j)
                     end do
                 end do
 
+                ! Parental warm glow: additive, constant across every choice,
+                ! so it sits outside the maximisation and moves no policy. It
+                ! still propagates to younger ages through beta*phi*EV.
+                if (j == j_parent) best = best + warm_glow(iy)
                 V(ia,iy,ie,id,iv,im,j)      = best
                 pol_a(ia,iy,ie,id,iv,im,j)  = best_a
                 pol_h(ia,iy,ie,id,iv,im,j)  = best_h
