@@ -31,12 +31,17 @@ module calibrate
 contains
 
 subroutine init_targets()
-    mom(1) = mom_t('drug participation (%)     ',  4.00_dp, 0.0_dp, 1.0_dp)
-    mom(2) = mom_t('SUD rate (%)               ',  2.00_dp, 0.0_dp, 1.0_dp)
+    ! NSDUH 2024, ages 26+ (the model's range), from data/nsduh_gradients.py.
+    ! The paper's 4% and 2% were built for ages 18+ on a different construction.
+    mom(1) = mom_t('drug participation (%)     ',  5.13_dp, 0.0_dp, 1.0_dp)
+    mom(2) = mom_t('SUD rate (%)               ',  3.68_dp, 0.0_dp, 1.0_dp)
     mom(3) = mom_t('homelessness rate (%)      ',  0.30_dp, 0.0_dp, 1.0_dp)
     mom(4) = mom_t('unemployment rate (%)      ',  4.90_dp, 0.0_dp, 1.0_dp)
     mom(5) = mom_t('unemp rate | SUD (%)       ', 26.90_dp, 0.0_dp, 1.0_dp)
-    mom(6) = mom_t('SUD share of homeless (%)  ', 37.00_dp, 0.0_dp, 1.0_dp)
+    ! DRUG use disorder among the homeless, 21.7% (Gutwinski et al. 2021). The
+    ! paper's 37% target sits on the ALCOHOL figure (36.7%) from the same
+    ! evidence base, but the model is about drug use.
+    mom(6) = mom_t('drug UD share of homeless(%)', 21.70_dp, 0.0_dp, 1.0_dp)
     mom(7) = mom_t('voucher recipients/elig (%)', 26.60_dp, 0.0_dp, 1.0_dp)
     mom(8) = mom_t('drug spend/income | SUD (%)', 44.00_dp, 0.0_dp, 1.0_dp)
     ! Housing burden over ALL households, not renters only: everyone rents in
