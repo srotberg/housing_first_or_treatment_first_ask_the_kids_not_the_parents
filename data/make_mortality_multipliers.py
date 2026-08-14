@@ -125,13 +125,22 @@ def main():
         kh = max(1.0, rr / ((1 - s) + s * kd))
         rows.append((age, kd, kh, r.get(age, float("nan"))))
 
+    # Emit the SHAPE and the homelessness RR, not just the levels. kappa_phi_d
+    # is still the second stage's instrument for the drug-price elasticity of
+    # participation, so its LEVEL has to stay free; only its profile is data.
+    # The model rebuilds both multipliers from these two columns whenever the
+    # level moves:
+    #     kappa_phi_d(a) = 1 + (level - 1) * shape(a)
+    #     kappa_phi_h(a) = max(1, rr_homeless(a) / [(1-s) + s*kappa_phi_d(a)])
     with open(OUT, "w", newline="") as fh:
         w = csv.writer(fh)
-        w.writerow(["age", "kappa_phi_d", "kappa_phi_h", "overdose_excess_ratio"])
+        w.writerow(["age", "shape_sud", "rr_homeless", "kappa_phi_d_at_peak_level",
+                    "kappa_phi_h_at_peak_level", "overdose_excess_ratio"])
         for age, kd, kh, rr in rows:
-            w.writerow([age, f"{kd:.6f}", f"{kh:.6f}", f"{rr:.6f}"])
+            w.writerow([age, f"{rr/rmax:.6f}", f"{rr_at(age):.6f}",
+                        f"{kd:.6f}", f"{kh:.6f}", f"{rr:.6f}"])
 
-    print(f"  wrote {OUT}")
+    print(f"  wrote {OUT}   (shape + RR; the model rescales to the calibrated level)")
     print(f"  SUD prevalence {100*a.sud_prevalence:.2f}%, "
           f"SUD share of homeless {100*s:.1f}%, peak SUD multiplier {a.peak_sud_mult}")
     print(f"    {'age':>4s}{'kappa_phi_d':>13s}{'kappa_phi_h':>13s}")

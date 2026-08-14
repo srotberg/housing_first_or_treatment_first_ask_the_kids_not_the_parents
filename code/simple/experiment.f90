@@ -330,8 +330,8 @@ subroutine calibrate_kappa_phi_d(iters, verbose)
     ! dependence between about 2.5 and 9.8; the bracket is that range.
     lo = log(2.5_dp); hi = log(9.8_dp)
 
-    kappa_phi_d = exp(lo); f_lo = price_elasticity()
-    kappa_phi_d = exp(hi); f_hi = price_elasticity()
+    kappa_phi_d = exp(lo); call refresh_mortality_multipliers(); f_lo = price_elasticity()
+    kappa_phi_d = exp(hi); call refresh_mortality_multipliers(); f_hi = price_elasticity()
     rising = (f_hi > f_lo)
 
     if (verbose) write(*,'(A,2F9.4,A,L2)') '   kappa_phi_d bracket elasticities: ', &
@@ -343,6 +343,7 @@ subroutine calibrate_kappa_phi_d(iters, verbose)
         else
             kappa_phi_d = exp(hi)
         end if
+        call refresh_mortality_multipliers()
         if (verbose) write(*,'(A)') &
             '   WARNING: -0.63 not attainable inside the Degenhardt SMR range; clamped'
         return
@@ -350,7 +351,7 @@ subroutine calibrate_kappa_phi_d(iters, verbose)
 
     do k = 1, iters
         mid = 0.5_dp*(lo+hi)
-        kappa_phi_d = exp(mid)
+        kappa_phi_d = exp(mid); call refresh_mortality_multipliers()
         f_mid = price_elasticity()
         if ((f_mid > target_price_elast) .eqv. rising) then
             hi = mid
@@ -358,7 +359,7 @@ subroutine calibrate_kappa_phi_d(iters, verbose)
             lo = mid
         end if
     end do
-    kappa_phi_d = exp(0.5_dp*(lo+hi))
+    kappa_phi_d = exp(0.5_dp*(lo+hi)); call refresh_mortality_multipliers()
 end subroutine calibrate_kappa_phi_d
 
 
