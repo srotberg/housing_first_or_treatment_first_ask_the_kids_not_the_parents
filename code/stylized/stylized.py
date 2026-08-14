@@ -46,8 +46,8 @@ The disorder hurts in two ways and each has a direct and an indirect arm:
 
     MORTALITY   kap   it kills you        kapH  it makes you homeless,
                                                 which also kills you
-    RESOURCE    u1    it costs you a job  ellH  homelessness costs a flow
-                xi    and a wage
+    RESOURCE    u1    it costs you a job, and the street means consuming
+                      h_hl of housing instead of h_ho
 
 Switching a channel off means switching every member of its group. Switching kap
 alone leaves the homelessness mortality penalty running in a row that is supposed
@@ -76,16 +76,19 @@ class P:
     b     = 0.010     # Stone Geary subsistence; th/b is the pull of the first unit
     beta  = 0.96
     R     = 1.03
-    phi0  = 0.94      # per period survival, clean, employed, housed
+    phi0  = 0.93      # survival over one period, clean, employed, housed
     aleph = 2.50      # flow value of being alive
 
     # the disorder
     lam   = 6.00      # addiction hazard per unit of use
-    rho   = 0.25      # recovery probability when HOUSED
-    rho_mult_hl = 0.40   # recovery multiplier when homeless: harder to get clean
+    rho   = 0.40      # recovery when HOUSED over one period: the full
+                      # model's 2.5 per cent a year over twenty years
+    rho_mult_hl = 0.50   # recovery multiplier on the street. The full
+                         # model's value: harder to get clean when homeless.
     kap   = 0.45      # MORTALITY, direct
-    xi    = 0.20      # RESOURCE, direct wage penalty
-    u1    = 0.16      # RESOURCE, unemployment probability with the disorder
+    u1    = 0.1625    # RESOURCE, unemployment given the disorder. MEASURED,
+                      # not calibrated: NSDUH 2024, ages 26+, weighted,
+                      # moderate or severe drug use disorder.
 
     # employment
     u0    = 0.049     # unemployment probability without the disorder
@@ -94,15 +97,17 @@ class P:
     # HOUSING. One rental unit at price pr, or the street.
     #
     # Homelessness is a CHOICE, not a hazard. A household compares living in the
-    # unit, which costs pr, against the street, which is free but costs dis_hl in
-    # flow utility, raises mortality by kapH, and lowers the recovery
-    # probability. Households with low cash choose the street. This is the
+    # unit, which costs pr, against the street, which is free but supplies only
+    # h_hl of housing services instead of h_ho, raises mortality by kapH, and
+    # lowers the recovery probability. Households with low cash choose the street. This is the
     # trade off the whole literature is built on, and modelling it as an
     # exogenous probability, as an earlier version of this file did, hides it:
     # the voucher then works by shrinking a lottery rather than by relaxing a
     # budget constraint, which is not how the policy operates.
-    pr    = 0.21      # rent, as a share of mean income
-    dis_hl = 0.80     # RESOURCE, flow utility cost of the street
+    gam   = 0.25      # weight on housing in utility. SET, not calibrated.
+    h_ho  = 1.0       # the one rental size, normalised
+    h_hl  = 0.05      # housing "consumed" on the street; calibrated
+    pr    = 0.21      # rent per unit, share of mean income; calibrated
     kapH  = 0.35      # MORTALITY, extra death risk on the street
 
     # policy: a voucher cuts the tenant's rent to kappa_r * pr
@@ -152,7 +157,7 @@ def _states(par, d, policy):
     pv = par.pV if covered else 0.0
     out = []
     for e, pe in ((0, 1.0 - pu), (1, pu)):                  # e = 1 unemployed
-        inc = (par.omega if e else 1.0) * (1.0 - par.xi * d)
+        inc = par.omega if e else 1.0
         for rent, prb in ((par.kappa_r * par.pr, pv), (par.pr, 1.0 - pv)):
             if pe * prb > 1e-14:
                 out.append((pe * prb, inc, rent))
@@ -173,10 +178,11 @@ def solve_late(par, y, policy):
     for d in (0, 1):
         for p, inc, rent in _states(par, d, policy):
             cash = par.R * ag + inc * y
-            v_ho = np.where(cash - rent > 1e-9,
-                            np.log(np.maximum(cash - rent, 1e-12)) + par.aleph,
-                            -np.inf)
-            v_hl = np.log(np.maximum(cash, 1e-12)) - par.dis_hl + par.aleph
+            v_ho = np.where(cash - rent * par.h_ho > 1e-9,
+                            np.log(np.maximum(cash - rent * par.h_ho, 1e-12))
+                            + par.gam * np.log(par.h_ho) + par.aleph, -np.inf)
+            v_hl = (np.log(np.maximum(cash, 1e-12))
+                    + par.gam * np.log(par.h_hl) + par.aleph)
             street = v_hl > v_ho
             V3[:, d] += p * np.where(street, v_hl, v_ho)
             H3[:, d] += p * street
@@ -188,12 +194,13 @@ def solve_late(par, y, policy):
             cash = par.R * ag[:, None] + inc * y
             best = None
             for h in (0, 1):                       # h = 1 is the street
-                c = cash - (rent if h == 0 else 0.0) - ag[None, :]
+                c = cash - (rent * par.h_ho if h == 0 else 0.0) - ag[None, :]
                 r = par.rho * (par.rho_mult_hl if h else 1.0) if d == 1 else 0.0
                 EV3 = (1.0 - r) * V3[:, d] + r * V3[:, 0]
                 val = np.where(c > 1e-9,
                                np.log(np.maximum(c, 1e-12))
-                               - (par.dis_hl if h else 0.0) + par.aleph
+                               + par.gam * np.log(par.h_hl if h else par.h_ho)
+                               + par.aleph
                                + par.beta * _surv(par, d, h) * EV3[None, :],
                                -np.inf).max(axis=1)
                 best = val if best is None else np.maximum(best, val)
@@ -272,7 +279,7 @@ def aggregates(par, ygrid, w, policy=None):
                 inc_all += m * p * inc * y
                 if d == 1:
                     inc_sud += m * p * inc * y
-                hcost += m * p * (1.0 - street) * rent
+                hcost += m * p * (1.0 - street) * rent * par.h_ho
                 hinc  += m * p * inc * y
 
     spend = float((ww * p_use * par.p_v * vbar).sum()

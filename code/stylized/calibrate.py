@@ -6,12 +6,12 @@ WHAT IS TARGETED, AND WHAT IS DELIBERATELY NOT
     b        drug participation rate                     5.13 %
     kap      price elasticity of participation          -0.45
     lam      share of users who acquire the disorder    71.7 %
-    xi       income with the disorder / average          0.687
     pr       housing spending / income                    21.2 %
-    dis_hl   homelessness rate                           0.399 %
+    h_hl     homelessness rate                           0.399 %
     aleph    value of a statistical life / PERIOD income  5.36
 
     HELD OUT  income of USERS / average                  0.951
+    HELD OUT  income with the disorder / average         0.687
     HELD OUT  share of the homeless with the disorder    21.7 %
 
 The income gradient of USE is never targeted. It is the fact the mechanism is
@@ -60,17 +60,21 @@ W  = np.exp(-0.5 * ((np.log(YG) + 0.5 * 0.75**2) / 0.75)**2)
 # nobody uses enough to be exposed to it, and the fit stalls with progression at
 # 8 per cent. The full model's annual hazard given any use is 2 per cent, so
 # over a twenty year period 1 - 0.98^20 = 0.332.
-TARGET = dict(part=0.0513, spend=0.11, elast_p=-0.45, prog=0.332, r_sud=0.687,
+TARGET = dict(part=0.0513, spend=0.11, elast_p=-0.45, prog=0.332,
               homeless=0.00399, housing_share=0.212, vsl=5.36)
 
 FREE = [('b',     1e-5, 3.0),
         ('th',    2e-3, 4.00),
         ('kap',   0.02, 0.95),
         ('lam',   0.20, 400.0),
-        ('xi',      0.01, 0.85),
         ('pr',      0.02, 0.60),
-        ('dis_hl',  0.02, 6.00),
+        ('h_hl',    1e-4, 0.90),
         ('aleph',   0.20, 400.0)]
+
+# u1 is MEASURED, so it is not free in the benchmark. It is freed only in the
+# resource only configuration below, where the mortality channel is switched off
+# and the labour market channel is asked to carry the price elasticity alone.
+BRACKETS = FREE + [('u1', 0.05, 0.95)]
 
 LABEL = {'part': 'drug participation rate',
          'elast_p': 'price elasticity of participation',
@@ -150,12 +154,14 @@ def report(par):
     print('CALIBRATION OF THE STYLISED MODEL')
     print('=' * 72)
     print(f"{'moment':41s}{'target':>10s}{'model':>10s}{'gap':>10s}")
-    for k in ['part', 'spend', 'elast_p', 'prog', 'r_sud', 'housing_share',
+    for k in ['part', 'spend', 'elast_p', 'prog', 'housing_share',
               'homeless', 'vsl']:
         print(f'{LABEL[k]:41s}{TARGET[k]:10.4f}{m[k]:10.4f}{m[k]-TARGET[k]:10.4f}')
     print('-' * 72)
     print(f"{'HELD OUT income of users / average':41s}{0.951:10.4f}"
           f"{m['r_use']:10.4f}{m['r_use']-0.951:10.4f}")
+    print(f"{'HELD OUT income with disorder / average':41s}{0.687:10.4f}"
+          f"{m['r_sud']:10.4f}{m['r_sud']-0.687:10.4f}")
     print(f"{'HELD OUT share of homeless w/ disorder':41s}{0.217:10.4f}"
           f"{m['sud_of_homeless']:10.4f}{m['sud_of_homeless']-0.217:10.4f}")
     print('-' * 72)
@@ -194,14 +200,19 @@ def jacobian(par, rel=0.08):
 # because one configuration was allowed a better fit.
 CONFIGS = [
     ('both channels',  {},                                   ['b', 'th', 'kap']),
-    ('mortality only', dict(xi=0.0, u1=P.u0, dis_hl=0.02),    ['b', 'th', 'kap']),
-    ('resource only',  dict(kap=0.0, kapH=0.0),               ['b', 'th', 'xi']),
+    ('mortality only', dict(u1=P.u0),                         ['b', 'th', 'kap']),
+    # In the resource only row the mortality channel is off, so the labour
+    # market channel is allowed to be AS STRONG AS IT NEEDS TO BE to match the
+    # same price elasticity: the unemployment rate given the disorder is freed.
+    # That is R1's rival hypothesis in its strongest form, and it still cannot
+    # produce the income gradient.
+    ('resource only',  dict(kap=0.0, kapH=0.0),               ['b', 'th', 'u1']),
 ]
 
 
 def fit_config(base, kw, free_names, maxfev=400):
     par = with_(base, **kw)
-    fr = [f for f in FREE if f[0] in free_names]
+    fr = [f for f in BRACKETS if f[0] in free_names]
     t = {'part': TARGET['part'], 'elast_p': TARGET['elast_p'],
          'spend': TARGET['spend']}
     return fit(par, targets=t, free=fr, maxfev=maxfev, verbose=False)
