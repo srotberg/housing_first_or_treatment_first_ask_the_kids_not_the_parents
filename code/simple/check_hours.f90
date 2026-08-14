@@ -34,8 +34,12 @@ program check_hours
     worst  = 0.0_dp; nbad = 0; ntot = 0; hgap = 0.0_dp
     seedstep = 7
 
-    ! a spread-out sample of working-age employed states, where hours bind
+    ! a spread-out sample of working-age employed states, where hours bind.
+    ! NB: EV is a single table overwritten once per age inside solve_household,
+    ! so it must be REBUILT for the age under test -- V(:,...,j+1) survives, so
+    ! this reproduces exactly the table the solve used at that age.
     do j = 2, j_ret-1, 6
+    call build_EV(j)
     do im = 1, NM
     do iv = 1, NV
     do id = 1, ND
@@ -121,6 +125,8 @@ program check_hours
                          '   (should be 0)'
     write(*,'(A,ES12.4)')'   worst value vgap           : ', worst
     write(*,'(A,ES12.4)')'   hours vgap at the worst    : ', hgap
+    write(*,'(A)') '   (a 4001-point grid resolves hours to 2.5e-4, so a value gap'
+    write(*,'(A)') '    below ~1e-6 is the grid''s own error, not a solver failure)'
     ! NOTE: the brute force uses a 4001-point grid, so a vgap below ~1e-6 is the
     ! grid's own resolution, not a solver failure.
 end program check_hours

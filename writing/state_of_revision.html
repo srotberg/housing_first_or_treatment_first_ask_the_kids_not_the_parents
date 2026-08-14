@@ -1,0 +1,835 @@
+<title>Housing First Revision Status</title>
+<style>
+:root{
+  --ground:#FBFBFC;
+  --surface:#F1F3F6;
+  --surface-2:#E8EBF0;
+  --ink:#15171C;
+  --ink-2:#565C67;
+  --ink-3:#7D838E;
+  --rule:#DDE0E7;
+  --rule-strong:#C3C8D2;
+  --accent:#1B565D;
+  --accent-soft:#E3EFF0;
+  --ok:#2C6449;
+  --ok-soft:#E1EFE7;
+  --warn:#7E621A;
+  --warn-soft:#F4EEDC;
+  --open:#94363A;
+  --open-soft:#F6E6E6;
+  --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0F1115;
+    --surface:#171A20;
+    --surface-2:#1E222A;
+    --ink:#E7E9ED;
+    --ink-2:#9AA0AC;
+    --ink-3:#7A808C;
+    --rule:#252932;
+    --rule-strong:#343946;
+    --accent:#74C2C7;
+    --accent-soft:#16292B;
+    --ok:#7CC49C;
+    --ok-soft:#152420;
+    --warn:#D3B166;
+    --warn-soft:#241F12;
+    --open:#DE8A8D;
+    --open-soft:#251617;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0F1115;
+  --surface:#171A20;
+  --surface-2:#1E222A;
+  --ink:#E7E9ED;
+  --ink-2:#9AA0AC;
+  --ink-3:#7A808C;
+  --rule:#252932;
+  --rule-strong:#343946;
+  --accent:#74C2C7;
+  --accent-soft:#16292B;
+  --ok:#7CC49C;
+  --ok-soft:#152420;
+  --warn:#D3B166;
+  --warn-soft:#241F12;
+  --open:#DE8A8D;
+  --open-soft:#251617;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font-family:var(--serif);
+  font-size:17px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{
+  max-width:1040px;
+  margin:0 auto;
+  padding:0 28px 120px;
+  display:flex;
+  flex-direction:column;
+  gap:0;
+}
+.prose{max-width:68ch}
+
+/* ---- masthead ---- */
+header.mast{
+  padding:64px 0 34px;
+  border-bottom:2px solid var(--ink);
+  margin-bottom:44px;
+}
+.eyebrow{
+  font-family:var(--mono);
+  font-size:11.5px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin:0 0 18px;
+}
+h1{
+  font-family:var(--sans);
+  font-size:clamp(30px,4.4vw,46px);
+  line-height:1.08;
+  letter-spacing:-.028em;
+  font-weight:700;
+  margin:0 0 16px;
+  text-wrap:balance;
+}
+.standfirst{
+  font-size:19px;
+  line-height:1.55;
+  color:var(--ink-2);
+  margin:0;
+  max-width:62ch;
+}
+.standfirst strong{color:var(--ink);font-weight:600}
+
+/* ---- contents ---- */
+nav.toc{
+  background:var(--surface);
+  border:1px solid var(--rule);
+  border-radius:2px;
+  padding:20px 24px;
+  margin-bottom:56px;
+}
+nav.toc h2{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--ink-3);
+  margin:0 0 12px;
+  font-weight:500;
+}
+nav.toc ol{
+  margin:0;padding:0;list-style:none;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:6px 28px;
+}
+nav.toc a{
+  font-family:var(--sans);
+  font-size:14.5px;
+  color:var(--ink);
+  text-decoration:none;
+  border-bottom:1px solid transparent;
+}
+nav.toc a:hover{border-bottom-color:var(--accent);color:var(--accent)}
+nav.toc .num{
+  font-family:var(--mono);
+  font-size:12px;
+  color:var(--ink-3);
+  margin-right:9px;
+}
+
+/* ---- sections ---- */
+section{margin-bottom:60px}
+h2.sec{
+  font-family:var(--sans);
+  font-size:13px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  font-weight:650;
+  color:var(--ink);
+  margin:0 0 6px;
+  padding-bottom:0;
+  display:flex;align-items:baseline;gap:12px;
+}
+h2.sec .n{
+  font-family:var(--mono);
+  color:var(--accent);
+  font-size:12px;
+  letter-spacing:.04em;
+}
+.sec-title{
+  font-family:var(--sans);
+  font-size:clamp(23px,2.8vw,30px);
+  letter-spacing:-.02em;
+  font-weight:700;
+  margin:0 0 26px;
+  padding-bottom:14px;
+  border-bottom:1px solid var(--rule-strong);
+  text-wrap:balance;
+}
+h3{
+  font-family:var(--sans);
+  font-size:18.5px;
+  letter-spacing:-.012em;
+  font-weight:650;
+  margin:40px 0 12px;
+  text-wrap:balance;
+}
+h4{
+  font-family:var(--mono);
+  font-size:12px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--ink-2);
+  font-weight:500;
+  margin:30px 0 10px;
+}
+p{margin:0 0 16px}
+p+p{margin-top:-2px}
+strong{font-weight:650}
+em{font-style:italic}
+a{color:var(--accent)}
+code{
+  font-family:var(--mono);
+  font-size:.85em;
+  background:var(--surface-2);
+  padding:.1em .34em;
+  border-radius:2px;
+}
+pre{
+  font-family:var(--mono);
+  font-size:13px;
+  line-height:1.55;
+  background:var(--surface);
+  border:1px solid var(--rule);
+  border-left:3px solid var(--accent);
+  padding:16px 18px;
+  overflow-x:auto;
+  margin:0 0 20px;
+}
+pre code{background:none;padding:0;font-size:inherit}
+ul{margin:0 0 18px;padding-left:22px}
+li{margin-bottom:7px}
+
+/* ---- tables ---- */
+.tbl{overflow-x:auto;margin:0 0 24px;border:1px solid var(--rule)}
+table{
+  border-collapse:collapse;
+  width:100%;
+  font-family:var(--sans);
+  font-size:14.5px;
+  line-height:1.45;
+  background:var(--ground);
+}
+thead th{
+  background:var(--surface);
+  text-align:left;
+  font-weight:600;
+  font-size:11.5px;
+  letter-spacing:.07em;
+  text-transform:uppercase;
+  color:var(--ink-2);
+  padding:11px 14px;
+  border-bottom:1px solid var(--rule-strong);
+  white-space:nowrap;
+}
+tbody td{
+  padding:11px 14px;
+  border-bottom:1px solid var(--rule);
+  vertical-align:top;
+}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:nth-child(even) td{background:color-mix(in srgb,var(--surface) 45%,transparent)}
+td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13.5px;white-space:nowrap}
+td.k{font-family:var(--mono);font-size:13px;white-space:nowrap;color:var(--ink)}
+
+/* ---- callout ---- */
+.note{
+  border-left:3px solid var(--accent);
+  background:var(--accent-soft);
+  padding:16px 20px;
+  margin:0 0 24px;
+  font-size:16px;
+}
+.note.risk{border-left-color:var(--open);background:var(--open-soft)}
+.note p:last-child{margin-bottom:0}
+.note .lbl{
+  display:block;
+  font-family:var(--mono);
+  font-size:10.5px;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:7px;
+}
+.note.risk .lbl{color:var(--open)}
+
+/* ---- status chips ---- */
+.chip{
+  display:inline-block;
+  font-family:var(--mono);
+  font-size:10.5px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  padding:2px 7px;
+  border-radius:2px;
+  white-space:nowrap;
+  vertical-align:2px;
+}
+.chip.done{background:var(--ok-soft);color:var(--ok)}
+.chip.part{background:var(--warn-soft);color:var(--warn)}
+.chip.open{background:var(--open-soft);color:var(--open)}
+
+/* ---- referee tags ---- */
+.ref{
+  font-family:var(--mono);
+  font-size:12.5px;
+  white-space:nowrap;
+  color:var(--ink);
+  font-weight:600;
+}
+
+/* ---- blocker cards ---- */
+.blocker{
+  border:1px solid var(--rule);
+  border-top:3px solid var(--rule-strong);
+  padding:20px 22px 6px;
+  margin:0 0 22px;
+  background:var(--surface);
+}
+.blocker.critical{border-top-color:var(--open)}
+.blocker.soon{border-top-color:var(--warn)}
+.blocker.cheap{border-top-color:var(--ok)}
+.blocker h3{margin:0 0 4px;font-size:17px}
+.blocker .why{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--ink-3);
+  margin:0 0 16px;
+}
+.blocker .tbl{border:none;margin-bottom:16px}
+.blocker table{background:transparent}
+.blocker thead th{background:transparent;border-bottom:1px solid var(--rule-strong)}
+.blocker tbody tr:nth-child(even) td{background:transparent}
+
+/* ---- ordered plan ---- */
+ol.plan{list-style:none;margin:0;padding:0;counter-reset:step}
+ol.plan li{
+  counter-increment:step;
+  display:grid;
+  grid-template-columns:38px 1fr;
+  gap:16px;
+  padding:16px 0;
+  border-bottom:1px solid var(--rule);
+  margin:0;
+}
+ol.plan li:last-child{border-bottom:none}
+ol.plan li::before{
+  content:counter(step);
+  font-family:var(--mono);
+  font-size:19px;
+  color:var(--accent);
+  line-height:1.3;
+}
+
+footer{
+  margin-top:30px;
+  padding-top:22px;
+  border-top:1px solid var(--rule);
+  font-family:var(--mono);
+  font-size:11.5px;
+  letter-spacing:.06em;
+  color:var(--ink-3);
+  text-transform:uppercase;
+}
+@media (max-width:640px){
+  body{font-size:16px}
+  .wrap{padding:0 18px 80px}
+  header.mast{padding-top:40px}
+}
+</style>
+
+<div class="wrap">
+
+<header class="mast">
+  <p class="eyebrow">RED-D-26-00078 &nbsp;·&nbsp; revision status</p>
+  <h1>Housing First or Treatment First?</h1>
+  <p class="standfirst">What the rebuilt model now is, how it is calibrated in <strong>two stages</strong>, what it is validated against, which referee comment each change answers — and, in §5, what is still <strong>unanswered</strong>.</p>
+</header>
+
+<nav class="toc">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#s1"><span class="num">1</span>The model</a></li>
+    <li><a href="#s2"><span class="num">2</span>Calibration, in two stages</a></li>
+    <li><a href="#s3"><span class="num">3</span>Validation and sources</a></li>
+    <li><a href="#s4"><span class="num">4</span>Changes → comments answered</a></li>
+    <li><a href="#s5"><span class="num">5</span>What is still unanswered</a></li>
+    <li><a href="#s6"><span class="num">6</span>Compute</a></li>
+    <li><a href="#s7"><span class="num">7</span>Recommended order</a></li>
+  </ol>
+</nav>
+
+<!-- ===================== 1 ===================== -->
+<section id="s1">
+  <h2 class="sec"><span class="n">§1</span> Model</h2>
+  <p class="sec-title">What is written</p>
+
+  <div class="prose">
+    <p>The original model is untouched (<code>housing_first_or_treatment_first_SR_v1.f90</code>) and remains the homeownership version for an appendix. Everything below refers to the rebuild in <code>code/simple/</code>.</p>
+  </div>
+
+  <h3>1.1 Environment and state</h3>
+  <div class="prose">
+    <p>Overlapping generations, model ages 1–60 (real age 26–85), retirement at 66. Households die stochastically; assets of the deceased are redistributed as a <em>uniform</em> lump-sum bequest.</p>
+  </div>
+
+  <div class="tbl">
+  <table>
+    <thead><tr><th>State</th><th>Symbol</th><th class="num">Points</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Age</td><td class="k">j</td><td class="num">60</td><td>real age 26–85</td></tr>
+      <tr><td>Financial assets</td><td class="k">a ≥ 0</td><td class="num">60</td><td>cubic spacing, dense near zero; no borrowing</td></tr>
+      <tr><td>Labour productivity</td><td class="k">y</td><td class="num">9</td><td>Rouwenhorst, AR(1) in logs, ρ = 0.90, σ = 0.20</td></tr>
+      <tr><td>Employment</td><td class="k">e</td><td class="num">3</td><td>employed / unemployed with UI (year 1) / unemployed without UI</td></tr>
+      <tr><td>SUD status</td><td class="k">d</td><td class="num">2</td><td>clean / substance use disorder</td></tr>
+      <tr><td>Serious mental illness</td><td class="k">m</td><td class="num">2</td><td>absent / present</td></tr>
+      <tr><td>Housing voucher</td><td class="k">η</td><td class="num">2</td><td>held / not held</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="prose">
+    <p>12,960 points per age. Two deliberate absences.</p>
+    <p><strong>Housing entered with is not a state.</strong> Survival, employment transitions and the recovery hazard all condition on the <em>chosen</em> <code>h'</code>, and renters face no adjustment cost, so the unit a household arrives in is payoff-irrelevant. Removing it left every aggregate identical and cut the solve by 6.6×.</p>
+    <p><strong>Employment needs three states, not four.</strong> UI is drawn on <em>entry</em> to unemployment with probability 0.30 and lasts one year. A first-year non-recipient and a long-term unemployed household have identical income (zero) and identical continuations, so those two states merge <em>exactly</em> — a proof, not an approximation.</p>
+  </div>
+
+  <h3>1.2 Choices</h3>
+  <div class="prose">
+    <p>Housing <code>h' ∈ {homeless, 3 rental sizes}</code> × drug regime <code>∈ {abstain, use}</code> × treatment <code>∈ {0,1}</code> × savings <code>a'</code> on the full 60-point grid × <strong>hours worked, continuous on [0,1]</strong>.</p>
+  </div>
+
+  <h3>1.3 Preferences</h3>
+<pre><code>u(c, h, v, n) = [ c^α · h^β · (v+b)^γ ]^(1−σ)/(1−σ)
+                + ω_ℓ · (1−n)^(1−σ_ℓ)/(1−σ_ℓ)
+                + ℵ − κ_ext·( H_agg + ω_ext·HD_agg )
+
+α = (1−θ_h)(1−θ_v),   β = θ_h(1−θ_v),   γ = θ_v</code></pre>
+  <div class="prose">
+    <p>The Cobb-Douglas <strong>weights are invariant to SUD status</strong>. Only the Stone-Geary shifter <code>b</code> varies, by SUD status and by mental illness. This is the AE's suggestion, and it is what kills the "reducing addiction mechanically raises utility from c and h" objection.</p>
+    <p>A single <code>b</code> cannot match both the participation moment and the expenditure-share moment: a <code>b</code> large enough to deter clean households pushes the unconstrained <code>v*</code> below zero, which drives SUD drug spending to the corner. Two values separate them — <code>b(clean)</code> pins participation, <code>b(SUD)</code> keeps the choice interior so <code>θ_v</code> pins the expenditure share. Poor mental health <em>lowers</em> <code>b</code>, raising the marginal utility of the first units of use: the self-medication channel.</p>
+    <p><code>ℵ</code> is the flow value of being alive. It is what makes mortality risk deter drug use, and therefore carries the paper's central mechanism.</p>
+  </div>
+
+  <h3>1.4 Drug use and addiction</h3>
+  <div class="prose">
+    <p>Two regimes: abstain (<code>v = 0</code>) or use (<code>v &gt; 0</code>, chosen continuously). <strong>A single addiction hazard</strong> — a clean household that uses becomes SUD next period with probability <code>π_d</code>, regardless of how much it consumes. No light/heavy threshold, no consumption-dependent hazard.</p>
+    <p>SUD households recover with a hazard depending on housing (lower when homeless), mental illness (lower with SMI), and <strong>treatment take-up</strong>, which is a choice with a resource cost. Clean households may initiate only up to real age 55.</p>
+  </div>
+
+  <h3>1.5 Labour supply — continuous, from the FOC</h3>
+  <div class="prose">
+    <p>Hours are pinned by the intratemporal first-order condition, solved the way the original code solves it: bracket on the sign of</p>
+  </div>
+<pre><code>u_c · d(resources)/d(hours)  −  ω_ℓ·(1−n)^(−σ_ℓ)</code></pre>
+  <div class="prose">
+    <p>Two things the original does not do, both of which matter.</p>
+    <p><strong>The residual is not monotone in hours.</strong> The food-stamp floor claws back at 100% and the voucher at <code>κ_r = 0.30</code>, so <code>d(resources)/d(hours)</code> jumps <em>up</em> where each transfer runs out and the residual can cross zero more than once. That is the <strong>welfare trap</strong>, not a numerical artefact: "work a little and keep the transfer" and "work properly" are genuinely distinct local optima, and the household has to compare them. A single bisection on [0,1] would silently pick whichever it happened to bracket. The interval is split at the kinks and each piece solved exactly. Voucher eligibility is a step in the <em>continuation</em> value rather than the budget, so the piece optimum is clamped to each side of it and both are evaluated.</p>
+    <p><strong>The FOC is solved multiplied through by <code>(1−n)^σ_ℓ / u_c</code>.</strong> Both factors are positive, so no bracketing decision changes, but it removes the poles false position crawls on — <code>u_c</code> blowing up as resources run out, and the marginal utility of leisure blowing up as hours approach one. With Anderson–Björck rather than Illinois for the remaining asymmetry at zero hours, a root takes 6.8 evaluations instead of 22.</p>
+    <p><code>check_hours.f90</code> validates the solver against a 4,001-point brute-force scan of the identical objective.</p>
+  </div>
+
+  <h3>1.6 Housing, vouchers, and the two policies</h3>
+  <div class="prose">
+    <p>Rent is a fixed price — no housing-market general equilibrium. Homelessness is the lowest point of the housing grid, with a calibrated service flow. Voucher rules are institutional, not free: eligibility below 50% of median income, 30% tenant contribution, and a lottery probability calibrated to HUD take-up among the eligible. Vouchers pay only while renting, never while homeless.</p>
+  </div>
+
+  <div class="tbl">
+  <table>
+    <thead><tr><th></th><th>Housing First</th><th>Treatment First</th></tr></thead>
+    <tbody>
+      <tr><td>Voucher conditional on abstinence</td><td>no</td><td>yes</td></tr>
+      <tr><td>Detection probability</td><td>—</td><td class="k">p_detect ≤ 1</td></tr>
+      <tr><td>False-positive rate</td><td>—</td><td class="k">p_false ≥ 0</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="prose">
+    <p>Both detection parameters are policy-experiment objects reported as sensitivity, not calibrated: the point is precisely that perfect enforcement is not credible.</p>
+  </div>
+
+  <h3>1.7 Serious mental illness</h3>
+  <div class="prose">
+    <p>Exogenous persistent binary state. It is <strong>SMI</strong>, not "any mental illness": AMI covers ~23% of US adults including mild anxiety, while SMI is ~5.5% and is defined by substantial functional impairment. Putting a quarter of the population in a state that halves productivity would be indefensible.</p>
+    <p>This follows İmrohoroğlu and Zhao (2022) structurally, not just numerically: in their model labour-market shocks generate <em>short</em> homeless spells while health shocks generate <em>chronic</em> homelessness, and expanded disability income is the effective policy for the chronic group. Homelessness driven purely by income risk is transitory; the persistent tail needs a persistent state.</p>
+    <p>SMI affects six things: productivity conditional on working, job finding and separation, mortality, the SUD recovery hazard, <code>b</code> (self-medication), and eligibility for disability income when not employed. Onset is <em>derived</em> from the target prevalence and the recovery rate, so calibrating persistence never disturbs prevalence.</p>
+  </div>
+
+  <h3>1.8 Government and equilibrium</h3>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Clears</th><th>How</th></tr></thead>
+    <tbody>
+      <tr><td class="k">τ_ℓ</td><td>government budget, closed form given the distribution</td></tr>
+      <tr><td class="k">p_v</td><td>drug market: cost <code>C(V) = ψ₁/ψ₂ · V^ψ₂</code>, so supply elasticity <code>= 1/(ψ₂−1)</code></td></tr>
+      <tr><td>bequests</td><td>assets of the deceased, redistributed uniformly</td></tr>
+      <tr><td class="k">H_agg, HD_agg</td><td>fixed point, since they enter period utility (only when <code>κ_ext &gt; 0</code>)</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="prose">
+    <p><code>ψ₁</code> is normalised so <code>p_v = 1</code> at the benchmark. This answers R3's worry that endogenising <code>p_v</code> "requires suppressing this normalization": it does not, because the normalisation moves to <code>ψ₁</code>. Only counterfactuals move the price.</p>
+    <p>The externality enters <strong>period utility</strong>, taken as given by households — that is what makes it a spillover rather than a private cost — but the aggregates are equilibrium objects, so policy moves them and the movement feeds back into the value of life and hence into drug decisions. This is the property <code>κ_cons</code> lacked.</p>
+  </div>
+</section>
+
+<!-- ===================== 2 ===================== -->
+<section id="s2">
+  <h2 class="sec"><span class="n">§2</span> Calibration</h2>
+  <p class="sec-title">Two stages, two different exercises</p>
+
+  <h3>2.1 First stage — the stationary equilibrium</h3>
+  <h4>Externally set</h4>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Parameter</th><th class="num">Value</th><th>Source</th></tr></thead>
+    <tbody>
+      <tr><td class="k">σ (CRRA)</td><td class="num">2.0</td><td>standard</td></tr>
+      <tr><td class="k">σ_ℓ (leisure curvature)</td><td class="num">3.0</td><td>Frisch elasticity 0.5, Chetty (2012)</td></tr>
+      <tr><td class="k">ξ (tax progressivity)</td><td class="num">0.85</td><td>Heathcote, Storesletten and Violante (2017)</td></tr>
+      <tr><td class="k">r</td><td class="num">0.03</td><td>Kaplan, Mitman and Violante (2020)</td></tr>
+      <tr><td class="k">κ_V (voucher eligibility)</td><td class="num">0.50 × median</td><td>HUD rule</td></tr>
+      <tr><td class="k">κ_r (tenant contribution)</td><td class="num">0.30</td><td>HUD rule</td></tr>
+      <tr><td class="k">π_UI (entrants drawing UI)</td><td class="num">0.30</td><td>insured unemployment / total unemployment, FRED 2014–24</td></tr>
+      <tr><td class="k">UI replacement rate</td><td class="num">0.50</td><td>standard US</td></tr>
+      <tr><td class="k">π_ue (job finding, annual)</td><td class="num">0.55</td><td>Krueger, Cramer and Cho (2014)</td></tr>
+      <tr><td class="k">κ_ue,h</td><td class="num">0.80</td><td>Desmond and Gershenson (2016)</td></tr>
+      <tr><td class="k">κ_φ,h</td><td class="num">1.60</td><td>Meyer et al. (2025), 60% excess mortality</td></tr>
+      <tr><td class="k">κ_φ,m</td><td class="num">2.50</td><td>standardised mortality ratio for SMI, 2–3</td></tr>
+      <tr><td class="k">SMI prevalence</td><td class="num">5.5%</td><td>NSDUH 2023, adults</td></tr>
+      <tr><td class="k">SMI recovery hazard</td><td class="num">0.067/yr</td><td>İmrohoroğlu–Zhao's own moment: ~50% improve enough to work within 10 years</td></tr>
+      <tr><td class="k">χ_D (fiscal cost per SUD)</td><td class="num">0.212</td><td>CEA (2017), ~$30,000 per person-year</td></tr>
+      <tr><td class="k">χ_H (fiscal cost per homeless)</td><td class="num">0.252</td><td>NAEH — <strong>reported as sensitivity</strong>; R2 and R3 both judge it high</td></tr>
+      <tr><td class="k">ρ_pen,d (SUD wage penalty)</td><td class="num">1.00</td><td><strong>no direct effect in the baseline</strong> — see A20</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h4>Internally calibrated — 19 parameters, 19 moments</h4>
+  <div class="prose">
+    <p>Each parameter is assigned the moment it dominates, and the sign of <code>dM/dparam</code> is declared in code, so a wrong sign shows up immediately as a moment walking away from its target.</p>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Parameter</th><th>Moment</th><th class="num">Target</th><th>Source</th></tr></thead>
+    <tbody>
+      <tr><td class="k">b(clean)</td><td>drug participation</td><td class="num">5.13%</td><td>NSDUH 2024, ages 26+</td></tr>
+      <tr><td class="k">π_d</td><td>SUD rate</td><td class="num">3.68%</td><td>NSDUH 2024, ages 26+</td></tr>
+      <tr><td class="k">h_homeless</td><td>homelessness rate</td><td class="num">0.30%</td><td>HUD point-in-time</td></tr>
+      <tr><td class="k">π_eu</td><td>unemployment rate</td><td class="num">4.90%</td><td>BLS</td></tr>
+      <tr><td class="k">κ_ue,d</td><td>unemployment rate given SUD</td><td class="num">26.90%</td><td>NSDUH</td></tr>
+      <tr><td class="k">recover_mult_hl</td><td>drug UD share of the homeless</td><td class="num">21.70%</td><td>Gutwinski et al. (2021)</td></tr>
+      <tr><td class="k">π_V</td><td>voucher recipients / income-eligible</td><td class="num">26.60%</td><td>HUD</td></tr>
+      <tr><td class="k">θ_v</td><td>drug spending / income given SUD</td><td class="num">44.00%</td><td>paper's existing moment</td></tr>
+      <tr><td class="k">θ_h</td><td>aggregate housing cost / income</td><td class="num">21.20%</td><td>SCF 2022, <strong>all</strong> households</td></tr>
+      <tr><td class="k">p_rent</td><td>share with housing cost &gt; 50% of income</td><td class="num">17.49%</td><td>SCF 2022, all households</td></tr>
+      <tr><td class="k">ℵ</td><td>SUD income / average income</td><td class="num">68.70%</td><td>NSDUH 2024</td></tr>
+      <tr><td class="k">di_coverage</td><td>SMI share of the homeless</td><td class="num">25.00%</td><td>Gutwinski et al. (2021)</td></tr>
+      <tr><td class="k">κ_ue,m</td><td>unemployment rate given SMI</td><td class="num">7.10%</td><td>NSDUH Table 6.5B, via Bayes</td></tr>
+      <tr><td class="k">ρ_pen,m</td><td>homeless income / average</td><td class="num">19.10%</td><td>Meyer et al., linked administrative data</td></tr>
+      <tr><td class="k"><strong>β</strong></td><td><strong>wealth / GDP</strong></td><td class="num"><strong>3.00</strong></td><td>standard US capital–output ratio</td></tr>
+      <tr><td class="k">cfloor_share</td><td>food stamps / labour income</td><td class="num">0.42%</td><td>SNAP outlays, FY2023</td></tr>
+      <tr><td class="k">mh_b_ratio</td><td>SUD rate given SMI</td><td class="num">9.75%</td><td>NSDUH 2023 detailed tables, Bayes on 6.13B / 6.4B / 5.10B</td></tr>
+      <tr><td class="k">ω_ℓ</td><td>average hours worked</td><td class="num">40% of time</td><td>Guvenen et al. (2023)</td></tr>
+      <tr><td class="k">b(SUD)</td><td>keeps the drug choice interior so θ_v identifies the expenditure share</td><td class="num">—</td><td>—</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note">
+    <span class="lbl">On β and wealth / GDP = 3</span>
+    <p>GDP is measured as <em>all factor income</em> — labour earnings plus the return on the capital stock — with transfers (social security, UI, disability, food stamps, vouchers) excluded, because transfers are redistribution, not output. Three is the standard US private-capital-to-output ratio and is what a life-cycle discount factor is normally pinned by.</p>
+    <p>It is the right target here rather than the SCF's ~7.3 net-worth-to-<em>household-income</em> ratio, whose numerator is mostly housing equity a model without homeownership cannot hold and whose denominator is a household income concept, not output.</p>
+    <p>Note the arithmetic this implies: with <code>A = 3·GDP</code> and <code>GDP = labour income + rA</code>, capital income is 9% of GDP. That is low relative to a one-third capital share, and it follows from holding <code>r</code> fixed at 3% in a model with no production function. State it in the paper rather than leave it for a referee to find.</p>
+  </div>
+
+  <div class="prose">
+    <p><strong>Method.</strong> Coordinate descent. Participation is a near-threshold function of <code>b</code> — below a cutoff everyone uses, above it nobody does, and in the dead zone every drug moment reads zero — so the level is pinned by bisection on <code>log b</code> <em>before</em> composition is touched, in partial equilibrium.</p>
+  </div>
+  <div class="note risk">
+    <span class="lbl">Status</span>
+    <p><strong>The first-stage calibration has not converged.</strong> Every number the model currently prints is a placeholder. This is the single largest piece of work outstanding.</p>
+  </div>
+
+  <h3>2.2 Second stage — short-run experimental moments</h3>
+  <div class="prose">
+    <p>The first stage matches a cross-section. It says nothing about the <em>responses</em> the paper's conclusion depends on — and that is exactly what R2, R3 and the AE all identified as the crux. The second stage targets those responses directly.</p>
+    <p>These are <strong>short-run</strong> objects, computed by holding the stationary distribution fixed at the benchmark, applying the experimental treatment, and simulating forward the same number of periods as the study — <em>not</em> by comparing two stationary equilibria. That is a different computation from stage one and needs the transition machinery.</p>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Moment</th><th>Value</th><th>Source</th><th>Use</th></tr></thead>
+    <tbody>
+      <tr><td>Abstinence: no housing → housing (unconditional)</td><td class="num">4.48 → 6.60 wks of 24</td><td>Milby et al. (2005), NH vs NACH, P = .058</td><td><span class="chip done">target</span></td></tr>
+      <tr><td>Abstinence: no housing → housing (best housed arm)</td><td class="num">4.48 → ~7.5 wks</td><td>Milby et al. (2005)</td><td><span class="chip done">target</span></td></tr>
+      <tr><td>Adding a sobriety condition</td><td class="num">6.60 → 8.32 wks, P = .091</td><td>Milby et al. (2005), NACH vs ACH</td><td><span class="chip part">sign only</span></td></tr>
+      <tr><td>Housing First vs <em>usual services</em>, substance use</td><td class="num">≈ 0</td><td>accommodation-based interventions systematic review</td><td><span class="chip part">validation</span></td></tr>
+      <tr><td>Drug-price participation elasticity</td><td class="num">−0.63</td><td>paper's existing approach, now computable because <code>p_v</code> is an equilibrium object</td><td><span class="chip done">target</span></td></tr>
+      <tr><td>Treatment effect on the recovery hazard</td><td class="num">OR ≈ 1.22 → 1.35</td><td>contingency-management meta-analysis</td><td><span class="chip done">target, as a range</span></td></tr>
+      <tr><td>Model-implied VSL</td><td class="num">$7.5m</td><td>Viscusi and Aldy (2003); EPA (2010)</td><td><span class="chip done">target</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="prose">
+    <p><strong>Why the conditionality effect is a validation check and not a target.</strong> Milby's abstract reports that the abstinence-contingent arm beat the unconditional arm, but that holds only <em>after controlling for treatment attendance</em>. In the raw randomised comparison, NACH vs ACH gives P = .091, and the GEE models state the two housed groups "did not differ from one another." Calibrating to a point estimate the source paper reports as insignificant would be exactly the sin R1 attacked <code>κ_cons</code> for.</p>
+    <p><strong>Why the extensive/intensive distinction is the sharper test.</strong> Milby's counterfactual is <em>literally no housing</em>, and the effect is large. The HF RCTs compare HF to "usual services", which already include shelter or transitional housing, and the effect is small or null. So the elasticity of drug use with respect to housing access is <strong>large at the extensive margin and near zero at the intensive margin</strong>. A model reproducing both is far better identified than one matching either number alone. This is the moment R2 called the crux.</p>
+  </div>
+  <div class="note risk">
+    <span class="lbl">Status</span>
+    <p><strong>The second stage is specified but not built.</strong> It needs the transition-path solver.</p>
+  </div>
+</section>
+
+<!-- ===================== 3 ===================== -->
+<section id="s3">
+  <h2 class="sec"><span class="n">§3</span> Validation</h2>
+  <p class="sec-title">Untargeted moments, and where they come from</p>
+
+  <h3>3.1 Distributional</h3>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Untargeted moment</th><th>Data</th><th>Source</th></tr></thead>
+    <tbody>
+      <tr><td>Full CDF of housing cost / income, 12 thresholds</td><td class="num">95.4 / 89.3 / 77.2 / 63.6 / 50.9 / 40.6 / 32.5 / 26.0 / 17.5 / 12.6 / 7.1 / 4.6 %</td><td>SCF 2022, ages 26–85; owner housing at imputed rent 8.3% of value (<code>data/scf_housing_burden.py</code>)</td></tr>
+      <tr><td>Drug <strong>user</strong> income / average</td><td class="num">95.1%</td><td>NSDUH 2024, ages 26+ (<code>data/nsduh_gradients.py</code>)</td></tr>
+      <tr><td>Share of the homeless who are <strong>employed</strong></td><td class="num">40–52%</td><td>R1 comment 2(c)(i)</td></tr>
+      <tr><td>Age distribution of the homeless</td><td class="num">48.1% aged 26–44; 27.1% aged 55+</td><td>R1 comment 2(c)(ii)</td></tr>
+      <tr><td>Drug use by age (U-shaped)</td><td class="num">—</td><td>NSDUH, <code>data/drug_use_age_distribution.xlsx</code></td></tr>
+      <tr><td>Homelessness by age</td><td class="num">—</td><td>California PIT, <code>data/homelessness_by_age_california.xlsx</code></td></tr>
+      <tr><td>Wealth distribution by age</td><td class="num">—</td><td>SCF 2022</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="prose">
+    <p>Two of these deserve emphasis, because R1 used them to distrust the whole quantification. The paper reported that drug users earn 41% of average income against "roughly 74%" in the data — but the 74% is computed over people with a use <em>disorder</em>, not people who use. For ages 26+, NSDUH gives <strong>0.951 for users</strong> and <strong>0.687 for moderate/severe UD</strong>. Targeting the disorder ratio and validating on the use ratio is the sharper test, and it makes the economics explicit: <em>use</em> is close to income-neutral, and it is <strong>progression to disorder</strong> that concentrates at the bottom.</p>
+  </div>
+
+  <h3>3.2 Policy responses</h3>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Untargeted response</th><th>Data</th><th>Source</th></tr></thead>
+    <tbody>
+      <tr><td>HF effect on 3-year mortality</td><td class="num">−4.6 pp, s.e. 1.7</td><td>Costantini (2025), ~300,000 VA veterans, IV</td></tr>
+      <tr><td>TF effect on long-run health</td><td class="num">≈ 0</td><td>Costantini (2025)</td></tr>
+      <tr><td>Housing stability under HF</td><td class="num">sustained</td><td>HF RCT literature</td></tr>
+      <tr><td>Housing stability under TF</td><td class="num">declining</td><td>HF RCT literature</td></tr>
+      <tr><td>PSH vs emergency shelter, property values</td><td class="num">PSH raises, shelter lowers</td><td>shelter-siting hedonic literature</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note risk">
+    <span class="lbl">The paper's biggest single risk</span>
+    <p><strong>Confront Costantini in the introduction, not in a footnote.</strong> The best available quasi-experimental evidence says the mortality benefit runs through <em>housing</em>, and that conditioning on treatment adds nothing detectable. The paper concludes universal TF dominates.</p>
+    <p>The defensible position after the revision is the <strong>generosity</strong> result — expanding coverage dominates, conditionality is second-order and uncertain — which is consistent with all of the evidence above and is still a paper. Getting there requires reporting welfare and mortality as two separate dimensions (AE A9) rather than one collapsed ranking.</p>
+  </div>
+
+  <h3>3.3 Full source list</h3>
+  <div class="prose">
+    <p>Heathcote, Storesletten and Violante (2017) · Kaplan, Mitman and Violante (2020) · Chetty (2012) · Guvenen et al. (2023) · Krueger, Cramer and Cho (2014) · Desmond and Gershenson (2016) · Meyer et al. (2025) · Degenhardt et al. (2011) · Vaillant (1995) · Fleury et al. (2016) · contingency-management meta-analysis (PMC8034391) · Gutwinski et al. (2021, <em>PLOS Medicine</em>) · İmrohoroğlu and Zhao (2022) · Corbae, Glover and Nattinger (2024, NBER w32898) · Autor, Palmer and Pathak (2014, via Corbae et al.) · Milby et al. (2005, <em>AJPH</em> 95(7):1259–65) · accommodation-based interventions systematic review (PMC8356295) · Costantini (2025) · CEA (2017) · Viscusi and Aldy (2003) / EPA (2010) · SAMHSA NSDUH 2024 microdata and 2023 detailed tables · SCF 2022 · HUD programme rules and take-up · FRED insured unemployment · National Alliance to End Homelessness · Sitti, Horn and Berrens; Ridgeway (shelter siting).</p>
+  </div>
+</section>
+
+<!-- ===================== 4 ===================== -->
+<section id="s4">
+  <h2 class="sec"><span class="n">§4</span> Coverage</h2>
+  <p class="sec-title">Every change, and the comments it answers</p>
+
+  <div class="tbl">
+  <table>
+    <thead><tr><th class="num">#</th><th>Change</th><th>Comments answered</th></tr></thead>
+    <tbody>
+      <tr><td class="num">1</td><td><strong>Homeownership, tenure, mortgages and negative assets removed</strong></td><td><span class="ref">AE A4</span>; <span class="ref">R2 D1</span> — the 7-point housing grid with 4 uncalibrated values disappears</td></tr>
+      <tr><td class="num">2</td><td><strong>Housing-market GE removed</strong> — house prices and rents no longer clear</td><td><span class="ref">AE A5</span></td></tr>
+      <tr><td class="num">3</td><td><strong>Drug price made an equilibrium object</strong>, with <code>ψ₁</code> normalised so <code>p_v = 1</code> at the benchmark</td><td><span class="ref">R1 1(c)</span>; <span class="ref">R3 M2d</span>; <span class="ref">AE A5</span></td></tr>
+      <tr><td class="num">4</td><td><strong>Cobb-Douglas weights fixed across SUD status; only <code>b</code> varies</strong></td><td><span class="ref">R2 C5</span>; <span class="ref">R3 M2a</span>; <span class="ref">AE A8</span></td></tr>
+      <tr><td class="num">5</td><td><strong><code>κ_cons</code> deleted; homelessness externality built into period utility</strong>, weighted by composition</td><td><span class="ref">R1 3(a)</span>, <span class="ref">3(b)</span>; <span class="ref">R2 C2</span>; <span class="ref">R3 M2c</span>; <span class="ref">AE A9</span></td></tr>
+      <tr><td class="num">6</td><td><strong>Endogenous treatment take-up</strong> raising the recovery hazard at a resource cost</td><td><span class="ref">R1 1(b)</span>; <span class="ref">AE A10</span> — the most damning gap: the policy is named Treatment First and there was no treatment</td></tr>
+      <tr><td class="num">7</td><td><strong>Imperfect detection and false positives</strong> under TF</td><td><span class="ref">R1 4(a)</span>, <span class="ref">4(b)</span>; <span class="ref">AE A11</span></td></tr>
+      <tr><td class="num">8</td><td><strong>Serious mental illness</strong>: productivity, employment, mortality, recovery hazard, <code>b</code>, disability income</td><td><span class="ref">R1 1(a)</span>; <span class="ref">R1 2(c)(ii)</span></td></tr>
+      <tr><td class="num">9</td><td><strong>SUD productivity penalty set to 1.0 in the baseline</strong>, employment margin carrying the effect, contested wage evidence stated plainly</td><td><span class="ref">AE A20</span></td></tr>
+      <tr><td class="num">10</td><td><strong>UI restructured</strong>: drawn on entry with probability 0.30, lasting one year; four states collapse to three by an exact merge</td><td><span class="ref">AE A2</span></td></tr>
+      <tr><td class="num">11</td><td><strong>Uniform lump-sum bequests</strong> replacing type-dependent transfers</td><td><span class="ref">AE A7</span></td></tr>
+      <tr><td class="num">12</td><td><strong>Single addiction hazard</strong> — no light/heavy threshold, no consumption-dependent hazard</td><td>removes the <code>v̄</code> and 6.48 heavy-ratio parameters <span class="ref">R3 M2b</span> asked to justify</td></tr>
+      <tr><td class="num">13</td><td><strong>Continuous labour supply from the FOC</strong>, with the welfare-trap non-convexity handled exactly</td><td><span class="ref">R3 m1</span>; <span class="ref">AE A3</span></td></tr>
+      <tr><td class="num">14</td><td><strong><code>β</code> retargeted to wealth / GDP = 3</strong></td><td><span class="ref">AE A17</span> — a parameter previously fixed by assertion now has an external target</td></tr>
+      <tr><td class="num">15</td><td><strong>Homeless SUD target corrected from 37% to 21.7%</strong> — the 37% sits on Gutwinski's <em>alcohol</em> figure</td><td><span class="ref">AE A16</span></td></tr>
+      <tr><td class="num">16</td><td><strong>Drug-user income target split</strong> into users (95.1%) and SUD (68.7%)</td><td><span class="ref">R1 2(c)(i)</span> — the "74%" measured a different population</td></tr>
+      <tr><td class="num">17</td><td><strong>Housing-burden target moved to all households</strong> at 21.2% aggregate, with the full 12-point CDF as validation</td><td><span class="ref">R1 2(a)</span>; <span class="ref">AE A12</span></td></tr>
+      <tr><td class="num">18</td><td><strong>Mental-illness productivity penalty generating employed-but-poor households</strong></td><td><span class="ref">R1 2(c)(i)</span> — an unemployment effect alone cannot produce employed homeless households</td></tr>
+      <tr><td class="num">19</td><td><strong>Every parameter assigned a source or a target</strong>, with a standard/novel status key</td><td><span class="ref">AE A17</span></td></tr>
+      <tr><td class="num">20</td><td><strong>Channel-shutdown ladder</strong>: shut one channel, recalibrate <code>b</code> to hold participation fixed, report <em>who</em> uses in each arm <span class="chip part">code exists, not yet run</span></td><td><span class="ref">R1 1(d)</span>, <span class="ref">1(e)</span>; <span class="ref">R2 C4</span>; <span class="ref">R3 M2b</span>, <span class="ref">M2c</span>; <span class="ref">AE A1</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="prose">
+    <p>Six model changes plus one table cover roughly two-thirds of the substantive comments.</p>
+  </div>
+</section>
+
+<!-- ===================== 5 ===================== -->
+<section id="s5">
+  <h2 class="sec"><span class="n">§5</span> Open</h2>
+  <p class="sec-title">What is still unanswered</p>
+  <div class="prose">
+    <p>Grouped by <em>what unblocks it</em>, because that is what should drive the decision about direction.</p>
+  </div>
+
+  <div class="blocker soon">
+    <h3>5.1 Blocked on the first-stage calibration converging</h3>
+    <p class="why">Nothing here is conceptually open — it is all waiting on numbers</p>
+    <div class="tbl">
+    <table>
+      <thead><tr><th>Comment</th><th>What is needed</th></tr></thead>
+      <tbody>
+        <tr><td><span class="ref">R1 2(a)</span>, <span class="ref">AE A12</span> — model fit never reported</td><td>The fit table. Exists in code, needs a converged calibration</td></tr>
+        <tr><td><span class="ref">R1 2(b)</span> — Tables 3–4 misses framed too positively</td><td>Rewrite once the misses are known</td></tr>
+        <tr><td><span class="ref">R1 1(d)</span>, <span class="ref">R2 C4</span>, <span class="ref">R3 M2b/M2c</span>, <span class="ref">AE A1</span> — mechanisms</td><td><code>mechanism.f90</code> is written but has never been run against a calibrated model</td></tr>
+        <tr><td><span class="ref">R1 2(c)(i)</span> — share of the homeless employed (40–52%)</td><td>Currently <strong>not a targeted moment</strong>. Should be added, or explicitly validated</td></tr>
+        <tr><td><span class="ref">R1 2(c)(ii)</span> — age distribution of the homeless</td><td>Not yet computed as a model moment</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="blocker critical">
+    <h3>5.2 Blocked on the transition-path solver</h3>
+    <p class="why">The critical path — everything R2, R3 and the AE call the crux sits behind it</p>
+    <div class="tbl">
+    <table>
+      <thead><tr><th>Comment</th><th>What is needed</th></tr></thead>
+      <tbody>
+        <tr><td><span class="ref">R1 3(d)</span> — "solve proper transition paths; the several-period PE is a half-measure"</td><td>A transition solver. With no housing market, a path iterates on <code>τ_ℓ</code> and <code>p_v</code> alone — far cheaper than in the original model, but it does not exist yet</td></tr>
+        <tr><td><span class="ref">R1 2(d)</span>, <span class="ref">R2 C1</span>, <span class="ref">R3</span>, <span class="ref">AE A13</span> — match the RCT elasticities</td><td><strong>The whole of §2.2.</strong> These are short-run objects and cannot be computed from a comparison of stationary equilibria</td></tr>
+        <tr><td><span class="ref">R1 2(e)</span> — the price-elasticity moment is not replicable</td><td>The perturbation experiment, plus an appendix defining each moment's model counterpart</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="blocker cheap">
+    <h3>5.3 Not started, cheap once the solve is fast</h3>
+    <p class="why">Each is hours, not days</p>
+    <div class="tbl">
+    <table>
+      <thead><tr><th>Comment</th><th>What is needed</th></tr></thead>
+      <tbody>
+        <tr><td><span class="ref">R1 2(f)</span> — show identification numerically</td><td>Jacobian or perturbation figure. One solve per parameter</td></tr>
+        <tr><td><span class="ref">R1 4(c)</span> — compliance, stigma and administrative costs of testing</td><td>A real admin cost in the government budget plus sensitivity. The current dismissive footnote must go</td></tr>
+        <tr><td><span class="ref">R1 4(d)</span> — sensitivity ladder over addiction, recovery, mortality, employment</td><td>Doubles as 2(f)</td></tr>
+        <tr><td><span class="ref">R2 C6</span>, <span class="ref">R3 m3</span> — voucher generosity sweep; is there a Laffer curve?</td><td>One sweep of <code>π_V</code> from benchmark to 1</td></tr>
+        <tr><td><span class="ref">R3 m2</span> — sensitivity as graphs, not tables</td><td>Plotting only</td></tr>
+        <tr><td><span class="ref">R3 M1c</span> — show the empirical income–drug-use relationship</td><td>Microdata already extracted in <code>data/nsduh_gradients.py</code>; needs a figure</td></tr>
+        <tr><td><span class="ref">AE A15</span> — compare <code>χ_H</code> to Abramson and van Nieuwerburgh</td><td>Sensitivity run plus a paragraph</td></tr>
+        <tr><td><span class="ref">R3 m1</span> — welfare decomposition showing the role of labour supply</td><td>Now that hours are continuous, a decomposition of the tax-financing welfare cost</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="blocker">
+    <h3>5.4 Genuinely open modelling questions</h3>
+    <p class="why">These need a decision, not compute</p>
+
+    <h4>R2 C2 — externality calibration</h4>
+    <div class="prose">
+      <p>Implemented, but <strong><code>κ_ext = 0</code> in the baseline</strong>. There is no credible point estimate: hedonic shelter-siting studies measure a <em>local, avoidable</em> disamenity, and this model has no geography. Corbae et al.'s externality is about neighbourhood housing <em>quality</em>, not homelessness, so only their identification logic transfers, not the functional form.</p>
+      <p><strong>Recommendation:</strong> keep zero as the conservative baseline, report a bounded sensitivity, and use the qualitative finding that <strong>PSH raises property values while emergency shelter lowers them</strong> — i.e. the externality plausibly differs in <em>sign</em> between HF and TF. That is a substantive point in HF's favour, and it is more honest than inventing a number.</p>
+    </div>
+
+    <h4>R2 C3 / AE A6 — parental anxiety and intergenerational transmission</h4>
+    <div class="prose">
+      <p>R2 lists it as a margin the paper misses but writes that it "could be discussed", and predicts it "would only amplify the welfare gains." The AE's A6 is a separate and simpler complaint: §4.1.3 uses intergenerational language without any intergenerational linkage.</p>
+      <p><strong>Decision needed.</strong> Either delete the decorative language (cheap, fully answers A6) or add a warm-glow term at one parental age using the <code>ρ_x = 0.5</code> process already specified (cheap, answers both). <strong>Recommendation:</strong> the warm-glow version — it costs one term and converts a criticism into a feature.</p>
+    </div>
+
+    <h4>R1 smaller comment 1 — why a maximum experimentation age?</h4>
+    <div class="prose">
+      <p>Still present (real age 55) and <strong>still unjustified</strong>. R1 caught a real internal tension with the U-shaped age profile of drug use in Table 4(a). Either justify it from NSDUH initiation data or drop it.</p>
+    </div>
+
+    <h4>AE A16 — homelessness definition</h4>
+    <div class="prose">
+      <p>The SUD target has been corrected, but the paper must still state explicitly that it targets <em>literal</em> homelessness and excludes doubling-up, and flag the sensitivity.</p>
+    </div>
+
+    <h4>R2 D1 — how were the rental sizes chosen?</h4>
+    <div class="prose">
+      <p>The grid is now 4 points instead of 7, and <code>h_homeless</code> is calibrated, but the three rental sizes are still set rather than calibrated. Either calibrate them or say plainly how they were chosen.</p>
+    </div>
+  </div>
+
+  <div class="blocker">
+    <h3>5.5 Writing only</h3>
+    <div class="prose">
+      <p><span class="ref">R1 1(e)</span> reorganise the appendix, relabel as intuition · <span class="ref">R1 3(c)</span> tone down; universal TF is not unambiguously preferred · <span class="ref">R1 smaller 2–10</span> levels <em>and</em> percentage changes in tables, plus eight typographical and citation fixes · <span class="ref">R3 M1a</span> stylised facts up front · <span class="ref">R3 M1b</span> transparent empirical basis for the survival and unemployment hazards · <span class="ref">AE A1</span> stylised model section — the plan is now to use the <em>calibrated</em> model with the shutdown ladder rather than a separate static toy · <span class="ref">AE A14</span> connect to Costantini, Cohen, Brounstein and Wieselthier, Abramson, Humphries et al. · <span class="ref">AE A17</span> rewrite the calibration section, for which §2 above is the raw material · <span class="ref">AE A18</span> two counterfactuals in the body · <span class="ref">AE A19</span> global replace "addicted" → "suffering from substance use disorder".</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 6 ===================== -->
+<section id="s6">
+  <h2 class="sec"><span class="n">§6</span> Compute</h2>
+  <p class="sec-title">Where the solve stands</p>
+  <div class="prose">
+    <p>4-core container, gfortran 13.3, <code>-O3 -march=native -funroll-loops -flto</code>.</p>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Operation</th><th class="num">Wall time</th></tr></thead>
+    <tbody>
+      <tr><td>One household solve, 4-point hours grid</td><td class="num">6.2 s</td></tr>
+      <tr><td>One household solve, continuous hours from the FOC</td><td class="num"><strong>19.2 s</strong></td></tr>
+      <tr><td>Distribution</td><td class="num">~0.01 s</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="prose">
+    <p>Continuous hours cost 3.1×. That is the price of exactness on the labour-supply margin and of handling the welfare-trap non-convexity correctly, and it is bounded: the FOC solve is now 6.8 residual evaluations per root, down from 22 before the rescaling.</p>
+    <p><strong>Implication for the plan.</strong> A stationary equilibrium is roughly 25–40 household solves, so 8–13 minutes. A full coordinate-descent calibration is an overnight job here and under an hour on 40 cores. Counterfactuals, once calibrated, are minutes. <strong>The transition solver will be the expensive object, and it is the thing to build next.</strong></p>
+  </div>
+</section>
+
+<!-- ===================== 7 ===================== -->
+<section id="s7">
+  <h2 class="sec"><span class="n">§7</span> Order</h2>
+  <p class="sec-title">Recommended sequence</p>
+  <ol class="plan">
+    <li><div><strong>Converge the first-stage calibration.</strong> Everything in §5.1 unblocks at once, including the model-fit table whose absence is what made R1 distrust the quantification.</div></li>
+    <li><div><strong>Build the transition-path solver.</strong> The critical path: it unblocks R1 3(d) <em>and</em> the whole of §2.2, which is what R2, R3 and the AE independently identified as the crux.</div></li>
+    <li><div><strong>Run the second-stage calibration</strong> against Milby and the HF RCT literature, reporting the extensive/intensive contrast.</div></li>
+    <li><div><strong>Run the shutdown ladder</strong> and the sensitivity and identification figures (§5.3) — cheap once 1–3 are done.</div></li>
+    <li><div><strong>Decide the two open modelling questions</strong> (§5.4): the parental warm-glow term, and the maximum experimentation age.</div></li>
+    <li><div><strong>Rewrite</strong>, leading with the generosity result and reporting welfare and mortality as two dimensions, with the Costantini evidence confronted in the introduction.</div></li>
+  </ol>
+</section>
+
+<footer>Model in <code>code/simple/</code> · comment numbering follows each report exactly</footer>
+
+</div>

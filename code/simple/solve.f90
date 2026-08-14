@@ -237,7 +237,13 @@ pure subroutine build_hpoints(w, base, vcap, cfl_net, h_elig, G)
     G%w = w; G%base = base; G%vcap = vcap; G%cfl_net = cfl_net
     G%hE = h_elig
 
-    hF = 2.0_dp; hV = 2.0_dp
+    ! Thresholds in hours at which each transfer runs out. A NEGATIVE value
+    ! means the transfer is never positive (no voucher on this unit, or assets
+    ! already above the food-stamp floor); a value above one means it is always
+    ! positive. Both are read directly by the slope tests below, so the "never"
+    ! sentinel must be negative -- setting it above one would tell every slope
+    ! test the clawback is always active, which is exactly backwards.
+    hF = -1.0_dp; hV = -1.0_dp
     if (w > 0.0_dp) then
         if (cfl_net > 0.0_dp) hF = cfl_net/w
         if (vcap    > 0.0_dp) hV = vcap/(kappa_r*w)

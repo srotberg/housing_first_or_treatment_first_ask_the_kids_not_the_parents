@@ -342,7 +342,7 @@ end function max_gap
 !   mh_b_ratio         SUD rate given SMI                     -
 !   kappa_ue_m         unemployment rate given SMI            -
 !   prod_pen_m         homeless income / average income       +
-!   beta               net worth / income                     +
+!   beta               wealth / GDP                           +
 !   cfloor_share       food stamps / labour income            +
 !   omega_l            average hours worked                   -
 !===============================================================================
