@@ -363,7 +363,19 @@ module params
     integer :: on_homeless_fb = 1               ! arm 3: homelessness feedback
 
     !-- fiscal ----------------------------------------------------------------
-    real(dp) :: chi_H = 0.252_dp                ! fiscal cost per homeless person
+    ! Fiscal cost per homeless household per year, as a share of average income.
+    ! The homeless state h_1 is LITERAL homelessness -- shelters and the street,
+    ! not doubling up -- so the matching figure in Abramson and Van Nieuwerburgh
+    ! (2024, NBER w32582, p.30) is their $2,500 per household per month for the
+    ! literally homeless, NOT the $1,775 they blend across the literally homeless
+    ! and the doubled-up. $30,000 a year against the model's $70,000 average
+    ! income gives 0.4286. Components, their footnote 11: shelters, social
+    ! services, extra policing, hospital emergency care.
+    !
+    ! Note the direction of travel. R2 and R3 both judged the previous 0.252 too
+    ! HIGH; the best structural number in the literature is 70% higher again, and
+    ! its authors call it conservative.
+    real(dp) :: chi_H = 0.4286_dp
     real(dp) :: chi_D = 0.212_dp                ! fiscal cost per person with SUD
     real(dp) :: cfloor_share = 0.10_dp          ! food-stamp consumption floor
 

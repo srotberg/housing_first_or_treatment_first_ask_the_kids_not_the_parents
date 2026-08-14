@@ -21,7 +21,7 @@ module calibrate
     ! co-occurring SUD rate among adults with SMI.
     real(dp) :: mh_b_ratio = 0.25_dp
 
-    integer, parameter :: NMOM = 24
+    integer, parameter :: NMOM = 26
     integer, parameter :: NPAR = 22   ! calibrated parameters, for the snapshot
 
     type :: mom_t
@@ -29,6 +29,11 @@ module calibrate
         real(dp) :: target
         real(dp) :: model
         real(dp) :: weight
+        ! UNTARGETED moments are computed and printed but no parameter is bumped
+        ! on them and they are excluded from max_gap(). Letting a validation
+        ! moment into the convergence statistic would report the calibration as
+        ! failing on something it is deliberately not fitting.
+        logical  :: targeted = .true.
     end type mom_t
 
     type(mom_t) :: mom(NMOM)   ! NB: not 'M' -- would shadow local scalar 'm'
@@ -55,7 +60,14 @@ subroutine init_targets()
     ! AGGREGATE ratio rather than the mean of ratios, which is trim-sensitive.
     ! See data/scf_housing_burden.py.
     mom(9)  = mom_t('housing cost/income, agg (%)', 21.20_dp, 0.0_dp, 1.0_dp)
-    mom(10) = mom_t('share housing cost>50% (%)  ', 17.49_dp, 0.0_dp, 1.0_dp)
+    ! The two grid parameters are now identified from the SIZE distribution the
+    ! grid represents, not from its budget consequences. ACS B25042 (Tenure by
+    ! Bedrooms, occupied units, 2023, N = 131,332,360): 13.21 / 24.12 / 62.67
+    ! per cent across {0,1}, {2} and {3+} bedrooms. All households, not renters:
+    ! the model has no homeownership, housing is a pure flow at p_r*h, so an
+    ! owner's analogue is imputed rent and the size distribution over occupied
+    ! units is the right object. Medium is the residual and is not targeted.
+    mom(10) = mom_t('housed in SMALL units (%)   ', 13.21_dp, 0.0_dp, 1.0_dp)
     ! R1 comment 2(c)(i) attacked the user income ratio as an untargeted miss
     ! (41% model vs "roughly 74%"). That 74% is computed over people with a use
     ! DISORDER, not over people who use -- a different population. For ages 26+,
@@ -113,7 +125,7 @@ subroutine init_targets()
     ! the rental grid moves the upper tail of the housing-burden distribution
     ! and its spread moves the middle, so two points of the SCF 2022 CDF
     ! identify the two grid parameters. Both come from data/scf_housing_burden.py.
-    mom(20) = mom_t('share housing cost>30% (%)  ', 40.62_dp, 0.0_dp, 1.0_dp)
+    mom(20) = mom_t('housed in LARGE units (%)   ', 62.67_dp, 0.0_dp, 1.0_dp)
     ! Treatment take-up among those with SUD. This is what disciplines the
     ! utility cost of treatment, which was previously a free parameter with no
     ! source at all -- and treatment is the mechanism the whole Treatment First
@@ -140,6 +152,12 @@ subroutine init_targets()
     ! to prod_pen_d -- the direct wage penalty the AE asks about in A20 -- so it
     ! is still targeted, and prod_pen_d = 1 becomes the robustness run.
     mom(23) = mom_t('model VSL ($m)              ',  7.50_dp, 0.0_dp, 1.0_dp)
+    ! UNTARGETED from here on -- computed and printed, no parameter bumped on
+    ! them. They were the identification for the housing grid until B25042
+    ! arrived; demoting them turns them into an out-of-sample check, which is a
+    ! stronger thing to show a referee than a moment the grid was fitted to.
+    mom(25) = mom_t('[val] housing cost>50% (%)  ', 17.49_dp, 0.0_dp, 1.0_dp, .false.)
+    mom(26) = mom_t('[val] housing cost>30% (%)  ', 40.62_dp, 0.0_dp, 1.0_dp, .false.)
     ! b_1 HAS A TARGET NOW. It used to be asserted small enough to keep the drug
     ! choice interior, which is a statement about numerical convenience rather
     ! than about data, and it left the Milby moment undefined: with abstention
@@ -166,6 +184,7 @@ subroutine compute_moments(A)
     real(dp) :: hl_smi, smi_work, smi_emp, hl_inc, hl_m
     real(dp) :: wealth, exp_m, exp_light, smi_m, smi_sud, hrs, hrs_m
     real(dp) :: burden30, treated_sud, hl_sud_m, hl_sud_abst
+    real(dp) :: housed_m, hsmall_m, hlarge_m
 
     p = max(A%pop, 1.0e-12_dp)
     sud_unemp = 0.0_dp; sud_work = 0.0_dp; hl_sud = 0.0_dp
@@ -178,6 +197,7 @@ subroutine compute_moments(A)
     wealth = 0.0_dp; exp_m = 0.0_dp; exp_light = 0.0_dp
     smi_m = 0.0_dp; smi_sud = 0.0_dp; hrs = 0.0_dp; hrs_m = 0.0_dp
     burden30 = 0.0_dp; treated_sud = 0.0_dp
+    housed_m = 0.0_dp; hsmall_m = 0.0_dp; hlarge_m = 0.0_dp
     hl_sud_m = 0.0_dp; hl_sud_abst = 0.0_dp
 
     do j = 1, n_age
@@ -239,6 +259,11 @@ subroutine compute_moments(A)
             hcost = hcost + m*p_rent*h_grid(ihp)
             if (p_rent*h_grid(ihp) > 0.5_dp*max(ygross,1.0e-8_dp)) burden50 = burden50 + m
             if (p_rent*h_grid(ihp) > 0.3_dp*max(ygross,1.0e-8_dp)) burden30 = burden30 + m
+            ! size shares are over the HOUSED, matching the ACS universe of
+            ! occupied units -- the homeless are not a housing unit
+            housed_m = housed_m + m
+            if (ihp == 2) hsmall_m = hsmall_m + m
+            if (ihp == NH) hlarge_m = hlarge_m + m
         end if
 
         ! income of drug users, for the gradient moment
@@ -275,7 +300,7 @@ subroutine compute_moments(A)
     mom(7)%model = 100.0_dp*vouch_elig/max(elig, 1.0e-12_dp)
     mom(8)%model = 100.0_dp*spend_sud/max(inc_sud, 1.0e-12_dp)
     mom(9)%model  = 100.0_dp*hcost/max(totinc, 1.0e-12_dp)
-    mom(10)%model = 100.0_dp*burden50/p
+    mom(10)%model = 100.0_dp*hsmall_m/max(housed_m,1.0e-12_dp)
     mom(11)%model = 100.0_dp*(users_inc/max(users_m,1.0e-12_dp)) &
                             /max(totinc/p, 1.0e-12_dp)
     mom(12)%model = 100.0_dp*(sud_inc/max(sud_m,1.0e-12_dp)) &
@@ -289,11 +314,13 @@ subroutine compute_moments(A)
     mom(17)%model = 100.0_dp*A%food/max(A%labinc, 1.0e-12_dp)
     mom(18)%model = 100.0_dp*smi_sud/max(smi_m, 1.0e-12_dp)
     mom(19)%model = 100.0_dp*hrs/max(hrs_m, 1.0e-12_dp)
-    mom(20)%model = 100.0_dp*burden30/p
+    mom(20)%model = 100.0_dp*hlarge_m/max(housed_m,1.0e-12_dp)
     mom(21)%model = 100.0_dp*treated_sud/max(sud_m, 1.0e-12_dp)
     mom(22)%model = 100.0_dp*A%poormh/p
     mom(23)%model = model_vsl()
     mom(24)%model = 100.0_dp*hl_sud_abst/max(hl_sud_m, 1.0e-12_dp)
+    mom(25)%model = 100.0_dp*burden50/p
+    mom(26)%model = 100.0_dp*burden30/p
 end subroutine compute_moments
 
 
@@ -398,6 +425,7 @@ function max_gap() result(g)
     integer  :: i
     g = 0.0_dp
     do i = 1, NMOM
+        if (.not. mom(i)%targeted) cycle
         g = max(g, abs(mom(i)%model - mom(i)%target)/max(abs(mom(i)%target), 1.0e-8_dp))
     end do
 end function max_gap
