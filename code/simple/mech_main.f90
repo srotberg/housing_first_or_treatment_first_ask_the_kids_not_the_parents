@@ -58,8 +58,9 @@ contains
 
 subroutine reset_channels()
     on_mortality_d = 1; on_employment_d = 1; on_homeless_fb = 1
-    b_d(1) = P0%b_clean
-    if (b_d(1) <= 0.0_dp) b_d(1) = 1.0e-4_dp
+    b_dm(1,1) = P0%b_clean
+    if (b_dm(1,1) <= 0.0_dp) b_dm(1,1) = 1.0e-4_dp
+    b_dm(1,2) = b_dm(1,1)*mh_b_ratio
     call refresh_utility_constants()
 end subroutine reset_channels
 

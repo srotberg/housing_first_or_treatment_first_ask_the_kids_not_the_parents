@@ -1,5 +1,6 @@
-! diag2.f90 -- does the mortality channel reverse the income gradient of drug use?
-! This is the paper's central claim, tested directly in the new model.
+! diag2.f90 -- does the mental-health productivity channel produce EMPLOYED
+! homeless households? R1 comment 2(c)(i): the model has 100% of the homeless
+! unemployed, against 40-52% in the data.
 program diag2
     use params
     use solve
@@ -7,58 +8,64 @@ program diag2
     use calibrate
     implicit none
     type(agg_t) :: A
-    integer  :: k, iq
-    real(dp) :: avals(5), q_use(3), q_pop(3)
+    integer  :: k
+    real(dp) :: pvals(5), hl, hl_emp, hl_mh, hl_inc, pop, avinc
 
-    avals = [1.0_dp, 10.0_dp, 40.0_dp, 150.0_dp, 600.0_dp]
+    pvals = [2.0_dp, 5.0_dp, 8.0_dp, 12.0_dp, 18.0_dp]   ! p_rent
 
     call setup_grids(); call alloc_all(); call alloc_solve(); call init_targets()
-    theta_v = 0.30_dp; b_d(1) = 1.0e-4_dp; b_d(2) = 1.0e-4_dp
+    theta_v = 0.30_dp; b_dm(1,1) = 0.15_dp; b_dm(1,2) = 0.04_dp
+    b_dm(2,1) = 1.0e-3_dp; b_dm(2,2) = 1.0e-3_dp
+    aleph = 60.0_dp
 
-    write(*,'(A)') '=== scan aleph with TINY b (mortality does the deterring) ==='
-    write(*,'(A)') '     aleph   particip%    SUD%   |  use% low   use% mid  use% high'
+    write(*,'(A)') '=== rent level vs homeless composition (prod_pen_m = 0.55) ==='
+    write(*,'(A)') ' data targets:  homeless 0.30% | employed 40-52% | income/avg 19.1%'
+    write(*,'(A)') ''
+    write(*,'(A)') '     p_rent   homeless%   %hl employed   %hl poor MH   hl income/avg  rent/inc'
     do k = 1, 5
-        aleph = avals(k); call refresh_utility_constants()
-        call solve_once(A); call compute_moments(A)
-        call use_by_income(q_use, q_pop)
-        write(*,'(F10.2,2F10.3,A,3F11.3)') aleph, mom(1)%model, mom(2)%model, '  |', &
-            100.0_dp*q_use(1)/max(q_pop(1),1.0e-12_dp), &
-            100.0_dp*q_use(2)/max(q_pop(2),1.0e-12_dp), &
-            100.0_dp*q_use(3)/max(q_pop(3),1.0e-12_dp)
+        p_rent = pvals(k)
+        call refresh_utility_constants()
+        call solve_once(A)
+        call comp(hl, hl_emp, hl_mh, hl_inc, pop, avinc)
+        write(*,'(F11.2,F12.4,F15.2,F14.2,F16.3,F10.3)') p_rent, &
+            100.0_dp*hl/max(pop,1.0e-12_dp), &
+            100.0_dp*hl_emp/max(hl,1.0e-12_dp), &
+            100.0_dp*hl_mh/max(hl,1.0e-12_dp), &
+            (hl_inc/max(hl,1.0e-12_dp))/max(avinc/max(pop,1.0e-12_dp),1.0e-12_dp), &
+            p_rent*h_grid(2)/max(avinc/max(pop,1.0e-12_dp),1.0e-12_dp)
     end do
 
 contains
 
-! split working-age households into three productivity bins and report the
-! fraction using drugs in each
-subroutine use_by_income(qu, qp)
-    real(dp), intent(out) :: qu(3), qp(3)
-    integer  :: j, ia, iy, ie, id, iv, bin
-    real(dp) :: m
-    qu = 0.0_dp; qp = 0.0_dp
-    do j = 1, j_ret-1
+subroutine comp(hl, hl_emp, hl_mh, hl_inc, pop, avinc)
+    real(dp), intent(out) :: hl, hl_emp, hl_mh, hl_inc, pop, avinc
+    integer  :: j, ia, iy, ie, id, iv, im
+    real(dp) :: m, y
+    hl=0; hl_emp=0; hl_mh=0; hl_inc=0; pop=0; avinc=0
+    do j = 1, n_age
+    do im = 1, NM
     do iv = 1, NV
     do id = 1, ND
     do ie = 1, NE
     do iy = 1, NY
     do ia = 1, NA
-        m = dist(ia,iy,ie,id,iv,j)
+        m = dist(ia,iy,ie,id,iv,im,j)
         if (m <= 0.0_dp) cycle
-        if (iy <= 3) then
-            bin = 1
-        else if (iy <= 6) then
-            bin = 2
-        else
-            bin = 3
+        y = income_gross(j, iy, ie, id, im)
+        pop = pop + m; avinc = avinc + m*y
+        if (pol_h(ia,iy,ie,id,iv,im,j) == 1) then
+            hl = hl + m
+            hl_inc = hl_inc + m*y
+            if (ie == 2) hl_emp = hl_emp + m
+            if (im == 2) hl_mh  = hl_mh  + m
         end if
-        qp(bin) = qp(bin) + m
-        if (pol_v(ia,iy,ie,id,iv,j) > 0.0_dp) qu(bin) = qu(bin) + m
     end do
     end do
     end do
     end do
     end do
     end do
-end subroutine use_by_income
+    end do
+end subroutine comp
 
 end program diag2

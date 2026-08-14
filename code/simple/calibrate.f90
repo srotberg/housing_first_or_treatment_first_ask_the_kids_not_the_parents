@@ -45,7 +45,7 @@ end subroutine init_targets
 !-- model moments, including the conditional ones the aggregator does not carry
 subroutine compute_moments(A)
     type(agg_t), intent(in) :: A
-    integer  :: j, ia, iy, ie, id, iv, ihp
+    integer  :: j, ia, iy, ie, id, iv, im, ihp
     real(dp) :: m, p, ygross
     real(dp) :: sud_unemp, sud_work, hl_sud, elig, vouch_elig
     real(dp) :: spend_sud, inc_sud
@@ -56,15 +56,16 @@ subroutine compute_moments(A)
     spend_sud = 0.0_dp; inc_sud = 0.0_dp
 
     do j = 1, n_age
+    do im = 1, NM
     do iv = 1, NV
     do id = 1, ND
     do ie = 1, NE
     do iy = 1, NY
     do ia = 1, NA
-        m = dist(ia,iy,ie,id,iv,j)
+        m = dist(ia,iy,ie,id,iv,im,j)
         if (m <= 0.0_dp) cycle
-        ihp    = pol_h(ia,iy,ie,id,iv,j)
-        ygross = income_gross(j, iy, ie)
+        ihp    = pol_h(ia,iy,ie,id,iv,im,j)
+        ygross = income_gross(j, iy, ie, id, im)
 
         ! unemployment among those with SUD, working age only
         if (id == 2 .and. j < j_ret) then
@@ -83,9 +84,10 @@ subroutine compute_moments(A)
 
         ! drug spending as a share of income, conditional on SUD
         if (id == 2) then
-            spend_sud = spend_sud + m*p_v*pol_v(ia,iy,ie,id,iv,j)
+            spend_sud = spend_sud + m*p_v*pol_v(ia,iy,ie,id,iv,im,j)
             inc_sud   = inc_sud   + m*max(ygross, 1.0e-8_dp)
         end if
+    end do
     end do
     end do
     end do
@@ -138,7 +140,7 @@ end function max_gap
 !
 !   parameter          primary moment                 sign of dM/dparam
 !   -----------------  -----------------------------  -----------------
-!   b_d(1)  (clean)    drug participation                    -
+!   b_dm(1,1) clean    drug participation                    -
 !   pi_d_low           SUD rate                              +
 !   h_homeless         homelessness rate                     +
 !   pi_eu_base         unemployment rate                     +
@@ -150,7 +152,7 @@ end function max_gap
 subroutine calibration_sweep(step)
     real(dp), intent(in) :: step
 
-    call bump(b_d(1),          gap(1), -1.0_dp, step, 1.0e-5_dp, 20.0_dp)
+    call bump(b_dm(1,1),       gap(1), -1.0_dp, step, 1.0e-5_dp, 20.0_dp)
     call bump(pi_d_low,        gap(2), +1.0_dp, step, 1.0e-6_dp, 0.9_dp)
     call bump(h_homeless,      gap(3), +1.0_dp, step, 1.0e-5_dp, h_grid(2)*0.95_dp)
     call bump(pi_eu_base,      gap(4), +1.0_dp, step, 1.0e-4_dp, 0.9_dp)
@@ -204,8 +206,9 @@ end subroutine refresh_utility_constants
 
 subroutine print_params()
     write(*,'(A)') '  -------------------- parameters --------------------'
-    write(*,'(A,ES12.4)') '   b_d(1) clean    : ', b_d(1)
-    write(*,'(A,ES12.4)') '   b_d(2) SUD      : ', b_d(2)
+    write(*,'(A,ES12.4)') '   b_dm(1,1) clean/goodMH : ', b_dm(1,1)
+    write(*,'(A,ES12.4)') '   b_dm(1,2) clean/poorMH : ', b_dm(1,2)
+    write(*,'(A,ES12.4)') '   b_dm(2,1) SUD          : ', b_dm(2,1)
     write(*,'(A,ES12.4)') '   pi_d_low        : ', pi_d_low
     write(*,'(A,ES12.4)') '   h_homeless      : ', h_homeless
     write(*,'(A,ES12.4)') '   pi_eu_base      : ', pi_eu_base

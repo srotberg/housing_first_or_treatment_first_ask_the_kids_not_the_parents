@@ -23,6 +23,10 @@ module mechanism
     implicit none
 
     integer, parameter :: NQ = 5      ! income quintiles
+    ! poor mental health scales b down (self-medication); the ratio is held
+    ! fixed while b_dm(1,1) is recalibrated, so the arms differ only in the
+    ! channel switched off
+    real(dp) :: mh_b_ratio = 0.25_dp
 
     type :: profile_t
         real(dp) :: particip, sud, homeless
@@ -42,7 +46,7 @@ contains
 !-- who uses drugs, in detail ------------------------------------------------
 subroutine profile_users(P)
     type(profile_t), intent(out) :: P
-    integer  :: j, ia, iy, ie, id, iv, q
+    integer  :: j, ia, iy, ie, id, iv, im, q
     real(dp) :: m, y, pop, users, uinc, uunemp, uhl, uage, uass
     real(dp) :: q_use(NQ), q_pop(NQ), totinc
     real(dp) :: e_mass, e_inc, s_mass, s_inc, homeless, sud
@@ -51,39 +55,41 @@ subroutine profile_users(P)
     q_use=0; q_pop=0; e_mass=0; e_inc=0; s_mass=0; s_inc=0; homeless=0; sud=0
 
     do j = 1, n_age
+    do im = 1, NM
     do iv = 1, NV
     do id = 1, ND
     do ie = 1, NE
     do iy = 1, NY
     do ia = 1, NA
-        m = dist(ia,iy,ie,id,iv,j)
+        m = dist(ia,iy,ie,id,iv,im,j)
         if (m <= 0.0_dp) cycle
-        y = income_gross(j, iy, ie)
+        y = income_gross(j, iy, ie, id, im)
 
         pop    = pop + m
         totinc = totinc + m*y
         if (id == 2) sud = sud + m
-        if (pol_h(ia,iy,ie,id,iv,j) == 1) homeless = homeless + m
+        if (pol_h(ia,iy,ie,id,iv,im,j) == 1) homeless = homeless + m
 
         ! income quintile by productivity state
         q = 1 + int( real(iy-1,dp)*real(NQ,dp)/real(NY,dp) )
         q = min(max(q,1),NQ)
         q_pop(q) = q_pop(q) + m
 
-        if (pol_v(ia,iy,ie,id,iv,j) > 0.0_dp) then
+        if (pol_v(ia,iy,ie,id,iv,im,j) > 0.0_dp) then
             users   = users + m
             q_use(q)= q_use(q) + m
             uinc    = uinc + m*y
             uage    = uage + m*real(j,dp)
             uass    = uass + m*a_grid(ia)
             if (ie == 1) uunemp = uunemp + m
-            if (pol_h(ia,iy,ie,id,iv,j) == 1) uhl = uhl + m
+            if (pol_h(ia,iy,ie,id,iv,im,j) == 1) uhl = uhl + m
             if (id == 1) then
                 e_mass = e_mass + m;  e_inc = e_inc + m*y
             else
                 s_mass = s_mass + m;  s_inc = s_inc + m*y
             end if
         end if
+    end do
     end do
     end do
     end do
@@ -104,7 +110,7 @@ subroutine profile_users(P)
     P%mean_assets_users   = uass/max(users,1.0e-12_dp)
     P%exp_inc_ratio       = (e_inc/max(e_mass,1.0e-12_dp)) / max(totinc/max(pop,1.0e-12_dp),1.0e-12_dp)
     P%sud_inc_ratio       = (s_inc/max(s_mass,1.0e-12_dp)) / max(totinc/max(pop,1.0e-12_dp),1.0e-12_dp)
-    P%b_clean             = b_d(1)
+    P%b_clean             = b_dm(1,1)
 end subroutine profile_users
 
 
@@ -123,7 +129,8 @@ subroutine recalibrate_b(target_p, iters)
 
     do k = 1, iters
         mid = 0.5_dp*(lo+hi)
-        b_d(1) = exp(mid)
+        b_dm(1,1) = exp(mid)
+        b_dm(1,2) = exp(mid)*mh_b_ratio
         call refresh_utility_constants()
         call solve_household()
         call build_distribution_eq()
@@ -135,7 +142,8 @@ subroutine recalibrate_b(target_p, iters)
             hi = mid
         end if
     end do
-    b_d(1) = exp(0.5_dp*(lo+hi))
+    b_dm(1,1) = exp(0.5_dp*(lo+hi))
+    b_dm(1,2) = b_dm(1,1)*mh_b_ratio
     call refresh_utility_constants()
     call solve_household()
     call build_distribution_eq()

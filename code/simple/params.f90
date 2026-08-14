@@ -33,6 +33,7 @@ module params
     integer, parameter :: ND  = 2          ! 1 = clean, 2 = SUD
     integer, parameter :: NH  = 4          ! 1 = homeless, 2..4 = rental sizes
     integer, parameter :: NV  = 2          ! 1 = no voucher, 2 = voucher
+    integer, parameter :: NM  = 2          ! 1 = good mental health, 2 = poor
 
     ! drug-use regimes: the addiction hazard is a step function of v, so the
     ! continuous choice only ever matters through which regime it lands in.
@@ -50,7 +51,11 @@ module params
     ! pushing the unconstrained v* below zero, which also drives SUD drug
     ! spending to the corner. b_d(1) pins participation, b_d(2) keeps the
     ! interior solution so theta_v pins the 44% expenditure share.
-    real(dp) :: b_d(ND) = [4.0e-1_dp, 1.0e-3_dp]
+    ! indexed (SUD status, mental health). Poor mental health lowers b, i.e.
+    ! raises the marginal utility of the first units of drug use -- the
+    ! self-medication channel R1 comment 1(a) is asking about.
+    real(dp) :: b_dm(ND,NM) = reshape([4.0e-1_dp, 1.0e-3_dp, &
+                                       1.0e-1_dp, 1.0e-3_dp], [ND,NM])
     real(dp) :: aleph   = 3.0_dp                ! flow value of being alive (VSL normalisation)
     real(dp) :: beta    = 0.96_dp
 
@@ -98,6 +103,23 @@ module params
     real(dp) :: treat_cost      = 0.05_dp       ! resource cost, share of average income
     real(dp) :: treat_gain      = 3.0_dp        ! multiplies the recovery hazard
 
+    !-- mental health ---------------------------------------------------------
+    ! A persistent state, exogenous, that (i) cuts productivity conditional on
+    ! working, (ii) worsens employment transitions, (iii) lowers the SUD
+    ! recovery hazard, and (iv) lowers b. R1 comment 1(a). The productivity
+    ! penalty is what generates EMPLOYED homeless households with positive but
+    ! low income -- R1 comment 2(c)(i) -- which an unemployment effect alone
+    ! cannot do.
+    real(dp) :: mh_onset    = 0.010_dp     ! good -> poor per year
+    real(dp) :: mh_recover  = 0.100_dp     ! poor -> good per year
+    real(dp) :: prod_pen_m  = 0.55_dp      ! productivity multiplier, poor MH
+    real(dp) :: prod_pen_d  = 0.80_dp      ! productivity multiplier, SUD (AE A20)
+    real(dp) :: kappa_ue_m  = 0.65_dp      ! job-finding multiplier, poor MH
+    real(dp) :: kappa_phi_m = 1.30_dp      ! mortality multiplier, poor MH
+    real(dp) :: rec_mult_m  = 0.50_dp      ! SUD recovery multiplier, poor MH
+    real(dp) :: mh_dist0(NM)               ! newborn distribution over MH
+    integer  :: include_mental_health = 1
+
     !-- mortality and employment multipliers ----------------------------------
     real(dp) :: kappa_phi_h = 1.6_dp            ! homelessness mortality multiplier
     real(dp) :: kappa_phi_d = 6.9_dp            ! SUD mortality multiplier
@@ -132,14 +154,15 @@ module params
     real(dp) :: median_income, avg_income
 
     !-- solution --------------------------------------------------------------
-    real(dp), allocatable :: V(:,:,:,:,:,:)       ! (NA,NY,NE,ND,NV,n_age+1)
-    integer,  allocatable :: pol_a(:,:,:,:,:,:)   ! index into a_grid
-    integer,  allocatable :: pol_h(:,:,:,:,:,:)   ! index into h_grid
-    integer,  allocatable :: pol_reg(:,:,:,:,:,:) ! drug regime
-    integer,  allocatable :: pol_tr(:,:,:,:,:,:)  ! treatment take-up
-    real(dp), allocatable :: pol_c(:,:,:,:,:,:)
-    real(dp), allocatable :: pol_v(:,:,:,:,:,:)
-    real(dp), allocatable :: dist(:,:,:,:,:,:)
+    real(dp), allocatable :: V(:,:,:,:,:,:,:)       ! (NA,NY,NE,ND,NV,NM,n_age+1)
+    integer,  allocatable :: pol_a(:,:,:,:,:,:,:)   ! index into a_grid
+    integer,  allocatable :: pol_h(:,:,:,:,:,:,:)   ! index into h_grid
+    integer,  allocatable :: pol_reg(:,:,:,:,:,:,:) ! drug regime
+    integer,  allocatable :: pol_tr(:,:,:,:,:,:,:)  ! treatment take-up
+    real(dp), allocatable :: pol_c(:,:,:,:,:,:,:)
+    real(dp), allocatable :: pol_v(:,:,:,:,:,:,:)
+    real(dp), allocatable :: dist(:,:,:,:,:,:,:)
+    real(dp) :: mh_trans(NM,NM)
     ! precomputed powers, to keep pow() out of the inner loop
     real(dp) :: h_pow(NH), alpha_u, beta_u, gamma_u
 
@@ -195,6 +218,15 @@ subroutine setup_grids()
         h_pow(i) = h_grid(i)**beta_u
     end do
 
+    !-- mental-health transition and its ergodic newborn distribution --------
+    if (include_mental_health == 1) then
+        mh_trans(1,1) = 1.0_dp - mh_onset;   mh_trans(1,2) = mh_onset
+        mh_trans(2,1) = mh_recover;          mh_trans(2,2) = 1.0_dp - mh_recover
+    else
+        mh_trans = 0.0_dp; mh_trans(1,1) = 1.0_dp; mh_trans(2,1) = 1.0_dp
+    end if
+    call ergodic(NM, mh_trans, mh_dist0)
+
     m = 0.0_dp
     do i = 1, NY
         m = m + y_dist0(i)*y_grid(i)
@@ -211,14 +243,14 @@ subroutine alloc_all()
     ! CHOSEN h', and renters face no adjustment cost, so the housing a
     ! household arrives with is payoff-irrelevant. Carrying it would replicate
     ! the entire problem NH times. Reinstate it if moving costs are added.
-    allocate(V     (NA,NY,NE,ND,NV,n_age+1))
-    allocate(pol_a (NA,NY,NE,ND,NV,n_age))
-    allocate(pol_h (NA,NY,NE,ND,NV,n_age))
-    allocate(pol_reg(NA,NY,NE,ND,NV,n_age))
-    allocate(pol_tr(NA,NY,NE,ND,NV,n_age))
-    allocate(pol_c (NA,NY,NE,ND,NV,n_age))
-    allocate(pol_v (NA,NY,NE,ND,NV,n_age))
-    allocate(dist  (NA,NY,NE,ND,NV,n_age))
+    allocate(V     (NA,NY,NE,ND,NV,NM,n_age+1))
+    allocate(pol_a (NA,NY,NE,ND,NV,NM,n_age))
+    allocate(pol_h (NA,NY,NE,ND,NV,NM,n_age))
+    allocate(pol_reg(NA,NY,NE,ND,NV,NM,n_age))
+    allocate(pol_tr(NA,NY,NE,ND,NV,NM,n_age))
+    allocate(pol_c (NA,NY,NE,ND,NV,NM,n_age))
+    allocate(pol_v (NA,NY,NE,ND,NV,NM,n_age))
+    allocate(dist  (NA,NY,NE,ND,NV,NM,n_age))
     V = 0.0_dp; dist = 0.0_dp
     pol_a = 1; pol_h = 1; pol_reg = 1; pol_tr = 0
     pol_c = 0.0_dp; pol_v = 0.0_dp
@@ -226,45 +258,49 @@ end subroutine alloc_all
 
 
 !-- survival probability, given chosen housing and SUD status ----------------
-pure function survival(j, ih, id) result(phi)
-    integer, intent(in) :: j, ih, id
+pure function survival(j, ih, id, im) result(phi)
+    integer, intent(in) :: j, ih, id, im
     real(dp) :: phi, mult, death
     mult = 1.0_dp
     if (ih == 1) mult = mult * kappa_phi_h**real(on_homeless_fb,dp)
     if (id == 2) mult = mult * kappa_phi_d**real(on_mortality_d,dp)
+    if (im == 2) mult = mult * kappa_phi_m
     death = (1.0_dp - surv_base(j)) * mult
     phi = max(0.0_dp, 1.0_dp - min(death, 1.0_dp))
 end function survival
 
 
 !-- job-finding probability --------------------------------------------------
-pure function p_find(ih, id) result(p)
-    integer, intent(in) :: ih, id
+pure function p_find(ih, id, im) result(p)
+    integer, intent(in) :: ih, id, im
     real(dp) :: p, mult
     mult = 1.0_dp
     if (ih == 1) mult = mult * kappa_ue_h**real(on_homeless_fb,dp)
     if (id == 2) mult = mult * kappa_ue_d**real(on_employment_d,dp)
+    if (im == 2) mult = mult * kappa_ue_m
     p = min(1.0_dp, pi_ue_base*mult)
 end function p_find
 
 
 !-- job-separation probability -----------------------------------------------
-pure function p_sep(ih, id) result(p)
-    integer, intent(in) :: ih, id
+pure function p_sep(ih, id, im) result(p)
+    integer, intent(in) :: ih, id, im
     real(dp) :: p, mult
     mult = 1.0_dp
     if (ih == 1) mult = mult / kappa_ue_h**real(on_homeless_fb,dp)
     if (id == 2) mult = mult / kappa_ue_d**real(on_employment_d,dp)
+    if (im == 2) mult = mult / kappa_ue_m
     p = min(1.0_dp, pi_eu_base*mult)
 end function p_sep
 
 
 !-- recovery hazard, given housing and treatment take-up ---------------------
-pure function p_recover(ih, itr) result(p)
-    integer, intent(in) :: ih, itr
+pure function p_recover(ih, itr, im) result(p)
+    integer, intent(in) :: ih, itr, im
     real(dp) :: p
     p = recover_housed
     if (ih == 1) p = p * recover_mult_hl**real(on_homeless_fb,dp)
+    if (im == 2) p = p * rec_mult_m
     if (itr == 1) p = p * treat_gain
     p = min(1.0_dp, p)
 end function p_recover

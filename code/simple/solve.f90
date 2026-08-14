@@ -29,15 +29,15 @@ module solve
     use params
     implicit none
 
-    ! EV(ia', ih', iy, ie, id, ireg, itr, ielig, iv)
-    real(dp), allocatable :: EV(:,:,:,:,:,:,:,:,:)
-    real(dp), allocatable :: VY(:,:,:,:,:)   ! (ia',iy,ie',id',iv')
+    ! EV(ia', ih', iy, ie, id, ireg, itr, ielig, iv, im)
+    real(dp), allocatable :: EV(:,:,:,:,:,:,:,:,:,:)
+    real(dp), allocatable :: VY(:,:,:,:,:,:)   ! (ia',iy,ie',id',iv',im')
 
 contains
 
 subroutine alloc_solve()
-    allocate(EV(NA,NH,NY,NE,ND,NREG,0:1,0:1,NV))
-    allocate(VY(NA,NY,NE,ND,NV))
+    allocate(EV(NA,NH,NY,NE,ND,NREG,0:1,0:1,NV,NM))
+    allocate(VY(NA,NY,NE,ND,NV,NM))
 end subroutine alloc_solve
 
 
@@ -61,13 +61,20 @@ end function util
 
 
 !-- gross labour / retirement income -----------------------------------------
-pure function income_gross(j, iy, ie) result(y)
-    integer, intent(in) :: j, iy, ie
-    real(dp) :: y
+! Productivity penalties apply CONDITIONAL ON WORKING. This is what lets an
+! employed household have low enough income to choose homelessness, which an
+! unemployment effect alone cannot deliver (R1 comment 2(c)(i)), and it answers
+! the AE's question A20 on direct productivity effects of SUD.
+pure function income_gross(j, iy, ie, id, im) result(y)
+    integer, intent(in) :: j, iy, ie, id, im
+    real(dp) :: y, prod
+    prod = 1.0_dp
+    if (id == 2) prod = prod * prod_pen_d
+    if (im == 2) prod = prod * prod_pen_m
     if (j >= j_ret) then
-        y = 0.40_dp * y_grid(iy)                 ! social security
+        y = 0.40_dp * y_grid(iy)                 ! social security, no penalty
     else if (ie == 2) then
-        y = y_grid(iy) * age_prof(j)
+        y = y_grid(iy) * age_prof(j) * prod
     else
         y = 0.20_dp * y_grid(iy) * age_prof(j)   ! UI, no expiration state
     end if
@@ -88,13 +95,15 @@ end function after_tax
 subroutine build_EV(j)
     integer, intent(in) :: j
     integer :: ia, iy, iyp, iep, idp, ihp, ivp, ie, id, ireg, itr, ielig, iv
-    real(dp) :: acc, pe, pd, pv_eta, pfind, psep, prec, paddict
+    integer :: im, imp
+    real(dp) :: acc, pe, pd, pv_eta, pm, pfind, psep, prec, paddict
     real(dp) :: s_eta(NV), s_d(ND), s_e(NE)
 
     !-- stage 1: integrate over next-period productivity ---------------------
     ! NB: collapsed loop variables are private by default and must NOT appear
     ! in the private clause -- doing so is non-conforming and segfaults.
-    !$omp parallel do collapse(3) private(ia,iy,acc,iyp) schedule(static)
+    !$omp parallel do collapse(4) private(ia,iy,acc,iyp) schedule(static)
+    do imp = 1, NM
     do ivp = 1, NV
     do idp = 1, ND
     do iep = 1, NE
@@ -102,11 +111,12 @@ subroutine build_EV(j)
             do ia = 1, NA
                 acc = 0.0_dp
                 do iyp = 1, NY
-                    acc = acc + y_trans(iy,iyp) * V(ia,iyp,iep,idp,ivp,j+1)
+                    acc = acc + y_trans(iy,iyp) * V(ia,iyp,iep,idp,ivp,imp,j+1)
                 end do
-                VY(ia,iy,iep,idp,ivp) = acc
+                VY(ia,iy,iep,idp,ivp,imp) = acc
             end do
         end do
+    end do
     end do
     end do
     end do
@@ -114,9 +124,10 @@ subroutine build_EV(j)
 
     !-- stage 2: integrate over employment, SUD and voucher transitions ------
     !$omp parallel do collapse(4) &
-    !$omp   private(ia,ihp,ireg,itr,ielig,acc,iep,idp,ivp, &
-    !$omp           pfind,psep,prec,paddict,s_e,s_d,s_eta,pe,pd,pv_eta) &
+    !$omp   private(ia,ihp,ireg,itr,ielig,acc,iep,idp,ivp,imp,iy,ie, &
+    !$omp           pfind,psep,prec,paddict,s_e,s_d,s_eta,pe,pd,pv_eta,pm) &
     !$omp   schedule(static)
+    do im = 1, NM
     do iv = 1, NV
     do id = 1, ND
     do ie = 1, NE
@@ -126,8 +137,8 @@ subroutine build_EV(j)
         do ireg = 1, NREG
         do ihp = 1, NH
 
-            pfind = p_find(ihp, id)
-            psep  = p_sep(ihp, id)
+            pfind = p_find(ihp, id, im)
+            psep  = p_sep(ihp, id, im)
             if (ie == 2) then
                 s_e(1) = psep;            s_e(2) = 1.0_dp - psep
             else
@@ -144,7 +155,7 @@ subroutine build_EV(j)
                 end if
                 s_d(1) = 1.0_dp - paddict; s_d(2) = paddict
             else
-                prec = p_recover(ihp, itr)
+                prec = p_recover(ihp, itr, im)
                 s_d(1) = prec;             s_d(2) = 1.0_dp - prec
             end if
 
@@ -161,17 +172,22 @@ subroutine build_EV(j)
                         do ivp = 1, NV
                             pv_eta = s_eta(ivp)
                             if (pv_eta <= 0.0_dp) cycle
-                            acc = acc + pe*pd*pv_eta*VY(ia,iy,iep,idp,ivp)
+                            do imp = 1, NM
+                                pm = mh_trans(im,imp)
+                                if (pm <= 0.0_dp) cycle
+                                acc = acc + pe*pd*pv_eta*pm*VY(ia,iy,iep,idp,ivp,imp)
+                            end do
                         end do
                     end do
                 end do
-                EV(ia,ihp,iy,ie,id,ireg,itr,ielig,iv) = acc
+                EV(ia,ihp,iy,ie,id,ireg,itr,ielig,iv,im) = acc
             end do
 
         end do
         end do
         end do
         end do
+    end do
     end do
     end do
     end do
@@ -213,31 +229,32 @@ end subroutine voucher_probs
 ! Backward induction.
 !===============================================================================
 subroutine solve_household()
-    integer :: j, ia, iy, ie, id, iv
+    integer :: j, ia, iy, ie, id, iv, im
     integer :: ihp, ireg, itr, iap, ielig
     integer :: best_a, best_h, best_reg, best_tr
     real(dp) :: res, R, Rt, cc, vv, val, best, phi
     real(dp) :: ygross, ynet, vouch, cfloor, v_unc, cost_tr, bestc, bestv
 
     cfloor = cfloor_share * avg_income
-    V(:,:,:,:,:,n_age+1) = 0.0_dp
+    V(:,:,:,:,:,:,n_age+1) = 0.0_dp
 
     do j = n_age, 1, -1
 
         call build_EV(j)
 
-        !$omp parallel do collapse(3) &
+        !$omp parallel do collapse(4) &
         !$omp   private(ia,iy,ihp,ireg,itr,iap,ielig, &
         !$omp           best_a,best_h,best_reg,best_tr,res,R,Rt,cc,vv,val,best, &
         !$omp           phi,ygross,ynet,vouch,v_unc,cost_tr,bestc,bestv) &
         !$omp   schedule(dynamic)
+        do im = 1, NM
         do iv = 1, NV
         do id = 1, ND
         do ie = 1, NE
             do iy = 1, NY
             do ia = 1, NA
 
-                ygross = income_gross(j, iy, ie)
+                ygross = income_gross(j, iy, ie, id, im)
                 ynet   = after_tax(ygross) + r*a_grid(ia)
 
                 if (ygross + max(0.0_dp, r*a_grid(ia)) < kappa_V*median_income) then
@@ -252,7 +269,7 @@ subroutine solve_household()
 
                 do ihp = 1, NH
 
-                    phi = survival(j, ihp, id)
+                    phi = survival(j, ihp, id, im)
 
                     ! the voucher pays only while renting, never while homeless
                     vouch = 0.0_dp
@@ -281,8 +298,8 @@ subroutine solve_household()
                                 if (R <= 0.0_dp) exit      ! a_grid is increasing
 
                                 ! closed-form Cobb-Douglas split of R over (c, v)
-                                Rt = R + p_v*b_d(id)
-                                v_unc = gamma_u/(alpha_u+gamma_u) * Rt/p_v - b_d(id)
+                                Rt = R + p_v*b_dm(id,im)
+                                v_unc = gamma_u/(alpha_u+gamma_u) * Rt/p_v - b_dm(id,im)
 
                                 select case (ireg)
                                 case (1)
@@ -296,8 +313,8 @@ subroutine solve_household()
                                 cc = R - p_v*vv
                                 if (cc <= 0.0_dp) cycle
 
-                                val = util(cc, h_pow(ihp), vv, b_d(id)) &
-                                    + beta*phi*EV(iap,ihp,iy,ie,id,ireg,itr,ielig,iv)
+                                val = util(cc, h_pow(ihp), vv, b_dm(id,im)) &
+                                    + beta*phi*EV(iap,ihp,iy,ie,id,ireg,itr,ielig,iv,im)
 
                                 if (val > best) then
                                     best = val
@@ -310,16 +327,17 @@ subroutine solve_household()
                     end do
                 end do
 
-                V(ia,iy,ie,id,iv,j)      = best
-                pol_a(ia,iy,ie,id,iv,j)  = best_a
-                pol_h(ia,iy,ie,id,iv,j)  = best_h
-                pol_reg(ia,iy,ie,id,iv,j)= best_reg
-                pol_tr(ia,iy,ie,id,iv,j) = best_tr
-                pol_c(ia,iy,ie,id,iv,j)  = bestc
-                pol_v(ia,iy,ie,id,iv,j)  = bestv
+                V(ia,iy,ie,id,iv,im,j)      = best
+                pol_a(ia,iy,ie,id,iv,im,j)  = best_a
+                pol_h(ia,iy,ie,id,iv,im,j)  = best_h
+                pol_reg(ia,iy,ie,id,iv,im,j)= best_reg
+                pol_tr(ia,iy,ie,id,iv,im,j) = best_tr
+                pol_c(ia,iy,ie,id,iv,im,j)  = bestc
+                pol_v(ia,iy,ie,id,iv,im,j)  = bestv
 
             end do
             end do
+        end do
         end do
         end do
         end do

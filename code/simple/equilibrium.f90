@@ -24,7 +24,7 @@ module equilibrium
         real(dp) :: pop=0, mass_dead=0
         real(dp) :: labinc=0, labinc_pow=0, capinc=0, captax=0
         real(dp) :: ss=0, ui=0, food=0, vouchers=0
-        real(dp) :: homeless=0, sud=0, users=0, unemp=0, drugq=0
+        real(dp) :: homeless=0, sud=0, users=0, unemp=0, drugq=0, poormh=0
         real(dp) :: assets_dead=0, consumption=0, treated=0
         real(dp) :: govt_outlay=0, tax_rev=0
     end type agg_t
@@ -37,31 +37,33 @@ contains
 !-- everything the equilibrium conditions need, in one pass ------------------
 subroutine compute_aggregates(A)
     type(agg_t), intent(out) :: A
-    integer  :: j, ia, iy, ie, id, iv, ihp, ireg, itr, iap
+    integer  :: j, ia, iy, ie, id, iv, im, ihp, ireg, itr, iap
     real(dp) :: m, ygross, ynet, vouch, res, phi, food_j, cc, vv, capinc_j
 
 
     do j = 1, n_age
+    do im = 1, NM
     do iv = 1, NV
     do id = 1, ND
     do ie = 1, NE
     do iy = 1, NY
     do ia = 1, NA
-        m = dist(ia,iy,ie,id,iv,j)
+        m = dist(ia,iy,ie,id,iv,im,j)
         if (m <= 0.0_dp) cycle
 
-        ihp  = pol_h(ia,iy,ie,id,iv,j)
-        iap  = pol_a(ia,iy,ie,id,iv,j)
-        ireg = pol_reg(ia,iy,ie,id,iv,j)
-        itr  = pol_tr(ia,iy,ie,id,iv,j)
-        cc   = pol_c(ia,iy,ie,id,iv,j)
-        vv   = pol_v(ia,iy,ie,id,iv,j)
+        ihp  = pol_h(ia,iy,ie,id,iv,im,j)
+        iap  = pol_a(ia,iy,ie,id,iv,im,j)
+        ireg = pol_reg(ia,iy,ie,id,iv,im,j)
+        itr  = pol_tr(ia,iy,ie,id,iv,im,j)
+        cc   = pol_c(ia,iy,ie,id,iv,im,j)
+        vv   = pol_v(ia,iy,ie,id,iv,im,j)
 
-        ygross   = income_gross(j, iy, ie)
+        ygross   = income_gross(j, iy, ie, id, im)
         capinc_j = r*a_grid(ia)
-        phi      = survival(j, ihp, id)
+        phi      = survival(j, ihp, id, im)
 
         A%pop = A%pop + m
+        if (im == 2) A%poormh = A%poormh + m
 
         ! income and the tax base
         if (j < j_ret) then
@@ -100,6 +102,7 @@ subroutine compute_aggregates(A)
         ! bequests: assets carried by those who do not survive
         A%mass_dead   = A%mass_dead   + m*(1.0_dp - phi)
         A%assets_dead = A%assets_dead + m*(1.0_dp - phi)*a_grid(iap)
+    end do
     end do
     end do
     end do
@@ -236,42 +239,45 @@ end subroutine normalise_drug_supply
 ! loop can call it.
 !===============================================================================
 subroutine build_distribution_eq()
-    integer  :: j, ia, iy, ie, id, iv
-    integer  :: iap, ihp, ireg, itr, iyp, iep, idp, ivp, ielig
+    integer  :: j, ia, iy, ie, id, iv, im
+    integer  :: iap, ihp, ireg, itr, iyp, iep, idp, ivp, imp, ielig
     real(dp) :: m, phi, pfind, psep, prec, paddict, ygross
     real(dp) :: s_e(NE), s_d(ND), s_eta(NV)
 
     dist = 0.0_dp
+    do im = 1, NM
     do iy = 1, NY
-        dist(1,iy,2,1,1,1) = y_dist0(iy)
+        dist(1,iy,2,1,1,im,1) = y_dist0(iy)*mh_dist0(im)
+    end do
     end do
 
     do j = 1, n_age-1
+        do im = 1, NM
         do iv = 1, NV
         do id = 1, ND
         do ie = 1, NE
         do iy = 1, NY
         do ia = 1, NA
-            m = dist(ia,iy,ie,id,iv,j)
+            m = dist(ia,iy,ie,id,iv,im,j)
             if (m <= 0.0_dp) cycle
 
-            iap  = pol_a(ia,iy,ie,id,iv,j)
-            ihp  = pol_h(ia,iy,ie,id,iv,j)
-            ireg = pol_reg(ia,iy,ie,id,iv,j)
-            itr  = pol_tr(ia,iy,ie,id,iv,j)
+            iap  = pol_a(ia,iy,ie,id,iv,im,j)
+            ihp  = pol_h(ia,iy,ie,id,iv,im,j)
+            ireg = pol_reg(ia,iy,ie,id,iv,im,j)
+            itr  = pol_tr(ia,iy,ie,id,iv,im,j)
 
-            phi = survival(j, ihp, id)
+            phi = survival(j, ihp, id, im)
             if (phi <= 0.0_dp) cycle
 
-            ygross = income_gross(j, iy, ie)
+            ygross = income_gross(j, iy, ie, id, im)
             if (ygross + max(0.0_dp, r*a_grid(ia)) < kappa_V*median_income) then
                 ielig = 1
             else
                 ielig = 0
             end if
 
-            pfind = p_find(ihp, id)
-            psep  = p_sep(ihp, id)
+            pfind = p_find(ihp, id, im)
+            psep  = p_sep(ihp, id, im)
             if (ie == 2) then
                 s_e(1) = psep;           s_e(2) = 1.0_dp - psep
             else
@@ -288,7 +294,7 @@ subroutine build_distribution_eq()
                 end if
                 s_d(1) = 1.0_dp - paddict; s_d(2) = paddict
             else
-                prec = p_recover(ihp, itr)
+                prec = p_recover(ihp, itr, im)
                 s_d(1) = prec;             s_d(2) = 1.0_dp - prec
             end if
 
@@ -302,13 +308,18 @@ subroutine build_distribution_eq()
                         if (s_d(idp) <= 0.0_dp) cycle
                         do ivp = 1, NV
                             if (s_eta(ivp) <= 0.0_dp) cycle
-                            dist(iap,iyp,iep,idp,ivp,j+1) = &
-                                dist(iap,iyp,iep,idp,ivp,j+1) + &
-                                m*phi*y_trans(iy,iyp)*s_e(iep)*s_d(idp)*s_eta(ivp)
+                            do imp = 1, NM
+                                if (mh_trans(im,imp) <= 0.0_dp) cycle
+                                dist(iap,iyp,iep,idp,ivp,imp,j+1) = &
+                                    dist(iap,iyp,iep,idp,ivp,imp,j+1) + &
+                                    m*phi*y_trans(iy,iyp)*s_e(iep)*s_d(idp) &
+                                    *s_eta(ivp)*mh_trans(im,imp)
+                            end do
                         end do
                     end do
                 end do
             end do
+        end do
         end do
         end do
         end do
@@ -321,10 +332,12 @@ end subroutine build_distribution_eq
 !-- ex-ante expected lifetime utility of a newborn ---------------------------
 function newborn_welfare() result(W)
     real(dp) :: W
-    integer  :: iy
+    integer  :: iy, im
     W = 0.0_dp
+    do im = 1, NM
     do iy = 1, NY
-        W = W + y_dist0(iy)*V(1,iy,2,1,1,1)
+        W = W + y_dist0(iy)*mh_dist0(im)*V(1,iy,2,1,1,im,1)
+    end do
     end do
 end function newborn_welfare
 

@@ -23,8 +23,8 @@ program main
     write(*,'(A)') ' Simplified HF/TF model -- stationary equilibrium'
     write(*,'(A)') '======================================================'
     write(*,'(A,I0)') ' threads             : ', nthreads
-    write(*,'(A,I0)') ' states per age      : ', NA*NY*NE*ND*NV
-    write(*,'(A,I0)') ' Bellman evaluations : ', NA*NY*NE*ND*NV*n_age*NH*NREG*2*NA
+    write(*,'(A,I0)') ' states per age      : ', NA*NY*NE*ND*NV*NM
+    write(*,'(A,I0)') ' Bellman evaluations : ', NA*NY*NE*ND*NV*NM*n_age*NH*NREG*2*NA
     write(*,'(A)') ''
 
     call wall(t0)
