@@ -137,7 +137,22 @@ module params
     ! direction. R1 1(c) and R3 M2d asked for the price to be endogenous; it now
     ! is, and the data say the flat benchmark is the right one to sit at.
     real(dp) :: psi1 = 1.0_dp
-    real(dp) :: drug_supply_elasticity = 50.0_dp   ! baseline: near-horizontal
+    ! Supply elasticity. 50 was effectively infinite and indefensible as a
+    ! NUMBER even though the direction is well supported: it made the price move
+    ! 1.4% when demand halves, which zeroes out the drug-price externality by
+    ! construction, and that channel is one of the five the welfare
+    ! decomposition exists to measure.
+    !
+    ! 10 is still highly elastic, consistent with the OxyContin episode, and
+    ! leaves the channel alive: halving demand moves the price 6.7%. Swept over
+    ! {2, 5, 10, 50} with the externality reported at each, since the evidence
+    ! pins the direction and not the number.
+    !
+    ! NOTE: with pin_pv = 1 this does NOT affect the first stage. p_v is the
+    ! numeraire there and psi1 is renormalised at each clearing, so the
+    ! calibrated benchmark is invariant to psi2. It bites only in
+    ! counterfactuals and in the second-stage elasticity.
+    real(dp) :: drug_supply_elasticity = 10.0_dp
     real(dp) :: psi2 = 1.02_dp
     ! psi1 is a pure NORMALISATION: it has no independent meaning and is pinned
     ! by the requirement that p_v = 1 at the benchmark. During the first stage
