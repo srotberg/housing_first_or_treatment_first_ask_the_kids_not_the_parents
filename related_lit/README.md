@@ -47,6 +47,22 @@ Degenhardt et al.'s SMR range of 2.5 to 9.8.
 | `Rydell_Everingham_1994_Controlling_Cocaine_Supply_Versus_Demand_RAND_MR331.pdf` | The RAND cost effectiveness study of cocaine control, source of the often quoted supply elasticity near $-3.6$ | **Not used for `psi_2`, and the reason matters.** A negative elasticity means a downward sloping supply curve, driven by enforcement swamping: a larger market dilutes per unit enforcement risk. Caulkins and Reuter note that swamping "pertains to total drug volume ... not just or primarily drug-specific market volume", so it operates on the aggregate market. Our counterfactuals move one drug market and leave total US drug volume essentially unchanged, so that force is not active at our margin. Scanned with no text layer; OCR it if the figure is needed |
 | `Caulkins_Reuter_2010_How_Drug_Enforcement_Affects_Drug_Prices_Crime_and_Justice.pdf` | The risks and prices framework | The cost STRUCTURE, not the slope. Growing and refining are under 1% of cocaine's retail price; a \$100 gram leaves Colombia at barely \$1; importation is 12% of the total and almost all risk compensation, in a competitive market. Also the source of the resolution of the sign problem: enforcement swamping "pertains to total drug volume ... not just or primarily drug-specific market volume", so the downward sloping force works on the aggregate market and not on ours |
 
+## Housing First trials, and what they say about the health channels
+
+| file | what it is | what it settled |
+|---|---|---|
+| `Stergiopoulos_et_al_2015_At_Home_Chez_Soi_RCT_scattered_site_housing_ICM_moderate_needs_JAMA.odt` | At Home/Chez Soi, N=1198, scattered site housing plus intensive case management, moderate needs, 4 Canadian cities | **The housing to mental health channel should NOT be added.** Mental illness symptom severity is null at every wave, $-0.96$ (p=.16), $-0.51$ (p=.46), 0.18 (p=.79), 0.57 (p=.44). Recovery Assessment Scale 0.09 (p=.92). **Severity of substance use problems 1.04 (0.89 to 1.21), p=.66, also null.** What IS large and significant: housing stability, the primary outcome, and condition specific quality of life, 5.91 (3.41 to 8.41), p<.001 |
+| `Aubry_et_al_2015_At_Home_Chez_Soi_RCT_Housing_First_with_ACT_high_needs_PsychServices.pdf` | The high needs arm of the same trial, Housing First with Assertive Community Treatment | Same design, sicker population. Outcomes measured on the Colorado Symptom Index and the GAIN substance problem scale |
+| `Sadowski_et_al_2009_Housing_and_case_management_ED_visits_hospitalizations_Chicago_RCT_JAMA.odt` | Chicago RCT, N=407, housing plus case management for chronically ill homeless adults | Health SERVICE use, emergency department visits and hospitalisations. The outcome family the model has no state for |
+
+**The Milby tension, and it is productive rather than awkward.** The model's
+`b_hl_ratio` is calibrated to Milby, where housing raised abstinence. At Home/Chez
+Soi finds unconditional housing does nothing to substance use. That is not a
+contradiction: Milby's housing was **contingent on abstinence** and At Home/Chez
+Soi's is **unconditional**. Contingency is doing the work, not housing. That
+distinction is exactly what this paper is about, and the two trials together are
+better evidence for it than either alone.
+
 ## Evidence reviews used for validation
 
 | file | what it is |
