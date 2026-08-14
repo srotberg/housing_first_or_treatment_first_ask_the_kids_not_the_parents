@@ -73,12 +73,20 @@ NSDUH 2023, aged 26+ (the model's population), past-year disorder:
 | Cocaine | 0.5% |
 | Heroin | 0.3% |
 
-The model's target is **3.68%**, which sits close to drug use disorder
-*excluding* marijuana (roughly 3.1%, the categories overlap so they do not sum).
-That is almost certainly the intended concept, but it is nowhere stated, and the
-gap between 3.68% and 16.6% is large enough that a referee who assumes the
-NSDUH headline will think the model is off by a factor of four. **Write the
-definition down explicitly** whatever else changes.
+**PROVENANCE CONFIRMED.** The target is **moderate/severe drug use disorder at
+ages 26+**, reproduced exactly from `NSDUH_2024.dta` using `svyrdudany` (1 mild,
+2 moderate, 3 severe, 4 none) weighted by `analwt2_c` over `age3 >= 7`:
+
+| concept | rate |
+|---|---:|
+| any drug use disorder (severity 1–3) | 8.90% |
+| **moderate/severe (severity 2–3)** | **3.68%** |
+
+My earlier guess that it was "drugs excluding marijuana" was wrong — it is a
+severity restriction, not a substance restriction. The definition still needs
+writing down: the gap between 3.68% and NSDUH's headline 16.6% is large enough
+that a referee assuming the published figure will think the model is off by a
+factor of four.
 
 ---
 
@@ -106,9 +114,49 @@ NSDUH's drug use disorder — marijuana is 5.5 of the 8.6 points, and severe
 disorders plausibly carry a steeper employment gradient than marijuana does. So
 the true comparison for the model's concept lies somewhere above 2.23.
 
-Still: **the 26.9% target needs a provenance**, and if it cannot be sourced it
-should be replaced by the NSDUH gradient, which is measured on the right
-population and is the cleaner identification of `kappa_ue_d` in any case.
+### Computed from the published tables
+
+Tables 5.4A (counts) and 5.4B (rates) together give the joint, ages 26+, 2023.
+Dividing counts by rates recovers each employment cell's population:
+
+| cell | population (000s) | with DUD (000s) | DUD rate |
+|---|---:|---:|---:|
+| full-time | 107,759 | 8,944 | 8.3% |
+| part-time | 23,145 | 1,921 | 8.3% |
+| unemployed | 8,099 | 1,555 | 19.2% |
+| other | 85,500 | 6,840 | 8.0% |
+
+- unemployment rate overall (U / [FT+PT+U]): **5.83%**
+- **unemployment rate given drug use disorder: 12.52%**
+- relative risk **2.15x**, against the model's implied **5.49x**
+
+**So 26.9% is roughly 2.15x the NSDUH figure for ANY drug use disorder.** But
+the model's concept is moderate/severe, which is worse-off than the average
+case, so the true comparison is higher than 12.52%. An extreme upper bound —
+assuming every unemployed person with a disorder has a moderate/severe one —
+puts it near 31%. So 26.9% is not refuted; it sits at the very top of the
+plausible range and requires nearly all disorder-related unemployment to fall
+in the severe tail.
+
+### Getting the exact number — one variable
+
+No published table crosses severity with employment, so this needs microdata.
+`data/NSDUH_2024.dta` already has severity (`svyrdudany`) and the weight, but
+the extract dropped employment. Add **`irwrkstat`** (1 full-time, 2 part-time,
+3 unemployed, 4 other/NILF) to the same `keep` list and re-export, or compute it
+in Stata directly:
+
+```stata
+use "NSDUH_2024.dta", clear
+keep if age3 >= 7                             // ages 26+
+gen byte modsev = inlist(svyrdudany, 2, 3)    // moderate/severe drug UD
+gen byte inlf   = inlist(irwrkstat, 1, 2, 3)  // labour force
+gen byte unemp  = irwrkstat == 3
+tab modsev if inlf [aw=analwt2_c], summarize(unemp) means
+```
+
+The `modsev == 1` mean is the moment. Check `tab irwrkstat` first — some
+vintages name it `irwrkstat18`.
 
 ---
 
