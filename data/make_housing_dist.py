@@ -78,9 +78,16 @@ def parse_num(x):
 
 def read_acs(path):
     """
-    Pull (label, estimate) pairs out of a data.census.gov xlsx export. The
-    export puts the table in a 'Data' sheet with a Label column and an Estimate
-    column; the table id and universe live in an 'Information' sheet.
+    Pull the bedroom counts out of a data.census.gov xlsx export.
+
+    B25042 is NESTED: a Total row, then an "Owner occupied:" header followed by
+    its six bedroom rows, then "Renter occupied:" followed by its six. The
+    bedroom labels REPEAT across the two blocks, so a flat label->value dict
+    silently keeps only the renter numbers. Track which tenure block we are in
+    and accumulate separately.
+
+    B25041 is flat -- one block, no tenure header -- and falls out of the same
+    loop with everything landing in 'all'.
     """
     import openpyxl
     wb = openpyxl.load_workbook(path, data_only=True)
@@ -95,16 +102,29 @@ def read_acs(path):
                 universe = cells[1]
 
     ws = wb["Data"] if "Data" in wb.sheetnames else wb.worksheets[0]
-    rows = []
+    blocks = {"owner": {}, "renter": {}, "all": {}}
+    total = None
+    cur = "all"
+
     for r in ws.iter_rows(values_only=True):
         if not r or r[0] is None:
             continue
-        label = str(r[0]).strip().strip(":").lower()
-        # the estimate is the first numeric-looking cell after the label
+        label = str(r[0]).strip().rstrip(":").lower()
         est = next((parse_num(c) for c in r[1:] if parse_num(c) is not None), None)
-        if est is not None:
-            rows.append((label, est))
-    return table_id, universe, rows
+
+        if label.startswith("owner occupied"):
+            cur = "owner"; continue
+        if label.startswith("renter occupied"):
+            cur = "renter"; continue
+        if label == "total":
+            total = est; continue
+        if est is None:
+            continue
+        for cat in CATS:
+            if label == cat:
+                blocks[cur][cat] = est
+
+    return table_id, universe, blocks, total
 
 
 def main():
@@ -113,9 +133,13 @@ def main():
     p.add_argument("--xlsx", required=True, metavar="FILE")
     p.add_argument("--bins", default="0112", choices=sorted(BINS),
                    help="0112 = {0,1}{2}{3+} (default); 0113 = {0,1}{2,3}{4+}")
+    p.add_argument("--tenure", default="all", choices=["all", "owner", "renter"],
+                   help="which households. 'all' is the model-consistent choice: "
+                        "there is no homeownership in the model, so every housed "
+                        "household maps to an occupied unit regardless of tenure.")
     a = p.parse_args()
 
-    table_id, universe, rows = read_acs(a.xlsx)
+    table_id, universe, blocks, total_row = read_acs(a.xlsx)
 
     if "B25041" in table_id:
         print(f"  WARNING: {table_id} has universe '{universe}', which includes "
@@ -125,35 +149,36 @@ def main():
               f"           the small end. B25042 (occupied units) is the right "
               f"table.", file=sys.stderr)
 
-    # match the six categories against the label column
-    counts = []
-    for cat in CATS:
-        hit = next((v for lab, v in rows if lab.startswith(cat.split()[0])
-                    and cat.split()[0] != "5" or lab.startswith("5")), None)
-        # explicit match is safer than the prefix trick above
-        hit = next((v for lab, v in rows if lab == cat), hit)
-        if hit is None:
-            sys.exit(f"ERROR: could not find the '{cat}' row in {a.xlsx}.\n"
-                     f"       Labels seen: {[l for l,_ in rows][:10]}")
-        counts.append(hit)
+    if a.tenure == "all":
+        counts = [blocks["owner"].get(c, 0.0) + blocks["renter"].get(c, 0.0)
+                  + blocks["all"].get(c, 0.0) for c in CATS]
+    else:
+        counts = [blocks[a.tenure].get(c, 0.0) for c in CATS]
 
-    total = next((v for lab, v in rows if lab == "total"), sum(counts))
-    if abs(sum(counts) - total) > 0.01 * total:
-        sys.exit(f"ERROR: the six categories sum to {sum(counts):,.0f} but the "
-                 f"total row says {total:,.0f}. Wrong columns?")
+    if sum(counts) <= 0:
+        sys.exit(f"ERROR: no '{a.tenure}' bedroom rows found in {a.xlsx}.\n"
+                 f"       Blocks seen: "
+                 f"{ {k: len(v) for k, v in blocks.items()} }")
+
+    total = sum(counts)
+    # cross-check against the table's own Total row when we took everything
+    if a.tenure == "all" and total_row and abs(total - total_row) > 0.005 * total_row:
+        sys.exit(f"ERROR: the bedroom rows sum to {total:,.0f} but the table's "
+                 f"Total row says {total_row:,.0f}. Nesting misread?")
 
     edges = BINS[a.bins]
     shares = [sum(counts[lo:hi]) / total for lo, hi in edges]
 
     with open(OUT, "w", newline="") as fh:
         w = csv.writer(fh)
-        w.writerow(["size", "share", "source", "universe"])
+        w.writerow(["size", "share", "source", "universe", "tenure"])
         for k, (name, sh) in enumerate(zip(["small", "medium", "large"], shares), 1):
-            w.writerow([k, f"{sh:.6f}", table_id, universe])
+            w.writerow([k, f"{sh:.6f}", table_id, universe, a.tenure])
 
     print(f"  wrote {OUT}")
-    print(f"  table {table_id}, universe: {universe}")
-    print(f"  total households: {total:,.0f}")
+    print(f"  table {table_id}, universe: {universe}, tenure: {a.tenure}")
+    print(f"  households: {total:,.0f}"
+          + (f"   (Total row: {total_row:,.0f})" if total_row else ""))
     for cat, c in zip(CATS, counts):
         print(f"    {cat:20s} {c:14,.0f}  {100*c/total:6.2f}%")
     print(f"  collapsed with --bins {a.bins}:")
