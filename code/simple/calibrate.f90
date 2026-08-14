@@ -17,7 +17,7 @@ module calibrate
     use equilibrium
     implicit none
 
-    integer, parameter :: NMOM = 11
+    integer, parameter :: NMOM = 12
 
     type :: mom_t
         character(len=28) :: name
@@ -46,10 +46,16 @@ subroutine init_targets()
     ! See data/scf_housing_burden.py.
     mom(9)  = mom_t('housing cost/income, agg (%)', 21.20_dp, 0.0_dp, 1.0_dp)
     mom(10) = mom_t('share housing cost>50% (%)  ', 17.49_dp, 0.0_dp, 1.0_dp)
-    ! R1 comment 2(c)(i) attacked this as an untargeted miss (41% model vs 74%
-    ! data). Target it: it is also the moment that identifies the flow value of
-    ! life, which is what generates the income gradient.
-    mom(11) = mom_t('drug user income / avg (%)  ', 74.00_dp, 0.0_dp, 1.0_dp)
+    ! R1 comment 2(c)(i) attacked the user income ratio as an untargeted miss
+    ! (41% model vs "roughly 74%"). That 74% is computed over people with a use
+    ! DISORDER, not over people who use -- a different population. For ages 26+,
+    ! NSDUH gives 0.951 for users and 0.687 for moderate/severe UD.
+    !
+    ! Targeting both is the sharper test: USE is close to income-neutral, and it
+    ! is PROGRESSION to disorder that concentrates at the bottom. See
+    ! data/nsduh_gradients.py.
+    mom(11) = mom_t('drug user income / avg (%)  ', 95.10_dp, 0.0_dp, 1.0_dp)
+    mom(12) = mom_t('SUD income / avg (%)        ', 68.70_dp, 0.0_dp, 1.0_dp)
 end subroutine init_targets
 
 
@@ -60,14 +66,14 @@ subroutine compute_moments(A)
     real(dp) :: m, p, ygross
     real(dp) :: sud_unemp, sud_work, hl_sud, elig, vouch_elig
     real(dp) :: spend_sud, inc_sud
-    real(dp) :: hcost, totinc, burden50, users_inc, users_m
+    real(dp) :: hcost, totinc, burden50, users_inc, users_m, sud_inc, sud_m
 
     p = max(A%pop, 1.0e-12_dp)
     sud_unemp = 0.0_dp; sud_work = 0.0_dp; hl_sud = 0.0_dp
     elig = 0.0_dp; vouch_elig = 0.0_dp
     spend_sud = 0.0_dp; inc_sud = 0.0_dp
     hcost = 0.0_dp; totinc = 0.0_dp; burden50 = 0.0_dp
-    users_inc = 0.0_dp; users_m = 0.0_dp
+    users_inc = 0.0_dp; users_m = 0.0_dp; sud_inc = 0.0_dp; sud_m = 0.0_dp
 
     do j = 1, n_age
     do im = 1, NM
@@ -109,6 +115,11 @@ subroutine compute_moments(A)
             users_inc = users_inc + m*max(ygross, 1.0e-8_dp)
         end if
 
+        if (id == 2) then
+            sud_m   = sud_m + m
+            sud_inc = sud_inc + m*max(ygross, 1.0e-8_dp)
+        end if
+
         ! drug spending as a share of income, conditional on SUD
         if (id == 2) then
             spend_sud = spend_sud + m*p_v*pol_v(ia,iy,ie,id,iv,im,j)
@@ -133,6 +144,8 @@ subroutine compute_moments(A)
     mom(9)%model  = 100.0_dp*hcost/max(totinc, 1.0e-12_dp)
     mom(10)%model = 100.0_dp*burden50/p
     mom(11)%model = 100.0_dp*(users_inc/max(users_m,1.0e-12_dp)) &
+                            /max(totinc/p, 1.0e-12_dp)
+    mom(12)%model = 100.0_dp*(sud_inc/max(sud_m,1.0e-12_dp)) &
                             /max(totinc/p, 1.0e-12_dp)
 end subroutine compute_moments
 
@@ -237,7 +250,7 @@ end function max_gap
 !   theta_v            drug spend / income | SUD             +
 !   theta_h            housing cost / income (aggregate)      +
 !   p_rent             share with housing cost > 50%          +
-!   aleph              drug user income / average income      -
+!   aleph              SUD income / average income            -
 !===============================================================================
 subroutine calibration_sweep(step)
     real(dp), intent(in) :: step
@@ -252,8 +265,10 @@ subroutine calibration_sweep(step)
     call bump(theta_v,         gap(8), +1.0_dp, step, 1.0e-3_dp, 0.6_dp)
     call bump(theta_h,         gap(9), +1.0_dp, step, 0.02_dp,   0.6_dp)
     call bump(p_rent,          gap(10),+1.0_dp, step, 0.1_dp,    50.0_dp)
-    ! higher flow value of life -> the rich abstain more -> user income falls
-    call bump(aleph,           gap(11),-1.0_dp, step, 0.5_dp,    5.0e3_dp)
+    ! Higher flow value of life makes the rich abstain, so both income ratios
+    ! fall. aleph is assigned to the SUD ratio because that gradient is the
+    ! steep one and so is the more informative of the two.
+    call bump(aleph,           gap(12),-1.0_dp, step, 0.5_dp,    5.0e3_dp)
 
     ! keep derived quantities consistent with the parameters just moved
     pi_d_high = heavy_ratio * pi_d_low
