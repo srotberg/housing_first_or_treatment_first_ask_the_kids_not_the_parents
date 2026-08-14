@@ -59,7 +59,7 @@ subroutine profile_users(P)
     do ia = 1, NA
         m = dist(ia,iy,ie,id,iv,im,j)
         if (m <= 0.0_dp) cycle
-        y = income_gross(j, iy, ie, id, im)
+        y = income_gross(j, iy, ie, id, im, hours_of(j, ie, pol_l(ia,iy,ie,id,iv,im,j)))
 
         pop    = pop + m
         totinc = totinc + m*y

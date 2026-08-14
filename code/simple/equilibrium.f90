@@ -58,7 +58,7 @@ subroutine compute_aggregates(A)
         cc   = pol_c(ia,iy,ie,id,iv,im,j)
         vv   = pol_v(ia,iy,ie,id,iv,im,j)
 
-        ygross   = income_gross(j, iy, ie, id, im)
+        ygross   = income_gross(j, iy, ie, id, im, hours_of(j, ie, pol_l(ia,iy,ie,id,iv,im,j)))
         capinc_j = r*a_grid(ia)
         phi      = survival(j, ihp, id, im)
 
@@ -204,7 +204,10 @@ subroutine solve_equilibrium(maxit, tol, verbose)
         end if
 
         tau_l      = tau_l      + damp*(tau_new - tau_l)
-        p_v        = p_v        + damp*(pv_new  - p_v)
+        ! p_v needs its own, heavier damping: with a small drug market the
+        ! supply curve p_v = psi1*V^(psi2-1) is hypersensitive to V, and at the
+        ! shared damping the price limit-cycles instead of settling
+        p_v        = p_v        + 0.08_dp*(pv_new - p_v)
         bequest    = bequest    + damp*(beq_new - bequest)
         H_agg      = H_agg      + damp*(H_new   - H_agg)
         HD_agg     = HD_agg     + damp*(HD_new  - HD_agg)
@@ -275,7 +278,7 @@ subroutine build_distribution_eq()
             phi = survival(j, ihp, id, im)
             if (phi <= 0.0_dp) cycle
 
-            ygross = income_gross(j, iy, ie, id, im)
+            ygross = income_gross(j, iy, ie, id, im, hours_of(j, ie, pol_l(ia,iy,ie,id,iv,im,j)))
             if (ygross + max(0.0_dp, r*a_grid(ia)) < kappa_V*median_income) then
                 ielig = 1
             else
@@ -287,10 +290,8 @@ subroutine build_distribution_eq()
             if (id == 1) then
                 if (ireg == 1) then
                     paddict = 0.0_dp
-                else if (ireg == 2) then
-                    paddict = pi_d_low
                 else
-                    paddict = pi_d_high
+                    paddict = pi_d_low          ! single hazard, any use
                 end if
                 s_d(1) = 1.0_dp - paddict; s_d(2) = paddict
             else

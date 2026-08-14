@@ -42,9 +42,9 @@ end subroutine alloc_solve
 
 
 !-- flow utility. hp is the PRECOMPUTED h**beta_u for the chosen unit ---------
-pure function util(c, hp, v, bb) result(u)
-    real(dp), intent(in) :: c, hp, v, bb
-    real(dp) :: u, comp
+pure function util(c, hp, v, bb, leis) result(u)
+    real(dp), intent(in) :: c, hp, v, bb, leis
+    real(dp) :: u, comp, ul
     if (c <= 0.0_dp) then
         u = -1.0e12_dp; return
     end if
@@ -52,10 +52,12 @@ pure function util(c, hp, v, bb) result(u)
     if (comp <= 0.0_dp) then
         u = -1.0e12_dp; return
     end if
+    ul = omega_l * max(leis,1.0e-8_dp)**(1.0_dp-sigma_l)/(1.0_dp-sigma_l)
     if (abs(sigma - 2.0_dp) < 1.0e-12_dp) then
-        u = -1.0_dp/comp + aleph - kappa_ext*(H_agg + omega_ext*HD_agg)
+        u = -1.0_dp/comp + ul + aleph - kappa_ext*(H_agg + omega_ext*HD_agg)
     else
-        u = comp**(1.0_dp-sigma)/(1.0_dp-sigma) + aleph - kappa_ext*(H_agg + omega_ext*HD_agg)
+        u = comp**(1.0_dp-sigma)/(1.0_dp-sigma) + ul + aleph &
+          - kappa_ext*(H_agg + omega_ext*HD_agg)
     end if
 end function util
 
@@ -65,8 +67,9 @@ end function util
 ! employed household have low enough income to choose homelessness, which an
 ! unemployment effect alone cannot deliver (R1 comment 2(c)(i)), and it answers
 ! the AE's question A20 on direct productivity effects of SUD.
-pure function income_gross(j, iy, ie, id, im) result(y)
+pure function income_gross(j, iy, ie, id, im, hours) result(y)
     integer, intent(in) :: j, iy, ie, id, im
+    real(dp), intent(in) :: hours
     real(dp) :: y, prod
     prod = 1.0_dp
     if (id == 2) prod = prod * prod_pen_d
@@ -74,7 +77,7 @@ pure function income_gross(j, iy, ie, id, im) result(y)
     if (j >= j_ret) then
         y = 0.40_dp * y_grid(iy)                       ! social security, no penalty
     else if (ie == 1) then
-        y = y_grid(iy) * age_prof(j) * prod            ! employed
+        y = hours * y_grid(iy) * age_prof(j) * prod    ! employed
     else if (ie == 2) then
         y = ui_replace * y_grid(iy) * age_prof(j)      ! UI, first year only
     else if (im == 2 .and. include_disability == 1) then
@@ -146,10 +149,8 @@ subroutine build_EV(j)
             if (id == 1) then
                 if (ireg == 1) then
                     paddict = 0.0_dp
-                else if (ireg == 2) then
-                    paddict = pi_d_low
                 else
-                    paddict = pi_d_high
+                    paddict = pi_d_low          ! single hazard, any use
                 end if
                 s_d(1) = 1.0_dp - paddict; s_d(2) = paddict
             else
@@ -228,10 +229,11 @@ end subroutine voucher_probs
 !===============================================================================
 subroutine solve_household()
     integer :: j, ia, iy, ie, id, iv, im
-    integer :: ihp, ireg, itr, iap, ielig
-    integer :: best_a, best_h, best_reg, best_tr
+    integer :: ihp, ireg, itr, iap, ielig, il, nl_eff
+    integer :: best_a, best_h, best_reg, best_tr, best_l
     real(dp) :: res, R, Rt, cc, vv, val, best, phi
     real(dp) :: ygross, ynet, vouch, cfloor, v_unc, cost_tr, bestc, bestv
+    real(dp) :: hours, leis
 
     cfloor = cfloor_share * avg_income
     V(:,:,:,:,:,:,n_age+1) = 0.0_dp
@@ -241,9 +243,9 @@ subroutine solve_household()
         call build_EV(j)
 
         !$omp parallel do collapse(4) &
-        !$omp   private(ia,iy,ihp,ireg,itr,iap,ielig, &
-        !$omp           best_a,best_h,best_reg,best_tr,res,R,Rt,cc,vv,val,best, &
-        !$omp           phi,ygross,ynet,vouch,v_unc,cost_tr,bestc,bestv) &
+        !$omp   private(ia,iy,ihp,ireg,itr,iap,ielig,il,nl_eff, &
+        !$omp           best_a,best_h,best_reg,best_tr,best_l,res,R,Rt,cc,vv,val,best, &
+        !$omp           phi,ygross,ynet,vouch,v_unc,cost_tr,bestc,bestv,hours,leis) &
         !$omp   schedule(dynamic)
         do im = 1, NM
         do iv = 1, NV
@@ -252,7 +254,22 @@ subroutine solve_household()
             do iy = 1, NY
             do ia = 1, NA
 
-                ygross = income_gross(j, iy, ie, id, im)
+                best = -1.0e13_dp
+                best_a = 1; best_h = 1; best_reg = 1; best_tr = 0; best_l = 1
+                bestc = 0.0_dp; bestv = 0.0_dp
+
+                ! hours matter only for the employed of working age
+                if (j < j_ret .and. ie == 1) then
+                    nl_eff = NL
+                else
+                    nl_eff = 1
+                end if
+
+                do il = 1, nl_eff
+
+                hours  = hours_of(j, ie, il)
+                leis   = 1.0_dp - hours
+                ygross = income_gross(j, iy, ie, id, im, hours)
                 ynet   = after_tax(ygross) + r*a_grid(ia)
 
                 if (ygross + max(0.0_dp, r*a_grid(ia)) < kappa_V*median_income) then
@@ -260,10 +277,6 @@ subroutine solve_household()
                 else
                     ielig = 0
                 end if
-
-                best = -1.0e13_dp
-                best_a = 1; best_h = 1; best_reg = 1; best_tr = 0
-                bestc = 0.0_dp; bestv = 0.0_dp
 
                 do ihp = 1, NH
 
@@ -299,25 +312,23 @@ subroutine solve_household()
                                 Rt = R + p_v*b_dm(id,im)
                                 v_unc = gamma_u/(alpha_u+gamma_u) * Rt/p_v - b_dm(id,im)
 
-                                select case (ireg)
-                                case (1)
+                                if (ireg == 1) then
                                     vv = 0.0_dp
-                                case (2)
-                                    vv = min(max(v_unc, 1.0e-8_dp), vbar)
-                                case (3)
-                                    vv = max(v_unc, vbar)
-                                end select
+                                else
+                                    vv = max(v_unc, 1.0e-8_dp)   ! interior optimum
+                                end if
 
                                 cc = R - p_v*vv
                                 if (cc <= 0.0_dp) cycle
 
-                                val = util(cc, h_pow(ihp), vv, b_dm(id,im)) &
+                                val = util(cc, h_pow(ihp), vv, b_dm(id,im), leis) &
                                     + beta*phi*EV(iap,ihp,iy,ie,id,ireg,itr,ielig,iv,im)
 
                                 if (val > best) then
                                     best = val
                                     best_a = iap; best_h = ihp
                                     best_reg = ireg; best_tr = itr
+                                    best_l = il
                                     bestc = cc; bestv = vv
                                 end if
                             end do
@@ -325,11 +336,14 @@ subroutine solve_household()
                     end do
                 end do
 
+                end do
+
                 V(ia,iy,ie,id,iv,im,j)      = best
                 pol_a(ia,iy,ie,id,iv,im,j)  = best_a
                 pol_h(ia,iy,ie,id,iv,im,j)  = best_h
                 pol_reg(ia,iy,ie,id,iv,im,j)= best_reg
                 pol_tr(ia,iy,ie,id,iv,im,j) = best_tr
+                pol_l(ia,iy,ie,id,iv,im,j)  = best_l
                 pol_c(ia,iy,ie,id,iv,im,j)  = bestc
                 pol_v(ia,iy,ie,id,iv,im,j)  = bestv
 

@@ -51,7 +51,7 @@ subroutine comp(hl, hl_emp, hl_mh, hl_inc, pop, avinc)
     do ia = 1, NA
         m = dist(ia,iy,ie,id,iv,im,j)
         if (m <= 0.0_dp) cycle
-        y = income_gross(j, iy, ie, id, im)
+        y = income_gross(j, iy, ie, id, im, hours_of(j, ie, pol_l(ia,iy,ie,id,iv,im,j)))
         pop = pop + m; avinc = avinc + m*y
         if (pol_h(ia,iy,ie,id,iv,im,j) == 1) then
             hl = hl + m

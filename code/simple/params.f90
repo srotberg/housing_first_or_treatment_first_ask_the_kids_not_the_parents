@@ -47,10 +47,19 @@ module params
     integer, parameter :: NV  = 2          ! 1 = no voucher, 2 = voucher
     integer, parameter :: NM  = 2          ! 1 = good mental health, 2 = poor
 
-    ! drug-use regimes: the addiction hazard is a step function of v, so the
-    ! continuous choice only ever matters through which regime it lands in.
-    ! 1 = abstain (v=0), 2 = light (0 < v <= vbar), 3 = heavy (v > vbar)
-    integer, parameter :: NREG = 3
+    ! Drug-use regimes. A SINGLE addiction hazard: you become addicted with the
+    ! same probability however much you consume, so the only thing that matters
+    ! is whether you use at all.
+    !   1 = abstain (v = 0), 2 = use (v > 0)
+    ! This drops vbar, the light/heavy threshold, and the 6.48 heavy-to-light
+    ! ratio, and cuts the inner loop by a third.
+    integer, parameter :: NREG = 2
+
+    ! Labour supply. R3 wants it for the welfare cost of financing via labour
+    ! taxes; the AE questions whether it matters. Kept, but on a coarse grid --
+    ! it is a CHOICE, not a state, so the cost is a factor NL on the inner loop.
+    integer, parameter :: NL = 4
+    real(dp) :: l_grid(NL)                      ! hours worked, fraction of time
 
     !-- preferences -----------------------------------------------------------
     real(dp), parameter :: sigma   = 2.0_dp     ! CRRA
@@ -68,6 +77,8 @@ module params
     ! self-medication channel R1 comment 1(a) is asking about.
     real(dp) :: b_dm(ND,NM) = reshape([4.0e-1_dp, 1.0e-3_dp, &
                                        1.0e-1_dp, 1.0e-3_dp], [ND,NM])
+    real(dp) :: omega_l  = 0.30_dp              ! weight on leisure (calibrated)
+    real(dp), parameter :: sigma_l = 3.0_dp     ! Frisch elasticity 0.5, Chetty (2012)
     real(dp) :: aleph   = 3.0_dp                ! flow value of being alive (VSL normalisation)
     real(dp) :: beta    = 0.96_dp
 
@@ -101,10 +112,7 @@ module params
     real(dp) :: false_pos   = 0.0_dp            ! P(clean agent flagged) under TF
 
     !-- SUD process -----------------------------------------------------------
-    real(dp) :: vbar        = 0.05_dp           ! light/heavy threshold
-    real(dp) :: pi_d_low    = 0.02_dp
-    real(dp), parameter :: heavy_ratio = 6.48_dp
-    real(dp) :: pi_d_high
+    real(dp) :: pi_d_low    = 0.02_dp           ! annual hazard of SUD given any use
     real(dp) :: recover_housed   = 0.025_dp
     real(dp) :: recover_mult_hl  = 0.5_dp       ! recovery multiplier when homeless
 
@@ -226,6 +234,7 @@ module params
     integer,  allocatable :: pol_h(:,:,:,:,:,:,:)   ! index into h_grid
     integer,  allocatable :: pol_reg(:,:,:,:,:,:,:) ! drug regime
     integer,  allocatable :: pol_tr(:,:,:,:,:,:,:)  ! treatment take-up
+    integer,  allocatable :: pol_l(:,:,:,:,:,:,:)   ! index into l_grid (hours)
     real(dp), allocatable :: pol_c(:,:,:,:,:,:,:)
     real(dp), allocatable :: pol_v(:,:,:,:,:,:,:)
     real(dp), allocatable :: dist(:,:,:,:,:,:,:)
@@ -243,6 +252,11 @@ subroutine setup_grids()
     amax = 40.0_dp
     do i = 1, NA
         a_grid(i) = amax * ( real(i-1,dp)/real(NA-1,dp) )**3.0_dp
+    end do
+
+    !-- labour supply grid ---------------------------------------------------
+    do i = 1, NL
+        l_grid(i) = 0.20_dp + 0.60_dp*real(i-1,dp)/real(NL-1,dp)   ! 0.20 .. 0.80
     end do
 
     !-- housing: homeless plus three rental sizes ----------------------------
@@ -272,7 +286,6 @@ subroutine setup_grids()
     end do
     surv_base(n_age) = 0.0_dp
 
-    pi_d_high = heavy_ratio * pi_d_low
     psi2 = 1.0_dp + 1.0_dp/drug_supply_elasticity
 
     !-- collapse the nested Cobb-Douglas into a single product, and hoist every
@@ -318,16 +331,30 @@ subroutine alloc_all()
     allocate(pol_h (NA,NY,NE,ND,NV,NM,n_age))
     allocate(pol_reg(NA,NY,NE,ND,NV,NM,n_age))
     allocate(pol_tr(NA,NY,NE,ND,NV,NM,n_age))
+    allocate(pol_l (NA,NY,NE,ND,NV,NM,n_age))
     allocate(pol_c (NA,NY,NE,ND,NV,NM,n_age))
     allocate(pol_v (NA,NY,NE,ND,NV,NM,n_age))
     allocate(dist  (NA,NY,NE,ND,NV,NM,n_age))
     V = 0.0_dp; dist = 0.0_dp
-    pol_a = 1; pol_h = 1; pol_reg = 1; pol_tr = 0
+    pol_a = 1; pol_h = 1; pol_reg = 1; pol_tr = 0; pol_l = 1
     pol_c = 0.0_dp; pol_v = 0.0_dp
 end subroutine alloc_all
 
 
 !-- survival probability, given chosen housing and SUD status ----------------
+! hours are a choice only for the employed of working age; everyone else
+! supplies zero and consumes full leisure
+pure function hours_of(j, ie, il) result(h)
+    integer, intent(in) :: j, ie, il
+    real(dp) :: h
+    if (j < j_ret .and. ie == 1) then
+        h = l_grid(il)
+    else
+        h = 0.0_dp
+    end if
+end function hours_of
+
+
 pure function survival(j, ih, id, im) result(phi)
     integer, intent(in) :: j, ih, id, im
     real(dp) :: phi, mult, death

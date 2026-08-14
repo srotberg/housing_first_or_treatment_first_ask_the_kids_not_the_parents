@@ -85,13 +85,13 @@ subroutine init_targets()
     ! linked administrative data of Meyer et al.
     mom(15) = mom_t('homeless income / avg (%)   ', 19.10_dp, 0.0_dp, 1.0_dp)
     ! ---- previously unjustified parameters, now attached to moments --------
-    ! beta: aggregate net worth / aggregate income, SCF 2022 (ages 26-85).
-    ! NB this is NOT the paper's wealth/GDP = 3.25 -- different denominator.
-    mom(16) = mom_t('net worth / income          ',  7.34_dp, 0.0_dp, 1.0_dp)
-    ! vbar: share of experimenters who are light users, NSDUH (paper target 15)
-    mom(17) = mom_t('light share of experimenters', 86.80_dp, 0.0_dp, 1.0_dp)
+    ! beta: net worth / income for RENTERS, SCF 2022 (ages 26-85) = 2.12.
+    ! Not the all-household 7.34, which is mostly housing equity this model
+    ! cannot hold: with no homeownership and a fixed 3% return, financial
+    ! assets alone cannot reach 7x income at any discount factor.
+    mom(16) = mom_t('net worth / income          ',  2.12_dp, 0.0_dp, 1.0_dp)
     ! cfloor_share: SNAP benefits as a share of GDP, FY2023 (paper target 21)
-    mom(18) = mom_t('food stamps / labour income ',  0.42_dp, 0.0_dp, 1.0_dp)
+    mom(17) = mom_t('food stamps / labour income ',  0.42_dp, 0.0_dp, 1.0_dp)
     ! Co-occurring SUD among adults with SMI, age-matched to the model from the
     ! 2023 NSDUH detailed tables (aged 26+, 2023):
     !   co-occurring SUD and SMI  = 2.2%   (Table 6.13B)
@@ -100,7 +100,9 @@ subroutine init_targets()
     ! so P(SUD | SMI) = 2.2/5.0 = 44.0%, a relative risk of 44.0/16.6 = 2.65.
     ! Applied to this model's SUD concept (3.68%): 2.65 x 3.68 = 9.75%.
     ! This identifies the self-medication channel, mh_b_ratio.
-    mom(19) = mom_t('SUD rate given SMI (%)      ',  9.75_dp, 0.0_dp, 1.0_dp)
+    mom(18) = mom_t('SUD rate given SMI (%)      ',  9.75_dp, 0.0_dp, 1.0_dp)
+    ! Average fraction of time worked among the employed, Guvenen et al. (2023)
+    mom(19) = mom_t('avg hours worked (%)        ', 40.00_dp, 0.0_dp, 1.0_dp)
 end subroutine init_targets
 
 
@@ -113,7 +115,7 @@ subroutine compute_moments(A)
     real(dp) :: spend_sud, inc_sud
     real(dp) :: hcost, totinc, burden50, users_inc, users_m, sud_inc, sud_m
     real(dp) :: hl_smi, smi_work, smi_emp, hl_inc, hl_m
-    real(dp) :: wealth, exp_m, exp_light, smi_m, smi_sud
+    real(dp) :: wealth, exp_m, exp_light, smi_m, smi_sud, hrs, hrs_m
 
     p = max(A%pop, 1.0e-12_dp)
     sud_unemp = 0.0_dp; sud_work = 0.0_dp; hl_sud = 0.0_dp
@@ -124,7 +126,7 @@ subroutine compute_moments(A)
     hl_smi = 0.0_dp; smi_work = 0.0_dp; smi_emp = 0.0_dp
     hl_inc = 0.0_dp; hl_m = 0.0_dp
     wealth = 0.0_dp; exp_m = 0.0_dp; exp_light = 0.0_dp
-    smi_m = 0.0_dp; smi_sud = 0.0_dp
+    smi_m = 0.0_dp; smi_sud = 0.0_dp; hrs = 0.0_dp; hrs_m = 0.0_dp
 
     do j = 1, n_age
     do im = 1, NM
@@ -136,7 +138,7 @@ subroutine compute_moments(A)
         m = dist(ia,iy,ie,id,iv,im,j)
         if (m <= 0.0_dp) cycle
         ihp    = pol_h(ia,iy,ie,id,iv,im,j)
-        ygross = income_gross(j, iy, ie, id, im)
+        ygross = income_gross(j, iy, ie, id, im, hours_of(j, ie, pol_l(ia,iy,ie,id,iv,im,j)))
 
         ! unemployment among those with SUD, working age only
         if (id == 2 .and. j < j_ret) then
@@ -169,10 +171,9 @@ subroutine compute_moments(A)
         end if
 
         wealth = wealth + m*a_grid(ia)
-        ! experimenters: light versus heavy use regime
-        if (id == 1 .and. pol_v(ia,iy,ie,id,iv,im,j) > 0.0_dp) then
-            exp_m = exp_m + m
-            if (pol_reg(ia,iy,ie,id,iv,im,j) == 2) exp_light = exp_light + m
+        if (j < j_ret .and. ie == 1) then
+            hrs_m = hrs_m + m
+            hrs   = hrs + m*l_grid(pol_l(ia,iy,ie,id,iv,im,j))
         end if
 
         ! housing burden, over ALL households
@@ -226,8 +227,9 @@ subroutine compute_moments(A)
                             /max(totinc/p, 1.0e-12_dp)
     mom(16)%model = wealth/max(totinc, 1.0e-12_dp)
     mom(17)%model = 100.0_dp*exp_light/max(exp_m, 1.0e-12_dp)
-    mom(18)%model = 100.0_dp*A%food/max(A%labinc, 1.0e-12_dp)
-    mom(19)%model = 100.0_dp*smi_sud/max(smi_m, 1.0e-12_dp)
+    mom(17)%model = 100.0_dp*A%food/max(A%labinc, 1.0e-12_dp)
+    mom(18)%model = 100.0_dp*smi_sud/max(smi_m, 1.0e-12_dp)
+    mom(19)%model = 100.0_dp*hrs/max(hrs_m, 1.0e-12_dp)
 end subroutine compute_moments
 
 
@@ -257,7 +259,7 @@ subroutine print_housing_cdf()
         if (m <= 0.0_dp) cycle
         pop = pop + m
         ihp = pol_h(ia,iy,ie,id,iv,im,j)
-        y   = max(income_gross(j, iy, ie, id, im), 1.0e-8_dp)
+        y   = max(income_gross(j, iy, ie, id, im, hours_of(j, ie, pol_l(ia,iy,ie,id,iv,im,j))), 1.0e-8_dp)
         if (ihp > 1) then
             ratio = p_rent*h_grid(ihp)/y
         else
@@ -337,20 +339,55 @@ end function max_gap
 !   kappa_ue_m         unemployment rate given SMI            -
 !   prod_pen_m         homeless income / average income       +
 !   beta               net worth / income                     +
-!   vbar               light share of experimenters           +
 !   cfloor_share       food stamps / labour income            +
+!   omega_l            average hours worked                   -
 !===============================================================================
+! Participation is a near-threshold function of b: below a cutoff everyone
+! uses, above it nobody does, and in the dead zone every drug moment reads zero
+! and every drug parameter is pushed to a bound by a gap of -1. So pin the level
+! by bisection BEFORE touching composition. In partial equilibrium -- the point
+! is the household problem, not prices.
+subroutine bisect_participation(target_p, iters)
+    real(dp), intent(in) :: target_p
+    integer,  intent(in) :: iters
+    type(agg_t) :: A
+    real(dp) :: lo, hi, mid, pmid
+    integer  :: k
+    lo = log(1.0e-6_dp); hi = log(5.0_dp)
+    do k = 1, iters
+        mid = 0.5_dp*(lo+hi)
+        b_dm(1,1) = exp(mid)
+        call refresh_utility_constants()
+        call solve_household(); call build_distribution_eq()
+        call compute_aggregates(A)
+        pmid = 100.0_dp*A%users/max(A%pop,1.0e-12_dp)
+        if (pmid > target_p) then
+            lo = mid
+        else
+            hi = mid
+        end if
+    end do
+    b_dm(1,1) = exp(0.5_dp*(lo+hi))
+    call refresh_utility_constants()
+end subroutine bisect_participation
+
+
 subroutine calibration_sweep(step)
     real(dp), intent(in) :: step
 
-    call bump(b_dm(1,1),       gap(1), -1.0_dp, step, 1.0e-5_dp, 20.0_dp)
-    call bump(pi_d_low,        gap(2), +1.0_dp, step, 1.0e-6_dp, 0.9_dp)
+    call bisect_participation(mom(1)%target, 18)
+
+    ! annual hazard of SUD from light use -- 18.7% was absurd, and raising it far
+    ! enough actually LOWERS the SUD rate by deterring experimentation
+    call bump(pi_d_low,        gap(2), +1.0_dp, step, 5.0e-3_dp, 0.15_dp)
     call bump(h_homeless,      gap(3), +1.0_dp, step, 1.0e-5_dp, h_grid(2)*0.95_dp)
     call bump(pi_eu_base,      gap(4), +1.0_dp, step, 1.0e-4_dp, 0.9_dp)
     call bump(kappa_ue_d,      gap(5), -1.0_dp, step, 0.02_dp,   1.0_dp)
     call bump(recover_mult_hl, gap(6), -1.0_dp, step, 0.01_dp,   1.0_dp)
     call bump(prob_V,          gap(7), +1.0_dp, step, 1.0e-4_dp, 1.0_dp)
-    call bump(theta_v,         gap(8), +1.0_dp, step, 1.0e-3_dp, 0.6_dp)
+    ! 0.6 means 60% of the consumption bundle on drugs; the bound was doing the
+    ! work rather than the moment
+    call bump(theta_v,         gap(8), +1.0_dp, step, 0.02_dp,  0.50_dp)
     call bump(theta_h,         gap(9), +1.0_dp, step, 0.02_dp,   0.6_dp)
     call bump(p_rent,          gap(10),+1.0_dp, step, 0.1_dp,    50.0_dp)
     ! Higher flow value of life makes the rich abstain, so both income ratios
@@ -362,13 +399,12 @@ subroutine calibration_sweep(step)
     call bump(kappa_ue_m,      gap(14),-1.0_dp, step, 0.05_dp,   1.00_dp)
     call bump(prod_pen_m,      gap(15),+1.0_dp, step, 0.05_dp,   1.00_dp)
     call bump(beta,            gap(16),+1.0_dp, step, 0.85_dp,   0.995_dp)
-    ! a higher heavy-use threshold lets more experimenters stay 'light'
-    call bump(vbar,            gap(17),+1.0_dp, step, 1.0e-3_dp, 2.0_dp)
-    call bump(cfloor_share,    gap(18),+1.0_dp, step, 1.0e-3_dp, 0.60_dp)
-    call bump(mh_b_ratio,      gap(19),-1.0_dp, step, 0.02_dp,   1.00_dp)
+    call bump(cfloor_share,    gap(17),+1.0_dp, step, 1.0e-3_dp, 0.60_dp)
+    call bump(mh_b_ratio,      gap(18),-1.0_dp, step, 0.02_dp,   1.00_dp)
+    ! more weight on leisure -> fewer hours
+    call bump(omega_l,         gap(19),-1.0_dp, step, 0.01_dp,   5.00_dp)
 
     ! keep derived quantities consistent with the parameters just moved
-    pi_d_high = heavy_ratio * pi_d_low
     ! keep SMI prevalence at its data value while persistence moves
     mh_onset = mh_recover*smi_prevalence/(1.0_dp - smi_prevalence)
     mh_trans(1,1) = 1.0_dp - mh_onset;  mh_trans(1,2) = mh_onset
@@ -438,8 +474,8 @@ subroutine print_params()
     write(*,'(A,ES12.4)') '   kappa_ue_m      : ', kappa_ue_m
     write(*,'(A,ES12.4)') '   prod_pen_m      : ', prod_pen_m
     write(*,'(A,ES12.4)') '   beta            : ', beta
-    write(*,'(A,ES12.4)') '   vbar            : ', vbar
     write(*,'(A,ES12.4)') '   cfloor_share    : ', cfloor_share
+    write(*,'(A,ES12.4)') '   omega_l         : ', omega_l
     write(*,'(A)') '  ----------------------------------------------------'
 end subroutine print_params
 
