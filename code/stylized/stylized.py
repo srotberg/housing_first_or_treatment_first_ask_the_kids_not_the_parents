@@ -85,6 +85,15 @@ class P:
     pH0   = 0.02      # P(homeless) without the disorder
     pH1   = 0.35      # P(homeless) with it, absent a voucher
     pV    = 0.27      # probability of receiving a voucher
+    # DRUG SUPPLY. Quantity supplied is psi * p_v ** eps_s, and psi is
+    # renormalised at the benchmark so that p_v = 1 there whatever eps_s is.
+    # Referee 1's comment 1(c) and Referee 3's M2d both object that the price
+    # cannot be both normalised and varied. Here the normalisation is explicit
+    # and confined to the benchmark, and the price is free in every experiment.
+    # eps_s = 2 is the baseline: Hansen, Miller and Weber (2017) imply about
+    # 0.79 for licensed marijuana, cigarettes and gasoline sit nearer 3.6.
+    eps_s = 2.0
+    psi   = 1.0
     sig   = 0.55      # dispersion of log taste, income independent
     nq    = 25        # Gauss Hermite nodes
     na    = 90        # asset grid
@@ -222,3 +231,66 @@ def moments(par, ygrid, w, policy='HF'):
     return dict(part=float((w * p_use).sum()), sud=float((w * pid).sum()),
                 r_use=float(r_use), r_sud=float(r_sud), elast=el,
                 p_use=p_use, v=vbar, ev=ev, pid=pid)
+
+
+# ----------------------------------------------------------------------------
+# the drug market
+# ----------------------------------------------------------------------------
+def demand(par, ygrid, w, policy='HF'):
+    """Aggregate drug quantity demanded at the current price."""
+    p_use, ev = profile(par, ygrid, policy)
+    return float((w / w.sum() * ev).sum())
+
+
+def normalise_supply(par, ygrid, w, policy='HF'):
+    """Set psi so the benchmark clears at p_v = 1, whatever eps_s is."""
+    q = with_(par, p_v=1.0)
+    return demand(q, ygrid, w, policy)
+
+
+def clear_price(par, ygrid, w, policy='HF', lo=0.2, hi=5.0, iters=26):
+    """
+    Find p_v with supply = demand. Supply slopes up and demand slopes down, so
+    excess demand is decreasing in the price and a bisection is safe.
+    """
+    for _ in range(iters):
+        p = np.sqrt(lo * hi)
+        exc = demand(with_(par, p_v=p), ygrid, w, policy) - par.psi * p**par.eps_s
+        if exc > 0.0:
+            lo = p
+        else:
+            hi = p
+    return float(np.sqrt(lo * hi))
+
+
+def price_elasticity(par, ygrid, w, policy='HF', step=0.05):
+    """
+    d log(participation) / d log(p_v), holding supply fixed. This is the object
+    the empirical literature estimates from tax and enforcement variation, so it
+    is a DEMAND elasticity and needs no market clearing: the price is moved
+    exogenously and the participation response is read off.
+    """
+    lo = moments(with_(par, p_v=1.0 - step), ygrid, w, policy)['part']
+    hi = moments(with_(par, p_v=1.0 + step), ygrid, w, policy)['part']
+    if lo <= 0.0 or hi <= 0.0:
+        return 0.0
+    return float((np.log(hi) - np.log(lo)) / (np.log(1.0 + step) - np.log(1.0 - step)))
+
+
+def aggregates(par, ygrid, w, policy='HF'):
+    """Everything the calibration targets, in one pass."""
+    m = moments(par, ygrid, w, policy)
+    ww = w / w.sum()
+    ph0, ph1 = _ph(par, 0, policy), _ph(par, 1, policy)
+    hl = (ww * ((1.0 - m['pid']) * ph0 + m['pid'] * ph1)).sum()
+    hl_sud = (ww * m['pid'] * ph1).sum()
+    m['homeless'] = float(hl)
+    m['sud_of_homeless'] = float(hl_sud / max(hl, 1e-12))
+
+    # value of a statistical life at mean income, in units of mean income.
+    # With log utility the marginal rate of substitution between consumption
+    # and survival is the continuation value times consumption.
+    k = int(np.argmin(np.abs(ygrid - 1.0)))
+    ag, V2 = solve_late(par, ygrid[k], policy)
+    m['vsl'] = float(par.beta * par.phi0 * V2[0, 0] * ygrid[k])
+    return m
