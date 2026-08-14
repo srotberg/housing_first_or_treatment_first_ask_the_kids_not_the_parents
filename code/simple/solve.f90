@@ -744,14 +744,31 @@ end subroutine add_mass
 ! Backward induction.
 !===============================================================================
 subroutine solve_household()
-    integer :: j
+    integer :: j, iy, im
 
     V(:,:,:,:,:,:,n_age+1) = 0.0_dp
+
+    ! The parental warm glow needs V at age 1, which the backward pass solves
+    ! LAST, so it is closed as a fixed point across passes: this solve uses the
+    ! previous pass's newborn value and hands its own on. That is legitimate
+    ! rather than a shortcut, because the term is additive and moves no policy,
+    ! so there is no feedback through behaviour and the iteration converges
+    ! without needing a loop of its own. It is exact at any fixed point of the
+    ! equilibrium, which is the only place results are read.
+    call refresh_warm_glow()
 
     do j = n_age, 1, -1
         call build_EV(j)
         call solve_age(j)
     end do
+
+    if (nu_parent > 0.0_dp) then
+        do im = 1, NM
+        do iy = 1, NY
+            V_newborn(iy,im) = V(1,iy,1,1,1,im,1)
+        end do
+        end do
+    end if
 end subroutine solve_household
 
 

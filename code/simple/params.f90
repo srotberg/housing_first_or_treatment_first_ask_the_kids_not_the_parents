@@ -506,7 +506,7 @@ module params
 contains
 
 subroutine setup_grids()
-    integer :: i
+    integer :: i, k
     real(dp) :: amax, rho, sig, m, step
 
     !-- assets: dense near zero, where the policy action is ------------------
@@ -526,8 +526,33 @@ subroutine setup_grids()
         y_grid(i) = exp(y_grid(i))
     end do
     call ergodic(NY, y_trans, y_dist0)
-    ! intergenerational chain on the SAME grid, persistence rho_x
-    call rouwenhorst(NY, rho_x, sig, y_grid, yg_trans)
+    ! Intergenerational chain, on the EXISTING grid.
+    !
+    ! NOT a second rouwenhorst call: that routine declares `grid` as intent(out)
+    ! and builds its own grid whose width depends on rho, so calling it again
+    ! silently OVERWROTE y_grid with a much narrower one and corrupted the whole
+    ! productivity process. It also would not have delivered rho_x, because a
+    ! transition matrix built for one grid does not carry its persistence onto
+    ! a different one.
+    !
+    ! Instead: the child inherits the parent's productivity with probability
+    ! rho_x and is otherwise drawn from the ergodic distribution,
+    !
+    !     yg_trans(i,j) = rho_x*1{i=j} + (1-rho_x)*Omega_x(j).
+    !
+    ! The correlation is exactly rho_x, and the unconditional distribution is
+    ! preserved, sum_i Omega_x(i) yg_trans(i,j) = Omega_x(j), which is what
+    ! lets the warm glow be added without disturbing the stationary newborn
+    ! distribution.
+    do i = 1, NY
+        do k = 1, NY
+            if (i == k) then
+                yg_trans(i,k) = rho_x + (1.0_dp - rho_x)*y_dist0(k)
+            else
+                yg_trans(i,k) = (1.0_dp - rho_x)*y_dist0(k)
+            end if
+        end do
+    end do
 
     !-- deterministic age profile and baseline survival ----------------------
     do i = 1, n_age

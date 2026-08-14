@@ -261,6 +261,11 @@ subroutine check_bellman(worst_v, worst_b)
             phi = survival(j, ihp, id, im)
             obj = util(cc, h_pow(ihp), vv, bb, 1.0_dp-hours)
             if (itr == 1) obj = obj - treat_ucost
+            ! The warm glow is additive at one age and sits outside the
+            ! maximisation, so the identity only holds if it is added back
+            ! here. Without this, check 4b reports a spurious failure at the
+            ! parental age and the suite's strongest correctness test is lost.
+            if (j == j_parent) obj = obj + warm_glow(iy)
             obj = obj + beta*phi*EV(iap,ihp,iy,ie,id,ireg,itr,ielig,iv,im)
 
             worst_v = max(worst_v, abs(obj - V(ia,iy,ie,id,iv,im,j)))
