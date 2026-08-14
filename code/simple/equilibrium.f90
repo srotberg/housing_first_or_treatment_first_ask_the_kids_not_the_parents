@@ -27,7 +27,7 @@ module equilibrium
         real(dp) :: ss=0, ui=0, food=0, vouchers=0
         real(dp) :: homeless=0, sud=0, users=0, unemp=0, drugq=0, poormh=0, hl_sud=0
         real(dp) :: assets_dead=0, consumption=0, treated=0
-        real(dp) :: wealth=0, gdp=0, med=0
+        real(dp) :: wealth=0, gdp=0, med=0, testing=0
         real(dp) :: govt_outlay=0, tax_rev=0
     end type agg_t
 
@@ -106,6 +106,10 @@ subroutine compute_aggregates(A)
             vouch = max(0.0_dp, p_rent*h_grid(ihp) - kappa_r*ygross)
         end if
         A%vouchers = A%vouchers + m*vouch
+        ! testing is paid on every voucher HOLDER under TF, whether or not the
+        ! voucher pays out this period -- that is what makes it a real cost
+        if (policy_TF == 1 .and. iv == 2) &
+            A%testing = A%testing + m*test_prob*test_cost*avg_income
 
         ! outcomes
         if (ihp == 1) A%homeless = A%homeless + m
@@ -145,7 +149,7 @@ subroutine compute_aggregates(A)
         end if
     end do
 
-    A%govt_outlay = A%ss + A%food + A%vouchers &
+    A%govt_outlay = A%ss + A%food + A%vouchers + A%testing &
                   + chi_H*A%homeless + chi_D*A%sud + G_public
     ! accidental bequests accrue to the government rather than to households
     if (bequest_to_govt == 1) A%govt_outlay = A%govt_outlay - A%assets_dead

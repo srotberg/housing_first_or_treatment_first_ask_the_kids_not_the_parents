@@ -21,8 +21,8 @@ module calibrate
     ! co-occurring SUD rate among adults with SMI.
     real(dp) :: mh_b_ratio = 0.25_dp
 
-    integer, parameter :: NMOM = 23
-    integer, parameter :: NPAR = 21   ! calibrated parameters, for the snapshot
+    integer, parameter :: NMOM = 24
+    integer, parameter :: NPAR = 22   ! calibrated parameters, for the snapshot
 
     type :: mom_t
         character(len=28) :: name
@@ -140,6 +140,18 @@ subroutine init_targets()
     ! to prod_pen_d -- the direct wage penalty the AE asks about in A20 -- so it
     ! is still targeted, and prod_pen_d = 1 becomes the robustness run.
     mom(23) = mom_t('model VSL ($m)              ',  7.50_dp, 0.0_dp, 1.0_dp)
+    ! b_1 HAS A TARGET NOW. It used to be asserted small enough to keep the drug
+    ! choice interior, which is a statement about numerical convenience rather
+    ! than about data, and it left the Milby moment undefined: with abstention
+    ! impossible for a household with SUD, the NH arm abstains 0% of the time and
+    ! the housing-access ratio is 0/0.
+    ! b_1 governs exactly how costly abstention is for a household that already
+    ! has SUD, so the moment that identifies it is the abstinence rate in Milby's
+    ! NO-HOUSING arm: 4.48 consecutive weeks abstinent out of 24, or 18.7%,
+    ! among homeless adults with SUD -- the same population and the same trial
+    ! that gives the housing-access ratio. One arm pins the level, the contrast
+    ! between arms pins the treatment effect.
+    mom(24) = mom_t('abstain rate|SUD & homeless%', 18.67_dp, 0.0_dp, 1.0_dp)
 end subroutine init_targets
 
 
@@ -153,7 +165,7 @@ subroutine compute_moments(A)
     real(dp) :: hcost, totinc, burden50, users_inc, users_m, sud_inc, sud_m
     real(dp) :: hl_smi, smi_work, smi_emp, hl_inc, hl_m
     real(dp) :: wealth, exp_m, exp_light, smi_m, smi_sud, hrs, hrs_m
-    real(dp) :: burden30, treated_sud
+    real(dp) :: burden30, treated_sud, hl_sud_m, hl_sud_abst
 
     p = max(A%pop, 1.0e-12_dp)
     sud_unemp = 0.0_dp; sud_work = 0.0_dp; hl_sud = 0.0_dp
@@ -166,6 +178,7 @@ subroutine compute_moments(A)
     wealth = 0.0_dp; exp_m = 0.0_dp; exp_light = 0.0_dp
     smi_m = 0.0_dp; smi_sud = 0.0_dp; hrs = 0.0_dp; hrs_m = 0.0_dp
     burden30 = 0.0_dp; treated_sud = 0.0_dp
+    hl_sud_m = 0.0_dp; hl_sud_abst = 0.0_dp
 
     do j = 1, n_age
     do im = 1, NM
@@ -186,7 +199,12 @@ subroutine compute_moments(A)
         end if
 
         ! SUD share of the homeless
-        if (ihp == 1 .and. id == 2) hl_sud = hl_sud + m
+        if (ihp == 1 .and. id == 2) then
+            hl_sud = hl_sud + m
+            ! Milby's NH arm: homeless adults with SUD, abstaining or not
+            hl_sud_m = hl_sud_m + m
+            if (pol_v(ia,iy,ie,id,iv,im,j) <= 0.0_dp) hl_sud_abst = hl_sud_abst + m
+        end if
 
         ! serious mental illness
         if (ihp == 1) then
@@ -275,6 +293,7 @@ subroutine compute_moments(A)
     mom(21)%model = 100.0_dp*treated_sud/max(sud_m, 1.0e-12_dp)
     mom(22)%model = 100.0_dp*A%poormh/p
     mom(23)%model = model_vsl()
+    mom(24)%model = 100.0_dp*hl_sud_abst/max(hl_sud_m, 1.0e-12_dp)
 end subroutine compute_moments
 
 
@@ -393,6 +412,7 @@ end function max_gap
 !   -----------------  -----------------------------  -----------------
 !   mh_onset           SMI prevalence                          +
 !   b_dm(1,1) clean    drug participation                    -
+!   b_dm(2,1) SUD      abstain rate | SUD and homeless        +
 !   pi_d_low           SUD rate                              +
 !   h_homeless         homelessness rate                     +
 !   pi_eu_base         unemployment rate                     +
@@ -466,8 +486,9 @@ subroutine calibration_sweep(step, nbis)
     ! rent is normalised, so the GRID carries these two moments
     call bump(h_small,         gap(10),+1.0_dp, step, 5.0e-3_dp, 0.60_dp)
     call bump(h_spread,        gap(20),+1.0_dp, step, 1.05_dp,   3.00_dp)
-    ! more stigma -> less take-up
-    call bump(treat_ucost,     gap(21),-1.0_dp, step, 1.0e-4_dp, 20.0_dp)
+    ! treat_ucost is NOT bumped: take-up is step-like in it (see the bracket
+    ! block below), and bumping it proportionally while aleph's bracket moves the
+    ! threshold underneath it pinned take-up at 99.9% for three sweeps.
     ! The SUD income ratio moves to the direct wage penalty, freeing aleph for
     ! the VSL target below. The AE asks about this penalty in A20; calibrating it
     ! is better discipline than asserting 1.0, and 1.0 becomes the robustness run.
@@ -478,6 +499,9 @@ subroutine calibration_sweep(step, nbis)
     call bump(prod_pen_m,      gap(15),+1.0_dp, step, 0.05_dp,   1.00_dp)
     call bump(cfloor_share,    gap(17),+1.0_dp, step, 1.0e-3_dp, 0.60_dp)
     call bump(mh_b_ratio,      gap(18),-1.0_dp, step, 0.02_dp,   1.00_dp)
+    ! bigger Stone-Geary endowment for a household with SUD -> abstaining costs
+    ! it less -> more of them abstain
+    call bump(b_dm(2,1),       gap(24),+1.0_dp, step, 1.0e-5_dp, 5.0_dp)
     ! more weight on leisure -> fewer hours
     call bump(omega_l,         gap(19),-1.0_dp, step, 0.01_dp,   5.00_dp)
 
@@ -495,6 +519,11 @@ subroutine calibration_sweep(step, nbis)
     call bisect_on(2, mom(3)%target,  nbis)   ! h_homeless  -> homelessness rate
     call bisect_on(4, mom(22)%target, nbis)   ! mh_onset    -> SMI prevalence
     call bisect_on(5, mom(23)%target, nbis)   ! aleph       -> model VSL
+    ! AFTER aleph: aleph is the value of staying alive, treatment is the
+    ! technology that buys survival, so raising aleph shifts the take-up
+    ! threshold in treat_ucost. Bracketing take-up before aleph would be undone
+    ! within the same sweep.
+    call bisect_on(6, mom(21)%target, nbis)   ! treat_ucost -> treatment take-up
     call bisect_on(1, mom(1)%target,  nbis)   ! b           -> participation
 end subroutine calibration_sweep
 
@@ -546,6 +575,8 @@ subroutine bisect_on(which, target_val, iters)
         lo = log(1.0e-5_dp); hi = log(0.20_dp);   rising = .true.
     case (5)
         lo = log(1.0_dp);    hi = log(1.0e5_dp);  rising = .true.
+    case (6)
+        lo = log(1.0e-4_dp); hi = log(20.0_dp);   rising = .false. ! more stigma, less take-up
     end select
 
     do k = 1, iters
@@ -556,6 +587,7 @@ subroutine bisect_on(which, target_val, iters)
         case (3); beta       = exp(mid)
         case (4); mh_onset    = exp(mid)
         case (5); aleph       = exp(mid)
+        case (6); treat_ucost = exp(mid)
         end select
         call refresh_utility_constants()
         call solve_household(); call build_distribution_eq()
@@ -566,6 +598,10 @@ subroutine bisect_on(which, target_val, iters)
         case (3); fmid = A%wealth/max(A%gdp,1.0e-12_dp)
         case (4); fmid = 100.0_dp*A%poormh/max(A%pop,1.0e-12_dp)
         case (5); fmid = model_vsl()
+        ! take-up conditional on SUD is accumulated inside compute_moments, not
+        ! carried on agg_t; recomputing the moment here also guarantees the
+        ! bracket and the printed table are reading the same number
+        case (6); call compute_moments(A); fmid = mom(21)%model
         end select
         if ((fmid > target_val) .eqv. rising) then
             hi = mid
@@ -581,6 +617,7 @@ subroutine bisect_on(which, target_val, iters)
     case (3); beta       = exp(mid)
     case (4); mh_onset    = exp(mid)
     case (5); aleph       = exp(mid)
+    case (6); treat_ucost = exp(mid)
     end select
     call refresh_utility_constants()
 end subroutine bisect_on
@@ -595,7 +632,7 @@ subroutine save_params(v)
     v = [ b_dm(1,1), pi_d_low, h_homeless, pi_eu_base, kappa_ue_d, &
           recover_mult_hl, prob_V, theta_v, theta_h, h_small, aleph, &
           di_coverage, kappa_ue_m, prod_pen_m, beta, cfloor_share, mh_b_ratio, &
-          h_spread, treat_ucost, mh_onset, prod_pen_d ]
+          h_spread, treat_ucost, mh_onset, prod_pen_d, b_dm(2,1) ]
 end subroutine save_params
 
 subroutine load_params(v)
@@ -605,7 +642,7 @@ subroutine load_params(v)
     theta_h=v(9);    h_small=v(10);   aleph=v(11);      di_coverage=v(12)
     kappa_ue_m=v(13);prod_pen_m=v(14);beta=v(15);       cfloor_share=v(16)
     mh_b_ratio=v(17);h_spread=v(18);  treat_ucost=v(19); mh_onset=v(20)
-    prod_pen_d=v(21)
+    prod_pen_d=v(21); b_dm(2,1)=v(22)
     call refresh_utility_constants()
 end subroutine load_params
 
@@ -627,6 +664,7 @@ end subroutine bump
 subroutine refresh_utility_constants()
     integer :: i
     b_dm(1,2) = b_dm(1,1)*mh_b_ratio
+    b_dm(2,2) = b_dm(2,1)*mh_b_ratio
     alpha_u = (1.0_dp-theta_h)*(1.0_dp-theta_v)
     beta_u  = theta_h*(1.0_dp-theta_v)
     gamma_u = theta_v

@@ -629,10 +629,11 @@ pure subroutine voucher_probs(iv, ielig, ireg, id, s)
     end if
 
     if (policy_TF == 1) then
+        ! detection requires a test, so both hazards scale with test_prob
         if (ireg > 1) then
-            pkeep = pkeep * (1.0_dp - detect_prob)   ! using: lose it if detected
+            pkeep = pkeep * (1.0_dp - test_prob*detect_prob)
         else
-            pkeep = pkeep * (1.0_dp - false_pos)     ! clean: false positive risk
+            pkeep = pkeep * (1.0_dp - test_prob*false_pos)
         end if
     end if
 
