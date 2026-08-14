@@ -158,7 +158,31 @@ Grouped by theme, with the cheapest adequate response. "Discuss" means a paragra
 | Item | Response | Cost |
 |---|---|---|
 | **Model fit never shown** | Add model column to Table 2 for all 22 targets | Free — non-negotiable |
-| Homeless: 100% unemployed, ~0 income (data: 40–52%, 19%) | Add a transitory expense/eviction shock so non-corner people become homeless | Model change |
+| Homeless: 100% unemployed, ~0 income (data: 40–52%, 19%) | **R1 diagnoses this but prescribes no fix.** Root cause: homelessness is a pure income corner, so only the destitute reach it. Needs a mechanism that puts non-corner households on the street — see the options below | Model change |
+
+**On that last row.** R1 comment 2(c)(i) identifies the miss and says why it matters ("may
+evaluate HF and TF at the wrong margins") but does not propose a remedy. The design space,
+cheapest first:
+
+1. **Mental health as a persistent vulnerability state.** Strongest candidate, because it
+   does three jobs at once: it is R1 comment 1(a)'s explicit request; it puts households
+   with positive income at risk of homelessness; and a chronically ill group that does not
+   age out fixes the age-distribution miss in 2(c)(ii). It is also the idiom of the paper
+   this one builds on — İmrohoroğlu and Zhao (2022) generate homelessness from "income risk,
+   **mental health shocks**, housing costs, and housing policy." Cost: doubles the state space.
+2. **A security deposit or entry cost to renting.** The most direct mechanism for
+   "employed but homeless": re-entering housing requires a lump sum, so a household with
+   income but no savings stays on the street. This is realistic and is a common explanation
+   for spell persistence. Cost: requires reinstating housing-entered-with as a state (which
+   the solver currently drops), so roughly ×4.
+3. **A transitory expense shock** (medical, legal, vehicle). Simple and standard. Cost: one
+   binary state. Weakest of the three conceptually — it is a reduced form for whatever the
+   real mechanism is, and adds a parameter with no obvious target.
+4. **Eviction / landlord screening**, following Abramson. Closest to the frontier literature
+   and the most defensible, but it is a substantial modelling project of its own.
+
+Option 1 is the recommendation: it is the only one a referee already asked for, and it
+retires two separate objections rather than one.
 | Homeless age distribution off (73% vs 48% aged 26–44) | Mental health state creates persistent older homeless | Comes free with §C |
 | No numerical identification evidence | Local perturbation plots; AGS sensitivity if solve is fast | Cheap once fast |
 | Price-elasticity moment not replicable | Appendix defining every moment's model counterpart | Writing |
