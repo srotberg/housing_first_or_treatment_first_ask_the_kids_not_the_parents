@@ -1,152 +1,72 @@
-# The intuition model
+# Intuition and mechanisms: one model, not two
 
-A small three-period model to sit in front of the quantitative one. **It has assets, income
-risk and a borrowing constraint** — see §0 for why that is not optional.
-
----
-
-## 0. Why assets have to be in it
-
-The first draft of this plan dropped savings to keep the model hand-solvable. That was
-wrong, for a reason that matters.
-
-**R1's objection to the current Appendix A is exactly that it has no savings.** Comment 1(d):
-
-> The paper emphasizes mortality risk as the key mechanism generating drug use concentrated
-> among low-income individuals. However, **in a dynamic model with savings, borrowing
-> constraints, and income risk, it seems possible that the labor-market and income-risk
-> consequences of drug use could also generate a low-income concentration of drug use.** ...
-> I would find this more intuitive than **a toy example that abstracts from dynamic savings
-> decisions**.
-
-R1 is not making a stylistic point. He is naming a **rival hypothesis**: income risk plus a
-borrowing constraint might produce the same downward gradient with no mortality channel at
-all. That rival operates *entirely through precautionary saving*. A model without assets
-cannot distinguish the two hypotheses, because it has assumed away the alternative it is
-supposed to rule out.
-
-R2 points the same way in his "black box" comment:
-
-> it would be useful to show and explain intuitively a plot of the drug use policy function
-> for addicts and non-addicts as **their income and wealth vary**.
-
-And R1 comment 1(e) asks for the appendix to be "reorganized and made more precise ...
-described more clearly as intuition rather than as a general proof," while the AE asks for a
-stylized model showing "key static **and dynamic** mechanisms."
-
-**Consequence for the design:** "simple" here means *few moving parts and fully transparent*,
-not *hand-solvable*. Three periods with assets does not have a closed form. It solves
-numerically in milliseconds, which is all that matters — it can be plotted, perturbed, and
-have channels switched off one at a time, in a setting small enough to reason about
-completely.
+**Decision: there is no separate computational toy model.** The analytical section proves what
+can be proved on paper; everything numerical happens in the simplified calibrated model.
 
 ---
 
-## 1. Setup
+## 0. Why not a separate three-period model
 
-Three periods, `t = 1, 2, 3` — the minimum that makes the value of life a real object and
-lets the homelessness feedback loop appear.
+An earlier version of this plan proposed a standalone three-period model with assets to
+demonstrate the income gradient. That is redundant, for three reasons.
 
-**State:** assets `a ≥ 0` (borrowing constraint binds — this is what makes precautionary
-saving operative), permanent income `y`, employment `e`, SUD status `d`.
+**R1 asked for it in the baseline model, explicitly.** Comment 1(d):
 
-**Preferences.** The quantitative model's period utility, unchanged, so the two models speak
-the same language:
+> A simple way to do this would be to compare the relationship between income and drug use in
+> **the baseline model** to an otherwise similar version of the model in which mortality is
+> not affected by drug use. **I would find this more intuitive than a toy example that
+> abstracts from dynamic savings decisions.**
 
-```
-u(c, h, v) = ( c^(1-θ_h) h^θ_h )^(1-θ_v) (v + b)^θ_v    under CRRA,  plus ℵ
-```
+A toy model is the thing he said he would find *less* convincing.
 
-**Timing.**
+**The simplified model already is the small model.** It solves in 1.4 s on four cores, and it
+carries assets, income risk, a borrowing constraint, and the full policy structure. A separate
+model would duplicate all of that and then invite the question of whether the two agree.
 
-- **t = 1.** Choose `v ≥ 0` and `a₂ ≥ 0`. Using leads to SUD at `t = 2` with probability `π`.
-- **t = 2.** Employment shock. SUD raises mortality `δ_d`, raises unemployment risk (hence
-  homelessness risk), and — under Treatment First — forfeits the voucher. Choose `a₃ ≥ 0`.
-- **t = 3.** Continuation. Recovery with probability `ρ(h₂)`, *lower if homeless at t = 2*.
+**Two models means two calibrations.** Every parameter would need a mapping, every result a
+consistency check, and any disagreement between them becomes a referee's paragraph.
 
-**Policy.** A voucher worth `W` in utility terms, received by eligible households with
-probability `π_V`. Under HF receipt is independent of drug use; under TF it requires
-sobriety. `π_V` is *generosity* (benchmark ≈ 0.27, universal = 1); HF/TF is *conditionality*.
+### What a toy model genuinely cannot be replaced by
 
----
-
-## 2. Proposition 1 — mortality, not income risk, reverses the income gradient
-
-### The analytical intuition (stated honestly as intuition)
-
-Ignoring savings for a moment, a household uses iff `G(y) > π·Δ(y)`, where `G` is the
-period-1 utility gain from using and `Δ` the expected loss in continuation value from SUD.
-
-Under CRRA with `σ = 2`, flow utility is `−1/comp`, so
-
-```
-G(y) = 1/comp₀ − 1/comp₁ = (1/comp₀)·(1 − comp₀/comp₁)  ∝  y^(−α).
-```
-
-The *utility* gain from drugs shrinks as consumption rises, because marginal utility falls.
-Meanwhile `Δ(y) ≈ V(y)`, which is increasing in `y`. So `π·Δ/G ∝ y^α·V(y)` is strictly
-increasing: the rich have more to lose and less to gain, and there is a single crossing.
-
-**This is intuition, not proof** — which is precisely how R1 asked for it to be labelled.
-The proof obligation is discharged numerically, below and in the full model.
-
-### The demonstration that actually answers R1
-
-With assets in the model, run three variants and plot drug use against income in each:
-
-| Variant | Mortality effect of SUD | Employment effect of SUD | Question it answers |
-|---|---|---|---|
-| A | on | on | baseline — is the gradient downward? |
-| B | **off** | on | **can income risk alone produce it?** |
-| C | on | off | is mortality sufficient on its own? |
-
-**Variant B is the whole point.** It is R1's rival hypothesis, instantiated. If the gradient
-survives with mortality switched off, the paper's headline framing is wrong and the mechanism
-is really about the value of future *resources*, not the value of *life*. If it flattens or
-inverts, R1's alternative is ruled out in the simplest setting where it can be posed.
-
-Because the model has a borrowing constraint, variant B genuinely has the precautionary
-channel operating — which is exactly what the current appendix cannot claim.
-
-### What the quantitative model already tells us to expect
-
-Scanning `ℵ` in the full model, drug use by income tercile:
-
-| ℵ | participation | low | mid | high |
-|---|---|---|---|---|
-| 1 | 90.9% | 96.8% | 96.8% | 96.8% |
-| 40 | 78.8% | 91.5% | 91.5% | 91.4% |
-| 150 | 59.7% | 80.0% | 80.0% | 80.0% |
-| **600** | **26.1%** | **54.6%** | **35.3%** | **19.1%** |
-
-The gradient only inverts once `ℵ` is large. Under CRRA the flow term is bounded above, so
-with small `ℵ` the continuation value is nearly flat in income, `Δ(y)` barely rises, and
-there is no reversal.
-
-**So the $7.5m VSL target is not a normalisation — it is the parameter that generates the
-paper's central mechanism.** That is worth stating plainly. It answers R3's request to
-"explain how [drug-use patterns] depend on model parameters, notably `b` ... and `ℵ`," and it
-turns an innocuous-looking calibration choice into a headline modelling result.
-
-**Second failure mode.** If `b` is large, the interior optimum
-`v* = γ/(α+γ)·(y + p_v b)/p_v − b` is negative at low `y`: poor households are *mechanically*
-barred from an interior solution and the gradient turns upward whatever mortality does. `b`
-must be small for Proposition 1 to have force. This is why the paper calibrates `b` "very
-small," and it deserves a sentence saying so — it is a substantive restriction, not a
-numerical convenience.
-
-### And the figure R2 asked for
-
-The same model produces it directly: the drug-use policy function over `(a, y)`, plotted
-separately for `d = 0` and `d = 1`. That is R2's request verbatim, and it is far more legible
-in a three-period model than in the full one.
+One thing: a **proof**. Proposition 2 below is a theorem about expected voucher values. It is
+established by two lines of algebra, needs no assets and no computation, and cannot be
+"demonstrated" by simulation. That stays analytical — but it is half a page, not a model.
 
 ---
 
-## 3. Proposition 2 — the cross-partial. This is the paper.
+## 1. The analytical section (short)
 
-The deterrent conditionality creates is the difference in expected voucher value between
-abstaining and using:
+Two results, derived in a stripped-down version of *the same* model with the simplifying
+assumptions stated explicitly, and labelled as intuition rather than as general proof — which
+is exactly what R1 comment 1(e) asks for.
+
+### 1a. The drug-use threshold
+
+A household uses iff `G(y) > π·Δ(y)`, where `G` is the period utility gain from using and `Δ`
+the expected loss in continuation value from SUD. Under CRRA with `σ = 2`,
+
+```
+G(y) = 1/comp₀ − 1/comp₁ = (1/comp₀)·(1 − comp₀/comp₁)  ∝  y^(−α),
+```
+
+so the *utility* gain from drugs shrinks as consumption rises, while `Δ(y) ≈ V(y)` rises. The
+ratio `π·Δ/G ∝ y^α·V(y)` is increasing: single crossing, use concentrated at the bottom, with
+no ex-ante preference heterogeneity.
+
+**State the two conditions under which this fails** — both are real and both are now
+documented numerically:
+
+- **`ℵ` must be large.** Under CRRA the flow term is bounded above, so with small `ℵ` the
+  continuation value is nearly flat in income, `Δ` barely rises, and there is no reversal.
+- **`b` must be small.** If `b` is large the interior optimum
+  `v* = γ/(α+γ)·(y + p_v b)/p_v − b` is negative at low `y`, so poor households are
+  *mechanically* barred from an interior solution and the gradient turns upward regardless of
+  mortality.
+
+### 1b. Proposition — the generosity × conditionality cross-partial
+
+The deterrent conditionality creates is the gap in expected voucher value between abstaining
+and using:
 
 | | abstain | use |
 |---|---|---|
@@ -154,78 +74,114 @@ abstaining and using:
 | Treatment First | `π_V · W` | `0` |
 
 ```
-D(π_V, TF) = π_V · W · 1{TF},        ∂D/∂π_V = W · 1{TF} > 0
+D(π_V, TF) = π_V · W · 1{TF},     ∂D/∂π_V = W · 1{TF} > 0
 ⟹  ∂²(drug use) / ∂π_V ∂(TF) < 0.
 ```
 
 **A guaranteed voucher is a much bigger stick than a lottery ticket.** At `π_V ≈ 0.27` the
-expected penalty for using is about a quarter of `W`, so TF barely bites; universal, it is
-all of `W`.
+expected penalty for using is a quarter of `W`; universal, it is all of `W`.
 
-**This one survives without savings, and that is a feature.** `D` is a comparison of expected
-voucher values; adding assets changes the *level* of `W` but not the linearity in `π_V`. So
-the paper's central contribution rests on the most robust part of the argument — worth saying
-explicitly, because it means the headline does not depend on the modelling choices R1 is
-most sceptical of.
-
-### Why the cost does not scale the same way
-
-The obvious objection is that TF's cost — non-compliant households losing housing — must
-also rise with `π_V`. It does not:
+**The cost does not scale the same way.** TF's cost is borne by non-compliant households:
 
 ```
-cost ≈ π_V · W · μ(π_V),      μ = mass still using under TF,
+cost ≈ π_V · W · μ(π_V),     μ = mass still using under TF,
 ```
 
-and `μ` is *decreasing* in `π_V` by Proposition 2 itself. **Generosity makes conditionality
-both more effective and cheaper.** That single mechanism explains the whole pattern that
-currently reads as four disconnected experiments:
+and `μ` is decreasing in `π_V` by the proposition itself. **Generosity makes conditionality
+both more effective and cheaper.** This explains the whole pattern that currently reads as
+four disconnected experiments: rationed TF has a weak deterrent and a large non-compliant
+group, so it loses; universal TF has a maximal deterrent and a small one, so it wins.
 
-- rationed TF vs rationed HF → weak deterrent, cost falls on a large non-compliant group →
-  TF loses (Experiment 1)
-- universal TF vs rationed HF → maximal deterrent, small non-compliant group → TF wins
-  (Experiment 4)
+This result needs no assets and no calibration, so the paper's central contribution rests on
+its most robust component — worth saying explicitly.
 
 ---
 
-## 4. Proposition 3 — the feedback loop amplifies both
+## 2. The mechanism section: the shutdown ladder, in the calibrated model
 
-Recovery at `t = 3` occurs with probability `ρ(h₂)`, lower when homeless. Then
+Shut channels off one at a time, **recalibrate `b` in each arm to hold drug participation at
+its baseline value**, and report both what `b` had to become and who uses drugs.
 
-```
-SUD at t=2 → unemployment ↑ → homeless at t=2 → ρ ↓ → SUD persists at t=3.
-```
+| Arm | Shut off | Isolates |
+|---|---|---|
+| 0 | — | baseline |
+| 1 | `κ_φd = 1` | SUD → mortality: the value-of-life channel, the headline claim |
+| 2 | `κ_ue,d = 1` | SUD → employment: **R1's rival hypothesis** |
+| 3 | `κ_φh, κ_ue,h, ρ_homeless = 1` | the homelessness feedback loop |
+| R | restore `θ₁,₂ > θ₀,₂` | robustness against the old preference spec |
 
-Expected SUD duration exceeds `1/ρ`, so `Δ(y)` in Proposition 1 is larger than a one-period
-penalty implies. Two corollaries: the gradient reversal is stronger than a two-period model
-predicts, and the deterrent in Proposition 2 is stronger because what is being deterred is
-more costly. **Conditionality and the feedback loop are complements.**
+Arm 2 is the one that matters most. R1's alternative is that "the labor-market and income-risk
+consequences of drug use could also generate a low-income concentration of drug use." That
+channel operates through precautionary saving against a borrowing constraint — both of which
+the simplified model has. So the arm is a genuine test, not a strawman.
 
-It also delivers the answer to the RCT literature for free: housing responds within one
-period, SUD only over two, so a short-horizon experiment detects the housing effect and
-misses the addiction effect regardless of the true long-run treatment effect.
+### Two numbers per arm, and the first one is new
+
+**How far `b` had to move** measures *how much* deterrence the channel was providing. If
+removing mortality forces `b` up by an order of magnitude to restore 4% participation,
+mortality was carrying the deterrence. If `b` barely moves, it was not.
+
+**The income gradient** measures *whom* it deterred — drug-use rate by income decile, one line
+per arm.
+
+Level and composition, separately identified. The recalibration is what makes the composition
+comparison meaningful at all: without it, removing the mortality penalty just raises drug use
+everywhere and the level change swamps any compositional change.
+
+### Reporting
+
+- Drug-use rate by income decile, one line per arm — **the money figure**. Baseline slopes
+  down; if the claim holds, Arm 1 flips it upward and Arm 2 does not.
+- Per arm: recalibrated `b`, mean user income relative to average (the statistic R1 attacked —
+  41% model vs 74% data), share unemployed, share homeless, mean age, mean assets.
+- **Experimenters and those with SUD reported separately.** Experimentation is the decision
+  margin and the clean test; SUD is a stock that also reflects differential mortality and
+  recovery, so shutting off SUD-mortality changes its composition partly mechanically.
+- Drug-use policy functions over `(assets, income)`, separately for `d = 0` and `d = 1` —
+  R2's request, verbatim.
+
+### On `b` as the normaliser
+
+`b` is not neutral: by the paper's own argument it governs the no-penalty gradient, which
+slopes *upward*, and the penalties reverse it. So recalibrating `b` adjusts the very object
+that determines the counterfactual gradient. Handle it openly:
+
+1. Report both un-normalised (headline level effect: "removing mortality raises participation
+   from 4% to X%") and normalised (composition). The pair is more informative than either.
+2. Confirm the gradient flip survives a second normaliser. `π_d,low` is the candidate, since
+   it shifts the transition rather than preferences and so does not mechanically re-rank who
+   wants drugs.
+
+### Risk
+
+If Arm 1 does not flip the gradient, the central claim is wrong. But if Arm 2 turns out to do
+the work, the framing shifts from *value of life* to *value of future resources* — more
+general and more robust. The paper survives either result. What it cannot survive is a referee
+running the experiment in his head and not believing the answer.
 
 ---
 
-## 5. How this reframes the paper
+## 3. Robustness arm worth adding: a usage-independent addiction hazard
 
-Currently the contribution reads as "a large model, four experiments." With this section:
+Replace the step function `π_d(v)` with a single probability of developing SUD conditional on
+any use. This is cheap (collapses `NREG` from 3 to 2) and directly answers R1 comment 4(d) on
+sensitivity to the addiction transition.
+
+**Run it as robustness, not baseline**, because it costs something specific: the bunching at
+`v̄` is what currently generates the experimenter expenditure share endogenously, so that
+moment would need to be targeted another way.
+
+---
+
+## 4. How this reframes the paper
 
 > a general principle about conditional transfers — *the deterrent value of conditionality is
-> increasing in the generosity of the benefit being conditioned* — proved transparently,
+> increasing in the generosity of the benefit being conditioned* — proved in half a page,
 > measured in a calibrated model, applied to a live policy debate.
 
-Say explicitly that the quantitative model measures **magnitudes** and the fiscal and
-equilibrium feedbacks; the **signs** come from here. That answers the AE's central complaint
-that "the economic messages of the paper are lost within long-lists of model features," and
-R2's "black box."
+The quantitative model measures **magnitudes** and the fiscal and equilibrium feedbacks; the
+**signs** come from §1. That answers the AE's complaint that "the economic messages of the
+paper are lost within long-lists of model features," and R2's "black box."
 
-**What stays in the appendix:** the tightened static derivation, relabelled as intuition
-rather than as a general proof of the model's mechanism — exactly R1 comment 1(e). Do not
-delete it; demote it.
-
-**Division of labour on Proposition 1.** The three-period model with assets shows the
-mechanism cleanly and rules out the precautionary rival in a transparent setting. The full
-channel-shutdown ladder in the quantitative model then does it at the calibrated
-parameterisation — which is what R1 actually asked for in 1(d). The small model motivates;
-the big model demonstrates.
+**Appendix A:** tightened, relabelled as intuition rather than as a general proof of the
+model's mechanism — R1 comment 1(e). Demote it, do not delete it.

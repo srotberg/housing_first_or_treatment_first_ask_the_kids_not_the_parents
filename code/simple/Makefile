@@ -1,17 +1,20 @@
 # Simplified HF/TF model
 FC      = gfortran
 FFLAGS  = -O2 -fopenmp
-COMMON  = params.f90 solve.f90 equilibrium.f90 calibrate.f90
+COMMON  = params.f90 solve.f90 equilibrium.f90 calibrate.f90 mechanism.f90
 SRC     = $(COMMON) main.f90
 TARGET  = hftf_simple
 
-all: $(TARGET) calib
+all: $(TARGET) calib mech
 
 $(TARGET): $(SRC)
 	$(FC) $(FFLAGS) $(SRC) -o $(TARGET)
 
 calib: $(COMMON) calib_main.f90
 	$(FC) $(FFLAGS) $(COMMON) calib_main.f90 -o hftf_calib
+
+mech: $(COMMON) mech_main.f90
+	$(FC) $(FFLAGS) $(COMMON) mech_main.f90 -o hftf_mech
 
 # stricter build for debugging; -fcheck=all catches out-of-bounds indexing
 debug: $(SRC)
@@ -21,5 +24,5 @@ run: $(TARGET)
 	OMP_NUM_THREADS=4 ./$(TARGET)
 
 clean:
-	rm -f *.mod $(TARGET) $(TARGET)_debug hftf_calib
-.PHONY: all debug run clean calib
+	rm -f *.mod $(TARGET) $(TARGET)_debug hftf_calib hftf_mech
+.PHONY: all debug run clean calib mech
