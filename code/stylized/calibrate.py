@@ -1,187 +1,206 @@
 """
-Calibrating the stylised model, and checking that it is identified.
+Calibrating the stylised model.
 
-The point of calibrating a stylised model is not to claim it fits the data. It
-is so that the comparative statics in run.py are read off a point that is in the
-right region of the parameter space, and so that the one moment the model is NOT
-fitted to becomes a genuine out of sample check.
+WHAT IS TARGETED, AND WHAT IS DELIBERATELY NOT
 
-SEVEN PARAMETERS, SEVEN TARGETS
-
-    b        drug participation                          5.13 %
-    lam      P(disorder | used)                          71.7 %
-    kap      price elasticity of participation           -0.45
+    b        drug participation rate                     5.13 %
+    kap      price elasticity of participation          -0.45
+    lam      share of users who acquire the disorder    71.7 %
     xi       income with the disorder / average          0.687
-    pH1      share of the homeless with the disorder     21.7 %
     pH0      homelessness rate                           0.399 %
-    aleph    value of a statistical life, in mean incomes  107
+    pH_d     share of the homeless with the disorder     21.7 %
+    aleph    value of a statistical life / PERIOD income  5.36
 
-HELD OUT, AND THIS IS THE POINT
+    HELD OUT: income of USERS / average                  0.951
 
-    r_use    income of USERS / average                   0.951 in the data
+The income gradient of USE is never targeted. It is the fact the mechanism is
+supposed to explain, so fitting it would make the exercise circular. Everything
+that identifies the mortality channel comes from the PRICE ELASTICITY instead,
+exactly as in the full model, which leaves the gradient as an out of sample check.
 
-The income gradient of USE is never targeted. It is what the paper's mechanism
-is supposed to explain, so fitting it would make the exercise circular. Everything
-that identifies the mortality channel comes from the price elasticity instead,
-exactly as in the full model.
+The unemployment rate given the disorder is set externally to the measured 16.25
+per cent rather than calibrated, because it IS a moment: NSDUH 2024 microdata,
+ages 26 and above, weighted.
 
-The targets are the same objects, from the same sources, as the full model's:
-NSDUH 2024 ages 26 and above for the drug moments, HUD point in time converted
-to households for the homelessness rate, Gutwinski et al. for the composition of
-the homeless population, and the standard 7.5 million dollar value of a
-statistical life against mean household income near 70,000.
+WHY A JOINT FIT AND NOT ONE BISECTION PER PARAMETER
+
+Coordinate bisection assumes each parameter dominates one moment. That is false
+here, in an instructive way. Raising the addiction hazard lam raises the disorder
+rate MECHANICALLY but lowers it in EQUILIBRIUM, because households respond by
+using less. The partial and the total derivative have opposite signs, so a
+bracket built on the partial sign walks lam to its bound; from there participation
+saturates, the price elasticity collapses to zero, and every other bracket loses
+its signal too. That is what happened on the first attempt. The Jacobian below
+reports it rather than hiding it, and it is a caution that applies to the full
+model's calibration as well.
 """
 
 import numpy as np
-from stylized import P, with_, fields, aggregates, price_elasticity, moments
+from stylized import P, with_, aggregates, price_elasticity
 
-YG = np.exp(np.linspace(np.log(0.15), np.log(5.0), 40))
+YG = np.exp(np.linspace(np.log(0.15), np.log(5.0), 34))
 W  = np.exp(-0.5 * ((np.log(YG) + 0.5 * 0.75**2) / 0.75)**2)
 
-TARGET = dict(part=0.0513, prog=0.717, elast_p=-0.45, r_sud=0.687,
-              sud_of_homeless=0.217, homeless=0.00399, vsl=107.0)
+# THE VALUE OF LIFE TARGET IS IN PERIOD INCOMES, NOT ANNUAL ONES.
+# A 7.5 million dollar VSL against 70,000 of annual income is 107 ANNUAL
+# incomes. Three periods span roughly ages 26 to 85, so a period is about 20
+# years and period income is 20 annual incomes: the target is 107/20 = 5.36.
+# Targeting 107 asks for a value of life twenty times too large, which makes the
+# marginal mortality cost of drug use so big that nobody uses anywhere in the
+# parameter space, and the fit dies with participation at zero.
+TARGET = dict(part=0.0513, spend=0.11, elast_p=-0.45, prog=0.717, r_sud=0.687,
+              homeless=0.00399, sud_of_homeless=0.217, vsl=5.36)
 
-# parameter, moment, bracket, and the sign of d(moment)/d(parameter)
-BLOCKS = [
-    ('b',     'part',            1e-5, 3.0,  -1),
-    ('lam',   'prog',            0.05, 200.0, +1),
-    ('kap',   'elast_p',         0.02, 0.95, +1),   # bigger kap, LESS elastic
-    ('xi',    'r_sud',           0.01, 0.90, -1),
-    ('pH1',   'sud_of_homeless', 1e-4, 0.95, +1),
-    ('pH0',   'homeless',        1e-6, 0.30, +1),
-    ('aleph', 'vsl',             0.10, 400.0, +1),
-]
+FREE = [('b',     1e-5, 3.0),
+        ('th',    2e-3, 4.00),
+        ('kap',   0.02, 0.95),
+        ('lam',   0.20, 400.0),
+        ('xi',    0.01, 0.85),
+        ('pH0',   1e-5, 0.20),
+        ('pH_d',  1.0,  120.0),
+        ('aleph', 0.20, 400.0)]
+
+LABEL = {'part': 'drug participation rate',
+         'elast_p': 'price elasticity of participation',
+         'prog': 'share of users who acquire the disorder',
+         'r_sud': 'income with the disorder / average',
+         'homeless': 'homelessness rate',
+         'sud_of_homeless': 'share of homeless with the disorder',
+         'vsl': 'value of a statistical life / mean income',
+         'spend': 'drug spending / income, among users'}
 
 
-def stats(par):
-    m = aggregates(par, YG, W)
+def stats(par, ygrid=None, w=None):
+    ygrid = YG if ygrid is None else ygrid
+    w = W if w is None else w
+    m = aggregates(par, ygrid, w)
     m['prog'] = m['sud'] / max(m['part'], 1e-12)
-    m['elast_p'] = price_elasticity(par, YG, W)
+    m['elast_p'] = price_elasticity(par, ygrid, w)
     return m
 
 
-def bisect(par, name, mom, lo, hi, sign, iters=13):
-    tgt = TARGET[mom]
-    for _ in range(iters):
-        mid = np.sqrt(lo * hi)
-        val = stats(with_(par, **{name: mid}))[mom]
-        # sign = +1 means the moment RISES in the parameter
-        if (val > tgt) == (sign > 0):
-            hi = mid
-        else:
-            lo = mid
-    return float(np.sqrt(lo * hi))
+def loss(par, targets=None, free=None):
+    """
+    Squared LOG ratio, not squared relative gap.
 
-
-def loss(par):
-    """Sum of squared relative gaps. The price elasticity is a level rather than
-    a ratio, so it is scaled by its own target's magnitude like the rest."""
+    A relative gap saturates: a moment 27 times too small and a moment 30 per
+    cent too small both contribute about one, so the optimiser cannot tell which
+    to fix and drifts. In logs, being 27 times out costs (log 27)^2 = 10.9
+    against 0.13 for 30 per cent, which is the ordering the fit needs.
+    """
+    t = targets or TARGET
     m = stats(par)
-    return sum((m[k] / TARGET[k] - 1.0)**2 for k in TARGET)
+    tot = 0.0
+    for k in t:
+        a, b_ = m[k], t[k]
+        if a * b_ <= 0.0:            # wrong sign, or dead: penalise hard
+            tot += 25.0
+        else:
+            tot += np.log(abs(a) / abs(b_))**2
+    return tot
 
 
-def calibrate(par=None, verbose=True, maxiter=900):
-    """
-    Joint minimisation rather than one bisection per parameter.
-
-    Coordinate bisection assumes each parameter dominates one moment. The
-    Jacobian below says that is FALSE here, and in an instructive way. Raising
-    the addiction hazard lam RAISES the disorder rate mechanically but LOWERS it
-    in equilibrium, because households respond by using less: the partial and
-    the total derivative have opposite signs. A bisection that assumes the
-    partial sign walks the parameter to its bound, which is what happened, and
-    from there the price elasticity collapses to zero and every other bracket
-    loses its signal too.
-
-    So the calibration is a joint fit. Parameters are searched in logs, which
-    keeps them positive and makes the step sizes scale free.
-    """
+def fit(par=None, targets=None, free=None, maxfev=2600, verbose=True, tag=''):
+    """Joint Nelder Mead over the free parameters, searched in logs."""
     from scipy.optimize import minimize
     par = par or P()
-    names = [b[0] for b in BLOCKS]
-    lo = np.array([np.log(b[2]) for b in BLOCKS])
-    hi = np.array([np.log(b[3]) for b in BLOCKS])
-    x0 = np.clip(np.array([np.log(getattr(par, n)) for n in names]),
-                 lo + 1e-6, hi - 1e-6)
-
-    hist = {'n': 0}
+    t = targets or TARGET
+    fr = free or FREE
+    names = [f[0] for f in fr]
+    lo = np.array([np.log(f[1]) for f in fr])
+    hi = np.array([np.log(f[2]) for f in fr])
+    x0 = np.clip([np.log(getattr(par, n)) for n in names], lo + 1e-6, hi - 1e-6)
+    n = {'k': 0}
 
     def f(x):
         x = np.clip(x, lo, hi)
-        q = with_(par, **{n: float(np.exp(v)) for n, v in zip(names, x)})
-        L = loss(q)
-        hist['n'] += 1
-        if verbose and hist['n'] % 60 == 0:
-            print(f'    {hist["n"]:5d} evaluations, loss {L:10.5f}')
+        q = with_(par, **{k: float(np.exp(v)) for k, v in zip(names, x)})
+        L = loss(q, t)
+        n['k'] += 1
+        if verbose and n['k'] % 150 == 0:
+            print(f'    {tag}{n["k"]:5d} evals, loss {L:9.5f}')
         return L
 
-    res = minimize(f, x0, method='Nelder-Mead',
-                   options=dict(maxfev=maxiter, xatol=1e-4, fatol=1e-7))
-    x = np.clip(res.x, lo, hi)
-    return with_(par, **{n: float(np.exp(v)) for n, v in zip(names, x)})
+    # two restarts: Nelder Mead collapses its simplex and a restart from the
+    # incumbent is the cheapest way to let it re expand
+    x = x0
+    for _ in range(3):
+        r = minimize(f, x, method='Nelder-Mead',
+                     options=dict(maxfev=maxfev // 3, xatol=2e-4, fatol=1e-9))
+        x = np.clip(r.x, lo, hi)
+    return with_(par, **{k: float(np.exp(v)) for k, v in zip(names, x)})
 
 
 def report(par):
     m = stats(par)
-    print('\n' + '=' * 74)
+    print('\n' + '=' * 72)
     print('CALIBRATION OF THE STYLISED MODEL')
-    print('=' * 74)
-    print(f"{'moment':38s}{'target':>11s}{'model':>11s}{'gap':>11s}")
-    order = ['part', 'prog', 'elast_p', 'r_sud', 'sud_of_homeless',
-             'homeless', 'vsl']
-    label = {'part': 'drug participation', 'prog': 'P(disorder | used)',
-             'elast_p': 'price elasticity of participation',
-             'r_sud': 'income with disorder / average',
-             'sud_of_homeless': 'share of homeless with disorder',
-             'homeless': 'homelessness rate',
-             'vsl': 'value of a statistical life / income'}
-    for k in order:
-        print(f'{label[k]:38s}{TARGET[k]:11.4f}{m[k]:11.4f}'
-              f'{m[k]-TARGET[k]:11.4f}')
-    print('-' * 74)
-    print(f"{'HELD OUT: income of users / average':38s}{0.951:11.4f}"
-          f"{m['r_use']:11.4f}{m['r_use']-0.951:11.4f}")
-    print('-' * 74)
-    print('parameters')
-    for name, _, _, _, _ in BLOCKS:
-        print(f'   {name:8s}{getattr(par, name):12.5f}')
+    print('=' * 72)
+    print(f"{'moment':41s}{'target':>10s}{'model':>10s}{'gap':>10s}")
+    for k in ['part', 'spend', 'elast_p', 'prog', 'r_sud', 'homeless',
+              'sud_of_homeless', 'vsl']:
+        print(f'{LABEL[k]:41s}{TARGET[k]:10.4f}{m[k]:10.4f}{m[k]-TARGET[k]:10.4f}')
+    print('-' * 72)
+    print(f"{'HELD OUT: income of users / average':41s}{0.951:10.4f}"
+          f"{m['r_use']:10.4f}{m['r_use']-0.951:10.4f}")
+    print('-' * 72)
+    print('  ' + '   '.join(f'{n}={getattr(par,n):.4g}' for n, _, _ in FREE))
     return m
 
 
-def jacobian(par, rel=0.10):
-    """
-    Sensitivity of every moment to every parameter, in elasticities. This is the
-    numerical identification evidence Referee 1 asks for in his comment 2(f),
-    done here on the small model where it can be read at a glance.
-    """
-    names = [b[0] for b in BLOCKS]
-    moms = ['part', 'prog', 'elast_p', 'r_sud', 'sud_of_homeless',
-            'homeless', 'vsl', 'r_use']
+def jacobian(par, rel=0.08):
+    """Elasticity of each moment to each parameter. R1's comment 2(f), on the
+    small model where it fits on one screen."""
+    names = [f[0] for f in FREE]
+    moms = ['part', 'spend', 'elast_p', 'prog', 'r_sud', 'homeless',
+            'sud_of_homeless', 'vsl', 'r_use']
     base = stats(par)
-    print('\n' + '=' * 92)
+    print('\n' + '=' * 86)
     print('IDENTIFICATION: elasticity of each moment to each parameter')
-    print('   a near diagonal matrix is what a triangular calibration needs')
-    print('=' * 92)
-    print(f"{'':9s}" + ''.join(f'{m[:15]:>10s}' for m in moms))
-    J = np.zeros((len(names), len(moms)))
-    for i, n in enumerate(names):
+    print('=' * 86)
+    print(f"{'':8s}" + ''.join(f'{m[:9]:>9s}' for m in moms))
+    for n in names:
         v = getattr(par, n)
         hi = stats(with_(par, **{n: v * (1 + rel)}))
         lo = stats(with_(par, **{n: v * (1 - rel)}))
-        row = ''
-        for j, mm in enumerate(moms):
-            d = (hi[mm] - lo[mm]) / max(abs(base[mm]), 1e-12) / (2 * rel)
-            J[i, j] = d
-            row += f'{d:10.2f}'
-        print(f'{n:9s}' + row)
-    return J
+        row = ''.join(f'{(hi[m]-lo[m])/max(abs(base[m]),1e-12)/(2*rel):9.2f}'
+                      for m in moms)
+        print(f'{n:8s}' + row)
+
+
+# ---------------------------------------------------------------------------
+# the channel configurations, EACH recalibrated to the same two moments
+# ---------------------------------------------------------------------------
+# The comparison is only fair if every configuration matches the same facts. So
+# in each one, b is refitted to the participation rate and the ACTIVE penalty is
+# refitted to the price elasticity: the mortality penalty where there is one,
+# the wage penalty where there is not. Then the income gradient is the only thing
+# left free to differ, and it differs because of the mechanism rather than
+# because one configuration was allowed a better fit.
+CONFIGS = [
+    ('both channels',  {},                               ['b', 'th', 'kap']),
+    ('mortality only', dict(xi=0.0, u1=P.u0, ellH=0.0),  ['b', 'th', 'kap']),
+    ('resource only',  dict(kap=0.0, kapH=0.0),          ['b', 'th', 'xi']),
+]
+
+
+def fit_config(base, kw, free_names, maxfev=400):
+    par = with_(base, **kw)
+    fr = [f for f in FREE if f[0] in free_names]
+    t = {'part': TARGET['part'], 'elast_p': TARGET['elast_p'],
+         'spend': TARGET['spend']}
+    return fit(par, targets=t, free=fr, maxfev=maxfev, verbose=False)
 
 
 if __name__ == '__main__':
-    print('calibrating')
-    par = calibrate()
+    import json, sys
+    print('calibrating the benchmark')
+    # start in the region the moments point to: a high taste with a high
+    # subsistence gives few users who each spend a lot, which is what a 5 per
+    # cent participation rate alongside 11 per cent spending requires
+    par = fit(P())
     m = report(par)
     jacobian(par)
-    print('\nparameter block for stylized.py:')
-    for n, _, _, _, _ in BLOCKS:
-        print(f'    {n:6s}= {getattr(par, n):.6f}')
+    out = {n: getattr(par, n) for n, _, _ in FREE}
+    json.dump(out, open('calibrated.json', 'w'), indent=1)
+    print('\nwrote calibrated.json')
