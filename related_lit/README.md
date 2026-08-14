@@ -39,6 +39,13 @@ Degenhardt et al.'s SMR range of 2.5 to 9.8.
 | `Evans_Lieber_Power_2018_How_OxyContin_reformulation_ignited_heroin_epidemic_NBER_w24475.pdf` | The substitution from OxyContin to heroin | Corroboration: heroin purity did not change at the reformulation. Also the source of the caution, they attribute the post 2013 deaths per use rise to fentanyl, and document the price fall from \$3,000 per pure gram in 1981 to under \$500 in 2012 as a supply expansion, not an elasticity |
 | `Dobkin_Nicosia_2009_War_on_Drugs_Methamphetamine_AER.pdf` | 1995 DEA precursor seizure | Corroboration only. Prices tripled and recovered within about four months, hard to square with steep supply, but as a SUPPLY shock it identifies the demand elasticity rather than this one |
 
+## Drug supply elasticity, the level
+
+| file | what it is | what it set |
+|---|---|---|
+| `Hansen_Miller_Weber_2017_Taxation_of_Recreational_Marijuana_Washington_NBER_w23632.pdf` | Washington's 2015 switch from a 25% gross receipts tax at every supply chain stage to a single 37% retail excise, with universal state traceability data | **The only MEASURED supply elasticity in any drug market.** Consumers bear **44%** of the additional retail tax burden; their demand elasticity is about $-1$ within two weeks. Textbook incidence then implies $\varepsilon_s\approx 0.79$. Three caveats, all stated in the note: it is a LEGAL licensed market with capped canopy, the reform changed tax STRUCTURE rather than a rate, and they find tax invariance did not hold, so the textbook mapping is an approximation |
+| `Caulkins_Reuter_2010_How_Drug_Enforcement_Affects_Drug_Prices_Crime_and_Justice.pdf` | The risks and prices framework | The cost STRUCTURE, not the slope. Growing and refining are under 1% of cocaine's retail price; a \$100 gram leaves Colombia at barely \$1; importation is 12% of the total and almost all risk compensation, in a competitive market. Also the source of the resolution of the sign problem: enforcement swamping "pertains to total drug volume ... not just or primarily drug-specific market volume", so the downward sloping force works on the aggregate market and not on ours |
+
 ## Evidence reviews used for validation
 
 | file | what it is |
