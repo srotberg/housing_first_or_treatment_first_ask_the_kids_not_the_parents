@@ -236,7 +236,80 @@ population shares.
 
 ---
 
+## 8. SUD mortality is now MEASURED, not inferred — the biggest win
+
+CDC WONDER provisional mortality, grouped by `MCD - Drug/Alcohol Induced
+Cause`. Overdose is the sum of the four drug-poisoning rows (X40-X44 unintentional,
+X60-X64 suicide, X85 homicide, Y10-Y14 undetermined), 81,834 deaths at ages
+25-84. Against the SSA all-cause table:
+
+| age | overdose q | all-cause q | **overdose share of all deaths** | implied q given SUD (3.68%) |
+|---|---:|---:|---:|---:|
+| 25-29 | 0.00025 | 0.00123 | **20.4%** | 0.0068 |
+| 30-34 | 0.00038 | 0.00166 | **23.2%** | 0.0105 |
+| 35-39 | 0.00046 | 0.00205 | **22.3%** | 0.0124 |
+| 40-44 | 0.00049 | 0.00262 | 18.6% | 0.0132 |
+| 50-54 | 0.00044 | 0.00471 | 9.4% | 0.0121 |
+| 65-69 | 0.00028 | 0.01500 | 1.9% | 0.0077 |
+
+**Roughly a fifth of all deaths between 25 and 44 are drug poisonings.** If
+those fall on the 3.68% carrying the model's SUD concept, their overdose hazard
+alone is about 1.3% a year at peak ages, against an all-cause baseline near
+0.26% — roughly **5x baseline mortality from overdose alone**.
+
+That is exactly the object the model's SUD mortality channel represents, and it
+is currently backed out of the VSL calibration rather than measured. This makes
+it an input. It also bears directly on Referee 1's rival hypothesis: a measured
+hazard accounting for a fifth of prime-age deaths is a far stronger answer than
+a parameter fitted to hit a VSL target — especially alongside the NSDUH finding
+in section 3 that the employment gradient may be too strong by 2.5x.
+
+Restricting to unintentional poisoning (X40-X44) alone, which is what the
+ICD-10 113 Cause List offers, understates the total by 7-10% at prime ages and
+by much more above 70, where intent is more often recorded as suicide or
+undetermined.
+
+### Do not use "All other drug-induced causes" as non-overdose SUD mortality
+
+It looks like the missing piece and it is not. CDC's drug-induced list carries a
+long tail of **therapeutic** adverse effects — drug-induced anaemia,
+thyroiditis, polyneuropathy, osteoporosis — with no connection to substance use
+disorder, and they dominate at older ages: 600 per 100,000 at 80-84, against 6
+for overdose. At prime ages it is mostly F11-F19, mental and behavioural
+disorders due to psychoactive substance use, and there it is informative. The
+script keeps the category and refuses to sum it into the overdose total.
+
+Overdose still understates total SUD excess mortality, which also runs through
+liver disease, endocarditis, hepatitis, HIV, suicide and accidents. Published
+all-cause SMRs for opioid use disorder are 6-10x, of which overdose is roughly
+half. Treat the numbers above as a **lower bound**.
+
+---
+
+## 9. `kappa_r` — use the tenant-based voucher figure, not the all-programs one
+
+The programme-level HUD extract separates what the summary file averaged
+together. The model's voucher is a tenant-based Housing Choice Voucher, so that
+is the row to compare.
+
+| programme | income/yr | tenant rent/mo | **tenant share** | HUD/mo | wait | beds 0-1/2/3+ | wages major |
+|---|---:|---:|---:|---:|---:|---|---:|
+| **HCV tenant-based** | \$19,368 | \$503 | **31.2%** | \$1,240 | 29mo | 31/35/34 | 28% |
+| HCV project-based | \$18,402 | \$428 | 27.9% | \$1,344 | 24mo | 60/23/17 | 21% |
+| Public housing | \$19,743 | \$439 | 26.7% | \$856 | 19mo | 41/30/29 | 29% |
+| Project-based S8 | \$16,427 | \$389 | 28.4% | \$1,150 | — | 62/25/13 | 17% |
+| all programmes | \$18,483 | \$452 | 29.3% | \$1,135 | 25mo | 46/29/25 | 24% |
+
+`kappa_r = 0.30` against **31.2%** for tenant-based vouchers. Slightly above the
+statutory 30%, which is expected: the statute takes 30% of *adjusted* income,
+and HCV tenants may pay up to 40% at initial lease-up when the unit rent exceeds
+the payment standard.
+
+The waiting time for tenant-based vouchers is **29 months**, which sharpens
+rather than resolves the `prob_V` tension in section 4: 0.06 implies 200.
+
+---
+
 ## Still outstanding
 
 - **SCF bottom-50% net worth share.**
-- **CDC WONDER drug-overdose mortality by single-year age.**
