@@ -726,7 +726,7 @@ $\bar\pi^{eu}$ & job separation & C & $\rightarrow$ unemployment rate, 4.9\%. BL
 $\pi_{UI}$ & share of entrants drawing UI & D & 0.30; insured unemployment / total unemployment, FRED 2014 to 24\\
 $\varrho_{UI}$ & UI replacement rate & D & 0.50. DOL statutory replacement rates average close to half of prior weekly wages\\
 $\kappa_{ueH}$ & employment multiplier, homeless & L & 0.80, Desmond and Gershenson (2016)\\
-$\kappa_{ued}$ & employment multiplier, SUD & C & $\rightarrow$ unemployment rate given SUD, 26.9\% (NSDUH 2024, ages 26+, own tabulation in \texttt{data/nsduh\_gradients.py}). Direction corroborated by roughly 50\% more unscheduled absence and 44\% higher turnover in the employer literature\\
+$\kappa_{ued}$ & employment multiplier, SUD & C & $\rightarrow$ unemployment rate given SUD, \nw{\textbf{16.25\%}}. \nw{\textbf{Corrected, and the previous figure's stated source was wrong.} The note attributed 26.9\% to a tabulation in \texttt{data/nsduh\_gradients.py}; that script contains no employment variable and cannot have produced it. Measured now from the full NSDUH 2024 public use file, ages 26+, unemployment over the labour force weighted by \texttt{analwt2\_c}, with \texttt{svyrdudany} for severity and \texttt{irwrkstat} for employment: 6.65\% for everyone, 6.04\% with no disorder, 12.72\% with any drug use disorder and 16.25\% with a moderate or severe one, which is the model's concept. The old target implied a relative risk of 5.49 against an overall rate of 4.9\%; the data gives 2.44, so the channel was about 2.25 times too strong}\\
 $\kappa_{uem}$ & employment multiplier, SMI & C & $\rightarrow$ unemployment rate given SMI, 7.1\%. NSDUH Table 6.5B: SMI prevalence 8.9\% among the unemployed against 5.1\% among the full-time employed, inverted by Bayes\\
 $\kappa_{\phi H}$ & mortality multiplier, homeless & D & \nw{\textbf{Now varies with age}: 4.41 at 26, 3.80 at 44, 3.14 at 56, 1.09 at 80. Baggett et al.\ (2013) give race adjusted all cause mortality rate ratios for homeless adults of 8.6 (men) and 9.6 (women) at 25 to 44, 4.5 at 45 to 64 and 1.1 at 65 to 84. The previous flat 1.60 was wrong twice: five times too small at prime ages, and the wrong \emph{shape}, since a constant multiplier matching the young implies a 41\% annual death rate at 80. Their ratio is the total for a population that mostly also has SUD, so it is netted down by $[(1-s)+s\kappa_{\phi d}]$ with $s=0.217$; floored at one, because the 65+ arithmetic says homelessness protects the old, which is survivor selection and not causation. \S\ref{sec:hazards}}\\
 $\kappa_{\phi d}$ & mortality multiplier, SUD & C\textsuperscript{2} & \nw{\textbf{Shape from data, level still calibrated.}} $\rightarrow$ drug price participation elasticity, $-0.63$ (inside the $-0.36$ to $-0.55$ cocaine and $-0.80$ to $-0.90$ heroin participation range of Saffer and Chaloupka), bracketed by the 2.5 to 9.8 SMR range of Degenhardt et al.\ (2011). \nw{The age \emph{profile} now comes from CDC WONDER drug poisonings, giving 5.90 at 26, 6.26 at 32, 2.62 at 56 and 1.03 at 80, while the \emph{level} stays the second stage instrument. Flat at 6.9 it implied a sevenfold SUD mortality penalty at 80, where the measured excess is essentially nil. \S\ref{sec:hazards}}\\
@@ -986,7 +986,7 @@ ratio to $\rho_d$.
 \nw{\paragraph{New untargeted moments.} None of these is fitted, and each is
 produced endogenously by a model with sixty single ages.}
 
-\nw{\begin{center}\begin{tabular}{lrl}
+{\color{red}\begin{center}\begin{tabular}{lrl}
 \toprule
 Moment & Data & Source\\
 \midrule
@@ -1002,6 +1002,11 @@ Age weighted SMR, SUD & 2.5 to 9.8 & Degenhardt et al.\\
 Age weighted SMR, homeless & 9.1 / 4.5 / 1.1 by band & Baggett et al.\\
 Tenant contribution rate & 31.2\% & HUD, tenant based vouchers\\
 Voucher holders with wages as main income & 28\% & HUD\\
+SUD income / average, moderate or severe & 71.1\% & NSDUH 2024\\
+Labour force participation, SUD vs clean & 65.8 vs 61.5\% & NSDUH 2024\\
+Homeless at treatment admission & 14.5\% & TEDS-A 2022\\
+Co-occurring psychiatric problem at admission & 43.1\% & TEDS-A 2022\\
+Working at all, among the homeless in treatment & 6.6\% & TEDS-A 2022\\
 \bottomrule
 \end{tabular}\end{center}}
 
@@ -1380,6 +1385,40 @@ conclusion reversed.
 \bottomrule
 \end{longtable}
 
+\subsection{\nw{Referee 1's rival hypothesis, and what the data did to it}}
+
+\nw{R1's central alternative is that the SUD to employment channel, rather than
+mortality, does the work. The model was biased toward that reading on
+\emph{both} sides at once, and neither bias was visible until the underlying
+numbers were measured rather than assumed.}
+
+{\color{red}\begin{center}\begin{tabular}{lrrl}
+\toprule
+Channel & Was & Is & Source\\
+\midrule
+Unemployment given SUD & 26.9\% & \textbf{16.25\%} & NSDUH 2024 microdata\\
+\quad implied relative risk & 5.49 & \textbf{2.44} & \\
+SUD mortality multiplier & 6.9, flat & profile, peak 6.9 & CDC WONDER\\
+Homelessness mortality multiplier & 1.6, flat & 4.41 at 26, 3.14 at 56 & Baggett et al.\\
+Baseline survival & fitted exponential & SSA life table & $q_{85}$ 0.045 $\to$ 0.081\\
+\bottomrule
+\end{tabular}\end{center}}
+
+\nw{So the employment channel was roughly 2.25 times too strong and the
+mortality channel was running at something like a fifth of its measured strength
+at prime ages. Correcting both moves against R1, and from measurement rather
+than assertion, which is the part that matters for a response letter.}
+
+\nw{Two further facts from the same file are worth reporting because nobody had
+looked at them. Mean personal income among those with a moderate or severe drug
+use disorder is 71.1\% of the average at ages 26+, against a 68.7\% target the
+model was already fitting, so that moment is nearly hit unprompted. And labour
+force \emph{participation} is slightly HIGHER among those with a disorder, 65.8
+against 61.5\%: the penalty runs through unemployment conditional on
+participating, not through dropping out of the labour force. The model should
+reproduce that, and it is a sharper statement of the mechanism than the paper
+currently makes.}
+
 \subsection{Referee 1, outstanding}
 
 \begin{longtable}{lL{7.4cm}L{4.6cm}}
@@ -1469,7 +1508,7 @@ is unfinished.}
 
 \nw{\paragraph{Closed.}}
 
-\nw{\begin{longtable}{lL{5.0cm}L{6.4cm}}
+{\color{red}\begin{longtable}{lL{5.0cm}L{6.4cm}}
 \toprule
 Ref & Item & What closed it\\
 \midrule
@@ -1484,12 +1523,13 @@ R2 D1 & Housing grid & Identified from the ACS B25042 size distribution rather t
 , & $b_1$, the SUD Stone--Geary shifter & Given a target, the Milby abstinence rate among the homeless with SUD. No longer asserted\\
 , & $g$, the treatment effect & Closed enough. One clean randomised estimate, an odds ratio of 1.22 for contingency management. Stays a reported range rather than a point\\
 , & SUD target provenance & 3.68\% is moderate or severe \emph{drug} use disorder at ages 26+, reproduced exactly from the NSDUH microdata. Needs stating in the paper, since NSDUH's headline of 16.6\% includes alcohol\\
+R1 2(c) & unemp $\mid$ SUD & \textbf{Measured at 16.25\%}, replacing an asserted 26.9\% whose stated source could not have produced it. The channel was 2.25 times too strong\\
 \bottomrule
 \end{longtable}}
 
 \nw{\paragraph{Decided and scoped, not yet built.}}
 
-\nw{\begin{longtable}{lL{5.0cm}L{6.4cm}}
+{\color{red}\begin{longtable}{lL{5.0cm}L{6.4cm}}
 \toprule
 Ref & Item & Plan\\
 \midrule
@@ -1503,14 +1543,13 @@ R1 sm.\ 1 & Maximum experimentation age & A diagnostic run. If dropping it piles
 
 \nw{\paragraph{Genuinely open.}}
 
-\nw{\begin{longtable}{lL{5.0cm}L{6.4cm}}
+{\color{red}\begin{longtable}{lL{5.0cm}L{6.4cm}}
 \toprule
 Ref & Item & Why it is still open\\
 \midrule
 \endhead
 , & \textbf{The calibration has not converged} & The real blocker. It gates the ladder, the externality decomposition and the whole second stage\\
 R2 C2 & $\omega_x$, the composition weight & Searched for and not found. The literature supports a difference in \emph{sign} by facility type, not a magnitude. Should be presented as a sign restriction with a range\\
-, & unemp $\mid$ SUD $=26.9\%$ & Needs a provenance. NSDUH's direct gradient implies roughly 2.5 times less, and one extra variable in the existing microdata extract would settle it\\
 , & $\kappa_{\phi m}$ level & Constant in age, which is settled, but the level is a judgement across three populations measuring different things. Sensitivity at 3.2\\
 \bottomrule
 \end{longtable}}

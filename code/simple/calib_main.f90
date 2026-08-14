@@ -48,6 +48,9 @@ program calib_main
     do sweep = 1, max_sweeps
         ! loose inner solve while parameters are still moving
         call solve_equilibrium(20, 3.0e-3_dp, .false.)
+        ! the small-target level moments are re-bracketed AT cleared prices, so
+        ! the number reported is the one actually hit
+        if (sweep > 1) call polish_levels(min(10, 6 + sweep/4))
         call compute_aggregates(A)
         call compute_moments(A)
 
