@@ -16,6 +16,7 @@ program calib_main
     type(agg_t) :: A
     integer  :: sweep, max_sweeps, nthreads
     real(dp) :: t0, t1, step, best_gap
+    real(dp) :: best_par(NPAR)
     character(len=64) :: arg
 
     max_sweeps = 25
@@ -41,7 +42,8 @@ program calib_main
     call normalise_drug_supply()
 
     best_gap = 1.0e30_dp
-    step = 0.60_dp
+    step = 0.35_dp
+    call save_params(best_par)
 
     do sweep = 1, max_sweeps
         ! loose inner solve while parameters are still moving
@@ -58,6 +60,7 @@ program calib_main
 
         if (max_gap() < best_gap) then
             best_gap = max_gap()
+            call save_params(best_par)     ! keep the best vector, not the last
         else
             step = max(0.15_dp, step*0.7_dp)   ! back off when it stops improving
         end if
@@ -70,9 +73,11 @@ program calib_main
         call calibration_sweep(step)
     end do
 
-    ! final tight solve at the calibrated parameters
+    ! final tight solve at the BEST parameter vector seen, not the last one
     write(*,'(A)') ''
+    write(*,'(A,F9.4)') ' restoring the best sweep, max rel gap = ', best_gap
     write(*,'(A)') ' final solve at tight tolerance...'
+    call load_params(best_par)
     call solve_equilibrium(80, 1.0e-4_dp, .false.)
     call compute_aggregates(A)
     call compute_moments(A)

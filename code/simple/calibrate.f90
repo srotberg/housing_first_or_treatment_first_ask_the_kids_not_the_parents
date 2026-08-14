@@ -22,6 +22,7 @@ module calibrate
     real(dp) :: mh_b_ratio = 0.25_dp
 
     integer, parameter :: NMOM = 19
+    integer, parameter :: NPAR = 17   ! calibrated parameters, for the snapshot
 
     type :: mom_t
         character(len=28) :: name
@@ -379,12 +380,14 @@ end subroutine bisect_participation
 subroutine calibration_sweep(step)
     real(dp), intent(in) :: step
 
-    call bisect_participation(mom(1)%target, 14)
+    ! bracket the three step-like moments before touching anything else
+    call bisect_on(3, mom(16)%target, 10)     ! beta        -> wealth / GDP
+    call bisect_on(2, mom(3)%target,  10)     ! h_homeless  -> homelessness rate
+    call bisect_on(1, mom(1)%target,  10)     ! b           -> participation
 
     ! annual hazard of SUD from light use -- 18.7% was absurd, and raising it far
     ! enough actually LOWERS the SUD rate by deterring experimentation
     call bump(pi_d_low,        gap(2), +1.0_dp, step, 5.0e-3_dp, 0.15_dp)
-    call bump(h_homeless,      gap(3), +1.0_dp, step, 1.0e-5_dp, h_grid(2)*0.95_dp)
     call bump(pi_eu_base,      gap(4), +1.0_dp, step, 1.0e-4_dp, 0.9_dp)
     call bump(kappa_ue_d,      gap(5), -1.0_dp, step, 0.02_dp,   1.0_dp)
     call bump(recover_mult_hl, gap(6), -1.0_dp, step, 0.01_dp,   1.0_dp)
@@ -402,7 +405,6 @@ subroutine calibration_sweep(step)
     call bump(di_coverage,     gap(13),-1.0_dp, step, 0.05_dp,   3.00_dp)
     call bump(kappa_ue_m,      gap(14),-1.0_dp, step, 0.05_dp,   1.00_dp)
     call bump(prod_pen_m,      gap(15),+1.0_dp, step, 0.05_dp,   1.00_dp)
-    call bump(beta,            gap(16),+1.0_dp, step, 0.85_dp,   0.995_dp)
     call bump(cfloor_share,    gap(17),+1.0_dp, step, 1.0e-3_dp, 0.60_dp)
     call bump(mh_b_ratio,      gap(18),-1.0_dp, step, 0.02_dp,   1.00_dp)
     ! more weight on leisure -> fewer hours
@@ -429,6 +431,94 @@ function gap(i) result(g)
 end function gap
 
 
+!===============================================================================
+! Bisection for the near-threshold moments.
+!
+! Three moments are step-like in their own parameter and destroy a
+! proportional-step sweep if they are bumped rather than bracketed:
+!
+!   participation in b       below a cutoff everyone uses, above it nobody does
+!   homelessness in h_homeless   0.12% -> 3.29% for a 35% change in the parameter
+!   wealth/GDP in beta       5.46 at beta = 0.995, 0.38 at beta = 0.85
+!
+! A multiplicative step of even 0.9 moves a discount factor from 0.96 to 0.864,
+! which is enormous in a life-cycle model; the first attempt at this calibration
+! slammed beta into its lower bound on sweep 3 and took every other moment with
+! it. All three are bracketed instead, in partial equilibrium -- prices move
+! slowly relative to these parameters and the outer loop re-clears them.
+!===============================================================================
+subroutine bisect_on(which, target_val, iters)
+    integer,  intent(in) :: which          ! 1 = b, 2 = h_homeless, 3 = beta
+    real(dp), intent(in) :: target_val
+    integer,  intent(in) :: iters
+    type(agg_t) :: A
+    real(dp) :: lo, hi, mid, fmid
+    integer  :: k
+    logical  :: rising
+
+    select case (which)
+    case (1)
+        lo = log(1.0e-6_dp); hi = log(5.0_dp);    rising = .false.  ! more b, less use
+    case (2)
+        lo = log(1.0e-5_dp); hi = log(h_grid(2)*0.98_dp); rising = .true.
+    case (3)
+        lo = log(0.900_dp);  hi = log(0.9990_dp); rising = .true.
+    end select
+
+    do k = 1, iters
+        mid = 0.5_dp*(lo+hi)
+        select case (which)
+        case (1); b_dm(1,1)  = exp(mid)
+        case (2); h_homeless = exp(mid)
+        case (3); beta       = exp(mid)
+        end select
+        call refresh_utility_constants()
+        call solve_household(); call build_distribution_eq()
+        call compute_aggregates(A)
+        select case (which)
+        case (1); fmid = 100.0_dp*A%users/max(A%pop,1.0e-12_dp)
+        case (2); fmid = 100.0_dp*A%homeless/max(A%pop,1.0e-12_dp)
+        case (3); fmid = A%wealth/max(A%gdp,1.0e-12_dp)
+        end select
+        if ((fmid > target_val) .eqv. rising) then
+            hi = mid
+        else
+            lo = mid
+        end if
+    end do
+
+    mid = 0.5_dp*(lo+hi)
+    select case (which)
+    case (1); b_dm(1,1)  = exp(mid)
+    case (2); h_homeless = exp(mid)
+    case (3); beta       = exp(mid)
+    end select
+    call refresh_utility_constants()
+end subroutine bisect_on
+
+
+!===============================================================================
+! Snapshot of every calibrated parameter, so a divergent tail cannot destroy a
+! good intermediate fit: the sweep loop keeps the best vector it has seen.
+!===============================================================================
+subroutine save_params(v)
+    real(dp), intent(out) :: v(NPAR)
+    v = [ b_dm(1,1), pi_d_low, h_homeless, pi_eu_base, kappa_ue_d, &
+          recover_mult_hl, prob_V, theta_v, theta_h, p_rent, aleph, &
+          di_coverage, kappa_ue_m, prod_pen_m, beta, cfloor_share, mh_b_ratio ]
+end subroutine save_params
+
+subroutine load_params(v)
+    real(dp), intent(in) :: v(NPAR)
+    b_dm(1,1)=v(1);  pi_d_low=v(2);   h_homeless=v(3);  pi_eu_base=v(4)
+    kappa_ue_d=v(5); recover_mult_hl=v(6); prob_V=v(7); theta_v=v(8)
+    theta_h=v(9);    p_rent=v(10);    aleph=v(11);      di_coverage=v(12)
+    kappa_ue_m=v(13);prod_pen_m=v(14);beta=v(15);       cfloor_share=v(16)
+    mh_b_ratio=v(17)
+    call refresh_utility_constants()
+end subroutine load_params
+
+
 !-- multiplicative update, clamped to [lo, hi] -------------------------------
 subroutine bump(par, g, sgn, step, lo, hi)
     real(dp), intent(inout) :: par
@@ -438,7 +528,7 @@ subroutine bump(par, g, sgn, step, lo, hi)
     ! parameters like b_d(1) must move orders of magnitude, so allow a wide
     ! multiplicative step rather than the +-15% a narrow clamp would permit
     fac = 1.0_dp - sgn*step*g
-    fac = min(max(fac, 0.4_dp), 2.5_dp)
+    fac = min(max(fac, 0.65_dp), 1.55_dp)
     par = min(max(par*fac, lo), hi)
 end subroutine bump
 
