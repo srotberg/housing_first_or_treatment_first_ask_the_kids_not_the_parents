@@ -1,0 +1,158 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\title{Modified Proofs with Utility Function $\theta \log(c) + (1-\theta)\log(v + b) + A$}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section*{Setup}
+
+We consider the utility function:
+\[
+U = \theta \log(c) + (1 - \theta) \log(v + b) + A
+\]
+with:
+\[
+v = \kappa y - a,\quad \kappa = \frac{1 - \theta}{p_v},\quad a = \theta b, \quad c+p_v=y
+\]
+
+\section*{1. The Inequality is More Likely to Hold as $y$ Increases}
+
+We analyze the inequality:
+\begin{align*}
+& (1 - \pi)\left[\theta \log(y - p_v(\kappa y - a)) + (1 - \theta)\log(\kappa y - a + b) + A\right] \\
+& + \pi\left[\theta \log(\epsilon y - p_v(\kappa \epsilon y - a)) + (1 - \theta)\log(\kappa \epsilon y - a + b) + A\right] \\
+& > \theta \log(y) + (1 - \theta)\log(b) + A
+\end{align*}
+
+Cancel $A$ from both sides:
+\begin{align*}
+f(y) := & (1 - \pi)\left[\theta \log(y - p_v(\kappa y - a)) + (1 - \theta)\log(\kappa y - a + b)\right] \\
+& + \pi\left[\theta \log(\epsilon y - p_v(\kappa \epsilon y - a)) + (1 - \theta)\log(\kappa \epsilon y - a + b)\right] \\
+& - \left[\theta \log(y) + (1 - \theta)\log(b)\right]
+\end{align*}
+
+Asymptotic behavior as $y \to \infty$:
+\[
+y - p_v(\kappa y - a) \sim (1 - p_v \kappa)y,\quad \kappa y - a + b \sim \kappa y
+\]
+So:
+\begin{align*}
+f(y) & \sim (1 - \pi)\left[\theta \log((1 - p_v \kappa)y) + (1 - \theta)\log(\kappa y)\right] \\
+& + \pi\left[\theta \log((1 - p_v \kappa)\epsilon y) + (1 - \theta)\log(\kappa \epsilon y)\right] \\
+& - \theta \log(y) - (1 - \theta)\log(b)
+\end{align*}
+
+Simplifying:
+\begin{align*}
+f(y) & \sim (1 - \pi)\left[\theta \log(1 - p_v \kappa) + \theta \log y + (1 - \theta)\log \kappa + (1 - \theta)\log y\right] \\
+& + \pi\left[\theta \log(1 - p_v \kappa) + \theta \log \epsilon + \theta \log y + (1 - \theta)\log \kappa + (1 - \theta)\log \epsilon + (1 - \theta)\log y\right] \\
+& - \theta \log y - (1 - \theta)\log b
+\end{align*}
+
+Collecting terms:
+\begin{align*}
+f(y) & \sim \log y + \underbrace{[\theta + (1 - \theta)]}_{=1} \log y \text{ from both components} \\
+& + \text{constant terms involving } \log(1 - p_v \kappa), \log(\kappa), \log(\epsilon), \log(b)
+\end{align*}
+
+Conclusion:
+\[
+f(y) \to \infty \quad \text{as } y \to \infty
+\]
+
+\section*{2. The Inequality Fails for Small $y$}
+
+Define:
+\begin{align*}
+A_1(y) &= y(1 - p_v \kappa) + p_v a \\
+A_2(y) &= \kappa y - a + b \\
+A_3(y) &= \epsilon y(1 - p_v \kappa) + p_v a \\
+A_4(y) &= \kappa \epsilon y - a + b
+\end{align*}
+
+As $y \to 0$:
+\begin{align*}
+\log(A_1(y)) &= \log(p_v a) + \frac{1 - p_v \kappa}{p_v a} y + o(y) \\
+\log(A_2(y)) &= \log(b - a) + \frac{\kappa}{b - a} y + o(y) \\
+\log(A_3(y)) &= \log(p_v a) + \frac{\epsilon(1 - p_v \kappa)}{p_v a} y + o(y) \\
+\log(A_4(y)) &= \log(b - a) + \frac{\kappa \epsilon}{b - a} y + o(y)
+\end{align*}
+
+So the left-hand side becomes:
+\begin{align*}
+f(y) &= \theta[(1 - \pi) \log(A_1(y)) + \pi \log(A_3(y))] + (1 - \theta)[(1 - \pi) \log(A_2(y)) + \pi \log(A_4(y))] \\
+&= \log(p_v a) + \log(b - a) + C y + o(y)
+\end{align*}
+
+Where:
+\[
+C = \theta\left[\frac{1 - p_v \kappa}{p_v a}(1 - \pi) + \frac{\epsilon(1 - p_v \kappa)}{p_v a} \pi\right] + (1 - \theta)\left[\frac{\kappa}{b - a}(1 - \pi) + \frac{\kappa \epsilon}{b - a} \pi\right]
+\]
+
+Right-hand side:
+\[
+g(y) = \theta \log(y) + (1 - \theta)\log(b)
+\]
+
+Difference:
+\[
+h(y) = f(y) - g(y) = \log(p_v a) + \log(b - a) - (1 - \theta)\log(b) - \theta \log(y) + C y + o(y)
+\]
+
+As $y \to 0^+$, $\log(y) \to -\infty$, so $h(y) \to -\infty$. Hence, the inequality fails for small $y$.
+
+\section*{3. How $\delta$ Affects the Inequality as $y$ Changes}
+
+We consider:
+\[
+(1 - \delta)\left[\theta \log(y - p_v(\kappa y - a)) + (1 - \delta)\log(\kappa y - a + b)\right] > \theta \log(y) + (1 - \theta)\log(b)
+\]
+
+Define:
+\[
+h(y; \delta) := (1 - \delta)[\theta \log(y - p_v(\kappa y - a)) + (1 - \theta)\log(\kappa y - a + b)] - \theta \log(y) - (1 - \theta)\log(b)
+\]
+
+As $y \to 0$:
+\[
+h(y; \delta) \to -\infty
+\]
+
+As $y \to \infty$:
+\begin{align*}
+y - p_v(\kappa y - a) &\sim (1 - p_v \kappa)y \\
+\kappa y - a + b &\sim \kappa y
+\end{align*}
+
+So:
+\[
+h(y; \delta) \sim (1 - \delta)\log y - \theta \log y + \text{const}
+\]
+
+This implies:
+\[
+h(y; \delta) \sim [(1 - \delta) - \theta] \log y + \text{const}
+\]
+
+So the inequality holds or fails for large $y$ depending on whether $(1 - \delta) > \theta$ or not.
+
+\textbf{Conclusion:}
+\begin{itemize}
+  \item If \( \delta < 1 - \theta \), then \( h(y; \delta) \to \infty \), and the inequality holds for large \( y \).
+  \item If \( \delta > 1 - \theta \), then \( h(y; \delta) \to -\infty \), and the inequality fails for large \( y \).
+  \item If \( \delta = 1 - \theta \), then \( h(y; \delta) \to \text{const} \), so the inequality may or may not hold depending on constants.
+\end{itemize}
+
+\textbf{Final implication:}
+\begin{itemize}
+  \item When \( \delta \) is large (above $1-\theta$), the inequality is \emph{more likely to hold for smaller \( y \)}.
+  \item When \( \delta \) is small (below $1-\theta$), the inequality is \emph{more likely to hold for larger \( y \)}.
+\end{itemize}
+
+\end{document}

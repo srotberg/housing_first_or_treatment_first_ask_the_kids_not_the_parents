@@ -1,0 +1,543 @@
+\documentclass[parskip=full]{article}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Basic includes
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\usepackage[pdftex, colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue, bookmarks=false]{hyperref}
+
+\usepackage{arydshln}
+\usepackage{array}
+\usepackage{makecell}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{verbatim}
+\usepackage{mathrsfs}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{bbm}
+\usepackage{bm}
+\usepackage[capposition=top]{floatrow}
+%\usepackage[dvipsnames]{xcolor}
+\usepackage{ulem}
+\usepackage[labelfont=bf]{caption}
+\usepackage{subcaption}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{natbib}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{adjustbox}
+\usepackage{multirow}
+\usepackage{rotating}
+\usepackage{pdflscape}
+\usepackage[title]{appendix}
+\usepackage{footmisc}
+\usepackage{bigdelim}
+\usepackage{tabularx}
+\usepackage{xspace}
+\newcommand{\A}{\ensuremath{\mathcal{A}}\xspace}
+\newcommand{\B}{\ensuremath{\mathcal{B}}\xspace}
+\newcommand\pa[1]{\ensuremath{\left(#1\right)}}
+\usepackage{epigraph}
+\usepackage{setspace}
+%\onehalfspacing
+\setstretch{1.5}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Microtype
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[activate={true,nocompatibility},final,tracking=true,kerning=true,spacing=true,factor=1100,stretch=10,shrink=10]{microtype}
+% activate={true,nocompatibility} - activate protrusion and expansion
+% final - enable microtype; use ``draft'' to disable
+%tracking=true, kerning=true, spacing=true - activate these techniques
+% factor=1100 - add 10% to the protrusion amount (default is 1000)
+% stretch=10, shrink=10 - reduce stretchability/shrinkability (default is 20/20)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Hyperref setup
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{url}
+\makeatletter
+\g@addto@macro{\UrlBreaks}{\UrlOrds}
+\makeatother
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks,%
+  citecolor=black,%
+  filecolor=black,%
+  linkcolor=blue,%
+  urlcolor=black
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Font setup
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{mathpazo} % math & rm
+%\linespread{1}        % Palatino needs more leading (space between lines)
+\usepackage{parskip}
+\usepackage[scaled]{helvet} % ss
+\usepackage{courier} % tt
+\usepackage{natbib}
+
+\usepackage{filecontents}
+
+\normalfont
+\usepackage[T1]{fontenc}
+
+\usepackage{titlesec}
+\titleformat{\section}
+{\normalfont\fontsize{12}{17}\bfseries}
+{\thesection}
+{1em}
+{}
+
+\titleformat{\subsection}
+{\normalfont\fontsize{11}{16}\bfseries}
+{\thesubsection}
+{1em}
+{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% macros
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcommand{\indicator}[1]{\mathbbm{1}_{\left\{ {#1} \right\} }}
+%\newcommand{\resultsloc}{../code/python/output/}
+\newcommand{\subfigwidth}{0.475\textwidth}
+\newcommand{\subfigwidthtwo}{0.375\textwidth}
+\newcommand{\figwidth}{0.6\textwidth}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+\setlength\epigraphwidth{0.9\textwidth}
+\setlength\epigraphrule{0pt}
+\renewcommand{\epigraphflush}{center}
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\epigraph}{\@epitext{#1}}{\itshape\@epitext{#1}}{}{}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Page and paragraph settings
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\parskip}{0.0pc} \setlength{\parindent}{0.25in}
+\setlength{\topmargin}{-3pc}
+\setlength{\textheight}{9in}
+\setlength{\oddsidemargin}{0pc} \setlength{\evensidemargin}{0pc}
+\setlength{\textwidth}{6.5in}
+\makeatletter
+\@fpsep\textheight
+\makeatother
+
+\newenvironment{fignote}{\begin{quote}\footnotesize}{\end{quote}}
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\renewcommand{\baselinestretch}{1.5}
+
+% Formats the notes at the bottom of tables and figures.
+\newenvironment{fignote2}[1]
+{
+\par
+\medskip
+\begin{minipage}{#1}
+\footnotesize
+}
+{
+\end{minipage}
+}
+
+% Formats the notes at the bottom of tables and figures.
+\newenvironment{fignote3}[1]
+{
+%\par
+\begin{minipage}{#1}
+\footnotesize
+}
+{
+\end{minipage}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Title page
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Title page
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{\vspace{-1.8cm}Deaths of Despair in General Equilibrium\footnote{We are grateful to Joseph Steinberg for allowing us to run our simulations on his high-powered computer. We thank xxx for helpful suggestions.}}
+
+\author{Ayşe İmrohoroğlu\footnote{University of Southern California. Contact: \url{aimrohor@marshall.usc.edu}. Website: \url{www.sites.google.com/usc.edu/ayse-imrohoroglu}} \and Shahar Rotberg\footnote{Canada Mortgage and Housing Corporation. Contact: \url{shahar.rotberg@gmail.com}. Website: \url{www.sites.google.com/site/shaharrotberg}.} \and Kai Zhao\footnote{University of Connecticut. Contact: \url{kai.zhao@uconn.edu}. Website: \url{www.sites.google.com/site/kaijackiezhao}}}
+
+
+\pagestyle{plain}
+
+\begin{document}
+
+\maketitle
+
+\setstretch{1.5}
+\begin{abstract}
+\onehalfspacing
+\noindent
+
+\noindent We...
+%words=100
+\\[1.5ex]
+
+\noindent \textbf{JEL Classification:} E20; H20; R13. 
+
+\noindent \textbf{Keywords:} Addiction, homelessness, general equilibrium.
+\end{abstract}
+\setstretch{1.5}
+
+\section{Introduction}
+
+I haven't written the model with segmented rental markets. I have it in my code and we can add it, but I think maybe we should leave it as a robustness check?
+
+Things that may be important:
+\begin{itemize}
+    \item Increase in probability to remain addicted if homeless ($\kappa_{1}$)
+    \item Increase in probability to lose employment or not regain employment if homeless ($\kappa_{2}$)
+    \item Proportion of people addicted to opioids
+\end{itemize}
+
+
+\section{Model}\label{sec:model}
+
+We combine the ideas in the foundational works of \citet{becker-murphy-1988} and \citet{az-2024} to develop a general equilibrium model of housing with endogenous addiction and homelessness. Both addiction and homelessness arise endogenously as rational choices. 
+
+Households that become addicted experience a short-term utility gain but face long-term costs because addiction diminishes their likelihood of maintaining and regaining employment. Recovery is modeled as an exogenous shock. Addicted households care about the consumption of an addictive substance, and the lower their income, the larger the share of their income spent on the addictive good. Thus, some addicted households prioritize the consumption of the addictive good even at the cost of being homeless. 
+
+Households also choose between renting, remaining homeless, or owning a home, with homeowners having access to long-term mortgage contracts. Renters acquire housing from competitive rental firms, while housing is supplied by a competitive construction industry.
+
+Households face employment opportunity shocks, which prevent them from finding employment. As a result, some households choose to become homeless not only due to addiction-related reasons but also because their income and assets fall so low that they face a trade-off between non-housing consumption and housing consumption or are unable to enter the rental market at all.
+
+The government in our model taxes income, property, and consumption, and uses these revenues to pay for unemployment insurance, food stamps, housing vouchers, and supply a public good that does not contribute to private utility. Additionally, it provides shelter to homeless households and incurs various costs associated with each homeless household.
+
+\subsection{Demographics and preferences}
+
+The model has overlapping generations of households, whose age is index by $j$. They are born at age $1$, retire at age $J_R$, and live for up to $J$ years. At each age $j<J$, households face mortality risk, which we will elaborate on below, and after age $J$ they die with certainty. 
+
+Households have generalized elasticity of substitution (GES) preferences: 
+\begin{equation}
+    u_j(c,h,d,v,\ell)=\xi_{j}\frac{\left(\gamma_{c,d} \left(\frac{c}{\xi_{j}}\right)^{\left(1-\frac{1}{\rho}\right)} + \gamma_{h,d} \left(\frac{h}{\xi_{j}}\right)^{\left(1-\frac{1}{\rho}\right)} + \gamma_{v,d} \left(\frac{v}{\xi_{j}}\right)^{\left(1-\frac{\eta}{\rho}\right)} \right)^{\frac{1-\sigma}{1-\frac{1}{\rho}}}}{1-\sigma} + \nu_{\ell}\frac{\ell^{1-\mu}}{1-\mu},
+\end{equation}
+
+\noindent $d$ is an indicator equal to $1$ if the household is addicted, and $0$ if it is not addicted, and $\xi<0$ is a scalar that increases the utility of addicted households, mimicking the idea that getting "euphoric" from the addictive
+substance increases their flow utility. $c$ denotes non-housing consumption, $h$ signifies housing consumption, and $v$ denotes consumption of the addictive good. $\gamma_{c,d}$ is the weight households put on consumption, $\gamma_{h,d}$ is the importance they put on the consumption of housing services, and $\gamma_{v,d}$ is the weight they give to the consumption of the addictive substance, where $\gamma_{c,d} + \gamma_{h,d} + \gamma_{v,d} = 1$, for each $d \in \{0.1\}$. For households who are not addicted ($d=0$), we set $\gamma_{v,d}=0$. $\rho$ determines the elasticity of substitution between consumption, housing and the addictive good, and $\eta>1$ determines the degree to which addictive goods are necessary goods for addicted households. $\sigma$ denotes  households’ risk aversion as well as their intertemporal elasticity of consumption.
+
+$\ell$ is leisure, $v_{\ell}$ governs the share of leisure in flow utility, and $\mu$ governs the Frisch elasticity. For house holds who do not work because they are unemployed, we set $\ell=1$.
+
+Households who reach age $J$ derive a warm-glow utility from bequests they leave after they die, which we denote by $w_B(q)=\mu_{B} \frac{q^{1-\sigma}}{1-\sigma}$. $q$ denotes their net wealth at death, which we define below, and $\mu_{B}$ determines the strength of the bequest motive.
+
+\subsection{Non-addiction-related endowments}\label{sec:non_addiction_endowments}
+All households are endowed with a maximum allotment of time $\overline{\ell}=1$. They can use their time for leisure and/or work, but are also subject to unemployment shocks ($e \in \{0,1\}$) and health shocks ($d \in \{0,1\}$) that prevent those with bad shocks from working. The unemployment shock, $e$, follows a Markov process $R(e,e')$, whereas the health shock follows a different Markov process $V(d,d')$. The ergodic distributions associated with these processes are $\bar{R}(e)$ and $\bar{V}(d)$, respectively.
+
+Working-age households ($j<J_R$) who are employed ($e=0$) and in good health ($d=0$), earn labor income that depends on their productivity and labor supply,
+\begin{equation}
+y_{j,\ell}(e=0,d=0,x,z) = (1-\ell) \zeta_j x z.
+\end{equation}
+
+\noindent $\zeta_j$ is a life-cycle profile common to all households, $x\in \mathcal{X}$ is a random fixed effect constant throughout a household's life, which is drawn from a distribution $G(x)$ at birth, and $z\in \mathcal{Z}$ is an idiosyncratic shock that follows a Markov process $F(z,z')$ with ergodic distribution $\bar{F}(z)$.
+
+I denote the average labor income in the economy conditional on having a good unemployment shock and a good health shock as: 
+
+\begin{equation}
+    \overline{y}_{\ell}=\mathbb{E}[y_{j,\ell}(e=0,d=0,x,z)].
+\end{equation} 
+
+\noindent Households who reach retirement age ($j\geq J_R$) receive social security benefits given by
+\begin{equation}
+    y_R(x,z) = \kappa(x,z) \overline{y}_{\ell}.
+\end{equation}
+
+\noindent The function $\kappa(x,z)$ represents the fraction of the average labor income that a retiree with fixed effect $x$ and shock $z$ receives. This allows me to encapsulate, in an ad-hoc way, the relationship between lifetime labor income and social security benefits. 
+
+For households that experience an adverse unemployment shock ($e=1$), unemployment insurance serves as a safety net. Upon becoming unemployed, there is a probability $p_{e}$ that these households will qualify for unemployment insurance ($w_{e}=1$), while with probability $1-p_{e}$, they will not receive any insurance ($w_{e}=0$). Those who do secure unemployment insurance will continue to receive these benefits until they regain employment. Conversely, households that are not fortunate enough to obtain insurance when they first become unemployed, will remain without it for the duration of their unemployment spell. I represent the probability transitions with the matrix $W_{e}(w_{e},w_{e}',e,e')$, where $W_{e}(w_{e},w_{e}'=1,e=0,e'=1)=p_{e}$, $W_{e}(w_{e},w_{e}'=0,e=0,e'=1)=1-p_{e}$, and $W_{e}(w_{e},w_{e}'=w_{e},e=1,e'=1)=1$. The insurance replaces a portion $\nu_{e}$ of the average labor income that a working-age household with the same fixed effect $\hat{x}$ and shock $\hat{z}$ would earn, though the benefits are capped at the average labor income in the economy.
+
+\begin{equation}
+y_{ui}(e=1,\hat{x},\hat{z},w_{e}) = \begin{cases}
+\mbox{min}\{\nu_{e} \mathbb{E}[y_{j,\ell}(e=0,d=0,x=\hat{x},z=\hat{z})],\overline{y}_{\ell}\} &\text{if $w_{e}$=1} \\
+0 &\text{if $w_{e}$=0}.
+\end{cases}
+\end{equation}
+
+Households facing a health shock ($d=1$) are unable to work but may qualify for disability insurance. Similar to unemployment insurance, these households have a probability $p_{d}$ of receiving disability insurance ($w_{d}=1$) and a probability $1-p_{d}$ of not receiving it ($w_{d}=0$). Disability insurance, once granted, continues for the duration of the disability. The probability transitions for this insurance are captured by the matrix $W_{d}(w_{d},w_{d}',d,d')$, where $W_{d}(w_{d},w_{d}'=1,d=0,d'=1)=p_{d}$, $W_{d}(w_{d},w_{d}'=0,d=0,d'=1)=1-p_{d}$, and $W_{d}(w_{d},w_{d}'=w_{d},d=1,d'=1)=1$. The disability insurance benefit is structured to replace a fraction $\nu_{d}$ of the average labor income that a working-age household with the same fixed effect $\hat{x}$ and shock $\hat{z}$ would earn, with the benefits capped at the average labor income in the economy. Unlike unemployment insurance, disability insurance has an additional lower cap, ensuring that the benefits do not fall below a fraction $\underline{\nu}_{d}$ of the average labor income.
+
+\begin{equation}
+y_{dis}(d=1,\hat{x},\hat{z},w_{d}) = \begin{cases}
+\mbox{max}\{\mbox{min}\{\nu_{e} \mathbb{E}[y_{j,\ell}(e=0,d=0,x=\hat{x},z=\hat{z})],\overline{y}_{\ell}\},\underline{\nu}_{d}\overline{y}_{\ell}\} &\text{if $w_{d}$=1} \\
+0 &\text{if $w_{d}$=0}.
+\end{cases}
+\end{equation}
+
+\noindent For brevity, I denote labor income, unemployment insurance, and disability insurance of household of age $j$ as $\hat{y}_{j}(e,d,x,z,w_{e},w_{d})$.
+
+On top of the labor income, newborns may receive endowments of financial wealth, denoted by $a$, as in \cite{kaplan2014model}. A fraction $\theta(x)$ of newborns with fixed effect $x$ are endowed with $a_1(x)$, whereas a fraction $1-\theta(x)$ receive nothing. This captures the positive correlation between income and wealth.
+
+As in \citet{kkk-2021}, living households also receive endowments of financial wealth. This ensures that the aggregate amount of bequests left by decedents equals the aggregate amount of financial endowments across the entire population of living households. All living households receive financial endowments of $\vartheta (x,z)$, which is a parsimonious way to capture the notion that bequests received later in life are unequally distributed and are also positively correlated with income.
+
+Households can also generate capital income by saving financial wealth. Capital income is $y_{k}(a)=ar$, where $r$ is an exogenous interest rate paid to financial wealth. I denote total income by $y_{j}(e,d,x,z,w_{e},w_{d},a)=\hat{y}_{j}(e,d,x,z,w_{e},w_{d})+y_{k}(a)$.
+
+Lastly, households choosing to rent, whose net wealth is less than a fraction $\nu_{q}$ of the average net wealth in the economy, and who must spend more than a fraction $\nu_{f}$ of their total income on some threshold amount of foods, are also eligible to receive food stamps. Food stamps enable such households to spend exactly a fraction $\nu_{f}$ of their income on this threshold amount of food. I denote the threshold consumption of food by $\underline{f}$, and the average net wealth in the economy by $\overline{q}=\mathbb{E}[a+o (ph-m)]$, where $o=1$ implies that the household is a homeowners (and otherwise $o=0$), $p$ is the price of housing, and $m$ is the outstanding mortgage for owners. Similarly, I define a household net wealth by $q=a+o(ph-m)$. I discuss housing prices and mortgages shortly below. A household food stamps subsidy is given by:
+
+\begin{equation}
+\kappa_{j}(e,d,x,z,w_{e},w_{d},a,o,h,m)=\begin{cases}
+\mbox{max}\{\underline{f}(1+\tau_{c})-\nu_{f}y_{j}(e,d,x,z,w_{e},w_{d},a),0\}&\text{if $o=0$ and $q \leq \nu_{q}\overline{q}$} \\
+0 &\text{if $o=1$}.
+\end{cases}
+\end{equation}
+
+\noindent Households receiving food stamps, have a lower bound on non-housing consumption, $c\geq \kappa_{j}(e,d,x,z,w_{e},w_{d},a,o',h,m)$.
+
+\subsection{Addiction-related endowments}\label{sec:addiction_endowments}
+
+Households also face addiction shocks, $g$, that evolve according to the Markov process $Q(g,g')$, with the ergodic distribution $\tilde{Q}(g)$. Households who obtain a shock $g=1$ care not just about consumption, $c$, and housing services, $h$, but also about their addiction, $v$. This means that for households with $g=1$, $\gamma_{v}>0$, whereas for households with $g=0$, $\gamma_{v}=0$.
+
+\subsection{Housing and mortgages}
+Shelter is obtained by renting a home, owning it, or by exiting the housing market and receiving free shelter services from the government (homelessness). I denote tenure by $o\in\{0,1\}$, where 0 implies that the household is a renter or homeless, and 1 indicates that the household is a homeowner. Each unit of housing provides the same housing services irrespective of tenure, but rental units are bound below by $\underline{{h}_r}$, whereas owner-occupied dwellings cannot be smaller than $\underline{{h}_o}>\underline{{h}_r}$. To capture the idea that homeless shelters are inferior housing options relative to the rental market, homeless households receive rent-free housing services $\underline{{h}_h}<\underline{{h}_r}$. 
+
+I denote homelessness status by $b \in \{0,1\}$. As in \citet{az-2024}, homeless households have a higher probability of becoming or remaining unemployed in the next period relative to households who are not homeless, i.e., $R(e,e'=1|h=\underline{{h}_h})=(1+\kappa_{h})R(e,e'=1|h \neq \underline{{h}_h})$, $\kappa_{h}>0$. Homeless households also have a higher probability of becoming or remaining addicted, $Q(g,g'=1|h=\underline{{h}_h})=(1+\kappa_{h})Q(g,g'=1|h \neq \underline{{h}_h})$, than those who are not homeless.
+
+The per-unit housing price is $p$, and the per-unit rent is $p_{r}$. Buying and selling houses require one-time proportional transaction costs, $\tau_{b}$, and $\tau_{s}$, respectively. Rental and owner-occupied housing are both taxed at a rate $\tau_{p}$ and depreciate in value at a rate $\delta$.
+
+Unsecured borrowing is not available to households, but homeowners can take on mortgage debt, $m$. The interest rate charged on mortgages is $r_m =r+\Delta_m$, where $\Delta_m$ is the mortgage premium. I model mortgages as long-term debt as in \citet{kkk-2021}. There are borrowing restrictions at mortgage origination and origination costs. A household originating a new mortgage incurs a fixed cost $\omega_1$, and must satisfy two restrictions only upon origination. The first is a loan-to-value (LTV) constraint, which limits their mortgage amount to a fraction $\lambda_{1}$ of the purchase price of the house $ph$:
+\begin{equation}
+\label{eq:ltv}
+m \leq \lambda_{1} ph.
+\end{equation}
+
+\noindent The second restriction is a payment-to-income (PTI) constraint, which limits a household's carrying costs to a fraction $\lambda_{2}$ of their gross income:
+\begin{equation}
+\label{eq:gds}
+\tau_p ph + (r_m + \nu_1) m\leq \lambda_{2}y_{j}(e,d,x,z,w_{e},w_{d},a).
+\end{equation}
+
+\noindent $\nu_1 m$ is the minimum required principal payment each period. Retirees are not allowed to originate new mortgages but they can carry a mortgage into their retirement.
+
+Homeowners who have a mortgage have to pay at least a fraction $\nu_1$ of their mortgage, or need to originate a new mortgage to repay the old one in full, also known as refinancing. Households who refinance pay an origination cost and must satisfy the borrowing restrictions again.
+
+\subsection{Income taxes}
+Households pay taxes on their non-capital incomes after taking a personal exemption and either a standard or itemized deduction. Taxable non-capital income is given by 
+\begin{equation}
+    \tilde{y}_{j}(e,d,x,z,w_{e},w_{d},o,h,m) = \max\{\hat{y}_{j}(e,d,x,z,w_{e},w_{d})-\tau_e-\max[\tau_d,o(\tau_m r_m m + \tau_p ph)],0\}.
+\end{equation}
+
+\noindent $\tau_e$ is the personal exemption, $\tau_d$ is the standard deduction, and $\tau_m$ is the fraction of mortgage interest payments that households can deduct from their taxable non-capital income, if they choose to it instead of the standard deduction. 
+
+Non-capital income taxes are progressive, as in \citet{hsv-2020}. A household's non-capital income tax liability is
+\begin{equation}
+    \tau_{j}(e,d,x,z,w_{e},w_{d},o,h,m) = \tilde{y}_j(e,d,x,z,w_{e},w_{d},o,h,m) - \tau_\ell \tilde{y}_j(e,d,x,z,w_{e},w_{d},o,h,m)^\psi.
+\end{equation}
+
+\noindent $\tau_{\ell}$ determined the average tax rate in the economy while $\psi$ affects the degree of progressivity. In contrast, all households pay proportional taxes $\tau_{k}$ and $\tau_{c}$ on their capital income and non-housing consumption, respectively.
+
+\subsection{Household dynamic program}
+A household's state variables are its idiosyncratic labor market productivities, $(x,z)$, its unemployment, health shocks, and addiction shocks $(e,d,g)$, its unemployment and disability insurance statuses, $(w_{e},w_{d})$, its financial wealth, $a$, tenure, $o$, house size, $h$, and mortgage debt, $m$. Conditional on these state variables, which I collectively denote by $s$, a household chooses how much leisure to take, $\ell$; how much financial assets to accumulate, $a'$; whether to rent or own, $o'$, or whether to become homeless, $b'$; how much to goods, housing services, and addiction to consume, $c$, $h'$, and $v$; whether to originate a new mortgage, $n$; and how much mortgage debt keep on its balance sheet at the end of the period, $m'$. The dynamic program that captures this optimization problem for a household of age $j\geq 2$ is
+\begin{align}
+  & V_{j}(s)=\max_{\{\ell,c,a',o',b',h',v,n,m'\}}\ \biggr\{u_{j}(c,h',v,\ell) +\indicator{j=J}w_B(q') + \indicator{j<J}\beta \int_{\mathcal{E} \times \mathcal{D}\times \mathcal{G}\times \mathcal{Z}\times\mathcal{W}_{e}\times\mathcal{W}_{d}} \label{eq:vf}\\ &\qquad V_{j+1}(s')\ \mathrm{d}R(e,e'|b')\mathrm{d}V(d,d')\mathrm{d}Q(g,g'|b')\mathrm{d}F(z,z')\mathrm{d}W_{e}(w_{e},w_{e}',e,e')\mathrm{d}W_{d}(w_{d},w_{d}',d,d')\biggr\}. \notag
+\end{align}
+Subject to
+\begin{align}
+  & (c+gv) (1+\tau_{c}) + a' + r_m m + (1-b')(1-o')p_{r}h' + 
+  o\left[\delta + \tau_p + \indicator{o'=0\lor h'\neq h}\tau_s\right]ph + \label{eq:vf_bc}\\ & \qquad o' (1+\indicator{o=0\lor h'\neq h}\tau_b)ph'
+  = y_{j}(e,d,x,z,w_{e},w_{d},a)-\tau_j(e,d,x,z,w_{e},w_{d},o,h,m) + a(1-r\tau_k)+ oph +\notag \\ &\qquad \kappa_{j}(e,d,x,z,w_{e},w_{d},a,o',h,m)+\vartheta(x,z) + m'-m- n\omega_1 - (1-n)\tau_{pp}(m,m')\notag\\
+  & c\geq \kappa_{j}(e,d,x,z,w_{e},w_{d},a,o',h,m)\label{eq:c_noneg}\\
+  & a'\geq 0\label{eq:a_noneg}\\
+  & h' \geq o'\underline{{h}_o} + (1-o')(1-b')\underline{{h}_r}\label{eq:vf_minhouse}\\
+  & h' = b'\underline{{h}_h}\label{eq:vf_minhouse_homeless}\\
+  & n=o'\indicator{j<j_R}\label{eq:vf_orig}\\
+  & n m' \leq \lambda_1 ph'\label{eq:vf_ltv}\\
+  & n [\tau_p p h' + \nu_1 m'] \leq \lambda_2 (y_j(x,z) + ra)\label{eq:vf_gds}\\
+  & (1-n)m'\leq (1-\nu_1) m \label{eq:vf_repay}\\
+  & q' = a' + o' \left[p h'(1-\delta-\tau_p)-m'\right] \label{eq:networth}
+\end{align}
+
+The first constraint \eqref{eq:vf_bc} is the budget constraint. The left-hand side includes spending on consumption and addiction, saving, mortgage interest, rent (if $o'=0$ and $o'=0$), property taxes and depreciation (if $o=1$), and the costs of buying and/or selling houses, which apply only when tenure and/or house size change. The right-hand side includes after-tax income, financial wealth and housing wealth, food stamps, funds raised by taking on a mortgage, and origination costs for new mortgages (if $n=1$). The budget constraint of a newborn is similar also includes $a_1(x)$ or zero, depending on the individual's realization of the initial endowment. 
+
+The second constraint \eqref{eq:c_noneg} says that non-housing consumption must greater or equal to the value of food stamps received. The third constraint, \eqref{eq:a_noneg} imposes no unsecured borrowing. The fourth constraint \eqref{eq:vf_minhouse} states that renters cannot live in houses smaller than $\underline{{h}_r}$ and owners cannot live in houses smaller than $\underline{{h}_o}$, the next constraint indicated that homeless households must live in a house size equal to $\underline{{h}_h}$. The sixth constraint \eqref{eq:vf_orig} implies that households can only originate a new mortgage before retirement and own a home at the end of the period. The seventh and eighth constraints \eqref{eq:vf_ltv}--\eqref{eq:vf_gds} are borrowing restrictions, LTV and PTI constraints, which only apply upon originating a new mortgage. The ninth constraint \eqref{eq:vf_repay} states that mortgagees have to pay at least a fraction $\nu_1$ of their principal. The last constraint states that a household's net worth is equal to the sum of its financial wealth and housing equity. I denote the policy functions for labor supply, consumption, savings, tenure, homelessness status, housing, how much to spend on addiction, mortgage origination, mortgage debt, and bequests by $\ell_{j}(s)$, $c_{j}(s)$, $a'_{j}(s)$, $o'_{j}(s)$, $b'_{j}(s)$, $h'_{j}(s)$, $v_{j}(s)$, $n_j(s)$, $m'_{j}(s)$, and $q'_j(s)$, respectively.
+
+\subsection{Rental and housing construction companies}
+
+To model the rental market, I borrow the corporate rental market structure from \citet{garrigaeetal-2009}. The rental company starts each period with rental housing stock, $S$, on which it incurs property taxes and depreciation costs. The rental company decided how much additional rental housing to buy, $S'-S$, resulting in rental income $p_{r} S'$. However, to supply $S'$, the rental company must incur management costs $C_r(S') = \frac{\theta_1}{\theta_2} S'^{\theta_2}$. 
+
+The dynamic problem of the rental company is:
+\begin{equation*}
+W_r(S)=\max_{S'} \left\{p_{r}S' - C_r(S') - p (S'-S) - p(\delta_{h}+\tau_{p})S + \frac{1}{1+r}W_r(S')\right\}.
+\end{equation*}
+The solution to this problem is:
+\begin{equation}
+\label{eq:foc_rental}
+p_{r} = \theta_1 (S')^{\theta_2-1}+\left\{\frac{r+\delta_{h}+\tau_p}{1+r}\right\}p.
+\end{equation}
+
+\noindent $\theta_2$ determines the rental price elasticity of the rental housing supply. If $\theta_2=1$, rental supply is perfectly elastic, which is the modelling choice in \citet{gervais} and \citet{kaplanetal-2019}. In this case, the price-rent ratio is does not depend on the quantity of rental housing supplied. In contrast, when $\theta_{2}>1$, the rental supply curve is upward sloping, which means that in equilibrium, rental prices rise when rental demand shifts to the right. As in \citet{rs-2023}, in my calibration, I pick $\theta_2$ to match empirical estimates of the property tax incidence of renters.
+
+As in \citet{az-2024}, the relationship between housing investment, $I$ and the price of housing is:
+\begin{equation}
+\label{eq:foc_construction}
+p = \epsilon_1 I^{\epsilon_2}.
+\end{equation}
+
+\noindent $\epsilon_2$ is the price elasticity of the supply of new housing construction, and $\epsilon_1$ is a scalar. \footnote{Please refer to Section 3.7 in \citet{rs-2023} to see the optimization problem that delivers Equation \eqref{eq:foc_construction}.} The following law of motion governs the aggregate stock of housing,
+\begin{equation}\label{eq:lom_h}
+H' = (1-\delta)H + I.
+\end{equation}
+
+\noindent In a stationary equilibrium $H=H'=\frac{I}{\delta}$.
+
+\subsection{Aggregation}\label{subsection:aggregation}
+
+\paragraph{Housing markets:} My model has two housing-market clearing conditions. First, aggregate housing demand coming from both owners and renters must equal the aggregate housing supply:
+\begin{equation}
+    \label{eq:mkt_h}
+    \sum_{j=1}^J \int_{\mathcal{S}} h'_j(s)\ \mathrm{d}\Psi_j(s) = H',
+\end{equation}
+
+\noindent where I denote the distribution of age-$j$ households over the state space $\mathcal{S}$ by $\Psi_j$. Second, aggregate rental demand must equal the aggregate rental supply by the rental company:
+\begin{equation}
+    \label{eq:mkt_r}
+    \sum_{j=1}^J \int_{\mathcal{S}} (1-o'_j(s))(1-b'_{j}(s))h'_j(s)\ \mathrm{d}\Psi_j(s) = S'.
+\end{equation}
+
+\paragraph{Government budget:} I require that government budget balance as follows:
+
+\begin{align}
+   & G + \sum_{j=J_{R}}^J \int_{\mathcal{S}} (y_{R}(x,z)+\ y_{ui}(s)+y_{dis}(s)+\kappa_{j}(e,d,x,z,w_{e},w_{d},a,o'_{j}(s),h,m)+\theta_{b}b'_{j}(s)) + \mathrm{d}\Psi_j(s)= \label{eq:gbc}\\ & \qquad
+  \sum_{j=1}^J \int_{\mathcal{S}} \left[\tau_j(s)+\tau_k r a +\tau_{c}c(s)\right] \mathrm{d}\Psi_j(s) + \tau_p p H \notag.
+\end{align}
+
+\noindent The left-hand side includes expenditures on public goods, social security, unemployment insurance, disability benefits, and food stamps, as well as costs associated with each household experiencing homelessness, where I denote the cost per households by $\theta_{b}$. The right-hand side contains revenues from income, property taxes, and consumption. In my calibration, I pick the public goods consumption, $G$, to ensure that this constraint. In my experiments, I hold $G$ fixed, and if necessary, adjust labor income taxes.
+
+\paragraph{Bequests:} I also require that aggregate bequests left by decedents must equal aggregate wealth endowments:
+\begin{equation}
+\label{eq:agg_bequests}
+      \int_{\mathcal{S}} q'_J(s)\ \mathrm{d}\Psi_J(s) = \int_{\mathcal{X}} \theta(x)a_1(x)\ \mathrm{d}G(x) + \sum_{j=1}^J \int_{\mathcal{S}} \vartheta (x,z)\ \mathrm{d}\Psi_j(s).
+\end{equation}
+The right-hand side represents the bequests left by households who reach age $J$. The left-hand side has two terms. The first term represents newborns' initial wealth endowments, whereas the second represents the flow of endowments to all living households. I adjust $\vartheta$ to guarantee that this condition is satisfied in all of my experiments. 
+
+\paragraph{Distributions' laws of motion:} Lastly, I define how the distribution of households across the state space evolves. Households are born as renters, which means that the distribution of newborns, $\Psi_1(s)$, is given by:
+
+\begin{align}\label{eq:lom1}
+    & \Psi_1(S) = \int_{\mathcal{E}\times \mathcal{D}\times \mathcal{G} \times \mathcal{X}\times \mathcal{Z}\times \mathcal{W}_{e}\times \mathcal{W}_{d}}\biggl[\theta(x)\indicator{(e,d,g,x,z,w_{e},w_{d},a_1(x),0,0,0)\in S} + \\
+    & \qquad (1-\theta(x))\indicator{(e,d,g,x,z,w_{e},w_{d},0,0,0,0)\in S}\biggl]\ \mathrm{d}\bar{R}(e)\mathrm{d}\bar{V}(d)\mathrm{d}\bar{Q}(g)\mathrm{d}G(x) \mathrm{d}\bar{F}(z)\mathrm{d}\bar{W_{e}}(w_{e})\mathrm{d}\bar{W_{d}}(w_{d}). \notag
+\end{align}
+
+\noindent $S$ represents a typical subset of the state space and $\bar{R}$, $\bar{V}$, $\bar{G}$, $\bar{F}$, $\bar{W_{e}}$, and $\bar{W_{d}}$ are the ergodic distributions of $e$, $d$, $g$, $x$, $z$, $w_{e}$, and $w_{d}$, associated with their respective Markov chain processes. The distributions of older households evolve according to the following law of motion:
+
+\begin{align}\label{eq:lom2}
+    & \Psi_{j+1}(S) = \int_{\mathcal{S}} \biggl[\int_{\mathcal{E}\times \mathcal{D}\times \mathcal{G}\times \mathcal{Z} \times \mathcal{W}_{e}\times \mathcal{W}_{d}}\indicator{ (e',d',g',x,z',w_{e}',w_{d}',a'_j(s),o'_j(z),h'_j(s),m'_j(s))\in S }\ \\ & \qquad \mathrm{d}R(e,e'|b'_{j}(s))\mathrm{d}V(d,d')\mathrm{d}Q(g,g'|b'_{j}(s))\mathrm{d}F(z,z')\mathrm{d}W_{e}(w_{e},w_{e}',e,e')\mathrm{d}W_{d}(w_{d},w_{d}',d,d')\biggl]\ \mathrm{d}\Psi_j(s),\ j=1,\ldots,J-1. \notag
+\end{align}
+
+\subsection{Equilibrium definition}\label{subsection: equilibrium_defintion}
+
+A stationary equilibrium in this economy is a set of aggregate prices and quantities, value and policy functions, and distributions,
+\begin{equation}
+    \left\langle p,p_{r},H',S',\left\{V_{j}(s),\ell_{j}(s),c_{j}(s),a'_{j}(s),o'_{j}(s),b'_{j}(s),h'_{j}(s),v_{j}(s),n_j(s),m'_{j}(s),q'_j(s),\Psi_j(s)\right\}_{j=1}^J\right\rangle,
+\end{equation}
+
+\noindent that solve the household's dynamic problem \eqref{eq:vf}, satisfy the rental company's first-order condition \eqref{eq:foc_rental}, satisfy the housing construction company's optimal decision \eqref{eq:foc_construction}, clear the housing and rental markets \eqref{eq:mkt_h}--\eqref{eq:mkt_r}, satisfy the government's constraint \eqref{eq:gbc}, the bequest constraint \eqref{eq:agg_bequests}, and the law of motion for the distributions \eqref{eq:lom1}--\eqref{eq:lom2}.
+
+\section{Calibration}\label{sec:calibartion}
+
+My calibration process consists of two steps. First, I externally set certain parameter values based on direct estimates. In the second step, I choose the remaining parameter values to ensure that the model aligns with key U.S. statistics. To be able to later compare the baseline to the counterfactual, I also calibrate the version of my counterfactual by following the same steps but without hitting addiction-related targets.
+
+\subsection{Externally assigned parameters}\label{sec:external_calib}
+
+Table \ref{tab:external_calibration} provides the descriptions, values, and sources for the externally calibrated parameters.
+
+\subsubsection{Demographics and preferences}
+I set the maximum age, $J$, to 60 and the retirement age, $J_R$, to 40, meaning that households live from age 26 to 85 and retire at 65. The coefficient of relative risk aversion, $\sigma$, is set to 2, a standard value in the literature. Following \citet{kaplanetal-2019}, I set $\rho$ to $0.8$, which implies an elasticity of substitution between non-housing and housing consumption of $1.25$. In line with \citet{rs-2023}, I use the equivalent household size scale, ${\xi_j}_{j=1}^{J}$, and set $\mu$ to 3 so that the Frisch elasticity equals 1.
+
+The weight on housing and addiction in households' preferences, $\gamma_h$ and $\gamma_v$ respectively, along with the weight on leisure, $\nu_{\ell}$, are calibrated in the second stage. Additionally, the parameter $\eta$, which represents the degree to which addictive substances are necessities, and the bequest motive strength, $\mu_B$, are also determined in this second stage.
+
+\subsubsection{Unemployment, health, and productivity endowments}
+
+I calibrate the unemployment process, $R(e,e')$, so that the unemployment rate is 4.8\% and the probability of regaining employment within one year is 29.7\%. The former is the average unemployment rate between 2014-2023 according to FRED, while the latter is based on \citet{kruegeretal-2016}, who estimate a quarterly re-employment probability of 11.1\%. For households who are addicted ($g=1$), I adjust the unemployment shock probability so that only 55\% of addicted households are employed.\footnote{See \url{https://www.samhsa.gov/data/sites/default/files/NSDUH-SP132-FullTime-2014/NSDUH-SP132-FullTime-2014.htm}.} Following \citet{az-2024}, I increase the probability of unemployment and prolonged unemployment by 20\% for homeless households. The probability of receiving unemployment insurance (UI), $p_e$, is set to 30\%, and the insurance fraction, $v_e$, to 50\%, also following \citet{az-2024}.
+
+I calibrate the Markov chain process for health shocks, $V(d,d')$, to match an overall 0.65\% rate of schizophrenia and a 50\% 10-year recovery rate, both based on \citet{az-2024}. The probability of receiving disability insurance, $p_d$, is determined in the second stage, and the insurance fraction, $v_d$, is set to 50\%, following \citet{az-2024}
+
+I adopt the remaining labor productivity process from \citet{gkkoc}. I set the standard deviation of the fixed effect, $x$, to 0.128. The stochastic labor productivity shocks, $z$, follow an AR(1) process in logs, represented by:
+\begin{equation*} 
+\log z' = \rho_z \log z + \epsilon_{z},\quad \epsilon_{z}\sim N(0,\sigma_{z}), 
+\end{equation*}
+
+\noindent where $\rho_z = 0.9$ and $\sigma_z = 0.2$. The deterministic life-cycle labor productivity profile, $\{\xi_{j}\}_{j=1}^{J_{R}}$, is also taken from \citet{gkkoc}, where productivity increases until age 55 and declines thereafter. Finally, I follow \citet{gkkoc} in setting $\kappa(x,z)$, which governs the extent to which social security benefits depend on labor productivity at the time of retirement
+
+\subsubsection{Wealth and food stamp endowments}
+
+I follow the approach in \citet{rs-2023} when selecting the wealth endowment parameters for newborns. I assign $\theta(x)$ and $a_1(x)$, which determine the endowments of newborns, using data from the 2019 Survey of Consumer Finances (SCF).\footnote{\citet{rs-2023} sort households aged 23–27 in the SCF into income deciles and calculate two statistics for each decile: the fraction of households with net worth greater than \$1,000, and the median net worth conditional on having at least \$1,000, expressed as a fraction of the median net worth for all working-age households. They then set $\theta(x)$ and $a_1(x)$ to replicate these moments.} The endowments of living households are proportional to the idiosyncratic component of their labor income, as follows: $\vartheta(x,z):=\vartheta x z$. Since the scale factor $\vartheta$ determines the wealth endowments of living households, I choose it residually to ensure that Equation \eqref{eq:agg_bequests} is always satisfied. 
+
+I set the minimum consumption of food, $\underline{f}$, to 5.4\% of average labor income so that $\underline{f}(1+\tau_{c})$ equals 5.8\% of average labor income, as in \citet{az-2024}. Additionally, I set the maximum fraction of income, $\nu_{f}$, that the government lets a household allocate toward this minimum consumption threshold to 1. This ensures that no household is required to spend more than its entire income to afford $\underline{f}$ of the non-addictive good.
+
+\subsubsection{Taxes and interest rate}
+
+I set the interest rate, $r$, to 3\% following \citet{kaplanetal-2019}, and the consumption tax, $\tau_{c}$, to 7.5\%, as estimated by \citet{mcdaniel-2007}. The investment income tax rate, $\tau_{k}$, is calibrated at 15\% according to \citet{kkk-2021}, and the personal exemption, $\tau_{e}$, is set to 43\% of the standard deduction, $\tau_{d}$, which I determine in the second stage of calibration. Additionally, I set the progressivity of labor income taxes, $\psi$, to 0.85 following \citet{hsv-2014}, and in the second stage, I select $\tau_{\ell}$, which governs the average labor income tax rate in the economy.
+
+\subsubsection{Addiction endowments}
+
+I calibrate the Markov process for the addiction shock, $g$, so that 0.4\% of households are addicted and the 20-year recovery rate is 30\%. The former statistic aligns with the percentage of households addicted to heroin in the United States,\footnote{See \url{https://nida.nih.gov/publications/research-reports/heroin/scope-heroin-use-in-united-states}.} while the latter is based on \citet{hseretal-2015}. I determine the weight households place on addiction consumption in their preferences, $\gamma_{v}$, in the second stage of calibration
+
+\subsubsection{Housing market}
+
+I set the property tax rate, $\tau_p$, to 1\% following \citet{sommeretal-2013}, and the housing depreciation rate to 0.6\%, based on estimates from \citet{rosenthal-2014}. Proportional buying costs, $\tau_b$, are set at 2\% of the purchase price, while proportional selling costs, $\tau_s$, are set at 6\% of the sale price, in line with estimates from \citet{gm-2003}. I set $\epsilon_2 = 1.9$ to match a housing supply elasticity of 0.9, as estimated by \citet{sommersullivan-2017}.\footnote{The level of the construction company's cost function, $\epsilon_1$, is determined as a free parameter and backed out from the market clearing condition \eqref{eq:foc_rental}.} Finally, I set the government's costs associated with homelessness, $\theta_b$, to 33\% of the average household income.\footnote{See \url{https://rootscommunityhealth.org/how-much-would-it-cost-to-end-homelessness-in-america/}.}
+
+\subsubsection{Mortgage market}
+I set the interest rate premium on mortgage debt, $\Delta_m$, to 1\%, which is consistent with the historical difference between interest rates on 30-year government bonds and mortgage interest rates. The maximum loan-to-value (LTV) ratio, $\lambda_1$, is set at 0.95, ensuring a minimum down payment of 5\%. The maximum payment-to-income (PTI) ratio, $\lambda_2$, is set to 0.39, a common threshold used by U.S. lenders. The minimum mortgage payment is given by $\nu_1 = r_m \frac{(1+r_m)^{30}}{(1+r_m)^{30}-1}$, representing the payment for an annuity mortgage with a 30-year term. The origination cost, $\omega_1$, is set to the model equivalent of \$2,000, capturing application, attorney, appraisal, and inspection fees.
+
+\subsection{Internally assigned parameters}\label{sec:internal_calib}
+
+At this stage, there are still thirteen parameters that require value assignment. I calibrate these remaining parameters by choosing values that enable the model to replicate thirteen key statistics observed in U.S. data. Table \ref{tab:internal_calibration} provides descriptions and values for these internally calibrated parameters.
+
+Although all parameter values are determined together, each parameter has more control over a particular statistic. For clarity and simplicity, I provide an enumerated list of the parameters and their targets as follows:
+
+\begin{enumerate}
+    \item The parameter $\eta$ determines the extent to which addiction behaves as a necessary good. A higher value of $\eta$ implies that addiction takes up a larger share of income as income decreases. I set $\eta$ to 1.1, which allows the model to replicate the income level of households in the 75th percentile of the homeless income distribution relative to the median labor income, in line with available data. According to \citet{meyeretal-2024}, the 75th percentile income for homeless individuals in 2010 was \$14,700, while the median household income in the United States was \$64,300, as reported by the Census. This results in a ratio of 0.228.
+    \item he parameter $\gamma_{v}$ governs the proportion of homeless households that are addicted. A higher value of $\gamma_{v}$ corresponds to a greater percentage of addiction among the homeless population. I set $\gamma_{v}$ to $0.5$ to match an addiction rate of 38\% within the homeless population, which reflects the percentage of homeless households addicted to alcohol, as reported by the American Addiction Centers.\footnote{See \url{https://americanaddictioncenters.org/rehab-guide/homeless}.}
+    \item The parameter $\beta$ determines the household savings rate, with a higher $\beta$ leading to a larger net wealth-to-GDP ratio. I set $\beta = 0.936$ to match a ratio of 3, as in \citet{gkkoc}.
+    \item The parameter $\gamma_{h}$ controls the proportion of income that households allocate to housing. A higher $\gamma_{h}$ indicates a greater share of income spent on housing. I set $\gamma_{h} = 0.254$ to align with an average rent-to-income ratio of $0.31$, as reported in \citet{rs-2023}.
+    \item The parameter $\gamma_{\ell}$ determines the fraction of time households allocate to labor. A higher value of $\gamma_{\ell}$ reflects a greater preference for leisure, resulting in less time spent working. I set $\gamma_{\ell} = 2.35$ to ensure that, on average, households dedicates 40\% of their time to work, consistent with \citet{gkkoc}.
+    \item The parameter $\mu_{B}$ captures the strength of the bequest motive for deceased households. A higher $\mu_{B}$ indicates a stronger desire to leave more wealth upon death, leading to a higher homeownership rate among retired households. I set $\mu_{B} = 60$ to match an 80.4\% homeownership rate, as reported in \citet{rs-2023}.
+    \item The parameter $\tau_{\ell}$ determines the average labor income tax rate in the economy. A higher value of $\tau_{\ell}$ corresponds to a lower average tax rate on labor income. I set $\tau_{\ell} = 0.66$ to produce an average labor income tax rate of 22.4\%, consistent with the estimate by \citet{mcdaniel-2007}.
+    \item The parameter $\tau_{d}$ determines the extent to which households claim mortgage interest deductions (MIDs). A higher $\tau_{d}$ implies a larger standard deduction, making it less advantageous for households to claim MIDs. I set $\tau_{d}$ to 13.4\% of the average labor income, ensuring that MIDs account for 0.41\% of GDP, in line with estimates from the Joint Committee on Taxation (JTC).
+    \item The parameter $\theta_{2}$ controls the elasticity of rental supply in response to changes in rents. A higher $\theta_{2}$ indicates a more inelastic rental supply, leading to greater rent increases when rental demand rises. Following \citet{rs-2023}, I set $\theta_{2} = 2.2$ to generate a 50\% tax incidence on renters.
+    \item The parameter $\theta_{1}$ governs the average managerial costs faced by rental companies, which in turn affects the rent-to-price ratio. A higher $\theta_{1}$ indicates higher costs for rental companies to supply rental housing, leading to a larger rent-to-price ratio. I set $\theta_{1}$ so that the managerial cost-to-rent ratio is 40\%, generating a rent-to-price ratio of 8.3\%, as estimated by \citet{gv-2009}.
+    \item The parameter $\underline{h}_{r}$ defines the minimum rental unit size. As noted in \citet{rs-2023}, a larger $\underline{h}_{r}$ leads to a higher proportion of cost-burdened renters. I set the minimum rental size to 44.3\% of the average owner-occupied house size, ensuring that 15.1\% of renters in the model spend over 50\% of their income on rent, in line with \citet{rs-2023}.
+    \item The parameter $\underline{h}_{o}$ represents the minimum size of an owner-occupied home. A higher value reduces the number of households that can afford homeownership, thereby lowering the homeownership rate. I set the minimum home size to 5.15 times the average labor income, which results in a homeownership rate of 65.9\%, consistent with \citet{rs-2023}.
+    \item The parameter $\underline{h}_{h}$ represents the level of housing services available to homeless households. A higher $\underline{h}_{h}$ makes homelessness less severe, thereby increasing the likelihood that more households may opt for homelessness. I set this parameter to 5\% of the smallest rental unit size, which results in a homelessness rate of 0.45\%, consistent with \citet{az-2024}.
+\end{enumerate}
+
+\section{Model performance}\label{sec:model_performance}
+Compared to the data, the model performs similarly to the one in \citet{rs-2023} in terms of homeownership rates and LTV across households' life cycles, and the rent-to-income distribution of renters.\footnote{See their Figures 2 and 3(a).} However, since my focus is homelessness, I emphasize the model's performance on homelessness-related dimensions that were not targeted during calibration. These statistics are presented in Table \ref{tab:non_targeted}. 
+
+I start by evaluating the performance of the baseline model, followed by an analysis of the counterfactual non-targeted outcomes. This comparison aims to underscore the key differences between the two models.
+
+\bibliographystyle{aer}
+\bibliography{reference_files/bib}
+
+\begin{table}[H]
+    \centering
+    \caption{External calibration}
+    \label{tab:external_calibration}
+    \input{tables/external_calibration}
+    \vspace{-0.5cm}
+    \begin{fignote2}{0.8\textwidth}
+    %\textit{Notes:} 
+    \end{fignote2}
+\end{table}
+
+\newpage
+
+\begin{table}[H]
+    \centering
+    \caption{Internal calibration}
+    \label{tab:internal_calibration}
+    \input{tables/internal_calibration}
+    \vspace{-0.5cm}
+    \begin{fignote2}{0.8\textwidth}
+    %\textit{Notes:} 
+    \end{fignote2}
+\end{table}
+
+\end{document}

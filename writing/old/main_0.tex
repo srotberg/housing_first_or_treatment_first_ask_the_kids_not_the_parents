@@ -1,0 +1,522 @@
+\documentclass[parskip=full]{article}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Basic includes
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\usepackage[pdftex, colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue, bookmarks=false]{hyperref}
+
+\usepackage{arydshln}
+\usepackage{array}
+\usepackage{makecell}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{verbatim}
+\usepackage{mathrsfs}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{bbm}
+\usepackage{bm}
+\usepackage[capposition=top]{floatrow}
+%\usepackage[dvipsnames]{xcolor}
+\usepackage{ulem}
+\usepackage[labelfont=bf]{caption}
+\usepackage{subcaption}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{natbib}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{rotating}
+\usepackage{pdflscape}
+\usepackage[title]{appendix}
+\usepackage{footmisc}
+\usepackage{bigdelim}
+\usepackage{tabularx}
+\usepackage{xspace}
+\newcommand{\A}{\ensuremath{\mathcal{A}}\xspace}
+\newcommand{\B}{\ensuremath{\mathcal{B}}\xspace}
+\newcommand\pa[1]{\ensuremath{\left(#1\right)}}
+\usepackage{epigraph}
+\usepackage{setspace}
+%\onehalfspacing
+\setstretch{1.5}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Microtype
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[activate={true,nocompatibility},final,tracking=true,kerning=true,spacing=true,factor=1100,stretch=10,shrink=10]{microtype}
+% activate={true,nocompatibility} - activate protrusion and expansion
+% final - enable microtype; use ``draft'' to disable
+%tracking=true, kerning=true, spacing=true - activate these techniques
+% factor=1100 - add 10% to the protrusion amount (default is 1000)
+% stretch=10, shrink=10 - reduce stretchability/shrinkability (default is 20/20)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Hyperref setup
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{url}
+\makeatletter
+\g@addto@macro{\UrlBreaks}{\UrlOrds}
+\makeatother
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks,%
+  citecolor=black,%
+  filecolor=black,%
+  linkcolor=blue,%
+  urlcolor=black
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Font setup
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{mathpazo} % math & rm
+%\linespread{1}        % Palatino needs more leading (space between lines)
+\usepackage{parskip}
+\usepackage[scaled]{helvet} % ss
+\usepackage{courier} % tt
+\usepackage{natbib}
+
+\usepackage{filecontents}
+
+\normalfont
+\usepackage[T1]{fontenc}
+
+\usepackage{titlesec}
+\titleformat{\section}
+{\normalfont\fontsize{12}{17}\bfseries}
+{\thesection}
+{1em}
+{}
+
+\titleformat{\subsection}
+{\normalfont\fontsize{11}{16}\bfseries}
+{\thesubsection}
+{1em}
+{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% macros
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcommand{\indicator}[1]{\mathbbm{1}_{\left\{ {#1} \right\} }}
+%\newcommand{\resultsloc}{../code/python/output/}
+\newcommand{\subfigwidth}{0.475\textwidth}
+\newcommand{\subfigwidthtwo}{0.375\textwidth}
+\newcommand{\figwidth}{0.6\textwidth}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+\setlength\epigraphwidth{0.9\textwidth}
+\setlength\epigraphrule{0pt}
+\renewcommand{\epigraphflush}{center}
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\epigraph}{\@epitext{#1}}{\itshape\@epitext{#1}}{}{}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Page and paragraph settings
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\parskip}{0.0pc} \setlength{\parindent}{0.25in}
+\setlength{\topmargin}{-3pc}
+\setlength{\textheight}{9in}
+\setlength{\oddsidemargin}{0pc} \setlength{\evensidemargin}{0pc}
+\setlength{\textwidth}{6.5in}
+\makeatletter
+\@fpsep\textheight
+\makeatother
+
+\newenvironment{fignote}{\begin{quote}\footnotesize}{\end{quote}}
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\renewcommand{\baselinestretch}{1.5}
+
+% Formats the notes at the bottom of tables and figures.
+\newenvironment{fignote2}[1]
+{
+\par
+\medskip
+\begin{minipage}{#1}
+\footnotesize
+}
+{
+\end{minipage}
+}
+
+% Formats the notes at the bottom of tables and figures.
+\newenvironment{fignote3}[1]
+{
+%\par
+\begin{minipage}{#1}
+\footnotesize
+}
+{
+\end{minipage}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Title page
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Title page
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{\vspace{-1.8cm}Housing First or Recovery First? \footnote{I am grateful to Joseph B. Steinberg for allowing me to run my all my simulations on his high-powered computer.}}
+
+\author{Shahar Rotberg\footnote{University of Toronto. Corresponding author contact: \url{shahar.rotberg@mail.utoronto.ca}. Website: \url{www.sites.google.com/site/shaharrotberg}.}}
+
+
+\pagestyle{plain}
+
+\begin{document}
+
+\maketitle
+
+\setstretch{1.5}
+\begin{abstract}
+\onehalfspacing
+\noindent
+
+\noindentI I develop a quantitative general equilibrium housing model to assess the feasibility and cost of eradicating homelessness in the United States. I incorporate addiction and government spending related to homelessness, and calibrate the model to U.S. data. In the absence of addiction, eradicating homelessness is relatively cheap and results in large welfare gains. After accounting for addiction, eradicating homelessness becomes exponentially more costly, and results in welfare losses. This is because addicted households allocate substantial income to addictive substances, widening the income distribution of the homeless, and thus requiring larger and more widespread housing vouchers. 
+\\[1.5ex]
+%words=96
+
+
+\noindent \textbf{JEL Classification:} E17; R31; R52. 
+
+\noindent \textbf{Keywords:} Homelessness, addiction, fraud, general equilibrium.
+\end{abstract}
+\setstretch{1.5}
+
+\section{Introduction}
+
+Despite extensive macroeconomic research on the wealthiest Americans, the literature has largely overlooked the poorest segment of the population. This is surprising because economic theory suggests that those with the least wealth have the highest marginal utilities, while the wealthiest have the lowest. And yet, an average of 556,000 Americans were reported as living in shelters or on the street in the last 10 point-in-time counts (PiT), and the U.S. appears no closer to solving this issue. In this paper, I ask: can we eradicate homelessness? If so, at what cost?
+
+One common argument certain homelessness advocacy groups make is that government could end homelessness right now if those experiencing homelessness simply received the money that the government instead spends on supportive systems because of homelessness.\footnote{\url{https://www.sciotoanalysis.com/news/2024/1/16/what-would-it-cost-to-end-homelessness-in-america}.} A counter-argument is that because subsidies would have to be given \textsl{before} a household becomes homeless, government may have to subsidize many households, including those who would never actually become homeless, which would require large tax increases, discourage work, raise rents, and may even prove to be economically unsustainable. 
+
+I contribute to this debate by developing a general equilibrium housing model that incorporates homelessness, addiction, and significant government spending related to homelessness. After calibrating the model to U.S. data, I explore the potential impact of housing vouchers on reducing homelessness.\footnote{I focus on housing vouchers because previous research has identified them as the most efficient method for reducing homelessness \citep{az-2024}.}
+
+My model significantly builds on the framework established in \citet{az-2024}. Like their model, households in my model can choose between owning a home, renting, or becoming homeless. However, I introduce a key new ingredient: households in my model face persistent addiction shocks. Drawing inspiration from \citet{becker-stigler-1977}, these shocks cause households to prioritize the consumption of an addictive substance during their addiction spell. Notably, the share of income that addicted households allocate to the addictive substance increases as their income decreases. This dynamic leads many moderate- and low-income addicted households to have insufficient disposable income for housing, resulting in homelessness within the model. The remainder of the model, detailed in Section \ref{sec:model}, includes standard features commonly found in the general equilibrium housing literature.
+
+I use many standard moments to calibrate the model to U.S. data. However, there are two moments related to addiction and homelessness unique to my calibration. Specifically, I pick the values of the two parameters that control the preferences of addicted households towards addictive substances to match U.S. data on the percentage of homeless with an addiction and the average income of households who are homeless. I also calibrate a version of my model without addiction in order to highlight the impacts of addiction on my results.
+
+The inclusion of addiction in my calibrated model significantly increases the cost of reducing homelessness through two key channels. First, the income distribution of the homeless becomes wider than in the same model but without addiction. This is because addicted households allocate a substantial portion of their income to addictive substances. Consequently, in the model with addiction, to achieve the same reductions in homelessness, government must provide housing vouchers to a larger share of the population, making the effort to reduce homelessness more expensive and distortionary.
+
+Second, to ensure that addicted households utilize their housing vouchers, these vouchers must be sufficiently large. Addicted households are more likely to forfeit their vouchers if their value covers too little of their potential rent, as they may not be willing to pay the difference since it would mean that less would be available for them to spend on their addiction. Therefore, government must also provide larger vouchers in the model with addiction to reduce homelessness.
+
+The general equilibrium literature on homelessness is relatively sparse. To my knowledge, \citet{az-2024} and \citet{abramson-2024} are the first to develop quantitative general equilibrium housing models that incorporate homelessness. However, these papers differ from mine in a crucial way: I include addiction and demonstrate how essential this factor is for accurately assessing the effectiveness of policies aimed at reducing homelessness.
+
+This paper makes both modeling and quantitative contributions. On the modeling side, I integrate addiction and food stamp fraud into a quantitative general equilibrium model of homelessness. Quantitatively, I contribute in two key ways: First, I demonstrate how food stamp fraud data can be used to structurally identify crucial parameters that determine the extent to which addiction is a necessary good. Second, I show through my model that addressing homelessness becomes exponentially more costly when addiction is considered, compared to a scenario where addiction is absent.
+
+%\Url{https://nida.nih.gov/publications/research-reports/heroin/scope-heroin-use-in-united-states}
+
+%In other words, those experiencing homelessness, particularly sheltered homelessness, look very much like single housed poor adults who share their demographic profile in terms of their incomes, employment, and safety net participation (median rent 855, median income 12,000, 75th percentile 14,700).
+
+%I include food stamp fraud in the model for the following reason. A Cobb-Douglas utility function would require addiction spending to remain roughly a constant fraction of income, which would imply that all addicted households are either homeless or none are. This conflicts with data showing that while the rate of addiction to hard drugs, opioids, alcohol, or gambling in the general population is around 1\%, less than 0.1\% of them are homeless. To reconcile these facts, I use a generalized elasticity of substitution (GES) utility function, where the share of income spent on addiction can decline with income. However, this approach introduces an additional parameter, complicating the calibration exercise. To resolve this, I incorporate food stamp fraud into the model, which allows me to control the percentage of homeless households who are addicted, while still allowing the model to generate many addicted households who are not homeless.
+
+%Substance abuse disorder and employment (55\%) \url{https://www.samhsa.gov/data/sites/default/files/NSDUH-SP132-FullTime-2014/NSDUH-SP132-FullTime-2014.htm#footnote1}
+
+\section{Model}\label{sec:model}
+
+I build substantially on the important work of \citet{az-2024}. My main departure is in accounting for addiction. As I demonstrate in Section \ref{}, including this component significantly changes the model's predictions about the effectiveness of policies targeting homelessness reduction. In my model, households are subject to persistent addiction shocks, and addicted households can sell their food stamps at a discounted rate ($\kappa<1$) to fuel their addiction.
+
+Unlike \citet{az-2024}, I also allow households to choose their labor supply and model their life cycles, pensions, long-term mortgage contracts, and the government’s budgetary costs per homeless household, which include not only expenses on shelters, but also expenses related to the health, police, and justice system.
+
+In the model, households choose to rent, remain homeless, or own a home, with homeowners having access to long-term mortgage contracts. Renters obtain housing from a competitive rental company, and housing is supplied by a competitive construction company.
+
+Households also face unemployment and health shocks that significantly reduce their earning potential. As a result, some households may become homeless not only because of addiction-related spending but also due to income and asset levels so low that they may face a choice between consumption and housing or may be unable to access the rental market altogether.
+
+The government taxes income, property, and consumption, provides pensions to retirees, and supplies a public good that does not contribute to private utility. It also provides shelter to homeless households and incurs various costs per homeless household.
+
+\subsection{Demographics and preferences}
+
+The model has overlapping generations of households, whose age is index by $j$. They are born at age $1$, retire at age $J_R$, and live for $J$ years, after which they die with certainty. 
+
+Households have generalized elasticity of substitution (GES) preferences: 
+\begin{equation}
+    u_j(c,h,z,\ell)=\xi_{j}^{\sigma}\frac{\left(\gamma_{c} c^{\left(1-\frac{1}{\rho}\right)} + \gamma_h h^{\left(1-\frac{1}{\rho}\right)} + \gamma_{v} {v}^{\left(1-\frac{\eta}{\rho}\right)} \right)^{\frac{1-\sigma}{1-\frac{1}{\rho}}}}{1-\sigma} + \nu_{\ell}\frac{\ell^{1-\mu}}{1-\mu},
+\end{equation}
+
+\noindent $c$ denotes non-housing consumption, $h$ signifies housing consumption, and $v$ denotes consumption of addiction. $\gamma_c$ is the weight households put on consumption, $\gamma_h$ is the importance they put on the consumption of housing services, and $\gamma_{v}$ is the weight they give to the consumption of addiction, where $\gamma_c+\gamma_h+\gamma_{v}=1$. $\rho$ determines the elasticity of substitution between consumption, housing and addiction, and $\eta>1$ determines the degree to which addiction is a necessary good. $\sigma$ denotes households' risk aversion as well as their intertemporal elasticity of consumption, and $\xi_j$ is an equivalence-scale parameter capturing changes in household size over their life cycle.
+
+$\ell$ is leisure, $\nu_{\ell}$ governs the share of leisure in flow utility, and $\mu$ governs the Frisch elasticity. For households who do not work because they are retired, unemployed, or experience a health shock, I set $\ell=1$.
+
+Households who reach age $J$ derive a warm-glow utility from bequests they leave after they die, which I denote by $w_B(q)=\mu \frac{q^{1-\sigma}}{1-\sigma}$. $q$ denotes their net wealth at death, which I define below, and $\mu$ determines the strength of the bequest motive.
+
+\subsection{Non-addiction endowments}\label{sec:non_addiction_endowments}
+All households are endowed with a maximum allotment of time $\overline{\ell}=1$. They can use their time for leisure and/or work, but are also subject to unemployment shocks ($e \in \{0,1\}$) and health shocks ($d \in \{0,1\}$) that prevent those with bad shocks from working. The unemployment shock, $e$, follows a Markov process $R(e,e')$, whereas the health shock follows a different Markov process $V(d,d')$. The ergodic distributions associated with these processes are $\bar{R}(e)$ and $\bar{V}(d)$, respectively.
+
+Working-age households ($j<J_R$) who are employed ($e=0$) and in good health ($d=0$), earn labor income that depends on their productivity and labor supply,
+\begin{equation}
+y_{j,\ell}(e=0,d=0,x,z) = (1-\ell) \zeta_j x z.
+\end{equation}
+
+\noindent $\zeta_j$ is a life-cycle profile common to all households, $x\in \mathcal{X}$ is an random fixed effect constant throughout a household's life, which is drawn from a distribution $G(x)$ at birth, and $z\in \mathcal{Z}$ is an idiosyncratic shock that follows a Markov process $F(z,z')$ with ergodic distribution $\bar{F}(z)$.
+
+I denote the average labor income in the economy conditional on having a good unemployment shock and a good health shock as: 
+
+\begin{equation}
+    \overline{y}_{\ell}=\mathbb{E}[y_{j,\ell}(e=0,d=0,x,z)].
+\end{equation} 
+
+\noindent Households who reach retirement age ($j\geq J_R$) receive social security benefits given by
+\begin{equation}
+    y_R(x,z) = \kappa(x,z) \overline{y}_{\ell}.
+\end{equation}
+
+\noindent The function $\kappa(x,z)$ represents the fraction of the average labor income that a retiree with fixed effect $x$ and shock $z$ receives. This allows me to encapsulate, in an ad-hoc way, the relationship between lifetime labor income and social security benefits. 
+
+For households that experience an adverse unemployment shock ($e=1$), unemployment insurance serves as a safety net. Upon becoming unemployed, there is a probability $p_{e}$ that these households will qualify for unemployment insurance ($w_{e}=1$), while with probability $1-p_{e}$, they will not receive any insurance ($w_{e}=0$). Those who do secure unemployment insurance will continue to receive these benefits until they regain employment. Conversely, households that are not fortunate enough to obtain insurance when they first become unemployed, will remain without it for the duration of their unemployment spell. I represent the probability transitions with the matrix $W_{e}(w_{e},w_{e}',e,e')$, where $W_{e}(w_{e},w_{e}'=1,e=0,e'=1)=p_{e}$, $W_{e}(w_{e},w_{e}'=0,e=0,e'=1)=1-p_{e}$, and $W_{e}(w_{e},w_{e}'=w_{e},e=1,e'=1)=1$. The insurance replaces a portion $\nu_{e}$ of the average labor income that a working-age household with the same fixed effect $\hat{x}$ and shock $\hat{z}$ would earn, though the benefits are capped at the average labor income in the economy.
+
+\begin{equation}
+y_{ui}(e=1,\hat{x},\hat{z},w_{e}) = \begin{cases}
+\mbox{min}\{\nu_{e} \mathbb{E}[y_{j,\ell}(e=0,d=0,x=\hat{x},z=\hat{z})],\overline{y}_{\ell}\} &\text{if $w_{e}$=1} \\
+0 &\text{if $w_{e}$=0}.
+\end{cases}
+\end{equation}
+
+Households facing a health shock ($d=1$) are unable to work but may qualify for disability insurance. Similar to unemployment insurance, these households have a probability $p_{d}$ of receiving disability insurance ($w_{d}=1$) and a probability $1-p_{d}$ of not receiving it ($w_{d}=0$). Disability insurance, once granted, continues for the duration of the disability. The probability transitions for this insurance are captured by the matrix $W_{d}(w_{d},w_{d}',d,d')$, where $W_{d}(w_{d},w_{d}'=1,d=0,d'=1)=p_{d}$, $W_{d}(w_{d},w_{d}'=0,d=0,d'=1)=1-p_{d}$, and $W_{d}(w_{d},w_{d}'=w_{d},d=1,d'=1)=1$. The disability insurance benefit is structured to replace a fraction $\nu_{d}$ of the average labor income that a working-age household with the same fixed effect $\hat{x}$ and shock $\hat{z}$ would earn, with the benefits capped at the average labor income in the economy. Unlike unemployment insurance, disability insurance has an additional lower cap, ensuring that the benefits do not fall below a fraction $\underline{\nu}_{d}$ of the average labor income.
+
+\begin{equation}
+y_{dis}(d=1,\hat{x},\hat{z},w_{d}) = \begin{cases}
+\mbox{max}\{\mbox{min}\{\nu_{e} \mathbb{E}[y_{j,\ell}(e=0,d=0,x=\hat{x},z=\hat{z})],\overline{y}_{\ell}\},\underline{\nu}_{d}\overline{y}_{\ell}\} &\text{if $w_{d}$=1} \\
+0 &\text{if $w_{d}$=0}.
+\end{cases}
+\end{equation}
+
+\noindent For brevity, I denote labor income, unemployment insurance, and disability insurance of household of age $j$ as $\hat{y}_{j}(e,d,x,z,w_{e},w_{d})$.
+
+On top of the labor income, newborns may receive endowments of financial wealth, denoted by $a$, as in \cite{kaplan2014model}. A fraction $\theta(x)$ of newborns with fixed effect $x$ are endowed with $a_1(x)$, whereas a fraction $1-\theta(x)$ receive nothing. This captures the positive correlation between income and wealth.
+
+As in \citet{kkk-2021}, living households also receive endowments of financial wealth. This ensures that the aggregate amount of bequests left by decedents equals the aggregate amount of financial endowments across the entire population of living households. All living households receive financial endowments of $\vartheta (x,z)$, which is a parsimonious way to capture the notion that bequests received later in life are unequally distributed and are also positively correlated with income.
+
+Households can also generate capital income by saving financial wealth. Capital income is $y_{k}(a)=ar$, where $r$ is an exogenous interest rate paid to financial wealth. I denote total income by $y_{j}(e,d,x,z,w_{e},w_{d},a)=\hat{y}_{j}(e,d,x,z,w_{e},w_{d})+y_{k}(a)$.
+
+Lastly, households choosing to rent, whose net wealth is less than a fraction $\nu_{q}$ of the average net wealth in the economy, and who must spend more than a fraction $\nu_{f}$ of their total income on some threshold amount of foods, are also eligible to receive food stamps. Food stamps enable such households to spend exactly a fraction $\nu_{f}$ of their income on this threshold amount of food. I denote the threshold consumption of food by $\underline{f}$, and the average net wealth in the economy by $\overline{q}=\mathbb{E}[a+o (ph-m)]$, where $o=1$ implies that the household is a homeowners (and otherwise $o=0$), $p$ is the price of housing, and $m$ is the outstanding mortgage for owners. Similarly, I define a household net wealth by $q=a+o(ph-m)$. I discuss housing prices and mortgages shortly below. A household food stamps subsidy is given by:
+
+\begin{equation}
+\kappa_{j}(e,d,x,z,w_{e},w_{d},a,o,h,m)=\begin{cases}
+\mbox{max}\{\underline{f}(1+\tau_{c})-\nu_{f}y_{j}(e,d,x,z,w_{e},w_{d},a),0\}&\text{if $o=0$ and $q \leq \nu_{q}\overline{q}$} \\
+0 &\text{if $o=1$}.
+\end{cases}
+\end{equation}
+
+\noindent Households receiving food stamps, have a lower bound on non-housing consumption, $c\geq \kappa_{j}(e,d,x,z,w_{e},w_{d},a,o',h,m)$. In Section \ref{sec:addiction_endowments}, I discuss how food stamps can be sold for cash by households.
+
+\subsection{Addiction endowments}\label{sec:addiction_endowments}
+
+Households also face addiction shocks, $g$, that evolve according to the Markov process $Q(g,g')$, with the ergodic distribution $\tilde{Q}(g)$. Households who obtain a shock $g=1$ care not just about consumption, $c$, and housing services, $h$, but also about their addiction, $v$. This means that for households with $g=1$, $\gamma_{v}>0$, whereas for households with $g=0$, $\gamma_{v}=0$. Addicted households can also choose to sell their food stamps, but this is costly; they only receive $\kappa_{f}<1$ for each unit of vouchers they sell. I denote the fraction of food stamps sold by $y_{f}$.
+
+\subsection{Housing and mortgages}
+Shelter is obtained by renting a home, owning it, or by exiting the housing market and receiving free shelter services from the government (homelessness). I denote tenure by $o\in\{0,1\}$, where 0 implies that the household is a renter or homeless, and 1 indicates that the household is a homeowner. Each unit of housing provides the same housing services irrespective of tenure, but rental units are bound below by $\underline{{h}_r}$, whereas owner-occupied dwellings cannot be smaller than $\underline{{h}_o}>\underline{{h}_r}$. To capture the idea that homeless shelters are inferior housing options relative to the rental market, homeless households receive rent-free housing services $\underline{{h}_h}<\underline{{h}_r}$. 
+
+I denote homelessness status by $b \in \{0,1\}$. As in \citet{az-2024}, homeless households have a higher probability of becoming or remaining unemployed in the next period relative to households who are not homeless, i.e., $R(e,e'=1|h=\underline{{h}_h})=(1+\kappa_{h})R(e,e'=1|h \neq \underline{{h}_h})$, $\kappa_{h}>0$. Homeless households also have a higher probability of becoming or remaining addicted, $Q(g,g'=1|h=\underline{{h}_h})=(1+\kappa_{h})Q(g,g'=1|h \neq \underline{{h}_h})$, than those who are not homeless.
+
+The per-unit housing price is $p$, and the per-unit rent is $p_{r}$. Buying and selling houses require one-time proportional transaction costs, $\tau_{b}$, and $\tau_{s}$, respectively. Rental and owner-occupied housing are both taxed at a rate $\tau_{p}$ and depreciate in value at a rate $\delta$.
+
+Unsecured borrowing is not available to households, but homeowners can take on mortgage debt, $m$. The interest rate charged on mortgages is $r_m =r+\Delta_m$, where $\Delta_m$ is the mortgage premium. I model mortgages as long-term debt as in \citet{kkk-2021}. There are borrowing restrictions at mortgage origination, prepayment penalties, and origination costs. A household originating a new mortgage incurs a fixed cost $\omega_1$, and must satisfy two restrictions only upon origination. The first is a loan-to-value (LTV) constraint, which limits their mortgage amount to a fraction $\lambda_{1}$ of the purchase price of the house $ph$:
+\begin{equation}
+\label{eq:ltv}
+m \leq \lambda_{1} ph.
+\end{equation}
+
+\noindent The second restriction is a payment-to-income (PTI) constraint, which limits a household's carrying costs to a fraction $\lambda_{2}$ of their gross income:
+\begin{equation}
+\label{eq:gds}
+\tau_p ph + (r_m + \nu_1) m\leq \lambda_{2}y_{j}(e,d,x,z,w_{e},w_{d},a).
+\end{equation}
+
+\noindent $\nu_1 m$ is the minimum required principal payment each period. Retirees are not allowed to originate new mortgages but they can carry a mortgage into their retirement.
+
+Homeowners who have a mortgage have to pay at least a fraction $\nu_1$ of their mortgage, or need to originate a new mortgage to repay the old one in full, also known as refinancing. Mortgagees who pay more than $\nu_2m$ towards their mortgage, trigger a prepayment penalty, which is given by
+\begin{equation}
+\label{eq:pp}
+    \tau_{pp}(m,m') = \omega_2\max\{(1-\nu_2)m - m',0\},
+\end{equation}
+
+\noindent where $m'$ is the mortgage balance carried into the next period. Households who refinance pay an origination cost and a prepayment penalty, and must satisfy the borrowing restrictions again.
+
+\subsection{Income taxes}
+Households pay taxes on their non-capital incomes after taking a personal exemption and either a standard or itemized deduction. Taxable non-capital income is given by 
+\begin{equation}
+    \tilde{y}_{j}(e,d,x,z,w_{e},w_{d},o,h,m) = \max\{\hat{y}_{j}(e,d,x,z,w_{e},w_{d})-\tau_e-\max[\tau_d,o(\tau_m r_m m + \tau_p ph)],0\}.
+\end{equation}
+
+\noindent $\tau_e$ is the personal exemption, $\tau_d$ is the standard deduction, and $\tau_m$ is the fraction of mortgage interest payments that households can deduct from their taxable non-capital income, if they choose to it instead of the standard deduction. 
+
+Non-capital income taxes are progressive, as in \citet{hsv-2020}. A household's non-capital income tax liability is
+\begin{equation}
+    \tau_{j}(e,d,x,z,w_{e},w_{d},o,h,m) = \tilde{y}_j(e,d,x,z,w_{e},w_{d},o,h,m) - \tau_\ell \tilde{y}_j(e,d,x,z,w_{e},w_{d},o,h,m)^\psi.
+\end{equation}
+
+\noindent $\tau_{\ell}$ determined the average tax rate in the economy while $\psi$ affects the degree of progressivity. In contrast, all households pay proportional taxes $\tau_{k}$ and $\tau_{c}$ on their capital income and non-housing consumption, respectively.
+
+\subsection{Household dynamic program}
+A household's state variables are its idiosyncratic labor market productivities, $(x,z)$, its unemployment, health shocks, and addiction shocks $(e,d,g)$, its unemployment and disability insurance statuses, $(w_{e},w_{d})$, its financial wealth, $a$, tenure, $o$, house size, $h$, and mortgage debt, $m$. Conditional on these state variables, which I collectively denote by $s$, a household chooses how much leisure to take, $\ell$; how much financial assets to accumulate, $a'$; whether to rent or own, $o'$, or whether to become homeless, $b'$; how much to goods, housing services, and addiction to consume, $c$, $h'$, and $v$; what fraction of food stamps to sell, $y_{f}$; whether to originate a new mortgage, $n$; and how much mortgage debt keep on its balance sheet at the end of the period, $m'$. The dynamic program that captures this optimization problem for a household of age $j\geq 2$ is
+\begin{align}
+  & V_{j}(s)=\max_{\{\ell,c,a',o',b',h',v,y_{f},n,m'\}}\ \biggr\{u_{j}(c,h',v,\ell) +\indicator{j=J}w_B(q') + \indicator{j<J}\beta \int_{\mathcal{E} \times \mathcal{D}\times \mathcal{G}\times \mathcal{Z}\times\mathcal{W}_{e}\times\mathcal{W}_{d}} \label{eq:vf}\\ &\qquad V_{j+1}(s')\ \mathrm{d}R(e,e'|b')\mathrm{d}V(d,d')\mathrm{d}Q(g,g'|b')\mathrm{d}F(z,z')\mathrm{d}W_{e}(w_{e},w_{e}',e,e')\mathrm{d}W_{d}(w_{d},w_{d}',d,d')\biggr\}. \notag
+\end{align}
+Subject to
+\begin{align}
+  & (c+gv) (1+\tau_{c}) + a' + r_m m + (1-b')(1-o')p_{r}h' + \label{eq:vf_bc}\\
+  & \qquad o\left[\delta + \tau_p + \indicator{o'=0\lor h'\neq h}\tau_s\right]ph + o' (1+\indicator{o=0\lor h'\neq h}\tau_b)ph'\notag\\
+  & \qquad= y_{j}(e,d,x,z,w_{e},w_{d},a)-\tau_j(e,d,x,z,w_{e},w_{d},o,h,m) + a(1-r\tau_k)+ oph +\notag \\ &\qquad (1-y_{f})\kappa_{j}(e,d,x,z,w_{e},w_{d},a,o',h,m)+y_{f}\kappa_{f}\kappa_{j}(e,d,x,z,w_{e},w_{d},a,o',h,m)+\notag\\ & \qquad \vartheta(x,z) + m'-m- n[\omega_1+\tau_{pp}(m,0)] - (1-n)\tau_{pp}(m,m')\notag\\
+  & c\geq (1-y_{f})\kappa_{j}(e,d,x,z,w_{e},w_{d},a,o',h,m)\label{eq:c_noneg}\\
+  & a'\geq 0\label{eq:a_noneg}\\
+  & h' \geq o'\underline{{h}_o} + (1-o')(1-b')\underline{{h}_r}\label{eq:vf_minhouse}\\
+  & h' = b'\underline{{h}_h}\label{eq:vf_minhouse_homeless}\\
+  & n\in \{0,o'\indicator{j<j_R}\}\label{eq:vf_orig}\\
+  & n m' \leq \lambda_1 ph'\label{eq:vf_ltv}\\
+  & n [\tau_p p h' + \nu_1 m'] \leq \lambda_2 (y_j(x,z) + ra)\label{eq:vf_gds}\\
+  & (1-n)m'\leq (1-\nu_1) m \label{eq:vf_repay}\\
+  & q' = a' + o' \left[p h'(1-\delta-\tau_p)-m'\right] \label{eq:networth}
+\end{align}
+
+The first constraint \eqref{eq:vf_bc} is the budget constraint. The left-hand side includes spending on consumption and addiction, saving, mortgage interest, rent (if $o'=0$ and $o'=0$), property taxes and depreciation (if $o=1$), and the costs of buying and/or selling houses, which apply only when tenure and/or house size change. The right-hand side includes after-tax income, financial wealth and housing wealth, food stamps adjusted for the fraction of it sold for cash, funds raised by taking on a mortgage, origination costs for new mortgages (if $n=1$), and prepayment costs for early mortgage balance payments. The budget constraint of a newborn is similar also includes $a_1(x)$ or zero, depending on the individual's realization of the initial endowment. 
+
+The second constraint \eqref{eq:c_noneg} says that non-housing consumption must greater or equal to the value of the portion of food stamps that is not sold. The third constraint, \eqref{eq:a_noneg} imposes no unsecured borrowing. The fourth constraint \eqref{eq:vf_minhouse} states that renters cannot live in houses smaller than $\underline{{h}_r}$ and owners cannot live in houses smaller than $\underline{{h}_o}$, the next constraint indicated that homeless households must live in a house size equal to $\underline{{h}_h}$. The sixth constraint \eqref{eq:vf_orig} implies that households can only originate a new mortgage before retirement and own a home at the end of the period. The seventh and eighth constraints \eqref{eq:vf_ltv}--\eqref{eq:vf_gds} are borrowing restrictions, LTV and PTI constraints, which only apply upon originating a new mortgage. The ninth constraint \eqref{eq:vf_repay} states that mortgagees have to pay at least a fraction $\nu_1$ of their principal. The last constraint states that a household's net worth is equal to the sum of its financial wealth and housing equity. I denote the policy functions for labor supply, consumption, savings, tenure, homelessness status, housing, what fraction of food stamps to sell, how much to spend on addiction, mortgage origination, mortgage debt, and bequests by $\ell_{j}(s)$, $c_{j}(s)$, $a'_{j}(s)$, $o'_{j}(s)$, $b'_{j}(s)$, $h'_{j}(s)$, $y_{j,f}(s)$, $v_{j}(s)$, $n_j(s)$, $m'_{j}(s)$, and $q'_j(s)$, respectively.
+
+\subsection{Rental and housing construction companies}
+
+To model the rental market, I borrow the corporate rental market structure from \citet{garrigaeetal-2009}. The rental company starts each period with rental housing stock, $S$, on which it incurs property taxes and depreciation costs. The rental company decided how much additional rental housing to buy, $S'-S$, resulting in rental income $p_{r} S'$. However, to supply $S'$, the rental company must incur management costs $C_r(S') = \frac{\theta_1}{\theta_2} S'^{\theta_2}$. 
+
+The dynamic problem of the rental company is:
+\begin{equation*}
+W_r(S)=\max_{S'} \left\{p_{r}S' - C_r(S') - p (S'-S) - p(\delta_{h}+\tau_{p})S + \frac{1}{1+r}W_r(S')\right\}.
+\end{equation*}
+The solution to this problem is:
+\begin{equation}
+\label{eq:foc_rental}
+p_{r} = \theta_1 (S')^{\theta_2-1}+\left\{\frac{r+\delta_{h}+\tau_p}{1+r}\right\}p.
+\end{equation}
+
+\noindent $\theta_2$ determines the rental price elasticity of the rental housing supply. If $\theta_2=1$, rental supply is perfectly elastic, which is the modelling choice in \citet{gervais} and \citet{kaplanetal-2019}. In this case, the price-rent ratio is does not depend on the quantity of rental housing supplied. In contrast, when $\theta_{2}>1$, the rental supply curve is upward sloping, which means that in equilibrium, rental prices rise when rental demand shifts to the right. As in \citet{rs-2023}, in my calibration, I pick $\theta_2$ to match empirical estimates of the property tax incidence of renters.
+
+As in \citet{az-2024}, the relationship between housing investment, $I$ and the price of housing is:
+\begin{equation}
+\label{eq:foc_construction}
+p = \epsilon_1 I^{\epsilon_2}.
+\end{equation}
+
+\noindent $\epsilon_2$ is the price elasticity of the supply of new housing construction, and $\epsilon_1$ is a scalar. \footnote{Please refer to Section 3.7 in \citet{rs-2023} to see the micro-foundations that deliver Equation \eqref{eq:foc_construction}.} The following law of motion governs the aggregate stock of housing,
+\begin{equation}\label{eq:lom_h}
+H' = (1-\delta)H + I.
+\end{equation}
+
+\noindent In a stationary equilibrium $H=H'=\frac{I}{\delta}$.
+
+\subsection{Aggregation}\label{subsection: aggregation}
+
+\paragraph{Housing markets:} My model has two housing-market clearing conditions. First, aggregate housing demand coming from both owners and renters must equal the aggregate housing supply:
+\begin{equation}
+    \label{eq:mkt_h}
+    \sum_{j=1}^J \int_{\mathcal{S}} h'_j(s)\ \mathrm{d}\Psi_j(s) = H',
+\end{equation}
+
+\noindent where I denote the distribution of age-$j$ households over the state space $\mathcal{S}$ by $\Psi_j$. Second, aggregate rental demand must equal the aggregate rental supply by the rental company:
+\begin{equation}
+    \label{eq:mkt_r}
+    \sum_{j=1}^J \int_{\mathcal{S}} (1-o'_j(s))(1-b'_{j}(s))h'_j(s)\ \mathrm{d}\Psi_j(s) = S'.
+\end{equation}
+
+\paragraph{Government budget:} I require that government budget balance as follows:
+
+\begin{align}
+   & G + \sum_{j=J_{R}}^J \int_{\mathcal{S}} (y_{R}(x,z)+\ y_{ui}(s)+y_{dis}(s)+\kappa_{j}(e,d,x,z,w_{e},w_{d},a,o'_{j}(s),h,m)+\theta_{b}b'_{j}(s)) + \mathrm{d}\Psi_j(s)= \label{eq:gbc}\\ & \qquad
+  \sum_{j=1}^J \int_{\mathcal{S}} \left[\tau_j(s)+\tau_k r a +\tau_{c}c(s)\right] \mathrm{d}\Psi_j(s) + \tau_p p H \notag.
+\end{align}
+
+\noindent The left-hand side includes expenditures on public goods, social security, unemployment insurance, disability benefits, and food stamps, as well as costs associated with each household experiencing homelessness, where I denote the cost per households by $\theta_{b}$. The right-hand side contains revenues from income, property taxes, and consumption. In my calibration, I pick the public goods consumption, $G$, to ensure that this constraint. In my experiments, I hold $G$ fixed, and if necessary, adjust labor income taxes.
+
+\paragraph{Bequests:} I also require that aggregate bequests left by decedents must equal aggregate wealth endowments:
+\begin{equation}
+\label{eq:agg_bequests}
+      \int_{\mathcal{S}} q'_J(s)\ \mathrm{d}\Psi_J(s) = \int_{\mathcal{X}} \theta(x)a_1(x)\ \mathrm{d}G(x) + \sum_{j=1}^J \int_{\mathcal{S}} \vartheta (x,z)\ \mathrm{d}\Psi_j(s).
+\end{equation}
+The right-hand side represents the bequests left by households who reach age $J$. The left-hand side has two terms. The first term represents newborns' initial wealth endowments, whereas the second represents the flow of endowments to all living households. I adjust $\vartheta$ to guarantee that this condition is satisfied in all of my experiments. 
+
+\paragraph{Distributions' laws of motion:} Lastly, I define how the distribution of households across the state space evolves. Households are born as renters, which means that the distribution of newborns, $\Psi_1(s)$, is given by:
+
+\begin{align}\label{eq:lom1}
+    & \Psi_1(S) = \int_{\mathcal{E}\times \mathcal{D}\times \mathcal{G} \times \mathcal{X}\times \mathcal{Z}\times \mathcal{W}_{e}\times \mathcal{W}_{d}}\biggl[\theta(x)\indicator{(e,d,g,x,z,w_{e},w_{d},a_1(x),0,0,0)\in S} + \\
+    & \qquad (1-\theta(x))\indicator{(e,d,g,x,z,w_{e},w_{d},0,0,0,0)\in S}\biggl]\ \mathrm{d}\bar{R}(e)\mathrm{d}\bar{V}(d)\mathrm{d}\bar{Q}(g)\mathrm{d}G(x) \mathrm{d}\bar{F}(z)\mathrm{d}\bar{W_{e}}(w_{e})\mathrm{d}\bar{W_{d}}(w_{d}). \notag
+\end{align}
+
+\noindent $S$ represents a typical subset of the state space and $\bar{R}$, $\bar{V}$, $\bar{G}$, $\bar{F}$, $\bar{W_{e}}$, and $\bar{W_{d}}$ are the ergodic distributions of $e$, $d$, $g$, $x$, $z$, $w_{e}$, and $w_{d}$, associated with their respective Markov chain processes. The distributions of older households evolve according to the following law of motion:
+
+\begin{align}\label{eq:lom2}
+    & \Psi_{j+1}(S) = \int_{\mathcal{S}} \biggl[\int_{\mathcal{E}\times \mathcal{D}\times \mathcal{G}\times \mathcal{Z} \times \mathcal{W}_{e}\times \mathcal{W}_{d}}\indicator{ (e',d',g',x,z',w_{e}',w_{d}',a'_j(s),o'_j(z),h'_j(s),m'_j(s))\in S }\ \\ & \qquad \mathrm{d}R(e,e'|b'_{j}(s))\mathrm{d}V(d,d')\mathrm{d}Q(g,g'|b'_{j}(s))\mathrm{d}F(z,z')\mathrm{d}W_{e}(w_{e},w_{e}',e,e')\mathrm{d}W_{d}(w_{d},w_{d}',d,d')\biggl]\ \mathrm{d}\Psi_j(s),\ j=1,\ldots,J-1. \notag
+\end{align}
+
+\subsection{Equilibrium definition}\label{subsection: equilibrium_defintion}
+
+A stationary equilibrium in this economy is a set of aggregate prices and quantities, value and policy functions, and distributions,
+\begin{equation}
+    \left\langle p,p_{r},H',S',\left\{V_{j}(s),(\ell_{j}(s),c_{j}(s),a'_{j}(s),o'_{j}(s),b'_{j}(s),h'_{j}(s),y_{j,f}(s),v_{j}(s),n_j(s),m'_{j}(s),q'_j(s),\Psi_j(s)\right\}_{j=1}^J\right\rangle,
+\end{equation}
+
+\noindent that solve the household's dynamic problem \eqref{eq:vf}, satisfy the rental company's first-order condition \eqref{eq:foc_rental}, satisfy the housing construction company's optimal decision \eqref{eq:foc_construction}, clear the housing and rental markets \eqref{eq:mkt_h}--\eqref{eq:mkt_r}, satisfy the government's constraint \eqref{eq:gbc}, the bequest constraint \eqref{eq:agg_bequests}, and the law of motion for the distributions \eqref{eq:lom1}--\eqref{eq:lom2}.
+
+\section{Calibration}
+
+\subsection{Externally assigned parameters}
+
+\subsection{Internally assigned parameters}
+
+\begin{itemize}
+    \item Homeownership rate ($\underline{h}_{o}$
+    \item HO of old ($\mu$)
+    \item Fraction of GDP spent on MID ($\tau_{d}$)
+    \item Mortgage to house value ratio ($\beta$)
+    \item Fraction of time working ($\nu_{\ell}$)
+    \item Spending on housing ($\gamma_{h}$)
+    \item Fraction of GDP spent on food stamps ($nu_{f}$)
+    \item Fraction of food stamps trafficked ($\eta$)
+    \item Percentage of homeless who are addicted ($\gamma_{v}$)
+    \item Fraction of homeless who are sick ($p_{d}$)
+    \item Percentage of renters spending over 50\% on housing ($\underline{h}_{r}$)
+    \item Percentage who are homeless ($\underline{h}_{h}$)
+    \item Avg income relative to avg household income  ($p_{e}$)\footnote{\url{https://nlihc.org/resource/employment-and-earnings-among-nyc-homeless-adults}, \url{https://www.deptofnumbers.com/rent/us/}}
+\end{itemize}
+
+\section{Model performance}
+Models performs the same as \cite{rs-2023} on lifecycle stats on HO, LTV, and rent to income ratios, as well as percentage of low-income households who rent. Don't plan to show these just reference the tables in \citet{rs-2023}. 
+
+Plan to focus on homelessness-related statistics:
+\begin{itemize}
+    \item Fraction on food stamps going to homeless
+    \item Fraction employed who are homeless.\footnote{    \url{https://www.healthcare.gov/glossary/federal-poverty-level-fpl/}.}
+    \item Avg assets of homeless relative to average
+    \item Homeless by age.\footnote{Homelessness by age in California: \url{https://data.ca.gov/dataset/homelessness-demographics}.}
+    \item Fraction homeless for more than 1 year
+    \item 
+\end{itemize}
+
+
+\begin{comment}
+
+Not surprisingly, homelessness has become a political focal point, with the Biden administration setting out to reduce homelessness by 25\% by 2025.\footnote{\url{https://www.whitehouse.gov/briefing-room/statements-releases/2022/12/19/fact-sheet-biden-harris-administration-announces-plan-to-prevent-and-end-homelessness/}.}
+
+\url{https://www.usich.gov/guidance-reports-data/data-trends}
+\url{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC121964/}
+
+addiction \url{https://www.forbes.com/sites/moneywisewomen/2012/06/19/the-cost-of-addiction-on-families/}
+
+tenancy fraud \url{https://www.counter-fraud.com/fraud-types-n-z/property-fraud/analysis-finds-148000-fraudulent-social-tenancies-while-104000-families-are-homeless-155587.htm}
+
+Trafficking\url{https://www.fns.usda.gov/pressrelease/2013/fns-001213}\url{https://www.nytimes.com/2013/12/19/us/food-stamp-fraud-in-the-underground-economy.html}\url{https://www.researchgate.net/publication/24117520_What_Are_Food_Stamps_Worth#:~:text=Whitmore%20(2002)%20indicates%20that%20Food,percent%20of%20their%20face%20value.}
+Total food stamps\url{https://www.ers.usda.gov/topics/food-nutrition-assistance/supplemental-nutrition-assistance-program-snap/key-statistics-and-research/#:~:text=Download%20chart%20data%20in%20Excel,%24230.88%20per%20participant%20per%20month}. 
+
+homelessness has become a policy focal point, with the Biden administration setting out to reduce homelessness by 25\% by 2025.\footnote{\url{https://www.whitehouse.gov/briefing-room/statements-releases/2022/12/19/fact-sheet-biden-harris-administration-announces-plan-to-prevent-and-end-homelessness/}.} , costing U.S. taxpayers about \$52 billion annually due to the costs homelessness imposes on the healthcare, justice, and housing systems to list some.\footnote{Similar cost estimates per person experiencing homelessness in Canada: \url{https://www.homelesshub.ca/solutions/ending-homelessness/cost-effectiveness-ending-homelessness}, \url{https://homelesshub.ca/sites/default/files/SOHC16_final_20Oct2016.pdf}.}
+
+\end{comment}
+
+\bibliographystyle{aer}
+\bibliography{reference_files/bib}
+
+
+
+\end{document}
