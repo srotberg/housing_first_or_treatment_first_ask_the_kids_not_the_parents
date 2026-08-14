@@ -526,7 +526,8 @@ subroutine calibration_sweep(step, nbis)
 
     ! annual hazard of SUD from light use -- 18.7% was absurd, and raising it far
     ! enough actually LOWERS the SUD rate by deterring experimentation
-    call bump(pi_d_low,        gap(2), +1.0_dp, step, 5.0e-3_dp, 0.15_dp)
+    ! pi_d_low is bracketed in polish_levels, not bumped: the SUD rate is a
+    ! LEVEL moment on a small target and a proportional step cannot hold it
     call bump(pi_eu_base,      gap(4), +1.0_dp, step, 1.0e-4_dp, 0.9_dp)
     call bump(kappa_ue_d,      gap(5), -1.0_dp, step, 0.02_dp,   1.0_dp)
     call bump(recover_mult_hl, gap(6), -1.0_dp, step, 0.01_dp,   1.0_dp)
@@ -633,6 +634,8 @@ subroutine bisect_on(which, target_val, iters)
         lo = log(1.0_dp);    hi = log(1.0e5_dp);  rising = .true.
     case (6)
         lo = log(1.0e-4_dp); hi = log(20.0_dp);   rising = .false. ! more stigma, less take-up
+    case (7)
+        lo = log(2.0e-3_dp); hi = log(0.60_dp);   rising = .true.  ! faster conversion, more SUD
     end select
 
     do k = 1, iters
@@ -644,6 +647,7 @@ subroutine bisect_on(which, target_val, iters)
         case (4); mh_onset    = exp(mid)
         case (5); aleph       = exp(mid)
         case (6); treat_ucost = exp(mid)
+        case (7); pi_d_low    = exp(mid)
         end select
         call refresh_utility_constants()
         call solve_household(); call build_distribution_eq()
@@ -682,9 +686,37 @@ subroutine bisect_on(which, target_val, iters)
     case (4); mh_onset    = exp(mid)
     case (5); aleph       = exp(mid)
     case (6); treat_ucost = exp(mid)
+    case (7); pi_d_low    = exp(mid)
     end select
     call refresh_utility_constants()
 end subroutine bisect_on
+
+
+!===============================================================================
+! Polish the LEVEL moments at cleared prices.
+!
+! The brackets inside calibration_sweep run in partial equilibrium, and the
+! solve_equilibrium that follows then moves prices and drags them off target: a
+! participation rate bracketed exactly onto 5.13% was being REPORTED at 3.62%,
+! and the printed moment was never the bracketed one. On a target of 5% that is
+! a 29% relative miss on the single most important moment in the paper.
+!
+! So re-bracket at the cleared prices and re-clear. Two rounds, because b and
+! pi_d_low are not independent -- a higher conversion hazard deters
+! experimentation, so pinning the SUD rate moves participation and vice versa --
+! and because prices move again after each pass. Two is enough: the price
+! response to these is second order once the level is close.
+!===============================================================================
+subroutine polish_levels(nbis)
+    integer, intent(in) :: nbis
+    integer :: round
+    do round = 1, 2
+        call bisect_on(1, mom(1)%target,  nbis)   ! b          -> participation
+        call bisect_on(7, mom(2)%target,  nbis)   ! pi_d_low   -> SUD rate
+        call bisect_on(2, mom(3)%target,  nbis)   ! h_homeless -> homelessness
+        call solve_equilibrium(12, 3.0e-3_dp, .false.)
+    end do
+end subroutine polish_levels
 
 
 !===============================================================================
