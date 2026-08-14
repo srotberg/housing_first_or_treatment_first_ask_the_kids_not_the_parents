@@ -46,8 +46,9 @@ The disorder hurts in two ways and each has a direct and an indirect arm:
 
     MORTALITY   kap   it kills you        kapH  it makes you homeless,
                                                 which also kills you
-    RESOURCE    u1    it costs you a job, and the street means consuming
-                      h_hl of housing instead of h_ho
+    RESOURCE    u1    it costs you a job
+                xi    and a wage, and the street means consuming h_hl of
+                      housing services instead of h_ho
 
 Switching a channel off means switching every member of its group. Switching kap
 alone leaves the homelessness mortality penalty running in a row that is supposed
@@ -86,6 +87,16 @@ class P:
     rho_mult_hl = 0.50   # recovery multiplier on the street. The full
                          # model's value: harder to get clean when homeless.
     kap   = 0.45      # MORTALITY, direct
+    xi    = 0.20      # RESOURCE, wage penalty given the disorder. RESTORED
+                      # after an ablation: without it the model predicts that
+                      # households WITH the disorder earn 1.14 times the average,
+                      # because progression rises with use intensity and use
+                      # intensity rises with income, so the disorder ends up
+                      # concentrated at the TOP. The data say 0.69. Unemployment
+                      # alone cannot fix that: 16 per cent against 5 moves mean
+                      # income by a few points, not by a third. This is also the
+                      # AE's comment A20, direct productivity effects of the
+                      # disorder.
     u1    = 0.1625    # RESOURCE, unemployment given the disorder. MEASURED,
                       # not calibrated: NSDUH 2024, ages 26+, weighted,
                       # moderate or severe drug use disorder.
@@ -157,7 +168,7 @@ def _states(par, d, policy):
     pv = par.pV if covered else 0.0
     out = []
     for e, pe in ((0, 1.0 - pu), (1, pu)):                  # e = 1 unemployed
-        inc = par.omega if e else 1.0
+        inc = (par.omega if e else 1.0) * (1.0 - par.xi * d)
         for rent, prb in ((par.kappa_r * par.pr, pv), (par.pr, 1.0 - pv)):
             if pe * prb > 1e-14:
                 out.append((pe * prb, inc, rent))
@@ -216,10 +227,24 @@ def solve_one(par, y, policy=None):
     Period 1. Returns (participation, expected use, assets carried into period 2
     by users, assets carried by abstainers).
 
-    The period 2 assets are needed because homelessness is now a CHOICE made at
-    a given cash position, so the homelessness rate cannot be read off a
-    parameter: it has to be evaluated at the asset the household actually saved.
+    PARTICIPATION IS COMPUTED FROM A THRESHOLD, NOT BY COUNTING NODES.
+
+    Drugs enter additively, so for a household with taste th the gain from using
+    is  f(th) = max_v [base(v) + th G(v)] - base(0),  where base is the taste
+    independent part and G(v) = log(b+v) - log(b) >= 0. f is a maximum of affine
+    increasing functions of th, so it is increasing and there is a single
+    threshold th* with f(th*) = 0. Participation is then 1 - Phi of the
+    standardised threshold, which is SMOOTH in every parameter.
+
+    Counting quadrature nodes instead, as this did before, makes participation a
+    step function: it jumps as each node crosses. Every calibration attempt
+    stalled on that. A least squares solver saw a zero derivative and terminated
+    at its starting point, and Nelder Mead wandered for two thousand evaluations
+    with participation at nearly three times its target while the direction that
+    fixed it was plainly downhill. The moment was not uninformative; it was
+    piecewise constant.
     """
+    from math import erf, sqrt as _sqrt
     policy = policy or par.policy
     ag, V2, _ = solve_late(par, y, policy)
     vg = np.concatenate(([0.0], np.linspace(1e-4, 0.55 * y, par.nv - 1)))
@@ -231,18 +256,36 @@ def solve_one(par, y, policy=None):
                    np.log(np.maximum(c, 1e-12)) + par.aleph
                    + par.beta * par.phi0 * EV2, -np.inf)
     base = val.max(axis=1)
-    G = np.log(par.b + vg) - np.log(par.b)
-
-    x, qw = np.polynomial.hermite_e.hermegauss(par.nq)
-    qw = qw / qw.sum()
-    th = par.th * np.exp(par.sig * x - 0.5 * par.sig**2)
-    tot = base[None, :] + th[:, None] * G[None, :]
-    k = np.argmax(tot, axis=1)
-    use = tot[np.arange(par.nq), k] > base[0] + 1e-12
     a_by_v = ag[np.argmax(np.where(c > 1e-9, val, -np.inf), axis=1)]
-    pu = float((qw * use).sum())
-    a_use = float((qw * use * a_by_v[k]).sum() / max(pu, 1e-12))
-    return pu, float((qw * use * vg[k]).sum()), a_use, float(a_by_v[0])
+    G = np.log(par.b + vg) - np.log(par.b)
+    v_no = base[0]
+
+    # the threshold taste, by bisection on a monotone function
+    lo, hi = 1e-10, 1e6
+    for _ in range(70):
+        mid = _sqrt(lo * hi)
+        if (base + mid * G).max() > v_no:
+            hi = mid
+        else:
+            lo = mid
+    th_star = _sqrt(lo * hi)
+
+    mu = np.log(par.th) - 0.5 * par.sig**2
+    z = (np.log(th_star) - mu) / par.sig
+    Phi = 0.5 * (1.0 + erf(z / np.sqrt(2.0)))
+    p_use = float(min(max(1.0 - Phi, 0.0), 1.0))
+    if p_use <= 1e-12:
+        return 0.0, 0.0, float(a_by_v[0]), float(a_by_v[0])
+
+    # expected use among users: quadrature on the TRUNCATED taste distribution,
+    # by inverse transform, so it is smooth in the threshold too
+    from scipy.special import ndtri
+    u = Phi + (1.0 - Phi) * (np.arange(par.nq) + 0.5) / par.nq
+    th_i = np.exp(mu + par.sig * ndtri(np.clip(u, 1e-12, 1 - 1e-12)))
+    k = np.argmax(base[None, :] + th_i[:, None] * G[None, :], axis=1)
+    ev = float(p_use * vg[k].mean())
+    a_use = float(a_by_v[k].mean())
+    return p_use, ev, a_use, float(a_by_v[0])
 
 
 def profile(par, ygrid, policy=None):

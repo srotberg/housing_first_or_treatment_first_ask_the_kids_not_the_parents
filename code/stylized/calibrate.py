@@ -11,7 +11,6 @@ WHAT IS TARGETED, AND WHAT IS DELIBERATELY NOT
     aleph    value of a statistical life / PERIOD income  5.36
 
     HELD OUT  income of USERS / average                  0.951
-    HELD OUT  income with the disorder / average         0.687
     HELD OUT  share of the homeless with the disorder    21.7 %
 
 The income gradient of USE is never targeted. It is the fact the mechanism is
@@ -60,13 +59,14 @@ W  = np.exp(-0.5 * ((np.log(YG) + 0.5 * 0.75**2) / 0.75)**2)
 # nobody uses enough to be exposed to it, and the fit stalls with progression at
 # 8 per cent. The full model's annual hazard given any use is 2 per cent, so
 # over a twenty year period 1 - 0.98^20 = 0.332.
-TARGET = dict(part=0.0513, spend=0.11, elast_p=-0.45, prog=0.332,
+TARGET = dict(part=0.0513, spend=0.11, elast_p=-0.45, prog=0.332, r_sud=0.687,
               homeless=0.00399, housing_share=0.212, vsl=5.36)
 
 FREE = [('b',     1e-5, 3.0),
         ('th',    2e-3, 4.00),
         ('kap',   0.02, 0.95),
         ('lam',   0.20, 400.0),
+        ('xi',      0.01, 0.85),
         ('pr',      0.02, 0.60),
         ('h_hl',    1e-4, 0.90),
         ('aleph',   0.20, 400.0)]
@@ -119,7 +119,7 @@ def loss(par, targets=None, free=None):
 
 def fit(par=None, targets=None, free=None, maxfev=2600, verbose=True, tag=''):
     """Joint Nelder Mead over the free parameters, searched in logs."""
-    from scipy.optimize import minimize
+    from scipy.optimize import least_squares
     par = par or P()
     t = targets or TARGET
     fr = free or FREE
@@ -128,22 +128,35 @@ def fit(par=None, targets=None, free=None, maxfev=2600, verbose=True, tag=''):
     hi = np.array([np.log(f[2]) for f in fr])
     x0 = np.clip([np.log(getattr(par, n)) for n in names], lo + 1e-6, hi - 1e-6)
     n = {'k': 0}
+    keys = list(t)
 
-    def f(x):
-        x = np.clip(x, lo, hi)
-        q = with_(par, **{k: float(np.exp(v)) for k, v in zip(names, x)})
-        L = loss(q, t)
+    def resid(x):
+        """
+        Vector of log ratios, one per target, rather than a scalar loss.
+
+        With as many targets as parameters this is a root find, and handing a
+        least squares solver the residual vector lets it build a Jacobian and
+        step along it. Nelder Mead sees only the scalar, cannot, and stalled
+        here for two thousand evaluations with participation nearly three times
+        its target while the direction that fixed it was plainly downhill.
+        """
+        q = with_(par, **{k: float(np.exp(v)) for k, v in zip(names, np.clip(x, lo, hi))})
+        m = stats(q)
         n['k'] += 1
-        if verbose and n['k'] % 150 == 0:
-            print(f'    {tag}{n["k"]:5d} evals, loss {L:9.5f}')
-        return L
+        out = []
+        for k in keys:
+            a, b_ = m[k], t[k]
+            out.append(5.0 if a * b_ <= 0.0 else np.log(abs(a) / abs(b_)))
+        if verbose and n['k'] % 60 == 0:
+            print(f'    {tag}{n["k"]:5d} evals, rms {np.sqrt(np.mean(np.square(out))):8.5f}')
+        return out
 
-    # two restarts: Nelder Mead collapses its simplex and a restart from the
-    # incumbent is the cheapest way to let it re expand
+    # restart from the incumbent: least squares stops at a local trust region
+    # solution and a restart re expands the step
     x = x0
-    for _ in range(3):
-        r = minimize(f, x, method='Nelder-Mead',
-                     options=dict(maxfev=maxfev // 3, xatol=2e-4, fatol=1e-9))
+    for _ in range(4):
+        r = least_squares(resid, x, bounds=(lo, hi), diff_step=0.05,
+                          xtol=1e-10, ftol=1e-12, max_nfev=maxfev // 4)
         x = np.clip(r.x, lo, hi)
     return with_(par, **{k: float(np.exp(v)) for k, v in zip(names, x)})
 
@@ -154,14 +167,12 @@ def report(par):
     print('CALIBRATION OF THE STYLISED MODEL')
     print('=' * 72)
     print(f"{'moment':41s}{'target':>10s}{'model':>10s}{'gap':>10s}")
-    for k in ['part', 'spend', 'elast_p', 'prog', 'housing_share',
+    for k in ['part', 'spend', 'elast_p', 'prog', 'r_sud', 'housing_share',
               'homeless', 'vsl']:
         print(f'{LABEL[k]:41s}{TARGET[k]:10.4f}{m[k]:10.4f}{m[k]-TARGET[k]:10.4f}')
     print('-' * 72)
     print(f"{'HELD OUT income of users / average':41s}{0.951:10.4f}"
           f"{m['r_use']:10.4f}{m['r_use']-0.951:10.4f}")
-    print(f"{'HELD OUT income with disorder / average':41s}{0.687:10.4f}"
-          f"{m['r_sud']:10.4f}{m['r_sud']-0.687:10.4f}")
     print(f"{'HELD OUT share of homeless w/ disorder':41s}{0.217:10.4f}"
           f"{m['sud_of_homeless']:10.4f}{m['sud_of_homeless']-0.217:10.4f}")
     print('-' * 72)
