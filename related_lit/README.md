@@ -44,13 +44,14 @@ Degenhardt et al.'s SMR range of 2.5 to 9.8.
 | file | what it is | what it set |
 |---|---|---|
 | `Hansen_Miller_Weber_2017_Taxation_of_Recreational_Marijuana_Washington_NBER_w23632.pdf` | Washington's 2015 switch from a 25% gross receipts tax at every supply chain stage to a single 37% retail excise, with universal state traceability data | **The only MEASURED supply elasticity in any drug market.** Consumers bear **44%** of the additional retail tax burden; their demand elasticity is about $-1$ within two weeks. Textbook incidence then implies $\varepsilon_s\approx 0.79$. Three caveats, all stated in the note: it is a LEGAL licensed market with capped canopy, the reform changed tax STRUCTURE rather than a rate, and they find tax invariance did not hold, so the textbook mapping is an approximation |
+| `Rydell_Everingham_1994_Controlling_Cocaine_Supply_Versus_Demand_RAND_MR331.pdf` | The RAND cost effectiveness study of cocaine control, source of the often quoted supply elasticity near $-3.6$ | **Not used for `psi_2`, and the reason matters.** A negative elasticity means a downward sloping supply curve, driven by enforcement swamping: a larger market dilutes per unit enforcement risk. Caulkins and Reuter note that swamping "pertains to total drug volume ... not just or primarily drug-specific market volume", so it operates on the aggregate market. Our counterfactuals move one drug market and leave total US drug volume essentially unchanged, so that force is not active at our margin. Scanned with no text layer; OCR it if the figure is needed |
 | `Caulkins_Reuter_2010_How_Drug_Enforcement_Affects_Drug_Prices_Crime_and_Justice.pdf` | The risks and prices framework | The cost STRUCTURE, not the slope. Growing and refining are under 1% of cocaine's retail price; a \$100 gram leaves Colombia at barely \$1; importation is 12% of the total and almost all risk compensation, in a competitive market. Also the source of the resolution of the sign problem: enforcement swamping "pertains to total drug volume ... not just or primarily drug-specific market volume", so the downward sloping force works on the aggregate market and not on ours |
 
 ## Evidence reviews used for validation
 
 | file | what it is |
 |---|---|
-| `Rog_et_al_Permanent_Supportive_Housing_Assessing_the_Evidence_PsychServices.mht` | *Psychiatric Services* review of permanent supportive housing. Housing-retention and treatment-engagement effects. |
+| `Rog_et_al_Permanent_Supportive_Housing_Assessing_the_Evidence_PsychServices.mht` | *Psychiatric Services* review of permanent supportive housing. Housing retention and treatment engagement effects. A second capture of the same article is kept as `..._capture2.mht`; identical content, different save. |
 | `Keenan_et_al_Accommodation_based_interventions_homelessness_review_PMC.mht` | Systematic review of accommodation-based interventions. |
 | `CSH_literature_review_supportive_housing_by_study.pdf` | CSH study-by-study outcomes table. Marked *do not distribute without permission* — do not redistribute. |
 | `To_House_or_Not_to_House_commentary.mht` | Commentary on the Housing First / Treatment First debate. |
