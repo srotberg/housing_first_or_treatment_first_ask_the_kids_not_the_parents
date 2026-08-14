@@ -414,12 +414,6 @@ subroutine calibration_sweep(step, nbis)
     real(dp), intent(in) :: step
     integer,  intent(in) :: nbis
 
-    ! bracket the four step-like moments before touching anything else
-    call bisect_on(3, mom(16)%target, nbis)   ! beta        -> wealth / GDP
-    call bisect_on(2, mom(3)%target,  nbis)   ! h_homeless  -> homelessness rate
-    call bisect_on(4, mom(22)%target, nbis)   ! mh_onset    -> SMI prevalence
-    call bisect_on(1, mom(1)%target,  nbis)   ! b           -> participation
-
     ! annual hazard of SUD from light use -- 18.7% was absurd, and raising it far
     ! enough actually LOWERS the SUD rate by deterring experimentation
     call bump(pi_d_low,        gap(2), +1.0_dp, step, 5.0e-3_dp, 0.15_dp)
@@ -450,6 +444,19 @@ subroutine calibration_sweep(step, nbis)
     call bump(omega_l,         gap(19),-1.0_dp, step, 0.01_dp,   5.00_dp)
 
     call refresh_utility_constants()
+
+    ! ---- bracket the four step-like moments LAST -----------------------------
+    ! Bracketing first and bumping afterwards means every sweep undoes its own
+    ! bracketing: sweep 2 set participation to its 5.13% target and then the
+    ! bumps carried it to 21.6%, so the next sweep's bisection had to start over
+    ! and the calibration oscillated instead of converging. Running the brackets
+    ! last leaves each sweep ENDING on target for the four moments that are
+    ! step-like in their own parameter, and it is also the state the next
+    ! equilibrium is solved at.
+    call bisect_on(3, mom(16)%target, nbis)   ! beta        -> wealth / GDP
+    call bisect_on(2, mom(3)%target,  nbis)   ! h_homeless  -> homelessness rate
+    call bisect_on(4, mom(22)%target, nbis)   ! mh_onset    -> SMI prevalence
+    call bisect_on(1, mom(1)%target,  nbis)   ! b           -> participation
 end subroutine calibration_sweep
 
 
