@@ -42,7 +42,7 @@ module params
 
     !-- preferences -----------------------------------------------------------
     real(dp), parameter :: sigma   = 2.0_dp     ! CRRA
-    real(dp), parameter :: theta_h = 0.20_dp    ! Cobb-Douglas weight on housing
+    real(dp) :: theta_h = 0.20_dp               ! Cobb-Douglas weight on housing (calibrated)
     real(dp) :: theta_v = 0.10_dp               ! weight on drugs -- SAME for d=0 and d=1
     ! Stone-Geary shifter, BY SUD STATUS (the AE's suggestion). Cobb-Douglas
     ! weights stay invariant to SUD -- so reducing SUD does not mechanically
@@ -60,7 +60,7 @@ module params
     real(dp) :: beta    = 0.96_dp
 
     !-- prices ----------------------------------------------------------------
-    real(dp) :: p_rent = 1.0_dp                 ! FIXED: no housing-market GE
+    real(dp) :: p_rent = 2.0_dp                 ! no housing-market GE, but calibrated
     real(dp) :: p_v    = 1.0_dp                 ! endogenous: clears the drug market
     real(dp), parameter :: r = 0.03_dp
 

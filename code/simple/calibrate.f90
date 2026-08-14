@@ -17,7 +17,7 @@ module calibrate
     use equilibrium
     implicit none
 
-    integer, parameter :: NMOM = 8
+    integer, parameter :: NMOM = 11
 
     type :: mom_t
         character(len=28) :: name
@@ -39,6 +39,17 @@ subroutine init_targets()
     mom(6) = mom_t('SUD share of homeless (%)  ', 37.00_dp, 0.0_dp, 1.0_dp)
     mom(7) = mom_t('voucher recipients/elig (%)', 26.60_dp, 0.0_dp, 1.0_dp)
     mom(8) = mom_t('drug spend/income | SUD (%)', 44.00_dp, 0.0_dp, 1.0_dp)
+    ! Housing burden over ALL households, not renters only: everyone rents in
+    ! this model, so a renters-only target would import the selection in who
+    ! rents. Owner housing valued at imputed rent (8.3% of value), and the
+    ! AGGREGATE ratio rather than the mean of ratios, which is trim-sensitive.
+    ! See data/scf_housing_burden.py.
+    mom(9)  = mom_t('housing cost/income, agg (%)', 21.20_dp, 0.0_dp, 1.0_dp)
+    mom(10) = mom_t('share housing cost>50% (%)  ', 17.49_dp, 0.0_dp, 1.0_dp)
+    ! R1 comment 2(c)(i) attacked this as an untargeted miss (41% model vs 74%
+    ! data). Target it: it is also the moment that identifies the flow value of
+    ! life, which is what generates the income gradient.
+    mom(11) = mom_t('drug user income / avg (%)  ', 74.00_dp, 0.0_dp, 1.0_dp)
 end subroutine init_targets
 
 
@@ -49,11 +60,14 @@ subroutine compute_moments(A)
     real(dp) :: m, p, ygross
     real(dp) :: sud_unemp, sud_work, hl_sud, elig, vouch_elig
     real(dp) :: spend_sud, inc_sud
+    real(dp) :: hcost, totinc, burden50, users_inc, users_m
 
     p = max(A%pop, 1.0e-12_dp)
     sud_unemp = 0.0_dp; sud_work = 0.0_dp; hl_sud = 0.0_dp
     elig = 0.0_dp; vouch_elig = 0.0_dp
     spend_sud = 0.0_dp; inc_sud = 0.0_dp
+    hcost = 0.0_dp; totinc = 0.0_dp; burden50 = 0.0_dp
+    users_inc = 0.0_dp; users_m = 0.0_dp
 
     do j = 1, n_age
     do im = 1, NM
@@ -82,6 +96,19 @@ subroutine compute_moments(A)
             if (iv == 2) vouch_elig = vouch_elig + m
         end if
 
+        ! housing burden, over ALL households
+        totinc = totinc + m*max(ygross, 1.0e-8_dp)
+        if (ihp > 1) then
+            hcost = hcost + m*p_rent*h_grid(ihp)
+            if (p_rent*h_grid(ihp) > 0.5_dp*max(ygross,1.0e-8_dp)) burden50 = burden50 + m
+        end if
+
+        ! income of drug users, for the gradient moment
+        if (pol_v(ia,iy,ie,id,iv,im,j) > 0.0_dp) then
+            users_m   = users_m + m
+            users_inc = users_inc + m*max(ygross, 1.0e-8_dp)
+        end if
+
         ! drug spending as a share of income, conditional on SUD
         if (id == 2) then
             spend_sud = spend_sud + m*p_v*pol_v(ia,iy,ie,id,iv,im,j)
@@ -103,6 +130,10 @@ subroutine compute_moments(A)
     mom(6)%model = 100.0_dp*hl_sud/max(A%homeless, 1.0e-12_dp)
     mom(7)%model = 100.0_dp*vouch_elig/max(elig, 1.0e-12_dp)
     mom(8)%model = 100.0_dp*spend_sud/max(inc_sud, 1.0e-12_dp)
+    mom(9)%model  = 100.0_dp*hcost/max(totinc, 1.0e-12_dp)
+    mom(10)%model = 100.0_dp*burden50/p
+    mom(11)%model = 100.0_dp*(users_inc/max(users_m,1.0e-12_dp)) &
+                            /max(totinc/p, 1.0e-12_dp)
 end subroutine compute_moments
 
 
@@ -148,6 +179,9 @@ end function max_gap
 !   recover_mult_hl    SUD share of homeless                 -
 !   prob_V             voucher recipients / eligible         +
 !   theta_v            drug spend / income | SUD             +
+!   theta_h            housing cost / income (aggregate)      +
+!   p_rent             share with housing cost > 50%          +
+!   aleph              drug user income / average income      -
 !===============================================================================
 subroutine calibration_sweep(step)
     real(dp), intent(in) :: step
@@ -160,6 +194,10 @@ subroutine calibration_sweep(step)
     call bump(recover_mult_hl, gap(6), -1.0_dp, step, 0.01_dp,   1.0_dp)
     call bump(prob_V,          gap(7), +1.0_dp, step, 1.0e-4_dp, 1.0_dp)
     call bump(theta_v,         gap(8), +1.0_dp, step, 1.0e-3_dp, 0.6_dp)
+    call bump(theta_h,         gap(9), +1.0_dp, step, 0.02_dp,   0.6_dp)
+    call bump(p_rent,          gap(10),+1.0_dp, step, 0.1_dp,    50.0_dp)
+    ! higher flow value of life -> the rich abstain more -> user income falls
+    call bump(aleph,           gap(11),-1.0_dp, step, 0.5_dp,    5.0e3_dp)
 
     ! keep derived quantities consistent with the parameters just moved
     pi_d_high = heavy_ratio * pi_d_low
@@ -216,6 +254,9 @@ subroutine print_params()
     write(*,'(A,ES12.4)') '   recover_mult_hl : ', recover_mult_hl
     write(*,'(A,ES12.4)') '   prob_V          : ', prob_V
     write(*,'(A,ES12.4)') '   theta_v         : ', theta_v
+    write(*,'(A,ES12.4)') '   theta_h         : ', theta_h
+    write(*,'(A,ES12.4)') '   p_rent          : ', p_rent
+    write(*,'(A,ES12.4)') '   aleph           : ', aleph
     write(*,'(A)') '  ----------------------------------------------------'
 end subroutine print_params
 
