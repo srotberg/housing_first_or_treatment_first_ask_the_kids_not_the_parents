@@ -284,32 +284,26 @@ module params
     integer  :: include_mental_health = 1
 
     !-- mortality and employment multipliers ----------------------------------
-    ! Homelessness mortality multiplier, BY AGE. Baggett et al. (2013, JAMA
-    ! Intern Med), the Boston Health Care for the Homeless cohort, give
-    ! race-adjusted all-cause mortality rate ratios against the Massachusetts
-    ! general population of 8.6 for men and 9.6 for women at 25-44, 4.5 at
-    ! 45-64, and 1.1 at 65-84. A flat 1.6 was wrong twice over: five times too
-    ! small at prime ages, and the wrong SHAPE -- a constant multiplier large
-    ! enough to match the young would imply a 41% annual death rate for a
-    ! homeless 80-year-old.
+    ! Mortality multipliers for homelessness and for SUD, BY AGE. Both were flat
+    ! constants (1.6 and 6.9) and both vary strongly with age in the data; they
+    ! are also derived TOGETHER, because the homelessness ratio in the
+    ! literature is measured on a population that mostly also has SUD, so
+    ! netting one out depends on the other. See data/make_mortality_multipliers.py
+    ! for the derivation and data/us_mortality_multipliers.csv for the values.
     !
-    ! Their ratio is the TOTAL for homeless adults, most of whom also have SUD,
-    ! and this model already carries a separate kappa_phi_d. Using 9.1 directly
-    ! would stack the two and count SUD mortality twice, giving 59x. Netting out
-    ! the SUD composition of the homeless,
+    ! Shape of kappa_phi_d comes from CDC WONDER drug-poisoning deaths by age,
+    ! concentrated on the SUD prevalence and divided by the all-cause baseline;
+    ! the LEVEL is anchored to the previous flat 6.9 at its peak, so no level
+    ! anyone defended has changed. Shape and level of kappa_phi_h come from
+    ! Baggett et al. (2013), net of the SUD composition of their cohort.
     !
-    !     RR_total = kappa_phi_h * [ (1-s) + s*kappa_phi_d ],   s = 0.217,
-    !
-    ! the model's own SUD-share-of-homeless target, leaves 3.99, 1.97 and 0.48.
-    !
-    ! The 65+ figure is floored at 1.0. Taken literally it says homelessness
-    ! PROTECTS the old, which is survivor selection -- the few who reach 65
-    ! homeless are unrepresentatively robust -- not a causal effect, and the
-    ! model has no way to represent selection on unobserved frailty. Flooring is
-    ! the conservative choice: it understates the mortality channel rather than
-    ! inventing a protective one.
+    ! A flat 6.9 implied a near-sevenfold SUD mortality penalty at 80, where the
+    ! measured excess is essentially nil; a flat 1.6 was five times too small at
+    ! prime ages. Both errors ran in the direction that weakens the paper's
+    ! central mechanism at the ages where it does its work.
     real(dp) :: kappa_phi_h_age(n_age)
-    real(dp) :: kappa_phi_h = 1.6_dp            ! legacy scalar, unused in survival()
+    real(dp) :: kappa_phi_d_age(n_age)
+    real(dp) :: kappa_phi_h = 1.6_dp            ! legacy scalars, unused in survival()
     real(dp) :: kappa_phi_d = 6.9_dp            ! SUD mortality multiplier
     real(dp) :: kappa_ue_h  = 0.8_dp
     real(dp) :: kappa_ue_d  = 0.6_dp
@@ -472,15 +466,11 @@ subroutine setup_grids()
     surv_base(n_age) = 0.0_dp
     call load_life_table()
 
-    ! age-varying homelessness mortality multiplier (Baggett et al. 2013, net of
-    ! the SUD composition of their cohort -- see the declaration above)
-    do i = 1, n_age
-        select case (i + 25)                       ! model age 1 = real age 26
-        case (:44);   kappa_phi_h_age(i) = 3.99_dp
-        case (45:64); kappa_phi_h_age(i) = 1.97_dp
-        case default; kappa_phi_h_age(i) = 1.00_dp
-        end select
-    end do
+    ! fallback only; load_mortality_multipliers() overwrites these if the file
+    ! is present. Flat values reproduce the pre-data behaviour exactly.
+    kappa_phi_h_age = kappa_phi_h
+    kappa_phi_d_age = kappa_phi_d
+    call load_mortality_multipliers()
 
     psi2 = 1.0_dp + 1.0_dp/drug_supply_elasticity
 
@@ -564,6 +554,53 @@ subroutine load_life_table()
     surv_base(n_age) = 0.0_dp        ! nobody survives the last model age
     write(*,'(A,I0,A)') ' life table loaded: ', nread, ' ages from data/us_life_table.csv'
 end subroutine load_life_table
+
+
+!===============================================================================
+! Age profiles of the homelessness and SUD mortality multipliers.
+!
+! Expected file: data/us_mortality_multipliers.csv, with a header and
+!
+!     age,kappa_phi_d,kappa_phi_h,overdose_excess_ratio
+!
+! age in YEARS. Anything outside 26-85 is ignored; any age not supplied keeps
+! the flat fallback. A missing file warns rather than aborting.
+!===============================================================================
+subroutine load_mortality_multipliers()
+    integer  :: u, ios, age, i, nread
+    real(dp) :: kd, kh, rr
+    character(len=256) :: line
+    logical  :: there
+
+    inquire(file='../../data/us_mortality_multipliers.csv', exist=there)
+    if (.not. there) then
+        write(*,'(A)') ' NOTE: data/us_mortality_multipliers.csv not found;'
+        write(*,'(A)') '       mortality multipliers are FLAT, which the data rejects.'
+        return
+    end if
+
+    open(newunit=u, file='../../data/us_mortality_multipliers.csv', &
+         status='old', iostat=ios)
+    if (ios /= 0) return
+
+    nread = 0
+    do
+        read(u,'(A)',iostat=ios) line
+        if (ios /= 0) exit
+        if (len_trim(line) == 0) cycle
+        if (line(1:1) < '0' .or. line(1:1) > '9') cycle      ! header
+        read(line,*,iostat=ios) age, kd, kh, rr
+        if (ios /= 0) cycle
+        i = age - 25                                          ! model age 1 = real 26
+        if (i >= 1 .and. i <= n_age) then
+            kappa_phi_d_age(i) = max(1.0_dp, kd)
+            kappa_phi_h_age(i) = max(1.0_dp, kh)
+            nread = nread + 1
+        end if
+    end do
+    close(u)
+    write(*,'(A,I0,A)') ' mortality multipliers loaded: ', nread, ' ages'
+end subroutine load_mortality_multipliers
 
 
 subroutine build_mh_trans()
@@ -657,7 +694,7 @@ pure function survival(j, ih, id, im) result(phi)
     real(dp) :: phi, mult, death
     mult = 1.0_dp
     if (ih == 1) mult = mult * kappa_phi_h_age(j)**real(on_homeless_fb,dp)
-    if (id == 2) mult = mult * kappa_phi_d**real(on_mortality_d,dp)
+    if (id == 2) mult = mult * kappa_phi_d_age(j)**real(on_mortality_d,dp)
     if (im == 2) mult = mult * kappa_phi_m
     death = (1.0_dp - surv_base(j)) * mult
     phi = max(0.0_dp, 1.0_dp - min(death, 1.0_dp))
