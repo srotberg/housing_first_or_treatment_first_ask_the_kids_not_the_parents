@@ -556,12 +556,16 @@ subroutine calibration_sweep(step, nbis)
     call bisect_on(2, mom(3)%target,  nbis)   ! h_homeless  -> homelessness rate
     call bisect_on(4, mom(22)%target, nbis)   ! mh_onset    -> SMI prevalence
     call bisect_on(5, mom(23)%target, nbis)   ! aleph       -> model VSL
-    ! AFTER aleph: aleph is the value of staying alive, treatment is the
-    ! technology that buys survival, so raising aleph shifts the take-up
-    ! threshold in treat_ucost. Bracketing take-up before aleph would be undone
-    ! within the same sweep.
-    call bisect_on(6, mom(21)%target, nbis)   ! treat_ucost -> treatment take-up
     call bisect_on(1, mom(1)%target,  nbis)   ! b           -> participation
+    ! LAST, and it must be last. Take-up is measured CONDITIONAL on SUD, so it
+    ! is meaningless until the drug population exists -- and b, bracketed just
+    ! above, is what creates it. Running this before bisect_on(1) read a SUD
+    ! mass of essentially zero, scored take-up as 0 against a 24% target,
+    ! concluded the cost was too high and drove treat_ucost to its FLOOR; b then
+    ! turned drug use on and take-up jumped to 100%. Every sweep repeated it.
+    ! It also has to follow aleph, which sets the value of survival that
+    ! treatment buys.
+    call bisect_on(6, mom(21)%target, nbis)   ! treat_ucost -> treatment take-up
 end subroutine calibration_sweep
 
 
@@ -638,7 +642,15 @@ subroutine bisect_on(which, target_val, iters)
         ! take-up conditional on SUD is accumulated inside compute_moments, not
         ! carried on agg_t; recomputing the moment here also guarantees the
         ! bracket and the printed table are reading the same number
-        case (6); call compute_moments(A); fmid = mom(21)%model
+        case (6)
+            ! a conditional moment with no conditioning mass carries no
+            ! information, and reading it as a zero moves the parameter to a
+            ! bound on the strength of a 0/0
+            if (A%sud <= 1.0e-8_dp*max(A%pop,1.0e-12_dp)) then
+                write(*,'(A)') '      (take-up bracket skipped: SUD population is empty)'
+                return
+            end if
+            call compute_moments(A); fmid = mom(21)%model
         end select
         if ((fmid > target_val) .eqv. rising) then
             hi = mid
