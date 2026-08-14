@@ -22,7 +22,7 @@ def with_(par, **kw):
     return clone(**f)
 
 
-def bcal(par, target=0.0513, lo=1e-4, hi=2.0, iters=30):
+def bcal(par, target=0.0513, lo=1e-4, hi=2.0, iters=17):
     """Bisect b on the participation rate, as the real calibration does."""
     for _ in range(iters):
         mid = np.sqrt(lo * hi)
