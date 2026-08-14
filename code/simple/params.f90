@@ -454,6 +454,29 @@ module params
     real(dp) :: y_grid(NY)
     real(dp) :: y_trans(NY,NY)
     real(dp) :: y_dist0(NY)
+    !-- parental warm glow (R2 C3, AE A6) -------------------------------------
+    ! Section 4.1.3 of the submitted paper specifies log x' = rho_x log x + eps
+    ! but newborns are drawn from the UNCONDITIONAL distribution, so rho_x is
+    ! decorative. That is precisely the AE's A6. This makes it load bearing: at
+    ! one parental age the household's value gains nu times the expected value
+    ! of a newborn whose productivity is drawn CONDITIONAL on its own.
+    !
+    ! The parent cannot influence that draw, so the term is additive and changes
+    ! no decision. It shifts welfare LEVELS, and therefore the policy
+    ! comparison, because V_1 differs across regimes. That is exactly what R2
+    ! predicts: "it would only amplify the welfare gains from reducing
+    ! addiction". Nothing else breaks, because in a stationary equilibrium the
+    ! unconditional newborn distribution is unchanged.
+    !
+    ! nu is NOT calibrated. Because it moves no behaviour there is no
+    ! behavioural moment that could identify it, so it is a welfare robustness
+    ! dimension and the baseline runs at zero.
+    real(dp) :: rho_x        = 0.5_dp        ! intergenerational persistence
+    real(dp) :: nu_parent    = 0.0_dp        ! warm glow weight; 0 = off
+    integer  :: j_parent     = 5             ! model age 5 = real age 30
+    real(dp) :: yg_trans(NY,NY)              ! child's y given the parent's
+    real(dp) :: V_newborn(NY,NM) = 0.0_dp    ! previous pass's newborn value
+    real(dp) :: warm_glow(NY)    = 0.0_dp    ! the additive term, by parent y
     real(dp) :: age_prof(n_age)
     real(dp) :: surv_base(n_age)
     real(dp) :: median_income, avg_income
@@ -503,6 +526,8 @@ subroutine setup_grids()
         y_grid(i) = exp(y_grid(i))
     end do
     call ergodic(NY, y_trans, y_dist0)
+    ! intergenerational chain on the SAME grid, persistence rho_x
+    call rouwenhorst(NY, rho_x, sig, y_grid, yg_trans)
 
     !-- deterministic age profile and baseline survival ----------------------
     do i = 1, n_age
@@ -713,6 +738,27 @@ subroutine load_mh_onset_shape()
     write(*,'(A,I0,A,F6.3)') ' SMI onset shape loaded: ', nread, &
         ' ages, prevalence at 26 = ', smi_prev0
 end subroutine load_mh_onset_shape
+
+
+!-- the parental warm glow term, by the parent's productivity ----------------
+! Recomputed from the PREVIOUS pass's newborn value, so the circularity (the
+! parent at age j_parent needs V at age 1, which is solved last) is handled as
+! a fixed point iterated alongside the equilibrium loop. It converges trivially
+! because the term is additive and moves no policy.
+subroutine refresh_warm_glow()
+    integer :: iy, iyp, imp
+    warm_glow = 0.0_dp
+    if (nu_parent <= 0.0_dp) return
+    do iy = 1, NY
+        do iyp = 1, NY
+            if (yg_trans(iy,iyp) <= 0.0_dp) cycle
+            do imp = 1, NM
+                warm_glow(iy) = warm_glow(iy) + nu_parent*yg_trans(iy,iyp) &
+                              * mh_dist0(imp)*V_newborn(iyp,imp)
+            end do
+        end do
+    end do
+end subroutine refresh_warm_glow
 
 
 !-- rebuild the onset profile from the calibrated level ----------------------
