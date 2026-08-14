@@ -1,53 +1,64 @@
 """
-The stylised two period model behind section 3 of the paper.
+The stylised THREE period model behind section 3 of the paper.
 
-WHAT THIS IS FOR
+WHY THREE AND NOT TWO
 
-The full model has too many moving parts for a reader to see which one does the
-work. This strips it to the smallest environment in which the paper's claims are
-still true, solves it numerically, and reports what each parameter controls. It
-is not a summary of the big model. It is a separate object whose job is to say
-what the channel shutdown ladder in section 7 is a test OF.
+Two periods makes the disorder a one off cost: you acquire it, you pay once,
+the model ends. The paper's mechanism is that the disorder is PERSISTENT and
+its costs compound, and that is also what makes the value of life rise steeply
+in permanent income. Three periods is the smallest environment with that
+property: use at 1, the disorder lands at 2, and it persists into 3 unless the
+household recovers.
+
+It also makes SAVING do something. With two periods saving is a pure
+consumption smoothing device. With three, the household saves in period 1 partly
+to self insure against the income drop and the homelessness risk that the
+disorder brings in period 2, and Referee 1's objection to the previous appendix
+was precisely that it abstracted from dynamic savings decisions.
 
 THE ENVIRONMENT
 
-Two periods. A household has permanent income y, fixed and heterogeneous.
+  period 1   income y. Choose non drug consumption, drug use v >= 0 and saving.
+             Everyone starts clean. Flow utility  log c + th_i [log(b+v) - log b].
+             Using raises the chance of the disorder:  pi_d(v) = 1 - exp(-lam v).
 
-  period 1   receives y, chooses non drug consumption c, drug use v >= 0 and
-             saving a >= 0, subject to c + p_v v + a = y
-             flow utility  (1-th) log c + th [ log(b+v) - log b ]
-             using raises the chance of carrying a substance use disorder into
-             period 2:  pi_d(v) = 1 - exp(-lam v)
+  period 2   disorder d in {0,1}. Income y(1 - xi d). Homeless with probability
+             pH1 if d = 1 and pH0 if not, unless a voucher covers the household.
+             Homelessness costs a utility flow and raises mortality. Choose
+             saving. Recover from the disorder with probability rho.
 
-  period 2   resources W = R a + y (1 - xi d) + Delta * 1{voucher}
-             survival    phi(d) = phi0 (1 - kap d)
-             value alive (1-th) log W + aleph
+  period 3   terminal. Consume everything, with the same homelessness risk.
 
-Two penalties for carrying the disorder, kept SEPARATE on purpose:
+TWO CHANNELS, AND THE PAIRS MATTER
 
-    kap   mortality penalty   you die more
-    xi    income penalty      you earn less
+The disorder hurts in two ways and each has a direct and an indirect arm:
 
-A voucher worth Delta arrives with probability pV. Under Housing First it
-arrives whatever d is; under Treatment First only if d = 0. That is the smallest
-representation of conditionality there is.
+    MORTALITY   kap   it kills you       kapH  and it makes you homeless,
+                                               which also kills you
+    RESOURCE    xi    it makes you poor   ellH  and homelessness costs a flow
 
-THE EXACT CONDITION EVERYTHING TURNS ON
+Switching a channel off means switching BOTH members of its pair. Switching kap
+alone leaves the homelessness mortality penalty running in a row that is
+supposed to have no mortality channel at all.
 
-At v -> 0, in CONSUMPTION units, the household uses if and only if
+THE VOUCHER, AND WHY IT PRODUCES BOTH OF THE PAPER'S FORCES
 
-    (th/b) c/(1-th)      >      p_v  +  beta lam VSL(y)
-    ---------------             ------------------------
-    marginal willingness        price plus the mortality
-    to pay, grows like y        cost of the marginal unit
+A voucher removes the risk of homelessness. Under Housing First it arrives
+whatever d is; under Treatment First only if d = 0. That single difference is
 
-with  VSL(y) = phi0 kap c [ log W + aleph/(1-th) ].
+  moral hazard     under HF, generosity lowers P(homeless | disorder), so
+                   acquiring the disorder costs less and use RISES
+  value of life    under TF, generosity raises the value of staying clean
+                   without touching the disorder branch, so use FALLS
 
-VSL/y rises in y through the log term, so the right hand side grows
-SUPERLINEARLY in income while the left grows linearly. That is the entire
-mechanism. It also says immediately that the mechanism is a RACE, won by
-mortality only if lam is large enough and aleph is not so large that the
-constant swamps the log term. Both are checked in search.py.
+Neither exists if the voucher is a transfer rather than insurance against a bad
+state. An earlier version made that mistake and found no moral hazard at all.
+
+NOTE ON PREFERENCES. Drugs enter ADDITIVELY, log c + th [log(b+v) - log b],
+rather than as a Cobb Douglas weight. Two reasons. It keeps periods 2 and 3
+independent of the taste draw, so they are solved once per income level rather
+than once per household. And it means taste dispersion shifts only the drug
+term, so nothing about the consumption side varies with it.
 """
 
 import os
@@ -58,49 +69,26 @@ OUT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
 
 
 class P:
-    th    = 0.05      # Cobb Douglas weight on drugs
-    b     = 0.010     # Stone Geary subsistence; th/b is the pull of the first unit
+    th    = 0.050     # mean taste for drugs
+    b     = 0.013     # Stone Geary subsistence; th/b is the pull of the first unit
     p_v   = 1.0       # price of drugs, the numeraire
     beta  = 0.96
     R     = 1.03
-    phi0  = 0.90      # survival through period 2, clean
-    kap   = 0.45      # mortality penalty, phi(1) = phi0 (1 - kap)
-    xi    = 0.31      # income penalty, y -> y (1 - xi)
+    phi0  = 0.94      # per period survival, clean and housed
+    kap   = 0.45      # MORTALITY channel, direct
+    kapH  = 0.35      # MORTALITY channel, through homelessness
+    xi    = 0.31      # RESOURCE channel, direct
+    ellH  = 0.80      # RESOURCE channel, through homelessness
     lam   = 6.00      # addiction hazard per unit of use
+    rho   = 0.15      # recovery probability between period 2 and 3
     aleph = 2.50      # flow value of being alive
-    # HOMELESSNESS, which is what the voucher actually insures.
-    #
-    # An earlier version had the voucher simply add resources in period 2. That
-    # cannot produce moral hazard, and did not: use under Housing First was flat
-    # in generosity. Moral hazard here is not about a transfer relaxing a budget
-    # constraint, it is about assistance CUSHIONING THE DOWNSIDE OF THE DISORDER,
-    # and the downside is homelessness. With no homelessness state there is
-    # nothing for the voucher to insure, so the only force left was the value of
-    # life effect and use could only fall.
     pH0   = 0.02      # P(homeless) without the disorder
     pH1   = 0.35      # P(homeless) with it, absent a voucher
-    ellH  = 0.80      # flow utility cost of being homeless
-    kapH  = 0.35      # mortality penalty of being homeless
     pV    = 0.27      # probability of receiving a voucher
-    # Dispersion in the TASTE for drugs, th_i = th exp(sig e - sig^2/2), e ~ N(0,1).
-    #
-    # Some smoothing is needed. With households differing only in y they all
-    # cross the extensive margin at nearly the same b, and participation jumps
-    # from one to zero over a factor of two in b, which makes every comparative
-    # static here degenerate. That is an artefact of having one source of
-    # heterogeneity; the full model has six state variables and does not need it.
-    #
-    # It has to be dispersion in the TASTE and not an additive shock on the
-    # choice. An additive shock sends participation to one half whenever the two
-    # conditional values are close, so participation cannot fall to the 5 per
-    # cent in the data no matter how large b is, and the calibration of b fails
-    # at its upper bound. Taste dispersion has no such floor.
-    #
-    # Note this is dispersion INDEPENDENT of income. The paper's claim is that it
-    # does not need taste heterogeneity CONDITIONAL on income to put use at the
-    # bottom, and that claim is untouched.
-    sig   = 0.55
-    nq    = 25        # Gauss Hermite nodes; too few makes participation step visibly
+    sig   = 0.55      # dispersion of log taste, income independent
+    nq    = 25        # Gauss Hermite nodes
+    na    = 90        # asset grid
+    nv    = 200       # drug use grid
 
 
 def clone(**kw):
@@ -110,97 +98,111 @@ def clone(**kw):
     return q
 
 
+def fields(par):
+    return {k: getattr(par, k) for k in dir(par)
+            if not k.startswith('_') and not callable(getattr(par, k))}
+
+
+def with_(par, **kw):
+    f = fields(par); f.update(kw)
+    return clone(**f)
+
+
 # ----------------------------------------------------------------------------
-# solver, vectorised over (v, saving rate)
-# ----------------------------------------------------------------------------
-def _V2(par, y, a, d, policy):
-    """
-    Period 2 value in disorder state d.
-
-    A voucher arrives with probability pV and, when it does, it removes the risk
-    of homelessness. Under Housing First it arrives whatever d is. Under
-    Treatment First it arrives only if d = 0.
-
-    That single difference is both of the paper's forces at once:
-
-      moral hazard   under HF, more generosity lowers P(homeless | disorder),
-                     which makes acquiring the disorder LESS costly, so use rises
-      deterrence     under TF, more generosity raises the value of staying clean
-                     without touching the disorder branch, so use falls
-
-    and neither exists if the voucher is modelled as a transfer rather than as
-    insurance against a bad state.
-    """
-    inc  = par.R * a + y * (1.0 - par.xi * d)
-    u    = (1.0 - par.th) * np.log(np.maximum(inc, 1e-12))
+def _ph(par, d, policy):
+    """P(homeless) in state d, after the voucher."""
     covered = (policy == 'HF') or (d == 0)
-    ph   = (par.pH1 if d == 1 else par.pH0) * (1.0 - (par.pV if covered else 0.0))
-    phi  = par.phi0 * (1.0 - par.kap * d)
-    v_ho = phi * (u + par.aleph)                               # housed
-    v_hl = phi * (1.0 - par.kapH) * (u - par.ellH + par.aleph)  # homeless
-    return (1.0 - ph) * v_ho + ph * v_hl
+    base = par.pH1 if d == 1 else par.pH0
+    return base * (1.0 - (par.pV if covered else 0.0))
 
 
-def _best(par, y, policy, vgrid, ns=81):
-    """Best value over the saving rate, for each v on the supplied grid."""
-    v   = vgrid[:, None]
-    s   = np.linspace(0.0, 0.85, ns)[None, :]
-    res = y - par.p_v * v
-    a   = res * s
-    c   = res * (1.0 - s)
-    ok  = (res > 1e-9) & (c > 1e-9)
-    pid = 1.0 - np.exp(-par.lam * v)
-    val = (1.0 - par.th) * np.log(np.maximum(c, 1e-12)) \
-        + par.th * (np.log(par.b + v) - np.log(par.b)) \
-        + par.beta * ((1.0 - pid) * _V2(par, y, a, 0, policy)
-                      +        pid  * _V2(par, y, a, 1, policy))
-    val = np.where(ok, val, -np.inf)
-    j   = np.argmax(val, axis=1)
-    return val[np.arange(val.shape[0]), j]
+def _surv(par, d, policy):
+    """Expected survival out of a period in state d."""
+    p = _ph(par, d, policy)
+    phi = par.phi0 * (1.0 - par.kap * d)
+    return (1.0 - p) * phi + p * phi * (1.0 - par.kapH)
 
 
-def _quad(par):
-    x, w = np.polynomial.hermite_e.hermegauss(par.nq)
-    return x, w / w.sum()
+def _flow(par, c, d, policy):
+    """Flow utility in state d, expected over the homelessness draw."""
+    return np.log(np.maximum(c, 1e-12)) + par.aleph \
+        - par.ellH * _ph(par, d, policy)
 
 
-def solve_one(par, y, policy='HF', nv=200):
+def solve_late(par, y, policy):
     """
-    Integrates over the taste draw. Returns (participation probability at this
-    income, expected use per household at this income).
+    Backward induction over periods 3 and 2. Independent of the taste draw, so
+    this is solved once per income level. Returns V2 on the asset grid, by d.
     """
-    x, qw = _quad(par)
-    vg = np.linspace(1e-4, 0.55 * y, nv)
-    p, ev = 0.0, 0.0
-    for xi_, wi in zip(x, qw):
-        q = clone(**{**_fields(par),
-                     'th': par.th * np.exp(par.sig * xi_ - 0.5 * par.sig**2)})
-        v_no = _best(q, y, policy, np.array([0.0]))[0]
-        vals = _best(q, y, policy, vg)
-        k = int(np.argmax(vals))
-        if np.isfinite(vals[k]) and vals[k] > v_no:
-            p  += wi
-            ev += wi * vg[k]
-    return float(p), float(ev)
+    amax = 1.4 * y
+    ag = np.linspace(0.0, amax, par.na)
+
+    # period 3: consume everything
+    V3 = np.empty((par.na, 2))
+    for d in (0, 1):
+        V3[:, d] = _flow(par, par.R * ag + y * (1.0 - par.xi * d), d, policy)
+
+    # period 2: choose next assets
+    V2 = np.empty((par.na, 2))
+    for d in (0, 1):
+        cash = par.R * ag[:, None] + y * (1.0 - par.xi * d)
+        c    = cash - ag[None, :]
+        EV3  = (1.0 - par.rho) * V3[:, d] + par.rho * V3[:, 0] if d == 1 else V3[:, 0]
+        val  = np.where(c > 1e-9,
+                        _flow(par, c, d, policy)
+                        + par.beta * _surv(par, d, policy) * EV3[None, :],
+                        -np.inf)
+        V2[:, d] = val.max(axis=1)
+    return ag, V2
+
+
+def solve_one(par, y, policy='HF'):
+    """
+    Period 1. Returns (participation probability, expected use per household).
+
+    Drugs enter additively, so the value of any (v, saving) pair splits into a
+    taste independent part and th_i times a known function of v. The maximisation
+    over the taste draw is therefore a single vector operation rather than a
+    resolve per household.
+    """
+    ag, V2 = solve_late(par, y, policy)
+    vg = np.concatenate(([0.0], np.linspace(1e-4, 0.55 * y, par.nv - 1)))
+
+    cash = y - par.p_v * vg[:, None]
+    c    = cash - ag[None, :]
+    pid  = (1.0 - np.exp(-par.lam * vg))[:, None]
+    EV2  = (1.0 - pid) * V2[None, :, 0] + pid * V2[None, :, 1]
+    val  = np.where(c > 1e-9,
+                    np.log(np.maximum(c, 1e-12)) + par.aleph
+                    + par.beta * par.phi0 * EV2,
+                    -np.inf)
+    base = val.max(axis=1)                      # best over saving, for each v
+    G    = np.log(par.b + vg) - np.log(par.b)   # the drug term, per unit of taste
+
+    x, qw = np.polynomial.hermite_e.hermegauss(par.nq)
+    qw = qw / qw.sum()
+    th = par.th * np.exp(par.sig * x - 0.5 * par.sig**2)
+
+    tot = base[None, :] + th[:, None] * G[None, :]      # nq by nv
+    k   = np.argmax(tot, axis=1)
+    best = tot[np.arange(par.nq), k]
+    v_no = base[0]                                       # v = 0 is the first node
+    use  = best > v_no + 1e-12
+    return float((qw * use).sum()), float((qw * use * vg[k]).sum())
 
 
 def profile(par, ygrid, policy='HF'):
-    """(participation, expected use) by income."""
     out = [solve_one(par, y, policy) for y in ygrid]
     return np.array([o[0] for o in out]), np.array([o[1] for o in out])
 
 
-# ----------------------------------------------------------------------------
-# the moments, measured the way the DATA measure them
-# ----------------------------------------------------------------------------
 def moments(par, ygrid, w, policy='HF'):
     """
-    r_use is the income of users relative to the average, in period 1.
-    r_sud is the income of households WITH the disorder relative to the average,
-    measured in period 2, so AFTER the earnings penalty has landed. That is what
-    NSDUH sees. Measuring it on pre penalty income was an error in the first
-    version of this script: it forced the two ratios to move together, which is
-    exactly the thing the data say they do not do.
+    r_use  income of users relative to the average, period 1.
+    r_sud  income of households with the disorder relative to the average,
+           measured in period 2 AFTER the earnings penalty, which is what NSDUH
+           sees. Measuring it on pre penalty income forces the two ratios to
+           move together, which is exactly what the data say they do not do.
     """
     p_use, ev = profile(par, ygrid, policy)
     vbar = np.where(p_use > 1e-9, ev / np.maximum(p_use, 1e-9), 0.0)
@@ -209,20 +211,14 @@ def moments(par, ygrid, w, policy='HF'):
 
     r_use = (w * p_use * ygrid).sum() / max((w * p_use).sum(), 1e-12) \
           / (w * ygrid).sum()
-
-    y2    = ygrid * (1.0 - par.xi)             # income once the disorder lands
+    y2    = ygrid * (1.0 - par.xi)
     ybar2 = (w * (pid * y2 + (1.0 - pid) * ygrid)).sum()
     r_sud = (w * pid * y2).sum() / max((w * pid).sum(), 1e-12) / ybar2
 
-    x = np.log(ygrid) - (w * np.log(ygrid)).sum()
-    slope = float((w * x * (ev - (w * ev).sum())).sum() / (w * x * x).sum())
-    v = vbar
+    ly = np.log(ygrid); ly = ly - (w * ly).sum()
+    el = float((w * ly * (p_use - (w * p_use).sum())).sum() / (w * ly * ly).sum()) \
+        / max((w * p_use).sum(), 1e-12)
 
     return dict(part=float((w * p_use).sum()), sud=float((w * pid).sum()),
-                r_use=float(r_use), r_sud=float(r_sud), slope=slope,
-                p_use=p_use, v=v, ev=ev, pid=pid)
-
-
-def _fields(par):
-    return {k: getattr(par, k) for k in dir(par)
-            if not k.startswith('_') and not callable(getattr(par, k))}
+                r_use=float(r_use), r_sud=float(r_sud), elast=el,
+                p_use=p_use, v=vbar, ev=ev, pid=pid)
