@@ -72,9 +72,15 @@ subroutine init_targets()
     ! severe disorder against 5.5% in the adult population -- a relative risk
     ! near 4.5. This identifies the PERSISTENCE of the SMI state.
     mom(13) = mom_t('SMI share of homeless (%)   ', 25.00_dp, 0.0_dp, 1.0_dp)
-    ! Employment rate given SMI: 22-40% for high-disability diagnoses; about a
-    ! fifth of people with schizophrenia are in work. Midpoint 30%.
-    mom(14) = mom_t('employment rate | SMI (%)   ', 30.00_dp, 0.0_dp, 1.0_dp)
+    ! WARNING -- this target is inconsistent with a 5% SMI prevalence; see
+    ! MENTAL_HEALTH.md section 6. The 22-40% employment figures come from
+    ! high-disability diagnoses (schizophrenia, ~1% of adults). NSDUH's SMI is a
+    ! broader functional-impairment measure at 5.0% of adults 26+, and its own
+    ! tables imply a far milder gradient: SMI prevalence is 8.9% among the
+    ! unemployed against 5.1% among the full-time employed (Table 6.5B), which
+    ! by Bayes gives an unemployment rate given SMI near 7.1% against 4%
+    ! overall -- a ratio of 1.8, not 70% non-employment.
+    mom(14) = mom_t('unemp rate | SMI (%)        ',  7.10_dp, 0.0_dp, 1.0_dp)
     ! Homeless income relative to average -- R1 comment 2(c)(i), 19.1% in the
     ! linked administrative data of Meyer et al.
     mom(15) = mom_t('homeless income / avg (%)   ', 19.10_dp, 0.0_dp, 1.0_dp)
@@ -86,12 +92,15 @@ subroutine init_targets()
     mom(17) = mom_t('light share of experimenters', 86.80_dp, 0.0_dp, 1.0_dp)
     ! cfloor_share: SNAP benefits as a share of GDP, FY2023 (paper target 21)
     mom(18) = mom_t('food stamps / labour income ',  0.42_dp, 0.0_dp, 1.0_dp)
-    ! Co-occurring SUD among adults with SMI. SAMHSA 2023 NSDUH: 6.809m adults
-    ! had both, against 14.6m with SMI, so 46.6%. Against a population SUD rate
-    ! near 17.7% that is a relative risk of about 2.6. Applied to the model's
-    ! SUD concept (3.68%) this implies roughly 9.6% among those with SMI.
-    ! This is what identifies the self-medication channel, mh_b_ratio.
-    mom(19) = mom_t('SUD rate given SMI (%)      ',  9.60_dp, 0.0_dp, 1.0_dp)
+    ! Co-occurring SUD among adults with SMI, age-matched to the model from the
+    ! 2023 NSDUH detailed tables (aged 26+, 2023):
+    !   co-occurring SUD and SMI  = 2.2%   (Table 6.13B)
+    !   SMI                       = 5.0%   (Table 6.4B)
+    !   SUD                       = 16.6%  (Table 5.10B)
+    ! so P(SUD | SMI) = 2.2/5.0 = 44.0%, a relative risk of 44.0/16.6 = 2.65.
+    ! Applied to this model's SUD concept (3.68%): 2.65 x 3.68 = 9.75%.
+    ! This identifies the self-medication channel, mh_b_ratio.
+    mom(19) = mom_t('SUD rate given SMI (%)      ',  9.75_dp, 0.0_dp, 1.0_dp)
 end subroutine init_targets
 
 
@@ -212,7 +221,7 @@ subroutine compute_moments(A)
     mom(12)%model = 100.0_dp*(sud_inc/max(sud_m,1.0e-12_dp)) &
                             /max(totinc/p, 1.0e-12_dp)
     mom(13)%model = 100.0_dp*hl_smi/max(hl_m, 1.0e-12_dp)
-    mom(14)%model = 100.0_dp*smi_emp/max(smi_work, 1.0e-12_dp)
+    mom(14)%model = 100.0_dp*(1.0_dp - smi_emp/max(smi_work, 1.0e-12_dp))
     mom(15)%model = 100.0_dp*(hl_inc/max(hl_m,1.0e-12_dp)) &
                             /max(totinc/p, 1.0e-12_dp)
     mom(16)%model = wealth/max(totinc, 1.0e-12_dp)
@@ -325,7 +334,7 @@ end function max_gap
 !   aleph              SUD income / average income            -
 !   di_coverage        SMI share of the homeless              -
 !   mh_b_ratio         SUD rate given SMI                     -
-!   kappa_ue_m         employment rate given SMI              +
+!   kappa_ue_m         unemployment rate given SMI            -
 !   prod_pen_m         homeless income / average income       +
 !   beta               net worth / income                     +
 !   vbar               light share of experimenters           +
@@ -350,7 +359,7 @@ subroutine calibration_sweep(step)
     call bump(aleph,           gap(12),-1.0_dp, step, 0.5_dp,    5.0e3_dp)
     ! wider DI coverage keeps more of the SMI population housed (IZ's zeta_di)
     call bump(di_coverage,     gap(13),-1.0_dp, step, 0.05_dp,   3.00_dp)
-    call bump(kappa_ue_m,      gap(14),+1.0_dp, step, 0.05_dp,   1.00_dp)
+    call bump(kappa_ue_m,      gap(14),-1.0_dp, step, 0.05_dp,   1.00_dp)
     call bump(prod_pen_m,      gap(15),+1.0_dp, step, 0.05_dp,   1.00_dp)
     call bump(beta,            gap(16),+1.0_dp, step, 0.85_dp,   0.995_dp)
     ! a higher heavy-use threshold lets more experimenters stay 'light'
