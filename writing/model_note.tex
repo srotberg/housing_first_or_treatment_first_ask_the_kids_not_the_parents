@@ -2,6 +2,7 @@
 
 \usepackage[margin=1.05in]{geometry}
 \usepackage{amsmath,amssymb}
+\usepackage[official]{eurosym}
 \usepackage{booktabs}
 \usepackage{longtable}
 \usepackage{array}
@@ -535,11 +536,34 @@ that endogenising the price ``requires suppressing this normalization''. It does
 not: the normalisation moves to $\psi_1$, the benchmark price is still one, and
 only counterfactuals move it.
 
-\paragraph{Honest statement about $\psi_2$.} There is no credible estimate of the
-supply elasticity of illicit drugs. It is reported as a bounded sensitivity, and
-note that the submitted paper's fixed price is the $\psi_2\to1$ endpoint of that
-range, so the sensitivity brackets the old assumption rather than replacing it
-with a different guess.
+\paragraph{What the evidence says about $\psi_2$, and why it favours the
+submitted paper.} The maintained assumption in the drug-economics literature is
+that US supply of cocaine and heroin is \emph{very} elastic. Rhodes et al.\
+(2002), discussed in the National Academies' \emph{Understanding the Demand for
+Illegal Drugs}, assume it outright on the grounds that these are agricultural
+products with simple, inexpensive processing, so producers can meet any demand at
+roughly the current price; the reduced-form demand estimates that literature
+rests on require it.
+
+There is also a natural experiment. In August 2010 Purdue replaced OxyContin
+with an abuse-deterrent formulation, pushing a very large mass of demand into
+heroin --- enough to quadruple heroin death rates (Alpert, Powell and Pacula,
+NBER w24475). Purity-adjusted heroin prices did not rise. They fell slightly
+between 2010 and 2012. A demand shift of that magnitude leaving price flat is
+direct evidence of a near-horizontal supply curve.
+
+So the baseline here is a \emph{flat} supply curve and finite elasticities are
+the robustness direction, not the other way round. That reframes the answer to
+Referee~1 (1c) and Referee~3 (M2d): the submitted paper's fixed price was the
+field's standard assumption rather than an unjustified normalisation, and the
+machinery now exists to demonstrate that relaxing it does not matter.
+
+It is worth recording the companion fact, because it disciplines the second
+stage. The \emph{demand} elasticity is well estimated: participation elasticities
+of $-0.36$ to $-0.55$ for cocaine and $-0.80$ to $-0.90$ for heroin
+(Saffer and Chaloupka), with conditional heroin demand near $-0.80$ (Olmstead et
+al.\ 2015). The paper's $-0.63$ target sits inside that range, and the $-0.36$ to
+$-0.9$ robustness band Referee~1 asks for \emph{is} that range.
 
 \subsection{Stationary equilibrium}
 
@@ -1000,10 +1024,53 @@ appendix could not deliver.
 Referee~3's M2c asks where the externalities justifying intervention arise, given
 that use is rational and forward-looking. They are of two kinds.
 
-\emph{Fiscal.} A household that becomes homeless or acquires SUD imposes $\chi_H$
-and $\chi_D$ on the budget and reduces the tax base through lower earnings and
-higher transfer receipt. None is internalised, and all of it is measured directly
-by the model. This is the larger of the two and it is fully disciplined.
+\emph{Fiscal, and it has four parts.} A household that acquires SUD (i) works
+less and pays less tax; (ii) becomes likelier to be voucher-eligible and to
+receive one; (iii) becomes likelier to be homeless, which raises the direct
+programme cost \emph{and} makes work harder to find and easier to lose
+($\kappa_{ueH}=0.80$, Desmond and Gershenson), compounding back into (i); and
+(iv) dies earlier, truncating the whole stream of future revenue. None of this is
+internalised, and all of it is already in the model --- but the submitted paper
+never reported it.
+
+It is now measured. Define the expected present discounted value of a
+household's net contribution to the government,
+\begin{equation}
+N_j(s)=\underbrace{T_j(s)}_{\text{taxes}}-\underbrace{V\!ch_j(s)}_{\text{vouchers}}
+-\underbrace{Tr_j(s)}_{\text{other transfers}}
+-\underbrace{\chi_H\ind{h'=h_1}+\chi_D\ind{d=1}}_{\text{direct costs}}
++\frac{\phi_j(s)}{1+r}\,\mathbb E\bigl[N_{j+1}(s')\bigr],
+\end{equation}
+discounted at the government's rate. Given the benchmark policy functions this is
+a \emph{linear} recursion, so it costs one backward pass and no optimisation, and
+carrying the four components separately decomposes the answer. The fiscal cost of
+one more case is
+\[
+\mathbb E\bigl[N(a,y,e,d=0,m,\eta)\bigr]-\mathbb E\bigl[N(a,y,e,d=1,m,\eta)\bigr]
+\]
+over the benchmark distribution of clean households: the same household,
+counterfactually with and without SUD.
+
+Two of the four channels are separated by re-running the recursion with one
+transition altered. Evaluating the SUD stream at \emph{clean} survival isolates
+what early death alone costs, purely by truncating the revenue stream. Evaluating
+it with homelessness carrying \emph{no} employment penalty isolates the
+SUD~$\rightarrow$~homelessness~$\rightarrow$~unemployment~$\rightarrow$~lost-tax
+chain. Both are easy to miss precisely because they work through transitions
+rather than through any flow.
+
+\paragraph{Reporting them in one currency.} The fiscal loss has to be financed by
+somebody, so annuitising it and spreading it across the population puts it in the
+same units as the disamenity --- a share of average annual consumption. Only then
+can a reader see which channel actually matters. On the target values alone the
+direct outlays $\chi_H H+\chi_D D$ come to about 0.86\% of average income per
+capita against a disamenity near 0.33\%, and the direct outlays are only one of
+the four fiscal channels. If that ordering survives the calibration it is a
+substantially stronger position than the submitted paper's, where the entire
+ranking rested on $\kappa_{\text{cons}}$: the case for intervention would rest
+mainly on the channel that is measured inside the model and needs no free
+parameter, rather than on the contingent-valuation number, which is the weakest
+link.
 
 \emph{Non-fiscal.} The disamenity term in \eqref{eq:util}. Referee~2 (C2) asked
 for it and said it was easy to introduce; it is, but it has no credible point
@@ -1015,15 +1082,61 @@ about neighbourhood housing \emph{quality} rather than homelessness, and their
 identification comes from rent decontrol, so what transfers is their
 identification logic, not their functional form.
 
-The recommendation is to set $\kappa_x=0$ in the baseline, report a bounded
-sensitivity, and use the qualitative finding from the spatial literature --- that
-permanent supportive housing \emph{raises} nearby property values while temporary
-emergency shelter lowers them --- as the substantive point. PSH is Housing
-First-like and transitional shelter is Treatment First-like, so the externality
-plausibly differs in \emph{sign} between the two policies. That is a stronger
-argument than a made-up parameter. Note also that $\kappa_x=0$ is a defensible
-baseline in a way $\kappa_{\text{cons}}=0$ was not: that was the value at which
-the paper's conclusion reversed.
+\paragraph{A calibration for the disamenity does exist.} Referee~2 noted that
+introducing the externality ``would require a new calibration moment''. There is
+one, and it is a much better fit to this model than the hedonics. Loubi\`ere et
+al.\ ran an eight-country contingent-valuation study (France, Ireland, Italy,
+Netherlands, Poland, Portugal, Spain, Sweden, roughly 700 respondents each,
+fielded in 2017) asking exactly the right question: what would you pay in annual
+taxes to \emph{end} homelessness through Housing First? The answer was about
+\EUR{}57 per respondent per year, roughly 0.2\% of average annual earnings. That
+is a stated preference over the \emph{aggregate} homelessness rate --- precisely
+the object $\kappa_x$ multiplies --- and it is non-spatial, which the hedonic
+estimates are not.
+
+\paragraph{The normalisation that this requires.} The \EUR{}57 buys elimination
+of the \emph{European} homelessness rate, not the model's. Dividing by the
+model's own rate would make the same survey figure imply a different disamenity
+in every economy it was transplanted into: mechanically small wherever
+homelessness is rare and large wherever it is common, which is the opposite of
+what a per-unit valuation means. So $\kappa_x$ is set as a price per unit of
+homelessness,
+\begin{equation}
+\kappa_x=\frac{\text{WTP}\cdot\mathbb E\bigl[c\,u_c\bigr]}
+{H_{\text{ref}}\bigl(1+\omega_x s_{\text{ref}}\bigr)},
+\end{equation}
+with $H_{\text{ref}}$ the European rate at the time of the survey and
+$s_{\text{ref}}$ the drug-use-disorder share of the homeless in the same pooled
+evidence base. FEANTSA counted roughly 700,000 people sleeping rough or in
+shelter across the EU in 2017 against a population near 440 million, so
+$H_{\text{ref}}\approx0.16\%$; the 2023 overview reports about 895,000, but part
+of that rise is improved measurement. The central value used is 0.18\% and the
+range swept is 0.15--0.22\%. Since $\kappa_x$ is inversely proportional to
+$H_{\text{ref}}$, this is the single most consequential judgement in the
+disamenity calibration and it must be reported as a range. At a model
+homelessness rate of 0.30\% against a reference of 0.18\%, the adjustment scales
+the disamenity by 1.67, from 0.20\% to 0.33\% of income.
+
+\paragraph{Caveats, to be stated in the paper.} Stated rather than revealed
+preference; European rather than US; 30.3\% protest zeros; and the elicited
+change is elimination rather than a marginal change, so the linear extrapolation
+to the model's rate is an assumption.
+
+\paragraph{What the hedonics are still good for.} Not a magnitude, but a sign.
+The NYC Independent Budget Office finds a property within 500 feet of a family
+shelter sells for about 6.4\% less than a comparable property 500--1,000 feet
+away, and properties near two or more shelters 17.4\% less than near one. The
+Furman Center, studying 123 supportive-housing developments over 18 years, finds
+supportive housing does \emph{not} depress neighbouring values and slightly
+raises the closest ones; spatial difference-in-differences work reaches the same
+split. Permanent supportive housing is Housing First-like and temporary
+congregate shelter is Treatment First-like, so the externality plausibly differs
+in \emph{sign} between the two policies being compared. That is a substantive
+point in Housing First's favour and it does not require a number.
+
+Note finally that $\kappa_x=0$ is a defensible baseline in a way
+$\kappa_{\text{cons}}=0$ was not: that was the value at which the paper's
+conclusion reversed.
 
 %======================================================================
 \section{What each referee still wants}
