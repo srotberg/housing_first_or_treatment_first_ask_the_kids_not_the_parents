@@ -1458,36 +1458,65 @@ A19 & ``Addicted'' $\rightarrow$ ``suffering from substance use disorder'' & \te
 \bottomrule
 \end{longtable}
 
-\subsection{Loose ends: what is \emph{not} covered by the work already planned}
+\subsection{\nw{Loose ends, split by status}}
 
-Almost everything in the four lists above is closed by one of four blocks of
-work that are already scoped: the \textbf{recalibration}, the
-\textbf{counterfactuals}, the \textbf{mechanism ladder}, and the
-\textbf{rewriting}. Stripping those out leaves a short list of genuine loose ends, items that need a decision, new data, or code that does not exist yet.
+\nw{Almost everything in the four lists above is closed by one of four blocks of
+work already scoped: the \textbf{recalibration}, the \textbf{counterfactuals},
+the \textbf{mechanism ladder} and the \textbf{rewriting}. What is left is sorted
+here into what is finished, what is decided and scoped but not yet built, and
+what is genuinely unresolved. Nothing sits in the third table merely because it
+is unfinished.}
 
-\begin{longtable}{lL{5.4cm}L{6.0cm}}
+\nw{\paragraph{Closed.}}
+
+\nw{\begin{longtable}{lL{5.0cm}L{6.4cm}}
 \toprule
-Ref & Loose end & What it actually needs\\
+Ref & Item & What closed it\\
 \midrule
 \endhead
-\nw{R1 3(d)} & \nw{Transition paths} & \nw{\textbf{Written, and now executing.} No longer a loose end in the sense of missing code. What remains is cost: one path iteration is two passes over $T$ dates by 60 ages, so $T=60$ with thirty iterations would be nineteen hours. $T=30$ and a better initial path are the mitigations}\\
-\nw{R1 4(c)} & \nw{Administrative cost of drug testing} & \nw{\textbf{Done.} Each voucher holder faces a per-period probability of being tested, each test costs the government, and detection now requires a test. It is in the budget constraint. The remaining judgement is the cost per test, currently \$40 quarterly}\\
-R2 C3 / AE A6 & Parental anxiety; intergenerational language without linkages & \nw{\textbf{A decision, and here is what it is between.} The submitted paper's \S4.1.3 discusses intergenerational transmission but the model has no link between parents and children, which is the AE's A6. R2 separately says parents suffer from the risk that their children become addicted or homeless, and predicts it would amplify the welfare gains. \textbf{Option 1}, delete the \S4.1.3 language: costs nothing, answers A6, ignores R2. \textbf{Option 2}, add a warm-glow term at one parental age, utility loads on the expected state of a child drawn from the $\rho_x=0.5$ process the paper already specifies: one term, answers both, and turns a criticism into a mechanism. \textbf{Recommended: option 2}}\\
-R1 sm.\ 1 & Maximum experimentation age & \textbf{A diagnostic and possibly a defence.} If dropping it piles use onto the old, that has to be explained rather than assumed away\\
-R2 C2 & $\omega_x$, the composition weight & \nw{\textbf{Genuinely open, and searched for.} What the literature supports is a difference in SIGN by facility type, permanent supportive housing raises nearby property values, temporary emergency shelter lowers them, not a composition weight on the homeless population's addiction rate. Baseline 1.0, swept 1 to 4, and the sign asymmetry carried as the qualitative point}\\
-\nw{R3 M1b} & \nw{Survival hazards} & \nw{\textbf{Closed.} SSA period life table loaded from \texttt{data/us\_life\_table.csv}; survival is no longer a fitted exponential}\\
-\nw{AE A16} & \nw{Homelessness definition} & \nw{\textbf{Done}, see the statement in \S2.7 above}\\
-R1 2(e) & Replicability of the price-elasticity moment & \textbf{An appendix defining each moment's model counterpart.} Mechanical, but nobody has written it\\
-\nw{, } & \nw{$g$, the treatment effect} & \nw{\textbf{Closed enough.} One clean randomised estimate exists, an odds ratio of 1.22 for contingency management, and that is a real number rather than a gap. It stays a reported range because the TF result runs through it, not because it is unidentified}\\
+R3 M1b & Survival hazards & SSA period life table, ages 26 to 85, sexes combined by survivor weight. The fitted exponential understated mortality by nearly half at 85\\
+R1 2(c) & SUD and homelessness mortality & Both multipliers now vary with age and are derived jointly, from CDC drug poisonings and Baggett et al.\ The flat values were five times too small at prime ages and the wrong shape\\
+AE A15 & $\chi_H$ against Abramson and Van Nieuwerburgh & Their \$2{,}500 per household month for the literally homeless gives 0.4286. Note the direction: R2 and R3 called 0.252 too high and the best structural estimate is higher still\\
+AE A16 & Homelessness definition & Literal homelessness, and the target is now on a household basis, 0.399\%\\
+R1 4(c) & Administrative cost of drug testing & In the government budget. Detection requires a test, so effective detection is $\text{test}\times\text{detect}$\\
+R1 1(b), AE A10 & Treatment take up & Endogenous, at a utility cost, with a target. NSDUH validates the \emph{structure}: the three largest barriers are beliefs and preferences, not prices\\
+R2 D1 & Housing grid & Identified from the ACS B25042 size distribution rather than from housing cost burdens, which become untargeted validation\\
+, & $b_1$, the SUD Stone--Geary shifter & Given a target, the Milby abstinence rate among the homeless with SUD. No longer asserted\\
+, & $g$, the treatment effect & Closed enough. One clean randomised estimate, an odds ratio of 1.22 for contingency management. Stays a reported range rather than a point\\
+, & SUD target provenance & 3.68\% is moderate or severe \emph{drug} use disorder at ages 26+, reproduced exactly from the NSDUH microdata. Needs stating in the paper, since NSDUH's headline of 16.6\% includes alcohol\\
 \bottomrule
-\end{longtable}
+\end{longtable}}
 
-That is nine items, of which one is a real build (transition paths), two are
-decisions rather than work, two need data that exists but has not been pulled,
-two are writing that nobody has started, and two, $\omega_x$ and $g$, are
-things the evidence does not support pinning down and which should be presented
-as ranges rather than resolved. Every other comment in \S\ref{sec:outstanding}
-is closed by the recalibration, the counterfactuals, the ladder, or the rewrite.
+\nw{\paragraph{Decided and scoped, not yet built.}}
+
+\nw{\begin{longtable}{lL{5.0cm}L{6.4cm}}
+\toprule
+Ref & Item & Plan\\
+\midrule
+\endhead
+R2 C3, AE A6 & Parental anxiety; decorative intergenerational language & \textbf{Decided: the warm glow.} At one parental age the value gains $\nu\,\mathbb{E}_{x'|x}[V_1]$, using the $\rho_x=0.5$ process \S4.1.3 already specifies but never uses. The parent cannot influence the draw, so it is additive and moves no decision: it shifts welfare levels and hence the policy comparison, which is what R2 predicts. $\nu$ cannot be calibrated, since it moves no behaviour, so it is a robustness range. Scaffolded inert at $\nu=0$\\
+R1 3(d) & Transition paths & \textbf{Solver written and validated end to end.} Damping is now adaptive, which lifted the contraction from 0.82 to 0.51 per iteration. What remains is a production run, and its cost\\
+R1 2(e) & Replicability of the moments & An appendix defining each moment's model counterpart. Mechanical writing that nobody has started\\
+R1 sm.\ 1 & Maximum experimentation age & A diagnostic run. If dropping it piles use onto the old, that has to be explained rather than assumed away\\
+\bottomrule
+\end{longtable}}
+
+\nw{\paragraph{Genuinely open.}}
+
+\nw{\begin{longtable}{lL{5.0cm}L{6.4cm}}
+\toprule
+Ref & Item & Why it is still open\\
+\midrule
+\endhead
+, & \textbf{The calibration has not converged} & The real blocker. It gates the ladder, the externality decomposition and the whole second stage\\
+R2 C2 & $\omega_x$, the composition weight & Searched for and not found. The literature supports a difference in \emph{sign} by facility type, not a magnitude. Should be presented as a sign restriction with a range\\
+, & unemp $\mid$ SUD $=26.9\%$ & Needs a provenance. NSDUH's direct gradient implies roughly 2.5 times less, and one extra variable in the existing microdata extract would settle it\\
+, & $\kappa_{\phi m}$ level & Constant in age, which is settled, but the level is a judgement across three populations measuring different things. Sensitivity at 3.2\\
+\bottomrule
+\end{longtable}}
+
+\nw{So: ten items closed, four decided and waiting on execution, and four
+genuinely open, of which only one, the calibration, is on the critical path.}
 
 \subsection{The critical path}
 
