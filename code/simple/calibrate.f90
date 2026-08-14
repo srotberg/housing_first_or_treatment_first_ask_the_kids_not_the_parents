@@ -406,14 +406,19 @@ subroutine bisect_participation(target_p, iters)
 end subroutine bisect_participation
 
 
-subroutine calibration_sweep(step)
+! `nbis` is the bisection depth. Four brackets at ten iterations each is forty
+! household solves per sweep, which dominates everything else; early sweeps do
+! not need that precision because the other sixteen parameters are still moving
+! by percent, so the caller raises it as the calibration settles.
+subroutine calibration_sweep(step, nbis)
     real(dp), intent(in) :: step
+    integer,  intent(in) :: nbis
 
-    ! bracket the three step-like moments before touching anything else
-    call bisect_on(3, mom(16)%target, 10)     ! beta        -> wealth / GDP
-    call bisect_on(2, mom(3)%target,  10)     ! h_homeless  -> homelessness rate
-    call bisect_on(4, mom(22)%target, 10)     ! mh_onset    -> SMI prevalence
-    call bisect_on(1, mom(1)%target,  10)     ! b           -> participation
+    ! bracket the four step-like moments before touching anything else
+    call bisect_on(3, mom(16)%target, nbis)   ! beta        -> wealth / GDP
+    call bisect_on(2, mom(3)%target,  nbis)   ! h_homeless  -> homelessness rate
+    call bisect_on(4, mom(22)%target, nbis)   ! mh_onset    -> SMI prevalence
+    call bisect_on(1, mom(1)%target,  nbis)   ! b           -> participation
 
     ! annual hazard of SUD from light use -- 18.7% was absurd, and raising it far
     ! enough actually LOWERS the SUD rate by deterring experimentation

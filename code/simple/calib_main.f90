@@ -70,7 +70,7 @@ program calib_main
             exit
         end if
 
-        call calibration_sweep(step)
+        call calibration_sweep(step, min(12, 6 + sweep/4))
     end do
 
     ! final tight solve at the BEST parameter vector seen, not the last one
