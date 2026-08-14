@@ -66,11 +66,12 @@ contains
 subroutine fiscal_pv(N, mode)
     real(dp), intent(out) :: N(NA,NY,NE,ND,NV,NM,n_age+1,NCOMP)
     integer,  intent(in)  :: mode
-    integer  :: ih_emp
     integer  :: j, ia, iy, ie, id, iv, im, k
-    integer  :: iap, ihp, ireg, itr, iyp, iep, idp, ivp, imp, ielig
-    real(dp) :: ygross, capinc, phi, food_j, vouch, hours, disc
-    real(dp) :: s_e(NE), s_d(ND), s_eta(NV), prec, paddict, cont(NCOMP)
+    integer  :: iyp, iep, idp, ivp, imp
+    real(dp) :: ygross, capinc, food_j, vouch, hours, disc
+    real(dp) :: s_e(NE), s_d(ND), s_eta(NV), cont(NCOMP)
+    integer  :: ih_emp_override, iap, ihp
+    real(dp) :: phi
     real(dp) :: cfloor
 
     cfloor = cfloor_share*avg_income
@@ -84,26 +85,15 @@ subroutine fiscal_pv(N, mode)
     do ie = 1, NE
     do iy = 1, NY
     do ia = 1, NA
-        iap  = pol_a(ia,iy,ie,id,iv,im,j)
-        ihp  = pol_h(ia,iy,ie,id,iv,im,j)
-        ireg = pol_reg(ia,iy,ie,id,iv,im,j)
-        itr  = pol_tr(ia,iy,ie,id,iv,im,j)
+        ihp    = pol_h(ia,iy,ie,id,iv,im,j)
         hours  = hours_of(j, ie, pol_l(ia,iy,ie,id,iv,im,j))
         ygross = income_gross(j, iy, ie, id, im, hours)
         capinc = r_free*a_grid(ia)
 
-        ! survival: optionally evaluated as if the household were clean, which
-        ! isolates how much of the fiscal gap is early death alone
-        if (mode == 1) then
-            phi = survival(j, ihp, 1, im)
-        else
-            phi = survival(j, ihp, id, im)
-        end if
-
-        ! employment transitions: mode 2 evaluates them as if the household
-        ! were housed, so the gap is the homelessness-to-unemployment link
-        ih_emp = ihp
-        if (mode == 2 .and. ihp == 1) ih_emp = 2
+        ! mode 2 evaluates employment transitions as if the household were
+        ! housed, which is what isolates the homelessness-to-work link
+        ih_emp_override = 0
+        if (mode == 2 .and. ihp == 1) ih_emp_override = 2
 
         food_j = max(0.0_dp, cfloor - (ygross + max(0.0_dp, capinc)))
         vouch  = 0.0_dp
@@ -132,24 +122,10 @@ subroutine fiscal_pv(N, mode)
         if (id  == 2) N(ia,iy,ie,id,iv,im,j,4) = N(ia,iy,ie,id,iv,im,j,4) - chi_D
 
         !-- continuation ------------------------------------------------------
-        if (ygross + max(0.0_dp, capinc) < kappa_V*median_income) then
-            ielig = 1
-        else
-            ielig = 0
-        end if
-        call emp_trans(ie, ih_emp, id, im, s_e)
-        if (id == 1) then
-            if (ireg == 1) then
-                paddict = 0.0_dp
-            else
-                paddict = pi_d_low
-            end if
-            s_d(1) = 1.0_dp - paddict; s_d(2) = paddict
-        else
-            prec = p_recover(ihp, itr, im)
-            s_d(1) = prec;             s_d(2) = 1.0_dp - prec
-        end if
-        call voucher_probs(iv, ielig, ireg, id, s_eta)
+        ! same kernel as every other transition in the model; the two overrides
+        ! are what isolate the mortality and homelessness-to-work channels
+        call trans_kernel(ia,iy,ie,id,iv,im,j, mode==1, ih_emp_override, &
+                          iap, ihp, phi, s_e, s_d, s_eta)
 
         cont = 0.0_dp
         do iyp = 1, NY

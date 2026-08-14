@@ -180,10 +180,8 @@ end subroutine run_arm
 subroutine push_forward(D, Dn)
     real(dp), intent(in)  :: D (NA,NY,NE,ND,NV,NM,n_age)
     real(dp), intent(out) :: Dn(NA,NY,NE,ND,NV,NM,n_age)
-    integer  :: j, ia, iy, ie, id, iv, im
-    integer  :: iap, ihp, ireg, itr, iyp, iep, idp, ivp, imp, ielig
-    real(dp) :: m, phi, prec, paddict, ygross
-    real(dp) :: s_e(NE), s_d(ND), s_eta(NV)
+    integer  :: j, ia, iy, ie, id, iv, im, iap, ihp
+    real(dp) :: m, phi, s_e(NE), s_d(ND), s_eta(NV)
 
     Dn = 0.0_dp
     do j = 1, n_age-1
@@ -195,57 +193,9 @@ subroutine push_forward(D, Dn)
     do ia = 1, NA
         m = D(ia,iy,ie,id,iv,im,j)
         if (m <= 0.0_dp) cycle
-
-        iap  = pol_a(ia,iy,ie,id,iv,im,j)
-        ihp  = pol_h(ia,iy,ie,id,iv,im,j)
-        ireg = pol_reg(ia,iy,ie,id,iv,im,j)
-        itr  = pol_tr(ia,iy,ie,id,iv,im,j)
-
-        phi = survival(j, ihp, id, im)
+        call trans_kernel(ia,iy,ie,id,iv,im,j,.false.,0, iap,ihp,phi,s_e,s_d,s_eta)
         if (phi <= 0.0_dp) cycle
-
-        ygross = income_gross(j, iy, ie, id, im, hours_of(j, ie, pol_l(ia,iy,ie,id,iv,im,j)))
-        if (ygross + max(0.0_dp, r_free*a_grid(ia)) < kappa_V*median_income) then
-            ielig = 1
-        else
-            ielig = 0
-        end if
-
-        call emp_trans(ie, ihp, id, im, s_e)
-
-        if (id == 1) then
-            if (ireg == 1) then
-                paddict = 0.0_dp
-            else
-                paddict = pi_d_low
-            end if
-            s_d(1) = 1.0_dp - paddict; s_d(2) = paddict
-        else
-            prec = p_recover(ihp, itr, im)
-            s_d(1) = prec;             s_d(2) = 1.0_dp - prec
-        end if
-
-        call voucher_probs(iv, ielig, ireg, id, s_eta)
-
-        do iyp = 1, NY
-            if (y_trans(iy,iyp) <= 0.0_dp) cycle
-            do iep = 1, NE
-                if (s_e(iep) <= 0.0_dp) cycle
-                do idp = 1, ND
-                    if (s_d(idp) <= 0.0_dp) cycle
-                    do ivp = 1, NV
-                        if (s_eta(ivp) <= 0.0_dp) cycle
-                        do imp = 1, NM
-                            if (pm_of(id,im,imp) <= 0.0_dp) cycle
-                            Dn(iap,iyp,iep,idp,ivp,imp,j+1) = &
-                                Dn(iap,iyp,iep,idp,ivp,imp,j+1) + &
-                                m*phi*y_trans(iy,iyp)*s_e(iep)*s_d(idp) &
-                                *s_eta(ivp)*pm_of(id,im,imp)
-                        end do
-                    end do
-                end do
-            end do
-        end do
+        call add_mass(Dn, iap, iy, id, im, j, m, phi, s_e, s_d, s_eta)
     end do
     end do
     end do

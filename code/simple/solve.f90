@@ -602,7 +602,7 @@ end subroutine build_EV
 
 
 !-- voucher receipt distribution next period ---------------------------------
-subroutine voucher_probs(iv, ielig, ireg, id, s)
+pure subroutine voucher_probs(iv, ielig, ireg, id, s)
     integer, intent(in) :: iv, ielig, ireg, id
     real(dp), intent(out) :: s(NV)
     real(dp) :: pkeep
@@ -628,6 +628,104 @@ subroutine voucher_probs(iv, ielig, ireg, id, s)
     s(2) = min(1.0_dp, max(0.0_dp, pkeep))
     s(1) = 1.0_dp - s(2)
 end subroutine voucher_probs
+
+
+!===============================================================================
+! THE TRANSITION KERNEL, in one place.
+!
+! Four routines need the same object -- the probability distribution over next
+! period's state for a household at (ia,iy,ie,id,iv,im,j) following the current
+! policies: build_distribution_eq for the stationary distribution, push_forward
+! for the cohort experiments, advance_distribution for a transition path, and
+! fiscal_pv for the present-value recursion. Until now each carried its own copy
+! of the logic, and every change to it -- b_of, then pm_of -- had to be applied
+! to all four by hand. Four copies of a kernel that must agree exactly is a
+! silent-divergence bug waiting to happen, and this codebase has already shown
+! it produces confident wrong numbers rather than crashes.
+!
+! The two overrides exist for the fiscal decomposition, which isolates channels
+! by re-running the recursion with one transition altered:
+!   clean_surv  evaluate survival as if the household were clean
+!   ih_emp_in   evaluate employment transitions at this housing index instead of
+!               the chosen one (pass 0 to use the chosen one)
+!===============================================================================
+pure subroutine trans_kernel(ia, iy, ie, id, iv, im, j, clean_surv, ih_emp_in, &
+                             iap, ihp, phi, s_e, s_d, s_eta)
+    integer, intent(in)  :: ia, iy, ie, id, iv, im, j, ih_emp_in
+    logical, intent(in)  :: clean_surv
+    integer, intent(out) :: iap, ihp
+    real(dp), intent(out) :: phi, s_e(NE), s_d(ND), s_eta(NV)
+    integer  :: ireg, itr, ielig, ih_emp
+    real(dp) :: ygross, prec, paddict
+
+    iap  = pol_a  (ia,iy,ie,id,iv,im,j)
+    ihp  = pol_h  (ia,iy,ie,id,iv,im,j)
+    ireg = pol_reg(ia,iy,ie,id,iv,im,j)
+    itr  = pol_tr (ia,iy,ie,id,iv,im,j)
+
+    if (clean_surv) then
+        phi = survival(j, ihp, 1, im)
+    else
+        phi = survival(j, ihp, id, im)
+    end if
+
+    ih_emp = ihp
+    if (ih_emp_in > 0) ih_emp = ih_emp_in
+    call emp_trans(ie, ih_emp, id, im, s_e)
+
+    if (id == 1) then
+        if (ireg == 1) then
+            paddict = 0.0_dp
+        else
+            paddict = pi_d_low          ! single hazard, any use
+        end if
+        s_d(1) = 1.0_dp - paddict; s_d(2) = paddict
+    else
+        prec = p_recover(ihp, itr, im)
+        s_d(1) = prec;             s_d(2) = 1.0_dp - prec
+    end if
+
+    ygross = income_gross(j, iy, ie, id, im, &
+                          hours_of(j, ie, pol_l(ia,iy,ie,id,iv,im,j)))
+    if (ygross + max(0.0_dp, r_free*a_grid(ia)) < kappa_V*median_income) then
+        ielig = 1
+    else
+        ielig = 0
+    end if
+    call voucher_probs(iv, ielig, ireg, id, s_eta)
+end subroutine trans_kernel
+
+
+!-- spread mass m from (iy,id,im,j) into age j+1 of D -------------------------
+subroutine add_mass(D, iap, iy, id, im, j, m, phi, s_e, s_d, s_eta)
+    real(dp), intent(inout) :: D(NA,NY,NE,ND,NV,NM,n_age)
+    integer,  intent(in)    :: iap, iy, id, im, j
+    real(dp), intent(in)    :: m, phi, s_e(NE), s_d(ND), s_eta(NV)
+    integer  :: iyp, iep, idp, ivp, imp
+    real(dp) :: w1, w2, w3, w4
+    do iyp = 1, NY
+        w1 = y_trans(iy,iyp)
+        if (w1 <= 0.0_dp) cycle
+        do iep = 1, NE
+            w2 = w1*s_e(iep)
+            if (w2 <= 0.0_dp) cycle
+            do idp = 1, ND
+                w3 = w2*s_d(idp)
+                if (w3 <= 0.0_dp) cycle
+                do ivp = 1, NV
+                    w4 = w3*s_eta(ivp)
+                    if (w4 <= 0.0_dp) cycle
+                    do imp = 1, NM
+                        if (pm_of(id,im,imp) <= 0.0_dp) cycle
+                        D(iap,iyp,iep,idp,ivp,imp,j+1) = &
+                            D(iap,iyp,iep,idp,ivp,imp,j+1) &
+                          + m*phi*w4*pm_of(id,im,imp)
+                    end do
+                end do
+            end do
+        end do
+    end do
+end subroutine add_mass
 
 
 !===============================================================================
