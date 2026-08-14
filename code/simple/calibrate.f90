@@ -714,7 +714,9 @@ subroutine polish_levels(nbis)
         call bisect_on(1, mom(1)%target,  nbis)   ! b          -> participation
         call bisect_on(7, mom(2)%target,  nbis)   ! pi_d_low   -> SUD rate
         call bisect_on(2, mom(3)%target,  nbis)   ! h_homeless -> homelessness
-        call solve_equilibrium(12, 3.0e-3_dp, .false.)
+        ! 8 rather than 12: prices barely move between polish rounds, so the
+        ! extra iterations bought precision on an object already converged
+        call solve_equilibrium(8, 3.0e-3_dp, .false.)
     end do
 end subroutine polish_levels
 
