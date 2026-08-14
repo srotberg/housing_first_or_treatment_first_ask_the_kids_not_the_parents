@@ -128,10 +128,93 @@ program smoke
     call save_benchmark()
     call report_second_stage()
 
+    !-- 7. market clearing at the converged equilibrium ---------------------
+    write(*,'(A)') ''
+    write(*,'(A)') ' 7. government budget and drug market residuals'
+    write(*,'(A,ES13.5)') '      govt revenue - outlay       : ', A%tax_rev - A%govt_outlay
+    if (A%drugq > 0.0_dp) then
+        write(*,'(A,ES13.5)') '      p_v - psi1*Q**(psi2-1)      : ', &
+            p_v - psi1*A%drugq**(psi2-1.0_dp)
+    end if
+    write(*,'(A)') '      (these are only expected to vanish after solve_equilibrium;'
+    write(*,'(A)') '       this run solves the household problem once, so they will not)'
+
     write(*,'(A)') ''
     if (nfail == 0) then
         write(*,'(A)') ' ===== all structural checks passed ====='
     else
         write(*,'(A,I0,A)') ' ===== ', nfail, ' STRUCTURAL CHECKS FAILED ====='
     end if
+contains
+
+!-- reassemble the objective at the stored policy and compare with V ---------
+subroutine check_bellman(worst_v, worst_b)
+    real(dp), intent(out) :: worst_v, worst_b
+    integer  :: j, ia, iy, ie, id, iv, im, iap, ihp, ireg, itr, ielig
+    real(dp) :: cc, vv, bb, hours, res, dres, obj, phi, cfloor
+    real(dp) :: w, base, vcap, cfl_net, y0, ygross, resid
+
+    worst_v = 0.0_dp; worst_b = 0.0_dp
+    cfloor = cfloor_share*avg_income
+
+    do j = n_age-1, 1, -1
+        call build_EV(j)
+        do im = 1, NM; do iv = 1, NV; do id = 1, ND
+        do ie = 1, NE; do iy = 1, NY; do ia = 1, NA
+            if (dist(ia,iy,ie,id,iv,im,j) <= 0.0_dp) cycle
+            iap  = pol_a  (ia,iy,ie,id,iv,im,j)
+            ihp  = pol_h  (ia,iy,ie,id,iv,im,j)
+            ireg = pol_reg(ia,iy,ie,id,iv,im,j)
+            itr  = pol_tr (ia,iy,ie,id,iv,im,j)
+            cc   = pol_c  (ia,iy,ie,id,iv,im,j)
+            vv   = pol_v  (ia,iy,ie,id,iv,im,j)
+            if (cc <= 0.0_dp) cycle
+            bb   = b_of(id, im, ihp)
+            hours = hours_of(j, ie, pol_l(ia,iy,ie,id,iv,im,j))
+
+            ! rebuild the budget exactly as solve_household does
+            if (j < j_ret .and. ie == 1) then
+                w  = wage_rate(j, iy, id, im); y0 = 0.0_dp
+            else
+                w  = 0.0_dp; y0 = income_gross(j, iy, ie, id, im, 0.0_dp)
+            end if
+            cfl_net = cfloor - max(0.0_dp, r_free*a_grid(ia))
+            if (ihp > 1 .and. iv == 2) then
+                vcap = p_rent*h_grid(ihp)
+            else
+                vcap = 0.0_dp
+            end if
+            base = a_grid(ia) + bequest + (1.0_dp-tau_k)*r_free*a_grid(ia)
+            if (ihp > 1) base = base - p_rent*h_grid(ihp)
+
+            if (j < j_ret .and. ie == 1) then
+                call res_slope(hours, w, base, vcap, cfl_net, res, dres)
+                ygross = hours*w
+            else
+                res = base + after_tax(y0) + max(0.0_dp, vcap - kappa_r*y0) &
+                    + max(0.0_dp, cfl_net - y0)
+                ygross = y0
+            end if
+
+            ! budget residual
+            resid = abs(cc + p_v*vv + a_grid(iap) - res)
+            worst_b = max(worst_b, resid)
+
+            ! eligibility, then the objective
+            if (ygross + max(0.0_dp, r_free*a_grid(ia)) < kappa_V*median_income) then
+                ielig = 1
+            else
+                ielig = 0
+            end if
+            phi = survival(j, ihp, id, im)
+            obj = util(cc, h_pow(ihp), vv, bb, 1.0_dp-hours)
+            if (itr == 1) obj = obj - treat_ucost
+            obj = obj + beta*phi*EV(iap,ihp,iy,ie,id,ireg,itr,ielig,iv,im)
+
+            worst_v = max(worst_v, abs(obj - V(ia,iy,ie,id,iv,im,j)))
+        end do; end do; end do
+        end do; end do; end do
+    end do
+end subroutine check_bellman
+
 end program smoke

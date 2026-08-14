@@ -284,6 +284,14 @@ subroutine calibrate_b_hl(iters, verbose)
     if (verbose) write(*,'(A,2F9.4,A,L2)') '   b_hl bracket ratios: ', f_lo, f_hi, &
         '   rising:', rising
 
+    if (f_lo <= 0.0_dp .or. f_hi <= 0.0_dp) then
+        if (verbose) write(*,'(A)') &
+            '   WARNING: the Milby ratio is undefined (no abstention in the NH arm);'
+        if (verbose) write(*,'(A)') &
+            '   b_hl_ratio left unchanged. Calibrate b_1 first.'
+        b_hl_ratio = keep
+        return
+    end if
     if ((f_lo - target_housing_ratio)*(f_hi - target_housing_ratio) > 0.0_dp) then
         ! target outside the bracket -- take the closer end and say so
         if (abs(f_lo - target_housing_ratio) < abs(f_hi - target_housing_ratio)) then
@@ -447,10 +455,24 @@ subroutine report_second_stage()
     write(*,'(A,F12.2,F11.2)') '   NACH housing, uncond.   ', 100*a_nach, 100*h_nach
     write(*,'(A,F12.2,F11.2)') '   ACH  housing, cond.     ', 100*a_ach,  100*h_ach
     write(*,'(A)') '  ------------------------------------------------------------'
-    write(*,'(A,F8.3,A,F8.3,A)') '   housing access  NACH/NH : ', &
-        a_nach/max(a_nh,1.0e-8_dp), '   target ', target_housing_ratio, '  (TARGETED)'
-    write(*,'(A,F8.3,A,F8.3,A)') '   conditionality  ACH/NACH: ', &
-        a_ach/max(a_nach,1.0e-8_dp), '   data   ', check_cond_ratio, '  (P=.091, sign only)'
+    ! Guard the ratios. If nobody abstains in an arm the ratio is 0/0, not zero,
+    ! and printing 0.000 or a field of asterisks would look like a result. It
+    ! happens whenever b_1 is small enough that a household with SUD never
+    ! abstains, which is exactly the uncalibrated corner.
+    if (a_nh > 1.0e-6_dp) then
+        write(*,'(A,F8.3,A,F8.3,A)') '   housing access  NACH/NH : ', &
+            a_nach/a_nh, '   target ', target_housing_ratio, '  (TARGETED)'
+    else
+        write(*,'(A,F8.3,A)') '   housing access  NACH/NH : UNDEFINED   target ', &
+            target_housing_ratio, '  (nobody abstains in the NH arm)'
+    end if
+    if (a_nach > 1.0e-6_dp) then
+        write(*,'(A,F8.3,A,F8.3,A)') '   conditionality  ACH/NACH: ', &
+            a_ach/a_nach, '   data   ', check_cond_ratio, '  (P=.091, sign only)'
+    else
+        write(*,'(A,F8.3,A)') '   conditionality  ACH/NACH: UNDEFINED   data   ', &
+            check_cond_ratio, '  (nobody abstains in the NACH arm)'
+    end if
     write(*,'(A,F8.3,A,F8.3,A)') '   drug-price participation elasticity: ', eps, &
         '   target ', target_price_elast, '  (TARGETED)'
     write(*,'(A,F8.2,A,F8.2,A)') '   model-implied VSL ($m)            : ', vsl, &
