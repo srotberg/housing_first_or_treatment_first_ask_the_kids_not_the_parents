@@ -169,7 +169,7 @@ subroutine compute_moments(A)
         end if
 
         ! voucher take-up among the income-eligible
-        if (ygross + max(0.0_dp, r*a_grid(ia)) < kappa_V*median_income) then
+        if (ygross + max(0.0_dp, r_free*a_grid(ia)) < kappa_V*median_income) then
             elig = elig + m
             if (iv == 2) vouch_elig = vouch_elig + m
         end if

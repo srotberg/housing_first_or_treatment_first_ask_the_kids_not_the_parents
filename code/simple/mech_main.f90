@@ -49,6 +49,17 @@ program mech_main
     call recalibrate_b(target_p, nbisect); call profile_users(P)
     call print_profile('ARM 3  homelessness feedback OFF', P, P0)
 
+    !-- arm 4: every private cost off at once --------------------------------
+    ! Whatever deterrence survives here is RESOURCE DIVERSION: the budget
+    ! constraint alone. Diversion cannot be switched off directly -- drugs are
+    ! priced inside a Cobb-Douglas bundle, so making them free sends v to the
+    ! corner -- but it can be measured as the residual once mortality,
+    ! employment and the homelessness loop are all gone.
+    call reset_channels()
+    on_mortality_d = 0; on_employment_d = 0; on_homeless_fb = 0
+    call recalibrate_b(target_p, nbisect); call profile_users(P)
+    call print_profile('ARM 4  ALL private costs OFF (residual = resource diversion)', P, P0)
+
     call reset_channels()
     call wall(t1)
     write(*,'(A)') ''

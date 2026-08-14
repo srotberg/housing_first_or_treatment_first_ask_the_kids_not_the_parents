@@ -16,7 +16,7 @@
 !
 ! 3. EXACT REGIME DECOMPOSITION instead of coarse-then-refine. The objective is
 !    not single-peaked in a' -- voucher eligibility is a step function of income
-!    (which includes r*a), the food-stamp floor kinks, and housing is discrete.
+!    (which includes r_free*a), the food-stamp floor kinks, and housing is discrete.
 !    Within a regime the c/v split is closed-form Cobb-Douglas, so we search a'
 !    exactly on the full grid and take the max over the handful of regimes. No
 !    unimodality assumption, and no basin-hopping failure.
@@ -98,13 +98,13 @@ end function leis_pow
 
 
 !-- flow utility. hp is the PRECOMPUTED h**beta_u for the chosen unit ---------
-pure function util(c, hp, v, bb, leis) result(u)
-    real(dp), intent(in) :: c, hp, v, bb, leis
+pure function util(c, hp, vd, bb, leis) result(u)
+    real(dp), intent(in) :: c, hp, vd, bb, leis
     real(dp) :: u, comp
     if (c <= 0.0_dp) then
         u = -1.0e12_dp; return
     end if
-    comp = c**alpha_u * hp * (v + bb)**gamma_u
+    comp = c**alpha_u * hp * (vd + bb)**gamma_u
     if (comp <= 0.0_dp) then
         u = -1.0e12_dp; return
     end if
@@ -206,9 +206,9 @@ end function after_tax
 
 
 !-- resources and their slope, for an arbitrary hours value ------------------
-!   base    hours-independent part:  a + r*a + bequest - rent(h')
+!   base    hours-independent part:  a + r_free*a + bequest - rent(h')
 !   vcap    p_rent*h' if the voucher is actually paid on this unit, else 0
-!   cfl_net cfloor - max(0, r*a): food stamps are positive iff w*hours < cfl_net
+!   cfl_net cfloor - max(0, r_free*a): food stamps are positive iff w*hours < cfl_net
 ! The original code carries the voucher clawback in the labour-supply FOC; the
 ! food-stamp clawback is carried here too.
 pure subroutine res_slope(hours, w, base, vcap, cfl_net, res, dres)
@@ -637,7 +637,7 @@ subroutine solve_household()
     integer :: j, ia, iy, ie, id, iv, im
     integer :: ihp, ireg, itr, iap, ielig, ic, nc
     integer :: best_a, best_h, best_reg, best_tr
-    real(dp) :: res, R, Rt, cc, vv, val, best, phi
+    real(dp) :: res, Rr, Rt, cc, vv, val, best, phi
     real(dp) :: ynet, vouch, cfloor, v_unc, cost_tr, bestc, bestv, bestl
     real(dp) :: hours, w, base, vcap, cfl_net, res_ub, y0, bb
     real(dp) :: h_elig, acost, A1, AK, akcon
@@ -660,7 +660,7 @@ subroutine solve_household()
 
         !$omp parallel do collapse(4) &
         !$omp   private(ia,iy,ihp,ireg,itr,iap,ielig,ic,nc, &
-        !$omp           best_a,best_h,best_reg,best_tr,res,R,Rt,cc,vv,val,best, &
+        !$omp           best_a,best_h,best_reg,best_tr,res,Rr,Rt,cc,vv,val,best, &
         !$omp           phi,ynet,vouch,v_unc,cost_tr,bestc,bestv,bestl,hours, &
         !$omp           w,base,vcap,cfl_net,res_ub,y0,bb,h_elig,acost,A1,AK, &
         !$omp           hc,rc,ec,working,G,warm) &
@@ -675,7 +675,6 @@ subroutine solve_household()
                 best = -1.0e13_dp
                 best_a = 1; best_h = 1; best_reg = 1; best_tr = 0
                 bestc = 0.0_dp; bestv = 0.0_dp; bestl = 0.0_dp
-                bb = b_dm(id,im)
 
                 ! hours are a choice only for the employed of working age
                 working = (j < j_ret .and. ie == 1)
@@ -689,15 +688,15 @@ subroutine solve_household()
                 end if
 
                 ! food stamps are positive iff w*hours < cfl_net
-                cfl_net = cfloor - max(0.0_dp, r*a_grid(ia))
+                cfl_net = cfloor - max(0.0_dp, r_free*a_grid(ia))
 
                 ! voucher eligibility is a STEP in hours:
-                !   eligible  <=>  w*hours + max(0,r*a) < kappa_V*median_income
+                !   eligible  <=>  w*hours + max(0,r_free*a) < kappa_V*median_income
                 ! h_elig <= 0 : never eligible;  h_elig >= 1 : always eligible
                 if (working) then
-                    h_elig = (kappa_V*median_income - max(0.0_dp, r*a_grid(ia))) / w
+                    h_elig = (kappa_V*median_income - max(0.0_dp, r_free*a_grid(ia))) / w
                 else
-                    if (y0 + max(0.0_dp, r*a_grid(ia)) < kappa_V*median_income) then
+                    if (y0 + max(0.0_dp, r_free*a_grid(ia)) < kappa_V*median_income) then
                         h_elig = 2.0_dp
                     else
                         h_elig = -1.0_dp
@@ -707,6 +706,9 @@ subroutine solve_household()
                 do ihp = 1, NH
 
                     phi = survival(j, ihp, id, im)
+                    ! b depends on the CHOSEN housing: sleeping rough raises the
+                    ! marginal utility of the first units of use
+                    bb  = b_of(id, im, ihp)
 
                     ! the voucher pays only while renting, never while homeless
                     if (ihp > 1 .and. iv == 2) then
@@ -715,7 +717,7 @@ subroutine solve_household()
                         vcap = 0.0_dp
                     end if
 
-                    base = a_grid(ia) + bequest + r*a_grid(ia)
+                    base = a_grid(ia) + bequest + r_free*a_grid(ia)
                     if (ihp > 1) base = base - p_rent*h_grid(ihp)
 
                     A1 = h_pow(ihp) * bb**gamma_u
@@ -771,11 +773,11 @@ subroutine solve_household()
                                     res   = rc(ic)
                                     ielig = ec(ic)
 
-                                    R = res - acost
-                                    if (R <= 0.0_dp) cycle
+                                    Rr = res - acost
+                                    if (Rr <= 0.0_dp) cycle
 
                                     ! closed-form Cobb-Douglas split of R over (c, v)
-                                    Rt = R + p_v*bb
+                                    Rt = Rr + p_v*bb
                                     v_unc = gamma_u/(alpha_u+gamma_u) * Rt/p_v - bb
 
                                     if (ireg == 1) then
@@ -784,7 +786,7 @@ subroutine solve_household()
                                         vv = max(v_unc, 1.0e-8_dp)   ! interior optimum
                                     end if
 
-                                    cc = R - p_v*vv
+                                    cc = Rr - p_v*vv
                                     if (cc <= 0.0_dp) cycle
 
                                     val = util(cc, h_pow(ihp), vv, bb, 1.0_dp-hours) &

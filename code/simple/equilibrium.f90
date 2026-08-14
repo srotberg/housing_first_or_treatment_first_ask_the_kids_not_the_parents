@@ -60,7 +60,7 @@ subroutine compute_aggregates(A)
         vv   = pol_v(ia,iy,ie,id,iv,im,j)
 
         ygross   = income_gross(j, iy, ie, id, im, hours_of(j, ie, pol_l(ia,iy,ie,id,iv,im,j)))
-        capinc_j = r*a_grid(ia)
+        capinc_j = r_free*a_grid(ia)
         phi      = survival(j, ihp, id, im)
 
         A%pop = A%pop + m
@@ -287,7 +287,7 @@ subroutine build_distribution_eq()
             if (phi <= 0.0_dp) cycle
 
             ygross = income_gross(j, iy, ie, id, im, hours_of(j, ie, pol_l(ia,iy,ie,id,iv,im,j)))
-            if (ygross + max(0.0_dp, r*a_grid(ia)) < kappa_V*median_income) then
+            if (ygross + max(0.0_dp, r_free*a_grid(ia)) < kappa_V*median_income) then
                 ielig = 1
             else
                 ielig = 0

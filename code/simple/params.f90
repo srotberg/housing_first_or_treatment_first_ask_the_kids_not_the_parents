@@ -86,6 +86,15 @@ module params
     ! self-medication channel R1 comment 1(a) is asking about.
     real(dp) :: b_dm(ND,NM) = reshape([4.0e-1_dp, 1.0e-3_dp, &
                                        1.0e-1_dp, 1.0e-3_dp], [ND,NM])
+    ! Homelessness scales b DOWN, exactly as poor mental health does: sleeping
+    ! rough raises the marginal utility of the first units of use. This is the
+    ! only parameter in the model that controls the ELASTICITY OF DRUG USE WITH
+    ! RESPECT TO HOUSING ACCESS -- R2's "crux", also R3 and AE A13. Without it
+    ! the moment cannot be targeted at all: housing a household with SUD only
+    ! raises its resources, and drugs are a normal good, so the model would
+    ! predict housing RAISES use, against Milby et al. (2005). Calibrated in the
+    ! second stage to the Milby housed-versus-unhoused abstinence ratio.
+    real(dp) :: b_hl_ratio = 1.00_dp            ! 1.0 = channel off
     real(dp) :: omega_l  = 0.30_dp              ! weight on leisure (calibrated)
     real(dp), parameter :: sigma_l = 3.0_dp     ! Frisch elasticity 0.5, Chetty (2012)
     real(dp) :: aleph   = 3.0_dp                ! flow value of being alive (VSL normalisation)
@@ -94,7 +103,7 @@ module params
     !-- prices ----------------------------------------------------------------
     real(dp) :: p_rent = 2.0_dp                 ! no housing-market GE, but calibrated
     real(dp) :: p_v    = 1.0_dp                 ! endogenous: clears the drug market
-    real(dp), parameter :: r = 0.03_dp
+    real(dp), parameter :: r_free = 0.03_dp
 
     !-- drug supply: C(V) = psi1/psi2 * V**psi2, so elasticity = 1/(psi2-1).
     !   psi1 is normalised so that p_v = 1 at the benchmark quantity, which keeps
@@ -358,6 +367,15 @@ pure function hours_of(j, ie, hstar) result(h)
         h = 0.0_dp
     end if
 end function hours_of
+
+
+!-- Stone-Geary shifter, given SUD status, mental health and CHOSEN housing --
+pure function b_of(id, im, ih) result(b)
+    integer, intent(in) :: id, im, ih
+    real(dp) :: b
+    b = b_dm(id,im)
+    if (ih == 1) b = b * b_hl_ratio
+end function b_of
 
 
 pure function survival(j, ih, id, im) result(phi)

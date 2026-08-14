@@ -49,7 +49,7 @@ program check_hours
 
             bb      = b_dm(id,im)
             w       = wage_rate(j, iy, id, im)
-            cfl_net = cfloor - max(0.0_dp, r*a_grid(ia))
+            cfl_net = cfloor - max(0.0_dp, r_free*a_grid(ia))
 
             brute = -1.0e13_dp; bh = 0.0_dp
             do ihp = 1, NH
@@ -59,7 +59,7 @@ program check_hours
                 else
                     vcap = 0.0_dp
                 end if
-                base = a_grid(ia) + bequest + r*a_grid(ia)
+                base = a_grid(ia) + bequest + r_free*a_grid(ia)
                 if (ihp > 1) base = base - p_rent*h_grid(ihp)
 
                 do itr = 0, 1
@@ -75,7 +75,7 @@ program check_hours
                                 call res_slope(hours, w, base, vcap, cfl_net, res, dres)
                                 Rres = res - acost
                                 if (Rres <= 0.0_dp) cycle
-                                if (hours*w + max(0.0_dp,r*a_grid(ia)) &
+                                if (hours*w + max(0.0_dp,r_free*a_grid(ia)) &
                                     < kappa_V*median_income) then
                                     ielig = 1
                                 else
