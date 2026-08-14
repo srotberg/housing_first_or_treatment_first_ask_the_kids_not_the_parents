@@ -347,6 +347,73 @@ function model_vsl() result(vsl_musd)
 end function model_vsl
 
 
+!===============================================================================
+! Stationary equilibrium with named objects HELD at supplied values.
+!
+! Used by the externality decomposition: freezing one equilibrium object and
+! re-solving isolates the channel that works through it. Freezing is not the same
+! as switching the channel off in preferences -- the household still faces the
+! same problem, it simply does not see the aggregate move -- which is exactly the
+! counterfactual an externality is defined against.
+!===============================================================================
+subroutine solve_equilibrium_frozen(taul0, pv0, avg0, med0, fix_tax, fix_pv, fix_scale)
+    real(dp), intent(in) :: taul0, pv0, avg0, med0
+    logical,  intent(in) :: fix_tax, fix_pv, fix_scale
+    type(agg_t) :: A
+    integer  :: it
+    real(dp) :: tau_new, pv_new, H_new, HD_new, avg_new, med_new, err, damp
+
+    damp = 0.25_dp
+    if (fix_tax)   tau_l = taul0
+    if (fix_pv)    p_v   = pv0
+    if (fix_scale) then
+        avg_income = avg0; median_income = med0
+    end if
+
+    do it = 1, 40
+        call solve_once(A)
+        err = 0.0_dp
+
+        if (.not. fix_tax) then
+            if (A%labinc_pow > 0.0_dp) then
+                tau_new = (A%labinc + A%captax - A%govt_outlay)/A%labinc_pow
+            else
+                tau_new = tau_l
+            end if
+            tau_new = min(max(tau_new, 0.30_dp), 1.20_dp)
+            err = max(err, reldiff(tau_new, tau_l))
+            tau_l = tau_l + damp*(tau_new - tau_l)
+        end if
+
+        if (.not. fix_pv) then
+            if (A%drugq > 0.0_dp) then
+                pv_new = psi1 * A%drugq**(psi2 - 1.0_dp)
+            else
+                pv_new = p_v
+            end if
+            pv_new = min(max(pv_new, 0.05_dp), 20.0_dp)
+            err = max(err, reldiff(pv_new, p_v))
+            p_v = p_v + 0.08_dp*(pv_new - p_v)
+        end if
+
+        if (.not. fix_scale) then
+            avg_new = (A%labinc + A%ss)/max(A%pop, 1.0e-12_dp)
+            med_new = A%med
+            err = max(err, reldiff(avg_new, avg_income))
+            avg_income    = avg_income    + damp*(avg_new - avg_income)
+            median_income = median_income + damp*(med_new - median_income)
+        end if
+
+        H_new  = A%homeless/max(A%pop, 1.0e-12_dp)
+        HD_new = A%hl_sud  /max(A%pop, 1.0e-12_dp)
+        H_agg  = H_agg  + damp*(H_new  - H_agg)
+        HD_agg = HD_agg + damp*(HD_new - HD_agg)
+
+        if (err < 1.0e-4_dp) exit
+    end do
+end subroutine solve_equilibrium_frozen
+
+
 !-- normalise the drug supply shifter so that p_v = 1 at the current demand --
 subroutine normalise_drug_supply()
     type(agg_t) :: A

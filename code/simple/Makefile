@@ -1,7 +1,7 @@
 # Simplified HF/TF model
 FC      = gfortran
 FFLAGS  = -O3 -march=native -funroll-loops -flto -fopenmp
-COMMON  = params.f90 solve.f90 equilibrium.f90 calibrate.f90 mechanism.f90 experiment.f90 fiscal.f90 transition.f90
+COMMON  = params.f90 solve.f90 equilibrium.f90 calibrate.f90 mechanism.f90 experiment.f90 fiscal.f90 transition.f90 welfare.f90
 SRC     = $(COMMON) main.f90
 TARGET  = hftf_simple
 
