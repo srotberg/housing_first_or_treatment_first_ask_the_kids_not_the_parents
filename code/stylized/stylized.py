@@ -54,13 +54,20 @@ Switching a channel off means switching every member of its group. Switching kap
 alone leaves the homelessness mortality penalty running in a row that is supposed
 to have no mortality channel at all.
 
-THE PRICE OF DRUGS IS AN EQUILIBRIUM OBJECT
+THE PRICE OF DRUGS IS AN EQUILIBRIUM OBJECT, BUT NOT PART OF THE MAIN ARGUMENT
 
 Quantity supplied is psi * p_v ** eps_s and psi is renormalised so the benchmark
 clears at p_v = 1 whatever eps_s is. R1's comment 1(c) and R3's M2d both object
 that a price cannot be normalised and varied at the same time; here the
 normalisation is explicit, confined to the benchmark, and the price is free in
 every experiment.
+
+The ablation in ABLATION.txt says this changes NEITHER of the two facts the
+model exists to establish: switching market clearing off entirely leaves the
+income gradient at 0.787 and the moral hazard at 0.80 per cent, to two decimal
+places, both identical to the baseline. So it is reported in its own short
+subsection rather than carried through the main exposition, where it would be
+one more moving part for no gain.
 """
 
 import os
