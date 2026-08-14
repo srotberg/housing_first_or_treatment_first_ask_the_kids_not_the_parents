@@ -111,6 +111,15 @@ class P:
     # employment
     u0    = 0.049     # unemployment probability without the disorder
     omega = 0.40      # replacement rate when unemployed
+    # A CONSUMPTION FLOOR. Food stamps and the rest of the safety net, as one
+    # number. Without it the model cannot hold a 21 per cent housing share and a
+    # 0.4 per cent homelessness rate at the same time: rent high enough to
+    # deliver the share prices the bottom of the income distribution out of
+    # housing entirely, and they choose the street. In the data those households
+    # are not on the street, because transfers put a floor under them. This is
+    # the full model's food stamp programme, collapsed to one parameter.
+    cfloor = 0.33     # share of mean income; CALIBRATED to the
+                      # homelessness rate
 
     # HOUSING. One rental unit at price pr, or the street.
     #
@@ -124,8 +133,14 @@ class P:
     # budget constraint, which is not how the policy operates.
     gam   = 0.25      # weight on housing in utility. SET, not calibrated.
     h_ho  = 1.0       # the one rental size, normalised
-    h_hl  = 0.05      # housing "consumed" on the street; calibrated
-    pr    = 0.21      # rent per unit, share of mean income; calibrated
+    h_hl  = 0.104     # housing "consumed" on the street. SET to the full
+                      # model's ratio of the homeless size to the smallest
+                      # rental size, 0.0083 / 0.08.
+    pr    = 0.212     # rent per unit. SET to the housing budget share, so a
+                      # housed household at mean income spends 21.2 per cent
+                      # of it on housing, which is the aggregate share in the
+                      # SCF. Not calibrated: with one housing size the share
+                      # IS the rent, so calibrating it would be circular.
     kapH  = 0.35      # MORTALITY, extra death risk on the street
 
     # policy: a voucher cuts the tenant's rent to kappa_r * pr
@@ -162,7 +177,7 @@ def with_(par, **kw):
 
 
 # ----------------------------------------------------------------------------
-def _states(par, d, policy):
+def _states(par, d, policy, y=1.0):
     """
     (probability, income multiplier, rent actually payable) for disorder status
     d. Housing is no longer here: it is chosen inside the value function.
@@ -175,7 +190,9 @@ def _states(par, d, policy):
     pv = par.pV if covered else 0.0
     out = []
     for e, pe in ((0, 1.0 - pu), (1, pu)):                  # e = 1 unemployed
-        inc = (par.omega if e else 1.0) * (1.0 - par.xi * d)
+        # the floor is a LEVEL, so it binds on inc * y, not on the multiplier
+        inc = max((par.omega if e else 1.0) * (1.0 - par.xi * d),
+                  par.cfloor / max(y, 1e-9))
         for rent, prb in ((par.kappa_r * par.pr, pv), (par.pr, 1.0 - pv)):
             if pe * prb > 1e-14:
                 out.append((pe * prb, inc, rent))
@@ -194,7 +211,7 @@ def solve_late(par, y, policy):
     V3 = np.zeros((par.na, 2))
     H3 = np.zeros((par.na, 2))          # share choosing the street, for reporting
     for d in (0, 1):
-        for p, inc, rent in _states(par, d, policy):
+        for p, inc, rent in _states(par, d, policy, y):
             cash = par.R * ag + inc * y
             v_ho = np.where(cash - rent * par.h_ho > 1e-9,
                             np.log(np.maximum(cash - rent * par.h_ho, 1e-12))
@@ -208,7 +225,7 @@ def solve_late(par, y, policy):
     V2 = np.zeros((par.na, 2))
     H2 = np.zeros((par.na, 2))
     for d in (0, 1):
-        for p, inc, rent in _states(par, d, policy):
+        for p, inc, rent in _states(par, d, policy, y):
             cash = par.R * ag[:, None] + inc * y
             best = None
             for h in (0, 1):                       # h = 1 is the street
@@ -292,18 +309,21 @@ def solve_one(par, y, policy=None):
     k = np.argmax(base[None, :] + th_i[:, None] * G[None, :], axis=1)
     ev = float(p_use * vg[k].mean())
     a_use = float(a_by_v[k].mean())
-    return p_use, ev, a_use, float(a_by_v[0])
+    # the v of every user at this income, equally weighted, for the
+    # concentration moment that identifies the taste dispersion
+    return p_use, ev, a_use, float(a_by_v[0]), vg[k]
 
 
 def profile(par, ygrid, policy=None):
     out = [solve_one(par, y, policy) for y in ygrid]
-    return tuple(np.array([o[i] for o in out]) for i in range(4))
+    return (tuple(np.array([o[i] for o in out]) for i in range(4))
+            + ([o[4] if len(o) > 4 else np.zeros(1) for o in out],))
 
 
 # ----------------------------------------------------------------------------
 def aggregates(par, ygrid, w, policy=None):
     policy = policy or par.policy
-    p_use, ev, a_use, a_no = profile(par, ygrid, policy)
+    p_use, ev, a_use, a_no, vlist = profile(par, ygrid, policy)
     vbar = np.where(p_use > 1e-9, ev / np.maximum(p_use, 1e-9), 0.0)
     pid = p_use * (1.0 - np.exp(-par.lam * vbar))
     ww = w / w.sum()
@@ -325,7 +345,7 @@ def aggregates(par, ygrid, w, policy=None):
             if d == 1:
                 hl_sud += m * street
                 m_sud += m
-            for p, inc, rent in _states(par, d, policy):
+            for p, inc, rent in _states(par, d, policy, y):
                 inc_all += m * p * inc * y
                 if d == 1:
                     inc_sud += m * p * inc * y
@@ -334,8 +354,29 @@ def aggregates(par, ygrid, w, policy=None):
 
     spend = float((ww * p_use * par.p_v * vbar).sum()
                   / max((ww * p_use * ygrid).sum(), 1e-12))
+
+    # THE CONCENTRATION OF USE, which is what identifies the taste dispersion.
+    # Share of all drug quantity consumed by the heaviest fifth of users. In
+    # NSDUH 2024, ages 26 and above, weighted, using band midpoints for days of
+    # use, that share is 0.736. It is a pure shape statistic: it needs no
+    # threshold parameter, unlike a light against heavy split, and it is far
+    # less sensitive to the top band's midpoint than a coefficient of variation.
+    mass, vals = [], []
+    for i in range(len(ygrid)):
+        vi = np.atleast_1d(vlist[i])
+        if p_use[i] > 1e-12 and vi.size:
+            mass.append(np.full(vi.size, ww[i] * p_use[i] / vi.size))
+            vals.append(vi)
+    if vals:
+        mm = np.concatenate(mass); vv = np.concatenate(vals)
+        o = np.argsort(vv); mm, vv = mm[o], vv[o]
+        cum = np.cumsum(mm) / max(mm.sum(), 1e-12)
+        top = cum > 0.80
+        conc = float((mm[top] * vv[top]).sum() / max((mm * vv).sum(), 1e-12))
+    else:
+        conc = 0.0
     return dict(
-        spend=spend,
+        spend=spend, conc=conc,
         part=float((ww * p_use).sum()), sud=float((ww * pid).sum()),
         r_use=float((ww * p_use * ygrid).sum()
                     / max((ww * p_use).sum(), 1e-12) / ybar),

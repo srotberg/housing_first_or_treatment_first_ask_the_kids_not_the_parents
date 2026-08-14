@@ -4,10 +4,10 @@ Calibrating the stylised model.
 WHAT IS TARGETED, AND WHAT IS DELIBERATELY NOT
 
     b        drug participation rate                     5.13 %
+    sig      use by the heaviest fifth of users          73.6 %
     kap      price elasticity of participation          -0.45
     lam      share of users who acquire the disorder    71.7 %
-    pr       housing spending / income                    21.2 %
-    h_hl     homelessness rate                           0.399 %
+    cfloor   homelessness rate                           0.399 %
     aleph    value of a statistical life / PERIOD income  5.36
 
     HELD OUT  income of USERS / average                  0.951
@@ -60,15 +60,15 @@ W  = np.exp(-0.5 * ((np.log(YG) + 0.5 * 0.75**2) / 0.75)**2)
 # 8 per cent. The full model's annual hazard given any use is 2 per cent, so
 # over a twenty year period 1 - 0.98^20 = 0.332.
 TARGET = dict(part=0.0513, spend=0.11, elast_p=-0.45, prog=0.332, r_sud=0.687,
-              homeless=0.00399, housing_share=0.212, vsl=5.36)
+              conc=0.736, homeless=0.00399, vsl=5.36)
 
 FREE = [('b',     1e-5, 3.0),
         ('th',    2e-3, 4.00),
+        ('sig',   0.10, 2.50),
         ('kap',   0.02, 0.95),
         ('lam',   0.20, 400.0),
         ('xi',      0.01, 0.85),
-        ('pr',      0.02, 0.60),
-        ('h_hl',    1e-4, 0.90),
+        ('cfloor',  0.05, 0.60),
         ('aleph',   0.20, 400.0)]
 
 # u1 is MEASURED, so it is not free in the benchmark. It is freed only in the
@@ -84,7 +84,8 @@ LABEL = {'part': 'drug participation rate',
          'sud_of_homeless': 'share of homeless with the disorder',
          'vsl': 'value of a statistical life / mean income',
          'spend': 'drug spending / income, among users',
-         'housing_share': 'housing spending / income'}
+         'housing_share': 'housing spending / income',
+         'conc': 'use by the heaviest fifth / all use'}
 
 
 def stats(par, ygrid=None, w=None):
@@ -167,7 +168,7 @@ def report(par):
     print('CALIBRATION OF THE STYLISED MODEL')
     print('=' * 72)
     print(f"{'moment':41s}{'target':>10s}{'model':>10s}{'gap':>10s}")
-    for k in ['part', 'spend', 'elast_p', 'prog', 'r_sud', 'housing_share',
+    for k in ['part', 'spend', 'conc', 'elast_p', 'prog', 'r_sud',
               'homeless', 'vsl']:
         print(f'{LABEL[k]:41s}{TARGET[k]:10.4f}{m[k]:10.4f}{m[k]-TARGET[k]:10.4f}')
     print('-' * 72)
@@ -175,6 +176,8 @@ def report(par):
           f"{m['r_use']:10.4f}{m['r_use']-0.951:10.4f}")
     print(f"{'HELD OUT share of homeless w/ disorder':41s}{0.217:10.4f}"
           f"{m['sud_of_homeless']:10.4f}{m['sud_of_homeless']-0.217:10.4f}")
+    print(f"{'HELD OUT housing spending / income':41s}{0.212:10.4f}"
+          f"{m['housing_share']:10.4f}{m['housing_share']-0.212:10.4f}")
     print('-' * 72)
     print('  ' + '   '.join(f'{n}={getattr(par,n):.4g}' for n, _, _ in FREE))
     return m
@@ -184,8 +187,8 @@ def jacobian(par, rel=0.08):
     """Elasticity of each moment to each parameter. R1's comment 2(f), on the
     small model where it fits on one screen."""
     names = [f[0] for f in FREE]
-    moms = ['part', 'spend', 'elast_p', 'prog', 'r_sud', 'housing_share',
-            'homeless', 'vsl', 'r_use', 'sud_of_homeless']
+    moms = ['part', 'spend', 'conc', 'elast_p', 'prog', 'r_sud',
+            'housing_share', 'homeless', 'vsl', 'r_use']
     base = stats(par)
     print('\n' + '=' * 86)
     print('IDENTIFICATION: elasticity of each moment to each parameter')
