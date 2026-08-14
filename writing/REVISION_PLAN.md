@@ -1,519 +1,480 @@
-# Housing First or Treatment First? — Assessment and Revision Plan
+# Housing First or Treatment First? — Revision Plan
 
-Notes on the RED R&R decision (RED-D-26-00078, reject with door left open) and a
-proposed rebuild of the quantitative model.
-
----
-
-## 1. Read of the decision
-
-Karabarbounis rejected but explicitly invited "an almost new paper," with a promise to
-return it to the same AE and the same referees. That is a real option, not a polite
-brush-off. Three signals support taking it:
-
-- The AE letter is a **roadmap**, not a dismissal. It is unusually specific about what a
-  successful revision looks like, and it leads with "the main contribution of this paper
-  would be to provide a detailed model-based evaluation ... This is the major selling
-  point." The AE likes the question.
-- R3 recommends revision. R2 is on the fence but calls the model "very rich" and its
-  exposition clearer than İmrohoroğlu–Zhao. Only R1 recommends rejection, and R1's
-  report is the most detailed and constructive of the three — that is an engaged referee,
-  not a hostile one.
-- Nobody attacked the question, the framing, or the contribution claim. Every objection is
-  about *execution*: identification, model fit, policy modeling, and complexity.
-
-**The one-line diagnosis, on which all three referees and the AE agree:** the paper is a
-large model carrying a small amount of identification. The fix is not to add more
-machinery. It is to cut ruthlessly, and spend the freed budget disciplining the three or
-four elasticities the policy conclusion actually turns on.
-
-That is exactly the direction of the "simplify the model" instinct. The plan below goes
-somewhat further than dropping homeownership, because the AE explicitly licenses more.
+RED-D-26-00078. Rejected, with an explicit invitation to resubmit "an almost new paper" to
+the same AE and the same referees.
 
 ---
 
-## 2. The one thing to resolve before investing months
+## 0. Compute: can this run here?
 
-The AE writes:
+**Yes — but only after fixing the code, not by shrinking the model alone.** I compiled and
+ran your model in this container. Findings are in `code/PERFORMANCE_NOTES.md`; the headline:
 
-> Constantini (2025) finds for a sample of 300,000 Veterans that Housing First reduces
-> three-year mortality by 4.6 percentage points while Treatment First has no long-term
-> health effects, **in contrast with the model simulations of this paper**.
+| Finding | Impact |
+|---|---|
+| **`readme.txt` compiles with no `-O` flag** — gfortran defaults to `-O0` | Likely **3–10×**, one-line fix |
+| **Expectation recomputed inside the `a′` loop** (lines 9552–9705) | Plausibly **10–50×** |
+| Model simplification (§2) | **15–25×** |
+| `max_CPUs=40` hardcoded, overrides `OMP_NUM_THREADS` | Portability; 10:1 oversubscription here |
+| **Coarse-grid mode has a real bug** — see below | Correctness |
 
-This is the most dangerous sentence in the whole file, because the paper's headline result
-runs *through mortality*. Universal TF only beats universal HF once loss-of-consortium
-mortality spillovers are added (Table 9). If the best quasi-experimental evidence says HF
-saves lives and TF does not, the central welfare ranking is contradicted by the evidence
-the model should be matching.
+These multiply. A solve currently measured in hours should land well under a minute, which
+is the threshold where the entire revision runs interactively on 4 cores.
 
-There is a good defense, and it should be made loudly and early — but it is only a partial
-defense:
+Measured baseline: compiles in 23 s; sustains ~360% CPU on 4 threads (parallelism is
+healthy); 612 MB resident; roughly 4 *retirement-age* backward-induction steps in 3.5 min
+wall / 12.5 min CPU. Retirement ages are the cheap ones.
 
-- **What Constantini studies is Experiment 1**, i.e. HF vs TF holding rationing fixed. In
-  that comparison the paper *already agrees* with the evidence on the housing and welfare
-  margins: TF raises homelessness ~17% and lowers welfare ~0.4%. The paper's novel claim
-  is about *universal* TF, which Constantini does not study. Say this explicitly.
-- **But the mortality sign still conflicts.** In Experiment 1 the model has population
-  *rising* 0.23% under TF (fewer deaths, via less addiction), whereas Constantini has HF
-  reducing mortality. The model's addiction→mortality multiplier (κ_{d,φ} = 6.9) is doing
-  far more work than its homelessness→mortality multiplier (κ_{h,φ} = 1.6). The relative
-  strength of those two channels is precisely what determines the paper's answer, and it is
-  currently disciplined by two separate literatures that were never reconciled.
+### Why the coarse grid disagrees with the full grid
 
-**Action, and do this first:** re-target the model so that Experiment 1 reproduces
-Constantini's 3-year mortality difference between HF and TF. This is a cheap experiment on
-the *existing* code — it is a re-calibration of two multipliers, not a rebuild. Two
-outcomes:
+You were right that it is broken, and it is not a tolerance issue. `optimal_financial_1` is
+initialized **once** (line 9471) outside both the addiction loop (9500) and the housing loop
+(9519), but the refinement pass centres its search window on it. It is only updated on a new
+**global** maximum (line 9715, inside the `largest_value` test), so for every branch after
+the first, the refinement searches around *a different branch's optimum*. A branch whose
+true optimum falls between coarse gridpoints and would have won is silently lost.
 
-- The universal-TF ranking survives → the paper is now *validated against* the AE's own
-  cited evidence, and the single strongest objection becomes a selling point.
-- The ranking flips → far better to learn this in a week than after a six-month rebuild,
-  and the paper becomes "generosity dominates conditionality," which is still publishable
-  and arguably a more interesting result.
+With `coarse_grid=0` the loop `do gsi=0,0` runs one exhaustive pass and the stale value is
+never read — which is exactly why only coarse mode is wrong.
 
-Do not start the rebuild before running this check.
+Separately, coarse-then-refine assumes unimodality in `a′`, and this model breaks it: voucher
+eligibility is a step function of income (which includes `r·a`), the food-stamp rule kinks,
+and housing is discrete. Those discontinuities sit precisely where your policy action is.
 
----
+**Recommendation: fix the reset, but do not rely on coarse mode for anything reported.** Your
+welfare margins are 0.1–1% and R1 already flagged them as narrow. Use **regime decomposition**
+instead — within each regime (voucher eligible/not, food stamp binding/not, `v` ∈ {0, ≤v̄, >v̄})
+the problem is concave, so solve each exactly and take the max. Exact *and* fast.
 
-## 3. What to cut
+### On giving me access to your remote machine
 
-The instinct to remove homeownership is right, and the AE explicitly asks for it ("Why do
-we need the role of homeownership, and not simply the difference between homelessness and
-houses?"). But the AE licenses considerably more cutting than that, and each cut below is
-requested by name in one of the four documents.
+Don't. Two better options:
 
-| # | Cut | Requested by | What it buys |
-|---|-----|--------------|--------------|
-| 1 | **Homeownership and tenure choice** | AE | Deletes state `o`, the entire owner branch, the 61-point negative asset grid, LTV constraint, selling costs, depreciation, and house price `p_h` |
-| 2 | **Housing-market GE (`p_h` *and* `p_r`)** | AE | Deletes construction firm, rental company, γ₁, γ₂, two market-clearing conditions, and two targets (rental supply elasticity, rent-to-price ratio) |
-| 3 | **UI expiration (state `κ`)** | AE | Collapses the (e, κ, d) grid from 6 to 4 |
-| 4 | **Type-dependent bequests ϑ(x,z)** | AE | Replace with uniform lump sum; removes a GE fixed point |
-| 5 | **Housing grid 7 sizes → 2–3** | R2 (grid is unjustified, only 3 of 7 calibrated) | Cuts the choice set ~2× |
-| 6 | **Loss-of-consortium adjustment κ_cons** | AE, R1 3(a)(b)(c) | See below — this is the highest-value cut in the table |
-| 7 | **Counterfactuals in the body: 4 → 2** | AE ("first and third experiment ... most relevant") | Pure writing win |
+1. **Run Claude Code on the remote box itself.** It is a Linux CLI — install it there and
+   start a session inside your MobaXterm SSH shell. You authenticate as yourself, no
+   credentials are shared, and the session has native access to all 40 cores. This is the
+   right answer to what you asked.
+2. **Git as the interface.** I commit here → you `git pull` and run there → you commit
+   results into `output/` → I analyze and write.
 
-Cut #2 deserves emphasis because it is counterintuitive. The AE writes: *"Why does the
-policy analysis require a full general equilibrium model? Many long-run partial equilibrium
-outcomes appear nearly identical to the general equilibrium ones. Do account for the changes
-in the government, and ideally for the adjustment in drug prices ... not necessarily in
-terms of housing prices and rents."* The AE is asking to trade two equilibrium prices you
-currently solve for (p_h, p_r) for one you do not (p_v). That is a strict computational win
-*and* a responsiveness win.
-
-Cut #6 also deserves emphasis. R1 called κ_cons "plucked out of thin air," noted that a
-genuinely conservative value would be zero, and observed that it flips the policy ranking —
-which is fatal for a headline claim. The AE offers the escape hatch: *"present the policy
-consequences along two different dimensions, the welfare consequences of equation (30) and
-the mortality consequences."* Report CE and lives saved as two separate columns and let the
-reader weigh them. This costs nothing computationally, removes a free parameter, kills three
-of R1's numbered objections at once, and forces the honest statement that the conclusion
-softens to *"universal TF dominates on addiction, homelessness, mortality, and fiscal cost;
-universal HF wins narrowly on direct newborn welfare."* That is a defensible claim. The
-current one ("the debate is resolved in favor of universal TF") is not — R1 said so directly.
+I cannot usefully SSH out from this container: it is ephemeral, outbound goes through an
+HTTPS proxy, and credentials would need re-entering every session. Option 1 gets you
+everything you wanted from that idea, without the security problem.
 
 ---
 
-## 4. What must be added
+## 1. Do this first, before anything else
 
-These are not optional. Each is flagged by at least two of the four documents.
+The AE writes that Constantini (2025) finds HF reduces 3-year mortality by 4.6pp while TF
+has no long-term health effect, *"in contrast with the model simulations of this paper."*
 
-**1. Endogenous treatment / recovery.** This is the single most damning critique and it is
-essentially unanswerable in the current setup: the policy is called *Treatment First* and
-the model contains no treatment. Recovery is exogenous and random, so TF operates only
-through the eligibility margin, never through the recovery margin. R1: *"One of the goals of
-TF as a policy is to encourage addicts to seek treatment ... this mechanism is ruled out in
-the model."* The AE: *"The policy itself has a direct role in impacting the transition out of
-addiction."* Note R1 expects this to **strengthen** TF — so this addition works in the
-paper's favor. Minimum viable version: a binary treatment/effort choice for those with SUD
-that raises the recovery hazard at a utility or resource cost, which TF subsidizes or
-mandates. Adds one binary choice, not a state variable.
+Your headline runs through mortality — universal TF only beats universal HF once mortality
+spillovers are added. Your Experiment 1 has population *rising* 0.23% under TF. Your
+addiction→mortality multiplier (6.9) is overwhelming your homelessness→mortality multiplier
+(1.6), and those two came from separate literatures that were never reconciled.
 
-**2. Drug price p_v adjusts in counterfactuals.** R1 1(c), R3, AE. Currently p_v ≡ 1 and
-never moves, yet the calibration targets a *price* elasticity — R3 flags the internal
-tension directly. One scalar in the outer loop, replacing two you deleted. Price feedback
-plausibly *offsets* TF's reduction in drug use, so this is a real robustness risk worth
-knowing about.
+**Re-target κ_{h,φ} and κ_{d,φ} on the existing code so Experiment 1 reproduces
+Constantini's HF-vs-TF mortality difference.** This is a two-parameter recalibration, not a
+rebuild. A week on your cluster.
 
-**3. Imperfect detection of drug use.** R1 4(a),(b). TF currently assumes sobriety is
-perfectly observed and perfectly enforced. Add a detection probability p < 1 and a false
-positive rate. This is a modification of the voucher transition kernel only — no new state,
-no new cost — and it is the kind of realism that converts a referee.
+- Ranking survives → your single strongest objection becomes a validation exercise.
+- Ranking flips → you learned it in a week, and "generosity dominates conditionality" is
+  still a publishable paper.
 
-**4. Mental health.** R1 1(a), and R1 is explicit that its absence is not neutral: *"mental
-health contributing to drug use and addiction as well as homelessness would weaken TF
-dramatically as a policy."* A referee who believes an omitted mechanism biases the result
-toward the paper's conclusion will not clear it. Add it as a persistent binary state that
-raises drug-use propensity, lowers employment, and lowers the recovery hazard.
-
-Two notes. First, this doubles the state space — add it **only after** the simplified core
-is fast, exactly as sequenced below. Second, there is a bonus: a chronically mentally ill
-group that does not age out of homelessness is the natural fix for R1 2(c)(ii), the finding
-that the model puts 73.1% of the homeless in ages 26–44 against 48.1% in the data. One
-addition, two objections answered.
-
-**5. Model fit column in Table 2.** R1 2(a). Trivial, and non-negotiable — its absence is
-what caused R1 to lose confidence in the entire quantification. Report model moments beside
-data moments for all 22 targets.
-
-**6. Target the elasticity of drug use with respect to housing access.** R2, R3, and the AE
-all name this as *the* key elasticity, and it is currently untargeted. R2: *"all of the
-welfare results rest on whether the model has an accurate elasticity of drug use to housing
-access."* Sources: Milby et al. (2005), plus the HF RCT literature already cited in the
-intro. Pair it with the elasticity of homelessness with respect to addiction (AE).
-
-**7. Numerical identification evidence.** R1 2(f), which was complimentary about the
-existing verbal argument in Section 4.2 and just wants it shown numerically. Cheapest
-credible option: perturb each parameter locally and plot the moment responses. The
-Andrews–Gentzkow–Shapiro sensitivity matrix is the fuller answer if the solve is fast.
-
-**8. Proper transition paths.** R1 3(d) calls the current several-period PE adjustment "a
-half-measure." This is only feasible because of the cuts in §3 — with no housing market to
-clear along the path, a transition requires iterating on τ_ℓ and p_v alone.
-
-**9. A stylized model in Section 2.** R1 1(e), R3, and the AE all ask. See §6 — this is
-more valuable than it sounds.
-
-**10. Connect to the recent empirical and structural literature.** Constantini (2025),
-Cohen (2024), Brounstein and Wieselthier (2026), Abramson (2026), Humphries et al. (2026),
-Abramson and van Nieuwerburgh (forthcoming) on fiscal costs of homelessness. Also revisit
-the χ_H = 25.2% of average income figure, which both R2 and R3 independently judged too
-high, and source the "37% of homeless have SUD" figure precisely with an explicit
-homelessness definition (AE).
-
-**11. Terminology.** Replace "addicted" with "suffering from substance use disorder"
-throughout (AE). Mechanical, and signals responsiveness at zero cost.
+There is a real partial defense either way: Constantini studies *rationed* HF vs TF, which
+is your Experiment 1, where you already agree TF is worse. Your novel claim is about
+*universal* TF, which he does not study. Say that explicitly regardless.
 
 ---
 
-## 5. The proposed state space, and whether it will run on 4 cores
+## 2. The new model, in one page
 
-The proposed minimal state — age, non-negative assets, labor productivity, SUD status,
-unemployment — is close to right but is missing two states that cannot go:
+**States (7):** age `j`, assets `a ≥ 0`, productivity `x/z`, employment `e`, SUD status `d`,
+housing `h` (homeless + 2–3 rental sizes), voucher receipt `η`. Mental health `m` makes 8.
 
-- **Housing status `h`** must stay. Mortality, employment transitions, and the recovery
-  hazard all condition on it, and `h'` is the central choice. But it shrinks from 8 points
-  (homeless + 7 sizes) to 3–4 (homeless + 2–3 rental sizes).
-- **Voucher receipt `η`** must stay, because receipt is persistent and that persistence is
-  the entire mechanism by which TF's threat operates.
+**Gone:** homeownership, tenure choice, mortgages, the negative asset grid, house prices,
+rents, the construction firm, the rental company, UI expiration, type-dependent bequests,
+4 of 7 housing sizes.
 
-So the minimal state is **(j, a ≥ 0, x/z, e, d, h, η)** — seven, of which age is trivially
-sequential. Mental health makes eight.
+**Equilibrium objects:** labor tax `τ_ℓ`, drug price `p_v`, bequests. That's it — no housing
+market to clear.
 
-Worth noting: renters in the current code already carry only non-negative assets (indices
-61–151 of the 151-point grid). Dropping ownership therefore deletes the 1–60 range and the
-entire owner block outright, rather than requiring any redesign of the asset grid.
+**New mechanisms:** endogenous treatment, imperfect sobriety detection, a homelessness
+externality, mental health.
 
-### Indicative state counts, per age
+**Preferences fixed across SUD status** (single θ_2) — see §4.
 
-| Version | Per-age states | vs. current |
-|---|---|---|
-| Current (renters 91×6×9×8×2, owners 151×6×9×2) | ≈ 95,000 | 1× |
-| Simplified core (45 × 9 × 4 × 4 × 2) | ≈ 13,000 | 7× smaller |
-| + mental health | ≈ 26,000 | 3.7× smaller |
-| + treatment state (d ∈ {clean, SUD, SUD-in-treatment}) | ≈ 39,000 | 2.4× smaller |
+Everything above is requested by name in the AE letter or a referee report except mental
+health (R1 asked for it) and fixed preferences (your call, and the right one).
 
-The state count is not the real constraint, though — the **choice set** is. It falls from
-a'(151) × h'(8) × o'(2) × v × ℓ to a'(45) × h'(4) × v × ℓ, and the tenure choice with all
-its buy/sell/mortgage branching disappears entirely.
+### Implement homeownership as a switch, not a deletion
 
-### Implement it as a compile-time switch, not a deletion
-
-Homeownership should be gated behind a flag rather than stripped out, so it can be turned
-back on for a robustness appendix or if a referee insists. The code already uses exactly
-this idiom — `include_addiction`, `include_vouchers`, `only_LTV`, `coarse_grid` — and, more
-usefully, the renter/owner split is *already* structurally separated: 74 `do i=1,2` loops
-where `i=1` is the renter branch and `i=2` the owner branch, with array bounds already
-driven by an `is_owner` flag at allocation.
-
-So the change is small and mechanical:
+The code already separates renter (`i=1`) and owner (`i=2`) across 74 `do i=1,2` loops, with
+bounds driven by `is_owner` at allocation. So:
 
 ```fortran
 integer, parameter :: include_homeownership=0
-
-! 1. Tenure: collapses all 74 owner/renter loops. `do i=1,2` -> `do i=1,tenure_grid_size`
 integer, parameter :: tenure_grid_size=include_homeownership*2+(1-include_homeownership)*1
-
-! 2. Mortgage grid: renters already index negative_financial_grid_size:financial_grid_size,
-!    so setting the negative block to 1 leaves 91 non-negative points with index 1 = zero
 integer, parameter :: negative_financial_grid_size=include_homeownership*61+(1-include_homeownership)*1
-
-! 3. Housing sizes: homeless + 3 rental sizes instead of homeless + 7
 integer, parameter :: housing_status_grid_size=include_homeownership*7+(1-include_homeownership)*4
 ```
 
-Because these are `parameter` (compile-time) constants, gfortran dead-code-eliminates the
-owner branches and the arrays physically shrink at compile time — there is no runtime cost
-to carrying the switch, and setting `include_homeownership=1` restores the current model
-exactly. This is strictly better than deleting the code. The one thing to verify is that
-the `financial_grid` construction routine behaves when the negative block has length 1.
+These are `parameter` constants, so gfortran dead-code-eliminates the owner branches and the
+arrays shrink at compile time. Zero runtime cost, and `=1` restores today's model exactly.
+Verify the `financial_grid` constructor handles a negative block of length 1.
 
-Turning it off also removes, for free: the LTV constraint, mortgage amortization and
-insurance, `cost_of_selling`, owner-occupied depreciation, the buy/sell branching in the
-Bellman operator, the construction firm, and `p_h` from the outer equilibrium loop.
+Speedup compounds: tenure ~2×, assets 151→91 ~1.7×, housing 8→4 ~2×, plus `p_h` leaving the
+outer loop. **Roughly 15–25× fewer Bellman evaluations**, before algorithmic changes.
 
-### Where the speedup actually comes from
+### Three algorithmic changes worth more than the state count
 
-The intuition that "a lot of stuff gets faster" is right, and it compounds multiplicatively
-because each cut hits a different nested loop:
+1. **Exploit the step structure of π_d(v).** It has one threshold v̄, so solve three *smooth*
+   subproblems (v=0, v ≤ v̄, v > v̄) and take the max. Kills a non-concave search.
+2. **Monotonicity of a'(a).** Carry the previous gridpoint's optimum as a bracket.
+3. **Coarse-grained OpenMP** over the outer state loops (productivity × employment × SUD).
+   With 4 cores, parallelize coarsely; with 40, this is where the scaling comes from.
 
-| Source | Factor |
+**Target:** one stationary equilibrium in ≤ 60–90 seconds on 4 cores. If you hit that,
+everything the referees want — transitions, sensitivity, identification — becomes routine.
+
+---
+
+## 3. Master table: every big item and its disposition
+
+Grouped by theme, with the cheapest adequate response. "Discuss" means a paragraph, not code.
+
+### A. The model is opaque *(AE, R1 1e, R2, R3)*
+
+| Item | Response | Cost |
+|---|---|---|
+| Need a stylized model | Two-period model proving the **generosity × conditionality cross-partial** — see §5 | Analytical |
+| Appendix A disorganized, static, overclaimed | Tighten, demote, relabel as intuition | Writing |
+| Model is a black box | Numerical **channel-shutdown ladder** — see §6 | ~50–100 solves |
+| Show drug-use policy functions | Plot v(a, income) by SUD status | 1 figure |
+| Stylized facts on drug use by income/employment/housing | Report from baseline | Free |
+
+### B. Quantification below bar *(AE, R1 2, R3)*
+
+| Item | Response | Cost |
+|---|---|---|
+| **Model fit never shown** | Add model column to Table 2 for all 22 targets | Free — non-negotiable |
+| Homeless: 100% unemployed, ~0 income (data: 40–52%, 19%) | Add a transitory expense/eviction shock so non-corner people become homeless | Model change |
+| Homeless age distribution off (73% vs 48% aged 26–44) | Mental health state creates persistent older homeless | Comes free with §C |
+| No numerical identification evidence | Local perturbation plots; AGS sensitivity if solve is fast | Cheap once fast |
+| Price-elasticity moment not replicable | Appendix defining every moment's model counterpart | Writing |
+| Calibration reads as a list | Rewrite around insights; separate standard vs novel parameters | Writing |
+| Sources span decades, SCF waves unclear | Date everything | Writing |
+
+### C. Key mechanisms missing *(R1 1a/1b, AE)*
+
+| Item | Response | Cost |
+|---|---|---|
+| **No treatment in "Treatment First"** | Binary treatment/effort choice raising the recovery hazard at a cost; TF subsidizes or mandates it | One binary choice, no new state. **R1 expects this to strengthen TF** |
+| TF assumes perfect detection | Detection probability p < 1 + false-positive rate | Modifies the voucher kernel only |
+| Mental health absent | Persistent binary state: raises drug propensity, lowers employment, lowers recovery | Doubles state space — add **last** |
+| Drug price fixed at 1 | Let `p_v` clear a simple supply curve | One scalar, replaces two you deleted |
+| Admin/compliance costs ignored | Sensitivity row | Cheap |
+
+### D. Elasticities untargeted *(R2, R3, AE — this is the core one)*
+
+| Item | Response |
 |---|---|
-| Tenure choice `o'` gone (74 loops halve; no buy/sell branch) | ~2× |
-| Asset grid 151 → 91 (mortgage block gone) | ~1.7× |
-| Housing grid 8 → 4 points | ~2× |
-| Per-age states 95k → 39k | (already counted above) |
-| `p_h` out of the outer GE loop | ~1.3–2× on the equilibrium solve |
+| **Elasticity of drug use to housing access** | Target it. Milby et al. (2005) + the HF RCT literature you already cite |
+| Elasticity of homelessness to SUD | Target it |
+| Match Constantini's mortality effects | §1 — do this first |
+| Robustness to the −0.36/−0.9 price elasticity range | Sensitivity ladder |
 
-Compounded, that is roughly **15–25× fewer Bellman evaluations per equilibrium**, before
-any of the algorithmic changes below. Those changes are what take it the rest of the way.
+### E. Welfare machinery is ad hoc *(R1 3, R2, R3, AE)* — see §4
 
-### Three algorithmic changes that matter more than the state count
+### F. Model too large *(AE)* — see §2
 
-1. **Exploit the step structure of addiction risk.** π_d(v) is a step function with a single
-   threshold v̄. So solve three *smooth* subproblems — v = 0, v ∈ (0, v̄], v > v̄ — and take
-   the max. This converts a non-concave search over v into three well-behaved problems and
-   is likely the largest single win available.
-2. **Use monotonicity of a'(a).** In finite-horizon VFI the savings policy is monotone in
-   assets; carrying the previous gridpoint's optimum as a lower bracket turns an O(N²)
-   search into roughly O(N). Consider EGM for the c/a' margin conditional on discrete
-   (h', v-regime).
-3. **Coarse-grained OpenMP.** With only 4 cores, parallelize the outer state loops
-   (productivity × employment × SUD), not the inner ones. The `-fopenmp` flag is already in
-   the build line.
+### G. Policy analysis presentation *(R1 3d, R3, AE)*
 
-On labor supply, there is a genuine conflict: the AE asks what role it plays, while R3 is
-*surprised* it does not matter more for the welfare cost of financing via labor taxes.
-Recommendation: keep it, since taxes are the financing margin and R3 will notice if it
-vanishes, but put it on a coarse 3–5 point grid.
+| Item | Response | Cost |
+|---|---|---|
+| No proper transition paths | Solve them — feasible once there's no housing market to clear | Only viable post-§2 |
+| Too many counterfactuals in body | Keep 2, appendix the rest | Writing |
+| Voucher probability varies discretely | Continuous sweep of π_V — is there a Laffer curve? | Cheap sweep, good figure |
+| Tables should show levels + % changes | Add columns | Free |
+| Language too strong ("debate is resolved") | Soften — see §4 | Writing |
 
-### Targets to aim for
+### H. Literature and writing
 
-| | Target on 4 cores |
+| Item | Response |
 |---|---|
-| One stationary equilibrium | ≤ 60–90 seconds |
-| Full calibration (~12–15 internal parameters) | overnight |
-| One transition path (~150 periods, clearing τ_ℓ and p_v only) | ≤ 1 hour |
-
-If a single equilibrium solve lands inside ~90 seconds, everything the referees asked for —
-transitions, sensitivity analysis, the AGS matrix, robustness on imprecisely measured
-targets (R1 2(f) flags the −0.36 to −0.9 price elasticity range specifically) — becomes
-routine rather than heroic. That, not elegance, is the reason to simplify.
-
----
-
-## 6. The stylized model is the highest-value addition
-
-R1, R3, and the AE all ask for it, and the existing Appendix A does not satisfy them —
-R1 calls it "disorganized and narrower than the surrounding discussion suggests," deriving
-results in static settings while the main model is dynamic.
-
-But there is a much better reason to write it than referee compliance. **The paper's actual
-contribution is a proposition, and it is currently buried in Table 8.** The headline finding
-is not "TF good" or "HF good" — it is that *the deterrent value of conditionality is
-increasing in the generosity of the benefit being conditioned*. A guaranteed voucher is a
-much bigger stick than a lottery ticket, which is why universal TF beats rationed TF on
-addiction while rationed TF loses to rationed HF. That is a cross-partial:
-∂²(deterrence)/∂(generosity)∂(conditionality) > 0.
-
-That is provable in a two-period model with no computation at all. It reframes the entire
-paper from "here is a big model, here are four experiments" to "here is a general principle
-about conditional transfers, verified quantitatively in a calibrated model, applied to a
-live policy debate." It also directly answers the AE's core complaint that "the economic
-messages of the paper are lost within long-lists of model features."
-
-Suggested Section 2: a two-period model delivering (i) the income gradient of drug use
-requires the mortality penalty to scale with continuation value — this is the current
-Appendix A result, tightened; and (ii) the generosity × conditionality cross-partial. Then
-state clearly that the quantitative model exists to measure the magnitudes and the fiscal
-and equilibrium feedbacks, not to establish the sign.
+| Connect to Constantini, Cohen, Brounstein-Wieselthier, Abramson, Humphries | Cite and engage |
+| χ_H = 25.2% too high *(R2, R3)* | Compare to Abramson–van Nieuwerburgh; sensitivity |
+| "37% of homeless have SUD" unsourced | Source it, state your homelessness definition |
+| Intergenerational discussion without linkages *(AE)* | See §4.3 |
+| "Addicted" → "substance use disorder" | Global find-replace |
+| Why a max experimentation age? *(R1)* | Justify or drop |
+| Typos *(R1, items 3–10)* | Fix |
 
 ---
 
-## 7. The mechanism section: channel shutdowns with the participation rate held fixed
+## 4. The welfare rebuild — the highest-leverage section
 
-Replace the static appendix as the primary vehicle for mechanisms with a numerical
-decomposition inside the quantitative model: shut the channels off one at a time,
-**recalibrate `b` in each arm to hold the drug-participation rate at its baseline value**,
-and report *who* uses drugs in each case.
+Four separate complaints all land here, and one restructuring answers all of them.
 
-### Why this is the right exercise
+### 4.1 Kill κ_cons; build the homelessness externality instead
 
-R1 asked for precisely this, in comment 1(d):
+R1 called κ_cons "plucked out of thin air," noted a truly conservative value is zero, and
+observed it flips your ranking. R1 also objected that it is "not formally integrated into
+the model" and "should in principle affect the value of life and agents' decisions."
 
-> The paper should demonstrate that the claimed mortality/value-of-life channel is actually
-> the quantitatively important one. A simple way to do this would be to compare the
-> relationship between income and drug use in the baseline model to an otherwise similar
-> version of the model in which mortality is not affected by drug use. **I would find this
-> more intuitive than a toy example that abstracts from dynamic savings decisions.**
+R2 hands you the replacement: *"a large homeless population, especially if many are addicted
+to drugs, creates a negative externality beyond the fiscal burden"* — citing Corbae, Glover
+and Nattinger (2024), and calling it *"very easy to introduce."*
 
-The referee who recommended rejection has pre-approved the design and stated a preference
-for it over the appendix. One exercise then also covers:
+**Add −κ_ext · H_agg to period utility**, where H_agg is the aggregate homelessness rate that
+agents take as given. This is strictly better than κ_cons on five counts:
 
-- **R1 1(e)** — the appendix is "disorganized and narrower than the surrounding discussion
-  suggests," static where the model is dynamic. Demoting it to a clearly-labeled intuition
-  section resolves this.
-- **R3** — *"present model-derived stylized facts on drug use ... by income, employment
-  status, housing status, assets, and explain how they depend on model parameters (notably
-  `b`, the Stone-Geary parameter, and ℵ)."* R3 names `b` specifically; this exercise varies it.
-- **R2** — *"show and explain intuitively a plot of the drug use policy function for addicts
-  and non-addicts as their income and wealth vary."*
-- **AE** — *"You really need to highlight the key ingredients of your machinery."*
+1. A referee **asked for it**.
+2. It has a citation and a literature, rather than being picked from air.
+3. It is **internalized** — it enters V, so it affects the value of life and drug decisions.
+   R1's consistency objection dies completely.
+4. It **amplifies** the universal-policy result, since those policies cut homelessness ~93%.
+5. It costs one scalar and an aggregate you already compute.
 
-The recalibration of `b` is the part that makes it work. Without it, shutting off the
-mortality penalty just raises drug use across the board and the level change swamps any
-compositional change. Holding participation fixed isolates *sorting* from *level*, which is
-the object the paper's claim is actually about.
+Then follow the AE's presentational fix: report **welfare and mortality as two separate
+columns** rather than folding deaths into a single number. Let the reader weigh them.
 
-### Proposed arms
+Expect the headline to soften to: *"universal TF dominates on addiction, homelessness,
+mortality and fiscal cost; universal HF wins narrowly on direct newborn welfare."* That is
+defensible. "The debate is resolved in favor of universal TF" is not — R1 said so directly.
 
-Two arms is not enough — addiction operates through more channels than mortality and
-employment, and two of the others are already under referee attack. A nested ladder:
+### 4.2 Fix preferences across SUD status
 
-| Arm | Shut off | Parameters | What it isolates |
-|---|---|---|---|
-| 0 | — (baseline) | — | Reference |
-| 1 | Addiction → mortality | κ_{d,φ} = 1 | The value-of-life channel — **the paper's headline claim** |
-| 2 | Addiction → employment | κ_{d,ue} = κ_{d,eu} = 1 | R1's rival hypothesis (income risk, not mortality) |
-| 3 | Addiction → preferences | θ_{1,2} = θ_{0,2} | The Cobb-Douglas weight shift R2 and R3 both attack |
-| 4 | Homelessness feedback | κ_{h,φ}, κ_{h,ue}, κ_{H,d} = 1 | The feedback loop the abstract claims is central |
+Adopt θ_{1,2} = θ_{0,2} = θ_2 as **the specification**, and run the old addiction-dependent
+version as a robustness arm. This is cleaner than the AE's own proposal (vary `b` by
+addiction status), because with Cobb-Douglas the asymptotic expenditure share is θ_2
+regardless of `b`, and `b` is calibrated tiny — so varying `b` moves behavior at very low `v`
+but will not reproduce the 44%-vs-11% expenditure gap.
 
-Arm 3 is doing double duty. The AE proposed exactly this as a preference robustness check —
-*"keep the Cobb-Douglas weights invariant to addiction but let the marginal utility vary by
-addiction by changing the parameter `b` decrease by addiction status"* — and R2 warned that
-the current specification makes "policies reducing addictions and policies raising housing
-consumption ... strong welfare complements even absent incentive effects." Running it as a
-mechanism arm answers the modeling objection and the robustness request in one table.
+**Fixed preferences reproduce that gap endogenously.** With identical preferences, an addict
+and an experimenter in the same state differ in exactly one respect: the addict faces no
+further addiction risk, since the recovery hazard depends on housing, not on `v`. So the
+addict's drug choice is *static* — expenditure share θ_2. The experimenter restrains,
+because crossing v̄ jumps them to π_{d,high} = 6.48 × π_{d,low}, so they bunch at or below v̄.
 
-Arm 4 is worth running even though no referee asked for it. The abstract claims a feedback
-loop is the central mechanism. If shutting it off barely moves anything, that is something
-to discover privately rather than in the next round.
+The 4× gap stops being an assumption and becomes a **prediction**. That is a materially
+stronger paper, and it kills R2's "bakes in an income-contingent gain/loss from becoming
+addicted" and R3's "reducing addiction mechanically raises consumption utility" at once.
 
-### What to report
+Three things to work through:
 
-The money figure: **drug-use rate by income decile, one line per arm.** Under the baseline
-it slopes down; if the paper's claim is right, Arm 1 should flip it upward. That single
-panel is the paper's central theoretical claim, shown dynamically and quantitatively, and it
-retires Appendix A as the load-bearing argument.
+1. **Recheck identification.** θ_{1,2} is gone, so the 44%, 11% and 0.87 moments now rest on
+   θ_2, v̄ and π_{d,low}. The mapping is intuitive but the last two both key off v̄ — verify.
+2. **All private cost of SUD now runs through mortality, unemployment and resource
+   diversion.** Absent those, becoming addicted *relaxes* a constraint and would be weakly
+   desirable. Internally consistent with your thesis, but a sharper commitment.
+3. **It makes the mortality shutdown a cleaner test**, since R2's rival explanation for the
+   income gradient is gone — but there is no fallback mechanism if the gradient fails to flip.
 
-Alongside it, for each arm: mean income of users relative to the average (the exact
-statistic R1 attacked — 41% in model vs 74% in data), share unemployed, share homeless,
-mean age, mean assets.
+**Computational bonus:** for d = 1 the drug choice is static and, given discrete h', the
+(c, v) split is closed-form Cobb-Douglas. No search over `v` for the addicted half of the
+state space; combined with the three-regime trick, none anywhere.
 
-**Report the flow and the stock separately.** The composition of *experimenters* is the
-decision margin, and it is where the mechanism lives — that is the clean test. The
-composition of *addicts* is a stock that also reflects differential mortality and recovery,
-so shutting off addiction-mortality changes it partly mechanically (addicts stop dying, the
-stock ages and persists) rather than through selection. Conflating them will invite exactly
-the kind of objection R1 raised about the untargeted moments.
+### 4.3 Parental anxiety: discuss it, mostly
 
-### One caveat on using `b` as the normalizer
+R2's exact framing matters. Of his two welfare additions he says the externality is *"very
+easy to introduce"* but the dynastic element *"seems like more of a stretch, **but could be
+discussed** (I think it would only amplify the welfare gains from reducing addiction)."*
 
-`b` is not a neutral instrument. The paper's own argument is that `b` governs the
-*no-penalty* gradient, which slopes *upward* in income, and the penalties reverse it. So
-recalibrating `b` in an arm where a penalty has been removed adjusts the very object that
-determines the counterfactual gradient. This does not invalidate the exercise, but it should
-be handled openly:
+R2 is not asking you to build a dynastic model. He is asking you to acknowledge it and note
+the direction — which is in your favor. Three tiers:
 
-1. **Report both the un-normalized and normalized versions.** The un-normalized arm gives a
-   headline level effect ("removing the mortality channel raises drug use from 4% to X%"),
-   which is itself evidence the channel matters. The normalized arm gives composition. The
-   pair is more informative than either.
-2. **Show the composition result under a second normalizer** — π_{d,low} is a good candidate
-   because it shifts the addiction transition rather than preferences, so it does not
-   mechanically re-rank who wants drugs. If the gradient flip survives both, it is the
-   mechanism and not the normalization.
+**Tier 1 — discuss (recommended default).** A paragraph: parental altruism is an omitted
+welfare channel; since universal TF reduces both SUD and homelessness among the next
+generation, incorporating it would amplify the measured gains. Cite Corbae et al. Zero cost,
+and it is literally what R2 asked for.
 
-### Division of labor with the stylized model
+**Tier 2 — warm glow (cheap, and it fixes an AE complaint).** The AE separately asks: *"Why
+is there a discussion on intergenerational transmission in Section 4.1.3, without
+intergenerational linkages?"* The AE is right — §4.1.3 specifies log x' = 0.5 log x + ε, but
+§3.12 draws newborns from the *unconditional* Ω_x, so ρ_x is decorative.
 
-Do not delete the analytical work; R1 asked for it to be *demoted and made precise*, not
-removed. Suggested split:
+Make it load-bearing. At a single parental age j_p, add ν · E_{x'|x}[V_1(0, x', ...)] to the
+Bellman. You do **not** need to match parents to actual children — the conditional
+distribution of x' given x is already specified, and in a stationary equilibrium the
+unconditional newborn distribution is unchanged, so nothing else breaks. One extra term at
+one age, using objects you already compute (V_1 is needed for the welfare measure anyway).
 
-- **Body, stylized section** — two-period model proving the generosity × conditionality
-  cross-partial (§6). This is the contribution, and the numerical exercise cannot prove it.
-- **Body, mechanism section** — this shutdown ladder. This is the calibration validation,
-  and it is what makes the quantitative model legible.
-- **Appendix A** — tightened static derivation of the income-gradient reversal, explicitly
-  framed as intuition rather than as a general proof of the model's mechanism.
+Because the parent cannot influence x', this shifts welfare *levels* but not decisions —
+which is exactly what R2 predicts ("only amplify the welfare gains"). It changes the *policy
+comparison* because V_1 differs across regimes. One new parameter ν, disciplined by
+willingness-to-pay evidence, reported as a welfare robustness row.
 
-### Prerequisite and risk
+**Tier 3 — behavioral dynastic link.** Make the child's initial state depend on the parent's
+`d` or `h`; the `newborns_inherit_addiction` switch (line 68) already exists. This creates a
+genuine "I shouldn't use drugs because my child will suffer" channel and would strengthen TF
+further. **Don't.** It is a different paper, it needs its own calibration target, and R2
+explicitly did not ask for it.
 
-Each arm needs a scalar root-find on `b` wrapped around a full solve — call it 10–20 solves
-per arm, 50–100 across the ladder. That is prohibitive at current speed and an afternoon
-after the cuts in §3. **The mechanism section is a concrete reason the simplification has to
-come first**, not a separate agenda.
-
-The risk is real and worth naming: if the gradient does not flip in Arm 1, the paper's
-central claim is wrong. But note R1's rival hypothesis is that "the labor-market and
-income-risk consequences of drug use could also generate a low-income concentration of drug
-use" — i.e. Arm 2 might be doing the work. If that turns out to be true, the framing shifts
-from *value of life* to *value of future resources*, which is more general and more robust
-than the current story. The paper survives either outcome; what it cannot survive is not
-knowing.
-
-Run these arms in PE at baseline prices and taxes. The point is to isolate behavioral
-mechanisms, not equilibrium feedback, and it keeps the ladder cheap.
+If Tier 2 is more than you want, do Tier 1 and simply delete the decorative
+intergenerational language from §4.1.3. That alone closes the AE's complaint.
 
 ---
 
-## 8. Two fit problems that the rebuild should be designed around
+## 5. The intuition section — a *dynamic* stylized model
 
-R1's Table 3 objections are the ones most likely to sink a resubmission, because they
-concern exactly the states that discipline the mechanism.
+The paper structure to aim for: **intuition model → quantitative model → homeownership in
+the appendix.** That is the right shape, and it maps onto what the referees asked for.
 
-**All homeless are unemployed with ~zero income in the model, against 40–52% unemployed and
-19% of average income in the data.** Homelessness is currently a pure corner of the income
-distribution. The fix is a shock that puts non-corner people on the street: a transitory
-expense/eviction shock, or a rent shock. Without it, as R1 puts it, the model "may evaluate
-HF and TF at the wrong margins" — and since voucher eligibility, tax payments, and the
-fiscal gains from employment all key off income, this is not cosmetic.
+The intuition model must be **dynamic, not static**. That is the whole content of R1's
+comment 1(e): the current Appendix A derives results "in very specific static settings,
+while the main model is dynamic," so "some claims around the appendix are more general than
+what the appendix actually establishes." A second static model would not fix this.
 
-**Model puts 73.1% of the homeless in ages 26–44 vs 48.1% in the data, with only 9.3% aged
-55+ vs 27.1%.** Agents age out of homelessness too readily. As noted in §4, the mental
-health state is the natural fix, since chronic mental illness generates exactly the
-persistent, older homeless population the model is missing.
+### Proposed setup — three periods, no assets, binary drug choice
 
-Design the simplified model to hit these two from the start rather than patching afterward.
+Keep only what is needed for the channels to be visible:
+
+- **Income** `y`, either two types or a continuum. No savings — this is what makes it
+  tractable, and R1's objection to the current appendix is about *dynamics*, not assets.
+- **Period 1:** choose `v ∈ {0,1}` (experiment or not). Utility gain `g(y)` from using.
+- **Transition:** experimenting leads to SUD with probability π.
+- **Period 2:** SUD carries mortality risk δ, unemployment risk, and — under TF — loss of the
+  voucher. Recovery probability depends on housing status.
+- **Period 3:** continuation value, so the value of life is an actual object rather than a
+  reduced-form penalty.
+
+Three periods rather than two buys you the feedback loop: SUD in period 2 → homeless in
+period 2 → lower recovery → still SUD in period 3. That is the mechanism the abstract calls
+central, and it cannot appear in two periods.
+
+### The three results it should deliver
+
+**Result 1 — the income gradient reverses.** There is a threshold ŷ above which agents
+abstain, and drug use is decreasing in `y` iff the mortality penalty scales with the
+continuation value faster than the utility gain `g(y)` scales with income. This is the
+current Appendix A result, but now with a genuine continuation value — which is exactly what
+R1 said the static version could not establish.
+
+**Result 2 — the cross-partial, and this is the paper.** Under TF the penalty for using is
+losing the voucher. If vouchers are rationed with probability π_V, the *expected* penalty is
+π_V × (voucher value). So deterrence is **linear in π_V**:
+
+> ∂(deterrence)/∂π_V > 0, hence ∂²(deterrence)/∂(generosity)∂(conditionality) > 0.
+
+A guaranteed voucher is a strictly bigger stick than a lottery ticket. That single line
+explains why rationed TF loses to rationed HF while universal TF beats both — the result
+currently buried in Table 8. It is nearly trivial to prove and it is the paper's actual
+contribution.
+
+**Result 3 — the feedback loop amplifies.** With recovery depending on housing, SUD +
+homelessness is close to absorbing, so the period-2 penalty compounds into period 3. Show
+that this raises the deterrent in Result 2 — i.e. the loop and the conditionality reinforce
+each other.
+
+### Why this reframes the whole paper
+
+It moves you from "here is a big model and four experiments" to "here is a general principle
+about conditional transfers, verified quantitatively, applied to a live debate." That
+directly answers the AE's central complaint — *"the economic messages of the paper are lost
+within long-lists of model features"* — and R2's "black box" objection.
+
+Say explicitly that the quantitative model exists to measure **magnitudes** and fiscal and
+equilibrium feedbacks. It does not establish the **signs**; the intuition model does.
+
+**Optional and cheap:** calibrate the three-period model roughly and show it reproduces the
+sign pattern of the quantitative model. It costs almost nothing and it is persuasive.
+
+### Homeownership in the appendix
+
+Exactly right, and the compile-time switch in §2 is what makes it nearly free: run the
+appendix version with `include_homeownership=1` and report that the policy conclusions are
+unchanged. This converts the AE's objection ("why do we need homeownership?") into a
+robustness result rather than a concession — and because it is one parameter, the appendix
+version stays in sync with the main model automatically instead of rotting.
 
 ---
 
-## 9. Suggested sequencing
+## 6. The mechanism section: channel shutdowns
 
-1. **Week 1 — the Constantini check.** Re-target κ_{h,φ} and κ_{d,φ} on the existing code so
-   Experiment 1 reproduces the HF-vs-TF 3-year mortality difference. Decide whether the
-   headline survives. *Everything downstream depends on this.*
-2. **Weeks 2–3 — the two-period model.** Prove the generosity × conditionality cross-partial.
-   Cheap, and it determines how the whole paper is framed.
-3. **Weeks 3–6 — strip the model.** Execute all seven cuts in §3. Verify the income gradient
-   of drug use survives the loss of homeownership — this doubles as R1's requested 1(d)
-   exercise (compare against a version with no mortality effect of drug use to show the
-   value-of-life channel is the quantitatively important one).
-4. **Weeks 6–9 — add back.** Endogenous treatment, p_v adjustment, imperfect detection. Then
-   mental health, last, once the solve time is known.
-5. **Weeks 9–12 — recalibrate and discipline.** Full fit table, the housing-access elasticity,
-   numerical identification, sensitivity to the imprecisely measured targets.
-6. **Weeks 12+ — transitions, two body experiments, rewrite.**
+R1 asked for this **by name** in comment 1(d), and stated a preference for it over the
+appendix: *"compare the relationship between income and drug use in the baseline model to an
+otherwise similar version of the model in which mortality is not affected by drug use. I
+would find this more intuitive than a toy example that abstracts from dynamic savings
+decisions."*
+
+Shut channels off one at a time, **recalibrating `b` in each arm to hold drug participation
+at its baseline value**, and report *who* uses drugs. The recalibration is what makes it
+work — without it, removing the mortality penalty just raises drug use everywhere and the
+level change swamps the compositional one.
+
+| Arm | Shut off | Isolates |
+|---|---|---|
+| 0 | baseline (fixed preferences) | Reference |
+| 1 | κ_{d,φ} = 1 | Value-of-life — **the headline claim** |
+| 2 | κ_{d,ue} = κ_{d,eu} = 1 | R1's rival hypothesis (income risk) |
+| 3 | κ_{h,φ}, κ_{h,ue}, κ_{H,d} = 1 | The feedback loop the abstract calls central |
+| R | restore θ_{1,2} > θ_{0,2} | Robustness vs the old preference spec |
+
+**The money figure:** drug-use rate by income decile, one line per arm. Baseline slopes
+down; if your claim holds, Arm 1 flips it upward. That single panel *is* your central
+theoretical claim, shown dynamically, and it retires Appendix A as the load-bearing argument.
+
+Alongside it, per arm: mean user income relative to average (the statistic R1 attacked —
+41% model vs 74% data), share unemployed, share homeless, mean age, mean assets.
+
+**Report experimenters and addicts separately.** Experimentation is the decision margin —
+the clean test. Addiction is a stock that also reflects differential mortality and recovery,
+so shutting off addiction-mortality changes its composition partly mechanically. Conflating
+them invites exactly the objection R1 raised about your untargeted moments.
+
+**Caveat on `b` as normalizer.** By your own argument `b` governs the *no-penalty* gradient,
+which slopes upward, and penalties reverse it — so recalibrating `b` adjusts the very object
+determining the counterfactual gradient. Handle it openly: report both un-normalized (gives
+a headline level effect) and normalized (gives composition), and confirm the flip survives a
+second normalizer. π_{d,low} is the good candidate, since it shifts the transition rather
+than preferences.
+
+**Risk:** if Arm 1 does not flip the gradient, the central claim is wrong. But R1's rival
+hypothesis is that Arm 2 does the work — in which case the framing shifts from *value of
+life* to *value of future resources*, which is more general and more robust. The paper
+survives either result. What it cannot survive is a referee running this in his head and not
+believing you.
+
+---
+
+## 7. Sequence
+
+Ordering, not schedule — calibrate the durations to your own pace.
+
+| Phase | Work | Where |
+|---|---|---|
+| **1** | **Constantini mortality check** on existing code | 40-core |
+| **2** | Two-period model: the cross-partial | Paper |
+| **3** | Strip the model (§2): homeownership switch, housing GE, UI, bequests, grid | Here → verify coarse |
+| **4** | Fixed preferences; recheck identification of θ_2, v̄, π_{d,low} | Here → calibrate there |
+| **5** | Add: treatment, imperfect detection, `p_v`, homelessness externality | Here |
+| **6** | Add mental health **last** (doubles the state space) | Here → there |
+| **7** | Full recalibration + fit table + housing-access elasticity + identification evidence | 40-core |
+| **8** | Mechanism ladder (§6) | 40-core |
+| **9** | Transitions, π_V sweep, sensitivity ladders | 40-core |
+| **10** | Rewrite | Paper |
+
+Phase 1 gates everything. Phases 3–5 are where I can do the most for you directly: the
+Fortran edits are mechanical, verifiable coarse, and independent of the cluster.
 
 The rewrite is not a residual. The AE was blunt: *"One would have to rewrite this paper to
 reflect insights rather than providing 5 pages describing 22 moments and parameters."*
 
 ---
 
-## 10. Bottom line
+## 8. Bottom line
 
-Resubmit — but only after step 1 confirms the mortality ranking survives contact with
-Constantini. The question is good, the AE wants the paper to exist, and the referee pool is
-already invested. The cost is a genuine rebuild of roughly a quarter's work, which is what
-"an almost new paper" means.
+The door is genuinely open: R3 says revise, R2 is on the fence and calls the model "very
+rich," and only R1 says reject — with the most constructive report of the three. Nobody
+attacked the question. Every objection is about execution.
 
-The simplification instinct is correct and should be pushed further than planned: drop the
-housing-market GE along with homeownership, because the AE asked for it and it buys back
-the compute needed to deliver the transitions, sensitivity analysis, and identification
-evidence that the referees actually want. The model is not too complex for its own sake —
-it is too complex to be *disciplined*, and that is the thing every one of these four
-documents is really saying.
+The single diagnosis all four documents share: **the paper is a large model carrying a small
+amount of identification.** The fix is not more machinery. It is to cut hard, and spend the
+freed compute disciplining the three or four elasticities the conclusion actually turns on.
 
-One expectation to set now: the headline will likely have to soften from "the debate is
-resolved in favor of universal TF" to something like "generosity matters more than
-conditionality, and conditionality only pays once the benefit is guaranteed." R1 asked for
-exactly this softening. It is a better paper's thesis anyway, and it is the one the
-two-period model actually proves.
+Two structural moves do most of the work. Replacing κ_cons with a modeled homelessness
+externality converts your weakest link into a referee-requested feature. Fixing preferences
+across SUD status converts a calibrated assumption into a prediction. Both simplify the
+model *and* strengthen it, which is the rare kind of revision that is worth the quarter it
+will cost.
