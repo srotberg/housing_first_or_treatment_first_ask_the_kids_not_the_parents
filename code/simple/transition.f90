@@ -45,6 +45,8 @@ module transition
 
     ! value functions along the path: Vp(:,:,:,:,:,:, j, t)
     real(dp), allocatable :: Vp(:,:,:,:,:,:,:,:)
+    ! scratch for one date's solve: see the note in solve_date
+    real(dp), allocatable :: Vnew(:,:,:,:,:,:,:), Vkeep(:,:,:,:,:,:)
     ! price paths
     real(dp), allocatable :: taul_t(:), pv_t(:), avg_t(:), med_t(:)
     real(dp), allocatable :: H_t(:), HD_t(:)
@@ -75,7 +77,39 @@ subroutine alloc_transition()
     allocate(dist_t(NA,NY,NE,ND,NV,NM,n_age))
     allocate(V_term(NA,NY,NE,ND,NV,NM,n_age+1))
     allocate(dist_init(NA,NY,NE,ND,NV,NM,n_age))
+    allocate(Vnew(NA,NY,NE,ND,NV,NM,n_age+1))
+    allocate(Vkeep(NA,NY,NE,ND,NV,NM))
 end subroutine alloc_transition
+
+
+!===============================================================================
+! Solve every age at one date, against the NEXT DATE's value function.
+!
+! This needs care that the stationary solver does not. In a steady state
+! V_j = f(V_{j+1}) within the same value function, so solving ages downwards in
+! place is fine: age j's answer overwrites a slice nobody reads again. Along a
+! path V_{j,t} = f(V_{j+1,t+1}), and solving in place destroys exactly the slice
+! the NEXT age needs -- writing V_{j,t} over V_{j,t+1} means build_EV(j-1) then
+! reads a date-t continuation where it should read date t+1. The path would look
+! plausible and be wrong.
+!
+! So each slice of the continuation is saved before solve_age clobbers it and
+! restored immediately after, with the answers accumulated separately.
+!===============================================================================
+subroutine solve_date(t)
+    integer, intent(in) :: t
+    integer :: j
+    call load_prices(t)
+    V = Vp(:,:,:,:,:,:,:,t+1)              ! the continuation, date t+1
+    do j = n_age, 1, -1
+        call build_EV(j)                   ! reads V(...,j+1), still date t+1
+        Vkeep = V(:,:,:,:,:,:,j)           ! date t+1's slice j
+        call solve_age(j)                  ! writes date t into V(...,j)
+        Vnew(:,:,:,:,:,:,j) = V(:,:,:,:,:,:,j)
+        V(:,:,:,:,:,:,j)    = Vkeep        ! put t+1 back for build_EV(j-1)
+    end do
+    Vnew(:,:,:,:,:,:,n_age+1) = 0.0_dp
+end subroutine solve_date
 
 
 !-- record the current stationary equilibrium as the INITIAL condition --------
@@ -119,19 +153,13 @@ end subroutine load_prices
 ! value function.
 !===============================================================================
 subroutine backward_pass()
-    integer :: t, j
+    integer :: t
 
     Vp(:,:,:,:,:,:,:,T_path+1) = V_term
 
     do t = T_path, 1, -1
-        call load_prices(t)
-        ! the continuation for a household alive at t is next period's path value
-        V = Vp(:,:,:,:,:,:,:,t+1)
-        do j = n_age, 1, -1
-            call build_EV(j)
-            call solve_age(j)
-        end do
-        Vp(:,:,:,:,:,:,:,t) = V
+        call solve_date(t)
+        Vp(:,:,:,:,:,:,:,t) = Vnew
     end do
 end subroutine backward_pass
 
@@ -146,16 +174,11 @@ end subroutine backward_pass
 !===============================================================================
 subroutine forward_pass(A_t)
     type(agg_t), intent(out) :: A_t(T_path)
-    integer :: t, j
+    integer :: t
 
     dist_t = dist_init
     do t = 1, T_path
-        call load_prices(t)
-        V = Vp(:,:,:,:,:,:,:,t+1)
-        do j = n_age, 1, -1
-            call build_EV(j)
-            call solve_age(j)
-        end do
+        call solve_date(t)     ! leaves the date-t POLICIES in the pol_* arrays
         ! aggregates use the CURRENT distribution and the date-t policies
         dist = dist_t
         call compute_aggregates(A_t(t))
