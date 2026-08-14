@@ -133,7 +133,7 @@ program smoke
         write(*,'(A)') '      FAIL: the value function and the policy disagree'
         nfail = nfail + 1
     end if
-    if (tot > 1.0e-9_dp) then
+    if (tot > 1.0e-11_dp) then
         write(*,'(A)') '      FAIL: c + p_v*v + a'' does not equal resources'
         nfail = nfail + 1
     end if

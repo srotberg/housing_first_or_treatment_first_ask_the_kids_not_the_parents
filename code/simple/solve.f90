@@ -452,7 +452,7 @@ pure subroutine hours_candidates(G, A1, AK, bb, acost, ireg, warm, nc, hc, rc, e
     integer,  intent(out) :: nc, ec(NCAND)
     real(dp), intent(out) :: hc(NCAND), rc(NCAND)
 
-    real(dp) :: iw(NBPMAX), fR, fL, hstar, rstar
+    real(dp) :: iw(NBPMAX), fR, fL, hstar, rstar, dres_tmp
     integer  :: k
     logical  :: split
 
@@ -491,8 +491,19 @@ pure subroutine hours_candidates(G, A1, AK, bb, acost, ireg, warm, nc, hc, rc, e
                 nc = nc + 1; hc(nc) = hstar;  rc(nc) = rstar;    ec(nc) = 1
                 nc = nc + 1; hc(nc) = G%hE;   rc(nc) = G%res_hE; ec(nc) = 0
             else
-                nc = nc + 1; hc(nc) = G%hE - 1.0e-9_dp
-                             rc(nc) = G%res_hE; ec(nc) = 1
+                ! Just BELOW the eligibility threshold, so that recomputing
+                ! eligibility from these hours reproduces ec = 1. The resources
+                ! must be evaluated at that same point rather than at hE
+                ! itself: taking res_hE here left c + p_v*v + a' short of
+                ! resources by d(res)/d(hours) * 1e-9, which the budget identity
+                ! in smoke.f90 caught at 1.9e-9 on its first run. Economically
+                ! nothing, but a budget constraint that does not close is not
+                ! something to carry around.
+                nc = nc + 1
+                hc(nc) = G%hE - 1.0e-9_dp
+                call res_slope(hc(nc), G%w, G%base, G%vcap, G%cfl_net, &
+                               rc(nc), dres_tmp)
+                ec(nc) = 1
                 nc = nc + 1; hc(nc) = hstar;  rc(nc) = rstar;    ec(nc) = 0
             end if
         end if
