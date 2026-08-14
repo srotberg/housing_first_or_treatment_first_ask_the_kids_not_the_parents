@@ -8931,6 +8931,11 @@
         if (solve_transition_dynamics>=0) then
         
             number_of_threads_used=max_CPUs
+            ! max_CPUs stays a compile-time parameter because it dimensions vector_cpu_real.
+            ! Use it only as an upper bound; take the actual thread count from the runtime so
+            ! the same binary is correct on a 4-core laptop and a 40-core server. Honours
+            ! OMP_NUM_THREADS when set.
+            !$ number_of_threads_used=max(1,min(max_CPUs,omp_get_max_threads()))
 
             CALL OMP_SET_NUM_THREADS(number_of_threads_used)
         
@@ -14667,6 +14672,11 @@
              if (solve_transition_dynamics>=0) then
              
                 number_of_threads_used=max_CPUs
+            ! max_CPUs stays a compile-time parameter because it dimensions vector_cpu_real.
+            ! Use it only as an upper bound; take the actual thread count from the runtime so
+            ! the same binary is correct on a 4-core laptop and a 40-core server. Honours
+            ! OMP_NUM_THREADS when set.
+            !$ number_of_threads_used=max(1,min(max_CPUs,omp_get_max_threads()))
 
                 CALL OMP_SET_NUM_THREADS(number_of_threads_used)
         
@@ -14987,6 +14997,11 @@
             if (solve_transition_dynamics>=0) then
             
                 number_of_threads_used=max_CPUs
+            ! max_CPUs stays a compile-time parameter because it dimensions vector_cpu_real.
+            ! Use it only as an upper bound; take the actual thread count from the runtime so
+            ! the same binary is correct on a 4-core laptop and a 40-core server. Honours
+            ! OMP_NUM_THREADS when set.
+            !$ number_of_threads_used=max(1,min(max_CPUs,omp_get_max_threads()))
 
                 CALL OMP_SET_NUM_THREADS(number_of_threads_used)
         
@@ -15266,6 +15281,11 @@
             if (solve_transition_dynamics>=0) then
             
                 number_of_threads_used=max_CPUs
+            ! max_CPUs stays a compile-time parameter because it dimensions vector_cpu_real.
+            ! Use it only as an upper bound; take the actual thread count from the runtime so
+            ! the same binary is correct on a 4-core laptop and a 40-core server. Honours
+            ! OMP_NUM_THREADS when set.
+            !$ number_of_threads_used=max(1,min(max_CPUs,omp_get_max_threads()))
 
                 CALL OMP_SET_NUM_THREADS(number_of_threads_used)
         
