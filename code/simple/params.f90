@@ -171,8 +171,27 @@ module params
     !-- externality (replaces the loss-of-consortium adjustment) --------------
     ! Enters period utility so it is internalised: it affects the value of life
     ! and therefore drug decisions, rather than being bolted on after solving.
+    ! R2's wording is specific: "a large homeless population, ESPECIALLY IF MANY
+    ! ARE ADDICTED TO DRUGS, creates a negative externality beyond the fiscal
+    ! burden". So the disamenity is weighted by composition, not just the level:
+    !
+    !     disutility = kappa_ext * ( H_agg + omega_ext * HD_agg )
+    !
+    ! with HD_agg the share of the population both homeless and with SUD.
+    ! Households take both aggregates as given -- that is what makes this an
+    ! externality rather than a private cost -- but the aggregates are
+    ! equilibrium objects, so the term responds to policy and feeds back into
+    ! the value of life and hence into drug decisions. That is the property
+    ! kappa_cons lacked and which R1 objected to in comment 3(a).
+    !
+    ! kappa_ext has no credible point estimate. It is reported as a bounded
+    ! sensitivity with kappa_ext = 0 as the conservative case; see
+    ! EXTERNALITY.md. Note zero here is a DEFENSIBLE baseline (no externality),
+    ! unlike kappa_cons = 0, which reversed the paper's conclusion.
     real(dp) :: kappa_ext = 0.0_dp
+    real(dp) :: omega_ext = 2.0_dp              ! extra weight on homeless-with-SUD
     real(dp) :: H_agg     = 0.0_dp              ! aggregate homelessness rate
+    real(dp) :: HD_agg    = 0.0_dp              ! homeless AND SUD, share of population
 
     !-- channel switches, for the mechanism-decomposition arms ----------------
     integer :: on_mortality_d = 1               ! arm 1: SUD -> mortality

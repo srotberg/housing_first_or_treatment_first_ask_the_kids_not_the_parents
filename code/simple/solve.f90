@@ -53,9 +53,9 @@ pure function util(c, hp, v, bb) result(u)
         u = -1.0e12_dp; return
     end if
     if (abs(sigma - 2.0_dp) < 1.0e-12_dp) then
-        u = -1.0_dp/comp + aleph - kappa_ext*H_agg          ! sigma = 2 fast path
+        u = -1.0_dp/comp + aleph - kappa_ext*(H_agg + omega_ext*HD_agg)
     else
-        u = comp**(1.0_dp-sigma)/(1.0_dp-sigma) + aleph - kappa_ext*H_agg
+        u = comp**(1.0_dp-sigma)/(1.0_dp-sigma) + aleph - kappa_ext*(H_agg + omega_ext*HD_agg)
     end if
 end function util
 

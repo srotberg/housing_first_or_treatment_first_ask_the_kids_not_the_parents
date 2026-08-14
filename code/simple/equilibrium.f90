@@ -24,7 +24,7 @@ module equilibrium
         real(dp) :: pop=0, mass_dead=0
         real(dp) :: labinc=0, labinc_pow=0, capinc=0, captax=0
         real(dp) :: ss=0, ui=0, food=0, vouchers=0
-        real(dp) :: homeless=0, sud=0, users=0, unemp=0, drugq=0, poormh=0
+        real(dp) :: homeless=0, sud=0, users=0, unemp=0, drugq=0, poormh=0, hl_sud=0
         real(dp) :: assets_dead=0, consumption=0, treated=0
         real(dp) :: govt_outlay=0, tax_rev=0
     end type agg_t
@@ -91,6 +91,7 @@ subroutine compute_aggregates(A)
 
         ! outcomes
         if (ihp == 1) A%homeless = A%homeless + m
+        if (ihp == 1 .and. id == 2) A%hl_sud = A%hl_sud + m
         if (id == 2)  A%sud      = A%sud + m
         if (itr == 1) A%treated  = A%treated + m
         if (vv > 0.0_dp) then
@@ -134,7 +135,7 @@ subroutine solve_equilibrium(maxit, tol, verbose)
     logical,  intent(in) :: verbose
     type(agg_t) :: A
     integer  :: it
-    real(dp) :: tau_new, pv_new, beq_new, H_new, avg_new, med_new
+    real(dp) :: tau_new, pv_new, beq_new, H_new, HD_new, avg_new, med_new
     real(dp) :: err, damp
 
     damp = 0.25_dp
@@ -179,6 +180,7 @@ subroutine solve_equilibrium(maxit, tol, verbose)
 
         ! ---- externality and income aggregates ------------------------------
         H_new   = A%homeless / max(A%pop, 1.0e-12_dp)
+        HD_new  = A%hl_sud   / max(A%pop, 1.0e-12_dp)
         avg_new = (A%labinc + A%ss) / max(A%pop, 1.0e-12_dp)
         med_new = avg_new          ! placeholder: replace with a true median
 
@@ -190,7 +192,10 @@ subroutine solve_equilibrium(maxit, tol, verbose)
         err = max( err, reldiff(beq_new, bequest) )
         err = max( err, reldiff(avg_new, avg_income) )
         ! H_agg only matters when the externality is switched on
-        if (kappa_ext > 0.0_dp) err = max( err, reldiff(H_new, H_agg) )
+        if (kappa_ext > 0.0_dp) then
+            err = max( err, reldiff(H_new,  H_agg) )
+            err = max( err, reldiff(HD_new, HD_agg) )
+        end if
 
         if (verbose) then
             write(*,'(A,I3,A,F9.5,A,F8.4,A,F8.4,A,F8.5,A,F7.3,A)') &
@@ -202,6 +207,7 @@ subroutine solve_equilibrium(maxit, tol, verbose)
         p_v        = p_v        + damp*(pv_new  - p_v)
         bequest    = bequest    + damp*(beq_new - bequest)
         H_agg      = H_agg      + damp*(H_new   - H_agg)
+        HD_agg     = HD_agg     + damp*(HD_new  - HD_agg)
         avg_income = avg_income + damp*(avg_new - avg_income)
         median_income = median_income + damp*(med_new - median_income)
 
