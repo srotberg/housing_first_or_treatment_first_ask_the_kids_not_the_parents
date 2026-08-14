@@ -47,13 +47,13 @@ program check_hours
         do iy = 1, NY, 2
         do ia = 1, NA, seedstep
 
-            bb      = b_dm(id,im)
             w       = wage_rate(j, iy, id, im)
             cfl_net = cfloor - max(0.0_dp, r_free*a_grid(ia))
 
             brute = -1.0e13_dp; bh = 0.0_dp
             do ihp = 1, NH
                 phi = survival(j, ihp, id, im)
+                bb  = b_of(id, im, ihp)
                 if (ihp > 1 .and. iv == 2) then
                     vcap = p_rent*h_grid(ihp)
                 else
@@ -65,11 +65,11 @@ program check_hours
                 do itr = 0, 1
                     if (itr == 1 .and. (id == 1 .or. allow_treatment == 0)) cycle
                     cost_tr = 0.0_dp
-                    if (itr == 1) cost_tr = treat_cost*avg_income
+                    if (itr == 1) cost_tr = treat_ucost      ! utility cost
                     do ireg = 1, NREG
                         if (id == 1 .and. j > j_exp .and. ireg > 1) cycle
                         do iap = 1, NA
-                            acost = a_grid(iap) + cost_tr
+                            acost = a_grid(iap)
                             do ig = 1, NHG
                                 hours = real(ig-1,dp)/real(NHG-1,dp)
                                 call res_slope(hours, w, base, vcap, cfl_net, res, dres)
@@ -91,6 +91,7 @@ program check_hours
                                 cc = Rres - p_v*vv
                                 if (cc <= 0.0_dp) cycle
                                 val = util(cc, h_pow(ihp), vv, bb, 1.0_dp-hours) &
+                                    - cost_tr &
                                     + beta*phi*EV(iap,ihp,iy,ie,id,ireg,itr,ielig,iv,im)
                                 if (val > brute) then
                                     brute = val; bh = hours

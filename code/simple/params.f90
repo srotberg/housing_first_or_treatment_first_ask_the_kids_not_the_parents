@@ -24,7 +24,11 @@ module params
     !-- demographics ----------------------------------------------------------
     integer, parameter :: n_age      = 60      ! model ages, real age 26..85
     integer, parameter :: j_ret     = 41      ! first retirement age index
-    integer, parameter :: j_exp     = 30      ! last age at which a clean agent may experiment
+    ! Last age at which a clean household may initiate use. R1's smaller comment
+    ! 1 says this is in tension with the U-shaped age profile of use in Table
+    ! 4(a). It is a VARIABLE so the model can be run without it: set
+    ! j_exp = n_age to remove the restriction and inspect the age profile.
+    integer :: j_exp = 30
 
     !-- grid sizes ------------------------------------------------------------
     integer, parameter :: NA  = 60         ! non-negative asset grid
@@ -101,7 +105,12 @@ module params
     real(dp) :: beta    = 0.96_dp
 
     !-- prices ----------------------------------------------------------------
-    real(dp) :: p_rent = 2.0_dp                 ! no housing-market GE, but calibrated
+    ! Rent is NORMALISED to one. Only the product p_rent*h enters the budget and
+    ! utility, so the rent level and the housing grid are not separately
+    ! identified; fixing the price makes the housing grid the calibrated object,
+    ! which is what R2's comment D1 asks for -- every grid point is now pinned
+    ! by a moment rather than asserted in a footnote.
+    real(dp), parameter :: p_rent = 1.0_dp
     real(dp) :: p_v    = 1.0_dp                 ! endogenous: clears the drug market
     real(dp), parameter :: r_free = 0.03_dp
 
@@ -115,11 +124,24 @@ module params
     !-- taxes and transfers ---------------------------------------------------
     real(dp) :: tau_l = 0.85_dp                 ! level parameter, HSV form
     real(dp), parameter :: xi_tax = 0.85_dp     ! progressivity
+    ! Accidental bequests. Redistributing them as a uniform lump sum is a large
+    ! unconditional transfer to the poor with welfare consequences of its own,
+    ! which would contaminate every policy comparison in the paper. They go into
+    ! the government budget instead, where they relax the tax constraint.
+    integer  :: bequest_to_govt = 1
     real(dp) :: bequest = 0.0_dp
 
     !-- housing ---------------------------------------------------------------
+    ! h_grid(1) is homelessness; the three rental sizes are geometric,
+    ! h_small, h_small*h_spread, h_small*h_spread**2, so two parameters set the
+    ! whole grid: the LEVEL is pinned by the share of households spending more
+    ! than half their income on housing, the SPREAD by the share spending more
+    ! than 30%. With h_homeless and theta_h that is four housing parameters
+    ! against four moments of the SCF housing-burden distribution.
     real(dp) :: h_grid(NH)
     real(dp) :: h_homeless = 0.0083_dp
+    real(dp) :: h_small    = 0.080_dp
+    real(dp) :: h_spread   = 1.480_dp
 
     !-- voucher programme -----------------------------------------------------
     real(dp) :: kappa_V   = 0.5_dp              ! eligibility: income < kappa_V * median
@@ -138,7 +160,16 @@ module params
     ! A clean answer to "Treatment First has no treatment": SUD agents may take
     ! up treatment at a utility cost, which raises the recovery hazard.
     integer  :: allow_treatment = 1
-    real(dp) :: treat_cost      = 0.05_dp       ! resource cost, share of average income
+    ! Treatment costs UTILITY, not resources. A resource cost comes out of the
+    ! same budget that buys food and rent, so the households with the strongest
+    ! case for treatment -- the poorest -- are exactly the ones who cannot
+    ! afford it, which is not how publicly funded treatment works. A flat
+    ! utility cost is the stigma, effort and time of entering a programme whose
+    ! monetary cost somebody else bears. Calibrated to treatment take-up among
+    ! those with SUD.
+    ! Side benefit: hours no longer depend on the treatment decision, so the
+    ! labour-supply FOC is solved once rather than twice for households with SUD.
+    real(dp) :: treat_ucost     = 0.05_dp       ! flat utility cost of take-up
     real(dp) :: treat_gain      = 1.35_dp       ! RCT-based; KEY SENSITIVITY
 
     !-- mental health ---------------------------------------------------------
@@ -273,10 +304,7 @@ subroutine setup_grids()
     end do
 
     !-- housing: homeless plus three rental sizes ----------------------------
-    h_grid(1) = h_homeless
-    h_grid(2) = 0.040_dp
-    h_grid(3) = 0.078_dp
-    h_grid(4) = 0.173_dp
+    call build_housing_grid()
 
     !-- productivity: Rouwenhorst for an AR(1) in logs -----------------------
     rho = 0.90_dp
@@ -331,6 +359,16 @@ subroutine setup_grids()
     median_income = m
     step = 0.0_dp
 end subroutine setup_grids
+
+
+subroutine build_housing_grid()
+    integer :: i
+    h_grid(1) = h_homeless
+    h_grid(2) = h_small
+    do i = 3, NH
+        h_grid(i) = h_grid(i-1)*h_spread
+    end do
+end subroutine build_housing_grid
 
 
 subroutine alloc_all()

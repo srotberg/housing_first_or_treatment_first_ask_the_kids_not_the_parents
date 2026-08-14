@@ -4,7 +4,8 @@
 ! Objects that clear:
 !   tau_l    government budget balance (closed form given the distribution)
 !   p_v      drug market, p_v = psi1 * V**(psi2-1)
-!   bequest  assets of the deceased redistributed to survivors
+!   bequest  assets of the deceased -- to the government by default,
+!            redistributed to survivors only if bequest_to_govt = 0
 !   H_agg    aggregate homelessness, which enters period utility as an
 !            externality and so must be a fixed point
 !   avg/median income, which enter voucher eligibility and the food-stamp floor
@@ -121,6 +122,8 @@ subroutine compute_aggregates(A)
 
     A%govt_outlay = A%ss + A%food + A%vouchers &
                   + chi_H*A%homeless + chi_D*A%sud + G_public
+    ! accidental bequests accrue to the government rather than to households
+    if (bequest_to_govt == 1) A%govt_outlay = A%govt_outlay - A%assets_dead
     A%tax_rev     = A%labinc - tau_l*A%labinc_pow + A%captax
 end subroutine compute_aggregates
 
@@ -180,7 +183,13 @@ subroutine solve_equilibrium(maxit, tol, verbose)
         pv_new = min(max(pv_new, 0.05_dp), 20.0_dp)
 
         ! ---- bequests -------------------------------------------------------
-        if (A%pop > 0.0_dp) then
+        ! When accidental bequests go to the government there is no fixed point
+        ! left to solve here: households receive nothing and the estate simply
+        ! relaxes the tax constraint. Keeping the lump-sum version behind a
+        ! switch preserves the old behaviour for a robustness run.
+        if (bequest_to_govt == 1) then
+            beq_new = 0.0_dp
+        else if (A%pop > 0.0_dp) then
             beq_new = A%assets_dead / A%pop
         else
             beq_new = bequest

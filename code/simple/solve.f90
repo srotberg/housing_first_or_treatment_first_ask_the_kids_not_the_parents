@@ -739,8 +739,11 @@ subroutine solve_household()
 
                     do itr = 0, 1
                         if (itr == 1 .and. (id == 1 .or. allow_treatment == 0)) cycle
+                        ! treatment costs UTILITY, not resources, so it never
+                        ! enters the budget and the hours solve is independent
+                        ! of it
                         cost_tr = 0.0_dp
-                        if (itr == 1) cost_tr = treat_cost*avg_income
+                        if (itr == 1) cost_tr = treat_ucost
 
                         do ireg = 1, NREG
                             ! a clean household past j_exp cannot initiate use
@@ -749,7 +752,7 @@ subroutine solve_household()
                             warm = -1.0_dp     ! hours are increasing in a'
 
                             do iap = 1, NA
-                                acost = a_grid(iap) + cost_tr
+                                acost = a_grid(iap)
                                 if (res_ub - acost <= 0.0_dp) exit   ! a_grid increasing
 
                                 !-- hours: every local optimum, with its
@@ -790,6 +793,7 @@ subroutine solve_household()
                                     if (cc <= 0.0_dp) cycle
 
                                     val = util(cc, h_pow(ihp), vv, bb, 1.0_dp-hours) &
+                                        - cost_tr &
                                         + beta*phi*EV(iap,ihp,iy,ie,id,ireg,itr,ielig,iv,im)
 
                                     if (val > best) then

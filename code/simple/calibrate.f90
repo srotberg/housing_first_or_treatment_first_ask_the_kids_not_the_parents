@@ -21,8 +21,8 @@ module calibrate
     ! co-occurring SUD rate among adults with SMI.
     real(dp) :: mh_b_ratio = 0.25_dp
 
-    integer, parameter :: NMOM = 19
-    integer, parameter :: NPAR = 17   ! calibrated parameters, for the snapshot
+    integer, parameter :: NMOM = 21
+    integer, parameter :: NPAR = 19   ! calibrated parameters, for the snapshot
 
     type :: mom_t
         character(len=28) :: name
@@ -108,6 +108,19 @@ subroutine init_targets()
     mom(18) = mom_t('SUD rate given SMI (%)      ',  9.75_dp, 0.0_dp, 1.0_dp)
     ! Average fraction of time worked among the employed, Guvenen et al. (2023)
     mom(19) = mom_t('avg hours worked (%)        ', 40.00_dp, 0.0_dp, 1.0_dp)
+    ! Rent is normalised to one, so the housing GRID is the calibrated object
+    ! and every point of it is pinned by a moment -- R2 comment D1. The level of
+    ! the rental grid moves the upper tail of the housing-burden distribution
+    ! and its spread moves the middle, so two points of the SCF 2022 CDF
+    ! identify the two grid parameters. Both come from data/scf_housing_burden.py.
+    mom(20) = mom_t('share housing cost>30% (%)  ', 40.62_dp, 0.0_dp, 1.0_dp)
+    ! Treatment take-up among those with SUD. This is what disciplines the
+    ! utility cost of treatment, which was previously a free parameter with no
+    ! source at all -- and treatment is the mechanism the whole Treatment First
+    ! result runs through. NSDUH 2023: roughly a quarter of people with a
+    ! past-year SUD received any substance use treatment. VERIFY against the
+    ! detailed tables before this goes in the paper.
+    mom(21) = mom_t('treatment take-up | SUD (%) ', 24.00_dp, 0.0_dp, 1.0_dp)
 end subroutine init_targets
 
 
@@ -121,6 +134,7 @@ subroutine compute_moments(A)
     real(dp) :: hcost, totinc, burden50, users_inc, users_m, sud_inc, sud_m
     real(dp) :: hl_smi, smi_work, smi_emp, hl_inc, hl_m
     real(dp) :: wealth, exp_m, exp_light, smi_m, smi_sud, hrs, hrs_m
+    real(dp) :: burden30, treated_sud
 
     p = max(A%pop, 1.0e-12_dp)
     sud_unemp = 0.0_dp; sud_work = 0.0_dp; hl_sud = 0.0_dp
@@ -132,6 +146,7 @@ subroutine compute_moments(A)
     hl_inc = 0.0_dp; hl_m = 0.0_dp
     wealth = 0.0_dp; exp_m = 0.0_dp; exp_light = 0.0_dp
     smi_m = 0.0_dp; smi_sud = 0.0_dp; hrs = 0.0_dp; hrs_m = 0.0_dp
+    burden30 = 0.0_dp; treated_sud = 0.0_dp
 
     do j = 1, n_age
     do im = 1, NM
@@ -186,6 +201,7 @@ subroutine compute_moments(A)
         if (ihp > 1) then
             hcost = hcost + m*p_rent*h_grid(ihp)
             if (p_rent*h_grid(ihp) > 0.5_dp*max(ygross,1.0e-8_dp)) burden50 = burden50 + m
+            if (p_rent*h_grid(ihp) > 0.3_dp*max(ygross,1.0e-8_dp)) burden30 = burden30 + m
         end if
 
         ! income of drug users, for the gradient moment
@@ -197,6 +213,7 @@ subroutine compute_moments(A)
         if (id == 2) then
             sud_m   = sud_m + m
             sud_inc = sud_inc + m*max(ygross, 1.0e-8_dp)
+            if (pol_tr(ia,iy,ie,id,iv,im,j) == 1) treated_sud = treated_sud + m
         end if
 
         ! drug spending as a share of income, conditional on SUD
@@ -235,6 +252,8 @@ subroutine compute_moments(A)
     mom(17)%model = 100.0_dp*A%food/max(A%labinc, 1.0e-12_dp)
     mom(18)%model = 100.0_dp*smi_sud/max(smi_m, 1.0e-12_dp)
     mom(19)%model = 100.0_dp*hrs/max(hrs_m, 1.0e-12_dp)
+    mom(20)%model = 100.0_dp*burden30/p
+    mom(21)%model = 100.0_dp*treated_sud/max(sud_m, 1.0e-12_dp)
 end subroutine compute_moments
 
 
@@ -337,7 +356,9 @@ end function max_gap
 !   prob_V             voucher recipients / eligible         +
 !   theta_v            drug spend / income | SUD             +
 !   theta_h            housing cost / income (aggregate)      +
-!   p_rent             share with housing cost > 50%          +
+!   h_small            share with housing cost > 50%           +
+!   h_spread           share with housing cost > 30%           +
+!   treat_ucost        treatment take-up given SUD             -
 !   aleph              SUD income / average income            -
 !   di_coverage        SMI share of the homeless              -
 !   mh_b_ratio         SUD rate given SMI                     -
@@ -396,7 +417,11 @@ subroutine calibration_sweep(step)
     ! work rather than the moment
     call bump(theta_v,         gap(8), +1.0_dp, step, 0.02_dp,  0.50_dp)
     call bump(theta_h,         gap(9), +1.0_dp, step, 0.02_dp,   0.6_dp)
-    call bump(p_rent,          gap(10),+1.0_dp, step, 0.1_dp,    50.0_dp)
+    ! rent is normalised, so the GRID carries these two moments
+    call bump(h_small,         gap(10),+1.0_dp, step, 5.0e-3_dp, 0.60_dp)
+    call bump(h_spread,        gap(20),+1.0_dp, step, 1.05_dp,   3.00_dp)
+    ! more stigma -> less take-up
+    call bump(treat_ucost,     gap(21),-1.0_dp, step, 1.0e-4_dp, 20.0_dp)
     ! Higher flow value of life makes the rich abstain, so both income ratios
     ! fall. aleph is assigned to the SUD ratio because that gradient is the
     ! steep one and so is the more informative of the two.
@@ -504,17 +529,18 @@ end subroutine bisect_on
 subroutine save_params(v)
     real(dp), intent(out) :: v(NPAR)
     v = [ b_dm(1,1), pi_d_low, h_homeless, pi_eu_base, kappa_ue_d, &
-          recover_mult_hl, prob_V, theta_v, theta_h, p_rent, aleph, &
-          di_coverage, kappa_ue_m, prod_pen_m, beta, cfloor_share, mh_b_ratio ]
+          recover_mult_hl, prob_V, theta_v, theta_h, h_small, aleph, &
+          di_coverage, kappa_ue_m, prod_pen_m, beta, cfloor_share, mh_b_ratio, &
+          h_spread, treat_ucost ]
 end subroutine save_params
 
 subroutine load_params(v)
     real(dp), intent(in) :: v(NPAR)
     b_dm(1,1)=v(1);  pi_d_low=v(2);   h_homeless=v(3);  pi_eu_base=v(4)
     kappa_ue_d=v(5); recover_mult_hl=v(6); prob_V=v(7); theta_v=v(8)
-    theta_h=v(9);    p_rent=v(10);    aleph=v(11);      di_coverage=v(12)
+    theta_h=v(9);    h_small=v(10);   aleph=v(11);      di_coverage=v(12)
     kappa_ue_m=v(13);prod_pen_m=v(14);beta=v(15);       cfloor_share=v(16)
-    mh_b_ratio=v(17)
+    mh_b_ratio=v(17);h_spread=v(18);  treat_ucost=v(19)
     call refresh_utility_constants()
 end subroutine load_params
 
@@ -539,7 +565,7 @@ subroutine refresh_utility_constants()
     alpha_u = (1.0_dp-theta_h)*(1.0_dp-theta_v)
     beta_u  = theta_h*(1.0_dp-theta_v)
     gamma_u = theta_v
-    h_grid(1) = h_homeless
+    call build_housing_grid()
     do i = 1, NH
         h_pow(i) = h_grid(i)**beta_u
     end do
@@ -558,8 +584,10 @@ subroutine print_params()
     write(*,'(A,ES12.4)') '   recover_mult_hl : ', recover_mult_hl
     write(*,'(A,ES12.4)') '   prob_V          : ', prob_V
     write(*,'(A,ES12.4)') '   theta_v         : ', theta_v
+    write(*,'(A,ES12.4)') '   h_small         : ', h_small
+    write(*,'(A,ES12.4)') '   h_spread        : ', h_spread
+    write(*,'(A,ES12.4)') '   treat_ucost     : ', treat_ucost
     write(*,'(A,ES12.4)') '   theta_h         : ', theta_h
-    write(*,'(A,ES12.4)') '   p_rent          : ', p_rent
     write(*,'(A,ES12.4)') '   aleph           : ', aleph
     write(*,'(A,ES12.4)') '   mh_recover (ext): ', mh_recover
     write(*,'(A,ES12.4)') '   di_coverage     : ', di_coverage
