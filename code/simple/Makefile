@@ -5,7 +5,7 @@ COMMON  = params.f90 solve.f90 equilibrium.f90 calibrate.f90 mechanism.f90 exper
 SRC     = $(COMMON) main.f90
 TARGET  = hftf_simple
 
-all: $(TARGET) calib mech exper check diag ext trans
+all: $(TARGET) calib mech exper check diag ext trans smoke
 
 $(TARGET): $(SRC)
 	$(FC) $(FFLAGS) $(SRC) -o $(TARGET)
@@ -31,6 +31,10 @@ ext: $(COMMON) ext_main.f90
 trans: $(COMMON) trans_main.f90
 	$(FC) $(FFLAGS) $(COMMON) trans_main.f90 -o hftf_trans
 
+# structural regression suite -- run this after ANY change to solve.f90
+smoke: $(COMMON) smoke.f90
+	$(FC) $(FFLAGS) $(COMMON) smoke.f90 -o hftf_smoke
+
 # stricter build for debugging; -fcheck=all catches out-of-bounds indexing
 debug: $(SRC)
 	$(FC) -O0 -g -fbacktrace -fcheck=all $(SRC) -o $(TARGET)_debug
@@ -42,5 +46,5 @@ run: $(TARGET)
 	OMP_NUM_THREADS=4 GFORTRAN_UNBUFFERED_ALL=1 ./$(TARGET)
 
 clean:
-	rm -f *.mod $(TARGET) $(TARGET)_debug hftf_calib hftf_mech hftf_exper check_hours diag_check hftf_ext hftf_trans
-.PHONY: all debug run clean calib mech
+	rm -f *.mod $(TARGET) $(TARGET)_debug hftf_calib hftf_mech hftf_exper check_hours diag_check hftf_ext hftf_trans hftf_smoke
+.PHONY: all debug run clean calib mech exper check diag ext trans smoke

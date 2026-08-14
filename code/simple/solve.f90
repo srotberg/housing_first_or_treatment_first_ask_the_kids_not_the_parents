@@ -770,7 +770,7 @@ subroutine solve_age(j)
     real(dp) :: res, Rr, Rt, cc, vv, val, best, phi
     real(dp) :: ynet, vouch, cfloor, v_unc, cost_tr, bestc, bestv, bestl
     real(dp) :: hours, w, base, vcap, cfl_net, res_ub, y0, bb
-    real(dp) :: h_elig, acost, A1, AK, akcon
+    real(dp) :: h_elig, acost, A1, AK, akcon, dres_dummy
     real(dp) :: hc(NCAND), rc(NCAND), warm(NBPMAX)
     integer  :: ec(NCAND)
     type(hpts_t) :: G
@@ -787,7 +787,7 @@ subroutine solve_age(j)
         !$omp           best_a,best_h,best_reg,best_tr,res,Rr,Rt,cc,vv,val,best, &
         !$omp           phi,ynet,vouch,v_unc,cost_tr,bestc,bestv,bestl,hours, &
         !$omp           w,base,vcap,cfl_net,res_ub,y0,bb,h_elig,acost,A1,AK, &
-        !$omp           hc,rc,ec,working,G,warm) &
+        !$omp           hc,rc,ec,working,G,warm,dres_dummy) &
         !$omp   schedule(dynamic)
         do im = 1, NM
         do iv = 1, NV
@@ -881,7 +881,24 @@ subroutine solve_age(j)
 
                                 !-- hours: every local optimum, with its
                                 !   eligibility branch attached
-                                if (working) then
+                                if (working .and. freeze_hours == 1) then
+                                    ! hours are EXOGENOUS at their benchmark value:
+                                    ! the household still re-optimises a', housing,
+                                    ! drugs and treatment, but cannot answer a tax
+                                    ! change by working less. The gap between this
+                                    ! and the free-hours re-solve IS the deadweight
+                                    ! loss.
+                                    nc    = 1
+                                    hc(1) = min(max(pol_lb(ia,iy,ie,id,iv,im,j), &
+                                                    0.0_dp), 1.0_dp - 1.0e-9_dp)
+                                    call res_slope(hc(1), w, base, vcap, cfl_net, &
+                                                   rc(1), dres_dummy)
+                                    if (hc(1) < h_elig) then
+                                        ec(1) = 1
+                                    else
+                                        ec(1) = 0
+                                    end if
+                                else if (working) then
                                     call hours_candidates(G, A1, AK, bb, acost, ireg, &
                                                           warm, nc, hc, rc, ec)
                                 else

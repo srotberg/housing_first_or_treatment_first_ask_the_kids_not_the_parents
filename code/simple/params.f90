@@ -383,6 +383,13 @@ module params
     integer,  allocatable :: pol_reg(:,:,:,:,:,:,:) ! drug regime
     integer,  allocatable :: pol_tr(:,:,:,:,:,:,:)  ! treatment take-up
     real(dp), allocatable :: pol_l(:,:,:,:,:,:,:)   ! hours worked (continuous)
+    ! Benchmark hours, held for the deadweight-loss decomposition. When
+    ! freeze_hours = 1 the household is forced to work pol_lb and re-optimises
+    ! everything else, which is what shuts the labour-supply RESPONSE to the tax
+    ! without touching preferences. Raising omega_l instead does NOT do this --
+    ! it makes leisure overwhelmingly valuable and sends hours to the corner.
+    real(dp), allocatable :: pol_lb(:,:,:,:,:,:,:)
+    integer :: freeze_hours = 0
     real(dp), allocatable :: pol_c(:,:,:,:,:,:,:)
     real(dp), allocatable :: pol_v(:,:,:,:,:,:,:)
     real(dp), allocatable :: dist(:,:,:,:,:,:,:)
@@ -563,11 +570,13 @@ subroutine alloc_all()
     allocate(pol_reg(NA,NY,NE,ND,NV,NM,n_age))
     allocate(pol_tr(NA,NY,NE,ND,NV,NM,n_age))
     allocate(pol_l (NA,NY,NE,ND,NV,NM,n_age))
+    allocate(pol_lb(NA,NY,NE,ND,NV,NM,n_age))
     allocate(pol_c (NA,NY,NE,ND,NV,NM,n_age))
     allocate(pol_v (NA,NY,NE,ND,NV,NM,n_age))
     allocate(dist  (NA,NY,NE,ND,NV,NM,n_age))
     V = 0.0_dp; dist = 0.0_dp
     pol_a = 1; pol_h = 1; pol_reg = 1; pol_tr = 0; pol_l = 0.0_dp
+    pol_lb = 0.0_dp
     pol_c = 0.0_dp; pol_v = 0.0_dp
 end subroutine alloc_all
 
