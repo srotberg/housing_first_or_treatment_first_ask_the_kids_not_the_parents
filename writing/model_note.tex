@@ -3,6 +3,10 @@
 \usepackage[margin=1.05in]{geometry}
 \usepackage{amsmath,amssymb}
 \usepackage[official]{eurosym}
+\usepackage{xcolor}
+% Changes since the previous version you read are in red. Each version resets
+% the markup, so red always means "new since last time".
+\newcommand{\nw}[1]{\textcolor{red}{#1}}
 \usepackage{booktabs}
 \usepackage{longtable}
 \usepackage{array}
@@ -67,10 +71,14 @@ on the housing chosen this period, on substance use disorder and on mental
 illness. A household that dies leaves its assets behind; the estate accrues to
 the government (Section~\ref{sec:govt}).
 
-Within a period the order of events is: the household observes its state,
-chooses hours, housing, drug use, treatment and saving, consumes, and then the
-shocks to productivity, employment, addiction, mental health, voucher receipt
-and survival are realised.
+\nw{Within a period the household observes its state, chooses hours, housing,
+drug use, treatment and saving, and consumes. Every shock --- productivity,
+employment, addiction, mental health, voucher receipt and survival --- is drawn
+\emph{after} all of that and determines the state the household wakes up in at
+$j+1$. Nothing realised this period changes anything the household did this
+period, which is what makes those variables state variables rather than choices,
+and it is why the transition kernels in \eqref{eq:dtrans}--\eqref{eq:emp}
+condition on the CHOSEN $h'$ and $v$: the choice comes first, the draw second.}
 
 \subsection{The state}
 
@@ -203,9 +211,8 @@ so the disamenity is weighted by composition through $\omega_x$ rather than
 depending on the headcount alone. Households take $H$ and $H_D$ as given, which
 is what makes this a spillover rather than a private cost, but both are
 equilibrium objects, so policy moves them and the movement feeds back through the
-value of life into drug decisions. That is the property $\kappa_{\text{cons}}$
-lacked and which Referee~1 attacked in comment 3(a). The baseline sets
-$\kappa_x=0$; see Section~\ref{sec:extern}.
+value of life into drug decisions. \nw{Section~\ref{sec:extern} calibrates
+$\kappa_x$ from a contingent-valuation study rather than leaving it at zero.}
 
 \subsection{Income, taxes and transfers}
 
@@ -221,9 +228,17 @@ n\,y\,\varepsilon_j\,\rho_{d}^{\ind{d=1}}\rho_{m}^{\ind{m=1}} & j<j_{R},\;e=1 \q
 \end{cases}
 \label{eq:income}
 \end{equation}
-where $\varepsilon_j$ is the deterministic age profile of efficiency,
-$\rho_{d}$ and $\rho_{m}$ are productivity penalties \emph{conditional on
-working}, and $\bar Y$ is average income.
+\nw{with, in order of appearance: $y$ the persistent productivity state;
+$\varepsilon_j$ the deterministic age profile of labour efficiency;
+$\rho_{d}\le1$ and $\rho_{m}\le1$ the productivity penalties from substance use
+disorder and serious mental illness, applied \emph{conditional on working};
+$\varrho_{UI}$ the unemployment-insurance replacement rate, paid on the
+household's own productivity and only in the first year of a spell;
+$\zeta_{DI}$ the share of the non-employed with serious mental illness who
+receive disability insurance; $\bar y_{DI}$ the disability benefit expressed as
+a share of average income; and $\bar Y$ average income in the economy.
+Retirement income is a flat 40\% replacement of the productivity state, with no
+health penalty --- social security is not means-tested on health.}
 
 \paragraph{Why the penalties are conditional on working.} This is what allows an
 \emph{employed} household to have income low enough to choose homelessness. An
@@ -244,13 +259,18 @@ $\underline c\,\bar Y$:
 F=\max\Bigl\{0,\;\underline c\,\bar Y-\bigl(y^{g}+\max\{0,ra\}\bigr)\Bigr\},
 \label{eq:food}
 \end{equation}
-and a \emph{housing voucher}, paid only to voucher holders and only while
-renting, covering rent above a tenant contribution of $\kappa_r$ of gross
-earnings:
+and a \emph{housing voucher}, paid to voucher holders and only while renting,
+covering rent above a tenant contribution of $\kappa_r$ of gross earnings:
 \begin{equation}
 V\!ch=\ind{\eta=1}\ind{h'\neq h_1}\max\bigl\{0,\;p_h h'-\kappa_r\,y^{g}\bigr\}.
 \label{eq:voucher}
 \end{equation}
+
+\nw{A homeless voucher holder does not lose the voucher. Retention depends on
+income eligibility, not on housing, so a household that gives up its unit keeps
+its entitlement and the voucher simply pays nothing until it rents again. With
+homeownership gone there is no other tenure for it to be spent on, so this is
+both the realistic rule and the simple one.}
 
 Both are means-tested on \emph{gross} income, as in the programmes themselves.
 Both are also clawed back --- at a rate of one for food stamps and $\kappa_r$ for
@@ -307,8 +327,17 @@ but it shifts the continuation value, so the piecewise optimum is clamped to eac
 side of the threshold and both are evaluated.
 
 Referee~3 (m1) wanted labour supply kept and its role made visible; the AE (A3)
-questioned whether it was needed. Making it continuous and exact resolves the
-tension in Referee~3's favour, at a cost of a factor of three in solve time.
+questioned whether it was needed. \nw{The decisive reason to keep it is not the
+welfare cost of tax financing but the programme itself: \textbf{voucher
+eligibility and the voucher payment are both functions of earnings}, so hours
+are the margin through which a household controls whether it qualifies and how
+much it receives. Without an hours choice the voucher's means test would be
+something that happens to a household rather than something it responds to, and
+the labour-supply distortion created by a 30\% tenant contribution on top of the
+food-stamp clawback --- the welfare trap above --- would be invisible. That
+distortion is a first-order part of what a housing voucher does.} Making hours
+continuous and exact resolves the tension in Referee~3's favour, at a cost of a
+factor of three in solve time.
 
 \subsection{Housing and homelessness}
 
@@ -320,9 +349,14 @@ h_2=\underline h,\qquad h_3=\underline h\,\varsigma,\qquad h_4=\underline h\,\va
 so two parameters describe the whole grid: the level $\underline h$ and the
 spread $\varsigma$.
 
-\paragraph{Rent is normalised.} Only the product $p_h h$ enters both the budget
-\eqref{eq:budget} and utility \eqref{eq:util}, so the rent level and the housing
-grid are not separately identified. Setting $p_h=1$ makes the \emph{grid} the
+\paragraph{Rent is normalised.} \nw{Housing services $h'$ enter utility
+\eqref{eq:util}; the rent bill $p_h h'$ enters the budget \eqref{eq:budget}. The
+two are nearly collinear: rescaling the grid by $\lambda$ and the price by
+$1/\lambda$ leaves every budget constraint untouched and changes utility only by
+the factor $\lambda^{\beta}$ inside the consumption bundle, which affects
+behaviour solely through the curvature interaction with the additive leisure and
+$\aleph$ terms. Identification of the level therefore runs through a weak
+channel and should not be relied on.} Setting $p_h=1$ makes the \emph{grid} the
 calibrated object, and $\underline h$, $\varsigma$ and $h_{\text{HL}}$ are then
 pinned by three moments of the housing-burden distribution and the homelessness
 rate. This is what Referee~2's comment D1 asked for: in the submitted paper the
@@ -445,6 +479,31 @@ finding and separation ($\kappa_{uem}$), mortality ($\kappa_{\phi m}$), the
 recovery hazard ($\mu_m$), the Stone--Geary shifter ($\rho_m$ in \eqref{eq:b}),
 and eligibility for disability income ($\zeta_{DI}$ in \eqref{eq:income}).
 
+\nw{\paragraph{And causation runs the other way too: SUD raises the hazard of
+SMI.} The onset rate is multiplied by $\iota>1$ for a household with $d=1$:
+\begin{equation}
+\Pr(m'=1\mid m=0,d)=\text{onset}_m\cdot\iota^{\ind{d=1}} .
+\end{equation}
+The evidence is strong. Substance-induced psychosis converts to schizophrenia or
+bipolar disorder at a pooled rate near 25\% (Murrie et al., \emph{Schizophrenia
+Bulletin}), and in the Danish registers any substance use disorder predicts
+conversion to schizophrenia with a hazard ratio of 1.34, amphetamine use
+disorder 1.90 and opioid use disorder 2.74. The central value is $\iota=2$ with a
+range of 1.3--2.7.}
+
+\nw{This channel matters twice over, and the submitted paper had neither half of
+it. \emph{Privately} it is a further cost of addiction, so it belongs in the
+mechanism ladder alongside mortality and employment. \emph{Fiscally} it is a
+further externality, and a compounding one: SUD raises SMI, SMI raises disability
+receipt, lowers employment, raises mortality and raises homelessness --- so the
+chain SUD $\rightarrow$ SMI $\rightarrow$ DI and lost tax runs entirely outside
+what the household internalises beyond its own utility. It is measured in
+\S\ref{sec:extern}.}
+
+\nw{Because onset is no longer common to everyone, it can no longer be derived
+from prevalence: the base rate is calibrated so that population prevalence still
+lands on 5.5\% while the multiplier operates.}
+
 The specification follows \.{I}mrohoro\u{g}lu and Zhao (2022) structurally, not
 just numerically: in their model labour-market shocks generate \emph{short}
 homeless spells while health shocks generate \emph{chronic} homelessness, and
@@ -481,12 +540,12 @@ parameters reported as sensitivity, not calibrated, because that is the point.
 Let $s=(a,y,e,d,m,\eta)$. The value function solves
 \begin{equation}
 \begin{aligned}
-V_j(s)=\max_{n,h',v,\tau,a'}\;&
+V_j(s)=\max_{\{n,\,h',\,v,\,\tau,\,a'\}}\;\Biggl\{&
 \frac{\bigl[c^{\alpha}(h')^{\beta}(v+b_{dmh'})^{\gamma}\bigr]^{1-\sigma}}{1-\sigma}
 +\omega_{\ell}\frac{(1-n)^{1-\sigma_{\ell}}}{1-\sigma_{\ell}}
 +\aleph-\tau\bar\tau^{u}-\kappa_x\bigl(H+\omega_x H_D\bigr)\\
 &+\beta\,\phi_j(h',d,m)\;
-\mathbb E\Bigl[V_{j+1}(a',y',e',d',m',\eta')\;\Big|\;s,h',v,\tau\Bigr]
+\mathbb E\Bigl[V_{j+1}\bigl(a',y',e',d',m',\eta'\bigr)\;\Big|\;s,h',v,\tau\Bigr]\Biggr\}
 \end{aligned}
 \label{eq:bellman}
 \end{equation}
@@ -599,7 +658,7 @@ Symbol & Meaning & St. & Value, source or target\\
 Symbol & Meaning & St. & Value, source or target\\
 \midrule
 \endhead
-$\sigma$ & risk aversion & L & 2.0, standard\\
+$\sigma$ & risk aversion & L & 2.0. \nw{Attanasio and Weber (2010) survey; the standard life-cycle value}\\
 $\sigma_{\ell}$ & curvature on leisure & L & 3.0; Frisch elasticity 0.5, Chetty (2012)\\
 $\omega_{\ell}$ & weight on leisure & C & $\rightarrow$ average hours worked, 40\% of time\\
 $\theta_h$ & Cobb--Douglas weight on housing & C & $\rightarrow$ aggregate housing cost / income, 21.2\%\\
@@ -611,11 +670,10 @@ $\rho_H$ & $b$ multiplier, homelessness & C\textsuperscript{2} & $\rightarrow$ M
 $\aleph$ & flow value of being alive & C & $\rightarrow$ SUD income / average, 68.7\%; model VSL reported against \$7.5m\\
 $\bar\tau^{u}$ & utility cost of treatment & C & $\rightarrow$ treatment take-up given SUD, $\approx$24\%\\
 $\beta$ & discount factor & C & $\rightarrow$ wealth / GDP $=3$\\
-$p_h$ & rent & N & $=1$; only $p_h h$ is identified\\
 $p_v$ & drug price & E & clears the drug market; $=1$ at the benchmark\\
 $r$ & risk-free rate & L & 0.03, Kaplan, Mitman and Violante (2020)\\
-$\kappa_x$ & externality weight & S & $0$ in the baseline; see \S\ref{sec:extern}\\
-$\omega_x$ & extra weight on homeless-with-SUD & S & 2.0, with $\kappa_x$\\
+$\kappa_x$ & externality weight & \nw{D} & \nw{Inverted from Loubi\`ere et al.'s eight-country contingent valuation, \EUR{}57 per adult per year to end homelessness, normalised per unit of homelessness by the European reference rate. \S\ref{sec:extern}}\\
+$\omega_x$ & extra weight on homeless-with-SUD & S & \nw{2.0. No direct estimate: R2's wording (``especially if many are addicted to drugs'') implies a positive weight, and the hedonic split between permanent supportive housing and emergency shelter implies composition matters, but neither pins a number. Swept over 1--4}\\
 \bottomrule
 \end{longtable}
 
@@ -634,7 +692,7 @@ $\underline h$ & smallest rental size & C & $\rightarrow$ share with housing cos
 $\varsigma$ & geometric spread of rental sizes & C & $\rightarrow$ share with housing cost $>30\%$ of income, 40.62\%\\
 $\xi$ & tax progressivity (HSV) & L & 0.85, Heathcote, Storesletten and Violante (2017)\\
 $\tau_{\ell}$ & tax level & E & clears the government budget\\
-$\tau_k$ & capital income tax & L & 0.15\\
+$\tau_k$ & capital income tax & L & 0.15. \nw{US long-run capital-gains and qualified-dividend rate for the middle brackets}\\
 $\underline c$ & food-stamp consumption floor & C & $\rightarrow$ food stamps / labour income, 0.42\% (SNAP outlays FY2023)\\
 $\kappa_V$ & voucher eligibility threshold & D & 0.50 of median income, HUD rule\\
 $\kappa_r$ & tenant contribution rate & D & 0.30, HUD rule\\
@@ -657,19 +715,19 @@ Symbol & Meaning & St. & Value, source or target\\
 Symbol & Meaning & St. & Value, source or target\\
 \midrule
 \endhead
-$\rho_y,\sigma_y$ & AR(1) in log productivity & L & 0.90, 0.20\\
-$\varepsilon_j$ & deterministic age profile & D & quadratic in age\\
+$\rho_y,\sigma_y$ & AR(1) in log productivity & L & 0.90, 0.20. \nw{Storesletten, Telmer and Yaron (2004); Floden and Lind\'e (2001)}\\
+$\varepsilon_j$ & deterministic age profile & D & \nw{quadratic in age, fitted to the PSID/CPS hump. \textbf{Replace with a directly estimated profile}}\\
 $\bar\phi_j$ & baseline survival & D & \textbf{placeholder}; replace with US life tables\\
 $\bar\pi^{ue}$ & job finding, annual & L & 0.55, Krueger, Cramer and Cho (2014)\\
 $\bar\pi^{eu}$ & job separation & C & $\rightarrow$ unemployment rate, 4.9\%\\
 $\pi_{UI}$ & share of entrants drawing UI & D & 0.30; insured unemployment / total unemployment, FRED 2014--24\\
-$\varrho_{UI}$ & UI replacement rate & D & 0.50, standard US\\
+$\varrho_{UI}$ & UI replacement rate & D & 0.50. \nw{DOL statutory replacement rates average close to half of prior weekly wages}\\
 $\kappa_{ueH}$ & employment multiplier, homeless & L & 0.80, Desmond and Gershenson (2016)\\
-$\kappa_{ued}$ & employment multiplier, SUD & C & $\rightarrow$ unemployment rate given SUD, 26.9\%\\
+$\kappa_{ued}$ & employment multiplier, SUD & C & $\rightarrow$ unemployment rate given SUD, 26.9\% \nw{(NSDUH 2024, ages 26+, own tabulation in \texttt{data/nsduh\_gradients.py}). \nw{Direction corroborated by roughly 50\% more unscheduled absence and 44\% higher turnover in the employer literature}}\\
 $\kappa_{uem}$ & employment multiplier, SMI & C & $\rightarrow$ unemployment rate given SMI, 7.1\%\\
 $\kappa_{\phi H}$ & mortality multiplier, homeless & D & 1.60; Meyer et al.\ (2025), 60\% excess mortality\\
 $\kappa_{\phi d}$ & mortality multiplier, SUD & C\textsuperscript{2} & $\rightarrow$ drug-price participation elasticity, $-0.63$; bracketed by the 2.5--9.8 SMR range of Degenhardt et al.\ (2011)\\
-$\kappa_{\phi m}$ & mortality multiplier, SMI & D & 2.50; standardised mortality ratio for SMI of 2--3\\
+$\kappa_{\phi m}$ & mortality multiplier, SMI & D & 2.50. \nw{Walker, McGee and Druss (2015), meta-analysis of 203 studies: pooled all-cause mortality risk ratio 2.22, and 10--20 years of life expectancy lost}\\
 $\rho_d$ & SUD productivity penalty & D & 1.00 in the baseline: no direct wage effect (AE A20)\\
 $\rho_m$ & SMI productivity penalty & C & $\rightarrow$ homeless income / average, 19.1\%\\
 \bottomrule
@@ -687,15 +745,16 @@ Symbol & Meaning & St. & Value, source or target\\
 \endhead
 $\pi_d$ & addiction hazard given any use & C & $\rightarrow$ SUD rate, 3.68\%\\
 $j_E$ & maximum experimentation age & S & real age 55; run with and without (\S\ref{sec:diag})\\
-$\bar\pi_r$ & baseline recovery hazard, housed & D & 0.025/yr; Vaillant (1995). The AE questions applying alcohol recovery rates to drug SUD\\
+$\bar\pi_r$ & baseline recovery hazard, housed & D & 0.025/yr; Vaillant (1995). \nw{The AE questions applying alcohol recovery rates to drug SUD; Fleury et al.\ (2016) give 35--54\% remission at a mean 17-year follow-up across substances, which brackets this}\\
 $\mu_H$ & recovery multiplier, homeless & C & $\rightarrow$ drug UD share of the homeless, 21.7\%\\
-$\mu_m$ & recovery multiplier, SMI & S & 0.50; direction certain, magnitude not sourced\\
-$g$ & treatment effect on recovery & S & 1.35, from an odds ratio of 1.22 for contingency management. \textbf{The TF result runs through this} --- report a range and the value at which the ranking flips\\
+$\mu_m$ & recovery multiplier, SMI & \nw{D} & \nw{\textbf{0.82.} Dual-diagnosis cohorts relapse at 39.8\% against 26.4\% without a co-occurring disorder (odds ratio 1.85 for difficulty maintaining abstinence), so sustained remission runs 0.602 against 0.736, a ratio of 0.82; converting the odds ratio to a risk ratio at that base rate gives the same figure. Previously 0.50, which was invented}\\
+$g$ & treatment effect on recovery & S & 1.35, from an odds ratio of 1.22 for contingency management in the only clean randomised evidence. \nw{Specialty-treatment remission of 47.6\% and overall remission of 35--54\% are \emph{not} treatment effects --- different populations, different selection --- which is why they are not used here.} \textbf{The TF result runs through this} --- report a range and the value at which the ranking flips\\
 $p_m$ & SMI prevalence & D & 5.5\%, NSDUH 2023\\
 $\lambda_m$ & SMI recovery rate & D & 0.067/yr; \.{I}mrohoro\u{g}lu--Zhao's own moment, $\approx$50\% improve enough to work within 10 years\\
-onset$_m$ & SMI onset & N & derived from $p_m$ and $\lambda_m$\\
+onset$_m$ & SMI onset & \nw{C} & \nw{$\rightarrow$ SMI prevalence, 5.5\%. No longer derived, because onset is no longer common to everyone}\\
+\nw{$\iota$} & \nw{SUD multiplier on SMI onset} & \nw{D} & \nw{\textbf{2.0, new.} Danish registers: any substance use disorder predicts conversion to schizophrenia with a hazard ratio of 1.34, amphetamine use disorder 1.90, opioid use disorder 2.74; substance-induced psychosis converts at a pooled 25\% (Murrie et al.). Range 1.3--2.7}\\
 $\zeta_{DI}$ & disability coverage given SMI & C & $\rightarrow$ SMI share of the homeless, 25\%\\
-$\bar y_{DI}$ & disability benefit level & S & 0.25 of average income; order of magnitude only\\
+$\bar y_{DI}$ & disability benefit level & \nw{D} & \nw{0.25 of average income. SSA: average SSDI benefit \$1,537 a month in 2024, about \$18,400 a year against average annual earnings near \$70,000, so 0.26. The SSI federal benefit rate of \$943 a month is 0.16; SSDI is the relevant figure for people with a work history}\\
 $\psi_1$ & drug supply shifter & N & $p_v=1$ at the benchmark\\
 $\psi_2$ & drug supply curvature & S & elasticity $1/(\psi_2-1)$; no credible estimate, swept\\
 \bottomrule
@@ -1024,14 +1083,16 @@ appendix could not deliver.
 Referee~3's M2c asks where the externalities justifying intervention arise, given
 that use is rational and forward-looking. They are of two kinds.
 
-\emph{Fiscal, and it has four parts.} A household that acquires SUD (i) works
-less and pays less tax; (ii) becomes likelier to be voucher-eligible and to
+\emph{Fiscal, and it has \nw{five} parts.} A household that acquires SUD (i)
+works less and pays less tax; (ii) becomes likelier to be voucher-eligible and to
 receive one; (iii) becomes likelier to be homeless, which raises the direct
 programme cost \emph{and} makes work harder to find and easier to lose
-($\kappa_{ueH}=0.80$, Desmond and Gershenson), compounding back into (i); and
-(iv) dies earlier, truncating the whole stream of future revenue. None of this is
-internalised, and all of it is already in the model --- but the submitted paper
-never reported it.
+($\kappa_{ueH}=0.80$, Desmond and Gershenson), compounding back into (i);
+\nw{(iv) becomes likelier to develop serious mental illness, which raises
+disability receipt and feeds back into employment, mortality and homelessness;}
+and (\nw{v}) dies earlier, truncating the whole stream of future revenue. None of
+this is internalised, and all of it is already in the model --- but the submitted
+paper never reported it\nw{, and did not have channel (iv) at all}.
 
 It is now measured. Define the expected present discounted value of a
 household's net contribution to the government,

@@ -236,11 +236,11 @@ subroutine push_forward(D, Dn)
                     do ivp = 1, NV
                         if (s_eta(ivp) <= 0.0_dp) cycle
                         do imp = 1, NM
-                            if (mh_trans(im,imp) <= 0.0_dp) cycle
+                            if (pm_of(id,im,imp) <= 0.0_dp) cycle
                             Dn(iap,iyp,iep,idp,ivp,imp,j+1) = &
                                 Dn(iap,iyp,iep,idp,ivp,imp,j+1) + &
                                 m*phi*y_trans(iy,iyp)*s_e(iep)*s_d(idp) &
-                                *s_eta(ivp)*mh_trans(im,imp)
+                                *s_eta(ivp)*pm_of(id,im,imp)
                         end do
                     end do
                 end do

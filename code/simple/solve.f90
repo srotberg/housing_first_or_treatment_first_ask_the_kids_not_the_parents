@@ -578,7 +578,7 @@ subroutine build_EV(j)
                             pv_eta = s_eta(ivp)
                             if (pv_eta <= 0.0_dp) cycle
                             do imp = 1, NM
-                                pm = mh_trans(im,imp)
+                                pm = pm_of(id, im, imp)
                                 if (pm <= 0.0_dp) cycle
                                 acc = acc + pe*pd*pv_eta*pm*VY(ia,iy,iep,idp,ivp,imp)
                             end do

@@ -21,8 +21,8 @@ module calibrate
     ! co-occurring SUD rate among adults with SMI.
     real(dp) :: mh_b_ratio = 0.25_dp
 
-    integer, parameter :: NMOM = 21
-    integer, parameter :: NPAR = 19   ! calibrated parameters, for the snapshot
+    integer, parameter :: NMOM = 22
+    integer, parameter :: NPAR = 20   ! calibrated parameters, for the snapshot
 
     type :: mom_t
         character(len=28) :: name
@@ -121,6 +121,12 @@ subroutine init_targets()
     ! past-year SUD received any substance use treatment. VERIFY against the
     ! detailed tables before this goes in the paper.
     mom(21) = mom_t('treatment take-up | SUD (%) ', 24.00_dp, 0.0_dp, 1.0_dp)
+    ! SMI prevalence is now a TARGET rather than an identity. Onset used to be
+    ! derived from prevalence and the recovery rate, which only works when onset
+    ! is the same for everyone. It is not: SUD raises it (see mh_onset_sud), so
+    ! the base onset rate has to be calibrated to hold prevalence at its data
+    ! value while the SUD multiplier operates.
+    mom(22) = mom_t('SMI prevalence (%)          ',  5.50_dp, 0.0_dp, 1.0_dp)
 end subroutine init_targets
 
 
@@ -254,6 +260,7 @@ subroutine compute_moments(A)
     mom(19)%model = 100.0_dp*hrs/max(hrs_m, 1.0e-12_dp)
     mom(20)%model = 100.0_dp*burden30/p
     mom(21)%model = 100.0_dp*treated_sud/max(sud_m, 1.0e-12_dp)
+    mom(22)%model = 100.0_dp*A%poormh/p
 end subroutine compute_moments
 
 
@@ -347,6 +354,7 @@ end function max_gap
 !
 !   parameter          primary moment                 sign of dM/dparam
 !   -----------------  -----------------------------  -----------------
+!   mh_onset           SMI prevalence                          +
 !   b_dm(1,1) clean    drug participation                    -
 !   pi_d_low           SUD rate                              +
 !   h_homeless         homelessness rate                     +
@@ -404,6 +412,7 @@ subroutine calibration_sweep(step)
     ! bracket the three step-like moments before touching anything else
     call bisect_on(3, mom(16)%target, 10)     ! beta        -> wealth / GDP
     call bisect_on(2, mom(3)%target,  10)     ! h_homeless  -> homelessness rate
+    call bisect_on(4, mom(22)%target, 10)     ! mh_onset    -> SMI prevalence
     call bisect_on(1, mom(1)%target,  10)     ! b           -> participation
 
     ! annual hazard of SUD from light use -- 18.7% was absurd, and raising it far
@@ -435,12 +444,6 @@ subroutine calibration_sweep(step)
     ! more weight on leisure -> fewer hours
     call bump(omega_l,         gap(19),-1.0_dp, step, 0.01_dp,   5.00_dp)
 
-    ! keep derived quantities consistent with the parameters just moved
-    ! keep SMI prevalence at its data value while persistence moves
-    mh_onset = mh_recover*smi_prevalence/(1.0_dp - smi_prevalence)
-    mh_trans(1,1) = 1.0_dp - mh_onset;  mh_trans(1,2) = mh_onset
-    mh_trans(2,1) = mh_recover;         mh_trans(2,2) = 1.0_dp - mh_recover
-    call ergodic(NM, mh_trans, mh_dist0)
     call refresh_utility_constants()
 end subroutine calibration_sweep
 
@@ -488,6 +491,8 @@ subroutine bisect_on(which, target_val, iters)
         lo = log(1.0e-5_dp); hi = log(h_grid(2)*0.98_dp); rising = .true.
     case (3)
         lo = log(0.900_dp);  hi = log(0.9990_dp); rising = .true.
+    case (4)
+        lo = log(1.0e-5_dp); hi = log(0.20_dp);   rising = .true.
     end select
 
     do k = 1, iters
@@ -496,6 +501,7 @@ subroutine bisect_on(which, target_val, iters)
         case (1); b_dm(1,1)  = exp(mid)
         case (2); h_homeless = exp(mid)
         case (3); beta       = exp(mid)
+        case (4); mh_onset    = exp(mid)
         end select
         call refresh_utility_constants()
         call solve_household(); call build_distribution_eq()
@@ -504,6 +510,7 @@ subroutine bisect_on(which, target_val, iters)
         case (1); fmid = 100.0_dp*A%users/max(A%pop,1.0e-12_dp)
         case (2); fmid = 100.0_dp*A%homeless/max(A%pop,1.0e-12_dp)
         case (3); fmid = A%wealth/max(A%gdp,1.0e-12_dp)
+        case (4); fmid = 100.0_dp*A%poormh/max(A%pop,1.0e-12_dp)
         end select
         if ((fmid > target_val) .eqv. rising) then
             hi = mid
@@ -517,6 +524,7 @@ subroutine bisect_on(which, target_val, iters)
     case (1); b_dm(1,1)  = exp(mid)
     case (2); h_homeless = exp(mid)
     case (3); beta       = exp(mid)
+    case (4); mh_onset    = exp(mid)
     end select
     call refresh_utility_constants()
 end subroutine bisect_on
@@ -531,7 +539,7 @@ subroutine save_params(v)
     v = [ b_dm(1,1), pi_d_low, h_homeless, pi_eu_base, kappa_ue_d, &
           recover_mult_hl, prob_V, theta_v, theta_h, h_small, aleph, &
           di_coverage, kappa_ue_m, prod_pen_m, beta, cfloor_share, mh_b_ratio, &
-          h_spread, treat_ucost ]
+          h_spread, treat_ucost, mh_onset ]
 end subroutine save_params
 
 subroutine load_params(v)
@@ -540,7 +548,7 @@ subroutine load_params(v)
     kappa_ue_d=v(5); recover_mult_hl=v(6); prob_V=v(7); theta_v=v(8)
     theta_h=v(9);    h_small=v(10);   aleph=v(11);      di_coverage=v(12)
     kappa_ue_m=v(13);prod_pen_m=v(14);beta=v(15);       cfloor_share=v(16)
-    mh_b_ratio=v(17);h_spread=v(18);  treat_ucost=v(19)
+    mh_b_ratio=v(17);h_spread=v(18);  treat_ucost=v(19); mh_onset=v(20)
     call refresh_utility_constants()
 end subroutine load_params
 
@@ -566,6 +574,7 @@ subroutine refresh_utility_constants()
     beta_u  = theta_h*(1.0_dp-theta_v)
     gamma_u = theta_v
     call build_housing_grid()
+    call build_mh_trans()
     do i = 1, NH
         h_pow(i) = h_grid(i)**beta_u
     end do

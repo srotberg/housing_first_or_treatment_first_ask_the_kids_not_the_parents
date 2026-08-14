@@ -216,7 +216,22 @@ module params
     ! independently, so 1-(1-0.5)^(1/10) = 0.067 per year. IZ pin their health
     ! shock with exactly this moment plus the prevalence.
     real(dp) :: mh_recover  = 0.067_dp
-    real(dp) :: mh_onset                   ! derived: recover*p/(1-p)
+    ! Onset is now CALIBRATED to the SMI prevalence rather than derived from it,
+    ! because onset is no longer the same for everyone: SUD raises it.
+    real(dp) :: mh_onset    = 0.0039_dp
+    ! SUD RAISES THE HAZARD OF SERIOUS MENTAL ILLNESS. Substance-induced
+    ! psychosis converts to schizophrenia or bipolar disorder at a pooled rate
+    ! near 25% (Murrie et al., Schizophrenia Bulletin), and in the Danish
+    ! registers any substance use disorder predicts conversion to schizophrenia
+    ! with a hazard ratio of 1.34, amphetamine use disorder 1.90 and opioid use
+    ! disorder 2.74. Central value 2.0, range 1.3-2.7.
+    !
+    ! This is a channel the submitted paper did not have, and it matters twice
+    ! over. Privately it is a further cost of addiction. Fiscally it is a further
+    ! EXTERNALITY: SUD raises SMI, SMI raises disability receipt, lowers
+    ! employment, raises mortality and raises homelessness, none of which the
+    ! household internalises beyond its own utility.
+    real(dp) :: mh_onset_sud = 2.0_dp
     real(dp) :: prod_pen_m  = 0.55_dp      ! calibrated: homeless income/average
     ! AE question A20. Evidence on the SUD wage penalty CONDITIONAL ON WORKING
     ! is contested -- parts of the older literature find positive effects for
@@ -232,11 +247,21 @@ module params
     ! Standardised mortality ratios for SMI are roughly 2-3, corresponding to
     ! 10-20 years of life expectancy lost. 1.3 was far too low.
     real(dp) :: kappa_phi_m = 2.50_dp
-    real(dp) :: rec_mult_m  = 0.50_dp      ! SUD recovery multiplier, poor MH
+    ! SUD recovery multiplier with SMI. Dual-diagnosis cohorts relapse at 39.8%
+    ! against 26.4% without a co-occurring disorder (odds ratio 1.85 for
+    ! difficulty maintaining abstinence), so the probability of staying in
+    ! remission is 0.602 against 0.736 -- a ratio of 0.82. Converting the odds
+    ! ratio to a risk ratio at that base rate gives the same 0.82. Previously
+    ! 0.50, which was invented.
+    real(dp) :: rec_mult_m  = 0.82_dp      ! SUD recovery multiplier, poor MH
     ! Disability income for the non-employed with SMI. Roughly two-thirds of
     ! people with schizophrenia receive federal disability insurance, so giving
     ! this group zero income overstates their homelessness. Also the margin
     ! Imrohoroglu-Zhao find effective for the chronically homeless.
+    ! SSA: the average SSDI benefit was about $1,537 a month in 2024, roughly
+    ! $18,400 a year against average annual earnings near $70,000, so 0.26. The
+    ! SSI federal benefit rate of $943 a month is 0.16. 0.25 sits at the SSDI
+    ! figure, which is the relevant one for people with a work history.
     real(dp) :: disab_income = 0.25_dp     ! share of average income
     ! IZ pin the fraction of the homeless with mental illness using DI COVERAGE
     ! (their zeta_di), not persistence. Same here: wider coverage keeps more of
@@ -343,7 +368,8 @@ module params
     real(dp), allocatable :: pol_c(:,:,:,:,:,:,:)
     real(dp), allocatable :: pol_v(:,:,:,:,:,:,:)
     real(dp), allocatable :: dist(:,:,:,:,:,:,:)
-    real(dp) :: mh_trans(NM,NM)
+    real(dp) :: mh_trans(NM,NM)          ! clean households
+    real(dp) :: mh_trans_d(NM,NM)        ! households with SUD: higher onset
     ! precomputed powers, to keep pow() out of the inner loop
     real(dp) :: h_pow(NH), alpha_u, beta_u, gamma_u
 
@@ -398,14 +424,7 @@ subroutine setup_grids()
     !-- mental-health transition and its ergodic newborn distribution --------
     ! onset is implied by the target prevalence and the recovery rate, so
     ! calibrating persistence never moves the prevalence off its data value
-    mh_onset = mh_recover*smi_prevalence/(1.0_dp - smi_prevalence)
-    if (include_mental_health == 1) then
-        mh_trans(1,1) = 1.0_dp - mh_onset;   mh_trans(1,2) = mh_onset
-        mh_trans(2,1) = mh_recover;          mh_trans(2,2) = 1.0_dp - mh_recover
-    else
-        mh_trans = 0.0_dp; mh_trans(1,1) = 1.0_dp; mh_trans(2,1) = 1.0_dp
-    end if
-    call ergodic(NM, mh_trans, mh_dist0)
+    call build_mh_trans()
 
     m = 0.0_dp
     do i = 1, NY
@@ -415,6 +434,36 @@ subroutine setup_grids()
     median_income = m
     step = 0.0_dp
 end subroutine setup_grids
+
+
+!-- mental-health transitions, separately for clean and SUD households -------
+subroutine build_mh_trans()
+    real(dp) :: on_d
+    if (include_mental_health == 1) then
+        on_d = min(0.99_dp, mh_onset*mh_onset_sud)
+        mh_trans(1,1) = 1.0_dp - mh_onset;  mh_trans(1,2) = mh_onset
+        mh_trans(2,1) = mh_recover;         mh_trans(2,2) = 1.0_dp - mh_recover
+        mh_trans_d(1,1) = 1.0_dp - on_d;    mh_trans_d(1,2) = on_d
+        mh_trans_d(2,1) = mh_recover;       mh_trans_d(2,2) = 1.0_dp - mh_recover
+    else
+        mh_trans = 0.0_dp; mh_trans(1,1) = 1.0_dp; mh_trans(2,1) = 1.0_dp
+        mh_trans_d = mh_trans
+    end if
+    ! newborns are drawn from the clean-household ergodic distribution
+    call ergodic(NM, mh_trans, mh_dist0)
+end subroutine build_mh_trans
+
+
+!-- P(m' | m, d): SUD raises the onset hazard --------------------------------
+pure function pm_of(id, im, imp) result(p)
+    integer, intent(in) :: id, im, imp
+    real(dp) :: p
+    if (id == 2) then
+        p = mh_trans_d(im,imp)
+    else
+        p = mh_trans(im,imp)
+    end if
+end function pm_of
 
 
 subroutine build_housing_grid()
