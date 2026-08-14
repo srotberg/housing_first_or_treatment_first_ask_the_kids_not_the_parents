@@ -623,7 +623,10 @@ pure subroutine voucher_probs(iv, ielig, ireg, id, s)
     end if
 
     if (iv == 2) then
-        pkeep = 1.0_dp          ! keep an existing voucher while eligible
+        ! keep an existing voucher while eligible, unless the programme is one
+        ! that expires by design -- v_expire is 0 everywhere except the
+        ! transitional-housing arm of the Costantini validation
+        pkeep = 1.0_dp - v_expire
     else
         pkeep = prob_V          ! otherwise win the lottery
     end if

@@ -461,6 +461,254 @@ end function kappa_ext_from_wtp
 ! see whether the level the price elasticity chose is consistent with the
 ! mortality evidence. These are NOT targets; disagreement is the finding.
 !===============================================================================
+!===============================================================================
+! Does the model deliver Costantini's short-run health effect?
+!
+! Costantini (2025) finds Housing First cuts 3-year mortality by 4.6pp
+! (s.e. 1.7) in roughly 300,000 VA veterans, by IV. That is the single most
+! directly comparable estimate to this model's central mechanism, and it is
+! UNTARGETED: nothing in the calibration is fitted to it.
+!
+! MATCHING HIS EXPERIMENT MATTERS, and the obvious analogue is the wrong one.
+! Costantini does not compare Housing First against Treatment First, and he does
+! not ask what would happen if a given homeless household were housed. He
+! instruments RECEIPT of a voucher, so his estimate is a local average treatment
+! effect over households the instrument moves into housing, with every
+! behavioural response left free.
+!
+! So the model analogue is a WALD RATIO, not a hazard calculation. Expand
+! voucher access, re-solve the equilibrium, and divide the change in aggregate
+! 3-year mortality by the change in the housed share:
+!
+!     LATE = d(3-year mortality) / d(share housed)
+!
+! That is the effect per household actually moved into housing, which is what
+! his IV estimates. Behaviour responds throughout: households that gain housing
+! may use more or less, work more or less, and the drug price moves. A pure
+! hazard difference would hold all of that fixed and would therefore overstate
+! the mortality gain if housing raises use, or understate it if housing lowers
+! use.
+!
+! The hazard version is still reported alongside, because the gap between the
+! two IS the behavioural response, and that gap is informative in its own right.
+!
+! Weighting by the model's own distribution rather than by HUD's age profile is
+! the point: if the model puts its homeless at the wrong ages, this diagnostic
+! is supposed to reveal that, and a hand calculation on external weights would
+! hide it.
+!===============================================================================
+subroutine report_health_effect()
+    integer  :: j, ia, iy, ie, id, iv, im, k, ihp
+    real(dp) :: m, mass, s_hl, s_ho, cum_hl, cum_ho, acc_hl, acc_ho
+    real(dp) :: age_acc, sud_acc, smi_acc
+
+    mass = 0.0_dp; acc_hl = 0.0_dp; acc_ho = 0.0_dp
+    age_acc = 0.0_dp; sud_acc = 0.0_dp; smi_acc = 0.0_dp
+
+    do j = 1, n_age-3
+    do im = 1, NM; do iv = 1, NV; do id = 1, ND
+    do ie = 1, NE; do iy = 1, NY; do ia = 1, NA
+        m = dist(ia,iy,ie,id,iv,im,j)
+        if (m <= 0.0_dp) cycle
+        if (pol_h(ia,iy,ie,id,iv,im,j) /= 1) cycle      ! the homeless only
+
+        ! three years at the homeless hazard, versus three years housed in the
+        ! smallest unit, ageing properly in both
+        cum_hl = 1.0_dp; cum_ho = 1.0_dp
+        do k = 0, 2
+            s_hl = survival(j+k, 1, id, im)
+            s_ho = survival(j+k, 2, id, im)
+            cum_hl = cum_hl*s_hl
+            cum_ho = cum_ho*s_ho
+        end do
+
+        acc_hl = acc_hl + m*(1.0_dp - cum_hl)
+        acc_ho = acc_ho + m*(1.0_dp - cum_ho)
+        mass   = mass + m
+        age_acc = age_acc + m*real(j+25,dp)
+        if (id == 2) sud_acc = sud_acc + m
+        if (im == 2) smi_acc = smi_acc + m
+    end do; end do; end do
+    end do; end do; end do
+    end do
+
+    write(*,'(A)') ''
+    write(*,'(A)') '  ========= short-run health: the model vs Costantini (2025) ========='
+    if (mass <= 0.0_dp) then
+        write(*,'(A)') '   UNDEFINED: no homeless mass in the benchmark'
+        write(*,'(A)') '  ==================================================================='
+        return
+    end if
+    write(*,'(A,F7.2)') '   mean age of the model''s homeless        : ', age_acc/mass
+    write(*,'(A,F7.2,A)') '   share with SUD                          : ', &
+        100.0_dp*sud_acc/mass, ' %'
+    write(*,'(A,F7.2,A)') '   share with poor mental health           : ', &
+        100.0_dp*smi_acc/mass, ' %'
+    write(*,'(A)') '  -------------------------------------------------------------------'
+    write(*,'(A,F7.2,A)') '   3-year mortality, staying homeless      : ', &
+        100.0_dp*acc_hl/mass, ' %'
+    write(*,'(A,F7.2,A)') '   3-year mortality, if housed             : ', &
+        100.0_dp*acc_ho/mass, ' %'
+    write(*,'(A,F7.2,A)') '   MODEL effect of housing                 : ', &
+        100.0_dp*(acc_ho-acc_hl)/mass, ' pp'
+    write(*,'(A)')        '   Costantini (2025), HF, IV               :   -4.60 pp (s.e. 1.7)'
+    write(*,'(A)')        '   95% interval                            :   -7.93 to -1.27 pp'
+    write(*,'(A)') '  -------------------------------------------------------------------'
+    write(*,'(A)') '   The above is the HAZARD difference: behaviour held fixed.'
+    call report_health_late(acc_ho-acc_hl, mass)
+end subroutine report_health_effect
+
+
+!===============================================================================
+! The two-armed Costantini validation, and why it is two-armed.
+!
+! The AE writes that Costantini finds Housing First cuts three-year mortality by
+! 4.6pp while Treatment First has no effect, "in contrast with the model
+! simulations of this paper". Two things in that sentence do not survive
+! contact with his design.
+!
+! FIRST, NEITHER OF HIS NUMBERS IS THIS PAPER'S EXPERIMENT 1. Both of his
+! estimates are local average treatment effects against NO HOUSING
+! INTERVENTION. He instruments entry into HUD-VASH and entry into Grant and Per
+! Diem separately, with two instruments, against a control arm that receives
+! nothing. So his estimates live on the GENEROSITY margin -- assistance versus
+! none -- while Experiment 1 holds the number of assisted households fixed and
+! varies only CONDITIONALITY. His pair of coefficients does not identify the
+! difference between two rationed regimes; he says so himself, and reports a
+! separate F test to compare them.
+!
+! SECOND, HIS TREATMENT FIRST IS NOT THIS PAPER'S TREATMENT FIRST. Grant and
+! Per Diem is TIME LIMITED transitional housing: a stay of six months to two
+! years, after which the veteran must find their own housing. That expiry is
+! what his own mechanism section identifies as the cause of the null. His
+! Figure 4 has transitional housing recipients MORE likely to be housed than
+! voucher recipients in quarter 1, because a bed is available at once while a
+! voucher has to find a landlord, and then decaying to 9pp by quarter 12 while
+! the voucher arm peaks at 34pp. The programme does not fail to house people.
+! It stops housing them. This paper's Treatment First is a permanent voucher
+! whose RETENTION is conditional on sobriety, which is a different object.
+!
+! So the honest test is to ask the model both of his questions, in his units,
+! at his margin, and see whether it produces both of his answers.
+!
+!   arm HF   expand access to an unconditional permanent voucher
+!   arm TF   expand access to a sobriety-conditioned voucher that EXPIRES at
+!            the Grant and Per Diem rate
+!
+! Each arm is its own baseline and its own expansion, so each Wald ratio is the
+! marginal effect of adding a household to THAT programme's rolls, which is what
+! an instrument that pushes compliers into one programme estimates. Neither is
+! contaminated by the other. The expiry hazard is 0.8 a year, the reciprocal of
+! the 1.25 year mean stay implied by his six month to two year window.
+!
+! If the model reproduces a large negative LATE for the first and a small one
+! for the second, the AE's contradiction is not a contradiction: the same
+! mechanism that makes universal Treatment First attractive in the long run --
+! conditionality raising the private cost of use while housing is still
+! guaranteed to the sober -- also predicts that a programme which withdraws the
+! housing after a year buys no three-year mortality gain.
+!===============================================================================
+subroutine report_health_late(hazard_gap, hl_mass)
+    real(dp), intent(in) :: hazard_gap, hl_mass
+    real(dp) :: pv_keep, late_hf, late_tf, dh_hf, dh_tf, dm_hf, dm_tf
+    integer  :: tf_keep
+    real(dp) :: ve_keep
+
+    pv_keep = prob_V; tf_keep = policy_TF; ve_keep = v_expire
+
+    ! arm HF: unconditional, permanent -- HUD-VASH
+    policy_TF = 0; v_expire = 0.0_dp
+    call late_arm(pv_keep, dh_hf, dm_hf, late_hf)
+
+    ! arm TF: sobriety conditioned, expiring -- Grant and Per Diem
+    policy_TF = 1; v_expire = gpd_expire
+    call late_arm(pv_keep, dh_tf, dm_tf, late_tf)
+
+    ! restore and re-solve, so whatever runs next sees the benchmark
+    prob_V = pv_keep; policy_TF = tf_keep; v_expire = ve_keep
+    call solve_equilibrium(40, 1.0e-4_dp, .false.)
+
+    write(*,'(A)') '  -------------------------------------------------------------------'
+    write(*,'(A)') '   WALD RATIOS, which is what Costantini''s two IVs actually estimate.'
+    write(*,'(A)') '   Both are marginal expansions of ACCESS against that programme''s own'
+    write(*,'(A)') '   baseline, because his control arm is no housing intervention.'
+    write(*,'(A)') ''
+    write(*,'(A)') '   arm                          d(housed) d(mort3)     LATE      data'
+    write(*,'(A,F9.4,F9.4,F9.3,A)') &
+        '   HF  permanent, unconditional', 100.0_dp*dh_hf, 100.0_dp*dm_hf, &
+        100.0_dp*late_hf, '    -4.60'
+    write(*,'(A,F9.4,F9.4,F9.3,A)') &
+        '   TF  expiring, sobriety-cond.', 100.0_dp*dh_tf, 100.0_dp*dm_tf, &
+        100.0_dp*late_tf, '     ~0  '
+    write(*,'(A)') '   all figures in percentage points'
+    write(*,'(A)') '  -------------------------------------------------------------------'
+    write(*,'(A,F9.3,A)') '   hazard-only version of the HF arm, no behaviour : ', &
+        100.0_dp*hazard_gap/max(hl_mass,1.0e-12_dp), ' pp'
+    write(*,'(A)') '   the gap between that and the HF LATE IS the behavioural response'
+    write(*,'(A)') ''
+    write(*,'(A)') '   Costantini (2025): HF -4.60 pp (s.e. 1.7), 95% [-7.93, -1.27];'
+    write(*,'(A)') '   TF point estimate near zero, and he rejects equality at F = 4.06.'
+    write(*,'(A)') '   The model passes if the HF arm lands inside his interval AND the'
+    write(*,'(A)') '   TF arm is much smaller. It is NOT fitted to either number.'
+    write(*,'(A)') '  ==================================================================='
+end subroutine report_health_late
+
+
+!-- one arm of the validation: baseline, expand access, Wald ratio ------------
+! Called with the policy design already set. Leaves prob_V restored.
+subroutine late_arm(pv_base, dhoused, dmort, late)
+    real(dp), intent(in)  :: pv_base
+    real(dp), intent(out) :: dhoused, dmort, late
+    type(agg_t) :: A0, A1
+    real(dp) :: mort0, mort1, hs0, hs1
+
+    prob_V = pv_base
+    call solve_equilibrium(40, 1.0e-4_dp, .false.)
+    call compute_aggregates(A0)
+    mort0 = mortality_3yr(); hs0 = 1.0_dp - A0%homeless/max(A0%pop,1.0e-12_dp)
+
+    ! expand access by a tenth: small enough to stay local, large enough to
+    ! move a measurable mass
+    prob_V = min(1.0_dp, pv_base*1.10_dp)
+    call solve_equilibrium(40, 1.0e-4_dp, .false.)
+    call compute_aggregates(A1)
+    mort1 = mortality_3yr(); hs1 = 1.0_dp - A1%homeless/max(A1%pop,1.0e-12_dp)
+
+    prob_V  = pv_base
+    dhoused = hs1 - hs0
+    dmort   = mort1 - mort0
+    if (abs(dhoused) > 1.0e-10_dp) then
+        late = dmort/dhoused
+    else
+        late = 0.0_dp           ! expansion moved nobody; reported as a zero row
+    end if
+end subroutine late_arm
+
+
+!-- population 3-year cumulative mortality at current policies ----------------
+function mortality_3yr() result(m3)
+    real(dp) :: m3
+    integer  :: j, ia, iy, ie, id, iv, im, k, ih
+    real(dp) :: m, mass, cum
+    mass = 0.0_dp; m3 = 0.0_dp
+    do j = 1, n_age-3
+    do im = 1, NM; do iv = 1, NV; do id = 1, ND
+    do ie = 1, NE; do iy = 1, NY; do ia = 1, NA
+        m = dist(ia,iy,ie,id,iv,im,j)
+        if (m <= 0.0_dp) cycle
+        ih = pol_h(ia,iy,ie,id,iv,im,j)
+        cum = 1.0_dp
+        do k = 0, 2
+            cum = cum*survival(j+k, ih, id, im)
+        end do
+        m3 = m3 + m*(1.0_dp - cum); mass = mass + m
+    end do; end do; end do
+    end do; end do; end do
+    end do
+    m3 = m3/max(mass,1.0e-12_dp)
+end function mortality_3yr
+
+
 subroutine report_mortality_validation()
     integer  :: j, ia, iy, ie, id, iv, im, ihp
     real(dp) :: m, q0, q1
@@ -571,6 +819,7 @@ subroutine report_second_stage()
     write(*,'(A,ES12.4)') '   kappa_ext currently in force                : ', kappa_ext
     write(*,'(A)') '  ============================================================'
     call report_mortality_validation()
+    call report_health_effect()
 end subroutine report_second_stage
 
 end module experiment

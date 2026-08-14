@@ -224,6 +224,18 @@ module params
     ! R1's comment 4(c) says the $1-2bn testing estimate is too large to relegate
     ! to a dismissive footnote; this puts it in the budget constraint where it
     ! competes with everything else the government pays for.
+    ! Per-period probability that an existing voucher lapses for reasons other
+    ! than failing a test. Zero in the benchmark and in every policy experiment,
+    ! because a Housing Choice Voucher is held indefinitely while the household
+    ! stays eligible. It is non-zero in exactly one place: the Costantini
+    ! validation, where the object being replicated is the VA's Grant and Per
+    ! Diem programme, which is TIME LIMITED at six months to two years. That
+    ! expiry is not a detail of his setting, it is the thing his mechanism
+    ! section says drives the null.
+    real(dp) :: v_expire    = 0.0_dp            ! P(voucher lapses | held, eligible)
+    ! Grant and Per Diem allows a stay of six months to two years, a mean of
+    ! about 1.25 years, so an annual lapse hazard of 1/1.25.
+    real(dp), parameter :: gpd_expire = 0.80_dp
     real(dp) :: test_prob   = 1.0_dp            ! P(tested | holds a voucher), TF
     ! Cost per test. A urine panel runs about $40; quarterly testing is roughly
     ! $160 a year against average earnings near $70,000.
