@@ -301,9 +301,32 @@ module params
     ! measured excess is essentially nil; a flat 1.6 was five times too small at
     ! prime ages. Both errors ran in the direction that weakens the paper's
     ! central mechanism at the ages where it does its work.
+    ! SHAPE and LEVEL are separated deliberately. kappa_phi_d is still the
+    ! SECOND STAGE's instrument: calibrate_kappa_phi_d brackets it inside
+    ! Degenhardt et al.'s SMR range to hit a drug-price elasticity of
+    ! participation of -0.63, and that elasticity is what disciplines how much
+    ! drug use responds to its costs -- the object the whole policy experiment
+    ! turns on. Pinning the level from mortality data would take the instrument
+    ! away and leave the elasticity undisciplined.
+    !
+    ! So the data supplies the PROFILE and the elasticity supplies the LEVEL:
+    !
+    !   kappa_phi_d_age(j) = 1 + (kappa_phi_d - 1) * shape_sud(j)
+    !   kappa_phi_h_age(j) = max(1, rr_homeless(j)/[(1-s) + s*kappa_phi_d_age(j)])
+    !
+    ! kappa_phi_h has to be rebuilt alongside it, because Baggett's ratio is
+    ! measured on a population that mostly also has SUD, so netting the SUD
+    ! component out depends on wherever the level lands.
+    !
+    ! This is now OVER-identified, which is a feature: the level that matches the
+    ! price elasticity can be compared against the level implied by the mortality
+    ! data, and disagreement is informative rather than hidden.
     real(dp) :: kappa_phi_h_age(n_age)
     real(dp) :: kappa_phi_d_age(n_age)
-    real(dp) :: kappa_phi_h = 1.6_dp            ! legacy scalars, unused in survival()
+    real(dp) :: shape_sud(n_age)                ! normalised to 1 at its peak
+    real(dp) :: rr_homeless(n_age)              ! Baggett all-cause RR, by age
+    real(dp) :: sud_share_homeless = 0.217_dp   ! s, for netting out
+    real(dp) :: kappa_phi_h = 1.6_dp            ! legacy scalar, unused in survival()
     real(dp) :: kappa_phi_d = 6.9_dp            ! SUD mortality multiplier
     real(dp) :: kappa_ue_h  = 0.8_dp
     real(dp) :: kappa_ue_d  = 0.6_dp
@@ -468,9 +491,11 @@ subroutine setup_grids()
 
     ! fallback only; load_mortality_multipliers() overwrites these if the file
     ! is present. Flat values reproduce the pre-data behaviour exactly.
-    kappa_phi_h_age = kappa_phi_h
-    kappa_phi_d_age = kappa_phi_d
+    shape_sud   = 1.0_dp        ! flat fallback reproduces the old behaviour
+    rr_homeless = kappa_phi_h*((1.0_dp-sud_share_homeless) &
+                + sud_share_homeless*kappa_phi_d)
     call load_mortality_multipliers()
+    call refresh_mortality_multipliers()
 
     psi2 = 1.0_dp + 1.0_dp/drug_supply_elasticity
 
@@ -568,7 +593,7 @@ end subroutine load_life_table
 !===============================================================================
 subroutine load_mortality_multipliers()
     integer  :: u, ios, age, i, nread
-    real(dp) :: kd, kh, rr
+    real(dp) :: sh, rrh
     character(len=256) :: line
     logical  :: there
 
@@ -589,18 +614,33 @@ subroutine load_mortality_multipliers()
         if (ios /= 0) exit
         if (len_trim(line) == 0) cycle
         if (line(1:1) < '0' .or. line(1:1) > '9') cycle      ! header
-        read(line,*,iostat=ios) age, kd, kh, rr
+        read(line,*,iostat=ios) age, sh, rrh
         if (ios /= 0) cycle
         i = age - 25                                          ! model age 1 = real 26
         if (i >= 1 .and. i <= n_age) then
-            kappa_phi_d_age(i) = max(1.0_dp, kd)
-            kappa_phi_h_age(i) = max(1.0_dp, kh)
+            shape_sud(i)   = max(0.0_dp, sh)
+            rr_homeless(i) = max(1.0_dp, rrh)
             nread = nread + 1
         end if
     end do
     close(u)
     write(*,'(A,I0,A)') ' mortality multipliers loaded: ', nread, ' ages'
 end subroutine load_mortality_multipliers
+
+
+!-- rebuild both mortality profiles from the current SUD level ---------------
+! Must be called after ANY change to kappa_phi_d -- in particular by the second
+! stage, which moves it to hit the price elasticity.
+subroutine refresh_mortality_multipliers()
+    integer :: i
+    real(dp) :: s
+    s = sud_share_homeless
+    do i = 1, n_age
+        kappa_phi_d_age(i) = 1.0_dp + (kappa_phi_d - 1.0_dp)*shape_sud(i)
+        kappa_phi_h_age(i) = max(1.0_dp, rr_homeless(i) &
+            / ((1.0_dp - s) + s*kappa_phi_d_age(i)))
+    end do
+end subroutine refresh_mortality_multipliers
 
 
 subroutine build_mh_trans()
