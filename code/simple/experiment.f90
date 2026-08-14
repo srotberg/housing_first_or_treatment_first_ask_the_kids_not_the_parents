@@ -469,9 +469,73 @@ subroutine calibrate_kappa_phi_d(iters, verbose)
 end subroutine calibrate_kappa_phi_d
 
 
+!===============================================================================
+! The homelessness disamenity, calibrated rather than assumed.
+!
+! R2's C2 asked for the externality and noted it "would require a new
+! calibration moment". Here is one. Loubiere et al.'s eight-country contingent
+! valuation study asked people what they would pay in annual taxes to END
+! homelessness through Housing First and got roughly EUR 57 per respondent per
+! year, about 0.2% of average annual earnings. That is a stated preference over
+! the AGGREGATE homelessness rate -- exactly the object kappa_ext multiplies.
+!
+! It is a much better fit to this model than the hedonic shelter-siting
+! literature, which measures a LOCAL, AVOIDABLE disamenity: what people pay to
+! live further from a facility. This model has no geography, so nobody can move
+! away, and a capitalisation coefficient cannot be ported into it. The
+! contingent-valuation number is non-spatial and is about the aggregate, which
+! is what the model has.
+!
+! The mapping. Removing the disamenity is worth kappa_ext*(H + omega_ext*HD)
+! utils; the household would pay wtp*c of consumption for it. Equating,
+!
+!     kappa_ext = wtp * E[c*u_c] / (H + omega_ext*HD),
+!
+! with the expectation taken over the benchmark distribution. Since kappa_ext
+! enters period utility additively and is zero at the benchmark, the aggregates
+! on the right-hand side do not depend on it, so this is a one-shot calculation
+! rather than a fixed point.
+!===============================================================================
+function kappa_ext_from_wtp() result(kx)
+    real(dp) :: kx
+    integer  :: j, ia, iy, ie, id, iv, im, ihp
+    real(dp) :: m, mass, acc, cc, vv, comp, bb, H, HD
+
+    mass = 0.0_dp; acc = 0.0_dp; H = 0.0_dp; HD = 0.0_dp
+
+    do j = 1, n_age
+    do im = 1, NM; do iv = 1, NV; do id = 1, ND
+    do ie = 1, NE; do iy = 1, NY; do ia = 1, NA
+        m = dist(ia,iy,ie,id,iv,im,j)
+        if (m <= 0.0_dp) cycle
+        mass = mass + m
+        ihp  = pol_h(ia,iy,ie,id,iv,im,j)
+        if (ihp == 1) then
+            H = H + m
+            if (id == 2) HD = HD + m
+        end if
+        cc = pol_c(ia,iy,ie,id,iv,im,j)
+        vv = pol_v(ia,iy,ie,id,iv,im,j)
+        if (cc <= 0.0_dp) cycle
+        bb   = b_of(id, im, ihp)
+        comp = cc**alpha_u * h_pow(ihp) * (vv + bb)**gamma_u
+        if (comp <= 0.0_dp) cycle
+        ! c*u_c = alpha*comp**(1-sigma); for sigma = 2 that is alpha/comp
+        acc = acc + m*alpha_u*comp**(1.0_dp - sigma)
+    end do; end do; end do
+    end do; end do; end do
+    end do
+
+    H  = H /max(mass,1.0e-12_dp)
+    HD = HD/max(mass,1.0e-12_dp)
+    kx = wtp_end_homelessness * (acc/max(mass,1.0e-12_dp)) &
+       / max(H + omega_ext*HD, 1.0e-12_dp)
+end function kappa_ext_from_wtp
+
+
 subroutine report_second_stage()
     real(dp) :: a_nh, a_nach, a_ach, h_nh, h_nach, h_ach
-    real(dp) :: eps, vsl
+    real(dp) :: eps, vsl, kx
 
     call milby_arms(a_nh, a_nach, a_ach, h_nh, h_nach, h_ach)
     eps = price_elasticity()
@@ -497,6 +561,12 @@ subroutine report_second_stage()
     write(*,'(A)') '  ------------------------------------------------------------'
     write(*,'(A,ES12.4)') '   b_hl_ratio  : ', b_hl_ratio
     write(*,'(A,ES12.4)') '   kappa_phi_d : ', kappa_phi_d
+    kx = kappa_ext_from_wtp()
+    write(*,'(A)') '  ------------------------------------------------------------'
+    write(*,'(A,ES12.4)') '   kappa_ext implied by WTP to end homelessness: ', kx
+    write(*,'(A,F8.3,A)') '     (from ', 100.0_dp*wtp_end_homelessness, &
+        '% of annual income, Loubiere et al. contingent valuation)'
+    write(*,'(A,ES12.4)') '   kappa_ext currently in force                : ', kappa_ext
     write(*,'(A)') '  ============================================================'
 end subroutine report_second_stage
 

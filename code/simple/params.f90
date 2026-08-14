@@ -117,9 +117,28 @@ module params
     !-- drug supply: C(V) = psi1/psi2 * V**psi2, so elasticity = 1/(psi2-1).
     !   psi1 is normalised so that p_v = 1 at the benchmark quantity, which keeps
     !   the existing calibration intact; psi2 is set from the supply elasticity.
+    ! Supply elasticity. The maintained assumption in the drug-economics
+    ! literature is that US supply of cocaine and heroin is VERY elastic --
+    ! Rhodes et al. (2002), discussed in the National Academies' Understanding
+    ! the Demand for Illegal Drugs -- on the grounds that these are agricultural
+    ! products with simple, inexpensive processing, so producers can meet any
+    ! demand at roughly the current price.
+    !
+    ! There is a natural experiment. The August 2010 abuse-deterrent
+    ! reformulation of OxyContin pushed a very large mass of demand into heroin,
+    ! enough to quadruple heroin death rates (Alpert, Powell and Pacula, NBER
+    ! w24475). Purity-adjusted heroin prices did not rise; they fell slightly
+    ! between 2010 and 2012. A demand shift of that size leaving price flat is
+    ! direct evidence of a near-horizontal supply curve.
+    !
+    ! So a flat supply curve is the BASELINE, not an omission -- which means the
+    ! submitted paper's fixed price was the field's standard assumption rather
+    ! than an unjustified normalisation. Finite elasticities are the ROBUSTNESS
+    ! direction. R1 1(c) and R3 M2d asked for the price to be endogenous; it now
+    ! is, and the data say the flat benchmark is the right one to sit at.
     real(dp) :: psi1 = 1.0_dp
-    real(dp) :: drug_supply_elasticity = 0.5_dp
-    real(dp) :: psi2 = 3.0_dp
+    real(dp) :: drug_supply_elasticity = 50.0_dp   ! baseline: near-horizontal
+    real(dp) :: psi2 = 1.02_dp
 
     !-- taxes and transfers ---------------------------------------------------
     real(dp) :: tau_l = 0.85_dp                 ! level parameter, HSV form
@@ -259,6 +278,19 @@ module params
     ! unlike kappa_cons = 0, which reversed the paper's conclusion.
     real(dp) :: kappa_ext = 0.0_dp
     real(dp) :: omega_ext = 2.0_dp              ! extra weight on homeless-with-SUD
+    ! Willingness to pay to END homelessness, as a share of annual income.
+    ! Loubiere et al.'s eight-country contingent-valuation study asked exactly
+    ! this question -- what would you pay in annual taxes to end homelessness
+    ! through Housing First -- and got about EUR 57 per respondent per year,
+    ! roughly 0.2% of average annual earnings. That is a STATED preference over
+    ! the AGGREGATE homelessness rate, which is precisely the object kappa_ext
+    ! multiplies, and it is a far better fit to this model than the hedonic
+    ! shelter-siting literature, which measures a local, avoidable disamenity in
+    ! a model that has no geography.
+    ! Caveats to state in the paper: stated rather than revealed preference;
+    ! European rather than US; 30.3% protest zeros; and the elicited change is
+    ! eliminating homelessness rather than a marginal change.
+    real(dp) :: wtp_end_homelessness = 0.002_dp
     real(dp) :: H_agg     = 0.0_dp              ! aggregate homelessness rate
     real(dp) :: HD_agg    = 0.0_dp              ! homeless AND SUD, share of population
 
