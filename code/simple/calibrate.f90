@@ -17,7 +17,11 @@ module calibrate
     use equilibrium
     implicit none
 
-    integer, parameter :: NMOM = 18
+    ! self-medication: poor mental health scales b down. Calibrated to the
+    ! co-occurring SUD rate among adults with SMI.
+    real(dp) :: mh_b_ratio = 0.25_dp
+
+    integer, parameter :: NMOM = 19
 
     type :: mom_t
         character(len=28) :: name
@@ -82,6 +86,12 @@ subroutine init_targets()
     mom(17) = mom_t('light share of experimenters', 86.80_dp, 0.0_dp, 1.0_dp)
     ! cfloor_share: SNAP benefits as a share of GDP, FY2023 (paper target 21)
     mom(18) = mom_t('food stamps / labour income ',  0.42_dp, 0.0_dp, 1.0_dp)
+    ! Co-occurring SUD among adults with SMI. SAMHSA 2023 NSDUH: 6.809m adults
+    ! had both, against 14.6m with SMI, so 46.6%. Against a population SUD rate
+    ! near 17.7% that is a relative risk of about 2.6. Applied to the model's
+    ! SUD concept (3.68%) this implies roughly 9.6% among those with SMI.
+    ! This is what identifies the self-medication channel, mh_b_ratio.
+    mom(19) = mom_t('SUD rate given SMI (%)      ',  9.60_dp, 0.0_dp, 1.0_dp)
 end subroutine init_targets
 
 
@@ -94,7 +104,7 @@ subroutine compute_moments(A)
     real(dp) :: spend_sud, inc_sud
     real(dp) :: hcost, totinc, burden50, users_inc, users_m, sud_inc, sud_m
     real(dp) :: hl_smi, smi_work, smi_emp, hl_inc, hl_m
-    real(dp) :: wealth, exp_m, exp_light
+    real(dp) :: wealth, exp_m, exp_light, smi_m, smi_sud
 
     p = max(A%pop, 1.0e-12_dp)
     sud_unemp = 0.0_dp; sud_work = 0.0_dp; hl_sud = 0.0_dp
@@ -105,6 +115,7 @@ subroutine compute_moments(A)
     hl_smi = 0.0_dp; smi_work = 0.0_dp; smi_emp = 0.0_dp
     hl_inc = 0.0_dp; hl_m = 0.0_dp
     wealth = 0.0_dp; exp_m = 0.0_dp; exp_light = 0.0_dp
+    smi_m = 0.0_dp; smi_sud = 0.0_dp
 
     do j = 1, n_age
     do im = 1, NM
@@ -132,6 +143,10 @@ subroutine compute_moments(A)
             hl_m   = hl_m + m
             hl_inc = hl_inc + m*ygross
             if (im == 2) hl_smi = hl_smi + m
+        end if
+        if (im == 2) then
+            smi_m = smi_m + m
+            if (id == 2) smi_sud = smi_sud + m
         end if
         if (im == 2 .and. j < j_ret) then
             smi_work = smi_work + m
@@ -203,6 +218,7 @@ subroutine compute_moments(A)
     mom(16)%model = wealth/max(totinc, 1.0e-12_dp)
     mom(17)%model = 100.0_dp*exp_light/max(exp_m, 1.0e-12_dp)
     mom(18)%model = 100.0_dp*A%food/max(A%labinc, 1.0e-12_dp)
+    mom(19)%model = 100.0_dp*smi_sud/max(smi_m, 1.0e-12_dp)
 end subroutine compute_moments
 
 
@@ -307,7 +323,8 @@ end function max_gap
 !   theta_h            housing cost / income (aggregate)      +
 !   p_rent             share with housing cost > 50%          +
 !   aleph              SUD income / average income            -
-!   mh_recover         SMI share of the homeless              -
+!   di_coverage        SMI share of the homeless              -
+!   mh_b_ratio         SUD rate given SMI                     -
 !   kappa_ue_m         employment rate given SMI              +
 !   prod_pen_m         homeless income / average income       +
 !   beta               net worth / income                     +
@@ -331,14 +348,15 @@ subroutine calibration_sweep(step)
     ! fall. aleph is assigned to the SUD ratio because that gradient is the
     ! steep one and so is the more informative of the two.
     call bump(aleph,           gap(12),-1.0_dp, step, 0.5_dp,    5.0e3_dp)
-    ! more persistent SMI -> the SMI stock accumulates in homelessness
-    call bump(mh_recover,      gap(13),-1.0_dp, step, 0.01_dp,   0.60_dp)
+    ! wider DI coverage keeps more of the SMI population housed (IZ's zeta_di)
+    call bump(di_coverage,     gap(13),-1.0_dp, step, 0.05_dp,   3.00_dp)
     call bump(kappa_ue_m,      gap(14),+1.0_dp, step, 0.05_dp,   1.00_dp)
     call bump(prod_pen_m,      gap(15),+1.0_dp, step, 0.05_dp,   1.00_dp)
     call bump(beta,            gap(16),+1.0_dp, step, 0.85_dp,   0.995_dp)
     ! a higher heavy-use threshold lets more experimenters stay 'light'
     call bump(vbar,            gap(17),+1.0_dp, step, 1.0e-3_dp, 2.0_dp)
     call bump(cfloor_share,    gap(18),+1.0_dp, step, 1.0e-3_dp, 0.60_dp)
+    call bump(mh_b_ratio,      gap(19),-1.0_dp, step, 0.02_dp,   1.00_dp)
 
     ! keep derived quantities consistent with the parameters just moved
     pi_d_high = heavy_ratio * pi_d_low
@@ -378,6 +396,7 @@ end subroutine bump
 
 subroutine refresh_utility_constants()
     integer :: i
+    b_dm(1,2) = b_dm(1,1)*mh_b_ratio
     alpha_u = (1.0_dp-theta_h)*(1.0_dp-theta_v)
     beta_u  = theta_h*(1.0_dp-theta_v)
     gamma_u = theta_v
@@ -403,7 +422,9 @@ subroutine print_params()
     write(*,'(A,ES12.4)') '   theta_h         : ', theta_h
     write(*,'(A,ES12.4)') '   p_rent          : ', p_rent
     write(*,'(A,ES12.4)') '   aleph           : ', aleph
-    write(*,'(A,ES12.4)') '   mh_recover      : ', mh_recover
+    write(*,'(A,ES12.4)') '   mh_recover (ext): ', mh_recover
+    write(*,'(A,ES12.4)') '   di_coverage     : ', di_coverage
+    write(*,'(A,ES12.4)') '   mh_b_ratio      : ', mh_b_ratio
     write(*,'(A,ES12.4)') '   mh_onset (deriv): ', mh_onset
     write(*,'(A,ES12.4)') '   kappa_ue_m      : ', kappa_ue_m
     write(*,'(A,ES12.4)') '   prod_pen_m      : ', prod_pen_m

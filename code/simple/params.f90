@@ -131,7 +131,11 @@ module params
     ! smi_prevalence pins the ergodic share; mh_onset is DERIVED from it and
     ! mh_recover, so persistence can be calibrated without breaking prevalence.
     real(dp) :: smi_prevalence = 0.055_dp  ! SMI among US adults, NSDUH 2023
-    real(dp) :: mh_recover  = 0.100_dp     ! calibrated: SMI share of the homeless
+    ! EXTERNAL, following Imrohoroglu-Zhao: ten years after diagnosis about 50%
+    ! of people with schizophrenia improve to the point they can work and live
+    ! independently, so 1-(1-0.5)^(1/10) = 0.067 per year. IZ pin their health
+    ! shock with exactly this moment plus the prevalence.
+    real(dp) :: mh_recover  = 0.067_dp
     real(dp) :: mh_onset                   ! derived: recover*p/(1-p)
     real(dp) :: prod_pen_m  = 0.55_dp      ! calibrated: homeless income/average
     ! AE question A20. Evidence on the SUD wage penalty CONDITIONAL ON WORKING
@@ -154,6 +158,10 @@ module params
     ! this group zero income overstates their homelessness. Also the margin
     ! Imrohoroglu-Zhao find effective for the chronically homeless.
     real(dp) :: disab_income = 0.25_dp     ! share of average income
+    ! IZ pin the fraction of the homeless with mental illness using DI COVERAGE
+    ! (their zeta_di), not persistence. Same here: wider coverage keeps more of
+    ! the SMI population housed.
+    real(dp) :: di_coverage = 0.60_dp      ! calibrated: SMI share of the homeless
     integer  :: include_disability = 1
     real(dp) :: mh_dist0(NM)               ! newborn distribution over MH
     integer  :: include_mental_health = 1

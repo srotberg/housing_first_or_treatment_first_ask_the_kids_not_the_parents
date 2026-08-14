@@ -23,10 +23,6 @@ module mechanism
     implicit none
 
     integer, parameter :: NQ = 5      ! income quintiles
-    ! poor mental health scales b down (self-medication); the ratio is held
-    ! fixed while b_dm(1,1) is recalibrated, so the arms differ only in the
-    ! channel switched off
-    real(dp) :: mh_b_ratio = 0.25_dp
 
     type :: profile_t
         real(dp) :: particip, sud, homeless
