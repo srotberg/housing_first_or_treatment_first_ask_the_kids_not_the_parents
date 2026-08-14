@@ -137,22 +137,33 @@ module params
     ! direction. R1 1(c) and R3 M2d asked for the price to be endogenous; it now
     ! is, and the data say the flat benchmark is the right one to sit at.
     real(dp) :: psi1 = 1.0_dp
-    ! Supply elasticity. 50 was effectively infinite and indefensible as a
-    ! NUMBER even though the direction is well supported: it made the price move
-    ! 1.4% when demand halves, which zeroes out the drug-price externality by
-    ! construction, and that channel is one of the five the welfare
-    ! decomposition exists to measure.
+    ! Supply elasticity, MEASURED. Hansen, Miller and Weber (2017) study
+    ! Washington's 2015 switch from a 25% gross receipts tax at every supply
+    ! chain stage to a single 37% retail excise, with universal state
+    ! traceability data. Consumers bear 44% of the additional retail tax burden
+    ! and their demand elasticity is about -1 within two weeks, so textbook
+    ! incidence, eps_s = rho*|eps_d|/(1-rho), implies 0.79.
     !
-    ! 10 is still highly elastic, consistent with the OxyContin episode, and
-    ! leaves the channel alive: halving demand moves the price 6.7%. Swept over
-    ! {2, 5, 10, 50} with the externality reported at each, since the evidence
-    ! pins the direction and not the number.
+    ! This is the only measured supply elasticity in any drug market. It is two
+    ! orders of magnitude below the 50 this model started with, and it makes the
+    ! equilibrium drug price genuinely consequential: halving demand now moves
+    ! the price about 58%, against 1.4% at 50. That matters for the referees who
+    ! asked for the price to BE an equilibrium object (R1 1c, R3 M2d, AE A5); at
+    ! 50 the model complied in form and not in substance.
+    !
+    ! Three caveats, all in the note rather than buried. It is a LEGAL licensed
+    ! market with capped cultivation canopy, a supply constraint with no
+    ! analogue in an illegal market, which biases the measured value DOWN
+    ! relative to an unlicensed one. The reform changed tax STRUCTURE rather
+    ! than a rate. And the authors find tax invariance did not hold, so the
+    ! textbook mapping is an approximation. It also sits in tension with
+    ! Alpert's null price response to a heroin demand shift, which is imprecise
+    ! but points the other way. Swept over {0.79, 2, 5, 50}.
     !
     ! NOTE: with pin_pv = 1 this does NOT affect the first stage. p_v is the
     ! numeraire there and psi1 is renormalised at each clearing, so the
-    ! calibrated benchmark is invariant to psi2. It bites only in
-    ! counterfactuals and in the second-stage elasticity.
-    real(dp) :: drug_supply_elasticity = 10.0_dp
+    ! calibrated benchmark is invariant to psi2.
+    real(dp) :: drug_supply_elasticity = 0.79_dp
     real(dp) :: psi2 = 1.02_dp
     ! psi1 is a pure NORMALISATION: it has no independent meaning and is pinned
     ! by the requirement that p_v = 1 at the benchmark. During the first stage
