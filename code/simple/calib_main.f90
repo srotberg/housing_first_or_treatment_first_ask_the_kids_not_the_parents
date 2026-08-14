@@ -1,0 +1,90 @@
+!===============================================================================
+! calib_main.f90 -- run the calibration sweep loop.
+!
+! The inner equilibrium is solved to a loose tolerance during calibration and
+! tightened only for the final report: there is no point converging prices to
+! 1e-4 while the parameters are still moving by percent.
+!===============================================================================
+program calib_main
+    use params
+    use solve
+    use equilibrium
+    use calibrate
+    !$ use omp_lib
+    implicit none
+
+    type(agg_t) :: A
+    integer  :: sweep, max_sweeps, nthreads
+    real(dp) :: t0, t1, step, best_gap
+    character(len=64) :: arg
+
+    max_sweeps = 25
+    if (command_argument_count() >= 1) then
+        call get_command_argument(1, arg); read(arg,*) max_sweeps
+    end if
+
+    nthreads = 1
+    !$ nthreads = omp_get_max_threads()
+
+    call setup_grids()
+    call alloc_all()
+    call alloc_solve()
+    call init_targets()
+    call refresh_utility_constants()
+
+    write(*,'(A)') '======================================================'
+    write(*,'(A)') ' Calibration -- simplified HF/TF model'
+    write(*,'(A,I0,A,I0,A)') ' threads: ', nthreads, '   sweeps: ', max_sweeps, ''
+    write(*,'(A)') '======================================================'
+
+    call wall(t0)
+    call normalise_drug_supply()
+
+    best_gap = 1.0e30_dp
+    step = 0.60_dp
+
+    do sweep = 1, max_sweeps
+        ! loose inner solve while parameters are still moving
+        call solve_equilibrium(20, 3.0e-3_dp, .false.)
+        call compute_aggregates(A)
+        call compute_moments(A)
+
+        write(*,'(A,I3,A,F9.4,A,F7.3)') ' sweep ', sweep, &
+            '   max rel gap = ', max_gap(), '   step = ', step
+
+        if (max_gap() < best_gap) then
+            best_gap = max_gap()
+        else
+            step = max(0.15_dp, step*0.7_dp)   ! back off when it stops improving
+        end if
+
+        if (max_gap() < 0.02_dp) then
+            write(*,'(A)') ' calibration tolerance reached'
+            exit
+        end if
+
+        call calibration_sweep(step)
+    end do
+
+    ! final tight solve at the calibrated parameters
+    write(*,'(A)') ''
+    write(*,'(A)') ' final solve at tight tolerance...'
+    call solve_equilibrium(80, 1.0e-4_dp, .false.)
+    call compute_aggregates(A)
+    call compute_moments(A)
+    call wall(t1)
+
+    call print_moments('calibration result')
+    call print_params()
+    write(*,'(A,F10.2,A)') ' total wall time: ', t1-t0, ' s'
+
+contains
+
+subroutine wall(t)
+    real(dp), intent(out) :: t
+    integer :: cnt, rate
+    call system_clock(cnt, rate)
+    t = real(cnt,dp)/real(rate,dp)
+end subroutine wall
+
+end program calib_main
