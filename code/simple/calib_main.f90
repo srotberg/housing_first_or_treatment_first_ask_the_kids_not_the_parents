@@ -75,6 +75,7 @@ program calib_main
     call wall(t1)
 
     call print_moments('calibration result')
+    call print_housing_cdf()
     call print_params()
     write(*,'(A,F10.2,A)') ' total wall time: ', t1-t0, ' s'
 

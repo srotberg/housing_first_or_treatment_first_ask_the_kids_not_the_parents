@@ -69,8 +69,8 @@ subroutine compute_aggregates(A)
         if (j < j_ret) then
             A%labinc     = A%labinc     + m*ygross
             A%labinc_pow = A%labinc_pow + m*max(ygross,1.0e-10_dp)**xi_tax
-            if (ie == 1) A%ui = A%ui + m*ygross     ! UI is the unemployed income flow
-            if (ie == 1) A%unemp = A%unemp + m
+            if (ie == 2) A%ui = A%ui + m*ygross     ! only year-1 UI recipients
+            if (ie >= 2) A%unemp = A%unemp + m
         else
             A%ss = A%ss + m*ygross
         end if
@@ -247,7 +247,7 @@ subroutine build_distribution_eq()
     dist = 0.0_dp
     do im = 1, NM
     do iy = 1, NY
-        dist(1,iy,2,1,1,im,1) = y_dist0(iy)*mh_dist0(im)
+        dist(1,iy,1,1,1,im,1) = y_dist0(iy)*mh_dist0(im)
     end do
     end do
 
@@ -276,13 +276,7 @@ subroutine build_distribution_eq()
                 ielig = 0
             end if
 
-            pfind = p_find(ihp, id, im)
-            psep  = p_sep(ihp, id, im)
-            if (ie == 2) then
-                s_e(1) = psep;           s_e(2) = 1.0_dp - psep
-            else
-                s_e(1) = 1.0_dp - pfind; s_e(2) = pfind
-            end if
+            call emp_trans(ie, ihp, id, im, s_e)
 
             if (id == 1) then
                 if (ireg == 1) then
@@ -336,7 +330,7 @@ function newborn_welfare() result(W)
     W = 0.0_dp
     do im = 1, NM
     do iy = 1, NY
-        W = W + y_dist0(iy)*mh_dist0(im)*V(1,iy,2,1,1,im,1)
+        W = W + y_dist0(iy)*mh_dist0(im)*V(1,iy,1,1,1,im,1)
     end do
     end do
 end function newborn_welfare

@@ -72,11 +72,13 @@ pure function income_gross(j, iy, ie, id, im) result(y)
     if (id == 2) prod = prod * prod_pen_d
     if (im == 2) prod = prod * prod_pen_m
     if (j >= j_ret) then
-        y = 0.40_dp * y_grid(iy)                 ! social security, no penalty
+        y = 0.40_dp * y_grid(iy)                       ! social security, no penalty
+    else if (ie == 1) then
+        y = y_grid(iy) * age_prof(j) * prod            ! employed
     else if (ie == 2) then
-        y = y_grid(iy) * age_prof(j) * prod
+        y = ui_replace * y_grid(iy) * age_prof(j)      ! UI, first year only
     else
-        y = 0.20_dp * y_grid(iy) * age_prof(j)   ! UI, no expiration state
+        y = 0.0_dp                                     ! no UI: food stamps only
     end if
 end function income_gross
 
@@ -137,13 +139,7 @@ subroutine build_EV(j)
         do ireg = 1, NREG
         do ihp = 1, NH
 
-            pfind = p_find(ihp, id, im)
-            psep  = p_sep(ihp, id, im)
-            if (ie == 2) then
-                s_e(1) = psep;            s_e(2) = 1.0_dp - psep
-            else
-                s_e(1) = 1.0_dp - pfind;  s_e(2) = pfind
-            end if
+            call emp_trans(ie, ihp, id, im, s_e)
 
             if (id == 1) then
                 if (ireg == 1) then

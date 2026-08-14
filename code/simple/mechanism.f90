@@ -81,7 +81,7 @@ subroutine profile_users(P)
             uinc    = uinc + m*y
             uage    = uage + m*real(j,dp)
             uass    = uass + m*a_grid(ia)
-            if (ie == 1) uunemp = uunemp + m
+            if (ie >= 2) uunemp = uunemp + m
             if (pol_h(ia,iy,ie,id,iv,im,j) == 1) uhl = uhl + m
             if (id == 1) then
                 e_mass = e_mass + m;  e_inc = e_inc + m*y

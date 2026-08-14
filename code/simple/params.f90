@@ -29,7 +29,19 @@ module params
     !-- grid sizes ------------------------------------------------------------
     integer, parameter :: NA  = 60         ! non-negative asset grid
     integer, parameter :: NY  = 9          ! labour productivity states
-    integer, parameter :: NE  = 2          ! 1 = unemployed, 2 = employed
+    ! Employment / UI duration. The paper lets UI persist for the whole
+    ! unemployment spell; UI in the US is time-limited, and reviewers question
+    ! that assumption. Here UI is drawn on ENTRY to unemployment with
+    ! probability prob_ui and lasts ONE year only.
+    !   1 = employed
+    !   2 = unemployed, first year, receiving UI
+    !   3 = unemployed without UI (first year non-recipients AND all later years)
+    !
+    ! Three states suffice, not four. A first-year non-recipient and a
+    ! long-term unemployed household have identical income (zero) and identical
+    ! continuations (find work with p_find, otherwise stay), so their value
+    ! functions are equal and the states merge exactly.
+    integer, parameter :: NE  = 3
     integer, parameter :: ND  = 2          ! 1 = clean, 2 = SUD
     integer, parameter :: NH  = 4          ! 1 = homeless, 2..4 = rental sizes
     integer, parameter :: NV  = 2          ! 1 = no voucher, 2 = voucher
@@ -127,6 +139,8 @@ module params
     real(dp) :: kappa_ue_d  = 0.6_dp
     real(dp) :: pi_ue_base  = 0.55_dp           ! job finding
     real(dp) :: pi_eu_base  = 0.03_dp           ! job separation
+    real(dp) :: prob_ui     = 0.30_dp           ! share of entrants who draw UI
+    real(dp) :: ui_replace  = 0.50_dp           ! replacement rate, first year only
 
     !-- externality (replaces the loss-of-consortium adjustment) --------------
     ! Enters period utility so it is internalised: it affects the value of life
@@ -292,6 +306,30 @@ pure function p_sep(ih, id, im) result(p)
     if (im == 2) mult = mult / kappa_ue_m
     p = min(1.0_dp, pi_eu_base*mult)
 end function p_sep
+
+
+!-- employment transition over the four-state (employment, UI duration) grid --
+! Row ie of the kernel, given chosen housing, SUD status and mental health.
+pure subroutine emp_trans(ie, ih, id, im, s)
+    integer,  intent(in)  :: ie, ih, id, im
+    real(dp), intent(out) :: s(NE)
+    real(dp) :: pf, ps
+    pf = p_find(ih, id, im)
+    ps = p_sep(ih, id, im)
+    s = 0.0_dp
+    select case (ie)
+    case (1)                       ! employed
+        s(1) = 1.0_dp - ps
+        s(2) = ps * prob_ui        ! separate into UI
+        s(3) = ps * (1.0_dp - prob_ui)
+    case (2)                       ! UI year -- benefit expires now
+        s(1) = pf
+        s(3) = 1.0_dp - pf
+    case (3)                       ! no UI, any duration
+        s(1) = pf
+        s(3) = 1.0_dp - pf
+    end select
+end subroutine emp_trans
 
 
 !-- recovery hazard, given housing and treatment take-up ---------------------

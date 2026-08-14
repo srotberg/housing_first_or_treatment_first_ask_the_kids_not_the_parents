@@ -84,7 +84,7 @@ subroutine compute_moments(A)
         ! unemployment among those with SUD, working age only
         if (id == 2 .and. j < j_ret) then
             sud_work = sud_work + m
-            if (ie == 1) sud_unemp = sud_unemp + m
+            if (ie >= 2) sud_unemp = sud_unemp + m
         end if
 
         ! SUD share of the homeless
@@ -135,6 +135,62 @@ subroutine compute_moments(A)
     mom(11)%model = 100.0_dp*(users_inc/max(users_m,1.0e-12_dp)) &
                             /max(totinc/p, 1.0e-12_dp)
 end subroutine compute_moments
+
+
+!-- model vs data CDF of the housing-cost-to-income ratio --------------------
+! Everyone rents in the model, so the data side is ALL households with owner
+! housing valued at imputed rent (8.3% of value). From data/scf_housing_burden.py,
+! SCF 2022, ages 26-85.
+subroutine print_housing_cdf()
+    integer, parameter :: NC = 12
+    real(dp) :: cut(NC), dat(NC), mdl(NC)
+    integer  :: j, ia, iy, ie, id, iv, im, ihp, k
+    real(dp) :: m, y, pop, ratio
+    cut = [0.05_dp,0.10_dp,0.15_dp,0.20_dp,0.25_dp,0.30_dp, &
+           0.35_dp,0.40_dp,0.50_dp,0.60_dp,0.80_dp,1.00_dp]
+    dat = [95.39_dp,89.25_dp,77.23_dp,63.64_dp,50.88_dp,40.62_dp, &
+           32.52_dp,25.97_dp,17.49_dp,12.60_dp, 7.06_dp, 4.57_dp]
+    mdl = 0.0_dp; pop = 0.0_dp
+
+    do j = 1, n_age
+    do im = 1, NM
+    do iv = 1, NV
+    do id = 1, ND
+    do ie = 1, NE
+    do iy = 1, NY
+    do ia = 1, NA
+        m = dist(ia,iy,ie,id,iv,im,j)
+        if (m <= 0.0_dp) cycle
+        pop = pop + m
+        ihp = pol_h(ia,iy,ie,id,iv,im,j)
+        y   = max(income_gross(j, iy, ie, id, im), 1.0e-8_dp)
+        if (ihp > 1) then
+            ratio = p_rent*h_grid(ihp)/y
+        else
+            ratio = 0.0_dp                   ! homeless: no housing outlay
+        end if
+        do k = 1, NC
+            if (ratio > cut(k)) mdl(k) = mdl(k) + m
+        end do
+    end do
+    end do
+    end do
+    end do
+    end do
+    end do
+    end do
+
+    write(*,'(A)') ''
+    write(*,'(A)') '  housing cost / income -- share ABOVE each threshold (%)'
+    write(*,'(A)') '  ------------------------------------------------------'
+    write(*,'(A)') '   threshold      data     model       gap'
+    do k = 1, NC
+        write(*,'(F12.2,F10.2,F10.2,F10.2)') cut(k), dat(k), &
+            100.0_dp*mdl(k)/max(pop,1.0e-12_dp), &
+            100.0_dp*mdl(k)/max(pop,1.0e-12_dp) - dat(k)
+    end do
+    write(*,'(A)') '  ------------------------------------------------------'
+end subroutine print_housing_cdf
 
 
 subroutine print_moments(header)
