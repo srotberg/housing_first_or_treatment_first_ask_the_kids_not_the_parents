@@ -284,7 +284,32 @@ module params
     integer  :: include_mental_health = 1
 
     !-- mortality and employment multipliers ----------------------------------
-    real(dp) :: kappa_phi_h = 1.6_dp            ! homelessness mortality multiplier
+    ! Homelessness mortality multiplier, BY AGE. Baggett et al. (2013, JAMA
+    ! Intern Med), the Boston Health Care for the Homeless cohort, give
+    ! race-adjusted all-cause mortality rate ratios against the Massachusetts
+    ! general population of 8.6 for men and 9.6 for women at 25-44, 4.5 at
+    ! 45-64, and 1.1 at 65-84. A flat 1.6 was wrong twice over: five times too
+    ! small at prime ages, and the wrong SHAPE -- a constant multiplier large
+    ! enough to match the young would imply a 41% annual death rate for a
+    ! homeless 80-year-old.
+    !
+    ! Their ratio is the TOTAL for homeless adults, most of whom also have SUD,
+    ! and this model already carries a separate kappa_phi_d. Using 9.1 directly
+    ! would stack the two and count SUD mortality twice, giving 59x. Netting out
+    ! the SUD composition of the homeless,
+    !
+    !     RR_total = kappa_phi_h * [ (1-s) + s*kappa_phi_d ],   s = 0.217,
+    !
+    ! the model's own SUD-share-of-homeless target, leaves 3.99, 1.97 and 0.48.
+    !
+    ! The 65+ figure is floored at 1.0. Taken literally it says homelessness
+    ! PROTECTS the old, which is survivor selection -- the few who reach 65
+    ! homeless are unrepresentatively robust -- not a causal effect, and the
+    ! model has no way to represent selection on unobserved frailty. Flooring is
+    ! the conservative choice: it understates the mortality channel rather than
+    ! inventing a protective one.
+    real(dp) :: kappa_phi_h_age(n_age)
+    real(dp) :: kappa_phi_h = 1.6_dp            ! legacy scalar, unused in survival()
     real(dp) :: kappa_phi_d = 6.9_dp            ! SUD mortality multiplier
     real(dp) :: kappa_ue_h  = 0.8_dp
     real(dp) :: kappa_ue_d  = 0.6_dp
@@ -446,6 +471,16 @@ subroutine setup_grids()
     end do
     surv_base(n_age) = 0.0_dp
     call load_life_table()
+
+    ! age-varying homelessness mortality multiplier (Baggett et al. 2013, net of
+    ! the SUD composition of their cohort -- see the declaration above)
+    do i = 1, n_age
+        select case (i + 25)                       ! model age 1 = real age 26
+        case (:44);   kappa_phi_h_age(i) = 3.99_dp
+        case (45:64); kappa_phi_h_age(i) = 1.97_dp
+        case default; kappa_phi_h_age(i) = 1.00_dp
+        end select
+    end do
 
     psi2 = 1.0_dp + 1.0_dp/drug_supply_elasticity
 
@@ -621,7 +656,7 @@ pure function survival(j, ih, id, im) result(phi)
     integer, intent(in) :: j, ih, id, im
     real(dp) :: phi, mult, death
     mult = 1.0_dp
-    if (ih == 1) mult = mult * kappa_phi_h**real(on_homeless_fb,dp)
+    if (ih == 1) mult = mult * kappa_phi_h_age(j)**real(on_homeless_fb,dp)
     if (id == 2) mult = mult * kappa_phi_d**real(on_mortality_d,dp)
     if (im == 2) mult = mult * kappa_phi_m
     death = (1.0_dp - surv_base(j)) * mult

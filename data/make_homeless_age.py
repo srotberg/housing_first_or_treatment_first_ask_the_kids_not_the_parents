@@ -22,8 +22,11 @@ no 65 plus column in the PIT age breakdown, so the profile stops at 64.
 import argparse, csv, os, re, sys
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "us_homeless_by_age.csv")
+# The 65+ column is named "Over 64", not "65+" -- easy to miss and the reason
+# the first version of this file stopped at 64.
 BANDS = {"Age 25 to 34": (25, 34), "Age 35 to 44": (35, 44),
-         "Age 45 to 54": (45, 54), "Age 55 to 64": (55, 64)}
+         "Age 45 to 54": (45, 54), "Age 55 to 64": (55, 64),
+         "Over 64": (65, 84)}
 
 def wonder_pop(path):
     """Population by five year group, deduplicated across cause rows."""
@@ -69,17 +72,18 @@ def main():
         out.append((lo, hi, int(tot[i]), pop, tot[i] / pop))
 
     T = sum(o[2] for o in out)
+    P = sum(o[3] for o in out)
     with open(OUT, "w", newline="") as fh:
         w = csv.writer(fh)
-        w.writerow(["age_lo", "age_hi", "homeless", "population", "rate", "share_of_25_64"])
+        w.writerow(["age_lo", "age_hi", "homeless", "population", "rate", "share_of_homeless"])
         for lo, hi, c, pop, rate in out:
             w.writerow([lo, hi, c, pop, f"{rate:.8f}", f"{c/T:.6f}"])
 
-    print(f"  wrote {OUT}   (PIT {a.year})")
+    print(f"  wrote {OUT}   (PIT {a.year}, ages 25-84)")
+    print(f"    {'band':9s}{'homeless':>10s}{'population':>13s}{'rate %':>9s}{'share %':>9s}")
     for lo, hi, c, pop, rate in out:
-        print(f"    {lo}-{hi}: {c:>8,d} homeless / {pop:>12,d}  = {100*rate:.4f}%"
-              f"   {100*c/T:5.1f}% of 25-64")
-    print(f"  aggregate 25-64 rate: {100*T/sum(o[3] for o in out):.4f}%")
+        print(f"    {str(lo)+'-'+str(hi):9s}{c:>10,d}{pop:>13,d}{100*rate:>9.4f}{100*c/T:>9.1f}")
+    print(f"    {'TOTAL':9s}{T:>10,.0f}{P:>13,d}{100*T/P:>9.4f}{100.0:>9.1f}")
 
 if __name__ == "__main__":
     main()
