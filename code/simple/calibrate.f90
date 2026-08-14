@@ -17,7 +17,7 @@ module calibrate
     use equilibrium
     implicit none
 
-    integer, parameter :: NMOM = 15
+    integer, parameter :: NMOM = 18
 
     type :: mom_t
         character(len=28) :: name
@@ -69,6 +69,14 @@ subroutine init_targets()
     ! Homeless income relative to average -- R1 comment 2(c)(i), 19.1% in the
     ! linked administrative data of Meyer et al.
     mom(15) = mom_t('homeless income / avg (%)   ', 19.10_dp, 0.0_dp, 1.0_dp)
+    ! ---- previously unjustified parameters, now attached to moments --------
+    ! beta: aggregate net worth / aggregate income, SCF 2022 (ages 26-85).
+    ! NB this is NOT the paper's wealth/GDP = 3.25 -- different denominator.
+    mom(16) = mom_t('net worth / income          ',  7.34_dp, 0.0_dp, 1.0_dp)
+    ! vbar: share of experimenters who are light users, NSDUH (paper target 15)
+    mom(17) = mom_t('light share of experimenters', 86.80_dp, 0.0_dp, 1.0_dp)
+    ! cfloor_share: SNAP benefits as a share of GDP, FY2023 (paper target 21)
+    mom(18) = mom_t('food stamps / labour income ',  0.42_dp, 0.0_dp, 1.0_dp)
 end subroutine init_targets
 
 
@@ -81,6 +89,7 @@ subroutine compute_moments(A)
     real(dp) :: spend_sud, inc_sud
     real(dp) :: hcost, totinc, burden50, users_inc, users_m, sud_inc, sud_m
     real(dp) :: hl_smi, smi_work, smi_emp, hl_inc, hl_m
+    real(dp) :: wealth, exp_m, exp_light
 
     p = max(A%pop, 1.0e-12_dp)
     sud_unemp = 0.0_dp; sud_work = 0.0_dp; hl_sud = 0.0_dp
@@ -90,6 +99,7 @@ subroutine compute_moments(A)
     users_inc = 0.0_dp; users_m = 0.0_dp; sud_inc = 0.0_dp; sud_m = 0.0_dp
     hl_smi = 0.0_dp; smi_work = 0.0_dp; smi_emp = 0.0_dp
     hl_inc = 0.0_dp; hl_m = 0.0_dp
+    wealth = 0.0_dp; exp_m = 0.0_dp; exp_light = 0.0_dp
 
     do j = 1, n_age
     do im = 1, NM
@@ -127,6 +137,13 @@ subroutine compute_moments(A)
         if (ygross + max(0.0_dp, r*a_grid(ia)) < kappa_V*median_income) then
             elig = elig + m
             if (iv == 2) vouch_elig = vouch_elig + m
+        end if
+
+        wealth = wealth + m*a_grid(ia)
+        ! experimenters: light versus heavy use regime
+        if (id == 1 .and. pol_v(ia,iy,ie,id,iv,im,j) > 0.0_dp) then
+            exp_m = exp_m + m
+            if (pol_reg(ia,iy,ie,id,iv,im,j) == 2) exp_light = exp_light + m
         end if
 
         ! housing burden, over ALL households
@@ -178,6 +195,9 @@ subroutine compute_moments(A)
     mom(14)%model = 100.0_dp*smi_emp/max(smi_work, 1.0e-12_dp)
     mom(15)%model = 100.0_dp*(hl_inc/max(hl_m,1.0e-12_dp)) &
                             /max(totinc/p, 1.0e-12_dp)
+    mom(16)%model = wealth/max(totinc, 1.0e-12_dp)
+    mom(17)%model = 100.0_dp*exp_light/max(exp_m, 1.0e-12_dp)
+    mom(18)%model = 100.0_dp*A%food/max(A%labinc, 1.0e-12_dp)
 end subroutine compute_moments
 
 
@@ -285,6 +305,9 @@ end function max_gap
 !   mh_recover         SMI share of the homeless              -
 !   kappa_ue_m         employment rate given SMI              +
 !   prod_pen_m         homeless income / average income       +
+!   beta               net worth / income                     +
+!   vbar               light share of experimenters           +
+!   cfloor_share       food stamps / labour income            +
 !===============================================================================
 subroutine calibration_sweep(step)
     real(dp), intent(in) :: step
@@ -307,6 +330,10 @@ subroutine calibration_sweep(step)
     call bump(mh_recover,      gap(13),-1.0_dp, step, 0.01_dp,   0.60_dp)
     call bump(kappa_ue_m,      gap(14),+1.0_dp, step, 0.05_dp,   1.00_dp)
     call bump(prod_pen_m,      gap(15),+1.0_dp, step, 0.05_dp,   1.00_dp)
+    call bump(beta,            gap(16),+1.0_dp, step, 0.85_dp,   0.995_dp)
+    ! a higher heavy-use threshold lets more experimenters stay 'light'
+    call bump(vbar,            gap(17),+1.0_dp, step, 1.0e-3_dp, 2.0_dp)
+    call bump(cfloor_share,    gap(18),+1.0_dp, step, 1.0e-3_dp, 0.60_dp)
 
     ! keep derived quantities consistent with the parameters just moved
     pi_d_high = heavy_ratio * pi_d_low
@@ -375,6 +402,9 @@ subroutine print_params()
     write(*,'(A,ES12.4)') '   mh_onset (deriv): ', mh_onset
     write(*,'(A,ES12.4)') '   kappa_ue_m      : ', kappa_ue_m
     write(*,'(A,ES12.4)') '   prod_pen_m      : ', prod_pen_m
+    write(*,'(A,ES12.4)') '   beta            : ', beta
+    write(*,'(A,ES12.4)') '   vbar            : ', vbar
+    write(*,'(A,ES12.4)') '   cfloor_share    : ', cfloor_share
     write(*,'(A)') '  ----------------------------------------------------'
 end subroutine print_params
 

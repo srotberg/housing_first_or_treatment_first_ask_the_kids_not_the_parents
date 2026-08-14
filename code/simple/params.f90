@@ -113,7 +113,7 @@ module params
     ! up treatment at a utility cost, which raises the recovery hazard.
     integer  :: allow_treatment = 1
     real(dp) :: treat_cost      = 0.05_dp       ! resource cost, share of average income
-    real(dp) :: treat_gain      = 3.0_dp        ! multiplies the recovery hazard
+    real(dp) :: treat_gain      = 1.35_dp       ! RCT-based; KEY SENSITIVITY
 
     !-- mental health ---------------------------------------------------------
     ! A persistent state, exogenous, that (i) cuts productivity conditional on
@@ -134,7 +134,16 @@ module params
     real(dp) :: mh_recover  = 0.100_dp     ! calibrated: SMI share of the homeless
     real(dp) :: mh_onset                   ! derived: recover*p/(1-p)
     real(dp) :: prod_pen_m  = 0.55_dp      ! calibrated: homeless income/average
-    real(dp) :: prod_pen_d  = 0.80_dp      ! productivity multiplier, SUD (AE A20)
+    ! AE question A20. Evidence on the SUD wage penalty CONDITIONAL ON WORKING
+    ! is contested -- parts of the older literature find positive effects for
+    ! casual use -- while the robust findings are on the employment margin
+    ! (~50% more unscheduled absence, ~44% higher turnover), which the model
+    ! already captures through kappa_ue_d. Baseline: no direct wage effect.
+    real(dp) :: prod_pen_d  = 1.00_dp
+    ! Treatment raises the recovery hazard. 3.0 was unsupported: the only clean
+    ! randomised estimate is an odds ratio near 1.22 for contingency management.
+    ! The TF result runs through this parameter, so report it as a range.
+    real(dp) :: treat_gain_lit = 1.35_dp
     real(dp) :: kappa_ue_m  = 0.35_dp      ! calibrated: employment rate given SMI
     ! Standardised mortality ratios for SMI are roughly 2-3, corresponding to
     ! 10-20 years of life expectancy lost. 1.3 was far too low.
