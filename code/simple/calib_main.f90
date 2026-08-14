@@ -49,8 +49,12 @@ program calib_main
         call compute_aggregates(A)
         call compute_moments(A)
 
-        write(*,'(A,I3,A,F9.4,A,F7.3)') ' sweep ', sweep, &
-            '   max rel gap = ', max_gap(), '   step = ', step
+        call wall(t1)
+        write(*,'(A,I3,A,F9.4,A,F7.3,A,F8.1,A)') ' sweep ', sweep, &
+            '   max rel gap = ', max_gap(), '   step = ', step, &
+            '   [', t1-t0, ' s elapsed]'
+        call print_moments('sweep moments')
+        call print_params()
 
         if (max_gap() < best_gap) then
             best_gap = max_gap()

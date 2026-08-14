@@ -379,7 +379,7 @@ end subroutine bisect_participation
 subroutine calibration_sweep(step)
     real(dp), intent(in) :: step
 
-    call bisect_participation(mom(1)%target, 18)
+    call bisect_participation(mom(1)%target, 14)
 
     ! annual hazard of SUD from light use -- 18.7% was absurd, and raising it far
     ! enough actually LOWERS the SUD rate by deterring experimentation
