@@ -31,6 +31,14 @@ comes from CDC WONDER drug poisonings in `data/raw/`, and its level stays
 calibrated to the drug price elasticity of participation, bracketed inside
 Degenhardt et al.'s SMR range of 2.5 to 9.8.
 
+## Drug supply elasticity
+
+| file | what it is | what it set |
+|---|---|---|
+| `Alpert_Powell_Pacula_2018_Supply_side_drug_policy_abuse_deterrent_opioids_AEJ_Policy.pdf` | State level event study of the 2010 OxyContin reformulation | **`psi_2`**. Their Figure 6 regresses purity adjusted heroin prices (DEA STRIDE, 2000 to 2012) on initial OxyContin misuse. No significant differential price response where the demand shock was larger. Only a demand shift can identify a supply elasticity, and their time fixed effects absorb the national decline, so the Mexican supply expansion and post 2013 fentanyl entry are differenced out |
+| `Evans_Lieber_Power_2018_How_OxyContin_reformulation_ignited_heroin_epidemic_NBER_w24475.pdf` | The substitution from OxyContin to heroin | Corroboration: heroin purity did not change at the reformulation. Also the source of the caution, they attribute the post 2013 deaths per use rise to fentanyl, and document the price fall from \$3,000 per pure gram in 1981 to under \$500 in 2012 as a supply expansion, not an elasticity |
+| `Dobkin_Nicosia_2009_War_on_Drugs_Methamphetamine_AER.pdf` | 1995 DEA precursor seizure | Corroboration only. Prices tripled and recovered within about four months, hard to square with steep supply, but as a SUPPLY shock it identifies the demand elasticity rather than this one |
+
 ## Evidence reviews used for validation
 
 | file | what it is |
