@@ -181,6 +181,62 @@ placeholder understated mortality badly: q at 85 was 0.045 against an actual
   currently calibrated to a \$7.5m VSL and SUD excess mortality is *inferred*
   rather than measured. Measuring it directly would make the paper's central
   mechanism an input instead of an output.
-- **NSDUH reasons for not receiving treatment** (Table 5.35B) — separates cost
-  from stigma, which is what `treat_ucost` is meant to be. Extracted but not yet
-  read against the parameter.
+(Table 5.35B is now read — see section 7.)
+
+---
+
+## 7. `treat_ucost` as a UTILITY cost is directly supported — no change
+
+NSDUH Table 5.35B, adults who perceived an unmet need for substance use
+treatment and did not receive it, 2023. Multiple responses allowed, so these do
+not sum to 100.
+
+| reason | % | model analogue |
+|---|---:|---|
+| Thought they should have been able to handle it themselves | **70.7** | none |
+| Not ready to start treatment | 62.3 | none |
+| Not ready to stop or cut back using | **55.9** | the Stone-Geary `b` term |
+| Worried what people would think | **41.5** | `treat_ucost` |
+| Thought it would cost too much | 40.1 | a resource cost |
+| Did not have enough time | 39.0 | time cost |
+| Did not know how or where to get treatment | 37.1 | none |
+| Worried information would not stay confidential | 32.4 | `treat_ucost` |
+| Insurance would not pay enough | 30.7 | a resource cost |
+| Thought that if people knew, [consequences] | 30.9 | `treat_ucost` |
+| Did not have health insurance | 28.6 | a resource cost |
+| Could not find a programme | 27.4 | none |
+| Did not think treatment would help | 24.4 | none |
+| Thought they would be forced to stop using | 22.9 | the Stone-Geary `b` term |
+| Transport and similar problems | 21.9 | none |
+| Thought no one would care | 16.8 | `treat_ucost` |
+| No openings in a programme | 13.4 | none |
+
+**The barriers are overwhelmingly non-monetary.** Cost is 40.1% and insurance
+another 28.6–30.7%, but every one of the three largest reasons is a belief or a
+preference: self-efficacy at 70.7%, not ready to start at 62.3%, not ready to
+stop using at 55.9%. The stigma cluster — what people would think,
+confidentiality, consequences if known — runs 31–42%.
+
+This settles a modelling choice a referee could reasonably have challenged.
+Treatment was switched from a resource cost `treat_cost` to a **utility** cost
+`treat_ucost`, which never enters the budget constraint. The data says that is
+the right structure: a resource cost would capture at most the 40% who cite
+expense, and would entirely miss the majority who decline treatment for reasons
+that are, in the model's language, preferences rather than prices.
+
+It also confirms the split already in the model. "Not ready to stop or cut back"
+(55.9%) and "would be forced to stop" (22.9%) are *not* `treat_ucost` — they are
+the household not wanting to quit, which the model carries in the Stone-Geary
+endowment `b`. Loading all of them onto `treat_ucost` would double-count.
+
+One caveat: this is conditional on *perceived unmet need*, so it describes the
+margin of people who considered treatment and declined, not the whole SUD
+population. That is the right margin for `treat_ucost`, but the levels are not
+population shares.
+
+---
+
+## Still outstanding
+
+- **SCF bottom-50% net worth share.**
+- **CDC WONDER drug-overdose mortality by single-year age.**
