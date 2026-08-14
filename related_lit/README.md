@@ -17,6 +17,20 @@ Papers cited in the note or used to set a parameter. Filenames are
 |---|---|
 | `Costantini_2025_Housing_First_or_Treatment_First_VA.pdf` | Costantini, *Housing First or Treatment First? Evidence from the VA's homelessness programs* (Nov 2025). Shares this paper's title and question, with quasi-experimental VA evidence. AE A14. |
 
+## Mortality, used to set the hazard multipliers
+
+| file | what it is | what it set |
+|---|---|---|
+| `Baggett_et_al_2013_Mortality_among_homeless_adults_Boston_JAMA_IntMed.odt` | Boston Health Care for the Homeless cohort, race adjusted all cause mortality rate ratios | **`kappa_phi_h`**. 8.6 men and 9.6 women at 25-44, 4.5 at 45-64, 1.1 at 65-84. Replaced a flat 1.6. Also: overdose is 35% of deaths at 25-44, opioids in 81% of them |
+| `Olfson_et_al_2015_Premature_Mortality_Schizophrenia_US_Medicaid_JAMA_Psychiatry.odt` | US Medicaid schizophrenia cohort, SMRs by age band | **`kappa_phi_m`**. All cause SMR 3.6 at 20-34, 3.4 at 35-54, 4.0 at 55-64 — flat, so the parameter stays constant |
+| `Walker_McGee_Druss_2015_Mortality_in_Mental_Disorders_metaanalysis_JAMA_Psychiatry.pdf` | Meta analysis, 148 studies, any mental disorder | Level check on `kappa_phi_m`. Pooled RR 2.22; 1.80 natural causes, 7.22 unnatural |
+| `Colton_Manderscheid_2006_Mortality_public_mental_health_clients_8_states_PCD.pdf` | Eight state public mental health clients; the "decades of life lost" study | Level check on `kappa_phi_m`. SMR about 3.2, 13 to 30 years of potential life lost |
+
+`kappa_phi_d`, the SUD multiplier, is not set from a paper here: its profile
+comes from CDC WONDER drug poisonings in `data/raw/`, and its level stays
+calibrated to the drug price elasticity of participation, bracketed inside
+Degenhardt et al.'s SMR range of 2.5 to 9.8.
+
 ## Evidence reviews used for validation
 
 | file | what it is |

@@ -589,7 +589,7 @@ subroutine build_EV(j)
                             pv_eta = s_eta(ivp)
                             if (pv_eta <= 0.0_dp) cycle
                             do imp = 1, NM
-                                pm = pm_of(id, im, imp)
+                                pm = pm_of(id, im, imp, j)
                                 if (pm <= 0.0_dp) cycle
                                 acc = acc + pe*pd*pv_eta*pm*VY(ia,iy,iep,idp,ivp,imp)
                             end do
@@ -728,10 +728,10 @@ subroutine add_mass(D, iap, iy, id, im, j, m, phi, s_e, s_d, s_eta)
                     w4 = w3*s_eta(ivp)
                     if (w4 <= 0.0_dp) cycle
                     do imp = 1, NM
-                        if (pm_of(id,im,imp) <= 0.0_dp) cycle
+                        if (pm_of(id,im,imp, j) <= 0.0_dp) cycle
                         D(iap,iyp,iep,idp,ivp,imp,j+1) = &
                             D(iap,iyp,iep,idp,ivp,imp,j+1) &
-                          + m*phi*w4*pm_of(id,im,imp)
+                          + m*phi*w4*pm_of(id,im,imp, j)
                     end do
                 end do
             end do
