@@ -302,7 +302,13 @@ module params
     ! EXTERNALITY.md. Note zero here is a DEFENSIBLE baseline (no externality),
     ! unlike kappa_cons = 0, which reversed the paper's conclusion.
     real(dp) :: kappa_ext = 0.0_dp
-    real(dp) :: omega_ext = 2.0_dp              ! extra weight on homeless-with-SUD
+    ! Composition weight on the homeless with SUD. NO direct estimate exists:
+    ! R2's wording ("especially if many are addicted to drugs") implies it is
+    ! positive, and the hedonic split between permanent supportive housing and
+    ! emergency shelter implies composition matters, but neither pins a number.
+    ! BASELINE 1.0 -- the disamenity depends on the headcount alone -- with the
+    ! composition-weighted version reported as an appendix robustness.
+    real(dp) :: omega_ext = 1.0_dp
     ! Willingness to pay to END homelessness, as a share of annual income.
     ! Loubiere et al.'s eight-country contingent-valuation study asked exactly
     ! this question -- what would you pay in annual taxes to end homelessness
