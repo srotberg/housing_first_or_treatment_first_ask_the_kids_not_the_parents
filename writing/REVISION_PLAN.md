@@ -329,7 +329,133 @@ and equilibrium feedbacks, not to establish the sign.
 
 ---
 
-## 7. Two fit problems that the rebuild should be designed around
+## 7. The mechanism section: channel shutdowns with the participation rate held fixed
+
+Replace the static appendix as the primary vehicle for mechanisms with a numerical
+decomposition inside the quantitative model: shut the channels off one at a time,
+**recalibrate `b` in each arm to hold the drug-participation rate at its baseline value**,
+and report *who* uses drugs in each case.
+
+### Why this is the right exercise
+
+R1 asked for precisely this, in comment 1(d):
+
+> The paper should demonstrate that the claimed mortality/value-of-life channel is actually
+> the quantitatively important one. A simple way to do this would be to compare the
+> relationship between income and drug use in the baseline model to an otherwise similar
+> version of the model in which mortality is not affected by drug use. **I would find this
+> more intuitive than a toy example that abstracts from dynamic savings decisions.**
+
+The referee who recommended rejection has pre-approved the design and stated a preference
+for it over the appendix. One exercise then also covers:
+
+- **R1 1(e)** — the appendix is "disorganized and narrower than the surrounding discussion
+  suggests," static where the model is dynamic. Demoting it to a clearly-labeled intuition
+  section resolves this.
+- **R3** — *"present model-derived stylized facts on drug use ... by income, employment
+  status, housing status, assets, and explain how they depend on model parameters (notably
+  `b`, the Stone-Geary parameter, and ℵ)."* R3 names `b` specifically; this exercise varies it.
+- **R2** — *"show and explain intuitively a plot of the drug use policy function for addicts
+  and non-addicts as their income and wealth vary."*
+- **AE** — *"You really need to highlight the key ingredients of your machinery."*
+
+The recalibration of `b` is the part that makes it work. Without it, shutting off the
+mortality penalty just raises drug use across the board and the level change swamps any
+compositional change. Holding participation fixed isolates *sorting* from *level*, which is
+the object the paper's claim is actually about.
+
+### Proposed arms
+
+Two arms is not enough — addiction operates through more channels than mortality and
+employment, and two of the others are already under referee attack. A nested ladder:
+
+| Arm | Shut off | Parameters | What it isolates |
+|---|---|---|---|
+| 0 | — (baseline) | — | Reference |
+| 1 | Addiction → mortality | κ_{d,φ} = 1 | The value-of-life channel — **the paper's headline claim** |
+| 2 | Addiction → employment | κ_{d,ue} = κ_{d,eu} = 1 | R1's rival hypothesis (income risk, not mortality) |
+| 3 | Addiction → preferences | θ_{1,2} = θ_{0,2} | The Cobb-Douglas weight shift R2 and R3 both attack |
+| 4 | Homelessness feedback | κ_{h,φ}, κ_{h,ue}, κ_{H,d} = 1 | The feedback loop the abstract claims is central |
+
+Arm 3 is doing double duty. The AE proposed exactly this as a preference robustness check —
+*"keep the Cobb-Douglas weights invariant to addiction but let the marginal utility vary by
+addiction by changing the parameter `b` decrease by addiction status"* — and R2 warned that
+the current specification makes "policies reducing addictions and policies raising housing
+consumption ... strong welfare complements even absent incentive effects." Running it as a
+mechanism arm answers the modeling objection and the robustness request in one table.
+
+Arm 4 is worth running even though no referee asked for it. The abstract claims a feedback
+loop is the central mechanism. If shutting it off barely moves anything, that is something
+to discover privately rather than in the next round.
+
+### What to report
+
+The money figure: **drug-use rate by income decile, one line per arm.** Under the baseline
+it slopes down; if the paper's claim is right, Arm 1 should flip it upward. That single
+panel is the paper's central theoretical claim, shown dynamically and quantitatively, and it
+retires Appendix A as the load-bearing argument.
+
+Alongside it, for each arm: mean income of users relative to the average (the exact
+statistic R1 attacked — 41% in model vs 74% in data), share unemployed, share homeless,
+mean age, mean assets.
+
+**Report the flow and the stock separately.** The composition of *experimenters* is the
+decision margin, and it is where the mechanism lives — that is the clean test. The
+composition of *addicts* is a stock that also reflects differential mortality and recovery,
+so shutting off addiction-mortality changes it partly mechanically (addicts stop dying, the
+stock ages and persists) rather than through selection. Conflating them will invite exactly
+the kind of objection R1 raised about the untargeted moments.
+
+### One caveat on using `b` as the normalizer
+
+`b` is not a neutral instrument. The paper's own argument is that `b` governs the
+*no-penalty* gradient, which slopes *upward* in income, and the penalties reverse it. So
+recalibrating `b` in an arm where a penalty has been removed adjusts the very object that
+determines the counterfactual gradient. This does not invalidate the exercise, but it should
+be handled openly:
+
+1. **Report both the un-normalized and normalized versions.** The un-normalized arm gives a
+   headline level effect ("removing the mortality channel raises drug use from 4% to X%"),
+   which is itself evidence the channel matters. The normalized arm gives composition. The
+   pair is more informative than either.
+2. **Show the composition result under a second normalizer** — π_{d,low} is a good candidate
+   because it shifts the addiction transition rather than preferences, so it does not
+   mechanically re-rank who wants drugs. If the gradient flip survives both, it is the
+   mechanism and not the normalization.
+
+### Division of labor with the stylized model
+
+Do not delete the analytical work; R1 asked for it to be *demoted and made precise*, not
+removed. Suggested split:
+
+- **Body, stylized section** — two-period model proving the generosity × conditionality
+  cross-partial (§6). This is the contribution, and the numerical exercise cannot prove it.
+- **Body, mechanism section** — this shutdown ladder. This is the calibration validation,
+  and it is what makes the quantitative model legible.
+- **Appendix A** — tightened static derivation of the income-gradient reversal, explicitly
+  framed as intuition rather than as a general proof of the model's mechanism.
+
+### Prerequisite and risk
+
+Each arm needs a scalar root-find on `b` wrapped around a full solve — call it 10–20 solves
+per arm, 50–100 across the ladder. That is prohibitive at current speed and an afternoon
+after the cuts in §3. **The mechanism section is a concrete reason the simplification has to
+come first**, not a separate agenda.
+
+The risk is real and worth naming: if the gradient does not flip in Arm 1, the paper's
+central claim is wrong. But note R1's rival hypothesis is that "the labor-market and
+income-risk consequences of drug use could also generate a low-income concentration of drug
+use" — i.e. Arm 2 might be doing the work. If that turns out to be true, the framing shifts
+from *value of life* to *value of future resources*, which is more general and more robust
+than the current story. The paper survives either outcome; what it cannot survive is not
+knowing.
+
+Run these arms in PE at baseline prices and taxes. The point is to isolate behavioral
+mechanisms, not equilibrium feedback, and it keeps the ladder cheap.
+
+---
+
+## 8. Two fit problems that the rebuild should be designed around
 
 R1's Table 3 objections are the ones most likely to sink a resubmission, because they
 concern exactly the states that discipline the mechanism.
@@ -350,7 +476,7 @@ Design the simplified model to hit these two from the start rather than patching
 
 ---
 
-## 8. Suggested sequencing
+## 9. Suggested sequencing
 
 1. **Week 1 — the Constantini check.** Re-target κ_{h,φ} and κ_{d,φ} on the existing code so
    Experiment 1 reproduces the HF-vs-TF 3-year mortality difference. Decide whether the
@@ -372,7 +498,7 @@ reflect insights rather than providing 5 pages describing 22 moments and paramet
 
 ---
 
-## 9. Bottom line
+## 10. Bottom line
 
 Resubmit — but only after step 1 confirms the mortality ranking survives contact with
 Constantini. The question is good, the AE wants the paper to exist, and the referee pool is
