@@ -51,41 +51,68 @@ def save(fig, name):
     print(f'   wrote {name}.pdf')
 
 
+# Everything the disorder does to you, switched off. Scaling a channel means
+# moving its members from these values to their calibrated ones together.
+OFF = dict(kap=0.0, kapH=0.0, rho_mult_hl=1.0, h_hl=P.h_sm, xi=0.0, u1=P.u0)
+
+
+def _scaled(base, which, s):
+    kw = dict(OFF)
+    if which == 'mortality':
+        kw.update(kap=s * base.kap, kapH=s * base.kapH,
+                  rho_mult_hl=1.0 - s * (1.0 - base.rho_mult_hl),
+                  h_hl=P.h_sm * (base.h_hl / P.h_sm) ** s)
+    else:
+        kw.update(xi=s * base.xi, u1=P.u0 + s * (base.u1 - P.u0))
+    par = with_(base, **kw)
+    # b is recalibrated at EVERY point, so participation is 5.13 per cent all
+    # along both curves and the only thing moving is WHO uses
+    return with_(par, b=bracket(par, 'b', 'part', 1e-5, 0.60, iters=22))
+
+
 def fig_who_uses(base):
-    """Figure 1: the gain from using, by income, per channel configuration."""
+    """
+    Figure 1: how strong does each consequence have to be to move drug use from
+    the top of the income distribution to the bottom?
+
+    An earlier version switched channels on and off and claimed only the
+    mortality channel flipped the gradient. That is false in this model: with
+    log utility a proportional wage penalty costs log(1 - xi) utils whatever
+    your income, so it is a CONSTANT utility loss whose consumption value rises
+    with income, exactly like a mortality penalty. Both channels flip it. The
+    real question, and the one R1's comment 1(d) actually asks, is how MUCH of
+    each is needed, and there the two are far apart.
+    """
     plt = style()
     fig, ax = plt.subplots(figsize=(7.4, 4.9))
-    ys = np.exp(np.linspace(np.log(0.15), np.log(4.0), 44))
-
-    for name, kw, col, ls in CONFIGS:
-        par = with_(base, **kw)
-        # recalibrate the temptation parameter so every configuration has the
-        # SAME participation rate; only then is the difference about mechanism
-        par = with_(par, b=bracket(par, 'b', 'part', 1e-5, 0.30))
-        g = np.array([use_choice(par, y)[0] for y in ys])
-        ax.plot(ys, g, ls, color=col, label=name)
-        pos = g > 0
-        if pos.any():
-            ax.plot(ys[pos], g[pos], ls, color=col, lw=4.0, alpha=0.30)
-
-    ax.axhline(0.0, color='0.35', lw=1.2)
-    ax.set_xscale('log')
-    ax.set_xticks([0.2, 0.5, 1.0, 2.0, 4.0])
-    ax.set_xticklabels(['0.2', '0.5', '1', '2', '4'])
-    ax.set_xlabel('permanent income, population mean $=1$')
-    ax.set_ylabel('gain from using drugs')
-    ax.set_title('Who uses: only the mortality channel puts use at the bottom',
+    sc = np.linspace(0.0, 1.0, 11)
+    for which, col, ls in (('mortality', '#2C6FAD', '-'),
+                           ('resource', '#D9822B', '--')):
+        r = [stats(_scaled(base, which, s))['r_use'] for s in sc]
+        ax.plot(100 * sc, r, ls, color=col,
+                label=f'{which} channel' + (': it kills you, directly and by\n'
+                      'putting you on the street' if which == 'mortality'
+                      else ': it costs you a job,\na wage, and the unit you live in'))
+    ax.axhline(1.0, color='0.35', lw=1.2)
+    ax.text(2, 1.06, 'users earn the population average', fontsize=9, color='0.35')
+    ax.set_yscale('log')
+    ax.set_yticks([0.2, 0.5, 1.0, 2.0, 4.0])
+    ax.set_yticklabels(['0.2', '0.5', '1', '2', '4'])
+    ax.set_xlabel('strength of the channel, per cent of its calibrated value')
+    ax.set_ylabel('income of users / population average')
+    ax.set_title('What it takes to move drug use to the bottom',
                  loc='left', pad=12)
-    ax.legend(loc='best', fontsize=10)
-    fig.text(0.5, -0.06,
-             'Above the line the household uses; the thick segment is the use '
-             'region. Every configuration is recalibrated to the\nsame 5.13 per '
-             'cent participation rate, so the lines differ in WHICH households '
-             'use, not how many. With only the\nresource channel the region '
-             'sits at the top: a richer household gives up less utility per '
-             'dollar of drugs, and a\npenalty proportional to income cannot '
-             'outrun that. A mortality penalty can, because it destroys a '
-             'continuation\nvalue that rises with income.',
+    ax.legend(loc='upper right', fontsize=9)
+    fig.text(0.5, -0.075,
+             'With no consequences at all, drug use sits at the TOP: users earn '
+             '3.5 times the average, because drugs are a\nnormal good and a '
+             'richer household gives up less utility per dollar. Both '
+             'consequences flip that, but not at the\nsame price. The mortality '
+             'channel crosses the line at under a fifth of its calibrated '
+             'strength; the resource\nchannel needs about three fifths. The '
+             'temptation parameter is recalibrated at every point, so '
+             'participation is\n5.13 per cent all along both curves and the only '
+             'thing moving is WHICH households use.',
              ha='center', fontsize=8.6, color='0.35')
     save(fig, 'stylized_who_uses')
 
