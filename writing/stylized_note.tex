@@ -95,17 +95,24 @@ also keeps intact the paper's claim to generate the income gradient in drug use
 without assuming ex ante preference heterogeneity, since there is none here
 available to do the work.}
 
-\new{Flow utility in a period depends on non durable consumption $c$, housing
-services $h$, and drug consumption $v$,}
+\new{Flow utility in a period depends on non durable consumption $c$, the flow
+of housing services $h$ the household consumes that period, and drug
+consumption $v$,}
 \begin{equation}\label{eq:u}
 u(c,h,v) \;=\; \log c \;+\; \gamma \log h
 \;+\; \theta\big[\log(b+v)-\log b\big] \;+\; \aleph .
 \end{equation}
 \new{The four preference parameters are the following.}
 \begin{itemize}
-\item \new{$\gamma>0$ is the weight on housing services. It governs how much
-utility a household loses when it downsizes or loses its home, and therefore
-how much a housing voucher is worth.}
+\item \new{$\gamma>0$ is the weight on housing services $h$. Housing enters as
+a single scalar index of quality and size, and the household chooses it in every
+period from the three point grid $\{h_0, h_S, h_L\}$ of
+equation~\eqref{eq:opts}: homelessness, a small unit, and a standard unit. Three
+options and no more, for the reason given in Section~\ref{sec:env}: two rented
+sizes are the minimum that lets a household economise on housing rather than
+lose it outright, and the third point is the outside option of having no home at
+all. The parameter $\gamma$ governs how much utility a household loses when it
+moves down that grid, and therefore how much a housing voucher is worth.}
 \item \new{$\theta>0$ is the weight on drug use. It and $b$ govern the drug
 term jointly: the marginal utility of the $v$th unit is $\theta/(b+v)$, so
 $\theta$ mostly sets how much a user uses while $b$ mostly sets whether anyone
@@ -133,12 +140,14 @@ asset at gross return $R$, subject to a no borrowing constraint $a'\ge 0$.
 
 \subsection{Timing}
 
-\paragraph{Period 1.} Every household is employed, has no substance use
-disorder, and lives in the standard rental unit. \new{Housing is not a choice
-in this period: nothing has yet happened that could threaten the roof, and the
-rent is the same for every household, so $y$ is to be read as permanent income
-net of the household's period 1 housing commitment.} The household chooses drug
-use $v \ge 0$, consumption, and saving. \new{Using drugs generates the risk of a
+\paragraph{Period 1.} Every household is employed and has no substance use
+disorder. \new{It chooses consumption, housing from the grid
+$\{h_0, h_S, h_L\}$, drug use $v \ge 0$, and saving. Housing is a choice here
+exactly as it is later, and the household pays the market rent on whatever it
+picks; the one thing that does not operate yet is the voucher, which arrives
+only from period 2. That costs the policy comparison nothing, because every
+period 1 household is clean, so Housing First and Treatment First would cover
+precisely the same households on precisely the same terms.} \new{Using drugs generates the risk of a
 substance use disorder in period 2, which rises with drug use $v$,}
 \begin{equation}\label{eq:hazard}
 \pi(v) \;=\; 1 - e^{-\lambda v}, \qquad \lambda > 0 .
@@ -159,8 +168,8 @@ support, described in Section~\ref{sec:support} below.} The household then
 realised, the probability of recovering from it by the next period is $\rho$.}
 
 \paragraph{Period 3.} \new{The last period of life. Employment, income support
-and housing work exactly as in period 2, and the household again chooses
-consumption and housing. There is no drug use decision: a household that does
+and the voucher work exactly as in period 2, and the household again chooses
+consumption and housing from the same three point grid. There is no drug use decision: a household that does
 not already have the disorder has nothing to gain from acquiring one when there
 is no period 4 in which to bear the consequence, and a household that does have
 it consumes and houses itself as best it can.} Assets are run down and nothing
@@ -231,8 +240,11 @@ chooses among three options,}
 \begin{equation}\label{eq:opts}
 h \in \{h_0,\ h_S,\ h_L\}, \qquad h_0 < h_S < h_L ,
 \end{equation}
-\new{a standard unit $h_L$, a small unit $h_S$, and homelessness $h_0$. The
-first two are rented at $p_r h_S$ and $p_r h_L$. Homelessness is free: it costs
+\new{a standard unit $h_L$, a small unit $h_S$, and homelessness $h_0$. Three
+points is the whole grid, and the count is not incidental: two rented sizes are
+the fewest that let a household economise on housing rather than lose it, and
+the third is the outside option of not renting at all. The first two are rented
+at $p_r h_S$ and $p_r h_L$. Homelessness is free: it costs
 nothing and delivers almost nothing, $h_0$ being a small fraction of a rented
 unit. It is the outside option that a household falls back on when it cannot,
 or chooses not to, pay for a home.}
@@ -328,16 +340,18 @@ $\phi(d)$ is survival from equation~\eqref{eq:surv}. The value of entering
 period 2 is again the expectation over employment and the voucher lottery,
 $W_2(a,d) = \mathbb{E}[V_2(a,e,z,d) \mid d]$.}
 
-\new{In period 1 the household is employed, clean, and housed in the standard
-unit, and chooses drug use and saving:}
+\new{In period 1 the household is employed and clean, and chooses housing, drug
+use and saving:}
 \begin{equation}\label{eq:v1}
-V_1(y) = \max_{v \ge 0,\ a' \ge 0}
-\Big\{ \log\!\big(y - p_v v - a'\big) + \gamma \log h_L
+V_1(y) = \max_{j,\ v \ge 0,\ a' \ge 0}
+\Big\{ \log\!\big(y - r_j(0) - p_v v - a'\big) + \gamma \log h_j
 + \theta\big[\log(b+v)-\log b\big] + \aleph
 + \beta\,\phi_0\, \mathbb{E}_{d'}\big[ W_2(a',d') \big] \Big\},
 \end{equation}
-\new{where $p_v$ is the price of a unit of drugs and the disorder arrives with
-the use dependent probability of equation~\eqref{eq:hazard}, so that
+\new{where $r_j(0)$ is the full market rent of equation~\eqref{eq:rent}, since
+no voucher is held in period 1, $p_v$ is the price of a unit of drugs, and the
+disorder arrives with the use dependent probability of
+equation~\eqref{eq:hazard}, so that
 $\mathbb{E}_{d'}[W_2(a',d')] = \big(1-\pi(v)\big) W_2(a',0) + \pi(v)\, W_2(a',1)$.}
 
 \new{A household uses drugs if the value in equation~\eqref{eq:v1} at its
@@ -354,6 +368,13 @@ Table~\ref{tab:ext} lists the parameters set outside the model, either to
 standard values or directly to a measured quantity. Table~\ref{tab:int} lists
 the three parameters calibrated inside the model, together with the moment each
 one is matched to and the fit.}
+
+\new{One untargeted moment is worth reporting because it is the one the model
+gets least well. The share of the homeless who carry the disorder comes out at
+$0.56$, which is the right order and the right direction but below what the data
+show. Nothing is calibrated to it and no result below turns on it; it is
+recorded here rather than buried because a reader who knows the homelessness
+literature will look for it.}
 
 \new{One caveat belongs here rather than in a footnote. The three periods are
 stages of a life rather than calendar intervals, and the parameters in
@@ -673,6 +694,45 @@ force.} The net effect of \new{universal} Housing First against no programme is
 $-3.19$ percentage points: \new{it still lowers drug use, because the value of
 life force is larger than the moral hazard force.}
 
+\paragraph{\new{What the same policy dial does to homelessness and to the
+disorder.}} \new{Drug use is not what a housing programme is for, and a reader
+shown only Figure~\ref{fig:mh} could reasonably conclude that Treatment First
+wins on every count. Figure~\ref{fig:margins} plots the two outcomes the
+programme is actually aimed at, over the same range of $\pi_V$.}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/stylized_margins.pdf}
+\caption{\new{Homelessness and the disorder under the two policies}}
+\label{fig:margins}
+\begin{minipage}{\textwidth}
+\vspace{0.4em}
+\new{Note: both panels use the same horizontal axis as Figure~\ref{fig:mh}, the
+share $\pi_V$ of eligible households covered. The left panel is the homelessness
+rate in the population, the right panel the share of the population carrying a
+substance use disorder. Because households here are identical at a given income,
+decisions are sharp and the use region moves in steps as $\pi_V$ rises, which is
+what produces the small kinks in the left panel.}
+\end{minipage}
+\end{figure}
+
+\new{Two things stand out. On homelessness the two policies end in the same
+place: both drive it from $0.62$ per cent to zero at universal cover, and the
+gap between them along the way never exceeds about a tenth of a percentage
+point. Housing First does not fail at housing people. It houses them exactly as
+effectively as Treatment First does, which is what one should expect of a
+programme whose only difference is that it also covers households in a state
+that makes them poorer.}
+
+\new{The difference is entirely on the other margin. At universal cover Housing
+First leaves $0.25$ per cent of the population with the disorder and Treatment
+First leaves none. So the moral hazard of Section~\ref{sec:mh} does not show up
+as families left on the street; it shows up as disorder cases among people who
+are housed. That distinction matters for the welfare question of
+Section~\ref{sec:welfare}, because it means the two policies differ in what
+happens to a small group of households rather than in whether the programme
+achieves its housing objective.}
+
 \new{Three things follow, and they are the reason the paper needs a quantitative
 model.}
 
@@ -761,53 +821,96 @@ reported both for the households that are affected at all and for the whole
 population.}}
 \end{table}
 
-\paragraph{\new{The fiscal argument for conditionality fails here, and not for
-the reason one would expect.}} \new{Equation~\eqref{eq:dom} holds generosity
-fixed, which is the wrong comparison if vouchers must be paid for. The natural
-conjecture is that Housing First buys the same coverage at a higher price, since
-it pays for households in the disorder state and, by insuring that state, puts
-more households into it, so that a fixed budget would buy more coverage under
-Treatment First. That conjecture is false in this model. As
-Table~\ref{tab:welfare} shows, Treatment First is very slightly \emph{more}
-expensive than Housing First at universal cover, $0.1808$ against $0.1806$, and
-the same ordering holds at every generosity. Matching the two policies on cost
-rather than on $\pi_V$ therefore changes nothing: Treatment First remains
-welfare reducing and still leaves no household better off.}
+\paragraph{\new{Making households pay for the programme does not change the
+ranking.}} \new{Equation~\eqref{eq:dom} treats the voucher as manna. Suppose
+instead that each policy must be financed by a proportional tax $\tau$ on
+income, levied in every period on earnings and on income support alike, with the
+budget balanced policy by policy so that $\tau$ times the present value of the
+tax base equals the voucher outlay. Because income here is
+exogenous, that tax is not distortionary in the usual sense, but it is far from
+innocuous: it takes resources from the same households the vouchers are given
+to, and it changes what a poor household can afford in exactly the states where
+its housing is at stake. Panel A of Table~\ref{tab:welfare} reports the rates.
+Universal Housing First needs $7.45$ per cent of income and universal Treatment
+First needs $7.46$ per cent.}
+
+\new{Those two numbers being equal is the whole story, and it is not what one
+would guess. The natural conjecture is that Housing First is dearer, since it
+pays for households in the disorder state and, by insuring that state, puts more
+households into it; a fixed budget would then buy more coverage under Treatment
+First, and that would be a reason to prefer it. The conjecture is false here.
+Treatment First is very slightly \emph{more} expensive at every generosity,
+$0.1792$ against $0.1791$ at universal cover, so it needs a marginally higher
+tax. With the budget balanced, conditionality therefore makes every household
+worse off rather than only the $3.6$ per cent who use, and the average
+consumption equivalent loss roughly triples, from $0.011$ to $0.033$ per cent.
+Financing the programme strengthens the case against conditionality instead of
+weakening it.}
 
 \paragraph{\new{Why the additional coverage is nearly free.}} \new{A household in
 the disorder state draws only about $79$ per cent of the voucher outlay a clean
 household draws, and this holds at every income level. It is not that such
-households house themselves worse: under universal cover nobody is on the
-street. It is mortality. Survival to period 3 falls from $\phi_0 = 0.93$ to
-$\phi_0(1-\kappa) = 0.51$, so the programme pays for these households over fewer
-periods. The households that the moral hazard adds to the rolls die sooner and
-stop costing money, and that saving very nearly offsets the cost of covering
-them. The mortality channel, which Section~\ref{sec:who} showed to be what puts
-drug use at the bottom of the income distribution, turns out also to be what
-neutralises the fiscal case against insuring it.}
+households house themselves worse: Figure~\ref{fig:margins} shows homelessness
+at zero under both policies at universal cover. It is mortality. Survival to
+period 3 falls from $\phi_0 = 0.93$ to $\phi_0(1-\kappa) = 0.51$, so the
+programme pays for these households over fewer periods, and the saving very
+nearly offsets the cost of covering them. The mortality channel, which
+Section~\ref{sec:who} showed to be what puts drug use at the bottom of the
+income distribution, turns out also to be what neutralises the fiscal case
+against insuring it.}
 
-\paragraph{\new{What this leaves for the quantitative model.}} \new{In an
-environment with rational households, no externalities, and a budget that
-contains nothing but housing vouchers, conditionality has nothing to recommend
-it at all. Any case for Treatment First must therefore rest on something this
-model deliberately excludes, and naming those things is the most useful work
-this section does.}
+\paragraph{\new{How large an externality would be needed.}} \new{What is left is
+the possibility that drug use harms someone other than the user. Suppose each
+household carrying the disorder imposes a social cost $\chi$ on the rest of
+society, in units of one household's lifetime income, and that this cost is
+invisible to the household itself, which is what makes it an externality rather
+than something already priced into equation~\eqref{eq:v1}. Conditionality is
+then worth having when the cases it prevents are worth more than the insurance
+it withdraws.}
+
+\new{Panel C of Table~\ref{tab:welfare} reports the critical value. Universal
+conditionality prevents $0.511$ percentage points of disorder cases once the
+budget is balanced, at a private welfare cost of $0.033$ per cent of
+consumption, so the two are equal at}
+\begin{equation}\label{eq:chi}
+\chi^{\star} \;\approx\; 0.17
+\end{equation}
+\new{of a household's lifetime income per case avoided, or $0.11$ if the
+programme is treated as costless. This is the most useful number the section
+produces, because it is a magnitude a reader can weigh rather than a direction.
+It is well within the range that crime, emergency care and lost output to others
+could plausibly justify, which is precisely why the question cannot be settled
+here: the model has no crime, no health system, and no one but the user. What it
+can say is that the private welfare cost of conditionality is small enough that
+a moderate externality overturns the ranking, so everything depends on a
+magnitude that has to be measured elsewhere.}
+
+\paragraph{\new{What this leaves for the quantitative model.}} \new{Two of the
+four candidate justifications for conditionality can now be dismissed inside
+this model rather than merely named. A government budget constraint does not
+help, because the two policies cost the same; and matching them on cost rather
+than on generosity does not help either, for the same reason. What survives is
+the following, and the ordering is by how much of the answer each one is likely
+to carry.}
 \begin{enumerate}
-\item \new{\textbf{Externalities.} Drug use here touches nobody but the user. If
-it raises crime, public disorder, or the health costs borne by others, the
-private optimum is not the social one and the moral hazard acquires a welfare
-cost it does not have here.}
+\item \new{\textbf{Externalities.} This is the one the model can size, and
+equation~\eqref{eq:chi} sizes it: a social cost of roughly $0.17$ of a
+household's lifetime income per case of the disorder is enough to reverse the
+ranking. Drug use here touches nobody but the user, and once it raises crime,
+public disorder, or health costs borne by others, the private optimum stops
+being the social one.}
 \item \new{\textbf{Internalities.} Households here face the true hazard and
 discount the future consistently. If drug use involves present bias, or a
 household that underestimates $\lambda$, then the extra use is a mistake by the
 household's own lights and conditionality can be paternalistically justified.
 This model cannot speak to that, because it assumes the mistake away.}
 \item \new{\textbf{Public costs outside housing.} The budget here is vouchers
-and nothing else, which is why the fiscal comparison comes out flat. Healthcare,
-treatment and incarceration all rise with the disorder and none of them appear.
-This, rather than the housing budget, is where the fiscal argument actually
-lives, and it is the reason the comparison above should be read as a statement
-about the housing programme's own accounts and not as a fiscal verdict.}
+and nothing else, which is why the financing exercise comes out flat: the only
+fiscal consequence of a disorder case in this model is that the household draws
+its voucher for fewer years. Healthcare, treatment and incarceration all rise
+with the disorder and none of them appear. This, rather than the housing budget,
+is where the fiscal argument really lives, and it is a form of the externality
+above rather than a separate mechanism.}
 \item \new{\textbf{General equilibrium.} With an endogenous drug price and a
 government budget that has to balance, both policies change prices and taxes for
 households that never touch either programme.}
@@ -831,15 +934,17 @@ other, and the two policies separate them exactly. That both forces are large is
 what this section establishes. Which of them wins is left open, and settling it
 is the job of the quantitative model that follows.}
 
-\new{A third result is negative, and it is the one that says most clearly why
-the quantitative model is needed. Because households here are forward looking
-and face the true addiction hazard, and because drug use harms nobody but the
-user, Housing First dominates Treatment First for every household at any given
-generosity, and matching the two policies on cost rather than on generosity does
-not change that. Conditionality can only be worth having once the environment
-contains something this one does not: an externality, an internality, a public
-cost outside the housing budget, or a general equilibrium. The stylized model
-cannot rank the two policies on welfare. What it can do is say precisely which
-absent ingredient any such ranking would have to come from.}
+\new{The third is a statement about what the model cannot settle, and it is
+the one that says most clearly why the quantitative model is needed. Because
+households here are forward looking and face the true addiction hazard, and
+because drug use harms nobody but the user, Housing First dominates Treatment
+First for every household at any given generosity. Neither matching the two
+policies on cost nor making households pay for them through a balanced budget
+disturbs that, because the two policies cost the same. What is left is an
+externality, and the model can say how big it would have to be: a social cost of
+roughly a sixth of a household's lifetime income per case of the disorder. The
+stylized model cannot rank the two policies on welfare, but it can say precisely
+which absent ingredient any such ranking must come from, and how large that
+ingredient has to be before it decides the question.}
 
 \end{document}

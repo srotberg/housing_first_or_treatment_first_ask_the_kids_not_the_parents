@@ -174,6 +174,80 @@ def equal_cost(par, pV_hf=1.0):
     return pv_tf, lam
 
 
+def balanced_tax(par, policy, pV, iters=25):
+    """
+    The proportional income tax that pays for the programme, policy by policy.
+
+    Income here is exogenous, so a proportional tax on it is not distortionary
+    in the usual sense; it still matters, because it takes resources from the
+    same households the vouchers are given to, and because it changes what a
+    poor household can afford in the states where housing is at stake.
+    """
+    q = with_(par, policy=policy, pV=pV, tau=0.0)
+    t = 0.0
+    for _ in range(iters):
+        m = stats(with_(q, tau=t))
+        new = m['cost'] / m['tax_base']
+        if abs(new - t) < 1e-6:
+            t = new
+            break
+        t = 0.5 * t + 0.5 * new          # damped, the map is close to linear
+    return t
+
+
+def financed(par, pV=1.0):
+    """Both policies with their own budgets balanced. Does the ranking move?"""
+    ww = W / W.sum()
+    th = balanced_tax(par, 'HF', pV)
+    tt = balanced_tax(par, 'TF', pV)
+    print(f'\nBALANCED BUDGET, pi_V = {pV}')
+    print(f'   tax rate that pays for Housing First   : {100*th:.3f}%')
+    print(f'   tax rate that pays for Treatment First : {100*tt:.3f}%')
+    vh = v1_pop(with_(par, tau=th), 'HF', pV)
+    vt = v1_pop(with_(par, tau=tt), 'TF', pV)
+    lam = cev(par, vh - vt)
+    print(f'   population average consumption equivalent of TF : '
+          f'{100*float((ww*lam).sum()):.4f}%')
+    print(f'   share strictly worse off under TF  : '
+          f'{float((ww * (vt < vh - 1e-9)).sum()):.4f}')
+    print(f'   share strictly better off under TF : '
+          f'{float((ww * (vt > vh + 1e-9)).sum()):.4f}')
+    return th, tt, lam
+
+
+def critical_externality(par, pV=1.0, tau_h=0.0, tau_t=0.0):
+    """
+    How large must the social cost of a case of the disorder be before
+    Treatment First is the better policy?
+
+    The externality is deliberately kept OUT of the household's problem: that is
+    what makes it an externality. It enters only the planner's objective, as a
+    cost chi per household in the disorder state, measured in units of a
+    household's lifetime income. The critical chi is the one at which the
+    private welfare loss from conditionality is exactly offset by the disorder
+    cases it avoids.
+    """
+    ww = W / W.sum()
+    mh = stats(with_(par, pV=pV, policy='HF', tau=tau_h))
+    mt = stats(with_(par, pV=pV, policy='TF', tau=tau_t))
+    vh = v1_pop(with_(par, tau=tau_h), 'HF', pV)
+    vt = v1_pop(with_(par, tau=tau_t), 'TF', pV)
+    lam = float((ww * cev(par, vh - vt)).sum())      # consumption households lose
+    scale = mh['tax_base']                           # lifetime income per household
+    loss = lam * scale                               # in units of income
+    d_sud = mh['sud'] - mt['sud']                    # disorder cases avoided
+    chi = loss / max(d_sud, 1e-12)
+    print(f'\nCRITICAL EXTERNALITY, pi_V = {pV}')
+    print(f'   households with the disorder   HF {100*mh["sud"]:.3f}%'
+          f'   TF {100*mt["sud"]:.3f}%')
+    print(f'   cases avoided by conditionality : {100*d_sud:.3f} pp')
+    print(f'   private welfare loss, consumption equivalent : {100*lam:.4f}%')
+    print(f'   lifetime income per household : {scale:.4f}')
+    print(f'   critical chi : {chi:.4f} of one household\'s lifetime income')
+    print(f'                  per additional case of the disorder')
+    return chi, d_sud, lam
+
+
 def tab_welfare(par, pV=1.0):
     """The welfare table for the note, written straight to LaTeX."""
     import os
@@ -189,30 +263,48 @@ def tab_welfare(par, pV=1.0):
     avg = float((ww * lam).sum())
     among = float((ww * lam)[hit].sum() / max(ww[hit].sum(), 1e-12))
 
+    th = balanced_tax(par, 'HF', pV)
+    tt = balanced_tax(par, 'TF', pV)
+    chi0, dsud0, _ = critical_externality(par, pV)
+    chi1, dsud1, lam1 = critical_externality(par, pV, th, tt)
+
+    pc = lambda x, n=2: f'{x:.{n}f}\\%'
     L = [r'\small', r'\begin{tabular}{@{}lcc@{}}', r'\toprule',
          r'& Housing First & Treatment First \\', r'\midrule',
          r'\multicolumn{3}{@{}l}{\emph{Panel A. Outcomes at universal cover}} \\',
-         f'\\quad Drug participation rate & {100*mh["part"]:.2f}\\% '
-         f'& {100*mt["part"]:.2f}\\% \\\\',
+         f'\\quad Drug participation rate & {pc(100*mh["part"])} '
+         f'& {pc(100*mt["part"])} \\\\',
+         f'\\quad Share with the disorder & {pc(100*mh["sud"],3)} '
+         f'& {pc(100*mt["sud"],3)} \\\\',
+         f'\\quad Homelessness rate & {pc(100*mh["homeless"],3)} '
+         f'& {pc(100*mt["homeless"],3)} \\\\',
          f'\\quad Voucher outlay per household & {mh["cost"]:.4f} '
          f'& {mt["cost"]:.4f} \\\\',
+         f'\\quad Tax rate that pays for it & {pc(100*th)} & {pc(100*tt)} \\\\',
          r'\addlinespace',
          r'\multicolumn{3}{@{}l}{\emph{Panel B. Treatment First against Housing '
-         r'First}} \\',
-         f'\\quad Households strictly worse off & '
-         f'& {100*worse:.1f}\\% \\\\',
-         f'\\quad Households strictly better off & '
-         f'& {100*better:.1f}\\% \\\\',
+         r'First, no externality}} \\',
+         f'\\quad Households strictly worse off & & {pc(100*worse,1)} \\\\',
+         f'\\quad Households strictly better off & & {pc(100*better,1)} \\\\',
          f'\\quad Consumption equivalent loss, those affected & '
-         f'& {100*among:.2f}\\% \\\\',
+         f'& {pc(100*among)} \\\\',
          f'\\quad Consumption equivalent loss, whole population & '
-         f'& {100*avg:.3f}\\% \\\\',
+         f'& {pc(100*avg,3)} \\\\',
+         f'\\quad \\emph{{the same, with the budget balanced}} & '
+         f'& {pc(100*lam1,3)} \\\\',
+         r'\addlinespace',
+         r'\multicolumn{3}{@{}l}{\emph{Panel C. How large an externality would '
+         r'reverse this}} \\',
+         f'\\quad Disorder cases avoided by conditionality & '
+         f'& {100*dsud1:.3f} pp \\\\',
+         f'\\quad Critical social cost per case, no financing & '
+         f'& {chi0:.2f} \\\\',
+         f'\\quad Critical social cost per case, budget balanced & '
+         f'& {chi1:.2f} \\\\',
          r'\bottomrule', r'\end{tabular}']
     with open(os.path.join(OUT, 'tab_welfare.tex'), 'w') as f:
         f.write('\n'.join(L) + '\n')
-    print(f'   wrote tab_welfare.tex')
-    print(f'   worse {worse:.4f}  better {better:.4f}  among {among:.5f}  '
-          f'avg {avg:.5f}')
+    print('   wrote tab_welfare.tex')
 
 
 if __name__ == '__main__':
@@ -226,4 +318,7 @@ if __name__ == '__main__':
     cost_curve(base, 'TF', [0.25, 0.5, 0.75, 1.0])
     equal_cost(base, 1.0)
     print()
+    th, tt, _ = financed(base, 1.0)
+    critical_externality(base, 1.0)
+    critical_externality(base, 1.0, th, tt)
     tab_welfare(base, 1.0)

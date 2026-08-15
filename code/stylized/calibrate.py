@@ -38,9 +38,16 @@ W = np.exp(-0.5 * ((np.log(YG) + 0.5 * 0.75**2) / 0.75)**2)
 
 TARGET = dict(part=0.0513, homeless=0.00399, prog=0.332)
 
-PAIRS = [('b', 'part', 1e-5, 0.30),
-         ('h_hl', 'homeless', 1e-5, 0.49),
-         ('lam', 'prog', 0.5, 900.0)]
+# ORDER MATTERS, and participation goes LAST. Every one of these parameters
+# moves participation: lam makes drugs riskier, h_hl changes what is at stake in
+# losing your home. So whichever bracket runs last is the one whose moment is
+# actually hit, and the others are only hit to the extent the sweep has
+# converged. Participation is the moment the model exists to reproduce, so b
+# runs last. With b first, participation settled at 3.7 per cent against a
+# target of 5.13 and stayed there however many sweeps were run.
+PAIRS = [('h_hl', 'homeless', 1e-5, 0.49),
+         ('lam', 'prog', 0.5, 900.0),
+         ('b', 'part', 1e-5, 0.30)]
 
 LABEL = {'part': 'drug participation rate',
          'housing_share': 'housing spending / income',
@@ -65,7 +72,7 @@ def bracket(par, name, mom, lo, hi, iters=34):
     return float(np.sqrt(lo * hi))
 
 
-def calibrate(par=None, sweeps=4, verbose=True):
+def calibrate(par=None, sweeps=6, verbose=True):
     par = par or P()
     for s in range(sweeps):
         for name, mom, lo, hi in PAIRS:

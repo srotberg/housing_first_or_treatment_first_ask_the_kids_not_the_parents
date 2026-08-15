@@ -163,6 +163,12 @@ class P:
     h_sm  = 0.106
     h_hl  = 0.05      # the street. CALIBRATED to the homelessness rate
     pr    = 1.00      # rent per unit of housing services: the numeraire
+    # FINANCING. A proportional tax on all income, in every period, set so that
+    # revenue covers the voucher outlay. Zero by default: the calibration and the
+    # two headline results are all computed without it, and it is switched on
+    # only in welfare.py, to ask whether making households pay for the programme
+    # changes which policy they prefer.
+    tau   = 0.00
     pV    = 0.27      # probability a voucher arrives, conditional on eligibility
     yV    = 1.00      # MEANS TEST: eligible if current income is below the mean
     kappa_r = 0.30    # tenant's share of the rent when covered
@@ -204,7 +210,8 @@ def _states(par, d, policy, y):
         # you used to earn, on an earnings base capped at ycap. For the poorest
         # household that is well below the rent on the smallest unit, so the
         # disorder can put the roof at risk, which is what the voucher insures.
-        inc = y if e == 0 else par.repl * min(y, par.ycap)
+        gross = y if e == 0 else par.repl * min(y, par.ycap)
+        inc = (1.0 - par.tau) * gross
         # MEANS TEST. A voucher can only reach a household whose income in that
         # state is below the mean. Every unemployed household passes the test;
         # employed households pass only in the bottom part of the distribution.
@@ -238,8 +245,10 @@ def solve_late(par, y, policy):
 
     V3 = np.zeros((par.na, 2))
     G3 = np.zeros((par.na, 2))
+    Y3 = np.zeros(2)                      # pre tax income, for the tax base
     for d in (0, 1):
         for p, inc, rmul in _states(par, d, policy, y):
+            Y3[d] += p * inc / max(1.0 - par.tau, 1e-9)
             cash = par.R * ag + inc
             best = np.full(par.na, -np.inf); sub = np.zeros(par.na)
             for h, rent, street in _options(par, rmul):
@@ -257,8 +266,13 @@ def solve_late(par, y, policy):
     V2 = np.zeros((par.na, 2)); H2 = np.zeros((par.na, 2))
     R2 = np.zeros((par.na, 2))            # rent actually paid, for the housing share
     G2 = np.zeros((par.na, 2))            # voucher outlay, periods 2 and 3
+    Y2 = np.zeros(2)                      # pre tax income, periods 2 and 3
     for d in (0, 1):
+        surv_d = par.phi0 * (1.0 - par.kap * d)
+        r_d = par.rho if d else 0.0
+        Y2[d] = ((1.0 - r_d) * Y3[d] + r_d * Y3[0]) * surv_d / par.R
         for p, inc, rmul in _states(par, d, policy, y):
+            Y2[d] += p * inc / max(1.0 - par.tau, 1e-9)
             cash = par.R * ag[:, None] + inc
             best = np.full(par.na, -np.inf); onst = np.zeros(par.na)
             rnt = np.zeros(par.na); out = np.zeros(par.na)
@@ -282,7 +296,7 @@ def solve_late(par, y, policy):
                 best = np.maximum(best, v)
             V2[:, d] += p * best; H2[:, d] += p * onst
             R2[:, d] += p * rnt;  G2[:, d] += p * out
-    return ag, V2, H2, R2, G2
+    return ag, V2, H2, R2, G2, Y2
 
 
 def use_choice(par, y, policy=None):
@@ -292,26 +306,27 @@ def use_choice(par, y, policy=None):
     bound the use region.
     """
     policy = policy or par.policy
-    ag, V2, _, _, _ = solve_late(par, y, policy)
+    ag, V2, _, _, _, _ = solve_late(par, y, policy)
     vg = np.concatenate(([0.0], np.linspace(1e-4, 0.5 * y, par.nv - 1)))
-    c = (y - par.p_v * vg[:, None]) - ag[None, :]
+    cash = ((1.0 - par.tau) * y - par.p_v * vg[:, None]) - ag[None, :]
     pid = (1.0 - np.exp(-par.lam * vg))[:, None]
     EV2 = (1.0 - pid) * V2[None, :, 0] + pid * V2[None, :, 1]
-    # PERIOD 1 HOUSING IS NOT A CHOICE. Every household is employed, clean and
-    # in the standard unit, so gam*log(h_lg) is a constant here and the rent is
-    # the same for everyone: y is income net of that rent. Housing becomes a
-    # choice in period 2, which is when the disorder and unemployment can
-    # threaten the roof, and that is the only place the margin has work to do.
-    #
-    # Letting period 1 households choose housing too was tried and reverted. It
-    # sorts the poor into small units and the street before anything has
-    # happened to them, which drops the share of the homeless who have the
-    # disorder from 0.70 to 0.35, away from the data, and buys nothing.
-    val = np.where(c > 1e-9,
-                   np.log(np.maximum(c, 1e-12)) + par.gam * np.log(par.h_lg)
-                   + par.aleph + par.beta * par.phi0 * EV2, -np.inf)
+    # HOUSING IS A CHOICE IN EVERY PERIOD, period 1 included. The household is
+    # employed and clean here, but it still picks among the same three options
+    # and pays for the one it picks, so y is income and not income net of some
+    # assumed rent. Vouchers are the one thing that does not operate yet: the
+    # programme starts in period 2. That costs the policy comparison nothing,
+    # because every period 1 household is clean, so Housing First and Treatment
+    # First would cover exactly the same households on exactly the same terms.
+    val = np.full(cash.shape, -np.inf)
+    for h, rent, _ in _options(par, 1.0):
+        c = cash - rent
+        val = np.maximum(val, np.where(
+            c > 1e-9,
+            np.log(np.maximum(c, 1e-12)) + par.gam * np.log(h)
+            + par.aleph + par.beta * par.phi0 * EV2, -np.inf))
     base = val.max(axis=1)
-    a_by_v = ag[np.argmax(np.where(c > 1e-9, val, -np.inf), axis=1)]
+    a_by_v = ag[np.argmax(val, axis=1)]
     tot = base + par.th * (np.log(par.b + vg) - np.log(par.b))
     k = int(np.argmax(tot[1:])) + 1
     return float(tot[k] - tot[0]), float(vg[k]), float(a_by_v[k]), float(a_by_v[0])
@@ -324,14 +339,18 @@ def value1(par, y, policy=None):
     addiction hazard, so whatever v it picks is the v it wants given the policy.
     """
     policy = policy or par.policy
-    ag, V2, _, _, _ = solve_late(par, y, policy)
+    ag, V2, _, _, _, _ = solve_late(par, y, policy)
     vg = np.concatenate(([0.0], np.linspace(1e-4, 0.5 * y, par.nv - 1)))
-    c = (y - par.p_v * vg[:, None]) - ag[None, :]
+    c = ((1.0 - par.tau) * y - par.p_v * vg[:, None]) - ag[None, :]
     pid = (1.0 - np.exp(-par.lam * vg))[:, None]
     EV2 = (1.0 - pid) * V2[None, :, 0] + pid * V2[None, :, 1]
-    val = np.where(c > 1e-9,
-                   np.log(np.maximum(c, 1e-12)) + par.gam * np.log(par.h_lg)
-                   + par.aleph + par.beta * par.phi0 * EV2, -np.inf)
+    val = np.full(c.shape, -np.inf)
+    for h, rent, _ in _options(par, 1.0):
+        cc = c - rent
+        val = np.maximum(val, np.where(
+            cc > 1e-9,
+            np.log(np.maximum(cc, 1e-12)) + par.gam * np.log(h)
+            + par.aleph + par.beta * par.phi0 * EV2, -np.inf))
     tot = val.max(axis=1) + par.th * (np.log(par.b + vg) - np.log(par.b))
     return float(tot.max())
 
@@ -372,9 +391,9 @@ def aggregates(par, ygrid, w, policy=None):
     pid = use * (1.0 - np.exp(-par.lam * vv))
     ww = w / w.sum(); ybar = (ww * ygrid).sum()
 
-    hl = hl_sud = hcost = hinc = cost = 0.0
+    hl = hl_sud = hcost = hinc = cost = base_y = 0.0
     for i, y in enumerate(ygrid):
-        ag, _, H2, R2, G2 = solve_late(par, y, policy)
+        ag, _, H2, R2, G2, Y2 = solve_late(par, y, policy)
         for m, a, d in ((ww[i] * (1.0 - use[i]), an[i], 0),
                         (ww[i] * (use[i] - pid[i]), au[i], 0),
                         (ww[i] * pid[i], au[i], 1)):
@@ -387,6 +406,9 @@ def aggregates(par, ygrid, w, policy=None):
             hl += m * street
             hcost += m * float(np.interp(a, ag, R2[:, d]))
             cost += m * float(np.interp(a, ag, G2[:, d]))
+            # the tax base: period 1 earnings plus the present value of income
+            # from period 2 on, all pre tax
+            base_y += m * (y + par.phi0 * Y2[d] / par.R)
             if d == 1:
                 hl_sud += m * street
             for p, inc, rmul in _states(par, d, policy, y):
@@ -399,5 +421,5 @@ def aggregates(par, ygrid, w, policy=None):
                 homeless=float(hl),
                 sud_of_homeless=float(hl_sud / max(hl, 1e-12)),
                 housing_share=float(hcost / max(hinc, 1e-12)),
-                cost=float(cost),
+                cost=float(cost), tax_base=float(base_y),
                 use=use, v=vv)

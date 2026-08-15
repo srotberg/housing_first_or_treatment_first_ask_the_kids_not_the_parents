@@ -61,11 +61,11 @@ CHANNELS = [
 ]
 
 
-def evaluate(par, sweeps=4):
+def evaluate(par, sweeps=6):
     """
     Full recalibration, then both counterfactuals.
 
-    Four sweeps, not three, and every row starts from the CALIBRATED point
+    Six sweeps, and every row starts from the CALIBRATED point
     rather than from the defaults. Both changes exist so that the 'nothing
     removed' row reproduces the headline numbers of the note exactly. It used
     to land on -6.01 and +2.83 against a headline of -6.12 and +2.93, purely

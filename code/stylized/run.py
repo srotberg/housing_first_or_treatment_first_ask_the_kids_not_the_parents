@@ -158,8 +158,50 @@ def fig_moral_hazard(base):
     return pVs, H, T
 
 
+def fig_margins(base):
+    """
+    Figure 3: what the same policy dial does to the two outcomes the programme
+    is actually for. Drug use is not the objective of a housing programme, and a
+    reader shown only figure 2 could reasonably think Treatment First wins on
+    every count. It does not.
+    """
+    plt = style()
+    pVs = np.array([0.0, 0.1, 0.2, 0.3, 0.45, 0.6, 0.75, 0.9, 1.0])
+    out = {}
+    for pol in ('HF', 'TF'):
+        m = [stats(with_(base, pV=p, policy=pol)) for p in pVs]
+        out[pol] = dict(homeless=np.array([x['homeless'] for x in m]),
+                        sud=np.array([x['sud'] for x in m]))
+
+    fig, axes = plt.subplots(1, 2, figsize=(9.6, 4.0))
+    for ax, key, lab in ((axes[0], 'homeless', 'Homelessness rate, per cent'),
+                         (axes[1], 'sud', 'Share with the disorder, per cent')):
+        ax.plot(pVs, 100 * out['HF'][key], color='#C0392B', marker='o', ms=4.2,
+                label='Housing First')
+        ax.plot(pVs, 100 * out['TF'][key], color='#2C6FAD', marker='s', ms=4.2,
+                label='Treatment First')
+        ax.set_xlabel('Voucher generosity $\\pi_V$')
+        ax.set_ylabel(lab)
+        ax.set_xlim(-0.02, 1.02)
+        ax.set_ylim(bottom=0.0)
+        ax.set_xticks([0.0, 0.25, 0.5, 0.75, 1.0])
+    axes[0].legend(loc='upper center', bbox_to_anchor=(1.08, 1.17), ncol=2,
+                   fontsize=9.5)
+    fig.tight_layout()
+    save(fig, 'stylized_margins')
+
+    print('\n   pi_V    homeless HF    homeless TF      disorder HF   disorder TF')
+    for i, p in enumerate(pVs):
+        print(f"   {p:4.2f}   {100*out['HF']['homeless'][i]:10.3f}%"
+              f"   {100*out['TF']['homeless'][i]:10.3f}%"
+              f"   {100*out['HF']['sud'][i]:12.3f}%"
+              f"   {100*out['TF']['sud'][i]:10.3f}%")
+    return pVs, out
+
+
 if __name__ == '__main__':
     base = with_(P(), **json.load(open('calibrated.json')))
     print('figures')
     fig_who_uses(base)
     fig_moral_hazard(base)
+    fig_margins(base)
