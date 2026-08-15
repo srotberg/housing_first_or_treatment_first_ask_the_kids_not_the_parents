@@ -24,6 +24,9 @@ python3 run.py
 echo "== tables"
 python3 tables.py
 
+echo "== welfare"
+python3 welfare.py
+
 echo "== note"
 cd "$ROOT/writing"
 pdflatex -interaction=nonstopmode stylized_note.tex > /dev/null

@@ -32,12 +32,14 @@
 questions of the paper are still well posed. Who uses drugs, and why are users
 poor? And how does housing assistance change the decision to use? The model has
 three periods, one asset, and households that differ in permanent income and in
-nothing else. Because it is stylized, I do not use it to evaluate welfare or
-the government budget; every magnitude reported in the paper comes from the
-quantitative model. What the model delivers is a set of qualitative results:
-which feature of the environment reverses the income gradient in drug use, and
-the sign and relative size of the two forces through which a housing voucher
-acts on drug use.}
+nothing else. Because it is stylized, every magnitude reported in the paper
+comes from the quantitative model rather than from here. What this model
+delivers is a set of qualitative results: which feature of the environment
+reverses the income gradient in drug use, the sign and relative size of the two
+forces through which a housing voucher acts on drug use, and a dominance result
+showing that conditioning assistance on abstinence cannot raise welfare in an
+environment whose households are rational and whose drug use harms nobody
+else.}
 \end{abstract}
 
 %======================================================================
@@ -60,12 +62,15 @@ housed future is worth more than a homeless one and using puts that future at
 risk. Which force is larger?}
 \end{enumerate}
 
-\new{Because this model is stylized I do not use it to evaluate welfare, the
-government budget, or general equilibrium, and there is no validation section.
-The calibration is deliberately rough: it exists to put the model in the right
-region, not to be defended.} Throughout, each component of the environment is
-justified by removing it, recalibrating the model without it, \new{and showing
-why it matters} for one of the two results.
+\new{Because this model is stylized I do not use it to produce magnitudes,
+there is no validation section, and the calibration is deliberately rough: it
+exists to put the model in the right region, not to be defended.} Throughout,
+each component of the environment is justified by removing it, recalibrating the
+model without it, \new{and showing why it matters} for one of the two results.
+\new{Section~\ref{sec:welfare} then asks the welfare question, and most of its
+answer is a statement about what an environment this small cannot contain: there
+is no government budget beyond the vouchers themselves, no externality from drug
+use, and no general equilibrium.}
 
 %======================================================================
 \section{The environment}\label{sec:env}
@@ -689,8 +694,12 @@ stylized environment is not something the paper carries forward as a result; it
 is a hypothesis for the quantitative model to test.}
 
 \paragraph{Conditionality retains the winning force and removes the losing one.}
-\new{That is the case for Treatment First in one sentence, and
-Figure~\ref{fig:mh} also shows the condition under which the case is weak. Both
+\new{That is the case for Treatment First \emph{as a way of reducing drug use},
+and it is worth being careful about what it is not: Section~\ref{sec:welfare}
+shows that in this environment the same policy makes every household weakly
+worse off, so a lower participation rate is not by itself an argument for the
+policy that produces it. Figure~\ref{fig:mh} also shows the condition under
+which even the drug use case is weak. Both
 forces scale with $\pi_V$: at the left of the figure the two policies are almost
 indistinguishable, because a programme that reaches few households has little
 moral hazard for conditionality to remove. Imposing conditionality while holding
@@ -700,9 +709,118 @@ and generosity are complements, and an experiment that changes one while holding
 the other fixed will understate what conditionality can do.}
 
 %======================================================================
+\section{\new{Welfare}}\label{sec:welfare}
+
+\new{Nothing so far has said whether Housing First or Treatment First is the
+better policy, only what each does to drug use. The natural next question is
+whether the moral hazard force of Section~\ref{sec:mh} is a reason to prefer
+conditionality. In this model it is not, and the reason is worth setting out
+because it is an argument rather than a number.}
+
+\paragraph{\new{Housing First dominates Treatment First at equal generosity.}}
+\new{Compare the two policies at the same $\pi_V$. By
+equation~\eqref{eq:vouch}, they differ only in the indicator
+$\mathbf{1}\{\text{policy covers } d\}$: both pay the voucher when $d=0$, and
+only Housing First pays it when $d=1$. Housing First therefore transfers
+resources to the household in a superset of the states in which Treatment First
+does, so the household's budget set is weakly larger in every state and strictly
+larger in one. A household that optimises cannot be made worse off by that, and
+is strictly better off whenever it faces any chance of the disorder:}
+\begin{equation}\label{eq:dom}
+V_1(y;\ \text{HF},\ \pi_V) \;\ge\; V_1(y;\ \text{TF},\ \pi_V)
+\qquad \text{for every } y,
+\end{equation}
+\new{with equality exactly for households that never use. This is a dominance
+argument, not a calibrated result. It does not depend on any parameter and no
+choice of parameters can overturn it. Table~\ref{tab:welfare} confirms it:
+$4.1$ per cent of households, which is to say the ones who use, are strictly
+worse off under Treatment First, and no household anywhere in the distribution
+is better off.}
+
+\paragraph{\new{The moral hazard is not a distortion.}} \new{This is the part
+worth pausing on, because the language invites the opposite reading. Households
+here are forward looking, face the true addiction hazard of
+equation~\eqref{eq:hazard}, and make no mistakes. The extra drug use that
+Housing First induces is therefore not a wedge to be closed. It is a household
+optimally taking a risk that it is now better able to bear, in exactly the sense
+in which an insured household drives in worse weather. The behaviour identified
+in Section~\ref{sec:mh} is real and it is large, but its size is a statement
+about drug use and not, on its own, a statement about welfare.}
+
+\begin{table}[htbp]
+\centering
+\caption{\new{Welfare and cost at universal cover}}\label{tab:welfare}
+\input{tables/tab_welfare}
+\notes{0.94\textwidth}{\new{Note: universal cover means $\pi_V=1$ under both
+policies. Voucher outlay is the expected present value of the government's
+spending on a household from period 2 onwards, discounted at $R$ and weighted by
+survival, expressed as a multiple of average income. The consumption equivalent
+is the proportional change in consumption, in every period and state, that would
+be worth as much to the household as the difference in lifetime value; it is
+reported both for the households that are affected at all and for the whole
+population.}}
+\end{table}
+
+\paragraph{\new{The fiscal argument for conditionality fails here, and not for
+the reason one would expect.}} \new{Equation~\eqref{eq:dom} holds generosity
+fixed, which is the wrong comparison if vouchers must be paid for. The natural
+conjecture is that Housing First buys the same coverage at a higher price, since
+it pays for households in the disorder state and, by insuring that state, puts
+more households into it, so that a fixed budget would buy more coverage under
+Treatment First. That conjecture is false in this model. As
+Table~\ref{tab:welfare} shows, Treatment First is very slightly \emph{more}
+expensive than Housing First at universal cover, $0.1808$ against $0.1806$, and
+the same ordering holds at every generosity. Matching the two policies on cost
+rather than on $\pi_V$ therefore changes nothing: Treatment First remains
+welfare reducing and still leaves no household better off.}
+
+\paragraph{\new{Why the additional coverage is nearly free.}} \new{A household in
+the disorder state draws only about $79$ per cent of the voucher outlay a clean
+household draws, and this holds at every income level. It is not that such
+households house themselves worse: under universal cover nobody is on the
+street. It is mortality. Survival to period 3 falls from $\phi_0 = 0.93$ to
+$\phi_0(1-\kappa) = 0.51$, so the programme pays for these households over fewer
+periods. The households that the moral hazard adds to the rolls die sooner and
+stop costing money, and that saving very nearly offsets the cost of covering
+them. The mortality channel, which Section~\ref{sec:who} showed to be what puts
+drug use at the bottom of the income distribution, turns out also to be what
+neutralises the fiscal case against insuring it.}
+
+\paragraph{\new{What this leaves for the quantitative model.}} \new{In an
+environment with rational households, no externalities, and a budget that
+contains nothing but housing vouchers, conditionality has nothing to recommend
+it at all. Any case for Treatment First must therefore rest on something this
+model deliberately excludes, and naming those things is the most useful work
+this section does.}
+\begin{enumerate}
+\item \new{\textbf{Externalities.} Drug use here touches nobody but the user. If
+it raises crime, public disorder, or the health costs borne by others, the
+private optimum is not the social one and the moral hazard acquires a welfare
+cost it does not have here.}
+\item \new{\textbf{Internalities.} Households here face the true hazard and
+discount the future consistently. If drug use involves present bias, or a
+household that underestimates $\lambda$, then the extra use is a mistake by the
+household's own lights and conditionality can be paternalistically justified.
+This model cannot speak to that, because it assumes the mistake away.}
+\item \new{\textbf{Public costs outside housing.} The budget here is vouchers
+and nothing else, which is why the fiscal comparison comes out flat. Healthcare,
+treatment and incarceration all rise with the disorder and none of them appear.
+This, rather than the housing budget, is where the fiscal argument actually
+lives, and it is the reason the comparison above should be read as a statement
+about the housing programme's own accounts and not as a fiscal verdict.}
+\item \new{\textbf{General equilibrium.} With an endogenous drug price and a
+government budget that has to balance, both policies change prices and taxes for
+households that never touch either programme.}
+\end{enumerate}
+\new{All four are present in the quantitative model, which is the sharpest
+statement this section can make about why that model is needed: not to refine
+the magnitudes of Section~\ref{sec:mh}, but because the welfare question cannot
+be posed at all in an environment this small.}
+
+%======================================================================
 \section{Summary}
 
-\new{Two results carry forward, and they carry forward as different kinds of
+\new{Three results carry forward, and they carry forward as different kinds of
 object. The first is a statement about mechanisms: drug use concentrates at the
 bottom of the income distribution only when the disorder carries a mortality
 cost, because a resource penalty proportional to income scales with the thing it
@@ -712,5 +830,16 @@ voucher acts on drug use through two first order forces that work against each
 other, and the two policies separate them exactly. That both forces are large is
 what this section establishes. Which of them wins is left open, and settling it
 is the job of the quantitative model that follows.}
+
+\new{A third result is negative, and it is the one that says most clearly why
+the quantitative model is needed. Because households here are forward looking
+and face the true addiction hazard, and because drug use harms nobody but the
+user, Housing First dominates Treatment First for every household at any given
+generosity, and matching the two policies on cost rather than on generosity does
+not change that. Conditionality can only be worth having once the environment
+contains something this one does not: an externality, an internality, a public
+cost outside the housing budget, or a general equilibrium. The stylized model
+cannot rank the two policies on welfare. What it can do is say precisely which
+absent ingredient any such ranking would have to come from.}
 
 \end{document}

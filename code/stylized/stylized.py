@@ -223,42 +223,66 @@ def _options(par, rmul):
 
 
 def solve_late(par, y, policy):
-    """Periods 3 and 2 by backward induction. Returns the street share too."""
+    """
+    Periods 3 and 2 by backward induction.
+
+    Returns (assets grid, V2, street share, rent paid, voucher outlay). The last
+    of these is the government's expected spending on this household from
+    period 2 on, discounted at the market rate and weighted by survival. It is
+    pure accounting: nothing in the household's problem depends on it, and the
+    household never pays for it. It exists so that the two policies can be
+    compared at equal COST as well as at equal generosity, which is the only
+    comparison in this model under which Treatment First can win.
+    """
     ag = np.linspace(0.0, 1.6 * y, par.na)
 
     V3 = np.zeros((par.na, 2))
+    G3 = np.zeros((par.na, 2))
     for d in (0, 1):
         for p, inc, rmul in _states(par, d, policy, y):
             cash = par.R * ag + inc
-            best = np.full(par.na, -np.inf)
-            for h, rent, _ in _options(par, rmul):
+            best = np.full(par.na, -np.inf); sub = np.zeros(par.na)
+            for h, rent, street in _options(par, rmul):
                 c = cash - rent
-                best = np.maximum(best, np.where(
-                    c > 1e-9, np.log(np.maximum(c, 1e-12))
-                    + par.gam * np.log(h) + par.aleph, -np.inf))
+                v = np.where(c > 1e-9, np.log(np.maximum(c, 1e-12))
+                             + par.gam * np.log(h) + par.aleph, -np.inf)
+                # what the voucher pays on this option: the rest of the market
+                # rent. Zero on the street, which is free to begin with.
+                s = 0.0 if street else par.pr * h * (1.0 - rmul)
+                sub = np.where(v > best, s, sub)
+                best = np.maximum(best, v)
             V3[:, d] += p * best
+            G3[:, d] += p * sub
 
     V2 = np.zeros((par.na, 2)); H2 = np.zeros((par.na, 2))
     R2 = np.zeros((par.na, 2))            # rent actually paid, for the housing share
+    G2 = np.zeros((par.na, 2))            # voucher outlay, periods 2 and 3
     for d in (0, 1):
         for p, inc, rmul in _states(par, d, policy, y):
             cash = par.R * ag[:, None] + inc
             best = np.full(par.na, -np.inf); onst = np.zeros(par.na)
-            rnt = np.zeros(par.na)
+            rnt = np.zeros(par.na); out = np.zeros(par.na)
+            r = par.rho if d else 0.0
+            EV3 = (1.0 - r) * V3[:, d] + r * V3[:, 0]
+            EG3 = (1.0 - r) * G3[:, d] + r * G3[:, 0]
+            surv = par.phi0 * (1.0 - par.kap * d)
             for h, rent, street in _options(par, rmul):
-                r = par.rho if d else 0.0
-                EV3 = (1.0 - r) * V3[:, d] + r * V3[:, 0]
-                surv = par.phi0 * (1.0 - par.kap * d)
                 c = cash - rent - ag[None, :]
-                v = np.where(c > 1e-9,
-                             np.log(np.maximum(c, 1e-12)) + par.gam * np.log(h)
-                             + par.aleph + par.beta * surv * EV3[None, :],
-                             -np.inf).max(axis=1)
+                obj = np.where(c > 1e-9,
+                               np.log(np.maximum(c, 1e-12)) + par.gam * np.log(h)
+                               + par.aleph + par.beta * surv * EV3[None, :],
+                               -np.inf)
+                ia = np.argmax(obj, axis=1)
+                v = obj[np.arange(par.na), ia]
+                s = 0.0 if street else par.pr * h * (1.0 - rmul)
+                g = s + surv * EG3[ia] / par.R
                 onst = np.where(v > best, street, onst)
                 rnt = np.where(v > best, rent, rnt)
+                out = np.where(v > best, g, out)
                 best = np.maximum(best, v)
-            V2[:, d] += p * best; H2[:, d] += p * onst; R2[:, d] += p * rnt
-    return ag, V2, H2, R2
+            V2[:, d] += p * best; H2[:, d] += p * onst
+            R2[:, d] += p * rnt;  G2[:, d] += p * out
+    return ag, V2, H2, R2, G2
 
 
 def use_choice(par, y, policy=None):
@@ -268,7 +292,7 @@ def use_choice(par, y, policy=None):
     bound the use region.
     """
     policy = policy or par.policy
-    ag, V2, _, _ = solve_late(par, y, policy)
+    ag, V2, _, _, _ = solve_late(par, y, policy)
     vg = np.concatenate(([0.0], np.linspace(1e-4, 0.5 * y, par.nv - 1)))
     c = (y - par.p_v * vg[:, None]) - ag[None, :]
     pid = (1.0 - np.exp(-par.lam * vg))[:, None]
@@ -291,6 +315,25 @@ def use_choice(par, y, policy=None):
     tot = base + par.th * (np.log(par.b + vg) - np.log(par.b))
     k = int(np.argmax(tot[1:])) + 1
     return float(tot[k] - tot[0]), float(vg[k]), float(a_by_v[k]), float(a_by_v[0])
+
+
+def value1(par, y, policy=None):
+    """
+    V1(y): lifetime value at the household's own optimum, which is what welfare
+    has to be measured on. The household is forward looking and faces the true
+    addiction hazard, so whatever v it picks is the v it wants given the policy.
+    """
+    policy = policy or par.policy
+    ag, V2, _, _, _ = solve_late(par, y, policy)
+    vg = np.concatenate(([0.0], np.linspace(1e-4, 0.5 * y, par.nv - 1)))
+    c = (y - par.p_v * vg[:, None]) - ag[None, :]
+    pid = (1.0 - np.exp(-par.lam * vg))[:, None]
+    EV2 = (1.0 - pid) * V2[None, :, 0] + pid * V2[None, :, 1]
+    val = np.where(c > 1e-9,
+                   np.log(np.maximum(c, 1e-12)) + par.gam * np.log(par.h_lg)
+                   + par.aleph + par.beta * par.phi0 * EV2, -np.inf)
+    tot = val.max(axis=1) + par.th * (np.log(par.b + vg) - np.log(par.b))
+    return float(tot.max())
 
 
 def threshold(par, ygrid, policy=None):
@@ -329,9 +372,9 @@ def aggregates(par, ygrid, w, policy=None):
     pid = use * (1.0 - np.exp(-par.lam * vv))
     ww = w / w.sum(); ybar = (ww * ygrid).sum()
 
-    hl = hl_sud = hcost = hinc = 0.0
+    hl = hl_sud = hcost = hinc = cost = 0.0
     for i, y in enumerate(ygrid):
-        ag, _, H2, R2 = solve_late(par, y, policy)
+        ag, _, H2, R2, G2 = solve_late(par, y, policy)
         for m, a, d in ((ww[i] * (1.0 - use[i]), an[i], 0),
                         (ww[i] * (use[i] - pid[i]), au[i], 0),
                         (ww[i] * pid[i], au[i], 1)):
@@ -343,6 +386,7 @@ def aggregates(par, ygrid, w, policy=None):
             # more than half and pinned the housing weight at its bound
             hl += m * street
             hcost += m * float(np.interp(a, ag, R2[:, d]))
+            cost += m * float(np.interp(a, ag, G2[:, d]))
             if d == 1:
                 hl_sud += m * street
             for p, inc, rmul in _states(par, d, policy, y):
@@ -355,4 +399,5 @@ def aggregates(par, ygrid, w, policy=None):
                 homeless=float(hl),
                 sud_of_homeless=float(hl_sud / max(hl, 1e-12)),
                 housing_share=float(hcost / max(hinc, 1e-12)),
+                cost=float(cost),
                 use=use, v=vv)
