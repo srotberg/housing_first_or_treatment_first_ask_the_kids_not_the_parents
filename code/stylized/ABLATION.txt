@@ -1,19 +1,22 @@
-==============================================================================
-DOES EACH PIECE EARN ITS PLACE?
-   b is rebracketed in every row so participation is 5.13 per cent
-==============================================================================
-switched off                                  b   r_use  val life  moral hz
-                                                               pp        pp
-nothing: the model as calibrated         0.0055   0.187     -5.32      4.86
-the disorder does not kill you           0.0075   0.869     -4.75      9.54  KEEP
-no recovery: the disorder is absorbing   0.0049   0.187     -5.26      5.13  cut?
-no wage penalty                          0.0113   0.198     -8.12      0.00  KEEP
-one rental size, no small unit           0.6000   0.189     -6.55      0.00  KEEP
-the street is as good as a small unit    0.0045   0.187      0.00      0.00  KEEP
-no consumption floor                     0.0039   0.187     -5.33      4.85  cut?
-no saving                                0.0055   0.187     -5.16      4.85  cut?
-the value of life is small               0.6000   0.324    -27.85     20.14  KEEP
-------------------------------------------------------------------------------
-   r_use below one is result 1: drug use sits at the bottom of the
-   income distribution. The two policy columns are result 2: they
-   are large, opposite, and nearly cancel.
+================================================================================
+WHICH CHANNELS EARN THEIR PLACE
+   each row is FULLY recalibrated after the channel is removed,
+   then both counterfactuals are rerun
+================================================================================
+removed                                part   r_use  val life  moral hz
+nothing removed                      0.0359   0.171     -4.32      1.52
+the disorder kills you               0.0513   3.372     -1.28      2.46  KEEP
+the street kills you                 0.0369   0.172     -4.45      1.58  remove
+the disorder costs you a job         0.0526   0.188     -6.55      2.32  KEEP
+the street is a worse home           0.0374   0.172     -4.41      1.64  remove
+recovery is harder on the street     0.0361   0.171     -4.33      1.53  remove
+recovery happens at all              0.0357   0.171     -4.25      1.59  remove
+a small unit exists                  0.0277   0.161     -8.65      3.20  KEEP
+income support is only half as generous 0.0365   0.172     -4.10      1.27  remove
+income support is uncapped           0.0359   0.171     -4.32      1.52  remove
+households can save                  0.0325   0.167     -3.35      2.81  KEEP
+life is worth much                   0.3803   0.397    -41.75     27.83  KEEP
+--------------------------------------------------------------------------------
+   r_use below one is result 1. The last two columns are result 2:
+   a large negative value of life effect and a large positive moral
+   hazard that nearly cancel.

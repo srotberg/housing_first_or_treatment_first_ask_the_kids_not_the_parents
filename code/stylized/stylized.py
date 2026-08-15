@@ -51,14 +51,25 @@ THE ENVIRONMENT
             what happens in the data and what the full model's housing grid is
             for.
 
-THE CHANNELS, AND THE RULE THEY HAVE TO SATISFY
+THE CHANNELS THAT SURVIVED
 
-    MORTALITY  kap          the disorder kills you
-               kapH         it can put you on the street, which also kills you
-    RESOURCE   u1           it costs you a job
-               h_hl         and on the street housing services fall from a
-                            whole unit to almost nothing
-    PERSISTENCE rho_mult_hl recovery is harder on the street
+    MORTALITY  kap    the disorder kills you
+    UNEMPLOYMENT  u1     it costs you a job, and income support cannot cover rent
+               h_hl   so you may end up on the street, where housing services
+                      fall from a whole unit to almost nothing
+
+Two channels were built and then removed because, after the model was FULLY
+recalibrated without them, neither result moved:
+
+    the street raises mortality        homelessness is a third of one per cent
+    recovery is harder on the street   of the population, so a channel acting
+                                       only on the homeless cannot move an
+                                       aggregate
+
+Both stay in the FULL model, where mortality and welfare are the objects of
+interest and the counterfactuals move the homeless population a long way. They
+are absent here because this model answers two questions and they bear on
+neither.
 
 EVERY CHANNEL HERE EXISTS IN THE FULL MODEL. That is a constraint, not a
 coincidence. A stylised model that rests on a shock the full model does not use
@@ -89,16 +100,14 @@ class P:
     # the disorder
     lam   = 25.0      # addiction hazard per unit of use. CALIBRATED
     rho   = 0.40      # recovery when housed, over one period
-    rho_mult_hl = 0.50   # recovery multiplier on the street
     kap   = 0.45      # MORTALITY: the disorder kills you
-    kapH  = 0.35      # MORTALITY: the street kills you
     u1    = 0.1625    # RESOURCE: the disorder costs you a job. Measured.
 
     # NO WAGE PENALTY. The full model has prod_pen_d and sets it to 1.00, which
     # is off, because the evidence on a wage penalty conditional on working is
     # contested while the robust findings are on the employment margin. A
     # stylised model must not rest on a shock the model it introduces does not
-    # use, so the resource channel here is unemployment alone.
+    # use, so the only consequence besides mortality here is unemployment.
 
     # employment and the safety net
     u0    = 0.049     # unemployment probability when clean
@@ -216,9 +225,9 @@ def solve_late(par, y, policy):
             best = np.full(par.na, -np.inf); onst = np.zeros(par.na)
             rnt = np.zeros(par.na)
             for h, rent, street in _options(par, rmul):
-                r = par.rho * (par.rho_mult_hl if street else 1.0) if d else 0.0
+                r = par.rho if d else 0.0
                 EV3 = (1.0 - r) * V3[:, d] + r * V3[:, 0]
-                surv = par.phi0 * (1.0 - par.kap * d) * (1.0 - par.kapH * street)
+                surv = par.phi0 * (1.0 - par.kap * d)
                 c = cash - rent - ag[None, :]
                 v = np.where(c > 1e-9,
                              np.log(np.maximum(c, 1e-12)) + par.gam * np.log(h)

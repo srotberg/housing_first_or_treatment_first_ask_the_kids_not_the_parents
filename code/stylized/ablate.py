@@ -31,10 +31,11 @@ from calibrate import calibrate, stats
 CHANNELS = [
     ('nothing removed', {}),
     ('the disorder kills you', dict(kap=0.0)),
-    ('the street kills you', dict(kapH=0.0)),
     ('the disorder costs you a job', dict(u1=P.u0)),
-    ('the street is a worse home', dict(h_hl=P.h_sm)),
-    ('recovery is harder on the street', dict(rho_mult_hl=1.0)),
+    # h_hl is CALIBRATED, so setting it here and then recalibrating simply
+    # resets it and the row measures nothing. It is structural in any case:
+    # without the street being worse than a home there is no homelessness to
+    # explain and no voucher worth having.
     ('recovery happens at all', dict(rho=0.0)),
     ('a small unit exists', dict(h_sm=P.h_lg)),
     ('income support is only half as generous', dict(repl=0.25)),

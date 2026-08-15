@@ -30,7 +30,7 @@ OUT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
 CONFIGS = [
     ('both channels',  {},                                   '#1B3B5F', '-'),
     ('mortality only', dict(u1=P.u0, h_hl=P.h_sm),           '#2C6FAD', '--'),
-    ('resource only',  dict(kap=0.0, kapH=0.0),              '#D9822B', ':'),
+    ('unemployment only',  dict(kap=0.0),                        '#D9822B', ':'),
 ]
 
 
@@ -53,17 +53,17 @@ def save(fig, name):
 
 # Everything the disorder does to you, switched off. Scaling a channel means
 # moving its members from these values to their calibrated ones together.
-OFF = dict(kap=0.0, kapH=0.0, u1=P.u0, h_hl=P.h_sm)
+OFF = dict(kap=0.0, u1=P.u0, h_hl=P.h_sm)
 
 
 def _scaled(base, which, s):
     kw = dict(OFF)
     if which == 'mortality':
-        kw.update(kap=s * base.kap, kapH=s * base.kapH)
+        kw.update(kap=s * base.kap)
     else:
         # the street's housing services belong HERE, not with mortality. An
-        # earlier version had h_hl in the mortality group, which quietly put a
-        # resource penalty inside the mortality curve.
+        # earlier version had h_hl in the mortality group, which quietly put an
+        # unemployment consequence inside the mortality curve.
         kw.update(u1=P.u0 + s * (base.u1 - P.u0),
                   h_hl=P.h_sm * (base.h_hl / P.h_sm) ** s)
     par = with_(base, **kw)
@@ -89,7 +89,7 @@ def fig_who_uses(base):
     fig, ax = plt.subplots(figsize=(7.4, 4.9))
     sc = np.linspace(0.0, 1.0, 11)
     for which, col, ls in (('mortality', '#2C6FAD', '-'),
-                           ('resource', '#D9822B', '--')):
+                           ('unemployment', '#D9822B', '--')):
         r = [stats(_scaled(base, which, s))['r_use'] for s in sc]
         ax.plot(100 * sc, r, ls, color=col,
                 label=f'{which} channel' + (': the disorder kills you' if which == 'mortality'
@@ -110,7 +110,7 @@ def fig_who_uses(base):
              'richer household gives up less utility per dollar. Both '
              'consequences flip that, but not at the\nsame price. The mortality '
              'channel crosses the line at under a fifth of its calibrated '
-             'strength; the resource\nchannel needs about three fifths. The '
+             'strength; the unemployment\nchannel never gets there. The '
              'temptation parameter is recalibrated at every point, so '
              'participation is\n5.13 per cent all along both curves and the only '
              'thing moving is WHICH households use.',
