@@ -37,7 +37,9 @@ CHANNELS = [
     ('recovery is harder on the street', dict(rho_mult_hl=1.0)),
     ('recovery happens at all', dict(rho=0.0)),
     ('a small unit exists', dict(h_sm=P.h_lg)),
-    ('a consumption floor exists', dict(cfloor=1e-4)),
+    ('a consumption floor exists', dict(floor_ratio=1e-3)),
+    ('the floor is generous, above the small rent',
+     dict(floor_ratio=1.30)),
     ('households can save', dict(na=1)),
     ('life is worth much', dict(aleph=0.25)),
 ]
