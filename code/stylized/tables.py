@@ -31,63 +31,55 @@ EXTERNAL = [
         ('beta', r'\beta', 'Discount factor', 'Standard', '{:.2f}'),
         ('R', 'R', 'Gross interest rate', 'Standard', '{:.2f}'),
         (None, r'\sigma', 'Dispersion of log permanent income',
-         r'Variance of log earnings, US cross section, '
-         r'Heathcote, Perri and Violante (2010)', '0.75'),
+         'Heathcote, Perri and Violante (2010)', '0.75'),
         ('phi0', r'\phi_0', 'Survival per period, no disorder',
-         r'CDC life tables, aggregated over the length of a model period',
-         '{:.2f}'),
+         'CDC life tables', '{:.2f}'),
         ('aleph', r'\aleph', 'Flow value of being alive',
-         r'Value of a statistical life of the order in '
-         r'Viscusi and Aldy (2003)', '{:.2f}'),
+         'Viscusi and Aldy (2003)', '{:.2f}'),
         ('gam', r'\gamma', 'Weight on housing services',
-         r'Housing budget share, Consumer Expenditure Survey', '{:.2f}'),
+         'Consumer Expenditure Survey', '{:.2f}'),
         ('th', r'\theta', 'Weight on drug use',
-         r'Set; $\theta$ and $b$ govern the drug term jointly and $b$ is '
-         r'calibrated given $\theta$', '{:.2f}'),
+         r'Set; $b$ is calibrated given it', '{:.2f}'),
     ]),
     ('The disorder', [
         ('rho', r'\rho', 'Recovery probability per period',
-         r'TEDS discharge outcomes, SAMHSA', '{:.2f}'),
+         'SAMHSA, TEDS', '{:.2f}'),
         ('kap', r'\kappa', 'Proportional fall in survival with the disorder',
-         r'Excess mortality with a substance use disorder, '
-         r'Hjorthoj et al. (2023)', '{:.2f}'),
+         r'Hjorth\o j et al. (2023)', '{:.2f}'),
         ('u0', 'u_0', 'Unemployment probability, no disorder',
-         r'BLS, civilian unemployment rate', '{:.3f}'),
+         'BLS', '{:.3f}'),
         ('u1', 'u_1', 'Unemployment probability, with the disorder',
-         r'NSDUH 2024, ages 26 and above, weighted, own calculation',
-         '{:.4f}'),
+         'NSDUH 2024, ages 26 and over, weighted', '{:.4f}'),
     ]),
     ('Income support', [
         ('repl', r'\psi', 'Replacement rate while unemployed',
-         r'Statutory UI replacement rates, DOL', '{:.2f}'),
+         'DOL, statutory UI rates', '{:.2f}'),
         ('ycap', r'\bar y',
          'Cap on the earnings base, multiple of average income',
-         r'State UI weekly benefit maxima, DOL', '{:.2f}'),
+         'DOL, state benefit maxima', '{:.2f}'),
     ]),
     ('The externality on children', [
         (None, r'\delta_d', 'Income penalty to a child whose parent acquires '
          'the disorder',
-         r"Ratio of a child's disorder rate to a child of a clean parent's, "
-         r'target $2.4$; McGovern et al. (2023)', '0.30'),
+         r'Transmission ratio $2.4$; McGovern et al. (2023)', '0.30'),
         (None, r'\delta_h', 'Income penalty to a child whose parent is homeless',
-         r'Adult earnings gain from a childhood move to a low poverty '
-         r'neighbourhood; Chetty, Hendren and Katz (2016)', '0.31'),
+         'Chetty, Hendren and Katz (2016)', '0.31'),
     ]),
     ('Housing, drugs and the voucher', [
         ('pr', 'p_r', 'Rent per unit of housing services', 'Numeraire',
          '{:.2f}'),
         ('p_v', 'p_v', 'Price of a unit of drugs',
-         'Units of $v$ are defined so that one unit costs one', '{:.2f}'),
+         'Normalisation of the units of $v$', '{:.2f}'),
         ('h_lg', 'h_L', 'Standard rental unit',
-         r'Median gross rent over median income, ACS 2023', '{:.3f}'),
+         'ACS 2023, rent over income', '{:.3f}'),
         ('h_sm', 'h_S', 'Small rental unit', 'Half the standard unit',
          '{:.3f}'),
         ('kappa_r', r'\kappa_r', "Tenant's share of the rent when covered",
-         r'Housing Choice Voucher rules, 30 per cent of income', '{:.2f}'),
+         'HUD voucher rules', '{:.2f}'),
         ('yV', 'y_V', 'Voucher means test, multiple of average income',
-         r'HUD income limits for voucher eligibility', '{:.2f}'),
+         'HUD income limits', '{:.2f}'),
         ('pV', r'\pi_V', 'Voucher generosity in the baseline',
-         r'Share of eligible households actually assisted, HUD', '{:.2f}'),
+         'HUD, share of eligible assisted', '{:.2f}'),
     ]),
 ]
 
@@ -102,7 +94,8 @@ INTERNAL = [
 
 
 def tab_external(base):
-    L = [r'\small', r'\begin{tabular}{@{}cL{5.0cm}L{5.4cm}r@{}}', r'\toprule',
+    L = [r'\footnotesize', r'\begin{tabular}{@{}cL{7.0cm}L{4.6cm}r@{}}',
+         r'\toprule',
          r'Parameter & Description & Source or rationale & Value \\',
          r'\midrule']
     for k, (head, rows) in enumerate(EXTERNAL):
@@ -119,7 +112,8 @@ def tab_external(base):
 def tab_internal(base):
     from calibrate import TARGET
     m = stats(base)
-    L = [r'\small', r'\begin{tabular}{@{}cL{4.2cm}L{4.2cm}rrr@{}}', r'\toprule',
+    L = [r'\footnotesize', r'\begin{tabular}{@{}cL{4.6cm}L{4.6cm}rrr@{}}',
+         r'\toprule',
          r'Parameter & Description & Target moment & Data & Model & Value \\',
          r'\midrule']
     for attr, sym, desc, mom, key, mfmt, vfmt in INTERNAL:
