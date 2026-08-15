@@ -857,6 +857,34 @@
         type(jagged_matrix_real_income), dimension(1:2) :: income_matrix,income_matrix_saved
            
         integer, parameter :: max_CPUs=40
+
+        ! HOISTING THE EXPECTATION OUT OF THE a' LOOP.
+        !
+        ! The conditional expected continuation value
+        !
+        !     EV(a') = sum over e', d', u', eta' of  Pr(.) * V_{j+1}(a', ...)
+        !
+        ! depends on the current state, on the chosen housing and drug regime,
+        ! and on a'. It does NOT depend on current assets, except through the
+        ! binary voucher eligibility indicator has_opportunity. The Bellman loop
+        ! nevertheless recomputes it once per CURRENT asset gridpoint, 91 times
+        ! for renters, and again across housing branches.
+        !
+        ! So it is tabulated instead: once per (drug regime, chosen housing,
+        ! eligibility) for each thread, and read as a lookup thereafter. The
+        ! table is invalidated whenever the outer state changes, which is
+        ! detected inside the subroutine from the module level loop indices, so
+        ! nothing in the calling code has to move.
+        !
+        ! THIS IS EXACT, not an approximation: the same terms are summed in the
+        ! same order, once instead of ninety one times. It is verified by
+        ! solving several ages with the tabulation on and off and comparing the
+        ! value function.
+        integer, parameter :: hoist_expectation=1
+        integer, parameter :: ev_addiction_top=2
+        real(8), allocatable, dimension(:,:,:,:,:) :: ev_table
+        logical, allocatable, dimension(:,:,:,:) :: ev_table_valid
+        integer, allocatable, dimension(:,:) :: ev_table_key
            
         type(jagged_matrix_cpu_real), dimension(1:2) :: distribution_implied_private
            
@@ -9507,9 +9535,98 @@
                                 
     end subroutine
     
+    subroutine fill_ev_table(time_period,evx_slot,evx_fai,&
+        evx_fhsi,evx_fhsu,&
+        evx_homeless,evx_opp,evx_vidx,&
+        evx_fv,evx_sv,evx_loopadd,evx_addidx)
+
+        ! Tabulate EV(a') for one (drug regime, chosen housing, eligibility)
+        ! triple. The body is the same four deep sum the Bellman loop used to
+        ! run inside the a' loop, with a' moved to the outside, so every term
+        ! and every loop bound is identical.
+
+        use Global_Vars
+
+        implicit none
+
+        integer, intent(in) :: time_period,evx_slot,evx_fai,&
+            evx_fhsi,evx_fhsu,&
+            evx_homeless,evx_opp,evx_vidx,&
+            evx_fv,evx_sv,evx_loopadd,evx_addidx
+
+        integer :: ffi_1,fei_1,fai_1,fui_1,fvi_1,evx_check
+        real(8) :: acc
+
+        do ffi_1=negative_financial_grid_size,financial_grid_size
+
+            acc=0
+
+            do fei_1=at_least_one_period_before_retirement*employment_index+&
+                (1-at_least_one_period_before_retirement)*1,&
+                at_least_one_period_before_retirement*employment_index+&
+                (1-at_least_one_period_before_retirement)*employment_grid_size
+
+                if (employment_process(age_index,employment_index,fei_1)<=0.d0) cycle
+
+                do fai_1=(1-evx_loopadd)*evx_fai+evx_loopadd*0,&
+                    (1-evx_loopadd)*evx_fai+evx_loopadd*include_addiction
+
+                    evx_check=0
+
+                    if (fai_1==1) then
+
+                        evx_check=1
+
+                    end if
+
+                    do fui_1=include_addiction*&
+                        ((1-evx_check)*1+evx_check*(threshold_addiction_index+1))+&
+                        (1-include_addiction)*(at_least_one_period_before_retirement*&
+                        (one_period_before_death*1+(1-one_period_before_death)*unemployment_index)+&
+                        (1-at_least_one_period_before_retirement)*1),include_addiction*&
+                        ((1-evx_check)*threshold_addiction_index+evx_check*unemployment_grid_size)+&
+                        (1-include_addiction)*(at_least_one_period_before_retirement*&
+                        (one_period_before_death*unemployment_grid_size+&
+                        (1-one_period_before_death)*unemployment_index)+&
+                        (1-at_least_one_period_before_retirement)*unemployment_grid_size)
+
+                        do fvi_1=evx_fv,evx_sv
+
+                            acc=acc+discount_factor*&
+                                survival_probability(age_index,evx_homeless,evx_addidx)*&
+                                voucher_probabilities(voucher_index,fvi_1,&
+                                evx_opp,evx_vidx)*&
+                                employment_process(age_index,employment_index,fei_1)*&
+                                unemployment_process(age_index,unemployment_index,&
+                                fui_1,evx_homeless,fai_1,employment_index)*&
+                                addiction_probabilities_percieved(evx_addidx,fai_1,&
+                                evx_fai,evx_homeless)*&
+                                value_function(1)%vector_transition_real&
+                                (min(time_period+solve_transition_dynamics,transition_length),age_index+1,&
+                                ffi_1,fui_1,fei_1,evx_fhsu,fvi_1)
+
+                        end do
+
+                    end do
+
+                end do
+
+            end do
+
+            ev_table(ffi_1,evx_fai,evx_fhsi,&
+                evx_opp,evx_slot)=acc
+
+        end do
+
+        ev_table_valid(evx_fai,evx_fhsi,&
+            evx_opp,evx_slot)=.TRUE.
+
+    end subroutine
+
     subroutine renter_to_renter_problem(time_period,financial_index)
     
         use Global_Vars
+        !$ use omp_lib
         
         implicit none
         
@@ -9518,7 +9635,7 @@
             future_housing_status_index_to_use,is_working_1,is_homeless_1,x_1,addiction_index,&
             global_search_index,optimal_financial_1,loop_over_addiction_1,check_1,allow_to_choose_addiction,&
             first_voucher_index,second_voucher_index,has_opportunity_1,can_consume_drugs,voucher_index_1,&
-            allow_to_choose_homelessness
+            allow_to_choose_homelessness,ev_slot
         real(8) :: labor_supply_1,labor_supply_2
         
         allow_to_choose_homelessness=1
@@ -9743,6 +9860,54 @@
                             
                         end if
                         
+                        ! THE TABULATED PATH. The sum below depends on a' only
+                        ! through the value function lookup, so it is computed
+                        ! once per (drug regime, chosen housing, eligibility) and
+                        ! read here. The table is invalidated whenever the outer
+                        ! state moves, detected from the module level loop
+                        ! indices, so the calling code is untouched. The original
+                        ! nest is kept and runs when the switch is off, which is
+                        ! what makes the two comparable.
+                        if (hoist_expectation==1) then
+
+                            ev_slot=1
+                            !$ ev_slot=omp_get_thread_num()+1
+
+                            if ((ev_table_key(1,ev_slot)/=age_index) .OR. &
+                                (ev_table_key(2,ev_slot)/=employment_index) .OR. &
+                                (ev_table_key(3,ev_slot)/=unemployment_index) .OR. &
+                                (ev_table_key(4,ev_slot)/=voucher_index) .OR. &
+                                (ev_table_key(5,ev_slot)/=housing_status_index) .OR. &
+                                (ev_table_key(6,ev_slot)/=years_left_on_mortgage_index)) then
+
+                                ev_table_valid(:,:,:,ev_slot)=.FALSE.
+                                ev_table_key(1,ev_slot)=age_index
+                                ev_table_key(2,ev_slot)=employment_index
+                                ev_table_key(3,ev_slot)=unemployment_index
+                                ev_table_key(4,ev_slot)=voucher_index
+                                ev_table_key(5,ev_slot)=housing_status_index
+                                ev_table_key(6,ev_slot)=years_left_on_mortgage_index
+
+                            end if
+
+                            if (.NOT. ev_table_valid(future_addiction_index,&
+                                future_housing_status_index,has_opportunity_1,ev_slot)) then
+
+                                call fill_ev_table(time_period,ev_slot,future_addiction_index,&
+                                    future_housing_status_index,future_housing_status_index_to_use,&
+                                    is_homeless_1,has_opportunity_1,voucher_index_1,&
+                                    first_voucher_index,second_voucher_index,loop_over_addiction_1,&
+                                    addiction_index)
+
+                            end if
+
+                            future_utility_vector(future_financial_index)=&
+                                future_utility_vector(future_financial_index)+&
+                                ev_table(future_financial_index,future_addiction_index,&
+                                future_housing_status_index,has_opportunity_1,ev_slot)
+
+                        else
+
                         do future_employment_index=&
                             at_least_one_period_before_retirement*employment_index+&
                             (1-at_least_one_period_before_retirement)*1,&
@@ -9804,6 +9969,8 @@
                             end do
                             
                         end do
+                        
+                        end if
                                                                        
                         value_function_renter_renter=flow_utility_vector(future_financial_index)+&
                             future_utility_vector(future_financial_index)
@@ -21774,6 +21941,19 @@
                 vector_real_income(life_span+1,1:financial_grid_size,unemployment_grid_size,employment_grid_size,&
                 lowest_housing_grid_point:housing_status_grid_size-1,0:include_vouchers))
         
+            if (.NOT. allocated(ev_table)) then
+
+                allocate(ev_table(negative_financial_grid_size:financial_grid_size,&
+                    0:ev_addiction_top,lowest_housing_grid_point:housing_status_grid_size,0:1,max_CPUs))
+                allocate(ev_table_valid(0:ev_addiction_top,&
+                    lowest_housing_grid_point:housing_status_grid_size,0:1,max_CPUs))
+                allocate(ev_table_key(6,max_CPUs))
+
+                ev_table_valid=.FALSE.
+                ev_table_key=-999999
+
+            end if
+
             allocate(value_function(i)%&
                 vector_transition_real(transition_length,life_span+1,is_owner*1+(1-is_owner)*negative_financial_grid_size:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
