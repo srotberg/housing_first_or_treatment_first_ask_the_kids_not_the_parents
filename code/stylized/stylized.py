@@ -107,7 +107,7 @@ class P:
     # SHARES THAT SUM TO ONE. The weight on consumption is 1-gam-th, so gam is
     # the housing budget share proper rather than gam/(1+gam+th). gam is set to
     # 0.25 of non drug spending, which is the share in the data.
-    th    = 0.20      # weight on drug use. RAISED from 0.11: see calibrate.py
+    th    = 0.11      # weight on drug use
     b     = 0.009     # Stone Geary subsistence; th/b is the pull of the first unit
     gam   = 0.2225    # weight on housing = 0.25 * (1 - th)
     # A PERIOD IS TWENTY YEARS, so the discount factor and the interest rate
