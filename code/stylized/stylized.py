@@ -104,16 +104,23 @@ import numpy as np
 
 class P:
     # preferences
+    # SHARES THAT SUM TO ONE. The weight on consumption is 1-gam-th, so gam is
+    # the housing budget share proper rather than gam/(1+gam+th). gam is set to
+    # 0.25 of non drug spending, which is the share in the data.
     th    = 0.11      # weight on drug use
     b     = 0.009     # Stone Geary subsistence; th/b is the pull of the first unit
-    gam   = 0.25      # weight on housing. CALIBRATED to the housing budget share
+    gam   = 0.2225    # weight on housing = 0.25 * (1 - th)
     beta  = 0.96
     R     = 1.03
     phi0  = 0.93      # survival over one period, clean, employed, housed
-    # 2.50 is too low to keep every value of life positive: see the block at the
-    # top of calibrate.py. The combinations that do fix it collapse the moral
-    # hazard, so this stays at the working value and the problem stays open.
-    aleph = 2.50      # flow value of being alive
+    # SET SO THAT NO HOUSEHOLD HAS A NEGATIVE VALUE OF LIFE. At 2.50 the very
+    # poorest had phi*W2 just below zero, and since dying is worth zero they
+    # then preferred the extra mortality the disorder brings, which inverts the
+    # mechanism. Two other changes did most of the work: weighting consumption
+    # by 1-gam-th damps log c at the bottom by a third, and setting u0 = 0 means
+    # far fewer households are ever at risk of the street, so h_hl calibrates to
+    # 0.0039 rather than 0.00013 and homelessness stops being worse than death.
+    aleph = 2.60      # flow value of being alive
 
     # the disorder
     lam   = 25.0      # addiction hazard per unit of use. CALIBRATED
@@ -128,7 +135,10 @@ class P:
     # use, so the only consequence besides mortality here is unemployment.
 
     # employment and the safety net
-    u0    = 0.049     # unemployment probability when clean
+    # ONLY THE DISORDER BRINGS UNEMPLOYMENT RISK. A clean household keeps its
+    # job, so every route into homelessness runs through the disorder and the
+    # model has one shock rather than two.
+    u0    = 0.0       # unemployment probability when clean
     # LOSING YOUR JOB. Income support replaces the fraction repl of what you used
     # to earn, on an earnings base capped at ycap. A household at or below the
     # mean therefore gets half its own income; one above the mean gets half the
@@ -247,7 +257,8 @@ def solve_late(par, y, policy):
             best = np.full(par.na, -np.inf); sub = np.zeros(par.na)
             for h, rent, street in _options(par, rmul):
                 c = cash - rent
-                v = np.where(c > 1e-9, np.log(np.maximum(c, 1e-12))
+                v = np.where(c > 1e-9,
+                             (1.0 - par.gam - par.th) * np.log(np.maximum(c, 1e-12))
                              + par.gam * np.log(h) + par.aleph, -np.inf)
                 # what the voucher pays on this option: the rest of the market
                 # rent. Zero on the street, which is free to begin with.
@@ -272,7 +283,9 @@ def solve_late(par, y, policy):
             for h, rent, street in _options(par, rmul):
                 c = cash - rent - ag[None, :]
                 obj = np.where(c > 1e-9,
-                               np.log(np.maximum(c, 1e-12)) + par.gam * np.log(h)
+                               (1.0 - par.gam - par.th)
+                               * np.log(np.maximum(c, 1e-12))
+                               + par.gam * np.log(h)
                                + par.aleph + par.beta * surv * EV3[None, :],
                                -np.inf)
                 ia = np.argmax(obj, axis=1)
@@ -312,7 +325,8 @@ def use_choice(par, y, policy=None):
         c = cash - rent
         val = np.maximum(val, np.where(
             c > 1e-9,
-            np.log(np.maximum(c, 1e-12)) + par.gam * np.log(h)
+            (1.0 - par.gam - par.th) * np.log(np.maximum(c, 1e-12))
+            + par.gam * np.log(h)
             + par.aleph + par.beta * par.phi0 * EV2, -np.inf))
     base = val.max(axis=1)
     a_by_v = ag[np.argmax(val, axis=1)]
@@ -338,7 +352,8 @@ def value1(par, y, policy=None):
         cc = c - rent
         val = np.maximum(val, np.where(
             cc > 1e-9,
-            np.log(np.maximum(cc, 1e-12)) + par.gam * np.log(h)
+            (1.0 - par.gam - par.th) * np.log(np.maximum(cc, 1e-12))
+            + par.gam * np.log(h)
             + par.aleph + par.beta * par.phi0 * EV2, -np.inf))
     tot = val.max(axis=1) + par.th * (np.log(par.b + vg) - np.log(par.b))
     return float(tot.max())
