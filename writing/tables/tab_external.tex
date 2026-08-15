@@ -1,0 +1,34 @@
+\small
+\begin{tabular}{@{}cL{5.0cm}L{5.4cm}r@{}}
+\toprule
+Parameter & Description & Source or rationale & Value \\
+\midrule
+\multicolumn{4}{@{}l}{\emph{Preferences and demographics}} \\
+$\beta$ & Discount factor & Standard & $0.96$ \\
+$R$ & Gross interest rate & Standard & $1.03$ \\
+$\sigma$ & Dispersion of log permanent income & US cross section & $0.75$ \\
+$\phi_0$ & Survival per period, no disorder & Life tables over the length of a model period & $0.93$ \\
+$\aleph$ & Flow value of being alive & Set so that the value of a statistical life is of the right order & $2.50$ \\
+$\gamma$ & Weight on housing services & Housing budget share & $0.25$ \\
+$\theta$ & Weight on drug use & Set; $\theta$ and $b$ govern the drug term jointly and $b$ is calibrated given $\theta$ & $0.11$ \\
+\addlinespace
+\multicolumn{4}{@{}l}{\emph{The disorder}} \\
+$\rho$ & Recovery probability per period & Treatment episode data & $0.40$ \\
+$\kappa$ & Proportional fall in survival with the disorder & Excess mortality of people with a substance use disorder & $0.45$ \\
+$u_0$ & Unemployment probability, no disorder & BLS & $0.049$ \\
+$u_1$ & Unemployment probability, with the disorder & NSDUH 2024, ages 26 and above, weighted & $0.1625$ \\
+\addlinespace
+\multicolumn{4}{@{}l}{\emph{Income support}} \\
+$\psi$ & Replacement rate while unemployed & Unemployment insurance replacement rates & $0.50$ \\
+$\bar y$ & Cap on the earnings base, multiple of average income & Benefit caps & $1.00$ \\
+\addlinespace
+\multicolumn{4}{@{}l}{\emph{Housing, drugs and the voucher}} \\
+$p_r$ & Rent per unit of housing services & Numeraire & $1.00$ \\
+$p_v$ & Price of a unit of drugs & Numeraire & $1.00$ \\
+$h_L$ & Standard rental unit & Housing budget share, 21.2 per cent of average income & $0.212$ \\
+$h_S$ & Small rental unit & Half the standard unit & $0.106$ \\
+$\kappa_r$ & Tenant's share of the rent when covered & Voucher rules & $0.30$ \\
+$y_V$ & Voucher means test, multiple of average income & Income limits & $1.00$ \\
+$\pi_V$ & Voucher generosity in the baseline & Share of eligible households covered & $0.27$ \\
+\bottomrule
+\end{tabular}

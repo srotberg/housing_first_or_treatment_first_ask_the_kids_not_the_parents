@@ -79,8 +79,8 @@ life and \new{lognormally distributed across households},
 \log y \sim \mathcal{N}\!\left(-\tfrac{1}{2}\sigma^2,\ \sigma^2\right),
 \qquad \text{so that } \mathbb{E}[y]=1 .
 \end{equation}
-Average income is therefore one, and every quantity below that has the units of
-income is expressed as a multiple of the population average. \new{Households
+Average income is therefore one, and every quantity below that is measured in
+units of income is expressed as a multiple of the population average. \new{Households
 differ in $y$ and in nothing else. There is no heterogeneity in preferences, so
 every household at a given income makes the same choice and drug use is a
 threshold in income rather than a probability. The sharpness is intentional: it
@@ -101,7 +101,10 @@ u(c,h,v) \;=\; \log c \;+\; \gamma \log h
 \item \new{$\gamma>0$ is the weight on housing services. It governs how much
 utility a household loses when it downsizes or loses its home, and therefore
 how much a housing voucher is worth.}
-\item \new{$\theta>0$ is the weight on drug use.}
+\item \new{$\theta>0$ is the weight on drug use. It and $b$ govern the drug
+term jointly: the marginal utility of the $v$th unit is $\theta/(b+v)$, so
+$\theta$ mostly sets how much a user uses while $b$ mostly sets whether anyone
+uses at all. Accordingly $\theta$ is set and $b$ is calibrated.}
 \item \new{$b>0$ is a Stone and Geary shifter on drugs. It is written this way
 for two reasons. First, the term is normalised to zero at $v=0$, so a household
 that does not use drugs is neither rewarded nor punished for it and $\aleph$
@@ -272,8 +275,9 @@ $\mathbf{1}\{\text{policy covers } d\}$ in equation~\eqref{eq:vouch}}.
 \item \textbf{Housing First} covers every eligible household \new{regardless of
 the household's disorder status}, so the indicator is one for both $d=0$ and
 $d=1$.
-\item \textbf{Treatment First} covers only households that are clean
-\new{($v=0$, so $d=0$)}, so the indicator is one for $d=0$ and zero for $d=1$.
+\item \textbf{Treatment First} covers only households that are clean,
+\new{meaning those for which the disorder has not been realised ($d=0$)}, so the
+indicator is one for $d=0$ and zero for $d=1$.
 \end{itemize}
 
 \new{The only thing Housing First adds to Treatment First is cover in the
@@ -343,50 +347,7 @@ one is matched to and the fit.}
 \begin{table}[htbp]
 \centering
 \caption{\new{Externally set parameters}}\label{tab:ext}
-\small
-\begin{tabular}{@{}cL{5.0cm}L{5.4cm}r@{}}
-\toprule
-Parameter & Description & Source or rationale & Value \\
-\midrule
-\multicolumn{4}{@{}l}{\emph{Preferences and demographics}} \\
-$\beta$   & Discount factor & Standard & $0.96$ \\
-$R$       & Gross interest rate & Standard & $1.03$ \\
-$\sigma$  & Dispersion of log permanent income & US cross section & $0.75$ \\
-$\phi_0$  & Survival per period, no disorder & Life tables over the length of a
-model period & $0.93$ \\
-$\aleph$  & Flow value of being alive & Set so that the value of a statistical
-life is of the right order & $2.50$ \\
-$\gamma$  & Weight on housing services & Housing budget share & $0.25$ \\
-$\theta$  & Weight on drug use & Normalisation; $b$ carries the identification
-of the participation margin & $0.11$ \\
-\addlinespace
-\multicolumn{4}{@{}l}{\emph{The disorder}} \\
-$\rho$    & Recovery probability per period & Treatment episode data & $0.40$ \\
-$\kappa$  & Proportional fall in survival with the disorder & Excess mortality
-of people with a substance use disorder & $0.45$ \\
-$u_0$     & Unemployment probability, no disorder & BLS & $0.049$ \\
-$u_1$     & Unemployment probability, with the disorder & NSDUH 2024, ages 26
-and above, weighted & $0.1625$ \\
-\addlinespace
-\multicolumn{4}{@{}l}{\emph{Income support}} \\
-$\psi$    & Replacement rate while unemployed & Unemployment insurance
-replacement rates & $0.50$ \\
-$\bar y$  & Cap on the earnings base, multiple of average income & Benefit caps
-& $1.00$ \\
-\addlinespace
-\multicolumn{4}{@{}l}{\emph{Housing, drugs and the voucher}} \\
-$p_r$     & Rent per unit of housing services & Numeraire & $1.00$ \\
-$p_v$     & Price of a unit of drugs & Numeraire & $1.00$ \\
-$h_L$     & Standard rental unit & Housing budget share, $21.2$ per cent of
-average income & $0.212$ \\
-$h_S$     & Small rental unit & Half the standard unit & $0.106$ \\
-$\kappa_r$ & Tenant's share of the rent when covered & Voucher rules & $0.30$ \\
-$y_V$     & Voucher means test, multiple of average income & Income limits &
-$1.00$ \\
-$\pi_V$   & Voucher generosity in the baseline & Share of eligible households
-covered & $0.27$ \\
-\bottomrule
-\end{tabular}
+\input{tables/tab_external}
 \notes{0.94\textwidth}{\new{Note: rent per unit of housing services is the numeraire, so a unit's
 size and its rent at market price are the same number and both are expressed as
 a share of average income. Average income is one by construction.
@@ -397,19 +358,7 @@ the baseline used everywhere else.}}
 \begin{table}[htbp]
 \centering
 \caption{\new{Internally calibrated parameters and their targets}}\label{tab:int}
-\small
-\begin{tabular}{@{}cL{4.2cm}L{4.2cm}rrr@{}}
-\toprule
-Parameter & Description & Target moment & Data & Model & Value \\
-\midrule
-$b$      & Pull of the first unit of drugs & Drug participation rate
-& $5.13\%$ & $5.17\%$ & $0.00749$ \\
-$h_0$    & Housing services when homeless & Homelessness rate
-& $0.399\%$ & $0.42\%$ & $0.00043$ \\
-$\lambda$ & Addiction hazard per unit of use & Share of users who acquire the
-disorder & $33.2\%$ & $33.2\%$ & $58.8$ \\
-\bottomrule
-\end{tabular}
+\input{tables/tab_internal}
 \notes{0.94\textwidth}{\new{Note: the three parameters are calibrated jointly, but each is
 bracketed on the moment it moves most. The mapping is close to triangular: $b$
 shifts the drug participation rate with little effect on the other two, $h_0$

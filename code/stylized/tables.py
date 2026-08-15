@@ -24,6 +24,100 @@ def write(name, body):
     print(f'   wrote {name}')
 
 
+# Every externally set parameter, with the attribute it is read from so the
+# note can never quote a value the model does not use.
+EXTERNAL = [
+    ('Preferences and demographics', [
+        ('beta', r'\beta', 'Discount factor', 'Standard', '{:.2f}'),
+        ('R', 'R', 'Gross interest rate', 'Standard', '{:.2f}'),
+        (None, r'\sigma', 'Dispersion of log permanent income',
+         'US cross section', '0.75'),
+        ('phi0', r'\phi_0', 'Survival per period, no disorder',
+         'Life tables over the length of a model period', '{:.2f}'),
+        ('aleph', r'\aleph', 'Flow value of being alive',
+         'Set so that the value of a statistical life is of the right order',
+         '{:.2f}'),
+        ('gam', r'\gamma', 'Weight on housing services',
+         'Housing budget share', '{:.2f}'),
+        ('th', r'\theta', 'Weight on drug use',
+         r'Set; $\theta$ and $b$ govern the drug term jointly and $b$ is '
+         r'calibrated given $\theta$', '{:.2f}'),
+    ]),
+    ('The disorder', [
+        ('rho', r'\rho', 'Recovery probability per period',
+         'Treatment episode data', '{:.2f}'),
+        ('kap', r'\kappa', 'Proportional fall in survival with the disorder',
+         'Excess mortality of people with a substance use disorder', '{:.2f}'),
+        ('u0', 'u_0', 'Unemployment probability, no disorder', 'BLS', '{:.3f}'),
+        ('u1', 'u_1', 'Unemployment probability, with the disorder',
+         'NSDUH 2024, ages 26 and above, weighted', '{:.4f}'),
+    ]),
+    ('Income support', [
+        ('repl', r'\psi', 'Replacement rate while unemployed',
+         'Unemployment insurance replacement rates', '{:.2f}'),
+        ('ycap', r'\bar y',
+         'Cap on the earnings base, multiple of average income',
+         'Benefit caps', '{:.2f}'),
+    ]),
+    ('Housing, drugs and the voucher', [
+        ('pr', 'p_r', 'Rent per unit of housing services', 'Numeraire',
+         '{:.2f}'),
+        ('p_v', 'p_v', 'Price of a unit of drugs', 'Numeraire', '{:.2f}'),
+        ('h_lg', 'h_L', 'Standard rental unit',
+         'Housing budget share, 21.2 per cent of average income', '{:.3f}'),
+        ('h_sm', 'h_S', 'Small rental unit', 'Half the standard unit',
+         '{:.3f}'),
+        ('kappa_r', r'\kappa_r', "Tenant's share of the rent when covered",
+         'Voucher rules', '{:.2f}'),
+        ('yV', 'y_V', 'Voucher means test, multiple of average income',
+         'Income limits', '{:.2f}'),
+        ('pV', r'\pi_V', 'Voucher generosity in the baseline',
+         'Share of eligible households covered', '{:.2f}'),
+    ]),
+]
+
+INTERNAL = [
+    ('b', 'b', 'Pull of the first unit of drugs', 'Drug participation rate',
+     'part', '{:.2%}', '{:.5f}'),
+    ('h_hl', 'h_0', 'Housing services when homeless', 'Homelessness rate',
+     'homeless', '{:.3%}', '{:.5f}'),
+    ('lam', r'\lambda', 'Addiction hazard per unit of use',
+     'Share of users who acquire the disorder', 'prog', '{:.1%}', '{:.1f}'),
+]
+
+
+def tab_external(base):
+    L = [r'\small', r'\begin{tabular}{@{}cL{5.0cm}L{5.4cm}r@{}}', r'\toprule',
+         r'Parameter & Description & Source or rationale & Value \\',
+         r'\midrule']
+    for k, (head, rows) in enumerate(EXTERNAL):
+        if k:
+            L.append(r'\addlinespace')
+        L.append(r'\multicolumn{4}{@{}l}{\emph{%s}} \\' % head)
+        for attr, sym, desc, src, fmt in rows:
+            val = fmt if attr is None else fmt.format(getattr(base, attr))
+            L.append(f'${sym}$ & {desc} & {src} & ${val}$ \\\\')
+    L += [r'\bottomrule', r'\end{tabular}']
+    write('tab_external.tex', '\n'.join(L) + '\n')
+
+
+def tab_internal(base):
+    from calibrate import TARGET
+    m = stats(base)
+    L = [r'\small', r'\begin{tabular}{@{}cL{4.2cm}L{4.2cm}rrr@{}}', r'\toprule',
+         r'Parameter & Description & Target moment & Data & Model & Value \\',
+         r'\midrule']
+    for attr, sym, desc, mom, key, mfmt, vfmt in INTERNAL:
+        L.append(f'${sym}$ & {desc} & {mom} & '
+                 f'{mfmt.format(TARGET[key]).replace("%", chr(92) + "%")} & '
+                 f'{mfmt.format(m[key]).replace("%", chr(92) + "%")} & '
+                 f'${vfmt.format(getattr(base, attr))}$ \\\\')
+        print(f'   {attr}: target {TARGET[key]:.5f}  model {m[key]:.5f}  '
+              f'value {getattr(base, attr):.6g}')
+    L += [r'\bottomrule', r'\end{tabular}']
+    write('tab_internal.tex', '\n'.join(L) + '\n')
+
+
 def tab_channels(base):
     """b and the income ratio, both channels, at five strengths."""
     sc = [0.0, 0.25, 0.50, 0.75, 1.0]
@@ -82,5 +176,7 @@ def tab_policy(base):
 if __name__ == '__main__':
     base = with_(P(), **json.load(open('calibrated.json')))
     print('tables')
+    tab_external(base)
+    tab_internal(base)
     tab_channels(base)
     tab_policy(base)
