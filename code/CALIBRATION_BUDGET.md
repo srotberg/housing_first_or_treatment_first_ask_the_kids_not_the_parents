@@ -206,20 +206,20 @@ ninety and comparing the targeted moments and both counterfactuals.
 
     per pass, from the measured 51 minutes
       asset grid 90 to 50                  3.2x
-      housing state removed                2.5x
+      housing state removed                2x
       owner branch removed                 2x
       housing choice grid 7 to 3           2.3x
       income grid 9 to 7                   1.3x
                                           -----
-                                            48x  ->  about 1 minute a pass
+                                            38x  ->  about 80 seconds a pass
 
     per calibration
       secant where the moment is smooth     3x   ->  550 evaluations
       no drug price loop                    2x
       equilibrium closed once per sweep    included above
 
-    550 x 1.2 x 1 min  =  11 hours on four cores
-                       =  about 1 hour on forty
+    550 x 1.2 x 80 s  =  15 hours on four cores
+                      =  about 1.5 hours on forty
 
 **Eleven hours on this container.** That is the target met with room to spare,
 and every factor except the asset grid is exact.
