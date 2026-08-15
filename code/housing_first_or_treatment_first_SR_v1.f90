@@ -16985,8 +16985,20 @@
                 addiction_probabilities(0,include_addiction,1,:)=probability_of_becoming_addicted_if_experiment
                 addiction_probabilities(0,0,1,:)=1-probability_of_becoming_addicted_if_experiment
                 
-                addiction_probabilities(0,include_addiction,2,:)=increased_probability_of_becoming_addicted_if_heavy_user
-                addiction_probabilities(0,0,2,:)=1-increased_probability_of_becoming_addicted_if_heavy_user
+                ! The heavy use row only EXISTS while the split does: the third
+                ! dimension is 0:include_addiction+include_heavy_vs_light_use_transitions,
+                ! so with the regimes collapsed index 2 is off the end of the
+                ! array. Writing to it was an out of bounds store that the
+                ! compiler caught and that nothing at run time would have.
+                if (include_heavy_vs_light_use_transitions==1) then
+
+                    addiction_probabilities(0,include_addiction,&
+                        include_heavy_vs_light_use_transitions+1,:)=&
+                        increased_probability_of_becoming_addicted_if_heavy_user
+                    addiction_probabilities(0,0,include_heavy_vs_light_use_transitions+1,:)=&
+                        1-increased_probability_of_becoming_addicted_if_heavy_user
+
+                end if
                 
             else
             
