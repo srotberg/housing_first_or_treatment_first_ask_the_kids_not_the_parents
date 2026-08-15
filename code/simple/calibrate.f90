@@ -730,13 +730,28 @@ end subroutine bisect_on
 ! response to these is second order once the level is close.
 !===============================================================================
 subroutine polish_levels(nbis)
+    !===========================================================================
+    ! ORDER MATTERS HERE, AND GETTING IT WRONG COST THREE HOURS.
+    !
+    ! b and pi_d_low are not separable. b sets how tempting the first unit of
+    ! drugs is, pi_d_low sets how likely use is to become a disorder, and BOTH
+    ! move participation AND the SUD rate. Bracketing b on participation first
+    ! and pi_d_low on the SUD rate second means the second bracket undoes the
+    ! first: pushing pi_d_low down to hit a SUD target makes use cheap, and
+    ! participation walked from 5.13 per cent to 58.9.
+    !
+    ! Whichever bracket runs LAST is the one that holds, so participation runs
+    ! last: it is the moment with the tightest tolerance and the one every
+    ! composition moment is conditioned on. Three rounds rather than two, so
+    ! the SUD rate has a chance to come back after participation moves it.
+    !===========================================================================
     integer, intent(in) :: nbis
     integer :: round
-    do round = 1, 2
-        call bisect_on(1, mom(1)%target,  nbis)   ! b          -> participation
+    do round = 1, 3
         call bisect_on(7, mom(2)%target,  nbis)   ! pi_d_low   -> SUD rate
         call bisect_on(2, mom(3)%target,  nbis)   ! h_homeless -> homelessness
         call bisect_on(8, mom(24)%target, nbis)   ! b_dm(2,1)  -> abstention
+        call bisect_on(1, mom(1)%target,  nbis)   ! b -> participation, LAST
         ! 8 rather than 12: prices barely move between polish rounds, so the
         ! extra iterations bought precision on an object already converged
         call solve_equilibrium(8, 3.0e-3_dp, .false.)
@@ -755,6 +770,38 @@ subroutine save_params(v)
           di_coverage, kappa_ue_m, prod_pen_m, beta, cfloor_share, mh_b_ratio, &
           h_spread, treat_ucost, mh_onset, prod_pen_d, b_dm(2,1) ]
 end subroutine save_params
+
+!-- persist the best vector, so a container restart costs minutes not hours ---
+subroutine write_params(v, path)
+    real(dp), intent(in) :: v(NPAR)
+    character(len=*), intent(in) :: path
+    integer :: u, i
+    open(newunit=u, file=path, status='replace', action='write')
+    do i = 1, NPAR
+        write(u,'(ES24.16)') v(i)
+    end do
+    close(u)
+end subroutine write_params
+
+logical function read_params(v, path)
+    real(dp), intent(out) :: v(NPAR)
+    character(len=*), intent(in) :: path
+    integer :: u, i, ios
+    logical :: ex
+    read_params = .false.
+    inquire(file=path, exist=ex)
+    if (.not. ex) return
+    open(newunit=u, file=path, status='old', action='read', iostat=ios)
+    if (ios /= 0) return
+    do i = 1, NPAR
+        read(u,*,iostat=ios) v(i)
+        if (ios /= 0) then
+            close(u); return
+        end if
+    end do
+    close(u)
+    read_params = .true.
+end function read_params
 
 subroutine load_params(v)
     real(dp), intent(in) :: v(NPAR)

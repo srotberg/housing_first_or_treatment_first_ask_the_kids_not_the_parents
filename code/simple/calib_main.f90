@@ -42,6 +42,13 @@ program calib_main
     call normalise_drug_supply()
 
     best_gap = 1.0e30_dp
+    ! Resume from the last best vector if one is on disk. Container restarts
+    ! have killed this run four times; without this each one costs the whole
+    ! elapsed calibration rather than the current sweep.
+    if (read_params(best_par, 'calib_best.txt')) then
+        call load_params(best_par)
+        write(*,'(A)') ' resumed from calib_best.txt'
+    end if
     ! Gentler than 0.35. With the level moments now BRACKETED rather than
     ! bumped, the proportional steps only carry composition moments, so there is
     ! no longer any reason to move fast: large steps were what made the sweep
@@ -72,6 +79,7 @@ program calib_main
         if (max_gap() < best_gap) then
             best_gap = max_gap()
             call save_params(best_par)     ! keep the best vector, not the last
+            call write_params(best_par, 'calib_best.txt')
         else
             step = max(0.06_dp, step*0.7_dp)   ! back off when it stops improving
         end if
