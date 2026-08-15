@@ -102,3 +102,73 @@ the biggest prize on the list, and it is the one place where the notches that
 make the objective not single peaked live: voucher eligibility as a step in
 income, the food stamp floor. Those are where the welfare comparison happens and
 the margins are tenths of a per cent.
+
+
+---
+
+# The answer, as of now
+
+Splitting what is measured from what is not, because the difference matters.
+
+## The one measured number
+
+One backward induction pass on four cores, with fixed productivity, the
+collapsed experimentation regimes and the zero probability guards all in:
+**51 minutes**, down from 88. Everything else below is arithmetic on top of it.
+
+## What is shipped but not measured
+
+The asset grid cut, ninety positive points to seventy. Renters loop 61 to 131
+rather than 61 to 151, so 71 points rather than 91, and the a prime search is
+quadratic: **1.65x**, predicted. That takes the pass to about **31 minutes**.
+
+## The calibration on top of a pass
+
+    one solve        = backward pass + distribution iteration      ~1.2 x pass
+    one calibration  = parameter evaluations x one solve
+
+Twenty two internal parameters, about fifteen bisection steps each, five sweeps:
+**1,650 solves**. At 31 minutes a pass that is
+
+    1,650 x 1.2 x 31 min  =  1,023 hours  =  43 days on four cores
+
+Forty cores, if scaling holds at the measured 360 per cent on four:
+**about four days**.
+
+## With the rest of the list done
+
+    housing entered with, as a state      6.6x
+    the owner branch                      2x
+    housing choice grid 7 to 3            1.33x
+                                         -----
+                                          17.5x  ->  pass of 1.8 minutes
+
+    secant instead of bisection            3x    ->  550 solves
+
+    550 x 1.2 x 1.8 min  =  20 hours on four cores
+                         =  about 2 hours on forty
+
+**So: twenty hours on this machine, two on a real one.** That is the target met,
+and none of the three outstanding items costs the model as written anything.
+
+## What could still be wrong with this
+
+Three assumptions, none of them measured.
+
+The distribution iteration at a fifth of a pass. Never timed.
+
+Fifteen bisection steps per parameter and five sweeps. That is my reading of how
+the first stage runs, not something read off the code.
+
+Whether the price loop is nested inside the parameter loop or runs alongside it.
+If it is nested, every number above is five to ten times worse and partial
+equilibrium sweeps become the single most valuable change on the list rather
+than a convenience. **This is the first thing to check**, and it is a ten minute
+job for someone who knows the calibration driver.
+
+## The lever not on this list
+
+Twenty two internally calibrated parameters is the multiplier that dominates
+everything. Halving it halves the calibration, and it is worth asking of each
+one whether it needs to be fitted here or could be assigned, the way theta was
+in the stylized model once the attempt to calibrate it failed honestly.
