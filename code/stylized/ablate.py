@@ -39,7 +39,14 @@ CHANNELS = [
     ('recovery happens at all', dict(rho=0.0)),
     ('a small unit exists', dict(h_sm=P.h_lg)),
     ('income support is only half as generous', dict(repl=0.25)),
-    ('income support is uncapped', dict(ycap=99.0)),
+    # ('income support is uncapped', dict(ycap=99.0)) reads as 'remove' here and
+    # that verdict is WRONG. This table only looks at the BASELINE, where the
+    # mortality channel is on and users are poor, so the cap never binds. In
+    # figure 1 the unemployment channel is scaled up on its own, users are rich,
+    # and the cap is the only thing making the resource penalty less than
+    # proportional to income. Uncapped, that curve is flat at 3.37 by
+    # construction. The lesson is that this table is necessary and not
+    # sufficient: a component also has to be tested where the figures put it.
     ('households can save', dict(na=1)),
     ('life is worth much', dict(aleph=0.25)),
 ]

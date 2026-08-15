@@ -5,13 +5,22 @@
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{array}
+\usepackage[dvipsnames]{xcolor}
 \usepackage[hidelinks]{hyperref}
 
-\setlength{\parskip}{0.35em}
+\setlength{\parskip}{0.3em}
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 
+% Material added or rewritten in response to the comments on the previous
+% draft is set in red.
+\newcommand{\new}[1]{\textcolor{red}{#1}}
+
+% Notes under a float, at the width of the float.
+\newcommand{\notes}[2]{\par\vspace{0.45em}%
+  \begin{minipage}{#1}\footnotesize #2\end{minipage}}
+
 \title{\textbf{Housing First or Treatment First?}\\[0.4em]
-\large A stylised model, before the quantitative one}
+\large A stylized model}
 \author{}
 \date{\today}
 
@@ -19,363 +28,688 @@
 \maketitle
 
 \begin{abstract}
-\noindent The smallest model in which the paper's two questions can be asked.
-Who uses drugs, and why are users poor? And what does housing assistance do to
-drug use? Three periods, one asset, and households that differ in permanent
-income and in nothing else. It is deliberately qualitative: it establishes
-directions and the sign and relative size of two opposing forces. Every
-magnitude in the paper comes from the full model that follows.
+\noindent \new{This section develops the smallest model in which the two main
+questions of the paper are still well posed. Who uses drugs, and why are users
+poor? And how does housing assistance change the decision to use? The model has
+three periods, one asset, and households that differ in permanent income and in
+nothing else. Because it is stylized, I do not use it to evaluate welfare or
+the government budget; every magnitude reported in the paper comes from the
+quantitative model. What the model delivers is a set of qualitative results:
+which feature of the environment reverses the income gradient in drug use, and
+the sign and relative size of the two forces through which a housing voucher
+acts on drug use.}
 \end{abstract}
 
 %======================================================================
-\section{What this model is for}
+\section{A stylized model}\label{sec:what}
 
-The full model has six state variables and roughly forty parameters. That is
-what the welfare and fiscal questions require, and it is far too much machinery
-for a reader to see which piece does the work. This note strips the environment
-to the smallest one in which two questions are still well posed.
+The quantitative model of the paper has six state variables and roughly forty
+parameters. That machinery is what the welfare and fiscal questions require,
+\new{but it makes it hard to see which piece of the environment is doing the
+work.} This \new{section strips the environment down to the smallest one in
+which the two main questions of the paper are still well posed.}
 
 \begin{enumerate}
-\item \textbf{Who uses.} Drug use is concentrated among low income households.
-What produces that, and how strong does it have to be?
-\item \textbf{What housing assistance does.} A voucher pulls drug use in two
-directions at once. Which force is larger?
+\item \textbf{Who \new{uses drugs}.} Drug use is concentrated among low income
+households. \new{What features of the model produce it?}
+\item \textbf{\new{How housing assistance changes decisions}.} A voucher pulls
+drug use in two directions at once. \new{The first is a moral hazard force,
+which raises use, because a household that acquires a substance use disorder is
+housed anyway. The second is a value of life force, which lowers use, because a
+housed future is worth more than a homeless one and using puts that future at
+risk. Which force is larger?}
 \end{enumerate}
 
-Nothing else. No welfare, no government budget, no general equilibrium, no
-validation section. The calibration is rough on purpose. Section~\ref{sec:parts}
-justifies every component by removing it, and section~\ref{sec:cannot} says what
-the model cannot do and why none of it is an accident.
+\new{Because this model is stylized I do not use it to evaluate welfare, the
+government budget, or general equilibrium, and there is no validation section.
+The calibration is deliberately rough: it exists to put the model in the right
+region, not to be defended.} Throughout, each component of the environment is
+justified by removing it, recalibrating the model without it, \new{and showing
+why it matters} for one of the two results.
 
 %======================================================================
-\section{The environment}
+\section{The environment}\label{sec:env}
 
-Three periods. A household has permanent income $y$, fixed, lognormal, and
-differs from other households in nothing else.
+\subsection{Households and preferences}
 
-\paragraph{Period 1.} Employed, in a rented unit. Choose consumption, drug use
-$v\ge0$ and saving, with flow utility
-\[
-\log c \;+\; \gamma \log h \;+\; \theta\big[\log(b+v)-\log b\big].
-\]
-Using risks a substance use disorder next period, with probability $1-e^{-\lambda v}$.
+There are three periods and a continuum of households. A household is
+characterised by its permanent income $y$, which is fixed over the household's
+life and \new{lognormally distributed across households},
+\begin{equation}
+\log y \sim \mathcal{N}\!\left(-\tfrac{1}{2}\sigma^2,\ \sigma^2\right),
+\qquad \text{so that } \mathbb{E}[y]=1 .
+\end{equation}
+Average income is therefore one, and every quantity below that has the units of
+income is expressed as a multiple of the population average. \new{Households
+differ in $y$ and in nothing else. There is no heterogeneity in preferences, so
+every household at a given income makes the same choice and drug use is a
+threshold in income rather than a probability. The sharpness is intentional: it
+lets the exercise in Section~\ref{sec:who} report exactly where the threshold
+sits and how far it moves when a feature of the environment is switched off. It
+also keeps intact the paper's claim to generate the income gradient in drug use
+without assuming ex ante preference heterogeneity, since there is none here
+available to do the work.}
 
-\paragraph{Period 2.} The disorder $d$ is realised. The household is unemployed
-with probability $u_0$, or the higher $u_1$ if $d=1$. Income support replaces
-half of previous earnings, capped at half of average income. Choose housing and
-saving. Recovery is $\rho$.
+\new{Flow utility in a period depends on non durable consumption $c$, housing
+services $h$, and drug consumption $v$,}
+\begin{equation}\label{eq:u}
+u(c,h,v) \;=\; \log c \;+\; \gamma \log h
+\;+\; \theta\big[\log(b+v)-\log b\big] \;+\; \aleph .
+\end{equation}
+\new{The four preference parameters are the following.}
+\begin{itemize}
+\item \new{$\gamma>0$ is the weight on housing services. It governs how much
+utility a household loses when it downsizes or loses its home, and therefore
+how much a housing voucher is worth.}
+\item \new{$\theta>0$ is the weight on drug use.}
+\item \new{$b>0$ is a Stone and Geary shifter on drugs. It is written this way
+for two reasons. First, the term is normalised to zero at $v=0$, so a household
+that does not use drugs is neither rewarded nor punished for it and $\aleph$
+below carries the entire flow value of being alive. Second, and more
+importantly, the marginal utility of the first unit of drugs is $\theta/b$,
+which is finite. Under plain $\theta \log v$ that marginal utility is infinite
+at $v=0$ and every household in the economy uses, whatever the consequences, so
+the model could not produce an interior participation rate at all. A smaller
+$b$ means a stronger pull from the first unit, and $b$ is the parameter that is
+calibrated to the drug participation rate.}
+\item \new{$\aleph>0$ is the flow value of being alive: the utility a household
+receives in a period simply from surviving into it, over and above what it
+consumes. It is what gives mortality risk a cost that does not vanish when
+consumption is low, and it is why the mortality channel of
+Section~\ref{sec:who} bites hardest at the bottom of the income distribution.
+Without it, a poor household with low $c$ and low $h$ would have little to lose
+from dying and the model would produce the opposite gradient.}
+\end{itemize}
 
-\paragraph{Period 3.} Terminal, same risks.
+Households discount the future at rate $\beta$ and save in a single risk free
+asset at gross return $R$, subject to a no borrowing constraint $a'\ge 0$.
 
-\paragraph{Housing.} A large unit, a small unit, or the street. The street is
-free but supplies only $h_{hl}$ of housing services. A voucher arrives with
-probability $\pi_V$ and cuts the tenant's rent.
+\subsection{Timing}
 
-\paragraph{The two policies.} Under Housing First the voucher arrives whatever
-the household's disorder status. Under Treatment First only if it is clean.
-That single difference is the entire policy contrast, and it is what makes the
-decomposition in section~\ref{sec:mh} possible.
+\paragraph{Period 1.} Every household is employed, has no substance use
+disorder, and lives in the standard rental unit. \new{Housing is not a choice
+in this period: nothing has yet happened that could threaten the roof, and the
+rent is the same for every household, so $y$ is to be read as permanent income
+net of the household's period 1 housing commitment.} The household chooses drug
+use $v \ge 0$, consumption, and saving. \new{Using drugs generates the risk of a
+substance use disorder in period 2, which rises with drug use $v$,}
+\begin{equation}\label{eq:hazard}
+\pi(v) \;=\; 1 - e^{-\lambda v}, \qquad \lambda > 0 .
+\end{equation}
+\new{The parameter $\lambda$ is the addiction hazard per unit of use. It is
+calibrated to the share of users who acquire the disorder. The functional form
+matters for the household's problem: because $\pi$ is increasing in $v$, the
+household internalises the fact that using more is riskier, so the intensive and
+extensive margins of drug use are not separate decisions.}
 
-\paragraph{No preference heterogeneity.} Households differ in permanent income
-and in nothing else, so every household at a given income makes the same choice
-and the drug use decision is a \emph{threshold in income} rather than a
-probability. The sharpness is the point. It also keeps intact the paper's claim
-to generate the income gradient without ex ante preference heterogeneity: there
-is none here to do the work.
+\paragraph{Period 2.} \new{For households that used drugs in period 1, a
+substance use disorder $d \in \{0,1\}$ may be realised, with probability
+$\pi(v)$; for households that did not use, it is not.} The household is
+unemployed with probability $u_0$, or with the higher probability $u_1$
+\new{if the disorder is realised}. \new{An unemployed household receives income
+support, described in Section~\ref{sec:support} below.} The household then
+\new{chooses consumption, housing, and savings}. \new{If the disorder is
+realised, the probability of recovering from it by the next period is $\rho$.}
+
+\paragraph{Period 3.} \new{The last period of life. Employment, income support
+and housing work exactly as in period 2, and the household again chooses
+consumption and housing. There is no drug use decision: a household that does
+not already have the disorder has nothing to gain from acquiring one when there
+is no period 4 in which to bear the consequence, and a household that does have
+it consumes and houses itself as best it can.} Assets are run down and nothing
+is bequeathed.
+
+\paragraph{Mortality.} A household survives from one period to the next with
+probability
+\begin{equation}\label{eq:surv}
+\phi(d) \;=\; \phi_0\,(1-\kappa d),
+\end{equation}
+so $\phi_0$ is survival for a household without the disorder and $\kappa$ is
+the proportional reduction in survival caused by it. \new{This is the mortality
+channel, and it turns out to be the single most important feature of the model.}
+
+\subsection{Employment and income support}\label{sec:support}
+
+\new{A household is employed or unemployed in periods 2 and 3. The probability
+of being unemployed is $u_0$ without the disorder and $u_1 > u_0$ with it, so
+the gap $u_1 - u_0$ is the employment cost of the disorder. This is the entire
+resource cost of the disorder in the model. There is no wage penalty conditional
+on working: the quantitative model contains such a parameter and switches it
+off, because the evidence on earnings conditional on employment is contested
+while the robust findings are on the employment margin, and a stylized model
+should not rest on a shock that the model it introduces does not use.}
+
+\new{Income in a period is}
+\begin{equation}\label{eq:inc}
+y_e \;=\;
+\begin{cases}
+y, & \text{if employed},\\[0.25em]
+\psi \cdot \min\{y,\ \bar y\}, & \text{if unemployed},
+\end{cases}
+\end{equation}
+\new{where $\psi$ is the replacement rate and $\bar y$ caps the earnings base
+on which the replacement rate is applied. A household at or below the cap
+therefore receives the fraction $\psi$ of its own income, while a household
+above it receives $\psi \bar y$ regardless of how much it used to earn.}
+
+\new{The level of income support is one of the most consequential numbers in
+the model, and the reason is worth stating. If income support were set above
+the rent on the smallest unit, every household could always afford a home, the
+disorder would never put anyone's roof at risk, a housing voucher would have
+nothing to insure, and the moral hazard force of Section~\ref{sec:mh} would be
+exactly zero. At the calibrated values it delivers half the income of the
+poorest households in the distribution, which is well below the rent on the
+smallest unit, so an unemployed household at the bottom cannot house itself out
+of current income alone and needs either accumulated savings or a voucher. That
+is the link between the disorder and homelessness, and without it the second
+result of this section does not exist.}
+
+\new{The cap $\bar y$ does something different and more subtle, and it matters
+for the first result rather than the second. Without it, income support would be
+exactly proportional to income, and so would the entire resource cost of the
+disorder. A penalty that is proportional to income cannot move a gradient that
+income itself generates: it scales with precisely the thing it is meant to
+offset. The cap breaks the proportionality at the top, so that unemployment is a
+larger fall for a household above average income than for one below it, and it
+is what gives the unemployment channel of Section~\ref{sec:who} any purchase on
+the income gradient at all. Real income support is capped in the same way and
+for the same reason.}
+
+\subsection{Housing and the voucher}
+
+\new{Rental housing is described by a single index of housing services $h$, and
+the rent per unit of housing services, $p_r$, is the numeraire, so a unit's size
+and its rent at market price are the same number. In periods 2 and 3 a household
+chooses among three options,}
+\begin{equation}\label{eq:opts}
+h \in \{h_0,\ h_S,\ h_L\}, \qquad h_0 < h_S < h_L ,
+\end{equation}
+\new{a standard unit $h_L$, a small unit $h_S$, and homelessness $h_0$. The
+first two are rented at $p_r h_S$ and $p_r h_L$. Homelessness is free: it costs
+nothing and delivers almost nothing, $h_0$ being a small fraction of a rented
+unit. It is the outside option that a household falls back on when it cannot,
+or chooses not to, pay for a home.}
+
+\new{Two rental sizes are needed rather than one. With a single size, a
+household whose cash on hand falls below the rent has no way to economise on
+housing at all and goes straight onto the street, and the model puts the entire
+bottom of the income distribution there. With a small unit available it
+downsizes instead, which is what households do in the data and what the
+quantitative model's housing grid is for. This is also what allows the model to
+match a homelessness rate below one per cent rather than one an order of
+magnitude too large; Section~\ref{sec:who} returns to what removing it does.}
+
+\new{A housing voucher covers part of the rent. It is means tested and
+rationed. A household is eligible in a given period if its income in that period
+is below the threshold $y_V$ and if the policy in force covers its disorder
+status; conditional on eligibility a voucher arrives with probability $\pi_V$.
+Writing $z \in \{0,1\}$ for whether a voucher is held,}
+\begin{equation}\label{eq:vouch}
+\Pr\big(z=1 \mid y_e, d;\ \text{policy}\big)
+\;=\; \pi_V \cdot \mathbf{1}\{y_e \le y_V\}
+\cdot \mathbf{1}\{\text{policy covers } d\} .
+\end{equation}
+\new{A household holding a voucher pays the fraction $\kappa_r < 1$ of the
+market rent, so the rent actually paid on option $j$ is}
+\begin{equation}\label{eq:rent}
+r_j(z) \;=\;
+\begin{cases}
+0, & j = h_0 \ \ \text{(homeless)},\\[0.25em]
+p_r h_j \big[\kappa_r z + (1-z)\big], & j \in \{h_S,\ h_L\} .
+\end{cases}
+\end{equation}
+\new{The parameter $\pi_V$ is the generosity of the programme: the share of
+eligible households actually covered. It is the policy dial traced out in
+Figure~\ref{fig:mh}. Vouchers exist only in periods 2 and 3, when the disorder
+and unemployment have been realised and housing is a choice.}
+
+\subsection{The two policies}
+
+The two policies differ in exactly one respect, \new{which is the indicator
+$\mathbf{1}\{\text{policy covers } d\}$ in equation~\eqref{eq:vouch}}.
+
+\begin{itemize}
+\item \textbf{Housing First} covers every eligible household \new{regardless of
+the household's disorder status}, so the indicator is one for both $d=0$ and
+$d=1$.
+\item \textbf{Treatment First} covers only households that are clean
+\new{($v=0$, so $d=0$)}, so the indicator is one for $d=0$ and zero for $d=1$.
+\end{itemize}
+
+\new{The only thing Housing First adds to Treatment First is cover in the
+disorder state. That is what makes the decomposition of Section~\ref{sec:mh}
+exact rather than approximate.}
+
+\subsection{The household's problem}\label{sec:problem}
+
+\new{The problem is solved backward. Let $a$ denote assets carried into a
+period, $e$ the employment state with associated income $y_e$ from
+equation~\eqref{eq:inc}, $z$ the voucher state from equation~\eqref{eq:vouch},
+and $d$ the disorder state.}
+
+\new{In period 3 the household consumes everything and chooses housing only:}
+\begin{equation}\label{eq:v3}
+V_3(a,e,z) \;=\; \max_{j \in \{h_0, h_S, h_L\}}
+\Big\{ \log\!\big(Ra + y_e - r_j(z)\big) + \gamma \log h_j + \aleph \Big\} .
+\end{equation}
+\new{Taking expectations over employment and the voucher lottery, both of which
+depend on the disorder state, gives the value of entering period 3 with assets
+$a$ and disorder status $d$,}
+\begin{equation}\label{eq:w3}
+W_3(a,d) \;=\; \mathbb{E}\big[\, V_3(a,e,z) \,\big|\, d \,\big] .
+\end{equation}
+
+\new{In period 2 the household chooses housing and saving, and faces both
+mortality risk and, if it has the disorder, the chance of recovery:}
+\begin{equation}\label{eq:v2}
+V_2(a,e,z,d) = \max_{j,\ a' \ge 0}
+\Big\{ \log\!\big(Ra + y_e - r_j(z) - a'\big) + \gamma \log h_j + \aleph
++ \beta\,\phi(d)\, \mathbb{E}_{d'}\big[ W_3(a',d') \big] \Big\},
+\end{equation}
+\new{where the disorder evolves as $d'=0$ with probability $\rho$ if $d=1$ and
+$d'=d$ otherwise, so
+$\mathbb{E}_{d'}[W_3(a',d')] = (1-\rho d)\,W_3(a',d) + \rho d\, W_3(a',0)$, and
+$\phi(d)$ is survival from equation~\eqref{eq:surv}. The value of entering
+period 2 is again the expectation over employment and the voucher lottery,
+$W_2(a,d) = \mathbb{E}[V_2(a,e,z,d) \mid d]$.}
+
+\new{In period 1 the household is employed, clean, and housed in the standard
+unit, and chooses drug use and saving:}
+\begin{equation}\label{eq:v1}
+V_1(y) = \max_{v \ge 0,\ a' \ge 0}
+\Big\{ \log\!\big(y - p_v v - a'\big) + \gamma \log h_L
++ \theta\big[\log(b+v)-\log b\big] + \aleph
++ \beta\,\phi_0\, \mathbb{E}_{d'}\big[ W_2(a',d') \big] \Big\},
+\end{equation}
+\new{where $p_v$ is the price of a unit of drugs and the disorder arrives with
+the use dependent probability of equation~\eqref{eq:hazard}, so that
+$\mathbb{E}_{d'}[W_2(a',d')] = \big(1-\pi(v)\big) W_2(a',0) + \pi(v)\, W_2(a',1)$.}
+
+\new{A household uses drugs if the value in equation~\eqref{eq:v1} at its
+optimal positive $v$ exceeds the value at $v=0$. Because households differ only
+in $y$, this comparison defines a set of income intervals on which use occurs,
+and the drug participation rate is the mass of the income distribution inside
+that set. Section~\ref{sec:who} is about where those intervals sit.}
 
 %======================================================================
-\section{What is calibrated}
+\section{Calibration}\label{sec:cal}
 
-Three parameters, bracketed on three targets.
+\new{The calibration is rough by design and is presented in two parts.
+Table~\ref{tab:ext} lists the parameters set outside the model, either to
+standard values or directly to a measured quantity. Table~\ref{tab:int} lists
+the three parameters calibrated inside the model, together with the moment each
+one is matched to and the fit.}
 
-\begin{center}
-\begin{tabular}{@{}llrr@{}}
-\toprule
-parameter & target & data & model \\
-\midrule
-$b$, the pull of the first unit & drug participation rate & 5.13\% & 4.51\% \\
-$h_{hl}$, housing on the street & homelessness rate & 0.399\% & 0.20\% \\
-$\lambda$, the addiction hazard & users who acquire the disorder & 33.2\% & 33.2\% \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-Everything else is set. Rent is set so that the standard unit costs 21.2 per
-cent of average income, which is the housing budget share in the data. Income
-support replaces half of previous earnings capped at half the average, which is
-roughly what unemployment insurance does. The unemployment rate given the
-disorder is the measured 16.25 per cent from NSDUH. The housing weight is
-$0.25$, and the discount factor, interest rate, survival, recovery and the
-mortality multiplier take standard values.
-
-Bracketing rather than a joint fit, for a reason worth stating because it
-recurs in the full model. With no preference heterogeneity the aggregate is a
-cliff in $b$: participation is one below a narrow band and zero above it, so a
-gradient method steps out of the band, finds a flat surface and walks to a
-corner. Each parameter is therefore bracketed on its own monotone target in
-sequence.
-
-%======================================================================
-\section{Who uses}\label{sec:who}
-
-Start from the force that has to be overcome. Drugs are a normal good bought at
-a price, so a household with twice the income gives up less utility per dollar
-spent on them. With \emph{no consequences at all} for acquiring a disorder,
-drug use therefore concentrates at the top: the average user earns 3.4 times
-the population average. The model has to be forced to put drug use at the
-bottom; it does not go there on its own.
-
-Two things could do the forcing.
-
-\begin{center}
-\begin{tabular}{@{}lL{9.2cm}@{}}
-\toprule
-\textbf{mortality} & the disorder kills you \\[0.35em]
-\textbf{unemployment} & it costs you a job, income support cannot cover the
-rent, so you may end up on the street, where housing services collapse \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-Each is scaled from nothing to its calibrated value, and at every point $b$ is
-rebracketed so participation stays at 5.13 per cent. The amount of drug use is
-therefore identical all along both curves, and the only thing moving is
-\emph{which} households use.
-
-\begin{figure}[h]
+\begin{table}[htbp]
 \centering
-\includegraphics[width=0.86\textwidth]{figures/stylized_who_uses.pdf}
-\caption{Only the mortality channel moves drug use to the bottom of the income
-distribution.}
+\caption{\new{Externally set parameters}}\label{tab:ext}
+\small
+\begin{tabular}{@{}cL{5.0cm}L{5.4cm}r@{}}
+\toprule
+Parameter & Description & Source or rationale & Value \\
+\midrule
+\multicolumn{4}{@{}l}{\emph{Preferences and demographics}} \\
+$\beta$   & Discount factor & Standard & $0.96$ \\
+$R$       & Gross interest rate & Standard & $1.03$ \\
+$\sigma$  & Dispersion of log permanent income & US cross section & $0.75$ \\
+$\phi_0$  & Survival per period, no disorder & Life tables over the length of a
+model period & $0.93$ \\
+$\aleph$  & Flow value of being alive & Set so that the value of a statistical
+life is of the right order & $2.50$ \\
+$\gamma$  & Weight on housing services & Housing budget share & $0.25$ \\
+$\theta$  & Weight on drug use & Normalisation; $b$ carries the identification
+of the participation margin & $0.11$ \\
+\addlinespace
+\multicolumn{4}{@{}l}{\emph{The disorder}} \\
+$\rho$    & Recovery probability per period & Treatment episode data & $0.40$ \\
+$\kappa$  & Proportional fall in survival with the disorder & Excess mortality
+of people with a substance use disorder & $0.45$ \\
+$u_0$     & Unemployment probability, no disorder & BLS & $0.049$ \\
+$u_1$     & Unemployment probability, with the disorder & NSDUH 2024, ages 26
+and above, weighted & $0.1625$ \\
+\addlinespace
+\multicolumn{4}{@{}l}{\emph{Income support}} \\
+$\psi$    & Replacement rate while unemployed & Unemployment insurance
+replacement rates & $0.50$ \\
+$\bar y$  & Cap on the earnings base, multiple of average income & Benefit caps
+& $1.00$ \\
+\addlinespace
+\multicolumn{4}{@{}l}{\emph{Housing, drugs and the voucher}} \\
+$p_r$     & Rent per unit of housing services & Numeraire & $1.00$ \\
+$p_v$     & Price of a unit of drugs & Numeraire & $1.00$ \\
+$h_L$     & Standard rental unit & Housing budget share, $21.2$ per cent of
+average income & $0.212$ \\
+$h_S$     & Small rental unit & Half the standard unit & $0.106$ \\
+$\kappa_r$ & Tenant's share of the rent when covered & Voucher rules & $0.30$ \\
+$y_V$     & Voucher means test, multiple of average income & Income limits &
+$1.00$ \\
+$\pi_V$   & Voucher generosity in the baseline & Share of eligible households
+covered & $0.27$ \\
+\bottomrule
+\end{tabular}
+\notes{0.94\textwidth}{\new{Note: rent per unit of housing services is the numeraire, so a unit's
+size and its rent at market price are the same number and both are expressed as
+a share of average income. Average income is one by construction.
+Section~\ref{sec:mh} varies $\pi_V$ from zero to one; the value in the table is
+the baseline used everywhere else.}}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{\new{Internally calibrated parameters and their targets}}\label{tab:int}
+\small
+\begin{tabular}{@{}cL{4.2cm}L{4.2cm}rrr@{}}
+\toprule
+Parameter & Description & Target moment & Data & Model & Value \\
+\midrule
+$b$      & Pull of the first unit of drugs & Drug participation rate
+& $5.13\%$ & $5.17\%$ & $0.00749$ \\
+$h_0$    & Housing services when homeless & Homelessness rate
+& $0.399\%$ & $0.42\%$ & $0.00043$ \\
+$\lambda$ & Addiction hazard per unit of use & Share of users who acquire the
+disorder & $33.2\%$ & $33.2\%$ & $58.8$ \\
+\bottomrule
+\end{tabular}
+\notes{0.94\textwidth}{\new{Note: the three parameters are calibrated jointly, but each is
+bracketed on the moment it moves most. The mapping is close to triangular: $b$
+shifts the drug participation rate with little effect on the other two, $h_0$
+governs how unattractive the street is and therefore the homelessness rate, and
+$\lambda$ converts a given amount of drug use into disorders. The calibration is
+rough on purpose and the fit is not defended anywhere in the paper; every
+magnitude reported in the paper comes from the quantitative model.}}
+\end{table}
+
+%======================================================================
+\section{Who uses drugs}\label{sec:who}
+
+\new{This section asks which feature of the environment determines who uses
+drugs across the income distribution.} Start from the force that any such
+feature has to overcome. Drugs are a normal good bought at a price, so a
+household with twice the income gives up less utility per dollar spent on them.
+\new{With no consequences at all for acquiring a disorder, that is the only
+force operating, and drug use concentrates at the top: the average user earns
+$3.37$ times the population average, which is the first row of
+Table~\ref{tab:channels} and the left hand end of both curves in
+Figure~\ref{fig:who}.}
+
+\new{Two features of the environment could reverse this gradient.}
+
+\begin{enumerate}
+\item \textbf{The mortality channel.} The disorder kills you: survival falls by
+the factor $\kappa$ in equation~\eqref{eq:surv}.
+\item \textbf{The unemployment channel.} The disorder costs you a job
+\new{with probability $u_1-u_0$, and if income} support cannot cover the rent
+you downsize \new{and live with lower consumption}, or lose your home
+altogether.
+\end{enumerate}
+
+Each \new{feature} is scaled from nothing to its calibrated value, and at every
+point $b$ is recalibrated so that the drug participation rate stays at
+$5.13$ per cent. The \emph{amount} of drug use is therefore identical all along
+both curves, and the only thing moving is \emph{which} households use.
+\new{Figure~\ref{fig:who} plots the result, and Table~\ref{tab:channels} reports
+the same exercise at five points along each curve, together with the value of
+$b$ that the recalibration selects.}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/stylized_who_uses.pdf}
+\caption{\new{What it takes to reverse the income gradient in drug use}}
+\label{fig:who}
+\begin{minipage}{\textwidth}\footnotesize
+\vspace{0.4em}
+\new{Note: the vertical axis is the average income of drug users divided by
+average income in the population, on a log scale; the horizontal axis scales
+each feature from zero to its calibrated value. Above the horizontal line at one
+users are richer than average, below it they are poorer. At every point $b$ is
+recalibrated so that the drug participation rate is $5.13$ per cent, so the two
+curves compare economies with the same amount of drug use and differ only in who
+does it. Both curves begin at $3.37$, the case with no consequences at all.}
+\end{minipage}
 \end{figure}
 
-\begin{center}
-\begin{tabular}{@{}rrrrr@{}}
-\toprule
-& \multicolumn{2}{c}{mortality channel} & \multicolumn{2}{c}{unemployment channel} \\
-\cmidrule(lr){2-3}\cmidrule(lr){4-5}
-strength & $b$ & users / average & $b$ & users / average \\
-\midrule
-0\%   & 0.2368 & 3.37 & 0.2368 & 3.37 \\
-25\%  & 0.0090 & 0.19 & 0.0655 & 3.37 \\
-50\%  & 0.0054 & 0.19 & 0.0337 & 3.37 \\
-75\%  & 0.0038 & 0.19 & 0.0193 & 3.37 \\
-100\% & 0.0030 & 0.19 & 0.0128 & 2.22 \\
-\bottomrule
-\end{tabular}
-\end{center}
+\begin{table}[htbp]
+\centering
+\caption{\new{Who uses drugs, as each feature is scaled up}}\label{tab:channels}
+\input{tables/tab_channels}
+\notes{0.94\textwidth}{\new{Note: $\bar y_u/\bar y$ is the average income of drug users divided
+by average income in the population. At each strength, $b$ is recalibrated so
+that the drug participation rate is $5.13$ per cent. The first row is the case
+with every consequence of the disorder removed and is common to both columns.}}
+\end{table}
 
-\paragraph{The top row is the case with every consequence removed.} Both
-columns start there, and users earn 3.4 times the average.
+\new{Table~\ref{tab:channels} contains the main result of this section, and it
+is sharper than the statement that mortality matters more than unemployment.
+The mortality channel reverses the gradient at a quarter of its calibrated
+strength, taking the income ratio from $3.37$ to $0.21$, and by half strength it
+has reached its final value of $0.19$; the rest of the channel changes nothing
+about who uses. The unemployment channel does not reverse the gradient at all.
+Scaled to three quarters of its calibrated value it has barely moved the ratio,
+from $3.37$ to $3.28$, and even fully switched on it leaves users at $1.96$
+times average income, still well above the population mean. In this environment
+the unemployment channel \emph{cannot} produce the concentration of drug use at
+the bottom of the income distribution, however strong it is made.}
 
-\paragraph{The mortality channel flips the gradient at a quarter of its
-strength. The unemployment channel never flips it at all.} Even fully switched on it
-leaves users at 2.2 times average income, still above the population mean. That
-is a sharper statement than the paper has made before: it is not that mortality
-matters more, it is that in this environment the unemployment channel
-\emph{cannot} produce the fact on its own however strong it is made.
+\new{The $b$ column of Table~\ref{tab:channels} shows the recalibration doing
+real work, and reading it is the best way to see why the exercise is set up this
+way. With no consequences a household needs almost no temptation to use, and
+$b=0.237$ delivers a participation rate of five per cent. Once the mortality
+channel is fully on, the same five per cent requires $b=0.0075$, roughly thirty
+times more temptation, because the consequences the household now faces have to
+be outweighed. Were $b$ not recalibrated at every point, the curves in
+Figure~\ref{fig:who} would be comparing economies with different amounts of drug
+use, and the comparison would say nothing about who uses.}
 
-\paragraph{The $b$ column shows the recalibration doing real work.} With no
-consequences a household needs almost no temptation and $b=0.237$ delivers 5 per
-cent participation. Once the mortality channel is on, the same 5 per cent needs
-$b$ near $0.003$, eighty times more temptation. Without rebracketing $b$ at
-every point the curves would be comparing economies with different amounts of
-drug use, and the exercise would say nothing about who uses.
+\paragraph{Why mortality reverses the gradient and unemployment does not.} The
+asymmetry is not obvious and it is worth stating carefully, because the same
+logic operates in the quantitative model. \new{The unemployment channel is a
+penalty in resources, and a resource penalty scales with the very thing it is
+meant to offset: taking a fixed share of a large income still leaves a large
+income, so the penalty cannot outrun the fact that drugs are cheaper in utility
+terms for the rich. Indeed, if income support were exactly proportional to
+income the unemployment curve in Figure~\ref{fig:who} would be flat at $3.37$,
+and the channel would be neutral on the income gradient by construction. What
+the cap $\bar y$ of equation~\eqref{eq:inc} does is break that proportionality
+at the top, and the $1.96$ in the last row of Table~\ref{tab:channels} is
+entirely the work of the cap. Even so, it is not enough.}
 
-\paragraph{Why the mortality channel wins, and it is not obvious.} A penalty
-proportional to income scales with the thing it is meant to offset, so it cannot
-outrun the fact that drugs are cheaper in utility terms for the rich. A
-mortality penalty can, because what it destroys is a continuation value, and the
-continuation value rises with permanent income. The household with more to lose
-loses more.
+\new{The mortality channel is different in kind, because what it destroys is not
+resources but a continuation value, and the continuation value rises with
+permanent income. The household with more to lose loses more, and it loses
+proportionally more than it gains from drugs being relatively cheap. This is
+also why $\aleph$ in equation~\eqref{eq:u} is not decorative. It is the part of
+the continuation value that does not shrink as consumption falls, and it is what
+stops a poor household from being nearly indifferent to dying. Cutting $\aleph$
+to a fifth of its value and recalibrating drives the income ratio from $0.19$ to
+$0.51$ and inflates both policy forces roughly eightfold, to $-56.9$ and
+$+47.0$ percentage points. No other parameter in the model is as consequential.}
+
+\paragraph{\new{Why the unemployment channel is retained.}} \new{The result just stated
+is a statement about the unemployment channel, so the channel has to be in the
+model for the statement to be made at all. It also does real work in
+Section~\ref{sec:mh}. Removing it and recalibrating leaves the income gradient
+untouched at $0.19$, confirming that it contributes nothing to who uses, but it
+changes the moral hazard force from $+2.83$ to $+2.15$ percentage points, about
+a quarter of its size. Unemployment is what makes the disorder threaten a
+household's housing, and housing is what the voucher insures, so without it the
+policy has substantially less to do.}
+
+\paragraph{\new{Why the small unit is retained.}} \new{Collapsing the two rental
+sizes into one, and recalibrating, moves the income gradient only slightly, from
+$0.19$ to $0.17$, but it distorts the policy experiment badly: the value of life
+force grows from $-6.01$ to $-9.68$ percentage points and the moral hazard from
+$+2.83$ to $+3.28$. With a single size, a household whose cash on hand falls
+short of the rent has no intermediate option and goes straight onto the street,
+so the model overstates how much housing is at stake in unemployment and
+therefore overstates what a voucher is worth. The small unit is the margin of
+adjustment that keeps both forces honest, and it is also what allows the model
+to match a homelessness rate below one per cent rather than one an order of
+magnitude too large.}
+
+\paragraph{\new{Why saving is retained.}} \new{Assets are the household's own
+insurance against the disorder, and they compete directly with the voucher.
+Shutting saving down and recalibrating changes both forces substantially and in
+opposite directions: the value of life force weakens from $-6.01$ to $-4.59$
+percentage points and the moral hazard strengthens from $+2.83$ to $+4.33$. A
+household that cannot save has no way to protect its own housing, so public
+insurance is the only insurance there is and the moral hazard it creates is
+correspondingly larger. Since the ranking of the two forces is the object of
+Section~\ref{sec:mh}, a component that moves them in opposite directions cannot
+be dropped.}
+
+\paragraph{\new{Recovery, and a component retained for a reason that is not
+quantitative.}} \new{Setting the recovery probability $\rho$ to zero and
+recalibrating moves the value of life force from $-6.01$ to $-5.60$ and the
+moral hazard from $+2.83$ to $+2.92$, which by the standard applied to
+everything else would be grounds for removing it. It is retained anyway, because
+without recovery a household that ever acquires the disorder has it permanently,
+and Treatment First becomes a policy of permanent exclusion rather than a policy
+that conditions assistance on getting clean. Recovery is what gives the name of
+the policy any content. This is a modelling reason and not a quantitative one,
+and it is stated as such.}
+
+\paragraph{\new{Components that were tried and removed.}} \new{Two further
+consequences of homelessness were built into an earlier version of this model
+and then removed, because after the model was fully recalibrated without them
+neither result moved: that living on the street raises mortality on top of the
+disorder, and that recovery from the disorder is harder on the street. Both
+belong in the quantitative model, where mortality and welfare are the objects of
+interest and the counterfactuals move the homeless population a long way. Here
+they cannot matter, for an arithmetic reason: homelessness is four tenths of one
+per cent of the population, so a component acting only on the homeless cannot
+move a population aggregate. A supply curve for drugs was tried and removed on
+the same test, changing neither result to two decimal places. A direct wage
+penalty for the disorder was removed for a different reason, given in
+Section~\ref{sec:support}: the quantitative model does not use one.}
+
+\paragraph{\new{A caution about this kind of test.}} \new{Removing a component
+and recalibrating is necessary but it is not sufficient, and the cap $\bar y$
+is the example. Judged at the baseline it is worthless: participation, the
+income gradient and both policy forces are identical to four decimals with and
+without it, because at the baseline the mortality channel is on, drug users are
+poor, and the cap never binds on anyone who is deciding anything. It survives
+only because Figure~\ref{fig:who} scales the unemployment channel up on its own,
+which is the one place in this section where the households near the margin are
+rich. A component has to be tested where the results actually put it.}
 
 %======================================================================
-\section{What housing assistance does}\label{sec:mh}
+\section{How housing assistance affects drug use}\label{sec:mh}
 
-A voucher does two things to a household deciding whether to use.
+\new{A housing voucher acts on the decision to use drugs through two forces
+that work in opposite directions.}
 
-It raises the value of staying clean, because a housed future is worth more than
-a homeless one and using puts that future at risk. Call this the value of life
-effect. It pushes use \emph{down}.
+\begin{enumerate}
+\item \new{\textbf{The value of life force, which lowers drug use.} A voucher
+raises the value of remaining clean, because a housed future is worth more than
+a homeless one and using drugs puts that future at risk. In terms of
+Section~\ref{sec:problem}, it raises $W_2(a',0)$ in equation~\eqref{eq:v1}, the
+continuation value the household keeps by not acquiring the disorder.}
+\item \new{\textbf{The moral hazard force, which raises drug use.} A voucher
+also cushions the consequence of acquiring the disorder, because a household
+that acquires it is housed anyway. It raises $W_2(a',1)$, the continuation value
+the household falls back on if the risk it takes goes badly.}
+\end{enumerate}
 
-It also cushions the consequence of acquiring the disorder, because the
-household that acquires it is housed anyway. Call this the moral hazard. It
-pushes use \emph{up}.
+\new{The difficulty in measuring either force is that any real programme moves
+both at once. The two policies of Section~\ref{sec:env} separate the two
+channels exactly.} Under Treatment First the voucher is withdrawn on acquiring
+the disorder, so $W_2(a',1)$ is unchanged and only \new{the value of life force}
+operates. Under Housing First it arrives regardless, \new{so both channels
+operate}. \new{Since cover in the disorder state is the only difference between
+the two policies, the gap between them is the moral hazard force, and the whole
+of it.}
 
-The two policies separate them exactly. Under Treatment First the voucher is
-withdrawn on acquiring the disorder, so only the first force operates. Under
-Housing First it arrives regardless, so both do. The only thing Housing First
-adds to Treatment First is cover in the disorder state, so the gap between the
-two policies \emph{is} the moral hazard.
+\new{Figure~\ref{fig:mh} traces both policies as the generosity of the
+programme, $\pi_V$, rises from zero to one, and Table~\ref{tab:policy} reports
+the two end points and the decomposition.}
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
-\includegraphics[width=0.86\textwidth]{figures/stylized_moral_hazard.pdf}
-\caption{The moral hazard is the gap between the two policies.}
+\includegraphics[width=\textwidth]{figures/stylized_moral_hazard.pdf}
+\caption{\new{Drug use under the two policies, as the voucher becomes more
+generous}}
+\label{fig:mh}
+\begin{minipage}{\textwidth}\footnotesize
+\vspace{0.4em}
+\new{Note: the horizontal axis is $\pi_V$, the share of eligible households
+covered by a voucher, from no programme at the left to universal cover at the
+right. The vertical axis is the drug participation rate in the population, and
+the dotted line marks that rate with no programme at all. The red band between
+the two policies is the moral hazard force, the extra drug use that Housing
+First produces relative to Treatment First at the same generosity. The blue band
+above it is what Housing First delivers net of that moral hazard. The two bands
+together are the value of life force, marked by the vertical arrow at the right
+hand edge: the fall in drug use that Treatment First produces relative to no
+programme.}
+\end{minipage}
 \end{figure}
 
-\paragraph{Reading the numbers.} All three are percentage points of the
-population drug participation rate, measured against the same starting point: no
-voucher programme at all, where 5.34 per cent of households use.
+\begin{table}[htbp]
+\centering
+\caption{\new{The two forces at universal cover}}\label{tab:policy}
+\input{tables/tab_policy}
+\notes{0.94\textwidth}{\new{Note: all differences are in percentage points of the population drug
+participation rate, measured against the same baseline of no voucher programme.
+Universal cover means $\pi_V=1$, so every eligible household receives a voucher;
+eligibility still requires income below $y_V$, and under Treatment First it also
+requires being clean.}}
+\end{table}
 
-\begin{center}
-\begin{tabular}{@{}lrl@{}}
-\toprule
-& participation & \\
-\midrule
-no voucher at all           & 5.34\% & \\
-universal Treatment First   & 0.00\% & value of life effect: $-5.34$ pp \\
-universal Housing First     & 2.27\% & moral hazard: $+2.27$ pp \\
-\midrule
-\multicolumn{2}{@{}l}{net effect of Housing First against no programme} & $-3.07$ pp \\
-\bottomrule
-\end{tabular}
-\end{center}
+\new{Table~\ref{tab:policy} reads as follows.} With no programme at all,
+$6.12$ per cent of households use drugs. Moving to universal Treatment First,
+participation falls by $6.12$ percentage points, to nothing: guaranteeing
+housing to households that stay clean makes staying clean worth a great deal
+more. Moving instead to universal Housing First leaves participation at
+$2.93$ per cent, which is $2.93$ percentage points higher than under Treatment
+First at the same generosity. \new{That difference is the moral hazard force,
+and it is the price of also covering households that already have the disorder.}
+The net effect of \new{universal} Housing First against no programme is
+$-3.19$ percentage points: \new{it still lowers drug use, because the value of
+life force is larger than the moral hazard force.}
 
-Move from no programme to universal Treatment First and participation falls by
-5.34 points, to nothing: guaranteeing housing to the clean makes staying clean
-worth much more. Move instead to universal Housing First and participation is
-2.27 points \emph{higher} than under Treatment First. That difference is the
-moral hazard, and it is exactly the price of also covering households that
-already have the disorder, because that cover is the only difference between the
-two policies. The net effect of Housing First against no programme is $-3.07$
-points: it still lowers drug use, because the first force is larger than the
-second.
+\new{Three things follow, and they are the reason the paper needs a quantitative
+model.}
 
-\paragraph{Both forces are first order, and they work against each other.} That
-is the central result of this section and the reason the paper needs a
-quantitative model. Theory does not sign the effect of housing assistance on
-drug use. Anyone asserting that housing the homeless must increase drug use, and
-anyone asserting it must reduce it, is making a quantitative claim while
-sounding as though they are making a theoretical one.
+\paragraph{Both forces are first order, and they work against each other.} The
+value of life force is roughly twice the moral hazard force here, but both are
+large relative to the participation rate they act on, and \new{their near
+cancellation is the central feature of the problem}. Theory does not sign the
+effect of housing assistance on drug use. Anyone asserting that housing the
+homeless must increase drug use, and anyone asserting that it must reduce it, is
+making a quantitative claim \new{that needs to be tested} while sounding as
+though they are making a theoretical one.
 
-\paragraph{Unconditional assistance still lowers drug use.} Worth stating
-plainly, because it cuts against the intuition that unconditional help must
-raise use through moral hazard. The moral hazard is real and it is large. It
-simply loses to the other force.
+\paragraph{Unconditional assistance still lowers drug use.} \new{This runs
+against the intuition that unconditional help must raise drug use through moral
+hazard. The moral hazard here is real and it is large, at $+2.93$ percentage
+points. It simply loses to the force running the other way. Which of the two
+wins, however, is a quantitative question, and the ranking obtained in this
+stylized environment is not something the paper carries forward as a result; it
+is a hypothesis for the quantitative model to test.}
 
-\paragraph{Conditionality keeps the winning force and removes the losing one.}
-That is the argument for Treatment First in one sentence, and it explains
-something about the previous version of this paper. Its weakest experiment
-imposed conditionality while holding the number of vouchers at the current
-rationed level. Both forces scale with generosity, so at the left of the figure
-there is very little for conditionality to work with while the cost of excluding
-people from a scarce benefit is immediate.
-
-%======================================================================
-\section{Why each component is here}\label{sec:parts}
-
-Every component was tested by removing it, \emph{fully recalibrating} the model
-without it, and rerunning both counterfactuals. Recalibrating is the whole
-point: a component can look essential merely because removing it throws the
-model off its targets, and it can look irrelevant because the other parameters
-were never given the chance to compensate. Only refitting distinguishes the two.
-
-\begin{center}
-\begin{tabular}{@{}lrrr@{}}
-\toprule
-removed & users / avg & value of life & moral hazard \\
-\midrule
-nothing                          & 0.17 & $-4.3$ & $+1.5$ \\
-the disorder kills you           & 3.37 & $-1.3$ & $+2.5$ \\
-the disorder costs you a job     & 0.19 & $-6.6$ & $+2.3$ \\
-the street raises mortality      & 0.17 & $-4.5$ & $+1.6$ \\
-recovery is harder on the street & 0.17 & $-4.3$ & $+1.5$ \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-\paragraph{The disorder kills you. Kept.} Removing it sends users from 0.17 to
-3.37 times average income, straight back to the top of the distribution. This is
-the single most important component in the model and the one the paper's
-mechanism rests on.
-
-\paragraph{The disorder costs you a job. Kept, for the second result rather than
-the first.} It barely touches who uses, moving the ratio from 0.17 to 0.19. But
-removing it changes the value of life effect from $-4.3$ to $-6.6$ points,
-because unemployment is what makes the disorder threaten your housing, and
-housing is what the voucher insures. Without it the policy has much less to do.
-
-\paragraph{Income support that cannot cover the rent. Structural.} Not a
-component to be justified separately, because it is what unemployment pays.
-Its level is the most consequential number in the model. Set it above the rent
-on the small unit and every household can always afford a home, the disorder
-never threatens the roof over anyone's head, the voucher has nothing to insure,
-and the moral hazard is exactly zero. A replacement rate of half of previous
-earnings capped at half the average leaves the poorest unable to house
-themselves out of income alone, which is what connects the disorder to
-homelessness.
-
-\paragraph{Two rental sizes. Kept.} With a single size a household whose cash
-falls below the rent cannot be housed at all, whatever the street is like, and
-the model puts the entire bottom of the distribution on the street. With a small
-unit available they downsize instead, which is what happens in the data and what
-the full model's housing grid is for.
-
-\paragraph{The street is a much worse home. Structural.} Without it there is no
-homelessness to explain and no voucher worth having. It is also the parameter
-bracketed on the homelessness rate, so it cannot be ablated: removing it and
-then recalibrating simply restores it.
-
-\paragraph{The street raises mortality. Removed.} Neither result moves.
-Homelessness is a fifth of one per cent of the population here, so a channel
-acting only on the homeless cannot move an aggregate.
-
-\paragraph{Recovery is harder on the street. Removed.} Same reason, same
-numbers.
-
-Both removed channels stay in the \emph{full} model, where mortality and welfare
-are the objects of interest and the counterfactuals move the homeless population
-a long way. They are absent here because this model answers two questions and
-they bear on neither.
+\paragraph{Conditionality retains the winning force and removes the losing one.}
+\new{That is the case for Treatment First in one sentence, and
+Figure~\ref{fig:mh} also shows the condition under which the case is weak. Both
+forces scale with $\pi_V$: at the left of the figure the two policies are almost
+indistinguishable, because a programme that reaches few households has little
+moral hazard for conditionality to remove. Imposing conditionality while holding
+the number of vouchers fixed at a low level therefore buys very little, while
+the cost of excluding people from a scarce benefit is immediate. Conditionality
+and generosity are complements, and an experiment that changes one while holding
+the other fixed will understate what conditionality can do.}
 
 %======================================================================
-\section{What this model cannot do}\label{sec:cannot}
+\section{Summary}
 
-None of this is accidental, and none of it is fixable without adding the
-machinery the model exists to avoid.
-
-\paragraph{The price elasticity of drug participation.} With every household at
-a given income identical, a change in the price of drugs moves the whole
-threshold and takes a large mass with it. The elasticity is pinned by the
-density of the income distribution at the threshold rather than by any
-parameter, and it comes out between three and four against roughly $0.45$ in the
-data. Matching it needs dispersion in tastes, which is the thing deliberately
-excluded.
-
-\paragraph{Drug spending as a share of income.} With one taste, optimal use
-solves $\theta/(b+v)$ equal to marginal cost exactly, so the level follows once
-$b$ is set.
-
-\paragraph{The magnitude of the income gradient.} Users earn 18 per cent of the
-average here against 95 per cent in the data. The direction is right and the
-comparison across channels is informative; the level is not.
-
-\paragraph{Anything requiring aggregation.} No government budget, no market
-clearing, no welfare. A drug supply curve was built into an earlier version and
-removed after switching market clearing off changed neither result to two
-decimal places. It belongs in the full model, where the fiscal and general
-equilibrium consequences it interacts with actually exist.
-
-%======================================================================
-\section{What the full model adds}
-
-Six state variables instead of one, so heterogeneity comes from the environment
-rather than from assumed taste differences. A government budget constraint, so
-policies have to be paid for. An equilibrium drug price. Serious mental illness.
-An endogenous treatment decision, so that a policy named Treatment First
-contains treatment. And welfare, which is what the policy question is actually
-about.
-
-Two things here carry forward as questions rather than answers.
-
-The first is whether the unemployment channel remains unable to produce the
-income gradient once it is given the richer environment: more states, a budget
-constraint, and counterfactuals that move homelessness a long way. The full
-model's channel decomposition has to answer that rather than assume it.
-
-The second is whether the ranking in section~\ref{sec:mh} survives. Here the
-value of life effect beats the moral hazard by three points out of five. That
-both forces are first order is the robust finding. Which one wins is not.
+\new{Two results carry forward, and they carry forward as different kinds of
+object. The first is a statement about mechanisms: drug use concentrates at the
+bottom of the income distribution only when the disorder carries a mortality
+cost, because a resource penalty proportional to income scales with the thing it
+is meant to offset while a mortality penalty destroys a continuation value that
+rises with income. The second is a statement about the policy problem: a housing
+voucher acts on drug use through two first order forces that work against each
+other, and the two policies separate them exactly. That both forces are large is
+what this section establishes. Which of them wins is left open, and settling it
+is the job of the quantitative model that follows.}
 
 \end{document}
