@@ -104,12 +104,15 @@ import numpy as np
 
 class P:
     # preferences
-    th    = 0.11      # taste for drugs
+    th    = 0.11      # weight on drug use
     b     = 0.009     # Stone Geary subsistence; th/b is the pull of the first unit
     gam   = 0.25      # weight on housing. CALIBRATED to the housing budget share
     beta  = 0.96
     R     = 1.03
     phi0  = 0.93      # survival over one period, clean, employed, housed
+    # 2.50 is too low to keep every value of life positive: see the block at the
+    # top of calibrate.py. The combinations that do fix it collapse the moral
+    # hazard, so this stays at the working value and the problem stays open.
     aleph = 2.50      # flow value of being alive
 
     # the disorder
