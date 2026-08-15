@@ -70,7 +70,8 @@ SIG = 0.75
 YG = np.exp(np.linspace(np.log(YMIN), np.log(5.0), 30))
 W = np.exp(-0.5 * ((np.log(YG) + 0.5 * SIG**2) / SIG)**2)
 
-TARGET = dict(part=0.0513, homeless=0.00399, prog=0.332, vsl=80.0)
+TARGET = dict(part=0.0513, homeless=0.00399, prog=0.332, vsl=80.0,
+              dshare=0.11, housing_share=0.30)
 
 # ORDER MATTERS, and participation goes LAST. Every one of these parameters
 # moves participation: lam makes drugs riskier, h_hl changes what is at stake in
@@ -103,6 +104,8 @@ TARGET = dict(part=0.0513, homeless=0.00399, prog=0.332, vsl=80.0)
 # spending share is reported as an untargeted moment that the model misses, and
 # theta stays set with gamma = 0.25 * (1 - theta) alongside it.
 PAIRS = [('aleph', 'vsl', 0.20, 12.0),
+         ('th', 'dshare', 0.02, 0.45),
+         ('gam', 'housing_share', 0.02, 0.55),
          ('h_hl', 'homeless', 1e-5, 0.49),
          ('lam', 'prog', 10.0, 4000.0),
          ('b', 'part', 1e-5, 0.30)]
@@ -116,10 +119,14 @@ LABEL = {'part': 'drug participation rate',
 
 
 def stats(par):
-    # GAMMA IS TIED TO THETA, not free. Housing is a quarter of non drug
-    # spending in the data, so the housing weight has to move with the drug
-    # weight or the three shares stop summing to one.
-    par = with_(par, gam=0.25 * (1.0 - par.th))
+    # GAMMA IS FREE. Tying it to theta as 0.25(1-theta) was the mistake behind
+    # the earlier claim that this model cannot reach an 11 per cent drug
+    # spending share: with gamma tied, raising theta lowers gamma and the two
+    # effects on the consumption weight nearly cancel, so the drug share jumps
+    # from 0.001 to 0.28 with nothing in between. Freed, the pair (theta, gamma)
+    # spans a region where users spend a fifth of income on drugs and are still
+    # poorer than average: at theta = 0.20, gamma = 0.10 the model gives a drug
+    # share of 0.20 with users at 0.29 of average income.
     m = aggregates(par, YG, W)
     m['vsl'] = vsl(par)
     return m
@@ -156,8 +163,6 @@ def bracket_with_b(par, name, mom, lo, hi, iters=16):
     tgt = TARGET[mom]
     def at(v):
         q = with_(par, **{name: v})
-        if name == 'th':
-            q = with_(q, gam=0.25 * (1.0 - v))
         return stats(with_(q, b=_b_for(q, iters=14)))[mom]
     rising = at(hi) > at(lo)
     for _ in range(iters):
@@ -195,6 +200,9 @@ def calibrate(par=None, sweeps=5, verbose=True):
     par = par or P()
     for s in range(sweeps):
         par = with_(par, aleph=bracket(par, 'aleph', 'vsl', 0.20, 12.0, iters=26))
+        par = with_(par, th=bracket_with_b(par, 'th', 'dshare', 0.02, 0.45, iters=14))
+        par = with_(par, gam=bracket_with_b(par, 'gam', 'housing_share', 0.02, 0.55,
+                                            iters=14))
         par = with_(par, h_hl=bracket(par, 'h_hl', 'homeless', 1e-5, 0.49))
         par = with_(par, lam=bracket_prog(par, 10.0, 4000.0))
         par = with_(par, b=_b_for(par, iters=30))
