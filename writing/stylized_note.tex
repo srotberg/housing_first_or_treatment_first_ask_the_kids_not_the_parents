@@ -237,10 +237,13 @@ or chooses not to, pay for a home.}
 quantitative rather than aesthetic. With a single size, a household whose cash
 on hand falls below the rent has no way to economise on housing at all and goes
 straight onto the street. Collapsing $h_S$ into $h_L$ raises homelessness from
-$0.42$ per cent of the population to $3.41$ per cent, and no value of $h_0$
-brings it back: driving $h_0$ to its lower bound leaves the rate more than eight
-times its target, because making the street arbitrarily miserable does not help
-a household that cannot afford the rent at any level of misery. With a small
+$0.42$ per cent of the population to $3.41$, and no value of $h_0$ brings it
+back. Refitting the whole model, with $h_0$ driven down to its lower bound,
+still leaves homelessness at $1.39$ per cent against a target of $0.399$ and
+drops the participation rate to $3.79$ per cent against a target of $5.13$: the
+model now misses both of the targets it is meant to hit. Making the street
+arbitrarily miserable does not help a household that cannot afford the rent at
+any level of misery. With a small
 unit available the household downsizes instead, which is what households do in
 the data and what the quantitative model's housing grid is for.
 Section~\ref{sec:who} returns to what removing it does to the policy
@@ -524,10 +527,10 @@ policy has substantially less to do.}
 component whose removal breaks the model outright rather than merely moving a
 number. As Section~\ref{sec:env} notes, a single rental size cannot deliver the
 homelessness rate at any value of $h_0$, so the row of the ablation that removes
-it is not a recalibrated model but a model that has failed to calibrate. Its
-policy numbers show the damage: the value of life force grows from $-6.01$ to
-$-9.68$ percentage points and the moral hazard from $+2.83$ to $+3.28$, both
-inflated by roughly half. The mechanism is direct. Without an intermediate
+it is not a recalibrated model but a model that has failed to calibrate, missing
+its participation target as well. The direction of the damage is nonetheless
+clear: the value of life force grows from $-6.12$ to $-9.68$ percentage points
+and the moral hazard from $+2.93$ to $+3.02$. The mechanism is direct. Without an intermediate
 option, a household whose cash on hand falls short of the rent goes straight
 onto the street, so far more housing is at stake in unemployment than there
 should be and a voucher is worth correspondingly more. The small unit is the
@@ -535,14 +538,27 @@ margin of adjustment that keeps both forces honest.}
 
 \paragraph{\new{Why saving is retained.}} \new{Assets are the household's own
 insurance against the disorder, and they compete directly with the voucher.
-Shutting saving down and recalibrating changes both forces substantially and in
-opposite directions: the value of life force weakens from $-6.01$ to $-4.59$
-percentage points and the moral hazard strengthens from $+2.83$ to $+4.33$. A
-household that cannot save has no way to protect its own housing, so public
-insurance is the only insurance there is and the moral hazard it creates is
-correspondingly larger. Since the ranking of the two forces is the object of
-Section~\ref{sec:mh}, a component that moves them in opposite directions cannot
-be dropped.}
+Shutting saving down and recalibrating leaves the value of life force almost
+unchanged, at $-6.53$ against $-6.12$ percentage points, but it drives the moral
+hazard from $+2.93$ to $+4.76$, which is more than half as large again. A
+household that cannot save has no way to protect its own housing, so a voucher
+is the only insurance there is and the behaviour it induces is correspondingly
+larger. Since the size of the moral hazard relative to the force opposing it is
+the object of Section~\ref{sec:mh}, a component that changes it by this much
+cannot be dropped.}
+
+\paragraph{\new{The generosity of income support.}} \new{This is not a
+component that can be removed, since unemployment has to pay something, but its
+level can be varied. Halving the replacement rate, from $\psi=0.5$ to $0.25$,
+and recalibrating moves the value of life force from $-6.12$ to $-5.73$
+percentage points and the moral hazard from $+2.93$ to $+3.20$. The pattern is
+the same one saving produces, and for the same reason: the less insurance a
+household already has, the more a voucher adds on the moral hazard side and the
+less it adds on the deterrent side. Neither movement is large enough to disturb
+the ranking of the two forces, so the level of income support is not a knife
+edge. Its \emph{upper} end is, for the reason given in
+Section~\ref{sec:support}: set income support above the rent on the small unit
+and the moral hazard force is exactly zero.}
 
 \paragraph{\new{Recovery, and a component retained for a reason that is not
 quantitative.}} \new{Setting the recovery probability $\rho$ to zero and
