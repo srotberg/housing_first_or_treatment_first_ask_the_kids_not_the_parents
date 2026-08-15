@@ -109,6 +109,50 @@
         ! instead would quietly shrink income inequality and take the wealth
         ! targets with it.
         integer, parameter :: fixed_productivity=1
+
+        ! THE EXTERNALITY ON CHILDREN. A newborn's permanent productivity is
+        ! drawn from the same unconditional distribution as everyone else's,
+        ! scaled down if the parent it replaces was carrying a substance use
+        ! disorder or was homeless when it died:
+        !
+        !     y_child = y_draw * (1-delta_d)^{d} * (1-delta_h)^{homeless}
+        !
+        ! The parent does not internalise this except through the altruism
+        ! weight below, which is what makes it an externality.
+        !
+        ! THE PENALTY MOVES PROBABILITIES, NOT GRID POINTS. Minting penalised
+        ! types would multiply the productivity space by four and give back
+        ! everything fixed_productivity buys. Instead the shifted distribution is
+        ! reallocated over the EXISTING nodes, preserving mass and the mean of
+        ! log productivity, with anything falling below the bottom node piled
+        ! onto it.
+        !
+        ! delta_d is calibrated to the ratio of a child's disorder rate to that
+        ! of a child of a clean parent; delta_h comes from Chetty, Hendren and
+        ! Katz (2016), whose children moved to a low poverty neighbourhood before
+        ! age 13 earned 31 per cent more as adults.
+        integer, parameter :: include_child_penalty=1
+        real(8) :: penalty_child_addicted=0.30
+        real(8), parameter :: penalty_child_homeless=0.31
+
+        ! THE WEIGHT PARENTS PUT ON THEIR CHILDREN. Zero means the damage above
+        ! is entirely external. It is calibrated to the drug use gap between
+        ! adults with and without a child in the household, reweighted to the
+        ! same age, income, sex and marital distribution: NSDUH 2024 puts the
+        ! ratio at 0.845, so switching altruism off must raise use by 18.4 per
+        ! cent. See data/make_altruism_moment.py. The measured gap is an UPPER
+        ! bound, since users also lose custody, so the ranking is reported across
+        ! zero to that value.
+        !
+        ! STARTING VALUE from the stylized model, which was put through exactly
+        ! this calibration: 0.0137 on the past month gap and 0.0169 on the past
+        ! year one. To be refitted here against the same condition. The number is
+        ! small, and that is the point: the stylized model's ranking reverses
+        ! back to Housing First only near 0.43, so a calibrated weight near 0.014
+        ! sits a factor of thirty inside the region where the externality still
+        ! decides the comparison, and it is consistent with Altonji, Hayashi and
+        ! Kotlikoff (1997) rejecting operative altruism at the margin.
+        real(8) :: weight_on_child=0.0137
         integer, parameter :: ss_decrease_for_retired_addicted=0
         integer, parameter :: threshold_addiction_index=3
         integer, parameter :: have_two_rental_markets=0
@@ -507,6 +551,10 @@
         real(8), dimension(life_span) :: value_of_bequests_by_age,bequests_mass_by_age
         
         real(8), dimension(employment_grid_size) :: unconditional_employment_probability
+
+        ! newborn productivity distribution given the parent's disorder status
+        ! (0 or 1) and whether the parent was homeless (1 housed, 2 homeless)
+        real(8), dimension(employment_grid_size,0:1,1:2) :: newborn_employment_probability
         real(8), dimension(threshold_addiction_index) :: unconditional_unemployment_probability
         real(8), dimension(life_span,employment_grid_size,employment_grid_size) :: employment_process
         real(8), allocatable, dimension(:,:,:,:,:,:) :: unemployment_process
@@ -15183,6 +15231,7 @@
                                         !$omp& m,time_period,has_mortgage,at_least_one_period_before_retirement,&
                                         !$omp& has_house,survival_probability,unemployment_process,newborn_household,&
                                         !$omp& unconditional_employment_probability,fraction_with_positive_wealth,&
+                                        !$omp& newborn_employment_probability,&
                                         !$omp& age_index,years_left_on_mortgage_index,unemployment_index,employment_index,&
                                         !$omp& index_of_smallest_house_hhld_can_buy,financial_grid,voucher_index,&
                                         !$omp& value_of_initial_assets,track_housing_1,addiction_probabilities,&
@@ -15305,7 +15354,8 @@
                                                                     fraction_copy*&
                                                                     (1-survival_probability_for_dist_iteration(age_index,1,0))*&
                                                                     fraction_with_positive_wealth(employment_index)*&
-                                                                    unconditional_employment_probability(future_employment_index)*&
+                                                                    newborn_employment_probability(future_employment_index,&
+                                                                    is_addicted_1,is_homeless_2)*&
                                                                     unemployment_process(age_index,unemployment_index,&                                                            
                                                                     future_unemployment_index,is_homeless_2,&
                                                                     future_addiction_index_2,employment_index)*&
@@ -15327,7 +15377,8 @@
                                                                 future_employment_index,0,0)=fraction_copy*&
                                                                 (1-survival_probability_for_dist_iteration(age_index,1,0))*&
                                                                 (1-fraction_with_positive_wealth(employment_index))*&
-                                                                unconditional_employment_probability(future_employment_index)*&    
+                                                                newborn_employment_probability(future_employment_index,&
+                                                                is_addicted_1,is_homeless_2)*&
                                                                 unemployment_process(age_index,unemployment_index,&
                                                                 future_unemployment_index,is_homeless_2,future_addiction_index_2,&
                                                                 employment_index)*addiction_probabilities(is_addicted_1,&
@@ -16518,6 +16569,98 @@
         
     end subroutine             
             
+    subroutine create_newborn_employment_probability()
+
+        ! Reallocate the unconditional productivity distribution downward by the
+        ! penalty, over the existing grid. Working in logs, a newborn that would
+        ! have drawn node i now sits at log y_i + log(penalty), which falls
+        ! between two nodes; the mass is split between them so that the mean of
+        ! log productivity moves by exactly log(penalty). Mass below the bottom
+        ! node piles onto it, which understates the penalty for the poorest
+        ! parents and is therefore conservative.
+
+        use Global_Vars
+
+        implicit none
+
+        integer :: d_index,h_index,node_index,lower_node
+        real(8) :: penalty,shifted_log,weight_lower
+        real(8), dimension(employment_grid_size) :: log_grid
+
+        do node_index=1,employment_grid_size
+
+            log_grid(node_index)=log(employment_grid(1,node_index))
+
+        end do
+
+        newborn_employment_probability=0
+
+        do d_index=0,1
+
+            do h_index=1,2
+
+                penalty=((1-penalty_child_addicted)**(d_index*include_child_penalty))*&
+                    ((1-penalty_child_homeless)**((h_index-1)*include_child_penalty))
+
+                do node_index=1,employment_grid_size
+
+                    shifted_log=log_grid(node_index)+log(penalty)
+
+                    if (shifted_log<=log_grid(1)) then
+
+                        newborn_employment_probability(1,d_index,h_index)=&
+                            newborn_employment_probability(1,d_index,h_index)+&
+                            unconditional_employment_probability(node_index)
+
+                    else
+
+                        lower_node=1
+
+                        do while ((lower_node<employment_grid_size-1) .AND. &
+                            (log_grid(lower_node+1)<shifted_log))
+
+                            lower_node=lower_node+1
+
+                        end do
+
+                        weight_lower=(log_grid(lower_node+1)-shifted_log)/&
+                            (log_grid(lower_node+1)-log_grid(lower_node))
+
+                        weight_lower=max(0.d0,min(1.d0,weight_lower))
+
+                        newborn_employment_probability(lower_node,d_index,h_index)=&
+                            newborn_employment_probability(lower_node,d_index,h_index)+&
+                            weight_lower*unconditional_employment_probability(node_index)
+
+                        newborn_employment_probability(lower_node+1,d_index,h_index)=&
+                            newborn_employment_probability(lower_node+1,d_index,h_index)+&
+                            (1-weight_lower)*unconditional_employment_probability(node_index)
+
+                    end if
+
+                end do
+
+                newborn_employment_probability(:,d_index,h_index)=&
+                    newborn_employment_probability(:,d_index,h_index)/&
+                    sum(newborn_employment_probability(:,d_index,h_index))
+
+            end do
+
+        end do
+
+        if (loop_count<1) then
+
+            write(*,*) "newborn_employment_probability, clean and housed parent"
+            write(*,*) newborn_employment_probability(:,0,1)
+            write(*,*) "newborn_employment_probability, parent with the disorder"
+            write(*,*) newborn_employment_probability(:,1,1)
+            write(*,*) "newborn_employment_probability, homeless parent with the disorder"
+            write(*,*) newborn_employment_probability(:,1,2)
+
+        end if
+
+    end subroutine
+
     subroutine GKKOC_intergenerational_employment_process(time_period)
     
         use Global_Vars
@@ -16527,6 +16670,7 @@
         real(8) :: persistence_fixed_employment_newborn=0.5
         real(8) :: s_deviation_top=3
         real(8) :: s_deviation_bottom=3
+        real(8) :: sd_fixed_y,width_fixed_y
         real(8) :: sum_of_dist,sum_of_unconditional_unemployment
         integer, intent(in) :: time_period
          
@@ -16632,6 +16776,50 @@
                 
             end do
             
+            ! THE DISTRIBUTION HAS TO BE REBUILT ON THE FROZEN GRID, not left as
+            ! it was. get_probabilities_KKK_process fills
+            ! unconditional_employment_probability from the variance of log
+            ! productivity at AGE ONE, on the age one grid. Freezing the grid at
+            ! its mid working life width without touching the probabilities
+            ! would put age one mass on a wider grid, which silently changes the
+            ! dispersion of permanent income and takes the wealth targets with
+            ! it. Both are rebuilt here from the single variance the frozen grid
+            ! implies, recovered from the grid itself: the top node sits
+            ! s_deviation_top standard deviations above the mean of log
+            ! productivity, which is zero by construction.
+            sd_fixed_y=log(employment_grid(1,employment_grid_size))/s_deviation_top
+            
+            width_fixed_y=(log(employment_grid(1,employment_grid_size))-&
+                log(employment_grid(1,1)))/(employment_grid_size-1)
+            
+            unconditional_employment_probability(1)=&
+                (1+erf(((log(employment_grid(1,1))+0.5*width_fixed_y)/sd_fixed_y)/sqrt(2.d0)))/2
+            
+            do employment_index=2,employment_grid_size-1
+            
+                unconditional_employment_probability(employment_index)=&
+                    (1+erf(((log(employment_grid(1,employment_index))+0.5*width_fixed_y)/&
+                    sd_fixed_y)/sqrt(2.d0)))/2-&
+                    (1+erf(((log(employment_grid(1,employment_index))-0.5*width_fixed_y)/&
+                    sd_fixed_y)/sqrt(2.d0)))/2
+            
+            end do
+            
+            unconditional_employment_probability(employment_grid_size)=&
+                1-(1+erf(((log(employment_grid(1,employment_grid_size))-0.5*width_fixed_y)/&
+                sd_fixed_y)/sqrt(2.d0)))/2
+            
+            unconditional_employment_probability=unconditional_employment_probability/&
+                sum(unconditional_employment_probability)
+            
+            if (loop_count<1) then
+            
+                write(*,*) "fixed productivity: sd of log y =", sd_fixed_y
+                write(*,*) "unconditional_employment_probability on the frozen grid"
+                write(*,*) unconditional_employment_probability
+            
+            end if
+            
         end if
         
         do age_index=fixed_productivity*1+(1-fixed_productivity)*(life_span-retirement_span),life_span
@@ -16656,6 +16844,8 @@
             
         end do
         
+        call create_newborn_employment_probability()
+
         call create_unemployment_process()
 
         if (is_counterfactual==0) then
