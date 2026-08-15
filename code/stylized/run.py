@@ -1,5 +1,5 @@
 """
-The stylised model's two figures.
+The stylized model's two figures.
 
     1  WHO USES.  The gain from using, by income, with each channel
        configuration recalibrated to the same 5.13 per cent participation rate.
@@ -22,17 +22,6 @@ from calibrate import YG, W, bracket, stats
 
 OUT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                     '..', '..', 'writing', 'figures'))
-
-# The two channels move in GROUPS. The disorder kills you directly and by
-# putting you on the street; it impoverishes you through unemployment, a wage
-# penalty, and the housing it forces you down to. Switching one member of a
-# group leaves the other running.
-CONFIGS = [
-    ('both channels',  {},                                   '#1B3B5F', '-'),
-    ('mortality only', dict(u1=P.u0, h_hl=P.h_sm),           '#2C6FAD', '--'),
-    ('unemployment only',  dict(kap=0.0),                        '#D9822B', ':'),
-]
-
 
 def style():
     import matplotlib

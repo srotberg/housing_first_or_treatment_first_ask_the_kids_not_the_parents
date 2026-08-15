@@ -1,5 +1,5 @@
 """
-A rough calibration of the stylised model. Four parameters, four targets.
+A rough calibration of the stylized model. Four parameters, four targets.
 
     b       drug participation rate                    5.13 %
     h_hl    homelessness rate                          0.399 %
@@ -81,7 +81,7 @@ def calibrate(par=None, sweeps=4, verbose=True):
 def report(par):
     m = stats(par)
     print('\n' + '=' * 64)
-    print('STYLISED MODEL, ROUGH CALIBRATION')
+    print('STYLIZED MODEL, ROUGH CALIBRATION')
     print('=' * 64)
     print(f"{'moment':42s}{'target':>10s}{'model':>10s}")
     for _, mom, _, _ in PAIRS:

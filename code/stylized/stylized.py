@@ -1,5 +1,5 @@
 """
-A stylised three period model of drug use, homelessness and housing policy.
+A stylized three period model of drug use, homelessness and housing policy.
 
 WHAT IT IS FOR
 
@@ -29,27 +29,35 @@ thing the paper says it does not need.
 
 THE ENVIRONMENT
 
-  period 1  income y, employed, in the large unit. Choose consumption, drug use
-            v >= 0 and saving. Flow utility  log c + gam log h + th[log(b+v) - log b].
-            Using gives the disorder next period with probability 1 - exp(-lam v).
+  period 1  income y, employed, in the large unit, which is NOT a choice here,
+            so y is income net of that rent. Choose consumption, drug use v >= 0
+            and saving. Flow utility
+                log c + gam log h + th[log(b+v) - log b] + aleph.
+            Using gives the disorder next period with probability 1 - exp(-lam v),
+            so the household internalises that using MORE is riskier.
 
-  period 2  the disorder d is realised. Unemployed with probability u0, paying a
-            replacement rate, with a consumption floor under the bottom.
-            Earnings carry a penalty xi if d = 1.
-            Choose housing and saving. Recovery from the disorder is rho.
+  period 2  the disorder d is realised, but only for households that used.
+            Unemployed with probability u0, or the higher u1 if d = 1. Income
+            support replaces repl of previous earnings on a base capped at ycap.
+            Choose consumption, housing and saving. Recovery from the disorder
+            is rho. There is NO wage penalty: see below.
 
-  period 3  terminal, same risks.
+  period 3  terminal. Same employment, income support and housing as period 2,
+            no drug use decision, assets run down, nothing bequeathed.
 
   housing   a large unit, a small unit, or the street. The street is free but
-            supplies only h_hl of housing services. A voucher pays part of the
-            rent.
+            supplies only h_hl of housing services. A voucher is means tested at
+            yV, arrives with probability pV, and cuts the tenant's rent to
+            kappa_r of the market rent.
 
             Two rental sizes rather than one, because with a single size a
-            household whose cash falls below the rent cannot be housed at all,
-            and the model puts the whole bottom of the distribution on the
-            street. With a small unit available they downsize instead, which is
-            what happens in the data and what the full model's housing grid is
-            for.
+            household whose cash falls below the rent cannot be housed at all.
+            Collapsing h_sm into h_lg takes homelessness from 0.42 per cent to
+            3.41 against a target of 0.399, and NO value of h_hl brings it back:
+            making the street arbitrarily bad does not help a household that
+            cannot afford the rent at any level of misery. That row of the
+            ablation is a model that failed to calibrate, not a recalibrated
+            model, which is the strongest case any component here has.
 
 THE CHANNELS THAT SURVIVED
 
@@ -61,10 +69,10 @@ THE CHANNELS THAT SURVIVED
 Two channels were built and then removed because, after the model was FULLY
 recalibrated without them, neither result moved:
 
-    the street raises mortality        homelessness is a third of one per cent
-    recovery is harder on the street   of the population, so a channel acting
-                                       only on the homeless cannot move an
-                                       aggregate
+    the street raises mortality        homelessness is four tenths of one per
+    recovery is harder on the street   cent of the population, so a channel
+                                       acting only on the homeless cannot move
+                                       an aggregate
 
 Both stay in the FULL model, where mortality and welfare are the objects of
 interest and the counterfactuals move the homeless population a long way. They
@@ -72,7 +80,7 @@ are absent here because this model answers two questions and they bear on
 neither.
 
 EVERY CHANNEL HERE EXISTS IN THE FULL MODEL. That is a constraint, not a
-coincidence. A stylised model that rests on a shock the full model does not use
+coincidence. A stylized model that rests on a shock the full model does not use
 is not an introduction to it, it is a different paper. An earlier version of
 this file leaned on a direct wage penalty for the disorder; the full model has
 that parameter and sets it to one, which is off, because the evidence
@@ -82,6 +90,13 @@ employment margin. It is gone.
 Which channels survive is decided by ablation, not by taste: each is removed,
 the model is FULLY recalibrated, and the counterfactuals are rerun. A channel
 that changes neither result after recalibration is removed. See ABLATION.txt.
+
+That test is NECESSARY BUT NOT SUFFICIENT, and ycap is the counterexample. It
+reads as removable in ABLATION.txt because the table only looks at the baseline,
+where users are poor and the cap never binds. In figure 1 the unemployment
+channel is scaled up alone, users are rich, and the cap is the only thing making
+the resource penalty less than proportional to income; uncapped, that curve is
+flat by construction. A component has to be tested where the figures put it.
 """
 
 import numpy as np
@@ -106,24 +121,22 @@ class P:
     # NO WAGE PENALTY. The full model has prod_pen_d and sets it to 1.00, which
     # is off, because the evidence on a wage penalty conditional on working is
     # contested while the robust findings are on the employment margin. A
-    # stylised model must not rest on a shock the model it introduces does not
+    # stylized model must not rest on a shock the model it introduces does not
     # use, so the only consequence besides mortality here is unemployment.
 
     # employment and the safety net
     u0    = 0.049     # unemployment probability when clean
-    # LOSING YOUR JOB. Income support replaces half of what you used to earn,
-    # capped at half of average income. So a household at or below the mean gets
-    # half its own income, and one above the mean gets half the mean.
+    # LOSING YOUR JOB. Income support replaces the fraction repl of what you used
+    # to earn, on an earnings base capped at ycap. A household at or below the
+    # mean therefore gets half its own income; one above the mean gets half the
+    # mean, so the largest benefit anyone can draw is 0.5.
     #
-    # This is one rule doing two jobs. For the poorest household it delivers half
-    # the smallest income in the support, which is well below the rent on the
-    # smallest unit, so an unemployed household there cannot house itself out of
-    # income alone and needs savings or a voucher. That is what connects the
-    # disorder to homelessness, and without the connection the voucher has
-    # nothing to insure and the model's second result does not exist. For a
-    # household above the mean the cap means unemployment is a large fall rather
-    # than a proportional one, so the disorder threatens housing across the
-    # distribution rather than only at the bottom.
+    # The LEVEL is what connects the disorder to homelessness. For the poorest
+    # household half its income is well below the rent on the smallest unit, so
+    # an unemployed household there cannot house itself out of current income
+    # alone and needs savings or a voucher. Set income support above the small
+    # unit's rent and everyone is always housed, the voucher has nothing to
+    # insure, and the moral hazard is exactly zero.
     #
     # This is not a safety net bolted onto unemployment, it IS what unemployment
     # pays, so it is not a component to be justified separately from the
