@@ -103,9 +103,16 @@ TARGET = dict(part=0.0513, homeless=0.00399, prog=0.332, vsl=80.0,
 # poor is the same fact as the income gradient, not an independent one. So the
 # spending share is reported as an untargeted moment that the model misses, and
 # theta stays set with gamma = 0.25 * (1 - theta) alongside it.
+# THETA AND GAMMA ARE SET, NOT BRACKETED. Freeing them was tried twice and it
+# collapses: gamma couples the housing weight to the homelessness margin through
+# the value of the street, the h_hl bracket loses its interior solution, and the
+# sweep walks to h_hl = 0.055 with homelessness at 25 per cent. They are chosen
+# instead by a scan over (theta, gamma) that refits the three below at every
+# point and screens on the two things that must not break: users poorer than
+# average, and no household with a negative ex ante value of life. theta = 0.20
+# with gamma left at its Consumer Expenditure Survey value is the largest drug
+# spending share that costs no other target. best_drug.json is the runner up.
 PAIRS = [('aleph', 'vsl', 0.20, 12.0),
-         ('th', 'dshare', 0.02, 0.45),
-         ('gam', 'housing_share', 0.02, 0.55),
          ('h_hl', 'homeless', 1e-5, 0.49),
          ('lam', 'prog', 10.0, 4000.0),
          ('b', 'part', 1e-5, 0.30)]
@@ -200,9 +207,6 @@ def calibrate(par=None, sweeps=5, verbose=True):
     par = par or P()
     for s in range(sweeps):
         par = with_(par, aleph=bracket(par, 'aleph', 'vsl', 0.20, 12.0, iters=26))
-        par = with_(par, th=bracket_with_b(par, 'th', 'dshare', 0.02, 0.45, iters=14))
-        par = with_(par, gam=bracket_with_b(par, 'gam', 'housing_share', 0.02, 0.55,
-                                            iters=14))
         par = with_(par, h_hl=bracket(par, 'h_hl', 'homeless', 1e-5, 0.49))
         par = with_(par, lam=bracket_prog(par, 10.0, 4000.0))
         par = with_(par, b=_b_for(par, iters=30))
@@ -212,7 +216,13 @@ def calibrate(par=None, sweeps=5, verbose=True):
             print(f'  sweep {s+1}  worst relative gap {worst:7.3f}   '
                   f'aleph={par.aleph:.4g}  h_hl={par.h_hl:.4g}  '
                   f'lam={par.lam:.4g}  b={par.b:.4g}')
-    return with_(par, gam=0.25 * (1.0 - par.th))
+    # GAMMA IS NOT RE-IMPOSED HERE. It used to be returned as 0.25*(1-theta),
+    # which silently overwrote the value the (theta, gamma) scan chose: at
+    # theta = 0.20 that is 0.200 rather than 0.2225, and the two are on opposite
+    # sides of a cliff, 1.9 per cent drug spending against 13. The tie belongs
+    # to the old calibration where theta was 0.11 and gamma was not a separate
+    # object; it does not belong here.
+    return par
 
 
 def report(par):
