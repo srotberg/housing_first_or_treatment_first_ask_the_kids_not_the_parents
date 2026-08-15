@@ -12,7 +12,31 @@
         integer, parameter :: test_elasticity=0
         real(8), parameter :: relative_price_change=0.0*test_elasticity
         
-        integer, parameter :: include_heavy_vs_light_use_transitions=1
+        ! LIGHT AND HEAVY EXPERIMENTATION COLLAPSED TO ONE REGIME.
+        !
+        ! With the split on, the addiction hazard is a STEP FUNCTION of drug
+        ! spending at the cutoff v_bar: 0.037 below it and 6.4761 times that
+        ! above. The step is one of the four sources of non concavity in a' that
+        ! PERFORMANCE_NOTES.md section 3 identifies as breaking the coarse then
+        ! refine asset search, and it sits exactly where this paper's action is.
+        ! Collapsing the regimes retires v_bar and its target, the share of
+        ! experimenters who are light users, and leaves a single use decision
+        ! whose hazard is a smooth function of the quantity chosen, which is the
+        ! same addiction technology the stylized model uses.
+        !
+        ! WHAT THIS CHANGE DOES NOT DO ON ITS OWN. It removes the step; it does
+        ! not yet make the hazard rise with v. See the block on
+        ! smooth_addiction_hazard below.
+        integer, parameter :: include_heavy_vs_light_use_transitions=0
+
+        ! The smooth hazard itself, pi_d(v) = 1 - exp(-lambda v), replacing the
+        ! regime lookup. Off until it is wired through the expectation nests: the
+        ! probability then depends on the drug quantity chosen at each state,
+        ! so it can no longer be a precomputed array indexed by regime. lambda is
+        ! calibrated to the same moment the two old probabilities jointly hit,
+        ! experimenters over addicts equal to one.
+        integer, parameter :: smooth_addiction_hazard=0
+        real(8) :: lambda_addiction=0
         integer, parameter :: compute_welfare_every_loop=0
         
         integer, parameter :: fixed_labor_supply_at_benchmark=test_elasticity
@@ -13163,7 +13187,12 @@
             
             drug_consumption_1=frac_spent_on_addiction_1*total_consumption_choice_3
             
-            if (unemployment_index<=threshold_addiction_index) then
+            ! The cutoff only exists while the light and heavy regimes do. With
+            ! the split collapsed there is one use decision and no v_bar to clip
+            ! against, so clipping here would silently cap every experimenter's
+            ! drug spending at the retired threshold.
+            if ((unemployment_index<=threshold_addiction_index) .AND. &
+                (include_heavy_vs_light_use_transitions==1)) then
             
                 if (addiction_index_1==1) then               
                     

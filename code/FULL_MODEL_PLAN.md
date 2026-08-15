@@ -197,26 +197,68 @@ the real reason to do it.
 
 ---
 
-## 5. The disorder probability: open
+## 5. The disorder probability: smooth hazard, split dropped
 
-`probability_of_becoming_addicted_if_experiment` and
-`increased_probability_of_becoming_addicted_if_heavy_user` currently make the
-addiction hazard a **step function of `v`** at the cutoff `v_bar`, with a
-separate target (light experimenters / experimenters = 0.868) pinning the cutoff.
+**Decision taken: replace the light/heavy step with a hazard that is smooth in
+`v`, and retire the split.** Two steps, and only the first is implemented.
 
-That step is one of the four sources of non-concavity in `a'` that
-`PERFORMANCE_NOTES.md` §3 identifies as breaking the coarse-then-refine asset
-search. Replacing it with a smooth hazard
+### Step 1, done: the regimes are collapsed
+
+`include_heavy_vs_light_use_transitions = 0`. The use decision
+`future_addiction_index` now runs over {0, 1} rather than {0, 1, 2}, and the
+`v_bar` truncation in the drug quantity block is guarded so it applies only while
+the split exists. Without that guard the collapsed model would silently cap every
+experimenter's drug spending at the retired threshold.
+
+Retired with it: `v_bar` itself and its target, light experimenters over
+experimenters = 0.868.
+
+### Step 2, not done: make the hazard rise with `v`
+
+`pi_d(v) = 1 - exp(-lambda v)`, with `lambda` calibrated to the moment the two
+old probabilities jointly hit, experimenters over addicts = 1.
+
+This is **not a one line change**, and the reason is worth being precise about.
+`addiction_probabilities` is a precomputed rank-4 array indexed by
+(current `d`, future `d`, **use regime**, homeless). Indexing by regime is exactly
+what makes it precomputable. Once the hazard depends on the *quantity* chosen it
+becomes state dependent, so it has to be evaluated inside the Bellman loop, where
+the drug quantity is known but the array lookup currently is not. The five
+expectation nests at lines 9694, 10086, 10636, 11045 and 11390, plus the
+distribution at 13964, all read it by index.
+
+### The speed claim needs a correction
+
+I said this change removes a non-concavity and speeds the solver up. Removing the
+step does remove one of the four non-concavities in `a'`. But there is a cost on
+the other side that I had not checked and that changes the sign of the net
+effect.
+
+Drug spending is currently chosen in **closed form** from the static Stone-Geary
+first order condition and then clipped to the regime. The household internalises
+the addiction hazard only at the *regime* margin, never at the intensive one. A
+hazard that rises with `v` puts the continuation value into the first order
+condition,
 
 ```
-pi_d(v) = 1 - exp(-lambda v)
+theta / (b + v)  =  (1-gamma-theta)/c  +  lambda exp(-lambda v) [V(d=1) - V(d=0)] / u_c
 ```
 
-would remove that non-concavity, retire `v_bar` and its target, and make the full
-model's addiction technology identical to the stylized model's, which the note
-now implicitly promises.
+which has no closed form and needs a numerical solve at every `(state, a', h')`
+node. The bisection branch already in the code can carry it, but this is a real
+cost, and it is plausibly larger than the gain from the removed step.
 
-**This is my reading of the change and it is a guess.** Confirm before it is
-written, since the alternative readings — smoothing the step but keeping the
-light/heavy split, or changing the *level* of the hazard rather than its shape —
-imply materially different work and different calibration targets.
+So: **do this for the economics, not for the speed.** It makes the full model's
+addiction technology identical to the stylized model's, and it restores the
+property the stylized note leans on, that the intensive and extensive margins are
+not separate decisions. The speed comes from fixed productivity (section 4) and,
+much more, from hoisting the expectation out of the `a'` loop
+(`PERFORMANCE_NOTES.md` section 4).
+
+There is a cheaper intermediate worth considering if the solve time bites: keep
+`v` static optimal as it is today and let the realised hazard be
+`1 - exp(-lambda v*)` at that quantity. That removes the step, retires `v_bar`,
+keeps the closed form, and keeps the extensive margin internalised. What it gives
+up is intensive margin internalisation, which the model does not have today
+either. It is strictly closer to the stylized model than the status quo and costs
+nothing.
