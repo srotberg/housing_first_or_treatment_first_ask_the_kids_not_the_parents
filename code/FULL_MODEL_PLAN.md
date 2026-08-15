@@ -88,45 +88,64 @@ the damage is external.
 
 ### How to calibrate it credibly
 
-**The identifying moment is the intergenerational transfer flow.** With
-`include_bequest_motive = 0` today, bequests in this model are purely accidental.
-Turning on altruism makes parents accumulate in order to pass wealth on, so
-`omega` is identified by how large that flow is, given `beta`. This is the
-standard approach in two-sided-altruism calibrations and it uses machinery the
-model already has.
+**The identifying moment is the drug use gap between adults with and without a
+child in the household.** This is the exact margin `omega` operates on in this
+model: the only thing the weight does is make a parent use less than an otherwise
+identical household without a child, because using raises the chance of a
+disorder and the disorder lowers the child's permanent income. It is a revealed
+behavioural moment from the survey the paper already uses for the participation
+rate and for `u_1`.
 
-`beta` and `omega` are then jointly identified by two moments:
+Measured in NSDUH 2024 (`data/make_altruism_moment.py`), adults 26 and over,
+weighted:
 
-| parameter | moment | target |
-|---|---|---|
-| `beta` | net wealth / GDP | 3.25 (already used) |
-| `omega` | intergenerational transfers / disposable income | **3% per year** |
+| | with a child | without | ratio |
+|---|---|---|---|
+| past month illicit use, raw | 16.34% | 16.63% | 0.983 |
+| **past month, reweighted** | **14.11%** | **16.71%** | **0.845** |
+| past year, reweighted | 20.34% | 25.14% | 0.809 |
 
-The transfer target is from the Federal Reserve's SCF-based work: annual
-inheritances plus inter vivos transfers averaged about **$350 billion (2016
-dollars) per year over 1995–2016, roughly 3% of household disposable personal
-income**. Since this model has bequests but no inter vivos margin, the model's
-bequest flow is matched to the combined figure, which is the conservative
-direction: it attributes the whole observed transfer flow to the one margin the
-model has, so it cannot understate `omega`.
+The raw comparison shows nothing, and that is composition: parents are older,
+richer and far more likely to be married. Reweighting parents to the non parents'
+*joint* distribution over age, income, sex and marital status opens a gap of 2.6
+percentage points. The age pattern is what makes it credible rather than
+mechanical: the gap is widest at 35 to 49 (ratio 0.60) and 30 to 34 (0.71), the
+child rearing window, and narrows at 50 to 64 (0.855) when children have left.
+
+**The calibration condition.** Every household in the model has a child, so there
+is no parent and non parent comparison to run directly. `omega` is the entire
+reason a household here uses less than it otherwise would, so at the calibrated
+parameters, switching altruism off must raise drug use by `1/0.845 - 1 = 18.4`
+per cent.
+
+**Run through the stylized model first, it gives `omega = 0.0137`** on the past
+month moment and `0.0169` on the past year one (`code/stylized/altruism.py`).
+That is a useful check on the whole strategy: the moment identifies `omega`
+sharply, the answer is small, and the stylized model's ranking reverses back to
+Housing First only near `omega = 0.43`, so the calibrated weight sits a factor of
+thirty inside the region where the externality still decides the comparison.
+
+**The caveat, which makes this an upper bound.** Selection runs the wrong way and
+cannot be signed away: heavy users lose custody, so part of the gap is children
+being absent from users' households rather than users cutting down for their
+children. The measured gap is therefore an upper bound on what altruism explains
+and zero is the lower bound, so the ranking is reported across that range with
+the threshold stated.
+
+**Why not the transfer flow, which was the earlier proposal.** It does not work
+here. Estates in this model accrue to the government rather than to children
+(change 11 in the revision list), so `omega` does not move saving at all and the
+transfer flow cannot identify it. Restoring bequests to children only to identify
+`omega` would undo a change made for a different reason.
 
 Cross-check, and it matters: **Altonji, Hayashi and Kotlikoff (1997)** reject
 operative altruism at the margin. Redistributing a dollar from a recipient child
 to a donor parent raises the transfer by **less than 13 cents**, against the
-dollar full altruism implies. Note what this does and does not deliver. It is not
-a point estimate of `omega` — in an interior altruistic transfer the derivative
-is one for *any* `omega` — it is a rejection of the interior altruistic transfer
-model itself. So it functions as a ceiling and a sanity check: a calibrated
-`omega` anywhere near one would be inconsistent with it, and any calibration that
-produces one should be treated as a failure of the calibration rather than a
-finding.
-
-A useful anchor for the order of magnitude is the pure generational discount: at
-an annual `beta` of 0.99 over thirty years that is **0.29**, and the stylized
-model's robustness check put the reversal threshold near 0.43. So the region that
-matters is roughly 0 to 0.5, and the ranking has to be reported across it with
-the threshold stated, the same discipline `kappa_cons` and `kappa_x` were held
-to.
+dollar full altruism implies. It is not a point estimate of `omega` — in an
+interior altruistic transfer the derivative is one for *any* `omega` — it is a
+rejection of the interior altruistic transfer model itself, so it functions as a
+ceiling. A calibrated `omega` near one would mean the moment is picking up
+something other than altruism. At 0.014 it is nowhere near.
 
 ### What altruism does to the rest of the calibration
 
