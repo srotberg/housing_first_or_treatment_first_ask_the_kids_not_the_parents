@@ -253,13 +253,11 @@ or chooses not to, pay for a home.}
 quantitative rather than aesthetic. With a single size, a household whose cash
 on hand falls below the rent has no way to economise on housing at all and goes
 straight onto the street. Collapsing $h_S$ into $h_L$ raises homelessness from
-$0.42$ per cent of the population to $3.41$, and no value of $h_0$ brings it
-back. Refitting the whole model, with $h_0$ driven down to its lower bound,
-still leaves homelessness at $1.39$ per cent against a target of $0.399$ and
-drops the participation rate to $3.79$ per cent against a target of $5.13$: the
-model now misses both of the targets it is meant to hit. Making the street
-arbitrarily miserable does not help a household that cannot afford the rent at
-any level of misery. With a small
+$0.36$ per cent of the population to $3.29$, and no value of $h_0$ brings it
+back: driving the street's housing services to essentially zero still leaves
+$0.81$ per cent, twice the target, and refitting the whole model leaves
+$2.10$ per cent, five times it. Making the street arbitrarily miserable does not
+help a household that cannot afford the rent at any level of misery. With a small
 unit available the household downsizes instead, which is what households do in
 the data and what the quantitative model's housing grid is for.
 Section~\ref{sec:who} returns to what removing it does to the policy
@@ -419,7 +417,7 @@ feature has to overcome. Drugs are a normal good bought at a price, so a
 household with twice the income gives up less utility per dollar spent on them.
 \new{With no consequences at all for acquiring a disorder, that is the only
 force operating, and drug use concentrates at the top: the average user earns
-$3.37$ times the population average, which is the first row of
+$3.41$ times the population average, which is the first row of
 Table~\ref{tab:channels} and the left hand end of both curves in
 Figure~\ref{fig:who}.}
 
@@ -455,7 +453,7 @@ each feature from zero to its calibrated value. Above the horizontal line at one
 users are richer than average, below it they are poorer. At every point $b$ is
 recalibrated so that the drug participation rate is $5.13$ per cent, so the two
 curves compare economies with the same amount of drug use and differ only in who
-does it. Both curves begin at $3.37$, the case with no consequences at all.}
+does it. Both curves begin at $3.41$, the case with no consequences at all.}
 \end{minipage}
 \end{figure}
 
@@ -472,11 +470,10 @@ with every consequence of the disorder removed and is common to both columns.}}
 \new{Table~\ref{tab:channels} contains the main result of this section, and it
 is sharper than the statement that mortality matters more than unemployment.
 The mortality channel reverses the gradient at a quarter of its calibrated
-strength, taking the income ratio from $3.37$ to $0.21$, and by half strength it
-has reached its final value of $0.19$; the rest of the channel changes nothing
-about who uses. The unemployment channel does not reverse the gradient at all.
+strength, taking the income ratio from $3.41$ to $0.19$, and it does not move
+again after that; the rest of the channel changes nothing about who uses. The unemployment channel does not reverse the gradient at all.
 Scaled to three quarters of its calibrated value it has barely moved the ratio,
-from $3.37$ to $3.28$, and even fully switched on it leaves users at $1.96$
+from $3.41$ to $3.37$, and even fully switched on it leaves users at $2.73$
 times average income, still well above the population mean. In this environment
 the unemployment channel \emph{cannot} produce the concentration of drug use at
 the bottom of the income distribution, however strong it is made.}
@@ -484,8 +481,8 @@ the bottom of the income distribution, however strong it is made.}
 \new{The $b$ column of Table~\ref{tab:channels} shows the recalibration doing
 real work, and reading it is the best way to see why the exercise is set up this
 way. With no consequences a household needs almost no temptation to use, and
-$b=0.237$ delivers a participation rate of five per cent. Once the mortality
-channel is fully on, the same five per cent requires $b=0.0075$, roughly thirty
+$b=0.226$ delivers a participation rate of five per cent. Once the mortality
+channel is fully on, the same five per cent requires $b=0.0051$, more than forty
 times more temptation, because the consequences the household now faces have to
 be outweighed. Were $b$ not recalibrated at every point, the curves in
 Figure~\ref{fig:who} would be comparing economies with different amounts of drug
@@ -498,10 +495,10 @@ penalty in resources, and a resource penalty scales with the very thing it is
 meant to offset: taking a fixed share of a large income still leaves a large
 income, so the penalty cannot outrun the fact that drugs are cheaper in utility
 terms for the rich. Indeed, if income support were exactly proportional to
-income the unemployment curve in Figure~\ref{fig:who} would be flat at $3.37$,
+income the unemployment curve in Figure~\ref{fig:who} would be flat at $3.41$,
 and the channel would be neutral on the income gradient by construction. What
 the cap $\bar y$ of equation~\eqref{eq:inc} does is break that proportionality
-at the top, and the $1.96$ in the last row of Table~\ref{tab:channels} is
+at the top, and the $2.73$ in the last row of Table~\ref{tab:channels} is
 entirely the work of the cap. Even so, it is not enough.}
 
 \new{The mortality channel is different in kind, because what it destroys is not
@@ -529,10 +526,10 @@ the results in this section at once, which no other component does. Switching it
 off and recalibrating sends users back to $3.37$ times average income, as
 Table~\ref{tab:channels} already shows. Less obviously, it also destroys the
 policy result of Section~\ref{sec:mh}. Without mortality the value of life force
-is $+0.03$ percentage points instead of $-6.12$, which is to say it disappears:
+is $-0.23$ percentage points instead of $-6.45$, which is to say it disappears:
 a voucher no longer deters anyone from using, because what using now threatens
 is only resources, and resources are what the voucher supplies either way. The
-moral hazard force survives at $+1.04$. An economy without the mortality channel
+moral hazard force survives at $+0.80$. An economy without the mortality channel
 would therefore conclude that Housing First unambiguously \emph{raises} drug
 use, the opposite of the conclusion reached here, and it would reach that
 conclusion with no opposing force in sight to warn the reader that the answer is
@@ -542,30 +539,34 @@ quantitative. The name \emph{value of life} is literal.}
 is a statement about the unemployment channel, so the channel has to be in the
 model for the statement to be made at all. It also does real work in
 Section~\ref{sec:mh}. Removing it and recalibrating leaves the income gradient
-untouched at $0.19$, confirming that it contributes nothing to who uses, but it
-changes the moral hazard force from $+2.93$ to $+2.15$ percentage points,
-roughly a quarter of its size. Unemployment is what makes the disorder threaten a
-household's housing, and housing is what the voucher insures, so without it the
-policy has substantially less to do.}
+untouched at $0.19$, confirming that it contributes nothing to who uses. What it
+does instead is carry most of the moral hazard: removing it cuts that force from
+$+2.55$ to $+0.51$ percentage points, four fifths of it, while the value of life
+force strengthens from $-6.45$ to $-7.14$. Unemployment is what makes the
+disorder threaten a household's housing, and housing is what the voucher
+insures, so without it a voucher has very little left to be a moral hazard
+about.}
 
 \paragraph{\new{Why the small unit is retained.}} \new{This is the one
 component whose removal breaks the model outright rather than merely moving a
-number. As Section~\ref{sec:env} notes, a single rental size cannot deliver the
-homelessness rate at any value of $h_0$, so the row of the ablation that removes
-it is not a recalibrated model but a model that has failed to calibrate, missing
-its participation target as well. The direction of the damage is nonetheless
-clear: the value of life force grows from $-6.12$ to $-9.68$ percentage points
-and the moral hazard from $+2.93$ to $+3.02$. The mechanism is direct. Without an intermediate
-option, a household whose cash on hand falls short of the rent goes straight
-onto the street, so far more housing is at stake in unemployment than there
-should be and a voucher is worth correspondingly more. The small unit is the
-margin of adjustment that keeps both forces honest.}
+number, and it is why the ablation reports homelessness alongside the two
+forces. Judged on the forces alone the row looks harmless: the value of life
+force moves from $-6.45$ to $-6.02$ and the moral hazard from $+2.55$ to
+$+2.72$, and the verdict would be to remove it. But that row is not a
+recalibrated model. As Section~\ref{sec:env} notes, a single rental size cannot
+deliver the homelessness rate at any value of $h_0$, and after refitting it sits
+at $2.10$ per cent against a target of $0.399$, five times too high. Without an
+intermediate option, a household whose cash on hand falls short of the rent goes
+straight onto the street, so the model has nowhere to put the households that in
+the data simply move somewhere smaller. Keeping a component because the model
+cannot hit its targets without it is a different kind of argument from keeping
+one because a result moves, and it is the stronger of the two.}
 
 \paragraph{\new{Why saving is retained.}} \new{Assets are the household's own
 insurance against the disorder, and they compete directly with the voucher.
 Shutting saving down and recalibrating leaves the value of life force almost
-unchanged, at $-6.53$ against $-6.12$ percentage points, but it drives the moral
-hazard from $+2.93$ to $+4.76$, which is more than half as large again. A
+unchanged, at $-6.65$ against $-6.45$ percentage points, but it drives the moral
+hazard from $+2.55$ to $+4.74$, which is nearly double. A
 household that cannot save has no way to protect its own housing, so a voucher
 is the only insurance there is and the behaviour it induces is correspondingly
 larger. Since the size of the moral hazard relative to the force opposing it is
@@ -575,19 +576,20 @@ cannot be dropped.}
 \paragraph{\new{The generosity of income support.}} \new{This is not a
 component that can be removed, since unemployment has to pay something, but its
 level can be varied. Halving the replacement rate, from $\psi=0.5$ to $0.25$,
-and recalibrating moves the value of life force from $-6.12$ to $-5.73$
-percentage points and the moral hazard from $+2.93$ to $+3.20$. The moral hazard
-moves the way it does when saving is shut down, and for the same reason: the
-less insurance a household already has of its own, the more behaviour a voucher
-induces. Neither movement here is large enough to disturb the ranking of the two
-forces, so the level of income support is not a knife edge. Its \emph{upper} end is, for the reason given in
+and recalibrating moves the value of life force from $-6.45$ to $-5.40$
+percentage points and the moral hazard from $+2.55$ to $+2.45$. The deterrent
+force is the one that moves, by a full percentage point, because a household
+with less to fall back on has more at stake in keeping its home and therefore
+values the voucher more; the moral hazard barely notices. The ranking is
+untouched, so the level of income support is not a knife edge in the middle of
+its range. Its \emph{upper} end is, for the reason given in
 Section~\ref{sec:support}: set income support above the rent on the small unit
 and the moral hazard force is exactly zero.}
 
 \paragraph{\new{Recovery, and a component retained for a reason that is not
 quantitative.}} \new{Setting the recovery probability $\rho$ to zero and
-recalibrating moves the value of life force from $-6.12$ to $-5.74$ and the
-moral hazard from $+2.93$ to $+3.08$, neither of which changes anything
+recalibrating moves the value of life force from $-6.45$ to $-6.13$ and the
+moral hazard from $+2.55$ to $+3.45$, neither of which changes anything
 qualitative, so by the standard applied to everything else this would be grounds
 for removing it. It is retained anyway, because
 without recovery a household that ever acquires the disorder has it permanently,
@@ -684,14 +686,14 @@ requires being clean.}}
 \end{table}
 
 \new{Table~\ref{tab:policy} reads as follows.} With no programme at all,
-$6.12$ per cent of households use drugs. Moving to universal Treatment First,
-participation falls by $6.12$ percentage points, to nothing: guaranteeing
+$6.45$ per cent of households use drugs. Moving to universal Treatment First,
+participation falls by $6.45$ percentage points, to nothing: guaranteeing
 housing to households that stay clean makes staying clean worth a great deal
 more. Moving instead to universal Housing First leaves participation at
-$2.93$ per cent, which is $2.93$ percentage points higher than under Treatment
+$2.55$ per cent, which is $2.55$ percentage points higher than under Treatment
 First at the same generosity, \new{and that difference is the moral hazard
 force.} The net effect of \new{universal} Housing First against no programme is
-$-3.19$ percentage points: \new{it still lowers drug use, because the value of
+$-3.90$ percentage points: \new{it still lowers drug use, because the value of
 life force is larger than the moral hazard force.}
 
 \paragraph{\new{What the same policy dial does to homelessness and to the
@@ -737,7 +739,8 @@ achieves its housing objective.}
 model.}
 
 \paragraph{Both forces are first order, and they work against each other.} The
-value of life force is roughly twice the moral hazard force here, but both are
+value of life force is about two and a half times the moral hazard force here,
+but both are
 large relative to the participation rate they act on, and \new{their near
 cancellation is the central feature of the problem}. Theory does not sign the
 effect of housing assistance on drug use. Anyone asserting that housing the
@@ -747,7 +750,7 @@ though they are making a theoretical one.
 
 \paragraph{Unconditional assistance still lowers drug use.} \new{This runs
 against the intuition that unconditional help must raise drug use through moral
-hazard. The moral hazard here is real and it is large, at $+2.93$ percentage
+hazard. The moral hazard here is real and it is large, at $+2.55$ percentage
 points. It simply loses to the force running the other way. Which of the two
 wins, however, is a quantitative question, and the ranking obtained in this
 stylized environment is not something the paper carries forward as a result; it
@@ -793,7 +796,7 @@ V_1(y;\ \text{HF},\ \pi_V) \;\ge\; V_1(y;\ \text{TF},\ \pi_V)
 \new{with equality exactly for households that never use. This is a dominance
 argument, not a calibrated result. It does not depend on any parameter and no
 choice of parameters can overturn it. Table~\ref{tab:welfare} confirms it:
-$4.1$ per cent of households, which is to say the ones who use, are strictly
+$3.6$ per cent of households, which is to say the ones who use, are strictly
 worse off under Treatment First, and no household anywhere in the distribution
 is better off.}
 
