@@ -102,21 +102,25 @@ class P:
 
     # employment and the safety net
     u0    = 0.049     # unemployment probability when clean
-    # LOSING YOUR JOB. Income support is a flat guarantee worth half the
-    # smallest income in the support of the income distribution. It can be, and
-    # is, well below the rent on the smallest unit: an unemployed household
-    # cannot house itself out of income alone and needs savings or a voucher.
-    # That is what connects the disorder to homelessness, and without the
-    # connection the voucher has nothing to insure and the model's second result
-    # does not exist.
+    # LOSING YOUR JOB. Income support replaces half of what you used to earn,
+    # capped at half of average income. So a household at or below the mean gets
+    # half its own income, and one above the mean gets half the mean.
+    #
+    # This is one rule doing two jobs. For the poorest household it delivers half
+    # the smallest income in the support, which is well below the rent on the
+    # smallest unit, so an unemployed household there cannot house itself out of
+    # income alone and needs savings or a voucher. That is what connects the
+    # disorder to homelessness, and without the connection the voucher has
+    # nothing to insure and the model's second result does not exist. For a
+    # household above the mean the cap means unemployment is a large fall rather
+    # than a proportional one, so the disorder threatens housing across the
+    # distribution rather than only at the bottom.
     #
     # This is not a safety net bolted onto unemployment, it IS what unemployment
-    # pays, so it is not an optional component to be justified separately. Its
-    # LEVEL is what matters, and it matters more than anything else here: at
-    # half the smallest income the moral hazard is large, and at a floor above
-    # the small rent it is exactly zero.
-    ymin  = 0.12      # lower bound of the income grid, set in calibrate.py
-    floor_ratio = 0.50
+    # pays, so it is not a component to be justified separately from the
+    # unemployment risk itself.
+    repl  = 0.50      # replacement rate
+    ycap  = 1.00      # capped at this multiple of average income
 
     # housing
     h_lg  = 1.00
@@ -165,7 +169,7 @@ def _states(par, d, policy, y):
         # income able to afford the small unit even while unemployed, so the
         # disorder never puts its roof at risk and the voucher has nothing to
         # insure.
-        inc = y if e == 0 else par.floor_ratio * par.ymin
+        inc = y if e == 0 else par.repl * min(y, par.ycap)
         for rmul, prb in ((par.kappa_r, pv), (1.0, 1.0 - pv)):
             if pe * prb > 1e-14:
                 out.append((pe * prb, inc, rmul))
