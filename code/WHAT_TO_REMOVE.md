@@ -138,3 +138,42 @@ not 6.6x.
 
 It is still the right change: it is provably exact, it removes four fifths of an
 array dimension, and it deletes the last structural trace of homeownership.
+
+---
+
+## The housing state is already mostly collapsed. The prize is 2x, not 6.6x
+
+Going in to remove it, the loop turns out to read
+
+```fortran
+do housing_status_index = (1-has_house)*lowest_housing_grid_point + &
+                          has_house*index_of_smallest_house_hhld_can_buy, &
+                          track_housing_1*(1-newborn_household)*(housing_status_grid_size-1)
+```
+
+The upper bound is `track_housing_1*(...)`. When `track_housing_1` is zero, which
+is what the value function solve uses, the bound is zero and the loop runs from
+`lowest_housing_grid_point = -1` to `0`: **two iterations, not eight**. That is
+exactly what the dump showed, two populated slots out of eight, and it is why the
+per age timings never revealed an eightfold overhead.
+
+So the dimension has already been collapsed once, by whoever wrote
+`track_housing_1`, and what is left to remove is the last factor of two. The
+6.6x in the model note assumed a loop over the full grid; that loop does not
+exist in the solve.
+
+**This reorders the list.** At 2x, removing the housing state now ranks below the
+asset grid change already shipped, and roughly level with dropping the owner
+branch. It is still worth doing, since the value function is provably identical
+at the two surviving indices and the array is four times wider than anything
+written to it, but it is no longer the item that decides whether the calibration
+fits in a day.
+
+**What the change is, for whoever does it.** Set the loop bound so it runs only
+at `lowest_housing_grid_point`, and force `future_housing_status_index_to_use` to
+the same index wherever the value function is read. That is exact because
+`V(-1) == V(0)` to the last bit. The care needed is in the distribution and the
+policy function stores, which are indexed by the same variable and would then be
+reading a slot nothing writes. Verify the way the expectation hoist was verified:
+dump the value function at a working age before and after, and require the files
+to be bit identical.
