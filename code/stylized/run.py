@@ -29,7 +29,7 @@ OUT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
 # group leaves the other running.
 CONFIGS = [
     ('both channels',  {},                                   '#1B3B5F', '-'),
-    ('mortality only', dict(xi=0.0, u1=P.u0),                '#2C6FAD', '--'),
+    ('mortality only', dict(u1=P.u0, h_hl=P.h_sm),           '#2C6FAD', '--'),
     ('resource only',  dict(kap=0.0, kapH=0.0),              '#D9822B', ':'),
 ]
 
@@ -53,18 +53,18 @@ def save(fig, name):
 
 # Everything the disorder does to you, switched off. Scaling a channel means
 # moving its members from these values to their calibrated ones together.
-OFF = dict(kap=0.0, h_hl=P.h_sm, xi=0.0)
+OFF = dict(kap=0.0, kapH=0.0, u1=P.u0, h_hl=P.h_sm)
 
 
 def _scaled(base, which, s):
     kw = dict(OFF)
     if which == 'mortality':
-        kw.update(kap=s * base.kap)
+        kw.update(kap=s * base.kap, kapH=s * base.kapH)
     else:
         # the street's housing services belong HERE, not with mortality. An
         # earlier version had h_hl in the mortality group, which quietly put a
         # resource penalty inside the mortality curve.
-        kw.update(xi=s * base.xi,
+        kw.update(u1=P.u0 + s * (base.u1 - P.u0),
                   h_hl=P.h_sm * (base.h_hl / P.h_sm) ** s)
     par = with_(base, **kw)
     # b is recalibrated at EVERY point, so participation is 5.13 per cent all
@@ -93,7 +93,7 @@ def fig_who_uses(base):
         r = [stats(_scaled(base, which, s))['r_use'] for s in sc]
         ax.plot(100 * sc, r, ls, color=col,
                 label=f'{which} channel' + (': the disorder kills you' if which == 'mortality'
-                      else ': it costs you a wage, and\nthe housing you can afford'))
+                      else ': it costs you a job, and\nthe home you can afford'))
     ax.axhline(1.0, color='0.35', lw=1.2)
     ax.text(2, 1.06, 'users earn the population average', fontsize=9, color='0.35')
     ax.set_yscale('log')

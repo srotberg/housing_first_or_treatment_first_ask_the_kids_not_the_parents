@@ -126,6 +126,15 @@ class P:
     h_lg  = 1.00
     h_sm  = 0.50
     h_hl  = 0.05      # the street. CALIBRATED to the homelessness rate
+    # RENT IS SET, NOT CALIBRATED, so that the standard unit costs the housing
+    # budget share of mean income. Calibrating it to the AGGREGATE share instead
+    # doubled it, because in this model most households take the small unit,
+    # which is backwards relative to the data, so rent per unit had to rise to
+    # make total housing spending add up. At that rent the small unit cost a
+    # fifth of mean income and a fifth of all households could not afford any
+    # home while unemployed, which put homelessness at 1.29 per cent against a
+    # target of 0.4. Setting it here leaves 4 per cent unable to afford the
+    # small unit and homelessness at 0.35 per cent.
     pr    = 0.212     # rent per unit of housing services
     pV    = 0.27      # probability a voucher arrives
     kappa_r = 0.30    # tenant's share of the rent when covered

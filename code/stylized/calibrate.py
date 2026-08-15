@@ -2,9 +2,15 @@
 A rough calibration of the stylised model. Four parameters, four targets.
 
     b       drug participation rate                    5.13 %
-    pr      housing spending / income                  21.2 %
     h_hl    homelessness rate                          0.399 %
     lam     share of users who acquire the disorder    33.2 %
+
+Three, not four. Rent used to be calibrated to the aggregate housing share and
+that was a mistake: it doubled rent, because most households here take the small
+unit, so a fifth of them could not afford any home while unemployed and
+homelessness came out three times its target. Rent is now SET so the standard
+unit costs 21.2 per cent of mean income, which is the same fact stated the way
+that does not break anything.
 
 Rough is the intention. The model is qualitative and exists to show directions,
 so the calibration only has to put it in the right region. Nothing here is a fit
@@ -30,14 +36,9 @@ from stylized import P, with_, aggregates
 YG = np.exp(np.linspace(np.log(0.12), np.log(5.0), 30))
 W = np.exp(-0.5 * ((np.log(YG) + 0.5 * 0.75**2) / 0.75)**2)
 
-TARGET = dict(part=0.0513, housing_share=0.212, homeless=0.00399, prog=0.332)
+TARGET = dict(part=0.0513, homeless=0.00399, prog=0.332)
 
-# Rent is the calibrated price and the housing weight is set at 0.25. The other
-# way round needs a weight near three, meaning housing worth three times
-# consumption, because at a rent of 0.212 per unit most households below mean
-# income take the small unit and the aggregate share falls short.
 PAIRS = [('b', 'part', 1e-5, 0.30),
-         ('pr', 'housing_share', 0.05, 1.20),
          ('h_hl', 'homeless', 1e-5, 0.49),
          ('lam', 'prog', 0.5, 900.0)]
 
