@@ -33,8 +33,42 @@ sequence, which cannot leave the band.
 import numpy as np
 from stylized import P, with_, aggregates
 
-YG = np.exp(np.linspace(np.log(0.12), np.log(5.0), 30))
-W = np.exp(-0.5 * ((np.log(YG) + 0.5 * 0.75**2) / 0.75)**2)
+# THE VALUE OF LIFE, and how it was fixed.
+#
+# The problem: with log utility the poorest households had a NEGATIVE value of
+# life. Since dying is worth zero they then preferred the extra mortality the
+# disorder brings, which inverts the mechanism the model rests on. The condition
+# that matters is on V1, the value at the point where v is chosen: nobody should
+# be choosing to use while death is the better option. W2 alone may dip below
+# zero later, when no v is being chosen.
+#
+# Three changes fixed it, and only the third touches aleph.
+#
+#   WEIGHTS THAT SUM TO ONE. Consumption is weighted by 1-gam-th rather than 1,
+#   which damps log c at the bottom by a third and makes gam the housing budget
+#   share proper rather than gam/(1+gam+th).
+#
+#   u0 STAYS. Setting it to zero was tried and reverted: it makes every route
+#   into homelessness run through the disorder, and the share of the homeless
+#   carrying one goes to 0.997 against a third or so in the data. Clean
+#   households have to be able to lose their jobs too.
+#
+#   ALEPH 2.50 -> 2.80. Small, and nowhere near the 3.7 that flattens the
+#   gradient by diluting the income dependence the mortality channel needs.
+#
+# Result: min V1 = +0.20, no household anywhere with a negative ex ante value of
+# life, both headline results intact, and the share of the homeless with the
+# disorder at 0.42.
+#
+# An income floor was also tried, at the suggestion that squeezing the bottom
+# would help. It does fix the value of life, but psi*YMIN must stay under the
+# small unit's rent for anyone to be at risk of the street at all, so a floor
+# high enough to matter collapses homelessness and takes the moral hazard with
+# it. floor_test.py is that diagnostic and is kept.
+YMIN = 0.12
+SIG = 0.75
+YG = np.exp(np.linspace(np.log(YMIN), np.log(5.0), 30))
+W = np.exp(-0.5 * ((np.log(YG) + 0.5 * SIG**2) / SIG)**2)
 
 TARGET = dict(part=0.0513, homeless=0.00399, prog=0.332)
 
@@ -46,7 +80,7 @@ TARGET = dict(part=0.0513, homeless=0.00399, prog=0.332)
 # runs last. With b first, participation settled at 3.7 per cent against a
 # target of 5.13 and stayed there however many sweeps were run.
 PAIRS = [('h_hl', 'homeless', 1e-5, 0.49),
-         ('lam', 'prog', 0.5, 900.0),
+         ('lam', 'prog', 10.0, 4000.0),
          ('b', 'part', 1e-5, 0.30)]
 
 LABEL = {'part': 'drug participation rate',
@@ -72,16 +106,44 @@ def bracket(par, name, mom, lo, hi, iters=34):
     return float(np.sqrt(lo * hi))
 
 
-def calibrate(par=None, sweeps=6, verbose=True):
+def _b_for(par, iters=16):
+    """Refit b so participation is on target at the given parameters."""
+    return bracket(par, 'b', 'part', 1e-5, 0.60, iters=iters)
+
+
+def bracket_prog(par, lo=10.0, hi=4000.0, iters=16):
+    """
+    Bracket lam on prog, REFITTING b at every trial.
+
+    prog is sud/part, so it is meaningless when participation is near zero.
+    Evaluated on a stale b the monotonicity test reads prog = 0 at one end,
+    concludes the wrong sign, and drives the parameter to a bound: that is what
+    made two earlier calibrations look as though the model had broken. Refitting
+    b at each trial keeps participation on target, so prog is always defined.
+    """
+    tgt = TARGET['prog']
+    for _ in range(iters):
+        mid = np.sqrt(lo * hi)
+        q = with_(par, lam=mid)
+        q = with_(q, b=_b_for(q))
+        if stats(q)['prog'] > tgt:
+            hi = mid
+        else:
+            lo = mid
+    return float(np.sqrt(lo * hi))
+
+
+def calibrate(par=None, sweeps=4, verbose=True):
     par = par or P()
     for s in range(sweeps):
-        for name, mom, lo, hi in PAIRS:
-            par = with_(par, **{name: bracket(par, name, mom, lo, hi)})
+        par = with_(par, h_hl=bracket(par, 'h_hl', 'homeless', 1e-5, 0.49))
+        par = with_(par, lam=bracket_prog(par, 10.0, 4000.0))
+        par = with_(par, b=_b_for(par, iters=30))
         if verbose:
             m = stats(par)
             worst = max(abs(m[k] / TARGET[k] - 1.0) for k in TARGET)
             print(f'  sweep {s+1}  worst relative gap {worst:7.3f}   '
-                  + '  '.join(f'{n}={getattr(par, n):.4g}' for n, _, _, _ in PAIRS))
+                  + f'h_hl={par.h_hl:.4g}  th={par.th:.4g}  b={par.b:.4g}')
     return par
 
 
