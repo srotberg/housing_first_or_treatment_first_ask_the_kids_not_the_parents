@@ -413,7 +413,14 @@
         real(8), parameter :: increased_risk_of_death_homeless_addicted=&
             increased_risk_of_death_homeless+increased_risk_of_death_addicted
                             
-        real(8), parameter :: probability_of_ui=0.3
+        ! UNEMPLOYMENT INSURANCE IS NOW CERTAIN FOR THE FIRST YEAR OF A SPELL
+        ! and pays nothing after it. This removes a parameter rather than a
+        ! state: a household in its first year of unemployment and one in its
+        ! third still have different income, the replacement rate against zero,
+        ! and different continuation values, so the two do not merge. The three
+        ! employment states stay, and with them the long spells that are what
+        ! actually cost a household its housing.
+        real(8), parameter :: probability_of_ui=1.0
                 
         real(8) :: utility_improvement=include_addiction*0
         real(8) :: utility_improvement_adjuster=0
@@ -499,7 +506,25 @@
         real(8), parameter :: mortgage_interest_gap=only_LTV*0+(1-only_LTV)*0.01
         real(8), parameter :: penalty_months_of_interest=0 !real(1)/real(4)
                                                
-        integer, parameter :: positive_financial_grid_size=90
+        ! ASSET GRID, and the one number here that is a judgement rather than a
+        ! deduction. The a' search is QUADRATIC in this, so ninety to seventy is
+        ! worth about 1.65x, more than anything else left on the list.
+        !
+        ! The reason for caution is that the objective is not single peaked in
+        ! a', and the things that break it, voucher eligibility as a step in
+        ! income and the food stamp floor, are where the welfare comparison
+        ! happens at margins of tenths of a per cent. What makes seventy
+        ! defensible is that the spacing is dense near zero and sparse at the
+        ! top, so the points removed are the ones above the wealth distribution's
+        ! upper decile, where few households sit and where the only notch,
+        ! capital income pushing a household over the eligibility threshold, is
+        ! already coarsely resolved.
+        !
+        ! IT IS ONE LINE TO PUT BACK, and it must be validated before any
+        ! reported number rests on it: solve the benchmark at seventy and at
+        ! ninety and compare the targeted moments and the two policy
+        ! counterfactuals, not just the value function.
+        integer, parameter :: positive_financial_grid_size=70
         integer, parameter :: negative_financial_grid_size=61
         
         integer, parameter :: grid_gaps=coarse_grid*10+(1-coarse_grid)
