@@ -66,6 +66,25 @@
         integer, parameter :: include_varying_household_size=0
         integer, parameter :: only_LTV=1
         integer, parameter :: newborns_inherit_addiction=0                    
+
+        ! PERMANENT INCOME FIXED OVER THE LIFE CYCLE, unemployment risk kept.
+        !
+        ! The productivity dimension is NOT removed: it still carries the
+        ! cross sectional dispersion of permanent income and the
+        ! intergenerational link, so employment_grid_size stays at 9 and the
+        ! value function is the same size. What changes is that the transition
+        ! becomes the identity, which collapses the innermost expectation nest
+        ! from nine branches to one at every working age, exactly as it already
+        ! does in retirement. Combined with the zero probability guards in the
+        ! Bellman loops this is where the speed comes from.
+        !
+        ! DISPERSION IS PRESERVED, RISK IS NOT. The grid is frozen at its mid
+        ! working life width rather than at its age one width, so the model
+        ! keeps roughly the average cross sectional variance of log productivity
+        ! it had with the shock and loses only the risk. Freezing at age one
+        ! instead would quietly shrink income inequality and take the wealth
+        ! targets with it.
+        integer, parameter :: fixed_productivity=1
         integer, parameter :: ss_decrease_for_retired_addicted=0
         integer, parameter :: threshold_addiction_index=3
         integer, parameter :: have_two_rental_markets=0
@@ -9657,6 +9676,14 @@
                             (1-at_least_one_period_before_retirement)*1,&
                             at_least_one_period_before_retirement*employment_index+&
                             (1-at_least_one_period_before_retirement)*employment_grid_size
+
+                            ! FIXED PRODUCTIVITY, and a free win even without it. When the productivity
+                            ! transition is the identity, eight of the nine branches carry zero mass and
+                            ! the innermost nest is nine times larger than it needs to be. Skipping them
+                            ! is exact, not an approximation, and it also prunes the near zero tails of
+                            ! the Tauchen matrix when productivity is stochastic.
+                            if (employment_process(age_index,employment_index,future_employment_index)<=0.d0) cycle
+
                         
                             do future_addiction_index_2=&
                                 (1-loop_over_addiction_1)*future_addiction_index+loop_over_addiction_1*0,&
@@ -10076,6 +10103,14 @@
                                                 (1-at_least_one_period_before_retirement)*1,&
                                                 at_least_one_period_before_retirement*employment_index+&
                                                 (1-at_least_one_period_before_retirement)*employment_grid_size
+
+                                                ! FIXED PRODUCTIVITY, and a free win even without it. When the productivity
+                                                ! transition is the identity, eight of the nine branches carry zero mass and
+                                                ! the innermost nest is nine times larger than it needs to be. Skipping them
+                                                ! is exact, not an approximation, and it also prunes the near zero tails of
+                                                ! the Tauchen matrix when productivity is stochastic.
+                                                if (employment_process(age_index,employment_index,future_employment_index)<=0.d0) cycle
+
                                                                      
                                                 future_utility_vector(future_mortgage_index)=&
                                                     future_utility_vector(future_mortgage_index)+discount_factor*&
@@ -10626,6 +10661,14 @@
                                         (1-at_least_one_period_before_retirement)*1,&
                                         at_least_one_period_before_retirement*employment_index+&
                                         (1-at_least_one_period_before_retirement)*employment_grid_size
+
+                                        ! FIXED PRODUCTIVITY, and a free win even without it. When the productivity
+                                        ! transition is the identity, eight of the nine branches carry zero mass and
+                                        ! the innermost nest is nine times larger than it needs to be. Skipping them
+                                        ! is exact, not an approximation, and it also prunes the near zero tails of
+                                        ! the Tauchen matrix when productivity is stochastic.
+                                        if (employment_process(age_index,employment_index,future_employment_index)<=0.d0) cycle
+
                                                                                                                                                                                                                                            
                                         future_utility_vector(future_mortgage_index)=&
                                             future_utility_vector(future_mortgage_index)+&
@@ -11035,6 +11078,14 @@
                                                     (1-at_least_one_period_before_retirement)*1,&
                                                     at_least_one_period_before_retirement*employment_index+&
                                                     (1-at_least_one_period_before_retirement)*employment_grid_size
+
+                                                    ! FIXED PRODUCTIVITY, and a free win even without it. When the productivity
+                                                    ! transition is the identity, eight of the nine branches carry zero mass and
+                                                    ! the innermost nest is nine times larger than it needs to be. Skipping them
+                                                    ! is exact, not an approximation, and it also prunes the near zero tails of
+                                                    ! the Tauchen matrix when productivity is stochastic.
+                                                    if (employment_process(age_index,employment_index,future_employment_index)<=0.d0) cycle
+
                                                                                                                                                                                                                                                                                                  
                                                     future_utility_vector(future_mortgage_index)=&
                                                         future_utility_vector(future_mortgage_index)+&
@@ -11376,6 +11427,14 @@
                                     (1-at_least_one_period_before_retirement)*1,&
                                     at_least_one_period_before_retirement*employment_index+&
                                     (1-at_least_one_period_before_retirement)*employment_grid_size
+
+                                    ! FIXED PRODUCTIVITY, and a free win even without it. When the productivity
+                                    ! transition is the identity, eight of the nine branches carry zero mass and
+                                    ! the innermost nest is nine times larger than it needs to be. Skipping them
+                                    ! is exact, not an approximation, and it also prunes the near zero tails of
+                                    ! the Tauchen matrix when productivity is stochastic.
+                                    if (employment_process(age_index,employment_index,future_employment_index)<=0.d0) cycle
+
                                     
                                     do future_voucher_index=first_voucher_index,second_voucher_index
                                                                                                                                                                                                    
@@ -16532,7 +16591,21 @@
                             
         end if
                 
-        do age_index=(life_span-retirement_span),life_span
+        ! With fixed_productivity the identity transition starts at age one
+        ! rather than at retirement, and the grid is frozen at its mid working
+        ! life width so that the cross sectional dispersion is the average of
+        ! what the stochastic process delivered.
+        if (fixed_productivity==1) then
+        
+            do age_index=1,life_span
+            
+                employment_grid(age_index,:)=employment_grid((life_span-retirement_span)/2,:)
+                
+            end do
+            
+        end if
+        
+        do age_index=fixed_productivity*1+(1-fixed_productivity)*(life_span-retirement_span),life_span
         
             do employment_index=1,employment_grid_size
             
