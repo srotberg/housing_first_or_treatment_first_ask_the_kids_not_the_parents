@@ -1,0 +1,104 @@
+# Getting the calibration to a day
+
+The target is hours, at most one day. The measured starting point is weeks. This
+is where the factors come from, and only the first group is about making the
+model smaller. The rest is about not doing the same solve hundreds of times.
+
+    weeks  --17x-->  30 h  --5x-->  6 h  --4x-->  1.5 h
+           removals         PE sweeps      secant, not bisection
+
+## Group 1: remove machinery the model no longer has. 17x
+
+Set out in `WHAT_TO_REMOVE.md` and unchanged here. Housing entered with as a
+state, 6.6x. The owner branch and its 61 negative asset points, about 2x. The
+housing choice grid from 7 to 3, 1.33x from the specified 4. None of it costs the
+model as written anything.
+
+## Group 2: the UI state, and what it is actually worth
+
+The suggestion was to remove the no UI state, with everyone getting UI for one
+period and nothing after. Two versions of that, and they are very different.
+
+**Setting the UI draw to certainty.** `probability_of_ui=0.3` becomes 1, so every
+household entering unemployment gets insurance for its first year. This removes a
+parameter and it removes a branch from the employment transition, but it does
+**not** remove a state: a household in its first year of a spell and one in its
+third still have different income, zero against the replacement rate, and
+different continuation values, so they do not merge. Worth a parameter, not
+compute.
+
+**Making unemployment last exactly one period.** This does remove the state, and
+the employment dimension goes from 3 to 2, which takes `unemployment_grid_size`
+from 6 to 4 since it carries employment crossed with the disorder. Worth
+**1.5x**, and it appears twice, in the state and in the expectation nest.
+
+But it removes long term unemployment, and that is not a free simplification
+here. The mechanism the paper rests on is that an unemployed household at the
+bottom cannot cover the rent out of current income, so it loses its housing. A
+household unemployed for one year on a fifty per cent replacement rate is in far
+less trouble than one unemployed for three years on nothing, and it is the second
+that becomes homeless. Removing the long spell removes the households the
+programme is for.
+
+**Recommended: take the parameter, not the state.** Set the UI draw to certainty,
+which is defensible on its own terms, and keep three employment states. If more
+is needed later, this is the first thing to revisit, but only with the
+homelessness rate watched closely.
+
+## Group 3: calibrate in partial equilibrium, close at the end. 5 to 10x
+
+This is the largest factor after the removals and it costs nothing at all.
+
+A stationary equilibrium currently means solving the household problem, iterating
+the distribution, and repeating until the tax rate, the drug price and estates
+settle: five to ten household solves per equilibrium. Every one of the hundreds
+of calibration evaluations pays that.
+
+It does not need to. The model note already does this for the three step like
+moments, which are bisected "at the head of each sweep, in partial equilibrium,
+before anything else moves". Extend it to the whole sweep: hold prices at their
+previous values through all the parameter bisections, and close the equilibrium
+**once per sweep** rather than once per evaluation. Since a sweep moves each
+parameter a little, prices move a little, so the fixed point is reached from a
+very good starting point anyway.
+
+The only care needed is with parameters whose moment is itself a price, so
+`tau_l` and `psi_1` stay in the outer loop where they belong.
+
+## Group 4: stop bisecting. 3 to 4x
+
+Bisection on a bracket of width one, to a tolerance of a thousandth, is about
+fifteen solves per parameter. Twenty two parameters over five sweeps is roughly
+sixteen hundred solves, and that is the whole budget.
+
+Bisection is the right tool for exactly three of those parameters, the step like
+ones where the moment is a cliff and a derivative is meaningless. For the other
+nineteen the moment is smooth and monotone in its parameter, which is what the
+declared sign of dM/dtheta already asserts. Those should use the secant method or
+Brent, which reach the same tolerance in **four to five** evaluations rather than
+fifteen.
+
+Keep bisection for participation in `b`, homelessness in `h_HL` and wealth over
+output in `beta`. Everything else moves to secant. That is 19 parameters going
+from 15 evaluations to 5, so the sweep cost falls by about a factor of three.
+
+## What is left, and what it costs
+
+    removals            17x     free, the model as written is already smaller
+    PE sweeps           5x      free, prices close once per sweep
+    secant              3x      free, only where the moment is smooth
+    UI parameter        1x      a parameter, not compute
+                       ---
+                       255x
+
+Weeks becomes a couple of hours. If that is still not enough, the next items in
+order are the income grid from nine to seven, 1.3x and cheap, and then the
+employment state from three to two, 1.5x and not cheap.
+
+## What not to spend
+
+Do not touch the asset grid. The `a'` search is quadratic in it, so it looks like
+the biggest prize on the list, and it is the one place where the notches that
+make the objective not single peaked live: voucher eligibility as a step in
+income, the food stamp floor. Those are where the welfare comparison happens and
+the margins are tenths of a per cent.
