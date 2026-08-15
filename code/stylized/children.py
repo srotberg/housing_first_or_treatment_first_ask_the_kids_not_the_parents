@@ -191,11 +191,12 @@ def tab_children(par, pV=1.0):
           r'\multicolumn{5}{@{}l}{\emph{Panel B. Does the externality reverse '
           r'the ranking?}} \\',
           f'\\quad Private welfare loss from conditionality & & & & '
-          f'{priv:.5f} \\\\',
+          f'{100*priv:.3f}\\% \\\\',
           f'\\quad Disorder cases prevented & & & & {100*dsud:.3f} pp \\\\',
-          f'\\quad Damage per case, one child & & & & {per_case:.2f} \\\\',
+          f'\\quad Damage to the child of one such case & & & & '
+          f'{100*per_case:.0f}\\% \\\\',
           f'\\quad Externality gain from conditionality & & & & '
-          f'{gain:.5f} \\\\',
+          f'{100*gain:.3f}\\% \\\\',
           f'\\quad Gain over loss & & & & {gain/max(priv,1e-12):.1f} \\\\',
           r'\bottomrule', r'\end{tabular}']
     with open(os.path.join(OUT, 'tab_children.tex'), 'w') as f:

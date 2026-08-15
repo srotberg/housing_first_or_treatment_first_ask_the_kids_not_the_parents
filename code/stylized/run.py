@@ -125,6 +125,9 @@ def fig_moral_hazard(base):
     ax.plot(pVs, 100 * T, color='#2C6FAD', marker='s', ms=4.5,
             label='Treatment First')
     ax.axhline(100 * T[0], color='0.45', lw=1.0, ls=':')
+    ax.axvline(base.pV, color='0.45', lw=1.0, ls='--')
+    ax.text(base.pV + 0.012, 100 * T[0] * 0.06, 'current programme',
+            fontsize=8.5, color='0.4', rotation=90, va='bottom')
     ax.set_ylim(-0.45, 100 * T[0] * 1.22)
     ax.set_xlim(-0.02, 1.14)
     ax.text(0.02, 100 * T[0] + 0.14, 'No voucher programme', fontsize=8.5,
@@ -171,23 +174,29 @@ def fig_margins(base):
     for pol in ('HF', 'TF'):
         m = [stats(with_(base, pV=p, policy=pol)) for p in pVs]
         out[pol] = dict(homeless=np.array([x['homeless'] for x in m]),
-                        sud=np.array([x['sud'] for x in m]))
+                        sud=np.array([x['sud'] for x in m]),
+                        part=np.array([x['part'] for x in m]))
 
-    fig, axes = plt.subplots(1, 2, figsize=(9.6, 4.0))
-    for ax, key, lab in ((axes[0], 'homeless', 'Homelessness rate, per cent'),
-                         (axes[1], 'sud', 'Share with the disorder, per cent')):
-        ax.plot(pVs, 100 * out['HF'][key], color='#C0392B', marker='o', ms=4.2,
-                label='Housing First')
-        ax.plot(pVs, 100 * out['TF'][key], color='#2C6FAD', marker='s', ms=4.2,
-                label='Treatment First')
+    out['use'] = {pol: np.array([x['part'] for x in
+                                 [stats(with_(base, pV=p, policy=pol)) for p in pVs]])
+                  for pol in ('HF', 'TF')}
+    fig, axes = plt.subplots(1, 3, figsize=(12.2, 3.6))
+    panels = ((axes[0], 'homeless', 'Homelessness rate, per cent'),
+              (axes[1], 'part', 'Drug use, per cent'),
+              (axes[2], 'sud', 'Share with the disorder, per cent'))
+    for ax, key, lab in panels:
+        for pol, col, mk in (('HF', '#C0392B', 'o'), ('TF', '#2C6FAD', 's')):
+            y = out[pol][key] if key in out[pol] else out['use'][pol]
+            ax.plot(pVs, 100 * y, color=col, marker=mk, ms=4.0,
+                    label='Housing First' if pol == 'HF' else 'Treatment First')
+        ax.axvline(base.pV, color='0.55', lw=0.9, ls='--')
         ax.set_xlabel('Voucher generosity $\\pi_V$')
         ax.set_ylabel(lab)
         ax.set_xlim(-0.02, 1.02)
         ax.set_ylim(bottom=0.0)
         ax.set_xticks([0.0, 0.25, 0.5, 0.75, 1.0])
-    axes[0].legend(loc='upper center', bbox_to_anchor=(1.08, 1.17), ncol=2,
+    axes[1].legend(loc='upper center', bbox_to_anchor=(0.5, 1.20), ncol=2,
                    fontsize=9.5)
-    fig.tight_layout()
     save(fig, 'stylized_margins')
 
     print('\n   pi_V    homeless HF    homeless TF      disorder HF   disorder TF')

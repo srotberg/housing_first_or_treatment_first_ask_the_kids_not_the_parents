@@ -58,13 +58,6 @@ EXTERNAL = [
          'Cap on the earnings base, multiple of average income',
          'DOL, state benefit maxima', '{:.2f}'),
     ]),
-    ('The externality on children', [
-        (None, r'\delta_d', 'Income penalty to a child whose parent acquires '
-         'the disorder',
-         r'Transmission ratio $2.4$; McGovern et al. (2023)', '0.30'),
-        (None, r'\delta_h', 'Income penalty to a child whose parent is homeless',
-         'Chetty, Hendren and Katz (2016)', '0.31'),
-    ]),
     ('Housing, drugs and the voucher', [
         ('pr', 'p_r', 'Rent per unit of housing services', 'Numeraire',
          '{:.2f}'),
@@ -94,7 +87,7 @@ INTERNAL = [
 
 
 def tab_external(base):
-    L = [r'\footnotesize', r'\begin{tabular}{@{}cL{7.0cm}L{4.6cm}r@{}}',
+    L = [r'\footnotesize', r'\begin{tabular}{@{}cL{6.9cm}L{4.5cm}r@{}}',
          r'\toprule',
          r'Parameter & Description & Source or rationale & Value \\',
          r'\midrule']

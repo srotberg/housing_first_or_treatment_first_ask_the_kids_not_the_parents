@@ -185,6 +185,16 @@ class P:
 
     p_v   = 1.0       # price of drugs
 
+    # PARTIAL INTERNALISATION OF THE CHILD. Both are zero in the baseline, which
+    # is what makes the damage to the child a pure externality. Set omega > 0
+    # and the parent subtracts omega * chdmg * pi(v) from its objective, where
+    # chdmg is the child's expected loss in lifetime utility from being born to
+    # a parent who acquired the disorder. It depends only on v, so it acts as an
+    # extra deterrent that rises with use, which is the right economics: a
+    # parent who cares about the child uses less. See internalise.py.
+    omega = 0.0
+    chdmg = 0.0
+
     na    = 60
     nv    = 140
 
@@ -332,7 +342,8 @@ def use_choice(par, y, policy=None):
             + par.aleph + par.beta * par.phi0 * EV2, -np.inf))
     base = val.max(axis=1)
     a_by_v = ag[np.argmax(val, axis=1)]
-    tot = base + par.th * (np.log(par.b + vg) - np.log(par.b))
+    tot = (base + par.th * (np.log(par.b + vg) - np.log(par.b))
+           - par.omega * par.chdmg * (1.0 - np.exp(-par.lam * vg)))
     k = int(np.argmax(tot[1:])) + 1
     return float(tot[k] - tot[0]), float(vg[k]), float(a_by_v[k]), float(a_by_v[0])
 
@@ -357,8 +368,13 @@ def value1(par, y, policy=None):
             (1.0 - par.gam - par.th) * np.log(np.maximum(cc, 1e-12))
             + par.gam * np.log(h)
             + par.aleph + par.beta * par.phi0 * EV2, -np.inf))
-    tot = val.max(axis=1) + par.th * (np.log(par.b + vg) - np.log(par.b))
-    return float(tot.max())
+    tot = (val.max(axis=1) + par.th * (np.log(par.b + vg) - np.log(par.b))
+           - par.omega * par.chdmg * (1.0 - np.exp(-par.lam * vg)))
+    k = int(np.argmax(tot))
+    # V1 is the PARENT'S OWN lifetime value, which is what a planner counts once
+    # and separately from the child's. The internalised term is added back so
+    # that raising omega changes behaviour without double counting the child.
+    return float(tot[k] + par.omega * par.chdmg * (1.0 - np.exp(-par.lam * vg[k])))
 
 
 def threshold(par, ygrid, policy=None):

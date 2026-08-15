@@ -225,7 +225,6 @@ def tab_welfare(par, pV=1.0):
     avg = float((ww * lam).sum())
     among = float((ww * lam)[hit].sum() / max(ww[hit].sum(), 1e-12))
 
-    chi0, dsud0, _ = critical_externality(par, pV)
 
     pc = lambda x, n=2: f'{x:.{n}f}\\%'
     L = [r'\small', r'\begin{tabular}{@{}lcc@{}}', r'\toprule',
@@ -248,12 +247,6 @@ def tab_welfare(par, pV=1.0):
          f'& {pc(100*among)} \\\\',
          f'\\quad Consumption equivalent loss, whole population & '
          f'& {pc(100*avg,3)} \\\\',
-         r'\addlinespace',
-         r'\multicolumn{3}{@{}l}{\emph{Panel C. How large an externality would '
-         r'reverse this}} \\',
-         f'\\quad Disorder cases avoided by conditionality & '
-         f'& {100*dsud0:.3f} pp \\\\',
-         f'\\quad Critical social cost per case & & {chi0:.2f} \\\\',
          r'\bottomrule', r'\end{tabular}']
     with open(os.path.join(OUT, 'tab_welfare.tex'), 'w') as f:
         f.write('\n'.join(L) + '\n')
