@@ -25,7 +25,7 @@
 
 \begin{center}
 {\Large\bfseries Housing First or Treatment First?}\\[0.35em]
-{\large A stylized model}\\[0.35em]
+{\large A stylized model, and the quantitative model behind it}\\[0.35em]
 \today
 \end{center}
 \vspace{0.8em}
@@ -324,10 +324,10 @@ curves and the only thing moving is which households use.
 
 \begin{figure}[!tb]
 \centering
-\includegraphics[width=0.70\textwidth]{figures/stylized_who_uses.pdf}
+\includegraphics[width=0.62\textwidth]{figures/stylized_who_uses.pdf}
 \caption{What it takes to reverse the income gradient in drug use}
 \label{fig:who}
-\notes{0.70\textwidth}{Note: the vertical axis is average income of users over
+\notes{0.62\textwidth}{Note: the vertical axis is average income of users over
 the population average, on a log scale, and $b$ is recalibrated at every point
 so that participation is $5.13$ per cent throughout.}
 \end{figure}
@@ -362,10 +362,10 @@ isolates the value of life force.
 
 \begin{figure}[!tb]
 \centering
-\includegraphics[width=0.74\textwidth]{figures/stylized_moral_hazard.pdf}
+\includegraphics[width=0.66\textwidth]{figures/stylized_moral_hazard.pdf}
 \caption{Drug use under the two policies as the voucher becomes more generous}
 \label{fig:mh}
-\notes{0.74\textwidth}{Note: the red band is the moral hazard force and the blue
+\notes{0.66\textwidth}{Note: the red band is the moral hazard force and the blue
 band above it is what Housing First delivers net; together they are the value of
 life force, marked at the right. The dashed line is the generosity of the
 current programme, $\pi_V = 0.27$.}
@@ -393,7 +393,7 @@ are housed either way.
 
 \begin{figure}[!tb]
 \centering
-\includegraphics[width=\textwidth]{figures/stylized_margins.pdf}
+\includegraphics[width=0.88\textwidth]{figures/stylized_margins.pdf}
 \caption{Homelessness, drug use and the disorder under the two policies}
 \label{fig:margins}
 \end{figure}
@@ -516,33 +516,101 @@ the margin. Nobody in this model faces the sobriety condition and fails to meet
 it, and the households who cannot comply are the entire empirical case for
 Housing First.
 
-Two further externalities are deliberately left out here and are in the
-quantitative model. The first is the disamenity of homelessness and drug use on
-the street itself, which runs through nobody's children. Loubi\`ere et al.\
-(2020) price it, asking adults in eight European countries what they would pay
-in annual taxes to end homelessness through Housing First: the mean over all
-respondents is \euro{}23 a year, and \euro{}57 among the $42$ per cent willing
-to pay anything, which is $0.08$ and $0.20$ per cent of average annual earnings.
-The second is how much of the damage in~\eqref{eq:kids} parents already
-internalise. This note treats all of it as external, and if parents care about
-their children only the remainder counts; the quantitative model puts the child's
-value in the parent's own objective at a weight taken from the literature and
-reports how the policy ranking moves with it.
+The point of this section is only that an externality can reverse a ranking that
+is otherwise airtight, and one externality is enough to show it. Which way the
+comparison actually goes is a question about magnitudes, and that is what the
+quantitative model is for.
 
-Neither belongs in a model this small. The point of this section is only that an
-externality can reverse a ranking that is otherwise airtight, and one is enough
-to show it. Which way the comparison actually goes is a question about
-magnitudes: how large the disamenity is, how much parents already internalise,
-what conditionality costs the government once take up and detection are
-imperfect, and what it does to labour supply and saving. Settling that, along
-with households who cannot get clean, a government budget, an equilibrium drug
-price and a proper life cycle, is what the quantitative model is for.
+%======================================================================
+\section{The quantitative model}\label{sec:full}
+
+What follows is only what changes. The income gradient in use, the two forces a
+voucher sets against each other, the dominance of Housing First absent an
+externality and the transmission channel that overturns it all carry over
+unchanged and are not restated.
+
+\paragraph{A life cycle in place of three periods.} Households enter at age $26$,
+face $60$ annual periods and die by $85$, retiring at $66$. Survival
+$\phi_j(h',d,m)$ falls with age, with the disorder, with homelessness and with
+mental illness, and its multipliers vary with age rather than being the single
+$\kappa$ of~\eqref{eq:surv}. Newborns replace the dead and inherit permanent
+productivity, which is what makes~\eqref{eq:kids} operative rather than a thought
+experiment.
+
+\paragraph{State and choices.} The state is $(a,y,e,d,m,\eta)$: assets, permanent
+productivity, employment, the disorder, serious mental illness and the voucher,
+which is $12{,}960$ points per age. Employment takes three values, employed,
+unemployed with unemployment insurance and unemployed without, since insurance is
+drawn on entry into unemployment and lasts a year. Mental illness is new and
+operates through six channels. The household chooses hours $n$, housing on a four
+point grid whose first point is homelessness, drug use $v$, treatment take up
+$\tau$ and saving. Housing entered with is deliberately not a state, since
+renters face no adjustment cost and everything that conditions on housing
+conditions on the unit \emph{chosen}.
+
+\paragraph{Three things exogenous here are endogenous there.} Period utility is a
+constant relative risk aversion transform of a Cobb-Douglas bundle in
+consumption, housing and $(v+b)$, of which~\eqref{eq:u} is the logarithmic case,
+plus a leisure term, $\aleph$ and the utility cost of treatment. Hours are
+therefore chosen, so conditionality distorts labour supply and not only
+consumption. The drug price clears a supply curve instead of being a
+normalisation. And the government runs a budget: the voucher is paid for out of a
+progressive labour income tax alongside food stamps and the costs of
+homelessness, addiction and drug testing, so a policy that spends more moves the
+tax rate and the distortion with it. None of these can be signed
+from~\eqref{eq:dom}, and all three cut against the externality rather than with
+it.
+
+\paragraph{Households who cannot comply.} Treatment is a choice made at a utility
+cost, with a recovery hazard that is lower on the street and with mental illness
+and higher with treatment. Enforcement is imperfect: under Treatment First a
+voucher is lost with probability $p_{\text{det}}$ by a household that used and
+with probability $p_{\text{fp}}$ by one that did not. Together these close the gap
+Section~\ref{sec:kids} flags and cannot: there, households fail the sobriety
+condition both because they cannot get clean and because the test is wrong.
+
+\paragraph{Both externalities, and the weight on the child.} The transmission
+penalty of~\eqref{eq:kids} enters as a shift in the newborn's productivity draw,
+and parental altruism enters as a weight $\omega$ on the newborn's value in the
+parent's own objective, so that only $1-\omega$ of the damage is external.
+That parents place some weight on their children is not in doubt, since
+substance use falls sharply during pregnancy and entry into treatment clusters
+around child welfare involvement. Identifying how much is the delicate part, and
+$\omega$ is not directly observed: turning altruism on makes parents
+accumulate in order to pass wealth on, so it is pinned jointly with the discount
+factor by wealth over output and by the flow of intergenerational transfers,
+about $3$ per cent of disposable income a year. Altonji, Hayashi and Kotlikoff
+(1997) discipline it from above, since a dollar moved from a recipient child to a
+donor parent raises the transfer by under thirteen cents against the dollar full
+altruism implies.
+
+The second externality is the disamenity of homelessness and drug use on the
+street itself, which runs through nobody's children. Loubi\`ere et al.\ (2020)
+price it, asking adults in eight European countries what they would pay in annual
+taxes to end homelessness through Housing First: the mean over all respondents is
+\euro{}23 a year and \euro{}57 among the $42$ per cent willing to pay anything,
+which is $0.08$ and $0.20$ per cent of average annual earnings. That is small
+enough that it cannot move a ranking on its own, so it is zero in the benchmark
+and reported as a range, where it can only strengthen the case for whichever
+policy houses more people.
+
+\paragraph{What is settled where.} This note settles directions and mechanisms:
+which feature puts drug use at the bottom, which way each of the two forces
+pulls, and that conditionality needs an externality to be defensible at all. It
+cannot settle magnitudes, and the magnitudes are the question. The externality
+gain has to be set against what conditionality costs the government, what the tax
+that pays for it does to hours and saving, and how much of the harm parents
+already internalise, with households who cannot get clean and a drug price that
+responds. That is the quantitative model's job, and it is why the welfare numbers
+above are illustration rather than evidence.
 
 %======================================================================
 \section*{References}
 {\footnotesize\setlength{\parskip}{0em}\par
 Chetty, R., N. Hendren and L. Katz (2016). ``The Effects of Exposure to Better
 Neighborhoods on Children.'' \emph{AER} 106(4).\ \
+Altonji, J., F. Hayashi and L. Kotlikoff (1997). ``Parental Altruism and Inter
+Vivos Transfers: Theory and Evidence.'' \emph{JPE} 105(6), 1121--66.\ \
 Loubi\`ere, S. et al.\ (2020). ``Europeans' willingness to pay for ending
 homelessness: A contingent valuation study.'' \emph{Social Science \& Medicine}
 247, 112802.\ \
