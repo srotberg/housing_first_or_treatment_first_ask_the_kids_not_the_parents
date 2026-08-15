@@ -33,17 +33,16 @@ THE ENVIRONMENT
             v >= 0 and saving. Flow utility  log c + gam log h + th[log(b+v) - log b].
             Using gives the disorder next period with probability 1 - exp(-lam v).
 
-  period 2  the disorder d is realised. Unemployed with probability u0, or u1 if
-            d = 1; unemployment pays a replacement rate and a consumption floor
-            catches the bottom. Earnings carry a further penalty xi if d = 1.
-            Choose housing and saving. Recovery is rho when housed and
-            rho * rho_mult_hl on the street.
+  period 2  the disorder d is realised. Unemployed with probability u0, paying a
+            replacement rate, with a consumption floor under the bottom.
+            Earnings carry a penalty xi if d = 1.
+            Choose housing and saving. Recovery from the disorder is rho.
 
   period 3  terminal, same risks.
 
   housing   a large unit, a small unit, or the street. The street is free but
-            supplies only h_hl of housing services, raises mortality by kapH,
-            and cuts the recovery probability. A voucher pays part of the rent.
+            supplies only h_hl of housing services. A voucher pays part of the
+            rent.
 
             Two rental sizes rather than one, because with a single size a
             household whose cash falls below the rent cannot be housed at all,
@@ -52,18 +51,26 @@ THE ENVIRONMENT
             what happens in the data and what the full model's housing grid is
             for.
 
-THE FOUR CHANNELS, IN TWO GROUPS
+THE CHANNELS, AND THE RULE THEY HAVE TO SATISFY
 
-    MORTALITY  kap   the disorder kills you
-               kapH  it puts you on the street, which also kills you
+    MORTALITY  kap          the disorder kills you
+               kapH         it can put you on the street, which also kills you
+    RESOURCE   u1           it costs you a job
+               h_hl         and on the street housing services fall from a
+                            whole unit to almost nothing
+    PERSISTENCE rho_mult_hl recovery is harder on the street
 
-    RESOURCE   u1    it costs you a job
-               xi    and a wage
-                     and the street means consuming h_hl instead of a unit
+EVERY CHANNEL HERE EXISTS IN THE FULL MODEL. That is a constraint, not a
+coincidence. A stylised model that rests on a shock the full model does not use
+is not an introduction to it, it is a different paper. An earlier version of
+this file leaned on a direct wage penalty for the disorder; the full model has
+that parameter and sets it to one, which is off, because the evidence
+conditional on working is contested while the robust findings are on the
+employment margin. It is gone.
 
-Switching a channel off means switching every member of its group. Switching kap
-alone leaves the street's mortality penalty running in a configuration that is
-supposed to have no mortality channel at all.
+Which channels survive is decided by ablation, not by taste: each is removed,
+the model is FULLY recalibrated, and the counterfactuals are rerun. A channel
+that changes neither result after recalibration is removed. See ABLATION.txt.
 """
 
 import numpy as np
@@ -83,13 +90,18 @@ class P:
     lam   = 25.0      # addiction hazard per unit of use. CALIBRATED
     rho   = 0.40      # recovery when housed, over one period
     rho_mult_hl = 0.50   # recovery multiplier on the street
-    kap   = 0.45      # MORTALITY, direct
-    kapH  = 0.35      # MORTALITY, extra death risk on the street
-    xi    = 0.20      # RESOURCE, wage penalty
-    u1    = 0.1625    # RESOURCE, unemployment given the disorder. Measured.
+    kap   = 0.45      # MORTALITY: the disorder kills you
+    kapH  = 0.35      # MORTALITY: the street kills you
+    u1    = 0.1625    # RESOURCE: the disorder costs you a job. Measured.
+
+    # NO WAGE PENALTY. The full model has prod_pen_d and sets it to 1.00, which
+    # is off, because the evidence on a wage penalty conditional on working is
+    # contested while the robust findings are on the employment margin. A
+    # stylised model must not rest on a shock the model it introduces does not
+    # use, so the resource channel here is unemployment alone.
 
     # employment and the safety net
-    u0    = 0.049
+    u0    = 0.049     # unemployment probability when clean
     omega = 0.40      # replacement rate
     cfloor = 0.22     # consumption floor, share of mean income. Set so that a
                       # household with no earnings can afford the SMALL unit;
@@ -137,7 +149,7 @@ def _states(par, d, policy, y):
     pv = par.pV if covered else 0.0
     out = []
     for e, pe in ((0, 1.0 - pu), (1, pu)):
-        inc = max((par.omega if e else 1.0) * (1.0 - par.xi * d) * y, par.cfloor)
+        inc = max((par.omega if e else 1.0) * y, par.cfloor)
         for rmul, prb in ((par.kappa_r, pv), (1.0, 1.0 - pv)):
             if pe * prb > 1e-14:
                 out.append((pe * prb, inc, rmul))

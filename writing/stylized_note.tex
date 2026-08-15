@@ -66,17 +66,15 @@ Using drugs risks a substance use disorder next period, with probability
 $1-e^{-\lambda v}$.
 
 \paragraph{Period 2.} The disorder $d$ is realised. The household is unemployed
-with probability $u_0$, or the higher $u_1$ if $d=1$; unemployment pays a
-replacement rate and a consumption floor catches the bottom. Earnings carry a
-further penalty $\xi$ if $d=1$. The household chooses housing and saving.
+with probability $u_0$, paying a replacement rate, with a consumption floor
+under the bottom. Earnings carry a penalty $\xi$ if $d=1$. The household chooses housing and saving.
 Recovery is $\rho$ when housed and $\rho\,\rho_{H}$ on the street.
 
 \paragraph{Period 3.} Terminal, with the same risks.
 
 \paragraph{Housing.} A large unit, a small unit, or the street. The street is
-free but supplies only $h_{hl}$ of housing services, raises mortality, and cuts
-the recovery probability. A voucher arrives with probability $\pi_V$ and pays
-part of the rent.
+free but supplies only $h_{hl}$ of housing services. A voucher arrives with
+probability $\pi_V$ and pays part of the rent.
 
 Two rental sizes rather than one, for a specific reason. With a single size, a
 household whose cash falls below the rent cannot be housed at all, whatever the
@@ -107,25 +105,18 @@ source.
 \toprule
 parameter & target & data & model \\
 \midrule
-$b$, the pull of the first unit & drug participation rate & 5.13\% & 5.12\% \\
+$b$, the pull of the first unit & drug participation rate & 5.13\% & 5.63\% \\
 $p_r$, rent per unit of housing & housing spending / income & 21.2\% & 21.3\% \\
-$h_{hl}$, housing on the street & homelessness rate & 0.399\% & 0.25\% \\
+$h_{hl}$, housing on the street & homelessness rate & 0.399\% & 0.47\% \\
 $\lambda$, the addiction hazard & users who acquire the disorder & 33.2\% & 33.2\% \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 Set externally: the discount factor and interest rate, survival, the housing
-weight $\gamma=0.25$, the two rental sizes, the unemployment rate given the
-disorder at the measured 16.25 per cent, the replacement rate, the consumption
-floor, recovery and its multiplier on the street, both mortality multipliers,
+weight $\gamma=0.25$, the two rental sizes, the unemployment rate, the
+replacement rate, the consumption floor, recovery, the mortality multiplier,
 the wage penalty, and the voucher parameters.
-
-One number is worth reporting because nothing was done to obtain it. The share
-of the homeless population carrying a substance use disorder is not targeted,
-and the model produces 27.6 per cent against 21.7 per cent in the data. It is
-the joint prediction of the unemployment channel, the wage penalty and the
-housing threshold operating together.
 
 The calibration brackets each parameter on its own target in sequence rather
 than fitting jointly. With no preference heterogeneity the aggregate is a cliff
@@ -148,10 +139,9 @@ Something has to flip it, and the model has two candidates.
 \begin{center}
 \begin{tabular}{@{}lL{9.4cm}@{}}
 \toprule
-\textbf{mortality} & the disorder kills you, directly, and by putting you on the
-street, which also kills you and makes recovery harder \\[0.35em]
-\textbf{resource} & it costs you a job, a wage, and the unit you can afford to
-live in \\
+\textbf{mortality} & the disorder kills you \\[0.35em]
+\textbf{resource} & it costs you a wage, and it can put you on the street,
+where housing services fall from a whole unit to almost nothing \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -175,12 +165,13 @@ distribution to the bottom, but not at the same price.}
 \cmidrule(lr){2-3}\cmidrule(lr){4-5}
 strength & $b$ & users / average & $b$ & users / average \\
 \midrule
-0\%   & 0.2558 & 3.47 & 0.2558 & 3.47 \\
-17\%  & 0.0207 & 0.62 & 0.0597 & 3.37 \\
-33\%  & 0.0182 & 0.26 & 0.0275 & 3.37 \\
-50\%  & 0.0151 & 0.21 & 0.0157 & 1.69 \\
-67\%  & 0.0164 & 0.19 & 0.0115 & 0.33 \\
-100\% & 0.0117 & 0.19 & 0.0109 & 0.19 \\
+0\%   & 0.2569 & 3.37 & 0.2569 & 3.37 \\
+17\%  & 0.0175 & 2.23 & 0.0724 & 3.37 \\
+33\%  & 0.0119 & 0.26 & 0.0389 & 3.37 \\
+50\%  & 0.0091 & 0.24 & 0.0220 & 3.41 \\
+67\%  & 0.0074 & 0.23 & 0.0153 & 2.24 \\
+83\%  & 0.0064 & 0.22 & 0.0114 & 1.28 \\
+100\% & 0.0055 & 0.21 & 0.0075 & 0.87 \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -189,15 +180,15 @@ Three things to read off it.
 
 \paragraph{The top row is the case with both penalties gone.} Both columns
 start there, because scaling either channel from zero means every consequence
-of the disorder is switched off. Users earn 3.5 times the average. The model
+of the disorder is switched off. Users earn 3.4 times the average. The model
 has to be \emph{forced} to put drug use at the bottom; it does not go there on
 its own.
 
 \paragraph{The recalibration is doing real work, and the $b$ columns show it.}
 With no consequences, a household needs very little temptation to use, and
-$b=0.26$ delivers 5 per cent participation. Once the consequences are switched
-on, the same 5 per cent requires $b$ around $0.011$, more than twenty times more
-temptation. Without rebracketing $b$ at every point, the curves would be
+$b=0.257$ delivers 5 per cent participation. Once the consequences are switched
+on, the same 5 per cent requires $b$ between $0.006$ and $0.007$, forty times
+more temptation. Without rebracketing $b$ at every point, the curves would be
 comparing economies with wildly different amounts of drug use and the exercise
 would say nothing about who uses.
 
@@ -252,11 +243,11 @@ At universal provision, in percentage points of the participation rate:
 \toprule
 & participation & against no voucher \\
 \midrule
-no voucher                  & 5.27\% & \\
-universal Treatment First   & 0.00\% & value of life $-5.27$ pp \\
-universal Housing First     & 4.79\% & net $-0.47$ pp \\
+no voucher                  & 5.76\% & \\
+universal Treatment First   & 0.00\% & value of life $-5.76$ pp \\
+universal Housing First     & 5.50\% & net $-0.26$ pp \\
 \midrule
-\multicolumn{2}{@{}l}{moral hazard, Housing First against Treatment First} & $+4.79$ pp \\
+\multicolumn{2}{@{}l}{moral hazard, Housing First against Treatment First} & $+5.50$ pp \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -269,7 +260,7 @@ increase drug use, and anyone who asserts it will reduce it, is making a
 quantitative claim while sounding like they are making a theoretical one.
 
 \paragraph{The value of life effect wins, narrowly.} Unconditional Housing
-First lowers drug use slightly on net, by half a percentage point. This is
+First lowers drug use slightly on net, by a quarter of a percentage point. This is
 worth stating plainly because it cuts against the intuition that unconditional
 assistance must raise use through moral hazard. The moral hazard is real and it
 is large. It simply loses to the other force.
@@ -331,8 +322,8 @@ is a quantitative question the full model's channel decomposition has to
 answer rather than assume.
 
 The second is whether the near cancellation in section~\ref{sec:mh} survives.
-Here the value of life effect wins by half a percentage point out of five, which
-is close enough that the ranking could plausibly reverse in a richer
+Here the value of life effect wins by a quarter of a percentage point out of
+nearly six, which is close enough that the ranking could plausibly reverse in a richer
 environment with treatment, mental illness, and a budget constraint. That the
 two forces are of comparable size is the robust finding. Which one wins is not.
 
