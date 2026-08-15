@@ -33,55 +33,38 @@ sequence, which cannot leave the band.
 import numpy as np
 from stylized import P, with_, aggregates
 
-# A FLOOR ON PERMANENT INCOME, and the reason it is here.
+# THE VALUE OF LIFE, and how it was fixed.
 #
-# The raw lognormal's lower tail runs to 12 per cent of average income. A
-# household that poor has flow utility so negative that W2 < 0, and since dying
-# is worth zero it then PREFERS the extra mortality the disorder brings: what it
-# compares is phi(d)*W2(a,d), so with W2 negative a lower phi is an improvement.
-# That inverts the mechanism the whole model rests on, and it bites exactly
-# where the drug users are.
+# The problem: with log utility the poorest households had a NEGATIVE value of
+# life. Since dying is worth zero they then preferred the extra mortality the
+# disorder brings, which inverts the mechanism the model rests on. The condition
+# that matters is on V1, the value at the point where v is chosen: nobody should
+# be choosing to use while death is the better option. W2 alone may dip below
+# zero later, when no v is being chosen.
 #
-# Raising aleph does not fix it. Aleph enters every household's continuation
-# value roughly equally, so it dilutes precisely the income dependence the
-# mortality channel needs; it takes about 4.5 to make every value of life
-# positive, and by 3.7 the gradient is already gone.
+# Three changes fixed it, and only the third touches aleph.
 #
-# THE VALUE OF LIFE PROBLEM, AND WHERE THE SEARCH FOR A FIX GOT TO.
+#   WEIGHTS THAT SUM TO ONE. Consumption is weighted by 1-gam-th rather than 1,
+#   which damps log c at the bottom by a third and makes gam the housing budget
+#   share proper rather than gam/(1+gam+th).
 #
-# The raw lognormal's lower tail runs to 12 per cent of average income, and a
-# household that poor has W2 < 0. Since dying is worth zero it then PREFERS the
-# extra mortality the disorder brings: what it compares is phi(d)*W2(a,d), so
-# with W2 negative a lower phi is an improvement. That inverts the mechanism,
-# and it bites over roughly y in [0.12, 0.24], which is exactly where the users
-# are. floor_test.py is the diagnostic.
+#   u0 STAYS. Setting it to zero was tried and reverted: it makes every route
+#   into homelessness run through the disorder, and the share of the homeless
+#   carrying one goes to 0.997 against a third or so in the data. Clean
+#   households have to be able to lose their jobs too.
 #
-# THREE REQUIREMENTS, and no point yet found that meets all three.
+#   ALEPH 2.50 -> 2.80. Small, and nowhere near the 3.7 that flattens the
+#   gradient by diluting the income dependence the mortality channel needs.
 #
-#   1  every value of life positive     needs the income floor HIGH, or aleph
-#                                       high, or both
-#   2  the income gradient              survives a floor easily; r_use is 0.21
-#                                       at YMIN = 0.20 and 0.44 at 0.30. Dies if
-#                                       aleph alone is pushed past about 3.7,
-#                                       which dilutes the income dependence the
-#                                       mortality channel needs
-#   3  a non zero moral hazard          needs the floor LOW: a household that
-#                                       can afford the small unit on income
-#                                       support is never at risk, so psi*YMIN
-#                                       must stay under h_S = 0.106
+# Result: min V1 = +0.20, no household anywhere with a negative ex ante value of
+# life, both headline results intact, and the share of the homeless with the
+# disorder at 0.42.
 #
-# YMIN = 0.20 with aleph = 3.1 satisfies 1 and 2: min phi*W2 = +0.567, the
-# disorder is costly at every income, r_use = 0.207. But the progression moment
-# then has to be carried by theta rather than lam, since with the disorder that
-# costly users pick a v so small that lam cannot lift prog past 0.09 even pinned
-# at 900. At the theta this requires, roughly 0.38, the policy experiment
-# collapses: participation with no voucher is 20.6 per cent and universal cover
-# drives BOTH policies to zero, so the moral hazard is exactly zero and result 2
-# is gone.
-#
-# So the three pull against each other and this is unresolved. The grid and
-# parameters below are the WORKING configuration, which has results 1 and 2 but
-# the negative value of life at the bottom. Nothing here is silently changed.
+# An income floor was also tried, at the suggestion that squeezing the bottom
+# would help. It does fix the value of life, but psi*YMIN must stay under the
+# small unit's rent for anyone to be at risk of the street at all, so a floor
+# high enough to matter collapses homelessness and takes the moral hazard with
+# it. floor_test.py is that diagnostic and is kept.
 YMIN = 0.12
 SIG = 0.75
 YG = np.exp(np.linspace(np.log(YMIN), np.log(5.0), 30))
@@ -96,14 +79,8 @@ TARGET = dict(part=0.0513, homeless=0.00399, prog=0.332)
 # converged. Participation is the moment the model exists to reproduce, so b
 # runs last. With b first, participation settled at 3.7 per cent against a
 # target of 5.13 and stayed there however many sweeps were run.
-# THETA, NOT LAM, IS THE INSTRUMENT FOR PROGRESSION. lam is the hazard per unit
-# used and theta is how much a user uses, and with the income floor in place the
-# disorder is costly enough everywhere that users choose a very small v: lam then
-# cannot lift prog past 0.09 even pinned at 900. theta moves it directly, since
-# raising the weight on drugs raises the quantity and the quantity is what
-# carries the risk. lam is set externally at 97 instead.
 PAIRS = [('h_hl', 'homeless', 1e-5, 0.49),
-         ('lam', 'prog', 10.0, 900.0),
+         ('lam', 'prog', 10.0, 4000.0),
          ('b', 'part', 1e-5, 0.30)]
 
 LABEL = {'part': 'drug participation rate',
@@ -134,7 +111,7 @@ def _b_for(par, iters=16):
     return bracket(par, 'b', 'part', 1e-5, 0.60, iters=iters)
 
 
-def bracket_prog(par, lo=10.0, hi=900.0, iters=14):
+def bracket_prog(par, lo=10.0, hi=4000.0, iters=16):
     """
     Bracket lam on prog, REFITTING b at every trial.
 
@@ -160,7 +137,7 @@ def calibrate(par=None, sweeps=4, verbose=True):
     par = par or P()
     for s in range(sweeps):
         par = with_(par, h_hl=bracket(par, 'h_hl', 'homeless', 1e-5, 0.49))
-        par = with_(par, lam=bracket_prog(par, 10.0, 900.0))
+        par = with_(par, lam=bracket_prog(par, 10.0, 4000.0))
         par = with_(par, b=_b_for(par, iters=30))
         if verbose:
             m = stats(par)

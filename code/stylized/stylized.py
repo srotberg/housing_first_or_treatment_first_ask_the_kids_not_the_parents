@@ -120,7 +120,7 @@ class P:
     # by 1-gam-th damps log c at the bottom by a third, and setting u0 = 0 means
     # far fewer households are ever at risk of the street, so h_hl calibrates to
     # 0.0039 rather than 0.00013 and homelessness stops being worse than death.
-    aleph = 2.60      # flow value of being alive
+    aleph = 2.80      # flow value of being alive
 
     # the disorder
     lam   = 25.0      # addiction hazard per unit of use. CALIBRATED
@@ -135,10 +135,12 @@ class P:
     # use, so the only consequence besides mortality here is unemployment.
 
     # employment and the safety net
-    # ONLY THE DISORDER BRINGS UNEMPLOYMENT RISK. A clean household keeps its
-    # job, so every route into homelessness runs through the disorder and the
-    # model has one shock rather than two.
-    u0    = 0.0       # unemployment probability when clean
+    # u0 IS NOT DECORATION. Setting it to zero makes every route into
+    # homelessness run through the disorder, and the share of the homeless
+    # carrying one then goes to 0.997. The data say the opposite: most homeless
+    # people do not have a substance use disorder, roughly a third do. A clean
+    # household therefore has to be able to lose its job too.
+    u0    = 0.049     # unemployment probability when clean
     # LOSING YOUR JOB. Income support replaces the fraction repl of what you used
     # to earn, on an earnings base capped at ycap. A household at or below the
     # mean therefore gets half its own income; one above the mean gets half the
