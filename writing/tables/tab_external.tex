@@ -4,13 +4,12 @@
 Parameter & Description & Source or rationale & Value \\
 \midrule
 \multicolumn{4}{@{}l}{\emph{Preferences and demographics}} \\
-$\beta$ & Discount factor & Standard & $0.96$ \\
-$R$ & Gross interest rate & Standard & $1.03$ \\
+$\beta$ & Discount factor over a twenty year period & $0.99$ annually, compounded & $0.818$ \\
+$R$ & Gross interest rate over a twenty year period & Set to $1/\beta$ & $1.223$ \\
 $\sigma$ & Dispersion of log permanent income & Heathcote, Perri and Violante (2010) & $0.75$ \\
 $\phi_0$ & Survival per period, no disorder & CDC life tables & $0.93$ \\
-$\aleph$ & Flow value of being alive & Viscusi and Aldy (2003) & $2.80$ \\
-$\gamma$ & Weight on housing services & Consumer Expenditure Survey & $0.22$ \\
-$\theta$ & Weight on drug use & Set; $b$ is calibrated given it & $0.11$ \\
+$\theta$ & Weight on drug use & Set; see the text & $0.11$ \\
+$\gamma$ & Weight on housing services & $0.25(1-\theta)$, Consumer Expenditure Survey & $0.223$ \\
 \addlinespace
 \multicolumn{4}{@{}l}{\emph{The disorder}} \\
 $\rho$ & Recovery probability per period & SAMHSA, TEDS & $0.40$ \\
@@ -23,7 +22,7 @@ $\psi$ & Replacement rate while unemployed & DOL, statutory UI rates & $0.50$ \\
 $\bar y$ & Cap on the earnings base, multiple of average income & DOL, state benefit maxima & $1.00$ \\
 \addlinespace
 \multicolumn{4}{@{}l}{\emph{Housing, drugs and the voucher}} \\
-$p_r$ & Rent per unit of housing services & Numeraire & $1.00$ \\
+$p_r$ & Rent per unit of housing services & Normalisation & $1.00$ \\
 $p_v$ & Price of a unit of drugs & Normalisation of the units of $v$ & $1.00$ \\
 $h_L$ & Standard rental unit & ACS 2023, rent over income & $0.212$ \\
 $h_S$ & Small rental unit & Half the standard unit & $0.106$ \\

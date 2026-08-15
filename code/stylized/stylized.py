@@ -110,8 +110,15 @@ class P:
     th    = 0.11      # weight on drug use
     b     = 0.009     # Stone Geary subsistence; th/b is the pull of the first unit
     gam   = 0.2225    # weight on housing = 0.25 * (1 - th)
-    beta  = 0.96
-    R     = 1.03
+    # A PERIOD IS TWENTY YEARS, so the discount factor and the interest rate
+    # are the annual values COMPOUNDED, not the annual values used raw. At an
+    # annual 0.99 the period factor is 0.99^20 = 0.818, which still leaves the
+    # future mattering, which is what the mortality channel needs. The interest
+    # rate is set to 1/beta so that beta*R = 1 and nothing in the results comes
+    # from a wedge between the two.
+    beta_ann = 0.99
+    beta  = 0.99 ** 20
+    R     = 1.0 / (0.99 ** 20)
     phi0  = 0.93      # survival over one period, clean, employed, housed
     # SET SO THAT NO HOUSEHOLD HAS A NEGATIVE VALUE OF LIFE. At 2.50 the very
     # poorest had phi*W2 just below zero, and since dying is worth zero they
@@ -217,12 +224,20 @@ def with_(par, **kw):
 
 
 # ---------------------------------------------------------------------------
-def _states(par, d, policy, y):
-    """(probability, income level, tenant's rent multiplier) given d."""
+def _states(par, d, policy, y, used=0):
+    """
+    (probability, income level, tenant's rent multiplier) given d and whether
+    the household used drugs in period 1.
+
+    POLICY. Treatment First withdraws the voucher from any household that
+    violated the sobriety condition, which is v > 0, not only from those that
+    went on to acquire the disorder. That is exactly the rule in the full model,
+    where voucher receipt is revoked with certainty whenever v > 0. Housing
+    First withdraws it from nobody. That single difference is the whole
+    experiment.
+    """
     pu = par.u1 if d == 1 else par.u0
-    # POLICY. Treatment First withdraws the voucher on acquiring the disorder,
-    # Housing First does not. That single difference is the whole experiment.
-    covered = (policy == 'HF') or (d == 0)
+    covered = (policy == 'HF') or (d == 0 and not used)
     out = []
     for e, pe in ((0, 1.0 - pu), (1, pu)):
         # Lose your job and income support replaces the fraction repl of what
@@ -247,7 +262,7 @@ def _options(par, rmul):
             (par.h_lg, par.pr * par.h_lg * rmul, 0))
 
 
-def solve_late(par, y, policy):
+def solve_late(par, y, policy, used=0):
     """
     Periods 3 and 2 by backward induction.
 
@@ -264,7 +279,7 @@ def solve_late(par, y, policy):
     V3 = np.zeros((par.na, 2))
     G3 = np.zeros((par.na, 2))
     for d in (0, 1):
-        for p, inc, rmul in _states(par, d, policy, y):
+        for p, inc, rmul in _states(par, d, policy, y, used):
             cash = par.R * ag + inc
             best = np.full(par.na, -np.inf); sub = np.zeros(par.na)
             for h, rent, street in _options(par, rmul):
@@ -284,7 +299,7 @@ def solve_late(par, y, policy):
     R2 = np.zeros((par.na, 2))            # rent actually paid, for the housing share
     G2 = np.zeros((par.na, 2))            # voucher outlay, periods 2 and 3
     for d in (0, 1):
-        for p, inc, rmul in _states(par, d, policy, y):
+        for p, inc, rmul in _states(par, d, policy, y, used):
             cash = par.R * ag[:, None] + inc
             best = np.full(par.na, -np.inf); onst = np.zeros(par.na)
             rnt = np.zeros(par.na); out = np.zeros(par.na)
@@ -320,11 +335,18 @@ def use_choice(par, y, policy=None):
     bound the use region.
     """
     policy = policy or par.policy
-    ag, V2, _, _, _ = solve_late(par, y, policy)
+    # TWO CONTINUATIONS, not one. Treatment First revokes the voucher from any
+    # household that used, so the value of period 2 differs between v = 0 and
+    # v > 0 even before the disorder is realised. Under Housing First the two
+    # coincide and the second solve is skipped.
+    ag, V2, _, _, _ = solve_late(par, y, policy, used=0)
+    V2u = V2 if policy == 'HF' else solve_late(par, y, policy, used=1)[1]
     vg = np.concatenate(([0.0], np.linspace(1e-4, 0.5 * y, par.nv - 1)))
     cash = (y - par.p_v * vg[:, None]) - ag[None, :]
     pid = (1.0 - np.exp(-par.lam * vg))[:, None]
-    EV2 = (1.0 - pid) * V2[None, :, 0] + pid * V2[None, :, 1]
+    Vd0 = np.where(vg[:, None] > 0.0, V2u[None, :, 0], V2[None, :, 0])
+    Vd1 = np.where(vg[:, None] > 0.0, V2u[None, :, 1], V2[None, :, 1])
+    EV2 = (1.0 - pid) * Vd0 + pid * Vd1
     # HOUSING IS A CHOICE IN EVERY PERIOD, period 1 included. The household is
     # employed and clean here, but it still picks among the same three options
     # and pays for the one it picks, so y is income and not income net of some
@@ -355,11 +377,14 @@ def value1(par, y, policy=None):
     addiction hazard, so whatever v it picks is the v it wants given the policy.
     """
     policy = policy or par.policy
-    ag, V2, _, _, _ = solve_late(par, y, policy)
+    ag, V2, _, _, _ = solve_late(par, y, policy, used=0)
+    V2u = V2 if policy == 'HF' else solve_late(par, y, policy, used=1)[1]
     vg = np.concatenate(([0.0], np.linspace(1e-4, 0.5 * y, par.nv - 1)))
     c = (y - par.p_v * vg[:, None]) - ag[None, :]
     pid = (1.0 - np.exp(-par.lam * vg))[:, None]
-    EV2 = (1.0 - pid) * V2[None, :, 0] + pid * V2[None, :, 1]
+    Vd0 = np.where(vg[:, None] > 0.0, V2u[None, :, 0], V2[None, :, 0])
+    Vd1 = np.where(vg[:, None] > 0.0, V2u[None, :, 1], V2[None, :, 1])
+    EV2 = (1.0 - pid) * Vd0 + pid * Vd1
     val = np.full(c.shape, -np.inf)
     for h, rent, _ in _options(par, 1.0):
         cc = c - rent
@@ -415,27 +440,38 @@ def aggregates(par, ygrid, w, policy=None):
 
     hl = hl_sud = hcost = hinc = cost = 0.0
     for i, y in enumerate(ygrid):
-        ag, _, H2, R2, G2 = solve_late(par, y, policy)
-        for m, a, d in ((ww[i] * (1.0 - use[i]), an[i], 0),
-                        (ww[i] * (use[i] - pid[i]), au[i], 0),
-                        (ww[i] * pid[i], au[i], 1)):
+        ag, _, H2, R2, G2 = solve_late(par, y, policy, used=0)
+        if policy == 'HF':
+            H2u, R2u, G2u = H2, R2, G2
+        else:
+            _, _, H2u, R2u, G2u = solve_late(par, y, policy, used=1)
+        for m, a, d, uu in ((ww[i] * (1.0 - use[i]), an[i], 0, 0),
+                            (ww[i] * (use[i] - pid[i]), au[i], 0, 1),
+                            (ww[i] * pid[i], au[i], 1, 1)):
             if m <= 0.0:
                 continue
-            street = float(np.interp(a, ag, H2[:, d]))
+            Hx, Rx, Gx = (H2, R2, G2) if uu == 0 else (H2u, R2u, G2u)
+            street = float(np.interp(a, ag, Hx[:, d]))
             # the rent ACTUALLY paid on the unit chosen, not the small one's
             # rent regardless of choice, which understated the housing share by
             # more than half and pinned the housing weight at its bound
             hl += m * street
-            hcost += m * float(np.interp(a, ag, R2[:, d]))
-            cost += m * float(np.interp(a, ag, G2[:, d]))
+            hcost += m * float(np.interp(a, ag, Rx[:, d]))
+            cost += m * float(np.interp(a, ag, Gx[:, d]))
 
             if d == 1:
                 hl_sud += m * street
-            for p, inc, rmul in _states(par, d, policy, y):
+            for p, inc, rmul in _states(par, d, policy, y, uu):
                 hinc += m * p * inc
 
     part = float((ww * use).sum())
+    # DRUG SPENDING OVER INCOME AMONG USERS, the moment that identifies theta.
+    # Aggregate spending over aggregate income of users, not the average of the
+    # ratios, so a handful of very poor users cannot drive it.
+    spend = float((ww * use * par.p_v * vv).sum())
+    uinc = float((ww * use * ygrid).sum())
     return dict(part=part, sud=float((ww * pid).sum()),
+                dshare=float(spend / max(uinc, 1e-12)),
                 prog=float((ww * pid).sum() / max(part, 1e-12)),
                 r_use=float((ww * use * ygrid).sum() / max(part, 1e-12) / ybar),
                 homeless=float(hl),
@@ -443,3 +479,45 @@ def aggregates(par, ygrid, w, policy=None):
                 housing_share=float(hcost / max(hinc, 1e-12)),
                 cost=float(cost),
                 use=use, v=vv)
+
+
+def vsl(par, y=1.0, policy=None, years=20.0):
+    """
+    The value of a statistical life, in multiples of average ANNUAL income.
+
+    A household at income y in period 1 would pay, in period 1 consumption, an
+    amount beta * E W2 / u_c(c1) for a marginal increase in its probability of
+    surviving into period 2. That is the standard VSL: the marginal rate of
+    substitution between consumption and mortality risk. It comes out in units
+    of one PERIOD's mean income, so it is multiplied by the number of years in a
+    period to put it in the annual units the empirical estimates use.
+
+    This is what pins aleph. Raising aleph raises every continuation value and
+    therefore the willingness to pay for survival, one for one.
+    """
+    policy = policy or par.policy
+    ag, V2, _, _, _ = solve_late(par, y, policy, used=0)
+    V2u = V2 if policy == 'HF' else solve_late(par, y, policy, used=1)[1]
+    vg = np.concatenate(([0.0], np.linspace(1e-4, 0.5 * y, par.nv - 1)))
+    c = (y - par.p_v * vg[:, None]) - ag[None, :]
+    pid = (1.0 - np.exp(-par.lam * vg))[:, None]
+    Vd0 = np.where(vg[:, None] > 0.0, V2u[None, :, 0], V2[None, :, 0])
+    Vd1 = np.where(vg[:, None] > 0.0, V2u[None, :, 1], V2[None, :, 1])
+    EV2 = (1.0 - pid) * Vd0 + pid * Vd1
+    val = np.full(c.shape, -np.inf)
+    con = np.zeros(c.shape)
+    for h, rent, _ in _options(par, 1.0):
+        cc = c - rent
+        v = np.where(cc > 1e-9,
+                     (1.0 - par.gam - par.th) * np.log(np.maximum(cc, 1e-12))
+                     + par.gam * np.log(h)
+                     + par.aleph + par.beta * par.phi0 * EV2, -np.inf)
+        con = np.where(v > val, cc, con)
+        val = np.maximum(val, v)
+    tot = (val.max(axis=1) + par.th * (np.log(par.b + vg) - np.log(par.b))
+           - par.omega * par.chdmg * (1.0 - np.exp(-par.lam * vg)))
+    k = int(np.argmax(tot))
+    ia = int(np.argmax(val[k]))
+    c1 = float(con[k, ia])
+    u_c = (1.0 - par.gam - par.th) / max(c1, 1e-12)
+    return float(par.beta * EV2[k, ia] / u_c * years)

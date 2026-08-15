@@ -31,7 +31,7 @@ sequence, which cannot leave the band.
 """
 
 import numpy as np
-from stylized import P, with_, aggregates
+from stylized import P, with_, aggregates, vsl
 
 # THE VALUE OF LIFE, and how it was fixed.
 #
@@ -70,7 +70,7 @@ SIG = 0.75
 YG = np.exp(np.linspace(np.log(YMIN), np.log(5.0), 30))
 W = np.exp(-0.5 * ((np.log(YG) + 0.5 * SIG**2) / SIG)**2)
 
-TARGET = dict(part=0.0513, homeless=0.00399, prog=0.332)
+TARGET = dict(part=0.0513, homeless=0.00399, prog=0.332, vsl=80.0)
 
 # ORDER MATTERS, and participation goes LAST. Every one of these parameters
 # moves participation: lam makes drugs riskier, h_hl changes what is at stake in
@@ -79,18 +79,50 @@ TARGET = dict(part=0.0513, homeless=0.00399, prog=0.332)
 # converged. Participation is the moment the model exists to reproduce, so b
 # runs last. With b first, participation settled at 3.7 per cent against a
 # target of 5.13 and stayed there however many sweeps were run.
-PAIRS = [('h_hl', 'homeless', 1e-5, 0.49),
+# THETA IS SET, NOT CALIBRATED, and the reason is worth recording because the
+# obvious alternative was tried and fails. The natural target is the 11 per cent
+# of income that users who are not addicted spend on drugs, which is what the
+# full model matches. This model cannot reach it while keeping users poor. Two
+# targets pin the pair (lam, v): prog = 1 - exp(-lam v) = 0.332 fixes lam*v at
+# 0.403, and a spending share of 0.11 on an average user income near 0.2 fixes
+# v near 0.022, hence lam near 18. Scanning (lam, th) over that region shows the
+# model is bimodal, with no interior solution:
+#
+#     lam    th      drug spending/income    users' income / average
+#      18   0.25            0.0003                    0.375
+#      18   0.35            0.3742                    3.372
+#      25   0.25            0.0014                    0.287
+#
+# Below the threshold users are the very poor and use a hair above zero; above
+# it the users are the rich and the income gradient the model exists to explain
+# is gone. There is nothing in between. The economics is not subtle: what puts
+# use at the bottom is that the disorder destroys a continuation value, and for
+# a poor household that cost is enormous relative to the utility of the drug, so
+# it uses as little as it can while still using. Low intensity use among the
+# poor is the same fact as the income gradient, not an independent one. So the
+# spending share is reported as an untargeted moment that the model misses, and
+# theta stays set with gamma = 0.25 * (1 - theta) alongside it.
+PAIRS = [('aleph', 'vsl', 0.20, 12.0),
+         ('h_hl', 'homeless', 1e-5, 0.49),
          ('lam', 'prog', 10.0, 4000.0),
          ('b', 'part', 1e-5, 0.30)]
 
 LABEL = {'part': 'drug participation rate',
          'housing_share': 'housing spending / income',
          'homeless': 'homelessness rate',
+         'dshare': 'drug spending / income among users',
+         'vsl': 'value of a statistical life, annual incomes',
          'prog': 'share of users who acquire the disorder'}
 
 
 def stats(par):
-    return aggregates(par, YG, W)
+    # GAMMA IS TIED TO THETA, not free. Housing is a quarter of non drug
+    # spending in the data, so the housing weight has to move with the drug
+    # weight or the three shares stop summing to one.
+    par = with_(par, gam=0.25 * (1.0 - par.th))
+    m = aggregates(par, YG, W)
+    m['vsl'] = vsl(par)
+    return m
 
 
 def bracket(par, name, mom, lo, hi, iters=34):
@@ -109,6 +141,32 @@ def bracket(par, name, mom, lo, hi, iters=34):
 def _b_for(par, iters=16):
     """Refit b so participation is on target at the given parameters."""
     return bracket(par, 'b', 'part', 1e-5, 0.60, iters=iters)
+
+
+def bracket_with_b(par, name, mom, lo, hi, iters=16):
+    """
+    Bracket one parameter on one moment, REFITTING b at every trial.
+
+    Needed wherever the moment is a ratio that is only defined when someone
+    uses, or where the parameter moves participation so hard that the stale b
+    makes the moment meaningless. theta and lam are both like that: raising
+    either changes how many households use, so the moment has to be read at a b
+    that puts participation back on target.
+    """
+    tgt = TARGET[mom]
+    def at(v):
+        q = with_(par, **{name: v})
+        if name == 'th':
+            q = with_(q, gam=0.25 * (1.0 - v))
+        return stats(with_(q, b=_b_for(q, iters=14)))[mom]
+    rising = at(hi) > at(lo)
+    for _ in range(iters):
+        mid = np.sqrt(lo * hi)
+        if (at(mid) > tgt) == rising:
+            hi = mid
+        else:
+            lo = mid
+    return float(np.sqrt(lo * hi))
 
 
 def bracket_prog(par, lo=10.0, hi=4000.0, iters=16):
@@ -133,9 +191,10 @@ def bracket_prog(par, lo=10.0, hi=4000.0, iters=16):
     return float(np.sqrt(lo * hi))
 
 
-def calibrate(par=None, sweeps=4, verbose=True):
+def calibrate(par=None, sweeps=5, verbose=True):
     par = par or P()
     for s in range(sweeps):
+        par = with_(par, aleph=bracket(par, 'aleph', 'vsl', 0.20, 12.0, iters=26))
         par = with_(par, h_hl=bracket(par, 'h_hl', 'homeless', 1e-5, 0.49))
         par = with_(par, lam=bracket_prog(par, 10.0, 4000.0))
         par = with_(par, b=_b_for(par, iters=30))
@@ -143,8 +202,9 @@ def calibrate(par=None, sweeps=4, verbose=True):
             m = stats(par)
             worst = max(abs(m[k] / TARGET[k] - 1.0) for k in TARGET)
             print(f'  sweep {s+1}  worst relative gap {worst:7.3f}   '
-                  + f'h_hl={par.h_hl:.4g}  th={par.th:.4g}  b={par.b:.4g}')
-    return par
+                  f'aleph={par.aleph:.4g}  h_hl={par.h_hl:.4g}  '
+                  f'lam={par.lam:.4g}  b={par.b:.4g}')
+    return with_(par, gam=0.25 * (1.0 - par.th))
 
 
 def report(par):
@@ -159,6 +219,11 @@ def report(par):
     print('  ' + '   '.join(f'{n}={getattr(par, n):.4g}' for n, _, _, _ in PAIRS))
     print(f"\n  income of users / average : {m['r_use']:.3f}")
     print(f"  share of homeless with the disorder : {m['sud_of_homeless']:.3f}")
+    print(f"  drug spending / income among users  : {m['dshare']:.4f}"
+          "   (untargeted; see the note on theta)")
+    from stylized import value1
+    v1 = np.array([value1(par, y, 'HF') for y in YG])
+    print(f"  minimum ex ante value of life over the grid : {v1.min():.3f}")
     return m
 
 
@@ -166,6 +231,6 @@ if __name__ == '__main__':
     import json
     par = calibrate()
     report(par)
-    json.dump({n: getattr(par, n) for n, _, _, _ in PAIRS},
+    json.dump({n: getattr(par, n) for n, _, _, _ in PAIRS} | {'gam': par.gam},
               open('calibrated.json', 'w'), indent=1)
     print('\nwrote calibrated.json')
