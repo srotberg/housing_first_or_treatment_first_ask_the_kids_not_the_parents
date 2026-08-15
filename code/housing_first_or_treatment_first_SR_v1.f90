@@ -507,8 +507,9 @@
         real(8), parameter :: penalty_months_of_interest=0 !real(1)/real(4)
                                                
         ! ASSET GRID, and the one number here that is a judgement rather than a
-        ! deduction. The a' search is QUADRATIC in this, so ninety to seventy is
-        ! worth about 1.65x, more than anything else left on the list.
+        ! deduction. The a' search is QUADRATIC in this, so ninety to fifty takes the
+        ! renter loop from 91 points to 51 and is worth about 3.2x, more than
+        ! anything else left on the list.
         !
         ! The reason for caution is that the objective is not single peaked in
         ! a', and the things that break it, voucher eligibility as a step in
@@ -524,7 +525,7 @@
         ! reported number rests on it: solve the benchmark at seventy and at
         ! ninety and compare the targeted moments and the two policy
         ! counterfactuals, not just the value function.
-        integer, parameter :: positive_financial_grid_size=70
+        integer, parameter :: positive_financial_grid_size=50
         integer, parameter :: negative_financial_grid_size=61
         
         integer, parameter :: grid_gaps=coarse_grid*10+(1-coarse_grid)

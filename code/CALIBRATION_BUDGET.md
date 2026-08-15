@@ -172,3 +172,54 @@ Twenty two internally calibrated parameters is the multiplier that dominates
 everything. Halving it halves the calibration, and it is worth asking of each
 one whether it needs to be fitted here or could be assigned, the way theta was
 in the stylized model once the attempt to calibrate it failed honestly.
+
+---
+
+# Revised bottom line
+
+Three corrections, two of them from the author and both right.
+
+**The drug price needs no convergence in the calibration.** The normalisation is
+that `psi_1` is chosen so `p_v = 1` at the benchmark quantity. That is a
+definition, not a fixed point: solve at `p_v = 1`, read the quantity off the
+solution, and set `psi_1 = 1/V^(psi_2-1)` at the end. Nothing iterates. Only the
+counterfactuals, where the quantity moves and the price with it, need the loop.
+That takes the outer loop from `tau_l`, `p_v` and estates to `tau_l` and estates,
+worth roughly **2x** on every equilibrium in the calibration. This should have
+been obvious and was not; it is the cheapest factor on the whole list.
+
+**The housing state goes, and the reason it was ever there is ownership.**
+Tracking the unit a household arrives in earns its keep only when selling carries
+a transaction cost, so a homeowner's tenure decision depends on where it starts.
+With ownership gone and renters facing no adjustment cost, it is dead weight, and
+the dump confirms it: the value function spread across that index is exactly
+zero. Worth **2.5x**, not the 6.6x in the model note, because six of the eight
+slots are unpopulated owner states that already exit for free.
+
+**The asset grid goes to fifty positive points**, not seventy. The renter loop
+goes from 91 points to 51 and the `a'` search is quadratic, so **3.2x** against
+the original ninety. This is the one number here that is a judgement rather than
+a deduction, and it must be validated by solving the benchmark at fifty and at
+ninety and comparing the targeted moments and both counterfactuals.
+
+## What it comes to
+
+    per pass, from the measured 51 minutes
+      asset grid 90 to 50                  3.2x
+      housing state removed                2.5x
+      owner branch removed                 2x
+      housing choice grid 7 to 3           2.3x
+      income grid 9 to 7                   1.3x
+                                          -----
+                                            48x  ->  about 1 minute a pass
+
+    per calibration
+      secant where the moment is smooth     3x   ->  550 evaluations
+      no drug price loop                    2x
+      equilibrium closed once per sweep    included above
+
+    550 x 1.2 x 1 min  =  11 hours on four cores
+                       =  about 1 hour on forty
+
+**Eleven hours on this container.** That is the target met with room to spare,
+and every factor except the asset grid is exact.
