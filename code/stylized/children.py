@@ -71,7 +71,7 @@ import json
 import numpy as np
 from stylized import P, with_, value1, use_choice
 from calibrate import YG, W, stats
-from welfare import cev, PV_INCOME
+from welfare import cev
 
 WW = W / W.sum()
 
@@ -108,17 +108,17 @@ def transmission(par, policy='HF', pV=None):
     print(f'   child of a clean parent: use {100*shifted(use,0.0):.2f}%'
           f'   disorder {100*base:.3f}%')
     print(f'   {"delta":>8s}{"child use":>12s}{"child disorder":>16s}'
-          f'{"ratio":>9s}{"income loss":>13s}')
+          f'{"ratio":>9s}{"cons. loss":>13s}')
     out = []
     for d in (0.0, 0.10, 0.20, 0.25, 0.30, 0.35, 0.40, 0.50):
         u = shifted(use, d)
         sud = u * prog
         # welfare damage to the child, in units of one lifetime income
         dv = shifted(v1, 0.0) - shifted(v1, d)
-        loss = cev(par, dv) * PV_INCOME
+        loss = cev(par, dv)
         out.append((d, u, sud, sud / max(base, 1e-12), loss))
         print(f'   {d:8.2f}{100*u:11.2f}%{100*sud:15.3f}%'
-              f'{sud/max(base,1e-12):9.2f}{loss:13.3f}')
+              f'{sud/max(base,1e-12):9.2f}{100*loss:12.2f}%')
     return out
 
 
@@ -132,17 +132,17 @@ def verdict(par, del_d, pV=1.0, omega=1.0, kids=1.0):
     """
     v1h, _ = child_grid(par, 'HF', pV)
     v1t, _ = child_grid(par, 'TF', pV)
-    priv = float((WW * cev(par, v1h - v1t)).sum()) * PV_INCOME
+    priv = float((WW * cev(par, v1h - v1t)).sum())
     mh = stats(with_(par, pV=pV, policy='HF'))
     mt = stats(with_(par, pV=pV, policy='TF'))
     dsud = mh['sud'] - mt['sud']
-    per_case = cev(par, shifted(v1h, 0.0) - shifted(v1h, del_d)) * PV_INCOME
+    per_case = cev(par, shifted(v1h, 0.0) - shifted(v1h, del_d))
     gain = omega * kids * dsud * per_case
     print(f'\n   VERDICT at pi_V = {pV}, del_d = {del_d}, '
           f'{kids} child per household, weight {omega}')
     print(f'      private welfare loss from conditionality : {priv:.5f}')
     print(f'      disorder cases prevented                 : {100*dsud:.3f} pp')
-    print(f'      damage per case, one child               : {per_case:.4f}')
+    print(f'      damage per case, one child               : {100*per_case:.2f}%')
     print(f'      externality gain from conditionality     : {gain:.5f}')
     print(f'      ratio, gain over loss                    : {gain/max(priv,1e-12):.2f}')
     print(f'      Treatment First preferred?               : {gain > priv}')
@@ -168,9 +168,9 @@ def tab_children(par, pV=1.0):
     for d in (0.0, 0.20, DEL_D, 0.40):
         u = shifted(use, d)
         rows.append((d, u * prog, u * prog / max(base, 1e-12),
-                     cev(par, shifted(v1, 0.0) - shifted(v1, d)) * PV_INCOME))
+                     cev(par, shifted(v1, 0.0) - shifted(v1, d))))
     v1u, _ = child_grid(par, 'HF', pV)
-    per_case = cev(par, shifted(v1u, 0.0) - shifted(v1u, DEL_D)) * PV_INCOME
+    per_case = cev(par, shifted(v1u, 0.0) - shifted(v1u, DEL_D))
     priv, gain = verdict(par, DEL_D, pV=pV)
     # Panel B is entirely at pV, the policy comparison. Panel A is entirely at
     # the baseline. Mixing the two silently reported a 1.68 pp gap where the
@@ -179,14 +179,14 @@ def tab_children(par, pV=1.0):
     mtu = stats(with_(par, pV=pV, policy='TF'))
     dsud = mhu['sud'] - mtu['sud']
 
-    L = [r'\small', r'\begin{tabular}{@{}lcccc@{}}', r'\toprule',
+    L = [r'\footnotesize', r'\begin{tabular}{@{}lcccc@{}}', r'\toprule',
          r'\multicolumn{5}{@{}l}{\emph{Panel A. Transmission: what each income '
          r'penalty implies}} \\',
          r"$\delta_d$ & & Child's disorder rate & Ratio & "
          r'Loss to the child \\', r'\midrule']
     for d, sud, ratio, loss in rows:
         lab = f'{d:.2f}' + (r'\ \ (calibrated)' if abs(d - DEL_D) < 1e-9 else '')
-        L.append(f'{lab} & & {100*sud:.2f}\\% & {ratio:.2f} & {loss:.2f} \\\\')
+        L.append(f'{lab} & & {100*sud:.2f}\\% & {ratio:.2f} & {100*loss:.1f}\\% \\\\')
     L += [r'\addlinespace',
           r'\multicolumn{5}{@{}l}{\emph{Panel B. Does the externality reverse '
           r'the ranking?}} \\',

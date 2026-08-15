@@ -28,18 +28,18 @@ def write(name, body):
 # note can never quote a value the model does not use.
 EXTERNAL = [
     ('Preferences and demographics', [
-        ('beta', r'\beta', 'Discount factor', 'Standard', '{:.2f}'),
-        ('R', 'R', 'Gross interest rate', 'Standard', '{:.2f}'),
+        ('beta', r'\beta', 'Discount factor over a twenty year period',
+         r'$0.99$ annually, compounded', '{:.3f}'),
+        ('R', 'R', 'Gross interest rate over a twenty year period',
+         r'Set to $1/\beta$', '{:.3f}'),
         (None, r'\sigma', 'Dispersion of log permanent income',
          'Heathcote, Perri and Violante (2010)', '0.75'),
         ('phi0', r'\phi_0', 'Survival per period, no disorder',
          'CDC life tables', '{:.2f}'),
-        ('aleph', r'\aleph', 'Flow value of being alive',
-         'Viscusi and Aldy (2003)', '{:.2f}'),
-        ('gam', r'\gamma', 'Weight on housing services',
-         'Consumer Expenditure Survey', '{:.2f}'),
         ('th', r'\theta', 'Weight on drug use',
-         r'Set; $b$ is calibrated given it', '{:.2f}'),
+         r'Set; see the text', '{:.2f}'),
+        ('gam', r'\gamma', 'Weight on housing services',
+         r'$0.25(1-\theta)$, Consumer Expenditure Survey', '{:.3f}'),
     ]),
     ('The disorder', [
         ('rho', r'\rho', 'Recovery probability per period',
@@ -59,7 +59,7 @@ EXTERNAL = [
          'DOL, state benefit maxima', '{:.2f}'),
     ]),
     ('Housing, drugs and the voucher', [
-        ('pr', 'p_r', 'Rent per unit of housing services', 'Numeraire',
+        ('pr', 'p_r', 'Rent per unit of housing services', 'Normalisation',
          '{:.2f}'),
         ('p_v', 'p_v', 'Price of a unit of drugs',
          'Normalisation of the units of $v$', '{:.2f}'),
@@ -77,6 +77,8 @@ EXTERNAL = [
 ]
 
 INTERNAL = [
+    ('aleph', r'\aleph', 'Flow value of being alive',
+     'Value of a statistical life, annual incomes', 'vsl', '{:.1f}', '{:.3f}'),
     ('b', 'b', 'Pull of the first unit of drugs', 'Drug participation rate',
      'part', '{:.2%}', '{:.5f}'),
     ('h_hl', 'h_0', 'Housing services when homeless', 'Homelessness rate',
