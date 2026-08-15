@@ -17,12 +17,13 @@ Neither tells you anything about the mechanism. Only refitting does.
 
 THE CONSTRAINT
 
-Only channels that exist in the full model may appear here. A stylised model
+Only channels that exist in the full model may appear here. A stylized model
 resting on a shock the full model does not use is not an introduction to it.
 
 Run:  python3 ablate.py
 """
 
+import json
 import numpy as np
 from stylized import P, with_
 from calibrate import calibrate, stats
@@ -48,12 +49,29 @@ CHANNELS = [
     # construction. The lesson is that this table is necessary and not
     # sufficient: a component also has to be tested where the figures put it.
     ('households can save', dict(na=1)),
+    # This row does not calibrate and its numbers should not be read as a
+    # recalibrated model. At aleph = 0.25 the continuation value goes NEGATIVE
+    # for every household at or below average income, and W2(a=0, d=1) exceeds
+    # W2(a=0, d=0): -0.68 against -0.70 at the mean. Having the disorder becomes
+    # PREFERABLE, because it raises mortality and a shorter life is better when
+    # life is worth less than nothing. Participation then sits above 60 per cent
+    # at b = 0.3, 1.0 and 3.0 alike, so no value of b brings it back. aleph is
+    # not a parameter that scales the results, it is what keeps their sign.
     ('life is worth much', dict(aleph=0.25)),
 ]
 
 
-def evaluate(par, sweeps=3):
-    """Full recalibration, then both counterfactuals."""
+def evaluate(par, sweeps=4):
+    """
+    Full recalibration, then both counterfactuals.
+
+    Four sweeps, not three, and every row starts from the CALIBRATED point
+    rather than from the defaults. Both changes exist so that the 'nothing
+    removed' row reproduces the headline numbers of the note exactly. It used
+    to land on -6.01 and +2.83 against a headline of -6.12 and +2.93, purely
+    because it was a less converged calibration of the same model, and a reader
+    comparing the two would reasonably have thought something was wrong.
+    """
     par = calibrate(par, sweeps=sweeps, verbose=False)
     m = stats(par)
     p0 = stats(with_(par, pV=0.0, policy='HF'))['part']
@@ -83,20 +101,26 @@ if __name__ == '__main__':
     print('   each row is FULLY recalibrated after the channel is removed,')
     print('   then both counterfactuals are rerun')
     print('=' * 80)
-    print(f"{'removed':36s}{'part':>7s}{'r_use':>8s}"
+    # part and homeless are printed BECAUSE a row can fail to calibrate. The
+    # single rental size row does: no value of h_hl delivers the homelessness
+    # rate once the small unit is gone, so its policy numbers come from a model
+    # that missed its targets, and that has to be visible here.
+    print(f"{'removed':36s}{'part':>7s}{'homeless':>10s}{'r_use':>8s}"
           f"{'val life':>10s}{'moral hz':>10s}")
+    print(f"{'   TARGETS':36s}{0.0513:7.4f}{0.00399:10.5f}")
+    base = with_(P(), **json.load(open('calibrated.json')))
     ref = None
     for name, kw in CHANNELS:
         try:
-            r = evaluate(with_(P(), **kw))
+            r = evaluate(with_(base, **kw))
         except Exception as exc:
             print(f'{name:36s}   failed: {exc}')
             continue
         v = verdict(r, ref)
         if ref is None:
             ref = r
-        print(f"{name:36s}{r['part']:7.4f}{r['r_use']:8.3f}"
-              f"{r['vol']:10.2f}{r['mh']:10.2f}{v}")
+        print(f"{name:36s}{r['part']:7.4f}{r['homeless']:10.5f}"
+              f"{r['r_use']:8.3f}{r['vol']:10.2f}{r['mh']:10.2f}{v}")
     print('-' * 80)
     print('   r_use below one is result 1. The last two columns are result 2:')
     print('   a large negative value of life effect and a large positive moral')

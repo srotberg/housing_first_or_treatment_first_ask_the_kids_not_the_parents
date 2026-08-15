@@ -62,7 +62,8 @@ EXTERNAL = [
     ('Housing, drugs and the voucher', [
         ('pr', 'p_r', 'Rent per unit of housing services', 'Numeraire',
          '{:.2f}'),
-        ('p_v', 'p_v', 'Price of a unit of drugs', 'Numeraire', '{:.2f}'),
+        ('p_v', 'p_v', 'Price of a unit of drugs',
+         'Units of $v$ are defined so that one unit costs one', '{:.2f}'),
         ('h_lg', 'h_L', 'Standard rental unit',
          'Housing budget share, 21.2 per cent of average income', '{:.3f}'),
         ('h_sm', 'h_S', 'Small rental unit', 'Half the standard unit',

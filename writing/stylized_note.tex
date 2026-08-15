@@ -348,6 +348,16 @@ standard values or directly to a measured quantity. Table~\ref{tab:int} lists
 the three parameters calibrated inside the model, together with the moment each
 one is matched to and the fit.}
 
+\new{One caveat belongs here rather than in a footnote. The three periods are
+stages of a life rather than calendar intervals, and the parameters in
+Table~\ref{tab:ext} take conventional values without imposing a mapping from a
+period to a number of years, so survival, recovery and the discount factor are
+not mutually consistent at any single horizon. Fixing that would require the
+life cycle structure that the quantitative model has and this one deliberately
+does not. Nothing below turns on it: every comparison in Sections~\ref{sec:who}
+and~\ref{sec:mh} varies one object and holds the rest of the parameter vector
+fixed, so the time unit is common to both sides of every number reported.}
+
 \begin{table}[htbp]
 \centering
 \caption{\new{Externally set parameters}}\label{tab:ext}
@@ -472,10 +482,19 @@ permanent income. The household with more to lose loses more, and it loses
 proportionally more than it gains from drugs being relatively cheap. This is
 also why $\aleph$ in equation~\eqref{eq:u} is not decorative. It is the part of
 the continuation value that does not shrink as consumption falls, and it is what
-stops a poor household from being nearly indifferent to dying. Cutting $\aleph$
-to a fifth of its value and recalibrating drives the income ratio from $0.19$ to
-$0.51$ and inflates both policy forces roughly eightfold, to $-56.9$ and
-$+47.0$ percentage points. No other parameter in the model is as consequential.}
+makes life worth living for a household with little to consume.}
+
+\new{Cutting $\aleph$ to a fifth of its value does not distort the model, it
+inverts it. At $\aleph=0.25$ the value of entering period 2 with no assets is
+negative for every household at or below average income, and for those
+households the value of entering \emph{with} the disorder exceeds the value of
+entering without it: $-0.68$ against $-0.70$ at the mean. The disorder raises
+mortality, and a shorter life is preferable when life is worth less than
+nothing. Drug use stops being a risk taken for a benefit and becomes a way of
+ending a bad life; participation rises to well over half the population and no
+value of $b$ brings it back to five per cent. No other parameter can do this,
+and it is why a flow value of being alive appears explicitly in
+equation~\eqref{eq:u} rather than being folded into the consumption term.}
 
 \paragraph{\new{Why the unemployment channel is retained.}} \new{The result just stated
 is a statement about the unemployment channel, so the channel has to be in the
@@ -615,9 +634,8 @@ participation falls by $6.12$ percentage points, to nothing: guaranteeing
 housing to households that stay clean makes staying clean worth a great deal
 more. Moving instead to universal Housing First leaves participation at
 $2.93$ per cent, which is $2.93$ percentage points higher than under Treatment
-First at the same generosity. \new{That difference is the moral hazard force,
-and it is the price of also covering households that already have the disorder.}
-The net effect of \new{universal} Housing First against no programme is
+First at the same generosity, \new{and that difference is the moral hazard
+force.} The net effect of \new{universal} Housing First against no programme is
 $-3.19$ percentage points: \new{it still lowers drug use, because the value of
 life force is larger than the moral hazard force.}
 
