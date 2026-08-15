@@ -98,3 +98,43 @@ threshold at which the calibration can actually be iterated rather than launched
 and hoped for.
 
 Adding item 3 at seven points takes it to roughly 22x.
+
+---
+
+## Verified: the housing state is exactly redundant
+
+Checked directly rather than argued. The value function was dumped at a working
+age and reshaped over its five state dimensions, then compared across the
+housing state index:
+
+```
+real cells 19,656 of 78,624
+populated housing indices          [9828 9828 0 0 0 0 0 0]
+max spread across housing, real cells only   0.0
+max |V|                                      3573.0
+```
+
+Two findings, both useful.
+
+**The spread is exactly zero.** Across every asset, employment, productivity and
+voucher combination, the value function takes the identical value at both
+populated housing indices, to the last bit. The model note's claim that the unit
+a household arrives in is payoff irrelevant is not an approximation here, it is
+an identity, and removing the dimension cannot change any number the model
+produces.
+
+**Only two of the eight slots are populated at all.** The other six hold the
+large negative sentinel: they are the owner states, which no longer exist. So the
+array is four times wider than the model uses on that dimension, and the loop
+runs over all eight while six of them produce nothing.
+
+That also revises the size of the prize. The 6.6x in the model note assumes the
+loop does real work at every housing point. It does not: six of the eight exit
+into infeasibility. The saving from collapsing the dimension to one is therefore
+**between 2x, if the infeasible branches exit for free, and 8x, if they cost what
+a populated one costs**. The measured per age timing suggests the truth is nearer
+the bottom of that range than the top, so **2x to 3x is the honest expectation**,
+not 6.6x.
+
+It is still the right change: it is provably exact, it removes four fifths of an
+array dimension, and it deletes the last structural trace of homeownership.
