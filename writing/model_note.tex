@@ -707,7 +707,7 @@ $\bar\tau^{u}$ & utility cost of treatment & C & $\rightarrow$ treatment take up
 $\beta$ & discount factor & C & $\rightarrow$ wealth / GDP $=3$. BEA fixed assets against GDP; the standard US private-capital-to-output ratio\\
 $p_v$ & drug price & E & clears the drug market; $=1$ at the benchmark by the normalisation of $\psi_1$\\
 $r$ & risk-free rate & L & 0.03, Kaplan, Mitman and Violante (2020)\\
-$\kappa_x$ & externality weight & D & Inverted from Loubi\`ere et al.'s eight-country contingent valuation, \EUR{}57 per adult per year to end homelessness, normalised per unit of homelessness by the European reference rate. \S\ref{sec:extern}\\
+$\kappa_x$ & externality weight & D & Inverted from Loubi\`ere et al.'s eight-country contingent valuation, \EUR{}23 per adult per year to end homelessness, normalised per unit of homelessness by the European reference rate. \textbf{This is the mean over ALL respondents.} The \EUR{}57 quoted in an earlier draft is the mean among the 42.3\% willing to pay anything, which is the wrong object for an aggregate public bad and overstates $\kappa_x$ by a factor of 2.5. \S\ref{sec:extern}\\
 $\omega_x$ & extra weight on homeless-with-SUD & S & \textbf{1.0 in the baseline}: the disamenity depends on the headcount alone. No direct estimate exists, R2's wording (``especially if many are addicted to drugs'') implies a positive weight and the hedonic split between supportive housing and emergency shelter implies composition matters, but neither pins a number, so the composition-weighted version is an \textbf{appendix robustness}, swept over 1 to 4\\
 \bottomrule
 \end{longtable}
@@ -1321,11 +1321,25 @@ one, and it is a much better fit to this model than the hedonics. Loubi\`ere et
 al.\ ran an eight-country contingent-valuation study (France, Ireland, Italy,
 Netherlands, Poland, Portugal, Spain, Sweden, roughly 700 respondents each,
 fielded in 2017) asking exactly the right question: what would you pay in annual
-taxes to \emph{end} homelessness through Housing First? The answer was about
-\EUR{}57 per respondent per year, roughly 0.2\% of average annual earnings. That
-is a stated preference over the \emph{aggregate} homelessness rate, precisely
-the object $\kappa_x$ multiplies, and it is non-spatial, which the hedonic
-estimates are not.
+taxes to \emph{end} homelessness through Housing First? That is a stated
+preference over the \emph{aggregate} homelessness rate, precisely the object
+$\kappa_x$ multiplies, and it is non-spatial, which the hedonic estimates are
+not.
+
+\paragraph{Which mean, and the correction.} The study reports two, and they
+differ by a factor of 2.5. Only 42.3\% of respondents were willing to pay
+anything. Among those, the mean was \EUR{}56.9 ($\pm$9.1) per year, ranging from
+\EUR{}33 in Italy to \EUR{}93 in Sweden. \emph{Over all respondents, including
+the zeros}, the mean was \EUR{}23 ($\pm$4.8) per year, ranging from \EUR{}16 in
+Poland to \EUR{}57 in Sweden. Both are annual, paid through taxes, not monthly.
+An earlier draft of this note used the \EUR{}57 and described it as ``per
+respondent'', which conflates the conditional mean with the unconditional one
+and, by coincidence, with Sweden's unconditional figure. $\kappa_x$ prices an
+aggregate public bad borne by everyone, so the object it needs is the
+unconditional mean: \EUR{}23 per adult per year, about 0.08\% of average annual
+earnings across the eight countries against 0.20\% for the conditional mean. The
+correction lowers the calibrated disamenity by a factor of 2.5, which moves it in
+the conservative direction and so cannot manufacture the result.
 
 \paragraph{The normalisation that this requires.} The \EUR{}57 buys elimination
 of the \emph{European} homelessness rate, not the model's. Dividing by the
