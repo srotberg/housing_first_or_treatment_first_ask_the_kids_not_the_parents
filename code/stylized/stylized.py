@@ -102,20 +102,20 @@ class P:
 
     # employment and the safety net
     u0    = 0.049     # unemployment probability when clean
-    # THE SAFETY NET, AS A RULE RATHER THAN A NUMBER.
+    # LOSING YOUR JOB. Income support is a flat guarantee worth half the
+    # smallest income in the support of the income distribution. It can be, and
+    # is, well below the rent on the smallest unit: an unemployed household
+    # cannot house itself out of income alone and needs savings or a voucher.
+    # That is what connects the disorder to homelessness, and without the
+    # connection the voucher has nothing to insure and the model's second result
+    # does not exist.
     #
-    # If you lose your job the government guarantees minimal consumption worth
-    # HALF THE RENT ON THE SMALLEST UNIT. Tying it to rent rather than picking a
-    # level does two things. It removes a free parameter, since the floor moves
-    # automatically when rent is calibrated. And it fixes the position that
-    # matters: a household on the floor cannot house itself unaided, so it needs
-    # a voucher or savings, which is what connects the disorder to homelessness.
-    #
-    # Set it above the small rent instead and nothing connects them: every
-    # household can always afford housing, the disorder never threatens the roof
-    # over your head, the voucher has nothing to insure, and the moral hazard is
-    # exactly zero. That is not a knife edge, it is what an earlier version of
-    # this file did, and it silently removed one of the model's two results.
+    # This is not a safety net bolted onto unemployment, it IS what unemployment
+    # pays, so it is not an optional component to be justified separately. Its
+    # LEVEL is what matters, and it matters more than anything else here: at
+    # half the smallest income the moral hazard is large, and at a floor above
+    # the small rent it is exactly zero.
+    ymin  = 0.12      # lower bound of the income grid, set in calibrate.py
     floor_ratio = 0.50
 
     # housing
@@ -165,7 +165,7 @@ def _states(par, d, policy, y):
         # income able to afford the small unit even while unemployed, so the
         # disorder never puts its roof at risk and the voucher has nothing to
         # insure.
-        inc = y if e == 0 else par.floor_ratio * par.pr * par.h_sm
+        inc = y if e == 0 else par.floor_ratio * par.ymin
         for rmul, prb in ((par.kappa_r, pv), (1.0, 1.0 - pv)):
             if pe * prb > 1e-14:
                 out.append((pe * prb, inc, rmul))
