@@ -27,6 +27,9 @@ python3 tables.py
 echo "== welfare"
 python3 welfare.py
 
+echo "== children"
+python3 children.py
+
 echo "== note"
 cd "$ROOT/writing"
 pdflatex -interaction=nonstopmode stylized_note.tex > /dev/null

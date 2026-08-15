@@ -36,10 +36,12 @@ nothing else. Because it is stylized, every magnitude reported in the paper
 comes from the quantitative model rather than from here. What this model
 delivers is a set of qualitative results: which feature of the environment
 reverses the income gradient in drug use, the sign and relative size of the two
-forces through which a housing voucher acts on drug use, and a dominance result
-showing that conditioning assistance on abstinence cannot raise welfare in an
-environment whose households are rational and whose drug use harms nobody
-else.}
+forces through which a housing voucher acts on drug use, and a welfare
+comparison in two steps. Where drug use harms nobody but the user, Housing First
+is better for every household and conditionality can never pay. Once parental
+addiction is allowed to damage a child's lifetime income, calibrated to the
+observed intergenerational transmission of the disorder, the ranking reverses.
+The case for conditionality rests entirely on that second step.}
 \end{abstract}
 
 %======================================================================
@@ -67,10 +69,11 @@ there is no validation section, and the calibration is deliberately rough: it
 exists to put the model in the right region, not to be defended.} Throughout,
 each component of the environment is justified by removing it, recalibrating the
 model without it, \new{and showing why it matters} for one of the two results.
-\new{Section~\ref{sec:welfare} then asks the welfare question, and most of its
-answer is a statement about what an environment this small cannot contain: there
-is no government budget beyond the vouchers themselves, no externality from drug
-use, and no general equilibrium.}
+\new{Section~\ref{sec:welfare} then asks the welfare question in two steps,
+first with drug use harming nobody but the user and then with the one externality
+this model can credibly measure, the damage parental addiction does to a child.
+The order matters: the second step reverses the first, and a reader who has not
+followed the first will take the second for granted.}
 
 %======================================================================
 \section{The environment}\label{sec:env}
@@ -803,12 +806,19 @@ the other fixed will understate what conditionality can do.}
 \section{\new{Welfare}}\label{sec:welfare}
 
 \new{Nothing so far has said whether Housing First or Treatment First is the
-better policy, only what each does to drug use. The natural next question is
-whether the moral hazard force of Section~\ref{sec:mh} is a reason to prefer
-conditionality. In this model it is not, and the reason is worth setting out
-because it is an argument rather than a number.}
+better policy, only what each does to drug use and homelessness. This section
+answers that in two steps. Section~\ref{sec:nox} shows that in an environment
+where drug use harms nobody but the user, Housing First is better for every
+household, always, and that the moral hazard of Section~\ref{sec:mh} is no
+argument against it. Section~\ref{sec:kids} then adds the one externality this
+model can credibly measure, the damage parental addiction does to a child, and
+shows that it reverses the ranking. Taking the two together is the point: the
+case for conditionality rests entirely on the second step, and a reader who has
+not understood the first will misread the second as obvious.}
 
-\paragraph{\new{Housing First dominates Treatment First at equal generosity.}}
+\subsection{\new{Without externalities, Housing First always wins}}\label{sec:nox}
+
+\paragraph{\new{The dominance argument.}}
 \new{Compare the two policies at the same $\pi_V$. By
 equation~\eqref{eq:vouch}, they differ only in the indicator
 $\mathbf{1}\{\text{policy covers } d\}$: both pay the voucher when $d=0$, and
@@ -821,12 +831,13 @@ is strictly better off whenever it faces any chance of the disorder:}
 V_1(y;\ \text{HF},\ \pi_V) \;\ge\; V_1(y;\ \text{TF},\ \pi_V)
 \qquad \text{for every } y,
 \end{equation}
-\new{with equality exactly for households that never use. This is a dominance
-argument, not a calibrated result. It does not depend on any parameter and no
-choice of parameters can overturn it. Table~\ref{tab:welfare} confirms it:
-$3.6$ per cent of households, which is to say the ones who use, are strictly
-worse off under Treatment First, and no household anywhere in the distribution
-is better off.}
+\new{with equality exactly for households that never use. Put the other way
+round: a household under Housing First can reproduce its Treatment First
+outcome exactly, by not using. Conditionality removes an option from a forward
+looking optimiser and gives it nothing in return. This is a dominance argument,
+not a calibrated result; no choice of parameters can overturn it, and
+Table~\ref{tab:welfare} confirms it, with $3.6$ per cent of households strictly
+worse off under Treatment First and none anywhere better off.}
 
 \paragraph{\new{The moral hazard is not a distortion.}} \new{This is the part
 worth pausing on, because the language invites the opposite reading. Households
@@ -834,108 +845,171 @@ here are forward looking, face the true addiction hazard of
 equation~\eqref{eq:hazard}, and make no mistakes. The extra drug use that
 Housing First induces is therefore not a wedge to be closed. It is a household
 optimally taking a risk that it is now better able to bear, in exactly the sense
-in which an insured household drives in worse weather. The behaviour identified
-in Section~\ref{sec:mh} is real and it is large, but its size is a statement
-about drug use and not, on its own, a statement about welfare.}
+in which an insured household drives in worse weather. The $+2.55$ percentage
+points of Section~\ref{sec:mh} is a statement about drug use, and on its own it
+is no statement about welfare at all.}
 
 \begin{table}[htbp]
 \centering
-\caption{\new{Welfare and cost at universal cover}}\label{tab:welfare}
+\caption{\new{Welfare and cost at universal cover, with no externality}}
+\label{tab:welfare}
 \input{tables/tab_welfare}
 \notes{0.94\textwidth}{\new{Note: universal cover means $\pi_V=1$ under both
 policies. Voucher outlay is the expected present value of the government's
 spending on a household from period 2 onwards, discounted at $R$ and weighted by
-survival, expressed as a multiple of average income. The consumption equivalent
-is the proportional change in consumption, in every period and state, that would
-be worth as much to the household as the difference in lifetime value; it is
-reported both for the households that are affected at all and for the whole
-population.}}
+survival, as a multiple of average income. The consumption equivalent is the
+proportional change in consumption, in every period and state, worth as much to
+the household as the difference in lifetime value.}}
 \end{table}
 
-\paragraph{\new{Matching the two policies on cost does not change the ranking
-either.}} \new{Equation~\eqref{eq:dom} holds generosity fixed, which is the
-wrong comparison if vouchers must be paid for. The natural conjecture is that
-Housing First buys the same coverage at a higher price, since it pays for
-households in the disorder state and, by insuring that state, puts more
-households into it; a fixed budget would then buy more coverage under Treatment
-First, and that would be a reason to prefer it. The conjecture is false here.
-Treatment First is very slightly \emph{more} expensive at every generosity,
-$0.1792$ against $0.1791$ at universal cover, so matching the two policies on
-cost rather than on $\pi_V$ leaves Treatment First welfare reducing and still
-leaves no household better off.}
+\paragraph{\new{A fixed budget does not rescue conditionality either.}}
+\new{Equation~\eqref{eq:dom} holds generosity fixed, which would be the wrong
+comparison if the two policies cost different amounts. The natural conjecture is
+that Housing First is dearer, since it pays for households in the disorder state
+and, by insuring that state, puts more households into it, so that a fixed
+budget would buy more coverage under Treatment First. The conjecture is false
+here. Treatment First is very slightly \emph{more} expensive at universal cover,
+$0.1792$ against $0.1791$, and the same ordering holds at every generosity, so
+matching the policies on cost rather than on $\pi_V$ changes nothing.}
 
-\paragraph{\new{Why the additional coverage is nearly free.}} \new{A household in
-the disorder state draws only about $79$ per cent of the voucher outlay a clean
-household draws, and this holds at every income level. It is not that such
+\new{The reason is worth recording because it is unattractive and true. A
+household in the disorder state draws only about $79$ per cent of the voucher
+outlay a clean household draws, at every income level. It is not that such
 households house themselves worse: Figure~\ref{fig:margins} shows homelessness
 at zero under both policies at universal cover. It is mortality. Survival to
 period 3 falls from $\phi_0 = 0.93$ to $\phi_0(1-\kappa) = 0.51$, so the
-programme pays for these households over fewer periods, and the saving very
-nearly offsets the cost of covering them. The mortality channel, which
-Section~\ref{sec:who} showed to be what puts drug use at the bottom of the
-income distribution, turns out also to be what neutralises the fiscal case
-against insuring it.}
+programme pays for these households over fewer periods. The households the moral
+hazard adds to the rolls die sooner and stop costing money, and that saving very
+nearly offsets the cost of covering them.}
 
-\paragraph{\new{How large an externality would be needed.}} \new{What is left is
-the possibility that drug use harms someone other than the user. Suppose each
-household carrying the disorder imposes a social cost $\chi$ on the rest of
-society, in units of one household's lifetime income, and that this cost is
-invisible to the household itself, which is what makes it an externality rather
-than something already priced into equation~\eqref{eq:v1}. Conditionality is
-then worth having when the cases it prevents are worth more than the insurance
-it withdraws.}
+\paragraph{\new{So where could a case for conditionality come from?}}
+\new{Only from something absent here. Households make no mistakes, so there is
+no internality to correct; drug use touches nobody but the user, so there is no
+externality; and the two policies cost the same, so there is no fiscal argument.
+Of these, the externality is the one that can be measured rather than assumed,
+and Panel C of Table~\ref{tab:welfare} says in advance how large it would have to
+be. Conditionality prevents $0.253$ percentage points of disorder cases at a
+private welfare cost of $0.011$ per cent of consumption, so a social cost of
+$0.12$ of one household's lifetime income per case would be exactly enough to
+justify it. Section~\ref{sec:kids} asks whether anything real is that large.}
 
-\new{Panel C of Table~\ref{tab:welfare} reports the critical value. Universal
-conditionality prevents $0.253$ percentage points of disorder cases at a private
-welfare cost of $0.011$ per cent of consumption, so the two are equal at}
-\begin{equation}\label{eq:chi}
-\chi^{\star} \;\approx\; 0.12
+\subsection{\new{The externality on children reverses the
+ranking}}\label{sec:kids}
+
+\paragraph{\new{Why the link runs through income and not through taste.}}
+\new{The obvious way to connect the generations is to let the child of a user
+inherit a stronger taste for drugs, a lower $b$. It matches the fact one wants
+to match, since a lower $b$ means more use. It is also exactly wrong. In
+equation~\eqref{eq:u}, $b$ enters only through
+$\theta[\log(b+v)-\log b] = \theta\log(1+v/b)$, which is higher at every $v>0$
+when $b$ is lower and zero at $v=0$. The child's objective is therefore higher
+pointwise and its choice set unchanged, so its lifetime value rises: measured,
+$V_1$ goes from $0.87$ to $1.02$ as $b$ falls to a tenth. Inheriting a taste for
+drugs makes the child better off. This is the standard difficulty with treating
+addiction as a preference, and it means a heritable taste is a positive
+externality, not a negative one.}
+
+\new{Inheriting a greater susceptibility, a higher $\lambda$, fails for the
+opposite reason. It has the right welfare sign, since a higher hazard is
+unambiguously bad to receive, but the wrong behavioural one: facing a riskier
+drug, the child uses less, not more. Participation falls from $28.5$ per cent at
+$\lambda=48$ to $2.3$ per cent at $\lambda=388$. It cannot generate
+intergenerational transmission of use at all.}
+
+\new{Income works on both counts, and it works because of Result 1. Lower
+permanent income is unambiguously bad to receive, and Section~\ref{sec:who}
+established that this model puts drug users at the bottom of the income
+distribution, so a child born poorer is mechanically more likely to use. The
+income gradient does the entire job. The model therefore transmits addiction
+across generations \emph{without transmitting any preference for drugs}, which
+is the within generation claim of this paper extended across one.}
+
+\paragraph{\new{The specification.}} \new{A child's baseline income is drawn from
+the same lognormal as everyone else, independently of its parent, and the whole
+intergenerational link is the penalty}
+\begin{equation}\label{eq:kids}
+y_{\text{child}} \;=\; y_{\text{base}}\,
+(1-\delta_d)^{\mathbf{1}\{\text{parent acquired the disorder}\}}\,
+(1-\delta_h)^{\mathbf{1}\{\text{parent was homeless}\}} .
 \end{equation}
-\new{of a household's lifetime income per case avoided. This is the most useful number the section
-produces, because it is a magnitude a reader can weigh rather than a direction.
-It is well within the range that crime, emergency care and lost output to others
-could plausibly justify, which is precisely why the question cannot be settled
-here: the model has no crime, no health system, and no one but the user. What it
-can say is that the private welfare cost of conditionality is small enough that
-a moderate externality overturns the ranking, so everything depends on a
-magnitude that has to be measured elsewhere.}
+\new{General income persistence is deliberately absent, because it is not an
+externality: it operates whether or not the parent uses drugs, so it would
+change the level of intergenerational correlation without changing what the
+policy does to it. Perfect persistence was tried and is far too strong, since
+parents who use are all poor and their children would then use with probability
+near one. The parent does not internalise any of
+equation~\eqref{eq:kids}; that is what makes it an externality rather than
+something already priced into equation~\eqref{eq:v1}.}
 
-\paragraph{\new{What this leaves for the quantitative model.}} \new{Two of the
-four candidate justifications for conditionality can now be dismissed inside
-this model rather than merely named. Matching the two policies on cost rather
-than on generosity does not help, because they cost the same; and a government
-budget constraint does not help either, for the same reason, which is why there
-is none here. What survives is the following, and the ordering is by how much of the answer each one is likely
-to carry.}
-\begin{enumerate}
-\item \new{\textbf{Externalities.} This is the one the model can size, and
-equation~\eqref{eq:chi} sizes it: a social cost of roughly $0.12$ of a
-household's lifetime income per case of the disorder is enough to reverse the
-ranking. Drug use here touches nobody but the user, and once it raises crime,
-public disorder, or health costs borne by others, the private optimum stops
-being the social one.}
-\item \new{\textbf{Internalities.} Households here face the true hazard and
-discount the future consistently. If drug use involves present bias, or a
-household that underestimates $\lambda$, then the extra use is a mistake by the
-household's own lights and conditionality can be paternalistically justified.
-This model cannot speak to that, because it assumes the mistake away.}
-\item \new{\textbf{Public costs outside housing.} The budget here is vouchers
-and nothing else, which is why the financing exercise comes out flat: the only
-fiscal consequence of a disorder case in this model is that the household draws
-its voucher for fewer years. Healthcare, treatment and incarceration all rise
-with the disorder and none of them appear. This, rather than the housing budget,
-is where the fiscal argument really lives, and it is a form of the externality
-above rather than a separate mechanism.}
-\item \new{\textbf{General equilibrium.} With an endogenous drug price and a
-government budget that has to balance, both policies change prices and taxes for
-households that never touch either programme.}
-\end{enumerate}
-\new{All four are present in the quantitative model, which is the sharpest
-statement this section can make about why that model is needed: not to refine
-the magnitudes of Section~\ref{sec:mh}, but because the welfare question cannot
-be posed at all in an environment this small.}
+\paragraph{\new{Calibration.}} \new{The two penalties are set to different
+things and should not be conflated. $\delta_d$ is calibrated to the
+intergenerational transmission of the disorder: Panel A of
+Table~\ref{tab:children} shows that $\delta_d = 0.30$ makes a child of a parent
+who acquired the disorder $2.4$ times as likely to acquire one, which sits in
+the middle of the epidemiological range of roughly two to four. $\delta_h$ is
+set from Chetty, Hendren and Katz (2016), who find that children moved to a low
+poverty neighbourhood before age 13 earned $31$ per cent more as adults; that is
+experimental variation from a housing intervention, and it is conservative here,
+since growing up homeless is presumably worse than growing up in a high poverty
+neighbourhood.}
 
-%======================================================================
+\new{The two also do different work. Both policies drive homelessness from
+$0.62$ per cent to zero at universal cover and the gap between them along the
+way never exceeds a tenth of a percentage point, so $\delta_h$ prices the
+programme against no programme rather than one policy against the other.
+$\delta_d$ is what decides Treatment First against Housing First.}
+
+\begin{table}[htbp]
+\centering
+\caption{\new{The externality on children}}\label{tab:children}
+\input{tables/tab_children}
+\notes{0.94\textwidth}{\new{Note: Panel A is computed at the baseline programme,
+$\pi_V=0.27$, because the transmission ratio in the data comes from an economy
+with a rationed programme. The ratio is the child's disorder rate divided by
+that of a child whose parent stayed clean, and the loss to the child is its
+consumption equivalent welfare loss expressed as a multiple of one lifetime
+income. Panel B compares the two policies at universal cover, with one child per
+household and no discounting between generations.}}
+\end{table}
+
+\paragraph{\new{The verdict.}} \new{Panel B of Table~\ref{tab:children} puts the
+two sides together, and they are not close. The private welfare cost of
+conditionality is $0.00029$ of a lifetime income, small because only $3.6$ per
+cent of households are affected at all and each loses $0.30$ per cent of
+consumption. Against that, universal conditionality prevents $0.253$ percentage
+points of disorder cases, and each case costs one child $1.43$ lifetime incomes.
+The externality gain is $0.0036$, twelve times the private loss, and at
+$\delta_d=0.20$ it is still seven times. Treatment First wins, and it wins for
+any penalty in the range the data support.}
+
+\new{Against the threshold set out in Section~\ref{sec:nox} the comparison is
+not close either: justifying conditionality needs a case to cost society $0.12$
+of a lifetime income, and one child carrying a $30$ per cent income penalty for
+life costs $1.43$. This is the whole model in one sentence. Housing First is
+better for every household taken one at a time, and worse once one counts the
+children of the households it fails to deter.}
+
+\subsection{\new{What this section can and cannot settle}}
+
+\new{One feature of the model inflates the margin and should be said plainly.
+Treatment First drives drug use to \emph{exactly} zero here, which is an
+artifact of having no preference heterogeneity: every household at a given
+income makes the same choice, so a policy strong enough to deter the marginal
+user deters every user. Nobody in this model faces the condition and fails to
+meet it. The households who cannot comply are the entire empirical case for
+Housing First, and this environment contains none of them.}
+
+\new{That is the right note on which to hand the question over. This section is
+a stylized model, and its purpose is to make the mechanisms visible: that
+conditionality is costly because it withdraws insurance from forward looking
+households, that the cost is small because it falls on few of them, that the
+benefit runs through children rather than through budgets, and that the two are
+close enough in magnitude that the answer is quantitative rather than
+theoretical. Establishing which way the comparison actually goes, in an
+environment with households who cannot get clean, a government budget, an
+equilibrium drug price and a proper life cycle, is the job of the quantitative
+model that follows.}
+
 \section{Summary}
 
 \new{Three results carry forward, and they carry forward as different kinds of
@@ -949,17 +1023,41 @@ other, and the two policies separate them exactly. That both forces are large is
 what this section establishes. Which of them wins is left open, and settling it
 is the job of the quantitative model that follows.}
 
-\new{The third is a statement about what the model cannot settle, and it is
-the one that says most clearly why the quantitative model is needed. Because
-households here are forward looking and face the true addiction hazard, and
-because drug use harms nobody but the user, Housing First dominates Treatment
-First for every household at any given generosity, and matching them on cost
-rather than on generosity does not disturb that, because the two policies cost
-the same. What is left is an
-externality, and the model can say how big it would have to be: a social cost of
-roughly an eighth of a household's lifetime income per case of the disorder. The
-stylized model cannot rank the two policies on welfare, but it can say precisely
-which absent ingredient any such ranking must come from, and how large that
-ingredient has to be before it decides the question.}
+\new{The third is about welfare, and it comes in two halves that have to be read
+together. Where drug use harms nobody but the user, Housing First dominates
+Treatment First for every household at every generosity, and matching the
+policies on cost does not disturb that, because they cost the same.
+Conditionality is then simply the withdrawal of insurance from households that
+are forward looking and make no mistakes, and the moral hazard it removes was
+never a distortion to begin with. Once parental addiction is allowed to damage a
+child, calibrated to the observed intergenerational transmission of the
+disorder, the conclusion reverses by an order of magnitude. The case for
+Treatment First is therefore neither theoretical nor fiscal. It rests entirely
+on what addiction does to the next generation, and that is a magnitude to be
+measured rather than a direction to be argued, which is what the quantitative
+model exists to do.}
+
+%======================================================================
+\section*{\new{References}}
+\begin{list}{}{\leftmargin=1.6em \itemindent=-1.6em \itemsep=0.35em}
+\item \new{Chetty, R., N. Hendren and L. Katz (2016). ``The Effects of Exposure
+to Better Neighborhoods on Children: New Evidence from the Moving to Opportunity
+Experiment.'' \emph{American Economic Review} 106(4), 855--902.}
+\item \new{Heathcote, J., F. Perri and G. Violante (2010). ``Unequal We Stand:
+An Empirical Analysis of Economic Inequality in the United States, 1967--2006.''
+\emph{Review of Economic Dynamics} 13(1), 15--51.}
+\item \new{Hjorth\o j, C. et al. (2023). Excess mortality among people with
+substance use disorders.}
+\item \new{McGovern, R. et al. (2023). ``The association between maternal and
+paternal substance use and child substance use, internalizing and externalizing
+problems: a systematic review and meta analysis.'' \emph{Addiction} 118(5).}
+\item \new{Viscusi, W. K. and J. Aldy (2003). ``The Value of a Statistical Life:
+A Critical Review of Market Estimates Throughout the World.'' \emph{Journal of
+Risk and Uncertainty} 27(1), 5--76.}
+\item \new{Substance Abuse and Mental Health Services Administration. National
+Survey on Drug Use and Health, 2024; Treatment Episode Data Set.}
+\item \new{US Department of Housing and Urban Development. Point in Time counts;
+Housing Choice Voucher programme rules and income limits.}
+\end{list}
 
 \end{document}

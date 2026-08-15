@@ -31,33 +31,47 @@ EXTERNAL = [
         ('beta', r'\beta', 'Discount factor', 'Standard', '{:.2f}'),
         ('R', 'R', 'Gross interest rate', 'Standard', '{:.2f}'),
         (None, r'\sigma', 'Dispersion of log permanent income',
-         'US cross section', '0.75'),
+         r'Variance of log earnings, US cross section, '
+         r'Heathcote, Perri and Violante (2010)', '0.75'),
         ('phi0', r'\phi_0', 'Survival per period, no disorder',
-         'Life tables over the length of a model period', '{:.2f}'),
-        ('aleph', r'\aleph', 'Flow value of being alive',
-         'Set so that the value of a statistical life is of the right order',
+         r'CDC life tables, aggregated over the length of a model period',
          '{:.2f}'),
+        ('aleph', r'\aleph', 'Flow value of being alive',
+         r'Value of a statistical life of the order in '
+         r'Viscusi and Aldy (2003)', '{:.2f}'),
         ('gam', r'\gamma', 'Weight on housing services',
-         'Housing budget share', '{:.2f}'),
+         r'Housing budget share, Consumer Expenditure Survey', '{:.2f}'),
         ('th', r'\theta', 'Weight on drug use',
          r'Set; $\theta$ and $b$ govern the drug term jointly and $b$ is '
          r'calibrated given $\theta$', '{:.2f}'),
     ]),
     ('The disorder', [
         ('rho', r'\rho', 'Recovery probability per period',
-         'Treatment episode data', '{:.2f}'),
+         r'TEDS discharge outcomes, SAMHSA', '{:.2f}'),
         ('kap', r'\kappa', 'Proportional fall in survival with the disorder',
-         'Excess mortality of people with a substance use disorder', '{:.2f}'),
-        ('u0', 'u_0', 'Unemployment probability, no disorder', 'BLS', '{:.3f}'),
+         r'Excess mortality with a substance use disorder, '
+         r'Hjorthoj et al. (2023)', '{:.2f}'),
+        ('u0', 'u_0', 'Unemployment probability, no disorder',
+         r'BLS, civilian unemployment rate', '{:.3f}'),
         ('u1', 'u_1', 'Unemployment probability, with the disorder',
-         'NSDUH 2024, ages 26 and above, weighted', '{:.4f}'),
+         r'NSDUH 2024, ages 26 and above, weighted, own calculation',
+         '{:.4f}'),
     ]),
     ('Income support', [
         ('repl', r'\psi', 'Replacement rate while unemployed',
-         'Unemployment insurance replacement rates', '{:.2f}'),
+         r'Statutory UI replacement rates, DOL', '{:.2f}'),
         ('ycap', r'\bar y',
          'Cap on the earnings base, multiple of average income',
-         'Benefit caps', '{:.2f}'),
+         r'State UI weekly benefit maxima, DOL', '{:.2f}'),
+    ]),
+    ('The externality on children', [
+        (None, r'\delta_d', 'Income penalty to a child whose parent acquires '
+         'the disorder',
+         r"Ratio of a child's disorder rate to a child of a clean parent's, "
+         r'target $2.4$; McGovern et al. (2023)', '0.30'),
+        (None, r'\delta_h', 'Income penalty to a child whose parent is homeless',
+         r'Adult earnings gain from a childhood move to a low poverty '
+         r'neighbourhood; Chetty, Hendren and Katz (2016)', '0.31'),
     ]),
     ('Housing, drugs and the voucher', [
         ('pr', 'p_r', 'Rent per unit of housing services', 'Numeraire',
@@ -65,15 +79,15 @@ EXTERNAL = [
         ('p_v', 'p_v', 'Price of a unit of drugs',
          'Units of $v$ are defined so that one unit costs one', '{:.2f}'),
         ('h_lg', 'h_L', 'Standard rental unit',
-         'Housing budget share, 21.2 per cent of average income', '{:.3f}'),
+         r'Median gross rent over median income, ACS 2023', '{:.3f}'),
         ('h_sm', 'h_S', 'Small rental unit', 'Half the standard unit',
          '{:.3f}'),
         ('kappa_r', r'\kappa_r', "Tenant's share of the rent when covered",
-         'Voucher rules', '{:.2f}'),
+         r'Housing Choice Voucher rules, 30 per cent of income', '{:.2f}'),
         ('yV', 'y_V', 'Voucher means test, multiple of average income',
-         'Income limits', '{:.2f}'),
+         r'HUD income limits for voucher eligibility', '{:.2f}'),
         ('pV', r'\pi_V', 'Voucher generosity in the baseline',
-         'Share of eligible households covered', '{:.2f}'),
+         r'Share of eligible households actually assisted, HUD', '{:.2f}'),
     ]),
 ]
 

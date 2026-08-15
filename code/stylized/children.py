@@ -149,6 +149,60 @@ def verdict(par, del_d, pV=1.0, omega=1.0, kids=1.0):
     return priv, gain
 
 
+DEL_D = 0.30      # parental disorder, from the transmission ratio
+DEL_H = 0.31      # parental homelessness, from Chetty, Hendren and Katz (2016)
+
+
+def tab_children(par, pV=1.0):
+    """The intergenerational table for the note."""
+    import os
+    from tables import OUT
+    # PANEL A IS CALIBRATED AT THE BASELINE POLICY, not at universal cover:
+    # the transmission ratio in the data comes from the world as it is, with a
+    # rationed programme, so that is where del_d has to be matched.
+    v1, use = child_grid(par, 'HF', par.pV)
+    m = stats(with_(par, policy='HF', pV=par.pV))
+    prog = m['prog']
+    base = shifted(use, 0.0) * prog
+    rows = []
+    for d in (0.0, 0.20, DEL_D, 0.40):
+        u = shifted(use, d)
+        rows.append((d, u * prog, u * prog / max(base, 1e-12),
+                     cev(par, shifted(v1, 0.0) - shifted(v1, d)) * PV_INCOME))
+    v1u, _ = child_grid(par, 'HF', pV)
+    per_case = cev(par, shifted(v1u, 0.0) - shifted(v1u, DEL_D)) * PV_INCOME
+    priv, gain = verdict(par, DEL_D, pV=pV)
+    # Panel B is entirely at pV, the policy comparison. Panel A is entirely at
+    # the baseline. Mixing the two silently reported a 1.68 pp gap where the
+    # universal cover gap is 0.25.
+    mhu = stats(with_(par, pV=pV, policy='HF'))
+    mtu = stats(with_(par, pV=pV, policy='TF'))
+    dsud = mhu['sud'] - mtu['sud']
+
+    L = [r'\small', r'\begin{tabular}{@{}lcccc@{}}', r'\toprule',
+         r'\multicolumn{5}{@{}l}{\emph{Panel A. Transmission: what each income '
+         r'penalty implies}} \\',
+         r"$\delta_d$ & & Child's disorder rate & Ratio & "
+         r'Loss to the child \\', r'\midrule']
+    for d, sud, ratio, loss in rows:
+        lab = f'{d:.2f}' + (r'\ \ (calibrated)' if abs(d - DEL_D) < 1e-9 else '')
+        L.append(f'{lab} & & {100*sud:.2f}\\% & {ratio:.2f} & {loss:.2f} \\\\')
+    L += [r'\addlinespace',
+          r'\multicolumn{5}{@{}l}{\emph{Panel B. Does the externality reverse '
+          r'the ranking?}} \\',
+          f'\\quad Private welfare loss from conditionality & & & & '
+          f'{priv:.5f} \\\\',
+          f'\\quad Disorder cases prevented & & & & {100*dsud:.3f} pp \\\\',
+          f'\\quad Damage per case, one child & & & & {per_case:.2f} \\\\',
+          f'\\quad Externality gain from conditionality & & & & '
+          f'{gain:.5f} \\\\',
+          f'\\quad Gain over loss & & & & {gain/max(priv,1e-12):.1f} \\\\',
+          r'\bottomrule', r'\end{tabular}']
+    with open(os.path.join(OUT, 'tab_children.tex'), 'w') as f:
+        f.write('\n'.join(L) + '\n')
+    print('   wrote tab_children.tex')
+
+
 if __name__ == '__main__':
     base = with_(P(), **json.load(open('calibrated.json')))
     print('=' * 76)
@@ -158,3 +212,5 @@ if __name__ == '__main__':
     transmission(base)
     for d in (0.20, 0.30, 0.40):
         verdict(base, d)
+    print()
+    tab_children(base)
