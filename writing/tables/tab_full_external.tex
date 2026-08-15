@@ -1,0 +1,52 @@
+\scriptsize
+\begin{longtable}{@{}lL{3.6cm}L{7.4cm}@{}}
+\caption{Assigned parameters of the quantitative model}\label{tab:fext}\\
+\toprule
+Symbol & Meaning & Value, source or target \\
+\midrule
+\endfirsthead
+\toprule
+Symbol & Meaning & Value, source or target \\
+\midrule
+\endhead
+$\sigma$ & risk aversion & 2.0. Attanasio and Weber (2010) survey; the standard life cycle value  \\
+$\sigma_{\ell}$ & curvature on leisure & 3.0; Frisch elasticity 0.5, Chetty (2012)  \\
+$\rho_H$ & $b$ multiplier, homelessness & $\rightarrow$ housed/unhoused abstinence ratio, 1.473. Milby et al.\ (2005), {AJPH} 95(7):1259 to 65, NACH versus NH arms  \\
+$p_v$ & drug price & clears the drug market; $=1$ at the benchmark by the normalisation of $\psi_1$  \\
+$r$ & risk-free rate & 0.03, Kaplan, Mitman and Violante (2020)  \\
+$\kappa_x$ & externality weight & Inverted from Loubi\`ere et al.'s eight-country contingent valuation, \EUR{}23 per adult per year to end homelessness, normalised per unit of homelessness by the European reference rate. {This is the mean over ALL respondents.} The \EUR{}57 quoted in an earlier draft is the mean among the 42.3\%...  \\
+$\omega_x$ & extra weight on homeless-with-SUD & {1.0 in the baseline}: the disamenity depends on the headcount alone. No direct estimate exists, R2's wording (``especially if many are addicted to drugs'') implies a positive weight and the hedonic split between supportive housing and emergency shelter implies composition matters, but neither...  \\
+$\xi$ & tax progressivity (HSV) & 0.85, Heathcote, Storesletten and Violante (2017)  \\
+$\tau_{\ell}$ & tax level & clears the government budget the budget given the distribution  \\
+$\tau_k$ & capital income tax & 0.15. US long run capital-gains and qualified-dividend rate for the middle brackets  \\
+$\kappa_V$ & voucher eligibility threshold & 0.50 of median income, HUD rule  \\
+$\kappa_r$ & tenant contribution rate & 0.30, HUD rule  \\
+$p_{\text{test}}$ & {probability a voucher holder is tested, TF} & {1.0 at the benchmark, swept downward. Detection now requires a test, so effective detection is $p_{\text{test}}p_{\text{det}}$ and the old behaviour is the $p_{\text{test}}=1$ corner}  \\
+$c_{\text{test}}$ & {cost per voucher holder tested} & {0.0023 of average income. A urine panel runs about \$40 and quarterly testing is roughly \$160 a year against average earnings near \$70,000. It enters the GOVERNMENT BUDGET, where it competes with everything else the government pays for, R1's comment 4(c) is that the \$1 to 2bn estimate is too... } \\
+$p_{\text{det}}$ & detection probability given a test & 1.0 in the benchmark, swept downward. No estimate exists and none should: R1 4(a) and AE A11 object precisely to assuming perfect enforcement, so the point is the sweep  \\
+$p_{\text{fp}}$ & false-positive rate under TF & 0.0 in the benchmark, swept upward. As above, R1 4(b)  \\
+$\chi_H$ & fiscal cost per homeless household & {{0.4286.} The homeless state $h_1$ is {literal} homelessness, shelters and the street, not doubling up, so the matching figure in Abramson and Van Nieuwerburgh (2024, NBER w32582, p.~30) is their \$2{,}500 per household per month for the literally homeless, not the \$1{,}775 they blend across... } \\
+$\chi_D$ & fiscal cost per household with SUD & 0.212; CEA (2017), $\approx$\$30,000 per person-year  \\
+$G$ & other public spending & Residual that balances the budget at the benchmark, then held fixed across counterfactuals so policy is financed by $\tau_{\ell}$ rather than by cutting other spending  \\
+$\rho_y,\sigma_y$ & AR(1) in log productivity & 0.90, 0.20. Storesletten, Telmer and Yaron (2004); Floden and Lind\'e (2001)  \\
+$\varepsilon_j$ & deterministic age profile & quadratic in age, fitted to the PSID/CPS hump. {Replace with a directly estimated profile}  \\
+$\bar\phi_j$ & baseline survival & {{Done.} SSA period life table ({oact/STATS/table4c6}), ages 26 to 85, the two sexes combined by survivor weight $q(x)=[l^M q^M+l^F q^F]/[l^M+l^F]$ rather than averaged equally, by the mid-eighties the survivor populations differ enough that equal weights are simply wrong. Loaded from... } \\
+$\bar\pi^{ue}$ & job finding, annual & 0.55, Krueger, Cramer and Cho (2014)  \\
+$\pi_{UI}$ & share of entrants drawing UI & 0.30; insured unemployment / total unemployment, FRED 2014 to 24  \\
+$\varrho_{UI}$ & UI replacement rate & 0.50. DOL statutory replacement rates average close to half of prior weekly wages  \\
+$\kappa_{ueH}$ & employment multiplier, homeless & 0.80, Desmond and Gershenson (2016)  \\
+$\kappa_{\phi H}$ & mortality multiplier, homeless & {{Now varies with age}: 4.41 at 26, 3.80 at 44, 3.14 at 56, 1.09 at 80. Baggett et al.\ (2013) give race adjusted all cause mortality rate ratios for homeless adults of 8.6 (men) and 9.6 (women) at 25 to 44, 4.5 at 45 to 64 and 1.1 at 65 to 84. The previous flat 1.60 was wrong twice: five times... } \\
+$\kappa_{\phi d}$ & mortality multiplier, SUD & {{Shape from data, level still calibrated.}} $\rightarrow$ drug price participation elasticity, $-0.63$ (inside the $-0.36$ to $-0.55$ cocaine and $-0.80$ to $-0.90$ heroin participation range of Saffer and Chaloupka), bracketed by the 2.5 to 9.8 SMR range of Degenhardt et al.\ (2011). {The age... } \\
+$\kappa_{\phi m}$ & mortality multiplier, SMI & 2.50, {and {constant in age, which is a finding rather than a default}. Unlike SUD and homelessness, whose multipliers collapse with age, Olfson et al.\ (2015) give all cause SMRs for schizophrenia of 3.6 at 20 to 34, 3.4 at 35 to 54 and 4.0 at 55 to 64: flat, if anything rising. The level is a... } \\
+$\rho_d$ & SUD productivity penalty & 1.00 in the baseline: no direct wage effect. The employment-margin evidence is robust (about 50\% more unscheduled absence, 44\% higher turnover) and is carried by $\kappa_{ued}$; the wage penalty conditional on working is contested, with parts of the older literature finding positive effects...  \\
+$j_E$ & maximum experimentation age & Real age 55, with no source, R1's smaller comment 1 says so. Run with and without (Section the text); if it can be dropped it should be  \\
+$\bar\pi_r$ & baseline recovery hazard, housed & 0.025/yr; Vaillant (1995). The AE questions applying alcohol recovery rates to drug SUD; Fleury et al.\ (2016) give 35 to 54\% remission at a mean 17-year follow up across substances, which brackets this  \\
+$\mu_m$ & recovery multiplier, SMI & {0.82.} Dual-diagnosis cohorts relapse at 39.8\% against 26.4\% without a co-occurring disorder (odds ratio 1.85 for difficulty maintaining abstinence), so sustained remission runs 0.602 against 0.736, a ratio of 0.82; converting the odds ratio to a risk ratio at that base rate gives the same...  \\
+$g$ & treatment effect on recovery & 1.35, from an odds ratio of 1.22 for contingency management in the only clean randomised evidence. Specialty-treatment remission of 47.6\% and overall remission of 35 to 54\% are {not} treatment effects, different populations, different selection, which is why they are not used here. {The TF... } \\
+$\lambda_m$ & SMI recovery rate & 0.067/yr; \.{I}mrohoro\u{g}lu, Zhao's own moment, $\approx$50\% improve enough to work within 10 years  \\
+$\iota$ & SUD multiplier on SMI onset & {2.0, new.} Danish registers: any substance use disorder predicts conversion to schizophrenia with a hazard ratio of 1.34, amphetamine use disorder 1.90, opioid use disorder 2.74; substance-induced psychosis converts at a pooled 25\% (Murrie et al.). Range 1.3 to 2.7  \\
+$\bar y_{DI}$ & disability benefit level & 0.25 of average income. SSA: average SSDI benefit \$1,537 a month in 2024, about \$18,400 a year against average annual earnings near \$70,000, so 0.26. The SSI federal benefit rate of \$943 a month is 0.16; SSDI is the relevant figure for people with a work history  \\
+$\psi_1$ & drug supply shifter & Normalised so $p_v=1$ at the benchmark quantity, which is what lets the price be endogenous without disturbing the existing normalisation (R3 M2d)  \\
+$\psi_2$ & drug supply curvature & {Elasticity $1/(\psi_2-1)$, {baseline 2.0}, bracketed from measured tax incidence in two legal markets. {Lower bound 0.79}: Hansen, Miller and Weber (2018) on Washington's 2015 switch from a 25\% gross receipts tax at every supply chain stage to a single 37\% retail excise, in universal state... } \\
+\bottomrule
+\end{longtable}

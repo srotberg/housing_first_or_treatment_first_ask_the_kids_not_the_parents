@@ -7,6 +7,7 @@
 \usepackage{array}
 \usepackage[hidelinks]{hyperref}
 \usepackage[official]{eurosym}
+\usepackage{longtable}
 
 \setlength{\parskip}{0.18em}
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
@@ -32,7 +33,10 @@
 
 
 %======================================================================
-\section{Three questions}\label{sec:what}
+\section{A stylized model}\label{sec:stylized}
+
+%======================================================================
+\subsection{Three questions}\label{sec:what}
 
 In the data, drug use is concentrated among low income households, most of the
 homeless do not carry a substance use disorder, and housing vouchers reach only
@@ -79,9 +83,9 @@ quantitative model is what settles the main question, which is whether Treatment
 First raises welfare relative to Housing First in a model that fits the data.
 
 %======================================================================
-\section{The environment}\label{sec:env}
+\subsection{The environment}\label{sec:env}
 
-\subsection{Households and preferences}
+\subsubsection{Households and preferences}
 
 There are three periods and a continuum of households. A period stands for twenty
 years of adult life, so the three of them span ages twenty five to eighty five.
@@ -115,7 +119,7 @@ being alive, the utility of surviving into a period over and above what is
 consumed in it, which gives mortality a cost that does not vanish when
 consumption is low. Households save in one risk free asset and cannot borrow.
 
-\subsection{Timing}
+\subsubsection{Timing}
 
 \paragraph{Period 1.} Every household is employed and clean. It chooses
 consumption, housing, drug use $v\ge0$, which for simplicity is the only period
@@ -154,7 +158,7 @@ in the last period, death costs nothing because nothing follows it, and the
 mechanism the whole model rests on is silent. Three periods is the smallest
 number at which acquiring the disorder has a future to destroy.
 
-\subsection{Employment, income support and housing}\label{sec:support}
+\subsubsection{Employment, income support and housing}\label{sec:support}
 
 The gap $u_1-u_0$ is the entire resource cost of the disorder. Income in a
 period, given permanent productivity $y$ and employment status $e$, is
@@ -206,7 +210,7 @@ rule in the quantitative model as well. Since cover in the states that follow
 drug use is the only difference, the gap between them is the moral hazard and
 the whole of it.
 
-\subsection{The household's problem}\label{sec:problem}
+\subsubsection{The household's problem}\label{sec:problem}
 
 Let $a$ be assets carried in. In period 3 the household consumes everything and
 chooses housing,
@@ -238,7 +242,7 @@ exceeds the value at $v=0$, and because households differ only in $y$ that
 defines a set of income intervals on which use occurs.
 
 %======================================================================
-\section{Calibration}\label{sec:cal}
+\subsection{Calibration}\label{sec:cal}
 
 Table~\ref{tab:ext} lists the parameters set outside the model. Preferences and
 demographics are conventional: the annual discount factor is $0.99$ and the
@@ -303,7 +307,7 @@ from households that already carry the disorder, is where it should be matched.
 \end{table}
 
 %======================================================================
-\section{Who uses drugs}\label{sec:who}
+\subsection{Who uses drugs}\label{sec:who}
 
 This section asks which feature of the model puts drug use at the bottom of the
 income distribution, and it starts from the force that any answer has to
@@ -350,7 +354,7 @@ equation~\eqref{eq:u}: it is the part of the continuation value that does not
 shrink as consumption falls.
 
 %======================================================================
-\section{How does housing assistance shape the drug use decision?}\label{sec:mh}
+\subsection{How does housing assistance shape the drug use decision?}\label{sec:mh}
 
 The two forces of question 2 can be separated exactly, because they differ in
 what happens to a household that uses. Under Treatment First the voucher is
@@ -399,9 +403,9 @@ are housed either way.
 \end{figure}
 
 %======================================================================
-\section{Welfare}\label{sec:welfare}
+\subsection{Welfare}\label{sec:welfare}
 
-\subsection{Without externalities, Housing First always wins}\label{sec:nox}
+\subsubsection{Without externalities, Housing First always wins}\label{sec:nox}
 
 Sections~\ref{sec:who} and~\ref{sec:mh} establish what each policy does to
 behaviour. This section asks what each does to welfare, comparing the two at the
@@ -449,7 +453,7 @@ disorder, so the households the moral hazard adds to the rolls die sooner and
 draw voucher payments for fewer periods. So a case for conditionality has to come
 from an externality.
 
-\subsection{The externality on children reverses it}\label{sec:kids}
+\subsubsection{The externality on children reverses it}\label{sec:kids}
 
 \begin{table}[!tb]
 \centering
@@ -1108,6 +1112,16 @@ externality still decides the comparison, and it is consistent with Altonji,
 Hayashi and Kotlikoff (1997), who reject altruism operating at the margin at all.
 The measured gap is an upper bound, since users also lose custody of children, so
 the ranking is reported across zero to that value.
+
+Tables~\ref{tab:fext} and~\ref{tab:fint} list every parameter of the model: the
+thirty nine that are assigned, whether by normalisation, from the literature,
+directly from data, in equilibrium or as a reported sensitivity, and the twenty
+two that are calibrated inside the model, each against the moment it is assigned
+to.
+
+\input{tables/tab_full_external}
+
+\input{tables/tab_full_internal}
 
 \paragraph{What fixing permanent income costs, and what has to be refitted.} The
 quantitative model holds permanent productivity fixed over the life cycle and
