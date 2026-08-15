@@ -33,8 +33,37 @@ sequence, which cannot leave the band.
 import numpy as np
 from stylized import P, with_, aggregates
 
-YG = np.exp(np.linspace(np.log(0.12), np.log(5.0), 30))
-W = np.exp(-0.5 * ((np.log(YG) + 0.5 * 0.75**2) / 0.75)**2)
+# THE INCOME GRID, and a finding recorded here because it matters.
+#
+# The lognormal's lower tail runs to 12 per cent of average income. A household
+# that poor has flow utility so negative that W2 < 0, and since dying is worth
+# zero it then PREFERS the extra mortality the disorder brings: the household
+# compares phi(d)*W2(a,d), and with W2 negative a lower phi is an improvement.
+#
+# Two fixes were tried and neither works.
+#
+#   RAISING ALEPH needs about 4.5 before every value of life is positive, and
+#   aleph enters every household's continuation value roughly equally, so it
+#   dilutes exactly the income dependence the mortality channel needs. At 3.7
+#   the gradient is gone: r_use goes to 3.37 and lam collapses to its bound.
+#
+#   FLOORING PERMANENT INCOME at 0.30, squeezing the bottom of the
+#   distribution, DOES fix the value of life completely: min W2 = +0.72 at
+#   aleph = 2.5, with the disorder costly at every income. It also destroys the
+#   gradient, r_use = 3.36 at every aleph tried with lam pinned at its bound.
+#   The reason is the diagnosis. The use region sits at y in [0.12, 0.24],
+#   which is exactly where W2 < 0, so flooring income above it removes every
+#   household that used to use.
+#
+# What that means is worth stating rather than parameterising away: at this
+# calibration the income gradient is produced in part by households for whom
+# life is worth less than nothing. Fixing it properly needs a utility function
+# bounded below, so W2 > 0 by construction, and then a check of whether the
+# gradient survives. The grid below is the original one.
+YMIN = 0.12
+SIG = 0.75
+YG = np.exp(np.linspace(np.log(YMIN), np.log(5.0), 30))
+W = np.exp(-0.5 * ((np.log(YG) + 0.5 * SIG**2) / SIG)**2)
 
 TARGET = dict(part=0.0513, homeless=0.00399, prog=0.332)
 
