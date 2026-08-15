@@ -1,162 +1,115 @@
 """
-The stylised three period model behind the note.
+A stylised three period model of drug use, homelessness and housing policy.
 
-WHAT IT HAS TO CONTAIN
+WHAT IT IS FOR
 
-The small model earns its place only if it carries the full model's mechanism.
-That means four links, and it has all four:
+Two things and nothing else:
 
-    homelessness raises mortality                   kapH
-    homelessness makes it harder to get clean       rho_mult_hl < 1
-    the disorder raises mortality                   kap
-    the disorder raises unemployment                u1 > u0
+    1  which channel decides WHO uses drugs across the income distribution
+    2  how the moral hazard of unconditional housing assistance operates
 
-and one policy: a voucher that removes the risk of homelessness, given
-unconditionally under Housing First and only to the clean under Treatment First.
+It is deliberately QUALITATIVE. It shows directions, and the sign and relative
+size of two opposing forces. Every magnitude in the paper comes from the full
+model, which has six state variables and can be disciplined properly. There is
+no validation section here and there should not be one: the calibration is rough
+by design, enough to put the model in the right region and no more.
 
-WHY THREE PERIODS
+NO PREFERENCE HETEROGENEITY
 
-Two periods make the disorder a one off cost: acquire it, pay once, the model
-ends. The paper's mechanism is that it PERSISTS and its costs compound, which is
-also what makes the value of life rise steeply in permanent income. Three is the
-smallest number with that property, and it makes saving do something beyond
-smoothing: the household saves in period 1 partly to self insure against the
-unemployment and homelessness risk the disorder brings in period 2.
+Households differ in permanent income and in nothing else, so everyone at a
+given income makes the same choice and the use decision is a THRESHOLD IN
+INCOME rather than a probability. That sharpness is the point: the figure shows
+where the threshold sits and how far it moves when a channel is switched off.
+
+It also keeps the paper's claim intact. The introduction says the model produces
+the income gradient without ex ante preference heterogeneity. An earlier version
+of this file gave the taste for drugs a lognormal spread, which smoothed the
+extensive margin and made calibration easy, at the cost of assuming exactly the
+thing the paper says it does not need.
 
 THE ENVIRONMENT
 
-  period 1   income y, employed and housed. Choose consumption, drug use v and
-             saving. Flow utility  log c + th_i [log(b+v) - log b].
-             Using gives the disorder next period with probability
-             pi_d(v) = 1 - exp(-lam v).
+  period 1  income y, employed, in the large unit. Choose consumption, drug use
+            v >= 0 and saving. Flow utility  log c + gam log h + th[log(b+v) - log b].
+            Using gives the disorder next period with probability 1 - exp(-lam v).
 
-  period 2   the disorder d is realised. Unemployed with probability u0, or u1
-             if d = 1, and unemployment pays a replacement rate omega. Earnings
-             carry a further penalty xi if d = 1. Homeless with a probability
-             that rises with the disorder and with unemployment, unless a
-             voucher covers the household; homelessness costs a utility flow
-             ellH and raises mortality by kapH. Choose saving. Recovery is rho
-             if housed and rho * rho_mult_hl if homeless.
+  period 2  the disorder d is realised. Unemployed with probability u0, or u1 if
+            d = 1; unemployment pays a replacement rate and a consumption floor
+            catches the bottom. Earnings carry a further penalty xi if d = 1.
+            Choose housing and saving. Recovery is rho when housed and
+            rho * rho_mult_hl on the street.
 
-  period 3   terminal, with the same employment and homelessness risks.
+  period 3  terminal, same risks.
 
-THE TWO CHANNELS, AND WHY THEY MOVE IN GROUPS
+  housing   a large unit, a small unit, or the street. The street is free but
+            supplies only h_hl of housing services, raises mortality by kapH,
+            and cuts the recovery probability. A voucher pays part of the rent.
 
-The disorder hurts in two ways and each has a direct and an indirect arm:
+            Two rental sizes rather than one, because with a single size a
+            household whose cash falls below the rent cannot be housed at all,
+            and the model puts the whole bottom of the distribution on the
+            street. With a small unit available they downsize instead, which is
+            what happens in the data and what the full model's housing grid is
+            for.
 
-    MORTALITY   kap   it kills you        kapH  it makes you homeless,
-                                                which also kills you
-    RESOURCE    u1    it costs you a job
-                xi    and a wage, and the street means consuming h_hl of
-                      housing services instead of h_ho
+THE FOUR CHANNELS, IN TWO GROUPS
+
+    MORTALITY  kap   the disorder kills you
+               kapH  it puts you on the street, which also kills you
+
+    RESOURCE   u1    it costs you a job
+               xi    and a wage
+                     and the street means consuming h_hl instead of a unit
 
 Switching a channel off means switching every member of its group. Switching kap
-alone leaves the homelessness mortality penalty running in a row that is supposed
-to have no mortality channel at all.
-
-THE PRICE OF DRUGS IS AN EQUILIBRIUM OBJECT, BUT NOT PART OF THE MAIN ARGUMENT
-
-Quantity supplied is psi * p_v ** eps_s and psi is renormalised so the benchmark
-clears at p_v = 1 whatever eps_s is. R1's comment 1(c) and R3's M2d both object
-that a price cannot be normalised and varied at the same time; here the
-normalisation is explicit, confined to the benchmark, and the price is free in
-every experiment.
-
-The ablation in ABLATION.txt says this changes NEITHER of the two facts the
-model exists to establish: switching market clearing off entirely leaves the
-income gradient at 0.787 and the moral hazard at 0.80 per cent, to two decimal
-places, both identical to the baseline. So it is reported in its own short
-subsection rather than carried through the main exposition, where it would be
-one more moving part for no gain.
+alone leaves the street's mortality penalty running in a configuration that is
+supposed to have no mortality channel at all.
 """
 
-import os
 import numpy as np
-
-OUT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                    '..', '..', 'writing', 'figures'))
 
 
 class P:
-    # preferences and technology
-    th    = 0.050     # mean taste for drugs
-    sig   = 0.55      # dispersion of log taste, INDEPENDENT of income
-    b     = 0.010     # Stone Geary subsistence; th/b is the pull of the first unit
+    # preferences
+    th    = 0.11      # taste for drugs
+    b     = 0.009     # Stone Geary subsistence; th/b is the pull of the first unit
+    gam   = 0.25      # weight on housing. CALIBRATED to the housing budget share
     beta  = 0.96
     R     = 1.03
     phi0  = 0.93      # survival over one period, clean, employed, housed
     aleph = 2.50      # flow value of being alive
 
     # the disorder
-    lam   = 6.00      # addiction hazard per unit of use
-    rho   = 0.40      # recovery when HOUSED over one period: the full
-                      # model's 2.5 per cent a year over twenty years
-    rho_mult_hl = 0.50   # recovery multiplier on the street. The full
-                         # model's value: harder to get clean when homeless.
+    lam   = 25.0      # addiction hazard per unit of use. CALIBRATED
+    rho   = 0.40      # recovery when housed, over one period
+    rho_mult_hl = 0.50   # recovery multiplier on the street
     kap   = 0.45      # MORTALITY, direct
-    xi    = 0.20      # RESOURCE, wage penalty given the disorder. RESTORED
-                      # after an ablation: without it the model predicts that
-                      # households WITH the disorder earn 1.14 times the average,
-                      # because progression rises with use intensity and use
-                      # intensity rises with income, so the disorder ends up
-                      # concentrated at the TOP. The data say 0.69. Unemployment
-                      # alone cannot fix that: 16 per cent against 5 moves mean
-                      # income by a few points, not by a third. This is also the
-                      # AE's comment A20, direct productivity effects of the
-                      # disorder.
-    u1    = 0.1625    # RESOURCE, unemployment given the disorder. MEASURED,
-                      # not calibrated: NSDUH 2024, ages 26+, weighted,
-                      # moderate or severe drug use disorder.
-
-    # employment
-    u0    = 0.049     # unemployment probability without the disorder
-    omega = 0.40      # replacement rate when unemployed
-    # A CONSUMPTION FLOOR. Food stamps and the rest of the safety net, as one
-    # number. Without it the model cannot hold a 21 per cent housing share and a
-    # 0.4 per cent homelessness rate at the same time: rent high enough to
-    # deliver the share prices the bottom of the income distribution out of
-    # housing entirely, and they choose the street. In the data those households
-    # are not on the street, because transfers put a floor under them. This is
-    # the full model's food stamp programme, collapsed to one parameter.
-    cfloor = 0.33     # share of mean income; CALIBRATED to the
-                      # homelessness rate
-
-    # HOUSING. One rental unit at price pr, or the street.
-    #
-    # Homelessness is a CHOICE, not a hazard. A household compares living in the
-    # unit, which costs pr, against the street, which is free but supplies only
-    # h_hl of housing services instead of h_ho, raises mortality by kapH, and
-    # lowers the recovery probability. Households with low cash choose the street. This is the
-    # trade off the whole literature is built on, and modelling it as an
-    # exogenous probability, as an earlier version of this file did, hides it:
-    # the voucher then works by shrinking a lottery rather than by relaxing a
-    # budget constraint, which is not how the policy operates.
-    gam   = 0.25      # weight on housing in utility. SET, not calibrated.
-    h_ho  = 1.0       # the one rental size, normalised
-    h_hl  = 0.104     # housing "consumed" on the street. SET to the full
-                      # model's ratio of the homeless size to the smallest
-                      # rental size, 0.0083 / 0.08.
-    pr    = 0.212     # rent per unit. SET to the housing budget share, so a
-                      # housed household at mean income spends 21.2 per cent
-                      # of it on housing, which is the aggregate share in the
-                      # SCF. Not calibrated: with one housing size the share
-                      # IS the rent, so calibrating it would be circular.
     kapH  = 0.35      # MORTALITY, extra death risk on the street
+    xi    = 0.20      # RESOURCE, wage penalty
+    u1    = 0.1625    # RESOURCE, unemployment given the disorder. Measured.
 
-    # policy: a voucher cuts the tenant's rent to kappa_r * pr
+    # employment and the safety net
+    u0    = 0.049
+    omega = 0.40      # replacement rate
+    cfloor = 0.22     # consumption floor, share of mean income. Set so that a
+                      # household with no earnings can afford the SMALL unit;
+                      # below that the bottom of the distribution is priced onto
+                      # the street whatever the street is like, and homelessness
+                      # stops being a choice.
+
+    # housing
+    h_lg  = 1.00
+    h_sm  = 0.50
+    h_hl  = 0.05      # the street. CALIBRATED to the homelessness rate
+    pr    = 0.212     # rent per unit of housing services
     pV    = 0.27      # probability a voucher arrives
-    kappa_r = 0.30    # tenant contribution rate
+    kappa_r = 0.30    # tenant's share of the rent when covered
     policy = 'HF'
 
-    # the drug market
-    p_v   = 1.0
-    eps_s = 2.0       # supply elasticity; 0.79 licensed marijuana, 3.6 cigarettes
-    psi   = 1.0
+    p_v   = 1.0       # price of drugs
 
-    # numerics
-    nq    = 21        # taste nodes
-    na    = 70        # asset grid
-    nv    = 160       # drug use grid
+    na    = 60
+    nv    = 140
 
 
 def clone(**kw):
@@ -176,254 +129,149 @@ def with_(par, **kw):
     return clone(**f)
 
 
-# ----------------------------------------------------------------------------
-def _states(par, d, policy, y=1.0):
-    """
-    (probability, income multiplier, rent actually payable) for disorder status
-    d. Housing is no longer here: it is chosen inside the value function.
-
-    A voucher cuts the tenant's rent to kappa_r * pr. Under Housing First it
-    arrives whatever d is; under Treatment First only if the household is clean.
-    """
+# ---------------------------------------------------------------------------
+def _states(par, d, policy, y):
+    """(probability, income level, tenant's rent multiplier) given d."""
     pu = par.u1 if d == 1 else par.u0
     covered = (policy == 'HF') or (d == 0)
     pv = par.pV if covered else 0.0
     out = []
-    for e, pe in ((0, 1.0 - pu), (1, pu)):                  # e = 1 unemployed
-        # the floor is a LEVEL, so it binds on inc * y, not on the multiplier
-        inc = max((par.omega if e else 1.0) * (1.0 - par.xi * d),
-                  par.cfloor / max(y, 1e-9))
-        for rent, prb in ((par.kappa_r * par.pr, pv), (par.pr, 1.0 - pv)):
+    for e, pe in ((0, 1.0 - pu), (1, pu)):
+        inc = max((par.omega if e else 1.0) * (1.0 - par.xi * d) * y, par.cfloor)
+        for rmul, prb in ((par.kappa_r, pv), (1.0, 1.0 - pv)):
             if pe * prb > 1e-14:
-                out.append((pe * prb, inc, rent))
+                out.append((pe * prb, inc, rmul))
     return out
 
 
-def _surv(par, d, h):
-    """h = 1 on the street."""
-    return par.phi0 * (1.0 - par.kap * d) * (1.0 - par.kapH * h)
+def _options(par, rmul):
+    """(housing services, rent, on the street) for the three choices."""
+    return ((par.h_hl, 0.0, 1),
+            (par.h_sm, par.pr * par.h_sm * rmul, 0),
+            (par.h_lg, par.pr * par.h_lg * rmul, 0))
 
 
 def solve_late(par, y, policy):
-    """Backward induction over periods 3 and 2. Independent of the taste draw."""
-    ag = np.linspace(0.0, 1.4 * y, par.na)
+    """Periods 3 and 2 by backward induction. Returns the street share too."""
+    ag = np.linspace(0.0, 1.6 * y, par.na)
 
     V3 = np.zeros((par.na, 2))
-    H3 = np.zeros((par.na, 2))          # share choosing the street, for reporting
     for d in (0, 1):
-        for p, inc, rent in _states(par, d, policy, y):
-            cash = par.R * ag + inc * y
-            v_ho = np.where(cash - rent * par.h_ho > 1e-9,
-                            np.log(np.maximum(cash - rent * par.h_ho, 1e-12))
-                            + par.gam * np.log(par.h_ho) + par.aleph, -np.inf)
-            v_hl = (np.log(np.maximum(cash, 1e-12))
-                    + par.gam * np.log(par.h_hl) + par.aleph)
-            street = v_hl > v_ho
-            V3[:, d] += p * np.where(street, v_hl, v_ho)
-            H3[:, d] += p * street
+        for p, inc, rmul in _states(par, d, policy, y):
+            cash = par.R * ag + inc
+            best = np.full(par.na, -np.inf)
+            for h, rent, _ in _options(par, rmul):
+                c = cash - rent
+                best = np.maximum(best, np.where(
+                    c > 1e-9, np.log(np.maximum(c, 1e-12))
+                    + par.gam * np.log(h) + par.aleph, -np.inf))
+            V3[:, d] += p * best
 
-    V2 = np.zeros((par.na, 2))
-    H2 = np.zeros((par.na, 2))
+    V2 = np.zeros((par.na, 2)); H2 = np.zeros((par.na, 2))
+    R2 = np.zeros((par.na, 2))            # rent actually paid, for the housing share
     for d in (0, 1):
-        for p, inc, rent in _states(par, d, policy, y):
-            cash = par.R * ag[:, None] + inc * y
-            best = None
-            for h in (0, 1):                       # h = 1 is the street
-                c = cash - (rent * par.h_ho if h == 0 else 0.0) - ag[None, :]
-                r = par.rho * (par.rho_mult_hl if h else 1.0) if d == 1 else 0.0
+        for p, inc, rmul in _states(par, d, policy, y):
+            cash = par.R * ag[:, None] + inc
+            best = np.full(par.na, -np.inf); onst = np.zeros(par.na)
+            rnt = np.zeros(par.na)
+            for h, rent, street in _options(par, rmul):
+                r = par.rho * (par.rho_mult_hl if street else 1.0) if d else 0.0
                 EV3 = (1.0 - r) * V3[:, d] + r * V3[:, 0]
-                val = np.where(c > 1e-9,
-                               np.log(np.maximum(c, 1e-12))
-                               + par.gam * np.log(par.h_hl if h else par.h_ho)
-                               + par.aleph
-                               + par.beta * _surv(par, d, h) * EV3[None, :],
-                               -np.inf).max(axis=1)
-                best = val if best is None else np.maximum(best, val)
-                if h == 0:
-                    v_ho = val
-            V2[:, d] += p * best
-            H2[:, d] += p * (best > v_ho + 1e-12)
-    return ag, V2, H2
+                surv = par.phi0 * (1.0 - par.kap * d) * (1.0 - par.kapH * street)
+                c = cash - rent - ag[None, :]
+                v = np.where(c > 1e-9,
+                             np.log(np.maximum(c, 1e-12)) + par.gam * np.log(h)
+                             + par.aleph + par.beta * surv * EV3[None, :],
+                             -np.inf).max(axis=1)
+                onst = np.where(v > best, street, onst)
+                rnt = np.where(v > best, rent, rnt)
+                best = np.maximum(best, v)
+            V2[:, d] += p * best; H2[:, d] += p * onst; R2[:, d] += p * rnt
+    return ag, V2, H2, R2
 
 
-def solve_one(par, y, policy=None):
+def use_choice(par, y, policy=None):
     """
-    Period 1. Returns (participation, expected use, assets carried into period 2
-    by users, assets carried by abstainers).
-
-    PARTICIPATION IS COMPUTED FROM A THRESHOLD, NOT BY COUNTING NODES.
-
-    Drugs enter additively, so for a household with taste th the gain from using
-    is  f(th) = max_v [base(v) + th G(v)] - base(0),  where base is the taste
-    independent part and G(v) = log(b+v) - log(b) >= 0. f is a maximum of affine
-    increasing functions of th, so it is increasing and there is a single
-    threshold th* with f(th*) = 0. Participation is then 1 - Phi of the
-    standardised threshold, which is SMOOTH in every parameter.
-
-    Counting quadrature nodes instead, as this did before, makes participation a
-    step function: it jumps as each node crosses. Every calibration attempt
-    stalled on that. A least squares solver saw a zero derivative and terminated
-    at its starting point, and Nelder Mead wandered for two thousand evaluations
-    with participation at nearly three times its target while the direction that
-    fixed it was plainly downhill. The moment was not uninformative; it was
-    piecewise constant.
+    At income y: (gain from using, best v, assets if using, assets if not).
+    The SIGN of the gain is the use decision, and its zero crossings in income
+    bound the use region.
     """
-    from math import erf, sqrt as _sqrt
     policy = policy or par.policy
-    ag, V2, _ = solve_late(par, y, policy)
-    vg = np.concatenate(([0.0], np.linspace(1e-4, 0.55 * y, par.nv - 1)))
-
+    ag, V2, _, _ = solve_late(par, y, policy)
+    vg = np.concatenate(([0.0], np.linspace(1e-4, 0.5 * y, par.nv - 1)))
     c = (y - par.p_v * vg[:, None]) - ag[None, :]
     pid = (1.0 - np.exp(-par.lam * vg))[:, None]
     EV2 = (1.0 - pid) * V2[None, :, 0] + pid * V2[None, :, 1]
     val = np.where(c > 1e-9,
-                   np.log(np.maximum(c, 1e-12)) + par.aleph
-                   + par.beta * par.phi0 * EV2, -np.inf)
+                   np.log(np.maximum(c, 1e-12)) + par.gam * np.log(par.h_lg)
+                   + par.aleph + par.beta * par.phi0 * EV2, -np.inf)
     base = val.max(axis=1)
     a_by_v = ag[np.argmax(np.where(c > 1e-9, val, -np.inf), axis=1)]
-    G = np.log(par.b + vg) - np.log(par.b)
-    v_no = base[0]
-
-    # the threshold taste, by bisection on a monotone function
-    lo, hi = 1e-10, 1e6
-    for _ in range(70):
-        mid = _sqrt(lo * hi)
-        if (base + mid * G).max() > v_no:
-            hi = mid
-        else:
-            lo = mid
-    th_star = _sqrt(lo * hi)
-
-    mu = np.log(par.th) - 0.5 * par.sig**2
-    z = (np.log(th_star) - mu) / par.sig
-    Phi = 0.5 * (1.0 + erf(z / np.sqrt(2.0)))
-    p_use = float(min(max(1.0 - Phi, 0.0), 1.0))
-    if p_use <= 1e-12:
-        return 0.0, 0.0, float(a_by_v[0]), float(a_by_v[0])
-
-    # expected use among users: quadrature on the TRUNCATED taste distribution,
-    # by inverse transform, so it is smooth in the threshold too
-    from scipy.special import ndtri
-    u = Phi + (1.0 - Phi) * (np.arange(par.nq) + 0.5) / par.nq
-    th_i = np.exp(mu + par.sig * ndtri(np.clip(u, 1e-12, 1 - 1e-12)))
-    k = np.argmax(base[None, :] + th_i[:, None] * G[None, :], axis=1)
-    ev = float(p_use * vg[k].mean())
-    a_use = float(a_by_v[k].mean())
-    # the v of every user at this income, equally weighted, for the
-    # concentration moment that identifies the taste dispersion
-    return p_use, ev, a_use, float(a_by_v[0]), vg[k]
+    tot = base + par.th * (np.log(par.b + vg) - np.log(par.b))
+    k = int(np.argmax(tot[1:])) + 1
+    return float(tot[k] - tot[0]), float(vg[k]), float(a_by_v[k]), float(a_by_v[0])
 
 
-def profile(par, ygrid, policy=None):
-    out = [solve_one(par, y, policy) for y in ygrid]
-    return (tuple(np.array([o[i] for o in out]) for i in range(4))
-            + ([o[4] if len(o) > 4 else np.zeros(1) for o in out],))
+def threshold(par, ygrid, policy=None):
+    """
+    The use region, with its boundaries resolved exactly.
+
+    The decision is zero or one at every income, so on a grid alone the
+    aggregate jumps whenever a grid point flips. Wherever the sign changes
+    between neighbours the crossing is bisected and the boundary cell is given
+    the fraction of itself inside the region. The decision stays sharp and the
+    aggregate moves smoothly, which is what a bracketing calibration needs.
+    """
+    policy = policy or par.policy
+    n = len(ygrid)
+    g = np.empty(n); vv = np.empty(n); au = np.empty(n); an = np.empty(n)
+    for i, y in enumerate(ygrid):
+        g[i], vv[i], au[i], an[i] = use_choice(par, y, policy)
+    frac = (g > 0.0).astype(float)
+    for i in range(n - 1):
+        if (g[i] > 0.0) != (g[i + 1] > 0.0):
+            lo, hi, sgn = ygrid[i], ygrid[i + 1], g[i] > 0.0
+            for _ in range(24):
+                mid = 0.5 * (lo + hi)
+                if (use_choice(par, mid, policy)[0] > 0.0) == sgn:
+                    lo = mid
+                else:
+                    hi = mid
+            w = (0.5 * (lo + hi) - ygrid[i]) / (ygrid[i + 1] - ygrid[i])
+            frac[i], frac[i + 1] = (w, 0.0) if g[i] > 0.0 else (0.0, 1.0 - w)
+    return np.clip(frac, 0.0, 1.0), vv, au, an
 
 
-# ----------------------------------------------------------------------------
 def aggregates(par, ygrid, w, policy=None):
     policy = policy or par.policy
-    p_use, ev, a_use, a_no, vlist = profile(par, ygrid, policy)
-    vbar = np.where(p_use > 1e-9, ev / np.maximum(p_use, 1e-9), 0.0)
-    pid = p_use * (1.0 - np.exp(-par.lam * vbar))
-    ww = w / w.sum()
-    ybar = (ww * ygrid).sum()
+    use, vv, au, an = threshold(par, ygrid, policy)
+    pid = use * (1.0 - np.exp(-par.lam * vv))
+    ww = w / w.sum(); ybar = (ww * ygrid).sum()
 
-    hl = hl_sud = inc_sud = m_sud = inc_all = hcost = hinc = 0.0
+    hl = hl_sud = hcost = hinc = 0.0
     for i, y in enumerate(ygrid):
-        ag, _, H2 = solve_late(par, y, policy)
-        # three groups arrive in period 2: abstainers, users who stayed clean,
-        # and users who acquired the disorder, each at their own asset position
-        groups = ((ww[i] * (1.0 - p_use[i]),        a_no[i],  0),
-                  (ww[i] * (p_use[i] - pid[i]),     a_use[i], 0),
-                  (ww[i] * pid[i],                  a_use[i], 1))
-        for m, a, d in groups:
+        ag, _, H2, R2 = solve_late(par, y, policy)
+        for m, a, d in ((ww[i] * (1.0 - use[i]), an[i], 0),
+                        (ww[i] * (use[i] - pid[i]), au[i], 0),
+                        (ww[i] * pid[i], au[i], 1)):
             if m <= 0.0:
                 continue
             street = float(np.interp(a, ag, H2[:, d]))
+            # the rent ACTUALLY paid on the unit chosen, not the small one's
+            # rent regardless of choice, which understated the housing share by
+            # more than half and pinned the housing weight at its bound
             hl += m * street
+            hcost += m * float(np.interp(a, ag, R2[:, d]))
             if d == 1:
                 hl_sud += m * street
-                m_sud += m
-            for p, inc, rent in _states(par, d, policy, y):
-                inc_all += m * p * inc * y
-                if d == 1:
-                    inc_sud += m * p * inc * y
-                hcost += m * p * (1.0 - street) * rent * par.h_ho
-                hinc  += m * p * inc * y
+            for p, inc, rmul in _states(par, d, policy, y):
+                hinc += m * p * inc
 
-    spend = float((ww * p_use * par.p_v * vbar).sum()
-                  / max((ww * p_use * ygrid).sum(), 1e-12))
-
-    # THE CONCENTRATION OF USE, which is what identifies the taste dispersion.
-    # Share of all drug quantity consumed by the heaviest fifth of users. In
-    # NSDUH 2024, ages 26 and above, weighted, using band midpoints for days of
-    # use, that share is 0.736. It is a pure shape statistic: it needs no
-    # threshold parameter, unlike a light against heavy split, and it is far
-    # less sensitive to the top band's midpoint than a coefficient of variation.
-    mass, vals = [], []
-    for i in range(len(ygrid)):
-        vi = np.atleast_1d(vlist[i])
-        if p_use[i] > 1e-12 and vi.size:
-            mass.append(np.full(vi.size, ww[i] * p_use[i] / vi.size))
-            vals.append(vi)
-    if vals:
-        mm = np.concatenate(mass); vv = np.concatenate(vals)
-        o = np.argsort(vv); mm, vv = mm[o], vv[o]
-        cum = np.cumsum(mm) / max(mm.sum(), 1e-12)
-        top = cum > 0.80
-        conc = float((mm[top] * vv[top]).sum() / max((mm * vv).sum(), 1e-12))
-    else:
-        conc = 0.0
-    return dict(
-        spend=spend, conc=conc,
-        part=float((ww * p_use).sum()), sud=float((ww * pid).sum()),
-        r_use=float((ww * p_use * ygrid).sum()
-                    / max((ww * p_use).sum(), 1e-12) / ybar),
-        homeless=float(hl),
-        sud_of_homeless=float(hl_sud / max(hl, 1e-12)),
-        unemp_sud=float(par.u1),
-        housing_share=float(hcost / max(hinc, 1e-12)),
-        r_sud=float(inc_sud / max(m_sud, 1e-12) / max(inc_all, 1e-12)),
-        vsl=_vsl(par, ygrid, policy),
-        p_use=p_use, v=vbar, pid=pid)
-
-
-def _vsl(par, ygrid, policy):
-    """Value of a statistical life at mean income, in units of mean income.
-    With log utility the marginal rate of substitution between consumption and
-    survival is the continuation value times consumption."""
-    k = int(np.argmin(np.abs(ygrid - 1.0)))
-    _, V2, _ = solve_late(par, ygrid[k], policy)
-    return float(par.beta * par.phi0 * V2[0, 0] * ygrid[k])
-
-
-def price_elasticity(par, ygrid, w, policy=None, step=0.06):
-    """
-    d log(participation) / d log(p_v) at fixed supply. This is what the
-    empirical literature estimates from tax and enforcement variation, so it is
-    a DEMAND elasticity and needs no market clearing: move the price, read off
-    the participation response.
-    """
-    lo = aggregates(with_(par, p_v=1.0 - step), ygrid, w, policy)['part']
-    hi = aggregates(with_(par, p_v=1.0 + step), ygrid, w, policy)['part']
-    if lo <= 1e-9 or hi <= 1e-9:
-        return 0.0
-    return float((np.log(hi) - np.log(lo))
-                 / (np.log(1.0 + step) - np.log(1.0 - step)))
-
-
-def demand(par, ygrid, w, policy=None):
-    ev = profile(par, ygrid, policy)[1]
-    return float((w / w.sum() * ev).sum())
-
-
-def clear_price(par, ygrid, w, policy=None, lo=0.25, hi=4.0, iters=22):
-    """Supply slopes up and demand down, so excess demand is monotone in p."""
-    for _ in range(iters):
-        p = np.sqrt(lo * hi)
-        if demand(with_(par, p_v=p), ygrid, w, policy) - par.psi * p**par.eps_s > 0:
-            lo = p
-        else:
-            hi = p
-    return float(np.sqrt(lo * hi))
+    part = float((ww * use).sum())
+    return dict(part=part, sud=float((ww * pid).sum()),
+                prog=float((ww * pid).sum() / max(part, 1e-12)),
+                r_use=float((ww * use * ygrid).sum() / max(part, 1e-12) / ybar),
+                homeless=float(hl),
+                sud_of_homeless=float(hl_sud / max(hl, 1e-12)),
+                housing_share=float(hcost / max(hinc, 1e-12)),
+                use=use, v=vv)
