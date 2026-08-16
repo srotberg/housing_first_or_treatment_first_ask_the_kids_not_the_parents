@@ -99,7 +99,7 @@ employed, the insurance benefit in the first year of a spell, and zero
 otherwise. The note's `zeta_DI * ybar_DI * Ybar` case for `e=3, m=1` has no
 counterpart, which follows from `m` not existing.
 
-### 1.3 The drug market. Declared, never cleared.
+### 1.3 The drug market. WAS declared and never cleared. Now cleared.
 
 `price_of_addictive_good` is set once at line 343 and **never assigned again**.
 The only other occurrences are `write` statements. There is no supply curve, no
@@ -109,8 +109,25 @@ So the note's Section 2.12, the cost function `C(V)`, the elasticity of 2, the
 normalisation of `psi_1`, and item 4 of the stationary equilibrium definition
 describe machinery that is not there. The price is fixed at 1 in every run.
 
-This one is cheap to add and it is what the revision's supply elasticity
-discussion rests on, so it should be added rather than removed from the note.
+**Built, in `clear_drug_market`.** Production costs `C(V)=(nu_1/nu_2)V^nu_2`, so
+the supply price is `nu_1 V^(nu_2-1)` and the elasticity of supply is
+`1/(nu_2-1)`, set at 2 so `nu_2=1.5`. `V` is the quantity households actually
+bought, which the distribution already accumulated in
+`model_drugs_consumed_by_users` and nobody read.
+
+The benchmark **normalises** and the counterfactuals **clear**, which is the note's
+own design and worth stating because the asymmetry looks like a dodge and is not.
+With one good and one price there is nothing in the data to pin the level of
+`nu_1` against, so the benchmark picks the `nu_1` that puts the price at one at
+whatever quantity it produces, and saves it. A counterfactual reads that `nu_1`,
+so the supply curve is fixed, and the price is then whatever the quantity implies:
+a policy that cuts drug use cuts the price, which feeds back into use. That
+feedback is the whole reason a supply elasticity is in the paper, and it was
+absent.
+
+`distance_drug_market` joins the convergence test, the price and the shifter join
+the resume file, and partial equilibrium and the elasticity test are guarded,
+since both hold or perturb this price deliberately.
 
 ### 1.4 The homelessness disamenity. Absent entirely.
 

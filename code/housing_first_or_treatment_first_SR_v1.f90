@@ -563,6 +563,39 @@
         real(8) :: increased_probability_of_becoming_addicted_if_heavy_user=&
             6.4761*0.0016
         
+        ! THE DRUG MARKET, which the note has had all along and the code did not.
+        !
+        ! price_of_addictive_good was assigned once and never again: every other
+        ! occurrence in the file was a write statement. So the note's supply
+        ! curve, its elasticity, its normalisation and item 4 of the stationary
+        ! equilibrium described machinery that was not there, and every price
+        ! counterfactual moved a number the households never saw.
+        !
+        ! Production costs C(V) = (nu_1/nu_2) V^nu_2, so the competitive supply
+        ! price is nu_1 V^(nu_2-1) and the elasticity of supply is 1/(nu_2-1).
+        ! The elasticity is set at 2, so nu_2 = 1.5.
+        !
+        ! THE BENCHMARK NORMALISES RATHER THAN CLEARS, and that is not a dodge:
+        ! with one good and one price there is nothing in the data to pin the
+        ! level of nu_1 against, so nu_1 is chosen each loop to put the price at
+        ! one at whatever quantity the benchmark produces. The market clears at
+        ! p_v=1 by construction, and nu_1 is saved.
+        !
+        ! THE COUNTERFACTUALS CLEAR. They read the benchmark's nu_1, so the
+        ! supply curve is fixed, and the price then moves with the quantity
+        ! households choose: a policy that cuts drug use cuts the price, which
+        ! feeds back into use. That feedback is the reason the supply elasticity
+        ! is in the paper at all, and it was absent.
+        real(8), parameter :: drug_supply_elasticity=2
+        real(8), parameter :: drug_supply_curvature=1+1/drug_supply_elasticity
+        real(8) :: drug_supply_shifter=1
+        real(8) :: distance_drug_market=0
+        real(8) :: stopping_rule_drug_market=10.d0**(-4)
+        real(8) :: drug_market_adjuster=0.5
+        real(8) :: previous_price_of_addictive_good=0
+        real(8) :: previous_drug_price_gap=0
+        integer :: have_drug_price_secant=0
+
         real(8), parameter :: price_of_addictive_good_benchmark=1
         
         real(8) :: price_of_addictive_good=include_addiction*&
@@ -24256,6 +24289,116 @@
 
     end subroutine
     
+    subroutine clear_drug_market(time_period)
+
+        ! See the block at drug_supply_elasticity for what this is and why the
+        ! benchmark normalises while the counterfactuals clear.
+
+        use Global_Vars
+
+        implicit none
+
+        integer, intent(in) :: time_period
+        real(8) :: quantity_1,implied_price_1,gap_1,step_1
+        logical :: shifter_exists_1
+
+        ! Partial equilibrium holds prices fixed by definition, and the
+        ! elasticity test perturbs this price on purpose, so neither may have it
+        ! moved underneath them.
+        if ((include_addiction==0) .OR. (partial_equilibrium==1) .OR. &
+            (test_elasticity==1)) then
+
+            distance_drug_market=0
+
+            return
+
+        end if
+
+        quantity_1=model_drugs_consumed_by_users(time_period)
+
+        if (quantity_1<=0) then
+
+            write(*,*) "no drug use at all, the drug market is left alone"
+            distance_drug_market=0
+
+            return
+
+        end if
+
+        if (is_counterfactual==0) then
+
+            ! Normalise: pick the shifter that puts the price at one here.
+            drug_supply_shifter=1/(quantity_1**(drug_supply_curvature-1))
+
+            price_of_addictive_good=price_of_addictive_good_benchmark
+            distance_drug_market=0
+
+            open(unit=73,file="drug_supply_shifter"//trim(benchmark_simulation)//".dat",&
+                action='write',status='replace')
+                write(73,'(F35.20)') drug_supply_shifter
+            close(73)
+
+            write(*,*) "drug quantity V=", quantity_1
+            write(*,*) "drug_supply_shifter (normalised)=", drug_supply_shifter
+
+        else
+
+            inquire(file="drug_supply_shifter"//trim(benchmark_simulation)//".dat",&
+                exist=shifter_exists_1)
+
+            if (shifter_exists_1) then
+
+                open(unit=73,file="drug_supply_shifter"//trim(benchmark_simulation)//".dat",&
+                    action='read')
+                    read(73,'(F35.20)') drug_supply_shifter
+                close(73)
+
+            else
+
+                write(*,*) "no drug_supply_shifter from the benchmark. stopping."
+                stop
+
+            end if
+
+            implied_price_1=drug_supply_shifter*(quantity_1**(drug_supply_curvature-1))
+
+            gap_1=implied_price_1-price_of_addictive_good
+
+            distance_drug_market=abs(gap_1)
+
+            ! Secant where two usable points exist, damped step otherwise. The
+            ! supply price rises in quantity and demand falls in price, so the
+            ! gap is monotone in the price and the secant is well behaved; the
+            ! clip is there for the first loops, before it is.
+            step_1=price_of_addictive_good+drug_market_adjuster*gap_1
+
+            if ((have_drug_price_secant==1) .AND. &
+                (abs(gap_1-previous_drug_price_gap)>10.d0**(-10)) .AND. &
+                (abs(price_of_addictive_good-previous_price_of_addictive_good)>10.d0**(-10))) then
+
+                step_1=price_of_addictive_good-gap_1*&
+                    (price_of_addictive_good-previous_price_of_addictive_good)/&
+                    (gap_1-previous_drug_price_gap)
+
+            end if
+
+            step_1=max(min(step_1,2*price_of_addictive_good),price_of_addictive_good/2)
+
+            previous_price_of_addictive_good=price_of_addictive_good
+            previous_drug_price_gap=gap_1
+            have_drug_price_secant=1
+
+            price_of_addictive_good=max(step_1,10.d0**(-6))
+
+            write(*,*) "drug quantity V=", quantity_1
+            write(*,*) "implied supply price=", implied_price_1
+            write(*,*) "price_of_addictive_good=", price_of_addictive_good
+            write(*,*) "distance_drug_market=", distance_drug_market
+
+        end if
+
+    end subroutine
+
     subroutine write_calibration_state()
 
         ! RESUMING AFTER A KILL. A calibration is days of wall clock and it used
@@ -24292,6 +24435,8 @@
             write(71,'(F30.15)') standard_deduction_as_percent_of_average_labor_income
             write(71,'(F30.15)') probability_of_becoming_addicted_if_experiment
             write(71,'(F30.15)') lambda_addiction
+            write(71,'(F30.15)') price_of_addictive_good
+            write(71,'(F30.15)') drug_supply_shifter
             write(71,'(F30.15)') utility_cost_of_treatment
             write(71,'(F30.15)') previous_utility_cost_of_treatment
             write(71,'(F30.15)') previous_treatment_take_up
@@ -24368,6 +24513,8 @@
             read(72,'(F30.15)') standard_deduction_as_percent_of_average_labor_income
             read(72,'(F30.15)') probability_of_becoming_addicted_if_experiment
             read(72,'(F30.15)') lambda_addiction
+            read(72,'(F30.15)') price_of_addictive_good
+            read(72,'(F30.15)') drug_supply_shifter
             read(72,'(F30.15)') utility_cost_of_treatment
             read(72,'(F30.15)') previous_utility_cost_of_treatment
             read(72,'(F30.15)') previous_treatment_take_up
@@ -24692,6 +24839,7 @@
             (distance_probability_of_becoming_addicted>&
              stopping_rule_probability_of_becoming_addicted) .OR. &
             (distance_lambda_addiction>stopping_rule_lambda_addiction) .OR. &
+            (distance_drug_market>stopping_rule_drug_market) .OR. &
             (distance_utility_cost_of_treatment>stopping_rule_utility_cost_of_treatment) .OR. &
             (distance_rent_to_price>stopping_rule_rent_to_price) .OR. &
             (distance_smallest_house_size>stopping_rule_smallest_house_size) .OR. &
@@ -25370,7 +25518,21 @@
             end if
                                                                                      
             distance_rental_market(1)=maxval(abs(total_rental_demand(1,:)-total_rental_supply(1,:)))
-                    
+
+            ! THE DRUG MARKET.
+            !
+            ! V is the quantity households actually bought, accumulated over the
+            ! distribution in model_drugs_consumed_by_users. The supply price at
+            ! that quantity is nu_1 V^(nu_2-1).
+            !
+            ! In the benchmark nu_1 is whatever puts that price at one, which is
+            ! the note's normalisation, so the market clears every loop and the
+            ! price never moves. In a counterfactual nu_1 is the benchmark's, so
+            ! the price is whatever the supply curve says and the loop iterates
+            ! until the price households faced and the price the quantity
+            ! implies agree.
+            call clear_drug_market(1)
+
             write(*,*) "rent(1)=", rent(1,:)
             write(*,*) "rental_supply(1)=", total_rental_supply(1,:)
             write(*,*) "rental_demand(1)=", total_rental_demand(1,:)
