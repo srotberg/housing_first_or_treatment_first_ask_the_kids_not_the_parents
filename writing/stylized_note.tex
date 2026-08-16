@@ -14,6 +14,7 @@
 \newcommand{\new}[1]{\textcolor{red}{#1}}
 \usepackage[official]{eurosym}
 \usepackage{longtable}
+\usepackage{titlesec}
 
 \setlength{\parskip}{0.18em}
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
@@ -27,6 +28,12 @@
 
 \newcommand{\notes}[2]{\par\vspace{0.4em}%
   \begin{minipage}{#1}\footnotesize #2\end{minipage}}
+% A table's note should start and end exactly where the rules of the table do.
+% \tabnote measures the table into a box first and sets the note to that width.
+\newsavebox{\ntbox}
+\newcommand{\tabnote}[1]{\notes{\wd\ntbox}{#1}}
+\titlespacing*{\subsection}{0pt}{1.4em plus 0.3em}{0.7em plus 0.15em}
+\titlespacing*{\subsubsection}{0pt}{1.1em plus 0.25em}{0.6em plus 0.15em}
 
 \begin{document}
 
@@ -89,8 +96,8 @@ Treatment First may be preferred: children of a parent with a SUD are
 themselves two to four times as likely to develop one (McGovern et al., 2023),
 and moving a child to a lower poverty neighbourhood before age thirteen raises
 adult earnings by $31$ percent (Chetty, Hendren and Katz, 2016). The
-model's work here is to \new{show why Housing First raises welfare whenever
-there are no externalities, and then to qualitatively} price the externality that
+model's work here is to show why Housing First raises welfare whenever
+there are no externalities, and then to qualitatively price the externality that
 overturns it.
 
 \end{enumerate}
@@ -205,11 +212,11 @@ Each period the household chooses
 \begin{equation}\label{eq:opts}
 h_k \in \{h_0,\ h_S,\ h_L\}, \qquad h_0 < h_S < h_L ,
 \end{equation}
-homelessness \new{($h_0$)}, a small unit \new{($h_S$)} and a standard unit
-\new{($h_L$)}. Homelessness is free and \new{delivers less housing services than
-the market does}.\footnote{\new{Two rented sizes is the fewest that lets a
+homelessness ($h_0$), a small unit ($h_S$) and a standard unit
+($h_L$). Homelessness is free and delivers less housing services than
+the market does.\footnote{Two rented sizes is the fewest that lets a
 household economise on housing rather than lose it. With one, homelessness comes
-out at 3.98 percent against a target of $0.40$, at any $h_0$.}}
+out at 3.98 percent against a target of $0.40$, at any $h_0$.}
 
 A voucher covers part of the rent, is means tested and is rationed. It is drawn
 independently each period, which is a simplification relative to the
@@ -220,7 +227,7 @@ Writing $\eta\in\{0,1\}$ for whether one is held,
 \cdot \mathbf{1}\{\text{policy covers } (d',v)\},
 \end{equation}
 and a household holding one pays the fraction $\kappa_r$ of market rent, so the
-rent paid on option \new{$k$} is
+rent paid on option $k$ is
 \begin{equation}\label{eq:rent}
 r_k(\eta) \;=\; p_r\,h_k\big[\kappa_r \eta + (1-\eta)\big]\cdot
 \mathbf{1}\{k \ne 0\},
@@ -233,16 +240,16 @@ The two policies differ in exactly one respect, the last indicator in
 equation~\eqref{eq:vouch}. \textbf{Housing First} covers every eligible
 household regardless of $(d',v)$. \textbf{Treatment First} covers only
 households that satisfy the sobriety condition, $v=0$ and $d'=0$, which is the
-rule in the quantitative model as well. Since \new{policy coverage} in the states
+rule in the quantitative model as well. Since policy coverage in the states
 that follow drug use is the only difference, the gap between them is the moral
 hazard and the whole of it.
 
 The condition binds in period 1 as well, and the timing there is worth stating.
 Every household arrives clean, so the period 1 voucher is drawn before $v$ is
-chosen and conditionality cannot screen anyone out on entry. \new{The order
+chosen and conditionality cannot screen anyone out on entry. The order
 within the period is therefore: the household chooses $v$, the policy rule is
 then applied to the voucher it drew, and it chooses housing knowing what rent it
-faces.} So under Treatment First a household that uses \new{would be subject to}
+faces. So under Treatment First a household that uses would be subject to
 market rent immediately and again in period 2.
 
 \subsubsection{The household's problem}\label{sec:problem}
@@ -265,8 +272,8 @@ V_1(y,e,\eta) = \max_{k,\,v \ge 0,\,a' \ge 0}
 + \beta\, \mathbb{E}_{d'}\Big[\phi(d')\,W_2(a',y,d')\Big] \Big\},
 \end{equation}
 with $c = y^{g}(y,e) - r_k(\eta) - p_v v - a'$ and $d'=1$ with the use dependent
-probability of~\eqref{eq:hazard}. \new{Survival sits inside the expectation over
-$d'$ because it depends on which $d'$ is realised.}
+probability of~\eqref{eq:hazard}. Survival sits inside the expectation over
+$d'$ because it depends on which $d'$ is realised.
 
 A household uses if the value at its best positive $v$ exceeds the value at
 $v=0$. Households differ only in $y$ and in the draw $(e,\eta)$, which is the
@@ -278,25 +285,25 @@ probability of drawing a state in which the household uses.
 %======================================================================
 \subsection{Calibration}\label{sec:cal}
 
-\new{\subsubsection{External calibration}}
+\subsubsection{External calibration}
 
 Table~\ref{tab:ext} lists the parameters set outside the model. Preferences and
-demographics are conventional: \new{the discount factor over a thirty year period
-is $\beta = 0.860$}\footnote{\new{An annual $0.995$, higher than the $0.99$ of
-the quantitative model, and deliberately so. A period here is thirty years, so
-every consequence of using arrives thirty years after the decision, whereas in
-the quantitative model consequences arrive annually and compound. A low annual
-discount factor would weigh that distant death much less and the mortality
-channel would be losing to impatience rather than to anything the model is
-about, so a higher factor corrects for the coarseness of the horizon rather than
-making a claim about preferences.}} \new{and the gross interest rate is
-$R=1/\beta$}, the dispersion of log permanent income is
+demographics are conventional: the discount factor over a thirty year period
+is $\beta = 0.860$\footnote{\new{The annual discount rate here is higher than the one in the
+quantitative model, and this is deliberate.} A period here is thirty years, so
+every consequence of \new{using drugs} arrives thirty years after the decision,
+whereas in the quantitative model consequences arrive annually and compound. A
+low annual discount factor would weigh that distant death much less and the
+mortality channel would be losing to impatience rather than to anything the model
+is about, so a higher factor corrects for the coarseness of the horizon rather
+than making a claim about preferences.} and the gross interest rate is
+$R=1/\beta$, the dispersion of log permanent income is
 $\sigma = 0.75$ from Heathcote, Perri and Violante (2010), and survival over
 a period is $\phi_0 = 0.91$, the CDC life table figure from twenty five to
 fifty five. For the SUD, the
-proportional fall in survival is $\kappa = 0.43$ \new{from Hjorth\o j et al.\
+proportional fall in survival is $\kappa = 0.43$ from Hjorth\o j et al.\
 (2023), so a clean household's chance of dying before period 2 is 9
-percent and a household that acquires a SUD faces 48 percent},
+percent and a household that acquires a SUD faces 48 percent,
 and the two unemployment probabilities are measured directly, $u_0 = 0.049$
 from the BLS and $u_1 = 0.1625$ from NSDUH 2024 for respondents aged 26 and
 over.
@@ -307,23 +314,16 @@ $21.2$ percent of mean income, its rent to income ratio in the ACS, and the
 small unit is half of it. The voucher parameters are institutional: covered
 tenants pay $30$ percent of market rent, eligibility is capped at mean income,
 and $\pi_V = 0.27$ is the HUD share of eligible households actually assisted.
-\new{The weight on drugs is set at $\theta = 0.20$, with $\gamma =
-0.25(1-\theta) = 0.200$ alongside it.}\footnote{\new{$\theta$ is set rather
-than calibrated because this model cannot reach the eleven percent of income
-that users spend on drugs, the moment the quantitative model matches, taken from
-NSDUH 2024 alongside the ADAM expenditure data (Golub and Johnson, 2004), while
-mortality still deters anyone. What a household loses by acquiring a SUD is
-a continuation value the value of a statistical life pins directly, and that same
-object is what puts users at the bottom of the income distribution, so the
-spending share and the income gradient are one moment rather than two. Raising
-$\theta$ buys spending share only until the household stops being deterred: at
-$\theta=0.22$ mortality alone still reverses the gradient, at $\theta=0.23$ it no
-longer does, and by $\theta=0.25$ the spending share is $21$ percent with what
-gradient remains produced by unemployment. There is no interior point, so
-$0.20$ is the largest weight that leaves both results standing, and at it the
-model produces 4.69 percent against eleven.}}
+The weight on drugs is set at $\theta = 0.20$, with $\gamma =
+0.25(1-\theta) = 0.200$ alongside it\new{, since housing is a quarter of non
+drug spending in the Consumer Expenditure Survey}.\footnote{\new{A $\theta$ large
+enough to match the eleven percent of income that users spend on drugs makes the
+drug too valuable to be deterred by a death that arrives thirty years later, and
+users stop being poor. Setting $\theta = 0.20$ gives a spending share of
+4.69 percent and keeps the income gradient, which is the trade this model
+can make.}}
 
-\new{\subsubsection{Internal calibration}}
+\subsubsection{Internal calibration}
 
 Four parameters are set inside the model, in Table~\ref{tab:int}, each bracketed
 on the moment it moves most rather than fitted jointly. The flow value
@@ -331,23 +331,12 @@ of being alive $\aleph$ is matched to a value of a statistical life of 80
 times average annual income, about \$9 million against a mean household income of
 \$113,000, which is the range surveyed by Viscusi and Aldy (2003) once their
 estimates are put in current dollars. The pull of the first unit $b$ is matched
-to a drug participation rate of $5.13$ percent \new{from NSDUH 2024 for
-respondents aged 26 and over}, housing services on the street
+to a drug participation rate of $5.13$ percent from NSDUH 2024 for
+respondents aged 26 and over, housing services on the street
 $h_0$ to a homelessness rate of $0.399$ percent from the HUD point in time
 counts, and the SUD hazard $\lambda$ to the $33.2$ percent of users who
 acquire a SUD.
 
-
-\new{Three moments the calibration does not target are worth reporting, since the
-model is free to miss them. The average user earns 0.19 times average
-income, which is Section~\ref{sec:who}'s result and not a target. The share of
-the homeless carrying a SUD is 20 percent, against a fifth to a third in
-the data depending on whether alcohol is counted, and it is this low only because
-period 1 carries unemployment as well: every period 1 household is clean, so a
-model in which only the second period could be homeless would put the share far
-too high. Against those two, the housing share of income is 16 percent
-against a third in the data, which is what a model with two rental sizes and no
-adjustment margin can do.}
 
 \begin{table}[!tb]
 \centering
@@ -366,14 +355,14 @@ adjustment margin can do.}
 
 This section asks which feature of the model puts drug use at the bottom of the
 income distribution, and it starts from the force that any answer has to
-overcome. Drugs \new{are a luxury good} bought at a price, so a household with
+overcome. Drugs are a luxury good bought at a price, so a household with
 twice the income gives up less utility per dollar spent on them. With no consequences
 at all for acquiring a SUD that is the only force operating, and drug use
 concentrates at the top: the average user then earns 3.02 times the
 population average.
 
-Two features of the environment \new{are candidates to reverse it}. The
-\emph{mortality channel} is that the SUD \new{increases your chance of dying},
+Two features of the environment are candidates to reverse it. The
+\emph{mortality channel} is that the SUD increases \new{the} chance of dying,
 through $\kappa$ in equation~\eqref{eq:surv}.
 The \emph{unemployment channel} is that it costs you a job with probability
 $u_1-u_0$, and if income support cannot cover the rent you downsize, live on
@@ -393,13 +382,13 @@ so that participation is $5.13$ percent throughout.}
 \end{figure}
 
 The result is sharper than the statement that mortality matters more. That
-channel takes the income ratio \new{down to} 0.19 at full strength, and it
-does so as a threshold rather than gradually: \new{at half of its calibrated value
+channel takes the income ratio down to 0.19 at full strength, and it
+does so as a threshold rather than gradually: at half of its calibrated value
 the ratio is still high, at 3.33, and the reversal happens over the
-last tenth or so of the channel.} The
+last tenth or so of the channel. The
 unemployment channel does
 not reverse it at all, leaving users at 3.33 times average income even
-fully switched on. A resource penalty \new{does not} produce the concentration of
+fully switched on. A resource penalty does not produce the concentration of
 drug use at the bottom.
 
 A mortality penalty is different in kind. A resource penalty scales with the
@@ -444,16 +433,16 @@ the problem. Anyone asserting that housing the homeless must increase drug use,
 or must reduce it, is making a quantitative claim that needs to be tested.
 
 Figure~\ref{fig:margins} plots the homelessness and SUD outcomes for each
-programme as its generosity changes, alongside drug use. \new{In panel (a)} the two
-policies end in the same place \new{on homelessness}, both driving it from 0.77
+programme as its generosity changes, alongside drug use. In panel (a) the two
+policies end in the same place on homelessness, both driving it from 0.77
 percent with no
 programme to zero, and along the way Treatment First is if anything slightly
 below Housing First, because the households it deters from using never acquire
-the SUD that puts their housing at risk. \new{Panel (b) is drug use, and it is
+the SUD that puts their housing at risk. Panel (b) is drug use, and it is
 Figure~\ref{fig:mh} again: Housing First raises participation from 0.00 percent
 under Treatment First to 2.71 percent, and both are below the 6.29 percent
-that use with no programme at all.} The larger difference is
-\new{in panel (c)}, where at universal cover Housing First leaves 0.372 percent of
+that use with no programme at all. The larger difference is
+in panel (c), where at universal cover Housing First leaves 0.372 percent of
 the population carrying the SUD and Treatment First leaves 0.000
 percent. What the moral hazard buys is extra SUD cases among households that
 are housed either way.
@@ -477,7 +466,7 @@ Table~\ref{tab:welfare}. The policies differ only in the last indicator in
 equation~\eqref{eq:vouch}, so Housing First transfers resources in a superset of
 the states in which Treatment First does. The budget set is weakly larger in
 every state and strictly larger in one, so a household that optimises cannot be
-\new{worse off under Housing First}:
+worse off under Housing First:
 \begin{equation}\label{eq:dom}
 V_1(y;\ \text{HF},\ \pi_V) \;\ge\; V_1(y;\ \text{TF},\ \pi_V)
 \qquad \text{for every } y,
@@ -496,61 +485,70 @@ is now better able to bear. The +2.71 points of Section~\ref{sec:mh} are a
 statement about drug use and not about welfare. Panel B of
 Table~\ref{tab:welfare} puts numbers on it: 4.1 percent of households are
 strictly worse off under Treatment First, none is better off, and those affected
-lose 0.29 percent of consumption. \new{Those are exactly the households
+lose 0.29 percent of consumption. Those are exactly the households
 that use: a household that never uses faces the same voucher rule under both
-policies and is indifferent between them.}
+policies and is indifferent between them. \new{The figure is not the $5.13$
+percent participation rate of Section~\ref{sec:cal}, for two reasons. That rate
+is measured at the current programme, $\pi_V=0.27$, and this table is at
+universal cover, where Housing First participation is 2.71 percent. And a
+household is counted here if it uses in \emph{any} of its period 1 draws, while
+participation weights each draw by its probability, so the affected set is wider
+than the rate.}
 
 \begin{table}[!tb]
 \centering
 \caption{Welfare at universal cover, with no externality}\label{tab:welfare}
-\input{tables/tab_welfare}
-\notes{0.9\textwidth}{Note: the consumption equivalent is the proportional change
+\sbox{\ntbox}{\input{tables/tab_welfare}}\usebox{\ntbox}
+\tabnote{Note: the consumption equivalent is the proportional change
 in consumption, in every period and state, worth as much as the difference in
-lifetime value. \new{Voucher outlay is expected spending on a household over both
+lifetime value. Voucher outlay is expected spending on a household over both
 periods, the second discounted and weighted by survival, per unit of average
-income.}}
+income.}
 \end{table}
 
-A fixed budget does not \new{rescue the welfare case for conditionality} either.
+A fixed budget does not rescue the welfare case for conditionality either.
 Treatment First is
 actually slightly \emph{more} expensive at universal cover, 0.1717 against
 0.1716, so matching on cost rather than on generosity changes nothing. The
 reason is that survival into period 2 falls from 0.91 to 0.52 with a
-SUD\new{: the extra households Housing First puts into the SUD state die sooner,
+SUD: the extra households Housing First puts into the SUD state die sooner,
 so fewer of them are alive in period 2 to collect a voucher, and the programme's
-expected outlay falls}. So a case for conditionality has to come
+expected outlay falls. So a case for conditionality has to come
 from an externality.
 
-\subsubsection{\new{An} externality on children reverses it}\label{sec:kids}
+\subsubsection{An externality on children reverses it}\label{sec:kids}
 
 \begin{table}[!tb]
 \centering
 \caption{The externality on children}\label{tab:children}
-\input{tables/tab_children}
-\notes{0.82\textwidth}{Note: Panel A is at the baseline programme, $\pi_V=0.27$,
+\sbox{\ntbox}{\input{tables/tab_children}}\usebox{\ntbox}
+\tabnote{Note: Panel A is at the baseline programme, $\pi_V=0.27$,
 since the transmission ratio in the data comes from an economy with a rationed
 programme; Panel B is at universal cover, one child per household, no
 discounting across generations. Losses are consumption equivalents.}
 \end{table}
 
-\new{I model an externality that runs} through income rather than through
+I model an externality that runs through income rather than through
 preferences. I have considered two alternatives, but both seem to be at odds
 with reality. Letting the child of a user inherit a stronger taste, a lower $b$,
 matches the transmission fact but has the wrong welfare sign: $b$ enters only
 through $\theta\log(1+v/b)$, so a lower one raises the child's objective at every
-$v>0$ and its lifetime value with it. Letting it inherit a greater
-susceptibility, a higher $\lambda$, fails \new{another way}, since a child facing a
-riskier drug optimally uses \emph{less} \new{ex ante, which is at odds with the
-data: children of parents with a SUD are \emph{more} likely to use, not less}.
+$v>0$ and its lifetime value with it. \new{That is at odds with what the data
+say about these children, who do worse on income, schooling and health, not
+better; a channel that makes the child of a user better off for being one cannot
+be the channel the evidence is describing.} Letting it inherit a greater
+susceptibility, a higher $\lambda$, fails another way, since a child facing a
+riskier drug optimally uses \emph{less} ex ante, which is at odds with the
+data: children of parents with a SUD are \emph{more} likely to use, not less.
 
 Income works on both counts, and it works through the channels explored in
 Section~\ref{sec:who}: lower permanent income is unambiguously bad to receive,
 and this model already puts users at the bottom, so a child born poorer is
-mechanically more likely to use, which is aligned with the data\new{. It is also
+mechanically more likely to use, which is aligned with the data. It is also
 supported by the evidence, and it stands in for more than income alone: a parent
 who diverts spending and time to drugs invests less in the child's education and
 development, and the income penalty is the reduced form of all of that (Chetty,
-Hendren and Katz, 2016; McGovern et al., 2023)}. The income
+Hendren and Katz, 2016; McGovern et al., 2023). The income
 gradient does the whole job, so the model transmits a SUD across generations
 \emph{without transmitting any preference for drugs}.
 
@@ -562,17 +560,17 @@ y_{\text{child}} \;=\; y_{\text{base}}\,
 (1-\delta_h)^{\mathbf{1}\{\text{parent was homeless}\}} ,
 \end{equation}
 which the parent does not internalise. That is what makes it an externality
-rather than something already priced into $V_1$.\footnote{\new{In the quantitative
+rather than something already priced into $V_1$.\footnote{In the quantitative
 model the altruism of parents towards their children is calibrated rather than
 set to zero, so that the channel where a parent does take some account of what it
-does to its child is present and only the remainder is external.}}
+does to its child is present and only the remainder is external.}
 
 The two penalties are set to different things. Panel A of
 Table~\ref{tab:children} shows that $\delta_d = 0.30$ makes the child of a
 parent who acquired the SUD 2.4 times as likely to acquire one, in
 the middle of the epidemiological range of two to four in McGovern et al.\
 (2023) and the alcohol literature. The homelessness penalty $\delta_h$ is set
-\new{to $31$ percent,} directly from Chetty, Hendren and Katz (2016), who find
+to $31$ percent, directly from Chetty, Hendren and Katz (2016), who find
 that children who moved to a low poverty neighbourhood before age 13 went on to
 earn $31$ percent more as adults. The two penalties also do different work: both policies drive
 homelessness to zero at universal cover, so $\delta_h$ prices the programme
@@ -585,21 +583,21 @@ conditionality, in the first row, is 0.012 percent of consumption, small
 because only 4.1 percent of households are affected. Against that,
 conditionality prevents 0.372 percentage points of SUD cases in the
 second row, and each of those cases costs one child 47.1 percent of
-consumption, \new{shown in the third row. The gain in the fourth row is the
+consumption, shown in the third row. The gain in the fourth row is the
 product of those two, since one prevented case spares one child: 0.372
 percentage points times 47.1 percent gives 0.175 percent of
 consumption, which is 14.5 times the private loss of the first row.
 That ratio exceeds one for every $\delta_d$ in Panel A except $\delta_d=0$, where
-by construction there is no externality to price}. Housing
+by construction there is no externality to price. Housing
 First is better for every household taken one at a time, and worse once one
 counts the children of the households it fails to deter.
 
-\new{All of this is a crude illustration: the model is two dates long, nobody who
-faces the sobriety condition fails to meet it, and the magnitudes are not to be
-taken seriously. It shows that an externality can reverse a ranking that is
+All of this is a crude illustration: the model is two \new{periods} long and
+nobody who faces the sobriety condition fails to meet it. It shows that an
+externality can reverse \new{a welfare ranking} that is
 otherwise airtight, which is all it is for. Which way the comparison actually
 goes is a question about magnitudes, and that is what the quantitative model of
-the next section is for.}
+the next section is for.
 
 %======================================================================
 \section{The quantitative model}\label{sec:full}
