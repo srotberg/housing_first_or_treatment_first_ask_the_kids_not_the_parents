@@ -639,114 +639,54 @@ more, which is the opposite direction from the tax.
 %======================================================================
 \section{The quantitative model}\label{sec:full}
 
-This section states the model the paper's numbers come from, completely. Where
+This section \new{describes} the model the paper's numbers come from. Where
 the stylized model already carries something unchanged it is named rather than
 motivated a second time: the Stone-Geary form of the drug term, the logic that
-separates the two policies, and the transmission externality all appear below
-exactly as Sections~\ref{sec:env} to~\ref{sec:kids} give them. Everything else is
-written out, because it is what turns a directional answer into a quantitative
-one.
+separates the two policies, and the transmission externality all appear below.
 
 \subsection{Demographics, the state and the choice set}
 
-Households enter at age $26$, live at most to $85$, so $j=1,\dots,J=60$ annual
-periods, and retire at $j_R=41$. Survival from $j$ to $j+1$ is $\phi_j(h',d,m)$
+\new{Households enter as adults, live at most $J$ annual periods and retire at
+$j_R$; the ages themselves belong with the calibration and are given in
+Section~\ref{sec:fullcal}.} Survival from $j$ to $j+1$ is $\phi_j(h',d,m)$
 in~\eqref{eq:fsurv}: it depends on age, on the housing \emph{chosen} this period,
-on the SUD and on mental illness. Newborns replace the dead. The individual
+on the SUD and on mental illness. Newborns replace the dead \new{exactly, so the
+mass of households is constant}. The individual
 state is
 \begin{equation}\label{eq:fstate}
 s=(a,\,y,\,e,\,d,\,m,\,\eta)\in
 \mathcal A\times\mathcal Y\times\{1,2,3\}\times\{0,1\}^3 ,
 \end{equation}
-assets $a\ge0$ on a \new{$40$} point grid dense near zero, permanent productivity
-$y$ on \new{$7$} points, employment $e$, the SUD $d$, serious mental illness $m$
-and the voucher $\eta$, which is \new{$6{,}720$} points per age and
-\new{$403{,}200$} in total. \new{Assets are non negative throughout: with
-homeownership out of the model there are no mortgages, so the grid has no
-negative side.}
-
-Two economies in that list are choices rather than oversights. \new{There are two
-employment statuses, employed and unemployed. Unemployment insurance is paid for
-the first year of a spell and nothing after it, so a household in its first year
-of unemployment and one in its third have different income and different
-continuation values and cannot be merged; $e$ therefore takes three values, the
-third being an unemployment duration marker rather than a third status. There is
-no probability of receiving insurance: it used to be drawn on entry into a spell,
-and that parameter is gone, which removes a parameter without removing a state.}
-And the housing unit a
-household arrives in is not a state: everything that conditions on housing
-conditions on the unit chosen, and renters face no adjustment cost, so carrying it
-would replicate the whole problem four times over for nothing. It would have to be
-reinstated if moving costs were added.
+\new{where $a$ denotes assets, $y$ permanent productivity, $e$ employment status,
+$d$ the substance use disorder, $m$ serious mental illness and $\eta$ receipt of a
+voucher. Assets and productivity are discretised, and the grids are given with the
+calibration in Section~\ref{sec:fullcal}.}
 
 Each period the household chooses
 \begin{equation}\label{eq:fchoice}
 \big(n,\,h',\,v,\,\tau,\,a'\big)\in
 [0,1]\times\{h_1,h_2,h_3,h_4\}\times\mathbb R_+\times\{0,1\}\times\mathcal A ,
 \end{equation}
-hours $n$, housing $h'$ where $h_1$ is homelessness, drug use $v$, treatment take
-up $\tau$, available only when $d=1$, and next period assets $a'$. Every shock is
-drawn \emph{after} all of that, which is what makes those variables state
-variables rather than choices, and it is why the transitions in
-Section~\ref{sec:fshocks} condition on the chosen $h'$, $v$ and $\tau$: the choice
-comes first, the draw second.
+\new{where $n$ denotes hours, $h'$ the housing unit chosen, of which $h_1$ is
+homelessness, $v$ drug use, $\tau$ SUD treatment take up, available only when
+$d=1$, and $a'$ next period assets.}
 
 \subsection{Preferences}\label{sec:fprefs}
 
 Period utility is
 \begin{equation}\label{eq:futil}
 u\big(c,h',v,n,\tau;d,m\big) \;=\;
-\frac{\big[\,c^{\alpha}\,(h')^{\beta}\,(v+b_{dmh'})^{\gamma}\,\big]^{1-\sigma}}{1-\sigma}
+\frac{\big[\,c^{\alpha}\,(h')^{\beta}\,(v+\new{b})^{\gamma}\,\big]^{1-\sigma}}{1-\sigma}
 \;+\;\omega_{\ell}\frac{(1-n)^{1-\sigma_{\ell}}}{1-\sigma_{\ell}}
-\;+\;\aleph\;-\;\tau\bar\tau^{u}\;\new{-\;\kappa_x H},
+\;+\;\aleph\;-\;\tau\bar\tau^{u}\;-\;\kappa_x H,
 \end{equation}
 with $\alpha+\beta+\gamma=1$. Equation~\eqref{eq:u} is the logarithmic case of the
 bundle with hours fixed, so $\gamma$ and $b$ do what $\theta$ and $b$ do in
 Section~\ref{sec:env}: $b$ is the Stone-Geary endowment that keeps the marginal
 utility of the first unit finite and therefore decides whether anyone uses at all.
 
-Four things are new. Leisure makes hours a margin. Treatment costs utility
-rather
-than money, which is what the evidence supports, since the three largest barriers
-reported in the NSDUH are beliefs and preferences and not prices. \new{The term $\kappa_x H$ prices the disamenity of the aggregate homelessness
-rate: households dislike homelessness around them and not only their own. It is
-the headcount alone, with no extra weight on the homeless who carry a SUD, so the
-object being priced is homelessness rather than addiction, and the willingness to
-pay evidence it is calibrated to is about exactly that.
-Section~\ref{sec:fleftout} gives the number.} \new{And the flow utility is the
-\emph{same function} of $(c,h,v)$ in every state and after every choice: the
-Cobb-Douglas weights are fixed, and so is the Stone-Geary shifter $b$.}
-
-{\color{red}
-That is a restriction and it is deliberate. A taste weight rising with $d$ would
-make reducing the SUD and expanding housing complements even absent any incentive
-effect, which is not a channel worth carrying, and it would transmit a preference
-for drugs across generations alongside the disorder itself. With the weights
-invariant, acquiring a SUD relaxes no constraint, so every private cost of it has
-to come from mortality, employment and the budget.
-
-An earlier version let $b$ fall with homelessness as well, which would have made
-housing lower drug use directly. Two objections retired it. The first is that
-housing is a \emph{choice} rather than a state, so a $b$ that depends on it makes
-preferences a function of a choice: a household would select its dwelling partly
-to move its own taste, and a user would have a reason to choose the street
-because the drug is worth more there, which is close to the opposite of the
-selection the paper is about. The second is that the sign is strange in either
-normalisation. The marginal value of the drug is proportional to $1/(b+v)$, so a
-smaller $b$ makes the drug \emph{better}; the channel would work by asserting
-that being homeless improves the experience of using, which is not something the
-evidence speaks to and not something we would want to calibrate.
-
-Nothing is lost by dropping it, because the elasticity of drug use with respect
-to housing access does not have to be a taste. It is already carried by a
-\emph{hazard}: recovery from the disorder is six times harder on the street than
-in a home, $\mu_H$ in Section~\ref{sec:fshocks}. That is a transition
-probability rather than a preference, it is measured on exogenous housing
-\emph{assignment} rather than inferred from choices, and abstinence by arm is
-precisely what Milby et al.\ (2005) report. So housing still lowers use in the
-model, and it does so through the object the trial actually identifies.
-}
-
+\new{Two things are new. Leisure makes hours a margin, and treatment costs
+utility rather than money.}
 \subsection{Income, taxes and transfers}
 
 Gross income depends on age, employment, productivity and health,
@@ -809,9 +749,9 @@ Note what is absent: treatment, which costs utility, and bequests, which go to
 the government. Given $a'$ and $h'$, write $R$ for the resources left over.
 Cobb-Douglas preferences over $(c,v+b)$ split them in closed form,
 \begin{equation}\label{eq:fcv}
-c=\frac{\alpha}{\alpha+\gamma}\big(R+p_v b_{dmh'}\big),
+c=\frac{\alpha}{\alpha+\gamma}\big(R+p_v b\big),
 \qquad
-v=\max\Big\{0,\ \frac{\gamma}{(\alpha+\gamma)p_v}\big(R+p_v b_{dmh'}\big)-b_{dmh'}\Big\},
+v=\max\Big\{0,\ \frac{\gamma}{(\alpha+\gamma)p_v}\big(R+p_v b\big)-b\Big\},
 \end{equation}
 so the inner allocation never needs a numerical search, and the corner in $v$ is
 where the household abstains because the Stone-Geary endowment already exceeds
@@ -1096,7 +1036,7 @@ Putting it together, for $j=1,\dots,J$ and with $V_{J+1}$ given below,
 \begin{equation}\label{eq:fbellman}
 \begin{aligned}
 V_j(a,y,e,d,m,\eta)=\max_{\,n,\,h',\,v,\,\tau,\,a'}\ \Bigg\{\
-&\frac{\big[c^{\alpha}(h')^{\beta}(v+b_{dmh'})^{\gamma}\big]^{1-\sigma}}{1-\sigma}
+&\frac{\big[c^{\alpha}(h')^{\beta}(v+b)^{\gamma}\big]^{1-\sigma}}{1-\sigma}
 +\omega_{\ell}\frac{(1-n)^{1-\sigma_{\ell}}}{1-\sigma_{\ell}}
 +\aleph-\tau\bar\tau^{u}\new{-\kappa_x H}\\[2pt]
 &+\ \beta\,\phi_j(h',d,m)\!\!\int\!\! V_{j+1}(s')\,
