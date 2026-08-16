@@ -182,6 +182,37 @@ one setting where the affordability floor is and the other how bad the
 alternative to it is, so running them at the same speed lets them chase each
 other.
 
+### 1.7 The weight on drugs is never calibrated, and the machinery for it is dead.
+
+`relative_share_of_addiction_adjuster = 0.5` and
+`stopping_rule_relative_share_of_addiction = 1e-3` both exist, which reads as a
+parameter being bracketed on a moment. It is not. The weight itself,
+`relative_share_of_addiction_1`, is declared **`parameter`**, a compile time
+constant, so it cannot be assigned; and the mutable copy
+`relative_share_of_addiction` is written to the log in three places and
+**assigned nowhere**. There is no update statement, so the adjuster and the
+stopping rule are dead.
+
+The weight is therefore fixed at 0.13 and the model's addiction rate is whatever
+falls out of it. In the run of 16 August that was `model_fraction_addicted =
+0.326`, against an NSDUH substance use disorder rate near 3.7 per cent for adults
+26 and over, which is the moment the note's internal table says $\lambda$ is
+matched to. Two things have to be separated before that gap means anything:
+
+* **What the moment IS.** `model_fraction_addicted` sits alongside
+  `model_exprimenters`, and the two summed to 0.62 while
+  `model_drug_use_by_age_group` ran at 0.10 to 0.12. Those cannot all be the same
+  object. Whether `model_fraction_addicted` is a stock of people who ever
+  acquired a disorder, a flow of current use, or something else decides whether
+  0.326 is wrong or merely unfamiliar. Read the accumulation, not the name.
+* **Whether the weight should be free.** If the disorder rate is a target, then
+  either the weight or $\lambda$ has to move to hit it, and at present neither
+  does: $\lambda$ has no adjuster either.
+
+Do this before reporting any number from the full model, because a disorder rate
+that is out by an order of magnitude changes every counterfactual that runs
+through it.
+
 ---
 
 ## 2. In the code, absent from the note
