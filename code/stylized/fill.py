@@ -45,6 +45,9 @@ def numbers(base):
     out['r_base'] = f'{mb["r_use"]:.2f}'
     out['hshare_m'] = f'{100*mb["housing_share"]:.0f}'
     out['hspend_m'] = f'{100*mb["hspend"]:.1f}'
+    # what gamma would have to be with a CONTINUOUS housing choice: the
+    # Cobb-Douglas share of non drug spending times (1-theta)
+    out['gam_naive'] = f'{0.268 * (1.0 - base.th):.3f}'
     out['th'] = f'{base.th:.2f}'
     out['gam'] = f'{base.gam:.3f}'
     out['lam'] = f'{base.lam:.0f}'
