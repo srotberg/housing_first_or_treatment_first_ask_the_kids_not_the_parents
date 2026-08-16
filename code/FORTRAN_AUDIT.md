@@ -137,13 +137,28 @@ already existed as `data/us_housing_dist.csv` and was marked "not yet wired". It
 is wired now. The cost shares stay in the table as untargeted moments, where they
 are a check rather than a definition.
 
-The signs both go the same way and both were flipped from the form they had.
-Raising the smallest unit makes it more expensive, and the households in it have
-nothing cheaper to move to except the street, so they leave the housed
-distribution rather than move down it and the smallest share FALLS. Raising the
-expander makes the middle unit smaller and cheaper, so more households take it
-and the largest share FALLS. Both updates therefore add the gap rather than
-subtracting it.
+The two signs go OPPOSITE ways, which is worth deriving rather than guessing,
+because the first attempt got the expander backwards.
+
+With three points the grid is `h0`, `h0 + (h2-h0)/2**expander`, `h2`.
+
+* **Smallest size.** Raising `h0` raises the middle unit too, but by less:
+  `dh1/dh0 = 1 - 2**(-expander)`, about 0.71 at 1.8. So the gap between the two
+  narrows and the middle unit becomes relatively better value, and the share in
+  the smallest FALLS. The update ADDS the gap.
+* **Expander.** A higher expander pulls the middle unit DOWN towards the
+  smallest: 0.119 at 1.8, 0.074 at 3.0, 0.178 at 1.0. Shrinking the middle makes
+  it a near duplicate of the small unit, so households that wanted a medium
+  dwelling have nowhere to go but the largest and the share in the largest RISES.
+  The update SUBTRACTS the gap.
+
+**A caveat on reachability.** The first iteration gives 36.9 / 56.9 / 6.1 against
+13.2 / 24.1 / 62.7, so the model is putting almost nobody in the largest unit
+while the data puts nearly two thirds there. In the ACS the largest bin is the
+MODAL one; in the model `largest_house_size` is 0.315 against a middle of 0.119,
+so it reads as a luxury rather than as the typical dwelling. If the expander runs
+to its bound of 5 without closing that gap, `largest_house_size` is the parameter
+at fault and has to come down; it is currently set, not calibrated.
 
 `smallest_house_size_adjuster` is deliberately slower than
 `size_homelessness_adjuster`: both move the bottom of the housing distribution,
