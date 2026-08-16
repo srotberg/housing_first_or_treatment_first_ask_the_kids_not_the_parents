@@ -189,6 +189,38 @@
         ! threshold is 3, the grid is 6, and 1..3 and 4..6 mean what they always
         ! did. verify_index_map checks that at run time rather than asking to be
         ! believed.
+        ! RESTRICTING THE a' SEARCH TO THE POINTS EQUILIBRIUM ACTUALLY USES.
+        ! The a' loop is the quadratic part of the solve and everything inside it
+        ! is expensive: a secant solve for hours and an iterative split of c and
+        ! v. But across a whole solve only a fraction of the asset grid is ever
+        ! chosen, so searching the rest is work spent proving what is already
+        ! known.
+        !
+        ! a_prime_allowed is built from the PREVIOUS solve's policy function,
+        ! every index chosen by any state, dilated by a_prime_window points on
+        ! each side. During a calibration the model is re-solved hundreds of times
+        ! at nearby parameters, so that set is stable and the saving compounds.
+        !
+        ! IT IS A HEURISTIC AND IT IS OFF. The objective is NOT single peaked in
+        ! a': voucher eligibility is a step in income which includes r*a, the food
+        ! stamp floor kinks, and housing is discrete. So an optimum outside the
+        ! allowed set cannot be ruled out by an argument, only by a check. Two are
+        ! provided. a_prime_boundary_hits counts the states whose optimum landed
+        ! on the edge of the allowed set, which is the signal that the window
+        ! bound and the answer may differ from the full grid; it is reported at
+        ! the end of every solve and should be zero. And the first solve of any
+        ! run is always unrestricted, since there is no previous policy to build
+        ! the set from.
+        !
+        ! Before this is trusted: solve the benchmark with it off, then on, and
+        ! compare the targeted moments and both counterfactuals, not just the
+        ! value function.
+        integer, parameter :: restrict_a_prime=0
+        integer, parameter :: a_prime_window=3
+        logical, dimension(:), allocatable :: a_prime_allowed
+        integer :: a_prime_boundary_hits=0
+        integer :: a_prime_set_ready=0
+
         integer, parameter :: number_of_smi_states=1
         integer, parameter :: threshold_addiction_index=3*number_of_smi_states
         integer, parameter :: have_two_rental_markets=0
@@ -10032,7 +10064,7 @@
                     if (labor_supply_2>0.4) then 
                      
                     if ((in_retirement==0) .AND. (fixed_labor_supply_at_benchmark==0) .AND. &
-                        ((unemployment_index==1) .OR. (unemployment_index==(threshold_addiction_index+1)))) then
+                        (emp_of(unemployment_index)==1)) then
                                         
                         x_1=1
                                         
@@ -10474,7 +10506,7 @@
                             
                             if (labor_supply_2>0.4) then
                             if ((in_retirement==0) .AND. (fixed_labor_supply_at_benchmark==0) .AND. &
-                                ((unemployment_index==1) .OR. (unemployment_index==(threshold_addiction_index+1)))) then
+                                (emp_of(unemployment_index)==1)) then
             
                                 x_1=2
                                                             
@@ -11802,6 +11834,15 @@
                     (1-global_search_index)*financial_grid_size+&
                     global_search_index*min(optimal_financial_1+grid_gaps-1,financial_grid_size),&
                     (1-global_search_index)*grid_gaps+global_search_index
+                
+                    ! Skip the asset points no state chose last time. Off by
+                    ! default, and never applied on the first solve, when there is
+                    ! no previous policy to learn the set from.
+                    if ((restrict_a_prime==1) .AND. (a_prime_set_ready==1)) then
+                    
+                        if (.NOT. a_prime_allowed(future_financial_index)) cycle
+                        
+                    end if
                 
                     if ((in_retirement==0) .AND. (fixed_labor_supply_at_benchmark==0)) then
                                     
@@ -16991,6 +17032,65 @@
         
     end subroutine             
             
+    subroutine build_a_prime_window(time_period)
+    
+        ! Collect every asset index the policy function chose anywhere, dilate by
+        ! a_prime_window on each side, and report how much of the grid that is.
+        ! Called after a solve; the next solve uses it.
+    
+        use Global_Vars
+        
+        implicit none
+        
+        integer, intent(in) :: time_period
+        integer :: j_1,k_1,lo_1,hi_1,kept_1
+        logical, dimension(:), allocatable :: chosen_1
+        
+        if (restrict_a_prime==0) return
+        
+        if (.NOT. allocated(a_prime_allowed)) allocate(a_prime_allowed(financial_grid_size))
+        
+        allocate(chosen_1(financial_grid_size))
+        
+        chosen_1=.FALSE.
+        
+        do j_1=1,financial_grid_size
+        
+            if (any(policy_function_financial_index(1)%vector_transition_integer&
+                (time_period,:,:,:,:,:,:)==j_1)) chosen_1(j_1)=.TRUE.
+        
+        end do
+        
+        a_prime_allowed=.FALSE.
+        
+        do j_1=1,financial_grid_size
+        
+            if (.NOT. chosen_1(j_1)) cycle
+            
+            lo_1=max(j_1-a_prime_window,1)
+            hi_1=min(j_1+a_prime_window,financial_grid_size)
+            
+            do k_1=lo_1,hi_1
+            
+                a_prime_allowed(k_1)=.TRUE.
+            
+            end do
+        
+        end do
+        
+        kept_1=count(a_prime_allowed)
+        
+        a_prime_set_ready=1
+        
+        write(*,*) "a' window: keeping", kept_1, "of", financial_grid_size, &
+            "asset points; boundary hits last solve:", a_prime_boundary_hits
+        
+        a_prime_boundary_hits=0
+        
+        deallocate(chosen_1)
+    
+    end subroutine
+    
     subroutine verify_index_map()
     
         ! THE INDEX MAP CHECKS ITSELF. Every fine grained test that used to be
