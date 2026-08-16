@@ -39,7 +39,7 @@ EXTERNAL = [
         ('th', r'\theta', 'Weight on drug use',
          r'Set; see the text', '{:.2f}'),
         ('gam', r'\gamma', 'Weight on housing services',
-         r'$0.25(1-\theta)$, \textcolor{red}{CES 2023}', '{:.2f}'),
+         r'$0.25(1-\theta)$, \textcolor{red}{CEX 2024, shelter and utilities}', '{:.2f}'),
     ]),
     ('The SUD', [
         ('kap', r'\kappa', 'Proportional fall in survival with a SUD',
