@@ -826,3 +826,62 @@ and re-searches the full grid, which is safer but silent.
 **They should be consolidated rather than left as two switches that do the same
 thing.** The right combination is the warm start's per branch window with
 `restrict_a_prime`'s boundary counter reported at the end of a solve.
+
+---
+
+# The calibration, note against code
+
+The note's internal table lists 24 parameters, each against the moment it is
+assigned to. **Nine of them are calibrated in the program. The rest are hard
+coded numbers.** This is the answer to "is anything not calibrated as the note
+says": most of it.
+
+The list of everything the calibration loop assigns was taken from the source
+rather than from memory.
+
+## Calibrated, as the note says
+
+`discount_factor` (beta), `relative_share_of_housing` (gamma),
+`relative_share_of_leisure` (omega_l), `largest_house_size`,
+`smallest_rental_relative_to_lowest_income` (hbar), `lambda_addiction` (lambda),
+`size_homelessness` (h_HL), `utility_cost_of_treatment` (bar tau^u), and
+`labor_income_tax_rate`, which clears rather than targets.
+
+## In the note's internal table, hard coded in the program
+
+| note | code | how it is set |
+|---|---|---|
+| `theta`, weight on drugs | `relative_share_of_addiction_1` | **`parameter`**, 0.13. `relative_share_of_addiction_adjuster` is declared and **never used anywhere** |
+| `b`, Stone-Geary endowment | `addiction_scalar_1` | **`parameter`**, 3.7e-8 |
+| `aleph`, flow value of life | `value_of_life` | variable, **never updated**, 340 |
+| `cbar`, food stamp floor | `max_food_cost` | **`parameter`**, 0.126 |
+| `pi_V`, voucher lottery | `probability_of_voucher_benchmark_used` | **`parameter`**, 0.06 |
+| `bar pi^eu`, separation rate | `probability_becoming_unemployed` | **`parameter`** |
+| `kappa_ued`, employment multiplier, SUD | `multiple_of_probabilities_of_employment_if_addicted` | **`parameter`**, 2.7 |
+| `bar kappa_phi d`, mortality multiplier, SUD | `increased_risk_of_death_addicted` | **`parameter`** |
+| `mu_H`, recovery multiplier, homeless | `probability_of_stopping_addiction_if_homeless` | **`parameter`**, one sixth of the base rate |
+| `omega`, weight on the child | `weight_on_child` | variable, **never updated**, 0.0137 |
+| `delta_d`, transmission penalty | `penalty_child_addicted` | variable, **never updated**, 0.30 |
+
+`varsigma`, the geometric spread, is the one benign difference: the code
+calibrates `largest_house_size` instead, which is the same grid under a different
+parameterisation.
+
+And `kappa_uem`, `rho_m`, `rho_d`, `p_m` and `zeta_DI` cannot be calibrated
+because they do not exist.
+
+## Why this matters more than a missing switch
+
+Three of the hard coded ones carry headline results.
+
+`bar kappa_phi d` is the note's **only second stage instrument**: the note says it
+is bracketed inside the Degenhardt range to hit a drug price elasticity of -0.63,
+and that elasticity is what disciplines how much drug use responds to its costs.
+It is a compile time constant, so the elasticity is not targeted at all.
+
+`omega` is what the welfare reversal turns on, and the note reports a condition
+that pins it at 0.014. It is fixed at 0.0137 and never moved.
+
+`theta` and `b` are the two parameters that decide who uses and how much, and
+between them they carry the participation rate and the drug spending share. Both
+are compile time constants.
