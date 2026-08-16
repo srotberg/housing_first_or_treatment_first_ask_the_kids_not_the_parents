@@ -396,51 +396,83 @@ magnitude, so the last two orders cost as much as everything before them.
 Three changes, in increasing order of how much thought they need before you
 trust them.
 
-### 9.1 The tolerance was two orders finer than anything that reads it
+### 9.1 The tolerance: no win here, and the reason is worth recording
 
-`stopping_rule_stationary_distribution` was 1e-8. What consumes the
-distribution is population shares reported to three or four decimals, and the
-calibration's own stopping rules are 1e-3 and 1e-4. 1e-6 is already two orders
-finer than the coarsest consumer. Given 230 sweeps per order, this alone is
-about 460 sweeps.
+`stopping_rule_stationary_distribution` is declared 1e-8, and the obvious move
+is to loosen it: the moments are shares to three or four decimals and the
+calibration's own rules are 1e-3 and 1e-4.
+
+**That was tried and it did nothing, because the declared value never reaches
+the iteration.** It is overwritten twice on the way in. There was a block at the
+head of the calibration sweep resetting it to 1e-8 in both arms of an `if` whose
+two branches were identical, and then, unconditionally since `include_addiction`
+is a parameter equal to one, a second assignment to **2e-4** at the call site.
+
+So the operative tolerance was already 2e-4 the whole time. The 655 sweeps a
+loop takes are the cost of reaching 2e-4, not of reaching 1e-8, and there is no
+slack left in the number. The dead 1e-8 block is removed and both surviving
+sites now say which one is operative.
+
+The general lesson, which is the same one section 8 taught: a value declared in
+one place and assigned in three is not a setting, it is a guess. Grep every
+assignment before concluding a constant does anything.
 
 ### 9.2 States with no mass propagate no mass
 
 The distribution is extremely concentrated: over half of it sits at the lowest
 asset point alone. Every empty state was still paying for a policy lookup, an
 income calculation and a four deep accumulation. The skip is at
-`negligible_mass = 1e-18`, twelve orders below the stopping rule, so the mass
-discarded cannot reach the convergence test let alone a reported moment.
+`negligible_mass = 1e-18`, fourteen orders below the operative 2e-4 stopping
+rule, so the mass discarded cannot reach the convergence test let alone a
+reported moment.
 
-### 9.3 Aitken extrapolation, guarded three ways
+This is a per sweep saving, not a reduction in the number of sweeps, so it
+cannot be read off the distance sequence. It is being measured against a twin
+binary with `negligible_mass` set negative, which skips nothing; the number
+goes here when that finishes. **Of the three changes in this section it is the
+only one that survived.**
+
+### 9.3 Aitken extrapolation: built, measured, rejected
 
 Three iterates of a linearly converging sequence identify the limit: with
 `d1 = x1 - x0`, `d2 = x2 - x1`, the ratio `d2/d1` estimates the contraction
-factor and `x2 + d2*rho/(1-rho)` is the limit. Elementwise on the whole
-distribution this is the ordinary delta squared step.
+factor and `x2 + d2*rho/(1-rho)` is the limit. Elementwise on the distribution
+this is the ordinary delta squared step. It is implemented, guarded, and
+**switched off, because the A/B says it makes things worse.**
 
-Two decisions in the implementation are worth stating because the obvious
-version of each is wrong.
+Two binaries differing in nothing but `accelerate_distribution`, from identical
+inputs, 2 threads each:
 
-**rho is estimated from the sums of absolute differences, not pointwise.** A
-pointwise ratio is noisy exactly where mass is near zero, and it would produce
-enormous extrapolations in the states that matter least. The sums are dominated
-by the states that carry mass, which is where the sequence's actual rate lives.
+| sweep | accelerated | plain |
+|---|---|---|
+| 20 | 1.999e-2 | 1.999e-2 |
+| 30 | 1.085e-2 | 2.464e-3 |
+| 40 | 2.554e-3 | 6.412e-4 |
+| 100 | 2.047e-3 | 5.421e-4 |
 
-**A bad step is rejected, not repaired.** The result is thrown away if it
-produces negative mass or moves the total by more than a part in a thousand.
-Negative mass in a distribution is much worse than a slow iteration, and a
-rejected step costs one wasted vector operation, after which the sweep carries
-on exactly as it would have. Two further guards: the step is taken only when
-the estimated rho is in (0, 0.999), and only every third sweep so the two
-intervening plain sweeps re establish the sequence.
+Identical to sweep 21, then three to four times *further* from the target at the
+same sweep count. The steps are being accepted, not rejected by the guards, so
+the extrapolation is genuinely running and genuinely hurting.
+
+**Why, and it should have been predictable.** Delta squared assumes a single
+dominant geometric mode. This operator moves mass one age per sweep, so for the
+first sixty sweeps it behaves nilpotently rather than geometrically and an
+estimated rho is meaningless; past that, a scalar rho is still compressing a
+whole spectrum into one number. What the step does is knock the distribution off
+a path that was converging, after which the plain sweeps repair it.
+
+If anyone revisits it, the two things to try are gating the step until the sweep
+count exceeds the life span, so the age transient is past, and requiring rho to
+agree across two consecutive estimates first. Neither is implemented.
+
+Two implementation choices are still worth keeping in the record, because the
+obvious version of each is wrong. rho is estimated from **sums** of absolute
+differences, not pointwise: a pointwise ratio is noisy exactly where mass is
+near zero and extrapolates wildly in the states that matter least. And a bad
+step is **rejected, not repaired** — thrown away on negative mass or a total
+moving more than a part in a thousand, since negative mass in a distribution is
+far worse than a slow iteration and a rejected step costs one vector operation.
 
 `accelerate_distribution = 0` reproduces the plain sweep exactly. That is what
-makes the two comparable, and the A/B was run that way: two binaries differing
-in nothing but that parameter, from identical inputs.
-
-**Watch for.** Acceleration changes the path to the fixed point, not the fixed
-point. If the converged moments differ between the two binaries by more than
-the stopping rule, the guard is not tight enough and the extrapolation is
-being accepted somewhere the sequence is not linear. Check that before reading
-anything else off a run.
+made the A/B possible, and it is the reason to leave the code in place rather
+than delete it.

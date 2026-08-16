@@ -485,25 +485,46 @@
         real(8) :: stopping_rule_inheritance_amount=(1-is_counterfactual)*2*10.d0**(-3)+is_counterfactual*2*10.d0**(-3)
                                                            
         real(8), parameter :: stopping_rule_value_function=5*10.d0**(-8)
-        ! THE TOLERANCE, AND WHAT IT IS FOR.
+        ! THIS VALUE IS NOT THE ONE THE CALIBRATION USES. Read the next comment
+        ! before changing it.
         !
-        ! 1e-8 on the distribution distance is far tighter than anything read off
-        ! it needs. The moments are population shares reported to three or four
-        ! decimals and the calibration's own stopping rules are 1e-3 and 1e-4, so
-        ! a distribution accurate to 1e-6 is already two orders finer than the
-        ! coarsest thing that consumes it. The iteration contracts at roughly the
-        ! per period survival rate, since mass turns over once per lifetime, so
-        ! the last two orders of magnitude cost as much as everything before
-        ! them.
-        real(8) :: stopping_rule_stationary_distribution=10.d0**(-6)
+        ! It is overwritten inside the calibration sweep, unconditionally,
+        ! because include_addiction is a parameter equal to one. The operative
+        ! tolerance is 2e-4, set at the call site. Relaxing this declaration
+        ! changes nothing, which was learned the slow way: it was moved to 1e-6
+        ! on the argument that 1e-8 was finer than anything reading it, and the
+        ! measurement showed no effect at all because the value never survived
+        ! to the iteration.
+        real(8) :: stopping_rule_stationary_distribution=10.d0**(-8)
 
         ! Below this a state is treated as empty. Twelve orders below the
         ! stopping rule, so discarded mass cannot reach the convergence test.
         real(8), parameter :: negligible_mass=10.d0**(-18)
 
-        ! Aitken acceleration of the distribution iteration. Off reproduces the
-        ! plain sweep exactly, which is what makes the two comparable.
-        integer, parameter :: accelerate_distribution=1
+        ! AITKEN ACCELERATION: BUILT, MEASURED, AND OFF. DO NOT SWITCH IT ON
+        ! WITHOUT READING THIS.
+        !
+        ! It was A/B tested against an otherwise identical binary from identical
+        ! inputs. The extrapolation passes the mass guards and is accepted, so it
+        ! does change the path, and it made convergence WORSE: the two sequences
+        ! agree to iteration 21 and from iteration 30 the accelerated run sits
+        ! three to four times further from its target at the same iteration
+        ! count.
+        !
+        ! The reason is structural and it is worth knowing. Delta squared assumes
+        ! a single dominant geometric mode. This operator moves mass one age per
+        ! sweep, so for the first sixty sweeps its behaviour is nilpotent rather
+        ! than geometric and an extrapolated rho means nothing; after that a
+        ! scalar rho is still summarising a whole spectrum. What the step does is
+        ! throw the distribution off a path that was converging, after which the
+        ! plain sweeps have to repair it.
+        !
+        ! If it is ever revisited, the two things to try are gating it until the
+        ! sweep count exceeds the life span, so the age transient is past, and
+        ! requiring rho to agree across two consecutive estimates before a step
+        ! is taken. Neither is implemented. The wins that were real are in
+        ! sections 9.1 and 9.2 of PERFORMANCE_NOTES.md.
+        integer, parameter :: accelerate_distribution=0
 
         real(8) :: weight_on_housing_price=0.5
                                         
@@ -25154,6 +25175,14 @@
                 
         distance_value_function=1
         distance_discount_factor=1
+
+        ! The convexity of the rental company is not calibrated, its adjuster is
+        ! zero, and its distance was assigned in exactly one place: the branch
+        ! taken when the parameters are held fixed. On the calibrating path it
+        ! was never written at all, so the loop condition was testing
+        ! uninitialised memory against 1e-3 and the sweep could not terminate.
+        distance_convexity_of_rental_company=0
+
         distance_discount_factor_on_child=1
         distance_minimum_inheritance=1
         distance_advantage_to_owning=1
@@ -25389,20 +25418,23 @@
                 
             end if
             
-            if (loop_count<=1) then
-            
-                stopping_rule_stationary_distribution=10.d0**(-8)
-                
-            else
-            
-                stopping_rule_stationary_distribution=10.d0**(-8)
-            
-            end if
-            
+            ! THIS IS THE OPERATIVE DISTRIBUTION TOLERANCE. 2e-4, and it is
+            ! already loose.
+            !
+            ! There used to be a second reset just above, to 1e-8, in both arms of
+            ! an if whose branches were identical; it has been removed because it
+            ! was dead, being overwritten here on the same pass. Both together
+            ! meant the declared value never reached the iteration.
+            !
+            ! Worth stating plainly since it was got wrong once: there is no
+            ! speed left in this number. The 655 sweeps a loop takes are what
+            ! reaching 2e-4 costs, not what reaching 1e-8 would cost. Loosening
+            ! it further trades directly against the moments, which are shares
+            ! read to three and four decimals.
             if (include_addiction==1) then
-            
+
                 stopping_rule_stationary_distribution=2*10.d0**(-4)
-            
+
             end if
             
             if (load_test_distribution==0) then
@@ -25531,9 +25563,23 @@
                         (model_mortgages(1)/model_gross_housing_wealth(1))
                                             
                     write(*,*) "discount_factor_on_child=", discount_factor_on_child
-                    
-                    if (target_HO_of_old==1) then
-                
+
+                    ! A DISTANCE WHOSE PARAMETER CANNOT MOVE MUST NOT BE IN THE
+                    ! CONVERGENCE TEST.
+                    !
+                    ! Both adjusters below are zero, so the parameter is frozen,
+                    ! but the distance was still computed from a model moment and
+                    ! still tested against 1e-3 in the loop condition. A frozen
+                    ! parameter will not walk its moment onto its target, so the
+                    ! sweep could not terminate however well everything else fit.
+                    ! Guard on the adjuster, which is the same discipline the
+                    ! homeownership blocks below already use.
+                    if (discount_factor_on_child_adjuster==0) then
+
+                        distance_discount_factor_on_child=0
+
+                    else if (target_HO_of_old==1) then
+
                         discount_factor_on_child=min(max(discount_factor_on_child-&
                             discount_factor_on_child_adjuster*(model_homeownership_by_age_group(1,5)-&
                             homeownership_rate_of_old_data),0.005),10000.d0) 
@@ -25561,11 +25607,19 @@
                     write(*,*) "minimum_inheritance=", minimum_inheritance
                 
                     minimum_inheritance=min(max(minimum_inheritance+minimum_inheritance_adjuster*&
-                        (model_fraction_leaving_bequests(1)-fraction_leaving_bequests_data),0.d0),150.d0) 
-                        
-                    distance_minimum_inheritance=&
-                        abs(model_fraction_leaving_bequests(1)-fraction_leaving_bequests_data)
-                        
+                        (model_fraction_leaving_bequests(1)-fraction_leaving_bequests_data),0.d0),150.d0)
+
+                    if (minimum_inheritance_adjuster==0) then
+
+                        distance_minimum_inheritance=0
+
+                    else
+
+                        distance_minimum_inheritance=&
+                            abs(model_fraction_leaving_bequests(1)-fraction_leaving_bequests_data)
+
+                    end if
+
                     write(*,*) "minimum_inheritance=", minimum_inheritance
                     write(*,*) "model_fraction_leaving_bequests=", model_fraction_leaving_bequests(1)
                                                                  
