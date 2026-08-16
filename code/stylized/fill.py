@@ -32,6 +32,7 @@ def numbers(base):
     out['u0'] = f'{base.u0:.3f}'
     out['u1'] = f'{base.u1:.4f}'
     out['phi0'] = f'{base.phi0:.2f}'
+    out['pV'] = f'{base.pV:.2f}'
     out['phi1'] = f'{base.phi0 * (1.0 - base.kap):.2f}'
     out['kap'] = f'{base.kap:.2f}'
     out['dth0'] = f'{100*(1.0 - base.phi0):.0f}'
