@@ -289,9 +289,9 @@ probability of drawing a state in which the household uses.
 
 Table~\ref{tab:ext} lists the parameters set outside the model. Preferences and
 demographics are conventional: the discount factor over a thirty year period
-is $\beta = @@beta@@$\footnote{\new{The annual discount rate here is higher than the one in the
-quantitative model, and this is deliberate.} A period here is thirty years, so
-every consequence of \new{using drugs} arrives thirty years after the decision,
+is $\beta = @@beta@@$\footnote{The annual discount rate here is higher than the one in the
+quantitative model, and this is deliberate. A period here is thirty years, so
+every consequence of using drugs arrives thirty years after the decision,
 whereas in the quantitative model consequences arrive annually and compound. A
 low annual discount factor would weigh that distant death much less and the
 mortality channel would be losing to impatience rather than to anything the model
@@ -315,13 +315,13 @@ small unit is half of it. The voucher parameters are institutional: covered
 tenants pay $30$ percent of market rent, eligibility is capped at mean income,
 and $\pi_V = 0.27$ is the HUD share of eligible households actually assisted.
 The weight on drugs is set at $\theta = @@th@@$, with $\gamma =
-0.25(1-\theta) = @@gam@@$ alongside it\new{, since housing is a quarter of non
-drug spending in the Consumer Expenditure Survey}.\footnote{\new{A $\theta$ large
+0.25(1-\theta) = @@gam@@$ alongside it, since housing is a quarter of non
+drug spending in the Consumer Expenditure Survey.\footnote{A $\theta$ large
 enough to match the eleven percent of income that users spend on drugs makes the
 drug too valuable to be deterred by a death that arrives thirty years later, and
 users stop being poor. Setting $\theta = @@th@@$ gives a spending share of
 @@dshare_m@@ percent and keeps the income gradient, which is the trade this model
-can make.}}
+can make.}
 
 \subsubsection{Internal calibration}
 
@@ -362,7 +362,7 @@ concentrates at the top: the average user then earns @@r_off@@ times the
 population average.
 
 Two features of the environment are candidates to reverse it. The
-\emph{mortality channel} is that the SUD increases \new{the} chance of dying,
+\emph{mortality channel} is that the SUD increases the chance of dying,
 through $\kappa$ in equation~\eqref{eq:surv}.
 The \emph{unemployment channel} is that it costs you a job with probability
 $u_1-u_0$, and if income support cannot cover the rent you downsize, live on
@@ -438,10 +438,8 @@ policies end in the same place on homelessness, both driving it from @@hl0@@
 percent with no
 programme to zero, and along the way Treatment First is if anything slightly
 below Housing First, because the households it deters from using never acquire
-the SUD that puts their housing at risk. Panel (b) is drug use, and it is
-Figure~\ref{fig:mh} again: Housing First raises participation from @@pt@@ percent
-under Treatment First to @@ph@@ percent, and both are below the @@p0@@ percent
-that use with no programme at all. The larger difference is
+the SUD that puts their housing at risk. \new{Panel (b) repeats
+Figure~\ref{fig:mh} here for convenience.} The larger difference is
 in panel (c), where at universal cover Housing First leaves @@sudh@@ percent of
 the population carrying the SUD and Treatment First leaves @@sudt@@
 percent. What the moral hazard buys is extra SUD cases among households that
@@ -488,12 +486,9 @@ strictly worse off under Treatment First, none is better off, and those affected
 lose @@cev_aff@@ percent of consumption. Those are exactly the households
 that use: a household that never uses faces the same voucher rule under both
 policies and is indifferent between them. \new{The figure is not the $5.13$
-percent participation rate of Section~\ref{sec:cal}, for two reasons. That rate
-is measured at the current programme, $\pi_V=@@pV@@$, and this table is at
-universal cover, where Housing First participation is @@ph@@ percent. And a
-household is counted here if it uses in \emph{any} of its period 1 draws, while
-participation weights each draw by its probability, so the affected set is wider
-than the rate.}
+percent participation rate of Section~\ref{sec:cal} because the programmes
+compared here are universal, rather than the rationed benchmark that rate is
+measured at.}
 
 \begin{table}[!tb]
 \centering
@@ -533,10 +528,13 @@ preferences. I have considered two alternatives, but both seem to be at odds
 with reality. Letting the child of a user inherit a stronger taste, a lower $b$,
 matches the transmission fact but has the wrong welfare sign: $b$ enters only
 through $\theta\log(1+v/b)$, so a lower one raises the child's objective at every
-$v>0$ and its lifetime value with it. \new{That is at odds with what the data
-say about these children, who do worse on income, schooling and health, not
-better; a channel that makes the child of a user better off for being one cannot
-be the channel the evidence is describing.} Letting it inherit a greater
+$v>0$ and its lifetime value with it. \new{The evidence runs the other way. The
+children of parents with a SUD have lower educational attainment and worse adult
+outcomes than otherwise comparable children, which is the premise of the
+transmission literature the penalty $\delta_d$ is calibrated against (McGovern
+et al., 2023). A channel whose whole content is that the child of a user is
+\emph{better off} for being one cannot be the channel that evidence is
+describing.} Letting it inherit a greater
 susceptibility, a higher $\lambda$, fails another way, since a child facing a
 riskier drug optimally uses \emph{less} ex ante, which is at odds with the
 data: children of parents with a SUD are \emph{more} likely to use, not less.
@@ -592,9 +590,9 @@ by construction there is no externality to price. Housing
 First is better for every household taken one at a time, and worse once one
 counts the children of the households it fails to deter.
 
-All of this is a crude illustration: the model is two \new{periods} long and
+All of this is a crude illustration: the model is two periods long and
 nobody who faces the sobriety condition fails to meet it. It shows that an
-externality can reverse \new{a welfare ranking} that is
+externality can reverse a welfare ranking that is
 otherwise airtight, which is all it is for. Which way the comparison actually
 goes is a question about magnitudes, and that is what the quantitative model of
 the next section is for.
