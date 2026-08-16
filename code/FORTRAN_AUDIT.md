@@ -250,29 +250,45 @@ from five factors against the measured 51 minute backward pass:
                               38x    ->  80 seconds a pass
     550 evaluations x 1.2 x 80 s   =  15 hours on four, 1.5 on forty
 
-Every one of those five is a removal from Section 2.1 or Section 3 of this
-audit, so the figure stands **only if the code is cut to what the note
-describes**. Three qualifications, and two of them run the wrong way:
+Every one of those five is a removal from Section 2.1 or Section 3 of this audit,
+so the figure stands only if the code is cut to what the note describes.
 
-1. **The employment dimension stays at three.** The budget considered cutting it
-   to two, worth 1.5x, and rejected it, because one year of unemployment on a
-   fifty per cent replacement rate is not what makes a household homeless; long
-   spells are. The 15 hours already assumes three, so this is confirmation
-   rather than a change.
+**The drug price loop is not a cost.** The price is normalised to one at the
+benchmark quantity through `psi_1`, so during the calibration it is fixed at one
+and the market never has to be cleared. The budget's 2x for "no drug price loop"
+therefore stands as written, and the supply curve is needed only where quantity
+moves away from the benchmark, which is the counterfactuals. That is where it has
+to be built, and it does not touch the fifteen hours.
 
-2. **The drug price loop is in the budget as a 2x saving from *not* doing it.**
-   The note's Section 2.12 requires it, and the code does not have it. Adding it
-   costs that 2x back: **30 hours on four cores, 3 on forty**.
+**The employment dimension stays at three.** The budget considered cutting it to
+two, worth 1.5x, and rejected it: one year of unemployment on a fifty per cent
+replacement rate is not what costs a household its housing, long spells are. The
+fifteen hours already assumes three.
 
-3. **Mental illness doubles the state space.** Adding `m` takes
-   `unemployment_grid_size` from 6 to 12 and enters the expectation nest as
-   well, so it is at least 2x and probably more: **60 hours on four cores, 6 on
-   forty**, with the drug price loop.
+**Mental illness roughly doubles it.** `unemployment_grid_size` goes from 6 to 12,
+which doubles the outer loop of the backward induction. It does not double the
+inner cost as well, because `hoist_expectation = 1` builds the expectation once
+per age rather than inside the `a'` search, so the shock dimension enters the
+table build and not the quadratic part. Call it **2x: 30 hours on four cores,
+about 3 on forty.**
 
-So the honest answer to how long the full model takes: **about 15 hours on four
-cores and 1.5 on forty if the note drops mental illness and the endogenous drug
-price, about 60 and 6 if it keeps both.** The 15 hour figure was never wrong; it
-was quoted for a smaller model than the note now describes.
+**The asset grid is the lever that pays for it, and the one to be careful with.**
+The `a'` search is quadratic, so against fifty points
+
+    40 points   1.56x    ->  19 hours on four,  1.9 on forty
+    35 points   2.04x    ->  15 hours on four,  1.5 on forty
+    30 points   2.78x    ->  11 hours on four,  1.1 on forty
+
+so **thirty five points cancels mental illness exactly** and returns the whole
+budget to where it was. But it is the one cut the budget document tells you not
+to make casually, and the reason is specific rather than general: the objective is
+not single peaked in `a'`, because voucher eligibility is a step function of
+income which includes `ra`, the food stamp floor kinks, and housing is discrete.
+Coarsening the grid coarsens precisely the dimension carrying the notches. The
+fifty point choice is already flagged there as the one judgement rather than a
+deduction, to be validated by solving the benchmark at fifty and at ninety and
+comparing the targeted moments and both counterfactuals. Any further cut needs the
+same validation against fifty, and it is cheap to run once the model is cut down.
 
 One separate correction. `PERFORMANCE_NOTES.md` section 4 and the closing
 section of `TIMING.md` both still say the expectation hoist is worth 10 to 50x.
@@ -284,18 +300,24 @@ not depend on it.
 
 ## 6. What to do, in order
 
-1. **Decide on mental illness.** It is six channels and seven parameters of the
-   written model, and none of it exists. Dropping it from the note is a day;
-   adding it to the code is weeks and quadruples the calibration.
+1. **Remove homeownership.** Five subroutines, the mortgage contract, the
+   negative asset grid, the house price loop, and four of the eight housing
+   statuses. This is where the 38x lives, and it comes first for a practical
+   reason: until it is done every test run of anything else costs the full 51
+   minute pass rather than 80 seconds. Cut the model down, then grow it.
 2. **Decide on `change_utility_for_addicts`.** The code triples the weight on
    drugs for a household with the disorder while the note says the weights are
    fixed. This is the one outright contradiction and it bears on the paper's
    central claim.
-3. **Remove homeownership.** Five subroutines, the mortgage contract, the
-   negative asset grid, the house price loop, and four of the eight housing
-   statuses. This is where the 38x lives.
-4. **Add the drug supply curve.** Cheap, and the revision's elasticity
-   discussion has nothing behind it until it exists.
+3. **Add mental illness.** Decided: it stays in the model, so the code gains it.
+   `MENTAL_ILLNESS_PLAN.md` is the sequence, the index design and the measured
+   count of touch points. It doubles the state space, which the asset grid can
+   buy back if that cut validates.
+4. **Add the drug supply curve, for the counterfactuals only.** The price is one
+   at the benchmark by the normalisation of `psi_1`, so the calibration never
+   clears the market and this costs nothing there. It is needed where quantity
+   moves away from the benchmark, and the revision's elasticity discussion has
+   nothing behind it until it exists.
 5. **Wire up the child.** `calculate_bequest_utility` is the hook; it needs the
    child's value rather than wealth, and `weight_on_child` needs to be read.
 6. **Reconcile the numeric disagreements in Section 3**, of which
