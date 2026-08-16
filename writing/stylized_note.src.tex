@@ -1055,7 +1055,7 @@ which is the object the expectation in~\eqref{eq:fbellman} is taken against.
 
 \subsection{The household's dynamic problem}\label{sec:fproblem}
 
-Putting it together, for $j=1,\dots,J$ and with $V_{J+1}$ given below,
+Putting it together, for $j=1,\dots,J$ and with \new{$V(J{+}1,\cdot)$} given below,
 \begin{equation}\label{eq:fbellman}
 \begin{aligned}
 V(j,a,y,e,d,m,\eta)=\max_{\,n,\,h',\,v,\,\tau,\,a'}\ \Bigg\{\
@@ -1071,7 +1071,8 @@ V(j,a,y,e,d,m,\eta)=\max_{\,n,\,h',\,v,\,\tau,\,a'}\ \Bigg\{\
 subject to the budget~\eqref{eq:fbudget}, the income
 definitions~\eqref{eq:fincome} to~\eqref{eq:ftrans}, the choice
 set~\eqref{eq:fchoice}, $\tau=0$ whenever $d=0$, $n=0$ whenever $j\ge J_R$ or
-$e\neq1$, $a'\ge0$, and $V_{J+1}=0$ with $\phi(J)=0$, so that at the last age the
+$e\neq1$, \new{$v=0$ whenever $\tau=1$,} $a'\ge0$, and \new{$V(J{+}1,\cdot)=0$}
+with $\phi(J)=0$, so that at the last age the
 child is the whole continuation.
 
 The altruism is carried at \emph{every} age and not only at the end. A
@@ -1170,7 +1171,7 @@ the estates of the deceased, and the level parameter $\tau_{\ell}$ clears the
 budget,
 \begin{equation}\label{eq:fgovt}
 \underbrace{\textstyle\sum y^{g}-\tau_{\ell}\sum (y^{g})^{\xi}
-+\tau_k\sum\max\{0,ra\}+\text{estates}}_{\text{revenue}}
++\tau_k\sum \new{ra}+\text{estates}}_{\text{revenue}}
 \;=\;
 \underbrace{SS+UI+DI+F+V\!ch+\chi_H H+\chi_D D+G}_{\text{outlay}} .
 \end{equation}
@@ -1190,17 +1191,17 @@ not survive into the quantitative model intact.
 
 \subsection{The drug market}
 
-Drug production has cost $C(V)=\frac{\psi_1}{\psi_2}V^{\psi_2}$, so supply
+Drug production has cost $C(V)=\frac{\new{\nu_1}}{\new{\nu_2}}V^{\new{\nu_2}}$, so supply
 satisfies
 \begin{equation}\label{eq:fdrug}
-p_v=\psi_1 V^{\psi_2-1},
+p_v=\new{\nu_1} V^{\new{\nu_2}-1},
 \qquad V=\int v(s)\,\mathrm{d}\Phi(s),
 \end{equation}
-with price elasticity of supply $1/(\psi_2-1)$ and $\psi_1$ normalised so that
+with price elasticity of supply $1/(\new{\nu_2}-1)$ and $\new{\nu_1}$ normalised so that
 $p_v=1$ at the benchmark quantity. Endogenising the price does not suppress the
-normalisation of Section~\ref{sec:support}, it moves it to $\psi_1$.
+normalisation of Section~\ref{sec:support}, it moves it to $\new{\nu_1}$.
 
-The baseline elasticity is $2$, so $\psi_2 = 1.5$. There is no direct
+The baseline elasticity is $2$, so $\new{\nu_2} = 1.5$. There is no direct
 estimate for an illicit drug, so it is taken from the closest legal markets, where
 the estimates run from about $0.7$ to about $4$: the Washington State marijuana
 reform implies roughly $0.79$, and the cigarette and gasoline literatures put it
@@ -1249,12 +1250,12 @@ is therefore a lower bound.
 \subsection{Stationary equilibrium}
 
 A stationary equilibrium is a set of value functions $\{V(j,\cdot)\}$, policy functions
-$\{n_j,h'_j,v_j,\tau_j,a'_j\}$, a distribution $\Phi$, and prices and aggregates
+$\new{\{n(j,\cdot),h'(j,\cdot),v(j,\cdot),\tau(j,\cdot),a'(j,\cdot)\}}$, a distribution $\Phi$, and prices and aggregates
 $\big(\tau_{\ell},\,p_v,\,\bar y,\,\text{median},\,H\big)$ such that
 
 \begin{enumerate}\setlength{\itemsep}{0.1em}\setlength{\parskip}{0em}
-\item the policy functions solve~\eqref{eq:fbellman} given the terminal
-condition~\eqref{eq:fterminal}, and $\{V(j,\cdot)\}$ are the associated values;
+\item the policy functions solve~\eqref{eq:fbellman} \new{given its terminal
+condition}, and $\{V(j,\cdot)\}$ are the associated values;
 \item $\Phi$ is invariant under the law of motion~\eqref{eq:flom} together with
 the newborn rule~\eqref{eq:fnewborn}, and the mass of newborns equals the mass of
 the deceased;
@@ -1432,10 +1433,10 @@ Drug use disorder share of the homeless & 21.7 percent & Gutwinski et al.\ (2021
 \end{tabular}
 \end{center}
 
-Five parameters remain undisciplined, and they are flagged rather than hidden:
+\new{Three} parameters remain undisciplined, and they are flagged rather than hidden:
 the treatment effect on recovery $g$, the recovery multiplier for SMI
-$\mu_m$, the disability benefit level $\bar y_{DI}$, and the drug supply
-curvature $\psi_2$. Of these only $g$ carries a headline result, and it is
+$\mu_m$, and the drug supply
+curvature $\new{\nu_2}$. Of these only $g$ carries a headline result, and it is
 reported as a range rather than as a number.
 
 One risk is larger than the others and belongs in the introduction rather than
