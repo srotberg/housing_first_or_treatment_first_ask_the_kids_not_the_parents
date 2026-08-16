@@ -23528,13 +23528,19 @@
                         ! -0.659 every iteration. The expander sets the curvature
                         ! of the grid between the smallest and largest sizes, so
                         ! the share in the LARGEST size is what it actually
-                        ! identifies. The sign: a higher expander makes the middle
-                        ! unit smaller and cheaper, so more households take it and
-                        ! fewer take the largest, hence share(largest) falls in the
-                        ! expander and the update ADDS the gap rather than
-                        ! subtracting it.
+                        ! identifies.
+                        !
+                        ! THE SIGN, derived rather than guessed. With three points
+                        ! the grid is h0, h0 + (h2-h0)/2**expander, h2, so a HIGHER
+                        ! expander pulls the middle unit DOWN towards the smallest
+                        ! one: at 1.8 it is 0.119, at 3.0 it is 0.074, at 1.0 it is
+                        ! 0.178. Shrinking the middle unit makes it a near
+                        ! duplicate of the small one, so the households that wanted
+                        ! a medium dwelling have nowhere to go but the largest, and
+                        ! share(largest) RISES in the expander. The update
+                        ! subtracts the gap.
                         housing_status_grid_expander=&
-                            min(max(housing_status_grid_expander+housing_status_grid_expander_adjuster*&
+                            min(max(housing_status_grid_expander-housing_status_grid_expander_adjuster*&
                             (model_housing_size_dist(1,housing_status_grid_size-1)-&
                             housing_size_dist_data(2)),0.1d0),5.d0) 
                                                                      
