@@ -16707,8 +16707,21 @@
                 
             end if
             
-            housing_size(housing_status_grid_size-2)=smallest_house_for_purchase
-            
+            ! ONLY WHEN THERE IS SOMETHING TO BUY. smallest_house_for_purchase
+            ! is the size at which a dwelling becomes eligible for a mortgage,
+            ! so overwriting a grid point with it is an OWNERSHIP construct. With
+            ! include_homeownership=0 that point is a rental size and nothing
+            ! else, and the overwrite destroyed the geometric spread the note
+            ! describes: at a three point grid it turned (0.040, 0.119, 0.315)
+            ! into (0.040, 0.250, 0.315), a sixfold gap at the bottom. Every
+            ! household then took the near free 0.040 unit and the model produced
+            ! EXACTLY ZERO homelessness, which made every homeless moment NaN.
+            if (include_homeownership==1) then
+
+                housing_size(housing_status_grid_size-2)=smallest_house_for_purchase
+
+            end if
+
             housing_size(lowest_housing_grid_point)=housing_size(0)*size_homelessness*(1+increase_homeless_size*5)
                         
             open(unit=3,file="housing_status_grid_points"//trim(file_number)//".txt",action="write",status="replace")
