@@ -1055,7 +1055,7 @@ which is the object the expectation in~\eqref{eq:fbellman} is taken against.
 
 \subsection{The household's dynamic problem}\label{sec:fproblem}
 
-Putting it together, for $j=1,\dots,J$ and with \new{$V(J{+}1,\cdot)$} given below,
+Putting it together, for $j=1,\dots,J$ and with $V(J{+}1,\cdot)$ given below,
 \begin{equation}\label{eq:fbellman}
 \begin{aligned}
 V(j,a,y,e,d,m,\eta)=\max_{\,n,\,h',\,v,\,\tau,\,a'}\ \Bigg\{\
@@ -1071,7 +1071,7 @@ V(j,a,y,e,d,m,\eta)=\max_{\,n,\,h',\,v,\,\tau,\,a'}\ \Bigg\{\
 subject to the budget~\eqref{eq:fbudget}, the income
 definitions~\eqref{eq:fincome} to~\eqref{eq:ftrans}, the choice
 set~\eqref{eq:fchoice}, $\tau=0$ whenever $d=0$, $n=0$ whenever $j\ge J_R$ or
-$e\neq1$, \new{$v=0$ whenever $\tau=1$,} $a'\ge0$, and \new{$V(J{+}1,\cdot)=0$}
+$e\neq1$, $v=0$ whenever $\tau=1$, $a'\ge0$, and $V(J{+}1,\cdot)=0$
 with $\phi(J)=0$, so that at the last age the
 child is the whole continuation.
 
@@ -1171,7 +1171,7 @@ the estates of the deceased, and the level parameter $\tau_{\ell}$ clears the
 budget,
 \begin{equation}\label{eq:fgovt}
 \underbrace{\textstyle\sum y^{g}-\tau_{\ell}\sum (y^{g})^{\xi}
-+\tau_k\sum \new{ra}+\text{estates}}_{\text{revenue}}
++\tau_k\sum ra+\text{estates}}_{\text{revenue}}
 \;=\;
 \underbrace{SS+UI+DI+F+V\!ch+\chi_H H+\chi_D D+G}_{\text{outlay}} .
 \end{equation}
@@ -1191,17 +1191,17 @@ not survive into the quantitative model intact.
 
 \subsection{The drug market}
 
-Drug production has cost $C(V)=\frac{\new{\nu_1}}{\new{\nu_2}}V^{\new{\nu_2}}$, so supply
+Drug production has cost $C(V)=\frac{\nu_1}{\nu_2}V^{\nu_2}$, so supply
 satisfies
 \begin{equation}\label{eq:fdrug}
-p_v=\new{\nu_1} V^{\new{\nu_2}-1},
+p_v=\nu_1 V^{\nu_2-1},
 \qquad V=\int v(s)\,\mathrm{d}\Phi(s),
 \end{equation}
-with price elasticity of supply $1/(\new{\nu_2}-1)$ and $\new{\nu_1}$ normalised so that
+with price elasticity of supply $1/(\nu_2-1)$ and $\nu_1$ normalised so that
 $p_v=1$ at the benchmark quantity. Endogenising the price does not suppress the
-normalisation of Section~\ref{sec:support}, it moves it to $\new{\nu_1}$.
+normalisation of Section~\ref{sec:support}, it moves it to $\nu_1$.
 
-The baseline elasticity is $2$, so $\new{\nu_2} = 1.5$. There is no direct
+The baseline elasticity is $2$, so $\nu_2 = 1.5$. There is no direct
 estimate for an illicit drug, so it is taken from the closest legal markets, where
 the estimates run from about $0.7$ to about $4$: the Washington State marijuana
 reform implies roughly $0.79$, and the cigarette and gasoline literatures put it
@@ -1250,12 +1250,12 @@ is therefore a lower bound.
 \subsection{Stationary equilibrium}
 
 A stationary equilibrium is a set of value functions $\{V(j,\cdot)\}$, policy functions
-$\new{\{n(j,\cdot),h'(j,\cdot),v(j,\cdot),\tau(j,\cdot),a'(j,\cdot)\}}$, a distribution $\Phi$, and prices and aggregates
+$\{n(j,\cdot),h'(j,\cdot),v(j,\cdot),\tau(j,\cdot),a'(j,\cdot)\}$, a distribution $\Phi$, and prices and aggregates
 $\big(\tau_{\ell},\,p_v,\,\bar y,\,\text{median},\,H\big)$ such that
 
 \begin{enumerate}\setlength{\itemsep}{0.1em}\setlength{\parskip}{0em}
-\item the policy functions solve~\eqref{eq:fbellman} \new{given its terminal
-condition}, and $\{V(j,\cdot)\}$ are the associated values;
+\item the policy functions solve~\eqref{eq:fbellman} given its terminal
+condition, and $\{V(j,\cdot)\}$ are the associated values;
 \item $\Phi$ is invariant under the law of motion~\eqref{eq:flom} together with
 the newborn rule~\eqref{eq:fnewborn}, and the mass of newborns equals the mass of
 the deceased;
@@ -1305,10 +1305,21 @@ $H$ a genuine fixed point of the equilibrium rather than accounting.
 \section{Calibrating the quantitative model}\label{sec:fullcal}
 
 Two stages, and they are different exercises. The first matches a cross section
-of the stationary equilibrium, twenty four parameters against twenty four moments.
+of the stationary equilibrium, \new{twenty parameters against twenty moments}.
 The second matches short run \emph{responses} measured in experiments, which
-cannot be read off a comparison of steady states. Only what is new or what
+cannot be read off a comparison of steady states\new{, and carries the remaining
+four}. Only what is new or what
 Section~\ref{sec:cal} does not already illustrate is described here.
+
+\new{Which parameter belongs to which stage is not obvious from
+Table~\ref{tab:fint}, so it is stated here. The second stage carries
+$\bar\kappa_{\phi d}$, whose moment is the drug price participation elasticity;
+$\mu_H$, whose moment is the ratio of weeks abstinent between Milby's arms;
+$\omega$, whose moment is the fall in drug use with a child present, which is a
+comparison against a counterfactual rather than a cross sectional share; and
+$\delta_d$, whose moment is the child's disorder rate against a clean parent's.
+None of the four can be read off a single stationary equilibrium, which is what
+separates them from the other twenty.}
 
 \paragraph{The same cliffs, and the same answer.} Three moments are step like and
 are bisected rather than stepped, for the reason Section~\ref{sec:cal} gives:
@@ -1346,11 +1357,12 @@ problem is solved again, because each arm changes the rules a forward looking
 household faces. Milby et al.\ (2005) randomised $196$ cocaine dependent homeless
 adults into three arms on identical day treatment, and the targeted moment is the
 ratio of the unconditional voucher arm to no assistance, $6.60/4.48=1.473$ weeks
-abstinent. The conditional against unconditional comparison is deliberately
+abstinent\new{, which is what identifies $\mu_H$}. The conditional against unconditional comparison is deliberately
 \emph{not} targeted, because the source reports it as insignificant in the raw
 randomised comparison; calibrating to it would repeat the error this revision is
-correcting elsewhere. The drug price participation elasticity, $-0.63$, is the
-second stage's other target.
+correcting elsewhere. The drug price participation elasticity, $-0.63$,
+\new{identifies the level $\bar\kappa_{\phi d}$, and it can only do so once the
+drug price is endogenous, since a fixed price has no elasticity to match}.
 
 \paragraph{What the two new parameters are matched to.} The weight on the child
 $\omega$ and the transmission penalty $\delta_d$ are fitted \emph{together},
@@ -1433,10 +1445,10 @@ Drug use disorder share of the homeless & 21.7 percent & Gutwinski et al.\ (2021
 \end{tabular}
 \end{center}
 
-\new{Three} parameters remain undisciplined, and they are flagged rather than hidden:
+Three parameters remain undisciplined, and they are flagged rather than hidden:
 the treatment effect on recovery $g$, the recovery multiplier for SMI
 $\mu_m$, and the drug supply
-curvature $\new{\nu_2}$. Of these only $g$ carries a headline result, and it is
+curvature $\nu_2$. Of these only $g$ carries a headline result, and it is
 reported as a range rather than as a number.
 
 One risk is larger than the others and belongs in the introduction rather than
