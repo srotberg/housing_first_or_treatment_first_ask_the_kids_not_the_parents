@@ -821,61 +821,51 @@ household wants: flow utility is the same function of $(c,h,v)$ housed or not.
 What housing changes is the
 chance of getting out of the disorder once it is carried, recovery on the street
 being $\mu_H$ times recovery while housed.
-
 Milby et al.\ (2005)
 randomised cocaine dependent homeless adults into arms differing in housing and
-measured weeks of abstinence, so the ratio between arms \new{identifies it.}
+measured weeks of abstinence, so the ratio between arms \new{identifies $\mu_H$
+in our calibration.}
 
 
 Treatment $\tau$ is a \emph{choice}, not a mechanical hazard, taken at the utility
-cost $\bar\tau^u$ in~\eqref{eq:futil}. It also costs the \new{drug: a household in
+cost $\bar\tau^u$ in~\eqref{eq:futil}. It also costs the drug: a household in
 treatment must abstain in that period, $v=0$ whenever $\tau=1$. And $g$ is the
-parameter through}
+parameter through
 which its entire effect runs, so treatment has to be something a household decides
 to undertake and can decline.
 
 \subsection{Serious mental illness}\label{sec:fsmi}
 
-$m$ is an exogenous two state Markov chain representing \emph{serious} mental
-illness, whose prevalence $p_m$ is about $5.5$ percent of adults, defined by substantial functional
+$m$ is an exogenous two state Markov chain representing \new{SMI}, whose
+prevalence $p_m$ is about $5.5$ percent of adults, defined by substantial functional
 impairment, rather than any mental illness, which is roughly a quarter of adults
 and includes mild anxiety: a state that halves productivity cannot sensibly cover
-a quarter of the population. The onset rate is derived from the target prevalence
-$p_m$ and the recovery rate $\lambda_m$, the annual chance of leaving the
-state,
+a quarter of the population.
+
+\new{The onset rate is a function of age, and there is one definition of it.
+Writing $p(j)$ for prevalence at age $j$ and $\lambda_m$ for the annual chance of
+leaving the state,}
+\begin{equation}\label{eq:fonsetage}
+\text{onset}_m(\new{j})=\frac{p(\new{j}{+}1)-p(\new{j})(1-\lambda_m)}{1-p(\new{j})},
+\end{equation}
+\new{which is the accounting identity that reproduces the observed profile
+exactly, backed} out of the observed prevalence profile and the
+recovery hazard. \new{Where prevalence is flat in age it collapses to
+$\lambda_m p_m/(1-p_m)$, the steady state of a two state chain, so the scalar and
+the profile are one object and not two.} The transitions are then
 \begin{equation}\label{eq:fonset}
-\text{onset}_m=\lambda_m\frac{p_m}{1-p_m},
-\qquad
-\Pr(m'=1\mid m=0,d)=\text{onset}_m\cdot\iota^{\mathbf{1}\{d=1\}},
+\Pr(m'=1\mid m=0,d)=\text{onset}_m(\new{j})\cdot\iota^{\mathbf{1}\{d=1\}},
 \qquad
 \Pr(m'=0\mid m=1)=\lambda_m,
 \end{equation}
-where the onset rate is not a scalar. A flat onset against a flat recovery
-drives prevalence towards its steady state from below, so a scalar produced a
-prevalence profile that \emph{rises} with age, where NSDUH has it falling from
-$11.0$ percent at ages 26 to 29 to $1.4$ percent at 65 and over, a factor of
-eight. Onset is therefore backed out of the observed prevalence profile and the
-recovery hazard,
-\begin{equation}\label{eq:fonsetage}
-\text{onset}_m(a)=\frac{p(a{+}1)-p(a)(1-\lambda_m)}{1-p(a)},
-\end{equation}
-with prevalence fitted log linearly, $R^2=0.977$, rather than interpolated
-piecewise: differencing a piecewise linear curve turns every kink into a spike,
-and an early attempt gave onset of $1.00$ at 26, $0.01$ at 32 and exactly zero at
-56 and 68, which are artifacts rather than incidence that vanishes and returns.
-As with the mortality multipliers, the data supply the shape and the level stays
-calibrated to the prevalence target, and newborns enter at the observed
-prevalence at 26 rather than at the ergodic distribution of the age one
-transition matrix, which would start them at $4.7$ percent against $11$ to $13$
-observed. So calibrating persistence never disturbs prevalence, and $\iota>1$
-, the multiplier on onset for a household carrying the SUD,
-makes a SUD raise the hazard of SMI. That last channel runs in the
+with $\iota>1$ the multiplier on onset for a household carrying the SUD,
+which makes a SUD raise the hazard of SMI. That last channel runs in the
 direction the evidence supports: substance induced psychosis converts to
 schizophrenia or bipolar disorder at a pooled rate near a quarter, and in the
 Danish registers any SUD predicts conversion to schizophrenia
 with a hazard ratio of $1.34$, opioid use disorder $2.74$.
 
-Mental illness then affects five objects: productivity conditional on working
+\new{SMI} then affects five objects: productivity conditional on working
 through $\rho_m$ in~\eqref{eq:fincome}, both employment margins through
 $\kappa_{uem}$, mortality through $\kappa_{\phi m}$, the recovery hazard through
 $\mu_m$, and
