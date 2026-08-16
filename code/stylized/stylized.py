@@ -152,7 +152,7 @@ class P:
     # the spending share.
     th    = 0.20      # weight on drug use
     b     = 0.009     # Stone Geary subsistence; th/b is the pull of the first unit
-    gam   = 0.2144    # weight on housing = 0.268 * (1 - th)
+    gam   = 0.2144    # CALIBRATED to the housing share. Starting value only
     # A PERIOD IS THIRTY YEARS, so the discount factor and the interest rate are
     # the annual values COMPOUNDED, not the annual values used raw. The interest
     # rate is set to 1/beta so that beta*R = 1 and nothing in the results comes
@@ -290,23 +290,44 @@ class P:
     # HOUSING. Rent per unit of housing services is the NUMERAIRE, p_r = 1, so
     # a unit size and its rent are the same number.
     #
-    # THE STANDARD UNIT IS DERIVED FROM GAMMA, and the change is worth recording
-    # because the previous version double counted. It used to be fixed at 21.2
-    # per cent of average income, the housing cost to income ratio in the SCF,
-    # while gamma was fixed separately at the Consumer Expenditure Survey share.
-    # Those are two external numbers aimed at the same object and nothing made
-    # them agree. Now there is only ONE number, 0.268, and the unit is what it
-    # implies: the dwelling a household at mean income would occupy if housing
-    # were continuously choosable, h_lg = gam/(1-th) * ybar. The small unit is a
-    # QUARTER of it and the street is what the homelessness rate identifies.
+    # THE GRID IS SET AND GAMMA IS CALIBRATED, which is the conventional order and
+    # the third arrangement tried here. The two before it are worth recording.
     #
-    # A QUARTER RATHER THAN A HALF, and the reason is the homelessness margin.
-    # The small unit is the affordability floor: a household whose cash falls
-    # below its rent has no housed option at all and is homeless BY FORCE, which
-    # no value of h_hl undoes. At half of a 0.262 unit that floor sits at 0.131
-    # and forced homelessness alone runs above the 0.399 per cent target, so the
-    # h_hl bracket loses its interior solution. At a quarter the floor is 0.0655,
-    # the target is reachable, and h_hl does the work it is supposed to do.
+    #   BOTH SET. gamma from the expenditure survey and h_lg from an SCF housing
+    #   cost to income ratio. Two external numbers aimed at one object with
+    #   nothing making them agree: the model delivered a 16 per cent housing
+    #   share against the survey's 26.8.
+    #
+    #   h_lg CALIBRATED ON THE SHARE. It hits 26.8 exactly and puts homelessness
+    #   at 3.2 per cent against a target of 0.399, because the aggregate share is
+    #   bounded above by h_lg and matching it needs a unit so large that the
+    #   small unit prices the bottom of the distribution out of housing
+    #   altogether. See the frontier below.
+    #
+    # So the sizes are SET and stated to the reader, and gamma is bracketed on
+    # the housing share instead. That is the ordinary way round: the grid is a
+    # market fact, the weight is a preference, and preferences are what a model
+    # is entitled to infer. Reading it backwards recovers the same object, since
+    # a gamma and a grid that reproduce the share are two descriptions of one
+    # calibration.
+    #
+    # THE SMALL UNIT IS A QUARTER OF THE STANDARD ONE because it is the
+    # affordability floor: a household whose cash falls below its rent has no
+    # housed option at all and is homeless BY FORCE, which no value of h_hl
+    # undoes. At a half the floor is high enough that forced homelessness alone
+    # exceeds the 0.399 per cent target and the h_hl bracket loses its interior
+    # solution. At a quarter, with h_lg at 0.40, the floor is 0.10 and h_hl does
+    # the work it is supposed to do.
+    #
+    # The frontier, measured with h_sm = h_lg/2 and h_hl refitted at every point,
+    # which is what rules out calibrating h_lg on the share:
+    #
+    #     h_lg    h_sm     h_hl     housing share   homelessness
+    #     0.212   0.106   4.2e-04       0.163          0.00395
+    #     0.240   0.120   7.7e-05       0.177          0.00593
+    #     0.270   0.135   1.0e-07       0.195          0.00594
+    #     0.340   0.170   1.0e-07       0.231          0.01091
+    #     0.450   0.225   1.0e-07       0.267          0.03160
     #
     # CALIBRATING h_lg ON THE REALISED HOUSING SHARE WAS TRIED AND FAILS, and the
     # reason is structural rather than a matter of tuning. Every household
@@ -329,8 +350,8 @@ class P:
     # So the realised share is an untargeted moment this model misses, for the
     # same kind of reason it misses the drug spending share, and it is reported
     # as one.
-    h_lg  = 0.2620    # = gam/(1-th) * ybar. DERIVED, see above
-    h_sm  = 0.0655    # tied to H_RATIO * h_lg in with_()
+    h_lg  = 0.40      # SET: the standard unit, 41 per cent of mean income
+    h_sm  = 0.10      # SET: a quarter of the standard unit
     h_hl  = 0.05      # the street. CALIBRATED to the homelessness rate
     pr    = 1.00      # rent per unit of housing services: the numeraire
     pV    = 0.27      # probability a voucher arrives, conditional on eligibility
@@ -371,9 +392,8 @@ H_RATIO = 0.25    # the small unit as a fraction of the standard one
 
 def with_(par, **kw):
     f = fields(par); f.update(kw)
-    # THE SMALL UNIT IS A QUARTER OF THE STANDARD ONE, always, and it is tied
-    # here rather than at the call sites so that a bracket on h_lg cannot forget
-    # it and silently calibrate one size against a stale other.
+    # THE SMALL UNIT IS A QUARTER OF THE STANDARD ONE, and both are SET, so the
+    # tie only fires for the diagnostics that move h_lg on purpose.
     if 'h_lg' in kw and 'h_sm' not in kw:
         f['h_sm'] = H_RATIO * f['h_lg']
     return clone(**f)

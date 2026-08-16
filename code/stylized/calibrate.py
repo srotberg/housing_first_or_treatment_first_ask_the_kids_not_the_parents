@@ -1,27 +1,39 @@
 """
-A rough calibration of the stylized two period model. Four parameters, four
+A rough calibration of the stylized two period model. Five parameters, five
 targets.
 
+    gam     housing over non drug spending             26.8 %
     h_hl    homelessness rate                          0.399 %
     aleph   value of a statistical life                80 annual incomes
     lam     share of users who acquire a SUD           33.2 %
     b       drug participation rate                    5.13 %
 
-THE RENTAL SIZES ARE NOT ON THE LIST AND ARE NOT SET FROM DATA EITHER. They are
-DERIVED from gamma: h_lg = gam/(1-th) * ybar is the dwelling a household at mean
-income would occupy if housing were continuously choosable, and h_sm is half of
-it. The previous version set h_lg at 21.2 per cent of mean income from the SCF
-while gamma was set separately from the Consumer Expenditure Survey, which is two
-external numbers aimed at one object with nothing making them agree. Deriving one
-from the other leaves a single number, 0.268, doing a single job.
+THE RENTAL SIZES ARE SET AND GAMMA IS CALIBRATED, which is the conventional order
+and the third arrangement tried. The grid is a market fact quoted to the reader,
+h_lg = 0.40 of mean income and h_sm a quarter of that; the weight on housing is a
+preference, and a preference is what a model is entitled to infer. Working
+backwards recovers the same object, since a gamma and a grid that reproduce the
+share are two descriptions of one calibration.
 
-CALIBRATING h_lg ON THE REALISED HOUSING SHARE WAS TRIED AND FAILS. See the
-frontier table in stylized.py: the aggregate share is bounded above by h_lg
-because every household consumes at most one standard unit, so matching 26.8 per
-cent needs a unit costing 45 per cent of mean income, a small unit at 22.5, and
-homelessness of 3.2 per cent that no value of h_hl can undo. The realised share
-is therefore an untargeted moment the model misses, like the drug spending share,
-and it is reported as one.
+WHAT WAS TRIED BEFORE, both of which failed. Setting BOTH, gamma from the
+expenditure survey and h_lg from an SCF housing cost to income ratio, aims two
+external numbers at one object with nothing making them agree, and the model
+delivered a 16 per cent share against the survey's 26.8. Calibrating h_lg on the
+share instead hits 26.8 exactly and puts homelessness at 3.2 per cent, because
+the aggregate share is bounded above by h_lg and matching it needs a unit so
+large that the small unit prices the bottom of the distribution out of housing.
+The frontier is tabulated in stylized.py.
+
+FREEING GAMMA HAS ITS OWN HISTORY AND IT IS A BAD ONE, so this arrangement is on
+probation until the sweep is read. Twice before, gamma was freed jointly with
+theta in a scan, and it collapsed both times: gamma couples the housing weight to
+the homelessness margin through the value of the street, the h_hl bracket lost
+its interior solution, and the sweep walked to h_hl = 0.055 with homelessness at
+25 per cent. Two things differ now. theta stays SET, so only one preference is
+moving. And the rental sizes are SET, so the affordability floor cannot drift
+while gamma moves, which is what removed h_hl's interior solution before. If the
+h_hl bracket corners again, this arrangement is wrong too and the note should say
+so rather than report a corner as a calibration.
 
 THE VALUE OF LIFE IS BRACKETED AFTER THE STREET. aleph is additive in flow
 utility so it barely touches the housing choice, whereas h_hl moves the
@@ -33,8 +45,8 @@ so the calibration only has to put it in the right region. Nothing here is a fit
 to be defended, there is no validation table, and the magnitudes in the paper
 come from the full model.
 
-Everything else is set: the discount factor, the interest rate, survival, the
-housing weight at 0.268 of non drug spending, the unemployment rate given a SUD
+Everything else is set: the discount factor, the interest rate, survival, the two
+rental sizes, the weight on drugs, the unemployment rate given a SUD
 (measured in NSDUH 2024, ages 26 and above, weighted), the replacement rate, the
 mortality multiplier, and the voucher parameters. Recovery is not on the list any
 more: period 2 is terminal, so rho has nothing to name.
@@ -150,7 +162,8 @@ TARGET = dict(part=0.0513, homeless=0.00399, prog=0.332, vsl=80.0,
 # rather than a calibration.
 LAM_LO, LAM_HI = 0.05, 4000.0
 
-PAIRS = [('h_hl', 'homeless', 1e-7, 0.49),
+PAIRS = [('gam', 'hspend', 0.02, 0.70),
+         ('h_hl', 'homeless', 1e-7, 0.49),
          ('aleph', 'vsl', 0.20, 24.0),
          ('lam', 'prog', LAM_LO, LAM_HI),
          ('b', 'part', 1e-5, 0.30)]
@@ -253,6 +266,10 @@ def calibrate(par=None, sweeps=5, verbose=True):
         # aleph is additive in flow utility, so it barely touches the housing
         # choice, while the rent moves the continuation and hence the VSL a lot.
         # The dependence runs one way, so the housing block goes first.
+        # GAMMA FIRST, then the street. Both move homelessness, so whichever runs
+        # last is the one whose moment is actually hit, and homelessness is the
+        # one that has to be.
+        par = with_(par, gam=bracket(par, 'gam', 'hspend', 0.02, 0.70))
         par = with_(par, h_hl=bracket(par, 'h_hl', 'homeless', 1e-7, 0.49))
         par = with_(par, aleph=bracket(par, 'aleph', 'vsl', 0.20, 24.0, iters=26))
         par = with_(par, lam=bracket_prog(par, LAM_LO, LAM_HI))

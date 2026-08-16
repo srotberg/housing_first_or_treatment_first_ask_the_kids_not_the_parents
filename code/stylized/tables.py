@@ -38,8 +38,6 @@ EXTERNAL = [
          'SSA period life table, ages 25--55', '{:.2f}'),
         ('th', r'\theta', 'Weight on drug use',
          r'Set; see the text', '{:.2f}'),
-        ('gam', r'\gamma', 'Weight on housing services',
-         '\\textcolor{red}{$0.268(1-\\theta)$, CEX 2024}', '{:.3f}'),
     ]),
     ('The SUD', [
         ('kap', r'\kappa', 'Proportional fall in survival with a SUD',
@@ -62,10 +60,9 @@ EXTERNAL = [
         ('p_v', 'p_v', 'Price of a unit of drugs',
          'Normalisation', '{:.2f}'),
         ('h_lg', 'h_L', 'Standard rental unit',
-         '\\textcolor{red}{$[\\gamma/(1-\\theta)]\\bar y$, the unit a household at mean income would occupy if housing were continuous}',
-         '{:.3f}'),
+         '\\textcolor{red}{Set; $0.41$ of mean income}', '{:.2f}'),
         ('h_sm', 'h_S', 'Small rental unit',
-         '\\textcolor{red}{A quarter of the standard unit}', '{:.4f}'),
+         '\\textcolor{red}{Set; a quarter of the standard unit}', '{:.2f}'),
         ('kappa_r', r'\kappa_r', "Tenant's share of the rent when covered",
          'HUD voucher rules', '{:.2f}'),
         ('yV', 'y_V', 'Voucher means test, multiple of average income',
@@ -76,6 +73,9 @@ EXTERNAL = [
 ]
 
 INTERNAL = [
+    ('gam', r'\gamma', '\\textcolor{red}{Weight on housing services}',
+     '\\textcolor{red}{Housing over non drug spending}', 'hspend', '{:.2%}',
+     '{:.3f}'),
     ('aleph', r'\aleph', 'Flow value of being alive',
      'Value of a statistical life', 'vsl', '{:.1f}', '{:.3f}'),
     ('b', 'b', 'Pull of the first unit of drugs', 'Drug participation rate',
