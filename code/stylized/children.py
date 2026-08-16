@@ -69,7 +69,7 @@ Run:  python3 children.py
 
 import json
 import numpy as np
-from stylized import P, with_, value1, use_choice
+from stylized import P, with_, value1, use_prob
 from calibrate import YG, W, stats
 from welfare import cev
 
@@ -80,7 +80,11 @@ def child_grid(par, policy, pV):
     """V1 and the use indicator on the income grid, for interpolation."""
     q = with_(par, policy=policy, pV=pV)
     v1 = np.array([value1(q, y, policy) for y in YG])
-    use = np.array([use_choice(q, y, policy)[0] > 0 for y in YG], dtype=float)
+    # the probability of using at that income, over the period 1 employment and
+    # voucher draws. It used to be a zero one indicator, which was right when
+    # period 1 held no lotteries; now a household at a given income uses in some
+    # draws and not in others.
+    use = np.array([use_prob(q, y, policy) for y in YG], dtype=float)
     return v1, use
 
 
@@ -182,7 +186,7 @@ def tab_children(par, pV=1.0):
     L = [r'\footnotesize', r'\begin{tabular}{@{}lcccc@{}}', r'\toprule',
          r'\multicolumn{5}{@{}l}{\emph{Panel A. Transmission: what each income '
          r'penalty implies}} \\',
-         r"$\delta_d$ & & Child's disorder rate & Ratio & "
+         r"$\delta_d$ & & Child's SUD rate & Ratio & "
          r'Loss to the child \\', r'\midrule']
     for d, sud, ratio, loss in rows:
         lab = f'{d:.2f}' + (r'\ \ (calibrated)' if abs(d - DEL_D) < 1e-9 else '')

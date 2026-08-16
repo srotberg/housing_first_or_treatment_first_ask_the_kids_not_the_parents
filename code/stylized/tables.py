@@ -28,27 +28,25 @@ def write(name, body):
 # note can never quote a value the model does not use.
 EXTERNAL = [
     ('Preferences and demographics', [
-        ('beta', r'\beta', 'Discount factor over a twenty year period',
+        ('beta', r'\beta', 'Discount factor over a thirty year period',
          r'$0.99$ annually, compounded', '{:.3f}'),
-        ('R', 'R', 'Gross interest rate over a twenty year period',
+        ('R', 'R', 'Gross interest rate over a thirty year period',
          r'Set to $1/\beta$', '{:.3f}'),
         (None, r'\sigma', 'Dispersion of log permanent income',
          'Heathcote, Perri and Violante (2010)', '0.75'),
-        ('phi0', r'\phi_0', 'Survival per period, no disorder',
-         'CDC life tables', '{:.2f}'),
+        ('phi0', r'\phi_0', 'Survival over a period, no SUD',
+         'CDC life tables, ages 25 to 55', '{:.2f}'),
         ('th', r'\theta', 'Weight on drug use',
          r'Set; see the text', '{:.2f}'),
         ('gam', r'\gamma', 'Weight on housing services',
          r'$0.25(1-\theta)$, Consumer Expenditure Survey', '{:.3f}'),
     ]),
-    ('The disorder', [
-        ('rho', r'\rho', 'Recovery probability per period',
-         'SAMHSA, TEDS', '{:.2f}'),
-        ('kap', r'\kappa', 'Proportional fall in survival with the disorder',
+    ('The SUD', [
+        ('kap', r'\kappa', 'Proportional fall in survival with a SUD',
          r'Hjorth\o j et al. (2023)', '{:.2f}'),
-        ('u0', 'u_0', 'Unemployment probability, no disorder',
+        ('u0', 'u_0', 'Unemployment probability, no SUD',
          'BLS', '{:.3f}'),
-        ('u1', 'u_1', 'Unemployment probability, with the disorder',
+        ('u1', 'u_1', 'Unemployment probability, with a SUD',
          'NSDUH 2024, ages 26 and over, weighted', '{:.4f}'),
     ]),
     ('Income support', [
@@ -84,7 +82,7 @@ INTERNAL = [
     ('h_hl', 'h_0', 'Housing services when homeless', 'Homelessness rate',
      'homeless', '{:.3%}', '{:.5f}'),
     ('lam', r'\lambda', 'Addiction hazard per unit of use',
-     'Share of users who acquire the disorder', 'prog', '{:.1%}', '{:.1f}'),
+     'Share of users who acquire a SUD', 'prog', '{:.1%}', '{:.1f}'),
 ]
 
 

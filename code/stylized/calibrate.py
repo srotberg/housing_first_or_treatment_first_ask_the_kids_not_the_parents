@@ -112,9 +112,17 @@ TARGET = dict(part=0.0513, homeless=0.00399, prog=0.332, vsl=80.0,
 # average, and no household with a negative ex ante value of life. theta = 0.20
 # with gamma left at its Consumer Expenditure Survey value is the largest drug
 # spending share that costs no other target. best_drug.json is the runner up.
-PAIRS = [('aleph', 'vsl', 0.20, 12.0),
+# THE LAMBDA BRACKET REACHES FAR DOWN. In the three period model it started at
+# 10 and the calibrated value was in the hundreds. Two periods put one third of
+# the continuation at risk instead of two, so a household that uses loses less
+# and uses more, and lambda has to be smaller to keep the same share of users
+# progressing. A bracket that cannot reach a small lambda would report a corner
+# rather than a calibration.
+LAM_LO, LAM_HI = 0.05, 4000.0
+
+PAIRS = [('aleph', 'vsl', 0.20, 24.0),
          ('h_hl', 'homeless', 1e-5, 0.49),
-         ('lam', 'prog', 10.0, 4000.0),
+         ('lam', 'prog', LAM_LO, LAM_HI),
          ('b', 'part', 1e-5, 0.30)]
 
 LABEL = {'part': 'drug participation rate',
@@ -122,7 +130,7 @@ LABEL = {'part': 'drug participation rate',
          'homeless': 'homelessness rate',
          'dshare': 'drug spending / income among users',
          'vsl': 'value of a statistical life, annual incomes',
-         'prog': 'share of users who acquire the disorder'}
+         'prog': 'share of users who acquire a SUD'}
 
 
 def stats(par):
@@ -181,7 +189,7 @@ def bracket_with_b(par, name, mom, lo, hi, iters=16):
     return float(np.sqrt(lo * hi))
 
 
-def bracket_prog(par, lo=10.0, hi=4000.0, iters=16):
+def bracket_prog(par, lo=None, hi=None, iters=16):
     """
     Bracket lam on prog, REFITTING b at every trial.
 
@@ -192,6 +200,8 @@ def bracket_prog(par, lo=10.0, hi=4000.0, iters=16):
     b at each trial keeps participation on target, so prog is always defined.
     """
     tgt = TARGET['prog']
+    lo = LAM_LO if lo is None else lo
+    hi = LAM_HI if hi is None else hi
     for _ in range(iters):
         mid = np.sqrt(lo * hi)
         q = with_(par, lam=mid)
@@ -206,9 +216,9 @@ def bracket_prog(par, lo=10.0, hi=4000.0, iters=16):
 def calibrate(par=None, sweeps=5, verbose=True):
     par = par or P()
     for s in range(sweeps):
-        par = with_(par, aleph=bracket(par, 'aleph', 'vsl', 0.20, 12.0, iters=26))
+        par = with_(par, aleph=bracket(par, 'aleph', 'vsl', 0.20, 24.0, iters=26))
         par = with_(par, h_hl=bracket(par, 'h_hl', 'homeless', 1e-5, 0.49))
-        par = with_(par, lam=bracket_prog(par, 10.0, 4000.0))
+        par = with_(par, lam=bracket_prog(par, LAM_LO, LAM_HI))
         par = with_(par, b=_b_for(par, iters=30))
         if verbose:
             m = stats(par)

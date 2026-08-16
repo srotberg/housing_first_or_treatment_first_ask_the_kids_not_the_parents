@@ -37,7 +37,8 @@ CHANNELS = [
     # resets it and the row measures nothing. It is structural in any case:
     # without the street being worse than a home there is no homelessness to
     # explain and no voucher worth having.
-    ('recovery happens at all', dict(rho=0.0)),
+    # recovery used to be a row here. rho is gone from the model: period 2 is
+    # terminal, so there is no period to recover into and nothing to switch off.
     ('a small unit exists', dict(h_sm=P.h_lg)),
     ('income support is only half as generous', dict(repl=0.25)),
     # ('income support is uncapped', dict(ycap=99.0)) reads as 'remove' here and

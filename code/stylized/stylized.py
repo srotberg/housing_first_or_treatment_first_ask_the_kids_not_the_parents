@@ -1,5 +1,5 @@
 """
-A stylized three period model of drug use, homelessness and housing policy.
+A stylized two period model of drug use, homelessness and housing policy.
 
 WHAT IT IS FOR
 
@@ -16,10 +16,11 @@ by design, enough to put the model in the right region and no more.
 
 NO PREFERENCE HETEROGENEITY
 
-Households differ in permanent income and in nothing else, so everyone at a
-given income makes the same choice and the use decision is a THRESHOLD IN
-INCOME rather than a probability. That sharpness is the point: the figure shows
-where the threshold sits and how far it moves when a channel is switched off.
+Households differ in permanent income and in nothing else. They also differ in
+the employment and voucher draws of period 1, which are the same lotteries every
+household faces, so within a draw the use decision is a THRESHOLD IN INCOME
+rather than a probability. That sharpness is the point: the figure shows where
+the threshold sits and how far it moves when a channel is switched off.
 
 It also keeps the paper's claim intact. The introduction says the model produces
 the income gradient without ex ante preference heterogeneity. An earlier version
@@ -29,21 +30,23 @@ thing the paper says it does not need.
 
 THE ENVIRONMENT
 
-  period 1  income y, employed, in the large unit, which is NOT a choice here,
-            so y is income net of that rent. Choose consumption, drug use v >= 0
-            and saving. Flow utility
-                log c + gam log h + th[log(b+v) - log b] + aleph.
-            Using gives the disorder next period with probability 1 - exp(-lam v),
-            so the household internalises that using MORE is riskier.
+  period 1  income y. Employment is drawn with the unemployment probability u0,
+            and an income eligible household draws a voucher with probability
+            pV. The household is clean. It then chooses consumption, housing,
+            drug use v >= 0 and saving. Flow utility
+                (1-gam-th) log c + gam log h + th[log(b+v) - log b] + aleph.
+            Using gives the disorder at the TRANSITION with probability
+            1 - exp(-lam v), so the household internalises that using MORE is
+            riskier.
 
-  period 2  the disorder d is realised, but only for households that used.
-            Unemployed with probability u0, or the higher u1 if d = 1. Income
-            support replaces repl of previous earnings on a base capped at ycap.
-            Choose consumption, housing and saving. Recovery from the disorder
-            is rho. There is NO wage penalty: see below.
+  the       the disorder d' is realised, and survival into period 2 is
+  transition  phi(d') = phi0 (1 - kap d'). The mortality penalty applies here
+            and only here.
 
-  period 3  terminal. Same employment, income support and housing as period 2,
-            no drug use decision, assets run down, nothing bequeathed.
+  period 2  terminal. Employment is drawn again, with u0 if clean and the
+            higher u1 if d' = 1, the voucher is drawn again subject to the
+            policy rule, housing is chosen, assets are run down and nothing is
+            bequeathed.
 
   housing   a large unit, a small unit, or the street. The street is free but
             supplies only h_hl of housing services. A voucher is means tested at
@@ -52,12 +55,42 @@ THE ENVIRONMENT
 
             Two rental sizes rather than one, because with a single size a
             household whose cash falls below the rent cannot be housed at all.
-            Collapsing h_sm into h_lg takes homelessness from 0.42 per cent to
-            3.41 against a target of 0.399, and NO value of h_hl brings it back:
-            making the street arbitrarily bad does not help a household that
-            cannot afford the rent at any level of misery. That row of the
-            ablation is a model that failed to calibrate, not a recalibrated
-            model, which is the strongest case any component here has.
+            Collapsing h_sm into h_lg takes homelessness far above its target
+            and NO value of h_hl brings it back: making the street arbitrarily
+            bad does not help a household that cannot afford the rent at any
+            level of misery. That row of the ablation is a model that failed to
+            calibrate, not a recalibrated model, which is the strongest case any
+            component here has.
+
+WHY TWO PERIODS AND WHERE THE DISORDER IS REALISED
+
+Mortality is a tax on a continuation value, so the disorder can only cost
+anything if there is a future left when it is carried. That does NOT require a
+third period, it requires the disorder to be realised at a TRANSITION rather
+than inside the terminal period. Here it is drawn on the way from period 1 to
+period 2 and survival over that transition depends on it, so acquiring it
+destroys the whole of period 2.
+
+An earlier two period attempt, in the deleted two_period.py, realised the
+disorder IN the final period, where death costs nothing because nothing follows
+it. Its moral hazard collapsed from +2.55 to +0.24 and it was correctly
+rejected. That is a verdict on where the draw sits, not on how many periods
+there are, and it is the reason this file puts the draw in the transition.
+
+A PERIOD IS THIRTY YEARS, so the two of them span ages twenty five to eighty
+five, and every parameter with an annual counterpart is compounded to that
+length rather than used raw.
+
+SURVIVAL GOES INSIDE THE EXPECTATION
+
+The period 1 continuation is
+
+    E_{d'} [ phi(d') W2(a', y, d') ]     and NOT     phi * E_{d'} W2 .
+
+Survival depends on the realised disorder, so it belongs inside. Writing it
+outside is the value of life pathology in another form: wherever W2 is negative,
+lower survival RAISES the expected continuation and the disorder becomes
+something the household wants.
 
 THE CHANNELS THAT SURVIVED
 
@@ -69,15 +102,15 @@ THE CHANNELS THAT SURVIVED
 Two channels were built and then removed because, after the model was FULLY
 recalibrated without them, neither result moved:
 
-    the street raises mortality        homelessness is four tenths of one per
+    the street raises mortality        homelessness is a fraction of one per
     recovery is harder on the street   cent of the population, so a channel
                                        acting only on the homeless cannot move
                                        an aggregate
 
-Both stay in the FULL model, where mortality and welfare are the objects of
-interest and the counterfactuals move the homeless population a long way. They
-are absent here because this model answers two questions and they bear on
-neither.
+Recovery has since gone entirely, and not because it was small: with a terminal
+period 2 there is no period to recover into, so rho has nothing to name. It
+stays in the FULL model, where treatment is a choice and rho is the parameter
+its whole effect runs through.
 
 EVERY CHANNEL HERE EXISTS IN THE FULL MODEL. That is a constraint, not a
 coincidence. A stylized model that rests on a shock the full model does not use
@@ -110,30 +143,43 @@ class P:
     th    = 0.11      # weight on drug use
     b     = 0.009     # Stone Geary subsistence; th/b is the pull of the first unit
     gam   = 0.2225    # weight on housing = 0.25 * (1 - th)
-    # A PERIOD IS TWENTY YEARS, so the discount factor and the interest rate
-    # are the annual values COMPOUNDED, not the annual values used raw. At an
-    # annual 0.99 the period factor is 0.99^20 = 0.818, which still leaves the
-    # future mattering, which is what the mortality channel needs. The interest
+    # A PERIOD IS THIRTY YEARS, so the discount factor and the interest rate are
+    # the annual values COMPOUNDED, not the annual values used raw. The interest
     # rate is set to 1/beta so that beta*R = 1 and nothing in the results comes
     # from a wedge between the two.
-    beta_ann = 0.99
-    beta  = 0.99 ** 20
-    R     = 1.0 / (0.99 ** 20)
-    phi0  = 0.93      # survival over one period, clean, employed, housed
-    # SET SO THAT NO HOUSEHOLD HAS A NEGATIVE VALUE OF LIFE. At 2.50 the very
-    # poorest had phi*W2 just below zero, and since dying is worth zero they
-    # then preferred the extra mortality the disorder brings, which inverts the
-    # mechanism. Two other changes did most of the work: weighting consumption
-    # by 1-gam-th damps log c at the bottom by a third, and setting u0 = 0 means
-    # far fewer households are ever at risk of the street, so h_hl calibrates to
-    # 0.0039 rather than 0.00013 and homelessness stops being worse than death.
-    aleph = 2.80      # flow value of being alive
+    #
+    # THE ANNUAL FACTOR IS 0.995 AND NOT 0.99, and over thirty years that is the
+    # difference between 0.740 and 0.860. It is not a free choice of units. The
+    # value of a statistical life pins the DISCOUNTED continuation, beta*W2, so
+    # raising beta lowers the aleph needed to deliver it. A smaller aleph is a
+    # continuation that depends more on the household's own consumption and less
+    # on a constant, which is exactly the part of the continuation that scales
+    # with permanent income. So a patient household has a mortality penalty that
+    # bites harder at the top and less hard at the bottom, which steepens the
+    # income gradient in who uses and, by lowering what a poor household stands
+    # to lose, raises how much a user uses. Both of those move the model towards
+    # the data at once.
+    beta_ann = 0.995
+    beta  = 0.995 ** 30
+    R     = 1.0 / (0.995 ** 30)
+    years = 30.0      # years in a period, used to put the VSL in annual units
+    phi0  = 0.91      # survival over one period, clean: ages 25 to 55, CDC
+    # SET SO THAT NO HOUSEHOLD HAS A NEGATIVE VALUE OF LIFE. When the poorest
+    # household's continuation goes below zero, dying is worth more than living
+    # and it then WANTS the extra mortality the disorder brings, which inverts
+    # the mechanism. It is calibrated to the value of a statistical life, and
+    # the level it needs is higher here than in the three period version because
+    # one period of continuation has to deliver the whole of it.
+    aleph = 4.00      # flow value of being alive. CALIBRATED
 
     # the disorder
     lam   = 25.0      # addiction hazard per unit of use. CALIBRATED
-    rho   = 0.40      # recovery when housed, over one period
     kap   = 0.45      # MORTALITY: the disorder kills you
     u1    = 0.1625    # RESOURCE: the disorder costs you a job. Measured.
+
+    # NO RECOVERY PARAMETER. rho needed a period to recover INTO and there is
+    # none: period 2 is terminal. It belongs to the full model, where treatment
+    # is a choice and rho is what its effect runs through.
 
     # NO WAGE PENALTY. The full model has prod_pen_d and sets it to 1.00, which
     # is off, because the evidence on a wage penalty conditional on working is
@@ -146,7 +192,8 @@ class P:
     # homelessness run through the disorder, and the share of the homeless
     # carrying one then goes to 0.997. The data say the opposite: most homeless
     # people do not have a substance use disorder, roughly a third do. A clean
-    # household therefore has to be able to lose its job too.
+    # household therefore has to be able to lose its job too, in BOTH periods:
+    # period 1 draws employment on the same lottery as period 2.
     u0    = 0.049     # unemployment probability when clean
     # LOSING YOUR JOB. Income support replaces the fraction repl of what you used
     # to earn, on an earnings base capped at ycap. A household at or below the
@@ -165,15 +212,15 @@ class P:
     # unemployment risk itself.
     #
     # THE CAP EARNS ITS PLACE, and it took a second look to see it. Removing it
-    # leaves the baseline calibration and BOTH policy forces identical to four
-    # decimals, so ablate.py votes to cut it. That verdict is wrong, because
-    # ablate.py only ever looks at the baseline. Without the cap, income support
-    # is exactly proportional to income, and a penalty proportional to income
+    # leaves the baseline calibration and BOTH policy forces nearly identical,
+    # so ablate.py votes to cut it. That verdict is wrong, because ablate.py
+    # only ever looks at the baseline. Without the cap, income support is
+    # exactly proportional to income, and a penalty proportional to income
     # cannot move a gradient generated by income: the unemployment curve in
-    # figure 1 becomes flat at 3.37 by construction. With the cap it falls to
-    # 1.96, so the channel does something and still fails to reverse the
-    # gradient, which is the honest version of the result and the one a referee
-    # cannot dismiss as a knife edge. Real income support is capped too.
+    # figure 1 becomes flat by construction. With the cap it falls, so the
+    # channel does something and still fails to reverse the gradient, which is
+    # the honest version of the result and the one a referee cannot dismiss as a
+    # knife edge. Real income support is capped too.
     repl  = 0.50      # replacement rate
     ycap  = 1.00      # earnings base capped at this multiple of average income
 
@@ -230,11 +277,17 @@ def _states(par, d, policy, y, used=0):
     the household used drugs in period 1.
 
     POLICY. Treatment First withdraws the voucher from any household that
-    violated the sobriety condition, which is v > 0, not only from those that
-    went on to acquire the disorder. That is exactly the rule in the full model,
-    where voucher receipt is revoked with certainty whenever v > 0. Housing
-    First withdraws it from nobody. That single difference is the whole
+    violates the sobriety condition, which is v > 0 OR d = 1, and not only from
+    those that went on to acquire the disorder. That is exactly the rule in the
+    full model, where voucher receipt is revoked with certainty whenever v > 0.
+    Housing First withdraws it from nobody. That single difference is the whole
     experiment.
+
+    This is called for BOTH periods. In period 1 it is called at d = 0 with
+    used = 0, because the voucher is drawn on arrival, before v is chosen, so
+    nobody has yet violated anything; the condition then bites within the period
+    through _p1_rmul, which strips the voucher from a period 1 household that
+    goes on to choose v > 0.
     """
     pu = par.u1 if d == 1 else par.u0
     covered = (policy == 'HF') or (d == 0 and not used)
@@ -250,9 +303,22 @@ def _states(par, d, policy, y, used=0):
         # employed households pass only in the bottom part of the distribution.
         pv = par.pV if (covered and inc <= par.yV) else 0.0
         for rmul, prb in ((par.kappa_r, pv), (1.0, 1.0 - pv)):
-            if pe * prb > 1e-14:
-                out.append((pe * prb, inc, rmul))
+            out.append((pe * prb, inc, rmul))
     return out
+
+
+def _p1_rmul(par, policy, rmul):
+    """
+    The rent multiplier a period 1 household faces once it has chosen v > 0.
+
+    Under Treatment First the sobriety condition applies to the voucher in every
+    period in which it is held, period 1 included, so a household that uses
+    loses it immediately and pays the market rent. Under Housing First it keeps
+    what it drew. The period 1 voucher is drawn BEFORE v is chosen, since the
+    household is clean on arrival, so conditionality operates here as a
+    consequence of the drug decision rather than as a screen on entry.
+    """
+    return rmul if policy == 'HF' else 1.0
 
 
 def _options(par, rmul):
@@ -262,26 +328,30 @@ def _options(par, rmul):
             (par.h_lg, par.pr * par.h_lg * rmul, 0))
 
 
-def solve_late(par, y, policy, used=0):
+def solve_period2(par, y, policy, used=0):
     """
-    Periods 3 and 2 by backward induction.
+    Period 2, which is terminal: assets are run down and nothing is bequeathed.
 
-    Returns (assets grid, V2, street share, rent paid, voucher outlay). The last
-    of these is the government's expected spending on this household from
-    period 2 on, discounted at the market rate and weighted by survival. It is
-    pure accounting: nothing in the household's problem depends on it, and the
+    Returns (assets grid, W2, street share, rent paid, voucher outlay), each
+    indexed by the assets grid and by the disorder d. The last of these is the
+    government's expected spending on this household in period 2. It is pure
+    accounting: nothing in the household's problem depends on it, and the
     household never pays for it. It exists so that the two policies can be
     compared at equal COST as well as at equal generosity, which is the only
     comparison in this model under which Treatment First can win.
     """
     ag = np.linspace(0.0, 1.6 * y, par.na)
 
-    V3 = np.zeros((par.na, 2))
-    G3 = np.zeros((par.na, 2))
+    W2 = np.zeros((par.na, 2)); H2 = np.zeros((par.na, 2))
+    R2 = np.zeros((par.na, 2))            # rent actually paid, for the housing share
+    G2 = np.zeros((par.na, 2))            # voucher outlay in period 2
     for d in (0, 1):
         for p, inc, rmul in _states(par, d, policy, y, used):
+            if p <= 1e-14:
+                continue
             cash = par.R * ag + inc
-            best = np.full(par.na, -np.inf); sub = np.zeros(par.na)
+            best = np.full(par.na, -np.inf); onst = np.zeros(par.na)
+            rnt = np.zeros(par.na); out = np.zeros(par.na)
             for h, rent, street in _options(par, rmul):
                 c = cash - rent
                 v = np.where(c > 1e-9,
@@ -290,84 +360,108 @@ def solve_late(par, y, policy, used=0):
                 # what the voucher pays on this option: the rest of the market
                 # rent. Zero on the street, which is free to begin with.
                 s = 0.0 if street else par.pr * h * (1.0 - rmul)
-                sub = np.where(v > best, s, sub)
-                best = np.maximum(best, v)
-            V3[:, d] += p * best
-            G3[:, d] += p * sub
-
-    V2 = np.zeros((par.na, 2)); H2 = np.zeros((par.na, 2))
-    R2 = np.zeros((par.na, 2))            # rent actually paid, for the housing share
-    G2 = np.zeros((par.na, 2))            # voucher outlay, periods 2 and 3
-    for d in (0, 1):
-        for p, inc, rmul in _states(par, d, policy, y, used):
-            cash = par.R * ag[:, None] + inc
-            best = np.full(par.na, -np.inf); onst = np.zeros(par.na)
-            rnt = np.zeros(par.na); out = np.zeros(par.na)
-            r = par.rho if d else 0.0
-            EV3 = (1.0 - r) * V3[:, d] + r * V3[:, 0]
-            EG3 = (1.0 - r) * G3[:, d] + r * G3[:, 0]
-            surv = par.phi0 * (1.0 - par.kap * d)
-            for h, rent, street in _options(par, rmul):
-                c = cash - rent - ag[None, :]
-                obj = np.where(c > 1e-9,
-                               (1.0 - par.gam - par.th)
-                               * np.log(np.maximum(c, 1e-12))
-                               + par.gam * np.log(h)
-                               + par.aleph + par.beta * surv * EV3[None, :],
-                               -np.inf)
-                ia = np.argmax(obj, axis=1)
-                v = obj[np.arange(par.na), ia]
-                s = 0.0 if street else par.pr * h * (1.0 - rmul)
-                g = s + surv * EG3[ia] / par.R
                 onst = np.where(v > best, street, onst)
                 rnt = np.where(v > best, rent, rnt)
-                out = np.where(v > best, g, out)
+                out = np.where(v > best, s, out)
                 best = np.maximum(best, v)
-            V2[:, d] += p * best; H2[:, d] += p * onst
+            W2[:, d] += p * best; H2[:, d] += p * onst
             R2[:, d] += p * rnt;  G2[:, d] += p * out
-    return ag, V2, H2, R2, G2
+    return ag, W2, H2, R2, G2
 
 
-def use_choice(par, y, policy=None):
+def _branch(par, ag, inc, rmul, vg, cont):
     """
-    At income y: (gain from using, best v, assets if using, assets if not).
+    Period 1, one branch of the drug decision: the value at each v on the grid,
+    maximised over housing and saving, with the choice recorded.
+
+    cont is the continuation E_{d'}[phi(d') W2(a',y,d')] on (v, a'), which is
+    where the mortality penalty enters, INSIDE the expectation over d'.
+    """
+    n = len(vg)
+    cash = (inc - par.p_v * vg[:, None]) - ag[None, :]
+    val = np.full(cash.shape, -np.inf)
+    st = np.zeros(cash.shape); rn = np.zeros(cash.shape); sb = np.zeros(cash.shape)
+    for h, rent, street in _options(par, rmul):
+        c = cash - rent
+        u = np.where(c > 1e-9,
+                     (1.0 - par.gam - par.th) * np.log(np.maximum(c, 1e-12))
+                     + par.gam * np.log(h) + par.aleph + par.beta * cont,
+                     -np.inf)
+        s = 0.0 if street else par.pr * h * (1.0 - rmul)
+        st = np.where(u > val, street, st)
+        rn = np.where(u > val, rent, rn)
+        sb = np.where(u > val, s, sb)
+        val = np.maximum(val, u)
+    ia = np.argmax(val, axis=1)
+    k = np.arange(n)
+    return val[k, ia], ag[ia], st[k, ia], rn[k, ia], sb[k, ia]
+
+
+def period1(par, y, policy=None):
+    """
+    The period 1 problem at income y, state by state.
+
+    The household draws employment and, if income eligible, a voucher, and only
+    then chooses housing, drug use and saving. So the use decision is a
+    threshold in income WITHIN a draw, and participation at a given income is
+    the probability of drawing a state in which the household uses.
+
+    Returns a list, one entry per period 1 state, of
+
+        (probability, gain from using, best v,
+         (a', street, rent, voucher outlay)  if it uses,
+         (a', street, rent, voucher outlay)  if it does not,
+         income in the state, lifetime value at the household's own optimum)
+
     The SIGN of the gain is the use decision, and its zero crossings in income
-    bound the use region.
+    bound the use region. States of zero probability are RETAINED rather than
+    dropped, so that the list is the same length at every income: the employed
+    household's voucher state has probability zero above the means test, and
+    dropping it there would shift every later index and break the bisection in
+    threshold().
     """
     policy = policy or par.policy
     # TWO CONTINUATIONS, not one. Treatment First revokes the voucher from any
-    # household that used, so the value of period 2 differs between v = 0 and
-    # v > 0 even before the disorder is realised. Under Housing First the two
-    # coincide and the second solve is skipped.
-    ag, V2, _, _, _ = solve_late(par, y, policy, used=0)
-    V2u = V2 if policy == 'HF' else solve_late(par, y, policy, used=1)[1]
-    vg = np.concatenate(([0.0], np.linspace(1e-4, 0.5 * y, par.nv - 1)))
-    cash = (y - par.p_v * vg[:, None]) - ag[None, :]
-    pid = (1.0 - np.exp(-par.lam * vg))[:, None]
-    Vd0 = np.where(vg[:, None] > 0.0, V2u[None, :, 0], V2[None, :, 0])
-    Vd1 = np.where(vg[:, None] > 0.0, V2u[None, :, 1], V2[None, :, 1])
-    EV2 = (1.0 - pid) * Vd0 + pid * Vd1
-    # HOUSING IS A CHOICE IN EVERY PERIOD, period 1 included. The household is
-    # employed and clean here, but it still picks among the same three options
-    # and pays for the one it picks, so y is income and not income net of some
-    # assumed rent. Vouchers are the one thing that does not operate yet: the
-    # programme starts in period 2. That costs the policy comparison nothing,
-    # because every period 1 household is clean, so Housing First and Treatment
-    # First would cover exactly the same households on exactly the same terms.
-    val = np.full(cash.shape, -np.inf)
-    for h, rent, _ in _options(par, 1.0):
-        c = cash - rent
-        val = np.maximum(val, np.where(
-            c > 1e-9,
-            (1.0 - par.gam - par.th) * np.log(np.maximum(c, 1e-12))
-            + par.gam * np.log(h)
-            + par.aleph + par.beta * par.phi0 * EV2, -np.inf))
-    base = val.max(axis=1)
-    a_by_v = ag[np.argmax(val, axis=1)]
-    tot = (base + par.th * (np.log(par.b + vg) - np.log(par.b))
-           - par.omega * par.chdmg * (1.0 - np.exp(-par.lam * vg)))
-    k = int(np.argmax(tot[1:])) + 1
-    return float(tot[k] - tot[0]), float(vg[k]), float(a_by_v[k]), float(a_by_v[0])
+    # household that used, so period 2 is worth less after v > 0 even before the
+    # disorder is realised. Under Housing First the two coincide and the second
+    # solve is skipped.
+    ag, W2c, _, _, _ = solve_period2(par, y, policy, used=0)
+    W2u = W2c if policy == 'HF' else solve_period2(par, y, policy, used=1)[1]
+    s0, s1 = par.phi0, par.phi0 * (1.0 - par.kap)
+    cont0 = (s0 * W2c[:, 0])[None, :]
+
+    out = []
+    for p, inc, rmul in _states(par, 0, policy, y, used=0):
+        vg = np.concatenate(([0.0], np.linspace(1e-4, 0.5 * inc, par.nv - 1)))
+        pid = (1.0 - np.exp(-par.lam * vg))[:, None]
+        # SURVIVAL INSIDE THE EXPECTATION over the realised disorder. Not
+        # phi * E W2: see the note at the head of this file.
+        cont = (1.0 - pid) * s0 * W2u[None, :, 0] + pid * s1 * W2u[None, :, 1]
+        vu, au, su, ru, gu = _branch(par, ag, inc, _p1_rmul(par, policy, rmul),
+                                     vg, cont)
+        # v = 0 is solved on its own, because the household still holds the
+        # voucher it drew and faces the clean continuation.
+        v0, a0, s_0, r0, g0 = _branch(par, ag, inc, rmul, np.zeros(1), cont0)
+
+        pen = par.omega * par.chdmg * (1.0 - np.exp(-par.lam * vg))
+        tot = vu + par.th * (np.log(par.b + vg) - np.log(par.b)) - pen
+        k = int(np.argmax(tot[1:])) + 1
+        gain = float(tot[k] - v0[0])
+        # V1 is the PARENT'S OWN lifetime value, which is what a planner counts
+        # once and separately from the child's. The internalised term is added
+        # back so that raising omega changes behaviour without double counting
+        # the child.
+        own = float(tot[k] + pen[k]) if gain > 0.0 else float(v0[0])
+        out.append((p, gain, float(vg[k]),
+                    (float(au[k]), float(su[k]), float(ru[k]), float(gu[k])),
+                    (float(a0[0]), float(s_0[0]), float(r0[0]), float(g0[0])),
+                    float(inc), own))
+    return out
+
+
+def use_prob(par, y, policy=None):
+    """The probability a household at income y uses, over its period 1 draws."""
+    return float(sum(p for p, g, *_ in period1(par, y, policy) if g > 0.0))
 
 
 def value1(par, y, policy=None):
@@ -375,149 +469,179 @@ def value1(par, y, policy=None):
     V1(y): lifetime value at the household's own optimum, which is what welfare
     has to be measured on. The household is forward looking and faces the true
     addiction hazard, so whatever v it picks is the v it wants given the policy.
+    It is an expectation over the period 1 employment and voucher draws, since
+    those are realised before anything is chosen.
     """
-    policy = policy or par.policy
-    ag, V2, _, _, _ = solve_late(par, y, policy, used=0)
-    V2u = V2 if policy == 'HF' else solve_late(par, y, policy, used=1)[1]
-    vg = np.concatenate(([0.0], np.linspace(1e-4, 0.5 * y, par.nv - 1)))
-    c = (y - par.p_v * vg[:, None]) - ag[None, :]
-    pid = (1.0 - np.exp(-par.lam * vg))[:, None]
-    Vd0 = np.where(vg[:, None] > 0.0, V2u[None, :, 0], V2[None, :, 0])
-    Vd1 = np.where(vg[:, None] > 0.0, V2u[None, :, 1], V2[None, :, 1])
-    EV2 = (1.0 - pid) * Vd0 + pid * Vd1
-    val = np.full(c.shape, -np.inf)
-    for h, rent, _ in _options(par, 1.0):
-        cc = c - rent
-        val = np.maximum(val, np.where(
-            cc > 1e-9,
-            (1.0 - par.gam - par.th) * np.log(np.maximum(cc, 1e-12))
-            + par.gam * np.log(h)
-            + par.aleph + par.beta * par.phi0 * EV2, -np.inf))
-    tot = (val.max(axis=1) + par.th * (np.log(par.b + vg) - np.log(par.b))
-           - par.omega * par.chdmg * (1.0 - np.exp(-par.lam * vg)))
-    k = int(np.argmax(tot))
-    # V1 is the PARENT'S OWN lifetime value, which is what a planner counts once
-    # and separately from the child's. The internalised term is added back so
-    # that raising omega changes behaviour without double counting the child.
-    return float(tot[k] + par.omega * par.chdmg * (1.0 - np.exp(-par.lam * vg[k])))
+    return float(sum(p * own for p, _, _, _, _, _, own
+                     in period1(par, y, policy)))
 
 
 def threshold(par, ygrid, policy=None):
     """
     The use region, with its boundaries resolved exactly.
 
-    The decision is zero or one at every income, so on a grid alone the
-    aggregate jumps whenever a grid point flips. Wherever the sign changes
-    between neighbours the crossing is bisected and the boundary cell is given
-    the fraction of itself inside the region. The decision stays sharp and the
-    aggregate moves smoothly, which is what a bracketing calibration needs.
+    Within a period 1 draw the decision is zero or one at every income, so on a
+    grid alone the aggregate jumps whenever a grid point flips. Wherever the
+    sign changes between neighbours the crossing is bisected and the boundary
+    cell is given the fraction of itself inside the region. The decision stays
+    sharp and the aggregate moves smoothly, which is what a bracketing
+    calibration needs.
+
+    Returns, per income and per period 1 state, the state probability, the
+    fraction of the cell inside the use region, the chosen v, and the two
+    branches of (a', street, rent, voucher outlay), plus the state's income.
     """
     policy = policy or par.policy
+    rows = [period1(par, y, policy) for y in ygrid]
+    ns = max(len(r) for r in rows)
     n = len(ygrid)
-    g = np.empty(n); vv = np.empty(n); au = np.empty(n); an = np.empty(n)
-    for i, y in enumerate(ygrid):
-        g[i], vv[i], au[i], an[i] = use_choice(par, y, policy)
-    frac = (g > 0.0).astype(float)
-    for i in range(n - 1):
-        if (g[i] > 0.0) != (g[i + 1] > 0.0):
-            lo, hi, sgn = ygrid[i], ygrid[i + 1], g[i] > 0.0
+    PR = np.zeros((n, ns)); G = np.full((n, ns), np.nan); VV = np.zeros((n, ns))
+    INC = np.zeros((n, ns))
+    BU = np.zeros((n, ns, 4)); BN = np.zeros((n, ns, 4))
+    for i, r in enumerate(rows):
+        for s, (p, g, v, bu, bn, inc, _own) in enumerate(r):
+            PR[i, s] = p; G[i, s] = g; VV[i, s] = v; INC[i, s] = inc
+            BU[i, s] = bu; BN[i, s] = bn
+    frac = (G > 0.0).astype(float)
+    for s in range(ns):
+        for i in range(n - 1):
+            if np.isnan(G[i, s]) or np.isnan(G[i + 1, s]):
+                continue
+            if (G[i, s] > 0.0) == (G[i + 1, s] > 0.0):
+                continue
+            lo, hi, sgn = ygrid[i], ygrid[i + 1], G[i, s] > 0.0
             for _ in range(24):
                 mid = 0.5 * (lo + hi)
-                if (use_choice(par, mid, policy)[0] > 0.0) == sgn:
+                r = period1(par, mid, policy)
+                gm = r[s][1] if s < len(r) else np.nan
+                if np.isnan(gm):
+                    break
+                if (gm > 0.0) == sgn:
                     lo = mid
                 else:
                     hi = mid
             w = (0.5 * (lo + hi) - ygrid[i]) / (ygrid[i + 1] - ygrid[i])
-            frac[i], frac[i + 1] = (w, 0.0) if g[i] > 0.0 else (0.0, 1.0 - w)
-    return np.clip(frac, 0.0, 1.0), vv, au, an
+            frac[i, s], frac[i + 1, s] = ((w, 0.0) if G[i, s] > 0.0
+                                          else (0.0, 1.0 - w))
+    return PR, np.clip(frac, 0.0, 1.0), VV, BU, BN, INC
 
 
 def aggregates(par, ygrid, w, policy=None):
+    """
+    Everything the calibration and the note read off the model.
+
+    Aggregates that describe a stock, homelessness and the housing share, are
+    taken over BOTH periods, weighted by the mass alive: one unit in period 1
+    and phi(d') in period 2. Period 1 now carries unemployment, so a period 1
+    household can be on the street too, and counting only period 2 would
+    understate homelessness and overstate the share of the homeless who carry
+    the disorder. Aggregates that describe the drug decision, participation and
+    the disorder rate, are period 1 objects, since that is where v is chosen.
+    """
     policy = policy or par.policy
-    use, vv, au, an = threshold(par, ygrid, policy)
-    pid = use * (1.0 - np.exp(-par.lam * vv))
+    PR, frac, VV, BU, BN, INC = threshold(par, ygrid, policy)
     ww = w / w.sum(); ybar = (ww * ygrid).sum()
+    s0, s1 = par.phi0, par.phi0 * (1.0 - par.kap)
 
-    hl = hl_sud = hcost = hinc = cost = 0.0
+    part = spend = uinc = sud = 0.0
+    hl = hl_sud = hcost = hinc = cost = mass = 0.0
     for i, y in enumerate(ygrid):
-        ag, _, H2, R2, G2 = solve_late(par, y, policy, used=0)
+        ag, _, H2c, R2c, G2c = solve_period2(par, y, policy, used=0)
         if policy == 'HF':
-            H2u, R2u, G2u = H2, R2, G2
+            H2u, R2u, G2u = H2c, R2c, G2c
         else:
-            _, _, H2u, R2u, G2u = solve_late(par, y, policy, used=1)
-        for m, a, d, uu in ((ww[i] * (1.0 - use[i]), an[i], 0, 0),
-                            (ww[i] * (use[i] - pid[i]), au[i], 0, 1),
-                            (ww[i] * pid[i], au[i], 1, 1)):
-            if m <= 0.0:
+            _, _, H2u, R2u, G2u = solve_period2(par, y, policy, used=1)
+        for s in range(PR.shape[1]):
+            if PR[i, s] <= 0.0:
                 continue
-            Hx, Rx, Gx = (H2, R2, G2) if uu == 0 else (H2u, R2u, G2u)
-            street = float(np.interp(a, ag, Hx[:, d]))
-            # the rent ACTUALLY paid on the unit chosen, not the small one's
-            # rent regardless of choice, which understated the housing share by
-            # more than half and pinned the housing weight at its bound
-            hl += m * street
-            hcost += m * float(np.interp(a, ag, Rx[:, d]))
-            cost += m * float(np.interp(a, ag, Gx[:, d]))
+            for uu, mm, br in ((1, ww[i] * PR[i, s] * frac[i, s], BU[i, s]),
+                               (0, ww[i] * PR[i, s] * (1.0 - frac[i, s]), BN[i, s])):
+                if mm <= 0.0:
+                    continue
+                a, street, rent, sub = br
+                pid = (1.0 - np.exp(-par.lam * VV[i, s])) if uu else 0.0
+                if uu:
+                    part += mm; spend += mm * par.p_v * VV[i, s]
+                    uinc += mm * INC[i, s]; sud += mm * pid
+                # period 1: everyone alive, mass one
+                mass += mm
+                hl += mm * street
+                hcost += mm * rent; hinc += mm * INC[i, s]; cost += mm * sub
+                # period 2: the disorder is drawn at the transition and survival
+                # depends on it
+                Hx, Rx, Gx = (H2u, R2u, G2u) if uu else (H2c, R2c, G2c)
+                for d, pd, surv in ((0, 1.0 - pid, s0), (1, pid, s1)):
+                    m2 = mm * pd * surv
+                    if m2 <= 0.0:
+                        continue
+                    street2 = float(np.interp(a, ag, Hx[:, d]))
+                    mass += m2
+                    hl += m2 * street2
+                    if d == 1:
+                        hl_sud += m2 * street2
+                    hcost += m2 * float(np.interp(a, ag, Rx[:, d]))
+                    cost += m2 * float(np.interp(a, ag, Gx[:, d])) / par.R
+                    for p2, inc2, _ in _states(par, d, policy, y, uu):
+                        hinc += m2 * p2 * inc2
 
-            if d == 1:
-                hl_sud += m * street
-            for p, inc, rmul in _states(par, d, policy, y, uu):
-                hinc += m * p * inc
-
-    part = float((ww * use).sum())
-    # DRUG SPENDING OVER INCOME AMONG USERS, the moment that identifies theta.
-    # Aggregate spending over aggregate income of users, not the average of the
-    # ratios, so a handful of very poor users cannot drive it.
-    spend = float((ww * use * par.p_v * vv).sum())
-    uinc = float((ww * use * ygrid).sum())
-    return dict(part=part, sud=float((ww * pid).sum()),
+    use = (PR * frac).sum(axis=1)
+    return dict(part=float(part), sud=float(sud),
+                # DRUG SPENDING OVER INCOME AMONG USERS, the moment that would
+                # identify theta if it were targeted. Aggregate spending over
+                # aggregate income of users, not the average of the ratios, so a
+                # handful of very poor users cannot drive it.
                 dshare=float(spend / max(uinc, 1e-12)),
-                prog=float((ww * pid).sum() / max(part, 1e-12)),
+                prog=float(sud / max(part, 1e-12)),
                 r_use=float((ww * use * ygrid).sum() / max(part, 1e-12) / ybar),
-                homeless=float(hl),
+                homeless=float(hl / max(mass, 1e-12)),
                 sud_of_homeless=float(hl_sud / max(hl, 1e-12)),
                 housing_share=float(hcost / max(hinc, 1e-12)),
                 cost=float(cost),
-                use=use, v=vv)
+                use=use, v=(PR * frac * VV).sum(axis=1) / np.maximum(use, 1e-12))
 
 
-def vsl(par, y=1.0, policy=None, years=20.0):
+def vsl(par, y=1.0, policy=None):
     """
     The value of a statistical life, in multiples of average ANNUAL income.
 
     A household at income y in period 1 would pay, in period 1 consumption, an
-    amount beta * E W2 / u_c(c1) for a marginal increase in its probability of
-    surviving into period 2. That is the standard VSL: the marginal rate of
-    substitution between consumption and mortality risk. It comes out in units
-    of one PERIOD's mean income, so it is multiplied by the number of years in a
-    period to put it in the annual units the empirical estimates use.
+    amount beta * E_{d'}[(1 - kap d') W2] for a marginal increase in phi0, its
+    probability of surviving into period 2. That is the standard VSL: the
+    marginal rate of substitution between consumption and mortality risk. It
+    comes out in units of one PERIOD's mean income, so it is multiplied by the
+    number of years in a period to put it in the annual units the empirical
+    estimates use.
 
     This is what pins aleph. Raising aleph raises every continuation value and
     therefore the willingness to pay for survival, one for one.
     """
     policy = policy or par.policy
-    ag, V2, _, _, _ = solve_late(par, y, policy, used=0)
-    V2u = V2 if policy == 'HF' else solve_late(par, y, policy, used=1)[1]
-    vg = np.concatenate(([0.0], np.linspace(1e-4, 0.5 * y, par.nv - 1)))
-    c = (y - par.p_v * vg[:, None]) - ag[None, :]
-    pid = (1.0 - np.exp(-par.lam * vg))[:, None]
-    Vd0 = np.where(vg[:, None] > 0.0, V2u[None, :, 0], V2[None, :, 0])
-    Vd1 = np.where(vg[:, None] > 0.0, V2u[None, :, 1], V2[None, :, 1])
-    EV2 = (1.0 - pid) * Vd0 + pid * Vd1
-    val = np.full(c.shape, -np.inf)
-    con = np.zeros(c.shape)
-    for h, rent, _ in _options(par, 1.0):
-        cc = c - rent
-        v = np.where(cc > 1e-9,
-                     (1.0 - par.gam - par.th) * np.log(np.maximum(cc, 1e-12))
-                     + par.gam * np.log(h)
-                     + par.aleph + par.beta * par.phi0 * EV2, -np.inf)
-        con = np.where(v > val, cc, con)
-        val = np.maximum(val, v)
-    tot = (val.max(axis=1) + par.th * (np.log(par.b + vg) - np.log(par.b))
-           - par.omega * par.chdmg * (1.0 - np.exp(-par.lam * vg)))
-    k = int(np.argmax(tot))
-    ia = int(np.argmax(val[k]))
-    c1 = float(con[k, ia])
-    u_c = (1.0 - par.gam - par.th) / max(c1, 1e-12)
-    return float(par.beta * EV2[k, ia] / u_c * years)
+    ag, W2c, _, _, _ = solve_period2(par, y, policy, used=0)
+    W2u = W2c if policy == 'HF' else solve_period2(par, y, policy, used=1)[1]
+    s0, s1 = par.phi0, par.phi0 * (1.0 - par.kap)
+    tot = 0.0
+    for p, inc, rmul in _states(par, 0, policy, y, used=0):
+        if p <= 1e-14:
+            continue
+        vg = np.concatenate(([0.0], np.linspace(1e-4, 0.5 * inc, par.nv - 1)))
+        pid = (1.0 - np.exp(-par.lam * vg))[:, None]
+        cont = (1.0 - pid) * s0 * W2u[None, :, 0] + pid * s1 * W2u[None, :, 1]
+        rm = _p1_rmul(par, policy, rmul)
+        val, aa, _, rr, _ = _branch(par, ag, inc, rm, vg, cont)
+        cont0 = np.repeat((s0 * W2c[:, 0])[None, :], 2, axis=0)
+        v0, a0, _, r0, _ = _branch(par, ag, inc, rmul, np.zeros(2), cont0)
+        tot_v = (val + par.th * (np.log(par.b + vg) - np.log(par.b))
+                 - par.omega * par.chdmg * (1.0 - np.exp(-par.lam * vg)))
+        k = int(np.argmax(tot_v[1:])) + 1
+        if tot_v[k] > v0[0]:
+            a, rent, pi = aa[k], rr[k], float(1.0 - np.exp(-par.lam * vg[k]))
+            c1 = inc - rent - par.p_v * vg[k] - a
+        else:
+            a, rent, pi = a0[0], r0[0], 0.0
+            c1 = inc - rent - a
+        i2 = int(np.argmin(np.abs(ag - a)))
+        # d(objective)/d(phi0), which is the continuation per unit of survival
+        ew = (1.0 - pi) * W2c[i2, 0] + pi * (1.0 - par.kap) * W2u[i2, 1]
+        u_c = (1.0 - par.gam - par.th) / max(c1, 1e-12)
+        tot += p * par.beta * ew / u_c * par.years
+    return float(tot)

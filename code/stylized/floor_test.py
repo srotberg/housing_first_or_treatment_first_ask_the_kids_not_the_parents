@@ -15,7 +15,7 @@ Run:  python3 floor_test.py
 import json
 import numpy as np
 from math import erf
-from stylized import P, with_, aggregates, solve_late
+from stylized import P, with_, aggregates, solve_period2
 
 BASE = with_(P(), **json.load(open('calibrated.json')))
 SIG = 0.75
@@ -67,7 +67,7 @@ if __name__ == '__main__':
             s0, s1 = par.phi0, par.phi0 * (1.0 - par.kap)
             worst, ok = 1e9, True
             for y in yg[::2]:
-                _, V2, _, _, _ = solve_late(par, y, 'HF')
+                _, V2, _, _, _ = solve_period2(par, y, 'HF')
                 worst = min(worst, s0 * V2[0, 0])
                 ok = ok and (s1 * V2[0, 1] < s0 * V2[0, 0])
             print('%-7.2f %-7.1f %-8.4f %-8.3f %-10.5f %-11.3f %-9s' %

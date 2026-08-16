@@ -17,7 +17,7 @@ Nothing else. The model is qualitative and these are the two things it is for.
 import json
 import os
 import numpy as np
-from stylized import P, with_, use_choice, aggregates
+from stylized import P, with_, use_prob, aggregates
 from calibrate import YG, W, bracket, stats
 
 OUT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),

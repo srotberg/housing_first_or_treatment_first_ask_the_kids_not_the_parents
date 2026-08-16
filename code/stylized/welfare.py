@@ -38,8 +38,8 @@ households into it. The conjecture is false here. Treatment First is very
 slightly MORE expensive at every generosity, and the reason is mortality. A
 household in the disorder state draws only about 79 per cent of the voucher
 outlay a clean household draws, at every income level, because survival to
-period 3 falls from 0.93 to 0.51 and the programme pays for it over fewer
-periods. The households the moral hazard adds to the rolls die sooner and stop
+period 2 falls by the mortality penalty and the programme pays for it in fewer
+states. The households the moral hazard adds to the rolls die sooner and stop
 costing money.
 
 A financing side was built here and removed. A proportional income tax balancing
@@ -64,8 +64,8 @@ from tables import OUT
 
 # Present value of income for a household at the mean, used only to express the
 # critical externality in units a reader can weigh: period 1 earnings plus
-# periods 2 and 3 discounted at R and weighted by survival.
-PV_INCOME = 1.0 + P.phi0 / P.R + (P.phi0 / P.R) ** 2
+# period 2 discounted at R and weighted by survival.
+PV_INCOME = 1.0 + P.phi0 / P.R
 
 
 def v1_pop(par, policy, pV):
@@ -77,9 +77,11 @@ def v1_pop(par, policy, pV):
 # Expected discounted periods lived by a clean household, used to turn a
 # difference in lifetime utility into a consumption equivalent. Log utility
 # means scaling consumption by (1+lam) in every period and state adds
-# K*log(1+lam) to lifetime value, so lam = exp(dV/K) - 1.
+# K*(1-gam-th)*log(1+lam) to lifetime value, so lam = exp(dV/K) - 1 with the
+# weight on consumption carried in K. Two periods, the second reached only on
+# survival.
 def periods(par):
-    return 1.0 + par.beta * par.phi0 + par.beta**2 * par.phi0**2
+    return (1.0 - par.gam - par.th) * (1.0 + par.beta * par.phi0)
 
 
 def cev(par, dv):
@@ -232,7 +234,7 @@ def tab_welfare(par, pV=1.0):
          r'\multicolumn{3}{@{}l}{\emph{Panel A. Outcomes at universal cover}} \\',
          f'\\quad Drug participation rate & {pc(100*mh["part"])} '
          f'& {pc(100*mt["part"])} \\\\',
-         f'\\quad Share with the disorder & {pc(100*mh["sud"],3)} '
+         f'\\quad Share with a SUD & {pc(100*mh["sud"],3)} '
          f'& {pc(100*mt["sud"],3)} \\\\',
          f'\\quad Homelessness rate & {pc(100*mh["homeless"],3)} '
          f'& {pc(100*mt["homeless"],3)} \\\\',
