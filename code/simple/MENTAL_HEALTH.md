@@ -50,10 +50,16 @@ homelessness at that ratio.
 The same study reports **any current mental disorder at 76.2%**, alcohol use
 disorder at **36.7%**, drug use disorder at **21.7%**. Two things follow. First,
 the model's binary SMI state cannot and should not try to reach 76% — that
-figure includes mild conditions the state does not represent. Second, **the
-paper's "addiction rate of homeless = 37%" target sits almost exactly on the
-*alcohol* figure, not the drug figure (21.7%)**. That target should be
-re-examined; the paper models drug use, not alcohol.
+figure includes mild conditions the state does not represent. Second, the
+paper's old "addiction rate of homeless = 37%" target sat almost exactly on the
+*alcohol* figure, not the drug figure, and the paper models drug use.
+
+**That has been settled: the figure is 21.7%, the drug use disorder number.**
+The note carries it, in the calibration section under "Three targets that were
+wrong and are now right", and the full model has it as
+`sud_share_of_homeless = 0.217`. It is an untargeted validation moment, not a
+target. Do not re-open it — this paragraph used to argue for a change that has
+since been made.
 
 **Employment rate given SMI — 30%.** Employment runs 22–40% for
 high-disability diagnoses, and roughly a fifth of people with schizophrenia are

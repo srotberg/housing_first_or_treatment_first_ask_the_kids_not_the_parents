@@ -1305,21 +1305,50 @@ $H$ a genuine fixed point of the equilibrium rather than accounting.
 \section{Calibrating the quantitative model}\label{sec:fullcal}
 
 Two stages, and they are different exercises. The first matches a cross section
-of the stationary equilibrium, \new{twenty parameters against twenty moments}.
+of the stationary equilibrium, \new{nineteen parameters against nineteen
+moments}.
 The second matches short run \emph{responses} measured in experiments, which
 cannot be read off a comparison of steady states\new{, and carries the remaining
-four}. Only what is new or what
+two}. Only what is new or what
 Section~\ref{sec:cal} does not already illustrate is described here.
 
 \new{Which parameter belongs to which stage is not obvious from
-Table~\ref{tab:fint}, so it is stated here. The second stage carries
-$\bar\kappa_{\phi d}$, whose moment is the drug price participation elasticity;
-$\mu_H$, whose moment is the ratio of weeks abstinent between Milby's arms;
+Table~\ref{tab:fint}, so it is stated here. The second stage carries $\mu_H$,
+whose moment is the ratio of weeks abstinent between Milby's arms, and
 $\omega$, whose moment is the fall in drug use with a child present, which is a
-comparison against a counterfactual rather than a cross sectional share; and
-$\delta_d$, whose moment is the child's disorder rate against a clean parent's.
-None of the four can be read off a single stationary equilibrium, which is what
-separates them from the other twenty.}
+comparison against a counterfactual rather than a cross sectional share.
+Neither can be read off a single stationary equilibrium, which is what
+separates them from the other nineteen.}
+
+{\color{red}Four parameters that this section used to calibrate are now
+assigned, and the reasoning is the same in each case: the moment being used to
+identify them was doing less work than a direct measurement would.
+
+$\bar\kappa_{\phi d}$ was identified from the drug price participation
+elasticity, which is a distant instrument for a mortality parameter, and it sat
+oddly beside $\kappa_{\phi H}$ and $\kappa_{\phi m}$, the same object for
+homelessness and for SMI, both of which are assigned. It is now assigned from
+the standardised mortality ratios directly, and the price elasticity is
+reported below as a moment the model is not fitted to. Since the SUD mortality
+channel is this paper's central mechanism, measuring it rather than inferring
+it is what allows the elasticity to serve as a test of the mechanism instead of
+a constraint on it.
+
+$p_m$ is a prevalence and NSDUH measures it, so it pins the ergodic share of
+the SMI chain directly; what is calibrated is the chain's persistence.
+$\zeta_{DI}$ is a replacement rate set by statute. Both were previously
+identified from the SMI share of the homeless, and that moment is better read
+as evidence on persistence, since it is only a sufficiently sticky state that
+lets the SMI population accumulate in homelessness at four and a half times its
+population share. $\lambda_m$ therefore moves the other way, from assigned to
+calibrated, and now carries that moment.
+
+$\delta_d$ is assigned because its source reports a range rather than a point,
+and because $\delta_h$, the same penalty for parental homelessness, is already
+assigned from the same literature. Calibrating one and assigning the other was
+difficult to defend. The cost is that the transmission channel is now assumed
+rather than fitted, so its magnitude is reported with a sensitivity band across
+the published range.}
 
 \paragraph{The same cliffs, and the same answer.} Three moments are step like and
 are bisected rather than stepped, for the reason Section~\ref{sec:cal} gives:
@@ -1360,15 +1389,22 @@ ratio of the unconditional voucher arm to no assistance, $6.60/4.48=1.473$ weeks
 abstinent\new{, which is what identifies $\mu_H$}. The conditional against unconditional comparison is deliberately
 \emph{not} targeted, because the source reports it as insignificant in the raw
 randomised comparison; calibrating to it would repeat the error this revision is
-correcting elsewhere. The drug price participation elasticity, $-0.63$,
-\new{identifies the level $\bar\kappa_{\phi d}$, and it can only do so once the
-drug price is endogenous, since a fixed price has no elasticity to match}.
+correcting elsewhere. {\color{red}The drug price participation elasticity,
+$-0.63$, is no longer targeted. It is reported below as a moment the model is
+not fitted to, which is the stronger use of it: with $\bar\kappa_{\phi d}$
+assigned from mortality data, the elasticity tests whether the mechanism
+delivers the observed price response rather than being spent on pinning a
+parameter. It remains a moment only an endogenous drug price can produce, since
+a fixed price has no elasticity to match.}
 
-\paragraph{What the two new parameters are matched to.} The weight on the child
-$\omega$ and the transmission penalty $\delta_d$ are fitted \emph{together},
-because each moves the other's moment. Altruistic parents use less, so the share
-of children born to a parent with the SUD falls, so the transmission ratio
-at a given $\delta_d$ falls with $\omega$.
+\paragraph{What the child parameters are matched to.} {\color{red}One of the two
+is calibrated. The weight on the child $\omega$ carries the behavioural moment;
+the transmission penalty $\delta_d$ is assigned, for the reasons given at the
+head of this section. That also removes a joint identification problem, since
+the two used to have to be fitted together: altruistic parents use less, so the
+share of children born to a parent with the SUD falls, so the transmission ratio
+at a given $\delta_d$ fell with $\omega$. With $\delta_d$ assigned, $\omega$ is
+identified from its own moment alone.}
 
 \begin{center}
 \small
@@ -1379,8 +1415,9 @@ Parameter & Moment & Source \\
 $\omega$ & Drug use falls $15.5$ percent with a child present
  & NSDUH 2024, ages $26+$, parents reweighted to the non parents' joint age,
    income, sex and marital distribution \\
-$\delta_d$ & Child's SUD rate relative to a child of a clean parent
- & The epidemiological range of two to four \\
+$\new{\delta_d}$ & \new{Set, not calibrated}
+ & \new{McGovern et al.\ (2023), midpoint of the epidemiological range of two
+   to four, reported with a sensitivity band across it} \\
 $\delta_h$ & Set, not calibrated
  & Chetty, Hendren and Katz (2016) \\
 \bottomrule
@@ -1441,6 +1478,7 @@ Homeless at treatment admission & 14.5 percent & TEDS-A 2022 \\
 Co-occurring psychiatric problem at admission & 43.1 percent & TEDS-A 2022 \\
 Working at all, among the homeless in treatment & 6.6 percent & TEDS-A 2022 \\
 Drug use disorder share of the homeless & 21.7 percent & Gutwinski et al.\ (2021) \\
+\new{Drug price participation elasticity} & \new{$-0.63$} & \new{Saffer and Chaloupka (1999)} \\
 \bottomrule
 \end{tabular}
 \end{center}
