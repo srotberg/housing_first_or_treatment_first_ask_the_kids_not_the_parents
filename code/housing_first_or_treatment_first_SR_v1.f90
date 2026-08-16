@@ -303,7 +303,10 @@
         ! they were wired, which is what makes their contribution measurable.
         integer, parameter :: include_wage_penalties=1
 
-        integer, parameter :: number_of_smi_states=1
+        ! TWO SMI STATES. This doubles the unemployment grid from 6 to 12 and
+        ! switches unemployment_process from the hand written block to the
+        ! generic builder, which was verified against it at one state.
+        integer, parameter :: number_of_smi_states=2
         integer, parameter :: threshold_addiction_index=3*number_of_smi_states
 
         ! ====================================================================
@@ -1764,6 +1767,10 @@
             model_avg_homeless_income,model_avg_homeless_assets,model_avg_homeless_after_tax_income,&
             model_avg_homeless_tax_to_income,model_food_stamps_share_to_homeless,&
             model_fraction_addicted,model_fraction_homeless_and_addicted,model_homelessness_old,&
+            model_mass_smi,model_smi_and_homeless,model_smi_and_employed,&
+            model_homeless_labour_income,model_all_labour_income,&
+            model_smi_share_of_homeless,model_employment_rate_given_smi,&
+            model_homeless_income_share,model_employed_share_of_homeless,&
             model_fraction_spent_on_addiction,model_fraction_spent_on_addiction_experimenters,&
             model_fraction_addicted_homeless_no_vouchers,model_average_spent_on_addiction_by_addicted,&
             model_fraction_of_homeless_and_addicted_unemployed,model_fraction_addicted_and_unemployed,&
@@ -3312,6 +3319,16 @@
         model_fraction_addicted_who_are_homeless(time_period)=0
         model_fraction_of_unemployed_homeless(time_period)=0
         model_fraction_of_homeless_and_addicted_unemployed(time_period)=0
+        model_mass_smi(time_period)=0
+        model_smi_and_homeless(time_period)=0
+        model_smi_and_employed(time_period)=0
+        model_homeless_labour_income(time_period)=0
+        model_all_labour_income(time_period)=0
+        model_smi_share_of_homeless(time_period)=0
+        model_employment_rate_given_smi(time_period)=0
+        model_homeless_income_share(time_period)=0
+        model_employed_share_of_homeless(time_period)=0
+
         model_fraction_unemployed(time_period)=0
         model_fraction_unemployed_on_ui(time_period)=0
         model_sum_of_lowest_productivities(time_period)=0
@@ -3647,6 +3664,31 @@
                                     
                                     end if
                                     
+                                    ! THE SMI MOMENTS. smi_of is the only correct test
+                                    ! once there are two SMI states; the coarse
+                                    ! index > threshold form means "has a SUD" and
+                                    ! nothing about mental illness.
+                                    if (smi_of(unemployment_index)>=1) then
+
+                                        model_mass_smi(time_period)=&
+                                            model_mass_smi(time_period)+distribution_mass_used
+
+                                        if (emp_of(unemployment_index)==1) then
+
+                                            model_smi_and_employed(time_period)=&
+                                                model_smi_and_employed(time_period)+distribution_mass_used
+
+                                        end if
+
+                                        if (housing_status_index_used==lowest_housing_grid_point) then
+
+                                            model_smi_and_homeless(time_period)=&
+                                                model_smi_and_homeless(time_period)+distribution_mass_used
+
+                                        end if
+
+                                    end if
+
                                     if (unemployment_index>threshold_addiction_index) then
                                     
                                         model_fraction_addicted(time_period)=&
@@ -4301,7 +4343,34 @@
                                         
                                         model_average_labour_income(time_period)=model_average_labour_income(time_period)+&
                                             labor_supply_used*employment_grid(age_index,employment_index)*&
-                                            labour_deterministic_efficiency(age_index)*distribution_mass_used
+                                            labour_deterministic_efficiency(age_index)*&
+                                            (rho_d**(min(sud_of(unemployment_index),1)*include_wage_penalties))*&
+                                            (rho_m**(min(smi_of(unemployment_index),1)*include_wage_penalties))*&
+                                            distribution_mass_used
+
+                                        ! THE PENALTIES BELONG IN THE MOMENT TOO. The budget
+                                        ! constraint applies rho_d and rho_m to earnings, so a
+                                        ! moment that omitted them would be measuring a different
+                                        ! wage than the household faces, and the homeless income
+                                        ! share is exactly the moment they are calibrated on.
+                                        model_all_labour_income(time_period)=model_all_labour_income(time_period)+&
+                                            labor_supply_used*employment_grid(age_index,employment_index)*&
+                                            labour_deterministic_efficiency(age_index)*&
+                                            (rho_d**(min(sud_of(unemployment_index),1)*include_wage_penalties))*&
+                                            (rho_m**(min(smi_of(unemployment_index),1)*include_wage_penalties))*&
+                                            distribution_mass_used
+
+                                        if (housing_status_index_used==lowest_housing_grid_point) then
+
+                                            model_homeless_labour_income(time_period)=&
+                                                model_homeless_labour_income(time_period)+&
+                                                labor_supply_used*employment_grid(age_index,employment_index)*&
+                                                labour_deterministic_efficiency(age_index)*&
+                                                (rho_d**(min(sud_of(unemployment_index),1)*include_wage_penalties))*&
+                                                (rho_m**(min(smi_of(unemployment_index),1)*include_wage_penalties))*&
+                                                distribution_mass_used
+
+                                        end if
                                             
                                         model_average_labour_income_by_employment(time_period,employment_index)=&
                                             model_average_labour_income_by_employment(time_period,employment_index)+&
@@ -4557,6 +4626,49 @@
         
         model_fraction_of_homeless_unemployed(time_period)=model_fraction_of_homeless_unemployed(time_period)/&
             model_fraction_homeless(time_period)
+
+        ! The employed share of the homeless is the complement of the moment
+        ! immediately above, so it is not accumulated separately.
+        model_employed_share_of_homeless(time_period)=&
+            1-model_fraction_of_homeless_unemployed(time_period)
+
+        ! model_fraction_homeless is a SHARE by this point, so the homeless mass
+        ! is that share times the total. Writing the ratio this way lets the
+        ! total cancel, which avoids depending on which normalisation has
+        ! already run.
+        if ((model_fraction_homeless(time_period)>10.d0**(-12)) .AND. &
+            (model_all_labour_income(time_period)>10.d0**(-12))) then
+
+            model_homeless_income_share(time_period)=&
+                model_homeless_labour_income(time_period)/&
+                (model_fraction_homeless(time_period)*model_all_labour_income(time_period))
+
+        else
+
+            model_homeless_income_share(time_period)=0
+
+        end if
+
+        if (model_fraction_homeless(time_period)>10.d0**(-12)) then
+
+            model_smi_share_of_homeless(time_period)=model_smi_and_homeless(time_period)/&
+                (model_fraction_homeless(time_period)*sum_of_distribution)
+
+        end if
+
+        if (model_mass_smi(time_period)>10.d0**(-12)) then
+
+            model_employment_rate_given_smi(time_period)=model_smi_and_employed(time_period)/&
+                model_mass_smi(time_period)
+
+        end if
+
+        write(*,*) "SMI prevalence in model=", model_mass_smi(time_period)/max(sum_of_distribution,10.d0**(-12)), &
+            " onset(1)=", smi_onset_by_age(1), " onset(30)=", smi_onset_by_age(30), " lambda_m=", lambda_m
+        write(*,*) "SMI share of homeless=", model_smi_share_of_homeless(time_period), &
+            " employment rate given SMI=", model_employment_rate_given_smi(time_period)
+        write(*,*) "homeless income share=", model_homeless_income_share(time_period), &
+            " employed share of homeless=", model_employed_share_of_homeless(time_period)
             
         model_fraction_homeless_owners(time_period)=model_fraction_homeless_owners(time_period)/&
             model_fraction_homeless(time_period)
@@ -25848,6 +25960,10 @@
         call initialize_financial_grid(1)
                 
         distance_value_function=1
+        distance_lambda_m=1
+        distance_kappa_uem=1
+        distance_rho_m=1
+        distance_rho_d=1
         distance_discount_factor=1
 
         ! The convexity of the rental company is not calibrated, its adjuster is
@@ -26082,7 +26198,11 @@
             (distance_average_labor_income>stopping_rule_average_labor_income) .OR. &
             (distance_median_income>stopping_rule_median_income) .OR. &
             (distance_average_net_wealth>stopping_rule_average_net_wealth) .OR. &
-            (distance_drug_threshold>stopping_rule_drug_threshold) .OR. (loop_count<1))
+            (distance_drug_threshold>stopping_rule_drug_threshold) .OR. &
+            (distance_lambda_m>stopping_rule_lambda_m) .OR. &
+            (distance_kappa_uem>stopping_rule_kappa_uem) .OR. &
+            (distance_rho_m>stopping_rule_rho_m) .OR. &
+            (distance_rho_d>stopping_rule_rho_d) .OR. (loop_count<1))
                         
             call solve_value_function_and_policy_functions(1)
                             
@@ -26213,6 +26333,10 @@
                 distance_convexity_of_rental_company=0
                 distance_fixed_cost_to_moving=0
                 distance_size_homelessness=0
+                distance_lambda_m=0
+                distance_kappa_uem=0
+                distance_rho_m=0
+                distance_rho_d=0
                         
             else
             
@@ -26867,6 +26991,96 @@
                     write(*,*) "multiple_of_probabilities_of_employment_if_addicted=", &
                         multiple_of_probabilities_of_employment_if_addicted
                     write(*,*) "distance_employment_multiplier=", distance_employment_multiplier
+
+                    ! ================================================
+                    ! THE SMI BLOCK AND THE TWO WAGE PENALTIES.
+                    !
+                    ! Each is guarded on its own adjuster, so a parameter that is
+                    ! frozen contributes a zero distance rather than a moment the
+                    ! sweep can never satisfy. That failure mode cost a whole
+                    ! calibration once: a distance computed from a live moment
+                    ! while its parameter could not move means the loop cannot
+                    ! terminate however well everything else fits.
+                    !
+                    ! Signs, stated because a wrong one shows up as a moment
+                    ! walking away rather than as an error:
+                    !   lambda_m up   -> SMI less persistent -> SMI share of the
+                    !                    homeless DOWN
+                    !   kappa_uem up  -> employment margins worse -> employment
+                    !                    rate given SMI DOWN
+                    !   rho_m up      -> smaller penalty -> homeless income UP
+                    !   rho_d up      -> smaller penalty -> employed homeless can
+                    !                    afford housing -> employed share of the
+                    !                    homeless DOWN
+
+                    if ((lambda_m_adjuster>0) .AND. (number_of_smi_states>1)) then
+
+                        lambda_m=min(max(lambda_m+lambda_m_adjuster*&
+                            (model_smi_share_of_homeless(1)-smi_share_of_homeless_data),&
+                            0.001d0),0.5d0)
+
+                        distance_lambda_m=&
+                            abs(model_smi_share_of_homeless(1)-smi_share_of_homeless_data)
+
+                        write(*,*) "lambda_m=", lambda_m, " distance_lambda_m=", distance_lambda_m
+
+                    else
+
+                        distance_lambda_m=0
+
+                    end if
+
+                    if ((kappa_uem_adjuster>0) .AND. (number_of_smi_states>1)) then
+
+                        kappa_uem=min(max(kappa_uem-kappa_uem_adjuster*&
+                            (model_employment_rate_given_smi(1)-employment_rate_given_smi_data),&
+                            1.0d0),20.d0)
+
+                        distance_kappa_uem=&
+                            abs(model_employment_rate_given_smi(1)-employment_rate_given_smi_data)
+
+                        write(*,*) "kappa_uem=", kappa_uem, " distance_kappa_uem=", distance_kappa_uem
+
+                    else
+
+                        distance_kappa_uem=0
+
+                    end if
+
+                    if ((rho_m_adjuster>0) .AND. (number_of_smi_states>1) .AND. &
+                        (include_wage_penalties==1)) then
+
+                        rho_m=min(max(rho_m-rho_m_adjuster*&
+                            (model_homeless_income_share(1)-homeless_income_share_data),&
+                            0.05d0),1.d0)
+
+                        distance_rho_m=&
+                            abs(model_homeless_income_share(1)-homeless_income_share_data)
+
+                        write(*,*) "rho_m=", rho_m, " distance_rho_m=", distance_rho_m
+
+                    else
+
+                        distance_rho_m=0
+
+                    end if
+
+                    if ((rho_d_adjuster>0) .AND. (include_wage_penalties==1)) then
+
+                        rho_d=min(max(rho_d+rho_d_adjuster*&
+                            (model_employed_share_of_homeless(1)-employed_share_of_homeless_data),&
+                            0.05d0),1.d0)
+
+                        distance_rho_d=&
+                            abs(model_employed_share_of_homeless(1)-employed_share_of_homeless_data)
+
+                        write(*,*) "rho_d=", rho_d, " distance_rho_d=", distance_rho_d
+
+                    else
+
+                        distance_rho_d=0
+
+                    end if
 
                     write(*,*) "model_fraction_homeless(1)=", model_fraction_homeless(1)
                     write(*,*) "size_homelessness=", size_homelessness
