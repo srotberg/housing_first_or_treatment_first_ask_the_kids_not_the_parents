@@ -74,8 +74,7 @@ EXTERNAL = [
         # quarter of h_lg, and printing 0.10 beside the standard unit's 0.41
         # invited the reader to multiply by four and find 0.40. Writing the
         # relation itself is exact and there is nothing left to check.
-        ('h_sm', 'h_S', 'Small rental unit',
-         'Set', '\\textcolor{red}{0.25\\times h_L}'),
+        ('h_sm', 'h_S', 'Small rental unit', 'Set', '0.25\\times h_L'),
         ('kappa_r', r'\kappa_r', "Tenant's share of the rent when covered",
          'HUD voucher rules', '{:.2f}'),
         ('yV', 'y_V', 'Voucher means test, multiple of average income',
