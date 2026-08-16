@@ -266,6 +266,22 @@
         integer, parameter :: number_of_smi_states=1
         integer, parameter :: threshold_addiction_index=3*number_of_smi_states
         integer, parameter :: have_two_rental_markets=0
+
+        ! A SECANT ON THE RENTAL MARKET TOO, for the same reason as lambda.
+        !
+        ! rent += 0.01 x excess demand is tatonnement with a step nobody chose,
+        ! and it sits inside the loop the whole calibration multiplies by: every
+        ! outer iteration it wastes is paid again on every calibration loop.
+        ! Excess demand is monotone in rent, so two (rent, excess) pairs give the
+        ! slope and the root directly. The step is clipped to a doubling or a
+        ! halving, which matters more here than for lambda: a market that has
+        ! nearly cleared has a tiny excess, and a secant through two nearly equal
+        ! points is numerically meaningless, so below that threshold it falls
+        ! back to the fixed step, which is fine because it is nearly there.
+        real(8), dimension(0:have_two_rental_markets) :: previous_rent=0
+        real(8), dimension(0:have_two_rental_markets) :: previous_excess_demand=0
+        real(8), dimension(0:have_two_rental_markets) :: excess_demand_1,rent_step_1
+        integer :: have_rent_secant=0
         integer, parameter :: include_bequest_motive=0
         integer, parameter :: include_bequests=1
         
@@ -1293,6 +1309,40 @@
         ! value function.
         integer, parameter :: hoist_expectation=1
         integer, parameter :: ev_addiction_top=2
+
+        ! SEARCHING a' AROUND WHERE IT WAS LAST TIME.
+        !
+        ! The a' search is exhaustive over the whole grid at every node of every
+        ! branch of every age, and it is the single largest block of work in the
+        ! solve. Between calibration loops the parameters move a little, so the
+        ! policy moves a little: the a' a household picked last loop is a far
+        ! better guess than anything a coarse sweep of the same grid produces,
+        ! and it costs nothing to keep.
+        !
+        ! WHY THIS IS NOT THE coarse_grid MODE. That mode samples every tenth
+        ! point and refines around the winner, and it is switched off because it
+        ! is wrong: it refines around optimal_financial_1, which is only updated
+        ! when a branch beats the running maximum ACROSS branches, so every
+        ! branch after the first refines around a different branch's optimum.
+        ! The fix is a per branch argmax, branch_argmax_1 below, which this needs
+        ! anyway and which repairs coarse mode as a side effect.
+        !
+        ! WHY IT IS SAFE, AND WHERE IT IS NOT. If the window's argmax lands on a
+        ! window edge the optimum was trying to leave, so the window is thrown
+        ! away and the full grid searched, exactly as a cold start would. That
+        ! makes escape from the window exact. It does NOT catch a second peak
+        ! sitting far outside the window, and this model has genuine non
+        ! concavity in a': voucher eligibility is a step in capital income and
+        ! the food stamp floor is a kink, both sitting where the paper's action
+        ! is. So the warm start is a speedup to be VERIFIED, not trusted:
+        ! set verify_asset_search to 1, which forces the full sweep everywhere,
+        ! and compare the policy_function_* files against a warm started run.
+        ! At welfare margins of 0.1 to 1 percent that check is not optional.
+        integer, parameter :: warm_start_asset_search=1
+        integer, parameter :: verify_asset_search=0
+        integer, parameter :: warm_start_half_width=3
+        integer, allocatable, dimension(:,:,:,:,:,:,:,:) :: warm_start_a_prime
+        integer :: warm_start_ready=0
         real(8), allocatable, dimension(:,:,:,:,:) :: ev_table
         logical, allocatable, dimension(:,:,:,:) :: ev_table_valid
         integer, allocatable, dimension(:,:) :: ev_table_key
@@ -9825,7 +9875,8 @@
                                 !$omp& index_of_smallest_house_hhld_can_buy,convexity_of_rental_company,&
                                 !$omp& size_of_smallest_house_hhld_can_buy,model_average_owner_occupied_unit_size,has_house,&
                                 !$omp& in_retirement,newborn_household,lump_sum_transfer,&
-                                !$omp& scaled_household_size,one_period_before_death,median_income)
+                                !$omp& scaled_household_size,one_period_before_death,median_income,&
+                                !$omp& warm_start_a_prime,warm_start_ready)
                         
                                 do financial_index=newborn_household*negative_financial_grid_size+&
                                     (1-newborn_household)*(has_house*1+(1-has_house)*negative_financial_grid_size),&
@@ -10405,7 +10456,9 @@
             future_housing_status_index_to_use,is_working_1,is_homeless_1,x_1,addiction_index,&
             global_search_index,optimal_financial_1,loop_over_addiction_1,check_1,allow_to_choose_addiction,&
             first_voucher_index,second_voucher_index,has_opportunity_1,can_consume_drugs,voucher_index_1,&
-            allow_to_choose_homelessness,ev_slot,drug_pass_1,drug_risk_top
+            allow_to_choose_homelessness,ev_slot,drug_pass_1,drug_risk_top,&
+            a_lo_1,a_hi_1,a_attempt_1,branch_argmax_1,warm_used_1,warm_guess_1
+        real(8) :: branch_best_1
         real(8) :: labor_supply_1,labor_supply_2
         
         allow_to_choose_homelessness=1
@@ -10529,14 +10582,59 @@
                 end if
                 
                 call compute_voucher_index_1(is_homeless_1,voucher_index_1)
-                                
+
+                ! The window for this branch's a' search, and the per branch
+                ! argmax that both the window and coarse mode need.
+                branch_best_1=large_negative_num
+                branch_argmax_1=negative_financial_grid_size
+
+                a_lo_1=negative_financial_grid_size
+                a_hi_1=financial_grid_size
+                warm_used_1=0
+
+                if ((warm_start_asset_search==1) .AND. (warm_start_ready==1) .AND. &
+                    (verify_asset_search==0)) then
+
+                    warm_guess_1=warm_start_a_prime(age_index,financial_index,&
+                        unemployment_index,employment_index,housing_status_index,&
+                        voucher_index,future_addiction_index,future_housing_status_index)
+
+                    if (warm_guess_1>=negative_financial_grid_size) then
+
+                        a_lo_1=max(warm_guess_1-warm_start_half_width,negative_financial_grid_size)
+                        a_hi_1=min(warm_guess_1+warm_start_half_width,financial_grid_size)
+                        warm_used_1=1
+
+                    end if
+
+                end if
+
+                do a_attempt_1=1,2
+
+                ! The second attempt runs only when the first one's argmax sat on
+                ! an edge the optimum could have crossed. Then the window is
+                ! discarded and the full grid searched, which is what a cold
+                ! start would have done.
+                if (a_attempt_1==2) then
+
+                    if (warm_used_1==0) exit
+
+                    if (((branch_argmax_1>a_lo_1) .OR. (a_lo_1==negative_financial_grid_size)) .AND. &
+                        ((branch_argmax_1<a_hi_1) .OR. (a_hi_1==financial_grid_size))) exit
+
+                    a_lo_1=negative_financial_grid_size
+                    a_hi_1=financial_grid_size
+                    branch_best_1=large_negative_num
+
+                end if
+
                 do global_search_index=0,coarse_grid
             
                 do future_financial_index=&
-                    (1-global_search_index)*negative_financial_grid_size+&
-                    global_search_index*max(optimal_financial_1-grid_gaps+1,negative_financial_grid_size),&
-                    (1-global_search_index)*financial_grid_size+&
-                    global_search_index*min(optimal_financial_1+grid_gaps-1,financial_grid_size),&
+                    (1-global_search_index)*a_lo_1+&
+                    global_search_index*max(branch_argmax_1-grid_gaps+1,a_lo_1),&
+                    (1-global_search_index)*a_hi_1+&
+                    global_search_index*min(branch_argmax_1+grid_gaps-1,a_hi_1),&
                     (1-global_search_index)*grid_gaps+global_search_index
 
                     if ((future_housing_status_index==housing_status_index) .AND. &
@@ -10825,7 +10923,20 @@
                                                                        
                         value_function_renter_renter=flow_utility_vector(future_financial_index)+&
                             future_utility_vector(future_financial_index)
-                                                                  
+
+                        ! THIS BRANCH's best, kept separately from the running
+                        ! maximum across branches. That is the whole of the
+                        ! coarse mode bug: a branch that does not beat the
+                        ! incumbent still has to know where its own optimum sat,
+                        ! or the refinement looks in another branch's basin.
+                        if ((global_search_index==0) .AND. &
+                            (value_function_renter_renter>branch_best_1)) then
+
+                            branch_best_1=value_function_renter_renter
+                            branch_argmax_1=future_financial_index
+
+                        end if
+
                         if (value_function_renter_renter>largest_value) then
                                                                     
                             largest_value=value_function_renter_renter
@@ -10868,6 +10979,20 @@
                 end do
                 
                 end do
+
+                end do
+
+                ! Where this branch's optimum sat, for the next loop to start
+                ! from. Threads own disjoint financial_index slices, so this is
+                ! written without a race.
+                if (warm_start_asset_search==1) then
+
+                    warm_start_a_prime(age_index,financial_index,&
+                        unemployment_index,employment_index,housing_status_index,&
+                        voucher_index,future_addiction_index,future_housing_status_index)=&
+                        branch_argmax_1
+
+                end if
                 
             end do
         
@@ -23258,6 +23383,19 @@
 
             end if
 
+            if (.NOT. allocated(warm_start_a_prime)) then
+
+                allocate(warm_start_a_prime(life_span+1,&
+                    negative_financial_grid_size:financial_grid_size,&
+                    unemployment_grid_size,employment_grid_size,&
+                    lowest_housing_grid_point:housing_status_grid_size,&
+                    0:include_vouchers,0:ev_addiction_top,&
+                    lowest_housing_grid_point:housing_status_grid_size))
+
+                warm_start_a_prime=-999999
+
+            end if
+
             allocate(value_function(i)%&
                 vector_transition_real(transition_length,life_span+1,is_owner*1+(1-is_owner)*negative_financial_grid_size:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
@@ -25628,11 +25766,37 @@
                 distance_rental_market(transition_length)=&
                     (1-partial_equilibrium)*maxval(abs(total_rental_demand(transition_length,:)-&
                     total_rental_supply(transition_length,:)))
-                
-                rent(transition_length,:)=(rent(transition_length,:)+&
-                    (1-partial_equilibrium)*rental_market_adjuster*&
-                    (total_rental_demand(transition_length,:)-&
-                    total_rental_supply(transition_length,:)))
+
+                excess_demand_1=total_rental_demand(transition_length,:)-&
+                    total_rental_supply(transition_length,:)
+
+                rent_step_1=rent(transition_length,:)+&
+                    rental_market_adjuster*excess_demand_1
+
+                if (have_rent_secant==1) then
+
+                    where ((abs(excess_demand_1-previous_excess_demand)>10.d0**(-8)) .AND. &
+                        (abs(rent(transition_length,:)-previous_rent)>10.d0**(-10)))
+
+                        rent_step_1=rent(transition_length,:)-excess_demand_1*&
+                            (rent(transition_length,:)-previous_rent)/&
+                            (excess_demand_1-previous_excess_demand)
+
+                    end where
+
+                end if
+
+                ! Never more than a doubling or a halving in one step, and never
+                ! non positive.
+                rent_step_1=max(min(rent_step_1,2*rent(transition_length,:)),&
+                    rent(transition_length,:)/2)
+
+                previous_rent=rent(transition_length,:)
+                previous_excess_demand=excess_demand_1
+                have_rent_secant=1
+
+                rent(transition_length,:)=(1-partial_equilibrium)*rent_step_1+&
+                    partial_equilibrium*rent(transition_length,:)
                     
             end if
                                  
@@ -26507,6 +26671,16 @@
             ! Everything the update block moved this loop, on disk before the
             ! next one starts.
             call write_calibration_state()
+
+            ! One complete backward induction has now filled the policy, so the
+            ! next loop can search around it. A resumed run starts cold, which
+            ! is correct: the array is not on disk and a stale one would be
+            ! worse than none.
+            if (warm_start_asset_search==1) then
+
+                warm_start_ready=1
+
+            end if
 
             do time_index=1,max(transition_length-1,1)
         

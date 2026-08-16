@@ -263,3 +263,69 @@ borrowed high-powered machine.
 
 These multiply. Together they plausibly take a solve from hours to well under a minute,
 which is the threshold at which the whole revision can be run interactively on 4 cores.
+
+---
+
+## 7. What was built, and what still has to be checked
+
+Three changes, in descending order of what they are worth.
+
+### The a' search starts where it ended last loop
+
+`warm_start_asset_search=1`. Between calibration loops the parameters move a
+little, so the policy moves a little. The a' a household chose last loop is a
+much better guess than anything a coarse sweep of the same grid produces, and
+storing it costs about 34 MB.
+
+The window is the previous argmax plus or minus `warm_start_half_width`, three
+points out of forty one. If the window's own argmax lands on an edge the optimum
+was trying to leave, the window is discarded and the full grid searched, so
+escape from the window is exact.
+
+**This required fixing section 3's Bug A first**, because the two are the same
+bug. Refining around `optimal_financial_1` refines around the running maximum
+across branches; a branch that does not beat the incumbent never updates it. The
+per branch `branch_argmax_1` is what the warm start stores and what coarse mode
+should always have used, so coarse mode is repaired as a side effect.
+
+**What it does not do.** Edge detection catches an optimum leaving the window. It
+does not catch a second peak sitting far outside it, and section 3's non
+concavities are real: voucher eligibility is a step in capital income and the
+food stamp floor is a kink, both where this paper's action is. One of the four
+sources listed there is gone, the addiction step, because the hazard is smooth in
+`v` now. Three remain.
+
+**So verify before reporting anything.** `verify_asset_search=1` forces the full
+sweep everywhere. Run the converged parameters both ways and diff the
+`policy_function_*` files. At welfare margins of 0.1 to 1 percent that is not
+optional, and it costs one equilibrium.
+
+### The rental market clears by secant
+
+`rent += 0.01 x excess demand` was tatonnement with a step nobody chose, inside
+the loop the whole calibration multiplies by. Excess demand is monotone in rent,
+so two (rent, excess) pairs give the root. Clipped to a doubling or a halving,
+falling back to the fixed step when the two excesses are too close to divide by.
+
+The housing price is left alone: it already updates with a weight of 0.02 on a
+supply function rather than by a fixed step on an excess, and a secant on a fixed
+point is a different and riskier object.
+
+`labor_income_tax_rate` is a calibration target here, not the budget clearing
+variable, so it is not part of this.
+
+### lambda by secant, from a flow balance first step
+
+In the stationary distribution onset times the mass using equals recovery times
+the mass carrying the disorder, so prevalence is nearly proportional to onset.
+The first update scales the onset by target over model, which crosses most of the
+gap at once; the model opened at nine times the data, which a fixed step would
+have taken about twenty loops to walk.
+
+### What is measured and what is not
+
+Nothing here is timed. The estimates are read off the code paths: the a' search
+is the largest block of work in the solve and the window cuts it from 41 points
+to 7, which should be worth 3 to 4x on the backward pass once the flow utility
+and budget solve that do not shrink are allowed for. The rest is arithmetic on
+TIMING.md. **Time a few ages before believing any of it.**
