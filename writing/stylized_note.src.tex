@@ -662,17 +662,22 @@ Period utility is
 u\big(c,h',v,n,\tau;d,m\big) \;=\;
 \frac{\big[\,c^{\alpha}\,(h')^{\beta}\,(v+b_{dmh'})^{\gamma}\,\big]^{1-\sigma}}{1-\sigma}
 \;+\;\omega_{\ell}\frac{(1-n)^{1-\sigma_{\ell}}}{1-\sigma_{\ell}}
-\;+\;\aleph\;-\;\tau\bar\tau^{u},
+\;+\;\aleph\;-\;\tau\bar\tau^{u}\;\new{-\;\kappa_x H},
 \end{equation}
 with $\alpha+\beta+\gamma=1$. Equation~\eqref{eq:u} is the logarithmic case of the
 bundle with hours fixed, so $\gamma$ and $b$ do what $\theta$ and $b$ do in
 Section~\ref{sec:env}: $b$ is the Stone-Geary endowment that keeps the marginal
 utility of the first unit finite and therefore decides whether anyone uses at all.
 
-\new{Three} things are new. Leisure makes hours a margin. Treatment costs utility
+Four things are new. Leisure makes hours a margin. Treatment costs utility
 rather
 than money, which is what the evidence supports, since the three largest barriers
-reported in the NSDUH are beliefs and preferences and not prices. And the
+reported in the NSDUH are beliefs and preferences and not prices. \new{The term $\kappa_x H$ prices the disamenity of the aggregate homelessness
+rate: households dislike homelessness around them and not only their own. It is
+the headcount alone, with no extra weight on the homeless who carry a SUD, so the
+object being priced is homelessness rather than addiction, and the willingness to
+pay evidence it is calibrated to is about exactly that.
+Section~\ref{sec:fleftout} gives the number.} And the
 Stone-Geary
 shifter itself varies,
 \begin{equation}\label{eq:fb}
@@ -1048,7 +1053,7 @@ Putting it together, for $j=1,\dots,J$ and with $V_{J+1}$ given below,
 V_j(a,y,e,d,m,\eta)=\max_{\,n,\,h',\,v,\,\tau,\,a'}\ \Bigg\{\
 &\frac{\big[c^{\alpha}(h')^{\beta}(v+b_{dmh'})^{\gamma}\big]^{1-\sigma}}{1-\sigma}
 +\omega_{\ell}\frac{(1-n)^{1-\sigma_{\ell}}}{1-\sigma_{\ell}}
-+\aleph-\tau\bar\tau^{u}\\[2pt]
++\aleph-\tau\bar\tau^{u}\new{-\kappa_x H}\\[2pt]
 &+\ \beta\,\phi_j(h',d,m)\!\!\int\!\! V_{j+1}(s')\,
 \Gamma\big(\mathrm{d}s'\mid s,n,h',v,\tau\big)\\[2pt]
 &+\ \new{\beta\,\big[1-\phi_j(h',d,m)\big]\,\omega\,
@@ -1178,7 +1183,7 @@ is therefore a lower bound.
 
 A stationary equilibrium is a set of value functions $\{V_j\}$, policy functions
 $\{n_j,h'_j,v_j,\tau_j,a'_j\}$, a distribution $\Phi$, and prices and aggregates
-$\big(\tau_{\ell},\,p_v,\,\bar Y,\,\text{median}\big)$ such that
+$\big(\tau_{\ell},\,p_v,\,\bar Y,\,\text{median}\new{,\,H}\big)$ such that
 
 \begin{enumerate}\setlength{\itemsep}{0.1em}\setlength{\parskip}{0em}
 \item the policy functions solve~\eqref{eq:fbellman} given the terminal
@@ -1189,10 +1194,13 @@ the deceased;
 \item the government budget~\eqref{eq:fgovt} holds at $\tau_{\ell}$;
 \item the drug market clears at $p_v$, so~\eqref{eq:fdrug} holds with
 $V=\int v(s)\,\mathrm{d}\Phi$;
-\item $\bar Y$ and the median of gross income are the aggregates implied by $\Phi$.
+\item $\bar Y$, the median of gross income \new{and the homelessness rate $H$}
+are the aggregates implied by $\Phi$.
 \end{enumerate}
 
-\new{Two} of those are genuine fixed points rather than accounting. The
+Three of those are genuine fixed points rather than accounting. \new{$H$
+enters~\eqref{eq:futil}, so the homelessness rate is an argument of the utility
+function that the distribution itself determines.} The
 median enters eligibility~\eqref{eq:felig}, and in a skewed income distribution it
 sits well below the mean, so using the mean would materially overstate the
 eligible population. And $\tau_{\ell}$ is what makes the policy comparison a
@@ -1201,22 +1209,29 @@ up and detection are imperfect, so they do not face the same tax, and the
 household problem is different under each for reasons that have nothing to do with
 the voucher rule itself.
 
-\subsection{What is left out, and what it would do}\label{sec:fleftout}
+\subsection{The disamenity of homelessness}\label{sec:fleftout}
 
-\new{The model has no disamenity from aggregate homelessness: households do not
-care how many other households are on the street. That was in an earlier version
-as a utility cost $\kappa_x(H+\omega_x H_D)$ and it is now out of the model
-rather than set to zero, because the evidence says it cannot change an answer.
-Loubi\`ere
+\new{The disamenity of aggregate homelessness is priced rather than assumed, and
+the evidence for it is thin enough to be worth stating exactly. Loubi\`ere
 et al.\ (2020) ask adults in eight European countries what they would pay in
 annual taxes to end homelessness through Housing First: the mean over all
-respondents is \euro{}23 a year and \euro{}57 among the $42$ percent willing to
-pay anything, which is $0.08$ and $0.20$ percent of average annual earnings. A
-term that small cannot move a ranking, and carrying it would put the homelessness
-rate inside the utility function and so add a fixed point to the equilibrium for
-nothing. Leaving it out is conservative in a known direction: it can only
-understate the case for whichever policy houses more people, so the reported
-results are a lower bound on the case for housing.}
+respondents is \euro{}23 a year, and \euro{}57 among the $42$ percent willing to
+pay anything, which is $0.08$ and $0.20$ percent of average annual earnings.
+$\kappa_x$ is set so that households in the model would pay the first of those to
+move $H$ to zero, and the second is the top of the range the results are reported
+across.
+
+The disamenity is on the headcount alone. There is no extra weight on the
+homeless who happen to carry a SUD, and that is deliberate: the survey evidence
+asks what people would pay to end \emph{homelessness}, so that is the object
+priced, and loading addiction into the same term would price something the
+evidence was not about.
+
+Two things follow. The term is small, so it cannot by itself decide a ranking;
+what it can do is add to whichever policy houses more people, which is why
+reporting the range matters more than the point estimate. And it is the only
+place where a household's utility depends on an aggregate, which is what makes
+$H$ a genuine fixed point of the equilibrium rather than accounting.}
 
 %======================================================================
 \section{Calibrating the quantitative model}\label{sec:fullcal}
