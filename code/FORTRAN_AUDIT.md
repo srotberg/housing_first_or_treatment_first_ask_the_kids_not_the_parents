@@ -217,8 +217,50 @@ targets it**: the weight is a compile time constant and $\lambda$ has no adjuste
 either. One of the two has to be freed and bracketed on the NSDUH rate. That is a
 modelling decision rather than a repair, so it is flagged rather than made.
 
-Nothing from the full model should be reported until it is, because the disorder
-rate is the state variable every counterfactual runs through.
+**Two separate defects, and only the first is fixed.**
+
+**The VALUE, fixed.** The hazard is no longer a compile time constant. It starts
+at 0.0016 and is bracketed on `sud_rate_data = 0.0368`, with the derived heavy
+user rate recomputed in `create_unemployment_process` so the rebuilt
+`addiction_probabilities` array follows it. That routine is called inside the
+calibration loop, so the update takes effect.
+
+**The FORM, not fixed, and it is the bigger of the two.** Section 2 of the note
+specifies
+
+    pi_d(v) = 1 - exp(-lambda v)
+
+so the chance of acquiring the disorder RISES with how much the household uses.
+The code has no such thing. `addiction_probabilities(is_addicted, future, 
+addiction_choice, is_homeless)` is indexed by a discrete CHOICE, experiment or
+not, and carries no quantity at all, so onset is flat in `v`. `lambda_addiction`
+exists, is zero, and is gated behind `smooth_addiction_hazard = 0`.
+
+Three things follow, and the third is why this matters more than a calibration
+detail.
+
+* The household does not internalise that using MORE is riskier. In the stylized
+  model that is the whole mechanism: the note's Section 1 rests on a household
+  choosing a small `v` because the hazard is convex in it.
+* The price of drugs affects how much is used but not the chance of addiction, so
+  a supply side counterfactual moves quantity without moving prevalence through
+  the channel the paper argues for.
+* The two models no longer share an addiction technology, which is exactly what
+  the note says they do.
+
+**What the fix needs.** `addiction_probabilities` is read at 31 sites across the
+value function nests, the distribution loop and the transition. Each would need
+the drug quantity chosen AT THAT STATE rather than a precomputed array indexed by
+regime, which is what the comment at `smooth_addiction_hazard` already warns. In
+the value function the quantity is in scope as
+`frac_spent_on_addiction_1*total_consumption_choice_1`; in the distribution loop
+it has to come from the policy function. This is a real piece of work and doing it
+carelessly is worse than not doing it, since a hazard wired wrong in the
+expectation nest gives a model that still runs and quietly misprices the central
+trade off.
+
+Do it before reporting any number from the full model, and calibrate lambda on
+the disorder rate once the form is right.
 
 ---
 

@@ -436,11 +436,40 @@
         real(8) :: relative_share_of_addiction_adjuster=5*10.d0**(-1)
         real(8) :: stopping_rule_relative_share_of_addiction=10.d0**(-3)
                 
-        real(8), parameter :: probability_of_becoming_addicted_if_experiment=&
-            (1-perceived_probability_lower)*0.037+perceived_probability_lower*0.062
-            
+        ! LAMBDA, THE ADDICTION HAZARD, AND IT IS CALIBRATED NOW. This is the
+        ! probability of acquiring the disorder in a period given that the
+        ! household uses, so it is what the note's internal table calls lambda and
+        ! matches to the substance use disorder rate. It used to be a parameter,
+        ! a compile time constant, and the value it held was 0.037.
+        !
+        ! THAT NUMBER IS A PREVALENCE, NOT A HAZARD, which is how the model came
+        ! to put 32.6 per cent of adults in the disorder. NSDUH gives a disorder
+        ! rate of 3.68 per cent for adults 26 and over, and 0.037 is that figure
+        ! written in as an ANNUAL onset probability. Over sixty years of adult
+        ! life against a recovery rate of 0.025 it compounds: in steady state the
+        ! flow balance onset*experimenters = recovery*addicted pins the ratio of
+        ! the two at 0.037/0.025 = 1.48, and the model delivered 1.11 once deaths
+        ! and clean newborns are allowed for. Prevalence was the arithmetic of two
+        ! constants rather than anything the solver chose.
+        !
+        ! The onset that DELIVERS 3.68 per cent, at the share who use and that
+        ! recovery rate, is near 0.0016, a factor of twenty three smaller. That is
+        ! the starting value; the bracket finds the rest.
+        !
+        ! Sign: a higher hazard means more of the people who use acquire the
+        ! disorder, so prevalence RISES in it and the update subtracts the gap.
+        real(8) :: probability_of_becoming_addicted_if_experiment=&
+            (1-perceived_probability_lower)*0.0016+perceived_probability_lower*0.062
+        real(8) :: probability_of_becoming_addicted_adjuster=5*10.d0**(-3)
+        real(8) :: distance_probability_of_becoming_addicted
+        real(8) :: stopping_rule_probability_of_becoming_addicted=10.d0**(-3)
+
+        ! NSDUH 2024, adults 26 and over. The moment the hazard above is matched
+        ! to, and the one the note's internal table already says lambda hits.
+        real(8), parameter :: sud_rate_data=0.0368
+
         real(8) :: increased_probability_of_becoming_addicted_if_heavy_user=&
-            6.4761*probability_of_becoming_addicted_if_experiment
+            6.4761*0.0016
         
         real(8), parameter :: price_of_addictive_good_benchmark=1
         
@@ -17718,6 +17747,11 @@
             
         end if
             
+        ! the base is calibrated now, so the derived heavy user rate has to be
+        ! recomputed here rather than only at declaration
+        increased_probability_of_becoming_addicted_if_heavy_user=&
+            6.4761*probability_of_becoming_addicted_if_experiment
+
         addiction_probabilities=0
         addiction_probabilities(0,0,:,:)=1
         
@@ -23101,6 +23135,7 @@
         distance_standard_deduction=1
         distance_housing_status_grid_expander=1
         distance_largest_house_size=1
+        distance_probability_of_becoming_addicted=1
         distance_rent_to_price=1
         distance_smallest_house_size=1
         distance_rental_market=1
@@ -23287,6 +23322,8 @@
             (distance_convexity_of_rental_company>stopping_rule_convexity_of_rental_company) .OR. &
             (distance_housing_status_grid_expander>stopping_rule_housing_status_grid_expander) .OR. &
             (distance_largest_house_size>stopping_rule_largest_house_size) .OR. &
+            (distance_probability_of_becoming_addicted>&
+             stopping_rule_probability_of_becoming_addicted) .OR. &
             (distance_rent_to_price>stopping_rule_rent_to_price) .OR. &
             (distance_smallest_house_size>stopping_rule_smallest_house_size) .OR. &
             (distance_fixed_cost_to_moving>stopping_rule_fixed_cost_to_moving) .OR. &
@@ -23405,6 +23442,7 @@
                 distance_minimum_inheritance=0
                 distance_housing_status_grid_expander=0
                 distance_largest_house_size=0
+                distance_probability_of_becoming_addicted=0
                 distance_rent_to_price=0
                 distance_smallest_house_size=0
                 distance_advantage_to_owning=0
@@ -23708,6 +23746,25 @@
                     
                     end if
                                         
+                    ! LAMBDA on the substance use disorder rate.
+                    write(*,*) "model_fraction_addicted(1)=", model_fraction_addicted(1)
+                    write(*,*) "sud_rate_data=", sud_rate_data
+                    write(*,*) "probability_of_becoming_addicted_if_experiment=", &
+                        probability_of_becoming_addicted_if_experiment
+
+                    probability_of_becoming_addicted_if_experiment=&
+                        max(min(probability_of_becoming_addicted_if_experiment-&
+                        probability_of_becoming_addicted_adjuster*&
+                        (model_fraction_addicted(1)-sud_rate_data),0.2d0),1.d0*10.d0**(-5))
+
+                    distance_probability_of_becoming_addicted=&
+                        abs(model_fraction_addicted(1)-sud_rate_data)
+
+                    write(*,*) "probability_of_becoming_addicted_if_experiment=", &
+                        probability_of_becoming_addicted_if_experiment
+                    write(*,*) "distance_probability_of_becoming_addicted=", &
+                        distance_probability_of_becoming_addicted
+
                     write(*,*) "model_fraction_homeless(1)=", model_fraction_homeless(1)
                     write(*,*) "size_homelessness=", size_homelessness
                 
