@@ -522,7 +522,14 @@
         real(8) :: distance_max_initial_endowment
         real(8) :: stopping_rule_max_initial_endowment=10.d0**(-3)
         
-        real(8) :: size_homelessness=(1-perceived_probability_lower)*0.21+perceived_probability_lower*0.3
+        ! WARM START. These three are the values the calibration of 16 August
+        ! converged to, and starting from them saves roughly fifteen equilibrium
+        ! solves on every restart. They are starting points, not settings: all
+        ! three still iterate. The proper fix is to write the calibrated values to
+        ! a file at the end of each loop and read them at startup, so a killed run
+        ! resumes instead of beginning again; that is not done yet, and this run
+        ! having been killed once is what made it worth doing at all.
+        real(8) :: size_homelessness=(1-perceived_probability_lower)*0.304+perceived_probability_lower*0.3
         
         ! ON, AND IT WAS OFF. At zero the update below is size_homelessness minus
         ! zero times the gap, so the parameter never moved and the homelessness
@@ -603,7 +610,7 @@
         real(8) :: distance_housing_status_grid_expander
         real(8) :: stopping_rule_housing_status_grid_expander=10.d0**(-3)
         
-        real(8) :: smallest_rental_relative_to_lowest_income=(1-perceived_probability_lower)*0.04+perceived_probability_lower*0.19
+        real(8) :: smallest_rental_relative_to_lowest_income=(1-perceived_probability_lower)*0.0361+perceived_probability_lower*0.19
         ! ON, and the sign is the same story as the expander. A larger smallest
         ! unit is a more expensive smallest unit, and the households that took it
         ! have nothing cheaper to move to except the street, so raising it pushes
@@ -638,7 +645,7 @@
         !
         ! Sign: a larger top unit is a more expensive one, so fewer households
         ! take it and the largest share FALLS. The update adds the gap.
-        real(8) :: largest_house_size=(1-perceived_probability_lower)*0.315+perceived_probability_lower*0.285
+        real(8) :: largest_house_size=(1-perceived_probability_lower)*0.0762+perceived_probability_lower*0.285
         real(8) :: largest_house_size_adjuster=0.05
         real(8) :: distance_largest_house_size
         real(8) :: stopping_rule_largest_house_size=10.d0**(-3)

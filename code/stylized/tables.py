@@ -64,17 +64,19 @@ EXTERNAL = [
         # average income 0.978, so the same object is 0.41 of average income; a
         # table that printed 0.40 next to a source line saying 0.41 was asking
         # the reader to reconcile two numbers for one parameter.
-        ('h_lg', 'h_L',
-         '\\textcolor{red}{Standard rental unit, multiple of average income}',
-         '\\textcolor{red}{Set}', '{:.2f}'),
+        ('h_lg', 'h_L', '\\textcolor{red}{Standard rental unit}',
+         'Set', '{:.2f}'),
         # The ratio is stated in the TEXT and not here. Printing "a quarter of
         # the standard unit" beside 0.10 next to a 0.41 invites the reader to
         # multiply by four, get 0.40, and conclude the table is wrong. It is not:
         # h_sm is exactly h_lg/4 and both are correctly rounded. But a table
         # should not set a check it fails.
-        ('h_sm', 'h_S',
-         '\\textcolor{red}{Small rental unit, multiple of average income}',
-         '\\textcolor{red}{Set}', '{:.2f}'),
+        # THE VALUE IS THE RATIO, not a rounded decimal. h_sm is exactly a
+        # quarter of h_lg, and printing 0.10 beside the standard unit's 0.41
+        # invited the reader to multiply by four and find 0.40. Writing the
+        # relation itself is exact and there is nothing left to check.
+        ('h_sm', 'h_S', '\\textcolor{red}{Small rental unit}',
+         'Set', '\\textcolor{red}{0.25\\,h_L}'),
         ('kappa_r', r'\kappa_r', "Tenant's share of the rent when covered",
          'HUD voucher rules', '{:.2f}'),
         ('yV', 'y_V', 'Voucher means test, multiple of average income',
@@ -106,7 +108,7 @@ def tab_external(base):
          r'\midrule']
     from calibrate import YG, W
     ww = W / W.sum(); ybar = float((ww * YG).sum())
-    PER_YBAR = {'h_lg', 'h_sm'}     # quoted as a multiple of average income
+    PER_YBAR = {'h_lg'}             # quoted as a multiple of average income
     for k, (head, rows) in enumerate(EXTERNAL):
         if k:
             L.append(r'\addlinespace')
@@ -115,7 +117,9 @@ def tab_external(base):
             raw = None if attr is None else getattr(base, attr)
             if attr in PER_YBAR:
                 raw = raw / ybar
-            val = fmt if attr is None else fmt.format(raw)
+            # a format string with no field is a literal, printed as written
+            val = (fmt if attr is None or '{:' not in fmt
+                   else fmt.format(raw))
             L.append(f'${sym}$ & {desc} & {src} & ${val}$ \\\\')
     L += [r'\bottomrule', r'\end{tabular}']
     write('tab_external.tex', '\n'.join(L) + '\n')
