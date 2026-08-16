@@ -7,13 +7,13 @@ Parameter & Description & Source or rationale & Value \\
 $\beta$ & Discount factor over a thirty year period & $0.99$ annually, compounded & $0.860$ \\
 $R$ & Gross interest rate over a thirty year period & Set to $1/\beta$ & $1.162$ \\
 $\sigma$ & Dispersion of log permanent income & \textcolor{red}{Heathcote et al.\ (2010)} & $0.75$ \\
-$\phi_0$ & Survival over a period, no SUD & \textcolor{red}{CDC life tables 2022, ages 25--55} & $0.91$ \\
+$\phi_0$ & Survival over a period, no SUD & \textcolor{red}{SSA period life table, ages 25--55} & $0.91$ \\
 $\theta$ & Weight on drug use & Set; see the text & $0.20$ \\
 $\gamma$ & Weight on housing services & $0.25(1-\theta)$, \textcolor{red}{CES 2023} & $0.20$ \\
 \addlinespace
 \multicolumn{4}{@{}l}{\emph{The SUD}} \\
 $\kappa$ & Proportional fall in survival with a SUD & Hjorth\o j et al.\ (2023), \textcolor{red}{age 26+, over thirty years} & $0.43$ \\
-$u_0$ & Unemployment probability, no SUD & \textcolor{red}{BLS 2023, age 26+} & $0.049$ \\
+$u_0$ & Unemployment probability, no SUD & \textcolor{red}{BLS, age 26+, 2014 to 2024} & $0.049$ \\
 $u_1$ & Unemployment probability, with a SUD & \textcolor{red}{NSDUH 2024, age 26+} & $0.1625$ \\
 \addlinespace
 \multicolumn{4}{@{}l}{\emph{Income support}} \\
@@ -23,10 +23,10 @@ $\bar y$ & Cap on the earnings base, multiple of average income & DOL, state ben
 \multicolumn{4}{@{}l}{\emph{Housing, drugs and the voucher}} \\
 $p_r$ & Rent per unit of housing services & Normalisation & $1.00$ \\
 $p_v$ & Price of a unit of drugs & \textcolor{red}{Normalisation} & $1.00$ \\
-$h_L$ & Standard rental unit & \textcolor{red}{ACS 2023}, rent over income & $0.212$ \\
+$h_L$ & Standard rental unit & \textcolor{red}{SCF 2022, housing cost over income} & $0.212$ \\
 $h_S$ & Small rental unit & Half the standard unit & $0.106$ \\
-$\kappa_r$ & Tenant's share of the rent when covered & \textcolor{red}{HUD voucher rules 2023} & $0.30$ \\
-$y_V$ & Voucher means test, multiple of average income & \textcolor{red}{HUD income limits 2023} & $1.00$ \\
-$\pi_V$ & Voucher generosity in the baseline & \textcolor{red}{HUD 2023, share of eligible assisted} & $0.27$ \\
+$\kappa_r$ & Tenant's share of the rent when covered & \textcolor{red}{HUD voucher rules} & $0.30$ \\
+$y_V$ & Voucher means test, multiple of average income & \textcolor{red}{HUD income limits} & $1.00$ \\
+$\pi_V$ & Voucher generosity in the baseline & \textcolor{red}{HUD 2023, assisted eligible share} & $0.27$ \\
 \bottomrule
 \end{tabular}
