@@ -988,7 +988,7 @@ with probability $p_{\text{fp}}$ by one that did not,
 1-p_{\text{det}} & \text{otherwise} .
 \end{cases}
 \end{equation}
-\new{There are four cases and the rule covers them. A clean household that does
+There are four cases and the rule covers them. A clean household that does
 not use meets the condition and faces only the false positive rate $p_{\text{fp}}$.
 A clean household that uses fails it and faces $p_{\text{det}}$. A household
 carrying the disorder that does not take treatment fails it and faces
@@ -996,7 +996,8 @@ $p_{\text{det}}$ as well. And a household carrying the disorder that does take
 treatment is abstaining, $v=0$ by the restriction in
 Section~\ref{sec:fdrug}, so it meets the condition and faces $p_{\text{fp}}$.
 There is no fifth case: treatment is available only when $d=1$, and it forbids
-use, so no household is ever both in treatment and using.}
+use, so no household is ever both in treatment and using.
+
 This is the one place where the quantitative model changes the \emph{logic} of
 Section~\ref{sec:mh} rather than its setting. There, conditionality is perfectly
 enforced and perfectly met, so Treatment First deters everyone and nobody is
@@ -1014,14 +1015,14 @@ independent transitions. Collecting them in one place:
 I do this for two reasons. First, it is what keeps the child's
 penalty~\eqref{eq:fnewborn} a shift
 along a single scalar rather than a shift across the nodes of an age varying
-discretisation\new{, which significantly reduces the computation time to
-manageable levels}. Second, it still captures the key mechanisms, because
-\new{unemployment and the penalty $\rho_d$ are the income risks} that link the SUD to
-housing, and \new{those are} retained in full.
+discretisation, which significantly reduces the computation time to
+manageable levels. Second, it still captures the key mechanisms, because
+unemployment and the penalty $\rho_d$ are the income risks that link the SUD to
+housing, and those are retained in full.
 
 \paragraph{Employment $e$.} A household that loses their job receives insurance
-with certainty for one year. \new{With} $\pi^{ue}$ and $\pi^{eu}$
-from~\eqref{eq:femp}\new{, it gives the following transitions:}
+with certainty for one year. With $\pi^{ue}$ and $\pi^{eu}$
+from~\eqref{eq:femp}, it gives the following transitions:
 \begin{equation}\label{eq:fetrans}
 e=1\ \longrightarrow
 \begin{cases}
@@ -1035,7 +1036,7 @@ e'=1 & \text{w.p. } \pi^{ue}\\
 e'=3 & \text{w.p. } 1-\pi^{ue},
 \end{cases}
 \end{equation}
-\new{State $2$ is reachable only from employment and} never from itself, so a
+State $2$ is reachable only from employment and never from itself, so a
 household is in it for the
 first year out of work and in state $3$, which pays nothing, from the second year
 on. One year is if anything generous: most states pay for twenty six weeks.
