@@ -16340,20 +16340,43 @@
         
         integer, intent(out) :: voucher_index_1
         integer, intent(in) :: is_homeless_1
+        integer :: meets_condition_1
         
         voucher_index_1=1
+
+        ! TREATMENT MEETS THE SOBRIETY CONDITION, and is rewarded for it.
+        !
+        ! Index 3 is the branch Treatment First uses to take the voucher away
+        ! from a household carrying the disorder. A household in treatment is
+        ! abstaining by construction, v=0, so on the rule the policy actually
+        ! states it is not the household the condition is aimed at. Sending it
+        ! to index 3 anyway would punish the one response the policy is trying
+        ! to buy, and would make the treatment choice strictly worse than doing
+        ! nothing under the very policy named after it.
+        !
+        ! So the disorder alone no longer routes to index 3: the disorder
+        ! WITHOUT treatment does.
+        meets_condition_1=0
+
+        if ((include_treatment==1) .AND. (treatment_choice_now==1)) then
+
+            meets_condition_1=1
+
+        end if
         
         if (is_homeless_1==1) then
         
             voucher_index_1=2
                                     
-            if (unemployment_index>threshold_addiction_index) then
+            if ((unemployment_index>threshold_addiction_index) .AND. &
+                (meets_condition_1==0)) then
             
                 voucher_index_1=3
                 
             end if
             
         elseif ((is_counterfactual==1) .AND. (unemployment_index>threshold_addiction_index) .AND. &
+            (meets_condition_1==0) .AND. &
             (increased_prob_of_voucher_if_homeless_and_addicted==0)) then
             
             voucher_index_1=3

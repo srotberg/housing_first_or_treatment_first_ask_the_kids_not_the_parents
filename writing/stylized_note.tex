@@ -917,12 +917,12 @@ what housing does.
 Three things are observed and two are solved for. Observed: $RR(j)$,
 Baggett's ratio; $\sigma_d(j)$, the shape of the SUD's mortality effect over age;
 and $s$, the SUD share of the homeless. Solved for: $\kappa_{\phi d}(j)$ and
-$\kappa_{\phi H}(j)$, \new{one age profile from each equation. Picking the single
+$\kappa_{\phi H}(j)$, one age profile from each equation. Picking the single
 number $\bar\kappa_{\phi d}$ settles both: the first equation turns it into
 $\kappa_{\phi d}(j)$ at every age, and the second then reads
 $\kappa_{\phi H}(j)$ off Baggett's ratio at every age. So the whole block has one
 free parameter, and the calibration chooses it while everything else is read from
-data.}
+data.
 
 Undoing the mixture needs the SUD's own multiplier at each age. That is what
 $\sigma_d(j)$ supplies: the age profile of drug poisoning deaths from CDC WONDER 2023,
@@ -947,8 +947,8 @@ whole policy experiment turns on. Pinning the level from mortality data would
 take the instrument away and leave the elasticity undisciplined, so the data
 supply the relative profile and the elasticity supplies the level.
 
-$\kappa_{\phi m}$ carries no age argument because the data give it \new{basically
-none}. Olfson et al.\ (2015) give all
+$\kappa_{\phi m}$ carries no age argument because the data give it basically
+none. Olfson et al.\ (2015) give all
 cause standardised mortality ratios for schizophrenia of $3.6$, $3.4$ and $4.0$
 across ages 20 to 34, 35 to 54 and 55 to 64. Flat, if anything rising.
 
@@ -984,8 +984,8 @@ with probability $p_{\text{fp}}$ by one that did not,
 \begin{equation}\label{eq:fpol}
 \Pr(\eta'=1)=\Pr(\eta'=1)^{HF}\times
 \begin{cases}
-1-p_{\text{det}} & \text{if } v>0 \ \new{\text{or } d=1},\\
-1-p_{\text{fp}} & \text{if } v=0 \ \new{\text{and } d=0} .
+1-p_{\text{fp}} & \text{if } (v=0 \ \text{and } d=0) \ \new{\text{or } \tau=1},\\
+1-p_{\text{det}} & \text{\new{otherwise}} .
 \end{cases}
 \end{equation}
 This is the one place where the quantitative model changes the \emph{logic} of
@@ -1001,17 +1001,15 @@ in the stylized model, and that is why its welfare numbers were illustration.
 Conditional on the state and the choices, next period's state is drawn from five
 independent transitions. Collecting them in one place:
 
-\paragraph{Productivity $y$.} Fixed over the life cycle. It carries the cross
-sectional dispersion of permanent income and the intergenerational link, and it
-is a type rather than a process, so $y'=y$. This is a departure from the
-submitted paper, where $y$ followed a persistent autoregression, and it is made
-for two reasons: it is what keeps the child's penalty~\eqref{eq:fnewborn} a shift
+\paragraph{Productivity $y$.} Fixed over the life cycle, so $y'=y$.
+\new{I do this for two reasons. First,} it is what keeps the child's
+penalty~\eqref{eq:fnewborn} a shift
 along a single scalar rather than a shift across the nodes of an age varying
-discretisation, and unemployment is the income risk that links the SUD to
-housing, which is retained in full. The stochastic version is the robustness
-direction.
+discretisation. \new{Second, it still captures the key mechanisms, because}
+unemployment is the income risk that links the SUD to
+housing, \new{and that} is retained in full.
 
-\paragraph{Employment $e$.} A household that separates receives insurance
+\paragraph{Employment $e$.} A household that \new{loses their job} receives insurance
 with certainty for one year, so with $\pi^{ue}$ and $\pi^{eu}$
 from~\eqref{eq:femp},
 \begin{equation}\label{eq:fetrans}
@@ -1027,9 +1025,10 @@ e'=1 & \text{w.p. } \pi^{ue}\\
 e'=3 & \text{w.p. } 1-\pi^{ue},
 \end{cases}
 \end{equation}
-which is where insurance lasting exactly one year comes from: state $2$ is
-entered only from employment and is never entered from itself, so the second year
-of a spell is state $3$ and pays nothing.
+\new{which is what makes insurance last exactly one year. State $2$ can only be
+reached from employment, and never from itself, so a household is in it for the
+first year out of work and in state $3$, which pays nothing, from the second year
+on. One year is if anything generous: most states pay for twenty six weeks.}
 
 \paragraph{The SUD $d$.} By~\eqref{eq:fd} if $d=0$ and~\eqref{eq:frecover}
 if $d=1$, conditioning on the chosen $v$, $h'$ and $\tau$.
@@ -1038,7 +1037,7 @@ if $d=1$, conditioning on the chosen $v$, $h'$ and $\tau$.
 
 \paragraph{The voucher $\eta$.} By~\eqref{eq:felig} and~\eqref{eq:fpol},
 conditioning on next period's eligibility and, under Treatment First, on the
-chosen $v$.
+chosen $v$\new{, the status $d$ and the treatment choice $\tau$}.
 
 Write $\Gamma\big(s'\mid s,\,n,h',v,\tau\big)$ for the product of these five,
 which is the object the expectation in~\eqref{eq:fbellman} is taken against.
