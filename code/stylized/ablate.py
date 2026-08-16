@@ -39,7 +39,10 @@ CHANNELS = [
     # explain and no voucher worth having.
     # recovery used to be a row here. rho is gone from the model: period 2 is
     # terminal, so there is no period to recover into and nothing to switch off.
-    ('a small unit exists', dict(h_sm=P.h_lg)),
+    # h_sm is READ OFF THE BASE at evaluation time, because the standard unit
+    # is now calibrated and P.h_lg is a stale starting value. Marked with a
+    # sentinel and resolved in the loop.
+    ('a small unit exists', 'collapse_h_sm'),
     ('income support is only half as generous', dict(repl=0.25)),
     # ('income support is uncapped', dict(ycap=99.0)) reads as 'remove' here and
     # that verdict is WRONG. This table only looks at the BASELINE, where the
@@ -112,6 +115,8 @@ if __name__ == '__main__':
     base = with_(P(), **json.load(open('calibrated.json')))
     ref = None
     for name, kw in CHANNELS:
+        if kw == 'collapse_h_sm':
+            kw = dict(h_sm=base.h_lg)
         try:
             r = evaluate(with_(base, **kw))
         except Exception as exc:

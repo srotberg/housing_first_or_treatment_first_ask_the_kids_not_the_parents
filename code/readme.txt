@@ -3,9 +3,14 @@ This file shows you how to run the simulations in "Housing First or Treatment Fi
 Before running each simulation you will have to run the following commands:
 
 Write the command in the line below and press enter:
-gfortran housing_first_or_treatment_first_SR_v1.f90 -mcmodel=medium -fopenmp -O2 -o housing_first_or_treatment_first
+gfortran housing_first_or_treatment_first_SR_v1.f90 -mcmodel=medium -fopenmp -O2 -ffree-line-length-none -o housing_first_or_treatment_first
 
-(The old line used -g and no -O flag, so gfortran defaulted to -O0. Measured on a 4-core
+(-ffree-line-length-none is REQUIRED, not optional. Free form Fortran truncates at column
+132 and gfortran makes that an error, and the source has 97 lines past it, most of them
+predating this revision. Without the flag the build stops with a syntax error inside a
+truncated line, which reads as a code error and is not one.
+
+The old line used -g and no -O flag, so gfortran defaulted to -O0. Measured on a 4-core
 machine, -O0 and -O3 reached the same point in the same wall time, so this is not where the
 run time goes -- but -O2 costs nothing and is the sane default. Drop -march=native unless
 you compile on the same machine you run on.
