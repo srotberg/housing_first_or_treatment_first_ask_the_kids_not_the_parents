@@ -229,7 +229,7 @@ def tab_welfare(par, pV=1.0):
 
 
     # every cell in this table is a model output and every one of them moved
-    pc = lambda x, n=2: '\\textcolor{red}{' + f'{x:.{n}f}' + '}\\%'
+    pc = lambda x, n=2: '' + f'{x:.{n}f}' + '\\%'
     L = [r'\small', r'\begin{tabular}{@{}lcc@{}}', r'\toprule',
          r'& Housing First & Treatment First \\', r'\midrule',
          r'\multicolumn{3}{@{}l}{\emph{Panel A. Outcomes at universal cover}} \\',
@@ -240,8 +240,8 @@ def tab_welfare(par, pV=1.0):
          f'\\quad Homelessness rate & {pc(100*mh["homeless"],3)} '
          f'& {pc(100*mt["homeless"],3)} \\\\',
          f'\\quad Voucher outlay per household '
-         f'& \\textcolor{{red}}{{{mh["cost"]:.4f}}} '
-         f'& \\textcolor{{red}}{{{mt["cost"]:.4f}}} \\\\',
+         f'& {mh["cost"]:.4f} '
+         f'& {mt["cost"]:.4f} \\\\',
          r'\addlinespace',
          r'\multicolumn{3}{@{}l}{\emph{Panel B. Treatment First against Housing '
          r'First, no externality}} \\',

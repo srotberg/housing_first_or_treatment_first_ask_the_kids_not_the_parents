@@ -88,7 +88,7 @@ def tab_internalise(par, dlt, omegas=(0.0, 0.10, 0.25, 0.50)):
     import os
     from tables import OUT
     # every model output in this table moved with the recalibration
-    RED = lambda x: '\\textcolor{red}{' + x + '}'
+    RED = lambda x: '' + x + ''
     rows = [row(par, w, dlt) for w in omegas]
     L = [r'\small', r'\begin{tabular}{@{}lcccccc@{}}', r'\toprule',
          r'Weight on & Refitted & \multicolumn{2}{c}{Disorder at $\pi_V=1$}'

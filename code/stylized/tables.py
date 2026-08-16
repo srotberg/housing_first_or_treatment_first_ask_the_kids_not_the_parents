@@ -41,9 +41,9 @@ EXTERNAL = [
     ]),
     ('The SUD', [
         ('kap', r'\kappa', 'Proportional fall in survival with a SUD',
-         'Hjorth\\o j et al.\\ (2023), age 26+, \\textcolor{red}{over 30 years}', '{:.2f}'),
+         'Hjorth\\o j et al.\\ (2023), age 26+, over 30 years', '{:.2f}'),
         ('u0', 'u_0', 'Unemployment probability, no SUD',
-         '\\textcolor{red}{BLS CPS, series UNRATE via FRED, 2014 to 2024}', '{:.4f}'),
+         'BLS CPS, series UNRATE via FRED, 2014 to 2024', '{:.4f}'),
         ('u1', 'u_1', 'Unemployment probability, with a SUD',
          'NSDUH 2024, age 26+', '{:.4f}'),
     ]),
@@ -64,8 +64,7 @@ EXTERNAL = [
         # average income 0.978, so the same object is 0.41 of average income; a
         # table that printed 0.40 next to a source line saying 0.41 was asking
         # the reader to reconcile two numbers for one parameter.
-        ('h_lg', 'h_L', '\\textcolor{red}{Standard rental unit}',
-         'Set', '{:.2f}'),
+        ('h_lg', 'h_L', 'Standard rental unit', 'Set', '{:.2f}'),
         # The ratio is stated in the TEXT and not here. Printing "a quarter of
         # the standard unit" beside 0.10 next to a 0.41 invites the reader to
         # multiply by four, get 0.40, and conclude the table is wrong. It is not:
@@ -75,8 +74,8 @@ EXTERNAL = [
         # quarter of h_lg, and printing 0.10 beside the standard unit's 0.41
         # invited the reader to multiply by four and find 0.40. Writing the
         # relation itself is exact and there is nothing left to check.
-        ('h_sm', 'h_S', '\\textcolor{red}{Small rental unit}',
-         'Set', '\\textcolor{red}{0.25\\,h_L}'),
+        ('h_sm', 'h_S', 'Small rental unit',
+         'Set', '\\textcolor{red}{0.25\\times h_L}'),
         ('kappa_r', r'\kappa_r', "Tenant's share of the rent when covered",
          'HUD voucher rules', '{:.2f}'),
         ('yV', 'y_V', 'Voucher means test, multiple of average income',
@@ -87,8 +86,8 @@ EXTERNAL = [
 ]
 
 INTERNAL = [
-    ('gam', r'\gamma', '\\textcolor{red}{Weight on housing services}',
-     '\\textcolor{red}{Housing over non drug spending}', 'hspend', '{:.2%}',
+    ('gam', r'\gamma', 'Weight on housing services',
+     'Housing over non drug spending', 'hspend', '{:.2%}',
      '{:.3f}'),
     ('aleph', r'\aleph', 'Flow value of being alive',
      'Value of a statistical life', 'vsl', '{:.1f}', '{:.3f}'),
@@ -134,7 +133,7 @@ def tab_internal(base):
          r'\midrule']
     # THE MODEL AND VALUE COLUMNS ARE RED because every one of them moved with
     # the recalibration. The Data column is a target and did not move.
-    red = lambda x: '\\textcolor{red}{' + x + '}'
+    red = lambda x: '' + x + ''
     for attr, sym, desc, mom, key, mfmt, vfmt in INTERNAL:
         L.append(f'${sym}$ & {desc} & {mom} & '
                  f'{mfmt.format(TARGET[key]).replace("%", chr(92) + "%")} & '
@@ -166,7 +165,7 @@ def tab_channels(base):
          r'Strength of the channel & $b$ & $\bar y_u/\bar y$'
          r' & $b$ & $\bar y_u/\bar y$ \\', r'\midrule']
     # every cell here is a model output and every one of them moved
-    red = lambda x: '\\textcolor{red}{' + x + '}'
+    red = lambda x: '' + x + ''
     for s, b1, r1, b2, r2 in rows:
         L.append(f'{100*s:.0f}\\% & {red(f"{b1:.4f}")} & {red(f"{r1:.2f}")} '
                  f'& {red(f"{b2:.4f}")} & {red(f"{r2:.2f}")} \\\\')
@@ -181,7 +180,7 @@ def tab_policy(base):
     pt = 100 * stats(with_(base, pV=1.0, policy='TF'))['part']
     ph = 100 * stats(with_(base, pV=1.0, policy='HF'))['part']
     print(f'   none {p0:.2f}   TF {pt:.2f}   HF {ph:.2f}')
-    R = lambda x: '\\textcolor{red}{' + x + '}'
+    R = lambda x: '' + x + ''
 
     L = [r'\begin{tabular}{@{}lcc@{}}', r'\toprule',
          r'& Participation rate & Difference \\',
