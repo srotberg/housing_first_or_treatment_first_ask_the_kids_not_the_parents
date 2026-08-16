@@ -76,8 +76,9 @@ better evidence for it than either alone.
 
 ## Cited but not held here
 
-Referenced in the note without a local copy: Milby et al. (the abstinence and
-housing-access arms behind `b_hl_ratio` and moment 24), Desmond & Gershenson
+Referenced in the note without a local copy: Milby, Schumacher, Wallace, Freedman
+and Vuchinich (2005), *To House or Not to House*, AJPH 95(7):1259-65, whose NACH
+and NH arms are behind `b_hl_ratio` and moment 24, Desmond & Gershenson
 (the homelessness–employment penalty κ_ueH), Loubière et al. (the eight-country
 contingent valuation behind κ_x), and the National Alliance to End Homelessness
 figure χ_H previously rested on.

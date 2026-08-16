@@ -29,7 +29,7 @@ A point passes only if
 
 and only then is the drug spending share worth reading.
 
-gamma is tied to 0.25(1-theta) throughout. Freeing it has been tried twice and
+gamma is tied to 0.268(1-theta) throughout. Freeing it has been tried twice and
 collapses: it couples the housing weight to the homelessness margin through the
 value of the street, the h_hl bracket loses its interior solution, and the sweep
 walks to homelessness of 25 per cent against a target of 0.4.

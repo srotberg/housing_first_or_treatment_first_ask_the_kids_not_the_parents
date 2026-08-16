@@ -1,18 +1,25 @@
 """
-A rough calibration of the stylized two period model. Four parameters, four
+A rough calibration of the stylized two period model. Five parameters, five
 targets.
 
     aleph   value of a statistical life                80 annual incomes
+    h_lg    housing over non drug spending             26.8 %
     h_hl    homelessness rate                          0.399 %
     lam     share of users who acquire a SUD           33.2 %
     b       drug participation rate                    5.13 %
 
-Rent is NOT among them. It used to be calibrated to the aggregate housing share and
-that was a mistake: it doubled rent, because most households here take the small
-unit, so a fifth of them could not afford any home while unemployed and
-homelessness came out three times its target. Rent is now SET so the standard
-unit costs 21.2 per cent of mean income, which is the same fact stated the way
-that does not break anything.
+THE STANDARD RENTAL UNIT IS BACK ON THE LIST, and the reason it left is worth
+recording along with the reason it returned. It was calibrated to the aggregate
+housing share once before and the sweep doubled the rent, so a fifth of
+households could not afford any home while unemployed and homelessness came out
+three times its target. It was then SET, at 21.2 per cent of mean income from the
+SCF, with gamma set separately from the Consumer Expenditure Survey. That is two
+external numbers aimed at one object, and nothing made the pair deliver the
+survey's share in equilibrium: it came out at 16 per cent against 26.8. Setting
+gamma from the survey and calibrating h_lg to realised spending removes the
+double count, and the earlier failure does not repeat because the moment is now
+housing over non drug SPENDING rather than over INCOME, and because h_hl is
+bracketed AFTER h_lg rather than before it.
 
 Rough is the intention. The model is qualitative and exists to show directions,
 so the calibration only has to put it in the right region. Nothing here is a fit
@@ -20,7 +27,7 @@ to be defended, there is no validation table, and the magnitudes in the paper
 come from the full model.
 
 Everything else is set: the discount factor, the interest rate, survival, the
-two rental sizes, the housing weight at 0.25, the unemployment rate given a SUD
+housing weight at 0.268 of non drug spending, the unemployment rate given a SUD
 (measured in NSDUH 2024, ages 26 and above, weighted), the replacement rate, the
 mortality multiplier, and the voucher parameters. Recovery is not on the list any
 more: period 2 is terminal, so rho has nothing to name.
@@ -73,7 +80,7 @@ YG = np.exp(np.linspace(np.log(YMIN), np.log(5.0), 30))
 W = np.exp(-0.5 * ((np.log(YG) + 0.5 * SIG**2) / SIG)**2)
 
 TARGET = dict(part=0.0513, homeless=0.00399, prog=0.332, vsl=80.0,
-              dshare=0.11, housing_share=0.30)
+              dshare=0.11, housing_share=0.30, hspend=0.268)
 
 # ORDER MATTERS, and participation goes LAST. Every one of these parameters
 # moves participation: lam makes drugs riskier, h_hl changes what is at stake in
@@ -118,7 +125,7 @@ TARGET = dict(part=0.0513, homeless=0.00399, prog=0.332, vsl=80.0,
 # it uses as little as it can while still using. Low intensity use among the
 # poor is the same fact as the income gradient, not an independent one. So the
 # spending share is reported as an untargeted moment that the model misses, and
-# theta stays set with gamma = 0.25 * (1 - theta) alongside it.
+# theta stays set with gamma = 0.268 * (1 - theta) alongside it.
 # THETA AND GAMMA ARE SET, NOT BRACKETED. Freeing them was tried twice and it
 # collapses: gamma couples the housing weight to the homelessness margin through
 # the value of the street, the h_hl bracket loses its interior solution, and the
@@ -137,11 +144,13 @@ TARGET = dict(part=0.0513, homeless=0.00399, prog=0.332, vsl=80.0,
 LAM_LO, LAM_HI = 0.05, 4000.0
 
 PAIRS = [('aleph', 'vsl', 0.20, 24.0),
-         ('h_hl', 'homeless', 1e-5, 0.49),
+         ('h_lg', 'hspend', 0.08, 1.40),
+         ('h_hl', 'homeless', 1e-7, 0.49),
          ('lam', 'prog', LAM_LO, LAM_HI),
          ('b', 'part', 1e-5, 0.30)]
 
 LABEL = {'part': 'drug participation rate',
+         'hspend': 'housing spending / non drug spending',
          'housing_share': 'housing spending / income',
          'homeless': 'homelessness rate',
          'dshare': 'drug spending / income among users',
@@ -150,7 +159,7 @@ LABEL = {'part': 'drug participation rate',
 
 
 def stats(par):
-    # GAMMA IS FREE. Tying it to theta as 0.25(1-theta) was the mistake behind
+    # GAMMA IS FREE. Tying it to theta as 0.268(1-theta) was the mistake behind
     # the earlier claim that this model cannot reach an 11 per cent drug
     # spending share: with gamma tied, raising theta lowers gamma and the two
     # effects on the consumption weight nearly cancel, so the drug share jumps
@@ -233,7 +242,12 @@ def calibrate(par=None, sweeps=5, verbose=True):
     par = par or P()
     for s in range(sweeps):
         par = with_(par, aleph=bracket(par, 'aleph', 'vsl', 0.20, 24.0, iters=26))
-        par = with_(par, h_hl=bracket(par, 'h_hl', 'homeless', 1e-5, 0.49))
+        # THE STANDARD UNIT GOES BEFORE THE STREET, because moving it moves
+        # homelessness and h_hl is what puts homelessness back. The reverse
+        # order leaves the street calibrated against a unit size that has since
+        # changed.
+        par = with_(par, h_lg=bracket(par, 'h_lg', 'hspend', 0.08, 1.40))
+        par = with_(par, h_hl=bracket(par, 'h_hl', 'homeless', 1e-7, 0.49))
         par = with_(par, lam=bracket_prog(par, LAM_LO, LAM_HI))
         par = with_(par, b=_b_for(par, iters=30))
         if verbose:

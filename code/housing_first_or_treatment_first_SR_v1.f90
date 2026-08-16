@@ -2,11 +2,11 @@
 
 		implicit none
         
-        integer, parameter :: is_counterfactual=1
+        integer, parameter :: is_counterfactual=0
         integer, parameter :: partial_equilibrium=0
         real(8), parameter :: probability_of_voucher_benchmark_used=0.06
         real(8), parameter :: increased_prob_of_voucher_if_homeless_and_addicted=1
-        integer, parameter :: how_many_iterations_to_do_on_distribution=1     
+        integer, parameter :: how_many_iterations_to_do_on_distribution=0     
         integer, parameter :: compare_to_original_benchmark=1
         
         integer, parameter :: test_elasticity=0

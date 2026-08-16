@@ -3,10 +3,17 @@ The housing share of spending, from the Consumer Expenditure Survey.
 
 WHAT IT IS FOR
 
-gamma, the Cobb-Douglas weight on housing, is set to a quarter of non drug
-spending. This is where that quarter comes from, and it is worth computing
-rather than asserting because the CEX offers three "housing" numbers that differ
-by more than half and only one of them is the model's object.
+gamma, the Cobb-Douglas weight on housing, is set to 26.8 per cent of non drug
+spending. This is where that number comes from, and it is worth computing rather
+than asserting because the CEX offers three "housing" numbers that differ by more
+than half and only one of them is the model's object.
+
+It is also the TARGET the standard rental unit is calibrated to. gamma is a
+preference weight and 26.8 per cent is the outcome of a choice, and with three
+points on the housing grid, the street among them and a voucher covering part of
+the rent, nothing makes the one deliver the other. Fixing gamma here and the unit
+size from a separate SCF ratio aimed two external numbers at one object and hit
+neither, so the unit size is now bracketed on realised spending instead.
 
     Shelter alone                   20.8 %
     Shelter and utilities           26.8 %   <- the model's h
@@ -22,8 +29,8 @@ number. CEX shelter for an owned dwelling is mortgage interest, property taxes
 and maintenance, so an outright owner with no mortgage records almost no shelter
 spending while consuming a full dwelling's worth of housing services. Sixty five
 per cent of consumer units report owned dwelling spending. The imputed rent
-figure is therefore HIGHER than 26.8 per cent, which puts the model's 25 at the
-low end of the defensible range rather than in the middle of it.
+figure is therefore HIGHER than 26.8 per cent, so the model's 26.8 is a lower
+bound on the defensible range rather than the middle of it.
 
 Everyone rents in the model, so owners are not excluded here: the object is what
 a representative household spends on housing services, and an owner consumes
@@ -91,7 +98,8 @@ if __name__ == '__main__':
     print(f'  whole Housing category           {m["Housing"]:10,.0f}   {m["Housing"]/total:6.1%}')
     print()
     print(f'  THE MODEL OBJECT, shelter and utilities: {(shelter+utilities)/total:.1%}')
-    print(f'  the model uses                           25.0%, at the low end because')
+    print(f'  the model uses that as gamma/(1-theta) AND as the target the')
+    print(f'  standard rental unit is calibrated to. It is a lower bound, because')
     print(f'  owners enter here at outlay rather than at imputed rent')
     print()
 
@@ -106,5 +114,6 @@ if __name__ == '__main__':
     print('  Renters spend a THIRD of expenditure on shelter and utilities, owners')
     print('  a quarter, and owners without a mortgage the least of all at 21.2 per')
     print('  cent, which is the outlay problem in one number: they record almost no')
-    print('  shelter spending while consuming a whole dwelling. So a quarter is at')
-    print('  the low end on every reading of this table.')
+    print('  shelter spending while consuming a whole dwelling. So 26.8 is at the')
+    print('  low end on every reading of this table, and well below the renter')
+    print('  figure that the model\'s households, all of whom rent, most resemble.')

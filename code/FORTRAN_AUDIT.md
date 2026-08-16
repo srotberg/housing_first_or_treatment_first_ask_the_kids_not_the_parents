@@ -57,6 +57,31 @@ describe machinery that is not there. The price is fixed at 1 in every run.
 This one is cheap to add and it is what the revision's supply elasticity
 discussion rests on, so it should be added rather than removed from the note.
 
+### 1.4 The homelessness disamenity. Absent entirely.
+
+`grep -n "kappa_x\|disamenity\|aggregate_homeless"` returns **zero**. Section 2
+of the note now prices a disamenity from aggregate homelessness, calibrated to
+Loubiere et al.\ (2020), and says it is the only place where a household's
+utility depends on an aggregate and hence what makes `H` a genuine fixed point.
+None of that is in the code.
+
+It was dropped once and brought back deliberately, so this is a gap to close
+rather than text to delete. Three things it needs:
+
+* an aggregate `H` computed from the distribution each equilibrium iteration,
+  **on the headcount alone**. Not weighted by the SUD, and not counting only the
+  homeless who carry one: the contingent valuation asked what people would pay
+  to end homelessness, so that is what may be priced.
+* a `- kappa_x * H` term in flow utility, identical across households, which is
+  what makes it a pure externality rather than a preference.
+* `kappa_x` set so that households would pay 0.08 per cent of average annual
+  earnings to move `H` to zero, with 0.20 per cent as the top of the reported
+  range.
+
+It is small by construction and cannot decide a ranking on its own, so it is not
+urgent. But the note asserts it, so either the code gains it or Section 2 loses
+the passage, and the first is the intent.
+
 ---
 
 ## 2. In the code, absent from the note

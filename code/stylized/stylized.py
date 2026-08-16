@@ -139,7 +139,7 @@ class P:
     # preferences
     # SHARES THAT SUM TO ONE. The weight on consumption is 1-gam-th, so gam is
     # the housing budget share proper rather than gam/(1+gam+th). gam is set to
-    # 0.25 of non drug spending, which is the share in the data.
+    # 0.268 of non drug spending, which is the share in the data.
     # THETA IS 0.20 AND NOT 0.11, and the two period model is what allows it. In
     # the three period model raising theta bought a drug spending share at the
     # cost of the income gradient: users stopped being poor. Here the mortality
@@ -152,7 +152,7 @@ class P:
     # the spending share.
     th    = 0.20      # weight on drug use
     b     = 0.009     # Stone Geary subsistence; th/b is the pull of the first unit
-    gam   = 0.20      # weight on housing = 0.25 * (1 - th)
+    gam   = 0.2144    # weight on housing = 0.268 * (1 - th)
     # A PERIOD IS THIRTY YEARS, so the discount factor and the interest rate are
     # the annual values COMPOUNDED, not the annual values used raw. The interest
     # rate is set to 1/beta so that beta*R = 1 and nothing in the results comes
@@ -288,11 +288,21 @@ class P:
     ycap  = 1.00      # earnings base capped at this multiple of average income
 
     # HOUSING. Rent per unit of housing services is the NUMERAIRE, p_r = 1, so
-    # a unit size and its rent are the same number. The standard unit is set to
-    # the housing budget share in the data, 21.2 per cent of average income, and
-    # the small unit is half of it.
-    h_lg  = 0.212
-    h_sm  = 0.106
+    # a unit size and its rent are the same number.
+    #
+    # THE STANDARD UNIT IS CALIBRATED, NOT SET, and the change is worth
+    # recording because the previous version double counted. It used to be fixed
+    # at 21.2 per cent of average income, the housing cost to income ratio in the
+    # SCF, while gamma was fixed at the Consumer Expenditure Survey share. Those
+    # are two external numbers aimed at the same object, and nothing made the
+    # pair deliver the survey share in equilibrium: gamma is a preference weight,
+    # whereas what a household actually spends depends on a housing grid with
+    # three points on it, on the street being an option, and on the voucher. So
+    # gamma is set from the survey and h_lg is calibrated to make realised
+    # spending match it. The small unit stays half the standard one, which is a
+    # normalisation of what "small" means rather than a second target.
+    h_lg  = 0.212     # CALIBRATED to the housing share of non drug spending
+    h_sm  = 0.106     # tied to h_lg/2 in with_()
     h_hl  = 0.05      # the street. CALIBRATED to the homelessness rate
     pr    = 1.00      # rent per unit of housing services: the numeraire
     pV    = 0.27      # probability a voucher arrives, conditional on eligibility
@@ -330,6 +340,11 @@ def fields(par):
 
 def with_(par, **kw):
     f = fields(par); f.update(kw)
+    # THE SMALL UNIT IS HALF THE STANDARD ONE, always, and it is tied here
+    # rather than at the call sites so that a bracket on h_lg cannot forget it
+    # and silently calibrate one size against a stale other.
+    if 'h_lg' in kw and 'h_sm' not in kw:
+        f['h_sm'] = 0.5 * f['h_lg']
     return clone(**f)
 
 
@@ -608,6 +623,12 @@ def aggregates(par, ygrid, w, policy=None):
 
     part = spend = uinc = sud = 0.0
     hl = hl_sud = hcost = hinc = cost = mass = 0.0
+    # NON DRUG EXPENDITURE, which is what the Consumer Expenditure Survey share
+    # is a share OF. In period 1 it is income less drug spending less saving; in
+    # period 2, which is terminal, it is the whole of cash. Rent here is what the
+    # tenant actually pays, net of any voucher, on both sides of the ratio, so
+    # the object is an outlay share exactly as the survey measures it.
+    hexp = 0.0
     for i, y in enumerate(ygrid):
         ag, _, H2c, R2c, G2c = solve_period2(par, y, policy, used=0)
         if policy == 'HF':
@@ -630,6 +651,7 @@ def aggregates(par, ygrid, w, policy=None):
                 mass += mm
                 hl += mm * street
                 hcost += mm * rent; hinc += mm * INC[i, s]; cost += mm * sub
+                hexp += mm * (INC[i, s] - (par.p_v * VV[i, s] if uu else 0.0) - a)
                 # period 2: the disorder is drawn at the transition and survival
                 # depends on it
                 Hx, Rx, Gx = (H2u, R2u, G2u) if uu else (H2c, R2c, G2c)
@@ -644,8 +666,10 @@ def aggregates(par, ygrid, w, policy=None):
                         hl_sud += m2 * street2
                     hcost += m2 * float(np.interp(a, ag, Rx[:, d]))
                     cost += m2 * float(np.interp(a, ag, Gx[:, d])) / par.R
+                    hexp += m2 * par.R * a
                     for p2, inc2, _ in _states(par, d, policy, y, uu):
                         hinc += m2 * p2 * inc2
+                        hexp += m2 * p2 * inc2
 
     use = (PR * frac).sum(axis=1)
     return dict(part=float(part), sud=float(sud),
@@ -659,6 +683,12 @@ def aggregates(par, ygrid, w, policy=None):
                 homeless=float(hl / max(mass, 1e-12)),
                 sud_of_homeless=float(hl_sud / max(hl, 1e-12)),
                 housing_share=float(hcost / max(hinc, 1e-12)),
+                # RENT OVER NON DRUG EXPENDITURE. The frictionless Cobb-Douglas
+                # benchmark for it is gam/(1-th), so this is the moment that
+                # says whether the discrete housing grid, the street and the
+                # voucher deliver the survey share the weight was set from. It
+                # is what h_lg is calibrated on.
+                hspend=float(hcost / max(hexp, 1e-12)),
                 cost=float(cost),
                 use=use, v=(PR * frac * VV).sum(axis=1) / np.maximum(use, 1e-12))
 

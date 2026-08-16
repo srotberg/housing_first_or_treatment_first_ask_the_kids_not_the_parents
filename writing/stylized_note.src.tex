@@ -299,44 +299,31 @@ is about, so a higher factor corrects for the coarseness of the horizon rather
 than making a claim about preferences.} and the gross interest rate is
 $R=1/\beta$, the dispersion of log permanent income is
 $\sigma = 0.75$ from Heathcote, Perri and Violante (2010), and survival over
-a period is $\phi_0 = @@phi0@@$, \new{from the Social Security Administration (SSA) period life table} for twenty
+a period is $\phi_0 = @@phi0@@$, from the Social Security Administration (SSA) period life table for twenty
 five to fifty five. For the SUD, the
 proportional fall in survival is $\kappa = @@kap@@$ from Hjorth\o j et al.\
 (2023), so a clean household's chance of dying before period 2 is @@dth0@@
 percent and a household that acquires a SUD faces @@dth1@@ percent,
-and the two unemployment probabilities are measured directly. \new{$u_0 = @@u0@@$
+and the two unemployment probabilities are measured directly. $u_0 = @@u0@@$
 is the headline civilian unemployment rate from the Bureau of Labor Statistics
 (BLS) Current Population Survey, series UNRATE as distributed by Federal Reserve
 Economic Data (FRED), averaged over 2014 to 2024. And $u_1 = @@u1@@$ is from the
 National Survey on Drug Use and Health (NSDUH) 2024 for respondents aged 26 and
-over. The two are not on the same age base: UNRATE covers everyone aged 16 and
-over, and since young workers carry more unemployment than older ones, using it
-raises $u_0$ and so narrows the gap $u_1-u_0$ that the unemployment channel runs
-on. The error is in the conservative direction.}
+over.
 
 Income support replaces half of previous earnings on a base capped at mean
-income, in line with statutory state rules. The standard rental unit costs
-$21.2$ percent of mean income, \new{its housing cost to income ratio in the 2022
-Survey of Consumer Finances (SCF)}, and the
-small unit is half of it. The voucher parameters are institutional: covered
+income, in line with statutory state rules. \new{The rental units are not set from
+the data and are discussed with the rest of the internal calibration below.} The voucher parameters are institutional: covered
 tenants pay $30$ percent of market rent, eligibility is capped at mean income,
-and $\pi_V = 0.27$ is the \new{assisted eligible share in the 2023 Picture of Subsidized
-Households, published by the Department of Housing and Urban Development (HUD)}.
+and $\pi_V = 0.27$ is the assisted eligible share in the 2023 Picture of Subsidized
+Households, published by the Department of Housing and Urban Development (HUD).
 The weight on drugs is set at $\theta = @@th@@$, with $\gamma =
-0.25(1-\theta) = @@gam@@$ alongside it, since housing is a quarter of non
-drug spending.\footnote{\new{In the 2024 Consumer Expenditure Survey (CEX), shelter plus
-utilities is $26.8$ percent of total expenditure across all consumer units. That
-is the right object for $h$ here: a dwelling occupied for a period, including
-what it costs to run, and excluding the furnishings and household operations that
-the survey's wider Housing category carries, which take it to $33.4$ percent.
-Owners enter the survey at outlay, mortgage interest, property taxes and
-maintenance, rather than at imputed rent, so an outright owner records almost no
-shelter spending while consuming a full dwelling. The survey's own tenure split
-makes the point: shelter and utilities are $34.3$ percent of expenditure for
-renters, $25.9$ for owners with a mortgage and $21.2$ for owners without one,
-who consume a dwelling and record almost nothing. A quarter is therefore at the
-low end on every reading, and well below the renter figure that the model's
-households, all of whom rent, most resemble.}}\footnote{A $\theta$ large
+\new{0.268}(1-\theta) = @@gam@@$ alongside it. \new{In the 2024 Consumer
+Expenditure Survey (CEX), shelter plus utilities is $26.8$ percent of total
+expenditure across all consumer units, which is the right object for $h$ here: a
+dwelling occupied for a period, including what it costs to run, and excluding the
+furnishings and household operations that the survey's wider Housing category
+carries.}\footnote{A $\theta$ large
 enough to match the eleven percent of income that users spend on drugs makes the
 drug too valuable to be deterred by a death that arrives thirty years later, and
 users stop being poor. Setting $\theta = @@th@@$ gives a spending share of
@@ -345,7 +332,7 @@ can make.}
 
 \subsubsection{Internal calibration}
 
-Four parameters are set inside the model, in Table~\ref{tab:int}, each bracketed
+\new{Five} parameters are set inside the model, in Table~\ref{tab:int}, each bracketed
 on the moment it moves most rather than fitted jointly. The flow value
 of being alive $\aleph$ is matched to a value of a statistical life of @@vsl_t@@
 times average annual income, about \$9 million against a mean household income of
@@ -353,9 +340,21 @@ times average annual income, about \$9 million against a mean household income o
 estimates are put in current dollars. The pull of the first unit $b$ is matched
 to a drug participation rate of $5.13$ percent from NSDUH 2024 for
 respondents aged 26 and over, housing services on the street
-$h_0$ to a homelessness rate of $0.399$ percent from the \new{2023 HUD point in
-time (PIT) count, converted to households}, and the SUD hazard $\lambda$ to the $33.2$ percent of users who
+$h_0$ to a homelessness rate of $0.399$ percent from the 2023 HUD point in
+time (PIT) count, converted to households, and the SUD hazard $\lambda$ to the $33.2$ percent of users who
 acquire a SUD.
+
+\new{The standard rental unit $h_L$ is the fifth, and it is calibrated rather than
+set because setting it would count the same fact twice. $\gamma$ is a preference
+weight and the survey share is the outcome of a choice; with only three points on
+the housing grid, the street among them and a voucher covering part of the rent
+for some households, nothing makes a $\gamma$ read off the survey deliver the
+survey's share in equilibrium. Fixing both, as an earlier draft did, aimed two
+external numbers at one object and hit neither. So $\gamma$ carries the
+preference and $h_L$ is bracketed on realised spending, housing over expenditure
+net of drugs, with a target of $26.8$ percent. The small unit stays half the
+standard one, which fixes what ``small'' means rather than adding a second
+target.}
 
 
 \begin{table}[!tb]
@@ -1232,7 +1231,7 @@ the voucher rule itself.
 
 \subsection{The disamenity of homelessness}\label{sec:fleftout}
 
-\new{The disamenity of aggregate homelessness is priced rather than assumed, and
+{\color{red}The disamenity of aggregate homelessness is priced rather than assumed, and
 the evidence for it is thin enough to be worth stating exactly. Loubi\`ere
 et al.\ (2020) ask adults in eight European countries what they would pay in
 annual taxes to end homelessness through Housing First: the mean over all
@@ -1422,8 +1421,10 @@ Golub, A. and B. Johnson (2004). ``How much do Manhattan arrestees spend on
 drugs?'' \emph{Drug and Alcohol Dependence} 76(3), 235--46.\ \
 Gutwinski, S. et al.\ (2021). ``The prevalence of mental disorders among homeless
 people in high income countries.'' \emph{PLOS Medicine} 18(8).\ \
-Milby, J. et al.\ (2005). ``Effects of sustained abstinence among treated
-substance abusing homeless persons.'' \emph{Behavior Therapy} 36(3).\ \
+Milby, J., J. Schumacher, D. Wallace, M. Freedman and R. Vuchinich (2005). ``To
+house or not to house: the effects of providing housing to homeless substance
+abusers in treatment.'' \emph{American Journal of Public Health} 95(7),
+1259--65.\ \
 Felitti, V. et al.\ (1998). ``Relationship of Childhood Abuse and Household
 Dysfunction to Many of the Leading Causes of Death in Adults.''
 \emph{American Journal of Preventive Medicine} 14(4), 245--58.\ \
