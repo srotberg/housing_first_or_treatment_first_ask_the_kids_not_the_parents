@@ -87,6 +87,8 @@ def row(par, omega, dlt, pV=1.0):
 def tab_internalise(par, dlt, omegas=(0.0, 0.10, 0.25, 0.50)):
     import os
     from tables import OUT
+    # every model output in this table moved with the recalibration
+    RED = lambda x: '\\textcolor{red}{' + x + '}'
     rows = [row(par, w, dlt) for w in omegas]
     L = [r'\small', r'\begin{tabular}{@{}lcccccc@{}}', r'\toprule',
          r'Weight on & Refitted & \multicolumn{2}{c}{Disorder at $\pi_V=1$}'
@@ -98,9 +100,11 @@ def tab_internalise(par, dlt, omegas=(0.0, 0.10, 0.25, 0.50)):
         lab = f'{r["omega"]:.2f}'
         if abs(r['omega']) < 1e-9:
             lab += r'\ \ (baseline)'
-        L.append(f'{lab} & {r["b"]:.5f} & {100*r["sud_h"]:.3f}\\% '
-                 f'& {100*r["sud_t"]:.3f}\\% & {100*r["priv"]:.3f}\\% '
-                 f'& {100*r["gain"]:.3f}\\% & {r["ratio"]:.1f} \\\\')
+        b_, sh, st = r["b"], 100*r["sud_h"], 100*r["sud_t"]
+        pr, gn, ra = 100*r["priv"], 100*r["gain"], r["ratio"]
+        L.append(f'{lab} & {RED(f"{b_:.5f}")} & {RED(f"{sh:.3f}")}\\% '
+                 f'& {RED(f"{st:.3f}")}\\% & {RED(f"{pr:.3f}")}\\% '
+                 f'& {RED(f"{gn:.3f}")}\\% & {RED(f"{ra:.1f}")} \\\\')
     L += [r'\bottomrule', r'\end{tabular}']
     with open(os.path.join(OUT, 'tab_internalise.tex'), 'w') as f:
         f.write('\n'.join(L) + '\n')

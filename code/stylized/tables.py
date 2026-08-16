@@ -110,11 +110,14 @@ def tab_internal(base):
          r'\toprule',
          r'Parameter & Description & Target moment & Data & Model & Value \\',
          r'\midrule']
+    # THE MODEL AND VALUE COLUMNS ARE RED because every one of them moved with
+    # the recalibration. The Data column is a target and did not move.
+    red = lambda x: '\\textcolor{red}{' + x + '}'
     for attr, sym, desc, mom, key, mfmt, vfmt in INTERNAL:
         L.append(f'${sym}$ & {desc} & {mom} & '
                  f'{mfmt.format(TARGET[key]).replace("%", chr(92) + "%")} & '
-                 f'{mfmt.format(m[key]).replace("%", chr(92) + "%")} & '
-                 f'${vfmt.format(getattr(base, attr))}$ \\\\')
+                 f'{red(mfmt.format(m[key]).replace("%", chr(92) + "%"))} & '
+                 f'{red("$" + vfmt.format(getattr(base, attr)) + "$")} \\\\')
         print(f'   {attr}: target {TARGET[key]:.5f}  model {m[key]:.5f}  '
               f'value {getattr(base, attr):.6g}')
     L += [r'\bottomrule', r'\end{tabular}']
@@ -140,9 +143,11 @@ def tab_channels(base):
          r'\cmidrule(lr){2-3}\cmidrule(lr){4-5}',
          r'Strength of the channel & $b$ & $\bar y_u/\bar y$'
          r' & $b$ & $\bar y_u/\bar y$ \\', r'\midrule']
+    # every cell here is a model output and every one of them moved
+    red = lambda x: '\\textcolor{red}{' + x + '}'
     for s, b1, r1, b2, r2 in rows:
-        L.append(f'{100*s:.0f}\\% & {b1:.4f} & {r1:.2f} '
-                 f'& {b2:.4f} & {r2:.2f} \\\\')
+        L.append(f'{100*s:.0f}\\% & {red(f"{b1:.4f}")} & {red(f"{r1:.2f}")} '
+                 f'& {red(f"{b2:.4f}")} & {red(f"{r2:.2f}")} \\\\')
     L += [r'\bottomrule', r'\end{tabular}']
     write('tab_channels.tex', '\n'.join(L) + '\n')
     return rows
@@ -154,23 +159,24 @@ def tab_policy(base):
     pt = 100 * stats(with_(base, pV=1.0, policy='TF'))['part']
     ph = 100 * stats(with_(base, pV=1.0, policy='HF'))['part']
     print(f'   none {p0:.2f}   TF {pt:.2f}   HF {ph:.2f}')
+    R = lambda x: '\\textcolor{red}{' + x + '}'
 
     L = [r'\begin{tabular}{@{}lcc@{}}', r'\toprule',
          r'& Participation rate & Difference \\',
          r'\midrule',
          r'\multicolumn{3}{@{}l}{\emph{Panel A. Drug use under each policy}} \\',
-         f'\\quad No voucher programme ($\\pi_V=0$) & {p0:.2f}\\% & \\\\',
-         f'\\quad Universal Treatment First ($\\pi_V=1$) & {pt:.2f}\\% & \\\\',
-         f'\\quad Universal Housing First ($\\pi_V=1$) & {ph:.2f}\\% & \\\\',
+         f'\\quad No voucher programme ($\\pi_V=0$) & {R(f"{p0:.2f}")}\\% & \\\\',
+         f'\\quad Universal Treatment First ($\\pi_V=1$) & {R(f"{pt:.2f}")}\\% & \\\\',
+         f'\\quad Universal Housing First ($\\pi_V=1$) & {R(f"{ph:.2f}")}\\% & \\\\',
          r'\addlinespace',
          r'\multicolumn{3}{@{}l}{\emph{Panel B. The two forces}} \\',
          r'\quad Value of life\quad(Treatment First $-$ no programme)'
-         f' & & ${pt-p0:+.2f}$ pp \\\\',
+         f' & & {R(f"${pt-p0:+.2f}$")} pp \\\\',
          r'\quad Moral hazard\quad(Housing First $-$ Treatment First)'
-         f' & & ${ph-pt:+.2f}$ pp \\\\',
+         f' & & {R(f"${ph-pt:+.2f}$")} pp \\\\',
          r'\addlinespace',
          r'\quad Net effect of Housing First\quad(Housing First $-$ no programme)'
-         f' & & ${ph-p0:+.2f}$ pp \\\\',
+         f' & & {R(f"${ph-p0:+.2f}$")} pp \\\\',
          r'\bottomrule', r'\end{tabular}']
     write('tab_policy.tex', '\n'.join(L) + '\n')
     return p0, pt, ph
