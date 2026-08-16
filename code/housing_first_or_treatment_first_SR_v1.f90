@@ -485,8 +485,26 @@
         real(8) :: stopping_rule_inheritance_amount=(1-is_counterfactual)*2*10.d0**(-3)+is_counterfactual*2*10.d0**(-3)
                                                            
         real(8), parameter :: stopping_rule_value_function=5*10.d0**(-8)
-        real(8) :: stopping_rule_stationary_distribution=10.d0**(-8)
-                                                                  
+        ! THE TOLERANCE, AND WHAT IT IS FOR.
+        !
+        ! 1e-8 on the distribution distance is far tighter than anything read off
+        ! it needs. The moments are population shares reported to three or four
+        ! decimals and the calibration's own stopping rules are 1e-3 and 1e-4, so
+        ! a distribution accurate to 1e-6 is already two orders finer than the
+        ! coarsest thing that consumes it. The iteration contracts at roughly the
+        ! per period survival rate, since mass turns over once per lifetime, so
+        ! the last two orders of magnitude cost as much as everything before
+        ! them.
+        real(8) :: stopping_rule_stationary_distribution=10.d0**(-6)
+
+        ! Below this a state is treated as empty. Twelve orders below the
+        ! stopping rule, so discarded mass cannot reach the convergence test.
+        real(8), parameter :: negligible_mass=10.d0**(-18)
+
+        ! Aitken acceleration of the distribution iteration. Off reproduces the
+        ! plain sweep exactly, which is what makes the two comparable.
+        integer, parameter :: accelerate_distribution=1
+
         real(8) :: weight_on_housing_price=0.5
                                         
         real(8), parameter :: risk_aversion_consumption=2
@@ -1451,7 +1469,10 @@
             policy_function_labor_supply,policy_function_cutoff_taxable_income,policy_function_frac_spent_on_addiction,&
             frac_mov_optimal_1,distribution_guess,distribution_implied,distribution_stationary,distribution_forward,&
             policy_function_total_consumption
-                    
+
+        ! Two previous sweeps of the distribution, kept for the Aitken step.
+        type(jagged_matrix_transition_real), dimension(1:2) :: dist_prev_1,dist_prev_2
+
         type(jagged_matrix_transition_integer), dimension(1:2) :: &
             policy_function_financial_index,policy_function_housing_status_index,policy_function_space_lived_in_index,&
             policy_function_years_of_amortization_index,fin_index_frac_mov_to_optimal,policy_function_addiction,&
@@ -16799,6 +16820,24 @@
                                         do housing_status_index=(1-has_house)*lowest_housing_grid_point+&
                                             has_house*index_of_smallest_house_hhld_can_buy,&
                                             track_housing_1*(1-newborn_household)*(housing_status_grid_size-1)    
+
+                                            ! STATES WITH NO MASS PROPAGATE NO MASS.
+                                            !
+                                            ! The distribution iteration is now four fifths of a
+                                            ! calibration loop, and most of what it does is push
+                                            ! zeros around: the distribution is concentrated, over
+                                            ! half of it sits at the lowest asset point alone, and
+                                            ! every empty state still pays for a policy lookup, an
+                                            ! income calculation and a four deep accumulation.
+                                            !
+                                            ! Skipping them is exact to the threshold, which is set
+                                            ! twelve orders of magnitude below the stopping rule, so
+                                            ! the mass discarded cannot reach the convergence test
+                                            ! let alone a reported moment.
+                                            if (distribution_guess(years_left_on_mortgage_index)%&
+                                                vector_transition_real(time_period-solve_transition_dynamics,&
+                                                age_index,financial_index,unemployment_index,employment_index,&
+                                                housing_status_index,voucher_index)<=negligible_mass) cycle
                                                                                                             
                                             if (policy_function_years_of_amortization_index(years_left_on_mortgage_index)%&
                                                 vector_transition_integer(time_period,age_index,financial_index,&
@@ -17510,12 +17549,57 @@
                 
             end if
                 
+            ! AITKEN EXTRAPOLATION ON THE WHOLE DISTRIBUTION.
+            !
+            ! This iteration contracts at roughly the per period survival rate,
+            ! because mass turns over once per lifetime and there is nothing
+            ! faster in the operator. That is a contraction factor near 0.99, so
+            ! it takes hundreds of sweeps, and the last two orders of magnitude
+            ! cost as much as everything before them. It was four fifths of a
+            ! calibration loop.
+            !
+            ! Three successive iterates of a linearly converging sequence
+            ! identify the limit: with d1 = x1 - x0 and d2 = x2 - x1, the ratio
+            ! d2/d1 is the contraction factor and x2 + d2*rho/(1-rho) is the
+            ! limit. Applied elementwise to the whole distribution it is the
+            ! standard delta squared step.
+            !
+            ! IT IS GUARDED THREE WAYS, because an extrapolation that overshoots
+            ! into negative mass would be far worse than a slow iteration. The
+            ! step is taken only when the estimated rho is in (0,1) and bounded
+            ! away from one, only every third iteration so the two intervening
+            ! plain sweeps re-establish the sequence, and the result is
+            ! rejected outright if it produces negative mass or changes the total
+            ! by more than a part in a thousand. A rejected step costs one
+            ! wasted vector operation and the iteration carries on exactly as it
+            ! would have.
+            if (accelerate_distribution==1) then
+
+                do i=1,2
+
+                    dist_prev_2(i)%vector_transition_real(time_period,:,:,:,:,:,:)=&
+                        dist_prev_1(i)%vector_transition_real(time_period,:,:,:,:,:,:)
+
+                    dist_prev_1(i)%vector_transition_real(time_period,:,:,:,:,:,:)=&
+                        distribution_guess(i)%vector_transition_real(time_period,:,:,:,:,:,:)
+
+                end do
+
+            end if
+
             do i=1,2
                 
                 distribution_guess(i)%vector_transition_real(time_period,:,:,:,:,:,:)=&
                     distribution_implied(i)%vector_transition_real(time_period,:,:,:,:,:,:)
                     
             end do
+
+            if ((accelerate_distribution==1) .AND. (loop_count_dist>=3) .AND. &
+                (mod(loop_count_dist,3)==0)) then
+
+                call aitken_on_distribution(time_period)
+
+            end if
                         
             loop_count_dist=loop_count_dist+1
             
@@ -17546,6 +17630,87 @@
 
     end subroutine
     
+    subroutine aitken_on_distribution(time_period)
+
+        ! Delta squared on three successive iterates, elementwise, with the
+        ! contraction factor estimated from the sums rather than pointwise. A
+        ! pointwise rho is noisy where the mass is near zero and would produce
+        ! wild extrapolations in exactly the states that matter least; the sums
+        ! are dominated by the states that carry mass, which is where the
+        ! sequence's actual convergence rate lives.
+
+        use Global_Vars
+
+        implicit none
+
+        integer, intent(in) :: time_period
+        integer :: i_1
+        real(8) :: d1_1,d2_1,contraction_1,total_before_1,total_after_1,worst_1
+
+        d1_1=0
+        d2_1=0
+        total_before_1=0
+
+        do i_1=1,2
+
+            d1_1=d1_1+sum(abs(dist_prev_1(i_1)%vector_transition_real(time_period,:,:,:,:,:,:)-&
+                dist_prev_2(i_1)%vector_transition_real(time_period,:,:,:,:,:,:)))
+
+            d2_1=d2_1+sum(abs(distribution_guess(i_1)%vector_transition_real(time_period,:,:,:,:,:,:)-&
+                dist_prev_1(i_1)%vector_transition_real(time_period,:,:,:,:,:,:)))
+
+            total_before_1=total_before_1+&
+                sum(distribution_guess(i_1)%vector_transition_real(time_period,:,:,:,:,:,:))
+
+        end do
+
+        if ((d1_1<=10.d0**(-30)) .OR. (d2_1<=10.d0**(-30))) return
+
+        contraction_1=d2_1/d1_1
+
+        ! Only extrapolate a sequence that is actually contracting, and not one
+        ! so close to one that the step becomes enormous.
+        if ((contraction_1<=0) .OR. (contraction_1>=0.999)) return
+
+        do i_1=1,2
+
+            dist_prev_2(i_1)%vector_transition_real(time_period,:,:,:,:,:,:)=&
+                distribution_guess(i_1)%vector_transition_real(time_period,:,:,:,:,:,:)+&
+                (contraction_1/(1-contraction_1))*&
+                (distribution_guess(i_1)%vector_transition_real(time_period,:,:,:,:,:,:)-&
+                dist_prev_1(i_1)%vector_transition_real(time_period,:,:,:,:,:,:))
+
+        end do
+
+        worst_1=0
+        total_after_1=0
+
+        do i_1=1,2
+
+            worst_1=min(worst_1,minval(dist_prev_2(i_1)%vector_transition_real(time_period,:,:,:,:,:,:)))
+            total_after_1=total_after_1+sum(dist_prev_2(i_1)%vector_transition_real(time_period,:,:,:,:,:,:))
+
+        end do
+
+        ! Reject rather than repair. Negative mass or a total that has moved is
+        ! a sign the sequence was not linear here, and one wasted vector
+        ! operation is cheaper than a distribution that has to be trusted.
+        if ((worst_1<-10.d0**(-14)) .OR. &
+            (abs(total_after_1-total_before_1)>10.d0**(-3)*max(total_before_1,10.d0**(-12)))) then
+
+            return
+
+        end if
+
+        do i_1=1,2
+
+            distribution_guess(i_1)%vector_transition_real(time_period,:,:,:,:,:,:)=&
+                max(dist_prev_2(i_1)%vector_transition_real(time_period,:,:,:,:,:,:),0.d0)
+
+        end do
+
+    end subroutine
+
     subroutine compute_homelessness_duration(time_period)
     
         use global_vars
@@ -24021,7 +24186,25 @@
                 life_span+1,is_owner*1+(1-is_owner)*negative_financial_grid_size:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
-                        
+
+            allocate(dist_prev_1(i)%&
+                vector_transition_real((1-solve_transition_dynamics):transition_length,&
+                life_span+1,is_owner*1+(1-is_owner)*negative_financial_grid_size:&
+                financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+
+            allocate(dist_prev_2(i)%&
+                vector_transition_real((1-solve_transition_dynamics):transition_length,&
+                life_span+1,is_owner*1+(1-is_owner)*negative_financial_grid_size:&
+                financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+
+            ! Zeroed so the first two shuffles move defined values. They are
+            ! overwritten before the first Aitken step reads them, but an
+            ! allocatable that is never written is not a thing to rely on.
+            dist_prev_1(i)%vector_transition_real=0
+            dist_prev_2(i)%vector_transition_real=0
+
             allocate(distribution_implied(i)%&
                 vector_transition_real(transition_length,life_span+1,is_owner*1+(1-is_owner)*negative_financial_grid_size:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&

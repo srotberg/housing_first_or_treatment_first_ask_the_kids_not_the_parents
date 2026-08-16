@@ -370,3 +370,77 @@ bounds every time a switch moves.
   Worth doing for clarity and compile time, not speed.
 * **`track_renters_housing`: already zero**, and section 8 above is what was
   still being paid for it.
+
+---
+
+## 9. The distribution iteration, which became four fifths of the cost
+
+Once the backward induction was fixed (sections 4, 7 and 8 together took it from
+205s to 131s and then to 66s of the loop's 1,561s), the profile inverted. A
+timed loop:
+
+| stage | wall seconds | share |
+|---|---|---|
+| backward induction, all 60 ages | 262 | 17% |
+| stationary distribution | ~1,300 | 83% |
+| everything else | ~0 | |
+
+655 sweeps, still contracting at 5.4e-3 when the loop ended.
+
+**Why it is slow is structural, not incidental.** The operator moves mass one
+age at a time and mass turns over once per lifetime, so the contraction factor
+is roughly the per period survival rate, near 0.99. Nothing in the operator is
+faster than that. At 0.99 per sweep it takes about 230 sweeps per order of
+magnitude, so the last two orders cost as much as everything before them.
+
+Three changes, in increasing order of how much thought they need before you
+trust them.
+
+### 9.1 The tolerance was two orders finer than anything that reads it
+
+`stopping_rule_stationary_distribution` was 1e-8. What consumes the
+distribution is population shares reported to three or four decimals, and the
+calibration's own stopping rules are 1e-3 and 1e-4. 1e-6 is already two orders
+finer than the coarsest consumer. Given 230 sweeps per order, this alone is
+about 460 sweeps.
+
+### 9.2 States with no mass propagate no mass
+
+The distribution is extremely concentrated: over half of it sits at the lowest
+asset point alone. Every empty state was still paying for a policy lookup, an
+income calculation and a four deep accumulation. The skip is at
+`negligible_mass = 1e-18`, twelve orders below the stopping rule, so the mass
+discarded cannot reach the convergence test let alone a reported moment.
+
+### 9.3 Aitken extrapolation, guarded three ways
+
+Three iterates of a linearly converging sequence identify the limit: with
+`d1 = x1 - x0`, `d2 = x2 - x1`, the ratio `d2/d1` estimates the contraction
+factor and `x2 + d2*rho/(1-rho)` is the limit. Elementwise on the whole
+distribution this is the ordinary delta squared step.
+
+Two decisions in the implementation are worth stating because the obvious
+version of each is wrong.
+
+**rho is estimated from the sums of absolute differences, not pointwise.** A
+pointwise ratio is noisy exactly where mass is near zero, and it would produce
+enormous extrapolations in the states that matter least. The sums are dominated
+by the states that carry mass, which is where the sequence's actual rate lives.
+
+**A bad step is rejected, not repaired.** The result is thrown away if it
+produces negative mass or moves the total by more than a part in a thousand.
+Negative mass in a distribution is much worse than a slow iteration, and a
+rejected step costs one wasted vector operation, after which the sweep carries
+on exactly as it would have. Two further guards: the step is taken only when
+the estimated rho is in (0, 0.999), and only every third sweep so the two
+intervening plain sweeps re establish the sequence.
+
+`accelerate_distribution = 0` reproduces the plain sweep exactly. That is what
+makes the two comparable, and the A/B was run that way: two binaries differing
+in nothing but that parameter, from identical inputs.
+
+**Watch for.** Acceleration changes the path to the fixed point, not the fixed
+point. If the converged moments differ between the two binaries by more than
+the stopping rule, the guard is not tight enough and the extrapolation is
+being accepted somewhere the sequence is not linear. Check that before reading
+anything else off a run.
