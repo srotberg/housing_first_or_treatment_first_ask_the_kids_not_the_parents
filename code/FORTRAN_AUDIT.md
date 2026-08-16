@@ -294,11 +294,21 @@ already what is wanted,
 but it values *wealth left behind*, not the child's lifetime value, and it is
 off.
 
-So the revision's requirement, that the child enter the continuation at every
-age weighted by the probability of death and by `omega`, is **not implemented**.
-The hook exists and is switched off; what has to change is that it takes
-`E V_1(0, y_child, ...)` in place of `u(wealth)`, and that `weight_on_child`
-becomes the weight on it.
+**Wired, switched off.** `compute_expected_child_value` fills
+`expected_child_value(d, homeless)` with `E V_1(0, y_child, ...)`, taking the
+newborn to where the distribution iteration puts it: age one, the zero asset
+index, employed and clean, no housing carried in, no voucher, productivity drawn
+from the penalised distribution. The renter continuation then adds
+`(1 - phi_j) * weight_on_child * expected_child_value` alongside the existing
+bequest hook. It does not depend on `a'`, because the estate goes to the
+government rather than to the child, so it shifts the level and the housing and
+drug choices through `phi_j` and leaves saving alone.
+
+`include_child_in_continuation` is **0**, so nothing changes yet. Turning it on
+puts the age one value function into every age's continuation, which is a fixed
+point across ages: the outer loop already iterates on prices, taxes and
+inheritance and will carry the lag, but that has to be *seen* to converge before
+the switch is trusted. That is the first thing to check on the first real run.
 
 ---
 
