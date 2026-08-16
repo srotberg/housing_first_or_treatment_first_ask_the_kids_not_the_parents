@@ -247,7 +247,17 @@ class P:
     # people do not have a substance use disorder, roughly a third do. A clean
     # household therefore has to be able to lose its job too, in BOTH periods:
     # period 1 draws employment on the same lottery as period 2.
-    u0    = 0.049     # unemployment probability when clean
+    # FRED series UNRATE, the headline civilian unemployment rate, monthly and
+    # seasonally adjusted, averaged over 2014 to 2024: 4.852 per cent. The file is
+    # data/raw/FRED_UNRATE_monthly_1948_2024.xlsx.
+    #
+    # ONE CAVEAT ON THE UNIVERSE. UNRATE is ages 16 and over, while u1 is NSDUH
+    # ages 26 and over, so the two are not on the same age base. The headline rate
+    # is HIGHER than a 25+ rate, because young workers carry more unemployment, so
+    # this choice overstates u0 and understates the gap u1 - u0 that the whole
+    # unemployment channel runs on. It is conservative in the direction that
+    # matters, which is why it is acceptable rather than merely convenient.
+    u0    = 0.0485    # unemployment probability when clean
     # LOSING YOUR JOB. Income support replaces the fraction repl of what you used
     # to earn, on an earnings base capped at ycap. A household at or below the
     # mean therefore gets half its own income; one above the mean gets half the
