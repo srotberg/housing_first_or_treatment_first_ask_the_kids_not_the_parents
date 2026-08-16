@@ -18543,6 +18543,24 @@
         integer :: node_index_1,d_index_1,h_index_1
         
         expected_child_value=0
+
+        ! THE VALUE FUNCTION IS NOT ZERO BEFORE IT IS SOLVED, it is
+        ! large_negative_num, and reading it then put roughly -1.8e10 into every
+        ! household's continuation on the first pass. That is not a small error:
+        ! it makes death arbitrarily bad, so the first pass would buy survival at
+        ! any price and the whole solve starts from a distorted policy.
+        !
+        ! So the sentinel is checked rather than assumed. Until age one has
+        ! actually been solved the child is worth zero, which is where the model
+        ! sat before this term existed, and the term switches itself on at the
+        ! second pass when there is something real to read.
+        if (value_function(1)%vector_transition_real&
+            (min(time_period+solve_transition_dynamics,transition_length),1,&
+            negative_financial_grid_size,1,1,0,0)<=large_negative_num/2) then
+
+            return
+
+        end if
         
         do d_index_1=0,1
         
