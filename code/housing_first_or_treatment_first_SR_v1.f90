@@ -625,7 +625,23 @@
         integer, parameter :: smallest_index_for_purchase=2
         real(8), parameter :: smallest_house_for_purchase=0.25
         
+        ! CALIBRATED NOW, to the share of households in the LARGEST unit. It was
+        ! set at 0.315, which is a leftover from the version with homeownership,
+        ! where the top of the grid was the largest house a household could BUY.
+        ! With owning gone every point on the grid is a rental, and 0.315 leaves
+        ! the largest rental nearly four times the middle one, so nobody crosses
+        ! the gap: the first calibration sweep drove the largest share from 6 per
+        ! cent to zero against an ACS share of 62.7, while the smallest share
+        ! converged neatly on its own target. In the data the largest bin is the
+        ! MODAL dwelling, not a luxury, so the top of the grid has to sit close
+        ! to the middle of it.
+        !
+        ! Sign: a larger top unit is a more expensive one, so fewer households
+        ! take it and the largest share FALLS. The update adds the gap.
         real(8) :: largest_house_size=(1-perceived_probability_lower)*0.315+perceived_probability_lower*0.285
+        real(8) :: largest_house_size_adjuster=0.05
+        real(8) :: distance_largest_house_size
+        real(8) :: stopping_rule_largest_house_size=10.d0**(-3)
         
         real(8), dimension(employment_grid_size) :: adjusted_probability
         real(8) :: average_labor_income_calibrated=&
@@ -23077,6 +23093,7 @@
         distance_relative_share_of_leisure=1
         distance_standard_deduction=1
         distance_housing_status_grid_expander=1
+        distance_largest_house_size=1
         distance_rent_to_price=1
         distance_smallest_house_size=1
         distance_rental_market=1
@@ -23262,6 +23279,7 @@
             (distance_relative_share_of_leisure>stopping_rule_relative_share_of_leisure) .OR. &
             (distance_convexity_of_rental_company>stopping_rule_convexity_of_rental_company) .OR. &
             (distance_housing_status_grid_expander>stopping_rule_housing_status_grid_expander) .OR. &
+            (distance_largest_house_size>stopping_rule_largest_house_size) .OR. &
             (distance_rent_to_price>stopping_rule_rent_to_price) .OR. &
             (distance_smallest_house_size>stopping_rule_smallest_house_size) .OR. &
             (distance_fixed_cost_to_moving>stopping_rule_fixed_cost_to_moving) .OR. &
@@ -23379,6 +23397,7 @@
                 distance_discount_factor_on_child=0
                 distance_minimum_inheritance=0
                 distance_housing_status_grid_expander=0
+                distance_largest_house_size=0
                 distance_rent_to_price=0
                 distance_smallest_house_size=0
                 distance_advantage_to_owning=0
@@ -23530,23 +23549,30 @@
                         ! the share in the LARGEST size is what it actually
                         ! identifies.
                         !
-                        ! THE SIGN, derived rather than guessed. With three points
-                        ! the grid is h0, h0 + (h2-h0)/2**expander, h2, so a HIGHER
-                        ! expander pulls the middle unit DOWN towards the smallest
-                        ! one: at 1.8 it is 0.119, at 3.0 it is 0.074, at 1.0 it is
-                        ! 0.178. Shrinking the middle unit makes it a near
-                        ! duplicate of the small one, so the households that wanted
-                        ! a medium dwelling have nowhere to go but the largest, and
-                        ! share(largest) RISES in the expander. The update
-                        ! subtracts the gap.
-                        housing_status_grid_expander=&
-                            min(max(housing_status_grid_expander-housing_status_grid_expander_adjuster*&
+                        ! THE LARGEST SIZE CARRIES THIS MOMENT, not the expander.
+                        ! Three shares have two free numbers in them, so two size
+                        ! parameters identify them and a third would be chasing the
+                        ! same target: h0 takes the smallest share, h2 the largest,
+                        ! and the middle follows. The expander is SET at its
+                        ! starting curvature. It was tried on this moment first and
+                        ! it cannot reach it, because what empties the largest unit
+                        ! is the LEVEL of h2 rather than the curvature between h0
+                        ! and h2: raising the expander from 1.8 to 2.17 moved the
+                        ! largest share from 6 per cent to zero rather than towards
+                        ! 62.7.
+                        largest_house_size=&
+                            min(max(largest_house_size+largest_house_size_adjuster*&
                             (model_housing_size_dist(1,housing_status_grid_size-1)-&
-                            housing_size_dist_data(2)),0.1d0),5.d0) 
-                                                                     
-                        distance_housing_status_grid_expander=&
+                            housing_size_dist_data(2)),0.02d0),1.d0)
+
+                        distance_largest_house_size=&
                             abs(model_housing_size_dist(1,housing_status_grid_size-1)-&
                             housing_size_dist_data(2))
+
+                        write(*,*) "largest_house_size=", largest_house_size
+                        write(*,*) "distance_largest_house_size=", distance_largest_house_size
+
+                        distance_housing_status_grid_expander=0
                             
                         distance_rent_to_price=0
                                                 

@@ -107,9 +107,32 @@ def numbers(base):
     return out
 
 
+# WHAT CHANGED SINCE THE LAST VERSION THE READER SAW, marked rather than
+# described. numbers_prev.json holds this same dictionary computed at the
+# previous calibration, so a number is red if and only if it actually moved.
+# Recompute it with scratchpad/baseline.py whenever a reviewed version ships.
+PREV = os.path.join(HERE, 'numbers_prev.json')
+
+
+def mark(new, prev):
+    """Wrap every value that moved in \new{}, and leave the rest black."""
+    out, moved = {}, []
+    for k, v in new.items():
+        if prev is not None and k in prev and prev[k] != v:
+            out[k] = r'\new{' + v + '}'
+            moved.append(f'{k}: {prev[k]} -> {v}')
+        else:
+            out[k] = v
+    return out, moved
+
+
 if __name__ == '__main__':
     base = with_(P(), **json.load(open(os.path.join(HERE, 'calibrated.json'))))
     n = numbers(base)
+    prev = json.load(open(PREV)) if os.path.exists(PREV) else None
+    if prev is None:
+        print('   numbers_prev.json missing: nothing will be marked red')
+    n, moved = mark(n, prev)
     src = open(os.path.join(WRITE, 'stylized_note.src.tex')).read()
     missing = set()
     for k in sorted(n, key=len, reverse=True):
@@ -120,6 +143,9 @@ if __name__ == '__main__':
     open(os.path.join(WRITE, 'stylized_note.tex'), 'w').write(src)
     for k in sorted(n):
         print(f'   {k:12s} {n[k]}')
+    print(f'\n   {len(moved)} number(s) moved and are marked red:')
+    for m in moved:
+        print(f'      {m}')
     if missing:
         print('\n   UNFILLED PLACEHOLDERS:', ' '.join(sorted(missing)))
     else:

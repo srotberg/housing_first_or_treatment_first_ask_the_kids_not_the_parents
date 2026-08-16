@@ -188,20 +188,23 @@ def tab_children(par, pV=1.0):
          r'penalty implies}} \\',
          r"$\delta_d$ & & Child's SUD rate & Ratio & "
          r'Loss to the child \\', r'\midrule']
+    # every model output in this table moved with the recalibration
+    R = lambda x: '\\textcolor{red}{' + x + '}'
     for d, sud, ratio, loss in rows:
         lab = f'{d:.2f}' + (r'\ \ (calibrated)' if abs(d - DEL_D) < 1e-9 else '')
-        L.append(f'{lab} & & {100*sud:.2f}\\% & {ratio:.2f} & {100*loss:.1f}\\% \\\\')
+        L.append(f'{lab} & & {R(f"{100*sud:.2f}")}\\% & {R(f"{ratio:.2f}")} '
+                 f'& {R(f"{100*loss:.1f}")}\\% \\\\')
     L += [r'\addlinespace',
           r'\multicolumn{5}{@{}l}{\emph{Panel B. Does the externality reverse '
           r'the ranking?}} \\',
           f'\\quad Private welfare loss from conditionality & & & & '
-          f'{100*priv:.3f}\\% \\\\',
-          f'\\quad Disorder cases prevented & & & & {100*dsud:.3f} pp \\\\',
+          f'{R(f"{100*priv:.3f}")}\\% \\\\',
+          f'\\quad Disorder cases prevented & & & & {R(f"{100*dsud:.3f}")} pp \\\\',
           f'\\quad Damage to the child of one such case & & & & '
-          f'{100*per_case:.0f}\\% \\\\',
+          f'{R(f"{100*per_case:.0f}")}\\% \\\\',
           f'\\quad Externality gain from conditionality & & & & '
-          f'{100*gain:.3f}\\% \\\\',
-          f'\\quad Gain over loss & & & & {gain/max(priv,1e-12):.1f} \\\\',
+          f'{R(f"{100*gain:.3f}")}\\% \\\\',
+          f'\\quad Gain over loss & & & & {R(f"{gain/max(priv,1e-12):.1f}")} \\\\',
           r'\bottomrule', r'\end{tabular}']
     with open(os.path.join(OUT, 'tab_children.tex'), 'w') as f:
         f.write('\n'.join(L) + '\n')

@@ -152,13 +152,29 @@ With three points the grid is `h0`, `h0 + (h2-h0)/2**expander`, `h2`.
   dwelling have nowhere to go but the largest and the share in the largest RISES.
   The update SUBTRACTS the gap.
 
-**A caveat on reachability.** The first iteration gives 36.9 / 56.9 / 6.1 against
-13.2 / 24.1 / 62.7, so the model is putting almost nobody in the largest unit
-while the data puts nearly two thirds there. In the ACS the largest bin is the
-MODAL one; in the model `largest_house_size` is 0.315 against a middle of 0.119,
-so it reads as a luxury rather than as the typical dwelling. If the expander runs
-to its bound of 5 without closing that gap, `largest_house_size` is the parameter
-at fault and has to come down; it is currently set, not calibrated.
+**The caveat was right, and it is now fixed.** Six sweeps gave
+
+| sweep | smallest | middle | largest |
+|---|---|---|---|
+| 1 | 0.369 | 0.569 | 0.061 |
+| 3 | 0.209 | 0.791 | 0.000 |
+| 6 | 0.141 | 0.858 | 0.001 |
+
+against 13.2 / 24.1 / 62.7. The smallest share converged on its target cleanly;
+the largest **collapsed to zero**. `largest_house_size` was the parameter at
+fault, set at 0.315, which is a leftover from the version with homeownership
+where the top of the grid was the largest house a household could BUY. With
+owning gone every point is a rental, and 0.315 leaves the largest nearly four
+times the middle, so nobody crosses the gap. In the ACS the largest bin is the
+MODAL dwelling, not a luxury.
+
+So `largest_house_size` is calibrated on the largest share and the expander is
+SET. Three shares carry two free numbers, so two size parameters identify them
+and a third would chase the same target: `h0` takes the smallest share, `h2` the
+largest, the middle follows. The expander was tried on this moment first and
+cannot reach it, because what empties the largest unit is the LEVEL of `h2`
+rather than the curvature between `h0` and `h2`: raising the expander from 1.8 to
+2.17 moved the largest share from 6 per cent to zero rather than towards 62.7.
 
 `smallest_house_size_adjuster` is deliberately slower than
 `size_homelessness_adjuster`: both move the bottom of the housing distribution,
