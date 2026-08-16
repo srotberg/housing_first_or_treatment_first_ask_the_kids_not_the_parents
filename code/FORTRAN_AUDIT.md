@@ -197,21 +197,28 @@ The weight is therefore fixed at 0.13 and the model's addiction rate is whatever
 falls out of it. In the run of 16 August that was `model_fraction_addicted =
 0.326`, against an NSDUH substance use disorder rate near 3.7 per cent for adults
 26 and over, which is the moment the note's internal table says $\lambda$ is
-matched to. Two things have to be separated before that gap means anything:
+matched to. **The moment is what its name says, and the gap is real.** Read from the
+accumulation rather than the name:
 
-* **What the moment IS.** `model_fraction_addicted` sits alongside
-  `model_exprimenters`, and the two summed to 0.62 while
-  `model_drug_use_by_age_group` ran at 0.10 to 0.12. Those cannot all be the same
-  object. Whether `model_fraction_addicted` is a stock of people who ever
-  acquired a disorder, a flow of current use, or something else decides whether
-  0.326 is wrong or merely unfamiliar. Read the accumulation, not the name.
-* **Whether the weight should be free.** If the disorder rate is a target, then
-  either the weight or $\lambda$ has to move to hit it, and at present neither
-  does: $\lambda$ has no adjuster either.
+* `model_fraction_addicted` adds `distribution_mass_used` for every state with
+  `unemployment_index > threshold_addiction_index`, which is exactly
+  `sud_of(index) == 1`, and divides by `sum_of_distribution`, the whole
+  population. So it is the **prevalence of the disorder**, and 0.326 is 32.6 per
+  cent of adults carrying a SUD against the 3.68 per cent the note's internal
+  table targets from NSDUH 2024 for ages 26 and over. A factor of nine.
+* `model_drug_use_by_age_group` is NOT comparable and looked like a
+  contradiction only because of its denominator: it divides by
+  `model_mass_total_users`, so it is the age PROFILE of users and sums to one
+  across age groups. 0.10 to 0.12 per group is what a flat profile over five
+  groups looks like. Nothing inconsistent, and nothing reassuring either.
 
-Do this before reporting any number from the full model, because a disorder rate
-that is out by an order of magnitude changes every counterfactual that runs
-through it.
+So the disorder rate is nine times the data and **nothing in the calibration
+targets it**: the weight is a compile time constant and $\lambda$ has no adjuster
+either. One of the two has to be freed and bracketed on the NSDUH rate. That is a
+modelling decision rather than a repair, so it is flagged rather than made.
+
+Nothing from the full model should be reported until it is, because the disorder
+rate is the state variable every counterfactual runs through.
 
 ---
 
