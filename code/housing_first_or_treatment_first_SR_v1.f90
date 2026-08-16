@@ -299,6 +299,10 @@
         integer :: a_prime_boundary_hits=0
         integer :: a_prime_set_ready=0
 
+        ! The two wage penalties, on together. Off reproduces the model before
+        ! they were wired, which is what makes their contribution measurable.
+        integer, parameter :: include_wage_penalties=1
+
         integer, parameter :: number_of_smi_states=1
         integer, parameter :: threshold_addiction_index=3*number_of_smi_states
 
@@ -372,6 +376,25 @@
         real(8) :: stopping_rule_rho_m=10.d0**(-3)
         real(8) :: rho_m_adjuster=5*10.d0**(-2)
         real(8), parameter :: homeless_income_share_data=0.191
+
+        ! THE SUD WAGE PENALTY, CONDITIONAL ON WORKING.
+        !
+        ! It exists to let the model produce EMPLOYED households poor enough to
+        ! be priced out of housing, which an effect on the employment margin
+        ! alone cannot do: without it everyone homeless is out of work, and about
+        ! half of them are not.
+        !
+        ! The evidence on this margin is genuinely contested, with parts of the
+        ! older literature finding positive effects for casual use, while the
+        ! robust findings are on the employment margin. That is why it is
+        ! calibrated to an employment composition moment rather than assigned
+        ! from a wage regression.
+        real(8) :: rho_d=0.85
+
+        real(8) :: distance_rho_d
+        real(8) :: stopping_rule_rho_d=10.d0**(-3)
+        real(8) :: rho_d_adjuster=5*10.d0**(-2)
+        real(8), parameter :: employed_share_of_homeless_data=0.50
         integer, parameter :: have_two_rental_markets=0
 
         ! A SECANT ON THE RENTAL MARKET TOO, for the same reason as lambda.
@@ -2368,13 +2391,24 @@
         ! branch is kept anyway so that a zero lambda cannot make abstaining and
         ! using look identical to a reader of the code.
         real(8) function addiction_transition&
-            (current_1,future_1,choice_1,homeless_1,drug_quantity_1,perceived_1,treatment_1)
+            (current_1,future_1,choice_1,homeless_1,drug_quantity_1,perceived_1,treatment_1,smi_1)
 
             implicit none
 
             integer, intent(in) :: current_1,future_1,choice_1,homeless_1,perceived_1,treatment_1
+            ! OPTIONAL so that the twelve existing call sites stay valid while
+            ! they are wired one at a time. Absent means no SMI, which is what
+            ! the model was before, so leaving a site unwired is a silent
+            ! omission rather than a compile error. Every site that has the
+            ! unemployment index in scope should pass smi_of(it).
+            integer, intent(in), optional :: smi_1
             real(8), intent(in) :: drug_quantity_1
             real(8) :: onset_1,recovery_1
+            integer :: smi_used_1
+
+            smi_used_1=0
+
+            if (present(smi_1)) smi_used_1=smi_1
 
             ! ALREADY CARRYING THE DISORDER: the transition is recovery, it does
             ! not depend on how much is used, and treatment is the one choice
@@ -2390,6 +2424,9 @@
                     recovery_1=min(recovery_1*treatment_effect_on_recovery,1.d0)
 
                 end if
+
+                ! mu_m: SMI lowers the recovery hazard.
+                recovery_1=recovery_with_smi(recovery_1,smi_used_1)
 
                 if (future_1==0) then
 
@@ -2445,7 +2482,57 @@
 
         end function
 
-        real(8) function smi_transition(current_m_1,future_m_1,sud_1,age_1)
+        real(8) function survival_with_smi(base_survival_1,smi_1)
+
+        ! eq:fsurv. survival_probability already carries age, homelessness and
+        ! the SUD; SMI multiplies the death HAZARD on top of that, which is not
+        ! the same as scaling the survival probability. So the hazard is taken
+        ! out, multiplied, and put back:
+        !
+        !     s' = 1 - (1 - s) * kappa_phi_m
+        !
+        ! This is the same repair made when the homelessness and SUD multipliers
+        ! stopped being added and started being multiplied. Adding excesses and
+        ! multiplying hazards agree only when both are small, and neither is.
+
+        implicit none
+
+        real(8), intent(in) :: base_survival_1
+        integer, intent(in) :: smi_1
+
+        if ((number_of_smi_states==1) .OR. (smi_1<=0)) then
+
+            survival_with_smi=base_survival_1
+            return
+
+        end if
+
+        survival_with_smi=max(1.d0-(1.d0-base_survival_1)*kappa_phi_m,0.d0)
+
+    end function
+
+    real(8) function recovery_with_smi(base_recovery_1,smi_1)
+
+        ! mu_m in eq:frecover. SMI lowers the SUD recovery hazard: dual diagnosis
+        ! relapse runs 39.8 against 26.4 percent, so mu_m is below one.
+
+        implicit none
+
+        real(8), intent(in) :: base_recovery_1
+        integer, intent(in) :: smi_1
+
+        if ((number_of_smi_states==1) .OR. (smi_1<=0)) then
+
+            recovery_with_smi=base_recovery_1
+            return
+
+        end if
+
+        recovery_with_smi=max(min(base_recovery_1*mu_m,1.d0),0.d0)
+
+    end function
+
+    real(8) function smi_transition(current_m_1,future_m_1,sud_1,age_1)
 
             ! eq:fonset. Onset is multiplied by iota when the household carries the
             ! SUD, which is the channel that makes a SUD raise the hazard of SMI.
@@ -14213,7 +14300,16 @@
           
         can_consume_1=1
           
-        max_gross_wage_income_1=employment_grid(age_index,employment_index)*labour_deterministic_efficiency(age_index)
+        ! eq:fincome. The two productivity penalties, conditional on working.
+        ! rho_d is what lets an EMPLOYED household be poor enough to be priced
+        ! out of housing; rho_m is the same for SMI. Both multiply earnings
+        ! down, so both are below one.
+        !
+        ! unemployment_index is safe to read here: the loop over it sits OUTSIDE
+        ! the omp parallel do, which runs over the financial index.
+        max_gross_wage_income_1=employment_grid(age_index,employment_index)*labour_deterministic_efficiency(age_index)*&
+            (rho_d**(min(sud_of(unemployment_index),1)*include_wage_penalties))*&
+            (rho_m**(min(smi_of(unemployment_index),1)*include_wage_penalties))
         
         after_tax_wealth_net_of_expenses_1=after_tax_wealth_net_of_expenses_1-&
             (gross_wage_income_1-wage_income_tax_paid_1+food_stamps_1+housing_voucher_1+housing_voucher_2)
@@ -25102,6 +25198,11 @@
         real(8) :: shape_1,implied_1,prev_1
         character(len=400) :: header_1
         logical :: file_exists_1
+
+        ! This routine is called more than once per run, so the allocation is
+        ! guarded and the file is read once. Allocating unconditionally aborted
+        ! the run on the second call.
+        if (allocated(smi_prevalence_by_age)) return
 
         allocate(smi_prevalence_by_age(life_span))
         allocate(smi_onset_by_age(life_span))
