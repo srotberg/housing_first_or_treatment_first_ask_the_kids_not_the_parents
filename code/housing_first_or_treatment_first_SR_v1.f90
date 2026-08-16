@@ -61,9 +61,11 @@
         ! consumption weights follow, so the flow utility is the same function
         ! clean and with the disorder.
         !
-        ! THE DISORDER THEN ACTS ONLY THROUGH b, which is what b_sud_ratio below is
-        ! for. Flipping this switch alone would leave the disorder with NO effect on
-        ! drug demand at all, so the two changes belong together.
+        ! THE DISORDER DOES NOT ACT THROUGH b EITHER. b_sud_ratio below is one and
+        ! stays one, so flow utility is the same function of (c, h, v) in every
+        ! state and after every choice. What the disorder costs runs through
+        ! mortality, through employment, and through a recovery hazard six times
+        ! worse on the street, none of which is a preference.
         integer, parameter :: change_utility_for_addicts=0
         real(8), parameter :: size_of_penalty=0
         integer, parameter :: use_income_or_income_plus_assets=4
@@ -429,32 +431,23 @@
         ! costlier abstention, since the optimal purchase is
         ! (gam/(alp+gam))*(R + p_v*b)/p_v - b, falling in b.
         !
-        ! IT IS NOT CALIBRATED YET. The ratio is one, which is the neutral value and
-        ! reproduces the old behaviour of addiction_scalar_2 = addiction_scalar_1;
-        ! at one the disorder does nothing to drug demand and the moment it is meant
-        ! to hit, abstinence among homeless adults with the disorder of 18.7 per
-        ! cent from the no housing arm of Milby et al., is not hit by anything. It
-        ! has to be bracketed on that moment before any number from this model is
-        ! reported.
+        ! FIXED AT ONE BY DECISION, not pending calibration. b does not depend on
+        ! the disorder, so the utility function is the same before and after a
+        ! household acquires one. This is the same principle that took the
+        ! Cobb-Douglas weights out: a preference that moves with a household's own
+        ! history is a preference doing the work the mechanism is supposed to do.
+        ! The disorder still costs plenty, through mortality, employment, and a
+        ! recovery hazard that is six times worse on the street; none of those is
+        ! a taste.
         real(8), parameter :: b_sud_ratio=1.0
 
-        ! RHO_H, THE HOUSING ACCESS CHANNEL, and the parameter the referees say
-        ! the paper stands on. A household that is homeless faces a SMALLER Stone
-        ! Geary shifter, so the first units of the drug are worth more to it and
-        ! housing it lowers use. It is the only parameter in the model that
-        ! governs the elasticity of drug use with respect to housing access,
-        ! which R2 (C1) calls the crux on which all the welfare results rest and
-        ! which R3 and the AE (A13) name independently.
-        !
-        ! Without it the sign of the central experiment is WRONG: housing a
-        ! household only raises its resources, drugs are a normal good, so the
-        ! model predicts that housing RAISES use, against Milby et al. (2005).
-        !
-        ! IT IS NOT CALIBRATED YET. One is the neutral value and reproduces the
-        ! old behaviour, where b did not depend on housing at all. It has to be
-        ! bracketed on the housed against unhoused abstinence ratio of 1.473,
-        ! Milby's NACH against NH arms, before any number from this model is
-        ! reported.
+        ! FIXED AT ONE BY DECISION, and no longer read by b_shifter. It made the
+        ! Stone Geary shifter depend on the dwelling CHOSEN for next period, so
+        ! preferences became a function of a choice. Kept as a declaration only,
+        ! so that a robustness run has a name to turn, and so the reason it is one
+        ! is recorded next to it. The argument is written out in full at
+        ! b_shifter; the elasticity of drug use with respect to housing access is
+        ! carried by the recovery hazard instead.
         real(8), parameter :: rho_b_homeless=1.0
         real(8), parameter :: addiction_scalar_2=b_sud_ratio*addiction_scalar_1
         
@@ -1727,13 +1720,35 @@
             integer, intent(in) :: is_sud_1
             real(8), intent(in) :: housing_size_1
 
-            b_shifter=(1-is_sud_1)*addiction_scalar_1+is_sud_1*addiction_scalar_2
-
-            if (housing_size_1<housing_size(second_lowest_housing_grid_point)) then
-
-                b_shifter=b_shifter*rho_b_homeless
-
-            end if
+            ! b IS CONSTANT ACROSS EVERY STATE AND EVERY CHOICE. The arguments
+            ! are kept so the 24 call sites read as they did, and so that a
+            ! robustness run can restore a dependence in one place, but the
+            ! baseline returns the same number everywhere. Three reasons, and the
+            ! second is decisive.
+            !
+            ! HOUSING IS A CHOICE, NOT A STATE. b used to be multiplied by
+            ! rho_b_homeless whenever the dwelling CHOSEN for next period was
+            ! below the smallest rental. That makes preferences a function of a
+            ! choice: the household picks its housing partly to move its own
+            ! taste for drugs, which is not a preference in the usual sense and
+            ! invites exactly the perverse selection the paper is about, a user
+            ! choosing the street because the drug is worth more there.
+            !
+            ! THE SIGN OF THE UTILITY EFFECT IS WRONG ANYWAY. Flow utility is
+            ! Cobb-Douglas in (b + v), so the marginal value of the drug is
+            ! proportional to 1/(b+v): a SMALLER b raises the marginal value of
+            ! using and raises desired intake. Whatever the level effect, the
+            ! channel works by making the drug better on the street, which is a
+            ! strange thing to assert and stranger to calibrate.
+            !
+            ! IT IS NOT NEEDED. Housing already changes drug use through a
+            ! HAZARD rather than a taste: recovery from the disorder is six times
+            ! harder on the street, probability_of_stopping_addiction_if_homeless
+            ! against probability_of_stopping_addiction. That is a transition
+            ! probability, it is what Milby et al.\ (2005) actually measure,
+            ! abstinence rates by arm, and it carries the elasticity of drug use
+            ! with respect to housing access on its own.
+            b_shifter=addiction_scalar_1
 
         end function
 
@@ -13673,10 +13688,9 @@
         
             if ((change_utility_for_addicts==0) .AND. (size_of_penalty==0)) then
         
-                ! The shifter is deliberately allowed to differ now: b_1 is the
-                ! only channel the disorder has left once the weights are fixed,
-                ! so addiction_scalar_2 .NE. addiction_scalar_1 is the intended
-                ! state and not a mistake. The WEIGHTS still have to agree.
+                ! Everything has to agree now, shifters included: b does not
+                ! depend on the disorder, so addiction_scalar_2 equals
+                ! addiction_scalar_1 by construction and the weights match too.
                 if ((relative_share_of_consumption_2 .NE. relative_share_of_consumption_1) .OR. &
                    (relative_share_of_housing_1 .NE. relative_share_of_housing_2)) then
                 
