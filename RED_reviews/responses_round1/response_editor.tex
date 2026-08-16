@@ -1,0 +1,334 @@
+\documentclass[11pt]{article}
+\input{preamble}
+
+\begin{document}
+
+\lettertitle{Letter to the Coordinating Editor}{Summary of changes}
+
+Dear Professor Karabarbounis,
+
+Thank you for the decision letter, and for leaving the door open to a resubmission
+in the form of an almost new paper. That is what this is. The framework has been
+rebuilt rather than patched, the calibration has been redone from primary data,
+and the validation section that the Associate Editor and Referee~1 both judged to
+be below the bar has been written from scratch.
+
+This letter summarises the main changes. Four further letters respond to the
+Associate Editor and to each referee, comment by comment, with the responses in
+red.
+
+\vspace{0.5em}
+{\color{respred}
+Before the summary, one framing point. The single most useful thing in the
+reports was the shared diagnosis that the paper had too many moving parts and too
+little discipline on the parts that mattered. We have taken that literally. The
+model is smaller than the one you rejected in every dimension the Associate
+Editor questioned, and larger in exactly the three the Associate Editor asked us
+to develop: homelessness, substance use, and income. The parameter count did not
+grow. What grew is the share of parameters attached to a named source or an
+identified moment.
+}
+
+%======================================================================
+\section*{\color{respred}1. What was cut, what was added, and why}
+
+{\color{respred}
+
+The Associate Editor asked whether six specific ingredients earn their place. We
+agreed on five of the six and cut them.
+
+\begin{center}
+\begin{tabular}{@{}L{4.2cm}L{2.0cm}L{7.2cm}@{}}
+\toprule
+Ingredient & Verdict & Reason \\
+\midrule
+Homeownership & Cut & The policy question is homeless against housed. Tenure
+added a large state and answered nothing. Also removes Referee~2's objection
+D1 about the housing grid, since the grid is now homeless plus three rental
+sizes and every point is pinned by a moment. \\[0.35em]
+Unemployment insurance expiration & Cut & A separate benefit duration state
+that no moment identified. \\[0.35em]
+Type dependent transfers and bequests & Cut & Replaced by a uniform lump sum.
+There was never an argument for the type dependence. \\[0.35em]
+Housing market general equilibrium & Cut & You are right that the partial and
+general equilibrium long run outcomes were nearly identical. House prices and
+rents are now fixed. \\[0.35em]
+Labour supply & Kept, coarsened & Referee~3 explicitly wants it, for the welfare
+cost of financing the policy with labour taxes. We keep it on a coarse grid and
+now report the decomposition that makes its role visible, so the two views can be
+adjudicated on evidence rather than on assertion. \\[0.35em]
+Section 4.1.3 on intergenerational transmission & Rewritten & You were right
+that the language was decorative. There is now an actual intergenerational
+linkage, a warm glow over the child's newborn value, so the discussion has
+something to stand on. Referee~2's comment C3 asked for the same thing. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Against that, six things were added, all of them requested:
+
+\begin{enumerate}
+\item \textbf{Serious mental illness} as a persistent state that raises the
+propensity to use, lowers employment, and raises the risk of homelessness
+(Referee~1, comment 1a).
+\item \textbf{Endogenous treatment.} Households with a substance use disorder
+choose whether to take up treatment at a utility cost, which raises the recovery
+hazard. Referee~1's comment 1b, that a policy called Treatment First contained no
+treatment, was the most damaging single sentence in the reports and it was
+correct.
+\item \textbf{An equilibrium drug price.} The price of drugs now clears a supply
+curve rather than sitting at one (Referee~1 comment 1c, Referee~3 comment M2d,
+and your own request).
+\item \textbf{Costly and imperfect enforcement} of the sobriety condition:
+a testing probability, a per test cost that enters the government budget, a
+detection probability below one, and a false positive rate (Referee~1 comments
+4a, 4b, 4c).
+\item \textbf{A direct productivity penalty} from substance use disorder, which
+is your comment A20. It is now the parameter that carries the income gradient
+among people with a disorder, and setting it to zero is a robustness run rather
+than a maintained assumption.
+\item \textbf{A homelessness externality inside period utility}, which
+replaces the loss of consortium adjustment. This is developed in section 3 below.
+\end{enumerate}
+}
+
+%======================================================================
+\section*{\color{respred}2. The loss of consortium adjustment is gone}
+
+{\color{respred}
+Referee~1 comments 3a, 3b and 3c, Referee~2 comment C2, Referee~3 comment M2c and
+your comment A9 all converge on the same object from different directions.
+Referee~1's version is the sharpest: an adjustment applied after the model is
+solved, which changes the policy ranking, and whose conservative value is
+arguably zero.
+
+We accept this entirely. The parameter is deleted. In its place, Referee~2's
+suggested externality, a disutility that every household suffers from the size of
+the homeless population, enters period utility, where households internalise it
+in the same way they internalise everything else. Three things follow. The
+welfare ranking is now produced by the model rather than added to it. The
+externality is a calibrated object with a moment behind it rather than a number
+chosen after seeing the answer. And Referee~3's question M2c, where does the
+market failure come from if use is rational, now has an explicit answer inside
+the model rather than an appeal outside it.
+
+We also follow your suggestion of reporting welfare and mortality as two separate
+dimensions rather than folding mortality into welfare through a single parameter.
+}
+
+%======================================================================
+\section*{\color{respred}3. Errors we found in our own previous version}
+
+{\color{respred}
+Rebuilding the calibration from primary sources turned up six errors in the
+version you rejected. We list them here rather than letting the referees find
+them, and because two of them bear directly on whether the paper's central
+mechanism was ever properly disciplined.
+
+\begin{enumerate}
+
+\item \textbf{The homelessness target had a unit error.} The model's agent is a
+household. The target, 0.30 per cent, was built on a person count from the HUD
+point in time data. Converting the numerator to households, 467{,}020 homeless
+individuals plus 57{,}563 homeless family households, against 131{,}332{,}360
+occupied units, gives 0.399 per cent. The model was targeting a homelessness rate
+about a quarter too low.
+
+\item \textbf{The unemployment rate given a substance use disorder, 26.9 per
+cent, had no traceable provenance.} Measuring it directly in the 2024 NSDUH
+microdata for ages 26 and above, weighted, gives 16.25 per cent for moderate or
+severe drug use disorder. The old figure implied a relative risk of 5.49 against
+an overall rate of 4.9 per cent. The data give 2.44. The model's channel from
+substance use to employment was running roughly 2.25 times too strong.
+
+\item \textbf{The mortality channel was running at roughly a fifth of its
+measured strength.} The homelessness mortality multiplier was a single flat 1.6.
+Baggett et al. (2013) give race adjusted rate ratios of 8.6 for men and 9.6 for
+women at ages 25 to 44, 4.5 at 45 to 64, and 1.1 at 65 to 84. The multiplier is
+now age varying and built from that profile, and the life table has been replaced
+with a current vintage.
+
+\item \textbf{Points 2 and 3 biased the paper in the same direction, and it is
+the direction that favours Referee~1's rival hypothesis.} Referee~1's comment 1d
+asks whether the mortality channel, rather than the labour market channel, is
+really what concentrates drug use at the bottom of the income distribution. With
+the employment channel more than twice too strong and the mortality channel at a
+fifth of strength, the previous calibration was stacked against our own claim.
+Referee~1 was asking the right question of a version of the model that could not
+have answered it honestly.
+
+\item \textbf{The 37 per cent figure for substance use disorder among the
+homeless, which you flagged in comment A16, is the alcohol figure.} It is 36.7
+per cent in Gutwinski et al. (2021). The drug use disorder figure from the same
+pooled evidence is 21.7 per cent. Your suspicion that the number looked high was
+exactly right, and the target has moved.
+
+\item \textbf{The value of life constant was pinned by a moment that fixes its
+effect but not its level.} A structural check found that at the previous
+parameters, 64.6 per cent of the population had negative continuation value: they
+would rather be dead. For those households the mortality cost of drug use is a
+mortality benefit, which silently inverts the paper's central mechanism for
+precisely the population the policy targets. The constant is now pinned by the
+model implied value of a statistical life at 7.5 million dollars, which is what
+the paper always claimed to be doing.
+
+\end{enumerate}
+
+We would rather report these than defend the previous numbers. Two of the six
+were found because a referee's comment forced us to look.
+}
+
+%======================================================================
+\section*{\color{respred}4. Calibration and validation}
+
+{\color{respred}
+Referee~1's comment 2a, that Table 2 never reported the model's own moments, is
+the comment that cost the paper the most, because as he says it made the entire
+quantification impossible to assess. The new calibration table reports the
+target, the model value and the gap for all 24 targeted moments, and two further
+moments are held out entirely and reported as validation.
+
+Every moment now carries a named source with a vintage, and a script in the
+replication package that reproduces it from the public file. Referee~1's comment
+2e, that the price elasticity moment could not be replicated as described, is
+addressed by an appendix that gives the model counterpart of every moment
+explicitly.
+
+The validation section is new. It contains three things:
+
+\begin{enumerate}
+\item Untargeted moments, including two housing cost burden moments that were
+demoted from targets once a better identification for the housing grid became
+available, so they are now genuine out of sample checks.
+\item A mortality validation: the model's implied standardised mortality ratios
+for the homeless and for people with a substance use disorder, against Baggett et
+al. and Degenhardt et al.
+\item A direct replication of Costantini (2025), described next.
+\end{enumerate}
+}
+
+%======================================================================
+\section*{\color{respred}5. The Costantini comparison, which the Associate Editor
+called a contradiction}
+
+{\color{respred}
+The Associate Editor writes that Costantini finds Housing First cuts three year
+mortality by 4.6 percentage points while Treatment First has no long term health
+effects, ``in contrast with the model simulations of this paper''. We take this
+seriously, because if it were right it would be fatal. Having read his design
+carefully, we do not think it is, and we now show this rather than assert it.
+
+Two premises in that sentence do not hold.
+
+First, \textbf{neither of his coefficients is our Experiment 1}. Both are local
+average treatment effects against \emph{no housing intervention}: he uses two
+instruments against a control arm that receives nothing. Both estimates therefore
+live on the generosity margin, assistance against none. Experiment 1 holds the
+number of assisted households fixed and varies only conditionality. His pair of
+coefficients does not identify the difference between two rationed regimes, which
+is why comparing them takes a separate test in his own paper rather than a
+subtraction of two rows.
+
+Second, \textbf{his Treatment First is not our Treatment First}. His is the
+Veterans Affairs Grant and Per Diem programme: time limited transitional housing,
+a stay of six months to two years, after which the veteran must find their own
+housing. His own mechanism section attributes the null to that expiry. In his
+Figure 4, transitional housing recipients are \emph{more} likely to be housed
+than voucher recipients in quarter one, because a bed is available immediately
+while a voucher must find a landlord, and then the effect decays to 9 percentage
+points by quarter twelve while the voucher arm peaks at 34. The programme does
+not fail to house people. It stops housing them. Our Treatment First is a
+permanent voucher whose \emph{retention} is conditional on sobriety.
+
+Rather than argue this, we ask the model both of his questions in his units and
+at his margin. Two arms, each with its own baseline and its own marginal
+expansion of access, each producing the Wald ratio that his instrument estimates:
+
+\begin{center}
+\begin{tabular}{@{}L{6.4cm}rr@{}}
+\toprule
+Arm & Model & Costantini \\
+\midrule
+Permanent unconditional voucher & \tbd{HF LATE} & $-4.60$ pp, 95\% $[-7.93,-1.27]$ \\
+Sobriety conditioned voucher that expires at the Grant and Per Diem rate & \tbd{TF LATE} & near zero \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Neither number is targeted. We will report whatever the model produces, including
+if it fails.
+
+There is a further point in Costantini's favour that we had not expected. His
+cause of death decomposition finds the mortality effect running through exposure
+to the elements, assault, and blood borne infection from unsafe injection, and he
+states explicitly that Housing First has \emph{no} effect on mental health care
+utilisation, ruling out mental health treatment as the channel. Those are exactly
+the channels this model has, and the one it deliberately does not. Independently,
+the At Home / Chez Soi trial finds housing moves mental illness symptom severity
+by nothing at any wave. Two very different designs agree, and together they
+support a modelling decision that would otherwise look like an omission.
+}
+
+%======================================================================
+\section*{\color{respred}6. Where we push back}
+
+{\color{respred}
+Four places, all handled in detail in the individual letters.
+
+\begin{enumerate}
+\item \textbf{The Costantini comparison}, above.
+
+\item \textbf{Abramson and Van Nieuwerburgh on the fiscal cost of
+homelessness} (comment A15). We have now read their paper. The 2{,}500 dollars
+per household per month is an \emph{assumption} inside their calibration, stated
+as such, with the components listed in their footnote 11. It is not an
+independent estimate of the fiscal cost, so it cannot serve as external
+validation of ours. We report the comparison anyway, because the reader will want
+it, but we say what it is. We also run the sensitivity that both you and
+Referee~2 ask for.
+
+\item \textbf{Referee~1's comparison of drug user income} (comment 2c i). His
+data figure of roughly 74 per cent is computed over people with a use
+\emph{disorder}. The model figure he compares it with, 41 per cent, is over
+people who \emph{use}. These are different populations. Measured consistently in
+NSDUH for ages 26 and above, the ratio is 0.951 for users and 0.687 for moderate
+or severe disorder. Both are now targeted, which is a sharper test than the one
+he proposed: use is close to income neutral, and it is \emph{progression} to
+disorder that concentrates at the bottom. The underlying complaint, that the
+model made drug users too poor, was correct.
+
+\item \textbf{Referee~3 and the Associate Editor disagree about labour supply.}
+Referee~3's minor comment 1 wants a clearer role for the labour supply elasticity
+in the welfare calculation. Comment A3 asks what labour supply is doing in the
+model at all. We keep it, coarsened, and report the decomposition, which is the
+only way to settle the question with evidence.
+\end{enumerate}
+}
+
+%======================================================================
+\section*{\color{respred}7. Presentation}
+
+{\color{respred}
+Two experiments in the body, the rest in an appendix, as you asked in comment
+A18. Welfare and mortality reported as two dimensions. The word ``addicted''
+replaced throughout with substance use disorder language, comment A19. The
+calibration section rewritten so that it reads as a set of identification
+arguments rather than a list of 22 targets, with parameters separated into those
+standard in the literature and those new to this paper, comment A17. A dynamic
+stylised model in the body, replacing the static appendix that Referee~1 said
+was claiming more than it established, comment A1 and Referee~1 comment 1e.
+
+Referee~1 asks for proper transition paths rather than a several period partial
+equilibrium adjustment, comment 3d. With the housing market general equilibrium
+cut, a transition path iterates on the labour tax and the drug price alone, which
+makes it feasible. It is now solved properly.
+}
+
+\vspace{1em}
+Thank you again for the second look.
+
+\vspace{1.4em}
+Sincerely,\\[0.6em]
+Shahar Rotberg
+
+\end{document}

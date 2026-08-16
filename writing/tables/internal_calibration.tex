@@ -1,0 +1,56 @@
+\begin{table}[p]
+\footnotesize
+\renewcommand{\arraystretch}{1.25}
+\begin{center}
+\caption{Internally calibrated parameter values}
+\label{tab:internal_calibration}
+\begin{tabular}{clcl}
+\toprule
+\textbf{Parameter} & \textbf{Description} & \textbf{Value} & \textbf{Target moment} \\
+\midrule
+\multicolumn{4}{l}{\textit{\textbf{A. Preferences}}} \\
+\midrule
+$\beta$ & Discount factor & $0.944$ & Net wealth / GDP $=3.25$ \\
+$\omega_\ell$ & Weight on leisure & $8.5$ & Avg. time working $=40\%$ \\
+$\aleph$ & Flow utility shifter (value of life) & $340$ & Avg. VSL $=\$7.5$M \\
+
+\midrule
+\multicolumn{4}{l}{\textit{\textbf{B. Housing demand and tenure choice}}} \\
+\midrule
+$\theta_1$ & Utility weight on housing & $0.278$ & Avg. rent / income $=0.33$ \\
+$h_1$ & Minimum rental unit size & $0.156\times \bar h^{o}$ & Renters w/ rent/income $\ge 0.5 = 16.2\%$ \\
+$h_{6}$ & Minimum owned house size & $6.25\times h_1$ & Homeownership rate $=66.1\%$ \\
+$\underline h$ & Housing services when homeless & $0.21\times h_1$ & Homelessness rate $=0.30\%$ \\
+
+\midrule
+\multicolumn{4}{l}{\textit{\textbf{C. Rental supply}}} \\
+\midrule
+$\gamma_2$ & Convexity of rental management costs & $2.35$ & Rental supply elasticity $=1.4$ \\
+$\gamma_1$ & Level of rental management costs & Implied & Rent / price ratio $=8.3\%$ \\
+
+\midrule
+\multicolumn{4}{l}{\textit{\textbf{D. Drug use and addiction behavior}}} \\
+\midrule
+$J_A$ & Maximum age of experimentation & $55$ & Avg. age of addicts $=40$ \\
+$\theta_{0,2}$ & Drug utility weight (non-addicts) & $0.13$ & Drug spending / income $=0.11$ \\
+$\theta_{1,2}$ & Drug utility weight (addicts) & $0.45$ & Drug spending / income $=0.44$ \\
+$b$ & Drug non-homotheticity parameter & $3.7\times 10^{-8}$ & Drug users / population $=4\%$ \\
+$\pi_{d,\text{low}}$ & Addiction risk if light experimenter & $0.037$ & Experimenters / addicts $=1$ \\
+$\overline{v}$ & Experimenters' heavy use cutoff & $5.41 \times b$ & Light experimenters / experimenters $=0.868$ \\
+$\kappa_{d,\phi}$ & Mortality multiplier when addicted & $6.9$ & Drug-use participation elasticity $=-0.63$ \\
+$\pi^{\text{base}}_{eu}$ & Baseline unemployment probability & $0.016$ & Unemployment rate $=4.9\%$ \\
+$\kappa_{d,ue}$ & Re-employment multiplier when addicted & $0.37$ & Addicts unemployment rate=26.9\%\\
+$\kappa_{d,eu}$ & Unemployment multiplier when addicted & $2.7$ & Implied by symmetry: $\kappa_{d,eu}=\frac{1}{\kappa_{d,ue}}$ \\
+$\kappa_{\underline H,d}$ & Recovery multiplier if homeless & $\frac{1}{6}$ & Share of homeless who are addicted $=37\%$\\
+\midrule
+\multicolumn{4}{l}{\textit{\textbf{E. Policy take-up and redistribution}}} \\
+\midrule
+$\pi_V$ & Voucher receipt probability (eligible, per period) & $0.06$ & Voucher recipients / eligible $=26.6\%$ \\
+$\kappa_f$ & Consumption floor (food stamps) & $0.126\times \overline{y}$ & Food stamps / GDP $=0.42\%$ \\
+$\tau_\ell$ & Labor income tax level parameter & $0.75$ & Avg. labor income tax rate $=22.4\%$ \\
+\bottomrule
+\bottomrule
+\end{tabular}
+\end{center}
+\normalsize
+\end{table}

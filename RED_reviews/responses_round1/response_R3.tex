@@ -1,0 +1,319 @@
+\documentclass[11pt]{article}
+\input{preamble}
+
+\begin{document}
+
+\lettertitle{Response to Referee 3}{Major and minor concerns, responses in red}
+
+Thank you for the report, and there is no need to apologise for the timing. Your
+second major concern contains the sharpest theoretical question in any of the four
+documents, and answering it properly has produced what we now think is the most
+interesting table in the paper.
+
+%======================================================================
+\section*{Major concern 1: connection to empirical evidence and stylised facts}
+
+\cmt{M1(a)}{Present stylised facts prominently}
+\begin{referee}
+``The nature of the model, with its large number of parameters, makes it
+relatively opaque. I believe it would be helpful for the paper to include a few
+stylized facts more prominently, notably on the empirically observed correlations
+between drug use, voucher receipt, and homelessness.''
+\end{referee}
+\begin{response}
+Done. There is now an empirical section before the model, presenting the joint
+distribution of drug use, substance use disorder, voucher receipt, employment and
+homelessness, computed from NSDUH and from the HUD point in time and Housing
+Inventory files, with the code in the replication package.
+
+The Associate Editor asks for the same thing in his comment A1 and adds a
+requirement we have adopted: the stylised model that follows should generate these
+facts, so that the reader can see which features of the environment the facts are
+pinning down before meeting the full quantitative model.
+\end{response}
+
+\cmt{M1(b)}{Survival and unemployment probabilities are not transparent}
+\begin{referee}
+``Survival probabilities (especially their dependence on homelessness and drug
+use) and unemployment probabilities are an essential input into the model's
+calibration and welfare implications. It would be good to present more prominently
+some empirical evidence on their correlation with homelessness and drug use, which
+are currently borrowed from other papers but not always set transparently (for
+example for unemployment transition probabilities).''
+\end{referee}
+\begin{response}
+This comment was better aimed than we realised at the time, and rebuilding these
+objects from primary sources found two errors that we report here rather than
+leave to be discovered.
+
+\begin{itemize}
+\item \textbf{The unemployment rate given a substance use disorder had no
+traceable provenance.} It was set at 26.9 per cent. Measured directly in the 2024
+NSDUH microdata for ages 26 and above, weighted, it is 16.25 per cent for moderate
+or severe drug use disorder. The old figure implied a relative risk of 5.49
+against an overall rate of 4.9 per cent; the data give 2.44. The model's channel
+from substance use to employment was running roughly 2.25 times too strong.
+
+\item \textbf{The homelessness mortality multiplier was a single flat number,
+1.6.} Baggett et al.\ (2013) give race adjusted all cause rate ratios of 8.6 for
+men and 9.6 for women at ages 25 to 44, 4.5 at 45 to 64, and 1.1 at 65 to 84.
+Both the level and the age profile were wrong, and the multiplier is now an age
+profile built from that source. The life table has also been replaced with a
+current vintage.
+\end{itemize}
+
+There is now a dedicated subsection that sources every hazard and every multiplier,
+with the mortality multipliers reported alongside the standardised mortality ratios
+they imply, so a reader can check them against Baggett et al.\ and Degenhardt et
+al.\ directly. Transparency here is not a presentational matter: two of these
+objects were wrong, and they were wrong in ways that mattered for the paper's
+central claim.
+\end{response}
+
+\cmt{M1(c)}{The income to drug use relationship is not shown}
+\begin{referee}
+``\dots the relationship between income and drug use (severe or mild) is key to
+the calibration of $b$ and the income-dependent penalties in the model \dots but
+its empirical counterpart does not feature very prominently in the paper. It would
+be helpful to get a sense of this joint distribution in the data.''
+\end{referee}
+\begin{response}
+Plotted from the NSDUH microdata, and this exercise changed a target.
+
+The relationship is not one gradient but two, and the distinction is the paper's
+mechanism. For ages 26 and above, average income relative to the population
+average is 0.951 for people who \emph{use} drugs and 0.687 for people with a
+moderate or severe use \emph{disorder}. Use is close to income neutral; it is
+\emph{progression} to disorder that concentrates at the bottom.
+
+Both ratios are now calibration targets, which is a sharper test than targeting
+either alone, and it is the right test for a model whose mechanism is that the
+expected cost of progression rises with lifetime resources. Referee~1's comment
+2(c)(i) compared a model moment over users with a data moment over people with a
+disorder; separating them was necessary to see what was actually going on.
+\end{response}
+
+%======================================================================
+\section*{Major concern 2: modelling of the drug addiction process}
+
+\cmt{M2(a)}{Reducing addiction mechanically raises consumption utility}
+\begin{referee}
+``\dots reducing addiction lowers $\theta_d$ \dots and thus increases directly
+consumption utility from housing and non-housing, thus implying mechanically that
+policies reducing addictions and policies raising housing consumption are strong
+welfare complements even absent incentive effects. I am not sure there is an
+alternative model that would make more sense, but I would like the author to
+acknowledge and potentially provide more sensitivity to this modelling choice.''
+\end{referee}
+\begin{response}
+\concede You and Referee~2, in his comment C5, identify the same problem, and it is
+more serious than a sensitivity issue: the complementarity between generosity and
+conditionality is the paper's headline result, and the specification was producing
+it mechanically.
+
+You write that you are not sure there is an alternative that would make more
+sense. There is, and it is simply to remove the state dependence entirely.
+Preferences are now \emph{fixed} across substance use disorder status: one set of
+weights, one subsistence parameter. Nothing about the utility function changes when
+a household acquires the disorder.
+
+The obvious objection is that the state dependence was carrying a target, the gap
+between 44 per cent of income spent on drugs among people with a disorder and 11
+per cent among experimenters. With fixed preferences that gap has to emerge
+endogenously, and it does, from forward looking restraint: a household without a
+disorder limits its use because use raises the probability of acquiring one, and a
+household that already has one faces no such margin. The gap becomes a prediction
+rather than an assumption, and the welfare complementarity becomes an incentive
+effect that the model has to produce rather than an artefact of the functional
+form.
+
+The Associate Editor suggested an intermediate version, keeping the weights fixed
+but letting the subsistence parameter vary by status. We report why it does not
+work in the letter to him: the subsistence parameter shifts the level of drug
+spending, but the ratio between the two groups is governed by the curvature of the
+subsistence term, and opening a fourfold gap by moving it drives experimenters to a
+corner.
+\end{response}
+
+\cmt{M2(b)}{What patterns does the Stone Geary form actually generate?}
+\begin{referee}
+``I find the use of the Stone-Geary functional form to generate a large mass of
+non-users, combined with income-dependent penalties \dots very clever. However, I
+am unclear on what are the actual patterns of drug consumption this generates, and
+where heterogeneity in $v$ (conditional on addiction status $d$) stems from. It
+would be very helpful to present model-derived stylized facts on drug use \dots by
+income, employment status, housing status, assets \dots and explain how they depend
+on model parameters (notably $b$, the Stone-Geary parameter, and $\aleph$, the value
+of life).''
+\end{referee}
+\begin{response}
+Done, and it is now a section rather than a paragraph, because Referee~1's comment
+1(d) and Referee~2's comment C4 ask for overlapping things and one exercise serves
+all three.
+
+The section reports the drug use policy function by income and wealth, separately
+by disorder status, employment and housing, and then a channel shutdown ladder
+that re solves the model with one channel disabled at a time.
+
+On $\aleph$ specifically, your question about how the patterns depend on it turned
+out to be more pointed than it looks. A structural check found that at the previous
+calibration, 64.6 per cent of the population had negative continuation value: they
+would rather be dead. For those households the mortality cost of drug use is a
+mortality \emph{benefit}, which silently inverts the paper's central mechanism for
+exactly the population the policy targets. The reason was that $\aleph$ was
+calibrated to the income ratio among people with a disorder, which pins its
+\emph{effect} on who uses but says nothing about its \emph{level}. It is now pinned
+by the model implied value of a statistical life at 7.5 million dollars, which is
+what the paper always claimed to be doing, and the income ratio moves to the direct
+productivity penalty that the Associate Editor asks for in his comment A20.
+\end{response}
+
+\cmt{M2(c)}{Where do the externalities come from if drug use is rational?}
+\begin{referee}
+``Since drug use is `rational' and agents are forward-looking, the model should
+make clearer where externalities arise that generate welfare-improving government
+interventions. There are potentially many sources of fiscal externalities \dots as
+well as potentially less obvious non-fiscal ones \dots It would be helpful to make
+those appear analytically or numerically, and establish how optimal policies change
+when some of this channels are shut down.''
+\end{referee}
+\begin{response}
+This is the best question in the four reports and it now has its own section.
+
+\textbf{Analytically}, the stylised model in section 2 enumerates them. Two are
+fiscal: a household that becomes homeless imposes a service cost on the budget, and
+a household that acquires a disorder lowers its own expected tax payments through
+employment and mortality. One is not fiscal: following Referee~2's comment C2, a
+disutility from the size of the homeless population now enters period utility. No
+individual household internalises its own contribution to that stock when it
+chooses whether to use.
+
+\textbf{Numerically}, the channel shutdown ladder re solves the model with each
+externality switched off and reports how the optimal policy moves, which is exactly
+the exercise you propose.
+
+\newresult There is also a third exercise, which came directly out of thinking
+about your comment, and we think it is the paper's most interesting single table.
+Taken to its conclusion, the position implicit in your question is that households
+internalise their own costs and the supports are therefore unnecessary. That is a
+\emph{testable claim about the existing safety net}, not an abstract point about
+rationality, because the benchmark economy already insures homelessness through
+vouchers, food stamps and disability. So we test it: remove the net, and then
+remove it again with the drug choice frozen at its benchmark schedule.
+
+The two removals differ by the \emph{addiction margin}. The classic moral hazard
+from social insurance is consumption smoothing, and one bad year is one bad year.
+Here there is a second margin, because cushioning the downside of homelessness also
+cushions the downside of acquiring a disorder, which is the state that leads there.
+That margin is worse than the savings one for a specific reason: it is persistent
+and self reinforcing. A one period distortion becomes a trap. The gap between the
+two arms measures how much of the moral hazard runs through addiction rather than
+through ordinary consumption smoothing, and the sign of the welfare number answers
+your question directly.
+\end{response}
+
+\cmt{M2(d)}{How is the price elasticity targeted when $p_v$ is normalised to one?}
+\begin{referee}
+``I am somewhat unclear how the elasticity of drug use to its price is targeted,
+given that the price of drugs $p_v$ is normalized to 1. The author says they vary
+the price of drugs in the model, but this requires suppressing this normalization
+and potentially affects the definition of other prices in the model?''
+\end{referee}
+\begin{response}
+You are right that one cannot simultaneously normalise a price and vary it, and the
+previous draft did not say clearly enough which it was doing.
+
+The drug price is now an equilibrium object that clears a supply curve, which
+Referee~1's comment 1(c) and the Associate Editor also ask for. The normalisation is
+stated explicitly and confined to where it belongs: the drug price is the numeraire
+of the \emph{first stage} of the calibration, held at one there, and a scale
+parameter of the supply curve is renormalised at each market clearing so that the
+benchmark allocation is invariant to the supply elasticity. The price is then free
+in every counterfactual and in the elasticity computation, so nothing is both fixed
+and varied.
+
+Because the supply elasticity now does real work, we discipline it rather than
+assume it. The one directly measured supply elasticity in any drug market is Hansen,
+Miller and Weber (2017) on the 2015 Washington marijuana tax reform: consumers bear
+44 per cent of an additional retail tax against a demand elasticity near minus one,
+which by textbook incidence implies a supply elasticity near 0.79. We state the
+three caveats, that it is a legal licensed market with capped canopy, that the
+reform changed tax structure rather than a rate, and that they find tax invariance
+does not hold exactly. Estimates for cigarettes and gasoline sit nearer 3.6. We take
+2 as the baseline and report the range.
+
+We also explain why the frequently quoted RAND figure of minus 3.6 is not the right
+object here. A negative supply elasticity reflects enforcement swamping, and
+Caulkins and Reuter note that swamping ``pertains to total drug volume \dots not
+just or primarily drug specific market volume'', so it operates on the aggregate
+market rather than at our margin.
+\end{response}
+
+%======================================================================
+\section*{Minor concerns}
+
+\cmt{m1}{The labour supply elasticity should matter more}
+\begin{referee}
+``I am surprised that there is not a clearer role for the labor supply elasticity
+in welfare calculations, as it should matter quite substantially for the welfare
+costs of balancing the budget with extra labor taxes.''
+\end{referee}
+\begin{response}
+Agreed, and we flag for you that the Associate Editor's comment A3 pushes the other
+way, asking what role labour supply plays in the framework at all. We have kept it,
+on your reasoning: every counterfactual in the paper is financed by the labour
+income tax, so the elasticity is not decorative.
+
+The reason its role was invisible is that the previous decomposition did not
+separate the mechanical transfer from the deadweight loss. It does now, by re
+solving the counterfactual with the hours choice frozen at its benchmark schedule.
+Freezing the choice set preserves the Bellman identity; the previous approach, of
+putting a large penalty on the disutility of labour, drove hours to a corner rather
+than holding them fixed, which is a different experiment and gave a misleading
+answer. The deadweight column is now a clean number and the reader can judge for
+themselves.
+\end{response}
+
+\cmt{m2}{Present sensitivity as graphs rather than tables}
+\begin{referee}
+``Some of the results of the counter-factual experiments might be more helpfully
+presented in the form of graphs comparing outcomes and sensitivity to parameters,
+rather than tables, for example, for the sensitivity to the loss of consortium
+spillover, or to the value-of-life parameter $\aleph$.''
+\end{referee}
+\begin{response}
+Done for $\aleph$ and for the other parameters where sensitivity is reported.
+
+The loss of consortium case is moot: that parameter is deleted. Referee~1's comments
+3(a) and 3(b) argued that an adjustment applied after the model is solved is
+internally inconsistent and that the conservative value of a parameter chosen
+without a source is zero. We agree, and the externality inside period utility from
+Referee~2's comment C2 does the job properly instead.
+\end{response}
+
+\cmt{m3}{Vary the voucher receipt probability continuously}
+\begin{referee}
+``It would be helpful to provide a more continuous experiment that varies the
+probability of voucher receipt rather than go straight for full rationing to fully
+universal provision. This would help establish whether there is a Laffer curve of
+voucher generosity, or whether the corner solution of universal provision is indeed
+optimal, and what are the key parameters governing this.''
+\end{referee}
+\begin{response}
+Done, and it has become one of the paper's main figures. The probability of voucher
+receipt is swept from the benchmark to universal, with welfare, homelessness, drug
+use, substance use disorder and the labour income tax plotted along it. Referee~2's
+comment C6 asks a related question about broadening eligibility, and the same figure
+answers it.
+
+We run the sweep twice, with and without the sobriety condition. That turns the
+paper's central claim into the vertical gap between two curves, and makes visible
+something four table cells could not: whether the gap \emph{widens} with generosity.
+It should, because conditionality is worth more when the benefit being conditioned
+on is guaranteed than when it is rationed, and that cross partial is what the
+stylised model in section 2 proves. Presenting it this way also softens the
+headline in the way Referee~1's comment 3(c) asks for, since the claim becomes one
+about an interaction rather than about a winner.
+\end{response}
+
+\end{document}

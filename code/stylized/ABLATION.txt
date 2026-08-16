@@ -1,0 +1,24 @@
+STALE: these rows were produced by the THREE period model. The model is now
+two periods with the SUD realised at the transition, and rho is gone, so the
+recovery row no longer exists and every number below has to be reproduced
+before it is quoted. Run ablate.py again; it is minutes now, not an hour.
+
+================================================================================
+WHICH CHANNELS EARN THEIR PLACE
+   each row is FULLY recalibrated after the channel is removed,
+   then both counterfactuals are rerun
+================================================================================
+removed                                part  homeless   r_use  val life  moral hz
+   TARGETS                           0.0513   0.00399
+nothing removed                      0.0513   0.00356   0.187     -6.45      2.55
+the disorder kills you               0.0513   0.00544   3.372     -0.23      0.80  KEEP
+the disorder costs you a job         0.0513   0.00544   0.187     -7.14      0.51  KEEP
+recovery happens at all              0.0513   0.00357   0.187     -6.13      3.45  remove
+a small unit exists                  0.0537   0.02095   0.189     -6.02      2.72  remove
+income support is only half as generous 0.0513   0.00708   0.187     -5.40      2.45  KEEP
+households can save                  0.0513   0.00567   0.187     -6.65      4.74  KEEP
+life is worth much                   0.5047   0.00594   0.512    -54.20     42.48  KEEP
+--------------------------------------------------------------------------------
+   r_use below one is result 1. The last two columns are result 2:
+   a large negative value of life effect and a large positive moral
+   hazard that nearly cancel.

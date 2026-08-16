@@ -1,0 +1,786 @@
+\appendix
+\setcounter{page}{1}
+\setcounter{section}{0} % ensures first appendix section is A
+
+\vspace{-3cm}
+\section*{Online Appendix: ``Housing First or Treatment First?''}
+
+\section{Utility properties}\label{app:proofs}
+
+This appendix provides the theoretical foundations for the paper's central mechanism: that drug use can be concentrated among low-income individuals in a model with forward-looking rational agents and no ex-ante preference heterogeneity. The key insight is that penalties which truncate the expected value of life — such as mortality risk — reduce the asymptotic growth rate of expected utility under drug use, eventually deterring high-income individuals from participating. By contrast, penalties that merely scale income — such as proportional unemployment risk — preserve the right-tail income gradient and cannot generate low-income concentration. I establish this result formally in a static environment that isolates the relevant economic forces, and I show that alternative utility specifications commonly used in the literature generally fail to jointly deliver non-universal drug use, low-income concentration, and the absence of ex-ante taste heterogeneity.
+
+To establish these results, I adopt logarithmic utility to maintain consistency with the intratemporal component of the CRRA--Stone--Geary preferences used in the full dynamic model:
+\[
+u\!\left(c,h',v,\ell \mid d\right)
+=\frac{\left[(c^{1-\theta_1}h'^{\theta_1})^{1-\theta_{d}}(v+b)^{\theta_{d}}\right]^{1-\sigma}}{1-\sigma}
++\omega_\ell\frac{\ell^{1-\sigma_\ell}}{1-\sigma_\ell}+\aleph.
+\]
+For simplicity, I set the outer curvature parameter $\sigma=1$ in this section. Within a given branch (e.g., conditional on drug use or non-use), the curvature parameter does not affect the intratemporal allocation between non-drug consumption and drug consumption, so this normalization simplifies the exposition. For expositional clarity, I further simplify the problem by shutting down the labor--leisure margin ($\omega_\ell=0$), abstracting from housing services ($\theta_1=0$), and defining $\theta\equiv 1-\theta_d$.
+
+\subsection{Static model}
+
+I use a static model to isolate the income-gradient mechanism, abstracting from dynamic considerations such as addiction persistence and housing transitions that are present in the full model but do not affect the core sorting logic.
+
+Individuals receive income $y>0$ and have preferences given by
+\[
+u(c,v)=\theta \log c + (1-\theta)\log(v+b) + \aleph,
+\]
+where $c$ denotes non-drug consumption, $v$ denotes drug consumption, $b>0$ governs the marginal utility of drug use at low consumption levels (i.e., the strength of non-homotheticity), and $\theta\in(0,1)$ is the weight on non-drug consumption. The constant $\aleph$ is chosen so that the value of being alive is positive on the relevant income support.\footnote{With logarithmic utility, $\log y\to-\infty$ as $y\to0^+$, so no finite $\aleph$ can guarantee positive utility for arbitrarily small income. In the quantitative model, income is bounded away from zero.} Prices are normalized to one. The solution to the static problem is
+\[
+v^{*}(y)=\max\left\{(1-\theta)y-\theta b,\;0\right\},\qquad c^{*}(y)=y-v^{*}(y).
+\]
+
+\subsection{No penalties to drug use}
+
+In the absence of penalties, individuals choose drugs whenever interior consumption is feasible, which requires
+\[
+y > \frac{\theta}{1-\theta}\, b.
+\]
+Thus, absent penalties, drug use is increasing in income: higher-income individuals are more likely to use drugs, and thus drug use is concentrated among richer individuals.
+
+\subsection{Drug use with mortality penalties}
+
+I now introduce mortality risk. Individuals who use drugs face a probability $\pi\in(0,1)$ of death. Death yields zero utility; utility (including $\aleph$) is received only conditional on survival. Survival is realized before consumption decisions pay off. Therefore, expected utility from the drug-use branch is scaled by $(1-\pi)$. In this subsection, I interpret ``using drugs'' as choosing a strictly positive level of drug consumption, $v>0$. Mortality risk applies only when $v>0$; if $v=0$, the individual is effectively abstaining and faces no drug-related mortality risk.
+
+Individuals who abstain obtain indirect utility
+\[
+U^{A}(y)=\theta\log y + (1-\theta)\log b + \aleph.
+\]
+Define the (no-mortality) indirect utility from the intratemporal drug problem
+\[
+W(y)\equiv \max_{v\in[0,y)}\{\theta\log(y-v)+(1-\theta)\log(v+b)+\aleph\}.
+\]
+For the drug-use branch, the relevant object is the maximized value conditional on choosing $v>0$,
+\[
+W^{+}(y)\equiv \sup_{v\in(0,y)}\{\theta\log(y-v)+(1-\theta)\log(v+b)+\aleph\}.
+\]
+The expected utility from the drug-use branch (i.e., conditional on choosing $v>0$ and therefore being exposed to mortality risk) is
+\[
+U^{D}(y)\equiv (1-\pi)\,W^{+}(y).
+\]
+The overall value when the agent may choose between abstention and drug use is the envelope
+\[
+V(y)\equiv \max\{U^{A}(y),\,U^{D}(y)\}.
+\]
+For sorting and cutoff arguments, the relevant object is the difference between the drug-use branch and abstention,
+\[
+\Delta(y)\equiv U^{D}(y)-U^{A}(y),
+\]
+so drug use is chosen if and only if $\Delta(y)\ge 0$. Throughout, the participation set is $\{y:\Delta(y)\ge 0\}$. A single-cutoff characterization requires a single-crossing property; below I establish this by showing that $\Delta(y)$ is strictly monotone on the relevant region.
+
+Let $y_0\equiv \frac{\theta}{1-\theta}b$ denote the threshold above which the optimal drug choice is interior. For $y\le y_0$, the objective is maximized at $v^*(y)=0$ (so the within-option drug problem selects the boundary). For $y>y_0$, the optimal choice is interior, and the indirect utility simplifies to the closed form
+\[
+W(y)=\log(y+b)+A(\theta)+\aleph,
+\qquad
+A(\theta)=\theta\log\theta+(1-\theta)\log(1-\theta).
+\]
+Hence for $y>y_0$ (where the optimizer satisfies $v^*(y)>0$), we have $W^{+}(y)=W(y)$ and therefore
+\[
+U^{D}(y)=(1-\pi)\big[\log(y+b)+A(\theta)+\aleph\big].
+\]
+
+\paragraph{Remark on low-income drug use and parameterization.}
+The threshold $y_0=\frac{\theta}{1-\theta}b$ arises from the Stone--Geary structure, which is used for expositional clarity in this static analysis. In the quantitative model, income is bounded away from zero and the parameter $b$ is chosen relative to the lower support of income. As a result, the region $y\le y_0$ need not occur in equilibrium, and the model does not mechanically rule out drug use among low-income individuals. All results below concern sorting behavior on the interior region where drug use is feasible and are not driven by behavior at arbitrarily low income.
+
+On the interior region $y>y_0$ (where the closed form applies), differentiating $\Delta(y)=U^{D}(y)-U^{A}(y)$ with respect to $y$ gives
+\[
+\Delta'(y)=\frac{\partial\Delta(y)}{\partial y}=\frac{1-\pi}{y+b}-\frac{\theta}{y}.
+\]
+
+\begin{lemma}[Income sorting with mortality risk]\label{lem:income_sorting_mortality}
+Let preferences be
+\[
+u(c,v)=\theta\log c+(1-\theta)\log(v+b)+\aleph,\qquad \theta\in(0,1),\ b>0,
+\]
+with budget $c=y-v$ and choice set $v\in[0,y)$. Suppose that if the individual chooses $v>0$ it dies with probability
+$\pi\in(0,1)$ and receives zero utility; utility is received only conditional on survival. Let
+\[
+U^A(y)=\theta\log y+(1-\theta)\log b+\aleph
+\]
+denote abstention utility. Assume income is supported on $[\underline y,\infty)$ and $\aleph$ is chosen so that $U^A(y)\ge 0$ for all $y$ in the support.
+
+Let
+\[
+W^{+}(y)=\sup_{v\in(0,y)}\{\theta\log(y-v)+(1-\theta)\log(v+b)+\aleph\},
+\qquad
+U^D(y)=(1-\pi)W^{+}(y)
+\]
+denote the expected utility from the drug-use branch. Define
+\[
+\Delta(y)\equiv U^D(y)-U^A(y).
+\]
+If $\pi>1-\theta$, then:
+\begin{enumerate}
+\item There exists $y_0\equiv \frac{\theta}{1-\theta}b$ such that for all $y\in(0,y_0]$ abstention is optimal.
+\item On the region $y>y_0$ (where the optimal drug choice is interior), $\Delta(y)$ is strictly decreasing in $y$.
+\item Consequently, the set $\{y>\,y_0:\Delta(y)\ge 0\}$ is either empty or an interval of the form $(y_0,\bar y]$ for some $\bar y\in(y_0,\infty)$. Equivalently, there exists at most one cutoff $\bar y\in(y_0,\infty)$ such that $\Delta(\bar y)=0$; if such a cutoff exists then individuals use drugs for $y\in(y_0,\bar y)$ and abstain for $y>\bar y$. Moreover, for all sufficiently large $y$, abstention is optimal.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+\textbf{Step 1: Very low income implies $v^*(y)=0$ and abstention is optimal.}
+For any $y>0$, the objective defining $W(y)$ is strictly concave in $v$, and the derivative at $v=0$ equals
+\[
+\left.\frac{\partial}{\partial v}\big[\theta\log(y-v)+(1-\theta)\log(v+b)\big]\right|_{v=0}
+= -\frac{\theta}{y}+\frac{1-\theta}{b}.
+\]
+If $y\le y_0\equiv \frac{\theta}{1-\theta}b$, this derivative is non-positive, so the within-option optimum is attained at the boundary $v^*(y)=0$.
+Since $W^{+}(y)\le W(y)=U^A(y)$ on this region, it follows that
+\[
+U^D(y)=(1-\pi)W^{+}(y)\le (1-\pi)U^A(y)\le U^A(y),
+\]
+and abstention is optimal for $y\in(0,y_0]$.
+
+\medskip
+\noindent\textbf{Step 2: On $y>y_0$, the interior solution and drug-use utility simplify.}
+For $y>y_0$, the optimal choice is interior and satisfies
+\[
+-\frac{\theta}{y-v}+\frac{1-\theta}{v+b}=0
+\quad\Longrightarrow\quad
+v^*(y)=(1-\theta)y-\theta b>0,
+\]
+and therefore
+\[
+y-v^*(y)=\theta(y+b),\qquad v^*(y)+b=(1-\theta)(y+b).
+\]
+Substituting into the objective gives, for all $y>y_0$,
+\[
+W^{+}(y)=W(y)=\theta\log(\theta(y+b))+(1-\theta)\log((1-\theta)(y+b))+\aleph
+=\log(y+b)+A(\theta)+\aleph,
+\]
+where $A(\theta)=\theta\log\theta+(1-\theta)\log(1-\theta)$.
+Thus for $y>y_0$,
+\[
+U^D(y)=(1-\pi)\big[\log(y+b)+A(\theta)+\aleph\big],
+\qquad
+U^A(y)=\theta\log y+(1-\theta)\log b+\aleph,
+\]
+and $\Delta(y)=U^D(y)-U^A(y)$ is differentiable.
+
+\medskip
+\noindent\textbf{Step 3: $\Delta(y)$ is strictly decreasing on $y>y_0$ when $\pi>1-\theta$.}
+For $y>y_0$,
+\[
+\Delta'(y)=\frac{1-\pi}{y+b}-\frac{\theta}{y}
+=\frac{(1-\pi-\theta)y-\theta b}{y(y+b)}.
+\]
+If $\pi>1-\theta$, then $1-\pi-\theta<0$, and since $y>0$ and $b>0$, the numerator is strictly negative for all $y>0$.
+Hence $\Delta'(y)<0$ for all $y>y_0$.
+
+\medskip
+\noindent\textbf{Step 4: High-income abstention and (possible) cutoff.}
+As $y\to\infty$, $\log(y+b)=\log y+o(1)$, so for $y>y_0$,
+\[
+\Delta(y)=\big[(1-\pi)-\theta\big]\log y + O(1).
+\]
+If $\pi>1-\theta$, then $(1-\pi)-\theta<0$, so $\Delta(y)\to -\infty$ as $y\to\infty$. Therefore, either $\Delta(y)<0$ for all $y>y_0$ (no drug use on the interior region), or else by continuity there exists a unique $\bar y\in(y_0,\infty)$ such that $\Delta(\bar y)=0$. Because $\Delta$ is continuous on $(y_0,\infty)$ and strictly decreasing there, there can be at most one $\bar y\in(y_0,\infty)$ with $\Delta(\bar y)=0$. If it exists, then $\Delta(y)>0$ for $y\in(y_0,\bar y)$ and $\Delta(y)<0$ for $y>\bar y$. Therefore the envelope $V(y)=\max\{U^A(y),U^D(y)\}$ selects abstention for all sufficiently large $y$.
+\end{proof}
+
+\paragraph{Interpretation.}
+At very low income, the within-option optimum is $v^*(y)=0$ for $y\le \frac{\theta}{1-\theta}b$. For incomes high enough that drug use is interior, mortality scales down the full value of being alive under the drug-use branch by $(1-\pi)$, reducing the asymptotic $\log y$ slope of the drug-use branch from $1$ to $1-\pi$, while abstention grows at slope $\theta$. When $\pi>1-\theta$, the expected value of the drug-use branch eventually declines relative to abstention, so sufficiently high-income individuals abstain. If drug use occurs at all, it can only occur over an intermediate income region $(y_0,\bar y)$ and then vanishes in the upper tail.
+
+\paragraph{Remark on drug-consumption-dependent mortality risk.}
+The upper-income abstention result is not specific to a constant mortality probability. Suppose instead that mortality risk depends on drug intensity, $\pi=\pi(v)$, with $\pi(v)\in(0,1)$ for $v>0$. If there exists a constant $\underline{\pi}>1-\theta$ such that $\pi(v)\ge \underline{\pi}$ for all $v>0$, then the drug-use branch has asymptotic $\log y$ slope at most $1-\underline{\pi}<\theta$. Consequently, even when mortality risk increases with drug consumption, the expected value of drug use eventually declines relative to abstention, and the upper-income abstention result of Lemma~\ref{lem:income_sorting_mortality} continues to hold.
+
+\subsection{Drug use with proportional unemployment penalties}
+
+Next, I consider unemployment risk with proportional income penalties. Individuals who use drugs face probability $\pi$ of becoming unemployed, in which case income falls to $\kappa y$ with $\kappa\in(0,1)$. In that event, individuals re-optimize conditional on realized income.
+
+For sufficiently large $y$, both realized incomes $y$ and $\kappa y$ exceed the Stone--Geary threshold $y_0=\frac{\theta}{1-\theta}b$, so the interior closed form applies in both states. Expected indirect utility from drug use is therefore
+\[
+U^{UE}(y)=(1-\pi)\big[\log(y+b)+A(\theta)+\aleph\big]
++\pi\big[\log(\kappa y+b)+A(\theta)+\aleph\big],
+\]
+while abstention yields
+\[
+U^{A}(y)=\theta\log y+(1-\theta)\log b + \aleph.
+\]
+Differentiating $\Delta(y)=U^{UE}(y)-U^{A}(y)$ with respect to $y$ gives
+\[
+\Delta'(y)=\frac{1-\pi}{y+b}+\frac{\pi\kappa}{\kappa y+b}-\frac{\theta}{y}.
+\]
+
+\begin{lemma}[No low-income-only sorting under proportional unemployment penalties]
+Suppose $b>0$, $\pi\in(0,1)$, and $\kappa\in(0,1)$ is constant.
+Then
+\[
+\Delta(y)\to +\infty \quad \text{as } y\to\infty.
+\]
+In particular, $\Delta(y)$ cannot be negative for all sufficiently large $y$, so proportional unemployment penalties cannot generate sorting in which only low-income individuals use drugs.
+\end{lemma}
+
+\begin{proof}
+Under proportional unemployment risk, abstention yields
+\[
+U^{A}(y)=\theta\log y+(1-\theta)\log b + \aleph.
+\]
+Drug use yields expected utility
+\[
+U^{UE}(y)=(1-\pi)\big[\log(y+b)+A(\theta)+\aleph\big] +\pi\big[\log(\kappa y+b)+A(\theta)+\aleph\big],
+\]
+where $A(\theta)$ is a constant.
+
+\medskip
+\noindent\textbf{High-income limit.}
+As $y\to\infty$, I have $\log(y+b)=\log y+o(1)$ and
+\[
+\log(\kappa y+b)=\log(\kappa y)+o(1)=\log y + \log\kappa + o(1).
+\]
+Substituting,
+\[
+U^{UE}(y)=(1-\pi)\log y + \pi(\log y+\log\kappa) + O(1)
+=\log y + \pi\log\kappa + O(1).
+\]
+Meanwhile,
+\[
+U^{A}(y)=\theta\log y + O(1).
+\]
+Therefore,
+\[
+\Delta(y)=U^{UE}(y)-U^{A}(y)
+=(1-\theta)\log y + O(1)\to +\infty \quad \text{as } y\to\infty,
+\]
+since $\theta<1$. Thus, drug use becomes strictly more attractive than abstention at sufficiently high income, implying that proportional unemployment penalties cannot confine
+drug use to low-income individuals.
+\end{proof}
+
+\paragraph{Interpretation.}
+Although the absolute income loss from unemployment rises with income, proportional unemployment penalties do not truncate utility in the penalty event. With logarithmic preferences, both employed and unemployed utility grow at the same rate in income, so unemployment risk shifts utility levels but leaves the asymptotic slope unchanged. As a result, the income-gradient force eventually dominates unemployment risk, and drug use cannot be confined to low-income individuals under proportional income losses.
+
+\subsection{Math intuition: why mortality changes the slope but proportional unemployment does not.}
+The difference between the two penalties is easiest to see by isolating the leading-order term in income. In my log specification, indirect utility from drug use at realized income $Y$ has the form
+\[
+U(Y)=\log(Y+b)+A(\theta)+\aleph,
+\]
+so for large income $y$ we have $\log(y+b)=\log y+o(1)$. Recall that $y_0\equiv \frac{\theta}{1-\theta}b$ is the Stone--Geary corner threshold below which the within-option optimum is $v^*(y)=0$.
+
+\medskip
+\noindent\textbf{Mortality risk multiplies the entire value of being alive (on the drug-use branch).}
+Under mortality risk, the individual receives utility only if it survives. Hence, for $y>y_0$,
+\[
+U^{D}(y)=(1-\pi)\big[\log(y+b)+A(\theta)+\aleph\big]=(1-\pi)\log y + O(1),
+\]
+while abstention yields
+\[
+U^{A}(y)=\theta\log y + O(1).
+\]
+Therefore the branch difference satisfies
+\[
+\Delta(y)=U^{D}(y)-U^{A}(y)=\big[(1-\pi)-\theta\big]\log y + O(1).
+\]
+Thus, mortality changes the coefficient on $\log y$: it reduces the $\log y$ slope of the drug-use branch from $1$ to $1-\pi$. When $\pi>1-\theta$, the coefficient $(1-\pi-\theta)$ is negative, so $\Delta(y)\to -\infty$, and high-income individuals are eventually deterred from drug use.
+
+\medskip
+\noindent\textbf{Proportional unemployment does not change the $\log y$ slope.}
+With proportional unemployment income $Y_u=\kappa y$, expected utility under drug use is
+\[
+U^{UE}(y)= (1-\pi)\big[\log(y+b)+A(\theta)+\aleph\big]+\pi\big[\log(\kappa y+b)+A(\theta)+\aleph\big].
+\]
+As $y\to\infty$, $\log(\kappa y+b)=\log(\kappa y)+o(1)=\log y+\log\kappa+o(1)$, so
+\[
+U^{UE}(y)=(1-\pi)\log y+\pi(\log y+\log\kappa)+O(1)=\log y+\pi\log\kappa+O(1).
+\]
+Abstention remains $U^{A}(y)=\theta\log y+O(1)$, hence
+\[
+\Delta(y)=(1-\theta)\log y + O(1)\to +\infty.
+\]
+So proportional unemployment only adds a level shift (the constant $\pi\log\kappa$) and leaves the
+$\log y$ slope equal to $1$. The asymptotic income-gradient therefore dominates in the right tail regardless of $\pi$ or $\kappa$.
+
+\medskip
+\noindent\textbf{Takeaway.}
+Mortality risk acts like a multiplicative penalty on the entire value of being alive (on the drug-use branch), which reduces the
+asymptotic slope of drug-use utility in $\log y$ from $1$ to $1-\pi$. Proportional unemployment is only a
+resource penalty: it preserves the $\log y$ slope and therefore cannot overturn the right-tail income-gradient at high income.
+
+\subsection{Drug use with non-proportional unemployment penalties}
+
+Finally, suppose unemployed income under drug use satisfies
+$0<Y_u(y)<y$ for all $y>0$ and
+\[
+\lim_{y\to\infty} Y_u(y)=0,
+\]
+so that the unemployment state becomes asymptotically near-subsistence even for high baseline income.
+
+\medskip
+
+\noindent
+\textbf{Indirect utility from drug consumption.}
+For realized income $Y>0$, define
+\[
+W(Y)\equiv
+\max_{v\in[0,Y)}
+\left\{
+\theta\log(Y-v)
++
+(1-\theta)\log(v+b)
++
+\aleph
+\right\}.
+\]
+
+Let
+\[
+y_0\equiv \frac{\theta}{1-\theta}b.
+\]
+
+By concavity, the maximized value admits the piecewise representation
+\[
+W(Y)=
+\begin{cases}
+\theta\log Y+(1-\theta)\log b+\aleph, & Y\le y_0,\\[6pt]
+\log(Y+b)+A(\theta)+\aleph, & Y>y_0,
+\end{cases}
+\]
+where
+\[
+A(\theta)\equiv \theta\log\theta+(1-\theta)\log(1-\theta).
+\]
+
+\medskip
+
+\noindent
+\textbf{Expected utility under drug use.}
+Expected utility from drug use is
+\[
+U^{UNP}(y)
+=
+(1-\pi)W(y)
++
+\pi W(Y_u(y)).
+\]
+
+Let abstention utility be
+\[
+U^{A}(y)
+=
+\theta\log y
++
+(1-\theta)\log b
++
+\aleph.
+\]
+
+Define
+\[
+\Delta(y)\equiv U^{UNP}(y)-U^{A}(y).
+\]
+
+\begin{lemma}[Cutoff under sufficiently severe non-proportional unemployment losses]
+\label{lem:nonprop_cutoff}
+Suppose $b>0$, $\pi\in(0,1)$, and unemployed income under drug use satisfies
+\[
+0<Y_u(y)<y \quad \text{for all } y\ge \underline y>0,
+\qquad
+\lim_{y\to\infty} Y_u(y)=0,
+\]
+and there exist $\varepsilon>0$ and $y_1$ such that
+\[
+Y_u(y)\le y^{-\varepsilon}
+\quad
+\text{for all } y\ge y_1.
+\]
+Let income be supported on $[\underline y,\infty)$.
+If
+\[
+\pi\theta\varepsilon>1-\pi-\theta
+\quad
+\text{and}
+\quad
+\Delta(\underline y)>0,
+\]
+then there exists at least one cutoff
+$\bar y\in(\underline y,\infty)$ such that
+$\Delta(\bar y)=0$,
+with $\Delta(y)>0$ for $y\in(\underline y,\bar y)$
+and $\Delta(y)<0$ for all sufficiently large $y$.
+\end{lemma}
+
+\begin{proof}
+\textbf{Step 1: Lower-support condition.}
+By assumption, $\Delta(\underline y)>0$.
+
+\medskip
+\noindent
+\textbf{Step 2: High-income limit.}
+Since $Y_u(y)\to 0$, for sufficiently large $y$ we have $Y_u(y)\le y_0$.
+Hence the unemployed term is governed by the corner solution:
+\[
+W(Y_u(y))
+=
+\theta\log Y_u(y)
++
+(1-\theta)\log b
++
+\aleph.
+\]
+For large $y$, we also have $y>y_0$, so
+\[
+W(y)=\log(y+b)+A(\theta)+\aleph.
+\]
+Therefore,
+\[
+U^{UNP}(y)
+=
+(1-\pi)\log(y+b)
++
+\pi\theta\log Y_u(y)
++
+O(1).
+\]
+Using $Y_u(y)\le y^{-\varepsilon}$,
+\[
+\log Y_u(y)\le -\varepsilon\log y,
+\]
+so
+\[
+U^{UNP}(y)
+\le
+\big[(1-\pi)-\pi\theta\varepsilon\big]\log y
++
+O(1).
+\]
+Since $U^{A}(y)=\theta\log y+O(1)$,
+\[
+\Delta(y)
+\le
+\big[(1-\pi)-\pi\theta\varepsilon-\theta\big]\log y
++
+O(1).
+\]
+If $\pi\theta\varepsilon>1-\pi-\theta$, the coefficient on $\log y$ is negative, hence $\Delta(y)\to -\infty$ as $y\to\infty$.
+
+\medskip
+\noindent
+\textbf{Step 3: Existence of a cutoff.}
+$\Delta(y)$ is continuous on $[\underline y,\infty)$. Since $\Delta(\underline y)>0$ and $\Delta(y)\to -\infty$, the Intermediate Value Theorem implies the existence of at least one $\bar y\in(\underline y,\infty)$ such that $\Delta(\bar y)=0$.
+\end{proof}
+
+\paragraph{Interpretation.}
+Under sufficiently severe non-proportional unemployment penalties,
+unemployed income under drug use declines toward zero as baseline income rises. Because the unemployed state eventually lies in the corner region, it contributes a negative $\log y$ component to expected utility under drug use. If this negative component dominates the growth of the employment term, expected utility from drug use eventually falls below abstention, generating a cutoff in income even when drug use would otherwise increase with income.
+
+\subsection{Summary}
+
+The results above show that the income profile of drug use depends fundamentally on whether penalties truncate utility or merely scale income. Proportional unemployment penalties reduce resources but preserve the growth rate of utility with income, so drug use retains its positive income gradient. By contrast, mortality risk and sufficiently non-proportional unemployment penalties reduce the right-tail growth rate of expected utility under drug use. Because higher-income individuals have more future utility to lose, these penalties deter drug use among the rich and can shift participation away from the upper tail. My model incorporates both mortality and unemployment risks. In the full model, unemployment risk resembles the proportional income--loss case shown in the static analysis, reflecting the largely proportional structure of unemployment insurance benefits in practice. I focus on these risks rather than on mechanisms involving strongly non-proportional income losses to higher earners in adverse states, since mortality and unemployment risks are directly observable and can be disciplined by the data. The full dynamic model builds on these mechanisms, combining mortality and unemployment risks in an 
+environment with addiction persistence, housing transitions, and general equilibrium feedback.
+
+\subsection{Can alternative commonly-used utility specifications generate non-universal drug use concentrated at low income?}
+
+The sections above model drug consumption using non-homothetic preferences that imply a positive income gradient in drug use absent penalties. This structure is essential for generating non-universal drug use that is concentrated among low-income individuals without assuming systematic ex-ante preference heterogeneity conditioned on socioeconomic characteristics, such as education, that are correlated with income. This subsection discusses alternative utility specifications and explains why they fail to replicate the empirical patterns targeted in this paper.
+
+\paragraph{\citet{greenwood_guner_kopecky_2025_downward_spiral}-style separable utility.}
+A first natural benchmark is the separable period utility used in \citet{greenwood_guner_kopecky_2025_downward_spiral} (GGK). Consider an individual with income $y$. Under abstention, period utility is
+\[
+U^{A}(y)=u(y),
+\]
+where $u(c)=\frac{c^{1-\sigma}-1}{1-\sigma}$ with $\sigma\ge 0$ (log utility when $\sigma=1$). Under drug use, the individual chooses drug spending $v\ge \underline v$ and consumes $c=y-v\ge 0$, obtaining expected utility
+\[
+U^{U}(y)=(1-\pi)\max_{v\in[\underline v,y]}\left\{\theta u(y-v)+(1-\theta) w(v-\underline v)\right\},
+\]
+where $w(x)=\frac{x^{1-\psi}-1}{1-\psi}$ with $\psi>0$, $\theta\in(0,1)$, and $\pi\in(0,1)$. Define $\Delta(y)\equiv U^{U}(y)-U^{A}(y)$.
+
+\begin{lemma}[Income concentration under separable utility]
+\label{lem:ggk_income}
+As $y\to\infty$, the asymptotic behavior of $\Delta(y)\equiv U^{U}(y)-U^{A}(y)$ depends on the relative curvature parameters $\sigma$ and $\psi$:
+\begin{enumerate}
+\item If $\sigma>\psi$ and $\psi\le 1$, then $\Delta(y)\to +\infty$, and drug use is optimal for all sufficiently large $y$.
+\item If $\psi>1$ and $\sigma\le 1$, then $\Delta(y)\to -\infty$, and drug use is eventually ruled out at high income.
+\item If $\sigma=\psi=1$, then $\Delta(y)\to -\infty$.
+\item If $\sigma>1$ and $\psi>1$, then $\Delta(y)$ remains bounded as $y\to\infty$ (there is no general divergence result); any limiting sign, when a limit exists, can depend on $(\pi,\theta,\sigma,\psi)$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Write the drug-use problem in terms of excess drug spending $x\equiv v-\underline v$ and net resources
+$\tilde y\equiv y-\underline v$. For $y>\underline v$,
+\[
+U^{U}(y)=(1-\pi)\,M(\tilde y),
+\qquad
+M(\tilde y)\equiv \max_{x\in[0,\tilde y]}\Big\{\theta u(\tilde y-x)+(1-\theta)w(x)\Big\}.
+\]
+Abstention yields $U^{A}(y)=u(y)$, so $\Delta(y)=(1-\pi)M(y-\underline v)-u(y)$.
+
+\medskip
+\noindent\textbf{Step 1 (upper bound).}
+For any $x\in[0,\tilde y]$, $\tilde y-x\le \tilde y$ and $x\le \tilde y$. Since $u$ and $w$ are increasing,
+\[
+\theta u(\tilde y-x)+(1-\theta)w(x)\le \theta u(\tilde y)+(1-\theta)w(\tilde y),
+\]
+so
+\[
+M(\tilde y)\le \theta u(\tilde y)+(1-\theta)w(\tilde y).
+\]
+
+\medskip
+\noindent\textbf{Step 2 (lower bounds).}
+Fix any $\varepsilon\in(0,1)$. For all $\tilde y>\varepsilon$, the feasible choice $x=\varepsilon$ yields
+\[
+M(\tilde y)\ge \theta u(\tilde y-\varepsilon)+(1-\theta)w(\varepsilon).
+\]
+Likewise, for all $\tilde y>2\varepsilon$, the feasible choice $x=\tilde y-\varepsilon$ yields
+\[
+M(\tilde y)\ge \theta u(\varepsilon)+(1-\theta)w(\tilde y-\varepsilon).
+\]
+
+\medskip
+\noindent\textbf{Step 3 (case $\sigma>\psi$ with $\psi\le 1$).}
+When $\psi\le 1$, $w(\tilde y)\to\infty$ as $\tilde y\to\infty$ (power growth if $\psi<1$, log growth if $\psi=1$).
+If additionally $\sigma>\psi$, then $w(\tilde y)$ grows faster than $u(\tilde y)$, so the lower bound with $x=\tilde y-\varepsilon$ implies
+$M(\tilde y)\ge (1-\theta)w(\tilde y-\varepsilon)+O(1)$, while Step~1 implies $M(\tilde y)\le (1-\theta)w(\tilde y)+\theta u(\tilde y)$.
+Thus $M(\tilde y)=(1-\theta)w(\tilde y)+o(w(\tilde y))$ and $\Delta(y)\to +\infty$.
+
+\medskip
+\noindent\textbf{Step 4 (case $\psi>1$ and $\sigma\le 1$).}
+When $\psi>1$, $w(\tilde y)$ is bounded above as $\tilde y\to\infty$.
+When $\sigma\le 1$, $u(y)\to\infty$ as $y\to\infty$.
+From Step~1, $M(\tilde y)\le \theta u(\tilde y)+O(1)$, hence
+\[
+\Delta(y)\le (1-\pi)\theta u(y-\underline v)-u(y)+O(1).
+\]
+Since $u(y-\underline v)/u(y)\to 1$ and $(1-\pi)\theta-1<0$, it follows that $\Delta(y)\to -\infty$.
+
+\medskip
+\noindent\textbf{Step 5 (log case $\sigma=\psi=1$).}
+When $\sigma=\psi=1$, the inner maximization can be solved explicitly:
+\[
+\max_{0<x<\tilde y}\{\theta\log(\tilde y-x)+(1-\theta)\log x\}
+=\log \tilde y + \theta\log\theta+(1-\theta)\log(1-\theta),
+\]
+so $M(\tilde y)=\log(\tilde y)+\text{constant}$. Hence,
+\[
+\Delta(y)=(1-\pi)\log(y-\underline v)-\log y+\text{constant}\to -\infty
+\quad\text{as }y\to\infty.
+\]
+
+\medskip
+\noindent\textbf{Step 6 (bounded-utility case $\sigma>1$ and $\psi>1$).}
+If $\sigma>1$ and $\psi>1$, then both $u(y)$ and $w(y)$ are bounded above as $y\to\infty$.
+By Step~1, $M(\tilde y)$ is bounded above; by Step~2 it is bounded below. Therefore $M(\tilde y)$, and hence $\Delta(y)$, remain bounded as $y\to\infty$.
+No general divergence result holds in this region, and the asymptotic sign can depend on parameters.
+\end{proof}
+
+For empirically relevant parameter values (e.g., $\sigma>1$ and $\psi>1$ in \citet{greenwood_guner_kopecky_2025_downward_spiral}), separable preferences of this type do not generically generate drug use concentrated among low-income individuals. In this region, the asymptotic participation pattern can depend on parameter values and may instead place substantial drug use among higher-income individuals. Consequently, generating non-universal drug use concentrated among low-income individuals within this class of preferences may require introducing ex-ante heterogeneity in tastes for drugs that is correlated with socioeconomic characteristics such as education, as in \citet{greenwood_guner_kopecky_2025_downward_spiral}.
+
+\paragraph{Subsistence-adjusted log utility and homelessness (case 5 above).}
+As shown in case 5, it is possible to reverse the income gradient with the death penalty with subsistence requirements for drug consumption using log utility, for example $\log(v-\underline v)$. This, however, is ill-suited for environments with homelessness and extreme poverty. In low-resource states, which are central to the analysis in this paper, subsistence-adjusted log utility can render the decision problem undefined because the constraint $v>\underline v$ may be infeasible. One way to restore feasibility is to assume the existence of transfers or top-ups that guarantee a minimum level of drug consumption even for individuals with no income or assets. While the resource cost of such transfers may be small, the level at which the minimum is set directly affects utility in precisely the states that can drive welfare comparisons. As a result, welfare outcomes could become sensitive to an exogenously chosen floor for drug consumption rather than emerge from endogenous tradeoffs.
+
+\paragraph{CES utility between consumption and drugs.}
+Another alternative is a CES aggregator between non-drug consumption and drug consumption,
+\[
+u(c,v)=\left(c^{\rho}+(\omega v)^{\rho}\right)^{1/\rho},
+\]
+possibly embedded in an outer CRRA utility. For any $\rho<1$, differentiating yields
+\[
+u_v=\omega^{\rho} v^{\rho-1}\left(c^{\rho}+(\omega v)^{\rho}\right)^{\frac{1}{\rho}-1},
+\]
+which implies that the marginal utility of drug consumption diverges as $v\to 0$. As a result, abstention is never optimal whenever drug consumption is feasible, and the model, even with mortality risk, cannot generate a participation margin or a mass of non-users. Consequently, standard CES preferences with $\rho<1$ cannot replicate the observed fact that only a small fraction of the population consumes drugs.\footnote{To preserve concavity of the intratemporal aggregator and well-behaved interior solutions, I restrict attention to $\rho<1$. The case $\rho=1$ is linear, and $\rho>1$ generally violates concavity.}
+
+\paragraph{CES utility with asymmetric curvature.}
+One might attempt to restore a participation margin by allowing different curvature parameters for consumption and drugs,
+\[
+u(c,v)=\left(c^{\rho}+(\omega v)^{\alpha}\right)^{1/\rho}.
+\]
+Differentiating yields
+\[
+u_v
+=\frac{\alpha \omega^{\alpha}}{\rho}
+\left(c^{\rho}+(\omega v)^{\alpha}\right)^{\frac{1}{\rho}-1}
+v^{\alpha-1}.
+\]
+As $v\to 0$, the term in parentheses converges to $c^{\rho}$, implying
+\[
+u_v \sim \frac{\alpha \omega^{\alpha}}{\rho}\,c^{1-\rho}\,v^{\alpha-1}.
+\]
+If $\alpha<1$, the marginal utility of drug consumption diverges at $v\to 0$, so abstention is never optimal whenever drug consumption is feasible. If $\alpha\ge 1$, the marginal utility of drug consumption at zero is finite (and equal to zero when $\alpha>1$), so abstention is possible. However, in this case the specification fails to generate drug use concentrated among low-income individuals. For $\rho<1$, the marginal utility cost of financing drug consumption,
+\[
+u_c(c,v)=c^{\rho-1}\left(c^{\rho}+(\omega v)^{\alpha}\right)^{\frac{1}{\rho}-1},
+\]
+is decreasing in resources, implying that higher-income individuals face a lower utility cost of drug consumption. Consequently, whenever drug use occurs, participation and consumption are skewed toward higher-income individuals rather than concentrated among the poor.
+
+Moreover, I show below that mortality risk cannot generate an upper-income cutoff: drug use remains strictly optimal in the upper tail.
+
+\medskip
+\noindent\textbf{Mortality penalties do not reverse the income gradient.}
+Now suppose that if the individual uses drugs it dies with probability $\pi\in(0,1)$ and receives zero utility; utility is received only conditional on survival. Let
+\[
+U^{A}(y)=u(y,0),\qquad
+U^{U}_{\pi}(y)=(1-\pi)\max_{v\in[0,y)} u(y-v,v),
+\qquad
+\Delta_{\pi}(y)\equiv U^{U}_{\pi}(y)-U^{A}(y).
+\]
+Fix the feasible choice $v=y/2$ (so $c=y/2$). Then
+\[
+\max_{v\in[0,y)} u(y-v,v)\ \ge\ u(y/2,y/2)
+=\left((y/2)^{\rho}+(\omega y/2)^{\alpha}\right)^{1/\rho}
+\ \ge\ \left((\omega y/2)^{\alpha}\right)^{1/\rho}
+=\omega^{\alpha/\rho}2^{-\alpha/\rho}\,y^{\alpha/\rho}.
+\]
+Moreover $U^{A}(y)=u(y,0)=\left(y^{\rho}\right)^{1/\rho}=y$. Hence
+\[
+\Delta_{\pi}(y)\ \ge\ (1-\pi)\omega^{\alpha/\rho}2^{-\alpha/\rho}\,y^{\alpha/\rho}-y.
+\]
+If $0<\rho<1$ and $\alpha>1$, then $\alpha/\rho>1$, so the right-hand side diverges to $+\infty$ as $y\to\infty$.
+Therefore $\Delta_{\pi}(y)>0$ for all sufficiently large $y$: drug use is strictly optimal in the upper tail even with mortality risk, so mortality penalties cannot generate sorting in which high-income individuals abstain.
+
+\paragraph{Additively separable utility.}
+Another possible specification is additive separability between baseline utility and drug consumption,
+\[
+u(c,h)+g(v),
+\]
+where $g$ is increasing and is chosen to allow a participation margin (finite marginal utility at $v=0$).
+A convenient parametric example is $u(c)=\theta\log c$ and $g(v)=v^{\alpha}$ with $\alpha>1$, which implies
+$g'(0)<\infty$ and therefore allows for abstention. Absent additional penalties, the optimality condition equates the marginal utility of drugs to the marginal utility cost of reduced consumption. Since the marginal utility of non-drug consumption is decreasing in income, higher-income individuals face a lower marginal cost of drug consumption and therefore optimally consume drugs. As a result, absent penalties, additively separable preferences imply that drug use would be concentrated among high-income individuals.
+
+Introducing penalties such as mortality risk raises the shadow cost of drug consumption and can reduce participation. However, under additively separable preferences, mortality risk reduces participation by eliminating marginal users—namely, the lowest-income users among those who choose to use drugs in the absence of penalties. Mortality risk therefore trims participation from the bottom of the income distribution of users, while leaving the relative ranking between users and non-users intact. As a result, although mortality risk reduces overall participation, it does not reverse the income gradient or generate drug use concentrated among low-income individuals under additively separable utility. I prove this claim right below.
+
+\begin{lemma}[Mortality trims participation from the bottom of the user distribution under additive utility]
+\label{lem:additive_trim_bottom_users}
+Assume $\aleph$ is chosen and income is supported on $[\underline y,\infty)$ such that $U^A(y)\ge 0$ for all $y$ in the support. Suppose preferences are additively separable,
+\[
+u(c,v)=\theta\log c + v^{\alpha} + \aleph,
+\qquad \theta\in(0,1),\ \alpha>1,
+\]
+with budget $c=y-v$ and $v\in[0,y)$. Let $U_0^U(y)$ denote indirect utility from using drugs absent penalties,
+\[
+U_0^U(y)\equiv \sup_{v\in[0,y)}\Big\{\theta\log(y-v)+v^{\alpha}+\aleph\Big\},
+\]
+and let indirect utility from abstaining be
+\[
+U^A(y)=\theta\log y+\aleph.
+\]
+Define $\Delta_0(y)\equiv U_0^U(y)-U^A(y)$.
+
+Now introduce mortality risk: if the individual uses drugs, it dies with probability $\pi\in(0,1)$ and receives zero utility; utility is received only conditional on survival. Expected indirect utility from using drugs is therefore
+\[
+U_\pi^U(y)=(1-\pi)U_0^U(y),
+\]
+and define $\Delta_\pi(y)\equiv U_\pi^U(y)-U^A(y)$.
+
+Suppose $\Delta_0(y)$ is weakly increasing in $y$ and there exists a cutoff $y_0$ such that $\Delta_0(y)\ge0$ if and only if $y\ge y_0$. Then for any $\pi\in(0,1)$,
+\[
+\Delta_\pi(y)=(1-\pi)\Delta_0(y)-\pi U^A(y)\le \Delta_0(y)
+\]
+for all $y$. Consequently, there exists a cutoff $y_\pi\ge y_0$ such that $\Delta_\pi(y)\ge0$ if and only if $y\ge y_\pi$. Hence mortality risk reduces drug participation by eliminating the lowest-income individuals who would otherwise use drugs.
+\end{lemma}
+
+\begin{proof} The proof proceeds in three steps.
+
+\medskip
+\noindent\textbf{Step 1: Drug use absent penalties is an upper-tail phenomenon.} Let $v^\ast(y)$ be an optimizer in the definition of $U_0^U(y)$. By the envelope theorem,
+\[
+\frac{dU_0^U(y)}{dy}
+=\left.\frac{\partial}{\partial y}\Big[\theta\log(y-v)+v^\alpha+\aleph\Big]\right|_{v=v^\ast(y)}
+=\frac{\theta}{y-v^\ast(y)}.
+\]
+Since $U^A(y)=\theta\log y+\aleph$, we have $dU^A(y)/dy=\theta/y$. Therefore,
+\[
+\Delta_0'(y)
+=\frac{\theta}{y-v^\ast(y)}-\frac{\theta}{y}
+=\frac{\theta\,v^\ast(y)}{y\,(y-v^\ast(y))}.
+\]
+Whenever drug use is optimal (i.e.\ $v^\ast(y)>0$), this derivative is strictly positive. Hence $\Delta_0(y)$ is strictly increasing wherever participation is relevant, implying the existence of a cutoff $y_0$ such that
+\[
+\Delta_0(y)\ge 0 \iff y\ge y_0.
+\]
+Thus, absent penalties, drug use occurs for all sufficiently high incomes and the user set is the unbounded upper interval $[y_0,\infty)$.
+
+Moreover, $\Delta_0(y)\to+\infty$ as $y\to\infty$: for example, the feasible choice $v=y/2$ yields
+\[
+U_0^U(y)\ge \theta\log(y/2)+(y/2)^\alpha+\aleph,
+\]
+so
+\[
+\Delta_0(y)\ge (y/2)^\alpha - \theta\log 2 \to +\infty
+\quad\text{as } y\to\infty,
+\]
+since $\alpha>1$. Therefore, there exists a (finite) cutoff $y_0$ such that $\Delta_0(y)\ge 0 \iff y\ge y_0$.
+
+\medskip
+\noindent\textbf{Step 2: Mortality cannot create new users (given positive value of life).}
+In the quantitative model, income is bounded away from zero, $y\ge \underline y>0$, and $\aleph$ is chosen such that
+$U^A(y)=\theta\log y+\aleph\ge 0$ for all $y\in[\underline y,\infty)$.
+Fix any $y$ in this support. Suppose the individual abstains absent mortality, i.e.\ $\Delta_0(y)<0$, equivalently
+$U_0^U(y)<U^A(y)$. Multiplying both sides by $(1-\pi)\in(0,1)$ yields
+\[
+(1-\pi)U_0^U(y) < (1-\pi)U^A(y) < U^A(y),
+\]
+where the second inequality uses $U^A(y)\ge 0$ and $(1-\pi)<1$.
+Therefore,
+\[
+\Delta_\pi(y)=(1-\pi)U_0^U(y)-U^A(y)<0.
+\]
+Hence, if an agent abstains absent mortality, it also abstains with mortality.
+
+\medskip
+\noindent\textbf{Step 3: Mortality trims participation only from the bottom (no upper cutoff).}
+By Step 2 and Step 1, any participation set under mortality must be contained in $[y_0,\infty)$.
+It remains to show that for sufficiently large income, drug use is strictly optimal even with mortality,
+so there cannot be an upper-income truncation.
+
+First, mortality does not change the intratemporal optimal drug choice conditional on using. For any given $y$, expected utility from choosing $v$ is
+\[
+(1-\pi)\big[\theta\log(y-v)+v^\alpha+\aleph\big],
+\]
+so the first-order condition is
+\[
+(1-\pi)\Big(-\frac{\theta}{y-v}+\alpha v^{\alpha-1}\Big)=0
+\iff-\frac{\theta}{y-v}+\alpha v^{\alpha-1}=0,
+\]
+which coincides with the no-mortality condition.
+
+Now, I show that $\Delta_\pi(y)>0$ for all sufficiently large $y$ by constructing a feasible drug choice
+whose expected utility advantage diverges. For large $y$, consider the feasible choice
+\[
+v(y)\equiv y-\varepsilon(y), \qquad
+\varepsilon(y)\equiv \frac{\theta}{\alpha\,y^{\alpha-1}},
+\]
+so that $c(y)=y-v(y)=\varepsilon(y)>0$ and $v(y)\in[0,y)$.
+Define the corresponding utility gap
+\[
+\widetilde\Delta_\pi(y)
+\equiv(1-\pi)\big[\theta\log\varepsilon(y)+v(y)^\alpha+\aleph\big]
+-\big[\theta\log y+\aleph\big].
+\]
+Because $U_\pi^U(y)$ is the maximum over all feasible $v$, we have $\Delta_\pi(y)\ge \widetilde\Delta_\pi(y)$.
+
+We bound $\widetilde\Delta_\pi(y)$ from below. First,
+\[
+v(y)^\alpha = (y-\varepsilon(y))^\alpha
+= y^\alpha\Big(1-\frac{\varepsilon(y)}{y}\Big)^\alpha
+\ge y^\alpha - \alpha y^{\alpha-1}\varepsilon(y)
+= y^\alpha-\theta,
+\]
+where I used $(1-x)^\alpha\ge 1-\alpha x$ for $x\in[0,1]$ and the definition of $\varepsilon(y)$.
+Second,
+\[
+\log\varepsilon(y)=\log\Big(\frac{\theta}{\alpha}\Big)-(\alpha-1)\log y.
+\]
+Plugging these into $\widetilde\Delta_\pi(y)$ gives
+\begin{align*}
+\widetilde\Delta_\pi(y)
+&\ge (1-\pi)\Big[\theta\Big(\log\Big(\frac{\theta}{\alpha}\Big)-(\alpha-1)\log y\Big)
++ (y^\alpha-\theta)+\aleph\Big]
+-\theta\log y-\aleph \\
+&=
+(1-\pi)y^\alpha
+-\theta\Big(1+(1-\pi)(\alpha-1)\Big)\log y
++\Big[(1-\pi)\theta\log\Big(\frac{\theta}{\alpha}\Big)-(1-\pi)\theta-\pi\aleph\Big].
+\end{align*}
+Since $\alpha>1$, the leading term $(1-\pi)y^\alpha$ dominates the logarithmic term as $y\to\infty$,
+so the right-hand side tends to $+\infty$. Therefore,
+there exists $\bar y$ such that for all $y\ge \bar y$, $\widetilde\Delta_\pi(y)>0$ and hence $\Delta_\pi(y)>0$.
+Thus, for sufficiently large incomes, drug use is optimal even with mortality risk,
+and mortality cannot truncate participation from above.
+
+Combining Steps 1--3, the mortality user set is an upper interval $[y_\pi,\infty)$ with $y_\pi\ge y_0$,
+so mortality eliminates only the lowest-income users among those who would use absent mortality.
+\end{proof}
+
+\paragraph{Implication.}
+Taken together, these alternative specifications fail to jointly deliver three central empirical features: (i) non-universal drug use, (ii) concentration of drug use among low-income individuals, and (iii) absence of ex-ante preference heterogeneity conditional on socioeconomic variables that are correlated with income. The non-homothetic structure used in the main model satisfies all three. It allows for a finite marginal utility of drugs, generates a participation margin, and ensures that dynamic penalties such as mortality risk — which truncate the expected value of future life — can overturn the right-tail income gradient and concentrate drug use among individuals with lower lifetime resources, without requiring the modeler to take a stand on why preferences differ systematically across socioeconomic groups.
+
+%\bibliographystyle{aer}
+%\bibliography{references}
+
+\vspace{1cm}

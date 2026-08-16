@@ -1,0 +1,68 @@
+\begin{table}[p]
+\footnotesize
+\renewcommand{\arraystretch}{1.25}
+\begin{center}
+\caption{Externally assigned parameter values}
+\label{tab:external_calibration}
+\begin{tabular}{clcl}
+\toprule
+\textbf{Parameter} & \textbf{Description} & \textbf{Value} & \textbf{Source} \\
+\midrule
+\multicolumn{4}{l}{\textit{\textbf{A. Demographics and preferences}}} \\
+\midrule
+$J$ & Lifespan (model periods) & $60$ & Age range 26--85 \\
+$J_R$ & Retirement age (model periods) & $41$ & Retirement age 66 \\
+$\{\phi^{\text{base}}_j\}_{j=1}^J$ & Baseline survival probabilities & Varies & \citet{arias-2014} \\
+$\sigma$ & Coefficient of relative risk aversion & $2$ & Standard \\
+$\sigma_{\ell}$ & Curvature of leisure in utility & $3$ & \citet{Chetty2012Frisch} \\
+\midrule
+\multicolumn{4}{l}{\textit{\textbf{B. Labor income, unemployment, and retirement}}} \\
+\midrule
+$\{\zeta_j\}_{j=1}^{J_R-1}$ & Deterministic life-cycle productivity & Varies & \citet{gkkoc} \\
+$\rho_z$ & Persistence of idiosyncratic productivity & $0.9$ & \citet{gkkoc} \\
+$\sigma_z$ & Volatility of idiosyncratic productivity & $0.2$ & \citet{gkkoc} \\
+$\rho_x$ & Intergenerational persistence of permanent productivity & $0.5$ & \citet{gkkoc} \\
+$\sigma_x$ & Intergenerational innovation volatility & $0.309$ & \citet{gkkoc} \\
+$y_R(x,z)$ & Social Security benefits & Varies & \citet{gkkoc} \\
+$\pi^{\text{base}}_{ue}$ & Baseline re-employment probability & $0.297$ & \citet{kruegeretal-2016} \\
+$\kappa_{h,ue}$ & Re-employment multiplier when homeless & $0.8$ & \citet{desmond_gershenson_2016} \\
+$\kappa_{h,eu}$ & Unemployment multiplier when homeless & $1.25$ & \citet{desmond_gershenson_2016} \\
+$\pi_\varkappa$ & Probability of receiving UI when unemployed & $0.3$ & FRED (2014-2024) \\
+$\kappa_{ui}$ & UI replacement rate & $0.5$ & Unemployment insurance program \\
+\midrule
+\multicolumn{4}{l}{\textit{\textbf{C. Housing and housing finance}}} \\
+\midrule
+$\delta$ & Housing depreciation rate & $0.6\%$ & \citet{rosenthal-2014} \\
+$\tau_s$ & Proportional housing selling cost & $6\%$ & \citet{gm-2003} \\
+$\varsigma_{2}$ & Parameter governing elasticity of housing investment & $2.11$ & \citet{sommersullivan-2017} \\
+$\lambda$ & Maximum loan-to-value ratio & $0.8$ & Standard \\
+$n$ & Number of housing sizes & 7 & See text\\
+\midrule
+\multicolumn{4}{l}{\textit{\textbf{D. Interest rates and taxes}}} \\
+\midrule
+$r$ & Real interest rate & $3\%$ & \citet{kaplanetal-2019} \\
+$\tau_k$ & Capital income tax rate & $15\%$ & \citet{kkk-2021} \\
+$\xi$ & Progressivity of labor income taxes & $0.85$ & \citet{hsv-2020} \\
+
+\midrule
+\multicolumn{4}{l}{\textit{\textbf{E. Voucher programs}}} \\
+\midrule
+$\kappa_V$ & Voucher income eligibility threshold & $0.5$ & Section 8 \\
+$\kappa_r$ & Rent contribution rate under vouchers & $0.3$ & Section 8 \\
+
+\midrule
+\multicolumn{4}{l}{\textit{\textbf{F. Homelessness and addiction}}} \\
+\midrule
+$p_v$ & Price of drugs & $1$ & Normalization \\
+$\kappa_{h,\phi}$ & Mortality multiplier when homeless & $1.6$ & \citet{meyer_wyse_logani_2024_mortality} \\
+$\kappa_{H,d}$ & Recovery probability if housed & $0.025$ & \citet{vaillant1995natural} \\
+$\pi_{d,\text{high}}$ & Addiction probability if heavy experimenter & $6.48 \times \pi_{d,\text{low}}$ & \citetshort{nsduh_2024} \\
+%$\Omega_d^{\underline H}$ & Recovery probability if homeless & $\frac{1}{3}\times 0.025$ & \citet{yamamoto2019homelessness} \\
+$\chi_H$ & Government cost per homeless & $0.252\,\overline{y}$ & \citet{naeh2016saves} \\
+$\chi_D$ & Government cost per addict & $0.212\,\overline{y}$ & \citet{cea2017opioid} \\
+\bottomrule
+\bottomrule
+\end{tabular}
+\end{center}
+\normalsize
+\end{table}

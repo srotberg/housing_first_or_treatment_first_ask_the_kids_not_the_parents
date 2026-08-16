@@ -1,0 +1,179 @@
+# What can come out, ranked by what it is worth
+
+Measured baseline: one working age of the backward induction takes **71 s** on
+four cores, one full pass **51 minutes**. Everything below is a multiplier on
+that. Nothing on this list costs the model as written anything, because most of
+it is machinery the revision already removed on paper and not yet in the code.
+
+## 1. Housing entered with is still a state. Worth 6.6x
+
+`do housing_status_index=lowest_housing_grid_point,housing_status_grid_size-1`
+is an outer loop over the unit the household **arrives in**, eight values for a
+renter. The model as written does not have it:
+
+> Survival, employment transitions and the recovery hazard all condition on the
+> *chosen* housing, and renters face no adjustment cost, so the unit a household
+> arrives in is payoff-irrelevant. Carrying it would replicate the whole problem
+> N_h times; removing it leaves every aggregate unchanged and cuts the solve by
+> a factor of 6.6.
+
+That is the model note's own arithmetic, and it is the single largest item
+available. It is not an approximation: with no moving costs the value function
+is genuinely constant across that index, so removing it changes no aggregate at
+all. It would have to come back if moving costs were ever added.
+
+**This is the one to do first.** It is worth more than everything else here put
+together.
+
+## 2. The owner branch is still solved. Worth about 2x
+
+`max_amortization_years=2` and the loop
+`do years_left_on_mortgage_index=1,...,max_amortization_years` runs twice, with
+`years_left_on_mortgage_index>1` setting `has_house=1`. So the owner problem is
+still being solved on every pass, along with its buy, sell and move branches,
+even though the revision removes homeownership, tenure, mortgages and negative
+assets.
+
+It also drags the asset grid with it. `financial_grid_size` is
+`negative_financial_grid_size=61` plus `positive_financial_grid_size=90`. The 61
+negative points are mortgage debt: renters already run 61 to 151, so those points
+exist only to serve a tenure the model no longer has.
+
+Removing the owner branch is worth roughly 2x directly, plus whatever the dead
+allocations cost in memory traffic.
+
+## 3. The income grid, 9 points. Worth 1.8x at 5 points, and it is the one to be careful with
+
+With `fixed_productivity=1` the transition is the identity, so productivity is a
+pure type: the model decouples into nine independent problems and cost is
+**linear** in the number of points. Nine to five is a straight 1.8x.
+
+But this is the one place where the saving is paid for. The paper's headline
+result is who uses drugs **by income**, and the stylized model's whole argument
+is about where a threshold in income sits. Five points across a lognormal with a
+standard deviation near 0.5 in logs is a coarse instrument for locating a
+threshold, and the participation moment is a near cliff in `b`, so a coarse
+income grid makes the moment itself jumpier to hit.
+
+Suggested: **seven, not five**, worth 1.3x, and only after items 1 and 2. If the
+gradient moments come out unchanged at seven, five can be tried.
+
+## 4. The housing choice grid, 4 points to 3. Worth 1.33x
+
+The model as written has one homelessness state and three rental sizes, from two
+parameters, the level and the geometric spread. Dropping to two rentals is worth
+1.33x on the choice loop.
+
+It is defensible but not free. Two rented sizes is the fewest that lets a
+household economise on housing rather than lose it, and the stylized model shows
+what happens without that margin: with a single rental size homelessness comes
+out at **3.48 per cent against a target of 0.40**, and no value of the street's
+service flow brings it back. Going to **three total** keeps two rentals and is
+safe. Going to two total is the failure case.
+
+Note the code still has `housing_status_grid_size=7`, so getting to four is
+itself a saving before any of this.
+
+## 5. What is NOT worth removing
+
+**The asset grid.** It is the largest single factor, since the `a'` search is
+quadratic in it, and halving it would be worth 4x. But the objective is not
+single peaked in `a'` precisely because voucher eligibility is a step function of
+income, the food stamp floor kinks, and housing is discrete. Those notches are
+where this paper's action is. A coarse asset grid degrades exactly the region
+the welfare comparison turns on, and the welfare margins are tenths of a per
+cent.
+
+**The expectation hoist.** Implemented, verified bit identical, measured at one
+per cent. See TIMING.md.
+
+## What it adds up to
+
+Items 1, 2 and 4 together are `6.6 x 2 x 1.33` which is about **17x**, and none
+of them costs the model as specified anything at all. That takes a working age
+from 71 s to roughly 4 s, a backward pass from 51 minutes to about 3, and a
+stationary equilibrium from 5 to 10 hours to well under an hour. A first stage
+calibration then moves from weeks on four cores to a day or two, which is the
+threshold at which the calibration can actually be iterated rather than launched
+and hoped for.
+
+Adding item 3 at seven points takes it to roughly 22x.
+
+---
+
+## Verified: the housing state is exactly redundant
+
+Checked directly rather than argued. The value function was dumped at a working
+age and reshaped over its five state dimensions, then compared across the
+housing state index:
+
+```
+real cells 19,656 of 78,624
+populated housing indices          [9828 9828 0 0 0 0 0 0]
+max spread across housing, real cells only   0.0
+max |V|                                      3573.0
+```
+
+Two findings, both useful.
+
+**The spread is exactly zero.** Across every asset, employment, productivity and
+voucher combination, the value function takes the identical value at both
+populated housing indices, to the last bit. The model note's claim that the unit
+a household arrives in is payoff irrelevant is not an approximation here, it is
+an identity, and removing the dimension cannot change any number the model
+produces.
+
+**Only two of the eight slots are populated at all.** The other six hold the
+large negative sentinel: they are the owner states, which no longer exist. So the
+array is four times wider than the model uses on that dimension, and the loop
+runs over all eight while six of them produce nothing.
+
+That also revises the size of the prize. The 6.6x in the model note assumes the
+loop does real work at every housing point. It does not: six of the eight exit
+into infeasibility. The saving from collapsing the dimension to one is therefore
+**between 2x, if the infeasible branches exit for free, and 8x, if they cost what
+a populated one costs**. The measured per age timing suggests the truth is nearer
+the bottom of that range than the top, so **2x to 3x is the honest expectation**,
+not 6.6x.
+
+It is still the right change: it is provably exact, it removes four fifths of an
+array dimension, and it deletes the last structural trace of homeownership.
+
+---
+
+## The housing state is already mostly collapsed. The prize is 2x, not 6.6x
+
+Going in to remove it, the loop turns out to read
+
+```fortran
+do housing_status_index = (1-has_house)*lowest_housing_grid_point + &
+                          has_house*index_of_smallest_house_hhld_can_buy, &
+                          track_housing_1*(1-newborn_household)*(housing_status_grid_size-1)
+```
+
+The upper bound is `track_housing_1*(...)`. When `track_housing_1` is zero, which
+is what the value function solve uses, the bound is zero and the loop runs from
+`lowest_housing_grid_point = -1` to `0`: **two iterations, not eight**. That is
+exactly what the dump showed, two populated slots out of eight, and it is why the
+per age timings never revealed an eightfold overhead.
+
+So the dimension has already been collapsed once, by whoever wrote
+`track_housing_1`, and what is left to remove is the last factor of two. The
+6.6x in the model note assumed a loop over the full grid; that loop does not
+exist in the solve.
+
+**This reorders the list.** At 2x, removing the housing state now ranks below the
+asset grid change already shipped, and roughly level with dropping the owner
+branch. It is still worth doing, since the value function is provably identical
+at the two surviving indices and the array is four times wider than anything
+written to it, but it is no longer the item that decides whether the calibration
+fits in a day.
+
+**What the change is, for whoever does it.** Set the loop bound so it runs only
+at `lowest_housing_grid_point`, and force `future_housing_status_index_to_use` to
+the same index wherever the value function is read. That is exact because
+`V(-1) == V(0)` to the last bit. The care needed is in the distribution and the
+policy function stores, which are indexed by the same variable and would then be
+reading a slot nothing writes. Verify the way the expectation hoist was verified:
+dump the value function at a working age before and after, and require the files
+to be bit identical.

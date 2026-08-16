@@ -1,0 +1,1316 @@
+\documentclass[parskip=full]{article}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Basic includes
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage[pdftex, colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue, bookmarks=false]{hyperref}
+
+\usepackage{adjustbox}
+\usepackage{arydshln}
+\usepackage{array}
+\usepackage{makecell}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{verbatim}
+\usepackage{mathrsfs}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{bbm}
+\usepackage{bm}
+\usepackage[capposition=top]{floatrow}
+%\usepackage[dvipsnames]{xcolor}
+\usepackage{ulem}
+\usepackage[labelfont=bf]{caption}
+\usepackage{subcaption}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{natbib}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{rotating}
+\usepackage{pdflscape}
+\usepackage[title]{appendix}
+\usepackage{footmisc}
+\usepackage{bigdelim}
+\usepackage{tabularx}
+\usepackage{xspace}
+\newcommand{\A}{\ensuremath{\mathcal{A}}\xspace}
+\newcommand{\B}{\ensuremath{\mathcal{B}}\xspace}
+\newcommand\pa[1]{\ensuremath{\left(#1\right)}}
+\newcommand{\indicator}[1]{\mathbbm{1}_{\left\{ {#1} \right\} }}
+\usepackage{epigraph}
+\usepackage{setspace}
+% ------------------------------------------------------------
+% Theorem environments
+% ------------------------------------------------------------
+\theoremstyle{plain}
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{proposition}[lemma]{Proposition}
+\newtheorem{theorem}[lemma]{Theorem}
+\newtheorem{corollary}[lemma]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+%\onehalfspacing
+\setstretch{1.5}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Microtype
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[activate={true,nocompatibility},final,tracking=true,kerning=true,spacing=true,factor=1100,stretch=10,shrink=10]{microtype}
+% activate={true,nocompatibility} - activate protrusion and expansion
+% final - enable microtype; use ``draft'' to disable
+%tracking=true, kerning=true, spacing=true - activate these techniques
+% factor=1100 - add 10% to the protrusion amount (default is 1000)
+% stretch=10, shrink=10 - reduce stretchability/shrinkability (default is 20/20)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Hyperref setup
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{url}
+\makeatletter
+\g@addto@macro{\UrlBreaks}{\UrlOrds}
+\makeatother
+\hypersetup{
+  colorlinks,%
+  citecolor=black,%
+  filecolor=black,%
+  linkcolor=blue,%
+  urlcolor=black
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Font setup
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{mathpazo} % math & rm
+%\linespread{1}        % Palatino needs more leading (space between lines)
+\usepackage{parskip}
+\usepackage[scaled]{helvet} % ss
+\usepackage{courier} % tt
+
+\usepackage{filecontents}
+
+\normalfont
+\usepackage[T1]{fontenc}
+
+\usepackage{titlesec}
+\titleformat{\section}
+{\normalfont\fontsize{12}{17}\bfseries}
+{\thesection}
+{1em}
+{}
+
+\titleformat{\subsection}
+{\normalfont\fontsize{11}{16}\bfseries}
+{\thesubsection}
+{1em}
+{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% macros
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+%\newcommand{\indicator}[1]{\mathbbm{1}_{\left\{ {#1} \right\} }}
+\defcitealias{SAMHSA_2023}{SAMHSA}
+\defcitealias{nsduh_2024}{NSDUH}
+\defcitealias{nsduh_2023}{NSDUH}
+\defcitealias{samhsa_tip55}{SAMHSA}
+\defcitealias{kuhn1998}{Kuhn and Culhane}
+\defcitealias{hud_pit_2022}{HUD}
+\defcitealias{hud_ahar_2023}{HUD}
+\newcommand{\citetshort}[1]{\citetalias{#1} (\citeyear{#1})}
+\newcommand{\citepshort}[1]{(\citetalias{#1}, \citeyear{#1})}
+%\newcommand{\resultsloc}{../code/python/output/}
+\newcommand{\subfigwidth}{0.475\textwidth}
+\newcommand{\subfigwidthtwo}{0.375\textwidth}
+\newcommand{\figwidth}{0.6\textwidth}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+\setlength\epigraphwidth{0.9\textwidth}
+\setlength\epigraphrule{0pt}
+\renewcommand{\epigraphflush}{center}
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\epigraph}{\@epitext{#1}}{\itshape\@epitext{#1}}{}{}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Page and paragraph settings
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\parskip}{0.0pc} \setlength{\parindent}{0.25in}
+\setlength{\topmargin}{-3pc}
+\setlength{\textheight}{9in}
+\setlength{\oddsidemargin}{0pc} \setlength{\evensidemargin}{0pc}
+\setlength{\textwidth}{6.5in}
+\makeatletter
+\@fpsep\textheight
+\makeatother
+
+\newenvironment{fignote}{\begin{quote}\footnotesize}{\end{quote}}
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\renewcommand{\baselinestretch}{1.5}
+
+% Formats the notes at the bottom of tables and figures.
+\newenvironment{fignote2}[1]
+{
+\par
+\medskip
+\begin{minipage}{#1}
+\footnotesize
+}
+{
+\end{minipage}
+}
+
+% Formats the notes at the bottom of tables and figures.
+\newenvironment{fignote3}[1]
+{
+%\par
+\begin{minipage}{#1}
+\footnotesize
+}
+{
+\end{minipage}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Title page
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Title page
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{\vspace{-1.8cm}Housing First or Treatment First?\footnote{I thank Ay\c{s}e \.{I}mroho\u{g}lu, Kai Zhao, Joseph Steinberg, Efraim Benmelech, Jonathan Alschech, Ryan Quandt, Christopher Sharp and the seminar participants at the University of Toronto for their helpful comments. I owe a special thank-you to Joseph Steinberg who generously provided access to one of his high-powered computers for this research. The data and replication code are available on GitHub at \url{https://github.com/srotberg/housing_first_or_treatment_first}.}}
+
+\author{Shahar Rotberg\footnote{Canada Mortgage and Housing Corporation (CMHC). Contact: \url{shahar.rotberg@gmail.com}. Website: \url{www.shaharrotberg.com}. This work was conducted on personal equipment and time. The code used to solve the model is the author's own. The opinions expressed herein do not necessarily represent the views of CMHC.}}
+
+\pagestyle{plain}
+
+\begin{document}
+
+\maketitle
+
+\setstretch{1.5}
+\begin{abstract}
+\onehalfspacing
+\noindent
+
+\noindent Should housing assistance be conditioned on sobriety? A dynamic general-equilibrium model evaluates Housing First (HF) and Treatment First (TF) as approaches to reducing drug addiction and homelessness. HF critics argue that conditioning housing on sobriety reduces both by decreasing moral hazard; supporters counter that such requirements exacerbate these issues as recovery is more difficult while homeless. The model links homelessness, addiction, mortality, and labor-market outcomes, endogenously generating drug use concentrated among low-income individuals. Holding policy generosity fixed, TF reduces addiction but increases homelessness. However, compared to a rationed HF benchmark, universal TF reduces both, raises welfare, and is nearly self-financing.\\[1.5ex]
+
+%words=100
+
+\noindent \textbf{Keywords:} Addiction, homelessness, general equilibrium. 
+
+\noindent \textbf{JEL Codes:} E20; H20; I18; I38; R13. 
+
+\end{abstract}
+\setstretch{1.5}
+
+\section{Introduction}\label{sec:intro}
+
+With close to 1 million individuals homeless in the United States and roughly 370 thousand of them addicted to drugs, debates about whether housing assistance should be conditioned on sobriety have resurfaced \citep{cityjournal_trump_homelessness,kqed_trump_homelessness}.
+
+On the one hand, critics of Housing First (HF) argue that unconditional housing assistance creates moral hazard by weakening incentives to remain sober and attached to the labor market, which may increase long-run homelessness through higher unemployment. On the other hand, critics of Treatment First (TF) argue that conditioning housing access on sobriety risks increasing homelessness by delaying access to stable housing for vulnerable individuals, worsening labor-market outcomes, and potentially exacerbating addiction in the long run, since recovery is more difficult while homeless.
+
+Much of the empirical evidence informing this debate comes from randomized controlled trials (RCTs) of HF programs, documenting short-run improvements in housing stability but mixed effects on substance use \citep{tsemberis2004housing,larimer2009housing,padgett2006housing,goering2014national,aubry2016housing}. By design, however, these experiments focus on partial-equilibrium, short-run outcomes and cannot speak to long-run behavioral responses, housing-market adjustments, or fiscal consequences.
+
+Resolving these competing claims requires a framework that captures how individuals respond to incentives at the margin where policy operates — the decision to initiate drug use. Modeling this decision as rational and forward-looking has a long tradition in economics, 
+dating to \citet{becker_murphy_1988}, and is supported by a growing body of empirical evidence. Both users and non-users are well informed about addiction risks: \citet{lundborg_lindgren_2002} find that Swedish teenagers hold risk perceptions closely aligned with objective probabilities, and \citet{greenwood_guner_kopecky_2025_downward_spiral} find similar results in a U.S. context. Drug markets also exhibit robust price responsiveness at the participation margin — for drugs as habit-forming as heroin and cocaine — with long-run responses consistently larger than short-run responses \citep{vanours1995price,saffer_chaloupka_1999,caulkins2001drug,gallet2014can}, a signature of forward-looking optimization rather than myopic 
+behavior — a pattern the calibration is designed to match. Consistent with clinical evidence that quitting is largely outside the addict's immediate control, this paper focuses on the decision to initiate drug use rather than the decision to quit — modeling experimentation as forward-looking and responsive to incentives, while treating cessation as exogenous. Finally, introducing time-inconsistency would only 
+reinforce the case for TF: present-biased agents would welcome sobriety requirements as a commitment device \citep{gruber_koszegi_2001,laibson1997golden,strotz1955myopia}, strengthening rather than undermining the paper's main conclusion.
+
+I develop a quantitative general-equilibrium framework that takes these ideas seriously: homelessness, drug experimentation, addiction, mortality, and labor-market outcomes arise endogenously, jointly with housing prices, rents, and government budgets. A key innovation is that the model endogenously replicates two central features of the data — only a small fraction of the population consumes drugs, and drug use is concentrated among low-income individuals \citepshort{kuhn1998,SAMHSA_2023,nsduh_2024} — without assuming ex-ante preference heterogeneity conditional on socioeconomic status. Non-homothetic drug preferences alone would generate drug use concentrated among higher-income individuals. Addiction-related mortality risk reverses this gradient: by truncating the expected continuation value of life, it imposes a loss that rises more rapidly for individuals with higher lifetime resources, so that in equilibrium drug use concentrates at the bottom of the income distribution (see Appendix~\ref{app:proofs}).
+
+Individuals in the model make forward-looking drug-use decisions by trading off the immediate utility of drug experimentation against a lower expected continuation value. This value loss arises from drug experimentation transitioning stochastically into addiction, a state characterized by higher mortality and unemployment risks. Crucially, the increased probability of unemployment for addicts raises their risk of transitioning into homelessness. Furthermore, recovery is less likely while homeless — and homelessness itself further reduces survival and employment chances — creating a feedback loop where individuals can end up trapped in a vicious cycle.
+
+The model captures two opposing effects of housing vouchers. By reducing homelessness risk, vouchers raise housing stability, employment prospects, and the expected value of future life, discouraging drug experimentation. At the same time, unconditional assistance weakens work incentives and relaxes budget constraints, generating moral hazard that increases drug use and addiction. The model quantifies how these forces interact in equilibrium and how their relative strength depends on policy design.
+
+Two main results emerge from the model. First, holding voucher generosity fixed, HF reduces homelessness but raises addiction, while TF has the opposite effect — a trade-off that explains why the policy debate has remained unresolved. Second, the conventional framing of the debate conflates two distinct policy dimensions: voucher generosity and conditionality. When these are separated, the results are unambiguous: expanding voucher coverage while conditioning access on sobriety simultaneously reduces both homelessness and addiction, nearly finances itself through improved fiscal outcomes, and raises welfare.
+
+I calibrate the model to match key features of the U.S. economy: a homelessness rate of 0.3 percent, 2 percent of the population experimenting with drugs and 2 percent addicted, drug use concentrated at the bottom of the income distribution, and only about 27 percent of income-eligible individuals receiving housing assistance — reflecting the substantial rationing that characterizes current U.S. voucher programs. Critically, the model is also calibrated to match the empirical participation elasticity of drug use with respect to price, ensuring that individuals' behavioral responses to incentives are disciplined by the data rather than assumed. The calibrated model is then used to evaluate the short-run and long-run welfare consequences of HF and TF policies, accounting for behavioral responses, housing-market price adjustments, and fiscal constraints that lie beyond the scope of experimental evidence.
+
+The counterfactual analysis is designed to disentangle the roles of conditionality and generosity. I begin by varying conditionality holding rationing fixed, then I vary generosity holding conditionality fixed, and finally I combine universal voucher provision with sobriety requirements — the policy that the model identifies as most welfare-improving relative to the current rationed HF benchmark. In all experiments, I balance the budget with labor income taxes.
+
+I discuss long-run effects first, then turn to short-run responses — a distinction that clarifies why the policy debate has remained unresolved despite decades of empirical evidence. When housing vouchers are rationed, conditioning access on sobriety reduces drug use and addiction by strengthening incentives to remain sober and attached to the labor market — less moral hazard. But this comes at the cost of higher homelessness, as sobriety requirements delay access to stable housing for non-compliant individuals. TF under rationing therefore trades lower addiction for worse housing outcomes and lower welfare.
+
+Expanding HF to all eligible individuals sharply raises the expected value of future life, substantially reduces homelessness, and generates sizable welfare gains. The cost of unconditional access is higher moral hazard: with housing stability de-linked from sobriety and labor-market attachment, drug experimentation rises in the long run. Yet addiction actually declines slightly, because the large reduction in homelessness makes recovery more likely — more than offsetting the increase in experimentation.
+
+The final experiment combines both dimensions: universal voucher provision with sobriety requirements. This simultaneously raises the value of life by guaranteeing housing access and restores incentives to remain sober and employed by conditioning that access on sobriety — shifting both margins in the same direction. Homelessness and addiction fall simultaneously by large margins, unemployment declines, and the fiscal savings from lower homelessness and addiction nearly offset the cost of expanding the program, requiring only a small increase in income taxes. Welfare rises above both the rationed HF benchmark and, once mortality spillovers through loss of consortium are accounted for, above universal HF as well — reflecting the significant reduction in premature deaths this policy generates.
+
+Across all experiments, short-run responses differ from the long-run responses outlined above. In the short-run, housing outcomes respond substantially to changes in voucher design, whereas addiction adjusts very gradually due to its persistent dynamics. This dynamic asymmetry can reconcile the mixed findings from RCTs of HF programs, which document short-run effects on homelessness but limited effects on substance use \citep{tsemberis2004housing,larimer2009housing,padgett2006housing,goering2014national,aubry2016housing}.
+
+\section{Related literature}\label{sec:literature}
+
+Four strands of literature relate to this paper: (i) empirical evaluations of HF programs through RCTs, (ii) economic models of drug use and addiction, (iii) structural models of homelessness, and (iv) housing models with empirically disciplined rental supply elasticities. The paper's main contribution relative to each is to provide a unified GE framework that captures long-run interactions among all four, which neither experimental evidence nor partial-equilibrium models can address.
+
+\paragraph{Randomized controlled trials.}
+A large empirical literature studies HF programs, which provide rapid access to housing without conditioning on sobriety. RCTs consistently find large and persistent improvements in housing stability and reductions in shelter use and other public services \citep{tsemberis2004housing,larimer2009housing,padgett2006housing,goering2014national,aubry2016housing}. Evidence on substance use disorders (SUDs) outcomes, however, is mixed. Most studies do not find statistically significant changes in drug or alcohol use, while some report modest reductions in alcohol-related outcomes. Importantly, these evaluations typically measure outcomes over relatively short horizons, generally between 6 and 24 months and only rarely extending beyond three years. As a result, the experimental evidence provides limited guidance on long-run addiction dynamics. This limitation is particularly salient given evidence that recovery from SUDs is a gradual and protracted process, with meaningful changes often occurring over much longer horizons \citep{vaillant1995natural}. 
+
+This paper provides a structural explanation for the mixed experimental findings: in the model, housing outcomes respond immediately to changes in voucher design while addiction adjusts slowly due to its persistent dynamics, so short-run RCTs are well-powered to detect housing effects but not substance use effects regardless of the true long-run treatment effect.
+
+\paragraph{Economic models of drug use and addiction.}
+A foundational literature models drug use and addiction as the outcome of forward-looking optimization. In the rational addiction framework of \citet{becker_murphy_1988}, individuals internalize the future consequences of current drug consumption, leading to intertemporal complementarities in use. Recent quantitative work strengthens the view that drug use need not reflect systematic misperceptions about addiction risk: in their model, \citet{greenwood_guner_kopecky_2025_downward_spiral} allow individuals’ perceived probability of becoming addicted to differ from the true probability and find that the model-implied beliefs are close to the true addiction risk, consistent with forward-looking and informed decision-making. Similarly, \citet{lundborg_lindgren_2002} find that Swedish teenagers are well-aware of the health risks associated with smoking, as both smokers and non-smokers provide risk estimates that are highly consistent with the actual objective risks of lung cancer and other smoking-related diseases. 
+
+Other work emphasizes temptation, self-control problems, and dynamically inconsistent preferences as key drivers of addictive behavior \citep{laibson1997golden,gruber_koszegi_2001}. In the \citet{gruber_koszegi_2001} framework, present-biased individuals over-consume addictive goods relative to their long-run preferences, generating a welfare rationale for corrective policy even absent externalities. This paper's framework is complementary rather than contradictory: as discussed in the introduction, introducing time-inconsistency at the initiation stage would strengthen rather than weaken the case for TF, since both ``naive'' and ``sophisticated'' present-biased agents would welcome sobriety requirements as an external commitment device.
+
+Building on the forward-looking perspective, more recent quantitative work embeds addiction decisions in a rich dynamic environment but differs from mine in how heterogeneity in drug use is generated across individuals. As I show in Appendix~\ref{app:proofs}, under standard separable preferences of the type used in \citet{greenwood_guner_kopecky_2025_downward_spiral}, drug use can be concentrated among higher-income individuals for empirically relevant parameter values. Consequently, generating drug use that is concentrated among low-income individuals within this class of preferences requires ex-ante heterogeneity in tastes for drugs that is conditioned on education, which is in turn correlated with income. Moreover, although specifications with subsistence-adjusted log utility can reverse the income gradient, they are ill-suited to environments with homelessness, as they are not well defined in extreme low-resource states that are central to the analysis. Restoring feasibility in such models requires imposing a minimum level of drug consumption through transfers or other smoothing mechanisms, and welfare outcomes then become sensitive to the exogenously chosen floor. My framework addresses both considerations because the intertemporal cost of drug use declines as resources fall, making drug consumption relatively more attractive while remaining well defined even under extreme poverty.
+
+This perspective aligns closely with the empirical literature on ``deaths of despair''. In their influential work, \citet{case_deaton_2020} document a sharp rise in mortality among lower-income populations in the United States, driven largely by drug overdoses, alcohol-related disease, and suicide. They emphasize a self-reinforcing interaction between labor-market decline, social disintegration, and addiction, in which deteriorating long-run life prospects increase drug use, drug use raises addiction and mortality risk, and addiction further erodes future economic and social outcomes. While this literature does not provide a structural model, it motivates an explicit role for mortality and expected future life prospects in the analysis of drug use and addiction — precisely the mechanism through which this paper reconciles rational drug use with the empirical concentration of addiction among low-income and homeless populations.
+
+\paragraph{Structural models of homelessness.}
+This paper builds directly on \citet{az-2024}, who develop a quantitative model in which homelessness is a rational choice arising from income risk, mental health shocks, housing costs, and housing policy. Their framework highlights how adverse shocks and limited resources can push households into homelessness even in the presence of safety-net programs. My paper extends this line of work by introducing endogenous drug experimentation, addiction, and recovery, as well as state-dependent mortality risk. These additions are not cosmetic: in their framework, housing policy affects homelessness through income and housing cost channels alone, and sobriety-contingent policies have no behavioral margin to operate on. By introducing addiction as a state that both causes and is caused by homelessness, the model creates the feedback loop through which voucher conditionality affects drug use, labor-market outcomes, and mortality — the channels that are central to evaluating HF versus TF.
+
+Another related work documents the role of evictions in generating persistent economic distress and homelessness. \citet{abramson_eviction_policies_jf_forthcoming} develops a model in which eviction policies affect landlord screening, rents, and access to housing. In equilibrium, these responses substantially alter the risk of homelessness among marginal renters. In my model, by contrast, employment outcomes and addiction affect housing loss, and housing loss directly worsens employment prospects, increases mortality risk, and impedes recovery from addiction.
+
+\paragraph{Rental supply elasticities and rent responses in models of GE.}
+Finally, I adopt the rental market structure of \citet{garrigaeetal-2009} to model how changes in housing voucher policy affect equilibrium rents. The elasticity of rental supply is disciplined using estimates from the macro-housing literature \citep{rotberg_steinberg_2024_mortgage_interest_deductions}, ensuring that rent responses to shifts in voucher-induced demand are quantitatively realistic. Under a perfectly elastic rental supply, expanding voucher coverage would have no effect on equilibrium rents, understating the fiscal cost of universal HF and overstating its welfare gains. The upward-sloping rental supply curve is therefore essential for an accurate welfare comparison across policy regimes. 
+
+\paragraph{In a nutshell.}
+Taken together, the existing literature provides the building blocks for this paper's analysis but stops short of assembling them into a unified framework. The RCT literature establishes that housing stability matters but cannot speak to long-run addiction dynamics. The rational addiction literature models drug use as a forward-looking choice but abstracts from homelessness and housing markets. The structural homelessness literature captures housing market equilibrium but omits drug use entirely. This paper bridges these strands of literature by embedding forward-looking drug experimentation in a housing-market equilibrium with endogenous addiction, mortality, and labor-market outcomes — a structure that enables a welfare evaluation of HF versus TF policies that none of these literatures can provide individually.
+
+\section{Model}\label{sec:model}
+
+I develop a quantitative overlapping-generations (OLG) model with endogenous homelessness, drug use, and addiction. The model is designed to compare (i) Housing First (HF), in which housing vouchers are provided without conditions on drug use, and (ii) Treatment First (TF), in which voucher access is conditional on sobriety (no drug use). The model also features probabilistic addiction dynamics: experimentation can lead to addiction, addiction affects mortality and labor-market risk, and recovery involves luck and is less likely when homeless.
+
+\paragraph{Roadmap.}
+For readability, the main text states the model, defines equilibrium, and summarizes key properties that I rely on in computation and welfare analysis. In Appendix~\ref{app:proofs}, I offer formal derivations and proofs for a simplified static problem to show how the utility function operates and what features in my model determine outcomes. 
+
+The model's central mechanism links drug experimentation to 
+homelessness through addiction: experimentation risks addiction, 
+addiction raises unemployment and mortality risk, unemployment 
+raises homelessness risk, and homelessness impedes recovery — 
+creating a feedback loop that housing voucher policy can either 
+reinforce or break depending on whether access is rationed or guaranteed and whether it is conditioned on sobriety.
+
+\subsection{Demographics}\label{sec:demographics}
+
+Time is discrete. Individuals live up to age $J$ and retire at age $J_R$. Conditional on being alive at age $j$, individuals survive to age $j+1$ with probability
+\begin{equation}\label{eq:survival}
+\phi_j\left(h', d\right)\in [0,1),
+\end{equation}
+and die with certainty after age $J$. Survival depends on the housing choice for the current period $h'$, which becomes the next period state, and addiction status $d$. This captures elevated mortality for homeless and addicted individuals.
+
+\subsection{State variables}\label{sec:states}
+
+An age-$j$ individual’s state is $(a,x,z,e,\varkappa,h,o,\eta,d)$, which I denote by $s$ for brevity. $a\in\mathbbm{R}$ denotes financial assets (negative values correspond to mortgage debt), $x$ is a permanent productivity type drawn at birth from $\Omega_x(x)$, $z$ is an idiosyncratic productivity shock following $\Omega_z(z'\mid z)$, $e\in\{0,1\}$ is employment status (employed if $e=1$, unemployed if $e=0$), $\varkappa\in\{0,1\}$ indicates unemployment insurance (UI) receipt, $h$ denotes the housing size with which the individual entered the period (with $h=\underline h$ indicating homelessness), $o\in\{0,1\}$ indicates the tenure state (homeowner if $o=1$, renter or homeless if $o=0$), $\eta\in\{0,1\}$ indicates current receipt of a housing voucher, and $d\in\{0,1\}$ indicates addiction status (addicted if $d=1$).
+
+\paragraph{State space.}
+Let $\mathcal{A}\subset\mathbbm{R}$ denote the support of financial assets, $\mathcal{X}$ the support of permanent productivity, $\mathcal{Z}$ the support of idiosyncratic productivity shocks, and let $\mathcal{E}=\{0,1\},\quad \mathcal{K}=\{0,1\},\quad \mathcal{O}=\{0,1\},\quad \mathcal{N}=\{0,1\},\quad \mathcal{D}=\{0,1\}$ denote the supports of employment status, UI receipt, tenure status, voucher receipt, and addiction status, respectively. Let $\mathcal{H}$ denote the finite set of housing sizes, including homelessness $\underline h$. The individual state space is then
+\[\mathcal{S}\equiv \mathcal{A}\times\mathcal{X}\times\mathcal{Z}\times\mathcal{E}\times\mathcal{K}\times\mathcal{H}\times\mathcal{O}\times\mathcal{N}\times\mathcal{D}.\] The ordering of components in $\mathcal{S}$ corresponds to
+$s=(a,x,z,e,\varkappa,h,o,\eta,d)$.
+
+\subsection{Timing}\label{sec:timing}
+
+At the start of age $j$, an individual observes their state $s$, and chooses $(c,v,\ell,a',h',o')$, where $c\ge 0$ is consumption of the non-drug good, $v\ge 0$ is consumption of drugs, $\ell\in[0,1]$ is leisure (so labor supply is $1-\ell$), and $a'\in\mathbbm{R}$ denotes next-period financial assets. $h'$ is current consumption of housing services — hence the next-period housing state, and $o'\in\{0,1\}$ is the current tenure choice — therefore the next-period tenure state. Non-addicts whose age is greater than $J_A$ cannot use drugs ($v=0$); the calibration of $J_A$ is discussed in Section~\ref{sec:calibration}. 
+
+After choices are made, idiosyncratic shocks $(z',e',\varkappa',d',\eta')$ are realized, where $z'$ is next-period productivity, $e'$ is next-period employment status, $\varkappa'$ is next-period UI receipt, $d'$ is next-period addiction status, and $\eta'$ is next-period housing voucher status. Under HF, new voucher receipt is determined by the eligibility rule and lottery described in Section~\ref{sec:programs}. Once an individual receives a voucher, it remains in place as long as the individual continues to satisfy the income eligibility condition and remains not a homeowner (i.e., $o'=0$). Voucher payments are made only in periods in which the individual rents housing ($h'>\underline{h}$); no voucher payments are made during homelessness since vouchers can only be used to pay for housing. In particular, under HF, if $\eta=1$ and eligibility continues to hold next period, then $\eta'=1$ with probability one. On the other hand, under TF, voucher receipt follows the same pattern but is revoked with certainty next period ($\eta'=0$) if the individual violates the sobriety requirement ($v>0$). The individual then survives to age $j+1$ with probability $\phi_j(h',d)$ as in \eqref{eq:survival}. 
+
+As in \citet{kkk-2021}, all living individuals receive financial endowments each period, which are equal to the bequests from the deceased in the preceding period. These are denoted by $\vartheta (x,z)$, capturing a positive correlation between bequests and income.
+
+\subsection{Income and taxes}\label{sec:income}
+
+\paragraph{Productivity.}
+Permanent productivity $x$ and idiosyncratic productivity $z$ are defined as in Section~\ref{sec:states}. Working-age productivity depends on a deterministic age profile $\{\zeta_j\}_{j=1}^{J_R-1}$.
+
+\paragraph{Labor income.}
+When employed, labor income is $y_{j,\ell}\!\left(x,z;\ell\right)= (1-\ell)\,x z \zeta_j$. Employment transitions depend on current employment, current housing decisions, and addiction status:
+
+\begin{equation}\label{eq:e_transition}
+e' \sim \Omega_e\!\left(e' \mid e, h', d\right).
+\end{equation}
+
+UI receipt is determined upon entry into unemployment. Formally, if an employed individual becomes unemployed ($e=1$ and $e'=0$), then $\varkappa'$ is drawn from a Bernoulli distribution with success probability $\pi_\varkappa$. If an individual remains unemployed ($e=0$ and $e'=0$), UI receipt is persistent and satisfies $\varkappa'=\varkappa$. Finally, if employment is realized next period ($e'=1$), then $\varkappa'=0$ with certainty.
+
+Equivalently, the UI receipt transition is governed by the kernel
+\begin{equation}\label{eq:kappa_transition}
+\Omega_{\varkappa}(\varkappa' \mid e,e',\varkappa)=
+\begin{cases}
+\pi_{\varkappa}, & (e,e')=(1,0)\ \text{and}\ \varkappa'=1,\\
+1-\pi_{\varkappa}, & (e,e')=(1,0)\ \text{and}\ \varkappa'=0,\\
+1, & (e,e')=(0,0)\ \text{and}\ \varkappa'=\varkappa,\\
+1, & e'=1\ \text{and}\ \varkappa'=0,\\
+0, & \text{otherwise.}
+\end{cases}
+\end{equation}
+
+UI benefits depend on baseline earnings of an age-$j$ individual with fixed productivity $x$. Let baseline income be $
+\bar y_{j,\ell}(x)\equiv x \mathbbm{E}[z]\zeta_{j}$. When unemployed ($e=0$), UI income is given by
+
+\begin{equation*}
+\label{eq:ui_income}
+y_{j,ui}(x,\varkappa)=
+\begin{cases}
+0, & \varkappa=0,\\
+\min\{\kappa_{ui}\bar y_{j,\ell}(x),\ \overline{y}\}, & \varkappa=1,
+\end{cases}
+\end{equation*}
+
+\noindent where $\kappa_{ui}\in(0,1)$ is the replacement rate and $\overline{y}$ is the statutory cap, set to the average labor income in the economy.
+
+Retirees receive Social Security (SS) benefits $y_R(x,z)$, which depend on the fixed and stochastic productivities of the individual at retirement. Thus, individuals who retire with higher productivities receive larger SS benefits. Define labor-related income as
+\begin{equation*}\label{eq:hat_y_l}
+\hat y_{j,\ell}(x,z,e,\varkappa;\ell)=
+\begin{cases}
+y_{j,\ell}(x,z;\ell), & j<J_R,\ e=1,\\
+y_{j,ui}(x,\varkappa), & j<J_R,\ e=0,\\
+y_R(x,z), & j\ge J_R.
+\end{cases}
+\end{equation*}
+
+Capital income is $\hat y_k(a)= r a$, where $r$ is the exogenous interest rate. 
+
+\paragraph{Taxes.}
+Labor income taxes are progressive, with liability
+\begin{equation}\label{eq:tax_l}
+\rho_{\ell}(x,z,e,\varkappa;\ell)=\hat y_{j,\ell}(x,z,e,\varkappa;\ell)-\tau_\ell \hat y_{j,\ell}(x,z,e,\varkappa;\ell)^{\xi},
+\end{equation}
+so that after-tax labor income is $\hat y_{j,\ell}(x,z,e,\varkappa;\ell)-\rho_{\ell}(x,z,e,\varkappa;\ell)=\tau_\ell \hat y_{j,\ell}(x,z,e,\varkappa;\ell)^{\xi}$.
+
+Capital income is taxed at a flat rate:
+\begin{equation}\label{eq:tax_k}
+\rho_k(a)=\tau_k\max\{\hat y_k(a),0\}.
+\end{equation}
+
+\subsection{Housing, tenure choice, and homelessness}\label{sec:housing}
+
+Housing services are discrete. Renters choose $h'\in\mathcal{H}^R\equiv\{h_i\}_{i=1}^n$ and pay per-unit rent $p_r$. Homeowners choose $h'\in\mathcal{H}^O\equiv\{h_i\}_{i=n-1}^n$ and pay per-unit house price $p_h$. Homeless individuals consume $h'=\underline h<h_1$ at no direct (resource) cost to them, but the government incurs a cost $\chi_{H}$ for each homeless individual, capturing the costs of services and expenses associated with homelessness. 
+
+Feasibility requires
+\begin{equation}\label{eq:housing_feas}
+\begin{aligned}
+&o'=1 \ \Rightarrow\ h'\in\mathcal{H}^O, \\
+&o'=0,\ h'>\underline h \ \Rightarrow\ h'\in\mathcal{H}^R, \\
+&o'=0,\ h'=\underline h \ \Rightarrow\ \text{homelessness.}
+\end{aligned}
+\end{equation}
+Homeowners face housing depreciation $\delta$ and proportional selling costs $\tau_s$ when changing housing size.
+
+Mortgages are one-period loans that must satisfy a loan-to-value restriction:
+\begin{equation}\label{eq:ltv}
+-a' \le \lambda p_h h'o' , \qquad \lambda\in(0,1).
+\end{equation}
+
+\subsection{Food stamps and housing vouchers (HF vs TF)}\label{sec:programs}
+
+\paragraph{Food stamps.}
+Low-income individuals receive food stamps with certainty when eligible, unlike housing vouchers, which are rationed. Let pre-tax income be
+\[y_j^{\text{pre-tax}}(a,x,z,e,\varkappa;\ell)\equiv \hat y_{j,\ell}(x,z,e,\varkappa;\ell)+\text{max}\{0,\hat y_k(a)\},\]
+
+Food stamps fill the gap between a food-consumption threshold and pre-tax income. Let
+$\bar c_f = \kappa_f \cdot \overline{y}$, where $\overline{y}$ is average income and $\kappa_f\in(0,1)$. Food-stamp transfers are
+\begin{equation}
+\label{eq:food_rule}
+\omega_{j,\text{food}}(a,x,z,e,\varkappa;\ell)=\max\left\{0,\ \bar c_f - y_{j}^{\text{pre-tax}}(a,x,z,e,\varkappa;\ell)\right\},
+\end{equation}
+and must be spent on the non-drug good such that $c\geq \omega_{j,\text{food}}(a,x,z,e,\varkappa;\ell)$.
+
+\paragraph{Housing vouchers.}
+Housing vouchers are targeted to help low-income individuals who are not homeowners. Voucher eligibility is determined using current-period pre-tax income. Define the eligibility indicator
+\begin{equation*}\label{eq:voucher_elig}
+\mathbbm{I}_j^{V}(a,x,z,e,\varkappa;o',\ell)=
+\mathbbm{I}\Big\{(o'=0)\ \land\ 
+y_j^{\text{pre-tax}}(a,x,z,e,\varkappa;\ell)
+<\kappa_V\,\text{Median}(y^{\text{pre-tax}})
+\Big\},
+\end{equation*}
+where $\text{Median}(y^{\text{pre-tax}})$ denotes the median income in the economy, $\kappa_V$ denotes the threshold income below which income must be relative to the median for eligibility, and $o'$ is the current tenure choice (which becomes the next-period state).
+
+Let $\eta'\in\{0,1\}$ denote next-period voucher receipt. Conditional on eligibility, voucher receipt for the next period is determined by a lottery:
+\begin{equation}\label{eq:voucher_lottery}
+\Pr\!_j\left(\eta'=1 \mid \eta,a,x,z,e,\varkappa;o',\ell;\text{HF}\right)=
+\mathbbm{I}_j^{V}(a,x,z,e,\varkappa;o',\ell)\cdot\Big[\eta+(1-\eta)\pi_V\Big].
+\end{equation}
+where $\pi_V$ is the probability of receiving a voucher conditional on eligibility. In my benchmark with HF, voucher receipt evolves according to the transition kernel
+\[\Pr\!_j(\eta'=1\mid \eta,\mathbbm{I}^V;\text{HF})
+=\mathbbm{I}^V\big[\eta+(1-\eta)\pi_V\big],\] \[
+\Pr\!_j(\eta'=0\mid \cdot)=1-\Pr\!_j(\eta'=1\mid \cdot).\]
+If an individual currently receives a voucher ($\eta=1$), voucher receipt is persistent as long as current-period eligibility holds, i.e., $\mathbbm{I}_j^{V}(a,x,z,e,\varkappa;o',\ell)=1$; otherwise the voucher is lost ($\eta'=0$). If an individual does not currently receive a voucher ($\eta=0$), voucher receipt is determined by the lottery rule in \eqref{eq:voucher_lottery}.
+
+Voucher benefits cover the gap between rental expenditures and a fixed share of income. The voucher amount is
+\begin{equation*}
+\label{eq:voucher_amount}
+\omega_{j,\text{voucher}}(a,x,z,e,\varkappa;\ell,h',o',p_r)=
+\begin{cases}
+\displaystyle
+\max\Big\{0,\ \min\{p_r h',\ p_r \overline{h}_r\}
+-\kappa_r \,y_j^{\text{pre-tax}}(a,x,z,e,\varkappa;\ell)\Big\},
+& o'=0,\ h'>\underline h,\\[1.2ex]
+0, & \text{otherwise},
+\end{cases}
+\end{equation*}
+where $p_r \overline{h}_r$ denotes average rental expenditure in the economy, measured in equilibrium and therefore allowed to adjust across counterfactual simulations, and $\kappa_r$ is the maximum tenant contribution rate. 
+
+\paragraph{HF vs.\ TF conditionality on drug use.}
+Under HF, voucher eligibility and receipt are independent of drug use. Under TF, voucher receipt requires sobriety in the current period. Let $\mathbbm{I}_j^{B}(v)\in\{0,1\}$ denote the sobriety indicator, where $\mathbbm{I}_j^{B}(v)=1$ if $v=0$ and $0$ otherwise. Under TF, next-period voucher receipt satisfies
+\begin{equation}\label{eq:tf_rule}
+\Pr\!_j\left(\eta'=1 \mid \eta,a,x,z,e,\varkappa,v,o',\ell;\text{TF}\right)=
+\mathbbm{I}_j^{B}(v)\cdot \mathbbm{I}_j^{V}(a,x,z,e,\varkappa;o',\ell)\cdot\Big[\eta+(1-\eta)\pi_V\Big].
+\end{equation}
+Equivalently, voucher receipt is revoked with certainty ($\eta'=0$) whenever drug use occurs ($v>0$), even if income eligibility is satisfied.
+
+Under TF in the model, drug use while receiving a voucher leads to loss of eligibility. In practice, such conditionality could be enforced through periodic drug testing. Drug testing technologies are inexpensive and widely used in employment and criminal justice settings. Even if vouchers were provided universally to all eligible households — roughly 20 million — and each recipient were tested once per year (randomly), the administrative cost would likely be on the order of \$1–2 billion annually (reflecting \$50-100 per test), an inconsequential share of the overall fiscal budget and the total cost of the voucher program. For this reason, administrative testing costs are abstracted from in the government budget constraint.
+
+\subsection{Drug experimentation and addiction}\label{sec:addiction}
+
+Individuals who are not addicted may experiment with drugs prior to age $J_A$. Conditional on experimentation, drug consumption intensity $v$ determines the probability of transitioning into addiction: higher consumption levels lead to a higher risk of addiction. Formally, the addiction transition process is given by
+\begin{equation}
+\label{eq:addiction_transition}
+d' \sim \Omega_d\!\left(d' \mid d, v, h'\right),
+\end{equation}
+where, for individuals who are not currently addicted $(d=0)$, the probability of becoming addicted is
+\begin{equation}
+\label{eq:addiction_probability}
+\Pr(d'=1 \mid d=0, v, h') \equiv \pi_d(v) =
+\begin{cases}
+0  & \text{if } v =0,\\[3pt]
+\pi_{d,\text{low}}  & \text{if } 0 < v \le \overline v,\\[3pt]
+\pi_{d,\text{high}} & \text{if } v > \overline v,
+\end{cases}
+\end{equation}
+with $\pi_{d,\text{high}} > \pi_{d,\text{low}}$. Individuals know their current addiction status and the transition probabilities governing addiction and recovery, consistent with the empirical evidence that both users and non-users are well-informed about addiction risk \citep{lundborg_lindgren_2002,greenwood_guner_kopecky_2025_downward_spiral}.
+
+For individuals who are already addicted $(d=1)$, addiction persists unless recovery occurs. Recovery probabilities depend on housing status. In particular, recovery is less likely when $h'=\underline h$, capturing the idea that homelessness impedes treatment adherence and sustained sobriety. Addiction status, in turn, affects survival probabilities \eqref{eq:survival} and employment transitions \eqref{eq:e_transition}.\footnote{The addicted state also captures addicted, self-medicating individuals with untreated mental illness whose marginal sensitivity to incentives is zero by construction. By calibrating the addiction state to data inclusive of this population, the model accounts for their behavioral non-responsiveness without requiring an additional mental health state variable that would substantially complicate computations.}
+
+The government also incurs a cost $\chi_{D}$ for each addict, capturing government expenditures related to addiction. 
+
+\subsection{Preferences}\label{sec:pref}
+
+Individuals value non-drug consumption $c$, housing services $h'$, drug consumption $v$, and leisure $\ell$. Period utility depends on addiction status:
+\begin{equation}\label{eq:utility}
+u\!\left(c,h',v,\ell \mid d\right)=\frac{\left[(c^{1-\theta_1}h'^{\theta_1})^{1-\theta_{d}}(v+b)^{\theta_{d}}\right]^{1-\sigma}}{1-\sigma} +\omega_\ell\frac{\ell^{1-\sigma_\ell}}{1-\sigma_\ell}+\aleph,
+\end{equation}
+where $\theta_{d}=\theta_{0,2}$ if $d=0$ and $\theta_{d}=\theta_{1,2}>\theta_{0,2}$ if $d=1$.
+
+\paragraph{Interpretation of $b$.}
+The parameter $b$ governs the marginal utility of drug use at low consumption levels and therefore the degree of non-homotheticity in instantaneous utility. If $b=0$, the marginal utility of initiating drug use is infinite, making it impossible to generate a substantial mass of non-users in equilibrium. A strictly positive but small $b$, however, implies that initiating drug use yields high — yet finite — marginal utility, allowing for a non-trivial mass of individuals who optimally choose not to use drugs.
+
+In the absence of penalties, this feature alone implies that drug use is increasing in income. However, when drug use instead entails penalties that scale disproportionately with income — such as elevated mortality risk or sufficiently non-proportional income losses — the interaction between high marginal utility at low drug consumption and income-dependent penalties can generate equilibria in which drug use is actually concentrated among low-income individuals, while higher-income individuals optimally abstain. In Appendix~\ref{app:proofs}, I illustrate this mechanism in a simple static environment that mirrors the key features of the dynamic model and provides proofs and clear intuition for the underlying forces.
+
+\paragraph{Interpretation of $\aleph$.}
+The constant $\aleph$ is a state-independent flow utility that normalizes welfare levels as in \citet{hall_jones_2007}. I calibrate $\aleph$ so that, in the stationary equilibrium, the model-implied average value of statistical life (VSL) equals \$7.5 million, a standard benchmark in the empirical value-of-statistical-life literature. This normalization ensures that the VSL is strictly positive for all individuals in equilibrium, ruling out perverse situations in which higher mortality risk due to addiction is actually welfare-improving.
+
+\subsection{Budget constraints}\label{sec:budget}
+
+Let $p_v$ denote the price of drugs and define net-of-tax income as
+\[y_j^{\text{net}}(a,x,z,e,\varkappa;\ell)\equiv
+\big[\hat y_{j,\ell}(x,z,e,\varkappa;\ell)-\rho_{\ell}(x,z,e,\varkappa;\ell)\big]+\big[\hat y_k(a)-\rho_k(a)\big].\]
+I break down the budget constraints by initial tenure status and by housing and homelessness choices to make the dynamic program that follows more transparent. Expenditures common to all constraints are consumption $c$, drug expenditures $p_v v$, and savings $a'$. Resources common to all constraints are after-tax income $y_j^{\text{net}}(\cdot)$, beginning-of-period assets $a$, food assistance $\omega_{j,\text{food}}(\cdot)$, and lump-sum transfers $\vartheta(x,z)$.
+
+\paragraph{Owners ($o'=1$).}
+
+If $o'=1$ and the individual starts as a homeowner ($o=1$),
+\begin{equation}\label{eq:bc_owner_from_owner}
+c+p_v v + p_h h\big(\delta+\mathbbm{I}_{\{h'\neq h\}}\tau_s\big) + p_h h' + a'
+= y_j^{\text{net}}(a,x,z,e,\varkappa;\ell)+a+p_h h+\omega_{j,\text{food}}(a,x,z,e,\varkappa;\ell)+\vartheta(x,z).
+\end{equation}
+Beyond the common terms, expenditures include depreciation $p_h 
+h\delta$, a transaction cost $p_h h\tau_s$, and next-period housing 
+$p_h h'$, while the existing housing stock $p_h h$ appears as an 
+additional resource.
+
+If $o'=1$ and the individual starts as a renter or homeless ($o=0$),
+\begin{equation}\label{eq:bc_owner_from_renter}
+c+p_v v + p_h h' + a'=y_j^{\text{net}}(a,x,z,e,\varkappa;\ell)+a+\omega_{j,\text{food}}(a,x,z,e,\varkappa;\ell)+\vartheta(x,z).
+\end{equation}
+The only additional expenditure is $p_h h'$; no housing-related 
+resources appear since the individual enters without an owned unit.
+
+\paragraph{Renters ($o'=0$, $h'>\underline h$).}
+
+If the individual starts as a homeowner ($o=1$),
+\begin{equation}\label{eq:bc_rent_from_owner}
+\begin{split}
+c+p_v v + p_r h' + p_h h(\delta+\tau_s) + a' &=y_j^{\text{net}}(a,x,z,e,\varkappa;\ell)+a+p_h h \\ &\quad + \omega_{j,\text{food}}(a,x,z,e,\varkappa;\ell)
++\eta\,\omega_{j,\text{voucher}}(a,x,z,e,\varkappa;\ell,h',o',p_r)+\vartheta(x,z).
+\end{split}
+\end{equation}
+Additional expenditures include rent $p_r h'$ and selling costs on 
+the owned unit, while proceeds $p_h h$ and voucher benefits 
+$\eta\,\omega_{j,\text{voucher}}(\cdot)$ appear as additional 
+resources.
+
+If the individual starts as a renter or homeless ($o=0$),
+\begin{equation}\label{eq:bc_rent_from_renter}
+c+p_v v + p_r h' + a'=y_j^{\text{net}}(a,x,z,e,\varkappa;\ell)+a+\omega_{j,\text{food}}(a,x,z,e,\varkappa;\ell)+\eta\,\omega_{j,\text{voucher}}(a,x,z,e,\varkappa;\ell,h',o',p_r)+\vartheta(x,z).
+\end{equation}
+Additional expenditures include rent $p_r h'$ and additional 
+resources include voucher benefits $\eta\,\omega_{j,
+\text{voucher}}(\cdot)$ when received; no housing sale proceeds 
+or maintenance costs apply.
+
+\paragraph{Homeless ($o'=0$, $h'=\underline h$).}
+
+If the individual starts as a renter or homeless ($o=0$),
+\begin{equation}\label{eq:bc_homeless_from_renter}
+c+p_v v + a'=y_j^{\text{net}}(a,x,z,e,\varkappa;\ell)+a+\omega_{j,\text{food}}(a,x,z,e,\varkappa;\ell)+\vartheta(x,z).
+\end{equation}
+No rent $p_r h'$ or voucher benefits $\eta\,\omega_{j,
+\text{voucher}}(\cdot)$ appear since vouchers cannot be used to 
+pay for shelter services.
+
+If the individual starts as a homeowner ($o=1$),
+\begin{equation}\label{eq:bc_homeless_from_owner}
+c+p_v v + p_h h(\delta+\tau_s) + a'=y_j^{\text{net}}(a,x,z,e,\varkappa;\ell)+a+p_h h+\omega_{j,\text{food}}(a,x,z,e,\varkappa;\ell)+\vartheta(x,z).
+\end{equation}
+The individual liquidates the owned unit incurring depreciation 
+$p_h h\delta$ and transaction costs $p_h h\tau_s$, while proceeds 
+$p_h h$ appear as an additional resource. No rent or voucher 
+benefits apply.
+
+All choices must satisfy feasibility \eqref{eq:housing_feas}, borrowing constraint \eqref{eq:ltv}, and the food-stamp rule \eqref{eq:food_rule}. Voucher receipt evolves via \eqref{eq:voucher_lottery} under HF and via \eqref{eq:tf_rule} under TF.
+
+\subsection{Individual dynamic program}\label{sec:hh}
+
+At each age $j$, given state $s$, individuals choose leisure, consumption, drug consumption, savings, housing, and tenure, to maximize expected lifetime utility. Let $V_j(s)$ be the value function. The individual solves
+\begin{equation}\label{eq:bellman}
+\begin{alignedat}{2}
+V_j(s)&=\max_{\{\ell,c,v,a',h',o'\}}\Bigg\{u(c,h',v,\ell\mid d)
++\beta\,\phi_j(h',d)\,\int_{\mathcal{Z}\times\mathcal{E}\times\mathcal{K}\times\mathcal{D}\times\mathcal{N}} V_{j+1}(s') \\[-0.25ex]
+&\qquad\qquad\qquad\qquad\qquad\qquad\qquad\qquad
+\,\times \mathrm{d}\Omega_z(z'\mid z)\times \mathrm{d}\Omega_e(e'\mid e,h',d) \\ &\qquad\qquad\qquad\qquad\qquad\qquad\qquad\qquad 
+\times \mathrm{d}\Omega_{\varkappa}(\varkappa' \mid e,e',\varkappa)\times \mathrm{d}\Omega_d(d'\mid d,v,h')\,
+\\ &\qquad\qquad\qquad\qquad\qquad\qquad\qquad\qquad  \times \mathrm{d}\Omega_\eta\!\left(\eta' \mid \eta,\mathbbm{I}_j^{V}(a,x,z,e,\varkappa;o',\ell),\mathbbm{I}_j^{B}(v);\text{policy}\right)
+\Bigg\},
+\end{alignedat}
+\end{equation}
+The maximization is subject to the housing constraints \eqref{eq:housing_feas}, borrowing constraint \eqref{eq:ltv}, budget constraints \eqref{eq:bc_owner_from_owner}--\eqref{eq:bc_homeless_from_owner}, and program rules. I denote the optimal policy functions for leisure, non-drug consumption, drug consumption, assets, housing, and tenure by $\ell_j(s),c_j(s),v_j(s),a'_j(s),h'_j(s),o'_j(s)$, respectively.
+
+The key tradeoff embedded in this problem is between the immediate 
+utility of drug experimentation and the expected loss in continuation 
+value arising from the risk of transitioning into addiction — a state 
+that raises mortality and unemployment risk and increases the 
+probability of homelessness, creating a feedback loop that further 
+reduces the value of future life. This tradeoff is the channel through 
+which housing voucher policy affects drug use: by altering the expected cost of homelessness, vouchers change the value of remaining sober and employed.
+
+Having characterized the individual's problem, I now turn to the 
+supply side of the housing market, the distribution of individuals 
+across states, and the equilibrium conditions that close the model.
+
+\subsection{Housing and rental supply}\label{sec:firms}
+
+\subsubsection{Housing construction company}\label{sec:construction_company}
+
+A competitive construction firm earns revenue $p_h I$ from producing $I$ units of new housing. Its total cost of production is given by:
+
+\begin{equation*}\label{eq:total_cost_structure}
+TC(I)=\frac{\varsigma_{1}}{\varsigma_{2}}I^{\varsigma_{2}},
+\end{equation*}
+
+\noindent where $\varsigma_{1}$ dictates the average cost of housing investment, and $\varsigma_{2}$ controls the responsiveness of investment to house prices. The firm chooses $I$ to maximize profits:
+\begin{equation*}
+\label{eq:construction_company_profits}
+\Pi_h=\max_{I}\left\{p_h I-TC(I)\right\}.
+\end{equation*}
+
+The first-order condition for this problem implies the following standard positive relationship between housing investment and the price of housing:
+\begin{equation}
+\label{eq:construction_company_first_order_condition}
+I^{\star}=\left(\frac{p_h}{\varsigma_{1}}\right)^{\frac{1}{\varsigma_{2}-1}}.
+\end{equation}
+This implies a new housing supply elasticity with respect to the housing price of
+\begin{equation*}
+\label{eq:elasticity_housing}
+\epsilon_{I^{\star}}=\frac{1}{\varsigma_{2}-1}.
+\end{equation*}
+
+\paragraph{Housing law of motion.}
+The aggregate housing stock evolves according to
+\begin{equation}
+\label{eq:housing_lom}
+H'=(1-\delta)H+I,
+\end{equation}
+where $\delta\in(0,1)$ is the depreciation rate of housing.
+
+\subsubsection{Rental company}
+I use the corporate rental market structure from \citet{garrigaeetal-2009}. The rental company discounts future profits at the exogenous interest rate $r$. The rental company begins each period with a stock of rental housing, $W$, on which it pays depreciation costs. It chooses how much additional rental housing to purchase, $W'-W(1-\delta)$, earns rental income $p_{r} W'$, and incurs management costs $C_r(W') = \frac{\gamma_1}{\gamma_2} W'^{\gamma_2}$. The rental company's dynamic program is
+\begin{equation*}
+V_r(W)=\max_{\{W'\}} \left\{p_{r}W' - C_r(W') - p_h W' + p_h(1-\delta) W + \frac{1}{1+r}V_r(W')\right\}.
+\end{equation*}
+The solution to this problem in a stationary equilibrium ($p'_h=p_h$) is given by
+\begin{equation}
+\label{eq:foc_rental}
+p_{r} = \gamma_1 (W')^{\gamma_2-1}+\left\{\frac{r+\delta}{1+r}\right\}p_h.
+\end{equation}
+
+The parameter $\gamma_2$ governs the elasticity of the rental housing supply to the rental price. When $\gamma_2=1$, the rental supply is perfectly elastic as in \citet{gervais} and \citet{kaplanetal-2019}, which means that the price-rent ratio is independent of the quantity of rental housing supplied. When $\gamma_{2}>1$, the rental supply curve slopes upward, which means that the rental price rises in equilibrium when demand for rental housing shifts outward. In my calibration, I discipline $\gamma_2$ using rental supply 
+elasticity estimates from \citet{rotberg_steinberg_2024_mortgage_interest_deductions}, 
+as described in Section~\ref{sec:calibration}.
+
+\subsection{Distributions: initialization and law of motion}\label{sec:dist}
+
+\paragraph{Initialization (newborn cohort).}
+The distribution of age-1 individuals is exogenous and follows the structure described by \eqref{eq:psi1}. Newborns are born with no assets, permanent productivity $x\sim \Omega_x(x)$ and initial idiosyncratic productivity $z\sim \bar F(z)$ that follows the ergodic distribution of $z$. All newborns start employed, without housing, without vouchers, and not addicted, consistent with the 
+empirical evidence that addiction develops during early adulthood rather than at birth \citep{nsduh_2024}.
+
+Formally, the distribution of age-1 individuals is given by
+\begin{equation}
+\label{eq:psi1}
+\Psi_1(S)=\int_{\mathcal{X}\times\mathcal{Z}} \indicator{(0,x,z,1,\varkappa_0,\underline{h},0,0,0)\in S}\,\mathrm{d}\Omega_x(x)\,\mathrm{d}\bar F(z),
+\end{equation}
+where I set initial UI receipt to $\varkappa_0=0$.
+
+The distribution of age-$j+1$ individuals, described by \eqref{eq:psi_lom}, is obtained by pushing forward the distribution of age-$j$ individuals through the optimal policy functions and the stochastic transition kernels, conditional on survival.
+
+\begin{equation}
+\label{eq:psi_lom}
+\begin{alignedat}{2}
+\Psi_{j+1}(S)&=\int_{\mathcal{S}}\phi_j\left(h'_j(s),d\right)
+\Bigg[\int_{\mathcal{Z}}\!\!\int_{\mathcal{E}}\!\!\int_{\mathcal{K}}\!\!\int_{\mathcal{D}}\!\!\int_{\mathcal{N}}\indicator{\big(a'_j(s),x,z',e',\varkappa',h'_j(s),o'_j(s),\eta',d'\big)\in S} \\[-0.5ex]
+&\quad \times \mathrm{d}\Omega_z(z'\mid z)\,\times\mathrm{d}\Omega_e(e'\mid e,h'_j(s),d)\, \times\mathrm{d}\Omega_{\varkappa}(\varkappa' \mid e,e',\varkappa)
+ \times\mathrm{d}\Omega_d(d'\mid d,v_j(s),h'_j(s))\\[-0.5ex]
+&\quad \times \mathrm{d}\Omega_\eta\!\left(\eta' \mid \eta,\mathbbm{I}_j^{V}(a,x,z,e,\varkappa;o'_j(s),\ell_j(s)),\mathbbm{I}_j^{B}(v_j(s));\text{policy}\right) \Bigg]\,\mathrm{d}\Psi_j(s),\qquad j=1,\ldots,J-1,
+\end{alignedat}
+\end{equation}
+where $\Psi_j(s)$ denotes the distribution of age-$j$ individuals over the state space $\mathcal{S}$.
+
+\paragraph{Accidental bequests.}
+
+Accidental bequests arise from the assets held by individuals who do not survive to the next period. These assets consist of the value of owner-occupied housing net of depreciation, plus financial assets or outstanding mortgage debt when $a'_j(s)$ is negative. In equilibrium, total bequests left by decedents — consisting of net housing wealth and financial assets — must equal total wealth endowments received by surviving individuals:
+\begin{equation}
+\label{eq:bequests}
+\sum_{j=1}^J \int_{\mathcal{S}}\big(1-\phi_j(h'_j(s),d)\big)\,\left[o'_j(s)p_h h'_j(s)(1-\delta)+a'_j(s)\right]\,
+\mathrm{d}\Psi_j(s)=\sum_{j=1}^J \int_{\mathcal{S}} \vartheta(x,z)\,\mathrm{d}\Psi_j(s).
+\end{equation}
+
+\subsection{Market clearing}\label{sec:mc}
+
+There are two housing market clearing conditions. The first states that the aggregate demand for housing services from both renters and homeowners must equal the aggregate housing stock available this period (excluding homeless shelters):
+\begin{equation}
+\label{eq:mkt_h}
+\sum_{j=1}^J \int_{\mathcal{S}}h'_j(s)\mathbbm{I}_{\{h'_j(s)\neq \underline{h}\}}\,\mathrm{d}\Psi_j(s)=H',
+\end{equation}
+
+The second market clearing condition states that the aggregate demand for rental housing services must equal the quantity of rental housing supplied by the rental company:
+\begin{equation}
+\label{eq:mkt_r}
+\sum_{j=1}^J \int_{\mathcal{S}}\big(1-o'_j(s)\big)\, \mathbbm{I}_{\{h'_j(s)\neq \underline{h}\}} h'_j(s)\, \mathrm{d}\Psi_j(s)=W'.
+\end{equation}
+
+\subsection{Government budget}\label{sec:gov}
+
+The government levies labor income taxes and capital income taxes and uses the proceeds to finance retirement and UI benefits, the food stamp and housing voucher programs, additional expenditures associated with homelessness and addiction, and public goods $G$. I keep $G$ constant in my counterfactual experiments and balance the budget with income taxes. Specifically, in each counterfactual experiment, the labor income tax shifter $\tau_\ell$ adjusts to satisfy \eqref{eq:gov_budget}, holding all other fiscal parameters 
+fixed. The government budget must balance each period:
+\begin{equation}
+\label{eq:gov_budget}
+\begin{aligned}
+&\sum_{j=1}^J \int_{\mathcal{S}}\Big[\rho_{\ell}(x,z,e,\varkappa;\ell_j(s))
++\rho_k\!\left(a\right)\Big]\,\mathrm{d}\Psi_j(s)  =
+\sum_{j=J_R}^J \int_{\mathcal{S}} y_{R}(x,z)\mathrm{d}\Psi_j(s)+
+\sum_{j=1}^{J_{R}-1} \int_{\mathcal{S}}y_{j,ui}(x,\varkappa)\mathrm{d}\Psi_j(s) \\ &\qquad\qquad\qquad +\sum_{j=1}^J \int_{\mathcal{S}}\Big[\omega_{j,\text{food}}(a,x,z,e,\varkappa;\ell_j(s)) + \eta\,\omega_{j,\text{voucher}}(a,x,z,e,\varkappa;\ell_j(s),h'_j(s),o'_{j}(s),p_r)\, \\ &\qquad\qquad\qquad + \mathbbm{I}\{h'_j(s)=\underline h\}\,\chi_H+\,\mathbbm{I}\{d=1\}\,\chi_D
+\Big] \,\mathrm{d}\Psi_j(s)+G.
+\end{aligned}
+\end{equation}
+
+\subsection{Equilibrium}\label{sec:eqm}
+
+Given a policy regime (HF or TF), a stationary competitive equilibrium consists of prices $(p_h,p_r)$, bequests $\vartheta(x,z)$, value functions $\{V_j(s)\}_{j=1}^J$, policy functions $\{\ell_j(s),c_j(s),v_j(s),a'_j(s),h'_j(s),o'_j(s)\}_{j=1}^J$ for all $s$, aggregate stocks $(H',W')$ and flows $(I)$, and age-dependent distributions $\{\Psi_j\}_{j=1}^J$ such that:
+
+\begin{enumerate}
+\item \textbf{Individual optimality.} Given $(p_h,p_r,\vartheta(x,z))$, taxes \eqref{eq:tax_l}--\eqref{eq:tax_k}, food stamp program rules \eqref{eq:food_rule}, and housing voucher program rules \eqref{eq:voucher_lottery} under HF or \eqref{eq:tf_rule} under TF, the value functions and policy functions solve \eqref{eq:bellman} subject to constraints \eqref{eq:housing_feas}--\eqref{eq:ltv} and \eqref{eq:bc_owner_from_owner}--\eqref{eq:bc_homeless_from_owner}.
+
+\item \textbf{Housing company optimality.} New housing investment $I$ solves the housing company's problem by satisfying \eqref{eq:construction_company_first_order_condition}.
+
+\item \textbf{Aggregate housing stock.} The aggregate housing 
+stock $H'$ is consistent with new investment $I^{\star}$ and 
+depreciation $\delta$ as in \eqref{eq:housing_lom}.
+
+\item \textbf{Rental company optimality.} The rental stock $W'$ solves the rental company's problem by satisfying \eqref{eq:foc_rental}.
+
+\item \textbf{Distributions.} The youngest-cohort distribution is initialized by \eqref{eq:psi1} and the laws of motion described by \eqref{eq:psi_lom} hold.
+
+\item \textbf{Bequests.} Bequests satisfy \eqref{eq:bequests}.
+
+\item \textbf{Market clearing.} Two conditions clear the 
+housing market. The first requires that aggregate demand for 
+housing from renters and homeowners equals the aggregate 
+housing stock \eqref{eq:mkt_h}. The second requires that 
+aggregate demand for rental housing equals the stock supplied 
+by the rental company \eqref{eq:mkt_r}.
+
+\item \textbf{Government budget.} The government balances its budget \eqref{eq:gov_budget}.
+\end{enumerate}
+
+Section~\ref{sec:calibration} describes how the model's parameters are calibrated to match key features of the U.S. economy.
+
+\section{Calibration}
+\label{sec:calibration}
+
+I calibrate the model so that its stationary equilibrium matches key features of the U.S.\ economy as well as salient empirical facts about homelessness, drug use, addiction, and housing assistance. The calibration proceeds in two stages. First, I assign values to parameters with clear empirical counterparts or that are standard in the literature. Second, I jointly calibrate the remaining parameters so that the model matches a set of aggregate and cross-sectional moments related to wealth accumulation, labor supply, housing outcomes, program participation, and addiction dynamics. Tables~\ref{tab:external_calibration} and~\ref{tab:internal_calibration} summarize the externally assigned and internally calibrated parameters and their values, respectively.
+
+\subsection{Externally assigned parameters}
+\label{sec:external_calibration}
+
+\subsubsection{Demographics}
+
+A model period corresponds to one year. Individuals enter the economy at age 26, retire at age 66, and may live up to age 85, implying a lifespan of $J=60$ and a retirement age of $J_R=41$. Individuals who are not addicted may experiment with drugs up to age $J_A$.\footnote{This upper bound captures the well-documented empirical regularity that initiation of illicit drug use is overwhelmingly concentrated in early adulthood \citep{nsduh_2024}; the specific value of $J_A$ is determined in the second stage.} The maximum experimentation age $J_A$ is calibrated internally. 
+
+Let $\phi_j^{\text{base}}$ denote the baseline probability that a housed, non-addicted individual of age $j$ survives to age $j+1$. I take $\{\phi_j^{\text{base}}\}_{j=1}^J$ from the U.S.\ Life Tables \citep{arias-2014}. Homelessness and addiction affect mortality by scaling the baseline probability of death. Define the baseline death probability as
+\[\delta_j^{\text{base}} \equiv 1-\phi_j^{\text{base}}.\]
+Survival for an individual of age $j$ who chooses housing $h'$ and has addiction status $d$ is thus given by
+\begin{equation*}
+\label{eq:survival_wedge}
+\phi_j(h',d)=1-\kappa_{\phi}(h',d)\,\delta_j^{\text{base}},
+\end{equation*}
+where
+\begin{equation*}
+\kappa_{\phi}(h',d)=
+\begin{cases}
+1, & h'>\underline h,\ d=0,\\
+\kappa_{h,\phi}, & h'=\underline h,\ d=0,\\
+\kappa_{d,\phi}, & h'>\underline h,\ d=1,\\
+\kappa_{h,\phi}\kappa_{d,\phi}, & h'=\underline h,\ d=1.
+\end{cases}
+\end{equation*}
+The homelessness-related mortality multiplier $\kappa_{h,\phi}$ is set externally in Section \ref{sec:external_calibration_homeless_addicted}, and the addiction-related mortality multiplier $\kappa_{d,\phi}$ is calibrated internally in Section~\ref{sec:internal_calibration}.
+
+\subsubsection{Preferences}
+
+The functional form of preferences was described in Section~\ref{sec:pref}. I set the coefficient of relative risk aversion $\sigma$ to 2, as is standard in the literature. The curvature of leisure in utility $\sigma_\ell$ is set to $3$, which implies a Frisch elasticity of $0.5$ as estimated by \citet{Chetty2012Frisch}.
+
+Several preference parameters are determined in the second stage of the calibration. In particular, the discount factor $\beta$, the leisure weight $\omega_\ell$, the housing utility weight $\theta_1$, and the drug utility parameters $(\theta_{0,2},\theta_{1,2},b)$ are calibrated internally.
+
+\subsubsection{Labor income and productivity}
+
+Working-age labor income depends on permanent productivity $x$, idiosyncratic productivity $z$, and a deterministic life-cycle component $\{\zeta_j\}_{j=1}^{J_R-1}$. I adopt the labor income process from \citet{gkkoc}.
+
+Permanent productivity evolves intergenerationally according to the AR(1) process
+\begin{equation*}
+\log x' = \rho_x \log x + \varepsilon_x,
+\qquad
+\varepsilon_x \sim \mathcal{N}(0,\sigma_x^2),
+\end{equation*}
+with $\rho_x=0.5$ and $\sigma_x=0.309$.
+
+Idiosyncratic productivity also follows an AR(1) process in logs:
+\begin{equation*}
+\log z' = \rho_z \log z + \varepsilon_z,
+\qquad
+\varepsilon_z \sim \mathcal{N}(0,\sigma_z^2),
+\end{equation*}
+with $\rho_z=0.9$ and $\sigma_z=0.2$. The deterministic life-cycle profile $\{\zeta_j\}$ and retirement income $y_R(x,z)$ are also taken from \citet{gkkoc}.
+
+\subsubsection{Employment transitions and unemployment insurance}
+\label{sec:cal_employment}
+
+\paragraph{Re-employment transitions.}
+I begin by specifying the probability that a housed, non-addicted unemployed individual regains employment next period. I denote this probability by $\pi_{ue}^{\text{base}}$, and set $\pi_{ue}^{\text{base}}$ using annualized estimates from \citet{kruegeretal-2016}, who document average job-finding rates in U.S.\ data.
+
+The re-employment probabilities of the homeless and addicted are scaled by the baseline hazard in the following way:
+\begin{equation*}
+\Omega_e(e'=1 \mid e=0, h', d)=\pi_{ue}(h',d)=
+\min\{1,\kappa_{ue}(h',d)\,\pi_{ue}^{\text{base}}\},
+\label{eq:jobfinding}
+\end{equation*}
+where
+\begin{equation*}
+\kappa_{ue}(h',d)=
+\begin{cases}
+1, & h'>\underline h,\ d=0,\\
+\kappa_{h,ue}, & h'=\underline h,\ d=0,\\
+\kappa_{d,ue}, & h'>\underline h,\ d=1,\\
+\kappa_{h,ue}\kappa_{d,ue}, & h'=\underline h,\ d=1.
+\end{cases}
+\label{eq:kappa_ue}
+\end{equation*}
+The homelessness-related multiplier $\kappa_{h,ue}$ is set to $0.8$, implying a 20\% reduction in re-employment among homeless individuals. This choice is in line with \citet{desmond_gershenson_2016}, who find that housing instability, including eviction, is associated with worse labor-market outcomes, including lower rates of job recovery and higher rates of job loss. $\kappa_{d,ue}$ is internally assigned in the second stage to match the share of the homeless population who is also addicted (Table~\ref{tab:internal_calibration}). The probability of remaining unemployed satisfies $\Omega_e(e'=0\mid e=0,h',d)=1-\pi_{ue}(h',d)$.
+
+\paragraph{Unemployment transitions.}
+Next, I specify unemployment risk. Let $\pi_{eu}^{\text{base}}$ denote the probability that a housed, non-addicted employed individual becomes unemployed in the next period. This parameter is calibrated in the second stage of my calibration procedure to match the aggregate unemployment rate, but I introduce it here because it serves as the baseline hazard underlying all unemployment transitions.
+
+Unemployment risk depends on housing and addiction status through a multiplicative scaling of this baseline hazard:
+\begin{equation*}
+\Omega_e(e'=0 \mid e=1, h', d)=\pi_{eu}(h',d)=
+\min\{1,\kappa_{eu}(h',d)\,\pi_{eu}^{\text{base}}\},
+\label{eq:jobloss}
+\end{equation*}
+where
+\begin{equation*}
+\kappa_{eu}(h',d)=
+\begin{cases}
+1, & h'>\underline h,\ d=0,\\
+\kappa_{h,eu}, & h'=\underline h,\ d=0,\\
+\kappa_{d,eu}, & h'>\underline h,\ d=1,\\
+\kappa_{h,eu}\kappa_{d,eu}, & h'=\underline h,\ d=1.
+\end{cases}
+\label{eq:kappa_eu}
+\end{equation*}
+To preserve symmetry with re-employment transitions, I define the unemployment multiplier associated with homelessness as the inverse of the re-employment multiplier, $\kappa_{h,eu}=\frac{1}{\kappa_{h,ue}}$. Accordingly, I set $\kappa_{h,eu}=1.25$, implying that transitions from employment to unemployment are 25\% more likely when homeless. Similarly, the addiction-related unemployment multiplier satisfies $\kappa_{d,eu}=\frac{1}{\kappa_{d,ue}}$, where $\kappa_{d,ue}$ is calibrated internally in the second stage.
+
+\paragraph{Unemployment insurance.}
+Consistent with U.S.\ data, I set the probability of receiving unemployment insurance $\pi_\varkappa$ to $0.3$ \citep{fred-ui}.\footnote{Using data from the Federal Reserve Bank of St.\ Louis, I compute the ratio of insured unemployment (series IURSA) to total unemployment (series UNRATE) over 2014--2024. This ratio averages close to 30\% outside recession periods.} I set the replacement rate $\kappa_{ui}$ to $0.5$, which is the standard replacement rate of UI benefits. Individuals who draw $\varkappa=1$ upon entering unemployment retain UI eligibility for the duration
+of their unemployment spell.
+
+\subsubsection{Housing, housing finance, interest rates, taxes, and voucher programs}
+
+\paragraph{Housing and housing finance.} The housing depreciation rate $\delta$ is set to $0.6\%$ based on estimates from \citet{rosenthal-2014}. The proportional selling cost $\tau_s$ is set to $6\%$ of the sale price as estimated by \citet{gm-2003}. $\varsigma_2$, which controls the elasticity of new housing investment, is set to $2.11$ to generate an elasticity of 0.9 based on estimates from \citet{sommersullivan-2017}. Mortgage borrowing is limited by a loan-to-value constraint with $\lambda=0.8$, a common threshold in the U.S. mortgage industry. The number of housing size categories $n$ is set to $7$, comprising seven discrete sizes, of which the two largest correspond to owner-occupied housing. The smallest rental unit $h_{1}$, the minimum owner-occupied housing size $h_{6}$, and the housing services available to the homeless $\underline{h}$ are calibrated in the second stage.\footnote{The full housing size grid, part of which is determined in the second stage, is $\mathcal{H}\equiv \{0.04, 0.051, 0.078, 0.119, 0.173, 0.25, 0.315\}$. Housing services received by homeless individuals, denoted $\underline{h}$, are set to $0.0083$, equal to about 21 percent of the smallest rental unit in the model. This captures in a reduced form the extreme loss of effective housing services associated with homelessness. Living unsheltered or in shelters, which are usually overcrowded, entails a severe reduction in privacy, poor sleep quality, heightened exposure to adverse weather, disease, violence, and theft, and limited ability to secure personal belongings or maintain basic hygiene.}
+
+\paragraph{Interest rates and taxes.} The real interest rate $r$ is set to 3\% as in \citet{kaplanetal-2019}. Capital income is taxed at rate $\tau_k=0.15$ as in \citet{kkk-2021}. Labor income taxes are progressive with parameter $\xi=0.85$, based on estimates from \citet{hsv-2020}. In the \citet{hsv-2020} parameterization, this corresponds to $1-\tau=0.85$ (i.e., $\tau=0.15$). The average labor income tax level $\tau_\ell$ is calibrated internally in the second stage.
+
+\paragraph{Voucher programs.} I model housing vouchers as a stylized version of U.S. Housing Choice Voucher (Section~8) programs. Eligibility is based on current income and tenure status, abstracting from local Area Median Income (AMI) variation. Specifically, eligibility is governed by $\kappa_V=0.5$, such that an individual must have income below 50\% of the economy-wide median income. Tenant rent contributions are governed by $\kappa_r=0.3$, and the voucher receipt probability $\pi_V$ is calibrated internally. Food stamps guarantee a minimum level of non-drug consumption governed by $\kappa_f$, which is also calibrated internally.
+
+\subsubsection{Homelessness and addiction}\label{sec:external_calibration_homeless_addicted}
+
+The price of drugs, $p_v$, is normalized to one. The mortality risk associated with homelessness is captured by a multiplicative shifter on the baseline death hazard. I set the homelessness mortality multiplier, $\kappa_{h,\phi}$, to $1.6$ based on \citet{meyer_wyse_logani_2024_mortality}, who find that unhoused individuals face a mortality risk approximately 60\% higher than that of comparably poor housed individuals.
+
+Recovery from addiction depends on housing status. Specifically, the probability that an addicted individual recovers in the next period is given by
+\begin{equation*}
+\Omega_d(d'=0 \mid d=1,h')=
+\begin{cases}
+\kappa_{H,d}=0.025, & h'>\underline h,\\
+\kappa_{\underline H,d}\times \kappa_{H,d}, & h'=\underline h.
+\end{cases}
+\end{equation*}
+The recovery probability for housed individuals, $\kappa_{H,d}$, is set to $2.5\%$, which implies a roughly 22.3\% cumulative recovery rate after ten years. This value is disciplined by 
+the 10-year recovery rates documented by \citet{vaillant1995natural} 
+for alcohol addiction, and should be interpreted as a conservative 
+lower bound given that the model's addiction state captures severe substance dependence. I set the recovery multiplier $\kappa_{\underline H,d}$ in the second stage. 
+
+I classify non-addicted individuals into light and heavy drug experimenters based on the annual frequency of drug use reported in the \citetshort{nsduh_2024}. Specifically, among individuals who report positive drug use $(v>0)$, I define light experimenters as those who consume drugs on at most $49$ days per year, and heavy users as those who consume drugs on $50$ or more days per year. This threshold partitions experimenters into two groups with distinct addiction risks while allowing for partial reductions in drug use that do not require complete abstinence. Using this classification, I compute the probability of having a SUD diagnosis separately for light and heavy users. I find that heavy users are approximately $6.48$ times more likely to be diagnosed with a SUD than light users. In the model, I map this empirical moment into the addiction transition process by setting $\frac{\pi_{d,\text{high}}}{\pi_{d,\text{low}}} = 6.48$, 
+where $\pi_{d,\text{low}}$ is set in the second stage of the calibration and $\pi_{d,\text{high}}=6.48 \times \pi_{d,\text{low}}$ governs the probability of transitioning from non-addiction to addiction for light and heavy users, respectively, as defined in \eqref{eq:addiction_probability}. I set the value of the cutoff $\overline{v}$ above which an individual becomes a heavy experimenter in the second stage.
+
+The fiscal cost of homelessness, $\chi_H$, is set to $25.2\%$ of average labor income. This corresponds to an annual public cost of approximately \$35{,}600 per chronically homeless individual, in line with estimates in \citet{naeh2016saves}. The fiscal cost of addiction, $\chi_D$, is set to $21.2\%$ of average labor income, matching the White House Council of Economic Advisers' estimate that non-fatal public expenditures associated with addiction amount to roughly \$30{,}000 per individual per year \citep{cea2017opioid}.
+
+\subsection{Internally calibrated parameters}
+\label{sec:internal_calibration}
+
+After assigning values to the parameters above, I jointly calibrate the values of the remaining parameters:
+\[\Big\{\beta,\ \omega_\ell,\ \aleph, \theta_1,\ h_1,\ h_{6},\ \underline h,\ \gamma_2,\ \gamma_1,\ J_{A},\ \theta_{0,2},\ \theta_{1,2},\ b,\ \pi_{d,\text{low}},\overline{v} ,\ \kappa_{d,\phi},\ \pi_{eu}^{\text{base}},\ \kappa_{d,ue},\ \kappa_{\underline H,d},\ \pi_{V},\ \kappa_{f},\ \tau_{\ell} \Big\}.\]
+I then also set the unemployment multiplier when addicted as
+$\kappa_{d,eu}=\frac{1}{\kappa_{d,ue}}$ so that addiction reduces re-employment probabilities and increases unemployment risk symmetrically. Hence $\kappa_{d,eu}$ is implied by the calibration of $\kappa_{d,ue}$ and is not targeted separately.
+
+The parameter values in the set above are chosen to match the following moments:
+\begin{enumerate}
+\setlength\itemsep{0.15em}
+\item \textbf{Net wealth / GDP $=3.25$.} This range is consistent with U.S. postwar data once housing and land are included in private wealth. Canonical heterogeneous-agent models imply wealth-to-GDP ratios close to 3.0 when calibrated to match capital–output ratios and wealth distributions \citep{krusell_smith_1998,kaplan_moll_violante_2018}. Models incorporating demographic forces, low natural rates of interest, or housing and land wealth generate higher ratios closer to 3.5 \citep{piketty_2014,eggertsson_mehrotra_robbins_2019,rachel_summers_2019,kindermann_krueger_2022}. Thus, my target ratio lies squarely within this empirically and theoretically accepted range.
+
+\item \textbf{Average fraction of time spent working $=40\%$.} This target comes from \citet{gkkoc}.
+
+\item \textbf{Average VSL $=\$7.5$ million.} This target is consistent with values estimated by \citet{viscusi_aldy_2003} and values used by \citet{epa_2010}.
+
+\item \textbf{Average rent-to-income ratio among renters $=0.33$.} I source this statistic from the 2022 Survey of Consumer Finances (SCF).
+
+\item \textbf{Fraction of renters with rent/income $\ge0.5$: $16.2\%$.} This target also comes from the SCF.
+
+\item \textbf{Homeownership rate $=66.1\%$.} I obtain this number from the SCF as well.
+
+\item \textbf{Homelessness rate $=0.3\%$.} I discipline the steady-state homelessness rate using two complementary measures. HUD's Annual Homeless Assessment Report records 1{,}388{,}000 individuals using shelter programs in 2022, implying a sheltered homelessness rate of 0.42\% \citepshort{hud_ahar_2023}. The 2022 Point-in-Time count of 582{,}462 implies a rate of 0.18\% \citepshort{hud_pit_2022}. I target the midpoint, 0.30\%, to account for both measurement approaches.
+
+\item \textbf{Rental supply elasticity $=1.4$.} This target comes from \citet{rotberg_steinberg_2024_mortgage_interest_deductions}, who estimate a rental supply elasticity of approximately 1.4 for the U.S.
+
+\item \textbf{Rent-to-house-price ratio $=8.3\%$.} This target comes from \citet{gv-2009}.
+
+\item \textbf{Average age of addicted individuals $=40$.} The average age of an addicted individual is computed using the age distribution of past-year SUD reported in Table 5.3A of the 2023 NSDUH Detailed Tables \citepshort{nsduh_2023}. Assigning standard midpoints to each age bin yields a mean age of approximately 40 years.
+
+\item \textbf{Drug spending / income (experimenters) $=11\%$.} I construct this target by combining NSDUH personal income 
+for individuals with mild SUD with Arrestee Drug Abuse Monitoring (ADAM) expenditure data on marijuana, adjusted to 2023 dollars using the CPI (see \citetshort{nsduh_2024} and \citet{golub_johnson_2004_manhattan}).
+
+\item \textbf{Drug spending / income (addicts) $=44\%$.} I construct this target by combining NSDUH personal income for individuals with moderate or severe SUD with ADAM expenditure data on heroin and cocaine, adjusted to 2023 dollars using the CPI (\citetshort{nsduh_2024} and \citet{golub_johnson_2004_manhattan}).
+
+\item \textbf{Percentage of population using drugs $=4\%$.} This target is constructed using nationally representative data from \citetshort{nsduh_2023}. According to their Table A.17B, 9.6 percent of adults report past-year use of illicit drugs other than alcohol. To be conservative, I also subtract non-severe marijuana use, which yields an overall drug-use prevalence of approximately 4 percent.
+
+\item \textbf{Ratio of experimenters to addicts $=1$.} Using the same table from \citetshort{nsduh_2023}, I find that 55.9 percent of past-year drug users are classified as mild users, while the remaining share meet criteria consistent with moderate or severe SUD. Given an overall drug-use prevalence of 4 percent in the population, this implies that roughly half of drug users engage in occasional or experimental use, with the remainder exhibiting addictive behavior. To capture this distinction parsimoniously, I therefore partition drug users evenly into experimenters and addicts, corresponding to 2 percent of the population in each group.
+
+\item \textbf{Fraction of experimenters who are light $=0.87$.}
+Using microdata from \citetshort{nsduh_2024}, I compute the share of individuals without a SUD diagnosis who report positive drug use and who consumed illicit drugs on at most $49$ days in the past year. I find that $86.8\%$ of experimenters fall into this light-use category.\footnote{Illicit drugs in this classification include cocaine, heroin, methamphetamine, inhalants, and hallucinogens, as defined in the \citetshort{nsduh_2024} public-use files.}
+
+\item \textbf{Drug-use participation elasticity $=-0.63$.} This number comes from estimates of the participation elasticity of drug use (with respect to own price) in the empirical literature on illicit drug demand. Using U.S. microdata, \citet{saffer_chaloupka_1999} estimate participation elasticities ranging from $-0.36$ for cocaine to $-0.9$ 
+for heroin; similar magnitudes are found for opium by \citet{vanours1995price}. I calibrate to the midpoint of the U.S. estimates, $-0.63$. 
+
+\item \textbf{Unemployment rate $=4.9\%$.} This value is taken from the Federal Reserve Economic Data (FRED) and corresponds to the average U.S.\ unemployment rate over the period 2014--2024.
+
+\item \textbf{Unemployment rate among addicted individuals $=26.9\%$.} I discipline the unemployment rate among addicts using nationally representative evidence from \citet{nsduh_2022}. Their Table 5.10B of the Detailed Tables reports labor force outcomes for individuals with past-year SUD. Among individuals with moderate or severe SUD, the unemployment rate was 26.1 percent in 2021 and 27.7 percent in 2022. I therefore target the midpoint of 26.9 percent.
+
+\item \textbf{Addiction rate of homeless $=37\%$.} U.S. evidence indicates some heterogeneity in addiction prevalence among the homeless. Using data from New York City and Philadelphia, \citet{kuhn1998}, report substance abuse rates among homeless adults ranging from approximately 25 percent to nearly 50 percent, depending on the population and definition considered. This also aligns with estimates from \citetshort{samhsa_tip55}. I therefore calibrate the fraction of homeless individuals who are addicted to 37 percent, corresponding to the midpoint of this empirically documented range. 
+
+\item \textbf{Voucher recipients relative to eligible individuals $=26.6\%$.} According to \citet{hud_worstcase2023}, there were 19.3 million very-low-income (VLI) renters in the United States in 2021, defined as renters with income below 50 percent of area median income. Of these renters, only 5.14 million received any form of federal rental assistance, including Housing Choice Vouchers, public housing, or project-based assistance. These figures imply that roughly 26.6 percent of VLI renters received some form of federal rental assistance. I therefore discipline voucher availability in the model to reflect the substantial gap between income eligibility and actual receipt observed in the data.
+
+\item \textbf{Food stamp expenditures / GDP $=0.42\%$.} In fiscal year 2023, total Supplemental Nutrition Assistance Program (SNAP) benefit payments were approximately \$113 billion following the expiration of pandemic-era emergency allotments \citep{usda_snap_2023}. Nominal U.S. GDP in the same year was about \$27.0 trillion \citep{bea_gdp_2023}. SNAP spending therefore represented $\frac{113}{27{,}000} \approx 0.0042$, or roughly 0.42 percent of GDP.
+
+\item \textbf{Average labor income tax rate $=22.4\%$.} This target comes from \citet{mcdaniel-2007}, commonly used in macro calibration.
+
+\end{enumerate}
+
+Although all parameters are jointly calibrated, individual parameters exert stronger influence on specific moments. Below, I describe the primary mapping between each calibration target and the parameter that most directly governs it.
+
+\begin{enumerate}
+\setlength\itemsep{0.15em}
+
+\item \textbf{Discount factor $\beta$.} A higher $\beta$ reduces time discounting, leading households to save more and increasing the net-wealth–to–GDP ratio.
+
+\item \textbf{Preference for leisure $\omega_{\ell}$.} A higher $\omega_{\ell}$ raises the marginal utility of leisure, reducing labor supply and average hours worked.
+
+\item \textbf{Flow utility shifter $\aleph$.} A higher $\aleph$ raises baseline utility, increasing the average VSL.
+
+\item \textbf{Preference for housing $\theta_1$.} A higher $\theta_1$ increases the marginal utility of housing services, causing renters to allocate a larger share of income to rent and raising the average rent–to–income ratio.
+
+\item \textbf{Minimum rental size $h_1$.} A higher $h_1$ forces more renters into larger units, increasing rent burdens and raising the share of renters spending more than 50\% of income on housing.
+
+\item \textbf{Minimum owner-occupied house size $h_{6}$.} A higher $h_{6}$ raises the entry cost to ownership, reducing the homeownership rate.
+
+\item \textbf{Shelter services for the homeless $\underline{h}$.} A higher $\underline{h}$ improves the outside option (homelessness) of renting in the conventional rental market, increasing the equilibrium homelessness rate.
+
+\item \textbf{Convexity of management costs $\gamma_2$.} A higher $\gamma_2$ increases the convexity of rental management costs, making marginal expansions of rental supply increasingly expensive and lowering the elasticity of rental supply.
+
+\item \textbf{Level of management costs $\gamma_1$.} A higher $\gamma_1$ raises the marginal cost of supplying rental housing at all scales, increasing equilibrium rents and the rent–to-house-price ratio.
+
+\item \textbf{Maximum age for drug experimentation $J_A$.} A higher $J_A$ allows experimentation at older ages, increasing transitions into addiction later in life and raising the average age of addicts.
+
+\item \textbf{Preference for drugs when not addicted $\theta_{0,2}$.} A higher $\theta_{0,2}$ increases the marginal utility of drugs for experimenters, raising the share of income they devote to drug consumption.
+
+\item \textbf{Preference for drugs when addicted $\theta_{1,2}$.} A higher $\theta_{1,2}$ increases the marginal utility of drugs for addicted individuals, raising drug expenditures as a share of income.
+
+\item \textbf{Degree of non-homotheticity of drugs $b$.} 
+A lower $b$ raises the marginal utility of initial drug consumption, increasing ``temptation'' and expanding the fraction of the population that consumes drugs. In my calibration, $b$ is very small, implying a high (but finite) marginal utility from using drugs and thus a high degree of ``temptation''. As a result, to generate empirically realistic participation patterns — particularly the low prevalence of drug use among high-income individuals — requires penalties associated with addiction, including elevated mortality risk. I elaborate on the mortality risk shortly below.
+
+\item \textbf{Addiction risk when experimenting $\pi_{d,\text{low}}$.} A higher $\pi_{d,\text{low}}$ increases the probability that experimenters transition into addiction, lowering the experimenter-to-addict ratio.
+
+\item \textbf{Experimenters' heavy use cutoff $\overline{v}$.} A higher $\overline{v}$ allows individuals to consume more drugs without increasing their probability of becoming addicted. Thus, a higher $\overline{v}$ increases the proportion of light experimenters.
+
+\item \textbf{Mortality multiplier when addicted $\kappa_{d,\phi}$.} A higher $\kappa_{d,\phi}$ raises the expected mortality cost of drug use, reducing participation in drug consumption and lowering the elasticity of participation with respect to the price.\footnote{I verify that the elasticity of participation in the benchmark is the same in the data by simulating changes to the benchmark price of drugs $p_v$ and taking the average elasticity across those price changes.} The calibrated mortality multiplier value lies well within the range of empirical estimates of the increased mortality risk associated with drug use. U.S.-based cohort studies reviewed in \citet{degenhardt2010mortality} report standardized mortality ratios (SMRs) for opioid-dependent individuals ranging approximately from 2.5 to 9.8 (see the penultimate row of their Table 1), substantially above general-population mortality. Estimates from other countries are of similar magnitude and often even higher. My calibrated mortality multiplier of 6.9 lies comfortably within the middle of this empirical range.
+
+\item \textbf{Baseline unemployment probability $\pi_{eu}^{\text{base}}$.} A higher value of $\pi_{eu}^{\text{base}}$ increases the steady-state share of unemployed households. I choose $\pi_{eu}^{\text{base}}$ so that, together with the baseline re-employment probability $\pi_{ue}^{\text{base}}$ — set in the first-stage calibration — and the stationary distribution over housing and addiction states, the model matches the average U.S.\ unemployment rate over 2014--2024, as reported by FRED.
+
+\item \textbf{Re-employment multiplier when addicted $\kappa_{d,ue}$.} A lower $\kappa_{d,ue}$ increases the unemployment rate among addicts. For parsimony, I do not calibrate the addiction-related unemployment multiplier $\kappa_{d,eu}$ separately, but instead impose a mirror-image restriction, $\kappa_{d,eu}=\frac{1}{\kappa_{d,ue}}$, analogous to the one used for homelessness. This ensures that addiction symmetrically increases unemployment risk and reduces re-employment probabilities.
+
+\item \textbf{Recovery multiplier when addicted $\kappa_{\underline H,d}$.} A lower $\kappa_{\underline H,d}$ reduces recovery rates while homeless, increasing addiction persistence and raising the share of the homeless population who is addicted. The magnitude in our calibration is consistent with evidence in \citet{yamamoto2019homelessness}, who document substantially worse addiction-related outcomes and markedly elevated overdose risk among homeless individuals relative to comparably low-income housed populations, implying a severely impaired recovery environment during homelessness.\footnote{The parameter $\kappa_{\underline H,d}$ scales the probability of recovery while homeless relative to when housed. Lower values imply that recovery is more difficult while homeless. Importantly, the welfare ranking between universal TF, universal HF, and the benchmark does not hinge on this recovery channel being weak. As I show in the simulations, universal TF dominates universal HF and the benchmark (once mortality spillovers are included) even for low values of $\kappa_{\underline H,d}$. Higher values of $\kappa_{\underline H,d}$ weaken the recovery advantage of housing and therefore would not overturn this ranking.}
+
+\item \textbf{Voucher receipt probability for eligible individuals $\pi_V$.} A higher $\pi_V$ increases voucher take-up among eligible individuals, raising the ratio of recipients to eligible individuals.
+
+\item \textbf{Consumption floor for food stamps $\kappa_f$.} A higher $\kappa_f$ raises the food consumption floor provided by food stamps, increasing total food stamp expenditures as a share of GDP.
+
+\item \textbf{Labor income tax parameter $\tau_{\ell}$.} Based on \eqref{eq:tax_l}, a lower $\tau_{\ell}$ raises labor income tax liabilities, and thus also the average income tax rate.
+
+\end{enumerate} 
+
+Section~\ref{sec:model_performance} evaluates the fit of the calibrated model along untargeted dimensions.
+
+\section{Model performance}\label{sec:model_performance}
+
+This section evaluates the model’s ability to replicate a set of aggregate and distributional moments that were not directly targeted in calibration. Tables \ref{tab:aggregate_non_targeted_moments} and \ref{tab:distributional_non_targeted_moments} compare model-implied outcomes to external data sources covering homelessness, drug use, and income and wealth inequality.
+
+\subsection{Homelessness}
+
+Panel (a) of Table \ref{tab:aggregate_non_targeted_moments} shows that the model captures key features of homelessness documented in the data. Homeless individuals in the model have extremely low income, consistent with empirical evidence that a large fraction of the homeless population is unemployed. Linked administrative data indicate that between 40 and 52 percent of homeless individuals are unemployed, and that average cash income among homeless individuals is approximately 19 percent of average population income \citep{meyer_wyse_logani_2024_mortality}. The model places homeless income close to zero relative to average income, reflecting the severe loss of labor income associated with homelessness.
+
+In addition, the model assigns very low asset holdings to homeless individuals, consistent with the broader pattern of economic marginalization among homeless individuals documented in \citet{meyer_wyse_logani_2024_mortality}.
+
+\subsection{Drug use, experimentation, and vouchers}
+
+Panel (b) of Table \ref{tab:aggregate_non_targeted_moments} summarizes non-targeted moments related to drug users. In the model, drug use is an endogenous choice, and drug-use decisions respond to individual economic conditions along different margins. Exposure to adverse economic and housing states — including unemployment without unemployment insurance, very low income (below 50\% of the median), and homelessness — increases the propensity to experiment with drugs. This mechanism reflects a lower value of future life that is outweighed by the contemporaneous utility gain from drug consumption, as discussed in Appendix \ref{app:proofs}. While I do not observe direct empirical counterparts for these conditional experimentation rates, I report them to provide intuition for the model’s internal mechanisms.
+
+The model generates an income ratio of drug users to the population average of approximately 41\%, compared with roughly 74\% in the \citetshort{nsduh_2024} data. The policy conclusions are nonetheless robust to this misfit for two reasons. First, the key object governing behavioral responses to sobriety conditionality is the participation 
+elasticity of drug use with respect to price, which is calibrated directly to empirical estimates and therefore disciplines the magnitude of the policy response independently of the income level of drug users. Second, the misfit biases the results against finding TF to be welfare-improving: by over-concentrating drug use among very low-income individuals, the model understates the VSL of the marginal drug user and therefore understates the deterrence effect of sobriety conditionality. The welfare gains from universal TF — the most welfare-enhancing policy examined in the simulations below — should thus be interpreted as a conservative lower bound; the policy would perform even better if the model matched the empirical income distribution of drug users exactly.
+
+Finally, the model implies that drug users are about 1.5 times more likely to receive housing vouchers than the rest of the population. This reflects the income eligibility criterion for vouchers: since drug users are concentrated among low-income individuals, they are disproportionately likely to qualify. This pattern has a direct bearing on the policy experiments: it implies that both HF and TF 
+vouchers are naturally targeted toward the population most at risk of addiction, amplifying the behavioral margin on which the two policies differ. 
+
+\subsection{Distributional patterns}
+
+Table \ref{tab:distributional_non_targeted_moments} shows that the model performs reasonably well along several distributional dimensions. Drug use declines with age in both the model and the data, and is concentrated among prime-age individuals, consistent with the data \citepshort{SAMHSA_2023}. At young ages, high survival probabilities mean that the expected mortality cost of experimentation is low in absolute terms, making the contemporaneous utility gain from drug consumption sufficient to induce experimentation for a non-trivial share of the population. At older ages, declining survival probabilities raise the cost of drug use in terms of foregone future value of life, leading drug use to decline.
+
+The model also broadly matches the age distribution of homelessness in California.\footnote{I use California as the comparison jurisdiction as it is the only one for which comparable administrative age distribution data are available \citep{California_2017}.} Homelessness 
+in the model is concentrated among prime-age individuals, consistent with these administrative counts. The model also matches the extremely low concentration of income and wealth at the bottom of the distribution, generating very low income and net wealth shares among the poorest individuals, consistent with data from the 2022 SCF.
+
+\subsection{Summary}
+
+Overall, the model provides a coherent quantitative account of homelessness, drug use, and inequality in income and wealth. Drug experimentation responds endogenously to adverse economic states, and homelessness emerges as a rare and extreme outcome associated with very low income and assets. The model's ability to replicate these non-targeted moments — particularly the concentration of drug use and homelessness among low-income and prime-age individuals — provides confidence that the counterfactual experiments capture the relevant behavioral margins through which HF and TF policies operate.
+
+Having evaluated the performance of the model, I now turn to the main policy experiments. Section~\ref{section:experiments} describes the design of the four counterfactual experiments and the welfare measures used to evaluate them.
+
+\section{Experiment design}\label{section:experiments}
+
+Using my calibrated model, I conduct four main experiments to quantify how alternative voucher implementation methods affect welfare, housing market outcomes, drug use, and homelessness in both general and partial equilibrium. In each experiment, I compare policy outcomes to a well-defined benchmark equilibrium and distinguish between partial-equilibrium (PE) effects at different time horizons and long-run general-equilibrium (GE) effects. Results are reported in Tables~\ref{tab:experiment_1}--\ref{tab:experiment_4}. Throughout, I report outcomes under four evaluation horizons: (i) a long-run GE equilibrium, in which house prices, rents, and income taxes adjust endogenously to restore market clearing and fiscal balance; and three PE responses — (ii) one period
+ahead, (iii) five periods ahead, and (iv) the long-run PE — in which prices and taxes are held fixed at their benchmark values. PE experiments isolate direct behavioral responses to policy changes, while GE experiments capture additional feedback effects operating through prices and taxes.
+
+\subsection{Benchmark}
+
+My benchmark economy corresponds to a HF regime, under which housing vouchers are rationed but made available to eligible individuals without conditioning on sobriety. Voucher eligibility is income- and ownership-status-based. This benchmark reflects the dominant policy approach currently implemented in many jurisdictions.
+
+\subsection{Experiment 1: Treatment First with rationing vs.\ HF with rationing}
+
+\begin{itemize}
+\item \textbf{Question:} How does conditioning access to housing assistance on sobriety (TF) affect homelessness, drug use, housing outcomes, and welfare relative to a HF benchmark?
+
+\item \textbf{Change:} I replace the benchmark HF policy with a TF regime, under which access to housing assistance requires no drug use. All other policy parameters are held fixed at their benchmark levels.
+
+\item \textbf{Intuition:} TF may reduce drug use by discouraging experimentation and thus lower addiction, but at the cost of delaying access to housing for individuals who fail to meet sobriety requirements. In PE, these effects operate primarily through selection into homelessness and drug-use states. In GE, additional effects arise through changes in house prices, rents, and tax adjustments needed to balance the budget.
+\end{itemize}
+
+\subsection{Experiment 2: HF with universal vouchers vs.\ HF with rationing}
+
+\begin{itemize}
+\item \textbf{Question:} What are the effects of making housing vouchers available to all eligible individuals under a HF regime, rather than rationing vouchers among eligible households?
+
+\item \textbf{Change:} I expand the HF policy by removing voucher rationing: all individuals who meet the income eligibility criteria receive a housing voucher. Eligibility remains income- and ownership-status-based and independent of drug use. The resulting increase in government expenditures is financed through an adjustment to the income tax rate.
+
+\item \textbf{Intuition:} Eliminating voucher rationing has the potential to reduce homelessness substantially, by including those at risk of homelessness who would otherwise remain unhoused due to limited voucher availability. At the same time, expanding voucher coverage may alter behavioral incentives. By relaxing housing constraints independently of employment or drug use, broader access to vouchers can increase moral hazard, leading to lower labor supply, higher rates of drug use and addiction, and higher fiscal costs. In addition, expanding coverage raises government expenditures and increases equilibrium rents through higher demand for rental housing, partially offsetting the value of the vouchers. These benefits must therefore be weighed against the GE distortions arising from higher taxes, reduced employment, and higher drug use.
+\end{itemize}
+
+\subsection{Experiment 3: TF with universal vouchers vs.\ HF with universal vouchers}
+
+\begin{itemize}
+\item \textbf{Question:} To what extent can conditioning housing assistance on sobriety mitigate the behavioral and fiscal distortions generated by unconditional voucher provision?
+
+\item \textbf{Change:} Starting from the equilibrium with unconditional vouchers to every eligible individual, as in Experiment~2, I impose a TF (no drug use) requirement for voucher receipt.
+
+\item \textbf{Intuition:} When vouchers are provided unconditionally to all eligible individuals, moral hazard is amplified, weakening incentives to work and to avoid drug use. Imposing TF partially restores these incentives by conditioning voucher use on sobriety, thereby reducing drug use and addiction and alleviating some of
+the associated fiscal costs. However, sobriety requirements reintroduce housing instability for non-compliant individuals, increasing homelessness and reducing direct welfare — though the welfare loss is smaller in GE than in PE, as lower addiction broadens the tax base and reduces fiscal costs associated with addiction.
+\end{itemize}
+
+\subsection{Experiment 4: TF with universal vouchers vs.\ HF with rationing}
+
+\begin{itemize}
+\item \textbf{Question:} Can conditioning housing assistance on sobriety, when vouchers are universally available, improve outcomes relative to a benchmark in which HF vouchers are rationed?
+
+\item \textbf{Change:} Starting from the benchmark economy with rationed HF vouchers, I replace rationing with universal voucher provision while imposing a TF requirement that conditions voucher receipt on sobriety.
+
+\item \textbf{Intuition:} Expanding voucher availability may reduce homelessness by extending eligibility to a broader vulnerable population, conditional on sobriety. Because eligibility under universal provision is guaranteed rather than rationed, the loss associated with drug use is larger, potentially strengthening incentives to remain sober and reducing drug use and addiction. As shown below, lower addiction leads to declines in unemployment and homelessness-related fiscal costs, allowing the expanded program to nearly finance itself despite serving a larger population.
+\end{itemize}
+
+\paragraph{Direct welfare measure.}
+I evaluate welfare using the expected ex-ante lifetime utility of newborns, commonly used in dynamic general equilibrium policy analysis. One complication in this environment is that preferences depend on the addiction state of individuals, and this state also affects survival probabilities. As a result, lifetime utility is not globally homothetic in non-drug consumption, and a closed-form consumption-equivalent welfare measure cannot be derived. I therefore compute the consumption-equivalent welfare change numerically by root-finding.
+
+Let $s\in\mathcal S$ denote the individual state, and let $\Psi^{\star}_1$ and $\Psi^{\dagger}_1$ denote the distributions of newborns in the benchmark and counterfactual equilibria, respectively. Let $V^{\star}_1(s)$ be the benchmark value function for a newborn in state $s$, and let $V^{\dagger}_1(s)$ be the corresponding value function in the counterfactual equilibrium.
+
+I define the consumption-equivalent welfare change $CE$ as the scalar that solves
+\begin{equation}\label{eq:CE_def}
+\int_{\mathcal S} V^{\dagger}_1(s)\, d\Psi^{\dagger}_1(s)
+\;=\;\int_{\mathcal S} V^{\star}_1\!\left(s;\,(1+CE)c\right)\, d\Psi^{\star}_1(s),
+\end{equation}
+where $V^{\star}_1(s;\,(1+CE)c)$ denotes the benchmark value function evaluated under a uniform proportional increase of non-drug consumption by a factor $(1+CE)$ in every period and state, holding benchmark policies, prices, and transition probabilities fixed. This definition fully accounts for endogenous transitions into addiction, state-dependent preferences, and mortality risk, while expressing welfare differences in units of permanent non-drug consumption.
+
+\paragraph{Mortality spillovers due to loss of consortium.}
+Finally, because the model abstracts from explicit family or social networks, the direct welfare measure described above reflects direct welfare effects arising from personal decisions and GE effects only. To account for spillovers from excess mortality arising from the decisions of others, I augment the consumption-equivalent welfare measure with a reduced-form loss-of-consortium adjustment.
+
+Let $\Delta d$ denote the difference between the counterfactual per-capita mortality rate and the benchmark mortality rate. I interpret excess mortality as generating a welfare loss borne by others through loss of consortium (disappearance of relationships). I parameterize this spillover cost as a constant $\kappa_\text{cons}$ per unit change in the per-capita mortality rate, expressed in consumption-equivalent units.
+
+Because the model is evaluated in a stationary equilibrium, this spillover represents a constant per-period welfare flow, which can be expressed in the same proportional consumption units as the consumption-equivalent welfare measure. Specifically, the loss-of-consortium correction to welfare is given by
+\[\Delta CE^{\text{cons}} \;=\; -\,\frac{\kappa_\text{cons}\,\Delta d}{\bar c},\]
+where $\bar c$ denotes average benchmark non-drug consumption. Under this convention, policies that reduce mortality relative to the benchmark ($\Delta d<0$) generate positive welfare adjustments, while policies that increase mortality generate welfare losses. The adjusted welfare measure reported in Table~\ref{tab:loss_of_consortium} is therefore
+\[CE^{\text{adj}} \;=\; CE \;+\; \Delta CE^{\text{cons}}.\]
+
+This adjustment is applied purely at the welfare-evaluation stage. It does not affect individual behavior, policy rules, prices, or GE allocations, and should be interpreted as a transparent accounting correction that incorporates the social cost of excess mortality into welfare comparisons.
+
+I calibrate the loss-of-consortium component of welfare rather conservatively. Each premature death is assumed to impose a welfare loss on exactly one other individual, interpreted as a surviving close social connection (such as a spouse, partner, or immediate family member). In reality, premature death typically affects multiple close friends and family members, implying that this assumption likely understates the true social cost of excess mortality. The welfare loss assigned to this surviving individual is parameterized as a small fraction of the VSL, and the resulting aggregate loss is translated into a consumption-equivalent welfare adjustment. 
+
+To discipline the magnitude of this fraction, I draw on evidence from both the economics of subjective well-being and the legal literature on compensatory damages. Using longitudinal data on life satisfaction, \citet{oswald2007death} estimate that the income-equivalent compensation required to offset the psychological cost of bereavement is on the order of \$100{,}000–\$200{,}000. These magnitudes are also consistent with non-economic loss-of-consortium awards commonly observed in U.S.\ wrongful-death cases, which frequently fall in the six-figure range. Relative to a benchmark VSL of \$7.5 million, a spillover cost of \$150{,}000 corresponds to 2 percent of the VSL. I therefore set the loss-of-consortium adjustment equal to 2\% of the VSL per premature death.\footnote{The qualitative direction of the results reported using 2 percent of the VSL remains unchanged as long as the spillover cost exceeds \$32{,}000.}
+
+\section{Results}\label{sec:results}
+
+\subsection{Experiment 1: TF with rationing vs.\ HF with rationing}
+
+I begin by studying the core trade-off at the center of the housing policy debate: whether conditioning housing assistance on sobriety can reduce addiction and improve labor-market outcomes without exacerbating housing instability.
+
+I present the results of Experiment 1 in Table \ref{tab:experiment_1}. In the GE long run, replacing the rationed HF regime with a rationed TF generates a reduction in drug use and addiction, but at the cost of higher homelessness and lower direct welfare. Under TF, the share of drug users falls by roughly 16.6 percent relative to the HF benchmark, with comparable declines in both experimentation and addiction. These reductions are driven by a decline in moral hazard: by conditioning access to housing assistance on sobriety, TF raises the effective private cost of drug use by increasing the expected loss in future housing stability and losses associated with higher unemployment and mortality while homeless. In the model, this operates through the value-of-life channel: drug use reduces expected future utility and survival, and TF amplifies these losses by making housing — and the associated protection of future life — contingent on remaining sober.
+
+Despite these improvements in drug-related outcomes, homelessness increases. In the long run, homelessness is about 17 percent higher under TF than under HF. This increase reflects delayed or foregone access to housing assistance for individuals who fail to meet sobriety requirements, highlighting the central trade-off inherent in TF policies.
+
+Labor-market outcomes improve modestly. Unemployment declines by about 1.4 percent in the long run, while labor supply rises by roughly 0.4 percent, lowering the average income tax rate by about 0.13 percentage points (p.p.). Population increases — by about 0.23 percent, or the equivalent of 766,000 people — reflecting lower addiction prevalence and reduced drug-related mortality. Housing-market effects are small: rents rise by about 0.6 percent and house prices by about 0.2 percent due to higher rental and housing demand, respectively, indicating limited GE feedback through prices.
+
+Despite reductions in drug use and small gains in labor-market attachment and longevity, TF lowers direct welfare relative to HF by about 0.4\%, indicating that the welfare losses associated with higher homelessness and housing instability outweigh the benefits from reduced drug use.
+
+Turning to the short-run effects helps clarify the underlying mechanisms. In PE, one period after implementation, TF immediately reduces drug experimentation by nearly as much as in the long run, reflecting the strong deterrent effect of conditioning housing access on sobriety. In contrast, addiction falls by only about 1 percent on impact. This muted short-run response reflects the low probability of exiting addiction: while TF discourages new experimentation immediately, it does little in the short run to induce recovery among individuals who are already addicted.
+
+Homelessness, by contrast, rises sharply in the short run — by nearly 24 percent — reflecting the immediate exclusion of many active drug users from housing assistance. Over subsequent periods, addiction declines more substantially as fewer individuals initiate drug use and the addicted population gradually shrinks through slow recovery and mortality. Homelessness remains elevated throughout the transition, however, as sobriety requirements continue to delay access to housing assistance for a subset of individuals.
+
+Welfare effects in PE are slightly less negative than those in GE because of the higher house prices and rents in the long-run GE. PE welfare effects are identical across all three horizons because welfare is measured for newborns, who face the same prices and taxes regardless of horizon; differences across PE horizons therefore reflect only direct policy incentives, not aggregate price adjustments. Although these GE forces are quantitatively small, they continue to reduce welfare and reinforce the conclusion that TF lowers welfare relative to HF.
+
+Overall, the results show that TF policies are effective at reducing drug use and addiction, but they do so at the cost of increasing homelessness and reducing direct newborn welfare. HF dominates TF in direct welfare terms, despite higher drug use, because it provides more stable housing access for vulnerable individuals.
+
+\subsection{Experiment 2: HF with universal vouchers vs.\ HF with rationing}
+
+The direct welfare losses under TF in Experiment 1 arise in an environment where housing vouchers are rationed, raising the question of how outcomes would change when rationing itself is removed. Experiment 2 addresses this by comparing HF with universal voucher provision to the rationed HF benchmark. Results are reported in Table \ref{tab:experiment_2}. 
+
+I begin with the long-run GE results. Eliminating voucher rationing under HF generates changes across homelessness, drug use, labor-market outcomes, and direct welfare. Most strikingly, universal voucher provision nearly eliminates homelessness: homelessness falls by roughly 93 percent relative to the rationed HF benchmark. This reflects the direct expansion of housing access to individuals who would otherwise remain unhoused solely because of limited voucher availability. Homelessness is not fully eliminated because a subset 
+of addicted individuals, facing both low income and high drug expenditures, find it optimal to forgo the 30\% tenant rent contribution required to activate the voucher, choosing homelessness over the combination of reduced drug consumption and stable housing.
+
+Universal housing access also raises the value of life. Stable housing improves recovery prospects for addicted individuals, reduces exposure to mortality risk associated with homelessness, and strengthens future employment prospects. This effect pulls drug use down. On the other hand, because vouchers are provided unconditionally, housing stability becomes de-linked from sobriety and labor-market attachment, increasing moral hazard. This pushes drug use up. 
+
+In equilibrium, the latter effect outweighs the former effect and experimentation rises by about 6 percent. However, the overall addiction rate falls slightly — by about 2 percent. This is because a much smaller share of addicted individuals remains homeless, making recovery more likely. 
+
+The reductions in homelessness and addiction translate into improved labor-market outcomes. Unemployment falls by about 1.4 percent, while labor supply rises modestly, by roughly 0.2 percent. However, expanded voucher coverage increases demand for rental housing, raising equilibrium rents by about 3.7 percent, while house prices fall slightly. Despite the improved labor-market outcomes and reductions in government spending on homelessness- and addiction-related costs, financing the expanded program still requires slightly higher income taxes, with average income taxes rising by about 0.4 p.p. in equilibrium.
+
+Taken together, these effects raise direct newborn welfare by about 1.1 percent, as the slight reduction in addiction and large reduction in homelessness and its associated utility costs outweigh the welfare losses from higher rents and taxes.
+
+Turning to PE outcomes, the short-run responses differ sharply from the long-run GE effects. In PE, prices and taxes are held fixed, isolating direct behavioral responses. Over the first one to five periods, drug experimentation rises while addiction slightly declines. In the long-run PE, addiction continues to decline, reaching a nearly 8 percent drop. Experimentation increases and addiction declines less in the long-run GE because of the increases in income taxes and rents, which reduce resources available for consumption. This reduction in resources reduces the future value of life and thus induces more experimentation and addiction relative to the long-run PE.
+
+Overall, Experiment 2 shows that removing voucher rationing under HF dramatically reduces homelessness and improves direct newborn welfare. While unconditional access increases experimentation through GE effects and moral hazard, improved housing stability reduces addiction and lowers unemployment slightly.
+
+\subsection{Experiment 3: TF with universal vouchers vs.\ HF with universal vouchers}\label{sec:exp_3}
+
+Experiments 1 and 2 isolate the effects of sobriety conditioning and voucher rationing separately; Experiment 3 combines these dimensions by studying the role of sobriety requirements when housing vouchers are universally available.
+
+In Table \ref{tab:experiment_3}, I report the effects of imposing a TF requirement when housing vouchers are universally available to all eligible individuals. The results are reported relative to equilibrium with universal HF, which is the equilibrium in Experiment 2. I start by examining the long-run GE effects. Conditioning voucher access on sobriety leads to a sharp decline in experimentation and addiction due to a reduction in moral hazard. The shares of the population experimenting with drugs and addicted to drugs fall both by about one third, reflecting an immediate reduction in experimentation in response to sobriety requirements, which cascades down to reduce addiction over time. Both experimentation and addiction also fall by similar magnitudes relative to the benchmark with rationed HF.  
+
+The reduction in addiction increases the population by close to 0.5 percent (or about 1.66 million people) and strengthens labor-market outcomes. Unemployment declines by close to 3 percent and labor supply rises by almost 1 percent, leading to a higher tax base and a reduction in average income tax rates of roughly 0.24 p.p. These labor-market improvements emerge gradually over time and are muted in the short-run PE responses, reflecting slow adjustment of employment and addiction status.
+
+Despite these gains, conditioning vouchers on sobriety generates an increase in homelessness. In GE, homelessness rises by nearly 420 percent in the long run. This large percentage increase reflects the fact that baseline homelessness in the universal-HF equilibrium is very low, so even small absolute increases in the number of individuals excluded from housing assistance translate into large percentage changes. Importantly, even after this increase, homelessness in the TF counterfactual remains more than 60 percent lower than in the benchmark economy with rationed HF vouchers. 
+
+The short-run PE responses display even larger percentage increases, as non-compliant individuals lose access to housing immediately while longer-run adjustments partially offset these effects. While in the long-run GE housing-market prices respond modestly — rents and house prices rise by less than half a percent — these price effects play only a limited role in shaping the homelessness response in the long run relative to the long-run PE.
+
+The direct welfare consequences highlight the central trade-off of sobriety-conditioned housing assistance. Again, although TF reduces addiction and improves labor-market outcomes, these gains are outweighed by the welfare costs associated with higher homelessness. As a result, direct newborn welfare falls by about 0.1 percent in the long-run GE and by roughly 0.4 percent in PE. The direct welfare loss in GE is smaller because the decline in addiction strengthens labor supply, reduces fiscal costs associated with addiction, and broadens the tax base, allowing income tax rates to fall back to similar levels 
+observed under the benchmark with rationed HF vouchers.
+
+Overall, these results show that when housing vouchers are universally available, conditioning access on sobriety is an effective tool for reducing drug use and mitigating fiscal costs, but this comes at the cost of higher short-run and long-run homelessness and lower direct newborn welfare.
+
+\subsection{Experiment 4: TF with universal vouchers vs.\ HF with rationing}
+
+Experiment 3 showed that sobriety requirements reduce addiction but increase homelessness when compared to universal HF. This experiment asks whether, relative to the rationed HF benchmark rather than universal HF, the same conditionality can simultaneously reduce both addiction and homelessness. Conditioning a guaranteed housing benefit on sobriety provides a much stronger incentive to remain eligible than conditioning access to a rationed benefit. Can this guaranteed benefit more strongly deter drug use, reduce addiction, and potentially even lower homelessness relative to the rationed HF benchmark? And can the resulting improvements in labor-market outcomes and reductions in homelessness- and addiction-related fiscal costs allow the policy to partially or fully finance itself?
+
+I study these questions next, and present the results in Table \ref{tab:experiment_4}. Relative to the benchmark with rationed HF vouchers, combining universal voucher provision with sobriety requirements delivers large and systematic improvements across housing, addiction, labor-market outcomes, and direct welfare, as well as nearly pays for itself. The policy change achieves these gains by simultaneously raising the value of life through guaranteed housing access and reducing moral hazard by conditioning that access on sobriety.
+
+As before, I begin by exploring the long-run GE effects. Universal TF leads to sharp declines in drug use and addiction. The share of drug users falls by roughly 33 percent, with reductions of similar magnitudes in experimentation and addiction. This lowers premature death and raises the level of the population by 0.5 percent. As in the earlier experiments, experimentation responds quickly to incentives, while addiction declines more gradually, reflecting persistence of addiction. Nevertheless, in the long run, addiction falls by more than 36 percent relative to the rationed HF benchmark, indicating that conditioning a guaranteed housing benefit on sobriety generates substantially stronger deterrence than conditioning access to a rationed benefit.
+
+In contrast to Experiment 1, these reductions in addiction are accompanied by large declines in homelessness. In the long-run GE, homelessness falls by more than 63 percent relative to rationed HF. This reflects the removal of voucher rationing for compliant individuals, which allows the policy to preserve the housing-stability benefits of universal access while still disciplining drug use. Short-run PE responses show smaller but still sizable declines in homelessness, as some non-compliant individuals initially lose access to housing assistance, while longer-run adjustments dominate as addiction falls.
+
+Labor-market outcomes improve substantially. In the long-run GE, unemployment declines by nearly 4 percent and labor supply rises by over 1 percent, reflecting the lower addiction prevalence. Housing-market price responses are mild: rents rise by about 4 percent, while house prices remain roughly unchanged, indicating modest GE feedback through prices.
+
+The fiscal and direct welfare consequences stand in sharp contrast to Experiments 1 and 3. Despite the expansion of voucher coverage, income tax rates only need to rise in GE by 0.15 p.p., reflecting offsetting fiscal forces. Lower addiction and homelessness reduce their associated public expenditures, while higher labor supply and lower unemployment expand the tax base. As a result, the policy nearly finances itself.
+
+These fiscal and behavioral improvements increase direct newborn welfare by about 1 percent in the long-run GE and by more than 2.3 percent in PE due to rents being held down in PE. Opposite to the earlier experiments, where sobriety requirements reduced direct welfare by increasing homelessness, universal TF dominates the rationed HF benchmark by simultaneously reducing addiction and homelessness both in the long run and in the short run while improving labor-market outcomes.
+
+Overall, these results show that when vouchers are rationed, sobriety requirements alone reduce addiction at the cost of higher homelessness. By contrast, moving from a rationed HF regime to a universal TF regime transforms the same conditionality into a powerful incentive device that reduces both addiction and homelessness, improves fiscal outcomes that require very small increases in income taxes to fund the universal program, and raises direct welfare in both the short and long run. This experiment underscores the importance of voucher generosity and conditionality when evaluating housing and addiction policy.
+
+\subsection{Welfare effects due to loss of consortium}\label{sec:loss_of_consortium}
+
+The welfare analysis presented so far focuses on direct newborn welfare. This measure fully internalizes individuals’ own decisions and mortality risk, but abstracts from interpersonal spillovers, such as loss of consortium, arising from premature death due to the decisions of others.  
+
+To assess the quantitative importance of this channel, I augment the welfare effect calculated in earlier sections with a reduced-form loss-of-consortium adjustment that translates excess mortality in each counterfactual into a consumption-equivalent welfare effect. As described in Section~\ref{section:experiments}, this adjustment is applied purely at the welfare-evaluation stage and does not affect behavior or equilibrium allocations.
+
+Table~\ref{tab:loss_of_consortium} reports the resulting welfare implications relative to the benchmark with rationed HF. The first column reports, for each experiment, the percentage change in the population. The second column reports the direct newborn welfare effect shown in Tables \ref{tab:experiment_1}-\ref{tab:experiment_4}. The third column shows the welfare effect attributable solely to loss of consortium, expressed as a percentage change in consumption-equivalent welfare relative to the benchmark. Positive values indicate that a policy reduces mortality relative to the benchmark, generating welfare gains through this channel, while negative values indicate higher mortality and corresponding welfare losses. The fourth column reports adjusted newborn welfare, obtained by adding the loss-of-consortium adjustment to the direct welfare effects reported in the second column.
+
+Two observations are immediate. First, incorporating mortality spillovers materially affects the magnitude of welfare effects across regimes. For rationed TF, the loss-of-consortium adjustment reduces the magnitude of the welfare losses but does not reverse its sign. For universal HF, accounting for mortality spillovers slightly raises the welfare gain relative to the benchmark, reflecting slightly lower addiction and mortality under this regime. For universal TF, the mortality adjustment substantially increases the welfare gain.
+
+Second, accounting for loss-of-consortium effects alters the welfare ranking of policies. While universal HF outperforms universal TF when only direct newborn welfare is considered, incorporating mortality spillovers strengthens the relative performance of universal TF to the point where it strictly dominates universal HF in terms of final welfare. This dominance is robust: the ranking is preserved as long 
+as the spillover cost per premature death exceeds \$32{,}000 — a threshold far below any empirical estimate of bereavement costs in the literature.
+
+Section~\ref{sec:conclusion} discusses the policy implications of these findings.
+
+\section{Summary and implications}\label{sec:conclusion}
+
+I develop a quantitative GE model that links homelessness, drug use, addiction, mortality, labor-market outcomes, and housing markets through a forward-looking trade-off between the immediate utility of drug use and the expected value-of-life loss. Housing assistance affects this trade-off in two opposing ways: by increasing housing stability and life value, it discourages drug experimentation, but by relaxing housing and income constraints unconditionally, it also generates moral hazard that weakens incentives to remain sober and attached to the labor market. Whether housing assistance is rationed or guaranteed, and whether it is conditioned on sobriety, therefore plays a central role in shaping behavioral and fiscal outcomes.
+
+The quantitative experiments, performed for the U.S.-calibrated model, show that neither sobriety requirements nor voucher generosity alone resolve this tension. When vouchers are rationed, TF reduces addiction by increasing the expected value-of-life loss associated with drug use, but at the cost of higher homelessness and lower welfare. When vouchers are made universal under HF, homelessness is nearly eliminated and welfare rises, but unconditional access creates moral hazard by weakening the link between sobriety, labor-market attachment, and future life prospects. Unconditional access results in slightly higher drug experimentation. However, addiction actually declines because of the large reduction in homelessness that makes recovery more likely than in the benchmark. The key result emerges when these two dimensions are combined: expanding the housing voucher program but conditioning access on sobriety simultaneously raises the value of life and reduces moral hazard. Relative to a rationed HF benchmark, universal TF reduces addiction by more than 36 percent and homelessness by more than 63 percent, improves labor-market outcomes, 
+nearly pays for itself in equilibrium, and raises welfare in both the short and long run. Moreover, once mortality spillovers from loss of consortium are accounted for, universal TF strictly dominates universal HF in welfare terms — a ranking that holds for any spillover cost exceeding \$32{,}000 per premature death, far below any empirical estimate of bereavement costs.
+
+Ultimately, the results suggest that the debate over HF 
+versus TF is, at its core, a debate about the joint design of voucher generosity and conditionality — and that resolving it in favor of universal TF can simultaneously reduce addiction, homelessness, and premature death while remaining nearly self-financing.
+
+\bibliographystyle{aer}
+\bibliography{reference_files/bib}
+
+\clearpage
+
+\begin{table}[H]
+    \centering
+    \vspace{-0.5cm}
+    \input{tables/external_calibration}
+    \vspace{-0.65cm}
+    \begin{fignote2}{1.02\textwidth}
+    \textit{Notes:} Table \ref{tab:external_calibration} presents the values of the externally calibrated parameters. $\overline{y}$ denotes the average income.
+    \end{fignote2}
+\end{table}
+
+\clearpage
+
+\begin{table}[H]
+    \centering
+    \vspace{-0.5cm}
+    \input{tables/internal_calibration}
+    \vspace{-0.45cm}
+    \begin{fignote2}{0.97\textwidth}
+    \textit{Notes:} Table \ref{tab:internal_calibration} displays the values of the internally calibrated parameters. My benchmark closely matches all calibration targets. Here, $\overline{y}$ denotes average income and $\bar h^{o}$ the average size of owner-occupied housing.
+    \end{fignote2}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \vspace{-0.5cm}
+    \input{tables/aggregate_non_targeted_moments} 
+    \vspace{-0.5cm}
+    \begin{fignote2}{0.95\textwidth}
+    \textit{Notes:} 
+    This table reports aggregate moments implied by the benchmark calibration that are not directly targeted in the calibration procedure. For some statistics, comparable data are unavailable; such cases are denoted by ``--''. The table is mainly meant to illustrate that homeless individuals and addicts in the model have very low income and asset holdings, while experimenters are better off but remain substantially poorer than the population average.
+    \end{fignote2}
+\end{table}
+
+
+\begin{table}[H]
+    \centering
+    \vspace{-0.5cm}
+    \input{tables/distributional_non_targeted_moments}
+    \vspace{-0.5cm}
+    \begin{fignote2}{0.66\textwidth}
+    \textit{Notes:} 
+    This table summarizes benchmark distributional statistics that were not used as calibration targets.
+    \end{fignote2}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \vspace{-0.5cm}
+    \input{tables/experiment_1}
+    \vspace{-0.5cm}
+    \begin{fignote2}{0.71\textwidth}
+    \textit{Notes:} 
+    This table summarizes the results of Experiment 1, which compares the benchmark's HF with rationing to a TF counterfactual with rationing.
+    \end{fignote2}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \vspace{-0.5cm}
+    \input{tables/experiment_2}
+    \vspace{-0.5cm}
+    \begin{fignote2}{0.71\textwidth}
+    \textit{Notes:} 
+    This table summarizes the results of Experiment 2, which compares the benchmark's HF with rationing to a HF counterfactual in which vouchers are given to every income-eligible individual.
+    \end{fignote2}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \vspace{-0.5cm}
+    \input{tables/experiment_3}
+    \vspace{-0.5cm}
+    \begin{fignote2}{0.69\textwidth}
+    \textit{Notes:} 
+    This table summarizes the results of Experiment 3, which compares the TF counterfactual with no voucher rationing to HF with no rationing. 
+    \end{fignote2}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \vspace{-0.5cm}
+    \input{tables/experiment_4}
+    \vspace{-0.5cm}
+    \begin{fignote2}{0.68\textwidth}
+    \textit{Notes:} 
+    This table summarizes the results of Experiment 4, which compares the TF counterfactual with no voucher rationing to HF with rationing. 
+    \end{fignote2}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \vspace{-0.5cm}
+    \input{tables/loss_of_consortium}
+    \vspace{-0.5cm}
+    \begin{fignote2}{0.91\textwidth}
+    \textit{Notes:} This table reports long-run GE welfare effects relative to the benchmark economy after accounting for loss of consortium. 
+    \end{fignote2}
+\end{table}
+
+
+\clearpage
+
+\include{appendix}
+
+\end{document}

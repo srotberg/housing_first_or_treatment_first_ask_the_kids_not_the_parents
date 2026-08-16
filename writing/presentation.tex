@@ -1,0 +1,718 @@
+\documentclass[10pt,aspectratio=169]{beamer}
+
+% ---------- Theme ----------
+\usetheme{Madrid}
+\usecolortheme{default}
+\setbeamertemplate{navigation symbols}{}
+
+% ---------- Packages ----------
+\usepackage{booktabs}
+\usepackage{amsmath, amsfonts, amssymb, bm}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{siunitx}
+
+% ---------- Notation macros (edit these to match the paper) ----------
+\newcommand{\drug}{v}          % drug consumption
+\newcommand{\nondrug}{c}       % non-addictive consumption
+\newcommand{\house}{h}         % housing services
+\newcommand{\leis}{\ell}       % leisure
+\newcommand{\uutil}{\nu}       % per-period utility function symbol
+\newcommand{\disc}{\beta}      % discount factor
+
+% ---------- Title info ----------
+\title[Housing First vs Treatment First]{Ending Homelessness: Housing First or Treatment First?}
+\author[Ay\c{s}e \.{I}mrohoroglu, Shahar Rotberg, Kai Zhao]{Ay\c{s}e \.{I}mrohoroglu \and Shahar Rotberg \and Kai Zhao}
+\institute[USC/CMHC/UConn]{USC \quad\quad CMHC \quad\quad UConn}
+\date{}
+
+\begin{document}
+
+% ---------------- Title ----------------
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% ---------------- Intro ----------------
+\begin{frame}{Homelessness and addiction in United States}
+\begin{itemize}
+\item Homelessness is a pressing issue in the U.S.
+\item 568{,}000 people were homeless on a given night in 2019 in U.S.
+\item 1{,}416{,}908 experienced sheltered homelessness throughout 2017
+\item 4\% in general U.S. population use drugs; 2\% serious, 2\% light (SAMHSA 2023)
+\item 25--50\% of homeless have a substance use disorder (SUD) (Burt et al., 1999)
+\item SUDs contribute substantially to morbidity and mortality (Coombs et al., 2024)
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Fighting homelessness}
+\begin{itemize}
+\item Addiction and homelessness are tightly connected; addressing one affects the other.
+\item Main tools to fight homelessness:
+\begin{itemize}
+\item Currently: \emph{Housing First} (HF)
+\item Alternative: \emph{Treatment First} (TF)
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Decades-long policy debate}
+\begin{itemize}
+\item TF advocates argue that HF creates substantial moral hazard.
+\item Thus, HF leads to more addiction and thus more homelessness.
+\item HF camp says moral hazard is low and homelessness hinders sobriety and employment.
+\item TF would lead to more addiction and more homelessness.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{This paper}
+\begin{itemize}
+\item Develop a quantitative economic model with endogenous homelessness and addiction.
+\item Compare HF with TF policies:
+\begin{itemize}
+\item HF: No conditions on drug use; receive housing vouchers with a probability.
+\item TF: Must be drug-free to have a chance to receive housing vouchers.
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Preview of results}
+\begin{itemize}
+\item TF increases homelessness immediately, but reduces addiction in the long run.
+\item But HF generates higher welfare both in short run and in long run.
+\item Direction holds for low moral hazard (benchmark) and high moral hazard.
+\end{itemize}
+
+\vspace{0.5em}
+\begin{table}
+\centering
+\small
+\begin{tabular}{lccc}
+\toprule
+Statistic & Short run, PE & Long run, PE & Long run, GE\\
+\midrule
+Homelessness & $\Uparrow$ & $\Uparrow$ & $\Uparrow$\\
+Chronic homelessness & $\Uparrow$ & $\Uparrow$ & $\Uparrow$\\
+Addiction & $\Leftrightarrow$ & $\Downarrow$ & $\Downarrow$\\
+Newborns' welfare & $\Downarrow$ & $\Downarrow$ & $\Downarrow$\\
+\bottomrule
+\end{tabular}
+\end{table}
+\end{frame}
+
+% ---------------- Model ----------------
+\section{Model}
+
+\begin{frame}{High-level model overview}
+\centering
+\includegraphics[width=0.92\textwidth]{slide_imgs/page_08.png}
+\end{frame}
+
+\begin{frame}{Model --- General features}
+\begin{itemize}
+\item Overlapping generations with heterogeneous individuals and incomplete markets.
+\item Homelessness as in \.{I}mrohoroglu and Zhao (2024).
+\item Rational drug use inspired by Becker and Murphy (1988).
+\item Probabilistic addiction as in Greenwood et al. (2024/2025).
+\item Individuals value $\nondrug$, $\drug$, $\house$, and leisure $\leis$ and face risks: death, labor income, addiction.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Model --- Demographics}
+\begin{itemize}
+\item Individuals live from age $1$ to age $J$, retire at age $J_R$.
+\item Survive from $j$ to $j+1$ with probability $\phi(j)$; die with certainty after age $J$.
+\item Deceased net assets are equally distributed to everyone (bequests), denoted $\pi_a$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Model --- Income}
+\begin{itemize}
+\item Labor income depends on:
+\begin{itemize}
+\item Fixed component $x$ (lifetime), drawn from $\Omega_x(x)$.
+\item Idiosyncratic component $z$, Markov chain $\Omega_z(z,z')$.
+\item Age productivity profile $\{\zeta_j\}_{j=1}^{J_R-1}$.
+\end{itemize}
+\item Employment status $e\in\{0,1\}$ follows Markov chain $\Omega_e(\cdot,\cdot)$.
+\item Unemployed may receive UI with probability $p^{ui}$:
+\[
+y^{ui}_j =
+\begin{cases}
+\min\{ v^e(1-\leis) x z \zeta_j,\ \bar y^{\leis}\} & \text{if UI}\\
+0 & \text{otherwise.}
+\end{cases}
+\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Model --- Income continued}
+\begin{itemize}
+\item Retirees receive Social Security $y^R(x,z)=\kappa(x,z)\bar y^{\leis}$, based on $x,z$ at retirement.
+\item Define income $\hat y^{\leis}_j$:
+\[
+\hat y^{\leis}_j=
+\begin{cases}
+y^{\leis}_j & e=0\\
+y^{ui}_j & e=1\\
+y^R & j\ge J_R.
+\end{cases}
+\]
+\item Capital income: $\hat y^{k}_j=r a$ (if $a<0$, this is mortgage interest payments).
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Model --- Housing and mortgage markets}
+\begin{itemize}
+\item Individuals can rent or own ($o\in\{0,1\}$) or be homeless ($\house=\underline{h}$).
+\item Renters choose $h'\in\{h_i\}_{i=1}^n$ and pay per-unit rent $p^r$.
+\item Homeowners choose $h'\in\{h_i\}_{i=n-1}^n$ and pay per-unit price $p^h$.
+\item One-period mortgages at interest rate $r$, with LTV constraint $\lambda p^h h \ge -a$ (benchmark $\lambda=0.8$).
+\item Selling cost $\tau_s=0.06$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Model --- Homelessness}
+\begin{itemize}
+\item Homeless receive reduced housing services $\underline{h}<h_1$ at no cost.
+\item Higher mortality: multiplier $\kappa_{h,\phi}=1.6$ on baseline death risk.
+\item Worse labor-market transitions:
+\begin{itemize}
+\item Re-employment multiplier $\kappa_{h,ue}=0.8$.
+\item Unemployment-risk multiplier $\kappa_{h,eu}=1.25$.
+\end{itemize}
+\item Lower probability of addiction recovery when homeless (multiplier $\kappa_{H,d}=\tfrac{1}{6}$).
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Model --- Housing vouchers}
+\begin{itemize}
+\item Low-income renters eligible for a voucher lottery if:
+\begin{itemize}
+\item Gross income below 50\% of median ($\kappa_V=0.5$), and
+\item Required rent contribution rate is 30\% of income ($\kappa_r=0.3$).
+\end{itemize}
+\item Voucher covers the gap between rent and $\kappa_r$ of income (subject to program rules).
+\item Benchmark lottery intensity: per-period receipt probability among eligible individuals $\pi^{V}=0.06$,
+which implies about 26.6\% of eligible receive vouchers over a year (calibration target).
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Model --- Food stamps}
+\begin{itemize}
+\item Low-income individuals receive food stamps with certainty.
+\item Food stamps must be spent on non-addictive consumption: $\nondrug \ge \omega^{food}$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Model --- Drug experimentation and addiction}
+\begin{itemize}
+\item Individuals may experiment ($q\in\{0,1\}$) with $\drug$ until age $J_A$.
+\item Experimenters become addicted ($d\in\{0,1\}$) with probability $\Omega_d(0,1\mid q=1)$.
+\item Heavy experimenters face higher addiction risk: $\pi_{d,high}=6.48\times\pi_{d,low}$ (NSDUH 2024).
+\item Addicts have:
+\begin{itemize}
+\item Higher mortality: multiplier $\kappa_{d,\phi}=6.9$ while addicted.
+\item Worse labor-market transitions: re-employment multiplier $\kappa_{d,ue}=0.37$ and unemployment-risk multiplier $\kappa_{d,eu}=2.7$.
+\item Recovery probability each period if housed: $\Omega_d(1,0\mid \house>\underline{h})=0.025$.
+\item Recovery probability if homeless: $\Omega_d(1,0\mid \house=\underline{h})=\tfrac{1}{6}\times 0.025$.
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Model --- Income taxes}
+\begin{itemize}
+\item Progressive labor income taxes (Heathcote et al., 2014):
+\[
+\rho^{\leis}_j = \hat y^{\leis}_j - \tau_{\leis}\,(\hat y^{\leis}_j)^{\xi}.
+\]
+\item $\tau_{\leis}$ pins down average labor income taxes; $\xi$ controls progressivity.
+\item Positive capital income taxed at constant rate $\tau_k$:
+\[
+\rho^k_j=\tau_k \max\{\hat y^k_j,0\}.
+\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Model --- Preferences (non-addicts)}
+\small
+Non-addicts ($d=0$):
+\[
+\uutil(\nondrug,\house',\drug,\leis\mid d=0)=
+\frac{\Big[(\nondrug^{1-\theta_1}(\house')^{\theta_1})^{1-\theta_{0,2}}(\drug+b)^{\theta_{0,2}}\Big]^{1-\sigma}}{1-\sigma}
++\omega_{\leis}\frac{\leis^{1-\sigma_{\leis}}}{1-\sigma_{\leis}}.
+\]
+\begin{itemize}
+\item $\theta_1(1-\theta_{0,2})$: weight on housing $\house'$.
+\item $(1-\theta_1)(1-\theta_{0,2})$: weight on non-drug consumption $\nondrug$.
+\item $\theta_{0,2}$: weight on drugs; relative price $p^{v}$.
+\item $b$ controls temptation (if $b>0$, not all individuals use drugs).
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Model --- Preferences (addicts)}
+\small
+Addicts ($d=1$):
+\[
+\uutil(\nondrug,\house',\drug,\leis\mid d=1)=
+\frac{\Big[(\nondrug^{1-\theta_1}(\house')^{\theta_1})^{1-\theta_{1,2}}(\drug+b)^{\theta_{1,2}}\Big]^{1-\sigma}}{1-\sigma}
++\omega_{\leis}\frac{\leis^{1-\sigma_{\leis}}}{1-\sigma_{\leis}}.
+\]
+\begin{itemize}
+\item $\theta_{1,2}>\theta_{0,2}$: addiction raises the marginal utility/weight of drug consumption (Becker \& Murphy, 1988).
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Model --- Budget constraints (homeowners)}
+\small
+\begin{itemize}
+\item Choosing to own ($o'=1$) starting as homeowner ($o=1$):
+\[
+\nondrug + p^v \drug + p^h h(\mathbb{I}_{\{h'\neq \underline{h}\}}\tau_s + \delta_h) + p^h h' + a' \\
+= \big(\hat y^{\leis}_j-\rho^{\leis}_j\big) + \big(\hat y^k_j-\rho^k_j\big) + a + p^h h + \omega^{food} + \pi_a.
+\]
+\item Choosing to own ($o'=1$) starting renter/homeless ($o=0$):
+\[
+\nondrug + p^v \drug + p^h h' + a'
+= \big(\hat y^{\leis}_j-\rho^{\leis}_j\big) + \big(\hat y^k_j-\rho^k_j\big) + a + \omega^{food} + \pi_a.
+\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Model --- Budget constraints (renters)}
+\small
+\begin{itemize}
+\item Renting ($o'=0$, $h'>\underline{h}$) starting homeowner ($o=1$):
+\[
+\nondrug + p^v \drug + p^r h' + p^h h(\delta_h+\tau_s) + a' \\
+= \big(\hat y^{\leis}_j-\rho^{\leis}_j\big)+\big(\hat y^k_j-\rho^k_j\big)+a+p^h h+\omega^{food}+\eta\omega^{voucher}+\pi_a.
+\]
+\item Renting ($o'=0$, $h'>\underline{h}$) starting renter/homeless ($o=0$):
+\[
+\nondrug + p^v \drug + p^r h' + a' \\
+= \big(\hat y^{\leis}_j-\rho^{\leis}_j\big)+\big(\hat y^k_j-\rho^k_j\big)+a+\omega^{food}+\eta\omega^{voucher}+\pi_a.
+\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Model --- Budget constraints (homeless)}
+\small
+\begin{itemize}
+\item Choosing homelessness ($o'=0$, $h'=\underline{h}$) starting renter ($o=0$, $h>\underline{h}$):
+\[
+\nondrug + p^v \drug + a'
+= \big(\hat y^{\leis}_j-\rho^{\leis}_j\big)+\big(\hat y^k_j-\rho^k_j\big)+a+\omega^{food}+\pi_a.
+\]
+\item Choosing homelessness ($o'=0$, $h'=\underline{h}$) starting homeowner ($o=1$):
+\[
+\nondrug + p^v \drug + p^h h(\delta_h+\tau_s) + a' \\
+= \big(\hat y^{\leis}_j-\rho^{\leis}_j\big)+\big(\hat y^k_j-\rho^{\leis}_j\big)+a+p^h h+\omega^{food}+\pi_a.
+\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Model --- Individual optimization}
+\small
+State: $g=(a,x,z,e,\omega_e,h,o,\eta,d)$.
+\[
+V_j(g)=\max_{\{\leis,a',\nondrug,o',h',\drug,q\}}
+\left\{\mathcal{N}+\uutil(\nondrug,h',\drug,\leis\mid d)+
+\disc\,\phi(j\mid h',d)\,V_{j+1}(g'\mid z,e,\omega_e,h',q,d)\right\}
+\]
+subject to budget constraints, LTV, food-stamps, voucher, and housing constraints.
+
+\vspace{0.25em}
+Policy functions: $\leis_j(g)$, $a'_j(g)$, $\nondrug_j(g)$, $o'_j(g)$, $h'_j(g)$, $\drug_j(g)$, $q_j(g)$.
+
+\vspace{0.25em}
+$\mathcal{N}$ is set so everyone has a positive value of life (average of \$10M).
+\end{frame}
+
+\begin{frame}{Housing and rental supply}
+\begin{itemize}
+\item Competitive construction: $I_h=\epsilon_1 (p^h)^{\epsilon_2}$.
+\item Housing law of motion: $H'=(1-\delta_h)H + I_h$.
+\item Competitive rental company chooses rental stock $X$ and faces convex management costs:
+\[
+C_r(X)=\frac{\gamma_1}{\gamma_2}X^{\gamma_2}.
+\]
+\item Rental firm's dynamic problem:
+\[
+W(X)=\max_{X'}\left\{p^rX' - C_r(X') - p^h(X'-X) - p^h\delta_h X + \frac{1}{1+r}W(X')\right\}.
+\]
+\item Optimal rent:
+\[
+p^r=\gamma_1 (X')^{\gamma_2-1}+\left(\frac{r+\delta_h}{1+r}\right)p^h.
+\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Government}
+\begin{itemize}
+\item Government holds total voucher spending fixed across simulations.
+\item Let $\psi_j(g)$ be the distribution of age-$j$ individuals across state space.
+\item Budget condition (vouchers):
+\[
+\sum_{j=1}^{J}\int \eta\,\omega^{voucher}\,\psi_j(g)\,dg = \text{benchmark voucher spending}.
+\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Equilibrium definition}
+\begin{itemize}
+\item Equilibrium: prices, value/policy functions, and distributions such that:
+\begin{itemize}
+\item Household policy functions solve the DP.
+\item Rental firm's policy solves its problem.
+\item Government budget clears.
+\item Bequests equal total net assets of deceased.
+\item Distributions are consistent with optimal choices.
+\item Housing and rental markets clear.
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+% ---------------- Calibration ----------------
+\section{Calibration}
+
+\begin{frame}{External calibration --- Demographics and preferences}
+\small
+\begin{table}
+\centering
+\begin{tabular}{lll}
+\toprule
+Parameter & Description & Value / Source\\
+\midrule
+$J$ & Lifespan (model periods) & 60 (ages 26--85)\\
+$J_R$ & Retirement age (model periods) & 41 (age 66)\\
+$\{\phi^{base}(j)\}_{j=1}^J$ & Baseline survival probs. & Arias (2014)\\
+$\sigma$ & Risk aversion & 2\\
+$\sigma_{\ell}$ & Leisure curvature & 3 (Chetty 2012)\\
+\bottomrule
+\end{tabular}
+\end{table}
+\end{frame}
+
+\begin{frame}{External calibration --- Labor income, unemployment, retirement}
+\small
+\begin{table}
+\centering
+\begin{tabular}{lll}
+\toprule
+Parameter & Description & Value / Source\\
+\midrule
+$\{\zeta_j\}$ & Life-cycle productivity profile & Guvenen et al. (2023)\\
+$\rho_z$ & Persistence of $z$ & 0.9 (Guvenen et al. 2023)\\
+$\sigma_z$ & Volatility of $z$ & 0.2 (Guvenen et al. 2023)\\
+$\rho_x$ & Intergenerational persistence of $x$ & 0.5 (Guvenen et al. 2023)\\
+$\sigma_x$ & Innovation vol. of $x$ & 0.309 (Guvenen et al. 2023)\\
+$y^R(x,z)$ & Social Security benefits & Guvenen et al. (2023)\\
+$\pi^{\kappa}$ & UI receipt prob. if unemployed & 0.3 (FRED 2014--2024)\\
+$\kappa^{ui}$ & UI replacement rate & 0.5\\
+$\kappa_{h,ue}$ & Re-employment multiplier if homeless & 0.8 (Desmond \& Gershenson 2016)\\
+$\kappa_{h,eu}$ & Unemployment-risk multiplier if homeless & 1.25 (Desmond \& Gershenson 2016)\\
+\bottomrule
+\end{tabular}
+\end{table}
+\end{frame}
+
+\begin{frame}{External calibration --- Interest rates and taxes}
+\small
+\begin{table}
+\centering
+\begin{tabular}{lll}
+\toprule
+Parameter & Description & Value / Source\\
+\midrule
+$r$ & Real interest rate & 3\% (Kaplan et al. 2020)\\
+$\tau_k$ & Capital income tax rate & 15\% (Karlman et al. 2021)\\
+$\xi$ & Progressivity of labor taxes & 0.85 (Heathcote et al. 2017)\\
+\bottomrule
+\end{tabular}
+\end{table}
+\end{frame}
+
+\begin{frame}{External calibration --- Homelessness and addiction}
+\small
+\begin{table}
+\centering
+\begin{tabular}{lll}
+\toprule
+Parameter & Description & Value / Source\\
+\midrule
+$p^v$ & Price of drugs & 1 (normalization)\\
+$\kappa_{h,\phi}$ & Mortality multiplier if homeless & 1.6 (Meyer et al. 2025)\\
+$\kappa_{H,d}$ & Recovery prob. if housed & 0.025 (Vaillant 1995)\\
+$\pi_{d,high}$ & Addiction risk (heavy) & $6.48\times\pi_{d,low}$ (NSDUH 2024)\\
+$\chi_H$ & Gov. cost per homeless & $0.252\,y$ (NAEH 2016)\\
+$\chi_D$ & Gov. cost per addict & $0.212\,y$ (CEA 2017)\\
+\bottomrule
+\end{tabular}
+\end{table}
+\end{frame}
+
+\begin{frame}{External calibration --- Housing and housing finance}
+\small
+\begin{table}
+\centering
+\begin{tabular}{lll}
+\toprule
+Parameter & Description & Value / Source\\
+\midrule
+$\delta$ & Housing depreciation rate & 0.6\% (Rosenthal 2014)\\
+$\tau_s$ & Selling cost & 6\% (Gruber \& Martin 2003)\\
+$\varsigma_2$ & Housing investment elasticity param. & 2.12 (Sommer \& Sullivan 2017)\\
+$\lambda$ & Max loan-to-value ratio & 0.8\\
+$n$ & Number of housing sizes & 7\\
+\bottomrule
+\end{tabular}
+\end{table}
+\end{frame}
+
+\begin{frame}{Internal calibration --- Preferences and housing demand}
+\small
+\begin{table}
+\centering
+\begin{tabular}{lll}
+\toprule
+Parameter & Target moment & Value\\
+\midrule
+$\beta$ & Net wealth/GDP = 3.25 & 0.944\\
+$\omega_{\ell}$ & Avg. time working = 40\% & 8.5\\
+$\mathcal{N}$ & Avg. VSL = \$7.5M & 340\\
+$\theta_1$ & Avg. rent/income = 0.33 & 0.278\\
+$h_1$ & Renters w/ rent/income $\ge 0.5$ = 16.2\% & $0.156\times\bar h_o$\\
+$h_6$ & Homeownership rate = 66.1\% & $5.17\times \frac{p^h}{\bar y_{\ell,o}}$\\
+$\underline{h}$ & Homelessness rate = 0.30\% & $0.21\times h_1$\\
+\bottomrule
+\end{tabular}
+\end{table}
+\end{frame}
+
+\begin{frame}{Internal calibration --- Rental supply, drugs, and policy take-up}
+\small
+\begin{table}
+\centering
+\begin{tabular}{lll}
+\toprule
+Parameter & Target moment & Value\\
+\midrule
+$\gamma_2$ & Rental supply elasticity = 1.4 & 2.35\\
+$\gamma_1$ & Rent/price ratio = 8.3\% & Implied\\
+$J_A$ & Avg. age of addicts = 40 & 55\\
+$\theta_{0,2}$ & Drugs spending/income (non-addicts) = 0.11 & 0.13\\
+$\theta_{1,2}$ & Drugs spending/income (addicts) = 0.45 & 0.45\\
+$b$ & Drug users/population = 4\% & $3.7\times 10^{-8}$\\
+$\pi_{d,low}$ & Experimenters/addicts = 1 & 0.037\\
+$\bar v$ & Light experimenters/experimenters = 0.868 & $5.41\times b$\\
+$\kappa_{d,\phi}$ & Participation elasticity = $-0.63$ & 6.9\\
+$\pi^{base}_{eu}$ & Unemployment rate = 4.9\% & 0.016\\
+$\kappa_{d,ue}$ & Addicts unemployment rate = 26.9\% & 0.37\\
+$\kappa_{H,d}$ & Share of homeless who are addicted = 37\% & $\tfrac{1}{6}$\\
+$\pi^{V}$ & Voucher recipients/eligible = 26.6\% & 0.06\\
+$\kappa_f$ & Food stamps/GDP = 0.42\% & $0.126\times y$\\
+$\tau_{\ell}$ & Avg. labor income tax rate = 22.4\% & 0.75\\
+\bottomrule
+\end{tabular}
+\end{table}
+\end{frame}
+
+% ---------------- Model performance ----------------
+\section{Model performance}
+
+\begin{frame}{Model performance --- Homelessness and addiction}
+\small
+\begin{table}
+\centering
+\begin{tabular}{lc}
+\toprule
+Statistic & Model\\
+\midrule
+Homeless unemployed (\%) & 100\\
+Addicts unemployed (\%) & 22.8\\
+Homeless avg. income & $0.12\times$ avg. income\\
+Homeless avg. assets & $0.02\times$ avg. assets\\
+\bottomrule
+\end{tabular}
+\end{table}
+\end{frame}
+
+\begin{frame}{Model performance --- Drug use}
+\small
+\begin{table}
+\centering
+\begin{tabular}{lc}
+\toprule
+Statistic & Model\\
+\midrule
+Experimenters' avg. income & $0.2\times$ avg. income\\
+Experimenters' avg. assets & $0.15\times$ avg. assets\\
+Experimenters while unemployed (\%) & 64.4\\
+Experimenters while homeless (\%) & 8.9\\
+Experimenters while retired (\%) & 0\\
+Voucher recipients who use drugs (\%) & 14.5\\
+Voucher recipients who experiment (\%) & 7.9\\
+\bottomrule
+\end{tabular}
+\end{table}
+\end{frame}
+
+\begin{frame}{Model performance --- Shares of income and wealth}
+\small
+\begin{table}
+\centering
+\begin{tabular}{lcc}
+\toprule
+Statistic (\%) & Model & Data (SCF)\\
+\midrule
+\multicolumn{3}{l}{\textbf{Share of total income}}\\
+Bottom 1\% & 0 & 0\\
+Bottom 1--5\% & 1.1 & 0.3\\
+Bottom 5--10\% & 2.6 & 0.6\\
+\addlinespace
+\multicolumn{3}{l}{\textbf{Share of total net wealth}}\\
+Bottom 1\% & 0 & -0.2\\
+Bottom 1--5\% & 0 & -0.1\\
+Bottom 5--10\% & 0 & 0\\
+\bottomrule
+\end{tabular}
+\end{table}
+\end{frame}
+
+\begin{frame}{Model performance --- Drug use by age group}
+\centering
+\includegraphics[width=0.92\textwidth]{slide_imgs/page_41.png}
+\end{frame}
+
+\begin{frame}{Model performance --- Homelessness by age group}
+\centering
+\includegraphics[width=0.92\textwidth]{slide_imgs/page_42.png}
+\end{frame}
+
+% ---------------- Experiments ----------------
+\section{Experiments}
+
+\begin{frame}{First experiment's description}
+\begin{itemize}
+\item Compare \emph{Treatment First} (TF) vs \emph{Housing First} (HF).
+\item Vouchers are not given / are taken away if addicted: $\eta=0$ if $d=1$.
+\item Four cases:
+\begin{itemize}
+\item Partial equilibrium (PE): 1 year after implementation.
+\item PE: 5 years after implementation.
+\item PE: long run.
+\item General equilibrium (GE): prices, bequests, and vouchers adjust.
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Results of ``Treatment First'' experiments}
+\small
+\begin{table}
+\centering
+\begin{tabular}{lcccc}
+\toprule
+Statistic (\%\,$\Delta$) & 1 period, PE & 5 periods, PE & Long run, PE & Long run, GE\\
+\midrule
+Drug users & -1.59 & -1.77 & -2.39 & -2.36\\
+Experimenters & -3.01 & -3.15 & -3.21 & -2.98\\
+Addicts & -0.16 & -0.40 & -1.57 & -1.73\\
+Homelessness & 15.45 & 17.22 & 17.61 & 17.63\\
+\# homeless and addicted & 42.91 & 50.74 & 52.21 & 52.27\\
+\# homeless 2 years+ & 2.27 & 21.48 & 22.40 & 22.35\\
+Life expectancy (years) & 0.00 & 0.00 & 0.01 & 0.01\\
+Welfare newborns & Down & Down & Down & Down\\
+Welfare everyone & Down & Down & Down & Down\\
+\bottomrule
+\end{tabular}
+\end{table}
+\end{frame}
+
+\begin{frame}{Experiments with high moral hazard}
+\begin{itemize}
+\item Moral hazard is low in benchmark because voucher probability if homeless is only 5.5\%.
+\item Two additional long-run GE experiments (full government budget clears):
+\begin{itemize}
+\item Experiment 2: Vouchers for everyone eligible (VFE) under HF.
+\item Experiment 3: Same as Experiment 2 but under TF (sobriety requirements).
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Results of Experiment 2: VFE with HF (relative to benchmark)}
+\small
+\begin{table}
+\centering
+\begin{tabular}{lc}
+\toprule
+Statistic (\%\,$\Delta$) & Long run, GE\\
+\midrule
+Rent & 2.45\\
+House price & -0.87\\
+Average income tax & 0.53\\
+Drug users & 36.48\\
+Experimenters & 36.18\\
+Addicts & 36.79\\
+Homelessness & -95.25\\
+\# homeless and addicted & -97.43\\
+\# homeless 2 years+ & -100.00\\
+Life expectancy (years) & -0.21\\
+Welfare newborns & Up\\
+Welfare everyone & Down\\
+\bottomrule
+\end{tabular}
+\end{table}
+\end{frame}
+
+\begin{frame}{Results of Experiment 3: VFE with TF (relative to VFE with HF)}
+\small
+\begin{table}
+\centering
+\begin{tabular}{lc}
+\toprule
+Statistic (\%\,$\Delta$) & Long run, GE\\
+\midrule
+Drug users & -32.91\\
+Experimenters & -33.98\\
+Addicts & -31.85\\
+Homelessness & 980.27\\
+\# homeless and addicted & 4{,}553.93\\
+\# homeless 2 years+ & 71.85 (p.p.)\\
+Life expectancy (years) & 0.26\\
+Welfare newborns & Down\\
+Welfare everyone & Up\\
+\bottomrule
+\end{tabular}
+\end{table}
+\end{frame}
+
+% ---------------- Conclusion ----------------
+\section{Conclusion}
+
+\begin{frame}{Conclusion (part 1)}
+\begin{itemize}
+\item Homelessness and addiction are pressing U.S. issues affecting millions.
+\item Many homeless also suffer from addiction.
+\item Interconnectedness makes policy design hard:
+\begin{itemize}
+\item Prioritizing immediate housing can help short term,
+\item but may create moral hazard if individuals do not internalize the costs of addiction.
+\end{itemize}
+\item HF camp: immediate help is more effective despite moral hazard.
+\item TF camp: homelessness rises because of moral hazard.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Conclusion (part 2)}
+\begin{itemize}
+\item Build a GE model with rational drug use and endogenous homelessness.
+\item Calibrate to key U.S. data on homelessness and addiction.
+\item Evaluate short- and long-run implications of TF vs HF.
+\item When moral hazard is low (benchmark): TF leads to short-run pain for little long-run gain.
+\item When moral hazard is high (if vouchers are universal): TF reduces addiction substantially,
+but homelessness still rises significantly.
+\end{itemize}
+\end{frame}
+
+\end{document}

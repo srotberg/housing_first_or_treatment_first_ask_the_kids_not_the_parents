@@ -1,0 +1,1626 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1.05in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage[official]{eurosym}
+\usepackage{xcolor}
+% Changes since the previous version you read are in red. Each version resets
+% the markup, so red always means "new since last time".
+\newcommand{\nw}[1]{\textcolor{red}{#1}}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+
+\usepackage[hidelinks]{hyperref}
+
+\setlength{\parskip}{0.32em}
+\newcommand{\ind}[1]{\mathbf{1}\{#1\}}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcommand{\pname}[1]{\texttt{#1}}
+
+\title{\textbf{Housing First or Treatment First?}\\[0.4em]
+\large The model, its parameters, its calibration, and what the referees still want}
+\author{}
+\date{Draft, \today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent A complete statement of the rebuilt model: environment, preferences,
+budget, every transition, the household problem, and the equilibrium.
+Section~\ref{sec:params} lists \emph{every} parameter with its symbol, its role,
+and either its external source or the moment that pins it.
+Sections~\ref{sec:calib} to \ref{sec:mech} cover the two-stage calibration, the
+untargeted moments used for validation, and the mechanism decomposition that
+replaces the static appendix. Section~\ref{sec:outstanding} lists, referee by
+referee, every comment that is still outstanding.
+\end{abstract}
+
+\newpage
+
+%======================================================================
+\section{Overview}
+
+The model is a life cycle economy in which households choose housing, drug use,
+treatment, hours and saving under mortality, employment, mental-health and
+addiction risk, and in which a housing voucher programme is run under one of two
+rules. The question is whether the voucher should be conditioned on abstinence.
+
+Relative to the submitted paper the model has been rebuilt rather than patched.
+Homeownership, the housing market, tenure, mortgages and negative assets are
+gone; the drug price is now an equilibrium object; treatment exists; mental
+illness exists; preferences no longer vary with addiction status; labour supply
+is continuous; and every parameter is attached either to a citation or to a
+moment. Table~\ref{tab:changes} in Section~\ref{sec:outstanding} maps each change
+to the comments it answers.
+
+Two conventions used throughout. Time is annual. All monetary quantities are in
+units of average model income, so ``0.25'' means a quarter of average income.
+
+%======================================================================
+\section{The model}
+
+\subsection{Demographics and timing}
+
+Households enter at model age $j=1$ (real age 26) and live at most to $j=J=60$
+(real age 85). They retire at $j_{R}=41$ (real age 66). Survival from $j$ to
+$j+1$ is $\phi_j(h',d,m)$, defined in \eqref{eq:surv} below: it depends on age,
+on the housing chosen this period, on substance use disorder and on mental
+illness. A household that dies leaves its assets behind; the estate accrues to
+the government (Section~\ref{sec:govt}).
+
+Within a period the household observes its state, chooses hours, housing,
+drug use, treatment and saving, and consumes. Every shock, productivity,
+employment, addiction, mental health, voucher receipt and survival, is drawn
+\emph{after} all of that and determines the state the household wakes up in at
+$j+1$. Nothing realised this period changes anything the household did this
+period, which is what makes those variables state variables rather than choices,
+and it is why the transition kernels in \eqref{eq:dtrans} to \eqref{eq:emp}
+condition on the CHOSEN $h'$ and $v$: the choice comes first, the draw second.
+
+\subsection{The state}
+
+\begin{table}[h]
+\centering
+\caption{The individual state: $12{,}960$ points per age, $777{,}600$ in total}
+\label{tab:state}
+\begin{tabular}{llrL{6.9cm}}
+\toprule
+& Symbol & Points & \\
+\midrule
+Age & $j$ & 60 & real age 26 to 85, retirement at 66\\
+Financial assets & $a\ge0$ & 60 & cubic spacing, dense near zero; no borrowing\\
+Labour productivity & $y$ & 9 & Rouwenhorst discretisation of an AR(1) in logs\\
+Employment & $e$ & 3 & employed; unemployed \emph{with} UI; unemployed without UI\\
+Substance use disorder & $d$ & 2 & $d=0$ clean, $d=1$ SUD\\
+Serious mental illness & $m$ & 2 & $m=0$ absent, $m=1$ present\\
+Housing voucher & $\eta$ & 2 & $\eta=0$ not held, $\eta=1$ held\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Two features are deliberate.
+
+\paragraph{Housing entered with is not a state.} Survival, employment
+transitions and the recovery hazard all condition on the \emph{chosen} housing
+$h'$, and renters face no adjustment cost, so the unit a household arrives in is
+payoff-irrelevant. Carrying it would replicate the whole problem $N_h$ times;
+removing it leaves every aggregate unchanged and cuts the solve by a factor of
+$6.6$. It would have to be reinstated if moving costs were added.
+
+\paragraph{Three employment states, not four.} UI is drawn on \emph{entry} into
+unemployment with probability $\pi_{UI}$ and lasts one year. A first-year
+non-recipient and a household unemployed for two or more years have identical
+income (zero) and identical continuation values, so those two states merge
+\emph{exactly}. This answers the AE's A2: UI expiration matters, and it costs one
+state rather than two.
+
+\subsection{Choices}
+
+Each period a household chooses
+\[
+\bigl(n,\;h',\;v,\;\tau,\;a'\bigr)\in[0,1]\times\{h_1,\dots,h_4\}\times\mathbb R_+
+\times\{0,1\}\times\mathcal A,
+\]
+hours $n$, housing $h'$ (where $h_1$ denotes homelessness and $h_2<h_3<h_4$ are
+rental sizes), drug consumption $v$, treatment take up $\tau$ (available only if
+$d=1$), and next-period assets $a'$ on the asset grid.
+
+\subsection{Preferences}
+
+Period utility is
+\begin{equation}
+u = \frac{\bigl[c^{\alpha}\,(h')^{\beta}\,(v+b_{dmh'})^{\gamma}\bigr]^{1-\sigma}}{1-\sigma}
+\;+\;\omega_{\ell}\frac{(1-n)^{1-\sigma_{\ell}}}{1-\sigma_{\ell}}
+\;+\;\aleph
+\;-\;\tau\,\bar\tau^{u}
+\;-\;\kappa_{x}\bigl(H+\omega_{x}H_{D}\bigr),
+\label{eq:util}
+\end{equation}
+with the Cobb--Douglas weights
+\[
+\alpha=(1-\theta_h)(1-\theta_v),\qquad
+\beta=\theta_h(1-\theta_v),\qquad
+\gamma=\theta_v,\qquad \alpha+\beta+\gamma=1 .
+\]
+
+\paragraph{The weights do not depend on addiction status.} Referee~2 (C5),
+Referee~3 (M2a) and the AE (A8) all objected that in the submitted paper the
+taste weight on drugs rose with $d$, so reducing SUD mechanically raised the
+utility derived from $c$ and $h$ and made addiction-reduction and housing
+expansion complements ``even absent incentive effects''. Fixing
+$\alpha,\beta,\gamma$ removes that channel completely. It is also a
+\emph{commitment}: with preferences invariant, becoming addicted no longer
+relaxes any constraint, so every private cost of SUD must now come from
+mortality, employment and the budget. Section~\ref{sec:mech} tests exactly that.
+
+\paragraph{Only the Stone--Geary shifter varies.} The AE's suggested alternative
+(A8) was to vary $b$ instead, and that is what the model does:
+\begin{equation}
+b_{dmh'}=b_d\;\cdot\;\rho_m^{\ind{m=1}}\;\cdot\;\rho_H^{\ind{h'=h_1}},
+\qquad d\in\{0,1\},\quad \rho_m,\rho_H\in(0,1].
+\label{eq:b}
+\end{equation}
+A lower $b$ raises the marginal utility of the first units of use. Three
+separate things are going on here and each is doing a job.
+
+\begin{enumerate}
+\item \emph{$b_0$ versus $b_1$.} A single $b$ cannot match both the
+participation rate and the drug-expenditure share. A $b$ large enough to deter
+clean households pushes the unconstrained interior choice $v^{*}$ below zero,
+which drives expenditure by households \emph{with} SUD to the corner. Two values
+separate the moments: $b_0$ pins participation, $b_1$ keeps the choice interior
+so that $\theta_v$ pins the expenditure share.
+
+\item \emph{$\rho_m<1$: self-medication.} Poor mental health raises the marginal
+value of the first units of use. This is the channel Referee~1 asks about in
+comment 1(a).
+
+\item \emph{$\rho_H<1$: the housing-access channel.} This is the only parameter
+in the model that governs the elasticity of drug use with respect to housing
+access, the object Referee~2 (C1) calls the crux on which all the welfare
+results rest, and which Referee~3 and the AE (A13) name independently. Without
+it that moment is not merely untargeted, it is \emph{untargetable}: housing a
+household only raises its resources, drugs are a normal good, and the model would
+predict that housing \emph{raises} use, the opposite sign to Milby et al.\
+(2005). Section~\ref{sec:secondstage} calibrates $\rho_H$ to that trial.
+\end{enumerate}
+
+\paragraph{Leisure.} $\omega_{\ell}$ is the weight on leisure and $\sigma_{\ell}$
+its curvature, which pins the Frisch elasticity at $1/\sigma_{\ell}$.
+
+\paragraph{$\aleph$, the flow value of being alive.} $\aleph$ is what makes
+mortality risk deter drug use: without it, dying is not costly and the model's
+central mechanism disappears. It also has to satisfy a condition that is easy to
+overlook, see Section~\ref{sec:diag}.
+
+\paragraph{$\bar\tau^{u}$, the utility cost of treatment.} Treatment take up
+costs utility, not resources. A resource cost comes out of the same budget that
+buys food and rent, so the households with the strongest case for treatment, the poorest, would be exactly the ones unable to afford it, which is not how
+publicly funded treatment works. $\bar\tau^{u}$ is the stigma, effort and time of
+entering a programme whose monetary cost somebody else bears.
+
+\paragraph{The externality.} $H$ is the aggregate homelessness rate and $H_D$ the
+share of the population both homeless and with SUD. Referee~2's wording is
+specific, ``a large homeless population, \emph{especially if many are
+addicted to drugs}, creates a negative externality beyond the fiscal burden'', so the disamenity is weighted by composition through $\omega_x$ rather than
+depending on the headcount alone. Households take $H$ and $H_D$ as given, which
+is what makes this a spillover rather than a private cost, but both are
+equilibrium objects, so policy moves them and the movement feeds back through the
+value of life into drug decisions. Section~\ref{sec:extern} calibrates
+$\kappa_x$ from a contingent-valuation study rather than leaving it at zero.
+
+\subsection{Income, taxes and transfers}
+
+Gross income depends on age, employment, productivity and health:
+\begin{equation}
+y^{g}(j,y,e,d,m,n)=
+\begin{cases}
+0.40\,y & j\ge j_{R} \quad\text{(social security)}\\[2pt]
+n\,y\,\varepsilon_j\,\rho_{d}^{\ind{d=1}}\rho_{m}^{\ind{m=1}} & j<j_{R},\;e=1 \quad\text{(employed)}\\[2pt]
+\varrho_{UI}\,y\,\varepsilon_j & j<j_{R},\;e=2 \quad\text{(UI, first year only)}\\[2pt]
+\zeta_{DI}\,\bar y_{DI}\,\bar Y & j<j_{R},\;e=3,\;m=1 \quad\text{(disability)}\\[2pt]
+0 & \text{otherwise,}
+\end{cases}
+\label{eq:income}
+\end{equation}
+with, in order of appearance: $y$ the persistent productivity state;
+$\varepsilon_j$ the deterministic age profile of labour efficiency;
+$\rho_{d}\le1$ and $\rho_{m}\le1$ the productivity penalties from substance use
+disorder and serious mental illness, applied \emph{conditional on working};
+$\varrho_{UI}$ the unemployment-insurance replacement rate, paid on the
+household's own productivity and only in the first year of a spell;
+$\zeta_{DI}$ the share of the non-employed with serious mental illness who
+receive disability insurance; $\bar y_{DI}$ the disability benefit expressed as
+a share of average income; and $\bar Y$ average income in the economy.
+Retirement income is a flat 40\% replacement of the productivity state, with no
+health penalty, social security is not means tested on health.
+
+\paragraph{Why the penalties are conditional on working.} This is what allows an
+\emph{employed} household to have income low enough to choose homelessness. An
+unemployment effect alone cannot do that, and Referee~1's comment 2(c)(i) is
+precisely that the model produced a homeless population that was 100\% out of
+work against 40 to 52\% in the data.
+
+Labour income is taxed with the Heathcote, Storesletten, Violante function and
+capital income at a flat rate:
+\begin{equation}
+y^{n}=\tau_{\ell}\,(y^{g})^{\xi}\;+\;(1-\tau_k)\,r\,a .
+\label{eq:aftertax}
+\end{equation}
+
+Two transfers. A \emph{food-stamp floor} tops means tested income up to
+$\underline c\,\bar Y$:
+\begin{equation}
+F=\max\Bigl\{0,\;\underline c\,\bar Y-\bigl(y^{g}+\max\{0,ra\}\bigr)\Bigr\},
+\label{eq:food}
+\end{equation}
+and a \emph{housing voucher}, paid to voucher holders and only while renting,
+covering rent above a tenant contribution of $\kappa_r$ of gross earnings:
+\begin{equation}
+V\!ch=\ind{\eta=1}\ind{h'\neq h_1}\max\bigl\{0,\;p_h h'-\kappa_r\,y^{g}\bigr\}.
+\label{eq:voucher}
+\end{equation}
+
+A homeless voucher holder does not lose the voucher. Retention depends on
+income eligibility, not on housing, so a household that gives up its unit keeps
+its entitlement and the voucher simply pays nothing until it rents again. With
+homeownership gone there is no other tenure for it to be spent on, so this is
+both the realistic rule and the simple one.
+
+Both are means tested on \emph{gross} income, as in the programmes themselves.
+Both are also clawed back, at a rate of one for food stamps and $\kappa_r$ for
+the voucher, and that is what generates the welfare trap discussed under
+labour supply below.
+
+\subsection{The budget constraint}
+
+\begin{equation}
+c+p_v v+a' \;=\; \underbrace{y^{n}+a}_{\text{after-tax income and assets}}
+\;-\;\underbrace{p_h h'\ind{h'\neq h_1}}_{\text{rent}}
+\;+\;V\!ch+F,
+\qquad c>0,\;\;v\ge0,\;\;a'\ge0 .
+\label{eq:budget}
+\end{equation}
+Note what is \emph{not} in \eqref{eq:budget}: treatment, which costs utility;
+and bequests, which go to the government.
+
+\paragraph{The closed form split of $c$ and $v$.} Given $a'$ and $h'$, let
+$R$ denote the resources remaining. Cobb--Douglas preferences over
+$(c,\,v+b)$ give
+\begin{equation}
+c=\frac{\alpha}{\alpha+\gamma}\bigl(R+p_v b\bigr),
+\qquad
+v=\max\Bigl\{0,\;\frac{\gamma}{(\alpha+\gamma)p_v}\bigl(R+p_v b\bigr)-b\Bigr\},
+\label{eq:cv}
+\end{equation}
+so the inner allocation never needs a numerical search. The $\max$ is the corner
+at which the household abstains because the Stone--Geary endowment already
+exceeds its desired intake, which is exactly how a large $b$ deters use.
+
+\subsection{Labour supply}
+
+Hours are continuous and satisfy the intratemporal first-order condition
+\begin{equation}
+u_c(c)\,\frac{\partial R}{\partial n}\;=\;\omega_{\ell}(1-n)^{-\sigma_{\ell}} .
+\label{eq:foc}
+\end{equation}
+Two properties of \eqref{eq:foc} matter substantively.
+
+\paragraph{The residual is not monotone: the welfare trap.} From
+\eqref{eq:food} and \eqref{eq:voucher}, $\partial R/\partial n$ jumps \emph{up}
+at the hours where each transfer is exhausted, because the clawback stops. Below
+the food-stamp exhaustion point the marginal return to an hour of work is close
+to zero. So ``work a little and keep the transfer'' and ``work properly'' are
+genuinely distinct local optima, and the household compares them. The solution
+algorithm splits $[0,1]$ at the kinks and solves each piece exactly; bracketing
+once would silently pick whichever optimum happened to be bracketed.
+
+\paragraph{Eligibility is a step in the continuation value.} Voucher eligibility
+is lost discretely when means tested income crosses $\kappa_V$ times the median.
+That does not kink the budget, so \eqref{eq:foc} is continuous across it, but it shifts the continuation value, so the piecewise optimum is clamped to each
+side of the threshold and both are evaluated.
+
+Referee~3 (m1) wanted labour supply kept and its role made visible; the AE (A3)
+questioned whether it was needed. The decisive reason to keep it is not the
+welfare cost of tax financing but the programme itself: \textbf{voucher
+eligibility and the voucher payment are both functions of earnings}, so hours
+are the margin through which a household controls whether it qualifies and how
+much it receives. Without an hours choice the voucher's means test would be
+something that happens to a household rather than something it responds to, and
+the labour supply distortion created by a 30\% tenant contribution on top of the
+food-stamp clawback, the welfare trap above, would be invisible. That
+distortion is a first-order part of what a housing voucher does. Making hours
+continuous and exact resolves the tension in Referee~3's favour, at a cost of a
+factor of three in solve time.
+
+\subsection{Housing and homelessness}
+
+Housing is a four-point grid. $h_1$ is homelessness, with a small service flow
+$h_{\text{HL}}$ and no rent. \nw{The concept is \textbf{literal homelessness}, sleeping rough or in an emergency shelter, the HUD point in time definition. It
+\emph{excludes} doubling-up and couch-surfing, which are far more common and
+would put the rate an order of magnitude higher. The AE's A16 notes that the
+share of the homeless with SUD depends heavily on which definition is used, and
+it does: the 21.7\% target is measured on the literal-homelessness population,
+so the model must target the same population. The sensitivity to a broader
+definition is reported.} The three rental sizes are geometric,
+\begin{equation}
+h_2=\underline h,\qquad h_3=\underline h\,\varsigma,\qquad h_4=\underline h\,\varsigma^{2},
+\end{equation}
+so two parameters describe the whole grid: the level $\underline h$ and the
+spread $\varsigma$.
+
+\paragraph{Rent is normalised.} Housing services $h'$ enter utility
+\eqref{eq:util}; the rent bill $p_h h'$ enters the budget \eqref{eq:budget}. The
+two are nearly collinear: rescaling the grid by $\lambda$ and the price by
+$1/\lambda$ leaves every budget constraint untouched and changes utility only by
+the factor $\lambda^{\beta}$ inside the consumption bundle, which affects
+behaviour solely through the curvature interaction with the additive leisure and
+$\aleph$ terms. Identification of the level therefore runs through a weak
+channel and should not be relied on. Setting $p_h=1$ makes the \emph{grid} the
+calibrated object, and $\underline h$, $\varsigma$ and $h_{\text{HL}}$ are then
+pinned by three moments of the housing-burden distribution and the homelessness
+rate. This is what Referee~2's comment D1 asked for: in the submitted paper the
+grid had seven points, four of them uncalibrated and listed in a footnote.
+
+\subsection{Drug use, addiction, recovery and treatment}
+
+A household either abstains ($v=0$) or uses ($v>0$, chosen continuously
+according to \eqref{eq:cv}). Transitions in $d$:
+\begin{equation}
+\Pr(d'=1\mid d=0)=\pi_d\cdot\ind{v>0},
+\qquad
+\Pr(d'=0\mid d=1)=\pi_r(h',\tau,m).
+\label{eq:dtrans}
+\end{equation}
+
+\paragraph{A single addiction hazard.} A clean household that uses becomes
+addicted with probability $\pi_d$ \emph{regardless of how much it consumes}.
+There is no light/heavy threshold $\bar v$ and no consumption-dependent hazard;
+the $6.48$ heavy-to-light ratio is gone. This removes two of the parameters
+Referee~3 (M2b) asked to have justified, at the cost of one channel: intensity no
+longer affects the risk of addiction, only the budget.
+
+\paragraph{Recovery and treatment.} The recovery hazard is
+\begin{equation}
+\pi_r(h',\tau,m)=\min\Bigl\{1,\;\bar\pi_r\cdot\mu_H^{\ind{h'=h_1}}\cdot\mu_m^{\ind{m=1}}\cdot g^{\tau}\Bigr\},
+\label{eq:recover}
+\end{equation}
+with $\mu_H<1$ (recovery is harder when homeless), $\mu_m<1$ (harder with mental
+illness) and $g>1$ the treatment effect. $\tau\in\{0,1\}$ is a choice, available
+only to households with $d=1$, at the utility cost $\bar\tau^u$ in
+\eqref{eq:util}.
+
+Referee~1's comment 1(b) and the AE's A10 are the same point and it is the most
+damning gap in the submitted paper: the policy is called Treatment First and
+there was no treatment in the model. There is now, it is a decision rather than a
+mechanical hazard, and $g$, through which the entire Treatment First result
+runs, is disciplined in Section~\ref{sec:secondstage}.
+
+\paragraph{The maximum experimentation age.} In the baseline a clean household
+may initiate only up to $j\le j_{E}$. Referee~1's smaller comment 1 notes this is
+in tension with the U-shaped age profile of use in Table 4(a). It is now a
+variable rather than a hard-coded parameter, so the model can be run without it;
+Section~\ref{sec:diag} reports the age profile both ways.
+
+\subsection{The private costs of SUD: mortality, employment, and the homelessness loop}
+\label{sec:costs}
+
+This subsection is the heart of the mechanism and it deserves to be stated
+explicitly rather than buried in a parameter table.
+
+\paragraph{Mortality.} Survival is
+\begin{equation}
+\phi_j(h',d,m)=1-\min\Bigl\{1,\;\bigl(1-\bar\phi_j\bigr)\cdot
+\kappa_{\phi H}^{\ind{h'=h_1}}\cdot\kappa_{\phi d}^{\ind{d=1}}\cdot\kappa_{\phi m}^{\ind{m=1}}\Bigr\},
+\label{eq:surv}
+\end{equation}
+where $\bar\phi_j$ is the baseline age profile of survival. SUD multiplies the
+death hazard by $\kappa_{\phi d}$, homelessness by $\kappa_{\phi H}$ and mental
+illness by $\kappa_{\phi m}$. Because $\aleph>0$, a higher death hazard is a real
+cost, and it is larger for households with more remaining life and more to
+consume, which is the sorting the paper's mechanism relies on.
+
+\paragraph{Employment.} Job finding and separation are
+\begin{equation}
+\pi^{ue}=\min\bigl\{1,\;\bar\pi^{ue}\,\kappa_{ueH}^{\ind{h'=h_1}}\kappa_{ued}^{\ind{d=1}}\kappa_{uem}^{\ind{m=1}}\bigr\},
+\qquad
+\pi^{eu}=\min\bigl\{1,\;\bar\pi^{eu}\,\kappa_{ueH}^{-\ind{h'=h_1}}\kappa_{ued}^{-\ind{d=1}}\kappa_{uem}^{-\ind{m=1}}\bigr\},
+\label{eq:emp}
+\end{equation}
+so each multiplier below one simultaneously makes work harder to find and easier
+to lose. On separation the household draws UI with probability $\pi_{UI}$:
+\[
+e=1\;\longrightarrow\;
+\begin{cases}
+e'=1 & \text{w.p. } 1-\pi^{eu}\\
+e'=2 & \text{w.p. } \pi^{eu}\pi_{UI}\\
+e'=3 & \text{w.p. } \pi^{eu}(1-\pi_{UI})
+\end{cases}
+\qquad
+e\in\{2,3\}\;\longrightarrow\;
+\begin{cases}
+e'=1 & \text{w.p. } \pi^{ue}\\
+e'=3 & \text{w.p. } 1-\pi^{ue} .
+\end{cases}
+\]
+
+\paragraph{The homelessness loop.} Homelessness enters \eqref{eq:surv},
+\eqref{eq:emp}, \eqref{eq:recover} and \eqref{eq:b}: it raises mortality, worsens
+employment, lowers the recovery hazard, and raises the marginal utility of drug
+use. Those four together are what make homelessness and SUD mutually reinforcing,
+and shutting them off jointly is arm 4 of the mechanism ladder.
+
+\paragraph{What SUD does \emph{not} do.} In the baseline there is no direct wage
+penalty conditional on working, $\rho_d=1$. The AE (A20) asks about direct
+productivity effects. The robust findings are on the employment margin, roughly 50\% more unscheduled absence and 44\% higher turnover, captured by
+$\kappa_{ued}$, while the wage penalty conditional on working is contested,
+with parts of the older literature finding positive effects for casual use. The
+baseline therefore imposes none and says so; a version calibrated to the SUD
+income ratio is reported as an alternative.
+
+\subsection{Serious mental illness}
+
+\nw{\paragraph{Why the mental health transition does not depend on housing, and
+why that is now a result.} The model lets homelessness lower SUD recovery
+($\lambda_{\text{HL}}$) but leaves the mental health chain independent of
+housing. That asymmetry looks like an omission and it is not. In the At
+Home/Chez Soi randomised trial, $N=1198$ homeless adults with mental illness
+across four Canadian cities, assignment to scattered site housing with intensive
+case management produced \textbf{no detectable effect on mental illness symptom
+severity at any wave} --- $-0.96$ ($p=.16$), $-0.51$ ($p=.46$), $0.18$
+($p=.79$), $0.57$ ($p=.44$) --- and none on the Recovery Assessment Scale,
+$0.09$ ($p=.92$). What the same trial \emph{does} find, large and significant, is
+housing stability, its primary outcome, and condition specific quality of life,
+$5.91$ ($3.41$ to $8.41$, $p<.001$).}
+
+\nw{Three things about how much weight this bears. The design is right for the
+question: it randomises housing access among exactly the population the
+parameter would govern. The estimate is if anything \emph{diluted}, because the
+control arm also achieves some housing, which makes a null more rather than less
+telling. And the outcomes are symptom scales over 24 months rather than
+diagnostic remission over a lifetime, so the honest claim is that housing does
+not measurably speed recovery from serious mental illness on that horizon,
+not that it could never matter. Making the channel housing dependent would mean
+adding a mechanism the best available trial looked for and did not find.}
+
+\nw{\paragraph{The same trial appears to contradict Milby, and the resolution is
+this paper's thesis.} At Home/Chez Soi also reports severity of substance use
+problems at $1.04$ ($0.89$ to $1.21$, $p=.66$): unconditional housing does not
+reduce substance use either. Yet $b_{\text{HL}}$ is calibrated to Milby, where
+housing \emph{did} raise abstinence. The two are reconciled by what
+distinguishes them: Milby's housing was \textbf{contingent on abstinence},
+At Home/Chez Soi's is \textbf{unconditional}. Contingency is doing the work,
+not housing per se. Two trials with opposite designs therefore identify exactly
+the margin this paper is about, and jointly they are far better evidence for the
+mechanism than either is alone.}
+
+$m$ is an exogenous two-state Markov chain. It represents \emph{serious} mental
+illness, not any mental illness: AMI covers roughly 23\% of US adults and
+includes mild anxiety and depression, whereas SMI is about 5.5\% and is defined
+by substantial functional impairment. A state that halves productivity cannot
+sensibly cover a quarter of the population.
+
+The onset rate is \emph{derived} from the target prevalence $p_m$ and the
+recovery rate $\lambda_m$,
+\begin{equation}
+\text{onset}=\lambda_m\frac{p_m}{1-p_m},
+\end{equation}
+so calibrating persistence never disturbs prevalence.
+
+SMI affects six objects: productivity conditional on working ($\rho_m$), job
+finding and separation ($\kappa_{uem}$), mortality ($\kappa_{\phi m}$), the
+recovery hazard ($\mu_m$), the Stone--Geary shifter ($\rho_m$ in \eqref{eq:b}),
+and eligibility for disability income ($\zeta_{DI}$ in \eqref{eq:income}).
+
+\paragraph{And causation runs the other way too: SUD raises the hazard of
+SMI.} The onset rate is multiplied by $\iota>1$ for a household with $d=1$:
+\begin{equation}
+\Pr(m'=1\mid m=0,d)=\text{onset}_m\cdot\iota^{\ind{d=1}} .
+\end{equation}
+The evidence is strong. Substance-induced psychosis converts to schizophrenia or
+bipolar disorder at a pooled rate near 25\% (Murrie et al., \emph{Schizophrenia
+Bulletin}), and in the Danish registers any substance use disorder predicts
+conversion to schizophrenia with a hazard ratio of 1.34, amphetamine use
+disorder 1.90 and opioid use disorder 2.74. The central value is $\iota=2$ with a
+range of 1.3 to 2.7.
+
+This channel matters twice over, and the submitted paper had neither half of
+it. \emph{Privately} it is a further cost of addiction, so it belongs in the
+mechanism ladder alongside mortality and employment. \emph{Fiscally} it is a
+further externality, and a compounding one: SUD raises SMI, SMI raises disability
+receipt, lowers employment, raises mortality and raises homelessness, so the
+chain SUD $\rightarrow$ SMI $\rightarrow$ DI and lost tax runs entirely outside
+what the household internalises beyond its own utility. It is measured in
+\S\ref{sec:extern}.
+
+Because onset is no longer common to everyone, it can no longer be derived
+from prevalence: the base rate is calibrated so that population prevalence still
+lands on 5.5\% while the multiplier operates.
+
+The specification follows \.{I}mrohoro\u{g}lu and Zhao (2022) structurally, not
+just numerically: in their model labour-market shocks generate \emph{short}
+homeless spells while health shocks generate \emph{chronic} homelessness, and
+expanded means tested disability income is the effective policy for the chronic
+group. Homelessness driven purely by income risk is transitory; the persistent
+tail needs a persistent state. This is Referee~1's comment 1(a), and the
+persistence is also what generates the older homeless population of comment
+2(c)(ii).
+
+\subsection{The voucher programme and the two policies}
+
+A household without a voucher draws one with probability $\pi_V$ if it is income
+eligible; a household with one keeps it while eligible. Eligibility is
+\begin{equation}
+y^{g}+\max\{0,ra\}\;<\;\kappa_V\cdot\text{median income}.
+\end{equation}
+
+Under \textbf{Housing First} that is the whole rule. Under \textbf{Treatment
+First} a voucher is additionally lost with probability $p_{\text{det}}$ if the
+household used drugs, and with probability $p_{\text{fp}}$ even if it did not:
+\begin{equation}
+\Pr(\eta'=1)=\Pr(\eta'=1)^{HF}\times
+\begin{cases}
+1-p_{\text{det}} & \text{if } v>0\\
+1-p_{\text{fp}} & \text{if } v=0 .
+\end{cases}
+\end{equation}
+Referee~1 (4a, 4b) and the AE (A11) both note that perfect observation and
+enforcement are not credible. $p_{\text{det}}$ and $p_{\text{fp}}$ are experiment
+parameters reported as sensitivity, not calibrated, because that is the point.
+
+\subsection{The household problem}
+
+Let $s=(a,y,e,d,m,\eta)$. The value function solves
+\begin{equation}
+\begin{aligned}
+V_j(s)=\max_{\{n,\,h',\,v,\,\tau,\,a'\}}\;\Biggl\{&
+\frac{\bigl[c^{\alpha}(h')^{\beta}(v+b_{dmh'})^{\gamma}\bigr]^{1-\sigma}}{1-\sigma}
++\omega_{\ell}\frac{(1-n)^{1-\sigma_{\ell}}}{1-\sigma_{\ell}}
++\aleph-\tau\bar\tau^{u}-\kappa_x\bigl(H+\omega_x H_D\bigr)\\
+&+\beta\,\phi_j(h',d,m)\;
+\mathbb E\Bigl[V_{j+1}\bigl(a',y',e',d',m',\eta'\bigr)\;\Big|\;s,h',v,\tau\Bigr]\Biggr\}
+\end{aligned}
+\label{eq:bellman}
+\end{equation}
+subject to \eqref{eq:income} to \eqref{eq:budget}, with $V_{J+1}\equiv0$: there is
+no bequest motive, and death is worth zero. The expectation is taken over the
+independent transitions in $y$ (Rouwenhorst), $e$ \eqref{eq:emp}, $d$
+\eqref{eq:dtrans}, $m$, and $\eta$.
+
+The problem is solved by exact backward induction. Within a drug regime and a
+housing choice the $c$ and $v$ split is closed form \eqref{eq:cv} and hours come
+from \eqref{eq:foc}, so the only search is over $a'$, done on the full grid
+because the objective is \emph{not} single-peaked in $a'$: voucher eligibility is
+a step function of income (which includes $ra$), the food-stamp floor kinks, and
+housing is discrete.
+
+\subsection{Government}
+\label{sec:govt}
+
+The government pays social security, UI, disability, food stamps and vouchers,
+and bears a fiscal cost $\chi_H$ per homeless household and $\chi_D$ per
+household with SUD. It finances this with the labour income tax
+\eqref{eq:aftertax}, the capital income tax, and the estates of the deceased.
+The level parameter $\tau_{\ell}$ clears the budget:
+\begin{equation}
+\underbrace{\sum y^{g}-\tau_{\ell}\sum (y^{g})^{\xi}+\tau_k\sum \max\{0,ra\}+\text{estates}}_{\text{revenue}}
+=\underbrace{SS+UI+DI+F+V\!ch+\chi_H H+\chi_D D+G}_{\text{outlay}} .
+\label{eq:govt}
+\end{equation}
+
+\paragraph{Estates go to the government.} Redistributing accidental bequests as a
+uniform lump sum is a large unconditional transfer to the poor with welfare
+consequences of its own, which would contaminate every policy comparison in the
+paper. Sending them to the budget also removes an equilibrium fixed point. The
+lump-sum version remains available for a robustness run. This is a change from
+the submitted paper, where transfers were additionally type-dependent, the
+AE's A7.
+
+\subsection{Drug supply and the price}
+
+Drug production has cost $C(V)=\frac{\psi_1}{\psi_2}V^{\psi_2}$, so supply
+satisfies $p_v=\psi_1V^{\psi_2-1}$ and the price elasticity of supply is
+$1/(\psi_2-1)$. The shifter $\psi_1$ is normalised so that $p_v=1$ at the
+benchmark quantity.
+
+This answers Referee~1 (1c), Referee~3 (M2d) and the AE (A5). Referee~3 worried
+that endogenising the price ``requires suppressing this normalization''. It does
+not: the normalisation moves to $\psi_1$, the benchmark price is still one, and
+only counterfactuals move it.
+
+\paragraph{What the evidence says about $\psi_2$, and why it favours the
+submitted paper.} The maintained assumption in the drug-economics literature is
+that US supply of cocaine and heroin is \emph{very} elastic. Rhodes et al.\
+(2002), discussed in the National Academies' \emph{Understanding the Demand for
+Illegal Drugs}, assume it outright on the grounds that these are agricultural
+products with simple, inexpensive processing, so producers can meet any demand at
+roughly the current price; the reduced-form demand estimates that literature
+rests on require it.
+
+There is also a natural experiment. In August 2010 Purdue replaced OxyContin
+with an abuse-deterrent formulation, pushing a very large mass of demand into
+heroin, enough to quadruple heroin death rates (Alpert, Powell and Pacula,
+NBER w24475). Purity-adjusted heroin prices did not rise. They fell slightly
+between 2010 and 2012. A demand shift of that magnitude leaving price flat is
+direct evidence of a near-horizontal supply curve.
+
+So the baseline here is a \emph{flat} supply curve and finite elasticities are
+the robustness direction, not the other way round. That reframes the answer to
+Referee~1 (1c) and Referee~3 (M2d): the submitted paper's fixed price was the
+field's standard assumption rather than an unjustified normalisation, and the
+machinery now exists to demonstrate that relaxing it does not matter.
+
+It is worth recording the companion fact, because it disciplines the second
+stage. The \emph{demand} elasticity is well estimated: participation elasticities
+of $-0.36$ to $-0.55$ for cocaine and $-0.80$ to $-0.90$ for heroin
+(Saffer and Chaloupka), with conditional heroin demand near $-0.80$ (Olmstead et
+al.\ 2015). The paper's $-0.63$ target sits inside that range, and the $-0.36$ to
+$-0.9$ robustness band Referee~1 asks for \emph{is} that range.
+
+\subsection{Stationary equilibrium}
+
+A stationary equilibrium is a value function, policy functions, a distribution
+$\Phi$, and $(\tau_{\ell},p_v,\bar Y,\text{median},H,H_D)$ such that households
+solve \eqref{eq:bellman}; $\Phi$ is the invariant distribution induced by the
+policies and the transitions; the government budget \eqref{eq:govt} holds; the
+drug market clears at $p_v$; and $\bar Y$, the median, $H$ and $H_D$ are the
+aggregates implied by $\Phi$.
+
+Note that $H$ and $H_D$ enter \eqref{eq:util}, so they are genuine fixed points
+whenever $\kappa_x>0$, and that the median enters voucher eligibility, so it is a
+fixed point too, in a skewed income distribution the median sits well below
+the mean, and using the mean would materially overstate the eligible population.
+
+%======================================================================
+\section{Parameters}
+\label{sec:params}
+
+Every parameter in the model. \textbf{Status} is one of: \textbf{N} normalisation
+or definition; \textbf{L} standard in the literature, cited; \textbf{D} set
+directly from data; \textbf{C} internally calibrated, with the moment it is
+assigned to; \textbf{E} determined in equilibrium; \textbf{S} reported as a
+sensitivity rather than calibrated, because no credible point estimate exists.
+
+\begin{longtable}{lL{3.8cm}cL{5.8cm}}
+\caption{Preferences and prices}\\
+\toprule
+Symbol & Meaning & St. & Value, source or target\\
+\midrule
+\endfirsthead
+\toprule
+Symbol & Meaning & St. & Value, source or target\\
+\midrule
+\endhead
+$\sigma$ & risk aversion & L & 2.0. Attanasio and Weber (2010) survey; the standard life cycle value\\
+$\sigma_{\ell}$ & curvature on leisure & L & 3.0; Frisch elasticity 0.5, Chetty (2012)\\
+$\omega_{\ell}$ & weight on leisure & C & $\rightarrow$ average hours worked, 40\% of time. Guvenen et al.\ (2023)\\
+$\theta_h$ & Cobb--Douglas weight on housing & C & $\rightarrow$ aggregate housing cost / income, 21.2\%. SCF 2022, ages 26 to 85, all households, owner housing at imputed rent; \texttt{data/scf\_housing\_burden.py}\\
+$\theta_v$ & Cobb--Douglas weight on drugs & C & $\rightarrow$ drug spending / income given SUD, 44\%. Carried over from the submitted paper; its construction must be stated explicitly in the appendix (R1 2e)\\
+$b_0$ & Stone--Geary shifter, clean & C & $\rightarrow$ drug participation, 5.13\%. NSDUH 2024 microdata, ages 26+; \texttt{data/nsduh\_gradients.py}\\
+$b_1$ & Stone--Geary shifter, SUD & C & \nw{$\rightarrow$ abstinence rate among homeless adults with SUD, 18.7\%. Milby et al.\ (2005), NO-HOUSING arm: 4.48 consecutive weeks abstinent out of 24. $b_1$ governs how costly abstention is once a household already has SUD, so one arm of the trial pins the level and the contrast between arms pins the treatment effect. It previously had no target at all, which also left the housing-access ratio undefined, with abstention impossible, the NH arm abstains 0\% and the ratio is 0/0}\\
+$\rho_m$ & $b$ multiplier, mental illness & C & $\rightarrow$ SUD rate given SMI, 9.75\%. NSDUH 2023 detailed tables, ages 26+, by Bayes on Tables 6.13B, 6.4B and 5.10B\\
+$\rho_H$ & $b$ multiplier, homelessness & C\textsuperscript{2} & $\rightarrow$ housed/unhoused abstinence ratio, 1.473. Milby et al.\ (2005), \emph{AJPH} 95(7):1259 to 65, NACH versus NH arms\\
+$\aleph$ & flow value of being alive & C & \nw{$\rightarrow$ \textbf{model implied VSL, \$7.5m} (Viscusi and Aldy 2003; EPA 2010). It used to target the SUD income ratio, which pins $\aleph$'s effect on WHO uses but not its LEVEL, and at the resulting level 64.6\% of the population had $V<0$, i.e.\ preferred death, which turns the mortality cost of drug use into a benefit. The SUD income ratio moved to $\rho_d$}\\
+$\bar\tau^{u}$ & utility cost of treatment & C & $\rightarrow$ treatment take up given SUD, $\approx$24\%. NSDUH 2023: about a quarter of people with a past-year SUD received any substance use treatment. \textbf{Verify against the detailed tables}\\
+$\beta$ & discount factor & C & $\rightarrow$ wealth / GDP $=3$. BEA fixed assets against GDP; the standard US private-capital-to-output ratio\\
+$p_v$ & drug price & E & clears the drug market; $=1$ at the benchmark by the normalisation of $\psi_1$\\
+$r$ & risk-free rate & L & 0.03, Kaplan, Mitman and Violante (2020)\\
+$\kappa_x$ & externality weight & D & Inverted from Loubi\`ere et al.'s eight-country contingent valuation, \EUR{}23 per adult per year to end homelessness, normalised per unit of homelessness by the European reference rate. \textbf{This is the mean over ALL respondents.} The \EUR{}57 quoted in an earlier draft is the mean among the 42.3\% willing to pay anything, which is the wrong object for an aggregate public bad and overstates $\kappa_x$ by a factor of 2.5. \S\ref{sec:extern}\\
+$\omega_x$ & extra weight on homeless-with-SUD & S & \textbf{1.0 in the baseline}: the disamenity depends on the headcount alone. No direct estimate exists, R2's wording (``especially if many are addicted to drugs'') implies a positive weight and the hedonic split between supportive housing and emergency shelter implies composition matters, but neither pins a number, so the composition-weighted version is an \textbf{appendix robustness}, swept over 1 to 4\\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}{lL{3.8cm}cL{5.8cm}}
+\caption{Housing, taxes and transfers}\\
+\toprule
+Symbol & Meaning & St. & Value, source or target\\
+\midrule
+\endfirsthead
+\toprule
+Symbol & Meaning & St. & Value, source or target\\
+\midrule
+\endhead
+$h_{\text{HL}}$ & service flow of homelessness & C & $\rightarrow$ homelessness rate, \nw{0.399\%}. \nw{HUD PIT 2023, converted to \textbf{households}: 467{,}020 homeless individuals, one household each, plus 57{,}563 homeless family households, against 131{,}332{,}360 occupied units. The model's agent is a household, so the person rate of 0.195\% is the wrong unit; the factor of two is because homeless households are overwhelmingly single person while US households average about 2.5 people. Literal homelessness, excluding doubling up (AE A16)}\\
+$\underline h$ & smallest rental size & C & $\rightarrow$ share with housing cost $>50\%$ of income, 17.49\%. SCF 2022; \texttt{data/scf\_housing\_burden.py}\\
+$\varsigma$ & geometric spread of rental sizes & C & $\rightarrow$ share with housing cost $>30\%$ of income, 40.62\% (SCF 2022). \nw{\textbf{Data now in hand} for the better target: ACS B25042 (\emph{Tenure by Bedrooms}, occupied units, 2023, $N=131{,}332{,}360$) gives 13.21\% / 24.12\% / 62.67\% across $\{0,1\}$, $\{2\}$, $\{3+\}$ bedrooms. All households, not renters: the model has no homeownership, housing is a pure flow at $p_r h$, so an owners analogue is imputed rent and the SIZE distribution over all occupied units is the right object. That choice is worth 2.4$\times$ on the small bin, renters alone give 32.35\%, and the bin cut matters more still, $\{3+\}$ at 62.67\% against $\{4+\}$ at 23.63\%. In \texttt{data/us\_housing\_dist.csv}; not yet wired in as a moment}\\
+$\xi$ & tax progressivity (HSV) & L & 0.85, Heathcote, Storesletten and Violante (2017)\\
+$\tau_{\ell}$ & tax level & E & clears the government budget \eqref{eq:govt} given the distribution\\
+$\tau_k$ & capital income tax & L & 0.15. US long run capital-gains and qualified-dividend rate for the middle brackets\\
+$\underline c$ & food-stamp consumption floor & C & $\rightarrow$ food stamps / labour income, 0.42\%. USDA Food and Nutrition Service, SNAP outlays FY2023, against GDP\\
+$\kappa_V$ & voucher eligibility threshold & D & 0.50 of median income, HUD rule\\
+$\kappa_r$ & tenant contribution rate & D & 0.30, HUD rule\\
+$\pi_V$ & voucher lottery probability & C & $\rightarrow$ voucher recipients / income-eligible, 26.6\%. HUD Picture of Subsidized Households against the income-eligible renter population\\
+$p_{\text{test}}$ & \nw{probability a voucher holder is tested, TF} & S & \nw{1.0 at the benchmark, swept downward. Detection now requires a test, so effective detection is $p_{\text{test}}p_{\text{det}}$ and the old behaviour is the $p_{\text{test}}=1$ corner}\\
+$c_{\text{test}}$ & \nw{cost per voucher holder tested} & \nw{D} & \nw{0.0023 of average income. A urine panel runs about \$40 and quarterly testing is roughly \$160 a year against average earnings near \$70,000. It enters the GOVERNMENT BUDGET, where it competes with everything else the government pays for, R1's comment 4(c) is that the \$1 to 2bn estimate is too large to leave in a dismissive footnote}\\
+$p_{\text{det}}$ & detection probability given a test & S & 1.0 in the benchmark, swept downward. No estimate exists and none should: R1 4(a) and AE A11 object precisely to assuming perfect enforcement, so the point is the sweep\\
+$p_{\text{fp}}$ & false-positive rate under TF & S & 0.0 in the benchmark, swept upward. As above, R1 4(b)\\
+$\chi_H$ & fiscal cost per homeless household & D/S & \nw{\textbf{0.4286.} The homeless state $h_1$ is \emph{literal} homelessness, shelters and the street, not doubling up, so the matching figure in Abramson and Van Nieuwerburgh (2024, NBER w32582, p.~30) is their \$2{,}500 per household per month for the literally homeless, not the \$1{,}775 they blend across the literally homeless and the doubled-up. \$30{,}000 a year against the models \$70{,}000 average income. Components, their footnote~11: shelters, social services, extra policing, hospital emergency care; they call the blended figure \emph{conservative}. \textbf{Note the direction}: R2 and R3 both judged the previous 0.252 too HIGH, and the best structural number in the literature is 70\% higher again. It is an assumption inside their calibration rather than an independent estimate, so it is not decisive, but it is the right thing to cite and it cuts against the referees}\\
+$\chi_D$ & fiscal cost per household with SUD & D & 0.212; CEA (2017), $\approx$\$30,000 per person-year\\
+$G$ & other public spending & E & Residual that balances \eqref{eq:govt} at the benchmark, then held fixed across counterfactuals so policy is financed by $\tau_{\ell}$ rather than by cutting other spending\\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}{lL{3.8cm}cL{5.8cm}}
+\caption{Income process, employment and mortality}\\
+\toprule
+Symbol & Meaning & St. & Value, source or target\\
+\midrule
+\endfirsthead
+\toprule
+Symbol & Meaning & St. & Value, source or target\\
+\midrule
+\endhead
+$\rho_y,\sigma_y$ & AR(1) in log productivity & L & 0.90, 0.20. Storesletten, Telmer and Yaron (2004); Floden and Lind\'e (2001)\\
+$\varepsilon_j$ & deterministic age profile & D & quadratic in age, fitted to the PSID/CPS hump. \textbf{Replace with a directly estimated profile}\\
+$\bar\phi_j$ & baseline survival & D & \nw{\textbf{Done.} SSA period life table (\texttt{oact/STATS/table4c6}), ages 26 to 85, the two sexes combined by survivor weight $q(x)=[l^M q^M+l^F q^F]/[l^M+l^F]$ rather than averaged equally, by the mid-eighties the survivor populations differ enough that equal weights are simply wrong. Loaded from \texttt{data/us\_life\_table.csv}. The placeholder it replaces understated mortality badly: $q$ at 85 was 0.045 against an actual 0.081, and at 26 0.00054 against 0.00116. This is R3 M1b}\\
+$\bar\pi^{ue}$ & job finding, annual & L & 0.55, Krueger, Cramer and Cho (2014)\\
+$\bar\pi^{eu}$ & job separation & C & $\rightarrow$ unemployment rate, 4.9\%. BLS, ages 25+, average over the recent expansion\\
+$\pi_{UI}$ & share of entrants drawing UI & D & 0.30; insured unemployment / total unemployment, FRED 2014 to 24\\
+$\varrho_{UI}$ & UI replacement rate & D & 0.50. DOL statutory replacement rates average close to half of prior weekly wages\\
+$\kappa_{ueH}$ & employment multiplier, homeless & L & 0.80, Desmond and Gershenson (2016)\\
+$\kappa_{ued}$ & employment multiplier, SUD & C & $\rightarrow$ unemployment rate given SUD, \nw{\textbf{16.25\%}}. \nw{\textbf{Corrected, and the previous figure's stated source was wrong.} The note attributed 26.9\% to a tabulation in \texttt{data/nsduh\_gradients.py}; that script contains no employment variable and cannot have produced it. Measured now from the full NSDUH 2024 public use file, ages 26+, unemployment over the labour force weighted by \texttt{analwt2\_c}, with \texttt{svyrdudany} for severity and \texttt{irwrkstat} for employment: 6.65\% for everyone, 6.04\% with no disorder, 12.72\% with any drug use disorder and 16.25\% with a moderate or severe one, which is the model's concept. The old target implied a relative risk of 5.49 against an overall rate of 4.9\%; the data gives 2.44, so the channel was about 2.25 times too strong}\\
+$\kappa_{uem}$ & employment multiplier, SMI & C & $\rightarrow$ unemployment rate given SMI, 7.1\%. NSDUH Table 6.5B: SMI prevalence 8.9\% among the unemployed against 5.1\% among the full-time employed, inverted by Bayes\\
+$\kappa_{\phi H}$ & mortality multiplier, homeless & D & \nw{\textbf{Now varies with age}: 4.41 at 26, 3.80 at 44, 3.14 at 56, 1.09 at 80. Baggett et al.\ (2013) give race adjusted all cause mortality rate ratios for homeless adults of 8.6 (men) and 9.6 (women) at 25 to 44, 4.5 at 45 to 64 and 1.1 at 65 to 84. The previous flat 1.60 was wrong twice: five times too small at prime ages, and the wrong \emph{shape}, since a constant multiplier matching the young implies a 41\% annual death rate at 80. Their ratio is the total for a population that mostly also has SUD, so it is netted down by $[(1-s)+s\kappa_{\phi d}]$ with $s=0.217$; floored at one, because the 65+ arithmetic says homelessness protects the old, which is survivor selection and not causation. \S\ref{sec:hazards}}\\
+$\kappa_{\phi d}$ & mortality multiplier, SUD & C\textsuperscript{2} & \nw{\textbf{Shape from data, level still calibrated.}} $\rightarrow$ drug price participation elasticity, $-0.63$ (inside the $-0.36$ to $-0.55$ cocaine and $-0.80$ to $-0.90$ heroin participation range of Saffer and Chaloupka), bracketed by the 2.5 to 9.8 SMR range of Degenhardt et al.\ (2011). \nw{The age \emph{profile} now comes from CDC WONDER drug poisonings, giving 5.90 at 26, 6.26 at 32, 2.62 at 56 and 1.03 at 80, while the \emph{level} stays the second stage instrument. Flat at 6.9 it implied a sevenfold SUD mortality penalty at 80, where the measured excess is essentially nil. \S\ref{sec:hazards}}\\
+$\kappa_{\phi m}$ & mortality multiplier, SMI & D & 2.50, \nw{and \textbf{constant in age, which is a finding rather than a default}. Unlike SUD and homelessness, whose multipliers collapse with age, Olfson et al.\ (2015) give all cause SMRs for schizophrenia of 3.6 at 20 to 34, 3.4 at 35 to 54 and 4.0 at 55 to 64: flat, if anything rising. The level is a judgement across three populations, Walker, McGee and Druss (2015) pooling 148 studies of any mental disorder at 2.22, Olfson's 3.4 to 4.0 for schizophrenia alone, and Colton and Manderscheid (2006) at about 3.2 for public mental health clients. This model's SMI state is 5.5\% of the population, broader than schizophrenia and far narrower than any mental disorder, so 2.50 sits where it belongs. Sensitivity at 3.2}\\
+$\rho_d$ & SUD productivity penalty & D & 1.00 in the baseline: no direct wage effect. The employment-margin evidence is robust (about 50\% more unscheduled absence, 44\% higher turnover) and is carried by $\kappa_{ued}$; the wage penalty conditional on working is contested, with parts of the older literature finding positive effects for casual use. A version calibrated to the SUD income ratio is an \textbf{appendix robustness} (AE A20)\\
+$\rho_m$ & SMI productivity penalty & C & $\rightarrow$ homeless income / average, 19.1\%. Meyer et al.\ (2025), homeless population linked to administrative earnings records\\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}{lL{3.8cm}cL{5.8cm}}
+\caption{Addiction, recovery, treatment and mental illness}\\
+\toprule
+Symbol & Meaning & St. & Value, source or target\\
+\midrule
+\endfirsthead
+\toprule
+Symbol & Meaning & St. & Value, source or target\\
+\midrule
+\endhead
+$\pi_d$ & addiction hazard given any use & C & $\rightarrow$ SUD rate, 3.68\%. NSDUH 2024 microdata, ages 26+\\
+$j_E$ & maximum experimentation age & S & Real age 55, with no source, R1's smaller comment 1 says so. Run with and without (\S\ref{sec:diag}); if it can be dropped it should be\\
+$\bar\pi_r$ & baseline recovery hazard, housed & D & 0.025/yr; Vaillant (1995). The AE questions applying alcohol recovery rates to drug SUD; Fleury et al.\ (2016) give 35 to 54\% remission at a mean 17-year follow up across substances, which brackets this\\
+$\mu_H$ & recovery multiplier, homeless & C & $\rightarrow$ drug use disorder share of the homeless, 21.7\%. Gutwinski et al.\ (2021), \emph{PLOS Medicine}, 39 pooled studies. Note this is the DRUG figure; the submitted paper's 37\% is their ALCOHOL figure\\
+$\mu_m$ & recovery multiplier, SMI & D & \textbf{0.82.} Dual-diagnosis cohorts relapse at 39.8\% against 26.4\% without a co-occurring disorder (odds ratio 1.85 for difficulty maintaining abstinence), so sustained remission runs 0.602 against 0.736, a ratio of 0.82; converting the odds ratio to a risk ratio at that base rate gives the same figure. Previously 0.50, which was invented\\
+$g$ & treatment effect on recovery & S & 1.35, from an odds ratio of 1.22 for contingency management in the only clean randomised evidence. Specialty-treatment remission of 47.6\% and overall remission of 35 to 54\% are \emph{not} treatment effects, different populations, different selection, which is why they are not used here. \textbf{The TF result runs through this}, report a range and the value at which the ranking flips\\
+$p_m$ & SMI prevalence & C & $\rightarrow$ 5.5\%, NSDUH 2023, adults. A target rather than a parameter now, since onset varies with SUD\\
+$\lambda_m$ & SMI recovery rate & D & 0.067/yr; \.{I}mrohoro\u{g}lu, Zhao's own moment, $\approx$50\% improve enough to work within 10 years\\
+onset$_m$ & SMI onset & C & $\rightarrow$ SMI prevalence, 5.5\%. No longer derived, because onset is no longer common to everyone\\
+$\iota$ & SUD multiplier on SMI onset & D & \textbf{2.0, new.} Danish registers: any substance use disorder predicts conversion to schizophrenia with a hazard ratio of 1.34, amphetamine use disorder 1.90, opioid use disorder 2.74; substance-induced psychosis converts at a pooled 25\% (Murrie et al.). Range 1.3 to 2.7\\
+$\zeta_{DI}$ & disability coverage given SMI & C & $\rightarrow$ SMI share of the homeless, 25\%. Gutwinski et al.\ (2021): 12.4\% schizophrenia-spectrum plus 12.6\% major depression. This is \.{I}mrohoro\u{g}lu, Zhao's own identifying margin ($\zeta_{DI}$ in their notation)\\
+$\bar y_{DI}$ & disability benefit level & D & 0.25 of average income. SSA: average SSDI benefit \$1,537 a month in 2024, about \$18,400 a year against average annual earnings near \$70,000, so 0.26. The SSI federal benefit rate of \$943 a month is 0.16; SSDI is the relevant figure for people with a work history\\
+$\psi_1$ & drug supply shifter & N & Normalised so $p_v=1$ at the benchmark quantity, which is what lets the price be endogenous without disturbing the existing normalisation (R3 M2d)\\
+$\psi_2$ & drug supply curvature & \nw{D} & \nw{Elasticity $1/(\psi_2-1)$, \textbf{baseline 2.0}, bracketed from measured tax incidence in two legal markets. \textbf{Lower bound 0.79}: Hansen, Miller and Weber (2018) on Washington's 2015 switch from a 25\% gross receipts tax at every supply chain stage to a single 37\% retail excise, in universal state traceability data. Consumers bear 44\% of the additional burden and demand elasticity is about $-1$ within two weeks, so $\varepsilon_s=\rho|\varepsilon_d|/(1-\rho)=0.79$. Washington caps licensed cultivation canopy, a constraint with no analogue in an illegal market, so this is a floor. \textbf{Upper bound about 3.6}: the same paper notes its result stands in contrast to the cigarette and gasoline incidence literatures, which find consumers bear the substantial majority; at a consumer share near 0.9 and a consensus demand elasticity near 0.4 that implies about 3.6 for unconstrained legal manufacturing. The two cannot be reconciled by demand elasticity alone, which is the authors' own explanation, since no single supply elasticity fits both, so cannabis genuinely is steeper and the licence cap is why. \textbf{Illegal drugs sit between}: no licence cap pushes toward 3.6, while enforcement prevents capital intensive scaling, drugs being ``diluted and packaged by hand \dots because enforcement makes it risky to maintain dedicated, fixed capital equipment'' (Caulkins and Reuter 2010), and moving more product needs more shipments and couriers, pushing toward 0.79. Swept over $\{0.79,2,5,50\}$, where 50 is the effectively infinite benchmark this model previously assumed. \textbf{This makes the equilibrium price consequential rather than decorative}: halving demand now moves it 29\%, against 1.4\% at 50, which is what R1 1(c), R3 M2d and AE A5 asked for when they asked that the price be an equilibrium object}\\
+\bottomrule
+\end{longtable}
+
+\paragraph{Superscript 2} marks the two parameters calibrated in the
+\emph{second} stage, against experimental rather than cross-sectional moments.
+
+\paragraph{Parameters that remain undisciplined.} Five, and they are flagged
+rather than hidden: $g$ (treatment effect), $\mu_m$, $\bar y_{DI}$, $\psi_2$ and
+$\kappa_x$. Of these only $g$ carries a headline result, and it is reported as a
+range. The baseline survival profile $\bar\phi_j$ is currently a smooth
+functional form and should be replaced with US life tables before the paper is
+resubmitted.
+
+%======================================================================
+\section{\nw{Hazards that vary with age}}
+\label{sec:hazards}
+
+\nw{Four hazards were constants and should not have been. Each was calibrated or
+assigned to hit an average, and each therefore matched a level while getting the
+life cycle profile wrong, in every case in the direction that weakens the
+paper's own mechanism at the ages where it does its work.}
+
+\nw{\paragraph{Baseline survival.} Was a smooth exponential fitted to nothing.
+Now the SSA period life table for ages 26 to 85, with the sexes combined by
+survivor weight, $q=[l^Mq^M+l^Fq^F]/[l^M+l^F]$, rather than averaged equally:
+by the mid eighties the two survivor populations differ enough that equal
+weights are simply wrong. The placeholder understated mortality by nearly half
+at the top of the range, $q=0.045$ at 85 against an actual 0.081. R3 M1b.}
+
+\nw{\paragraph{Homelessness and SUD mortality, derived jointly.} These cannot be
+set separately. Baggett et al.'s homelessness ratio is measured on a population
+that mostly also has SUD, so netting the SUD component out depends on wherever
+the SUD multiplier lands:}
+\begin{align}
+\kappa_{\phi d}(a) &= 1+(\kappa_{\phi d}-1)\,\sigma_d(a),\\
+\kappa_{\phi H}(a) &= \max\Bigl\{1,\ \frac{RR(a)}{(1-s)+s\,\kappa_{\phi d}(a)}\Bigr\},
+\end{align}
+\nw{where $\sigma_d$ is the SUD profile from CDC drug poisonings normalised to
+one at its peak, $RR$ is Baggett's all cause ratio, and $s=0.217$ is the model's
+own SUD share of the homeless. Because $\kappa_{\phi d}$ falls with age, so does
+the correction: at 45 to 64 more of the observed ratio is genuine homelessness
+effect, and $\kappa_{\phi H}$ at 56 comes out at 3.14 rather than the 1.97 a
+flat calculation gives.}
+
+\nw{\paragraph{Why the level stays free.} $\kappa_{\phi d}$ is the second
+stage's only instrument: it is bracketed inside the Degenhardt SMR range to hit
+a drug price elasticity of participation of $-0.63$, and that elasticity is what
+disciplines how much drug use responds to its costs, which is the object the
+entire policy experiment turns on. Pinning the level from mortality data would
+take the instrument away and leave the elasticity undisciplined. So the data
+supplies the \emph{profile} and the elasticity supplies the \emph{level}. The
+system is then over identified, which is the point: \S\ref{sec:valid} reports
+the age weighted SMR the model produces against the published ratios, and a
+disagreement is a finding rather than something a dual purpose parameter can
+hide.}
+
+\nw{\paragraph{SMI onset.} Was a scalar. A flat onset against a flat recovery
+drives prevalence toward its steady state from below, so the model produced a
+profile that \emph{rises} with age; NSDUH has SMI falling from 11.0\% at 26 to
+29 to 1.4\% at 65 and over, a factor of eight. The model hit the 5.5\% average
+and had the shape backwards, which misplaces the mental health channel and
+everything it feeds. Onset is backed out of the prevalence profile and the
+recovery hazard, $\lambda(a)=[p(a{+}1)-p(a)(1-\mu)]/(1-p(a))$, with prevalence
+fitted log linearly ($R^2=0.977$) rather than interpolated piecewise: an early
+attempt differenced a piecewise linear curve and every kink became a spike,
+giving an onset profile that was 1.00 at 26, 0.01 at 32 and exactly zero at 56
+and 68. Those zeros were artifacts, not incidence that vanishes and reappears.
+As with the mortality multipliers the shape is data and the level stays
+calibrated to the prevalence target. Newborns now enter with the observed
+prevalence at 26 rather than the ergodic of the age one transition matrix, which
+would start them at 4.7\% against 11 to 13\% observed.}
+
+\nw{\paragraph{What stays constant, and why.} $\kappa_{\phi m}$. I expected it to
+collapse with age like the other two and it does not: Olfson et al.\ (2015) give
+all cause SMRs for schizophrenia of 3.6, 3.4 and 4.0 across 20 to 34, 35 to 54
+and 55 to 64. Flat, if anything rising. The employment hazards
+$\pi_{ue},\pi_{eu}$ also stay constant; job finding does fall with age in the
+data, but it shapes the income profile rather than any of the paper's
+mechanisms, and it is not worth the extra machinery.}
+
+\section{Calibration}
+\label{sec:calib}
+
+Two stages, and they are different exercises. The first matches a cross-section
+of the stationary equilibrium. The second matches short run \emph{responses}
+measured in experiments, which cannot be computed by comparing stationary
+equilibria.
+
+\subsection{First stage: the stationary equilibrium}
+
+Nineteen parameters are calibrated jointly against twenty-one moments of the
+stationary distribution. All the assignments are in Section~\ref{sec:params};
+what matters methodologically is the following.
+
+\paragraph{The parameter, moment map is close to triangular, and the code says
+so.} Each parameter has one moment it dominates, and the sign of
+$\partial M/\partial\theta$ is declared explicitly for each pair, so a mistaken
+sign shows up immediately as a moment walking away from its target rather than as
+a silent failure.
+
+\paragraph{Three moments are step-like and must be bracketed, not stepped.}
+Participation is a near-threshold function of $b_0$, below a cutoff everyone
+uses, above it nobody does, and in between every drug moment reads zero.
+Homelessness moved from 0.12\% to 3.29\% for a 35\% change in $h_{\text{HL}}$.
+Wealth/GDP is 5.46 at $\beta=0.995$ and 0.38 at $\beta=0.85$. A proportional step
+of 0.9 takes a discount factor from 0.96 to 0.864, which is enormous in a
+life cycle model; the first attempt at this calibration drove $\beta$ into its
+lower bound and took every other moment with it. All three are bisected at the
+head of each sweep, in partial equilibrium, before anything else moves.
+
+\paragraph{The discount factor and wealth/GDP.} $\beta$ targets aggregate wealth
+equal to three times GDP, with GDP measured as \emph{all factor income}, labour earnings plus the return on the capital stock, and transfers excluded,
+because transfers are redistribution rather than output. Three is the standard US
+ratio of the private capital stock to annual output. It is the right target here
+rather than the SCF's net-worth-to-\emph{household-income} ratio of roughly 7.3,
+whose numerator is mostly housing equity a model without homeownership cannot
+hold and whose denominator is not output. One implication should be stated in the
+paper rather than left for a reader to find: with $A=3\cdot\text{GDP}$ and
+$\text{GDP}=\text{labour income}+rA$, capital income is 9\% of GDP, low against a
+one-third capital share. That follows from holding $r$ fixed at 3\% in a model
+with no production function.
+
+\paragraph{Three targets that were wrong in the submitted paper.}
+\begin{enumerate}
+\item \emph{SUD among the homeless.} The paper targets 37\%. Gutwinski et al.\
+(2021) pool 39 studies of homeless people in high income countries and report
+36.7\% \emph{alcohol} use disorder and 21.7\% \emph{drug} use disorder. The model
+is about drug use. This is the AE's A16.
+
+\item \emph{Income of drug users.} Referee~1 (2c-i) attacked the model's 41\%
+against ``roughly 74\%''. The 74\% is computed over people with a use
+\emph{disorder}, not people who use. For ages 26+, NSDUH gives 95.1\% for users
+and 68.7\% for moderate or severe use disorder. Targeting the disorder ratio and
+\emph{validating} on the use ratio is the sharper test, and it makes the
+economics explicit: use is close to income-neutral, and it is progression to
+disorder that concentrates at the bottom.
+
+\item \emph{Housing burden.} Everyone rents in this model, so a renters-only
+target would import the selection into who rents. The target is the aggregate
+ratio over \emph{all} households with owner housing valued at imputed rent, and
+the full distribution is used for validation.
+\end{enumerate}
+
+\subsection{Second stage: short run experimental moments}
+\label{sec:secondstage}
+
+\emph{Method note.} These are partial equilibrium \textbf{cohort}
+experiments, not transition paths. A trial of two hundred people does not move
+the tax rate or the drug price, so prices are held at their benchmark values; the
+household problem \emph{is} re-solved, because each arm changes the rules a
+forward-looking household faces. Only the aggregate policy counterfactuals of
+R1 3(d) need a transition solver.
+
+Referee~2 (C1): ``all of the welfare results rest on whether the model has an
+accurate elasticity of drug use to housing access''. Referee~3 and the AE (A13)
+say the same independently. Referee~1 (2d, 2e) asks for policy-relevant
+elasticities from the RCT literature and notes that the price-elasticity moment
+as written is not replicable.
+
+These are short run objects. A trial hands a treatment to a selected group and
+measures them months later; it does not move aggregate prices and it does not
+wait for a new stationary distribution. The second stage holds prices at
+benchmark, takes the benchmark distribution as the initial condition, restricts
+to the trial's eligible population, applies each arm's rules, re-solves the
+household problem, and pushes the cohort forward.
+
+\paragraph{The housing-access elasticity.} Milby et al.\ (2005) randomised 196
+cocaine-dependent homeless adults into three arms, all receiving identical day
+treatment:
+
+\begin{center}
+\begin{tabular}{llrl}
+\toprule
+Arm & Model counterpart & $n$ & Weeks abstinent (of 24)\\
+\midrule
+NH   & no assistance & 66 & 4.48\\
+NACH & voucher, unconditional, \emph{Housing First} & 67 & 6.60\\
+ACH  & voucher, conditional, \emph{Treatment First} & 63 & 8.32\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The targeted moment is the \emph{ratio} $\text{NACH}/\text{NH}=1.473$, which
+identifies $\rho_H$. Ratios rather than levels: ``mean consecutive weeks
+abstinent out of 24'' is not the same object as ``abstains this model year'', but
+the treatment effect is comparable and it is the treatment effect the referees
+want reproduced.
+
+\paragraph{The conditionality effect is a validation check, not a target.} The
+abstract reports that the abstinence-contingent arm beat the unconditional arm,
+but only \emph{after controlling for treatment attendance}. In the raw randomised
+comparison NACH versus ACH gives $P=.091$, and the GEE models state the two
+housed groups ``did not differ from one another''. Calibrating to a point
+estimate the source reports as insignificant is exactly the error Referee~1
+attacked $\kappa_{\text{cons}}$ for.
+
+\paragraph{The extensive/intensive contrast is the sharper test.} Milby's
+counterfactual is literally no housing, and the effect is large. The Housing
+First RCTs compare Housing First to ``usual services'', which already include
+shelter or transitional housing, and the systematic review finds ``no clear
+differences \dots\ on outcomes related to mental health, quality of life and
+substance use''. These are not in conflict: the elasticity is \emph{large at the
+extensive margin} and \emph{near zero at the intensive margin}. A model
+reproducing both is far better identified than one matching either alone.
+
+\paragraph{The drug-price participation elasticity.} Perturb $p_v$, hold
+everything else at benchmark, re-solve, read the arc elasticity of participation.
+Partial equilibrium deliberately, since the empirical estimates come from price
+variation rather than from a comparison of steady states. Target $-0.63$;
+identifies $\kappa_{\phi d}$ within the Degenhardt SMR range. Referee~1 also asks
+for robustness across $-0.36$ to $-0.9$, which is the same bisection at the two
+endpoints.
+
+\paragraph{The value of a statistical life.} Reported rather than targeted,
+because $\aleph$ currently carries a first stage moment. Reference \$7.5m
+(Viscusi and Aldy 2003; EPA 2010). If the model implied value is far off, the
+right response is to move $\aleph$ to the VSL target and reassign the SUD income
+ratio to $\rho_d$.
+
+%======================================================================
+\section{Validation}
+\label{sec:valid}
+
+\nw{\paragraph{New untargeted moments.} None of these is fitted, and each is
+produced endogenously by a model with sixty single ages.}
+
+{\color{red}\begin{center}\begin{tabular}{lrl}
+\toprule
+Moment & Data & Source\\
+\midrule
+Homelessness rate, 25 to 34 / 35 to 44 / 45 to 54 / 55 to 64 / 65+ &
+\multicolumn{2}{l}{0.316 / 0.338 / 0.291 / 0.250 / 0.077\%\quad HUD PIT 2024}\\
+Shares of the homeless across those bands &
+\multicolumn{2}{l}{26.0 / 27.2 / 21.0 / 18.4 / 7.5\%}\\
+Returns to homelessness within 24 months & 17.4\% & HUD SPM 2024\\
+Drug poisonings as a share of all deaths, 25 to 44 & about 20\% & CDC WONDER\\
+Bottom 50\% share of net worth & 2.52\% & Fed DFA, 2022 to 2026\\
+Housing cost above 30\% / 50\% of income & 40.6 / 17.5\% & SCF 2022\\
+Age weighted SMR, SUD & 2.5 to 9.8 & Degenhardt et al.\\
+Age weighted SMR, homeless & 9.1 / 4.5 / 1.1 by band & Baggett et al.\\
+Tenant contribution rate & 31.2\% & HUD, tenant based vouchers\\
+Voucher holders with wages as main income & 28\% & HUD\\
+SUD income / average, moderate or severe & 71.1\% & NSDUH 2024\\
+Labour force participation, SUD vs clean & 65.8 vs 61.5\% & NSDUH 2024\\
+Homeless at treatment admission & 14.5\% & TEDS-A 2022\\
+Co-occurring psychiatric problem at admission & 43.1\% & TEDS-A 2022\\
+Working at all, among the homeless in treatment & 6.6\% & TEDS-A 2022\\
+\bottomrule
+\end{tabular}\end{center}}
+
+\nw{The age weighted SMRs deserve emphasis. Because the multipliers now vary
+with age while the literature reports a single ratio, the comparable object is
+the SMR computed on the model's \emph{own} age distribution of SUD and of
+homelessness. An unweighted average across ages would compare a profile against
+a statistic measured on a population concentrated at its young end, where both
+multipliers are largest. This is reported automatically by the second stage.}
+
+\label{sec:valid}
+
+None of these is targeted. Referee~1's 2(a), model fit never reported, and
+the AE's A12 are answered by reporting all of them, including the misses, and by
+framing the misses honestly rather than favourably (2b).
+
+\begin{longtable}{L{5.6cm}L{3.9cm}L{4.4cm}}
+\caption{Untargeted moments}\\
+\toprule
+Moment & Data & Source\\
+\midrule
+\endfirsthead
+\toprule
+Moment & Data & Source\\
+\midrule
+\endhead
+\multicolumn{3}{l}{\emph{Distributional}}\\
+Full CDF of housing cost / income & 12 thresholds, 5 to 100\% & SCF 2022, ages 26 to 85, owner housing at imputed rent\\
+Income of drug \emph{users} / average & 95.1\% & NSDUH 2024, ages 26+\\
+Income of those with SUD / average & 68.7\% (targeted; reported alongside) & NSDUH 2024, ages 26+\\
+Share of the homeless employed & 40 to 52\% & R1 comment 2(c)(i)\\
+Age distribution of the homeless & 48.1\% aged 26 to 44; 27.1\% 55+ & R1 comment 2(c)(ii); to be reported in finer bins\\
+Drug use by age & U-shaped & NSDUH microdata\\
+Wealth by age &, & SCF 2022\\
+\addlinespace
+\multicolumn{3}{l}{\emph{Policy responses}}\\
+HF effect on 3-year mortality & $-4.6$pp (s.e.\ 1.7) & Costantini (2025), $\approx$300,000 VA veterans, IV\\
+TF effect on long run health & $\approx0$ & Costantini (2025). The outcome is mortality and health-service use; the model captures mortality and SUD status, not general morbidity\\
+Housing stability, HF vs TF & sustained vs declining & HF RCT literature\\
+PSH vs emergency shelter, property values & PSH raises, shelter lowers & shelter-siting hedonic literature\\
+\bottomrule
+\end{longtable}
+
+\paragraph{The Costantini result is the paper's largest single risk and belongs
+in the introduction.} The best available quasi-experimental evidence says the
+mortality benefit runs through \emph{housing}, and that conditioning on treatment
+adds nothing detectable. The submitted paper concludes universal Treatment First
+dominates. The defensible position after the revision is the \emph{generosity}
+result, expanding coverage dominates, conditionality is second-order and
+uncertain, which is consistent with all of the above and is still a paper.
+Getting there requires reporting welfare and mortality as two dimensions, the
+AE's A9, rather than collapsing them into one ranking.
+
+%======================================================================
+\section{Diagnostics the model must pass}
+\label{sec:diag}
+
+Two checks are run before any number is read as a result.
+
+\paragraph{Is life worth living?} Death is worth zero in \eqref{eq:bellman}. If
+any household has $V_j(s)<0$ it strictly prefers to die, and for that household
+drug use is \emph{rewarded} by the mortality it causes, inverting the paper's
+central mechanism for exactly the population the policy targets. The diagnostic
+reports the minimum $V$ over the benchmark distribution, the mass with $V<0$, and
+whether they are disproportionately homeless, addicted or retired. If any mass
+appears, $\aleph$ is too small.
+
+\paragraph{The age profile of use, with and without $j_E$.} Referee~1's smaller
+comment 1 says the maximum experimentation age is in tension with the U-shaped
+age profile of use. The test is whether removing it produces a sensible profile
+or piles use onto the old, who have the least remaining life to lose. If use does
+concentrate at old ages, that is informative rather than embarrassing, it says
+the deterrent is the value of remaining life, but it has to be reported and
+explained rather than assumed away by a hard age limit.
+
+%======================================================================
+\section{Mechanisms: shutting channels and recalibrating $b$}
+\label{sec:mech}
+
+\subsection{Why this replaces the static appendix}
+
+Referee~1's comment 1(d) does not merely ask for intuition, it \emph{specifies
+the design}: show that the mortality channel is the quantitatively important one
+by shutting channels off. Comment 1(e) says the current appendix is disorganised,
+static and overreaches. Referee~2 (C4) wants the drug-use policy function shown
+by income and wealth. Referee~3 (M2b) asks what patterns the Stone--Geary
+specification actually generates and where heterogeneity in $v$ comes from;
+(M2c) asks the sharpest theoretical question in any report, since drug use is
+rational and forward-looking, where do the externalities justifying intervention
+arise? The AE (A1) asks for a stylised section because the number of moving parts
+obscures the economics.
+
+One exercise answers all five, run on the \emph{calibrated} model rather than a
+separate static toy. That matters: a static model with no assets cannot address
+Referee~2's question about wealth, and a toy calibrated to nothing cannot
+establish that a channel is quantitatively important.
+
+\subsection{The design}
+
+Shut one channel at a time and, in each arm, \textbf{recalibrate $b_0$ so that
+drug participation returns to its benchmark value}. The recalibration is what
+makes the comparison informative: without it, removing the mortality penalty
+simply raises use everywhere and the level change swamps any compositional
+change. Holding participation fixed separates \emph{sorting} from \emph{level}
+and yields two statistics per arm:
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Statistic & What it measures\\
+\midrule
+How far $b_0$ had to move & how much deterrence the channel was providing\\
+The income gradient of use & \emph{whom} it deterred\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The arms run in partial equilibrium at benchmark prices: the object of interest
+is the behavioural mechanism, not equilibrium feedback, and holding prices fixed
+isolates it as well as being far cheaper.
+
+\subsection{The arms}
+
+\begin{enumerate}
+\item \textbf{Benchmark.} All channels on.
+\item \textbf{No mortality penalty}, $\kappa_{\phi d}=1$. The paper's headline
+claim.
+\item \textbf{No employment penalty}, $\kappa_{ued}=1$. Referee~1's rival
+hypothesis.
+\item \textbf{No homelessness feedback}, $\kappa_{\phi H}=\kappa_{ueH}=\mu_H=1$
+and $\rho_H=1$. Isolates the loop that makes homelessness and SUD mutually
+reinforcing.
+\item \textbf{All private costs off at once.} Whatever deterrence survives is
+\emph{resource diversion}: the budget constraint alone. Diversion cannot be
+switched off directly, drugs are priced inside a Cobb--Douglas bundle, so
+making them free sends $v$ to the corner, but it is measurable as the
+residual, which is what this arm reports.
+\end{enumerate}
+
+\subsection{What is reported}
+
+\begin{table}[h]
+\centering
+\caption{Mechanism decomposition (structure; numbers pending the calibration)}
+\label{tab:mech}
+\begin{tabular}{lccccc}
+\toprule
+& Benchmark & No mortality & No employment & No homeless & All private\\
+& & penalty & penalty & feedback & costs off\\
+\midrule
+$b_0$ relative to benchmark & 1.00 & & & &\\
+Participation (\%, held fixed) & & & & &\\
+SUD rate (\%) & & & & &\\
+Homelessness (\%) & & & & &\\
+\addlinespace
+Use rate, income Q1 (\%) & & & & &\\
+Use rate, income Q5 (\%) & & & & &\\
+\addlinespace
+User income / average & & & & &\\
+\quad experimenters only & & & & &\\
+\quad SUD only & & & & &\\
+Users unemployed (\%) & & & & &\\
+Users homeless (\%) & & & & &\\
+Mean age of users & & & & &\\
+Mean assets of users & & & & &\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{The sharp prediction, and how it could fail}
+
+With preferences fixed across addiction status, becoming addicted no longer
+relaxes any constraint, so \emph{all} deterrence must come from mortality,
+employment and the budget. If removing the mortality penalty requires only a
+small change in $b_0$ and leaves the income gradient nearly flat, the paper's
+central mechanism is not carrying the weight the text claims, and the honest
+response is to say so and re-centre on the generosity result. If $b_0$ must fall
+substantially and the gradient inverts, the mechanism is established numerically
+on the calibrated model, which is what Referee~1 asked for and what the static
+appendix could not deliver.
+
+\subsection{Where the externalities come from}
+\label{sec:extern}
+
+Referee~3's M2c asks where the externalities justifying intervention arise, given
+that use is rational and forward-looking. They are of two kinds.
+
+\emph{Fiscal, and it has five parts.} A household that acquires SUD (i)
+works less and pays less tax; (ii) becomes likelier to be voucher-eligible and to
+receive one; (iii) becomes likelier to be homeless, which raises the direct
+programme cost \emph{and} makes work harder to find and easier to lose
+($\kappa_{ueH}=0.80$, Desmond and Gershenson), compounding back into (i);
+(iv) becomes likelier to develop serious mental illness, which raises
+disability receipt and feeds back into employment, mortality and homelessness;
+and (v) dies earlier, truncating the whole stream of future revenue. None of
+this is internalised, and all of it is already in the model, but the submitted
+paper never reported it, and did not have channel (iv) at all.
+
+It is now measured. Define the expected present discounted value of a
+household's net contribution to the government,
+\begin{equation}
+N_j(s)=\underbrace{T_j(s)}_{\text{taxes}}-\underbrace{V\!ch_j(s)}_{\text{vouchers}}
+-\underbrace{Tr_j(s)}_{\text{other transfers}}
+-\underbrace{\chi_H\ind{h'=h_1}+\chi_D\ind{d=1}}_{\text{direct costs}}
++\frac{\phi_j(s)}{1+r}\,\mathbb E\bigl[N_{j+1}(s')\bigr],
+\end{equation}
+discounted at the government's rate. Given the benchmark policy functions this is
+a \emph{linear} recursion, so it costs one backward pass and no optimisation, and
+carrying the four components separately decomposes the answer. The fiscal cost of
+one more case is
+\[
+\mathbb E\bigl[N(a,y,e,d=0,m,\eta)\bigr]-\mathbb E\bigl[N(a,y,e,d=1,m,\eta)\bigr]
+\]
+over the benchmark distribution of clean households: the same household,
+counterfactually with and without SUD.
+
+Two of the four channels are separated by re-running the recursion with one
+transition altered. Evaluating the SUD stream at \emph{clean} survival isolates
+what early death alone costs, purely by truncating the revenue stream. Evaluating
+it with homelessness carrying \emph{no} employment penalty isolates the
+SUD~$\rightarrow$~homelessness~$\rightarrow$~unemployment~$\rightarrow$~lost-tax
+chain. Both are easy to miss precisely because they work through transitions
+rather than through any flow.
+
+\paragraph{Reporting them in one currency.} The fiscal loss has to be financed by
+somebody, so annuitising it and spreading it across the population puts it in the
+same units as the disamenity, a share of average annual consumption. Only then
+can a reader see which channel actually matters. On the target values alone the
+direct outlays $\chi_H H+\chi_D D$ come to about 0.86\% of average income per
+capita against a disamenity near 0.33\%, and the direct outlays are only one of
+the four fiscal channels. If that ordering survives the calibration it is a
+substantially stronger position than the submitted paper's, where the entire
+ranking rested on $\kappa_{\text{cons}}$: the case for intervention would rest
+mainly on the channel that is measured inside the model and needs no free
+parameter, rather than on the contingent-valuation number, which is the weakest
+link.
+
+\nw{\paragraph{A second, wider measure.} The present-value recursion above is
+exact but partial: it prices what the government gains and loses, not what
+\emph{households} gain and lose, so it misses three things. It misses the
+deadweight loss of financing the transfer, which is real and first-order here
+because labour supply is elastic. It misses the drug price, which is an
+equilibrium object, so one more user raises the price every other user pays. And
+it misses the transfer scale: average income sets the food-stamp floor and the
+disability benefit, median income sets voucher eligibility, so one more case of
+SUD lowers all three for everybody. The wider measure raises the addiction hazard
+$\pi_{d}$ by ten per cent, re-solves, and reports the change in newborn welfare
+as a consumption-equivalent variation. Each channel is then isolated by
+re-solving with that channel alone \emph{frozen} at its benchmark value; the gap
+between the free re-solve and the frozen one is that channel's contribution.}
+
+\nw{Two cautions on reading the resulting table. First, the total includes the
+household's own expected cost, which it internalises and which is therefore
+\emph{not} an externality; only the channels beneath it are. Second, the
+disamenity, drug-price and transfer-scale channels are each measured with the
+other channels live, so they are marginal contributions and need not sum to the
+total, the sum is a diagnostic, not an accounting identity. The fiscal pair is
+the exception: the mechanical transfer is measured by holding hours at their
+benchmark schedule while the tax moves, so no distortion is created, and the
+deadweight loss is the residual once hours are free to respond. Those two are
+nested by construction and do add up. Holding hours fixed has to be done by
+constraining the choice, not by reweighting leisure in preferences: a large
+weight on leisure does not fix hours, it drives them to the corner.}
+
+\emph{Non-fiscal.} The disamenity term in \eqref{eq:util}. Referee~2 (C2) asked
+for it and said it was easy to introduce; it is, but it has no credible point
+estimate. Hedonic shelter-siting studies measure a \emph{local, avoidable}
+disamenity, what people pay to live further away, and this model has no
+geography, so nobody can avoid anything and a capitalisation coefficient does not
+map onto an aggregate public bad. Corbae, Glover and Nattinger's externality is
+about neighbourhood housing \emph{quality} rather than homelessness, and their
+identification comes from rent decontrol, so what transfers is their
+identification logic, not their functional form.
+
+\paragraph{A calibration for the disamenity does exist.} Referee~2 noted that
+introducing the externality ``would require a new calibration moment''. There is
+one, and it is a much better fit to this model than the hedonics. Loubi\`ere et
+al.\ ran an eight-country contingent-valuation study (France, Ireland, Italy,
+Netherlands, Poland, Portugal, Spain, Sweden, roughly 700 respondents each,
+fielded in 2017) asking exactly the right question: what would you pay in annual
+taxes to \emph{end} homelessness through Housing First? That is a stated
+preference over the \emph{aggregate} homelessness rate, precisely the object
+$\kappa_x$ multiplies, and it is non-spatial, which the hedonic estimates are
+not.
+
+\paragraph{Which mean, and the correction.} The study reports two, and they
+differ by a factor of 2.5. Only 42.3\% of respondents were willing to pay
+anything. Among those, the mean was \EUR{}56.9 ($\pm$9.1) per year, ranging from
+\EUR{}33 in Italy to \EUR{}93 in Sweden. \emph{Over all respondents, including
+the zeros}, the mean was \EUR{}23 ($\pm$4.8) per year, ranging from \EUR{}16 in
+Poland to \EUR{}57 in Sweden. Both are annual, paid through taxes, not monthly.
+An earlier draft of this note used the \EUR{}57 and described it as ``per
+respondent'', which conflates the conditional mean with the unconditional one
+and, by coincidence, with Sweden's unconditional figure. $\kappa_x$ prices an
+aggregate public bad borne by everyone, so the object it needs is the
+unconditional mean: \EUR{}23 per adult per year, about 0.08\% of average annual
+earnings across the eight countries against 0.20\% for the conditional mean. The
+correction lowers the calibrated disamenity by a factor of 2.5, which moves it in
+the conservative direction and so cannot manufacture the result.
+
+\paragraph{The normalisation that this requires.} The \EUR{}57 buys elimination
+of the \emph{European} homelessness rate, not the model's. Dividing by the
+model's own rate would make the same survey figure imply a different disamenity
+in every economy it was transplanted into: mechanically small wherever
+homelessness is rare and large wherever it is common, which is the opposite of
+what a per-unit valuation means. So $\kappa_x$ is set as a price per unit of
+homelessness,
+\begin{equation}
+\kappa_x=\frac{\text{WTP}\cdot\mathbb E\bigl[c\,u_c\bigr]}
+{H_{\text{ref}}\bigl(1+\omega_x s_{\text{ref}}\bigr)},
+\end{equation}
+with $H_{\text{ref}}$ the European rate at the time of the survey and
+$s_{\text{ref}}$ the drug-use-disorder share of the homeless in the same pooled
+evidence base. FEANTSA counted roughly 700,000 people sleeping rough or in
+shelter across the EU in 2017 against a population near 440 million, so
+$H_{\text{ref}}\approx0.16\%$; the 2023 overview reports about 895,000, but part
+of that rise is improved measurement. The central value used is 0.18\% and the
+range swept is 0.15 to 0.22\%. Since $\kappa_x$ is inversely proportional to
+$H_{\text{ref}}$, this is the single most consequential judgement in the
+disamenity calibration and it must be reported as a range. At a model
+homelessness rate of 0.30\% against a reference of 0.18\%, the adjustment scales
+the disamenity by 1.67, from 0.20\% to 0.33\% of income.
+
+\paragraph{Caveats, to be stated in the paper.} Stated rather than revealed
+preference; European rather than US; 30.3\% protest zeros; and the elicited
+change is elimination rather than a marginal change, so the linear extrapolation
+to the model's rate is an assumption.
+
+\paragraph{What the hedonics are still good for.} Not a magnitude, but a sign.
+The NYC Independent Budget Office finds a property within 500 feet of a family
+shelter sells for about 6.4\% less than a comparable property 500 to 1,000 feet
+away, and properties near two or more shelters 17.4\% less than near one. The
+Furman Center, studying 123 supportive-housing developments over 18 years, finds
+supportive housing does \emph{not} depress neighbouring values and slightly
+raises the closest ones; spatial difference-in-differences work reaches the same
+split. Permanent supportive housing is Housing First-like and temporary
+congregate shelter is Treatment First-like, so the externality plausibly differs
+in \emph{sign} between the two policies being compared. That is a substantive
+point in Housing First's favour and it does not require a number.
+
+Note finally that $\kappa_x=0$ is a defensible baseline in a way
+$\kappa_{\text{cons}}=0$ was not: that was the value at which the paper's
+conclusion reversed.
+
+%======================================================================
+\section{What each referee still wants}
+\label{sec:outstanding}
+
+\subsection{What has been done, and what it answers}
+
+\begin{longtable}{rL{6.2cm}L{6.4cm}}
+\caption{Model changes and the comments they answer}\label{tab:changes}\\
+\toprule
+\# & Change & Answers\\
+\midrule
+\endfirsthead
+\toprule
+\# & Change & Answers\\
+\midrule
+\endhead
+1 & Homeownership, tenure, mortgages and negative assets removed & AE A4; R2 D1\\
+2 & Housing market GE removed & AE A5\\
+3 & Drug price made an equilibrium object, $\psi_1$ normalised & R1 1(c); R3 M2d; AE A5\\
+4 & Cobb--Douglas weights fixed across SUD status & R2 C5; R3 M2a; AE A8\\
+5 & $\kappa_{\text{cons}}$ deleted; homelessness externality in period utility, weighted by composition & R1 3(a), 3(b); R2 C2; R3 M2c; AE A9\\
+6 & Endogenous treatment take up, at a utility cost, with a take up target & R1 1(b); AE A10\\
+7 & Imperfect detection and false positives & R1 4(a), 4(b); AE A11\\
+8 & Serious mental illness, six channels & R1 1(a), 2(c)(ii)\\
+9 & SUD wage penalty set to one in the baseline, with the evidence stated & AE A20\\
+10 & UI drawn on entry, one year; four states collapse to three exactly & AE A2\\
+11 & Estates to the government rather than lump-sum by type & AE A7\\
+12 & Single addiction hazard; $\bar v$ and the 6.48 ratio gone & R3 M2b (partly)\\
+13 & Continuous labour supply from the FOC, welfare trap handled exactly & R3 m1; AE A3\\
+14 & $\beta$ retargeted to wealth/GDP $=3$ & AE A17\\
+15 & Rent normalised; the whole housing grid calibrated & R2 D1\\
+16 & Homeless SUD target corrected 37\% $\rightarrow$ 21.7\% & AE A16\\
+17 & Drug user income target split: users 95.1\%, SUD 68.7\% & R1 2(c)(i)\\
+18 & Housing burden targeted over all households, full CDF for validation & R1 2(a); AE A12\\
+19 & Every parameter given a source or a target (\S\ref{sec:params}) & AE A17\\
+20 & Capital income taxed in the household budget; true median income & internal consistency\\
+21 & Mechanism ladder built & R1 1(d), 1(e); R2 C4; R3 M2b, M2c; AE A1\\
+\nw{22} & \nw{Baseline survival from the SSA life table, sexes combined by survivor weight; the fitted exponential is gone} & \nw{\textbf{R3 M1b, closed}}\\
+\nw{23} & \nw{$\chi_H$ from Abramson and Van Nieuwerburgh, \$2{,}500 per household month for the literally homeless, giving 0.4286} & \nw{\textbf{AE A15, closed}}\\
+\nw{24} & \nw{Housing grid identified from the ACS B25042 size distribution rather than from housing cost burdens, which become untargeted validation} & \nw{\textbf{R2 D1, strengthened}}\\
+\nw{25} & \nw{Homelessness target corrected to a household basis, 0.399\%} & \nw{\textbf{internal consistency}}\\
+\nw{26} & \nw{Homelessness and SUD mortality multipliers made age varying and derived jointly; SMI onset likewise; $\kappa_{\phi m}$ shown to be flat} & \nw{\textbf{R1 2(c), R3 M1b}}\\
+\nw{27} & \nw{Drug testing costed in the government budget; detection requires a test} & \nw{\textbf{R1 4(c), closed}}\\
+\nw{28} & \nw{$b_1$ given a target, the Milby abstinence rate among the homeless with SUD} & \nw{\textbf{no longer asserted}}\\
+\nw{29} & \nw{Treatment as a \emph{utility} cost validated against NSDUH: the three largest barriers are beliefs and preferences, not prices} & \nw{\textbf{R1 1(b), AE A10}}\\
+\bottomrule
+\end{longtable}
+
+\subsection{\nw{Referee 1's rival hypothesis, and what the data did to it}}
+
+\nw{R1's central alternative is that the SUD to employment channel, rather than
+mortality, does the work. The model was biased toward that reading on
+\emph{both} sides at once, and neither bias was visible until the underlying
+numbers were measured rather than assumed.}
+
+{\color{red}\begin{center}\begin{tabular}{lrrl}
+\toprule
+Channel & Was & Is & Source\\
+\midrule
+Unemployment given SUD & 26.9\% & \textbf{16.25\%} & NSDUH 2024 microdata\\
+\quad implied relative risk & 5.49 & \textbf{2.44} & \\
+SUD mortality multiplier & 6.9, flat & profile, peak 6.9 & CDC WONDER\\
+Homelessness mortality multiplier & 1.6, flat & 4.41 at 26, 3.14 at 56 & Baggett et al.\\
+Baseline survival & fitted exponential & SSA life table & $q_{85}$ 0.045 $\to$ 0.081\\
+\bottomrule
+\end{tabular}\end{center}}
+
+\nw{So the employment channel was roughly 2.25 times too strong and the
+mortality channel was running at something like a fifth of its measured strength
+at prime ages. Correcting both moves against R1, and from measurement rather
+than assertion, which is the part that matters for a response letter.}
+
+\nw{Two further facts from the same file are worth reporting because nobody had
+looked at them. Mean personal income among those with a moderate or severe drug
+use disorder is 71.1\% of the average at ages 26+, against a 68.7\% target the
+model was already fitting, so that moment is nearly hit unprompted. And labour
+force \emph{participation} is slightly HIGHER among those with a disorder, 65.8
+against 61.5\%: the penalty runs through unemployment conditional on
+participating, not through dropping out of the labour force. The model should
+reproduce that, and it is a sharper statement of the mechanism than the paper
+currently makes.}
+
+\subsection{Referee 1, outstanding}
+
+\begin{longtable}{lL{7.4cm}L{4.6cm}}
+\toprule
+\# & Comment & Status\\
+\midrule
+\endhead
+1(d),(e) & Show the mortality channel is the quantitatively important one; reorganise the appendix & Ladder built, \textbf{not yet run}, needs the calibration\\
+2(a) & Model fit never reported & \textbf{Pending the calibration}\\
+2(b) & Tables 3 to 4 misses framed too positively & \textbf{Writing}, once the misses are known\\
+2(c)(i) & Homeless 100\% unemployed vs 40 to 52\%; income $\approx0$ vs 19.1\% & Mechanism added; the employment share is \textbf{not yet a targeted moment}\\
+2(c)(ii) & Homeless too young & SMI added; \textbf{age distribution not yet computed}, and needs finer bins\\
+2(d) & Match policy-relevant RCT elasticities & \textbf{Second stage built, not yet run}\\
+2(e) & Price-elasticity moment not replicable & Model counterpart defined; \textbf{appendix not written}\\
+2(f) & Show identification numerically & \textbf{Not started.} One solve per parameter\\
+3(c) & Tone down; universal TF not unambiguously preferred & \textbf{Writing}\\
+3(d) & Solve proper transition paths & \textbf{Not built.} The critical path\\
+4(c) & Compliance, stigma and administrative costs of testing & \textbf{Not started.} Needs a real admin cost in the budget\\
+4(d) & Sensitivity ladder over addiction, recovery, mortality, employment & \textbf{Not started}\\
+sm.\ 1 & Why a maximum experimentation age? & Now switchable; \textbf{diagnostic not yet run}\\
+sm.\ 2 to 10 & Levels and percentage changes; typographical and citation fixes & \textbf{Writing}\\
+\bottomrule
+\end{longtable}
+
+\subsection{Referee 2, outstanding}
+
+\begin{longtable}{lL{7.4cm}L{4.6cm}}
+\toprule
+\# & Comment & Status\\
+\midrule
+\endhead
+C1 & The elasticity of drug use to housing access & $\rho_H$ added and the moment defined; \textbf{not yet calibrated}\\
+C2 & Homelessness externality & Implemented, $\kappa_x=0$; \textbf{no credible calibration}, see \S\ref{sec:extern}\\
+C3 & Parental anxiety about children & \textbf{Open decision.} R2 says it ``could be discussed''; a warm-glow term would answer this and AE A6 together\\
+C4 & Show the drug-use policy function by income and wealth & \textbf{Not produced.} Free once calibrated\\
+C6 & Optimal voucher design; is $\chi_H$ too high? & \textbf{Not started.} One sweep of $\pi_V$ plus a $\chi_H$ sensitivity\\
+\bottomrule
+\end{longtable}
+
+\subsection{Referee 3, outstanding}
+
+\begin{longtable}{lL{7.4cm}L{4.6cm}}
+\toprule
+\# & Comment & Status\\
+\midrule
+\endhead
+M1a & Stylised facts on drug use, voucher receipt and homelessness & \textbf{Not written}\\
+M1b & Empirical basis for survival and unemployment hazards & Partly done in \S\ref{sec:params}; $\bar\phi_j$ is still a placeholder and must come from life tables\\
+M1c & Show the empirical income, drug-use relationship & Microdata extracted; \textbf{figure not made}\\
+M2b & What patterns does Stone--Geary generate? & Ladder built, \textbf{not run}\\
+M2c & Where do the externalities arise? & Enumerated in \S\ref{sec:extern}; the fiscal side needs quantifying from the ladder\\
+m1 & Labour supply and the welfare cost of tax financing & Labour supply now continuous; \textbf{welfare decomposition not done}\\
+m2 & Sensitivity as graphs, not tables & \textbf{Not started}\\
+m3 & Vary voucher receipt continuously; Laffer curve? & \textbf{Not started}\\
+\bottomrule
+\end{longtable}
+
+\subsection{Associate Editor, outstanding}
+
+\begin{longtable}{lL{7.4cm}L{4.6cm}}
+\toprule
+\# & Comment & Status\\
+\midrule
+\endhead
+A1 & Stylised model section & Plan is to use the calibrated model plus the ladder; \textbf{not written}\\
+A6 & Intergenerational language without intergenerational linkages & \textbf{Open decision}: delete the language, or add a warm-glow term (with R2 C3)\\
+A9 & Report welfare and mortality as two dimensions & \textbf{Not done.} Requires the counterfactuals\\
+A12 & Model fit; non-targeted moments & \textbf{Pending the calibration}\\
+A13 & Key elasticities & \textbf{Second stage built, not run}\\
+A14 & Connect to Costantini, Cohen, Brounstein and Wieselthier, Abramson, Humphries et al. & \textbf{Writing}\\
+A15 & Compare $\chi_H$ with Abramson and van Nieuwerburgh & \nw{\textbf{Done}, \S\ref{sec:params}. Their \$1{,}775/month blended figure implies $\chi_H=0.304$ and their literally-homeless \$2{,}500 implies 0.429, both above the 0.252 the referees called too high}\\
+A16 & Homelessness definition & Target corrected; the paper must still state that it targets \emph{literal} homelessness and excludes doubling-up\\
+A17 & Rewrite the calibration section & \S\ref{sec:params} to \ref{sec:calib} are the raw material; \textbf{not yet in the paper}\\
+A18 & Fewer counterfactuals in the body & \textbf{Writing}\\
+A19 & ``Addicted'' $\rightarrow$ ``suffering from substance use disorder'' & \textbf{Writing}, global replace\\
+\bottomrule
+\end{longtable}
+
+\subsection{\nw{Loose ends, split by status}}
+
+\nw{Almost everything in the four lists above is closed by one of four blocks of
+work already scoped: the \textbf{recalibration}, the \textbf{counterfactuals},
+the \textbf{mechanism ladder} and the \textbf{rewriting}. What is left is sorted
+here into what is finished, what is decided and scoped but not yet built, and
+what is genuinely unresolved. Nothing sits in the third table merely because it
+is unfinished.}
+
+\nw{\paragraph{Closed.}}
+
+{\color{red}\begin{longtable}{lL{5.0cm}L{6.4cm}}
+\toprule
+Ref & Item & What closed it\\
+\midrule
+\endhead
+R3 M1b & Survival hazards & SSA period life table, ages 26 to 85, sexes combined by survivor weight. The fitted exponential understated mortality by nearly half at 85\\
+R1 2(c) & SUD and homelessness mortality & Both multipliers now vary with age and are derived jointly, from CDC drug poisonings and Baggett et al.\ The flat values were five times too small at prime ages and the wrong shape\\
+AE A15 & $\chi_H$ against Abramson and Van Nieuwerburgh & Their \$2{,}500 per household month for the literally homeless gives 0.4286. Note the direction: R2 and R3 called 0.252 too high and the best structural estimate is higher still\\
+AE A16 & Homelessness definition & Literal homelessness, and the target is now on a household basis, 0.399\%\\
+R1 4(c) & Administrative cost of drug testing & In the government budget. Detection requires a test, so effective detection is $\text{test}\times\text{detect}$\\
+R1 1(b), AE A10 & Treatment take up & Endogenous, at a utility cost, with a target. NSDUH validates the \emph{structure}: the three largest barriers are beliefs and preferences, not prices\\
+R2 D1 & Housing grid & Identified from the ACS B25042 size distribution rather than from housing cost burdens, which become untargeted validation\\
+, & $b_1$, the SUD Stone--Geary shifter & Given a target, the Milby abstinence rate among the homeless with SUD. No longer asserted\\
+, & $g$, the treatment effect & Closed enough. One clean randomised estimate, an odds ratio of 1.22 for contingency management. Stays a reported range rather than a point\\
+, & SUD target provenance & 3.68\% is moderate or severe \emph{drug} use disorder at ages 26+, reproduced exactly from the NSDUH microdata. Needs stating in the paper, since NSDUH's headline of 16.6\% includes alcohol\\
+R1 2(c) & unemp $\mid$ SUD & \textbf{Measured at 16.25\%}, replacing an asserted 26.9\% whose stated source could not have produced it. The channel was 2.25 times too strong\\
+\bottomrule
+\end{longtable}}
+
+\nw{\paragraph{Decided and scoped, not yet built.}}
+
+{\color{red}\begin{longtable}{lL{5.0cm}L{6.4cm}}
+\toprule
+Ref & Item & Plan\\
+\midrule
+\endhead
+R2 C3, AE A6 & Parental anxiety; decorative intergenerational language & \textbf{Decided: the warm glow.} At one parental age the value gains $\nu\,\mathbb{E}_{x'|x}[V_1]$, using the $\rho_x=0.5$ process \S4.1.3 already specifies but never uses. The parent cannot influence the draw, so it is additive and moves no decision: it shifts welfare levels and hence the policy comparison, which is what R2 predicts. $\nu$ cannot be calibrated, since it moves no behaviour, so it is a robustness range. Scaffolded inert at $\nu=0$\\
+R1 3(d) & Transition paths & \textbf{Solver written and validated end to end.} Damping is now adaptive, which lifted the contraction from 0.82 to 0.51 per iteration. What remains is a production run, and its cost\\
+R1 2(e) & Replicability of the moments & An appendix defining each moment's model counterpart. Mechanical writing that nobody has started\\
+R1 sm.\ 1 & Maximum experimentation age & A diagnostic run. If dropping it piles use onto the old, that has to be explained rather than assumed away\\
+\bottomrule
+\end{longtable}}
+
+\nw{\paragraph{Genuinely open.}}
+
+{\color{red}\begin{longtable}{lL{5.0cm}L{6.4cm}}
+\toprule
+Ref & Item & Why it is still open\\
+\midrule
+\endhead
+, & \textbf{The calibration has not converged} & The real blocker. It gates the ladder, the externality decomposition and the whole second stage\\
+R2 C2 & $\omega_x$, the composition weight & Searched for and not found. The literature supports a difference in \emph{sign} by facility type, not a magnitude. Should be presented as a sign restriction with a range\\
+, & $\kappa_{\phi m}$ level & Constant in age, which is settled, but the level is a judgement across three populations measuring different things. Sensitivity at 3.2\\
+\bottomrule
+\end{longtable}}
+
+\nw{So: ten items closed, four decided and waiting on execution, and four
+genuinely open, of which only one, the calibration, is on the critical path.}
+
+\subsection{The critical path}
+
+Three things gate almost everything above.
+
+\begin{enumerate}
+\item \textbf{The first stage calibration converging.} Unblocks R1 2(a), 2(b),
+2(c), 1(d), R2 C4, R3 M2b, AE A12 at once.
+\item \textbf{The second stage calibration}, which is built and needs only a
+converged benchmark to run against. This is R2 C1, R3 and AE A13, what all
+three independently call the crux, and it is a partial equilibrium cohort
+experiment, so it does \emph{not} wait on the transition solver.
+\item \textbf{The counterfactuals.} Unblock AE A9, A18, R2 C6, R3 m3, R1 3(c),
+4(d). Then the transition-path solver for R1 3(d), which is the one large
+build left and affects only the aggregate policy experiments.
+\end{enumerate}
+
+Everything else on the outstanding lists is either writing or a single cheap run.
+
+\end{document}

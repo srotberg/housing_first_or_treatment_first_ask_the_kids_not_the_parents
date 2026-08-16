@@ -1,0 +1,62 @@
+% The long form of this table, with the full derivation and the history
+% behind every value, is kept in writing/old/tab_full_external_long.tex.
+% What prints here is the parameter, what it means, where the value comes
+% from, and the value.
+
+\scriptsize
+\begin{longtable}{@{}cL{5.0cm}L{6.4cm}r@{}}
+\caption{Assigned parameters of the quantitative model}\label{tab:fext}\\
+\toprule
+Parameter & Description & Source or rationale & Value \\
+\midrule
+\endfirsthead
+\toprule
+Parameter & Description & Source or rationale & Value \\
+\midrule
+\endhead
+\multicolumn{4}{@{}l}{\emph{Preferences and demographics}} \\
+$\sigma$ & Risk aversion & Attanasio and Weber (2010); the standard life cycle value & 2.00 \\
+$\sigma_{\ell}$ & Curvature on leisure & Frisch elasticity of $0.5$, Chetty (2012) & 3.00 \\
+$\varepsilon_j$ & Deterministic age profile of efficiency & Quadratic in age, fitted to the PSID and CPS hump & profile \\
+$\bar\phi_j$ & Baseline survival by age & SSA period life table, ages 26 to 85, the sexes combined by survivor weight & profile \\
+$\rho_y,\sigma_y$ & Persistence and dispersion of log productivity & Storesletten, Telmer and Yaron (2004); the stochastic process is the robustness direction, the baseline holds $y$ fixed & 0.90, 0.20 \\
+$j_E$ & Maximum experimentation age & Reported with and without it & 55 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\emph{Prices, taxes and the government}} \\
+$r$ & Risk free rate & Kaplan, Mitman and Violante (2020) & 0.03 \\
+$\xi$ & Tax progressivity & Heathcote, Storesletten and Violante (2017) & 0.85 \\
+$\tau_k$ & Capital income tax & US long run rate on capital gains and qualified dividends & 0.15 \\
+$\tau_{\ell}$ & Tax level & Clears the government budget & in eqm. \\
+$G$ & Other public spending & Residual at the benchmark, then held fixed so that policy is financed by $\tau_{\ell}$ & in eqm. \\
+$\chi_H$ & Fiscal cost per homeless household & Abramson and Van Nieuwerburgh (2024), the literally homeless figure & 0.4286 \\
+$\chi_D$ & Fiscal cost per household with a SUD & CEA (2017), about \$30{,}000 per person year & 0.212 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\emph{Income support and the voucher}} \\
+$\varrho_{UI}$ & Unemployment insurance replacement rate & DOL statutory replacement rates & 0.50 \\
+$\bar u$ & Cap on the insurance benefit, share of average income & DOL state benefit maxima & 1.00 \\
+$\bar y_{DI}$ & Disability benefit level, share of average income & SSA, average SSDI benefit against average earnings & 0.25 \\
+$\kappa_V$ & Voucher eligibility threshold, share of median income & HUD rule & 0.50 \\
+$\kappa_r$ & Tenant contribution rate & HUD rule & 0.30 \\
+$p_{\text{test}}$ & Probability a voucher holder is tested & Benchmark value, swept downward & 1.00 \\
+$c_{\text{test}}$ & Cost per voucher holder tested & A urine panel at about \$40, quarterly & 0.0023 \\
+$p_{\text{det}}$ & Detection probability given a test & Benchmark value, swept downward & 1.00 \\
+$p_{\text{fp}}$ & False positive rate under Treatment First & Benchmark value, swept upward & 0.00 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\emph{Employment, the SUD and mental illness}} \\
+$\bar\pi^{ue}$ & Job finding rate, annual & Krueger, Cramer and Cho (2014) & 0.55 \\
+$\kappa_{ueH}$ & Employment multiplier, homeless & Desmond and Gershenson (2016) & 0.80 \\
+$\kappa_{\phi H}$ & Mortality multiplier, homeless & Baggett et al.\ (2013), varying with age & 4.41 to 1.09 \\
+$\kappa_{\phi m}$ & Mortality multiplier, mental illness & Olfson et al.\ (2015); flat in age & 2.50 \\
+$\rho_d$ & Productivity penalty of a SUD, conditional on working & No direct wage effect in the baseline: the employment margin carries it & 1.00 \\
+$\bar\pi_r$ & Baseline recovery hazard when housed, annual & Vaillant (1995); bracketed by Fleury et al.\ (2016) & 0.025 \\
+$\mu_m$ & Recovery multiplier, mental illness & Dual diagnosis relapse of $39.8$ against $26.4$ per cent & 0.82 \\
+$g$ & Treatment effect on recovery & Odds ratio of $1.22$ for contingency management & 1.35 \\
+$\lambda_m$ & Recovery rate from mental illness, annual & \.{I}mrohoro\u{g}lu and Zhao; about half improve within ten years & 0.067 \\
+$\iota$ & SUD multiplier on the onset of mental illness & Danish registers, hazard ratios of $1.34$ to $2.74$ & 2.00 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\emph{The drug market}} \\
+$p_v$ & Price of drugs & Clears the drug market, and is one at the benchmark & 1.00 \\
+$\psi_1$ & Drug supply shifter & Normalisation, so that $p_v=1$ at the benchmark quantity & norm. \\
+$\psi_2$ & Drug supply curvature & Elasticity $1/(\psi_2-1)=2$; Hansen, Miller and Weber (2018) give $0.79$ and the cigarette and gasoline literatures about $3.6$ & 1.50 \\
+\bottomrule
+\end{longtable}

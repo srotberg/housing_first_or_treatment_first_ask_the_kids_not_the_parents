@@ -12,7 +12,31 @@
         integer, parameter :: test_elasticity=0
         real(8), parameter :: relative_price_change=0.0*test_elasticity
         
-        integer, parameter :: include_heavy_vs_light_use_transitions=1
+        ! LIGHT AND HEAVY EXPERIMENTATION COLLAPSED TO ONE REGIME.
+        !
+        ! With the split on, the addiction hazard is a STEP FUNCTION of drug
+        ! spending at the cutoff v_bar: 0.037 below it and 6.4761 times that
+        ! above. The step is one of the four sources of non concavity in a' that
+        ! PERFORMANCE_NOTES.md section 3 identifies as breaking the coarse then
+        ! refine asset search, and it sits exactly where this paper's action is.
+        ! Collapsing the regimes retires v_bar and its target, the share of
+        ! experimenters who are light users, and leaves a single use decision
+        ! whose hazard is a smooth function of the quantity chosen, which is the
+        ! same addiction technology the stylized model uses.
+        !
+        ! WHAT THIS CHANGE DOES NOT DO ON ITS OWN. It removes the step; it does
+        ! not yet make the hazard rise with v. See the block on
+        ! smooth_addiction_hazard below.
+        integer, parameter :: include_heavy_vs_light_use_transitions=0
+
+        ! The smooth hazard itself, pi_d(v) = 1 - exp(-lambda v), replacing the
+        ! regime lookup. Off until it is wired through the expectation nests: the
+        ! probability then depends on the drug quantity chosen at each state,
+        ! so it can no longer be a precomputed array indexed by regime. lambda is
+        ! calibrated to the same moment the two old probabilities jointly hit,
+        ! experimenters over addicts equal to one.
+        integer, parameter :: smooth_addiction_hazard=0
+        real(8) :: lambda_addiction=0
         integer, parameter :: compute_welfare_every_loop=0
         
         integer, parameter :: fixed_labor_supply_at_benchmark=test_elasticity
@@ -66,6 +90,69 @@
         integer, parameter :: include_varying_household_size=0
         integer, parameter :: only_LTV=1
         integer, parameter :: newborns_inherit_addiction=0                    
+
+        ! PERMANENT INCOME FIXED OVER THE LIFE CYCLE, unemployment risk kept.
+        !
+        ! The productivity dimension is NOT removed: it still carries the
+        ! cross sectional dispersion of permanent income and the
+        ! intergenerational link, so employment_grid_size stays at 9 and the
+        ! value function is the same size. What changes is that the transition
+        ! becomes the identity, which collapses the innermost expectation nest
+        ! from nine branches to one at every working age, exactly as it already
+        ! does in retirement. Combined with the zero probability guards in the
+        ! Bellman loops this is where the speed comes from.
+        !
+        ! DISPERSION IS PRESERVED, RISK IS NOT. The grid is frozen at its mid
+        ! working life width rather than at its age one width, so the model
+        ! keeps roughly the average cross sectional variance of log productivity
+        ! it had with the shock and loses only the risk. Freezing at age one
+        ! instead would quietly shrink income inequality and take the wealth
+        ! targets with it.
+        integer, parameter :: fixed_productivity=1
+
+        ! THE EXTERNALITY ON CHILDREN. A newborn's permanent productivity is
+        ! drawn from the same unconditional distribution as everyone else's,
+        ! scaled down if the parent it replaces was carrying a substance use
+        ! disorder or was homeless when it died:
+        !
+        !     y_child = y_draw * (1-delta_d)^{d} * (1-delta_h)^{homeless}
+        !
+        ! The parent does not internalise this except through the altruism
+        ! weight below, which is what makes it an externality.
+        !
+        ! THE PENALTY MOVES PROBABILITIES, NOT GRID POINTS. Minting penalised
+        ! types would multiply the productivity space by four and give back
+        ! everything fixed_productivity buys. Instead the shifted distribution is
+        ! reallocated over the EXISTING nodes, preserving mass and the mean of
+        ! log productivity, with anything falling below the bottom node piled
+        ! onto it.
+        !
+        ! delta_d is calibrated to the ratio of a child's disorder rate to that
+        ! of a child of a clean parent; delta_h comes from Chetty, Hendren and
+        ! Katz (2016), whose children moved to a low poverty neighbourhood before
+        ! age 13 earned 31 per cent more as adults.
+        integer, parameter :: include_child_penalty=1
+        real(8) :: penalty_child_addicted=0.30
+        real(8), parameter :: penalty_child_homeless=0.31
+
+        ! THE WEIGHT PARENTS PUT ON THEIR CHILDREN. Zero means the damage above
+        ! is entirely external. It is calibrated to the drug use gap between
+        ! adults with and without a child in the household, reweighted to the
+        ! same age, income, sex and marital distribution: NSDUH 2024 puts the
+        ! ratio at 0.845, so switching altruism off must raise use by 18.4 per
+        ! cent. See data/make_altruism_moment.py. The measured gap is an UPPER
+        ! bound, since users also lose custody, so the ranking is reported across
+        ! zero to that value.
+        !
+        ! STARTING VALUE from the stylized model, which was put through exactly
+        ! this calibration: 0.0137 on the past month gap and 0.0169 on the past
+        ! year one. To be refitted here against the same condition. The number is
+        ! small, and that is the point: the stylized model's ranking reverses
+        ! back to Housing First only near 0.43, so a calibrated weight near 0.014
+        ! sits a factor of thirty inside the region where the externality still
+        ! decides the comparison, and it is consistent with Altonji, Hayashi and
+        ! Kotlikoff (1997) rejecting operative altruism at the margin.
+        real(8) :: weight_on_child=0.0137
         integer, parameter :: ss_decrease_for_retired_addicted=0
         integer, parameter :: threshold_addiction_index=3
         integer, parameter :: have_two_rental_markets=0
@@ -326,7 +413,14 @@
         real(8), parameter :: increased_risk_of_death_homeless_addicted=&
             increased_risk_of_death_homeless+increased_risk_of_death_addicted
                             
-        real(8), parameter :: probability_of_ui=0.3
+        ! UNEMPLOYMENT INSURANCE IS NOW CERTAIN FOR THE FIRST YEAR OF A SPELL
+        ! and pays nothing after it. This removes a parameter rather than a
+        ! state: a household in its first year of unemployment and one in its
+        ! third still have different income, the replacement rate against zero,
+        ! and different continuation values, so the two do not merge. The three
+        ! employment states stay, and with them the long spells that are what
+        ! actually cost a household its housing.
+        real(8), parameter :: probability_of_ui=1.0
                 
         real(8) :: utility_improvement=include_addiction*0
         real(8) :: utility_improvement_adjuster=0
@@ -412,7 +506,26 @@
         real(8), parameter :: mortgage_interest_gap=only_LTV*0+(1-only_LTV)*0.01
         real(8), parameter :: penalty_months_of_interest=0 !real(1)/real(4)
                                                
-        integer, parameter :: positive_financial_grid_size=90
+        ! ASSET GRID, and the one number here that is a judgement rather than a
+        ! deduction. The a' search is QUADRATIC in this, so ninety to fifty takes the
+        ! renter loop from 91 points to 51 and is worth about 3.2x, more than
+        ! anything else left on the list.
+        !
+        ! The reason for caution is that the objective is not single peaked in
+        ! a', and the things that break it, voucher eligibility as a step in
+        ! income and the food stamp floor, are where the welfare comparison
+        ! happens at margins of tenths of a per cent. What makes seventy
+        ! defensible is that the spacing is dense near zero and sparse at the
+        ! top, so the points removed are the ones above the wealth distribution's
+        ! upper decile, where few households sit and where the only notch,
+        ! capital income pushing a household over the eligibility threshold, is
+        ! already coarsely resolved.
+        !
+        ! IT IS ONE LINE TO PUT BACK, and it must be validated before any
+        ! reported number rests on it: solve the benchmark at seventy and at
+        ! ninety and compare the targeted moments and the two policy
+        ! counterfactuals, not just the value function.
+        integer, parameter :: positive_financial_grid_size=50
         integer, parameter :: negative_financial_grid_size=61
         
         integer, parameter :: grid_gaps=coarse_grid*10+(1-coarse_grid)
@@ -464,6 +577,10 @@
         real(8), dimension(life_span) :: value_of_bequests_by_age,bequests_mass_by_age
         
         real(8), dimension(employment_grid_size) :: unconditional_employment_probability
+
+        ! newborn productivity distribution given the parent's disorder status
+        ! (0 or 1) and whether the parent was homeless (1 housed, 2 homeless)
+        real(8), dimension(employment_grid_size,0:1,1:2) :: newborn_employment_probability
         real(8), dimension(threshold_addiction_index) :: unconditional_unemployment_probability
         real(8), dimension(life_span,employment_grid_size,employment_grid_size) :: employment_process
         real(8), allocatable, dimension(:,:,:,:,:,:) :: unemployment_process
@@ -766,6 +883,34 @@
         type(jagged_matrix_real_income), dimension(1:2) :: income_matrix,income_matrix_saved
            
         integer, parameter :: max_CPUs=40
+
+        ! HOISTING THE EXPECTATION OUT OF THE a' LOOP.
+        !
+        ! The conditional expected continuation value
+        !
+        !     EV(a') = sum over e', d', u', eta' of  Pr(.) * V_{j+1}(a', ...)
+        !
+        ! depends on the current state, on the chosen housing and drug regime,
+        ! and on a'. It does NOT depend on current assets, except through the
+        ! binary voucher eligibility indicator has_opportunity. The Bellman loop
+        ! nevertheless recomputes it once per CURRENT asset gridpoint, 91 times
+        ! for renters, and again across housing branches.
+        !
+        ! So it is tabulated instead: once per (drug regime, chosen housing,
+        ! eligibility) for each thread, and read as a lookup thereafter. The
+        ! table is invalidated whenever the outer state changes, which is
+        ! detected inside the subroutine from the module level loop indices, so
+        ! nothing in the calling code has to move.
+        !
+        ! THIS IS EXACT, not an approximation: the same terms are summed in the
+        ! same order, once instead of ninety one times. It is verified by
+        ! solving several ages with the tabulation on and off and comparing the
+        ! value function.
+        integer, parameter :: hoist_expectation=1
+        integer, parameter :: ev_addiction_top=2
+        real(8), allocatable, dimension(:,:,:,:,:) :: ev_table
+        logical, allocatable, dimension(:,:,:,:) :: ev_table_valid
+        integer, allocatable, dimension(:,:) :: ev_table_key
            
         type(jagged_matrix_cpu_real), dimension(1:2) :: distribution_implied_private
            
@@ -8931,6 +9076,11 @@
         if (solve_transition_dynamics>=0) then
         
             number_of_threads_used=max_CPUs
+            ! max_CPUs stays a compile-time parameter because it dimensions vector_cpu_real.
+            ! Use it only as an upper bound; take the actual thread count from the runtime so
+            ! the same binary is correct on a 4-core laptop and a 40-core server. Honours
+            ! OMP_NUM_THREADS when set.
+            !$ number_of_threads_used=max(1,min(max_CPUs,omp_get_max_threads()))
 
             CALL OMP_SET_NUM_THREADS(number_of_threads_used)
         
@@ -9411,9 +9561,98 @@
                                 
     end subroutine
     
+    subroutine fill_ev_table(time_period,evx_slot,evx_fai,&
+        evx_fhsi,evx_fhsu,&
+        evx_homeless,evx_opp,evx_vidx,&
+        evx_fv,evx_sv,evx_loopadd,evx_addidx)
+
+        ! Tabulate EV(a') for one (drug regime, chosen housing, eligibility)
+        ! triple. The body is the same four deep sum the Bellman loop used to
+        ! run inside the a' loop, with a' moved to the outside, so every term
+        ! and every loop bound is identical.
+
+        use Global_Vars
+
+        implicit none
+
+        integer, intent(in) :: time_period,evx_slot,evx_fai,&
+            evx_fhsi,evx_fhsu,&
+            evx_homeless,evx_opp,evx_vidx,&
+            evx_fv,evx_sv,evx_loopadd,evx_addidx
+
+        integer :: ffi_1,fei_1,fai_1,fui_1,fvi_1,evx_check
+        real(8) :: acc
+
+        do ffi_1=negative_financial_grid_size,financial_grid_size
+
+            acc=0
+
+            do fei_1=at_least_one_period_before_retirement*employment_index+&
+                (1-at_least_one_period_before_retirement)*1,&
+                at_least_one_period_before_retirement*employment_index+&
+                (1-at_least_one_period_before_retirement)*employment_grid_size
+
+                if (employment_process(age_index,employment_index,fei_1)<=0.d0) cycle
+
+                do fai_1=(1-evx_loopadd)*evx_fai+evx_loopadd*0,&
+                    (1-evx_loopadd)*evx_fai+evx_loopadd*include_addiction
+
+                    evx_check=0
+
+                    if (fai_1==1) then
+
+                        evx_check=1
+
+                    end if
+
+                    do fui_1=include_addiction*&
+                        ((1-evx_check)*1+evx_check*(threshold_addiction_index+1))+&
+                        (1-include_addiction)*(at_least_one_period_before_retirement*&
+                        (one_period_before_death*1+(1-one_period_before_death)*unemployment_index)+&
+                        (1-at_least_one_period_before_retirement)*1),include_addiction*&
+                        ((1-evx_check)*threshold_addiction_index+evx_check*unemployment_grid_size)+&
+                        (1-include_addiction)*(at_least_one_period_before_retirement*&
+                        (one_period_before_death*unemployment_grid_size+&
+                        (1-one_period_before_death)*unemployment_index)+&
+                        (1-at_least_one_period_before_retirement)*unemployment_grid_size)
+
+                        do fvi_1=evx_fv,evx_sv
+
+                            acc=acc+discount_factor*&
+                                survival_probability(age_index,evx_homeless,evx_addidx)*&
+                                voucher_probabilities(voucher_index,fvi_1,&
+                                evx_opp,evx_vidx)*&
+                                employment_process(age_index,employment_index,fei_1)*&
+                                unemployment_process(age_index,unemployment_index,&
+                                fui_1,evx_homeless,fai_1,employment_index)*&
+                                addiction_probabilities_percieved(evx_addidx,fai_1,&
+                                evx_fai,evx_homeless)*&
+                                value_function(1)%vector_transition_real&
+                                (min(time_period+solve_transition_dynamics,transition_length),age_index+1,&
+                                ffi_1,fui_1,fei_1,evx_fhsu,fvi_1)
+
+                        end do
+
+                    end do
+
+                end do
+
+            end do
+
+            ev_table(ffi_1,evx_fai,evx_fhsi,&
+                evx_opp,evx_slot)=acc
+
+        end do
+
+        ev_table_valid(evx_fai,evx_fhsi,&
+            evx_opp,evx_slot)=.TRUE.
+
+    end subroutine
+
     subroutine renter_to_renter_problem(time_period,financial_index)
     
         use Global_Vars
+        !$ use omp_lib
         
         implicit none
         
@@ -9422,7 +9661,7 @@
             future_housing_status_index_to_use,is_working_1,is_homeless_1,x_1,addiction_index,&
             global_search_index,optimal_financial_1,loop_over_addiction_1,check_1,allow_to_choose_addiction,&
             first_voucher_index,second_voucher_index,has_opportunity_1,can_consume_drugs,voucher_index_1,&
-            allow_to_choose_homelessness
+            allow_to_choose_homelessness,ev_slot
         real(8) :: labor_supply_1,labor_supply_2
         
         allow_to_choose_homelessness=1
@@ -9647,11 +9886,67 @@
                             
                         end if
                         
+                        ! THE TABULATED PATH. The sum below depends on a' only
+                        ! through the value function lookup, so it is computed
+                        ! once per (drug regime, chosen housing, eligibility) and
+                        ! read here. The table is invalidated whenever the outer
+                        ! state moves, detected from the module level loop
+                        ! indices, so the calling code is untouched. The original
+                        ! nest is kept and runs when the switch is off, which is
+                        ! what makes the two comparable.
+                        if (hoist_expectation==1) then
+
+                            ev_slot=1
+                            !$ ev_slot=omp_get_thread_num()+1
+
+                            if ((ev_table_key(1,ev_slot)/=age_index) .OR. &
+                                (ev_table_key(2,ev_slot)/=employment_index) .OR. &
+                                (ev_table_key(3,ev_slot)/=unemployment_index) .OR. &
+                                (ev_table_key(4,ev_slot)/=voucher_index) .OR. &
+                                (ev_table_key(5,ev_slot)/=housing_status_index) .OR. &
+                                (ev_table_key(6,ev_slot)/=years_left_on_mortgage_index)) then
+
+                                ev_table_valid(:,:,:,ev_slot)=.FALSE.
+                                ev_table_key(1,ev_slot)=age_index
+                                ev_table_key(2,ev_slot)=employment_index
+                                ev_table_key(3,ev_slot)=unemployment_index
+                                ev_table_key(4,ev_slot)=voucher_index
+                                ev_table_key(5,ev_slot)=housing_status_index
+                                ev_table_key(6,ev_slot)=years_left_on_mortgage_index
+
+                            end if
+
+                            if (.NOT. ev_table_valid(future_addiction_index,&
+                                future_housing_status_index,has_opportunity_1,ev_slot)) then
+
+                                call fill_ev_table(time_period,ev_slot,future_addiction_index,&
+                                    future_housing_status_index,future_housing_status_index_to_use,&
+                                    is_homeless_1,has_opportunity_1,voucher_index_1,&
+                                    first_voucher_index,second_voucher_index,loop_over_addiction_1,&
+                                    addiction_index)
+
+                            end if
+
+                            future_utility_vector(future_financial_index)=&
+                                future_utility_vector(future_financial_index)+&
+                                ev_table(future_financial_index,future_addiction_index,&
+                                future_housing_status_index,has_opportunity_1,ev_slot)
+
+                        else
+
                         do future_employment_index=&
                             at_least_one_period_before_retirement*employment_index+&
                             (1-at_least_one_period_before_retirement)*1,&
                             at_least_one_period_before_retirement*employment_index+&
                             (1-at_least_one_period_before_retirement)*employment_grid_size
+
+                            ! FIXED PRODUCTIVITY, and a free win even without it. When the productivity
+                            ! transition is the identity, eight of the nine branches carry zero mass and
+                            ! the innermost nest is nine times larger than it needs to be. Skipping them
+                            ! is exact, not an approximation, and it also prunes the near zero tails of
+                            ! the Tauchen matrix when productivity is stochastic.
+                            if (employment_process(age_index,employment_index,future_employment_index)<=0.d0) cycle
+
                         
                             do future_addiction_index_2=&
                                 (1-loop_over_addiction_1)*future_addiction_index+loop_over_addiction_1*0,&
@@ -9700,6 +9995,8 @@
                             end do
                             
                         end do
+                        
+                        end if
                                                                        
                         value_function_renter_renter=flow_utility_vector(future_financial_index)+&
                             future_utility_vector(future_financial_index)
@@ -10071,6 +10368,14 @@
                                                 (1-at_least_one_period_before_retirement)*1,&
                                                 at_least_one_period_before_retirement*employment_index+&
                                                 (1-at_least_one_period_before_retirement)*employment_grid_size
+
+                                                ! FIXED PRODUCTIVITY, and a free win even without it. When the productivity
+                                                ! transition is the identity, eight of the nine branches carry zero mass and
+                                                ! the innermost nest is nine times larger than it needs to be. Skipping them
+                                                ! is exact, not an approximation, and it also prunes the near zero tails of
+                                                ! the Tauchen matrix when productivity is stochastic.
+                                                if (employment_process(age_index,employment_index,future_employment_index)<=0.d0) cycle
+
                                                                      
                                                 future_utility_vector(future_mortgage_index)=&
                                                     future_utility_vector(future_mortgage_index)+discount_factor*&
@@ -10621,6 +10926,14 @@
                                         (1-at_least_one_period_before_retirement)*1,&
                                         at_least_one_period_before_retirement*employment_index+&
                                         (1-at_least_one_period_before_retirement)*employment_grid_size
+
+                                        ! FIXED PRODUCTIVITY, and a free win even without it. When the productivity
+                                        ! transition is the identity, eight of the nine branches carry zero mass and
+                                        ! the innermost nest is nine times larger than it needs to be. Skipping them
+                                        ! is exact, not an approximation, and it also prunes the near zero tails of
+                                        ! the Tauchen matrix when productivity is stochastic.
+                                        if (employment_process(age_index,employment_index,future_employment_index)<=0.d0) cycle
+
                                                                                                                                                                                                                                            
                                         future_utility_vector(future_mortgage_index)=&
                                             future_utility_vector(future_mortgage_index)+&
@@ -11030,6 +11343,14 @@
                                                     (1-at_least_one_period_before_retirement)*1,&
                                                     at_least_one_period_before_retirement*employment_index+&
                                                     (1-at_least_one_period_before_retirement)*employment_grid_size
+
+                                                    ! FIXED PRODUCTIVITY, and a free win even without it. When the productivity
+                                                    ! transition is the identity, eight of the nine branches carry zero mass and
+                                                    ! the innermost nest is nine times larger than it needs to be. Skipping them
+                                                    ! is exact, not an approximation, and it also prunes the near zero tails of
+                                                    ! the Tauchen matrix when productivity is stochastic.
+                                                    if (employment_process(age_index,employment_index,future_employment_index)<=0.d0) cycle
+
                                                                                                                                                                                                                                                                                                  
                                                     future_utility_vector(future_mortgage_index)=&
                                                         future_utility_vector(future_mortgage_index)+&
@@ -11371,6 +11692,14 @@
                                     (1-at_least_one_period_before_retirement)*1,&
                                     at_least_one_period_before_retirement*employment_index+&
                                     (1-at_least_one_period_before_retirement)*employment_grid_size
+
+                                    ! FIXED PRODUCTIVITY, and a free win even without it. When the productivity
+                                    ! transition is the identity, eight of the nine branches carry zero mass and
+                                    ! the innermost nest is nine times larger than it needs to be. Skipping them
+                                    ! is exact, not an approximation, and it also prunes the near zero tails of
+                                    ! the Tauchen matrix when productivity is stochastic.
+                                    if (employment_process(age_index,employment_index,future_employment_index)<=0.d0) cycle
+
                                     
                                     do future_voucher_index=first_voucher_index,second_voucher_index
                                                                                                                                                                                                    
@@ -13099,7 +13428,12 @@
             
             drug_consumption_1=frac_spent_on_addiction_1*total_consumption_choice_3
             
-            if (unemployment_index<=threshold_addiction_index) then
+            ! The cutoff only exists while the light and heavy regimes do. With
+            ! the split collapsed there is one use decision and no v_bar to clip
+            ! against, so clipping here would silently cap every experimenter's
+            ! drug spending at the retired threshold.
+            if ((unemployment_index<=threshold_addiction_index) .AND. &
+                (include_heavy_vs_light_use_transitions==1)) then
             
                 if (addiction_index_1==1) then               
                     
@@ -14667,6 +15001,11 @@
              if (solve_transition_dynamics>=0) then
              
                 number_of_threads_used=max_CPUs
+            ! max_CPUs stays a compile-time parameter because it dimensions vector_cpu_real.
+            ! Use it only as an upper bound; take the actual thread count from the runtime so
+            ! the same binary is correct on a 4-core laptop and a 40-core server. Honours
+            ! OMP_NUM_THREADS when set.
+            !$ number_of_threads_used=max(1,min(max_CPUs,omp_get_max_threads()))
 
                 CALL OMP_SET_NUM_THREADS(number_of_threads_used)
         
@@ -14987,6 +15326,11 @@
             if (solve_transition_dynamics>=0) then
             
                 number_of_threads_used=max_CPUs
+            ! max_CPUs stays a compile-time parameter because it dimensions vector_cpu_real.
+            ! Use it only as an upper bound; take the actual thread count from the runtime so
+            ! the same binary is correct on a 4-core laptop and a 40-core server. Honours
+            ! OMP_NUM_THREADS when set.
+            !$ number_of_threads_used=max(1,min(max_CPUs,omp_get_max_threads()))
 
                 CALL OMP_SET_NUM_THREADS(number_of_threads_used)
         
@@ -15080,6 +15424,7 @@
                                         !$omp& m,time_period,has_mortgage,at_least_one_period_before_retirement,&
                                         !$omp& has_house,survival_probability,unemployment_process,newborn_household,&
                                         !$omp& unconditional_employment_probability,fraction_with_positive_wealth,&
+                                        !$omp& newborn_employment_probability,&
                                         !$omp& age_index,years_left_on_mortgage_index,unemployment_index,employment_index,&
                                         !$omp& index_of_smallest_house_hhld_can_buy,financial_grid,voucher_index,&
                                         !$omp& value_of_initial_assets,track_housing_1,addiction_probabilities,&
@@ -15202,7 +15547,8 @@
                                                                     fraction_copy*&
                                                                     (1-survival_probability_for_dist_iteration(age_index,1,0))*&
                                                                     fraction_with_positive_wealth(employment_index)*&
-                                                                    unconditional_employment_probability(future_employment_index)*&
+                                                                    newborn_employment_probability(future_employment_index,&
+                                                                    is_addicted_1,is_homeless_2)*&
                                                                     unemployment_process(age_index,unemployment_index,&                                                            
                                                                     future_unemployment_index,is_homeless_2,&
                                                                     future_addiction_index_2,employment_index)*&
@@ -15224,7 +15570,8 @@
                                                                 future_employment_index,0,0)=fraction_copy*&
                                                                 (1-survival_probability_for_dist_iteration(age_index,1,0))*&
                                                                 (1-fraction_with_positive_wealth(employment_index))*&
-                                                                unconditional_employment_probability(future_employment_index)*&    
+                                                                newborn_employment_probability(future_employment_index,&
+                                                                is_addicted_1,is_homeless_2)*&
                                                                 unemployment_process(age_index,unemployment_index,&
                                                                 future_unemployment_index,is_homeless_2,future_addiction_index_2,&
                                                                 employment_index)*addiction_probabilities(is_addicted_1,&
@@ -15266,6 +15613,11 @@
             if (solve_transition_dynamics>=0) then
             
                 number_of_threads_used=max_CPUs
+            ! max_CPUs stays a compile-time parameter because it dimensions vector_cpu_real.
+            ! Use it only as an upper bound; take the actual thread count from the runtime so
+            ! the same binary is correct on a 4-core laptop and a 40-core server. Honours
+            ! OMP_NUM_THREADS when set.
+            !$ number_of_threads_used=max(1,min(max_CPUs,omp_get_max_threads()))
 
                 CALL OMP_SET_NUM_THREADS(number_of_threads_used)
         
@@ -16410,6 +16762,98 @@
         
     end subroutine             
             
+    subroutine create_newborn_employment_probability()
+
+        ! Reallocate the unconditional productivity distribution downward by the
+        ! penalty, over the existing grid. Working in logs, a newborn that would
+        ! have drawn node i now sits at log y_i + log(penalty), which falls
+        ! between two nodes; the mass is split between them so that the mean of
+        ! log productivity moves by exactly log(penalty). Mass below the bottom
+        ! node piles onto it, which understates the penalty for the poorest
+        ! parents and is therefore conservative.
+
+        use Global_Vars
+
+        implicit none
+
+        integer :: d_index,h_index,node_index,lower_node
+        real(8) :: penalty,shifted_log,weight_lower
+        real(8), dimension(employment_grid_size) :: log_grid
+
+        do node_index=1,employment_grid_size
+
+            log_grid(node_index)=log(employment_grid(1,node_index))
+
+        end do
+
+        newborn_employment_probability=0
+
+        do d_index=0,1
+
+            do h_index=1,2
+
+                penalty=((1-penalty_child_addicted)**(d_index*include_child_penalty))*&
+                    ((1-penalty_child_homeless)**((h_index-1)*include_child_penalty))
+
+                do node_index=1,employment_grid_size
+
+                    shifted_log=log_grid(node_index)+log(penalty)
+
+                    if (shifted_log<=log_grid(1)) then
+
+                        newborn_employment_probability(1,d_index,h_index)=&
+                            newborn_employment_probability(1,d_index,h_index)+&
+                            unconditional_employment_probability(node_index)
+
+                    else
+
+                        lower_node=1
+
+                        do while ((lower_node<employment_grid_size-1) .AND. &
+                            (log_grid(lower_node+1)<shifted_log))
+
+                            lower_node=lower_node+1
+
+                        end do
+
+                        weight_lower=(log_grid(lower_node+1)-shifted_log)/&
+                            (log_grid(lower_node+1)-log_grid(lower_node))
+
+                        weight_lower=max(0.d0,min(1.d0,weight_lower))
+
+                        newborn_employment_probability(lower_node,d_index,h_index)=&
+                            newborn_employment_probability(lower_node,d_index,h_index)+&
+                            weight_lower*unconditional_employment_probability(node_index)
+
+                        newborn_employment_probability(lower_node+1,d_index,h_index)=&
+                            newborn_employment_probability(lower_node+1,d_index,h_index)+&
+                            (1-weight_lower)*unconditional_employment_probability(node_index)
+
+                    end if
+
+                end do
+
+                newborn_employment_probability(:,d_index,h_index)=&
+                    newborn_employment_probability(:,d_index,h_index)/&
+                    sum(newborn_employment_probability(:,d_index,h_index))
+
+            end do
+
+        end do
+
+        if (loop_count<1) then
+
+            write(*,*) "newborn_employment_probability, clean and housed parent"
+            write(*,*) newborn_employment_probability(:,0,1)
+            write(*,*) "newborn_employment_probability, parent with the disorder"
+            write(*,*) newborn_employment_probability(:,1,1)
+            write(*,*) "newborn_employment_probability, homeless parent with the disorder"
+            write(*,*) newborn_employment_probability(:,1,2)
+
+        end if
+
+    end subroutine
+
     subroutine GKKOC_intergenerational_employment_process(time_period)
     
         use Global_Vars
@@ -16419,6 +16863,7 @@
         real(8) :: persistence_fixed_employment_newborn=0.5
         real(8) :: s_deviation_top=3
         real(8) :: s_deviation_bottom=3
+        real(8) :: sd_fixed_y,width_fixed_y
         real(8) :: sum_of_dist,sum_of_unconditional_unemployment
         integer, intent(in) :: time_period
          
@@ -16512,7 +16957,65 @@
                             
         end if
                 
-        do age_index=(life_span-retirement_span),life_span
+        ! With fixed_productivity the identity transition starts at age one
+        ! rather than at retirement, and the grid is frozen at its mid working
+        ! life width so that the cross sectional dispersion is the average of
+        ! what the stochastic process delivered.
+        if (fixed_productivity==1) then
+        
+            do age_index=1,life_span
+            
+                employment_grid(age_index,:)=employment_grid((life_span-retirement_span)/2,:)
+                
+            end do
+            
+            ! THE DISTRIBUTION HAS TO BE REBUILT ON THE FROZEN GRID, not left as
+            ! it was. get_probabilities_KKK_process fills
+            ! unconditional_employment_probability from the variance of log
+            ! productivity at AGE ONE, on the age one grid. Freezing the grid at
+            ! its mid working life width without touching the probabilities
+            ! would put age one mass on a wider grid, which silently changes the
+            ! dispersion of permanent income and takes the wealth targets with
+            ! it. Both are rebuilt here from the single variance the frozen grid
+            ! implies, recovered from the grid itself: the top node sits
+            ! s_deviation_top standard deviations above the mean of log
+            ! productivity, which is zero by construction.
+            sd_fixed_y=log(employment_grid(1,employment_grid_size))/s_deviation_top
+            
+            width_fixed_y=(log(employment_grid(1,employment_grid_size))-&
+                log(employment_grid(1,1)))/(employment_grid_size-1)
+            
+            unconditional_employment_probability(1)=&
+                (1+erf(((log(employment_grid(1,1))+0.5*width_fixed_y)/sd_fixed_y)/sqrt(2.d0)))/2
+            
+            do employment_index=2,employment_grid_size-1
+            
+                unconditional_employment_probability(employment_index)=&
+                    (1+erf(((log(employment_grid(1,employment_index))+0.5*width_fixed_y)/&
+                    sd_fixed_y)/sqrt(2.d0)))/2-&
+                    (1+erf(((log(employment_grid(1,employment_index))-0.5*width_fixed_y)/&
+                    sd_fixed_y)/sqrt(2.d0)))/2
+            
+            end do
+            
+            unconditional_employment_probability(employment_grid_size)=&
+                1-(1+erf(((log(employment_grid(1,employment_grid_size))-0.5*width_fixed_y)/&
+                sd_fixed_y)/sqrt(2.d0)))/2
+            
+            unconditional_employment_probability=unconditional_employment_probability/&
+                sum(unconditional_employment_probability)
+            
+            if (loop_count<1) then
+            
+                write(*,*) "fixed productivity: sd of log y =", sd_fixed_y
+                write(*,*) "unconditional_employment_probability on the frozen grid"
+                write(*,*) unconditional_employment_probability
+            
+            end if
+            
+        end if
+        
+        do age_index=fixed_productivity*1+(1-fixed_productivity)*(life_span-retirement_span),life_span
         
             do employment_index=1,employment_grid_size
             
@@ -16534,6 +17037,8 @@
             
         end do
         
+        call create_newborn_employment_probability()
+
         call create_unemployment_process()
 
         if (is_counterfactual==0) then
@@ -16673,8 +17178,20 @@
                 addiction_probabilities(0,include_addiction,1,:)=probability_of_becoming_addicted_if_experiment
                 addiction_probabilities(0,0,1,:)=1-probability_of_becoming_addicted_if_experiment
                 
-                addiction_probabilities(0,include_addiction,2,:)=increased_probability_of_becoming_addicted_if_heavy_user
-                addiction_probabilities(0,0,2,:)=1-increased_probability_of_becoming_addicted_if_heavy_user
+                ! The heavy use row only EXISTS while the split does: the third
+                ! dimension is 0:include_addiction+include_heavy_vs_light_use_transitions,
+                ! so with the regimes collapsed index 2 is off the end of the
+                ! array. Writing to it was an out of bounds store that the
+                ! compiler caught and that nothing at run time would have.
+                if (include_heavy_vs_light_use_transitions==1) then
+
+                    addiction_probabilities(0,include_addiction,&
+                        include_heavy_vs_light_use_transitions+1,:)=&
+                        increased_probability_of_becoming_addicted_if_heavy_user
+                    addiction_probabilities(0,0,include_heavy_vs_light_use_transitions+1,:)=&
+                        1-increased_probability_of_becoming_addicted_if_heavy_user
+
+                end if
                 
             else
             
@@ -21450,6 +21967,19 @@
                 vector_real_income(life_span+1,1:financial_grid_size,unemployment_grid_size,employment_grid_size,&
                 lowest_housing_grid_point:housing_status_grid_size-1,0:include_vouchers))
         
+            if (.NOT. allocated(ev_table)) then
+
+                allocate(ev_table(negative_financial_grid_size:financial_grid_size,&
+                    0:ev_addiction_top,lowest_housing_grid_point:housing_status_grid_size,0:1,max_CPUs))
+                allocate(ev_table_valid(0:ev_addiction_top,&
+                    lowest_housing_grid_point:housing_status_grid_size,0:1,max_CPUs))
+                allocate(ev_table_key(6,max_CPUs))
+
+                ev_table_valid=.FALSE.
+                ev_table_key=-999999
+
+            end if
+
             allocate(value_function(i)%&
                 vector_transition_real(transition_length,life_span+1,is_owner*1+(1-is_owner)*negative_financial_grid_size:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&

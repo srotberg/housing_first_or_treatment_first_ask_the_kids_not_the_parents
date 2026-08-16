@@ -1,0 +1,414 @@
+\documentclass[parskip=full]{article}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Basic includes
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\usepackage[pdftex, colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue, bookmarks=false]{hyperref}
+
+\usepackage{arydshln}
+\usepackage{array}
+\usepackage{makecell}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{verbatim}
+\usepackage{mathrsfs}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{bbm}
+\usepackage{bm}
+\usepackage[capposition=top]{floatrow}
+%\usepackage[dvipsnames]{xcolor}
+\usepackage{ulem}
+\usepackage[labelfont=bf]{caption}
+\usepackage{subcaption}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{natbib}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{adjustbox}
+\usepackage{multirow}
+\usepackage{rotating}
+\usepackage{pdflscape}
+\usepackage[title]{appendix}
+\usepackage{footmisc}
+\usepackage{bigdelim}
+\usepackage{tabularx}
+\usepackage{xspace}
+\newcommand{\A}{\ensuremath{\mathcal{A}}\xspace}
+\newcommand{\B}{\ensuremath{\mathcal{B}}\xspace}
+\newcommand\pa[1]{\ensuremath{\left(#1\right)}}
+\usepackage{epigraph}
+\usepackage{setspace}
+%\onehalfspacing
+\setstretch{1.5}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Microtype
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[activate={true,nocompatibility},final,tracking=true,kerning=true,spacing=true,factor=1100,stretch=10,shrink=10]{microtype}
+% activate={true,nocompatibility} - activate protrusion and expansion
+% final - enable microtype; use ``draft'' to disable
+%tracking=true, kerning=true, spacing=true - activate these techniques
+% factor=1100 - add 10% to the protrusion amount (default is 1000)
+% stretch=10, shrink=10 - reduce stretchability/shrinkability (default is 20/20)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Hyperref setup
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{url}
+\makeatletter
+\g@addto@macro{\UrlBreaks}{\UrlOrds}
+\makeatother
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks,%
+  citecolor=black,%
+  filecolor=black,%
+  linkcolor=blue,%
+  urlcolor=black
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Font setup
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{mathpazo} % math & rm
+%\linespread{1}        % Palatino needs more leading (space between lines)
+\usepackage{parskip}
+\usepackage[scaled]{helvet} % ss
+\usepackage{courier} % tt
+\usepackage{natbib}
+
+\usepackage{filecontents}
+
+\normalfont
+\usepackage[T1]{fontenc}
+
+\usepackage{titlesec}
+\titleformat{\section}
+{\normalfont\fontsize{12}{17}\bfseries}
+{\thesection}
+{1em}
+{}
+
+\titleformat{\subsection}
+{\normalfont\fontsize{11}{16}\bfseries}
+{\thesubsection}
+{1em}
+{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% macros
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcommand{\indicator}[1]{\mathbbm{1}_{\left\{ {#1} \right\} }}
+%\newcommand{\resultsloc}{../code/python/output/}
+\newcommand{\subfigwidth}{0.475\textwidth}
+\newcommand{\subfigwidthtwo}{0.375\textwidth}
+\newcommand{\figwidth}{0.6\textwidth}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+\setlength\epigraphwidth{0.9\textwidth}
+\setlength\epigraphrule{0pt}
+\renewcommand{\epigraphflush}{center}
+\usepackage{etoolbox}
+\usepackage{amsthm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Theorem environments
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\theoremstyle{plain}      % bold title, italic body
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{theorem}{Theorem}
+
+\theoremstyle{remark}    % upright text
+\newtheorem{remark}{Remark}
+
+
+\makeatletter
+\patchcmd{\epigraph}{\@epitext{#1}}{\itshape\@epitext{#1}}{}{}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Page and paragraph settings
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\parskip}{0.0pc} \setlength{\parindent}{0.25in}
+\setlength{\topmargin}{-3pc}
+\setlength{\textheight}{9in}
+\setlength{\oddsidemargin}{0pc} \setlength{\evensidemargin}{0pc}
+\setlength{\textwidth}{6.5in}
+\makeatletter
+\@fpsep\textheight
+\makeatother
+
+\newenvironment{fignote}{\begin{quote}\footnotesize}{\end{quote}}
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\renewcommand{\baselinestretch}{1.5}
+
+% Formats the notes at the bottom of tables and figures.
+\newenvironment{fignote2}[1]
+{
+\par
+\medskip
+\begin{minipage}{#1}
+\footnotesize
+}
+{
+\end{minipage}
+}
+
+% Formats the notes at the bottom of tables and figures.
+\newenvironment{fignote3}[1]
+{
+%\par
+\begin{minipage}{#1}
+\footnotesize
+}
+{
+\end{minipage}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Title page
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Title page
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{\vspace{-1.8cm}Properties of utility\footnote{...}}
+
+\author{Shahar Rotberg\footnote{Canada Mortgage and Housing Corporation. Contact: \url{shahar.rotberg@gmail.com}. Website: \url{www.sites.google.com/site/shaharrotberg}.}}
+
+
+\pagestyle{plain}
+
+\begin{document}
+
+\maketitle
+
+\setstretch{1.5}
+\begin{abstract}
+\onehalfspacing
+\noindent
+
+\noindent ...
+%words=100
+\\[1.5ex]
+
+\noindent \textbf{JEL Classification:} E20; H20; R13. 
+
+\noindent \textbf{Keywords:} Addiction, homelessness, general equilibrium.
+\end{abstract}
+\setstretch{1.5}
+\section{Utility properties}
+
+Our goal in this section is to show that when drugs are a luxury good and drug use generates penalties, the income profile of drug use depends critically on the nature of the penalty. In particular, we show that penalties that truncate the value of life can reverse the income gradient of drug use, whereas penalties that merely scale income cannot. We focus on a simplified static environment to provide clear intuition; the dynamic model studied later in the paper builds on the same economic forces.
+
+Households receive income $y>0$ and have preferences given by
+\[u(c,v) = \theta \log c + (1-\theta)\log(v+b) + D,\]
+where $c$ denotes consumption, $v$ denotes drug consumption, $b>0$ governs the extent to which drugs are a luxury good, and $\theta\in(0,1)$. The constant $D>0$ ensures that the value of life is strictly positive over the entire support of income. Prices are normalized to one.
+
+We use logarithmic utility to maintain consistency with the intratemporal component of the CRRA–Stone--Geary preferences employed in the full dynamic model,
+\[u(c,h,v)=\frac{\left(c^{\gamma} h^{\alpha} (v+b)^{1-\gamma-\alpha}\right)^{1-\sigma}}{1-\sigma}.\]
+In a static setting, the curvature parameter $\sigma$ does not affect intratemporal choices, so the log formulation delivers the same allocations and sorting behavior. We set $\gamma=\theta$ and $\alpha=0$ to simplify exposition.
+
+\subsection{No penalties to drug use}
+
+In the absence of penalties, households choose drugs whenever interior consumption is feasible, which requires
+\[y > \frac{\theta}{1-\theta} b.\]
+Thus drugs are a luxury good: higher-income households are more likely to use drugs, and drug use is concentrated among richer households.
+
+\subsection{Drug use with mortality penalties}
+
+We now introduce mortality risk. Households who use drugs face a probability $\pi\in(0,1)$ of death. Death yields zero utility and occurs before consumption is realized, so expected utility from drug use is scaled by $(1-\pi)$.
+
+Households who abstain obtain
+\[u(y,0)=(1-\theta)\log y + \theta\log b + D,\]
+while households who use drugs obtain
+\[u(y,1)=(1-\pi)\big[\log(y+b)+A(\theta)+D\big],\]
+where $A(\theta)=\theta\log\theta+(1-\theta)\log(1-\theta)$.
+
+Define $\Delta(y)\equiv u(y,1)-u(y,0)$. Differentiating,
+\[\Delta'(y)=\frac{1-\pi}{y+b}-\frac{1-\theta}{y}.\]
+
+\begin{lemma}[Income sorting with mortality risk]
+If $\pi>\theta$, then $\Delta'(y)<0$ for all $y>0$. Drug use is strictly decreasing in income, and there exists a unique cutoff $\bar y$ such that households with $y<\bar y$ use drugs while higher-income households abstain.
+\end{lemma}
+
+\begin{proof}
+\noindent\textbf{Step 1: Low-income limit.}
+As $y\to 0^+$,
+\[u(y,0)\to -\infty\]
+because $\log y\to -\infty$, while
+\[u(y,1)\to (1-\pi)\big[\log b + A(\theta)+D\big],\]
+which is finite. Hence
+\[\Delta(y)=u(y,1)-u(y,0)\to +\infty \quad \text{as } y\to 0^+.\]
+
+\medskip
+\noindent\textbf{Step 2: High-income limit.}
+As $y\to\infty$, we have $\log(y+b)=\log y+o(1)$, so
+\[u(y,1)=(1-\pi)\log y + O(1),
+\qquad u(y,0)=(1-\theta)\log y + O(1).\]
+Therefore,
+\[\Delta(y)=(\theta-\pi)\log y + O(1).\]
+If $\pi>\theta$, then 
+\[\Delta(y)\to -\infty \quad \text{as } y\to\infty.\]
+
+\medskip
+\noindent\textbf{Step 3: Cutoff.}
+Since $\Delta(y)$ is continuous, diverges to $+\infty$ as $y\to 0^+$,
+and diverges to $-\infty$ as $y\to\infty$, there exists a unique
+$\bar y$ such that $\Delta(\bar y)=0$. Drug use is optimal for
+$y<\bar y$ and suboptimal for $y>\bar y$.
+\end{proof}
+
+
+\paragraph{Interpretation.}
+The key force behind this result is that the value of life is increasing in income. Although drugs are a luxury good absent penalties, death truncates all future utility. Higher-income households therefore have more to lose from mortality risk, so the expected cost of drug use rises faster with income than its benefit. When mortality risk is sufficiently severe relative to preferences for drugs ($\pi>\theta$), this effect dominates the luxury motive and deters high-income households from using drugs.
+
+\subsection{Drug use with proportional unemployment penalties}
+
+We next consider unemployment risk. Households who use drugs face probability $\pi$ of becoming unemployed, in which case income falls to $\kappa y$ with $\kappa\in(0,1)$. Households re-optimize conditional on realized income.
+
+Expected utility from drug use is
+\[u(y,1)=(1-\pi)\big[\log(y+b)+A(\theta)+D\big]
++\pi\big[\log(\kappa y+b)+A(\theta)+D\big],\]
+while abstention yields
+\[u(y,0)=(1-\theta)\log y+\theta\log b + D.\]
+
+Differentiating $\Delta(y)=u(y,1)-u(y,0)$ gives
+\[\Delta'(y)=\frac{1-\pi}{y+b}+\frac{\pi\kappa}{\kappa y+b}-\frac{1-\theta}{y}.\]
+
+\begin{lemma}[No low-income-only sorting under proportional unemployment penalties]
+Suppose $b>0$, $\pi\in(0,1)$, and $\kappa\in(0,1)$ is constant.
+Then
+\[\Delta(y)\to +\infty \quad \text{as } y\to\infty.\]
+In particular, $\Delta(y)$ cannot be negative for all sufficiently large $y$,
+so proportional unemployment penalties cannot generate sorting in which only
+low-income households use drugs.
+\end{lemma}
+
+\begin{proof}
+Under proportional unemployment risk, abstention yields
+\[u(y,0)=(1-\theta)\log y+\theta\log b + D.\]
+Drug use yields expected utility
+\[u(y,1)=(1-\pi)\big[\log(y+b)+A(\theta)+D\big] +\pi\big[\log(\kappa y+b)+A(\theta)+D\big],\]
+where $A(\theta)$ is a constant.
+
+\medskip
+\noindent\textbf{High-income limit.}
+As $y\to\infty$, we have $\log(y+b)=\log y+o(1)$ and
+\[\log(\kappa y+b)=\log(\kappa y)+o(1)=\log y + \log\kappa + o(1).\]
+Substituting,
+\[u(y,1)=(1-\pi)\log y + \pi(\log y+\log\kappa) + O(1) =\log y + \pi\log\kappa + O(1).\]
+Meanwhile,
+\[u(y,0)=(1-\theta)\log y + O(1).\]
+Therefore,
+\[\Delta(y)=u(y,1)-u(y,0)=\theta\log y + O(1)\to +\infty
+\quad \text{as } y\to\infty,\]
+since $\theta>0$.
+Thus drug use becomes strictly more attractive than abstention at sufficiently
+high income, implying that proportional unemployment penalties cannot confine
+drug use to low-income households.
+\end{proof}
+
+\paragraph{Interpretation.}
+Although the absolute income loss from unemployment rises with income, proportional unemployment penalties do not truncate utility. With logarithmic preferences, both employed and unemployed utility grow at the same rate in income, so unemployment risk shifts utility levels but leaves the asymptotic slope unchanged. As a result, the luxury motive eventually dominates unemployment risk, and drug use cannot be confined to low-income households under proportional income losses.
+
+\subsection{Math intuition: why mortality changes the slope but proportional unemployment does not.}
+The difference between the two penalties is easiest to see by isolating the leading-order term in income.
+In our log specification, indirect utility from drug use at realized income $Y$ has the form
+\[U_1(Y)=\log(Y+b)+A(\theta)+D,\]
+so for large income $y$ we have $\log(y+b)=\log y+o(1)$.
+
+\medskip
+\noindent\textbf{Mortality risk multiplies the entire value of being alive.}
+Under mortality risk, the household receives utility only if it survives. Hence
+\[u(y,1)=(1-\pi)\big[\log(y+b)+A(\theta)+D\big]=(1-\pi)\log y + O(1),\]
+while abstention yields
+\[u(y,0)=(1-\theta)\log y + O(1).\]
+Therefore the utility difference satisfies
+\[\Delta(y)=u(y,1)-u(y,0)=\big[(1-\pi)-(1-\theta)\big]\log y + O(1)=(\theta-\pi)\log y + O(1).\]
+Thus mortality \emph{changes the coefficient on $\log y$}: it reduces the $\log y$ slope of drug-use utility
+from $1$ to $1-\pi$. When $\pi>\theta$, the coefficient $(\theta-\pi)$ is negative, so $\Delta(y)\to -\infty$,
+and high-income households are eventually deterred from drug use.
+
+\medskip
+\noindent\textbf{Proportional unemployment does not change the $\log y$ slope.}
+With proportional unemployment income $Y_u=\kappa y$, expected utility under drug use is
+\[u(y,1)=(1-\pi)\big[\log(y+b)+A(\theta)+D\big]+\pi\big[\log(\kappa y+b)+A(\theta)+D\big].\]
+As $y\to\infty$, $\log(\kappa y+b)=\log(\kappa y)+o(1)=\log y+\log\kappa+o(1)$, so
+\[u(y,1)=(1-\pi)\log y+\pi(\log y+\log\kappa)+O(1)=\log y+\pi\log\kappa+O(1).\]
+Abstention remains $u(y,0)=(1-\theta)\log y+O(1)$, hence
+\[\Delta(y)=\theta\log y + O(1)\to +\infty.\]
+So proportional unemployment only adds a \emph{level shift} (the constant $\pi\log\kappa$) and leaves the
+$\log y$ slope equal to $1$. The luxury motive therefore dominates in the right tail regardless of $\pi$ or $\kappa$.
+
+\medskip
+\noindent\textbf{Takeaway.}
+Mortality risk acts like a \emph{multiplicative} penalty on the entire value of being alive, which reduces the
+asymptotic slope of drug-use utility in $\log y$ from $1$ to $1-\pi$. Proportional unemployment is only a
+\emph{resource} penalty: it preserves the $\log y$ slope and therefore cannot overturn the luxury-good force at high income.
+
+\subsection{Drug use with non-proportional unemployment penalties}
+
+Finally, suppose unemployed income satisfies $Y_u(y)=\kappa(y)y$ with $\kappa(y)\to 0$ as $y\to\infty$. Expected utility from drug use becomes
+\[u(y,1)=(1-\pi)\big[\log(y+b)+A(\theta)+D\big]
++\pi\big[\log(Y_u(y)+b)+A(\theta)+D\big].\]
+
+\begin{lemma}[Cutoff under sufficiently severe non-proportional unemployment losses]\label{lem:nonprop_cutoff}
+Suppose $b>0$ and unemployed income under drug use is $Y_u(y)\equiv \kappa(y)y$ with $\kappa(y)\in(0,1)$.
+Assume
+\[\lim_{y\to\infty} Y_u(y)=0.\]
+If $\pi>\theta$, then there exists at least one cutoff $\bar y\in(0,\infty)$ such that $\Delta(\bar y)=0$.
+Moreover, $\Delta(y)>0$ for all sufficiently small $y$ and $\Delta(y)<0$ for all sufficiently large $y$.
+\end{lemma}
+
+\begin{proof}
+Recall that abstention yields
+\[u(y,0)=(1-\theta)\log y+\theta\log b + D,\]
+while drug use yields expected indirect utility
+\[u(y,1)=(1-\pi)\big[\log(y+b)+A(\theta)+D\big] +\pi\big[\log(Y_u(y)+b)+A(\theta)+D\big],\]
+so $\Delta(y)\equiv u(y,1)-u(y,0)$.
+
+\smallskip
+\noindent\textbf{Step 1: $\Delta(y)\to +\infty$ as $y\to 0^+$.}
+As $y\to 0^+$, we have $u(y,0)=(1-\theta)\log y + O(1)\to -\infty$.
+In contrast, $u(y,1)$ remains finite because $\log(y+b)\to\log b$ and $Y_u(y)\in(0,y)$ implies
+$\log(Y_u(y)+b)\to \log b$. Hence $\Delta(y)=u(y,1)-u(y,0)\to +\infty$.
+
+\smallskip
+\noindent\textbf{Step 2: $\Delta(y)\to -\infty$ as $y\to\infty$ when $\pi>\theta$.}
+As $y\to\infty$, $\log(y+b)=\log y+o(1)$.
+By assumption, $Y_u(y)\to 0$, so $Y_u(y)+b\to b$ and therefore
+\[\log(Y_u(y)+b)\to \log b \qquad \text{(not $\log Y_u(y)$, since $b>0$).}\]
+It follows that
+\[u(y,1)=(1-\pi)\log y + O(1), \qquad u(y,0)=(1-\theta)\log y + O(1),\]
+and hence
+\[\Delta(y)=\big[(1-\pi)-(1-\theta)\big]\log y + O(1)=(\theta-\pi)\log y + O(1).\]
+
+If $\pi>\theta$, then $(\theta-\pi)<0$, so $\Delta(y)\to -\infty$ as $y\to\infty$.
+
+\smallskip
+\noindent\textbf{Step 3: Existence of a cutoff.}
+$\Delta(y)$ is continuous in $y$ (it is a sum of continuous log terms on $(0,\infty)$). Since $\Delta(y)\to +\infty$ as $y\to 0^+$ and $\Delta(y)\to -\infty$ as $y\to\infty$ when $\pi>\theta$, the Intermediate Value Theorem implies there exists at least one $\bar y\in(0,\infty)$ such that $\Delta(\bar y)=0$. The sign changes imply $\Delta(y)>0$ for small $y$ and $\Delta(y)<0$ for large $y$.
+\end{proof}
+
+\paragraph{Interpretation.}
+With non-proportional unemployment losses satisfying $Y_u(y)\to 0$, the unemployment state becomes effectively ``near-subsistence'' even for very high baseline income. In that case, drug use exposes high-income households
+to an adverse state whose utility does \emph{not} continue to grow with $\log y$; asymptotically, only the employment state contributes a $\log y$ term. Consequently, the leading coefficient on $\log y$ under drug use is $(1-\pi)$, while under abstention it is $(1-\theta)$. When $\pi>\theta$, the difference $\Delta(y)$ eventually declines without bound, so high-income households are deterred, whereas low-income households may still use drugs because abstention utility diverges to $-\infty$ as $y\to 0^+$ under log utility. This delivers a cutoff pattern even though drugs are a luxury good absent penalties.
+
+\subsection{Summary}
+
+The results above show that the income profile of drug use depends fundamentally on whether penalties truncate utility or merely scale income. Proportional unemployment penalties reduce resources but preserve the growth rate of utility with income, so drug use retains its luxury-good nature. By contrast, mortality risk and sufficiently non-proportional unemployment penalties flatten the expected utility of drug use at high income levels. Because higher-income households have more future utility to lose, these penalties deter drug use among the rich and concentrate drug use among lower-income households. For empirical reasons, our quantitative analysis focuses on mortality risk and proportional income losses, which are observable and disciplinable in the data.
+
+\bibliographystyle{aer}
+
+\vspace{1cm}
+
+
+\end{document}
