@@ -45,6 +45,18 @@ than at a terminal date, four hazards vary with age, homeownership is out, the
 drug supply curve is finite, three numbers were wrong and are corrected, and the
 homelessness disamenity has been dropped rather than priced at zero.
 
+**The Stone-Geary shifter no longer varies at all.** This is the one place where
+these letters now promise something different from the first draft, so it is worth
+knowing before reading them. We had said the shifter would fall with the disorder,
+with mental illness and with homelessness. It does none of those: flow utility is
+the same function of consumption, housing and drugs in every state and after every
+choice. Housing is a *choice*, so a preference depending on it is a preference over
+a choice, and it would give a user a reason to pick the street because the drug is
+worth more there. The elasticity R2 asked for in C1 runs through the recovery
+hazard instead, which is six times worse on the street, is a transition
+probability rather than a taste, and is what Milby actually measures. The upshot is
+that C1 and C5 turn out to be the same request, which the letters now say.
+
 That last one is a change of mind against Referee 2, who asked for it and whom we
 agreed with at the time. It is argued in `response_R2.tex` under C2 and offered
 back: if he would still prefer it carried and reported across a range, restoring

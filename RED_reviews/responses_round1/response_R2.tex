@@ -52,14 +52,29 @@ Contingency is doing the work, not housing. That distinction is exactly the
 paper's subject, and the two trials together are better evidence for it than
 either alone. This is now in the text.
 
-\thisround It is now in the code and not only in the written model. The
-Stone-Geary shifter depends on the housing chosen, and every place in the
-program that evaluates the drug term goes through a single function, so the flow
-utility, its marginal utility and the two closed form splits of consumption
-against drugs cannot disagree with one another. That was the implementation risk
-worth spending care on: had those been patched separately, the objective and its
-own first order condition would have drifted apart silently. The parameter is
-bracketed on the contrast between Milby's arms, as described above.
+\thisround It is now in the code and not only in the written model, and it sits
+in a different place from the one we first proposed. Our first draft made the
+Stone-Geary shifter fall with homelessness, so that housing lowered use through a
+taste. We have retired that, for two reasons we would rather state than have you
+find. Housing in this model is a \emph{choice}, so a preference that depends on
+it is a preference over a choice: a household would pick its dwelling partly to
+move its own taste, and a user would acquire a reason to choose the street
+because the drug is worth more there, which is close to the reverse of the
+selection the paper is about. And the sign is odd in any case, since the marginal
+value of the drug goes as $1/(b+v)$, so the channel would have worked by
+asserting that homelessness improves the experience of using.
+
+The elasticity you asked for does not need a taste, and it is better identified
+without one. It now runs entirely through the \emph{recovery hazard}: recovery
+from a substance use disorder is six times harder on the street than in a home.
+That is a transition probability rather than a preference, it is what a trial
+measures, and it is what your own citation reports. Milby et al.\ record
+abstinence by arm; abstinence by arm is a hazard. So the requested moment is
+targeted, the sign is right, and the flow utility is now the same function of
+consumption, housing and drugs in every state and after every choice, which is
+also what your comment C5 and the Associate Editor's A8 asked for. The two
+requests turn out to be the same request, and we had been answering them with
+different machinery.
 \end{response}
 
 \cmt{C2}{A large homeless population is a negative externality}
