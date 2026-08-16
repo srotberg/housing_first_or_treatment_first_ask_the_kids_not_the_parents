@@ -777,6 +777,36 @@
         real(8) :: increased_risk_of_death_addicted=&
             have_increased_death_from_addiction*5.9+(1-have_increased_death_from_addiction)*size_of_penalty*5
         real(8) :: increased_risk_of_death_homeless_addicted=0
+
+        ! THE MORTALITY MULTIPLIERS VARY WITH AGE, AND THE DATA FOR IT WAS
+        ! ALREADY IN THE REPOSITORY AND UNREAD.
+        !
+        ! data/us_mortality_multipliers.csv has sixty rows, ages 26 to 85, with
+        ! shape_sud, the CDC drug poisoning profile normalised to one at its
+        ! peak, and rr_homeless, Baggett's all cause ratio by age. The code read
+        ! neither file and used two flat excesses instead.
+        !
+        ! Equation (25) of the note:
+        !
+        !   kappa_phi_d(j) = 1 + (kappa_bar_phi_d - 1) * shape_sud(j)
+        !   kappa_phi_H(j) = max{1, RR(j) / [(1-s) + s*kappa_phi_d(j)]}
+        !
+        ! with s the SUD share of the homeless, because Baggett's ratio is
+        ! measured on a population that mostly also carries a SUD and using it
+        ! raw would credit housing with a mortality effect that belongs to the
+        ! disorder.
+        !
+        ! Survival is then MULTIPLICATIVE in the two, as the note has it. The old
+        ! code added the two excesses, which is a different and larger number
+        ! whenever both are large, and both are large exactly for the households
+        ! this paper is about.
+        real(8), dimension(life_span) :: shape_sud_profile=0
+        real(8), dimension(life_span) :: rr_homeless_profile=0
+        real(8), dimension(life_span) :: kappa_phi_d_by_age=1
+        real(8), dimension(life_span) :: kappa_phi_h_by_age=1
+        real(8) :: kappa_phi_d_level=6.9
+        real(8), parameter :: sud_share_of_homeless=0.217
+        integer :: mortality_profiles_loaded=0
                             
         ! UNEMPLOYMENT INSURANCE IS NOW CERTAIN FOR THE FIRST YEAR OF A SPELL
         ! and pays nothing after it. This removes a parameter rather than a
@@ -18321,22 +18351,45 @@
         
         end if  
         
-        survival_probability(:,2,0)=max(survival_probability(:,1,0)-&
-            increased_risk_of_death_homeless*(1-survival_probability(:,1,0)),0.d0)
+        ! EQUATION (24), MULTIPLICATIVE AND AGE VARYING.
+        !
+        !   phi(j,h',d) = 1 - min{1, (1-phibar(j)) * kappa_phi_H(j)^1{h1} * kappa_phi_d(j)^1{d=1}}
+        !
+        ! The old lines subtracted a flat excess times the death hazard and, for
+        ! a household that was both homeless and carrying the disorder, ADDED the
+        ! two excesses. The note multiplies the two multipliers, which is a
+        ! different and larger number whenever both are large, and both are large
+        ! exactly for the households this paper is about.
+        call build_mortality_multipliers()
+
+        do i=1,life_span
+
+            survival_probability(i,2,0)=1-min(1.d0,&
+                (1-survival_probability(i,1,0))*kappa_phi_h_by_age(i))
+
+        end do
                     
 !        survival_probability(1:life_span-retirement_span,2,0)=&
 !            survival_probability(1:life_span-retirement_span,1,0)
         
         if (include_addiction==1) then
         
-            survival_probability(:,1,include_addiction)=max(survival_probability(:,1,0)-&
-                increased_risk_of_death_addicted*(1-survival_probability(:,1,0)),0.d0)
+            do i=1,life_span
+
+                survival_probability(i,1,include_addiction)=1-min(1.d0,&
+                    (1-survival_probability(i,1,0))*kappa_phi_d_by_age(i))
+
+            end do
                                 
 !            survival_probability(1:life_span-retirement_span,1,include_addiction)=&
 !                survival_probability(1:life_span-retirement_span,1,0)
                 
-            survival_probability(:,2,include_addiction)=max(survival_probability(:,1,0)-&
-                increased_risk_of_death_homeless_addicted*(1-survival_probability(:,1,0)),0.d0)
+            do i=1,life_span
+
+                survival_probability(i,2,include_addiction)=1-min(1.d0,&
+                    (1-survival_probability(i,1,0))*kappa_phi_h_by_age(i)*kappa_phi_d_by_age(i))
+
+            end do
                 
 !            survival_probability(1:life_span-retirement_span,2,include_addiction)=&
 !                survival_probability(1:life_span-retirement_span,1,0)
@@ -18923,6 +18976,8 @@
             
         end do
         
+        call load_mortality_profiles()
+
         call recompute_derived_parameters()
 
         call verify_index_map()
@@ -24399,6 +24454,94 @@
 
     end subroutine
     
+    subroutine load_mortality_profiles()
+
+        ! Read the CDC and Baggett profiles once. The file has a header and sixty
+        ! rows, ages 26 to 85, and the last row's shape is nan because the
+        ! difference that defines it has no next age; it is read as zero, which
+        ! is right, since the SUD's excess mortality has gone by 85.
+
+        use Global_Vars
+
+        implicit none
+
+        integer :: age_1,i_1,ios_1
+        real(8) :: shape_1,rr_1,d1_1,d2_1,d3_1
+        character(len=400) :: header_1
+        logical :: file_exists_1
+
+        inquire(file="../data/us_mortality_multipliers.csv",exist=file_exists_1)
+
+        if (.NOT. file_exists_1) then
+
+            inquire(file="us_mortality_multipliers.csv",exist=file_exists_1)
+
+            if (.NOT. file_exists_1) then
+
+                write(*,*) "us_mortality_multipliers.csv not found. stopping."
+                stop
+
+            end if
+
+            open(unit=74,file="us_mortality_multipliers.csv",action='read')
+
+        else
+
+            open(unit=74,file="../data/us_mortality_multipliers.csv",action='read')
+
+        end if
+
+            read(74,'(A)') header_1
+
+            do i_1=1,life_span
+
+                read(74,*,iostat=ios_1) age_1,shape_1,rr_1,d1_1,d2_1,d3_1
+
+                if (ios_1/=0) then
+
+                    shape_1=0
+                    rr_1=1
+
+                end if
+
+                if (shape_1/=shape_1) shape_1=0
+                if (rr_1/=rr_1) rr_1=1
+
+                shape_sud_profile(i_1)=max(shape_1,0.d0)
+                rr_homeless_profile(i_1)=max(rr_1,1.d0)
+
+            end do
+
+        close(74)
+
+        mortality_profiles_loaded=1
+
+        write(*,*) "mortality profiles loaded, shape_sud(1)=", shape_sud_profile(1), &
+            " rr_homeless(1)=", rr_homeless_profile(1)
+
+    end subroutine
+
+    subroutine build_mortality_multipliers()
+
+        ! Equation (25). Called whenever the level moves.
+
+        use Global_Vars
+
+        implicit none
+
+        integer :: j_1
+
+        do j_1=1,life_span
+
+            kappa_phi_d_by_age(j_1)=1+(kappa_phi_d_level-1)*shape_sud_profile(j_1)
+
+            kappa_phi_h_by_age(j_1)=max(1.d0,rr_homeless_profile(j_1)/&
+                ((1-sud_share_of_homeless)+sud_share_of_homeless*kappa_phi_d_by_age(j_1)))
+
+        end do
+
+    end subroutine
+
     subroutine recompute_derived_parameters()
 
         ! EVERY QUANTITY DERIVED FROM A CALIBRATED ONE, REBUILT IN ONE PLACE.
