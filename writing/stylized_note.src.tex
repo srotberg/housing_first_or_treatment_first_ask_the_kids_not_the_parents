@@ -304,9 +304,13 @@ fifty five. For the SUD, the
 proportional fall in survival is $\kappa = @@kap@@$ from Hjorth\o j et al.\
 (2023), so a clean household's chance of dying before period 2 is @@dth0@@
 percent and a household that acquires a SUD faces @@dth1@@ percent,
-and the two unemployment probabilities are measured directly, $u_0 = @@u0@@$
-from the \new{BLS, averaged over 2014 to 2024}, and $u_1 = @@u1@@$ from NSDUH
-2024, both for respondents aged 26 and over.
+and the two unemployment probabilities are measured directly. \new{$u_0 = @@u0@@$
+is the FRED series UNRATE, the headline civilian unemployment rate, averaged over
+2014 to 2024, and $u_1 = @@u1@@$ is from NSDUH 2024 for respondents aged 26 and
+over. The two are not on the same age base: UNRATE covers everyone aged 16 and
+over, and since young workers carry more unemployment than older ones, using it
+raises $u_0$ and so narrows the gap $u_1-u_0$ that the unemployment channel runs
+on. The error is in the conservative direction.}
 
 Income support replaces half of previous earnings on a base capped at mean
 income, in line with statutory state rules. The standard rental unit costs

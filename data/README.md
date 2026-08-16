@@ -38,6 +38,7 @@ source and must not survive into the paper.
 | `CDCWONDER_provisional_mortality_drug_alcohol_induced_by_5yr_age.txt` | CDC WONDER provisional mortality | 2018– | Grouped by `MCD - Drug/Alcohol Induced Cause` × five-year age. **The right grouping.** |
 | `CDCWONDER_..._113_cause_list_..._SUPERSEDED.txt` | same | 2018– | Grouped by the ICD-10 113 Cause List. Its poisoning category is X40–X49, unintentional only. Superseded; kept so the difference is checkable. |
 | `NSDUH_2023_detailed_tables.zip` | SAMHSA NSDUH | 2023 | Detailed tables, HTML. Query with `nsduh_query.py`. |
+| `FRED_UNRATE_monthly_1948_2024.xlsx` | FRED series `UNRATE`, St. Louis Fed, from the BLS CPS | 1948–01 to 2024–05 | Headline civilian unemployment rate, **ages 16 and over**, monthly, seasonally adjusted. The 2014 to 2024 mean is **4.852 per cent**, which is where `u_0` comes from. Note the universe: `u_1` is NSDUH ages 26+, so the two are not on the same age base. A 25+ series (`LNS14000048`) would be lower than the headline and would widen the gap. |
 
 Despite its filename, `HUD_picture_subsidized_households_2023_by_program_US.xlsx`
 arrived named `US_2025_2020census.xlsx`. It is not census population data.
