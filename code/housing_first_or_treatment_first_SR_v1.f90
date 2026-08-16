@@ -287,7 +287,14 @@
                                                         
         integer, parameter :: do_internal_computations=1
         integer :: fin_num_of_internal=50
-        integer, parameter :: re_do_simulation_with_fixed_parameters=1                                                               
+        ! ZERO MEANS CALIBRATE. At one, every distance_* is set to zero and the
+        ! whole parameter update block is skipped, so the program re-solves the
+        ! equilibrium at fixed parameters and reports the result. That is what it
+        ! is for and it is the right setting for a re-run of a finished
+        ! calibration. It is the wrong setting for FINDING one, and it was on:
+        ! size_homelessness sat at its starting 0.21 through every loop while
+        ! homelessness fell from 1.2e-4 to 4.6e-5 against a target of 3.99e-3.
+        integer, parameter :: re_do_simulation_with_fixed_parameters=0
         integer, parameter :: calibrate_only_rental_management_costs=1
                                                                                                                                                                                                                                                                                                                                     
         real(8), parameter :: property_tax_deductibility=0
@@ -332,6 +339,29 @@
         ! households, against 131,332,360 occupied units. The model's agent is a
         ! household, so the person rate is the wrong denominator. It was 0.0045.
         real(8), parameter :: fraction_homeless_data=0.00399
+
+        ! THE DISTRIBUTION OF HOUSEHOLDS ACROSS UNIT SIZES, from the American
+        ! Community Survey 2023 table B25042, tenure by bedrooms, universe
+        ! OCCUPIED housing units, N = 131,332,360. Built by
+        ! data/make_housing_dist.py into data/us_housing_dist.csv, with the six
+        ! bedroom categories collapsed to three: no bedroom and one bedroom, two
+        ! bedrooms, and three or more.
+        !
+        ! WHY THIS RATHER THAN THE HOUSING COST SHARES. The two rental sizes used
+        ! to be identified from the share of renters spending above 30 or above
+        ! 50 per cent of income on housing. That is identification from a budget
+        ! CONSEQUENCE of the grid rather than from the grid itself, so the sizes
+        ! absorbed anything else that moved the housing cost distribution:
+        ! incomes, rents, the voucher, the food stamp floor. The size
+        ! distribution names the object directly. The cost shares stay in the
+        ! table as untargeted moments, where they are a check rather than a
+        ! definition.
+        !
+        ! The universe is occupied units, so the model counterpart conditions on
+        ! being HOUSED: the homeless are not in the ACS denominator and are not
+        ! in this one either.
+        real(8), parameter, dimension(0:2) :: housing_size_dist_data=&
+            (/0.132065d0,0.241212d0,0.626723d0/)
         real(8), parameter :: fraction_light_users=0.731
         
         integer, parameter :: target_HO_of_old=1
@@ -574,7 +604,18 @@
         real(8) :: stopping_rule_housing_status_grid_expander=10.d0**(-3)
         
         real(8) :: smallest_rental_relative_to_lowest_income=(1-perceived_probability_lower)*0.04+perceived_probability_lower*0.19
-        real(8) :: smallest_house_size_adjuster=0
+        ! ON, and the sign is the same story as the expander. A larger smallest
+        ! unit is a more expensive smallest unit, and the households that took it
+        ! have nothing cheaper to move to except the street, so raising it pushes
+        ! them out of the housed distribution rather than down it and the share
+        ! in the smallest size FALLS. The update therefore adds the gap.
+        !
+        ! Deliberately smaller than the homelessness adjuster. Both this and
+        ! size_homelessness move the bottom of the housing distribution, so they
+        ! compete: this one sets where the affordability floor is and that one
+        ! sets how bad the alternative to it is. Running them at the same speed
+        ! lets them chase each other.
+        real(8) :: smallest_house_size_adjuster=0.05
         real(8) :: distance_smallest_house_size
         real(8) :: stopping_rule_smallest_house_size=10.d0**(-3) 
         
@@ -875,6 +916,12 @@
         
         real(8), dimension(transition_length,lowest_housing_grid_point:housing_status_grid_size-1) :: renters_by_rental
         real(8), dimension(transition_length) :: total_renters
+
+        ! renters_by_rental renormalised over the HOUSED sizes only, so it lines
+        ! up with the ACS universe of occupied units. Index 0 is the smallest
+        ! rental, housing_status_grid_size-1 the largest; homelessness, which
+        ! sits at lowest_housing_grid_point, is excluded from the denominator.
+        real(8), dimension(transition_length,0:housing_status_grid_size-1) :: model_housing_size_dist
                     
         real(8) :: consumption_choice,total_consumption_choice
         real(8), dimension(financial_grid_size) :: flow_utility_vector
@@ -4123,6 +4170,18 @@
         
         renters_by_rental(time_period,:)=&
             renters_by_rental(time_period,:)/total_renters(time_period)
+
+        if (sum(renters_by_rental(time_period,0:housing_status_grid_size-1))>0) then
+
+            model_housing_size_dist(time_period,:)=&
+                renters_by_rental(time_period,0:housing_status_grid_size-1)/&
+                sum(renters_by_rental(time_period,0:housing_status_grid_size-1))
+
+        else
+
+            model_housing_size_dist(time_period,:)=0
+
+        end if
         
         total_rental_demand_segmented(time_period,:)=total_rental_demand_segmented(time_period,:)/&
             sum(total_rental_demand_segmented(time_period,:))
@@ -23460,13 +23519,28 @@
                     write(*,*) "housing_status_grid_expander=", housing_status_grid_expander
                         
                     if (calibrate_size_of_smallest_house_hhld_can_buy==1) then
-                    
+
+                        ! RETARGETED ONTO THE SIZE DISTRIBUTION. This used to be
+                        ! bracketed on the homeownership rate against the SCF's
+                        ! 0.659, which is a dead moment now: include_homeownership
+                        ! is zero, so model_homeownership_rate is identically zero
+                        ! and the update drove the expander with a constant gap of
+                        ! -0.659 every iteration. The expander sets the curvature
+                        ! of the grid between the smallest and largest sizes, so
+                        ! the share in the LARGEST size is what it actually
+                        ! identifies. The sign: a higher expander makes the middle
+                        ! unit smaller and cheaper, so more households take it and
+                        ! fewer take the largest, hence share(largest) falls in the
+                        ! expander and the update ADDS the gap rather than
+                        ! subtracting it.
                         housing_status_grid_expander=&
-                            min(max(housing_status_grid_expander-housing_status_grid_expander_adjuster*&
-                            (model_homeownership_rate(1)-SCF_homeownership_rate),0.0),5.d0) 
+                            min(max(housing_status_grid_expander+housing_status_grid_expander_adjuster*&
+                            (model_housing_size_dist(1,housing_status_grid_size-1)-&
+                            housing_size_dist_data(2)),0.1d0),5.d0) 
                                                                      
                         distance_housing_status_grid_expander=&
-                            abs(model_homeownership_rate(1)-SCF_homeownership_rate)
+                            abs(model_housing_size_dist(1,housing_status_grid_size-1)-&
+                            housing_size_dist_data(2))
                             
                         distance_rent_to_price=0
                                                 
@@ -23518,14 +23592,21 @@
                     write(*,*) "smallest_rental_relative_to_lowest_income=", smallest_rental_relative_to_lowest_income                    
                     
                     if (calibrate_smallest_house_size==1) then
-                                        
+
+                        ! TARGETED ON THE SIZE DISTRIBUTION, not on a housing cost
+                        ! share. See housing_size_dist_data for why.
+                        write(*,*) "model_housing_size_dist=", model_housing_size_dist(1,:)
+                        write(*,*) "housing_size_dist_data=", housing_size_dist_data
+                        write(*,*) "smallest_rental_relative_to_lowest_income=", &
+                            smallest_rental_relative_to_lowest_income
+
                         smallest_rental_relative_to_lowest_income=&
                             min(max(smallest_rental_relative_to_lowest_income-smallest_house_size_adjuster*&
-                            (mass_of_renters_at_housing_spending(1,target_30_perc*1+(1-target_30_perc)*2)-&
-                            SW_renters_spend_over_X_on_hous),0.d0),10.d0) 
+                            (model_housing_size_dist(1,0)-&
+                            housing_size_dist_data(0)),0.d0),10.d0) 
                                                                      
-                        distance_smallest_house_size=abs(mass_of_renters_at_housing_spending&
-                            (1,target_30_perc*1+(1-target_30_perc)*2)-SW_renters_spend_over_X_on_hous)
+                        distance_smallest_house_size=abs(model_housing_size_dist(1,0)-&
+                            housing_size_dist_data(0))
                                                          
                     else
                     

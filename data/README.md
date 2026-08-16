@@ -18,7 +18,7 @@ python3 make_overdose.py      --wonder   raw/CDCWONDER_provisional_mortality_dru
 | file | read by | contents |
 |---|---|---|
 | `us_life_table.csv` | `params.f90::load_life_table` | `age,qx`, ages 26–85 |
-| `us_housing_dist.csv` | not yet wired | housed shares by unit size |
+| `us_housing_dist.csv` | **wired**: the two rental sizes are calibrated to it | housed shares by unit size, 13.2 / 24.1 / 62.7 |
 | `us_overdose_mortality.csv` | not yet wired | overdose deaths and rates by 5-year age |
 
 `load_life_table` warns and falls back to a smooth hazard if its file is

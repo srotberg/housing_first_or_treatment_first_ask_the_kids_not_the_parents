@@ -108,6 +108,49 @@ homelessness too, and turning both on in the same sweep lets them fight over the
 same moment. It should be switched on afterwards, once the street is settled, and
 bracketed on the share of renters spending above half of income.
 
+### 1.6 The calibration was switched off, and two targets pointed at dead moments.
+
+Three separate things, found by reading a run that was not converging.
+
+**`re_do_simulation_with_fixed_parameters` was 1.** At one, every `distance_*` is
+set to zero and the whole parameter update block is skipped: the program
+re-solves the equilibrium at fixed parameters and reports it. That is the right
+setting for re-running a finished calibration and the wrong one for finding a
+calibration, and it was on. `size_homelessness` sat at its starting 0.21 through
+every loop while homelessness fell from 1.2e-4 to 4.6e-5 against a target of
+3.99e-3. Now zero.
+
+**The grid expander was targeted on the homeownership rate.** It was bracketed on
+`model_homeownership_rate` against the SCF's 0.659. With `include_homeownership`
+at zero that moment is identically zero, so the update was being driven by a
+constant gap of -0.659 every iteration. Retargeted onto the share of households
+in the LARGEST unit, which is what the curvature of the grid actually identifies.
+
+**The two rental sizes were identified from a budget consequence.** They were
+bracketed on the share of renters spending above 30 or above 50 per cent of
+income. That is a consequence of the grid rather than the grid itself, so the
+sizes absorbed anything else moving the housing cost distribution: incomes,
+rents, the voucher, the food stamp floor. Both are now targeted on the SIZE
+distribution directly, from the American Community Survey 2023 table B25042,
+occupied units, collapsed to three bins: **13.2, 24.1, 62.7 per cent**. That file
+already existed as `data/us_housing_dist.csv` and was marked "not yet wired". It
+is wired now. The cost shares stay in the table as untargeted moments, where they
+are a check rather than a definition.
+
+The signs both go the same way and both were flipped from the form they had.
+Raising the smallest unit makes it more expensive, and the households in it have
+nothing cheaper to move to except the street, so they leave the housed
+distribution rather than move down it and the smallest share FALLS. Raising the
+expander makes the middle unit smaller and cheaper, so more households take it
+and the largest share FALLS. Both updates therefore add the gap rather than
+subtracting it.
+
+`smallest_house_size_adjuster` is deliberately slower than
+`size_homelessness_adjuster`: both move the bottom of the housing distribution,
+one setting where the affordability floor is and the other how bad the
+alternative to it is, so running them at the same speed lets them chase each
+other.
+
 ---
 
 ## 2. In the code, absent from the note
