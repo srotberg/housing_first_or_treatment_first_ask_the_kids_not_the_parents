@@ -9796,6 +9796,76 @@
             
     end subroutine
         
+    subroutine copy_housing_state_slice(time_period,from_1,to_1)
+
+        ! Copy every policy and the value function from one previous dwelling
+        ! index to another. Only called where the two are provably the same
+        ! problem, which is checked by the caller rather than here.
+
+        use Global_Vars
+
+        implicit none
+
+        integer, intent(in) :: time_period,from_1,to_1
+        integer :: k_1
+
+        do k_1=1,newborn_household*1+(1-newborn_household)*max_amortization_years
+
+            value_function(k_1)%vector_transition_real(time_period,age_index,:,:,:,to_1,:)=&
+                value_function(k_1)%vector_transition_real(time_period,age_index,:,:,:,from_1,:)
+
+            policy_function_consumption(k_1)%vector_transition_real(time_period,age_index,:,:,:,to_1,:)=&
+                policy_function_consumption(k_1)%vector_transition_real(time_period,age_index,:,:,:,from_1,:)
+
+            policy_function_total_consumption(k_1)%vector_transition_real(time_period,age_index,:,:,:,to_1,:)=&
+                policy_function_total_consumption(k_1)%vector_transition_real(time_period,age_index,:,:,:,from_1,:)
+
+            policy_function_frac_spent_on_addiction(k_1)%vector_transition_real(time_period,age_index,:,:,:,to_1,:)=&
+                policy_function_frac_spent_on_addiction(k_1)%vector_transition_real(time_period,age_index,:,:,:,from_1,:)
+
+            policy_function_labor_supply(k_1)%vector_transition_real(time_period,age_index,:,:,:,to_1,:)=&
+                policy_function_labor_supply(k_1)%vector_transition_real(time_period,age_index,:,:,:,from_1,:)
+
+            policy_function_cutoff_taxable_income(k_1)%vector_transition_real(time_period,age_index,:,:,:,to_1,:)=&
+                policy_function_cutoff_taxable_income(k_1)%vector_transition_real(time_period,age_index,:,:,:,from_1,:)
+
+            policy_function_wage_income_tax_paid(k_1)%vector_transition_real(time_period,age_index,:,:,:,to_1,:)=&
+                policy_function_wage_income_tax_paid(k_1)%vector_transition_real(time_period,age_index,:,:,:,from_1,:)
+
+            policy_function_mortgage_interest_deductions(k_1)%vector_transition_real(time_period,age_index,:,:,:,to_1,:)=&
+                policy_function_mortgage_interest_deductions(k_1)%vector_transition_real(time_period,age_index,:,:,:,from_1,:)
+
+            policy_function_space_lived_in_size(k_1)%vector_transition_real(time_period,age_index,:,:,:,to_1,:)=&
+                policy_function_space_lived_in_size(k_1)%vector_transition_real(time_period,age_index,:,:,:,from_1,:)
+
+            frac_mov_optimal_1(k_1)%vector_transition_real(time_period,age_index,:,:,:,to_1,:)=&
+                frac_mov_optimal_1(k_1)%vector_transition_real(time_period,age_index,:,:,:,from_1,:)
+
+            policy_function_financial_index(k_1)%vector_transition_integer(time_period,age_index,:,:,:,to_1,:)=&
+                policy_function_financial_index(k_1)%vector_transition_integer(time_period,age_index,:,:,:,from_1,:)
+
+            policy_function_housing_status_index(k_1)%vector_transition_integer(time_period,age_index,:,:,:,to_1,:)=&
+                policy_function_housing_status_index(k_1)%vector_transition_integer(time_period,age_index,:,:,:,from_1,:)
+
+            policy_function_space_lived_in_index(k_1)%vector_transition_integer(time_period,age_index,:,:,:,to_1,:)=&
+                policy_function_space_lived_in_index(k_1)%vector_transition_integer(time_period,age_index,:,:,:,from_1,:)
+
+            policy_function_years_of_amortization_index(k_1)%vector_transition_integer(time_period,age_index,:,:,:,to_1,:)=&
+                policy_function_years_of_amortization_index(k_1)%vector_transition_integer(time_period,age_index,:,:,:,from_1,:)
+
+            policy_function_addiction(k_1)%vector_transition_integer(time_period,age_index,:,:,:,to_1,:)=&
+                policy_function_addiction(k_1)%vector_transition_integer(time_period,age_index,:,:,:,from_1,:)
+
+            policy_function_treatment(k_1)%vector_transition_integer(time_period,age_index,:,:,:,to_1,:)=&
+                policy_function_treatment(k_1)%vector_transition_integer(time_period,age_index,:,:,:,from_1,:)
+
+            fin_index_frac_mov_to_optimal(k_1)%vector_transition_integer(time_period,age_index,:,:,:,to_1,:)=&
+                fin_index_frac_mov_to_optimal(k_1)%vector_transition_integer(time_period,age_index,:,:,:,from_1,:)
+
+        end do
+
+    end subroutine
+
     subroutine solve_value_function_and_policy_functions(time_period)
     
         use Global_Vars
@@ -9804,6 +9874,7 @@
         implicit none
         
         integer :: financial_index,time_period,run_internal_grid,number_of_threads_used,has_house,track_housing_1
+        integer :: collapse_housing_state_1,housing_copy_1
         real(8) :: labor_supply_2
         character*1 :: string_used
                         
@@ -9958,9 +10029,40 @@
                 
                     do voucher_index=0,(1-has_house)*include_vouchers
                                                     
+                        ! LAST PERIOD'S DWELLING IS NOT A STATE FOR A RENTER,
+                        ! so it is solved once rather than twice.
+                        !
+                        ! With owning switched off, the previous dwelling reaches
+                        ! nothing. fixed_cost_to_moving is zero; changing_homes
+                        ! is assigned in three places and read in none, so the
+                        ! moving cost machinery is dead; and inside
+                        ! calculate_after_tax_wealth housing_status_index appears
+                        ! only under is_current_owner, which needs
+                        ! years_left_on_mortgage_index above one and never gets
+                        ! it. The problem is therefore identical at every value
+                        ! of the index, and the loop was solving it twice: at
+                        ! homelessness and at the smallest rental, because
+                        ! track_renters_housing collapses the rest onto zero.
+                        !
+                        ! The switches were flipped without the loop bounds
+                        ! following them, which is what left this here. Solving
+                        ! one and copying into the others is exact, not an
+                        ! approximation, and it halves the backward pass.
+                        collapse_housing_state_1=0
+
+                        if ((include_homeownership==0) .AND. (track_renters_housing==0) .AND. &
+                            (fixed_cost_to_moving==0) .AND. (has_house==0)) then
+
+                            collapse_housing_state_1=1
+
+                        end if
+
                         do housing_status_index=(1-has_house)*lowest_housing_grid_point+&
                             has_house*index_of_smallest_house_hhld_can_buy,&
-                            track_housing_1*(1-newborn_household)*(housing_status_grid_size-1)
+                            (1-collapse_housing_state_1)*&
+                            (track_housing_1*(1-newborn_household)*(housing_status_grid_size-1))+&
+                            collapse_housing_state_1*((1-has_house)*lowest_housing_grid_point+&
+                            has_house*index_of_smallest_house_hhld_can_buy)
                                                         
                             do unemployment_index=1,unemployment_grid_size
                                                                                                             
@@ -10230,6 +10332,21 @@
                                 !$omp end parallel do
                                 
                             end do
+
+                            ! The solved slice copied across the indices that
+                            ! were not solved. The distribution and the moments
+                            ! still read every one of them, so the arrays have to
+                            ! be whole even though only one was computed.
+                            if (collapse_housing_state_1==1) then
+
+                                do housing_copy_1=housing_status_index+1,&
+                                    track_housing_1*(1-newborn_household)*(housing_status_grid_size-1)
+
+                                    call copy_housing_state_slice(time_period,housing_status_index,housing_copy_1)
+
+                                end do
+
+                            end if
                             
                         end do
                                                                     

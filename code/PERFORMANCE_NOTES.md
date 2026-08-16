@@ -329,3 +329,44 @@ is the largest block of work in the solve and the window cuts it from 41 points
 to 7, which should be worth 3 to 4x on the backward pass once the flow utility
 and budget solve that do not shrink are allowed for. The rest is arithmetic on
 TIMING.md. **Time a few ages before believing any of it.**
+
+## 8. The previous dwelling was being solved twice
+
+`include_homeownership`, `track_renters_housing` and `max_amortization_years`
+were all switched off or collapsed in an earlier session, but the loop bounds
+did not follow them. The backward induction still ran
+
+```
+do housing_status_index = lowest_housing_grid_point, track_housing_1*(housing_status_grid_size-1)
+```
+
+which with `track_housing_1=0` is two values, homelessness and the smallest
+rental, and solved the same problem at each.
+
+The same, provably, for a renter:
+
+* `fixed_cost_to_moving` is zero
+* `changing_homes` is assigned in three places and read in none, so the moving
+  cost machinery is dead
+* inside `calculate_after_tax_wealth`, `housing_status_index` appears only under
+  `is_current_owner`, which requires `years_left_on_mortgage_index > 1` and never
+  gets it with owning off
+
+So one slice is solved and `copy_housing_state_slice` writes it into the others,
+which the distribution and the moments still read. **Exact, and it halves the
+backward pass.**
+
+The lesson is the one the audit keeps repeating: switching a feature off at its
+parameter does not remove the work, it removes the meaning of the work. Check the
+bounds every time a switch moves.
+
+### What the other proposed removals are worth
+
+* **The negative asset grid: nothing.** Renter arrays are already allocated
+  `negative_financial_grid_size:financial_grid_size`, that is 61 to 101, and the
+  `a'` search already runs over exactly those 41 points. The 60 negative points
+  exist only in owner arrays.
+* **Deleting the owner routines: no run time**, since they are never called.
+  Worth doing for clarity and compile time, not speed.
+* **`track_renters_housing`: already zero**, and section 8 above is what was
+  still being paid for it.

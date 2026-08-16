@@ -712,7 +712,7 @@ n\,y\,\varepsilon_j\,\rho_{d}^{\mathbf{1}\{d=1\}}\rho_{m}^{\mathbf{1}\{m=1\}}
  & j<J_{R},\ e=1 \quad\text{(employed)}\\[2pt]
 \psi\,\min\{y\,\varepsilon_j,\ \bar y\}
  & j<J_{R},\ e=2 \quad\text{(first year of a spell)}\\[2pt]
-\zeta_{DI}\,y\,\varepsilon_j & j<J_{R},\ e=3,\ m=1 \quad\text{(disability)}\\[2pt]
+\zeta_{DI}\,y\,\varepsilon_j & j<J_{R},\ e=3,\ m=1 \quad\text{\new{(non employed with SMI: disability)}}\\[2pt]
 0 & \text{otherwise,}
 \end{cases}
 \end{equation}
@@ -721,7 +721,10 @@ percent of the productivity state with no health penalty, since social security
 is not means tested on health. For the employed, $\varepsilon_j$ is
 the deterministic age profile of efficiency and $\rho_d$ and
 $\rho_m$ are productivity penalties applied \emph{conditional on working}.
-Unemployment insurance (UI) is paid in the first period of a spell only, at
+\new{The three employment states are work, $e=1$, the first period of a spell
+out of work, $e=2$, and non employment thereafter, $e=3$, so the last two cases
+are both unemployment and the disability case is the income of a household that
+is out of work and carries SMI.} Unemployment insurance (UI) is paid in the first period of a spell only, at
 the replacement rate $\psi$ on an earnings base capped at average income
 $\bar y$, both as in equation~\eqref{eq:inc}. $\zeta_{DI}$ is the rate at which disability
 insurance (DI) replaces the income of a non employed household with SMI.
@@ -803,9 +806,7 @@ equation~\eqref{eq:hazard},
 In the baseline a clean household may initiate only up to an age
 $J_E$, the last age at which use can begin.\footnote{Without it there
 is little consequence at old ages to using: too little life remains for the
-disorder to damage, so the model produces both too much of the disorder and too
-many users against the data. It is a switch rather than a hard coded parameter,
-and the age profile of use is reported both ways.} A household with the SUD recovers with probability
+disorder to damage, so the model \new{produces too much of it.}} A household with the SUD recovers with probability
 \begin{equation}\label{eq:frecover}
 \pi_r(h',m,\tau)=\min\Big\{1,\ \bar\pi_r\,
 \mu_H^{\mathbf{1}\{h'=h_1\}}\,\mu_m^{\mathbf{1}\{m=1\}}\,g^{\tau}\Big\},
@@ -823,8 +824,8 @@ chance of getting out of the disorder once it is carried, recovery on the street
 being $\mu_H$ times recovery while housed.
 Milby et al.\ (2005)
 randomised cocaine dependent homeless adults into arms differing in housing and
-measured weeks of abstinence, so the ratio between arms \new{identifies $\mu_H$
-in our calibration.}
+measured weeks of abstinence, so the ratio between arms identifies $\mu_H$
+in our calibration.
 
 
 Treatment $\tau$ is a \emph{choice}, not a mechanical hazard, taken at the utility
@@ -836,47 +837,45 @@ to undertake and can decline.
 
 \subsection{Serious mental illness}\label{sec:fsmi}
 
-$m$ is an exogenous two state Markov chain representing \new{SMI}, whose
+$m$ is an exogenous two state Markov chain representing SMI, whose
 prevalence $p_m$ is about $5.5$ percent of adults, defined by substantial functional
 impairment, rather than any mental illness, which is roughly a quarter of adults
 and includes mild anxiety: a state that halves productivity cannot sensibly cover
 a quarter of the population.
 
-\new{The onset rate is a function of age, and there is one definition of it.
+The onset rate is a function of age.
 Writing $p(j)$ for prevalence at age $j$ and $\lambda_m$ for the annual chance of
-leaving the state,}
+leaving the state,
 \begin{equation}\label{eq:fonsetage}
-\text{onset}_m(\new{j})=\frac{p(\new{j}{+}1)-p(\new{j})(1-\lambda_m)}{1-p(\new{j})},
+\text{onset}_m(j)=\frac{p(j{+}1)-p(j)(1-\lambda_m)}{1-p(j)},
 \end{equation}
-\new{which is the accounting identity that reproduces the observed profile
-exactly, backed} out of the observed prevalence profile and the
-recovery hazard. \new{Where prevalence is flat in age it collapses to
-$\lambda_m p_m/(1-p_m)$, the steady state of a two state chain, so the scalar and
-the profile are one object and not two.} The transitions are then
+which is the accounting identity that reproduces the observed \new{age}
+profile exactly, backed out of \new{the age profile of prevalence in NSDUH} and the
+recovery hazard. The transitions are then
 \begin{equation}\label{eq:fonset}
-\Pr(m'=1\mid m=0,d)=\text{onset}_m(\new{j})\cdot\iota^{\mathbf{1}\{d=1\}},
+\Pr(m'=1\mid m=0,d)=\text{onset}_m(j)\cdot\iota^{\mathbf{1}\{d=1\}},
 \qquad
 \Pr(m'=0\mid m=1)=\lambda_m,
 \end{equation}
-with $\iota>1$ the multiplier on onset for a household carrying the SUD,
+\new{where} $\iota>1$ \new{is} the multiplier on onset for a household carrying the SUD,
 which makes a SUD raise the hazard of SMI. That last channel runs in the
 direction the evidence supports: substance induced psychosis converts to
-schizophrenia or bipolar disorder at a pooled rate near a quarter, and in the
+schizophrenia or bipolar disorder at a pooled rate near a quarter
+\new{(Murrie et al., 2020)}, and in the
 Danish registers any SUD predicts conversion to schizophrenia
-with a hazard ratio of $1.34$, opioid use disorder $2.74$.
+with a hazard ratio of $1.34$, opioid use disorder $2.74$
+\new{(Nielsen et al., 2017)}.
 
-\new{SMI} then affects five objects: productivity conditional on working
+SMI then affects five objects: productivity conditional on working
 through $\rho_m$ in~\eqref{eq:fincome}, both employment margins through
-$\kappa_{uem}$, mortality through $\kappa_{\phi m}$, the recovery hazard through
-$\mu_m$, and
-eligibility for disability income through $\zeta_{DI}$. It does not shift
-$b$, for the reason given in Section~\ref{sec:fprefs}: flow utility is the same
-function of $(c,h,v)$ in every state, SMI included. Self medication, if
-it operates, operates here through the recovery hazard and the budget rather than
-through a taste.
+$\kappa_{uem}$ \new{in~\eqref{eq:femp}}, mortality through $\kappa_{\phi m}$
+\new{in~\eqref{eq:fsurv}}, the \new{SUD} recovery hazard through
+$\mu_m$ \new{in~\eqref{eq:frecover}}, and
+\new{disability income, for which eligibility is being out of work with SMI and
+the replacement rate is $\zeta_{DI}$. It does not change the utility function.}
 
-The mental health chain does \emph{not} depend on housing, and that is a result
-rather than an omission. In the At Home / Chez Soi randomised trial, $1{,}198$
+The mental health chain does \emph{not} depend on housing, and that is
+\new{a finding in the data} rather than an omission. In the At Home / Chez Soi randomised trial, $1{,}198$
 homeless adults with SMI across four cities, assignment to housing
 with intensive case management produced no detectable effect on symptom severity
 at any wave, while producing large effects on housing stability, its primary
@@ -1478,6 +1477,15 @@ homelessness: A contingent valuation study.'' \emph{Social Science \& Medicine}
 Heathcote, J., K. Storesletten and G. Violante (2017). ``Optimal Tax
 Progressivity: An Analytical Framework.'' \emph{Quarterly Journal of Economics}
 132(4), 1693--1754.
+
+\new{Murrie, B., J. Lappin, M. Large and G. Sara (2020). ``Transition of
+Substance-Induced, Brief, and Atypical Psychoses to Schizophrenia: A Systematic
+Review and Meta-analysis.'' \emph{Schizophrenia Bulletin} 46(3), 505--516.}
+
+\new{Nielsen, S. M., N. B. Toftdahl, M. Nordentoft and C. Hjorthoj (2017).
+``Association between alcohol, cannabis, and other illicit substance abuse and
+risk of developing schizophrenia: a nationwide population based register study.''
+\emph{Psychological Medicine} 47(9), 1668--1677.}
 
 Heathcote, J., F. Perri and G. Violante (2010). ``Unequal We Stand.'' \emph{RED}
 13(1), 15--51.\ \
