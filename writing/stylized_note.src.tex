@@ -639,94 +639,113 @@ more, which is the opposite direction from the tax.
 %======================================================================
 \section{The quantitative model}\label{sec:full}
 
-This section \new{describes} the model the paper's numbers come from. Where
+This section describes the model the paper's numbers come from. Where
 the stylized model already carries something unchanged it is named rather than
 motivated a second time: the Stone-Geary form of the drug term, the logic that
 separates the two policies, and the transmission externality all appear below.
+\new{Notation follows Section~\ref{sec:stylized} wherever the two models share an
+object: $\gamma$ and $\theta$ are the housing and drug weights in both, $b$ is the
+same Stone-Geary endowment, $\aleph$ the same flow value of being alive, $\lambda$
+the same addiction hazard, and $\beta$ is the discount factor and nothing else.}
 
 \subsection{Demographics, the state and the choice set}
 
-\new{Households enter as adults, live at most $J$ annual periods and retire at
-$j_R$; the ages themselves belong with the calibration and are given in
-Section~\ref{sec:fullcal}.} Survival from $j$ to $j+1$ is $\phi_j(h',d,m)$
-in~\eqref{eq:fsurv}: it depends on age, on the housing \emph{chosen} this period,
-on the SUD and on mental illness. Newborns replace the dead \new{exactly, so the
-mass of households is constant}. The individual
+\new{Survival $\phi_j$ depends} on the housing \emph{chosen} this period,
+on the SUD and on mental illness. Newborns replace the dead exactly, so the
+mass of households is constant. The individual
 state is
 \begin{equation}\label{eq:fstate}
 s=(a,\,y,\,e,\,d,\,m,\,\eta)\in
 \mathcal A\times\mathcal Y\times\{1,2,3\}\times\{0,1\}^3 ,
 \end{equation}
-\new{where $a$ denotes assets, $y$ permanent productivity, $e$ employment status,
-$d$ the substance use disorder, $m$ serious mental illness and $\eta$ receipt of a
-voucher. Assets and productivity are discretised, and the grids are given with the
-calibration in Section~\ref{sec:fullcal}.}
+where $a$ denotes assets, $y$ permanent productivity, $e$ employment status,
+$d$ the substance use disorder, $m$ \new{serious mental illness and $\eta$ receipt
+of a voucher.}
 
 Each period the household chooses
 \begin{equation}\label{eq:fchoice}
 \big(n,\,h',\,v,\,\tau,\,a'\big)\in
 [0,1]\times\{h_1,h_2,h_3,h_4\}\times\mathbb R_+\times\{0,1\}\times\mathcal A ,
 \end{equation}
-\new{where $n$ denotes hours, $h'$ the housing unit chosen, of which $h_1$ is
+where $n$ denotes hours, $h'$ the housing unit chosen, of which $h_1$ is
 homelessness, $v$ drug use, $\tau$ SUD treatment take up, available only when
-$d=1$, and $a'$ next period assets.}
+$d=1$, and $a'$ next period assets.
 
 \subsection{Preferences}\label{sec:fprefs}
 
 Period utility is
 \begin{equation}\label{eq:futil}
 u\big(c,h',v,n,\tau;d,m\big) \;=\;
-\frac{\big[\,c^{\alpha}\,(h')^{\beta}\,(v+\new{b})^{\gamma}\,\big]^{1-\sigma}}{1-\sigma}
+\frac{\big[\,c^{\new{1-\gamma-\theta}}\,(h')^{\new{\gamma}}\,(v+b)^{\new{\theta}}\,\big]^{1-\sigma}}{1-\sigma}
 \;+\;\omega_{\ell}\frac{(1-n)^{1-\sigma_{\ell}}}{1-\sigma_{\ell}}
 \;+\;\aleph\;-\;\tau\bar\tau^{u}\;-\;\kappa_x H,
 \end{equation}
-with $\alpha+\beta+\gamma=1$. Equation~\eqref{eq:u} is the logarithmic case of the
-bundle with hours fixed, so $\gamma$ and $b$ do what $\theta$ and $b$ do in
-Section~\ref{sec:env}: $b$ is the Stone-Geary endowment that keeps the marginal
-utility of the first unit finite and therefore decides whether anyone uses at all.
+\new{Four of these are the stylized model's and carry the same meaning here as
+in Section~\ref{sec:env}: $\gamma$ the housing weight, $\theta$ the drug weight,
+so that $1-\gamma-\theta$ is the weight on consumption and the three sum to one;
+$b$ the Stone-Geary endowment; and $\aleph$ the flow value of being alive.
+Equation~\eqref{eq:u} is the logarithmic case of this bundle with hours fixed.}
 
-\new{Two things are new. Leisure makes hours a margin, and treatment costs
-utility rather than money.}
+\new{The rest are new, and there are three of them. Leisure makes hours a margin,
+at weight $\omega_{\ell}$ and curvature $\sigma_{\ell}$ over the hours $n$ not
+worked. SUD treatment costs utility rather than money, $\bar\tau^{u}$ in each
+period the household takes it up, $\tau=1$. And homelessness carries a
+disamenity, $\kappa_x$ per unit of the aggregate homelessness rate $H$, borne by
+every household and priced on the headcount alone, which is what makes
+homelessness an externality here rather than a private misfortune;
+Section~\ref{sec:fleftout} takes it up. Outside the bundle, $\sigma$ is the
+coefficient of relative risk aversion, which the stylized model does not need
+because its utility is logarithmic.}
+
 \subsection{Income, taxes and transfers}
 
 Gross income depends on age, employment, productivity and health,
 \begin{equation}\label{eq:fincome}
 y^{g}(j,y,e,d,m,n)=
 \begin{cases}
-0.40\,y & j\ge j_{R} \quad\text{(social security)}\\[2pt]
+0.40\,y & j\ge \new{J_{R}} \quad\text{(social security)}\\[2pt]
 n\,y\,\varepsilon_j\,\rho_{d}^{\mathbf{1}\{d=1\}}\rho_{m}^{\mathbf{1}\{m=1\}}
- & j<j_{R},\ e=1 \quad\text{(employed)}\\[2pt]
-\new{\min\{\varrho_{UI}\,y\,\varepsilon_j,\ \bar u\,\bar Y\}}
- & j<j_{R},\ e=2 \quad\text{\new{(first year of a spell)}}\\[2pt]
-\zeta_{DI}\,\bar y_{DI}\,\bar Y & j<j_{R},\ e=3,\ m=1 \quad\text{(disability)}\\[2pt]
+ & j<\new{J_{R}},\ e=1 \quad\text{(employed)}\\[2pt]
+\min\{\varrho_{UI}\,y\,\varepsilon_j,\ \bar u\,\bar Y\}
+ & j<\new{J_{R}},\ e=2 \quad\text{(first year of a spell)}\\[2pt]
+\new{\zeta_{DI}\,y\,\varepsilon_j} & j<\new{J_{R}},\ e=3,\ m=1 \quad\text{(disability)}\\[2pt]
 0 & \text{otherwise,}
 \end{cases}
 \end{equation}
 with $\varepsilon_j$ the deterministic age profile of efficiency, $\rho_d$ and
 $\rho_m$ productivity penalties applied \emph{conditional on working},
-$\varrho_{UI}$ the \new{unemployment insurance (UI)} replacement rate paid on the
-household's own productivity, up
-to \new{a cap $\bar u$ on the benefit as a share of average income, as in
-equation~\eqref{eq:inc},}
-$\zeta_{DI}$ the share of the non employed with mental illness who receive
-\new{disability insurance (DI)}, and $\bar Y$ average income. Retirement income replaces $40$ percent
+$\varrho_{UI}$ the unemployment insurance (UI) replacement rate paid on the
+household's own productivity \new{and only in the first period of a spell}, up
+to a cap $\bar u$ on the benefit as a share of average income, as in
+equation~\eqref{eq:inc},
+\new{$\zeta_{DI}$ the rate at which disability insurance (DI) replaces the income
+of a non employed household with serious mental illness}, and $\bar Y$ average
+income. Retirement income replaces $40$ percent
 of the productivity state with no health penalty, since social security is not
 means tested on health.
 
-The conditioning of the penalties on \emph{working} is what lets an employed
-household be poor enough to choose homelessness. An unemployment effect alone
-cannot do that, and the data require it: the homeless are roughly half in work,
-not none. Section~\ref{sec:support}'s environment, where only unemployment
-lowers income, is exactly the version that cannot.
+{\color{red}The two penalties are in the model for one reason, and it is a moment
+rather than a mechanism. Roughly half the homeless work, so homelessness cannot
+be produced by unemployment alone: something has to leave a household poor while
+it is still in a job, and a penalty conditional on working is that something.
+Section~\ref{sec:support}'s environment, where only unemployment lowers income,
+is the version that cannot deliver it.
 
-Labour income is taxed with the Heathcote, Storesletten and Violante function and
+They are calibrated rather than asserted, and on the moments that require them:
+$\rho_d$ and $\rho_m$ are fitted jointly to the share of the homeless who are
+employed and to homeless income relative to average, two parameters against the
+two moments that identify them. If those moments can be matched without the
+penalties, the penalties should go, and the calibration will say so by driving
+both to one.}
+
+Labour income is taxed with the \new{Heathcote et al.\ (2017)} function and
 capital income at a flat rate,
 \begin{equation}\label{eq:ftax}
 y^{n}=\tau_{\ell}\,(y^{g})^{\xi}\;+\;(1-\tau_k)\,r\,a ,
 \end{equation}
-where $\xi$ governs progressivity and $\tau_{\ell}$ the level, and $\tau_{\ell}$
-is what clears the government budget. Two transfers follow, both means tested on
-gross income as the programmes themselves are. A food stamp floor tops means
+\new{with $y^{n}$ after tax income,} where $\xi$ governs progressivity and
+$\tau_{\ell}$ the level. \new{Households can receive two transfers, both means
+tested on gross income as the programmes themselves are.} A food stamp floor tops means
 tested income up to $\underline c\,\bar Y$, and the voucher covers rent above a
 tenant contribution of $\kappa_r$ of gross earnings,
 \begin{equation}\label{eq:ftrans}
@@ -749,9 +768,9 @@ Note what is absent: treatment, which costs utility, and bequests, which go to
 the government. Given $a'$ and $h'$, write $R$ for the resources left over.
 Cobb-Douglas preferences over $(c,v+b)$ split them in closed form,
 \begin{equation}\label{eq:fcv}
-c=\frac{\alpha}{\alpha+\gamma}\big(R+p_v b\big),
+c=\new{\frac{1-\gamma-\theta}{1-\gamma}}\big(R+p_v b\big),
 \qquad
-v=\max\Big\{0,\ \frac{\gamma}{(\alpha+\gamma)p_v}\big(R+p_v b\big)-b\Big\},
+v=\max\Big\{0,\ \new{\frac{\theta}{(1-\gamma)p_v}}\big(R+p_v b\big)-b\Big\},
 \end{equation}
 so the inner allocation never needs a numerical search, and the corner in $v$ is
 where the household abstains because the Stone-Geary endowment already exceeds
@@ -1036,7 +1055,7 @@ Putting it together, for $j=1,\dots,J$ and with $V_{J+1}$ given below,
 \begin{equation}\label{eq:fbellman}
 \begin{aligned}
 V_j(a,y,e,d,m,\eta)=\max_{\,n,\,h',\,v,\,\tau,\,a'}\ \Bigg\{\
-&\frac{\big[c^{\alpha}(h')^{\beta}(v+b)^{\gamma}\big]^{1-\sigma}}{1-\sigma}
+&\frac{\big[c^{\new{1-\gamma-\theta}}(h')^{\new{\gamma}}(v+b)^{\new{\theta}}\big]^{1-\sigma}}{1-\sigma}
 +\omega_{\ell}\frac{(1-n)^{1-\sigma_{\ell}}}{1-\sigma_{\ell}}
 +\aleph-\tau\bar\tau^{u}\new{-\kappa_x H}\\[2pt]
 &+\ \beta\,\phi_j(h',d,m)\!\!\int\!\! V_{j+1}(s')\,
@@ -1047,7 +1066,7 @@ V_j(a,y,e,d,m,\eta)=\max_{\,n,\,h',\,v,\,\tau,\,a'}\ \Bigg\{\
 \end{equation}
 subject to the budget~\eqref{eq:fbudget}, the income
 definitions~\eqref{eq:fincome} to~\eqref{eq:ftrans}, the choice
-set~\eqref{eq:fchoice}, $\tau=0$ whenever $d=0$, $n=0$ whenever $j\ge j_R$ or
+set~\eqref{eq:fchoice}, $\tau=0$ whenever $d=0$, $n=0$ whenever $j\ge \new{J_R}$ or
 $e\neq1$, $a'\ge0$, and $V_{J+1}=0$ with $\phi_J=0$, so that at the last age the
 child is the whole continuation.
 
@@ -1233,8 +1252,8 @@ participation is a near threshold function of $b$, homelessness moves from $0.12
 to $3.29$ percent for a $35$ percent change in $h_{\text{HL}}$, and wealth over
 output is $5.46$ at $\beta=0.995$ and $0.38$ at $\beta=0.85$. All three are
 bisected at the head of each sweep, in partial equilibrium, before anything else
-moves. The parameter to moment map is close to triangular and the sign of
-$\partial M/\partial\theta$ is declared for every pair, so a mistaken sign shows
+moves. The parameter to moment map is close to triangular and \new{the sign of each
+parameter's effect on each moment} is declared for every pair, so a mistaken sign shows
 up as a moment walking away from its target rather than as a silent failure.
 
 \paragraph{Anchors.} The discount factor targets aggregate wealth at three times
@@ -1345,6 +1364,7 @@ Labour force participation, SUD against clean & 65.8 against 61.5 percent & NSDU
 Homeless at treatment admission & 14.5 percent & TEDS-A 2022 \\
 Co-occurring psychiatric problem at admission & 43.1 percent & TEDS-A 2022 \\
 Working at all, among the homeless in treatment & 6.6 percent & TEDS-A 2022 \\
+\new{Drug use disorder share of the homeless} & \new{21.7 percent} & \new{Gutwinski et al.\ (2021)} \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -1400,6 +1420,10 @@ Vivos Transfers: Theory and Evidence.'' \emph{JPE} 105(6), 1121--66.\ \
 Loubi\`ere, S. et al.\ (2020). ``Europeans' willingness to pay for ending
 homelessness: A contingent valuation study.'' \emph{Social Science \& Medicine}
 247, 112802.\ \
+\new{Heathcote, J., K. Storesletten and G. Violante (2017). ``Optimal Tax
+Progressivity: An Analytical Framework.'' \emph{Quarterly Journal of Economics}
+132(4), 1693--1754.}
+
 Heathcote, J., F. Perri and G. Violante (2010). ``Unequal We Stand.'' \emph{RED}
 13(1), 15--51.\ \
 Hjorth\o j, C. et al.\ (2023). Excess mortality among people with substance use
