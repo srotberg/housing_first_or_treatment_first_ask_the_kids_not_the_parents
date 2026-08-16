@@ -9875,6 +9875,8 @@
         
         integer :: financial_index,time_period,run_internal_grid,number_of_threads_used,has_house,track_housing_1
         integer :: collapse_housing_state_1,housing_copy_1
+        real(8) :: age_cpu_time_1,age_cpu_prev_1
+        integer :: age_wall_1,age_wall_prev_1,age_wall_rate_1
         real(8) :: labor_supply_2
         character*1 :: string_used
                         
@@ -9946,6 +9948,25 @@
         end if
                        
         do age_index=life_span,1,-1
+
+            ! PER AGE TIMING. TIMING.md's numbers were measured with a print like
+            ! this and then it was removed again, which is why every later
+            ! estimate had to be arithmetic. It costs one call and one line per
+            ! age, sixty lines a pass, and it is the difference between knowing
+            ! what a change bought and guessing.
+            call cpu_time(age_cpu_time_1)
+            call system_clock(age_wall_1,age_wall_rate_1)
+
+            if (age_index<life_span) then
+
+                write(*,'(A,I4,A,F10.2,A,F10.2)') " AGE_TIME age=", age_index+1, &
+                    "  wall_s=", real(age_wall_1-age_wall_prev_1,8)/real(max(age_wall_rate_1,1),8), &
+                    "  cpu_s=", age_cpu_time_1-age_cpu_prev_1
+
+            end if
+
+            age_cpu_prev_1=age_cpu_time_1
+            age_wall_prev_1=age_wall_1
                 
             if (age_index>(life_span-retirement_span)) then
                 

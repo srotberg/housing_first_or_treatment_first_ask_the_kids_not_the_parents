@@ -654,7 +654,7 @@ factor and nothing else.
 
 Households enter as adults, live at most $J$ annual periods and retire at
 $J_R$, and $j$ indexes age within that span. Survival from $j$ to $j+1$ is
-$\phi_j(h',d,m)$ in~\eqref{eq:fsurv}, and it depends on age, on the housing
+$\new{\phi(j,}h',d,m)$ in~\eqref{eq:fsurv}, and it depends on age, on the housing
 \emph{chosen} this period, on the SUD and on serious mental illness (SMI). Newborns replace the dead
 exactly, so the mass of households is constant. The individual
 state is
@@ -708,17 +708,17 @@ Gross income depends on age, employment, productivity and health,
 y^{g}(j,y,e,d,m,n)=
 \begin{cases}
 0.40\,y & j\ge J_{R} \quad\text{(social security)}\\[2pt]
-n\,y\,\varepsilon_j\,\rho_{d}^{\mathbf{1}\{d=1\}}\rho_{m}^{\mathbf{1}\{m=1\}}
+n\,y\,\new{\varepsilon(j)}\,\rho_{d}^{\mathbf{1}\{d=1\}}\rho_{m}^{\mathbf{1}\{m=1\}}
  & j<J_{R},\ e=1 \quad\text{(employed)}\\[2pt]
-\psi\,\min\{y\,\varepsilon_j,\ \bar y\}
+\psi\,\min\{y\,\new{\varepsilon(j)},\ \bar y\}
  & j<J_{R},\ e=2 \quad\text{(first year of a spell)}\\[2pt]
-\zeta_{DI}\,y\,\varepsilon_j & j<J_{R},\ e=3,\ m=1 \quad\text{(non employed with SMI: disability)}\\[2pt]
+\zeta_{DI}\,y\,\new{\varepsilon(j)} & j<J_{R},\ e=3,\ m=1 \quad\text{(non employed with SMI: disability)}\\[2pt]
 0 & \text{otherwise,}
 \end{cases}
 \end{equation}
 taking the cases in the order they appear. Retirement income replaces $40$
 percent of the productivity state with no health penalty, since social security
-is not means tested on health. For the employed, $\varepsilon_j$ is
+is not means tested on health. For the employed, $\new{\varepsilon(j)}$ is
 the deterministic age profile of efficiency and $\rho_d$ and
 $\rho_m$ are productivity penalties applied \emph{conditional on working}.
 The three employment states are work, $e=1$, the first period of a spell
@@ -884,15 +884,15 @@ best available trial looked for and did not find.
 
 \subsection{What the SUD, SMI, and homelessness cost}\label{sec:fcosts}
 
-\paragraph{\new{Death risk.}} Survival is
+\paragraph{Death risk.} Survival is
 \begin{equation}\label{eq:fsurv}
-\phi_j(h',d,m)=1-\min\Big\{1,\ (1-\bar\phi_j)\,
+\new{\phi(j,}h',d,m)=1-\min\Big\{1,\ (1-\new{\bar\phi(j)})\,
 \kappa_{\phi H}(j)^{\mathbf{1}\{h'=h_1\}}\,\kappa_{\phi d}(j)^{\mathbf{1}\{d=1\}}\,
-\kappa_{\phi m}(j)^{\mathbf{1}\{m=1\}}\Big\},
+\new{\kappa_{\phi m}}^{\mathbf{1}\{m=1\}}\Big\},
 \end{equation}
-with $\bar\phi_j$ the baseline survival age profile and
-$\kappa_{\phi H}(j)$, $\kappa_{\phi d}(j)$ and $\kappa_{\phi m}(j)$
-three age varying multipliers
+with $\new{\bar\phi(j)}$ the baseline survival age profile and
+$\kappa_{\phi H}(j)$ and $\kappa_{\phi d}(j)$ \new{two age varying multipliers,
+and $\kappa_{\phi m}$ one that is not,}
 raising the death hazard for homelessness, the SUD and SMI
 respectively.
 Because $\aleph>0$ and guarantees that the value of life is positive, a
@@ -900,21 +900,28 @@ higher death hazard is a real cost, and it is larger for households with more li
 remaining and more to consume, which is precisely the sorting
 Section~\ref{sec:who} isolates.
 
-$\bar\phi_j$ is the SSA period life table for ages 26 to 85, with the sexes
+$\new{\bar\phi(j)}$ is the SSA period life table for ages 26 to 85, with the sexes
 combined by survivor weight, $q=[l^Mq^M+l^Fq^F]/[l^M+l^F]$.
 
-{\color{red}The homelessness multiplier cannot be read off the data directly, and
+The homelessness multiplier cannot be read off the data directly, and
 the reason is worth spelling out. Baggett et al.\ report a \emph{standardised
 mortality ratio} (SMR) for homeless adults: deaths among the homeless at a given
 age divided by deaths in the general population at that age, which they publish
 by age band and which we write $RR(j)$. It cannot be used as $\kappa_{\phi H}(j)$
 because the people it is measured on are not only homeless. A share $s=0.217$ of
-them also carry a SUD, which raises mortality by itself, so the published ratio
+them also carry a SUD \new{(Gutwinski et al., 2021)}, which raises mortality by
+itself, so the published ratio
 is a mixture of two effects and attributing all of it to housing would overstate
 what housing does.
 
+\new{Three things are observed and two are solved for. Observed: $RR(j)$,
+Baggett's ratio; $\sigma_d(j)$, the shape of the SUD's mortality effect over age;
+and $s$, the SUD share of the homeless. Solved for: $\kappa_{\phi d}(j)$ and
+$\kappa_{\phi H}(j)$, given the level $\bar\kappa_{\phi d}$, which is the one
+number in the block the calibration chooses rather than reads.}
+
 Undoing the mixture needs the SUD's own multiplier at each age. That is what
-$\sigma_d(j)$ supplies: the age profile of drug poisoning deaths from CDC,
+$\sigma_d(j)$ supplies: the age profile of drug poisoning deaths from \new{CDC WONDER 2023},
 normalised to one at the age where it peaks, so $\sigma_d(j)$ is the share of the
 SUD's peak mortality effect that is present at age $j$. Writing
 $\bar\kappa_{\phi d}$ for the level of the SUD multiplier,
@@ -928,24 +935,20 @@ a share $1-s$ of it carries homelessness alone and a share $s$ carries the SUD a
 well. Dividing the observed ratio by it leaves the homelessness effect on its
 own.
 
-Because $\kappa_{\phi d}(j)$ falls with age so does the correction, so at 45 to 64
-more of the observed ratio is genuine homelessness effect and $\kappa_{\phi H}$ at
-56 comes out at $3.14$ rather than the $1.97$ a flat calculation gives.}
-
-\new{$\bar\kappa_{\phi d}$} stays free on purpose. It is the second
-stage's only instrument: it is bracketed inside the Degenhardt \new{SMR} range to hit a
+$\bar\kappa_{\phi d}$ stays free on purpose. It is the second
+stage's only instrument: it is bracketed inside the Degenhardt SMR range to hit a
 drug price participation elasticity of $-0.63$, and that elasticity is what
 disciplines how much drug use responds to its costs, which is the object the
 whole policy experiment turns on. Pinning the level from mortality data would
 take the instrument away and leave the elasticity undisciplined, so the data
-supply the \new{relative} profile and the elasticity supplies the level.
+supply the relative profile and the elasticity supplies the level.
 
-$\kappa_{\phi m}(j)$ \new{is constant in $j$, unlike the other two}, and that is a
-result rather than a default: Olfson et al.\ (2015) give all
+$\kappa_{\phi m}$ \new{carries no age argument because the data give it none},
+and that is a result rather than a default: Olfson et al.\ (2015) give all
 cause standardised mortality ratios for schizophrenia of $3.6$, $3.4$ and $4.0$
 across ages 20 to 34, 35 to 54 and 55 to 64. Flat, if anything rising.
 
-\paragraph{\new{Unemployment risk.}} Job finding and separation are
+\paragraph{Unemployment risk.} Job finding and separation are
 \begin{equation}\label{eq:femp}
 \pi^{ue}=\min\Big\{1,\ \bar\pi^{ue}\,\kappa_{ueH}^{\mathbf{1}\{h'=h_1\}}
 \kappa_{ued}^{\mathbf{1}\{d=1\}}\kappa_{uem}^{\mathbf{1}\{m=1\}}\Big\},
@@ -971,7 +974,8 @@ y^{g}+ra\;<\;\kappa_V\cdot\text{median income}.
 with $\kappa_V$ the eligibility cutoff expressed as a share of median
 income.
 Under Housing First that is the whole rule. Under Treatment First the voucher is
-additionally lost with probability $p_{\text{det}}$ by a household that used and
+additionally lost with probability $p_{\text{det}}$ by a household that \new{uses
+drugs or has a SUD}, and
 with probability $p_{\text{fp}}$ by one that did not,
 \begin{equation}\label{eq:fpol}
 \Pr(\eta'=1)=\Pr(\eta'=1)^{HF}\times
@@ -986,7 +990,7 @@ enforced and perfectly met, so Treatment First deters everyone and nobody is
 thrown off the rolls. Here detection is imperfect and so are households: some fail
 the condition because they cannot get clean, and some fail it because the test is
 wrong. Those two groups are the empirical case for Housing First, neither exists
-in the stylized model, and that is why its welfare numbers are illustration.
+in the stylized model, and that is why its welfare numbers \new{were} illustration.
 
 \subsection{The shocks, collected}\label{sec:fshocks}
 
@@ -1040,27 +1044,27 @@ which is the object the expectation in~\eqref{eq:fbellman} is taken against.
 Putting it together, for $j=1,\dots,J$ and with $V_{J+1}$ given below,
 \begin{equation}\label{eq:fbellman}
 \begin{aligned}
-V_j(a,y,e,d,m,\eta)=\max_{\,n,\,h',\,v,\,\tau,\,a'}\ \Bigg\{\
+\new{V(j,}a,y,e,d,m,\eta)=\max_{\,n,\,h',\,v,\,\tau,\,a'}\ \Bigg\{\
 &\frac{\big[c^{1-\gamma-\theta}(h')^{\gamma}(v+b)^{\theta}\big]^{1-\sigma}}{1-\sigma}
 +\omega_{\ell}\frac{(1-n)^{1-\sigma_{\ell}}}{1-\sigma_{\ell}}
 +\aleph-\tau\bar\tau^{u}-\kappa_x H\\[2pt]
-&+\ \beta\,\phi_j(h',d,m)\!\!\int\!\! V_{j+1}(s')\,
+&+\ \beta\,\new{\phi(j,}h',d,m)\!\!\int\!\! \new{V(j{+}1)}(s')\,
 \Gamma\big(\mathrm{d}s'\mid s,n,h',v,\tau\big)\\[2pt]
-&+\ \beta\,\big[1-\phi_j(h',d,m)\big]\,\omega\,
+&+\ \beta\,\big[1-\new{\phi(j,}h',d,m)\big]\,\omega\,
 \mathbb{E}\,V_1\big(0,\,y_{\text{child}},\,1,0,0,0\big)\Bigg\}
 \end{aligned}
 \end{equation}
 subject to the budget~\eqref{eq:fbudget}, the income
 definitions~\eqref{eq:fincome} to~\eqref{eq:ftrans}, the choice
 set~\eqref{eq:fchoice}, $\tau=0$ whenever $d=0$, $n=0$ whenever $j\ge J_R$ or
-$e\neq1$, $a'\ge0$, and $V_{J+1}=0$ with $\phi_J=0$, so that at the last age the
+$e\neq1$, $a'\ge0$, and $V_{J+1}=0$ with $\new{\phi(J)}=0$, so that at the last age the
 child is the whole continuation.
 
 The altruism is carried at \emph{every} age and not only at the end. A
 household that does not survive from $j$ to $j+1$ leaves a child, so the
 continuation is the survival weighted value of its own next period plus the death
 weighted value of the child's life, each discounted, with $y_{\text{child}}$ drawn
-from~\eqref{eq:fnewborn}. That matters because $\phi_j$ itself depends on $h'$ and,
+from~\eqref{eq:fnewborn}. That matters because $\new{\phi(j,\cdot)}$ itself depends on $h'$ and,
 through $d$, on $v$: a household that uses raises the chance it is the child's
 term rather than its own that is realised, so the child enters the drug and
 housing decision through the weight on the two terms as well as through
@@ -1203,12 +1207,12 @@ fixed price.
 Given the policy functions, the distribution over states evolves by pushing
 households through their choices and then through the shocks,
 \begin{equation}\label{eq:flom}
-\Phi_{j+1}(\mathcal S')\;=\;\phi_j\!\int
+\Phi_{j+1}(\mathcal S')\;=\;\new{\phi(j,\cdot)}\!\int
 \Gamma\big(\mathcal S'\mid s,\,n_j(s),h'_j(s),v_j(s),\tau_j(s)\big)\,
 \mathrm{d}\Phi_j(s)
 \qquad\text{for every measurable } \mathcal S' ,
 \end{equation}
-where $\phi_j$ is evaluated at the household's own $(h'_j(s),d,m)$. The mass that
+where $\new{\phi(j,\cdot)}$ is evaluated at the household's own $\new{(h'(j,s),d,m)}$. The mass that
 does not survive, plus the mass at $j=J$, is replaced by newborns at $j=1$ with
 zero assets, employed, clean, without SMI and without a voucher, whose
 productivity is drawn from the unconditional distribution $\Omega_y$ of
@@ -1230,13 +1234,13 @@ is therefore a lower bound.
 
 \subsection{Stationary equilibrium}
 
-A stationary equilibrium is a set of value functions $\{V_j\}$, policy functions
+A stationary equilibrium is a set of value functions $\new{\{V(j,\cdot)\}}$, policy functions
 $\{n_j,h'_j,v_j,\tau_j,a'_j\}$, a distribution $\Phi$, and prices and aggregates
 $\big(\tau_{\ell},\,p_v,\,\bar y,\,\text{median},\,H\big)$ such that
 
 \begin{enumerate}\setlength{\itemsep}{0.1em}\setlength{\parskip}{0em}
 \item the policy functions solve~\eqref{eq:fbellman} given the terminal
-condition~\eqref{eq:fterminal}, and $\{V_j\}$ are the associated values;
+condition~\eqref{eq:fterminal}, and $\new{\{V(j,\cdot)\}}$ are the associated values;
 \item $\Phi$ is invariant under the law of motion~\eqref{eq:flom} together with
 the newborn rule~\eqref{eq:fnewborn}, and the mass of newborns equals the mass of
 the deceased;
@@ -1468,6 +1472,11 @@ homelessness: A contingent valuation study.'' \emph{Social Science \& Medicine}
 Heathcote, J., K. Storesletten and G. Violante (2017). ``Optimal Tax
 Progressivity: An Analytical Framework.'' \emph{Quarterly Journal of Economics}
 132(4), 1693--1754.
+
+\new{Gutwinski, S., S. Schreiter, K. Deutscher and S. Fazel (2021). ``The
+prevalence of mental disorders among homeless people in high-income countries: An
+updated systematic review and meta-regression analysis.'' \emph{PLOS Medicine}
+18(8), e1003750.}
 
 Murrie, B., J. Lappin, M. Large and G. Sara (2020). ``Transition of
 Substance-Induced, Brief, and Atypical Psychoses to Schizophrenia: A Systematic
