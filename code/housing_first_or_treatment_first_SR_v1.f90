@@ -29,14 +29,51 @@
         ! smooth_addiction_hazard below.
         integer, parameter :: include_heavy_vs_light_use_transitions=0
 
-        ! The smooth hazard itself, pi_d(v) = 1 - exp(-lambda v), replacing the
-        ! regime lookup. Off until it is wired through the expectation nests: the
-        ! probability then depends on the drug quantity chosen at each state,
-        ! so it can no longer be a precomputed array indexed by regime. lambda is
-        ! calibrated to the same moment the two old probabilities jointly hit,
-        ! experimenters over addicts equal to one.
-        integer, parameter :: smooth_addiction_hazard=0
-        real(8) :: lambda_addiction=0
+        ! THE SMOOTH HAZARD, pi_d(v) = 1 - exp(-lambda v), and it is now ON.
+        !
+        ! This is the form the written model specifies and the one the stylized
+        ! model uses, so with the switch at 1 the two models finally share an
+        ! addiction technology. What it buys is the mechanism the paper rests on:
+        ! onset RISES with how much is used, so a household choosing v trades the
+        ! flow value of the drug against a higher chance of carrying the disorder
+        ! next period, and a supply side counterfactual that moves quantity moves
+        ! prevalence with it. The old lookup was flat in v and did neither.
+        !
+        ! WHAT THE SWITCH ACTUALLY CHANGES, in three places, because a hazard
+        ! wired into only one of them is worse than a flat one:
+        !
+        !   1. The transition. addiction_transition() replaces every read of
+        !      addiction_probabilities. Only the ONSET row moves: recovery does
+        !      not depend on v, and a household that does not use has v=0, where
+        !      1-exp(-lambda*0)=0 reproduces the old row exactly.
+        !   2. The expectation. The probability now depends on a choice made at
+        !      the same node, so it can no longer be folded into a table indexed
+        !      by a', which is what fill_ev_table used to do. The table is now
+        !      indexed by the future disorder STATE and carries no hazard; the
+        !      caller weights the two states by pi_d(v) where v is known.
+        !   3. The drug choice. The static Cobb-Douglas split ignores the
+        !      continuation, so leaving it alone would give a hazard that rises
+        !      in v that the household never responds to. The split now solves
+        !      the full first order condition, marginal utility of the drug
+        !      against the marginal risk term lambda*exp(-lambda*v)*(EV_clean -
+        !      EV_disorder). See optimize_frac_spent_on_addiciton.
+        !
+        ! At 0 every one of those three falls back to the array and the run is
+        ! bit for bit what it was, which is what makes the two comparable.
+        integer, parameter :: smooth_addiction_hazard=1
+
+        ! LAMBDA. Calibrated on the NSDUH disorder rate, sud_rate_data, through
+        ! the onset evaluated at the mean quantity used: see the update block.
+        ! The starting value is the one that reproduces the flat hazard's own
+        ! starting value, 0.0016, at the mean quantity the published benchmark
+        ! reports, model_drugs_used_by_users_on_average = 0.0585, so
+        ! -log(1-0.0016)/0.0585. It matters for the first backward pass only;
+        ! from the first update onwards lambda is re-derived from the model's own
+        ! mean quantity, so it cannot be left stranded by a change of scale.
+        real(8) :: lambda_addiction=0.027364
+        real(8) :: lambda_addiction_adjuster=5*10.d0**(-3)
+        real(8) :: distance_lambda_addiction
+        real(8) :: stopping_rule_lambda_addiction=10.d0**(-3)
         integer, parameter :: compute_welfare_every_loop=0
         
         integer, parameter :: fixed_labor_supply_at_benchmark=test_elasticity
@@ -652,6 +689,30 @@
         ! sets how bad the alternative to it is. Running them at the same speed
         ! lets them chase each other.
         real(8) :: smallest_house_size_adjuster=0.05
+
+        ! DAMPING THE TWO HOUSING ADJUSTERS. Both were fixed steps and both
+        ! oscillated: the size distribution responds sharply to the size
+        ! parameters, so a step that closes the gap from one side overshoots it
+        ! from the other and the loop rings instead of settling.
+        !
+        ! The rule is the standard one for a damped fixed point and it needs no
+        ! tuning. Remember the sign of the gap. If it flips, the step jumped the
+        ! root, so halve it; if it does not, the step is still walking towards
+        ! the root, so let it grow back slowly. The floor stops it damping itself
+        ! to a standstill on noise from the distribution iteration, the ceiling
+        ! is the original step, so an undamped run is the worst this can do
+        ! rather than the best.
+        real(8), parameter :: house_size_adjuster_damping=0.5
+        real(8), parameter :: house_size_adjuster_growth=1.2
+        real(8), parameter :: house_size_adjuster_floor=10.d0**(-3)
+        real(8) :: smallest_house_size_adjuster_start=0.05
+        real(8) :: largest_house_size_adjuster_start=0.05
+        real(8) :: previous_gap_smallest_house_size=0
+        real(8) :: previous_gap_largest_house_size=0
+        integer :: have_gap_smallest_house_size=0
+        integer :: have_gap_largest_house_size=0
+        real(8) :: gap_house_size_1
+        integer :: resumed_loop_count=0
         real(8) :: distance_smallest_house_size
         real(8) :: stopping_rule_smallest_house_size=10.d0**(-3) 
         
@@ -976,6 +1037,30 @@
         real(8), dimension(transition_length,0:housing_status_grid_size-1) :: model_housing_size_dist
                     
         real(8) :: consumption_choice,total_consumption_choice
+
+        ! WHAT THE HOUSEHOLD LOSES BY ACQUIRING THE DISORDER, carried down to the
+        ! drug choice the way consumption_choice is carried up from it.
+        !
+        ! drug_risk_value is EV(a',clean) - EV(a',disorder) at the node being
+        ! solved, already discounted and already weighted by survival, because
+        ! that is how fill_ev_table accumulates. drug_risk_active says whether
+        ! the household faces the choice at all: it is zero for a household that
+        ! already carries the disorder, whose transition is recovery and does not
+        ! depend on how much is used, and zero on the first of the two passes, in
+        ! which the node is solved without the risk term purely to locate income
+        ! and voucher eligibility so the table can be read.
+        !
+        ! The housing index and tenure travel with them because the marginal
+        ! utility of the drug has to be compared with a marginal RISK in the same
+        ! units, so the split can no longer be solved from the shares alone: it
+        ! needs the level of flow utility, and that needs the dwelling.
+        !
+        ! Threadprivate for the same reason consumption_choice is: every one of
+        ! these is scratch for one node of the a' search inside an OpenMP loop.
+        real(8) :: drug_risk_value=0
+        integer :: drug_risk_active=0
+        integer :: drug_risk_housing_index=0
+        integer :: drug_risk_ownership=0
         real(8), dimension(financial_grid_size) :: flow_utility_vector
         real(8), dimension(financial_grid_size) :: future_utility_vector,future_bequest_vector,future_leisure_vector
         
@@ -1553,6 +1638,14 @@
         integer :: simulation_ended
         
         integer :: financial_index_copy,financial_index_copy_1,addiction_choice_1
+
+        ! The drug QUANTITY the policy function says this state buys, which is
+        ! what the hazard is a function of. In the value function the quantity is
+        ! in scope as a choice being evaluated; here it has to be read back out
+        ! of the policy, spending over the price, or the distribution would
+        ! iterate on a different addiction technology from the one the household
+        ! solved against.
+        real(8) :: drug_quantity_dist_1
         integer :: amortization_used_dist
         integer :: financial_index_used_3,space_lived_in_index_used_3
         real(8) :: labor_supply_used_3,frac_spent_on_addiction_3
@@ -1595,6 +1688,10 @@
         
         !$omp threadprivate(consumption_choice)
         !$omp threadprivate(total_consumption_choice)
+        !$omp threadprivate(drug_risk_value)
+        !$omp threadprivate(drug_risk_active)
+        !$omp threadprivate(drug_risk_housing_index)
+        !$omp threadprivate(drug_risk_ownership)
         !$omp threadprivate(largest_possible_financial_index)
         !$omp threadprivate(flow_utility_vector)
         !$omp threadprivate(future_utility_vector)
@@ -1629,6 +1726,7 @@
         !$omp threadprivate(financial_index_copy)
         !$omp threadprivate(financial_index_copy_1)
         !$omp threadprivate(addiction_choice_1)
+        !$omp threadprivate(drug_quantity_dist_1)
         !$omp threadprivate(amortization_used_dist)
         !$omp threadprivate(financial_index_used_3)
         !$omp threadprivate(frac_spent_on_addiction_3)
@@ -1848,6 +1946,129 @@
             ! abstinence rates by arm, and it carries the elasticity of drug use
             ! with respect to housing access on its own.
             b_shifter=addiction_scalar_1
+
+        end function
+
+        ! THE ADDICTION HAZARD, pi_d(v) = 1 - exp(-lambda v), in one place.
+        !
+        ! v is the QUANTITY of the drug, not the spending on it. Everywhere in
+        ! the code the quantity is spending over the price,
+        ! frac_spent_on_addiction*total_consumption_choice/price_of_addictive_good,
+        ! and it has to be the quantity here or a supply side counterfactual
+        ! would move the price, move spending, and leave onset untouched, which
+        ! is the whole point of putting the hazard in quantity.
+        real(8) function addiction_onset_hazard(drug_quantity_1)
+
+            implicit none
+
+            real(8), intent(in) :: drug_quantity_1
+
+            addiction_onset_hazard=1-exp(-lambda_addiction*max(drug_quantity_1,0.d0))
+
+        end function
+
+        ! d pi_d / d v = lambda exp(-lambda v). This is the marginal risk the
+        ! household weighs against the marginal flow value of the drug, so it
+        ! belongs next to the hazard and not inlined at the one place that
+        ! differentiates it.
+        real(8) function addiction_onset_hazard_slope(drug_quantity_1)
+
+            implicit none
+
+            real(8), intent(in) :: drug_quantity_1
+
+            addiction_onset_hazard_slope=&
+                lambda_addiction*exp(-lambda_addiction*max(drug_quantity_1,0.d0))
+
+        end function
+
+        ! THE TRANSITION, replacing every read of addiction_probabilities.
+        !
+        ! Arguments are the four the array carried, in the same order, plus the
+        ! drug quantity chosen at this state and a flag for whether the caller
+        ! wants the perceived probability, which is what the household optimises
+        ! against, or the objective one, which is what the distribution and the
+        ! transition iterate on.
+        !
+        ! Only the ONSET row is a function of v. Recovery from the disorder runs
+        ! on housing, six times harder on the street, and not on how much is
+        ! used, so an already addicted household reads the array. A household
+        ! that does not use has v=0 and 1-exp(0)=0, so the abstain row is
+        ! reproduced exactly rather than special cased for its own sake, but the
+        ! branch is kept anyway so that a zero lambda cannot make abstaining and
+        ! using look identical to a reader of the code.
+        real(8) function addiction_transition&
+            (current_1,future_1,choice_1,homeless_1,drug_quantity_1,perceived_1)
+
+            implicit none
+
+            integer, intent(in) :: current_1,future_1,choice_1,homeless_1,perceived_1
+            real(8), intent(in) :: drug_quantity_1
+            real(8) :: onset_1
+
+            if ((smooth_addiction_hazard==0) .OR. (include_addiction==0) .OR. &
+                (include_probability_of_becoming_addicted==0) .OR. (current_1>=1) .OR. &
+                (choice_1==0)) then
+
+                if (perceived_1==1) then
+
+                    addiction_transition=&
+                        addiction_probabilities_percieved(current_1,future_1,choice_1,homeless_1)
+
+                else
+
+                    addiction_transition=&
+                        addiction_probabilities(current_1,future_1,choice_1,homeless_1)
+
+                end if
+
+                return
+
+            end if
+
+            onset_1=addiction_onset_hazard(drug_quantity_1)
+
+            if (perceived_1==1) then
+
+                onset_1=min(onset_1*difference_in_perceived_of_becoming_addicted_if_experiment,1.d0)
+
+            end if
+
+            if (future_1>=1) then
+
+                addiction_transition=onset_1
+
+            else
+
+                addiction_transition=1-onset_1
+
+            end if
+
+        end function
+
+        ! The slope the household actually responds to, which is the perceived
+        ! one. Kept beside the transition so the two cannot drift apart if the
+        ! perception wedge is ever reopened.
+        real(8) function addiction_transition_slope(current_1,choice_1,drug_quantity_1)
+
+            implicit none
+
+            integer, intent(in) :: current_1,choice_1
+            real(8), intent(in) :: drug_quantity_1
+
+            if ((smooth_addiction_hazard==0) .OR. (include_addiction==0) .OR. &
+                (include_probability_of_becoming_addicted==0) .OR. (current_1>=1) .OR. &
+                (choice_1==0)) then
+
+                addiction_transition_slope=0
+
+                return
+
+            end if
+
+            addiction_transition_slope=&
+                difference_in_perceived_of_becoming_addicted_if_experiment*&
+                addiction_onset_hazard_slope(drug_quantity_1)
 
         end function
 
@@ -8280,9 +8501,11 @@
                                                                 unemployment_process(age_index,unemployment_index,&
                                                                 future_unemployment_index,is_homeless_1,&
                                                                 future_addiction_index_2,employment_index)*&
-                                                                addiction_probabilities_percieved&
+                                                                addiction_transition&
                                                                 (addiction_index_1,future_addiction_index_2,addiction_used_1,&
-                                                                is_homeless_1)*((1-frac_move_1)*&
+                                                                is_homeless_1,fraction_spent_on_addiction_1*&
+                                                                total_consumption_1/price_of_addictive_good_benchmark,1)*&
+                                                                ((1-frac_move_1)*&
                                                                 value_function_comparison(years_1)%&
                                                                 vector_real(age_index+1,financial_index_1,&
                                                                 future_unemployment_index,future_employment_index,&
@@ -9943,15 +10166,83 @@
                                 
     end subroutine
     
+    subroutine ensure_ev_table(time_period,evx_slot,evx_fai,&
+        evx_fhsi,evx_fhsu,&
+        evx_homeless,evx_opp,evx_vidx,&
+        evx_fv,evx_sv,evx_loopadd,evx_addidx)
+
+        ! Invalidate the table when the outer state moves and fill the column
+        ! asked for if it is not there. Pulled out of the Bellman loop because
+        ! the smooth hazard reads the table twice per node, once to price the
+        ! drug risk before the choice is made and once to form the continuation
+        ! after, and the two reads have to agree about what is cached.
+
+        use Global_Vars
+        !$ use omp_lib
+
+        implicit none
+
+        integer, intent(in) :: time_period,evx_slot,evx_fai,&
+            evx_fhsi,evx_fhsu,&
+            evx_homeless,evx_opp,evx_vidx,&
+            evx_fv,evx_sv,evx_loopadd,evx_addidx
+
+        if ((ev_table_key(1,evx_slot)/=age_index) .OR. &
+            (ev_table_key(2,evx_slot)/=employment_index) .OR. &
+            (ev_table_key(3,evx_slot)/=unemployment_index) .OR. &
+            (ev_table_key(4,evx_slot)/=voucher_index) .OR. &
+            (ev_table_key(5,evx_slot)/=housing_status_index) .OR. &
+            (ev_table_key(6,evx_slot)/=years_left_on_mortgage_index)) then
+
+            ev_table_valid(:,:,:,evx_slot)=.FALSE.
+            ev_table_key(1,evx_slot)=age_index
+            ev_table_key(2,evx_slot)=employment_index
+            ev_table_key(3,evx_slot)=unemployment_index
+            ev_table_key(4,evx_slot)=voucher_index
+            ev_table_key(5,evx_slot)=housing_status_index
+            ev_table_key(6,evx_slot)=years_left_on_mortgage_index
+
+        end if
+
+        if (.NOT. ev_table_valid(evx_fai,evx_fhsi,evx_opp,evx_slot)) then
+
+            call fill_ev_table(time_period,evx_slot,evx_fai,&
+                evx_fhsi,evx_fhsu,evx_homeless,evx_opp,evx_vidx,&
+                evx_fv,evx_sv,evx_loopadd,evx_addidx)
+
+        end if
+
+    end subroutine
+
     subroutine fill_ev_table(time_period,evx_slot,evx_fai,&
         evx_fhsi,evx_fhsu,&
         evx_homeless,evx_opp,evx_vidx,&
         evx_fv,evx_sv,evx_loopadd,evx_addidx)
 
-        ! Tabulate EV(a') for one (drug regime, chosen housing, eligibility)
-        ! triple. The body is the same four deep sum the Bellman loop used to
-        ! run inside the a' loop, with a' moved to the outside, so every term
-        ! and every loop bound is identical.
+        ! Tabulate EV(a') for one (chosen housing, eligibility) pair. The body is
+        ! the same four deep sum the Bellman loop used to run inside the a' loop,
+        ! with a' moved to the outside, so every term and every loop bound is
+        ! identical.
+        !
+        ! WHAT THE SECOND INDEX MEANS DEPENDS ON THE HAZARD, and it has to.
+        !
+        ! With smooth_addiction_hazard at 0 the addiction probability is a
+        ! constant given the drug regime, so it can be folded into the sum and
+        ! the table is indexed by the CHOICE, which is what it was.
+        !
+        ! With the hazard at 1 the probability depends on the quantity chosen at
+        ! this node, and the quantity depends on a', so folding it in would
+        ! tabulate a different function at every a' and destroy the hoist. The
+        ! table therefore carries NO hazard and is indexed by the future disorder
+        ! STATE, and the caller forms
+        !
+        !     (1-pi_d(v)) * EV(a',clean) + pi_d(v) * EV(a',disorder)
+        !
+        ! once v is known. That is exact, not an approximation: the hazard is the
+        ! only factor in the old sum that depended on the choice, everything else
+        ! is a function of the future state. It also hands the caller the two
+        ! continuations separately, which is what the drug first order condition
+        ! needs, so the restructure pays for itself twice.
 
         use Global_Vars
 
@@ -9962,30 +10253,66 @@
             evx_homeless,evx_opp,evx_vidx,&
             evx_fv,evx_sv,evx_loopadd,evx_addidx
 
-        integer :: ffi_1,fei_1,fai_1,fui_1,fvi_1,evx_check
-        real(8) :: acc
+        integer :: ffi_1,fei_1,fai_1,fui_1,fvi_1,evx_check,evx_lo,evx_hi,evx_col
+        real(8) :: acc,haz_1
 
-        do ffi_1=negative_financial_grid_size,financial_grid_size
+        ! In smooth mode both future states are tabulated on every call, because
+        ! both are read: a household that uses needs the disorder continuation
+        ! and a household that has the disorder needs the clean one for recovery.
+        if (smooth_addiction_hazard==1) then
 
-            acc=0
+            evx_lo=0
+            evx_hi=include_addiction
 
-            do fei_1=at_least_one_period_before_retirement*employment_index+&
-                (1-at_least_one_period_before_retirement)*1,&
-                at_least_one_period_before_retirement*employment_index+&
-                (1-at_least_one_period_before_retirement)*employment_grid_size
+        else
 
-                if (employment_process(age_index,employment_index,fei_1)<=0.d0) cycle
+            evx_lo=(1-evx_loopadd)*evx_fai+evx_loopadd*0
+            evx_hi=(1-evx_loopadd)*evx_fai+evx_loopadd*include_addiction
 
-                do fai_1=(1-evx_loopadd)*evx_fai+evx_loopadd*0,&
-                    (1-evx_loopadd)*evx_fai+evx_loopadd*include_addiction
+        end if
 
-                    evx_check=0
+        do fai_1=evx_lo,evx_hi
 
-                    if (fai_1==1) then
+            ! The column written. In smooth mode it is the future state, so the
+            ! sum is accumulated per state rather than across them; otherwise it
+            ! is the choice and every state lands in the same column, which is
+            ! what folding the hazard in means.
+            evx_col=smooth_addiction_hazard*fai_1+(1-smooth_addiction_hazard)*evx_fai
 
-                        evx_check=1
+            if (smooth_addiction_hazard==1) then
 
-                    end if
+                ev_table(:,evx_col,evx_fhsi,evx_opp,evx_slot)=0
+
+            elseif (fai_1==evx_lo) then
+
+                ev_table(:,evx_col,evx_fhsi,evx_opp,evx_slot)=0
+
+            end if
+
+            evx_check=0
+
+            if (fai_1==1) then
+
+                evx_check=1
+
+            end if
+
+            do ffi_1=negative_financial_grid_size,financial_grid_size
+
+                acc=0
+
+                do fei_1=at_least_one_period_before_retirement*employment_index+&
+                    (1-at_least_one_period_before_retirement)*1,&
+                    at_least_one_period_before_retirement*employment_index+&
+                    (1-at_least_one_period_before_retirement)*employment_grid_size
+
+                    if (employment_process(age_index,employment_index,fei_1)<=0.d0) cycle
+
+                    ! In smooth mode the hazard is applied by the caller, so the
+                    ! factor here is one. Off, it is the old array read.
+                    haz_1=smooth_addiction_hazard*1.d0+(1-smooth_addiction_hazard)*&
+                        addiction_probabilities_percieved(evx_addidx,fai_1,&
+                        evx_fai,evx_homeless)
 
                     do fui_1=include_addiction*&
                         ((1-evx_check)*1+evx_check*(threshold_addiction_index+1))+&
@@ -10007,8 +10334,7 @@
                                 employment_process(age_index,employment_index,fei_1)*&
                                 unemployment_process(age_index,unemployment_index,&
                                 fui_1,evx_homeless,fai_1,employment_index)*&
-                                addiction_probabilities_percieved(evx_addidx,fai_1,&
-                                evx_fai,evx_homeless)*&
+                                haz_1*&
                                 value_function(1)%vector_transition_real&
                                 (min(time_period+solve_transition_dynamics,transition_length),age_index+1,&
                                 ffi_1,fui_1,fei_1,evx_fhsu,fvi_1)
@@ -10019,15 +10345,27 @@
 
                 end do
 
-            end do
+                ev_table(ffi_1,evx_col,evx_fhsi,&
+                    evx_opp,evx_slot)=ev_table(ffi_1,evx_col,evx_fhsi,&
+                    evx_opp,evx_slot)+acc
 
-            ev_table(ffi_1,evx_fai,evx_fhsi,&
-                evx_opp,evx_slot)=acc
+            end do
 
         end do
 
-        ev_table_valid(evx_fai,evx_fhsi,&
-            evx_opp,evx_slot)=.TRUE.
+        ! In smooth mode the fill covers every column at this (housing,
+        ! eligibility) pair, so every column is marked. Off, only the choice
+        ! that was asked for is.
+        if (smooth_addiction_hazard==1) then
+
+            ev_table_valid(:,evx_fhsi,evx_opp,evx_slot)=.TRUE.
+
+        else
+
+            ev_table_valid(evx_fai,evx_fhsi,&
+                evx_opp,evx_slot)=.TRUE.
+
+        end if
 
     end subroutine
 
@@ -10043,7 +10381,7 @@
             future_housing_status_index_to_use,is_working_1,is_homeless_1,x_1,addiction_index,&
             global_search_index,optimal_financial_1,loop_over_addiction_1,check_1,allow_to_choose_addiction,&
             first_voucher_index,second_voucher_index,has_opportunity_1,can_consume_drugs,voucher_index_1,&
-            allow_to_choose_homelessness,ev_slot
+            allow_to_choose_homelessness,ev_slot,drug_pass_1,drug_risk_top
         real(8) :: labor_supply_1,labor_supply_2
         
         allow_to_choose_homelessness=1
@@ -10188,40 +10526,97 @@
                         
                     end if
                     
-                    if ((in_retirement==0) .AND. (fixed_labor_supply_at_benchmark==0)) then
-                    
-                        labor_supply_2=1
-                        
+                    ! THE NODE IS SOLVED TWICE WHEN THE HAZARD CAN BITE, and only
+                    ! then. The drug first order condition needs EV(a',clean) -
+                    ! EV(a',disorder), the table that holds it is keyed on voucher
+                    ! eligibility, and eligibility is a threshold on income, which
+                    ! is not known until hours and consumption have been solved.
+                    ! So the first pass solves the node with the risk term off,
+                    ! purely to locate income and eligibility; the second solves
+                    ! it again with the risk term on, and hours, consumption and
+                    ! the drug quantity come out mutually consistent because the
+                    ! whole chain, secant included, re-runs underneath it.
+                    !
+                    ! It costs a second solve at exactly the nodes where the
+                    ! choice exists: a household that already carries the
+                    ! disorder faces a recovery hazard that does not depend on
+                    ! how much it uses, and one that abstains has v=0, so neither
+                    ! pays for the pass.
+                    drug_risk_top=0
+
+                    if ((smooth_addiction_hazard==1) .AND. (addiction_index==0) .AND. &
+                        (future_addiction_index>=1) .AND. (include_addiction==1) .AND. &
+                        (include_probability_of_becoming_addicted==1)) then
+
+                        drug_risk_top=1
+
                     end if
-                                        
+
+                    drug_risk_housing_index=future_housing_status_index
+                    drug_risk_ownership=0
+
+                    do drug_pass_1=0,drug_risk_top
+
+                    drug_risk_active=drug_pass_1
+
+                    if ((in_retirement==0) .AND. (fixed_labor_supply_at_benchmark==0)) then
+
+                        labor_supply_2=1
+
+                    end if
+
                     call calculate_after_tax_wealth&
                         (financial_index,future_financial_index,years_left_on_mortgage_index,0,&
                         housing_status_index,future_housing_status_index,tenure_2,tenure_2,tenure_2,&
                         tenure_2,tenure_1,time_period,labor_supply_2,cutoff_taxable_income,future_addiction_index)
                         ! owner_to_owner_move_1,owner_to_renter_1,renter_to_owner_1,owner_to_owner_stay_1,renter_to_renter_1
-                     
-                    if (labor_supply_2>0.4) then 
-                     
+
+                    if (labor_supply_2>0.4) then
+
                     if ((in_retirement==0) .AND. (fixed_labor_supply_at_benchmark==0) .AND. &
                         (emp_of(unemployment_index)==1)) then
-                                        
+
                         x_1=1
-                                        
+
                         call secant(time_period,financial_index,financial_grid(future_financial_index),&
                             housing_size(future_housing_status_index),future_housing_status_index,&
                             x_1,after_tax_wealth_net_of_expenses,labor_supply_1,gross_wage_income,&
                             wage_income_tax_paid,food_stamps_recieved,housing_voucher_recieved,&
                             housing_voucher_recieved_2,mortgage_deductions_tax_rebates,proceed_2,&
                             future_addiction_index)
-                                                            
+
                     end if
-                    
+
                     end if
-                    
+
                     call calculate_future_voucher_index_and_opportunity&
                         (has_opportunity_1,first_voucher_index,second_voucher_index,&
                         time_period,0,0,voucher_index_1,gross_wage_income+investment_income)
-                    
+
+                    ! Between the passes, read the loss from acquiring the
+                    ! disorder at this a'. Filling the table here rather than
+                    ! below costs nothing: it is cached on the same key and the
+                    ! read further down finds it already built.
+                    if (drug_pass_1<drug_risk_top) then
+
+                        ev_slot=1
+                        !$ ev_slot=omp_get_thread_num()+1
+
+                        call ensure_ev_table(time_period,ev_slot,future_addiction_index,&
+                            future_housing_status_index,future_housing_status_index_to_use,&
+                            is_homeless_1,has_opportunity_1,voucher_index_1,&
+                            first_voucher_index,second_voucher_index,loop_over_addiction_1,&
+                            addiction_index)
+
+                        drug_risk_value=max(ev_table(future_financial_index,0,&
+                            future_housing_status_index,has_opportunity_1,ev_slot)-&
+                            ev_table(future_financial_index,include_addiction,&
+                            future_housing_status_index,has_opportunity_1,ev_slot),0.d0)
+
+                    end if
+
+                    end do
+
                     can_consume_drugs=1
                                                                                                                                                                                                                                                                                        
                     if ((consumption_choice>=(food_stamps_recieved/(1+consumption_tax))) .AND. &
@@ -10296,38 +10691,39 @@
                             ev_slot=1
                             !$ ev_slot=omp_get_thread_num()+1
 
-                            if ((ev_table_key(1,ev_slot)/=age_index) .OR. &
-                                (ev_table_key(2,ev_slot)/=employment_index) .OR. &
-                                (ev_table_key(3,ev_slot)/=unemployment_index) .OR. &
-                                (ev_table_key(4,ev_slot)/=voucher_index) .OR. &
-                                (ev_table_key(5,ev_slot)/=housing_status_index) .OR. &
-                                (ev_table_key(6,ev_slot)/=years_left_on_mortgage_index)) then
+                            call ensure_ev_table(time_period,ev_slot,future_addiction_index,&
+                                future_housing_status_index,future_housing_status_index_to_use,&
+                                is_homeless_1,has_opportunity_1,voucher_index_1,&
+                                first_voucher_index,second_voucher_index,loop_over_addiction_1,&
+                                addiction_index)
 
-                                ev_table_valid(:,:,:,ev_slot)=.FALSE.
-                                ev_table_key(1,ev_slot)=age_index
-                                ev_table_key(2,ev_slot)=employment_index
-                                ev_table_key(3,ev_slot)=unemployment_index
-                                ev_table_key(4,ev_slot)=voucher_index
-                                ev_table_key(5,ev_slot)=housing_status_index
-                                ev_table_key(6,ev_slot)=years_left_on_mortgage_index
+                            if (smooth_addiction_hazard==1) then
+
+                                ! The table carries the two continuations and no
+                                ! hazard, so the weighting happens here, at the
+                                ! one place where the quantity chosen at this node
+                                ! is known.
+                                do future_addiction_index_2=0,include_addiction
+
+                                    future_utility_vector(future_financial_index)=&
+                                        future_utility_vector(future_financial_index)+&
+                                        addiction_transition(addiction_index,future_addiction_index_2,&
+                                        future_addiction_index,is_homeless_1,&
+                                        frac_spent_on_addiction*total_consumption_choice/&
+                                        price_of_addictive_good,1)*&
+                                        ev_table(future_financial_index,future_addiction_index_2,&
+                                        future_housing_status_index,has_opportunity_1,ev_slot)
+
+                                end do
+
+                            else
+
+                                future_utility_vector(future_financial_index)=&
+                                    future_utility_vector(future_financial_index)+&
+                                    ev_table(future_financial_index,future_addiction_index,&
+                                    future_housing_status_index,has_opportunity_1,ev_slot)
 
                             end if
-
-                            if (.NOT. ev_table_valid(future_addiction_index,&
-                                future_housing_status_index,has_opportunity_1,ev_slot)) then
-
-                                call fill_ev_table(time_period,ev_slot,future_addiction_index,&
-                                    future_housing_status_index,future_housing_status_index_to_use,&
-                                    is_homeless_1,has_opportunity_1,voucher_index_1,&
-                                    first_voucher_index,second_voucher_index,loop_over_addiction_1,&
-                                    addiction_index)
-
-                            end if
-
-                            future_utility_vector(future_financial_index)=&
-                                future_utility_vector(future_financial_index)+&
-                                ev_table(future_financial_index,future_addiction_index,&
-                                future_housing_status_index,has_opportunity_1,ev_slot)
 
                         else
 
@@ -10378,8 +10774,10 @@
                                             employment_process(age_index,employment_index,future_employment_index)*&
                                             unemployment_process(age_index,unemployment_index,&
                                             future_unemployment_index,is_homeless_1,future_addiction_index_2,employment_index)*&
-                                            addiction_probabilities_percieved(addiction_index,future_addiction_index_2,&
-                                            future_addiction_index,is_homeless_1)*&
+                                            addiction_transition(addiction_index,future_addiction_index_2,&
+                                            future_addiction_index,is_homeless_1,&
+                                            frac_spent_on_addiction*total_consumption_choice/&
+                                            price_of_addictive_good,1)*&
                                             value_function(1)%vector_transition_real&
                                             (min(time_period+solve_transition_dynamics,transition_length),age_index+1,&
                                             future_financial_index,future_unemployment_index,future_employment_index,&
@@ -10780,8 +11178,10 @@
                                                     employment_process(age_index,employment_index,future_employment_index)*&
                                                     unemployment_process(age_index,unemployment_index,&
                                                     future_unemployment_index,1,future_addiction_index_2,employment_index)*&
-                                                    addiction_probabilities_percieved(addiction_index,future_addiction_index_2,&
-                                                    future_addiction_index,1)*&
+                                                    addiction_transition(addiction_index,future_addiction_index_2,&
+                                                    future_addiction_index,1,&
+                                                    frac_spent_on_addiction*total_consumption_choice/&
+                                                    price_of_addictive_good,1)*&
                                                     value_function(future_years_of_amortization_index)%&
                                                     vector_transition_real&
                                                     (min(time_period+solve_transition_dynamics,transition_length),&
@@ -11338,8 +11738,10 @@
                                             employment_process(age_index,employment_index,future_employment_index)*&
                                             unemployment_process(age_index,unemployment_index,&
                                             future_unemployment_index,1,future_addiction_index_2,employment_index)*&
-                                            addiction_probabilities_percieved(addiction_index,future_addiction_index_2,&
-                                            future_addiction_index,1)*&
+                                            addiction_transition(addiction_index,future_addiction_index_2,&
+                                            future_addiction_index,1,&
+                                            frac_spent_on_addiction*total_consumption_choice/&
+                                            price_of_addictive_good,1)*&
                                             value_function(future_years_of_amortization_index)%&
                                             vector_transition_real(min(time_period+solve_transition_dynamics,transition_length),&
                                             age_index+1,future_mortgage_index,future_unemployment_index,&
@@ -11755,8 +12157,10 @@
                                                         employment_process(age_index,employment_index,future_employment_index)*&
                                                         unemployment_process(age_index,unemployment_index,&
                                                         future_unemployment_index,1,future_addiction_index_2,employment_index)*&
-                                                        addiction_probabilities_percieved(addiction_index,future_addiction_index_2,&
-                                                        future_addiction_index,1)*&
+                                                        addiction_transition(addiction_index,future_addiction_index_2,&
+                                                        future_addiction_index,1,&
+                                                        frac_spent_on_addiction*total_consumption_choice/&
+                                                        price_of_addictive_good,1)*&
                                                         value_function(future_years_of_amortization_index)%vector_transition_real&
                                                         (min(time_period+solve_transition_dynamics,transition_length),age_index+1,&
                                                         future_mortgage_index,future_unemployment_index,future_employment_index,&
@@ -12117,8 +12521,10 @@
                                             employment_process(age_index,employment_index,future_employment_index)*&
                                             unemployment_process(age_index,unemployment_index,&
                                             future_unemployment_index,is_homeless_1,future_addiction_index_2,employment_index)*&
-                                            addiction_probabilities_percieved(addiction_index,future_addiction_index_2,&
-                                            future_addiction_index,is_homeless_1)*&
+                                            addiction_transition(addiction_index,future_addiction_index_2,&
+                                            future_addiction_index,is_homeless_1,&
+                                            frac_spent_on_addiction*total_consumption_choice/&
+                                            price_of_addictive_good,1)*&
                                             value_function(1)%vector_transition_real&
                                             (min(time_period+solve_transition_dynamics,transition_length),&
                                             age_index+1,future_financial_index,future_unemployment_index,&
@@ -13830,12 +14236,55 @@
             end if
             
             consumption_choice_1=min(consumption_choice_1,total_consumption_choice_3)
-            
+
             frac_spent_on_addiction_1=1-consumption_choice_1/total_consumption_choice_3
             total_consumption_choice_1=total_consumption_choice_3
-            
+
+            ! THE RISK TERM, and this is where the hazard stops being decoration.
+            !
+            ! The closed form above is the static Cobb-Douglas split: it sets the
+            ! marginal utility of consumption equal to the marginal utility of
+            ! the drug and knows nothing about next period. Leave it alone and
+            ! pi_d(v) rises with v in the transition while the household picks v
+            ! as though it did not, which is the flat hazard wearing a different
+            ! hat.
+            !
+            ! With the disorder in play the household solves
+            !
+            !   max  u(c,h,b+v) + (1-pi_d(v)) EV_clean + pi_d(v) EV_disorder
+            !   s.t. c + p v = C
+            !
+            ! whose first order condition adds one term to the static one:
+            !
+            !   G [ w_v/(b+v) - p w_c/c ] = lambda exp(-lambda v) (EV_clean - EV_disorder)
+            !
+            ! where G is flow utility times (1-sigma), the common factor the
+            ! static condition was free to cancel and this one is not, since the
+            ! right hand side is in utils and the left is a ratio.
+            !
+            ! THE BRACKET IS THE CLOSED FORM ITSELF, which is what makes this
+            ! cheap and safe. Risk can only push the household towards LESS of
+            ! the drug, so the solution lies between the static split and
+            ! abstention. At the static split the left side is zero and the right
+            ! is positive, so the household wants more consumption; at the corner
+            ! where it buys nothing, b is of order 1e-8 and w_v/(b+v) swamps
+            ! everything, so it wants less. One sign change, one bisection, and
+            ! the objective rises then falls across it, so the root is the
+            ! maximum rather than just a stationary point.
+            if ((smooth_addiction_hazard==1) .AND. (drug_risk_active==1) .AND. &
+                (drug_risk_value>0) .AND. (total_consumption_choice_3>0) .AND. &
+                (frac_spent_on_addiction_1>0)) then
+
+                call solve_drug_split_with_risk(total_consumption_choice_3,&
+                    consumption_choice_1,frac_spent_on_addiction_1,&
+                    price_of_addictive_good_1,housing_size_1,addiction_index_1)
+
+                total_consumption_choice_1=total_consumption_choice_3
+
+            end if
+
             drug_consumption_1=frac_spent_on_addiction_1*total_consumption_choice_3
-            
+
             ! The cutoff only exists while the light and heavy regimes do. With
             ! the split collapsed there is one use decision and no v_bar to clip
             ! against, so clipping here would silently cap every experimenter's
@@ -13977,9 +14426,115 @@
             write(*,*) "frac_spent_on_addiction=", frac_spent_on_addiction_1
         
         end if
-             
+
     end subroutine
-        
+
+    subroutine solve_drug_split_with_risk(total_consumption_choice_1,consumption_choice_1,&
+        frac_spent_on_addiction_1,price_of_addictive_good_1,housing_size_1,addiction_index_1)
+
+        ! The drug quantity that internalises the hazard. Called only from
+        ! optimize_frac_spent_on_addiciton, and only for a household that does
+        ! not yet carry the disorder and has chosen to use; see the comment
+        ! there for the first order condition and why the static split is the
+        ! lower end of the bracket.
+        !
+        ! The level of flow utility comes from calculate_flow_utility rather than
+        ! being written out again here. That is the same discipline b_shifter
+        ! imposes on the shifter: the marginal condition and the utility it is
+        ! the margin of cannot be allowed to drift apart, and writing the
+        ! Cobb-Douglas out a second time is exactly how they would.
+
+        use Global_Vars
+
+        implicit none
+
+        real(8), intent(in) :: total_consumption_choice_1,price_of_addictive_good_1,housing_size_1
+        real(8), intent(inout) :: consumption_choice_1,frac_spent_on_addiction_1
+        integer, intent(in) :: addiction_index_1
+
+        real(8) :: x_lo,x_hi,x_mid,cons_x_1,v_1,b_1,utility_1,scale_1,marginal_1,share_c_1,share_v_1
+        real(8) :: stopping_rule_1=10.d0**(-6)
+        integer :: is_sud_1,loop_1,max_loop_1
+
+        is_sud_1=0
+
+        if (unemployment_index>threshold_addiction_index) then
+
+            is_sud_1=1
+
+        end if
+
+        if (is_sud_1==1) then
+
+            share_c_1=relative_share_of_consumption_2
+            share_v_1=relative_share_of_addiction_2
+
+        else
+
+            share_c_1=relative_share_of_consumption_1
+            share_v_1=relative_share_of_addiction_1
+
+        end if
+
+        b_1=b_shifter(is_sud_1,housing_size_1)
+
+        x_lo=consumption_choice_1/total_consumption_choice_1
+        x_hi=1
+
+        if (x_lo>=1-stopping_rule_1) then
+
+            return
+
+        end if
+
+        max_loop_1=200
+        loop_1=1
+
+        do while (((x_hi-x_lo)>stopping_rule_1) .AND. (loop_1<max_loop_1))
+
+            x_mid=(x_lo+x_hi)/2
+
+            cons_x_1=x_mid*total_consumption_choice_1
+            v_1=((1-x_mid)*total_consumption_choice_1)/price_of_addictive_good_1
+
+            call calculate_flow_utility(0,drug_risk_housing_index,housing_size_1,&
+                1-x_mid,total_consumption_choice_1,cons_x_1,drug_risk_ownership,&
+                addiction_index_1,utility_1,0)
+
+            ! Flow utility is the Cobb-Douglas aggregate over (1-sigma), so the
+            ! aggregate itself is that times (1-sigma), and the two marginal
+            ! utilities are the aggregate times the share over its argument.
+            scale_1=(1-risk_aversion_consumption)*utility_1
+
+            marginal_1=scale_1*(share_v_1/(b_1+v_1))-&
+                scale_1*(price_of_addictive_good_1*share_c_1/cons_x_1)-&
+                addiction_transition_slope(is_sud_1,addiction_index_1,v_1)*drug_risk_value
+
+            ! Positive means the drug is still worth more at the margin than the
+            ! consumption it displaces and the risk it carries, so buy more of it
+            ! by moving the upper bound on the consumption share down.
+            if (marginal_1>0) then
+
+                x_hi=x_mid
+
+            else
+
+                x_lo=x_mid
+
+            end if
+
+            loop_1=loop_1+1
+
+        end do
+
+        consumption_choice_1=min(((x_lo+x_hi)/2)*total_consumption_choice_1,total_consumption_choice_1)
+
+        frac_spent_on_addiction_1=min(max(1-consumption_choice_1/total_consumption_choice_1,0.d0),1.d0)
+
+        consumption_choice_1=total_consumption_choice_1*(1-frac_spent_on_addiction_1)
+
+    end subroutine
+
     subroutine internal_computations&
         (value_function_1,labor_supply_1,gross_wage_income_1,&
         fin_index_1,ownership_status_index_1,space_lived_in_index_1,housing_status_index_1,&
@@ -14698,8 +15253,10 @@
                                         employment_process(age_index,employment_index,future_employment_index)*&
                                         unemployment_process(age_index,unemployment_index,&
                                         future_unemployment_index,is_homeless_1,future_addiction_index_2,employment_index)*&
-                                        addiction_probabilities_percieved(current_addiction_index_1,future_addiction_index_2,&
-                                        future_addiction_index_1,is_homeless_1)*&
+                                        addiction_transition(current_addiction_index_1,future_addiction_index_2,&
+                                        future_addiction_index_1,is_homeless_1,&
+                                        frac_spent_on_addiction_2*total_consumption_choice_1/&
+                                        price_of_addictive_good,1)*&
                                         (frac_mov_to_another_cell_1*value_function(years_of_amortization_1)%&
                                         vector_transition_real(min(time_period+solve_transition_dynamics,transition_length),&
                                         age_index+1,financial_index_copy_1,future_unemployment_index,future_employment_index,&
@@ -15511,6 +16068,8 @@
                                     !$omp& at_least_one_period_before_retirement,survival_probability,employment_process,&
                                     !$omp& age_index,has_house,years_left_on_mortgage_index,unemployment_index,employment_index,&
                                     !$omp& index_of_smallest_house_hhld_can_buy,addiction_probabilities,voucher_probabilities,&
+                                    !$omp& policy_function_frac_spent_on_addiction,policy_function_total_consumption,&
+                                    !$omp& price_of_addictive_good,&
                                     !$omp& avg_income_to_use_1,avg_income_to_use_2,policy_function_labor_supply,in_retirement,&
                                     !$omp& median_income,financial_grid,risk_free_rate,median_income_calibrated,is_addicted_1,&
                                     !$omp& voucher_index_1,survival_probability_for_dist_iteration)
@@ -15633,6 +16192,15 @@
                                                 policy_function_addiction(years_left_on_mortgage_index)%&
                                                 vector_transition_integer(time_period,age_index,financial_index,&
                                                 unemployment_index,employment_index,housing_status_index,voucher_index)
+
+                                            drug_quantity_dist_1=&
+                                                (policy_function_frac_spent_on_addiction(years_left_on_mortgage_index)%&
+                                                vector_transition_real(time_period,age_index,financial_index,&
+                                                unemployment_index,employment_index,housing_status_index,voucher_index)*&
+                                                policy_function_total_consumption(years_left_on_mortgage_index)%&
+                                                vector_transition_real(time_period,age_index,financial_index,&
+                                                unemployment_index,employment_index,housing_status_index,voucher_index))/&
+                                                price_of_addictive_good
                                                 
                                             is_addicted_1=0                                                
                                             loop_over_addiction_2=0
@@ -15693,8 +16261,9 @@
                                                                 future_employment_index)*unemployment_process&
                                                                 (age_index,unemployment_index,future_unemployment_index,&
                                                                 is_homeless_2,future_addiction_index_2,employment_index)*&
-                                                                addiction_probabilities(is_addicted_1,&
-                                                                future_addiction_index_2,addiction_choice_1,is_homeless_2)*&
+                                                                addiction_transition(is_addicted_1,&
+                                                                future_addiction_index_2,addiction_choice_1,is_homeless_2,&
+                                                                drug_quantity_dist_1,0)*&
                                                                 distribution_guess(years_left_on_mortgage_index)%&
                                                                 vector_transition_real(time_period-solve_transition_dynamics,&
                                                                 age_index,financial_index,unemployment_index,employment_index,&
@@ -15836,6 +16405,8 @@
                                         !$omp& age_index,years_left_on_mortgage_index,unemployment_index,employment_index,&
                                         !$omp& index_of_smallest_house_hhld_can_buy,financial_grid,voucher_index,&
                                         !$omp& value_of_initial_assets,track_housing_1,addiction_probabilities,&
+                                        !$omp& policy_function_frac_spent_on_addiction,policy_function_total_consumption,&
+                                        !$omp& price_of_addictive_good,&
                                         !$omp& is_addicted_1,survival_probability_for_dist_iteration)
                                                                                             
                                         do financial_index=newborn_household*negative_financial_grid_size+&
@@ -15906,6 +16477,15 @@
                                                     policy_function_addiction(years_left_on_mortgage_index)%&
                                                     vector_transition_integer(time_period,age_index,financial_index,&
                                                     unemployment_index,employment_index,housing_status_index,voucher_index)
+
+                                                drug_quantity_dist_1=&
+                                                    (policy_function_frac_spent_on_addiction(years_left_on_mortgage_index)%&
+                                                    vector_transition_real(time_period,age_index,financial_index,&
+                                                    unemployment_index,employment_index,housing_status_index,voucher_index)*&
+                                                    policy_function_total_consumption(years_left_on_mortgage_index)%&
+                                                    vector_transition_real(time_period,age_index,financial_index,&
+                                                    unemployment_index,employment_index,housing_status_index,voucher_index))/&
+                                                    price_of_addictive_good
                                                 
                                                 is_addicted_1=0
                                                 loop_over_addiction_2=0
@@ -15960,8 +16540,9 @@
                                                                     unemployment_process(age_index,unemployment_index,&                                                            
                                                                     future_unemployment_index,is_homeless_2,&
                                                                     future_addiction_index_2,employment_index)*&
-                                                                    addiction_probabilities(is_addicted_1,&
-                                                                    future_addiction_index_2,addiction_choice_1,is_homeless_2)*& 
+                                                                    addiction_transition(is_addicted_1,&
+                                                                    future_addiction_index_2,addiction_choice_1,is_homeless_2,&
+                                                                    drug_quantity_dist_1,0)*& 
                                                                     distribution_guess(years_left_on_mortgage_index)%&
                                                                     vector_transition_real(time_period-solve_transition_dynamics,&
                                                                     age_index,financial_index,unemployment_index,employment_index,&
@@ -15982,8 +16563,9 @@
                                                                 is_addicted_1,is_homeless_2)*&
                                                                 unemployment_process(age_index,unemployment_index,&
                                                                 future_unemployment_index,is_homeless_2,future_addiction_index_2,&
-                                                                employment_index)*addiction_probabilities(is_addicted_1,&
-                                                                future_addiction_index_2,addiction_choice_1,is_homeless_2)*&
+                                                                employment_index)*addiction_transition(is_addicted_1,&
+                                                                future_addiction_index_2,addiction_choice_1,is_homeless_2,&
+                                                                drug_quantity_dist_1,0)*&
                                                                 distribution_guess(years_left_on_mortgage_index)%&
                                                                 vector_transition_real&
                                                                 (time_period-solve_transition_dynamics,age_index,financial_index,&
@@ -16495,6 +17077,15 @@
                                                 policy_function_addiction(years_left_on_mortgage_index)%&
                                                 vector_transition_integer(time_period,age_index,financial_index,&
                                                 unemployment_index,employment_index,housing_status_index,voucher_index)
+
+                                            drug_quantity_dist_1=&
+                                                (policy_function_frac_spent_on_addiction(years_left_on_mortgage_index)%&
+                                                vector_transition_real(time_period,age_index,financial_index,&
+                                                unemployment_index,employment_index,housing_status_index,voucher_index)*&
+                                                policy_function_total_consumption(years_left_on_mortgage_index)%&
+                                                vector_transition_real(time_period,age_index,financial_index,&
+                                                unemployment_index,employment_index,housing_status_index,voucher_index))/&
+                                                price_of_addictive_good
                                                 
                                             is_addicted_1=0                                                
                                             loop_over_addiction_2=0
@@ -16567,8 +17158,9 @@
                                                                     future_employment_index)*unemployment_process&
                                                                     (age_index,unemployment_index,future_unemployment_index,&
                                                                     is_homeless_2,future_addiction_index_2,employment_index)*&
-                                                                    addiction_probabilities(is_addicted_1,&
-                                                                    future_addiction_index_2,addiction_choice_1,is_homeless_2)*&
+                                                                    addiction_transition(is_addicted_1,&
+                                                                    future_addiction_index_2,addiction_choice_1,is_homeless_2,&
+                                                                    drug_quantity_dist_1,0)*&
                                                                     distribution_forward(years_left_on_mortgage_index)%&
                                                                     vector_transition_real(time_period-solve_transition_dynamics,&
                                                                     age_index,financial_index,unemployment_index,employment_index,&
@@ -23051,6 +23643,135 @@
 
     end subroutine
     
+    subroutine write_calibration_state()
+
+        ! RESUMING AFTER A KILL. A calibration is days of wall clock and it used
+        ! to lose all of it on a kill: the only memory of where the bisection had
+        ! got to was three starting values edited into the declarations by hand,
+        ! so a restart went back to whatever they last happened to say.
+        !
+        ! Every loop now writes the parameters the update block moves, together
+        ! with the prices and the damping state, so a restart picks up where the
+        ! last completed loop left off. The damping state matters as much as the
+        ! parameters: drop it and a resumed run rings again from a full step, and
+        ! the loops spent settling the first time are spent again.
+        !
+        ! Written to a temporary and renamed, because a kill during the write is
+        ! the one moment when this file is being touched and a half written file
+        ! that parses is worse than no file at all.
+
+        use Global_Vars
+
+        implicit none
+
+        open(unit=71,file="calibration_state.tmp",action='write',status='replace')
+
+            write(71,'(A)') "calibration_state_v1"
+            write(71,'(F30.15)') discount_factor
+            write(71,'(F30.15)') discount_factor_on_child
+            write(71,'(F30.15)') minimum_inheritance
+            write(71,'(F30.15)') advantage_to_owning
+            write(71,'(F30.15)') relative_share_of_housing
+            write(71,'(F30.15)') relative_share_of_leisure
+            write(71,'(F30.15)') largest_house_size
+            write(71,'(F30.15)') smallest_rental_relative_to_lowest_income
+            write(71,'(F30.15)') labor_income_tax_rate
+            write(71,'(F30.15)') standard_deduction_as_percent_of_average_labor_income
+            write(71,'(F30.15)') probability_of_becoming_addicted_if_experiment
+            write(71,'(F30.15)') lambda_addiction
+            write(71,'(F30.15)') size_homelessness
+            write(71,'(F30.15)') fixed_cost_to_moving
+            write(71,'(F30.15)') housing_status_grid_expander
+            write(71,'(F30.15)') smallest_house_size_adjuster
+            write(71,'(F30.15)') largest_house_size_adjuster
+            write(71,'(F30.15)') previous_gap_smallest_house_size
+            write(71,'(F30.15)') previous_gap_largest_house_size
+            write(71,'(I10)') have_gap_smallest_house_size
+            write(71,'(I10)') have_gap_largest_house_size
+            write(71,'(I10)') loop_count
+            write(71,'(F30.15)') housing_price(1)
+            write(71,'(F30.15)') rent(1,:)
+            write(71,'(F30.15)') convexity_of_rental_company
+            write(71,'(F30.15)') inheritance_amount
+
+        close(71)
+
+        call rename("calibration_state.tmp","calibration_state.dat")
+
+    end subroutine
+
+    subroutine read_calibration_state()
+
+        ! The other half of the resume. Absent file means a fresh start, which is
+        ! what a first run wants, so this is silent rather than an error. Delete
+        ! calibration_state.dat to force one.
+
+        use Global_Vars
+
+        implicit none
+
+        logical :: state_exists_1
+        character(len=40) :: state_tag_1
+
+        inquire(file="calibration_state.dat",exist=state_exists_1)
+
+        if (.NOT. state_exists_1) then
+
+            write(*,*) "no calibration_state.dat, starting from the declared values"
+
+            return
+
+        end if
+
+        open(unit=72,file="calibration_state.dat",action='read')
+
+            read(72,'(A)') state_tag_1
+
+            if (trim(state_tag_1) .NE. "calibration_state_v1") then
+
+                write(*,*) "calibration_state.dat is not version 1, ignoring it"
+                close(72)
+
+                return
+
+            end if
+
+            read(72,'(F30.15)') discount_factor
+            read(72,'(F30.15)') discount_factor_on_child
+            read(72,'(F30.15)') minimum_inheritance
+            read(72,'(F30.15)') advantage_to_owning
+            read(72,'(F30.15)') relative_share_of_housing
+            read(72,'(F30.15)') relative_share_of_leisure
+            read(72,'(F30.15)') largest_house_size
+            read(72,'(F30.15)') smallest_rental_relative_to_lowest_income
+            read(72,'(F30.15)') labor_income_tax_rate
+            read(72,'(F30.15)') standard_deduction_as_percent_of_average_labor_income
+            read(72,'(F30.15)') probability_of_becoming_addicted_if_experiment
+            read(72,'(F30.15)') lambda_addiction
+            read(72,'(F30.15)') size_homelessness
+            read(72,'(F30.15)') fixed_cost_to_moving
+            read(72,'(F30.15)') housing_status_grid_expander
+            read(72,'(F30.15)') smallest_house_size_adjuster
+            read(72,'(F30.15)') largest_house_size_adjuster
+            read(72,'(F30.15)') previous_gap_smallest_house_size
+            read(72,'(F30.15)') previous_gap_largest_house_size
+            read(72,'(I10)') have_gap_smallest_house_size
+            read(72,'(I10)') have_gap_largest_house_size
+            read(72,'(I10)') resumed_loop_count
+            read(72,'(F30.15)') housing_price(1)
+            read(72,'(F30.15)') rent(1,:)
+            read(72,'(F30.15)') convexity_of_rental_company
+            read(72,'(F30.15)') inheritance_amount
+
+        close(72)
+
+        write(*,*) "resumed from calibration_state.dat, written after loop", resumed_loop_count
+        write(*,*) "lambda_addiction=", lambda_addiction
+        write(*,*) "largest_house_size=", largest_house_size
+        write(*,*) "smallest_rental_relative_to_lowest_income=", smallest_rental_relative_to_lowest_income
+
+    end subroutine
+
     subroutine calibrating_model()
     
         use Global_Vars
@@ -23060,12 +23781,29 @@
         logical :: file_exists
         
         real(8) :: mass_at_top_financial,a,b,c,d
+        real(8) :: mean_drug_quantity_1,onset_at_mean_1
         character*1 :: string_used
         integer :: last_period_of_life,addiction_index
         integer, dimension(1) :: index_drug_1
                                 
         simulation_ended=0
-                                        
+
+        ! Pick up where a killed run left off, if it left anything.
+        call read_calibration_state()
+
+        ! THE SMOOTH HAZARD NEEDS THE TABULATED EXPECTATION. With the hoist off
+        ! the two continuations are never formed separately, so there is nothing
+        ! to price the drug risk against and the household would face a hazard
+        ! rising in v that it does not respond to, which is the defect this was
+        ! meant to fix wearing a different hat. Stop rather than run: a model
+        ! that still produces numbers is exactly how this would go unnoticed.
+        if ((smooth_addiction_hazard==1) .AND. (hoist_expectation==0)) then
+
+            write(*,*) "smooth_addiction_hazard needs hoist_expectation=1. stopping."
+            stop
+
+        end if
+
         call cpu_time(simulation_start_time)
         
         lump_sum_transfer(1)=0
@@ -23136,6 +23874,7 @@
         distance_housing_status_grid_expander=1
         distance_largest_house_size=1
         distance_probability_of_becoming_addicted=1
+        distance_lambda_addiction=1
         distance_rent_to_price=1
         distance_smallest_house_size=1
         distance_rental_market=1
@@ -23324,6 +24063,7 @@
             (distance_largest_house_size>stopping_rule_largest_house_size) .OR. &
             (distance_probability_of_becoming_addicted>&
              stopping_rule_probability_of_becoming_addicted) .OR. &
+            (distance_lambda_addiction>stopping_rule_lambda_addiction) .OR. &
             (distance_rent_to_price>stopping_rule_rent_to_price) .OR. &
             (distance_smallest_house_size>stopping_rule_smallest_house_size) .OR. &
             (distance_fixed_cost_to_moving>stopping_rule_fixed_cost_to_moving) .OR. &
@@ -23443,6 +24183,7 @@
                 distance_housing_status_grid_expander=0
                 distance_largest_house_size=0
                 distance_probability_of_becoming_addicted=0
+                distance_lambda_addiction=0
                 distance_rent_to_price=0
                 distance_smallest_house_size=0
                 distance_advantage_to_owning=0
@@ -23605,10 +24346,36 @@
                         ! and h2: raising the expander from 1.8 to 2.17 moved the
                         ! largest share from 6 per cent to zero rather than towards
                         ! 62.7.
+                        gap_house_size_1=&
+                            model_housing_size_dist(1,housing_status_grid_size-1)-&
+                            housing_size_dist_data(2)
+
+                        if (have_gap_largest_house_size==1) then
+
+                            if ((gap_house_size_1*previous_gap_largest_house_size)<0) then
+
+                                largest_house_size_adjuster=&
+                                    max(largest_house_size_adjuster*house_size_adjuster_damping,&
+                                    house_size_adjuster_floor)
+
+                            else
+
+                                largest_house_size_adjuster=&
+                                    min(largest_house_size_adjuster*house_size_adjuster_growth,&
+                                    largest_house_size_adjuster_start)
+
+                            end if
+
+                        end if
+
+                        previous_gap_largest_house_size=gap_house_size_1
+                        have_gap_largest_house_size=1
+
+                        write(*,*) "largest_house_size_adjuster=", largest_house_size_adjuster
+
                         largest_house_size=&
                             min(max(largest_house_size+largest_house_size_adjuster*&
-                            (model_housing_size_dist(1,housing_status_grid_size-1)-&
-                            housing_size_dist_data(2)),0.02d0),1.d0)
+                            gap_house_size_1,0.02d0),1.d0)
 
                         distance_largest_house_size=&
                             abs(model_housing_size_dist(1,housing_status_grid_size-1)-&
@@ -23677,10 +24444,35 @@
                         write(*,*) "smallest_rental_relative_to_lowest_income=", &
                             smallest_rental_relative_to_lowest_income
 
+                        gap_house_size_1=&
+                            model_housing_size_dist(1,0)-housing_size_dist_data(0)
+
+                        if (have_gap_smallest_house_size==1) then
+
+                            if ((gap_house_size_1*previous_gap_smallest_house_size)<0) then
+
+                                smallest_house_size_adjuster=&
+                                    max(smallest_house_size_adjuster*house_size_adjuster_damping,&
+                                    house_size_adjuster_floor)
+
+                            else
+
+                                smallest_house_size_adjuster=&
+                                    min(smallest_house_size_adjuster*house_size_adjuster_growth,&
+                                    smallest_house_size_adjuster_start)
+
+                            end if
+
+                        end if
+
+                        previous_gap_smallest_house_size=gap_house_size_1
+                        have_gap_smallest_house_size=1
+
+                        write(*,*) "smallest_house_size_adjuster=", smallest_house_size_adjuster
+
                         smallest_rental_relative_to_lowest_income=&
                             min(max(smallest_rental_relative_to_lowest_income-smallest_house_size_adjuster*&
-                            (model_housing_size_dist(1,0)-&
-                            housing_size_dist_data(0)),0.d0),10.d0) 
+                            gap_house_size_1,0.d0),10.d0) 
                                                                      
                         distance_smallest_house_size=abs(model_housing_size_dist(1,0)-&
                             housing_size_dist_data(0))
@@ -23752,18 +24544,79 @@
                     write(*,*) "probability_of_becoming_addicted_if_experiment=", &
                         probability_of_becoming_addicted_if_experiment
 
-                    probability_of_becoming_addicted_if_experiment=&
-                        max(min(probability_of_becoming_addicted_if_experiment-&
-                        probability_of_becoming_addicted_adjuster*&
-                        (model_fraction_addicted(1)-sud_rate_data),0.2d0),1.d0*10.d0**(-5))
+                    if (smooth_addiction_hazard==1) then
 
-                    distance_probability_of_becoming_addicted=&
-                        abs(model_fraction_addicted(1)-sud_rate_data)
+                        ! LAMBDA IS BRACKETED THROUGH THE ONSET AT THE MEAN
+                        ! QUANTITY, not directly, and that is what makes the
+                        ! bracket transferable.
+                        !
+                        ! lambda is a hazard per unit of drug, so its scale is
+                        ! whatever the model's consumption units happen to be and
+                        ! an adjuster tuned at one calibration would be wrong at
+                        ! the next. The onset a mean user faces,
+                        ! 1-exp(-lambda vbar), is a probability whatever the
+                        ! units, it is monotone in lambda, and it is the same
+                        ! object the flat hazard was: so the update runs on it
+                        ! with the step and the bracket the flat hazard already
+                        ! used, and lambda is recovered by inverting at the
+                        ! model's own mean. Nothing is left to depend on a guess
+                        ! about scale except the very first backward pass.
+                        !
+                        ! Sign is unchanged: a higher hazard means more of the
+                        ! people who use acquire the disorder, so prevalence
+                        ! rises in it and the update subtracts the gap.
+                        mean_drug_quantity_1=model_drugs_used_by_users_on_average(1)
 
-                    write(*,*) "probability_of_becoming_addicted_if_experiment=", &
-                        probability_of_becoming_addicted_if_experiment
-                    write(*,*) "distance_probability_of_becoming_addicted=", &
-                        distance_probability_of_becoming_addicted
+                        if (mean_drug_quantity_1>0) then
+
+                            onset_at_mean_1=1-exp(-lambda_addiction*mean_drug_quantity_1)
+
+                            onset_at_mean_1=max(min(onset_at_mean_1-&
+                                lambda_addiction_adjuster*&
+                                (model_fraction_addicted(1)-sud_rate_data),0.2d0),1.d0*10.d0**(-5))
+
+                            lambda_addiction=-log(1-onset_at_mean_1)/mean_drug_quantity_1
+
+                            write(*,*) "model_drugs_used_by_users_on_average(1)=", mean_drug_quantity_1
+                            write(*,*) "onset_at_the_mean_quantity=", onset_at_mean_1
+
+                        else
+
+                            write(*,*) "no drug use at all, lambda left where it is"
+
+                        end if
+
+                        distance_lambda_addiction=&
+                            abs(model_fraction_addicted(1)-sud_rate_data)
+
+                        ! The flat hazard is not calibrated alongside it. Two
+                        ! parameters on one moment is not identification, it is a
+                        ! race, and with the smooth form on the flat number is
+                        ! read only where the household abstains, where it is
+                        ! multiplied by zero.
+                        distance_probability_of_becoming_addicted=0
+
+                        write(*,*) "lambda_addiction=", lambda_addiction
+                        write(*,*) "distance_lambda_addiction=", distance_lambda_addiction
+
+                    else
+
+                        probability_of_becoming_addicted_if_experiment=&
+                            max(min(probability_of_becoming_addicted_if_experiment-&
+                            probability_of_becoming_addicted_adjuster*&
+                            (model_fraction_addicted(1)-sud_rate_data),0.2d0),1.d0*10.d0**(-5))
+
+                        distance_probability_of_becoming_addicted=&
+                            abs(model_fraction_addicted(1)-sud_rate_data)
+
+                        distance_lambda_addiction=0
+
+                        write(*,*) "probability_of_becoming_addicted_if_experiment=", &
+                            probability_of_becoming_addicted_if_experiment
+                        write(*,*) "distance_probability_of_becoming_addicted=", &
+                            distance_probability_of_becoming_addicted
+
+                    end if
 
                     write(*,*) "model_fraction_homeless(1)=", model_fraction_homeless(1)
                     write(*,*) "size_homelessness=", size_homelessness
@@ -25487,6 +26340,10 @@
             loop_count=loop_count+1
             
             write(*,*) "loop_count=", loop_count
+
+            ! Everything the update block moved this loop, on disk before the
+            ! next one starts.
+            call write_calibration_state()
 
             do time_index=1,max(transition_length-1,1)
         
