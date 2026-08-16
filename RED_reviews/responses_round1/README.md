@@ -37,13 +37,26 @@ Both come from `hftf_exper` once the calibration finishes.
 ## What was added after the first draft
 
 `\thisround` marks every place where something that was a plan in the first draft
-of these letters is now built and running. There are eleven, across four letters,
-and `response_editor.tex` section 0 is the overview: the taste for drugs no longer
-changes with addiction in the code as well as on paper, the housing access
-elasticity has a parameter of its own, children are valued at every age rather
-than at a terminal date, four hazards vary with age, homeownership is out, the
-drug supply curve is finite, three numbers were wrong and are corrected, and the
-homelessness disamenity has been dropped rather than priced at zero.
+of these letters is **built and running in the Fortran**, not merely written into
+the model. `\open` marks the reverse: in the written model, not yet in the code.
+The distinction is now enforced rather than assumed, and three claims moved from
+the first flag to the second when it was checked against the source:
+
+| claim | where | status |
+|---|---|---|
+| the drug price clears a finite supply curve | R3, R1, AE | **written only.** `price_of_addictive_good` is assigned once and never again; there is no cost function, no elasticity and no clearing loop |
+| the homelessness disamenity is priced | R2 C2, editor | **written only.** `grep kappa_x` returns nothing |
+| serious mental illness is a state of the model | R1, editor, AE | **written only.** `number_of_smi_states = 1`, and `grep -ci mental` over the source returns zero |
+
+All three are gaps recorded in `code/FORTRAN_AUDIT.md` (items 1.1, 1.3, 1.4) with
+what each needs. None of them is a claim we should make in the present tense to an
+editor until it runs, so the letters do not.
+
+What IS built and running: the taste for drugs no longer changes with addiction,
+the housing access elasticity has a parameter of its own, children are valued at
+every age rather than at a terminal date, four hazards vary with age,
+homeownership is out, the rental grid is calibrated to the ACS size distribution,
+and three numbers were wrong and are corrected.
 
 **The Stone-Geary shifter no longer varies at all.** This is the one place where
 these letters now promise something different from the first draft, so it is worth
@@ -57,10 +70,18 @@ hazard instead, which is six times worse on the street, is a transition
 probability rather than a taste, and is what Milby actually measures. The upshot is
 that C1 and C5 turn out to be the same request, which the letters now say.
 
-That last one is a change of mind against Referee 2, who asked for it and whom we
-agreed with at the time. It is argued in `response_R2.tex` under C2 and offered
-back: if he would still prefer it carried and reported across a range, restoring
-it is small.
+**The homelessness disamenity is back.** An earlier draft dropped it, which was a
+change of mind against Referee 2 who had asked for it. It is carried again, priced
+from Loubiere et al.'s contingent valuation and on the headcount alone with no
+extra weight on the homeless who carry a disorder, since that is what the survey
+asked about. It is in the written model and not yet in the code.
+
+**The Stone-Geary shifter is now constant too**, which goes further than R2's C5
+and R3's M2(a) asked. Flow utility is the same function of consumption, housing
+and drugs in every state and after every choice. The housing access elasticity R2
+asked for in C1 runs through the recovery hazard instead, which is six times worse
+on the street, is a transition probability rather than a taste, and is what Milby
+reports. So C1 and C5 turn out to be the same request.
 
 ## The four places we push back
 
