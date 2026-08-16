@@ -141,6 +141,42 @@
         integer, parameter :: use_cobb_douglas=0
         integer, parameter :: use_cobb_douglas_2=0
         integer, parameter :: include_probability_of_becoming_addicted=1
+
+        ! SUD TREATMENT, the choice the paper is named after.
+        !
+        ! It was in the note and absent from the code: no tau, no utility cost,
+        ! no multiplier on recovery. That is the parameter through which the
+        ! entire effect of one of the two policies runs, so the model could not
+        ! evaluate Treatment First at all.
+        !
+        ! Three things make it a choice rather than a hazard. It is decided each
+        ! period by a household that carries the disorder; it costs utility
+        ! rather than money, utility_cost_of_treatment, which is what
+        ! bar_tau^u is in the note; and it forbids use in the period it is
+        ! taken. That last one is the reader's, and it is the larger of the two
+        ! costs: abstaining is exactly what a household with the disorder finds
+        ! expensive, and without it treatment is a free multiplier on recovery
+        ! that every such household would take and the take up moment could not
+        ! be matched at any cost.
+        integer, parameter :: include_treatment=1
+
+        ! g in the note. An odds ratio of 1.22 for contingency management, which
+        ! the note's external table carries as 1.35 on the hazard.
+        real(8), parameter :: treatment_effect_on_recovery=1.35
+
+        ! bar_tau^u, calibrated on take up among those carrying the disorder.
+        ! In utils, and flow utility here is negative and of order one, so the
+        ! starting value is a small fraction of it; the bracket finds the rest.
+        real(8) :: utility_cost_of_treatment=0.02
+        real(8) :: utility_cost_of_treatment_adjuster=0.05
+        real(8) :: distance_utility_cost_of_treatment
+        real(8) :: stopping_rule_utility_cost_of_treatment=10.d0**(-3)
+        real(8) :: previous_utility_cost_of_treatment=0
+        real(8) :: previous_treatment_take_up=0
+        integer :: have_treatment_secant=0
+
+        ! NSDUH 2023, treatment take up given a SUD.
+        real(8), parameter :: treatment_take_up_data=0.24
         integer, parameter :: max_age_to_choose_addiction=55
         integer, parameter :: max_age_to_choose_homelessness=59
         
@@ -1079,6 +1115,13 @@
         real(8) :: drug_risk_value=0
         integer :: drug_risk_active=0
 
+        ! Whether the household being evaluated is in treatment this period.
+        ! Read in two places that cannot take it as an argument without changing
+        ! every caller: the drug split, which it forces to zero, and flow
+        ! utility, which it charges. Reset to zero at the top of every branch
+        ! that does not set it.
+        integer :: treatment_choice_now=0
+
         ! WARM STARTING THE HOURS BISECTION ON THE SECOND PASS.
         !
         ! The second pass re-solves a node the first pass already solved, with
@@ -1222,6 +1265,7 @@
             optimal_space_lived_in_owner_renter,optimal_space_lived_in_owner_owner_move,&
             optimal_space_lived_in_owner_owner_stay,optimal_household_can_consume_owner,&
             optimal_addiction_status_renter,optimal_addiction_status_owner,optimal_addiction_status_renter_renter,&
+            optimal_treatment_renter,optimal_treatment_renter_renter,&
             optimal_addiction_status_renter_owner,optimal_addiction_status_owner_owner_stay,&
             optimal_addiction_status_owner_owner_move,optimal_addiction_status_owner_renter,&
             optimal_household_can_consume_renter,&
@@ -1279,7 +1323,8 @@
                     
         type(jagged_matrix_transition_integer), dimension(1:2) :: &
             policy_function_financial_index,policy_function_housing_status_index,policy_function_space_lived_in_index,&
-            policy_function_years_of_amortization_index,fin_index_frac_mov_to_optimal,policy_function_addiction
+            policy_function_years_of_amortization_index,fin_index_frac_mov_to_optimal,policy_function_addiction,&
+            policy_function_treatment
             
         type(jagged_matrix_real_income), dimension(1:2) :: income_matrix,income_matrix_saved
            
@@ -1467,6 +1512,7 @@
             model_eligibles,model_addicted,model_exprimenters,model_total_drug_users,&
             model_addicted_total_income,model_addicted_total_addiction_spending_to_total_income,&
             model_experimenters_total_drug_spending_to_total_income,model_experimenters_total_income,&
+            model_treatment_take_up,model_mass_with_sud,&
             model_drugs_used_by_users_on_average,model_drugs_used_by_experimenters_on_average,model_mass_total_users,&
             model_mass_experimenters,model_mass_addicts,model_drugs_used_by_addicts_on_average,&
             model_drugs_consumed_by_users,model_experimenters_getting_voucher,model_avg_income_experimenters,&
@@ -1718,6 +1764,7 @@
         ! iterate on a different addiction technology from the one the household
         ! solved against.
         real(8) :: drug_quantity_dist_1
+        integer :: treatment_choice_dist_1,treatment_used_1
         integer :: amortization_used_dist
         integer :: financial_index_used_3,space_lived_in_index_used_3
         real(8) :: labor_supply_used_3,frac_spent_on_addiction_3
@@ -1762,6 +1809,7 @@
         !$omp threadprivate(total_consumption_choice)
         !$omp threadprivate(drug_risk_value)
         !$omp threadprivate(drug_risk_active)
+        !$omp threadprivate(treatment_choice_now)
         !$omp threadprivate(secant_guess)
         !$omp threadprivate(have_secant_guess)
         !$omp threadprivate(drug_risk_housing_index)
@@ -1801,6 +1849,8 @@
         !$omp threadprivate(financial_index_copy_1)
         !$omp threadprivate(addiction_choice_1)
         !$omp threadprivate(drug_quantity_dist_1)
+        !$omp threadprivate(treatment_choice_dist_1)
+        !$omp threadprivate(treatment_used_1)
         !$omp threadprivate(amortization_used_dist)
         !$omp threadprivate(financial_index_used_3)
         !$omp threadprivate(frac_spent_on_addiction_3)
@@ -1877,6 +1927,8 @@
         !$omp threadprivate(optimal_frac_spent_on_addiction_renter_renter)
         !$omp threadprivate(optimal_total_consumption_renter_renter)
         !$omp threadprivate(optimal_addiction_status_renter_renter)
+        !$omp threadprivate(optimal_treatment_renter_renter)
+        !$omp threadprivate(optimal_treatment_renter)
 
         !$omp threadprivate(value_function_renter_owner)
         !$omp threadprivate(optimal_renter_owner_indeces)
@@ -2072,13 +2124,42 @@
         ! branch is kept anyway so that a zero lambda cannot make abstaining and
         ! using look identical to a reader of the code.
         real(8) function addiction_transition&
-            (current_1,future_1,choice_1,homeless_1,drug_quantity_1,perceived_1)
+            (current_1,future_1,choice_1,homeless_1,drug_quantity_1,perceived_1,treatment_1)
 
             implicit none
 
-            integer, intent(in) :: current_1,future_1,choice_1,homeless_1,perceived_1
+            integer, intent(in) :: current_1,future_1,choice_1,homeless_1,perceived_1,treatment_1
             real(8), intent(in) :: drug_quantity_1
-            real(8) :: onset_1
+            real(8) :: onset_1,recovery_1
+
+            ! ALREADY CARRYING THE DISORDER: the transition is recovery, it does
+            ! not depend on how much is used, and treatment is the one choice
+            ! that moves it. g multiplies the hazard and the complement follows,
+            ! so a household in treatment recovers with probability
+            ! min(1, g * pi_r) and stays with the rest.
+            if ((current_1>=1) .AND. (include_addiction==1)) then
+
+                recovery_1=addiction_probabilities(current_1,0,choice_1,homeless_1)
+
+                if ((include_treatment==1) .AND. (treatment_1==1)) then
+
+                    recovery_1=min(recovery_1*treatment_effect_on_recovery,1.d0)
+
+                end if
+
+                if (future_1==0) then
+
+                    addiction_transition=recovery_1
+
+                else
+
+                    addiction_transition=1-recovery_1
+
+                end if
+
+                return
+
+            end if
 
             if ((smooth_addiction_hazard==0) .OR. (include_addiction==0) .OR. &
                 (include_probability_of_becoming_addicted==0) .OR. (current_1>=1) .OR. &
@@ -5721,6 +5802,8 @@
         percent_addicted_by_employment(time_period,:)=0
         mass_by_employment(time_period,:)=0
         model_average_spent_on_addiction_by_addicted(time_period)=0
+        model_treatment_take_up(time_period)=0
+        model_mass_with_sud(time_period)=0
         model_drugs_used_by_users_on_average(time_period)=0
         model_drugs_consumed_by_users(time_period)=0
         model_drugs_used_by_experimenters_on_average(time_period)=0
@@ -6113,6 +6196,23 @@
                                         
                                     end if
                                     
+                                    ! TREATMENT TAKE UP, over households that
+                                    ! carry the disorder, which is the
+                                    ! denominator NSDUH reports it on.
+                                    if (unemployment_index>threshold_addiction_index) then
+
+                                        model_mass_with_sud(time_period)=&
+                                            model_mass_with_sud(time_period)+distribution_mass_used
+
+                                        model_treatment_take_up(time_period)=&
+                                            model_treatment_take_up(time_period)+&
+                                            real(policy_function_treatment(years_left_on_mortgage_index)%&
+                                            vector_transition_integer(time_period,age_index,financial_index,&
+                                            unemployment_index,employment_index,housing_status_index,&
+                                            voucher_index),8)*distribution_mass_used
+
+                                    end if
+
                                     if (((addiction_consumption_1>0) .AND. (unemployment_index<=threshold_addiction_index)) .OR. &
                                         (unemployment_index>threshold_addiction_index)) then
                                         
@@ -6684,6 +6784,13 @@
         model_fraction_light_users(time_period)=model_fraction_light_users(time_period)/&
             model_exprimenters(time_period)
         
+        if (model_mass_with_sud(time_period)>0) then
+
+            model_treatment_take_up(time_period)=&
+                model_treatment_take_up(time_period)/model_mass_with_sud(time_period)
+
+        end if
+
         model_drugs_used_by_users_on_average(time_period)=&
             model_drugs_used_by_users_on_average(time_period)/model_mass_total_users(time_period)
             
@@ -8492,6 +8599,11 @@
                                         (has_opportunity_1,first_voucher_index,second_voucher_index,&
                                         time_period,has_house,choose_to_own,voucher_index_1,income_1)
 
+                                    treatment_used_1=&
+                                        policy_function_treatment(years_left_on_mortgage_index)%&
+                                        vector_transition_integer(1,age_index,financial_index,&
+                                        unemployment_index,employment_index,housing_status_index,voucher_index)
+
                                     fraction_spent_on_addiction_1=&
                                         policy_function_frac_spent_on_addiction_benchmark&
                                         (years_left_on_mortgage_index)%&
@@ -8578,7 +8690,8 @@
                                                                 addiction_transition&
                                                                 (addiction_index_1,future_addiction_index_2,addiction_used_1,&
                                                                 is_homeless_1,fraction_spent_on_addiction_1*&
-                                                                total_consumption_1/price_of_addictive_good_benchmark,1)*&
+                                                                total_consumption_1/price_of_addictive_good_benchmark,1,&
+                                                                treatment_used_1)*&
                                                                 ((1-frac_move_1)*&
                                                                 value_function_comparison(years_1)%&
                                                                 vector_real(age_index+1,financial_index_1,&
@@ -9719,6 +9832,7 @@
             policy_function_total_consumption(i)%vector_transition_real(time_period,:,:,:,:,:,:)=0
             policy_function_frac_spent_on_addiction(i)%vector_transition_real(time_period,:,:,:,:,:,:)=0
             policy_function_addiction(i)%vector_transition_integer(time_period,:,:,:,:,:,:)=0
+            policy_function_treatment(i)%vector_transition_integer(time_period,:,:,:,:,:,:)=0
                 
         end do
         
@@ -10194,6 +10308,7 @@
             optimal_frac_spent_on_addiction_renter=optimal_frac_spent_on_addiction_renter_renter
             optimal_total_consumption_renter=optimal_total_consumption_renter_renter
             optimal_addiction_status_renter=optimal_addiction_status_renter_renter
+            optimal_treatment_renter=optimal_treatment_renter_renter
             
             if ((unemployment_index>threshold_addiction_index) .AND. &
                 (optimal_addiction_status_renter_renter==0) .AND. (optimal_after_tax_wealth_net_of_expenses_renter>0)) then
@@ -10222,6 +10337,7 @@
             optimal_frac_spent_on_addiction_renter=optimal_frac_spent_on_addiction_renter_owner
             optimal_total_consumption_renter=optimal_total_consumption_renter_owner
             optimal_addiction_status_renter=optimal_addiction_status_renter_owner
+            optimal_treatment_renter=0
             
             if ((unemployment_index>threshold_addiction_index) .AND. &
                 (optimal_addiction_status_renter_owner==0)) then
@@ -10457,7 +10573,8 @@
             global_search_index,optimal_financial_1,loop_over_addiction_1,check_1,allow_to_choose_addiction,&
             first_voucher_index,second_voucher_index,has_opportunity_1,can_consume_drugs,voucher_index_1,&
             allow_to_choose_homelessness,ev_slot,drug_pass_1,drug_risk_top,&
-            a_lo_1,a_hi_1,a_attempt_1,branch_argmax_1,warm_used_1,warm_guess_1
+            a_lo_1,a_hi_1,a_attempt_1,branch_argmax_1,warm_used_1,warm_guess_1,&
+            treatment_choice_1,treatment_top_1
         real(8) :: branch_best_1
         real(8) :: labor_supply_1,labor_supply_2
         
@@ -10521,6 +10638,8 @@
         optimal_frac_spent_on_addiction_renter_renter=0
         optimal_total_consumption_renter_renter=0
         optimal_addiction_status_renter_renter=0
+        optimal_treatment_renter_renter=0
+        treatment_choice_now=0
         
         if (fixed_labor_supply_at_benchmark==1) then
                     
@@ -10551,6 +10670,22 @@
             end if
                         
             changing_homes=0
+
+            ! TREATMENT. A binary choice, open only to a household that already
+            ! carries the disorder, evaluated alongside housing and saving
+            ! rather than after them, because it changes the budget through the
+            ! forced abstention and so changes what every other choice is worth.
+            treatment_top_1=0
+
+            if ((include_treatment==1) .AND. (addiction_index==1)) then
+
+                treatment_top_1=1
+
+            end if
+
+            do treatment_choice_1=0,treatment_top_1
+
+            treatment_choice_now=treatment_choice_1
                             
             do future_housing_status_index=&
                 allow_to_choose_homelessness*lowest_housing_grid_point,largest_house_size_hhld_can_rent
@@ -10838,7 +10973,7 @@
                                         addiction_transition(addiction_index,future_addiction_index_2,&
                                         future_addiction_index,is_homeless_1,&
                                         frac_spent_on_addiction*total_consumption_choice/&
-                                        price_of_addictive_good,1)*&
+                                        price_of_addictive_good,1,treatment_choice_now)*&
                                         ev_table(future_financial_index,future_addiction_index_2,&
                                         future_housing_status_index,has_opportunity_1,ev_slot)
 
@@ -10905,7 +11040,7 @@
                                             addiction_transition(addiction_index,future_addiction_index_2,&
                                             future_addiction_index,is_homeless_1,&
                                             frac_spent_on_addiction*total_consumption_choice/&
-                                            price_of_addictive_good,1)*&
+                                            price_of_addictive_good,1,treatment_choice_now)*&
                                             value_function(1)%vector_transition_real&
                                             (min(time_period+solve_transition_dynamics,transition_length),age_index+1,&
                                             future_financial_index,future_unemployment_index,future_employment_index,&
@@ -10971,6 +11106,7 @@
                             optimal_frac_spent_on_addiction_renter_renter=frac_spent_on_addiction
                             optimal_total_consumption_renter_renter=total_consumption_choice
                             optimal_addiction_status_renter_renter=future_addiction_index
+                            optimal_treatment_renter_renter=treatment_choice_1
                                                                                                                                                                                                                              
                         end if
                                                                                                                                                                                                                                                            
@@ -10995,6 +11131,10 @@
                 end if
                 
             end do
+
+            end do
+
+            treatment_choice_now=0
         
         end do
             
@@ -11336,7 +11476,7 @@
                                                     addiction_transition(addiction_index,future_addiction_index_2,&
                                                     future_addiction_index,1,&
                                                     frac_spent_on_addiction*total_consumption_choice/&
-                                                    price_of_addictive_good,1)*&
+                                                    price_of_addictive_good,1,treatment_choice_now)*&
                                                     value_function(future_years_of_amortization_index)%&
                                                     vector_transition_real&
                                                     (min(time_period+solve_transition_dynamics,transition_length),&
@@ -11896,7 +12036,7 @@
                                             addiction_transition(addiction_index,future_addiction_index_2,&
                                             future_addiction_index,1,&
                                             frac_spent_on_addiction*total_consumption_choice/&
-                                            price_of_addictive_good,1)*&
+                                            price_of_addictive_good,1,treatment_choice_now)*&
                                             value_function(future_years_of_amortization_index)%&
                                             vector_transition_real(min(time_period+solve_transition_dynamics,transition_length),&
                                             age_index+1,future_mortgage_index,future_unemployment_index,&
@@ -12315,7 +12455,7 @@
                                                         addiction_transition(addiction_index,future_addiction_index_2,&
                                                         future_addiction_index,1,&
                                                         frac_spent_on_addiction*total_consumption_choice/&
-                                                        price_of_addictive_good,1)*&
+                                                        price_of_addictive_good,1,treatment_choice_now)*&
                                                         value_function(future_years_of_amortization_index)%vector_transition_real&
                                                         (min(time_period+solve_transition_dynamics,transition_length),age_index+1,&
                                                         future_mortgage_index,future_unemployment_index,future_employment_index,&
@@ -12679,7 +12819,7 @@
                                             addiction_transition(addiction_index,future_addiction_index_2,&
                                             future_addiction_index,is_homeless_1,&
                                             frac_spent_on_addiction*total_consumption_choice/&
-                                            price_of_addictive_good,1)*&
+                                            price_of_addictive_good,1,treatment_choice_now)*&
                                             value_function(1)%vector_transition_real&
                                             (min(time_period+solve_transition_dynamics,transition_length),&
                                             age_index+1,future_financial_index,future_unemployment_index,&
@@ -12959,6 +13099,15 @@
         
         end if
         
+        ! bar_tau^u, charged wherever flow utility is evaluated so that the
+        ! value function, the comparison routine and the welfare calculations
+        ! cannot disagree about what treatment costs.
+        if ((include_treatment==1) .AND. (treatment_choice_now==1)) then
+
+            flow_utility_1=flow_utility_1-utility_cost_of_treatment
+
+        end if
+
     end subroutine
     
     subroutine calculate_bequest_utility(wealth_1,bequest_1,is_homeless_1,is_addicted_1)
@@ -13195,6 +13344,11 @@
                     unemployment_index,employment_index,housing_status_index,voucher_index)=&
                     is_owner_better*optimal_addiction_status_owner+&
                     (1-is_owner_better)*optimal_addiction_status_renter
+
+                policy_function_treatment(years_left_on_mortgage_index)%&
+                    vector_transition_integer(time_period,age_index,financial_index,&
+                    unemployment_index,employment_index,housing_status_index,voucher_index)=&
+                    (1-is_owner_better)*optimal_treatment_renter
                     
                 if ((unemployment_index>threshold_addiction_index) .AND. &
                     (policy_function_addiction(years_left_on_mortgage_index)%&
@@ -13210,6 +13364,10 @@
                 policy_function_addiction(years_left_on_mortgage_index)%&
                     vector_transition_integer(time_period,age_index,financial_index,&
                     unemployment_index,employment_index,housing_status_index,voucher_index)=0
+
+                policy_function_treatment(years_left_on_mortgage_index)%&
+                    vector_transition_integer(time_period,age_index,financial_index,&
+                    unemployment_index,employment_index,housing_status_index,voucher_index)=0
             
             end if
                 
@@ -13218,6 +13376,11 @@
             policy_function_addiction(years_left_on_mortgage_index)%&
                 vector_transition_integer(time_period,age_index,financial_index,&
                 unemployment_index,employment_index,housing_status_index,voucher_index)=1
+
+            policy_function_treatment(years_left_on_mortgage_index)%&
+                vector_transition_integer(time_period,age_index,financial_index,&
+                unemployment_index,employment_index,housing_status_index,voucher_index)=&
+                optimal_treatment_renter
         
         end if
                                                                                                          
@@ -14317,6 +14480,20 @@
         real(8) :: total_consumption_choice_1,total_consumption_choice_2
         integer, intent(in) :: addiction_index_1
         
+        ! TREATMENT FORBIDS USE IN THE PERIOD IT IS TAKEN. That is the larger of
+        ! its two costs for a household carrying the disorder, and without it
+        ! treatment is a free multiplier on recovery that every such household
+        ! takes, which no utility cost can undo because the cost buys the
+        ! multiplier outright.
+        if ((include_treatment==1) .AND. (treatment_choice_now==1)) then
+
+            frac_spent_on_addiction=0
+            total_consumption_choice=consumption_choice
+
+            return
+
+        end if
+
         if ((addiction_index_1>=1) .AND. (consumption_choice>0) .AND. (relative_share_of_addiction>0)) then
                                 
             total_consumption_choice_1=consumption_1
@@ -15483,7 +15660,7 @@
                                         addiction_transition(current_addiction_index_1,future_addiction_index_2,&
                                         future_addiction_index_1,is_homeless_1,&
                                         frac_spent_on_addiction_2*total_consumption_choice_1/&
-                                        price_of_addictive_good,1)*&
+                                        price_of_addictive_good,1,treatment_choice_now)*&
                                         (frac_mov_to_another_cell_1*value_function(years_of_amortization_1)%&
                                         vector_transition_real(min(time_period+solve_transition_dynamics,transition_length),&
                                         age_index+1,financial_index_copy_1,future_unemployment_index,future_employment_index,&
@@ -16296,7 +16473,7 @@
                                     !$omp& age_index,has_house,years_left_on_mortgage_index,unemployment_index,employment_index,&
                                     !$omp& index_of_smallest_house_hhld_can_buy,addiction_probabilities,voucher_probabilities,&
                                     !$omp& policy_function_frac_spent_on_addiction,policy_function_total_consumption,&
-                                    !$omp& price_of_addictive_good,&
+                                    !$omp& price_of_addictive_good,policy_function_treatment,&
                                     !$omp& avg_income_to_use_1,avg_income_to_use_2,policy_function_labor_supply,in_retirement,&
                                     !$omp& median_income,financial_grid,risk_free_rate,median_income_calibrated,is_addicted_1,&
                                     !$omp& voucher_index_1,survival_probability_for_dist_iteration)
@@ -16420,6 +16597,11 @@
                                                 vector_transition_integer(time_period,age_index,financial_index,&
                                                 unemployment_index,employment_index,housing_status_index,voucher_index)
 
+                                            treatment_choice_dist_1=&
+                                                policy_function_treatment(years_left_on_mortgage_index)%&
+                                                vector_transition_integer(time_period,age_index,financial_index,&
+                                                unemployment_index,employment_index,housing_status_index,voucher_index)
+
                                             drug_quantity_dist_1=&
                                                 (policy_function_frac_spent_on_addiction(years_left_on_mortgage_index)%&
                                                 vector_transition_real(time_period,age_index,financial_index,&
@@ -16490,7 +16672,7 @@
                                                                 is_homeless_2,future_addiction_index_2,employment_index)*&
                                                                 addiction_transition(is_addicted_1,&
                                                                 future_addiction_index_2,addiction_choice_1,is_homeless_2,&
-                                                                drug_quantity_dist_1,0)*&
+                                                                drug_quantity_dist_1,0,treatment_choice_dist_1)*&
                                                                 distribution_guess(years_left_on_mortgage_index)%&
                                                                 vector_transition_real(time_period-solve_transition_dynamics,&
                                                                 age_index,financial_index,unemployment_index,employment_index,&
@@ -16633,7 +16815,7 @@
                                         !$omp& index_of_smallest_house_hhld_can_buy,financial_grid,voucher_index,&
                                         !$omp& value_of_initial_assets,track_housing_1,addiction_probabilities,&
                                         !$omp& policy_function_frac_spent_on_addiction,policy_function_total_consumption,&
-                                        !$omp& price_of_addictive_good,&
+                                        !$omp& price_of_addictive_good,policy_function_treatment,&
                                         !$omp& is_addicted_1,survival_probability_for_dist_iteration)
                                                                                             
                                         do financial_index=newborn_household*negative_financial_grid_size+&
@@ -16705,7 +16887,12 @@
                                                     vector_transition_integer(time_period,age_index,financial_index,&
                                                     unemployment_index,employment_index,housing_status_index,voucher_index)
 
-                                                drug_quantity_dist_1=&
+                                                treatment_choice_dist_1=&
+                                                policy_function_treatment(years_left_on_mortgage_index)%&
+                                                vector_transition_integer(time_period,age_index,financial_index,&
+                                                unemployment_index,employment_index,housing_status_index,voucher_index)
+
+                                            drug_quantity_dist_1=&
                                                     (policy_function_frac_spent_on_addiction(years_left_on_mortgage_index)%&
                                                     vector_transition_real(time_period,age_index,financial_index,&
                                                     unemployment_index,employment_index,housing_status_index,voucher_index)*&
@@ -16769,7 +16956,7 @@
                                                                     future_addiction_index_2,employment_index)*&
                                                                     addiction_transition(is_addicted_1,&
                                                                     future_addiction_index_2,addiction_choice_1,is_homeless_2,&
-                                                                    drug_quantity_dist_1,0)*& 
+                                                                    drug_quantity_dist_1,0,treatment_choice_dist_1)*& 
                                                                     distribution_guess(years_left_on_mortgage_index)%&
                                                                     vector_transition_real(time_period-solve_transition_dynamics,&
                                                                     age_index,financial_index,unemployment_index,employment_index,&
@@ -16792,7 +16979,7 @@
                                                                 future_unemployment_index,is_homeless_2,future_addiction_index_2,&
                                                                 employment_index)*addiction_transition(is_addicted_1,&
                                                                 future_addiction_index_2,addiction_choice_1,is_homeless_2,&
-                                                                drug_quantity_dist_1,0)*&
+                                                                drug_quantity_dist_1,0,treatment_choice_dist_1)*&
                                                                 distribution_guess(years_left_on_mortgage_index)%&
                                                                 vector_transition_real&
                                                                 (time_period-solve_transition_dynamics,age_index,financial_index,&
@@ -17305,6 +17492,11 @@
                                                 vector_transition_integer(time_period,age_index,financial_index,&
                                                 unemployment_index,employment_index,housing_status_index,voucher_index)
 
+                                            treatment_choice_dist_1=&
+                                                policy_function_treatment(years_left_on_mortgage_index)%&
+                                                vector_transition_integer(time_period,age_index,financial_index,&
+                                                unemployment_index,employment_index,housing_status_index,voucher_index)
+
                                             drug_quantity_dist_1=&
                                                 (policy_function_frac_spent_on_addiction(years_left_on_mortgage_index)%&
                                                 vector_transition_real(time_period,age_index,financial_index,&
@@ -17387,7 +17579,7 @@
                                                                     is_homeless_2,future_addiction_index_2,employment_index)*&
                                                                     addiction_transition(is_addicted_1,&
                                                                     future_addiction_index_2,addiction_choice_1,is_homeless_2,&
-                                                                    drug_quantity_dist_1,0)*&
+                                                                    drug_quantity_dist_1,0,treatment_choice_dist_1)*&
                                                                     distribution_forward(years_left_on_mortgage_index)%&
                                                                     vector_transition_real(time_period-solve_transition_dynamics,&
                                                                     age_index,financial_index,unemployment_index,employment_index,&
@@ -20470,6 +20662,11 @@
                 trim(string_used)//trim(file_number)//".dat",status='replace')
                 write(2,'(I1)') policy_function_addiction(i)%vector_transition_integer(:,:,:,:,:,:,:)
             close(2)
+
+            open(unit=2,file="policy_function_treatment"//&
+                trim(string_used)//trim(file_number)//".dat",status='replace')
+                write(2,'(I1)') policy_function_treatment(i)%vector_transition_integer(:,:,:,:,:,:,:)
+            close(2)
             
             open(unit=2,file="frac_mov_optimal_1"//trim(string_used)//trim(file_number)//".dat",status='replace')
                 write(2,'(F22.20)') frac_mov_optimal_1(i)%vector_transition_real(:,:,:,:,:,:,:)
@@ -21335,6 +21532,10 @@
                 model_experimenters_total_drug_spending_to_total_income(time_period)
             write(2,*) "model_addicts_consuming_no_drugs,", model_addicts_consuming_no_drugs(time_period)
             write(2,*) "model_drugs_used_by_users_on_average,", model_drugs_used_by_users_on_average(time_period)
+            write(2,*) "model_treatment_take_up,", model_treatment_take_up(time_period)
+            write(2,*) "treatment_take_up_data,", treatment_take_up_data
+            write(2,*) "utility_cost_of_treatment,", utility_cost_of_treatment
+            write(2,*) "treatment_effect_on_recovery,", treatment_effect_on_recovery
             write(2,*) "model_drugs_used_by_experimenters_on_average,", model_drugs_used_by_experimenters_on_average(time_period)
             write(2,*) "model_drugs_consumed_by_users,", model_drugs_consumed_by_users(time_period)
             write(2,*) "model_drugs_used_by_addicts_on_average,", model_drugs_used_by_addicts_on_average(time_period)
@@ -23446,6 +23647,11 @@
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
                                         
+            allocate(policy_function_treatment(i)%&
+                vector_transition_integer(transition_length,life_span+1,is_owner*1+(1-is_owner)*negative_financial_grid_size:&
+                financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                                        
             allocate(frac_mov_optimal_1(i)%&
                 vector_transition_real(transition_length,life_span+1,is_owner*1+(1-is_owner)*negative_financial_grid_size:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
@@ -23685,6 +23891,12 @@
                 
             end if
             
+            if (allocated(policy_function_treatment(i)%vector_transition_integer)) then
+
+                deallocate(policy_function_treatment(i)%vector_transition_integer)
+
+            end if
+
             if (allocated(policy_function_addiction(i)%vector_transition_integer)) then
             
                 deallocate(policy_function_addiction(i)%vector_transition_integer)
@@ -23919,6 +24131,10 @@
             write(71,'(F30.15)') standard_deduction_as_percent_of_average_labor_income
             write(71,'(F30.15)') probability_of_becoming_addicted_if_experiment
             write(71,'(F30.15)') lambda_addiction
+            write(71,'(F30.15)') utility_cost_of_treatment
+            write(71,'(F30.15)') previous_utility_cost_of_treatment
+            write(71,'(F30.15)') previous_treatment_take_up
+            write(71,'(I10)') have_treatment_secant
             write(71,'(F30.15)') previous_onset_at_mean
             write(71,'(F30.15)') previous_sud_rate
             write(71,'(I10)') have_lambda_secant
@@ -23991,6 +24207,10 @@
             read(72,'(F30.15)') standard_deduction_as_percent_of_average_labor_income
             read(72,'(F30.15)') probability_of_becoming_addicted_if_experiment
             read(72,'(F30.15)') lambda_addiction
+            read(72,'(F30.15)') utility_cost_of_treatment
+            read(72,'(F30.15)') previous_utility_cost_of_treatment
+            read(72,'(F30.15)') previous_treatment_take_up
+            read(72,'(I10)') have_treatment_secant
             read(72,'(F30.15)') previous_onset_at_mean
             read(72,'(F30.15)') previous_sud_rate
             read(72,'(I10)') have_lambda_secant
@@ -24027,7 +24247,7 @@
         logical :: file_exists
         
         real(8) :: mass_at_top_financial,a,b,c,d
-        real(8) :: mean_drug_quantity_1,onset_at_mean_1,onset_step_1
+        real(8) :: mean_drug_quantity_1,onset_at_mean_1,onset_step_1,treatment_step_1
         character*1 :: string_used
         integer :: last_period_of_life,addiction_index
         integer, dimension(1) :: index_drug_1
@@ -24121,6 +24341,7 @@
         distance_largest_house_size=1
         distance_probability_of_becoming_addicted=1
         distance_lambda_addiction=1
+        distance_utility_cost_of_treatment=1
         distance_rent_to_price=1
         distance_smallest_house_size=1
         distance_rental_market=1
@@ -24310,6 +24531,7 @@
             (distance_probability_of_becoming_addicted>&
              stopping_rule_probability_of_becoming_addicted) .OR. &
             (distance_lambda_addiction>stopping_rule_lambda_addiction) .OR. &
+            (distance_utility_cost_of_treatment>stopping_rule_utility_cost_of_treatment) .OR. &
             (distance_rent_to_price>stopping_rule_rent_to_price) .OR. &
             (distance_smallest_house_size>stopping_rule_smallest_house_size) .OR. &
             (distance_fixed_cost_to_moving>stopping_rule_fixed_cost_to_moving) .OR. &
@@ -24430,6 +24652,7 @@
                 distance_largest_house_size=0
                 distance_probability_of_becoming_addicted=0
                 distance_lambda_addiction=0
+                distance_utility_cost_of_treatment=0
                 distance_rent_to_price=0
                 distance_smallest_house_size=0
                 distance_advantage_to_owning=0
@@ -24919,6 +25142,57 @@
 
                     end if
 
+                    ! THE UTILITY COST OF TREATMENT, on take up given a SUD.
+                    !
+                    ! Sign: a higher cost means fewer households take treatment,
+                    ! so take up FALLS in it and the update adds the gap. Same
+                    ! secant as lambda and rent, for the same reason: the number
+                    ! of loops is the calibration time.
+                    !
+                    ! Take up is bounded in [0,1] and the cost is in utils, so
+                    ! the fallback step is a fixed one on the gap rather than a
+                    ! proportional rule, which would be meaningless at a take up
+                    ! of zero.
+                    if (include_treatment==1) then
+
+                        write(*,*) "model_treatment_take_up(1)=", model_treatment_take_up(1)
+                        write(*,*) "treatment_take_up_data=", treatment_take_up_data
+                        write(*,*) "utility_cost_of_treatment=", utility_cost_of_treatment
+
+                        treatment_step_1=utility_cost_of_treatment+&
+                            utility_cost_of_treatment_adjuster*&
+                            (treatment_take_up_data-model_treatment_take_up(1))
+
+                        if ((have_treatment_secant==1) .AND. &
+                            (abs(model_treatment_take_up(1)-previous_treatment_take_up)>10.d0**(-6)) .AND. &
+                            (abs(utility_cost_of_treatment-previous_utility_cost_of_treatment)>10.d0**(-10))) then
+
+                            treatment_step_1=utility_cost_of_treatment-&
+                                (model_treatment_take_up(1)-treatment_take_up_data)*&
+                                (utility_cost_of_treatment-previous_utility_cost_of_treatment)/&
+                                (model_treatment_take_up(1)-previous_treatment_take_up)
+
+                        end if
+
+                        previous_utility_cost_of_treatment=utility_cost_of_treatment
+                        previous_treatment_take_up=model_treatment_take_up(1)
+                        have_treatment_secant=1
+
+                        utility_cost_of_treatment=max(min(treatment_step_1,10.d0),0.d0)
+
+                        distance_utility_cost_of_treatment=&
+                            abs(model_treatment_take_up(1)-treatment_take_up_data)
+
+                        write(*,*) "utility_cost_of_treatment=", utility_cost_of_treatment
+                        write(*,*) "distance_utility_cost_of_treatment=", &
+                            distance_utility_cost_of_treatment
+
+                    else
+
+                        distance_utility_cost_of_treatment=0
+
+                    end if
+
                     write(*,*) "model_fraction_homeless(1)=", model_fraction_homeless(1)
                     write(*,*) "size_homelessness=", size_homelessness
                 
@@ -25123,6 +25397,7 @@
             write(*,*) "model_experimenters_total_drug_spending_to_total_income=", &
                 model_experimenters_total_drug_spending_to_total_income(1)
             write(*,*) "model_drugs_used_by_users_on_average,", model_drugs_used_by_users_on_average(1)
+            write(*,*) "model_treatment_take_up,", model_treatment_take_up(1)
             write(*,*) "model_drugs_consumed_by_users=", model_drugs_consumed_by_users(1)
             write(*,*) "model_drugs_used_by_experimenters_on_average,", model_drugs_used_by_experimenters_on_average(1)
             write(*,*) "model_drugs_used_by_addicts_on_average=", model_drugs_used_by_addicts_on_average(1)
@@ -25997,6 +26272,7 @@
             write(*,*) "model_exprimenters=", model_exprimenters(1)
             write(*,*) "model_fraction_addicted+model_exprimenters=", model_fraction_addicted(1)+model_exprimenters(1)
             write(*,*) "model_drugs_used_by_users_on_average,", model_drugs_used_by_users_on_average(1)
+            write(*,*) "model_treatment_take_up,", model_treatment_take_up(1)
             write(*,*) "model_drugs_consumed_by_users=", model_drugs_consumed_by_users(1)
             write(*,*) "model_drugs_used_by_experimenters_on_average,", model_drugs_used_by_experimenters_on_average(1)
             write(*,*) "model_drugs_used_by_addicts_on_average=", model_drugs_used_by_addicts_on_average(1)

@@ -36,7 +36,7 @@ employment states times two disorder states. There is no room for `m` in it.
 code gains a state variable, and the second doubles the state space. See
 Section 5 for what that costs.
 
-### 1.1b SUD treatment. Absent entirely, and it is the policy under evaluation.
+### 1.1b SUD treatment. WAS absent entirely. Now built.
 
 `grep -ci treat` over the source returns **one**, and that one is the file name.
 There is no `tau` in the choice set, no `bar_tau_u` in flow utility, and no `g`
@@ -52,11 +52,44 @@ utility cost in `calculate_flow_utility`, `g` in the recovery row of
 `optimize_frac_spent_on_addiciton`, a policy function to store it, and a read in
 the distribution loop and the transition.
 
-**This matters more than the other absences on this list.** The paper is called
+**This mattered more than the other absences on this list.** The paper is called
 Housing First or Treatment First, `g` is the parameter through which the entire
 effect of one of the two policies runs, and the note calibrates the utility cost
-`bar_tau_u` to a treatment take up rate of 24 per cent. None of that is in the
+`bar_tau_u` to a treatment take up rate of 24 per cent. None of that was in the
 model that produces the numbers.
+
+**Built, under `include_treatment`.** Six pieces, because a choice that exists in
+only some of them is worse than one that exists in none:
+
+* **The choice.** `treatment_choice_1` loops 0 to 1 inside the renter problem,
+  open only when `addiction_index==1`. It sits OUTSIDE the housing loop, not
+  after it, because forced abstention changes the budget and therefore what
+  every other choice is worth.
+* **The utility cost.** `utility_cost_of_treatment` is subtracted in
+  `calculate_flow_utility`, so the value function, the comparison routine and
+  the welfare calculations cannot disagree about what treatment costs.
+* **Forced abstention.** `calculate_addiction_spending` returns `v=0` when the
+  flag is set. This is the reader's restriction and it is the binding one:
+  without it treatment is a free multiplier on recovery that every household
+  with the disorder takes, and no utility cost can undo that, because the cost
+  buys the multiplier outright.
+* **The recovery hazard.** `addiction_transition` multiplies the recovery row by
+  `treatment_effect_on_recovery`, capped at one. The recovery branch is now
+  handled explicitly at the top of that function rather than falling through to
+  the array, which is what lets `g` in.
+* **The policy function.** `policy_function_treatment`, allocated, zeroed,
+  written, saved and read alongside `policy_function_addiction`, and read back
+  in the distribution loop and the comparison routine so the distribution
+  iterates on the same hazard the household solved against.
+* **The calibration.** `model_treatment_take_up` accumulates over households
+  carrying the disorder, which is NSDUH's denominator, and
+  `utility_cost_of_treatment` is bracketed on `treatment_take_up_data = 0.24`
+  by secant.
+
+**What is NOT built.** The owner problems do not offer treatment, so with
+`include_homeownership` at 1 a homeowner with the disorder could never take it.
+That is dead code today and the renter problem is the whole model, but it is a
+trap for whoever turns owning back on.
 
 ### 1.2 Disability income. Absent entirely.
 
