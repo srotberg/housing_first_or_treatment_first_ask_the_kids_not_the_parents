@@ -105,16 +105,36 @@ note's is that the weight on drugs **more than triples** with the disorder,
 under the switch `change_utility_for_addicts = 1`. That is a preference change,
 not a Stone-Geary shifter, and it is a much stronger mechanism than `b_1`.
 
-Either the note is wrong about its own model or the switch should be zero. It
-matters for the paper's claim that addiction is transmitted without transmitting
-a preference for drugs.
+This is not a matter of taste between two defensible specifications. It is the
+thing three referees objected to in the submitted paper: Referee 2 (C5),
+Referee 3 (M2a) and the AE (A8) all said that a taste weight rising with `d`
+makes reducing the SUD and expanding housing complements "even absent incentive
+effects". The model note already records the objection and the fix, and the AE's
+suggested alternative, A8, was to vary `b` instead.
 
-And the mirror image holds for the shifter the note says does move.
+**Fixed.** `change_utility_for_addicts` is now `0`, which with
+`size_of_penalty = 0` sends `relative_share_of_addiction_2` back to
+`relative_share_of_addiction_1` and the housing and consumption weights with it,
+so the flow utility is the same function clean and with the SUD. The consistency
+check at line 13394 was relaxed to test the weights only, since the shifter is
+now meant to differ. Compiles clean, and the model has to be recalibrated before
+it produces a number.
+
+And the mirror image held for the shifter the note says does move.
 `addiction_scalar_2 = addiction_scalar_1` at line 354, so **`b_1 = b_0`
-exactly**: the Stone-Geary endowment does not vary with the disorder at all. The
-note calibrates `b_1` separately, against abstinence among homeless adults with a
-SUD from Milby et al.'s no housing arm. So on both halves of Section 2.2 the code
-does the opposite of what is written: the weights move and the shifter does not.
+exactly**: the Stone-Geary endowment did not vary with the SUD at all. The model
+note explains why two values are needed and it is not decoration: a single `b`
+large enough to deter clean households pushes the interior choice below zero for
+households that already have the SUD, so their expenditure goes to the corner and
+`theta_v` has nothing to pin. `b_0` pins participation and `b_1` keeps the choice
+interior.
+
+**Partly fixed.** `addiction_scalar_2` is now `b_sud_ratio * addiction_scalar_1`
+with `b_sud_ratio` a declared parameter, so the structure matches the written
+model. The ratio is one, which is the neutral value, and it is flagged in the
+source as needing to be bracketed on abstinence among homeless adults with a SUD,
+18.7 per cent from the no housing arm of Milby et al., before anything is
+reported. At one the SUD has no effect on drug demand at all.
 
 ### 2.3 Bequests are redistributed, not confiscated.
 
@@ -145,9 +165,21 @@ Three of the four are there:
 | recovery | `probability_of_stopping_addiction_if_homeless = (1/6) x 0.025` | `mu_H` = 0.167, set rather than calibrated |
 | Stone-Geary shifter | **absent** | `b` is selected by the disorder index alone, never by housing |
 
-So `rho^b_H`, which the note calls one of the four channels that make
-homelessness and the SUD mutually reinforcing, does not exist. The loop the note
-describes runs on three legs.
+So `rho^b_H` does not exist, and it is not one channel among four. The model
+note is explicit about what it is:
+
+> "This is the only parameter in the model that governs the elasticity of drug
+> use with respect to housing access, the object Referee 2 (C1) calls the crux on
+> which all the welfare results rest, and which Referee 3 and the AE (A13) name
+> independently. Without it that moment is not merely untargeted, it is
+> *untargetable*: housing a household only raises its resources, drugs are a
+> normal good, and the model would predict that housing *raises* use, the
+> opposite sign to Milby et al. (2005)."
+
+So the parameter the referees identify as the crux of the paper is absent from
+the code, and without it the model gets the sign of the central experiment
+backwards. This is the most consequential single finding in this audit, and it
+moves to the head of the queue.
 
 ---
 
