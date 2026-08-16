@@ -2,7 +2,7 @@
 The stylized model's two figures.
 
     1  WHO USES.  The gain from using, by income, with each channel
-       configuration recalibrated to the same 5.13 per cent participation rate.
+       configuration recalibrated to the same 5.13 percent participation rate.
        Where the line is above zero the household uses. Only the mortality
        channel puts that region at the bottom of the income distribution.
 
@@ -56,7 +56,7 @@ def _scaled(base, which, s):
         kw.update(u1=P.u0 + s * (base.u1 - P.u0),
                   h_hl=P.h_sm * (base.h_hl / P.h_sm) ** s)
     par = with_(base, **kw)
-    # b is recalibrated at EVERY point, so participation is 5.13 per cent all
+    # b is recalibrated at EVERY point, so participation is 5.13 percent all
     # along both curves and the only thing moving is WHO uses
     return with_(par, b=bracket(par, 'b', 'part', 1e-5, 0.60, iters=22))
 
@@ -86,7 +86,7 @@ def fig_who_uses(base):
     ax.set_ylim(0.1, 6.0)
     ax.set_xlim(-3, 103)
     ax.set_xticks([0, 25, 50, 75, 100])
-    ax.set_xlabel('Strength of the channel, per cent of its calibrated value')
+    ax.set_xlabel('Strength of the channel, percent of its calibrated value')
     ax.set_ylabel('Mean income of users / population mean')
     # legend OUTSIDE the plotting area, so it cannot sit on the lines
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.16), ncol=2,
@@ -143,7 +143,7 @@ def fig_moral_hazard(base):
             color='#C0392B', ha='center', va='center')
     ax.set_xlabel('Voucher generosity $\\pi_V$: '
                   'share of eligible households covered')
-    ax.set_ylabel('Drug use participation rate, per cent')
+    ax.set_ylabel('Drug use participation rate, percent')
     h_, l_ = ax.get_legend_handles_labels()
     ax.legend([h_[2], h_[3]], [l_[2], l_[3]], loc='upper center',
               bbox_to_anchor=(0.46, 1.15), ncol=2, fontsize=9.5)
@@ -151,7 +151,7 @@ def fig_moral_hazard(base):
     fig.tight_layout()
     save(fig, 'stylized_moral_hazard')
 
-    print('\n   participation, per cent')
+    print('\n   participation, percent')
     print(f'     no voucher                {100*T[0]:6.2f}')
     print(f'     universal Treatment First {100*T[-1]:6.2f}'
           f'   value of life {100*(T[-1]-T[0]):+6.2f}')
@@ -181,10 +181,10 @@ def fig_margins(base):
                                  [stats(with_(base, pV=p, policy=pol)) for p in pVs]])
                   for pol in ('HF', 'TF')}
     fig, axes = plt.subplots(1, 3, figsize=(12.2, 3.6))
-    panels = ((axes[0], 'homeless', 'Homelessness rate, per cent'),
-              (axes[1], 'part', 'Drug use, per cent'),
-              (axes[2], 'sud', 'Share with the disorder, per cent'))
-    for ax, key, lab in panels:
+    panels = ((axes[0], 'homeless', 'Homelessness rate, percent', '(a)'),
+              (axes[1], 'part', 'Drug use, percent', '(b)'),
+              (axes[2], 'sud', 'Share with a SUD, percent', '(c)'))
+    for ax, key, lab, tag in panels:
         for pol, col, mk in (('HF', '#C0392B', 'o'), ('TF', '#2C6FAD', 's')):
             y = out[pol][key] if key in out[pol] else out['use'][pol]
             ax.plot(pVs, 100 * y, color=col, marker=mk, ms=4.0,
@@ -195,6 +195,7 @@ def fig_margins(base):
         ax.set_xlim(-0.02, 1.02)
         ax.set_ylim(bottom=0.0)
         ax.set_xticks([0.0, 0.25, 0.5, 0.75, 1.0])
+        ax.set_title(tag, loc='left', fontsize=11, fontweight='bold')
     axes[1].legend(loc='upper center', bbox_to_anchor=(0.5, 1.20), ncol=2,
                    fontsize=9.5)
     save(fig, 'stylized_margins')

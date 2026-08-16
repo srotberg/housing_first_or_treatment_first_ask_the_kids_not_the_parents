@@ -18,7 +18,7 @@ Two candidate channels were tested first and both fail, for opposite reasons.
     A HERITABLE SUSCEPTIBILITY, a higher lam for the child of a user. This has
     the right welfare sign but the wrong behavioural one. Higher lam makes using
     riskier, so the child uses LESS, not more: participation falls from 28.5 per
-    cent at lam = 48 to 2.3 per cent at lam = 388. It cannot generate
+    cent at lam = 48 to 2.3 percent at lam = 388. It cannot generate
     intergenerational transmission of use at all.
 
     INCOME works on both counts. Lower permanent income is unambiguously bad to
@@ -57,7 +57,7 @@ THE CALIBRATION
 
     del_h   parental homelessness   set from Chetty, Hendren and Katz (2016).
                                  Children moved to a low poverty neighbourhood
-                                 before age 13 earned 31 per cent more as
+                                 before age 13 earned 31 percent more as
                                  adults. That is a housing intervention with
                                  experimental variation, and it is conservative
                                  here: growing up homeless is presumably worse

@@ -36,14 +36,14 @@ is that Housing First buys the same coverage at a higher price, because it pays
 for households in the disorder state and, by insuring that state, puts more
 households into it. The conjecture is false here. Treatment First is very
 slightly MORE expensive at every generosity, and the reason is mortality. A
-household in the disorder state draws only about 79 per cent of the voucher
+household in the disorder state draws only about 79 percent of the voucher
 outlay a clean household draws, at every income level, because survival to
 period 2 falls by the mortality penalty and the programme pays for it in fewer
 states. The households the moral hazard adds to the rolls die sooner and stop
 costing money.
 
 A financing side was built here and removed. A proportional income tax balancing
-each policy's budget separately came to 7.45 per cent under Housing First and
+each policy's budget separately came to 7.45 percent under Housing First and
 7.46 under Treatment First, so it changed the ranking not at all, for the same
 equal cost reason. It is gone because this model is for intuition and a
 government that provably does nothing is machinery a reader has to carry for no
@@ -93,7 +93,7 @@ def cev(par, dv):
     The voucher is means tested at y_V, so V1 jumps down as income crosses the
     threshold and a household just above it is worse off than one just below.
     V1 is therefore not monotone in y, and bisecting on income lands on spurious
-    roots: at y = 0.94 it reported a 9.8 per cent income equivalent between two
+    roots: at y = 0.94 it reported a 9.8 percent income equivalent between two
     policies whose values agree to eight decimals. The notch is a real feature
     of a means tested benefit and it stays in the model; it just cannot be used
     as a measuring rod.

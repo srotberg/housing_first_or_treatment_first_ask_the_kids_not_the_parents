@@ -80,8 +80,29 @@ following, all live:
 `housing_status_grid_size = 7` with `lowest_housing_grid_point = -1`, so the
 housing index runs `-1 .. 6`: **eight statuses**, against the note's four.
 
-The revision removes all of this. Until it is removed the code is solving a
-different model, and it is where most of the run time goes.
+**Switched off.** Ownership is now unreachable at the three places that led to
+it, rather than deleted, so the change is one line to reverse and the owner code
+is still there to read:
+
+| Switch | Was | Now | Effect |
+|---|---|---|---|
+| `max_amortization_years` | 2 | **1** | `has_house` is set from this loop index, so it never leaves zero and no owner state is solved |
+| `include_homeownership` | did not exist | **0** | `renters_problem` skips the renter to owner branch, so buying is not in the choice set |
+| `housing_status_grid_size` | 7 | **3** | the index runs `-1 .. 2`: homelessness plus three rental sizes, the four point grid of the written model |
+
+`smallest_index_for_purchase` moves from 5 to 2 so that references which compile
+whether or not they are reachable stay inside the smaller grid. Compiles clean,
+with the same nine pre-existing warnings and no new bounds warnings.
+
+Two things are deliberately left: the negative asset grid, because the renter
+loops *start* at `negative_financial_grid_size` so setting it to zero would send
+those loops through index zero, and it costs no time now that no owner is solved;
+and the house price and rental company loops, which are next.
+
+**None of this is verified numerically.** A backward pass is 51 minutes and a
+benchmark equilibrium is hours, so what is checked here is that it compiles and
+that the switches do what reading them says. The model has to be solved before
+any of it is trusted.
 
 ### 2.2 The Cobb-Douglas weights move with the disorder.
 
