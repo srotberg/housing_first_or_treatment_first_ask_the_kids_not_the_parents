@@ -173,7 +173,24 @@
         ! Kotlikoff (1997) rejecting operative altruism at the margin.
         real(8) :: weight_on_child=0.0137
         integer, parameter :: ss_decrease_for_retired_addicted=0
-        integer, parameter :: threshold_addiction_index=3
+        ! THE UNEMPLOYMENT INDEX CARRIES EMPLOYMENT, THE SUD AND, WHEN IT IS
+        ! TURNED ON, MENTAL ILLNESS. The layout is
+        !
+        !     index = 3*number_of_smi_states*d + 3*m + e,   e in 1..3, m,d in 0..1
+        !
+        ! with the SUD as the OUTERMOST factor. That ordering is the whole design.
+        ! It keeps the clean block and the SUD block CONTIGUOUS at either grid
+        ! size, so every loop of the form 1..threshold or threshold+1..grid_size
+        ! stays a single range, and every coarse test of the form
+        ! index > threshold keeps meaning "has a SUD". Putting m outermost, which
+        ! was the first plan, splits both blocks in two and breaks all of them.
+        !
+        ! At number_of_smi_states = 1 this reproduces the old layout exactly:
+        ! threshold is 3, the grid is 6, and 1..3 and 4..6 mean what they always
+        ! did. verify_index_map checks that at run time rather than asking to be
+        ! believed.
+        integer, parameter :: number_of_smi_states=1
+        integer, parameter :: threshold_addiction_index=3*number_of_smi_states
         integer, parameter :: have_two_rental_markets=0
         integer, parameter :: include_bequest_motive=0
         integer, parameter :: include_bequests=1
@@ -658,7 +675,8 @@
         real(8), parameter :: life_cycle_component_a=real(0.38)/((real(life_span)-real(retirement_span)-11))
         real(8), parameter :: life_cycle_component_b=(real(0.38)-real(0.38))/(10)
         
-        integer, parameter :: unemployment_grid_size=include_addiction*6+(1-include_addiction)*3
+        integer, parameter :: unemployment_grid_size=&
+            include_addiction*6*number_of_smi_states+(1-include_addiction)*3
                                                
         real(8), dimension(unemployment_grid_size) :: unemployment_grid
         real(8), dimension(life_span,employment_grid_size) :: employment_grid
@@ -1617,6 +1635,35 @@
 
     contains
 
+        ! THE INDEX MAP. Employment, mental illness and the SUD are folded into
+        ! one index, and these four functions are the only place that folding is
+        ! known. Every fine grained test that used to compare the index against a
+        ! threshold goes through them, so growing the grid does not mean auditing
+        ! a hundred and fifty hand written comparisons.
+        integer function emp_of(i_1)
+            implicit none
+            integer, intent(in) :: i_1
+            emp_of=mod(i_1-1,3)+1
+        end function
+
+        integer function smi_of(i_1)
+            implicit none
+            integer, intent(in) :: i_1
+            smi_of=mod((i_1-1)/3,number_of_smi_states)
+        end function
+
+        integer function sud_of(i_1)
+            implicit none
+            integer, intent(in) :: i_1
+            sud_of=(i_1-1)/(3*number_of_smi_states)
+        end function
+
+        integer function idx_of(e_1,m_1,d_1)
+            implicit none
+            integer, intent(in) :: e_1,m_1,d_1
+            idx_of=3*number_of_smi_states*d_1+3*m_1+e_1
+        end function
+
         ! THE STONE GEARY SHIFTER, in one place. It depends on whether the
         ! household carries a SUD and on whether it is homeless, and on nothing
         ! else. Homelessness is identified by the housing SIZE rather than the
@@ -1847,16 +1894,16 @@
             
                 income_1=model_ss_benefits(employment_index_1)
         
-            elseif (unemployment_index_1==threshold_addiction_index+1) then
+            elseif ((sud_of(unemployment_index_1)==1 .AND. emp_of(unemployment_index_1)==1)) then
                             
                 income_1=model_ss_benefits(employment_index_1)
                 
-            elseif (unemployment_index_1==threshold_addiction_index+2) then
+            elseif ((sud_of(unemployment_index_1)==1 .AND. emp_of(unemployment_index_1)==2)) then
             
                 income_1=(1-ss_decrease_for_retired_addicted)*model_ss_benefits(employment_index_1)+&
                     ss_decrease_for_retired_addicted*model_ss_benefits(employment_index_1)*(1-ss_decrease_addicted(1))
                 
-            elseif ((unemployment_index_1==unemployment_grid_size) .AND. (include_addiction==1)) then
+            elseif (((sud_of(unemployment_index_1)==1 .AND. emp_of(unemployment_index_1)==3)) .AND. (include_addiction==1)) then
             
                 income_1=(1-ss_decrease_for_retired_addicted)*model_ss_benefits(employment_index_1)+&
                     ss_decrease_for_retired_addicted*model_ss_benefits(employment_index_1)*(1-ss_decrease_addicted(2))
@@ -1865,14 +1912,14 @@
             
         else
         
-            if ((unemployment_index_1==1) .OR. (unemployment_index_1==threshold_addiction_index+1)) then
+            if ((unemployment_index_1==1) .OR. ((sud_of(unemployment_index_1)==1 .AND. emp_of(unemployment_index_1)==1))) then
                         
                 income_1=labor_supply_1*&
                     employment_grid(age_index,employment_index_1)*&
                     labour_deterministic_efficiency(age_index)
                     
-            elseif ((unemployment_index_1==threshold_addiction_index) .OR. &
-                (unemployment_index_1==unemployment_grid_size)) then
+            elseif (((sud_of(unemployment_index_1)==0 .AND. emp_of(unemployment_index_1)==3)) .OR. &
+                ((sud_of(unemployment_index_1)==1 .AND. emp_of(unemployment_index_1)==3))) then
             
                 income_1=min(replacement_rate_ui*avg_income_to_use_2,&
                     max_ui_as_perc_of_avg_inc*avg_income_to_use_1)
@@ -2538,7 +2585,7 @@
                                     end if
                                                                                                    
                                     if ((in_retirement==0) .AND.&
-                                        ((unemployment_index==1) .OR. (unemployment_index==threshold_addiction_index+1))) then
+                                        ((unemployment_index==1) .OR. ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==1)))) then
                                                             
                                         model_output(time_period)=model_output(time_period)+&
                                             (labor_supply_used*employment_grid(age_index,employment_index)*&
@@ -2570,15 +2617,15 @@
                                                                                                                     
                                     end if
                                     
-                                    if ((unemployment_index==2) .OR. (unemployment_index==threshold_addiction_index) .OR. &
-                                       (unemployment_index==threshold_addiction_index+2) .OR. &
-                                       (unemployment_index==unemployment_grid_size)) then
+                                    if ((unemployment_index==2) .OR. ((sud_of(unemployment_index)==0 .AND. emp_of(unemployment_index)==3)) .OR. &
+                                       ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==2)) .OR. &
+                                       ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==3))) then
                                     
                                         model_fraction_unemployed(time_period)=&
                                             model_fraction_unemployed(time_period)+distribution_mass_used
                                             
-                                        if ((unemployment_index==threshold_addiction_index) .OR. &
-                                            (unemployment_index==unemployment_grid_size)) then
+                                        if (((sud_of(unemployment_index)==0 .AND. emp_of(unemployment_index)==3)) .OR. &
+                                            ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==3))) then
                                         
                                             model_fraction_unemployed_on_ui(time_period)=&
                                                 model_fraction_unemployed_on_ui(time_period)+distribution_mass_used
@@ -2604,7 +2651,7 @@
                                         model_fraction_addicted(time_period)=&
                                             model_fraction_addicted(time_period)+distribution_mass_used
                                                                                         
-                                        if (unemployment_index>threshold_addiction_index+1) then
+                                        if ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)>1)) then
                                         
                                             model_fraction_addicted_and_unemployed(time_period)=&
                                                 model_fraction_addicted_and_unemployed(time_period)+distribution_mass_used
@@ -2619,7 +2666,7 @@
                                             model_fraction_homeless_and_addicted(time_period)=&
                                                 model_fraction_homeless_and_addicted(time_period)+distribution_mass_used
                                         
-                                            if (unemployment_index>threshold_addiction_index+1) then
+                                            if ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)>1)) then
                                         
                                                 model_fraction_of_homeless_and_addicted_unemployed(time_period)=&
                                                     model_fraction_of_homeless_and_addicted_unemployed(time_period)+&
@@ -2642,7 +2689,7 @@
                                             age_index*distribution_mass_used
                                             
                                         if ((unemployment_index==1) .OR. &
-                                            (unemployment_index==threshold_addiction_index+1)) then
+                                            ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==1))) then
                                             
                                         else
                                             
@@ -2653,8 +2700,8 @@
                                         end if
                                         
                                         if ((unemployment_index==1) .OR. (unemployment_index==3) .OR. &
-                                            (unemployment_index==threshold_addiction_index+1) .OR. &
-                                            (unemployment_index==threshold_addiction_index+3)) then
+                                            ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==1)) .OR. &
+                                            ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==3))) then
                                             
                                         else
                                             
@@ -3247,7 +3294,7 @@
                                     end if
                                     
                                     if ((in_retirement==0) .AND. ((unemployment_index==1) .OR. &
-                                       (unemployment_index==threshold_addiction_index+1))) then
+                                       ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==1)))) then
                                     
                                         model_total_workers(time_period)=model_total_workers(time_period)+distribution_mass_used
                                         
@@ -3273,14 +3320,14 @@
                                     
                                     else
                                     
-                                        if ((unemployment_index==1) .OR. (unemployment_index==threshold_addiction_index+1)) then
+                                        if ((unemployment_index==1) .OR. ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==1))) then
                                         
                                             model_average_income(time_period)=model_average_income(time_period)+&
                                                 labor_supply_used*employment_grid(age_index,employment_index)*&
                                                 labour_deterministic_efficiency(age_index)*distribution_mass_used
                                                 
-                                        elseif ((unemployment_index==threshold_addiction_index) .OR. &
-                                            (unemployment_index==unemployment_grid_size)) then
+                                        elseif (((sud_of(unemployment_index)==0 .AND. emp_of(unemployment_index)==3)) .OR. &
+                                            ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==3))) then
                                     
                                             model_average_income(time_period)=model_average_income(time_period)+&
                                                 min(replacement_rate_ui*avg_income_to_use_2,&
@@ -5734,7 +5781,7 @@
                                         mass_by_employment(time_period,employment_index)=&
                                             mass_by_employment(time_period,employment_index)+distribution_mass_used
                                             
-                                        if (unemployment_index==threshold_addiction_index+1) then
+                                        if ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==1)) then
                                             
                                             addiction_share_of_income_by_employment(time_period,employment_index)=&
                                                 addiction_share_of_income_by_employment(time_period,employment_index)+&
@@ -5800,8 +5847,8 @@
                                                                                  
                                     else
                                     
-                                        if ((unemployment_index==threshold_addiction_index) .OR. &
-                                            (unemployment_index==unemployment_grid_size)) then
+                                        if (((sud_of(unemployment_index)==0 .AND. emp_of(unemployment_index)==3)) .OR. &
+                                            ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==3))) then
                                         
                                             govt_spending_on_ui(time_period)=govt_spending_on_ui(time_period)+&
                                                 income_1*distribution_mass_used
@@ -5895,10 +5942,10 @@
                                         mass_by_employment_1(time_period,employment_index)=&
                                             mass_by_employment_1(time_period,employment_index)+distribution_mass_used
                                                                                                         
-                                        if ((unemployment_index==threshold_addiction_index-1) .OR. &
-                                            (unemployment_index==threshold_addiction_index) .OR. &
-                                            (unemployment_index==unemployment_grid_size-1) .OR. &
-                                            (unemployment_index==unemployment_grid_size)) then
+                                        if (((sud_of(unemployment_index)==0 .AND. emp_of(unemployment_index)==2)) .OR. &
+                                            ((sud_of(unemployment_index)==0 .AND. emp_of(unemployment_index)==3)) .OR. &
+                                            ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==2)) .OR. &
+                                            ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==3))) then
                                             
                                             model_unemployment_by_employment(time_period,employment_index)=&
                                                 model_unemployment_by_employment(time_period,employment_index)+&
@@ -5912,7 +5959,7 @@
                                             
                                             end if
                                             
-                                            if (unemployment_index==threshold_addiction_index-1) then
+                                            if ((sud_of(unemployment_index)==0 .AND. emp_of(unemployment_index)==2)) then
                                             
                                                 model_fraction_choose_addiction_when_unemployed(time_period)=&
                                                     model_fraction_choose_addiction_when_unemployed(time_period)+&
@@ -7292,15 +7339,15 @@
                                     else
                                     
                                         if ((unemployment_index==1) .OR. &
-                                            (unemployment_index==threshold_addiction_index+1)) then
+                                            ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==1))) then
                                         
                                             average_income(time_period,employment_index_to_use)=&
                                                 average_income(time_period,employment_index_to_use)+&
                                                 (labor_supply_used*employment_grid(age_index,employment_index)*&
                                                 labour_deterministic_efficiency(age_index))*distribution_mass_used
                                                 
-                                        elseif ((unemployment_index==threshold_addiction_index) .OR. &
-                                            (unemployment_index==unemployment_grid_size)) then
+                                        elseif (((sud_of(unemployment_index)==0 .AND. emp_of(unemployment_index)==3)) .OR. &
+                                            ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==3))) then
                                                                                 
                                             average_income(time_period,employment_index_to_use)=&
                                                 average_income(time_period,employment_index_to_use)+&
@@ -8766,7 +8813,7 @@
                                         
                                         else
                                         
-                                            if ((unemployment_index==1) .OR. (unemployment_index==threshold_addiction_index+1)) then
+                                            if ((unemployment_index==1) .OR. ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==1))) then
                                             
                                                 income_by_age_renter(time_period,age_index)=&
                                                     income_by_age_renter(time_period,age_index)+&
@@ -8777,8 +8824,8 @@
                                                     personal_exemption),0.d0)**curvature_of_labor_income_taxes)*&
                                                     distribution_mass_used
                                                     
-                                            elseif ((unemployment_index==threshold_addiction_index) .OR. &
-                                                (unemployment_index==unemployment_grid_size)) then
+                                            elseif (((sud_of(unemployment_index)==0 .AND. emp_of(unemployment_index)==3)) .OR. &
+                                                ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==3))) then
                                             
                                                 income_by_age_renter(time_period,age_index)=&
                                                     income_by_age_renter(time_period,age_index)+&
@@ -9855,8 +9902,8 @@
         is_working_1=1
         
         if ((in_retirement==1) .OR. &
-            ((unemployment_index>1) .AND. (unemployment_index<threshold_addiction_index+1)) .OR. &
-            (unemployment_index>threshold_addiction_index+1)) then
+            ((unemployment_index>1) .AND. (sud_of(unemployment_index)==0)) .OR. &
+            ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)>1))) then
         
             is_working_1=0
             
@@ -10268,8 +10315,8 @@
         is_working_1=1
         
         if ((in_retirement==1) .OR. &
-            ((unemployment_index>1) .AND. (unemployment_index<threshold_addiction_index+1)) .OR. &
-            (unemployment_index>threshold_addiction_index+1)) then
+            ((unemployment_index>1) .AND. (sud_of(unemployment_index)==0)) .OR. &
+            ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)>1))) then
         
             is_working_1=0
             
@@ -10828,8 +10875,8 @@
         is_working_1=1
         
         if ((in_retirement==1) .OR. &
-            ((unemployment_index>1) .AND. (unemployment_index<threshold_addiction_index+1)) .OR. &
-            (unemployment_index>threshold_addiction_index+1)) then
+            ((unemployment_index>1) .AND. (sud_of(unemployment_index)==0)) .OR. &
+            ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)>1))) then
         
             is_working_1=0
             
@@ -10982,7 +11029,7 @@
                      
                     if (labor_supply_2>0.4) then 
                     if ((in_retirement==0) .AND. (fixed_labor_supply_at_benchmark==0) .AND. &
-                        ((unemployment_index==1) .OR. (unemployment_index==threshold_addiction_index+1))) then
+                        ((unemployment_index==1) .OR. ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==1)))) then
                                             
                         x_1=2
                                             
@@ -11234,8 +11281,8 @@
         is_working_1=1
         
         if ((in_retirement==1) .OR. &
-            ((unemployment_index>1) .AND. (unemployment_index<threshold_addiction_index+1)) .OR. &
-            (unemployment_index>threshold_addiction_index+1)) then
+            ((unemployment_index>1) .AND. (sud_of(unemployment_index)==0)) .OR. &
+            ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)>1))) then
         
             is_working_1=0
             
@@ -11402,7 +11449,7 @@
                                    
                                 if (labor_supply_2>0.4) then
                                 if ((in_retirement==0) .AND. (fixed_labor_supply_at_benchmark==0).AND. &
-                                    ((unemployment_index==1) .OR. (unemployment_index==threshold_addiction_index+1))) then
+                                    ((unemployment_index==1) .OR. ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==1)))) then
                 
                                     x_1=2
                                                                 
@@ -11659,8 +11706,8 @@
         is_working_1=1
         
         if ((in_retirement==1) .OR. &
-            ((unemployment_index>1) .AND. (unemployment_index<threshold_addiction_index+1)) .OR. &
-            (unemployment_index>threshold_addiction_index+1)) then
+            ((unemployment_index>1) .AND. (sud_of(unemployment_index)==0)) .OR. &
+            ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)>1))) then
         
             is_working_1=0
             
@@ -11770,7 +11817,7 @@
                       
                     if (labor_supply_2>0.4) then
                     if ((in_retirement==0) .AND. (fixed_labor_supply_at_benchmark==0) .AND. &
-                        ((unemployment_index==1) .OR. (unemployment_index==threshold_addiction_index+1))) then
+                        ((unemployment_index==1) .OR. ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==1)))) then
                     
                         x_1=1
                 
@@ -14208,7 +14255,7 @@
             consumption_choice_1=(1-frac_spent_on_addiction_2)*total_consumption_choice_1
                             
             if ((in_retirement==0) .AND. (fixed_labor_supply_at_benchmark==0) .AND.&
-                ((unemployment_index==1) .OR. (unemployment_index==threshold_addiction_index+1))) then
+                ((unemployment_index==1) .OR. ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==1)))) then
                                             
                 x_1=ownership_status_index_1+1
         
@@ -16944,6 +16991,65 @@
         
     end subroutine             
             
+    subroutine verify_index_map()
+    
+        ! THE INDEX MAP CHECKS ITSELF. Every fine grained test that used to be
+        ! written against threshold_addiction_index is now written through
+        ! emp_of and sud_of, and at number_of_smi_states = 1 the two forms have
+        ! to agree on every index in the grid. This runs once at startup and
+        ! stops the model if they do not, so the rewrite is verified rather than
+        ! asserted. At number_of_smi_states = 2 the old forms are WRONG by
+        ! construction, which is the whole point, so the comparison is only made
+        ! at one.
+    
+        use Global_Vars
+        
+        implicit none
+        
+        integer :: i_1,bad_1
+        
+        if (number_of_smi_states/=1) then
+        
+            write(*,*) "index map: not checked, number_of_smi_states=", number_of_smi_states
+            
+            return
+            
+        end if
+        
+        bad_1=0
+        
+        do i_1=1,unemployment_grid_size
+        
+            if ((sud_of(i_1)==1) .NEQV. (i_1>threshold_addiction_index)) bad_1=bad_1+1
+            if ((sud_of(i_1)==0) .NEQV. (i_1<=threshold_addiction_index)) bad_1=bad_1+1
+            if (((sud_of(i_1)==0) .AND. (emp_of(i_1)==3)) .NEQV. &
+                (i_1==threshold_addiction_index)) bad_1=bad_1+1
+            if (((sud_of(i_1)==0) .AND. (emp_of(i_1)==2)) .NEQV. &
+                (i_1==threshold_addiction_index-1)) bad_1=bad_1+1
+            if (((sud_of(i_1)==1) .AND. (emp_of(i_1)==1)) .NEQV. &
+                (i_1==threshold_addiction_index+1)) bad_1=bad_1+1
+            if (((sud_of(i_1)==1) .AND. (emp_of(i_1)==2)) .NEQV. &
+                (i_1==threshold_addiction_index+2)) bad_1=bad_1+1
+            if (((sud_of(i_1)==1) .AND. (emp_of(i_1)==3)) .NEQV. &
+                (i_1==unemployment_grid_size)) bad_1=bad_1+1
+            if (((sud_of(i_1)==1) .AND. (emp_of(i_1)>1)) .NEQV. &
+                (i_1>threshold_addiction_index+1)) bad_1=bad_1+1
+            if (idx_of(emp_of(i_1),smi_of(i_1),sud_of(i_1))/=i_1) bad_1=bad_1+1
+            
+        end do
+        
+        if (bad_1>0) then
+        
+            write(*,*) "INDEX MAP IS WRONG, mismatches:", bad_1
+            
+            stop
+            
+        end if
+        
+        write(*,*) "index map verified against the old thresholds, grid=", unemployment_grid_size
+    
+    end subroutine
+    
     subroutine compute_expected_child_value(time_period)
     
         ! E V_1(0, y_child, employed, clean, no voucher), by the parent's SUD
@@ -17257,6 +17363,8 @@
             
         end do
         
+        call verify_index_map()
+
         call create_newborn_employment_probability()
 
         call create_unemployment_process()

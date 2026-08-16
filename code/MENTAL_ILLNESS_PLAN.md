@@ -50,17 +50,26 @@ where within each block `1` is employed, `2` is unemployed without insurance and
 `3` is unemployed in the first year of a spell. `threshold_addiction_index = 3`
 is the divider.
 
-Make it `12`, with **mental illness as the outermost factor**:
+**CORRECTED, and this is the opposite of what this plan first said.** Put the
+**SUD** outermost and mental illness inside it:
 
-    index = 6*m + 3*d + e        m in {0,1},  d in {0,1},  e in {1,2,3}
+    index = 3*n_smi*d + 3*m + e      e in 1..3,  m,d in 0..1,  n_smi in {1,2}
 
-    1 .. 6    exactly what they mean today
-    7 .. 12   the same six states, with mental illness
+    n_smi = 1:  1..3 clean, 4..6 with a SUD      exactly today's layout
+    n_smi = 2:  1..6 clean, 7..12 with a SUD
 
-That ordering is the whole trick. Every existing test of the form
-`unemployment_index <= threshold_addiction_index` stays correct for the first
-block, so nothing that works today breaks; what is needed is that the tests
-become block aware rather than being rewritten one by one.
+The first version of this plan put `m` outermost, which looked equivalent and is
+not. Counting the patterns in the source shows why: there are 37 uses of
+`threshold_addiction_index` that are not comparisons at all but **loop bounds**,
+of the form `1 .. threshold` and `threshold+1 .. grid_size`, meaning "sweep the
+clean block" or "sweep the SUD block". With `m` outermost the clean block is
+`{1,2,3,7,8,9}` and neither range is contiguous, so all 37 break. With the SUD
+outermost both blocks stay contiguous at either grid size, so all 37 are correct
+untouched, and so are the 74 coarse tests of the form `index > threshold`, which
+still mean exactly "has a SUD".
+
+That leaves only the fine grained employment tests to rewrite, which is about
+thirty sites rather than a hundred and fifty.
 
 The measured size of that job:
 
@@ -76,11 +85,16 @@ Rewriting 156 index tests by hand is where the bugs come from. Do it with four
 pure functions instead, added once near the head of `Global_Vars`:
 
 ```fortran
-integer function emp_of(i)   ; emp_of = mod(i-1,3) + 1        ; end function
-integer function sud_of(i)   ; sud_of = mod((i-1)/3, 2)       ; end function
-integer function smi_of(i)   ; smi_of = (i-1)/6               ; end function
-integer function idx_of(e,d,m) ; idx_of = 6*m + 3*d + e       ; end function
+integer function emp_of(i)     ; emp_of = mod(i-1,3) + 1                    ; end function
+integer function smi_of(i)     ; smi_of = mod((i-1)/3, number_of_smi_states) ; end function
+integer function sud_of(i)     ; sud_of = (i-1)/(3*number_of_smi_states)     ; end function
+integer function idx_of(e,m,d) ; idx_of = 3*number_of_smi_states*d + 3*m + e ; end function
 ```
+
+Written against `number_of_smi_states` they are correct at **both** grid sizes,
+with `threshold_addiction_index = 3*number_of_smi_states` and
+`unemployment_grid_size = 6*number_of_smi_states`. That is what makes step 1
+below a no-op by construction rather than by hope.
 
 Then the rewrite is mechanical and checkable:
 
@@ -97,10 +111,17 @@ of a wrong answer that still runs.
 
 ## Order of work
 
-1. **Add the four index functions and rewrite every test through them, with the
-   grid still at 6.** The model must reproduce the current benchmark bit for bit
-   before the grid grows. This is the step that makes the rest safe, and it is
-   the one to spend the time on.
+1. ~~**Add the four index functions and rewrite every test through them, with the
+   grid still at 6.**~~ **DONE.** `number_of_smi_states = 1`, so the grid is
+   still 6 and the layout is unchanged. 49 fine grained tests now go through
+   `emp_of` and `sud_of`; the loop bounds and the coarse SUD tests were left
+   alone because the SUD being outermost keeps them correct. Every rewritten
+   form was checked to be identical to the one it replaced at every index in the
+   grid, and `verify_index_map` re-checks that inside the model at startup and
+   stops it if any pair disagrees. Two sites needed care: the original had
+   `index == threshold - 1` and `index == grid_size - 1`, arithmetic rather than
+   comparison, and a first pass left the `-1` dangling. The compiler caught
+   both.
 2. **Grow the grid to 12** and build the transition, with all six channel
    parameters set to their neutral values, `rho_m = kappa_uem = kappa_phi_m =
    mu_m = rho^b_m = 1`, `zeta_DI = 0`, `iota = 1`. Prevalence then moves but
