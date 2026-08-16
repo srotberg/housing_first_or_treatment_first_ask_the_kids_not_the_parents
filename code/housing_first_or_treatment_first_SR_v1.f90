@@ -103,6 +103,10 @@
         integer, parameter :: max_age_to_choose_homelessness=59
         
         integer, parameter :: include_varying_household_size=0
+        ! Renter model: homeownership, mortgages and negative assets are out.
+        ! Setting this to 1 restores the owner branch, and the three switches it
+        ! governs are marked FIRST, SECOND and THIRD.
+        integer, parameter :: include_homeownership=0
         integer, parameter :: only_LTV=1
         integer, parameter :: newborns_inherit_addiction=0                    
 
@@ -487,7 +491,10 @@
         real(8) :: distance_smallest_house_size
         real(8) :: stopping_rule_smallest_house_size=10.d0**(-3) 
         
-        integer, parameter :: smallest_index_for_purchase=5
+        ! Purchase is unreachable, but this index is still read in places that
+        ! compile whether or not it is reachable, so it is kept inside the new
+        ! grid rather than left at 5, which is now out of bounds.
+        integer, parameter :: smallest_index_for_purchase=2
         real(8), parameter :: smallest_house_for_purchase=0.25
         
         real(8) :: largest_house_size=(1-perceived_probability_lower)*0.315+perceived_probability_lower*0.285
@@ -565,7 +572,17 @@
         real(8), dimension(negative_financial_grid_size) :: financial_grid_distance_negative
         real(8), dimension(financial_grid_size) :: financial_grid_distance_positive
                 
-        integer, parameter :: max_amortization_years=2  
+        ! HOMEOWNERSHIP IS OUT OF THE MODEL. The revision is a renter model: the
+        ! written model has four housing statuses, homelessness and three rental
+        ! sizes, no mortgages, and assets that cannot go negative. Rather than
+        ! delete two and a half thousand lines of owner and mortgage code, which
+        ! would be irreversible and hard to check, ownership is switched off at
+        ! the three places that let a household reach it.
+        !
+        ! THIS IS THE FIRST. has_house is set from years_left_on_mortgage_index at
+        ! line 9188, so a loop that runs to one leaves has_house at zero and no
+        ! owner state is ever solved. It was two.
+        integer, parameter :: max_amortization_years=1
                             
         real(8), parameter :: max_times_labour_income_saved=3.2
                                               
@@ -696,7 +713,12 @@
         integer :: largest_possible_financial_index,largest_possible_mortgage_index
         real(8) :: value_of_house_without_min_down_payment
         
-        integer, parameter :: housing_status_grid_size=7
+        ! THE THIRD. The housing index runs lowest_housing_grid_point .. this
+        ! minus one, so at 3 it is -1, 0, 1, 2: homelessness plus three rental
+        ! sizes, which is the four point grid of the written model. It was 7,
+        ! which gave eight statuses, and six of the extra slots were owner states
+        ! that no longer exist.
+        integer, parameter :: housing_status_grid_size=3
                          
         integer :: space_lived_in_num_of_internal=2  
                                                         
@@ -9521,7 +9543,18 @@
                                                                                                                       
         call renter_to_renter_problem(time_period,financial_index)
                 
-        call renter_to_owner_problem(time_period,financial_index)
+        ! THE SECOND. Buying is not in the choice set. With include_homeownership
+        ! at zero the renter to owner branch is never solved and its value is
+        ! minus infinity, so the comparison below can only ever pick renting.
+        if (include_homeownership==1) then
+        
+            call renter_to_owner_problem(time_period,financial_index)
+            
+        else
+        
+            value_function_renter_owner=large_negative_num
+            
+        end if
         
         if (value_function_renter_renter>=value_function_renter_owner) then
                         
