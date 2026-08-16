@@ -4,7 +4,7 @@
         
         integer, parameter :: is_counterfactual=0
         integer, parameter :: partial_equilibrium=0
-        real(8), parameter :: probability_of_voucher_benchmark_used=0.06
+        real(8) :: probability_of_voucher_benchmark_used=0.06
         real(8), parameter :: increased_prob_of_voucher_if_homeless_and_addicted=1
         integer, parameter :: how_many_iterations_to_do_on_distribution=0     
         integer, parameter :: compare_to_original_benchmark=1
@@ -121,7 +121,7 @@
         real(8), parameter :: increase_in_newborns_bequests=0
         integer, parameter :: increase_vouchers_for_homeless_only=0
         
-        real(8) :: probability_of_voucher_benchmark_used_1=probability_of_voucher_benchmark_used
+        real(8) :: probability_of_voucher_benchmark_used_1=0.06
         real(8) :: increased_prob_of_voucher_if_homeless_1=increased_prob_of_voucher_if_homeless    
         integer, parameter :: double_voucher_program=0
         real(8), parameter :: cost_of_addict_scaling=1    
@@ -333,7 +333,18 @@
         integer, parameter :: increase_homeless_size=0
         integer, parameter :: coarse_grid=0
         
-        integer, parameter :: provide_vouchers=is_counterfactual*0+(1-is_counterfactual)*0
+        ! THE VOUCHER WAS SWITCHED OFF, IN BOTH ARMS.
+        !
+        ! Every branch of this expression was zero, and all eight calls to
+        ! calculate_housing_voucher are guarded by it, so no household in any run
+        ! ever received a voucher. The written model has Vch in the budget
+        ! constraint, eta in the state, pi_V as the policy dial and the entire
+        ! Housing First against Treatment First comparison resting on who gets
+        ! one. None of it was reachable.
+        !
+        ! It is on in both arms. The two policies differ in the sobriety
+        ! condition, voucher_conditional_on_clean, not in whether vouchers exist.
+        integer, parameter :: provide_vouchers=1
         real(8), parameter :: max_fraction_of_income_spent_on_housing=include_addiction*0.44+(1-include_addiction)*0.8
         real(8), parameter :: max_rent_relative_to_ave=include_addiction*1.56+(1-include_addiction)*1.4
         
@@ -476,10 +487,8 @@
         real(8), parameter :: risk_aversion_consumption=2
         real(8), parameter :: rho_1=real(1.25)
         real(8), parameter :: eta_1=1.07
-        real(8), parameter :: relative_share_of_addiction_1=(1-perceived_probability_lower)*0.13+perceived_probability_lower*0.16
-        real(8), parameter :: relative_share_of_addiction_2=&
-            change_utility_for_addicts*((1-perceived_probability_lower)*0.45+perceived_probability_lower*0.44)+&
-            (1-change_utility_for_addicts)*(size_of_penalty*((0.39-relative_share_of_addiction_1))+relative_share_of_addiction_1)
+        real(8) :: relative_share_of_addiction_1=(1-perceived_probability_lower)*0.13+perceived_probability_lower*0.16
+        real(8) :: relative_share_of_addiction_2=0.13
         real(8), parameter :: power_1=1-(1/rho_1)
         real(8), parameter :: power_2=(1-risk_aversion_consumption)/power_1
         real(8), parameter :: power_3=1-(eta_1/rho_1)
@@ -523,7 +532,7 @@
         real(8) :: relative_share_of_leisure_adjuster=5*10.d0**(-1)
         real(8) :: stopping_rule_relative_share_of_leisure=10.d0**(-3)
         
-        real(8) :: relative_share_of_addiction=relative_share_of_addiction_1
+        real(8) :: relative_share_of_addiction=0.13
         real(8) :: distance_relative_share_of_addiction
         real(8) :: relative_share_of_addiction_adjuster=5*10.d0**(-1)
         real(8) :: stopping_rule_relative_share_of_addiction=10.d0**(-3)
@@ -559,6 +568,47 @@
         ! NSDUH 2024, adults 26 and over. The moment the hazard above is matched
         ! to, and the one the note's internal table already says lambda hits.
         real(8), parameter :: sud_rate_data=0.0368
+
+        ! THE ELEVEN THE NOTE CALLS CALIBRATED AND THE CODE HELD FIXED.
+        ! Each with the moment its table row names. Where the moment is a first
+        ! stage cross sectional one it is bracketed in the loop below; the three
+        ! that need a second stage experiment are marked as such and are freed
+        ! but not yet driven, because the experiment does not exist to drive them.
+        real(8), parameter :: drug_spending_share_data=0.44
+        real(8), parameter :: participation_rate_data=0.0513
+        real(8), parameter :: vsl_data=7.5
+        real(8), parameter :: food_stamps_share_data=0.0042
+        real(8), parameter :: voucher_coverage_data=0.266
+        real(8), parameter :: unemployment_rate_data=0.0485
+        real(8), parameter :: unemployment_rate_sud_data=0.1625
+
+        real(8) :: relative_share_of_addiction_adj=5*10.d0**(-2)
+        real(8) :: distance_relative_share_of_addiction_1
+        real(8) :: stopping_rule_relative_share_of_addiction_1=10.d0**(-3)
+
+        real(8) :: addiction_scalar_adjuster=2*10.d0**(-1)
+        real(8) :: distance_addiction_scalar
+        real(8) :: stopping_rule_addiction_scalar=10.d0**(-3)
+
+        real(8) :: value_of_life_adjuster=1*10.d0**(1)
+        real(8) :: distance_value_of_life
+        real(8) :: stopping_rule_value_of_life=10.d0**(-2)
+
+        real(8) :: max_food_cost_adjuster=5*10.d0**(-2)
+        real(8) :: distance_max_food_cost
+        real(8) :: stopping_rule_max_food_cost=10.d0**(-4)
+
+        real(8) :: voucher_probability_adjuster=1*10.d0**(-1)
+        real(8) :: distance_voucher_probability
+        real(8) :: stopping_rule_voucher_probability=10.d0**(-3)
+
+        real(8) :: separation_rate_adjuster=1*10.d0**(-1)
+        real(8) :: distance_separation_rate
+        real(8) :: stopping_rule_separation_rate=10.d0**(-3)
+
+        real(8) :: employment_multiplier_adjuster=2*10.d0**(0)
+        real(8) :: distance_employment_multiplier
+        real(8) :: stopping_rule_employment_multiplier=10.d0**(-3)
 
         real(8) :: increased_probability_of_becoming_addicted_if_heavy_user=&
             6.4761*0.0016
@@ -603,7 +653,7 @@
             (1-partial_equilibrium)*(is_counterfactual*price_of_addictive_good_benchmark*(1+relative_price_change)+&
             (1-is_counterfactual)*price_of_addictive_good_benchmark))
             
-        real(8), parameter :: addiction_scalar_1=&
+        real(8) :: addiction_scalar_1=&
             raise_b*0.01+(1-raise_b)*&
             ((1-perceived_probability_lower)*3.7*10.d0**(-8)+perceived_probability_lower*2.2*10.d0**(-3))
             
@@ -633,13 +683,13 @@
         ! b_shifter; the elasticity of drug use with respect to housing access is
         ! carried by the recovery hazard instead.
         real(8), parameter :: rho_b_homeless=1.0
-        real(8), parameter :: addiction_scalar_2=b_sud_ratio*addiction_scalar_1
+        real(8) :: addiction_scalar_2=3.7*10.d0**(-8)
         
-        real(8) :: relative_share_of_housing_1=relative_share_of_housing_0*(1-relative_share_of_addiction_1)
-        real(8) :: relative_share_of_housing_2=relative_share_of_housing_0*(1-relative_share_of_addiction_2)
+        real(8) :: relative_share_of_housing_1=0
+        real(8) :: relative_share_of_housing_2=0
     
-        real(8) :: relative_share_of_consumption_1=(1-relative_share_of_housing_0)*(1-relative_share_of_addiction_1)
-        real(8) :: relative_share_of_consumption_2=(1-relative_share_of_housing_0)*(1-relative_share_of_addiction_2)
+        real(8) :: relative_share_of_consumption_1=0
+        real(8) :: relative_share_of_consumption_2=0
                 
         real(8) :: advantage_to_owning=0
         real(8) :: advantage_to_owning_adjuster=(1-calibrate_size_of_smallest_house_hhld_can_buy)*1*10.d0**(-1)
@@ -719,10 +769,9 @@
         ! calibrated in the second stage inside the Degenhardt range, so this is a
         ! starting value; what matters is that the units are now the same in the
         ! code and in the note.
-        real(8), parameter :: increased_risk_of_death_addicted=&
+        real(8) :: increased_risk_of_death_addicted=&
             have_increased_death_from_addiction*5.9+(1-have_increased_death_from_addiction)*size_of_penalty*5
-        real(8), parameter :: increased_risk_of_death_homeless_addicted=&
-            increased_risk_of_death_homeless+increased_risk_of_death_addicted
+        real(8) :: increased_risk_of_death_homeless_addicted=0
                             
         ! UNEMPLOYMENT INSURANCE IS NOW CERTAIN FOR THE FIRST YEAR OF A SPELL
         ! and pays nothing after it. This removes a parameter rather than a
@@ -742,7 +791,7 @@
             include_addiction*(/0,0/)
         
         real(8), parameter :: consumption_tax=0
-        real(8), parameter :: max_food_cost=&
+        real(8) :: max_food_cost=&
             ((1-perceived_probability_lower)*0.126+perceived_probability_lower*0.132)/(1+consumption_tax)
                                                                         
         real(8), dimension(0:have_two_rental_markets) :: convexity_of_rental_company=&
@@ -1008,35 +1057,26 @@
         real(8), parameter :: replacement_rate_ui=0.5
         real(8), parameter :: max_ui_as_perc_of_avg_inc=1
         real(8), parameter :: probability_becoming_employed=0.297404631
-        real(8), parameter :: probability_becoming_unemployed=&
+        real(8) :: probability_becoming_unemployed=&
             (1-perceived_probability_lower)*0.0155+perceived_probability_lower*0.0143
         
-        real(8), parameter :: multiple_of_probabilities_of_employment_if_addicted=&
+        real(8) :: multiple_of_probabilities_of_employment_if_addicted=&
             have_increased_unemployment_from_addiction*2.7+(1-have_increased_unemployment_from_addiction)*size_of_penalty*1.7
         real(8), dimension(0:include_addiction,0:include_addiction,&
             0:include_addiction+include_heavy_vs_light_use_transitions,1:2) :: &
             addiction_probabilities,addiction_probabilities_percieved
-        real(8), parameter :: probability_of_stopping_addiction=0.025
-        real(8), parameter :: probability_of_stopping_addiction_if_homeless=(real(1)/real(6))*probability_of_stopping_addiction
-        real(8), parameter :: probability_becoming_unemployed_if_addicted=&
-            max(min(probability_becoming_unemployed*multiple_of_probabilities_of_employment_if_addicted,1.d0),0.d0)
-        real(8), parameter :: probability_becoming_employed_if_addicted=&
-            max(min(probability_becoming_employed/multiple_of_probabilities_of_employment_if_addicted,1.d0),0.d0)
+        real(8) :: probability_of_stopping_addiction=0.025
+        real(8) :: mu_homeless=real(1)/real(6)
+        real(8) :: probability_of_stopping_addiction_if_homeless=(real(1)/real(6))*0.025
+        real(8) :: probability_becoming_unemployed_if_addicted=0
+        real(8) :: probability_becoming_employed_if_addicted=0
         
         real(8), dimension(0:include_vouchers,0:include_vouchers,0:include_vouchers,1:3) :: &
             voucher_probabilities,voucher_probabilities_benchmark
                     
-        real(8), parameter, dimension(0:2) :: probability_of_voucher_benchmark=&
-            (1-perceived_probability_lower)*&
-            (/real(probability_of_voucher_benchmark_used),&
-            min(real(probability_of_voucher_benchmark_used*increased_prob_of_voucher_if_homeless),1.0),&
-            min(real(probability_of_voucher_benchmark_used*increased_prob_of_voucher_if_homeless_and_addicted),1.0)/)+&
-            perceived_probability_lower*probability_of_voucher_benchmark_used*&
-            (/real(probability_of_voucher_benchmark_used),&
-            min(real(probability_of_voucher_benchmark_used*increased_prob_of_voucher_if_homeless),1.0),&
-            min(real(probability_of_voucher_benchmark_used*increased_prob_of_voucher_if_homeless_and_addicted),1.0)/)
-            
-        real(8), dimension(0:2) :: probability_of_voucher=probability_of_voucher_benchmark
+        real(8), dimension(0:2) :: probability_of_voucher_benchmark=0
+
+        real(8), dimension(0:2) :: probability_of_voucher=0
             
         ! The literally homeless figure from Abramson and Van Nieuwerburgh (2024),
         ! \$2,500 per household per month, and not the \$1,775 they blend across
@@ -18864,6 +18904,8 @@
             
         end do
         
+        call recompute_derived_parameters()
+
         call verify_index_map()
 
         call create_newborn_employment_probability()
@@ -18997,6 +19039,10 @@
             
         end if
             
+        ! Every quantity built from a calibrated parameter, rebuilt before the
+        ! hazards that read them.
+        call recompute_derived_parameters()
+
         ! the base is calibrated now, so the derived heavy user rate has to be
         ! recomputed here rather than only at declaration
         increased_probability_of_becoming_addicted_if_heavy_user=&
@@ -24334,6 +24380,85 @@
 
     end subroutine
     
+    subroutine recompute_derived_parameters()
+
+        ! EVERY QUANTITY DERIVED FROM A CALIBRATED ONE, REBUILT IN ONE PLACE.
+        !
+        ! Eleven parameters the note calls calibrated were compile time
+        ! constants. Freeing them is only half the job: a dozen more quantities
+        ! were initialised FROM them in their declarations, which in Fortran
+        ! happens once, so a freed parameter would move and everything computed
+        ! from it would silently keep the starting value.
+        !
+        ! So the derived ones now start at zero and are built here, and this is
+        ! called at initialisation and again after every calibration update.
+        ! Anything derived from a calibrated parameter belongs in this routine
+        ! and nowhere else.
+
+        use Global_Vars
+
+        implicit none
+
+        ! The Cobb-Douglas weights. With change_utility_for_addicts and
+        ! size_of_penalty both zero the disorder does not move them, so the two
+        ! versions agree, which optimize_frac_spent_on_addiciton checks.
+        relative_share_of_addiction_2=&
+            change_utility_for_addicts*((1-perceived_probability_lower)*0.45+&
+            perceived_probability_lower*0.44)+&
+            (1-change_utility_for_addicts)*&
+            (size_of_penalty*((0.39-relative_share_of_addiction_1))+relative_share_of_addiction_1)
+
+        relative_share_of_addiction=relative_share_of_addiction_1
+
+        relative_share_of_housing_1=relative_share_of_housing_0*(1-relative_share_of_addiction_1)
+        relative_share_of_housing_2=relative_share_of_housing_0*(1-relative_share_of_addiction_2)
+
+        relative_share_of_consumption_1=(1-relative_share_of_housing_0)*(1-relative_share_of_addiction_1)
+        relative_share_of_consumption_2=(1-relative_share_of_housing_0)*(1-relative_share_of_addiction_2)
+
+        ! The Stone-Geary shifter. b is constant across every state and choice,
+        ! so b_sud_ratio is one and the two are the same number; the line is kept
+        ! so a robustness run can separate them in one place.
+        addiction_scalar_2=b_sud_ratio*addiction_scalar_1
+
+        ! Recovery on the street, as a multiple of recovery while housed.
+        probability_of_stopping_addiction_if_homeless=&
+            mu_homeless*probability_of_stopping_addiction
+
+        ! The employment margins with the disorder.
+        probability_becoming_unemployed_if_addicted=&
+            max(min(probability_becoming_unemployed*&
+            multiple_of_probabilities_of_employment_if_addicted,1.d0),0.d0)
+
+        probability_becoming_employed_if_addicted=&
+            max(min(probability_becoming_employed/&
+            multiple_of_probabilities_of_employment_if_addicted,1.d0),0.d0)
+
+        ! Mortality with both. The note multiplies the two hazards; the code used
+        ! to add the two excesses, which is not the same thing once either is
+        ! large. See the age varying block for the rest of that repair.
+        increased_risk_of_death_homeless_addicted=&
+            (1+increased_risk_of_death_homeless)*(1+increased_risk_of_death_addicted)-1
+
+        ! The voucher lottery.
+        probability_of_voucher_benchmark_used_1=probability_of_voucher_benchmark_used
+
+        probability_of_voucher_benchmark=&
+            (1-perceived_probability_lower)*&
+            (/real(probability_of_voucher_benchmark_used,8),&
+            min(real(probability_of_voucher_benchmark_used*increased_prob_of_voucher_if_homeless,8),1.d0),&
+            min(real(probability_of_voucher_benchmark_used*&
+            increased_prob_of_voucher_if_homeless_and_addicted,8),1.d0)/)+&
+            perceived_probability_lower*probability_of_voucher_benchmark_used*&
+            (/real(probability_of_voucher_benchmark_used,8),&
+            min(real(probability_of_voucher_benchmark_used*increased_prob_of_voucher_if_homeless,8),1.d0),&
+            min(real(probability_of_voucher_benchmark_used*&
+            increased_prob_of_voucher_if_homeless_and_addicted,8),1.d0)/)
+
+        probability_of_voucher=probability_of_voucher_benchmark
+
+    end subroutine
+
     subroutine clear_drug_market(time_period)
 
         ! See the block at drug_supply_elasticity for what this is and why the
@@ -24695,6 +24820,13 @@
         distance_probability_of_becoming_addicted=1
         distance_lambda_addiction=1
         distance_utility_cost_of_treatment=1
+        distance_relative_share_of_addiction_1=1
+        distance_addiction_scalar=1
+        distance_value_of_life=1
+        distance_max_food_cost=1
+        distance_voucher_probability=1
+        distance_separation_rate=1
+        distance_employment_multiplier=1
         distance_rent_to_price=1
         distance_smallest_house_size=1
         distance_rental_market=1
@@ -24885,6 +25017,13 @@
              stopping_rule_probability_of_becoming_addicted) .OR. &
             (distance_lambda_addiction>stopping_rule_lambda_addiction) .OR. &
             (distance_drug_market>stopping_rule_drug_market) .OR. &
+            (distance_relative_share_of_addiction_1>stopping_rule_relative_share_of_addiction_1) .OR. &
+            (distance_addiction_scalar>stopping_rule_addiction_scalar) .OR. &
+            (distance_value_of_life>stopping_rule_value_of_life) .OR. &
+            (distance_max_food_cost>stopping_rule_max_food_cost) .OR. &
+            (distance_voucher_probability>stopping_rule_voucher_probability) .OR. &
+            (distance_separation_rate>stopping_rule_separation_rate) .OR. &
+            (distance_employment_multiplier>stopping_rule_employment_multiplier) .OR. &
             (distance_utility_cost_of_treatment>stopping_rule_utility_cost_of_treatment) .OR. &
             (distance_rent_to_price>stopping_rule_rent_to_price) .OR. &
             (distance_smallest_house_size>stopping_rule_smallest_house_size) .OR. &
@@ -25007,6 +25146,13 @@
                 distance_probability_of_becoming_addicted=0
                 distance_lambda_addiction=0
                 distance_utility_cost_of_treatment=0
+                distance_relative_share_of_addiction_1=0
+                distance_addiction_scalar=0
+                distance_value_of_life=0
+                distance_max_food_cost=0
+                distance_voucher_probability=0
+                distance_separation_rate=0
+                distance_employment_multiplier=0
                 distance_rent_to_price=0
                 distance_smallest_house_size=0
                 distance_advantage_to_owning=0
@@ -25546,6 +25692,108 @@
                         distance_utility_cost_of_treatment=0
 
                     end if
+
+                    ! THE ELEVEN, FREED AND BRACKETED.
+                    !
+                    ! Each on the moment its row in the note's internal table
+                    ! names. Signs are stated rather than left to be inferred,
+                    ! because a wrong sign here shows up as a moment walking
+                    ! away rather than as an error.
+                    !
+                    ! theta, the weight on drugs, on drug spending over income
+                    ! given a SUD. More weight, more spending, so the update
+                    ! adds the gap the other way round: subtract model minus
+                    ! data.
+                    write(*,*) "relative_share_of_addiction_1=", relative_share_of_addiction_1
+                    relative_share_of_addiction_1=max(min(relative_share_of_addiction_1-&
+                        relative_share_of_addiction_adj*&
+                        (model_experimenters_total_drug_spending_to_total_income(1)/&
+                        max(model_experimenters_total_income(1),10.d0**(-12))-&
+                        drug_spending_share_data),0.9d0),10.d0**(-4))
+                    distance_relative_share_of_addiction_1=&
+                        abs(model_experimenters_total_drug_spending_to_total_income(1)/&
+                        max(model_experimenters_total_income(1),10.d0**(-12))-drug_spending_share_data)
+                    write(*,*) "relative_share_of_addiction_1=", relative_share_of_addiction_1
+                    write(*,*) "distance_relative_share_of_addiction_1=", distance_relative_share_of_addiction_1
+
+                    ! b, the Stone-Geary endowment, on participation. A LARGER b
+                    ! deters use, since the marginal value of the first unit is
+                    ! theta/b, so participation FALLS in b and the update adds
+                    ! the gap. Multiplicative, because b is of order 1e-8 and an
+                    ! additive step in it is meaningless.
+                    write(*,*) "addiction_scalar_1=", addiction_scalar_1
+                    if (model_exprimenters(1)>0) then
+                        addiction_scalar_1=max(min(addiction_scalar_1*&
+                            (1+addiction_scalar_adjuster*&
+                            (model_exprimenters(1)-participation_rate_data)/&
+                            max(participation_rate_data,10.d0**(-12))),&
+                            10*addiction_scalar_1),addiction_scalar_1/10)
+                    end if
+                    distance_addiction_scalar=abs(model_exprimenters(1)-participation_rate_data)
+                    write(*,*) "addiction_scalar_1=", addiction_scalar_1
+                    write(*,*) "distance_addiction_scalar=", distance_addiction_scalar
+
+                    ! aleph, on the model implied value of a statistical life.
+                    ! A larger aleph makes life worth more, so the VSL rises in
+                    ! it and the update subtracts the gap.
+                    write(*,*) "model_value_of_life(1)=", model_value_of_life(1)
+                    value_of_life=max(min(value_of_life-value_of_life_adjuster*&
+                        (model_value_of_life(1)-vsl_data),10.d0**(4)),10.d0**(-2))
+                    distance_value_of_life=abs(model_value_of_life(1)-vsl_data)
+                    write(*,*) "value_of_life=", value_of_life
+                    write(*,*) "distance_value_of_life=", distance_value_of_life
+
+                    ! cbar, the food stamp floor, on food stamps over labour
+                    ! income. A higher floor pays more out, so the share rises
+                    ! in it and the update subtracts the gap.
+                    if (model_average_labour_income(1)>0) then
+                        write(*,*) "max_food_cost=", max_food_cost
+                        max_food_cost=max(min(max_food_cost-max_food_cost_adjuster*&
+                            (govt_spending_on_food_stamps(1)/model_average_labour_income(1)-&
+                            food_stamps_share_data),1.d0),10.d0**(-4))
+                        distance_max_food_cost=&
+                            abs(govt_spending_on_food_stamps(1)/model_average_labour_income(1)-food_stamps_share_data)
+                        write(*,*) "max_food_cost=", max_food_cost
+                        write(*,*) "distance_max_food_cost=", distance_max_food_cost
+                    end if
+
+                    ! pi_V, the voucher lottery, on recipients over the income
+                    ! eligible. Coverage rises in it, so subtract the gap.
+                    write(*,*) "probability_of_voucher_benchmark_used=", probability_of_voucher_benchmark_used
+                    probability_of_voucher_benchmark_used=&
+                        max(min(probability_of_voucher_benchmark_used-voucher_probability_adjuster*&
+                        (model_eligibles_getting_voucher(1)-voucher_coverage_data),1.d0),10.d0**(-5))
+                    distance_voucher_probability=&
+                        abs(model_eligibles_getting_voucher(1)-voucher_coverage_data)
+                    write(*,*) "probability_of_voucher_benchmark_used=", probability_of_voucher_benchmark_used
+                    write(*,*) "distance_voucher_probability=", distance_voucher_probability
+
+                    ! bar pi^eu, the separation rate, on the unemployment rate.
+                    ! Unemployment rises in it, so subtract the gap.
+                    write(*,*) "probability_becoming_unemployed=", probability_becoming_unemployed
+                    probability_becoming_unemployed=&
+                        max(min(probability_becoming_unemployed-separation_rate_adjuster*&
+                        (model_fraction_unemployed(1)-unemployment_rate_data),1.d0),10.d0**(-6))
+                    distance_separation_rate=abs(model_fraction_unemployed(1)-unemployment_rate_data)
+                    write(*,*) "probability_becoming_unemployed=", probability_becoming_unemployed
+                    write(*,*) "distance_separation_rate=", distance_separation_rate
+
+                    ! kappa_ued, the employment multiplier for the SUD, on the
+                    ! unemployment rate GIVEN a SUD. It multiplies the
+                    ! separation rate and divides the job finding rate, so
+                    ! unemployment among those with the disorder rises in it.
+                    write(*,*) "multiple_of_probabilities_of_employment_if_addicted=", &
+                        multiple_of_probabilities_of_employment_if_addicted
+                    multiple_of_probabilities_of_employment_if_addicted=&
+                        max(min(multiple_of_probabilities_of_employment_if_addicted-&
+                        employment_multiplier_adjuster*&
+                        (model_fraction_addicted_and_unemployed(1)-unemployment_rate_sud_data),&
+                        20.d0),1.d0)
+                    distance_employment_multiplier=&
+                        abs(model_fraction_addicted_and_unemployed(1)-unemployment_rate_sud_data)
+                    write(*,*) "multiple_of_probabilities_of_employment_if_addicted=", &
+                        multiple_of_probabilities_of_employment_if_addicted
+                    write(*,*) "distance_employment_multiplier=", distance_employment_multiplier
 
                     write(*,*) "model_fraction_homeless(1)=", model_fraction_homeless(1)
                     write(*,*) "size_homelessness=", size_homelessness

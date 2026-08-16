@@ -885,3 +885,49 @@ that pins it at 0.014. It is fixed at 0.0137 and never moved.
 `theta` and `b` are the two parameters that decide who uses and how much, and
 between them they carry the participation rate and the drug spending share. Both
 are compile time constants.
+
+---
+
+# The switch audit
+
+Every compile time switch read from the source. Two were wrong, and one of those
+is the largest single finding in this file.
+
+## provide_vouchers was 0, in BOTH arms
+
+```
+integer, parameter :: provide_vouchers = is_counterfactual*0 + (1-is_counterfactual)*0
+```
+
+Every branch is zero, and all eight calls to `calculate_housing_voucher` are
+guarded by `if (provide_vouchers==1)`. **No household in any run ever received a
+housing voucher.**
+
+The written model has `Vch` in the budget constraint, `eta` in the state, `pi_V`
+as the policy dial, and the whole Housing First against Treatment First
+comparison resting on who gets one. None of it was reachable. `include_vouchers`
+being 1 is what makes this hard to see: the voucher STATE exists and is carried
+through every array, so the machinery looks present. Only the payment is off.
+
+**Now 1 in both arms.** The two policies differ in the sobriety condition,
+`voucher_conditional_on_clean`, not in whether vouchers exist at all.
+
+## Switches that are right, recorded so they are not re-litigated
+
+| switch | value | why it is right |
+|---|---|---|
+| `include_bequest_motive` | 0 | the note's budget says bequests go to the government, so there is no motive |
+| `include_bequests` | 1 | estates are collected and redistributed |
+| `newborns_inherit_addiction` | 0 | newborns enter clean, per the newborn rule |
+| `include_heavy_vs_light_use_transitions` | 0 | collapsed on purpose; the smooth hazard replaces the step |
+| `change_utility_for_addicts`, `raise_b`, `size_of_penalty` | 0 | the weights do not move with the disorder |
+| `track_renters_housing` | 0 | last period's dwelling is not a state without owning |
+| `include_homeownership` | 0 | owning is out of this revision |
+| `compute_welfare_every_loop` | 0 | welfare is not a calibration target |
+| `verify_asset_search` | 0 | production value; flip it for the verification run |
+| `restrict_a_prime` | 0 | superseded by the warm start, pending consolidation |
+
+## Still to switch on
+
+`number_of_smi_states` is 1. Turning it to 2 is what starts serious mental
+illness, and the content behind it does not exist yet.
