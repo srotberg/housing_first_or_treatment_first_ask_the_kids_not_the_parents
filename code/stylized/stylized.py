@@ -140,9 +140,19 @@ class P:
     # SHARES THAT SUM TO ONE. The weight on consumption is 1-gam-th, so gam is
     # the housing budget share proper rather than gam/(1+gam+th). gam is set to
     # 0.25 of non drug spending, which is the share in the data.
-    th    = 0.11      # weight on drug use
+    # THETA IS 0.20 AND NOT 0.11, and the two period model is what allows it. In
+    # the three period model raising theta bought a drug spending share at the
+    # cost of the income gradient: users stopped being poor. Here the mortality
+    # channel is strong enough to hold the gradient while theta rises, and the
+    # spending share goes from 1.9 per cent to 4.9. The ceiling is real and it is
+    # close: theta = 0.22 still passes, theta = 0.24 does not, and by 0.28 users
+    # are RICHER than average and the model has changed regime. 0.20 is chosen
+    # over 0.22 because it buys the same spending share with room to spare.
+    # See scan_theta.py, which screens the channel decomposition before it reads
+    # the spending share.
+    th    = 0.20      # weight on drug use
     b     = 0.009     # Stone Geary subsistence; th/b is the pull of the first unit
-    gam   = 0.2225    # weight on housing = 0.25 * (1 - th)
+    gam   = 0.20      # weight on housing = 0.25 * (1 - th)
     # A PERIOD IS THIRTY YEARS, so the discount factor and the interest rate are
     # the annual values COMPOUNDED, not the annual values used raw. The interest
     # rate is set to 1/beta so that beta*R = 1 and nothing in the results comes
@@ -159,6 +169,30 @@ class P:
     # income gradient in who uses and, by lowering what a poor household stands
     # to lose, raises how much a user uses. Both of those move the model towards
     # the data at once.
+    # THE ANNUAL FACTOR IS 0.995, so a thirty year period discounts at 0.86. It
+    # is high on purpose: the consequences of using arrive a FULL THIRTY YEARS
+    # after the decision, and at an annual 0.99 they would arrive weighted 0.74,
+    # which asks the household to weigh a distant death against an immediate
+    # pleasure with the scales already tipped by impatience. The interest rate is
+    # 1/beta so that beta*R = 1 and nothing comes from a wedge between the two.
+    #
+    # BETA = 1 WAS TRIED AND REJECTED, and it is worth recording why, because the
+    # argument for it is a good one: over a thirty year gap, why discount at all?
+    # Two things happen, and they run the wrong way.
+    #
+    #   The drug spending share FALLS, from 4.8 per cent to 3.2. A household that
+    #   weighs the thirty year consequence in full finds the SUD more costly and
+    #   uses less, so patience and the spending share pull against each other in
+    #   exactly the way mortality and the spending share do.
+    #
+    #   The minimum ex ante value of life goes NEGATIVE, to -0.02. The VSL pins
+    #   the discounted continuation beta * E W2, so a larger beta buys a smaller
+    #   aleph, and aleph is the part of the continuation that does not shrink
+    #   when consumption does. Shrink it far enough and the poorest household
+    #   prefers death, which inverts the mechanism the model rests on.
+    #
+    # 0.995 is as patient as the model can be while every household still values
+    # its own life.
     beta_ann = 0.995
     beta  = 0.995 ** 30
     R     = 1.0 / (0.995 ** 30)
@@ -173,8 +207,27 @@ class P:
     aleph = 4.00      # flow value of being alive. CALIBRATED
 
     # the disorder
-    lam   = 25.0      # addiction hazard per unit of use. CALIBRATED
-    kap   = 0.45      # MORTALITY: the disorder kills you
+    lam   = 25.0      # SUD hazard per unit of use. CALIBRATED
+    # MORTALITY: the SUD kills you. kap is the proportional fall in survival over
+    # a THIRTY YEAR period, and it is derived from the annual mortality rate
+    # ratio rather than assumed, because a period this long is not forgiving
+    # about the difference. The full model multiplies the ANNUAL death
+    # probability by 6.9, so the right construction compounds that annual hazard
+    # over thirty years:
+    #
+    #     annual survival, clean       p_a  = phi0 ** (1/30)      = 0.99686
+    #     annual survival with a SUD   p_d  = 1 - smr*(1 - p_a)   = 0.97834
+    #     kap                               = 1 - p_d**30 / phi0  = 0.4326
+    #
+    # Applying the 6.9 to the THIRTY YEAR death probability instead would give
+    # kap = 0.58, which is the same arithmetic error as using an annual discount
+    # factor for a thirty year period. The number it replaces, a flat 0.45, was
+    # carried over from the twenty year version, where it implied a rate ratio of
+    # 9.2; at thirty years it implies 7.4. Both sit inside Hjorthoj et al.'s
+    # range, so this is a correction of construction rather than of magnitude,
+    # and it moves the penalty DOWN very slightly.
+    smr_d = 6.9       # mortality rate ratio with a SUD. Hjorthoj et al. (2023)
+    kap   = 1.0 - (1.0 - 6.9 * (1.0 - 0.91 ** (1.0 / 30.0))) ** 30 / 0.91
     u1    = 0.1625    # RESOURCE: the disorder costs you a job. Measured.
 
     # NO RECOVERY PARAMETER. rho needed a period to recover INTO and there is

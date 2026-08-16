@@ -1,11 +1,13 @@
 """
-A rough calibration of the stylized model. Four parameters, four targets.
+A rough calibration of the stylized two period model. Four parameters, four
+targets.
 
-    b       drug participation rate                    5.13 %
+    aleph   value of a statistical life                80 annual incomes
     h_hl    homelessness rate                          0.399 %
-    lam     share of users who acquire the disorder    33.2 %
+    lam     share of users who acquire a SUD           33.2 %
+    b       drug participation rate                    5.13 %
 
-Three, not four. Rent used to be calibrated to the aggregate housing share and
+Rent is NOT among them. It used to be calibrated to the aggregate housing share and
 that was a mistake: it doubled rent, because most households here take the small
 unit, so a fifth of them could not afford any home while unemployed and
 homelessness came out three times its target. Rent is now SET so the standard
@@ -18,10 +20,10 @@ to be defended, there is no validation table, and the magnitudes in the paper
 come from the full model.
 
 Everything else is set: the discount factor, the interest rate, survival, the
-two rental sizes, the housing weight at 0.25, the unemployment rate given the disorder (measured in
-NSDUH 2024, ages 26 and above, weighted), the replacement rate, the consumption
-floor, recovery and its multiplier on the street, the two mortality multipliers,
-the wage penalty, and the voucher parameters.
+two rental sizes, the housing weight at 0.25, the unemployment rate given a SUD
+(measured in NSDUH 2024, ages 26 and above, weighted), the replacement rate, the
+mortality multiplier, and the voucher parameters. Recovery is not on the list any
+more: period 2 is terminal, so rho has nothing to name.
 
 BRACKETING, NOT A JOINT FIT. With no preference heterogeneity the aggregate is
 a cliff in b: participation is one below a narrow band and zero above it. A
@@ -80,6 +82,20 @@ TARGET = dict(part=0.0513, homeless=0.00399, prog=0.332, vsl=80.0,
 # converged. Participation is the moment the model exists to reproduce, so b
 # runs last. With b first, participation settled at 3.7 per cent against a
 # target of 5.13 and stayed there however many sweeps were run.
+# THE TWO PERIOD RESTRUCTURE WAS DONE FOR THE DRUG SPENDING SHARE AND DID NOT
+# DELIVER IT. The share went from 1.76 per cent in the three period model to 1.91
+# here against a target of 11, and the reason is worth recording because it is
+# structural rather than a matter of tuning. What a household loses by acquiring
+# the SUD is, to a first approximation, kap * phi0 * (the discounted continuation),
+# and the VALUE OF A STATISTICAL LIFE pins the discounted continuation directly:
+# beta * E W2 / u_c * years = 80. Cutting the horizon from two continuation
+# periods to one shortens the continuation, but it also raises the share of it
+# that mortality destroys from the tail to ALL of it, and with aleph refitted to
+# the same VSL the two effects very nearly cancel. Raising the annual discount
+# factor from 0.99 to 0.995 is the same story: it lowers the aleph needed for the
+# VSL, which steepens the income gradient, and leaves the spending share where it
+# was.
+#
 # THETA IS SET, NOT CALIBRATED, and the reason is worth recording because the
 # obvious alternative was tried and fails. The natural target is the 11 per cent
 # of income that users who are not addicted spend on drugs, which is what the
@@ -259,6 +275,7 @@ if __name__ == '__main__':
     import json
     par = calibrate()
     report(par)
-    json.dump({n: getattr(par, n) for n, _, _, _ in PAIRS} | {'gam': par.gam},
+    json.dump({n: getattr(par, n) for n, _, _, _ in PAIRS}
+              | {'th': par.th, 'gam': par.gam},
               open('calibrated.json', 'w'), indent=1)
     print('\nwrote calibrated.json')

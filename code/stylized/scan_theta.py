@@ -46,7 +46,7 @@ from calibrate import calibrate, stats, YG
 from run import _scaled
 
 
-def point(th, sweeps=3):
+def point(th, sweeps=4):
     t = time.time()
     par = with_(P(), th=th, gam=0.25 * (1.0 - th))
     par = calibrate(par, sweeps=sweeps, verbose=False)

@@ -1,35 +1,45 @@
+% The long form of this table, with the full derivation and the history
+% behind every value, is kept in writing/old/tab_full_internal_long.tex.
+% What prints here is the parameter, what it means, where the value comes
+% from, and the value.
+
 \scriptsize
-\begin{longtable}{@{}lL{3.6cm}L{7.4cm}@{}}
+\begin{longtable}{@{}cL{3.4cm}L{3.7cm}L{2.9cm}rrr@{}}
 \caption{Internally calibrated parameters of the quantitative model}\label{tab:fint}\\
 \toprule
-Symbol & Meaning & Value, source or target \\
+Parameter & Description & Target moment & Source & Data & Model & Value \\
 \midrule
 \endfirsthead
 \toprule
-Symbol & Meaning & Value, source or target \\
+Parameter & Description & Target moment & Source & Data & Model & Value \\
 \midrule
 \endhead
-$\omega_{\ell}$ & weight on leisure & $\rightarrow$ average hours worked, 40\% of time. Guvenen et al.\ (2023)  \\
-$\theta_h$ & Cobb--Douglas weight on housing & $\rightarrow$ aggregate housing cost / income, 21.2\%. SCF 2022, ages 26 to 85, all households, owner housing at imputed rent; {data/scf\_housing\_burden.py}  \\
-$\theta_v$ & Cobb--Douglas weight on drugs & $\rightarrow$ drug spending / income given SUD, 44\%. Carried over from the submitted paper; its construction must be stated explicitly in the appendix (R1 2e)  \\
-$b_0$ & Stone--Geary shifter, clean & $\rightarrow$ drug participation, 5.13\%. NSDUH 2024 microdata, ages 26+; {data/nsduh\_gradients.py}  \\
-$b_1$ & Stone--Geary shifter, SUD & {$\rightarrow$ abstinence rate among homeless adults with SUD, 18.7\%. Milby et al.\ (2005), NO-HOUSING arm: 4.48 consecutive weeks abstinent out of 24. $b_1$ governs how costly abstention is once a household already has SUD, so one arm of the trial pins the level and the contrast between arms... } \\
-$\rho_m$ & $b$ multiplier, mental illness & $\rightarrow$ SUD rate given SMI, 9.75\%. NSDUH 2023 detailed tables, ages 26+, by Bayes on Tables 6.13B, 6.4B and 5.10B  \\
-$\aleph$ & flow value of being alive & {$\rightarrow$ {model implied VSL, \$7.5m} (Viscusi and Aldy 2003; EPA 2010). It used to target the SUD income ratio, which pins $\aleph$'s effect on WHO uses but not its LEVEL, and at the resulting level 64.6\% of the population had $V<0$, i.e.\ preferred death, which turns the mortality cost... } \\
-$\bar\tau^{u}$ & utility cost of treatment & $\rightarrow$ treatment take up given SUD, $\approx$24\%. NSDUH 2023: about a quarter of people with a past-year SUD received any substance use treatment. {Verify against the detailed tables}  \\
-$\beta$ & discount factor & $\rightarrow$ wealth / GDP $=3$. BEA fixed assets against GDP; the standard US private-capital-to-output ratio  \\
-$h_{\text{HL}}$ & service flow of homelessness & $\rightarrow$ homelessness rate, {0.399\%}. {HUD PIT 2023, converted to {households}: 467{,}020 homeless individuals, one household each, plus 57{,}563 homeless family households, against 131{,}332{,}360 occupied units. The model's agent is a household, so the person rate of 0.195\% is the wrong... } \\
-$\underline h$ & smallest rental size & $\rightarrow$ share with housing cost $>50\%$ of income, 17.49\%. SCF 2022; {data/scf\_housing\_burden.py}  \\
-$\varsigma$ & geometric spread of rental sizes & $\rightarrow$ share with housing cost $>30\%$ of income, 40.62\% (SCF 2022). {{Data now in hand} for the better target: ACS B25042 ({Tenure by Bedrooms}, occupied units, 2023, $N=131{,}332{,}360$) gives 13.21\% / 24.12\% / 62.67\% across $\{0,1\}$, $\{2\}$, $\{3+\}$ bedrooms. All households, not... } \\
-$\underline c$ & food-stamp consumption floor & $\rightarrow$ food stamps / labour income, 0.42\%. USDA Food and Nutrition Service, SNAP outlays FY2023, against GDP  \\
-$\pi_V$ & voucher lottery probability & $\rightarrow$ voucher recipients / income-eligible, 26.6\%. HUD Picture of Subsidized Households against the income-eligible renter population  \\
-$\bar\pi^{eu}$ & job separation & $\rightarrow$ unemployment rate, 4.9\%. BLS, ages 25+, average over the recent expansion  \\
-$\kappa_{ued}$ & employment multiplier, SUD & $\rightarrow$ unemployment rate given SUD, {{16.25\%}}. {{Corrected, and the previous figure's stated source was wrong.} The note attributed 26.9\% to a tabulation in {data/nsduh\_gradients.py}; that script contains no employment variable and cannot have produced it. Measured now from the... } \\
-$\kappa_{uem}$ & employment multiplier, SMI & $\rightarrow$ unemployment rate given SMI, 7.1\%. NSDUH Table 6.5B: SMI prevalence 8.9\% among the unemployed against 5.1\% among the full-time employed, inverted by Bayes  \\
-$\rho_m$ & SMI productivity penalty & $\rightarrow$ homeless income / average, 19.1\%. Meyer et al.\ (2025), homeless population linked to administrative earnings records  \\
-$\pi_d$ & addiction hazard given any use & $\rightarrow$ SUD rate, 3.68\%. NSDUH 2024 microdata, ages 26+  \\
-$\mu_H$ & recovery multiplier, homeless & $\rightarrow$ drug use disorder share of the homeless, 21.7\%. Gutwinski et al.\ (2021), {PLOS Medicine}, 39 pooled studies. Note this is the DRUG figure; the submitted paper's 37\% is their ALCOHOL figure  \\
-$p_m$ & SMI prevalence & $\rightarrow$ 5.5\%, NSDUH 2023, adults. A target rather than a parameter now, since onset varies with SUD  \\
-$\zeta_{DI}$ & disability coverage given SMI & $\rightarrow$ SMI share of the homeless, 25\%. Gutwinski et al.\ (2021): 12.4\% schizophrenia-spectrum plus 12.6\% major depression. This is \.{I}mrohoro\u{g}lu, Zhao's own identifying margin ($\zeta_{DI}$ in their notation)  \\
+$\omega_{\ell}$ & Weight on leisure & Average hours worked & Guvenen et al.\ (2023) & 40\% & \textemdash & \textemdash \\
+$\theta_h$ & Cobb-Douglas weight on housing & Aggregate housing cost over income & SCF 2022 & 21.2\% & \textemdash & \textemdash \\
+$\theta_v$ & Cobb-Douglas weight on drugs & Drug spending over income given a SUD & NSDUH and ADAM & 44\% & \textemdash & \textemdash \\
+$b_0$ & Stone-Geary shifter, clean & Drug participation rate & NSDUH 2024, ages 26+ & 5.13\% & \textemdash & \textemdash \\
+$b_1$ & Stone-Geary shifter, with a SUD & Abstinence among homeless adults with a SUD & Milby et al.\ (2005), no housing arm & 18.7\% & \textemdash & \textemdash \\
+$\rho^b_m$ & Shifter multiplier, mental illness & SUD rate given mental illness & NSDUH 2023 & 9.75\% & \textemdash & \textemdash \\
+$\rho^b_H$ & Shifter multiplier, homelessness & Housed against unhoused abstinence & Milby et al.\ (2005) & 1.473 & \textemdash & \textemdash \\
+$\aleph$ & Flow value of being alive & Model implied value of a statistical life & Viscusi and Aldy (2003) & \$7.5m & \textemdash & \textemdash \\
+$\bar\tau^{u}$ & Utility cost of treatment & Treatment take up given a SUD & NSDUH 2023 & 24\% & \textemdash & \textemdash \\
+$\beta$ & Discount factor & Wealth over output & BEA fixed assets against GDP & 3.0 & \textemdash & \textemdash \\
+$h_{\text{HL}}$ & Service flow of homelessness & Homelessness rate & HUD point in time 2023, households & 0.399\% & \textemdash & \textemdash \\
+$\underline h$ & Smallest rental size & Share with housing costs above half of income & SCF 2022 & 17.49\% & \textemdash & \textemdash \\
+$\varsigma$ & Geometric spread of the rental sizes & Share with housing costs above $30$ per cent of income & SCF 2022 & 40.62\% & \textemdash & \textemdash \\
+$\underline c$ & Food stamp consumption floor & Food stamps over labour income & USDA, SNAP outlays & 0.42\% & \textemdash & \textemdash \\
+$\pi_V$ & Voucher lottery probability & Recipients over the income eligible & HUD Picture of Subsidized Households & 26.6\% & \textemdash & \textemdash \\
+$\bar\pi^{eu}$ & Job separation rate & Unemployment rate & BLS, ages 25+ & 4.9\% & \textemdash & \textemdash \\
+$\kappa_{ued}$ & Employment multiplier, SUD & Unemployment rate given a SUD & NSDUH 2024, ages 26+ & 16.25\% & \textemdash & \textemdash \\
+$\kappa_{uem}$ & Employment multiplier, mental illness & Unemployment rate given mental illness & NSDUH, by Bayes & 7.1\% & \textemdash & \textemdash \\
+$\rho_m$ & Productivity penalty of mental illness & Homeless income over average & Meyer et al.\ (2025) & 19.1\% & \textemdash & \textemdash \\
+$\lambda$ & SUD hazard per unit of use & SUD rate & NSDUH 2024, ages 26+ & 3.68\% & \textemdash & \textemdash \\
+$\kappa_{\phi d}$ & Mortality multiplier, SUD & Drug price participation elasticity & Saffer and Chaloupka (1999) & $-0.63$ & \textemdash & \textemdash \\
+$\mu_H$ & Recovery multiplier, homeless & Drug use disorder share of the homeless & Gutwinski et al.\ (2021) & 21.7\% & \textemdash & \textemdash \\
+$p_m$ & Prevalence of serious mental illness & Share of adults with serious mental illness & NSDUH 2023 & 5.5\% & \textemdash & \textemdash \\
+$\zeta_{DI}$ & Disability coverage given mental illness & Mental illness share of the homeless & Gutwinski et al.\ (2021) & 25\% & \textemdash & \textemdash \\
+$\omega$ & Weight on the child & Fall in drug use with a child present & NSDUH 2024, reweighted & 15.5\% & \textemdash & \textemdash \\
+$\delta_d$ & Transmission penalty, parental SUD & Child's SUD rate against a clean parent's & McGovern et al.\ (2023) & 2 to 4 & \textemdash & \textemdash \\
+$\delta_h$ & Transmission penalty, parental homelessness & Set, not calibrated & Chetty, Hendren and Katz (2016) & 0.31 & \textemdash & \textemdash \\
 \bottomrule
 \end{longtable}

@@ -33,10 +33,16 @@ def numbers(base):
     out['u1'] = f'{base.u1:.4f}'
     out['phi0'] = f'{base.phi0:.2f}'
     out['phi1'] = f'{base.phi0 * (1.0 - base.kap):.2f}'
+    out['kap'] = f'{base.kap:.2f}'
+    out['dth0'] = f'{100*(1.0 - base.phi0):.0f}'
+    out['dth1'] = f'{100*(1.0 - base.phi0*(1.0 - base.kap)):.0f}'
+    out['beta_ann'] = f'{base.beta_ann:.3f}'
     out['vsl_t'] = f'{TARGET["vsl"]:.0f}'
     mb = stats(base)
     out['dshare_m'] = f'{100*mb["dshare"]:.2f}'
     out['sudhl'] = f'{100*mb["sud_of_homeless"]:.0f}'
+    out['r_base'] = f'{mb["r_use"]:.2f}'
+    out['hshare_m'] = f'{100*mb["housing_share"]:.0f}'
     out['th'] = f'{base.th:.2f}'
     out['gam'] = f'{base.gam:.3f}'
     out['lam'] = f'{base.lam:.0f}'
@@ -47,6 +53,7 @@ def numbers(base):
     # the two channels, both ends
     out['r_off'] = f'{stats(_scaled(base, "mortality", 0.0))["r_use"]:.2f}'
     out['r_mort'] = f'{stats(_scaled(base, "mortality", 1.0))["r_use"]:.2f}'
+    out['r_mort_half'] = f'{stats(_scaled(base, "mortality", 0.5))["r_use"]:.2f}'
     out['r_unemp'] = f'{stats(_scaled(base, "unemployment", 1.0))["r_use"]:.2f}'
 
     # the policy experiment
