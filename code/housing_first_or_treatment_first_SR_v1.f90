@@ -1770,6 +1770,7 @@
             model_mass_smi,model_smi_and_homeless,model_smi_and_employed,&
             model_homeless_labour_income,model_all_labour_income,&
             model_smi_share_of_homeless,model_employment_rate_given_smi,&
+            model_mass_homeless_raw,model_mass_total_raw,&
             model_homeless_income_share,model_employed_share_of_homeless,&
             model_fraction_spent_on_addiction,model_fraction_spent_on_addiction_experimenters,&
             model_fraction_addicted_homeless_no_vouchers,model_average_spent_on_addiction_by_addicted,&
@@ -2089,6 +2090,14 @@
         !$omp threadprivate(drug_risk_housing_index)
         !$omp threadprivate(drug_risk_ownership)
         !$omp threadprivate(largest_possible_financial_index)
+        ! THE ASSET LOTTERY, carried from the a' search to internal_computations.
+        ! Threadprivate for the same reason the vectors it is built from are.
+        real(8) :: interp_frac_1=0
+        integer :: interp_neighbour_1=0
+        integer, parameter :: interpolate_a_prime=1
+        !$omp threadprivate(interp_frac_1)
+        !$omp threadprivate(interp_neighbour_1)
+
         !$omp threadprivate(flow_utility_vector)
         !$omp threadprivate(future_utility_vector)
         !$omp threadprivate(future_bequest_vector)
@@ -2489,7 +2498,89 @@
 
         end function
 
-        real(8) function survival_with_smi(base_survival_1,smi_1)
+        subroutine compute_asset_lottery(opt_1,lo_1,hi_1)
+
+        ! A' OFF THE GRID, BY A TWO POINT LOTTERY.
+        !
+        ! The discrete search returns the best GRID point. The true optimum
+        ! generally sits between two of them, and with a coarse grid that gap is
+        ! the dominant approximation error in the savings policy. The
+        ! distribution already knows how to split a household across two asset
+        ! points: it loops m=1,2 sending (1-frac) to the policy index and frac to
+        ! fin_index_frac_mov_to_optimal. That machinery was fully wired and then
+        ! fed a hardcoded frac of zero, so both branches landed on the same point
+        ! and the lottery collapsed. This fills it.
+        !
+        ! The optimum is located by fitting a parabola through the objective at
+        ! the argmax and its two neighbours. The grid is UNEVENLY spaced, which
+        ! rules out the textbook equal spacing formula, so the general three
+        ! point vertex is used. The weight is then set so the lottery's MEAN
+        ! asset holding equals the vertex, which is what makes the aggregate
+        ! right even though no household sits at the optimum.
+        !
+        ! It refuses in three cases rather than extrapolating: at either end of
+        ! the search range, where there is no bracket; when the parabola is not
+        ! concave, so the vertex is a minimum or a straight line and the fit says
+        ! nothing; and when the vertex falls outside the bracket, which means the
+        ! quadratic is a bad local model. Refusing costs nothing, since frac zero
+        ! is exactly the old behaviour.
+
+        implicit none
+
+        integer, intent(in) :: opt_1,lo_1,hi_1
+        real(8) :: x0_1,x1_1,x2_1,y0_1,y1_1,y2_1,d1_1,d2_1,denom_1,vertex_1
+
+        interp_frac_1=0
+        interp_neighbour_1=opt_1
+
+        if (interpolate_a_prime==0) return
+
+        if ((opt_1<=lo_1) .OR. (opt_1>=hi_1)) return
+
+        x0_1=financial_grid(opt_1-1)
+        x1_1=financial_grid(opt_1)
+        x2_1=financial_grid(opt_1+1)
+
+        if ((x1_1-x0_1<=0.d0) .OR. (x2_1-x1_1<=0.d0)) return
+
+        y0_1=flow_utility_vector(opt_1-1)+future_utility_vector(opt_1-1)
+        y1_1=flow_utility_vector(opt_1)+future_utility_vector(opt_1)
+        y2_1=flow_utility_vector(opt_1+1)+future_utility_vector(opt_1+1)
+
+        ! An unreachable neighbour carries a sentinel rather than a value, and a
+        ! parabola through a sentinel is meaningless.
+        if ((y0_1<=large_negative_num/2) .OR. (y2_1<=large_negative_num/2)) return
+
+        d1_1=(y1_1-y0_1)/(x1_1-x0_1)
+        d2_1=(y2_1-y1_1)/(x2_1-x1_1)
+
+        denom_1=d2_1-d1_1
+
+        ! Concavity. A non negative second difference means the argmax is not an
+        ! interior maximum of the fit.
+        if (denom_1>=-10.d0**(-14)) return
+
+        vertex_1=0.5d0*(x0_1+x1_1)-0.5d0*d1_1*(x2_1-x0_1)/denom_1
+
+        if ((vertex_1<x0_1) .OR. (vertex_1>x2_1)) return
+
+        if (vertex_1>=x1_1) then
+
+            interp_neighbour_1=opt_1+1
+            interp_frac_1=(vertex_1-x1_1)/(x2_1-x1_1)
+
+        else
+
+            interp_neighbour_1=opt_1-1
+            interp_frac_1=(x1_1-vertex_1)/(x1_1-x0_1)
+
+        end if
+
+        interp_frac_1=max(min(interp_frac_1,1.d0),0.d0)
+
+    end subroutine
+
+    real(8) function survival_with_smi(base_survival_1,smi_1)
 
         ! eq:fsurv. survival_probability already carries age, homelessness and
         ! the SUD; SMI multiplies the death HAZARD on top of that, which is not
@@ -3319,6 +3410,8 @@
         model_fraction_addicted_who_are_homeless(time_period)=0
         model_fraction_of_unemployed_homeless(time_period)=0
         model_fraction_of_homeless_and_addicted_unemployed(time_period)=0
+        model_mass_homeless_raw(time_period)=0
+        model_mass_total_raw(time_period)=0
         model_mass_smi(time_period)=0
         model_smi_and_homeless(time_period)=0
         model_smi_and_employed(time_period)=0
@@ -3668,6 +3761,9 @@
                                     ! once there are two SMI states; the coarse
                                     ! index > threshold form means "has a SUD" and
                                     ! nothing about mental illness.
+                                    model_mass_total_raw(time_period)=&
+                                        model_mass_total_raw(time_period)+distribution_mass_used
+
                                     if (smi_of(unemployment_index)>=1) then
 
                                         model_mass_smi(time_period)=&
@@ -3771,6 +3867,16 @@
                                     
                                         model_fraction_homeless(time_period)=&
                                             model_fraction_homeless(time_period)+distribution_mass_used
+
+                                        ! A RAW HOMELESS MASS, KEPT SEPARATELY ON PURPOSE.
+                                        ! model_fraction_homeless is divided by
+                                        ! model_sum_of_lowest_productivities later, not by the
+                                        ! total mass, so anything that reconstructs a mass from it
+                                        ! is wrong by that ratio. That is exactly the error that
+                                        ! made the SMI share of the homeless read 0.0012 percent.
+                                        ! This counter depends on no later normalisation.
+                                        model_mass_homeless_raw(time_period)=&
+                                            model_mass_homeless_raw(time_period)+distribution_mass_used
                                             
                                         if (age_index>life_span-retirement_span) then
                                         
@@ -4632,27 +4738,31 @@
         model_employed_share_of_homeless(time_period)=&
             1-model_fraction_of_homeless_unemployed(time_period)
 
-        ! model_fraction_homeless is a SHARE by this point, so the homeless mass
-        ! is that share times the total. Writing the ratio this way lets the
-        ! total cancel, which avoids depending on which normalisation has
-        ! already run.
-        if ((model_fraction_homeless(time_period)>10.d0**(-12)) .AND. &
-            (model_all_labour_income(time_period)>10.d0**(-12))) then
+        ! ALL THREE RATIOS USE THE RAW MASSES. Reconstructing a mass from
+        ! model_fraction_homeless is wrong, because that share is normalised by
+        ! model_sum_of_lowest_productivities rather than by the total.
+        if (model_mass_homeless_raw(time_period)>10.d0**(-12)) then
+
+            model_smi_share_of_homeless(time_period)=model_smi_and_homeless(time_period)/&
+                model_mass_homeless_raw(time_period)
+
+        else
+
+            model_smi_share_of_homeless(time_period)=0
+
+        end if
+
+        if ((model_mass_homeless_raw(time_period)>10.d0**(-12)) .AND. &
+            (model_all_labour_income(time_period)>10.d0**(-12)) .AND. &
+            (model_mass_total_raw(time_period)>10.d0**(-12))) then
 
             model_homeless_income_share(time_period)=&
-                model_homeless_labour_income(time_period)/&
-                (model_fraction_homeless(time_period)*model_all_labour_income(time_period))
+                (model_homeless_labour_income(time_period)/model_mass_homeless_raw(time_period))/&
+                (model_all_labour_income(time_period)/model_mass_total_raw(time_period))
 
         else
 
             model_homeless_income_share(time_period)=0
-
-        end if
-
-        if (model_fraction_homeless(time_period)>10.d0**(-12)) then
-
-            model_smi_share_of_homeless(time_period)=model_smi_and_homeless(time_period)/&
-                (model_fraction_homeless(time_period)*sum_of_distribution)
 
         end if
 
@@ -4663,7 +4773,7 @@
 
         end if
 
-        write(*,*) "SMI prevalence in model=", model_mass_smi(time_period)/max(sum_of_distribution,10.d0**(-12)), &
+        write(*,*) "SMI prevalence in model=", model_mass_smi(time_period)/max(model_mass_total_raw(time_period),10.d0**(-12)), &
             " onset(1)=", smi_onset_by_age(1), " onset(30)=", smi_onset_by_age(30), " lambda_m=", lambda_m
         write(*,*) "SMI share of homeless=", model_smi_share_of_homeless(time_period), &
             " employment rate given SMI=", model_employment_rate_given_smi(time_period)
@@ -15877,13 +15987,23 @@
         optimal_mortgage_interest_deductions_1=mortgage_interest_deductions_2
         mortgage_interest_deductions_1=mortgage_interest_deductions_2
                                                                                                                    
+        ! Built here, on the index actually being recorded, so the lottery cannot
+        ! drift out of step with the policy. The utility vectors still hold this
+        ! state's values at this point, since this routine is called straight
+        ! after that state's a' search. Both outputs default to the degenerate
+        ! case, frac zero on the chosen point, which is what this used to be
+        ! hardcoded to.
+        call compute_asset_lottery(fin_index_1,negative_financial_grid_size,financial_grid_size)
+
         frac_mov_optimal_1(years_left_on_mortgage_index)%&
             vector_transition_real(time_period,age_index,financial_index,&
-            unemployment_index,employment_index,housing_status_index,voucher_index)=0
-                        
+            unemployment_index,employment_index,housing_status_index,voucher_index)=&
+            interp_frac_1
+
         fin_index_frac_mov_to_optimal(years_left_on_mortgage_index)%&
             vector_transition_integer(time_period,age_index,financial_index,&
-            unemployment_index,employment_index,housing_status_index,voucher_index)=fin_index_1
+            unemployment_index,employment_index,housing_status_index,voucher_index)=&
+            interp_neighbour_1
                     
         if (in_retirement==1) then
         
