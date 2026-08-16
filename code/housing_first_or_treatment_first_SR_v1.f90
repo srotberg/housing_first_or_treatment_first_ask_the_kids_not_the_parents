@@ -20014,6 +20014,13 @@
 
             call build_unemployment_process_smi(increased_prob_if_homeless)
 
+            ! The onset entry itself: index 1 is (employed, no SMI, no SUD) and
+            ! index 4 is (employed, SMI, no SUD), so this is the probability of
+            ! acquiring SMI while staying employed and clean. If it is zero the
+            ! chain cannot populate and no calibration of lambda_m means anything.
+            write(*,*) "unemployment_process onset 1->4 =", &
+                unemployment_process(1,1,4,1,0,1), " stay 1->1 =", unemployment_process(1,1,1,1,0,1)
+
         end if
 
         if (loop_count<1) then
@@ -25432,6 +25439,10 @@
                 clipped_1, " ages; lambda_m too low for the profile. lambda_m=", lambda_m
 
         end if
+
+        write(*,*) "build_smi_onset: lambda_m=", lambda_m, " onset(1)=", smi_onset_by_age(1), &
+            " onset(30)=", smi_onset_by_age(30), " max=", maxval(smi_onset_by_age), &
+            " implied ergodic prevalence=", smi_onset_by_age(1)/max(smi_onset_by_age(1)+lambda_m,10.d0**(-12))
 
     end subroutine
 
