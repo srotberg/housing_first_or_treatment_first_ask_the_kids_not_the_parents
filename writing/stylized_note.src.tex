@@ -312,26 +312,25 @@ National Survey on Drug Use and Health (NSDUH) 2024 for respondents aged 26 and
 over.
 
 Income support replaces half of previous earnings on a base capped at mean
-income, in line with statutory state rules. \new{The two rental sizes are set
-rather than inferred, such that the standard unit costs $40.9$ percent of mean
-income and the small unit is a quarter of it.} The voucher parameters are institutional: covered
+income, in line with statutory state rules. The two rental sizes are set
+\new{rather than inferred, such that the standard unit costs $0.41$ of mean income
+and the small unit is a quarter of it.} The voucher parameters are institutional: covered
 tenants pay $30$ percent of market rent, eligibility is capped at mean income,
 and $\pi_V = 0.27$ is the assisted eligible share in the 2023 Picture of Subsidized
 Households, published by the Department of Housing and Urban Development (HUD).
-The weight on drugs is set at $\theta = @@th@@$.\new{ The weight on housing is
-not, and is calibrated below.}\footnote{A $\theta$ large
+The weight on drugs is set at $\theta = @@th@@$.\footnote{A $\theta$ large
 enough to match the eleven percent of income that users spend on drugs makes the
 drug too valuable to be deterred by a death that arrives thirty years later, and
 users stop being poor. Setting $\theta = @@th@@$ gives a spending share of
 @@dshare_m@@ percent and keeps the income gradient, which is the trade this model
-can make.}
+can make.} \new{The weight on housing is not: it is calibrated internally.}
 
 \subsubsection{Internal calibration}
 
 Five parameters are set inside the model, in Table~\ref{tab:int}, each bracketed
 on the moment it moves most rather than fitted jointly. The weight on
-housing $\gamma$ is matched to \new{the $26.8$ percent of total expenditure that
-shelter plus utilities take in the 2024 Consumer Expenditure Survey (CEX)},
+housing $\gamma$ is matched to the $26.8$ percent of total expenditure that
+shelter plus utilities take in the 2024 Consumer Expenditure Survey (CEX),
 housing over expenditure net of drugs. The flow value
 of being alive $\aleph$ is matched to a value of a statistical life of @@vsl_t@@
 times average annual income, about \$9 million against a mean household income of
@@ -514,13 +513,13 @@ income.}
 
 A fixed budget does not rescue the welfare case for conditionality either.
 Treatment First is
-\new{exactly as expensive as Housing First} at universal cover, @@costt@@ against
-@@costh@@, so matching on cost rather than on generosity changes nothing. \new{Two
+exactly as expensive as Housing First at universal cover, @@costt@@ against
+@@costh@@, so matching on cost rather than on generosity changes nothing. Two
 things offset. Survival into period 2 falls from @@phi0@@ to @@phi1@@ with a SUD,
 so the extra households Housing First puts into the SUD state die sooner and
 fewer are alive in period 2 to collect a voucher; against that, Treatment First
 withdraws the voucher from anyone who used, so it pays for fewer tenants while
-they live. The expected outlay remains the same.} So a case for conditionality has to come
+they live. The expected outlay remains the same. So a case for conditionality has to come
 from an externality.
 
 \subsubsection{An externality on children reverses it}\label{sec:kids}
@@ -606,14 +605,14 @@ First is better for every household taken one at a time, and worse once one
 counts the children of the households it fails to deter.
 
 All of this is a crude illustration: the model is two periods long and
-nobody who faces the sobriety condition fails to meet it\new{, so the impacts of
-policies can be unreasonably large}. It shows that an
+nobody who faces the sobriety condition fails to meet it, so the impacts of
+policies can be unreasonably large. It shows that an
 externality can reverse a welfare ranking that is
 otherwise airtight, which is all it is for. Which way the comparison actually
 goes is a question about magnitudes, and that is what the quantitative model of
 the next section is for.
 
-{\color{red}
+
 The quantitative model also carries more externalities than are described here,
 and they do not all pull the same way.
 
@@ -622,18 +621,17 @@ and they do not all pull the same way.
 the base they are paid from.} A programme that houses more households costs more,
 raising taxes that distort the hours and the saving of every household, including
 those it never reaches. It also lowers the labour supply of the households it
-does reach, because eligibility is means tested: food stamps claw back one for
-one and the voucher at $\kappa_r$, so a recipient who works more loses the
-transfer, and many do not work more. That shrinks the tax base, which raises the
-tax on everyone else again and distorts their labour supply further. Neither
-effect exists here, where hours are fixed and the programme is not financed.
+does reach, because eligibility is means tested: food stamps are clawed back one
+for one and the voucher at a rate of $\kappa_r$, so a recipient who works more
+loses some of the transfer. Neither
+effect exists here, where hours are fixed and financing is not modelled.
 
 \item \textbf{Homelessness is a disamenity in itself.} Households dislike
 homelessness around them and not only their own, so the aggregate rate is an
 argument of everyone's utility. It runs in favour of whichever policy houses
 more, which is the opposite direction from the tax.
 \end{itemize}
-}
+
 
 
 %======================================================================
