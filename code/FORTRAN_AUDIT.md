@@ -702,3 +702,93 @@ not depend on it.
    `bar_pi^ue` at 0.297 against 0.55, `chi_H` at 0.252 against 0.4286, the
    homelessness target at 0.45 against 0.399, and the mortality ratio at 7.9
    against 6.9 are the four that change results rather than wording.
+
+---
+
+# The full sweep, note against code, after this session's fixes
+
+Every equation in Section 2 of the note checked against the source. Ordered by
+what it would cost to believe the note where the code says otherwise.
+
+## A. In the note, still absent from the code
+
+### A.1 Serious mental illness, and everything hanging off it
+`grep -ci mental` returns 3 and all three are comments. There is no `m` in the
+state, the transitions, survival, income or utility. So the note's
+`eq:fonsetage`, `eq:fonset`, `rho_m`, `kappa_uem`, `kappa_phi_m`, `mu_m`,
+`iota`, `p_m` and `lambda_m` have **no counterpart at all**. `unemployment_grid_size`
+is 6, three employment states by two disorder states, with no room for it.
+Adding it doubles the state space.
+
+### A.2 Disability income
+`grep -ci disabilit` returns **0**. The note's `e=3, m=1` case, `zeta_DI`, and
+the DI branch of `eq:fincome` do not exist. Follows from A.1.
+
+### A.3 The productivity penalties conditional on working
+`grep -ci "rho_d\|rho_m\|productivity_penalty"` returns **0**. The note now
+says both are calibrated jointly on the homeless employment share and homeless
+income. Neither exists. The SUD's resource cost runs entirely through the
+employment margin.
+
+### A.4 The homelessness disamenity
+`grep -ci disamenity` returns **0**. `kappa_x H` is in `eq:futil` and in the
+Bellman and is in no line of Fortran.
+
+## B. Present in both, but NOT the same object
+
+### B.1 The voucher formula. Different rule, different incentives.
+Note: `Vch = max(0, p_r h' - kappa_r y^g)`, so the subsidy is computed on the
+household's OWN chosen dwelling.
+Code, `calculate_housing_voucher`: the payment standard is
+`max_rent_relative_to_ave * average rent * average rental size`, minus
+`max_fraction_of_income_spent_on_housing * income`, capped at actual rent paid.
+
+The difference is behavioural, not cosmetic. Under the note a household raises
+its voucher by renting a bigger unit; under the code it cannot, because the
+standard is fixed at the average. The code is closer to how HUD actually works
+and avoids a perverse incentive. **The note should be changed to match the code**,
+not the other way round.
+
+Also: `max_fraction_of_income_spent_on_housing = 0.44`, and the income tested
+includes food stamps, which the note's `y^g` does not.
+
+### B.2 The tax function has an exemption and a deduction
+Note `eq:ftax`: `y^n = tau_l (y^g)^xi + (1-tau_k) r a`.
+Code: the HSV form is applied to `y^g - personal_exemption - standard_deduction`,
+with mortgage interest deductions on top. Both are currently **zero**
+(`standard_deduction_data = 0`, `personal_exemption_data = 0`), so today the two
+agree numerically, but the machinery differs and the note does not mention it.
+
+### B.3 Capital income is not taxed
+`grep -c "tau_k\|capital_tax"` returns **0**. The note's `(1-tau_k) r a` has no
+counterpart: capital income enters untaxed. `tau_k` appears in the note's
+government budget as revenue that the code never collects.
+
+### B.4 The food stamp floor is means tested on labour plus capital income
+Note: `F = max(0, cbar*ybar - (y^g + ra))`.
+Code: `max_food_cost*(1+consumption_tax)*avg_income - (gross_wage_income + r*max(a,0))`.
+Same shape. `max_food_cost = 0.126`, so `cbar = 0.126`. This one **agrees**, and
+is recorded so it does not get re-checked.
+
+### B.5 The initiation age is a number, not a switch
+`max_age_to_choose_addiction = 55`. The note calls `J_E` a switch reported both
+ways. It is a hard coded 55 and only one way is reported.
+
+## C. Present in the code, absent from the note
+
+### C.1 A consumption tax
+`consumption_tax` exists throughout the budget and the food stamp floor. It is
+**0**, so it is inert, but the note's budget constraint has no such term.
+
+## D. Coverage gaps inside features that do exist
+
+### D.1 Treatment and the child term are renter only
+Neither the treatment choice nor the child continuation is offered in the four
+owner problems. Dead today with `include_homeownership=0`; a trap if it returns.
+
+## What this list is for
+
+Nothing above is a bug in the sense of a wrong line. Each is a place where a
+reader of the note would form a belief about the model that the program does not
+support. A.1 to A.4 are decisions about scope. B.1 to B.3 are decisions about
+which document is right, and for B.1 I think it is the code.
