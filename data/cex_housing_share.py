@@ -39,12 +39,25 @@ import openpyxl
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, 'raw', 'CEX_all_consumer_units_detailed_means_2024.xlsx')
+TENURE = os.path.join(HERE, 'raw', 'CEX_housing_tenure_means_2024.xlsx')
 
 # The workbook puts a label on one row and Mean, Share, SE, RSE on the rows
 # under it, so a line is found by its label and read from the row below.
 WANT = ['Average annual expenditures', 'Housing', 'Shelter',
         'Owned dwellings', 'Rented dwellings', 'Other lodging',
         'Utilities, fuels, and public services']
+
+
+def read_row(path, label, ncol=6):
+    """The Mean row under a label, across every column of the table."""
+    ws = openpyxl.load_workbook(path, data_only=True).worksheets[0]
+    rows = list(ws.iter_rows(min_row=1, values_only=True))
+    for i, r in enumerate(rows):
+        if (str(r[0]) if r[0] else '').split('[')[0].strip() == label:
+            for j in range(i + 1, min(i + 4, len(rows))):
+                if (str(rows[j][0]) or '').strip() == 'Mean':
+                    return [float(x) for x in rows[j][1:ncol]]
+    return None
 
 
 def read_means(path=SRC):
@@ -80,3 +93,18 @@ if __name__ == '__main__':
     print(f'  THE MODEL OBJECT, shelter and utilities: {(shelter+utilities)/total:.1%}')
     print(f'  the model uses                           25.0%, at the low end because')
     print(f'  owners enter here at outlay rather than at imputed rent')
+    print()
+
+    cols = ['all', 'owner', 'owner, mortgage', 'owner, none', 'renter']
+    tot = read_row(TENURE, 'Average annual expenditures')
+    sh = read_row(TENURE, 'Shelter')
+    ut = read_row(TENURE, 'Utilities, fuels, and public services')
+    print('CEX 2024, table 1710, by housing tenure')
+    print('  ' + ''.join(f'{c:>18s}' for c in cols))
+    print('  ' + ''.join(f'{(sh[i]+ut[i])/tot[i]:17.1%}' for i in range(len(cols))))
+    print()
+    print('  Renters spend a THIRD of expenditure on shelter and utilities, owners')
+    print('  a quarter, and owners without a mortgage the least of all at 21.2 per')
+    print('  cent, which is the outlay problem in one number: they record almost no')
+    print('  shelter spending while consuming a whole dwelling. So a quarter is at')
+    print('  the low end on every reading of this table.')

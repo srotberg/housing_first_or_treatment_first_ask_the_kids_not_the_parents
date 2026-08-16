@@ -45,7 +45,7 @@ EXTERNAL = [
         ('kap', r'\kappa', 'Proportional fall in survival with a SUD',
          r'Hjorth\o j et al.\ (2023), \textcolor{red}{age 26+, over thirty years}', '{:.2f}'),
         ('u0', 'u_0', 'Unemployment probability, no SUD',
-         '\\textcolor{red}{FRED UNRATE, age 16+, 2014 to 2024}', '{:.4f}'),
+         '\\textcolor{red}{BLS CPS, series UNRATE via FRED, age 16+, 2014 to 2024}', '{:.4f}'),
         ('u1', 'u_1', 'Unemployment probability, with a SUD',
          '\\textcolor{red}{NSDUH 2024, age 26+}', '{:.4f}'),
     ]),
