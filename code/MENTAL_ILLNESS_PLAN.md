@@ -17,15 +17,30 @@ Six channels, all of them already written into Section 2.6 of the note:
 | the Stone-Geary shifter | `rho^b_m` | `calculate_flow_utility` |
 | disability eligibility | `zeta_DI` | `calculate_income`, a branch that does not exist yet |
 
-Plus the chain itself: onset derived from prevalence and the recovery rate, so
-that calibrating persistence never disturbs prevalence,
+Plus the chain itself, and **the onset rate is a profile, not a scalar.** The
+model note is explicit that the scalar version was tried and is wrong: a flat
+onset against a flat recovery drives prevalence towards its steady state from
+below, so the model produces a prevalence profile that *rises* with age, where
+NSDUH has it *falling* from 11.0 per cent at 26 to 29 to 1.4 per cent at 65 and
+over, a factor of eight. It hit the 5.5 per cent average with the shape
+backwards, which misplaces the channel and everything it feeds.
 
-    onset_m = lambda_m * p_m / (1 - p_m),   entry raised by iota when d = 1
-    exit    = lambda_m
+So onset is backed out of the observed prevalence profile and the recovery
+hazard,
 
-with `p_m = 0.055`, `lambda_m = 0.067`, `iota = 2.0` from the note's tables. The
-chain does **not** depend on housing, which is a result rather than an omission:
-At Home / Chez Soi looked for that effect and did not find it.
+    lambda(a) = [ p(a+1) - p(a)(1 - mu) ] / (1 - p(a))
+
+with prevalence fitted **log linearly**, R^2 = 0.977, and not interpolated
+piecewise: differencing a piecewise linear curve turns every kink into a spike,
+and the first attempt gave onset of 1.00 at 26, 0.01 at 32 and exactly zero at 56
+and 68. Those zeros were artifacts. Entry is raised by `iota = 2.0` when `d = 1`,
+exit is `lambda_m = 0.067`, the level stays calibrated to `p_m = 0.055`, and
+newborns enter at the observed prevalence at 26 rather than at the ergodic of the
+age one transition matrix, which would start them at 4.7 per cent against 11 to
+13 observed.
+
+The chain does **not** depend on housing, which is a result rather than an
+omission: At Home / Chez Soi looked for that effect and did not find it.
 
 ## The index, and why m goes on the outside
 

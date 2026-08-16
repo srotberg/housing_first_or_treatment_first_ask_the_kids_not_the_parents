@@ -49,7 +49,22 @@
         
         real(8), parameter :: increased_prob_of_voucher_if_homeless=1
         integer, parameter :: raise_b=0
-        integer, parameter :: change_utility_for_addicts=1
+        ! THE UTILITY WEIGHTS DO NOT CHANGE WITH THE DISORDER. At 1 this switch
+        ! moved the Cobb Douglas weight on drugs from 0.13 to 0.45 for a household
+        ! that acquired the disorder, and the housing and consumption weights with
+        ! it. That is a preference change, and the written model says the opposite:
+        ! the weights are held fixed and only the Stone Geary shifter moves. It also
+        ! cuts against the paper's own claim, which is that the disorder is
+        ! transmitted across generations WITHOUT transmitting a preference for
+        ! drugs. At 0, with size_of_penalty at 0, relative_share_of_addiction_2
+        ! falls back to relative_share_of_addiction_1 and the housing and
+        ! consumption weights follow, so the flow utility is the same function
+        ! clean and with the disorder.
+        !
+        ! THE DISORDER THEN ACTS ONLY THROUGH b, which is what b_sud_ratio below is
+        ! for. Flipping this switch alone would leave the disorder with NO effect on
+        ! drug demand at all, so the two changes belong together.
+        integer, parameter :: change_utility_for_addicts=0
         real(8), parameter :: size_of_penalty=0
         integer, parameter :: use_income_or_income_plus_assets=4
         integer, parameter :: have_increased_death_from_addiction=1
@@ -351,7 +366,21 @@
             
         real(8), parameter :: drug_threshold_guess=2*10.d0**(-7)
             
-        real(8), parameter :: addiction_scalar_2=addiction_scalar_1
+        ! THE STONE GEARY SHIFTER WITH THE DISORDER, b_1 in the written model, and
+        ! now the ONLY channel through which the disorder changes what a household
+        ! wants to consume. A smaller shifter means a larger desired intake and a
+        ! costlier abstention, since the optimal purchase is
+        ! (gam/(alp+gam))*(R + p_v*b)/p_v - b, falling in b.
+        !
+        ! IT IS NOT CALIBRATED YET. The ratio is one, which is the neutral value and
+        ! reproduces the old behaviour of addiction_scalar_2 = addiction_scalar_1;
+        ! at one the disorder does nothing to drug demand and the moment it is meant
+        ! to hit, abstinence among homeless adults with the disorder of 18.7 per
+        ! cent from the no housing arm of Milby et al., is not hit by anything. It
+        ! has to be bracketed on that moment before any number from this model is
+        ! reported.
+        real(8), parameter :: b_sud_ratio=1.0
+        real(8), parameter :: addiction_scalar_2=b_sud_ratio*addiction_scalar_1
         
         real(8) :: relative_share_of_housing_1=relative_share_of_housing_0*(1-relative_share_of_addiction_1)
         real(8) :: relative_share_of_housing_2=relative_share_of_housing_0*(1-relative_share_of_addiction_2)
@@ -13393,8 +13422,11 @@
         
             if ((change_utility_for_addicts==0) .AND. (size_of_penalty==0)) then
         
+                ! The shifter is deliberately allowed to differ now: b_1 is the
+                ! only channel the disorder has left once the weights are fixed,
+                ! so addiction_scalar_2 .NE. addiction_scalar_1 is the intended
+                ! state and not a mistake. The WEIGHTS still have to agree.
                 if ((relative_share_of_consumption_2 .NE. relative_share_of_consumption_1) .OR. &
-                   (addiction_scalar_2 .NE. addiction_scalar_1) .OR. &
                    (relative_share_of_housing_1 .NE. relative_share_of_housing_2)) then
                 
                     write(*,*) "strange"
