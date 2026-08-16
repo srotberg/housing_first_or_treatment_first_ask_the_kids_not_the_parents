@@ -5737,9 +5737,24 @@
         real(8) :: voucher_required
         integer, intent(in) :: time_period,is_current_homeowner_1,is_choosing_to_rent_1
                 
-        voucher_required=max(max_rent_relative_to_ave*&
-            is_choosing_to_rent_1*model_average_rent(time_period)*model_average_rental_unit_size(time_period)+&
-            is_current_homeowner_1*model_average_rent(time_period)*model_average_rental_unit_size(time_period)-&
+        ! THE NOTE'S RULE, NOT A PAYMENT STANDARD.
+        !
+        ! This used to compute the subsidy against a standard fixed at the
+        ! AVERAGE rental unit, max_rent_relative_to_ave times the average rent
+        ! times the average size, which is how HUD actually works and is not what
+        ! the written model says. Equation (17) is
+        !
+        !     Vch = 1{eta=1} 1{h' /= h_1} max(0, p_r h' - kappa_r y^g)
+        !
+        ! so the subsidy is computed on the household's OWN chosen dwelling. The
+        ! difference is behavioural rather than cosmetic: under this rule a
+        ! household can raise its voucher by renting a bigger unit, and under the
+        ! payment standard it cannot.
+        !
+        ! Homelessness needs no indicator here. It pays no rent, so
+        ! rent_spending_1 is zero and the subsidy is zero.
+        voucher_required=max(is_choosing_to_rent_1*rent_spending_1+&
+            is_current_homeowner_1*homeowner_spending_1-&
             max_fraction_of_income_spent_on_housing*income_1,0.d0)
                                     
         housing_voucher_1=max(min(voucher_required,&
@@ -6767,9 +6782,7 @@
                                     
                                     if (provide_vouchers==1) then
                                                                                                             
-                                        call calculate_housing_voucher(housing_voucher_1,income_1+food_stamps_1+&
-                                            risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)+&
-                                            bequest_1,rent(time_period,low_quality_market)*housing_size(housing_status_index_used),&
+                                        call calculate_housing_voucher(housing_voucher_1,income_1,rent(time_period,low_quality_market)*housing_size(housing_status_index_used),&
                                             homeowner_spending,is_current_owner,choose_to_rent,time_period)
                                               
                                     end if
@@ -13905,8 +13918,7 @@
             if ((years_left_on_mortgage_1>=1) .AND. &
                 ((space_lived_in_1-housing_size(lowest_housing_grid_point))>10.d0**(-2))) then
                 
-                call calculate_housing_voucher(housing_voucher_1,gross_wage_income_1+food_stamps_1+&
-                    risk_free_rate(time_period)*max(financial_grid(financial_index_1),0.d0)+bequest_1,&
+                call calculate_housing_voucher(housing_voucher_1,gross_wage_income_1,&
                     rent(time_period,low_quality_market)*space_lived_in_1,homeowner_spending,&
                     is_current_owner,choose_to_rent,time_period)
                                     
@@ -14467,8 +14479,7 @@
             
                 if (future_housing_status_index_1>lowest_housing_grid_point) then
             
-                    call calculate_housing_voucher(housing_voucher_recieved,gross_wage_income+food_stamps_recieved+&
-                        risk_free_rate(time_period)*max(financial_grid(financial_index_1),0.d0)+bequest_1,rent_spending,&
+                    call calculate_housing_voucher(housing_voucher_recieved,gross_wage_income,rent_spending,&
                         homeowner_spending,is_current_owner,choose_to_rent,time_period)
                         
                 end if
@@ -14496,8 +14507,7 @@
                     
             if (provide_vouchers==1) then
             
-                call calculate_housing_voucher(housing_voucher_recieved,gross_wage_income+food_stamps_recieved+&
-                    risk_free_rate(time_period)*max(financial_grid(financial_index_1),0.d0)+bequest_1,&
+                call calculate_housing_voucher(housing_voucher_recieved,gross_wage_income,&
                     rent_spending,homeowner_spending,is_current_owner,choose_to_rent,time_period)
                                 
             end if
@@ -14549,8 +14559,7 @@
                 
             if (provide_vouchers==1) then
             
-                call calculate_housing_voucher(housing_voucher_recieved,gross_wage_income+food_stamps_recieved+&
-                    risk_free_rate(time_period)*max(financial_grid(financial_index_1),0.d0)+bequest_1,rent_spending,&
+                call calculate_housing_voucher(housing_voucher_recieved,gross_wage_income,rent_spending,&
                     homeowner_spending,is_current_owner,choose_to_rent,time_period)
                                 
             end if
@@ -14582,8 +14591,7 @@
                 
             if (provide_vouchers==1) then
             
-                call calculate_housing_voucher(housing_voucher_recieved,gross_wage_income+food_stamps_recieved+&
-                    risk_free_rate(time_period)*max(financial_grid(financial_index_1),0.d0)+bequest_1,rent_spending,&
+                call calculate_housing_voucher(housing_voucher_recieved,gross_wage_income,rent_spending,&
                     homeowner_spending,is_current_owner,choose_to_rent,time_period)
                                 
             end if
@@ -14632,8 +14640,7 @@
             
                 if (future_housing_status_index_1>lowest_housing_grid_point) then
             
-                    call calculate_housing_voucher(housing_voucher_recieved,gross_wage_income+food_stamps_recieved+&
-                        risk_free_rate(time_period)*max(financial_grid(financial_index_1),0.d0)+bequest_1,rent_spending,&
+                    call calculate_housing_voucher(housing_voucher_recieved,gross_wage_income,rent_spending,&
                         homeowner_spending,is_current_owner,choose_to_rent,time_period)
                         
                 end if
@@ -15550,8 +15557,7 @@
                 if (housing_status_index_1>lowest_housing_grid_point) then
                 
                     call calculate_housing_voucher(housing_voucher_recieved_1,&
-                        optimal_gross_wage_income_1+food_stamps_recieved_1+&
-                        risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)+bequest_1,&
+                        optimal_gross_wage_income_1,&
                         renter_spending_1,homeowner_spending_1,is_current_owner_1,&
                         ownership_status_index_1,time_period)
                         
