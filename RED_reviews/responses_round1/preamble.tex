@@ -9,6 +9,7 @@
 \usepackage[margin=1.05in]{geometry}
 \usepackage{amsmath,amssymb}
 \usepackage{xcolor}
+\usepackage[official]{eurosym}
 \usepackage{booktabs}
 \usepackage{longtable}
 \usepackage{array}
@@ -55,6 +56,11 @@
 
 % numbers that are not in yet, so they are impossible to miss on a read through
 \newcommand{\tbd}[1]{\textbf{[TO FILL: #1]}}
+
+% Marks what has been done since the first draft of these letters. The letters
+% were written when most of this was a plan; this flag marks the places where it
+% is now built and running.
+\newcommand{\thisround}{\textbf{[Built since the first draft of this letter.]}\ }
 
 \newcommand{\lettertitle}[2]{%
   \begin{center}

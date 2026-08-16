@@ -51,6 +51,15 @@ severity, 1.04 with a confidence interval of 0.89 to 1.21. Milby's housing was
 Contingency is doing the work, not housing. That distinction is exactly the
 paper's subject, and the two trials together are better evidence for it than
 either alone. This is now in the text.
+
+\thisround It is now in the code and not only in the written model. The
+Stone-Geary shifter depends on the housing chosen, and every place in the
+program that evaluates the drug term goes through a single function, so the flow
+utility, its marginal utility and the two closed form splits of consumption
+against drugs cannot disagree with one another. That was the implementation risk
+worth spending care on: had those been patched separately, the objective and its
+own first order condition would have drifted apart silently. The parameter is
+bracketed on the contrast between Milby's arms, as described above.
 \end{response}
 
 \cmt{C2}{A large homeless population is a negative externality}
@@ -85,6 +94,25 @@ does and does not transfer. Their externality is about neighbourhood housing
 \emph{quality} and is identified off rent decontrol, so their functional form is
 not the right one to import. What transfers is the identification logic. We use a
 contingent valuation approach for the calibration moment instead.
+
+\thisround \concede We have changed our minds on this one, and against you, so it
+is worth being explicit rather than quiet. The disamenity is now \emph{absent}
+from the model rather than present and set to zero in the benchmark.
+
+The reason is the size of the object. Loubi\`ere et al.\ (2020) ask adults in
+eight European countries what they would pay in annual taxes to end homelessness
+through Housing First, and get \euro{}23 a year on average and \euro{}57 among the
+42 per cent willing to pay anything, which is 0.08 and 0.20 per cent of average
+annual earnings. A term that small cannot change a ranking. Carrying it, however,
+puts the aggregate homelessness rate inside the utility function, which makes it
+an argument the distribution itself determines, and so adds a fixed point to the
+equilibrium in exchange for nothing.
+
+What we have done instead is state the direction of the omission. Leaving the
+disamenity out can only \emph{understate} the case for whichever policy houses
+more people, so every result we report on that margin is a lower bound. If you
+would still prefer it carried and reported across a range, it is a small change to
+restore and we will restore it.
 \end{response}
 
 \cmt{C3}{Parents suffer anxiety about their children}
@@ -170,6 +198,14 @@ one faces no such margin. The spending gap becomes a prediction rather than an
 assumption, and the welfare complementarity becomes an incentive effect rather
 than an artefact of the utility function. This is a stronger result than the one
 it replaces and we are grateful for the push.
+
+\thisround Done in the code, where it previously was not. The switch that raised
+the weight on drugs from 0.13 to 0.45 for a household with the disorder is off,
+so the weights on consumption, housing and drugs are now the same function clean
+and addicted, and the disorder acts on the drug decision only through the
+Stone-Geary shifter. The consistency check inside the program that used to demand
+the two shifters be equal has been relaxed accordingly, since the shifter is now
+the one thing that is meant to differ.
 \end{response}
 
 \cmt{C6}{Optimal voucher design, and $\chi_H$ looks high}
