@@ -744,15 +744,19 @@ capital income at a flat rate,
 y^{n}=\tau_{\ell}\,(y^{g})^{\xi}\;+\;(1-\tau_k)\,r\,a ,
 \end{equation}
 \new{with $y^{n}$ after tax income,} where $\xi$ governs progressivity and
-$\tau_{\ell}$ the level. \new{Households can receive two transfers, both means
-tested on gross income as the programmes themselves are.} A food stamp floor tops means
-tested income up to $\underline c\,\bar Y$, and the voucher covers rent above a
-tenant contribution of $\kappa_r$ of gross earnings,
+$\tau_{\ell}$ the level, \new{$\tau_k$ is the flat rate on capital income and $r$
+the risk free rate, which is the stylized model's $R-1$}. \new{Households can
+receive two transfers, both means tested on gross income as the programmes
+themselves are.} A food stamp floor tops means
+tested income up to $\underline c\,\bar Y$, \new{with $\underline c$ the floor
+expressed as a share of average income}, and the voucher covers rent above a
+tenant contribution of $\kappa_r$ of gross earnings, \new{the same $\kappa_r$ as
+in Section~\ref{sec:support},}
 \begin{equation}\label{eq:ftrans}
 F=\max\big\{0,\ \underline c\,\bar Y-(y^{g}+\max\{0,ra\})\big\},
 \qquad
 V\!ch=\mathbf{1}\{\eta=1\}\,\mathbf{1}\{h'\neq h_1\}\,
-\max\big\{0,\ p_h h'-\kappa_r\,y^{g}\big\}.
+\max\big\{0,\ \new{p_r}\, h'-\kappa_r\,y^{g}\big\}.
 \end{equation}
 A homeless voucher holder does not lose the voucher: retention depends on income
 eligibility, not on housing, so the entitlement survives and simply pays nothing
@@ -761,16 +765,18 @@ until the household rents again.
 \subsection{The budget constraint and the hours choice}
 
 \begin{equation}\label{eq:fbudget}
-c+p_v v+a' \;=\; y^{n}+a\;-\;p_h h'\,\mathbf{1}\{h'\neq h_1\}\;+\;V\!ch+F,
+c+p_v v+a' \;=\; y^{n}+a\;-\;\new{p_r}\, h'\,\mathbf{1}\{h'\neq h_1\}\;+\;V\!ch+F,
 \qquad c>0,\ v\ge0,\ a'\ge0 .
 \end{equation}
-Note what is absent: treatment, which costs utility, and bequests, which go to
-the government. Given $a'$ and $h'$, write $R$ for the resources left over.
+\new{The drug price is $p_v$ and market rent is $p_r$, both as in
+Section~\ref{sec:support}, and $a$ is assets carried in.} Note what is absent:
+treatment, which costs utility, and bequests, which go to
+the government. Given $a'$ and $h'$, write \new{$x$} for the resources left over.
 Cobb-Douglas preferences over $(c,v+b)$ split them in closed form,
 \begin{equation}\label{eq:fcv}
-c=\new{\frac{1-\gamma-\theta}{1-\gamma}}\big(R+p_v b\big),
+c=\new{\frac{1-\gamma-\theta}{1-\gamma}}\big(\new{x}+p_v b\big),
 \qquad
-v=\max\Big\{0,\ \new{\frac{\theta}{(1-\gamma)p_v}}\big(R+p_v b\big)-b\Big\},
+v=\max\Big\{0,\ \new{\frac{\theta}{(1-\gamma)p_v}}\big(\new{x}+p_v b\big)-b\Big\},
 \end{equation}
 so the inner allocation never needs a numerical search, and the corner in $v$ is
 where the household abstains because the Stone-Geary endowment already exceeds
@@ -779,10 +785,10 @@ mechanism as the threshold in Section~\ref{sec:problem}.
 
 Hours solve
 \begin{equation}\label{eq:ffoc}
-u_c(c)\,\frac{\partial R}{\partial n}\;=\;\omega_{\ell}(1-n)^{-\sigma_{\ell}} .
+u_c(c)\,\frac{\partial \new{x}}{\partial n}\;=\;\omega_{\ell}(1-n)^{-\sigma_{\ell}} .
 \end{equation}
 The clawbacks in~\eqref{eq:ftrans}, at a rate of one for food stamps and
-$\kappa_r$ for the voucher, make $\partial R/\partial n$ jump \emph{up} at the
+$\kappa_r$ for the voucher, make $\partial \new{x}/\partial n$ jump \emph{up} at the
 hours where each transfer is exhausted, because the clawback stops. The residual
 is therefore not monotone in $n$ and~\eqref{eq:ffoc} can have several roots, so
 it is solved by comparing the candidate roots rather than by a first order
@@ -798,10 +804,13 @@ are geometric,
 \begin{equation}\label{eq:fhouse}
 h_2=\underline h,\qquad h_3=\underline h\,\varsigma,\qquad h_4=\underline h\,\varsigma^{2},
 \end{equation}
-so two parameters describe the grid. Rent $p_h$ is normalised to one and the
-\emph{grid} is the calibrated object, since rescaling the grid by $\lambda$ and
-the price by $1/\lambda$ leaves every budget constraint untouched and identifying
-the level would run through a weak channel.
+so two parameters describe the grid: \new{$\underline h$ the smallest rental size
+and $\varsigma>1$ the geometric spread between consecutive sizes}. Rent
+\new{$p_r$} is normalised to one and the
+\emph{grid} is the calibrated object, since rescaling the grid by \new{any
+positive constant} and the price by \new{its reciprocal} leaves every budget
+constraint untouched and identifying the level would run through a weak
+channel.
 
 Homelessness then enters \new{three} separate equations: survival~\eqref{eq:fsurv},
 the employment transitions~\eqref{eq:femp} and the recovery
@@ -822,18 +831,23 @@ hazard of equation~\eqref{eq:hazard},
 \begin{equation}\label{eq:fd}
 \Pr(d'=1\mid d=0,v)=\pi_d(v)=1-e^{-\lambda v},
 \end{equation}
+\new{with $\lambda$ the same hazard parameter as in Section~\ref{sec:env}:}
 a single hazard rising in the quantity used, with no light and heavy split and no
 threshold, so as in Section~\ref{sec:env} the intensive and extensive margins are
 not separate decisions. \new{In the baseline a clean household may initiate only
-up to an age $j_E$. That is in tension with the U shaped age profile of use, so
+up to an age $j_E$, the last age at which use can begin. That is in tension with the U shaped age profile of use, so
 it is a switch rather than a hard coded parameter: the model runs both ways and
 the age profile is reported both ways.} A household with the SUD recovers with probability
 \begin{equation}\label{eq:frecover}
 \pi_r(h',\tau,m)=\min\Big\{1,\ \bar\pi_r\,
 \mu_H^{\mathbf{1}\{h'=h_1\}}\,\mu_m^{\mathbf{1}\{m=1\}}\,g^{\tau}\Big\},
 \end{equation}
-with $\mu_H<1$, recovery is harder on the street, $\mu_m<1$, harder with mental
-illness, and $g>1$ the treatment effect.
+\new{with $\bar\pi_r$ the baseline annual chance of recovering while housed,
+clean of mental illness and untreated, and three multipliers on it:}
+$\mu_H<1$, \new{so} recovery is harder on the street, $\mu_m<1$, harder with
+mental illness, and $g>1$ the treatment effect. \new{This is where housing acts
+on drug use in the quantitative model, and it is what Milby et al.\ (2005)
+measure.}
 
 Treatment $\tau$ is a \emph{choice}, not a mechanical hazard, taken at the utility
 cost $\bar\tau^u$ in~\eqref{eq:futil}. This matters more than it looks: the policy
@@ -845,11 +859,12 @@ whether to use, has no counterpart for it.
 \subsection{Serious mental illness}
 
 $m$ is an exogenous two state Markov chain representing \emph{serious} mental
-illness, about $5.5$ percent of adults, defined by substantial functional
+illness, \new{whose prevalence $p_m$ is} about $5.5$ percent of adults, defined by substantial functional
 impairment, rather than any mental illness, which is roughly a quarter of adults
 and includes mild anxiety: a state that halves productivity cannot sensibly cover
 a quarter of the population. The onset rate is derived from the target prevalence
-$p_m$ and the recovery rate $\lambda_m$,
+$p_m$ and the recovery rate $\lambda_m$, \new{the annual chance of leaving the
+state,}
 \begin{equation}\label{eq:fonset}
 \text{onset}_m=\lambda_m\frac{p_m}{1-p_m},
 \qquad
@@ -864,7 +879,7 @@ $11.0$ percent at ages 26 to 29 to $1.4$ percent at 65 and over, a factor of
 eight. Onset is therefore backed out of the observed prevalence profile and the
 recovery hazard,
 \begin{equation}\label{eq:fonsetage}
-\lambda(a)=\frac{p(a{+}1)-p(a)(1-\mu)}{1-p(a)},
+\new{\text{onset}_m(a)}=\frac{p(a{+}1)-p(a)(1-\new{\lambda_m})}{1-p(a)},
 \end{equation}
 with prevalence fitted log linearly, $R^2=0.977$, rather than interpolated
 piecewise: differencing a piecewise linear curve turns every kink into a spike,
@@ -875,6 +890,7 @@ calibrated to the prevalence target, and newborns enter at the observed
 prevalence at 26 rather than at the ergodic distribution of the age one
 transition matrix, which would start them at $4.7$ percent against $11$ to $13$
 observed. So} calibrating persistence never disturbs prevalence, and $\iota>1$
+\new{, the multiplier on onset for a household carrying the SUD,}
 makes a SUD raise the hazard of mental illness. That last channel runs in the
 direction the evidence supports: substance induced psychosis converts to
 schizophrenia or bipolar disorder at a pooled rate near a quarter, and in the
@@ -907,7 +923,10 @@ Survival is
 \kappa_{\phi H}^{\mathbf{1}\{h'=h_1\}}\,\kappa_{\phi d}^{\mathbf{1}\{d=1\}}\,
 \kappa_{\phi m}^{\mathbf{1}\{m=1\}}\Big\},
 \end{equation}
-with $\bar\phi_j$ the baseline age profile and the multipliers themselves varying
+with $\bar\phi_j$ the baseline \new{survival} age profile and the
+\new{three multipliers $\kappa_{\phi H}$, $\kappa_{\phi d}$ and $\kappa_{\phi m}$
+raising the death hazard for homelessness, the SUD and mental illness
+respectively, themselves varying}
 with age, rather than the single $\kappa$ of~\eqref{eq:surv}. Because $\aleph>0$ a
 higher death hazard is a real cost, and it is larger for households with more life
 remaining and more to consume, which is precisely the sorting
@@ -968,22 +987,31 @@ Job finding and separation are
 \pi^{eu}=\min\Big\{1,\ \bar\pi^{eu}\,\kappa_{ueH}^{-\mathbf{1}\{h'=h_1\}}
 \kappa_{ued}^{-\mathbf{1}\{d=1\}}\kappa_{uem}^{-\mathbf{1}\{m=1\}}\Big\},
 \end{equation}
-so each multiplier below one makes work simultaneously harder to find and easier
-to lose. In the baseline there is no direct wage penalty conditional on working,
-$\rho_d=1$: the robust findings are on the employment margin, roughly half again
-as much unscheduled absence and $44$ percent higher turnover, while the wage
-penalty conditional on working is contested. A version calibrated to the income
-ratio of those with the SUD is reported as an alternative.
+\new{with $\bar\pi^{ue}$ and $\bar\pi^{eu}$ the baseline job finding and
+separation rates and $\kappa_{ueH}$, $\kappa_{ued}$ and $\kappa_{uem}$ the
+multipliers for homelessness, the SUD and mental illness,} so each multiplier
+below one makes work simultaneously harder to find and easier
+to lose. {\color{red}The employment margin is where the robust findings are,
+roughly half again as much unscheduled absence and $44$ percent higher turnover.
+The wage penalty conditional on working is contested, and it would be left out
+were it not needed: it is in the model because roughly half the homeless work,
+and without something that leaves a household poor while it is still in a job
+that moment cannot be reached. It is calibrated rather than assumed, jointly with
+$\rho_m$, against the share of the homeless who are employed and homeless income
+over average.}
 
 \subsection{The voucher, and the two policies}
 
-A household without a voucher draws one with probability $\pi_V$ if it is income
+A household without a voucher draws one with probability $\pi_V$ \new{, the same
+lottery probability as in Section~\ref{sec:support},} if it is income
 eligible, and a household with one keeps it while eligible, so unlike
 Section~\ref{sec:support} the voucher is persistent rather than redrawn each
 period. Eligibility is
 \begin{equation}\label{eq:felig}
 y^{g}+\max\{0,ra\}\;<\;\kappa_V\cdot\text{median income}.
 \end{equation}
+\new{with $\kappa_V$ the eligibility cutoff expressed as a share of median
+income.}
 Under Housing First that is the whole rule. Under Treatment First the voucher is
 additionally lost with probability $p_{\text{det}}$ by a household that used and
 with probability $p_{\text{fp}}$ by one that did not,
@@ -1168,8 +1196,10 @@ households through their choices and then through the shocks,
 where $\phi_j$ is evaluated at the household's own $(h'_j(s),d,m)$. The mass that
 does not survive, plus the mass at $j=J$, is replaced by newborns at $j=1$ with
 zero assets, employed, clean, without mental illness and without a voucher, whose
-productivity is drawn from the unconditional distribution $\Omega_y$ scaled by the
-penalty,
+productivity is drawn from the unconditional distribution $\Omega_y$ \new{of
+permanent productivity across households} scaled by the
+\new{transmission penalties $\delta_d$ for a parent who carried the SUD and
+$\delta_h$ for one who was homeless,}
 \begin{equation}\label{eq:fnewborn}
 y_{\text{child}}\ \sim\ \Omega_y\ \text{ scaled by }\
 (1-\delta_d)^{\mathbf{1}\{\text{parent had the SUD}\}}\,
