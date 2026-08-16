@@ -297,8 +297,16 @@ class P:
     # Those are two external numbers aimed at the same object and nothing made
     # them agree. Now there is only ONE number, 0.268, and the unit is what it
     # implies: the dwelling a household at mean income would occupy if housing
-    # were continuously choosable, h_lg = gam/(1-th) * ybar. The small unit is
-    # half of it and the street is what the homelessness rate identifies.
+    # were continuously choosable, h_lg = gam/(1-th) * ybar. The small unit is a
+    # QUARTER of it and the street is what the homelessness rate identifies.
+    #
+    # A QUARTER RATHER THAN A HALF, and the reason is the homelessness margin.
+    # The small unit is the affordability floor: a household whose cash falls
+    # below its rent has no housed option at all and is homeless BY FORCE, which
+    # no value of h_hl undoes. At half of a 0.262 unit that floor sits at 0.131
+    # and forced homelessness alone runs above the 0.399 per cent target, so the
+    # h_hl bracket loses its interior solution. At a quarter the floor is 0.0655,
+    # the target is reachable, and h_hl does the work it is supposed to do.
     #
     # CALIBRATING h_lg ON THE REALISED HOUSING SHARE WAS TRIED AND FAILS, and the
     # reason is structural rather than a matter of tuning. Every household
@@ -322,7 +330,7 @@ class P:
     # same kind of reason it misses the drug spending share, and it is reported
     # as one.
     h_lg  = 0.2620    # = gam/(1-th) * ybar. DERIVED, see above
-    h_sm  = 0.1310    # tied to h_lg/2 in with_()
+    h_sm  = 0.0655    # tied to H_RATIO * h_lg in with_()
     h_hl  = 0.05      # the street. CALIBRATED to the homelessness rate
     pr    = 1.00      # rent per unit of housing services: the numeraire
     pV    = 0.27      # probability a voucher arrives, conditional on eligibility
@@ -358,13 +366,16 @@ def fields(par):
             if not k.startswith('_') and not callable(getattr(par, k))}
 
 
+H_RATIO = 0.25    # the small unit as a fraction of the standard one
+
+
 def with_(par, **kw):
     f = fields(par); f.update(kw)
-    # THE SMALL UNIT IS HALF THE STANDARD ONE, always, and it is tied here
-    # rather than at the call sites so that a bracket on h_lg cannot forget it
-    # and silently calibrate one size against a stale other.
+    # THE SMALL UNIT IS A QUARTER OF THE STANDARD ONE, always, and it is tied
+    # here rather than at the call sites so that a bracket on h_lg cannot forget
+    # it and silently calibrate one size against a stale other.
     if 'h_lg' in kw and 'h_sm' not in kw:
-        f['h_sm'] = 0.5 * f['h_lg']
+        f['h_sm'] = H_RATIO * f['h_lg']
     return clone(**f)
 
 
