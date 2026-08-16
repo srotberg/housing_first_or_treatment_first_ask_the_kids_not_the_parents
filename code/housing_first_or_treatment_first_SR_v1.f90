@@ -276,7 +276,11 @@
         real(8), parameter :: fraction_itemizing_MIDs_data=0.07467241172     
         real(8), parameter :: MID_to_GDP_data=0.41
         real(8), parameter :: bequests_to_net_wealth_data=0.012
-        real(8), parameter :: fraction_homeless_data=0.0045
+        ! HUD point in time 2023 converted to HOUSEHOLDS: 467,020 homeless
+        ! individuals at one household each, plus 57,563 homeless family
+        ! households, against 131,332,360 occupied units. The model's agent is a
+        ! household, so the person rate is the wrong denominator. It was 0.0045.
+        real(8), parameter :: fraction_homeless_data=0.00399
         real(8), parameter :: fraction_light_users=0.731
         
         integer, parameter :: target_HO_of_old=1
@@ -384,6 +388,25 @@
         ! has to be bracketed on that moment before any number from this model is
         ! reported.
         real(8), parameter :: b_sud_ratio=1.0
+
+        ! RHO_H, THE HOUSING ACCESS CHANNEL, and the parameter the referees say
+        ! the paper stands on. A household that is homeless faces a SMALLER Stone
+        ! Geary shifter, so the first units of the drug are worth more to it and
+        ! housing it lowers use. It is the only parameter in the model that
+        ! governs the elasticity of drug use with respect to housing access,
+        ! which R2 (C1) calls the crux on which all the welfare results rest and
+        ! which R3 and the AE (A13) name independently.
+        !
+        ! Without it the sign of the central experiment is WRONG: housing a
+        ! household only raises its resources, drugs are a normal good, so the
+        ! model predicts that housing RAISES use, against Milby et al. (2005).
+        !
+        ! IT IS NOT CALIBRATED YET. One is the neutral value and reproduces the
+        ! old behaviour, where b did not depend on housing at all. It has to be
+        ! bracketed on the housed against unhoused abstinence ratio of 1.473,
+        ! Milby's NACH against NH arms, before any number from this model is
+        ! reported.
+        real(8), parameter :: rho_b_homeless=1.0
         real(8), parameter :: addiction_scalar_2=b_sud_ratio*addiction_scalar_1
         
         real(8) :: relative_share_of_housing_1=relative_share_of_housing_0*(1-relative_share_of_addiction_1)
@@ -441,8 +464,17 @@
         real(8) :: stopping_rule_scaling_of_ss=10.d0**(-3)
         
         real(8), parameter :: increased_risk_of_death_homeless=0.6 
+        ! THIS IS THE MULTIPLIER MINUS ONE, not the multiplier. Survival is built
+        ! as phi - k*(1 - phi) at line 16620ish, so the death probability comes out
+        ! (1 + k) times the baseline. At k = 6.9 the effective mortality rate ratio
+        ! was 7.9, which is not what the written model says and not what the
+        ! stylized model's kappa was derived from. 5.9 gives an effective 6.9,
+        ! which is Hjorthoj's ratio and is what both models now use. The LEVEL is
+        ! calibrated in the second stage inside the Degenhardt range, so this is a
+        ! starting value; what matters is that the units are now the same in the
+        ! code and in the note.
         real(8), parameter :: increased_risk_of_death_addicted=&
-            have_increased_death_from_addiction*6.9+(1-have_increased_death_from_addiction)*size_of_penalty*5
+            have_increased_death_from_addiction*5.9+(1-have_increased_death_from_addiction)*size_of_penalty*5
         real(8), parameter :: increased_risk_of_death_homeless_addicted=&
             increased_risk_of_death_homeless+increased_risk_of_death_addicted
                             
@@ -561,7 +593,21 @@
         ! reported number rests on it: solve the benchmark at seventy and at
         ! ninety and compare the targeted moments and the two policy
         ! counterfactuals, not just the value function.
-        integer, parameter :: positive_financial_grid_size=50
+        ! FORTY, NOT FIFTY, and this is the one cut in the whole exercise that is
+        ! a judgement rather than a deduction. The a' search is quadratic in the
+        ! grid, so forty against fifty is 1.56x, which is what takes the
+        ! calibration under a day once mental illness doubles the state space:
+        ! thirty hours becomes nineteen on four cores, about two on forty.
+        !
+        ! IT MUST BE VALIDATED, and the validation is cheap now that the owner
+        ! branch is gone: solve the benchmark at forty and at fifty and compare
+        ! the targeted moments and BOTH counterfactuals, not just the value
+        ! function. The reason to be careful is specific rather than general. The
+        ! objective is not single peaked in a': voucher eligibility is a step
+        ! function of income which includes r*a, the food stamp floor kinks, and
+        ! housing is discrete. Coarsening this grid coarsens exactly the dimension
+        ! that carries the notches.
+        integer, parameter :: positive_financial_grid_size=40
         integer, parameter :: negative_financial_grid_size=61
         
         integer, parameter :: grid_gaps=coarse_grid*10+(1-coarse_grid)
@@ -664,7 +710,12 @@
             
         real(8), dimension(0:2) :: probability_of_voucher=probability_of_voucher_benchmark
             
-        real(8), parameter :: homeless_cost_govt_as_perc_of_avg_inc=0.252
+        ! The literally homeless figure from Abramson and Van Nieuwerburgh (2024),
+        ! \$2,500 per household per month, and not the \$1,775 they blend across
+        ! the homeless and the precariously housed. h_1 here is literal
+        ! homelessness, shelters and the street, so the blended figure is the
+        ! wrong one. It was 0.252.
+        real(8), parameter :: homeless_cost_govt_as_perc_of_avg_inc=0.4286
         real(8), parameter :: addict_cost_govt_as_perc_of_avg_inc=cost_of_addict_scaling*0.212  ! 38393
         real(8), parameter :: threshold_for_food_stamps_as_perc_of_average_net_wealth=100000 !0.015
         real(8), parameter :: fraction_of_income_spent_on_food=0.4
@@ -1542,6 +1593,36 @@
         
         !$omp threadprivate(choose_to_own)
         !$omp threadprivate(track_housing_2)
+
+    contains
+
+        ! THE STONE GEARY SHIFTER, in one place. It depends on whether the
+        ! household carries a SUD and on whether it is homeless, and on nothing
+        ! else. Homelessness is identified by the housing SIZE rather than the
+        ! index because the chain from the solver down to
+        ! optimize_frac_spent_on_addiciton carries the size; the homeless flow is
+        ! size_homelessness times the smallest rental, about a fifth of it, so
+        ! the test has an enormous margin and no floating point risk.
+        !
+        ! Every place that evaluates the drug term goes through this, so the flow
+        ! utility, its marginal utility and the closed form split cannot drift
+        ! apart. That was the reason not to patch them one at a time.
+        real(8) function b_shifter(is_sud_1,housing_size_1)
+
+            implicit none
+
+            integer, intent(in) :: is_sud_1
+            real(8), intent(in) :: housing_size_1
+
+            b_shifter=(1-is_sud_1)*addiction_scalar_1+is_sud_1*addiction_scalar_2
+
+            if (housing_size_1<housing_size(second_lowest_housing_grid_point)) then
+
+                b_shifter=b_shifter*rho_b_homeless
+
+            end if
+
+        end function
 
 	end module Global_Vars
     
@@ -11910,7 +11991,7 @@
                     ((housing_status_utility_function(future_housing_status_index_1,&
                     age_index,ownership_status_index_1,addicted_status_1)*&
                     consumption_choice_1**((1-risk_aversion_consumption)*relative_share_of_consumption_2)*&
-                    (addiction_scalar_1+(frac_spent_on_addiction_1*total_consumption_choice_1)/price_of_addictive_good_to_use)**&
+                    (b_shifter(0,housing_size(future_housing_status_index_1))+(frac_spent_on_addiction_1*total_consumption_choice_1)/price_of_addictive_good_to_use)**&
                     ((1-risk_aversion_consumption)*relative_share_of_addiction)))/(1-risk_aversion_consumption)
             
             elseif (include_probability_of_becoming_addicted==1) then
@@ -11920,7 +12001,7 @@
                     flow_utility_1=scaled_household_size(age_index)*&
                         ((housing_status_utility_function(future_housing_status_index_1,age_index,ownership_status_index_1,1)*&
                         consumption_choice_1**((1-risk_aversion_consumption)*relative_share_of_consumption_2)*&
-                        ((addiction_scalar_2+(frac_spent_on_addiction_1*total_consumption_choice_1)/&
+                        ((b_shifter(1,housing_size(future_housing_status_index_1))+(frac_spent_on_addiction_1*total_consumption_choice_1)/&
                         price_of_addictive_good_to_use))**&
                         ((1-risk_aversion_consumption)*relative_share_of_addiction_2)))/(1-risk_aversion_consumption)
                         
@@ -11929,7 +12010,7 @@
                     flow_utility_1=scaled_household_size(age_index)*&
                         ((housing_status_utility_function(future_housing_status_index_1,age_index,ownership_status_index_1,0)*&
                         consumption_choice_1**((1-risk_aversion_consumption)*relative_share_of_consumption_1)*&
-                        ((addiction_scalar_1+(frac_spent_on_addiction_1*total_consumption_choice_1)/&
+                        ((b_shifter(0,housing_size(future_housing_status_index_1))+(frac_spent_on_addiction_1*total_consumption_choice_1)/&
                         price_of_addictive_good_to_use))**&
                         ((1-risk_aversion_consumption)*relative_share_of_addiction_1)))/(1-risk_aversion_consumption)
                 
@@ -11990,7 +12071,7 @@
                     ((space_lived_in_internal_1*(1+ownership_status_index_1*advantage_to_owning))**&
                     ((1-risk_aversion_consumption)*relative_share_of_housing)*&
                     consumption_choice_1**((1-risk_aversion_consumption)*relative_share_of_consumption_2)*&
-                    (addiction_scalar_1+(frac_spent_on_addiction_1*total_consumption_choice_1)/price_of_addictive_good_to_use)**&
+                    (b_shifter(0,housing_size(future_housing_status_index_1))+(frac_spent_on_addiction_1*total_consumption_choice_1)/price_of_addictive_good_to_use)**&
                     ((1-risk_aversion_consumption)*relative_share_of_addiction))/(1-risk_aversion_consumption)
                     
             elseif (include_probability_of_becoming_addicted==1) then
@@ -12001,7 +12082,7 @@
                         ((space_lived_in_internal_1*(1+ownership_status_index_1*advantage_to_owning))**&
                         ((1-risk_aversion_consumption)*relative_share_of_housing_2)*&
                         consumption_choice_1**((1-risk_aversion_consumption)*relative_share_of_consumption_2)*&
-                        ((addiction_scalar_2+(frac_spent_on_addiction_1*total_consumption_choice_1)/&
+                        ((b_shifter(1,housing_size(future_housing_status_index_1))+(frac_spent_on_addiction_1*total_consumption_choice_1)/&
                         price_of_addictive_good_to_use))**&
                         ((1-risk_aversion_consumption)*relative_share_of_addiction_2))/(1-risk_aversion_consumption)
                 
@@ -12011,7 +12092,7 @@
                         ((space_lived_in_internal_1*(1+ownership_status_index_1*advantage_to_owning))**&
                         ((1-risk_aversion_consumption)*relative_share_of_housing_1)*&
                         consumption_choice_1**((1-risk_aversion_consumption)*relative_share_of_consumption_1)*&
-                        ((addiction_scalar_1+(frac_spent_on_addiction_1*total_consumption_choice_1)/&
+                        ((b_shifter(0,housing_size(future_housing_status_index_1))+(frac_spent_on_addiction_1*total_consumption_choice_1)/&
                         price_of_addictive_good_to_use))**&
                         ((1-risk_aversion_consumption)*relative_share_of_addiction_1))/(1-risk_aversion_consumption)
                 
@@ -12114,12 +12195,12 @@
             first_part=scaled_household_size(age_index)*&
                 ((housing_1**relative_share_of_housing)*&
                 (consumption_1**relative_share_of_consumption_2)*&
-                (addiction_scalar_1+(addiction_1/price_of_addictive_good))**relative_share_of_addiction)**&
+                (b_shifter(0,housing_1)+(addiction_1/price_of_addictive_good))**relative_share_of_addiction)**&
                 (-risk_aversion_consumption)
                 
             second_part=relative_share_of_consumption_2*(consumption_1)**(relative_share_of_consumption_2-1)*&
                 ((housing_1**relative_share_of_housing)*&
-                (addiction_scalar_1+(addiction_1/price_of_addictive_good))**relative_share_of_addiction)   
+                (b_shifter(0,housing_1)+(addiction_1/price_of_addictive_good))**relative_share_of_addiction)   
                 
         elseif (include_probability_of_becoming_addicted==1) then
         
@@ -12128,24 +12209,24 @@
                 first_part=scaled_household_size(age_index)*&
                     ((housing_1**relative_share_of_housing_2)*&
                     (consumption_1**relative_share_of_consumption_2)*&
-                    ((addiction_scalar_2+(addiction_1/price_of_addictive_good))**relative_share_of_addiction_2))**&
+                    ((b_shifter(1,housing_1)+(addiction_1/price_of_addictive_good))**relative_share_of_addiction_2))**&
                     (-risk_aversion_consumption)
                     
                 second_part=relative_share_of_consumption_2*(consumption_1)**(relative_share_of_consumption_2-1)*&
                     (housing_1**relative_share_of_housing_2)*&
-                    ((addiction_scalar_2+(addiction_1/price_of_addictive_good))**relative_share_of_addiction_2)
+                    ((b_shifter(1,housing_1)+(addiction_1/price_of_addictive_good))**relative_share_of_addiction_2)
                     
             else
             
                 first_part=scaled_household_size(age_index)*&
                     ((housing_1**relative_share_of_housing_1)*&
                     (consumption_1**relative_share_of_consumption_1)*&
-                    ((addiction_scalar_1+(addiction_1/price_of_addictive_good))**relative_share_of_addiction_1))**&
+                    ((b_shifter(0,housing_1)+(addiction_1/price_of_addictive_good))**relative_share_of_addiction_1))**&
                     (-risk_aversion_consumption)
                     
                 second_part=relative_share_of_consumption_1*(consumption_1)**(relative_share_of_consumption_1-1)*&
                     (housing_1**relative_share_of_housing_1)*&
-                    ((addiction_scalar_1+(addiction_1/price_of_addictive_good))**relative_share_of_addiction_1)
+                    ((b_shifter(0,housing_1)+(addiction_1/price_of_addictive_good))**relative_share_of_addiction_1)
             
             end if
                                                             
@@ -12764,11 +12845,11 @@
                 MU_2=scaled_household_size(age_index)*&
                     (((consumption_choice**relative_share_of_consumption_2)*&
                     (space_lived_in_1**relative_share_of_housing)*&
-                    (addiction_scalar_1+(frac_spent_on_addiction*total_consumption_choice)/&
+                    (b_shifter(0,housing_size(future_housing_status_index_1))+(frac_spent_on_addiction*total_consumption_choice)/&
                     price_of_addictive_good)**relative_share_of_addiction)**(-risk_aversion_consumption))*&
                     (relative_share_of_consumption_2*consumption_choice**(relative_share_of_consumption_2-1))*&
                     ((space_lived_in_1**relative_share_of_housing)*&
-                    (addiction_scalar_1+((frac_spent_on_addiction*total_consumption_choice)/&
+                    (b_shifter(0,housing_size(future_housing_status_index_1))+((frac_spent_on_addiction*total_consumption_choice)/&
                     price_of_addictive_good))**relative_share_of_addiction)
             
                 if (housing_voucher_2==0) then
@@ -12810,11 +12891,11 @@
                     MU_2=scaled_household_size(age_index)*&
                         (((consumption_choice**relative_share_of_consumption_2)*&
                         (space_lived_in_1**relative_share_of_housing_2)*&
-                        ((addiction_scalar_2+(frac_spent_on_addiction*total_consumption_choice)/&
+                        ((b_shifter(1,housing_size(future_housing_status_index_1))+(frac_spent_on_addiction*total_consumption_choice)/&
                         price_of_addictive_good))**relative_share_of_addiction_2)**(-risk_aversion_consumption))*&
                         (relative_share_of_consumption_2*consumption_choice**(relative_share_of_consumption_2-1))*&
                         ((space_lived_in_1**relative_share_of_housing_2)*&
-                        ((addiction_scalar_2+(frac_spent_on_addiction*total_consumption_choice)/&
+                        ((b_shifter(1,housing_size(future_housing_status_index_1))+(frac_spent_on_addiction*total_consumption_choice)/&
                         price_of_addictive_good))**relative_share_of_addiction_2)
                         
                 else
@@ -12822,11 +12903,11 @@
                     MU_2=scaled_household_size(age_index)*&
                         (((consumption_choice**relative_share_of_consumption_1)*&
                         (space_lived_in_1**relative_share_of_housing_1)*&
-                        ((addiction_scalar_1+(frac_spent_on_addiction*total_consumption_choice)/&
+                        ((b_shifter(0,housing_size(future_housing_status_index_1))+(frac_spent_on_addiction*total_consumption_choice)/&
                         price_of_addictive_good))**relative_share_of_addiction_1)**(-risk_aversion_consumption))*&
                         (relative_share_of_consumption_1*consumption_choice**(relative_share_of_consumption_1-1))*&
                         ((space_lived_in_1**relative_share_of_housing_1)*&
-                        ((addiction_scalar_1+(frac_spent_on_addiction*total_consumption_choice)/&
+                        ((b_shifter(0,housing_size(future_housing_status_index_1))+(frac_spent_on_addiction*total_consumption_choice)/&
                         price_of_addictive_good))**relative_share_of_addiction_1)
                 
                 end if
@@ -13475,13 +13556,13 @@
             if (unemployment_index>threshold_addiction_index) then
             
                 consumption_choice_1=(relative_share_of_consumption_2*&
-                    (price_of_addictive_good_1*addiction_scalar_2+total_consumption_choice_3))/&
+                    (price_of_addictive_good_1*b_shifter(1,housing_size_1)+total_consumption_choice_3))/&
                     (relative_share_of_consumption_2+relative_share_of_addiction_2)
                     
             else
             
                 consumption_choice_1=(relative_share_of_consumption_1*&
-                    (price_of_addictive_good_1*addiction_scalar_1+total_consumption_choice_3))/&
+                    (price_of_addictive_good_1*b_shifter(0,housing_size_1)+total_consumption_choice_3))/&
                     (relative_share_of_consumption_1+relative_share_of_addiction_1)
                                 
             end if
@@ -13547,9 +13628,9 @@
                     
                         MU_1=(1/price_of_addictive_good_1)*&
                             (relative_share_of_consumption_2*consumption_1**(relative_share_of_consumption_2-1))*&
-                            ((addiction_scalar_1+(addiction_1/price_of_addictive_good_1))**relative_share_of_addiction)
+                            ((b_shifter(0,housing_size_1)+(addiction_1/price_of_addictive_good_1))**relative_share_of_addiction)
                             
-                        MU_2=(relative_share_of_addiction*(addiction_scalar_1+(addiction_1/price_of_addictive_good_1))**&
+                        MU_2=(relative_share_of_addiction*(b_shifter(0,housing_size_1)+(addiction_1/price_of_addictive_good_1))**&
                             (relative_share_of_addiction-1))*(consumption_1**relative_share_of_consumption_2)
                             
                     elseif (include_probability_of_becoming_addicted==1) then
@@ -13558,13 +13639,13 @@
                     
                             MU_1=price_of_addictive_good_1*(relative_share_of_consumption_2*consumption_1**(-1))
                                 
-                            MU_2=(relative_share_of_addiction_2*(addiction_scalar_2+addiction_1/price_of_addictive_good_1)**(-1))
+                            MU_2=(relative_share_of_addiction_2*(b_shifter(1,housing_size_1)+addiction_1/price_of_addictive_good_1)**(-1))
                                 
                         else
                         
                             MU_1=price_of_addictive_good_1*(relative_share_of_consumption_1*consumption_1**(-1))
                                 
-                            MU_2=(relative_share_of_addiction_1*(addiction_scalar_1+addiction_1/price_of_addictive_good_1)**(-1))
+                            MU_2=(relative_share_of_addiction_1*(b_shifter(0,housing_size_1)+addiction_1/price_of_addictive_good_1)**(-1))
                         
                         end if
                                 
