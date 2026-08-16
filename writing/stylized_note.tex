@@ -410,10 +410,14 @@ Two features of the environment are candidates to reverse it. The
 through $\kappa$ in equation~\eqref{eq:surv}.
 The \emph{unemployment channel} is that it costs you a job with probability
 $u_1-u_0$, and if income support cannot cover the rent you downsize, live on
-less, or lose your home. Figure~\ref{fig:who} scales each from nothing to its
+less, or lose your home. Figure~\ref{fig:who} scales each from nothing to
+\new{$125$ percent of its}
 calibrated value, recalibrating $b$ at every point so participation stays at
 $5.13$ percent. The amount of drug use is therefore identical all along both
-curves and the only thing moving is which households use.
+curves and the only thing moving is which households use. \new{The range runs
+past the calibrated point deliberately: at $100$ percent one cannot tell a
+channel that has just crossed the line from one that is still falling hard, nor
+whether the channel that fails is about to turn.}
 
 \begin{figure}[!tb]
 \centering
@@ -422,17 +426,22 @@ curves and the only thing moving is which households use.
 \label{fig:who}
 \notes{0.62\textwidth}{Note: the vertical axis is average income of users over
 the population average, on a log scale, and $b$ is recalibrated at every point
-so that participation is $5.13$ percent throughout.}
+so that participation is $5.13$ percent throughout. \new{The dotted line marks
+the calibrated strength; everything to the right of it is extrapolation.}}
 \end{figure}
 
 The result is sharper than the statement that mortality matters more. That
 channel takes the income ratio down to \new{0.43} at full strength, and it
 does so as a threshold rather than gradually: at half of its calibrated value
 the ratio is still high, at 3.33, and the reversal happens over the
-last tenth or so of the channel. The
+last tenth or so of the channel. \new{Past the calibrated point it keeps
+biting, reaching \new{0.19} at $125$ percent, so the reversal is not a knife
+edge that the calibration happens to sit on.} The
 unemployment channel does
 not reverse it at all, leaving users at 3.33 times average income even
-fully switched on. A resource penalty does not produce the concentration of
+fully switched on\new{, and at $125$ percent it is \new{3.33}, still above
+one and no closer to turning. Strengthening the resource penalty by a quarter
+does not begin to do what mortality does}. A resource penalty does not produce the concentration of
 drug use at the bottom.
 
 A mortality penalty is different in kind. A resource penalty scales with the
@@ -643,6 +652,58 @@ externality can reverse a welfare ranking that is
 otherwise airtight, which is all it is for. Which way the comparison actually
 goes is a question about magnitudes, and that is what the quantitative model of
 the next section is for.
+
+{\color{red}
+It also prices exactly \emph{one} externality, because one is enough to make that
+point, and the reader should not take the ratio above as an estimate of anything.
+The quantitative model carries several more and they do not all pull the same
+way, which is the substantive reason the ranking there is a question of
+magnitudes rather than of signs.
+
+\begin{itemize}\setlength{\itemsep}{0.15em}
+\item \textbf{The government budget.} It clears at a distortionary labour income
+tax. A policy that houses more households spends more, so $\tau_{\ell}$ rises and
+the higher tax distorts hours and saving for \emph{every} household, including
+those the programme never reaches. This is the largest of the omissions and it
+runs against Housing First.
+
+\item \textbf{The transfers distort labour supply directly.} Food stamps claw
+back one for one and the voucher at $\kappa_r$, so the resources left over jump
+at the hours where each transfer is exhausted and the hours choice has several
+candidate roots. Conditionality then changes how much a household works, not only
+what it consumes. Here hours are fixed, so that margin does not exist.
+
+\item \textbf{Homelessness is a disamenity in itself.} Households dislike
+homelessness around them and not only their own, so the aggregate rate enters
+everyone's flow utility and is a genuine fixed point of the equilibrium. It is
+priced from what people say they would pay to end homelessness, and it runs
+\emph{for} whichever policy houses more.
+
+\item \textbf{The drug market clears.} Supply has a finite elasticity, so one
+household's use raises the price every other user pays. Here $p_v$ is a
+normalisation and that channel is absent entirely.
+
+\item \textbf{Homelessness feeds back on the disorder.} It raises mortality,
+worsens both employment margins and lowers the chance of recovering, so a spell
+on the street makes the disorder more likely to persist. Period~2 is terminal
+here, so none of that can operate.
+
+\item \textbf{Parents are partly altruistic.} The weight a parent puts on its
+child is calibrated rather than set to zero, so only the remainder of the damage
+in equation~\eqref{eq:kids} is external. That shrinks the very term this section
+rests on, and Section~\ref{sec:full} reports how far.
+
+\item \textbf{Eligibility and disability are fiscal facts about other people.}
+The means test is against the median income, which the distribution itself
+determines, and mental illness carries a disability benefit. Both make one
+household's income and health part of what every other household faces.
+\end{itemize}
+
+Only the third and the sixth of these have any counterpart in this section, and
+the sixth only as its absence. The first two in particular run the other way from
+the externality priced above, which is why nothing here should be read as
+settling the ranking.
+}
 
 %======================================================================
 \section{The quantitative model}\label{sec:full}
