@@ -985,12 +985,21 @@
         ! E V_1(0, y_child, ...) by the parent's SUD status and by whether it was
         ! homeless, which is what the newborn productivity penalty conditions on.
         !
-        ! IT IS OFF. The switch is zero, so nothing changes until it is turned on
-        ! and tested. Turning it on makes the age one value function enter every
-        ! age's continuation, which is a fixed point across ages: the outer loop
-        ! already iterates on prices, taxes and inheritance and carries the lag,
-        ! but that has to be seen to converge before the switch is trusted.
-        integer, parameter :: include_child_in_continuation=0
+        ! IT IS ON. omega is the parameter the paper's welfare reversal turns on,
+        ! and leaving the term switched off meant the model that produces the
+        ! numbers did not contain the externality the paper is about.
+        !
+        ! HOW THE FIXED POINT IS HANDLED. The age one value function enters every
+        ! age's continuation, which is a fixed point across ages rather than a
+        ! backward recursion. It is carried the way the outer loop already
+        ! carries prices, taxes and inheritance: expected_child_value is computed
+        ! once at the head of each backward pass from the PREVIOUS pass's age one
+        ! values, so within a pass it is a constant and the recursion is still
+        ! backward. Convergence of the outer loop is then convergence of this
+        ! too, and it shows up in the loop's own distances rather than needing a
+        ! separate test. On the first pass the value function is zero, so the
+        ! child term is zero and the model starts where it used to be.
+        integer, parameter :: include_child_in_continuation=1
         real(8), dimension(0:1,1:2) :: expected_child_value=0
         real(8), dimension(threshold_addiction_index) :: unconditional_unemployment_probability
         real(8), dimension(life_span,employment_grid_size,employment_grid_size) :: employment_process
@@ -9980,6 +9989,17 @@
             
         end if
                        
+        ! The child's expected value, from the previous pass's age one values.
+        ! Computed here so it is a constant within the pass; see the block at
+        ! include_child_in_continuation.
+        if (include_child_in_continuation==1) then
+
+            call compute_expected_child_value(time_period)
+
+            write(*,*) "expected_child_value=", expected_child_value
+
+        end if
+
         do age_index=life_span,1,-1
 
             ! PER AGE TIMING. TIMING.md's numbers were measured with a print like
@@ -11107,6 +11127,7 @@
                         
                             future_utility_vector(future_financial_index)=&
                                 future_utility_vector(future_financial_index)+&
+                                discount_factor*&
                                 (1-survival_probability(age_index,is_homeless_1,addiction_index))*&
                                 weight_on_child*expected_child_value(addiction_index,is_homeless_1)
                         

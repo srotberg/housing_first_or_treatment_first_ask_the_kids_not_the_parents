@@ -336,6 +336,31 @@ the disorder rate once the form is right.
 
 ---
 
+### 1.8 The child in the continuation. WAS switched off. Now on.
+
+`include_child_in_continuation` was zero, so the altruism term in the note's
+Bellman equation was absent from the model that produces the numbers. Since
+`omega` is the parameter the paper's welfare reversal turns on, that is the most
+consequential of the switches that were flipped without their consequences being
+followed through.
+
+`compute_expected_child_value` already existed and was **never called**, and the
+term at the read site was **missing its discount factor**. Both fixed, and the
+switch is on.
+
+**The fixed point, and why it does not need its own solver.** The age one value
+function enters every age's continuation, so this is a fixed point across ages
+rather than a backward recursion. It is carried the way the outer loop already
+carries prices, taxes and inheritance: `expected_child_value` is computed once at
+the head of each backward pass from the PREVIOUS pass's age one values, so within
+a pass it is a constant and the recursion stays backward. Convergence of the
+outer loop is convergence of this, and it shows in the loop's own distances. On
+the first pass the value function is zero, so the child term is zero and the
+model starts exactly where it used to.
+
+**What is not done.** The owner problems do not carry the term, the same gap as
+treatment, and dead for the same reason.
+
 ## 2. In the code, absent from the note
 
 ### 2.1 Homeownership, mortgages and a housing market.
