@@ -301,6 +301,77 @@
 
         integer, parameter :: number_of_smi_states=1
         integer, parameter :: threshold_addiction_index=3*number_of_smi_states
+
+        ! ====================================================================
+        ! SERIOUS MENTAL ILLNESS. Section 2.9 of the note, eq:fonsetage and
+        ! eq:fonset.
+        !
+        ! The prevalence profile is DATA and the onset is DERIVED FROM IT, which
+        ! is the one thing to understand before touching any of this. The note
+        ! writes
+        !
+        !     onset_m(j) = [ p(j+1) - p(j)(1-lambda_m) ] / (1 - p(j))
+        !
+        ! which is the accounting identity that makes a two state chain
+        ! reproduce an observed prevalence profile exactly. So prevalence is
+        ! matched BY CONSTRUCTION at any lambda_m, and lambda_m is therefore NOT
+        ! identified by prevalence. It is identified by the SMI share of the
+        ! homeless, because only a sufficiently sticky state lets the SMI
+        ! population accumulate in homelessness at four and a half times its
+        ! population share.
+        !
+        ! That is why p_m is an assigned input here and lambda_m is calibrated,
+        ! which is the reverse of what the note's tables used to say. See the
+        ! head of the calibration section.
+        !
+        ! code/simple does the same chain with a shape/level split instead, and
+        ! calibrates the onset LEVEL on prevalence while assigning recovery. Both
+        ! are coherent; this file follows the note.
+        real(8), dimension(:), allocatable :: smi_prevalence_by_age
+        real(8), dimension(:), allocatable :: smi_onset_by_age
+
+        ! Calibrated: SMI share of the homeless, 25 percent, Gutwinski et al.
+        ! (2021), pooling thirty nine studies. Start at the value code/simple
+        ! reached from Imrohoroglu and Zhao, about half improving within ten
+        ! years, 1-(1-0.5)^(1/10).
+        real(8) :: lambda_m=0.067
+
+        ! Assigned. Danish registers put the hazard ratio at 1.34 for any SUD
+        ! and 2.74 for opioid use disorder; substance induced psychosis converts
+        ! at a pooled rate near a quarter (Murrie et al., 2020).
+        real(8), parameter :: iota_smi=2.0
+
+        ! Calibrated: earnings of workers with SMI, through the homeless income
+        ! share. code/simple reached 0.55 targeting homeless income over average.
+        real(8) :: rho_m=0.55
+
+        ! Calibrated: employment rate given SMI, 30 percent, the midpoint of the
+        ! high disability range.
+        real(8) :: kappa_uem=1.0
+
+        ! Assigned. Standardised mortality ratios for SMI run 2 to 3.
+        real(8), parameter :: kappa_phi_m=2.50
+
+        ! Assigned. Dual diagnosis relapse of 39.8 against 26.4 percent.
+        real(8), parameter :: mu_m=0.82
+
+        ! Assigned. SSDI and SSI replacement for the non employed with SMI.
+        real(8), parameter :: zeta_DI=0.25
+
+        real(8) :: distance_lambda_m
+        real(8) :: stopping_rule_lambda_m=10.d0**(-3)
+        real(8) :: lambda_m_adjuster=1*10.d0**(-1)
+        real(8), parameter :: smi_share_of_homeless_data=0.25
+
+        real(8) :: distance_kappa_uem
+        real(8) :: stopping_rule_kappa_uem=10.d0**(-3)
+        real(8) :: kappa_uem_adjuster=2*10.d0**(0)
+        real(8), parameter :: employment_rate_given_smi_data=0.30
+
+        real(8) :: distance_rho_m
+        real(8) :: stopping_rule_rho_m=10.d0**(-3)
+        real(8) :: rho_m_adjuster=5*10.d0**(-2)
+        real(8), parameter :: homeless_income_share_data=0.191
         integer, parameter :: have_two_rental_markets=0
 
         ! A SECANT ON THE RENTAL MARKET TOO, for the same reason as lambda.
@@ -19164,6 +19235,10 @@
         
         call load_mortality_profiles()
 
+        ! Before recompute_derived_parameters, which builds the onset from this
+        ! profile and the current lambda_m.
+        call load_smi_prevalence_profile()
+
         call recompute_derived_parameters()
 
         call verify_index_map()
@@ -24658,6 +24733,204 @@
 
     end subroutine
     
+    subroutine load_smi_prevalence_profile()
+
+        ! Read the NSDUH SMI prevalence profile, ages 26 to 85. Built by
+        ! data/make_mh_onset.py, which is also what code/simple reads. The file
+        ! carries the shape and an implied onset alongside; only the prevalence
+        ! column is used here, because this file derives onset from the note's
+        ! identity rather than from a shape/level split.
+
+        use Global_Vars
+
+        implicit none
+
+        integer :: age_1,i_1,ios_1
+        real(8) :: shape_1,implied_1,prev_1
+        character(len=400) :: header_1
+        logical :: file_exists_1
+
+        allocate(smi_prevalence_by_age(life_span))
+        allocate(smi_onset_by_age(life_span))
+
+        smi_prevalence_by_age=0
+        smi_onset_by_age=0
+
+        inquire(file="../data/us_mh_onset_shape.csv",exist=file_exists_1)
+
+        if (.NOT. file_exists_1) then
+
+            inquire(file="us_mh_onset_shape.csv",exist=file_exists_1)
+
+            if (.NOT. file_exists_1) then
+
+                write(*,*) "us_mh_onset_shape.csv not found. stopping."
+                stop
+
+            end if
+
+            open(unit=75,file="us_mh_onset_shape.csv",action='read')
+
+        else
+
+            open(unit=75,file="../data/us_mh_onset_shape.csv",action='read')
+
+        end if
+
+            read(75,'(A)') header_1
+
+            do i_1=1,life_span
+
+                read(75,*,iostat=ios_1) age_1,shape_1,implied_1,prev_1
+
+                if (ios_1/=0) then
+
+                    prev_1=smi_prevalence_by_age(max(i_1-1,1))
+
+                end if
+
+                smi_prevalence_by_age(i_1)=prev_1
+
+            end do
+
+        close(75)
+
+        write(*,*) "SMI prevalence, first and last=", &
+            smi_prevalence_by_age(1), smi_prevalence_by_age(life_span)
+
+    end subroutine
+
+    subroutine build_smi_onset()
+
+        ! eq:fonsetage. Given the observed prevalence profile and the recovery
+        ! hazard, this is the onset that reproduces the profile exactly:
+        !
+        !     onset(j) = [ p(j+1) - p(j)(1-lambda_m) ] / (1 - p(j))
+        !
+        ! Called from recompute_derived_parameters, because it depends on
+        ! lambda_m and lambda_m is calibrated.
+        !
+        ! IT CAN GO NEGATIVE, and that is information rather than an error. A
+        ! negative value means the observed profile falls faster than the
+        ! recovery hazard alone can explain, so no non negative onset reproduces
+        ! it at that lambda_m. It is clamped at zero and counted; a large count
+        ! means lambda_m has been pushed too low for the data, and the
+        ! calibration should not be reading a fit through it silently.
+
+        use Global_Vars
+
+        implicit none
+
+        integer :: j_1,clipped_1
+        real(8) :: p_now_1,p_next_1,onset_1
+
+        clipped_1=0
+
+        do j_1=1,life_span
+
+            p_now_1=smi_prevalence_by_age(j_1)
+
+            if (j_1<life_span) then
+
+                p_next_1=smi_prevalence_by_age(j_1+1)
+
+            else
+
+                p_next_1=p_now_1
+
+            end if
+
+            if (p_now_1>=1.d0-10.d0**(-8)) then
+
+                smi_onset_by_age(j_1)=0
+                cycle
+
+            end if
+
+            onset_1=(p_next_1-p_now_1*(1-lambda_m))/(1-p_now_1)
+
+            if (onset_1<0.d0) then
+
+                onset_1=0
+                clipped_1=clipped_1+1
+
+            end if
+
+            smi_onset_by_age(j_1)=min(onset_1,1.d0)
+
+        end do
+
+        if (clipped_1>0) then
+
+            write(*,*) "build_smi_onset: onset clipped at zero for ", &
+                clipped_1, " ages; lambda_m too low for the profile. lambda_m=", lambda_m
+
+        end if
+
+    end subroutine
+
+    real(8) function smi_transition(current_m_1,future_m_1,sud_1,age_1)
+
+        ! eq:fonset. Onset is multiplied by iota when the household carries the
+        ! SUD, which is the channel that makes a SUD raise the hazard of SMI.
+        ! Leaving the state is lambda_m and does not depend on the SUD, on
+        ! housing, or on anything chosen.
+        !
+        ! The chain does NOT depend on housing, and that is a finding rather than
+        ! an omission: At Home / Chez Soi randomised 1,198 homeless adults with
+        ! SMI and found no detectable effect of housing on symptom severity at
+        ! any wave. Do not add a housing argument to this function.
+
+        use Global_Vars
+
+        implicit none
+
+        integer, intent(in) :: current_m_1,future_m_1,sud_1,age_1
+        real(8) :: onset_1
+
+        if (number_of_smi_states==1) then
+
+            smi_transition=1
+            return
+
+        end if
+
+        if (current_m_1==1) then
+
+            if (future_m_1==0) then
+
+                smi_transition=lambda_m
+
+            else
+
+                smi_transition=1-lambda_m
+
+            end if
+
+            return
+
+        end if
+
+        onset_1=smi_onset_by_age(min(max(age_1,1),life_span))
+
+        if (sud_1>=1) then
+
+            onset_1=min(onset_1*iota_smi,1.d0)
+
+        end if
+
+        if (future_m_1==1) then
+
+            smi_transition=onset_1
+
+        else
+
+            smi_transition=1-onset_1
+
+        end if
+
+    end function
+
     subroutine load_mortality_profiles()
 
         ! Read the CDC and Baggett profiles once. The file has a header and sixty
@@ -24786,6 +25059,14 @@
         ! so b_sud_ratio is one and the two are the same number; the line is kept
         ! so a robustness run can separate them in one place.
         addiction_scalar_2=b_sud_ratio*addiction_scalar_1
+
+        ! The SMI onset profile. Depends on lambda_m, which is calibrated, so it
+        ! is rebuilt here rather than once at startup.
+        if (allocated(smi_onset_by_age)) then
+
+            call build_smi_onset()
+
+        end if
 
         ! Recovery on the street, as a multiple of recovery while housed.
         probability_of_stopping_addiction_if_homeless=&
