@@ -655,7 +655,7 @@ factor and nothing else.
 \new{Households enter as adults, live at most $J$ annual periods and retire at
 $J_R$, and $j$ indexes age within that span.} Survival \new{from $j$ to $j+1$ is
 $\phi_j(h',d,m)$ in~\eqref{eq:fsurv}, and it depends on age,} on the housing
-\emph{chosen} this period, on the SUD and on \new{SMI}. Newborns replace the dead
+\emph{chosen} this period, on the SUD and on \new{serious mental illness (SMI)}. Newborns replace the dead
 exactly, so the mass of households is constant. The individual
 state is
 \begin{equation}\label{eq:fstate}
@@ -663,7 +663,7 @@ s=(a,\,y,\,e,\,d,\,m,\,\eta)\in
 \mathcal A\times\mathcal Y\times\{1,2,3\}\times\{0,1\}^3 ,
 \end{equation}
 where $a$ denotes assets, $y$ permanent productivity, $e$ employment status,
-$d$ the \new{SUD}, $m$ serious mental illness \new{(SMI)} and $\eta$ receipt
+$d$ the \new{SUD}, $m$ \new{SMI} and $\eta$ receipt
 of a voucher.
 
 Each period the household chooses
@@ -724,15 +724,15 @@ $\rho_m$ \new{are} productivity penalties applied \emph{conditional on working}.
 the replacement rate $\psi$ on an earnings base capped at $\bar y$, both as in
 equation~\eqref{eq:inc}.} $\zeta_{DI}$ \new{is} the rate at which disability
 insurance (DI) replaces the income of a non employed household with
-\new{SMI, and $\bar Y$ is} average income.
+\new{SMI}.
 
-{\color{red}The two penalties are in the model to generate a large share of
-homeless households being employed, consistent with the data. Roughly half the
-homeless work, so homelessness cannot be produced by unemployment alone:
+The two penalties\new{, $\rho_d$ and $\rho_m$,} are in the model to generate a
+large share of homeless households being employed, consistent with the data.
+\new{H}omelessness cannot be produced by unemployment alone:
 something has to leave a household poor while it is still in a job.
-
-Both are calibrated: $\rho_d$ on the share of the homeless who are employed, and
-$\rho_m$ on the earnings of workers with SMI relative to average.}
+Both are calibrated \new{internally}: $\rho_d$ on the share of the homeless who
+are employed, and $\rho_m$ on the earnings of workers with SMI relative to
+average.
 
 Labour income is taxed with the \new{Heathcote et al.\ (2017)} function and
 capital income at a flat rate \new{$\tau_k$},
@@ -744,11 +744,11 @@ and $\tau_{\ell}$ the level. Households can
 receive two transfers, both means tested on gross income as the programmes
 themselves are. A food stamp floor tops means
 tested income up to $\underline c\,\bar Y$, with $\underline c$ the floor
-expressed as a share of average income, and the voucher covers rent above a
+expressed as a share of \new{$\bar Y$,} average income, and the voucher covers rent above a
 tenant contribution of $\kappa_r$ of gross earnings, the same $\kappa_r$ as
 in Section~\ref{sec:support},
 \begin{equation}\label{eq:ftrans}
-F=\max\big\{0,\ \underline c\,\bar Y-(y^{g}+\max\{0,ra\})\big\},
+F=\max\big\{0,\ \underline c\,\bar Y-(y^{g}+\new{ra})\big\},
 \qquad
 V\!ch=\mathbf{1}\{\eta=1\}\,\mathbf{1}\{h'\neq h_1\}\,
 \max\big\{0,\ p_r\, h'-\kappa_r\,y^{g}\big\}.
@@ -760,60 +760,84 @@ until the household rents again.
 \subsection{The budget constraint and the hours choice}
 
 \begin{equation}\label{eq:fbudget}
-c+p_v v+a' \;=\; y^{n}+a\;-\;\new{p_r}\, h'\,\mathbf{1}\{h'\neq h_1\}\;+\;V\!ch+F,
+c+p_v v+a' \;=\; y^{n}+a\;-\;p_r\, h'\,\mathbf{1}\{h'\neq h_1\}\;+\;V\!ch+F,
 \qquad c>0,\ v\ge0,\ a'\ge0 .
 \end{equation}
-\new{The drug price is $p_v$ and market rent is $p_r$, both as in
-Section~\ref{sec:support}, and $a$ is assets carried in.} Note what is absent:
-treatment, which costs utility, and bequests, which go to
-the government. Given $a'$ and $h'$, write \new{$x$} for the resources left over.
-Cobb-Douglas preferences over $(c,v+b)$ split them in closed form,
-\begin{equation}\label{eq:fcv}
-c=\new{\frac{1-\gamma-\theta}{1-\gamma}}\big(\new{x}+p_v b\big),
-\qquad
-v=\max\Big\{0,\ \new{\frac{\theta}{(1-\gamma)p_v}}\big(\new{x}+p_v b\big)-b\Big\},
+The drug price is $p_v$ and market rent is $p_r$, both as in
+Section~\ref{sec:support}, and $a$ is assets carried in. Note what is absent:
+treatment, which costs utility, and bequests, which go to the government.
+
+{\color{red}Given hours, the dwelling and next period assets, what is left to divide
+between consumption and the drug is
+\begin{equation}\label{eq:fresource}
+x\;=\;y^{n}+a\;-\;p_r\,h'\,\mathbf{1}\{h'\neq h_1\}\;+\;V\!ch+F\;-\;a' ,
 \end{equation}
-so the inner allocation never needs a numerical search, and the corner in $v$ is
-where the household abstains because the Stone-Geary endowment already exceeds
-its desired intake. That is how a large $b$ deters use, and it is the same
-mechanism as the threshold in Section~\ref{sec:problem}.
+so that the budget above reads $c+p_v v=x$. The household maximises
+\eqref{eq:futil} plus its continuation value over that margin, and because the
+disorder arrives with probability $\pi_d(v)$ the continuation value moves with
+the split as well. The first order condition is
+\begin{equation}\label{eq:fcv}
+\frac{\theta}{b+v}\,\Lambda
+\;=\;
+\frac{p_v\,(1-\gamma-\theta)}{c}\,\Lambda
+\;+\;
+\lambda e^{-\lambda v}\Big[\,\mathbb E V\!\left(\cdot\,\middle|\,d'=0\right)-
+\mathbb E V\!\left(\cdot\,\middle|\,d'=1\right)\Big] ,
+\end{equation}
+with $\Lambda$ the Cobb-Douglas bundle of~\eqref{eq:futil} times $1-\sigma$. That
+is the paper's mechanism in one line: the marginal value of the drug is set
+against the consumption it displaces \emph{and} against the extra chance of
+carrying the disorder that using more brings, so the intensive margin is priced
+by the hazard rather than only by the budget.
+
+The third term is zero for a household that already carries the disorder, whose
+transition is recovery and does not depend on $v$, and for one that abstains.
+There the condition is the static Cobb-Douglas split,
+\begin{equation}\label{eq:fcvstatic}
+c=\frac{1-\gamma-\theta}{1-\gamma}\big(x+p_v b\big),
+\qquad
+v=\max\Big\{0,\ \frac{\theta}{(1-\gamma)p_v}\big(x+p_v b\big)-b\Big\},
+\end{equation}
+whose corner is where the household abstains because the Stone-Geary endowment
+already exceeds its desired intake. That is how a large $b$ deters use, and it is
+the same mechanism as the threshold in Section~\ref{sec:problem}.
+}
 
 Hours solve
 \begin{equation}\label{eq:ffoc}
-u_c(c)\,\frac{\partial \new{x}}{\partial n}\;=\;\omega_{\ell}(1-n)^{-\sigma_{\ell}} .
+u_c(c)\,\frac{\partial x}{\partial n}\;=\;\omega_{\ell}(1-n)^{-\sigma_{\ell}} .
 \end{equation}
 The clawbacks in~\eqref{eq:ftrans}, at a rate of one for food stamps and
-$\kappa_r$ for the voucher, make $\partial \new{x}/\partial n$ jump \emph{up} at the
-hours where each transfer is exhausted, because the clawback stops. The residual
-is therefore not monotone in $n$ and~\eqref{eq:ffoc} can have several roots, so
-it is solved by comparing the candidate roots rather than by a first order
-condition alone. This is the welfare trap, and it is the channel through which
-conditionality changes labour supply rather than only consumption.
+$\kappa_r$ for the voucher, make $\partial x/\partial n$ jump \emph{up} at the
+hours where each transfer is exhausted, because the clawback stops. This is the
+welfare trap, and it is the channel through which conditionality changes labour
+supply rather than only consumption.
 
 \subsection{Housing, and the homelessness loop}
 
 Housing is a four point grid. $h_1$ is literal homelessness, sleeping rough or in
-an emergency shelter, which is the HUD point in time definition and excludes
+an emergency shelter, which is the HUD \new{point-in-time} definition and excludes
 doubling up; it carries a small service flow and no rent. The three rental sizes
 are geometric,
 \begin{equation}\label{eq:fhouse}
 h_2=\underline h,\qquad h_3=\underline h\,\varsigma,\qquad h_4=\underline h\,\varsigma^{2},
 \end{equation}
-so two parameters describe the grid: \new{$\underline h$ the smallest rental size
-and $\varsigma>1$ the geometric spread between consecutive sizes}. Rent
-\new{$p_r$} is normalised to one and the
-\emph{grid} is the calibrated object, since rescaling the grid by \new{any
-positive constant} and the price by \new{its reciprocal} leaves every budget
-constraint untouched and identifying the level would run through a weak
-channel.
+so two parameters describe the grid: $\underline h$ the smallest rental size
+and $\varsigma>1$ the geometric spread between consecutive sizes. \new{They are
+geometric rather than fitted one by one, and that is a restriction worth being
+explicit about. Three sizes hold two free numbers once the shares must sum to
+one, so $\underline h$ and $\varsigma$ are exactly identified by two of the three
+occupancy shares and the third is a check on the functional form rather than a
+target. Fitting each size separately would add a parameter that the shares cannot
+distinguish from the other two.}
 
-Homelessness then enters \new{three} separate equations: survival~\eqref{eq:fsurv},
-the employment transitions~\eqref{eq:femp} and the recovery
-hazard~\eqref{eq:frecover}. It raises
-mortality, worsens both employment margins\new{ and lowers the chance of
-recovering. It does not enter preferences, which is deliberate and argued in
-Section~\ref{sec:fprefs}: housing is chosen, so a taste that moved with it would
-be a preference over a choice. Those three} together are what make
+Homelessness then enters three separate equations: survival~\eqref{eq:fsurv},
+the employment transitions~\eqref{eq:femp} and the \new{SUD} recovery
+hazard~\eqref{eq:frecover}\new{, through $\kappa_{\phi H}$, $\kappa_{ueH}$ and
+$\mu_H$ respectively, each defined with the equation it appears in}. It raises
+mortality, worsens both employment margins \new{and lowers the chance of
+recovering from the SUD; the SMI chain does not depend on housing, for the reason
+given in Section~\ref{sec:fsmi}. Those three} together are what make
 homelessness and the SUD mutually reinforcing rather than merely correlated,
 and it is that loop, absent from Section~\ref{sec:env}, that a housing programme
 acts on.
@@ -851,7 +875,7 @@ which its entire effect runs, so treatment has to be something a household decid
 to undertake and can decline. Section~\ref{sec:mh}, where the only margin is
 whether to use, has no counterpart for it.
 
-\subsection{Serious mental illness}
+\subsection{Serious mental illness}\label{sec:fsmi}
 
 $m$ is an exogenous two state Markov chain representing \emph{serious} mental
 illness, \new{whose prevalence $p_m$ is} about $5.5$ percent of adults, defined by substantial functional
@@ -1003,7 +1027,7 @@ eligible, and a household with one keeps it while eligible, so unlike
 Section~\ref{sec:support} the voucher is persistent rather than redrawn each
 period. Eligibility is
 \begin{equation}\label{eq:felig}
-y^{g}+\max\{0,ra\}\;<\;\kappa_V\cdot\text{median income}.
+y^{g}+\new{ra}\;<\;\kappa_V\cdot\text{median income}.
 \end{equation}
 \new{with $\kappa_V$ the eligibility cutoff expressed as a share of median
 income.}
@@ -1115,7 +1139,9 @@ carried a SUD or was homeless, and both depend on $v$ and $h'$, that last term i
 what puts the child inside the parent's drug and housing decision.
 
 The problem is solved by exact backward induction. Within a housing choice the
-split of $c$ and $v$ is closed form by~\eqref{eq:fcv} and hours come
+split of $c$ and $v$ solves~\eqref{eq:fcv}, \new{closed form
+by~\eqref{eq:fcvstatic} wherever the risk term vanishes and a one dimensional
+solve between that split and abstention where it does not,} and hours come
 from~\eqref{eq:ffoc}, so the only search is over $a'$, and it is done on the full
 grid rather than by a coarse then refine heuristic, because the objective is
 \emph{not} single peaked in $a'$: eligibility~\eqref{eq:felig} is a step function
