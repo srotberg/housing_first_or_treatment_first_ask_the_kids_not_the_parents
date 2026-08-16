@@ -345,7 +345,9 @@
         ! It is on in both arms. The two policies differ in the sobriety
         ! condition, voucher_conditional_on_clean, not in whether vouchers exist.
         integer, parameter :: provide_vouchers=1
-        real(8), parameter :: max_fraction_of_income_spent_on_housing=include_addiction*0.44+(1-include_addiction)*0.8
+        ! kappa_r, the tenant contribution rate. The note's external table sets it at
+        ! 0.30, which is HUD's own rule; the code had 0.44.
+        real(8), parameter :: max_fraction_of_income_spent_on_housing=0.30
         real(8), parameter :: max_rent_relative_to_ave=include_addiction*1.56+(1-include_addiction)*1.4
         
         character*400 :: file_number
@@ -416,7 +418,10 @@
         real(8), parameter :: average_labor_income_tax_data=0.224
         real(8) :: standard_deduction
         real(8) :: personal_exemption
-        real(8), parameter :: standard_deduction_data=0 !9350
+        ! REMOVED FROM THE MODEL. Equation (16) applies the Heathcote, Storesletten and
+        ! Violante form to gross income with no exemption and no deduction, so both
+        ! are held at zero and the note and the code now agree on the tax base.
+        real(8), parameter :: standard_deduction_data=0
         real(8), parameter :: personal_exemption_data=0 !4050
         
         integer, parameter :: include_housing_depreciation_in_housing_costs=0 
@@ -790,6 +795,11 @@
         real(8), dimension(2) :: ss_decrease_addicted=ss_decrease_for_retired_addicted*&
             include_addiction*(/0,0/)
         
+        ! REMOVED FROM THE MODEL. The written budget constraint has no consumption tax.
+        ! It was already zero, so nothing changes numerically, but it is kept at
+        ! zero as a parameter rather than deleted because it appears in a dozen
+        ! expressions and threading it out of all of them risks more than it
+        ! gains. Anything that reads it reads a hard zero.
         real(8), parameter :: consumption_tax=0
         real(8) :: max_food_cost=&
             ((1-perceived_probability_lower)*0.126+perceived_probability_lower*0.132)/(1+consumption_tax)
@@ -807,6 +817,13 @@
         real(8) :: stopping_rule_labor_income_tax_rate=10.d0**(-3)
                 
         real(8) :: curvature_of_labor_income_taxes=0.85
+
+        ! tau_k is investment_income_tax, declared near the voucher block and set
+        ! at 0.15, which is the note's value. It is applied in
+        ! calculate_after_tax_wealth and its revenue is accumulated in
+        ! govt_revenues_from_investment_income. I reported capital income as
+        ! untaxed on the strength of grepping for tau_k, which is the note's
+        ! name for it and not the code's. It was there all along.
         
         real(8) :: housing_status_grid_expander=1.8
         real(8) :: housing_status_grid_expander_adjuster=1*10.d0**(-1)
@@ -1056,7 +1073,9 @@
         
         real(8), parameter :: replacement_rate_ui=0.5
         real(8), parameter :: max_ui_as_perc_of_avg_inc=1
-        real(8), parameter :: probability_becoming_employed=0.297404631
+        ! bar pi^ue, the annual job finding rate. The note's external table sets it at
+        ! 0.55; the code had 0.2974.
+        real(8) :: probability_becoming_employed=0.55
         real(8) :: probability_becoming_unemployed=&
             (1-perceived_probability_lower)*0.0155+perceived_probability_lower*0.0143
         

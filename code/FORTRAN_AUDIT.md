@@ -931,3 +931,49 @@ through every array, so the machinery looks present. Only the payment is off.
 
 `number_of_smi_states` is 1. Turning it to 2 is what starts serious mental
 illness, and the content behind it does not exist yet.
+
+---
+
+# The external table, note against code, value by value
+
+Built by reading each row of `tab_full_external.tex` and finding the code's own
+name for it. **Three of my earlier "absent" findings were wrong, and all three
+failed the same way: I probed with the note's symbol rather than the code's
+vocabulary.** That is now the standing rule for this file: an absence is not
+established until the code's own naming has been searched.
+
+## Wrong, and corrected
+
+| I said | truth |
+|---|---|
+| capital income is not taxed | `investment_income_tax = 0.15`, exactly the note's `tau_k`, applied in `calculate_after_tax_wealth` with revenue in `govt_revenues_from_investment_income` |
+| serious mental illness absent entirely | the index scaffold is built; only the content is missing |
+| the fiscal costs are absent | `homeless_cost_govt_as_perc_of_avg_inc = 0.4286` and `addict_cost_govt_as_perc_of_avg_inc = 0.212`, both the note's values |
+
+## Aligned, verified
+
+`sigma` 2.00, `sigma_l` 3.00, `r` 0.03, `xi` 0.85, `tau_k` 0.15, `chi_H` 0.4286,
+`chi_D` 0.212, `kappa_V` 0.50 (`threshold_income_vouchers`), `bar pi_r` 0.025,
+`g` 1.35, `nu_2` 1.50, `j_E` 55.
+
+`p_det` 1.00 and `p_fp` 0.00 are the note's own values, and a binary
+`voucher_conditional_on_clean` is exactly perfect detection with no false
+positives. Aligned by construction.
+
+## Was misaligned, now fixed
+
+| | note | was | now |
+|---|---|---|---|
+| `kappa_r`, tenant contribution | 0.30 | 0.44 | 0.30 |
+| `bar pi^ue`, job finding | 0.55 | 0.2974 | 0.55 |
+| consumption tax | absent | present, zero | held at zero, documented as not in the model |
+| exemption and deduction | absent | present, zero | held at zero, tax base now matches equation (16) |
+
+## Still misaligned
+
+| | note | code |
+|---|---|---|
+| `kappa_phi H` | 4.41 falling to 1.09 with age | `increased_risk_of_death_homeless = 0.6`, flat |
+| `kappa_ueH` | 0.80 as a multiplier | `increased_prob_if_homeless = 0.2` as an excess; roughly but not exactly the same |
+| `lambda_m`, `iota`, `kappa_phi m`, `mu_m` | 0.067, 2.00, 2.50, 0.82 | absent, all SMI |
+| `p_test`, `c_test` | 1.00, 0.0023 | absent; there is no testing cost in the government budget |
