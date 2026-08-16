@@ -110,7 +110,7 @@ does and does not transfer. Their externality is about neighbourhood housing
 not the right one to import. What transfers is the identification logic. We use a
 contingent valuation approach for the calibration moment instead.
 
-\thisround It is in the model, priced from the evidence you would want it priced
+\open It is in the model as written, priced from the evidence you would want it priced
 from rather than asserted. Loubi\`ere et al.\ (2020) ask adults in eight European
 countries what they would pay in annual taxes to end homelessness through Housing
 First: \euro{}23 a year on average, which is 0.08 per cent of average annual
@@ -218,13 +218,15 @@ assumption, and the welfare complementarity becomes an incentive effect rather
 than an artefact of the utility function. This is a stronger result than the one
 it replaces and we are grateful for the push.
 
-\thisround Done in the code, where it previously was not. The switch that raised
-the weight on drugs from 0.13 to 0.45 for a household with the disorder is off,
-so the weights on consumption, housing and drugs are now the same function clean
-and addicted, and the disorder acts on the drug decision only through the
-Stone-Geary shifter. The consistency check inside the program that used to demand
-the two shifters be equal has been relaxed accordingly, since the shifter is now
-the one thing that is meant to differ.
+\thisround Done in the code, where it previously was not, and taken one step
+further than you asked. The switch that raised the weight on drugs from 0.13 to
+0.45 for a household with the disorder is off, so the weights on consumption,
+housing and drugs are the same function clean and addicted. We then found that
+the Stone-Geary shifter raised the same objection one step along, and it is now
+constant too: flow utility is the same function of consumption, housing and drugs
+in every state and after every choice. What the disorder costs runs entirely
+through mortality, employment, the recovery hazard and the budget, none of which
+is a preference.
 \end{response}
 
 \cmt{C6}{Optimal voucher design, and $\chi_H$ looks high}

@@ -96,9 +96,9 @@ def fig_who_uses(base):
     ax.set_xlim(-3, 128)
     ax.set_xticks([0, 25, 50, 75, 100, 125])
     # the calibrated point, so the extrapolation past it reads as extrapolation
-    ax.axvline(100, color='0.55', lw=0.9, ls=':')
+    ax.axvline(100, color='black', lw=0.9, ls=':')
     ax.annotate('calibrated', xy=(100, 0.115), ha='center', va='bottom',
-                fontsize=8, color='0.45')
+                fontsize=8, color='black')
     ax.set_xlabel('Strength of the channel, percent of its calibrated value')
     ax.set_ylabel('Mean income of users / population mean')
     # legend OUTSIDE the plotting area, so it cannot sit on the lines
