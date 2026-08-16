@@ -2445,6 +2445,141 @@
 
         end function
 
+        real(8) function smi_transition(current_m_1,future_m_1,sud_1,age_1)
+
+            ! eq:fonset. Onset is multiplied by iota when the household carries the
+            ! SUD, which is the channel that makes a SUD raise the hazard of SMI.
+            ! Leaving the state is lambda_m and does not depend on the SUD, on
+            ! housing, or on anything chosen.
+            !
+            ! The chain does NOT depend on housing, and that is a finding rather than
+            ! an omission: At Home / Chez Soi randomised 1,198 homeless adults with
+            ! SMI and found no detectable effect of housing on symptom severity at
+            ! any wave. Do not add a housing argument to this function.
+
+            implicit none
+
+            integer, intent(in) :: current_m_1,future_m_1,sud_1,age_1
+            real(8) :: onset_1
+
+            if (number_of_smi_states==1) then
+
+                smi_transition=1
+                return
+
+            end if
+
+            if (current_m_1==1) then
+
+                if (future_m_1==0) then
+
+                    smi_transition=lambda_m
+
+                else
+
+                    smi_transition=1-lambda_m
+
+                end if
+
+                return
+
+            end if
+
+            onset_1=smi_onset_by_age(min(max(age_1,1),life_span))
+
+            if (sud_1>=1) then
+
+                onset_1=min(onset_1*iota_smi,1.d0)
+
+            end if
+
+            if (future_m_1==1) then
+
+                smi_transition=onset_1
+
+            else
+
+                smi_transition=1-onset_1
+
+            end if
+
+        end function
+
+        real(8) function employment_transition(e_c_1,e_f_1,d_f_1,m_f_1,h_1,p_1,iph_1)
+
+            ! The employment leg of the joint transition, keyed on the FUTURE
+            ! disorder state, which is the existing convention: a household that
+            ! acquires the SUD this period faces the addicted margins on the way in,
+            ! and one that recovers faces the clean margins. h_1 is 1 housed, 2
+            ! homeless.
+
+            implicit none
+
+            integer, intent(in) :: e_c_1,e_f_1,d_f_1,m_f_1,h_1,p_1
+            real(8), intent(in) :: iph_1
+            real(8) :: sep_1,find_1
+
+            if (d_f_1>=1) then
+
+                sep_1=probability_becoming_unemployed_if_addicted
+                find_1=probability_becoming_employed_if_addicted
+
+            else
+
+                sep_1=probability_becoming_unemployed
+                find_1=probability_becoming_employed
+
+            end if
+
+            ! SMI worsens both margins, in the same direction and by the same
+            ! convention as the SUD multiplier: it multiplies separation and divides
+            ! job finding, so kappa_uem greater than one is unambiguously worse.
+            if (m_f_1>=1) then
+
+                sep_1=sep_1*kappa_uem
+                find_1=find_1/kappa_uem
+
+            end if
+
+            if (h_1==2) then
+
+                sep_1=sep_1*(1+iph_1)
+                find_1=find_1/(1+iph_1)
+
+            end if
+
+            sep_1=sep_1*adjusted_probability(p_1)
+
+            sep_1=max(min(sep_1,1.d0),0.d0)
+            find_1=max(min(find_1,1.d0),0.d0)
+
+            employment_transition=0
+
+            if (e_c_1==1) then
+
+                if (e_f_1==2) employment_transition=sep_1*(1-probability_of_ui)
+                if (e_f_1==3) employment_transition=sep_1*probability_of_ui
+                if (e_f_1==1) employment_transition=1-sep_1
+
+            else
+
+                ! Out of work, with or without UI. Finding a job returns to 1;
+                ! otherwise the spell continues in the SAME state, which is what
+                ! keeps UI a first period only benefit.
+                if (e_f_1==1) then
+
+                    employment_transition=find_1
+
+                elseif (e_f_1==e_c_1) then
+
+                    employment_transition=1-find_1
+
+                end if
+
+            end if
+
+        end function
+
         ! The slope the household actually responds to, which is the perceived
         ! one. Kept beside the transition so the two cannot drift apart if the
         ! perception wedge is ever reopened.
@@ -19647,9 +19782,32 @@
             
             unemployment_process(:,5,2,1,0,:)=(1-probability_becoming_employed)
             unemployment_process(:,5,2,2,0,:)=(1-probability_becoming_employed/(1+increased_prob_if_homeless))
-                       
+
         end if
-               
+
+        ! AT ONE SMI STATE the hand written block above is the live array and the
+        ! generic builder is only checked against it. At two the hand written
+        ! block cannot express the layout at all, so the generic builder becomes
+        ! the live one. Flipping number_of_smi_states is therefore the whole
+        ! switch, and the run says out loud which path it took.
+        if (number_of_smi_states==1) then
+
+            if (loop_count<1) then
+
+                ! Restores the hand written array before returning, so at one
+                ! state the model stays bit identical to before the port.
+                call verify_unemployment_process(increased_prob_if_homeless)
+
+            end if
+
+        else
+
+            write(*,*) "unemployment_process: generic builder, number_of_smi_states=", number_of_smi_states
+
+            call build_unemployment_process_smi(increased_prob_if_homeless)
+
+        end if
+
         if (loop_count<1) then
                 
 !            do unemployment_index=1,unemployment_grid_size
@@ -19770,6 +19928,192 @@
         
     end subroutine
     
+
+    subroutine build_unemployment_process_smi(iph_1)
+
+        ! THE JOINT (employment, SMI, SUD) TRANSITION, BUILT RATHER THAN
+        ! ENUMERATED.
+        !
+        ! The block above writes this array out by hand, one index pair at a
+        ! time. That is readable at six states and unmaintainable at twelve, and
+        ! twelve is what a second SMI state costs. The transition factorises,
+        !
+        !     P(e,m,d -> e',m',d') = P_emp(e -> e' | d', m', h, p) * P_smi(m -> m' | d, j)
+        !
+        ! so it can be built from the two legs directly. The SMI leg takes the
+        ! CURRENT disorder state, because the note's iota raises the onset of SMI
+        ! for a household that already carries the SUD; the employment leg takes
+        ! the future one, for the reason given in employment_transition.
+        !
+        ! This is verified against the hand written array rather than trusted:
+        ! see verify_unemployment_process.
+
+        use Global_Vars
+
+        implicit none
+
+        real(8), intent(in) :: iph_1
+        integer :: a_1,p_1,h_1,d_c_1,d_f_1,m_c_1,m_f_1,e_c_1,e_f_1,i_1,j_1
+        real(8) :: smi_1
+
+        unemployment_process=0
+
+        do a_1=1,life_span
+
+            do p_1=1,employment_grid_size
+
+                do h_1=1,2
+
+                    do d_c_1=0,include_addiction
+
+                        do d_f_1=0,include_addiction
+
+                            do m_c_1=0,number_of_smi_states-1
+
+                                do m_f_1=0,number_of_smi_states-1
+
+                                    smi_1=smi_transition(m_c_1,m_f_1,d_c_1,a_1)
+
+                                    if (smi_1<=0.d0) cycle
+
+                                    do e_c_1=1,3
+
+                                        i_1=idx_of(e_c_1,m_c_1,d_c_1)
+
+                                        do e_f_1=1,3
+
+                                            j_1=idx_of(e_f_1,m_f_1,d_f_1)
+
+                                            unemployment_process(a_1,i_1,j_1,h_1,d_f_1,p_1)=&
+                                                employment_transition(e_c_1,e_f_1,d_f_1,m_f_1,h_1,p_1,iph_1)*smi_1
+
+                                        end do
+
+                                    end do
+
+                                end do
+
+                            end do
+
+                        end do
+
+                    end do
+
+                end do
+
+            end do
+
+        end do
+
+    end subroutine
+
+    subroutine verify_unemployment_process(iph_1)
+
+        ! Build the generic array into scratch and compare it, element by
+        ! element, with whatever is currently in unemployment_process. At one SMI
+        ! state the two are meant to describe the same object, so any difference
+        ! is a real disagreement and is printed with its indices rather than
+        ! summarised away.
+        !
+        ! This is the same discipline as verify_index_map: the rewrite is
+        ! checked at run time instead of being asserted in a comment.
+
+        use Global_Vars
+
+        implicit none
+
+        real(8), intent(in) :: iph_1
+        real(8), allocatable, dimension(:,:,:,:,:,:) :: hand_1
+        integer :: a_1,i_1,j_1,h_1,d_1,p_1,bad_1
+        real(8) :: worst_1,diff_1,rowsum_1
+        integer :: worst_i_1,worst_j_1,worst_d_1,worst_h_1
+
+        allocate(hand_1(life_span,unemployment_grid_size,unemployment_grid_size,2,&
+            0:include_addiction,employment_grid_size))
+
+        hand_1=unemployment_process
+
+        call build_unemployment_process_smi(iph_1)
+
+        worst_1=0
+        bad_1=0
+        worst_i_1=0
+        worst_j_1=0
+        worst_d_1=0
+        worst_h_1=0
+
+        do p_1=1,employment_grid_size
+            do d_1=0,include_addiction
+                do h_1=1,2
+                    do i_1=1,unemployment_grid_size
+                        do j_1=1,unemployment_grid_size
+
+                            diff_1=abs(hand_1(1,i_1,j_1,h_1,d_1,p_1)-&
+                                unemployment_process(1,i_1,j_1,h_1,d_1,p_1))
+
+                            if (diff_1>10.d0**(-10)) bad_1=bad_1+1
+
+                            if (diff_1>worst_1) then
+
+                                worst_1=diff_1
+                                worst_i_1=i_1
+                                worst_j_1=j_1
+                                worst_d_1=d_1
+                                worst_h_1=h_1
+
+                            end if
+
+                        end do
+                    end do
+                end do
+            end do
+        end do
+
+        write(*,*) "verify_unemployment_process: differing entries=", bad_1, " worst=", worst_1
+        write(*,*) "  worst at from=", worst_i_1, " to=", worst_j_1, &
+            " homeless=", worst_h_1, " future_sud=", worst_d_1
+        write(*,*) "  hand=", hand_1(1,max(worst_i_1,1),max(worst_j_1,1),max(worst_h_1,1),worst_d_1,1), &
+            " generic=", unemployment_process(1,max(worst_i_1,1),max(worst_j_1,1),max(worst_h_1,1),worst_d_1,1)
+
+        ! Whatever else is true, every row of a transition matrix has to sum to
+        ! one over the future states it can reach. The sum is taken across BOTH
+        ! future disorder blocks, since the disorder leg is applied separately by
+        ! addiction_transition and this array is conditional on it.
+        do p_1=1,1
+            do h_1=1,2
+                do i_1=1,unemployment_grid_size
+
+                    rowsum_1=0
+
+                    do d_1=0,include_addiction
+                        do j_1=1,unemployment_grid_size
+
+                            rowsum_1=rowsum_1+unemployment_process(1,i_1,j_1,h_1,d_1,p_1)
+
+                        end do
+                    end do
+
+                    ! One per disorder block, so include_addiction+1 in total.
+                    if (abs(rowsum_1-real(include_addiction+1,8))>10.d0**(-8)) then
+
+                        write(*,*) "verify_unemployment_process: ROW SUM WRONG from=", i_1, &
+                            " homeless=", h_1, " sum=", rowsum_1
+
+                    end if
+
+                end do
+            end do
+        end do
+
+        ! PUT THE HAND WRITTEN ARRAY BACK. This routine is a check, not a
+        ! build: at one SMI state the hand written block stays live, so the
+        ! comparison must not have side effects on the model.
+        unemployment_process=hand_1
+
+        deallocate(hand_1)
+
+    end subroutine
+
     subroutine adjusting_unemployment_probabilities_based_on_productivity(adjusted_probability_1)
     
         use Global_Vars
@@ -19784,6 +20128,15 @@
             
         end do
         
+        ! THE LINE ABOVE IS DEAD. The profile is computed and then thrown away,
+        ! so the separation rate does not vary with permanent productivity at
+        ! all. Left as it stands because switching it on is a modelling change
+        ! and not a repair, but it should be a decision rather than an accident.
+        !
+        ! One consequence to know about: because this is uniformly one, the
+        ! comparison in verify_unemployment_process cannot discriminate on it,
+        ! so that check confirms the structure of the transition and not the
+        ! placement of this factor.
         adjusted_probability_1=1
                 
     end subroutine
@@ -24869,67 +25222,6 @@
 
     end subroutine
 
-    real(8) function smi_transition(current_m_1,future_m_1,sud_1,age_1)
-
-        ! eq:fonset. Onset is multiplied by iota when the household carries the
-        ! SUD, which is the channel that makes a SUD raise the hazard of SMI.
-        ! Leaving the state is lambda_m and does not depend on the SUD, on
-        ! housing, or on anything chosen.
-        !
-        ! The chain does NOT depend on housing, and that is a finding rather than
-        ! an omission: At Home / Chez Soi randomised 1,198 homeless adults with
-        ! SMI and found no detectable effect of housing on symptom severity at
-        ! any wave. Do not add a housing argument to this function.
-
-        use Global_Vars
-
-        implicit none
-
-        integer, intent(in) :: current_m_1,future_m_1,sud_1,age_1
-        real(8) :: onset_1
-
-        if (number_of_smi_states==1) then
-
-            smi_transition=1
-            return
-
-        end if
-
-        if (current_m_1==1) then
-
-            if (future_m_1==0) then
-
-                smi_transition=lambda_m
-
-            else
-
-                smi_transition=1-lambda_m
-
-            end if
-
-            return
-
-        end if
-
-        onset_1=smi_onset_by_age(min(max(age_1,1),life_span))
-
-        if (sud_1>=1) then
-
-            onset_1=min(onset_1*iota_smi,1.d0)
-
-        end if
-
-        if (future_m_1==1) then
-
-            smi_transition=onset_1
-
-        else
-
-            smi_transition=1-onset_1
-
-        end if
-
-    end function
 
     subroutine load_mortality_profiles()
 
