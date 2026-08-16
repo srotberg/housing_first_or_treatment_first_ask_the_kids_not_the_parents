@@ -18,11 +18,11 @@ State as of 16 August, branch `claude/two-period-stylized-model-8ewnmt`, merged 
   sentence. If a highlight is ambiguous, ask. Anything you add or restore on your
   own initiative goes in red so the reader can see it.
 
-## 2. The comment round that is NOT yet applied
+## 2. The last comment round: APPLIED
 
-The reader's last PDF, `4e810400-stylized_note_3.pdf`, carries comments on
-Sections 2.1 and 2.2 and asks: **remove all red until the end of 2.2, put updates
-in red.** Extracted and mapped, not yet applied:
+The reader's PDF `4e810400-stylized_note_3.pdf` carried comments on Sections 2.1
+and 2.2. All are applied and the note is rebuilt and pushed. Recorded here
+because the reasoning behind two of them matters:
 
 **Section 2 opening paragraph**
 * "states" -> "describes"
@@ -59,8 +59,17 @@ in red.** Extracted and mapped, not yet applied:
   `{\color{red}...}` block about `b` falling with homelessness and the recovery
   hazard, which runs to "the object the trial actually identifies."
 
-Extract the annotations yourself to confirm, with the script pattern used all
-along: `pypdf`, read `/Annots`, match `/Contents` to the text under the
+One consequence worth watching. The `kappa_x H` term is still IN the utility
+equation, but the prose explaining it was removed on instruction, so as it stands
+the disamenity appears in the formula unexplained until Section 2.16. Either that
+is intended, with the explanation living in the calibration section, or a clause
+naming it needs to come back. Ask.
+
+Also done, beyond the marked comments: `b_{dmh'}` carried its subscripts in four
+more places outside 2.2, in the budget constraint and the Bellman equation. Since
+`b` is constant they were simply wrong, so they are now plain `b`.
+
+To read the next round's annotations, use the script pattern used all along: `pypdf`, read `/Annots`, match `/Contents` to the text under the
 `/QuadPoints` by y coordinate, and use the x range to find which words on the line
 a partial highlight covers.
 
