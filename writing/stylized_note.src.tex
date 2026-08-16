@@ -346,7 +346,7 @@ $h_0$ to a homelessness rate of $0.399$ percent from the 2023 HUD point in
 time (PIT) count, converted to households, and the SUD hazard $\lambda$ to the $33.2$ percent of users who
 acquire a SUD.
 
-\new{An earlier draft set $h_L$ separately, at the $21.2$ percent housing cost to
+{\color{red}An earlier draft set $h_L$ separately, at the $21.2$ percent housing cost to
 income ratio in the Survey of Consumer Finances, with $\gamma$ set alongside it
 from the expenditure survey. That is two external numbers aimed at one object and
 nothing makes them agree, so the model reproduced neither. Deriving the unit from
@@ -684,7 +684,7 @@ variables rather than choices, and it is why the transitions in
 Section~\ref{sec:fshocks} condition on the chosen $h'$, $v$ and $\tau$: the choice
 comes first, the draw second.
 
-\subsection{Preferences}
+\subsection{Preferences}\label{sec:fprefs}
 
 Period utility is
 \begin{equation}\label{eq:futil}
@@ -706,36 +706,38 @@ rate: households dislike homelessness around them and not only their own. It is
 the headcount alone, with no extra weight on the homeless who carry a SUD, so the
 object being priced is homelessness rather than addiction, and the willingness to
 pay evidence it is calibrated to is about exactly that.
-Section~\ref{sec:fleftout} gives the number.} And the
-Stone-Geary
-shifter itself varies,
-\begin{equation}\label{eq:fb}
-b_{dmh'}=b_d\cdot\big(\rho^b_m\big)^{\mathbf{1}\{m=1\}}\cdot\big(\rho^b_H\big)^{\mathbf{1}\{h'=h_1\}},
-\qquad \new{\rho^b_m,\rho^b_H}\in(0,1],
-\end{equation}
-so a SUD, mental illness and homelessness each raise the marginal utility
-of the first unit of the drug. The Cobb-Douglas weights themselves are held fixed
-across the SUD: only the shifter moves. {\color{red}
-A taste weight rising with
-$d$ would make reducing the SUD and expanding housing complements even absent any
-incentive effect, which is not a channel worth carrying. With the weights
-invariant, acquiring a SUD relaxes no
-constraint, so every private cost of it has to come from mortality, employment
-and the budget.
+Section~\ref{sec:fleftout} gives the number.} \new{And the flow utility is the
+\emph{same function} of $(c,h,v)$ in every state and after every choice: the
+Cobb-Douglas weights are fixed, and so is the Stone-Geary shifter $b$.}
 
-Three separate things happen in equation~\eqref{eq:fb}. First, $b_0$ against
-$b_1$: a single $b$ cannot match participation and the expenditure share at once,
-because a $b$ large enough to deter clean households pushes the interior choice
-below zero for households that already carry a SUD and sends their expenditure to
-the corner, so $b_0$ pins participation and $b_1$ keeps the choice interior for
-$\theta_v$ to pin. Second, $\rho^b_m<1$ is self medication. Third, and most
-important, $\rho^b_H<1$ is the
-housing access channel: it is the \emph{only} parameter in the model that governs
-the elasticity of drug use with respect to housing access, which is the object the
-welfare results rest on. Without it that moment is not merely untargeted, it
-is untargetable, since housing a household only raises its resources and drugs
-are a normal good, so the model would predict that housing \emph{raises} use,
-the opposite sign to Milby et al.\ (2005).
+{\color{red}
+That is a restriction and it is deliberate. A taste weight rising with $d$ would
+make reducing the SUD and expanding housing complements even absent any incentive
+effect, which is not a channel worth carrying, and it would transmit a preference
+for drugs across generations alongside the disorder itself. With the weights
+invariant, acquiring a SUD relaxes no constraint, so every private cost of it has
+to come from mortality, employment and the budget.
+
+An earlier version let $b$ fall with homelessness as well, which would have made
+housing lower drug use directly. Two objections retired it. The first is that
+housing is a \emph{choice} rather than a state, so a $b$ that depends on it makes
+preferences a function of a choice: a household would select its dwelling partly
+to move its own taste, and a user would have a reason to choose the street
+because the drug is worth more there, which is close to the opposite of the
+selection the paper is about. The second is that the sign is strange in either
+normalisation. The marginal value of the drug is proportional to $1/(b+v)$, so a
+smaller $b$ makes the drug \emph{better}; the channel would work by asserting
+that being homeless improves the experience of using, which is not something the
+evidence speaks to and not something we would want to calibrate.
+
+Nothing is lost by dropping it, because the elasticity of drug use with respect
+to housing access does not have to be a taste. It is already carried by a
+\emph{hazard}: recovery from the disorder is six times harder on the street than
+in a home, $\mu_H$ in Section~\ref{sec:fshocks}. That is a transition
+probability rather than a preference, it is measured on exogenous housing
+\emph{assignment} rather than inferred from choices, and abstinence by arm is
+precisely what Milby et al.\ (2005) report. So housing still lowers use in the
+model, and it does so through the object the trial actually identifies.
 }
 
 \subsection{Income, taxes and transfers}
@@ -835,11 +837,13 @@ so two parameters describe the grid. Rent $p_h$ is normalised to one and the
 the price by $1/\lambda$ leaves every budget constraint untouched and identifying
 the level would run through a weak channel.
 
-Homelessness then enters four separate equations: survival~\eqref{eq:fsurv},
-the employment transitions~\eqref{eq:femp}, the recovery
-hazard~\eqref{eq:frecover} and the Stone-Geary shifter~\eqref{eq:fb}. It raises
-mortality, worsens both employment margins, lowers the chance of recovering, and
-raises the marginal utility of the drug. Those four together are what make
+Homelessness then enters \new{three} separate equations: survival~\eqref{eq:fsurv},
+the employment transitions~\eqref{eq:femp} and the recovery
+hazard~\eqref{eq:frecover}. It raises
+mortality, worsens both employment margins\new{ and lowers the chance of
+recovering. It does not enter preferences, which is deliberate and argued in
+Section~\ref{sec:fprefs}: housing is chosen, so a taste that moved with it would
+be a preference over a choice. Those three} together are what make
 homelessness and the SUD mutually reinforcing rather than merely correlated,
 and it is that loop, absent from Section~\ref{sec:env}, that a housing programme
 acts on.
@@ -911,11 +915,15 @@ schizophrenia or bipolar disorder at a pooled rate near a quarter, and in the
 Danish registers any SUD predicts conversion to schizophrenia
 with a hazard ratio of $1.34$, opioid use disorder $2.74$.
 
-Mental illness then affects six objects: productivity conditional on working
+Mental illness then affects \new{five} objects: productivity conditional on working
 through $\rho_m$ in~\eqref{eq:fincome}, both employment margins through
 $\kappa_{uem}$, mortality through $\kappa_{\phi m}$, the recovery hazard through
-$\mu_m$, the Stone-Geary shifter through $\rho^b_m$ in~\eqref{eq:fb}, and
-eligibility for disability income through $\zeta_{DI}$.
+$\mu_m$, and
+eligibility for disability income through $\zeta_{DI}$. \new{It does not shift
+$b$, for the reason given in Section~\ref{sec:fprefs}: flow utility is the same
+function of $(c,h,v)$ in every state, mental illness included. Self medication, if
+it operates, operates here through the recovery hazard and the budget rather than
+through a taste.}
 
 The mental health chain does \emph{not} depend on housing, and that is a result
 rather than an omission. In the At Home / Chez Soi randomised trial, $1{,}198$
