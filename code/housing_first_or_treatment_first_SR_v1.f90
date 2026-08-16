@@ -2094,9 +2094,11 @@
         ! Threadprivate for the same reason the vectors it is built from are.
         real(8) :: interp_frac_1=0
         integer :: interp_neighbour_1=0
+        integer :: interp_mismatch_count=0
         integer, parameter :: interpolate_a_prime=1
         !$omp threadprivate(interp_frac_1)
         !$omp threadprivate(interp_neighbour_1)
+        !$omp threadprivate(interp_mismatch_count)
 
         !$omp threadprivate(flow_utility_vector)
         !$omp threadprivate(future_utility_vector)
@@ -2498,7 +2500,7 @@
 
         end function
 
-        subroutine compute_asset_lottery(opt_1,lo_1,hi_1)
+        subroutine compute_asset_lottery(opt_1,lo_1,hi_1,recorded_value_1)
 
         ! A' OFF THE GRID, BY A TWO POINT LOTTERY.
         !
@@ -2528,6 +2530,7 @@
         implicit none
 
         integer, intent(in) :: opt_1,lo_1,hi_1
+        real(8), intent(in) :: recorded_value_1
         real(8) :: x0_1,x1_1,x2_1,y0_1,y1_1,y2_1,d1_1,d2_1,denom_1,vertex_1
 
         interp_frac_1=0
@@ -2536,6 +2539,24 @@
         if (interpolate_a_prime==0) return
 
         if ((opt_1<=lo_1) .OR. (opt_1>=hi_1)) return
+
+        ! THE VECTORS MUST DESCRIBE THE BRANCH THAT WON, and there is an exact
+        ! test for it rather than an argument.
+        !
+        ! The a' search loops over housing choices, refilling these vectors on
+        ! each branch, so on return they hold the LAST branch searched and not
+        ! necessarily the optimal one. Fitting a parabola to the wrong branch
+        ! would place the lottery in another basin entirely. If the value at the
+        ! recorded optimum matches the value actually recorded, the vectors are
+        ! the winning branch's; if it does not, they are not, and the lottery
+        ! refuses rather than guessing.
+        if (abs(flow_utility_vector(opt_1)+future_utility_vector(opt_1)-recorded_value_1)>&
+            10.d0**(-8)*max(abs(recorded_value_1),1.d0)) then
+
+            interp_mismatch_count=interp_mismatch_count+1
+            return
+
+        end if
 
         x0_1=financial_grid(opt_1-1)
         x1_1=financial_grid(opt_1)
@@ -15993,7 +16014,8 @@
         ! after that state's a' search. Both outputs default to the degenerate
         ! case, frac zero on the chosen point, which is what this used to be
         ! hardcoded to.
-        call compute_asset_lottery(fin_index_1,negative_financial_grid_size,financial_grid_size)
+        call compute_asset_lottery(fin_index_1,negative_financial_grid_size,financial_grid_size,&
+            value_function_1)
 
         frac_mov_optimal_1(years_left_on_mortgage_index)%&
             vector_transition_real(time_period,age_index,financial_index,&
