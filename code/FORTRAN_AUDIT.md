@@ -82,6 +82,32 @@ It is small by construction and cannot decide a ranking on its own, so it is not
 urgent. But the note asserts it, so either the code gains it or Section 2 loses
 the passage, and the first is the intent.
 
+### 1.5 Two calibration targets have their adjusters switched off.
+
+`size_homelessness_adjuster` and `smallest_house_size_adjuster` are both **zero**
+in the original source, so the update lines that read
+
+    size_homelessness = size_homelessness - adjuster*(model - data)
+
+subtract zero and the parameters never move. The homelessness rate and the share
+of renters spending above half of income are listed as targets in the note's
+internal table, and neither was being iterated: they were reached by hand between
+runs.
+
+That was workable while the rental grid was stable. It is not now. Taking the
+mortgage eligibility overwrite out of `housing_size` (item 2.5) moved the
+smallest rental, so the hand set `size_homelessness = 0.21` leaves homelessness at
+0.007 per cent against a target of 0.399.
+
+`size_homelessness_adjuster` is now **20**, which moves the parameter about 0.08
+per iteration at the current gap and crosses its `[0,1]` range in roughly a dozen
+equilibrium solves. The sign was already correct.
+
+`smallest_house_size_adjuster` is **left at zero for now**, deliberately: it moves
+homelessness too, and turning both on in the same sweep lets them fight over the
+same moment. It should be switched on afterwards, once the street is settled, and
+bracketed on the share of renters spending above half of income.
+
 ---
 
 ## 2. In the code, absent from the note

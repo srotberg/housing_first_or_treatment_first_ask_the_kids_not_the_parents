@@ -501,7 +501,20 @@
         
         real(8) :: size_homelessness=(1-perceived_probability_lower)*0.21+perceived_probability_lower*0.3
         
-        real(8) :: size_homelessness_adjuster=0
+        ! ON, AND IT WAS OFF. At zero the update below is size_homelessness minus
+        ! zero times the gap, so the parameter never moved and the homelessness
+        ! target was reached by hand between runs instead. That was workable while
+        ! the rental grid was stable. It is not now: taking the mortgage
+        ! eligibility overwrite out of housing_size moved the smallest rental, so
+        ! the hand set 0.21 leaves homelessness at 0.007 per cent against a target
+        ! of 0.399 and no iteration closes it.
+        !
+        ! The sign is already right. size_homelessness scales the service flow of
+        ! the street, so raising it raises homelessness, and the update subtracts
+        ! the adjuster times (model minus data), which rises when the model is
+        ! below target. 20 moves it about 0.08 per iteration at the current gap,
+        ! which crosses the [0,1] range in roughly a dozen equilibrium solves.
+        real(8) :: size_homelessness_adjuster=20
         real(8) :: distance_size_homelessness
         real(8) :: stopping_rule_size_homelessness=10.d0**(-3)
         
