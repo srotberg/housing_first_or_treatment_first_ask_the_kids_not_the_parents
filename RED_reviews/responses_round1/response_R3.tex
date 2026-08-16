@@ -68,6 +68,21 @@ they imply, so a reader can check them against Baggett et al.\ and Degenhardt et
 al.\ directly. Transparency here is not a presentational matter: two of these
 objects were wrong, and they were wrong in ways that mattered for the paper's
 central claim.
+
+\thisround Built. Baseline survival is the SSA period life table for ages 26 to
+85, with the sexes combined by survivor weight rather than averaged equally,
+since by the mid eighties the two survivor populations differ enough that equal
+weights are simply wrong. The curve it replaces understated mortality by nearly
+half at the top of the range, $q=0.045$ at 85 against an actual 0.081.
+
+The homelessness and addiction multipliers turned out not to be separable and are
+now derived jointly, because Baggett et al.'s homelessness ratio is measured on a
+population that mostly also carries a disorder, so netting that out depends on
+where the disorder multiplier lands. Because the disorder multiplier falls with
+age, so does the correction, and the homelessness multiplier at 56 comes out at
+3.14 rather than the 1.97 a flat calculation gives. The level of the disorder
+multiplier stays calibrated, for the reason given under M2(d): it is the second
+stage's only instrument.
 \end{response}
 
 \cmt{M1(c)}{The income to drug use relationship is not shown}
@@ -133,6 +148,11 @@ work in the letter to him: the subsistence parameter shifts the level of drug
 spending, but the ratio between the two groups is governed by the curvature of the
 subsistence term, and opening a fourfold gap by moving it drives experimenters to a
 corner.
+
+\thisround Done in the code. The weights are now identical clean and addicted,
+and only the Stone-Geary shifter varies, so becoming addicted relaxes no
+constraint and every private cost of the disorder comes from mortality,
+employment and the budget.
 \end{response}
 
 \cmt{M2(b)}{What patterns does the Stone Geary form actually generate?}
@@ -247,6 +267,14 @@ object here. A negative supply elasticity reflects enforcement swamping, and
 Caulkins and Reuter note that swamping ``pertains to total drug volume \dots not
 just or primarily drug specific market volume'', so it operates on the aggregate
 market rather than at our margin.
+
+\thisround The supply curve is now finite rather than flat. The elasticity is
+two, bracketed by 0.79 from Hansen, Miller and Weber's study of Washington's 2015
+switch to a single retail excise and by roughly 3.6 from the cigarette and
+gasoline literatures, and the range is reported. The price is one at the benchmark
+by the normalisation of the supply shifter, so the calibration itself never has to
+clear the drug market; the curve matters where quantity moves away from the
+benchmark, which is the counterfactuals, and that is where it operates.
 \end{response}
 
 %======================================================================

@@ -34,6 +34,22 @@ through. Currently two, both the same object:
 
 Both come from `hftf_exper` once the calibration finishes.
 
+## What was added after the first draft
+
+`\thisround` marks every place where something that was a plan in the first draft
+of these letters is now built and running. There are eleven, across four letters,
+and `response_editor.tex` section 0 is the overview: the taste for drugs no longer
+changes with addiction in the code as well as on paper, the housing access
+elasticity has a parameter of its own, children are valued at every age rather
+than at a terminal date, four hazards vary with age, homeownership is out, the
+drug supply curve is finite, three numbers were wrong and are corrected, and the
+homelessness disamenity has been dropped rather than priced at zero.
+
+That last one is a change of mind against Referee 2, who asked for it and whom we
+agreed with at the time. It is argued in `response_R2.tex` under C2 and offered
+back: if he would still prefer it carried and reported across a range, restoring
+it is small.
+
 ## The four places we push back
 
 Worth reviewing together, because pushing back after a rejection is the part
