@@ -44,6 +44,7 @@ def numbers(base):
     out['sudhl'] = f'{100*mb["sud_of_homeless"]:.0f}'
     out['r_base'] = f'{mb["r_use"]:.2f}'
     out['hshare_m'] = f'{100*mb["housing_share"]:.0f}'
+    out['hspend_m'] = f'{100*mb["hspend"]:.1f}'
     out['th'] = f'{base.th:.2f}'
     out['gam'] = f'{base.gam:.3f}'
     out['lam'] = f'{base.lam:.0f}'

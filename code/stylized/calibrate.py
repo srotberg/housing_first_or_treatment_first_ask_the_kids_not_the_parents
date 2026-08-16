@@ -1,29 +1,32 @@
 """
-A rough calibration of the stylized two period model. Five parameters, five
+A rough calibration of the stylized two period model. Four parameters, four
 targets.
 
-    h_lg    housing over non drug spending             26.8 %
     h_hl    homelessness rate                          0.399 %
     aleph   value of a statistical life                80 annual incomes
     lam     share of users who acquire a SUD           33.2 %
     b       drug participation rate                    5.13 %
 
-THE STANDARD RENTAL UNIT IS BACK ON THE LIST, and the reason it left is worth
-recording along with the reason it returned. It was calibrated to the aggregate
-housing share once before and the sweep doubled the rent, so a fifth of
-households could not afford any home while unemployed and homelessness came out
-three times its target. It was then SET, at 21.2 per cent of mean income from the
-SCF, with gamma set separately from the Consumer Expenditure Survey. That is two
-external numbers aimed at one object, and nothing made the pair deliver the
-survey's share in equilibrium: it came out at 16 per cent against 26.8. Setting
-gamma from the survey and calibrating h_lg to realised spending removes the
-double count, and the earlier failure does not repeat because the moment is now
-housing over non drug SPENDING rather than over INCOME, and because h_hl is
-bracketed AFTER h_lg rather than before it. The value of life is bracketed
-after both, for the same reason: aleph is additive in flow utility and barely
-touches the housing choice, whereas the rent moves the continuation and hence
-the VSL a lot, so the dependence runs one way. With aleph first the sweep
-reported a VSL of 129 against a target of 80.
+THE RENTAL SIZES ARE NOT ON THE LIST AND ARE NOT SET FROM DATA EITHER. They are
+DERIVED from gamma: h_lg = gam/(1-th) * ybar is the dwelling a household at mean
+income would occupy if housing were continuously choosable, and h_sm is half of
+it. The previous version set h_lg at 21.2 per cent of mean income from the SCF
+while gamma was set separately from the Consumer Expenditure Survey, which is two
+external numbers aimed at one object with nothing making them agree. Deriving one
+from the other leaves a single number, 0.268, doing a single job.
+
+CALIBRATING h_lg ON THE REALISED HOUSING SHARE WAS TRIED AND FAILS. See the
+frontier table in stylized.py: the aggregate share is bounded above by h_lg
+because every household consumes at most one standard unit, so matching 26.8 per
+cent needs a unit costing 45 per cent of mean income, a small unit at 22.5, and
+homelessness of 3.2 per cent that no value of h_hl can undo. The realised share
+is therefore an untargeted moment the model misses, like the drug spending share,
+and it is reported as one.
+
+THE VALUE OF LIFE IS BRACKETED AFTER THE STREET. aleph is additive in flow
+utility so it barely touches the housing choice, whereas h_hl moves the
+continuation and hence the VSL, so the dependence runs one way. With aleph first
+the sweep reported a VSL of 129 against a target of 80.
 
 Rough is the intention. The model is qualitative and exists to show directions,
 so the calibration only has to put it in the right region. Nothing here is a fit
@@ -147,8 +150,7 @@ TARGET = dict(part=0.0513, homeless=0.00399, prog=0.332, vsl=80.0,
 # rather than a calibration.
 LAM_LO, LAM_HI = 0.05, 4000.0
 
-PAIRS = [('h_lg', 'hspend', 0.08, 1.40),
-         ('h_hl', 'homeless', 1e-7, 0.49),
+PAIRS = [('h_hl', 'homeless', 1e-7, 0.49),
          ('aleph', 'vsl', 0.20, 24.0),
          ('lam', 'prog', LAM_LO, LAM_HI),
          ('b', 'part', 1e-5, 0.30)]
@@ -247,14 +249,10 @@ def calibrate(par=None, sweeps=5, verbose=True):
     for s in range(sweeps):
         # HOUSING FIRST, THEN THE VALUE OF LIFE. aleph used to run first and the
         # calibration reported a VSL of 129 against a target of 80: aleph was on
-        # target when it was set and the rent moved underneath it afterwards.
+        # target when it was set and the street moved underneath it afterwards.
         # aleph is additive in flow utility, so it barely touches the housing
         # choice, while the rent moves the continuation and hence the VSL a lot.
         # The dependence runs one way, so the housing block goes first.
-        #
-        # THE STANDARD UNIT GOES BEFORE THE STREET, for the same reason: moving
-        # it moves homelessness, and the street is what puts homelessness back.
-        par = with_(par, h_lg=bracket(par, 'h_lg', 'hspend', 0.08, 1.40))
         par = with_(par, h_hl=bracket(par, 'h_hl', 'homeless', 1e-7, 0.49))
         par = with_(par, aleph=bracket(par, 'aleph', 'vsl', 0.20, 24.0, iters=26))
         par = with_(par, lam=bracket_prog(par, LAM_LO, LAM_HI))
