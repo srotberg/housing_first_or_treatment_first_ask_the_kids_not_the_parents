@@ -189,7 +189,7 @@ def tab_children(par, pV=1.0):
          r"$\delta_d$ & & Child's SUD rate & Ratio & "
          r'Loss to the child \\', r'\midrule']
     # every model output in this table moved with the recalibration
-    R = lambda x: '\\textcolor{red}{' + x + '}'
+    R = lambda x: '' + x + ''
     for d, sud, ratio, loss in rows:
         lab = f'{d:.2f}' + (r'\ \ (calibrated)' if abs(d - DEL_D) < 1e-9 else '')
         L.append(f'{lab} & & {R(f"{100*sud:.2f}")}\\% & {R(f"{ratio:.2f}")} '
