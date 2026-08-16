@@ -673,6 +673,27 @@
         ! newborn productivity distribution given the parent's disorder status
         ! (0 or 1) and whether the parent was homeless (1 housed, 2 homeless)
         real(8), dimension(employment_grid_size,0:1,1:2) :: newborn_employment_probability
+
+        ! THE CHILD IN THE CONTINUATION, AT EVERY AGE. The written model has the
+        ! household value its child at weight omega whenever it does not survive,
+        ! so the continuation is
+        !
+        !   beta*phi_j*E V_{j+1}  +  beta*(1 - phi_j)*omega*E V_1(0, y_child, ...)
+        !
+        ! rather than the child appearing only in a terminal condition. It matters
+        ! because phi_j itself depends on the housing chosen and, through d, on
+        ! use, so a household that uses raises the chance that it is the child's
+        ! term and not its own that is realised. expected_child_value holds
+        ! E V_1(0, y_child, ...) by the parent's SUD status and by whether it was
+        ! homeless, which is what the newborn productivity penalty conditions on.
+        !
+        ! IT IS OFF. The switch is zero, so nothing changes until it is turned on
+        ! and tested. Turning it on makes the age one value function enter every
+        ! age's continuation, which is a fixed point across ages: the outer loop
+        ! already iterates on prices, taxes and inheritance and carries the lag,
+        ! but that has to be seen to converge before the switch is trusted.
+        integer, parameter :: include_child_in_continuation=0
+        real(8), dimension(0:1,1:2) :: expected_child_value=0
         real(8), dimension(threshold_addiction_index) :: unconditional_unemployment_probability
         real(8), dimension(life_span,employment_grid_size,employment_grid_size) :: employment_process
         real(8), allocatable, dimension(:,:,:,:,:,:) :: unemployment_process
@@ -10029,6 +10050,21 @@
                             
                         end if
                         
+                        ! The child, weighted by the chance the household does not
+                        ! survive this period and by omega. It does not depend on
+                        ! a', since the estate goes to the government rather than
+                        ! to the child, so it shifts the level and the housing and
+                        ! drug choices through phi and leaves the saving decision
+                        ! alone.
+                        if (include_child_in_continuation==1) then
+                        
+                            future_utility_vector(future_financial_index)=&
+                                future_utility_vector(future_financial_index)+&
+                                (1-survival_probability(age_index,is_homeless_1,addiction_index))*&
+                                weight_on_child*expected_child_value(addiction_index,is_homeless_1)
+                        
+                        end if
+                        
                         ! THE TABULATED PATH. The sum below depends on a' only
                         ! through the value function lookup, so it is computed
                         ! once per (drug regime, chosen housing, eligibility) and
@@ -16908,6 +16944,44 @@
         
     end subroutine             
             
+    subroutine compute_expected_child_value(time_period)
+    
+        ! E V_1(0, y_child, employed, clean, no voucher), by the parent's SUD
+        ! status and whether it was homeless. The newborn lands where the
+        ! distribution iteration puts it: age one, the zero asset index, the
+        ! employed and clean unemployment state, no housing carried in and no
+        ! voucher, with productivity drawn from the penalised distribution.
+    
+        use Global_Vars
+        
+        implicit none
+        
+        integer, intent(in) :: time_period
+        integer :: node_index_1,d_index_1,h_index_1
+        
+        expected_child_value=0
+        
+        do d_index_1=0,1
+        
+            do h_index_1=1,2
+            
+                do node_index_1=1,employment_grid_size
+                
+                    expected_child_value(d_index_1,h_index_1)=&
+                        expected_child_value(d_index_1,h_index_1)+&
+                        newborn_employment_probability(node_index_1,d_index_1,h_index_1)*&
+                        value_function(1)%vector_transition_real&
+                        (min(time_period+solve_transition_dynamics,transition_length),1,&
+                        negative_financial_grid_size,1,node_index_1,0,0)
+                
+                end do
+            
+            end do
+        
+        end do
+    
+    end subroutine
+    
     subroutine create_newborn_employment_probability()
 
         ! Reallocate the unconditional productivity distribution downward by the
