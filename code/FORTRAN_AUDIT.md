@@ -712,13 +712,29 @@ what it would cost to believe the note where the code says otherwise.
 
 ## A. In the note, still absent from the code
 
-### A.1 Serious mental illness, and everything hanging off it
-`grep -ci mental` returns 3 and all three are comments. There is no `m` in the
-state, the transitions, survival, income or utility. So the note's
-`eq:fonsetage`, `eq:fonset`, `rho_m`, `kappa_uem`, `kappa_phi_m`, `mu_m`,
-`iota`, `p_m` and `lambda_m` have **no counterpart at all**. `unemployment_grid_size`
-is 6, three employment states by two disorder states, with no room for it.
-Adding it doubles the state space.
+### A.1 Serious mental illness. CORRECTION: the scaffold exists, the content does not.
+
+**I reported this as absent entirely and that was wrong.** `grep -ci mental`
+returns 3 comments, which is what I probed, but the code calls it `smi`. The
+state layout was already rebuilt for it:
+
+```
+index = 3*number_of_smi_states*d + 3*m + e,   e in 1..3, m,d in 0..1
+```
+
+with `smi_of`, `sud_of`, `emp_of`, `idx_of` and a run time `verify_index_map`
+that checks the map round trips. The design note is explicit that the SUD is the
+OUTERMOST factor so the clean and SUD blocks stay contiguous at either grid size,
+which keeps every `1..threshold` and `threshold+1..grid_size` loop a single range.
+That is the hard part of adding `m`, and it is done.
+
+**What is missing is the content, not the indexing.** `number_of_smi_states = 1`,
+which collapses `m` to a single value, and nothing reads `smi_of` anywhere in the
+model: not the transitions, not income, not survival, not the employment margins,
+not the recovery hazard. So `eq:fonsetage`, `eq:fonset`, `rho_m`, `kappa_uem`,
+`kappa_phi_m`, `mu_m`, `iota`, `p_m` and `lambda_m` still have no counterpart, but
+turning `number_of_smi_states` to 2 is the beginning of the work rather than the
+whole of it.
 
 ### A.2 Disability income
 `grep -ci disabilit` returns **0**. The note's `e=3, m=1` case, `zeta_DI`, and
@@ -792,3 +808,21 @@ Nothing above is a bug in the sense of a wrong line. Each is a place where a
 reader of the note would form a belief about the model that the program does not
 support. A.1 to A.4 are decisions about scope. B.1 to B.3 are decisions about
 which document is right, and for B.1 I think it is the code.
+
+### A.5 A second a' restriction already existed, switched off
+
+`restrict_a_prime` builds `a_prime_allowed` from the previous solve's policy,
+dilated by `a_prime_window = 3` points, and skips everything outside it. That is
+the same idea as the `warm_start_asset_search` added this session, arrived at
+independently, with the same window width, and its comment raises the same
+objection about non concavity and demands the same verification.
+
+Two differences matter. `restrict_a_prime` is a single allowed SET over all
+states, built from every index any state chose; the warm start is a window per
+state per branch, which is tighter. And `restrict_a_prime` counts
+`a_prime_boundary_hits` and reports it, where the warm start detects an edge hit
+and re-searches the full grid, which is safer but silent.
+
+**They should be consolidated rather than left as two switches that do the same
+thing.** The right combination is the warm start's per branch window with
+`restrict_a_prime`'s boundary counter reported at the end of a solve.
