@@ -410,10 +410,14 @@ Two features of the environment are candidates to reverse it. The
 through $\kappa$ in equation~\eqref{eq:surv}.
 The \emph{unemployment channel} is that it costs you a job with probability
 $u_1-u_0$, and if income support cannot cover the rent you downsize, live on
-less, or lose your home. Figure~\ref{fig:who} scales each from nothing to its
+less, or lose your home. Figure~\ref{fig:who} scales each from nothing to
+\new{$125$ percent of its}
 calibrated value, recalibrating $b$ at every point so participation stays at
 $5.13$ percent. The amount of drug use is therefore identical all along both
-curves and the only thing moving is which households use.
+curves and the only thing moving is which households use. \new{The range runs
+past the calibrated point deliberately: at $100$ percent one cannot tell a
+channel that has just crossed the line from one that is still falling hard, nor
+whether the channel that fails is about to turn.}
 
 \begin{figure}[!tb]
 \centering
@@ -422,17 +426,22 @@ curves and the only thing moving is which households use.
 \label{fig:who}
 \notes{0.62\textwidth}{Note: the vertical axis is average income of users over
 the population average, on a log scale, and $b$ is recalibrated at every point
-so that participation is $5.13$ percent throughout.}
+so that participation is $5.13$ percent throughout. \new{The dotted line marks
+the calibrated strength; everything to the right of it is extrapolation.}}
 \end{figure}
 
 The result is sharper than the statement that mortality matters more. That
 channel takes the income ratio down to @@r_mort@@ at full strength, and it
 does so as a threshold rather than gradually: at half of its calibrated value
 the ratio is still high, at @@r_mort_half@@, and the reversal happens over the
-last tenth or so of the channel. The
+last tenth or so of the channel. \new{Past the calibrated point it keeps
+biting, reaching @@r_mort125@@ at $125$ percent, so the reversal is not a knife
+edge that the calibration happens to sit on.} The
 unemployment channel does
 not reverse it at all, leaving users at @@r_unemp@@ times average income even
-fully switched on. A resource penalty does not produce the concentration of
+fully switched on\new{, and at $125$ percent it is @@r_unemp125@@, still above
+one and no closer to turning. Strengthening the resource penalty by a quarter
+does not begin to do what mortality does}. A resource penalty does not produce the concentration of
 drug use at the bottom.
 
 A mortality penalty is different in kind. A resource penalty scales with the
