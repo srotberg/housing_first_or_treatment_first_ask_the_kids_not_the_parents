@@ -70,7 +70,11 @@ def fig_who_uses(base):
     """Figure 1: how strong must each channel be to move use to the bottom."""
     plt = style()
     fig, ax = plt.subplots(figsize=(7.0, 4.4))
-    sc = np.linspace(0.0, 1.0, 11)
+    # PAST THE CALIBRATED VALUE, to 125 per cent. Stopping at 100 leaves the
+    # reader unable to tell a channel that has just crossed the line from one
+    # that is still falling hard, and it leaves the unemployment channel's
+    # failure looking like it might be about to turn. It is not.
+    sc = np.linspace(0.0, 1.25, 11)
     curves = {}
     for which, col, ls, mk in (('mortality', '#2C6FAD', '-', 'o'),
                                ('unemployment', '#D9822B', '--', 's')):
@@ -89,8 +93,12 @@ def fig_who_uses(base):
     ax.yaxis.set_major_locator(FixedLocator([0.1, 0.2, 0.5, 1.0, 2.0, 4.0]))
     ax.set_yticklabels(['0.1', '0.2', '0.5', '1.0', '2.0', '4.0'])
     ax.set_ylim(0.1, 6.0)
-    ax.set_xlim(-3, 103)
-    ax.set_xticks([0, 25, 50, 75, 100])
+    ax.set_xlim(-3, 128)
+    ax.set_xticks([0, 25, 50, 75, 100, 125])
+    # the calibrated point, so the extrapolation past it reads as extrapolation
+    ax.axvline(100, color='0.55', lw=0.9, ls=':')
+    ax.annotate('calibrated', xy=(100, 0.115), ha='center', va='bottom',
+                fontsize=8, color='0.45')
     ax.set_xlabel('Strength of the channel, percent of its calibrated value')
     ax.set_ylabel('Mean income of users / population mean')
     # legend OUTSIDE the plotting area, so it cannot sit on the lines

@@ -126,7 +126,7 @@ def tab_internal(base):
 
 def tab_channels(base):
     """b and the income ratio, both channels, at five strengths."""
-    sc = [0.0, 0.25, 0.50, 0.75, 1.0]
+    sc = [0.0, 0.25, 0.50, 0.75, 1.0, 1.25]
     rows = []
     for s in sc:
         cells = []

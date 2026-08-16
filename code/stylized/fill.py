@@ -60,6 +60,9 @@ def numbers(base):
     out['r_mort'] = f'{stats(_scaled(base, "mortality", 1.0))["r_use"]:.2f}'
     out['r_mort_half'] = f'{stats(_scaled(base, "mortality", 0.5))["r_use"]:.2f}'
     out['r_unemp'] = f'{stats(_scaled(base, "unemployment", 1.0))["r_use"]:.2f}'
+    # past the calibrated point, which is what the figure now shows
+    out['r_mort125'] = f'{stats(_scaled(base, "mortality", 1.25))["r_use"]:.2f}'
+    out['r_unemp125'] = f'{stats(_scaled(base, "unemployment", 1.25))["r_use"]:.2f}'
 
     # the policy experiment
     m0 = stats(with_(base, pV=0.0, policy='HF'))
@@ -118,9 +121,11 @@ def mark(new, prev):
     """Wrap every value that moved in \new{}, and leave the rest black."""
     out, moved = {}, []
     for k, v in new.items():
-        if prev is not None and k in prev and prev[k] != v:
+        # a key MISSING from prev is a number the reader has not seen either, so
+        # it is red for the same reason a changed one is
+        if prev is not None and (k not in prev or prev[k] != v):
             out[k] = r'\new{' + v + '}'
-            moved.append(f'{k}: {prev[k]} -> {v}')
+            moved.append(f'{k}: {prev.get(k, "new")} -> {v}')
         else:
             out[k] = v
     return out, moved
