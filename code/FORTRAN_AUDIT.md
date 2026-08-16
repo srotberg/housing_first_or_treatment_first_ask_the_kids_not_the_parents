@@ -36,6 +36,28 @@ employment states times two disorder states. There is no room for `m` in it.
 code gains a state variable, and the second doubles the state space. See
 Section 5 for what that costs.
 
+### 1.1b SUD treatment. Absent entirely, and it is the policy under evaluation.
+
+`grep -ci treat` over the source returns **one**, and that one is the file name.
+There is no `tau` in the choice set, no `bar_tau_u` in flow utility, and no `g`
+multiplying the recovery hazard: `probability_of_stopping_addiction` is 0.025
+with a homelessness multiplier and nothing else.
+
+So the reader's instruction that a household in treatment must abstain, `v=0`
+whenever `tau=1`, cannot be applied to the code as it stands. There is no `tau`
+to condition on. The restriction is in the note; adding it to the Fortran means
+building the choice first: a binary decision in the value function nests, the
+utility cost in `calculate_flow_utility`, `g` in the recovery row of
+`addiction_probabilities`, the restriction `v=0` in
+`optimize_frac_spent_on_addiciton`, a policy function to store it, and a read in
+the distribution loop and the transition.
+
+**This matters more than the other absences on this list.** The paper is called
+Housing First or Treatment First, `g` is the parameter through which the entire
+effect of one of the two policies runs, and the note calibrates the utility cost
+`bar_tau_u` to a treatment take up rate of 24 per cent. None of that is in the
+model that produces the numbers.
+
 ### 1.2 Disability income. Absent entirely.
 
 `grep -ci disability` returns **zero**. `calculate_income` at line 1678 has
