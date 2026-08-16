@@ -72,6 +72,9 @@
         ! mean quantity, so it cannot be left stranded by a change of scale.
         real(8) :: lambda_addiction=0.027364
         real(8) :: lambda_addiction_adjuster=5*10.d0**(-3)
+        real(8) :: previous_onset_at_mean=0
+        real(8) :: previous_sud_rate=0
+        integer :: have_lambda_secant=0
         real(8) :: distance_lambda_addiction
         real(8) :: stopping_rule_lambda_addiction=10.d0**(-3)
         integer, parameter :: compute_welfare_every_loop=0
@@ -23679,6 +23682,9 @@
             write(71,'(F30.15)') standard_deduction_as_percent_of_average_labor_income
             write(71,'(F30.15)') probability_of_becoming_addicted_if_experiment
             write(71,'(F30.15)') lambda_addiction
+            write(71,'(F30.15)') previous_onset_at_mean
+            write(71,'(F30.15)') previous_sud_rate
+            write(71,'(I10)') have_lambda_secant
             write(71,'(F30.15)') size_homelessness
             write(71,'(F30.15)') fixed_cost_to_moving
             write(71,'(F30.15)') housing_status_grid_expander
@@ -23748,6 +23754,9 @@
             read(72,'(F30.15)') standard_deduction_as_percent_of_average_labor_income
             read(72,'(F30.15)') probability_of_becoming_addicted_if_experiment
             read(72,'(F30.15)') lambda_addiction
+            read(72,'(F30.15)') previous_onset_at_mean
+            read(72,'(F30.15)') previous_sud_rate
+            read(72,'(I10)') have_lambda_secant
             read(72,'(F30.15)') size_homelessness
             read(72,'(F30.15)') fixed_cost_to_moving
             read(72,'(F30.15)') housing_status_grid_expander
@@ -23781,7 +23790,7 @@
         logical :: file_exists
         
         real(8) :: mass_at_top_financial,a,b,c,d
-        real(8) :: mean_drug_quantity_1,onset_at_mean_1
+        real(8) :: mean_drug_quantity_1,onset_at_mean_1,onset_step_1
         character*1 :: string_used
         integer :: last_period_of_life,addiction_index
         integer, dimension(1) :: index_drug_1
@@ -24571,9 +24580,64 @@
 
                             onset_at_mean_1=1-exp(-lambda_addiction*mean_drug_quantity_1)
 
-                            onset_at_mean_1=max(min(onset_at_mean_1-&
-                                lambda_addiction_adjuster*&
-                                (model_fraction_addicted(1)-sud_rate_data),0.2d0),1.d0*10.d0**(-5))
+                            ! SECANT ON THE ONSET, NOT A FIXED STEP, and the
+                            ! first step comes from the flow balance rather than
+                            ! from the adjuster.
+                            !
+                            ! An equilibrium is hours, so the number of loops IS
+                            ! the calibration time and a fixed step that has to
+                            ! creep is the wrong instrument. Two things fix it.
+                            !
+                            ! THE FIRST STEP IS ANALYTIC. In the stationary
+                            ! distribution the disorder is a two state flow
+                            ! balance: onset times the mass using equals recovery
+                            ! times the mass carrying it, so prevalence is very
+                            ! nearly proportional to the onset at a given share
+                            ! who use. Scaling the onset by the ratio of target
+                            ! to model prevalence therefore lands close on the
+                            ! first try, where the fixed step would have taken
+                            ! twenty loops to cover the same ground when the
+                            ! model came in at nine times the data.
+                            !
+                            ! AFTER THAT IT IS A SECANT. Two (onset, prevalence)
+                            ! pairs give the local slope, which is what the
+                            ! proportionality above only approximates once the
+                            ! share who use responds to the hazard as well. The
+                            ! step is clipped to a factor of four either way so a
+                            ! flat or noisy secant cannot throw lambda across the
+                            ! bracket, and it falls back to the proportional rule
+                            ! whenever the two prevalences are too close to
+                            ! divide by.
+                            if ((have_lambda_secant==1) .AND. &
+                                (abs(model_fraction_addicted(1)-previous_sud_rate)>10.d0**(-6)) .AND. &
+                                (abs(onset_at_mean_1-previous_onset_at_mean)>10.d0**(-12))) then
+
+                                onset_step_1=onset_at_mean_1-&
+                                    (model_fraction_addicted(1)-sud_rate_data)*&
+                                    (onset_at_mean_1-previous_onset_at_mean)/&
+                                    (model_fraction_addicted(1)-previous_sud_rate)
+
+                            elseif (model_fraction_addicted(1)>10.d0**(-8)) then
+
+                                onset_step_1=onset_at_mean_1*&
+                                    (sud_rate_data/model_fraction_addicted(1))
+
+                            else
+
+                                onset_step_1=onset_at_mean_1-&
+                                    lambda_addiction_adjuster*&
+                                    (model_fraction_addicted(1)-sud_rate_data)
+
+                            end if
+
+                            onset_step_1=max(min(onset_step_1,4*onset_at_mean_1),&
+                                onset_at_mean_1/4)
+
+                            previous_onset_at_mean=onset_at_mean_1
+                            previous_sud_rate=model_fraction_addicted(1)
+                            have_lambda_secant=1
+
+                            onset_at_mean_1=max(min(onset_step_1,0.2d0),1.d0*10.d0**(-5))
 
                             lambda_addiction=-log(1-onset_at_mean_1)/mean_drug_quantity_1
 

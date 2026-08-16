@@ -124,7 +124,7 @@ quantitative model throughout.
 
 A household is characterised by its productivity $y$, fixed over its
 life and lognormally distributed across households, $\log y \sim
-\mathcal{N}(-\tfrac12\sigma^2, \sigma^2)$, so mean income is one. Households
+\mathcal{N}(-\tfrac12\new{\sigma_y}^2, \new{\sigma_y}^2)$, so mean income is one. Households
 differ in $y$, in age $j\in\{1,2\}$, in employment status $e\in\{0,1\}$, in
 voucher receipt $\eta\in\{0,1\}$ and in SUD status $d\in\{0,1\}$, all
 discussed below, and in nothing else.
@@ -298,7 +298,7 @@ mortality channel would be losing to impatience rather than to anything the mode
 is about, so a higher factor corrects for the coarseness of the horizon rather
 than making a claim about preferences.} and the gross interest rate is
 $R=1/\beta$, the dispersion of log permanent income is
-$\sigma = 0.75$ from Heathcote, Perri and Violante (2010), and survival over
+$\new{\sigma_y} = 0.75$ from Heathcote, Perri and Violante (2010), and survival over
 a period is $\phi_0 = 0.91$, from the Social Security Administration (SSA) period life table for twenty
 five to fifty five. For the SUD, the
 proportional fall in survival is $\kappa = 0.43$ from Hjorth\o j et al.\
@@ -643,24 +643,28 @@ This section describes the model the paper's numbers come from. Where
 the stylized model already carries something unchanged it is named rather than
 motivated a second time: the Stone-Geary form of the drug term, the logic that
 separates the two policies, and the transmission externality all appear below.
-\new{Notation follows Section~\ref{sec:stylized} wherever the two models share an
+Notation follows Section~\ref{sec:stylized} wherever the two models share an
 object: $\gamma$ and $\theta$ are the housing and drug weights in both, $b$ is the
 same Stone-Geary endowment, $\aleph$ the same flow value of being alive, $\lambda$
-the same addiction hazard, and $\beta$ is the discount factor and nothing else.}
+the same \new{SUD} hazard, \new{$\psi$ and $\bar y$ the same replacement rate and
+earnings base cap, $r$ the same risk free rate,} and $\beta$ is the discount
+factor and nothing else.
 
 \subsection{Demographics, the state and the choice set}
 
-\new{Survival $\phi_j$ depends} on the housing \emph{chosen} this period,
-on the SUD and on mental illness. Newborns replace the dead exactly, so the
-mass of households is constant. The individual
+\new{Households enter as adults, live at most $J$ annual periods and retire at
+$J_R$, and $j$ indexes age within that span.} Survival \new{from $j$ to $j+1$ is
+$\phi_j(h',d,m)$ in~\eqref{eq:fsurv}, and it depends on age,} on the housing
+\emph{chosen} this period, on the SUD and on \new{SMI}. Newborns replace the dead
+exactly, so the mass of households is constant. The individual
 state is
 \begin{equation}\label{eq:fstate}
 s=(a,\,y,\,e,\,d,\,m,\,\eta)\in
 \mathcal A\times\mathcal Y\times\{1,2,3\}\times\{0,1\}^3 ,
 \end{equation}
 where $a$ denotes assets, $y$ permanent productivity, $e$ employment status,
-$d$ the substance use disorder, $m$ \new{serious mental illness and $\eta$ receipt
-of a voucher.}
+$d$ the \new{SUD}, $m$ serious mental illness \new{(SMI)} and $\eta$ receipt
+of a voucher.
 
 Each period the household chooses
 \begin{equation}\label{eq:fchoice}
@@ -676,26 +680,25 @@ $d=1$, and $a'$ next period assets.
 Period utility is
 \begin{equation}\label{eq:futil}
 u\big(c,h',v,n,\tau;d,m\big) \;=\;
-\frac{\big[\,c^{\new{1-\gamma-\theta}}\,(h')^{\new{\gamma}}\,(v+b)^{\new{\theta}}\,\big]^{1-\sigma}}{1-\sigma}
+\frac{\big[\,c^{1-\gamma-\theta}\,(h')^{\gamma}\,(v+b)^{\theta}\,\big]^{1-\sigma}}{1-\sigma}
 \;+\;\omega_{\ell}\frac{(1-n)^{1-\sigma_{\ell}}}{1-\sigma_{\ell}}
 \;+\;\aleph\;-\;\tau\bar\tau^{u}\;-\;\kappa_x H,
 \end{equation}
-\new{Four of these are the stylized model's and carry the same meaning here as
+Four of these are the stylized model's and carry the same meaning here as
 in Section~\ref{sec:env}: $\gamma$ the housing weight, $\theta$ the drug weight,
 so that $1-\gamma-\theta$ is the weight on consumption and the three sum to one;
 $b$ the Stone-Geary endowment; and $\aleph$ the flow value of being alive.
-Equation~\eqref{eq:u} is the logarithmic case of this bundle with hours fixed.}
+Equation~\eqref{eq:u} is the logarithmic case of this bundle with hours fixed.
 
-\new{The rest are new, and there are three of them. Leisure makes hours a margin,
-at weight $\omega_{\ell}$ and curvature $\sigma_{\ell}$ over the hours $n$ not
-worked. SUD treatment costs utility rather than money, $\bar\tau^{u}$ in each
+The rest are new, and there are three of them. Leisure makes hours a margin,
+at weight $\omega_{\ell}$ and curvature $\sigma_{\ell}$ over \new{the $1-n$ hours}
+not worked. SUD treatment costs utility, $\bar\tau^{u}$ in each
 period the household takes it up, $\tau=1$. And homelessness carries a
 disamenity, $\kappa_x$ per unit of the aggregate homelessness rate $H$, borne by
 every household and priced on the headcount alone, which is what makes
-homelessness an externality here rather than a private misfortune;
+homelessness an externality here rather than \new{only} a private misfortune;
 Section~\ref{sec:fleftout} takes it up. Outside the bundle, $\sigma$ is the
-coefficient of relative risk aversion, which the stylized model does not need
-because its utility is logarithmic.}
+coefficient of relative risk aversion.
 
 \subsection{Income, taxes and transfers}
 
@@ -703,60 +706,52 @@ Gross income depends on age, employment, productivity and health,
 \begin{equation}\label{eq:fincome}
 y^{g}(j,y,e,d,m,n)=
 \begin{cases}
-0.40\,y & j\ge \new{J_{R}} \quad\text{(social security)}\\[2pt]
+0.40\,y & j\ge J_{R} \quad\text{(social security)}\\[2pt]
 n\,y\,\varepsilon_j\,\rho_{d}^{\mathbf{1}\{d=1\}}\rho_{m}^{\mathbf{1}\{m=1\}}
- & j<\new{J_{R}},\ e=1 \quad\text{(employed)}\\[2pt]
-\min\{\varrho_{UI}\,y\,\varepsilon_j,\ \bar u\,\bar Y\}
- & j<\new{J_{R}},\ e=2 \quad\text{(first year of a spell)}\\[2pt]
-\new{\zeta_{DI}\,y\,\varepsilon_j} & j<\new{J_{R}},\ e=3,\ m=1 \quad\text{(disability)}\\[2pt]
+ & j<J_{R},\ e=1 \quad\text{(employed)}\\[2pt]
+\new{\psi\,\min\{y\,\varepsilon_j,\ \bar y\}}
+ & j<J_{R},\ e=2 \quad\text{(first year of a spell)}\\[2pt]
+\zeta_{DI}\,y\,\varepsilon_j & j<J_{R},\ e=3,\ m=1 \quad\text{(disability)}\\[2pt]
 0 & \text{otherwise,}
 \end{cases}
 \end{equation}
-with $\varepsilon_j$ the deterministic age profile of efficiency, $\rho_d$ and
-$\rho_m$ productivity penalties applied \emph{conditional on working},
-$\varrho_{UI}$ the unemployment insurance (UI) replacement rate paid on the
-household's own productivity \new{and only in the first period of a spell}, up
-to a cap $\bar u$ on the benefit as a share of average income, as in
-equation~\eqref{eq:inc},
-\new{$\zeta_{DI}$ the rate at which disability insurance (DI) replaces the income
-of a non employed household with serious mental illness}, and $\bar Y$ average
-income. Retirement income replaces $40$ percent
-of the productivity state with no health penalty, since social security is not
-means tested on health.
+\new{taking the cases in the order they appear.} Retirement income replaces $40$
+percent of the productivity state with no health penalty, since social security
+is not means tested on health. \new{For the employed,} $\varepsilon_j$ \new{is}
+the deterministic age profile of efficiency \new{and} $\rho_d$ and
+$\rho_m$ \new{are} productivity penalties applied \emph{conditional on working}.
+\new{Unemployment insurance (UI) is paid in the first period of a spell only, at
+the replacement rate $\psi$ on an earnings base capped at $\bar y$, both as in
+equation~\eqref{eq:inc}.} $\zeta_{DI}$ \new{is} the rate at which disability
+insurance (DI) replaces the income of a non employed household with
+\new{SMI, and $\bar Y$ is} average income.
 
-{\color{red}The two penalties are in the model for one reason, and it is a moment
-rather than a mechanism. Roughly half the homeless work, so homelessness cannot
-be produced by unemployment alone: something has to leave a household poor while
-it is still in a job, and a penalty conditional on working is that something.
-Section~\ref{sec:support}'s environment, where only unemployment lowers income,
-is the version that cannot deliver it.
+{\color{red}The two penalties are in the model to generate a large share of
+homeless households being employed, consistent with the data. Roughly half the
+homeless work, so homelessness cannot be produced by unemployment alone:
+something has to leave a household poor while it is still in a job.
 
-They are calibrated rather than asserted, and on the moments that require them:
-$\rho_d$ and $\rho_m$ are fitted jointly to the share of the homeless who are
-employed and to homeless income relative to average, two parameters against the
-two moments that identify them. If those moments can be matched without the
-penalties, the penalties should go, and the calibration will say so by driving
-both to one.}
+Both are calibrated: $\rho_d$ on the share of the homeless who are employed, and
+$\rho_m$ on the earnings of workers with SMI relative to average.}
 
 Labour income is taxed with the \new{Heathcote et al.\ (2017)} function and
-capital income at a flat rate,
+capital income at a flat rate \new{$\tau_k$},
 \begin{equation}\label{eq:ftax}
 y^{n}=\tau_{\ell}\,(y^{g})^{\xi}\;+\;(1-\tau_k)\,r\,a ,
 \end{equation}
-\new{with $y^{n}$ after tax income,} where $\xi$ governs progressivity and
-$\tau_{\ell}$ the level, \new{$\tau_k$ is the flat rate on capital income and $r$
-the risk free rate, which is the stylized model's $R-1$}. \new{Households can
+with $y^{n}$ \new{denoting} after tax income, where $\xi$ governs progressivity
+and $\tau_{\ell}$ the level. Households can
 receive two transfers, both means tested on gross income as the programmes
-themselves are.} A food stamp floor tops means
-tested income up to $\underline c\,\bar Y$, \new{with $\underline c$ the floor
-expressed as a share of average income}, and the voucher covers rent above a
-tenant contribution of $\kappa_r$ of gross earnings, \new{the same $\kappa_r$ as
-in Section~\ref{sec:support},}
+themselves are. A food stamp floor tops means
+tested income up to $\underline c\,\bar Y$, with $\underline c$ the floor
+expressed as a share of average income, and the voucher covers rent above a
+tenant contribution of $\kappa_r$ of gross earnings, the same $\kappa_r$ as
+in Section~\ref{sec:support},
 \begin{equation}\label{eq:ftrans}
 F=\max\big\{0,\ \underline c\,\bar Y-(y^{g}+\max\{0,ra\})\big\},
 \qquad
 V\!ch=\mathbf{1}\{\eta=1\}\,\mathbf{1}\{h'\neq h_1\}\,
-\max\big\{0,\ \new{p_r}\, h'-\kappa_r\,y^{g}\big\}.
+\max\big\{0,\ p_r\, h'-\kappa_r\,y^{g}\big\}.
 \end{equation}
 A homeless voucher holder does not lose the voucher: retention depends on income
 eligibility, not on housing, so the entitlement survives and simply pays nothing
@@ -843,9 +838,9 @@ the age profile is reported both ways.} A household with the SUD recovers with p
 \mu_H^{\mathbf{1}\{h'=h_1\}}\,\mu_m^{\mathbf{1}\{m=1\}}\,g^{\tau}\Big\},
 \end{equation}
 \new{with $\bar\pi_r$ the baseline annual chance of recovering while housed,
-clean of mental illness and untreated, and three multipliers on it:}
+clean of \new{SMI} and untreated, and three multipliers on it:}
 $\mu_H<1$, \new{so} recovery is harder on the street, $\mu_m<1$, harder with
-mental illness, and $g>1$ the treatment effect. \new{This is where housing acts
+\new{SMI}, and $g>1$ the treatment effect. \new{This is where housing acts
 on drug use in the quantitative model, and it is what Milby et al.\ (2005)
 measure.}
 
@@ -891,7 +886,7 @@ prevalence at 26 rather than at the ergodic distribution of the age one
 transition matrix, which would start them at $4.7$ percent against $11$ to $13$
 observed. So} calibrating persistence never disturbs prevalence, and $\iota>1$
 \new{, the multiplier on onset for a household carrying the SUD,}
-makes a SUD raise the hazard of mental illness. That last channel runs in the
+makes a SUD raise the hazard of \new{SMI}. That last channel runs in the
 direction the evidence supports: substance induced psychosis converts to
 schizophrenia or bipolar disorder at a pooled rate near a quarter, and in the
 Danish registers any SUD predicts conversion to schizophrenia
@@ -903,13 +898,13 @@ $\kappa_{uem}$, mortality through $\kappa_{\phi m}$, the recovery hazard through
 $\mu_m$, and
 eligibility for disability income through $\zeta_{DI}$. \new{It does not shift
 $b$, for the reason given in Section~\ref{sec:fprefs}: flow utility is the same
-function of $(c,h,v)$ in every state, mental illness included. Self medication, if
+function of $(c,h,v)$ in every state, \new{SMI} included. Self medication, if
 it operates, operates here through the recovery hazard and the budget rather than
 through a taste.}
 
 The mental health chain does \emph{not} depend on housing, and that is a result
 rather than an omission. In the At Home / Chez Soi randomised trial, $1{,}198$
-homeless adults with mental illness across four cities, assignment to housing
+homeless adults with \new{SMI} across four cities, assignment to housing
 with intensive case management produced no detectable effect on symptom severity
 at any wave, while producing large effects on housing stability, its primary
 outcome. Making the channel housing dependent would mean adding a mechanism the
@@ -925,7 +920,7 @@ Survival is
 \end{equation}
 with $\bar\phi_j$ the baseline \new{survival} age profile and the
 \new{three multipliers $\kappa_{\phi H}$, $\kappa_{\phi d}$ and $\kappa_{\phi m}$
-raising the death hazard for homelessness, the SUD and mental illness
+raising the death hazard for homelessness, the SUD and \new{SMI}
 respectively, themselves varying}
 with age, rather than the single $\kappa$ of~\eqref{eq:surv}. Because $\aleph>0$ a
 higher death hazard is a real cost, and it is larger for households with more life
@@ -989,7 +984,7 @@ Job finding and separation are
 \end{equation}
 \new{with $\bar\pi^{ue}$ and $\bar\pi^{eu}$ the baseline job finding and
 separation rates and $\kappa_{ueH}$, $\kappa_{ued}$ and $\kappa_{uem}$ the
-multipliers for homelessness, the SUD and mental illness,} so each multiplier
+multipliers for homelessness, the SUD and \new{SMI},} so each multiplier
 below one makes work simultaneously harder to find and easier
 to lose. {\color{red}The employment margin is where the robust findings are,
 roughly half again as much unscheduled absence and $44$ percent higher turnover.
@@ -1195,7 +1190,7 @@ households through their choices and then through the shocks,
 \end{equation}
 where $\phi_j$ is evaluated at the household's own $(h'_j(s),d,m)$. The mass that
 does not survive, plus the mass at $j=J$, is replaced by newborns at $j=1$ with
-zero assets, employed, clean, without mental illness and without a voucher, whose
+zero assets, employed, clean, without \new{SMI} and without a voucher, whose
 productivity is drawn from the unconditional distribution $\Omega_y$ \new{of
 permanent productivity across households} scaled by the
 \new{transmission penalties $\delta_d$ for a parent who carried the SUD and
@@ -1258,7 +1253,7 @@ across.
 The disamenity is on the headcount alone. There is no extra weight on the
 homeless who happen to carry a SUD, and that is deliberate: the survey evidence
 asks what people would pay to end \emph{homelessness}, so that is the object
-priced, and loading addiction into the same term would price something the
+priced, and loading \new{the SUD} into the same term would price something the
 evidence was not about.
 
 Two things follow. The term is small, so it cannot by itself decide a ranking;
@@ -1271,7 +1266,7 @@ $H$ a genuine fixed point of the equilibrium rather than accounting.}
 \section{Calibrating the quantitative model}\label{sec:fullcal}
 
 Two stages, and they are different exercises. The first matches a cross section
-of the stationary equilibrium, nineteen parameters against twenty one moments.
+of the stationary equilibrium, \new{twenty four} parameters against \new{twenty four} moments.
 The second matches short run \emph{responses} measured in experiments, which
 cannot be read off a comparison of steady states. Only what is new or what
 Section~\ref{sec:cal} does not already illustrate is described here.
@@ -1400,7 +1395,7 @@ Working at all, among the homeless in treatment & 6.6 percent & TEDS-A 2022 \\
 \end{center}
 
 Five parameters remain undisciplined, and they are flagged rather than hidden:
-the treatment effect on recovery $g$, the recovery multiplier for mental illness
+the treatment effect on recovery $g$, the recovery multiplier for \new{SMI}
 $\mu_m$, the disability benefit level $\bar y_{DI}$, and the drug supply
 curvature $\psi_2$. Of these only $g$ carries a headline result, and it is
 reported as a range rather than as a number.
