@@ -1062,6 +1062,25 @@
         ! these is scratch for one node of the a' search inside an OpenMP loop.
         real(8) :: drug_risk_value=0
         integer :: drug_risk_active=0
+
+        ! WARM STARTING THE HOURS BISECTION ON THE SECOND PASS.
+        !
+        ! The second pass re-solves a node the first pass already solved, with
+        ! one term added to the drug condition. Hours barely move: the risk term
+        ! shifts the split between consumption and the drug and reaches labour
+        ! supply only through the marginal utility of consumption. Bisecting
+        ! hours again from [0,1] spends twenty seven iterations rediscovering a
+        ! number it already has, which is most of what the second pass costs.
+        !
+        ! The fix keeps it exact. Start from a narrow bracket around the first
+        ! pass's answer; if the search lands on an edge of that bracket the root
+        ! was outside it, so the bracket is thrown away and the whole interval
+        ! bisected, which is what a cold start would have done anyway. A wrong
+        ! guess costs one redo, a right one costs four iterations instead of
+        ! twenty seven.
+        real(8) :: secant_guess=0
+        real(8), parameter :: secant_guess_width=0.05
+        integer :: have_secant_guess=0
         integer :: drug_risk_housing_index=0
         integer :: drug_risk_ownership=0
         real(8), dimension(financial_grid_size) :: flow_utility_vector
@@ -1693,6 +1712,8 @@
         !$omp threadprivate(total_consumption_choice)
         !$omp threadprivate(drug_risk_value)
         !$omp threadprivate(drug_risk_active)
+        !$omp threadprivate(secant_guess)
+        !$omp threadprivate(have_secant_guess)
         !$omp threadprivate(drug_risk_housing_index)
         !$omp threadprivate(drug_risk_ownership)
         !$omp threadprivate(largest_possible_financial_index)
@@ -10616,9 +10637,15 @@
                             ev_table(future_financial_index,include_addiction,&
                             future_housing_status_index,has_opportunity_1,ev_slot),0.d0)
 
+                        ! Hand the second pass the hours the first one found.
+                        secant_guess=labor_supply_1
+                        have_secant_guess=1
+
                     end if
 
                     end do
+
+                    have_secant_guess=0
 
                     can_consume_drugs=1
                                                                                                                                                                                                                                                                                        
@@ -13100,6 +13127,14 @@
         
         x_0=0
         x_2=1
+
+        if (have_secant_guess==1) then
+
+            x_0=max(secant_guess-secant_guess_width,0.d0)
+            x_2=min(secant_guess+secant_guess_width,1.d0)
+
+        end if
+
         x_1=(x_0+x_2)/2
                     
         loop_1=1
@@ -13178,6 +13213,70 @@
                                             
         end do
         
+        ! The warm bracket is only a guess. If the answer sits on one of its
+        ! edges the root was outside it, so the bracket is discarded and the
+        ! whole interval bisected.
+        if ((have_secant_guess==1) .AND. (can_consume_1==1) .AND. &
+            ((labor_supply_1<=x_0+10.d0**(-6)) .OR. (labor_supply_1>=x_2-10.d0**(-6))) .AND. &
+            ((x_0>0) .OR. (x_2<1))) then
+
+            x_0=0
+            x_2=1
+            x_1=0.5
+            distance_secant=1
+            loop_1=1
+
+            do while ((distance_secant>stopping_rule_secant) .AND. (loop_1<max_loop_count))
+
+                after_tax_wealth_net_of_expenses_1=after_tax_wealth_net_of_expenses_2
+                gross_wage_income_1=gross_wage_income_2
+                wage_income_tax_paid_1=wage_income_tax_paid_2
+                food_stamps_1=food_stamps_2
+                housing_voucher_1=housing_voucher_2
+                housing_voucher_3=housing_voucher_4
+                mortgage_deductions_tax_rebates_1=mortgage_deductions_tax_rebates_2
+
+                labor_supply_1=x_1
+
+                call objective(time_period,MU_1,MU_2,x_1,after_tax_wealth_net_of_expenses_1,&
+                    financial_index_1,future_financial_amount_1,space_lived_in_1,&
+                    future_housing_status_index_1,can_consume_1,gross_wage_income_1,&
+                    wage_income_tax_paid_1,food_stamps_1,housing_voucher_1,housing_voucher_3,&
+                    mortgage_deductions_tax_rebates_1,years_left_on_mortgage_1,addiction_index_1,taxable_income_1)
+
+                if (can_consume_1==1) then
+
+                    proceed_2=1
+
+                    if (MU_1<MU_2) then
+
+                        x_0=x_1
+                        x_1=(x_1+x_2)/2
+
+                    else
+
+                        x_2=x_1
+                        x_1=(x_1+x_0)/2
+
+                    end if
+
+                    distance_secant=abs(x_0-x_2)
+
+                else
+
+                    x_0=x_1
+                    x_1=(x_1+x_2)/2
+                    proceed_2=0
+                    distance_secant=abs(MU_1-MU_2)
+
+                end if
+
+                loop_1=loop_1+1
+
+            end do
+
+        end if
+
         if ((labor_supply_1>1) .OR. (labor_supply_1<0)) then
         
             write(*,*) "labor_supply_1=", labor_supply_1
