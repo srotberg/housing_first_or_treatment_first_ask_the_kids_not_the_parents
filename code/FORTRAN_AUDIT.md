@@ -186,7 +186,19 @@ Three of the four are there:
 | recovery | `probability_of_stopping_addiction_if_homeless = (1/6) x 0.025` | `mu_H` = 0.167, set rather than calibrated |
 | Stone-Geary shifter | **absent** | `b` is selected by the disorder index alone, never by housing |
 
-So `rho^b_H` does not exist, and it is not one channel among four. The model
+**Fixed, structurally.** Every place that evaluates the drug term now goes
+through one function, `b_shifter(is_sud, housing_size)`, added to `Global_Vars`:
+the flow utility, its marginal utility, the closed form split in `objective` and
+`optimize_frac_spent_on_addiciton`, twenty four call sites in four routines. They
+cannot drift apart, which is why this was not patched one site at a time.
+Homelessness is identified by the housing size rather than the index, because the
+call chain carries the size; the homeless flow is about a fifth of the smallest
+rental, so the test has an enormous margin. `rho_b_homeless` is one, the neutral
+value, and is flagged in the source: it has to be bracketed on Milby's housed
+against unhoused abstinence ratio of 1.473 before anything is reported. Until it
+is, the sign of the central experiment is still wrong.
+
+So `rho^b_H` did not exist, and it is not one channel among four. The model
 note is explicit about what it is:
 
 > "This is the only parameter in the model that governs the elasticity of drug
@@ -220,14 +232,14 @@ Checked against the tables as they now print.
 | `bar_pi^ue` | 0.55, Krueger et al. | `probability_becoming_employed = 0.297` | **disagrees**, code is 46 per cent lower |
 | `bar_pi^eu` | calibrated to unemployment 4.9 per cent | `probability_becoming_unemployed = 0.0155` | plausible, verify against the moment |
 | `kappa_ued` | calibrated to unemployment given a SUD, 16.25 per cent | `multiple_of_probabilities_of_employment_if_addicted = 2.7` | set, not calibrated |
-| `kappa_phi_d` | mortality multiplier, SUD | `increased_risk_of_death_addicted = 6.9` | **the effective ratio is 7.9**, see below |
+| `kappa_phi_d` | mortality multiplier, SUD | was `6.9`, **now `5.9`** | fixed: the constant is the multiplier minus one, so the effective ratio is now 6.9 |
 | `kappa_phi_H` | 4.41 at 26 falling to 1.09 at 80 | `increased_risk_of_death_homeless = 0.6`, flat | **disagrees**: flat, and an effective 1.6 |
 | homeless and SUD together | multiplicative in the note | `0.6 + 6.9`, additive | **disagrees in functional form** |
 | `bar_pi_r` | 0.025 a year | `probability_of_stopping_addiction = 0.025` | agrees |
 | `mu_H` | calibrated to the SUD share of the homeless, 21.7 per cent | `= 1/6` exactly | set, not calibrated |
 | `pi_d` | calibrated to the SUD rate, 3.68 per cent | `probability_of_becoming_addicted_if_experiment = 0.037` | agrees |
 | `chi_D` | 0.212 | `addict_cost_govt_as_perc_of_avg_inc = 0.212` | agrees |
-| `chi_H` | 0.4286 | `homeless_cost_govt_as_perc_of_avg_inc = 0.252` | **disagrees**, the note took the literally homeless figure and the code did not |
+| `chi_H` | 0.4286 | was `0.252`, **now `0.4286`** | fixed to the literally homeless figure |
 | `xi` | 0.85 | `curvature_of_labor_income_taxes = 0.85` | agrees |
 | `tau_k` | 0.15 | `investment_income_tax = 0.15` | agrees |
 | `kappa_V` | 0.50 of median | `threshold_income_vouchers = 0.5` | agrees |
@@ -237,7 +249,7 @@ Checked against the tables as they now print.
 | `delta_d` | 0.30 | `penalty_child_addicted = 0.30` | agrees |
 | `delta_h` | 0.31 | `penalty_child_homeless = 0.31` | agrees |
 | `omega` | 0.014 | `weight_on_child = 0.0137` | value agrees, **but see 4** |
-| homelessness target | 0.399 per cent | `fraction_homeless_data = 0.0045` | **disagrees**, code targets 0.45 |
+| homelessness target | 0.399 percent | was `0.0045`, **now `0.00399`** | fixed to the HUD count converted to households |
 | `p_det`, `p_fp`, `p_test`, `c_test` | four parameters, swept | none exist | conditionality is perfectly enforced in the code |
 | `kappa_x`, `omega_x` | removed from the note this revision | never existed in the code | now consistent |
 
@@ -330,6 +342,7 @@ The `a'` search is quadratic, so against fifty points
 
     40 points   1.56x    ->  19 hours on four,  1.9 on forty
     35 points   2.04x    ->  15 hours on four,  1.5 on forty
+    **40 points  1.56x    ->  19 hours on four,  1.9 on forty  <- CHOSEN**
     30 points   2.78x    ->  11 hours on four,  1.1 on forty
 
 so **thirty five points cancels mental illness exactly** and returns the whole
