@@ -290,19 +290,47 @@ class P:
     # HOUSING. Rent per unit of housing services is the NUMERAIRE, p_r = 1, so
     # a unit size and its rent are the same number.
     #
-    # THE STANDARD UNIT IS CALIBRATED, NOT SET, and the change is worth
-    # recording because the previous version double counted. It used to be fixed
-    # at 21.2 per cent of average income, the housing cost to income ratio in the
-    # SCF, while gamma was fixed at the Consumer Expenditure Survey share. Those
-    # are two external numbers aimed at the same object, and nothing made the
-    # pair deliver the survey share in equilibrium: gamma is a preference weight,
-    # whereas what a household actually spends depends on a housing grid with
-    # three points on it, on the street being an option, and on the voucher. So
-    # gamma is set from the survey and h_lg is calibrated to make realised
-    # spending match it. The small unit stays half the standard one, which is a
-    # normalisation of what "small" means rather than a second target.
-    h_lg  = 0.212     # CALIBRATED to the housing share of non drug spending
-    h_sm  = 0.106     # tied to h_lg/2 in with_()
+    # THE STANDARD UNIT IS DERIVED FROM GAMMA, and the change is worth recording
+    # because the previous version double counted. It used to be fixed at 21.2
+    # per cent of average income, the housing cost to income ratio in the SCF,
+    # while gamma was fixed separately at the Consumer Expenditure Survey share.
+    # Those are two external numbers aimed at the same object and nothing made
+    # them agree. Now there is only ONE number, 0.268, and the unit is what it
+    # implies: the dwelling a household at mean income would occupy if housing
+    # were continuously choosable, h_lg = gam/(1-th) * ybar. The small unit is a
+    # QUARTER of it and the street is what the homelessness rate identifies.
+    #
+    # A QUARTER RATHER THAN A HALF, and the reason is the homelessness margin.
+    # The small unit is the affordability floor: a household whose cash falls
+    # below its rent has no housed option at all and is homeless BY FORCE, which
+    # no value of h_hl undoes. At half of a 0.262 unit that floor sits at 0.131
+    # and forced homelessness alone runs above the 0.399 per cent target, so the
+    # h_hl bracket loses its interior solution. At a quarter the floor is 0.0655,
+    # the target is reachable, and h_hl does the work it is supposed to do.
+    #
+    # CALIBRATING h_lg ON THE REALISED HOUSING SHARE WAS TRIED AND FAILS, and the
+    # reason is structural rather than a matter of tuning. Every household
+    # consumes at most ONE standard unit however rich it is, so the aggregate
+    # share is bounded above by h_lg in units of mean income and the rich drag it
+    # down. Matching 26.8 per cent needs h_lg near 0.45, hence a small unit at
+    # 0.225, and every household whose cash falls below that is homeless BY
+    # FORCE, which no value of h_hl undoes. That sweep hit the share exactly and
+    # put homelessness at 3.2 per cent against a target of 0.399, with h_hl
+    # pinned at its lower bound and the SUD share of the homeless down at 8 per
+    # cent. The frontier, with h_hl refitted at every point:
+    #
+    #     h_lg    h_sm     h_hl     housing share   homelessness
+    #     0.212   0.106   4.2e-04       0.163          0.00395   <- on target
+    #     0.240   0.120   7.7e-05       0.177          0.00593
+    #     0.270   0.135   1.0e-07       0.195          0.00594
+    #     0.340   0.170   1.0e-07       0.231          0.01091
+    #     0.450   0.225   1.0e-07       0.267          0.03160
+    #
+    # So the realised share is an untargeted moment this model misses, for the
+    # same kind of reason it misses the drug spending share, and it is reported
+    # as one.
+    h_lg  = 0.2620    # = gam/(1-th) * ybar. DERIVED, see above
+    h_sm  = 0.0655    # tied to H_RATIO * h_lg in with_()
     h_hl  = 0.05      # the street. CALIBRATED to the homelessness rate
     pr    = 1.00      # rent per unit of housing services: the numeraire
     pV    = 0.27      # probability a voucher arrives, conditional on eligibility
@@ -338,13 +366,16 @@ def fields(par):
             if not k.startswith('_') and not callable(getattr(par, k))}
 
 
+H_RATIO = 0.25    # the small unit as a fraction of the standard one
+
+
 def with_(par, **kw):
     f = fields(par); f.update(kw)
-    # THE SMALL UNIT IS HALF THE STANDARD ONE, always, and it is tied here
-    # rather than at the call sites so that a bracket on h_lg cannot forget it
-    # and silently calibrate one size against a stale other.
+    # THE SMALL UNIT IS A QUARTER OF THE STANDARD ONE, always, and it is tied
+    # here rather than at the call sites so that a bracket on h_lg cannot forget
+    # it and silently calibrate one size against a stale other.
     if 'h_lg' in kw and 'h_sm' not in kw:
-        f['h_sm'] = 0.5 * f['h_lg']
+        f['h_sm'] = H_RATIO * f['h_lg']
     return clone(**f)
 
 

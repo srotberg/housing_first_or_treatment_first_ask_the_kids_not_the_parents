@@ -312,8 +312,10 @@ National Survey on Drug Use and Health (NSDUH) 2024 for respondents aged 26 and
 over.
 
 Income support replaces half of previous earnings on a base capped at mean
-income, in line with statutory state rules. \new{The rental units are not set from
-the data and are discussed with the rest of the internal calibration below.} The voucher parameters are institutional: covered
+income, in line with statutory state rules. \new{The standard rental unit is
+neither set from the data nor calibrated: it is what $\gamma$ implies, $h_L =
+[\gamma/(1-\theta)]\bar y$, the dwelling a household at mean income would occupy
+if housing were continuously choosable, and the small unit is a quarter of it.} The voucher parameters are institutional: covered
 tenants pay $30$ percent of market rent, eligibility is capped at mean income,
 and $\pi_V = 0.27$ is the assisted eligible share in the 2023 Picture of Subsidized
 Households, published by the Department of Housing and Urban Development (HUD).
@@ -332,7 +334,7 @@ can make.}
 
 \subsubsection{Internal calibration}
 
-\new{Five} parameters are set inside the model, in Table~\ref{tab:int}, each bracketed
+Four parameters are set inside the model, in Table~\ref{tab:int}, each bracketed
 on the moment it moves most rather than fitted jointly. The flow value
 of being alive $\aleph$ is matched to a value of a statistical life of @@vsl_t@@
 times average annual income, about \$9 million against a mean household income of
@@ -344,17 +346,25 @@ $h_0$ to a homelessness rate of $0.399$ percent from the 2023 HUD point in
 time (PIT) count, converted to households, and the SUD hazard $\lambda$ to the $33.2$ percent of users who
 acquire a SUD.
 
-\new{The standard rental unit $h_L$ is the fifth, and it is calibrated rather than
-set because setting it would count the same fact twice. $\gamma$ is a preference
-weight and the survey share is the outcome of a choice; with only three points on
-the housing grid, the street among them and a voucher covering part of the rent
-for some households, nothing makes a $\gamma$ read off the survey deliver the
-survey's share in equilibrium. Fixing both, as an earlier draft did, aimed two
-external numbers at one object and hit neither. So $\gamma$ carries the
-preference and $h_L$ is bracketed on realised spending, housing over expenditure
-net of drugs, with a target of $26.8$ percent. The small unit stays half the
-standard one, which fixes what ``small'' means rather than adding a second
-target.}
+\new{An earlier draft set $h_L$ separately, at the $21.2$ percent housing cost to
+income ratio in the Survey of Consumer Finances, with $\gamma$ set alongside it
+from the expenditure survey. That is two external numbers aimed at one object and
+nothing makes them agree, so the model reproduced neither. Deriving the unit from
+$\gamma$ leaves a single number doing a single job.
+
+Calibrating $h_L$ to the realised housing share instead was tried and it fails,
+for a reason worth stating because it is structural rather than a matter of
+tuning. Every household here occupies at most one standard unit however rich it
+is, so the aggregate share of spending that goes on housing is bounded above by
+$h_L$ in units of mean income, and the households above the mean drag it down.
+Matching $26.8$ percent needs a standard unit costing @@hL_share@@ times mean
+income, and every household whose cash falls below a quarter of that is homeless
+by force rather than by choice, which no value of $h_0$ undoes. That calibration
+matched the share and put homelessness at @@hl_share@@ percent against a target
+of $0.399$. So the realised housing share, @@hspend_m@@ percent, is reported
+as a moment the model misses, for the same kind of reason it misses the drug
+spending share: a coarse grid cannot reproduce a distribution's average and the
+behaviour at its bottom at once, and this model is built for the bottom.}
 
 
 \begin{table}[!tb]
