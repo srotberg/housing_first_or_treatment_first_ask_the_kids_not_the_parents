@@ -33,8 +33,8 @@ $\chi_D$ & Fiscal cost per household with a SUD & CEA (2017), about \$30{,}000 p
 $\kappa_x$ & Disamenity of the homelessness rate, headcount only & Loubi\`ere et al.\ (2020): \euro{}23 a year on average, $0.08$ percent of average earnings, to end homelessness; the \euro{}57 among those willing to pay anything is the top of the reported range & priced \\
 \addlinespace
 \multicolumn{4}{@{}l}{\emph{Income support and the voucher}} \\
-$\new{\psi}$ & Unemployment insurance replacement rate & DOL statutory replacement rates & 0.50 \\
-$\new{\bar y}$ & \new{Cap on the earnings base for insurance, share of average income} & DOL state benefit maxima & 1.00 \\
+$\psi$ & Unemployment insurance replacement rate & DOL statutory replacement rates & 0.50 \\
+$\bar y$ & Cap on the earnings base for insurance, share of average income & DOL state benefit maxima & 1.00 \\
 $\kappa_V$ & Voucher eligibility threshold, share of median income & HUD rule & 0.50 \\
 $\kappa_r$ & Tenant contribution rate & HUD rule & 0.30 \\
 $p_{\text{test}}$ & Probability a voucher holder is tested & Benchmark value, swept downward & 1.00 \\
@@ -42,23 +42,23 @@ $c_{\text{test}}$ & Cost per voucher holder tested & A urine panel at about \$40
 $p_{\text{det}}$ & Detection probability given a test & Benchmark value, swept downward & 1.00 \\
 $p_{\text{fp}}$ & False positive rate under Treatment First & Benchmark value, swept upward & 0.00 \\
 \addlinespace
-\multicolumn{4}{@{}l}{\emph{Employment, the SUD and \new{SMI}}} \\
+\multicolumn{4}{@{}l}{\emph{Employment, the SUD and SMI}} \\
 $\bar\pi^{ue}$ & Job finding rate, annual & Krueger, Cramer and Cho (2014) & 0.55 \\
 $\kappa_{ueH}$ & Employment multiplier, homeless & Desmond and Gershenson (2016) & 0.80 \\
 $\kappa_{\phi H}$ & Mortality multiplier, homeless & Baggett et al.\ (2013), varying with age & 4.41 to 1.09 \\
-$\kappa_{\phi m}$ & Mortality multiplier, \new{SMI} & Olfson et al.\ (2015); flat in age & 2.50 \\
-$\new{\bar\kappa_{\phi d}}$ & \new{Mortality multiplier, SUD, at its peak age} & \new{All cause standardised mortality ratios for opioid use disorder run 6 to 10, of which overdose is roughly half; the age shape is taken from CDC WONDER drug poisonings} & \new{6.90} \\
+$\kappa_{\phi m}$ & Mortality multiplier, SMI & Olfson et al.\ (2015); flat in age & 2.50 \\
+$\bar\kappa_{\phi d}$ & Mortality multiplier, SUD, at its peak age & All cause standardised mortality ratios for opioid use disorder run 6 to 10, of which overdose is roughly half; the age shape is taken from CDC WONDER drug poisonings & 6.90 \\
 $\bar\pi_r$ & Baseline recovery hazard when housed, annual & Vaillant (1995); bracketed by Fleury et al.\ (2016) & 0.025 \\
-$\mu_m$ & Recovery multiplier, \new{SMI} & Dual diagnosis relapse of $39.8$ against $26.4$ percent & 0.82 \\
+$\mu_m$ & Recovery multiplier, SMI & Dual diagnosis relapse of $39.8$ against $26.4$ percent & 0.82 \\
 $g$ & Treatment effect on recovery & Odds ratio of $1.22$ for contingency management & 1.35 \\
-$\new{p_m}$ & \new{Prevalence of SMI among adults} & \new{NSDUH 2023, defined by substantial functional impairment} & \new{5.5\%} \\
-$\new{\zeta_{DI}}$ & \new{Disability replacement rate, non employed with SMI} & \new{SSDI and SSI replacement for this group} & \new{0.25} \\
-$\iota$ & SUD multiplier on the onset of \new{SMI} & Danish registers, hazard ratios of $1.34$ to $2.74$ & 2.00 \\
-$\new{\delta_d}$ & \new{Transmission penalty, parental SUD} & \new{McGovern et al.\ (2023) give a range of 2 to 4, not a point, and $\delta_h$ is already assigned from the same literature} & \new{3.00} \\
+$p_m$ & Prevalence of SMI among adults & NSDUH 2023, defined by substantial functional impairment & 5.5\% \\
+$\zeta_{DI}$ & Disability replacement rate, non employed with SMI & SSDI and SSI replacement for this group & 0.25 \\
+$\iota$ & SUD multiplier on the onset of SMI & Danish registers, hazard ratios of $1.34$ to $2.74$ & 2.00 \\
+$\delta_d$ & Transmission penalty, parental SUD & McGovern et al.\ (2023) give a range of 2 to 4, not a point, and $\delta_h$ is already assigned from the same literature & 3.00 \\
 \addlinespace
 \multicolumn{4}{@{}l}{\emph{The drug market}} \\
 $p_v$ & Price of drugs & Clears the drug market, and is one at the benchmark & 1.00 \\
-$\new{\nu_1}$ & Drug supply shifter & Normalisation, so that $p_v=1$ at the benchmark quantity & norm. \\
-$\new{\nu_2}$ & Drug supply curvature & Elasticity $1/(\new{\nu_2}-1)=2$; Hansen, Miller and Weber (2018) give $0.79$ and the cigarette and gasoline literatures about $3.6$ & 1.50 \\
+$\nu_1$ & Drug supply shifter & Normalisation, so that $p_v=1$ at the benchmark quantity & norm. \\
+$\nu_2$ & Drug supply curvature & Elasticity $1/(\nu_2-1)=2$; Hansen, Miller and Weber (2018) give $0.79$ and the cigarette and gasoline literatures about $3.6$ & 1.50 \\
 \bottomrule
 \end{longtable}
