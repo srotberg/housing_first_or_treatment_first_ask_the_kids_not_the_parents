@@ -1246,6 +1246,22 @@
         real(8), dimension(threshold_addiction_index) :: unconditional_unemployment_probability
         real(8), dimension(life_span,employment_grid_size,employment_grid_size) :: employment_process
         real(8), allocatable, dimension(:,:,:,:,:,:) :: unemployment_process
+        ! THE NEWBORN'S TRANSITION, WHICH IS NOT THE PARENT'S.
+        !
+        ! A newborn's SMI state was being drawn from unemployment_process applied
+        ! to the DYING PARENT'S index, so it inherited the parent's mental illness
+        ! with probability 1-lambda_m. The note has m exogenous with onset by age
+        ! and the onset identity reproduces the observed profile only if the age
+        ! one mass carries prevalence p(1). It did not, so the profile was never
+        ! reproduced: the model's cohort weighted prevalence came out near 2 per
+        ! cent against a profile averaging 5, and every SMI moment inherited that
+        ! error, including the three the SMI parameters are calibrated to.
+        !
+        ! The transition factorises into an employment leg and an SMI leg, so
+        ! this array is the same product with the SMI leg replaced by a draw from
+        ! p(1). The employment leg is left alone, since the intergenerational
+        ! link in productivity is deliberate.
+        real(8), allocatable, dimension(:,:,:,:,:,:) :: newborn_unemployment_process
         
         real(8), parameter :: replacement_rate_ui=0.5
         real(8), parameter :: max_ui_as_perc_of_avg_inc=1
@@ -17964,6 +17980,7 @@
                                         !$omp& policy_function_housing_status_index,initial_endowment,&
                                         !$omp& m,time_period,has_mortgage,at_least_one_period_before_retirement,&
                                         !$omp& has_house,survival_probability,unemployment_process,newborn_household,&
+                                        !$omp& newborn_unemployment_process,&
                                         !$omp& unconditional_employment_probability,fraction_with_positive_wealth,&
                                         !$omp& newborn_employment_probability,&
                                         !$omp& age_index,years_left_on_mortgage_index,unemployment_index,employment_index,&
@@ -18106,7 +18123,7 @@
                                                                     fraction_with_positive_wealth(employment_index)*&
                                                                     newborn_employment_probability(future_employment_index,&
                                                                     is_addicted_1,is_homeless_2)*&
-                                                                    unemployment_process(age_index,unemployment_index,&                                                            
+                                                                    newborn_unemployment_process(age_index,unemployment_index,&
                                                                     future_unemployment_index,is_homeless_2,&
                                                                     future_addiction_index_2,employment_index)*&
                                                                     addiction_transition(is_addicted_1,&
@@ -18130,7 +18147,7 @@
                                                                 (1-fraction_with_positive_wealth(employment_index))*&
                                                                 newborn_employment_probability(future_employment_index,&
                                                                 is_addicted_1,is_homeless_2)*&
-                                                                unemployment_process(age_index,unemployment_index,&
+                                                                newborn_unemployment_process(age_index,unemployment_index,&
                                                                 future_unemployment_index,is_homeless_2,future_addiction_index_2,&
                                                                 employment_index)*addiction_transition(is_addicted_1,&
                                                                 future_addiction_index_2,addiction_choice_1,is_homeless_2,&
@@ -20163,6 +20180,10 @@
 
         call create_unemployment_process()
 
+        ! After the array exists, not before: the first placement ran the check on
+        ! an unbuilt array of zeros.
+        call verify_newborn_process()
+
         if (is_counterfactual==0) then
                    
             standard_deduction=(model_average_labour_income(1)*standard_deduction_as_percent_of_average_labor_income)
@@ -20742,9 +20763,15 @@
 
         real(8), intent(in) :: iph_1
         integer :: a_1,p_1,h_1,d_c_1,d_f_1,m_c_1,m_f_1,e_c_1,e_f_1,i_1,j_1
-        real(8) :: smi_1
+        real(8) :: smi_1,newborn_smi_1
 
         unemployment_process=0
+        newborn_unemployment_process=0
+
+        ! The newborn's own SMI draw, from prevalence at age one. Independent of
+        ! the parent, which is the whole point.
+        newborn_smi_1=0
+        if (number_of_smi_states>1) newborn_smi_1=smi_prevalence_by_age(1)
 
         do a_1=1,life_span
 
@@ -20762,7 +20789,12 @@
 
                                     smi_1=smi_transition(m_c_1,m_f_1,d_c_1,a_1)
 
-                                    if (smi_1<=0.d0) cycle
+                                    ! The zero skip that used to sit here has
+                                    ! gone. It saved nothing measurable and it
+                                    ! would leave newborn_unemployment_process
+                                    ! unfilled at exactly the (m,m') pairs the
+                                    ! newborn draw does not care about, since
+                                    ! that leg does not depend on m at all.
 
                                     do e_c_1=1,3
 
@@ -20774,6 +20806,12 @@
 
                                             unemployment_process(a_1,i_1,j_1,h_1,d_f_1,p_1)=&
                                                 employment_transition(e_c_1,e_f_1,d_f_1,m_f_1,h_1,p_1,iph_1)*smi_1
+
+                                            ! Same employment leg, SMI drawn from
+                                            ! p(1) rather than from the parent.
+                                            newborn_unemployment_process(a_1,i_1,j_1,h_1,d_f_1,p_1)=&
+                                                employment_transition(e_c_1,e_f_1,d_f_1,m_f_1,h_1,p_1,iph_1)*&
+                                                (m_f_1*newborn_smi_1+(1-m_f_1)*(1-newborn_smi_1))
 
                                         end do
 
@@ -20792,6 +20830,90 @@
             end do
 
         end do
+
+    end subroutine
+
+    subroutine verify_newborn_process()
+
+        ! THE NEWBORN DRAW HAS TO DELIVER p(1), and it is checked rather than
+        ! argued, because the bug it replaces was invisible: the model ran and
+        ! reported an SMI prevalence of about two per cent against a profile
+        ! averaging five, and nothing said the newborns were the reason.
+        !
+        ! Two conditions. The newborn process must be a distribution, summing to
+        ! one over the future index for every state it is read at. And the mass it
+        ! puts on the SMI states must be p(1), independently of the parent's own
+        ! SMI state, which is the property the old array did not have.
+
+        use Global_Vars
+
+        implicit none
+
+        integer :: a_1,i_1,j_1,h_1,d_f_1,p_1,bad_sum_1,bad_prev_1
+        real(8) :: sum_1,smi_mass_1,target_1
+
+        if (number_of_smi_states<=1) then
+
+            write(*,*) "newborn process: not checked, number_of_smi_states=", number_of_smi_states
+            return
+
+        end if
+
+        target_1=smi_prevalence_by_age(1)
+        bad_sum_1=0
+        bad_prev_1=0
+
+        do a_1=1,life_span
+
+            do p_1=1,employment_grid_size
+
+                do h_1=1,2
+
+                    do d_f_1=0,include_addiction
+
+                        do i_1=1,unemployment_grid_size
+
+                            sum_1=0
+                            smi_mass_1=0
+
+                            do j_1=1,unemployment_grid_size
+
+                                if (sud_of(j_1)/=d_f_1) cycle
+
+                                sum_1=sum_1+newborn_unemployment_process(a_1,i_1,j_1,h_1,d_f_1,p_1)
+
+                                if (smi_of(j_1)==1) then
+
+                                    smi_mass_1=smi_mass_1+&
+                                        newborn_unemployment_process(a_1,i_1,j_1,h_1,d_f_1,p_1)
+
+                                end if
+
+                            end do
+
+                            if (abs(sum_1-1.d0)>10.d0**(-8)) bad_sum_1=bad_sum_1+1
+
+                            if (abs(smi_mass_1-target_1)>10.d0**(-8)) bad_prev_1=bad_prev_1+1
+
+                        end do
+
+                    end do
+
+                end do
+
+            end do
+
+        end do
+
+        write(*,*) "newborn process: p(1)=", target_1, &
+            " rows not summing to one=", bad_sum_1, " rows off p(1)=", bad_prev_1
+
+        if ((bad_sum_1>0) .OR. (bad_prev_1>0)) then
+
+            write(*,*) "NEWBORN PROCESS IS WRONG. stopping."
+            stop
+
+        end if
 
     end subroutine
 
@@ -25605,6 +25727,8 @@
         
         allocate(unemployment_process(life_span,unemployment_grid_size,unemployment_grid_size,2,&
             0:include_addiction,employment_grid_size))
+        allocate(newborn_unemployment_process(life_span,unemployment_grid_size,unemployment_grid_size,2,&
+            0:include_addiction,employment_grid_size))
                     
     end subroutine
     
@@ -25871,6 +25995,7 @@
         end if
         
         deallocate(unemployment_process)
+        deallocate(newborn_unemployment_process)
 
     end subroutine
     
