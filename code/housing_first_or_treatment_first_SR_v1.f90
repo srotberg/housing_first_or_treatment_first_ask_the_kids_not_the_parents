@@ -17534,6 +17534,8 @@
         integer :: financial_index,has_house,time_period,track_housing_1,voucher_index_1
         integer :: number_of_threads_used,loop_only_over_oldest,amortization_used,is_addicted_1
         real(8) :: sum_distribution_implied,sum_distribution_guess,avg_income_to_use_1,avg_income_to_use_2
+        integer :: newborn_census_i
+        real(8) :: newborn_census_clean,newborn_census_smi
         character*1 :: string_used
                 
         if (partial_equilibrium==1) then
