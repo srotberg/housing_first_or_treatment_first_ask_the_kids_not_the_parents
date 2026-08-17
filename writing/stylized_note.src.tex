@@ -1300,94 +1300,108 @@ vintages, so what follows is not another pass through them. It is organised
 around three things a table cannot say, and it is written to be read rather than
 consulted.
 
-\emph{Which parameters are standard and which are this paper's.} Most of the
-fifty eight are the furniture of any life cycle model: preferences, the earnings
-\new{distribution}, the tax schedule, the survival profile. \new{A much smaller
-set} is specific to this
-paper and carries its results: the SUD hazard $\lambda$ and its mortality
-multiplier $\bar\kappa_{\phi d}$; the recovery hazard $\bar\pi_r$ with its
-housing and treatment multipliers $\mu_H$ and $g$, respectively; the
-Stone-Geary endowment $b$;
-the wage penalties $\rho_d$ and $\rho_m$, incurred by households with a SUD
-\new{or} with SMI respectively; and \new{the parent's weight on its child,
-$\omega$,} with
-the transmission penalties $\delta_d$ and $\delta_h$. Eleven parameters out of
-fifty eight. Those are the ones worth arguing about, and the discussion below is
-weighted more heavily towards them for that reason. \new{Between them they answer
-the three questions of Section~\ref{sec:what}: who uses drugs, how housing
-assistance shapes that decision, and when Treatment First beats Housing First.
-The table below sets them out that way, with the moment and the source for each,
-and marks whether each is assigned or calibrated.}
+{\color{red}\subsection{The eleven parameters that carry the results}
+
+Most of the fifty eight are the furniture of any life cycle model. A much
+smaller set is specific to this paper, and eleven of those carry its results.
+They are set out in Table~\ref{tab:eleven} against the three questions of
+Section~\ref{sec:what}, with the moment, the source and the value for each, and
+they are discussed one at a time below because they are the parameters a reader
+should want to argue with.
 
 \input{tables/tab_eleven}
 
-\emph{Which moment does the work, and how one would know if it were wrong.} A
-parameter to moment map is only useful if the sign of each parameter's effect on
-its moment is declared, so that a mistake shows up as a moment walking away from
-its target rather than as a silent failure. That is done for every pair, and the
-map is close to triangular by construction.
+\paragraph{Who uses drugs.} Three parameters answer this. $b$ is the
+Stone-Geary endowment and it decides whether a household uses at all: because
+the marginal value of the drug goes as $\theta/(b+v)$, a larger $b$ makes the
+first units worth less, so participation is a near threshold function of it.
+That is what identifies it from the participation rate, and it is also why it is
+bisected rather than stepped. $\lambda$ governs how much faster heavier use
+turns into a disorder, and it is identified by the share of users who acquire
+one, the same moment the stylized model uses; the prevalence rate would not
+separate onset from recovery. $\bar\kappa_{\phi d}$ is the mortality cost of the
+disorder, assigned at the midpoint of standardised mortality ratios for opioid
+use disorder, which run six to ten. It is assigned rather than calibrated so
+that the price participation elasticity can be held back as a test.
 
-\emph{What the calibration cannot do.} Two parameters are matched to short run
-\emph{responses} measured in experiments rather than to a cross section, because
-no comparison of steady states identifies them. Three assigned values carry no
-real discipline and are flagged rather than buried. And one target, the
-participation elasticity, is deliberately not a target at all: it is held back to
-test the model rather than to fit it.
+\paragraph{How housing assistance shapes that decision.} Four parameters.
+$\bar\pi_r$ is the recovery hazard when housed and $\mu_H$ scales it on the
+street, so the pair is what makes housing an input into recovery rather than
+only a transfer. $\mu_H$ is the one the policy comparison turns on and it is
+identified from Milby's randomised trial, weeks abstinent in the housed arm
+against the unhoused arm. $\rho_d$ and $\rho_m$ are the earnings lost to a SUD
+and to SMI conditional on still working. They exist because an effect on the
+employment margin alone makes every homeless household jobless, and about half
+are not: it is the wage penalty that produces households poor enough to be
+priced out while still employed.
+
+\paragraph{When Treatment First beats Housing First.} Four parameters. $g$ is
+how much treatment raises recovery, and it is the one assigned value that
+carries a headline result, so it is reported across a range rather than at a
+point. $\omega$ is the weight a parent puts on its child, identified from the
+fall in use when a child is present. $\delta_d$ and $\delta_h$ are the earnings
+a child loses to a parent's disorder and to growing up homeless. Both are
+assigned, because their sources report ranges rather than points, and together
+they are the externality: a household internalises a share $\omega$ of what it
+does to its child and the rest falls outside its problem.
+
+\subsection{Other parameters specific to this paper}
+
+A second group is new to this paper but does not carry its headline results.
+$\lambda_m$ sets the persistence of serious mental illness and is calibrated to
+the SMI share of the homeless, since only a sufficiently sticky state lets that
+population accumulate in homelessness at four and a half times its share of
+adults; $\iota$ and $\mu_m$ carry the interaction between the two disorders;
+$\kappa_{uem}$ and $\zeta_{DI}$ carry SMI's employment and disability
+consequences; $\bar\tau^{u}$ is the utility cost of treatment, identified from
+take up among those with a SUD; and $\kappa_x$ prices the disamenity of
+aggregate homelessness. The values and sources are in
+Tables~\ref{tab:fint} and~\ref{tab:fext}.
+
+\subsection{Standard parameters}
+
+The remainder are conventional and are recorded so the calibration can be
+reproduced rather than because anything turns on them: preferences, the earnings
+distribution, the tax schedule, the survival profile, the transition rates, and
+the institutional parameters of unemployment insurance, disability and the
+voucher. Table~\ref{tab:fext} carries each with its source and data vintage, and
+Table~\ref{tab:fint} does the same for the handful that are calibrated to an
+obvious moment, such as the leisure weight to average hours and the two
+Cobb-Douglas weights to their own expenditure shares.
+
+The rental ladder is worth one sentence because it looks like more parameters
+than it is. It is geometric, pinned by two numbers: $\underline h$ sets the
+smallest rental and $\varsigma$ the ratio between successive sizes, so the whole
+grid follows and nothing is set by hand. Both are calibrated to two points on the
+same distribution, the shares of renters spending more than half and more than
+thirty percent of income on housing, which is what separates a level from a
+spread. A uniform grid is a restriction on $\varsigma$ rather than a neutral
+choice, and it fits those two shares worse.
+
+\subsection{How the calibration is done, and what it cannot do}
 
 The first stage matches nineteen parameters to nineteen moments of the
-stationary equilibrium; the second carries the remaining two.
+stationary equilibrium; the second matches short run responses measured in
+experiments, which no comparison of steady states identifies, and carries
+$\mu_H$ and $\omega$. Table~\ref{tab:fint} reports the data moment and the model
+moment side by side for every calibrated parameter, so the fit can be inspected
+rather than asserted, and each is solved to a distance of $10^{-3}$, or $10^{-4}$
+for the three bisected below.
 
-\paragraph{What the calibration table reports, and why the model column
-is there.} Referee~1's objection to the previous version was not that the fit was
-bad but that it could not be seen: the table gave targets without model
-counterparts, and the text asserted that the benchmark ``closely matches all
-calibration targets'' without saying close by what criterion. That is a fair
-objection and it is answered by construction. Table~\ref{tab:fint} carries a data
-column and a model column for every calibrated parameter, so every target and its
-model counterpart sit side by side and a reader can judge the fit without taking
-a claim on trust. The criterion is stated rather than implied: each moment is
-solved to a distance of $10^{-3}$, except the three step like moments below,
-which are bisected to $10^{-4}$.
+Two things the calibration does not do are worth stating. Three assigned values
+carry no real discipline, and they are named rather than buried: the treatment
+effect $g$, the SMI recovery multiplier $\mu_m$ and the drug supply curvature
+$\nu_2$. Of these only $g$ carries a headline result, and it is reported across
+a range. And the drug price participation elasticity is deliberately not a
+target: with $\bar\kappa_{\phi d}$ assigned from mortality data, the elasticity
+is computed after the fact, between the benchmark and a re solved economy with
+the supply curve shifted, and compared with the range estimated in the
+literature. It tests the mechanism instead of constraining it, which is only
+possible because the drug price is endogenous; $\nu_1$ normalises the units so
+that supply meets demand at $p_v=1$ in the benchmark, and $p_v$ moves freely in
+every counterfactual.
 
-\paragraph{How each moment is computed in the model.} The same referee could not
-replicate the price elasticity moment from its description, and Referee~3 asked
-how an elasticity can be targeted at all when $p_v$ is normalised to one. Both
-are addressed by a change in the model rather than in the prose. The price is now
-endogenous: $\nu_1$ is chosen so that supply equals demand at $p_v=1$ in the
-benchmark, which is a normalisation of the \emph{units}, not a restriction on the
-price, and $p_v$ moves freely in every counterfactual. The elasticity is then the
-proportional change in the participation rate against the proportional change in
-$p_v$ between the benchmark and a re solved economy with the supply curve shifted,
-and it is no longer a target at all: it is computed after the fact and compared
-with the literature. The model definition of every other moment is given with the
-parameter it identifies rather than left to inference, since a moment whose
-definition is ambiguous cannot discipline anything.
-
-\paragraph{The rental grid is two parameters, not seven.} Referee~2 asked how the
-housing levels are chosen, whether they could simply be spread uniformly, and
-whether each size ought to count as a free parameter. It is a geometric grid
-pinned by two numbers: $\underline h$ sets the smallest rental and $\varsigma$ the
-ratio between successive sizes, so the whole ladder follows from those two and
-nothing is set by hand. They are calibrated to two points on the same
-distribution, the shares of renters spending more than half and more than thirty
-percent of income on housing, which is what identifies a level and a spread
-separately. A uniform grid is a restriction on $\varsigma$, not a neutral choice,
-and it fits those two shares worse; the geometric form is what the ACS size
-distribution supports.
-
-\paragraph{Where $b$ comes from, and what it has to do.} Referee~3 noted that the
-relationship between income and drug use is what identifies the Stone-Geary
-endowment and the income dependent penalties, and asked for its empirical basis.
-$b$ is calibrated to the participation rate, but what makes it identified is the
-\emph{shape} it imposes: because the marginal value of the drug goes as
-$\theta/(b+v)$, a larger $b$ makes the first units worth less and deters use
-altogether, so participation is a near threshold function of it. That is also why
-it is bisected rather than stepped. The income gradient it has to produce, use
-concentrated at the bottom of the income distribution, is not targeted and is
-reported among the untargeted moments, which is the sharper test of whether the
-mechanism is right.
-
-\paragraph{Three moments that are cliffs, not slopes.} Most parameters
+}\paragraph{Three moments that are cliffs, not slopes.} Most parameters
 move their moment smoothly, so a step in one direction tells you where to go
 next. Three do not, and treating them as though they did is how a calibration
 silently fails. Three moments are step like and
