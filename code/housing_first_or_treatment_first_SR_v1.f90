@@ -975,6 +975,24 @@
         ! answer to that is to sequence the loop rather than to bisect harder.
         real(8) :: size_homelessness_lo_moment=-1
         real(8) :: size_homelessness_hi_moment=-1
+
+        ! The monotonicity check above catches a stale bracket only once it has
+        ! already produced a contradictory evaluation, which costs an equilibrium
+        ! solve to learn. The cause is known, so it can be tested for directly:
+        ! a bracket is valid only if its two endpoints were priced under the same
+        ! value of life. This records aleph when the bracket is opened, and any
+        ! evaluation arriving after aleph has moved by more than the tolerance
+        ! throws the bracket away before it is used.
+        !
+        ! Hard sequencing, holding this parameter fixed until aleph converges, is
+        ! the other way to get the same guarantee and it is NOT what is done here.
+        ! The two are jointly determined: the value of life is measured over the
+        ! whole distribution, the homeless included, and the street is what makes
+        ! dying cheap. Freezing one to converge the other can settle on a
+        ! different fixed point, or on none. Refusing to trust a bracket that
+        ! spans two different models is the weaker claim and the safe one.
+        real(8) :: value_of_life_at_bracket=-1
+        real(8), parameter :: bracket_value_of_life_tolerance=0.05
         
         integer, parameter :: employment_grid_size=9
         integer, parameter :: productivity_below_which_to_reduce_ss=9
@@ -28225,6 +28243,33 @@
 
                     write(*,*) "model_fraction_homeless(1)=", model_fraction_homeless(1)
                     write(*,*) "size_homelessness=", size_homelessness
+
+                    ! A bracket whose endpoints were priced under different values
+                    ! of life is not a bracket. Test for that before using it.
+                    if ((size_homelessness_lo>=0) .OR. (size_homelessness_hi>=0)) then
+
+                        if ((value_of_life_at_bracket>0) .AND. &
+                            (abs(value_of_life-value_of_life_at_bracket)>&
+                            bracket_value_of_life_tolerance*value_of_life_at_bracket)) then
+
+                            write(*,*) "size_homelessness BRACKET DISCARDED: the value of life moved from ",&
+                                value_of_life_at_bracket, " to ", value_of_life,&
+                                " so its endpoints are not comparable"
+                            size_homelessness_lo=-1
+                            size_homelessness_hi=-1
+                            size_homelessness_lo_moment=-1
+                            size_homelessness_hi_moment=-1
+                            value_of_life_at_bracket=-1
+
+                        end if
+
+                    end if
+
+                    if ((size_homelessness_lo<0) .AND. (size_homelessness_hi<0)) then
+
+                        value_of_life_at_bracket=value_of_life
+
+                    end if
 
                     ! Tighten the bracket with what this evaluation just proved,
                     ! unless it proves the bracket itself is stale.
