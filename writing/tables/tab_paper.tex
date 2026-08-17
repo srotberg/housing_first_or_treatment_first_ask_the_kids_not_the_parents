@@ -10,17 +10,13 @@ Parameter& Description& Set& Moment or source& Value \\
 Parameter& Description& Set& Moment or source& Value \\
 \midrule
 \endhead
-\multicolumn{5}{@{}l}{\emph{Earnings, conditional on working}} \\
-$\rho_d$& Earnings lost to a SUD& Int.& Employment rate of the homeless, HUD 2023& \textemdash \\
-$\rho_m$& Earnings lost to SMI& Int.& Earnings with SMI, NSDUH 2023& \textemdash \\
-\addlinespace
 \multicolumn{5}{@{}l}{\emph{The employment margins}} \\
 $\kappa_{ued}$& Employment multiplier, SUD& Int.& Unemployment rate, SUD, NSDUH 2024& \textemdash \\
 $\kappa_{uem}$& Employment multiplier, SMI& Int.& Unemployment rate, SMI, NSDUH 2023& \textemdash \\
 $\kappa_{ueH}$& Employment multiplier, homeless& Ext.& Desmond and Gershenson (2016)& 0.80 \\
 \addlinespace
-\multicolumn{5}{@{}l}{\emph{Recovery, and the treatment decision}} \\
-$\bar\pi_r$& Recovery when housed& Ext.& Ten year remission, Vaillant (1995)& 0.025 \\
+\multicolumn{5}{@{}l}{\emph{Recovery and treatment}} \\
+$\bar\pi_r$& Recovery when housed& Ext.& Ten year remission rate, Vaillant (1995)& 0.025 \\
 $g$& Treatment effect on recovery& Ext.& Odds ratio, Milby (2005)& 1.35 \\
 $\bar\tau^{u}$& Utility cost of treatment& Int.& Treatment take up, NSDUH 2023& \textemdash \\
 \addlinespace
@@ -32,12 +28,9 @@ $\mu_m$& Recovery multiplier, SMI& Ext.& Dual diagnosis relapse of $39.8$ agains
 $\kappa_{\phi m}$& Mortality multiplier, SMI& Ext.& Olfson et al.\ (2015)& 2.50 \\
 $\zeta_{DI}$& Disability replacement rate, SMI& Ext.& SSDI and SSI rates (SSA 2023)& 0.25 \\
 \addlinespace
-\multicolumn{5}{@{}l}{\emph{Being unhoused}} \\
-$\kappa_{\phi H}(j)$& Mortality multiplier, homeless& Ext.& Baggett et al.\ (2013)& 4.41 at 26 to 1.09 at 85 \\
-\addlinespace
 \multicolumn{5}{@{}l}{\emph{The drug market, and the value of life}} \\
-$\nu_1$& Drug supply shifter& Ext.& Normalisation, so $p_v=1$ at the benchmark& norm. \\
+$\nu_1$& Drug supply shifter& Ext.& Normalisation, so $p_v=1$ in the benchmark& norm. \\
 $p_v$& Price of drugs& Ext.& Clears the drug market in the benchmark& 1.00 \\
-$\nu_2$ & Drug supply elasticity & Ext. & Elasticity $1/(\nu_2-1)=2$; legal markets & 1.50 \\
+$\nu_2$ & Drug supply elasticity & Ext. & Elasticity 2; Hansen et al.\ (2017), Chaloupka (1991) & 1.50 \\
 \bottomrule
 \end{longtable}\endgroup
