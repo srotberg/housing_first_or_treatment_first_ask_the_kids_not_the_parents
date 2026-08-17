@@ -5,31 +5,31 @@
 \toprule
 Parameter & Description & Set & Moment and source & Value \\
 \midrule
-\multicolumn{5}{@{}l}{\emph{{\color{red}Who uses drugs}}} \\
+\multicolumn{5}{@{}l}{\emph{Who uses drugs}} \\
 $b$ & Whether a household uses & Int. & Drug participation, NSDUH 2024 & \textemdash \\
 $\lambda$ & SUD hazard per unit used & Int. & Users acquiring a SUD, NSDUH 2024 & \textemdash \\
 $\bar\kappa_{\phi d}$ & Mortality with a SUD & Ext. & Mortality ratios, Hjorth\o j et al.\ (2023) & 8.00 \\
 $\aleph$ & Flow value of being alive & Int. & Value of a statistical life, Viscusi (2003) & \textemdash \\
 $\rho_d$ & Earnings lost to a SUD & Int. & Employment rate of the homeless, HUD 2023 & \textemdash \\
 $\kappa_{ued}$ & Employment multiplier, SUD & Int. & Unemployment rate given a SUD, NSDUH 2024 & \textemdash \\
- \textcolor{red}{$\rho_m$} & \textcolor{red}{Earnings lost to SMI} & \textcolor{red}{Int.} & \textcolor{red}{Earnings of workers with SMI, NSDUH 2023} & \textcolor{red}{\textemdash}  \\
- \textcolor{red}{$\kappa_{uem}$} & \textcolor{red}{Employment multiplier, SMI} & \textcolor{red}{Int.} & \textcolor{red}{Employment rate given SMI, NSDUH 2023} & \textcolor{red}{\textemdash}  \\
+ $\rho_m$ & Earnings lost to SMI & Int. & Earnings of workers with SMI, NSDUH 2023 & \textemdash  \\
+ $\kappa_{uem}$ & Employment multiplier, SMI & Int. & Employment rate given SMI, NSDUH 2023 & \textemdash  \\
 \addlinespace
 \multicolumn{5}{@{}l}{\emph{How housing assistance shapes that decision}} \\
 $\pi_V$ & Voucher lottery probability & Int. & Recipients over eligible, HUD 2023 & \textemdash \\
-$\mu_H$ & \textcolor{red}{Recovery multiplier when homeless} & Int. & Weeks abstinent, Milby et al.\ (2005) & \textemdash \\
+$\mu_H$ & Recovery multiplier when homeless & Int. & Weeks abstinent, Milby et al.\ (2005) & \textemdash \\
 $h_1$ & Service flow of homelessness & Int. & Homelessness rate, HUD 2023 & \textemdash \\
-$\kappa_{\phi H}(j)$ & \textcolor{red}{Increased mortality when homeless} & Ext. & \textcolor{red}{Mortality ratios by age}, Baggett et al.\ (2013) & 4.41 to 1.09 \\
- \textcolor{red}{$\kappa_{ueH}$} & \textcolor{red}{Employment multiplier, homeless} & \textcolor{red}{Ext.} & \textcolor{red}{Desmond and Gershenson (2016)} & \textcolor{red}{0.80}  \\
+$\kappa_{\phi H}(j)$ & Increased mortality when homeless & Ext. & Mortality ratios by age, Baggett et al.\ (2013) & 4.41 to 1.09 \\
+ $\kappa_{ueH}$ & Employment multiplier, homeless & Ext. & Desmond and Gershenson (2016) & 0.80  \\
 \addlinespace
-\multicolumn{5}{@{}l}{\emph{{\color{red}Externalities on child}}} \\
+\multicolumn{5}{@{}l}{\emph{Externalities on child}} \\
 $\omega$ & Weight on the child & Int. & Parent use rate with a child, NSDUH 2024 & \textemdash \\
 $\delta_d$ & Child's earnings, parent SUD & Int. & Child SUD ratio, McGovern et al.\ (2023) & \textemdash \\
-$\delta_h$ & Child's earnings, homeless & Ext. & \textcolor{red}{Poverty exposure on child's earnings}, Chetty et al.\ (2016) & 0.31 \\
+$\delta_h$ & Child's earnings, homeless & Ext. & Poverty exposure on child's earnings, Chetty et al.\ (2016) & 0.31 \\
 \addlinespace
-\multicolumn{5}{@{}l}{\emph{{\color{red}Other externalities}}} \\
+\multicolumn{5}{@{}l}{\emph{Other externalities}} \\
 $\omega_{\ell}$ & Weight on leisure & Int. & Average hours worked, Guvenen et al.\ (2023) & \textemdash \\
-$\kappa_x$ & Disamenity of homelessness & Ext. & \textcolor{red}{Willingness to pay to eliminate homelessness}, Loubi\`ere et al.\ (2020) & 0.0008 \\
+$\kappa_x$ & Disamenity of homelessness & Ext. & Willingness to pay to eliminate homelessness, Loubi\`ere et al.\ (2020) & 0.0008 \\
 \bottomrule
 \end{tabular}
 \endgroup
