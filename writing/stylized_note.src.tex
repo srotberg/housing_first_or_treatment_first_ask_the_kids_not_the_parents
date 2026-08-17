@@ -1380,22 +1380,22 @@ voucher buys beyond shelter, and that makes it the counterweight to the moral
 hazard in $\pi_V$. If $\mu_H$ is large, assistance buys recovery and the insurance
 effect is outweighed; if it is near one, assistance is a transfer and the moral
 hazard stands unopposed. Its value is chosen so the model generates the increase
-in \new{recovery} that housing produced in Milby et al.\ (2005), a randomised
+in recovery that housing produced in Milby et al.\ (2005), a randomised
 trial on cocaine dependent homeless adults: $6.60$ weeks abstinent in the housed
-arm against $4.48$ unhoused, so housing raises \new{recovery} by $47.3$ percent.
+arm against $4.48$ unhoused, so housing raises recovery by $47.3$ percent.
 \end{description}
 
-\paragraph{The externality on the child.} \new{These three are the externalities
+\paragraph{The externality on the child.} These three are the externalities
 that a parent's SUD and a parent's homelessness impose on its child. The first
 runs in favour of Treatment First and the second in favour of Housing First, which
-is why they are taken together.}
+is why they are taken together.
 \begin{description}\setlength{\itemsep}{0.3em}\setlength{\parskip}{0em}
 \item[$\omega$, the parent's weight on its child.] A parent values its child's
 lifetime utility at $\omega$ times its own, and $\omega$ is small. What that means
 for policy is the point: the two penalties below cost the child in full, the
 parent counts only $\omega$ of that when deciding whether to use, and the
-remaining $1-\omega$ is a cost nobody in the model weighs \new{in their
-decisions. Identifying it needs care, because} \emph{every} household here has a
+remaining $1-\omega$ is a cost nobody in the model weighs in their
+decisions. Identifying it needs care, because \emph{every} household here has a
 child, so there is no parent against non parent comparison to run inside the
 model. The moment is a counterfactual instead. In NSDUH 2024 past month use is
 $15.5$ percent lower among parents than among non parents, with parents reweighted
@@ -1408,9 +1408,12 @@ that same $15.5$ percent.
 Treatment First. McGovern et al.\ (2023) find that children of a parent with a SUD
 are two to four times likelier to acquire one themselves. The model does not carry
 an inherited disorder; it carries the loss of earnings potential that goes with
-it, which is the reduced form of a large literature on childhood adversity:
-Felitti et al.\ (1998) link household dysfunction to adult outcomes across many
-domains, and parental substance use is one of its components. $\delta_d$ is
+it, \new{which is the reduced form of a literature on childhood adversity:
+Felitti et al.\ (1998) link household dysfunction, of which parental substance
+use is a component, to adult outcomes across many domains; Chetty, Hendren and
+Katz (2016) measure the earnings consequences of childhood environment directly;
+and Heathcote, Storesletten and Violante (2010) document how much of lifetime
+inequality is already present at labour market entry.} $\delta_d$ is
 calibrated internally, its value chosen so the model reproduces McGovern's ratio
 of child disorder rates between parents with and without a disorder. A policy that
 cures disorders therefore earns a return on the next generation that a policy
@@ -1425,8 +1428,8 @@ So the two penalties pull in opposite directions, and which return is larger is
 exactly the quantitative question the paper asks.
 \end{description}
 
-\paragraph{The other externalities.} These two act on households \new{who are not
-the children}, and neither runs through the drug decision directly.
+\paragraph{The other externalities.} These two act on households who are not
+the children, and neither runs through the drug decision directly.
 \begin{description}\setlength{\itemsep}{0.3em}\setlength{\parskip}{0em}
 \item[$\omega_{\ell}$, the weight on leisure.] This sets how much labour supply
 responds to the tax, and to the programme's own design. A policy that houses more
@@ -1455,57 +1458,138 @@ the assumption least kind to it.
 
 \subsection{Other parameters specific to this paper}\label{sec:paperparams}
 
-These are new here too, but none carries a headline result. Table~\ref{tab:paperparams}
-collects them and marks which are calibrated and which assigned; each is taken
-below in the order it appears there, with the intuition for what it does.
+{\color{red}Twenty four further parameters are new to this paper, and none of them
+carries a key result. Table~\ref{tab:paperparams} collects them and marks which
+are internally and which externally calibrated. They fall into six groups, and
+each parameter is taken in turn below.}
 
 \input{tables/tab_paper}
 
+{\color{red}\paragraph{Earnings, conditional on working.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$\rho_d$ and $\rho_m$, earnings lost while still in work.] These are not
-key, for the reason Section~\ref{sec:what} gives: the income gradient is produced
-by mortality, not by the wage. What they do is let an \emph{employed} household
-be poor enough to be priced out, which an effect on the employment margin alone
-cannot deliver, since that makes every homeless household jobless and about half
-are not.
-\item[$\bar\pi_r$, recovery when housed.] The baseline hazard the housing
-multiplier scales. It sets the level of recovery, not its gradient in housing,
-which is why it is not among the key parameters.
-\item[$g$, the treatment effect on recovery.] It is reported across a range
-rather than at a point, and the results are shown across that range.
-\item[$\kappa_{ued}$ and $\kappa_{uem}$, the employment margins.] How much harder
-work is to find and easier to lose with a disorder and with mental illness. They
-are why a health shock becomes an income shock.
-\item[$\bar\tau^{u}$, the utility cost of treatment.] What stops everyone with a
-disorder from taking a programme that raises recovery, \new{its value chosen so the model generates take up among those who have one}.
-\item[$\lambda_m$, the rate of leaving SMI.] \new{Its value is chosen so the model generates the SMI share of the homeless.} Prevalence is reproduced by construction from the observed age profile,
-so what the homeless share identifies is \emph{persistence}: only a sticky enough
-state lets the SMI population accumulate in homelessness at four and a half times
-its share of adults.
-\item[$p_{\text{test}}$, $c_{\text{test}}$, $p_{\text{det}}$ and
-$p_{\text{fp}}$, the testing technology.] These matter more than their size
-suggests, because a condition that detected perfectly would be a different
-policy. Imperfect detection is what makes Treatment First withdraw vouchers from
-people who are complying and keep them for people who are not.
-\item[$\kappa_{ueH}$ and $\kappa_{\phi H}(j)$, the penalties of being unhoused.]
-Employment and mortality, the latter backed out age by age from Baggett's ratio
-net of the disorder composition of the homeless population.
-\item[$\kappa_{\phi m}$, $\mu_m$, $p_m$, $\zeta_{DI}$ and $\iota$, the mental
-illness block.] Mortality, slower recovery, prevalence, disability income, and
-the multiplier on SMI onset for a household already carrying a disorder. That
-last is the channel by which a SUD raises the hazard of mental
-illness.
-\item[$p_v$, $\nu_1$ and $\nu_2$, the drug market.] $\nu_2$ sets the supply
-elasticity, $\nu_1$ normalises the units so supply meets demand at $p_v=1$ in the
-benchmark, and $p_v$ then moves in every counterfactual. That is what lets a
-policy which changes how much is used feed back into the price, and so into
-everyone else's decision.
-\item[$h_{\text{HL}}$ and $\aleph$, homelessness and the value of life.] The
-service flow of homelessness, \new{its value chosen so the model generates the homelessness rate}, and the flow value of
-being alive, \new{its value chosen so the model generates the value of a statistical life}. $\aleph$ needs a level and
-not only a behavioural target: at the wrong level households prefer death and the
-mortality cost of using becomes a benefit.
+\item[$\rho_d$, earnings lost to a SUD.] Not key, because the income gradient is
+produced by mortality rather than by the wage, as Section~\ref{sec:what} shows.
+What it does is narrower and still necessary: it lets an \emph{employed} household
+be poor enough to be priced out of housing. An effect on the employment margin
+alone cannot deliver that, since it makes every homeless household jobless and
+about half are not. Its value is chosen so the model generates the employment rate
+of the homeless.
+\item[$\rho_m$, earnings lost to SMI.] The same object for mental illness, its
+value chosen so the model generates the earnings of workers with SMI relative to
+average. It matters for who is poor rather than for who uses.
 \end{description}
+
+\paragraph{The employment margins.}
+\begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
+\item[$\kappa_{ued}$, the employment multiplier for a SUD.] Work is harder to find
+and easier to lose with a disorder, and this is what converts a health shock into
+an income shock. Its value is chosen so the model generates the unemployment rate
+among those with a SUD, $16.25$ percent in NSDUH 2024.
+\item[$\kappa_{uem}$, the employment multiplier for SMI.] The same construction
+for mental illness, its value chosen so the model generates the employment rate
+given SMI, about $30$ percent, which is the midpoint of the range reported for
+high disability diagnoses.
+\item[$\kappa_{ueH}$, the employment multiplier for being unhoused.] Being on the
+street makes work harder to hold, independently of why one is there. It is set
+externally, because separating it from the disorder in the data would need the
+kind of randomised variation in housing that does not exist at this margin.
+\end{description}
+
+\paragraph{Recovery, and the treatment decision.}
+\begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
+\item[$\bar\pi_r$, recovery when housed.] The baseline hazard that $\mu_H$ scales.
+It sets the \emph{level} of recovery rather than its gradient in housing, which is
+why it is not among the key parameters, and it is set externally from the ten year
+remission rate in Vaillant (1995), bracketed by Fleury et al.\ (2016).
+\item[$g$, the treatment effect on recovery.] Set externally from the odds ratio
+for contingency management, and reported across a range rather than at a point
+because it is the one externally set value carrying a headline result.
+\item[$\bar\tau^{u}$, the utility cost of treatment.] Treatment raises recovery,
+so without a cost every household with a disorder would take it. This is what
+stops that, and it is the parameter that makes take up a decision rather than an
+assumption. Its value is chosen so the model generates treatment take up among
+those with a SUD, $24$ percent in NSDUH 2023.
+\end{description}
+
+\paragraph{The mental illness chain.}
+\begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
+\item[$p_m$, the prevalence of SMI.] Set externally at $5.5$ percent of adults
+from NSDUH 2023, defined by substantial functional impairment rather than any
+mental illness, which is roughly a quarter of adults. A state that halves
+productivity cannot sensibly cover a quarter of the population.
+\item[$\lambda_m$, the rate of leaving SMI.] This one needs care. The onset
+profile is backed out of the observed prevalence profile, so prevalence is
+reproduced by construction at any $\lambda_m$ and cannot identify it. What
+identifies it is \emph{persistence}: only a sufficiently sticky state lets the SMI
+population accumulate in homelessness at four and a half times its share of
+adults. Its value is chosen so the model generates the SMI share of the homeless,
+$25$ percent in Gutwinski et al.\ (2021).
+\item[$\iota$, the SUD multiplier on SMI onset.] A substance use disorder raises
+the hazard of mental illness. This is the channel, and it runs the direction the
+evidence supports: in the Danish registers any SUD predicts conversion to
+schizophrenia with a hazard ratio of $1.34$, opioid use disorder $2.74$ (Nielsen
+et al., 2017). It is a further private cost of a disorder and a further
+externality, since SMI raises disability receipt and mortality.
+\item[$\mu_m$, the SMI recovery multiplier.] Mental illness slows recovery from a
+disorder. Set externally from dual diagnosis relapse of $39.8$ against $26.4$
+percent, and flagged as one of the three values carrying no real discipline.
+\item[$\kappa_{\phi m}$, mortality with SMI.] Set externally at $2.50$, and flat
+in age, because Olfson et al.\ (2015) report standardised mortality ratios for
+schizophrenia of $3.6$, $3.4$ and $4.0$ across the working ages. Flat, if
+anything rising, so the absence of an age argument is a finding.
+\item[$\zeta_{DI}$, the disability replacement rate.] What a household out of work
+with SMI receives. Set externally from SSDI and SSI replacement rates, and it is
+the transfer that İmrohoroğlu and Zhao (2022) identify as the effective policy for
+the chronic group, which is why it is in the model at all.
+\end{description}
+
+\paragraph{Being unhoused.}
+\begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
+\item[$h_{\text{HL}}$, the service flow of homelessness.] What the street delivers
+relative to a dwelling. Its value is chosen so the model generates the
+homelessness rate, $0.399$ percent of households in HUD's 2023 point in time
+count. It is one of the three moments bisected rather than stepped, because
+homelessness moves from $0.12$ to $3.29$ percent over a $35$ percent change in it.
+\item[$\kappa_{\phi H}(j)$, mortality when unhoused.] Baggett et al.\ (2013) give
+race adjusted mortality ratios for homeless adults of about $9.1$ at ages 25 to
+44, falling to $1.1$ at 65 to 84. Those are totals for a population most of which
+also carries a disorder, so this is backed out age by age net of that composition,
+which is why it must be derived jointly with $\bar\kappa_{\phi d}$ rather than
+read off directly.
+\end{description}
+
+\paragraph{Testing, and what makes the condition imperfect.}
+\begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
+\item[$p_{\text{test}}$ and $c_{\text{test}}$, the frequency and unit cost of
+testing.] A conditional programme has to look, and looking costs money. These put
+the administrative cost of conditionality into the government budget rather than
+assuming it away.
+\item[$p_{\text{det}}$ and $p_{\text{fp}}$, detection and false positives.] These
+matter far more than their size suggests, because a condition that detected
+perfectly would be a different policy altogether. Imperfect detection is what
+makes Treatment First withdraw vouchers from households that are complying and
+keep them for households that are not, so it is the reason conditionality can lose
+on its own terms rather than only on incentives.
+\end{description}
+
+\paragraph{The drug market, and the value of life.}
+\begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
+\item[$\nu_2$, the supply curvature.] Sets the price elasticity of supply at $2$,
+the middle of a range running from about $0.7$ to about $4$. There is no direct
+estimate for an illicit drug, so it is bracketed by the closest legal markets: the
+Washington State marijuana reform implies roughly $0.79$, the cigarette and
+gasoline literatures nearer $3.6$.
+\item[$\nu_1$, the supply shifter.] A pure normalisation, chosen so that supply
+equals demand at $p_v=1$ in the benchmark. It normalises units, not behaviour.
+\item[$p_v$, the drug price.] One at the benchmark by that normalisation, and free
+in every counterfactual. That is what lets a policy which changes how much is used
+move the price, and so feed back into every other household's decision.
+\item[$\aleph$, the flow value of being alive.] Its value is chosen so the model
+generates a value of a statistical life of \$7.5m, from Viscusi and Aldy (2003).
+It needs a level and not only a behavioural target: at the wrong level households
+prefer death outright, and the mortality cost of using becomes a benefit rather
+than a deterrent.
+\end{description}}
 
 \subsection{Standard parameters}
 
@@ -1516,16 +1600,16 @@ its source and vintage, in this order.
 \input{tables/tab_standard}
 
 \begin{description}\setlength{\itemsep}{0.2em}\setlength{\parskip}{0em}
-\item[$\beta$, $\sigma$, $\sigma_{\ell}$.] Discount factor, \new{value chosen to match wealth over output}; risk aversion and the curvature on leisure, both standard.
+\item[$\beta$, $\sigma$, $\sigma_{\ell}$.] Discount factor, value chosen to match wealth over output; risk aversion and the curvature on leisure, both standard.
 \item[$\gamma$ and $\theta$.] The Cobb-Douglas weights on housing and the drug,
-\new{each chosen so the model matches its own expenditure share}.
+each chosen so the model matches its own expenditure share.
 \item[$\underline h$ and $\varsigma$.] The rental ladder, which is geometric, so
 these two numbers give the whole grid and no size is set by hand. They are
 matched to the shares of renters spending more than half and more than thirty
 percent of income on housing, which separates a level from a spread. A uniform
 grid is a restriction on $\varsigma$, not a neutral choice, and fits those two
 shares worse.
-\item[$\underline c$.] The food stamp floor, \new{chosen so the model matches programme spending}.
+\item[$\underline c$.] The food stamp floor, chosen so the model matches programme spending.
 \item[$\bar\pi^{eu}$ and $\bar\pi^{ue}$.] Baseline separation and job finding
 rates.
 \item[$\varepsilon(j)$, $\bar\phi(j)$, $\rho_y$, $\sigma_y$, $j_E$.] Age profiles

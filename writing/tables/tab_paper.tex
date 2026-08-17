@@ -1,6 +1,7 @@
-\scriptsize\setlength{\tabcolsep}{3pt}
-\begin{longtable}{@{}lL{4.3cm}cL{6.3cm}r@{}}
-\caption{Parameters specific to this paper}\label{tab:paperparams}\\
+\setlength{\tabcolsep}{3pt}
+\begingroup\scriptsize
+\begin{longtable}{@{}lL{4.3cm}cL{6.6cm}r@{}}
+\caption{\normalsize Parameters specific to this paper}\label{tab:paperparams}\\
 \toprule
 Parameter & Description & Set & Moment or source & Value \\
 \midrule
@@ -22,8 +23,8 @@ $\kappa_{\phi H}(j)$ & Mortality multiplier, homeless & Ext. & Baggett et al.\ (
 $\kappa_{\phi m}$ & Mortality multiplier, SMI & Ext. & Olfson et al.\ (2015) & 2.50 \\
 $\mu_m$ & Recovery multiplier, SMI & Ext. & Dual diagnosis relapse of $39.8$ against & 0.82 \\
 $p_m$ & Prevalence of SMI among adults & Ext. & NSDUH 2023, defined by substantial & 5.5\% \\
-$\zeta_{DI}$ & Disability replacement rate, SMI & Ext. & SSDI and SSI replacement for this group & 0.25 \\
-$\iota$ & SUD multiplier on the onset of SMI & Ext. & Danish registers, hazard ratios of $1.34$ & 2.00 \\
+$\zeta_{DI}$ & Disability replacement rate, SMI & Ext. & SSDI and SSI replacement rates & 0.25 \\
+$\iota$ & SUD multiplier on the onset of SMI & Ext. & Danish registers, hazard ratio $1.34$ & 2.00 \\
 $p_v$ & Price of drugs & Ext. & Clears the drug market & 1.00 \\
 $\nu_1$ & Drug supply shifter & Ext. & Normalisation, so that $p_v=1$ at the & norm. \\
 $\nu_2$ & Drug supply curvature & Ext. & Elasticity $1/(\nu_2-1)=2$ & 1.50 \\
@@ -34,4 +35,4 @@ $\rho_m$ & Earnings lost to SMI & Int. & Earnings with SMI, NSDUH 2023 & \textem
 $\bar\pi_r$ & Recovery when housed & Ext. & Remission rates, Vaillant (1995) & 0.025 \\
 $g$ & Treatment effect on recovery & Ext. & Odds ratio, Milby (2005) & 1.35 \\
 \bottomrule
-\end{longtable}
+\end{longtable}\endgroup
