@@ -1,11 +1,12 @@
 \begin{table}[htbp]\centering
-\caption{\normalsize The twenty seven parameters that carry the story of this paper}\label{tab:eleven}
+\caption{\normalsize The thirty two parameters that carry the story of this paper}\label{tab:eleven}
 \begingroup\scriptsize\setlength{\tabcolsep}{2pt}
 \begin{tabular}{@{}lL{123pt}cL{238pt}r@{}}
 \toprule
 Parameter & Description & Set & Moment and source & Value \\
 \midrule
 \multicolumn{5}{@{}l}{\emph{Who uses drugs}} \\
+\textcolor{red}{$\theta$} & \textcolor{red}{Weight on drugs in utility} & \textcolor{red}{Int.} & \textcolor{red}{Drug spending given a SUD, NSDUH 2024} & \textcolor{red}{\textemdash} \\
 $b$ & Whether a household uses & Int. & Drug participation, NSDUH 2024 & \textemdash \\
 $\lambda$ & SUD hazard per unit used & Int. & Users acquiring a SUD, NSDUH 2024 & \textemdash \\
 $\bar\kappa_{\phi d}$ & Mortality with a SUD & Ext. & Mortality ratios, Hjorth\o j et al.\ (2023) & 8.00 \\
@@ -18,6 +19,7 @@ $h_1$ & Service flow of homelessness & Int. & Homelessness rate, HUD 2023 & \tex
 $\kappa_{\phi H}(j)$ & Increased mortality when homeless & Ext. & Mortality ratios by age, Baggett et al.\ (2013) & 4.41 to 1.09 \\
 $\kappa_{ueH}$ & Employment multiplier, homeless & Ext. & Desmond and Gershenson (2016) & 0.80 \\
 $\zeta_{DI}$ & Disability replacement, SMI & Ext. & SSDI and SSI rates, SSA 2023 & 0.25 \\
+\textcolor{red}{$\underline c$} & \textcolor{red}{Food stamp consumption floor} & \textcolor{red}{Int.} & \textcolor{red}{Food stamps over labour income, USDA} & \textcolor{red}{\textemdash} \\
 $\pi_V$ & Voucher lottery probability & Int. & Recipients over eligible, HUD 2023 & \textemdash \\
 \addlinespace
 \multicolumn{5}{@{}l}{\emph{The mental illness chain}} \\
@@ -41,6 +43,11 @@ $\delta_d$ & Child's earnings, parent SUD & Int. & Child SUD ratio, McGovern et 
 $\delta_h$ & Child's earnings, homeless & Ext. & Poverty exposure on child's earnings, Chetty et al.\ (2016) & 0.31 \\
 $\omega_{\ell}$ & Weight on leisure & Int. & Average hours worked, Guvenen et al.\ (2023) & \textemdash \\
 $\kappa_x$ & Disamenity of homelessness & Ext. & Willingness to pay to eliminate homelessness, Loubi\`ere et al.\ (2020) & 0.0008 \\
+\addlinespace
+\multicolumn{5}{@{}l}{\emph{\textcolor{red}{The drug market}}} \\
+\textcolor{red}{$\nu_1$} & \textcolor{red}{Drug supply shifter} & \textcolor{red}{Ext.} & \textcolor{red}{Normalisation, so $p_v=1$ in the benchmark} & \textcolor{red}{norm.} \\
+\textcolor{red}{$p_v$} & \textcolor{red}{Price of drugs} & \textcolor{red}{Ext.} & \textcolor{red}{Clears the drug market in the benchmark} & \textcolor{red}{1.00} \\
+\textcolor{red}{$\nu_2$} & \textcolor{red}{Drug supply elasticity} & \textcolor{red}{Ext.} & \textcolor{red}{Elasticity 2; Hansen (2017), Chaloupka (1991)} & \textcolor{red}{1.50} \\
 \bottomrule
 \end{tabular}
 \endgroup
