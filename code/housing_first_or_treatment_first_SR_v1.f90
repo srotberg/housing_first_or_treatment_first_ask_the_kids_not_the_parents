@@ -4799,6 +4799,17 @@
 
         end if
 
+        ! THE FOUR RAW PIECES OF THE HOMELESS INCOME SHARE. It came out at 1.15,
+        ! meaning the homeless earn MORE than average, which is wrong signed and
+        ! is the moment rho_m and rho_d calibrate against. Printing the parts
+        ! says which one is wrong in a single run instead of by argument: if the
+        ! two masses are inconsistent the ratio is a base problem, and if the two
+        ! incomes are, it is an accumulation problem.
+        write(*,*) "homeless income parts: inc_homeless=", model_homeless_labour_income(time_period), &
+            " mass_homeless=", model_mass_homeless_raw(time_period), &
+            " inc_all=", model_all_labour_income(time_period), &
+            " mass_all=", model_mass_total_raw(time_period)
+
         write(*,*) "SMI prevalence in model=", model_mass_smi(time_period)/max(model_mass_total_raw(time_period),10.d0**(-12)), &
             " onset(1)=", smi_onset_by_age(1), " onset(30)=", smi_onset_by_age(30), " lambda_m=", lambda_m
         write(*,*) "SMI share of homeless=", model_smi_share_of_homeless(time_period), &
