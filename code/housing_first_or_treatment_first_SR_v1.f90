@@ -27516,7 +27516,19 @@
                         mass_of_renters_at_housing_spending(1,target_30_perc*1+(1-target_30_perc)*2)
                         
                     write(*,*) "labor_income_tax_rate=", labor_income_tax_rate
-                                            
+
+                    ! THE PLUS IS CORRECT AND THE NAME IS NOT. labor_income_tax_rate
+                    ! is the RETENTION SCALE in the tax function
+                    !
+                    !     tax = y - labor_income_tax_rate * y**curvature
+                    !
+                    ! so it multiplies income KEPT, not income taken. Raising it
+                    ! lowers the average effective tax rate, which is why an
+                    ! average tax above target is met by raising this number. Its
+                    ! declared value of 0.75 only makes sense read that way; as a
+                    ! marginal rate it would be absurd. Anyone auditing signs from
+                    ! the variable names will read this one as inverted and be
+                    ! wrong, which is why the note is here rather than nowhere.
                     labor_income_tax_rate=max(min(labor_income_tax_rate+labor_income_tax_rate_adjuster*&
                         (model_average_labour_income_tax(1)-average_labor_income_tax_data),2.d0),0.d0)
                         
@@ -27869,7 +27881,10 @@
                     !   lambda_m up   -> SMI less persistent -> SMI share of the
                     !                    homeless DOWN
                     !   kappa_uem up  -> employment margins worse -> employment
-                    !                    rate given SMI DOWN
+                    !                    rate given SMI DOWN, so the update ADDS,
+                    !                    unlike kappa_ued above whose moment is an
+                    !                    unemployment rate and whose update
+                    !                    subtracts
                     !   rho_m up      -> smaller penalty -> homeless income UP
                     !   rho_d up      -> smaller penalty -> employed homeless can
                     !                    afford housing -> employed share of the
@@ -27894,7 +27909,18 @@
 
                     if ((kappa_uem_adjuster>0) .AND. (number_of_smi_states>1)) then
 
-                        kappa_uem=min(max(kappa_uem-kappa_uem_adjuster*&
+                        ! THE SIGN HERE IS THE OPPOSITE OF ITS NEIGHBOUR'S, and
+                        ! that is not a slip. kappa_ued above is moved against an
+                        ! UNEMPLOYMENT rate, which rises in the parameter, so its
+                        ! update subtracts. kappa_uem is moved against an
+                        ! EMPLOYMENT rate, which falls in the parameter, so its
+                        ! update must ADD. The block was written by analogy with
+                        ! the SUD block and inherited the minus, which drove
+                        ! kappa_uem to its floor of one, removed the SMI
+                        ! employment effect altogether, and left a distance that
+                        ! could never fall below its stopping rule, so the loop
+                        ! could not terminate however well anything else fitted.
+                        kappa_uem=min(max(kappa_uem+kappa_uem_adjuster*&
                             (model_employment_rate_given_smi(1)-employment_rate_given_smi_data),&
                             1.0d0),20.d0)
 
