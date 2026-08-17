@@ -10915,13 +10915,40 @@
 
         end if
 
+        ! THE CHILD'S VALUE MUST BE READ BEFORE THE SLICE IT LIVES IN IS WIPED.
+        !
+        ! This block used to sit below, after the loop that sets this
+        ! time_period's value function to large_negative_num. It reads the age
+        ! one value at that same time_period, so it was reading the sentinel it
+        ! had just written, and the guard inside
+        ! compute_expected_child_value then returned early with zeros. The
+        ! consequence is not subtle: expected_child_value printed exactly
+        ! 0.0000000000000000 in every pass of every calibration iteration, so
+        ! weight_on_child*expected_child_value contributed nothing to any
+        ! household's continuation, and the child externality the paper turns on
+        ! was switched off in the solve while appearing to be present.
+        !
+        ! Moved here, above the wipe, so it reads the PREVIOUS pass's age one
+        ! values, which is what the comment always said it did. Nothing between
+        ! the two positions feeds it: the lines in between wipe policy
+        ! functions, optionally read a labour supply file, and set the thread
+        ! count, and newborn_employment_probability is built outside this
+        ! routine, in GKKOC_intergenerational_employment_process.
+        if (include_child_in_continuation==1) then
+
+            call compute_expected_child_value(time_period)
+
+            write(*,*) "expected_child_value=", expected_child_value
+
+        end if
+
         max_future_mortgage_index_1=negative_financial_grid_size
-        
+
         do i=1,2
-                        
-            value_function(i)%vector_transition_real(time_period,:,:,:,:,:,:)=large_negative_num            
+
+            value_function(i)%vector_transition_real(time_period,:,:,:,:,:,:)=large_negative_num
             value_function(i)%vector_transition_real(time_period,life_span+1,:,:,:,:,:)=0
-            
+
         end do
                 
         do i=1,2
@@ -10982,16 +11009,10 @@
             
         end if
                        
-        ! The child's expected value, from the previous pass's age one values.
-        ! Computed here so it is a constant within the pass; see the block at
-        ! include_child_in_continuation.
-        if (include_child_in_continuation==1) then
-
-            call compute_expected_child_value(time_period)
-
-            write(*,*) "expected_child_value=", expected_child_value
-
-        end if
+        ! The child's expected value is computed at the top of this routine,
+        ! above the wipe of this time_period's value function, because the wipe
+        ! destroys the age one values it has to read. It is a constant within
+        ! the pass either way; see the block at include_child_in_continuation.
 
         do age_index=life_span,1,-1
 
