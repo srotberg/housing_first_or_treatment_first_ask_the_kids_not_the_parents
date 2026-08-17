@@ -10894,6 +10894,22 @@
 
             end if
 
+            ! THE LOTTERY SHARES, REPORTED PART WAY THROUGH AND NOT ONLY AT THE
+            ! END, because a report that only prints at the end of a backward
+            ! induction is a report you do not get. Two attempts to measure this
+            ! were lost when the run was cut off partway, at ages 13 and 38 of
+            ! sixty, and each time the whole diagnostic went with it.
+            !
+            ! The counts are cumulative across ages, so an interrupted run still
+            ! answers the question the diagnostic exists for, and printing them
+            ! by age also shows whether the fire rate varies over the life cycle,
+            ! which a single figure at the end would hide.
+            if ((report_lottery_diagnostics==1) .AND. (mod(age_index,10)==0)) then
+
+                call report_asset_lottery()
+
+            end if
+
             age_cpu_prev_1=age_cpu_time_1
             age_wall_prev_1=age_wall_1
                 
