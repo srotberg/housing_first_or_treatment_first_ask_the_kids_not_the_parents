@@ -677,8 +677,10 @@ factor and nothing else.
 
 Households enter as adults, live at most $J$ annual periods and retire at
 $J_R$, and $j$ indexes age within that span. Survival from $j$ to $j+1$ is
-$\phi(j,h',d,m)$ in~\eqref{eq:fsurv}, and it depends on age, on the housing
-\emph{chosen} this period, on the SUD and on serious mental illness (SMI). Newborns replace the dead
+$\phi(j,h',d,m,\tau)$ in~\eqref{eq:fsurv}, and it depends on age, on the housing
+\emph{chosen} this period, on the SUD and on serious mental illness (SMI){\color{red},
+and on whether the household is in treatment, since treatment means it is not
+using}. Newborns replace the dead
 exactly, so the mass of households is constant. The individual
 state is
 \begin{equation}\label{eq:fstate}
@@ -909,15 +911,27 @@ best available trial looked for and did not find.
 
 \paragraph{Death risk.}\label{sec:fdeath} Survival is
 \begin{equation}\label{eq:fsurv}
-\phi(j,h',d,m)=1-\min\Big\{1,\ (1-\bar\phi(j))\,
-\kappa_{\phi H}(j)^{\mathbf{1}\{h'=h_1\}}\,\kappa_{\phi d}(j)^{\mathbf{1}\{d=1\}}\,
+\phi(j,h',d,m,\tau)=1-\min\Big\{1,\ (1-\bar\phi(j))\,
+\kappa_{\phi H}(j)^{\mathbf{1}\{h'=h_1\}}\,
+{\color{red}\kappa_{\phi d}(j)^{\mathbf{1}\{d=1\}\mathbf{1}\{\tau=0\}}}\,
 \kappa_{\phi m}^{\mathbf{1}\{m=1\}}\Big\},
 \end{equation}
 with $\bar\phi(j)$ the baseline survival age profile and
 $\kappa_{\phi H}(j)$ and $\kappa_{\phi d}(j)$ two age varying multipliers,
 and $\kappa_{\phi m}$ one that is not,
 raising the death hazard for homelessness, the SUD and SMI
-respectively.
+respectively. {\color{red}The SUD multiplier is switched off in a period the
+household is in treatment, $\tau=1$. The excess mortality of the disorder is
+overwhelmingly a mortality of use, poisoning above all, and treatment forbids use
+in the period it is taken, so a household that is not using does not carry it.
+This is the strong form of the assumption and it is worth being explicit about:
+the standardised mortality ratios $\kappa_{\phi d}$ is calibrated to are measured
+on people who \emph{carry} the disorder rather than on people using in a given
+year, so treating an abstaining household as fully clean for the period overstates
+what one period of abstention buys. It is also what makes take up a real choice
+rather than a corner: against the recovery gain alone, which raises the annual
+hazard of leaving the disorder from $0.025$ to $0.034$, no household accepted a
+whole period without the drug at any utility cost, including a cost of zero.}
 Because $\aleph>0$ and guarantees that the value of life is positive, a
 higher death hazard is a real cost, and it is larger for households with more life
 remaining and more to consume, which is precisely the sorting
@@ -1099,9 +1113,9 @@ V(j,a,y,e,d,m,\eta)=\max_{\{n,\,h',\,v,\,\tau,\,a'\}}\ \Bigg\{\
 &\frac{\big[c^{1-\gamma-\theta}(h')^{\gamma}(v+b)^{\theta}\big]^{1-\sigma}}{1-\sigma}
 +\omega_{\ell}\frac{(1-n)^{1-\sigma_{\ell}}}{1-\sigma_{\ell}}
 +\aleph-\tau\bar\tau^{u}-\kappa_x H\\[2pt]
-&+\ \beta\,\phi(j,h',d,m)\!\!\int_{\mathcal S}\!\! V(j{+}1)(s')\,
+&+\ \beta\,\phi(j,h',d,m,\tau)\!\!\int_{\mathcal S}\!\! V(j{+}1)(s')\,
 \Gamma\big(\mathrm{d}s'\mid s,n,h',v,\tau\big)\\[2pt]
-&+\ \beta\,\big[1-\phi(j,h',d,m)\big]\,\omega\,
+&+\ \beta\,\big[1-\phi(j,h',d,m,\tau)\big]\,\omega\,
 \mathbb{E}\,V\big(1,\,0,\,y_{\text{child}},\,e',\,0,0,0\big)\Bigg\}
 \end{aligned}
 \end{equation}
@@ -1640,6 +1654,12 @@ rule, and this is what makes households decline treatment they would gain from.
 As it rises fewer take treatment, so the externality falls by less than
 $g$ alone would suggest and Treatment First delivers less than its instrument
 promises. It is calibrated internally to treatment take up in NSDUH 2023.
+{\color{red}What it is charged against matters as much as its level. Treatment
+forbids use for the period, and it buys two things in return: the higher recovery
+hazard $g$ delivers, and survival at the clean hazard rather than at
+$\kappa_{\phi d}$ times it, since a household that is not using does not die of
+using. Against the recovery gain alone the trade is not close, and no household
+takes it at any cost.}
 \end{description}
 
 \paragraph{Externalities and distortions.} The first three are what a parent's disorder and a
@@ -1751,11 +1771,11 @@ As it rises supply is more elastic, so the price moves less when demand does, an
 
 The rest are conventional, recorded so the calibration can be reproduced rather
 than because anything turns on them. Table~\ref{tab:stdparams} carries each with
-its source and vintage, in this order. {\color{red}There are twenty one of them.
+its source and vintage, in this order. There are twenty one of them.
 Five are calibrated inside the model, against a moment, because there is no source
 to read them off; the other sixteen are set from outside, from an estimate or from
 statute. Each is taken below in the order of the table, with the moment or the
-source that fixes it.}
+source that fixes it.
 
 They are not inert in the experiments, and it is worth saying so
 plainly. The discount factor sets how heavily a death thirty years away is
@@ -1771,7 +1791,7 @@ ones where this paper makes a choice.
 
 \input{tables/tab_standard}
 
-{\color{red}
+
 \paragraph{The five calibrated inside the model.} These have no source to be read
 off, so each is chosen to reproduce one moment, and the moment is what disciplines
 it.
@@ -1849,7 +1869,7 @@ covers the rest.
 \item[$\bar\pi^{ue}$, the annual job finding rate.] $0.55$, from Krueger, Cramer
 and Cho (2014).
 \end{description}
-}
+
 
 \subsection{Validation, and what is left undisciplined}\label{sec:fvalid}
 
