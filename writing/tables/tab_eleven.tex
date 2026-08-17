@@ -1,5 +1,5 @@
 \begin{table}[htbp]\centering
-\caption{\normalsize The seventeen parameters that carry the key results}\label{tab:eleven}
+\caption{\normalsize The fifteen parameters that carry the key results}\label{tab:eleven}
 \begingroup\footnotesize\setlength{\tabcolsep}{4pt}
 \begin{tabular}{@{}lL{4.2cm}cL{6.9cm}r@{}}
 \toprule
@@ -9,22 +9,20 @@ Parameter & Description & Set & Moment and source & Value \\
 $b$ & Whether a household uses & Int. & Drug participation, NSDUH 2024 & \textemdash \\
 $\lambda$ & SUD hazard per unit used & Int. & Users acquiring a SUD, NSDUH 2024 & \textemdash \\
 $\bar\kappa_{\phi d}$ & Mortality with a SUD & Ext. & Mortality ratios, Hjorth\o j et al.\ (2023) & 8.00 \\
-$\aleph$ & Flow value of being alive & Int. & Value of a statistical life, Viscusi and Aldy (2003) & \textemdash \\
+$\aleph$ & Flow value of being alive & Int. & Value of a statistical life, Viscusi (2003) & \textemdash \\
 $\rho_d$ & Earnings lost to a SUD & Int. & Employment rate of the homeless, HUD 2023 & \textemdash \\
-$\rho_m$ & Earnings lost to SMI & Int. & Earnings of workers with SMI, NSDUH 2023 & \textemdash \\
 $\kappa_{ued}$ & Employment multiplier, SUD & Int. & Unemployment rate given a SUD, NSDUH 2024 & \textemdash \\
-$\kappa_{uem}$ & Employment multiplier, SMI & Int. & Employment rate given SMI, NSDUH 2023 & \textemdash \\
 \addlinespace
 \multicolumn{5}{@{}l}{\emph{How housing assistance shapes that decision}} \\
 $\pi_V$ & Voucher lottery probability & Int. & Recipients over eligible, HUD 2023 & \textemdash \\
 $\mu_H$ & Recovery on the street & Int. & Weeks abstinent, Milby et al.\ (2005) & \textemdash \\
 $h_1$ & Service flow of homelessness & Int. & Homelessness rate, HUD 2023 & \textemdash \\
-$\kappa_{\phi H}(j)$ & Mortality when unhoused & Ext. & Mortality ratios by age, Baggett et al.\ (2013) & 4.41 to 1.09 \\
+$\kappa_{\phi H}(j)$ & Mortality when unhoused & Ext. & Mortality by age, Baggett et al.\ (2013) & 4.41 to 1.09 \\
 \addlinespace
 \multicolumn{5}{@{}l}{\emph{The externality on the child}} \\
 $\omega$ & Weight on the child & Int. & Parent use rate with a child, NSDUH 2024 & \textemdash \\
-$\delta_d$ & Child's earnings, parent's SUD & Int. & Child SUD ratio, McGovern et al.\ (2023) & \textemdash \\
-$\delta_h$ & Child's earnings, homelessness & Ext. & Poverty exposure effects, Chetty et al.\ (2016) & 0.31 \\
+$\delta_d$ & Child's earnings, parent SUD & Int. & Child SUD ratio, McGovern et al.\ (2023) & \textemdash \\
+$\delta_h$ & Child's earnings, homeless & Ext. & Poverty exposure, Chetty et al.\ (2016) & 0.31 \\
 \addlinespace
 \multicolumn{5}{@{}l}{\emph{The other externalities}} \\
 $\omega_{\ell}$ & Weight on leisure & Int. & Average hours worked, Guvenen et al.\ (2023) & \textemdash \\
