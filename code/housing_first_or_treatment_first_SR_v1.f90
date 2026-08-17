@@ -2524,6 +2524,34 @@
             idx_of=3*number_of_smi_states*d_1+3*m_1+e_1
         end function
 
+        ! WHICH SUD INDEX THE MORTALITY MULTIPLIER IS READ AT.
+        !
+        ! The excess mortality of the disorder is overwhelmingly a mortality of
+        ! USE, poisoning above all, and treatment forbids use in the period it is
+        ! taken. A household in treatment therefore does not carry kappa_phi_d
+        ! that period, and this is the one place that exception is known.
+        !
+        ! It matters for whether anybody takes treatment at all. Before this, the
+        ! offer was to give up a full period of the drug in exchange for raising
+        ! the annual recovery hazard from 0.0250 to 0.0338, a gain of 0.88
+        ! percentage points, and take up was zero at every cost including a cost
+        ! of zero. Surviving the period at the clean hazard rather than at a
+        ! multiple of it is a first order gain by comparison, and it is a gain the
+        ! household is actually buying with the abstention it is already paying
+        ! for.
+        !
+        ! The strong form of the assumption is deliberate and worth naming: the
+        ! standardised mortality ratios kappa_phi_d is calibrated to are measured
+        ! on people who CARRY the disorder, not on people using in a given year,
+        ! so treating a household as fully clean for the period overstates what
+        ! one period of abstention buys. The weaker form would scale the
+        ! multiplier down rather than remove it.
+        integer function survival_sud_of(d_1,treatment_1)
+            implicit none
+            integer, intent(in) :: d_1,treatment_1
+            survival_sud_of=d_1*(1-treatment_1*include_treatment)
+        end function
+
         ! THE STONE GEARY SHIFTER, in one place. It depends on whether the
         ! household carries a SUD and on whether it is homeless, and on nothing
         ! else. Homelessness is identified by the housing SIZE rather than the
@@ -12250,7 +12278,7 @@
                             future_utility_vector(future_financial_index)=&
                                 future_utility_vector(future_financial_index)+&
                                 discount_factor*&
-                                (1-survival_probability(age_index,is_homeless_1,addiction_index,smi_of(unemployment_index)))*&
+                                (1-survival_probability(age_index,is_homeless_1,survival_sud_of(addiction_index,treatment_choice_now),smi_of(unemployment_index)))*&
                                 weight_on_child*expected_child_value(addiction_index,is_homeless_1)
                         
                         end if
@@ -12345,7 +12373,7 @@
                                                                                                                       
                                         future_utility_vector(future_financial_index)=&
                                             future_utility_vector(future_financial_index)+discount_factor*&
-                                            survival_probability(age_index,is_homeless_1,addiction_index,smi_of(unemployment_index))*&
+                                            survival_probability(age_index,is_homeless_1,survival_sud_of(addiction_index,treatment_choice_now),smi_of(unemployment_index))*&
                                             voucher_probabilities(voucher_index,future_voucher_index,&
                                             has_opportunity_1,voucher_index_1)*&
                                             employment_process(age_index,employment_index,future_employment_index)*&
@@ -12782,7 +12810,7 @@
                                                                      
                                                 future_utility_vector(future_mortgage_index)=&
                                                     future_utility_vector(future_mortgage_index)+discount_factor*&
-                                                    survival_probability(age_index,1,addiction_index,smi_of(unemployment_index))*&
+                                                    survival_probability(age_index,1,survival_sud_of(addiction_index,treatment_choice_now),smi_of(unemployment_index))*&
                                                     employment_process(age_index,employment_index,future_employment_index)*&
                                                     unemployment_process(age_index,unemployment_index,&
                                                     future_unemployment_index,1,future_addiction_index_2,employment_index)*&
@@ -13341,7 +13369,7 @@
                                                                                                                                                                                                                                            
                                         future_utility_vector(future_mortgage_index)=&
                                             future_utility_vector(future_mortgage_index)+&
-                                            discount_factor*survival_probability(age_index,1,addiction_index,smi_of(unemployment_index))*&
+                                            discount_factor*survival_probability(age_index,1,survival_sud_of(addiction_index,treatment_choice_now),smi_of(unemployment_index))*&
                                             employment_process(age_index,employment_index,future_employment_index)*&
                                             unemployment_process(age_index,unemployment_index,&
                                             future_unemployment_index,1,future_addiction_index_2,employment_index)*&
@@ -13759,7 +13787,7 @@
                                                                                                                                                                                                                                                                                                  
                                                     future_utility_vector(future_mortgage_index)=&
                                                         future_utility_vector(future_mortgage_index)+&
-                                                        discount_factor*survival_probability(age_index,1,addiction_index,smi_of(unemployment_index))*&
+                                                        discount_factor*survival_probability(age_index,1,survival_sud_of(addiction_index,treatment_choice_now),smi_of(unemployment_index))*&
                                                         employment_process(age_index,employment_index,future_employment_index)*&
                                                         unemployment_process(age_index,unemployment_index,&
                                                         future_unemployment_index,1,future_addiction_index_2,employment_index)*&
@@ -14120,7 +14148,7 @@
                                                                                                                                                                                                    
                                         future_utility_vector(future_financial_index)=&
                                             future_utility_vector(future_financial_index)+&
-                                            discount_factor*survival_probability(age_index,is_homeless_1,addiction_index,smi_of(unemployment_index))*&
+                                            discount_factor*survival_probability(age_index,is_homeless_1,survival_sud_of(addiction_index,treatment_choice_now),smi_of(unemployment_index))*&
                                             voucher_probabilities(voucher_index,future_voucher_index,&
                                             has_opportunity_1,voucher_index_1)*&
                                             employment_process(age_index,employment_index,future_employment_index)*&
@@ -14432,7 +14460,7 @@
                         
         if (minimum_inheritance>0) then
                 
-            bequest_1=(1-survival_probability(age_index,is_homeless_1,is_addicted_1,smi_of(unemployment_index)))*&
+            bequest_1=(1-survival_probability(age_index,is_homeless_1,survival_sud_of(is_addicted_1,treatment_choice_now),smi_of(unemployment_index)))*&
                 discount_factor_on_child*((minimum_inheritance+wealth_1)**(1-risk_aversion_consumption))/&
                 (1-risk_aversion_consumption)
                 
@@ -14440,7 +14468,7 @@
         
             if (wealth_1>0) then
             
-                bequest_1=((1-survival_probability(age_index,is_homeless_1,is_addicted_1,smi_of(unemployment_index)))*&
+                bequest_1=((1-survival_probability(age_index,is_homeless_1,survival_sud_of(is_addicted_1,treatment_choice_now),smi_of(unemployment_index)))*&
                     discount_factor_on_child*(wealth_1)**(1-risk_aversion_consumption))/(1-risk_aversion_consumption)
             
             else
@@ -16974,7 +17002,7 @@
                                 do future_voucher_index=first_voucher_index,second_voucher_index
                                                                                                                                                                                                                                            
                                     future_utility_internal=future_utility_internal+discount_factor*&
-                                        survival_probability(age_index,is_homeless_1,current_addiction_index_1,smi_of(unemployment_index))*&
+                                        survival_probability(age_index,is_homeless_1,survival_sud_of(current_addiction_index_1,treatment_choice_now),smi_of(unemployment_index))*&
                                         voucher_probabilities(voucher_index,future_voucher_index,&
                                         has_opportunity_1,voucher_index_1)*&
                                         employment_process(age_index,employment_index,future_employment_index)*&
@@ -18029,7 +18057,9 @@
                                                                 future_unemployment_index,future_employment_index,&
                                                                 future_housing_status_index_to_use_2,future_voucher_index)=&
                                                                 fraction_copy*survival_probability_for_dist_iteration&
-                                                                (age_index,is_homeless_2,is_addicted_1,smi_of(unemployment_index))*&
+                                                                (age_index,is_homeless_2,&
+                                                                survival_sud_of(is_addicted_1,treatment_choice_dist_1),&
+                                                                smi_of(unemployment_index))*&
                                                                 voucher_probabilities(voucher_index,&
                                                                 future_voucher_index,has_opportunity_2,voucher_index_1)*&
                                                                 employment_process(age_index,employment_index,&
