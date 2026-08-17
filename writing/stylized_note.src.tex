@@ -1,4 +1,13 @@
 \documentclass[10pt]{article}
+% MAXIMUM VIEWER COMPATIBILITY. pdfTeX writes PDF 1.5 by default, which uses a
+% compressed cross reference stream and object streams. Both are legal and both
+% are what GitHub's in browser viewer most often fails to render, reporting the
+% file as invalid when it is not. Dropping to 1.4 with object compression off
+% writes a classic xref table, which every viewer reads. It costs some file size
+% and nothing else.
+\pdfminorversion=4
+\pdfobjcompresslevel=0
+\pdfcompresslevel=9
 
 \usepackage[margin=1in]{geometry}
 \usepackage{amsmath,amssymb}
