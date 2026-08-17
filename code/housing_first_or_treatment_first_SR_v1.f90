@@ -944,6 +944,37 @@
         ! rebuild whereas a misread field would be silent and wrong.
         real(8) :: size_homelessness_lo=-1
         real(8) :: size_homelessness_hi=-1
+
+        ! AND THE BRACKET HAS TO BE ABLE TO THROW ITSELF AWAY.
+        !
+        ! Bisecting assumes the moment is a function of this parameter alone. It
+        ! is not, because every other parameter moves in the same outer loop, and
+        ! one of them moves enormously: over the four iterations that formed the
+        ! first bracket the value of life went 0.01, 80.96, 133.41, 168.27, 192.86.
+        ! A household's willingness to live on a street that kills it is not
+        ! comparable across a change like that, so the two endpoints were priced
+        ! under different models and the interval between them means nothing.
+        !
+        ! It showed up as the moment moving the wrong way. Measured: 0.3836 gave
+        ! 0.00 per cent, 0.4634 gave 1.22, then the midpoint 0.4235 gave 20.56 and
+        ! the next midpoint 0.4036 gave 32.11. Lowering the parameter raised
+        ! homelessness twice in a row, which cannot happen if a better street puts
+        ! more households on it. A bracket that ignores this converges neatly onto
+        ! a stale endpoint and reports a calibrated parameter that was never
+        ! calibrated against anything.
+        !
+        ! So each endpoint now carries the moment measured there, and a new
+        ! evaluation that contradicts monotonicity discards the bracket and goes
+        ! back to traversing. The pattern is the one the labour supply search
+        ! already uses: when the answer lands outside the bracket, the bracket was
+        ! wrong, so throw it away rather than trusting it.
+        !
+        ! This makes the update honest, not convergent. If the violations keep
+        ! coming, the message they carry is that this parameter cannot be
+        ! calibrated while the value of life is still moving under it, and the
+        ! answer to that is to sequence the loop rather than to bisect harder.
+        real(8) :: size_homelessness_lo_moment=-1
+        real(8) :: size_homelessness_hi_moment=-1
         
         integer, parameter :: employment_grid_size=9
         integer, parameter :: productivity_below_which_to_reduce_ss=9
@@ -28195,16 +28226,31 @@
                     write(*,*) "model_fraction_homeless(1)=", model_fraction_homeless(1)
                     write(*,*) "size_homelessness=", size_homelessness
 
-                    ! Tighten the bracket with what this evaluation just proved.
+                    ! Tighten the bracket with what this evaluation just proved,
+                    ! unless it proves the bracket itself is stale.
                     if (model_fraction_homeless(1)<fraction_homeless_data) then
 
                         if (size_homelessness_lo<0) then
 
                             size_homelessness_lo=size_homelessness
+                            size_homelessness_lo_moment=model_fraction_homeless(1)
 
-                        else
+                        else if ((size_homelessness>size_homelessness_lo) .AND. &
+                            (model_fraction_homeless(1)<size_homelessness_lo_moment-10.d0**(-5))) then
 
-                            size_homelessness_lo=max(size_homelessness_lo,size_homelessness)
+                            ! Raised the parameter and homelessness fell.
+                            write(*,*) "size_homelessness BRACKET DISCARDED: raised to ",&
+                                size_homelessness, " and homelessness fell from ",&
+                                size_homelessness_lo_moment, " to ", model_fraction_homeless(1)
+                            size_homelessness_lo=-1
+                            size_homelessness_hi=-1
+                            size_homelessness_lo_moment=-1
+                            size_homelessness_hi_moment=-1
+
+                        else if (size_homelessness>size_homelessness_lo) then
+
+                            size_homelessness_lo=size_homelessness
+                            size_homelessness_lo_moment=model_fraction_homeless(1)
 
                         end if
 
@@ -28213,10 +28259,24 @@
                         if (size_homelessness_hi<0) then
 
                             size_homelessness_hi=size_homelessness
+                            size_homelessness_hi_moment=model_fraction_homeless(1)
 
-                        else
+                        else if ((size_homelessness<size_homelessness_hi) .AND. &
+                            (model_fraction_homeless(1)>size_homelessness_hi_moment+10.d0**(-5))) then
 
-                            size_homelessness_hi=min(size_homelessness_hi,size_homelessness)
+                            ! Lowered the parameter and homelessness rose.
+                            write(*,*) "size_homelessness BRACKET DISCARDED: lowered to ",&
+                                size_homelessness, " and homelessness rose from ",&
+                                size_homelessness_hi_moment, " to ", model_fraction_homeless(1)
+                            size_homelessness_lo=-1
+                            size_homelessness_hi=-1
+                            size_homelessness_lo_moment=-1
+                            size_homelessness_hi_moment=-1
+
+                        else if (size_homelessness<size_homelessness_hi) then
+
+                            size_homelessness_hi=size_homelessness
+                            size_homelessness_hi_moment=model_fraction_homeless(1)
 
                         end if
 
