@@ -64,8 +64,8 @@ In the data, drug use is concentrated among low income households, most of the
 homeless do not carry a substance use disorder (SUD), and housing vouchers
 reach only about a quarter of the households eligible for them. The quantitative
 model is built to match facts of that kind. It has six state variables and
-\new{fifty four parameters, which is what the welfare and fiscal questions
-require,}
+fifty four parameters, which is what the welfare and fiscal questions
+require,
 but it also makes it hard to see which pieces of the environment do the
 heavy lifting. This note strips the environment down to help understand the
 main drivers in the model, but where my three main questions are still well
@@ -148,7 +148,7 @@ u(c,h,v) \;=\; (1-\gamma-\theta)\log c \;+\; \gamma \log h
 The three weights sum to one, so $\gamma$ is the housing budget share.
 Drugs enter only in the first period, since that is the only period in which $v$
 is chosen, and housing is chosen each period from a three point grid
-$\{h_0,h_S,h_L\}$. The pair $(\theta,b)$ governs the drug term: the marginal
+$\{h_1,h_2,h_3\}$. The pair $(\theta,b)$ governs the drug term: the marginal
 utility of the $v$th unit is $\theta/(b+v)$, so $\theta$ mostly sets how much a
 user uses and $b$ whether anyone uses at all. The Stone-Geary form keeps the
 first unit's marginal utility finite, which is what generates non users at
@@ -220,13 +220,13 @@ out of current income.
 
 Each period the household chooses
 \begin{equation}\label{eq:opts}
-h_k \in \{h_0,\ h_S,\ h_L\}, \qquad h_0 < h_S < h_L ,
+h_k \in \{h_1,\ h_2,\ h_3\}, \qquad h_1 < h_2 < h_3 ,
 \end{equation}
-homelessness ($h_0$), a small unit ($h_S$) and a standard unit
-($h_L$). Homelessness is free and delivers less housing services than
+homelessness (\new{$h_1$}), a small unit (\new{$h_2$}) and a standard unit
+(\new{$h_3$}). Homelessness is free and delivers less housing services than
 the market does.\footnote{Two rented sizes is the fewest that lets a
 household economise on housing rather than lose it. With one, homelessness comes
-out at @@homeless1@@ percent against a target of $0.40$, at any $h_0$.}
+out at @@homeless1@@ percent against a target of $0.40$, at any $h_1$.}
 
 A voucher covers part of the rent, is means tested and is rationed. It is drawn
 independently each period, which is a simplification relative to the
@@ -348,7 +348,7 @@ times average annual income, about \$9 million against a mean household income o
 estimates are put in current dollars. The pull of the first unit $b$ is matched
 to a drug participation rate of $5.13$ percent from NSDUH 2024 for
 respondents aged 26 and over, housing services on the street
-$h_0$ to a homelessness rate of $0.399$ percent from the 2023 HUD point in
+$h_1$ to a homelessness rate of $0.399$ percent from the 2023 HUD point in
 time (PIT) count, converted to households, and the SUD hazard $\lambda$ to the $33.2$ percent of users who
 acquire a SUD.
 
@@ -894,7 +894,7 @@ best available trial looked for and did not find.
 
 \subsection{What the SUD, SMI, and homelessness cost}\label{sec:fcosts}
 
-\paragraph{Death risk.} Survival is
+\paragraph{Death risk.}\label{sec:fdeath} Survival is
 \begin{equation}\label{eq:fsurv}
 \phi(j,h',d,m)=1-\min\Big\{1,\ (1-\bar\phi(j))\,
 \kappa_{\phi H}(j)^{\mathbf{1}\{h'=h_1\}}\,\kappa_{\phi d}(j)^{\mathbf{1}\{d=1\}}\,
@@ -1309,9 +1309,9 @@ twenty two are calibrated internally, inside the model. Four further parameters
 govern drug testing and detection; they are inert in the benchmark, where nothing
 is conditional, so they are set with the Treatment First experiment rather than
 here. They are
-split across the three tables of this section: \new{fifteen carry the key results
-(Table~\ref{tab:eleven}, eleven internally and four externally calibrated),
-fifteen are specific} to this paper without carrying a key result
+split across the three tables of this section: \new{seventeen carry the key results
+(Table~\ref{tab:eleven}, thirteen internally and four externally calibrated),
+thirteen are specific} to this paper without carrying a key result
 (Table~\ref{tab:paperparams}, seven internally and eleven externally), and
 twenty four are standard (Table~\ref{tab:stdparams}, seven internally and
 seventeen externally).
@@ -1321,10 +1321,10 @@ fix its value, and the value itself. The text alongside each table adds what a
 table has no room for: the intuition for what each parameter does, and why its
 moment identifies it.
 
-\subsection{\new{The fifteen} parameters that carry the key results}
+\subsection{\new{The seventeen} parameters that carry the key results}
 
 Most of the fifty four are the furniture of any life cycle model. A much
-smaller set is specific to this paper, and \new{fifteen} of those carry its
+smaller set is specific to this paper, and \new{seventeen} of those carry its
 key results. They are set out in Table~\ref{tab:eleven} against the three
 questions of Section~\ref{sec:what}, with the parameter, its description,
 and the moment and source used to fix its value, which is given in the last
@@ -1358,29 +1358,44 @@ for SUD reported in Hjorth\o j et al.\ (2023), which run six to ten, with the ag
 profile taken from CDC WONDER 2023. Setting it externally rather than fitting it
 is what frees the elasticity of participation with respect to the drug price to
 serve as a test of the mechanism rather than being spent pinning a parameter.
-\item[{\color{red}$\aleph$, the flow value of being alive.}] {\color{red}This is
-the other half of the mortality mechanism, so it sits beside $\bar\kappa_{\phi d}$
-rather than among the secondary parameters. $\bar\kappa_{\phi d}$ sets how much a
+\item[$\aleph$, the flow value of being alive.] This is
+the other half of the mortality mechanism, so it sits beside $\bar\kappa_{\phi d}$.
+$\bar\kappa_{\phi d}$ sets how much a
 SUD raises the chance of dying; $\aleph$ implies what value is being truncated,
 which is what reverses the income gradient. It needs a level and not only a
 behavioural target: if the value of life is negative, then households prefer death
 outright and the mortality cost of using becomes a benefit rather than a
 deterrent, which can perhaps be used to explain suicide, though that is outside
 the scope of this paper. Its value is chosen so the model generates a value of a
-statistical life of \$7.5m, from Viscusi and Aldy (2003).}
-\item[{\color{red}$\rho_d$ and $\rho_m$, earnings lost while still in work.}]
-{\color{red}These belong here rather than among the secondary parameters, because
+statistical life of \$7.5m, from Viscusi and Aldy (2003).
+\item[$\rho_d$ and $\rho_m$, earnings lost while still in work.]
+These belong here rather than among the secondary parameters, because
 they act on the use decision and not only on who is poor. Earnings enter the
 budget, so a household that loses income to a disorder can afford less of
 everything including the drug; and earnings enter the continuation value, so
-losing them lowers what a household has to lose from dying, which is the same
-channel $\aleph$ works through. They also do a job nothing else can: they let an
+losing them lowers what a household has to lose from dying, \new{a similar channel
+to the one $\aleph$ works through}. They also do a job nothing else can: they let an
 \emph{employed} household be poor enough to be priced out of housing. An effect on
 the employment margin alone cannot deliver that, since it makes every homeless
-household jobless and about half are not. $\rho_d$'s value is chosen so the model
-generates the employment rate of the homeless, about half, from HUD's 2023 point
-in time count and TEDS-A 2022; $\rho_m$'s so it generates the earnings of workers
-with SMI relative to average, from NSDUH 2023.}
+household jobless and about half are not. {\color{red}One subtlety is worth stating, because it cuts against
+Section~\ref{sec:what}. There the \emph{proportional} income penalty was shown to
+matter little for whether a household uses, and that remains true holding the
+Stone-Geary endowment fixed in ratio terms. But $b$ is a level, not a share, so
+conditional on $b$ a larger penalty lowers $x$ against a fixed subsistence
+endowment, and the corner in~\eqref{eq:fcvstatic} binds for more households. So
+raising $\rho_d$ does reduce use at the bottom; what Section~\ref{sec:what} rules
+out is the penalty \emph{generating} the income gradient, not its having any
+effect at all.} $\rho_d$'s value is chosen so the model
+generates the employment rate of the homeless, about half, from HUD's 2023 \new{point-in-time} count and TEDS-A 2022; $\rho_m$'s so it generates the earnings of workers
+with SMI relative to average, from NSDUH 2023.
+\item[{\color{red}$\kappa_{ued}$ and $\kappa_{uem}$, the employment
+multipliers.}] {\color{red}These belong here for the same reason as the wage
+penalties: work is harder to find and easier to lose with a SUD or with mental
+illness, and losing work lowers both the budget and the continuation value. They
+are the margin that turns a health shock into an income shock, and without them a
+disorder would cost a household nothing beyond the drug itself. Their values are
+chosen so the model generates the unemployment rate given a SUD, $16.25$ percent
+in NSDUH 2024, and the employment rate given SMI, about $30$ percent.}
 \end{description}
 
 \paragraph{How housing assistance shapes that decision.}
@@ -1411,26 +1426,25 @@ in recovery that housing produced in Milby et al.\ (2005), a randomised
 trial on cocaine dependent homeless adults: $6.60$ weeks abstinent in the housed
 arm against $4.48$ unhoused, so housing raises recovery by $47.3$ percent.
 \item[$h_1$, the service flow of homelessness.]
-{\color{red}This is what the street delivers relative to a dwelling, and
-therefore what a voucher is worth.} It belongs among the key parameters because it
+It belongs among the key parameters because it
 sets how bad the outside option is, and the value of being alive is measured
 against that outside option: a household with little to lose from dying is a
-household for which the mortality cost of using is small. {\color{red}It also
+household for which the mortality cost of using is small. It also
 decides the welfare comparison directly. If Housing First houses more households
 and the cost of homelessness is high, Housing First can deliver higher welfare
 than Treatment First even once the externalities on the child are counted against
-it.} Its value is chosen so the model generates the
-homelessness rate, $0.399$ percent of households in HUD's 2023 point in time
-count.
-\item[{\color{red}$\kappa_{\phi H}(j)$, mortality when unhoused.}]
-{\color{red}This is how much of the cost of dying a voucher removes, which is why
+it. Its value is chosen so the model generates the
+homelessness rate, $0.399$ percent of households in HUD's 2023 \new{point-in-time} count.
+\item[$\kappa_{\phi H}(j)$, mortality when unhoused.]
+This is how much of the cost of dying a voucher removes, which is why
 it belongs here and why it runs against Treatment First: a policy that houses more
-people saves lives directly, whatever it does to disorders. Baggett et al.\ (2013)
+people saves lives directly, whatever it does to disorders, \new{although in general
+equilibrium it can backfire by raising the SUD rate}. Baggett et al.\ (2013)
 give race adjusted mortality ratios for homeless adults of about $9.1$ at ages 25
 to 44, falling to $1.1$ at 65 to 84. Those are totals for a population most of
 which also carries a SUD, so it is set externally age by age net of that
 composition, which is why it has to be derived jointly with $\bar\kappa_{\phi d}$
-rather than read off directly.}
+rather than read off directly, \new{as set out at~\eqref{eq:fhaz}}.
 \end{description}
 
 \paragraph{The externality on the child.} These three are the externalities
@@ -1507,7 +1521,7 @@ the assumption least kind to it.
 
 \subsection{Other parameters specific to this paper}\label{sec:paperparams}
 
-\new{Fifteen further parameters are specific to this paper}, and none of them
+\new{Thirteen further parameters are specific to this paper}, and none of them
 carries a key result. Table~\ref{tab:paperparams} collects them and marks which
 are internally and which externally calibrated. The table is broken into the same six groups the discussion follows, and each
 parameter is taken in turn below.

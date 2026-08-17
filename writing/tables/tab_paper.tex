@@ -10,9 +10,7 @@ Parameter& Description& Set& Moment or source& Value \\
 Parameter& Description& Set& Moment or source& Value \\
 \midrule
 \endhead
-\multicolumn{5}{@{}l}{\emph{The employment margins}} \\
-$\kappa_{ued}$& Employment multiplier, SUD& Int.& Unemployment rate, SUD, NSDUH 2024& \textemdash \\
-$\kappa_{uem}$& Employment multiplier, SMI& Int.& Unemployment rate, SMI, NSDUH 2023& \textemdash \\
+\multicolumn{5}{@{}l}{\emph{The employment margin for homelessness}} \\
 $\kappa_{ueH}$& Employment multiplier, homeless& Ext.& Desmond and Gershenson (2016)& 0.80 \\
 \addlinespace
 \multicolumn{5}{@{}l}{\emph{Recovery and treatment}} \\
@@ -21,10 +19,10 @@ $g$& Treatment effect on recovery& Ext.& Odds ratio, Milby (2005)& 1.35 \\
 $\bar\tau^{u}$& Utility cost of treatment& Int.& Treatment take up, NSDUH 2023& \textemdash \\
 \addlinespace
 \multicolumn{5}{@{}l}{\emph{The mental illness chain}} \\
-$p_m$& Prevalence of SMI among adults& Ext.& NSDUH 2023, defined by substantial& 5.5\% \\
-$\lambda_m$& Recovery rate from SMI, annual& Int.& SMI share of homeless, Gutwinski et al.\ (2021)& \textemdash \\
+$p_m$ & Prevalence of SMI among adults & Ext. & Share with serious mental illness, NSDUH 2023 & 5.5\% \\
+$\lambda_m$ & Recovery rate from SMI & Int. & SMI share of homeless, Gutwinski et al.\ (2021) & \textemdash \\
 $\iota$& SUD multiplier on the onset of SMI& Ext.& Danish registers, Nielsen et al.\ (2017)& 2.00 \\
-$\mu_m$& Recovery multiplier, SMI& Ext.& Dual diagnosis relapse of $39.8$ against& 0.82 \\
+$\mu_m$ & Recovery multiplier, SMI & Ext. & Dual diagnosis relapse, Bradizza et al.\ (2006) & 0.82 \\
 $\kappa_{\phi m}$& Mortality multiplier, SMI& Ext.& Olfson et al.\ (2015)& 2.50 \\
 $\zeta_{DI}$& Disability replacement rate, SMI& Ext.& SSDI and SSI rates (SSA 2023)& 0.25 \\
 \addlinespace
