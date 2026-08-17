@@ -1,25 +1,27 @@
+\begin{table}[htbp]\centering
+\caption{The twelve parameters that carry the key results}\label{tab:eleven}
 \footnotesize\setlength{\tabcolsep}{4pt}
-\begin{center}
-\begin{tabular}{@{}lL{5.0cm}cL{6.6cm}r@{}}
+\begin{tabular}{@{}lL{4.6cm}cL{6.3cm}r@{}}
 \toprule
-Parameter & What it controls & Set & Moment and source & Value \\
+Parameter & Description & Set & Moment and source & Value \\
 \midrule
-\multicolumn{5}{@{}l}{\emph{Who uses drugs, and what it costs them}} \\
+\multicolumn{5}{@{}l}{\emph{Who uses drugs, and why}} \\
 $b$ & Whether a household uses & Int. & Drug participation, NSDUH 2024 & \textemdash \\
 $\lambda$ & SUD hazard per unit used & Int. & Users acquiring a SUD, NSDUH 2024 & \textemdash \\
 $\bar\kappa_{\phi d}$ & Mortality with a SUD & Ext. & Mortality ratios, Degenhardt (2011) & 8.00 \\
+$\rho_d$ & Earnings lost to a SUD & Int. & Employment rate of the homeless, HUD 2023 & \textemdash \\
+$\rho_m$ & Earnings lost to SMI & Int. & Earnings with SMI, NSDUH 2023 & \textemdash \\
 \addlinespace
 \multicolumn{5}{@{}l}{\emph{How housing assistance shapes that decision}} \\
+$\pi_V$ & Voucher lottery probability & Int. & Recipients over eligible, HUD 2023 & \textemdash \\
 $\bar\pi_r$ & Recovery when housed & Ext. & Remission rates, Vaillant (1995) & 0.025 \\
 $\mu_H$ & Recovery on the street & Int. & Weeks abstinent, Milby (2005) & \textemdash \\
-$\rho_d$ & Earnings lost to a SUD & Int. & Homeless in work, HUD 2023 & \textemdash \\
-$\rho_m$ & Earnings lost to SMI & Int. & Earnings with SMI, NSDUH 2023 & \textemdash \\
 \addlinespace
 \multicolumn{5}{@{}l}{\emph{When Treatment First beats Housing First}} \\
 $g$ & Treatment effect on recovery & Ext. & Odds ratio, Milby (2005) & 1.35 \\
-$\omega$ & Weight on the child & Int. & Use with a child, NSDUH 2024 & \textemdash \\
+$\omega$ & Weight on the child & Int. & Parent use rate with a child, NSDUH 2024 & \textemdash \\
 $\delta_d$ & Child's earnings, parent's SUD & Ext. & Child SUD ratio, McGovern (2023) & 3.00 \\
-$\delta_h$ & Child's earnings, homelessness & Ext. & Exposure effects, Chetty (2016) & 0.31 \\
+$\delta_h$ & Child's earnings, homelessness & Ext. & Poverty exposure effects, Chetty (2016) & 0.31 \\
 \bottomrule
 \end{tabular}
-\end{center}
+\end{table}

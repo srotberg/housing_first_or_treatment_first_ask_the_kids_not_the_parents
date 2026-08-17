@@ -1294,71 +1294,81 @@ because the transition exercise in the results needs it.
 \section{Calibrating the quantitative model}\label{sec:fullcal}
 
 The model has fifty eight parameters, some of which vary in value by age.
-Thirty seven are assigned and twenty one are calibrated. They are split across
-the three tables of this section: eleven carry the results
-(Table~\ref{tab:eleven}, six calibrated and five assigned), twenty one are
-specific to this paper without carrying a headline
-(Table~\ref{tab:paperparams}, six and fifteen), and twenty six are standard
-(Table~\ref{tab:stdparams}, nine and seventeen). The tables carry the values, the sources and the data
-vintages, so what follows is not another pass through them. It is organised
-around three things a table cannot say, and it is written to be read rather than
-consulted.
+{\color{red}Thirty seven are calibrated externally, from data or from the
+literature, and twenty one are calibrated internally, inside the model. They are
+split across the three tables of this section: twelve carry the key results
+(Table~\ref{tab:eleven}, seven internally and five externally calibrated),
+twenty one are specific to this paper without carrying a key result
+(Table~\ref{tab:paperparams}, six internally and fifteen externally), and twenty
+five are standard (Table~\ref{tab:stdparams}, eight internally and seventeen
+externally).
 
-{\color{red}\subsection{The eleven parameters that carry the results}
+The tables carry the parameter, its description, the moment and source used to
+fix its value, and the value itself. The text alongside each table adds what a
+table has no room for: the intuition for what each parameter does, and why its
+moment identifies it.}
+
+\subsection{\new{The twelve parameters that carry the key results}}
 
 Most of the fifty eight are the furniture of any life cycle model. A much
-smaller set is specific to this paper, and eleven of those carry its results.
-They are set out in Table~\ref{tab:eleven} against the three questions of
-Section~\ref{sec:what}, with the moment, the source and the value for each, and
-they are discussed one at a time below because they are the parameters a reader
-should want to argue with.
+smaller set is specific to this paper, and \new{twelve} of those carry its
+\new{key results}. They are set out in Table~\ref{tab:eleven} against the three
+questions of Section~\ref{sec:what}, \new{with the parameter, its description,
+and the moment and source used to fix its value, which is given in the last
+column. They are discussed one at a time below because they are the parameters a
+reader may want to argue over, and each is taken in the order of the table.}
 
 \input{tables/tab_eleven}
 
-Each is taken in the order of the table.
+{\color{red}\paragraph{Who uses drugs, and why.}
+\begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
+\item[$b$, whether a household uses at all.] The marginal value of the drug goes
+as $\theta/(b+v)$, so a larger $b$ makes the first units worth less and a
+household with little to spend buys nothing at all. Participation is therefore a
+near threshold function of $b$, which is what identifies it from the
+participation rate, and why it is bisected rather than stepped.
+\item[$\lambda$, the hazard per unit used.] This is the parameter that makes
+using \emph{more} genuinely riskier rather than merely dearer. It is identified
+from the share of users who go on to acquire a disorder, the same moment the
+stylized model uses; prevalence alone cannot separate onset from recovery.
+\item[$\bar\kappa_{\phi d}$, what a disorder does to survival.] Set externally at
+the midpoint of standardised mortality ratios for opioid use disorder, which run
+six to ten. Setting it rather than fitting it is what frees the price elasticity
+to serve as a test of the mechanism instead of being spent pinning it.
+\item[$\rho_d$ and $\rho_m$, earnings lost while still in work.] These exist for
+a reason that is easy to miss. An effect on the employment margin alone makes
+every homeless household jobless, and about half are not. It is the wage penalty
+that produces households poor enough to be priced out of housing while still
+employed, which is exactly the group a housing policy reaches and a treatment
+policy does not.
+\end{description}
 
-\paragraph{Who uses drugs, and what it costs them.} $b$ is the Stone-Geary
-endowment and it decides whether a household uses at all. Because the marginal
-value of the drug goes as $\theta/(b+v)$, a larger $b$ makes the first units
-worth less, so a household with little to spend buys nothing: participation is a
-near threshold function of it, which is what identifies it from the
-participation rate and why it is bisected rather than stepped.
-$\lambda$ is the hazard of acquiring a disorder per unit used, and it is the
-parameter that makes using more genuinely riskier rather than merely more
-expensive. It is identified from the share of users who acquire a disorder, the
-same moment the stylized model uses; prevalence alone would not separate onset
-from recovery.
-$\bar\kappa_{\phi d}$ is what the disorder does to survival, assigned at the
-midpoint of standardised mortality ratios for opioid use disorder, which run six
-to ten. It is assigned rather than calibrated so that the price participation
-elasticity can be kept back as a test of the mechanism instead of being spent
-pinning it.
+\paragraph{How housing assistance shapes that decision.}
+\begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
+\item[$\pi_V$, the chance of drawing a voucher.] This is the policy dial. It sets
+how much assistance exists to be had, and every counterfactual moves it.
+\item[$\bar\pi_r$ and $\mu_H$, recovery housed and on the street.] Together they
+are what makes housing an \emph{input into recovery} rather than only a transfer,
+which is the whole reason Housing First can beat a treatment condition. $\mu_H$
+is the one the comparison turns on, and it comes from Milby's randomised trial:
+weeks abstinent in the housed arm against the unhoused arm, on exactly the
+population at issue.
+\end{description}
 
-\paragraph{How housing assistance shapes that decision.} $\bar\pi_r$ is the
-recovery hazard when housed, and $\mu_H$ is how much lower it is on the street.
-The pair is what makes housing an input into recovery rather than only a
-transfer, and $\mu_H$ is the one the whole policy comparison turns on: it is
-identified from Milby's randomised trial, weeks abstinent in the housed arm
-against the unhoused arm, which is a comparison on exactly the population at
-issue.
-$\rho_d$ and $\rho_m$ are the earnings lost to a disorder and to serious mental
-illness conditional on still working. They exist for a reason that is easy to
-miss: an effect on the employment margin alone makes every homeless household
-jobless, and about half are not. It is the wage penalty that produces households
-poor enough to be priced out of housing while still in work, which is the group
-a housing policy reaches and a treatment policy does not.
-
-\paragraph{When Treatment First beats Housing First.} $g$ is how much treatment
-raises recovery. It is the one assigned value carrying a headline result, so it
-is reported across a range rather than at a point.
-$\omega$ is the weight a parent puts on its child, identified from the fall in
+\paragraph{When Treatment First beats Housing First.}
+\begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
+\item[$g$, the treatment effect on recovery.] The one externally set value
+carrying a headline result, so it is reported across a range rather than at a
+point.
+\item[$\omega$, the parent's weight on its child.] Identified from the fall in
 use when a child is present. It is small, and that is the point: the household
-internalises a share $\omega$ of what it does to its child and the remaining
+weighs a fraction $\omega$ of what it does to its child and the remaining
 $1-\omega$ falls outside its problem altogether.
-$\delta_d$ and $\delta_h$ are the earnings a child loses to a parent's disorder
-and to growing up homeless. Both are assigned, because their sources report
-ranges rather than points, and between them they are the externality the policy
-comparison is trying to price.
+\item[$\delta_d$ and $\delta_h$, what the child loses.] The earnings a child
+loses to a parent's disorder and to growing up homeless. Both are set externally,
+because their sources report ranges rather than points, and between them they are
+the externality the policy comparison is trying to price.
+\end{description}}
 
 \subsection{Other parameters specific to this paper}
 
@@ -1453,7 +1463,7 @@ moment side by side for every calibrated parameter, so the fit can be inspected
 rather than asserted, and each is solved to a distance of $10^{-3}$, or $10^{-4}$
 for the three bisected below.
 
-Two things the calibration does not do are worth stating. Three assigned values
+Two things the calibration does not do are worth stating. Three externally calibrated values
 carry no real discipline, and they are named rather than buried: the treatment
 effect $g$, the SMI recovery multiplier $\mu_m$ and the drug supply curvature
 $\nu_2$. Of these only $g$ carries a headline result, and it is reported across
@@ -1466,7 +1476,7 @@ possible because the drug price is endogenous; $\nu_1$ normalises the units so
 that supply meets demand at $p_v=1$ in the benchmark, and $p_v$ moves freely in
 every counterfactual.
 
-}\paragraph{Three moments that are cliffs, not slopes.} Most parameters
+\paragraph{Three moments that are cliffs, not slopes.} Most parameters
 move their moment smoothly, so a step in one direction tells you where to go
 next. Three do not, and treating them as though they did is how a calibration
 silently fails. Three moments are step like and
