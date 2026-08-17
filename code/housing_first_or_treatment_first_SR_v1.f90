@@ -26738,7 +26738,6 @@
 
         ! Pick up where a killed run left off, if it left anything.
         call read_calibration_state()
-        call read_calibration_distribution()
 
         ! THE SMOOTH HAZARD NEEDS THE TABULATED EXPECTATION. With the hoist off
         ! the two continuations are never formed separately, so there is nothing
@@ -27019,6 +27018,16 @@
         index_drug_1(1)=min(max(minloc(drug_spending_relative_to_average(:)-0.5,1,&
             mask=drug_spending_relative_to_average(:)-0.5>0),1),&
             bins_drug_spending_relative_to_average) 
+
+        ! THE WARM START IS READ HERE AND NOT WITH THE PARAMETERS, because it
+        ! writes into distribution_stationary and distribution_guess and those do
+        ! not exist until allocate_matrix has run. Reading it beside
+        ! read_calibration_state, which only moves scalars, wrote into unallocated
+        ! derived type components and segfaulted before the first line of output.
+        ! The symptom was a binary that had just run fine crashing on startup, and
+        ! the only thing that had changed was that a previous loop had left a
+        ! checkpoint on disk for it to read.
+        call read_calibration_distribution()
                                     
         do while((distance_rental_market(1)>stopping_rule_rental_market) .OR. &
             (distance_discount_factor>stopping_rule_discount_factor) .OR. &
