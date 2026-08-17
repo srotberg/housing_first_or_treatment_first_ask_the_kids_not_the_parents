@@ -1283,7 +1283,23 @@
         real(8), parameter :: threshold_for_food_stamps_as_perc_of_average_net_wealth=100000 !0.015
         real(8), parameter :: fraction_of_income_spent_on_food=0.4
                                                                                               
-        real(8), dimension(life_span,2,0:include_addiction) :: survival_probability,survival_probability_for_dist_iteration
+        ! THE SMI DIMENSION IS ON THE ARRAY, NOT ON A WRAPPER AT EACH CALL.
+        !
+        ! survival_with_smi was written to multiply the death hazard by
+        ! kappa_phi_m and then never called from anywhere, so the SMI mortality
+        ! channel did not exist: kappa_phi_m appeared in the declarations, in the
+        ! note and in the calibration table, and had no effect on a single
+        ! household. The same shape of omission as the employed test.
+        !
+        ! Wrapping the nineteen call sites in survival_with_smi would have
+        ! restored it and left the same trap open, since a twentieth site added
+        ! later would compile and silently drop the multiplier again. Carrying
+        ! the state as a DIMENSION closes it: every call site must supply an SMI
+        ! index, and one that does not is a rank mismatch and a compile error.
+        real(8), dimension(life_span,2,0:include_addiction,0:number_of_smi_states-1) :: &
+            survival_probability,survival_probability_for_dist_iteration
+        integer :: clipped_survival_cells=0
+        real(8) :: min_survival_seen=1
 
         real(8), dimension(life_span) :: actual_survival_probability=(/&
             0.999057437351439000,0.999047139252070000,0.999028513848316000,0.999002128606662000,&
@@ -4555,7 +4571,7 @@
                                     end if
                                     
                                     mass_dying(time_period)=mass_dying(time_period)+distribution_mass_used*&
-                                        (1-survival_probability(age_index,is_homeless_1,is_addicted_1))
+                                        (1-survival_probability(age_index,is_homeless_1,is_addicted_1,smi_of(unemployment_index)))
                                                                 
                                     if (amortization_used>1) then
 
@@ -4585,7 +4601,7 @@
                                     bequests_mass_by_age(age_index)=bequests_mass_by_age(age_index)+distribution_mass_used
                                     
                                     model_bequests(time_period)=model_bequests(time_period)+bequest_1*distribution_mass_used*&
-                                        (1-survival_probability(age_index,is_homeless_1,is_addicted_1))
+                                        (1-survival_probability(age_index,is_homeless_1,is_addicted_1,smi_of(unemployment_index)))
                                         
                                     model_total_inheritance(time_period)=model_total_inheritance(time_period)+&
                                         ((1-inheritance_function_of_productivity)+&
@@ -4596,13 +4612,13 @@
                                     model_financial_bequests(time_period)=model_financial_bequests(time_period)+&
                                         ((1-frac_used)*max(financial_grid(financial_index_used),0.d0)+&
                                         frac_used*max(financial_grid(fin_frac_used),0.d0))*distribution_mass_used*&
-                                        (1-survival_probability(age_index,is_homeless_1,is_addicted_1))
+                                        (1-survival_probability(age_index,is_homeless_1,is_addicted_1,smi_of(unemployment_index)))
                                     
                                     if (years_left_on_mortgage_index>1) then
                                     
                                         model_fraction_leaving_housing_bequests(time_period)=&
                                             model_fraction_leaving_housing_bequests(time_period)+distribution_mass_used*&
-                                            (1-survival_probability(age_index,is_homeless_1,is_addicted_1))
+                                            (1-survival_probability(age_index,is_homeless_1,is_addicted_1,smi_of(unemployment_index)))
                                             
                                     end if
 
@@ -4610,7 +4626,7 @@
                                     
                                         model_fraction_leaving_bequests(time_period)=&
                                             model_fraction_leaving_bequests(time_period)+distribution_mass_used*&
-                                            (1-survival_probability(age_index,is_homeless_1,is_addicted_1))
+                                            (1-survival_probability(age_index,is_homeless_1,is_addicted_1,smi_of(unemployment_index)))
                                             
                                     end if
                                               
@@ -9575,7 +9591,7 @@
                                                                 vector_real(age_index,financial_index,unemployment_index,&
                                                                 employment_index,housing_status_index,voucher_index)+&
                                                                 discount_factor*&
-                                                                survival_probability(age_index,is_homeless_1,is_addicted_1)*&
+                                                                survival_probability(age_index,is_homeless_1,is_addicted_1,smi_of(unemployment_index))*&
                                                                 voucher_probabilities_benchmark(voucher_index,future_voucher_index,&
                                                                 has_opportunity_1,voucher_index_1)*employment_process&
                                                                 (age_index,employment_index,future_employment_index)*&
@@ -11563,7 +11579,7 @@
                         do fvi_1=evx_fv,evx_sv
 
                             acc=acc+discount_factor*&
-                                survival_probability(age_index,evx_homeless,evx_addidx)*&
+                                survival_probability(age_index,evx_homeless,evx_addidx,smi_of(unemployment_index))*&
                                 voucher_probabilities(voucher_index,fvi_1,&
                                 evx_opp,evx_vidx)*&
                                 employment_process(age_index,employment_index,fei_1)*&
@@ -11980,7 +11996,7 @@
                             future_utility_vector(future_financial_index)=&
                                 future_utility_vector(future_financial_index)+&
                                 discount_factor*&
-                                (1-survival_probability(age_index,is_homeless_1,addiction_index))*&
+                                (1-survival_probability(age_index,is_homeless_1,addiction_index,smi_of(unemployment_index)))*&
                                 weight_on_child*expected_child_value(addiction_index,is_homeless_1)
                         
                         end if
@@ -12075,7 +12091,7 @@
                                                                                                                       
                                         future_utility_vector(future_financial_index)=&
                                             future_utility_vector(future_financial_index)+discount_factor*&
-                                            survival_probability(age_index,is_homeless_1,addiction_index)*&
+                                            survival_probability(age_index,is_homeless_1,addiction_index,smi_of(unemployment_index))*&
                                             voucher_probabilities(voucher_index,future_voucher_index,&
                                             has_opportunity_1,voucher_index_1)*&
                                             employment_process(age_index,employment_index,future_employment_index)*&
@@ -12512,7 +12528,7 @@
                                                                      
                                                 future_utility_vector(future_mortgage_index)=&
                                                     future_utility_vector(future_mortgage_index)+discount_factor*&
-                                                    survival_probability(age_index,1,addiction_index)*&
+                                                    survival_probability(age_index,1,addiction_index,smi_of(unemployment_index))*&
                                                     employment_process(age_index,employment_index,future_employment_index)*&
                                                     unemployment_process(age_index,unemployment_index,&
                                                     future_unemployment_index,1,future_addiction_index_2,employment_index)*&
@@ -13071,7 +13087,7 @@
                                                                                                                                                                                                                                            
                                         future_utility_vector(future_mortgage_index)=&
                                             future_utility_vector(future_mortgage_index)+&
-                                            discount_factor*survival_probability(age_index,1,addiction_index)*&
+                                            discount_factor*survival_probability(age_index,1,addiction_index,smi_of(unemployment_index))*&
                                             employment_process(age_index,employment_index,future_employment_index)*&
                                             unemployment_process(age_index,unemployment_index,&
                                             future_unemployment_index,1,future_addiction_index_2,employment_index)*&
@@ -13489,7 +13505,7 @@
                                                                                                                                                                                                                                                                                                  
                                                     future_utility_vector(future_mortgage_index)=&
                                                         future_utility_vector(future_mortgage_index)+&
-                                                        discount_factor*survival_probability(age_index,1,addiction_index)*&
+                                                        discount_factor*survival_probability(age_index,1,addiction_index,smi_of(unemployment_index))*&
                                                         employment_process(age_index,employment_index,future_employment_index)*&
                                                         unemployment_process(age_index,unemployment_index,&
                                                         future_unemployment_index,1,future_addiction_index_2,employment_index)*&
@@ -13850,7 +13866,7 @@
                                                                                                                                                                                                    
                                         future_utility_vector(future_financial_index)=&
                                             future_utility_vector(future_financial_index)+&
-                                            discount_factor*survival_probability(age_index,is_homeless_1,addiction_index)*&
+                                            discount_factor*survival_probability(age_index,is_homeless_1,addiction_index,smi_of(unemployment_index))*&
                                             voucher_probabilities(voucher_index,future_voucher_index,&
                                             has_opportunity_1,voucher_index_1)*&
                                             employment_process(age_index,employment_index,future_employment_index)*&
@@ -14162,7 +14178,7 @@
                         
         if (minimum_inheritance>0) then
                 
-            bequest_1=(1-survival_probability(age_index,is_homeless_1,is_addicted_1))*&
+            bequest_1=(1-survival_probability(age_index,is_homeless_1,is_addicted_1,smi_of(unemployment_index)))*&
                 discount_factor_on_child*((minimum_inheritance+wealth_1)**(1-risk_aversion_consumption))/&
                 (1-risk_aversion_consumption)
                 
@@ -14170,7 +14186,7 @@
         
             if (wealth_1>0) then
             
-                bequest_1=((1-survival_probability(age_index,is_homeless_1,is_addicted_1))*&
+                bequest_1=((1-survival_probability(age_index,is_homeless_1,is_addicted_1,smi_of(unemployment_index)))*&
                     discount_factor_on_child*(wealth_1)**(1-risk_aversion_consumption))/(1-risk_aversion_consumption)
             
             else
@@ -16704,7 +16720,7 @@
                                 do future_voucher_index=first_voucher_index,second_voucher_index
                                                                                                                                                                                                                                            
                                     future_utility_internal=future_utility_internal+discount_factor*&
-                                        survival_probability(age_index,is_homeless_1,current_addiction_index_1)*&
+                                        survival_probability(age_index,is_homeless_1,current_addiction_index_1,smi_of(unemployment_index))*&
                                         voucher_probabilities(voucher_index,future_voucher_index,&
                                         has_opportunity_1,voucher_index_1)*&
                                         employment_process(age_index,employment_index,future_employment_index)*&
@@ -17125,14 +17141,14 @@
                                                 
                         distribution_guess(1)%vector_transition_real&
                             (time_period,age_index,initial_endowment(employment_index),unemployment_index,employment_index,0,0)=&
-                            survival_probability(age_index-1,1,0)*distribution_guess(1)%vector_transition_real&
+                            survival_probability(age_index-1,1,0,0)*distribution_guess(1)%vector_transition_real&
                             (time_period,age_index-1,initial_endowment(employment_index),unemployment_index,employment_index,0,0)
 
                     end if
                         
                     distribution_guess(1)%vector_transition_real&
                         (time_period,age_index,negative_financial_grid_size,unemployment_index,employment_index,0,0)=&
-                        survival_probability(age_index-1,1,0)*distribution_guess(1)%vector_transition_real&
+                        survival_probability(age_index-1,1,0,0)*distribution_guess(1)%vector_transition_real&
                         (time_period,age_index-1,negative_financial_grid_size,unemployment_index,employment_index,0,0)
                         
                 end do
@@ -17763,7 +17779,7 @@
                                                                 future_unemployment_index,future_employment_index,&
                                                                 future_housing_status_index_to_use_2,future_voucher_index)=&
                                                                 fraction_copy*survival_probability_for_dist_iteration&
-                                                                (age_index,is_homeless_2,is_addicted_1)*&
+                                                                (age_index,is_homeless_2,is_addicted_1,smi_of(unemployment_index))*&
                                                                 voucher_probabilities(voucher_index,&
                                                                 future_voucher_index,has_opportunity_2,voucher_index_1)*&
                                                                 employment_process(age_index,employment_index,&
@@ -18047,7 +18063,7 @@
                                                                     initial_endowment(future_employment_index),&
                                                                     future_unemployment_index,future_employment_index,0,0)=&
                                                                     fraction_copy*&
-                                                                    (1-survival_probability_for_dist_iteration(age_index,1,0))*&
+                                                                    (1-survival_probability_for_dist_iteration(age_index,1,0,0))*&
                                                                     fraction_with_positive_wealth(employment_index)*&
                                                                     newborn_employment_probability(future_employment_index,&
                                                                     is_addicted_1,is_homeless_2)*&
@@ -18071,7 +18087,7 @@
                                                             distribution_implied_private(1)%vector_cpu_real(thread_num+1,1,&
                                                                 negative_financial_grid_size,future_unemployment_index,&
                                                                 future_employment_index,0,0)=fraction_copy*&
-                                                                (1-survival_probability_for_dist_iteration(age_index,1,0))*&
+                                                                (1-survival_probability_for_dist_iteration(age_index,1,0,0))*&
                                                                 (1-fraction_with_positive_wealth(employment_index))*&
                                                                 newborn_employment_probability(future_employment_index,&
                                                                 is_addicted_1,is_homeless_2)*&
@@ -18802,7 +18818,7 @@
                                                                     future_unemployment_index,future_employment_index,&
                                                                     future_housing_status_index_to_use_2,future_voucher_index)=&
                                                                     fraction_copy*survival_probability&
-                                                                    (age_index,is_homeless_2,is_addicted_1)*&
+                                                                    (age_index,is_homeless_2,is_addicted_1,smi_of(unemployment_index))*&
                                                                     voucher_probabilities(voucher_index,&
                                                                     future_voucher_index,has_opportunity_2,voucher_index_1)*&
                                                                     employment_process(age_index,employment_index,&
@@ -19251,11 +19267,11 @@
                 
             end if
             
-            survival_probability(i,:,:)=1
+            survival_probability(i,:,:,:)=1
         
             do j=i,min(i,life_span)
         
-                survival_probability(i,:,:)=survival_probability(i,:,:)*actual_survival_probability(j)
+                survival_probability(i,:,:,:)=survival_probability(i,:,:,:)*actual_survival_probability(j)
                 
             end do
                 
@@ -19263,7 +19279,7 @@
         
         if (life_span<60) then
         
-            survival_probability(life_span,:,:)=0
+            survival_probability(life_span,:,:,:)=0
             
             if (loop_count==0) then
             
@@ -19282,12 +19298,32 @@
         ! two excesses. The note multiplies the two multipliers, which is a
         ! different and larger number whenever both are large, and both are large
         ! exactly for the households this paper is about.
+        !
+        ! THE PROFILES HAVE TO BE ON DISK BEFORE THE MULTIPLIERS ARE BUILT, and
+        ! for a long time they were not.
+        !
+        ! build_mortality_multipliers is called from here and nowhere else, and
+        ! load_mortality_profiles used to be called only from
+        ! GKKOC_intergenerational_employment_process, which runs AFTER this
+        ! routine. So the multipliers were built from profiles that were still
+        ! all zero, which makes kappa_phi_d_by_age = 1 and kappa_phi_h_by_age = 1
+        ! at every age, and survival_probability was then built from those. The
+        ! whole age varying mortality specification, equation (25), was inert:
+        ! the CSV was read a moment later and never used for anything.
+        !
+        ! It was invisible because every cell of the array still held a
+        ! defensible looking survival probability, and because the confirming
+        ! print, "mortality profiles loaded", appeared in the log a hundred lines
+        ! after the array had already been built. The hazard ratio between a
+        ! clean housed household and a homeless using one was exactly one.
+        call load_mortality_profiles()
+
         call build_mortality_multipliers()
 
         do i=1,life_span
 
-            survival_probability(i,2,0)=1-min(1.d0,&
-                (1-survival_probability(i,1,0))*kappa_phi_h_by_age(i))
+            survival_probability(i,2,0,0)=1-min(1.d0,&
+                (1-survival_probability(i,1,0,0))*kappa_phi_h_by_age(i))
 
         end do
                     
@@ -19298,8 +19334,8 @@
         
             do i=1,life_span
 
-                survival_probability(i,1,include_addiction)=1-min(1.d0,&
-                    (1-survival_probability(i,1,0))*kappa_phi_d_by_age(i))
+                survival_probability(i,1,include_addiction,0)=1-min(1.d0,&
+                    (1-survival_probability(i,1,0,0))*kappa_phi_d_by_age(i))
 
             end do
                                 
@@ -19308,23 +19344,115 @@
                 
             do i=1,life_span
 
-                survival_probability(i,2,include_addiction)=1-min(1.d0,&
-                    (1-survival_probability(i,1,0))*kappa_phi_h_by_age(i)*kappa_phi_d_by_age(i))
+                survival_probability(i,2,include_addiction,0)=1-min(1.d0,&
+                    (1-survival_probability(i,1,0,0))*kappa_phi_h_by_age(i)*kappa_phi_d_by_age(i))
 
             end do
                 
 !            survival_probability(1:life_span-retirement_span,2,include_addiction)=&
 !                survival_probability(1:life_span-retirement_span,1,0)
-            
+
         end if
-        
+
+        ! THE SMI LAYER, and it is built LAST for a reason.
+        !
+        ! kappa_phi_m multiplies the death hazard a household already faces, so
+        ! it has to be applied to a base that already carries the housing and
+        ! SUD multipliers. Building it earlier would give a household that is
+        ! homeless, using and mentally ill the SMI multiplier on the clean
+        ! housed hazard, which is the same error as adding excesses instead of
+        ! multiplying hazards, one level up.
+        !
+        ! survival_with_smi is the one place the arithmetic lives, and it is
+        ! finally called from somewhere.
+        if (number_of_smi_states>1) then
+
+            do i=1,life_span
+
+                do j=1,2
+
+                    do k=0,include_addiction
+
+                        survival_probability(i,j,k,1)=&
+                            survival_with_smi(survival_probability(i,j,k,0),1)
+
+                    end do
+
+                end do
+
+            end do
+
+        end if
+
+        ! HOW HARD THE HAZARDS STACK, reported rather than assumed.
+        !
+        ! The note multiplies the multipliers, so a household that is homeless,
+        ! using and mentally ill faces kappa_phi_H * kappa_phi_d * kappa_phi_m
+        ! times the baseline hazard, and at the oldest ages that product is large
+        ! enough to drive the hazard past one. Both clips are deliberate and both
+        ! are explicit in the code, but a clip means the multiplier has stopped
+        ! doing what the calibration thinks it does: past the floor, raising
+        ! kappa_phi_d no longer changes anything for that cell, so the moment
+        ! stops responding to the parameter and the calibration stalls against a
+        ! wall it cannot see.
+        !
+        ! So the floor is counted and printed once. A handful of clipped cells at
+        ! the very oldest ages is expected and harmless. A large count means the
+        ! multipliers are stacking past what the survival curve can carry, and
+        ! that is a specification problem to be argued about, not a number to
+        ! quietly accept.
+        if (loop_count<1) then
+
+            clipped_survival_cells=0
+            min_survival_seen=1
+
+            do i=1,life_span-1
+
+                do j=1,2
+
+                    do k=0,include_addiction
+
+                        do m=0,number_of_smi_states-1
+
+                            if (survival_probability(i,j,k,m)<=0.d0) then
+
+                                clipped_survival_cells=clipped_survival_cells+1
+
+                            end if
+
+                            min_survival_seen=min(min_survival_seen,survival_probability(i,j,k,m))
+
+                        end do
+
+                    end do
+
+                end do
+
+            end do
+
+            write(*,*) "survival: cells clipped to zero before the last age =", &
+                clipped_survival_cells, " of ", &
+                (life_span-1)*2*(1+include_addiction)*number_of_smi_states
+            write(*,*) "survival: smallest probability before the last age =", min_survival_seen
+
+            if (number_of_smi_states>1) then
+
+                write(*,*) "survival: SMI multiplier is live, kappa_phi_m =", kappa_phi_m
+                write(*,*) "survival: clean housed vs SMI homeless with SUD at age 40 =", &
+                    survival_probability(40,1,0,0), survival_probability(40,2,include_addiction,&
+                    number_of_smi_states-1)
+
+            end if
+
+        end if
+
         survival_probability_for_dist_iteration=survival_probability
         
         if (remove_increased_death==1) then
         
-            survival_probability_for_dist_iteration(:,2,0)=survival_probability(:,1,0)
-            survival_probability_for_dist_iteration(:,1,include_addiction)=survival_probability(:,1,0)
-            survival_probability_for_dist_iteration(:,2,include_addiction)=survival_probability(:,1,0)
+            survival_probability_for_dist_iteration(:,2,0,:)=survival_probability(:,1,0,:)
+            survival_probability_for_dist_iteration(:,1,include_addiction,:)=survival_probability(:,1,0,:)
+            survival_probability_for_dist_iteration(:,2,include_addiction,:)=survival_probability(:,1,0,:)
         
         end if
         
@@ -19341,13 +19469,13 @@
             
                 if (i==age_index) then
                 
-                    mass_2(1)=(1-survival_probability(i,1,0))*mass_2(1)
-                    mass_2(2)=(1-survival_probability(i,2,0))*mass_2(2)
+                    mass_2(1)=(1-survival_probability(i,1,0,0))*mass_2(1)
+                    mass_2(2)=(1-survival_probability(i,2,0,0))*mass_2(2)
         
                 else
         
-                    mass_2(1)=survival_probability(i,1,0)*mass_2(1)
-                    mass_2(2)=survival_probability(i,2,0)*mass_2(2)
+                    mass_2(1)=survival_probability(i,1,0,0)*mass_2(1)
+                    mass_2(2)=survival_probability(i,2,0,0)*mass_2(2)
                     
                 end if
                 
@@ -19362,13 +19490,13 @@
                             
                     if (i==age_index) then
                 
-                        mass_2(3)=(1-survival_probability(i,1,include_addiction))*mass_2(3)
-                        mass_2(4)=(1-survival_probability(i,2,include_addiction))*mass_2(4)
+                        mass_2(3)=(1-survival_probability(i,1,include_addiction,0))*mass_2(3)
+                        mass_2(4)=(1-survival_probability(i,2,include_addiction,0))*mass_2(4)
             
                     else
             
-                        mass_2(3)=survival_probability(i,1,include_addiction)*mass_2(3)
-                        mass_2(4)=survival_probability(i,2,include_addiction)*mass_2(4)
+                        mass_2(3)=survival_probability(i,1,include_addiction,0)*mass_2(3)
+                        mass_2(4)=survival_probability(i,2,include_addiction,0)*mass_2(4)
                         
                     end if
                     
@@ -19384,7 +19512,7 @@
         if (have_probablistic_death==0) then
         
             survival_probability=1
-            survival_probability(life_span,:,:)=0
+            survival_probability(life_span,:,:,:)=0
             
             if (loop_count==0) then
             
@@ -19400,7 +19528,7 @@
                 
                 if (solve_transition_dynamics==0) then
             
-                    write(*,*) "survival_probability(",age_index,")=", survival_probability(age_index,1,0)
+                    write(*,*) "survival_probability(",age_index,")=", survival_probability(age_index,1,0,0)
                     
                 end if
                     
@@ -19414,7 +19542,7 @@
             
         do i=2,life_span
         
-            cohort_population(i)=cohort_population(i-1)*survival_probability(i-1,1,0)
+            cohort_population(i)=cohort_population(i-1)*survival_probability(i-1,1,0,0)
             
             total_population=total_population+cohort_population(i)
             
@@ -25865,6 +25993,11 @@
         ! rows, ages 26 to 85, and the last row's shape is nan because the
         ! difference that defines it has no next age; it is read as zero, which
         ! is right, since the SUD's excess mortality has gone by 85.
+        !
+        ! IDEMPOTENT, because it is now called from two places. It has to run
+        ! before build_mortality_multipliers, which lives in
+        ! initialize_variables_and_grids, and the original call sat in
+        ! GKKOC_intergenerational_employment_process, which runs after it.
 
         use Global_Vars
 
@@ -25874,6 +26007,8 @@
         real(8) :: shape_1,rr_1,d1_1,d2_1,d3_1
         character(len=400) :: header_1
         logical :: file_exists_1
+
+        if (mortality_profiles_loaded==1) return
 
         inquire(file="../data/us_mortality_multipliers.csv",exist=file_exists_1)
 
