@@ -1,7 +1,7 @@
 \setlength{\tabcolsep}{3pt}
 \begingroup\scriptsize
 \begin{longtable}{@{}lL{4.3cm}cL{6.6cm}r@{}}
-\caption{\normalsize Parameters specific to this paper}\label{tab:paperparams}\\
+\caption{\normalsize \textcolor{red}{The drug supply parameters}}\label{tab:paperparams}\\
 \toprule
 Parameter& Description& Set& Moment and source& Value \\
 \midrule
@@ -10,20 +10,6 @@ Parameter& Description& Set& Moment and source& Value \\
 Parameter& Description& Set& Moment and source& Value \\
 \midrule
 \endhead
-\multicolumn{5}{@{}l}{\emph{Recovery and treatment}} \\
-$\bar\pi_r$& Recovery when housed& Ext.& Ten year remission rate, Vaillant (1995)& 0.025 \\
-$g$& Treatment effect on recovery& Ext.& Odds ratio, Milby (2005)& 1.35 \\
-$\bar\tau^{u}$& Utility cost of treatment& Int.& Treatment take up, NSDUH 2023& \textemdash \\
-\addlinespace
-\multicolumn{5}{@{}l}{\emph{The mental illness chain}} \\
-$p_m$ & Prevalence the onset reproduces & Ext. & Share with serious mental illness, NSDUH 2023 & 5.5\% \\
-$\lambda_m$ & Annual chance of leaving SMI & Int. & SMI share of homeless, Gutwinski (2021) & \textemdash \\
-$\iota$& SUD multiplier on SMI onset& Ext.& Danish registers, Nielsen et al.\ (2017)& 2.00 \\
-$\mu_m$ & Recovery multiplier, SMI & Ext. & Dual diagnosis relapse, Bradizza (2006) & 0.82 \\
-$\kappa_{\phi m}$& Mortality multiplier, SMI& Ext.& Olfson et al.\ (2015)& 2.50 \\
-$\zeta_{DI}$& Disability replacement, SMI& Ext.& SSDI and SSI rates (SSA 2023)& 0.25 \\
-\addlinespace
-\multicolumn{5}{@{}l}{\emph{The drug market, and the value of life}} \\
 $\nu_1$& Drug supply shifter& Ext.& Normalisation, so $p_v=1$ in the benchmark& norm. \\
 $p_v$& Price of drugs& Ext.& Clears the drug market in the benchmark& 1.00 \\
 $\nu_2$ & Drug supply elasticity & Ext. & Elasticity 2; Hansen (2017), Chaloupka (1991) & 1.50 \\
