@@ -1,12 +1,16 @@
+% VALUES COME FROM code/stylized/calibrated.json AND THE STATS AT THAT
+% CALIBRATION, so they must be refreshed whenever the stylized model is
+% recalibrated. They were hardcoded here and went stale once already, reporting
+% the theta = 0.20 calibration after theta had moved to 0.23.
 \footnotesize
 \begin{tabular}{@{}cL{5.0cm}L{5.0cm}rrr@{}}
 \toprule
 Parameter & Description & Target moment & Data & Model & Value \\
 \midrule
-$\gamma$ & Weight on housing services & Housing over non drug spending & 26.80\% & 27.03\% & $0.301$ \\
-$\aleph$ & Flow value of being alive & Value of a statistical life & 80.0 & 80.0 & $2.899$ \\
-$b$ & Pull of the first unit of drugs & Drug participation rate & 5.13\% & 5.13\% & $0.00226$ \\
-$h_1$ & Housing services when homeless & Homelessness rate & 0.40\% & 0.43\% & $0.00630$ \\
-$\lambda$ & Addiction hazard per unit of use & Share of users who acquire a SUD & 33.2\% & 37.1\% & $173.2$ \\
+$\gamma$ & Weight on housing services & Housing over non drug spending & 26.80\% & \textcolor{red}{26.58\%} & \textcolor{red}{$0.289$} \\
+$\aleph$ & Flow value of being alive & Value of a statistical life & 80.0 & 80.0 & \textcolor{red}{$2.790$} \\
+$b$ & Pull of the first unit of drugs & Drug participation rate & 5.13\% & 5.13\% & \textcolor{red}{$0.00316$} \\
+$h_1$ & Housing services when homeless & Homelessness rate & 0.40\% & \textcolor{red}{0.42\%} & \textcolor{red}{$0.00573$} \\
+$\lambda$ & Addiction hazard per unit of use & Share of users who acquire a SUD & 33.2\% & \textcolor{red}{35.5\%} & \textcolor{red}{$132.6$} \\
 \bottomrule
 \end{tabular}
