@@ -920,9 +920,9 @@ and $s$, the SUD share of the homeless. Solved for: $\kappa_{\phi d}(j)$ and
 $\kappa_{\phi H}(j)$, one age profile from each equation. Picking the single
 number $\bar\kappa_{\phi d}$ settles both: the first equation turns it into
 $\kappa_{\phi d}(j)$ at every age, and the second then reads
-$\kappa_{\phi H}(j)$ off Baggett's ratio at every age. So the whole block has one
-free parameter, and the calibration chooses it while everything else is read from
-data.
+$\kappa_{\phi H}(j)$ off Baggett's ratio at every age. \new{So the whole block
+turns on that one number, and it is assigned from the data rather than
+calibrated, which leaves nothing here for the calibration to choose.}
 
 Undoing the mixture needs the SUD's own multiplier at each age. That is what
 $\sigma_d(j)$ supplies: the age profile of drug poisoning deaths from CDC WONDER 2023,
@@ -939,14 +939,19 @@ a share $1-s$ of it carries homelessness alone and a share $s$ carries the SUD a
 well. Dividing the observed ratio by it leaves the homelessness effect on its
 own.
 
-{\color{red}$\bar\kappa_{\phi d}$ is assigned, not calibrated, and this
-passage used to argue the opposite. The level comes from all cause standardised
-mortality ratios for opioid use disorder, which run $6$ to $10$, and the data
-supply the age profile as well. The drug price participation elasticity of
-$-0.63$ that used to pin it is now reported as a moment the model is not fitted
-to. Since the SUD mortality channel is the mechanism the whole policy experiment
-turns on, measuring it and letting the elasticity test it is stronger than
-inferring it and leaving the elasticity with nothing to say.}
+\new{The level is set at $\bar\kappa_{\phi d}=6.9$, so a household carrying
+the SUD faces close to seven times the death hazard at the age where the effect
+peaks. All cause standardised mortality ratios for opioid use disorder run $6$
+to $10$, of which overdose is roughly half, and $6.9$ sits at the lower end of
+that range, which is the conservative choice for a paper whose mechanism runs
+through mortality. Setting it from the data rather than calibrating it means the
+drug price participation elasticity is no longer a target. It is reported instead
+as a moment the model is not fitted to, and the test is whether the assigned
+level delivers an elasticity inside the range Saffer and Chaloupka (1999)
+estimate. That is the stronger use of it: the SUD mortality channel is the
+mechanism the whole policy experiment turns on, so measuring it and letting the
+elasticity test it beats inferring it and leaving the elasticity with nothing to
+say.}
 
 $\kappa_{\phi m}$ carries no age argument because the data give it basically
 none. Olfson et al.\ (2015) give all
@@ -966,17 +971,20 @@ separation rates and $\kappa_{ueH}$, $\kappa_{ued}$ and $\kappa_{uem}$ the
 multipliers for homelessness, the SUD and SMI, so each multiplier
 below one makes work simultaneously harder to find and easier to lose.
 
-\new{\paragraph{The child's income risk.} There is a third risk in the
-environment and it is borne mostly by someone who does not choose it. A
-parent who uses, or who ends up on the street, lowers the productivity its
-child is born with through $\delta_d$ and $\delta_h$
-in~\eqref{eq:fnewborn}. That is a risk to the household's own objective only
-to the extent that $\omega$ is positive, and $\omega$ is small, so the
-household weighs a fraction $\omega$ of it and the remaining $1-\omega$ falls
+\paragraph{The child's income risk.} There is a third risk in the
+environment and it is borne mostly by someone who does not choose it.
+\new{A parent with a SUD, or} one who ends up on the street, lowers the
+\new{productivity $y_{\text{child}}$ its
+child is born with, through $\delta_d$ and $\delta_h$ respectively, as shown
+in~\eqref{eq:fnewborn} in Section~\ref{sec:fnewbornsec}}. That is a risk to the
+household's own objective only
+to the extent that \new{$\omega$, the weight the parent places on its child's
+lifetime utility in~\eqref{eq:fbellman}, is positive. $\omega$ is small, so the
+household weighs a fraction $\omega$ of this risk and $1-\omega$ of it falls
 outside the problem entirely. It is therefore the one risk here that is
-principally an externality rather than a cost, which is what makes it a
+principally an externality rather than a pure personal cost}, which is what makes it a
 candidate for policy in a way that mortality and unemployment risk, both fully
-internalised, are not.}
+internalised, are not.
 
 \subsection{The voucher, and the two policies}
 
@@ -1071,37 +1079,35 @@ which is the object the expectation in~\eqref{eq:fbellman} is taken against.
 Putting it together, for $j=1,\dots,J$ and with $V(J{+}1,\cdot)$ given below,
 \begin{equation}\label{eq:fbellman}
 \begin{aligned}
-V(j,a,y,e,d,m,\eta)=\max_{\new{\{n,\,h',\,v,\,\tau,\,a'\}}}\ \Bigg\{\
+V(j,a,y,e,d,m,\eta)=\max_{\{n,\,h',\,v,\,\tau,\,a'\}}\ \Bigg\{\
 &\frac{\big[c^{1-\gamma-\theta}(h')^{\gamma}(v+b)^{\theta}\big]^{1-\sigma}}{1-\sigma}
 +\omega_{\ell}\frac{(1-n)^{1-\sigma_{\ell}}}{1-\sigma_{\ell}}
 +\aleph-\tau\bar\tau^{u}-\kappa_x H\\[2pt]
-&+\ \beta\,\phi(j,h',d,m)\!\!\int_{\new{\mathcal S}}\!\! V(j{+}1)(s')\,
+&+\ \beta\,\phi(j,h',d,m)\!\!\int_{\mathcal S}\!\! V(j{+}1)(s')\,
 \Gamma\big(\mathrm{d}s'\mid s,n,h',v,\tau\big)\\[2pt]
 &+\ \beta\,\big[1-\phi(j,h',d,m)\big]\,\omega\,
-\mathbb{E}\,V\big(\new{1},\,\new{0},\,y_{\text{child}},\,\new{e'},\,0,0,0\big)\Bigg\}
+\mathbb{E}\,V\big(1,\,0,\,y_{\text{child}},\,e',\,0,0,0\big)\Bigg\}
 \end{aligned}
 \end{equation}
-\new{The integral runs over next period's state
-$s'=(a',y,e',d',m',\eta')$. The second line is the household's own
-continuation and the third is the child's expected lifetime utility, entered at
-age one with zero assets and with its own employment status $e'$ drawn as any
-newborn's is.}
-
 subject to the budget~\eqref{eq:fbudget}, the income
 definitions~\eqref{eq:fincome} to~\eqref{eq:ftrans}, the choice
-set~\new{of dwellings }\eqref{eq:fchoice}, $\tau=0$ whenever $d=0$, $n=0$
+set of dwellings~\eqref{eq:fchoice}, $\tau=0$ whenever $d=0$, $n=0$
 whenever $j\ge J_R$ or
-$e\neq1$, $v=0$ whenever $\tau=1$, $a'\ge0$, \new{$c\ge F$ so that
-consumption never falls below the food stamp floor,} and $V(J{+}1,\cdot)=0$
+$e\neq1$, $v=0$ whenever $\tau=1$, $a'\ge0$, $c\ge F$ so that
+consumption never falls below the food stamp floor, and $V(J{+}1,\cdot)=0$
 with $\phi(J)=0$, so that at the last age the
-child is the whole continuation.
+child is the whole continuation. \new{The integral runs over next period's
+state $s'=(a',y,e',d',m',\eta')$; the second line of~\eqref{eq:fbellman} is the
+household's own continuation, and the third is the child's expected lifetime
+utility, entered at age one with zero assets and with its own employment status
+$e'$ drawn as any newborn's is.}
 
 A
 household that does not survive from $j$ to $j+1$ leaves a child, so the
 continuation is the survival weighted value of its own next period plus the death
 weighted value of the child's life, each discounted, with $y_{\text{child}}$
-\new{as defined in}~\eqref{eq:fnewborn}. \new{What that buys is a second route
-by which the drug and the dwelling reach the child.} $\phi(j,\cdot)$ itself
+as defined in~\eqref{eq:fnewborn}. \new{What that buys is a second route by
+which the household's own decisions, to use and to go unhoused, reach its} child. $\phi(j,\cdot)$ itself
 depends on $h'$ and,
 through $d$, on $v$: a household that uses raises the chance it is the child's
 term rather than its own that is realised, so the child enters the drug and
@@ -1112,30 +1118,30 @@ At $\omega=0$ death is
 worth zero and the damage a household does to its child is entirely external; at
 $\omega>0$ the household internalises a share $\omega$ of it, and only $1-\omega$
 remains external. Since the child's productivity depends on whether the parent
-carried a SUD or was homeless, and both depend on $v$ and $h'$, \new{the child
-term in}~\eqref{eq:fbellman} is
+carried a SUD or was homeless, and both depend on $v$ and $h'$, the child
+term in~\eqref{eq:fbellman} is
 what puts the child inside the parent's drug and housing decision.
 
-\new{\paragraph{How the choices separate, and where they do not.}} The problem
+\paragraph{\new{How the choices separate, and where they do not.}} The problem
 is solved by exact backward induction, and it is worth
 setting out how the choices separate, because one of them does not separate the
-way a Cobb-Douglas model usually allows. \new{Take hours, the dwelling and next
-period assets as given.} What is left to divide
+way a Cobb-Douglas model usually allows\new{, taking hours, the dwelling and next
+period assets as given}. What is left to divide
 between consumption and the drug is
 \begin{equation}\label{eq:fresource}
 x\;=\;y^{n}+a\;-\;p_r\,h'\,\mathbf{1}\{h'\neq h_1\}\;+\;V\!ch+F\;-\;a' ,
 \end{equation}
-so the budget~\eqref{eq:fbudget} reads $c+p_v v=x$ \new{and the whole of the
+so the budget~\eqref{eq:fbudget} reads $c+p_v v=x$ and the whole of the
 remaining problem is one number: how to split $x$ between $c$ and $v$, since
-either one determines the other.}
+either one determines the other.
 
-\new{Were the drug an ordinary good, one whose only consequence is the flow
+Were the drug an ordinary good, one whose only consequence is the flow
 utility it delivers this period, that split would follow from flow utility
-alone.}
+alone.
 It does not, because $v$ enters the transition as well as the utility: by
 \eqref{eq:fd} another unit of the drug also buys a higher chance of waking up
-next period with the disorder. So there are three terms in the \new{first order
-condition for $v$}, not
+next period with the disorder. So there are three terms in the first order
+condition for $v$, not
 two,
 \begin{equation}\label{eq:fcv}
 \underbrace{\frac{\theta}{b+v}\,\Lambda}_{\text{value of another unit}}
@@ -1145,34 +1151,34 @@ two,
 \underbrace{\lambda e^{-\lambda v}\Big[\,\mathbb E V\!\left(\cdot\,\middle|\,d'=0\right)-
 \mathbb E V\!\left(\cdot\,\middle|\,d'=1\right)\Big]}_{\text{the risk it adds}} ,
 \end{equation}
-where \new{$\Lambda=\big[c^{1-\gamma-\theta}(h')^{\gamma}(v+b)^{\theta}\big]^{1-\sigma}$
+where $\Lambda=\big[c^{1-\gamma-\theta}(h')^{\gamma}(v+b)^{\theta}\big]^{1-\sigma}$
 is the Cobb-Douglas bundle of~\eqref{eq:futil}. It multiplies the first two
 terms and not the third, because the third is a difference of continuation
 values and is therefore already in utils. Were it absent, $\Lambda$ would divide
 out of the condition entirely and the split would reduce to the usual
 Cobb-Douglas one; it is the third term that stops it cancelling, and that is why
 the marginal utility level matters here and not in an ordinary two good
-problem.} That third term is the marginal hazard $\pi_d'(v)=\lambda e^{-\lambda
+problem. That third term is the marginal hazard $\pi_d'(v)=\lambda e^{-\lambda
 v}$ times what the disorder costs, the gap between the two continuation values.
 This is Section~\ref{sec:stylized}'s mechanism inside the quantitative model:
 because $\pi_d$ rises in $v$, how much to use is not decided on the budget alone.
 
-\new{There are two cases in which the third term is zero, and in both the
-household faces no such trade off}: one
+There are two cases in which the third term is zero, and in both the
+household faces no such trade off: one
 that abstains, where $v=0$, and one that already carries the disorder, whose
 recovery hazard~\eqref{eq:frecover} does not depend on how much it uses. For both
 the condition is the Cobb-Douglas split in closed form,
 \begin{equation}\label{eq:fcvstatic}
-\new{c=\max\Big\{F,\ \frac{1-\gamma-\theta}{1-\gamma}\big(x+p_v b\big)\Big\}},
+c=\max\Big\{F,\ \frac{1-\gamma-\theta}{1-\gamma}\big(x+p_v b\big)\Big\},
 \qquad
-\new{v=\frac{x-c}{p_v}},
+v=\new{\max\Big\{0,\ }\frac{x-c}{p_v}\new{\Big\}},
 \end{equation}
 whose corner is the abstention decision: a household buys nothing when the
 Stone-Geary endowment already exceeds what it wants, which is how a large $b$
-deters use and is the threshold of Section~\ref{sec:problem}. \new{The outer
+deters use and is the threshold of Section~\ref{sec:problem}. The outer
 maximum on $c$ is the food stamp floor. Where it binds the Cobb-Douglas split no
 longer describes the allocation: consumption is held at $F$ and the drug takes
-what the budget leaves, so the floor changes behaviour and not only welfare.} Where the third
+what the budget leaves, so the floor changes behaviour and not only welfare. Where the third
 term is present the answer lies between~\eqref{eq:fcvstatic} and abstention,
 since risk can only push towards less, so it is found by a one dimensional search
 on that interval.
@@ -1243,7 +1249,7 @@ lowers aggregate drug use also lowers its price, and the cheaper drug offsets pa
 of the fall, so every effect on drug use below is smaller than it would be at a
 fixed price.
 
-\subsection{The law of motion and newborns}
+\subsection{The law of motion and newborns}\label{sec:fnewbornsec}
 
 Given the policy functions, the distribution over states evolves by pushing
 households through their choices and then through the shocks,
