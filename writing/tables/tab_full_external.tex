@@ -17,8 +17,8 @@ Parameter & Description & Source or rationale & Value \\
 \multicolumn{4}{@{}l}{\emph{Preferences and demographics}} \\
 $\sigma$ & Risk aversion & Attanasio and Weber (2010); the standard life cycle value & 2.00 \\
 $\sigma_{\ell}$ & Curvature on leisure & Frisch elasticity of $0.5$, Chetty (2012) & 3.00 \\
-$\new{\varepsilon(j)}$ & Deterministic age profile of efficiency\new{, varies with age} & Quadratic in age, fitted to the PSID and CPS hump & profile \\
-$\new{\bar\phi(j)}$ & Baseline survival\new{, varies with age} & SSA period life table, ages 26 to 85, the sexes combined by survivor weight & profile \\
+$\varepsilon(j)$ & Deterministic age profile of efficiency, varies with age & Quadratic in age, fitted to the PSID and CPS hump & profile \\
+$\bar\phi(j)$ & Baseline survival, varies with age & SSA period life table, ages 26 to 85, the sexes combined by survivor weight & profile \\
 $\rho_y,\sigma_y$ & Persistence and dispersion of log productivity & Storesletten, Telmer and Yaron (2004); the stochastic process is the robustness direction, the baseline holds $y$ fixed & 0.90, 0.20 \\
 $j_E$ & Maximum experimentation age & Reported with and without it & 55 \\
 \addlinespace
@@ -28,8 +28,6 @@ $\xi$ & Tax progressivity & Heathcote, Storesletten and Violante (2017) & 0.85 \
 $\tau_k$ & Capital income tax & US long run rate on capital gains and qualified dividends & 0.15 \\
 $\tau_{\ell}$ & Tax level & Clears the government budget & in eqm. \\
 $G$ & Other public spending & Residual at the benchmark, then held fixed so that policy is financed by $\tau_{\ell}$ & in eqm. \\
-$\chi_H$ & Fiscal cost per homeless household & Abramson and Van Nieuwerburgh (2024), the literally homeless figure & 0.4286 \\
-$\chi_D$ & Fiscal cost per household with a SUD & CEA (2017), about \$30{,}000 per person year & 0.212 \\
 $\kappa_x$ & Disamenity of the homelessness rate, headcount only & Loubi\`ere et al.\ (2020): \euro{}23 a year on average, $0.08$ percent of average earnings, to end homelessness; the \euro{}57 among those willing to pay anything is the top of the reported range & priced \\
 \addlinespace
 \multicolumn{4}{@{}l}{\emph{Income support and the voucher}} \\
@@ -45,9 +43,9 @@ $p_{\text{fp}}$ & False positive rate under Treatment First & Benchmark value, s
 \multicolumn{4}{@{}l}{\emph{Employment, the SUD and SMI}} \\
 $\bar\pi^{ue}$ & Job finding rate, annual & Krueger, Cramer and Cho (2014) & 0.55 \\
 $\kappa_{ueH}$ & Employment multiplier, homeless & Desmond and Gershenson (2016) & 0.80 \\
-$\new{\kappa_{\phi H}(j)}$ & Mortality multiplier, homeless\new{, varies with age} & Baggett et al.\ (2013); backed out age by age from~\eqref{eq:fhaz} & \new{4.41 at 26 to 1.09 at 85} \\
-$\kappa_{\phi m}$ & Mortality multiplier, SMI\new{, flat in age} & Olfson et al.\ (2015) & 2.50 \\
-$\bar\kappa_{\phi d}$ & Mortality multiplier, SUD, \new{the LEVEL at its peak age; it generates the age profile $\kappa_{\phi d}(j)$ through~\eqref{eq:fhaz}} & Midpoint of the all cause standardised mortality ratios reported for opioid use disorder, which run 6 to 10; the age shape is from CDC WONDER drug poisonings & 8.00 \\
+$\kappa_{\phi H}(j)$ & Mortality multiplier, homeless, varies with age & Baggett et al.\ (2013); backed out age by age from~\eqref{eq:fhaz} & 4.41 at 26 to 1.09 at 85 \\
+$\kappa_{\phi m}$ & Mortality multiplier, SMI, flat in age & Olfson et al.\ (2015) & 2.50 \\
+$\bar\kappa_{\phi d}$ & Mortality multiplier, SUD, the LEVEL at its peak age; it generates the age profile $\kappa_{\phi d}(j)$ through~\eqref{eq:fhaz} & Midpoint of the all cause standardised mortality ratios reported for opioid use disorder, which run 6 to 10; the age shape is from CDC WONDER drug poisonings & 8.00 \\
 $\bar\pi_r$ & Baseline recovery hazard when housed, annual & Vaillant (1995); bracketed by Fleury et al.\ (2016) & 0.025 \\
 $\mu_m$ & Recovery multiplier, SMI & Dual diagnosis relapse of $39.8$ against $26.4$ percent & 0.82 \\
 $g$ & Treatment effect on recovery & Odds ratio of $1.22$ for contingency management & 1.35 \\

@@ -14,14 +14,13 @@ Parameter & Description & Target moment & Source & Data & Model & Value \\
 Parameter & Description & Target moment & Source & Data & Model & Value \\
 \midrule
 \endhead
+$b$ & Stone-Geary endowment, constant across every state and choice & Drug participation rate & NSDUH 2024, ages 26+ & 5.13\% & \textemdash & \textemdash \\
+$h_{\text{HL}}$ & Service flow of homelessness & Homelessness rate & HUD point in time 2023, households & 0.399\% & \textemdash & \textemdash \\
+$\beta$ & Discount factor & Wealth over output & BEA fixed assets against GDP & 3.0 & \textemdash & \textemdash \\
+$\aleph$ & Flow value of being alive & Model implied value of a statistical life & Viscusi and Aldy (2003) & \$7.5m & \textemdash & \textemdash \\
 $\omega_{\ell}$ & Weight on leisure & Average hours worked & Guvenen et al.\ (2023) & 40\% & \textemdash & \textemdash \\
 $\gamma$ & Cobb-Douglas weight on housing & Aggregate housing cost over income & SCF 2022 & 21.2\% & \textemdash & \textemdash \\
 $\theta$ & Cobb-Douglas weight on drugs & Drug spending over income given a SUD & NSDUH and ADAM & 44\% & \textemdash & \textemdash \\
-$b$ & Stone-Geary endowment, constant across every state and choice & Drug participation rate & NSDUH 2024, ages 26+ & 5.13\% & \textemdash & \textemdash \\
-$\aleph$ & Flow value of being alive & Model implied value of a statistical life & Viscusi and Aldy (2003) & \$7.5m & \textemdash & \textemdash \\
-$\bar\tau^{u}$ & Utility cost of treatment & Treatment take up given a SUD & NSDUH 2023 & 24\% & \textemdash & \textemdash \\
-$\beta$ & Discount factor & Wealth over output & BEA fixed assets against GDP & 3.0 & \textemdash & \textemdash \\
-$h_{\text{HL}}$ & Service flow of homelessness & Homelessness rate & HUD point in time 2023, households & 0.399\% & \textemdash & \textemdash \\
 $\underline h$ & Smallest rental size & Share with housing costs above half of income & SCF 2022 & 17.49\% & \textemdash & \textemdash \\
 $\varsigma$ & Geometric spread of the rental sizes & Share with housing costs above $30$ percent of income & SCF 2022 & 40.62\% & \textemdash & \textemdash \\
 $\underline c$ & Food stamp consumption floor & Food stamps over labour income & USDA, SNAP outlays & 0.42\% & \textemdash & \textemdash \\
@@ -31,10 +30,11 @@ $\kappa_{ued}$ & Employment multiplier, SUD & Unemployment rate given a SUD & NS
 $\kappa_{uem}$ & Employment multiplier, SMI & Unemployment rate given SMI & NSDUH, by Bayes & 7.1\% & \textemdash & \textemdash \\
 $\rho_m$ & Productivity penalty of SMI, conditional on working & Earnings of workers with SMI relative to average & to be pinned in the data appendix & \textemdash & \textemdash & \textemdash \\
 $\rho_d$ & Productivity penalty of a SUD, conditional on working & Share of the homeless who are employed & to be pinned in the data appendix & about half & \textemdash & \textemdash \\
+$\bar\tau^{u}$ & Utility cost of treatment & Treatment take up given a SUD & NSDUH 2023 & 24\% & \textemdash & \textemdash \\
 $\lambda$ & SUD hazard per unit of use & SUD rate & NSDUH 2024, ages 26+ & 3.68\% & \textemdash & \textemdash \\
+$\lambda_m$ & Recovery rate from SMI, annual, flat in age; with the observed prevalence profile it implies the age varying onset $\text{onset}_m(j)$ of~\eqref{eq:fonsetage} & SMI share of the homeless & Gutwinski et al.\ (2021) & 25\% & \textemdash & \textemdash \\
 $\mu_H$ & Recovery multiplier, homeless & Housed against unhoused abstinence & Milby et al.\ (2005) & 1.473 & \textemdash & \textemdash \\
 $\omega$ & Weight on the child & Fall in drug use with a child present & NSDUH 2024, reweighted & 15.5\% & \textemdash & \textemdash \\
-$\lambda_m$ & Recovery rate from SMI, annual\new{, flat in age; with the observed prevalence profile it implies the age varying onset $\text{onset}_m(j)$ of~\eqref{eq:fonsetage}} & SMI share of the homeless & Gutwinski et al.\ (2021) & 25\% & \textemdash & \textemdash \\
 $\delta_h$ & Transmission penalty, parental homelessness & Set, not calibrated & Chetty, Hendren and Katz (2016) & 0.31 & \textemdash & \textemdash \\
 \bottomrule
 \end{longtable}

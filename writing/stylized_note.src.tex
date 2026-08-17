@@ -786,7 +786,7 @@ and $\varsigma>1$ the geometric spread between consecutive sizes.
 
 Homelessness then enters three separate equations: survival~\eqref{eq:fsurv},
 the employment transitions~\eqref{eq:femp} and the SUD recovery
-hazard~\eqref{eq:frecover}, through \new{$\kappa_{\phi H}(j)$} and $\kappa_{ueH}$
+hazard~\eqref{eq:frecover}, through $\kappa_{\phi H}(j)$ and $\kappa_{ueH}$
 in Section~\ref{sec:fcosts} and $\mu_H$ in Section~\ref{sec:fdrug}. It raises
 mortality, worsens both employment margins and lowers the chance of
 recovering from the SUD. Mental illness is the one thing it does not reach.
@@ -987,10 +987,10 @@ eligible, and a household with one keeps it while eligible, so unlike
 Section~\ref{sec:support} the voucher is persistent rather than redrawn each
 period. Eligibility is
 \begin{equation}\label{eq:felig}
-y^{g}+ra\;<\;\kappa_V\,\new{y^{\text{med}}}.
+y^{g}+ra\;<\;\kappa_V\,y^{\text{med}}.
 \end{equation}
 with $\kappa_V$ the eligibility cutoff expressed as a share of
-\new{median gross income $y^{\text{med}}$}.
+median gross income $y^{\text{med}}$.
 Under Housing First that is the whole rule. Under Treatment First the voucher is
 additionally lost with probability $p_{\text{det}}$ by a household that uses
 drugs or has a SUD, and
@@ -1186,15 +1186,14 @@ supply rather than only consumption.
 
 \subsection{The government}
 
-The government pays social security, \new{unemployment insurance},
+The government pays social security, unemployment insurance,
 disability, food stamps and
-vouchers, and bears a fiscal cost $\chi_H$ per homeless household and $\chi_D$
-per household with the SUD. \new{It also supplies a public good $G$ that does
+vouchers\new{, and supplies a public good $G$ that does
 not enter private consumption and is held fixed across simulations, so that
-policies are compared at a constant level of it.} It finances this with the two
+policies are compared at a constant level of it}. It finances this with the two
 taxes in~\eqref{eq:ftax} and
-the estates of the deceased, \new{with the level $\tau_{\ell}$ clearing the
-budget in every simulation},
+the estates of the deceased, with the level $\tau_{\ell}$ clearing the
+budget in every simulation,
 \begin{equation}\label{eq:fgovt}
 \underbrace{\textstyle\sum y^{g}-\tau_{\ell}\sum (y^{g})^{\xi}
 +\tau_k\sum ra+\text{estates}}_{\text{revenue}}
@@ -1202,38 +1201,28 @@ budget in every simulation},
 \underbrace{SS+UI+DI+F+V\!ch+G}_{\text{outlay}} .
 \end{equation}
 
-Equation~\eqref{eq:fgovt} \new{does not appear in the stylized model, and that
-is the most consequential difference between the two}. There, the two policies
+\new{In the stylized model} the two policies
 happen to cost the same and the comparison
 is unaffected. Here a policy that houses more households spends more,
-$\tau_{\ell}$ rises to pay for it, and the higher tax distorts \new{the labour
-supply condition~\eqref{eq:ffoc}} and
-saving for everyone, including the households the programme never reaches\new{,
-and it runs against Housing First}.
+$\tau_{\ell}$ rises to pay for it, and \new{the higher tax lowers the after tax
+return to an extra hour: it enters~\eqref{eq:ffoc} through
+$\partial x/\partial n$, which is net of the tax schedule
+in~\eqref{eq:ftax}, so hours fall and saving with them,} for everyone,
+including the households the programme never reaches,
+and it runs against Housing First.
 
 \subsection{The drug market}
 
-Drug production has cost \new{$C(S_v)=\frac{\nu_1}{\nu_2}S_v^{\nu_2}$, where
-$S_v$ is the aggregate quantity, written with its own symbol so it is not
-confused with the value function}, so supply satisfies
+Drug production has cost $C(S_v)=\frac{\nu_1}{\nu_2}S_v^{\nu_2}$\new{, where
+$S_v$ is the aggregate quantity. Supply satisfies}
 \begin{equation}\label{eq:fdrug}
-p_v=\nu_1 \new{S_v}^{\nu_2-1},
-\qquad \new{S_v}=\int v(s)\,\mathrm{d}\Phi(s),
+p_v=\nu_1 S_v^{\nu_2-1},
+\qquad S_v=\int v(s)\,\mathrm{d}\Phi(s),
 \end{equation}
-with price elasticity of supply $1/(\nu_2-1)$ and \new{$\nu_1$ normalised so
-that the quantity supplied equals the quantity demanded at the benchmark price}.
-\new{The supply elasticity and its range are set in
-Section~\ref{sec:fullcal}.}
-The perfectly elastic case is its upper end rather than the baseline, and it has a
-natural experiment behind it. In 2010 the
-reformulation of OxyContin pushed a very large mass of demand into heroin, enough
-to quadruple heroin death rates, and purity adjusted heroin prices did not rise;
-they fell slightly. A demand shift of that size leaving price flat is evidence
-that the curve is close to horizontal, which is why the top of the range deserves
-as much weight as the bottom. What a finite elasticity buys is that a policy which
-lowers aggregate drug use also lowers its price, and the cheaper drug offsets part
-of the fall, so every effect on drug use below is smaller than it would be at a
-fixed price.
+with price elasticity of supply $1/(\nu_2-1)$ and $\nu_1$ normalised so
+that the quantity supplied equals the quantity demanded at the benchmark
+price\new{, which is normalised to one}. \new{The supply elasticity, its range
+and the evidence behind them are set in Section~\ref{sec:fullcal}.}
 
 \subsection{The law of motion and newborns}\label{sec:fnewbornsec}
 
@@ -1245,7 +1234,7 @@ households through their choices and then through the shocks,
 \mathrm{d}\Phi_j(s)
 \qquad\text{for every measurable } \mathcal S' ,
 \end{equation}
-\new{together with the newborn inflow
+together with the newborn inflow
 \begin{equation}\label{eq:flomnew}
 \Phi_{1}(\mathcal S')\;=\;\int\big[1-\phi(j,\cdot)\big]\,
 \mathcal N\big(\mathcal S'\mid s\big)\,\mathrm{d}\Phi_j(s)
@@ -1253,69 +1242,54 @@ households through their choices and then through the shocks,
 \end{equation}
 where $\mathcal N$ places a newborn according to~\eqref{eq:fnewborn}, so that
 the mass of newborns equals the mass of the dead exactly and the two equations
-together conserve the population.}
+together conserve the population.
 
 Here $\phi(j,\cdot)$ is evaluated at the household's own $(h'(j,s),d,m)$. The mass that
 does not survive, plus the mass at $j=J$, is replaced by newborns at $j=1$ with
-zero assets, \new{clean, without SMI and without a voucher, and subject to the
-same unemployment shocks as anyone else}, whose
+zero assets, clean, without SMI and without a voucher, and subject to the
+same unemployment shocks as anyone else, whose
 productivity is drawn from the unconditional distribution $\Omega_y$ of
 permanent productivity across households scaled by the
-transmission penalties $\delta_d$ \new{for a child whose parent carried the SUD}
-and $\delta_h$ \new{for one whose parent was homeless},
+transmission penalties $\delta_d$ for a child whose parent carried the SUD
+and $\delta_h$ for one whose parent was homeless,
 \begin{equation}\label{eq:fnewborn}
 y_{\text{child}}\ \sim\ \Omega_y\ \text{ scaled by }\
 (1-\delta_d)^{\mathbf{1}\{\text{parent had the SUD}\}}\,
 (1-\delta_h)^{\mathbf{1}\{\text{parent was homeless}\}} .
 \end{equation}
-\new{The parent's status is read at death, which understates exposure, since a
-parent who acquired the
-SUD at forty and recovered at sixty leaves no mark; the resulting externality
-is therefore a lower bound.}
 
-\subsection{Stationary equilibrium}
 
-\new{A competitive equilibrium is a sequence of value functions
-$\{V_t(j,\cdot)\}$, policy functions
-$\{n_t(j,\cdot),h'_t(j,\cdot),v_t(j,\cdot),\tau_t(j,\cdot),a'_t(j,\cdot)\}$,
+\subsection{\new{Competitive equilibrium}}
+
+A competitive equilibrium is a sequence of value functions
+$\{V_t(j,\cdot)\}_{j=1}^{J}$, policy functions
+$\{n_t(j,\cdot),h'_t(j,\cdot),v_t(j,\cdot),\tau_t(j,\cdot),a'_t(j,\cdot)\}_{j=1}^{J}$,
 distributions $\{\Phi_t\}$, and prices, policies and aggregates
 $\big(\tau_{\ell t},\,p_{vt},\,G_t,\,\bar y_t,\,y^{\text{med}}_t,\,H_t\big)$
-satisfying the conditions below at every date. A stationary equilibrium is the
-special case in which all of them are constant, and it is what the results
-report; writing the definition for a sequence costs nothing here and is what a
-transition between two policies would need.} Formally, such an equilibrium
-satisfies
+such that, at every date $t$,
 
 \begin{enumerate}\setlength{\itemsep}{0.1em}\setlength{\parskip}{0em}
 \item the policy functions solve~\eqref{eq:fbellman} given its terminal
-condition, and $\{V(j,\cdot)\}$ are the associated values;
-\item $\Phi$ is invariant under the law of motion~\eqref{eq:flom} together with
-the newborn rule~\eqref{eq:fnewborn}, and the mass of newborns equals the mass of
-the deceased;
-\item the government budget~\eqref{eq:fgovt} holds at $\tau_{\ell}$;
-\item the drug market clears at $p_v$, so~\eqref{eq:fdrug} holds with
-\new{aggregate drug demand $S_v=\int v(s)\,\mathrm{d}\Phi$};
-\item \new{the public good $G$ is supplied at its assigned level};
-\item $\bar y$, \new{median gross income $y^{\text{med}}$} and the homelessness
-rate $H$ are the aggregates implied by $\Phi$.
+condition, and $\{V_t(j,\cdot)\}_{j=1}^{J}$ are the associated values;
+\item $\Phi_{t+1}$ follows from $\Phi_t$ by the law of motion~\eqref{eq:flom}
+together with the newborn rule~\eqref{eq:fnewborn} and~\eqref{eq:flomnew}, and
+the mass of newborns equals the mass of the deceased;
+\item the government budget~\eqref{eq:fgovt} holds at $\tau_{\ell t}$;
+\item the drug market clears at $p_{vt}$, so~\eqref{eq:fdrug} holds with
+aggregate drug demand $S_{vt}=\int v_t(s)\,\mathrm{d}\Phi_t$;
+\item the public good $G_t$ is supplied at its assigned level;
+\item $\bar y_t$, median gross income $y^{\text{med}}_t$ and the homelessness
+rate $H_t$ are the aggregates implied by $\Phi_t$.
 \end{enumerate}
 
-\new{Four} of those are genuine fixed points rather than accounting. $H$
-enters~\eqref{eq:futil}, so the homelessness rate is an argument of the utility
-function that the distribution itself determines. \new{$y^{\text{med}}$} enters
-eligibility~\eqref{eq:felig}, and in a skewed income distribution it
-sits well below the mean, so using the mean would materially overstate the
-eligible population. \new{$p_v$ is a third: a policy that changes how much is
-used moves the price, which feeds back into every household's use decision.} And
-$\tau_{\ell}$ is what makes the policy comparison a
-general equilibrium object at all: the two policies do not cost the same once take
-up and detection are imperfect, so they do not face the same tax, and the
-household problem is different under each for reasons that have nothing to do with
-the voucher rule itself.
+\new{A stationary equilibrium is the special case in which all of these are
+constant and $\Phi_{t+1}=\Phi_t$, which is what the calibration and the policy
+comparisons report. The sequence version is stated because the transition
+exercise in the results needs it.}
 
 \section{Calibrating the quantitative model}\label{sec:fullcal}
 
-{\color{red}The model has fifty eight parameters, and listing them one after
+The model has fifty eight parameters, and listing them one after
 another is exactly what the previous version did and what this section does not.
 Thirty seven are assigned, in Table~\ref{tab:fext}; twenty one are calibrated, in
 Table~\ref{tab:fint}, alongside $\delta_h$, which sits there but is set rather
@@ -1348,7 +1322,7 @@ participation elasticity, is deliberately not a target at all: it is held back t
 test the model rather than to fit it.
 
 The first stage matches nineteen parameters to nineteen moments of the
-stationary equilibrium; the second carries the remaining two.}
+stationary equilibrium; the second carries the remaining two.
 
 \paragraph{The same cliffs, and the same answer.} Three moments are step like and
 are bisected rather than stepped, for the reason Section~\ref{sec:cal} gives:
@@ -1360,7 +1334,7 @@ moves. The parameter to moment map is close to triangular and the sign of each
 parameter's effect on each moment is declared for every pair, so a mistaken sign shows
 up as a moment walking away from its target rather than as a silent failure.
 
-\paragraph{\new{The disamenity of homelessness.}}\label{sec:fleftout} {\color{red}The disamenity of aggregate homelessness is priced rather than assumed, and
+\paragraph{The disamenity of homelessness.}\label{sec:fleftout} The disamenity of aggregate homelessness is priced rather than assumed, and
 the evidence for it is thin enough to be worth stating exactly. Loubi\`ere
 et al.\ (2020) ask adults in eight European countries what they would pay in
 annual taxes to end homelessness through Housing First: the mean over all
@@ -1381,9 +1355,16 @@ what it can do is add to whichever policy houses more people, which is why
 reporting the range matters more than the point estimate. And it is the only
 place where a household's utility depends on an aggregate, which is what makes
 $H$ a genuine fixed point of the equilibrium rather than accounting.
-}
 
-{\color{red}\paragraph{The standard block.} The parameters in this paragraph are
+
+\new{\paragraph{How the tables are ordered.} Table~\ref{tab:fint} lists the
+calibrated parameters in the order this section takes them: the three bisected
+moments first, then the anchors, then the standard block, then the wage
+penalties, then treatment and the two hazards, and last the second stage and the
+one value that is set rather than calibrated. Table~\ref{tab:fext} is ordered by
+what assigning a value rests on, in the same order as the discussion below.}
+
+\paragraph{The standard block.} The parameters in this paragraph are
 not this paper's contribution and are not argued for at length; each is matched
 to the moment it plainly governs, and they are recorded so the calibration is
 reproducible rather than because anything turns on them.
@@ -1429,9 +1410,9 @@ regression.
 
 $\bar\tau^{u}$, the utility cost of treatment, is set to treatment take up among
 those with a SUD. It is the only parameter that moves the treatment decision, and
-take up is the only moment it moves.}
+take up is the only moment it moves.
 
-{\color{red}\paragraph{The assigned parameters, and what assigning them rests
+\paragraph{The assigned parameters, and what assigning them rests
 on.} Table~\ref{tab:fext} carries every value, its source and its data vintage.
 What matters is not the list but that "assigned" means four different things
 here, and only the last group is contestable.
@@ -1463,8 +1444,7 @@ ages at which drug use can begin and work ends. $\tau_{\ell}$ is listed among
 them but is not assigned at all: it is whatever clears the government budget, and
 it is the one value in the table that differs across policies.
 
-Set from programme administration: $\chi_H$ and $\chi_D$, the fiscal cost per
-homeless household and per household with the SUD; $p_{\text{test}}$ and
+Set from programme administration: $p_{\text{test}}$ and
 $c_{\text{test}}$, the frequency and unit cost of drug testing; and
 $p_{\text{det}}$ and $p_{\text{fp}}$, the detection and false positive rates that
 make Treatment First's condition imperfect. These four matter more than their
@@ -1488,7 +1468,35 @@ counterfactual.
 
 Three assigned values carry no discipline at all and are flagged rather than
 hidden: $g$, $\mu_m$ and $\nu_2$. Of these only $g$ carries a headline result,
-and it is reported across a range rather than at a point.}
+and it is reported across a range rather than at a point.
+
+{\color{red}\paragraph{Vintages, and one transfer that has to be defended.} Every
+source in both tables carries its wave, because a reader who cannot tell which
+SCF or which NSDUH was used cannot replicate the exercise: SCF 2022, NSDUH 2024
+for use and disorder and 2023 for SMI, TEDS-A 2022, HUD's 2023 point in time
+count, ACS 2023, CDC WONDER 2023, BLS 1994 to 2024.
+
+Three values are genuinely old, and rather than let the dates pass unremarked:
+Vaillant (1995) for the recovery hazard, Altonji, Hayashi and Kotlikoff (1997)
+for the altruism restriction, and Saffer and Chaloupka (1999) for the price
+elasticity. The last two are used as they should be, one to justify a modelling
+choice and one as a validation target rather than a calibration target, so
+neither carries a number into the model.
+
+The first does, and it needs defending, because a ten year recovery rate for
+alcoholism is not obviously the recovery rate for a substance use disorder among
+the homeless. Three things make the transfer narrower than it looks. It supplies
+$\bar\pi_r$, the recovery hazard \emph{when housed}, and not the rate for anyone
+on the street: the homeless rate is $\mu_H\bar\pi_r$, and $\mu_H$ is calibrated to
+Milby et al.\ (2005), a randomised trial on cocaine dependent homeless adults,
+which is exactly the population in question. So the number doing the work for the
+homeless comes from a trial on the homeless, not from Vaillant. The housed
+baseline is bracketed independently by Fleury et al.\ (2016), whose remission
+estimates for substance use disorders span it. And because $\bar\pi_r$ and $\mu_H$
+enter multiplicatively, an error in the baseline moves the housed and unhoused
+hazards together and leaves the housing gradient, which is what the policy
+comparison turns on, unchanged. The results are reported across the Fleury range
+regardless.}
 
 \paragraph{Anchors.} The discount factor targets aggregate wealth at three times
 output, with output measured as all factor income and transfers excluded, which
