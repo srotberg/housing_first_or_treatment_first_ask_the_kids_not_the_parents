@@ -336,6 +336,27 @@
         ! are coherent; this file follows the note.
         real(8), dimension(:), allocatable :: smi_prevalence_by_age
         real(8), dimension(:), allocatable :: smi_onset_by_age
+        ! THE SMALLEST lambda_m THE PROFILE ALLOWS.
+        !
+        ! The onset identity needs p(j+1) >= p(j)(1-lambda_m), so a declining
+        ! prevalence profile puts a FLOOR under lambda_m: below it no non negative
+        ! onset reproduces the profile, onset is clipped to zero at almost every
+        ! age, and the SMI state empties. Every SMI moment then reads exactly zero
+        ! whatever else is true.
+        !
+        ! It is a cliff and not a slope, because the profile declines at an almost
+        ! constant rate: 0.04408 at the shallowest age and 0.04419 at the
+        ! steepest, so all sixty ages cross within a thousandth of each other.
+        ! At lambda_m = 0.046 no age has a negative onset; at 0.044, fifty nine
+        ! of sixty do.
+        !
+        ! The calibration walks straight into it. The SMI share of the homeless
+        ! comes out below target, and a lower lambda_m is the right response,
+        ! since a stickier state lets SMI accumulate among the homeless. So the
+        ! update pushes lambda_m down until the state empties, at which point the
+        ! moment is zero regardless of lambda_m and the update pushes in the same
+        ! direction forever.
+        real(8) :: lambda_m_floor=0
 
         ! Calibrated: SMI share of the homeless, 25 percent, Gutwinski et al.
         ! (2021), pooling thirty nine studies. Start at the value code/simple
@@ -939,6 +960,14 @@
         real(8), dimension(life_span) :: shape_sud_profile=0
         real(8), dimension(life_span) :: rr_homeless_profile=0
         real(8), dimension(life_span) :: kappa_phi_d_by_age=1
+        ! SMI prevalence by age in the model, against the profile the onset
+        ! identity is built to reproduce. The aggregate cannot say whether a
+        ! shortfall is the newborn draw failing to arrive or the differential
+        ! mortality of SMI households eroding it with age, and those call for
+        ! opposite fixes. Read at age one it is the draw; read as a slope against
+        ! the profile it is the mortality.
+        real(8), dimension(life_span) :: model_smi_mass_by_age=0
+        real(8), dimension(life_span) :: model_mass_by_age=0
         real(8), dimension(life_span) :: kappa_phi_h_by_age=1
         ! ASSIGNED, at the midpoint of the literature range. All cause standardised
         ! mortality ratios for opioid use disorder run 6 to 10, so 8 is the middle
@@ -3572,7 +3601,7 @@
         
         integer :: financial_index,time_period,pay_mortgage_insurance_1,has_house,low_quality_market,is_homeless_1,&
             is_addicted_1,time_period_used,housing_status_index_used,financial_index_used,amortization_used,fin_frac_used,&
-            is_using_drugs
+            is_using_drugs,smi_age_1
         real(8) :: total_income,lived_in_size_used,labor_supply_used,value_function_used,&
             distribution_mass_used,frac_used,rent_to_income,income_to_avg_income,total_renters_to_consider,&
             bequest_1,bequest_2,housing_to_income_owners,housing_to_income_all,mortgage_to_income_owners,&
@@ -3656,6 +3685,8 @@
         model_mass_homeless_raw(time_period)=0
         model_mass_total_raw(time_period)=0
         model_mass_smi(time_period)=0
+        model_smi_mass_by_age(:)=0
+        model_mass_by_age(:)=0
         model_smi_and_homeless(time_period)=0
         model_smi_and_employed(time_period)=0
         model_homeless_labour_income(time_period)=0
@@ -4021,10 +4052,16 @@
 
                                     end if
 
+                                    model_mass_by_age(age_index)=&
+                                        model_mass_by_age(age_index)+distribution_mass_used
+
                                     if (smi_of(unemployment_index)>=1) then
 
                                         model_mass_smi(time_period)=&
                                             model_mass_smi(time_period)+distribution_mass_used
+
+                                        model_smi_mass_by_age(age_index)=&
+                                            model_smi_mass_by_age(age_index)+distribution_mass_used
 
                                         if (emp_of(unemployment_index)==1) then
 
@@ -5037,7 +5074,34 @@
             " inc_all=", model_all_labour_income(time_period), &
             " mass_all=", model_mass_total_raw(time_period)
 
-        write(*,*) "SMI prevalence in model=", model_mass_smi(time_period)/max(model_mass_total_raw(time_period),10.d0**(-12)), &
+        ! THE DENOMINATOR MUST BE THE SAME POPULATION AS THE NUMERATOR.
+        ! model_mass_total_raw counts working age households only, because the
+        ! homeless income share needs that base, while model_mass_smi counts every
+        ! age, so their ratio is not a prevalence of anything. The by age masses
+        ! give the right total and also say WHERE a shortfall is.
+        if ((number_of_smi_states>1) .AND. (allocated(smi_prevalence_by_age))) then
+
+            write(*,*) "SMI prevalence by age, model against profile:"
+
+            do smi_age_1=1,life_span,10
+
+                write(*,'(A,I3,A,F9.5,A,F9.5)') "   age ", smi_age_1, &
+                    "  model=", model_smi_mass_by_age(smi_age_1)/&
+                    max(model_mass_by_age(smi_age_1),10.d0**(-12)), &
+                    "  profile=", smi_prevalence_by_age(smi_age_1)
+
+            end do
+
+            write(*,*) "SMI prevalence all ages, model=", &
+                sum(model_smi_mass_by_age(:))/max(sum(model_mass_by_age(:)),10.d0**(-12)), &
+                " profile at the model's age weights=", &
+                sum(smi_prevalence_by_age(:)*model_mass_by_age(:))/&
+                max(sum(model_mass_by_age(:)),10.d0**(-12))
+
+        end if
+
+        write(*,*) "SMI mass over the working age base (not a prevalence)=", &
+            model_mass_smi(time_period)/max(model_mass_total_raw(time_period),10.d0**(-12)), &
             " onset(1)=", smi_onset_by_age(1), " onset(30)=", smi_onset_by_age(30), " lambda_m=", lambda_m
         write(*,*) "SMI share of homeless=", model_smi_share_of_homeless(time_period), &
             " employment rate given SMI=", model_employment_rate_given_smi(time_period)
@@ -26094,8 +26158,27 @@
 
         close(75)
 
+        ! The floor, from the profile itself rather than a hardcoded guess.
+        lambda_m_floor=0
+
+        do i_1=1,life_span-1
+
+            if (smi_prevalence_by_age(i_1)>10.d0**(-12)) then
+
+                lambda_m_floor=max(lambda_m_floor,&
+                    1.d0-smi_prevalence_by_age(i_1+1)/smi_prevalence_by_age(i_1))
+
+            end if
+
+        end do
+
+        ! A small margin, so onset is strictly positive rather than exactly zero
+        ! at the steepest age.
+        lambda_m_floor=lambda_m_floor+10.d0**(-3)
+
         write(*,*) "SMI prevalence, first and last=", &
             smi_prevalence_by_age(1), smi_prevalence_by_age(life_span)
+        write(*,*) "lambda_m floor implied by the profile=", lambda_m_floor
 
     end subroutine
 
@@ -27901,9 +27984,27 @@
 
                     if ((lambda_m_adjuster>0) .AND. (number_of_smi_states>1)) then
 
+                        ! THE FLOOR IS THE PROFILE'S, NOT 0.001. Below
+                        ! lambda_m_floor the onset identity has no non negative
+                        ! solution, the SMI state empties, and every SMI moment
+                        ! reads zero, so the loop cannot recover: the moment stops
+                        ! responding to the parameter and the update keeps pushing
+                        ! the same way. Stopping at the floor keeps the model
+                        ! interpretable and makes the tension visible instead.
                         lambda_m=min(max(lambda_m+lambda_m_adjuster*&
                             (model_smi_share_of_homeless(1)-smi_share_of_homeless_data),&
-                            0.001d0),0.5d0)
+                            lambda_m_floor),0.5d0)
+
+                        if (lambda_m<=lambda_m_floor+10.d0**(-9)) then
+
+                            write(*,*) "lambda_m IS AT ITS FLOOR", lambda_m_floor, &
+                                " and the SMI share of the homeless is", &
+                                model_smi_share_of_homeless(1), " against a target of", &
+                                smi_share_of_homeless_data
+                            write(*,*) "   the profile cannot deliver this moment: the prevalence path, the onset"
+                            write(*,*) "   identity and this target are not mutually consistent."
+
+                        end if
 
                         distance_lambda_m=&
                             abs(model_smi_share_of_homeless(1)-smi_share_of_homeless_data)
