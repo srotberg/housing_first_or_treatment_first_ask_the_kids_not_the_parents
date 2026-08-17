@@ -1313,31 +1313,6 @@ up and detection are imperfect, so they do not face the same tax, and the
 household problem is different under each for reasons that have nothing to do with
 the voucher rule itself.
 
-\subsection{The disamenity of homelessness}\label{sec:fleftout}
-
-The disamenity of aggregate homelessness is priced rather than assumed, and
-the evidence for it is thin enough to be worth stating exactly. Loubi\`ere
-et al.\ (2020) ask adults in eight European countries what they would pay in
-annual taxes to end homelessness through Housing First: the mean over all
-respondents is \euro{}23 a year, and \euro{}57 among the $42$ percent willing to
-pay anything, which is $0.08$ and $0.20$ percent of average annual earnings.
-$\kappa_x$ is set so that households in the model would pay the first of those to
-move $H$ to zero, and the second is the top of the range the results are reported
-across.
-
-The disamenity is on the headcount alone. There is no extra weight on the
-homeless who happen to carry a SUD, and that is deliberate: the survey evidence
-asks what people would pay to end \emph{homelessness}, so that is the object
-priced, and loading the SUD into the same term would price something the
-evidence was not about.
-
-Two things follow. The term is small, so it cannot by itself decide a ranking;
-what it can do is add to whichever policy houses more people, which is why
-reporting the range matters more than the point estimate. And it is the only
-place where a household's utility depends on an aggregate, which is what makes
-$H$ a genuine fixed point of the equilibrium rather than accounting.
-
-%======================================================================
 \section{Calibrating the quantitative model}\label{sec:fullcal}
 
 Two stages, and they are different exercises. The first matches a cross section
@@ -1395,6 +1370,122 @@ bisected at the head of each sweep, in partial equilibrium, before anything else
 moves. The parameter to moment map is close to triangular and the sign of each
 parameter's effect on each moment is declared for every pair, so a mistaken sign shows
 up as a moment walking away from its target rather than as a silent failure.
+
+\paragraph{\new{The disamenity of homelessness.}}\label{sec:fleftout} {\color{red}The disamenity of aggregate homelessness is priced rather than assumed, and
+the evidence for it is thin enough to be worth stating exactly. Loubi\`ere
+et al.\ (2020) ask adults in eight European countries what they would pay in
+annual taxes to end homelessness through Housing First: the mean over all
+respondents is \euro{}23 a year, and \euro{}57 among the $42$ percent willing to
+pay anything, which is $0.08$ and $0.20$ percent of average annual earnings.
+$\kappa_x$ is set so that households in the model would pay the first of those to
+move $H$ to zero, and the second is the top of the range the results are reported
+across.
+
+The disamenity is on the headcount alone. There is no extra weight on the
+homeless who happen to carry a SUD, and that is deliberate: the survey evidence
+asks what people would pay to end \emph{homelessness}, so that is the object
+priced, and loading the SUD into the same term would price something the
+evidence was not about.
+
+Two things follow. The term is small, so it cannot by itself decide a ranking;
+what it can do is add to whichever policy houses more people, which is why
+reporting the range matters more than the point estimate. And it is the only
+place where a household's utility depends on an aggregate, which is what makes
+$H$ a genuine fixed point of the equilibrium rather than accounting.
+}
+
+{\color{red}\paragraph{The rest of the first stage, parameter by parameter.} The
+paragraphs above cover what is new or awkward. For completeness, every remaining
+first stage parameter and the moment that identifies it:
+
+$\omega_{\ell}$, the weight on leisure, is set to average hours worked. It is the
+only parameter that moves hours directly, and hours enter no other target, so it
+is identified whatever else is going on.
+
+$\gamma$ and $\theta$, the Cobb-Douglas weights on housing and on the drug, are
+set to the aggregate housing share of expenditure and to drug spending over
+income conditional on a SUD. Each is the expenditure share its own parameter
+governs, which is what makes them the cleanest pair in the table. Note the
+direction: the rental grid is quoted from the data and $\gamma$ is calibrated,
+not the reverse.
+
+$\underline h$ and $\varsigma$, the smallest rental and the geometric spread of
+the rental sizes, are set to the share of renters spending more than half and
+more than thirty percent of income on housing. Two points on the same
+distribution pin a level and a spread, which is exactly what these two are.
+
+$\underline c$, the food stamp floor, is set to food stamp outlays over labour
+income, and $\pi_V$, the voucher lottery probability, to recipients over the
+income eligible. Both are programme sizes matched to programme spending.
+
+$\bar\pi^{eu}$ is set to the unemployment rate and $\kappa_{ued}$ to the
+unemployment rate among those with a SUD, so the baseline separation rate is
+identified by the aggregate and the multiplier by the gap between the two.
+$\kappa_{uem}$ is the same construction for SMI, set to the employment rate given
+SMI.
+
+$\rho_m$ and $\rho_d$, the productivity penalties for SMI and for the SUD
+conditional on working, are set to the earnings of the homeless relative to
+average and to the employed share of the homeless. These two need saying
+carefully, because they are the reason the model can produce homelessness among
+people who work. An effect on the employment margin alone makes every homeless
+household jobless, and about half are not; it is the wage penalty that generates
+households poor enough to be priced out while still employed. The evidence on
+this margin is contested, with parts of the older literature finding positive
+effects for casual use, which is why both are identified from employment and
+income composition among the homeless rather than assigned from a wage
+regression.
+
+$\bar\tau^{u}$, the utility cost of treatment, is set to treatment take up among
+those with a SUD. It is the only parameter that moves the treatment decision, and
+take up is the only moment it moves.}
+
+{\color{red}\paragraph{The assigned parameters.} Table~\ref{tab:fext} lists every
+value set outside the model with the source it comes from. Most are conventional
+and need no discussion here, but the groups differ in what "assigned" means and
+that is worth separating.
+
+Standard and taken from the literature: $\sigma_{\ell}$, the curvature on
+leisure, which with $\omega_{\ell}$ delivers the Frisch elasticity; $\rho_y$ and
+$\sigma_y$, the persistence and dispersion of permanent productivity;
+$\varepsilon_j$, the deterministic age profile of earnings; $\bar\phi_j$, the
+baseline survival profile from the SSA life table; and $\tau_k$, the tax rate on
+capital income.
+
+Institutional, and set by statute rather than estimated: $\kappa_V$, the voucher
+eligibility cutoff as a share of $y^{\text{med}}$; $\kappa_r$, the tenant
+contribution rate; $\psi$ and $\bar y$, the replacement rate and cap for
+unemployment insurance; $\zeta_{DI}$ for disability; and $j_E$ and $j_R$, the
+ages at which drug use can begin and work ends. $\tau_{\ell}$ is listed among
+them but is not assigned at all: it is whatever clears the government budget, and
+it is the one value in the table that differs across policies.
+
+Set from programme administration: $\chi_H$ and $\chi_D$, the fiscal cost per
+homeless household and per household with the SUD; $p_{\text{test}}$ and
+$c_{\text{test}}$, the frequency and unit cost of drug testing; and
+$p_{\text{det}}$ and $p_{\text{fp}}$, the detection and false positive rates that
+make Treatment First's condition imperfect. These four matter more than their
+size suggests, because a conditional policy that detected perfectly would be a
+different policy.
+
+Transition rates with a single source each: $\bar\pi^{ue}$, the job finding rate;
+$\kappa_{ueH}$, the employment multiplier for homelessness; $\bar\pi_r$, the
+baseline recovery hazard when housed; $\mu_m$, the recovery multiplier for SMI;
+$\lambda_m$'s counterpart $\iota$, the multiplier on SMI onset for a household
+carrying the SUD; and $g$, the treatment effect on recovery.
+
+The drug market: $\nu_2$ sets the supply elasticity at $2$, the middle of a range
+running from about $0.7$ to about $4$, since there is no direct estimate for an
+illicit drug and the closest legal markets bracket it: the Washington State
+marijuana reform implies roughly $0.79$, the cigarette and gasoline literatures
+nearer $3.6$. The range itself is reported rather than the point alone. $\nu_1$
+is then a normalisation, chosen so that supply equals demand at $p_v=1$ in the
+benchmark, so $p_v$ is one by construction there and free to move in every
+counterfactual.
+
+Three assigned values carry no discipline at all and are flagged rather than
+hidden: $g$, $\mu_m$ and $\nu_2$. Of these only $g$ carries a headline result,
+and it is reported across a range rather than at a point.}
 
 \paragraph{Anchors.} The discount factor targets aggregate wealth at three times
 output, with output measured as all factor income and transfers excluded, which
