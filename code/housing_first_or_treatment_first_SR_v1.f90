@@ -3185,7 +3185,7 @@
             
         else
         
-            if ((unemployment_index_1==1) .OR. ((sud_of(unemployment_index_1)==1 .AND. emp_of(unemployment_index_1)==1))) then
+            if ((emp_of(unemployment_index_1)==1)) then
                         
                 income_1=labor_supply_1*&
                     employment_grid(age_index,employment_index_1)*&
@@ -3870,7 +3870,7 @@
                                     end if
                                                                                                    
                                     if ((in_retirement==0) .AND.&
-                                        ((unemployment_index==1) .OR. ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==1)))) then
+                                        ((emp_of(unemployment_index)==1))) then
                                                             
                                         model_output(time_period)=model_output(time_period)+&
                                             (labor_supply_used*employment_grid(age_index,employment_index)*&
@@ -3902,9 +3902,7 @@
                                                                                                                     
                                     end if
                                     
-                                    if ((unemployment_index==2) .OR. ((sud_of(unemployment_index)==0 .AND. emp_of(unemployment_index)==3)) .OR. &
-                                       ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==2)) .OR. &
-                                       ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==3))) then
+                                    if ((emp_of(unemployment_index)>1)) then
                                     
                                         model_fraction_unemployed(time_period)=&
                                             model_fraction_unemployed(time_period)+distribution_mass_used
@@ -4017,8 +4015,7 @@
                                             profile_of_chronic_homeless(time_period,1)+&
                                             age_index*distribution_mass_used
                                             
-                                        if ((unemployment_index==1) .OR. &
-                                            ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==1))) then
+                                        if ((emp_of(unemployment_index)==1)) then
                                             
                                         else
                                             
@@ -4028,9 +4025,7 @@
                                                 
                                         end if
                                         
-                                        if ((unemployment_index==1) .OR. (unemployment_index==3) .OR. &
-                                            ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==1)) .OR. &
-                                            ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==3))) then
+                                        if (((emp_of(unemployment_index)==1) .OR. (emp_of(unemployment_index)==3))) then
                                             
                                         else
                                             
@@ -4632,8 +4627,7 @@
                                     
                                     end if
                                     
-                                    if ((in_retirement==0) .AND. ((unemployment_index==1) .OR. &
-                                       ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==1)))) then
+                                    if ((in_retirement==0) .AND. ((emp_of(unemployment_index)==1))) then
                                     
                                         model_total_workers(time_period)=model_total_workers(time_period)+distribution_mass_used
                                         
@@ -4686,7 +4680,7 @@
                                     
                                     else
                                     
-                                        if ((unemployment_index==1) .OR. ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==1))) then
+                                        if ((emp_of(unemployment_index)==1)) then
                                         
                                             model_average_income(time_period)=model_average_income(time_period)+&
                                                 labor_supply_used*employment_grid(age_index,employment_index)*&
@@ -8813,8 +8807,7 @@
                                     
                                     else
                                     
-                                        if ((unemployment_index==1) .OR. &
-                                            ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==1))) then
+                                        if ((emp_of(unemployment_index)==1)) then
                                         
                                             average_income(time_period,employment_index_to_use)=&
                                                 average_income(time_period,employment_index_to_use)+&
@@ -10296,7 +10289,7 @@
                                         
                                         else
                                         
-                                            if ((unemployment_index==1) .OR. ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==1))) then
+                                            if ((emp_of(unemployment_index)==1)) then
                                             
                                                 income_by_age_renter(time_period,age_index)=&
                                                     income_by_age_renter(time_period,age_index)+&
@@ -11656,8 +11649,7 @@
         is_working_1=1
         
         if ((in_retirement==1) .OR. &
-            ((unemployment_index>1) .AND. (sud_of(unemployment_index)==0)) .OR. &
-            ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)>1))) then
+            (emp_of(unemployment_index)>1)) then
         
             is_working_1=0
             
@@ -12231,8 +12223,7 @@
         is_working_1=1
         
         if ((in_retirement==1) .OR. &
-            ((unemployment_index>1) .AND. (sud_of(unemployment_index)==0)) .OR. &
-            ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)>1))) then
+            (emp_of(unemployment_index)>1)) then
         
             is_working_1=0
             
@@ -12793,8 +12784,7 @@
         is_working_1=1
         
         if ((in_retirement==1) .OR. &
-            ((unemployment_index>1) .AND. (sud_of(unemployment_index)==0)) .OR. &
-            ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)>1))) then
+            (emp_of(unemployment_index)>1)) then
         
             is_working_1=0
             
@@ -12947,7 +12937,7 @@
                      
                     if (labor_supply_2>0.4) then 
                     if ((in_retirement==0) .AND. (fixed_labor_supply_at_benchmark==0) .AND. &
-                        ((unemployment_index==1) .OR. ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==1)))) then
+                        ((emp_of(unemployment_index)==1))) then
                                             
                         x_1=2
                                             
@@ -13201,8 +13191,7 @@
         is_working_1=1
         
         if ((in_retirement==1) .OR. &
-            ((unemployment_index>1) .AND. (sud_of(unemployment_index)==0)) .OR. &
-            ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)>1))) then
+            (emp_of(unemployment_index)>1)) then
         
             is_working_1=0
             
@@ -13369,7 +13358,7 @@
                                    
                                 if (labor_supply_2>0.4) then
                                 if ((in_retirement==0) .AND. (fixed_labor_supply_at_benchmark==0).AND. &
-                                    ((unemployment_index==1) .OR. ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==1)))) then
+                                    ((emp_of(unemployment_index)==1))) then
                 
                                     x_1=2
                                                                 
@@ -13628,8 +13617,7 @@
         is_working_1=1
         
         if ((in_retirement==1) .OR. &
-            ((unemployment_index>1) .AND. (sud_of(unemployment_index)==0)) .OR. &
-            ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)>1))) then
+            (emp_of(unemployment_index)>1)) then
         
             is_working_1=0
             
@@ -13748,7 +13736,7 @@
                       
                     if (labor_supply_2>0.4) then
                     if ((in_retirement==0) .AND. (fixed_labor_supply_at_benchmark==0) .AND. &
-                        ((unemployment_index==1) .OR. ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==1)))) then
+                        ((emp_of(unemployment_index)==1))) then
                     
                         x_1=1
                 
@@ -16458,7 +16446,7 @@
             consumption_choice_1=(1-frac_spent_on_addiction_2)*total_consumption_choice_1
                             
             if ((in_retirement==0) .AND. (fixed_labor_supply_at_benchmark==0) .AND.&
-                ((unemployment_index==1) .OR. ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==1)))) then
+                ((emp_of(unemployment_index)==1))) then
                                             
                 x_1=ownership_status_index_1+1
         
@@ -19528,25 +19516,115 @@
         ! to agree on every index in the grid. This runs once at startup and
         ! stops the model if they do not, so the rewrite is verified rather than
         ! asserted. At number_of_smi_states = 2 the old forms are WRONG by
-        ! construction, which is the whole point, so the comparison is only made
-        ! at one.
-    
+        ! construction, which is the whole point, so that comparison is only
+        ! made at one.
+        !
+        ! THAT GUARD IS ALSO HOW A REAL BUG SURVIVED, so there is now a second
+        ! block that runs at every grid size.
+        !
+        ! The accessor rewrite replaced the simple tests and left the COMPOSITE
+        ! ones enumerating index values: "employed" was written as
+        !
+        !     index == 1  .OR.  (sud_of == 1 .AND. emp_of == 1)
+        !
+        ! which at one SMI state is exactly {1,4} and correct, and at two states
+        ! is {1,7,10} and misses index 4, the household that is EMPLOYED and
+        ! carries SMI without a SUD. That household was handed zero labour
+        ! income by calculate_income and counted as not working everywhere else,
+        ! which is precisely the population the SMI calibration targets are
+        ! about. Eighteen tests were wrong in this way and the run produced
+        ! numbers throughout.
+        !
+        ! The check below is written on CARDINALITIES rather than on membership,
+        ! because that is what a composite test gets wrong: any predicate that
+        ! partitions on employment alone must split the grid into three equal
+        ! blocks whatever the SMI grid size, and a test that forgets a state
+        ! lands a block short. It would have failed on the old forms at two
+        ! states, which is the test that was missing.
+
         use Global_Vars
-        
+
         implicit none
-        
-        integer :: i_1,bad_1
-        
-        if (number_of_smi_states/=1) then
-        
-            write(*,*) "index map: not checked, number_of_smi_states=", number_of_smi_states
-            
-            return
-            
-        end if
-        
+
+        integer :: i_1,bad_1,count_emp_1,count_ui_1,count_out_1,count_smi_1,count_sud_1
+        integer :: expected_block_1
+
         bad_1=0
-        
+
+        count_emp_1=0
+        count_ui_1=0
+        count_out_1=0
+        count_smi_1=0
+        count_sud_1=0
+
+        do i_1=1,unemployment_grid_size
+
+            if (emp_of(i_1)==1) count_emp_1=count_emp_1+1
+            if (emp_of(i_1)==3) count_ui_1=count_ui_1+1
+            if (emp_of(i_1)>1) count_out_1=count_out_1+1
+            if (smi_of(i_1)==1) count_smi_1=count_smi_1+1
+            if (sud_of(i_1)==1) count_sud_1=count_sud_1+1
+
+            ! The round trip, which is the one identity that has to hold at
+            ! every grid size.
+            if (idx_of(emp_of(i_1),smi_of(i_1),sud_of(i_1))/=i_1) bad_1=bad_1+1
+
+            ! Every accessor in range.
+            if ((emp_of(i_1)<1) .OR. (emp_of(i_1)>3)) bad_1=bad_1+1
+            if ((smi_of(i_1)<0) .OR. (smi_of(i_1)>(number_of_smi_states-1))) bad_1=bad_1+1
+            if ((sud_of(i_1)<0) .OR. (sud_of(i_1)>1)) bad_1=bad_1+1
+
+        end do
+
+        expected_block_1=unemployment_grid_size/3
+
+        ! The employment partition holds at every configuration, since the grid
+        ! is three employment states however many factors are folded around them.
+        if (count_emp_1/=expected_block_1) bad_1=bad_1+1
+        if (count_ui_1/=expected_block_1) bad_1=bad_1+1
+        if (count_out_1/=(2*expected_block_1)) bad_1=bad_1+1
+
+        ! The SUD and SMI blocks only exist when the SUD is in the model: with
+        ! include_addiction = 0 the grid is three states and carries neither,
+        ! whatever number_of_smi_states happens to say. Checking them
+        ! unconditionally would abort a configuration that is in fact correct.
+        if (include_addiction==1) then
+
+            if (count_smi_1/=((number_of_smi_states-1)*unemployment_grid_size/number_of_smi_states)) bad_1=bad_1+1
+            if (count_sud_1/=(unemployment_grid_size/2)) bad_1=bad_1+1
+
+        else
+
+            if (count_smi_1/=0) bad_1=bad_1+1
+            if (count_sud_1/=0) bad_1=bad_1+1
+
+        end if
+
+        if (bad_1>0) then
+
+            write(*,*) "INDEX MAP IS WRONG at number_of_smi_states=", number_of_smi_states
+            write(*,*) "mismatches:", bad_1
+            write(*,*) "employed=", count_emp_1, " on UI=", count_ui_1, &
+                " not employed=", count_out_1, " expected block=", expected_block_1
+            write(*,*) "with SMI=", count_smi_1, " with SUD=", count_sud_1
+
+            stop
+
+        end if
+
+        write(*,*) "index map: accessors consistent at number_of_smi_states=", &
+            number_of_smi_states, " employed block=", count_emp_1
+
+        if (number_of_smi_states/=1) then
+
+            write(*,*) "index map: threshold comparison not made, number_of_smi_states=", number_of_smi_states
+
+            return
+
+        end if
+
+        bad_1=0
+
         do i_1=1,unemployment_grid_size
         
             if ((sud_of(i_1)==1) .NEQV. (i_1>threshold_addiction_index)) bad_1=bad_1+1

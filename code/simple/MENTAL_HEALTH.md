@@ -131,6 +131,48 @@ First" programmes in practice treat both, this is a real gap.
 
 ---
 
+## 4a. The bug that adding the state introduced, and how it hid
+
+Worth recording separately, because it was invisible in every output and it
+corrupted exactly the moments the SMI parameters are calibrated to.
+
+The joint state folds employment, SMI and the SUD into one index,
+`index = 3*number_of_smi_states*d + 3*m + e`. Tests that used to ask "is this
+household employed?" were written for the six state grid, where the employed
+states are `{1, 4}`, as
+
+    index == 1  .OR.  (sud_of(index) == 1 .AND. emp_of(index) == 1)
+
+At one SMI state that is exactly `{1, 4}` and correct. At two states the employed
+states are `{1, 4, 7, 10}` and the test returns `{1, 7, 10}`. The state it misses
+is index 4: **employed, carrying SMI, no SUD** — which is most of the employed
+SMI population, since most people with SMI do not have a co-occurring drug
+disorder.
+
+That household was handed **zero labour income** by `calculate_income` and
+counted as not working everywhere else. So the employment rate given SMI, the
+homeless income share, and the SMI share of the homeless — the three moments that
+identify `mh_recover`, `kappa_ue_m` and `prod_pen_m` — were all being measured
+against a population a quarter of whose employed members had been zeroed out.
+Eighteen tests were wrong in this way and the model ran and printed numbers
+throughout.
+
+**Why the existing check did not catch it.** `verify_index_map` compares the
+accessor forms against the old threshold forms, and it skips when
+`number_of_smi_states /= 1`, on the correct reasoning that the old forms are
+wrong at two states by construction. The composite tests were never rewritten,
+so the one configuration where they were wrong was the one configuration the
+check declined to look at.
+
+The fix is that every such test now goes through `emp_of` alone, and
+`verify_index_map` has a second block that runs at **every** grid size and checks
+**cardinalities** rather than membership: any predicate that partitions on
+employment must split the grid into three equal blocks whatever the SMI grid
+size, so a test that forgets a state lands a block short. That check fails on the
+old forms at two states, which is the test that was missing.
+
+---
+
 ## 5. What was wrong before
 
 For the record, since these numbers appeared in earlier output:
