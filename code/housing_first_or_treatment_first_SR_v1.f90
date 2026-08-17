@@ -27870,7 +27870,22 @@
                         write(*,*) "treatment_take_up_data=", treatment_take_up_data
                         write(*,*) "utility_cost_of_treatment=", utility_cost_of_treatment
 
-                        treatment_step_1=utility_cost_of_treatment+&
+                        ! THE SIGN. Take up FALLS in the cost: the cost is
+                        ! subtracted from flow utility in the period treatment is
+                        ! taken, so raising it makes treatment less attractive.
+                        ! The step therefore has to move the cost AGAINST the
+                        ! gap, not with it. Written with a plus, as it was, a
+                        ! take up below target raised the cost, which lowered take
+                        ! up further, which raised the cost again: measured over
+                        ! thirteen iterations the cost ratcheted from 0.020 to
+                        ! 0.151 in exact steps of adjuster*(0.24-0) = 0.012 while
+                        ! take up sat at zero throughout. The secant below cannot
+                        ! rescue it, because a take up that never moves fails the
+                        ! guard on its own change and the fallback runs every
+                        ! time. This is the same error as the kappa_uem update,
+                        ! which was also copied from a moment that runs the other
+                        ! way.
+                        treatment_step_1=utility_cost_of_treatment-&
                             utility_cost_of_treatment_adjuster*&
                             (treatment_take_up_data-model_treatment_take_up(1))
 
@@ -27897,6 +27912,24 @@
                         write(*,*) "utility_cost_of_treatment=", utility_cost_of_treatment
                         write(*,*) "distance_utility_cost_of_treatment=", &
                             distance_utility_cost_of_treatment
+
+                        ! SAY SO WHEN THE COST CAN GO NO LOWER, the way the
+                        ! lambda_m floor does. At a cost of zero treatment is free
+                        ! in utils and still costs the household its drug
+                        ! spending, since taking it forces abstention. So a take
+                        ! up of zero here is not a failure of this update: it says
+                        ! the benefit side is too small, which is g, mu_H, pi_r
+                        ! and the abstention itself, and no value of bar_tau^u
+                        ! reaches the target.
+                        if ((utility_cost_of_treatment<=0.d0) .AND. &
+                            (model_treatment_take_up(1)<treatment_take_up_data)) then
+
+                            write(*,*) "utility_cost_of_treatment IS AT ITS FLOOR 0 and take up is ",&
+                                model_treatment_take_up(1), " against a target of ", treatment_take_up_data
+                            write(*,*) "   treatment is declined even when free, so the target is out of",&
+                                " reach on the benefit side, not on the cost."
+
+                        end if
 
                     else
 

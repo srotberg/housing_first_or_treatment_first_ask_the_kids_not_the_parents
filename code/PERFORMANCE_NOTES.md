@@ -649,3 +649,39 @@ at 41 asset points and twelve joint states on four cores**, so a full backward
 induction is roughly four minutes and a calibration loop is that plus the 655
 distribution sweeps. Earlier timings in this file that look slower than that were
 measured under contention and should not be compared with anything.
+
+## 13. Treatment is never evaluated for an owner, and nobody owns, so it has not bitten yet
+
+`policy_function_treatment` is written as
+
+    policy_function_treatment(...) = (1-is_owner_better)*optimal_treatment_renter
+
+with no owner term, while the line directly above it writes the addiction policy
+the correct way, `is_owner_better*..._owner + (1-is_owner_better)*..._renter`. One
+level down, the renter's choice between staying a renter and buying sets
+`optimal_treatment_renter=0` in the buy branch. There is no
+`optimal_treatment_owner` anywhere in the file: grep returns only the renter
+variants.
+
+So the treatment choice exists only in the renter stays renter branch. Any
+household that owns, or that becomes an owner this period, is recorded as
+declining treatment whatever it would have chosen, and its choice is never even
+computed.
+
+This is currently harmless, and that is the only reason it has not shown up as a
+wrong number. In this calibration `model_homeownership_rate(1)` is exactly zero:
+the smallest buyable house is 0.23 while the largest housing size consumed in
+equilibrium is grid index 2, so no household ever buys, essentially all mass is
+renter to renter, and the branch that works is the branch that carries everybody.
+
+It becomes a real bug the moment the housing side moves. Anything that makes
+ownership attainable, a larger rental ladder, a smaller
+`size_of_smallest_house_hhld_can_buy`, a richer distribution, silently biases
+treatment take up downward, and biases it hardest for exactly the households that
+have assets. Fixing it means computing an `optimal_treatment_owner` through the
+owner comparison routines and carrying it into the same two write sites, which is
+a change to the owner branch and should be done when the owner branch is being
+exercised rather than blind.
+
+Noted here rather than fixed for that reason. If homeownership ever prints above
+zero, fix this before reading any treatment moment.
