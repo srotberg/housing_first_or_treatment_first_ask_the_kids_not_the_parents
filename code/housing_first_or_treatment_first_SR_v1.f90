@@ -649,7 +649,10 @@
         real(8), parameter :: risk_aversion_consumption=2
         real(8), parameter :: rho_1=real(1.25)
         real(8), parameter :: eta_1=1.07
-        real(8) :: relative_share_of_addiction_1=(1-perceived_probability_lower)*0.13+perceived_probability_lower*0.16
+        ! Seeded at the calibrated value. Starting at 0.13 when the answer is
+        ! near 0.43 is why this one looked stuck: it was traversing, not stalling.
+        real(8) :: relative_share_of_addiction_1=&
+            (1-perceived_probability_lower)*0.42652988349555548+perceived_probability_lower*0.16
         real(8) :: relative_share_of_addiction_2=0.13
         real(8), parameter :: power_1=1-(1/rho_1)
         real(8), parameter :: power_2=(1-risk_aversion_consumption)/power_1
@@ -815,9 +818,23 @@
             (1-partial_equilibrium)*(is_counterfactual*price_of_addictive_good_benchmark*(1+relative_price_change)+&
             (1-is_counterfactual)*price_of_addictive_good_benchmark))
             
+        ! SEEDED AT THE ANSWER, NOT SEVEN ORDERS OF MAGNITUDE BELOW IT.
+        !
+        ! This used to start at 3.7e-08 while the calibrated value is about 0.25.
+        ! The update is multiplicative and capped at ten times a step, so it
+        ! climbed 3.7e-08, 1.67e-07, 7.04e-07, 3.07e-06, 1.34e-05, 5.86e-05,
+        ! 2.56e-04, 1.12e-03, 4.89e-03, 2.14e-02, 9.38e-02, 0.312, 0.261, 0.251:
+        ! eleven iterations of pure climb before it was in the right decade.
+        !
+        ! Nothing measured during that climb means anything, because participation
+        ! is a threshold function of b and sat at 87 to 96 per cent for all of it,
+        ! against a target of 5.13. A thirteen iteration run therefore had about
+        ! two usable iterations at the end, and every moment fitted before that was
+        ! fitted in a world where almost every household used drugs. That is most
+        ! of why the drug weight looked stuck and the housing margin looked wild.
         real(8) :: addiction_scalar_1=&
             raise_b*0.01+(1-raise_b)*&
-            ((1-perceived_probability_lower)*3.7*10.d0**(-8)+perceived_probability_lower*2.2*10.d0**(-3))
+            ((1-perceived_probability_lower)*0.25369576894400586+perceived_probability_lower*2.2*10.d0**(-3))
             
         real(8), parameter :: drug_threshold_guess=2*10.d0**(-7)
             
@@ -881,7 +898,12 @@
         real(8) :: distance_minimum_inheritance
         real(8) :: stopping_rule_minimum_inheritance=10.d0**(-3)
         
-        real(8) :: value_of_life=(1-perceived_probability_lower)*340+perceived_probability_lower*120
+        ! Seeded at the calibrated value. From 340 the first step subtracted
+        ! adjuster*(96.0-7.5) = 885, which is 2.6 times the parameter itself, so it
+        ! was clamped to its floor of 0.01 and then spent five iterations climbing
+        ! back. The step is now bounded relatively as well, below.
+        real(8) :: value_of_life=(1-perceived_probability_lower)*143.06028602039615+perceived_probability_lower*120
+        real(8) :: value_of_life_step_1=0
         
         real(8) :: max_initial_endowment=7
         real(8) :: max_initial_endowment_adjuster=0
@@ -28091,8 +28113,16 @@
                     ! A larger aleph makes life worth more, so the VSL rises in
                     ! it and the update subtracts the gap.
                     write(*,*) "model_value_of_life(1)=", model_value_of_life(1)
-                    value_of_life=max(min(value_of_life-value_of_life_adjuster*&
-                        (model_value_of_life(1)-vsl_data),10.d0**(4)),10.d0**(-2))
+                    ! A TRUST REGION. The adjuster is ten and the gap is measured
+                    ! in the same units as the parameter, so an early gap of 88
+                    ! moves it by 885 and any starting value below that lands on a
+                    ! clamp. Halving or one and a half times per iteration is
+                    ! still fast and cannot overshoot into a bound.
+                    value_of_life_step_1=value_of_life-value_of_life_adjuster*&
+                        (model_value_of_life(1)-vsl_data)
+                    value_of_life_step_1=max(min(value_of_life_step_1,&
+                        1.5d0*value_of_life),0.5d0*value_of_life)
+                    value_of_life=max(min(value_of_life_step_1,10.d0**(4)),10.d0**(-2))
                     distance_value_of_life=abs(model_value_of_life(1)-vsl_data)
                     write(*,*) "value_of_life=", value_of_life
                     write(*,*) "distance_value_of_life=", distance_value_of_life
