@@ -1311,72 +1311,133 @@ should want to argue with.
 
 \input{tables/tab_eleven}
 
-\paragraph{Who uses drugs.} Three parameters answer this. $b$ is the
-Stone-Geary endowment and it decides whether a household uses at all: because
-the marginal value of the drug goes as $\theta/(b+v)$, a larger $b$ makes the
-first units worth less, so participation is a near threshold function of it.
-That is what identifies it from the participation rate, and it is also why it is
-bisected rather than stepped. $\lambda$ governs how much faster heavier use
-turns into a disorder, and it is identified by the share of users who acquire
-one, the same moment the stylized model uses; the prevalence rate would not
-separate onset from recovery. $\bar\kappa_{\phi d}$ is the mortality cost of the
-disorder, assigned at the midpoint of standardised mortality ratios for opioid
-use disorder, which run six to ten. It is assigned rather than calibrated so
-that the price participation elasticity can be held back as a test.
+Each is taken in the order of the table.
 
-\paragraph{How housing assistance shapes that decision.} Four parameters.
-$\bar\pi_r$ is the recovery hazard when housed and $\mu_H$ scales it on the
-street, so the pair is what makes housing an input into recovery rather than
-only a transfer. $\mu_H$ is the one the policy comparison turns on and it is
+\paragraph{Who uses drugs, and what it costs them.} $b$ is the Stone-Geary
+endowment and it decides whether a household uses at all. Because the marginal
+value of the drug goes as $\theta/(b+v)$, a larger $b$ makes the first units
+worth less, so a household with little to spend buys nothing: participation is a
+near threshold function of it, which is what identifies it from the
+participation rate and why it is bisected rather than stepped.
+$\lambda$ is the hazard of acquiring a disorder per unit used, and it is the
+parameter that makes using more genuinely riskier rather than merely more
+expensive. It is identified from the share of users who acquire a disorder, the
+same moment the stylized model uses; prevalence alone would not separate onset
+from recovery.
+$\bar\kappa_{\phi d}$ is what the disorder does to survival, assigned at the
+midpoint of standardised mortality ratios for opioid use disorder, which run six
+to ten. It is assigned rather than calibrated so that the price participation
+elasticity can be kept back as a test of the mechanism instead of being spent
+pinning it.
+
+\paragraph{How housing assistance shapes that decision.} $\bar\pi_r$ is the
+recovery hazard when housed, and $\mu_H$ is how much lower it is on the street.
+The pair is what makes housing an input into recovery rather than only a
+transfer, and $\mu_H$ is the one the whole policy comparison turns on: it is
 identified from Milby's randomised trial, weeks abstinent in the housed arm
-against the unhoused arm. $\rho_d$ and $\rho_m$ are the earnings lost to a SUD
-and to SMI conditional on still working. They exist because an effect on the
-employment margin alone makes every homeless household jobless, and about half
-are not: it is the wage penalty that produces households poor enough to be
-priced out while still employed.
+against the unhoused arm, which is a comparison on exactly the population at
+issue.
+$\rho_d$ and $\rho_m$ are the earnings lost to a disorder and to serious mental
+illness conditional on still working. They exist for a reason that is easy to
+miss: an effect on the employment margin alone makes every homeless household
+jobless, and about half are not. It is the wage penalty that produces households
+poor enough to be priced out of housing while still in work, which is the group
+a housing policy reaches and a treatment policy does not.
 
-\paragraph{When Treatment First beats Housing First.} Four parameters. $g$ is
-how much treatment raises recovery, and it is the one assigned value that
-carries a headline result, so it is reported across a range rather than at a
-point. $\omega$ is the weight a parent puts on its child, identified from the
-fall in use when a child is present. $\delta_d$ and $\delta_h$ are the earnings
-a child loses to a parent's disorder and to growing up homeless. Both are
-assigned, because their sources report ranges rather than points, and together
-they are the externality: a household internalises a share $\omega$ of what it
-does to its child and the rest falls outside its problem.
+\paragraph{When Treatment First beats Housing First.} $g$ is how much treatment
+raises recovery. It is the one assigned value carrying a headline result, so it
+is reported across a range rather than at a point.
+$\omega$ is the weight a parent puts on its child, identified from the fall in
+use when a child is present. It is small, and that is the point: the household
+internalises a share $\omega$ of what it does to its child and the remaining
+$1-\omega$ falls outside its problem altogether.
+$\delta_d$ and $\delta_h$ are the earnings a child loses to a parent's disorder
+and to growing up homeless. Both are assigned, because their sources report
+ranges rather than points, and between them they are the externality the policy
+comparison is trying to price.
 
 \subsection{Other parameters specific to this paper}
 
-A second group is new to this paper but does not carry its headline results.
-$\lambda_m$ sets the persistence of serious mental illness and is calibrated to
-the SMI share of the homeless, since only a sufficiently sticky state lets that
+These are new here too, but none carries a headline result. Table~\ref{tab:paperparams}
+collects them and marks which are calibrated and which assigned; each is taken
+below in the order it appears there, with the intuition for what it does.
+
+\input{tables/tab_paper}
+
+$\kappa_{ued}$ and $\kappa_{uem}$ are how much harder work is to find and easier
+to lose with a disorder and with SMI. They are the employment margin, and they
+are why a health shock in this model becomes an income shock.
+$\bar\tau^{u}$ is the utility cost of entering treatment. It is what stops
+everyone with a disorder from taking a programme that raises recovery, and it is
+identified from take up among those who have one.
+$\lambda_m$ is the rate of leaving SMI. It is calibrated to the SMI share of the
+homeless, and the logic is worth stating: prevalence is reproduced by
+construction from the observed age profile, so what the homeless share
+identifies is \emph{persistence}. Only a sufficiently sticky state lets the SMI
 population accumulate in homelessness at four and a half times its share of
-adults; $\iota$ and $\mu_m$ carry the interaction between the two disorders;
-$\kappa_{uem}$ and $\zeta_{DI}$ carry SMI's employment and disability
-consequences; $\bar\tau^{u}$ is the utility cost of treatment, identified from
-take up among those with a SUD; and $\kappa_x$ prices the disamenity of
-aggregate homelessness. The values and sources are in
-Tables~\ref{tab:fint} and~\ref{tab:fext}.
+adults.
+$\kappa_x$ prices the disamenity of aggregate homelessness. It is the only place
+a household's utility depends on an aggregate, which is what makes $H$ a genuine
+fixed point rather than accounting.
+$p_{\text{test}}$ and $c_{\text{test}}$ are the frequency and unit cost of drug
+testing, and $p_{\text{det}}$ and $p_{\text{fp}}$ the detection and false
+positive rates. These four matter more than their size suggests, because a
+conditional policy that detected perfectly would be a different policy: it is
+imperfect detection that makes Treatment First lose vouchers to people who are
+complying and keep them for people who are not.
+$\kappa_{ueH}$ is the employment penalty of being unhoused, and
+$\kappa_{\phi H}(j)$ the mortality penalty, backed out age by age from Baggett's
+ratio net of the disorder composition of the homeless population.
+$\kappa_{\phi m}$ is SMI's mortality multiplier, flat in age because the data are
+flat in age.
+$\mu_m$ is how much SMI slows recovery from a disorder, $p_m$ the prevalence of
+SMI, $\zeta_{DI}$ the disability replacement rate for the non employed with SMI,
+and $\iota$ the multiplier on SMI onset for a household that already carries a
+disorder. That last one is the channel by which a substance use disorder raises
+the hazard of mental illness, and it runs the direction the register evidence
+supports.
+$p_v$, $\nu_1$ and $\nu_2$ are the drug market. $\nu_2$ sets the supply
+elasticity, $\nu_1$ normalises the units so that supply meets demand at $p_v=1$
+in the benchmark, and $p_v$ is then free to move in every counterfactual. That
+is what lets a policy which changes how much is used feed back into the price
+and so into everyone else's decision.
+$h_{\text{HL}}$ is the service flow of homelessness, calibrated to the
+homelessness rate, and $\aleph$ the flow value of being alive, calibrated to the
+value of a statistical life. $\aleph$ needs a level and not only a behavioural
+target: at the wrong level households prefer death, and the mortality cost of
+using becomes a benefit.
 
 \subsection{Standard parameters}
 
-The remainder are conventional and are recorded so the calibration can be
-reproduced rather than because anything turns on them: preferences, the earnings
-distribution, the tax schedule, the survival profile, the transition rates, and
-the institutional parameters of unemployment insurance, disability and the
-voucher. Table~\ref{tab:fext} carries each with its source and data vintage, and
-Table~\ref{tab:fint} does the same for the handful that are calibrated to an
-obvious moment, such as the leisure weight to average hours and the two
-Cobb-Douglas weights to their own expenditure shares.
+The rest are conventional, recorded so the calibration can be reproduced rather
+than because anything turns on them. Table~\ref{tab:stdparams} carries each with
+its source and vintage, in this order.
 
-The rental ladder is worth one sentence because it looks like more parameters
-than it is. It is geometric, pinned by two numbers: $\underline h$ sets the
-smallest rental and $\varsigma$ the ratio between successive sizes, so the whole
-grid follows and nothing is set by hand. Both are calibrated to two points on the
-same distribution, the shares of renters spending more than half and more than
-thirty percent of income on housing, which is what separates a level from a
-spread. A uniform grid is a restriction on $\varsigma$ rather than a neutral
-choice, and it fits those two shares worse.
+\input{tables/tab_standard}
+
+$\beta$ targets wealth over output and $\sigma$, $\sigma_{\ell}$ and
+$\omega_{\ell}$ are preferences, the last set to average hours.
+$\gamma$ and $\theta$ are the Cobb-Douglas weights on housing and the drug, each
+set to its own expenditure share.
+$\underline h$ and $\varsigma$ are the rental ladder. It is geometric, so those
+two numbers give the whole grid and none of the sizes is set by hand; they are
+matched to the shares of renters spending more than half and more than thirty
+percent of income on housing, which separates a level from a spread. A uniform
+grid is a restriction on $\varsigma$, not a neutral choice, and it fits those two
+shares worse.
+$\underline c$ and $\pi_V$ are the food stamp floor and the voucher lottery,
+matched to programme spending and to recipients over the income eligible.
+$\bar\pi^{eu}$ and $\bar\pi^{ue}$ are the baseline separation and job finding
+rates.
+$\varepsilon(j)$ and $\bar\phi(j)$ are the age profiles of earnings and survival,
+$\rho_y$ and $\sigma_y$ the persistence and dispersion of permanent
+productivity, and $j_E$ the age at which use can begin.
+$r$, $\xi$, $\tau_k$ and $\tau_{\ell}$ are the interest rate and the tax system,
+with $\tau_{\ell}$ not assigned at all but whatever clears the budget.
+$G$ is the public good, held fixed across simulations. $\psi$, $\bar y$,
+$\kappa_V$ and $\kappa_r$ are the replacement rate and cap for unemployment
+insurance and the eligibility and contribution rates for the voucher, all set by
+statute.
 
 \subsection{How the calibration is done, and what it cannot do}
 
@@ -1436,153 +1497,6 @@ reporting the range matters more than the point estimate. And it is the only
 place where a household's utility depends on an aggregate, which is what makes
 $H$ a genuine fixed point of the equilibrium rather than accounting.
 
-
-\paragraph{How the tables are read.} Both tables are broken into blocks with
-headings, in the order this section takes them, so that a reader can find any
-parameter without going through a list of sixty. \paragraph{How the tables are ordered.} Table~\ref{tab:fint} lists the
-calibrated parameters in the order this section takes them: the three bisected
-moments first, then the anchors, then the standard block, then the wage
-penalties, then treatment and the two hazards, and last the second stage and the
-one value that is set rather than calibrated. Table~\ref{tab:fext} is ordered by
-what assigning a value rests on, in the same order as the discussion below.
-
-\paragraph{The parameters that are anyone's.} This block is here so the
-calibration can be reproduced, not because anything turns on it. A reader who
-wants the economics can skip to the wage penalties. The parameters in this paragraph are
-not this paper's contribution and are not argued for at length; each is matched
-to the moment it plainly governs, and they are recorded so the calibration is
-reproducible rather than because anything turns on them.
-
-$\omega_{\ell}$, the weight on leisure, is set to average hours worked. It is the
-only parameter that moves hours directly, and hours enter no other target, so it
-is identified whatever else is going on.
-
-$\gamma$ and $\theta$, the Cobb-Douglas weights on housing and on the drug, are
-set to the aggregate housing share of expenditure and to drug spending over
-income conditional on a SUD. Each is the expenditure share its own parameter
-governs, which is what makes them the cleanest pair in the table. Note the
-direction: the rental grid is quoted from the data and $\gamma$ is calibrated,
-not the reverse.
-
-$\underline h$ and $\varsigma$, the smallest rental and the geometric spread of
-the rental sizes, are set to the share of renters spending more than half and
-more than thirty percent of income on housing. Two points on the same
-distribution pin a level and a spread, which is exactly what these two are.
-
-$\underline c$, the food stamp floor, is set to food stamp outlays over labour
-income, and $\pi_V$, the voucher lottery probability, to recipients over the
-income eligible. Both are programme sizes matched to programme spending.
-
-$\bar\pi^{eu}$ is set to the unemployment rate and $\kappa_{ued}$ to the
-unemployment rate among those with a SUD, so the baseline separation rate is
-identified by the aggregate and the multiplier by the gap between the two.
-$\kappa_{uem}$ is the same construction for SMI, set to the employment rate given
-SMI.
-
-\paragraph{The wage penalties, which are this paper's.} $\rho_m$ and $\rho_d$,
-the productivity penalties for SMI and for the SUD
-conditional on working, are set to the earnings of the homeless relative to
-average and to the employed share of the homeless. These two need saying
-carefully, because they are the reason the model can produce homelessness among
-people who work. An effect on the employment margin alone makes every homeless
-household jobless, and about half are not; it is the wage penalty that generates
-households poor enough to be priced out while still employed. The evidence on
-this margin is contested, with parts of the older literature finding positive
-effects for casual use, which is why both are identified from employment and
-income composition among the homeless rather than assigned from a wage
-regression.
-
-$\bar\tau^{u}$, the utility cost of treatment, is set to treatment take up among
-those with a SUD. It is the only parameter that moves the treatment decision, and
-take up is the only moment it moves.
-
-\paragraph{The assigned parameters, and what assigning them rests
-on.} Assignment is not one thing. Some values are conventional, some are
-statute, some are programme arithmetic, and a few are judgements that could
-reasonably differ; only the last group is worth arguing with, and it is named. Table~\ref{tab:fext} carries every value, its source and its data vintage.
-What matters is not the list but that "assigned" means four different things
-here, and only the last group is contestable.
-
-Standard and taken from the literature: $\sigma_{\ell}$, the curvature on
-leisure, which with $\omega_{\ell}$ delivers the Frisch elasticity; $\rho_y$ and
-$\sigma_y$, the persistence and dispersion of permanent productivity;
-$\varepsilon(j)$, the deterministic age profile of earnings; $\bar\phi(j)$, the
-baseline survival profile from the SSA life table; and $\tau_k$, the tax rate on
-capital income.
-
-Four objects vary with age and are written with a $(j)$ argument throughout, so
-that a profile is never mistaken for a scalar: $\varepsilon(j)$ and
-$\bar\phi(j)$ above, the SUD mortality multiplier $\kappa_{\phi d}(j)$, and the
-homelessness multiplier $\kappa_{\phi H}(j)$. The last two are not assigned
-directly. What is assigned is the single number $\bar\kappa_{\phi d}$, the level
-at the age where the SUD's effect peaks; \eqref{eq:fhaz} then turns it into
-$\kappa_{\phi d}(j)$ using the CDC shape and reads $\kappa_{\phi H}(j)$ off
-Baggett's ratio age by age. A fifth, the SMI onset $\text{onset}_m(j)$, is not a
-parameter at all but is implied by the observed prevalence profile and the flat
-recovery rate $\lambda_m$ through~\eqref{eq:fonsetage}. Everything else in both
-tables is a scalar.
-
-Institutional, and set by statute rather than estimated: $\kappa_V$, the voucher
-eligibility cutoff as a share of $y^{\text{med}}$; $\kappa_r$, the tenant
-contribution rate; $\psi$ and $\bar y$, the replacement rate and cap for
-unemployment insurance; $\zeta_{DI}$ for disability; and $j_E$ and $j_R$, the
-ages at which drug use can begin and work ends. $\tau_{\ell}$ is listed among
-them but is not assigned at all: it is whatever clears the government budget, and
-it is the one value in the table that differs across policies.
-
-Set from programme administration: $p_{\text{test}}$ and
-$c_{\text{test}}$, the frequency and unit cost of drug testing; and
-$p_{\text{det}}$ and $p_{\text{fp}}$, the detection and false positive rates that
-make Treatment First's condition imperfect. These four matter more than their
-size suggests, because a conditional policy that detected perfectly would be a
-different policy.
-
-Transition rates with a single source each: $\bar\pi^{ue}$, the job finding rate;
-$\kappa_{ueH}$, the employment multiplier for homelessness; $\bar\pi_r$, the
-baseline recovery hazard when housed; $\mu_m$, the recovery multiplier for SMI;
-$\lambda_m$'s counterpart $\iota$, the multiplier on SMI onset for a household
-carrying the SUD; and $g$, the treatment effect on recovery.
-
-The drug market: $\nu_2$ sets the supply elasticity at $2$, the middle of a range
-running from about $0.7$ to about $4$, since there is no direct estimate for an
-illicit drug and the closest legal markets bracket it: the Washington State
-marijuana reform implies roughly $0.79$, the cigarette and gasoline literatures
-nearer $3.6$. The range itself is reported rather than the point alone. $\nu_1$
-is then a normalisation, chosen so that supply equals demand at $p_v=1$ in the
-benchmark, so $p_v$ is one by construction there and free to move in every
-counterfactual.
-
-Three assigned values carry no discipline at all and are flagged rather than
-hidden: $g$, $\mu_m$ and $\nu_2$. Of these only $g$ carries a headline result,
-and it is reported across a range rather than at a point.
-
-\paragraph{Vintages, and one transfer that has to be defended.} Every
-source in both tables carries its wave, because a reader who cannot tell which
-SCF or which NSDUH was used cannot replicate the exercise: SCF 2022, NSDUH 2024
-for use and disorder and 2023 for SMI, TEDS-A 2022, HUD's 2023 point in time
-count, ACS 2023, CDC WONDER 2023, BLS 1994 to 2024.
-
-Three values are genuinely old, and rather than let the dates pass unremarked:
-Vaillant (1995) for the recovery hazard, Altonji, Hayashi and Kotlikoff (1997)
-for the altruism restriction, and Saffer and Chaloupka (1999) for the price
-elasticity. The last two are used as they should be, one to justify a modelling
-choice and one as a validation target rather than a calibration target, so
-neither carries a number into the model.
-
-The first does, and it needs defending, because a ten year recovery rate for
-alcoholism is not obviously the recovery rate for a substance use disorder among
-the homeless. Three things make the transfer narrower than it looks. It supplies
-$\bar\pi_r$, the recovery hazard \emph{when housed}, and not the rate for anyone
-on the street: the homeless rate is $\mu_H\bar\pi_r$, and $\mu_H$ is calibrated to
-Milby et al.\ (2005), a randomised trial on cocaine dependent homeless adults,
-which is exactly the population in question. So the number doing the work for the
-homeless comes from a trial on the homeless, not from Vaillant. The housed
-baseline is bracketed independently by Fleury et al.\ (2016), whose remission
-estimates for substance use disorders span it. And because $\bar\pi_r$ and $\mu_H$
-enter multiplicatively, an error in the baseline moves the housed and unhoused
-hazards together and leaves the housing gradient, which is what the policy
-comparison turns on, unchanged. The results are reported across the Fleury range
-regardless.
 
 \paragraph{Anchors.} The discount factor targets aggregate wealth at three times
 output, with output measured as all factor income and transfers excluded, which
