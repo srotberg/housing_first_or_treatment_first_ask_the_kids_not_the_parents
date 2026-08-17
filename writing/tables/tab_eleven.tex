@@ -1,27 +1,25 @@
-\footnotesize
+\footnotesize\setlength{\tabcolsep}{4pt}
 \begin{center}
-\begin{tabular}{@{}cL{5.3cm}L{6.4cm}@{}}
+\begin{tabular}{@{}cL{4.7cm}cL{5.9cm}@{}}
 \toprule
-& What it controls & What pins it down \\
+& What it controls & Set & What pins it down \\
 \midrule
-\multicolumn{3}{@{}l}{\emph{How a disorder starts, and what it costs}} \\
-$\lambda$ & How fast use turns into a disorder & The share of adults with a SUD \\
-$b$ & Whether a household uses at all & The share of adults who use \\
-$\bar\kappa_{\phi d}$ & How much likelier a user is to die & Assigned, from mortality ratios \\
+\multicolumn{4}{@{}l}{\emph{Who uses drugs, and what it costs them}} \\
+$b$ & Whether a household uses at all & Int. & Drug participation, NSDUH 2024 \\
+$\lambda$ & How much more quickly higher use turns into a disorder & Int. & Share of users acquiring a SUD, NSDUH 2024 \\
+$\bar\kappa_{\phi d}$ & How much less likely a user is to survive & Ext. & Mortality ratios, Degenhardt et al.\ (2011) \\
 \addlinespace
-\multicolumn{3}{@{}l}{\emph{How a disorder ends}} \\
-$\bar\pi_r$ & Recovery, when housed & Assigned, from the remission literature \\
-$\mu_H$ & How much harder recovery is on the street & Milby's trial, housed against unhoused \\
-$g$ & How much treatment helps & Assigned, reported as a range \\
+\multicolumn{4}{@{}l}{\emph{How housing assistance shapes that decision}} \\
+$\bar\pi_r$ & Recovery, when housed & Ext. & Remission rates, Vaillant (1995) \\
+$\mu_H$ & How much harder recovery is on the street & Int. & Weeks abstinent, housed against unhoused, Milby et al.\ (2005) \\
+$\rho_d$ & Earnings lost to a SUD, while still employed & Int. & Share of the homeless who work, HUD 2023 \\
+$\rho_m$ & Earnings lost to SMI, while still employed & Int. & Earnings of workers with SMI, NSDUH 2023 \\
 \addlinespace
-\multicolumn{3}{@{}l}{\emph{Why poor households end up unhoused}} \\
-$\rho_d$ & Earnings lost to a SUD, while working & The share of the homeless who work \\
-$\rho_m$ & Earnings lost to SMI, while working & Homeless earnings against average \\
-\addlinespace
-\multicolumn{3}{@{}l}{\emph{What it does to the next generation}} \\
-$\omega$ & How much the parent counts the child & The fall in use when a child is present \\
-$\delta_d$ & The disorder a child inherits & Assigned, from a range of 2 to 4 \\
-$\delta_h$ & What homelessness costs a child & Assigned, from Chetty et al. \\
+\multicolumn{4}{@{}l}{\emph{When Treatment First beats Housing First}} \\
+$g$ & How much treatment helps recovery from a SUD & Ext. & Contingency management, Milby et al.\ (2005) \\
+$\omega$ & The parent's weight on its child & Int. & Fall in use with a child present, NSDUH 2024 \\
+$\delta_d$ & Earnings a child loses to a parent's SUD & Ext. & McGovern et al.\ (2023), range of 2 to 4 \\
+$\delta_h$ & Earnings a child loses to growing up homeless & Ext. & Chetty, Hendren and Katz (2016) \\
 \bottomrule
 \end{tabular}
 \end{center}

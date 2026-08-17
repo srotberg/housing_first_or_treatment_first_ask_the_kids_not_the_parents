@@ -1266,7 +1266,7 @@ A competitive equilibrium is a collection of
 \item value functions $\big\{\{V_t(j,\cdot)\}_{j=1}^{J}\big\}_{t=0}^{\infty}$;
 \item policy functions
 $\big\{\{n_t(j,\cdot),\,h'_t(j,\cdot),\,v_t(j,\cdot),\,\tau_t(j,\cdot),\,a'_t(j,\cdot)\}_{j=1}^{J}\big\}_{t=0}^{\infty}$;
-\item distributions \new{$\big\{\{\Phi_t(j,\cdot)\}_{j=1}^{J}\big\}_{t=0}^{\infty}$}; and
+\item distributions $\big\{\{\Phi_t(j,\cdot)\}_{j=1}^{J}\big\}_{t=0}^{\infty}$; and
 \item prices, policies and aggregates
 $\big\{\tau_{\ell t},\,p_{vt},\,\bar y_t,\,y^{\text{med}}_t,\,H_t\big\}_{t=0}^{\infty}$,
 \end{itemize}
@@ -1275,7 +1275,7 @@ such that, at every date $t$,
 \begin{enumerate}\setlength{\itemsep}{0.1em}\setlength{\parskip}{0em}
 \item the policy functions solve~\eqref{eq:fbellman} given its terminal
 condition, and $\{V_t(j,\cdot)\}_{j=1}^{J}$ are the associated values;
-\item \new{$\Phi_{t+1}(j{+}1,\cdot)$ follows from $\Phi_t(j,\cdot)$} by the law of motion~\eqref{eq:flom}
+\item $\Phi_{t+1}(j{+}1,\cdot)$ follows from $\Phi_t(j,\cdot)$ by the law of motion~\eqref{eq:flom}
 together with the newborn rule~\eqref{eq:fnewborn} and~\eqref{eq:flomnew}, and
 the mass of newborns equals the mass of the deceased;
 \item the government budget~\eqref{eq:fgovt} holds at $\tau_{\ell t}$;
@@ -1293,29 +1293,31 @@ because the transition exercise in the results needs it.
 
 \section{Calibrating the quantitative model}\label{sec:fullcal}
 
-The model has fifty eight parameters\new{, some of which vary in value by age}.
+The model has fifty eight parameters, some of which vary in value by age.
 Thirty seven are assigned, in Table~\ref{tab:fext}; twenty one are calibrated, in
 Table~\ref{tab:fint}. The tables carry the values, the sources and the data
-vintages, \new{so what follows is not another pass through them. It is organised
+vintages, so what follows is not another pass through them. It is organised
 around three things a table cannot say, and it is written to be read rather than
-consulted.}
+consulted.
 
 \emph{Which parameters are standard and which are this paper's.} Most of the
 fifty eight are the furniture of any life cycle model: preferences, the earnings
-process, the tax schedule, the survival profile. They are assigned from the usual
-sources and nothing here turns on them. A much smaller set is specific to this
+\new{distribution}, the tax schedule, the survival profile. \new{A much smaller
+set} is specific to this
 paper and carries its results: the SUD hazard $\lambda$ and its mortality
 multiplier $\bar\kappa_{\phi d}$; the recovery hazard $\bar\pi_r$ with its
-housing and treatment multipliers $\mu_H$ and $g$\new{, respectively}; the
+housing and treatment multipliers $\mu_H$ and $g$, respectively; the
 Stone-Geary endowment $b$;
-the wage penalties $\rho_d$ and $\rho_m$\new{, incurred by households with a SUD
-and with SMI respectively}; and the child's weight $\omega$ with
+the wage penalties $\rho_d$ and $\rho_m$, incurred by households with a SUD
+\new{or} with SMI respectively; and \new{the parent's weight on its child,
+$\omega$,} with
 the transmission penalties $\delta_d$ and $\delta_h$. Eleven parameters out of
 fifty eight. Those are the ones worth arguing about, and the discussion below is
-\new{weighted more heavily towards them for that reason. Between them they answer
-the three questions the paper asks: who acquires a substance use disorder and
-what it costs them, who ends up unhoused, and what either does to the next
-generation.}
+weighted more heavily towards them for that reason. \new{Between them they answer
+the three questions of Section~\ref{sec:what}: who uses drugs, how housing
+assistance shapes that decision, and when Treatment First beats Housing First.
+The table below sets them out that way, with the moment and the source for each,
+and marks whether each is assigned or calibrated.}
 
 \input{tables/tab_eleven}
 
