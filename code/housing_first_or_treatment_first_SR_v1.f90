@@ -1038,6 +1038,11 @@
         integer :: have_gap_largest_house_size=0
         real(8) :: gap_house_size_1
         integer :: resumed_loop_count=0
+        ! Set by read_calibration_distribution. The first three loops overwrite
+        ! the distribution with a fresh initialisation, which would throw a
+        ! loaded warm start away, so the initialisation is skipped when this is
+        ! one.
+        integer :: have_warm_distribution=0
         real(8) :: distance_smallest_house_size
         real(8) :: stopping_rule_smallest_house_size=10.d0**(-3) 
         
@@ -2099,11 +2104,46 @@
         ! Threadprivate for the same reason the vectors it is built from are.
         real(8) :: interp_frac_1=0
         integer :: interp_neighbour_1=0
-        integer :: interp_mismatch_count=0
         integer, parameter :: interpolate_a_prime=1
         !$omp threadprivate(interp_frac_1)
         !$omp threadprivate(interp_neighbour_1)
-        !$omp threadprivate(interp_mismatch_count)
+        ! THE LOTTERY'S OWN DIAGNOSTICS, and they are NOT threadprivate.
+        !
+        ! A threadprivate counter is unreadable after the fact: the copies of
+        ! every thread but the master are discarded when the parallel region
+        ! ends, so a counter that lives where the counting happens cannot be
+        ! printed where the reporting happens. That is why the mismatch count
+        ! sat in the code incremented and never read.
+        !
+        ! Shared with an atomic is the other wrong answer. The subroutine runs
+        ! once per state per housing branch per age, which is tens of millions
+        ! of calls, and an atomic on a single word would serialise the search.
+        !
+        ! So each thread writes its OWN SLOT of a shared array, which needs no
+        ! synchronisation because no two threads touch the same element, and
+        ! the row stride pushes the slots onto separate cache lines so the
+        ! threads are not fighting over one line either. The totals are summed
+        ! in serial code afterwards.
+        !   row 1  calls with the lottery switched on
+        !   row 2  refusals because the vectors held the wrong housing branch
+        !   row 3  refusals for no bracket, no concavity, or a vertex outside it
+        !   row 4  calls that actually returned a positive fraction
+        !
+        ! The slot index is resolved on FIRST USE by each thread rather than
+        ! set once in a parallel region of its own. Threadprivate copies are
+        ! only guaranteed to persist between two parallel regions when the
+        ! thread count matches and dynamic adjustment is off, and a slot that
+        ! silently failed to persist would put two threads on one element and
+        ! lose counts in a race. Zero means unresolved, so a thread that gets a
+        ! fresh copy resolves it again.
+        integer, parameter :: interp_counter_stride=8
+        integer(8) :: interp_counters(interp_counter_stride,max_CPUs)=0
+        integer :: interp_slot_1=0
+        !$omp threadprivate(interp_slot_1)
+        ! One line per equilibrium solve, so leave it on: it is the record of
+        ! whether the coarse grid is defensible in the run that produced the
+        ! numbers, rather than in some earlier run someone remembers.
+        integer, parameter :: report_lottery_diagnostics=1
 
         !$omp threadprivate(flow_utility_vector)
         !$omp threadprivate(future_utility_vector)
@@ -2532,6 +2572,8 @@
         ! quadratic is a bad local model. Refusing costs nothing, since frac zero
         ! is exactly the old behaviour.
 
+        !$ use omp_lib
+
         implicit none
 
         integer, intent(in) :: opt_1,lo_1,hi_1
@@ -2543,7 +2585,21 @@
 
         if (interpolate_a_prime==0) return
 
-        if ((opt_1<=lo_1) .OR. (opt_1>=hi_1)) return
+        if (interp_slot_1<=0) then
+
+            interp_slot_1=1
+            !$ interp_slot_1=min(max_CPUs,omp_get_thread_num()+1)
+
+        end if
+
+        interp_counters(1,interp_slot_1)=interp_counters(1,interp_slot_1)+1
+
+        if ((opt_1<=lo_1) .OR. (opt_1>=hi_1)) then
+
+            interp_counters(3,interp_slot_1)=interp_counters(3,interp_slot_1)+1
+            return
+
+        end if
 
         ! THE VECTORS MUST DESCRIBE THE BRANCH THAT WON, and there is an exact
         ! test for it rather than an argument.
@@ -2558,7 +2614,7 @@
         if (abs(flow_utility_vector(opt_1)+future_utility_vector(opt_1)-recorded_value_1)>&
             10.d0**(-8)*max(abs(recorded_value_1),1.d0)) then
 
-            interp_mismatch_count=interp_mismatch_count+1
+            interp_counters(2,interp_slot_1)=interp_counters(2,interp_slot_1)+1
             return
 
         end if
@@ -2567,7 +2623,12 @@
         x1_1=financial_grid(opt_1)
         x2_1=financial_grid(opt_1+1)
 
-        if ((x1_1-x0_1<=0.d0) .OR. (x2_1-x1_1<=0.d0)) return
+        if ((x1_1-x0_1<=0.d0) .OR. (x2_1-x1_1<=0.d0)) then
+
+            interp_counters(3,interp_slot_1)=interp_counters(3,interp_slot_1)+1
+            return
+
+        end if
 
         y0_1=flow_utility_vector(opt_1-1)+future_utility_vector(opt_1-1)
         y1_1=flow_utility_vector(opt_1)+future_utility_vector(opt_1)
@@ -2575,7 +2636,12 @@
 
         ! An unreachable neighbour carries a sentinel rather than a value, and a
         ! parabola through a sentinel is meaningless.
-        if ((y0_1<=large_negative_num/2) .OR. (y2_1<=large_negative_num/2)) return
+        if ((y0_1<=large_negative_num/2) .OR. (y2_1<=large_negative_num/2)) then
+
+            interp_counters(3,interp_slot_1)=interp_counters(3,interp_slot_1)+1
+            return
+
+        end if
 
         d1_1=(y1_1-y0_1)/(x1_1-x0_1)
         d2_1=(y2_1-y1_1)/(x2_1-x1_1)
@@ -2584,11 +2650,21 @@
 
         ! Concavity. A non negative second difference means the argmax is not an
         ! interior maximum of the fit.
-        if (denom_1>=-10.d0**(-14)) return
+        if (denom_1>=-10.d0**(-14)) then
+
+            interp_counters(3,interp_slot_1)=interp_counters(3,interp_slot_1)+1
+            return
+
+        end if
 
         vertex_1=0.5d0*(x0_1+x1_1)-0.5d0*d1_1*(x2_1-x0_1)/denom_1
 
-        if ((vertex_1<x0_1) .OR. (vertex_1>x2_1)) return
+        if ((vertex_1<x0_1) .OR. (vertex_1>x2_1)) then
+
+            interp_counters(3,interp_slot_1)=interp_counters(3,interp_slot_1)+1
+            return
+
+        end if
 
         if (vertex_1>=x1_1) then
 
@@ -2603,6 +2679,78 @@
         end if
 
         interp_frac_1=max(min(interp_frac_1,1.d0),0.d0)
+
+        if (interp_frac_1>0.d0) then
+
+            interp_counters(4,interp_slot_1)=interp_counters(4,interp_slot_1)+1
+
+        end if
+
+    end subroutine
+
+    subroutine report_asset_lottery()
+
+    ! WHETHER THE LOTTERY IS DOING ANYTHING, which decides whether the asset
+    ! grid can be cut.
+    !
+    ! The case for a coarse grid is that the lottery puts a' where the grid
+    ! cannot, so coarseness stops costing accuracy. That case is worth nothing
+    ! unless the lottery FIRES, and it can fail to fire for reasons that leave
+    ! no other trace: the branch guard refusing on most calls, or the objective
+    ! not being locally concave at the argmax. So the shares are read before
+    ! the grid is touched, not after.
+    !
+    ! Read it as: a fire share near one means the grid is now the wrong place
+    ! to spend points and can be cut. A large branch mismatch share means the
+    ! guard is refusing rather than the geometry, and the fix is to fill the
+    ! vectors from the winning branch, not to cut the grid. A large "other"
+    ! share is the geometry itself and no amount of guard work will help.
+
+    implicit none
+
+    integer(8) :: calls_1,mism_1,other_1,fire_1
+    integer :: slot_index_1
+
+    calls_1=0
+    mism_1=0
+    other_1=0
+    fire_1=0
+
+    do slot_index_1=1,max_CPUs
+
+        calls_1=calls_1+interp_counters(1,slot_index_1)
+        mism_1=mism_1+interp_counters(2,slot_index_1)
+        other_1=other_1+interp_counters(3,slot_index_1)
+        fire_1=fire_1+interp_counters(4,slot_index_1)
+
+    end do
+
+    write(*,*) "-------- asset lottery --------"
+    write(*,*) "calls                 = ", calls_1
+
+    if (calls_1<=0) then
+
+        write(*,*) "the lottery was never called"
+        write(*,*) "------------------------------"
+        return
+
+    end if
+
+    write(*,*) "fired                 = ", fire_1, dble(fire_1)/dble(calls_1)
+    write(*,*) "refused branch match  = ", mism_1, dble(mism_1)/dble(calls_1)
+    write(*,*) "refused geometry      = ", other_1, dble(other_1)/dble(calls_1)
+    write(*,*) "------------------------------"
+
+    end subroutine
+
+    subroutine reset_asset_lottery_counters()
+
+    ! Called before a value function solve so the shares describe THAT solve
+    ! and not the accumulation of every solve since the program started.
+
+    implicit none
+
+    interp_counters=0
 
     end subroutine
 
@@ -17248,17 +17396,23 @@
         
         end if
 
+        if (report_lottery_diagnostics==1) then
+
+            call reset_asset_lottery_counters()
+
+        end if
+
         avg_income_to_use_1=is_counterfactual*average_labor_income_calibrated+&
             (1-is_counterfactual)*model_average_labour_income(time_period)
-                            
+
         if (have_probablistic_death==0) then
-            
+
             loop_only_over_oldest=1
-            
+
         else
-        
+
             loop_only_over_oldest=1
-            
+
         end if
         
         if (solve_transition_dynamics>=0) then
@@ -18234,11 +18388,17 @@
                     distribution_implied(i)%vector_transition_real(time_period,:,:,:,:,:,:)
 
             end do
-            
+
+        end if
+
+        if (report_lottery_diagnostics==1) then
+
+            call report_asset_lottery()
+
         end if
 
     end subroutine
-    
+
     subroutine aitken_on_distribution(time_period)
 
         ! Delta squared on three successive iterates, elementwise, with the
@@ -25922,6 +26082,14 @@
         ! Written to a temporary and renamed, because a kill during the write is
         ! the one moment when this file is being touched and a half written file
         ! that parses is worse than no file at all.
+        !
+        ! V2 ADDS THE FOUR SMI PARAMETERS. They were wired into the update block
+        ! and not into this file, so a resumed run picked the housing and drug
+        ! parameters up where they left off and sent lambda_m, kappa_uem, rho_m
+        ! and rho_d back to their declared values. That is worse than not
+        ! resuming at all: the parameters that resume are the ones the SMI
+        ! parameters have to be consistent with. The version tag is bumped so a
+        ! v1 file is ignored rather than read short and misaligned.
 
         use Global_Vars
 
@@ -25929,7 +26097,7 @@
 
         open(unit=71,file="calibration_state.tmp",action='write',status='replace')
 
-            write(71,'(A)') "calibration_state_v1"
+            write(71,'(A)') "calibration_state_v2"
             write(71,'(F30.15)') discount_factor
             write(71,'(F30.15)') discount_factor_on_child
             write(71,'(F30.15)') minimum_inheritance
@@ -25965,6 +26133,10 @@
             write(71,'(F30.15)') rent(1,:)
             write(71,'(F30.15)') convexity_of_rental_company
             write(71,'(F30.15)') inheritance_amount
+            write(71,'(F30.15)') lambda_m
+            write(71,'(F30.15)') kappa_uem
+            write(71,'(F30.15)') rho_m
+            write(71,'(F30.15)') rho_d
 
         close(71)
 
@@ -25999,9 +26171,9 @@
 
             read(72,'(A)') state_tag_1
 
-            if (trim(state_tag_1) .NE. "calibration_state_v1") then
+            if (trim(state_tag_1) .NE. "calibration_state_v2") then
 
-                write(*,*) "calibration_state.dat is not version 1, ignoring it"
+                write(*,*) "calibration_state.dat is not version 2, ignoring it"
                 close(72)
 
                 return
@@ -26043,6 +26215,10 @@
             read(72,'(F30.15)') rent(1,:)
             read(72,'(F30.15)') convexity_of_rental_company
             read(72,'(F30.15)') inheritance_amount
+            read(72,'(F30.15)') lambda_m
+            read(72,'(F30.15)') kappa_uem
+            read(72,'(F30.15)') rho_m
+            read(72,'(F30.15)') rho_d
 
         close(72)
 
@@ -26050,6 +26226,98 @@
         write(*,*) "lambda_addiction=", lambda_addiction
         write(*,*) "largest_house_size=", largest_house_size
         write(*,*) "smallest_rental_relative_to_lowest_income=", smallest_rental_relative_to_lowest_income
+        write(*,*) "lambda_m=", lambda_m
+        write(*,*) "kappa_uem=", kappa_uem
+        write(*,*) "rho_m=", rho_m
+        write(*,*) "rho_d=", rho_d
+
+    end subroutine
+
+    subroutine write_calibration_distribution()
+
+    ! THE DISTRIBUTION IS THE OTHER HALF OF A WARM START, and it is the
+    ! expensive half.
+    !
+    ! A resumed run that recovers the parameters still pays 655 sweeps to
+    ! rebuild the distribution from the age one cross section, and those
+    ! sweeps are most of a loop. The converged distribution of the last
+    ! completed loop is a far better guess for the next parameter vector than
+    ! a freshly initialised one, because consecutive vectors differ by a
+    ! damped step.
+    !
+    ! Written on the same schedule as the parameters and to a temporary first,
+    ! for the same reason. It is a large file, so it is written once per loop
+    ! and not once per sweep.
+
+    use Global_Vars
+
+    implicit none
+
+    integer :: dist_index_1
+    character*1 :: string_used_1
+
+    do dist_index_1=1,2
+
+        write(string_used_1,'(i1)') dist_index_1
+
+        open(unit=73,file="calibration_distribution"//trim(string_used_1)//".tmp",&
+            action='write',status='replace')
+            write(73,'(F30.28)') distribution_stationary(dist_index_1)%vector_transition_real(1,:,:,:,:,:,:)
+        close(73)
+
+        call rename("calibration_distribution"//trim(string_used_1)//".tmp",&
+            "calibration_distribution"//trim(string_used_1)//".dat")
+
+    end do
+
+    end subroutine
+
+    subroutine read_calibration_distribution()
+
+    ! Loads the warm start if it is there, and records that it did, because the
+    ! caller has to skip initialize_feasible_distribution when it did. Both
+    ! files have to be present: half a warm start is two distributions from
+    ! different loops, which is not a distribution of anything.
+
+    use Global_Vars
+
+    implicit none
+
+    integer :: dist_index_1
+    logical :: exists_1,exists_2
+    character*1 :: string_used_1
+
+    have_warm_distribution=0
+
+    inquire(file="calibration_distribution1.dat",exist=exists_1)
+    inquire(file="calibration_distribution2.dat",exist=exists_2)
+
+    if (.NOT. (exists_1 .AND. exists_2)) then
+
+        write(*,*) "no warm start distribution, initialising from the age one cross section"
+
+        return
+
+    end if
+
+    do dist_index_1=1,2
+
+        write(string_used_1,'(i1)') dist_index_1
+
+        open(unit=74,file="calibration_distribution"//trim(string_used_1)//".dat",action='read')
+            read(74,'(F30.28)') distribution_stationary(dist_index_1)%vector_transition_real(1,:,:,:,:,:,:)
+        close(74)
+
+        distribution_guess(dist_index_1)%vector_transition_real(1,:,:,:,:,:,:)=&
+            distribution_stationary(dist_index_1)%vector_transition_real(1,:,:,:,:,:,:)
+
+    end do
+
+    have_warm_distribution=1
+
+    write(*,*) "warm start distribution loaded, sum=", &
+        sum(distribution_guess(1)%vector_transition_real(1,:,:,:,:,:,:))+&
+        sum(distribution_guess(2)%vector_transition_real(1,:,:,:,:,:,:))
 
     end subroutine
 
@@ -26071,6 +26339,7 @@
 
         ! Pick up where a killed run left off, if it left anything.
         call read_calibration_state()
+        call read_calibration_distribution()
 
         ! THE SMOOTH HAZARD NEEDS THE TABULATED EXPECTATION. With the hoist off
         ! the two continuations are never formed separately, so there is nothing
@@ -26391,11 +26660,20 @@
                         
             call solve_value_function_and_policy_functions(1)
                             
-            if ((loop_count<3) .OR. (re_do_simulation_with_fixed_parameters==1)) then
-            
+            ! A LOADED WARM START MUST NOT BE OVERWRITTEN. The initialisation
+            ! puts everyone at age one with no assets, which is the right guess
+            ! only when there is no better one on disk. Once a loop has run and
+            ! converged, distribution_stationary is the better guess and the
+            ! flag is cleared, so this reverts to the old behaviour from the
+            ! second loop of a resumed run onwards.
+            if (((loop_count<3) .OR. (re_do_simulation_with_fixed_parameters==1)) .AND. &
+                (have_warm_distribution==0)) then
+
                 call initialize_feasible_distribution(1)
-                
+
             end if
+
+            have_warm_distribution=0
             
             ! THIS IS THE OPERATIVE DISTRIBUTION TOLERANCE. 2e-4, and it is
             ! already loose.
@@ -27685,9 +27963,22 @@
 !            end do
             
             write(*,*) "file_number=", file_number
-                                    
+
+            ! THE CHECKPOINT, AND IT USED TO BE MISSING FROM EXACTLY THE LOOP
+            ! THAT NEEDED IT.
+            !
+            ! write_calibration_state and read_calibration_state were written as
+            ! a pair, but only the transition simulation ever called the write.
+            ! The calibration itself, which is the run that takes days and the
+            ! only run anyone ever kills, wrote nothing, so read_calibration_state
+            ! sat at the top of this subroutine reading a file that this
+            ! subroutine never produced. Both halves are called here now, so a
+            ! kill costs one loop instead of all of them.
+            call write_calibration_state()
+            call write_calibration_distribution()
+
         end do
-    
+
         simulation_ended=0
         
         call calculate_homeownership_by_characteristics(1)

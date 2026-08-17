@@ -476,3 +476,86 @@ far worse than a slow iteration and a rejected step costs one vector operation.
 `accelerate_distribution = 0` reproduces the plain sweep exactly. That is what
 made the A/B possible, and it is the reason to leave the code in place rather
 than delete it.
+
+---
+
+## 10. Two things that were built and then never connected
+
+Both of these are the same failure, and it is a cheap one to make: the code is
+written, it compiles, it looks finished in a diff, and nothing calls it. Neither
+was a performance bug in the sense of a slow loop. Each was a facility that cost
+nothing to add and gave nothing back because the last wire was missing.
+
+### 10.1 The asset lottery counted its refusals into a threadprivate variable
+
+`compute_asset_lottery` refuses in several cases rather than extrapolating, and
+it counted the branch mismatch refusals so the refusal rate could be read before
+the asset grid was cut. The counter was `threadprivate`.
+
+A threadprivate counter cannot be read after the fact. Every thread but the
+master gets its copy discarded when the parallel region ends, so the number that
+reaches serial code is one thread's share of the work, and only by luck is it
+even that. The counter was incremented tens of millions of times and printed
+never.
+
+The fix is a shared array with one row per thread and a stride wide enough to put
+the rows on separate cache lines. No synchronisation, because no two threads
+touch the same element, and no atomic, because an atomic on one word in a
+subroutine called once per state per housing branch per age would serialise the
+search that the parallelism exists to speed up.
+
+The slot index is resolved on **first use by each thread**, not once in a
+parallel region of its own. Threadprivate data is only guaranteed to survive
+between two parallel regions when the thread count matches and dynamic
+adjustment is off; a slot that quietly failed to persist would put two threads on
+one element and lose counts to a race, which is the failure mode that produces a
+plausible wrong number rather than an obvious one.
+
+Four counts are kept: calls, refusals on the branch guard, refusals on the
+geometry, and calls that returned a positive fraction. They are printed once per
+equilibrium solve. **Read them before touching the grid.** A high fire share says
+the grid is the wrong place to be spending points and can be cut. A high branch
+mismatch share says the guard is refusing rather than the geometry, and the fix
+is to fill the vectors from the winning branch instead of cutting the grid. A
+high geometry share is the objective's own shape, and no amount of guard work
+will change it — that is section 3's non concavity showing up in a second place.
+
+### 10.2 The calibration checkpoint was written for the one loop that never called it
+
+`write_calibration_state` and `read_calibration_state` are a pair, and the read
+half sits at the top of `calibrating_model`. The write half was called only from
+`transition_simulation`. So the calibration — the run that takes days, and the
+only run anyone ever kills — wrote nothing, and the read at the top of it was
+reading a file that it never produced. On a fresh machine it printed "no
+calibration_state.dat" and started from the declared values, which is exactly
+what the checkpoint existed to prevent, and it printed it so quietly that the
+resume looked like it was working.
+
+Three changes:
+
+**The write is called from the calibration loop**, once per completed loop, so a
+kill costs one loop instead of all of them.
+
+**The four SMI parameters are in the file**, and the version tag went to v2 so a
+v1 file is ignored rather than read short and misaligned. They had been wired
+into the update block and not into the state, so a resumed run picked the housing
+and drug parameters up where they left off and sent lambda_m, kappa_uem, rho_m
+and rho_d back to their declared values. That is worse than not resuming: the
+parameters that resume are the ones the SMI parameters have to be consistent
+with.
+
+**The converged distribution is checkpointed too**, which is the expensive half.
+Recovering the parameters alone still pays 655 sweeps to rebuild the distribution
+from the age one cross section, and those sweeps are most of a loop. Consecutive
+parameter vectors differ by a damped step, so the last converged distribution is
+a much better guess than a fresh initialisation. Loading it also means
+`initialize_feasible_distribution` has to be skipped on that first loop, since it
+would otherwise overwrite the warm start with everyone at age one holding
+nothing — the flag is cleared immediately afterwards, so from the second loop on
+the behaviour is unchanged.
+
+The positional state file has one real failure mode, which is a write list and a
+read list that drift out of step. It is checked mechanically rather than by
+reading: 40 entries each, formats identical, names identical except the one
+deliberate difference, `loop_count` written and `resumed_loop_count` read, since
+a resumed run counts its own loops from zero.
