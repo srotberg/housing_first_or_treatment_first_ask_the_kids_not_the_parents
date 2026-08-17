@@ -1,32 +1,35 @@
 \begin{table}[htbp]\centering
-\caption{\normalsize The fifteen parameters that carry the key results}\label{tab:eleven}
-\begingroup\footnotesize\setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}lL{4.2cm}cL{6.9cm}r@{}}
+\caption{\normalsize The eighteen parameters that carry the key results}\label{tab:eleven}
+\begingroup\scriptsize\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lL{4.6cm}cL{7.6cm}r@{}}
 \toprule
 Parameter & Description & Set & Moment and source & Value \\
 \midrule
-\multicolumn{5}{@{}l}{\emph{Who uses drugs, and why}} \\
+\multicolumn{5}{@{}l}{\emph{{\color{red}Who uses drugs}}} \\
 $b$ & Whether a household uses & Int. & Drug participation, NSDUH 2024 & \textemdash \\
 $\lambda$ & SUD hazard per unit used & Int. & Users acquiring a SUD, NSDUH 2024 & \textemdash \\
 $\bar\kappa_{\phi d}$ & Mortality with a SUD & Ext. & Mortality ratios, Hjorth\o j et al.\ (2023) & 8.00 \\
 $\aleph$ & Flow value of being alive & Int. & Value of a statistical life, Viscusi (2003) & \textemdash \\
 $\rho_d$ & Earnings lost to a SUD & Int. & Employment rate of the homeless, HUD 2023 & \textemdash \\
 $\kappa_{ued}$ & Employment multiplier, SUD & Int. & Unemployment rate given a SUD, NSDUH 2024 & \textemdash \\
+\color{red} $\rho_m$ & \color{red} Earnings lost to SMI & \color{red} Int. & \color{red} Earnings of workers with SMI, NSDUH 2023 & \color{red} \textemdash \\
+\color{red} $\kappa_{uem}$ & \color{red} Employment multiplier, SMI & \color{red} Int. & \color{red} Employment rate given SMI, NSDUH 2023 & \color{red} \textemdash \\
 \addlinespace
 \multicolumn{5}{@{}l}{\emph{How housing assistance shapes that decision}} \\
 $\pi_V$ & Voucher lottery probability & Int. & Recipients over eligible, HUD 2023 & \textemdash \\
-$\mu_H$ & Recovery on the street & Int. & Weeks abstinent, Milby et al.\ (2005) & \textemdash \\
+$\mu_H$ & \color{red} Recovery multiplier on the street & Int. & Weeks abstinent, Milby et al.\ (2005) & \textemdash \\
 $h_1$ & Service flow of homelessness & Int. & Homelessness rate, HUD 2023 & \textemdash \\
-$\kappa_{\phi H}(j)$ & Mortality when unhoused & Ext. & Mortality by age, Baggett et al.\ (2013) & 4.41 to 1.09 \\
+$\kappa_{\phi H}(j)$ & \color{red} Increased mortality when unhoused & Ext. & Mortality by age, Baggett et al.\ (2013) & 4.41 to 1.09 \\
+\color{red} $\kappa_{ueH}$ & \color{red} Employment multiplier, HL & \color{red} Ext. & \color{red} Desmond and Gershenson (2016) & \color{red} 0.80 \\
 \addlinespace
-\multicolumn{5}{@{}l}{\emph{The externality on the child}} \\
+\multicolumn{5}{@{}l}{\emph{{\color{red}Externalities on child}}} \\
 $\omega$ & Weight on the child & Int. & Parent use rate with a child, NSDUH 2024 & \textemdash \\
 $\delta_d$ & Child's earnings, parent SUD & Int. & Child SUD ratio, McGovern et al.\ (2023) & \textemdash \\
-$\delta_h$ & Child's earnings, homeless & Ext. & Poverty exposure, Chetty et al.\ (2016) & 0.31 \\
+$\delta_h$ & Child's earnings, homeless & Ext. & {\color{red}Poverty exposure on child's earnings}, Chetty et al.\ (2016) & 0.31 \\
 \addlinespace
-\multicolumn{5}{@{}l}{\emph{The other externalities}} \\
+\multicolumn{5}{@{}l}{\emph{{\color{red}Other externalities}}} \\
 $\omega_{\ell}$ & Weight on leisure & Int. & Average hours worked, Guvenen et al.\ (2023) & \textemdash \\
-$\kappa_x$ & Disamenity of homelessness & Ext. & Willingness to pay, Loubi\`ere et al.\ (2020) & 0.0008 \\
+$\kappa_x$ & Disamenity of homelessness & Ext. & {\color{red}Willingness to pay to eliminate homelessness}, Loubi\`ere et al.\ (2020) & 0.0008 \\
 \bottomrule
 \end{tabular}
 \endgroup
