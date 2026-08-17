@@ -140,17 +140,47 @@ class P:
     # SHARES THAT SUM TO ONE. The weight on consumption is 1-gam-th, so gam is
     # the housing budget share proper rather than gam/(1+gam+th). gam is set to
     # 0.268 of non drug spending, which is the share in the data.
-    # THETA IS 0.20 AND NOT 0.11, and the two period model is what allows it. In
+    # THETA IS 0.23 AND NOT 0.11, and the two period model is what allows it. In
     # the three period model raising theta bought a drug spending share at the
     # cost of the income gradient: users stopped being poor. Here the mortality
-    # channel is strong enough to hold the gradient while theta rises, and the
-    # spending share goes from 1.9 per cent to 4.9. The ceiling is real and it is
-    # close: theta = 0.22 still passes, theta = 0.24 does not, and by 0.28 users
-    # are RICHER than average and the model has changed regime. 0.20 is chosen
-    # over 0.22 because it buys the same spending share with room to spare.
+    # channel is strong enough to hold the gradient while theta rises.
+    #
+    # THE CEILING MOVED WHEN THE SMR DID. With kappa derived from an SMR of 8
+    # rather than 6.9 the mortality channel is stronger, so it holds the gradient
+    # further. The six point screen, all at the same 5.13 per cent participation
+    # rate and each fully recalibrated:
+    #
+    #   theta   spending    r_mort   passes
+    #   0.20      3.80 %     0.187    yes
+    #   0.22      6.18 %     0.161    yes
+    #   0.23      6.32 %     0.449    yes
+    #   0.24      4.35 %     0.967    yes, with no margin at all
+    #   0.25     19.81 %     3.519    NO
+    #   0.28     29.70 %     2.820    NO
+    #
+    # r_mort is the income gradient among users with the mortality channel alone
+    # at full strength, and it has to be BELOW ONE or the model no longer says
+    # what it exists to say: that mortality is what makes the poor the users.
+    #
+    # So 0.25 is not available, and that matters because 0.25 is where the
+    # spending share finally gets near the data's 11 per cent. The 19.81 per cent
+    # there is not a better calibration, it is a different regime: r_mort of 3.5
+    # means the mortality channel now puts USE AT THE TOP of the income
+    # distribution, and the headline result is gone.
+    #
+    # 0.23 is chosen. It is the largest spending share among the points that
+    # pass, and it keeps real margin below one, unlike 0.24 which passes at 0.967
+    # with none. The share is 6.32 per cent against 11 in the data, so the gap is
+    # narrowed and not closed, and the note says so rather than claiming a fit.
+    #
+    # The share is NOT monotone in theta between 0.22 and 0.24, which is worth
+    # knowing before anyone reads a small difference as signal: b rises smoothly
+    # across the whole range, so the dip at 0.24 is the four sweep calibration
+    # struggling near the boundary rather than a feature of the model.
+    #
     # See scan_theta.py, which screens the channel decomposition before it reads
     # the spending share.
-    th    = 0.20      # weight on drug use
+    th    = 0.23      # weight on drug use
     b     = 0.009     # Stone Geary subsistence; th/b is the pull of the first unit
     gam   = 0.2144    # CALIBRATED to the housing share. Starting value only
     # A PERIOD IS THIRTY YEARS, so the discount factor and the interest rate are

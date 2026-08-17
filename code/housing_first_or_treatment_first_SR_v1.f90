@@ -10790,7 +10790,14 @@
         integer :: age_wall_1,age_wall_prev_1,age_wall_rate_1
         real(8) :: labor_supply_2
         character*1 :: string_used
-                        
+
+        ! Cleared here so the shares describe THIS backward induction.
+        if (report_lottery_diagnostics==1) then
+
+            call reset_asset_lottery_counters()
+
+        end if
+
         max_future_mortgage_index_1=negative_financial_grid_size
         
         do i=1,2
@@ -11311,6 +11318,19 @@
                 
             loop_count=loop_count+1
             
+        end if
+
+        ! THE LOTTERY IS COUNTED WHERE IT RUNS. The a' search is in this
+        ! subroutine, and the first version reset the counters at the head of
+        ! converge_to_stationary_equilibrium, which the calibration loop calls
+        ! AFTER this one. So the reset wiped the whole solve's counts and the
+        ! report read zero and said the lottery had never been called, which was
+        ! a statement about where the counters were cleared and not about the
+        ! lottery.
+        if (report_lottery_diagnostics==1) then
+
+            call report_asset_lottery()
+
         end if
          
         call cpu_time(value_function_iteration_stop_time)
@@ -17400,12 +17420,6 @@
         
         end if
 
-        if (report_lottery_diagnostics==1) then
-
-            call reset_asset_lottery_counters()
-
-        end if
-
         avg_income_to_use_1=is_counterfactual*average_labor_income_calibrated+&
             (1-is_counterfactual)*model_average_labour_income(time_period)
 
@@ -18392,12 +18406,6 @@
                     distribution_implied(i)%vector_transition_real(time_period,:,:,:,:,:,:)
 
             end do
-
-        end if
-
-        if (report_lottery_diagnostics==1) then
-
-            call report_asset_lottery()
 
         end if
 
