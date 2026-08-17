@@ -301,7 +301,7 @@ $R=1/\beta$, the dispersion of log permanent income is
 $\sigma_y = 0.75$ from Heathcote, Perri and Violante (2010), and survival over
 a period is $\phi_0 = @@phi0@@$, from the Social Security Administration (SSA) period life table for twenty
 five to fifty five. For the SUD, the
-proportional fall in survival is $\kappa = @@kap@@$ from Hjorth\o j et al.\
+proportional fall in survival is $\kappa = @@kap@@$ \new{, derived by compounding an annual mortality ratio of $8$, the midpoint of the range in} Hjorth\o j et al.\
 (2023), so a clean household's chance of dying before period 2 is @@dth0@@
 percent and a household that acquires a SUD faces @@dth1@@ percent,
 and the two unemployment probabilities are measured directly. $u_0 = @@u0@@$
@@ -1294,10 +1294,10 @@ because the transition exercise in the results needs it.
 \section{Calibrating the quantitative model}\label{sec:fullcal}
 
 The model has fifty eight parameters, some of which vary in value by age.
-Thirty seven are calibrated externally, from data or from the
-literature, and twenty one are calibrated internally, inside the model. They are
-split across the three tables of this section: ten carry the key results
-(Table~\ref{tab:eleven}, six internally and four externally calibrated),
+\new{Thirty six are calibrated externally, from data or from the
+literature, and twenty two are calibrated internally, inside the model.} They are
+split across the three tables of this section: \new{ten carry the key results
+(Table~\ref{tab:eleven}, seven internally and three externally calibrated),}
 twenty four are specific to this paper without carrying a key result
 (Table~\ref{tab:paperparams}, eight internally and sixteen externally), and
 twenty four are standard (Table~\ref{tab:stdparams}, seven internally and
@@ -1320,89 +1320,121 @@ reader may want to argue over, and each is taken in the order of the table.
 
 \input{tables/tab_eleven}
 
-{\color{red}\paragraph{Who uses drugs, and why.}
+{\color{red}Throughout, a parameter is not ``set to'' a moment. Its value is
+chosen so that the model reproduces the moment, which is a different statement
+and the one that matters for identification.
+
+\paragraph{Who uses drugs, and why.}
 \begin{description}\setlength{\itemsep}{0.3em}\setlength{\parskip}{0em}
-\item[$b$, whether a household uses at all.] The marginal value of the drug
-goes as $\theta/(b+v)$, so a larger $b$ makes the first units worth less and a
-household with little to spend buys nothing. It is set to the $5.13$ percent
-participation rate among adults aged 26 and over in NSDUH 2024.
-\item[$\lambda$, the hazard per unit used.] This is what makes using
-\emph{more} genuinely riskier rather than merely dearer. It is set to the share
-of users who go on to acquire a disorder, from the same NSDUH sample;
-prevalence alone cannot separate onset from recovery, which is why the flow is
-the moment and not the stock.
+\item[$b$, whether a household uses at all.] The marginal value of the drug goes
+as $\theta/(b+v)$, so a larger $b$ makes the first units worth less and a
+household with little to spend buys nothing. Its value is chosen so the model
+generates a drug participation rate of $5.13$ percent, the NSDUH 2024 figure for
+adults aged 26 and over.
+\item[$\lambda$, the hazard per unit used.] This is what makes using \emph{more}
+genuinely riskier rather than merely dearer. Its value is chosen so the model
+generates the share of users who go on to acquire a disorder, from the same
+NSDUH 2024 sample. The flow is the moment rather than the stock because
+prevalence cannot separate onset from recovery: a high prevalence is equally
+consistent with fast onset and with slow recovery.
 \item[$\bar\kappa_{\phi d}$, mortality with a disorder.] This is the parameter
-the whole paper turns on. Section~\ref{sec:what} showed why: mortality
-is what truncates the value of life for a user, and it truncates it hardest for
-the household with most life left to value. That is what reverses the income
-gradient and makes the \emph{poor} the users rather than the rich, which no
-budget constraint alone delivers. It is set externally at the midpoint of
-standardised mortality ratios for opioid use disorder, six to ten, with the age
-profile from CDC WONDER; setting it rather than fitting it is what frees the
-price elasticity to test the mechanism instead of pinning it.
+the whole paper turns on, and Section~\ref{sec:what} shows why. Mortality
+truncates the value of life for a user, and it truncates it hardest for
+households with the most life left to value. That is what reverses the income
+gradient and makes the poor the users rather than the rich, which no budget
+constraint alone delivers. It is calibrated externally, at the midpoint of the
+standardised mortality ratios for substance use disorder reported in Hjorth\o j
+et al.\ (2023), which run six to ten, with the age profile taken from CDC WONDER
+2023. Setting it externally rather than fitting it is what frees the
+\emph{elasticity of participation} with respect to the drug price to serve as a
+test of the mechanism rather than being spent pinning a parameter.
 \end{description}
 
 \paragraph{How housing assistance shapes that decision.}
 \begin{description}\setlength{\itemsep}{0.3em}\setlength{\parskip}{0em}
-\item[$\pi_V$, the chance of drawing a voucher.] This is the policy dial. It
-does three things at once, which is why it cannot be read as generosity alone. It
-raises the value of life, because a household with a voucher has more to lose
-from dying, and that pushes against use. It lowers homelessness directly. And it
-creates the moral hazard the paper is about: assistance that arrives whatever a
-household does insures it against the consequences of using, so the same
-instrument that raises the value of life also weakens the reason to protect it.
-Which effect dominates is quantitative, and it is what the counterfactuals
-measure. It is set to recipients over the income eligible in HUD's Picture of
-Subsidized Households.
-\item[$\mu_H$, how much harder recovery is on the street.] This, and not the
-housed recovery rate, is what makes housing an \emph{input into recovery} rather
-than only a transfer. It is also where the moral hazard bites hardest and where
-the value of life moves most, so it works directly against $\pi_V$: a large
-$\mu_H$ means a voucher buys recovery as well as shelter. It is set from Milby's
-randomised trial, weeks abstinent in the housed arm against the unhoused arm,
-$6.60$ against $4.48$, on exactly the population at issue.
+\item[$\pi_V$, the chance of drawing a voucher.] This is the policy dial, and it
+does three things at once, which is why it cannot be read as generosity alone.
+\emph{First}, it lowers homelessness directly, since a household with a voucher
+can afford a dwelling it otherwise could not. \emph{Second}, it raises the value
+of being alive: a household with a voucher has a better life ahead of it and so
+more to lose from the mortality that use brings, and that pushes against using.
+\emph{Third, and in the opposite direction}, it insures the household against the
+consequences of using. A voucher that arrives whatever a household does removes
+part of the penalty for ending up unable to pay rent, and that is the moral
+hazard the paper is about. So the same instrument that gives a household more to
+protect also weakens its reason to protect it, and which of the two dominates is
+quantitative. Its value is chosen so the model generates the ratio of voucher
+recipients to the income eligible population in HUD's Picture of Subsidized
+Households.
+\item[$\mu_H$, how much harder recovery is on the street.] Housing enters
+recovery here and not only the budget, and this is the parameter that carries it.
+It matters more than the housed recovery rate because it is a \emph{gradient}: it
+is how much a household gains in recovery terms from being housed, so it is what
+a voucher buys beyond shelter. That makes it the counterweight to the moral
+hazard in $\pi_V$. If $\mu_H$ is large, assistance buys recovery and the
+insurance effect is outweighed; if it is near one, assistance is a transfer and
+the moral hazard stands unopposed. Its value is chosen so the model generates the
+ratio of weeks abstinent between the housed and unhoused arms of Milby et al.\
+(2005), $6.60$ against $4.48$, a randomised trial on cocaine dependent homeless
+adults.
 \end{description}
 
-\paragraph{The externality on the child.} These three are the only place where a
-household's choice falls on someone who did not make it, and they are what a
-policy can improve without changing anyone's incentives at all.
+\paragraph{The externality on the child.} A household's choice falls on people
+who did not make it in several ways here, through the tax that finances
+assistance and through the disamenity below. What is distinctive about these
+three is that the person bearing the cost cannot respond at all.
 \begin{description}\setlength{\itemsep}{0.3em}\setlength{\parskip}{0em}
-\item[$\omega$, the parent's weight on its child.] It is set to the fall
-in drug use when a child is present, $15.5$ percent in NSDUH 2024, with parents
-reweighted to the non parents' joint age, income, sex and marital distribution so
-the comparison is not composition. It is small, and that is the whole point: a
-household weighs a fraction $\omega$ of the two penalties below and the remaining
-$1-\omega$ falls outside its problem entirely. The externality is therefore
-$1-\omega$ times whatever $\delta_d$ and $\delta_h$ cost the child.
-\item[$\delta_d$, what the child loses to a parent's disorder.] This one argues
-for Treatment First. Children of a parent with a substance use disorder are two
-to four times likelier to acquire one (McGovern et al., 2023), and the model
-carries that as a loss of earnings potential rather than an inherited state. A
-policy that cures disorders therefore buys a second return, on the next
-generation, that a policy which only houses people does not.
+\item[$\omega$, the parent's weight on its child.] A parent values its child's
+lifetime utility at $\omega$ times its own, and $\omega$ is small. What that
+means for policy is the point: the two penalties below cost the child in full,
+the parent counts only $\omega$ of that when deciding whether to use, and the
+remaining $1-\omega$ is a cost nobody in the model weighs at all. The externality
+is therefore $1-\omega$ times what $\delta_d$ and $\delta_h$ cost the child. Its
+value is chosen so the model generates the $15.5$ percent fall in past month drug
+use between parents and non parents in NSDUH 2024, with parents reweighted to the
+non parents' joint distribution of age, income, sex and marital status, so the gap
+is behaviour rather than composition.
+\item[$\delta_d$, what the child loses to a parent's SUD.] This one argues for
+Treatment First. McGovern et al.\ (2023) find that children of a parent with a
+substance use disorder are two to four times likelier to acquire one themselves.
+The model does not carry an inherited disorder; it carries the loss of earnings
+potential that goes with it, so $\delta_d$ is calibrated internally, its value
+chosen so the model reproduces that ratio of child disorder rates between parents
+with and without a disorder. A policy that cures disorders therefore earns a
+return on the next generation that a policy which only houses people does not.
 \item[$\delta_h$, what the child loses to growing up homeless.] This one argues
-for Housing First. Moving a child to a lower poverty neighbourhood before age
-thirteen raises adult earnings by $31$ percent (Chetty, Hendren and Katz, 2016),
-and the same channel run backwards is what homelessness costs. So the two
-penalties pull in opposite directions, and which dominates is exactly the
-quantitative question the paper asks. Both are set externally because their
-sources report ranges rather than points.
+for Housing First, and it is set from the same literature read in the other
+direction. Chetty, Hendren and Katz (2016) find that moving a child to a lower
+poverty neighbourhood before age thirteen raises adult earnings by $31$ percent;
+$\delta_h$ is calibrated externally to that figure, taking the earnings gain from
+leaving poverty as the mirror of the earnings loss from growing up without
+stable housing. So the two penalties pull in opposite directions: curing
+disorders helps the child through $\delta_d$, housing families helps the child
+through $\delta_h$, and which return is larger is exactly the quantitative
+question the paper asks.
 \end{description}
 
-\paragraph{What the tax has to distort.} These two come last because they do not
-act on the drug decision at all. They are what makes a policy costly to everyone
-who never receives it.
+\paragraph{The other externalities.} These two act on households who never
+receive the programme, and neither runs through the drug decision directly.
 \begin{description}\setlength{\itemsep}{0.3em}\setlength{\parskip}{0em}
 \item[$\omega_{\ell}$, the weight on leisure.] This sets how much labour supply
-responds to the tax. A policy that houses more households is financed by
-a higher $\tau_{\ell}$, which lowers the after tax return to an hour worked. How
-far hours fall is governed here, so this parameter decides how large the
-deadweight loss of financing either policy is. It is set to average hours worked.
-\item[$\kappa_x$, the disamenity of homelessness.] It is the
-only term through which one household's housing status enters another's utility,
-which is what makes the homelessness rate a genuine fixed point rather than
-accounting. It is set from the willingness to pay in Loubi\`ere et al.\ (2020),
-and the results are reported across its range because the evidence is thin.
+responds to the tax, and the tax is where the fiscal externality lives. A policy
+that houses more households is financed by a higher $\tau_{\ell}$, which lowers
+the after tax return to an hour worked, so hours fall for everyone including
+households the programme never reaches. The channel runs the other way too, and
+that is what makes it an externality rather than only a cost: a household that
+uses is likelier to be out of work and likelier to need assistance, so its choice
+raises the tax everybody else pays. Its value is chosen so the model generates
+average hours worked, from Guvenen et al.\ (2023).
+\item[$\kappa_x$, the disamenity of homelessness.] It is the only term through
+which one household's housing status enters the utility of another household who
+is not its own child, which is what makes the homelessness rate a genuine fixed
+point of the equilibrium rather than accounting. It is calibrated externally from
+the contingent valuation in Loubi\`ere et al.\ (2020): a mean willingness to pay
+of \euro{}23 a year across all respondents, and \euro{}57 among the $42$ percent
+willing to pay anything, which are $0.08$ and $0.20$ percent of average annual
+earnings. The lower figure is the baseline and the results are reported across
+the range, because the evidence here is thin.
 \end{description}}
 
 \subsection{Other parameters specific to this paper}

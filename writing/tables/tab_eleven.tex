@@ -8,7 +8,7 @@ Parameter & Description & Set & Moment and source & Value \\
 \multicolumn{5}{@{}l}{\emph{Who uses drugs, and why}} \\
 $b$ & Whether a household uses & Int. & Drug participation, NSDUH 2024 & \textemdash \\
 $\lambda$ & SUD hazard per unit used & Int. & Users acquiring a SUD, NSDUH 2024 & \textemdash \\
-$\bar\kappa_{\phi d}$ & Mortality with a SUD & Ext. & Mortality ratios, Degenhardt (2011) & 8.00 \\
+$\bar\kappa_{\phi d}$ & Mortality with a SUD & Ext. & Mortality ratios, Hjorth\o j (2023) & 8.00 \\
 \addlinespace
 \multicolumn{5}{@{}l}{\emph{How housing assistance shapes that decision}} \\
 $\pi_V$ & Voucher lottery probability & Int. & Recipients over eligible, HUD 2023 & \textemdash \\
@@ -16,12 +16,12 @@ $\mu_H$ & Recovery on the street & Int. & Weeks abstinent, Milby (2005) & \texte
 \addlinespace
 \multicolumn{5}{@{}l}{\emph{The externality on the child}} \\
 $\omega$ & Weight on the child & Int. & Parent use rate with a child, NSDUH 2024 & \textemdash \\
-$\delta_d$ & Child's earnings, parent's SUD & Ext. & Child SUD ratio, McGovern (2023) & 3.00 \\
+$\delta_d$ & Child's earnings, parent's SUD & Int. & Child SUD ratio, McGovern (2023) & \textemdash \\
 $\delta_h$ & Child's earnings, homelessness & Ext. & Poverty exposure effects, Chetty (2016) & 0.31 \\
 \addlinespace
 \multicolumn{5}{@{}l}{\emph{What the tax has to distort}} \\
-$\omega_{\ell}$ & Weight on leisure & Int. & Average hours, Guvenen (2023) & \textemdash \\
-$\kappa_x$ & Disamenity of homelessness & Ext. & Loubi\`ere et al.\ (2020) & 0.0008 \\
+$\omega_{\ell}$ & Weight on leisure & Int. & Average hours worked, Guvenen et al.\ (2023) & \textemdash \\
+$\kappa_x$ & Disamenity of homelessness & Ext. & Willingness to pay, Loubi\`ere et al.\ (2020) & 0.0008 \\
 \bottomrule
 \end{tabular}
 \end{table}

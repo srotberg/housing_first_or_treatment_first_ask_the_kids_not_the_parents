@@ -226,8 +226,15 @@ class P:
     # 9.2; at thirty years it implies 7.4. Both sit inside Hjorthoj et al.'s
     # range, so this is a correction of construction rather than of magnitude,
     # and it moves the penalty DOWN very slightly.
-    smr_d = 6.9       # mortality rate ratio with a SUD. Hjorthoj et al. (2023)
-    kap   = 1.0 - (1.0 - 6.9 * (1.0 - 0.91 ** (1.0 / 30.0))) ** 30 / 0.91
+    # RAISED FROM 6.9 TO 8.0 so the two models use the same number. The full
+    # model calibrates kappa_phi_d externally at the MIDPOINT of the six to ten
+    # range Hjorthoj et al. (2023) report, and citing the same source for the
+    # same object while carrying two different values is exactly the
+    # inconsistency the AE's letter objects to. kap is DERIVED from it, not set
+    # to it: an annual ratio does not transfer to a thirty year period, so the
+    # annual hazard is compounded. 6.9 gave kap = 0.4302; 8.0 gives 0.4876.
+    smr_d = 8.0       # mortality rate ratio with a SUD. Hjorthoj et al. (2023)
+    kap   = 1.0 - (1.0 - smr_d * (1.0 - 0.91 ** (1.0 / 30.0))) ** 30 / 0.91
     u1    = 0.1625    # RESOURCE: the disorder costs you a job. Measured.
 
     # NO RECOVERY PARAMETER. rho needed a period to recover INTO and there is
