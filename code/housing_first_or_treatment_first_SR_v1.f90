@@ -175,6 +175,49 @@
         real(8) :: previous_treatment_take_up=0
         integer :: have_treatment_secant=0
 
+        ! MU_H, INTERNALLY CALIBRATED, as Table 5 says it is. It used to be
+        ! assigned mu_homeless = 4.48/6.60 directly, which is Milby's raw ratio and
+        ! not the same thing as the model reproducing it: who is on the street is
+        ! not a random draw of who carries the disorder, and the SMI multiplier and
+        ! treatment take up both enter the hazard, so the model's recovery gradient
+        ! sits somewhere else at the same mu_H.
+        !
+        ! The moment is the model's own increase in recovery from being housed,
+        ! 6.60/4.48 = 1.473 weeks abstinent in Milby et al. (2005). The model
+        ! counterpart is the ratio of the average recovery hazard faced by housed
+        ! households with the disorder to that faced by homeless ones.
+        !
+        ! The stronger form of this moment is the trial itself, a two arm partial
+        ! equilibrium cohort experiment with prices held at the benchmark, which is
+        ! the second stage the note describes and which is still not implemented.
+        ! This is the stationary distribution's version of the same ratio.
+        real(8), parameter :: milby_recovery_ratio_data=6.60d0/4.48d0
+        real(8) :: mu_homeless_adjuster=5*10.d0**(-2)
+        real(8) :: distance_mu_homeless=1
+        real(8) :: stopping_rule_mu_homeless=10.d0**(-2)
+
+        ! OMEGA, INTERNALLY CALIBRATED, also as Table 5 says. Its moment is a
+        ! counterfactual: switching the child term off raises drug use by 15.5 per
+        ! cent, which is the parent against non parent gap in NSDUH 2024 with
+        ! parents reweighted to the non parents' joint distribution.
+        !
+        ! That requires a second solve with the term off, so the loop below runs
+        ! the counterfactual FIRST and the baseline second. Running it the other
+        ! way round would leave every model statistic describing the world without
+        ! the child, and the rest of the calibration reads those statistics.
+        !
+        ! It could not have been calibrated before today in any case: the child's
+        ! value was identically zero until the read was moved above the wipe that
+        ! destroyed it, so switching the term off changed nothing and the moment
+        ! was identically zero too.
+        real(8), parameter :: child_use_gap_data=0.155d0
+        real(8) :: weight_on_child_adjuster=2*10.d0**(-2)
+        real(8) :: distance_weight_on_child=1
+        real(8) :: stopping_rule_weight_on_child=10.d0**(-2)
+        real(8) :: drug_users_without_child=0
+        real(8) :: weight_on_child_saved=0
+        integer, parameter :: calibrate_weight_on_child=1
+
         ! NSDUH 2023, treatment take up given a SUD.
         real(8), parameter :: treatment_take_up_data=0.24
         integer, parameter :: max_age_to_choose_addiction=55
@@ -552,6 +595,21 @@
         real(8), parameter :: himmelberg_etal_rent_to_price=0.083
         real(8), parameter :: free_market_rent_to_house_price=0.083
         integer, parameter :: calibrate_size_of_smallest_house_hhld_can_buy=1
+
+        ! OWNERSHIP IS OFF. This is a model of renters, the street and a rental
+        ! voucher, and nothing in either policy touches the owner margin. It was
+        ! never switched off explicitly, so it produced a homeownership rate of
+        ! exactly zero anyway, by way of a smallest buyable house of 0.23 against
+        ! a largest housing size consumed of grid index 2, and left NaNs behind it
+        ! in every mortgage and owner unit statistic. Zero by accident is worse
+        ! than zero by construction: it hides whether the owner branch is doing
+        ! anything, and the treatment policy is written with no owner term at all
+        ! (PERFORMANCE_NOTES section 13), so an owner would silently decline
+        ! treatment it wanted.
+        !
+        ! At zero the two ownership comparisons are forced to the renter side, so
+        ! the owner branch can never be chosen and that latent bug cannot fire.
+        integer, parameter :: include_ownership=0
         integer, parameter :: calibrate_smallest_house_size=1
         real(8), parameter :: SCF_homeownership_rate=0.659  
         real(8), parameter :: SW_renters_spend_over_X_on_hous=target_30_perc*0.45+(1-target_30_perc)*0.151    
@@ -1989,6 +2047,8 @@
             model_addicted_total_income,model_addicted_total_addiction_spending_to_total_income,&
             model_experimenters_total_drug_spending_to_total_income,model_experimenters_total_income,&
             model_treatment_take_up,model_mass_with_sud,&
+            model_sud_mass_housed,model_sud_mass_homeless,&
+            model_recovery_housed,model_recovery_homeless,&
             model_drugs_used_by_users_on_average,model_drugs_used_by_experimenters_on_average,model_mass_total_users,&
             model_mass_experimenters,model_mass_addicts,model_drugs_used_by_addicts_on_average,&
             model_drugs_consumed_by_users,model_experimenters_getting_voucher,model_avg_income_experimenters,&
@@ -6965,6 +7025,10 @@
         model_average_spent_on_addiction_by_addicted(time_period)=0
         model_treatment_take_up(time_period)=0
         model_mass_with_sud(time_period)=0
+        model_sud_mass_housed(time_period)=0
+        model_sud_mass_homeless(time_period)=0
+        model_recovery_housed(time_period)=0
+        model_recovery_homeless(time_period)=0
         model_drugs_used_by_users_on_average(time_period)=0
         model_drugs_consumed_by_users(time_period)=0
         model_drugs_used_by_experimenters_on_average(time_period)=0
@@ -7371,6 +7435,53 @@
                                             vector_transition_integer(time_period,age_index,financial_index,&
                                             unemployment_index,employment_index,housing_status_index,&
                                             voucher_index),8)*distribution_mass_used
+
+                                        ! MU_H's MOMENT. The recovery hazard each
+                                        ! household actually faces, averaged over
+                                        ! the housed and the homeless separately,
+                                        ! so their ratio is the increase in
+                                        ! recovery that housing produces IN THE
+                                        ! MODEL rather than the raw ratio mu_H is
+                                        ! built from. The two differ through
+                                        ! composition: who is on the street is not
+                                        ! a random draw of who carries the
+                                        ! disorder, and the SMI multiplier and
+                                        ! treatment take up both enter the hazard.
+                                        if (housing_status_index_used>=second_lowest_housing_grid_point) then
+
+                                            model_sud_mass_housed(time_period)=&
+                                                model_sud_mass_housed(time_period)+distribution_mass_used
+
+                                            model_recovery_housed(time_period)=&
+                                                model_recovery_housed(time_period)+distribution_mass_used*&
+                                                addiction_transition(1,0,&
+                                                policy_function_addiction(years_left_on_mortgage_index)%&
+                                                vector_transition_integer(time_period,age_index,financial_index,&
+                                                unemployment_index,employment_index,housing_status_index,&
+                                                voucher_index),1,0.d0,1,&
+                                                policy_function_treatment(years_left_on_mortgage_index)%&
+                                                vector_transition_integer(time_period,age_index,financial_index,&
+                                                unemployment_index,employment_index,housing_status_index,&
+                                                voucher_index),smi_of(unemployment_index))
+
+                                        else
+
+                                            model_sud_mass_homeless(time_period)=&
+                                                model_sud_mass_homeless(time_period)+distribution_mass_used
+
+                                            model_recovery_homeless(time_period)=&
+                                                model_recovery_homeless(time_period)+distribution_mass_used*&
+                                                addiction_transition(1,0,&
+                                                policy_function_addiction(years_left_on_mortgage_index)%&
+                                                vector_transition_integer(time_period,age_index,financial_index,&
+                                                unemployment_index,employment_index,housing_status_index,&
+                                                voucher_index),2,0.d0,1,&
+                                                policy_function_treatment(years_left_on_mortgage_index)%&
+                                                vector_transition_integer(time_period,age_index,financial_index,&
+                                                unemployment_index,employment_index,housing_status_index,&
+                                                voucher_index),smi_of(unemployment_index))
+
+                                        end if
 
                                     end if
 
@@ -7947,6 +8058,24 @@
 
             model_treatment_take_up(time_period)=&
                 model_treatment_take_up(time_period)/model_mass_with_sud(time_period)
+
+        end if
+
+        ! Turn the two recovery sums into average hazards. Left at zero when a side
+        ! is empty, which the update below tests for rather than dividing by it:
+        ! with homelessness at a few tenths of a per cent the homeless SUD mass is
+        ! small, and it is exactly zero whenever the housing margin has collapsed.
+        if (model_sud_mass_housed(time_period)>0) then
+
+            model_recovery_housed(time_period)=&
+                model_recovery_housed(time_period)/model_sud_mass_housed(time_period)
+
+        end if
+
+        if (model_sud_mass_homeless(time_period)>0) then
+
+            model_recovery_homeless(time_period)=&
+                model_recovery_homeless(time_period)/model_sud_mass_homeless(time_period)
 
         end if
 
@@ -11652,7 +11781,7 @@
             
         end if
         
-        if (value_function_renter_renter>=value_function_renter_owner) then
+        if ((value_function_renter_renter>=value_function_renter_owner) .OR. (include_ownership==0)) then
                         
             value_function_renter=value_function_renter_renter
             
@@ -14602,7 +14731,7 @@
         
         is_owner_better=0
         
-        if (value_function_owner>value_function_renter) then
+        if ((value_function_owner>value_function_renter) .AND. (include_ownership==1)) then
         
             is_owner_better=1
             
@@ -27327,8 +27456,33 @@
             (distance_lambda_m>stopping_rule_lambda_m) .OR. &
             (distance_kappa_uem>stopping_rule_kappa_uem) .OR. &
             (distance_rho_m>stopping_rule_rho_m) .OR. &
-            (distance_rho_d>stopping_rule_rho_d) .OR. (loop_count<1))
+            (distance_rho_d>stopping_rule_rho_d) .OR. &
+            (distance_mu_homeless>stopping_rule_mu_homeless) .OR. &
+            (distance_weight_on_child>stopping_rule_weight_on_child) .OR. (loop_count<1))
                         
+            ! OMEGA'S MOMENT, measured before the baseline so that every statistic
+            ! the rest of this loop reads describes the baseline and not this.
+            ! Switching the child term off means setting its weight to zero, which
+            ! is exactly what the moment describes.
+            if ((calibrate_weight_on_child==1) .AND. (include_child_in_continuation==1)&
+                .AND. (loop_count>=1)) then
+
+                weight_on_child_saved=weight_on_child
+                weight_on_child=0
+
+                call solve_value_function_and_policy_functions(1)
+                call converge_to_stationary_equilibrium(1)
+                call stationary_equilibrium_statistics(1)
+
+                drug_users_without_child=model_total_drug_users(1)
+
+                weight_on_child=weight_on_child_saved
+
+                write(*,*) "omega counterfactual: drug users with the child term off =",&
+                    drug_users_without_child
+
+            end if
+
             call solve_value_function_and_policy_functions(1)
                             
             ! A LOADED WARM START MUST NOT BE OVERWRITTEN. The initialisation
@@ -28062,6 +28216,68 @@
                                 " reach on the benefit side, not on the cost."
 
                         end if
+
+                    ! MU_H, on the model's own increase in recovery from housing.
+                    ! The ratio FALLS in mu_H, since mu_H is how good recovery on
+                    ! the street is, so the step moves mu_H with the gap: a model
+                    ! ratio above target means the street is too bad and mu_H rises.
+                    if ((model_recovery_homeless(1)>0) .AND. (model_recovery_housed(1)>0)) then
+
+                        write(*,*) "model recovery housed, homeless =",&
+                            model_recovery_housed(1), model_recovery_homeless(1)
+                        write(*,*) "model recovery ratio =",&
+                            model_recovery_housed(1)/model_recovery_homeless(1),&
+                            " target =", milby_recovery_ratio_data
+                        write(*,*) "mu_homeless=", mu_homeless
+
+                        mu_homeless=max(min(mu_homeless+mu_homeless_adjuster*&
+                            (model_recovery_housed(1)/model_recovery_homeless(1)-&
+                            milby_recovery_ratio_data),1.d0),10.d0**(-3))
+
+                        distance_mu_homeless=&
+                            abs(model_recovery_housed(1)/model_recovery_homeless(1)-&
+                            milby_recovery_ratio_data)
+
+                        write(*,*) "mu_homeless=", mu_homeless,&
+                            " distance_mu_homeless=", distance_mu_homeless
+
+                    else
+
+                        ! No homeless household carries the disorder, so the
+                        ! gradient has no denominator. Say so rather than dividing.
+                        write(*,*) "mu_homeless HELD: no homeless household carries the disorder, so",&
+                            " the recovery gradient cannot be measured this iteration"
+
+                    end if
+
+                    ! OMEGA, on how much drug use rises when the child term is off.
+                    ! Use rises in the gap, and a LARGER omega means the parent
+                    ! already internalises more, so switching the term off changes
+                    ! more and the measured gap RISES in omega. A model gap above
+                    ! target therefore calls for a smaller omega.
+                    if ((calibrate_weight_on_child==1) .AND. (drug_users_without_child>0)&
+                        .AND. (model_total_drug_users(1)>0)) then
+
+                        write(*,*) "drug users, baseline and child term off =",&
+                            model_total_drug_users(1), drug_users_without_child
+                        write(*,*) "model child use gap =",&
+                            drug_users_without_child/model_total_drug_users(1)-1,&
+                            " target =", child_use_gap_data
+                        write(*,*) "weight_on_child=", weight_on_child
+
+                        weight_on_child=max(min(weight_on_child-weight_on_child_adjuster*&
+                            (drug_users_without_child/model_total_drug_users(1)-1&
+                            -child_use_gap_data),1.d0),0.d0)
+
+                        distance_weight_on_child=&
+                            abs(drug_users_without_child/model_total_drug_users(1)-1&
+                            -child_use_gap_data)
+
+                        write(*,*) "weight_on_child=", weight_on_child,&
+                            " distance_weight_on_child=", distance_weight_on_child
+
+                    end if
+
 
                     else
 
