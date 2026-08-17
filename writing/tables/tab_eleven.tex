@@ -1,27 +1,30 @@
 \begin{table}[htbp]\centering
-\caption{The ten parameters that carry the key results}\label{tab:eleven}
-\footnotesize\setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}lL{4.6cm}cL{6.3cm}r@{}}
+\caption{\normalsize The twelve parameters that carry the key results}\label{tab:eleven}
+\begingroup\footnotesize\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lL{4.4cm}cL{6.4cm}r@{}}
 \toprule
 Parameter & Description & Set & Moment and source & Value \\
 \midrule
 \multicolumn{5}{@{}l}{\emph{Who uses drugs, and why}} \\
 $b$ & Whether a household uses & Int. & Drug participation, NSDUH 2024 & \textemdash \\
 $\lambda$ & SUD hazard per unit used & Int. & Users acquiring a SUD, NSDUH 2024 & \textemdash \\
-$\bar\kappa_{\phi d}$ & Mortality with a SUD & Ext. & Mortality ratios, Hjorth\o j (2023) & 8.00 \\
+$\bar\kappa_{\phi d}$ & Mortality with a SUD & Ext. & Mortality ratios, Hjorth\o j et al.\ (2023) & 8.00 \\
 \addlinespace
 \multicolumn{5}{@{}l}{\emph{How housing assistance shapes that decision}} \\
 $\pi_V$ & Voucher lottery probability & Int. & Recipients over eligible, HUD 2023 & \textemdash \\
-$\mu_H$ & Recovery on the street & Int. & Weeks abstinent, Milby (2005) & \textemdash \\
+$\mu_H$ & Recovery on the street & Int. & Weeks abstinent, Milby et al.\ (2005) & \textemdash \\
+$h_{\text{HL}}$ & Service flow of homelessness & Int. & Homelessness rate, HUD 2023 & \textemdash \\
+$\nu_2$ & Drug supply elasticity & Ext. & Elasticity $1/(\nu_2-1)=2$; legal market range & 1.50 \\
 \addlinespace
 \multicolumn{5}{@{}l}{\emph{The externality on the child}} \\
 $\omega$ & Weight on the child & Int. & Parent use rate with a child, NSDUH 2024 & \textemdash \\
-$\delta_d$ & Child's earnings, parent's SUD & Int. & Child SUD ratio, McGovern (2023) & \textemdash \\
-$\delta_h$ & Child's earnings, homelessness & Ext. & Poverty exposure effects, Chetty (2016) & 0.31 \\
+$\delta_d$ & Child's earnings, parent's SUD & Int. & Child SUD ratio, McGovern et al.\ (2023) & \textemdash \\
+$\delta_h$ & Child's earnings, homelessness & Ext. & Poverty exposure effects, Chetty et al.\ (2016) & 0.31 \\
 \addlinespace
-\multicolumn{5}{@{}l}{\emph{What the tax has to distort}} \\
+\multicolumn{5}{@{}l}{\emph{The other externalities}} \\
 $\omega_{\ell}$ & Weight on leisure & Int. & Average hours worked, Guvenen et al.\ (2023) & \textemdash \\
 $\kappa_x$ & Disamenity of homelessness & Ext. & Willingness to pay, Loubi\`ere et al.\ (2020) & 0.0008 \\
 \bottomrule
 \end{tabular}
+\endgroup
 \end{table}

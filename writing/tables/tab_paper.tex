@@ -3,36 +3,41 @@
 \begin{longtable}{@{}lL{4.3cm}cL{6.6cm}r@{}}
 \caption{\normalsize Parameters specific to this paper}\label{tab:paperparams}\\
 \toprule
-Parameter & Description & Set & Moment or source & Value \\
+Parameter& Description& Set& Moment or source& Value \\
 \midrule
 \endfirsthead
 \toprule
-Parameter & Description & Set & Moment or source & Value \\
+Parameter& Description& Set& Moment or source& Value \\
 \midrule
 \endhead
-$\kappa_{ued}$ & Employment multiplier, SUD & Int. & Unemployment rate, SUD, NSDUH 2024 & \textemdash \\
-$\kappa_{uem}$ & Employment multiplier, SMI & Int. & Unemployment rate, SMI, NSDUH 2023 & \textemdash \\
-$\bar\tau^{u}$ & Utility cost of treatment & Int. & Treatment take up, NSDUH 2023 & \textemdash \\
-$\lambda_m$ & Recovery rate from SMI, annual & Int. & SMI share of the homeless, Gutwinski et & \textemdash \\
-$p_{\text{test}}$ & Probability a holder is tested & Ext. & Benchmark value, swept downward & 1.00 \\
-$c_{\text{test}}$ & Cost per voucher holder tested & Ext. & A urine panel at about \$40, quarterly & 0.0023 \\
-$p_{\text{det}}$ & Detection probability given a test & Ext. & Benchmark value, swept downward & 1.00 \\
-$p_{\text{fp}}$ & False positive rate & Ext. & Benchmark value, swept upward & 0.00 \\
-$\kappa_{ueH}$ & Employment multiplier, homeless & Ext. & Desmond and Gershenson (2016) & 0.80 \\
-$\kappa_{\phi H}(j)$ & Mortality multiplier, homeless & Ext. & Baggett et al.\ (2013) & 4.41 at 26 to 1.09 at 85 \\
-$\kappa_{\phi m}$ & Mortality multiplier, SMI & Ext. & Olfson et al.\ (2015) & 2.50 \\
-$\mu_m$ & Recovery multiplier, SMI & Ext. & Dual diagnosis relapse of $39.8$ against & 0.82 \\
-$p_m$ & Prevalence of SMI among adults & Ext. & NSDUH 2023, defined by substantial & 5.5\% \\
-$\zeta_{DI}$ & Disability replacement rate, SMI & Ext. & SSDI and SSI replacement rates & 0.25 \\
-$\iota$ & SUD multiplier on the onset of SMI & Ext. & Danish registers, hazard ratio $1.34$ & 2.00 \\
-$p_v$ & Price of drugs & Ext. & Clears the drug market & 1.00 \\
-$\nu_1$ & Drug supply shifter & Ext. & Normalisation, so that $p_v=1$ at the & norm. \\
-$\nu_2$ & Drug supply curvature & Ext. & Elasticity $1/(\nu_2-1)=2$ & 1.50 \\
-$h_{\text{HL}}$ & Service flow of homelessness & Int. & Homelessness rate, HUD 2023 & \textemdash \\
-$\aleph$ & Flow value of being alive & Int. & Value of a statistical life, Viscusi (2003) & \textemdash \\
-$\rho_d$ & Earnings lost to a SUD & Int. & Employment rate of the homeless, HUD 2023 & \textemdash \\
-$\rho_m$ & Earnings lost to SMI & Int. & Earnings with SMI, NSDUH 2023 & \textemdash \\
-$\bar\pi_r$ & Recovery when housed & Ext. & Remission rates, Vaillant (1995) & 0.025 \\
-$g$ & Treatment effect on recovery & Ext. & Odds ratio, Milby (2005) & 1.35 \\
+\multicolumn{5}{@{}l}{\emph{Earnings, conditional on working}} \\
+$\rho_d$& Earnings lost to a SUD& Int.& Employment rate of the homeless, HUD 2023& \textemdash \\
+$\rho_m$& Earnings lost to SMI& Int.& Earnings with SMI, NSDUH 2023& \textemdash \\
+\addlinespace
+\multicolumn{5}{@{}l}{\emph{The employment margins}} \\
+$\kappa_{ued}$& Employment multiplier, SUD& Int.& Unemployment rate, SUD, NSDUH 2024& \textemdash \\
+$\kappa_{uem}$& Employment multiplier, SMI& Int.& Unemployment rate, SMI, NSDUH 2023& \textemdash \\
+$\kappa_{ueH}$& Employment multiplier, homeless& Ext.& Desmond and Gershenson (2016)& 0.80 \\
+\addlinespace
+\multicolumn{5}{@{}l}{\emph{Recovery, and the treatment decision}} \\
+$\bar\pi_r$& Recovery when housed& Ext.& Ten year remission, Vaillant (1995)& 0.025 \\
+$g$& Treatment effect on recovery& Ext.& Odds ratio, Milby (2005)& 1.35 \\
+$\bar\tau^{u}$& Utility cost of treatment& Int.& Treatment take up, NSDUH 2023& \textemdash \\
+\addlinespace
+\multicolumn{5}{@{}l}{\emph{The mental illness chain}} \\
+$p_m$& Prevalence of SMI among adults& Ext.& NSDUH 2023, defined by substantial& 5.5\% \\
+$\lambda_m$& Recovery rate from SMI, annual& Int.& SMI share of homeless, Gutwinski et al.\ (2021)& \textemdash \\
+$\iota$& SUD multiplier on the onset of SMI& Ext.& Danish registers, Nielsen et al.\ (2017)& 2.00 \\
+$\mu_m$& Recovery multiplier, SMI& Ext.& Dual diagnosis relapse of $39.8$ against& 0.82 \\
+$\kappa_{\phi m}$& Mortality multiplier, SMI& Ext.& Olfson et al.\ (2015)& 2.50 \\
+$\zeta_{DI}$& Disability replacement rate, SMI& Ext.& SSDI and SSI rates (SSA 2023)& 0.25 \\
+\addlinespace
+\multicolumn{5}{@{}l}{\emph{Being unhoused}} \\
+$\kappa_{\phi H}(j)$& Mortality multiplier, homeless& Ext.& Baggett et al.\ (2013)& 4.41 at 26 to 1.09 at 85 \\
+\addlinespace
+\multicolumn{5}{@{}l}{\emph{The drug market, and the value of life}} \\
+$\nu_1$& Drug supply shifter& Ext.& Normalisation, so $p_v=1$ at the benchmark& norm. \\
+$p_v$& Price of drugs& Ext.& Clears the drug market in the benchmark& 1.00 \\
+$\aleph$& Flow value of being alive& Int.& Value of a statistical life, Viscusi (2003)& \textemdash \\
 \bottomrule
 \end{longtable}\endgroup

@@ -104,7 +104,7 @@ as affecting the earning potential of the children of parents with a SUD, then
 Treatment First may be preferred: children of a parent with a SUD are
 themselves two to four times as likely to develop one (McGovern et al., 2023),
 and moving a child to a lower poverty neighbourhood before age thirteen raises
-adult earnings by $31$ percent (Chetty, Hendren and Katz, 2016). The
+adult earnings by $31$ percent (Chetty et al., 2016). The
 model's work here is to show why Housing First raises welfare whenever
 there are no externalities, and then to qualitatively price the externality that
 overturns it.
@@ -591,7 +591,7 @@ Table~\ref{tab:children} shows that $\delta_d = 0.30$ makes the child of a
 parent who acquired the SUD @@ratio@@ times as likely to acquire one, in
 the middle of the epidemiological range of two to four in McGovern et al.\
 (2023) and the alcohol literature. The homelessness penalty $\delta_h$ is set
-to $31$ percent, directly from Chetty, Hendren and Katz (2016), who find
+to $31$ percent, directly from Chetty et al. (2016), who find
 that children who moved to a low poverty neighbourhood before age 13 went on to
 earn $31$ percent more as adults. The two penalties also do different work: both policies drive
 homelessness to zero at universal cover, so $\delta_h$ prices the programme
@@ -1302,25 +1302,28 @@ because the transition exercise in the results needs it.
 
 \section{Calibrating the quantitative model}\label{sec:fullcal}
 
-The model has fifty eight parameters, some of which vary in value by age.
-Thirty six are calibrated externally, from data or from the
-literature, and twenty two are calibrated internally, inside the model. They are
-split across the three tables of this section: ten carry the key results
-(Table~\ref{tab:eleven}, seven internally and three externally calibrated),
-twenty four are specific to this paper without carrying a key result
-(Table~\ref{tab:paperparams}, eight internally and sixteen externally), and
+The model has \new{fifty four} parameters, some of which vary in value by age.
+\new{Thirty two are calibrated externally, from data or from the literature, and
+twenty two are calibrated internally, inside the model. Four further parameters
+govern drug testing and detection; they are inert in the benchmark, where nothing
+is conditional, so they are set with the Treatment First experiment rather than
+here.} They are
+split across the three tables of this section: \new{twelve carry the key results
+(Table~\ref{tab:eleven}, eight internally and four externally calibrated),
+eighteen are specific to this paper without carrying a key result
+(Table~\ref{tab:paperparams}, seven internally and eleven externally), and
 twenty four are standard (Table~\ref{tab:stdparams}, seven internally and
-seventeen externally).
+seventeen externally).}
 
 The tables carry the parameter, its description, the moment and source used to
 fix its value, and the value itself. The text alongside each table adds what a
 table has no room for: the intuition for what each parameter does, and why its
 moment identifies it.
 
-\subsection{The ten parameters that carry the key results}
+\subsection{\new{The twelve} parameters that carry the key results}
 
-Most of the fifty eight are the furniture of any life cycle model. A much
-smaller set is specific to this paper, and ten of those carry its
+Most of the \new{fifty four} are the furniture of any life cycle model. A much
+smaller set is specific to this paper, and \new{twelve} of those carry its
 key results. They are set out in Table~\ref{tab:eleven} against the three
 questions of Section~\ref{sec:what}, with the parameter, its description,
 and the moment and source used to fix its value, which is given in the last
@@ -1383,6 +1386,24 @@ hazard stands unopposed. Its value is chosen so the model generates the increase
 in recovery that housing produced in Milby et al.\ (2005), a randomised
 trial on cocaine dependent homeless adults: $6.60$ weeks abstinent in the housed
 arm against $4.48$ unhoused, so housing raises recovery by $47.3$ percent.
+\item[{\color{red}$h_{\text{HL}}$, the service flow of homelessness.}]
+{\color{red}What the street delivers relative to a dwelling, and so what a
+voucher is worth. It belongs among the key parameters because it sets how bad the
+outside option is, and the value of being alive is measured against that outside
+option: a household with little to lose from dying is a household for which the
+mortality cost of using is small. Its value is chosen so the model generates the
+homelessness rate, $0.399$ percent of households in HUD's 2023 point in time
+count, and it is bisected rather than stepped because homelessness moves from
+$0.12$ to $3.29$ percent over a $35$ percent change in it.}
+\item[{\color{red}$\nu_2$, the elasticity of drug supply.}] {\color{red}A policy
+that changes how much is used moves the price, and the price moves how much
+everyone else uses. So this parameter decides how much of a policy's effect passes
+through to households the programme never reaches rather than being absorbed by
+the market, which feeds back into homelessness and so into which policy wins. It
+is set externally to an elasticity of $2$, the middle of a range from about $0.7$
+to about $4$: there is no direct estimate for an illicit drug, so it is bracketed
+by the closest legal markets, the Washington State marijuana reform at roughly
+$0.79$ and the cigarette and gasoline literatures nearer $3.6$.}
 \end{description}
 
 \paragraph{The externality on the child.} These three are the externalities
@@ -1408,19 +1429,20 @@ that same $15.5$ percent.
 Treatment First. McGovern et al.\ (2023) find that children of a parent with a SUD
 are two to four times likelier to acquire one themselves. The model does not carry
 an inherited disorder; it carries the loss of earnings potential that goes with
-it, \new{which is the reduced form of a literature on childhood adversity:
-Felitti et al.\ (1998) link household dysfunction, of which parental substance
-use is a component, to adult outcomes across many domains; Chetty, Hendren and
-Katz (2016) measure the earnings consequences of childhood environment directly;
-and Heathcote, Storesletten and Violante (2010) document how much of lifetime
-inequality is already present at labour market entry.} $\delta_d$ is
+it. {\color{red}No paper estimates the effect of a parent's SUD on a child's
+lifetime earnings directly, which is why the penalty is calibrated to the
+disorder ratio rather than lifted from an estimate. What the literature supplies
+is the two halves of the chain: Felitti et al.\ (1998) link household
+dysfunction, of which parental substance use is a component, to adult health and
+behavioural outcomes, and Chetty et al.\ (2016) measure what childhood
+environment does to adult earnings. $\delta_d$ is the reduced form of the two.} $\delta_d$ is
 calibrated internally, its value chosen so the model reproduces McGovern's ratio
 of child disorder rates between parents with and without a disorder. A policy that
 cures disorders therefore earns a return on the next generation that a policy
 which only houses people does not.
 \item[$\delta_h$, what the child loses to growing up homeless.] This one argues
 for Housing First, and it comes from the same literature read in the other
-direction. Chetty, Hendren and Katz (2016) find that moving a child to a lower
+direction. Chetty et al. (2016) find that moving a child to a lower
 poverty neighbourhood before age thirteen raises adult earnings by $31$ percent;
 $\delta_h$ is calibrated externally to that figure, taking the earnings gain from
 leaving poverty as the mirror of the loss from growing up without stable housing.
@@ -1458,14 +1480,14 @@ the assumption least kind to it.
 
 \subsection{Other parameters specific to this paper}\label{sec:paperparams}
 
-{\color{red}Twenty four further parameters are new to this paper, and none of them
-carries a key result. Table~\ref{tab:paperparams} collects them and marks which
-are internally and which externally calibrated. They fall into six groups, and
-each parameter is taken in turn below.}
+\new{Eighteen further parameters are specific to this paper, and none of them
+carries a key result.} Table~\ref{tab:paperparams} collects them and marks which
+are internally and which externally calibrated. \new{The table is broken into the same six groups the discussion follows, and each
+parameter is taken in turn below.}
 
 \input{tables/tab_paper}
 
-{\color{red}\paragraph{Earnings, conditional on working.}
+\paragraph{Earnings, conditional on working.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\rho_d$, earnings lost to a SUD.] Not key, because the income gradient is
 produced by mortality rather than by the wage, as Section~\ref{sec:what} shows.
@@ -1545,11 +1567,6 @@ the chronic group, which is why it is in the model at all.
 
 \paragraph{Being unhoused.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$h_{\text{HL}}$, the service flow of homelessness.] What the street delivers
-relative to a dwelling. Its value is chosen so the model generates the
-homelessness rate, $0.399$ percent of households in HUD's 2023 point in time
-count. It is one of the three moments bisected rather than stepped, because
-homelessness moves from $0.12$ to $3.29$ percent over a $35$ percent change in it.
 \item[$\kappa_{\phi H}(j)$, mortality when unhoused.] Baggett et al.\ (2013) give
 race adjusted mortality ratios for homeless adults of about $9.1$ at ages 25 to
 44, falling to $1.1$ at 65 to 84. Those are totals for a population most of which
@@ -1558,27 +1575,8 @@ which is why it must be derived jointly with $\bar\kappa_{\phi d}$ rather than
 read off directly.
 \end{description}
 
-\paragraph{Testing, and what makes the condition imperfect.}
-\begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$p_{\text{test}}$ and $c_{\text{test}}$, the frequency and unit cost of
-testing.] A conditional programme has to look, and looking costs money. These put
-the administrative cost of conditionality into the government budget rather than
-assuming it away.
-\item[$p_{\text{det}}$ and $p_{\text{fp}}$, detection and false positives.] These
-matter far more than their size suggests, because a condition that detected
-perfectly would be a different policy altogether. Imperfect detection is what
-makes Treatment First withdraw vouchers from households that are complying and
-keep them for households that are not, so it is the reason conditionality can lose
-on its own terms rather than only on incentives.
-\end{description}
-
 \paragraph{The drug market, and the value of life.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$\nu_2$, the supply curvature.] Sets the price elasticity of supply at $2$,
-the middle of a range running from about $0.7$ to about $4$. There is no direct
-estimate for an illicit drug, so it is bracketed by the closest legal markets: the
-Washington State marijuana reform implies roughly $0.79$, the cigarette and
-gasoline literatures nearer $3.6$.
 \item[$\nu_1$, the supply shifter.] A pure normalisation, chosen so that supply
 equals demand at $p_v=1$ in the benchmark. It normalises units, not behaviour.
 \item[$p_v$, the drug price.] One at the benchmark by that normalisation, and free
@@ -1589,7 +1587,7 @@ generates a value of a statistical life of \$7.5m, from Viscusi and Aldy (2003).
 It needs a level and not only a behavioural target: at the wrong level households
 prefer death outright, and the mortality cost of using becomes a benefit rather
 than a deterrent.
-\end{description}}
+\end{description}
 
 \subsection{Standard parameters}
 
@@ -1741,7 +1739,7 @@ $\delta_d$ & Set, not calibrated
  & McGovern et al.\ (2023), midpoint of the epidemiological range of two
    to four, reported with a sensitivity band across it \\
 $\delta_h$ & Set, not calibrated
- & Chetty, Hendren and Katz (2016) \\
+ & Chetty et al. (2016) \\
 \bottomrule
 \end{tabular}
 \end{center}
