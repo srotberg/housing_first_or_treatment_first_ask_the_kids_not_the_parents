@@ -1315,51 +1315,40 @@ the voucher rule itself.
 
 \section{Calibrating the quantitative model}\label{sec:fullcal}
 
-Two stages, and they are different exercises. The first matches a cross section
-of the stationary equilibrium, nineteen parameters against nineteen
-moments.
-The second matches short run \emph{responses} measured in experiments, which
-cannot be read off a comparison of steady states, and carries the remaining
-two. Only what is new or what
-Section~\ref{sec:cal} does not already illustrate is described here.
+{\color{red}The model has fifty eight parameters, and listing them one after
+another is exactly what the previous version did and what this section does not.
+Thirty seven are assigned, in Table~\ref{tab:fext}; twenty one are calibrated, in
+Table~\ref{tab:fint}, alongside $\delta_h$, which sits there but is set rather
+than calibrated. The tables carry the values, the sources and the data vintages.
+What follows is organised around three things the tables cannot say.
 
-Which parameter belongs to which stage is not obvious from
-Table~\ref{tab:fint}, so it is stated here. The second stage carries $\mu_H$,
-whose moment is the ratio of weeks abstinent between Milby's arms, and
-$\omega$, whose moment is the fall in drug use with a child present, which is a
-comparison against a counterfactual rather than a cross sectional share.
-Neither can be read off a single stationary equilibrium, which is what
-separates them from the other nineteen.
+\emph{Which parameters are standard and which are this paper's.} Most of the
+fifty eight are the furniture of any life cycle model: preferences, the earnings
+process, the tax schedule, the survival profile. They are assigned from the usual
+sources and nothing here turns on them. A much smaller set is specific to this
+paper and carries its results: the SUD hazard $\lambda$ and its mortality
+multiplier $\bar\kappa_{\phi d}$; the recovery hazard $\bar\pi_r$ with its
+housing and treatment multipliers $\mu_H$ and $g$; the Stone-Geary endowment $b$;
+the wage penalties $\rho_d$ and $\rho_m$; and the child's weight $\omega$ with
+the transmission penalties $\delta_d$ and $\delta_h$. Eleven parameters out of
+fifty eight. Those are the ones worth arguing about, and the discussion below is
+weighted towards them accordingly.
 
-Four parameters that this section used to calibrate are now
-assigned, and the reasoning is the same in each case: the moment being used to
-identify them was doing less work than a direct measurement would.
+\emph{Which moment does the work, and how one would know if it were wrong.} A
+parameter to moment map is only useful if the sign of each parameter's effect on
+its moment is declared, so that a mistake shows up as a moment walking away from
+its target rather than as a silent failure. That is done for every pair, and the
+map is close to triangular by construction.
 
-$\bar\kappa_{\phi d}$ was identified from the drug price participation
-elasticity, which is a distant instrument for a mortality parameter, and it sat
-oddly beside $\kappa_{\phi H}$ and $\kappa_{\phi m}$, the same object for
-homelessness and for SMI, both of which are assigned. It is now assigned from
-the standardised mortality ratios directly, and the price elasticity is
-reported below as a moment the model is not fitted to. Since the SUD mortality
-channel is this paper's central mechanism, measuring it rather than inferring
-it is what allows the elasticity to serve as a test of the mechanism instead of
-a constraint on it.
+\emph{What the calibration cannot do.} Two parameters are matched to short run
+\emph{responses} measured in experiments rather than to a cross section, because
+no comparison of steady states identifies them. Three assigned values carry no
+real discipline and are flagged rather than buried. And one target, the
+participation elasticity, is deliberately not a target at all: it is held back to
+test the model rather than to fit it.
 
-$p_m$ is a prevalence and NSDUH measures it, so it pins the ergodic share of
-the SMI chain directly; what is calibrated is the chain's persistence.
-$\zeta_{DI}$ is a replacement rate set by statute. Both were previously
-identified from the SMI share of the homeless, and that moment is better read
-as evidence on persistence, since it is only a sufficiently sticky state that
-lets the SMI population accumulate in homelessness at four and a half times its
-population share. $\lambda_m$ therefore moves the other way, from assigned to
-calibrated, and now carries that moment.
-
-$\delta_d$ is assigned because its source reports a range rather than a point,
-and because $\delta_h$, the same penalty for parental homelessness, is already
-assigned from the same literature. Calibrating one and assigning the other was
-difficult to defend. The cost is that the transmission channel is now assumed
-rather than fitted, so its magnitude is reported with a sensitivity band across
-the published range.
+The first stage matches nineteen parameters to nineteen moments of the
+stationary equilibrium; the second carries the remaining two.}
 
 \paragraph{The same cliffs, and the same answer.} Three moments are step like and
 are bisected rather than stepped, for the reason Section~\ref{sec:cal} gives:
@@ -1394,9 +1383,10 @@ place where a household's utility depends on an aggregate, which is what makes
 $H$ a genuine fixed point of the equilibrium rather than accounting.
 }
 
-{\color{red}\paragraph{The rest of the first stage, parameter by parameter.} The
-paragraphs above cover what is new or awkward. For completeness, every remaining
-first stage parameter and the moment that identifies it:
+{\color{red}\paragraph{The standard block.} The parameters in this paragraph are
+not this paper's contribution and are not argued for at length; each is matched
+to the moment it plainly governs, and they are recorded so the calibration is
+reproducible rather than because anything turns on them.
 
 $\omega_{\ell}$, the weight on leisure, is set to average hours worked. It is the
 only parameter that moves hours directly, and hours enter no other target, so it
@@ -1424,7 +1414,8 @@ identified by the aggregate and the multiplier by the gap between the two.
 $\kappa_{uem}$ is the same construction for SMI, set to the employment rate given
 SMI.
 
-$\rho_m$ and $\rho_d$, the productivity penalties for SMI and for the SUD
+\paragraph{The wage penalties, which are this paper's.} $\rho_m$ and $\rho_d$,
+the productivity penalties for SMI and for the SUD
 conditional on working, are set to the earnings of the homeless relative to
 average and to the employed share of the homeless. These two need saying
 carefully, because they are the reason the model can produce homelessness among
@@ -1440,10 +1431,10 @@ $\bar\tau^{u}$, the utility cost of treatment, is set to treatment take up among
 those with a SUD. It is the only parameter that moves the treatment decision, and
 take up is the only moment it moves.}
 
-{\color{red}\paragraph{The assigned parameters.} Table~\ref{tab:fext} lists every
-value set outside the model with the source it comes from. Most are conventional
-and need no discussion here, but the groups differ in what "assigned" means and
-that is worth separating.
+{\color{red}\paragraph{The assigned parameters, and what assigning them rests
+on.} Table~\ref{tab:fext} carries every value, its source and its data vintage.
+What matters is not the list but that "assigned" means four different things
+here, and only the last group is contestable.
 
 Standard and taken from the literature: $\sigma_{\ell}$, the curvature on
 leisure, which with $\omega_{\ell}$ delivers the Frisch elasticity; $\rho_y$ and

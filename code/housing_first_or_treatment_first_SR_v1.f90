@@ -3787,8 +3787,24 @@
                                     ! once there are two SMI states; the coarse
                                     ! index > threshold form means "has a SUD" and
                                     ! nothing about mental illness.
-                                    model_mass_total_raw(time_period)=&
-                                        model_mass_total_raw(time_period)+distribution_mass_used
+                                    ! THE BASE FOR THE HOMELESS INCOME SHARE, AND WHY IT IS
+                                    ! WORKING AGE ONLY.
+                                    !
+                                    ! Counting every household here put retirees, who earn no
+                                    ! labour income, in the denominator but hardly any in the
+                                    ! numerator, because the homeless are working age. That
+                                    ! alone made the homeless look RICHER than average: mean
+                                    ! homeless labour income 0.321 against a population mean of
+                                    ! 0.278, a ratio of 1.15 against a target of 0.191. The sign
+                                    ! was wrong, and rho_d and rho_m are calibrated on it, so
+                                    ! both would have been driven to their bounds undoing a base
+                                    ! mismatch rather than matching the data.
+                                    if (in_retirement==0) then
+
+                                        model_mass_total_raw(time_period)=&
+                                            model_mass_total_raw(time_period)+distribution_mass_used
+
+                                    end if
 
                                     if (smi_of(unemployment_index)>=1) then
 
