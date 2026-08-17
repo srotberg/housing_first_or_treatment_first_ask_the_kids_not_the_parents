@@ -605,3 +605,47 @@ no amount of guard work will remove those.
 Worth stating plainly, because the opposite conclusion was one commit away: the
 diagnostic did not confirm the plan, it killed it, and that is the whole reason
 for measuring before cutting.
+
+---
+
+## 12. Five copies of the model were running at once, and it looked like something else
+
+Worth recording because it produced a wrong diagnosis that survived several
+attempts, and because the wrong diagnosis was about the machine rather than the
+code, which is the kind that does not get checked.
+
+Runs kept stopping partway through the first backward induction, at ages 13, 38
+and 22 of sixty, with no error in the log, no exit code, and memory nowhere near
+exhausted. The conclusion drawn was that the harness was reaping long background
+tasks, and the response was to make the lottery diagnostic print every tenth age
+so an interrupted run would still yield its number.
+
+What was actually happening: **each launch left the previous one running.** By the
+time this was noticed there were five `./hftf` processes alive, each asking for
+four OpenMP threads on a four core box. Per age wall time was about 18 seconds. On
+a single clean run it is about 4 seconds. So the box was oversubscribed roughly
+five to one, everything crawled, and logs that had merely slowed to a crawl looked
+like logs that had stopped.
+
+Three things to take from it:
+
+**`pgrep -f` and `pkill -f` match the shell that is running them**, because the
+pattern appears in that shell's own command line. One `pkill -f 'lot/hftf'` killed
+the compound command that was setting up the next run, which is how a setup step
+died before `mkdir` had finished and left a missing directory as the only symptom.
+Kill by PID, listed with `ps -eo pid,args` and an exact match on the program name.
+
+**"The log stopped growing" is not evidence the process died.** Check `ps` for the
+program by name before concluding anything, and check for *more than one*.
+
+**The incremental reporting added in section 11 was the right change for the wrong
+reason.** It is still worth having, since the counts are cumulative and a partial
+run answers the question, but it was not needed to survive reaping. The lottery
+numbers it produced stand: 177,120 calls and 12 fires is a property of the
+objective, not of how fast the run was going.
+
+The one real performance note in all this: **the model gets about 4 seconds an age
+at 41 asset points and twelve joint states on four cores**, so a full backward
+induction is roughly four minutes and a calibration loop is that plus the 655
+distribution sweeps. Earlier timings in this file that look slower than that were
+measured under contention and should not be compared with anything.
