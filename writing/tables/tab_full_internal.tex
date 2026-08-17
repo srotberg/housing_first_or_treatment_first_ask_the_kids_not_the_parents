@@ -3,8 +3,8 @@
 % What prints here is the parameter, what it means, where the value comes
 % from, and the value.
 
-\scriptsize
-\begin{longtable}{@{}cL{3.4cm}L{3.7cm}L{2.9cm}rrr@{}}
+\scriptsize\setlength{\tabcolsep}{3pt}
+\begin{longtable}{@{}cL{3.6cm}L{3.8cm}L{2.9cm}rrr@{}}
 \caption{Internally calibrated parameters of the quantitative model}\label{tab:fint}\\
 \toprule
 Parameter & Description & Target moment & Source & Data & Model & Value \\
@@ -50,8 +50,5 @@ $\lambda_m$ & Recovery rate from SMI, annual, flat in age; with the observed pre
 \multicolumn{7}{@{}l}{\emph{The second stage, matched to experimental responses}} \\
 $\mu_H$ & Recovery multiplier, homeless & Housed against unhoused abstinence & Milby et al.\ (2005) & 1.473 & \textemdash & \textemdash \\
 $\omega$ & Weight on the child & Fall in drug use with a child present & NSDUH 2024, reweighted & 15.5\% & \textemdash & \textemdash \\
-\addlinespace
-\multicolumn{7}{@{}l}{\emph{Set, not calibrated}} \\
-$\delta_h$ & Transmission penalty, parental homelessness & Set, not calibrated & Chetty, Hendren and Katz (2016) & 0.31 & \textemdash & \textemdash \\
 \bottomrule
 \end{longtable}
