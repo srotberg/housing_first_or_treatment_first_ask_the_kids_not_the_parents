@@ -913,6 +913,37 @@
         real(8) :: size_homelessness_adjuster=20
         real(8) :: distance_size_homelessness
         real(8) :: stopping_rule_size_homelessness=10.d0**(-3)
+
+        ! A BRACKET, BECAUSE THE LINEAR STEP CANNOT LAND ON THE TARGET.
+        !
+        ! Homelessness is very nearly a step function of size_homelessness, since
+        ! the housing choice is discrete and the marginal households jump together.
+        ! Measured over the thirteen iterations of the run archived in
+        ! scratchpad/cal_run/stale_state: at 0.3836 the model gives 0.0 per cent,
+        ! at 0.4634 it gives 1.22, at 0.3788 it gives 10.9 and at 0.5586 it gives
+        ! 34.5, against a target of 0.399. So the parameter has to be placed inside
+        ! a window narrower than the adjuster's own step.
+        !
+        ! It could not be. A gap of one percentage point moves the parameter by
+        ! 20*0.01 = 0.2, which is wider than the whole window, so the update
+        ! overshot every time it crossed: it slammed to the zero clamp, ratcheted
+        ! back up in exact steps of 0.0798 while the model read zero, crossed the
+        ! threshold, overshot to zero again, and never converged. The adjuster is
+        ! not wrong, it is a range traverser, which is what the comment above says
+        ! it was sized for.
+        !
+        ! So the step now only runs until there is a bracket, and after that the
+        ! interval is bisected. lo is the largest value known to leave the model
+        ! BELOW target, hi the smallest known to leave it at or above, which is
+        ! well defined because homelessness rises in size_homelessness: a better
+        ! street puts more households on it. Negative means not found yet.
+        !
+        ! The bracket is deliberately NOT written to the warm start file. The
+        ! calibration state is read back positionally, so adding fields to it is a
+        ! format change, and losing the bracket on a resume costs two iterations to
+        ! rebuild whereas a misread field would be silent and wrong.
+        real(8) :: size_homelessness_lo=-1
+        real(8) :: size_homelessness_hi=-1
         
         integer, parameter :: employment_grid_size=9
         integer, parameter :: productivity_below_which_to_reduce_ss=9
@@ -28163,13 +28194,73 @@
 
                     write(*,*) "model_fraction_homeless(1)=", model_fraction_homeless(1)
                     write(*,*) "size_homelessness=", size_homelessness
-                
-                    size_homelessness=max(min(size_homelessness-size_homelessness_adjuster*&
-                        (model_fraction_homeless(1)-fraction_homeless_data),1.d0),0.d0)
-                        
+
+                    ! Tighten the bracket with what this evaluation just proved.
+                    if (model_fraction_homeless(1)<fraction_homeless_data) then
+
+                        if (size_homelessness_lo<0) then
+
+                            size_homelessness_lo=size_homelessness
+
+                        else
+
+                            size_homelessness_lo=max(size_homelessness_lo,size_homelessness)
+
+                        end if
+
+                    else
+
+                        if (size_homelessness_hi<0) then
+
+                            size_homelessness_hi=size_homelessness
+
+                        else
+
+                            size_homelessness_hi=min(size_homelessness_hi,size_homelessness)
+
+                        end if
+
+                    end if
+
+                    if ((size_homelessness_lo>=0) .AND. &
+                        (size_homelessness_hi>size_homelessness_lo)) then
+
+                        ! Bisect. This halves the window every equilibrium solve,
+                        ! so a window of 0.08 is down to the stopping rule in about
+                        ! seven of them however wide the initial bracket was.
+                        size_homelessness=&
+                            0.5d0*(size_homelessness_lo+size_homelessness_hi)
+
+                        write(*,*) "size_homelessness bisecting in [",&
+                            size_homelessness_lo, ",", size_homelessness_hi, "]"
+
+                    else
+
+                        ! No bracket yet, so traverse, which is what the adjuster
+                        ! is good at.
+                        size_homelessness=max(min(size_homelessness-size_homelessness_adjuster*&
+                            (model_fraction_homeless(1)-fraction_homeless_data),1.d0),0.d0)
+
+                        ! Say so if the traverse has run out of room. At a street
+                        ! worth as much as housing_size(0) and free, a model still
+                        ! below target is not a failure of this update: nothing in
+                        ! the housing ladder makes homelessness attractive, so the
+                        ! rental grid or the food floor is what has to move.
+                        if ((size_homelessness>=1.d0) .AND. &
+                            (model_fraction_homeless(1)<fraction_homeless_data)) then
+
+                            write(*,*) "size_homelessness IS AT ITS CEILING 1 and homelessness is ",&
+                                model_fraction_homeless(1), " against a target of ", fraction_homeless_data
+                            write(*,*) "   no bracket exists below the ceiling: the street cannot be",&
+                                " made attractive enough through this parameter."
+
+                        end if
+
+                    end if
+
                     distance_size_homelessness=&
                         abs(model_fraction_homeless(1)-fraction_homeless_data)
-                        
+
                     write(*,*) "size_homelessness=", size_homelessness
                                  
                 end if
