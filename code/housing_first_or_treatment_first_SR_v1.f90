@@ -104,7 +104,7 @@
         ! THE DISORDER DOES NOT ACT THROUGH b EITHER. b_sud_ratio below is one and
         ! stays one, so flow utility is the same function of (c, h, v) in every
         ! state and after every choice. What the disorder costs runs through
-        ! mortality, through employment, and through a recovery hazard six times
+        ! mortality, through employment, and through a recovery hazard that is harder
         ! worse on the street, none of which is a preference.
         integer, parameter :: change_utility_for_addicts=0
         real(8), parameter :: size_of_penalty=0
@@ -812,7 +812,7 @@
         ! Cobb-Douglas weights out: a preference that moves with a household's own
         ! history is a preference doing the work the mechanism is supposed to do.
         ! The disorder still costs plenty, through mortality, employment, and a
-        ! recovery hazard that is six times worse on the street; none of those is
+        ! recovery hazard that is worse on the street; none of those is
         ! a taste.
         real(8), parameter :: b_sud_ratio=1.0
 
@@ -1277,8 +1277,36 @@
             0:include_addiction+include_heavy_vs_light_use_transitions,1:2) :: &
             addiction_probabilities,addiction_probabilities_percieved
         real(8) :: probability_of_stopping_addiction=0.025
-        real(8) :: mu_homeless=real(1)/real(6)
-        real(8) :: probability_of_stopping_addiction_if_homeless=(real(1)/real(6))*0.025
+        ! mu_H, RECOVERY ON THE STREET AS A MULTIPLE OF RECOVERY WHILE HOUSED.
+        !
+        ! IT WAS 1/6 AND THE NOTE'S OWN MOMENT SAYS 0.679, so the code was
+        ! asserting a recovery gradient four times the one it claims to be
+        ! calibrated to. Milby et al. (2005) randomised cocaine dependent homeless
+        ! adults and measured abstinent weeks of 6.60 in the housed arm against
+        ! 4.48 unhoused, a ratio of 1.473. At 1/6 the model delivers a ratio near
+        ! 6.0 instead, whatever the trial length is taken to be.
+        !
+        ! The mapping is the inverse ratio, and it is not sensitive to the horizon.
+        ! With a per period recovery hazard h over a trial of T periods, expected
+        ! abstinent time is sum_t [1-(1-h)^t], which for a small h*T is close to
+        ! h*T(T+1)/2, so the ratio of abstinent time is the ratio of hazards.
+        ! Evaluated at the housed hazard of 0.025 a year, mu_H = 4.48/6.60 gives a
+        ! model ratio of 1.472 at twelve weeks, 1.471 at twenty six and 1.469 at
+        ! fifty two. The old 1/6 gives 5.99, 5.98 and 5.96.
+        !
+        ! WHICH WAY THE ERROR RAN. mu_H is the counterweight to the moral hazard in
+        ! pi_V: a small mu_H means a voucher buys a great deal of recovery, so the
+        ! insurance effect is outweighed and Housing First looks better. The old
+        ! value therefore biased the comparison TOWARDS Housing First, against the
+        ! paper's own conclusion, so correcting it should strengthen the result
+        ! rather than rescue it.
+        !
+        ! This is still the short trial approximation. Closing it exactly is the
+        ! second stage's job: a cohort experiment at benchmark prices that
+        ! reproduces Milby's two arms inside the model. There is no such loop yet,
+        ! which is why the declared value matters at all.
+        real(8) :: mu_homeless=4.48d0/6.60d0
+        real(8) :: probability_of_stopping_addiction_if_homeless=(4.48d0/6.60d0)*0.025
         real(8) :: probability_becoming_unemployed_if_addicted=0
         real(8) :: probability_becoming_employed_if_addicted=0
         
@@ -2427,7 +2455,7 @@
             ! strange thing to assert and stranger to calibrate.
             !
             ! IT IS NOT NEEDED. Housing already changes drug use through a
-            ! HAZARD rather than a taste: recovery from the disorder is six times
+            ! HAZARD rather than a taste: recovery from the disorder is harder
             ! harder on the street, probability_of_stopping_addiction_if_homeless
             ! against probability_of_stopping_addiction. That is a transition
             ! probability, it is what Milby et al.\ (2005) actually measure,
@@ -2479,7 +2507,7 @@
         ! transition iterate on.
         !
         ! Only the ONSET row is a function of v. Recovery from the disorder runs
-        ! on housing, six times harder on the street, and not on how much is
+        ! on housing, harder on the street, and not on how much is
         ! used, so an already addicted household reads the array. A household
         ! that does not use has v=0 and 1-exp(0)=0, so the abstain row is
         ! reproduced exactly rather than special cased for its own sake, but the
