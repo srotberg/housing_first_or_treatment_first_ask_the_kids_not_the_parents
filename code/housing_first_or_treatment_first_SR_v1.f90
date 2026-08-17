@@ -18182,11 +18182,36 @@
                                                     
                                                 end if
                                                 
+                                                ! NEWBORNS ARE BORN CLEAN, SO THE SUD INDEX IS ZERO.
+                                                !
+                                                ! These bounds used to add
+                                                ! (1-newborns_inherit_addiction), which pins the index at
+                                                ! ONE when newborns do not inherit the disorder, that is
+                                                ! at the SUD state. The transition array is non-zero only
+                                                ! where sud_of(j) agrees with this index, and the
+                                                ! future_unemployment_index loop below runs over the CLEAN
+                                                ! block, so every newborn term was multiplied by a zero
+                                                ! weight and the newborn push contributed nothing at all.
+                                                !
+                                                ! Measured at startup: the array sums to one over the clean
+                                                ! block at index zero and to exactly zero at index one,
+                                                ! which is what the loop was asking for.
+                                                !
+                                                ! The age one row was therefore whatever
+                                                ! initialize_feasible_distribution had left there, all of it
+                                                ! on a single clean employed state. That is why age one SMI
+                                                ! prevalence read exactly 0.00000 against a profile of
+                                                ! 0.12719, and why prevalence overall came out near two per
+                                                ! cent against a profile averaging five: mental illness was
+                                                ! built up by onset from age two alone, with nobody ever
+                                                ! born carrying it. It also means the age one cross section
+                                                ! did not respond to the newborn productivity draw or to
+                                                ! anything else in the transition.
                                                 do future_addiction_index_2=&
                                                     newborns_inherit_addiction*((1-loop_over_addiction_2)*addiction_choice_1+& 
-                                                    loop_over_addiction_2*0)+(1-newborns_inherit_addiction),& 
+                                                    loop_over_addiction_2*0),& 
                                                     newborns_inherit_addiction*((1-loop_over_addiction_2)*addiction_choice_1+& 
-                                                    loop_over_addiction_2*include_addiction)+(1-newborns_inherit_addiction)
+                                                    loop_over_addiction_2*include_addiction)
                                                     
                                                     check_2=0
                                                     
