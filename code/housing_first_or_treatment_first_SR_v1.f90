@@ -940,7 +940,12 @@
         real(8), dimension(life_span) :: rr_homeless_profile=0
         real(8), dimension(life_span) :: kappa_phi_d_by_age=1
         real(8), dimension(life_span) :: kappa_phi_h_by_age=1
-        real(8) :: kappa_phi_d_level=6.9
+        ! ASSIGNED, at the midpoint of the literature range. All cause standardised
+        ! mortality ratios for opioid use disorder run 6 to 10, so 8 is the middle
+        ! of it rather than an old point estimate. This used to be calibrated on
+        ! the drug price participation elasticity; that elasticity is now an
+        ! untargeted validation moment instead.
+        real(8) :: kappa_phi_d_level=8.0
         real(8), parameter :: sud_share_of_homeless=0.217
         integer :: mortality_profiles_loaded=0
                             

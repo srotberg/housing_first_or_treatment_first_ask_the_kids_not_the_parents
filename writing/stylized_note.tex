@@ -920,9 +920,7 @@ and $s$, the SUD share of the homeless. Solved for: $\kappa_{\phi d}(j)$ and
 $\kappa_{\phi H}(j)$, one age profile from each equation. Picking the single
 number $\bar\kappa_{\phi d}$ settles both: the first equation turns it into
 $\kappa_{\phi d}(j)$ at every age, and the second then reads
-$\kappa_{\phi H}(j)$ off Baggett's ratio at every age. \new{So the whole block
-turns on that one number, and it is assigned from the data rather than
-calibrated, which leaves nothing here for the calibration to choose.}
+$\kappa_{\phi H}(j)$ off Baggett's ratio at every age.
 
 Undoing the mixture needs the SUD's own multiplier at each age. That is what
 $\sigma_d(j)$ supplies: the age profile of drug poisoning deaths from CDC WONDER 2023,
@@ -939,19 +937,14 @@ a share $1-s$ of it carries homelessness alone and a share $s$ carries the SUD a
 well. Dividing the observed ratio by it leaves the homelessness effect on its
 own.
 
-\new{The level is set at $\bar\kappa_{\phi d}=6.9$, so a household carrying
-the SUD faces close to seven times the death hazard at the age where the effect
-peaks. All cause standardised mortality ratios for opioid use disorder run $6$
-to $10$, of which overdose is roughly half, and $6.9$ sits at the lower end of
-that range, which is the conservative choice for a paper whose mechanism runs
-through mortality. Setting it from the data rather than calibrating it means the
-drug price participation elasticity is no longer a target. It is reported instead
-as a moment the model is not fitted to, and the test is whether the assigned
-level delivers an elasticity inside the range Saffer and Chaloupka (1999)
-estimate. That is the stronger use of it: the SUD mortality channel is the
-mechanism the whole policy experiment turns on, so measuring it and letting the
-elasticity test it beats inferring it and leaving the elasticity with nothing to
-say.}
+\new{$\bar\kappa_{\phi d}$ is assigned from the literature on all cause
+standardised mortality ratios for opioid use disorder, which report values
+between $6$ and $10$ (Degenhardt et al., 2011; Hser et al., 2017; Larney et al.,
+2020), and the calibration section reports the value taken. The drug price
+participation elasticity is not targeted; it is reported as a validation moment
+and compared with the range estimated in the literature, $-0.3$ to $-1.1$
+(Saffer and Chaloupka, 1999; Grossman and Chaloupka, 1998; Olmstead et al.,
+2015).}
 
 $\kappa_{\phi m}$ carries no age argument because the data give it basically
 none. Olfson et al.\ (2015) give all
@@ -971,18 +964,18 @@ separation rates and $\kappa_{ueH}$, $\kappa_{ued}$ and $\kappa_{uem}$ the
 multipliers for homelessness, the SUD and SMI, so each multiplier
 below one makes work simultaneously harder to find and easier to lose.
 
-\paragraph{The child's income risk.} There is a third risk in the
-environment and it is borne mostly by someone who does not choose it.
-\new{A parent with a SUD, or} one who ends up on the street, lowers the
-\new{productivity $y_{\text{child}}$ its
+\paragraph{The child's income risk.}
+A parent with a SUD, or one who ends up on the street, lowers the
+productivity \new{($y_{\text{child}}$)} its
 child is born with, through $\delta_d$ and $\delta_h$ respectively, as shown
-in~\eqref{eq:fnewborn} in Section~\ref{sec:fnewbornsec}}. That is a risk to the
+in~\eqref{eq:fnewborn} in Section~\ref{sec:fnewbornsec}. That is a risk to the
 household's own objective only
-to the extent that \new{$\omega$, the weight the parent places on its child's
-lifetime utility in~\eqref{eq:fbellman}, is positive. $\omega$ is small, so the
+to the extent that $\omega$, the weight the parent places on its child's
+lifetime utility in~\eqref{eq:fbellman}, is positive. \new{Since $\omega$ is
+small (see Section~\ref{sec:fullcal} for details), the
 household weighs a fraction $\omega$ of this risk and $1-\omega$ of it falls
-outside the problem entirely. It is therefore the one risk here that is
-principally an externality rather than a pure personal cost}, which is what makes it a
+outside the problem entirely.} It is therefore the one risk here that is
+principally an externality rather than a pure personal cost, which is what makes it a
 candidate for policy in a way that mortality and unemployment risk, both fully
 internalised, are not.
 
@@ -1096,18 +1089,18 @@ whenever $j\ge J_R$ or
 $e\neq1$, $v=0$ whenever $\tau=1$, $a'\ge0$, $c\ge F$ so that
 consumption never falls below the food stamp floor, and $V(J{+}1,\cdot)=0$
 with $\phi(J)=0$, so that at the last age the
-child is the whole continuation. \new{The integral runs over next period's
+child is the whole continuation. The integral runs over next period's
 state $s'=(a',y,e',d',m',\eta')$; the second line of~\eqref{eq:fbellman} is the
 household's own continuation, and the third is the child's expected lifetime
 utility, entered at age one with zero assets and with its own employment status
-$e'$ drawn as any newborn's is.}
+$e'$ drawn as any newborn's is.
 
 A
 household that does not survive from $j$ to $j+1$ leaves a child, so the
 continuation is the survival weighted value of its own next period plus the death
 weighted value of the child's life, each discounted, with $y_{\text{child}}$
-as defined in~\eqref{eq:fnewborn}. \new{What that buys is a second route by
-which the household's own decisions, to use and to go unhoused, reach its} child. $\phi(j,\cdot)$ itself
+as defined in~\eqref{eq:fnewborn}. What that buys is a second route by
+which the household's own decisions, to use and to go unhoused, reach its child. $\phi(j,\cdot)$ itself
 depends on $h'$ and,
 through $d$, on $v$: a household that uses raises the chance it is the child's
 term rather than its own that is realised, so the child enters the drug and
@@ -1122,12 +1115,10 @@ carried a SUD or was homeless, and both depend on $v$ and $h'$, the child
 term in~\eqref{eq:fbellman} is
 what puts the child inside the parent's drug and housing decision.
 
-\paragraph{\new{How the choices separate, and where they do not.}} The problem
-is solved by exact backward induction, and it is worth
-setting out how the choices separate, because one of them does not separate the
-way a Cobb-Douglas model usually allows\new{, taking hours, the dwelling and next
-period assets as given}. What is left to divide
-between consumption and the drug is
+\paragraph{How the choices separate, and where they do not.}
+\new{Taking hours, the dwelling and next
+period assets as given, what is left to divide
+between consumption and the drug is}
 \begin{equation}\label{eq:fresource}
 x\;=\;y^{n}+a\;-\;p_r\,h'\,\mathbf{1}\{h'\neq h_1\}\;+\;V\!ch+F\;-\;a' ,
 \end{equation}
@@ -1171,7 +1162,7 @@ the condition is the Cobb-Douglas split in closed form,
 \begin{equation}\label{eq:fcvstatic}
 c=\max\Big\{F,\ \frac{1-\gamma-\theta}{1-\gamma}\big(x+p_v b\big)\Big\},
 \qquad
-v=\new{\max\Big\{0,\ }\frac{x-c}{p_v}\new{\Big\}},
+v=\max\Big\{0,\ \frac{x-c}{p_v}\Big\},
 \end{equation}
 whose corner is the abstention decision: a household buys nothing when the
 Stone-Geary endowment already exceeds what it wants, which is how a large $b$
