@@ -724,7 +724,7 @@ homelessness an externality here rather than only a private misfortune;
 Section~\ref{sec:fleftout} takes it up. Outside the bundle, $\sigma$ is the
 coefficient of relative risk aversion.
 
-\subsection{Income, taxes and transfers}
+\subsection{Income, taxes and transfers}\label{sec:ftaxes}
 
 Gross income depends on age, employment, productivity and health,
 \begin{equation}\label{eq:fincome}
@@ -1357,12 +1357,12 @@ a disorder and mental illness as a consequence, to be unhoused and to die young;
 and on everybody, through the disamenity of aggregate homelessness. The parent
 internalises only $\omega$ of the part that falls on its child, and $\omega$ is
 small, which is what leaves anything for a policy to correct. And the
-\textbf{distortion} is what {\color{red}the programmes cost in behaviour rather than
+\textbf{distortion} is what the programmes cost in behaviour rather than
 in money, and it comes from two places. The programmes create distortions of their
 own: assistance is means tested and the rent share is clawed back at $\kappa_r$,
 so a recipient who works more loses part of the transfer. And they are paid for by
 distortionary taxes, which lower the after tax return to an hour for households
-neither policy ever reaches.}
+neither policy ever reaches.
 
 The second and the third are worth keeping apart, because the paper's
 answer turns on the second and not the third. One test separates them: ask what
@@ -1373,9 +1373,9 @@ the tax schedule looks like. The distortion would not. It exists only because
 revenue has to be raised with a tax that moves behaviour, and it would vanish if
 the same revenue could be raised lump sum. Everything that reaches the comparison
 through the government budget therefore belongs with the distortion, including the
-part that behaviour sets in motion{\color{red}: a household that uses is likelier to
+part that behaviour sets in motion: a household that uses is likelier to
 be out of work, so it pays less tax and draws more transfers, and everybody else pays
-higher taxes for that}. It is a real
+higher taxes for that. It is a real
 cost and it is counted, but it is not the market failure either policy is trying to
 correct.
 
@@ -1406,7 +1406,7 @@ operates in. Spend more on either policy and the tax rises, hours fall, the base
 shrinks and the tax has to rise again. Treatment First has an offset of
 its own in the other direction: sending more households into treatment raises the
 recovery rate faced by everyone deciding whether to use, and those
-consequences affect a newborn when it makes its own {\color{red}decisions}, so the policy
+consequences affect a newborn when it makes its own decisions, so the policy
 changes behaviour beyond the households it treats. And because $\kappa_x$ is levied on the
 aggregate headcount, any movement in homelessness feeds back into everyone's
 utility. So the mechanical effects above are upper bounds on both sides.
@@ -1642,14 +1642,14 @@ $g$ alone would suggest and Treatment First delivers less than its instrument
 promises. It is calibrated internally to treatment take up in NSDUH 2023.
 \end{description}
 
-\paragraph{{\color{red}Externalities and distortions}.} The first three are what a parent's disorder and a
-parent's homelessness cost the child, and {\color{red}the fourth} is what the
+\paragraph{Externalities and distortions.} The first three are what a parent's disorder and a
+parent's homelessness cost the child, and the fourth is what the
 homelessness of strangers costs everybody. All four are externalities in the strict
 sense: one household's choice enters another household's utility directly, and it
-would still do so if the programmes were paid for with a lump sum tax. {\color{red}The
+would still do so if the programmes were paid for with a lump sum tax. The
 last two are not externalities but distortions, and they close the block for that
 reason: they say what it costs to raise the revenue either programme needs rather
-than whose utility a choice lands in.} This is where
+than whose utility a choice lands in. This is where
 the ranking is decided, since the private comparison already
 favours Housing First.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
@@ -1751,7 +1751,11 @@ As it rises supply is more elastic, so the price moves less when demand does, an
 
 The rest are conventional, recorded so the calibration can be reproduced rather
 than because anything turns on them. Table~\ref{tab:stdparams} carries each with
-its source and vintage, in this order.
+its source and vintage, in this order. {\color{red}There are twenty one of them.
+Five are calibrated inside the model, against a moment, because there is no source
+to read them off; the other sixteen are set from outside, from an estimate or from
+statute. Each is taken below in the order of the table, with the moment or the
+source that fixes it.}
 
 They are not inert in the experiments, and it is worth saying so
 plainly. The discount factor sets how heavily a death thirty years away is
@@ -1767,61 +1771,85 @@ ones where this paper makes a choice.
 
 \input{tables/tab_standard}
 
-\begin{description}\setlength{\itemsep}{0.2em}\setlength{\parskip}{0em}
-\item[$\beta$, $\sigma$.] Discount factor, value chosen to match wealth over output, and risk aversion, both standard.
-\item[$\underline h$ and $\varsigma$.] The rental ladder, which is geometric, so
-these two numbers give the whole grid and no size is set by hand. They are
-matched to the shares of renters spending more than half and more than thirty
-percent of income on housing, which separates a level from a spread. A uniform
-grid is a restriction on $\varsigma$, not a neutral choice, and fits those two
-shares worse.
-\item[$\bar\pi^{eu}$ and $\bar\pi^{ue}$.] Baseline separation and job finding
-rates.
-\item[$\varepsilon(j)$, $\bar\phi(j)$, $\rho_y$, $\sigma_y$, $j_E$.] Age profiles
-of earnings and survival, the persistence and dispersion of permanent
-productivity, and the age at which use can begin.
-\item[$r$, $\xi$, $\tau_k$, $\tau_{\ell}$, $G$.] The interest rate and the tax
-system, with $\tau_{\ell}$ not set at all but whatever clears the budget, and $G$
-held fixed across simulations.
-\item[$\psi$, $\bar y$, $\kappa_V$, $\kappa_r$.] The replacement rate and cap for
-unemployment insurance and the eligibility and contribution rates for the
-voucher, all set by statute.
+{\color{red}
+\paragraph{The five calibrated inside the model.} These have no source to be read
+off, so each is chosen to reproduce one moment, and the moment is what disciplines
+it.
+\begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
+\item[$\gamma$, the weight on housing services.] The Cobb-Douglas share of the
+bundle that goes on housing, so it fixes what a dwelling is worth against
+consumption and against the drug. Chosen to reproduce housing cost over income in
+the 2022 Survey of Consumer Finances. It sits here rather than in
+Section~\ref{sec:fullcal} because every life cycle model with housing has it and
+calibrates it the same way.
+\item[$\beta$, the discount factor.] Chosen to reproduce wealth over output in the
+national accounts. It matters more here than the description suggests, since it is
+what decides how heavily a death thirty years away is weighed, but it is set the
+way it is set everywhere.
+\item[$\underline h$ and $\varsigma$, the rental ladder.] The smallest rental size
+and the geometric spread of the rungs. Together these give the whole grid, so no
+size is picked by hand. They are matched to two shares of renters from the same 2022
+survey, those spending more than half of income on housing and those spending more
+than thirty percent, which separates a level from a spread: the first says how bad
+the bottom of the ladder is and the second how far apart the rungs are. A uniform
+grid is a restriction on $\varsigma$ rather than a neutral choice, and it fits
+those two shares worse.
+\item[$\bar\pi^{eu}$, the job separation rate.] Chosen to reproduce the aggregate
+unemployment rate in the BLS Current Population Survey over 2014 to 2024, given the
+job finding rate set externally below. Separation is the internal one of the pair
+because the unemployment rate identifies the ratio and the finding rate is the
+better measured half.
 \end{description}
 
-\paragraph{How these are solved for.}
-Two points about the mechanics survive from the longer treatment this
-section used to carry, because nothing else says them.
-
-\emph{Three moments are cliffs, not slopes.} Most parameters
-move their moment smoothly, so a step in one direction tells you where to go
-next. Three do not, and treating them as though they did is how a calibration
-silently fails. Three moments are step like and
-are bisected rather than stepped, for the reason Section~\ref{sec:cal} gives:
-participation is a near threshold function of $b$, homelessness moves from $0.12$
-to $3.29$ percent for a $35$ percent change in $h_1$, and wealth over
-output is $5.46$ at $\beta=0.995$ and $0.38$ at $\beta=0.85$. All three are
-bisected at the head of each sweep, in partial equilibrium, before anything else
-moves. The parameter to moment map is close to triangular and the sign of each
-parameter's effect on each moment is declared for every pair, so a mistaken sign shows
-up as a moment walking away from its target rather than as a silent failure.
-
-\emph{The second stage matches responses, not steady states.} These are partial
-equilibrium cohort experiments. A trial of two hundred people does not move the
-tax rate or the drug price, so prices are held at benchmark; the household
-problem is solved again, because each arm changes the rules a forward looking
-household faces. Milby et al.\ (2005) randomised $196$ cocaine dependent homeless
-adults into three arms on identical day treatment, and the targeted moment is the
-ratio of the unconditional voucher arm to no assistance, $6.60/4.48=1.473$ weeks
-abstinent, which is what identifies $\mu_H$. The conditional against unconditional comparison is deliberately
-\emph{not} targeted, because the source reports it as insignificant in the raw
-randomised comparison; calibrating to it would repeat the error this revision is
-correcting elsewhere. The drug price participation elasticity,
-$-0.63$, is no longer targeted. It is reported below as a moment the model is
-not fitted to, which is the stronger use of it: with $\bar\kappa_{\phi d}$
-assigned from mortality data, the elasticity tests whether the mechanism
-delivers the observed price response rather than being spent on pinning a
-parameter. It remains a moment only an endogenous drug price can produce, since
-a fixed price has no elasticity to match.
+\paragraph{The sixteen set from outside.} Each of these is taken from a source or
+from statute, so a reader who disagrees is disagreeing with the literature or with
+the rule rather than with anything argued here. Values are in
+Table~\ref{tab:stdparams}.
+\begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
+\item[$\sigma$, risk aversion.] Two, from Attanasio and Weber (2010). It decides
+what insurance is worth, which is most of what a voucher is.
+\item[$\varepsilon(j)$, the age profile of efficiency.] A quadratic in age fitted
+to the earnings hump in the PSID and the CPS, so earnings rise and then flatten
+rather than being constant over the life cycle.
+\item[$\bar\phi(j)$, baseline survival by age.] The SSA period life table for ages
+26 to 85. This is the profile every mortality multiplier in
+Section~\ref{sec:fullcal} multiplies, so it is the base the SUD, homelessness and
+mental illness hazards are measured against.
+\item[$\rho_y$ and $\sigma_y$, permanent productivity.] Persistence and
+dispersion in logs, $0.90$ and $0.20$, from Storesletten et al.\ (2004). These
+decide how many households are poor enough to be at risk at all, which is why they
+are not inert even though they are conventional.
+\item[$j_E$, the maximum age at which use can begin.] Fifty five. It is a
+restriction rather than an estimate, so the results are reported with and without
+it.
+\item[$r$, the risk free rate.] Three percent, from Kaplan, Mitman and Violante
+(2020).
+\item[$\xi$, tax progressivity.] The exponent on income in the tax schedule of
+Section~\ref{sec:ftaxes}, $0.85$, from Heathcote, Storesletten and Violante (2017).
+It is what makes the labour income tax progressive rather than
+flat, and so what decides how much of either programme's bill falls on whom.
+\item[$\tau_k$, the capital income tax.] Fifteen percent, the long run US rate on
+capital gains and dividends.
+\item[$\tau_{\ell}$, the level of the labour income tax.] Not set at all. It is
+whatever clears the government budget at the benchmark and in every
+counterfactual, which is what makes both programmes paid for rather than free, and
+what makes the distortion of Section~\ref{sec:fullcal} a cost the model actually
+bears.
+\item[$G$, other public spending.] The residual that balances the budget at the
+benchmark, then held fixed across simulations so that a policy is financed by the
+tax and not by cutting something else.
+\item[$\psi$ and $\bar y$, unemployment insurance.] The replacement rate and the
+cap on the earnings it is paid on, fifty percent and one times average income, both
+from Department of Labor statutory rates and state benefit maxima.
+\item[$\kappa_V$ and $\kappa_r$, the voucher rules.] The income cutoff for
+eligibility and the tenant's contribution, half of median income and thirty percent
+of income, which are HUD's own rules rather than estimates: the first is the very low income limit that
+governs eligibility, the second is what a tenant pays of the rent when a voucher
+covers the rest.
+\item[$\bar\pi^{ue}$, the annual job finding rate.] $0.55$, from Krueger, Cramer
+and Cho (2014).
+\end{description}
+}
 
 \subsection{Validation, and what is left undisciplined}\label{sec:fvalid}
 
