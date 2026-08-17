@@ -1302,28 +1302,28 @@ because the transition exercise in the results needs it.
 
 \section{Calibrating the quantitative model}\label{sec:fullcal}
 
-The model has \new{fifty four} parameters, some of which vary in value by age.
-\new{Thirty two are calibrated externally, from data or from the literature, and
+The model has fifty four parameters, some of which vary in value by age.
+Thirty two are calibrated externally, from data or from the literature, and
 twenty two are calibrated internally, inside the model. Four further parameters
 govern drug testing and detection; they are inert in the benchmark, where nothing
 is conditional, so they are set with the Treatment First experiment rather than
-here.} They are
-split across the three tables of this section: \new{twelve carry the key results
+here. They are
+split across the three tables of this section: twelve carry the key results
 (Table~\ref{tab:eleven}, eight internally and four externally calibrated),
 eighteen are specific to this paper without carrying a key result
 (Table~\ref{tab:paperparams}, seven internally and eleven externally), and
 twenty four are standard (Table~\ref{tab:stdparams}, seven internally and
-seventeen externally).}
+seventeen externally).
 
 The tables carry the parameter, its description, the moment and source used to
 fix its value, and the value itself. The text alongside each table adds what a
 table has no room for: the intuition for what each parameter does, and why its
 moment identifies it.
 
-\subsection{\new{The twelve} parameters that carry the key results}
+\subsection{The twelve parameters that carry the key results}
 
-Most of the \new{fifty four} are the furniture of any life cycle model. A much
-smaller set is specific to this paper, and \new{twelve} of those carry its
+Most of the fifty four are the furniture of any life cycle model. A much
+smaller set is specific to this paper, and twelve of those carry its
 key results. They are set out in Table~\ref{tab:eleven} against the three
 questions of Section~\ref{sec:what}, with the parameter, its description,
 and the moment and source used to fix its value, which is given in the last
@@ -1386,24 +1386,25 @@ hazard stands unopposed. Its value is chosen so the model generates the increase
 in recovery that housing produced in Milby et al.\ (2005), a randomised
 trial on cocaine dependent homeless adults: $6.60$ weeks abstinent in the housed
 arm against $4.48$ unhoused, so housing raises recovery by $47.3$ percent.
-\item[{\color{red}$h_{\text{HL}}$, the service flow of homelessness.}]
-{\color{red}What the street delivers relative to a dwelling, and so what a
+\item[$h_1$, the service flow of homelessness.]
+What the street delivers relative to a dwelling, and so what a
 voucher is worth. It belongs among the key parameters because it sets how bad the
 outside option is, and the value of being alive is measured against that outside
 option: a household with little to lose from dying is a household for which the
 mortality cost of using is small. Its value is chosen so the model generates the
 homelessness rate, $0.399$ percent of households in HUD's 2023 point in time
 count, and it is bisected rather than stepped because homelessness moves from
-$0.12$ to $3.29$ percent over a $35$ percent change in it.}
-\item[{\color{red}$\nu_2$, the elasticity of drug supply.}] {\color{red}A policy
-that changes how much is used moves the price, and the price moves how much
-everyone else uses. So this parameter decides how much of a policy's effect passes
-through to households the programme never reaches rather than being absorbed by
-the market, which feeds back into homelessness and so into which policy wins. It
-is set externally to an elasticity of $2$, the middle of a range from about $0.7$
-to about $4$: there is no direct estimate for an illicit drug, so it is bracketed
-by the closest legal markets, the Washington State marijuana reform at roughly
-$0.79$ and the cigarette and gasoline literatures nearer $3.6$.}
+$0.12$ to $3.29$ percent over a $35$ percent change in it.
+\item[{\color{red}$\aleph$, the flow value of being alive.}] {\color{red}This is
+the other half of the mortality mechanism, and it belongs beside
+$\bar\kappa_{\phi d}$ rather than among the secondary parameters.
+$\bar\kappa_{\phi d}$ sets how much a disorder raises the chance of dying;
+$\aleph$ sets what dying costs. Neither does anything without the other, and it is
+their product that truncates the value of life and reverses the income gradient.
+It also needs a level and not only a behavioural target: at the wrong level
+households prefer death outright, and the mortality cost of using becomes a
+benefit rather than a deterrent. Its value is chosen so the model generates a
+value of a statistical life of \$7.5m, from Viscusi and Aldy (2003).}
 \end{description}
 
 \paragraph{The externality on the child.} These three are the externalities
@@ -1429,13 +1430,13 @@ that same $15.5$ percent.
 Treatment First. McGovern et al.\ (2023) find that children of a parent with a SUD
 are two to four times likelier to acquire one themselves. The model does not carry
 an inherited disorder; it carries the loss of earnings potential that goes with
-it. {\color{red}No paper estimates the effect of a parent's SUD on a child's
+it. No paper estimates the effect of a parent's SUD on a child's
 lifetime earnings directly, which is why the penalty is calibrated to the
 disorder ratio rather than lifted from an estimate. What the literature supplies
 is the two halves of the chain: Felitti et al.\ (1998) link household
 dysfunction, of which parental substance use is a component, to adult health and
 behavioural outcomes, and Chetty et al.\ (2016) measure what childhood
-environment does to adult earnings. $\delta_d$ is the reduced form of the two.} $\delta_d$ is
+environment does to adult earnings. $\delta_d$ is the reduced form of the two. $\delta_d$ is
 calibrated internally, its value chosen so the model reproduces McGovern's ratio
 of child disorder rates between parents with and without a disorder. A policy that
 cures disorders therefore earns a return on the next generation that a policy
@@ -1480,10 +1481,10 @@ the assumption least kind to it.
 
 \subsection{Other parameters specific to this paper}\label{sec:paperparams}
 
-\new{Eighteen further parameters are specific to this paper, and none of them
-carries a key result.} Table~\ref{tab:paperparams} collects them and marks which
-are internally and which externally calibrated. \new{The table is broken into the same six groups the discussion follows, and each
-parameter is taken in turn below.}
+Eighteen further parameters are specific to this paper, and none of them
+carries a key result. Table~\ref{tab:paperparams} collects them and marks which
+are internally and which externally calibrated. The table is broken into the same six groups the discussion follows, and each
+parameter is taken in turn below.
 
 \input{tables/tab_paper}
 
@@ -1577,16 +1578,16 @@ read off directly.
 
 \paragraph{The drug market, and the value of life.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
+\item[{\color{red}$\nu_2$, the supply elasticity.}] {\color{red}Sets the price
+elasticity of supply at $2$, the middle of a range from about $0.7$ to about $4$.
+There is no direct estimate for an illicit drug, so it is bracketed by the closest
+legal markets: the Washington State marijuana reform implies roughly $0.79$, the
+cigarette and gasoline literatures nearer $3.6$.}
 \item[$\nu_1$, the supply shifter.] A pure normalisation, chosen so that supply
 equals demand at $p_v=1$ in the benchmark. It normalises units, not behaviour.
 \item[$p_v$, the drug price.] One at the benchmark by that normalisation, and free
 in every counterfactual. That is what lets a policy which changes how much is used
 move the price, and so feed back into every other household's decision.
-\item[$\aleph$, the flow value of being alive.] Its value is chosen so the model
-generates a value of a statistical life of \$7.5m, from Viscusi and Aldy (2003).
-It needs a level and not only a behavioural target: at the wrong level households
-prefer death outright, and the mortality cost of using becomes a benefit rather
-than a deterrent.
 \end{description}
 
 \subsection{Standard parameters}
@@ -1650,7 +1651,7 @@ next. Three do not, and treating them as though they did is how a calibration
 silently fails. Three moments are step like and
 are bisected rather than stepped, for the reason Section~\ref{sec:cal} gives:
 participation is a near threshold function of $b$, homelessness moves from $0.12$
-to $3.29$ percent for a $35$ percent change in $h_{\text{HL}}$, and wealth over
+to $3.29$ percent for a $35$ percent change in $h_1$, and wealth over
 output is $5.46$ at $\beta=0.995$ and $0.38$ at $\beta=0.85$. All three are
 bisected at the head of each sweep, in partial equilibrium, before anything else
 moves. The parameter to moment map is close to triangular and the sign of each
