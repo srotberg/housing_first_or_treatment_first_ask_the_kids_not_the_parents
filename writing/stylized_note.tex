@@ -1324,6 +1324,56 @@ test the model rather than to fit it.
 The first stage matches nineteen parameters to nineteen moments of the
 stationary equilibrium; the second carries the remaining two.
 
+{\color{red}\paragraph{What the calibration table reports, and why the model column
+is there.} Referee~1's objection to the previous version was not that the fit was
+bad but that it could not be seen: the table gave targets without model
+counterparts, and the text asserted that the benchmark ``closely matches all
+calibration targets'' without saying close by what criterion. That is a fair
+objection and it is answered by construction. Table~\ref{tab:fint} carries a data
+column and a model column for every calibrated parameter, so every target and its
+model counterpart sit side by side and a reader can judge the fit without taking
+a claim on trust. The criterion is stated rather than implied: each moment is
+solved to a distance of $10^{-3}$, except the three step like moments below,
+which are bisected to $10^{-4}$.
+
+\paragraph{How each moment is computed in the model.} The same referee could not
+replicate the price elasticity moment from its description, and Referee~3 asked
+how an elasticity can be targeted at all when $p_v$ is normalised to one. Both
+are addressed by a change in the model rather than in the prose. The price is now
+endogenous: $\nu_1$ is chosen so that supply equals demand at $p_v=1$ in the
+benchmark, which is a normalisation of the \emph{units}, not a restriction on the
+price, and $p_v$ moves freely in every counterfactual. The elasticity is then the
+proportional change in the participation rate against the proportional change in
+$p_v$ between the benchmark and a re solved economy with the supply curve shifted,
+and it is no longer a target at all: it is computed after the fact and compared
+with the literature. The model definition of every other moment is given with the
+parameter it identifies rather than left to inference, since a moment whose
+definition is ambiguous cannot discipline anything.
+
+\paragraph{The rental grid is two parameters, not seven.} Referee~2 asked how the
+housing levels are chosen, whether they could simply be spread uniformly, and
+whether each size ought to count as a free parameter. It is a geometric grid
+pinned by two numbers: $\underline h$ sets the smallest rental and $\varsigma$ the
+ratio between successive sizes, so the whole ladder follows from those two and
+nothing is set by hand. They are calibrated to two points on the same
+distribution, the shares of renters spending more than half and more than thirty
+percent of income on housing, which is what identifies a level and a spread
+separately. A uniform grid is a restriction on $\varsigma$, not a neutral choice,
+and it fits those two shares worse; the geometric form is what the ACS size
+distribution supports.
+
+\paragraph{Where $b$ comes from, and what it has to do.} Referee~3 noted that the
+relationship between income and drug use is what identifies the Stone-Geary
+endowment and the income dependent penalties, and asked for its empirical basis.
+$b$ is calibrated to the participation rate, but what makes it identified is the
+\emph{shape} it imposes: because the marginal value of the drug goes as
+$\theta/(b+v)$, a larger $b$ makes the first units worth less and deters use
+altogether, so participation is a near threshold function of it. That is also why
+it is bisected rather than stepped. The income gradient it has to produce, use
+concentrated at the bottom of the income distribution, is not targeted and is
+reported among the untargeted moments, which is the sharper test of whether the
+mechanism is right.}
+
 \paragraph{The same cliffs, and the same answer.} Three moments are step like and
 are bisected rather than stepped, for the reason Section~\ref{sec:cal} gives:
 participation is a near threshold function of $b$, homelessness moves from $0.12$
