@@ -559,3 +559,49 @@ read list that drift out of step. It is checked mechanically rather than by
 reading: 40 entries each, formats identical, names identical except the one
 deliberate difference, `loop_count` written and `resumed_loop_count` read, since
 a resumed run counts its own loops from zero.
+
+---
+
+## 11. The asset grid cannot be cut, and the lottery is why not
+
+The plan was: the two point lottery puts `a'` between grid points, so coarseness
+stops costing accuracy, so the grid can go from 41 points to about 25 and the
+backward induction gets proportionally cheaper. Section 10.1 built the counters to
+check the premise before acting on it. Measured over one backward induction, ten
+ages in:
+
+```
+calls                 =  177120
+fired                 =      12   0.0068 %
+refused branch match  =  160995  90.90   %
+refused geometry      =   16113   9.10   %
+```
+
+**The lottery does not fire.** Twelve times in a hundred and seventy seven
+thousand. Cutting the grid to 25 points on the strength of it would have been a
+straight loss of accuracy in exchange for nothing, and the loss would have shown
+up as a worse savings policy with no obvious cause.
+
+**The reason is the guard, not the geometry**, which is the distinction the four
+counters exist to draw. Nine refusals in ten are the branch match test. The `a'`
+search loops over housing choices and refills `flow_utility_vector` and
+`future_utility_vector` on each branch, so on return they describe the LAST branch
+searched rather than the one that won. The guard notices and refuses, which is
+correct — fitting a parabola to another branch would put the lottery in a
+different basin entirely — but it means the machinery is inert.
+
+**The fix is cheap and it is not "keep the whole vector".** The lottery needs the
+objective at exactly three points, the argmax and its two neighbours, for the
+winning branch. So either the winning branch's three values are kept as the search
+goes, or they are recomputed once the housing choice is known. Recomputing three
+points per state is nearly free next to the search itself. What must not happen is
+another attempt to use the vectors as they stand.
+
+Until that is done, `interpolate_a_prime` is effectively off whatever its value
+says, and **the grid stays at 41 points.** The remaining 9 per cent, the geometry
+refusals, are section 3's non concavity in `a'` showing up for the third time, and
+no amount of guard work will remove those.
+
+Worth stating plainly, because the opposite conclusion was one commit away: the
+diagnostic did not confirm the plan, it killed it, and that is the whole reason
+for measuring before cutting.

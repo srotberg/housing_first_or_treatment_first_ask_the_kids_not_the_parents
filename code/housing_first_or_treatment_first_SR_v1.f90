@@ -2587,6 +2587,15 @@
         ! nothing; and when the vertex falls outside the bracket, which means the
         ! quadratic is a bad local model. Refusing costs nothing, since frac zero
         ! is exactly the old behaviour.
+        !
+        ! MEASURED, AND IT IS INERT. Over one backward induction: 177,120 calls,
+        ! 12 fired, 160,995 refused on the branch match and 16,113 on the
+        ! geometry. So this subroutine currently does nothing, and the asset grid
+        ! must NOT be cut on the strength of it. PERFORMANCE_NOTES.md section 11
+        ! has the numbers and the fix, which is to keep or recompute the three
+        ! objective values for the WINNING housing branch rather than trusting
+        ! the vectors, since the search refills them per branch and leaves the
+        ! last one behind.
 
         !$ use omp_lib
 
