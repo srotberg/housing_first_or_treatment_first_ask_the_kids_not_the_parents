@@ -786,7 +786,7 @@ and $\varsigma>1$ the geometric spread between consecutive sizes.
 
 Homelessness then enters three separate equations: survival~\eqref{eq:fsurv},
 the employment transitions~\eqref{eq:femp} and the SUD recovery
-hazard~\eqref{eq:frecover}, through $\kappa_{\phi H}$ and $\kappa_{ueH}$
+hazard~\eqref{eq:frecover}, through \new{$\kappa_{\phi H}(j)$} and $\kappa_{ueH}$
 in Section~\ref{sec:fcosts} and $\mu_H$ in Section~\ref{sec:fdrug}. It raises
 mortality, worsens both employment margins and lowers the chance of
 recovering from the SUD. Mental illness is the one thing it does not reach.
@@ -1439,9 +1439,21 @@ here, and only the last group is contestable.
 Standard and taken from the literature: $\sigma_{\ell}$, the curvature on
 leisure, which with $\omega_{\ell}$ delivers the Frisch elasticity; $\rho_y$ and
 $\sigma_y$, the persistence and dispersion of permanent productivity;
-$\varepsilon_j$, the deterministic age profile of earnings; $\bar\phi_j$, the
+$\varepsilon(j)$, the deterministic age profile of earnings; $\bar\phi(j)$, the
 baseline survival profile from the SSA life table; and $\tau_k$, the tax rate on
 capital income.
+
+Four objects vary with age and are written with a $(j)$ argument throughout, so
+that a profile is never mistaken for a scalar: $\varepsilon(j)$ and
+$\bar\phi(j)$ above, the SUD mortality multiplier $\kappa_{\phi d}(j)$, and the
+homelessness multiplier $\kappa_{\phi H}(j)$. The last two are not assigned
+directly. What is assigned is the single number $\bar\kappa_{\phi d}$, the level
+at the age where the SUD's effect peaks; \eqref{eq:fhaz} then turns it into
+$\kappa_{\phi d}(j)$ using the CDC shape and reads $\kappa_{\phi H}(j)$ off
+Baggett's ratio age by age. A fifth, the SMI onset $\text{onset}_m(j)$, is not a
+parameter at all but is implied by the observed prevalence profile and the flat
+recovery rate $\lambda_m$ through~\eqref{eq:fonsetage}. Everything else in both
+tables is a scalar.
 
 Institutional, and set by statute rather than estimated: $\kappa_V$, the voucher
 eligibility cutoff as a share of $y^{\text{med}}$; $\kappa_r$, the tenant
