@@ -386,8 +386,9 @@ produces through unemployment is held out rather than loaded onto sigma_y. The a
 profile is removed separately, since the model carries eps(j) of its own. And what
 is left, the dispersion of hours among the employed, is small against a spread of log
 earnings above one. What remains shows up in the validation section: the model's own
-earnings distribution, with hours and employment in it, is checked against the same
-SCF shares as an untargeted moment.
+earnings distribution, with hours and employment in it, is checked at the two tails,
+the bottom tenth's share of 0.99 percent and the top tenth's of 41.1. The bottom
+half's share is not a check, because it is the target.
 
 ---
 

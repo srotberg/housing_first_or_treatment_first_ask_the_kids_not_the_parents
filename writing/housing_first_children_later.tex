@@ -217,6 +217,14 @@ long run effect turns out to be.
 %======================================================================
 \section{Related literature}\label{sec:literature}
 
+\textcolor{red}{The literatures this paper draws on are set out in the order the
+argument needs them. The first three supply the machinery: what the trials establish
+about housing policy, how economists model the decision to use, and what structural
+models of homelessness already deliver. The next two supply the motivation, which is
+where this paper departs from its predecessors: what a childhood transmits, and how
+much weight a parent puts on the child who bears it. The last two are what the
+quantitative model is built out of: the hazards, taken one at a time from clinical
+and epidemiological work, and the drug market that makes the price endogenous.}
 
 \paragraph{Randomised trials of Housing First.} A large empirical literature
 evaluates programmes that provide rapid housing without conditioning on sobriety,
@@ -272,7 +280,7 @@ causation runs both ways, and the two directions reinforce each other. On the on
 hand, the SUD costs employment, which costs a household its housing. On the other
 hand, losing housing worsens employment and raises mortality, which raises the value
 of using relative to the value of life being risked, since a household with less
-continuation left to lose \textcolor{red}{risks less by using drugs}. Each direction
+continuation left to lose risks less by using drugs. Each direction
 feeds the other, so what the model produces is a vicious circle rather than a one
 directional flow.
 
@@ -288,21 +296,25 @@ documents it too. Household substance abuse is one of the adverse childhood
 experiences of Felitti et al.\ (1998), and children of a parent with a SUD are two to
 four times as likely to acquire one themselves (McGovern et al., 2023).
 
-\textcolor{red}{The second link is that the childhood shows up in the child's own adult
-earnings, and the mechanism is straightforward. A parent spending money and hours on
-the drug has less of both left for the child's schooling and wellbeing, and runs a
-more chaotic household, so the child reaches the labour market with less human
-capital. Each step of that is measured. Dahl and Lochner (2012) find that family
+The second link is that the childhood shows up in the child's own adult
+earnings, and the mechanism is straightforward. \textcolor{red}{A parent who has lost work
+to the SUD, and who spends what money is left on the drug, has less of it for the
+child. Time goes the same way. What the child loses is schooling and the ordinary
+attention a household gives, in a home more chaotic than it would otherwise be. The
+child reaches the labour market with less human capital for it.}
+
+\textcolor{red}{Each step of that is measured. Dahl and Lochner (2012) find that family
 income raises children's achievement, using the Earned Income Tax Credit to move the
-income; Card (1999) puts the return to a year of schooling at around ten percent; and
-Nilsson (2017) closes the loop for a parental substance shock in particular, finding
-that children exposed in utero to an alcohol availability experiment earn less and
-finish less schooling. What no study does is estimate the effect of a parent's SUD on
-a child's lifetime earnings directly. That is why $\delta_d$ is calibrated inside the
-model rather than lifted from a coefficient: these estimates imply that the effect is
-real and of what order, and the penalty itself is set to reproduce what the
-literature does measure for the children of parents with a SUD, who are two to four
-times as likely to acquire one themselves.}
+income. Card (1999) puts the return to a year of schooling at around ten percent. And
+Nilsson (2017) closes the loop for a parental substance shock in particular: children
+exposed in utero to a Swedish experiment that sharply raised alcohol availability earn
+about twenty four percent less as adults and finish less schooling. What no study does
+is estimate the effect of a parent's SUD on a child's lifetime earnings directly. That
+is why $\delta_d$ is calibrated inside the model rather than lifted from a
+coefficient: these estimates imply that the effect is real and of first order, and the
+penalty itself is set to reproduce what the literature does measure for the children
+of parents with a SUD: they are two to four times as likely to acquire one
+themselves.}
 
 The third is that housing, and the poverty that comes with bad housing,
 is one of the environments doing the transmitting. Chyn (2018) finds that children
@@ -332,7 +344,7 @@ rather than assuming either end of it. Their experiment cannot be run here. It c
 own adult children, and every household in this model has a child, born when it
 dies, so there is no parent against non parent comparison to make in the benchmark.
 What the model can do is another test, and for this paper
-\textcolor{red}{it is a more relevant one}: run the comparison as a counterfactual. In NSDUH 2024 past
+it is a more relevant one: run the comparison as a counterfactual. In NSDUH 2024 past
 month use among parents is $0.845$ of use among non parents, reweighted to the non
 parents' joint distribution of age, income, sex and marital status so that the gap
 is behaviour rather than composition. The child term of the household's problem is
@@ -368,17 +380,17 @@ disagreeing with the study behind it.
 \paragraph{The drug market.} Making the drug price endogenous is what
 lets a policy that changes the number of users change what using costs everybody
 else. Two elasticities govern it and they do different jobs, so the literatures
-behind them are worth separating: the demand side \textcolor{red}{is driven by how much} the extensive
-and the intensive margins respond to a given price, and the supply side \textcolor{red}{determines
-how much} the price moves when demand changes.
+behind them are worth separating: the demand side is driven by how much the extensive
+and the intensive margins respond to a given price, and the supply side determines
+how much the price moves when demand changes.
 
-\emph{The elasticity of participation.} \textcolor{red}{This is the extensive margin of the
+\emph{The elasticity of participation.} This is the extensive margin of the
 demand side, and the most relevant margin for the comparison this paper makes, since
 Treatment First and Housing First differ in who is drawn into use at all. It is what
 fixes how large the behavioural response to either policy can be in the model, and the
 model is checked against it in Section~\ref{sec:fvalid} rather than calibrated to it.
 The intensive margin, how much a user buys once using, is a separate elasticity that
-the model produces separately.} Gallet (2014) synthesises $462$ price elasticity studies,
+the model produces separately. Gallet (2014) synthesises $462$ price elasticity studies,
 and van Ours (1995), Saffer and Chaloupka (1999) and Caulkins (2001) establish that
 participation responds to price even for drugs as habit forming as heroin and
 cocaine, with long run responses consistently larger than short run ones. That
@@ -388,8 +400,8 @@ why it belongs with Becker and Murphy (1988) above as well as here.
 \emph{The elasticity of supply.} This is the general equilibrium offset, and it
 runs against Treatment First in particular: curing households takes them out of the
 market, demand and the drug price fall, and a cheaper drug draws others in. I am not aware of a direct
-estimate for an illicit drug. Cannabis is the closest market I found \textcolor{red}{to an illicit
-drug, as it} remains a Schedule I substance federally, so even a licensed producer works
+estimate for an illicit drug. Cannabis is the closest market I found to an illicit
+drug, as it remains a Schedule I substance federally, so even a licensed producer works
 without interstate trade, without ordinary banking and under federal prohibition,
 which is the set of frictions an illicit supplier faces. Mace et al.\ (2020) estimate a price elasticity of supply of
 $1.46$ on Washington State administrative data, and that is the number the model
@@ -399,7 +411,7 @@ uses.
 policy but cannot price what happens in the long run, to others not in the sample,
 or to the distortionary tax system that pays for it. The rational
 addiction literature models the use and SUD decisions but abstracts from housing,
-\textcolor{red}{children, and mental illness}. The structural homelessness literature delivers a housing market
+children, and mental illness. The structural homelessness literature delivers a housing market
 equilibrium but has no drug margin for conditionality to act on. The transmission
 literature measures what a childhood costs but takes the parent's behaviour as
 given. This paper's contribution is to put them in one framework and then to insist
@@ -700,10 +712,7 @@ the 2022 Survey of Consumer Finances, households aged $26$ to $65$ with positive
 and salary income hold $17.2$ percent of total earnings in the poorer half of the
 distribution. The share falls in $\sigma_y$, so one number identifies it, and the
 quantitative model of Section~\ref{sec:full} is calibrated to the same moment.
-\textcolor{red}{Here the match is exact: income in this model is the permanent draw
-itself, with no labour supply choice between the two, so the spread of income and the
-spread of the draw are the same object. In the quantitative model they are not, and
-Section~\ref{sec:fullcal} says what stands between them.} The weight on
+The weight on
 housing $\gamma$ is matched to the $26.8$ percent of total expenditure that
 shelter plus utilities take in the 2024 Consumer Expenditure Survey (CEX),
 housing over expenditure net of drugs. The flow value
@@ -2299,34 +2308,15 @@ working life.
 \item[$\sigma_y$, the dispersion of productivity.] Productivity is
 permanent: a household draws it once and keeps it for life, exactly as in the
 stylized model, so all that is needed is the spread of that draw.
-\textcolor{red}{It is calibrated, to the share of earnings held by the bottom of the
+It is calibrated, to the share of earnings held by the bottom of the
 income distribution among working households. It is what decides how many households
 are poor enough to be at risk of homelessness and of acquiring a SUD. In the 2022
 Survey of Consumer Finances, households aged $26$ to $65$ with positive wage and
 salary income hold $17.2$ percent of total earnings in the poorer half of the
 distribution, and $\sigma_y$ is chosen to reproduce that share. The share falls in
-$\sigma_y$, so the mapping is monotone and one number identifies it. Two shares
-nobody targeted come out alongside: the model's top tenth holds $38.5$ percent of
+$\sigma_y$, so the mapping is monotone and one number identifies it. \textcolor{red}{Two untargeted shares} come out alongside: the model's top tenth holds $38.5$ percent of
 earnings against $41.1$ in the data, and its bottom tenth holds $1.1$ percent against
-$0.99$.}
-
-\textcolor{red}{One caveat belongs with it here, and only here. What the parameter
-governs is the spread of \emph{productivity}, and what the moment measures is the
-spread of \emph{earnings}, which in this model is productivity times hours times
-whether the household works at all. The stylized model has no such gap, because
-income there is the draw itself and there is no labour supply margin between them, so
-its $\sigma_y$ matches the moment exactly. Here the two are not the same object, and
-the difference is not a rounding error: hours are chosen, and unemployment, the SUD
-and homelessness all cut earnings without touching productivity. Three things keep the
-mapping tight enough to use. The data universe is households with positive earnings,
-so the extensive margin the model produces through unemployment is held out of the
-moment rather than loaded onto $\sigma_y$. The age profile is taken out separately,
-since the model carries $\varepsilon(j)$ of its own. And what is left, the dispersion
-of hours among the employed, is small against a spread of log earnings above one. What
-remains is reported rather than assumed away: the model's own distribution of
-earnings, with hours and employment in it, is a validation moment in
-Section~\ref{sec:fvalid} and not a target, so the distance between the productivity
-spread and the earnings spread it produces is visible rather than buried.}
+$0.99$.
 
 \item[$\bar\pi^{eu}$, the job separation rate.] Chosen to reproduce the aggregate
 unemployment rate in the BLS Current Population Survey (CPS) over 2014 to 2024,
@@ -2453,7 +2443,7 @@ Shares of the homeless across those bands
  & 26.0, 27.2, 21.0, 18.4, 7.5 percent & HUD PIT 2024 \\
 Returns to homelessness within 24 months & 17.4 percent & HUD SPM 2024 \\
 Drug poisonings as a share of deaths, 25 to 44 & about 20 percent & CDC WONDER \\
-\textcolor{red}{Earnings shares, bottom half and top tenth} & \textcolor{red}{17.2 and 41.1 percent} & \textcolor{red}{SCF 2022} \\
+\textcolor{red}{Earnings shares, bottom tenth and top tenth} & \textcolor{red}{0.99 and 41.1 percent} & SCF 2022 \\
 Bottom half's share of net worth & 2.52 percent & Fed DFA \\
 Housing costs above 30 and 50 percent of income & 40.6 and 17.5 percent & SCF 2022 \\
 Standardised mortality ratio, homeless & 9.1, 4.5, 1.1 by band & Baggett et al. \\
