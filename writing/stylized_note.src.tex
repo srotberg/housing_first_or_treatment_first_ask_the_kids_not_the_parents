@@ -804,13 +804,19 @@ optimisation, in Section~\ref{sec:fproblem}.
 
 Housing is a four point grid. $h_1$ is literal homelessness, sleeping rough or in
 an emergency shelter, which is the HUD point-in-time definition and excludes
-doubling up; it carries a small service flow and no rent. The three rental sizes
-are geometric,
+doubling up; it carries a small service flow and no rent{\color{red}, a fixed
+fraction of the smallest rental rather than a level of its own}. The three rental
+sizes are {\color{red}pinned at both ends and spaced by a curvature between them,}
 \begin{equation}\label{eq:fhouse}
-h_2=\underline h,\qquad h_3=\underline h\,\varsigma,\qquad h_4=\underline h\,\varsigma^{2},
+h_2=\underline h,\qquad
+h_3=\underline h+\Big(\tfrac{1}{2}\big(\bar h-\underline h\big)^{1/\varsigma}\Big)^{\varsigma},
+\qquad h_4=\bar h,
 \end{equation}
-so two parameters describe the grid: $\underline h$ the smallest rental size
-and $\varsigma>1$ the geometric spread between consecutive sizes.
+so {\color{red}three} parameters describe the grid: $\underline h$ the smallest
+rental size, {\color{red}$\bar h$ the largest, and $\varsigma$ the curvature that
+places the rung between them. At $\varsigma=1$ the ladder is uniform and at
+$\varsigma>1$ the middle rung sits closer to the bottom, which is what a housing
+size distribution with most households in the largest category requires.}
 
 Homelessness then enters three separate equations: survival~\eqref{eq:fsurv},
 the employment transitions~\eqref{eq:femp} and the SUD recovery
@@ -1387,16 +1393,16 @@ because the transition exercise in the results needs it.
 
 \section{Calibrating the quantitative model}\label{sec:fullcal}
 
-The model has fifty four parameters, some of which vary in value by age.
-Thirty two are calibrated externally, from data or from the literature, and
-twenty two are calibrated internally, inside the model. Four further parameters
+The model has {\color{red}fifty five} parameters, some of which vary in value by
+age. {\color{red}Thirty three} are calibrated externally, from data or from the
+literature, and twenty two are calibrated internally, inside the model. Four further parameters
 govern drug testing and detection; they are inert in the benchmark, where nothing
 is conditional, so they are set with the Treatment First experiment rather than
 here. They are
 split across the two tables of this section: thirty two are the main story
 of this paper and its policy analysis (Table~\ref{tab:eleven}, seventeen internally
-and fifteen externally calibrated), and twenty two are standard
-(Table~\ref{tab:stdparams}, five internally and seventeen externally).
+and fifteen externally calibrated), and {\color{red}twenty three} are standard
+(Table~\ref{tab:stdparams}, five internally and {\color{red}eighteen} externally).
 
 The tables carry the parameter, its description, the moment and source used to
 fix its value, and the value itself. The text alongside each table adds what a
@@ -1842,7 +1848,7 @@ As it rises supply is more elastic, so the price moves less when demand does, an
 
 The rest are conventional, recorded so the calibration can be reproduced rather
 than because anything turns on them. Table~\ref{tab:stdparams} carries each with
-its source and vintage, in this order. There are twenty two of them.
+its source and vintage, in this order. There are {\color{red}twenty three} of them.
 Five are calibrated inside the model, against a moment, because there is no source
 to read them off; the other seventeen are set from outside, from an estimate or from
 statute. Each is taken below in the order of the table, with the moment or the
@@ -1872,22 +1878,37 @@ it.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\gamma$, the weight on housing services.] The Cobb-Douglas share of the
 bundle that goes on housing, so it fixes what a dwelling is worth against
-consumption and against the drug. Chosen to reproduce housing cost over income in
-the 2022 Survey of Consumer Finances. It sits here rather than in
-Section~\ref{sec:fullcal} because every life cycle model with housing has it and
-calibrates it the same way.
+consumption and against the drug. Chosen to reproduce {\color{red}the share of
+renters who spend more than thirty percent of income on housing, $49.7$ percent},
+which is the standard cost burden threshold in the 2023 American Community Survey,
+$21.1$ of $42.5$ million renter households, and is the moment a Cobb-Douglas share
+moves most directly. It sits here rather than in Section~\ref{sec:fullcal} because
+every life cycle model with housing has it and calibrates it the same way.
 \item[$\beta$, the discount factor.] Chosen to reproduce wealth over output in the
-national accounts. It matters more here than the description suggests, since it is
-what decides how heavily a death thirty years away is weighed, but it is set the
-way it is set everywhere.
-\item[$\underline h$ and $\varsigma$, the rental ladder.] The smallest rental size
-and the geometric spread of the rungs. Together these give the whole grid, so no
-size is picked by hand. They are matched to two shares of renters from the same 2022
-survey, those spending more than half of income on housing and those spending more
-than thirty percent, which separates a level from a spread: the first says how bad
-the bottom of the ladder is and the second how far apart the rungs are. A uniform
-grid is a restriction on $\varsigma$ rather than a neutral choice, and it fits
-those two shares worse.
+national accounts, {\color{red}a ratio of three}. It matters more here than the
+description suggests, since it is what decides how heavily a death thirty years
+away is weighed, but it is set the way it is set everywhere. {\color{red}Household
+wealth in this model is financial wealth alone, because the rental stock sits on
+the rental companies' books rather than on any household's, so the counterpart in
+the accounts is the private capital stock rather than measured household net
+worth.}
+\item[$\underline h$ and $\bar h$, the rental ladder.] {\color{red}The smallest and
+the largest rental size. The ladder is pinned at both ends and the rung between
+them follows from the curvature $\varsigma$, so no size is picked by hand.
+The two ends are matched to the two ends of the distribution of occupied units by
+number of bedrooms in the 2023 American Community Survey, table B25042: $13.2$
+percent of households are in the smallest category and $62.7$ percent in the
+largest. Three shares carry two free numbers, so two sizes identify them and the
+middle share follows, which is why the curvature is set rather than calibrated.
+
+Identifying the sizes from the size distribution rather than from the share of
+renters spending more than thirty or more than fifty percent of income on housing
+is deliberate. Those cost shares are a budget consequence of the grid rather than
+the grid itself, so a size calibrated on them absorbs anything else that moves the
+housing cost distribution: incomes, rents, the voucher, the food stamp floor. The
+size distribution names the object directly, and the cost shares are then available
+as a check. The universe is occupied units, so the model counterpart conditions on
+being housed: the homeless are in neither denominator.}
 \item[$\bar\pi^{eu}$, the job separation rate.] Chosen to reproduce the aggregate
 unemployment rate in the BLS Current Population Survey over 2014 to 2024,
 $4.85$ percent, given the
@@ -1896,11 +1917,19 @@ because the unemployment rate identifies the ratio and the finding rate is the
 better measured half.
 \end{description}
 
-\paragraph{The seventeen set from outside.} Each of these is taken from a source or
-from statute, so a reader who disagrees is disagreeing with the literature or with
-the rule rather than with anything argued here. Values are in
+\paragraph{The {\color{red}eighteen} set from outside.} Each of these is taken from
+a source or from statute, so a reader who disagrees is disagreeing with the
+literature or with the rule rather than with anything argued here. Values are in
 Table~\ref{tab:stdparams}.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
+\item[{\color{red}$\varsigma$, the curvature of the rental ladder.}]
+{\color{red}Set at $1.8$ rather than calibrated. With three rental sizes there are
+two free numbers in the size distribution, and the two ends of the ladder take
+them, so a third parameter chasing the same three shares would not be identified.
+It was tried on the largest share first and could not reach it, which is the
+expected result: what empties the largest unit is the level of $\bar h$ rather than
+the curvature between the ends. A uniform ladder is the restriction $\varsigma=1$
+and fits the size distribution worse.}
 \item[$\sigma$, risk aversion.] Two, from Attanasio and Weber (2010). It decides
 what insurance is worth, which is most of what a voucher is.
 \item[$\varepsilon(j)$, the age profile of efficiency.] A quadratic in age fitted

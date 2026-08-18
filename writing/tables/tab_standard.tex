@@ -10,10 +10,11 @@ Parameter & Description & Set & Moment and source & Data & Model & Value \\
 Parameter & Description & Set & Moment and source & Data & Model & Value \\
 \midrule
 \endhead
-$\gamma$ & CD weight on housing & Int. & Housing cost over income, SCF 2022 & \textemdash & \textemdash & \textemdash \\
-$\beta$ & Discount factor & Int. & Wealth over output, BEA & \textemdash & \textemdash & \textemdash \\
-$\underline h$ & Smallest rental size & Int. & Housing cost over half income, SCF 2022 & \textemdash & \textemdash & \textemdash \\
-$\varsigma$ & Geometric spread of rentals & Int. & Housing cost over 30 pct, SCF 2022 & \textemdash & \textemdash & \textemdash \\
+$\gamma$ & CD weight on housing & Int. & {\color{red}Renters above 30 pct of income, ACS 2023} & {\color{red}49.7\%} & \textemdash & \textemdash \\
+$\beta$ & Discount factor & Int. & {\color{red}Wealth over output, BEA fixed assets} & {\color{red}3.00} & \textemdash & \textemdash \\
+$\underline h$ & Smallest rental size & Int. & {\color{red}Share in smallest unit size, ACS 2023} & {\color{red}13.2\%} & \textemdash & \textemdash \\
+{\color{red}$\bar h$} & {\color{red}Largest rental size} & {\color{red}Int.} & {\color{red}Share in largest unit size, ACS 2023} & {\color{red}62.7\%} & \textemdash & \textemdash \\
+$\varsigma$ & {\color{red}Curvature of the ladder} & {\color{red}Ext.} & {\color{red}Set; the two ends carry the distribution} & {\color{red}1.80} & {\color{red}n.a.} & {\color{red}1.80} \\
 $\bar\pi^{eu}$ & Job separation rate & Int. & Unemployment rate, BLS CPS 2014--24 & 4.85\% & \textemdash & \textemdash \\
 $\sigma$ & Risk aversion & Ext. & Attanasio and Weber (2010) & 2.00 & n.a. & 2.00 \\
 $\varepsilon(j)$ & Age profile of efficiency & Ext. & Quadratic in age, PSID and CPS hump & profile & n.a. & profile \\
@@ -21,10 +22,10 @@ $\bar\phi(j)$ & Baseline survival by age & Ext. & SSA period life table, ages 26
 $p_m$ & Age profile of SMI prevalence & Ext. & Share with SMI, NSDUH 2023 & 5.5\% & n.a. & 5.5\% \\
 $\rho_y$ & Persistence of log prod. & Ext. & Storesletten et al.\ (2004) & 0.90 & n.a. & 0.90 \\
 $\sigma_y$ & Dispersion of log prod. & Ext. & Storesletten et al.\ (2004) & 0.20 & n.a. & 0.20 \\
-$j_E$ & Maximum experimentation age & Ext. & Reported with and without it & 55 & n.a. & 55 \\
+$j_E$ & {\color{red}Last experimentation age} & Ext. & Reported with and without it & 55 & n.a. & 55 \\
 $r$ & Risk free rate & Ext. & Kaplan, Mitman and Violante (2020) & 0.03 & n.a. & 0.03 \\
 $\xi$ & Tax progressivity & Ext. & Heathcote et al. (2017) & 0.85 & n.a. & 0.85 \\
-$\tau_k$ & Capital income tax & Ext. & US long run rate on capital gains and dividends & 0.15 & n.a. & 0.15 \\
+$\tau_k$ & Capital income tax & Ext. & {\color{red}US long run rate on gains and dividends} & 0.15 & n.a. & 0.15 \\
 $\tau_{\ell}$ & Tax level & Ext. & Clears the government budget & in eqm. & n.a. & in eqm. \\
 $G$ & Other public spending & Ext. & Residual at benchmark, then held fixed & in eqm. & n.a. & in eqm. \\
 $\psi$ & UI replacement rate & Ext. & DOL statutory replacement rates & 0.50 & n.a. & 0.50 \\

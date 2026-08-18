@@ -637,7 +637,16 @@
         integer, parameter :: calibrate_smallest_house_size=1
         real(8), parameter :: SCF_homeownership_rate=0.659  
         real(8), parameter :: SW_renters_spend_over_X_on_hous=target_30_perc*0.45+(1-target_30_perc)*0.151    
-        real(8), parameter :: SW_renters_spend_over_X_on_hous_2=0.416
+        ! THE RENTER COST BURDEN, the moment that identifies the Cobb-Douglas
+        ! housing share. It used to be 0.416, carried over from Sommer and
+        ! Sullivan with no note of which vintage or which universe it came from,
+        ! and it does not match the survey this calibration uses everywhere else.
+        ! The American Community Survey puts 21.1 million of 42.5 million renter
+        ! households above the thirty percent threshold in 2023, which is 49.7
+        ! per cent, and the 2024 release puts it at 50.3. The size distribution
+        ! that identifies the rental ladder is ACS 2023 as well, so 2023 is the
+        ! vintage this one takes.
+        real(8), parameter :: SW_renters_spend_over_X_on_hous_2=0.497
         real(8), parameter :: SCF_mortgage_to_gross_housing_wealth=0.345
         real(8), parameter :: fraction_itemizing_MIDs_data=0.07467241172     
         real(8), parameter :: MID_to_GDP_data=0.41
