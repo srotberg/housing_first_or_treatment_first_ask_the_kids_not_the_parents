@@ -12,23 +12,11 @@ are the organising principle of the revision.
 
 
 {\color{respred}
-\textbf{One thing to say before the comments, because it will be the first thing you
-notice.} The paper has a new title. It was submitted as \emph{Housing First or
-Treatment First?} and it is now \emph{Housing First, Children Later}. The change
-records where the argument ended up rather than dressing up the same paper. The
-version you read asked which of the two policies is better and left the reader
-without an account of where a case for conditionality could come from. This one
-answers that. If households are forward looking and face the true hazard of a
-substance use disorder, conditionality only removes an option from an optimiser, so
-Housing First weakly dominates Treatment First at the same generosity and the same
-cost. The case for conditionality therefore has to rest on something outside the
-household's own objective, and the paper separates three things the debate runs
-together: a genuine externality, the distortions that fund the programme, and the
-programme's own distortions. The externality that decides the comparison is
-intergenerational, which is what the title refers to. A parent who acquires the
-disorder, or who ends up on the street, passes a worse productivity draw to the child
-who replaces it and counts only a fraction of that loss. Pricing that reverses the
-ranking. That mechanism is yours and Referee~2's, from A6 and C3 respectively, which is why it is worth naming here rather than at comment A6.
+\textbf{One note before the comments.} The paper has a new title: it was submitted as
+\emph{Housing First or Treatment First?} and is now \emph{Housing First, Children
+Later}. The reason is the substance of the revision rather than a relabelling, and it
+will be clearest at A6, since the mechanism the title names is the one you and
+Referee~2 asked for.
 }
 
 %======================================================================
@@ -259,13 +247,34 @@ the spending gap becomes a prediction rather than an assumption, and the welfare
 complementarity becomes an incentive effect rather than an artefact of the
 utility function.
 
-\thisround Your alternative is what the model now does, in the code as well as in
-the text. The weights are invariant across the disorder and the Stone-Geary
-shifter carries the difference, with a second value of the shifter for households
-that already have a disorder. Two values are needed rather than one: a shifter
-large enough to deter clean households pushes the interior choice below zero for
-households with the disorder, so their expenditure goes to the corner and the
-weight on drugs has nothing left to pin.
+\thisround There is a deeper reason than the calibration one, and it is what
+settled the choice. Any specification that makes a household \emph{more} susceptible
+to drugs by moving its preferences also makes that household \emph{better off},
+mechanically, because it is now getting more utility from something it was going to
+consume anyway. Flow utility here is Cobb-Douglas in $b+v$, so the marginal value of
+the drug is proportional to $1/(b+v)$: a smaller $b$ raises the marginal value of
+using and raises desired intake, and it raises the level of utility along with it.
+That sign is the wrong way round against everything known about substance use
+disorders, which are not experienced as a windfall by the people who have them, and
+it would put the welfare accounting on exactly the wrong footing: the policy that
+prevents a disorder would be taking something valuable away.
+
+So the model varies \emph{income} rather than utility. Preferences are one weight
+and one $b$, identical in every state and after every choice, in the code as well as
+in the text: the function that returns the shifter takes the disorder and the dwelling
+as arguments and returns the same number for all of them, and the two Cobb-Douglas
+weights are set equal by construction with the switches that would separate them held
+at zero. What the disorder changes is the budget and the hazards it faces, through
+lost earnings, lost employment, higher mortality and harder recovery. Those are
+measured objects, and every one of them makes the household worse off, which is the
+direction the evidence points.
+
+The same argument governs what the child inherits, and it is worth saying because it
+is the paper's central mechanism. A child of a user inherits a worse productivity
+draw, not a stronger taste. Had it inherited the taste, through a lower $b$, its
+lifetime value would have gone \emph{up}, so the specification would say that a child
+of a parent with a disorder is better off for it. That is the opposite of what these
+children report.
 \end{response}
 
 \cmt{A9}{Loss of consortium is ad hoc; present welfare and mortality separately}
