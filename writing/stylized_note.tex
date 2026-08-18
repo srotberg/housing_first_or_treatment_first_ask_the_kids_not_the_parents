@@ -1398,7 +1398,7 @@ small, which is what leaves something for a policy to correct. And the
 \textbf{distortion} is what the programmes cost in behaviour, and it comes from two
 places. The programmes create distortions due to their design:
 assistance is means tested and the rent share is clawed back at $\kappa_r$,
-so a recipient who works more loses eligibility and part of the transfer, which requires
+so a recipient who works more loses eligibility {\color{red}or} part of the transfer, which requires
 even higher taxes on everyone else to fund even larger programmes. And
 assistance is paid for by
 distortionary taxes, which lower the after tax return to an hour for households
@@ -1476,12 +1476,12 @@ into a disorder. As $\lambda$ rises both the private cost and the
 externality rise, and Housing First's moral hazard costs more, since it is
 $\lambda$ that converts an extra voucher into a higher SUD rate Treatment First
 attempts to cure. Its value is chosen so the model generates the share of users
-who go on to acquire a SUD, from the same NSDUH 2024 sample.
+who go on to acquire a SUD, {\color{red}$33.2$ percent} in the same NSDUH 2024 sample.
 \item[$\bar\kappa_{\phi d}$, increased mortality with a SUD.] This is the parameter the whole
 paper turns on. Mortality truncates the value of life for a user, which
 hits households with the highest life values hardest and thus reverses the income
 gradient, making the poor the users rather than the rich. As it rises
-the private cost rises; the externality rises
+the private cost rises{\color{red}, and} the externality rises
 with it, since a child born to a parent with a SUD has a lower value of life.
 Both policies reduce these deaths, treatment by curing and housing because recovery
 is less likely when homeless. It is calibrated externally, at the midpoint of the
@@ -1508,39 +1508,40 @@ states, everything here moves the private value and the externality together.
 of life when a household acquires a SUD, since the earnings it costs would have
 been enjoyed for the rest of that life. It also does a job nothing else can: it
 lets an \emph{employed} household be poor enough to be priced out of housing, which
-an employment effect alone cannot deliver, since that makes every homeless household
-jobless and about half are not. As $\rho_d$ rises the penalty shrinks,
-so the private cost falls and, because the child's draw improves with it, so does
-the externality. These earnings are lost housed or homeless, so treatment recovers
-them and housing does not. One subtlety is worth stating, because it may seem like
+an employment effect alone cannot deliver, since that makes {\color{red}essentially}
+every homeless household
+jobless{\color{red}, whereas about half are not in the data}. As $\rho_d$ rises the penalty shrinks,
+so the private cost falls and, because the {\color{red}impact on the child is less
+harmful, the externality declines}. These earnings are lost {\color{red}whether the
+household is housed or homeless}, so treatment {\color{red}affects}
+them and housing does not.\footnote{\color{red}One subtlety is worth stating, because it may seem like
 a contradiction with Section~\ref{sec:what}. There the proportional income penalty
 was shown to matter little for \emph{who} uses. That is a statement about the
 calibrated model, not the parameter: raising $\rho_d$ with $b$ held fixed does
 change who uses, but $b$ is recalibrated to the participation rate each time the
-penalty changes, and once it is, the composition of users is back where it started.
+penalty changes, and once it is, the composition of users is back where it started.}
 Its value is chosen so the model generates the employment rate of the homeless,
-about half, from HUD's 2023 point-in-time count and TEDS-A 2022, which is its moment
-because it is the parameter that puts working households on the street.
+{\color{red}$50$ percent}, from HUD's 2023 point-in-time count and TEDS-A 2022.
 \item[$\kappa_{ued}$, the employment multiplier for a SUD.] The same channel on the
 extensive margin: regaining employment is less likely and losing it more likely with
-a disorder. As it rises the private cost rises, the externality rises
-with the child's draw, and the tax base narrows, so it costs taxpayers as well. The
-two penalties are told apart by the moments they move: $\rho_d$ shifts income
-\emph{among the employed}, which the homeless employment rate reads, while
-$\kappa_{ued}$ shifts the employment rate itself. Its value is chosen so the model
+a disorder. As it rises the private cost rises{\color{red}, even more than for
+$\rho_d$}, the externality rises
+with the child's draw, and the tax base narrows {\color{red}since the household does
+not work and receives unemployment insurance}, so it costs taxpayers as well.
+Its value is chosen so the model
 generates the unemployment rate given a SUD, $16.25$ percent in NSDUH 2024.
 \item[$h_1$, the service flow of homelessness.] It sets how bad the outside option
 is, and the value of being alive is measured against that outside option: a
 household with little to lose from dying is one for which the mortality cost of
 using is small. As $h_1$ rises the street is less bad, so the private
 cost of homelessness falls, a voucher is worth less, and the externality on a child
-likelier to be unhoused falls with it. It is therefore what Housing First's
-redistribution is worth. Its value is chosen so the model generates the
+likelier to be unhoused falls with it. Its value is chosen so the model generates the
 homelessness rate, $0.399$ percent of households in HUD's 2023 point-in-time count.
 \item[$\kappa_{\phi H}(j)$, mortality when homeless.] As it rises the
-private cost of being unhoused rises and so does the private value of a voucher, and
-the externality rises at the same time, because the parents who die are parents of
-children; the workers who die were also paying tax, which shows up on the
+private cost of being unhoused rises {\color{red}and thus so does} the private value
+of a voucher{\color{red}. The externality rises also at the same time because it
+reduces the value of life for a child who is born to a parent with a SUD or who is
+homeless}; the workers who die were also paying tax, which shows up on the
 distortion side rather than this one. Baggett et al.\ (2013) give race
 adjusted mortality ratios for homeless adults of about $9.1$ at ages 25 to 44,
 falling to $1.1$ at 65 to 84. Those are totals for a population most of which also
@@ -1550,23 +1551,24 @@ as set out in Section~\ref{sec:fdeath} at~\eqref{eq:fhaz}.
 \item[$\kappa_{ueH}$, employment lost to homelessness.] Here the homelessness
 itself costs the job, so housing mechanically recovers the earnings and treating
 does not. As it rises the private cost and the externality rise
-together, and so does what housing recovers, which makes it the clearest case in
-the table of a parameter loading Housing First's side. It is set externally at
+together, which makes it the clearest case in
+the table of a parameter loading Housing First's side{\color{red}, and it also
+reduces the tax burden since these households are more likely to be employed}. It is set externally at
 $0.80$, from Desmond and Gershenson (2016).
 \item[$\zeta_{DI}$, the disability transfer for the non employed with SMI.] It is
-the floor under the worst state in the model, being ill and out of work, so it sets
+the floor {\color{red}for one of the worst states} in the model, being ill and out of work, so it sets
 how far a household can fall. As it rises the private cost of that
 state falls, and the externality on a child likelier to reach it falls, at the price
 of a higher tax on everybody else. It is set externally from SSDI and SSI
 replacement rates, SSA 2023.
 \item[$\underline c$, the food stamp consumption floor.]
 The floor under consumption, and it belongs here rather than among the
-standard parameters because it is what the value of life rests on at the bottom of
-the distribution: a household that cannot fall below $\underline c$ has something
-to lose from dying even with no assets and no job, and that is exactly the
-household the mortality channel decides. As it rises the private cost of every bad
+standard parameters because {\color{red}the consumption floor for the poor is one of
+the key components of the value of life} at the bottom of
+the distribution. As it rises the private cost of every bad
 state falls, so a voucher is worth less at the margin and the externality on a
-child likelier to reach those states falls too, while the tax that funds it rises.
+child likelier to reach those states falls too, while {\color{red}the distortionary
+taxes} that fund it rise.
 It is calibrated internally to food stamp spending over labour income, from the
 USDA.
 \item[$\pi_V$, the chance of drawing a voucher.] This is the policy dial itself.
@@ -1595,8 +1597,8 @@ is set externally from the share of adults with SMI in NSDUH 2023.
 and the one piece of the chain the data cannot hand over, since prevalence pins the
 stock and not the flows. As it rises mental illness is less persistent
 and both objects fall. It is calibrated internally to the SMI share of the homeless
-in Gutwinski et al.\ (2021): only a sufficiently sticky state lets people with SMI
-accumulate in homelessness at the ratio observed.
+in Gutwinski et al.\ (2021), {\color{red}$25$ percent}: only a sufficiently sticky
+state lets people with SMI accumulate in homelessness at the ratio observed.
 \item[$\iota$, the SUD multiplier on SMI onset.] The hinge of the whole block.
 Without it mental illness is exogenous to everything a policy does and treating the
 disorder cannot touch it. As it rises a SUD causes more mental illness,
@@ -1641,7 +1643,8 @@ policy can actually buy.
 disorder for a housed household, which is the level everything else in this block
 scales. As it rises disorders end sooner on their own, so both objects
 fall and there is less for either policy to buy. It is set externally from the ten
-year remission rate in Vaillant (1995).
+year remission rate in Vaillant (1995){\color{red}, which gives an annual hazard of
+$0.025$}.
 \item[$\mu_H$, SUD recovery when homeless.] How much less likely recovery from the
 disorder is for an unhoused household than a housed one. It matters more than the
 level $\bar\pi_r$ because it is a \emph{gradient}: it is what a voucher buys beyond
@@ -1662,7 +1665,8 @@ reported across a range rather than at a point.
 rule, and this is what makes households decline treatment they would gain from.
 As it rises fewer take treatment, so the externality falls by less than
 $g$ alone would suggest and Treatment First delivers less than its instrument
-promises. It is calibrated internally to treatment take up in NSDUH 2023.
+promises. It is calibrated internally to treatment take up {\color{red}among adults
+with a SUD, $24$ percent} in NSDUH 2023.
 What it is charged against matters as much as its level. Treatment
 forbids use for the period, and it buys two things in return: the higher recovery
 hazard $g$ delivers, and survival at the clean hazard rather than at
@@ -1788,7 +1792,10 @@ its source and vintage, in this order. There are twenty one of them.
 Five are calibrated inside the model, against a moment, because there is no source
 to read them off; the other sixteen are set from outside, from an estimate or from
 statute. Each is taken below in the order of the table, with the moment or the
-source that fixes it.
+source that fixes it{\color{red}, and with the value of that moment in the data.
+Table~\ref{tab:stdparams} carries the same numbers in its Data column, against what
+the model produces in the Model column, which is reported only for the five that are
+calibrated internally since the other sixteen have nothing to reproduce}.
 
 They are not inert in the experiments, and it is worth saying so
 plainly. The discount factor sets how heavily a death thirty years away is
@@ -1828,7 +1835,8 @@ the bottom of the ladder is and the second how far apart the rungs are. A unifor
 grid is a restriction on $\varsigma$ rather than a neutral choice, and it fits
 those two shares worse.
 \item[$\bar\pi^{eu}$, the job separation rate.] Chosen to reproduce the aggregate
-unemployment rate in the BLS Current Population Survey over 2014 to 2024, given the
+unemployment rate in the BLS Current Population Survey over 2014 to 2024,
+{\color{red}$4.85$ percent}, given the
 job finding rate set externally below. Separation is the internal one of the pair
 because the unemployment rate identifies the ratio and the finding rate is the
 better measured half.

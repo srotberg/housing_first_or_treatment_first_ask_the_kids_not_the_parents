@@ -7,48 +7,48 @@ Parameter & Description & Set & Moment and source & Data & Model & Value \\
 \midrule
 \multicolumn{7}{@{}l}{\emph{Who uses drugs}} \\
 $\theta$ & Weight on drugs in utility & Int. & Drug spending given a SUD, NSDUH 2024 & \textemdash & \textemdash & \textemdash \\
-$b$ & Whether a household uses & Int. & Drug participation, NSDUH 2024 & \textemdash & \textemdash & \textemdash \\
-$\lambda$ & SUD hazard per unit used & Int. & Users acquiring a SUD, NSDUH 2024 & \textemdash & \textemdash & \textemdash \\
-$\bar\kappa_{\phi d}$ & Mortality with a SUD & Ext. & Mortality ratios, Hjorth\o j et al.\ (2023) & \textemdash & \textemdash & 8.00 \\
-$\aleph$ & Flow value of being alive & Int. & Value of a statistical life, Viscusi (2003) & \textemdash & \textemdash & \textemdash \\
+$b$ & Whether a household uses & Int. & Drug participation, NSDUH 2024 & \textcolor{red}{5.13\%} & \textemdash & \textemdash \\
+$\lambda$ & SUD hazard per unit used & Int. & Users acquiring a SUD, NSDUH 2024 & \textcolor{red}{33.2\%} & \textemdash & \textemdash \\
+$\bar\kappa_{\phi d}$ & \textcolor{red}{Increased mortality with a SUD} & Ext. & Mortality ratios, Hjorth\o j et al.\ (2023) & \textcolor{red}{6 to 10} & \textcolor{red}{n.a.} & 8.00 \\
+$\aleph$ & Flow value of being alive & Int. & Value of a statistical life, Viscusi (2003) & \textcolor{red}{\$7.5m} & \textemdash & \textemdash \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{What using and being homeless cost}} \\
-$\rho_d$ & Earnings lost to a SUD & Int. & Employment rate of the homeless, HUD 2023 & \textemdash & \textemdash & \textemdash \\
-$\kappa_{ued}$ & Employment multiplier, SUD & Int. & Unemployment rate given a SUD, NSDUH 2024 & \textemdash & \textemdash & \textemdash \\
-$h_1$ & Service flow of homelessness & Int. & Homelessness rate, HUD 2023 & \textemdash & \textemdash & \textemdash \\
-$\kappa_{\phi H}(j)$ & Increased mortality when homeless & Ext. & Mortality ratios by age, Baggett et al.\ (2013) & \textemdash & \textemdash & 4.41 to 1.09 \\
-$\kappa_{ueH}$ & Employment multiplier, homeless & Ext. & Desmond and Gershenson (2016) & \textemdash & \textemdash & 0.80 \\
-$\zeta_{DI}$ & Disability replacement, SMI & Ext. & SSDI and SSI rates, SSA 2023 & \textemdash & \textemdash & 0.25 \\
+$\rho_d$ & Earnings lost to a SUD & Int. & Employment rate of the homeless, HUD 2023 & \textcolor{red}{50\%} & \textemdash & \textemdash \\
+$\kappa_{ued}$ & Employment multiplier, SUD & Int. & Unemployment rate given a SUD, NSDUH 2024 & \textcolor{red}{16.25\%} & \textemdash & \textemdash \\
+$h_1$ & Service flow of homelessness & Int. & Homelessness rate, HUD 2023 & \textcolor{red}{0.399\%} & \textemdash & \textemdash \\
+$\kappa_{\phi H}(j)$ & Increased mortality when homeless & Ext. & Mortality ratios by age, Baggett et al.\ (2013) & \textcolor{red}{9.1 to 1.1} & \textcolor{red}{n.a.} & 4.41 to 1.09 \\
+$\kappa_{ueH}$ & Employment multiplier, homeless & Ext. & Desmond and Gershenson (2016) & \textcolor{red}{0.80} & \textcolor{red}{n.a.} & 0.80 \\
+$\zeta_{DI}$ & Disability replacement, SMI & Ext. & SSDI and SSI rates, SSA 2023 & \textcolor{red}{0.25} & \textcolor{red}{n.a.} & 0.25 \\
 $\underline c$ & Food stamp consumption floor & Int. & Food stamps over labour income, USDA & \textemdash & \textemdash & \textemdash \\
-$\pi_V$ & Voucher lottery probability & Int. & Recipients over eligible, HUD 2023 & \textemdash & \textemdash & \textemdash \\
+$\pi_V$ & Voucher lottery probability & Int. & Recipients over eligible, HUD 2023 & \textcolor{red}{26.6\%} & \textemdash & \textemdash \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{The mental illness chain}} \\
-$p_m$ & Prevalence the onset reproduces & Ext. & Share with SMI, NSDUH 2023 & \textemdash & \textemdash & 5.5\% \\
-$\lambda_m$ & Annual chance of leaving SMI & Int. & SMI share of homeless, Gutwinski et al.\ (2021) & \textemdash & \textemdash & \textemdash \\
-$\iota$ & SUD multiplier on SMI onset & Ext. & Danish registers, Nielsen et al.\ (2017) & \textemdash & \textemdash & 2.00 \\
+$p_m$ & Prevalence the onset reproduces & Ext. & Share with SMI, NSDUH 2023 & \textcolor{red}{5.5\%} & \textcolor{red}{n.a.} & 5.5\% \\
+$\lambda_m$ & Annual chance of leaving SMI & Int. & SMI share of homeless, Gutwinski et al.\ (2021) & \textcolor{red}{25\%} & \textemdash & \textemdash \\
+$\iota$ & SUD multiplier on SMI onset & Ext. & Danish registers, Nielsen et al.\ (2017) & \textcolor{red}{2.00} & \textcolor{red}{n.a.} & 2.00 \\
 $\rho_m$ & Earnings lost to SMI & Int. & Earnings of workers with SMI, NSDUH 2023 & \textemdash & \textemdash & \textemdash \\
-$\kappa_{uem}$ & Employment multiplier, SMI & Int. & Employment rate given SMI, NSDUH 2023 & \textemdash & \textemdash & \textemdash \\
-$\mu_m$ & SUD recovery multiplier, SMI & Ext. & Dual diagnosis relapse, Bradizza et al.\ (2006) & \textemdash & \textemdash & 0.82 \\
-$\kappa_{\phi m}$ & Mortality multiplier, SMI & Ext. & Olfson et al.\ (2015) & \textemdash & \textemdash & 2.50 \\
+$\kappa_{uem}$ & Employment multiplier, SMI & Int. & Employment rate given SMI, NSDUH 2023 & \textcolor{red}{30\%} & \textemdash & \textemdash \\
+$\mu_m$ & SUD recovery multiplier, SMI & Ext. & Dual diagnosis relapse, Bradizza et al.\ (2006) & \textcolor{red}{0.82} & \textcolor{red}{n.a.} & 0.82 \\
+$\kappa_{\phi m}$ & Mortality multiplier, SMI & Ext. & Olfson et al.\ (2015) & \textcolor{red}{2.50} & \textcolor{red}{n.a.} & 2.50 \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{Recovery and treatment}} \\
-$\bar\pi_r$ & Baseline SUD recovery rate & Ext. & Ten year remission rate, Vaillant (1995) & \textemdash & \textemdash & 0.025 \\
-$\mu_H$ & Recovery multiplier when homeless & Int. & Weeks abstinent, Milby et al.\ (2005) & \textemdash & \textemdash & \textemdash \\
-$g$ & Treatment effect on recovery & Ext. & Odds ratio, Milby et al.\ (2005) & \textemdash & \textemdash & 1.35 \\
-$\bar\tau^{u}$ & Utility cost of treatment & Int. & Treatment take up, NSDUH 2023 & \textemdash & \textemdash & \textemdash \\
+$\bar\pi_r$ & Baseline SUD recovery rate & Ext. & Ten year remission rate, Vaillant (1995) & \textcolor{red}{0.025} & \textcolor{red}{n.a.} & 0.025 \\
+$\mu_H$ & Recovery multiplier when homeless & Int. & Weeks abstinent, Milby et al.\ (2005) & \textcolor{red}{1.473} & \textemdash & \textemdash \\
+$g$ & Treatment effect on recovery & Ext. & Odds ratio, Milby et al.\ (2005) & \textcolor{red}{1.35} & \textcolor{red}{n.a.} & 1.35 \\
+$\bar\tau^{u}$ & Utility cost of treatment & Int. & Treatment take up, NSDUH 2023 & \textcolor{red}{24\%} & \textemdash & \textemdash \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{Externalities and distortions}} \\
-$\omega$ & Weight on the child & Int. & Parent use rate with a child, NSDUH 2024 & \textemdash & \textemdash & \textemdash \\
-$\delta_d$ & Child's earnings, parent SUD & Int. & Child SUD ratio, McGovern et al.\ (2023) & \textemdash & \textemdash & \textemdash \\
-$\delta_h$ & Child's earnings, homeless & Ext. & Poverty exposure on child's earnings, Chetty et al.\ (2016) & \textemdash & \textemdash & 0.31 \\
-$\kappa_x$ & Disamenity of homelessness & Ext. & Willingness to pay to eliminate homelessness, Loubi\`ere et al.\ (2020) & \textemdash & \textemdash & 0.0008 \\
+$\omega$ & Weight on the child & Int. & Parent use rate with a child, NSDUH 2024 & \textcolor{red}{15.5\%} & \textemdash & \textemdash \\
+$\delta_d$ & Child's earnings, parent SUD & Int. & Child SUD ratio, McGovern et al.\ (2023) & \textcolor{red}{2 to 4} & \textemdash & \textemdash \\
+$\delta_h$ & Child's earnings, homeless & Ext. & Poverty exposure on child's earnings, Chetty et al.\ (2016) & \textcolor{red}{31\%} & \textcolor{red}{n.a.} & 0.31 \\
+$\kappa_x$ & Disamenity of homelessness & Ext. & Willingness to pay to eliminate homelessness, Loubi\`ere et al.\ (2020) & \textcolor{red}{0.20\%} & \textcolor{red}{n.a.} & 0.0008 \\
 $\omega_{\ell}$ & Weight on leisure & Int. & Average hours worked, Guvenen et al.\ (2023) & \textemdash & \textemdash & \textemdash \\
-$\sigma_{\ell}$ & Curvature on leisure & Ext. & Frisch elasticity of $0.5$, Chetty (2012) & \textemdash & \textemdash & 3.00 \\
+$\sigma_{\ell}$ & Curvature on leisure & Ext. & Frisch elasticity of $0.5$, Chetty (2012) & \textcolor{red}{0.50} & \textcolor{red}{n.a.} & 3.00 \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{The drug market}} \\
-$\nu_1$ & Drug supply shifter & Ext. & Normalisation, so $p_v=1$ in the benchmark & \textemdash & \textemdash & norm. \\
-$p_v$ & Price of drugs & Ext. & Clears the drug market in the benchmark & \textemdash & \textemdash & 1.00 \\
-$\nu_2$ & Drug supply elasticity & Ext. & Elasticity 2; Hansen (2017), Chaloupka (1991) & \textemdash & \textemdash & 1.50 \\
+$\nu_1$ & Drug supply shifter & Ext. & Normalisation, so $p_v=1$ in the benchmark & \textcolor{red}{norm.} & \textcolor{red}{n.a.} & norm. \\
+$p_v$ & Price of drugs & Ext. & Clears the drug market in the benchmark & \textcolor{red}{1.00} & \textcolor{red}{n.a.} & 1.00 \\
+$\nu_2$ & Drug supply elasticity & Ext. & Elasticity 2; Hansen (2017), Chaloupka (1991) & \textcolor{red}{2.00} & \textcolor{red}{n.a.} & 1.50 \\
 \bottomrule
 \end{tabular}
 \endgroup
