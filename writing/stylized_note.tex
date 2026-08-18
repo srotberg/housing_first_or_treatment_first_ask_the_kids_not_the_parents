@@ -358,7 +358,7 @@ acquire a SUD.
 \centering
 \caption{Externally set parameters}\label{tab:ext}
 \sbox{\ntbox}{\input{tables/tab_external}}\usebox{\ntbox}
-\tabnote{{\color{red}Note: every parameter here is set from outside, so none has a model counterpart to report against the data. This is the same distinction the Model column of Tables~\ref{tab:eleven} and~\ref{tab:stdparams} makes with n.a., which those tables need because they carry externally set and internally calibrated parameters together.}}
+\tabnote{Note: every parameter here is set from outside, so none has a model counterpart to report against the data. This is the same distinction the Model column of Tables~\ref{tab:eleven} and~\ref{tab:stdparams} makes with n.a., which those tables need because they carry externally set and internally calibrated parameters together.}
 \end{table}
 
 \begin{table}[!tb]
@@ -1141,14 +1141,14 @@ weighted value of what the household's own state costs that child,
 each discounted, with $y_{\text{child}}$
 as defined in~\eqref{eq:fnewborn}. What that buys is a second route by
 which the household's own decisions, to use and to go unhoused, reach its child.
-{\color{red}$\phi(j,\cdot)$ itself depends on the dwelling chosen, so the housing
+$\phi(j,\cdot)$ itself depends on the dwelling chosen, so the housing
 decision moves the weight on the two terms directly. The drug does not move it
 within the period, because $\phi$ takes the disorder as a state and $v$ only raises
 the chance of carrying it \emph{next} period. The drug reaches the child through the
-continuation instead, which is where the first order condition below picks it up.}
+continuation instead, which is where the first order condition below picks it up.
 
 The third line is a \emph{difference} and not a level, and the
-distinction is not cosmetic. Written as a level, $\omega$ in the child's
+distinction is not cosmetic. Written as a level, $\omega$ {\color{red}times} the child's
 utility, the term is worth more to a household the likelier it is to die,
 because it is the death branch that carries it. A SUD raises the death hazard
 several fold, so a level would pay most to exactly the households the paper is
@@ -1204,13 +1204,13 @@ Cobb-Douglas one; it is the third term that stops it cancelling, and that is why
 the marginal utility level matters here and not in an ordinary two good
 problem. That third term is the marginal hazard $\pi_d'(v)=\lambda e^{-\lambda
 v}$ times what the disorder costs, the gap between the two continuation values.
-{\color{red}That gap is where the externality on the child enters the drug decision,
+That gap is where the externality on the child enters the drug decision,
 and it is why there is no fourth term. Each continuation value carries its own child
 term, at $d'=0$ and at $d'=1$, so the difference between them already contains the
 $\omega$ share of what the disorder costs the child alongside what it costs the
 household itself. A fourth term would be needed only if using raised the chance the
 child's term is realised within the period, and it does not: $\phi$ depends on the
-disorder as a state, not on how much is bought today.}
+disorder as a state, not on how much is bought today.
 This is Section~\ref{sec:stylized}'s mechanism inside the quantitative model:
 because $\pi_d$ rises in $v$, how much to use is not decided on the budget alone.
 
@@ -1581,53 +1581,68 @@ HUD's Picture of Subsidized Households, 2023.
 \paragraph{The mental illness chain.} This block is why Treatment First reaches
 further than the disorder it treats: a SUD raises the chance of mental illness,
 mental illness lowers earnings and employment and raises death, and the child
-inherits all of it as a worse draw. Everything here therefore moves both
-objects in the same direction, and the first three decide whether the chain exists
+{\color{red}is susceptible to all of this}. Everything here therefore moves
+{\color{red}the private cost and the externality}
+in the same direction, and the first three decide whether the chain exists
 at all.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$p_m$, the prevalence the onset reproduces.] The onset hazard is not free: it
+\item[$p_m$, {\color{red}the age profile of SMI prevalence}.] The onset hazard is not free: it
 is backed out of the observed age profile of prevalence and the exit rate by the
-identity in~\eqref{eq:fonsetage}, so the profile is reproduced by construction and
+identity in~\eqref{eq:fonsetage} {\color{red}of Section~\ref{sec:fsmi}}, so the profile is reproduced by construction and
 the level of mental illness in the model is data rather than a fitted number.
-As it rises more households are in the state, so both objects rise. It
-is set externally from the share of adults with SMI in NSDUH 2023.
-\item[$\lambda_m$, the annual chance of leaving SMI.] The persistence of the state,
+{\color{red}As it rises more households are ill, so the private cost rises, since
+mental illness costs earnings, employment and years of life; and the externality
+rises with it, because a child of an ill parent draws lower productivity and is
+likelier to be ill in turn.} It
+is set externally from the share of adults with SMI in NSDUH 2023,
+{\color{red}$5.5$ percent}.
+\item[$\lambda_m$, the annual chance of {\color{red}recovering from} SMI.] The persistence of the state,
 and the one piece of the chain the data cannot hand over, since prevalence pins the
-stock and not the flows. As it rises mental illness is less persistent
-and both objects fall. It is calibrated internally to the SMI share of the homeless
+stock and not the flows. {\color{red}As it rises mental illness is less persistent,
+so the private cost falls, because fewer years are spent ill, and the externality
+falls with it.} It is calibrated internally to the SMI share of the homeless
 in Gutwinski et al.\ (2021), $25$ percent: only a sufficiently sticky
 state lets people with SMI accumulate in homelessness at the ratio observed.
 \item[$\iota$, the SUD multiplier on SMI onset.] The hinge of the whole block.
 Without it mental illness is exogenous to everything a policy does and treating the
-disorder cannot touch it. As it rises a SUD causes more mental illness,
-so both objects rise and Treatment First's return rises with them, because curing
+disorder cannot touch it. {\color{red}As it rises a SUD causes more mental illness,
+so the private cost of using rises, and the externality rises further, because the
+child of a user now inherits a higher chance of illness on top of the productivity
+penalty.} Treatment First's return rises with them, because curing
 the disorder now prevents the illness too. It is set externally at two, from the
 Danish registers in Nielsen et al.\ (2017).
 \item[$\rho_m$, earnings lost to SMI.] The counterpart of $\rho_d$ for mental
 illness, and it reaches the comparison through $\iota$: a household carrying the
 disorder faces onset at $\iota$ times the baseline rate, so treatment reduces mental
 illness in a roundabout way and recovers these earnings for households that never
-fall ill. As it rises the penalty shrinks and both objects fall. Its
-value is chosen so the model generates the earnings of workers with SMI relative to
-average, from NSDUH 2023.
+fall ill. {\color{red}As it rises the penalty shrinks, so the private cost of
+illness falls and, because the child's draw improves with it, the externality falls
+too.} Its
+value is chosen so the model generates the {\color{red}average labour income of the
+homeless relative to the average, $19.1$ percent}.
 \item[$\kappa_{uem}$, the employment multiplier for SMI.] The same on the extensive
 margin, and where the chain does most of its work, since employment is what mental
-illness costs most. As it rises both objects rise and the tax base
-narrows; a child of a treated parent is less likely to carry SMI, which raises its
+illness costs most. {\color{red}As it rises the private cost rises, because being
+ill now costs the job as well as the wage, and the externality rises with the
+child's draw}; the tax base
+narrows{\color{red}, which is a distortion on top of both}. A child of a treated parent is less likely to carry SMI, which raises its
 earnings and lowers its chance of being unhoused, so part of Treatment First's
 return never appears in the treated household's own drug use. Its value is chosen
 so the model generates the employment rate given SMI, about $30$ percent, the
 midpoint of the range for high disability diagnoses in NSDUH 2023.
 \item[$\mu_m$, the SUD recovery multiplier for SMI.] The second direction of the
 chain: not only does a SUD cause mental illness, mental illness keeps the SUD.
-As it falls the disorder is harder to leave, so both objects rise and
-treatment has more to overcome in exactly the households it most wants to reach. It
+{\color{red}As it falls the disorder is harder to leave, so the private cost of
+acquiring one rises and the externality rises with it, and
+treatment has more to overcome in exactly the households it most wants to reach.} It
 is set externally at $0.82$ from dual diagnosis relapse rates in Bradizza et al.\
 (2006), and it is one of the three values in the paper carrying no real discipline,
 which Section~\ref{sec:fvalid} says.
 \item[$\kappa_{\phi m}$, the mortality multiplier for SMI.] The chain's last link,
-and what makes it matter for welfare rather than only for income. As it
-rises deaths among the mentally ill rise, so both objects rise, and part of what a
+and what makes it matter for welfare rather than only for income. {\color{red}As it
+rises deaths among the mentally ill rise, so the private cost rises sharply, since
+it is years of life, and the externality rises with it, because a parent who dies
+young leaves a child with a lower value of life.} Part of what a
 SUD does to mortality it does by way of SMI rather than directly. It is set
 externally at $2.5$, the middle of the standardised mortality ratios for SMI in
 Olfson et al.\ (2015).
