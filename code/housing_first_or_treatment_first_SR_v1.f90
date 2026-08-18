@@ -283,6 +283,35 @@
         ! in the note describes.
         integer :: child_penalty_off=0
 
+        ! ---- THE CHANNEL SHUTDOWN LADDER --------------------------------------
+        ! The paper separates a genuine externality, the distortions that fund the
+        ! programme, and the programme's own distortions, and it has to show that
+        ! the separation is real rather than asserted. The ladder re solves the
+        ! same policy with one channel switched off at a time, AT THE OPTIMAL
+        ! VOUCHER DESIGN rather than at a fixed one, so it also says how much of
+        ! the optimum each channel is responsible for.
+        !
+        !   full counterfactual        everything on
+        !   child_penalty_off=1        the child externality off
+        !   kappa_x=0                  the aggregate externality off
+        !   freeze_labor_supply=1      the tax distortion off
+        !   fix_drug_price=1           general equilibrium off, which is neither
+        !                              an externality nor a distortion
+        !   cost_per_drug_test=0       the programme's own distortion off
+        !
+        ! THE RUNGS DO NOT COMMUTE, and the paper says so rather than hiding it.
+        ! Switching the externality off changes who is poor and therefore how far
+        ! the tax base moves, so the split depends on the order. Report a fixed
+        ! order and the interaction term explicitly; a residual buried in whichever
+        ! channel goes last is exactly the conflation the paper argues against.
+        !
+        ! Freezing hours holds the choice at its benchmark schedule rather than
+        ! penalising the disutility of labour. Penalising it drives hours to a
+        ! corner, which is a different experiment; freezing the choice set
+        ! preserves the Bellman identity.
+        integer :: freeze_labor_supply=0
+        integer :: fix_drug_price=0
+
         ! NSDUH 2023, treatment take up given a SUD.
         real(8), parameter :: treatment_take_up_data=0.24
         integer, parameter :: max_age_to_choose_addiction=55

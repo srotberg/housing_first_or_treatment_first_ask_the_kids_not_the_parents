@@ -257,9 +257,39 @@ utility, and no individual household internalises its own contribution to that s
 That one is in the written model and not yet in the code, which I flag in the letter
 to Referee~2 as well.
 
-\textbf{Numerically}, the channel shutdown ladder re solves the model with each
-externality switched off and reports how the optimal policy moves, which is exactly
-the exercise you propose.
+\textbf{Numerically}, there is a channel shutdown ladder, which is exactly the
+exercise you propose. It re solves the same policy with one channel switched off at a
+time, and it does so \emph{at the optimal voucher design} rather than at a fixed one,
+so it says how much of the optimum each channel is responsible for. That also answers
+Referee~2's C6 and your own m3, which ask for the optimal programme and for the
+voucher probability to be varied continuously rather than jumped from rationing to
+universal cover.
+
+\begin{center}\small
+\begin{tabular}{@{}ll@{}}
+\toprule
+Rung & What it isolates \\
+\midrule
+Full counterfactual & everything \\
+$\omega=0$ & the child externality \\
+$\kappa_x=0$ & the aggregate externality \\
+Hours frozen at the benchmark schedule & the tax distortion \\
+Drug price fixed at its benchmark & general equilibrium \\
+Cost of testing set to zero & the programme's own distortion \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Two points about how it is read, both of which I would rather state than have you
+find. \textbf{The rungs do not commute.} Switching the externality off changes who is
+poor and therefore how far the tax base moves, so the split depends on the order they
+are switched in. I report a fixed order and the interaction term explicitly, because
+a residual buried inside whichever channel happens to go last is exactly the
+conflation this paper argues against. \textbf{And the drug price rung is neither an
+externality nor a distortion.} A policy that cures households takes them out of the
+market, the price falls, and a cheaper drug draws others in. That is general
+equilibrium, and without a rung of its own it would be attributed to whichever
+channel is switched last.
 
 \newresult There is also a third exercise, which came directly out of thinking
 about your comment, and I think it is the paper's most interesting single table.
