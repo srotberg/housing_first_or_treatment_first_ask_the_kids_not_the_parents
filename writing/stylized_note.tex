@@ -39,6 +39,9 @@
   \begin{minipage}{#1}\footnotesize #2\end{minipage}}
 % A table's note should start and end exactly where the rules of the table do.
 % \tabnote measures the table into a box first and sets the note to that width.
+% Captions sit above the tables, and the default gap below one is small enough
+% that the title touches the top rule. Set once so every table gets the same air.
+\setlength{\belowcaptionskip}{0.6em}
 \newsavebox{\ntbox}
 \newcommand{\tabnote}[1]{\notes{\wd\ntbox}{#1}}
 \titlespacing*{\subsection}{0pt}{1.4em plus 0.3em}{0.7em plus 0.15em}
@@ -1471,21 +1474,17 @@ and the two ratios are then averaged with their shares of the using population a
 weights:
 \begin{equation*}
 \text{drug share}\;=\;
-\frac{\mu_e}{\mu_e+\mu_d}\,\frac{p_v v_e}{y_e}
+\frac{\mu_e}{\mu_e+\mu_d}\,\frac{p_v \bar v_e}{\bar y_e}
 \;+\;
-\frac{\mu_d}{\mu_e+\mu_d}\,\frac{p_v v_d}{y_d},
+\frac{\mu_d}{\mu_e+\mu_d}\,\frac{p_v \bar v_d}{\bar y_d},
 \end{equation*}
-with $\mu_e$ and $\mu_d$ the masses without and with the disorder. Averaging the
-ratios rather than taking the ratio of the totals is what makes the weights
-population shares rather than income shares. Non users are outside the average
-altogether, since a household that buys nothing has no ratio to contribute.
-The target follows from the two group ratios and the split between them: users
-without a disorder spend $11$ percent of income on the drug and users with one
-spend $44$, and $33.2$ percent of users carry a disorder, which is the share
-$\lambda$ is identified on, so the average is
-$0.332\times0.44+0.668\times0.11=0.22$. There are fewer households with a
-disorder than users without one, which is what keeps the average nearer the
-lighter group's ratio than the heavier one's.
+{\color{red}where $\bar v_g$ and $\bar y_g$ are the average drug quantity and
+average income in group $g$, and $\mu_e$ and $\mu_d$ are the masses without and
+with the disorder.} The target follows from the two group ratios and the split
+between them: users without a disorder spend $11$ percent of income on the drug
+and users with one spend $44$, and {\color{red}the share of users carrying a
+disorder is the SUD rate over the participation rate, $0.0368/0.0513=0.717$, so
+the average is $0.717\times0.44+0.283\times0.11=0.35$}.
 \item[$b$, whether a household uses at all.] The marginal value of the drug goes
 as $\theta/(b+v)$, so a larger $b$ makes the first units worth less and a household
 with little to spend buys nothing. As $b$ rises use falls, so the
@@ -1655,8 +1654,8 @@ and what makes it matter for welfare, not through income. As it
 rises deaths among the mentally ill rise, so the private cost rises, and the
 externality rises with it, because a child born to a parent with a SUD is
 more likely to acquire a SUD and through it SMI, and therefore more likely to die.
-Part of what a
-SUD does to mortality it does by way of SMI rather than directly. It is set
+{\color{red}This is how a SUD affects mortality indirectly, through SMI, rather
+than only by the direct route.} It is set
 externally at $2.5$, the middle of the standardised mortality ratios for SMI in
 Olfson et al.\ (2015).
 \end{description}
