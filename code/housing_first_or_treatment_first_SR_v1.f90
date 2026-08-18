@@ -218,6 +218,30 @@
         real(8) :: weight_on_child_saved=0
         integer, parameter :: calibrate_weight_on_child=1
 
+        ! THE COUNTERFACTUAL REMOVES THE PENALTY, NOT THE CHILD.
+        !
+        ! The child term is beta*(1-phi)*omega*E[V_child], weighted by the
+        ! probability of DYING, because a newborn replaces a household that dies.
+        ! So it does two things at once. Its LEVEL makes dying less bad, since
+        ! something of value survives, and that pushes a household towards more
+        ! risk and more use. Its GRADIENT is the externality: E[V_child] falls
+        ! from 4988.7 clean and housed to 4893.7 with the disorder, so using costs
+        ! the child something the parent partly bears.
+        !
+        ! Setting omega to zero removes both, and the level dominates by about
+        ! fifty to one. Measured: it moved drug users from 9.09 to 6.04 per cent,
+        ! a fall of 33.5 per cent, where the note's moment says switching the term
+        ! off should RAISE use by 15.5. No omega above zero can produce that,
+        ! because the sign is wrong for the whole range, and the update would have
+        ! chased omega to its ceiling making death cheaper and cheaper.
+        !
+        ! So the counterfactual holds the child's value at its clean housed level
+        ! for every parent instead. The parent still values leaving a child, and
+        ! no longer sees any penalty from its own disorder or homelessness, which
+        ! is exactly the part omega is the weight on and exactly what the moment
+        ! in the note describes.
+        integer :: child_penalty_off=0
+
         ! NSDUH 2023, treatment take up given a SUD.
         real(8), parameter :: treatment_take_up_data=0.24
         integer, parameter :: max_age_to_choose_addiction=55
@@ -20289,6 +20313,17 @@
             end do
         
         end do
+
+        ! THE COUNTERFACTUAL, applied after the values exist and not before.
+        ! Every parent is given the clean, housed child, so the level of the term
+        ! survives and the gradient that carries the externality does not.
+        if (child_penalty_off==1) then
+
+            expected_child_value(0,2)=expected_child_value(0,1)
+            expected_child_value(1,1)=expected_child_value(0,1)
+            expected_child_value(1,2)=expected_child_value(0,1)
+
+        end if
     
     end subroutine
     
@@ -27467,8 +27502,7 @@
             if ((calibrate_weight_on_child==1) .AND. (include_child_in_continuation==1)&
                 .AND. (loop_count>=1)) then
 
-                weight_on_child_saved=weight_on_child
-                weight_on_child=0
+                child_penalty_off=1
 
                 call solve_value_function_and_policy_functions(1)
                 call converge_to_stationary_equilibrium(1)
@@ -27476,9 +27510,9 @@
 
                 drug_users_without_child=model_total_drug_users(1)
 
-                weight_on_child=weight_on_child_saved
+                child_penalty_off=0
 
-                write(*,*) "omega counterfactual: drug users with the child term off =",&
+                write(*,*) "omega counterfactual: drug users with the child penalty off =",&
                     drug_users_without_child
 
             end if
