@@ -130,12 +130,25 @@ cures households takes them out of the market, the price falls, and a cheaper dr
 draws others in. That is general equilibrium. Without a rung of its own it would be
 attributed to whichever channel is switched last.
 
-**Say whose welfare each column is.** The two horizons are different populations, and
-if that is not fixed the decomposition can move for reasons that have nothing to do
-with the channels. Report the transition column as the consumption equivalent for
-**households alive at the reform date**, and the long run column for a **newborn in
-the new steady state**. Otherwise a channel can look like it grows with the horizon
-when what actually changed is who is being counted.
+**Both columns are a newborn, and that is what makes them comparable.** Report the
+transition column as the consumption equivalent for a **newborn on the date of
+implementation**, and the long run column for a **newborn in the new steady state**.
+The two are then the same object, the ex ante value of a household at age one, and
+the only thing that differs between them is the path it lives through: the first is
+born into the transition, the second into the new steady state. Any difference
+between the columns is therefore the transition itself rather than a change in who is
+being counted.
+
+This also keeps one criterion running through the whole design, since Step 1 chooses
+the optimum on the same ex ante newborn value.
+
+The alternative, averaging over households alive at the reform, does not work here
+and it is worth recording why. That population is a mix of ages and states, so its
+average moves with the age and state composition as well as with the policy, and the
+composition itself responds to the reform. A channel could then look as though it
+grows with the horizon when what actually changed is the mix of people in the
+average. It is the artefact the split is meant to detect, so the measure must not be
+capable of generating it.
 
 Splitting the ladder across the two horizons is the point of doing Step 3 first. The
 externality is intergenerational, so it is almost absent from period 1 and grows with
