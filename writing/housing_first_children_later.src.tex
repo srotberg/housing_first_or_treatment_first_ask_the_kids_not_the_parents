@@ -51,7 +51,7 @@
 
 \begin{center}
 \renewcommand{\thefootnote}{\fnsymbol{footnote}}
-{\Large\bfseries Housing First, Children Later}\footnote{I thank Ay\c{s}e \.{I}mroho\u{g}lu, Kai Zhao, Joseph Steinberg, Efraim Benmelech, Jonathan Alschech, Ryan Quandt, Christopher Sharp and the seminar participants at the University of Toronto for their helpful comments. I owe a special thank you to Joseph Steinberg who generously provided access to one of his high powered computers for this research. The data and replication code are available on GitHub at \url{https://github.com/srotberg/housing_first_children_later}.}\\[0.6em]
+{\Large\bfseries Housing First, Children Later}\footnote{I thank Ay\c{s}e \.{I}mroho\u{g}lu, Kai Zhao, Joseph Steinberg, Efraim Benmelech, Jonathan Alschech, Ryan Quandt, Christopher Sharp and the seminar participants at the University of Toronto for their helpful comments. The data and replication code are available on GitHub at \url{https://github.com/srotberg/housing_first_children_later}.}\\[0.6em]
 {\large Shahar Rotberg}\footnote{Canada Mortgage and Housing Corporation (CMHC). Contact: \url{shahar.rotberg@gmail.com}. Website: \url{www.shaharrotberg.com}. This work was conducted on personal equipment and time. The code used to solve the model is the author's own. The opinions expressed herein do not necessarily represent the views of CMHC.}\\[0.35em]
 \today
 \end{center}
@@ -61,23 +61,23 @@
 \vspace{0.4em}
 \begin{center}
 \begin{minipage}{0.86\textwidth}
-\begin{center}\textcolor{red}{\textbf{Abstract}}\end{center}
-\noindent\textcolor{red}{Should housing assistance be conditioned on sobriety? With
-forward looking households facing the true hazard of a substance use disorder,
-conditionality only removes an option, so Housing First weakly dominates Treatment
-First at equal generosity and cost. The case for conditionality must therefore rest
-outside the household's own objective. I separate three candidates the debate runs
-together: a genuine externality, the tax that funds the programme, and the
-programme's design. The decisive one is intergenerational. A parent's disorder and
-homelessness pass a worse productivity draw to the child, and pricing that reverses
-the ranking.}
+\begin{center}\textbf{Abstract}\end{center}
+\noindent Should housing assistance be conditioned on sobriety?
+\textcolor{red}{With no externalities or distortions, and with} forward looking
+households facing the true hazard of a substance use disorder, conditionality only
+removes an option, so Housing First weakly dominates Treatment First at equal
+generosity and cost. The case for conditionality must therefore rest outside the
+household's own objective. I separate \textcolor{red}{a genuine externality, the tax
+that funds the programme, and the programme's design}. The decisive one is
+intergenerational. A parent's disorder and homelessness pass a worse productivity
+draw to the child, and pricing that reverses the ranking.
 
 \vspace{0.6em}
-\noindent\textcolor{red}{\textit{Keywords:} homelessness; housing vouchers; substance
-use disorder; intergenerational transmission; externalities.}
+\noindent\textit{Keywords:} homelessness; housing vouchers; substance
+use disorder; intergenerational transmission; externalities.
 
 \vspace{0.2em}
-\noindent\textcolor{red}{\textit{JEL classification:} I18; I38; H23; R21; J62.}
+\noindent\textit{JEL classification:} I18; I38; H23; R21; J62.
 \end{minipage}
 \end{center}
 
@@ -246,10 +246,10 @@ long run effect turns out to be.
 
 The literatures this paper draws on are set out in the order the
 argument needs them. The first three supply the machinery: what the trials establish
-about housing policy, how economists model the decision to \textcolor{red}{use substances}, and what structural
+about housing policy, how economists model the decision to use substances, and what structural
 models of homelessness already deliver. The next two supply the motivation, which is
-where this paper departs from its predecessors: \textcolor{red}{what a parent with a SUD, or a
-parent on the street, transmits to their child}, and how much weight a parent puts on
+where this paper departs from its predecessors: what a parent with a SUD, or a
+parent on the street, transmits to their child, and how much weight a parent puts on
 the child who bears it. The last two are what the
 quantitative model is built out of: the hazards, taken one at a time from clinical
 and epidemiological work, and the drug market that makes the price endogenous.
@@ -325,15 +325,21 @@ experiences of Felitti et al.\ (1998), and children of a parent with a SUD are t
 four times as likely to acquire one themselves (McGovern et al., 2023).
 
 The second link is that the childhood shows up in the child's own adult
-earnings, and the mechanism is \textcolor{red}{as follows}. A parent who has \textcolor{red}{lost their job
-to the SUD}, and who spends what money is left on the drug, has less of it for the
+earnings, and the mechanism is as follows. A parent who has lost their job
+to the SUD, and who spends what money is left on the drug, has less of it for the
 child. Time goes the same way. What the child loses is schooling and the ordinary
 attention a household gives, in a home more chaotic than it would otherwise be. The
 child reaches the labour market with less human capital for it.
 
-Each step of that is measured. Dahl and Lochner (2012) find that family
-income raises children's achievement, using the Earned Income Tax Credit to move the
-income. Card (1999) puts the return to a year of schooling at around ten percent. And
+Each step of that is measured, and each has been built into a
+model before. \textcolor{red}{Dahl and Lochner (2012) find that family income raises
+children's achievement, using the Earned Income Tax Credit to move the income, and
+Restuccia and Urrutia (2004) put roughly half of the intergenerational correlation
+in earnings down to parental investment in education, most of it early. Card (1999)
+puts the return to a year of schooling at around ten percent. Fogli and Guerrieri
+(2019) close the loop from the housing side, in a general equilibrium model where
+parents choose the neighbourhood they raise a child in and local spillovers feed back
+into the return to education, which is the same object $\delta_h$ prices here. And}
 Nilsson (2017) closes the loop for a parental substance shock in particular: children
 exposed in utero to a Swedish experiment that sharply raised alcohol availability earn
 about twenty four percent less as adults and finish less schooling. What no study does
@@ -2517,6 +2523,7 @@ reported as a range rather than as a number.
 \item Degenhardt, L. et al.\ (2011). ``Mortality among regular or dependent users of heroin and other opioids: a systematic review.'' \emph{Addiction} 106(1), 32--51.
 \item Desmond, M. and C. Gershenson (2016). ``Housing and Employment Insecurity among the Working Poor.'' \emph{Social Problems} 63(1), 46--67.
 \item Felitti, V. et al.\ (1998). ``Relationship of Childhood Abuse and Household Dysfunction to Many of the Leading Causes of Death in Adults.'' \emph{American Journal of Preventive Medicine} 14(4), 245--58.
+\item \textcolor{red}{Fogli, A. and V. Guerrieri (2019). ``The End of the American Dream? Inequality and Segregation in US Cities.'' NBER Working Paper 26143.}
 \item Gallet, C. A. (2014). ``Can Price Get the Monkey Off Our Back? A Meta-Analysis of Illicit Drug Demand.'' \emph{Health Economics} 23(1), 55--68.
 \item Goering, P. et al.\ (2014). \emph{National At Home/Chez Soi Final Report}. Mental Health Commission of Canada.
 \item Greenwood, J., N. Guner and K. A. Kopecky (2025). ``The Downward Spiral: A Macroeconomic Analysis of the Opioid Crisis.'' Working paper.
@@ -2547,6 +2554,7 @@ reported as a range rather than as a number.
 \item Olmstead, T. et al.\ (2015). ``The price elasticity of demand for heroin.'' \emph{Journal of Health Economics} 41, 59--71.
 \item Oreopoulos, P., M. Page and A. H. Stevens (2008). ``The Intergenerational Effects of Worker Displacement.'' \emph{Journal of Labor Economics} 26(3), 455--83.
 \item Padgett, D. K., L. Gulcur and S. Tsemberis (2006). ``Housing First Services for People Who Are Homeless with Co-Occurring Serious Mental Illness and Substance Abuse.'' \emph{Research on Social Work Practice} 16(1), 74--83.
+\item \textcolor{red}{Restuccia, D. and C. Urrutia (2004). ``Intergenerational Persistence of Earnings: The Role of Early and College Education.'' \emph{American Economic Review} 94(5), 1354--78.}
 \item Saffer, H. and F. Chaloupka (1999). ``The demand for illicit drugs.'' \emph{Economic Inquiry} 37(3), 401--11.
 \item Storesletten, K., C. I. Telmer and A. Yaron (2004). ``Consumption and Risk Sharing over the Life Cycle.'' \emph{Journal of Monetary Economics} 51(3), 609--33.
 \item Tsemberis, S., L. Gulcur and M. Nakae (2004). ``Housing First, Consumer Choice, and Harm Reduction for Homeless Individuals With a Dual Diagnosis.'' \emph{American Journal of Public Health} 94(4), 651--56.

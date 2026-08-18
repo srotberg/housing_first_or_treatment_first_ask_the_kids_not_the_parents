@@ -206,13 +206,27 @@ when some of this channels are shut down.''
 \begin{response}
 This is the best question in the four reports and it now has its own section.
 
-\textbf{Analytically}, the stylised model in Section~3 enumerates them. Two are
-fiscal: a household that becomes homeless imposes a service cost on the budget, and
-a household that acquires a disorder lowers its own expected tax payments through
-employment and mortality. One is not fiscal: following Referee~2's comment C2, a
-disutility from the size of the homeless population now enters period utility. No
-individual household internalises its own contribution to that stock when it
-chooses whether to use.
+\textbf{Analytically}, the stylised model in Section~3 enumerates them, and one of
+them turns out to decide the paper.
+
+The one that decides it is \emph{intergenerational}, and it is the answer to your
+question rather than a fiscal side effect. A household that acquires the disorder,
+or that ends up on the street, passes a worse productivity draw to the child who
+replaces it, and counts only a fraction $\omega$ of that loss. The complement is
+external in the strict sense you mean: it is a cost the decision maker does not bear
+and cannot be made to bear by any price it faces. It is also why rational forward
+looking behaviour is not enough to make the supports unnecessary. Every household in
+the model is optimising, and the ranking of the two policies still reverses once the
+children are counted. Section~3.6 proves that in the stylised model: without the
+externality Housing First weakly dominates, and with it the dominance goes.
+
+Two more are fiscal: a household that becomes homeless imposes a service cost on the
+budget, and a household that acquires a disorder lowers its own expected tax payments
+through employment and mortality. One further one is not fiscal: following Referee~2's
+comment C2, a disutility from the size of the homeless population enters period
+utility, and no individual household internalises its own contribution to that stock.
+That one is in the written model and not yet in the code, which we flag in the letter
+to Referee~2 as well.
 
 \textbf{Numerically}, the channel shutdown ladder re solves the model with each
 externality switched off and reports how the optimal policy moves, which is exactly
