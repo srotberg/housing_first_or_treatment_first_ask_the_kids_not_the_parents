@@ -564,6 +564,12 @@ a resumed run counts its own loops from zero.
 
 ## 11. The asset grid cannot be cut, and the lottery is why not
 
+**The lottery is now OFF, because it broke the household budget constraint.**
+Read section 15 before reading the rest of this section: everything below
+describes a mechanism that is no longer active, and the reason it is not active
+is not the one this section was written about.
+
+
 The plan was: the two point lottery puts `a'` between grid points, so coarseness
 stops costing accuracy, so the grid can go from 41 points to about 25 and the
 backward induction gets proportionally cheaper. Section 10.1 built the counters to
@@ -720,3 +726,61 @@ So: if a run stops with no error, set the stack before you look for a bug in the
 model, and before you blame whatever else happened to be running at the time.
 Building while a run is going is still worth avoiding on a 15 GB box, but it was
 not what killed these runs.
+
+## 15. The asset lottery was violating the budget constraint
+
+The model's own budget check had been firing about ten thousand times per
+backward induction, and every single one of those states was a homeless
+household. Not most of them: all of them, ten thousand out of ten thousand.
+That is not what a numerical tolerance looks like, so it was worth chasing.
+
+`compute_asset_lottery` finds the true optimum between two grid points by
+fitting a parabola through the objective at the argmax and its neighbours, then
+sets the lottery weight so that the MEAN asset holding equals that vertex.
+Moving the mean off the grid point is the entire purpose of the routine.
+
+Consumption never moved with it. It is computed once, in
+`internal_computations`, as
+
+    c = (resources - a(fin_index_1)) / (1 + tau_c)
+
+from the grid point, and nothing recomputes it at the vertex. So the household
+was recorded consuming as though it had saved `a(fin_index_1)` while saving
+`frac*a(neighbour) + (1-frac)*a(fin_index_1)` in expectation. The budget then
+fails by exactly
+
+    frac * (a(neighbour) - a(fin_index_1))
+
+which is the grid gap scaled by the weight.
+
+That is measured rather than argued. Instrumenting the check to print the
+weight, both grid points, consumption and resources gave 105 records matching
+that expression to eleven decimal places, and every record whose weight was zero
+cleared exactly. The violations ran to eight per cent of consumption.
+
+Why only the homeless: the parabola refuses unless the argmax has a bracket and
+the fit is concave, and homelessness is where the savings policy sits between
+grid points often enough for it to pass those tests.
+
+The fix is `interpolate_a_prime=0`. Over the same forty age steps of the same
+backward induction, the unfixed build produced 443 violations and the fixed
+build produced none.
+
+To put the lottery back, consumption has to come from the lottery's mean rather
+than from the grid point, which means the lottery has to sit INSIDE the `a'`
+search rather than be applied after it: the flow utility changes with
+consumption, so the argmax can move. That is a real change to the search, not a
+one line fix, and the accuracy it buys should be measured against the grid it
+would let you cut before anyone attempts it.
+
+### The residual was a shared variable
+
+While chasing the above: `x`, the budget residual in
+`check_budget_constraint_clears`, was declared at module scope with no
+`threadprivate`, and the check runs inside the parallel region. One thread could
+overwrite it between another computing it and testing it, which is why some
+printed records had a residual that did not match their own operands. It is a
+local now, renamed `budget_residual_1`. Nothing in the model reads it, so the
+race only ever corrupted the diagnostic, but a diagnostic you cannot trust is
+worse than no diagnostic.
+

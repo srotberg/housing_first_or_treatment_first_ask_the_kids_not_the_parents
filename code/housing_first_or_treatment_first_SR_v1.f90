@@ -2453,7 +2453,42 @@
         ! Threadprivate for the same reason the vectors it is built from are.
         real(8) :: interp_frac_1=0
         integer :: interp_neighbour_1=0
-        integer, parameter :: interpolate_a_prime=1
+        ! THE ASSET LOTTERY BREAKS THE HOUSEHOLD BUDGET CONSTRAINT, so it is off.
+        !
+        ! compute_asset_lottery locates the true optimum between two grid points
+        ! by fitting a parabola, then sets the weight so that the lottery's MEAN
+        ! asset holding equals that vertex. The mean is therefore moved off the
+        ! grid point, which is the whole purpose. But consumption is computed
+        ! once, in internal_computations, as
+        !
+        !     c = (resources - a(fin_index_1)) / (1+tau_c)
+        !
+        ! from the GRID POINT and never from the vertex. So the household is
+        ! recorded consuming as though it saved a(fin_index_1) while saving
+        ! frac*a(neighbour) + (1-frac)*a(fin_index_1) in expectation, and its
+        ! budget fails by exactly
+        !
+        !     frac * (a(neighbour) - a(fin_index_1)).
+        !
+        ! MEASURED, NOT ARGUED. Instrumenting check_budget_constraint_clears to
+        ! print the weight, both grid points, consumption and resources, 105 of
+        ! the violations matched that expression to eleven decimal places, and
+        ! every record whose weight was zero cleared exactly. The violations run
+        ! to eight per cent of consumption, and every one of them is a homeless
+        ! household, because homelessness is where the savings policy sits
+        ! between grid points often enough for the parabola to fire.
+        !
+        ! Turning it off restores the identity exactly, at the cost of the grid
+        ! rounding in the savings policy that it was written to remove. That is
+        ! the right trade: a model whose households cannot pay for what they
+        ! consume is worse than one whose savings sit on a grid.
+        !
+        ! TO PUT IT BACK, consumption has to be computed from the lottery's mean
+        ! rather than from the grid point, which means the lottery has to sit
+        ! INSIDE the optimisation rather than be applied after it: the flow
+        ! utility changes with consumption, so the argmax can move. That is a
+        ! real change to the a' search and not a one line fix.
+        integer, parameter :: interpolate_a_prime=0
         !$omp threadprivate(interp_frac_1)
         !$omp threadprivate(interp_neighbour_1)
         ! THE LOTTERY'S OWN DIAGNOSTICS, and they are NOT threadprivate.
@@ -17381,6 +17416,14 @@
         real(8) :: frac_used,total_consumption_used,consumption_used,&
             food_stamps_1,assets_1,avg_net_wealth_to_use_1,avg_income_to_use_1,labor_supply_used,income_1,&
             avg_income_to_use_2,checking_criterion,frac_spent_on_addiction_used
+        ! THE RESIDUAL WAS A MODULE VARIABLE, so every thread wrote the same one.
+        ! This routine runs inside the parallel region, so one thread could
+        ! overwrite the residual between another thread computing it and testing
+        ! it, which printed records whose residual did not match their own
+        ! operands. It is local now. Nothing in the model reads it, so the race
+        ! only ever corrupted the diagnostic, but a diagnostic that cannot be
+        ! trusted is worse than none.
+        real(8) :: budget_residual_1
         
         avg_income_to_use_1=is_counterfactual*average_labor_income_calibrated+&
             (1-is_counterfactual)*model_average_labour_income(time_period)
@@ -17454,7 +17497,7 @@
                                         
         end if
                                                                                                                             
-        x=after_tax_wealth_net_of_expenses_1-&
+        budget_residual_1=after_tax_wealth_net_of_expenses_1-&
             ((frac_used*min(financial_grid(fin_index_frac_used),0.d0)+&
             (1-frac_used)*min(financial_grid(financial_index_used),0.d0))*&
             max(amortization_used-1,0)*housing_price(time_period)*housing_size(housing_status_index_used)+&
@@ -17464,11 +17507,11 @@
                 
         checking_criterion=5*10.d0**(-8)
                         
-        if ((abs(x)>checking_criterion) .AND. (after_tax_wealth_net_of_expenses_1>0) .AND. (frac_spent_on_addiction_used>=0) .AND. &
-           (consumption_used>0))  then
+        if ((abs(budget_residual_1)>checking_criterion) .AND. (after_tax_wealth_net_of_expenses_1>0) .AND. &
+           (frac_spent_on_addiction_used>=0) .AND. (consumption_used>0))  then
                          
 !            write(*,*) "error budget does not clear"
-            write(*,*) "x=", x
+            write(*,*) "budget does not clear by", budget_residual_1
             write(*,*) "min(financial_grid(fin_index_frac_used),0.d0)=", min(financial_grid(fin_index_frac_used),0.d0)
             write(*,*) "min(financial_grid(financial_index_used),0.d0)=", min(financial_grid(financial_index_used),0.d0)
             write(*,*) "amortization_used=", amortization_used
