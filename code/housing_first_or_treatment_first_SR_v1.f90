@@ -983,7 +983,36 @@
         real(8) :: discount_factor=(1-perceived_probability_lower)*0.944+perceived_probability_lower*0.951
         real(8) :: discount_factor_adjuster=5*10.d0**(-3)
         real(8) :: distance_discount_factor
-        real(8) :: stopping_rule_discount_factor=10.d0**(-4)
+        ! A RATIO OF THREE CANNOT BE HIT TO ONE PART IN THIRTY THOUSAND. The old
+        ! tolerance of 1e-4 was written against a mortgage share between zero and
+        ! one and is meaningless against wealth over output. One part in three
+        ! hundred is what the outer loop can actually deliver.
+        real(8) :: stopping_rule_discount_factor=10.d0**(-2)
+
+        ! WEALTH OVER OUTPUT, the moment that identifies beta. The model
+        ! counterpart is total household net wealth over GDP including imputed
+        ! rent. With include_ownership at zero that net wealth is financial
+        ! assets alone: the rental stock sits on the rental companies' books and
+        ! not on any household's, so the national accounts counterpart is
+        ! nonresidential capital rather than total household net worth.
+        !
+        ! BEA fixed assets over NIPA output puts private nonresidential fixed
+        ! assets at roughly two years of GDP and all private fixed assets,
+        ! residential included, at roughly three. Three is the number the life
+        ! cycle literature uses for this sentence, so three is what is set here,
+        ! and the run reports loudly if beta pins at a bound trying to reach it.
+        ! If the number should be two, on the argument that the residential
+        ! stock is outside household wealth in this model, this is the one line
+        ! to change.
+        real(8), parameter :: wealth_to_output_data=3.0d0
+        real(8) :: wealth_to_output_model_1
+        real(8) :: gap_discount_factor_1
+        real(8) :: previous_gap_discount_factor=0
+        integer :: have_gap_discount_factor=0
+        real(8), parameter :: discount_factor_damping=0.5
+        real(8), parameter :: discount_factor_growth=1.2
+        real(8), parameter :: discount_factor_adjuster_floor=10.d0**(-5)
+        real(8), parameter :: discount_factor_adjuster_start=5*10.d0**(-3)
         
         real(8) :: standard_deduction_as_percent_of_average_labor_income=0 !&
             !(1-perceived_probability_lower)*0.117+perceived_probability_lower*0.11
@@ -27713,12 +27742,91 @@
             
                     write(*,*) "discount_factor=", discount_factor
                                             
-                    discount_factor=min(max(discount_factor+discount_factor_adjuster*&
-                        ((model_mortgages(1)/model_gross_housing_wealth(1))-&
-                        SCF_mortgage_to_gross_housing_wealth),0.d0),1.3)  ! Standard
-                
-                    distance_discount_factor=abs(((model_mortgages(1)/model_gross_housing_wealth(1))-&
-                        SCF_mortgage_to_gross_housing_wealth))
+                    ! RETARGETED ONTO WEALTH OVER OUTPUT. This used to be driven
+                    ! by the mortgage share of gross housing wealth against the
+                    ! SCF's 0.345, and with include_ownership at zero that moment
+                    ! is not merely dead, it is NOT A NUMBER: mortgages and gross
+                    ! housing wealth are both identically zero, so the ratio is
+                    ! 0/0. The consequence was worse than a frozen parameter.
+                    ! beta + adjuster*NaN is NaN, and min(max(NaN,0),1.3) collapses
+                    ! to zero under gfortran, so the discount factor was SET TO
+                    ! ZERO at the end of the first calibration loop and every loop
+                    ! after the first solved a completely myopic household. The
+                    ! distance was NaN too, and NaN > tolerance is false, so the
+                    ! convergence test read the broken parameter as converged and
+                    ! said nothing.
+                    !
+                    ! The note has always said beta is chosen to reproduce wealth
+                    ! over output in the national accounts, and the model
+                    ! counterpart was already being computed and printed two lines
+                    ! below the update that ignored it. That is what it targets now.
+                    !
+                    ! SIGN. Wealth rises with patience, so a model below target
+                    ! calls for a higher beta: the update is minus the adjuster
+                    ! times (model minus data), which is the same convention as
+                    ! every other parameter in this loop.
+                    wealth_to_output_model_1=model_total_net_wealth(1)/model_GDP_incl_imput_rent(1)
+
+                    if (wealth_to_output_model_1 .NE. wealth_to_output_model_1) then
+
+                        ! A MOMENT THAT IS NOT A NUMBER MUST NOT MOVE A PARAMETER
+                        ! AND MUST NOT BE READ AS CONVERGED. Leave beta where it
+                        ! is and force the distance large so the loop stays open
+                        ! and the failure is visible.
+                        write(*,*) "wealth over output is NaN: beta held at", discount_factor
+                        distance_discount_factor=1
+
+                    else
+
+                        gap_discount_factor_1=wealth_to_output_model_1-wealth_to_output_data
+
+                        ! The usual sign flip ratchet. Wealth over output is very
+                        ! sensitive to beta close to one, so a fixed step
+                        ! overshoots and then oscillates.
+                        if (have_gap_discount_factor==1) then
+
+                            if ((gap_discount_factor_1*previous_gap_discount_factor)<0) then
+
+                                discount_factor_adjuster=&
+                                    max(discount_factor_adjuster*discount_factor_damping,&
+                                    discount_factor_adjuster_floor)
+
+                            else
+
+                                discount_factor_adjuster=&
+                                    min(discount_factor_adjuster*discount_factor_growth,&
+                                    discount_factor_adjuster_start)
+
+                            end if
+
+                        end if
+
+                        previous_gap_discount_factor=gap_discount_factor_1
+                        have_gap_discount_factor=1
+
+                        discount_factor=min(max(discount_factor-discount_factor_adjuster*&
+                            gap_discount_factor_1,0.5d0),1.05d0)
+
+                        distance_discount_factor=abs(gap_discount_factor_1)
+
+                        write(*,*) "wealth_to_output_model=", wealth_to_output_model_1, &
+                            " against ", wealth_to_output_data
+                        write(*,*) "discount_factor_adjuster=", discount_factor_adjuster
+
+                        ! A PINNED PARAMETER IS A RESULT, NOT A DETAIL. If beta
+                        ! sits on a bound the target is not reachable by patience
+                        ! alone and the number in the table would be a bound
+                        ! rather than a calibration.
+                        if ((discount_factor<=0.5d0+10.d0**(-8)) .OR. &
+                            (discount_factor>=1.05d0-10.d0**(-8))) then
+
+                            write(*,*) "beta IS PINNED AT A BOUND", discount_factor, &
+                                " and wealth over output is ", wealth_to_output_model_1, &
+                                " against ", wealth_to_output_data
+
+                        end if
+
+                    end if
                                          
                     write(*,*) "discount_factor=", discount_factor
                     write(*,*) "distance_discount_factor=", distance_discount_factor
