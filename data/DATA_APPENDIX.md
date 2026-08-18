@@ -377,11 +377,6 @@ annualised as 12 × rent / income. This is a different universe from the ACS 49.
 26.5 percent quoted with the rental ladder, which is why the two pairs of numbers
 differ, and both are reported rather than reconciled.
 
-**Standardised mortality ratio, SUD — 2.5 to 9.8** (age weighted). Degenhardt et al.
-(2011), the range across studies of regular or dependent opioid users. Reported as a
-range because the studies disagree, and the model's own ratio is checked against the
-range rather than a point.
-
 **Standardised mortality ratio, homeless — 9.1, 4.5, 1.1 by band** (age weighted). Baggett et
 al. (2013), ages 25–44, 45–64 and 65–84. This is the profile the age varying
 homelessness multiplier is built from, so the check is that the model reproduces the
