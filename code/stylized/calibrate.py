@@ -368,6 +368,14 @@ def calibrate(par=None, sweeps=5, verbose=True):
         for _ in range(4):
             par = with_(par, lam=bracket_sud(par, LAM_LO, LAM_HI))
             par = with_(par, b=_b_for(par, iters=30))
+        # CHECKPOINT EVERY SWEEP. This process has been killed mid run four
+        # times by the container reclaiming background work, and each time the
+        # whole calibration was lost because the only write was at the end. Now
+        # each sweep leaves calibrated.json on disk, so a kill costs one sweep
+        # rather than all of them, and the next run can be seeded from it.
+        import json as _json
+        _json.dump({n: getattr(par, n) for n, _, _, _ in PAIRS} | {'th': par.th, 'gam': par.gam},
+                   open('calibrated.json', 'w'), indent=1)
         if verbose:
             m = stats(par)
             worst = max(abs(m[k] / TARGET[k] - 1.0) for k in TARGET)
