@@ -108,8 +108,9 @@ themselves two to four times as likely to develop one (McGovern et al., 2023),
 and moving a child to a lower poverty neighbourhood before age thirteen raises
 adult earnings by $31$ percent (Chetty et al., 2016). The
 model's work here is to show why Housing First raises welfare whenever
-there are no externalities, and then to qualitatively price the externality that
-overturns it.
+there are no externalities{\color{red} and no distortions from the programmes or
+from the taxes that pay for them, both of which the full model takes up}, and then
+{\color{red}show how the} externality that overturns it {\color{red}works}.
 
 \end{enumerate}
 
@@ -634,21 +635,19 @@ the next section is for.
 The quantitative model carries two further channels absent here, and
 they are different in kind as well as in sign, which is another substantive reason
 the welfare ranking is a question of magnitudes. The first is not an externality at
-all but the cost of paying for the programme; the second is an externality of the
+all but {\color{red}the distortions the programme creates and the distortionary taxes
+it requires in order to pay for it}; the second is an externality of the
 same type as the one on children.
 
 \begin{itemize}\setlength{\itemsep}{0.15em}
-\item \textbf{Programmes are paid for out of distortionary taxes, and they shrink
-the base they are paid from.} A programme that houses more households costs more,
-raising taxes that distort the hours and the saving of every household, including
-those it never reaches. It also lowers the labour supply of the households it
+\item \textbf{{\color{red}Programmes distort the decisions of recipients and are
+paid for out of distortionary taxes.}} {\color{red}A programme lowers} the labour supply of the households it
 does reach, because eligibility is means tested: the voucher is clawed back at a
 rate of $\kappa_r$, so a recipient who works more loses some of the transfer.
 This means that other households have to pay more taxes, which further
-distorts their labour supply. Neither
-effect exists here, where hours are fixed and financing is not modelled.
-Both are distortions and not externalities: they are what raising the
-revenue costs, and lump sum financing would remove them.
+distorts their labour supply. {\color{red}Neither
+effect exists here, where hours are fixed and financing is not modelled at all,
+though saving is.}
 
 \item \textbf{Homelessness is a disamenity in itself.} Households dislike
 homelessness around them and not only their own, so the aggregate rate is an
@@ -678,9 +677,9 @@ factor and nothing else.
 Households enter as adults, live at most $J$ annual periods and retire at
 $J_R$, and $j$ indexes age within that span. Survival from $j$ to $j+1$ is
 $\phi(j,h',d,m,\tau)$ in~\eqref{eq:fsurv}, and it depends on age, on the housing
-\emph{chosen} this period, on the SUD and on serious mental illness (SMI){\color{red},
+\emph{chosen} this period, on the SUD and on serious mental illness (SMI),
 and on whether the household is in treatment, since treatment means it is not
-using}. Newborns replace the dead
+using. Newborns replace the dead
 exactly, so the mass of households is constant. The individual
 state is
 \begin{equation}\label{eq:fstate}
@@ -913,14 +912,14 @@ best available trial looked for and did not find.
 \begin{equation}\label{eq:fsurv}
 \phi(j,h',d,m,\tau)=1-\min\Big\{1,\ (1-\bar\phi(j))\,
 \kappa_{\phi H}(j)^{\mathbf{1}\{h'=h_1\}}\,
-{\color{red}\kappa_{\phi d}(j)^{\mathbf{1}\{d=1\}\mathbf{1}\{\tau=0\}}}\,
+\kappa_{\phi d}(j)^{\mathbf{1}\{d=1\}\mathbf{1}\{\tau=0\}}\,
 \kappa_{\phi m}^{\mathbf{1}\{m=1\}}\Big\},
 \end{equation}
 with $\bar\phi(j)$ the baseline survival age profile and
 $\kappa_{\phi H}(j)$ and $\kappa_{\phi d}(j)$ two age varying multipliers,
 and $\kappa_{\phi m}$ one that is not,
 raising the death hazard for homelessness, the SUD and SMI
-respectively. {\color{red}The SUD multiplier is switched off in a period the
+respectively. The SUD multiplier is switched off in a period the
 household is in treatment, $\tau=1$. The excess mortality of the disorder is
 overwhelmingly a mortality of use, poisoning above all, and treatment forbids use
 in the period it is taken, so a household that is not using does not carry it.
@@ -931,7 +930,7 @@ year, so treating an abstaining household as fully clean for the period overstat
 what one period of abstention buys. It is also what makes take up a real choice
 rather than a corner: against the recovery gain alone, which raises the annual
 hazard of leaving the disorder from $0.025$ to $0.034$, no household accepted a
-whole period without the drug at any utility cost, including a cost of zero.}
+whole period without the drug at any utility cost, including a cost of zero.
 Because $\aleph>0$ and guarantees that the value of life is positive, a
 higher death hazard is a real cost, and it is larger for households with more life
 remaining and more to consume, which is precisely the sorting
@@ -1356,68 +1355,58 @@ and the moment and source used to fix its value, which is given in the last
 column. They are discussed one at a time below because they are the parameters a
 reader may want to argue over, and each is taken in the order of the table.
 
-The comparison has a shape, and every entry below is read against it,
-so it is worth setting out once and in full.
+{\color{red}The comparison between Housing First and Treatment First has a shape,
+and every entry below is read against it, so it is worth setting out once and in
+full before the entries begin.}
 
 Three things decide the ranking between Housing First and Treatment
 First. The \textbf{private value} is what a household
 itself gains from being housed and from not carrying a disorder: consumption, a
-dwelling rather than the street, and above all the years of life that
+dwelling rather than the street {\color{red}or shelter}, and above all the years of life that
 homelessness and the disorder take away. The \textbf{externality} is what
 lands on somebody else: on the child, who inherits not the disorder but a
-worse productivity draw associated with the parent's SUD, and so is
+worse productivity draw associated with the parent's SUD
+{\color{red}and with the parent's homelessness, which $\delta_d$ and $\delta_h$
+price separately}, and so is
 likelier in turn to be poor, to use, to acquire
 a disorder and mental illness as a consequence, to be unhoused and to die young;
 and on everybody, through the disamenity of aggregate homelessness. The parent
 internalises only $\omega$ of the part that falls on its child, and $\omega$ is
-small, which is what leaves anything for a policy to correct. And the
-\textbf{distortion} is what the programmes cost in behaviour rather than
-in money, and it comes from two places. The programmes create distortions of their
-own: assistance is means tested and the rent share is clawed back at $\kappa_r$,
-so a recipient who works more loses part of the transfer. And they are paid for by
+small, which is what leaves {\color{red}something} for a policy to correct. And the
+\textbf{distortion} is what the programmes cost in behaviour, and it comes from two
+places. The programmes create distortions {\color{red}due to their design}:
+assistance is means tested and the rent share is clawed back at $\kappa_r$,
+so a recipient who works more loses part of the transfer{\color{red}, which requires
+even higher taxes on everyone else to fund even larger programmes}. And
+{\color{red}assistance is} paid for by
 distortionary taxes, which lower the after tax return to an hour for households
 neither policy ever reaches.
 
-The second and the third are worth keeping apart, because the paper's
-answer turns on the second and not the third. One test separates them: ask what
-would survive a change in how the programme is paid for. The externality would.
-A child born to a parent with a disorder draws a lower productivity whoever
-writes the cheque, and the disamenity of the aggregate headcount is felt whatever
-the tax schedule looks like. The distortion would not. It exists only because
-revenue has to be raised with a tax that moves behaviour, and it would vanish if
-the same revenue could be raised lump sum. Everything that reaches the comparison
-through the government budget therefore belongs with the distortion, including the
-part that behaviour sets in motion: a household that uses is likelier to
-be out of work, so it pays less tax and draws more transfers, and everybody else pays
-higher taxes for that. It is a real
-cost and it is counted, but it is not the market failure either policy is trying to
-correct.
-
-\emph{Housing First is redistribution, and it removes externalities
-while creating another.} It moves resources to the poorest households
-and spares them the outcomes that fall hardest on them, which is most of its case.
-Mechanically it also removes two externalities: a child of a housed parent does not
+\emph{Housing First is redistribution, {\color{red}removes externalities, but
+creates another}.}
+Mechanically it {\color{red}removes} two externalities: a child of a housed parent does not
 carry the penalty $\delta_h$ prices, and aggregate homelessness falls, which every
-household values through $\kappa_x$. It creates one at the same time,
+household values through $\kappa_x$. {\color{red}However, it} creates one at the same time,
 because assistance that arrives whatever a household does insures it against the
 consequences of using, so the SUD rate rises and reaches the child through
 $\delta_d$.
 
-\emph{Treatment First is the mirror image, and it removes an
-externality but creates others too.} Curing the parent is how the child's worse draw is avoided, which is
-its case. But conditioning assistance means some households do not receive it, so
-Treatment First mechanically raises homelessness, especially in the short run, and
+\emph{Treatment First {\color{red}does not redistribute, removes an
+externality but creates two others}.} Curing the parent is how the child's worse draw is avoided.
+But conditioning assistance means some households do not receive it
+{\color{red}and end up homeless}, especially in the short run, and
 over that horizon it creates the two externalities Housing First removes. The short
-run matters on its own account: a household that wants to stop cannot do it at
-once, and the transition is costly while it lasts, which is why the
+run matters on its own account: a household that wants to stop cannot do it
+{\color{red}immediately}, and the transition is costly while it lasts, which is why the
 policy analysis reports the transition and not only the steady states.
 
-\emph{And general equilibrium returns part of it.} The drug price is
-endogenous, set by the supply curve $\nu_1$ and $\nu_2$ describe, so curing
+\emph{And general equilibrium returns part of it.} {\color{red}First,} the drug price is
+endogenous, set by the supply curve {\color{red}that} $\nu_1$ and $\nu_2$ describe, so curing
 disorders lowers drug demand, lowers the price, and makes using cheaper for those
-still deciding: part of what treatment removes comes back through the market it
-operates in. Spend more on either policy and the tax rises, hours fall, the base
-shrinks and the tax has to rise again. Treatment First has an offset of
+still deciding: part of what treatment removes comes back through
+{\color{red}lower prices}. {\color{red}Second, when the government spends more on
+either policy and the tax rises,} hours fall, the base
+shrinks and the tax has to rise again. {\color{red}Third,} Treatment First has an offset of
 its own in the other direction: sending more households into treatment raises the
 recovery rate faced by everyone deciding whether to use, and those
 consequences affect a newborn when it makes its own decisions, so the policy
@@ -1429,7 +1418,7 @@ utility. So the mechanical effects above are upper bounds on both sides.
 
 \noindent For every parameter the things worth knowing are what
 happens to the private value, to the externality and, where it applies, to the
-distortion, \emph{as it rises}, and each entry says so in a line before giving the
+distortion, \emph{{\color{red}as its value rises or falls}}, and each entry says so in a line before giving the
 moment. The middle blocks are where the two move
 together: because the child inherits a higher chance of landing in exactly the
 states those parameters price, anything that raises the private cost of using or of
@@ -1654,12 +1643,12 @@ rule, and this is what makes households decline treatment they would gain from.
 As it rises fewer take treatment, so the externality falls by less than
 $g$ alone would suggest and Treatment First delivers less than its instrument
 promises. It is calibrated internally to treatment take up in NSDUH 2023.
-{\color{red}What it is charged against matters as much as its level. Treatment
+What it is charged against matters as much as its level. Treatment
 forbids use for the period, and it buys two things in return: the higher recovery
 hazard $g$ delivers, and survival at the clean hazard rather than at
 $\kappa_{\phi d}$ times it, since a household that is not using does not die of
 using. Against the recovery gain alone the trade is not close, and no household
-takes it at any cost.}
+takes it at any cost.
 \end{description}
 
 \paragraph{Externalities and distortions.} The first three are what a parent's disorder and a
