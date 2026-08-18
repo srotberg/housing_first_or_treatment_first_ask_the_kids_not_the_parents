@@ -28406,7 +28406,13 @@
                     ! because the denominator is dominated by the group that does
                     ! earn, and the log says so rather than passing it off as the
                     ! weighted average.
-                    income_floor_1=10.d0**(-3)*model_average_labour_income(1)
+                    ! A TENTH OF AVERAGE INCOME PER HOUSEHOLD, not a thousandth.
+                    ! At a thousandth the guard passed on a group whose income per
+                    ! head was still near zero, and the ratio it then formed was
+                    ! 1,815,823. A group whose average income is below a tenth of
+                    ! the mean has no meaningful drug to income ratio, whatever the
+                    ! numerator is.
+                    income_floor_1=10.d0**(-1)*model_average_labour_income(1)
 
                     if ((model_experimenters_total_income(1)>&
                         income_floor_1*model_mass_experimenters(1)) .AND. &
