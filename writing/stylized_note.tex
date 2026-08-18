@@ -682,8 +682,8 @@ Households enter as adults, live at most $J$ annual periods and retire at
 $J_R$, and $j$ indexes age within that span. Survival from $j$ to $j+1$ is
 $\phi(j,h',d,m,\tau)$ in~\eqref{eq:fsurv}, and it depends on age, on the housing
 \emph{chosen} this period, on the SUD and on serious mental illness (SMI),
-{\color{red}and on whether the household is in treatment, since treatment means it is
-not using.} Newborns replace the dead
+and on whether the household is in treatment, since treatment means it is
+not using. Newborns replace the dead
 exactly, so the mass of households is constant. The individual
 state is
 \begin{equation}\label{eq:fstate}
@@ -700,8 +700,8 @@ Each period the household chooses
 [0,1]\times\{h_1,h_2,h_3,h_4\}\times\mathbb R_+\times\{0,1\}\times\mathcal A ,
 \end{equation}
 where $n$ denotes hours, $h'$ the housing unit chosen, of which $h_1$ is
-homelessness, $v$ drug use, {\color{red}$\tau$ SUD treatment take up, available only when
-$d=1$ and requiring $v=0$ in the period it is taken}, and $a'$ next period
+homelessness, $v$ drug use, $\tau$ SUD treatment take up, available only when
+$d=1$ and requiring $v=0$ in the period it is taken, and $a'$ next period
 assets.
 
 \subsection{Preferences}\label{sec:fprefs}
@@ -711,7 +711,7 @@ Period utility is
 u\big(c,h',v,n,\tau;d,m\big) \;=\;
 \frac{\big[\,c^{1-\gamma-\theta}\,(h')^{\gamma}\,(v+b)^{\theta}\,\big]^{1-\sigma}}{1-\sigma}
 \;+\;\omega_{\ell}\frac{(1-n)^{1-\sigma_{\ell}}}{1-\sigma_{\ell}}
-\;+\;\aleph\;-\;{\color{red}\tau\bar\tau^{u}}\;-\;\kappa_x H,
+\;+\;\aleph\;-\;\tau\bar\tau^{u}\;-\;\kappa_x H,
 \end{equation}
 Four of these are the stylized model's and carry the same meaning here as
 in Section~\ref{sec:env}: $\gamma$ the housing weight, $\theta$ the drug weight,
@@ -721,8 +721,8 @@ Equation~\eqref{eq:u} is the logarithmic case of this bundle with hours fixed.
 
 The rest are new, and there are three of them. Leisure makes hours a margin,
 at weight $\omega_{\ell}$ and curvature $\sigma_{\ell}$ over the $1-n$ hours
-not worked. {\color{red}SUD treatment costs utility, $\bar\tau^{u}$ in each
-period the household takes it up, $\tau=1$.} And homelessness carries a
+not worked. SUD treatment costs utility, $\bar\tau^{u}$ in each
+period the household takes it up, $\tau=1$. And homelessness carries a
 disamenity, $\kappa_x$ per unit of the aggregate homelessness rate $H$, borne by
 every household and priced on the headcount alone, which is what makes
 homelessness an externality here rather than only a private misfortune;
@@ -796,7 +796,7 @@ c+p_v v+a' \;=\; y^{n}+a\;-\;p_r\, h'\,\mathbf{1}\{h'\neq h_1\}\;+\;V\!ch+F,
 \end{equation}
 The drug price is $p_v$ and market rent is $p_r$, both as in
 Section~\ref{sec:support}, and $a$ is assets carried in. Note what is absent:
-{\color{red}treatment, which costs utility}, and bequests, which go to the government.
+treatment, which costs utility, and bequests, which go to the government.
 How $c$, $v$ and $n$ are chosen out of it is with the rest of the
 optimisation, in Section~\ref{sec:fproblem}.
 
@@ -823,7 +823,7 @@ trial that housed people with serious mental illness looked for an effect on
 their symptoms and did not find one, while finding large effects on their
 housing. Section~\ref{sec:fsmi} gives it.
 
-\subsection{Drug use, the SUD, recovery and {\color{red}treatment}}\label{sec:fdrug}
+\subsection{Drug use, the SUD, recovery and treatment}\label{sec:fdrug}
 
 A household either abstains or uses, with $v$ chosen continuously. A clean
 household that uses acquires the SUD with the hazard of
@@ -837,12 +837,12 @@ is little consequence at old ages to using: too little life remains for the
 disorder to damage, so the model produces too much of it.} A household with the SUD recovers with probability
 \begin{equation}\label{eq:frecover}
 \pi_r(h',m,\tau)=\min\Big\{1,\ \bar\pi_r\,
-\mu_H^{\mathbf{1}\{h'=h_1\}}\,\mu_m^{\mathbf{1}\{m=1\}}\,{\color{red}g^{\tau}}\Big\},
+\mu_H^{\mathbf{1}\{h'=h_1\}}\,\mu_m^{\mathbf{1}\{m=1\}}\,g^{\tau}\Big\},
 \end{equation}
 with $\bar\pi_r$ the baseline annual chance of recovering while housed,
-clean of SMI and {\color{red}untreated}, and three multipliers on it:
+clean of SMI and untreated, and three multipliers on it:
 $\mu_H<1$, so recovery is harder on the street, $\mu_m<1$, harder with
-SMI, and {\color{red}$g>1$ the treatment effect}.
+SMI, and $g>1$ the treatment effect.
 
 $\mu_H$ is how housing acts on drug use here, and it is worth being
 exact about what that claim is and is not. Housing does not change what a
@@ -856,17 +856,17 @@ measured weeks of abstinence, so the ratio between arms identifies $\mu_H$
 in our calibration.
 
 
-{\color{red}Treatment $\tau$ is a \emph{choice}, not a mechanical hazard, taken at the
+Treatment $\tau$ is a \emph{choice}, not a mechanical hazard, taken at the
 utility cost $\bar\tau^u$ in~\eqref{eq:futil}. It also costs the drug: a
 household in treatment must abstain in that period, $v=0$ whenever $\tau=1$, which
-is imposed as a constraint on~\eqref{eq:fbellman} rather than priced.}
-{\color{red}On the other hand, because it is not using, its mortality rate goes back
-to the baseline for that period.}
+is imposed as a constraint on~\eqref{eq:fbellman} rather than priced.
+On the other hand, because it is not using, its mortality rate goes back
+to the baseline for that period.
 
-{\color{red}$g$ is the
+$g$ is the
 parameter through
 which its entire effect runs, so treatment has to be something a household decides
-to undertake and can decline.}
+to undertake and can decline.
 
 \subsection{Serious mental illness}\label{sec:fsmi}
 
@@ -921,21 +921,20 @@ best available trial looked for and did not find.
 \begin{equation}\label{eq:fsurv}
 \phi(j,h',d,m,\tau)=1-\min\Big\{1,\ (1-\bar\phi(j))\,
 \kappa_{\phi H}(j)^{\mathbf{1}\{h'=h_1\}}\,
-{\color{red}\kappa_{\phi d}(j)^{\mathbf{1}\{d=1\}\mathbf{1}\{\tau=0\}}}\,
+\kappa_{\phi d}(j)^{\mathbf{1}\{d=1\}\mathbf{1}\{\tau=0\}}\,
 \kappa_{\phi m}^{\mathbf{1}\{m=1\}}\Big\},
 \end{equation}
 with $\bar\phi(j)$ the baseline survival age profile and
 $\kappa_{\phi H}(j)$ and $\kappa_{\phi d}(j)$ two age varying multipliers,
 and $\kappa_{\phi m}$ one that is not,
 raising the death hazard for homelessness, the SUD and SMI
-respectively. {\color{red}The SUD multiplier is switched off in a period the
+respectively. The SUD multiplier is switched off in a period the
 household is in treatment, $\tau=1$, which is why the survival function takes $\tau$
 as an argument at all. The excess mortality of the disorder is
 overwhelmingly a mortality of use, poisoning above all, and treatment forbids use
-in the period it is taken, so a household that is not using does not carry it.}
-
-$\bar\phi(j)$ is the SSA period life table for ages 26 to 85, with the sexes
-combined by survivor weight, $q=[l^Mq^M+l^Fq^F]/[l^M+l^F]$.
+in the period it is taken, so a household that is not using does not carry it.
+{\color{red}$\bar\phi(j)$ is the SSA period life table for ages 26 to 85, with the sexes
+combined by survivor weight, $q=[l^Mq^M+l^Fq^F]/[l^M+l^F]$.}
 
 The homelessness multiplier cannot be read off the data directly, and
 the reason is worth spelling out. Baggett et al.\ report a \emph{standardised
@@ -1032,19 +1031,19 @@ with probability $p_{\text{fp}}$ by one that did not,
 \begin{equation}\label{eq:fpol}
 \Pr(\eta'=1)=\Pr(\eta'=1)^{HF}\times
 \begin{cases}
-1-p_{\text{fp}} & \text{if } (v=0 \ \text{and } d=0) \ \text{or } {\color{red}\tau=1},\\
+1-p_{\text{fp}} & \text{if } (v=0 \ \text{and } d=0) \ \text{or } \tau=1,\\
 1-p_{\text{det}} & \text{otherwise} .
 \end{cases}
 \end{equation}
 There are four cases and the rule covers them. A clean household that does
 not use meets the condition and faces only the false positive rate $p_{\text{fp}}$.
-A clean household that uses fails it and faces $p_{\text{det}}$. {\color{red}A household
+A clean household that uses fails it and faces $p_{\text{det}}$. A household
 carrying the disorder that does not take treatment fails it and faces
 $p_{\text{det}}$ as well. And a household carrying the disorder that does take
 treatment is abstaining, $v=0$ by the restriction in
 Section~\ref{sec:fdrug}, so it meets the condition and faces $p_{\text{fp}}$.
 There is no fifth case: treatment is available only when $d=1$, and it forbids
-use, so no household is ever both in treatment and using.}
+use, so no household is ever both in treatment and using.
 
 This is the one place where the quantitative model changes the \emph{logic} of
 Section~\ref{sec:mh} rather than its setting. There, conditionality is perfectly
@@ -1090,13 +1089,13 @@ first year out of work and in state $3$, which pays nothing, from the second yea
 on. One year is if anything generous: most states pay for twenty six weeks.
 
 \paragraph{The SUD $d$.} By~\eqref{eq:fd} if $d=0$ and~\eqref{eq:frecover}
-if $d=1$, conditioning on the chosen $v$, $h'$ and {\color{red}$\tau$}.
+if $d=1$, conditioning on the chosen $v$, $h'$ and $\tau$.
 
 \paragraph{Mental illness $m$.} By~\eqref{eq:fonset}, conditioning on $d$.
 
 \paragraph{The voucher $\eta$.} By~\eqref{eq:felig} and~\eqref{eq:fpol},
 conditioning on next period's eligibility and, under Treatment First, on the
-chosen $v$, the status $d$ and {\color{red}the treatment choice $\tau$}.
+chosen $v$, the status $d$ and the treatment choice $\tau$.
 
 Write $\Gamma\big(s'\mid s,\,n,h',v,\tau\big)$ for the product of these five,
 which is the object the expectation in~\eqref{eq:fbellman} is taken against.
@@ -1120,9 +1119,9 @@ V(j,a,y,e,d,m,\eta)=\max_{\{n,\,h',\,v,\,\tau,\,a'\}}\ \Bigg\{\
 \end{equation}
 subject to the budget~\eqref{eq:fbudget}, the income
 definitions~\eqref{eq:fincome} to~\eqref{eq:ftrans}, the choice
-set of dwellings~\eqref{eq:fchoice}, {\color{red}$\tau=0$ whenever $d=0$}, $n=0$
+set of dwellings~\eqref{eq:fchoice}, $\tau=0$ whenever $d=0$, $n=0$
 whenever $j\ge J_R$ or
-$e\neq1$, {\color{red}$v=0$ whenever $\tau=1$}, $a'\ge0$, $c\ge F$ so that
+$e\neq1$, $v=0$ whenever $\tau=1$, $a'\ge0$, $c\ge F$ so that
 consumption never falls below the food stamp floor, and $V(J{+}1,\cdot)=0$
 with $\phi(J)=0$, so that at the last age the
 child is the whole continuation. The integral runs over next period's
@@ -1676,11 +1675,12 @@ increase in recovery housing produced in Milby et al.\ (2005), a randomised tria
 cocaine dependent homeless adults: $6.60$ weeks abstinent in the housed arm against
 $4.48$ homeless, so housing raises recovery by $47.3$ percent.
 \item[$g$, the treatment effect on recovery.] Treatment First's instrument, and the
-parameter its case rests on most directly. {\color{red}As it rises treatment works
-better, so a household that carries the disorder is more easily cured. The private
-cost falls, since the household spends less of its life carrying one. The
+parameter its case rests on most directly. As it rises treatment works
+better, so a household that carries the disorder is more easily {\color{red}cured, and
+therefore the private cost falls}, since the household spends less of its life
+carrying one. The
 externality falls with it, and by the same route: a child who acquires a disorder is
-also more easily cured, so what its parent hands on costs it less of its own life.} It is set externally at $1.35$, the
+also more easily cured, so what its parent hands on costs it less of its own life. It is set externally at $1.35$, the
 odds ratio in Milby et al.\ (2005).
 \item[$\bar\tau^{u}$, the utility cost of treatment.] Take up is a choice, not a
 rule, and this is what makes households decline treatment they might gain
