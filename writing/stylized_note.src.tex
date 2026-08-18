@@ -857,26 +857,11 @@ in our calibration.
 
 
 Treatment $\tau$ is a \emph{choice}, not a mechanical hazard, taken at the utility
-cost $\bar\tau^u$ in~\eqref{eq:futil}. {\color{red}It also costs the drug: a
+cost $\bar\tau^u$ in~\eqref{eq:futil}. It also costs the drug: a
 household in treatment must abstain in that period, $v=0$ whenever $\tau=1$, which
-is imposed as a constraint on~\eqref{eq:fbellman} rather than priced.}
-
-{\color{red}It is worth collecting in one place what a period of treatment does,
-because the pieces are set out in three different equations and none of them is the
-whole of it. A household that takes treatment gives up the drug for the period,
-$v=0$, and pays $\bar\tau^u$ in utility. In return it recovers at $g$ times the
-hazard it would otherwise face, by~\eqref{eq:frecover}, and it survives the period
-at the clean hazard rather than at $\kappa_{\phi d}$ times it, by~\eqref{eq:fsurv},
-since the excess mortality of the disorder is a mortality of use and a household in
-treatment is not using.
-
-None of these is confined to the period they happen in. Surviving raises the
-probability the household is there at all next period, and recovering changes which
-state it is there in; both enter the continuation, so the value of being alive next
-period and every period after it is what treatment is really bought for. The utility
-cost and the forgone drug are paid now, the recovery and the survival are collected
-later, and it is the size of that later term, not the flow cost, that decides
-whether a household takes treatment at all.}
+is imposed as a constraint on~\eqref{eq:fbellman} rather than priced.
+{\color{red}On the other hand, because it is not using, its mortality rate goes back
+to the baseline for that period.}
 
 $g$ is the
 parameter through
@@ -936,30 +921,18 @@ best available trial looked for and did not find.
 \begin{equation}\label{eq:fsurv}
 \phi(j,h',d,m,\tau)=1-\min\Big\{1,\ (1-\bar\phi(j))\,
 \kappa_{\phi H}(j)^{\mathbf{1}\{h'=h_1\}}\,
-{\color{red}\kappa_{\phi d}(j)^{\mathbf{1}\{d=1\}\mathbf{1}\{\tau=0\}}}\,
+\kappa_{\phi d}(j)^{\mathbf{1}\{d=1\}\mathbf{1}\{\tau=0\}}\,
 \kappa_{\phi m}^{\mathbf{1}\{m=1\}}\Big\},
 \end{equation}
 with $\bar\phi(j)$ the baseline survival age profile and
 $\kappa_{\phi H}(j)$ and $\kappa_{\phi d}(j)$ two age varying multipliers,
 and $\kappa_{\phi m}$ one that is not,
 raising the death hazard for homelessness, the SUD and SMI
-respectively. {\color{red}The SUD multiplier is switched off in a period the
+respectively. The SUD multiplier is switched off in a period the
 household is in treatment, $\tau=1$, which is why the survival function takes $\tau$
 as an argument at all. The excess mortality of the disorder is
 overwhelmingly a mortality of use, poisoning above all, and treatment forbids use
-in the period it is taken, so a household that is not using does not carry it.}
-This is the strong form of the assumption and it is worth being explicit about:
-the standardised mortality ratios $\kappa_{\phi d}$ is calibrated to are measured
-on people who \emph{carry} the disorder rather than on people using in a given
-year, so treating an abstaining household as fully clean for the period overstates
-what one period of abstention buys. It is also what makes take up a real choice
-rather than a corner: against the recovery gain alone, which raises the annual
-hazard of leaving the disorder from $0.025$ to $0.034$, no household accepted a
-whole period without the drug at any utility cost, including a cost of zero.
-Because $\aleph>0$ and guarantees that the value of life is positive, a
-higher death hazard is a real cost, and it is larger for households with more life
-remaining and more to consume, which is precisely the sorting
-Section~\ref{sec:who} isolates.
+in the period it is taken, so a household that is not using does not carry it.
 
 $\bar\phi(j)$ is the SSA period life table for ages 26 to 85, with the sexes
 combined by survivor weight, $q=[l^Mq^M+l^Fq^F]/[l^M+l^F]$.
@@ -1704,19 +1677,16 @@ cocaine dependent homeless adults: $6.60$ weeks abstinent in the housed arm agai
 $4.48$ homeless, so housing raises recovery by $47.3$ percent.
 \item[$g$, the treatment effect on recovery.] Treatment First's instrument, and the
 parameter its case rests on most directly. {\color{red}As it rises treatment works
-better. The externality itself is not what changes: $g$ acts only where treatment is
-taken, so the harm a household does to its child absent any policy is the same at
-every $g$. What rises is how much of that harm Treatment First can remove, which is
-why its case strengthens in $g$ even though the externality it is correcting has
-not moved. The private cost falls at the same time, since a household that carries
-the disorder is more easily cured and so is more able to treat itself in response to
-the conditionality.} It is set externally at $1.35$, the
+better, so a household that carries the disorder is more easily cured. The private
+cost falls, since the household spends less of its life carrying one. The
+externality falls with it, and by the same route: a child who acquires a disorder is
+also more easily cured, so what its parent hands on costs it less of its own life.} It is set externally at $1.35$, the
 odds ratio in Milby et al.\ (2005).
 \item[$\bar\tau^{u}$, the utility cost of treatment.] Take up is a choice, not a
 rule, and this is what makes households decline treatment they might gain
 from in the future. As it rises fewer take treatment, so the externality rises, since
-more people remain with a SUD {\color{red}and thus more children are born with lower
-incomes, which leads to higher SUD incidence}, and the private cost rises too, since
+more people remain with a SUD and thus more children are born with lower
+incomes, which leads to higher SUD incidence, and the private cost rises too, since
 treatment is costly. It is calibrated internally to treatment take up among adults
 with a SUD, $24$ percent in NSDUH 2023.
 \end{description}
