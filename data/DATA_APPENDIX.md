@@ -205,6 +205,122 @@ wrong because the surviving population is increasingly female with age.
 
 ---
 
+## 8. The externally set parameters, one at a time
+
+The sections above cover every target the model is calibrated *to*. This section
+covers every parameter set *from* a source without a model counterpart, so that the
+two tables in the paper are documented in full and nothing is left to be inferred.
+
+### Mortality
+
+**κ̄_φd, increased mortality with a disorder — 8, from a range of 6 to 10.**
+Hjorthøj et al. (2023), a review of excess mortality among people with substance use
+disorders; the midpoint of the reported range is used.
+
+**κ_φH(j), increased mortality when homeless — 4.41 falling to 1.09 by age.**
+Baggett et al. (2013), standardised mortality ratios for homeless adults in Boston,
+which run 9.1 at the youngest ages to 1.1 at the oldest. The model applies the
+profile scaled so that the aggregate excess matches; `FINDINGS.md` section 10 records
+that an earlier placeholder understated this by a factor of five.
+
+**κ_φm, mortality multiplier for mental illness — 2.50.** Olfson et al. (2015),
+premature mortality among adults with schizophrenia and other serious mental illness.
+
+### The mental illness chain
+
+**ι, the multiplier a disorder puts on the onset of mental illness — 2.** Nielsen et
+al. (2017), Danish population registers, which follow the whole population and so
+identify the effect of a disorder on subsequent onset rather than the cross sectional
+association.
+
+**μ_m, the recovery multiplier under dual diagnosis — 0.82.** Bradizza et al. (2006),
+a review of relapse among people carrying both a disorder and a mental illness.
+
+**ζ_DI, the disability replacement rate for mental illness — 0.25.** SSA 2023, SSDI
+and SSI award rates and benefit levels for beneficiaries qualifying on a mental
+disorder.
+
+### Recovery and treatment
+
+**π̄_r, the baseline recovery rate — 0.025 a year.** Vaillant (1995), the ten year
+remission rate from the natural history of alcoholism, annualised. This is
+unassisted remission, which is what the baseline hazard is meant to be.
+
+**g, the treatment effect on recovery — 1.35.** Milby et al. (2005), the odds ratio
+from the same randomised trial that supplies μ_H, so the level and the housing
+gradient come from one experiment rather than two.
+
+### Externalities
+
+**δ_h, the child's earnings penalty for homelessness — 0.31.** Chetty et al. (2016);
+see section 5.
+
+**κ_x, the disamenity of aggregate homelessness — 0.20 percent of annual earnings,
+which enters as 0.0008.** Loubière et al. (2020), a contingent valuation across
+Europe: €57 a year among the 42 percent of respondents willing to pay anything,
+against €23 averaged over all respondents. The higher figure is taken as the
+baseline, because it is the one least kind to Treatment First: a larger disamenity
+loads whichever policy houses more people.
+
+### Employment and labour supply
+
+**κ_ueH, the employment multiplier when homeless — 0.80.** Desmond and Gershenson
+(2016), on job loss following involuntary housing loss.
+
+**σ_ℓ, the curvature on leisure — 3.00, chosen to produce a Frisch elasticity of
+0.5.** Chetty (2012). The Data column of the paper's table reports the elasticity
+being targeted, 0.5, and the Value column the curvature that delivers it.
+
+**ε(j), the age profile of efficiency.** The exponential of a quadratic used by
+Greenwood et al. (2025), exp{−(j−1)²/1800 + (j−1)/30} with j = 1 at age 26. It peaks
+at age 56 having risen 65 percent, then falls 4 percent to the last working age.
+
+### Preferences and the grid
+
+**σ, risk aversion — 2.** Attanasio and Weber (2010).
+
+**ς, the curvature of the rental ladder — 1.8.** Set rather than estimated. With
+three rental sizes the size distribution carries two free numbers and the two ends
+take them, so a third parameter chasing the same shares would not be identified. The
+curvature places the middle rung a fraction (1/2)^ς of the way from the smallest size
+to the largest, so 1.8 puts it 28.7 percent of the way up rather than the 50 percent a
+uniform ladder gives. At the calibrated ends the three sizes stand at 1 : 1.46 : 2.59.
+
+### The drug market
+
+**ν_2, the drug supply elasticity — 1.46, which implies a curvature of
+1 + 1/1.46 = 1.68.** Mace et al. (2020), estimated on Washington State
+administrative data. No direct estimate exists for an illicit drug; cannabis is the
+closest market because it remains a Schedule I substance federally, so even a
+licensed producer works without interstate trade, without ordinary banking and under
+prohibition. Cigarettes and gasoline share none of those frictions and are not used.
+
+**ν_1, the supply shifter, and p_v, the drug price.** ν_1 is a pure normalisation,
+chosen so that supply equals demand at p_v = 1 in the benchmark; it fixes units and
+not behaviour. p_v is one at the benchmark by that normalisation and free in every
+counterfactual, where it is an equilibrium object rather than a parameter.
+
+**J_E, the last age at which use can begin — 55 in model terms, which is age 80.**
+A restriction rather than an estimate. The model imposes certain mortality by age 85
+to keep the age dimension manageable, so a household near the end knows death is
+coming and a disorder costs it almost nothing; at the final age a disorder acquired
+carries no consequence at all, only the flow benefit of using. The cap keeps use out
+of that region. Sensitivity to raising it is reported once the model is calibrated.
+
+### Statute
+
+**ξ = 0.85**, tax progressivity, Heathcote et al. (2017). **τ_k = 0.15**, the
+statutory US rate on long term capital gains and qualified dividends, IRS Topic 409
+(https://www.irs.gov/taxtopics/tc409). **ψ = 0.50** and **ȳ = 1** times average
+income, from the Department of Labor's comparison of state unemployment insurance
+laws (https://oui.doleta.gov/unemploy/statelaws.asp). **κ_V = 0.50** of median
+income, HUD's very low income limit
+(https://www.huduser.gov/portal/datasets/il.html), and **κ_r = 0.30** of income, the
+tenant contribution under the Housing Choice Voucher programme
+(https://www.hud.gov/helping-americans/housing-choice-vouchers).
+
+---
+
 ## What is not here yet
 
 The Model column of the paper's two calibration tables reports what the model

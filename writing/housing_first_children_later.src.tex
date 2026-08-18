@@ -1179,13 +1179,13 @@ to undertake and can decline.
 \subsection{Serious mental illness}\label{sec:fsmi}
 
 $m$ is an exogenous two state Markov chain representing SMI, whose
-prevalence \textcolor{red}{$p_m(j)$} averages about $5.5$ percent of adults, defined by substantial functional
+prevalence $p_m(j)$ averages about $5.5$ percent of adults, defined by substantial functional
 impairment, rather than any mental illness, which is roughly a quarter of adults
 and includes mild anxiety: a state that halves productivity cannot sensibly cover
 a quarter of the population.
 
 The onset rate is a function of age.
-Writing \textcolor{red}{$p_m(j)$} for prevalence at age $j$ and $\lambda_m$ for the annual chance of
+Writing $p_m(j)$ for prevalence at age $j$ and $\lambda_m$ for the annual chance of
 leaving the state,
 \begin{equation}\label{eq:fonsetage}
 \text{onset}_m(j)=\frac{p_m(j{+}1)-p_m(j)(1-\lambda_m)}{1-p_m(j)},
@@ -1689,13 +1689,13 @@ internally and thirteen externally calibrated), and twenty four are standard
 (Table~\ref{tab:stdparams}, seven internally and seventeen externally).
 
 The tables carry the parameter, its description, the moment and source used to
-fix its value, and the value itself. \textcolor{red}{The text alongside each table adds what a table
+fix its value, and the value itself. The text alongside each table adds what a table
 has no room for: the intuition for what each parameter does, and why its moment
 identifies it. Every estimate that goes into them is documented in full in the
 replication package: \texttt{data/DATA\_APPENDIX.md} names the dataset behind each
 target, its year and universe, and the computation that turns it into the number
 reported here, so that any of them can be reproduced from the public microdata
-without reference to this text.}
+without reference to this text.
 
 \subsection{The twenty nine parameters that carry the story of this paper}
 
@@ -2233,26 +2233,26 @@ unemployment rate in the BLS Current Population Survey (CPS) over 2014 to 2024,
 $4.85$ percent, given the
 job finding rate set externally below. As it rises more households lose work each year, so the unemployment rate rises with it.
 \item[$\bar\pi^{ue}$, the annual job finding rate.] The probability that an unemployed household finds work
-\textcolor{red}{by the end of a period, which I set to $0.55$ from the annual exit rate Krueger et
-al.\ (2014) estimate on matched CPS panels.}
+by the end of a period, which I set to $0.55$ from the annual exit rate Krueger et
+al.\ (2014) estimate on matched CPS panels.
 
 \end{description}
 
 \paragraph{Survival and mental illness.} These two parameters are age profiles that I take from outside the model rather than generate inside it.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\bar\phi(j)$, baseline survival by age.] The most recent Social Security
-Administration \textcolor{red}{(SSA)} period life table, table 4.C6, for ages $26$ to $85$, with the sexes
+Administration (SSA) period life table, table 4.C6, for ages $26$ to $85$, with the sexes
 combined by survivor weight rather than averaged. This is the profile every mortality multiplier in
 Section~\ref{sec:fullcal} multiplies, so it is the base the SUD, homelessness and
 mental illness hazards are measured against.
 
 \item[$p_m(j)$, the age profile of SMI prevalence.]
-\textcolor{red}{The target is the share of adults carrying serious mental illness at each age $j$
+The target is the share of adults carrying serious mental illness at each age $j$
 in NSDUH 2023, which integrates to $5.5$ percent across all ages; the $5.5$ percent
 is the overall level and the profile is what is matched, age by age. It sits here
 rather than in Section~\ref{sec:fullcal} because it is the baseline profile, in the
 same way the survival table is: what this paper adds is $\iota$, the multiplier a SUD
-puts on that onset, and that is where the interaction lives.}
+puts on that onset, and that is where the interaction lives.
 
 \end{description}
 
@@ -2262,15 +2262,15 @@ puts on that onset, and that is where the interaction lives.}
 (2020).
 
 \item[$\xi$, tax progressivity.] The exponent on income in the tax schedule of
-Section~\ref{sec:ftaxes}, which is set to $0.85$, from Heathcote et al.\ (2017). \textcolor{red}{It is
+Section~\ref{sec:ftaxes}, which is set to $0.85$, from Heathcote et al.\ (2017). It is
 what makes the labour income tax progressive rather than flat. That in turn decides
 how much a programme's bill falls on the households it is meant to help, and how much
-on everybody else.}
+on everybody else.
 
 \item[$\tau_k$, the capital income tax.] I set it to fifteen percent, consistent
 with the statutory United States rate on long term capital gains and qualified
 dividends for the middle of the income distribution, which the Internal Revenue
-Service \textcolor{red}{(IRS)} sets out in Topic 409
+Service (IRS) sets out in Topic 409
 (\url{https://www.irs.gov/taxtopics/tc409}).
 
 \item[$\tau_{\ell}$, the level of the labour income tax.] It is calibrated so that
@@ -2284,20 +2284,21 @@ Section~\ref{sec:fullcal} a cost the model actually bears.
 
 \paragraph{Transfers and the voucher rule.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$\psi$ and $\bar y$, unemployment insurance.] \textcolor{red}{These two set the replacement
+\item[$\psi$ and $\bar y$, unemployment insurance.] These two set the replacement
 rate and the cap on the earnings it is paid on. I set them to fifty percent and one
-times average income respectively, taking both from the statutory replacement rates
+times average income\textcolor{red}{, respectively,} taking both from the statutory replacement rates
 and state benefit maxima that the Department of Labor compiles in its comparison of
 state unemployment insurance laws
-(\url{https://oui.doleta.gov/unemploy/statelaws.asp}).}
+(\url{https://oui.doleta.gov/unemploy/statelaws.asp}).
 
 \item[$\kappa_V$ and $\kappa_r$, the voucher rules.] \textcolor{red}{These two set the income
 cutoff for eligibility and the tenant's contribution, and I take both from HUD's own
-rules rather than from any estimate. I set the cutoff to half of median income, which
-is the very low income limit HUD publishes annually with its income limits
-(\url{https://www.huduser.gov/portal/datasets/il.html}). I set the contribution to
-thirty percent of income, which is the share a tenant pays of the rent when a voucher
-covers the rest under the Housing Choice Voucher programme
+rules rather than from any estimate. I set them to half of median income and thirty
+percent of income, respectively. The first is the very low income limit HUD publishes
+annually with its income limits
+(\url{https://www.huduser.gov/portal/datasets/il.html}); the second is the share a
+tenant pays of the rent when a voucher covers the rest, under the Housing Choice
+Voucher programme
 (\url{https://www.hud.gov/helping-americans/housing-choice-vouchers}).}
 
 \end{description}
@@ -2306,16 +2307,17 @@ covers the rest under the Housing Choice Voucher programme
 fixes who can enter it, and the other two fix the units in which its price and
 quantity are measured.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$J_E$, the maximum age at which use can begin.] \textcolor{red}{I set it to fifty five in model terms, which is age $80$, since the first model
-age is $26$. It is there so that use cannot begin in the last few years of life,
-where almost no continuation value remains to be lost and the private cost of using
-is therefore close to zero. It is a restriction rather than an estimate, so the
-results are reported with and without it, and across the range over which it can bind
-at all: the upper end of that range is fifty eight rather than fifty nine, because a
-household that acquires the disorder in the final model period dies at the end of it
-whatever the hazard does, so a cap at fifty nine removes no mortality and changes
-nothing. Fifty eight is the loosest restriction that still has any consequence, and
-the sensitivity is reported over fifty five, fifty seven and fifty eight.}
+\item[$J_E$, the maximum age at which use can begin.] \textcolor{red}{I set it to fifty five in model terms, which corresponds to age $80$ in the data.
+It is there so that use cannot begin in the last few years of life, where almost no
+continuation value remains to be lost and the private cost of using is therefore
+close to zero. That is an artefact of the horizon rather than a feature of the world:
+to keep the age dimension manageable the model imposes certain mortality by age $85$,
+so a household near the end knows death is coming with certainty and a disorder costs
+it almost nothing. Without the cap the model would let use begin exactly there, and
+at the final age it would be worse than that, since a household that acquires the
+disorder in the last period dies at the end of it whatever the hazard does: the
+disorder carries literally no consequence and only the flow benefit of using, which
+cannot be a reasonable description of the choice either.}
 
 \item[$\nu_1$, the supply shifter.] A pure normalisation, chosen so that supply
 equals demand at $p_v=1$ in the benchmark. It normalises units, not behaviour.
