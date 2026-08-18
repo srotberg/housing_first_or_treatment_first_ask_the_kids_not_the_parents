@@ -50,7 +50,7 @@
 \begin{document}
 
 \begin{center}
-{\Large\bfseries Housing First, Children Later}\footnote{I thank Ay\c{s}e \.{I}mroho\u{g}lu, Kai Zhao, Joseph Steinberg, Efraim Benmelech, Jonathan Alschech, Ryan Quandt, Christopher Sharp and the seminar participants at the University of Toronto for their helpful comments. I owe a special thank you to Joseph Steinberg who generously provided access to one of his high powered computers for this research. The data and replication code are available on GitHub at \url{https://github.com/srotberg/housing_first_or_treatment_first}.}\\[0.6em]
+{\Large\bfseries Housing First, Children Later}\footnote{I thank Ay\c{s}e \.{I}mroho\u{g}lu, Kai Zhao, Joseph Steinberg, Efraim Benmelech, Jonathan Alschech, Ryan Quandt, Christopher Sharp and the seminar participants at the University of Toronto for their helpful comments. I owe a special thank you to Joseph Steinberg who generously provided access to one of his high powered computers for this research. The data and replication code are available on GitHub at \url{https://github.com/srotberg/housing_first_children_after}.}\\[0.6em]
 {\large Shahar Rotberg}\footnote{Canada Mortgage and Housing Corporation (CMHC). Contact: \url{shahar.rotberg@gmail.com}. Website: \url{www.shaharrotberg.com}. This work was conducted on personal equipment and time. The code used to solve the model is the author's own. The opinions expressed herein do not necessarily represent the views of CMHC.}\\[0.35em]
 \today
 \end{center}
@@ -129,7 +129,7 @@ productivity draw to the child who replaces it, and it counts only a fraction
 $\omega$ of that loss. Each link in that chain is measured. Parental alcohol or
 drug abuse is recorded as a circumstance at removal for $38$ percent of children
 entering out of home care in 2025, against $18.5$ percent in 2000, and in FY2017
-that was $96{,}400$ children, or $36$ percent of all removals; children of a parent
+that was $96{,}400$ children, or $36$ percent of all removals \textcolor{red}{(AFCARS)}; children of a parent
 with a disorder are themselves two to four times as likely to acquire one
 (McGovern et al., 2023). Parental shocks transmit to the child's own earnings:
 children whose fathers were displaced by a firm closure earn about $9$ percent
@@ -240,10 +240,10 @@ optimisation dates to Becker and Murphy (1988), and the assumption is empiricall
 defensible at the margin where policy operates. Both users and non users hold risk
 perceptions close to the objective probabilities (Lundborg and Lindgren, 2002), and
 Greenwood et al.\ (2025), who allow perceived and true addiction risk to
-differ, find the model implied beliefs close to the truth. \textcolor{red}{The price evidence points
+differ, find the model implied beliefs close to the truth. The price evidence points
 the same way and is taken up with the drug market below, since the elasticity of
 participation is what disciplines the size of every behavioural response in this
-paper.} A separate literature emphasises temptation and dynamic
+paper. A separate literature emphasises temptation and dynamic
 inconsistency (Laibson, 1997; Gruber and K\H{o}szegi, 2001), under which
 present biased households over consume relative to their own long run preferences
 and corrective policy has a rationale with no externality at all. That literature is
@@ -269,11 +269,6 @@ point on the other side of the market, showing that eviction policy changes land
 screening and rents and so changes who becomes homeless in equilibrium. Here the
 causation runs the other way as well: employment and disorder cost a household its
 housing, and losing it worsens employment, raises mortality and slows recovery.
-\textcolor{red}{The
-rental market itself follows Chambers et al.\ (2009), with its supply elasticity
-disciplined by Rotberg and Steinberg (2024): under perfectly elastic rental supply,
-expanding voucher coverage would leave rents unchanged, which would understate the
-fiscal cost of universal Housing First and overstate its welfare gain.}
 
 
 
@@ -325,13 +320,13 @@ outside the model is the point: the parameters this paper argues over are the on
 Section~\ref{sec:fullcal}, and a reader who disagrees with one of these is
 disagreeing with the study behind it.
 
-\paragraph{\textcolor{red}{The drug market.}} \textcolor{red}{Making the drug price endogenous is what
+\paragraph{The drug market.} Making the drug price endogenous is what
 lets a policy that changes the number of users change what using costs everybody
 else. Two elasticities govern it and they do different jobs, so the literatures
 behind them are worth separating: the demand side fixes how much use responds to a
-given price, and the supply side fixes how much the price moves when use changes.}
+given price, and the supply side fixes how much the price moves when use changes.
 
-\textcolor{red}{\emph{The elasticity of participation.} This is the demand side, and it is the
+\emph{The elasticity of participation.} This is the demand side, and it is the
 better served of the two. Gallet (2014) synthesises $462$ price elasticity studies,
 and van Ours (1995), Saffer and Chaloupka (1999) and Caulkins (2001) establish that
 participation responds to price even for drugs as habit forming as heroin and
@@ -339,9 +334,9 @@ cocaine, with long run responses consistently larger than short run ones. That
 ordering is the signature of forward looking behaviour rather than myopia, which is
 why it belongs with Becker and Murphy (1988) above as well as here, and the
 calibration is disciplined to reproduce it. It is what fixes how large the
-behavioural response to either policy can be.}
+behavioural response to either policy can be.
 
-\textcolor{red}{\emph{The elasticity of supply.} This is the general equilibrium offset, and it
+\emph{The elasticity of supply.} This is the general equilibrium offset, and it
 runs against Treatment First in particular: curing households takes them out of the
 market, demand and the price fall, and a cheaper drug draws others in. No direct
 estimate exists for an illicit drug. Cannabis is the closest market there is, because
@@ -350,7 +345,7 @@ without interstate trade, without ordinary banking and under federal prohibition
 which is the set of frictions an illicit supplier faces; cigarettes and gasoline
 share none of them. Mace et al.\ (2020) estimate a price elasticity of supply of
 $1.46$ on Washington State administrative data, and that is the number the model
-uses.}
+uses.
 
 \paragraph{In a nutshell.} The trials establish that housing stability responds to
 policy but cannot price what happens to anyone outside the sample. The rational
@@ -2148,14 +2143,12 @@ data. The Model column reports what the model produces against that value, and i
 does so only for the six I calibrate internally, since the other twenty have no
 target to reproduce.
 
-These parameters are not inert in the experiments. For example, the discount
-factor governs how heavily a household weighs a death thirty years in the future,
-the dispersion of permanent income determines how many households are poor enough
-to be at risk of homelessness and of acquiring a disorder, and risk aversion
-governs what insurance is worth. Each of them therefore moves the private value of
-a policy and, through the child's draw, the externality as well. What separates
-them from the parameters above is not that they do nothing, but that they are not
-specific to this paper.
+\textcolor{red}{These parameters are not inert in the experiments. For example, the discount
+factor governs how heavily a household weighs a death late in life, the dispersion
+of permanent income determines how many households are poor enough to be at risk of
+homelessness and of acquiring a disorder, and risk aversion governs what insurance
+is worth. What separates them from the parameters above is not that they do nothing,
+but that they are not specific to this paper.}
 
 \input{tables/tab_standard}
 
@@ -2171,8 +2164,7 @@ bundle that goes on housing, so it fixes what a dwelling is worth against
 consumption and against the drug. I choose it so that housing takes $26.8$ percent of expenditure net of drugs, as
 shelter plus utilities do in the 2024 Consumer Expenditure Survey, which is the same
 moment and the same definition the stylized model of Section~\ref{sec:stylized}
-uses. The share rather than a rent to income ratio is the exact counterpart of a
-Cobb-Douglas weight, since income and expenditure differ by saving. As $\gamma$
+uses. As $\gamma$
 rises housing is worth more against consumption and the drug, households buy more of
 it, and that expenditure share rises with it.
 \item[$\beta$, the discount factor.] It is chosen so that wealth over output
@@ -2189,16 +2181,18 @@ it.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\underline h$ and $\bar h$, the rental ladder.] The smallest and
 the largest rental size. The ladder is pinned at both ends and the rung between
-them follows from the curvature $\varsigma$, so no size is picked by hand.
+them follows from the curvature $\varsigma$.
 I choose the two ends to match the two ends of the distribution of occupied units
 by number of bedrooms in the 2023 American Community Survey, table B25042: $13.2$
 percent of households sit in the smallest category and $62.7$ percent in the
 largest. Three shares carry two free numbers, so the two sizes identify them and the
-middle share follows, which is why I set the curvature rather than calibrate it. The
-two ends move the composition in opposite directions. Raising $\underline h$ makes
-the bottom rung dearer, so households that would have taken it move up and the
-smallest share falls; raising $\bar h$ makes the top rung dearer, so households move
-down out of it and the largest share falls. The universe is occupied units, so the
+middle share follows \textcolor{red}{by complementarity}, which is why I set the curvature rather
+than calibrate it. \textcolor{red}{Each end moves its own share, which is what identifies them
+separately. Rent is the rent per unit of housing times the size taken, so raising
+$\underline h$ enlarges the bottom rung and therefore raises what the cheapest way
+of being housed costs in rent, while raising $\bar h$ does the same at the top of the
+ladder. The share in the smallest category responds to the first and the share in
+the largest to the second.} The universe is occupied units, so the
 model counterpart conditions on being housed, and the homeless are in neither
 denominator.
 \item[$\varsigma$, the curvature of the rental ladder.]
@@ -2206,36 +2200,51 @@ I set it at $1.8$ rather than calibrate it, because with three rental sizes the
 size distribution carries two free numbers and the two ends of the ladder already
 take them. What the curvature does is place the middle rung: the middle size sits a
 fraction $(1/2)^{\varsigma}$ of the way from $\underline h$ to $\bar h$, so at
-$\varsigma=1.8$ it sits $28.7$ percent of the way up rather than the $50$ percent a
-uniform ladder would give. That is the shape the data ask for, since $62.7$ percent
-of households are in the largest category and only $13.2$ percent in the smallest,
-which is a ladder whose middle rung is nearer the bottom. At the calibrated ends the
-three sizes stand in the ratio $1 : 1.46 : 2.59$. The two renter cost shares are
-left untargeted and serve as a check instead: in the 2023 American Community Survey
-$49.5$ percent of renter households spend more than thirty percent of income on
-housing and $26.5$ percent spend more than half.
+$\varsigma=1.8$ it sits $28.7$ percent of the way up \textcolor{red}{from the smallest rental}
+rather than the $50$ percent a uniform ladder would give. \textcolor{red}{At the calibrated ends
+the three rental sizes stand in the ratio $1 : 1.46 : 2.59$. The two renter cost
+shares are left untargeted and serve as a check instead: in the 2023 American
+Community Survey $49.5$ percent of renter households spend more than thirty percent
+of income on housing and $26.5$ percent spend more than half, and what the model
+produces against those two numbers is reported with the other untargeted moments in
+Section~\ref{sec:fvalid}.}
 
 \end{description}
 
-\paragraph{Earnings and employment.} These five parameters determine what a household earns over its life, how much of that is permanent, and how it moves between work and unemployment.
+\paragraph{Earnings and employment.} These five parameters determine what a household \textcolor{red}{is expected to earn} over its life, how much of that is permanent, and how it moves between work and unemployment.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$\varepsilon(j)$, the age profile of efficiency.] A quadratic in age fitted
-to the earnings hump in the PSID and the CPS, so earnings rise and then flatten
-rather than being constant over the life cycle.
+\item[$\varepsilon(j)$, the age profile of efficiency.] \textcolor{red}{The deterministic hump in
+earnings over the life cycle, taken as the exponential of a quadratic in age used by
+Greenwood et al.\ (2025), $\varepsilon(j)=\exp\{-(j-1)^2/1800+(j-1)/30\}$ with $j=1$
+at age $26$. It peaks at age $56$, having risen $65$ percent from age $26$, and then
+falls $4$ percent from the peak to age $65$, the last working age. Without it every
+household would earn the same at every age, and the ages at which households are
+poor, and so at risk of homelessness and of using, would be wrong at both ends of
+working life.}
 
-\item[$\rho_y$ and $\sigma_y$, permanent productivity.] Persistence and
-dispersion in logs, $0.90$ and $0.20$, from Storesletten et al.\ (2004). These
-decide how many households are poor enough to be at risk at all, which is why they
-are not inert even though they are conventional.
+\item[$\rho_y$ and $\sigma_y$, permanent productivity.] \textcolor{red}{Productivity is fixed
+over the life cycle in the benchmark, so what these two do is set the spread of the
+draw a household is born with rather than the path it follows. The dispersion,
+$\sigma_y=0.20$ in logs, is what decides how many households are poor enough to be
+at risk of homelessness and of acquiring a disorder, and it is therefore not inert
+even though it is conventional. The persistence, $\rho_y=0.90$, is inert here for
+exactly that reason: with a fixed draw there is nothing for it to act on. Both are
+from Storesletten et al.\ (2004), and the persistence is carried because relaxing
+the fixed draw is the robustness direction where it would start to matter.}
 
 \item[$\bar\pi^{eu}$, the job separation rate.] Chosen to reproduce the aggregate
 unemployment rate in the BLS Current Population Survey over 2014 to 2024,
 $4.85$ percent, given the
-job finding rate set externally below. Separation is the internal one of the pair
-because the unemployment rate identifies the ratio and the finding rate is the
-better measured half. As it rises more households lose work each year, so the unemployment rate rises with it.
-\item[$\bar\pi^{ue}$, the annual job finding rate.] $0.55$, from Krueger, Cramer
-and Cho (2014).
+job finding rate set externally below. As it rises more households lose work each year, so the unemployment rate rises with it.
+\item[$\bar\pi^{ue}$, the annual job finding rate.] \textcolor{red}{The probability that an
+unemployed household finds work within the year, set at $0.55$ from the exit rates
+Krueger et al.\ (2014) estimate on matched Current Population Survey panels. It is
+the other half of the pair that produces the unemployment rate, and I set this half
+from outside because exit rates are measured directly while the separation rate is
+better identified from the stock. It matters here beyond the unemployment rate,
+because how quickly work returns is what decides whether a spell of unemployment
+turns into a loss of housing: the shorter the expected spell, the less a job loss
+costs and the less it can push a household onto the street or towards using.}
 
 \end{description}
 
@@ -2364,7 +2373,6 @@ reported as a range rather than as a number.
 \item Baggett, T. et al.\ (2013). ``Mortality among homeless adults in Boston.'' \emph{JAMA Internal Medicine} 173(3), 189--95.
 \item Becker, G. S. and K. M. Murphy (1988). ``A Theory of Rational Addiction.'' \emph{Journal of Political Economy} 96(4), 675--700.
 \item Caulkins, J. P. (2001). ``Drug Prices and Emergency Department Mentions for Cocaine and Heroin.'' \emph{American Journal of Public Health} 91(9), 1446--48.
-\item Chambers, M., C. Garriga and D. E. Schlagenhauf (2009). ``Housing Policy and the Progressivity of Income Taxation.'' \emph{Journal of Monetary Economics} 56(8), 1116--34.
 \item Chetty, R., N. Hendren and L. Katz (2016). ``The Effects of Exposure to Better Neighborhoods on Children.'' \emph{American Economic Review} 106(4), 855--902.
 \item Chyn, E. (2018). ``Moved to Opportunity: The Long-Run Effects of Public Housing Demolition on Children.'' \emph{American Economic Review} 108(10), 3028--56.
 \item Collinson, R., J. E. Humphries, N. Mader, D. Reed, D. Tannenbaum and W. van Dijk (2024). ``Eviction and Poverty in American Cities.'' \emph{Quarterly Journal of Economics} 139(1), 57--120.
@@ -2373,7 +2381,6 @@ reported as a range rather than as a number.
 \item Felitti, V. et al.\ (1998). ``Relationship of Childhood Abuse and Household Dysfunction to Many of the Leading Causes of Death in Adults.'' \emph{American Journal of Preventive Medicine} 14(4), 245--58.
 \item Gallet, C. A. (2014). ``Can Price Get the Monkey Off Our Back? A Meta-Analysis of Illicit Drug Demand.'' \emph{Health Economics} 23(1), 55--68.
 \item Goering, P. et al.\ (2014). \emph{National At Home/Chez Soi Final Report}. Mental Health Commission of Canada.
-\item Golub, A. and B. Johnson (2004). ``How much do Manhattan arrestees spend on drugs?'' \emph{Drug and Alcohol Dependence} 76(3), 235--46.
 \item Greenwood, J., N. Guner and K. A. Kopecky (2025). ``The Downward Spiral: A Macroeconomic Analysis of the Opioid Crisis.'' Working paper.
 \item Gross, M. and E. J. Baron (2022). ``Temporary Stays and Persistent Gains: The Causal Effects of Foster Care.'' \emph{American Economic Journal: Applied Economics} 14(2), 170--99.
 \item Grossman, M. and F. Chaloupka (1998). ``The demand for cocaine by young adults: a rational addiction approach.'' \emph{Journal of Health Economics} 17(4), 427--74.
@@ -2400,7 +2407,6 @@ reported as a range rather than as a number.
 \item Olmstead, T. et al.\ (2015). ``The price elasticity of demand for heroin.'' \emph{Journal of Health Economics} 41, 59--71.
 \item Oreopoulos, P., M. Page and A. H. Stevens (2008). ``The Intergenerational Effects of Worker Displacement.'' \emph{Journal of Labor Economics} 26(3), 455--83.
 \item Padgett, D. K., L. Gulcur and S. Tsemberis (2006). ``Housing First Services for People Who Are Homeless with Co-Occurring Serious Mental Illness and Substance Abuse.'' \emph{Research on Social Work Practice} 16(1), 74--83.
-\item Rotberg, S. and J. B. Steinberg (2024). ``Mortgage interest deductions? Not a bad idea after all.'' \emph{Journal of Monetary Economics} 144, 103551.
 \item Saffer, H. and F. Chaloupka (1999). ``The demand for illicit drugs.'' \emph{Economic Inquiry} 37(3), 401--11.
 \item Tsemberis, S., L. Gulcur and M. Nakae (2004). ``Housing First, Consumer Choice, and Harm Reduction for Homeless Individuals With a Dual Diagnosis.'' \emph{American Journal of Public Health} 94(4), 651--56.
 \item Vaillant, G. (1995). \emph{The Natural History of Alcoholism Revisited}. Harvard University Press.

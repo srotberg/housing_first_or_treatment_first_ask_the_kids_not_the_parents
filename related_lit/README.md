@@ -15,7 +15,7 @@ Papers cited in the note or used to set a parameter. Filenames are
 
 | file | what it is |
 |---|---|
-| `Costantini_2025_Housing_First_or_Treatment_First_VA.pdf` | Costantini, *Housing First or Treatment First? Evidence from the VA's homelessness programs* (Nov 2025). Shares this paper's title and question, with quasi-experimental VA evidence. AE A14. |
+| `Costantini_2025_Housing_First_or_Treatment_First_VA.pdf` | Costantini, *Housing First or Treatment First? Evidence from the VA's homelessness programs* (Nov 2025). Shares this paper's question, and the title this paper used before, with quasi-experimental VA evidence. AE A14. |
 
 ## Mortality, used to set the hazard multipliers
 

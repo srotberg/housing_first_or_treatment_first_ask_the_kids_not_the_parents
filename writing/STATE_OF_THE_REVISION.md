@@ -1,4 +1,4 @@
-# Housing First or Treatment First — state of the revision
+# Housing First, Children Later — state of the revision
 
 RED-D-26-00078. What the model now is, how it is calibrated in two stages, what it is
 validated against, which referee comment each change answers, and what is still open.

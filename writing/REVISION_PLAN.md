@@ -1,4 +1,4 @@
-# Housing First or Treatment First? — Revision Plan
+# Housing First, Children Later — Revision Plan
 
 RED-D-26-00078. Rejected, with an explicit invitation to resubmit "an almost new paper" to
 the same AE and the same referees.

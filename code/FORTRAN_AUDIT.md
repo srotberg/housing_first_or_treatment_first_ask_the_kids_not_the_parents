@@ -52,8 +52,8 @@ utility cost in `calculate_flow_utility`, `g` in the recovery row of
 `optimize_frac_spent_on_addiciton`, a policy function to store it, and a read in
 the distribution loop and the transition.
 
-**This mattered more than the other absences on this list.** The paper is called
-Housing First or Treatment First, `g` is the parameter through which the entire
+**This mattered more than the other absences on this list.** The paper turns on the comparison between
+Housing First and Treatment First, `g` is the parameter through which the entire
 effect of one of the two policies runs, and the note calibrates the utility cost
 `bar_tau_u` to a treatment take up rate of 24 per cent. None of that was in the
 model that produces the numbers.
