@@ -2,8 +2,11 @@
 % CALIBRATION, so they must be refreshed whenever the stylized model is
 % recalibrated. They were hardcoded here and went stale once already, reporting
 % the theta = 0.20 calibration after theta had moved to 0.23.
-\footnotesize
-\begin{tabular}{@{}lL{5.0cm}L{5.0cm}rrr@{}}
+\footnotesize\setlength{\tabcolsep}{4pt}
+% Plain l columns, not L{}, so no row can wrap. Measured at \footnotesize the six
+% columns need 38.6 + 133.6 + 158.3 + 26.4 + 26.4 + 27.9 = 411.3pt of content, and
+% five gaps at 4pt of \tabcolsep add 40pt, for 451.3pt inside a 469.8pt text block.
+\begin{tabular}{@{}lllrrr@{}}
 \toprule
 Parameter & Description & Target moment & Data & Model & Value \\
 \midrule
