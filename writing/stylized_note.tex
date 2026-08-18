@@ -51,11 +51,276 @@
 
 \begin{center}
 {\Large\bfseries Housing First or Treatment First?}\\[0.35em]
+{\Large\bfseries\color{red}Externalities and the Case for Conditionality}\\[0.35em]
 {\large A stylized model, and the quantitative model behind it}\\[0.35em]
 \today
 \end{center}
 \vspace{0.8em}
 
+
+%======================================================================
+\section{Introduction}\label{sec:intro}
+
+{\color{red}
+On a single night in January 2024 the Department of Housing and Urban
+Development's point in time count found $771{,}480$ people homeless in the United
+States, the largest number since the count began and eighteen percent above the
+year before. In July 2025 the federal government moved decisively to one side of
+a long argument about what to do about it. An executive order redirected federal
+homelessness funding away from Housing First, instituted sobriety requirements in
+federally funded housing and homelessness programmes, and encouraged the civil
+commitment of people judged unable to care for themselves; the 2026 grant
+competition cut permanent supportive housing from about three billion dollars to
+$2.4$ billion and moved $1.3$ billion into transitional programmes, against about
+$218$ million the year before. Whether housing assistance should be conditioned on
+sobriety is no longer an academic question.
+}
+
+{\color{red}
+The argument is usually framed as a contest between two behavioural claims.
+Critics of Housing First say that unconditional assistance is moral hazard:
+guaranteeing housing whatever a household does weakens the incentive to stay
+sober and attached to the labour market, so use and disorder rise. Critics of
+Treatment First say that conditionality delays stable housing for exactly the
+households least able to wait, worsens their employment, and makes recovery
+harder, since recovery is harder on the street. Both claims are true about
+behaviour, and the experimental literature has not settled between them.
+Randomised trials of Housing First find large and persistent gains in housing
+stability and mixed to null effects on substance use (Tsemberis, Gulcur and
+Nakae, 2004; Padgett, Gulcur and Tsemberis, 2006; Larimer et al., 2009; Goering
+et al., 2014; Aubry et al., 2016), but they run six to twenty four months and
+cannot speak to long run behaviour, to housing markets, or to the budget.
+}
+
+{\color{red}
+This paper starts from the observation that the debate as framed cannot be
+settled, because the moral hazard both sides argue about is not an inefficiency.
+If households are forward looking and face the true hazard of acquiring a
+substance use disorder, which is what the evidence supports (Lundborg and
+Lindgren, 2002; Greenwood, Guner and Kopecky, 2025), then at the same generosity
+and the same cost Housing First weakly dominates Treatment First for every
+household. The two policies differ only in whether the voucher is withheld in one
+state, so the budget set under Housing First is weakly larger everywhere and
+strictly larger somewhere, and a household under Housing First can reproduce its
+Treatment First outcome exactly by declining to use. Conditionality removes an
+option from an optimiser and gives nothing back. The extra use that Housing First
+induces is real, and this paper measures it at +1.26 percentage points, but it is
+a household optimally taking a risk it is now better able to bear rather than a
+wedge for policy to close. It is not, on its own, an argument for conditionality.
+}
+
+{\color{red}
+The case for Treatment First therefore has to rest on something outside the
+household's own objective, and this paper insists on keeping three such things
+apart, because the debate does not. The first is a genuine externality: a cost
+the household imposes on someone whose welfare it does not fully count. The
+second is the distortion from the taxes that pay for the programme, since a
+policy that costs more to run raises the rate everybody faces. The third is the
+programme's own design, since rationing a voucher by lottery is not the same
+instrument as rationing it by conduct. Only the first is an externality. A
+conclusion that leans on the second or the third is a different claim about a
+different object, and conflating them is what allows the same evidence to be read
+either way.
+}
+
+{\color{red}
+The externality that decides the comparison here is intergenerational. A
+household that acquires a disorder, or that ends up on the street, passes a worse
+productivity draw to the child who replaces it, and it counts only a fraction
+$\omega$ of that loss. Each link in that chain is measured. Parental alcohol or
+drug abuse is recorded as a circumstance at removal for $38$ percent of children
+entering out of home care in 2025, against $18.5$ percent in 2000, and in FY2017
+that was $96{,}400$ children, or $36$ percent of all removals; children of a parent
+with a disorder are themselves two to four times as likely to acquire one
+(McGovern et al., 2023). Parental shocks transmit to the child's own earnings:
+children whose fathers were displaced by a firm closure earn about $9$ percent
+less as adults (Oreopoulos, Page and Stevens, 2008). And housing is one of the
+environments that does the transmitting: children displaced by Chicago's public
+housing demolitions earned $16$ percent more a year as adults (Chyn, 2018), and a
+move to a lower poverty neighbourhood before age thirteen raises adult earnings by
+$31$ percent (Chetty, Hendren and Katz, 2016). What is a private problem for the
+parent is a childhood for the child, and the child does not choose it.
+}
+
+{\color{red}
+A second externality runs through the aggregate rather than through the family:
+households dislike homelessness around them whether or not it is their own child's,
+which is what makes the homelessness rate a genuine fixed point rather than
+accounting, and both policies move it (Loubi\`ere et al., 2020). It turns out to be
+much the smaller of the two, and saying so is part of the point: once the channels
+are separated, one of them carries the result.
+}
+
+{\color{red}
+The paper makes the argument in two models. A stylized two period model, in
+Section~\ref{sec:stylized}, is stripped to the point where the dominance result
+above can be proved rather than computed, and where the externality that overturns
+it can be switched on alone with everything else held fixed. A quantitative general
+equilibrium life cycle model, in Section~\ref{sec:full}, then puts the same
+mechanism in an environment that can be taken to the data: six state variables and
+fifty five parameters, with endogenous homelessness, drug use, disorder, recovery,
+serious mental illness, employment, mortality, a drug market that clears, a rental
+market with an empirically disciplined supply elasticity, and a government budget
+that balances. Both models are calibrated to United States data, and the
+calibration is set out parameter by parameter in Section~\ref{sec:fullcal}.
+}
+
+{\color{red}
+One feature of the environment is worth flagging early because it decides who the
+two policies treat differently. In the data, drug use is concentrated at the bottom
+of the income distribution. Drugs here are a luxury good bought at a price, so the
+share of income spent on them rises with income and, left alone, the environment
+would concentrate use at the top. Mortality risk reverses the gradient: acquiring a
+disorder truncates the expected continuation value of life, and that loss rises
+faster than income does, so in equilibrium use concentrates at the bottom without
+any assumed heterogeneity in tastes conditional on income. The households whose
+behaviour separates the two policies are therefore the poor ones, which is also
+where the child externality is largest.
+}
+
+{\color{red}
+The stylized model delivers the result in a form that can be read off. At universal
+cover and with no externality, 2.7 percent of households are strictly worse
+off under Treatment First and none is better off, so the private cost of
+conditionality is 0.013 percent of consumption in the aggregate: small, because
+so few households are affected, and unambiguous in sign. Switching the externality
+on, conditionality prevents 0.217 percentage points of disorder cases, and each
+prevented case spares one child 54.3 percent of consumption. The product is
+0.118 percent, which is 8.9 times the private loss. Housing First is
+better for every household taken one at a time, and worse once one counts the
+children of the households it fails to deter. The ranking survives every value of
+the transmission penalty considered except zero, where by construction there is no
+externality to price.
+}
+
+{\color{red}
+The quantitative model is what settles whether that ranking survives in an
+environment that fits the data, where the drug price responds to the number of
+users, the rent responds to voucher demand, the tax rate responds to the programme's
+cost, and the two policies can be separated on generosity as well as on
+conditionality. It is also what allows the short run and the long run to be
+distinguished, which matters for reading the experimental evidence: if housing
+outcomes respond immediately to voucher design while disorder adjusts slowly,
+short trials are well powered to detect the first and not the second whatever the
+long run effect turns out to be.
+}
+
+
+%======================================================================
+\section{Related literature}\label{sec:literature}
+
+{\color{red}
+Five literatures meet in this paper. Four of them supply the machinery and are the
+ones the previous version of this project drew on; the fifth supplies the
+motivation and is the one the argument above turns on.
+}
+
+{\color{red}
+\paragraph{Randomised trials of Housing First.} A large empirical literature
+evaluates programmes that provide rapid housing without conditioning on sobriety,
+and finds large and persistent improvements in housing stability and reductions in
+shelter and other public service use (Tsemberis, Gulcur and Nakae, 2004; Padgett,
+Gulcur and Tsemberis, 2006; Larimer et al., 2009; Goering et al., 2014; Aubry et
+al., 2016). Evidence on substance use is mixed: most studies find no statistically
+significant change, and some report modest reductions in alcohol related outcomes.
+These evaluations typically measure outcomes over six to twenty four months and
+rarely beyond three years, which is short against a recovery process that Vaillant
+(1995) documents as gradual and protracted. The model here offers a structural
+reading of that pattern rather than a dismissal of it: housing responds immediately
+to voucher design and disorder adjusts slowly, so a short trial is well powered for
+the first and not the second whatever the long run effect is. The deeper limitation
+is not power but scope. A trial randomises households within a fixed environment,
+and holds fixed exactly the things that decide the welfare comparison: the price of
+the drug, the rent, the tax rate, and the outcomes of children who are not in the
+sample.
+}
+
+{\color{red}
+\paragraph{Economic models of drug use.} Modelling use as forward looking
+optimisation dates to Becker and Murphy (1988), and the assumption is empirically
+defensible at the margin where policy operates. Both users and non users hold risk
+perceptions close to the objective probabilities (Lundborg and Lindgren, 2002), and
+Greenwood, Guner and Kopecky (2025), who allow perceived and true addiction risk to
+differ, find the model implied beliefs close to the truth. Drug demand responds to
+price at the participation margin even for drugs as habit forming as heroin and
+cocaine, with long run responses larger than short run ones (van Ours, 1995; Saffer
+and Chaloupka, 1999; Caulkins, 2001; Gallet, 2014), which is the signature of
+forward looking behaviour rather than myopia and which the calibration here is
+disciplined to reproduce. A separate literature emphasises temptation and dynamic
+inconsistency (Laibson, 1997; Gruber and K\H{o}szegi, 2001), under which
+present biased households over consume relative to their own long run preferences
+and corrective policy has a rationale with no externality at all. That literature is
+complementary here rather than opposed, and it cuts in the same direction: a
+present biased household would welcome a sobriety requirement as a commitment
+device, so introducing it would strengthen the case for conditionality rather than
+weaken it. The dominance result of Section~\ref{sec:nox} is therefore the hardest
+case for Treatment First, not the easiest, which is why the paper is written around
+it.
+}
+
+{\color{red}
+\paragraph{Structural models of homelessness.} The paper builds directly on
+\.{I}mrohoro\u{g}lu and Zhao (2022), who model homelessness as a rational
+response to income risk, mental health shocks, housing costs and housing policy.
+In that framework housing policy reaches homelessness through income and housing
+costs alone, so a sobriety contingent policy has no behavioural margin to act on.
+Adding endogenous use, disorder and recovery, together with state dependent
+mortality, creates the margin: the same voucher that insures a household also
+changes what using costs it, and the disorder it may acquire then feeds back into
+employment, housing and survival. Abramson (forthcoming) makes the complementary
+point on the other side of the market, showing that eviction policy changes landlord
+screening and rents and so changes who becomes homeless in equilibrium. Here the
+causation runs the other way as well: employment and disorder cost a household its
+housing, and losing it worsens employment, raises mortality and slows recovery.
+}
+
+{\color{red}
+\paragraph{What a childhood transmits.} This is the literature the paper's
+motivation now rests on, and it is the one the earlier version of this project did
+not use. Three links have to hold for the argument to work, and each is estimated
+separately. That a parent's disorder changes the childhood is documented at scale in
+the administrative record of the child welfare system, where parental substance
+abuse is now recorded at more than a third of removals, and in the epidemiology,
+where household substance abuse is one of the adverse childhood experiences of
+Felitti et al.\ (1998) and children of a parent with a disorder are two to four
+times as likely to acquire one (McGovern et al., 2023). Whether removal itself helps
+or harms is contested, and nothing here needs it settled: Doyle (2007) finds
+children on the margin of placement do better left at home, while Gross and Baron
+(2022) find placement improved safety and schooling. That a parental shock transmits
+to the child's own earnings is estimated well outside the substance literature, by
+Oreopoulos, Page and Stevens (2008) on paternal job displacement and by Nilsson
+(2017) on an alcohol availability experiment. And that housing is one of the
+environments doing the transmitting is the contribution of Chyn (2018) and Chetty,
+Hendren and Katz (2016), with Collinson et al.\ (2024) supplying the adult leg from
+eviction to homelessness. What this paper adds is not another estimate but a price:
+it puts these magnitudes inside an equilibrium model where the parent's use decision
+is endogenous, so the transmitted loss becomes a quantity that policy moves rather
+than a coefficient.
+}
+
+{\color{red}
+\paragraph{Rental supply and general equilibrium.} The rental market follows
+Chambers, Garriga and Schlagenhauf (2009), with the supply elasticity disciplined by
+the macro housing literature (Rotberg and Steinberg, 2024). This is not decoration.
+Under perfectly elastic supply, expanding voucher coverage would leave rents
+unchanged, which understates the fiscal cost of universal Housing First and
+overstates its welfare gain. An upward sloping rental supply is what makes the
+comparison across regimes a comparison of equilibria rather than of transfers.
+}
+
+{\color{red}
+\paragraph{In a nutshell.} The trials establish that housing stability responds to
+policy but cannot price what happens to anyone outside the sample. The rational
+addiction literature models the use decision but abstracts from housing and from
+children. The structural homelessness literature delivers a housing market
+equilibrium but has no drug margin for conditionality to act on. The transmission
+literature measures what a childhood costs but takes the parent's behaviour as
+given. This paper's contribution is to put them in one framework and then to insist
+on a distinction none of them needs on its own: that the moral hazard which
+dominates the policy debate is not a reason for conditionality, and that whatever
+case exists has to be made on the externality, on the tax, or on the design, one at
+a time and with the three kept apart.
+}
 
 %======================================================================
 \section{A stylized model}\label{sec:stylized}
@@ -1330,37 +1595,19 @@ y_{\text{child}}\ \sim\ \Omega_y\ \text{ scaled by }\
 (1-\delta_h)^{\mathbf{1}\{\text{parent was homeless}\}} .
 \end{equation}
 
-{\color{red}These two penalties carry the paper's central mechanism, so it is worth
-setting out the evidence for each of the three links they compress rather than
-asserting the reduced form.
-
-\emph{A parent's disorder changes the childhood.} It does so at scale and through a
-channel that is measured: parental alcohol or drug abuse is recorded as a
-circumstance at removal for $38$ percent of children entering out of home care in
-2025, against $18.5$ percent in 2000, and in FY2017 that was $96{,}400$ children, or
-$36$ percent of all removals (AFCARS). Whether removal itself helps or harms is
-contested, and the paper does not need to take a side: Doyle (2007) finds that
-children on the margin of placement do better left at home, while Gross and Baron
-(2022) find that placement improved safety and schooling. $\delta_d$ is a reduced
-form for the whole bundle of that childhood, not for removal alone.
-
-\emph{A parental shock transmits to the child's own earnings.} This is the step the
-reduced form actually assumes, and it is estimated outside the substance use
-literature entirely: children whose fathers were displaced by a firm closure earn
-about $9$ percent less as adults (Oreopoulos, Page and Stevens, 2008). For the
-substance channel specifically, Nilsson (2017) uses a Swedish experiment that
-sharply raised alcohol availability and finds substantially worse adult earnings
-and schooling among the cohorts exposed in utero, though that is prenatal exposure
-rather than the childhood environment $\delta_d$ describes.
-
-\emph{Housing is one of the environments that does the transmitting.} Children
-displaced by Chicago's public housing demolitions were $9$ percent more likely to
-be employed as adults and earned $16$ percent more a year, and those who moved
-before thirteen earned \$3{,}036 more at age $26$ (Chyn, 2018); Chetty et al.\
-(2016) put the gain from a move to a lower poverty neighbourhood before thirteen at
-$31$ percent, which is the figure $\delta_h$ is set to. On the adult side,
-eviction lowers earnings and raises homelessness in linked administrative data for
-Cook County and New York City (Collinson et al., 2024).}
+{\color{red}The evidence behind both penalties is set out in
+Section~\ref{sec:intro} and placed against the literature in
+Section~\ref{sec:literature}, and it is worth saying here only what the
+functional form takes from it. Three separate links are being compressed into two
+numbers: that a parent's disorder changes the childhood, that a parental shock
+transmits to the child's own adult earnings, and that housing is one of the
+environments doing the transmitting. Only the last is measured as an earnings
+effect of the right kind, which is why $\delta_h$ is set directly to the $31$
+percent of Chetty, Hendren and Katz (2016) while $\delta_d$ is set to the value
+that reproduces the disorder ratio of McGovern et al.\ (2023). Neither is a
+removal effect: whether foster placement itself helps or harms is contested, and
+$\delta_d$ is a reduced form for the whole bundle of that childhood rather than for
+any one intervention in it.}
 
 
 \subsection{Competitive equilibrium}
@@ -2047,37 +2294,53 @@ reported as a range rather than as a number.
 {\footnotesize
 \setlength{\parindent}{0em}
 \begin{list}{}{\setlength{\leftmargin}{1.5em}\setlength{\itemindent}{-1.5em}\setlength{\itemsep}{0.35em}\setlength{\parsep}{0em}}
+\item Abramson, B. (forthcoming). ``The Equilibrium Effects of Eviction Policies.'' \emph{Journal of Finance}.
 \item AFCARS. \emph{Adoption and Foster Care Analysis and Reporting System}, US Department of Health and Human Services, Administration for Children and Families, FY2017 and FY2025 releases.
 \item Altonji, J., F. Hayashi and L. Kotlikoff (1997). ``Parental Altruism and Inter Vivos Transfers: Theory and Evidence.'' \emph{Journal of Political Economy} 105(6), 1121--66.
+\item Aubry, T. et al.\ (2016). ``A Randomized Controlled Trial of the Effectiveness of Housing First in a Small Canadian City.'' \emph{BMC Public Health} 19(1), 274--81.
 \item Baggett, T. et al.\ (2013). ``Mortality among homeless adults in Boston.'' \emph{JAMA Internal Medicine} 173(3), 189--95.
+\item Becker, G. S. and K. M. Murphy (1988). ``A Theory of Rational Addiction.'' \emph{Journal of Political Economy} 96(4), 675--700.
+\item Caulkins, J. P. (2001). ``Drug Prices and Emergency Department Mentions for Cocaine and Heroin.'' \emph{American Journal of Public Health} 91(9), 1446--48.
+\item Chambers, M., C. Garriga and D. E. Schlagenhauf (2009). ``Housing Policy and the Progressivity of Income Taxation.'' \emph{Journal of Monetary Economics} 56(8), 1116--34.
 \item Chetty, R., N. Hendren and L. Katz (2016). ``The Effects of Exposure to Better Neighborhoods on Children.'' \emph{American Economic Review} 106(4), 855--902.
 \item Chyn, E. (2018). ``Moved to Opportunity: The Long-Run Effects of Public Housing Demolition on Children.'' \emph{American Economic Review} 108(10), 3028--56.
 \item Collinson, R., J. E. Humphries, N. Mader, D. Reed, D. Tannenbaum and W. van Dijk (2024). ``Eviction and Poverty in American Cities.'' \emph{Quarterly Journal of Economics} 139(1), 57--120.
 \item Degenhardt, L. et al.\ (2011). ``Mortality among regular or dependent users of heroin and other opioids: a systematic review.'' \emph{Addiction} 106(1), 32--51.
 \item Doyle, J. J. (2007). ``Child Protection and Child Outcomes: Measuring the Effects of Foster Care.'' \emph{American Economic Review} 97(5), 1583--1610.
 \item Felitti, V. et al.\ (1998). ``Relationship of Childhood Abuse and Household Dysfunction to Many of the Leading Causes of Death in Adults.'' \emph{American Journal of Preventive Medicine} 14(4), 245--58.
+\item Gallet, C. A. (2014). ``Can Price Get the Monkey Off Our Back? A Meta-Analysis of Illicit Drug Demand.'' \emph{Health Economics} 23(1), 55--68.
+\item Goering, P. et al.\ (2014). \emph{National At Home/Chez Soi Final Report}. Mental Health Commission of Canada.
 \item Golub, A. and B. Johnson (2004). ``How much do Manhattan arrestees spend on drugs?'' \emph{Drug and Alcohol Dependence} 76(3), 235--46.
+\item Greenwood, J., N. Guner and K. A. Kopecky (2025). ``The Downward Spiral: A Macroeconomic Analysis of the Opioid Crisis.'' Working paper.
 \item Gross, M. and E. J. Baron (2022). ``Temporary Stays and Persistent Gains: The Causal Effects of Foster Care.'' \emph{American Economic Journal: Applied Economics} 14(2), 170--99.
 \item Grossman, M. and F. Chaloupka (1998). ``The demand for cocaine by young adults: a rational addiction approach.'' \emph{Journal of Health Economics} 17(4), 427--74.
+\item Gruber, J. and B. K\H{o}szegi (2001). ``Is Addiction `Rational'? Theory and Evidence.'' \emph{Quarterly Journal of Economics} 116(4), 1261--1303.
 \item Gutwinski, S., S. Schreiter, K. Deutscher and S. Fazel (2021). ``The prevalence of mental disorders among homeless people in high-income countries: An updated systematic review and meta-regression analysis.'' \emph{PLOS Medicine} 18(8), e1003750.
 \item Guvenen, F. et al.\ (2023). ``Lifetime Earnings in the United States over Six Decades.'' \emph{American Economic Journal: Applied Economics} 14(4), 446--79.
-\item Heathcote, J., F. Perri and G. Violante (2010). ``Unequal We Stand.'' \emph{Review of Economic Dynamics} 13(1), 15--51.
 \item Heathcote, J., K. Storesletten and G. Violante (2017). ``Optimal Tax Progressivity: An Analytical Framework.'' \emph{Quarterly Journal of Economics} 132(4), 1693--1754.
+\item Heathcote, J., F. Perri and G. Violante (2010). ``Unequal We Stand.'' \emph{Review of Economic Dynamics} 13(1), 15--51.
 \item Hjorth\o j, C. et al.\ (2023). ``Excess mortality among people with substance use disorders.'' \emph{World Psychiatry} 22(2).
 \item Hser, Y. et al.\ (2017). ``Mortality among substance-using mothers and fathers.'' \emph{Addiction} 112(11), 2011--18.
-\item Nilsson, J. P. (2017). ``Alcohol Availability, Prenatal Conditions, and Long-Term Economic Outcomes.'' \emph{Journal of Political Economy} 125(4), 1149--1207.
-\item Oreopoulos, P., M. Page and A. H. Stevens (2008). ``The Intergenerational Effects of Worker Displacement.'' \emph{Journal of Labor Economics} 26(3), 455--83.
 \item \.{I}mrohoro\u{g}lu, A. and K. Zhao (2022). ``Homelessness.'' Working paper.
+\item Laibson, D. (1997). ``Golden Eggs and Hyperbolic Discounting.'' \emph{Quarterly Journal of Economics} 112(2), 443--77.
+\item Larimer, M. E. et al.\ (2009). ``Health Care and Public Service Use and Costs Before and After Provision of Housing for Chronically Homeless Persons With Severe Alcohol Problems.'' \emph{JAMA} 301(13), 1349--57.
 \item Larney, S. et al.\ (2020). ``All-cause and cause-specific mortality among people using extramedical opioids: a systematic review and meta-analysis.'' \emph{JAMA Psychiatry} 77(5), 493--502.
 \item Loubi\`ere, S. et al.\ (2020). ``Europeans' willingness to pay for ending homelessness: A contingent valuation study.'' \emph{Social Science \& Medicine} 247, 112802.
+\item Lundborg, P. and B. Lindgren (2002). ``Do they know what they are doing? Risk perceptions and smoking behaviour among Swedish teenagers.'' \emph{Journal of Risk and Uncertainty} 25(3), 241--63.
 \item McGovern, R. et al.\ (2023). ``Maternal and paternal substance use and child substance use.'' \emph{Addiction} 118(5).
 \item Milby, J., J. Schumacher, D. Wallace, M. Freedman and R. Vuchinich (2005). ``To house or not to house: the effects of providing housing to homeless substance abusers in treatment.'' \emph{American Journal of Public Health} 95(7), 1259--65.
 \item Murrie, B., J. Lappin, M. Large and G. Sara (2020). ``Transition of Substance-Induced, Brief, and Atypical Psychoses to Schizophrenia: A Systematic Review and Meta-analysis.'' \emph{Schizophrenia Bulletin} 46(3), 505--516.
 \item Nielsen, S. M., N. B. Toftdahl, M. Nordentoft and C. Hjorthoj (2017). ``Association between alcohol, cannabis, and other illicit substance abuse and risk of developing schizophrenia: a nationwide population based register study.'' \emph{Psychological Medicine} 47(9), 1668--1677.
+\item Nilsson, J. P. (2017). ``Alcohol Availability, Prenatal Conditions, and Long-Term Economic Outcomes.'' \emph{Journal of Political Economy} 125(4), 1149--1207.
 \item Olfson, M. et al.\ (2015). ``Premature mortality among adults with schizophrenia in the United States.'' \emph{JAMA Psychiatry} 72(12), 1172--81.
 \item Olmstead, T. et al.\ (2015). ``The price elasticity of demand for heroin.'' \emph{Journal of Health Economics} 41, 59--71.
+\item Oreopoulos, P., M. Page and A. H. Stevens (2008). ``The Intergenerational Effects of Worker Displacement.'' \emph{Journal of Labor Economics} 26(3), 455--83.
+\item Padgett, D. K., L. Gulcur and S. Tsemberis (2006). ``Housing First Services for People Who Are Homeless with Co-Occurring Serious Mental Illness and Substance Abuse.'' \emph{Research on Social Work Practice} 16(1), 74--83.
+\item Rotberg, S. and J. B. Steinberg (2024). ``Mortgage interest deductions? Not a bad idea after all.'' \emph{Journal of Monetary Economics} 144, 103551.
 \item Saffer, H. and F. Chaloupka (1999). ``The demand for illicit drugs.'' \emph{Economic Inquiry} 37(3), 401--11.
+\item Tsemberis, S., L. Gulcur and M. Nakae (2004). ``Housing First, Consumer Choice, and Harm Reduction for Homeless Individuals With a Dual Diagnosis.'' \emph{American Journal of Public Health} 94(4), 651--56.
 \item Vaillant, G. (1995). \emph{The Natural History of Alcoholism Revisited}. Harvard University Press.
+\item van Ours, J. C. (1995). ``The Price Elasticity of Hard Drugs: The Case of Opium in the Dutch East Indies, 1923--1938.'' \emph{Journal of Political Economy} 103(2), 261--79.
 \item Viscusi, W. K. and J. Aldy (2003). ``The Value of a Statistical Life.'' \emph{Journal of Risk and Uncertainty} 27(1), 5--76.
 \end{list}
 
