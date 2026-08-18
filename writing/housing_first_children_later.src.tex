@@ -2514,6 +2514,104 @@ curvature $\nu_2$. Of these only $g$ carries a headline result, and it is
 reported as a range rather than as a number.
 
 
+%======================================================================
+\section{\textcolor{red}{The welfare criterion}}\label{sec:cev}
+
+\textcolor{red}{\emph{Plan for this section, not its content.} Every number in the
+experiments below is a consumption equivalent variation, and this section will define
+it exactly rather than leave a reader to guess which of several conventions is in
+use. What it has to contain:}
+
+\begin{itemize}\setlength{\itemsep}{0.25em}
+\item \textcolor{red}{\emph{The object.} The variation $\Delta$ that solves
+$V^{\text{bench}}\big((1+\Delta)c\big)=V^{\text{cf}}(c)$ for a newborn, so that a
+positive number means the counterfactual is worth that much of a permanent
+consumption gain. Two horizons, as set out in \texttt{code/EXPERIMENT\_PLAN.md}: a
+newborn on the date of implementation, who lives through the transition, and a
+newborn in the new steady state. Both are the same object, which is what makes them
+comparable.}
+\item \textcolor{red}{\emph{Why there is no closed form.} Flow utility here is not
+homothetic in consumption. The flow value of being alive $\aleph$ is additive, so it
+does not scale; the drug enters through $(v+b)$ with a subsistence shifter, so
+scaling consumption does not scale the drug term proportionately; and the food stamp
+floor binds for exactly the households the paper is about. The usual closed form for
+a constant relative risk aversion economy therefore does not apply, and $\Delta$ is
+solved numerically. The section will say so and give the solve.}
+\item \textcolor{red}{\emph{What is scaled and what is not.} The household's own
+consumption is scaled at every date and state. The child term in
+equation~\eqref{eq:fbellman} is a difference of newborn values, so the scaling has to
+be applied consistently inside it; whether the child's consumption is scaled too is a
+choice, it changes the number, and the section will state which is used and report
+the other.}
+\item \textcolor{red}{\emph{The aggregate disamenity.} $\kappa_x H$ is additive and
+does not scale with consumption either, so it enters the level of welfare without
+entering the scaling. That is why it can be switched off as a rung of the ladder
+without disturbing the rest of the decomposition.}
+\end{itemize}
+
+%======================================================================
+\section{\textcolor{red}{Experiments}}\label{sec:experiments}
+
+\textcolor{red}{\emph{Plan for this section, not its content.} Four steps, set out in
+full in \texttt{code/EXPERIMENT\_PLAN.md} and summarised here so the paper's structure
+is legible:}
+
+\begin{enumerate}\setlength{\itemsep}{0.25em}
+\item \textcolor{red}{\emph{The optimal generosity of each policy, separately}, over
+eligibility, the share of rent covered, and the probability of receipt, the last
+varied continuously so the question of whether the corner is optimal can be answered
+rather than assumed.}
+\item \textcolor{red}{\emph{Each optimum against the other policy at the same
+generosity}, which is what isolates conditionality from generosity. Both optima,
+because the optimal Housing First design is not the optimal Treatment First design.
+Reported under both readings of "the same": same design, and same cost.}
+\item \textcolor{red}{\emph{Transition against the long run}, for whichever policy
+wins, because a trial that runs six to twenty four months sees the first periods of a
+transition and not a steady state.}
+\item \textcolor{red}{\emph{The channel shutdown ladder at the optimum}, in both
+horizons: the child externality, the aggregate externality, the labour supply
+response that carries the tax distortion, the drug price response, and the cost of
+administering the test. The rungs do not commute, so a fixed order is reported
+together with the interaction term.}
+\end{enumerate}
+
+%======================================================================
+\section{\textcolor{red}{Discussion}}\label{sec:discussion}
+
+\textcolor{red}{\emph{Plan for this section, not its content.} Four things to say once
+the numbers exist:}
+
+\begin{itemize}\setlength{\itemsep}{0.25em}
+\item \textcolor{red}{\emph{What the trials can and cannot settle.} If the ladder
+shows the externality nearly absent at implementation and growing with the horizon
+while the tax distortion bites immediately, that is the reconciliation: the trials
+are well powered for the margin that moves first and silent on the one that decides
+the ranking.}
+\item \textcolor{red}{\emph{Which channel carries the result.} The paper insists on
+separating an externality from the distortions, and the ladder is what makes that
+separation a number rather than a claim. If the aggregate disamenity turns out to be
+small next to the intergenerational one, saying so is part of the point.}
+\item \textcolor{red}{\emph{What would overturn it.} The three undisciplined
+parameters above, and the value of $\omega$, are where a reader should push. Report
+what each would have to be for the ranking to flip.}
+\item \textcolor{red}{\emph{What the model does not have.} Neighbourhood effects on
+the child are priced through $\delta_h$ rather than modelled spatially; treatment
+capacity is not rationed; and the detection rates are set rather than estimated.}
+\end{itemize}
+
+%======================================================================
+\section{\textcolor{red}{Conclusion}}\label{sec:conclusion}
+
+\textcolor{red}{\emph{Plan for this section, not its content.} Short. The moral hazard
+the debate argues about is real and is not an inefficiency, so it cannot carry the
+case for conditionality on its own. The case has to rest on an externality, on the
+distortions that fund the programme, or on the programme's own distortions, and those
+are three different claims. This paper prices the first and finds it
+intergenerational: what a parent's disorder and homelessness cost the child who
+replaces it. Close on what that implies for a policy debate currently being settled by
+executive order.}
+
+
 \section*{References}
 
 {\normalsize
