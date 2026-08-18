@@ -133,6 +133,39 @@
         real(8), parameter :: difference_in_perceived_of_becoming_addicted_if_experiment=&
             (1-perceived_probability_lower)*1+perceived_probability_lower*0.5
         integer, parameter :: voucher_conditional_on_clean=0
+
+        ! ---- CONDITIONALITY IS NOT PERFECTLY ENFORCED -------------------------
+        ! Equation (32) of the note. Under Treatment First a household that meets
+        ! the condition still loses the voucher with the false positive rate, and
+        ! one that fails it still keeps the voucher with one minus the detection
+        ! rate. Both are ZERO IN THE BENCHMARK and cannot bite there, because
+        ! voucher_conditional_on_clean is zero and nothing is conditional; they
+        ! are the counterfactual's parameters and are set with it.
+        !
+        ! These two are what separate the quantitative model's logic from the
+        ! stylized model's, where conditionality is perfectly enforced and
+        ! perfectly met. Here some households fail the condition because they
+        ! cannot get clean and some fail it because the test is wrong, and those
+        ! two groups are the empirical case for Housing First.
+        real(8) :: probability_of_detection=0.9d0
+        real(8) :: probability_of_false_positive=0.05d0
+
+        ! ---- WHAT THE TESTING COSTS ------------------------------------------
+        ! The government pays to run the test, per household screened, per period.
+        ! In units of average annual earnings, so it is comparable to the voucher
+        ! and to the food stamp floor. Set from the direct cost of a test in the
+        ! public assistance programmes that have tried it: the Texas fiscal note
+        ! puts a test at about \$35 and Oklahoma at \$20 for the screen plus
+        ! \$141 for the chemical confirmation of a positive. Against an average
+        ! household income near \$113,000 that is 0.031 per cent of average
+        ! earnings for the screen alone.
+        !
+        ! It is a LOWER BOUND on the administrative burden and is meant as one.
+        ! The programme level figures are far larger once staffing is counted:
+        ! Arkansas spent \$32,507 to run five tests in 2017. The counterfactual
+        ! reports the range rather than resting on the assay cost.
+        real(8) :: cost_per_drug_test=0.00031d0
+        real(8) :: govt_spending_on_drug_tests=0
             
         integer, parameter :: life_span=60
         integer, parameter :: retirement_span=20
@@ -832,6 +865,24 @@
         real(8), dimension(number_of_inheritance_ages) :: previous_inheritance_amount
         integer, parameter :: youngest_ages_for_wealth_computation=9
         
+        ! ---- KAPPA_X, THE DISAMENITY OF AGGREGATE HOMELESSNESS ---------------
+        ! One household's housing status entering another's utility, the only
+        ! term in the model that does that outside the family. Priced from the
+        ! contingent valuation in Loubiere et al. (2020): 57 euro a year among
+        ! the 42 per cent of respondents willing to pay anything, which is 0.20
+        ! per cent of average annual earnings. The HIGHER of their two figures is
+        ! the baseline, because setting it high favours the policy that houses
+        ! more people, so a ranking that survives it is the stronger claim; the
+        ! lower one, 23 euro and 0.08 per cent, is the other end of the range.
+        !
+        ! IT CANNOT MOVE A POLICY FUNCTION. H is the aggregate headcount, taken
+        ! as given by every household, so kappa_x*H is a constant inside the
+        ! household's problem and shifts every value by the same amount. It
+        ! changes welfare COMPARISONS ACROSS STEADY STATES, which is where the
+        ! paper uses it, and it changes nothing in the calibration. That is why
+        ! it can be added to a calibration already in flight.
+        real(8) :: kappa_x=0.002d0
+
         ! The CURVATURE on leisure, sigma_ell in the note, not the Frisch
         ! elasticity itself. With hours at 0.40 the implied Frisch elasticity is
         ! (1/sigma_ell)*(1-n)/n = (1/3)*(0.6/0.4) = 0.5, which is the number the
@@ -8611,11 +8662,22 @@
             include_property_taxes_in_govt_constraint*govt_revenues_from_property_tax(time_period)-&
             govt_lump_sum_transfers(time_period)
             
+        ! WHAT THE TESTING COSTS THE BUDGET. Under Treatment First every income
+        ! eligible household has to be screened for the condition to mean
+        ! anything, so the government pays cost_per_drug_test for each of them,
+        ! once per period. Zero in the benchmark, where voucher_conditional_on_clean
+        ! is zero, nothing is conditional and nobody is tested, so this term
+        ! cannot move the calibration; it is what makes the counterfactual pay
+        ! for its own enforcement rather than getting it free.
+        govt_spending_on_drug_tests=voucher_conditional_on_clean*cost_per_drug_test*&
+            model_eligibles_getting_voucher(time_period)/&
+            max(probability_of_voucher_benchmark_used_1,10.d0**(-10))
+
         govt_revenues_to_use_in_tests(time_period)=&
             total_govt_revenues(time_period)-govt_spending_on_ss(time_period)-&
             govt_spending_on_ui(time_period)-govt_spending_on_homeless(time_period)-govt_spending_on_addicts(time_period)-&
             govt_spending_on_food_stamps(time_period)-govt_spending_on_housing_vouchers(time_period)-&
-            govt_spending_on_housing_vouchers_2(time_period)+(1-include_bequests)*&
+            govt_spending_on_housing_vouchers_2(time_period)-govt_spending_on_drug_tests+(1-include_bequests)*&
             (model_bequests(time_period)-value_of_initial_assets)
                     
         net_govt_revenues(time_period)=clear_only_vouchers_govt_budget*(-govt_spending_on_housing_vouchers_2(time_period))+&
@@ -10192,7 +10254,8 @@
 
                                         flow_utility_1=flow_utility_1+relative_share_of_leisure*&
                                             ((max_labor_supply-labor_supply_1)**&
-                                            (1-leisure_curvature))/(1-leisure_curvature)
+                                            (1-leisure_curvature))/(1-leisure_curvature)&
+                                            -kappa_x*model_fraction_homeless(1)
 
                                         value_function_comparison(years_left_on_mortgage_index)%&
                                             vector_real(age_index,financial_index,unemployment_index,&
@@ -21058,6 +21121,43 @@
                 min(real(probability_of_voucher_benchmark_used_1*increased_prob_of_voucher_if_homeless_and_addicted),1.0)/)
                 
             voucher_probabilities(0,0,1,:)=(1-voucher_probabilities(0,1,1,:))
+            
+            ! ---- IMPERFECT ENFORCEMENT, equation (32) of the note -------------
+            ! Under Treatment First the condition is checked by a test that is
+            ! wrong in both directions. A household that FAILS the condition
+            ! keeps the voucher with probability 1 - probability_of_detection,
+            ! because the test does not always catch it; a household that MEETS
+            ! the condition loses it with probability_of_false_positive.
+            !
+            ! This is applied to the voucher transition rather than to the
+            ! voucher amount, because it is a lottery over receipt: a household
+            ! that is not caught gets the whole voucher, not a fraction of one.
+            ! Scaling the amount would be the certainty equivalent under risk
+            ! neutrality, which is the wrong object in a model whose point is
+            ! insurance.
+            !
+            ! INERT IN THE BENCHMARK. voucher_conditional_on_clean is zero there,
+            ! nothing is conditional, no household is tested and the block does
+            ! not execute. It is the counterfactual's machinery.
+            if (voucher_conditional_on_clean==1) then
+            
+                ! category 3 is the household that fails the condition
+                voucher_probabilities(0,1,1,3)=(1-probability_of_detection)*&
+                    min(real(probability_of_voucher_benchmark_used_1*&
+                    increased_prob_of_voucher_if_homeless_and_addicted),1.0)
+                voucher_probabilities(0,0,1,3)=1-voucher_probabilities(0,1,1,3)
+                voucher_probabilities(1,1,1,3)=1-probability_of_detection
+                voucher_probabilities(1,0,1,3)=probability_of_detection
+                
+                ! categories 1 and 2 meet the condition and face the false
+                ! positive rate instead
+                voucher_probabilities(0,1,1,1:2)=(1-probability_of_false_positive)*&
+                    voucher_probabilities(0,1,1,1:2)
+                voucher_probabilities(0,0,1,1:2)=1-voucher_probabilities(0,1,1,1:2)
+                voucher_probabilities(1,1,1,1:2)=1-probability_of_false_positive
+                voucher_probabilities(1,0,1,1:2)=probability_of_false_positive
+                
+            end if
             
         end if
         
