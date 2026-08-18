@@ -13,6 +13,26 @@ rebuilt rather than patched, the calibration has been redone from primary data,
 and the validation section that the Associate Editor and Referee~1 both judged to
 be below the bar has been written from scratch.
 
+{\color{respred}
+It also has a different title, and the change is not cosmetic. The paper is now
+\emph{Housing First, Children Later}. The version you rejected argued that
+conditionality could not be justified by moral hazard and then left the reader
+without a clear alternative account of where the case for it would come from. The
+paper now answers that question and is organised around the answer. If households
+are forward looking and face the true hazard of a substance use disorder, then
+conditionality only removes an option from an optimiser, so Housing First weakly
+dominates Treatment First at the same generosity and the same cost. The case for
+conditionality therefore has to rest on something outside the household's own
+objective, and the paper separates three things the debate runs together: a genuine
+externality, the distortion from the tax that funds the programme, and the
+programme's design. The externality that decides the comparison is
+intergenerational, and it is what the new title refers to. A parent who acquires a
+disorder, or who ends up on the street, passes a worse productivity draw to the
+child who replaces it, and counts only a fraction of that loss. Pricing it reverses
+the ranking. The paper also now carries an abstract, keywords and JEL codes, which
+the previous version did not.
+}
+
 This letter summarises the main changes. Four further letters respond to the
 Associate Editor and to each referee, comment by comment, with the responses in
 red.
@@ -37,6 +57,17 @@ identified moment.
 This letter was first written when most of what follows was a plan. It is now
 built, and the summary below is what changed, why, and which comment each change
 answers. Nothing in it is a new promise.
+
+One item is the exception, and we would rather name it than let you find it. The
+\textbf{disamenity of an aggregate homeless population}, which Referee~2 asked for
+in C2, is in the model as written and is not yet in the Fortran. Because the
+headcount is taken as given by every household, its absence cannot move a single
+policy function, so no part of the calibration depends on it; what it changes is the
+welfare comparison across steady states, which is exactly where the paper uses it,
+so it is built before that comparison is reported. Two other items that stood in the
+same place when this letter was drafted, the drug market clearing a finite supply
+curve and serious mental illness as a state of the model, are now running in the
+code, and they are described below in the present tense because they earned it.
 
 \begin{itemize}
 
@@ -85,10 +116,13 @@ Associate Editor's diagnosis was too many moving parts. This is the largest sing
 cut: five subroutines, a mortgage contract, an endogenous house price, and half of
 the housing grid. The model is a renter model, which is what the questions need.
 
-\item \textbf{The drug price has a supply curve with an elasticity of two},
-bracketed by 0.79 from the Washington marijuana reform and about 3.6 from the
-cigarette and gasoline literatures, rather than the flat curve of the previous
-version. Referee~3's M2(d).
+\item \textbf{The drug price clears a finite supply curve}, with an elasticity of
+1.46 taken from Mace, Patel and Seegert's (2020) Washington State administrative
+data, rather than the flat curve of the previous version. Cannabis is the closest
+market there is to an illicit one, since federal prohibition leaves even a licensed
+producer without interstate trade or ordinary banking; cigarettes and gasoline share
+none of that and are not used to bracket it. This now runs in the code rather than
+sitting in the written model. Referee~3's M2(d).
 
 \item \textbf{Three numbers were wrong and are corrected}: the mortality
 multiplier for addiction was applied as an excess rather than a ratio, so the

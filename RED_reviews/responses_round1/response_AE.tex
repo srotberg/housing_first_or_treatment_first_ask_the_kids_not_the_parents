@@ -29,10 +29,16 @@ static object cannot establish claims about a dynamic mechanism, and he is right
 the paper's mechanism is that drug use lowers the \emph{continuation} value, which
 a static model cannot represent.
 
-The new section 2 is therefore a stripped down \emph{dynamic} model: two periods,
+The new Section~3 is therefore a stripped down \emph{dynamic} model: two periods,
 one asset, a binary use choice, a binary housing outcome, and a survival
-probability that depends on both. It is small enough to solve by hand and it
-delivers the three results the paper needs:
+probability that depends on both. It is small enough to solve by hand, and it is
+also calibrated, to the same United States moments as the quantitative model, so
+the results below are numbers rather than signs: six of its parameters are set
+inside it, against drug participation, the adult substance use disorder rate, the
+homelessness rate, the value of a statistical life, the housing expenditure share,
+and the dispersion of earnings. The last of those is calibrated to the same moment
+in both models, so the two carry the same income dispersion by construction rather
+than by coincidence. It delivers the three results the paper needs:
 
 \begin{enumerate}
 \item Use falls in permanent income whenever the penalty for use is a mortality
@@ -120,11 +126,13 @@ the drug price endogenous, a policy that reduces the number of users lowers
 demand and therefore lowers the price, which partially offsets the reduction. The
 size of that offset depends on the elasticity of drug supply, which is not a
 parameter with an obvious value, so we have gone to some length to discipline it.
-The one directly measured estimate in any drug market is Hansen, Miller and Weber
-(2017) on the Washington marijuana tax reform, where consumers bear 44 per cent
-of an additional retail tax and demand elasticity is near minus one, implying a
-supply elasticity near 0.79. Estimates for cigarettes and gasoline sit nearer
-3.6. We take 2 as the baseline and report the range. We explain in the text why
+There is no direct estimate for an illicit drug. Cannabis is the closest market to
+one, because it remains a Schedule I substance federally, so even a state licensed
+producer works without interstate trade, without ordinary banking and under federal
+prohibition, which is the set of frictions an illicit supplier faces. Mace, Patel
+and Seegert (2020) estimate a price elasticity of supply of 1.46 on Washington
+State administrative data, and that is the number the model uses. Cigarettes and
+gasoline share none of those frictions, so we do not bracket with them. We explain in the text why
 the frequently quoted RAND figure of minus 3.6 is not the right object here: a
 negative supply elasticity comes from enforcement swamping, which Caulkins and
 Reuter note ``pertains to total drug volume \dots not just or primarily drug
@@ -143,17 +151,44 @@ C3 asks for the opposite fix, an actual linkage, on the ground that parental
 anxiety about children's outcomes would amplify the welfare gains from reducing
 addiction.
 
-We have made the linkage real rather than deleting the discussion. Newborn
-productivity is drawn from a parent's productivity through a persistent process,
-and the parent's period utility carries a warm glow term in the expected newborn
-value of their child. This is the cheapest structure that makes the transmission
-load bearing: it does not require tracking dynasties, and it makes the
-persistence parameter an object that matters for welfare rather than a line of
-text.
+We have made the linkage real rather than deleting the discussion, and it has
+since become the organising idea of the paper, which is why the paper now has a
+different title. A household that acquires the disorder, or that ends up on the
+street, passes a worse productivity draw to the child who replaces it and counts
+only a fraction $\omega$ of that loss. The remainder is an externality. It is the
+one that decides the comparison: Housing First weakly dominates Treatment First for
+every household taken one at a time, at the same generosity and the same cost, and
+the ranking reverses once the children of the households it fails to deter are
+counted.
 
-We report results with the warm glow weight set to zero as well, so a reader can
-see exactly how much of the welfare result depends on it. Our expectation, and
-Referee~2's, is that it amplifies rather than reverses.
+Three things make it load bearing rather than decorative.
+
+It costs no new state. The continuation splits into the household's own next
+period, weighted by survival, and the child who replaces it, weighted by the chance
+of dying and by $\omega$. The child term is a difference, the value of a child born
+to this household against one born to a clean and housed parent, so it is zero in
+the reference state and negative otherwise, and only the loss the parent's own state
+imposes enters the decision.
+
+Each link is measured. Parental substance abuse is recorded at more than a third of
+removals into out of home care; children of a parent with a disorder are two to four
+times as likely to acquire one; a parental shock reaches the child's adult earnings,
+which Nilsson (2017) puts at about twenty four per cent for prenatal exposure to an
+alcohol availability experiment; and housing is one of the environments doing the
+transmitting, which Chetty et al.\ (2016) put at thirty one per cent for a move to a
+lower poverty neighbourhood before age thirteen.
+
+And $\omega$ is calibrated rather than chosen. Every household in the model has a
+child, so there is no parent against non parent comparison in the benchmark and the
+moment has to be a counterfactual. In NSDUH 2024, past month use among parents is
+$0.845$ of use among non parents, reweighted to the non parents' joint distribution
+of age, income, sex and marital status, and $\omega$ is set so that removing the
+child from the household's problem raises use by the same $18.3$ per cent.
+
+We report results with $\omega$ set to zero as well, so a reader can see exactly how
+much rests on it. Referee~2's expectation was that the channel would amplify the
+gains from reducing addiction. In this model it does more than amplify: it is what
+reverses a ranking that is otherwise unambiguous.
 \end{response}
 
 \cmt{A7}{Lump sum transfers and type dependent bequests}
@@ -509,10 +544,22 @@ apply to substance use disorder for the homeless.''
 \begin{response}
 Rewritten. Three specific changes.
 
-Every source now carries a vintage, and the calibration table has a column
-separating parameters standard in the literature from those new to this paper.
-Every moment is reproduced from a public file by a script in the replication
-package, so a reader can check any number without asking us.
+Every source now carries a vintage, and the parameters are split across two
+tables rather than one: the twenty nine that carry this paper's story and its
+policy analysis, and the twenty four that are standard in life cycle models. Each
+table marks every parameter as internally calibrated or externally set, and the
+text alongside gives, for each one, the direction in which the moment moves it and
+why that pairing is informative.
+
+On replication specifically, since you say the paper is impossible to replicate as
+it stands: \pname{data/DATA\_APPENDIX.md} in the replication package now derives
+every number the calibration takes from outside the model, naming the dataset, its
+year, its universe and the computation that turns it into the figure the paper
+reports. It does the same for every validation moment, including the three places
+where the universe rather than the arithmetic decides the number. And the package
+carries the datasets themselves, the raw exports from HUD, CDC WONDER, the Federal
+Reserve, the Census, SSA, BLS and SAMHSA alongside the two microdata extracts, so
+nothing has to be downloaded to reproduce any of it.
 
 The section is organised by \emph{identification argument} rather than by
 parameter index: which moment moves which parameter, and why that pairing is

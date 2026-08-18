@@ -44,13 +44,30 @@ the first flag to the second when it was checked against the source:
 
 | claim | where | status |
 |---|---|---|
-| the drug price clears a finite supply curve | R3, R1, AE | **written only.** `price_of_addictive_good` is assigned once and never again; there is no cost function, no elasticity and no clearing loop |
-| the homelessness disamenity is priced | R2 C2, editor | **written only.** `grep kappa_x` returns nothing |
-| serious mental illness is a state of the model | R1, editor, AE | **written only.** `number_of_smi_states = 1`, and `grep -ci mental` over the source returns zero |
+| the drug price clears a finite supply curve | R3, R1, AE | **built.** There is a supply curve, `drug_supply_shifter * quantity^(curvature-1)`, an implied price, and an update loop; the elasticity is 1.46 |
+| serious mental illness is a state of the model | R1, editor, AE | **built.** `number_of_smi_states = 2`, and the state index carries `m` |
+| the homelessness disamenity is priced | R2 C2, editor | **still written only.** `grep -ci kappa_x` over the source returns 0 |
 
-All three are gaps recorded in `code/FORTRAN_AUDIT.md` (items 1.1, 1.3, 1.4) with
-what each needs. None of them is a claim we should make in the present tense to an
-editor until it runs, so the letters do not.
+Two of the three have closed since the first draft and the letters now say so in
+the present tense. The third has not, and the letters say that too: it is flagged
+`\open` in R2's C2 and named explicitly in the editor letter, because the
+alternative is letting an editor find it. Its absence cannot move a policy function,
+since the headcount is aggregate and taken as given, so no calibrated moment depends
+on it; what it changes is the welfare comparison across steady states.
+
+Three further things were corrected in this pass:
+
+* **The cannabis supply elasticity was attributed to the wrong paper.** It is Mace,
+  Patel and Seegert (2020), not Hansen, Miller and Weber, and the value is 1.46
+  rather than a baseline of 2 bracketed by cigarettes and gasoline. Those markets
+  share none of the frictions of an illicit one, so they no longer bracket anything.
+  Fixed in R1, R3, the AE letter and the editor letter.
+* **The homelessness disamenity had the wrong figure as its baseline.** The paper
+  takes the higher of Loubiere et al.'s two numbers, 0.20 per cent of average
+  earnings, because setting it high favours Housing First and a ranking that
+  survives that is the stronger claim. R2's C2 said the opposite.
+* **The stylized model is Section 3 of the new paper**, not section 2, and it is
+  calibrated rather than only derived.
 
 What IS built and running: the taste for drugs no longer changes with addiction,
 the housing access elasticity has a parameter of its own, children are valued at

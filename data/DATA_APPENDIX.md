@@ -47,7 +47,9 @@ disorder. The two published numbers are not mutually consistent: a conversion of
 33.2 percent applied to a 5.13 percent participation rate implies a disorder rate
 near 1.7 percent, not 3.68. The level is the better measured of the two, so it is
 the one matched, and the conversion the model implies, 71.7 percent, is reported
-rather than imposed.
+rather than imposed. The stylized model is calibrated to the same 3.68 percent
+level, having previously targeted the 33.2 percent conversion, so the two models no
+longer carry inconsistent numbers for the same object.
 
 **ℵ, the flow value of being alive — a value of a statistical life of \$7.5m.**
 The range surveyed in Viscusi and Aldy (2003), converted to current dollars and
@@ -260,11 +262,19 @@ gradient come from one experiment rather than two.
 see section 5.
 
 **κ_x, the disamenity of aggregate homelessness — 0.20 percent of annual earnings,
-which enters as 0.0008.** Loubière et al. (2020), a contingent valuation across
+which enters as 0.002.** Loubière et al. (2020), a contingent valuation across
 Europe: €57 a year among the 42 percent of respondents willing to pay anything,
 against €23 averaged over all respondents. The higher figure is taken as the
 baseline, because it is the one least kind to Treatment First: a larger disamenity
-loads whichever policy houses more people.
+loads whichever policy houses more people. The lower figure, €23, is 0.08 percent
+and enters as 0.0008; an earlier version of this file gave that number as the value
+of the 0.20 percent baseline, which was wrong.
+
+**κ_x is not yet in the Fortran.** It appears in the household's problem in the
+paper and `grep -ci kappa_x` over the source returns zero. Because the headcount is
+aggregate and taken as given, its absence cannot move any policy function, so no
+calibrated moment depends on it; what it changes is the welfare comparison across
+steady states, which is where the paper uses it.
 
 ### Employment and labour supply
 

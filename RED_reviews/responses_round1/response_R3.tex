@@ -206,7 +206,7 @@ when some of this channels are shut down.''
 \begin{response}
 This is the best question in the four reports and it now has its own section.
 
-\textbf{Analytically}, the stylised model in section 2 enumerates them. Two are
+\textbf{Analytically}, the stylised model in Section~3 enumerates them. Two are
 fiscal: a household that becomes homeless imposes a service cost on the budget, and
 a household that acquires a disorder lowers its own expected tax payments through
 employment and mortality. One is not fiscal: following Referee~2's comment C2, a
@@ -259,14 +259,16 @@ in every counterfactual and in the elasticity computation, so nothing is both fi
 and varied.
 
 Because the supply elasticity now does real work, we discipline it rather than
-assume it. The one directly measured supply elasticity in any drug market is Hansen,
-Miller and Weber (2017) on the 2015 Washington marijuana tax reform: consumers bear
-44 per cent of an additional retail tax against a demand elasticity near minus one,
-which by textbook incidence implies a supply elasticity near 0.79. We state the
-three caveats, that it is a legal licensed market with capped canopy, that the
-reform changed tax structure rather than a rate, and that they find tax invariance
-does not hold exactly. Estimates for cigarettes and gasoline sit nearer 3.6. We take
-2 as the baseline and report the range.
+assume it. There is no direct estimate for an illicit drug, and cannabis is the
+closest market to one: it remains a Schedule I substance federally, so even a state
+licensed producer works without interstate trade, without ordinary banking and under
+federal prohibition, which is the set of frictions an illicit supplier faces. Mace,
+Patel and Seegert (2020) estimate a price elasticity of supply of 1.46 on Washington
+State administrative data, and that is the number the model uses. We state the
+caveat that it is a legal licensed market with a capped canopy. We do not bracket it
+with cigarettes or gasoline, which was the previous draft's approach: those markets
+share none of the frictions above, so their elasticities are not informative about
+this one.
 
 We also explain why the frequently quoted RAND figure of minus 3.6 is not the right
 object here. A negative supply elasticity reflects enforcement swamping, and
@@ -274,13 +276,13 @@ Caulkins and Reuter note that swamping ``pertains to total drug volume \dots not
 just or primarily drug specific market volume'', so it operates on the aggregate
 market rather than at our margin.
 
-\open The supply curve is finite rather than flat in the model as written. The elasticity is
-two, bracketed by 0.79 from Hansen, Miller and Weber's study of Washington's 2015
-switch to a single retail excise and by roughly 3.6 from the cigarette and
-gasoline literatures, and the range is reported. The price is one at the benchmark
-by the normalisation of the supply shifter, so the calibration itself never has to
-clear the drug market; the curve matters where quantity moves away from the
-benchmark, which is the counterfactuals, and that is where it operates.
+\thisround The supply curve is finite rather than flat, and it now clears in the
+code rather than only in the written model. The elasticity is 1.46, from Mace,
+Patel and Seegert (2020) on Washington State administrative data. The price is one
+at the benchmark by the normalisation of the supply shifter, so the calibration
+itself never has to clear the drug market; the curve matters where quantity moves
+away from the benchmark, which is the counterfactuals, and that is where it
+operates.
 \end{response}
 
 %======================================================================
@@ -345,7 +347,7 @@ paper's central claim into the vertical gap between two curves, and makes visibl
 something four table cells could not: whether the gap \emph{widens} with generosity.
 It should, because conditionality is worth more when the benefit being conditioned
 on is guaranteed than when it is rationed, and that cross partial is what the
-stylised model in section 2 proves. Presenting it this way also softens the
+stylised model in Section~3 proves. Presenting it this way also softens the
 headline in the way Referee~1's comment 3(c) asks for, since the claim becomes one
 about an interaction rather than about a winner.
 \end{response}

@@ -119,12 +119,15 @@ Your point about offsetting is exactly what happens: a policy that reduces the
 number of users lowers demand and lowers the price, which partially offsets the
 reduction. The size of the offset depends on the elasticity of drug supply.
 Because that elasticity is doing real work, we have gone to some length to
-discipline it rather than assume it. The one directly measured estimate in any
-drug market is Hansen, Miller and Weber (2017) on the 2015 Washington marijuana
-tax reform, where consumers bear 44 per cent of an additional retail tax against a
-demand elasticity near minus one, implying a supply elasticity near 0.79.
-Estimates for cigarettes and gasoline sit nearer 3.6. We take 2 as the baseline
-and report the range.
+discipline it rather than assume it. There is no direct estimate for an illicit
+drug. Cannabis is the closest market to one, because it remains a Schedule I
+substance federally, so even a state licensed producer works without interstate
+trade, without ordinary banking and under federal prohibition, which is the set of
+frictions an illicit supplier faces. Mace, Patel and Seegert (2020) estimate a
+price elasticity of supply of 1.46 on Washington State administrative data, and
+that is the number the model uses. We do not bracket it with cigarettes or
+gasoline: those markets share none of those frictions, so their elasticities are
+not informative about this one.
 
 We also explain why the frequently quoted RAND figure of minus 3.6 is not the
 right object. A negative supply elasticity reflects enforcement swamping, where a
@@ -338,9 +341,14 @@ clarified. I would appreciate an appendix describing the model definitions of th
 moments more thoroughly in general.''
 \end{referee}
 \begin{response}
-There is now an appendix that gives, for every moment, the exact model object, the
-data source with its vintage, and the script in the replication package that
-produces the data value from the public file. Nothing is described in prose only.
+There is now an appendix, \pname{data/DATA\_APPENDIX.md} in the replication
+package, that gives for every moment the exact model object, the data source with
+its vintage and universe, and the computation that produces the data value from the
+file. Nothing is described in prose only. It covers the validation moments as well
+as the targets, and it flags the three places where the universe rather than the
+arithmetic decides the number, since those are where a reader is most likely to get
+a different answer from the same source. The package also carries the datasets
+themselves, so none of it has to be downloaded first.
 \end{response}
 
 \cmt{2(f)}{Show identification numerically, and show robustness to the elasticity range}
@@ -415,7 +423,7 @@ Accepted. The claim that the debate is resolved is removed.
 The headline is now a statement about the interaction rather than about a winner:
 generosity dominates conditionality, and conditionality pays once the benefit
 being conditioned on is guaranteed rather than rationed. That is a claim about a
-cross partial, it is what the stylised model in section 2 proves, and it does not
+cross partial, it is what the stylised model in Section~3 proves, and it does not
 require a welfare ranking between two universal regimes to survive.
 
 Following the Associate Editor's suggestion, welfare and mortality are reported as

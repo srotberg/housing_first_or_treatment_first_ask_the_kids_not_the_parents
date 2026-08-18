@@ -110,13 +110,22 @@ does and does not transfer. Their externality is about neighbourhood housing
 not the right one to import. What transfers is the identification logic. We use a
 contingent valuation approach for the calibration moment instead.
 
-\open It is in the model as written, priced from the evidence you would want it priced
-from rather than asserted. Loubi\`ere et al.\ (2020) ask adults in eight European
-countries what they would pay in annual taxes to end homelessness through Housing
-First: \euro{}23 a year on average, which is 0.08 per cent of average annual
-earnings, and \euro{}57 among the 42 per cent willing to pay anything, 0.20 per
-cent. The first sets the parameter and the second is the top of the range the
-results are reported across.
+\open It is in the model as written and \emph{not yet in the code}, which we would
+rather say than imply otherwise: the term appears in the household's problem in the
+paper, and the Fortran does not yet carry it. Because the aggregate headcount is
+taken as given by every household, its absence cannot move a single policy function,
+so nothing in the calibration depends on it; what it changes is the welfare
+comparison across steady states, which is where we use it, and that is why it has to
+be built before we report that comparison.
+
+It is priced from the evidence you would want it priced from rather than asserted.
+Loubi\`ere et al.\ (2020) ask adults in eight European countries what they would pay
+in annual taxes to end homelessness through Housing First: \euro{}23 a year on
+average, which is 0.08 per cent of average annual earnings, and \euro{}57 among the
+42 per cent willing to pay anything, 0.20 per cent. We take the \emph{higher}
+figure, 0.20 per cent, as the baseline. Setting it high should favour Housing First,
+which houses more people, so a ranking that still favours Treatment First survives
+the assumption least kind to it; the lower figure is the other end of the range.
 
 One choice inside it is worth flagging, because your comment mentioned addiction
 explicitly. The disamenity is on the homelessness \emph{headcount alone}, with no
@@ -148,19 +157,42 @@ draft discussed intergenerational transmission in section 4.1.3 without any
 intergenerational linkage in the model, which made the discussion decorative.
 Your comment supplies exactly the linkage that would make it load bearing.
 
-Newborn productivity is now drawn from a parent's productivity through a
-persistent process, and the parent's period utility carries a warm glow term in
-the expected newborn value of their child. This is the cheapest structure that
-makes the transmission real: it does not require tracking dynasties or adding a
-state, and it means the persistence parameter matters for welfare rather than
-appearing only in a sentence.
+In fact it has become the paper's central mechanism, which is why the paper now
+carries a different title. A household that acquires the disorder, or that ends up
+on the street, passes a worse productivity draw to the child who replaces it, and
+counts only a fraction $\omega$ of that loss. The remainder is an externality, and
+it turns out to be the one that decides the policy comparison: at the same
+generosity and the same cost, Housing First weakly dominates Treatment First for
+every household taken one at a time, and the ranking reverses once the children of
+the households it fails to deter are counted. Each link in the chain is measured
+rather than assumed, and the transmission penalty is calibrated inside the model to
+reproduce the ratio of disorder rates between the children of parents with and
+without a disorder.
 
-We report results with the warm glow weight set to zero as well, so a reader can
-see how much of the welfare result rests on it. Your prediction is that it
-amplifies rather than reverses, and that is also our prior, but it is now
-something the paper shows rather than something we assert. The weight itself is
-disciplined against the literature on altruism towards children rather than
-chosen.
+Two things about it are worth flagging, since you called the dynastic element a
+stretch.
+
+It does not require tracking dynasties or a new state. A household's continuation
+splits into its own next period, weighted by survival, and the value of the child
+who replaces it, weighted by the chance of dying and by $\omega$. The child term is
+a \emph{difference}, the value of a child born to this household against a child
+born to a clean and housed one, so it is zero in the reference state and negative
+otherwise, and what enters the decision is only the loss the parent's own state
+imposes.
+
+And $\omega$ is not free. Every household in the model has a child, so there is no
+parent against non parent comparison to run in the benchmark; the moment is a
+counterfactual instead. In NSDUH 2024, past month use among parents is $0.845$ of
+use among non parents, reweighted to the non parents' joint distribution of age,
+income, sex and marital status, and $\omega$ is set so that removing the child from
+the household's problem raises use by that same $18.3$ per cent. The externality is
+therefore not assumed to be large. Its size is read off what parents already do.
+
+Your prediction was that the dynastic element would amplify the welfare gains from
+reducing addiction rather than reverse anything. In this model it does more than
+amplify: it is what overturns a ranking that is otherwise unambiguous. We report the
+results at $\omega$ set to zero as well, so a reader can see exactly how much rests
+on it.
 \end{response}
 
 \cmt{C4}{The rich model is a black box; show the policy functions}
