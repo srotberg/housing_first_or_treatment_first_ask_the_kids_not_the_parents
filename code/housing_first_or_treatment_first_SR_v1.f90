@@ -832,7 +832,11 @@
         real(8), dimension(number_of_inheritance_ages) :: previous_inheritance_amount
         integer, parameter :: youngest_ages_for_wealth_computation=9
         
-        real(8), parameter :: Frisch_elasticity=3
+        ! The CURVATURE on leisure, sigma_ell in the note, not the Frisch
+        ! elasticity itself. With hours at 0.40 the implied Frisch elasticity is
+        ! (1/sigma_ell)*(1-n)/n = (1/3)*(0.6/0.4) = 0.5, which is the number the
+        ! calibration table reports and the one taken from Chetty (2012).
+        real(8), parameter :: leisure_curvature=3
         real(8), parameter :: risk_aversion_housing=2
         real(8), parameter :: relative_share_of_housing_0=&
             (1-perceived_probability_lower)*0.278+perceived_probability_lower*0.31
@@ -842,6 +846,23 @@
         real(8) :: stopping_rule_relative_share_of_housing=10.d0**(-3)
         
         real(8) :: sd_fixed_employment_newborn=0.309 !0.309
+
+        ! SIGMA_Y, the dispersion of the permanent productivity draw, in logs.
+        ! This is the number reported in the calibration table, so the grid is
+        ! built from it directly rather than inherited from whatever width the
+        ! KKK process happened to leave behind. The value below reproduces the
+        ! grid the frozen process used to deliver, to the last digit, so setting
+        ! it here changes nothing until the number itself is changed.
+        !
+        ! It is NOT free. At sd 0.20 the implied earnings distribution has
+        ! p90/p10 of 1.8 and the bottom half of earners taking 42 percent of
+        ! labour income, which is nothing like the United States and cannot
+        ! produce either the homelessness rate or the 2.52 percent bottom half
+        ! share of net worth the model is checked against. At 0.458 p90/p10 is
+        ! 4.0 and the bottom half takes 33 percent. Storesletten et al. (2004)
+        ! put the fixed effect VARIANCE near 0.27, which is an sd near 0.52 and
+        ! a p90/p10 near 4.8, close to the roughly 5 in the data.
+        real(8), parameter :: sd_permanent_productivity=0.45797120856966389d0
         real(8) :: persistence_employment_surviving=0.9
         real(8) :: sd_employment_surviving=0.2
             
@@ -10151,7 +10172,7 @@
 
                                         flow_utility_1=flow_utility_1+relative_share_of_leisure*&
                                             ((max_labor_supply-labor_supply_1)**&
-                                            (1-Frisch_elasticity))/(1-Frisch_elasticity)
+                                            (1-leisure_curvature))/(1-leisure_curvature)
 
                                         value_function_comparison(years_left_on_mortgage_index)%&
                                             vector_real(age_index,financial_index,unemployment_index,&
@@ -12615,7 +12636,7 @@
                         end if
                                                         
                         future_leisure_vector(future_financial_index)=relative_share_of_leisure*&
-                            ((max_labor_supply-labor_supply_1)**(1-Frisch_elasticity))/(1-Frisch_elasticity)
+                            ((max_labor_supply-labor_supply_1)**(1-leisure_curvature))/(1-leisure_curvature)
                            
                         call calculate_flow_utility(0,future_housing_status_index,&
                             housing_size(future_housing_status_index),frac_spent_on_addiction,&
@@ -13112,7 +13133,7 @@
                                                                                                                                 
                                     future_leisure_vector(future_mortgage_index)=&
                                         relative_share_of_leisure*((max_labor_supply-labor_supply_1)**&
-                                        (1-Frisch_elasticity))/(1-Frisch_elasticity)
+                                        (1-leisure_curvature))/(1-leisure_curvature)
                                                                             
                                     call calculate_flow_utility(0,space_lived_in_index_feasible,&
                                         housing_size(space_lived_in_index_feasible),frac_spent_on_addiction,&
@@ -13671,7 +13692,7 @@
                             end if
                                                                             
                             future_leisure_vector(future_mortgage_index)=relative_share_of_leisure*&
-                                ((max_labor_supply-labor_supply_1)**(1-Frisch_elasticity))/(1-Frisch_elasticity)
+                                ((max_labor_supply-labor_supply_1)**(1-leisure_curvature))/(1-leisure_curvature)
                                                             
                             call calculate_flow_utility(0,space_lived_in_index_feasible,&
                                 housing_size(space_lived_in_index_feasible),frac_spent_on_addiction,&
@@ -14088,7 +14109,7 @@
                                                                                                                 
                                         future_leisure_vector(future_mortgage_index)=&
                                             relative_share_of_leisure*((max_labor_supply-labor_supply_1)**&
-                                            (1-Frisch_elasticity))/(1-Frisch_elasticity)
+                                            (1-leisure_curvature))/(1-leisure_curvature)
                                                                                     
                                         call calculate_flow_utility(0,space_lived_in_index_feasible,&
                                             housing_size(space_lived_in_index_feasible),frac_spent_on_addiction,&
@@ -14456,7 +14477,7 @@
                         end if
                                                                             
                         future_leisure_vector(future_financial_index)=relative_share_of_leisure*&
-                            ((max_labor_supply-labor_supply_1)**(1-Frisch_elasticity))/(1-Frisch_elasticity)
+                            ((max_labor_supply-labor_supply_1)**(1-leisure_curvature))/(1-leisure_curvature)
                                                 
                         call calculate_flow_utility(0,future_housing_status_index,&
                             housing_size(future_housing_status_index),frac_spent_on_addiction,&
@@ -15535,7 +15556,7 @@
         if ((consumption_choice>=(food_stamps_1/(1+consumption_tax))) .AND. &
            (consumption_choice>0)) then 
                   
-            MU_1=relative_share_of_leisure*(max_labor_supply-labor_supply_1)**(-Frisch_elasticity)
+            MU_1=relative_share_of_leisure*(max_labor_supply-labor_supply_1)**(-leisure_curvature)
                 
             if (use_cobb_douglas==1) then
         
@@ -17309,7 +17330,7 @@
                     financial_index_copy_1=fin_index_frac_mov_to
                                                                     
                     future_leisure_internal=relative_share_of_leisure*&
-                        ((max_labor_supply-labor_supply_2)**(1-Frisch_elasticity))/(1-Frisch_elasticity)
+                        ((max_labor_supply-labor_supply_2)**(1-leisure_curvature))/(1-leisure_curvature)
                                                    
                     call calculate_flow_utility(1,housing_status_index_1,&
                         space_lived_in_internal,frac_spent_on_addiction_2,total_consumption_choice_1,&
@@ -20762,9 +20783,23 @@
         ! what the stochastic process delivered.
         if (fixed_productivity==1) then
         
+            ! The nodes are evenly spaced in logs between -s_deviation_bottom
+            ! and +s_deviation_top standard deviations of the permanent draw,
+            ! with the mean of log productivity zero by construction, which is
+            ! the same shape the frozen grid had and the shape the probability
+            ! rebuild below assumes.
+            do employment_index=1,employment_grid_size
+            
+                employment_grid(1,employment_index)=&
+                    exp(-s_deviation_bottom*sd_permanent_productivity+&
+                    (s_deviation_bottom+s_deviation_top)*sd_permanent_productivity*&
+                    real(employment_index-1)/real(employment_grid_size-1))
+                
+            end do
+        
             do age_index=1,life_span
             
-                employment_grid(age_index,:)=employment_grid((life_span-retirement_span)/2,:)
+                employment_grid(age_index,:)=employment_grid(1,:)
                 
             end do
             
