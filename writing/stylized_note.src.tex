@@ -108,8 +108,8 @@ themselves two to four times as likely to develop one (McGovern et al., 2023),
 and moving a child to a lower poverty neighbourhood before age thirteen raises
 adult earnings by $31$ percent (Chetty et al., 2016). The
 model's work here is to show why Housing First raises welfare whenever
-there are no externalities {\color{red}(}and no distortions from the programmes or
-from the taxes that pay for them, both of which the full model takes up{\color{red})},
+there are no externalities (and no distortions from the programmes or
+from the taxes that pay for them, both of which the full model takes up),
 and then show how the externality that overturns it works.
 
 \end{enumerate}
@@ -636,16 +636,16 @@ The quantitative model carries two further channels absent here, and
 they are different in kind as well as in sign, which is another substantive reason
 the welfare ranking is a question of magnitudes. The first is not an externality at
 all but the distortions the programme creates and the distortionary taxes
-{\color{red}required to pay for it}; the second is an externality of the
+required to pay for it; the second is an externality of the
 same type as the one on children.
 
 \begin{itemize}\setlength{\itemsep}{0.15em}
 \item \textbf{Programmes distort the decisions of recipients and are
 paid for out of distortionary taxes.} A programme lowers the labour supply of the households it
-does reach, because eligibility is means tested{\color{red}, and} the voucher is clawed back at a
-rate of $\kappa_r$, so a recipient who works more loses {\color{red}eligibility or}
+does reach, because eligibility is means tested, and the voucher is clawed back at a
+rate of $\kappa_r$, so a recipient who works more loses eligibility or
 some of the transfer.
-This{\color{red}, combined with the pure financing of the programmes,} means that other
+This, combined with the pure financing of the programmes, means that other
 households have to pay more taxes, which
 distorts their labour supply.
 
@@ -1115,7 +1115,9 @@ V(j,a,y,e,d,m,\eta)=\max_{\{n,\,h',\,v,\,\tau,\,a'\}}\ \Bigg\{\
 &+\ \beta\,\phi(j,h',d,m,\tau)\!\!\int_{\mathcal S}\!\! V(j{+}1)(s')\,
 \Gamma\big(\mathrm{d}s'\mid s,n,h',v,\tau\big)\\[2pt]
 &+\ \beta\,\big[1-\phi(j,h',d,m,\tau)\big]\,\omega\,
-\mathbb{E}\,V\big(1,\,0,\,y_{\text{child}},\,e',\,0,0,0\big)\Bigg\}
+{\color{red}\Big[}\mathbb{E}\,V\big(1,0,y_{\text{child}},e',0,0,0\big)\\[2pt]
+&\hphantom{+\ \beta\,\big[1-\phi(j,h',d,m,\tau)\big]\,\omega\,\Big[}
+{\color{red}-\ \mathbb{E}\,V\big(1,0,y_{\text{base}},e',0,0,0\big)\Big]}\Bigg\}
 \end{aligned}
 \end{equation}
 subject to the budget~\eqref{eq:fbudget}, the income
@@ -1134,19 +1136,38 @@ $e'$ drawn as any newborn's is.
 A
 household that does not survive from $j$ to $j+1$ leaves a child, so the
 continuation is the survival weighted value of its own next period plus the death
-weighted value of the child's life, each discounted, with $y_{\text{child}}$
+weighted value of {\color{red}what the household's own state costs that child},
+each discounted, with $y_{\text{child}}$
 as defined in~\eqref{eq:fnewborn}. What that buys is a second route by
-which the household's own decisions, to use and to go unhoused, reach its child. $\phi(j,\cdot)$ itself
+which the household's own decisions, to use and to go unhoused, reach its child.
+
+{\color{red}The third line is a \emph{difference} and not a level, and the
+distinction is not cosmetic. Written as a level, $\omega$ times the child's whole
+lifetime utility, the term is worth more to a household the likelier it is to die,
+because it is the death branch that carries it. A SUD raises the death hazard
+several fold, so a level would pay most to exactly the households the paper is
+about, and it would do so for reasons that have nothing to do with the child: it
+would make dying less bad. Calibrated, the reward was about seventy times the
+penalty it was supposed to carry, and switching the whole term off \emph{lowered}
+drug use rather than raising it.
+
+Subtracting the value of a child born to a clean, housed parent removes that. The
+term is zero for a household in the reference state and negative otherwise, so
+what enters the decision is only the loss the parent's own state imposes on its
+child, weighted by the chance that child is born at all. The value of leaving
+somebody behind is not lost from the model; it is carried by the bequest motive,
+where it was already being counted once.} $\phi(j,\cdot)$ itself
 depends on $h'$ and,
 through $d$, on $v$: a household that uses raises the chance it is the child's
 term rather than its own that is realised, so the child enters the drug and
 housing decision through the weight on the two terms as well as through
 $y_{\text{child}}$.
 
-At $\omega=0$ death is
-worth zero and the damage a household does to its child is entirely external; at
+At $\omega=0$ {\color{red}the damage a household does to its child is entirely
+external}; at
 $\omega>0$ the household internalises a share $\omega$ of it, and only $1-\omega$
-remains external. Since the child's productivity depends on whether the parent
+remains external.{\color{red}\ Because the term is a difference, $\omega$ is the
+weight on that damage and nothing else.} Since the child's productivity depends on whether the parent
 carried a SUD or was homeless, and both depend on $v$ and $h'$, the child
 term in~\eqref{eq:fbellman} is
 what puts the child inside the parent's drug and housing decision.
@@ -1356,8 +1377,8 @@ column. They are discussed one at a time below because they are the parameters a
 reader may want to argue over, and each is taken in the order of the table.
 
 The comparison between Housing First and Treatment First has a shape,
-and every entry below is read against it, so it is worth setting {\color{red}out this
-comparison} once and in full before the entries begin.
+and every entry below is read against it, so it is worth setting out this
+comparison once and in full before the entries begin.
 
 Three things decide the ranking between Housing First and Treatment
 First. The \textbf{private value} is what a household
@@ -1365,19 +1386,19 @@ itself gains from being housed and from not carrying a disorder: consumption, a
 dwelling rather than the street or shelter, and above all the years of life that
 homelessness and the disorder take away. The \textbf{externality} is what
 lands on somebody else: on the child, who inherits not the disorder
-{\color{red}or homelessness} but a
+or homelessness but a
 worse productivity draw associated with the parent's SUD
 and with the parent's homelessness, which $\delta_d$ and $\delta_h$
-price separately{\color{red}. This means that the child is}
+price separately. This means that the child is
 likelier in turn to be poor, to use, to acquire
-a disorder and mental illness as a consequence, to be unhoused and to die young{\color{red}.
-The externality also lands} on everybody, through the disamenity of aggregate homelessness. The parent
+a disorder and mental illness as a consequence, to be unhoused and to die young.
+The externality also lands on everybody, through the disamenity of aggregate homelessness. The parent
 internalises only $\omega$ of the part that falls on its child, and $\omega$ is
 small, which is what leaves something for a policy to correct. And the
 \textbf{distortion} is what the programmes cost in behaviour, and it comes from two
 places. The programmes create distortions due to their design:
 assistance is means tested and the rent share is clawed back at $\kappa_r$,
-so a recipient who works more loses {\color{red}eligibility and} part of the transfer, which requires
+so a recipient who works more loses eligibility and part of the transfer, which requires
 even higher taxes on everyone else to fund even larger programmes. And
 assistance is paid for by
 distortionary taxes, which lower the after tax return to an hour for households
@@ -1435,33 +1456,33 @@ there is for a policy to act on.
 \item[$\theta$, the weight on the drug in utility.]
 How much a household wants the drug at all, against consumption and
 housing. It is the level of the temptation where $b$ is its curvature, and it is
-the parameter the amount spent on drugs{\color{red}, when it does,} turns on. As it
-rises use rises on {\color{red}the extensive and intensive margins}, so the private
+the parameter the amount spent on drugs, when it does, turns on. As it
+rises use rises on the extensive and intensive margins, so the private
 cost and the externality both rise and there is more for
 either policy to act on. It is calibrated internally to drug spending given a SUD,
 NSDUH 2024.
 \item[$b$, whether a household uses at all.] The marginal value of the drug goes
 as $\theta/(b+v)$, so a larger $b$ makes the first units worth less and a household
 with little to spend buys nothing. As $b$ rises use falls, so the
-private cost and the externality both fall, and {\color{red}housing assistance is
-less likely to be translated into more spending on drugs}: $b$ is the size of the
+private cost and the externality both fall, and housing assistance is
+less likely to be translated into more spending on drugs: $b$ is the size of the
 moral hazard. Its value is chosen so the
 model generates a drug participation rate of $5.13$ percent, the NSDUH 2024 figure
 for adults aged 26 and over, which identifies it sharply because participation is
 close to a threshold function of $b$.
 \item[$\lambda$, the hazard per unit used.] This is what makes using \emph{more}
-{\color{red}risky}, and it is the step that turns spending
+risky, and it is the step that turns spending
 into a disorder. As $\lambda$ rises both the private cost and the
 externality rise, and Housing First's moral hazard costs more, since it is
-$\lambda$ that converts {\color{red}an extra voucher into a higher} SUD rate Treatment First
+$\lambda$ that converts an extra voucher into a higher SUD rate Treatment First
 attempts to cure. Its value is chosen so the model generates the share of users
 who go on to acquire a SUD, from the same NSDUH 2024 sample.
-\item[$\bar\kappa_{\phi d}$, {\color{red}increased mortality} with a SUD.] This is the parameter the whole
-paper turns on. Mortality truncates the value of life for a user, {\color{red}which
-hits households with the highest life values hardest and thus reverses} the income
-gradient{\color{red}, making} the poor the users rather than the rich. As it rises
+\item[$\bar\kappa_{\phi d}$, increased mortality with a SUD.] This is the parameter the whole
+paper turns on. Mortality truncates the value of life for a user, which
+hits households with the highest life values hardest and thus reverses the income
+gradient, making the poor the users rather than the rich. As it rises
 the private cost rises; the externality rises
-with it, since {\color{red}a child born to a parent with a SUD has a lower value of life}.
+with it, since a child born to a parent with a SUD has a lower value of life.
 Both policies reduce these deaths, treatment by curing and housing because recovery
 is less likely when homeless. It is calibrated externally, at the midpoint of the
 standardised mortality ratios for SUD in Hjorth\o j et al.\ (2023), which run six to
@@ -1472,7 +1493,7 @@ $\aleph$ sets what the life being lost is worth. As it rises the private
 value of every life either policy saves rises, and use falls, so the externality
 falls. Its
 value is chosen so the model generates a value of a statistical life of \$7.5m,
-from Viscusi and Aldy (2003).\footnote{\color{red}I check that no household has a
+from Viscusi and Aldy (2003).\footnote{I check that no household has a
 negative value of life in equilibrium, so death is never an optimal outcome.}
 \end{description}
 
@@ -1661,8 +1682,8 @@ than whose utility a choice lands in. This is where
 the ranking is decided, since the private comparison already
 favours Housing First.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$\omega$, the parent's weight on its child.] A parent values its child's
-lifetime utility at $\omega$ times its own, and $\omega$ is small. As it
+\item[$\omega$, the parent's weight on its child.] A parent bears $\omega$ of what
+its own state costs its child, and $\omega$ is small. As it
 rises the parent already counts more of the child's loss, so the externality left
 for a policy to correct is smaller and both policies are worth less. Identifying it
 needs care, because \emph{every} household here has a child, so there is no parent
@@ -1670,9 +1691,13 @@ against non parent comparison to run inside the model. The moment is a
 counterfactual instead. In NSDUH 2024 past month use is $15.5$ percent lower among
 parents than among non parents, with parents reweighted to the non parents' joint
 distribution of age, income, sex and marital status so the gap is behaviour rather
-than composition. Since $\omega$ is the only reason a household in the model uses
-less than it otherwise would, its value is chosen so that switching the child term
-off at the calibrated parameters raises drug use by that same $15.5$ percent.
+than composition. {\color{red}The child term of~\eqref{eq:fbellman} is the only
+thing that makes a household in the model use less than it otherwise would, so its
+value is chosen so that removing the child's penalty at the calibrated parameters
+raises drug use by that same $15.5$ percent. It is the penalty that is removed and
+not the child, for the reason Section~\ref{sec:fproblem} gives: a term carrying the
+child's whole value would reward dying, and removing it would lower use rather than
+raise it.}
 \item[$\delta_d$, what the child loses to a parent's SUD.] This is Treatment First's
 case, very nearly in full. The child does not inherit the disorder, only a worse
 productivity draw, and the draw is what makes it likelier to be poor, to use, to
