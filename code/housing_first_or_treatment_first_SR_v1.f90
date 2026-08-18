@@ -20314,14 +20314,38 @@
         
         end do
 
-        ! THE COUNTERFACTUAL, applied after the values exist and not before.
-        ! Every parent is given the clean, housed child, so the level of the term
-        ! survives and the gradient that carries the externality does not.
+        ! ONLY THE PENALTY ENTERS, NOT THE LEVEL.
+        !
+        ! The term is beta*(1-phi(d,h))*omega*E[V_child(d,h)], weighted by the
+        ! probability of dying because a newborn replaces a household that dies.
+        ! Written with the level in it, it pays a household MORE the likelier it is
+        ! to die, and the disorder raises the death hazard eightfold, so it paid
+        ! most to exactly the households the paper wants deterred. Measured at the
+        ! calibrated point: omega*E[V_child] was 0.826 utils, worth 0.008 to a
+        ! clean housed household and 0.066 to one with the disorder, a differential
+        ! of 0.058 utils REWARDING the disorder, against a genuine gradient in
+        ! E[V_child] of 60.291 versus 60.276, or 0.02 per cent. The externality was
+        ! a rounding error beside a perverse incentive.
+        !
+        ! So the level is netted out and the term becomes
+        ! beta*(1-phi(d,h))*omega*[E[V_child(d,h)] - E[V_child(0,1)]], which is
+        ! zero for a clean housed parent and negative otherwise. What remains is
+        ! the loss the parent's own state imposes on its child, weighted by the
+        ! chance the child is actually born, which is what omega is the weight on.
+        !
+        ! The model already has a separate bequest motive for the value of leaving
+        ! something behind, so the level was double counting it.
+        expected_child_value(1,1)=expected_child_value(1,1)-expected_child_value(0,1)
+        expected_child_value(0,2)=expected_child_value(0,2)-expected_child_value(0,1)
+        expected_child_value(1,2)=expected_child_value(1,2)-expected_child_value(0,1)
+        expected_child_value(0,1)=0
+
+        ! The counterfactual now simply removes what is left, which is the penalty
+        ! alone. Switching it off makes using cheaper, so use RISES, which is the
+        ! sign the moment in the note describes.
         if (child_penalty_off==1) then
 
-            expected_child_value(0,2)=expected_child_value(0,1)
-            expected_child_value(1,1)=expected_child_value(0,1)
-            expected_child_value(1,2)=expected_child_value(0,1)
+            expected_child_value=0
 
         end if
     
