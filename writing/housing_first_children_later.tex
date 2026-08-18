@@ -139,6 +139,17 @@ housing demolitions earned $16$ percent more a year as adults (Chyn, 2018), and 
 move to a lower poverty neighbourhood before age thirteen raises adult earnings by
 $31$ percent (Chetty et al., 2016). What is a private problem for the
 parent is a childhood for the child, and the child does not choose it.
+\textcolor{red}{It does not stop with the child either. A child born with a worse
+productivity draw sits further into the part of the distribution where use and
+homelessness concentrate, so it is likelier to acquire a disorder or lose its housing
+itself, and likelier in turn to pass the same draw to its own child. That is the two
+to four times of McGovern et al.\ (2023) read forward rather than backward: one case
+propagates down a line of descendants with a probability that decays but does not
+reach zero, so what a parent's decision costs is a series of childhoods and not one.
+The parent prices only part of that series. It values its own child at $\omega$, that
+child values the grandchild at $\omega$ again, so generation $k$ enters the parent's
+problem at $\omega^k$ and the share left external rises at every link, until distant
+descendants sit almost entirely outside the decision that produced them.}
 
 
 
@@ -1242,7 +1253,7 @@ as an argument at all. The excess mortality of the disorder is
 overwhelmingly a mortality of use, poisoning above all, and treatment forbids use
 in the period it is taken, so a household that is not using does not carry it.
 I make this assumption because that is what the cause specific evidence
-shows. The meta-analyses of mortality among people using extramedical opioids report
+shows. The meta analyses of mortality among people using extramedical opioids report
 overdose as the largest single contributor to the excess (Larney et al., 2020;
 Degenhardt et al., 2011), and in CDC WONDER drug poisoning alone accounts for about
 a fifth of all deaths at ages 25 to 44, which is the moment
@@ -1478,6 +1489,20 @@ carried a SUD or was homeless, and both depend on $v$ and $h'$, the child
 term in~\eqref{eq:fbellman} is
 what puts the child inside the parent's drug and housing decision.
 
+\textcolor{red}{What remains external is more than $1-\omega$ once one looks past the
+child. A child born with the penalty is likelier to be carrying a disorder, or to be
+unhoused, when its own death draw arrives, so it is likelier to pass the penalty on,
+and the parent's decision reaches a grandchild through a link the parent never chose.
+Equation~\eqref{eq:fbellman} does price that chain, but geometrically: the child's
+value $V(1,\cdot)$ on the third line contains its own $\omega$ weighted child term, so
+generation $k$ enters the parent's problem at $\omega^k$, times the discounting and
+the death probabilities along the way, and $1-\omega^k$ of it stays outside. The
+penalty itself does not compound, since every newborn draws afresh from $\Omega_y$
+in~\eqref{eq:fnewborn} and takes at most one $\delta_d$ and one $\delta_h$; what
+compounds is the chance of taking it at all. So the object here is not a transfer from
+one parent to one child but a hazard running down a line of descendants, and the
+further down that line one looks the less of it $\omega$ prices.}
+
 \paragraph{How the choices separate, and where they do not.}
 Taking hours, the dwelling and next
 period assets as given, what is left to divide
@@ -1695,7 +1720,9 @@ identifies it. Every estimate that goes into them is documented in full in the
 replication package: \texttt{data/DATA\_APPENDIX.md} names the dataset behind each
 target, its year and universe, and the computation that turns it into the number
 reported here, so that any of them can be reproduced from the public microdata
-without reference to this text.
+without reference to this text. \textcolor{red}{The package also carries the datasets
+themselves, so nothing has to be downloaded to reproduce any of this: the extracts
+behind every target sit next to the code that reads them.}
 
 \subsection{The twenty nine parameters that carry the story of this paper}
 
@@ -2286,12 +2313,12 @@ Section~\ref{sec:fullcal} a cost the model actually bears.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\psi$ and $\bar y$, unemployment insurance.] These two set the replacement
 rate and the cap on the earnings it is paid on. I set them to fifty percent and one
-times average income\textcolor{red}{, respectively,} taking both from the statutory replacement rates
+times average income, respectively, taking both from the statutory replacement rates
 and state benefit maxima that the Department of Labor compiles in its comparison of
 state unemployment insurance laws
 (\url{https://oui.doleta.gov/unemploy/statelaws.asp}).
 
-\item[$\kappa_V$ and $\kappa_r$, the voucher rules.] \textcolor{red}{These two set the income
+\item[$\kappa_V$ and $\kappa_r$, the voucher rules.] These two set the income
 cutoff for eligibility and the tenant's contribution, and I take both from HUD's own
 rules rather than from any estimate. I set them to half of median income and thirty
 percent of income, respectively. The first is the very low income limit HUD publishes
@@ -2299,7 +2326,7 @@ annually with its income limits
 (\url{https://www.huduser.gov/portal/datasets/il.html}); the second is the share a
 tenant pays of the rent when a voucher covers the rest, under the Housing Choice
 Voucher programme
-(\url{https://www.hud.gov/helping-americans/housing-choice-vouchers}).}
+(\url{https://www.hud.gov/helping-americans/housing-choice-vouchers}).
 
 \end{description}
 
@@ -2307,7 +2334,7 @@ Voucher programme
 fixes who can enter it, and the other two fix the units in which its price and
 quantity are measured.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$J_E$, the maximum age at which use can begin.] \textcolor{red}{I set it to fifty five in model terms, which corresponds to age $80$ in the data.
+\item[$J_E$, the maximum age at which use can begin.] I set it to fifty five in model terms, which corresponds to age $80$ in the data.
 It is there so that use cannot begin in the last few years of life, where almost no
 continuation value remains to be lost and the private cost of using is therefore
 close to zero. That is an artefact of the horizon rather than a feature of the world:
@@ -2317,7 +2344,7 @@ it almost nothing. Without the cap the model would let use begin exactly there, 
 at the final age it would be worse than that, since a household that acquires the
 disorder in the last period dies at the end of it whatever the hazard does: the
 disorder carries literally no consequence and only the flow benefit of using, which
-cannot be a reasonable description of the choice either.}
+cannot be a reasonable description of the choice either.
 
 \item[$\nu_1$, the supply shifter.] A pure normalisation, chosen so that supply
 equals demand at $p_v=1$ in the benchmark. It normalises units, not behaviour.
@@ -2332,29 +2359,35 @@ free in every counterfactual. It is an equilibrium object rather than a dial.
 
 None of the moments below is fitted. Each is produced endogenously by a model
 with sixty single ages, and each is a place the model can be caught.
+\textcolor{red}{Section~9 of \texttt{data/}\allowbreak\texttt{DATA\_APPENDIX.md} in the replication
+package derives the data side of every one of them, and it is the place to go for
+everything needed to replicate them: the dataset, the year, the universe, the
+computation, and the three cases where the universe rather than the arithmetic
+decides the number. The package ships those datasets as well, so none of them has
+to be downloaded first. Both standardised mortality ratios below are age weighted.}
 
 \begin{center}\footnotesize
-\begin{tabular}{@{}lL{5.6cm}r@{}}
+\begin{tabular}{@{}llr@{}}
 \toprule
 Moment & Data & Source \\
 \midrule
 Homelessness rate by age, 25 to 34 through 65+
- & 0.316 / 0.338 / 0.291 / 0.250 / 0.077 percent & HUD PIT 2024 \\
+ & \textcolor{red}{0.316, 0.338, 0.291, 0.250, 0.077 percent} & HUD PIT 2024 \\
 Shares of the homeless across those bands
- & 26.0 / 27.2 / 21.0 / 18.4 / 7.5 percent & HUD PIT 2024 \\
+ & \textcolor{red}{26.0, 27.2, 21.0, 18.4, 7.5 percent} & HUD PIT 2024 \\
 Returns to homelessness within 24 months & 17.4 percent & HUD SPM 2024 \\
-Drug poisonings as a share of all deaths, 25 to 44 & about 20 percent & CDC WONDER \\
+\textcolor{red}{Drug poisonings as a share of deaths, 25 to 44} & about 20 percent & CDC WONDER \\
 Bottom half's share of net worth & 2.52 percent & Fed DFA \\
-Housing costs above 30 and above 50 percent of income & 40.6 and 17.5 percent & SCF 2022 \\
-Age weighted standardised mortality ratio, SUD & 2.5 to 9.8 & Degenhardt et al. \\
-Age weighted standardised mortality ratio, homeless & 9.1 / 4.5 / 1.1 by band & Baggett et al. \\
+\textcolor{red}{Housing costs above 30 and 50 percent of income} & 40.6 and 17.5 percent & SCF 2022 \\
+\textcolor{red}{Standardised mortality ratio, SUD} & 2.5 to 9.8 & Degenhardt et al. \\
+\textcolor{red}{Standardised mortality ratio, homeless} & \textcolor{red}{9.1, 4.5, 1.1 by band} & Baggett et al. \\
 Tenant contribution rate & 31.2 percent & HUD \\
-Voucher holders with wages as their main income & 28 percent & HUD \\
-Income with a moderate or severe SUD, over average & 71.1 percent & NSDUH 2024 \\
+\textcolor{red}{Voucher holders with wages as main income} & 28 percent & HUD \\
+\textcolor{red}{Income, moderate or severe SUD over average} & 71.1 percent & NSDUH 2024 \\
 Labour force participation, SUD against clean & 65.8 against 61.5 percent & NSDUH 2024 \\
 Homeless at treatment admission & 14.5 percent & TEDS-A 2022 \\
-Co-occurring psychiatric problem at admission & 43.1 percent & TEDS-A 2022 \\
-Working at all, among the homeless in treatment & 6.6 percent & TEDS-A 2022 \\
+\textcolor{red}{Psychiatric problem alongside SUD at admission} & 43.1 percent & TEDS-A 2022 \\
+\textcolor{red}{Working at all, homeless in treatment} & 6.6 percent & TEDS-A 2022 \\
 Drug use disorder share of the homeless & 21.7 percent & Gutwinski et al.\ (2021) \\
 Drug price participation elasticity & $-0.63$ & Saffer and Chaloupka (1999) \\
 \bottomrule

@@ -12,8 +12,12 @@ stated for every target**, because several of these numbers differ by a factor o
 two depending on whether the denominator is people or households, adults or all
 ages, renters or all occupants.
 
-Files live in this folder. `raw/` holds the source exports exactly as downloaded;
-the scripts here turn them into the small CSVs the Fortran reads. `README.md` lists
+**Nothing here has to be downloaded.** The replication package carries the datasets
+themselves, so every number below can be recomputed from the files already in this
+folder. `raw/` holds the source exports exactly as they came from HUD, CDC WONDER, the
+Federal Reserve, the Census, SSA, BLS and SAMHSA; `NSDUH_2024.dta` and `SCF_2022.dta`
+are the two microdata extracts; and the scripts here turn all of it into the small
+CSVs the Fortran reads. `README.md` lists
 the regeneration commands and `FINDINGS.md` records what each source implied when
 it arrived, including the targets it called into question.
 
@@ -321,10 +325,113 @@ tenant contribution under the Housing Choice Voucher programme
 
 ---
 
+## 9. The validation moments
+
+None of these is fitted. Each is produced endogenously by the model and is a place
+the model can be caught, so the derivation of the data side matters as much as for a
+target. They are listed in the order the paper's validation section lists them.
+
+**Homelessness rate by age, and the shares of the homeless across bands.** HUD point
+in time count 2024, by age band, against Census population for the same bands.
+
+| band | homeless | population | rate | share of homeless |
+|---|---:|---:|---:|---:|
+| 25–34 | 146,859 | 46,453,864 | 0.3161% | 26.0% |
+| 35–44 | 153,849 | 45,539,224 | 0.3378% | 27.2% |
+| 45–54 | 118,740 | 40,780,356 | 0.2912% | 21.0% |
+| 55–64 | 104,007 | 41,661,725 | 0.2496% | 18.4% |
+| 65–84 | 42,147 | 54,744,775 | 0.0770% | 7.5% |
+| total | 565,602 | 229,179,944 | 0.2468% | 100% |
+
+Two cautions. The 65+ column in the HUD file is named **"Over 64"**, and a first pass
+that searched for "65" stopped at 64 and lost the band. And these are **person**
+rates, unlike the household rate that h₁ is calibrated to, because the age
+distribution is only published for people; the level therefore differs from the 0.399
+percent target by construction and it is the **profile** that is the check.
+
+**Returns to homelessness within 24 months — 17.4 percent.** HUD System Performance
+Measures, national summary, 2024 (`raw/HUD_system_performance_measures_national_summary_2020_2024.pdf`).
+The series runs 19.7 in 2020 and 16.6 in 2022, so 2024 is not an outlier. Nothing in
+the calibration disciplines exit and reentry, so the model produces this from the
+recovery and homelessness hazards alone.
+
+**Drug poisonings as a share of deaths, 25 to 44 — about 20 percent.** CDC WONDER
+provisional mortality, grouped by **MCD – Drug/Alcohol Induced Cause**, summing the
+four drug poisoning rows: X40–X44 unintentional, X60–X64 suicide, X85 homicide,
+Y10–Y14 undetermined. That is 81,834 deaths at ages 25–84. Dividing by the SSA
+all cause probability at the same ages gives 20.4 percent at 25–29, 23.2 at 30–34,
+22.3 at 35–39 and 18.6 at 40–44. **The grouping matters:** the ICD-10 113 Cause List
+offers only unintentional poisoning, X40–X44, which understates the total by 7 to 10
+percent at prime ages; that export is kept in `raw/` marked SUPERSEDED so the
+difference is checkable.
+
+**Bottom half's share of net worth — 2.52 percent.** Federal Reserve Distributional
+Financial Accounts (`raw/FRB_DFA_net_worth_levels_by_percentile_1989_2026.csv`), most
+recent quarter, bottom 50 percent share of household net worth.
+
+**Housing costs above 30 and 50 percent of income — 40.6 and 17.5 percent.**
+SCF 2022, computed by `SCF_cost_burdened_renters_code.txt`. The universe is renters
+with positive income and positive rent, dropped of homeowners, and restricted to the
+80th to 100th percentile band of the income CDF used in that script; rent to income is
+annualised as 12 × rent / income. This is a different universe from the ACS 49.5 and
+26.5 percent quoted with the rental ladder, which is why the two pairs of numbers
+differ, and both are reported rather than reconciled.
+
+**Standardised mortality ratio, SUD — 2.5 to 9.8** (age weighted). Degenhardt et al.
+(2011), the range across studies of regular or dependent opioid users. Reported as a
+range because the studies disagree, and the model's own ratio is checked against the
+range rather than a point.
+
+**Standardised mortality ratio, homeless — 9.1, 4.5, 1.1 by band** (age weighted). Baggett et
+al. (2013), ages 25–44, 45–64 and 65–84. This is the profile the age varying
+homelessness multiplier is built from, so the check is that the model reproduces the
+**shape**: the collapse by a factor of eight from the youngest band to the oldest is
+selection, not protection.
+
+**Tenant contribution rate — 31.2 percent.** HUD Picture of Subsidized Households
+2023, **tenant based voucher row**: \$503 monthly tenant rent against \$19,368 annual
+income. The all programmes figure is 29.3 percent and the project based figure 27.9,
+so using the wrong row moves this by three points; the model's κ_r is set to 0.30 and
+this is the check on it.
+
+**Voucher holders with wages as main income — 28 percent.** Same source and
+same row. It is a check on the model's employment composition among voucher holders,
+which nothing targets.
+
+**Income, moderate or severe SUD over average — 71.1 percent**, and
+**labour force participation, SUD against clean — 65.8 against 61.5 percent.**
+NSDUH 2024 public use file, computed by `NSDUH_2024_income_code.txt` and
+`NSDUH_2024_probability_SUD_code.txt`, adults 26 and over, severity from the
+DSM-5 based moderate or severe classification. The participation pair is the
+informative one: participation is **higher** among those with a disorder, so the
+earnings penalty in the model has to run through unemployment conditional on
+participating rather than through dropping out of the labour force.
+
+**Homeless at treatment admission — 14.5 percent**, **psychiatric problem
+alongside SUD at admission — 43.1 percent**, and **working at all, homeless in treatment — 6.6
+percent.** TEDS-A 2022 admissions public use file, 999,619 admissions aged 25 and
+over. The sample is selected on entering publicly funded treatment, so it is useful
+for **ratios and not levels**. The psychiatric figure is a share of those answering
+the item. The last of the three is the sharpest check in this list: among people
+entering treatment who are homeless, only 6.6 percent work at all, which is far more
+severe than the disorder penalty alone and is a direct test of the homelessness to
+employment channel.
+
+**Drug use disorder share of the homeless — 21.7 percent.** Gutwinski et al. (2021),
+the same meta regression that supplies the SMI share λ_m is calibrated to, so the
+disorder share is the untargeted half of the same study.
+
+**Drug price participation elasticity — −0.63.** Saffer and Chaloupka (1999). The
+model's participation response to the drug price is not targeted anywhere; it comes
+out of the drug market and the utility weight, so this is a check on both at once.
+
+---
+
 ## What is not here yet
 
-The Model column of the paper's two calibration tables reports what the model
-produces against each of these targets. Those numbers are filled from a converged
-run, and the run is not converged at the time of writing, so this file documents the
-data side only. When the calibration lands, the model side is added here alongside
-each target rather than left only in the paper.
+The Model column of the paper's two calibration tables, and the model side of the
+validation moments in section 9, report what the model produces against each of these
+figures. Those numbers come from a converged run, and the run is not converged at the
+time of writing, so this file documents the data side only. When the calibration
+lands, the model side is added here alongside each figure rather than left only in the
+paper.
