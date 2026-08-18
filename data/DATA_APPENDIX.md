@@ -327,39 +327,52 @@ tenant contribution under the Housing Choice Voucher programme
 
 ### The dispersion of permanent productivity
 
-**sigma_y — 1.00 in logs.** SCF 2022 (`SCF_2022.dta`), households aged 26 to 65
-with positive wage and salary income (`wageinc > 0`), weighted by `wgt`. That is
-13,070 observations, 85.2 percent of the age band by weight.
+**sigma_y — the target is the bottom half's share of earnings, 17.2 percent.**
+SCF 2022 (`SCF_2022.dta`), households aged 26 to 65 with positive wage and salary
+income (`wageinc > 0`), weighted by `wgt`. That is 13,070 observations, 85.2 percent
+of the age band by weight.
 
 | moment | SCF 2022 |
 |---|---:|
+| bottom half's share of earnings | **17.2%** (the target) |
+| top tenth's share | 41.1% |
+| p90/p10 | 10.0 |
 | sd of log earnings | 1.036 |
 | sd net of age effects | 1.019 |
-| p90/p10 | 10.0 |
-| bottom half's share of earnings | 17.2% |
-| top tenth's share | 41.1% |
 
-Two adjustments take 1.036 to the 1.00 the models use. The **age profile** comes
-out first, because the life cycle model carries it separately in ε(j); regressing
-log earnings on single age dummies and taking the residual sd gives 1.019. The
-**transitory variance** comes out next, because nothing in either model is
-transitory: productivity is drawn once and kept for life, so the parameter has to
-match the persistent part alone. Storesletten et al. (2004) put the transitory
-variance at 0.063, and √(1.036² − 0.063) = 1.005.
+sigma_y is **internally calibrated** in both models, against the first row. The share
+falls monotonically in sigma_y, so one number identifies it, and both models are
+calibrated to the same moment, which is what makes their income dispersion the same
+object rather than two numbers that happen to be close.
+
+**Why the share and not the sd.** The sd is the obvious moment and it is the wrong
+one here, for two reasons. Discretisation: the life cycle model's productivity grid
+has nine nodes spanning six standard deviations, so it cannot reproduce a continuous
+sd, and the stylized model's grid is truncated at [0.12, 5.0], which costs dispersion
+at both ends. Universe: the sd of log earnings mixes the permanent draw with a
+transitory component the models do not have, so matching it directly would overstate
+permanent inequality. A distributional share is robust to both. It is a property of
+where the mass sits rather than of the tails the grid cannot represent.
+
+For reference, the two adjustments that would take the raw sd to a comparable number:
+the **age profile** comes out first, because the life cycle model carries it
+separately in ε(j), and regressing log earnings on single age dummies leaves 1.019;
+the **transitory variance** comes out next, and Storesletten et al. (2004) put it at
+0.063, so √(1.036² − 0.063) = 1.005.
 
 The universe is the household, per the convention above, so `wageinc` is household
 wage and salary income rather than an individual's. **The universe matters here:**
-restricting to positive earnings excludes the 14.8 percent of the age band with
-none, which is the margin the model produces endogenously through unemployment
-rather than through the productivity draw.
+restricting to positive earnings excludes the 14.8 percent of the age band with none,
+which is the margin the model produces endogenously through unemployment rather than
+through the productivity draw.
 
-On the life cycle model's nine node grid this delivers a bottom half share of 16.5
-percent against 17.2 and a top tenth share of 38.5 against 41.1. p90/p10 comes out
-at 20 against 10, which is the discretisation and not the dispersion: nine nodes
-spanning six standard deviations put the tenth and ninetieth percentiles on the
-second and eighth nodes. The shares are the moments to read. The stylized model,
-on its thirty node grid, gives p90/p10 of 10.1, a bottom half share of 17.3 percent
-and a top tenth share of 36.8.
+**What the models deliver.** The stylized model lands at sigma_y = 1.147 and hits
+17.2 percent exactly; untargeted, its p90/p10 is 11.7 against 10.0 and its top tenth
+share 39.3 against 41.1. The life cycle model's sigma_y is still converging at the
+time of writing; at 1.00 its bottom half share is 16.5 percent and its top tenth
+share 38.5. Its p90/p10 is not a useful check, because nine nodes over six standard
+deviations put the tenth and ninetieth percentiles on the second and eighth nodes:
+the shares are the moments to read.
 
 ---
 
@@ -369,7 +382,7 @@ None of these is fitted. Each is produced endogenously by the model and is a pla
 the model can be caught, so the derivation of the data side matters as much as for a
 target. They are listed in the order the paper's validation section lists them.
 
-**Homelessness rate by age, and the shares of the homeless across bands.** HUD point
+**Homelessness rate for 25-34, 35-44, 45-54, 55-64 and 65+, and the shares of the homeless across those bands.** HUD point
 in time count 2024, by age band, against Census population for the same bands.
 
 | band | homeless | population | rate | share of homeless |
@@ -457,3 +470,7 @@ disorder share is the untargeted half of the same study.
 **Drug price participation elasticity — −0.63.** Saffer and Chaloupka (1999). The
 model's participation response to the drug price is not targeted anywhere; it comes
 out of the drug market and the utility weight, so this is a check on both at once.
+This is the **extensive** margin, whether a household uses at all. The intensive
+margin, how much a user buys once using, is a separate elasticity and the model
+produces it separately; it is not yet reported here because the source for the data
+side has not been settled.
