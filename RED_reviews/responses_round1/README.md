@@ -26,6 +26,12 @@ spacing is set directly in `preamble.tex`.
 * **No hyphens** anywhere in my own prose. Referee quotes keep theirs, since
   they are verbatim.
 * **Singular voice.** I, me, my. Not we, us, our. Referee quotes are exempt.
+* **Labour supply is solved from the first order condition, not off a grid.** An
+  earlier draft of these letters called it coarse in three places. Each period the
+  household sets the marginal utility of leisure against the after tax marginal wage
+  and the model solves that condition by a secant method; the curvature on leisure
+  delivers a Frisch elasticity of 0.5 and the weight on leisure is calibrated to
+  average hours.
 * Every response says what was done, not what could be done.
 * Four flags mark responses that need a second read before submission:
   `\concede`, `\correction`, `\newresult`, `\open`.
@@ -106,6 +112,14 @@ and drugs in every state and after every choice. The housing access elasticity R
 asked for in C1 runs through the recovery hazard instead, which is six times worse
 on the street, is a transition probability rather than a taste, and is what Milby
 reports. So C1 and C5 turn out to be the same request.
+
+## Still to do before submission
+
+* **The editor letter's overview belongs in the other four as well.** The summary
+  of what changed, and why the title changed with it, is currently only in
+  `response_editor.tex`. Each referee and the AE should eventually get a version of
+  it, tailored to what they asked for. Deliberately not done yet: the four letters
+  now carry only the two sentence title note.
 
 ## The four places we push back
 

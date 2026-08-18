@@ -343,6 +343,15 @@ way, asking what role labour supply plays in the framework at all. I have kept i
 on your reasoning: every counterfactual in the paper is financed by the labour
 income tax, so the elasticity is not decorative.
 
+It is also a real margin rather than a nominal one, which is worth saying because the
+previous draft did not make it clear. Hours are not chosen off a grid. Each period the
+household sets the marginal utility of leisure against the after tax marginal wage,
+and the model solves that first order condition numerically by a secant method to a
+tolerance. The curvature on leisure is set to deliver a Frisch elasticity of $0.5$,
+following Chetty (2012), and the weight on leisure is calibrated to average hours, so
+the two dials you would want disciplined are disciplined separately: one fixes the
+level of hours and the other fixes how far they move when the tax does.
+
 The reason its role was invisible is that the previous decomposition did not
 separate the mechanical transfer from the deadweight loss. It does now, by re
 solving the counterfactual with the hours choice frozen at its benchmark schedule.
