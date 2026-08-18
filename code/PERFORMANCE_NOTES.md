@@ -685,3 +685,21 @@ exercised rather than blind.
 
 Noted here rather than fixed for that reason. If homeownership ever prints above
 zero, fix this before reading any treatment moment.
+
+## 14. Do not compile while a run is going: it kills the run
+
+Two calibration runs died with no error, no crash line and no message, the log
+simply stopping partway through a backward induction. Both deaths line up with a
+`gfortran` invocation on this file: the first at 01:03, the second at 02:09
+mid-solve, 51 ages into 60.
+
+The arithmetic makes it obvious in hindsight. `hftf` holds about 1.4 GB resident.
+Compiling this source at `-O2` is itself a multi-gigabyte job, since it is 1.6 MB
+of Fortran in one translation unit with very large module arrays. Run the two
+together and the kernel reaps the bigger, older process without writing anything
+to its log, which is exactly what a silent truncation looks like.
+
+So the order is: stop the run, build, then start the new run. Never build a new
+binary "ready to swap in" while the old one is still solving. If a log stops with
+no error and the process is gone, check whether a compile was running at that
+timestamp before looking for a bug in the model.

@@ -832,6 +832,9 @@
         ! 0.20 is the weighted average across users, light and heavy together,
         ! which is the population the moment is actually taken over.
         real(8), parameter :: drug_spending_share_data=0.20
+        real(8) :: drug_share_experimenters_1=0
+        real(8) :: drug_share_addicted_1=0
+        real(8) :: drug_share_weighted_1=0
         real(8), parameter :: participation_rate_data=0.0513
         real(8), parameter :: vsl_data=7.5
         real(8), parameter :: food_stamps_share_data=0.0042
@@ -28366,15 +28369,39 @@
                     ! more spending, so the update
                     ! adds the gap the other way round: subtract model minus
                     ! data.
+                    ! THE MOMENT IS A WEIGHTED AVERAGE OVER BOTH KINDS OF USER.
+                    !
+                    ! It used to be the ratio for the experimenters alone, who are
+                    ! the users WITHOUT a disorder, since the code keeps the two
+                    ! groups disjoint. So a target meant for users as a whole was
+                    ! being asked of the lighter half of them.
+                    !
+                    ! Now each group's own drug to income ratio is formed first and
+                    ! the two are averaged with their shares of the using
+                    ! population as weights, which is the object the data number is.
+                    drug_share_experimenters_1=&
+                        model_experimenters_total_drug_spending_to_total_income(1)/&
+                        max(model_experimenters_total_income(1),10.d0**(-12))
+                    drug_share_addicted_1=&
+                        model_addicted_total_addiction_spending_to_total_income(1)/&
+                        max(model_addicted_total_income(1),10.d0**(-12))
+                    drug_share_weighted_1=&
+                        (model_mass_experimenters(1)*drug_share_experimenters_1+&
+                        model_mass_addicts(1)*drug_share_addicted_1)/&
+                        max(model_mass_experimenters(1)+model_mass_addicts(1),10.d0**(-12))
+
+                    write(*,*) "drug share, experimenters and with a SUD =",&
+                        drug_share_experimenters_1, drug_share_addicted_1
+                    write(*,*) "drug share, weighted by their population shares =",&
+                        drug_share_weighted_1, " target =", drug_spending_share_data
+
                     write(*,*) "relative_share_of_addiction_1=", relative_share_of_addiction_1
                     relative_share_of_addiction_1=max(min(relative_share_of_addiction_1-&
                         relative_share_of_addiction_adj*&
-                        (model_experimenters_total_drug_spending_to_total_income(1)/&
-                        max(model_experimenters_total_income(1),10.d0**(-12))-&
+                        (drug_share_weighted_1-&
                         drug_spending_share_data),0.9d0),10.d0**(-4))
                     distance_relative_share_of_addiction_1=&
-                        abs(model_experimenters_total_drug_spending_to_total_income(1)/&
-                        max(model_experimenters_total_income(1),10.d0**(-12))-drug_spending_share_data)
+                        abs(drug_share_weighted_1-drug_spending_share_data)
                     write(*,*) "relative_share_of_addiction_1=", relative_share_of_addiction_1
                     write(*,*) "distance_relative_share_of_addiction_1=", distance_relative_share_of_addiction_1
 
