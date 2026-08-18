@@ -1,8 +1,14 @@
 # Round 1 response letters
 
-Draft responses to RED-D-26-00078. Five letters, four of them comment by comment.
-Everything we say back to a referee is in **red**; the black italic block above
-each response is the referee's own text.
+Draft responses to RED-D-26-00078, submitted as *Housing First or Treatment First?*
+and resubmitted as **Housing First, Children Later**. Five letters, four of them
+comment by comment. Everything said back to a referee is in **red**; the black italic
+block above each response is the referee's own text.
+
+All five open by stating the title change and why it happened, because it is the
+first thing a referee will notice and because the reason for it is the substance of
+the revision: the case for conditionality has to rest outside the household's own
+objective, and the externality that decides it is intergenerational.
 
 | file | covers |
 |---|---|
@@ -17,8 +23,9 @@ spacing is set directly in `preamble.tex`.
 
 ## House rules
 
-* **No hyphens** anywhere in our own prose. Referee quotes keep theirs, since
+* **No hyphens** anywhere in my own prose. Referee quotes keep theirs, since
   they are verbatim.
+* **Singular voice.** I, me, my. Not we, us, our. Referee quotes are exempt.
 * Every response says what was done, not what could be done.
 * Four flags mark responses that need a second read before submission:
   `\concede`, `\correction`, `\newresult`, `\open`.
