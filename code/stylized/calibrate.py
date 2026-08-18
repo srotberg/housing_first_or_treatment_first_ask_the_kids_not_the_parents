@@ -94,9 +94,78 @@ from stylized import P, with_, aggregates, vsl
 # high enough to matter collapses homelessness and takes the moral hazard with
 # it. floor_test.py is that diagnostic and is kept.
 YMIN = 0.12
-SIG = 0.75
-YG = np.exp(np.linspace(np.log(YMIN), np.log(5.0), 30))
-W = np.exp(-0.5 * ((np.log(YG) + 0.5 * SIG**2) / SIG)**2)
+# SIG IS THE DATA, NOT A DIAL. It is the dispersion of log permanent income, and
+# it is set to the dispersion of log labour earnings in the SCF 2022: households
+# aged 26 to 65 with positive wage income have an sd of log earnings of 1.036,
+# and 1.019 net of age effects, which the life cycle model carries separately in
+# eps(j). Netting off the transitory variance of 0.063 in Storesletten et al.
+# (2004) leaves 1.00, and that is the number both models use.
+#
+# On the grid below it delivers p90/p10 of 10.1 against 10.0 in the SCF, a
+# bottom half share of earnings of 17.3 per cent against 17.2, and a top tenth
+# share of 36.8 against 41.1. The old 0.75 gave 6.6, 19.3 and 29.2, so it was
+# too equal on all three at once. THE GRID IS DELIBERATELY NOT WIDENED with it:
+# at [0.12, 5.0] the truncation is what keeps the poorest household above the
+# point where the ex ante value of life goes negative, and widening to plus and
+# minus three standard deviations puts YMIN at 0.030 and breaks that. The
+# truncation costs dispersion, sd on the grid is 0.858 rather than 1.00, and the
+# distributional shares are what matter here rather than the sd itself.
+# SIG IS CALIBRATED, NOT SET. It is chosen so that the bottom half of the income
+# distribution holds the share of earnings it holds in the data: 17.2 percent, in
+# the SCF 2022, among households aged 26 to 65 with positive wage and salary
+# income. The life cycle model is calibrated to the same moment, so the two
+# models carry the same income dispersion by construction rather than by
+# coincidence, which is what lets the stylized model stand in for the other one.
+#
+# It is solved here rather than in the sweep below because the mapping from SIG
+# to the share involves nothing else in the model: the grid and its weights are
+# built before any parameter is chosen, and the share falls monotonically in SIG.
+# Bisection on one number is exact and costs nothing, where putting it in the
+# sweep would make every other bracket chase a moving grid.
+#
+# What it replaced: 0.75, which was a guess and was too equal. It gave the bottom
+# half 19.3 percent against 17.2, a ratio of the ninetieth to the tenth percentile
+# of 6.6 against 10.0 in the data, and a top tenth share of 29.2 against 41.1.
+BOT50_TARGET = 0.172
+
+
+def _grid(sig):
+    yg = np.exp(np.linspace(np.log(YMIN), np.log(5.0), 30))
+    w = np.exp(-0.5 * ((np.log(yg) + 0.5 * sig**2) / sig)**2)
+    return yg, w / w.sum()
+
+
+def _bottom_half_share(sig):
+    """Share of income held by the poorer half, with the node the median falls
+    inside split at the median rather than assigned whole, so the share moves
+    smoothly in sig instead of jumping from node to node."""
+    yg, w = _grid(sig)
+    mean = float((w * yg).sum())
+    acc = tot = 0.0
+    for yi, wi in zip(yg, w):
+        if acc + wi <= 0.5:
+            tot += yi * wi
+            acc += wi
+        else:
+            tot += yi * (0.5 - acc)
+            break
+    return tot / mean
+
+
+def _solve_sig(lo=0.30, hi=2.50, iters=60):
+    # the share FALLS in sig, so a share above target means too equal and sig rises
+    for _ in range(iters):
+        mid = 0.5 * (lo + hi)
+        if _bottom_half_share(mid) > BOT50_TARGET:
+            lo = mid
+        else:
+            hi = mid
+    return 0.5 * (lo + hi)
+
+
+SIG = _solve_sig()
+YG, W = _grid(SIG)
+W = W * len(W)  # calibrate.py uses W unnormalised elsewhere; scale is irrelevant
 
 TARGET = dict(part=0.0513, homeless=0.00399, prog=0.332, vsl=80.0,
               dshare=0.11, housing_share=0.30, hspend=0.268)

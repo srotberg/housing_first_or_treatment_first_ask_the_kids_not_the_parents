@@ -325,6 +325,44 @@ tenant contribution under the Housing Choice Voucher programme
 
 ---
 
+### The dispersion of permanent productivity
+
+**sigma_y — 1.00 in logs.** SCF 2022 (`SCF_2022.dta`), households aged 26 to 65
+with positive wage and salary income (`wageinc > 0`), weighted by `wgt`. That is
+13,070 observations, 85.2 percent of the age band by weight.
+
+| moment | SCF 2022 |
+|---|---:|
+| sd of log earnings | 1.036 |
+| sd net of age effects | 1.019 |
+| p90/p10 | 10.0 |
+| bottom half's share of earnings | 17.2% |
+| top tenth's share | 41.1% |
+
+Two adjustments take 1.036 to the 1.00 the models use. The **age profile** comes
+out first, because the life cycle model carries it separately in ε(j); regressing
+log earnings on single age dummies and taking the residual sd gives 1.019. The
+**transitory variance** comes out next, because nothing in either model is
+transitory: productivity is drawn once and kept for life, so the parameter has to
+match the persistent part alone. Storesletten et al. (2004) put the transitory
+variance at 0.063, and √(1.036² − 0.063) = 1.005.
+
+The universe is the household, per the convention above, so `wageinc` is household
+wage and salary income rather than an individual's. **The universe matters here:**
+restricting to positive earnings excludes the 14.8 percent of the age band with
+none, which is the margin the model produces endogenously through unemployment
+rather than through the productivity draw.
+
+On the life cycle model's nine node grid this delivers a bottom half share of 16.5
+percent against 17.2 and a top tenth share of 38.5 against 41.1. p90/p10 comes out
+at 20 against 10, which is the discretisation and not the dispersion: nine nodes
+spanning six standard deviations put the tenth and ninetieth percentiles on the
+second and eighth nodes. The shares are the moments to read. The stylized model,
+on its thirty node grid, gives p90/p10 of 10.1, a bottom half share of 17.3 percent
+and a top tenth share of 36.8.
+
+---
+
 ## 9. The validation moments
 
 None of these is fitted. Each is produced endogenously by the model and is a place

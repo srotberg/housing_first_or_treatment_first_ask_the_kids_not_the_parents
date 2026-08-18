@@ -854,15 +854,35 @@
         ! grid the frozen process used to deliver, to the last digit, so setting
         ! it here changes nothing until the number itself is changed.
         !
-        ! It is NOT free. At sd 0.20 the implied earnings distribution has
-        ! p90/p10 of 1.8 and the bottom half of earners taking 42 percent of
-        ! labour income, which is nothing like the United States and cannot
-        ! produce either the homelessness rate or the 2.52 percent bottom half
-        ! share of net worth the model is checked against. At 0.458 p90/p10 is
-        ! 4.0 and the bottom half takes 33 percent. Storesletten et al. (2004)
-        ! put the fixed effect VARIANCE near 0.27, which is an sd near 0.52 and
-        ! a p90/p10 near 4.8, close to the roughly 5 in the data.
-        real(8), parameter :: sd_permanent_productivity=0.45797120856966389d0
+        ! IT IS SET TO THE DATA. In the SCF 2022, households aged 26 to 65 with
+        ! positive wage income have an sd of log earnings of 1.036, and 1.019
+        ! net of age effects, which this model carries separately in eps(j).
+        ! Netting off the transitory variance of 0.063 in Storesletten et al.
+        ! (2004) leaves 1.00, and that is the value below. The stylized model
+        ! uses the same number.
+        !
+        ! On the nine node grid it delivers a bottom half share of earnings of
+        ! 16.5 percent against 17.2 in the SCF and a top tenth share of 38.5
+        ! against 41.1. p90/p10 comes out at 20 against 10, but that is the
+        ! discretisation rather than the dispersion: nine nodes over six
+        ! standard deviations put the tenth and ninetieth percentiles on the
+        ! second and eighth nodes, so the ratio is lumpy where the shares are
+        ! not. The shares are the moments to read.
+        !
+        ! What it replaced: 0.458, which was not chosen at all. It was whatever
+        ! width the KKK process happened to leave on the frozen grid, and it
+        ! gave a bottom half share of 33 percent, an almost equal society.
+        real(8) :: sd_permanent_productivity=1.00d0
+        real(8) :: sd_permanent_productivity_adjuster=2.d0
+        real(8) :: distance_sd_permanent_productivity=1
+        real(8) :: stopping_rule_sd_permanent_productivity=10.d0**(-3)
+        integer, parameter :: calibrate_sd_permanent_productivity=1
+        ! THE MOMENT. The share of labour productivity held by the bottom half of
+        ! the distribution: 17.2 percent in the SCF 2022, households aged 26 to 65
+        ! with positive wage and salary income. sigma_y moves against it, and the
+        ! mapping is monotone, so the step below is a plain secant on one number.
+        real(8), parameter :: bottom_half_earnings_share_data=0.172d0
+        real(8) :: model_bottom_half_earnings_share=0
         real(8) :: persistence_employment_surviving=0.9
         real(8) :: sd_employment_surviving=0.2
             
@@ -20839,9 +20859,55 @@
             unconditional_employment_probability=unconditional_employment_probability/&
                 sum(unconditional_employment_probability)
             
+            ! THE MOMENT sigma_y IS CALIBRATED ON. The share of productivity
+            ! held by the bottom half of the distribution, with the node the
+            ! median falls inside split at the median rather than assigned
+            ! whole, so the share moves smoothly in sigma_y instead of jumping
+            ! node to node.
+            sum_of_dist=0
+            sum_of_unconditional_unemployment=0
+            
+            do employment_index=1,employment_grid_size
+            
+                sum_of_unconditional_unemployment=sum_of_unconditional_unemployment+&
+                    employment_grid(1,employment_index)*&
+                    unconditional_employment_probability(employment_index)
+            
+            end do
+            
+            model_bottom_half_earnings_share=0
+            
+            do employment_index=1,employment_grid_size
+            
+                if ((sum_of_dist+unconditional_employment_probability(employment_index))<=0.5d0) then
+                
+                    model_bottom_half_earnings_share=model_bottom_half_earnings_share+&
+                        employment_grid(1,employment_index)*&
+                        unconditional_employment_probability(employment_index)
+                        
+                    sum_of_dist=sum_of_dist+unconditional_employment_probability(employment_index)
+                
+                else
+                
+                    model_bottom_half_earnings_share=model_bottom_half_earnings_share+&
+                        employment_grid(1,employment_index)*(0.5d0-sum_of_dist)
+                        
+                    sum_of_dist=0.5d0
+                    
+                    exit
+                
+                end if
+            
+            end do
+            
+            model_bottom_half_earnings_share=model_bottom_half_earnings_share/&
+                max(sum_of_unconditional_unemployment,10.d0**(-10))
+            
             if (loop_count<1) then
             
                 write(*,*) "fixed productivity: sd of log y =", sd_fixed_y
+                write(*,*) "bottom half's share of productivity =",&
+                    model_bottom_half_earnings_share, " target =", bottom_half_earnings_share_data
                 write(*,*) "unconditional_employment_probability on the frozen grid"
                 write(*,*) unconditional_employment_probability
             
@@ -27764,8 +27830,34 @@
             (distance_mu_homeless>stopping_rule_mu_homeless) .OR. &
             (distance_weight_on_child>stopping_rule_weight_on_child) .OR. &
             (distance_penalty_child_addicted>stopping_rule_penalty_child_addicted) .OR. &
-            (distance_labor_income_tax_rate>stopping_rule_labor_income_tax_rate) .OR. (loop_count<1))
+            (distance_labor_income_tax_rate>stopping_rule_labor_income_tax_rate) .OR. &
+            (distance_sd_permanent_productivity>stopping_rule_sd_permanent_productivity) .OR. (loop_count<1))
                         
+            ! SIGMA_Y, on the share of productivity held by the bottom half.
+            ! The share FALLS in sigma_y, so a model share above target means
+            ! the distribution is too equal and sigma_y has to rise. The grid is
+            ! rebuilt from sigma_y at the top of every loop, so the new value is
+            ! in force for the solve that follows.
+            if ((calibrate_sd_permanent_productivity==1) .AND. (loop_count>=1)) then
+
+                write(*,*) "bottom half's share of productivity =",&
+                    model_bottom_half_earnings_share,&
+                    " target =", bottom_half_earnings_share_data
+                write(*,*) "sd_permanent_productivity=", sd_permanent_productivity
+
+                sd_permanent_productivity=max(min(sd_permanent_productivity+&
+                    sd_permanent_productivity_adjuster*&
+                    (model_bottom_half_earnings_share-bottom_half_earnings_share_data),&
+                    3.d0),10.d0**(-2))
+
+                distance_sd_permanent_productivity=&
+                    abs(model_bottom_half_earnings_share-bottom_half_earnings_share_data)
+
+                write(*,*) "sd_permanent_productivity=", sd_permanent_productivity,&
+                    " distance_sd_permanent_productivity=", distance_sd_permanent_productivity
+
+            end if
+
             ! OMEGA'S MOMENT, measured before the baseline so that every statistic
             ! the rest of this loop reads describes the baseline and not this.
             ! Switching the child term off means setting its weight to zero, which
@@ -31236,6 +31328,11 @@
                 write(*,*) "NaN DISTANCE: distance_penalty_child_addicted, forced to 1 so the sweep cannot mistake it for convergence"
                 distance_penalty_child_addicted=1
             end if
+            if (distance_sd_permanent_productivity .NE. distance_sd_permanent_productivity) then
+                write(*,*) "NaN DISTANCE: distance_sd_permanent_productivity, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_sd_permanent_productivity=1
+            end if
+
             if (distance_labor_income_tax_rate .NE. distance_labor_income_tax_rate) then
                 write(*,*) "NaN DISTANCE: distance_labor_income_tax_rate, forced to 1 so the sweep cannot mistake it for convergence"
                 distance_labor_income_tax_rate=1
