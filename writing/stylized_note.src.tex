@@ -50,9 +50,8 @@
 \begin{document}
 
 \begin{center}
-{\Large\bfseries Housing First or Treatment First?}\\[0.35em]
-{\Large\bfseries Externalities and the Case for Conditionality}\\[0.35em]
-{\large A stylized model, and the quantitative model behind it}\\[0.35em]
+{\Large\bfseries \textcolor{red}{Housing First, Children Later}}\textcolor{red}{\footnote{I thank Ay\c{s}e \.{I}mroho\u{g}lu, Kai Zhao, Joseph Steinberg, Efraim Benmelech, Jonathan Alschech, Ryan Quandt, Christopher Sharp and the seminar participants at the University of Toronto for their helpful comments. I owe a special thank you to Joseph Steinberg who generously provided access to one of his high powered computers for this research. The data and replication code are available on GitHub at \url{https://github.com/srotberg/housing_first_or_treatment_first}.}}\\[0.6em]
+{\large \textcolor{red}{Shahar Rotberg}}\textcolor{red}{\footnote{Canada Mortgage and Housing Corporation (CMHC). Contact: \url{shahar.rotberg@gmail.com}. Website: \url{www.shaharrotberg.com}. This work was conducted on personal equipment and time. The code used to solve the model is the author's own. The opinions expressed herein do not necessarily represent the views of CMHC.}}\\[0.35em]
 \today
 \end{center}
 \vspace{0.8em}
@@ -87,7 +86,7 @@ harder, since recovery is harder on the street. Both claims are true about
 behaviour, and the experimental literature has not settled between them.
 Randomised trials of Housing First find large and persistent gains in housing
 stability and mixed to null effects on substance use (Tsemberis, Gulcur and
-Nakae, 2004; Padgett, Gulcur and Tsemberis, 2006; Larimer et al., 2009; Goering
+Nakae, 2004; Padgett et al., 2006; Larimer et al., 2009; Goering
 et al., 2014; Aubry et al., 2016), but they run six to twenty four months and
 cannot speak to long run behaviour, to housing markets, or to the budget.
 
@@ -134,11 +133,11 @@ that was $96{,}400$ children, or $36$ percent of all removals; children of a par
 with a disorder are themselves two to four times as likely to acquire one
 (McGovern et al., 2023). Parental shocks transmit to the child's own earnings:
 children whose fathers were displaced by a firm closure earn about $9$ percent
-less as adults (Oreopoulos, Page and Stevens, 2008). And housing is one of the
+less as adults (Oreopoulos et al., 2008). And housing is one of the
 environments that does the transmitting: children displaced by Chicago's public
 housing demolitions earned $16$ percent more a year as adults (Chyn, 2018), and a
 move to a lower poverty neighbourhood before age thirteen raises adult earnings by
-$31$ percent (Chetty, Hendren and Katz, 2016). What is a private problem for the
+$31$ percent (Chetty et al., 2016). What is a private problem for the
 parent is a childhood for the child, and the child does not choose it.
 
 
@@ -219,7 +218,7 @@ motivation and is the one the argument above turns on.
 \paragraph{Randomised trials of Housing First.} A large empirical literature
 evaluates programmes that provide rapid housing without conditioning on sobriety,
 and finds large and persistent improvements in housing stability and reductions in
-shelter and other public service use (Tsemberis, Gulcur and Nakae, 2004; Padgett,
+shelter and other public service use (Tsemberis et al., 2004; Padgett,
 Gulcur and Tsemberis, 2006; Larimer et al., 2009; Goering et al., 2014; Aubry et
 al., 2016). Evidence on substance use is mixed: most studies find no statistically
 significant change, and some report modest reductions in alcohol related outcomes.
@@ -240,7 +239,7 @@ sample.
 optimisation dates to Becker and Murphy (1988), and the assumption is empirically
 defensible at the margin where policy operates. Both users and non users hold risk
 perceptions close to the objective probabilities (Lundborg and Lindgren, 2002), and
-Greenwood, Guner and Kopecky (2025), who allow perceived and true addiction risk to
+Greenwood et al.\ (2025), who allow perceived and true addiction risk to
 differ, find the model implied beliefs close to the truth. Drug demand responds to
 price at the participation margin even for drugs as habit forming as heroin and
 cocaine, with long run responses larger than short run ones (van Ours, 1995; Saffer
@@ -288,7 +287,7 @@ or harms is contested, and nothing here needs it settled: Doyle (2007) finds
 children on the margin of placement do better left at home, while Gross and Baron
 (2022) find placement improved safety and schooling. That a parental shock transmits
 to the child's own earnings is estimated well outside the substance literature, by
-Oreopoulos, Page and Stevens (2008) on paternal job displacement and by Nilsson
+Oreopoulos et al.\ (2008) on paternal job displacement and by Nilsson
 (2017) on an alcohol availability experiment. And that housing is one of the
 environments doing the transmitting is the contribution of Chyn (2018) and Chetty,
 Hendren and Katz (2016), with Collinson et al.\ (2024) supplying the adult leg from
@@ -299,15 +298,47 @@ than a coefficient.
 
 
 
-\paragraph{Rental supply and general equilibrium.} The rental market follows
-Chambers, Garriga and Schlagenhauf (2009), with the supply elasticity disciplined by
-the macro housing literature (Rotberg and Steinberg, 2024). This is not decoration.
-Under perfectly elastic supply, expanding voucher coverage would leave rents
-unchanged, which understates the fiscal cost of universal Housing First and
-overstates its welfare gain. An upward sloping rental supply is what makes the
-comparison across regimes a comparison of equilibria rather than of transfers.
+\paragraph{\textcolor{red}{What the hazards are built from.}} \textcolor{red}{The model's transitions are not
+free parameters dressed as structure; each is anchored on a clinical or
+epidemiological estimate, and the calibration section names them one at a time. Four
+groups do the work. On mortality, Hjorth\o j et al.\ (2023) put the excess death
+rate for a substance use disorder at six to ten times the baseline, Baggett et al.\
+(2013) measure it for the homeless by age, and Olfson et al.\ (2015) do the same for
+serious mental illness; against those hazards the value of a life comes from the
+willingness to pay estimates surveyed in Viscusi and Aldy (2003). On the mental
+illness chain, Nielsen et al.\ (2017) identify the effect of a disorder on the onset
+of mental illness in Danish registers, Gutwinski et al.\ (2021) meta analyse its
+prevalence among the homeless, and Bradizza et al.\ (2006) review relapse under dual
+diagnosis. On recovery, Vaillant (1995) documents how slow unassisted remission is,
+and Milby et al.\ (2005) supply the causal estimate this paper leans on hardest: a
+randomised trial on cocaine dependent homeless adults in which the housed arm was
+abstinent $6.60$ weeks against $4.48$ in the unhoused arm, which is where both the
+treatment effect on recovery and the penalty homelessness imposes on it come from. On
+employment and the cost of housing loss, Desmond and Gershenson (2016) estimate what
+losing housing does to holding a job, and Loubi\`ere et al.\ (2020) price the
+disamenity of visible homelessness through a contingent valuation, which is what
+makes the aggregate headcount enter anybody's utility at all. Taking these from
+outside the model is the point: the parameters this paper argues over are the ones in
+Section~\ref{sec:fullcal}, and a reader who disagrees with one of these is
+disagreeing with the study behind it.}
 
-
+\paragraph{\textcolor{red}{The supply of the drug.}} \textcolor{red}{Making the drug price endogenous is what
+lets a policy that changes the number of users change what using costs everybody
+else, and it is the channel through which Treatment First hands part of its gain
+back. What disciplines it is the elasticity of supply, and no direct estimate exists
+for an illicit drug. The demand side is much better served: Gallet (2014)
+synthesises $462$ price elasticity studies, and van Ours (1995), Saffer and Chaloupka
+(1999) and Caulkins (2001) establish that participation responds to price even for
+heroin and cocaine. For supply I use cannabis, which is the closest market there is.
+It remains a Schedule I substance federally, so a licensed producer works without
+interstate trade, without ordinary banking and under federal prohibition, which is
+the set of frictions an illicit supplier faces; cigarettes and gasoline share none of
+them. Mace et al.\ (2020) estimate a price elasticity of supply of $1.46$ on
+Washington State administrative data, and that is the number the model uses. The
+rental market follows Chambers et al.\ (2009), with its supply elasticity
+disciplined by Rotberg and Steinberg (2024), because under perfectly elastic rental
+supply expanding voucher coverage would leave rents unchanged, which would understate
+the fiscal cost of universal Housing First and overstate its welfare gain.}
 
 \paragraph{In a nutshell.} The trials establish that housing stability responds to
 policy but cannot price what happens to anyone outside the sample. The rational
@@ -1599,7 +1630,7 @@ numbers: that a parent's disorder changes the childhood, that a parental shock
 transmits to the child's own adult earnings, and that housing is one of the
 environments doing the transmitting. Only the last is measured as an earnings
 effect of the right kind, which is why $\delta_h$ is set directly to the $31$
-percent of Chetty, Hendren and Katz (2016) while $\delta_d$ is set to the value
+percent of Chetty et al.\ (2016) while $\delta_d$ is set to the value
 that reproduces the disorder ratio of McGovern et al.\ (2023). Neither is a
 removal effect: whether foster placement itself helps or harms is contested, and
 $\delta_d$ is a reduced form for the whole bundle of that childhood rather than for
@@ -1658,9 +1689,9 @@ moment identifies it.
 
 \subsection{The twenty nine parameters that carry the story of this paper}
 
-\textcolor{red}{Twenty six of the fifty five} are the furniture of \textcolor{red}{most life cycle
-models}, whereas the rest are specific to this paper, and all \textcolor{red}{twenty
-nine} of those carry its main story and policy analysis. They are set out in Table~\ref{tab:eleven},
+Twenty six of the fifty five are \textcolor{red}{common to most life cycle
+models}, whereas the rest are specific to this paper, and all twenty
+nine of those carry its main story and policy analysis. They are set out in Table~\ref{tab:eleven},
 with the parameter, its description,
 and the moment and source used to fix its value, which is given in the last
 column. They are discussed one at a time below because they are the parameters a
@@ -1984,9 +2015,9 @@ with a SUD, $24$ percent in NSDUH 2023.
 \end{description}
 
 \paragraph{Externalities and distortions.} This block is about what causes the
-externalities and the distortions. \textcolor{red}{This is where the ranking between Housing
+externalities and the distortions. This is where the ranking between Housing
 First and Treatment First is decided, since the private comparison already favours
-Housing First, holding externalities and distortions aside.}
+Housing First, holding externalities and distortions aside.
 The first three are what a parent's disorder and a
 parent's homelessness cost the child, and the fourth is what the
 homelessness of strangers costs everybody. All four are externalities in the strict
@@ -2075,20 +2106,19 @@ Frisch elasticity of $0.5$, from Chetty (2012).
 \paragraph{Drug market.} One parameter of the drug market belongs here.
 It is what makes the drug price endogenous, so drug use affects drug demand and the
 drug price in equilibrium; the normalisation and the price it fixes are standard
-and sit in Table~\ref{tab:stdparams}. \textcolor{red}{This is a general equilibrium offset that
+and sit in Table~\ref{tab:stdparams}. This is a general equilibrium offset that
 runs against Treatment First in particular. Curing households takes them out of the
 drug market, demand falls and so does the price, and a cheaper drug draws other
 households in. Some of what the policy removes is handed back through the price,
-and how much depends entirely on this parameter.}
+and how much depends entirely on this parameter.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$\nu_2$, the supply elasticity.] \textcolor{red}{Set so that the price elasticity of
-supply is $1.46$, from Mace, Patel and Seegert (2020), who estimate it on Washington
-State administrative data. There is no direct estimate for an illicit drug, and
-cannabis is the closest market there is: it remains a Schedule I substance
-federally, so even a state licensed producer works without interstate trade,
-without ordinary banking and under federal prohibition, which is the set of
-frictions an illicit supplier faces. Cigarettes and gasoline are not comparable in
-that respect and are not used here.}
+\item[\textcolor{red}{$\nu_2$, the drug supply elasticity.}] Set so that the price elasticity of
+supply is $1.46$, \textcolor{red}{which is what Mace et al.\ (2020) estimate for cannabis on
+Washington State administrative data. There is no direct estimate for an illicit
+drug, and cannabis is the closest market there is: it remains a Schedule I
+substance federally, so even a state licensed producer works without interstate
+trade, without ordinary banking and under federal prohibition, which is the set of
+frictions an illicit supplier faces.}
 As it rises supply is more elastic, so the price moves less when demand does, and the general equilibrium offset to treatment shrinks: at a very elastic supply,
 curing households barely lowers the price, so general equilibrium effects play
 little role.
@@ -2096,87 +2126,86 @@ little role.
 
 \subsection{Standard parameters}
 
-The rest are conventional, recorded so the calibration can be reproduced rather
-than because anything turns on them. Table~\ref{tab:stdparams} carries each with
-its source and vintage, in this order. There are twenty six of them.
-Six are calibrated inside the model, against a moment, because there is no source
-to read them off; the other twenty are set from outside, from an estimate or from
-statute. Both the table and the entries below run in the same seven blocks, from
-what a household wants through to the drug market, with the moment or the
-source that fixes it, and with the value of that moment in the data.
-Table~\ref{tab:stdparams} carries the same numbers in its Data column, against what
-the model produces in the Model column, which is reported only for the six that are
-calibrated internally since the other twenty have nothing to reproduce.
+\textcolor{red}{The remaining twenty six parameters are more conventional, and I record them so
+that the calibration can be reproduced. Six of them I calibrate inside the model,
+against a moment, because no source reads them off directly; the other twenty I set
+from outside, from an estimate or from statute. Table~\ref{tab:stdparams} and the
+entries below run in the same seven blocks, and each entry gives the moment or the
+source that fixes the parameter together with the value that moment takes in the
+data. The Model column reports what the model produces against that value, and it
+does so only for the six I calibrate internally, since the other twenty have no
+target to reproduce.}
 
-They are not inert in the experiments, and it is worth saying so
-plainly. The discount factor sets how heavily a death thirty years away is
-weighed, the dispersion of permanent income decides how many households are poor
-enough to be at risk, and risk aversion decides what insurance is worth: each of
-them moves the private value and, through the child's draw, the externality as
-well. What separates them from the twenty nine above is not that they do nothing
-but that they are not specific to this paper. They are calibrated the way any life
-cycle model calibrates them, to the same moments and from the same sources, so a
-reader who disagrees with one of them is disagreeing with a literature rather than
-with anything argued here. The parameters in Section~\ref{sec:fullcal} are the
-ones where this paper makes a choice.
+\textcolor{red}{These parameters are not inert in the experiments. For example, the discount
+factor governs how heavily a household weighs a death thirty years in the future,
+the dispersion of permanent income determines how many households are poor enough
+to be at risk of homelessness and of acquiring a disorder, and risk aversion
+governs what insurance is worth. Each of them therefore moves the private value of
+a policy and, through the child's draw, the externality as well. What separates
+them from the parameters above is not that they do nothing, but that they are not
+specific to this paper.}
 
 \input{tables/tab_standard}
 
 
-\paragraph{Preferences.} The four that say what a household wants, and what it is willing to give up to get it.
+\paragraph{Preferences.} \textcolor{red}{The four parameters in this block say what a household wants, and what it is willing to give up to get it.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$\sigma$, risk aversion.] \textcolor{red}{Set to the standard value of two, following
+\item[$\sigma$, risk aversion.] Set to the standard value of two, following
 Attanasio and Weber (2010). As it rises consumption is smoother and insurance is
 worth more, so the voucher is worth more; it also sets the marginal utility of
-consumption, so it enters every welfare comparison in the paper.}
+consumption, so it enters every welfare comparison in the paper.
 \item[$\gamma$, the weight on housing services.] The Cobb-Douglas share of the
 bundle that goes on housing, so it fixes what a dwelling is worth against
-consumption and against the drug. \textcolor{red}{It is chosen so that the average rent to
-income ratio matches the data, $26.8$ percent, which is the same moment the stylized
-model of Section~\ref{sec:stylized} uses. As it rises housing is worth more against
-consumption and the drug, households buy more of it, and the rent to income ratio
-rises with it.}
-\item[$\beta$, the discount factor.] \textcolor{red}{It is chosen so that wealth over output
+consumption and against the drug. \textcolor{red}{I choose it so that housing takes $26.8$ percent of expenditure net of drugs, as
+shelter plus utilities do in the 2024 Consumer Expenditure Survey, which is the same
+moment and the same definition the stylized model of Section~\ref{sec:stylized}
+uses. The share rather than a rent to income ratio is the exact counterpart of a
+Cobb-Douglas weight, since income and expenditure differ by saving. As $\gamma$
+rises housing is worth more against consumption and the drug, households buy more of
+it, and that expenditure share rises with it.}
+\item[$\beta$, the discount factor.] It is chosen so that wealth over output
 matches the national accounts, a ratio of three, from the BEA fixed asset tables
 against NIPA output. As it rises households are more patient, save more, and the
-wealth to output ratio rises with it.}
-\item[$\omega_{\ell}$, the weight on leisure.] \textcolor{red}{It is set so that the model
+wealth to output ratio rises with it.
+\item[$\omega_{\ell}$, the weight on leisure.] It is set so that the model
 generates average hours worked of $40$ percent, from Guvenen et al.\ (2023). As it
 rises leisure is worth more, households work less, and average hours fall with
-it.}
+it.
 \end{description}
 
-\paragraph{Rental ladder.} The grid of dwelling sizes a renter chooses from, and how the rungs are spaced.
+\paragraph{Rental ladder.} \textcolor{red}{These three parameters build the grid of dwelling sizes a renter chooses from, and they fix how the rungs are spaced.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\underline h$ and $\bar h$, the rental ladder.] The smallest and
 the largest rental size. The ladder is pinned at both ends and the rung between
 them follows from the curvature $\varsigma$, so no size is picked by hand.
-The two ends are matched to the two ends of the distribution of occupied units by
-number of bedrooms in the 2023 American Community Survey, table B25042: $13.2$
-percent of households are in the smallest category and $62.7$ percent in the
-largest. Three shares carry two free numbers, so two sizes identify them and the
-middle share follows, which is why the curvature is set rather than calibrated.
-
-Identifying the sizes from the size distribution rather than from the share of
-renters spending more than thirty or more than fifty percent of income on housing
-is deliberate. Those cost shares are a budget consequence of the grid rather than
-the grid itself, so a size calibrated on them absorbs anything else that moves the
-housing cost distribution: incomes, rents, the voucher, the food stamp floor. The
-size distribution names the object directly, and the cost shares are then available
-as a check. The universe is occupied units, so the model counterpart conditions on
-being housed: the homeless are in neither denominator. \textcolor{red}{As they rise the whole ladder is more expensive to occupy, so more households sit lower on it and the shares in the two end categories move directly with them.}
+\textcolor{red}{I choose the two ends to match the two ends of the distribution of occupied units
+by number of bedrooms in the 2023 American Community Survey, table B25042: $13.2$
+percent of households sit in the smallest category and $62.7$ percent in the
+largest. Three shares carry two free numbers, so the two sizes identify them and the
+middle share follows, which is why I set the curvature rather than calibrate it. The
+two ends move the composition in opposite directions. Raising $\underline h$ makes
+the bottom rung dearer, so households that would have taken it move up and the
+smallest share falls; raising $\bar h$ makes the top rung dearer, so households move
+down out of it and the largest share falls. The universe is occupied units, so the
+model counterpart conditions on being housed, and the homeless are in neither
+denominator.}
 \item[$\varsigma$, the curvature of the rental ladder.]
-Set at $1.8$ rather than calibrated. With three rental sizes there are
-two free numbers in the size distribution, and the two ends of the ladder take
-them, so a third parameter chasing the same three shares would not be identified.
-It was tried on the largest share first and could not reach it, which is the
-expected result: what empties the largest unit is the level of $\bar h$ rather than
-the curvature between the ends. A uniform ladder is the restriction $\varsigma=1$
-and fits the size distribution worse.
+\textcolor{red}{I set it at $1.8$ rather than calibrate it, because with three rental sizes the
+size distribution carries two free numbers and the two ends of the ladder already
+take them. What the curvature does is place the middle rung: the middle size sits a
+fraction $(1/2)^{\varsigma}$ of the way from $\underline h$ to $\bar h$, so at
+$\varsigma=1.8$ it sits $28.7$ percent of the way up rather than the $50$ percent a
+uniform ladder would give. That is the shape the data ask for, since $62.7$ percent
+of households are in the largest category and only $13.2$ percent in the smallest,
+which is a ladder whose middle rung is nearer the bottom. At the calibrated ends the
+three sizes stand in the ratio $1 : 1.46 : 2.59$. The two renter cost shares are
+left untargeted and serve as a check instead: in the 2023 American Community Survey
+$49.5$ percent of renter households spend more than thirty percent of income on
+housing and $26.5$ percent spend more than half.}
 
 \end{description}
 
-\paragraph{Earnings and employment.} What a household earns over its life, how much of that is permanent, and how it moves between work and unemployment.
+\paragraph{Earnings and employment.} \textcolor{red}{These five parameters determine what a household earns over its life, how much of that is permanent, and how it moves between work and unemployment.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\varepsilon(j)$, the age profile of efficiency.] A quadratic in age fitted
 to the earnings hump in the PSID and the CPS, so earnings rise and then flatten
@@ -2192,13 +2221,13 @@ unemployment rate in the BLS Current Population Survey over 2014 to 2024,
 $4.85$ percent, given the
 job finding rate set externally below. Separation is the internal one of the pair
 because the unemployment rate identifies the ratio and the finding rate is the
-better measured half. \textcolor{red}{As it rises more households lose work each year, so the unemployment rate rises with it.}
+better measured half. As it rises more households lose work each year, so the unemployment rate rises with it.
 \item[$\bar\pi^{ue}$, the annual job finding rate.] $0.55$, from Krueger, Cramer
 and Cho (2014).
 
 \end{description}
 
-\paragraph{Survival and mental illness.} The two age profiles the model takes from outside rather than generating.
+\paragraph{Survival and mental illness.} \textcolor{red}{These two parameters are age profiles that I take from outside the model rather than generate inside it.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\bar\phi(j)$, baseline survival by age.] The SSA period life table for ages
 26 to 85. This is the profile every mortality multiplier in
@@ -2217,13 +2246,13 @@ SUD puts on that onset, and that is where the interaction lives.
 
 \end{description}
 
-\paragraph{Interest, taxes and public spending.} The return on saving and the fiscal side that the programmes have to be paid for out of.
+\paragraph{Interest, taxes and public spending.} \textcolor{red}{These five parameters set the return on saving and the fiscal side out of which either programme has to be paid.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$r$, the risk free rate.] Three percent, from Kaplan, Mitman and Violante
 (2020).
 
 \item[$\xi$, tax progressivity.] The exponent on income in the tax schedule of
-Section~\ref{sec:ftaxes}, $0.85$, from Heathcote, Storesletten and Violante (2017).
+Section~\ref{sec:ftaxes}, $0.85$, from Heathcote et al.\ (2017).
 It is what makes the labour income tax progressive rather than
 flat, and so what decides how much of either programme's bill falls on whom.
 
@@ -2242,7 +2271,7 @@ tax and not by cutting something else.
 
 \end{description}
 
-\paragraph{Transfers and the voucher rule.} The statutory parameters of the two programmes a household can fall back on.
+\paragraph{Transfers and the voucher rule.} \textcolor{red}{These four parameters are the statutory terms of the two programmes a household can fall back on.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\psi$ and $\bar y$, unemployment insurance.] The replacement rate and the
 cap on the earnings it is paid on, fifty percent and one times average income, both
@@ -2256,7 +2285,7 @@ covers the rest.
 
 \end{description}
 
-\paragraph{Drug market.} The age at which use can start, and the two objects that fix the units of the drug market.
+\paragraph{Drug market.} \textcolor{red}{These three parameters fix the age at which use can start and the units of the drug market.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$j_E$, the maximum age at which use can begin.] Fifty five. It is a
 restriction rather than an estimate, so the results are reported with and without

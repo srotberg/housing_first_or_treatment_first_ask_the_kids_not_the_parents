@@ -663,9 +663,11 @@
         real(8), parameter :: fraction_of_average_house_price_data=100000 ! real(500000)/real(767336) 
         real(8), parameter :: FRED_housing_services_to_GDP=0.312
         ! SHELTER PLUS UTILITIES over total expenditure net of drugs, 2024
-        ! Consumer Expenditure Survey. The same number the stylized model of
-        ! Section 2 matches gamma to, so the two models are disciplined by one
-        ! moment rather than by two that happen to be about housing.
+        ! Consumer Expenditure Survey. The same number AND the same definition
+        ! the stylized model of Section 2 matches gamma to. It is an expenditure
+        ! share rather than a rent to income ratio because gamma is a
+        ! Cobb-Douglas weight, and a Cobb-Douglas weight equals the expenditure
+        ! share exactly; income and expenditure differ by saving.
         real(8), parameter :: avg_rent_to_income_data=0.268
         ! GAMMA TARGETS THE AVERAGE RENT TO INCOME RATIO, which is the moment the
         ! stylized model of Section 2 uses and the one a Cobb-Douglas housing
@@ -4764,7 +4766,25 @@
                                                                                                             
                                         rent_to_income=(rent(time_period,low_quality_market)*lived_in_size_used)/total_income
                                         housing_to_income_all=rent_to_income
-                                        housing_to_income_renters=rent_to_income
+
+                                        ! GAMMA'S MOMENT IS AN EXPENDITURE SHARE, NOT A
+                                        ! RENT TO INCOME RATIO. gamma is the Cobb-Douglas
+                                        ! weight on housing, so its exact counterpart is
+                                        ! housing over expenditure, not housing over
+                                        ! income: the two differ by saving, and only the
+                                        ! first is what a Cobb-Douglas share equals. It is
+                                        ! also the moment the stylized model of Section 2
+                                        ! matches gamma to, shelter plus utilities over
+                                        ! expenditure net of drugs in the CEX, so the two
+                                        ! models are now disciplined by one definition
+                                        ! rather than by two that both mention housing.
+                                        ! Net of drugs is what consumption_used already
+                                        ! is, since the drug is carried separately in
+                                        ! addiction_consumption_1.
+                                        housing_to_income_renters=&
+                                            (rent(time_period,low_quality_market)*lived_in_size_used)/&
+                                            max(rent(time_period,low_quality_market)*lived_in_size_used+&
+                                            consumption_used,10.d0**(-10))
                                                                               
                                         if (rent_to_income<1) then
                                             
