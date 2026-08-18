@@ -167,7 +167,18 @@ SIG = _solve_sig()
 YG, W = _grid(SIG)
 W = W * len(W)  # calibrate.py uses W unnormalised elsewhere; scale is irrelevant
 
-TARGET = dict(part=0.0513, homeless=0.00399, prog=0.332, vsl=80.0,
+# LAMBDA TARGETS THE SAME MOMENT AS THE LIFE CYCLE MODEL. It used to target
+# prog, the 33.2 per cent of users who acquire a SUD, while the life cycle model
+# targets the ADULT SUD RATE of 3.68 per cent from NSDUH 2024. Those two are not
+# the same claim: with participation at 5.13 per cent, a prog of 0.332 implies a
+# population SUD rate of 0.0513 * 0.332 = 1.70 per cent, less than half of 3.68,
+# so the two models were calibrated to inconsistent numbers for the same object.
+#
+# sud is also the better behaved moment. prog is sud/part, a ratio of two
+# endogenous objects, and it is very nearly a step function in lam: with b refit
+# at every point it runs 0.065 at lam = 60, 0.221 at 121 and 0.9998 at 250. The
+# population rate is bounded by participation and moves smoothly.
+TARGET = dict(part=0.0513, homeless=0.00399, sud=0.0368, vsl=80.0,
               dshare=0.11, housing_share=0.30, hspend=0.268)
 
 # ORDER MATTERS, and participation goes LAST. Every one of these parameters
@@ -234,10 +245,11 @@ LAM_LO, LAM_HI = 0.05, 4000.0
 PAIRS = [('gam', 'hspend', 0.02, 0.70),
          ('h_hl', 'homeless', 1e-7, 0.49),
          ('aleph', 'vsl', 0.20, 24.0),
-         ('lam', 'prog', LAM_LO, LAM_HI),
+         ('lam', 'sud', LAM_LO, LAM_HI),
          ('b', 'part', 1e-5, 0.30)]
 
 LABEL = {'part': 'drug participation rate',
+         'sud': 'adult SUD rate',
          'hspend': 'housing spending / non drug spending',
          'housing_share': 'housing spending / income',
          'homeless': 'homelessness rate',
@@ -302,9 +314,9 @@ def bracket_with_b(par, name, mom, lo, hi, iters=16):
     return float(np.sqrt(lo * hi))
 
 
-def bracket_prog(par, lo=None, hi=None, iters=16):
+def bracket_sud(par, lo=None, hi=None, iters=16):
     """
-    Bracket lam on prog, REFITTING b at every trial.
+    Bracket lam on the adult SUD rate, REFITTING b at every trial.
 
     prog is sud/part, so it is meaningless when participation is near zero.
     Evaluated on a stale b the monotonicity test reads prog = 0 at one end,
@@ -312,14 +324,14 @@ def bracket_prog(par, lo=None, hi=None, iters=16):
     made two earlier calibrations look as though the model had broken. Refitting
     b at each trial keeps participation on target, so prog is always defined.
     """
-    tgt = TARGET['prog']
+    tgt = TARGET['sud']
     lo = LAM_LO if lo is None else lo
     hi = LAM_HI if hi is None else hi
     for _ in range(iters):
         mid = np.sqrt(lo * hi)
         q = with_(par, lam=mid)
         q = with_(q, b=_b_for(q))
-        if stats(q)['prog'] > tgt:
+        if stats(q)['sud'] > tgt:
             hi = mid
         else:
             lo = mid
@@ -354,7 +366,7 @@ def calibrate(par=None, sweeps=5, verbose=True):
         # it: b still runs last, so participation is still the moment that is
         # actually hit, but lam is re-solved against the b that will survive.
         for _ in range(4):
-            par = with_(par, lam=bracket_prog(par, LAM_LO, LAM_HI))
+            par = with_(par, lam=bracket_sud(par, LAM_LO, LAM_HI))
             par = with_(par, b=_b_for(par, iters=30))
         if verbose:
             m = stats(par)

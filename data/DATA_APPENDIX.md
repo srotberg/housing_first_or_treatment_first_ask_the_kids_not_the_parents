@@ -336,6 +336,7 @@ of the age band by weight.
 |---|---:|
 | bottom half's share of earnings | **17.2%** (the target) |
 | top tenth's share | 41.1% |
+| bottom tenth's share | 0.99% |
 | p90/p10 | 10.0 |
 | sd of log earnings | 1.036 |
 | sd net of age effects | 1.019 |
@@ -370,9 +371,23 @@ through the productivity draw.
 17.2 percent exactly; untargeted, its p90/p10 is 11.7 against 10.0 and its top tenth
 share 39.3 against 41.1. The life cycle model's sigma_y is still converging at the
 time of writing; at 1.00 its bottom half share is 16.5 percent and its top tenth
-share 38.5. Its p90/p10 is not a useful check, because nine nodes over six standard
-deviations put the tenth and ninetieth percentiles on the second and eighth nodes:
-the shares are the moments to read.
+share 38.5 and its bottom tenth share 1.10 against 0.99. Its p90/p10 is not a useful
+check, because nine nodes over six standard deviations put the tenth and ninetieth
+percentiles on the second and eighth nodes: the shares are the moments to read.
+
+**Productivity is not earnings in the life cycle model, and the gap is reported
+rather than assumed away.** The distinction applies to the life cycle model only. In
+the stylized model income *is* the draw, with no labour supply choice between them, so
+its sigma_y matches this moment exactly. In the life cycle model what sigma_y governs
+is the spread of *productivity*, while the moment measures the spread of *earnings*,
+which is productivity times hours times whether the household works at all. Three things keep the mapping tight enough to use the moment. The
+universe is households with positive earnings, so the extensive margin the model
+produces through unemployment is held out rather than loaded onto sigma_y. The age
+profile is removed separately, since the model carries eps(j) of its own. And what
+is left, the dispersion of hours among the employed, is small against a spread of log
+earnings above one. What remains shows up in the validation section: the model's own
+earnings distribution, with hours and employment in it, is checked against the same
+SCF shares as an untargeted moment.
 
 ---
 
