@@ -50,10 +50,37 @@
 \begin{document}
 
 \begin{center}
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
 {\Large\bfseries Housing First, Children Later}\footnote{I thank Ay\c{s}e \.{I}mroho\u{g}lu, Kai Zhao, Joseph Steinberg, Efraim Benmelech, Jonathan Alschech, Ryan Quandt, Christopher Sharp and the seminar participants at the University of Toronto for their helpful comments. I owe a special thank you to Joseph Steinberg who generously provided access to one of his high powered computers for this research. The data and replication code are available on GitHub at \url{https://github.com/srotberg/housing_first_children_later}.}\\[0.6em]
 {\large Shahar Rotberg}\footnote{Canada Mortgage and Housing Corporation (CMHC). Contact: \url{shahar.rotberg@gmail.com}. Website: \url{www.shaharrotberg.com}. This work was conducted on personal equipment and time. The code used to solve the model is the author's own. The opinions expressed herein do not necessarily represent the views of CMHC.}\\[0.35em]
 \today
 \end{center}
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\setcounter{footnote}{0}
+
+\vspace{0.4em}
+\begin{center}
+\begin{minipage}{0.86\textwidth}
+\begin{center}\textcolor{red}{\textbf{Abstract}}\end{center}
+\noindent\textcolor{red}{Should housing assistance be conditioned on sobriety? With
+forward looking households facing the true hazard of a substance use disorder,
+conditionality only removes an option, so Housing First weakly dominates Treatment
+First at equal generosity and cost. The case for conditionality must therefore rest
+outside the household's own objective. I separate three candidates the debate runs
+together: a genuine externality, the tax that funds the programme, and the
+programme's design. The decisive one is intergenerational. A parent's disorder and
+homelessness pass a worse productivity draw to the child, and pricing that reverses
+the ranking.}
+
+\vspace{0.6em}
+\noindent\textcolor{red}{\textit{Keywords:} homelessness; housing vouchers; substance
+use disorder; intergenerational transmission; externalities.}
+
+\vspace{0.2em}
+\noindent\textcolor{red}{\textit{JEL classification:} I18; I38; H23; R21; J62.}
+\end{minipage}
+\end{center}
+
 \vspace{0.8em}
 
 
@@ -217,14 +244,15 @@ long run effect turns out to be.
 %======================================================================
 \section{Related literature}\label{sec:literature}
 
-\textcolor{red}{The literatures this paper draws on are set out in the order the
+The literatures this paper draws on are set out in the order the
 argument needs them. The first three supply the machinery: what the trials establish
-about housing policy, how economists model the decision to use, and what structural
+about housing policy, how economists model the decision to \textcolor{red}{use substances}, and what structural
 models of homelessness already deliver. The next two supply the motivation, which is
-where this paper departs from its predecessors: what a childhood transmits, and how
-much weight a parent puts on the child who bears it. The last two are what the
+where this paper departs from its predecessors: \textcolor{red}{what a parent with a SUD, or a
+parent on the street, transmits to their child}, and how much weight a parent puts on
+the child who bears it. The last two are what the
 quantitative model is built out of: the hazards, taken one at a time from clinical
-and epidemiological work, and the drug market that makes the price endogenous.}
+and epidemiological work, and the drug market that makes the price endogenous.
 
 \paragraph{Randomised trials of Housing First.} A large empirical literature
 evaluates programmes that provide rapid housing without conditioning on sobriety,
@@ -297,13 +325,13 @@ experiences of Felitti et al.\ (1998), and children of a parent with a SUD are t
 four times as likely to acquire one themselves (McGovern et al., 2023).
 
 The second link is that the childhood shows up in the child's own adult
-earnings, and the mechanism is straightforward. \textcolor{red}{A parent who has lost work
-to the SUD, and who spends what money is left on the drug, has less of it for the
+earnings, and the mechanism is \textcolor{red}{as follows}. A parent who has \textcolor{red}{lost their job
+to the SUD}, and who spends what money is left on the drug, has less of it for the
 child. Time goes the same way. What the child loses is schooling and the ordinary
 attention a household gives, in a home more chaotic than it would otherwise be. The
-child reaches the labour market with less human capital for it.}
+child reaches the labour market with less human capital for it.
 
-\textcolor{red}{Each step of that is measured. Dahl and Lochner (2012) find that family
+Each step of that is measured. Dahl and Lochner (2012) find that family
 income raises children's achievement, using the Earned Income Tax Credit to move the
 income. Card (1999) puts the return to a year of schooling at around ten percent. And
 Nilsson (2017) closes the loop for a parental substance shock in particular: children
@@ -314,7 +342,7 @@ is why $\delta_d$ is calibrated inside the model rather than lifted from a
 coefficient: these estimates imply that the effect is real and of first order, and the
 penalty itself is set to reproduce what the literature does measure for the children
 of parents with a SUD: they are two to four times as likely to acquire one
-themselves.}
+themselves.
 
 The third is that housing, and the poverty that comes with bad housing,
 is one of the environments doing the transmitting. Chyn (2018) finds that children
@@ -2314,7 +2342,7 @@ are poor enough to be at risk of homelessness and of acquiring a SUD. In the 202
 Survey of Consumer Finances, households aged $26$ to $65$ with positive wage and
 salary income hold $17.2$ percent of total earnings in the poorer half of the
 distribution, and $\sigma_y$ is chosen to reproduce that share. The share falls in
-$\sigma_y$, so the mapping is monotone and one number identifies it. \textcolor{red}{Two untargeted shares} come out alongside: the model's top tenth holds $38.5$ percent of
+$\sigma_y$, so the mapping is monotone and one number identifies it. Two untargeted shares come out alongside: the model's top tenth holds $38.5$ percent of
 earnings against $41.1$ in the data, and its bottom tenth holds $1.1$ percent against
 $0.99$.
 
@@ -2443,7 +2471,7 @@ Shares of the homeless across those bands
  & 26.0, 27.2, 21.0, 18.4, 7.5 percent & HUD PIT 2024 \\
 Returns to homelessness within 24 months & 17.4 percent & HUD SPM 2024 \\
 Drug poisonings as a share of deaths, 25 to 44 & about 20 percent & CDC WONDER \\
-\textcolor{red}{Earnings shares, bottom tenth and top tenth} & \textcolor{red}{0.99 and 41.1 percent} & SCF 2022 \\
+Earnings shares, bottom tenth and top tenth & 0.99 and 41.1 percent & SCF 2022 \\
 Bottom half's share of net worth & 2.52 percent & Fed DFA \\
 Housing costs above 30 and 50 percent of income & 40.6 and 17.5 percent & SCF 2022 \\
 Standardised mortality ratio, homeless & 9.1, 4.5, 1.1 by band & Baggett et al. \\
