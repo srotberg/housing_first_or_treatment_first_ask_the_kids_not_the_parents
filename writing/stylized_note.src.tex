@@ -834,7 +834,7 @@ household substance abuse is one of the adverse childhood experiences in Felitti
 et al.\ (1998), and it predicts higher rates of depression, worse self reported
 health and lower life satisfaction in adulthood; the children of parents with a
 SUD also have lower educational attainment, which is the premise of the
-transmission literature $\delta_d$ is set against (McGovern et al., 2023).
+transmission literature $\delta_d$ is \textcolor{red}{calibrated} against (McGovern et al., 2023).
 A model in which the transmitted trait raises the child's own welfare cannot be
 describing any of that, whatever it does to the transmission rate. Letting it inherit a greater
 susceptibility, a higher $\lambda$, fails another way, since a child facing a
@@ -1647,8 +1647,8 @@ govern drug testing and detection; they are inert in the benchmark, where nothin
 is conditional, so they are set with the Treatment First experiment rather than
 here. They are
 split across the two tables of this section: \textcolor{red}{twenty nine} are the main story
-of this paper and its policy analysis (Table~\ref{tab:eleven}, \textcolor{red}{fifteen
-internally and fourteen} externally calibrated), and \textcolor{red}{twenty six} are standard
+of this paper and its policy analysis (Table~\ref{tab:eleven}, \textcolor{red}{sixteen
+internally and thirteen} externally calibrated), and \textcolor{red}{twenty six} are standard
 (Table~\ref{tab:stdparams}, \textcolor{red}{six} internally and \textcolor{red}{twenty} externally).
 
 The tables carry the parameter, its description, the moment and source used to
@@ -1884,7 +1884,7 @@ the $26.6$ percent ratio of voucher recipients to the income eligible population
 HUD's Picture of Subsidized Households, 2023.
 \end{description}
 
-\paragraph{The mental illness chain.} This block is why Treatment First reaches
+\paragraph{\textcolor{red}{Mental illness chain.}} This block is why Treatment First reaches
 further than the disorder it treats: a SUD raises the chance of mental illness,
 mental illness lowers earnings and employment and raises death, and the child
 is susceptible to all of this. Everything here therefore moves
@@ -2027,9 +2027,15 @@ earnings directly, which is why the penalty is calibrated to the disorder ratio
 rather than lifted from an estimate. What the literature supplies is the two halves
 of the chain: Felitti et al.\ (1998) link household dysfunction to adult outcomes,
 and Chetty et al.\ (2016) measure what childhood environment does to adult earnings.
-It is set at $0.30$, the value that puts the ratio in the middle of
-the range McGovern et al.\ (2023) report, who find children of a parent with a SUD
-two to four times likelier to acquire one.
+\textcolor{red}{It is calibrated inside the model to reproduce the ratio of disorder rates
+between the children of parents with and without a disorder, which McGovern et
+al.\ (2023) put between two and four; the midpoint, three, is the target. The
+moment does not need the parent's type carried through the child's whole life. The
+only thing $\delta_d$ changes about a child is the productivity it is born with,
+and the model already holds the distribution of that draw conditional on the
+parent's disorder, and the disorder rate at each productivity level; the ratio is
+those two contracted against each other, at the same parental housing status so
+the comparison isolates the disorder.}
 \item[$\delta_h$, what the child loses to homelessness.] It works through the same
 compounding draw as $\delta_d$, and as it rises it loads whichever policy houses
 more people: Housing First directly, Treatment First by removing the disorder that
@@ -2065,7 +2071,7 @@ Frisch elasticity of $0.5$, from Chetty (2012).
 \end{description}
 
 
-\paragraph{The drug market.} \textcolor{red}{One parameter of the drug market belongs here.
+\paragraph{\textcolor{red}{Drug market.}} \textcolor{red}{One parameter of the drug market belongs here.
 It is what makes the drug price endogenous, so drug use affects drug demand and the
 drug price in equilibrium; the normalisation and the price it fixes are standard
 and sit in Table~\ref{tab:stdparams}.}
@@ -2141,7 +2147,7 @@ standard preference moment; what is specific to this paper is the elasticity, an
 that is $\sigma_{\ell}$, which stays there.}
 \end{description}
 
-\paragraph{\textcolor{red}{The rental ladder.}} \textcolor{red}{The grid of dwelling sizes a renter chooses from, and how the rungs are spaced.}
+\paragraph{\textcolor{red}{Rental ladder.}} \textcolor{red}{The grid of dwelling sizes a renter chooses from, and how the rungs are spaced.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\underline h$ and $\bar h$, the rental ladder.] The smallest and
 the largest rental size. The ladder is pinned at both ends and the rung between
@@ -2238,7 +2244,7 @@ governs eligibility, the second is what a tenant pays of the rent when a voucher
 covers the rest.
 \end{description}
 
-\paragraph{\textcolor{red}{The drug market.}} \textcolor{red}{The age at which use can start, and the two objects that fix the units of the drug market.}
+\paragraph{\textcolor{red}{Drug market.}} \textcolor{red}{The age at which use can start, and the two objects that fix the units of the drug market.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$j_E$, the maximum age at which use can begin.] Fifty five. It is a
 restriction rather than an estimate, so the results are reported with and without

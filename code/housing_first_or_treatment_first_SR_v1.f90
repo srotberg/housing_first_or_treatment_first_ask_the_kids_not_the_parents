@@ -304,7 +304,48 @@
         ! Katz (2016), whose children moved to a low poverty neighbourhood before
         ! age 13 earned 31 per cent more as adults.
         integer, parameter :: include_child_penalty=1
+        ! DELTA_D IS CALIBRATED INSIDE THE MODEL, which is what the note has
+        ! always said and what the code did not do: this was a plain number with
+        ! no adjuster, no distance and no moment anywhere in the sweep.
+        !
+        ! THE MOMENT, and why it does not need a new state. McGovern et al.
+        ! (2023) report children of a parent with a disorder acquiring one at two
+        ! to four times the rate of other children. The model counterpart looks
+        ! as though it needs the parent's type carried through the child's whole
+        ! life, which would be a new dimension on the distribution. It does not.
+        ! The only thing delta_d changes about a child is the productivity draw
+        ! it is born with, and newborn_employment_probability already holds that
+        ! draw's distribution CONDITIONAL on the parent's disorder. The disorder
+        ! rate at each productivity node is already accumulated as well, in
+        ! percent_addicted_by_employment. So the ratio is those two objects
+        ! contracted against each other,
+        !
+        !   sum_z p(z | parent has SUD) a(z)  /  sum_z p(z | parent clean) a(z),
+        !
+        ! at the same parental housing status so the comparison isolates the
+        ! disorder. It is the cross sectional disorder rate by node rather than
+        ! the lifetime probability from that node, which is an approximation, but
+        ! it is the same approximation on both sides of a ratio and it costs
+        ! nothing to compute.
+        !
+        ! DIRECTION. A larger penalty moves the newborn distribution down the
+        ! productivity grid, and the disorder is concentrated at the bottom, so
+        ! the numerator rises and the ratio rises with the penalty.
         real(8) :: penalty_child_addicted=0.30
+        real(8), parameter :: child_sud_ratio_data=3.0d0
+        real(8) :: penalty_child_addicted_adjuster=5*10.d0**(-2)
+        real(8), parameter :: penalty_child_adjuster_start=5*10.d0**(-2)
+        real(8), parameter :: penalty_child_adjuster_damping=0.5
+        real(8), parameter :: penalty_child_adjuster_growth=1.2
+        real(8), parameter :: penalty_child_adjuster_floor=10.d0**(-4)
+        real(8) :: distance_penalty_child_addicted=1
+        real(8) :: stopping_rule_penalty_child_addicted=5*10.d0**(-2)
+        real(8) :: child_sud_ratio_model_1=0
+        real(8) :: child_sud_num_1=0,child_sud_den_1=0
+        real(8) :: gap_penalty_child_1=0,previous_gap_penalty_child=0
+        integer :: have_gap_penalty_child=0
+        integer, parameter :: calibrate_penalty_child_addicted=1
+        integer :: child_node_index_1
         real(8), parameter :: penalty_child_homeless=0.31
 
         ! THE WEIGHT PARENTS PUT ON THEIR CHILDREN. Zero means the damage above
@@ -27634,7 +27675,8 @@
             (distance_rho_m>stopping_rule_rho_m) .OR. &
             (distance_rho_d>stopping_rule_rho_d) .OR. &
             (distance_mu_homeless>stopping_rule_mu_homeless) .OR. &
-            (distance_weight_on_child>stopping_rule_weight_on_child) .OR. (loop_count<1))
+            (distance_weight_on_child>stopping_rule_weight_on_child) .OR. &
+            (distance_penalty_child_addicted>stopping_rule_penalty_child_addicted) .OR. (loop_count<1))
                         
             ! OMEGA'S MOMENT, measured before the baseline so that every statistic
             ! the rest of this loop reads describes the baseline and not this.
@@ -28629,6 +28671,92 @@
 
                         write(*,*) "weight_on_child=", weight_on_child,&
                             " distance_weight_on_child=", distance_weight_on_child
+
+                    end if
+
+                    ! DELTA_D, on the ratio of child disorder rates.
+                    if (calibrate_penalty_child_addicted==1) then
+
+                        child_sud_num_1=0
+                        child_sud_den_1=0
+
+                        do child_node_index_1=1,employment_grid_size
+
+                            child_sud_num_1=child_sud_num_1+&
+                                newborn_employment_probability(child_node_index_1,1,1)*&
+                                percent_addicted_by_employment(1,child_node_index_1)
+
+                            child_sud_den_1=child_sud_den_1+&
+                                newborn_employment_probability(child_node_index_1,0,1)*&
+                                percent_addicted_by_employment(1,child_node_index_1)
+
+                        end do
+
+                        if (child_sud_den_1>10.d0**(-10)) then
+
+                            child_sud_ratio_model_1=child_sud_num_1/child_sud_den_1
+
+                            gap_penalty_child_1=child_sud_ratio_model_1-child_sud_ratio_data
+
+                            if (have_gap_penalty_child==1) then
+
+                                if ((gap_penalty_child_1*previous_gap_penalty_child)<0) then
+
+                                    penalty_child_addicted_adjuster=&
+                                        max(penalty_child_addicted_adjuster*penalty_child_adjuster_damping,&
+                                        penalty_child_adjuster_floor)
+
+                                else
+
+                                    penalty_child_addicted_adjuster=&
+                                        min(penalty_child_addicted_adjuster*penalty_child_adjuster_growth,&
+                                        penalty_child_adjuster_start)
+
+                                end if
+
+                            end if
+
+                            previous_gap_penalty_child=gap_penalty_child_1
+                            have_gap_penalty_child=1
+
+                            write(*,*) "child SUD ratio model =", child_sud_ratio_model_1,&
+                                " target =", child_sud_ratio_data
+                            write(*,*) "penalty_child_addicted=", penalty_child_addicted
+
+                            penalty_child_addicted=&
+                                max(min(penalty_child_addicted-penalty_child_addicted_adjuster*&
+                                gap_penalty_child_1,0.9d0),0.d0)
+
+                            distance_penalty_child_addicted=abs(gap_penalty_child_1)
+
+                            write(*,*) "penalty_child_addicted=", penalty_child_addicted,&
+                                " distance_penalty_child_addicted=", distance_penalty_child_addicted
+
+                            ! The newborn draw is built from this penalty, so it
+                            ! has to be rebuilt now rather than at the next setup,
+                            ! which never runs again.
+                            call create_newborn_employment_probability()
+
+                            if ((penalty_child_addicted<=10.d0**(-8)) .OR. &
+                                (penalty_child_addicted>=0.9d0-10.d0**(-8))) then
+
+                                write(*,*) "delta_d IS PINNED AT A BOUND", penalty_child_addicted,&
+                                    " and the child SUD ratio is ", child_sud_ratio_model_1,&
+                                    " against ", child_sud_ratio_data
+
+                            end if
+
+                        else
+
+                            write(*,*) "child SUD ratio has an empty denominator: delta_d held at",&
+                                penalty_child_addicted
+                            distance_penalty_child_addicted=1
+
+                        end if
+
+                    else
+
+                        distance_penalty_child_addicted=0
 
                     end if
 
@@ -30996,6 +31124,10 @@
             if (distance_weight_on_child .NE. distance_weight_on_child) then
                 write(*,*) "NaN DISTANCE: distance_weight_on_child, forced to 1 so the sweep cannot mistake it for convergence"
                 distance_weight_on_child=1
+            end if
+            if (distance_penalty_child_addicted .NE. distance_penalty_child_addicted) then
+                write(*,*) "NaN DISTANCE: distance_penalty_child_addicted, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_penalty_child_addicted=1
             end if
             ! Everything the update block moved this loop, on disk before the
             ! next one starts.
