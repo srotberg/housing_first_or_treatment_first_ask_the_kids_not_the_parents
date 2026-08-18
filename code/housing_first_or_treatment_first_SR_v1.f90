@@ -210,7 +210,15 @@
         ! value was identically zero until the read was moved above the wipe that
         ! destroyed it, so switching the term off changed nothing and the moment
         ! was identically zero too.
-        real(8), parameter :: child_use_gap_data=0.155d0
+        ! THE TARGET AND THE MOMENT HAD DIFFERENT DENOMINATORS. The model moment
+        ! below is drug_users_without_child/model_total_drug_users - 1, which is
+        ! the PROPORTIONAL RISE in use when the child term is switched off, so
+        ! its base is use with the term on. NSDUH 2024 puts the reweighted ratio
+        ! of parent to non parent use at 0.845, and 1/0.845 - 1 = 0.1834 is the
+        ! rise on that base. The old 0.155 was 1 - 0.845, the same gap measured
+        ! against the non parent level instead, so omega was being calibrated to
+        ! a target roughly fifteen per cent too small.
+        real(8), parameter :: child_use_gap_data=1.d0/0.845d0-1.d0
         real(8) :: weight_on_child_adjuster=2*10.d0**(-2)
         real(8) :: distance_weight_on_child=1
         real(8) :: stopping_rule_weight_on_child=10.d0**(-2)

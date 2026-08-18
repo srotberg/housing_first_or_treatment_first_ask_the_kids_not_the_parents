@@ -355,7 +355,11 @@ to a drug participation rate of $5.13$ percent from NSDUH 2024 for
 respondents aged 26 and over, housing services on the street
 $h_1$ to a homelessness rate of $0.399$ percent from the 2023 HUD point in
 time (PIT) count, converted to households, and the SUD hazard $\lambda$ to the $33.2$ percent of users who
-acquire a SUD.
+acquire a SUD.{\color{red}\footnote{{\color{red}The quantitative model matches the level of the
+disorder rate instead, $3.68$ percent, for the reason given with $\lambda$ in
+Section~\ref{sec:fullcal}: the conversion rate and the disorder rate published in the same survey
+are not consistent with each other, and the level is the better measured of the two. Nothing here
+turns on which is used, since the two period model has no separate disorder level to reproduce.}}}
 
 \begin{table}[!tb]
 \centering
@@ -569,7 +573,7 @@ household substance abuse is one of the adverse childhood experiences in Felitti
 et al.\ (1998), and it predicts higher rates of depression, worse self reported
 health and lower life satisfaction in adulthood; the children of parents with a
 SUD also have lower educational attainment, which is the premise of the
-transmission literature $\delta_d$ is calibrated against (McGovern et al., 2023).
+transmission literature $\delta_d$ is {\color{red}set} against (McGovern et al., 2023).
 A model in which the transmitted trait raises the child's own welfare cannot be
 describing any of that, whatever it does to the transmission rate. Letting it inherit a greater
 susceptibility, a higher $\lambda$, fails another way, since a child facing a
@@ -1400,8 +1404,8 @@ govern drug testing and detection; they are inert in the benchmark, where nothin
 is conditional, so they are set with the Treatment First experiment rather than
 here. They are
 split across the two tables of this section: thirty two are the main story
-of this paper and its policy analysis (Table~\ref{tab:eleven}, seventeen internally
-and fifteen externally calibrated), and {\color{red}twenty three} are standard
+of this paper and its policy analysis (Table~\ref{tab:eleven}, {\color{red}sixteen
+internally and sixteen} externally calibrated), and {\color{red}twenty three} are standard
 (Table~\ref{tab:stdparams}, five internally and {\color{red}eighteen} externally).
 
 The tables carry the parameter, its description, the moment and source used to
@@ -1536,8 +1540,14 @@ risky, and it is the step that turns spending
 into a disorder. As $\lambda$ rises both the private cost and the
 externality rise, and Housing First's moral hazard costs more, since it is
 $\lambda$ that converts an extra voucher into a higher SUD rate Treatment First
-attempts to cure. Its value is chosen so the model generates the share of users
-who go on to acquire a SUD, $33.2$ percent in the same NSDUH 2024 sample.
+attempts to cure. {\color{red}Its value is chosen so the model generates the share
+of adults carrying a substance use disorder, $3.68$ percent among those aged $26$
+and over in NSDUH 2024. That is the level rather than the conversion rate, and it
+is the level because the two published numbers do not agree with each other: a
+conversion of $33.2$ percent applied to a participation rate of $5.13$ percent
+implies a disorder rate near $1.7$ percent, not $3.68$. The disorder rate is the
+better measured of the two, so it is the one the hazard is matched to and the
+conversion the model implies, $71.7$ percent, is reported rather than imposed.}
 \item[$\bar\kappa_{\phi d}$, increased mortality with a SUD.] This is the parameter the whole
 paper turns on. Mortality truncates the value of life for a user, which
 hits households with the highest life values hardest and thus reverses the income
@@ -1752,13 +1762,15 @@ rises the parent already counts more of the child's loss, so the externality lef
 for a policy to correct is smaller and both policies are worth less. Identifying it
 needs care, because \emph{every} household here has a child, so there is no parent
 against non parent comparison to run inside the model. The moment is a
-counterfactual instead. In NSDUH 2024 past month use is $15.5$ percent lower among
-parents than among non parents, with parents reweighted to the non parents' joint
+counterfactual instead. In NSDUH 2024 past month use among parents is $0.845$ of
+use among non parents, with parents reweighted to the non parents' joint
 distribution of age, income, sex and marital status so the gap is behaviour rather
 than composition. The child term of~\eqref{eq:fbellman} is the only
 thing that makes a household in the model use less than it otherwise would, so its
 value is chosen so that removing the child's penalty at the calibrated parameters
-raises drug use by that same $15.5$ percent. It is the penalty that is removed and
+raises drug use by {\color{red}$18.3$ percent, which is that same ratio read the
+way the model reads it: the counterfactual raises use from the parent level, so the
+rise is $1/0.845-1$ rather than $1-0.845$}. It is the penalty that is removed and
 not the child, for the reason Section~\ref{sec:fproblem} gives: a term carrying the
 child's whole value would reward dying, and removing it would lower use rather than
 raise it.
@@ -1773,9 +1785,15 @@ earnings directly, which is why the penalty is calibrated to the disorder ratio
 rather than lifted from an estimate. What the literature supplies is the two halves
 of the chain: Felitti et al.\ (1998) link household dysfunction to adult outcomes,
 and Chetty et al.\ (2016) measure what childhood environment does to adult earnings.
-It is calibrated internally so the model reproduces the ratio of child disorder
-rates between parents with and without a disorder in McGovern et al.\ (2023), who
-find children of a parent with a SUD two to four times likelier to acquire one.
+{\color{red}It is set at $0.30$, the value that puts the stylized model's ratio of
+child disorder rates between parents with and without a disorder in the middle of
+the range McGovern et al.\ (2023) report, who find children of a parent with a SUD
+two to four times likelier to acquire one. It is set rather than calibrated inside
+the quantitative model because that ratio needs the parent's type carried through
+the child's whole life, which would add a dimension to the state space for one
+moment; the stylized model of Section~\ref{sec:stylized} is two periods long and
+carries it for free. Results are reported across the range of $\delta_d$ rather
+than at the point value alone.}
 \item[$\delta_h$, what the child loses to homelessness.] The externality
 Housing First removes, working through the same compounding draw as $\delta_d$.
 As it rises the externality Housing First removes grows, again leaving
