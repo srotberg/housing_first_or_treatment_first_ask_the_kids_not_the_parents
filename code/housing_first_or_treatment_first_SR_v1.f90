@@ -844,6 +844,7 @@
         real(8) :: drug_share_experimenters_1=0
         real(8) :: drug_share_addicted_1=0
         real(8) :: drug_share_weighted_1=0
+        real(8) :: income_floor_1=0
         real(8), parameter :: participation_rate_data=0.0513
         real(8), parameter :: vsl_data=7.5
         real(8), parameter :: food_stamps_share_data=0.0042
@@ -28388,16 +28389,55 @@
                     ! Now each group's own drug to income ratio is formed first and
                     ! the two are averaged with their shares of the using
                     ! population as weights, which is the object the data number is.
-                    drug_share_experimenters_1=&
-                        model_experimenters_total_drug_spending_to_total_income(1)/&
-                        max(model_experimenters_total_income(1),10.d0**(-12))
-                    drug_share_addicted_1=&
-                        model_addicted_total_addiction_spending_to_total_income(1)/&
-                        max(model_addicted_total_income(1),10.d0**(-12))
-                    drug_share_weighted_1=&
-                        (model_mass_experimenters(1)*drug_share_experimenters_1+&
-                        model_mass_addicts(1)*drug_share_addicted_1)/&
-                        max(model_mass_experimenters(1)+model_mass_addicts(1),10.d0**(-12))
+                    ! A GROUP WITH NO INCOME HAS NO RATIO.
+                    !
+                    ! Households carrying the disorder are largely out of work with
+                    ! no assets, so their measured income can be numerically zero
+                    ! while they still spend on the drug out of the consumption
+                    ! floor. Dividing one by the other gave a group ratio of
+                    ! 1,815,832 on the first iteration, which then swamped the
+                    ! weighted average. The 1e-12 guard stopped a crash and
+                    ! produced a meaningless number instead, which is worse.
+                    !
+                    ! So a group ratio is only formed when that group's income is a
+                    ! real quantity, taken as a thousandth of average labour income
+                    ! times its mass. When it is not, the pooled ratio over both
+                    ! groups is used for that iteration, which is well behaved
+                    ! because the denominator is dominated by the group that does
+                    ! earn, and the log says so rather than passing it off as the
+                    ! weighted average.
+                    income_floor_1=10.d0**(-3)*model_average_labour_income(1)
+
+                    if ((model_experimenters_total_income(1)>&
+                        income_floor_1*model_mass_experimenters(1)) .AND. &
+                        (model_addicted_total_income(1)>&
+                        income_floor_1*model_mass_addicts(1))) then
+
+                        drug_share_experimenters_1=&
+                            model_experimenters_total_drug_spending_to_total_income(1)/&
+                            model_experimenters_total_income(1)
+                        drug_share_addicted_1=&
+                            model_addicted_total_addiction_spending_to_total_income(1)/&
+                            model_addicted_total_income(1)
+                        drug_share_weighted_1=&
+                            (model_mass_experimenters(1)*drug_share_experimenters_1+&
+                            model_mass_addicts(1)*drug_share_addicted_1)/&
+                            max(model_mass_experimenters(1)+model_mass_addicts(1),10.d0**(-12))
+
+                    else
+
+                        drug_share_experimenters_1=-1
+                        drug_share_addicted_1=-1
+                        drug_share_weighted_1=&
+                            (model_experimenters_total_drug_spending_to_total_income(1)+&
+                            model_addicted_total_addiction_spending_to_total_income(1))/&
+                            max(model_experimenters_total_income(1)+&
+                            model_addicted_total_income(1),10.d0**(-12))
+
+                        write(*,*) "drug share: a using group has no income to speak of, so the pooled",&
+                            " ratio is used this iteration rather than the weighted average"
+
+                    end if
 
                     write(*,*) "drug share, experimenters and with a SUD =",&
                         drug_share_experimenters_1, drug_share_addicted_1
