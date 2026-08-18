@@ -1030,6 +1030,11 @@
         real(8), parameter :: discount_factor_growth=1.2
         real(8), parameter :: discount_factor_adjuster_floor=10.d0**(-5)
         real(8), parameter :: discount_factor_adjuster_start=5*10.d0**(-3)
+        real(8) :: discount_factor_lo=-1
+        real(8) :: discount_factor_hi=-1
+        real(8) :: discount_factor_lo_moment=-1
+        real(8) :: discount_factor_hi_moment=-1
+        real(8), parameter :: bracket_discount_factor_floor=10.d0**(-6)
         
         real(8) :: standard_deduction_as_percent_of_average_labor_income=0 !&
             !(1-perceived_probability_lower)*0.117+perceived_probability_lower*0.11
@@ -27821,10 +27826,110 @@
                         previous_gap_discount_factor=gap_discount_factor_1
                         have_gap_discount_factor=1
 
-                        discount_factor=min(max(discount_factor-discount_factor_adjuster*&
-                            gap_discount_factor_1,0.5d0),1.05d0)
+                        ! BRACKET AND BISECT, for the same reason the homelessness
+                        ! size does it. Wealth over output is very nearly a step
+                        ! function in beta near the knife edge where beta*(1+r)
+                        ! reaches one: measured here, beta of 0.957 gave 0.78 and
+                        ! beta of 0.968 gave 20.79, so a twenty six fold move in
+                        ! the moment across eleven thousandths of the parameter.
+                        ! A proportional adjuster cannot land inside a window that
+                        ! narrow, however hard it is damped; it can only straddle
+                        ! it. Bisection halves the window every solve regardless
+                        ! of how steep the schedule is.
+                        !
+                        ! Wealth over output RISES with beta, so a model below
+                        ! target makes this beta the low endpoint and a model
+                        ! above target makes it the high one.
+                        if (wealth_to_output_model_1<wealth_to_output_data) then
+
+                            if (discount_factor_lo<0) then
+
+                                discount_factor_lo=discount_factor
+                                discount_factor_lo_moment=wealth_to_output_model_1
+
+                            else if ((discount_factor>discount_factor_lo) .AND. &
+                                (wealth_to_output_model_1<discount_factor_lo_moment-10.d0**(-5))) then
+
+                                ! Raised patience and wealth fell. Something else
+                                ! moved under the bracket, so its endpoints are no
+                                ! longer comparable.
+                                write(*,*) "beta BRACKET DISCARDED: raised to ", discount_factor, &
+                                    " and wealth over output fell from ", discount_factor_lo_moment, &
+                                    " to ", wealth_to_output_model_1
+                                discount_factor_lo=-1
+                                discount_factor_hi=-1
+                                discount_factor_lo_moment=-1
+                                discount_factor_hi_moment=-1
+
+                            else if (discount_factor>discount_factor_lo) then
+
+                                discount_factor_lo=discount_factor
+                                discount_factor_lo_moment=wealth_to_output_model_1
+
+                            end if
+
+                        else
+
+                            if (discount_factor_hi<0) then
+
+                                discount_factor_hi=discount_factor
+                                discount_factor_hi_moment=wealth_to_output_model_1
+
+                            else if ((discount_factor<discount_factor_hi) .AND. &
+                                (wealth_to_output_model_1>discount_factor_hi_moment+10.d0**(-5))) then
+
+                                write(*,*) "beta BRACKET DISCARDED: lowered to ", discount_factor, &
+                                    " and wealth over output rose from ", discount_factor_hi_moment, &
+                                    " to ", wealth_to_output_model_1
+                                discount_factor_lo=-1
+                                discount_factor_hi=-1
+                                discount_factor_lo_moment=-1
+                                discount_factor_hi_moment=-1
+
+                            else if (discount_factor<discount_factor_hi) then
+
+                                discount_factor_hi=discount_factor
+                                discount_factor_hi_moment=wealth_to_output_model_1
+
+                            end if
+
+                        end if
 
                         distance_discount_factor=abs(gap_discount_factor_1)
+
+                        if ((discount_factor_lo>=0) .AND. &
+                            (discount_factor_hi>discount_factor_lo)) then
+
+                            if ((discount_factor_hi-discount_factor_lo)<bracket_discount_factor_floor) then
+
+                                ! A WINDOW THIS NARROW IS THE ANSWER. The moment
+                                ! jumps across it, so no beta reproduces the target
+                                ! more closely and iterating further only burns
+                                ! solves. Report the two sides and stop asking.
+                                write(*,*) "beta BRACKET IS AT ITS FLOOR [", discount_factor_lo, &
+                                    ",", discount_factor_hi, "] with the moment jumping from ", &
+                                    discount_factor_lo_moment, " to ", discount_factor_hi_moment, &
+                                    " across it, against a target of ", wealth_to_output_data
+                                write(*,*) "   wealth over output is a step in beta here, so this is",&
+                                    " as close as the moment can be brought."
+                                distance_discount_factor=0
+
+                            else
+
+                                discount_factor=0.5d0*(discount_factor_lo+discount_factor_hi)
+
+                                write(*,*) "beta bisecting in [", discount_factor_lo, &
+                                    ",", discount_factor_hi, "]"
+
+                            end if
+
+                        else
+
+                            ! No bracket yet, so traverse.
+                            discount_factor=min(max(discount_factor-discount_factor_adjuster*&
+                                gap_discount_factor_1,0.5d0),1.05d0)
+
+                        end if
 
                         write(*,*) "wealth_to_output_model=", wealth_to_output_model_1, &
                             " against ", wealth_to_output_data
