@@ -21,7 +21,7 @@ intergenerational, which is what the title refers to.
 | Folder | Contents |
 | --- | --- |
 | `code/` | The Fortran source that solves and calibrates the quantitative model, plus engineering notes. Start with `code/readme.txt` for how to compile and run it. |
-| `writing/` | The paper and its predecessors. `writing/housing_first_children_after.src.tex` is the live source; `writing/housing_first_children_after.pdf` is the current build. |
+| `writing/` | The paper and its predecessors. `writing/housing_first_children_later.src.tex` is the live source; `writing/housing_first_children_later.pdf` is the current build. |
 | `data/` | Stata and text code that produces the calibration targets from the public microdata, with a README of its own. |
 | `output/` | Saved simulation output from benchmark and counterfactual runs. |
 | `related_lit/` | Notes on the literature the paper draws on. |
@@ -49,10 +49,10 @@ The source uses placeholders of the form `@@name@@` for every number the stylize
 model produces, so that no model output is typed by hand. Filling them and
 building takes two steps:
 
-1. substitute the values into `writing/housing_first_children_after.tex`;
+1. substitute the values into `writing/housing_first_children_later.tex`;
 2. run `pdflatex` twice, so that references and the table of contents resolve.
 
-The committed `writing/housing_first_children_after.tex` is the filled version, so `pdflatex housing_first_children_after`
+The committed `writing/housing_first_children_later.tex` is the filled version, so `pdflatex housing_first_children_later`
 twice reproduces the PDF as it stands.
 
 ## Compiling and running the model

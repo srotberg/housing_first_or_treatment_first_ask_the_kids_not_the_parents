@@ -75,9 +75,9 @@ a partial highlight covers.
 
 ## 3. The pipeline, and the one trap in it
 
-`writing/housing_first_children_after.src.tex` holds `@@placeholder@@` markers. `fill.py`
-substitutes them and writes `writing/housing_first_children_after.tex`, which is what pdflatex
-builds. **Editing `housing_first_children_after.tex` directly is lost on the next fill; editing
+`writing/housing_first_children_later.src.tex` holds `@@placeholder@@` markers. `fill.py`
+substitutes them and writes `writing/housing_first_children_later.tex`, which is what pdflatex
+builds. **Editing `housing_first_children_later.tex` directly is lost on the next fill; editing
 only the source does not show up until you re-run fill.** Order is always:
 
 ```
@@ -88,7 +88,7 @@ python3 children.py     # tab_children
 python3 internalise.py  # tab_internalise
 python3 run.py          # the three figures
 python3 fill.py         # numbers into the note
-cd ../../writing && pdflatex -interaction=nonstopmode housing_first_children_after.tex   # twice
+cd ../../writing && pdflatex -interaction=nonstopmode housing_first_children_later.tex   # twice
 ```
 
 Tables and figures take roughly twenty minutes each; `fill.py` about ten. If an
