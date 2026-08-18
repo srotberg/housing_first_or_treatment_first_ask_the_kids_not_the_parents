@@ -145,7 +145,7 @@ parent is a childhood for the child, and the child does not choose it.
 {\color{red}
 A second externality runs through the aggregate rather than through the family:
 households dislike homelessness around them whether or not it is their own child's,
-which is what makes the homelessness rate a genuine fixed point rather than
+which is what makes the homelessness rate a genuine fixed point problem rather than
 accounting, and both policies move it (Loubi\`ere et al., 2020). It turns out to be
 much the smaller of the two, and saying so is part of the point: once the channels
 are separated, one of them carries the result.
@@ -620,11 +620,7 @@ to a drug participation rate of $5.13$ percent from NSDUH 2024 for
 respondents aged 26 and over, housing services on the street
 $h_1$ to a homelessness rate of $0.399$ percent from the 2023 HUD point in
 time (PIT) count, converted to households, and the SUD hazard $\lambda$ to the $33.2$ percent of users who
-acquire a SUD.{\color{red}\footnote{{\color{red}The quantitative model matches the level of the
-disorder rate instead, $3.68$ percent, for the reason given with $\lambda$ in
-Section~\ref{sec:fullcal}: the conversion rate and the disorder rate published in the same survey
-are not consistent with each other, and the level is the better measured of the two. Nothing here
-turns on which is used, since the two period model has no separate disorder level to reproduce.}}}
+acquire a SUD.
 
 \begin{table}[!tb]
 \centering
@@ -838,7 +834,7 @@ household substance abuse is one of the adverse childhood experiences in Felitti
 et al.\ (1998), and it predicts higher rates of depression, worse self reported
 health and lower life satisfaction in adulthood; the children of parents with a
 SUD also have lower educational attainment, which is the premise of the
-transmission literature $\delta_d$ is {\color{red}set} against (McGovern et al., 2023).
+transmission literature $\delta_d$ is set against (McGovern et al., 2023).
 A model in which the transmitted trait raises the child's own welfare cannot be
 describing any of that, whatever it does to the transmission rate. Letting it inherit a greater
 susceptibility, a higher $\lambda$, fails another way, since a child facing a
@@ -952,7 +948,7 @@ $J_R$, and $j$ indexes age within that span. Survival from $j$ to $j+1$ is
 $\phi(j,h',d,m,\tau)$ in~\eqref{eq:fsurv}, and it depends on age, on the housing
 \emph{chosen} this period, on the SUD and on serious mental illness (SMI),
 and on whether the household is in treatment, since treatment means it is
-not using{\color{red}, and thus is less likely to die}. Newborns replace the dead
+not using, and thus is less likely to die. Newborns replace the dead
 exactly, so the mass of households is constant. The individual
 state is
 \begin{equation}\label{eq:fstate}
@@ -1073,19 +1069,19 @@ optimisation, in Section~\ref{sec:fproblem}.
 
 Housing is a four point grid. $h_1$ is literal homelessness, sleeping rough or in
 an emergency shelter, which is the HUD point-in-time definition and excludes
-doubling up; it carries a small service flow and no rent{\color{red}, a fixed
-fraction of the smallest rental rather than a level of its own}. The three rental
-sizes are {\color{red}pinned at both ends and spaced by a curvature between them,}
+doubling up; it carries a small service flow and no rent, a fixed
+fraction of the smallest rental rather than a level of its own. The three rental
+sizes are pinned at both ends and spaced by a curvature between them,
 \begin{equation}\label{eq:fhouse}
 h_2=\underline h,\qquad
 h_3=\underline h+\Big(\tfrac{1}{2}\big(\bar h-\underline h\big)^{1/\varsigma}\Big)^{\varsigma},
 \qquad h_4=\bar h,
 \end{equation}
-so {\color{red}three} parameters describe the grid: $\underline h$ the smallest
-rental size, {\color{red}$\bar h$ the largest, and $\varsigma$ the curvature that
+so three parameters describe the grid: $\underline h$ the smallest
+rental size, $\bar h$ the largest, and $\varsigma$ the curvature that
 places the rung between them. At $\varsigma=1$ the ladder is uniform and at
 $\varsigma>1$ the middle rung sits closer to the bottom, which is what a housing
-size distribution with most households in the largest category requires.}
+size distribution with most households in the largest category requires.
 
 Homelessness then enters three separate equations: survival~\eqref{eq:fsurv},
 the employment transitions~\eqref{eq:femp} and the SUD recovery
@@ -1208,14 +1204,14 @@ household is in treatment, $\tau=1$, which is why the survival function takes $\
 as an argument at all. The excess mortality of the disorder is
 overwhelmingly a mortality of use, poisoning above all, and treatment forbids use
 in the period it is taken, so a household that is not using does not carry it.
-{\color{red}I make this assumption because that is what the cause specific evidence
+I make this assumption because that is what the cause specific evidence
 shows. The meta-analyses of mortality among people using extramedical opioids report
 overdose as the largest single contributor to the excess (Larney et al., 2020;
 Degenhardt et al., 2011), and in CDC WONDER drug poisoning alone accounts for about
 a fifth of all deaths at ages 25 to 44, which is the moment
-Section~\ref{sec:fvalid} reports the model against.}
-{\color{red}$\bar\phi(j)$ is the SSA period life table for ages 26 to 85, with the sexes
-combined by survivor weight, $q=[l^Mq^M+l^Fq^F]/[l^M+l^F]$.}
+Section~\ref{sec:fvalid} reports the model against.
+$\bar\phi(j)$ is the SSA period life table for ages 26 to 85, with the sexes
+combined by survivor weight, $q=[l^Mq^M+l^Fq^F]/[l^M+l^F]$.
 
 The homelessness multiplier cannot be read off the data directly, and
 the reason is worth spelling out. Baggett et al.\ report a \emph{standardised
@@ -1595,7 +1591,7 @@ y_{\text{child}}\ \sim\ \Omega_y\ \text{ scaled by }\
 (1-\delta_h)^{\mathbf{1}\{\text{parent was homeless}\}} .
 \end{equation}
 
-{\color{red}The evidence behind both penalties is set out in
+The evidence behind both penalties is set out in
 Section~\ref{sec:intro} and placed against the literature in
 Section~\ref{sec:literature}, and it is worth saying here only what the
 functional form takes from it. Three separate links are being compressed into two
@@ -1607,7 +1603,7 @@ percent of Chetty, Hendren and Katz (2016) while $\delta_d$ is set to the value
 that reproduces the disorder ratio of McGovern et al.\ (2023). Neither is a
 removal effect: whether foster placement itself helps or harms is contested, and
 $\delta_d$ is a reduced form for the whole bundle of that childhood rather than for
-any one intervention in it.}
+any one intervention in it.
 
 
 \subsection{Competitive equilibrium}
@@ -1644,16 +1640,16 @@ because the transition exercise in the results needs it.
 
 \section{Calibrating the quantitative model}\label{sec:fullcal}
 
-The model has {\color{red}fifty five} parameters, some of which vary in value by
-age. {\color{red}Thirty three} are calibrated externally, from data or from the
+The model has fifty five parameters, some of which vary in value by
+age. Thirty three are calibrated externally, from data or from the
 literature, and twenty two are calibrated internally, inside the model. Four further parameters
 govern drug testing and detection; they are inert in the benchmark, where nothing
 is conditional, so they are set with the Treatment First experiment rather than
 here. They are
 split across the two tables of this section: thirty two are the main story
-of this paper and its policy analysis (Table~\ref{tab:eleven}, {\color{red}sixteen
-internally and sixteen} externally calibrated), and {\color{red}twenty three} are standard
-(Table~\ref{tab:stdparams}, five internally and {\color{red}eighteen} externally).
+of this paper and its policy analysis (Table~\ref{tab:eleven}, sixteen
+internally and sixteen externally calibrated), and twenty three are standard
+(Table~\ref{tab:stdparams}, five internally and eighteen externally).
 
 The tables carry the parameter, its description, the moment and source used to
 fix its value, and the value itself. The text alongside each table adds what a
@@ -1787,14 +1783,9 @@ risky, and it is the step that turns spending
 into a disorder. As $\lambda$ rises both the private cost and the
 externality rise, and Housing First's moral hazard costs more, since it is
 $\lambda$ that converts an extra voucher into a higher SUD rate Treatment First
-attempts to cure. {\color{red}Its value is chosen so the model generates the share
+attempts to cure. Its value is chosen so the model generates the share
 of adults carrying a substance use disorder, $3.68$ percent among those aged $26$
-and over in NSDUH 2024. That is the level rather than the conversion rate, and it
-is the level because the two published numbers do not agree with each other: a
-conversion of $33.2$ percent applied to a participation rate of $5.13$ percent
-implies a disorder rate near $1.7$ percent, not $3.68$. The disorder rate is the
-better measured of the two, so it is the one the hazard is matched to and the
-conversion the model implies, $71.7$ percent, is reported rather than imposed.}
+and over in NSDUH 2024.
 \item[$\bar\kappa_{\phi d}$, increased mortality with a SUD.] This is the parameter the whole
 paper turns on. Mortality truncates the value of life for a user, which
 hits households with the highest life values hardest and thus reverses the income
@@ -1977,9 +1968,9 @@ cocaine dependent homeless adults: $6.60$ weeks abstinent in the housed arm agai
 $4.48$ homeless, so housing raises recovery by $47.3$ percent.
 \item[$g$, the treatment effect on recovery.] Treatment First's instrument, and the
 parameter its case rests on most directly. As it rises treatment works
-better, so a household that carries the disorder is more easily {\color{red}cured, and
-therefore the private cost falls}, since the household spends less of its life
-carrying one. The
+better, so a household that carries the disorder is more easily cured, and
+therefore the private cost falls, \textcolor{red}{with the household spending less of its
+life carrying one.} The
 externality falls with it, and by the same route: a child who acquires a disorder is
 also more easily cured, so what its parent hands on costs it less of its own life. It is set externally at $1.35$, the
 odds ratio in Milby et al.\ (2005).
@@ -1992,135 +1983,127 @@ treatment is costly. It is calibrated internally to treatment take up among adul
 with a SUD, $24$ percent in NSDUH 2023.
 \end{description}
 
-\paragraph{Externalities and distortions.} The first three are what a parent's disorder and a
+\paragraph{Externalities and distortions.} \textcolor{red}{This block is about what causes the
+externalities and the distortions.} The first three are what a parent's disorder and a
 parent's homelessness cost the child, and the fourth is what the
 homelessness of strangers costs everybody. All four are externalities in the strict
-sense: one household's choice enters another household's utility directly, and it
-would still do so if the programmes were paid for with a lump sum tax. The
+sense: one household's choice enters another household's utility directly \textcolor{red}{without
+being internalised by the household making the decision}, and it
+would still do so if the programmes were paid for with \textcolor{red}{a non distortionary tax, such
+as a lump sum tax}. The
 last two are not externalities but distortions, and they close the block for that
 reason: they say what it costs to raise the revenue either programme needs rather
 than whose utility a choice lands in. This is where
-the ranking is decided, since the private comparison already
+the ranking \textcolor{red}{between Housing First and Treatment First} is decided, since the private comparison already
 favours Housing First.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\omega$, the parent's weight on its child.] A parent bears $\omega$ of what
 its own state costs its child, and $\omega$ is small. As it
-rises the parent already counts more of the child's loss, so the externality left
-for a policy to correct is smaller and both policies are worth less. Identifying it
-needs care, because \emph{every} household here has a child, so there is no parent
-against non parent comparison to run inside the model. The moment is a
+rises the parent counts more of the child's loss, so the externality left
+for a policy to correct is smaller. Identifying it \textcolor{red}{in the model requires}
+care, because \emph{every} household here has a child\textcolor{red}{, born after it dies,} so there is no parent
+against non parent comparison to run in \textcolor{red}{the benchmark}. The moment is a
 counterfactual instead. In NSDUH 2024 past month use among parents is $0.845$ of
 use among non parents, with parents reweighted to the non parents' joint
 distribution of age, income, sex and marital status so the gap is behaviour rather
-than composition. The child term of~\eqref{eq:fbellman} is the only
-thing that makes a household in the model use less than it otherwise would, so its
+than composition. The child term of the household's problem in
+Section~\textcolor{red}{\ref{sec:fproblem}}, equation~\eqref{eq:fbellman}, is the only
+thing that makes a household in the model use less than \textcolor{red}{it would if it did not
+have a child}, so its
 value is chosen so that removing the child's penalty at the calibrated parameters
-raises drug use by {\color{red}$18.3$ percent, which is that same ratio read the
-way the model reads it: the counterfactual raises use from the parent level, so the
-rise is $1/0.845-1$ rather than $1-0.845$}. It is the penalty that is removed and
-not the child, for the reason Section~\ref{sec:fproblem} gives: a term carrying the
-child's whole value would reward dying, and removing it would lower use rather than
-raise it.
-\item[$\delta_d$, what the child loses to a parent's SUD.] This is Treatment First's
-case, very nearly in full. The child does not inherit the disorder, only a worse
-productivity draw, and the draw is what makes it likelier to be poor, to use, to
-acquire a disorder and mental illness in consequence, and to be unhoused.
-As it rises the externality rises and Treatment First's case with it,
-while the parent's own private cost is unchanged, which is exactly what makes it an
+raises drug use by $18.3$ percent, which is that same ratio read the
+way the model reads it: the counterfactual raises use from the parent level.
+\item[$\delta_d$, what the child loses to a parent's SUD.] The child does not inherit
+the disorder, only a worse
+productivity draw, and \textcolor{red}{that lower expected draw} is what makes it likelier to be poor, to use, to
+acquire a disorder and mental illness \textcolor{red}{consequently}, \textcolor{red}{to be unhoused and to die
+earlier}.
+As it rises the externality rises, and \textcolor{red}{it loads whichever policy prevents more
+disorder: Treatment First by curing the parent, Housing First because recovery is
+easier once housed},
+while the parent's own private cost is \textcolor{red}{largely} unchanged, which is exactly what makes it an
 externality. No paper estimates the effect of a parent's SUD on a child's lifetime
 earnings directly, which is why the penalty is calibrated to the disorder ratio
 rather than lifted from an estimate. What the literature supplies is the two halves
 of the chain: Felitti et al.\ (1998) link household dysfunction to adult outcomes,
 and Chetty et al.\ (2016) measure what childhood environment does to adult earnings.
-{\color{red}It is set at $0.30$, the value that puts the stylized model's ratio of
-child disorder rates between parents with and without a disorder in the middle of
+It is set at $0.30$, the value that puts \textcolor{red}{the ratio} in the middle of
 the range McGovern et al.\ (2023) report, who find children of a parent with a SUD
-two to four times likelier to acquire one. It is set rather than calibrated inside
-the quantitative model because that ratio needs the parent's type carried through
-the child's whole life, which would add a dimension to the state space for one
-moment; the stylized model of Section~\ref{sec:stylized} is two periods long and
-carries it for free. Results are reported across the range of $\delta_d$ rather
-than at the point value alone.}
-\item[$\delta_h$, what the child loses to homelessness.] The externality
-Housing First removes, working through the same compounding draw as $\delta_d$.
-As it rises the externality Housing First removes grows, again leaving
-the private cost unchanged. Chetty et al.\ (2016) find that moving a child to a
+two to four times likelier to acquire one.
+\item[$\delta_h$, what the child loses to homelessness.] \textcolor{red}{It works through the same
+compounding draw as $\delta_d$, and as it rises it loads whichever policy houses
+more people: Housing First directly, Treatment First by removing the disorder that
+leads to homelessness in the first place}, again leaving
+the private cost \textcolor{red}{mostly} unchanged. Chetty et al.\ (2016) find that moving a child to a
 lower poverty neighbourhood before age thirteen raises adult earnings by $31$
-percent; $\delta_h$ is calibrated externally to that figure, taking the earnings
-gain from leaving poverty as the mirror of the loss from growing up without stable
-housing.
+percent; $\delta_h$ is calibrated externally to that figure.
 \item[$\kappa_x$, the disamenity of homelessness.]\label{sec:fleftout} The only term through which one
 household's housing status enters the utility of another who is not its own child,
-which is what makes the homelessness rate a genuine fixed point rather than
+which is what makes the homelessness rate a genuine fixed point \textcolor{red}{problem} rather than
 accounting. As it rises the externality from the aggregate headcount
-grows, which loads whichever policy houses more people. Setting it high therefore
-favours Housing First, so the higher figure is taken as the baseline and a ranking
+grows, which loads whichever policy houses more people. Setting it high \textcolor{red}{should
+mostly favour} Housing First, so the higher figure is taken as the baseline and a ranking
 that still favours Treatment First survives the assumption least kind to it. It is
 calibrated externally from the contingent valuation in Loubi\`ere et al.\ (2020):
 \euro{}57 a year among the $42$ percent of respondents willing to pay anything,
 which is $0.20$ percent of average annual earnings, against \euro{}23 and $0.08$
 percent averaged over all respondents.
 \item[$\omega_{\ell}$, the weight on leisure.] This sets how much labour supply
-responds to the tax and to the programme's own design. As it rises hours
-are more responsive, so the tax that funds the vouchers or the monitoring costs
+responds to the tax and to the programme's own design. As it rises \textcolor{red}{households care
+more about their leisure and work less when their tax rises}, so the tax that funds
+the vouchers or the monitoring costs
 more, and the distortion grows against whichever policy costs
-more. The channel also runs back: a household that uses is likelier to be out of work
-and to need assistance, so its choice raises the tax everybody else pays. That
-feedback is a cost that travels through the government budget rather than through
-anybody's utility directly, which is why it is counted here: raise the same revenue
-lump sum and it disappears, while the child's draw and the headcount stay exactly
-where they were. Its value is chosen so
-the model generates average hours worked, from Guvenen et al.\ (2023).
+more\textcolor{red}{. Higher rates also lead households to cut their hours further in order to
+draw more in transfers and to stay eligible for them}. Its value is chosen so
+the model generates average hours worked \textcolor{red}{of $40$ percent}, from Guvenen et al.\ (2023).
 \item[$\sigma_{\ell}$, the curvature on leisure.]
 The curvature that turns $\omega_{\ell}$ into an elasticity: together
-they decide how far hours actually move when the after tax wage does. It belongs
+they decide how far hours actually move when the after tax wage does. \textcolor{red}{The two are
+not the same dial. $\omega_{\ell}$ sets what an hour of leisure is worth against
+consumption, so it fixes the level of hours; $\sigma_{\ell}$ sets how fast that
+worth falls as leisure is given up, so it fixes how far hours move when the wage
+changes. One pins the average, the other the response to a tax.} It belongs
 here because the size of the
 distortion is exactly what this parameter sets: at a high curvature hours barely
 respond and the tax that funds either policy is close to a lump sum, at a low one
 the same revenue costs far more in forgone work. As it rises labour supply is less
 elastic, so the distortion falls and both policies look cheaper, without touching
-the private value or the externality at all. It is set externally to a Frisch
-elasticity of $0.5$, from Chetty (2012).
+the private value or the externality at all. It is set externally to \textcolor{red}{produce a
+Frisch} elasticity of $0.5$, from Chetty (2012).
 \end{description}
 
 
 \paragraph{The drug market.} Three parameters describe
 the supply of the drug. Two are normalisations and the third is a supply
 elasticity, and they matter for one thing: they make the drug price endogenous, so
-a policy that changes the number of users changes what the drug costs. That is the
-general equilibrium offset named above, and it exists only because these are
-here. It is a third kind of thing again, neither an externality nor a
-distortion but a price: it changes the size of both without being either, and it is
-the one channel through which a policy reaches households it never touches without
-anybody's utility or the government's budget being involved.
+\textcolor{red}{drug use affects drug demand and the drug price in equilibrium}.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\nu_1$, the supply shifter.] A pure normalisation, chosen so that supply
 equals demand at $p_v=1$ in the benchmark. It normalises units, not behaviour.
-It is a normalisation, so nothing turns on its level: it is chosen so the benchmark price is one, and moving it moves neither object.
-\item[$p_v$, the drug price.] One at the benchmark by that normalisation, and free
-in every counterfactual. That is what lets a policy which changes how much is used
-move the price, and so feed back into every other household's decision.
-As it rises using is dearer, so use falls and both objects fall with it. It is an equilibrium object rather than a dial, which is what lets a policy that changes the number of users change what the drug costs.
-\item[$\nu_2$, the supply elasticity.] Sets the price
-elasticity of supply at $2$, the middle of a range from about $0.7$ to about $4$.
+\item[$p_v$, the drug price.] \textcolor{red}{Set to one by normalisation in the benchmark, but
+free in every counterfactual.}
+\item[$\nu_2$, the supply elasticity.] \textcolor{red}{Set so that the price
+elasticity of supply is $2$}, the middle of a range from about $0.7$ to about $4$.
 There is no direct estimate for an illicit drug, so it is bracketed by the closest
 legal markets: the Washington State marijuana reform implies roughly $0.79$, the
 cigarette and gasoline literatures nearer $3.6$.
-As it rises supply is more elastic, so the price moves less when demand does, and the general equilibrium offset to treatment shrinks: at a very elastic supply, curing households barely lowers the price and almost none of the gain comes back.
+As it rises supply is more elastic, so the price moves less when demand does, and the general equilibrium offset to treatment shrinks: at a very elastic supply,
+curing households barely lowers the price, so \textcolor{red}{general equilibrium effects play
+little role}.
 \end{description}
 
 \subsection{Standard parameters}
 
 The rest are conventional, recorded so the calibration can be reproduced rather
 than because anything turns on them. Table~\ref{tab:stdparams} carries each with
-its source and vintage, in this order. There are {\color{red}twenty three} of them.
+its source and vintage, in this order. There are twenty three of them.
 Five are calibrated inside the model, against a moment, because there is no source
-to read them off; the other {\color{red}eighteen} are set from outside, from an estimate or from
+to read them off; the other eighteen are set from outside, from an estimate or from
 statute. Each is taken below in the order of the table, with the moment or the
 source that fixes it, and with the value of that moment in the data.
 Table~\ref{tab:stdparams} carries the same numbers in its Data column, against what
 the model produces in the Model column, which is reported only for the five that are
-calibrated internally since the other {\color{red}eighteen} have nothing to reproduce.
+calibrated internally since the other eighteen have nothing to reproduce.
 
 They are not inert in the experiments, and it is worth saying so
 plainly. The discount factor sets how heavily a death thirty years away is
@@ -2143,21 +2126,21 @@ it.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\gamma$, the weight on housing services.] The Cobb-Douglas share of the
 bundle that goes on housing, so it fixes what a dwelling is worth against
-consumption and against the drug. Chosen to reproduce {\color{red}the share of
-renters who spend more than thirty percent of income on housing, $49.7$ percent},
+consumption and against the drug. Chosen to reproduce the share of
+renters who spend more than thirty percent of income on housing, $49.7$ percent,
 which is the standard cost burden threshold in the 2023 American Community Survey,
 $21.1$ of $42.5$ million renter households, and is the moment a Cobb-Douglas share
 moves most directly. It sits here rather than in Section~\ref{sec:fullcal} because
 every life cycle model with housing has it and calibrates it the same way.
 \item[$\beta$, the discount factor.] Chosen to reproduce wealth over output in the
-national accounts, {\color{red}a ratio of three}. It matters more here than the
+national accounts, a ratio of three. It matters more here than the
 description suggests, since it is what decides how heavily a death thirty years
-away is weighed, but it is set the way it is set everywhere. {\color{red}Household
+away is weighed, but it is set the way it is set everywhere. Household
 wealth in this model is financial wealth alone, because the rental stock sits on
 the rental companies' books rather than on any household's, so the counterpart in
 the accounts is the private capital stock rather than measured household net
-worth.}
-\item[$\underline h$ and $\bar h$, the rental ladder.] {\color{red}The smallest and
+worth.
+\item[$\underline h$ and $\bar h$, the rental ladder.] The smallest and
 the largest rental size. The ladder is pinned at both ends and the rung between
 them follows from the curvature $\varsigma$, so no size is picked by hand.
 The two ends are matched to the two ends of the distribution of occupied units by
@@ -2173,7 +2156,7 @@ the grid itself, so a size calibrated on them absorbs anything else that moves t
 housing cost distribution: incomes, rents, the voucher, the food stamp floor. The
 size distribution names the object directly, and the cost shares are then available
 as a check. The universe is occupied units, so the model counterpart conditions on
-being housed: the homeless are in neither denominator.}
+being housed: the homeless are in neither denominator.
 \item[$\bar\pi^{eu}$, the job separation rate.] Chosen to reproduce the aggregate
 unemployment rate in the BLS Current Population Survey over 2014 to 2024,
 $4.85$ percent, given the
@@ -2182,19 +2165,19 @@ because the unemployment rate identifies the ratio and the finding rate is the
 better measured half.
 \end{description}
 
-\paragraph{The {\color{red}eighteen} set from outside.} Each of these is taken from
+\paragraph{The eighteen set from outside.} Each of these is taken from
 a source or from statute, so a reader who disagrees is disagreeing with the
 literature or with the rule rather than with anything argued here. Values are in
 Table~\ref{tab:stdparams}.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[{\color{red}$\varsigma$, the curvature of the rental ladder.}]
-{\color{red}Set at $1.8$ rather than calibrated. With three rental sizes there are
+\item[$\varsigma$, the curvature of the rental ladder.]
+Set at $1.8$ rather than calibrated. With three rental sizes there are
 two free numbers in the size distribution, and the two ends of the ladder take
 them, so a third parameter chasing the same three shares would not be identified.
 It was tried on the largest share first and could not reach it, which is the
 expected result: what empties the largest unit is the level of $\bar h$ rather than
 the curvature between the ends. A uniform ladder is the restriction $\varsigma=1$
-and fits the size distribution worse.}
+and fits the size distribution worse.
 \item[$\sigma$, risk aversion.] Two, from Attanasio and Weber (2010). It decides
 what insurance is worth, which is most of what a voucher is.
 \item[$\varepsilon(j)$, the age profile of efficiency.] A quadratic in age fitted
