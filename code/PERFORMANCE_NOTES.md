@@ -686,20 +686,37 @@ exercised rather than blind.
 Noted here rather than fixed for that reason. If homeownership ever prints above
 zero, fix this before reading any treatment moment.
 
-## 14. Do not compile while a run is going: it kills the run
+## 14. The silent deaths were a stack overflow, not memory and not the compiler
 
-Two calibration runs died with no error, no crash line and no message, the log
-simply stopping partway through a backward induction. Both deaths line up with a
-`gfortran` invocation on this file: the first at 01:03, the second at 02:09
-mid-solve, 51 ages into 60.
+Four calibration runs died with no error, no crash line and no message, the log
+simply stopping partway through a backward induction. The first explanation
+written here was that a concurrent `gfortran` invocation had pushed the machine
+into swap and the kernel had reaped the run. That was wrong, and it is worth
+saying why, because it sent two hours in the wrong direction.
 
-The arithmetic makes it obvious in hindsight. `hftf` holds about 1.4 GB resident.
-Compiling this source at `-O2` is itself a multi-gigabyte job, since it is 1.6 MB
-of Fortran in one translation unit with very large module arrays. Run the two
-together and the kernel reaps the bigger, older process without writing anything
-to its log, which is exactly what a silent truncation looks like.
+The evidence against it accumulated in this order. A run died with no compile
+anywhere near it. `dmesg` showed no OOM kill. There was no cgroup memory limit
+in force and 15 GB free at the moment of death. The clincher was that a
+bounds checked build died at the identical point, 83 ages into the backward
+induction at age 37, on the same iteration, which is the signature of a
+deterministic fault rather than of a kernel deciding at random which process is
+biggest.
 
-So the order is: stop the run, build, then start the new run. Never build a new
-binary "ready to swap in" while the old one is still solving. If a log stops with
-no error and the process is gone, check whether a compile was running at that
-timestamp before looking for a bug in the model.
+It was the stack. The parallel region allocates large automatic arrays per
+thread, and the default OpenMP thread stack is a few megabytes. A thread walks
+off the end of its stack, and there is no handler and no message: the process
+dies where it stands. That is exactly a log that stops mid line.
+
+The fix is two settings at launch, not a code change:
+
+    ulimit -s unlimited
+    export OMP_STACKSIZE=512M
+
+With those in place the same binary on the same seeds passed the point it had
+died at four times running and went on to solve 118 ages and complete a
+distribution sweep.
+
+So: if a run stops with no error, set the stack before you look for a bug in the
+model, and before you blame whatever else happened to be running at the time.
+Building while a run is going is still worth avoiding on a 15 GB box, but it was
+not what killed these runs.
