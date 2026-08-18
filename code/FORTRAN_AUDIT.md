@@ -1,7 +1,7 @@
 # The Fortran against the written model, parameter by parameter
 
 `housing_first_or_treatment_first_SR_v1.f90`, 24,868 lines, against Section 2 of
-`writing/stylized_note.src.tex` and the two tables it prints.
+`writing/housing_first_children_after.src.tex` and the two tables it prints.
 
 The verdict up front: **the two are not the same model, and the gap is bigger
 than a parameter audit.** Three things the note describes do not exist in the
