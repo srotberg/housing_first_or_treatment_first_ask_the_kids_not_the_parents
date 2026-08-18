@@ -829,9 +829,19 @@
         ! disorder number attached to an all user average, and no household in
         ! the model spends anything like that share on the drug.
         !
-        ! 0.20 is the weighted average across users, light and heavy together,
-        ! which is the population the moment is actually taken over.
-        real(8), parameter :: drug_spending_share_data=0.20
+        ! 0.22 is that average: users without a disorder spend 11 per cent of
+        ! income on the drug and those with one spend 44, and 33.2 per cent of
+        ! users carry a disorder, which is the same share lambda is identified on.
+        ! So 0.332*0.44 + 0.668*0.11 = 0.2196.
+        !
+        ! NOTE THE TENSION WITH sud_rate_data. That target is 0.0368 against a
+        ! participation rate of 0.0513, which would make 72 per cent of users
+        ! carry a disorder, not 33.2, and would put this average at 0.35. The two
+        ! cannot both hold: at a participation rate of 5.13 per cent a 33.2 per
+        ! cent conversion implies a disorder rate near 1.7 per cent. The weight
+        ! used here is the one consistent with lambda's own moment and with there
+        ! being fewer households with a disorder than users without one.
+        real(8), parameter :: drug_spending_share_data=0.22
         real(8) :: drug_share_experimenters_1=0
         real(8) :: drug_share_addicted_1=0
         real(8) :: drug_share_weighted_1=0
