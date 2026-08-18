@@ -357,7 +357,8 @@ acquire a SUD.
 \begin{table}[!tb]
 \centering
 \caption{Externally set parameters}\label{tab:ext}
-\input{tables/tab_external}
+\sbox{\ntbox}{\input{tables/tab_external}}\usebox{\ntbox}
+\tabnote{{\color{red}Note: every parameter here is set from outside, so none has a model counterpart to report against the data. This is the same distinction the Model column of Tables~\ref{tab:eleven} and~\ref{tab:stdparams} makes with n.a., which those tables need because they carry externally set and internally calibrated parameters together.}}
 \end{table}
 
 \begin{table}[!tb]
