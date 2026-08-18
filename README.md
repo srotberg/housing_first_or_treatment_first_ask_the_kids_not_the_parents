@@ -5,17 +5,6 @@ Replication material for **"Housing First, Children Later"** by Shahar Rotberg
 [shahar.rotberg@gmail.com](mailto:shahar.rotberg@gmail.com) ·
 [www.shaharrotberg.com](http://www.shaharrotberg.com)
 
-The paper asks whether housing assistance should be conditioned on sobriety, and
-argues that the answer cannot turn on moral hazard. With forward looking
-households facing the true hazard of acquiring a substance use disorder, Housing
-First weakly dominates Treatment First at the same generosity and the same cost,
-because conditionality only removes an option from an optimiser. The case for
-conditionality therefore has to rest on something outside the household's own
-objective, and the paper separates three such things that the debate usually runs
-together: a genuine externality, the tax that funds the programme, and the
-programme's design. The externality that decides the comparison is
-intergenerational, which is what the title refers to.
-
 ## What is here
 
 | Folder | Contents |
@@ -32,13 +21,13 @@ intergenerational, which is what the title refers to.
 The paper carries two models, and the distinction matters for reading the code.
 
 A **stylized two period model**, in Section 3 of the paper, is stripped to the
-point where the dominance result can be proved rather than computed, and where the
-externality that overturns it can be switched on alone with everything else held
+point where its main result can be proved rather than computed, and where the
+intergenerational externality can be switched on alone with everything else held
 fixed. Its code is in `code/stylized/`.
 
 A **quantitative general equilibrium life cycle model**, in Section 4, puts the
 same mechanism in an environment that can be taken to the data: six state
-variables and fifty five parameters, with endogenous homelessness, drug use,
+variables and fifty three parameters, with endogenous homelessness, drug use,
 disorder, recovery, serious mental illness, employment, mortality, a drug market
 that clears, and a government budget that balances. Its code is
 `code/housing_first_or_treatment_first_SR_v1.f90`.
