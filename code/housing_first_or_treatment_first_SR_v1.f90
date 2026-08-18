@@ -662,7 +662,19 @@
         real(8), parameter :: fraction_of_property_taxes_in_GDS=1        
         real(8), parameter :: fraction_of_average_house_price_data=100000 ! real(500000)/real(767336) 
         real(8), parameter :: FRED_housing_services_to_GDP=0.312
-        real(8), parameter :: target_renters_rent_to_income=0
+        ! SHELTER PLUS UTILITIES over total expenditure net of drugs, 2024
+        ! Consumer Expenditure Survey. The same number the stylized model of
+        ! Section 2 matches gamma to, so the two models are disciplined by one
+        ! moment rather than by two that happen to be about housing.
+        real(8), parameter :: avg_rent_to_income_data=0.268
+        ! GAMMA TARGETS THE AVERAGE RENT TO INCOME RATIO, which is the moment the
+        ! stylized model of Section 2 uses and the one a Cobb-Douglas housing
+        ! share moves most directly. It used to target the SHARE OF RENTERS above
+        ! the thirty percent cost burden threshold, which is a feature of the
+        ! tail of the housing cost distribution rather than of its level, so the
+        ! share absorbed anything that moved the spread: the rental grid, the
+        ! voucher, the food stamp floor.
+        integer, parameter :: target_renters_rent_to_income=1
         real(8), parameter :: avg_labor_supply_data=0.4
         real(8), parameter :: perc_higher_rent_in_free_market=0.137
         real(8), parameter :: himmelberg_etal_rent_to_price=0.083
@@ -951,7 +963,17 @@
         !
         ! Production costs C(V) = (nu_1/nu_2) V^nu_2, so the competitive supply
         ! price is nu_1 V^(nu_2-1) and the elasticity of supply is 1/(nu_2-1).
-        ! The elasticity is set at 2, so nu_2 = 1.5.
+        !
+        ! SET FROM CANNABIS, not from a midpoint of legal markets. There is no
+        ! direct estimate for an illicit drug, and the cigarette and gasoline
+        ! literatures were the wrong place to bracket it from: those goods are
+        ! produced and traded under ordinary commercial law. Cannabis is not.
+        ! It remains a Schedule I substance federally, so even a state licensed
+        ! producer operates without interstate trade, without ordinary banking
+        ! and under federal prohibition, which is the set of frictions an illicit
+        ! supplier faces. Mace, Patel and Seegert (2020) estimate a supply
+        ! elasticity of 1.46 from Washington State administrative data. That is
+        ! the number, so nu_2 = 1 + 1/1.46 = 1.6849.
         !
         ! THE BENCHMARK NORMALISES RATHER THAN CLEARS, and that is not a dodge:
         ! with one good and one price there is nothing in the data to pin the
@@ -964,7 +986,7 @@
         ! households choose: a policy that cuts drug use cuts the price, which
         ! feeds back into use. That feedback is the reason the supply elasticity
         ! is in the paper at all, and it was absent.
-        real(8), parameter :: drug_supply_elasticity=2
+        real(8), parameter :: drug_supply_elasticity=1.46
         real(8), parameter :: drug_supply_curvature=1+1/drug_supply_elasticity
         real(8) :: drug_supply_shifter=1
         real(8) :: distance_drug_market=0
@@ -28131,12 +28153,16 @@
                     
                     if (target_renters_rent_to_income==1) then
                                         
+                        ! Raising gamma makes housing worth more against
+                        ! consumption and the drug, so the household buys more of
+                        ! it and the rent to income ratio RISES. A model above
+                        ! target therefore calls for a smaller gamma.
                         relative_share_of_housing=&
                             min(max(relative_share_of_housing-relative_share_of_housing_adjuster*&
-                            (model_avg_housing_spending_renters(1)-FRED_housing_services_to_GDP),0.01),0.9) 
+                            (model_avg_housing_spending_renters(1)-avg_rent_to_income_data),0.01),0.9) 
                                                                      
                         distance_relative_share_of_housing=&
-                            abs(model_avg_housing_spending_renters(1)-FRED_housing_services_to_GDP)
+                            abs(model_avg_housing_spending_renters(1)-avg_rent_to_income_data)
                                     
                         write(*,*) "model_avg_housing_spending_all=", model_avg_housing_spending_renters(1)
                             

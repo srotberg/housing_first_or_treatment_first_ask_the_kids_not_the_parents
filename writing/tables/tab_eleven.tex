@@ -1,7 +1,7 @@
 \begin{table}[htbp]\centering
-\caption{The \textcolor{red}{twenty nine} parameters that carry the story of this paper}\label{tab:eleven}
+\caption{The twenty nine parameters that carry the story of this paper}\label{tab:eleven}
 \begingroup\scriptsize\setlength{\tabcolsep}{1.5pt}
-\begin{tabular}{@{}lL{123pt}cL{178pt}rrr@{}}
+\sbox{\ntbox}{\begin{tabular}{@{}lL{123pt}cL{178pt}rrr@{}}
 \toprule
 Parameter & Description & Set & Moment and source & Data & Model & Value \\
 \midrule
@@ -38,15 +38,15 @@ $\bar\tau^{u}$ & Utility cost of treatment & Int. & Treatment take up, NSDUH 202
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{Externalities and distortions}} \\
 $\omega$ & Weight on the child & Int. & Use rise with altruism off, NSDUH 2024 & 18.3\% & \textemdash & \textemdash \\
-$\delta_d$ & Child's earnings, parent SUD & \textcolor{red}{Int.} & Child SUD ratio, McGovern et al.\ (2023) & \textcolor{red}{3.00} & \textemdash & \textemdash \\
+$\delta_d$ & Child's earnings, parent SUD & Int. & Child SUD ratio, McGovern et al.\ (2023) & 3.00 & \textemdash & \textemdash \\
 $\delta_h$ & Child's earnings, homeless & Ext. & Poverty exposure on earnings, Chetty et al.\ (2016) & 31\% & n.a. & 0.31 \\
 $\kappa_x$ & Disamenity of homelessness & Ext. & Willingness to pay, Loubi\`ere et al.\ (2020) & 0.20\% & n.a. & 0.0008 \\
 $\sigma_{\ell}$ & Curvature on leisure & Ext. & Frisch elasticity of $0.5$, Chetty (2012) & 0.50 & n.a. & 3.00 \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{Drug market}} \\
-$\nu_2$ & Drug supply curvature & Ext. & Elasticity 2; Hansen (2017) & 2.00 & n.a. & 1.50 \\
+$\nu_2$ & Drug supply curvature & Ext. & \textcolor{red}{Elasticity, Mace et al.\ (2020)} & \textcolor{red}{1.46} & n.a. & \textcolor{red}{1.68} \\
 \bottomrule
-\end{tabular}
-\notes{\textwidth}{Note: n.a.\ in the Model column marks a parameter that is set from outside rather than calibrated inside the model. For those the model produces no internal target to compare with the data, so the cell reads n.a.\ rather than a dash, which keeps them distinct from the internally calibrated parameters.}
+\end{tabular}}\usebox{\ntbox}
+\tabnote{Note: n.a.\ in the Model column marks a parameter that is set from outside rather than calibrated inside the model. For those the model produces no internal target to compare with the data, so the cell reads n.a.\ rather than a dash, which keeps them distinct from the internally calibrated parameters.}
 \endgroup
 \end{table}
