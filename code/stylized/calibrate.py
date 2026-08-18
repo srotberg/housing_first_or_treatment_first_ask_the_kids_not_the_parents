@@ -341,8 +341,21 @@ def calibrate(par=None, sweeps=5, verbose=True):
         par = with_(par, gam=bracket(par, 'gam', 'hspend', 0.02, 0.70))
         par = with_(par, h_hl=bracket(par, 'h_hl', 'homeless', 1e-7, 0.49))
         par = with_(par, aleph=bracket(par, 'aleph', 'vsl', 0.20, 24.0, iters=26))
-        par = with_(par, lam=bracket_prog(par, LAM_LO, LAM_HI))
-        par = with_(par, b=_b_for(par, iters=30))
+        # LAM AND B ARE SOLVED JOINTLY, not once each. prog is very nearly a
+        # step function in lam at the calibrated dispersion: with b refit at
+        # every trial it runs 0.065 at lam = 60, 0.221 at 121 and 0.9998 at 250,
+        # so the whole target range sits inside a factor of two. bracket_prog
+        # refits b inside itself, but the b that survives the sweep is the one
+        # set AFTERWARDS, on participation, and on a curve that steep even a
+        # small move in b throws prog off by more than the moment's tolerance.
+        # That is what left prog at 0.247 against a target of 0.332 while lam
+        # sat at 121, nowhere near its bounds, and looked like a model that
+        # could not reach the moment. Alternating the two to a fixed point fixes
+        # it: b still runs last, so participation is still the moment that is
+        # actually hit, but lam is re-solved against the b that will survive.
+        for _ in range(4):
+            par = with_(par, lam=bracket_prog(par, LAM_LO, LAM_HI))
+            par = with_(par, b=_b_for(par, iters=30))
         if verbose:
             m = stats(par)
             worst = max(abs(m[k] / TARGET[k] - 1.0) for k in TARGET)
