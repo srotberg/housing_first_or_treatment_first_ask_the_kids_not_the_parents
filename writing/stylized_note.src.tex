@@ -683,7 +683,7 @@ $J_R$, and $j$ indexes age within that span. Survival from $j$ to $j+1$ is
 $\phi(j,h',d,m,\tau)$ in~\eqref{eq:fsurv}, and it depends on age, on the housing
 \emph{chosen} this period, on the SUD and on serious mental illness (SMI),
 and on whether the household is in treatment, since treatment means it is
-not using. Newborns replace the dead
+not using{\color{red}, and thus is less likely to die}. Newborns replace the dead
 exactly, so the mass of households is constant. The individual
 state is
 \begin{equation}\label{eq:fstate}
@@ -933,6 +933,12 @@ household is in treatment, $\tau=1$, which is why the survival function takes $\
 as an argument at all. The excess mortality of the disorder is
 overwhelmingly a mortality of use, poisoning above all, and treatment forbids use
 in the period it is taken, so a household that is not using does not carry it.
+{\color{red}I make this assumption because that is what the cause specific evidence
+shows. The meta-analyses of mortality among people using extramedical opioids report
+overdose as the largest single contributor to the excess (Larney et al., 2020;
+Degenhardt et al., 2011), and in CDC WONDER drug poisoning alone accounts for about
+a fifth of all deaths at ages 25 to 44, which is the moment
+Section~\ref{sec:fvalid} reports the model against.}
 {\color{red}$\bar\phi(j)$ is the SSA period life table for ages 26 to 85, with the sexes
 combined by survivor weight, $q=[l^Mq^M+l^Fq^F]/[l^M+l^F]$.}
 
