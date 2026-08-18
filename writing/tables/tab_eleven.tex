@@ -8,7 +8,7 @@ Parameter & Description & Set & Moment and source & Data & Model & Value \\
 \multicolumn{7}{@{}l}{\emph{Who uses drugs}} \\
 $\theta$ & Weight on drugs in utility & Int. & Drug spending over income, users, NSDUH 2024 & 35\% & \textemdash & \textemdash \\
 $b$ & Whether a household uses & Int. & Drug participation, NSDUH 2024 & 5.13\% & \textemdash & \textemdash \\
-$\lambda$ & SUD hazard per unit used & Int. & {\color{red}Adult SUD rate, NSDUH 2024} & {\color{red}3.68\%} & \textemdash & \textemdash \\
+$\lambda$ & SUD hazard per unit used & Int. & \textcolor{red}{Adult SUD rate, NSDUH 2024} & \textcolor{red}{3.68\%} & \textemdash & \textemdash \\
 $\bar\kappa_{\phi d}$ & Increased mortality with a SUD & Ext. & Mortality ratios, Hjorth\o j et al.\ (2023) & 6 to 10 & n.a. & 8.00 \\
 $\aleph$ & Flow value of being alive & Int. & Value of a statistical life, Viscusi (2003) & \$7.5m & \textemdash & \textemdash \\
 \addlinespace
@@ -37,8 +37,8 @@ $g$ & Treatment effect on recovery & Ext. & Odds ratio, Milby et al.\ (2005) & 1
 $\bar\tau^{u}$ & Utility cost of treatment & Int. & Treatment take up, NSDUH 2023 & 24\% & \textemdash & \textemdash \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{Externalities and distortions}} \\
-$\omega$ & Weight on the child & Int. & {\color{red}Use rise with altruism off, NSDUH 2024} & {\color{red}18.3\%} & \textemdash & \textemdash \\
-$\delta_d$ & Child's earnings, parent SUD & {\color{red}Ext.} & Child SUD ratio, McGovern et al.\ (2023) & 2 to 4 & {\color{red}n.a.} & {\color{red}0.30} \\
+$\omega$ & Weight on the child & Int. & \textcolor{red}{Use rise with altruism off, NSDUH 2024} & \textcolor{red}{18.3\%} & \textemdash & \textemdash \\
+$\delta_d$ & Child's earnings, parent SUD & \textcolor{red}{Ext.} & Child SUD ratio, McGovern et al.\ (2023) & 2 to 4 & \textcolor{red}{n.a.} & \textcolor{red}{0.30} \\
 $\delta_h$ & Child's earnings, homeless & Ext. & Poverty exposure on earnings, Chetty et al.\ (2016) & 31\% & n.a. & 0.31 \\
 $\kappa_x$ & Disamenity of homelessness & Ext. & Willingness to pay, Loubi\`ere et al.\ (2020) & 0.20\% & n.a. & 0.0008 \\
 $\omega_{\ell}$ & Weight on leisure & Int. & Average hours worked, Guvenen et al.\ (2023) & 0.40 & \textemdash & \textemdash \\
@@ -47,7 +47,7 @@ $\sigma_{\ell}$ & Curvature on leisure & Ext. & Frisch elasticity of $0.5$, Chet
 \multicolumn{7}{@{}l}{\emph{The drug market}} \\
 $\nu_1$ & Drug supply shifter & Ext. & Normalisation, so $p_v=1$ & norm. & n.a. & norm. \\
 $p_v$ & Price of drugs & Ext. & Clears the drug market in the benchmark & 1.00 & n.a. & 1.00 \\
-$\nu_2$ & {\color{red}Drug supply curvature} & Ext. & Elasticity 2; Hansen (2017) & 2.00 & n.a. & 1.50 \\
+$\nu_2$ & \textcolor{red}{Drug supply curvature} & Ext. & Elasticity 2; Hansen (2017) & 2.00 & n.a. & 1.50 \\
 \bottomrule
 \end{tabular}
 \notes{\textwidth}{Note: n.a.\ in the Model column marks a parameter that is set from outside rather than calibrated inside the model. For those the model produces no internal target to compare with the data, so the cell reads n.a.\ rather than a dash, which keeps them distinct from the internally calibrated parameters.}
