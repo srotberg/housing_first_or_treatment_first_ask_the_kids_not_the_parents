@@ -1466,7 +1466,7 @@ the parameter the amount spent on drugs, when it does, turns on. As it
 rises use rises on the extensive and intensive margins, so the private
 cost and the externality both rise and there is more for
 either policy to act on. It is calibrated internally to drug spending
-over income across users, {\color{red}$35$} percent in NSDUH 2024. The moment is
+over income across users, $35$ percent in NSDUH 2024. The moment is
 built in two steps, because users are not one group. Households that buy without
 carrying a disorder and households that carry one have very different ratios, so
 each group's own total drug spending is divided by that group's own total income,
@@ -1478,13 +1478,13 @@ weights:
 \;+\;
 \frac{\mu_d}{\mu_e+\mu_d}\,\frac{p_v \bar v_d}{\bar y_d},
 \end{equation*}
-{\color{red}where $\bar v_g$ and $\bar y_g$ are the average drug quantity and
+where $\bar v_g$ and $\bar y_g$ are the average drug quantity and
 average income in group $g$, and $\mu_e$ and $\mu_d$ are the masses without and
-with the disorder.} The target follows from the two group ratios and the split
+with the disorder. The target follows from the two group ratios and the split
 between them: users without a disorder spend $11$ percent of income on the drug
-and users with one spend $44$, and {\color{red}the share of users carrying a
+and users with one spend $44$, and the share of users carrying a
 disorder is the SUD rate over the participation rate, $0.0368/0.0513=0.717$, so
-the average is $0.717\times0.44+0.283\times0.11=0.35$}.
+the average is $0.717\times0.44+0.283\times0.11=0.35$.
 \item[$b$, whether a household uses at all.] The marginal value of the drug goes
 as $\theta/(b+v)$, so a larger $b$ makes the first units worth less and a household
 with little to spend buys nothing. As $b$ rises use falls, so the
@@ -1654,50 +1654,46 @@ and what makes it matter for welfare, not through income. As it
 rises deaths among the mentally ill rise, so the private cost rises, and the
 externality rises with it, because a child born to a parent with a SUD is
 more likely to acquire a SUD and through it SMI, and therefore more likely to die.
-{\color{red}This is how a SUD affects mortality indirectly, through SMI, rather
-than only by the direct route.} It is set
+This is how a SUD affects mortality indirectly, through SMI, rather
+than only by the direct route. It is set
 externally at $2.5$, the middle of the standardised mortality ratios for SMI in
 Olfson et al.\ (2015).
 \end{description}
 
-\paragraph{Recovery and treatment.} This is the block Treatment First works on. The
-first two set how much recovery there is to buy and the last two how much of it a
-policy can actually buy.
+\paragraph{Recovery and treatment.} {\color{red}Both policies work on this block,
+since recovery is what Treatment First buys directly and what Housing First buys by
+housing people. The first two set how much recovery there is to buy and the last two
+how much of it a policy can reach.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\bar\pi_r$, the baseline SUD recovery rate.] The hazard of getting out of the
 disorder for a housed household, which is the level everything else in this block
-scales. As it rises disorders end sooner on their own, so both objects
-fall and there is less for either policy to buy. It is set externally from the ten
+scales. {\color{red}As it rises disorders end sooner on their own, so the private
+cost of acquiring one falls and the externality falls with it, and there is less for
+either policy to buy.} It is set externally from the ten
 year remission rate in Vaillant (1995), which gives an annual hazard of
 $0.025$.
 \item[$\mu_H$, SUD recovery when homeless.] How much less likely recovery from the
 disorder is for an unhoused household than a housed one. It matters more than the
 level $\bar\pi_r$ because it is a \emph{gradient}: it is what a voucher buys beyond
 shelter. As it falls the gradient steepens, so housing buys more
-recovery: the private value of a voucher rises and the externality falls, which is
-what offsets the moral hazard in $\pi_V$. Near one, assistance is a transfer and the
+recovery: the private value of a voucher rises and the externality falls. Near one, assistance is a transfer and the
 moral hazard stands unopposed. Its value is chosen so the model generates the
 increase in recovery housing produced in Milby et al.\ (2005), a randomised trial on
 cocaine dependent homeless adults: $6.60$ weeks abstinent in the housed arm against
 $4.48$ homeless, so housing raises recovery by $47.3$ percent.
 \item[$g$, the treatment effect on recovery.] Treatment First's instrument, and the
 parameter its case rests on most directly. As it rises treatment works
-better, so the externality falls and Treatment First's case strengthens; the private
-cost falls with it, since the household is cured too. It is set externally from the
-odds ratio in Milby et al.\ (2005), and because it carries a headline result it is
-reported across a range rather than at a point.
+better, so the externality falls and Treatment First's case strengthens{\color{red},
+but actually also the private cost falls, since the household is more easily cured,
+because those with a SUD are more able to treat themselves in response to the
+conditionality}. It is set externally at {\color{red}$1.35$}, the
+odds ratio in Milby et al.\ (2005).
 \item[$\bar\tau^{u}$, the utility cost of treatment.] Take up is a choice, not a
-rule, and this is what makes households decline treatment they would gain from.
-As it rises fewer take treatment, so the externality falls by less than
-$g$ alone would suggest and Treatment First delivers less than its instrument
-promises. It is calibrated internally to treatment take up among adults
+rule, and this is what makes households decline treatment they {\color{red}might gain
+from in the future. As it rises fewer take treatment, so the externality rises, since
+more people remain with a SUD, and the private cost rises too, since treatment is
+costly}. It is calibrated internally to treatment take up among adults
 with a SUD, $24$ percent in NSDUH 2023.
-What it is charged against matters as much as its level. Treatment
-forbids use for the period, and it buys two things in return: the higher recovery
-hazard $g$ delivers, and survival at the clean hazard rather than at
-$\kappa_{\phi d}$ times it, since a household that is not using does not die of
-using. Against the recovery gain alone the trade is not close, and no household
-takes it at any cost.
 \end{description}
 
 \paragraph{Externalities and distortions.} The first three are what a parent's disorder and a
