@@ -1337,7 +1337,17 @@
                  
         real(8) :: labor_income_tax_rate=(1-perceived_probability_lower)*0.75+perceived_probability_lower*0.69
         real(8) :: labor_income_tax_rate_adjuster=5*10.d0**(-1)
+        ! THE STOPPING RULE EXISTED AND THE DISTANCE DID NOT.
+        !
+        ! The retention scale is updated every loop against an average labour
+        ! income tax rate of 22.4 per cent, and this tolerance was declared for
+        ! it, but no distance was ever computed and nothing was ever tested. So
+        ! the sweep could declare itself converged with the average tax rate
+        ! anywhere at all, which makes every fiscal number downstream of it,
+        ! including the cost of either programme, unanchored. The note says this
+        ! parameter reproduces 22.4 per cent; now it has to.
         real(8) :: stopping_rule_labor_income_tax_rate=10.d0**(-3)
+        real(8) :: distance_labor_income_tax_rate=1
                 
         real(8) :: curvature_of_labor_income_taxes=0.85
 
@@ -27718,7 +27728,8 @@
             (distance_rho_d>stopping_rule_rho_d) .OR. &
             (distance_mu_homeless>stopping_rule_mu_homeless) .OR. &
             (distance_weight_on_child>stopping_rule_weight_on_child) .OR. &
-            (distance_penalty_child_addicted>stopping_rule_penalty_child_addicted) .OR. (loop_count<1))
+            (distance_penalty_child_addicted>stopping_rule_penalty_child_addicted) .OR. &
+            (distance_labor_income_tax_rate>stopping_rule_labor_income_tax_rate) .OR. (loop_count<1))
                         
             ! OMEGA'S MOMENT, measured before the baseline so that every statistic
             ! the rest of this loop reads describes the baseline and not this.
@@ -28399,6 +28410,21 @@
                     ! wrong, which is why the note is here rather than nowhere.
                     labor_income_tax_rate=max(min(labor_income_tax_rate+labor_income_tax_rate_adjuster*&
                         (model_average_labour_income_tax(1)-average_labor_income_tax_data),2.d0),0.d0)
+
+                    distance_labor_income_tax_rate=&
+                        abs(model_average_labour_income_tax(1)-average_labor_income_tax_data)
+
+                    write(*,*) "average labour income tax rate =", model_average_labour_income_tax(1),&
+                        " against ", average_labor_income_tax_data,&
+                        " distance_labor_income_tax_rate=", distance_labor_income_tax_rate
+
+                    if ((labor_income_tax_rate<=10.d0**(-8)) .OR. (labor_income_tax_rate>=2.d0-10.d0**(-8))) then
+
+                        write(*,*) "the retention scale IS PINNED AT A BOUND", labor_income_tax_rate,&
+                            " and the average labour income tax rate is ", model_average_labour_income_tax(1),&
+                            " against ", average_labor_income_tax_data
+
+                    end if
                         
                     write(*,*) "labor_income_tax_rate=", labor_income_tax_rate
                                                             
@@ -31174,6 +31200,10 @@
             if (distance_penalty_child_addicted .NE. distance_penalty_child_addicted) then
                 write(*,*) "NaN DISTANCE: distance_penalty_child_addicted, forced to 1 so the sweep cannot mistake it for convergence"
                 distance_penalty_child_addicted=1
+            end if
+            if (distance_labor_income_tax_rate .NE. distance_labor_income_tax_rate) then
+                write(*,*) "NaN DISTANCE: distance_labor_income_tax_rate, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_labor_income_tax_rate=1
             end if
             ! Everything the update block moved this loop, on disk before the
             ! next one starts.
