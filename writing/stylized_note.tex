@@ -1140,11 +1140,11 @@ weighted value of what the household's own state costs that child,
 each discounted, with $y_{\text{child}}$
 as defined in~\eqref{eq:fnewborn}. What that buys is a second route by
 which the household's own decisions, to use and to go unhoused, reach its child.
-$\phi(j,\cdot)$ itself depends on $h'$ and,
-through $d$, on $v$: a household that uses raises the chance it is the child's
-term rather than its own that is realised, so the child enters the drug and
-housing decision through the weight on the two terms as well as through
-$y_{\text{child}}$.
+{\color{red}$\phi(j,\cdot)$ itself depends on the dwelling chosen, so the housing
+decision moves the weight on the two terms directly. The drug does not move it
+within the period, because $\phi$ takes the disorder as a state and $v$ only raises
+the chance of carrying it \emph{next} period. The drug reaches the child through the
+continuation instead, which is where the first order condition below picks it up.}
 
 The third line is a \emph{difference} and not a level, and the
 distinction is not cosmetic. Written as a level, $\omega$ in the child's
@@ -1203,6 +1203,13 @@ Cobb-Douglas one; it is the third term that stops it cancelling, and that is why
 the marginal utility level matters here and not in an ordinary two good
 problem. That third term is the marginal hazard $\pi_d'(v)=\lambda e^{-\lambda
 v}$ times what the disorder costs, the gap between the two continuation values.
+{\color{red}That gap is where the externality on the child enters the drug decision,
+and it is why there is no fourth term. Each continuation value carries its own child
+term, at $d'=0$ and at $d'=1$, so the difference between them already contains the
+$\omega$ share of what the disorder costs the child alongside what it costs the
+household itself. A fourth term would be needed only if using raised the chance the
+child's term is realised within the period, and it does not: $\phi$ depends on the
+disorder as a state, not on how much is bought today.}
 This is Section~\ref{sec:stylized}'s mechanism inside the quantitative model:
 because $\pi_d$ rises in $v$, how much to use is not decided on the budget alone.
 
