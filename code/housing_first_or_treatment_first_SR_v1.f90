@@ -30793,6 +30793,167 @@
             
             write(*,*) "loop_count=", loop_count
 
+            ! A DISTANCE THAT IS NOT A NUMBER MUST NOT READ AS CONVERGED.
+            !
+            ! Every stopping test in the sweep is of the form distance > rule,
+            ! and NaN > anything is FALSE in Fortran, so a moment that came back
+            ! 0/0 silently satisfies its own convergence test and takes the sweep
+            ! with it. That is not hypothetical: the discount factor was driven
+            ! by a mortgage share that is 0/0 once ownership is off, and the
+            ! sweep read the resulting NaN as a parameter that had converged
+            ! while the parameter itself had been set to zero. The employment
+            ! penalty for a disorder did the same thing through an employment
+            ! rate of the homeless computed on an empty set.
+            !
+            ! Forcing a NaN distance to one keeps the sweep open and puts the
+            ! name of the offending moment in the log, which is the difference
+            ! between a wrong answer and a visible failure. It is deliberately
+            ! placed here, after every update block, so it catches whatever the
+            ! moment came from rather than each site having to guard itself.
+            if (distance_addiction_scalar .NE. distance_addiction_scalar) then
+                write(*,*) "NaN DISTANCE: distance_addiction_scalar, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_addiction_scalar=1
+            end if
+            if (distance_advantage_to_owning .NE. distance_advantage_to_owning) then
+                write(*,*) "NaN DISTANCE: distance_advantage_to_owning, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_advantage_to_owning=1
+            end if
+            if (distance_average_labor_income .NE. distance_average_labor_income) then
+                write(*,*) "NaN DISTANCE: distance_average_labor_income, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_average_labor_income=1
+            end if
+            if (distance_average_net_wealth .NE. distance_average_net_wealth) then
+                write(*,*) "NaN DISTANCE: distance_average_net_wealth, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_average_net_wealth=1
+            end if
+            if (distance_convexity_of_rental_company .NE. distance_convexity_of_rental_company) then
+                write(*,*) "NaN DISTANCE: distance_convexity_of_rental_company, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_convexity_of_rental_company=1
+            end if
+            if (distance_discount_factor .NE. distance_discount_factor) then
+                write(*,*) "NaN DISTANCE: distance_discount_factor, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_discount_factor=1
+            end if
+            if (distance_discount_factor_on_child .NE. distance_discount_factor_on_child) then
+                write(*,*) "NaN DISTANCE: distance_discount_factor_on_child, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_discount_factor_on_child=1
+            end if
+            if (distance_drug_market .NE. distance_drug_market) then
+                write(*,*) "NaN DISTANCE: distance_drug_market, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_drug_market=1
+            end if
+            if (distance_drug_threshold .NE. distance_drug_threshold) then
+                write(*,*) "NaN DISTANCE: distance_drug_threshold, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_drug_threshold=1
+            end if
+            if (distance_employment_multiplier .NE. distance_employment_multiplier) then
+                write(*,*) "NaN DISTANCE: distance_employment_multiplier, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_employment_multiplier=1
+            end if
+            if (distance_fixed_cost_to_moving .NE. distance_fixed_cost_to_moving) then
+                write(*,*) "NaN DISTANCE: distance_fixed_cost_to_moving, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_fixed_cost_to_moving=1
+            end if
+            if (distance_housing_status_grid_expander .NE. distance_housing_status_grid_expander) then
+                write(*,*) "NaN DISTANCE: distance_housing_status_grid_expander, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_housing_status_grid_expander=1
+            end if
+            if (distance_inheritance_amount .NE. distance_inheritance_amount) then
+                write(*,*) "NaN DISTANCE: distance_inheritance_amount, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_inheritance_amount=1
+            end if
+            if (distance_kappa_uem .NE. distance_kappa_uem) then
+                write(*,*) "NaN DISTANCE: distance_kappa_uem, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_kappa_uem=1
+            end if
+            if (distance_lambda_addiction .NE. distance_lambda_addiction) then
+                write(*,*) "NaN DISTANCE: distance_lambda_addiction, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_lambda_addiction=1
+            end if
+            if (distance_lambda_m .NE. distance_lambda_m) then
+                write(*,*) "NaN DISTANCE: distance_lambda_m, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_lambda_m=1
+            end if
+            if (distance_largest_house_size .NE. distance_largest_house_size) then
+                write(*,*) "NaN DISTANCE: distance_largest_house_size, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_largest_house_size=1
+            end if
+            if (distance_max_food_cost .NE. distance_max_food_cost) then
+                write(*,*) "NaN DISTANCE: distance_max_food_cost, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_max_food_cost=1
+            end if
+            if (distance_median_income .NE. distance_median_income) then
+                write(*,*) "NaN DISTANCE: distance_median_income, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_median_income=1
+            end if
+            if (distance_minimum_inheritance .NE. distance_minimum_inheritance) then
+                write(*,*) "NaN DISTANCE: distance_minimum_inheritance, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_minimum_inheritance=1
+            end if
+            if (distance_mu_homeless .NE. distance_mu_homeless) then
+                write(*,*) "NaN DISTANCE: distance_mu_homeless, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_mu_homeless=1
+            end if
+            if (distance_probability_of_becoming_addicted .NE. distance_probability_of_becoming_addicted) then
+                write(*,*) "NaN DISTANCE: distance_probability_of_becoming_addicted, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_probability_of_becoming_addicted=1
+            end if
+            if (distance_relative_share_of_addiction_1 .NE. distance_relative_share_of_addiction_1) then
+                write(*,*) "NaN DISTANCE: distance_relative_share_of_addiction_1, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_relative_share_of_addiction_1=1
+            end if
+            if (distance_relative_share_of_housing .NE. distance_relative_share_of_housing) then
+                write(*,*) "NaN DISTANCE: distance_relative_share_of_housing, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_relative_share_of_housing=1
+            end if
+            if (distance_relative_share_of_leisure .NE. distance_relative_share_of_leisure) then
+                write(*,*) "NaN DISTANCE: distance_relative_share_of_leisure, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_relative_share_of_leisure=1
+            end if
+            if (distance_rent_to_price .NE. distance_rent_to_price) then
+                write(*,*) "NaN DISTANCE: distance_rent_to_price, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_rent_to_price=1
+            end if
+            if (distance_rho_d .NE. distance_rho_d) then
+                write(*,*) "NaN DISTANCE: distance_rho_d, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_rho_d=1
+            end if
+            if (distance_rho_m .NE. distance_rho_m) then
+                write(*,*) "NaN DISTANCE: distance_rho_m, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_rho_m=1
+            end if
+            if (distance_separation_rate .NE. distance_separation_rate) then
+                write(*,*) "NaN DISTANCE: distance_separation_rate, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_separation_rate=1
+            end if
+            if (distance_size_homelessness .NE. distance_size_homelessness) then
+                write(*,*) "NaN DISTANCE: distance_size_homelessness, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_size_homelessness=1
+            end if
+            if (distance_smallest_house_size .NE. distance_smallest_house_size) then
+                write(*,*) "NaN DISTANCE: distance_smallest_house_size, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_smallest_house_size=1
+            end if
+            if (distance_standard_deduction .NE. distance_standard_deduction) then
+                write(*,*) "NaN DISTANCE: distance_standard_deduction, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_standard_deduction=1
+            end if
+            if (distance_utility_cost_of_treatment .NE. distance_utility_cost_of_treatment) then
+                write(*,*) "NaN DISTANCE: distance_utility_cost_of_treatment, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_utility_cost_of_treatment=1
+            end if
+            if (distance_value_of_life .NE. distance_value_of_life) then
+                write(*,*) "NaN DISTANCE: distance_value_of_life, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_value_of_life=1
+            end if
+            if (distance_voucher_probability .NE. distance_voucher_probability) then
+                write(*,*) "NaN DISTANCE: distance_voucher_probability, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_voucher_probability=1
+            end if
+            if (distance_weight_on_child .NE. distance_weight_on_child) then
+                write(*,*) "NaN DISTANCE: distance_weight_on_child, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_weight_on_child=1
+            end if
             ! Everything the update block moved this loop, on disk before the
             ! next one starts.
             call write_calibration_state()
