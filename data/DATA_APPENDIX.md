@@ -424,14 +424,3 @@ disorder share is the untargeted half of the same study.
 **Drug price participation elasticity — −0.63.** Saffer and Chaloupka (1999). The
 model's participation response to the drug price is not targeted anywhere; it comes
 out of the drug market and the utility weight, so this is a check on both at once.
-
----
-
-## What is not here yet
-
-The Model column of the paper's two calibration tables, and the model side of the
-validation moments in section 9, report what the model produces against each of these
-figures. Those numbers come from a converged run, and the run is not converged at the
-time of writing, so this file documents the data side only. When the calibration
-lands, the model side is added here alongside each figure rather than left only in the
-paper.
