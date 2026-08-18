@@ -821,7 +821,17 @@
         ! stage cross sectional one it is bracketed in the loop below; the three
         ! that need a second stage experiment are marked as such and are freed
         ! but not yet driven, because the experiment does not exist to drive them.
-        real(8), parameter :: drug_spending_share_data=0.44
+        ! DRUG SPENDING OVER INCOME, AVERAGED ACROSS USERS.
+        !
+        ! The moment this is compared with divides total drug spending by total
+        ! income over the EXPERIMENTERS, which is every household that buys any
+        ! drug, not the subset carrying a disorder. At 0.44 the target was a with
+        ! disorder number attached to an all user average, and no household in
+        ! the model spends anything like that share on the drug.
+        !
+        ! 0.20 is the weighted average across users, light and heavy together,
+        ! which is the population the moment is actually taken over.
+        real(8), parameter :: drug_spending_share_data=0.20
         real(8), parameter :: participation_rate_data=0.0513
         real(8), parameter :: vsl_data=7.5
         real(8), parameter :: food_stamps_share_data=0.0042
@@ -28351,7 +28361,9 @@
                     ! away rather than as an error.
                     !
                     ! theta, the weight on drugs, on drug spending over income
-                    ! given a SUD. More weight, more spending, so the update
+                    ! averaged across users, light and heavy together, which is
+                    ! the population the moment below is taken over. More weight,
+                    ! more spending, so the update
                     ! adds the gap the other way round: subtract model minus
                     ! data.
                     write(*,*) "relative_share_of_addiction_1=", relative_share_of_addiction_1
