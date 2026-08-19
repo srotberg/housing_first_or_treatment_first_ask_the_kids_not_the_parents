@@ -36,6 +36,17 @@ percent. The weight comes from the two NSDUH rates the model already targets
 rather than from the conversion rate; see the note under λ for why those two do not
 agree with each other.
 
+*The stylized model targets 20 percent, not 34.7, and the difference is not a data
+disagreement.* A period there is thirty years, so every consequence of using arrives
+once, at the end, rather than compounding annually. Buying the same spending share
+therefore takes a larger weight on the drug, and past about θ = 0.22 the drug becomes
+too valuable to be deterred by a distant death: at θ = 0.24 the average user earns
+four times the population average and the income gradient the model exists to explain
+has reversed. With the whole model recalibrated at each θ the share runs 15.2, 18.4,
+20.2, 21.6 and 24.2 percent at θ from 0.18 to 0.23, and the mortality channel stops
+reversing the gradient on its own somewhere between 0.22 and 0.23. Twenty percent is
+what the two period model can carry with the mechanism intact.
+
 **b, whether a household uses — 5.13 percent participation.** NSDUH 2024, past
 year illicit drug use disorder module, adults 26 and over. Restricting to 26 and
 over matters: including 12 to 25 year olds roughly doubles the rate, and the model
@@ -141,6 +152,15 @@ node, at the same parental housing status, so the comparison isolates the disord
 **δ_h, the child's earnings penalty for homelessness — 31 percent.** Chetty et al.
 (2016): children who moved to a lower poverty neighbourhood before age thirteen
 earned 31 percent more as adults.
+
+The stylized model is calibrated to the same ratio of 3 and needs δ_d = 0.45 to reach
+it. That is a larger penalty than the earnings literature measures directly, 24
+percent in Nilsson (2017) and 31 in Chetty et al. (2016), because the model is being
+asked to reproduce an epidemiological ratio rather than an earnings coefficient and
+income is its only channel from parent to child. It should be read as the reduced
+form of the whole childhood rather than as an estimate of a wage effect. It was
+previously set at 0.30, which delivered a ratio of 2.1, the bottom of the McGovern et
+al. range rather than its midpoint.
 
 ---
 
