@@ -140,10 +140,19 @@ class P:
     # SHARES THAT SUM TO ONE. The weight on consumption is 1-gam-th, so gam is
     # the housing budget share proper rather than gam/(1+gam+th). gam is set to
     # 0.268 of non drug spending, which is the share in the data.
-    # THETA IS 0.23 AND NOT 0.11, and the two period model is what allows it. In
+    # THETA IS 0.21 AND NOT 0.11, and the two period model is what allows it. In
     # the three period model raising theta bought a drug spending share at the
     # cost of the income gradient: users stopped being poor. Here the mortality
     # channel is strong enough to hold the gradient while theta rises.
+    #
+    # THE SIX POINT SCREEN BELOW IS SUPERSEDED and is kept only as a record of
+    # how far the answer moved when sigma_y was calibrated. It was run at
+    # sigma_y = 0.75, a guess, and with lambda targeting the 33.2 per cent
+    # conversion from use to a SUD rather than the 3.68 per cent adult rate the
+    # quantitative model matches. Both were replaced, and under the new income
+    # distribution the spending shares are three times larger at every theta and
+    # the mortality screen fails a full point earlier. The current numbers are in
+    # the block above this class attribute.
     #
     # THE CEILING MOVED WHEN THE SMR DID. With kappa derived from an SMR of 8
     # rather than 6.9 the mortality channel is stronger, so it holds the gradient
@@ -180,7 +189,21 @@ class P:
     #
     # See scan_theta.py, which screens the channel decomposition before it reads
     # the spending share.
-    th    = 0.23      # weight on drug use
+    # THETA = 0.21, AND THE SECOND ROW OF THIS TABLE IS WHY. Scanning theta with
+    # the WHOLE model recalibrated at each point (frontier.py), the drug spending
+    # share of users and what the mortality channel does on its own are:
+    #
+    #     theta   0.18    0.20    0.21    0.22    0.23
+    #     share  15.2%   18.4%   20.2%   21.6%   24.2%
+    #     r_mort  0.15    0.15    0.39    0.93    1.90
+    #
+    # r_mort is the average income of users over the population average when the
+    # mortality channel alone is switched on at full strength. Below one, users
+    # are poorer than average and mortality has reversed the income gradient by
+    # itself, which is the mechanism this model exists to show. It crosses one
+    # between 0.22 and 0.23. So 0.23 buys a 24 per cent spending share and loses
+    # the reversal; 0.21 buys 20 per cent and keeps it with room to spare.
+    th    = 0.21      # weight on drug use
     b     = 0.009     # Stone Geary subsistence; th/b is the pull of the first unit
     gam   = 0.2144    # CALIBRATED to the housing share. Starting value only
     # A PERIOD IS THIRTY YEARS, so the discount factor and the interest rate are

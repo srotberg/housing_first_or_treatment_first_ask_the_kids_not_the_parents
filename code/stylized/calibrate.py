@@ -234,24 +234,24 @@ TARGET = dict(part=0.0513, homeless=0.00399, sud=0.0368, vsl=80.0,
 # rather than a calibration.
 LAM_LO, LAM_HI = 0.05, 4000.0
 
-# THETA'S WINDOW, and a correction to what an earlier version of this comment
-# said. It claimed the drug spending share is bimodal in theta, running 5.2 per
-# cent at theta = 0.21 and jumping to 18.8 at 0.22, so that only a narrow window
-# was safe to bisect on. That measurement refit b ALONE. With the whole model
-# recalibrated at each theta, which is what a bracket inside the sweep actually
-# does, the share is smooth and monotone:
+# THETA IS SET, NOT BRACKETED, and a correction to what an earlier version of this
+# comment said. It claimed the drug spending share is bimodal in theta, running
+# 5.2 per cent at theta = 0.21 and jumping to 18.8 at 0.22, so that only a narrow
+# window was safe to bisect on. That measurement refit b ALONE. With the whole
+# model recalibrated at each theta the share is smooth and monotone:
 #
 #     theta   0.18    0.20    0.21    0.22    0.23
 #     share  15.2%   18.4%   20.2%   21.6%   24.2%
+#     r_mort  0.15    0.15    0.39    0.93    1.90
 #
 # The jump was lambda, gamma and the street being held at their theta = 0.23
-# values while theta moved, which is a different model at every point rather
-# than the same model at a different theta. The window is wide enough to hold
-# the answer and no wider, and the sweep warns if theta arrives at either end.
-TH_LO, TH_HI = 0.150, 0.280
-
-PAIRS = [('th', 'dshare', TH_LO, TH_HI),
-         ('gam', 'hspend', 0.02, 0.70),
+# values while theta moved. The second row is what decides the setting: r_mort is
+# what the mortality channel alone does to the income ratio of users, and it has
+# to be below one for the mechanism this model exists to show. It crosses one
+# between 0.22 and 0.23, so theta = 0.21 buys a spending share of about 20 per
+# cent with the reversal comfortably intact, and theta = 0.23 buys 24 per cent
+# with no reversal at all. frontier.py is the scan.
+PAIRS = [('gam', 'hspend', 0.02, 0.70),
          ('h_hl', 'homeless', 1e-7, 0.49),
          ('aleph', 'vsl', 0.20, 24.0),
          ('lam', 'sud', LAM_LO, LAM_HI),
@@ -382,25 +382,6 @@ def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=()):
         for _ in range(4):
             par = with_(par, lam=bracket_sud(par, LAM_LO, LAM_HI))
             par = with_(par, b=_b_for(par, iters=30))
-        # THETA GOES LAST BUT ONE, AND THE FIRST VERSION HAD IT FIRST. calibrate()
-        # starts from the class defaults, where lambda is 25 against a calibrated
-        # 161 and the street is 0.05 against 0.00028, so a theta bracketed before
-        # anything else has been refit is bracketed on a model that does not
-        # exist: it ran to the top of its window on sweep one and reported that
-        # the drug spending share could not be reached. The share depends on
-        # lambda above all, since lambda is what makes using risky, so theta has
-        # to be read at a lambda that is on target.
-        #
-        # b is refit inside bracket_with_b at every trial and AGAIN below, so
-        # participation is still the moment that is hit exactly, which is the
-        # rule the rest of this ordering follows.
-        if 'th' not in fix:
-            par = with_(par, th=bracket_with_b(par, 'th', 'dshare',
-                                               TH_LO, TH_HI))
-            if par.th <= TH_LO * 1.001 or par.th >= TH_HI * 0.999:
-                print(f'   WARNING: theta arrived at a bound, {par.th:.4f} in '
-                      f'[{TH_LO}, {TH_HI}]; the drug spending share is not hit')
-            par = with_(par, b=_b_for(par, iters=30))
         # CHECKPOINT EVERY SWEEP. This process has been killed mid run four
         # times by the container reclaiming background work, and each time the
         # whole calibration was lost because the only write was at the end. Now
@@ -443,6 +424,31 @@ def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=()):
     return par
 
 
+def polish(par, verbose=True):
+    """
+    One pass over everything EXCEPT theta, at the final theta.
+
+    The sweep ends on theta, so the parameters bracketed before it are fitted to
+    the theta that theta has just replaced. On the last sweep there is no next
+    sweep to correct that, and the model written out carries a street and a
+    housing weight that belong to a different theta: after sweep one the
+    homelessness rate sat 17 per cent off its target for exactly this reason.
+    This runs the rest of the sweep once more with theta held where it landed,
+    so every moment but the drug spending share is on target at the theta that
+    is reported, and the drug spending share moves only by however much the
+    others move it.
+    """
+    if verbose:
+        print(f'\npolishing at theta = {par.th:.4f}')
+    par = with_(par, gam=bracket(par, 'gam', 'hspend', 0.02, 0.70))
+    par = with_(par, h_hl=bracket(par, 'h_hl', 'homeless', 1e-7, 0.49))
+    par = with_(par, aleph=bracket(par, 'aleph', 'vsl', 0.20, 24.0, iters=26))
+    for _ in range(2):
+        par = with_(par, lam=bracket_sud(par, LAM_LO, LAM_HI))
+        par = with_(par, b=_b_for(par, iters=30))
+    return par
+
+
 def report(par):
     m = stats(par)
     print('\n' + '=' * 64)
@@ -455,8 +461,8 @@ def report(par):
     print('  ' + '   '.join(f'{n}={getattr(par, n):.4g}' for n, _, _, _ in PAIRS))
     print(f"\n  income of users / average : {m['r_use']:.3f}")
     print(f"  share of homeless with the disorder : {m['sud_of_homeless']:.3f}")
-    print(f"  income of the poorest household / average : "
-          f"{float(YG.min() / (W / W.sum() @ YG)):.3f}")
+    print(f"  drug spending / income among users  : {m['dshare']:.4f}"
+          "   (untargeted; theta is set, see the note above)")
     from stylized import value1
     v1 = np.array([value1(par, y, 'HF') for y in YG])
     print(f"  minimum ex ante value of life over the grid : {v1.min():.3f}")
@@ -476,6 +482,7 @@ if __name__ == '__main__':
         seed = with_(P(), **json.load(open('calibrated.json')))
         print(f'seeded from calibrated.json at theta = {seed.th:.4f}')
     par = calibrate(seed, checkpoint='calibrated.json')
+    par = polish(par)
     report(par)
     json.dump({n: getattr(par, n) for n, _, _, _ in PAIRS}
               | {'th': par.th, 'gam': par.gam},

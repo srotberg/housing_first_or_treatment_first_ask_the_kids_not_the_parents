@@ -205,6 +205,19 @@ def tab_children(par, pV=1.0):
                      cev(par, shifted(v1, 0.0) - shifted(v1, d))))
     v1u, _ = child_grid(par, 'HF', pV)
     per_case = cev(par, shifted(v1u, 0.0) - shifted(v1u, DEL_D))
+    # WHERE THE NUMBER COMES FROM, because it is large enough to want checking.
+    # A permanent income cut of del_d costs a household with log utility exactly
+    # log(1-del_d) of flow utility in every period, so the consumption equivalent
+    # of the INCOME alone is (1-del_d)^-1 - 1 with no behaviour in it at all. The
+    # gap between that and per_case is the behavioural response: the poorer child
+    # uses more, is likelier to lose its housing and likelier to acquire the
+    # disorder, and each of those costs it again.
+    income_only = 1.0 / (1.0 - DEL_D) - 1.0
+    print(f'\n   PER CASE, decomposed at del_d = {DEL_D:.4f}')
+    print(f'      consumption equivalent, total          : {100*per_case:.1f}%')
+    print(f'      of which the income cut alone          : {100*income_only:.1f}%')
+    print(f'      of which the behavioural response      : '
+          f'{100*(per_case-income_only):.1f}%')
     priv, gain = verdict(par, DEL_D, pV=pV)
     # Panel B is entirely at pV, the policy comparison. Panel A is entirely at
     # the baseline. Mixing the two silently reported a 1.68 pp gap where the

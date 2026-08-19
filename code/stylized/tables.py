@@ -34,6 +34,8 @@ EXTERNAL = [
          r'Set to $1/\beta$', '{:.3f}'),
         ('phi0', r'\phi_0', 'Survival over a period, no SUD',
          'SSA period life table, ages 25--55', '{:.2f}'),
+        ('th', r'\theta', 'Weight on drug use',
+         r'Set; see the text', '{:.2f}'),
     ]),
     ('The SUD', [
         ('kap', r'\kappa', 'Fall in survival with a SUD, over a thirty year period',
@@ -88,12 +90,6 @@ EXTERNAL = [
 INTERNAL = [
     (None, r'\sigma_y', 'Dispersion of log permanent income',
      "Bottom half's share of earnings, SCF 2022", 'bot50', '{:.2%}', '{:.3f}'),
-    # theta MOVED HERE FROM THE EXTERNAL TABLE. It used to be set by hand with a
-    # footnote explaining the trade it represented; it is bracketed on the drug
-    # spending share now, so it belongs with the parameters that have a model
-    # counterpart to report against a target.
-    ('th', r'\theta', 'Weight on drug use',
-     'Drug spending over income, users', 'dshare', '{:.2%}', '{:.3f}'),
     ('gam', r'\gamma', 'Weight on housing services',
      'Housing over non drug spending', 'hspend', '{:.2%}',
      '{:.3f}'),
