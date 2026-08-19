@@ -132,10 +132,15 @@ naming.
 *What NSDUH actually says.* In the 2024 public use file, among adults 26 and over,
 58.0 percent of those with SMI are employed against 57.5 percent of those without,
 and 45.8 percent against 47.2 percent are employed full time. On NSDUH's own
-definition of SMI there is almost no employment gap. Either the target belongs to a
-narrower population than NSDUH's SMI, which is what the high disability restriction
-is doing, and the paper should say so, or the target should be the NSDUH gap. This
-is flagged rather than resolved. The distinction
+definition of SMI there is almost no employment gap.
+
+*Resolved: keep the high disability target.* The state in the model is not NSDUH's
+SMI. It is an illness severe enough to cut productivity by ρ_m and to raise the
+chance of losing work, which is the high disability end of the distribution rather
+than the whole of it. The clinical range for that end is what 30 percent is the
+midpoint of, and it is the closest measurement available for the population the state
+represents. A survey number for a population the state is not would be worse. The
+paper carries this as a footnote on κ_uem rather than leaving the reader to find it. The distinction
 is load bearing: any mental illness covers roughly a quarter of adults, and a state
 that halves productivity cannot sensibly cover a quarter of the population.
 
