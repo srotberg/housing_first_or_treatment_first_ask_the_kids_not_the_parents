@@ -190,7 +190,9 @@ likely to have suffered physical or sexual abuse or had a parent serve jail time
 case-control design differences all of that out, which is why Bassuk is used and Flatau
 is not.
 
-*Journeys Home.* Its microdata would give an independent poverty-held-fixed ratio, from
+*Journeys Home.* The panel is documented in Scutella, Johnson, Moschion, Tseng and
+Wooden (2012), the Wave 1 findings report. Its microdata would give an independent
+poverty-held-fixed ratio, from
 `HFHLAGE < 18` crossed with `JHSTRATA`, but access needs a DSS application and possibly
 a fee, and it has no parental-homelessness question so it could not reproduce Flatau in
 any case. The variables and the access route are recorded in

@@ -2,16 +2,20 @@
 
 Journeys Home is a six wave Australian panel of 1,682 disadvantaged adults, all drawn
 from Centrelink income support recipients, run by the Melbourne Institute for the
-Department of Social Services. It is here to pin down one number the paper currently
-states only as a bound: how much likelier the child of a homeless household is to be
-homeless itself, with poverty held fixed.
+Department of Social Services, and documented in Scutella, Johnson, Moschion, Tseng and
+Wooden (2012). It is here to check one number the paper takes from a single American
+case control study: how much likelier the child of a homeless household is to be
+homeless itself, with poverty held fixed. The paper calibrates delta_h so the model
+reproduces 2.1, the midpoint of the two odds ratios in Bassuk et al. (1997). An
+Australian panel with poverty in the sampling frame is an independent read on the same
+object.
 
 ## Why this dataset and not the one the paper cites
 
 The paper quotes Flatau et al. (2013), who find that 43 per cent of non-Indigenous
 homelessness assistance clients had parents who had themselves experienced
 homelessness. Turning that into a risk ratio needs a base rate, and against a general
-population base it implies a ratio of 5 to 6 against the model's 2.02.
+population base it implies a ratio of 5 to 6 against the 2.1 the model targets.
 
 That comparison is wrong, and the reason is selection. A parent who was homeless was
 already poor before anything was transmitted, so a ratio taken against the whole
@@ -54,7 +58,8 @@ Childhood homelessness is `HFHLAGE < 18`; adult homelessness is the homeless str
       / P(homeless stratum | not first homeless before 18)
 
 weighted by `JHWPOP`. That is the model's `ratio_h` with poverty differenced out, and
-it replaces the bound in the note with a point estimate and a standard error.
+it would put a second point estimate, with a standard error, next to the Bassuk
+midpoint the model is calibrated to.
 
 ## What is here
 
@@ -63,3 +68,8 @@ the Australian Data Archive and may not be redistributable; if so, the derived
 statistics go into `data/DATA_APPENDIX.md` and the microdata stay out of the repo.
 
 Manual: Journeys Home User Manual, Melbourne Institute, last modified 10 December 2014.
+
+Report: Scutella, R., G. Johnson, J. Moschion, Y.-P. Tseng and M. Wooden (2012).
+"Journeys Home Research Report No. 1: Wave 1 Findings." Melbourne Institute of Applied
+Economic and Social Research, University of Melbourne.
+doi:10.25439/rmt.27350055.v1
