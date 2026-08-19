@@ -1,9 +1,9 @@
 """
 Fill the note's inline numbers straight from the model.
 
-Every number quoted in the prose of stylized_note.tex is written as a
-placeholder @@name@@ in stylized_note.src.tex, and this file computes each one
-and writes stylized_note.tex. Nothing in the note can then drift away from the
+Every number quoted in the prose of housing_first_children_later.tex is written as a
+placeholder @@name@@ in housing_first_children_later.src.tex, and this file computes each one
+and writes housing_first_children_later.tex. Nothing in the note can then drift away from the
 code, which is the same discipline the tables already follow.
 
 Run:  python3 fill.py
@@ -138,14 +138,14 @@ if __name__ == '__main__':
     if prev is None:
         print('   numbers_prev.json missing: nothing will be marked red')
     n, moved = mark(n, prev)
-    src = open(os.path.join(WRITE, 'stylized_note.src.tex')).read()
+    src = open(os.path.join(WRITE, 'housing_first_children_later.src.tex')).read()
     missing = set()
     for k in sorted(n, key=len, reverse=True):
         src = src.replace(f'@@{k}@@', n[k])
     import re
     for m in re.findall(r'@@[a-zA-Z_0-9]+@@', src):
         missing.add(m)
-    open(os.path.join(WRITE, 'stylized_note.tex'), 'w').write(src)
+    open(os.path.join(WRITE, 'housing_first_children_later.tex'), 'w').write(src)
     for k in sorted(n):
         print(f'   {k:12s} {n[k]}')
     print(f'\n   {len(moved)} number(s) moved and are marked red:')
@@ -154,4 +154,4 @@ if __name__ == '__main__':
     if missing:
         print('\n   UNFILLED PLACEHOLDERS:', ' '.join(sorted(missing)))
     else:
-        print('\n   wrote stylized_note.tex, every placeholder filled')
+        print('\n   wrote housing_first_children_later.tex, every placeholder filled')

@@ -20,7 +20,11 @@
 % the responses to the comments on the previous version. The change of
 % terminology from "the disorder" to "a SUD" runs through the whole note and is
 % NOT marked, since colouring every instance would colour half the document.
-\newcommand{\new}[1]{#1}
+% fill.py wraps in \new{} every number that MOVED against numbers_prev.json, so
+% the note marks a changed number automatically rather than by hand. Set it to red
+% so a recalibration shows up as red without anyone having to find the numbers.
+% To clear the marks, copy the current numbers over numbers_prev.json and refill.
+\newcommand{\new}[1]{\textcolor{red}{#1}}
 \usepackage[official]{eurosym}
 \usepackage{longtable}
 \usepackage{titlesec}
