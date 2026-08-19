@@ -33,13 +33,13 @@ eligibility and coverage side. One search answers both.
 Treatment First is the same search with `voucher_conditional_on_clean = 1`, so it
 carries the detection rates and the cost of testing with it.
 
-**The welfare criterion has to be stated, because it changes the answer.** A
-utilitarian sum over the stationary distribution and the expected value of a newborn
-behind the veil give different optima, and here the difference is not cosmetic: the
-newborn criterion internalises the child by construction, which partly assumes the
-result the paper is trying to establish. Use the **ex ante newborn** criterion as the
-primary and report the utilitarian one alongside, and say which is which. A referee
-who is not told will assume the flattering one was chosen.
+**The welfare criterion is the ex-ante newborn value**, stated in the paper's Section
+on the welfare criterion and used throughout. It is the standard criterion in this
+literature (Conesa, Kitao and Krueger, 2009; Guvenen, Kambourov, Kuruscu, Ocampo and
+Chen, 2023), and the paper no longer reports a utilitarian sum beside it: the reader
+asked for one criterion rather than two, on 19 August. Every number in the four steps
+below is therefore that same object, a newborn's expected value before any draw is
+realised, taken under each policy's own equilibrium.
 
 **Output:** two optimal designs, one per policy. They will not be the same design.
 Treatment First excludes people, which lets it be more generous to those it serves,

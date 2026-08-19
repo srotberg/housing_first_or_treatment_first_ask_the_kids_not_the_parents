@@ -232,7 +232,8 @@ expenditure differ by saving. It is the same moment and the same definition the
 stylized model uses.
 
 **β, the discount factor — wealth over output of 3.** BEA fixed assets against NIPA
-output. Household wealth in the model is financial wealth alone, since the rental
+output, 2023 vintage, the last year the fixed asset tables cover. The target is a
+round number rather than a single year's reading; the paper names the vintage. Household wealth in the model is financial wealth alone, since the rental
 stock sits on the rental companies' books, so the counterpart in the accounts is
 the private capital stock rather than measured household net worth. Private
 nonresidential fixed assets are roughly two years of output and all private fixed
