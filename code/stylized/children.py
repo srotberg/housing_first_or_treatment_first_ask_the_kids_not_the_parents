@@ -188,28 +188,36 @@ RATIO_TARGET = 3.0
 # Minnesota who were themselves homeless as children, which depends on a base
 # rate the source does not give. Two is inside that range.
 #
-# What makes it more than a guess is that it is corroborated by a number measured
-# a different way. Chetty et al. (2016) put the earnings gain from moving out of
-# a poor neighbourhood before age thirteen at 31 per cent, and delta_h = 0.31 in
-# this model delivers a child homelessness ratio of 2.02. An earnings estimate and
-# a transmission ratio, from unrelated data, agree on the same parameter. So
-# calibrating delta_h internally does not move it; it gives it a model counterpart
-# to report against a target, which is what the external version lacked.
-RATIO_H_TARGET = 2.0
+# THE RATIO IS REPORTED, NOT TARGETED, AND THAT IS THE POINT. An earlier version
+# calibrated delta_h on a child homelessness ratio of 2, which was a number with
+# no source behind it. The one real measurement, Flatau et al. (2013), reports
+# that 43 per cent of non-Indigenous homelessness assistance clients in Australia
+# had parents who had themselves experienced homelessness. That cannot be this
+# model's target for a structural reason worth recording: it conditions on
+# receiving homelessness assistance over a lifetime, while the model's homeless
+# are the 0.4 per cent literally on the street at a point in time. Matching 43
+# per cent against a parental rate of 0.35 per cent needs a transmission ratio
+# near 214. The data moment and the model object are different populations.
+#
+# Converting Flatau to a ratio needs the share of the population whose parents
+# were ever homeless, which the report does not give, and the answer swings with
+# it: 14.3 at a base rate of 5 per cent, 4.3 at 15 and 2.3 at 25. So delta_h
+# stays external, at the 31 per cent earnings gain Chetty et al. (2016) measure
+# directly, and the ratio the model produces at that value is reported as an
+# untargeted moment instead. The asymmetry with delta_d is then principled: no
+# study measures the parent SUD to child earnings link, so delta_d must be
+# calibrated, while the housing to child earnings link IS measured, so delta_h
+# need not be.
+DEL_H = 0.31      # parental homelessness, from Chetty, Hendren and Katz (2016)
 
 
-def solve_del_h(par, target=RATIO_H_TARGET, lo=0.0, hi=0.95, iters=44):
-    """The income penalty that puts the child of a homeless parent at `target`
-    times the risk of being homeless itself."""
+def ratio_h(par, del_h=None):
+    """The child homelessness ratio the model PRODUCES at delta_h: how much
+    likelier the child of a homeless parent is to be homeless itself. Untargeted,
+    and reported for validation."""
     hl = child_homeless_grid(par, 'HF', par.pV)
     base = shifted(hl, 0.0)
-    for _ in range(iters):
-        mid = 0.5 * (lo + hi)
-        if shifted(hl, mid) / max(base, 1e-12) > target:
-            hi = mid
-        else:
-            lo = mid
-    return 0.5 * (lo + hi)
+    return shifted(hl, DEL_H if del_h is None else del_h) / max(base, 1e-12)
 
 
 def solve_del_d(par, target=RATIO_TARGET, lo=0.0, hi=0.95, iters=44):
@@ -230,8 +238,6 @@ import os as _os
 _HERE = _os.path.dirname(_os.path.abspath(__file__))
 _BASE = with_(P(), **json.load(open(_os.path.join(_HERE, 'calibrated.json'))))
 DEL_D = solve_del_d(_BASE)
-DEL_H = solve_del_h(_BASE)
-DEL_H = 0.31      # parental homelessness, from Chetty, Hendren and Katz (2016)
 
 
 def tab_children(par, pV=1.0):

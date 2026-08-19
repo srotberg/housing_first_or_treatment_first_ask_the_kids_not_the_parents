@@ -16,7 +16,7 @@ from stylized import P, with_, value1
 from calibrate import YG, W, stats, bracket, TARGET
 from welfare import cev, v1_pop
 from children import (child_grid, shifted, DEL_D, DEL_H, RATIO_TARGET,
-                      RATIO_H_TARGET, verdict)
+                      ratio_h, verdict)
 from run import _scaled
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -102,7 +102,9 @@ def numbers(base):
     out['del_d'] = f'{DEL_D:.2f}'
     out['ratio_t'] = f'{RATIO_TARGET:.0f}'
     out['del_h'] = f'{DEL_H:.2f}'
-    out['ratio_h'] = f'{RATIO_H_TARGET:.0f}'
+    # UNTARGETED: what delta_h, set from Chetty et al., implies for how much
+    # likelier the child of a homeless parent is to be homeless itself
+    out['ratio_h'] = f'{ratio_h(base):.2f}'
     # THE SMALLEST GAIN OVER LOSS ANYWHERE IN PANEL A that is not the zero
     # penalty, so the note can say the ranking survives every penalty it shows
     # WITHOUT the reader having to take it on trust, and so the claim breaks

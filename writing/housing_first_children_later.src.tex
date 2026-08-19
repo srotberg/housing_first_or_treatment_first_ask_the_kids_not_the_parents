@@ -1078,21 +1078,28 @@ model the only channel from parent to child is income, so income has to carry
 whatever the childhood does. If part of the transmission runs through something else,
 through the home rather than the budget, then $\delta_d$ is standing in for more than
 earnings and should be read as the reduced form of the whole childhood rather than as
-an estimate of a wage effect. \textcolor{red}{The homelessness penalty $\delta_h$ is calibrated the
-same way, on the transmission of its own condition: it is chosen so that the child
-of a parent who was homeless is @@ratio_h@@ times as likely to be homeless itself,
-which takes $\delta_h = @@del_h@@$. The evidence behind that ratio is thinner than
-behind the SUD one, since there is no homelessness counterpart to the two to four
-times of McGovern et al.\ (2023): published estimates run from a $40$ percent
-increase in the odds of adult homelessness after a single childhood episode up to
-the much larger ratio implied by the third of homeless parents who were themselves
-homeless as children. What makes the resulting $\delta_h$ more than a guess is that
-it is corroborated by a number measured a different way. Chetty et al.\ (2016) find
+an estimate of a wage effect. \textcolor{red}{\textcolor{red}{The homelessness penalty $\delta_h$ is set from outside, at the $31$ percent more
 that children who moved to a low poverty neighbourhood before age $13$ went on to
-earn $31$ percent more as adults, and $\delta_h$ solves to that same figure. An
-earnings estimate and a transmission ratio, from unrelated data, pin the same
-parameter, and the earlier version of this note used the earnings estimate directly
-because there was nothing inside the model to check it against.} The two penalties also do different work: both policies drive
+earn as adults (Chetty et al., 2016). The asymmetry with $\delta_d$ is deliberate
+rather than untidy. No study measures what a parent's SUD does to a child's lifetime
+earnings, so $\delta_d$ has to be calibrated inside the model against something the
+literature does measure. The housing to earnings link \emph{is} measured directly,
+so $\delta_h$ does not.
+
+What the model then produces, and does not target, is how much likelier the child of
+a homeless parent is to be homeless itself: @@ratio_h@@ times. That number is worth
+reporting because the literature cannot deliver it directly, and it is worth being
+careful about why. Flatau et al.\ (2013) is the closest measurement, and finds that
+$43$ percent of non-Indigenous homelessness assistance clients in Australia had
+parents who had themselves experienced homelessness. It is not this model's
+counterpart: it conditions on receiving assistance over a lifetime, while the model's
+homeless are the households literally without shelter at a point in time, and
+recovering a ratio from it needs the share of the population whose parents were ever
+homeless, which the report does not give. That share moves the answer from about
+$2.3$ at a base rate of a quarter to $14$ at a base rate of a twentieth. A ratio of
+@@ratio_h@@ sits at the conservative end of what those numbers can be made to say,
+and the model reaches it from an earnings estimate that knows nothing about
+homelessness transmission at all.}} The two penalties also do different work: both policies drive
 homelessness to zero at universal cover, so $\delta_h$ prices the programme
 against no programme while $\delta_d$ decides Treatment First against Housing
 First.
@@ -2708,6 +2715,7 @@ executive order.
 \item Fogli, A. and V. Guerrieri (2019). ``The End of the American Dream? Inequality and Segregation in US Cities.'' NBER Working Paper 26143.
 \item Gallet, C. A. (2014). ``Can Price Get the Monkey Off Our Back? A Meta-Analysis of Illicit Drug Demand.'' \emph{Health Economics} 23(1), 55--68.
 \item Goering, P. et al.\ (2014). \emph{National At Home/Chez Soi Final Report}. Mental Health Commission of Canada.
+\item Flatau, P., E. Conroy, C. Spooner, T. Eardley and C. Forbes (2013). ``Lifetime and intergenerational experiences of homelessness in Australia.'' \emph{AHURI Final Report No.\ 200}, Australian Housing and Urban Research Institute.
 \item Greenwood, J., N. Guner and K. A. Kopecky (2025). ``The Downward Spiral: A Macroeconomic Analysis of the Opioid Crisis.'' Working paper.
 \item Grossman, M. and F. Chaloupka (1998). ``The demand for cocaine by young adults: a rational addiction approach.'' \emph{Journal of Health Economics} 17(4), 427--74.
 \item Gruber, J. and B. K\H{o}szegi (2001). ``Is Addiction `Rational'? Theory and Evidence.'' \emph{Quarterly Journal of Economics} 116(4), 1261--1303.
