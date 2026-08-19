@@ -29064,9 +29064,9 @@
 
                     else if (calibrate_weight_on_child==1) then
 
-                        write(*,*) "omega HELD: the baseline using population is ",&
-                            model_total_drug_users(1), " which is too small for the",&
-                            " child term gap to mean anything"
+                        write(*,*) "omega HELD: baseline users ", model_total_drug_users(1),&
+                            " and users with the child term off ", drug_users_without_child,&
+                            ": one of the two is too small for the gap to mean anything"
                         distance_weight_on_child=1
 
                     end if
