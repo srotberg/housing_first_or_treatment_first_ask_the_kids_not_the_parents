@@ -857,7 +857,7 @@ quantitative model matches too.
 \begin{table}[!tb]
 \centering
 \caption{Internally calibrated parameters}\label{tab:int}
-\input{tables/tab_internal}
+\sbox{\ntbox}{\input{tables/tab_internal}}\usebox{\ntbox}
 \tabnote{Note: \textcolor{red}{the homelessness rate comes out at $0.35$ percent against a target of
 $0.40$, and the gap is left rather than closed. Every parameter after $h_1$ in the
 sweep moves homelessness a little: $h_1$ is bracketed on the homelessness rate, but
