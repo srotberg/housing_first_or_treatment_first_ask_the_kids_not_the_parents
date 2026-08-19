@@ -1086,20 +1086,29 @@ earnings, so $\delta_d$ has to be calibrated inside the model against something 
 literature does measure. The housing to earnings link \emph{is} measured directly,
 so $\delta_h$ does not.
 
-What the model then produces, and does not target, is how much likelier the child of
-a homeless parent is to be homeless itself: @@ratio_h@@ times. That number is worth
-reporting because the literature cannot deliver it directly, and it is worth being
-careful about why. Flatau et al.\ (2013) is the closest measurement, and finds that
-$43$ percent of non-Indigenous homelessness assistance clients in Australia had
-parents who had themselves experienced homelessness. It is not this model's
-counterpart: it conditions on receiving assistance over a lifetime, while the model's
-homeless are the households literally without shelter at a point in time, and
-recovering a ratio from it needs the share of the population whose parents were ever
-homeless, which the report does not give. That share moves the answer from about
-$2.3$ at a base rate of a quarter to $14$ at a base rate of a twentieth. A ratio of
-@@ratio_h@@ sits at the conservative end of what those numbers can be made to say,
-and the model reaches it from an earnings estimate that knows nothing about
-homelessness transmission at all.}} The two penalties also do different work: both policies drive
+\textcolor{red}{What the model then produces, and does not target, is how much likelier the child of
+a homeless parent is to be homeless itself: @@ratio_h@@ times. The literature cannot
+deliver that number directly. Flatau et al.\ (2013) is the closest measurement, and
+finds that $43$ percent of non-Indigenous homelessness assistance clients in
+Australia had parents who had themselves experienced homelessness. It is not this
+model's counterpart, because it conditions on receiving assistance over a lifetime
+while the model's homeless are the households literally without shelter at a point in
+time. Turning it into a ratio needs the share of the population whose parents were
+ever homeless, which the report does not give, and the implied ratio falls as that
+share rises: about $2.3$ if a quarter of parents were ever homeless, $4.3$ at a
+sixth, $14$ at a twentieth.
+
+That spread is not a range of plausible values, and it is worth saying why, because
+the model itself rules out most of it. Reproducing a ratio of $4.3$ inside this model
+takes an earnings penalty of $64$ percent, and a ratio of $14$ takes $99$ percent: the
+child would have to lose almost the whole of its lifetime income. No estimate in the
+earnings literature is remotely that large. What bounds the transmission ratio here is
+therefore not a judgement about homelessness but the measured effect of housing on
+earnings, and once $\delta_h$ is held to what Chetty et al.\ measure, the ratio has
+to sit near @@ratio_h@@. That it also matches Flatau's number at a parental
+homelessness rate of about a quarter, which is the right order for a lifetime measure
+in a population of assistance recipients, is a check the model passes rather than an
+assumption it makes.}} The two penalties also do different work: both policies drive
 homelessness to zero at universal cover, so $\delta_h$ prices the programme
 against no programme while $\delta_d$ decides Treatment First against Housing
 First.

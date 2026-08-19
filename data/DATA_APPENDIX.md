@@ -158,27 +158,43 @@ literature does measure. The housing-to-earnings link is measured directly, so �
 does not.
 
 *What the model implies, and does not target.* At δ_h = 0.31 the child of a homeless
-parent is 2.02 times as likely to be homeless itself. This is reported as a
-validation moment. It cannot be targeted, because nothing in the literature measures
-it directly and the closest thing does not share the model's population. Flatau,
-Conroy, Spooner, Eardley and Forbes (2013), AHURI Final Report 200, find that 43.0
-percent of non-Indigenous homelessness-assistance clients in Australia had parents
-who had themselves experienced homelessness (69.0 percent for Indigenous clients).
-That conditions on receiving assistance over a lifetime, while the model's homeless
-are households without shelter at a point in time; matching 43 percent against a
-parental rate of 0.35 percent would need a transmission ratio near 214. Recovering a
-ratio from Flatau instead needs the population share whose parents were ever
-homeless, which the report does not give, and the implied ratio runs 14.3 at a base
-rate of 5 percent, 4.3 at 15 percent and 2.3 at 25 percent. The UCSF Benioff
-Homelessness and Housing Initiative reports a 40 percent increase in the odds of
-adult homelessness after a single childhood episode, a lower bound on a different
-conditioning event. The model's 2.02 sits at the conservative end of that spread and
-is reached from an earnings estimate that knows nothing about homelessness
-transmission, which is what makes it a check rather than an assumption.
+parent is 2.02 times as likely to be homeless itself, reported as a validation moment.
+It cannot be targeted: nothing measures it directly, and the closest thing does not
+share the model's population. Flatau, Conroy, Spooner, Eardley and Forbes (2013),
+AHURI Final Report 200, find that 43.0 percent of non-Indigenous
+homelessness-assistance clients in Australia had parents who had themselves
+experienced homelessness (69.0 percent for Indigenous clients). That conditions on
+receiving assistance over a lifetime while the model's homeless are households
+without shelter at a point in time; matching 43 percent against a parental rate of
+0.35 percent would need a transmission ratio near 214.
 
-An earlier version of this appendix recorded δ_h as calibrated to a ratio of 2. That
-target had no source; it was chosen because it reproduced Chetty. The dependence has
-been inverted so the sourced number is the input.
+Converting Flatau to a ratio is an odds identity, R = (0.43/0.57)(1−p)/p, where p is
+the population share whose parents were ever homeless — a number the report does not
+give. It yields 2.3 at p = 0.25, 4.3 at p = 0.15 and 14.3 at p = 0.05.
+
+*That spread is not a range of plausible values, and the model is what rules most of
+it out.* The earnings penalty each ratio requires, solved inside the model:
+
+| implied ratio | required δ_h |
+|---|---|
+| 2.02 | 0.31 (Chetty's measured value) |
+| 2.26 | 0.36 |
+| 4.27 | 0.64 |
+| 14.3 | 0.99 |
+
+A ratio of 14 needs the child to lose essentially the whole of its lifetime income,
+and nothing in the earnings literature is close to that. So the binding discipline is
+the measured effect of housing on earnings, not a judgement about homelessness
+transmission, and holding δ_h at Chetty's 31 percent forces the ratio to about 2. That
+this also reproduces Flatau at a parental homelessness rate near a quarter — the right
+order for a lifetime measure among assistance recipients — is a check passed, not an
+assumption made. The UCSF Benioff Homelessness and Housing Initiative's 40 percent
+increase in the odds of adult homelessness after a single childhood episode is a lower
+bound on a different conditioning event.
+
+An earlier version recorded δ_h as calibrated to a ratio of 2. That target had no
+source; it was chosen because it reproduced Chetty. The dependence has been inverted
+so the sourced number is the input.
 
 The stylized model is calibrated to the same ratio of 3 and needs δ_d = 0.45 to reach
 it. That is a larger penalty than the earnings literature measures directly, 24
