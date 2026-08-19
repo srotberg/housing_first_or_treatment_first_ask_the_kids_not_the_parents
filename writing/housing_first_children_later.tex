@@ -234,7 +234,17 @@ share of income spent on them rises with income and, left alone, the environment
 would concentrate use at the top. Mortality risk reverses the gradient: acquiring a
 disorder truncates the expected continuation value of life, and that loss rises
 faster than income does, so in equilibrium use concentrates at the bottom without
-any assumed heterogeneity in tastes conditional on income. The households whose
+any assumed heterogeneity in tastes conditional on income. \textcolor{red}{That is worth saying
+plainly, because it is not how the gradient is usually produced. Structural models of
+the opioid epidemic reproduce the concentration of use among poorer and less educated
+households by letting the propensity to use differ systematically across those groups,
+as in Greenwood et al.\ (2025). Nothing here varies with income except income. Every
+household has the same preferences, the same hazard and the same mortality penalty,
+and the gradient is an outcome of the model rather than an input to it, which matters
+for the question this paper asks: if the poor used more because they liked the drug
+more, a policy that changes what use costs would move the gradient hardly at all,
+whereas here it is exactly the margin the two policies act on.
+Section~\ref{sec:literature} places the paper against that literature.} The households whose
 behaviour separates the two policies are therefore the poor ones, which is also
 where the child externality is largest.
 
@@ -246,9 +256,9 @@ off under Treatment First and none is better off, so the private cost of
 conditionality is \new{0.027} percent of consumption in the aggregate: small, because
 so few households are affected, and unambiguous in sign. Switching the externality
 on, conditionality prevents \new{1.818} percentage points of disorder cases, and
-\textcolor{red}{preventing one case is worth \new{61.2} percent of consumption to
+\textcolor{red}{preventing one case is worth \new{119.7} percent of consumption to
 one child}. The product is
-\new{1.112} percent, which is \new{41.4} times the private loss. Housing First is
+\new{2.177} percent, which is \new{81.0} times the private loss. Housing First is
 better for every household taken one at a time, and worse once one counts the
 children of the households it fails to deter. The ranking survives every value of
 the transmission penalty considered except zero, where by construction there is no
@@ -302,7 +312,23 @@ importantly, the outcomes of children who are not in the sample.
 
 \paragraph{Economic models of drug use.} Modelling use as forward looking
 optimisation dates to Becker and Murphy (1988), and the assumption is empirically
-defensible at the margin where policy operates. Both users and non users hold risk
+defensible at the margin where policy operates.\textcolor{red}{ Where this paper departs from
+the structural literature is in what generates the income gradient in use. Greenwood
+et al.\ (2025) build a macroeconomic model of the opioid crisis in which households
+differ by skill, and the concentration of use among the less skilled is carried in
+part by parameters that differ across those groups. That is a reasonable modelling
+choice for the question they ask, which is about the path of the epidemic. It is a
+costly one for the question here. If the poor use more because their taste for the
+drug is larger, then the gradient is an assumption, the households the two policies
+treat differently are identified by that assumption, and a policy that changes what
+using costs cannot move the gradient by much. In the model below no preference
+parameter varies with income: every household has the same weight on the drug, the
+same Stone-Geary endowment, the same hazard per unit used and the same mortality
+penalty. The gradient comes out of the mortality channel, because a SUD destroys a
+continuation value and the continuation value rises with permanent income, so the
+household with more to lose loses proportionally more than it gains from a drug that
+is cheap relative to its income. Section~\ref{sec:who} isolates that channel and
+shows a resource penalty cannot substitute for it.} Both users and non users hold risk
 perceptions close to the objective probabilities (Lundborg and Lindgren, 2002), and
 Greenwood et al.\ (2025), who allow perceived and true SUD risk to
 differ, find the model implied beliefs are close to the true risk. The price evidence points
@@ -746,7 +772,8 @@ a period is $\phi_0 = 0.91$, from the Social Security Administration (SSA) perio
 five to fifty five. For the SUD, the
 proportional fall in survival is $\kappa = \new{0.49}$ , derived by compounding an annual mortality ratio of $8$, the midpoint of the range in Hjorth\o j et al.\
 (2023), so a clean household's chance of dying before period 2 is 9
-percent and a household that acquires a SUD faces \new{53} percent,
+percent and \textcolor{red}{a household that acquires a SUD has a \new{53} percent chance of
+dying before period 2},
 and the two unemployment probabilities are measured directly. $u_0 = 0.049$
 is the headline civilian unemployment rate from the Bureau of Labor Statistics
 (BLS) Current Population Survey, series UNRATE as distributed by Federal Reserve
@@ -789,14 +816,9 @@ to a drug participation rate of $5.13$ percent from NSDUH 2024 for
 respondents aged 26 and over, housing services on the street
 $h_1$ to a homelessness rate of $0.399$ percent from the 2023 HUD point in
 \textcolor{red}{time (PIT) count, and the SUD hazard $\lambda$ to the $3.68$ percent
-of adults aged $26$ and over carrying a substance use disorder in NSDUH 2024. That
-is the same moment the quantitative model matches, and it replaces the $33.2$
-percent of users who acquire a SUD that this model used to target. The two
-published numbers do not agree with each other: a conversion of $33.2$ percent at a
-participation rate of $5.13$ percent implies an adult disorder rate near $1.7$
-percent rather than $3.68$. The level is the better measured of the two, so it is
-the one matched, and the conversion the model implies, \new{71.7} percent, is
-reported rather than imposed.}
+of adults aged $26$ and over carrying a SUD in NSDUH 2024, which is the moment the
+quantitative model matches too. The conversion from use to a SUD that the model
+implies, \new{71.7} percent, is reported rather than imposed.}
 
 \begin{table}[!tb]
 \centering
@@ -1041,10 +1063,11 @@ set to zero, so that the channel where a parent does take some account of what i
 does to its child is present and only the remainder is external.}
 
 The two penalties are set to different things. Panel A of
-Table~\ref{tab:children} shows that $\delta_d = 0.30$ makes the child of a
-parent who acquired the SUD \new{2.1} times as likely to acquire one, in
-the middle of the epidemiological range of two to four in McGovern et al.\
-(2023) and the alcohol literature. The homelessness penalty $\delta_h$ is set
+\textcolor{red}{The disorder penalty $\delta_d$ is calibrated rather than set: it is chosen so that
+the child of a parent who acquired the SUD is \new{3} times as likely to acquire
+one, the middle of the epidemiological range of two to four in McGovern et al.\
+(2023) and the alcohol literature. That takes $\delta_d = \new{0.45}$, shown in
+Table~\ref{tab:children}.} The homelessness penalty $\delta_h$ is set
 to $31$ percent, directly from Chetty et al. (2016), who find
 that children who moved to a low poverty neighbourhood before age 13 went on to
 earn $31$ percent more as adults. The two penalties also do different work: both policies drive
@@ -1057,17 +1080,18 @@ Panel B puts the two sides together and they are not close. The private cost of
 conditionality, in the first row, is \new{0.027} percent of consumption, small
 because only 2.7 percent of households are affected. Against that,
 conditionality prevents \new{1.818} percentage points of SUD cases in the
-second row, and \textcolor{red}{preventing one of them is worth \new{61.2} percent
+second row, and \textcolor{red}{preventing one of them is worth \new{119.7} percent
 of consumption to one child, shown in the third row. That is a compensating
 variation and not a share of anything: it is the proportional rise in consumption,
 at every date and in every state, that would leave the child of a parent who
 acquired the disorder as well off as the child of a parent who did not, so it can
 exceed one hundred percent and does at the largest penalty in Panel A.} The gain in the fourth row is the
 product of those two, since one prevented case spares one child: \new{1.818}
-percentage points times \new{61.2} percent gives \new{1.112} percent of
-consumption, which is \new{41.4} times the private loss of the first row.
-That ratio exceeds one for every $\delta_d$ in Panel A except $\delta_d=0$, where
-by construction there is no externality to price. Housing
+percentage points times \new{119.7} percent gives \new{2.177} percent of
+consumption, which is \new{81.0} times the private loss of the first row.
+\textcolor{red}{That ratio exceeds one for every $\delta_d$ in Panel A except $\delta_d=0$, where
+by construction there is no externality to price; at the smallest penalty shown it is
+still \new{24} times the private loss.} Housing
 First is better for every household taken one at a time, and worse once one
 counts the children of the households it fails to deter.
 
