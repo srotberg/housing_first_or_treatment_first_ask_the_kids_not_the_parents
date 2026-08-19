@@ -656,6 +656,22 @@ def use_prob(par, y, policy=None):
     return float(sum(p for p, g, *_ in period1(par, y, policy) if g > 0.0))
 
 
+def homeless_prob(par, y, policy=None):
+    """
+    The probability a household at income y is on the street, over its period 1
+    draws.
+
+    The branch a draw lands in depends on whether it uses, so the two branches
+    are weighted by that: bu is what it does if it uses and bn if it does not,
+    and g > 0 says which. street is the third element of neither: the branch is
+    (a', street, rent, voucher outlay), so street is index 1.
+    """
+    tot = 0.0
+    for p, g, _v, bu, bn, *_ in period1(par, y, policy):
+        tot += p * ((bu if g > 0.0 else bn)[1])
+    return float(tot)
+
+
 def value1(par, y, policy=None):
     """
     V1(y): lifetime value at the household's own optimum, which is what welfare

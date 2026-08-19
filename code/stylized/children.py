@@ -69,7 +69,7 @@ Run:  python3 children.py
 
 import json
 import numpy as np
-from stylized import P, with_, value1, use_prob
+from stylized import P, with_, value1, use_prob, homeless_prob
 from calibrate import YG, W, stats
 from welfare import cev
 
@@ -77,7 +77,7 @@ WW = W / W.sum()
 
 
 def child_grid(par, policy, pV):
-    """V1 and the use indicator on the income grid, for interpolation."""
+    """V1, the use indicator and the homelessness indicator on the income grid."""
     q = with_(par, policy=policy, pV=pV)
     v1 = np.array([value1(q, y, policy) for y in YG])
     # the probability of using at that income, over the period 1 employment and
@@ -86,6 +86,16 @@ def child_grid(par, policy, pV):
     # draws and not in others.
     use = np.array([use_prob(q, y, policy) for y in YG], dtype=float)
     return v1, use
+
+
+def child_homeless_grid(par, policy, pV):
+    """The probability of being on the street at each income, period 1.
+
+    The analogue of the use grid, and it is period 1 for the same reason: that
+    is where the household's own draws are realised, so it is the object a
+    parent's income penalty shifts."""
+    q = with_(par, policy=policy, pV=pV)
+    return np.array([homeless_prob(q, y, policy) for y in YG], dtype=float)
 
 
 def shifted(vals, delta):
@@ -166,6 +176,42 @@ def verdict(par, del_d, pV=1.0, omega=1.0, kids=1.0):
 RATIO_TARGET = 3.0
 
 
+# DELTA_H IS CALIBRATED TOO, on the transmission of homelessness, so that both
+# channels are quantified inside the model on the same footing rather than one
+# matched to a ratio and the other lifted from a coefficient.
+#
+# THE TARGET IS 2.0 AND THE EVIDENCE FOR IT IS THINNER THAN FOR DELTA_D. There is
+# no homelessness counterpart to McGovern et al.'s two to four times. What exists
+# runs from a 40 per cent increase in the odds of adult homelessness after a
+# single childhood episode (UCSF Benioff Homelessness and Housing Initiative) to
+# the much larger ratio implied by the 34 per cent of homeless parents in
+# Minnesota who were themselves homeless as children, which depends on a base
+# rate the source does not give. Two is inside that range.
+#
+# What makes it more than a guess is that it is corroborated by a number measured
+# a different way. Chetty et al. (2016) put the earnings gain from moving out of
+# a poor neighbourhood before age thirteen at 31 per cent, and delta_h = 0.31 in
+# this model delivers a child homelessness ratio of 2.02. An earnings estimate and
+# a transmission ratio, from unrelated data, agree on the same parameter. So
+# calibrating delta_h internally does not move it; it gives it a model counterpart
+# to report against a target, which is what the external version lacked.
+RATIO_H_TARGET = 2.0
+
+
+def solve_del_h(par, target=RATIO_H_TARGET, lo=0.0, hi=0.95, iters=44):
+    """The income penalty that puts the child of a homeless parent at `target`
+    times the risk of being homeless itself."""
+    hl = child_homeless_grid(par, 'HF', par.pV)
+    base = shifted(hl, 0.0)
+    for _ in range(iters):
+        mid = 0.5 * (lo + hi)
+        if shifted(hl, mid) / max(base, 1e-12) > target:
+            hi = mid
+        else:
+            lo = mid
+    return 0.5 * (lo + hi)
+
+
 def solve_del_d(par, target=RATIO_TARGET, lo=0.0, hi=0.95, iters=44):
     """The income penalty that puts the child of a user at `target` times the
     risk of the child of a clean parent."""
@@ -182,8 +228,9 @@ def solve_del_d(par, target=RATIO_TARGET, lo=0.0, hi=0.95, iters=44):
 
 import os as _os
 _HERE = _os.path.dirname(_os.path.abspath(__file__))
-DEL_D = solve_del_d(with_(P(), **json.load(
-    open(_os.path.join(_HERE, 'calibrated.json')))))
+_BASE = with_(P(), **json.load(open(_os.path.join(_HERE, 'calibrated.json'))))
+DEL_D = solve_del_d(_BASE)
+DEL_H = solve_del_h(_BASE)
 DEL_H = 0.31      # parental homelessness, from Chetty, Hendren and Katz (2016)
 
 
