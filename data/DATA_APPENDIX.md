@@ -576,5 +576,17 @@ model's participation response to the drug price is not targeted anywhere; it co
 out of the drug market and the utility weight, so this is a check on both at once.
 This is the **extensive** margin, whether a household uses at all. The intensive
 margin, how much a user buys once using, is a separate elasticity and the model
-produces it separately; it is not yet reported here because the source for the data
-side has not been settled.
+produces it separately.
+
+The data side of both margins is now settled. Participation estimates run from about
+−0.3 to −0.9: Saffer and Chaloupka (1999) and Grossman and Chaloupka (1998), whose
+long run decomposition has a permanent ten percent price fall raising the number of
+cocaine users by a little over eight percent. The intensive margin is smaller, about
+−0.3 to −0.8: the same decomposition raises frequency among users by a little over
+three percent, and Olmstead et al. (2015) put the conditional elasticity for heroin at
+−0.80 on two designs sharing a sample of regular users but not an identification
+strategy.
+
+*Correction.* An earlier version gave the participation range as −0.3 to −1.1 and
+cited Olmstead et al. (2015) for it. The −1.1 endpoint had no traceable source, and
+Olmstead's −0.80 is a conditional elasticity, so it belonged on the other margin.
