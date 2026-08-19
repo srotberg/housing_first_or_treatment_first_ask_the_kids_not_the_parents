@@ -18,7 +18,7 @@ import json
 import os
 import numpy as np
 from stylized import P, with_, use_prob, aggregates
-from calibrate import YG, W, bracket, stats
+from calibrate import YG, W, bracket, stats, TARGET
 
 OUT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                     '..', '..', 'writing', 'figures'))
@@ -62,8 +62,28 @@ def _scaled(base, which, s):
                   h_hl=base.h_sm * (base.h_hl / base.h_sm) ** s)
     par = with_(base, **kw)
     # b is recalibrated at EVERY point, so participation is 5.13 percent all
-    # along both curves and the only thing moving is WHO uses
-    return with_(par, b=bracket(par, 'b', 'part', 1e-5, 0.60, iters=22))
+    # along both curves and the only thing moving is WHO uses.
+    #
+    # THE CEILING USED TO BE 0.60 AND IT BOUND. With the consequences switched
+    # off drugs are a pure luxury, so it takes a very large Stone-Geary
+    # endowment to hold participation down to 5.13 percent: the answer is b =
+    # 1.15, and at a ceiling of 0.60 the bisection returned the ceiling and left
+    # participation at 15.15 percent. Both curves therefore started from a point
+    # with three times the drug use of every other point on them, while the note
+    # said the amount of use was identical throughout. Raising the ceiling to 20
+    # makes the claim true where it can be made true.
+    q = with_(par, b=bracket(par, 'b', 'part', 1e-5, 20.0, iters=30))
+    # AND WHERE IT CANNOT, SAY SO. Participation is a step function of b at the
+    # far end of the mortality curve, jumping from 4.1 to 6.2 percent with
+    # nothing in between, so no b delivers 5.13 there. That is a fact about the
+    # model rather than a failure of the bisection, and it is printed rather
+    # than passed over, because a point that misses the target is not comparable
+    # with the points that hit it.
+    got = stats(q)['part']
+    if abs(got - TARGET['part']) > 5e-4:
+        print(f'   NOTE: {which} at {s:.2f}: participation {100*got:.2f} percent, '
+              f'not {100*TARGET["part"]:.2f}; no b delivers the target here')
+    return q
 
 
 def fig_who_uses(base):
