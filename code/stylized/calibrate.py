@@ -234,17 +234,21 @@ TARGET = dict(part=0.0513, homeless=0.00399, sud=0.0368, vsl=80.0,
 # rather than a calibration.
 LAM_LO, LAM_HI = 0.05, 4000.0
 
-# THETA IS BRACKETED IN A NARROW WINDOW, and the window is the point. dshare is
-# bimodal in theta and the two branches are far apart: refitting b only, the share
-# runs 1.8 per cent at theta = 0.14, 5.2 at 0.21, then jumps to 18.8 at 0.22 and
-# 32.7 at 0.24. On the low branch users buy a hair above nothing; on the high one
-# they buy a lot, and past 0.235 or so the users are the RICH, which is the result
-# the model exists to produce running backwards (r_use is 4.08 at theta = 0.24).
-# A bracket wide enough to contain both branches is not bisecting a monotone
-# function and lands wherever the first monotonicity test happens to point. On
-# [0.215, 0.240] the share is monotone and the gradient holds throughout, so that
-# is the window, and the sweep warns if the answer arrives at either end of it.
-TH_LO, TH_HI = 0.215, 0.240
+# THETA'S WINDOW, and a correction to what an earlier version of this comment
+# said. It claimed the drug spending share is bimodal in theta, running 5.2 per
+# cent at theta = 0.21 and jumping to 18.8 at 0.22, so that only a narrow window
+# was safe to bisect on. That measurement refit b ALONE. With the whole model
+# recalibrated at each theta, which is what a bracket inside the sweep actually
+# does, the share is smooth and monotone:
+#
+#     theta   0.18    0.20    0.21    0.22    0.23
+#     share  15.2%   18.4%   20.2%   21.6%   24.2%
+#
+# The jump was lambda, gamma and the street being held at their theta = 0.23
+# values while theta moved, which is a different model at every point rather
+# than the same model at a different theta. The window is wide enough to hold
+# the answer and no wider, and the sweep warns if theta arrives at either end.
+TH_LO, TH_HI = 0.150, 0.280
 
 PAIRS = [('th', 'dshare', TH_LO, TH_HI),
          ('gam', 'hspend', 0.02, 0.70),
@@ -411,7 +415,15 @@ def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=()):
                    indent=1)
         if verbose:
             m = stats(par)
-            worst = max(abs(m[k] / TARGET[k] - 1.0) for k in TARGET)
+            # ONLY THE MOMENTS SOMETHING IS ACTUALLY BRACKETED ON. TARGET
+            # also carries housing_share, which nothing calibrates: gamma is
+            # bracketed on hspend, housing over spending net of drugs, while
+            # housing_share is housing over income, a separate untargeted
+            # moment sitting about seven per cent below its data value. A
+            # convergence test that counted it reported every converged sweep
+            # as seven per cent off, forever.
+            worst = max(abs(m[mom] / TARGET[mom] - 1.0)
+                        for _, mom, _, _ in PAIRS)
             print(f'  sweep {s+1}  worst relative gap {worst:7.3f}   '
                   f'aleph={par.aleph:.4g}  h_hl={par.h_hl:.4g}  '
                   f'lam={par.lam:.4g}  b={par.b:.4g}')

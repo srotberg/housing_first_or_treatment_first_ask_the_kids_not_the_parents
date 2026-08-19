@@ -36,7 +36,14 @@ if __name__ == '__main__':
     for f in sorted(glob.glob('checkpoint_front_*.json')):
         q = par_of(f)
         m = stats(q)
-        gap = max(abs(m[k] / TARGET[k] - 1.0) for k in TARGET)
+        # dshare IS EXCLUDED FROM THE GAP, and it has to be. theta is held
+        # fixed at each frontier point, so the drug spending share is the moment
+        # the point is DEFINED by missing: it reports what share that theta
+        # delivers, and the whole purpose is to see which theta lands near 20
+        # per cent. Counting it as a calibration error made a fully converged
+        # point read as 24 per cent off.
+        gap = max(abs(m[k] / TARGET[k] - 1.0)
+                  for k in TARGET if k != 'dshare')
         rm = stats(_scaled(q, 'mortality', 1.0))['r_use']
         ru = stats(_scaled(q, 'unemployment', 1.0))['r_use']
         mv = float(min(value1(q, y, 'HF') for y in YG))
