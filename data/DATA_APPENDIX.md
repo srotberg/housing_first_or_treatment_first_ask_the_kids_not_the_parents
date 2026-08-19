@@ -116,8 +116,19 @@ conditional moments, so the two penalties are identified jointly rather than
 separately; the paper says so.
 
 **κ_uem, the employment multiplier for mental illness — a 30 percent employment
-rate given SMI.** NSDUH 2023, adults with serious mental illness, defined by
-substantial functional impairment rather than any mental illness. The distinction
+rate given SMI.** NOT an NSDUH number, and the table used to say it was. It is the
+midpoint of the employment range for high disability diagnoses in the clinical
+literature: roughly a fifth of people with schizophrenia are in work, 12 percent
+full time, against 48 to 73 percent for any mental illness. The source needs
+naming.
+
+*What NSDUH actually says.* In the 2024 public use file, among adults 26 and over,
+58.0 percent of those with SMI are employed against 57.5 percent of those without,
+and 45.8 percent against 47.2 percent are employed full time. On NSDUH's own
+definition of SMI there is almost no employment gap. Either the target belongs to a
+narrower population than NSDUH's SMI, which is what the high disability restriction
+is doing, and the paper should say so, or the target should be the NSDUH gap. This
+is flagged rather than resolved. The distinction
 is load bearing: any mental illness covers roughly a quarter of adults, and a state
 that halves productivity cannot sensibly cover a quarter of the population.
 
@@ -136,8 +147,13 @@ housed arm against 4.48 in the unhoused arm, so 6.60/4.48 = 1.473. This is the
 causal estimate the paper leans on hardest, and the same trial supplies the
 treatment effect on recovery.
 
-**τ̄ᵘ, the utility cost of treatment — 24 percent treatment take up.** NSDUH 2023,
-take up given a disorder.
+**τ̄ᵘ, the utility cost of treatment — 24.5 percent treatment take up.** NSDUH 2024,
+adults 26 and over with an illicit drug use disorder other than marijuana,
+receiving any substance use treatment in the past year (`SUTRTPY2` over
+`UD5IEMANY`, weighted by `ANALWT2_C`). It was 24 percent from the 2023 detailed
+tables; the vintage now matches every other NSDUH moment. The same universe gives a
+disorder rate of 3.71 percent, against the 3.68 the calibration targets, which is
+the difference between the public use file and the published table.
 
 ---
 

@@ -313,7 +313,13 @@
         integer :: fix_drug_price=0
 
         ! NSDUH 2023, treatment take up given a SUD.
-        real(8), parameter :: treatment_take_up_data=0.24
+        ! TREATMENT TAKE UP GIVEN A DISORDER, NSDUH 2024, adults 26 and over with
+        ! an illicit drug use disorder other than marijuana, receiving any
+        ! substance use treatment in the past year: 24.5 per cent. It was 0.24
+        ! from the 2023 detailed tables, and the vintage now matches every other
+        ! NSDUH moment in the paper. Computed from the public use file, the same
+        ! universe that gives the 3.71 per cent disorder rate lambda targets.
+        real(8), parameter :: treatment_take_up_data=0.245
         integer, parameter :: max_age_to_choose_addiction=55
         integer, parameter :: max_age_to_choose_homelessness=59
         

@@ -75,10 +75,10 @@ EXTERNAL = [
         ('h_sm', 'h_2', 'Small rental unit', 'Set', '0.25\\times h_3'),
         ('kappa_r', r'\kappa_r', "Tenant's share of the rent when covered",
          'HUD voucher rules', '{:.2f}'),
-        ('yV', 'y_V', 'Voucher means test, multiple of average income',
-         'HUD income limits', '{:.2f}'),
+        ('yV', 'y_V', 'Voucher means test, half of median income',
+         'HUD income limits', '{:.3f}'),
         ('pV', r'\pi_V', 'Voucher generosity in the baseline',
-         'HUD 2023, assisted eligible share', '{:.2f}'),
+         'HUD 2023, recipients over eligible', '{:.3f}'),
     ]),
 ]
 

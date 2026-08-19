@@ -417,8 +417,18 @@ class P:
     h_sm  = 0.10      # SET: a quarter of the standard unit
     h_hl  = 0.05      # the street. CALIBRATED to the homelessness rate
     pr    = 1.00      # rent per unit of housing services: the numeraire
-    pV    = 0.27      # probability a voucher arrives, conditional on eligibility
-    yV    = 1.00      # MEANS TEST: eligible if current income is below the mean
+    pV    = 0.266     # probability a voucher arrives, conditional on eligibility.
+                      # HUD 2023, recipients over the income eligible population,
+                      # the same 26.6 per cent the quantitative model targets. It
+                      # was 0.27, the same number rounded differently.
+    yV    = 0.2591    # MEANS TEST: eligible if current income is below HALF OF
+                      # MEDIAN INCOME, which is the HUD rule the quantitative
+                      # model uses. It was one times the MEAN, which is a
+                      # different rule and a far looser one: the mean of this
+                      # lognormal is 1 by construction and its median is
+                      # exp(-sigma^2/2) = 0.518, so half of median is 0.2591.
+                      # calibrate.py asserts that this equals 0.5*exp(-SIG^2/2),
+                      # so it cannot drift away from SIG unnoticed.
     kappa_r = 0.30    # tenant's share of the rent when covered
     policy = 'HF'
 

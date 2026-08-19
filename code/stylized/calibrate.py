@@ -148,6 +148,15 @@ def _solve_sig(lo=0.30, hi=2.50, iters=60):
 
 
 SIG = _solve_sig()
+
+# THE MEANS TEST IS HALF OF MEDIAN INCOME, the HUD rule the quantitative model
+# uses, and the median moves with SIG. Tying the two together here means the
+# voucher rule cannot drift away from the income distribution it is applied to.
+YV_HALF_MEDIAN = 0.5 * float(np.exp(-0.5 * SIG**2))
+assert abs(P().yV - YV_HALF_MEDIAN) < 5e-4, (
+    f'yV is {P().yV} but half of median income at SIG={SIG:.4f} is '
+    f'{YV_HALF_MEDIAN:.4f}; set yV in stylized.py to match')
+
 YG, W = _grid(SIG)
 W = W * len(W)  # calibrate.py uses W unnormalised elsewhere; scale is irrelevant
 
