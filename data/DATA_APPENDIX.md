@@ -206,6 +206,35 @@ ratio can be **bounded, not matched**:
 | against an already-assisted population (transmission) | ≈ 0.50 | ≈ 2.2 |
 | model at Chetty's δ_h = 0.31 | — | **2.02** |
 
+*Direct evidence that the selection is large.* Cobb-Clark and Zhu (2015, IZA DP 9426)
+compare Journeys Home respondents first homeless at 15 or below with those first
+homeless later. Both groups are on income support, so poverty is already held fixed,
+and they still differ on everything a childhood can differ on:
+
+| childhood characteristic | first homeless ≤15 | first homeless >15 |
+|---|---|---|
+| foster care | 0.425 | 0.161 |
+| physical abuse | 0.816 | 0.584 |
+| sexual abuse | 0.480 | 0.275 |
+| emotional abuse | 0.760 | 0.556 |
+| parent served jail time | 0.162 | 0.095 |
+| parental drinking or gambling | 0.285 | 0.203 |
+
+A transmission ratio taken against the general population credits the housing penalty
+with all of this as well, which is why 5 to 6 cannot be what δ_h reproduces. The same
+paper reports that 27 percent of Journeys Home respondents were first homeless before
+16, and 96 percent had been homeless at some point.
+
+*Why the Journeys Home microdata were not used.* They would give the poverty-held-fixed
+ratio directly, from `HFHLAGE < 18` crossed with `JHSTRATA`, but access needs a DSS
+application and possibly a fee, and Cobb-Clark and Zhu's published tables settle the
+qualitative point without it — their own dependent variable is employment, so the paper
+cannot supply the ratio itself. Journeys Home has no parental-homelessness question
+either, so it could never reproduce Flatau's statistic. The variables and the access
+route are recorded in `data/journeys_home/README.md` should the point estimate ever be
+worth the application.
+
+
 What can be said is that δ_h is not asked to carry more than the earnings evidence
 supports, and that if any of the observed gradient is selection rather than transmission
 — which it must partly be — the model's value is the conservative one.
