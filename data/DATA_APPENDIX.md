@@ -149,28 +149,11 @@ target. The model counterpart contracts the newborn productivity distribution
 conditional on the parent's disorder against the disorder rate at each productivity
 node, at the same parental housing status, so the comparison isolates the disorder.
 
-**δ_h, the child's earnings penalty for homelessness — 31 percent.** Chetty et al.
-(2016): children who moved to a lower poverty neighbourhood before age thirteen
-earned 31 percent more as adults. Set externally, not calibrated, and the asymmetry
-with δ_d is deliberate. No study measures what a parent's SUD does to a child's
-lifetime earnings, so δ_d has to be calibrated inside the model against a moment the
-literature does measure. The housing-to-earnings link is measured directly, so δ_h
-does not.
-
-*What the model implies, and does not target.* At δ_h = 0.31 the child of a homeless
-parent is 2.02 times as likely to be homeless itself, reported as a validation moment
-rather than a target.
-
-*What the model implies, and the direct measurement it is checked against.* At
-δ_h = 0.31 the child of a homeless parent is 2.02 times as likely to be homeless itself
-in the stylized model, reported as a validation moment rather than a target. (The
-quantitative model carries its own δ_h and produces its own ratio.)
-
-The measurement to check it against is Bassuk, Buckner, Weinreb, Browne, Bassuk, Dawson
-and Perloff (1997), *American Journal of Public Health* 87(2), 241–248 — a case-control
-study of 220 homeless mothers and 216 low-income housed mothers in Worcester,
-Massachusetts. Both arms are poor, so the comparison isolates transmission from the
-poverty that accompanies it, and no population base rate is needed:
+**δ_h, the child's earnings penalty for homelessness — a child homelessness ratio of
+2.1.** Calibrated internally, on the transmission of its own condition, exactly as δ_d
+is. Bassuk, Buckner, Weinreb, Browne, Bassuk, Dawson and Perloff (1997), *American
+Journal of Public Health* 87(2), 241–248, is a case-control study of 220 homeless
+mothers and 216 low-income housed mothers in Worcester, Massachusetts:
 
 | childhood factor | homeless | housed poor | odds ratio | 95% CI |
 |---|---|---|---|---|
@@ -180,21 +163,32 @@ poverty that accompanies it, and no population base rate is needed:
 
 Odds ratios and intervals computed from the published percentages and the two sample
 sizes; homelessness is rare in the population, so the odds ratio approximates the risk
-ratio. The model's 2.02 sits between the two parental measures, at a δ_h taken from an
-earnings estimate that knows nothing about homelessness transmission. It is US data,
-matching the model's calibration.
+ratio. The target is the midpoint of the two parental measures, 2.1. Both arms are
+poor, so the comparison isolates transmission from the poverty that accompanies it and
+needs no population base rate. It is US data, matching the model's calibration.
 
-*Why a general-population comparison is the wrong one.* Flatau, Conroy, Spooner, Eardley
+*Chetty et al. (2016) is the check, not the source.* Children moved to a lower poverty
+neighbourhood before age thirteen earn 31 percent more as adults. The penalty that
+matches Bassuk is δ_h = 0.327, so an earnings estimate the calibration never saw
+reproduces one it did, to within two points. This ordering was reversed in an earlier
+version, with Chetty as the target and the ratio as the check; that had the dependence
+backwards, since δ_h exists to price transmission and Chetty measures a neighbourhood
+effect that only stands in for it. The honest caveat is that Bassuk is observational
+and single-city where Chetty is quasi-experimental, so the target is the weaker design
+and the check the stronger.
+
+*Why a general-population comparison would be wrong.* Flatau, Conroy, Spooner, Eardley
 and Forbes (2013) report that 43.0 percent of non-Indigenous Australian
 homelessness-assistance clients had parents who had experienced homelessness (69.0
-percent for Indigenous clients). Turning a conditional share into a ratio needs a
-population base rate, and against one the implied ratio is 5 to 6 — but that credits the
-housing penalty with everything else that differs between poor children. Cobb-Clark and
-Zhu (2015) show the difference is substantial: among Journeys Home respondents, all on
-income support, those first homeless at 15 or below were 2.6 times as likely to have
-been in foster care (42.5 against 16.1 percent), and markedly more likely to have
-suffered physical or sexual abuse or had a parent serve jail time. A case-control design
-differences all of that out, which is why Bassuk is used and Flatau is not.
+percent for Indigenous clients). Converting a conditional share to a ratio needs a
+population base rate, and against one the implied ratio is 5 to 6 — but that credits
+the housing penalty with everything else that differs between poor children.
+Cobb-Clark and Zhu (2015) show the difference is substantial: among Journeys Home
+respondents, all on income support, those first homeless at 15 or below were 2.6 times
+as likely to have been in foster care (42.5 against 16.1 percent), and markedly more
+likely to have suffered physical or sexual abuse or had a parent serve jail time. A
+case-control design differences all of that out, which is why Bassuk is used and Flatau
+is not.
 
 *Journeys Home.* Its microdata would give an independent poverty-held-fixed ratio, from
 `HFHLAGE < 18` crossed with `JHSTRATA`, but access needs a DSS application and possibly

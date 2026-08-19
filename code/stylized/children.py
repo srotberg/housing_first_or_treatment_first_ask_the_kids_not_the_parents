@@ -208,7 +208,42 @@ RATIO_TARGET = 3.0
 # study measures the parent SUD to child earnings link, so delta_d must be
 # calibrated, while the housing to child earnings link IS measured, so delta_h
 # need not be.
-DEL_H = 0.31      # parental homelessness, from Chetty, Hendren and Katz (2016)
+# DELTA_H IS CALIBRATED, LIKE DELTA_D, AND ON THE SAME KIND OF MOMENT. It used to
+# be set from the 31 per cent earnings gain in Chetty et al. (2016), with the
+# transmission ratio the model then produced reported as a check. That had the
+# dependence backwards. delta_h exists to price the intergenerational transmission
+# of homelessness, and Bassuk et al. (1997) measure exactly that: a case control
+# study of 220 homeless mothers and 216 low income housed mothers, in which 14.2
+# against 8.3 per cent had a primary female caretaker who had been homeless and
+# 10.3 against 4.4 a male one, which are odds ratios of 1.80 and 2.41. Both arms
+# are poor, so the comparison isolates transmission from the poverty that comes
+# with it and needs no population base rate.
+#
+# Calibrating to the midpoint of those two, 2.1, is what makes delta_h parallel to
+# delta_d, which is calibrated to the transmission of ITS own condition. And it
+# turns Chetty into an over identifying check rather than the target: the model
+# reproduces an earnings penalty it was never shown. That is a stronger claim than
+# the agreement the old ordering asserted, since there the two agreed by
+# construction.
+#
+# The honest caveat is that Bassuk is observational and single city where Chetty is
+# quasi experimental, so the identification is weaker for the target and stronger
+# for the check. The two land within two points of each other either way.
+RATIO_H_TARGET = 2.1   # midpoint of Bassuk et al. (1997), 1.80 and 2.41
+
+
+def solve_del_h(par, target=RATIO_H_TARGET, lo=0.0, hi=0.95, iters=50):
+    """The income penalty that puts the child of a homeless parent at `target`
+    times the risk of being homeless itself."""
+    hl = child_homeless_grid(par, 'HF', par.pV)
+    base = shifted(hl, 0.0)
+    for _ in range(iters):
+        mid = 0.5 * (lo + hi)
+        if shifted(hl, mid) / max(base, 1e-12) > target:
+            hi = mid
+        else:
+            lo = mid
+    return 0.5 * (lo + hi)
 
 
 def ratio_h(par, del_h=None):
@@ -238,6 +273,7 @@ import os as _os
 _HERE = _os.path.dirname(_os.path.abspath(__file__))
 _BASE = with_(P(), **json.load(open(_os.path.join(_HERE, 'calibrated.json'))))
 DEL_D = solve_del_d(_BASE)
+DEL_H = solve_del_h(_BASE)
 
 
 def tab_children(par, pV=1.0):

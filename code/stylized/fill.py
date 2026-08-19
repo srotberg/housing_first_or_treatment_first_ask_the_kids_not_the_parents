@@ -102,6 +102,7 @@ def numbers(base):
     out['del_d'] = f'{DEL_D:.2f}'
     out['ratio_t'] = f'{RATIO_TARGET:.0f}'
     out['del_h'] = f'{DEL_H:.2f}'
+    out['del_h_pc'] = f'{100*DEL_H:.0f}'
     # UNTARGETED: what delta_h, set from Chetty et al., implies for how much
     # likelier the child of a homeless parent is to be homeless itself
     out['ratio_h'] = f'{ratio_h(base):.2f}'
