@@ -20902,8 +20902,23 @@
             ! rebuild below assumes.
             do employment_index=1,employment_grid_size
             
+                ! MEAN PRODUCTIVITY IS ONE AT EVERY sigma_y, and the shift by
+                ! -sigma_y^2/2 below is what makes it so. Without it the mean of
+                ! LOG productivity is zero, so the mean of the LEVEL is
+                ! exp(sigma_y^2/2) and moves with sigma_y: calibrating sigma_y
+                ! from 0.75 to 1.15 raised mean income by 47 per cent and
+                ! silently rescaled every level denominated parameter against
+                ! it, the drug price, the Stone-Geary endowment, the consumption
+                ! floor, the rent and the voucher means test among them. The
+                ! poorest node fell from 0.079 of the mean to 0.016 at the same
+                ! time, which pinned the bottom of the distribution at an
+                ! unchanged consumption floor, and the model produced no drug
+                ! use at all. sigma_y is a dispersion parameter and must not
+                ! move the scale. This is also the normalisation the stylized
+                ! model uses, so the two now agree.
                 employment_grid(1,employment_index)=&
-                    exp(-s_deviation_bottom*sd_permanent_productivity+&
+                    exp(-0.5d0*sd_permanent_productivity**2&
+                    -s_deviation_bottom*sd_permanent_productivity+&
                     (s_deviation_bottom+s_deviation_top)*sd_permanent_productivity*&
                     real(employment_index-1)/real(employment_grid_size-1))
                 
@@ -20926,27 +20941,33 @@
             ! implies, recovered from the grid itself: the top node sits
             ! s_deviation_top standard deviations above the mean of log
             ! productivity, which is zero by construction.
-            sd_fixed_y=log(employment_grid(1,employment_grid_size))/s_deviation_top
+            ! The top node is exp(-sigma^2/2 + s_deviation_top*sigma) now, so
+            ! sigma cannot be read off it by dividing. It is taken directly.
+            sd_fixed_y=sd_permanent_productivity
             
             width_fixed_y=(log(employment_grid(1,employment_grid_size))-&
                 log(employment_grid(1,1)))/(employment_grid_size-1)
             
+            ! THE LOG MEAN IS -sigma^2/2, NOT ZERO, so it is added back before
+            ! standardising. Leaving it out would put the probabilities on a
+            ! distribution shifted away from the grid the nodes sit on.
             unconditional_employment_probability(1)=&
-                (1+erf(((log(employment_grid(1,1))+0.5*width_fixed_y)/sd_fixed_y)/sqrt(2.d0)))/2
+                (1+erf(((log(employment_grid(1,1))+0.5*width_fixed_y+&
+                0.5d0*sd_fixed_y**2)/sd_fixed_y)/sqrt(2.d0)))/2
             
             do employment_index=2,employment_grid_size-1
             
                 unconditional_employment_probability(employment_index)=&
-                    (1+erf(((log(employment_grid(1,employment_index))+0.5*width_fixed_y)/&
-                    sd_fixed_y)/sqrt(2.d0)))/2-&
-                    (1+erf(((log(employment_grid(1,employment_index))-0.5*width_fixed_y)/&
-                    sd_fixed_y)/sqrt(2.d0)))/2
+                    (1+erf(((log(employment_grid(1,employment_index))+0.5*width_fixed_y+&
+                    0.5d0*sd_fixed_y**2)/sd_fixed_y)/sqrt(2.d0)))/2-&
+                    (1+erf(((log(employment_grid(1,employment_index))-0.5*width_fixed_y+&
+                    0.5d0*sd_fixed_y**2)/sd_fixed_y)/sqrt(2.d0)))/2
             
             end do
             
             unconditional_employment_probability(employment_grid_size)=&
-                1-(1+erf(((log(employment_grid(1,employment_grid_size))-0.5*width_fixed_y)/&
-                sd_fixed_y)/sqrt(2.d0)))/2
+                1-(1+erf(((log(employment_grid(1,employment_grid_size))-0.5*width_fixed_y+&
+                0.5d0*sd_fixed_y**2)/sd_fixed_y)/sqrt(2.d0)))/2
             
             unconditional_employment_probability=unconditional_employment_probability/&
                 sum(unconditional_employment_probability)
