@@ -479,8 +479,16 @@ if __name__ == '__main__':
     import os
     seed = None
     if os.path.exists('calibrated.json'):
-        seed = with_(P(), **json.load(open('calibrated.json')))
-        print(f'seeded from calibrated.json at theta = {seed.th:.4f}')
+        # ONLY THE PARAMETERS THIS FILE CALIBRATES. The checkpoint also carries
+        # theta, which is set in the parameter class rather than bracketed here,
+        # so seeding it would let a stale calibration silently override the value
+        # the class sets: a file written while theta was briefly an internally
+        # calibrated parameter reseeded it at 0.2236 over a class value of 0.21.
+        keep = {n for n, _, _, _ in PAIRS}
+        kw = {k: v for k, v in json.load(open('calibrated.json')).items()
+              if k in keep}
+        seed = with_(P(), **kw)
+        print(f'seeded from calibrated.json; theta is set at {seed.th:.4f}')
     par = calibrate(seed, checkpoint='calibrated.json')
     par = polish(par)
     report(par)
