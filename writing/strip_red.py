@@ -75,6 +75,9 @@ if __name__ == "__main__":
     # silently un-reds every number fill.py marked, which is the opposite of
     # what a strip is for: those marks are generated fresh on the next fill.
     # It is hidden from the stripper and put back afterwards.
+    # From 19 August \new prints as ordinary text, so the definition carries no
+    # red for the stripper to find. The guard is kept because the red form is
+    # one edit away and stripping it silently un-reds every marked number.
     DEF = "\\newcommand{\\new}[1]{\\textcolor{red}{#1}}"
     guarded = DEF in src
     if guarded:

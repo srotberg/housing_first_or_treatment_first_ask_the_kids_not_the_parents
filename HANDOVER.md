@@ -19,6 +19,16 @@ State as of 16 August, branch `claude/two-period-stylized-model-8ewnmt`, merged 
     twenty five to eighty five, thirty one percent. A number word is a number, not
     a compound modifier, so it takes no hyphen here even though many house styles
     hyphenate 21 to 99. Every one of these was marked back on 19 August.
+* **Citations use et al. for three or more authors**, in the text and in the tables.
+  Two authors are both named. The reference list keeps the full author list, and
+  where two papers collide on author and year they take a and b, as Guvenen et al.
+  (2023a) and (2023b) do. Asked for on 19 August.
+* **Red is for this round's edits only.** `\new{}`, the mark `fill.py` puts on every
+  number that moved since `numbers_prev.json`, prints as ordinary text: the reader
+  does not want the pipeline's bookkeeping in red. The mark survives in the generated
+  `.tex`, so `grep '\new{' writing/housing_first_children_later.tex` finds what
+  moved. To find every number the stylized pipeline still supplies, and which the
+  quantitative model has to replace, grep `.src.tex` for `@@`.
   * **Not when the phrase is a noun.** in the long run, the steady state, the means
     test, of first order, over the life cycle, different in kind.
 * Comment rounds work like this: the reader sends an annotated PDF, you **strip

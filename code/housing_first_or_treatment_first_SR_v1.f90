@@ -1037,7 +1037,11 @@
         real(8) :: drug_share_experimenters_1=0
         real(8) :: drug_share_addicted_1=0
         real(8) :: drug_share_weighted_1=0
+        real(8) :: drug_share_gap_1=0
+        real(8) :: child_use_gap_1=0
         real(8) :: income_floor_1=0
+        logical :: use_experimenters_1=.FALSE.
+        logical :: use_addicts_1=.FALSE.
         real(8), parameter :: participation_rate_data=0.0513
         real(8), parameter :: vsl_data=7.5
         real(8), parameter :: food_stamps_share_data=0.0042
@@ -8444,13 +8448,40 @@
         model_experimentation_choice_by_age(time_period,:)=&
             model_experimentation_choice_by_age(time_period,:)/model_mass_experimenters(time_period)
         
-        model_addicted_total_addiction_spending_to_total_income(time_period)=&
-            model_addicted_total_addiction_spending_to_total_income(time_period)/&
-            model_addicted_total_income(time_period)
-            
-         model_experimenters_total_drug_spending_to_total_income(time_period)=&
-            model_experimenters_total_drug_spending_to_total_income(time_period)/&
-            model_experimenters_total_income(time_period)
+        ! AFTER THIS BLOCK THESE TWO ARE RATIOS, spending over income, each
+        ! summed over its group with the distribution's mass. Anything reading
+        ! them downstream takes them as they are. The calibration used to divide
+        ! them by the group's total income a SECOND time, and since that total is
+        ! a mass weighted number of order 1e-4 for a group that barely exists,
+        ! a share of 0.002 came back as 1,204,097 and a share of 0.007 as 62.
+        ! That is what threw theta to its floor and back every other iteration.
+        !
+        ! A group with no income has no ratio. Dividing by zero here put a NaN
+        ! into the drug block that survived into the next iteration, so the
+        ! sentinel is negative and the caller tests for it.
+        if (model_addicted_total_income(time_period)>0) then
+
+            model_addicted_total_addiction_spending_to_total_income(time_period)=&
+                model_addicted_total_addiction_spending_to_total_income(time_period)/&
+                model_addicted_total_income(time_period)
+
+        else
+
+            model_addicted_total_addiction_spending_to_total_income(time_period)=-1
+
+        end if
+
+        if (model_experimenters_total_income(time_period)>0) then
+
+            model_experimenters_total_drug_spending_to_total_income(time_period)=&
+                model_experimenters_total_drug_spending_to_total_income(time_period)/&
+                model_experimenters_total_income(time_period)
+
+        else
+
+            model_experimenters_total_drug_spending_to_total_income(time_period)=-1
+
+        end if
         
         model_total_drug_users(time_period)=model_addicted(time_period)+model_exprimenters(time_period)
         
@@ -29000,26 +29031,43 @@
                     ! already internalises more, so switching the term off changes
                     ! more and the measured gap RISES in omega. A model gap above
                     ! target therefore calls for a smaller omega.
+                    ! THE BASELINE HAS TO EXIST FOR THE GAP TO BE A GAP. With a
+                    ! baseline using mass of 2.3e-4 the ratio came back as 325
+                    ! against a target of 0.18 and omega went to zero in one step,
+                    ! which is a statement about the denominator rather than about
+                    ! how much a parent internalises. A tenth of the participation
+                    ! rate the model is trying to reproduce is the floor.
                     if ((calibrate_weight_on_child==1) .AND. (drug_users_without_child>0)&
-                        .AND. (model_total_drug_users(1)>0)) then
+                        .AND. (model_total_drug_users(1)>&
+                        10.d0**(-1)*participation_rate_data)) then
 
                         write(*,*) "drug users, baseline and child term off =",&
                             model_total_drug_users(1), drug_users_without_child
+
+                        child_use_gap_1=drug_users_without_child/model_total_drug_users(1)-1
+
                         write(*,*) "model child use gap =",&
-                            drug_users_without_child/model_total_drug_users(1)-1,&
-                            " target =", child_use_gap_data
+                            child_use_gap_1, " target =", child_use_gap_data
                         write(*,*) "weight_on_child=", weight_on_child
 
+                        ! The step is taken on a clamped gap for the same reason
+                        ! theta's is: the sign is informative long before the
+                        ! magnitude is.
                         weight_on_child=max(min(weight_on_child-weight_on_child_adjuster*&
-                            (drug_users_without_child/model_total_drug_users(1)-1&
-                            -child_use_gap_data),1.d0),0.d0)
+                            max(min(child_use_gap_1-child_use_gap_data,1.d0),-1.d0),&
+                            1.d0),0.d0)
 
-                        distance_weight_on_child=&
-                            abs(drug_users_without_child/model_total_drug_users(1)-1&
-                            -child_use_gap_data)
+                        distance_weight_on_child=abs(child_use_gap_1-child_use_gap_data)
 
                         write(*,*) "weight_on_child=", weight_on_child,&
                             " distance_weight_on_child=", distance_weight_on_child
+
+                    else if (calibrate_weight_on_child==1) then
+
+                        write(*,*) "omega HELD: the baseline using population is ",&
+                            model_total_drug_users(1), " which is too small for the",&
+                            " child term gap to mean anything"
+                        distance_weight_on_child=1
 
                     end if
 
@@ -29164,34 +29212,51 @@
                     ! numerator is.
                     income_floor_1=10.d0**(-1)*model_average_labour_income(1)
 
-                    if ((model_experimenters_total_income(1)>&
-                        income_floor_1*model_mass_experimenters(1)) .AND. &
-                        (model_addicted_total_income(1)>&
-                        income_floor_1*model_mass_addicts(1))) then
+                    ! EACH ACCUMULATOR IS ALREADY A RATIO. It is divided by its
+                    ! group's total income where the distribution is summed, and
+                    ! dividing it again here is what produced 62 and 1,204,097 for
+                    ! a share the budget constraint caps at one. A negative value
+                    ! is the sentinel for a group with no income at all.
+                    drug_share_experimenters_1=&
+                        model_experimenters_total_drug_spending_to_total_income(1)
+                    drug_share_addicted_1=&
+                        model_addicted_total_addiction_spending_to_total_income(1)
 
-                        drug_share_experimenters_1=&
-                            model_experimenters_total_drug_spending_to_total_income(1)/&
-                            model_experimenters_total_income(1)
-                        drug_share_addicted_1=&
-                            model_addicted_total_addiction_spending_to_total_income(1)/&
-                            model_addicted_total_income(1)
+                    ! A GROUP COUNTS ONLY IF ITS RATIO MEANS SOMETHING, and a group
+                    ! that fails is dropped from the average rather than replaced
+                    ! by a pooled ratio. Pooling put the failing group back in
+                    ! through the numerator.
+                    use_experimenters_1=(model_mass_experimenters(1)>0) .AND. &
+                        (drug_share_experimenters_1>=0) .AND. &
+                        (model_experimenters_total_income(1)>&
+                        income_floor_1*model_mass_experimenters(1))
+                    use_addicts_1=(model_mass_addicts(1)>0) .AND. &
+                        (drug_share_addicted_1>=0) .AND. &
+                        (model_addicted_total_income(1)>&
+                        income_floor_1*model_mass_addicts(1))
+
+                    if (use_experimenters_1 .AND. use_addicts_1) then
+
                         drug_share_weighted_1=&
                             (model_mass_experimenters(1)*drug_share_experimenters_1+&
                             model_mass_addicts(1)*drug_share_addicted_1)/&
-                            max(model_mass_experimenters(1)+model_mass_addicts(1),10.d0**(-12))
+                            (model_mass_experimenters(1)+model_mass_addicts(1))
+
+                    else if (use_experimenters_1) then
+
+                        drug_share_weighted_1=drug_share_experimenters_1
+                        write(*,*) "drug share: the group with a disorder has no income to speak of,",&
+                            " so the moment is the experimenters alone this iteration"
+
+                    else if (use_addicts_1) then
+
+                        drug_share_weighted_1=drug_share_addicted_1
+                        write(*,*) "drug share: the experimenters have no income to speak of,",&
+                            " so the moment is the group with a disorder alone this iteration"
 
                     else
 
-                        drug_share_experimenters_1=-1
-                        drug_share_addicted_1=-1
-                        drug_share_weighted_1=&
-                            (model_experimenters_total_drug_spending_to_total_income(1)+&
-                            model_addicted_total_addiction_spending_to_total_income(1))/&
-                            max(model_experimenters_total_income(1)+&
-                            model_addicted_total_income(1),10.d0**(-12))
-
-                        write(*,*) "drug share: a using group has no income to speak of, so the pooled",&
-                            " ratio is used this iteration rather than the weighted average"
+                        drug_share_weighted_1=-1
 
                     end if
 
@@ -29200,15 +29265,40 @@
                     write(*,*) "drug share, weighted by their population shares =",&
                         drug_share_weighted_1, " target =", drug_spending_share_data
 
-                    write(*,*) "relative_share_of_addiction_1=", relative_share_of_addiction_1
-                    relative_share_of_addiction_1=max(min(relative_share_of_addiction_1-&
-                        relative_share_of_addiction_adj*&
-                        (drug_share_weighted_1-&
-                        drug_spending_share_data),0.9d0),10.d0**(-4))
-                    distance_relative_share_of_addiction_1=&
-                        abs(drug_share_weighted_1-drug_spending_share_data)
-                    write(*,*) "relative_share_of_addiction_1=", relative_share_of_addiction_1
-                    write(*,*) "distance_relative_share_of_addiction_1=", distance_relative_share_of_addiction_1
+                    if (drug_share_weighted_1>=0) then
+
+                        write(*,*) "relative_share_of_addiction_1=", relative_share_of_addiction_1
+
+                        ! A TRUST REGION ON THE GAP AND ON THE STEP. The share
+                        ! cannot exceed one, so a gap above one is a measurement
+                        ! failure rather than a signal about theta, and the raw gap
+                        ! of 109 moved theta from 0.44 to its floor in one step
+                        ! while the next iteration undid it. Clamping the gap keeps
+                        ! the sign and drops the magnitude; halving or doubling per
+                        ! iteration is still fast and cannot land on a bound.
+                        drug_share_gap_1=max(min(drug_share_weighted_1-&
+                            drug_spending_share_data,1.d0),-1.d0)
+
+                        relative_share_of_addiction_1=&
+                            max(min(relative_share_of_addiction_1-&
+                            relative_share_of_addiction_adj*drug_share_gap_1,&
+                            min(0.9d0,2*relative_share_of_addiction_1)),&
+                            max(10.d0**(-4),relative_share_of_addiction_1/2))
+
+                        distance_relative_share_of_addiction_1=&
+                            abs(drug_share_weighted_1-drug_spending_share_data)
+
+                        write(*,*) "relative_share_of_addiction_1=", relative_share_of_addiction_1
+                        write(*,*) "distance_relative_share_of_addiction_1=",&
+                            distance_relative_share_of_addiction_1
+
+                    else
+
+                        write(*,*) "drug share HELD: neither using group has income worth dividing by,",&
+                            " so theta is not moved on a moment that does not exist"
+                        distance_relative_share_of_addiction_1=1
+
+                    end if
 
                     ! b, the Stone-Geary endowment, on participation. A LARGER b
                     ! deters use, since the marginal value of the first unit is
@@ -29216,13 +29306,16 @@
                     ! the gap. Multiplicative, because b is of order 1e-8 and an
                     ! additive step in it is meaningless.
                     write(*,*) "addiction_scalar_1=", addiction_scalar_1
-                    if (model_exprimenters(1)>0) then
-                        addiction_scalar_1=max(min(addiction_scalar_1*&
-                            (1+addiction_scalar_adjuster*&
-                            (model_exprimenters(1)-participation_rate_data)/&
-                            max(participation_rate_data,10.d0**(-12))),&
-                            10*addiction_scalar_1),addiction_scalar_1/10)
-                    end if
+                    ! NO GUARD ON PARTICIPATION BEING POSITIVE. Zero participation
+                    ! is exactly the state b has to move out of, and the gap is
+                    ! normalised by the target so it cannot be worse than minus
+                    ! one however empty the model is. Skipping the update there
+                    ! left the model parked at the corner it needed to leave.
+                    addiction_scalar_1=max(min(addiction_scalar_1*&
+                        (1+addiction_scalar_adjuster*&
+                        (model_exprimenters(1)-participation_rate_data)/&
+                        max(participation_rate_data,10.d0**(-12))),&
+                        10*addiction_scalar_1),addiction_scalar_1/10)
                     distance_addiction_scalar=abs(model_exprimenters(1)-participation_rate_data)
                     write(*,*) "addiction_scalar_1=", addiction_scalar_1
                     write(*,*) "distance_addiction_scalar=", distance_addiction_scalar

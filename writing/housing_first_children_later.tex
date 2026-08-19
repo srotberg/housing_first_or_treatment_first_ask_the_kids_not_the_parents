@@ -24,7 +24,13 @@
 % the note marks a changed number automatically rather than by hand. Set it to red
 % so a recalibration shows up as red without anyone having to find the numbers.
 % To clear the marks, copy the current numbers over numbers_prev.json and refill.
-\newcommand{\new}[1]{\textcolor{red}{#1}}
+% \new{} is the mark fill.py puts on every number that moved since
+% numbers_prev.json. It prints as ordinary text: the reader asked not to see the
+% pipeline's own bookkeeping in red. The mark survives in the generated .tex,
+% so grep for \new{ there to find what moved, and grep .src.tex for @@ to find
+% every number the stylized pipeline still supplies and the quantitative model
+% has yet to replace.
+\newcommand{\new}[1]{#1}
 \usepackage[official]{eurosym}
 \usepackage{longtable}
 \usepackage{titlesec}
@@ -2307,9 +2313,9 @@ easier once housed,
 while the parent's own private cost is largely unchanged, which is exactly what makes it an
 externality. No paper estimates the effect of a parent's SUD on a child's lifetime
 earnings directly, which is why the penalty is calibrated to the disorder ratio
-rather than lifted from an estimate. \textcolor{red}{Its target is} the ratio of disorder rates
+rather than lifted from an estimate. Its target is the ratio of disorder rates
 between the children of parents with and without a disorder, which McGovern et
-al.\ (2023) put between two and four; the midpoint, three, is the target \textcolor{red}{value}. The
+al.\ (2023) put between two and four; the midpoint, three, is the target value. The
 moment does not need the parent's type carried through the child's whole life. The
 only thing $\delta_d$ changes about a child is the productivity it is born with,
 and the model already holds the distribution of that draw conditional on the
@@ -2326,7 +2332,7 @@ compare $220$ homeless mothers with $216$ low-income housed mothers and find tha
 $14.2$ against $8.3$ percent had a primary female caretaker who had been homeless, and
 $10.3$ against $4.4$ percent a male one, odds ratios of $1.80$ and $2.41$. $\delta_h$
 is set so the child of a homeless parent is $2.1$ times as likely to be homeless
-\textcolor{red}{themselves}, the midpoint of the two. Because both arms of that study are poor \textcolor{red}{households}, the target
+themselves, the midpoint of the two. Because both arms of that study are poor households, the target
 isolates transmission from the poverty that accompanies it.
 \item[$\kappa_x$, the disamenity of homelessness.]\label{sec:fleftout} The only term through which one
 household's housing status enters the utility of another who is not its own child,
@@ -2415,10 +2421,10 @@ rises housing is worth more against consumption and the drug, households buy mor
 it, and that expenditure share rises with it.
 \item[$\beta$, the discount factor.] It is chosen so that wealth over output
 matches the national accounts, a ratio of three, from the Bureau of Economic Analysis (BEA) fixed asset tables
-against National Income and Product Accounts (NIPA) output, \textcolor{red}{both read at the 2023 vintage, the last year the fixed asset tables cover}. As it rises households are more patient, save more, and the
+against National Income and Product Accounts (NIPA) output, both read at the 2023 vintage, the last year the fixed asset tables cover. As it rises households are more patient, save more, and the
 wealth to output ratio rises with it.
 \item[$\omega_{\ell}$, the weight on leisure.] It is set so that the model
-generates average hours worked of $40$ percent, from Guvenen et al.\ (2023). As it
+generates average hours worked of $40$ percent, from Guvenen et al.\ (\textcolor{red}{2023a}). As it
 rises leisure is worth more, households work less, and average hours fall with
 it.
 \end{description}
@@ -2521,7 +2527,7 @@ Service (IRS) sets out in Topic 409
 
 \item[$\tau_{\ell}$, the level of the labour income tax.] It is calibrated so that
 the average labour income tax rate the model produces is $22.4$ percent, which is
-what McDaniel (2007) measures for the United States and what Guvenen et al.\ (2023)
+what McDaniel (2007) measures for the United States and what Guvenen et al.\ (\textcolor{red}{2023a})
 use. It then moves with the government budget in every counterfactual, which is what
 makes both programmes paid for rather than free, and what makes the distortion of
 Section~\ref{sec:fullcal} a cost the model actually bears.
@@ -2640,12 +2646,12 @@ reported as a range rather than as a number.
 %======================================================================
 \section{The welfare criterion}\label{sec:cev}
 
-Every welfare number in this paper is a \textcolor{red}{consumption-equivalent variation (CEV)}, and the
+Every welfare number in this paper is a consumption-equivalent variation (CEV), and the
 convention matters enough to state exactly. Write
 $V^{b}$ for lifetime value under the benchmark and $V^{c}$ for lifetime value under a
-counterfactual policy. The \textcolor{red}{CEV} $\Delta$ is the proportional change in
-consumption, applied at every date and in every state, that makes a \textcolor{red}{newborn} under
-the benchmark as well off as the same \textcolor{red}{newborn} under the counterfactual:
+counterfactual policy. The CEV $\Delta$ is the proportional change in
+consumption, applied at every date and in every state, that makes a newborn under
+the benchmark as well off as the same newborn under the counterfactual:
 %
 \begin{equation}\label{eq:cev}
 V^{b}\big((1+\Delta)\,c\big)\;=\;V^{c}(c) .
@@ -2654,18 +2660,17 @@ V^{b}\big((1+\Delta)\,c\big)\;=\;V^{c}(c) .
 A positive $\Delta$ therefore means the counterfactual is worth that much of a
 permanent consumption gain, and a negative one that it costs that much.
 
-\paragraph{Whose welfare.} The household \textcolor{red}{considered} is a newborn, and the value is taken before
+\paragraph{Whose welfare.} The household considered is a newborn, and the value is taken before
 any of its draws are realised, so $\Delta$ is an expectation over the productivity
-draw and everything that follows from it. \textcolor{red}{The expectation is taken under each policy's
+draw and everything that follows from it. The expectation is taken under each policy's
 own equilibrium rather than a common one, since the penalties that set a child's
 starting productivity depend on what happened to its parent, so the distribution a
 newborn is drawn from is itself something the policy moves. This is the standard
-criterion in this literature (Conesa, Kitao and Krueger, 2009; Guvenen, Kambourov,
-Kuruscu, Ocampo and Chen, 2023).}
+criterion in this literature (\textcolor{red}{Conesa et al., 2009; Guvenen et al., 2023b}).
 
 Two horizons are used, and they are the same object measured at different dates: a
 newborn on the date the policy is implemented, who lives through the transition, and
-a newborn in the new steady state. Because both are the \textcolor{red}{ex-ante} value of a household
+a newborn in the new steady state. Because both are the ex-ante value of a household
 at age one, any difference between them is the transition itself rather than a change
 in who is being counted.
 
@@ -2674,7 +2679,7 @@ With log utility over consumption and housing, scaling consumption by $1+\Delta$
 every date adds $K\log(1+\Delta)$ to lifetime value, where $K$ collects the weight on
 consumption and the discounted periods a household expects to live,
 $K=(1-\gamma-\theta)\,(1+\beta\phi_0)$. Equation~\eqref{eq:cev} then inverts
-directly to $\Delta=\exp\{(V^{c}-V^{b})/K\}-1$, which is how every \textcolor{red}{CEV}
+directly to $\Delta=\exp\{(V^{c}-V^{b})/K\}-1$, which is how every CEV
 in Section~\ref{sec:welfare} is computed.
 
 No such inversion exists in the quantitative model, and three features of flow utility
@@ -2771,7 +2776,7 @@ executive order.
 \item Bassuk, E. L., J. C. Buckner, L. F. Weinreb, A. Browne, S. S. Bassuk, R. Dawson and J. N. Perloff (1997). ``Homelessness in Female-Headed Families: Childhood and Adult Risk and Protective Factors.'' \emph{American Journal of Public Health} 87(2), 241--248.
 \item Chetty, R., N. Hendren and L. Katz (2016). ``The Effects of Exposure to Better Neighborhoods on Children.'' \emph{American Economic Review} 106(4), 855--902.
 \item Cobb-Clark, D. A. and A. Zhu (2015). ``Childhood Homelessness and Adult Employment: The Role of Education, Incarceration, and Welfare Receipt.'' \emph{IZA Discussion Paper} 9426.
-\item \textcolor{red}{Conesa, J. C., S. Kitao and D. Krueger (2009). ``Taxing Capital? Not a Bad Idea after All!'' \emph{American Economic Review} 99(1), 25--48.}
+\item Conesa, J. C., S. Kitao and D. Krueger (2009). ``Taxing Capital? Not a Bad Idea after All!'' \emph{American Economic Review} 99(1), 25--48.
 \item Chyn, E. (2018). ``Moved to Opportunity: The Long-Run Effects of Public Housing Demolition on Children.'' \emph{American Economic Review} 108(10), 3028--56.
 \item Dahl, G. B. and L. Lochner (2012). ``The Impact of Family Income on Child Achievement: Evidence from the Earned Income Tax Credit.'' \emph{American Economic Review} 102(5), 1927--56.
 \item Degenhardt, L. et al.\ (2011). ``Mortality among regular or dependent users of heroin and other opioids: a systematic review.'' \emph{Addiction} 106(1), 32--51.
@@ -2785,8 +2790,8 @@ executive order.
 \item Grossman, M. and F. Chaloupka (1998). ``The demand for cocaine by young adults: a rational addiction approach.'' \emph{Journal of Health Economics} 17(4), 427--74.
 \item Gruber, J. and B. K\H{o}szegi (2001). ``Is Addiction `Rational'? Theory and Evidence.'' \emph{Quarterly Journal of Economics} 116(4), 1261--1303.
 \item Gutwinski, S., S. Schreiter, K. Deutscher and S. Fazel (2021). ``The prevalence of mental disorders among homeless people in high-income countries: An updated systematic review and meta-regression analysis.'' \emph{PLOS Medicine} 18(8), e1003750.
-\item \textcolor{red}{Guvenen, F., G. Kambourov, B. Kuruscu, S. Ocampo and D. Chen (2023). ``Use It or Lose It: Efficiency and Redistributional Effects of Wealth Taxation.'' \emph{Quarterly Journal of Economics} 138(2), 835--894.}
-\item Guvenen, F. et al.\ (2023). ``Lifetime Earnings in the United States over Six Decades.'' \emph{American Economic Journal: Applied Economics} 14(4), 446--79.
+\item Guvenen, F., G. Kambourov, B. Kuruscu, S. Ocampo and D. Chen (2023\textcolor{red}{b}). ``Use It or Lose It: Efficiency and Redistributional Effects of Wealth Taxation.'' \emph{Quarterly Journal of Economics} 138(2), 835--894.
+\item Guvenen, F. et al.\ (2023\textcolor{red}{a}). ``Lifetime Earnings in the United States over Six Decades.'' \emph{American Economic Journal: Applied Economics} 14(4), 446--79.
 \item Heathcote, J., K. Storesletten and G. Violante (2017). ``Optimal Tax Progressivity: An Analytical Framework.'' \emph{Quarterly Journal of Economics} 132(4), 1693--1754.
 \item Heathcote, J., F. Perri and G. Violante (2010). ``Unequal We Stand.'' \emph{Review of Economic Dynamics} 13(1), 15--51.
 \item Hjorth\o j, C. et al.\ (2023). ``Excess mortality among people with substance use disorders.'' \emph{World Psychiatry} 22(2).
