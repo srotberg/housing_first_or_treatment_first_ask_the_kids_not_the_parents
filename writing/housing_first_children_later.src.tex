@@ -31,6 +31,19 @@
 % every number the stylized pipeline still supplies and the quantitative model
 % has yet to replace.
 \newcommand{\new}[1]{#1}
+% \cut{...} is a PROPOSED DELETION: red and struck through, so the reader sees what
+% would go before it goes. ulem is not in this installation, and a single rule over a
+% whole phrase cannot break across lines, so the rule is drawn word by word: each word
+% is its own box and TeX breaks between them as usual. The scanner below splits the
+% argument on spaces, which is why a cut must not contain a braced group with a space
+% inside it. Maths is fine, $14.2$ is one word.
+\makeatletter
+\newlength{\cw@len}
+\newcommand{\cw}[1]{{\settowidth{\cw@len}{#1}%
+  \rlap{\textcolor{red}{\rule[0.55ex]{\cw@len}{0.4pt}}}\textcolor{red}{#1}}}
+\newcommand{\cut}[1]{\cut@scan#1 \@nil}
+\def\cut@scan#1 #2\@nil{\cw{#1}\ifx\relax#2\relax\else\space\cut@scan#2\@nil\fi}
+\makeatother
 \usepackage[official]{eurosym}
 \usepackage{longtable}
 \usepackage{titlesec}
@@ -133,8 +146,7 @@ experimental literature has not settled between them, because the trials that co
 
 Randomised trials of Housing First find
 large and persistent gains in housing stability and mixed to null effects on substance
-use (Tsemberis et al., 2004; Padgett et al., 2006; Larimer et al., 2009; Goering et
-al., 2014; Aubry et al., 2016), but they run six to twenty four months, so they cannot
+use (Tsemberis et al., 2004; \cut{Padgett et al., 2006; Larimer et al., 2009; Goering et al., 2014;} Aubry et al., 2016\textcolor{red}{, among others}), but they run six to twenty four months, so they cannot
 speak to long-run behaviour or to the budget required to fund either policy at
 scale.
 
@@ -148,10 +160,7 @@ they make that decision, as they do in the model in this paper
 and as the evidence suggests (Lundborg and Lindgren, 2002; van Ours, 1995; Grossman
 and Chaloupka, 1998; Saffer and Chaloupka, 1999; Caulkins, 2001; Gallet, 2014;
 Greenwood et al., 2025). Then at the same generosity and the same cost, Housing First
-weakly dominates Treatment First for every household. The two policies differ only in whether the voucher is withheld in one
-state, so the household's budget set under Housing First is weakly larger everywhere and
-strictly larger somewhere, and a household under Housing First can reproduce its
-Treatment First outcome exactly by simply not using. Conditionality removes an
+weakly dominates Treatment First for every household. \cut{The two policies differ only in whether the voucher is withheld in one state, so the household's budget set under Housing First is weakly larger everywhere and strictly larger somewhere, and a household under Housing First can reproduce its Treatment First outcome exactly by simply not using.} Conditionality removes an
 option from an optimiser and gives nothing back.
 
 
@@ -185,8 +194,7 @@ and a lower earning child is then likelier to decide to use and consequently to
 acquire a SUD themselves, which then means they are likelier to lose work, to end up on
 the street and to die young. Evidence shows that children of a parent with a disorder
 are two to four times more likely to acquire one themselves (McGovern et al., 2023), and
-the earnings loss is also visible in children exposed in utero to a Swedish experiment that
-sharply raised alcohol availability, who earn about $24$ percent less as adults
+the earnings loss is also visible in children exposed in utero to a Swedish \cut{experiment that sharply raised alcohol availability}\textcolor{red}{ alcohol experiment}, who earn about $24$ percent less as adults
 (Nilsson, 2017). This half favours Treatment First, since any use that conditionality
 deters is a chain it never starts.
 
@@ -293,9 +301,7 @@ preventing one case is worth @@percase@@ percent of consumption to
 one child. The product is
 @@gain@@ percent, which is @@ratiogl@@ times the private loss. Housing First is
 better for every household taken one at a time, and worse once one counts the
-children of the households it fails to deter. The ranking survives every value of
-the transmission penalty considered except zero, where by construction there is no
-externality to price.
+children of the households it fails to deter. \cut{The ranking survives every value of the transmission penalty considered except zero, where by construction there is no externality to price.}
 
 
 
@@ -304,10 +310,7 @@ environment that fits the data, where the drug price responds to the number of
 users, the rent responds to voucher demand, the tax rate responds to the programme's
 cost, and the two policies can be separated on generosity as well as on
 conditionality. It is also what allows the short run and the long run to be
-distinguished, which matters for reading the experimental evidence: if housing
-outcomes respond immediately to voucher design while disorder adjusts slowly,
-short trials are well powered to detect the first and not the second whatever the
-long-run effect turns out to be.
+distinguished\cut{, which matters for reading the experimental evidence: if housing outcomes respond immediately to voucher design while disorder adjusts slowly, short trials are well powered to detect the first and not the second whatever the long-run effect turns out to be}.
 
 
 
@@ -425,8 +428,7 @@ is estimate the effect of a parent's SUD on a child's lifetime earnings directly
 is why $\delta_d$ is calibrated inside the model rather than lifted from a
 coefficient: these estimates imply that the effect is real and of first order, and the
 penalty itself is set to reproduce what the literature does measure for the children
-of parents with a SUD: they are two to four times more likely to acquire one
-themselves.
+of parents with a SUD\cut{: they are two to four times more likely to acquire one themselves}\textcolor{red}{, the disorder ratio above}.
 
 The third is that housing, and the poverty that comes with bad housing,
 is one of the environments doing the transmitting, and it affects the
@@ -434,9 +436,7 @@ transmission of earnings as well. Chyn (2018) finds that children
 displaced by Chicago's public housing demolitions earned sixteen percent more a year
 as adults. Bassuk et al.\ (1997) is what the homelessness penalty is calibrated
 to, and its case-control design is what makes it usable: among $220$ homeless mothers
-and $216$ low-income housed mothers, $14.2$ against $8.3$ percent had a primary female
-caretaker who had been homeless, and $10.3$ against $4.4$ percent a male one. Those are
-odds ratios of $1.80$ and $2.41$, and $\delta_h$ is set so the model reproduces their
+and $216$ low-income housed mothers, \cut{$14.2$ against $8.3$ percent had a primary female caretaker who had been homeless, and $10.3$ against $4.4$ percent a male one. Those are}\textcolor{red}{ a homeless caretaker is likelier in the homeless arm on both the mother's and the father's side, at} odds ratios of $1.80$ and $2.41$, and $\delta_h$ is set so the model reproduces their
 midpoint.
 
 Chetty et al.\ (2016) then becomes a check rather than the target, and it is the
@@ -548,8 +548,7 @@ estimate for an illicit drug. Cannabis is the closest market I found to an illic
 drug, as it remains a Schedule I substance federally, so even a licensed producer works
 without interstate trade, without ordinary banking and under federal prohibition,
 which is the set of frictions an illicit supplier faces. Mace et al.\ (2020) estimate a price elasticity of supply of
-$1.46$ on Washington State administrative data, and that is the number the model
-uses.
+$1.46$ on Washington State administrative data, and that is the \textcolor{red}{elasticity the model reproduces; the curvature $\nu_2$ that delivers it is $1.68$}.
 
 \paragraph{In a nutshell.} The trials establish that housing stability responds to
 policy but cannot price what happens in the long run, to others not in the sample,
@@ -575,7 +574,7 @@ In the data, drug use is concentrated among low-income households, most of the
 homeless do not carry a SUD, and housing vouchers
 reach only about a quarter of the households eligible for them. The quantitative
 model is built to match facts of that kind. It has six state variables and
-fifty four parameters, which is what the welfare and fiscal questions
+\textcolor{red}{fifty three} parameters, which is what the welfare and fiscal questions
 require,
 but it also makes it hard to see which pieces of the environment do the
 heavy lifting. This note strips the environment down to help understand the
@@ -614,10 +613,7 @@ more attractive, but that tension does not raise welfare, because Treatment
 First only removes an option that a household can take under Housing First as
 well. However, if a SUD and homelessness generate externalities, such
 as affecting the earning potential of the children of parents with a SUD, then
-Treatment First may be preferred: children of a parent with a SUD are
-themselves two to four times more likely to develop one (McGovern et al., 2023),
-and moving a child to a lower-poverty neighbourhood before age thirteen raises
-adult earnings by $31$ percent (Chetty et al., 2016). The
+Treatment First may be preferred\cut{: children of a parent with a SUD are themselves two to four times more likely to develop one (McGovern et al., 2023), and moving a child to a lower-poverty neighbourhood before age thirteen raises adult earnings by $31$ percent (Chetty et al., 2016)}\textcolor{red}{, on the evidence above}. The
 model's work here is to show why Housing First raises welfare whenever
 there are no externalities (and no distortions from the programmes or
 from the taxes that pay for them, both of which the full model takes up),
@@ -1133,8 +1129,7 @@ Table~\ref{tab:children}.
 The homelessness penalty $\delta_h$ is calibrated the same way, on the transmission of
 its own condition, so the two penalties are matched to the same kind of moment rather
 than one to a ratio and the other to a coefficient. Bassuk et al.\ (1997) is a case-control study of $220$ homeless mothers and $216$ low-income housed mothers in
-Worcester, Massachusetts: $14.2$ against $8.3$ percent had a primary female caretaker
-who had been homeless, and $10.3$ against $4.4$ percent a male one, which are odds
+Worcester, Massachusetts, \cut{$14.2$ against $8.3$ percent had a primary female caretaker who had been homeless, and $10.3$ against $4.4$ percent a male one, which are}\textcolor{red}{with} odds
 ratios of $1.80$ and $2.41$. Both arms are poor, so the comparison isolates
 transmission from the poverty that accompanies it and needs no population base rate.
 $\delta_h$ is set so the child of a homeless parent is @@ratio_h@@ times as likely to
@@ -1160,9 +1155,7 @@ percentage points times @@percase@@ percent gives @@gain@@ percent of
 consumption, which is @@ratiogl@@ times the private loss of the first row.
 That ratio exceeds one for every $\delta_d$ in Panel A except $\delta_d=0$, where
 by construction there is no externality to price; at the smallest penalty shown it is
-still @@ratiomin@@ times the private loss. Housing
-First is better for every household taken one at a time, and worse once one
-counts the children of the households it fails to deter.
+still @@ratiomin@@ times the private loss. \cut{Housing First is better for every household taken one at a time, and worse once one counts the children of the households it fails to deter.}
 
 All of this is a crude illustration, so the impacts of
 policies can be unreasonably large. Its point is to show that an
@@ -1908,8 +1901,7 @@ such that, at every date $t$,
 \item the policy functions solve~\eqref{eq:fbellman} given its terminal
 condition, and $\{V_t(j,\cdot)\}_{j=1}^{J}$ are the associated values;
 \item $\Phi_{t+1}(j{+}1,\cdot)$ follows from $\Phi_t(j,\cdot)$ by the law of motion~\eqref{eq:flom}
-together with the newborn rule~\eqref{eq:fnewborn} and~\eqref{eq:flomnew}, and
-the mass of newborns equals the mass of the deceased;
+together with the newborn rule~\eqref{eq:fnewborn} and~\eqref{eq:flomnew}\cut{, and the mass of newborns equals the mass of the deceased};
 \item the government budget~\eqref{eq:fgovt} holds at $\tau_{\ell t}$;
 \item the drug market clears at $p_{vt}$, so~\eqref{eq:fdrug} holds with
 aggregate drug demand $S_{vt}=\int v_t(s)\,\mathrm{d}\Phi_t$;
@@ -2090,7 +2082,7 @@ mechanism: $\bar\kappa_{\phi d}$ sets how much a SUD raises the chance of dying 
 $\aleph$ sets what the life being lost is worth. As it rises the private
 value of every life either policy saves rises, and use falls, so the externality
 falls. Its
-value is chosen so the model generates a value of a statistical life of \$7.5m,
+value is chosen so the model generates a value of a statistical life of \textcolor{red}{\$9m},
 from Viscusi and Aldy (2003).\footnote{I check that no household has a
 negative value of life in equilibrium, so death is never an optimal outcome.}
 \end{description}
@@ -2328,9 +2320,7 @@ more people: Housing First directly, Treatment First by removing the disorder th
 leads to homelessness in the first place, again leaving
 the private cost mostly unchanged. It is calibrated internally, on the
 transmission of its own condition, exactly as $\delta_d$ is: Bassuk et al.\ (1997)
-compare $220$ homeless mothers with $216$ low-income housed mothers and find that
-$14.2$ against $8.3$ percent had a primary female caretaker who had been homeless, and
-$10.3$ against $4.4$ percent a male one, odds ratios of $1.80$ and $2.41$. $\delta_h$
+compare $220$ homeless mothers with $216$ low-income housed mothers and find \cut{that $14.2$ against $8.3$ percent had a primary female caretaker who had been homeless, and $10.3$ against $4.4$ percent a male one,} odds ratios of $1.80$ and $2.41$. $\delta_h$
 is set so the child of a homeless parent is $2.1$ times as likely to be homeless
 themselves, the midpoint of the two. Because both arms of that study are poor households, the target
 isolates transmission from the poverty that accompanies it.
@@ -2371,7 +2361,7 @@ drug market, demand falls and so does the price, and a cheaper drug draws other
 households in. Some of what the policy removes is handed back through the price,
 and how much depends entirely on this parameter.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$\nu_2$, the drug supply elasticity.] Set so that the price elasticity of
+\item[$\nu_2$, the drug supply \textcolor{red}{curvature}.] Set so that the price elasticity of
 supply is $1.46$, which is what Mace et al.\ (2020) estimate for cannabis on
 Washington State administrative data. There is no direct estimate for an illicit
 drug, and cannabis is the closest market there is: it remains a Schedule I
@@ -2636,11 +2626,13 @@ Odds a homeless adult had a homeless caretaker & 1.8 to 2.4 & Bassuk et al.\ (19
 \end{tabular}
 \end{center}
 
-Three parameters remain undisciplined, and they are flagged rather than hidden:
-the treatment effect on recovery $g$, the recovery multiplier for SMI
-$\mu_m$, and the drug supply
-curvature $\nu_2$. Of these only $g$ carries a headline result, and it is
-reported as a range rather than as a number.
+\textcolor{red}{Every parameter is disciplined, either by a moment the model is asked to
+reproduce or by an estimate taken from outside it, and
+Tables~\ref{tab:eleven} and~\ref{tab:stdparams} name which for each. Three rest on a
+single study rather than on a literature: the treatment effect on recovery $g$, the
+recovery multiplier for SMI $\mu_m$ and the drug supply curvature $\nu_2$. Of these
+only $g$ carries a headline result, so it is reported as a range rather than as a
+number.}
 
 
 %======================================================================

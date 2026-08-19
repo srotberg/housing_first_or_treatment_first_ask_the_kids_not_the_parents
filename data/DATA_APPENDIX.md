@@ -62,9 +62,18 @@ rather than imposed. The stylized model is calibrated to the same 3.68 percent
 level, having previously targeted the 33.2 percent conversion, so the two models no
 longer carry inconsistent numbers for the same object.
 
-**ℵ, the flow value of being alive — a value of a statistical life of \$7.5m.**
-The range surveyed in Viscusi and Aldy (2003), converted to current dollars and
-expressed as a multiple of mean household income.
+**ℵ, the flow value of being alive — a value of a statistical life of \$9m, which is
+80 times mean household income.** The range surveyed in Viscusi and Aldy (2003),
+converted to current dollars, against a mean household income of \$113,000. The
+stylized model targets the same 80.
+
+*Correction.* The quantitative model's target was 7.5, the dollar figure in millions,
+compared against a model quantity that is a sum of V/MU_c and so carries the model's
+own numeraire. On the first iteration the model produced 392 times average labour
+income and the block was driving it at 7.5, which is a tenth of one multiple of
+average income. The target is now the multiple, 80, and the comparison is taken on
+the model's value of life over average labour income so that nothing in the block
+depends on what a unit of the model is worth.
 
 ---
 

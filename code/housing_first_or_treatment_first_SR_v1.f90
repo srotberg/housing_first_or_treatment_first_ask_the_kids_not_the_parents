@@ -1040,10 +1040,20 @@
         real(8) :: drug_share_gap_1=0
         real(8) :: child_use_gap_1=0
         real(8) :: income_floor_1=0
+        real(8) :: model_vsl_ratio_1=0
         logical :: use_experimenters_1=.FALSE.
         logical :: use_addicts_1=.FALSE.
         real(8), parameter :: participation_rate_data=0.0513
-        real(8), parameter :: vsl_data=7.5
+        ! THE VALUE OF A STATISTICAL LIFE, AS A MULTIPLE OF AVERAGE LABOUR
+        ! INCOME. It used to be 7.5, the figure in millions of dollars, compared
+        ! against a model quantity that is a sum of V/MU_c and so is denominated
+        ! in the model's own consumption units. On the first iteration the model
+        ! produced 152.96 in those units, 392 times average labour income, and
+        ! the block was driving it at 7.5, which is a tenth of one multiple of
+        ! average income. Nine million dollars against a mean household income of
+        ! $113,000 is eighty times it, which is the number the stylized model of
+        ! the paper's Section 3 already uses.
+        real(8), parameter :: vsl_data=80.d0
         real(8), parameter :: food_stamps_share_data=0.0042
         real(8), parameter :: voucher_coverage_data=0.266
         real(8), parameter :: unemployment_rate_data=0.0485
@@ -29323,18 +29333,40 @@
                     ! aleph, on the model implied value of a statistical life.
                     ! A larger aleph makes life worth more, so the VSL rises in
                     ! it and the update subtracts the gap.
-                    write(*,*) "model_value_of_life(1)=", model_value_of_life(1)
-                    ! A TRUST REGION. The adjuster is ten and the gap is measured
-                    ! in the same units as the parameter, so an early gap of 88
-                    ! moves it by 885 and any starting value below that lands on a
-                    ! clamp. Halving or one and a half times per iteration is
-                    ! still fast and cannot overshoot into a bound.
-                    value_of_life_step_1=value_of_life-value_of_life_adjuster*&
-                        (model_value_of_life(1)-vsl_data)
-                    value_of_life_step_1=max(min(value_of_life_step_1,&
-                        1.5d0*value_of_life),0.5d0*value_of_life)
-                    value_of_life=max(min(value_of_life_step_1,10.d0**(4)),10.d0**(-2))
-                    distance_value_of_life=abs(model_value_of_life(1)-vsl_data)
+                    ! THE MOMENT IS SCALE FREE, so the comparison is too. The
+                    ! model's value of life is a sum of V/MU_c and carries the
+                    ! numeraire with it; dividing by average labour income turns
+                    ! it into the multiple the data number is quoted as, and
+                    ! nothing in the block then depends on what a unit of the
+                    ! model is worth.
+                    if (model_average_labour_income(1)>0) then
+
+                        model_vsl_ratio_1=model_value_of_life(1)/&
+                            model_average_labour_income(1)
+
+                        write(*,*) "model_value_of_life(1)=", model_value_of_life(1),&
+                            " over average labour income =", model_vsl_ratio_1,&
+                            " target =", vsl_data
+
+                        ! A TRUST REGION. The adjuster is ten and the gap is measured
+                        ! in the same units as the parameter, so an early gap of 88
+                        ! moves it by 885 and any starting value below that lands on a
+                        ! clamp. Halving or one and a half times per iteration is
+                        ! still fast and cannot overshoot into a bound.
+                        value_of_life_step_1=value_of_life-value_of_life_adjuster*&
+                            (model_vsl_ratio_1-vsl_data)
+                        value_of_life_step_1=max(min(value_of_life_step_1,&
+                            1.5d0*value_of_life),0.5d0*value_of_life)
+                        value_of_life=max(min(value_of_life_step_1,10.d0**(4)),10.d0**(-2))
+                        distance_value_of_life=abs(model_vsl_ratio_1-vsl_data)
+
+                    else
+
+                        write(*,*) "aleph HELD: average labour income is zero, so the",&
+                            " value of life has no multiple to be quoted as"
+                        distance_value_of_life=1
+
+                    end if
                     write(*,*) "value_of_life=", value_of_life
                     write(*,*) "distance_value_of_life=", distance_value_of_life
 
