@@ -41,6 +41,9 @@ def numbers(base):
     out['vsl_t'] = f'{TARGET["vsl"]:.0f}'
     mb = stats(base)
     out['dshare_m'] = f'{100*mb["dshare"]:.2f}'
+    # the conversion from use to disorder is IMPLIED here rather than
+    # targeted, so it is quoted from the model and never typed into the text
+    out['prog_m'] = f'{100*mb["prog"]:.1f}'
     out['sudhl'] = f'{100*mb["sud_of_homeless"]:.0f}'
     out['r_base'] = f'{mb["r_use"]:.2f}'
     out['hshare_m'] = f'{100*mb["housing_share"]:.0f}'

@@ -94,22 +94,6 @@ from stylized import P, with_, aggregates, vsl
 # high enough to matter collapses homelessness and takes the moral hazard with
 # it. floor_test.py is that diagnostic and is kept.
 YMIN = 0.12
-# SIG IS THE DATA, NOT A DIAL. It is the dispersion of log permanent income, and
-# it is set to the dispersion of log labour earnings in the SCF 2022: households
-# aged 26 to 65 with positive wage income have an sd of log earnings of 1.036,
-# and 1.019 net of age effects, which the life cycle model carries separately in
-# eps(j). Netting off the transitory variance of 0.063 in Storesletten et al.
-# (2004) leaves 1.00, and that is the number both models use.
-#
-# On the grid below it delivers p90/p10 of 10.1 against 10.0 in the SCF, a
-# bottom half share of earnings of 17.3 per cent against 17.2, and a top tenth
-# share of 36.8 against 41.1. The old 0.75 gave 6.6, 19.3 and 29.2, so it was
-# too equal on all three at once. THE GRID IS DELIBERATELY NOT WIDENED with it:
-# at [0.12, 5.0] the truncation is what keeps the poorest household above the
-# point where the ex ante value of life goes negative, and widening to plus and
-# minus three standard deviations puts YMIN at 0.030 and breaks that. The
-# truncation costs dispersion, sd on the grid is 0.858 rather than 1.00, and the
-# distributional shares are what matter here rather than the sd itself.
 # SIG IS CALIBRATED, NOT SET. It is chosen so that the bottom half of the income
 # distribution holds the share of earnings it holds in the data: 17.2 percent, in
 # the SCF 2022, among households aged 26 to 65 with positive wage and salary
@@ -179,7 +163,8 @@ W = W * len(W)  # calibrate.py uses W unnormalised elsewhere; scale is irrelevan
 # at every point it runs 0.065 at lam = 60, 0.221 at 121 and 0.9998 at 250. The
 # population rate is bounded by participation and moves smoothly.
 TARGET = dict(part=0.0513, homeless=0.00399, sud=0.0368, vsl=80.0,
-              dshare=0.11, housing_share=0.30, hspend=0.268)
+              dshare=0.11, housing_share=0.30, hspend=0.268,
+              bot50=BOT50_TARGET)
 
 # ORDER MATTERS, and participation goes LAST. Every one of these parameters
 # moves participation: lam makes drugs riskier, h_hl changes what is at stake in
@@ -255,7 +240,8 @@ LABEL = {'part': 'drug participation rate',
          'homeless': 'homelessness rate',
          'dshare': 'drug spending / income among users',
          'vsl': 'value of a statistical life, annual incomes',
-         'prog': 'share of users who acquire a SUD'}
+         'prog': 'share of users who acquire a SUD',
+         'bot50': "bottom half's share of earnings"}
 
 
 def stats(par):
@@ -269,6 +255,10 @@ def stats(par):
     # share of 0.20 with users at 0.29 of average income.
     m = aggregates(par, YG, W)
     m['vsl'] = vsl(par)
+    # the grid is built from SIG, so this moment does not depend on par at
+    # all; it is reported here so it passes through the same convergence
+    # test and the same table generator as the moments that do.
+    m['bot50'] = _bottom_half_share(SIG)
     return m
 
 

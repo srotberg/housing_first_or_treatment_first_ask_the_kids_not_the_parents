@@ -788,8 +788,15 @@ estimates are put in current dollars. The pull of the first unit $b$ is matched
 to a drug participation rate of $5.13$ percent from NSDUH 2024 for
 respondents aged 26 and over, housing services on the street
 $h_1$ to a homelessness rate of $0.399$ percent from the 2023 HUD point in
-time (PIT) count, converted to households, and the SUD hazard $\lambda$ to the $33.2$ percent of users who
-acquire a SUD.
+time (PIT) count, and \textcolor{red}{the SUD hazard $\lambda$ to the $3.68$ percent
+of adults aged $26$ and over carrying a substance use disorder in NSDUH 2024. That
+is the same moment the quantitative model matches, and it replaces the $33.2$
+percent of users who acquire a SUD that this model used to target. The two
+published numbers do not agree with each other: a conversion of $33.2$ percent at a
+participation rate of $5.13$ percent implies an adult disorder rate near $1.7$
+percent rather than $3.68$. The level is the better measured of the two, so it is
+the one matched, and the conversion the model implies, @@prog_m@@ percent, is
+reported rather than imposed.}
 
 \begin{table}[!tb]
 \centering
@@ -1173,7 +1180,7 @@ n\,y\,\varepsilon(j)\,\rho_{d}^{\mathbf{1}\{d=1\}}\rho_{m}^{\mathbf{1}\{m=1\}}
  & j<J_{R},\ e=1 \quad\text{(employed)}\\[2pt]
 \psi\,\min\{y\,\varepsilon(j),\ \bar y\}
  & j<J_{R},\ e=2 \quad\text{(first year of a spell)}\\[2pt]
-\zeta_{DI}\,y\,\varepsilon(j) & j<J_{R},\ e=3,\ m=1 \quad\text{(non employed with SMI: disability)}\\[2pt]
+\zeta_{DI}\,y\,\varepsilon(j) & j<J_{R},\ e=3,\ m=1 \quad\text{(disability)}\\[2pt]
 0 & \text{otherwise,}
 \end{cases}
 \end{equation}
