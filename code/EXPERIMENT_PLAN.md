@@ -42,8 +42,9 @@ primary and report the utilitarian one alongside, and say which is which. A refe
 who is not told will assume the flattering one was chosen.
 
 **Output:** two optimal designs, one per policy. They will not be the same design.
-Treatment First excludes people, so it can afford to be more generous to those it
-serves, and it pays for testing, which pulls the other way. That is exactly why
+Treatment First excludes people, which lets it be more generous to those it serves,
+but it pays for testing and it keeps households alive longer to collect, both of which
+pull the other way. That is exactly why
 Step 2 has to be run at both.
 
 ---
@@ -69,16 +70,22 @@ and the paper should say so rather than pick the comparison that reads better.
   probability of receipt. This is what isolates conditionality *alone*, and it is the
   primary comparison, because it is the quantitative counterpart of the stylized
   model's ranking at equal generosity.
-* **Same cost.** Treatment First at the same design is a *cheaper* programme, since
-  it excludes people, and it also spends on testing. Holding the design fixed
-  therefore compares two programmes of different size. So run the cost matched
-  comparison as well, adjusting one generosity margin until outlays match.
+* **Same cost.** Two forces pull the conditional programme's outlay in opposite
+  directions, and which wins is a quantitative question rather than an obvious one.
+  Excluding people and paying only clean tenants makes it cheaper; but the extra
+  households Housing First puts into the disorder state die sooner and collect fewer
+  periods of voucher, which makes Housing First cheaper. In the stylized model the
+  second dominates and **Treatment First is very slightly the dearer** at every
+  generosity, before any testing cost. Do not assume the sign in the quantitative
+  model: measure it, and add the cost of testing on top, which pulls the same way.
+  Then run the cost matched comparison, adjusting one generosity margin until outlays
+  match.
 
-They cannot both be held fixed at once, which is why both are reported. And it is
-worth saying in the paper that "Treatment First is cheaper" is not a welfare argument
-for Treatment First: it is a different programme, and the whole point of the
-separation the paper insists on is that a conclusion resting on the budget is a
-different claim from one resting on an externality.
+They cannot both be held fixed at once, which is why both are reported. And whichever
+way the sign falls, a cost difference is not a welfare argument for either policy: the
+two are different programmes, and the whole point of the separation this paper insists
+on is that a conclusion resting on the budget is a different claim from one resting on
+an externality.
 
 **Output:** the effect of conditionality, holding generosity fixed, at two points,
 under both definitions of fixed.
