@@ -113,8 +113,25 @@ YMIN = 0.12
 BOT50_TARGET = 0.172
 
 
+# THE GRID IS 120 NODES, NOT 30, AND THE REASON IS THE DRUG DECISION.
+#
+# With the means test at half of median income the voucher no longer cushions the
+# poor, users are poorer, and the disorder hazard lambda has to be far larger to
+# convert the same fraction of them. At lambda near 450 the use decision is close
+# to bang-bang, and on a 30 node grid participation moved in lumps: at lambda=455
+# it ran 4.24 per cent at b=9.159e-4 and 13.83 at b=9.00e-4, so a 1.7 per cent
+# change in b moved participation by nine and a half points and the 5.13 per cent
+# target fell in the gap between two attainable values. The SUD rate did the same
+# thing, sitting at 3.0 per cent across lambda from 435 to 475 and jumping to 5.3,
+# with the 3.68 target in between. Neither moment was reachable and the sweep
+# walked lambda to its ceiling.
+#
+# The lumps are the discretisation, not the economics: the threshold in income is
+# bisected inside a node, but the housing rung a household picks is discrete, so
+# several nodes can flip together. Four times the nodes cuts each lump to a
+# quarter and the brackets have somewhere to land. It costs four times the solve.
 def _grid(sig):
-    yg = np.exp(np.linspace(np.log(YMIN), np.log(5.0), 30))
+    yg = np.exp(np.linspace(np.log(YMIN), np.log(5.0), 120))
     w = np.exp(-0.5 * ((np.log(yg) + 0.5 * sig**2) / sig)**2)
     return yg, w / w.sum()
 

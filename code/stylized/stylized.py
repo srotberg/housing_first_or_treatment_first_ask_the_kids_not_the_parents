@@ -424,7 +424,10 @@ class P:
     kV    = 0.50      # MEANS TEST, the share of MEDIAN income below which a
                       # household is eligible. This is the quantitative model's
                       # kappa_V and the paper uses the same symbol for both.
-    yV    = 0.2591    # the level kV implies, kV times median income. Eligible if
+    yV    = 0.2477    # the level kV implies, kV times median income. It moved from
+                      # 0.2591 when the income grid went from 30 nodes to 120: the
+                      # median of the discretised lognormal moves with the grid, and
+                      # calibrate.py asserts the two stay tied. Eligible if
                       # current income is below HALF OF
                       # MEDIAN INCOME, which is the HUD rule the quantitative
                       # model uses. It was one times the MEAN, which is a
