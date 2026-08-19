@@ -8,8 +8,19 @@ State as of 16 August, branch `claude/two-period-stylized-model-8ewnmt`, merged 
 ## 1. Standing instructions
 
 * **Merge to main and push, every time, without asking.**
-* **No hyphens** anywhere in the paper or the letters. The only agreed exceptions
-  are compound proper names: Stone-Geary, Cobb-Douglas.
+* **Hyphens only where they join a compound modifier.** The rule started as "no
+  hyphens anywhere" and was narrowed in the round of 19 August: hyphenate a
+  compound that works as a single adjective, and nothing else. So forward-looking
+  households, long-run effect, case-control study, low-income mothers, means-tested
+  assistance, point-in-time count, first-order condition, all-cause mortality,
+  willingness-to-pay estimates, and compound proper names, Stone-Geary and
+  Cobb-Douglas.
+  * **Not spelled out numerals.** twenty four months, fifty three parameters,
+    twenty five to eighty five, thirty one percent. A number word is a number, not
+    a compound modifier, so it takes no hyphen here even though many house styles
+    hyphenate 21 to 99. Every one of these was marked back on 19 August.
+  * **Not when the phrase is a noun.** in the long run, the steady state, the means
+    test, of first order, over the life cycle, different in kind.
 * Comment rounds work like this: the reader sends an annotated PDF, you **strip
   the red from the reviewed part**, apply the comments, and mark **only this
   round's changes** in red. Then rebuild, push, and send the PDF back.
