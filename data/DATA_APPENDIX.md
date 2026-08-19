@@ -578,6 +578,10 @@ This is the **extensive** margin, whether a household uses at all. The intensive
 margin, how much a user buys once using, is a separate elasticity and the model
 produces it separately.
 
+Both margins are now validation moments. The table in the validation section carries
+the participation elasticity at −0.63 and the intensive margin at −0.80, the latter
+from Olmstead et al. (2015); the model produces each and neither is targeted.
+
 The data side of both margins is now settled. Participation estimates run from about
 −0.3 to −0.9: Saffer and Chaloupka (1999) and Grossman and Chaloupka (1998), whose
 long run decomposition has a permanent ten percent price fall raising the number of
