@@ -1,67 +1,92 @@
 """
-The (beta, theta) frontier: can this model carry a large drug spending share AND
-a mortality channel that reverses the income gradient on its own?
+The (beta, theta) frontier, scanned rather than solved.
 
-The two are in tension. Raising theta makes the drug worth more, which buys the
-spending share and weakens the deterrent, until past a point the users are the
-rich and the result the model exists to produce runs backwards. Raising beta
-makes the future matter more, which strengthens the deterrent and, at a fixed
-theta, cuts the spending share because a household that fears the consequence
-more buys less of the thing that causes it.
+THE QUESTION. The stylized model has to do two things at once and they pull
+against each other. It has to put a serious amount of drug spending in the hands
+of users, because a model where users buy a hair above nothing is not a model of
+drug use. And the mortality channel has to reverse the income gradient BY ITSELF
+at its calibrated strength, because that reversal is the mechanism the paper
+rests on: what makes the poor the users is that a SUD destroys a continuation
+value, and the continuation value rises with permanent income.
 
-So neither dial alone does it, and the question is whether the pair does: at a
-higher beta, is there a theta that puts the spending share back at 20 per cent
-while the mortality channel still reverses the gradient by itself?
+Raising theta makes the drug worth more, which buys the spending share and
+weakens the deterrent, until past a point the users are the rich and the result
+runs backwards. Raising beta makes the future matter more, which strengthens the
+deterrent and, at a fixed theta, CUTS the spending share, because a household
+that fears the consequence more buys less of what causes it. So the two dials do
+not substitute for each other and the question is what the pair can reach.
 
-For each beta this solves theta on the spending share, refitting aleph on the
-value of a statistical life and b on participation at every trial, and then reads
-off what the mortality channel does alone at full strength.
+WHAT IS SCREENED. A point is admissible only if
 
-Run:  python3 frontier.py
+    r_mort  < 1     mortality alone at full strength reverses the gradient
+    r_unemp > 1     the resource channel alone does NOT, which is the contrast
+    r_use   < 1     users are poorer than average at the full calibration
+    minv1   > 0     no household prefers death: the VSL pins the discounted
+                    continuation, so a larger beta buys a SMALLER aleph, and
+                    aleph is the part of the continuation that does not shrink
+                    with consumption. At beta = 1 this already fails.
+
+and among the admissible points the best is the one with the LARGEST drug
+spending share, since that is the moment being traded away.
+
+WHY A SCAN AND NOT A SOLVE. Solving theta on a spending share target and then
+reading the deterrent off answers one target at a time and hides the shape. The
+share is bimodal in theta and the admissible window is narrow, so the useful
+object is the whole curve: it shows where the branch jumps, how much share is
+available just below the jump, and how far the window moves when beta does.
+
+Run:  python3 frontier.py <beta_ann> <th> [<th> ...]
+      One JSON file per point, so points can be split across processes.
 """
 import json
+import sys
 import numpy as np
-from stylized import P, with_
-from calibrate import stats, bracket, _b_for, TARGET
+from stylized import P, with_, value1
+from calibrate import stats, bracket, _b_for, YG, calibrate
 from run import _scaled
 
 BASE = with_(P(), **json.load(open('calibrated.json')))
-TH_LO, TH_HI = 0.150, 0.320
 
 
-def refit(par):
-    """aleph on the VSL and b on participation, which is what any theta has to
-    be read at: both move when theta does."""
-    q = with_(par, aleph=bracket(par, 'aleph', 'vsl', 0.05, 40.0, iters=26))
-    return with_(q, b=_b_for(q, iters=24))
+def at(beta_ann, th, sweeps=2):
+    """
+    theta with the WHOLE model recalibrated around it.
 
-
-def at(beta_ann, th):
+    Refitting aleph and b only is not enough, and the first version of this scan
+    was wrong for that reason. lambda is bracketed on the adult SUD rate, and at
+    a lower theta households use less, so a stale lambda leaves the disorder rate
+    at half a per cent against a target of 3.68 and the drug spending share is
+    then read off a model that is not calibrated. gamma and the street move too.
+    Every point here is therefore a full calibration at a fixed theta, which is
+    what makes the points comparable with each other and with the baseline.
+    """
     q = with_(BASE, beta_ann=beta_ann, beta=beta_ann**30, R=1.0/beta_ann**30,
               th=th)
-    return refit(q)
-
-
-def solve_th(beta_ann, target=0.20, iters=17):
-    lo, hi = TH_LO, TH_HI
-    for _ in range(iters):
-        mid = 0.5 * (lo + hi)
-        if stats(at(beta_ann, mid))['dshare'] > target:
-            hi = mid
-        else:
-            lo = mid
-    return 0.5 * (lo + hi)
+    return calibrate(q, sweeps=sweeps, verbose=False, fix=('th',),
+                     checkpoint=f'checkpoint_front_{beta_ann}_{th:.3f}.json')
 
 
 if __name__ == '__main__':
-    print(f'{"beta_ann":>9}{"theta":>8}{"aleph":>8}{"dshare":>9}{"part":>8}'
-          f'{"r_use":>8}{"r_mort":>8}{"r_unemp":>9}', flush=True)
-    for ba in (0.9950, 0.9960, 0.9970, 0.9975, 0.9980):
-        th = solve_th(ba)
-        q = at(ba, th)
+    ba = float(sys.argv[1])
+    ths = [float(x) for x in sys.argv[2:]]
+    rows = []
+    print(f'beta_ann = {ba}', flush=True)
+    print(f'{"theta":>7}{"aleph":>8}{"dshare":>9}{"part":>8}{"sud":>7}'
+          f'{"r_use":>8}{"r_mort":>8}{"r_unemp":>9}{"minv1":>8}  ok', flush=True)
+    for th in ths:
+        q = at(ba, float(th))
         m = stats(q)
         rm = stats(_scaled(q, 'mortality', 1.0))['r_use']
         ru = stats(_scaled(q, 'unemployment', 1.0))['r_use']
-        print(f'{ba:9.4f}{th:8.4f}{q.aleph:8.3f}{100*m["dshare"]:8.2f}%'
-              f'{100*m["part"]:7.2f}%{m["r_use"]:8.2f}{rm:8.2f}{ru:9.2f}',
+        mv = float(min(value1(q, y, 'HF') for y in YG))
+        ok = bool(rm < 1.0 and ru > 1.0 and m['r_use'] < 1.0 and mv > 0.0)
+        rows.append(dict(beta_ann=ba, th=float(th), aleph=q.aleph, b=q.b,
+                         dshare=m['dshare'], part=m['part'], sud=m['sud'],
+                         r_use=m['r_use'], r_mort=rm, r_unemp=ru, minv1=mv,
+                         ok=ok))
+        print(f'{th:7.3f}{q.aleph:8.3f}{100*m["dshare"]:8.2f}%'
+              f'{100*m["part"]:7.2f}%{100*m["sud"]:6.2f}%{m["r_use"]:8.2f}'
+              f'{rm:8.2f}{ru:9.2f}{mv:8.2f}  {"YES" if ok else "no"}',
               flush=True)
+        json.dump(rows[-1], open(f'front_{ba}_{th:.3f}.json', 'w'),
+                  indent=1)
