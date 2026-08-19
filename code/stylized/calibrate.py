@@ -58,6 +58,7 @@ corner. Each parameter is therefore bracketed on its own monotone target in
 sequence, which cannot leave the band.
 """
 
+import math
 import numpy as np
 from stylized import P, with_, aggregates, vsl
 
@@ -130,10 +131,53 @@ BOT50_TARGET = 0.172
 # bisected inside a node, but the housing rung a household picks is discrete, so
 # several nodes can flip together. Four times the nodes cuts each lump to a
 # quarter and the brackets have somewhere to land. It costs four times the solve.
-def _grid(sig):
-    yg = np.exp(np.linspace(np.log(YMIN), np.log(5.0), 120))
-    w = np.exp(-0.5 * ((np.log(yg) + 0.5 * sig**2) / sig)**2)
-    return yg, w / w.sum()
+# AND THE NODES ARE PLACED BY QUANTILE, NOT BY LOG INCOME, with extra density at
+# the bottom. Everything the model is about happens there: who is priced out of
+# housing, who uses, who acquires the disorder. At kappa = 2 sixty of the hundred
+# and twenty nodes sit in the bottom quarter of the distribution and eighty four
+# in the bottom half, against thirty and sixty under an even spacing.
+#
+# Two things fall out of doing it this way rather than by truncating log income at
+# five times the mean, which is what this used to do.
+#
+# The mean is exactly one. Each node is the lognormal quantile at the mass midpoint
+# of its interval and each weight is that interval's mass, so the discretisation
+# integrates to the distribution rather than to a truncation of it.
+#
+# And the median comes out where the data put it. The old grid threw away the top
+# tail, so sigma had to be 1.1854 to leave the bottom half with 17.2 per cent of
+# earnings, and that put the median at 0.518 of the mean. Here sigma is 0.9633 and
+# the median is 0.636 of the mean, against roughly 0.65 in United States household
+# income. That matters for the voucher: the means test is half of median income, so
+# a distribution that is too unequal makes the test tighter than HUD's rule is.
+def _ndtr(x):
+    return 0.5 * (1.0 + math.erf(x / math.sqrt(2.0)))
+
+
+def _ndtri(p, lo=-12.0, hi=12.0, iters=80):
+    """The normal quantile by bisection. scipy is not installed here."""
+    for _ in range(iters):
+        mid = 0.5 * (lo + hi)
+        if _ndtr(mid) < p:
+            lo = mid
+        else:
+            hi = mid
+    return 0.5 * (lo + hi)
+
+
+GRID_N = 120
+GRID_KAPPA = 2.0      # above one packs the nodes toward the bottom
+GRID_QLO = 2e-3       # the lowest node is the two tenths of a percentile
+
+
+def _grid(sig, n=GRID_N, kappa=GRID_KAPPA, q_lo=GRID_QLO):
+    u = np.arange(n + 1) / n
+    p = q_lo + (1.0 - q_lo) * u**kappa
+    w = np.diff(p)
+    pm = 0.5 * (p[:-1] + p[1:])
+    mu = -0.5 * sig * sig
+    yg = np.array([math.exp(mu + sig * _ndtri(q)) for q in pm])
+    return yg / float((w * yg).sum()), w
 
 
 def _bottom_half_share(sig):
@@ -169,7 +213,20 @@ SIG = _solve_sig()
 # THE MEANS TEST IS HALF OF MEDIAN INCOME, the HUD rule the quantitative model
 # uses, and the median moves with SIG. Tying the two together here means the
 # voucher rule cannot drift away from the income distribution it is applied to.
-YV_HALF_MEDIAN = 0.5 * float(np.exp(-0.5 * SIG**2))
+def _median_of(yg, w):
+    """The median of the discretised distribution, interpolated inside the node
+    the median falls in, so it does not jump from node to node."""
+    c = 0.0
+    for i, (yi, wi) in enumerate(zip(yg, w)):
+        if c + wi >= 0.5:
+            lo = yg[i - 1] if i else yi
+            frac = (0.5 - c) / wi
+            return float(lo + frac * (yi - lo))
+        c += wi
+    return float(yg[-1])
+
+
+YV_HALF_MEDIAN = 0.5 * _median_of(*_grid(SIG))
 assert abs(P().yV - YV_HALF_MEDIAN) < 5e-4, (
     f'yV is {P().yV} but half of median income at SIG={SIG:.4f} is '
     f'{YV_HALF_MEDIAN:.4f}; set yV in stylized.py to match')
