@@ -1112,29 +1112,38 @@ earnings, so $\delta_d$ has to be calibrated inside the model against something 
 literature does measure. The housing to earnings link \emph{is} measured directly,
 so $\delta_h$ does not.
 
-What the model then produces, and does not target, is how much likelier the child of
-a homeless parent is to be homeless itself: \new{2.02} times. The literature cannot
-deliver that number directly. Flatau et al.\ (2013) is the closest measurement, and
-finds that $43$ percent of non-Indigenous homelessness assistance clients in
-Australia had parents who had themselves experienced homelessness. It is not this
-model's counterpart, because it conditions on receiving assistance over a lifetime
-while the model's homeless are the households literally without shelter at a point in
-time. Turning it into a ratio needs the share of the population whose parents were
-ever homeless, which the report does not give, and the implied ratio falls as that
-share rises: about $2.3$ if a quarter of parents were ever homeless, $4.3$ at a
-sixth, $14$ at a twentieth.
+\textcolor{red}{What the model then produces, and does not target, is how much likelier the child of
+a homeless parent is to be homeless itself: \new{2.02} times. The comparison the
+literature allows is indirect but it can be made, and it can be made twice. Flatau et
+al.\ (2013) report that $43$ percent of non-Indigenous homelessness assistance clients
+in Australia had parents who had themselves experienced homelessness, and $69$ percent
+of Indigenous clients. Those are conditional shares rather than ratios. Writing $p$ for
+the share of the relevant population whose parents were ever homeless, each implies a
+risk ratio of $\tfrac{c}{1-c}\cdot\tfrac{1-p}{p}$ for a share $c$, so each is
+identified once its own $p$ is known.}
 
-That spread is not a range of plausible values, and it is worth saying why, because
-the model itself rules out most of it. Reproducing a ratio of $4.3$ inside this model
-takes an earnings penalty of $64$ percent, and a ratio of $14$ takes $99$ percent: the
-child would have to lose almost the whole of its lifetime income. No estimate in the
-earnings literature is remotely that large. What bounds the transmission ratio here is
-therefore not a judgement about homelessness but the measured effect of housing on
-earnings, and once $\delta_h$ is held to what Chetty et al.\ measure, the ratio has
-to sit near \new{2.02}. That it also matches Flatau's number at a parental
-homelessness rate of about a quarter, which is the right order for a lifetime measure
-in a population of assistance recipients, is a check the model passes rather than an
-assumption it makes.
+\textcolor{red}{Both bases are measured, and they have to be taken separately, because the group with
+the higher share also has the higher base. The Australian Bureau of Statistics General
+Social Survey of 2010, a random sample of $15{,}028$ households, put lifetime
+homelessness among all Australian adults at $13$ percent on the broad definition
+Flatau's clients are drawn under; the National Aboriginal and Torres Strait Islander
+Social Survey of 2014--15 put the Indigenous figure at just over a quarter. Since
+Indigenous Australians are about three percent of adults, the two together imply a non
+Indigenous rate of $12.6$ percent. The non-Indigenous share and base give a
+transmission ratio of $5.3$; the Indigenous share and base give $6.3$. Two groups whose
+conditional shares differ by twenty six points and whose base rates differ by a factor
+of two land within one unit of each other, which is the check that matters here, since
+the inversion would otherwise be hostage to a base rate chosen rather than measured.}
+
+\textcolor{red}{The model produces \new{2.02}, so it delivers roughly a third of the transmission the
+data imply, and that is worth stating plainly rather than presenting as a match.
+Reaching a ratio of $5$ inside the model takes an earnings penalty above $70$ percent,
+more than twice anything the earnings literature measures, so no credible $\delta_h$
+closes the gap. It says instead that income is not the only thing a homeless childhood
+transmits, which is the same limitation the disorder penalty carries and is recorded
+there too. The consequence for the paper is conservative: the intergenerational
+externality running through housing is understated here, and the results below survive
+that understatement rather than depending on its absence.}
 
 The two penalties also do different work: both policies drive
 homelessness to zero at universal cover, so $\delta_h$ prices the programme
@@ -2736,6 +2745,8 @@ executive order.
 \item AFCARS. \emph{Adoption and Foster Care Analysis and Reporting System}, US Department of Health and Human Services, Administration for Children and Families, FY2017 and FY2025 releases.
 \item Altonji, J., F. Hayashi and L. Kotlikoff (1997). ``Parental Altruism and Inter Vivos Transfers: Theory and Evidence.'' \emph{Journal of Political Economy} 105(6), 1121--66.
 \item Attanasio, O. P. and G. Weber (2010). ``Consumption and Saving: Models of Intertemporal Allocation and Their Implications for Public Policy.'' \emph{Journal of Economic Literature} 48(3), 693--751.
+\item Australian Bureau of Statistics (2016). ``National Aboriginal and Torres Strait Islander Social Survey, 2014--15.'' Cat.\ no.\ 4714.0.
+\item Australian Bureau of Statistics (2012). ``General Social Survey: Summary Results, Australia, 2010.'' Cat.\ no.\ 4159.0.
 \item Aubry, T. et al.\ (2016). ``A Randomized Controlled Trial of the Effectiveness of Housing First in a Small Canadian City.'' \emph{BMC Public Health} 19(1), 274--81.
 \item Baggett, T. et al.\ (2013). ``Mortality among homeless adults in Boston.'' \emph{JAMA Internal Medicine} 173(3), 189--95.
 \item Becker, G. S. and K. M. Murphy (1988). ``A Theory of Rational Addiction.'' \emph{Journal of Political Economy} 96(4), 675--700.
@@ -2768,6 +2779,7 @@ executive order.
 \item Laibson, D. (1997). ``Golden Eggs and Hyperbolic Discounting.'' \emph{Quarterly Journal of Economics} 112(2), 443--77.
 \item Larimer, M. E. et al.\ (2009). ``Health Care and Public Service Use and Costs Before and After Provision of Housing for Chronically Homeless Persons With Severe Alcohol Problems.'' \emph{JAMA} 301(13), 1349--57.
 \item Larney, S. et al.\ (2020). ``All-cause and cause-specific mortality among people using extramedical opioids: a systematic review and meta-analysis.'' \emph{JAMA Psychiatry} 77(5), 493--502.
+\item Link, B. G., E. Susser, A. Stueve, J. Phelan, R. E. Moore and E. Struening (1994). ``Lifetime and Five-Year Prevalence of Homelessness in the United States.'' \emph{American Journal of Public Health} 84(12), 1907--1912.
 \item Loubi\`ere, S. et al.\ (2020). ``Europeans' willingness to pay for ending homelessness: A contingent valuation study.'' \emph{Social Science \& Medicine} 247, 112802.
 \item Lundborg, P. and B. Lindgren (2002). ``Do they know what they are doing? Risk perceptions and smoking behaviour among Swedish teenagers.'' \emph{Journal of Risk and Uncertainty} 25(3), 241--63.
 \item Mace, C., E. Patel and N. Seegert (2020). ``Marijuana Taxation and Imperfect Competition.'' \emph{National Tax Journal} 73(2), 545--92.
@@ -2784,6 +2796,7 @@ executive order.
 \item Restuccia, D. and C. Urrutia (2004). ``Intergenerational Persistence of Earnings: The Role of Early and College Education.'' \emph{American Economic Review} 94(5), 1354--78.
 \item Saffer, H. and F. Chaloupka (1999). ``The demand for illicit drugs.'' \emph{Economic Inquiry} 37(3), 401--11.
 \item Storesletten, K., C. I. Telmer and A. Yaron (2004). ``Consumption and Risk Sharing over the Life Cycle.'' \emph{Journal of Monetary Economics} 51(3), 609--33.
+\item Toro, P. A., C. J. Tompsett, S. Lombardo, P. Philippot, H. Nachtergael, B. Galand, N. Schlienz, N. Stammel, Y. Yabar, M. Blume, L. MacKay and K. Harvey (2007). ``Homelessness in Europe and the United States: A Comparison of Prevalence and Public Opinion.'' \emph{Journal of Social Issues} 63(3), 505--524.
 \item Tsemberis, S., L. Gulcur and M. Nakae (2004). ``Housing First, Consumer Choice, and Harm Reduction for Homeless Individuals With a Dual Diagnosis.'' \emph{American Journal of Public Health} 94(4), 651--56.
 \item Vaillant, G. (1995). \emph{The Natural History of Alcoholism Revisited}. Harvard University Press.
 \item van Ours, J. C. (1995). ``The Price Elasticity of Hard Drugs: The Case of Opium in the Dutch East Indies, 1923--1938.'' \emph{Journal of Political Economy} 103(2), 261--79.

@@ -161,43 +161,58 @@ does not.
 parent is 2.02 times as likely to be homeless itself, reported as a validation moment
 rather than a target.
 
-*The data counterpart, and how it is recovered.* Flatau, Conroy, Spooner, Eardley and
-Forbes (2013), AHURI Final Report 200, report that 43.0 percent of non-Indigenous
-homelessness-assistance clients in Australia had parents who had themselves experienced
-homelessness, and 69.0 percent of Indigenous clients. Those are conditional shares, not
-ratios. Writing c for the share and p for the population share whose parents were ever
-homeless, the implied risk ratio is R = [c/(1−c)]·[(1−p)/p].
+*The data counterpart, and why the obvious comparison is the wrong one.* Flatau,
+Conroy, Spooner, Eardley and Forbes (2013), AHURI Final Report 200, report that 43.0
+percent of non-Indigenous homelessness-assistance clients in Australia had parents who
+had themselves experienced homelessness, and 69.0 percent of Indigenous clients. Those
+are conditional shares, not ratios. Writing c for the share and p for the population
+share whose parents were ever homeless, R = [c/(1−c)]·[(1−p)/p].
 
-*Each group needs its own base, and this is not a detail.* The group with the higher
-conditional share also has the far higher base rate, so applying an all-population base
-to the Indigenous share would badly overstate the ratio. Both bases are measured:
+Each group needs its own base, because the group with the higher share also has the
+higher base:
 
 - **All Australian adults: 13 percent** ever homeless in their lifetime. ABS General
-  Social Survey 2010 (cat. 4159.0), random sample of 15,028 households, broad
-  ("cultural") definition — the same concept Flatau's clients are drawn under.
-- **Indigenous Australians: just over a quarter** had ever been without a permanent
-  place to live. National Aboriginal and Torres Strait Islander Social Survey 2014–15.
-- **Non-Indigenous: 12.6 percent**, backed out from the two above given that Indigenous
-  Australians are about 3.2 percent of adults.
+  Social Survey 2010 (cat. 4159.0), 15,028 households, broad ("cultural") definition —
+  the concept Flatau's clients are drawn under.
+- **Indigenous Australians: just over a quarter** ever without a permanent place to
+  live. NATSISS 2014–15 (cat. 4714.0).
+- **Non-Indigenous: 12.6 percent**, backed out given Indigenous Australians are about
+  3.2 percent of adults.
 
-| group | share with homeless parents | lifetime base | implied ratio R | δ_h the model needs |
-|---|---|---|---|---|
-| non-Indigenous | 43.0% | 12.6% | **5.25** | 0.73 |
-| Indigenous | 69.0% | 26% | **6.33** | 0.81 |
-| model at Chetty's δ_h = 0.31 | — | — | **2.02** | — |
+| group | share | base | implied R |
+|---|---|---|---|
+| non-Indigenous | 43.0% | 12.6% | 5.25 |
+| Indigenous | 69.0% | 26% | 6.33 |
 
-*The two groups agree, which is the check that matters.* Their conditional shares differ
-by 26 points and their base rates by a factor of two, and the implied ratios land within
-one unit of each other. The inversion is therefore not hostage to a base rate chosen
-rather than measured, which is the obvious way this calculation could have gone wrong.
+The two agree within one unit despite shares 26 points apart and bases differing by a
+factor of two, so the arithmetic is not hostage to a chosen base rate.
 
-*The model understates this channel, and that is the honest reading.* The data imply a
-ratio of 5 to 6 and the model delivers 2.02, about a third. Closing the gap takes an
-earnings penalty above 70 percent, more than twice anything the earnings literature
-measures, so no credible δ_h reaches it. The gap says income is not the only thing a
-homeless childhood transmits — the same limitation δ_d carries. The consequence is
-conservative: the housing externality is understated, and the paper's results survive
-that rather than depending on its absence.
+*But this is not the object the model produces, and the difference is selection.* A
+parent who was homeless was already poor before anything was transmitted. A ratio taken
+against the whole population therefore carries selection AND transmission. The model
+computes transmission alone: it takes a child, cuts its income by δ_h, and asks how much
+likelier it is to be homeless, holding the distribution it is drawn from fixed. The
+matching empirical object would hold poverty fixed as well — children of homeless
+parents against children of otherwise similar poor households, not against everyone.
+
+Among a population already receiving housing assistance the share with a homeless parent
+is far above a quarter. At a base of one half the same formula gives R = 2.23, against
+the model's 2.02. No published figure gives that base for either country, so the model's
+ratio can be **bounded, not matched**:
+
+| comparison | base | implied R |
+|---|---|---|
+| against the whole population (selection + transmission) | 0.13 / 0.26 | 5.3 – 6.3 |
+| against an already-assisted population (transmission) | ≈ 0.50 | ≈ 2.2 |
+| model at Chetty's δ_h = 0.31 | — | **2.02** |
+
+What can be said is that δ_h is not asked to carry more than the earnings evidence
+supports, and that if any of the observed gradient is selection rather than transmission
+— which it must partly be — the model's value is the conservative one.
+
+*Correction.* An earlier version of this appendix read the 5–6 figure as the model's
+target and concluded the model understated the channel by two thirds. That compared a
+selection-confounded data ratio with a pure income effect and was wrong.
 
 An earlier version recorded δ_h as calibrated to a ratio of 2. That target had no
 source; it was chosen because it reproduced Chetty. The dependence has been inverted

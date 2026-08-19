@@ -1113,37 +1113,40 @@ literature does measure. The housing to earnings link \emph{is} measured directl
 so $\delta_h$ does not.
 
 \textcolor{red}{What the model then produces, and does not target, is how much likelier the child of
-a homeless parent is to be homeless itself: @@ratio_h@@ times. The comparison the
-literature allows is indirect but it can be made, and it can be made twice. Flatau et
+a homeless parent is to be homeless itself: @@ratio_h@@ times. Comparing that with the
+data takes some care, because the obvious comparison is not the right one. Flatau et
 al.\ (2013) report that $43$ percent of non-Indigenous homelessness assistance clients
 in Australia had parents who had themselves experienced homelessness, and $69$ percent
-of Indigenous clients. Those are conditional shares rather than ratios. Writing $p$ for
-the share of the relevant population whose parents were ever homeless, each implies a
-risk ratio of $\tfrac{c}{1-c}\cdot\tfrac{1-p}{p}$ for a share $c$, so each is
-identified once its own $p$ is known.}
+of Indigenous clients. Those are conditional shares. Writing $c$ for a share and $p$
+for the share of the relevant population whose parents were ever homeless, the implied
+risk ratio is $\tfrac{c}{1-c}\cdot\tfrac{1-p}{p}$.}
 
-\textcolor{red}{Both bases are measured, and they have to be taken separately, because the group with
-the higher share also has the higher base. The Australian Bureau of Statistics General
-Social Survey of 2010, a random sample of $15{,}028$ households, put lifetime
-homelessness among all Australian adults at $13$ percent on the broad definition
-Flatau's clients are drawn under; the National Aboriginal and Torres Strait Islander
-Social Survey of 2014--15 put the Indigenous figure at just over a quarter. Since
-Indigenous Australians are about three percent of adults, the two together imply a non
-Indigenous rate of $12.6$ percent. The non-Indigenous share and base give a
-transmission ratio of $5.3$; the Indigenous share and base give $6.3$. Two groups whose
-conditional shares differ by twenty six points and whose base rates differ by a factor
-of two land within one unit of each other, which is the check that matters here, since
-the inversion would otherwise be hostage to a base rate chosen rather than measured.}
+\textcolor{red}{Against a general population base those shares imply a large ratio. Lifetime
+homelessness runs at $13$ percent among all Australian adults (ABS General Social
+Survey, 2010) and just over a quarter among Indigenous Australians (National Aboriginal
+and Torres Strait Islander Social Survey, 2014--15), which puts the non-Indigenous rate
+near $12.6$ percent. Those give ratios of $5.3$ and $6.3$ respectively, and the
+agreement between two groups whose shares differ by twenty six points and whose bases
+differ by a factor of two is reassuring about the arithmetic.}
 
-\textcolor{red}{The model produces @@ratio_h@@, so it delivers roughly a third of the transmission the
-data imply, and that is worth stating plainly rather than presenting as a match.
-Reaching a ratio of $5$ inside the model takes an earnings penalty above $70$ percent,
-more than twice anything the earnings literature measures, so no credible $\delta_h$
-closes the gap. It says instead that income is not the only thing a homeless childhood
-transmits, which is the same limitation the disorder penalty carries and is recorded
-there too. The consequence for the paper is conservative: the intergenerational
-externality running through housing is understated here, and the results below survive
-that understatement rather than depending on its absence.}
+\textcolor{red}{It is not, however, the object the model produces, and the difference is selection. A
+parent who was homeless was already poor before anything was transmitted, so a ratio
+taken against the whole population carries both that selection and the transmission
+itself. What the model computes is the transmission alone: it takes a child, cuts its
+income by $\delta_h$, and asks how much likelier it is to be homeless, holding the
+distribution it is drawn from fixed. The right empirical counterpart would hold poverty
+fixed too, comparing the children of homeless parents with the children of otherwise
+similar poor households rather than with everyone. Among a population already receiving
+housing assistance the share with a homeless parent is far above the population's
+quarter, and at a base near a half the same arithmetic returns a ratio near $2.2$.}
+
+\textcolor{red}{So $5$ to $6$ is an upper bound that credits the income penalty with the selection as
+well as the transmission, and @@ratio_h@@ is what the transmission alone delivers. The
+poverty held fixed comparison that would separate them is not published for either
+country, so the model's ratio can be bounded but not matched. What can be said is that
+$\delta_h$ is not being asked to carry more than the earnings evidence supports, and
+that if any of the observed gradient is selection rather than transmission, which it
+must partly be, the model's value is the conservative one.}
 
 The two penalties also do different work: both policies drive
 homelessness to zero at universal cover, so $\delta_h$ prices the programme
