@@ -15,7 +15,8 @@ import numpy as np
 from stylized import P, with_, value1
 from calibrate import YG, W, stats, bracket, TARGET
 from welfare import cev, v1_pop
-from children import child_grid, shifted, DEL_D, RATIO_TARGET, verdict
+from children import (child_grid, shifted, DEL_D, DEL_H, RATIO_TARGET,
+                      RATIO_H_TARGET, verdict)
 from run import _scaled
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -100,6 +101,8 @@ def numbers(base):
     out['ratio'] = f'{ratio:.1f}'
     out['del_d'] = f'{DEL_D:.2f}'
     out['ratio_t'] = f'{RATIO_TARGET:.0f}'
+    out['del_h'] = f'{DEL_H:.2f}'
+    out['ratio_h'] = f'{RATIO_H_TARGET:.0f}'
     # THE SMALLEST GAIN OVER LOSS ANYWHERE IN PANEL A that is not the zero
     # penalty, so the note can say the ranking survives every penalty it shows
     # WITHOUT the reader having to take it on trust, and so the claim breaks

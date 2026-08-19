@@ -149,9 +149,28 @@ target. The model counterpart contracts the newborn productivity distribution
 conditional on the parent's disorder against the disorder rate at each productivity
 node, at the same parental housing status, so the comparison isolates the disorder.
 
-**δ_h, the child's earnings penalty for homelessness — 31 percent.** Chetty et al.
-(2016): children who moved to a lower poverty neighbourhood before age thirteen
-earned 31 percent more as adults.
+**δ_h, the child's earnings penalty for homelessness — a child homelessness ratio
+of 2.** Calibrated inside the model, the same way δ_d is, so that both
+intergenerational channels are matched to the transmission of their own condition
+rather than one matched and the other lifted from a coefficient. The target is the
+ratio of the child's own homelessness rate when the parent was homeless to when the
+parent was not.
+
+The evidence behind the ratio is thinner than behind δ_d's. There is no homelessness
+counterpart to McGovern et al.'s two to four times. Published estimates run from a 40
+percent increase in the odds of adult homelessness after a single childhood episode
+(UCSF Benioff Homelessness and Housing Initiative) to the much larger ratio implied by
+the 34 percent of homeless parents in Minnesota who were themselves homeless as
+children, which needs a childhood base rate the source does not report. Two sits
+inside that range.
+
+What makes it more than a guess is a coincidence of two unrelated measurements. Chetty
+et al. (2016) find that children who moved to a lower poverty neighbourhood before age
+thirteen earned 31 percent more as adults, which is where δ_h used to be set directly;
+solving δ_h on a transmission ratio of 2 gives 0.31. An earnings estimate and a
+transmission ratio pin the same parameter. Internalising δ_h therefore validates the
+value rather than changing it, and gives it a model counterpart to report against a
+target, which the externally set version did not have.
 
 The stylized model is calibrated to the same ratio of 3 and needs δ_d = 0.45 to reach
 it. That is a larger penalty than the earnings literature measures directly, 24

@@ -1073,10 +1073,21 @@ model the only channel from parent to child is income, so income has to carry
 whatever the childhood does. If part of the transmission runs through something else,
 through the home rather than the budget, then $\delta_d$ is standing in for more than
 earnings and should be read as the reduced form of the whole childhood rather than as
-an estimate of a wage effect. The homelessness penalty $\delta_h$ is set
-to $31$ percent, directly from Chetty et al. (2016), who find
-that children who moved to a low poverty neighbourhood before age 13 went on to
-earn $31$ percent more as adults. The two penalties also do different work: both policies drive
+an estimate of a wage effect. \textcolor{red}{The homelessness penalty $\delta_h$ is calibrated the
+same way, on the transmission of its own condition: it is chosen so that the child
+of a parent who was homeless is @@ratio_h@@ times as likely to be homeless itself,
+which takes $\delta_h = @@del_h@@$. The evidence behind that ratio is thinner than
+behind the SUD one, since there is no homelessness counterpart to the two to four
+times of McGovern et al.\ (2023): published estimates run from a $40$ percent
+increase in the odds of adult homelessness after a single childhood episode up to
+the much larger ratio implied by the third of homeless parents who were themselves
+homeless as children. What makes the resulting $\delta_h$ more than a guess is that
+it is corroborated by a number measured a different way. Chetty et al.\ (2016) find
+that children who moved to a low poverty neighbourhood before age $13$ went on to
+earn $31$ percent more as adults, and $\delta_h$ solves to that same figure. An
+earnings estimate and a transmission ratio, from unrelated data, pin the same
+parameter, and the earlier version of this note used the earnings estimate directly
+because there was nothing inside the model to check it against.} The two penalties also do different work: both policies drive
 homelessness to zero at universal cover, so $\delta_h$ prices the programme
 against no programme while $\delta_d$ decides Treatment First against Housing
 First.
