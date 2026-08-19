@@ -421,7 +421,11 @@ class P:
                       # HUD 2023, recipients over the income eligible population,
                       # the same 26.6 per cent the quantitative model targets. It
                       # was 0.27, the same number rounded differently.
-    yV    = 0.2591    # MEANS TEST: eligible if current income is below HALF OF
+    kV    = 0.50      # MEANS TEST, the share of MEDIAN income below which a
+                      # household is eligible. This is the quantitative model's
+                      # kappa_V and the paper uses the same symbol for both.
+    yV    = 0.2591    # the level kV implies, kV times median income. Eligible if
+                      # current income is below HALF OF
                       # MEDIAN INCOME, which is the HUD rule the quantitative
                       # model uses. It was one times the MEAN, which is a
                       # different rule and a far looser one: the mean of this

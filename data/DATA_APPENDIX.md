@@ -109,9 +109,16 @@ overstate coverage.
 the homeless.** Gutwinski et al. (2021), a meta regression of prevalence among
 homeless people in high income countries.
 
-**ρ_m, earnings lost to mental illness — labour income of the homeless at 19.1
-percent of average.** The moment is the ratio of mean labour income among the
-homeless to the population mean. Note that this and ρ_d are both homeless
+**ρ_m, earnings lost to mental illness — income of the homeless at 19.1 percent of
+average.** Meyer, Wyse, Meyer, Grunwaldt and Wu (2024), NBER Working Paper 32323,
+from the 2010 Census linked to restricted use tax and administrative records. The
+attribution is inferred rather than quoted: Referee 1's comment 2(c)(i) gives the
+19.1 percent alongside an employment rate of 40 to 52 percent among the homeless,
+and that pair is verbatim the headline of that paper, 52 percent of the sheltered
+and 40 percent of the unsheltered in formal employment. The paper itself could not
+be opened from the machine this was written on, so the table number behind the 19.1
+still needs checking. The moment is the ratio of mean income among the homeless to
+the population mean. Note that this and ρ_d are both homeless
 conditional moments, so the two penalties are identified jointly rather than
 separately; the paper says so.
 

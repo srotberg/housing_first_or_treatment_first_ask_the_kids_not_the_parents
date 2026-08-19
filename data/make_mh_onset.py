@@ -44,9 +44,20 @@ import argparse, csv, os
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "us_mh_onset_shape.csv")
 AGE_LO, AGE_HI = 26, 85
-# NSDUH 2023 Table 6.4B, serious mental illness in the past year, total
-PREV = [(27.5, 0.110), (32.0, 0.103), (37.0, 0.069), (42.0, 0.060),
-        (47.0, 0.056), (52.0, 0.045), (57.0, 0.030), (62.0, 0.027), (72.0, 0.014)]
+# NSDUH 2024 public use file, serious mental illness in the past year, weighted by
+# ANALWT2_C, by the AGE3 recode: 26-29, 30-34, 35-49, 50-64, 65 and over, taken at
+# the band midpoints. The whole paper is on the 2024 vintage and this was the last
+# moment left on 2023.
+#
+# The 2024 public use file is coarser above 35 than the 2023 detailed tables, which
+# gave five year bands, so what is lost is resolution inside 35 to 64 and not the
+# shape: the fall from the late twenties to 65 and over is a factor of 8.0 in 2024
+# against 7.9 in 2023, and the prevalence is fitted log-linearly in age anyway, so
+# the fit uses the span rather than the individual points. The 2023 numbers, for
+# comparison: 11.0, 10.3, 6.9, 6.0, 5.6, 4.5, 3.0, 2.7, 1.4 at midpoints 27.5, 32,
+# 37, 42, 47, 52, 57, 62, 72.
+PREV = [(27.5, 0.1015), (32.0, 0.0898), (42.0, 0.0630),
+        (57.0, 0.0432), (72.0, 0.0127)]
 
 
 # Prevalence is fitted LOG-LINEARLY in age, not interpolated piecewise.
