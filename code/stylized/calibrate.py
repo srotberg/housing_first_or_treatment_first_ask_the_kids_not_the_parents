@@ -364,18 +364,6 @@ def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=()):
         # GAMMA FIRST, then the street. Both move homelessness, so whichever runs
         # last is the one whose moment is actually hit, and homelessness is the
         # one that has to be.
-        # THETA FIRST. It and gamma share the consumption weight 1-gam-th, so
-        # each moves the other's moment, and theta moves participation hard
-        # enough that the share has to be read at a b that puts participation
-        # back on target: hence bracket_with_b rather than bracket.
-        # fix=('th',) is what scan_theta.py needs: it asks what the model looks
-        # like AT a given theta, so calibrating theta away would answer a
-        # different question.
-        if 'th' not in fix:
-            par = with_(par, th=bracket_with_b(par, 'th', 'dshare', TH_LO, TH_HI))
-        if 'th' not in fix and (par.th <= TH_LO * 1.001 or par.th >= TH_HI * 0.999):
-            print(f'   WARNING: theta arrived at a bound, {par.th:.4f} in '
-                  f'[{TH_LO}, {TH_HI}]; the drug spending share is not hit')
         par = with_(par, gam=bracket(par, 'gam', 'hspend', 0.02, 0.70))
         par = with_(par, h_hl=bracket(par, 'h_hl', 'homeless', 1e-7, 0.49))
         par = with_(par, aleph=bracket(par, 'aleph', 'vsl', 0.20, 24.0, iters=26))
@@ -393,6 +381,25 @@ def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=()):
         # actually hit, but lam is re-solved against the b that will survive.
         for _ in range(4):
             par = with_(par, lam=bracket_sud(par, LAM_LO, LAM_HI))
+            par = with_(par, b=_b_for(par, iters=30))
+        # THETA GOES LAST BUT ONE, AND THE FIRST VERSION HAD IT FIRST. calibrate()
+        # starts from the class defaults, where lambda is 25 against a calibrated
+        # 161 and the street is 0.05 against 0.00028, so a theta bracketed before
+        # anything else has been refit is bracketed on a model that does not
+        # exist: it ran to the top of its window on sweep one and reported that
+        # the drug spending share could not be reached. The share depends on
+        # lambda above all, since lambda is what makes using risky, so theta has
+        # to be read at a lambda that is on target.
+        #
+        # b is refit inside bracket_with_b at every trial and AGAIN below, so
+        # participation is still the moment that is hit exactly, which is the
+        # rule the rest of this ordering follows.
+        if 'th' not in fix:
+            par = with_(par, th=bracket_with_b(par, 'th', 'dshare',
+                                               TH_LO, TH_HI))
+            if par.th <= TH_LO * 1.001 or par.th >= TH_HI * 0.999:
+                print(f'   WARNING: theta arrived at a bound, {par.th:.4f} in '
+                      f'[{TH_LO}, {TH_HI}]; the drug spending share is not hit')
             par = with_(par, b=_b_for(par, iters=30))
         # CHECKPOINT EVERY SWEEP. This process has been killed mid run four
         # times by the container reclaiming background work, and each time the
@@ -458,9 +465,17 @@ def report(par):
 
 if __name__ == '__main__':
     import json
-    # only this entry point writes the canonical file, and it checkpoints into
-    # it too, because here the run IS the calibration the note is built from
-    par = calibrate(checkpoint='calibrated.json')
+    # SEEDED FROM THE EXISTING CALIBRATION when there is one. A cold start from
+    # the class defaults is the more honest test of path independence, and it is
+    # what this used to do, but it costs a sweep or two of every bracket working
+    # on a model that is nowhere near calibrated. Delete calibrated.json to cold
+    # start deliberately.
+    import os
+    seed = None
+    if os.path.exists('calibrated.json'):
+        seed = with_(P(), **json.load(open('calibrated.json')))
+        print(f'seeded from calibrated.json at theta = {seed.th:.4f}')
+    par = calibrate(seed, checkpoint='calibrated.json')
     report(par)
     json.dump({n: getattr(par, n) for n, _, _, _ in PAIRS}
               | {'th': par.th, 'gam': par.gam},
