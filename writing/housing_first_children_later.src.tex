@@ -2655,37 +2655,71 @@ reported as a range rather than as a number.
 %======================================================================
 \section{The welfare criterion}\label{sec:cev}
 
-\emph{Plan for this section, not its content.} Every number in the
-experiments below is a consumption equivalent variation, and this section will define
-it exactly rather than leave a reader to guess which of several conventions is in
-use. What it has to contain:
+\textcolor{red}{Every welfare number in this paper is a consumption equivalent variation, and the
+convention matters enough to state exactly rather than leave a reader to infer. Write
+$V^{b}$ for lifetime value under the benchmark and $V^{c}$ for lifetime value under a
+counterfactual policy. The variation $\Delta$ is the proportional change in
+consumption, applied at every date and in every state, that makes a household under
+the benchmark as well off as the same household under the counterfactual:
+%
+\begin{equation}\label{eq:cev}
+V^{b}\big((1+\Delta)\,c\big)\;=\;V^{c}(c) .
+\end{equation}
+%
+A positive $\Delta$ therefore means the counterfactual is worth that much of a
+permanent consumption gain, and a negative one that it costs that much. Reporting the
+compensating direction rather than the equivalent one is the reason a number can
+exceed one hundred percent: it is what consumption would have to rise \emph{by}, not
+a share of anything.}
 
-\begin{itemize}\setlength{\itemsep}{0.25em}
-\item \emph{The object.} The variation $\Delta$ that solves
-$V^{\text{bench}}\big((1+\Delta)c\big)=V^{\text{cf}}(c)$ for a newborn, so that a
-positive number means the counterfactual is worth that much of a permanent
-consumption gain. Two horizons, as set out in \texttt{code/EXPERIMENT\_PLAN.md}: a
-newborn on the date of implementation, who lives through the transition, and a
-newborn in the new steady state. Both are the same object, which is what makes them
-comparable.
-\item \emph{Why there is no closed form.} Flow utility here is not
-homothetic in consumption. The flow value of being alive $\aleph$ is additive, so it
-does not scale; the drug enters through $(v+b)$ with a subsistence shifter, so
-scaling consumption does not scale the drug term proportionately; and the food stamp
-floor binds for exactly the households the paper is about. The usual closed form for
-a constant relative risk aversion economy therefore does not apply, and $\Delta$ is
-solved numerically. The section will say so and give the solve.
-\item \emph{What is scaled and what is not.} The household's own
-consumption is scaled at every date and state. The child term in
-equation~\eqref{eq:fbellman} is a difference of newborn values, so the scaling has to
-be applied consistently inside it; whether the child's consumption is scaled too is a
-choice, it changes the number, and the section will state which is used and report
-the other.
-\item \emph{The aggregate disamenity.} $\kappa_x H$ is additive and
-does not scale with consumption either, so it enters the level of welfare without
-entering the scaling. That is why it can be switched off as a rung of the ladder
-without disturbing the rest of the decomposition.
-\end{itemize}
+\textcolor{red}{\paragraph{Whose welfare.} The household is a newborn, and the value is taken before
+any of its draws are realised, so $\Delta$ is an expectation over the productivity
+draw and everything that follows from it. This is the criterion behind the veil, and
+it is used rather than a utilitarian sum over the stationary distribution for a
+reason worth admitting: the two do not agree here, and the newborn criterion
+internalises the child by construction, which is part of what the paper is trying to
+establish. Both are therefore reported wherever they differ, with the newborn one
+primary and the utilitarian one beside it, so a reader can see which conclusion rests
+on which.}
+
+\textcolor{red}{Two horizons are used, and they are the same object measured at different dates: a
+newborn on the date the policy is implemented, who lives through the transition, and
+a newborn in the new steady state. Because both are the ex ante value of a household
+at age one, any difference between them is the transition itself rather than a change
+in who is being counted. Averaging over the households alive at the reform would not
+have that property: that population is a mix of ages and states whose composition
+responds to the policy, so a channel could appear to grow with the horizon when what
+changed was the mix of people in the average.}
+
+\textcolor{red}{\paragraph{The stylized model has a closed form and the quantitative model does not.}
+With log utility over consumption and housing, scaling consumption by $1+\Delta$ at
+every date adds $K\log(1+\Delta)$ to lifetime value, where $K$ collects the weight on
+consumption and the discounted periods a household expects to live,
+$K=(1-\gamma-\theta)\,(1+\beta\phi_0)$. Equation~\eqref{eq:cev} then inverts
+directly to $\Delta=\exp\{(V^{c}-V^{b})/K\}-1$, which is how every consumption
+equivalent in Section~\ref{sec:welfare} is computed.}
+
+\textcolor{red}{No such inversion exists in the quantitative model, and three features of flow utility
+in equation~\eqref{eq:futil} are why. The flow value of being alive $\aleph$ is additive,
+so it does not scale with consumption. The drug enters through $\log(b+v)$ with a
+Stone-Geary shifter, so scaling consumption does not scale the drug term
+proportionately. And the food stamp floor $\underline c$ binds for exactly the
+households the paper is about, so their consumption does not scale at all until the
+scaling lifts them off it. $\Delta$ is therefore solved numerically, by bisection on
+the newborn's expected value with the whole model re-solved at each trial, which is
+expensive but avoids assuming away the non-homotheticity that the mechanism depends
+on.}
+
+\textcolor{red}{\paragraph{What is scaled, and what is not.} The household's own consumption is scaled
+at every date and in every state. Two terms deliberately are not. The aggregate
+disamenity $\kappa_x H$ is additive in flow utility and does not scale with
+consumption, so it enters the level of welfare without entering the scaling; that is
+what lets it be switched off as a rung of the decomposition without disturbing the
+rest of it. The child term is a difference of newborn values, and the scaling is
+applied inside it consistently with the parent's, so a policy that improves the
+child's prospects is credited through the same measuring rod. Whether the child's own
+consumption is scaled as well is a choice rather than a fact, it moves the number, and
+the reported figures scale the parent only, with the alternative given alongside.}
 
 %======================================================================
 \section{Experiments}\label{sec:experiments}
