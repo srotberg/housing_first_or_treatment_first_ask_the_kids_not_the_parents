@@ -92,6 +92,50 @@ change shows the old opener struck and the new one in red.
 
 ---
 
+## Round three, 19 August: the audit
+
+Asked whether everything from the earlier messages had actually been applied. It had
+not. What follows was checked in the file rather than asserted, and six things were
+found still outstanding.
+
+### Found outstanding and now fixed
+
+| what | where it was wrong |
+|---|---|
+| $\rho_m$'s Moment cell wrapped onto a second line | `tab_eleven`, shortened to "Income over average, homeless, Meyer et al. (2024)" |
+| $\nu_2$'s Moment cell wrapped onto a second line | `tab_eleven`, the formula moved into the table note where it already appears |
+| Guvenen et al.\ (2023) without its letter | `tab_standard`, now 2023a, matching the text |
+| Heathcote et al. (2017) missing the thin space after "al." | `tab_standard` |
+| $\phi_0$ survived in the welfare criterion's closed form | line 2687, now $\bar\phi$ |
+| a bare $\kappa$ survived in the channel decomposition | line 908, now $\kappa_{\phi d}$ |
+
+### Checked and correct
+
+* Every one of the twenty three data targets in Tables 5 and 6 matches the constant of
+  the same name in `housing_first_or_treatment_first_SR_v1.f90` exactly, including the
+  two that are written as arithmetic there: $\omega$'s 18.3 percent is `1/0.845 - 1`
+  and $\mu_H$'s 1.473 is `6.60/4.48`.
+* No `NSDUH 2023` survives anywhere in the text or in either live table.
+* No `y_V` and no `\phi_0` survive anywhere in the paper.
+* The five annotations on the page proofs are each in the file.
+
+### Not needed after all
+
+A footnote saying which statistics are only available for 2023. There are none: the
+SMI prevalence profile was the last one and the 2024 public use file carries it through
+the `AGE3` recode.
+
+### Still open
+
+* The internal stylized table is stale until the recalibration lands. Its descriptions
+  are already corrected in `tables.py`; the file on disk is regenerated with the new
+  numbers.
+* The abstract asserts a result the quantitative model has not yet produced.
+* $\rho_m$'s attribution to Meyer et al. (2024) is inferred from the referee's
+  matching employment pair, not quoted. The table number still needs checking.
+
+---
+
 ## Round one, 19 August
 
 Eighteen inconsistencies and ten duplications, listed in the commit at `7507ded`.

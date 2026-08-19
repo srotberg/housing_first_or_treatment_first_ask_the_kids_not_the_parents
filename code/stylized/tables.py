@@ -91,14 +91,14 @@ INTERNAL = [
     (None, r'\sigma_y', 'Dispersion of the fixed draw',
      "Bottom half's share of earnings, SCF 2022", 'bot50', '{:.2%}', '{:.3f}'),
     ('gam', r'\gamma', 'Weight on housing',
-     'Housing over non drug spending', 'hspend', '{:.2%}',
+     'Housing over expenditure net of drugs, CEX 2024', 'hspend', '{:.2%}',
      '{:.3f}'),
     ('aleph', r'\aleph', 'Flow value of being alive',
-     'Value of a statistical life', 'vsl', '{:.1f}', '{:.3f}'),
-    ('b', 'b', 'Whether a household uses', 'Drug participation rate',
+     'Value of a statistical life, Viscusi and Aldy (2003)', 'vsl', '{:.1f}', '{:.3f}'),
+    ('b', 'b', 'Whether a household uses', 'Drug participation, NSDUH 2024',
      'part', '{:.2%}', '{:.5f}'),
-    ('h_hl', 'h_1', 'Service flow of homelessness', 'Homelessness rate',
-     'homeless', '{:.2%}', '{:.5f}'),
+    ('h_hl', 'h_1', 'Service flow of homelessness', 'Homelessness rate, HUD 2023',
+     'homeless', '{:.3%}', '{:.5f}'),
     # THE MOMENT IS THE ADULT SUD RATE, not the share of users who progress.
     # The life cycle model targets 3.68 per cent from NSDUH 2024 and this model
     # used to target a progression rate of 33.2 per cent, which at a
