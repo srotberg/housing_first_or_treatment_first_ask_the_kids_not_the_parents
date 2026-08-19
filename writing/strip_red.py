@@ -79,9 +79,19 @@ if __name__ == "__main__":
     # red for the stripper to find. The guard is kept because the red form is
     # one edit away and stripping it silently un-reds every marked number.
     DEF = "\\newcommand{\\new}[1]{\\textcolor{red}{#1}}"
+    # THE SAME TRAP CAUGHT \\cw. Its definition contains two red wrappers, and
+    # stripping them turned every proposed deletion black: the rule was still
+    # drawn and the text still struck, but nothing was red any more, so a whole
+    # round of cuts went out looking like ordinary text with a line through it.
+    CWDEF = ("\\newcommand{\\cw}[1]{{\\settowidth{\\cw@len}{#1}%\n"
+             "  \\rlap{\\textcolor{red}{\\rule[0.55ex]{\\cw@len}{0.4pt}}}"
+             "\\textcolor{red}{\\hspace{0pt}#1}}}")
     guarded = DEF in src
     if guarded:
         src = src.replace(DEF, "@@NEWDEF@@")
+    cwguarded = CWDEF in src
+    if cwguarded:
+        src = src.replace(CWDEF, "@@CWDEF@@")
     before = {t: src.count(t) for t, _ in OPENERS}
     out = strip(src)
     after = {t: out.count(t) for t, _ in OPENERS}
@@ -115,5 +125,7 @@ if __name__ == "__main__":
     out = out.replace("\\hspace{0pt}", "")
     if guarded:
         out = out.replace("@@NEWDEF@@", DEF)
+    if cwguarded:
+        out = out.replace("@@CWDEF@@", CWDEF)
     open(p, "w").write(out)
     print("stripped:", p, len(src), "->", len(out))

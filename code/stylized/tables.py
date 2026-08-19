@@ -32,13 +32,13 @@ EXTERNAL = [
          'ANN', '{:.3f}'),
         ('R', 'R', 'Gross interest rate over a thirty year period',
          r'Set to $1/\beta$', '{:.3f}'),
-        ('phi0', r'\phi_0', 'Survival over a period, no SUD',
+        ('phi0', r'\bar\phi', 'Survival over a period, no SUD',
          'SSA period life table, ages 25--55', '{:.2f}'),
-        ('th', r'\theta', 'Weight on drug use',
+        ('th', r'\theta', 'Weight on drugs in utility',
          r'Set; see the text', '{:.2f}'),
     ]),
     ('The SUD', [
-        ('kap', r'\kappa', 'Fall in survival with a SUD, over a thirty year period',
+        ('kap', r'\kappa_{\phi d}', 'Fall in survival with a SUD, over a thirty year period',
          'Hjorth\\o j et al.\\ (2023), age 26+', '{:.2f}'),
         ('u0', 'u_0', 'Unemployment probability, no SUD',
          'BLS CPS via FRED, 2014 to 2024', '{:.4f}'),
@@ -62,7 +62,7 @@ EXTERNAL = [
         # average income 0.978, so the same object is 0.41 of average income; a
         # table that printed 0.40 next to a source line saying 0.41 was asking
         # the reader to reconcile two numbers for one parameter.
-        ('h_lg', 'h_3', 'Standard rental unit', 'Set', '{:.2f}'),
+        ('h_lg', r'\bar h', 'Standard rental unit', 'Set', '{:.2f}'),
         # The ratio is stated in the TEXT and not here. Printing "a quarter of
         # the standard unit" beside 0.10 next to a 0.41 invites the reader to
         # multiply by four, get 0.40, and conclude the table is wrong. It is not:
@@ -72,7 +72,7 @@ EXTERNAL = [
         # quarter of h_lg, and printing 0.10 beside the standard unit's 0.41
         # invited the reader to multiply by four and find 0.40. Writing the
         # relation itself is exact and there is nothing left to check.
-        ('h_sm', 'h_2', 'Small rental unit', 'Set', '0.25\\times h_3'),
+        ('h_sm', r'\underline h', 'Small rental unit', 'Set', r'0.25\times\bar h'),
         ('kappa_r', r'\kappa_r', "Tenant's share of the rent when covered",
          'HUD voucher rules', '{:.2f}'),
         ('kV', r'\kappa_V', 'Voucher means test, share of median income',
@@ -88,23 +88,23 @@ EXTERNAL = [
 # calibrate.SIG. None means "read SIG", and the row is otherwise an ordinary
 # internally calibrated one.
 INTERNAL = [
-    (None, r'\sigma_y', 'Dispersion of log permanent income',
+    (None, r'\sigma_y', 'Dispersion of the fixed draw',
      "Bottom half's share of earnings, SCF 2022", 'bot50', '{:.2%}', '{:.3f}'),
-    ('gam', r'\gamma', 'Weight on housing services',
+    ('gam', r'\gamma', 'Weight on housing',
      'Housing over non drug spending', 'hspend', '{:.2%}',
      '{:.3f}'),
     ('aleph', r'\aleph', 'Flow value of being alive',
      'Value of a statistical life', 'vsl', '{:.1f}', '{:.3f}'),
-    ('b', 'b', 'Pull of the first unit of drugs', 'Drug participation rate',
+    ('b', 'b', 'Whether a household uses', 'Drug participation rate',
      'part', '{:.2%}', '{:.5f}'),
-    ('h_hl', 'h_1', 'Housing services when homeless', 'Homelessness rate',
+    ('h_hl', 'h_1', 'Service flow of homelessness', 'Homelessness rate',
      'homeless', '{:.2%}', '{:.5f}'),
     # THE MOMENT IS THE ADULT SUD RATE, not the share of users who progress.
     # The life cycle model targets 3.68 per cent from NSDUH 2024 and this model
     # used to target a progression rate of 33.2 per cent, which at a
     # participation rate of 5.13 implies a population rate of 1.70: the two
     # models were calibrated to inconsistent numbers for the same object.
-    ('lam', r'\lambda', 'Addiction hazard per unit of use',
+    ('lam', r'\lambda', 'SUD hazard per unit used',
      'Adult SUD rate, NSDUH 2024', 'sud', '{:.2%}', '{:.1f}'),
 ]
 
