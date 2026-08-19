@@ -161,78 +161,46 @@ does not.
 parent is 2.02 times as likely to be homeless itself, reported as a validation moment
 rather than a target.
 
-*The data counterpart, and why the obvious comparison is the wrong one.* Flatau,
-Conroy, Spooner, Eardley and Forbes (2013), AHURI Final Report 200, report that 43.0
-percent of non-Indigenous homelessness-assistance clients in Australia had parents who
-had themselves experienced homelessness, and 69.0 percent of Indigenous clients. Those
-are conditional shares, not ratios. Writing c for the share and p for the population
-share whose parents were ever homeless, R = [c/(1−c)]·[(1−p)/p].
+*What the model implies, and the direct measurement it is checked against.* At
+δ_h = 0.31 the child of a homeless parent is 2.02 times as likely to be homeless itself
+in the stylized model, reported as a validation moment rather than a target. (The
+quantitative model carries its own δ_h and produces its own ratio.)
 
-Each group needs its own base, because the group with the higher share also has the
-higher base:
+The measurement to check it against is Bassuk, Buckner, Weinreb, Browne, Bassuk, Dawson
+and Perloff (1997), *American Journal of Public Health* 87(2), 241–248 — a case-control
+study of 220 homeless mothers and 216 low-income housed mothers in Worcester,
+Massachusetts. Both arms are poor, so the comparison isolates transmission from the
+poverty that accompanies it, and no population base rate is needed:
 
-- **All Australian adults: 13 percent** ever homeless in their lifetime. ABS General
-  Social Survey 2010 (cat. 4159.0), 15,028 households, broad ("cultural") definition —
-  the concept Flatau's clients are drawn under.
-- **Indigenous Australians: just over a quarter** ever without a permanent place to
-  live. NATSISS 2014–15 (cat. 4714.0).
-- **Non-Indigenous: 12.6 percent**, backed out given Indigenous Australians are about
-  3.2 percent of adults.
+| childhood factor | homeless | housed poor | odds ratio | 95% CI |
+|---|---|---|---|---|
+| primary female caretaker ever homeless | 14.2% | 8.3% | 1.80 | [0.98, 3.33] |
+| primary male caretaker ever homeless | 10.3% | 4.4% | 2.41 | [1.12, 5.18] |
+| ever in foster care | 19.6% | 8.3% | 2.67 | [1.49, 4.80] |
 
-| group | share | base | implied R |
-|---|---|---|---|
-| non-Indigenous | 43.0% | 12.6% | 5.25 |
-| Indigenous | 69.0% | 26% | 6.33 |
+Odds ratios and intervals computed from the published percentages and the two sample
+sizes; homelessness is rare in the population, so the odds ratio approximates the risk
+ratio. The model's 2.02 sits between the two parental measures, at a δ_h taken from an
+earnings estimate that knows nothing about homelessness transmission. It is US data,
+matching the model's calibration.
 
-The two agree within one unit despite shares 26 points apart and bases differing by a
-factor of two, so the arithmetic is not hostage to a chosen base rate.
+*Why a general-population comparison is the wrong one.* Flatau, Conroy, Spooner, Eardley
+and Forbes (2013) report that 43.0 percent of non-Indigenous Australian
+homelessness-assistance clients had parents who had experienced homelessness (69.0
+percent for Indigenous clients). Turning a conditional share into a ratio needs a
+population base rate, and against one the implied ratio is 5 to 6 — but that credits the
+housing penalty with everything else that differs between poor children. Cobb-Clark and
+Zhu (2015) show the difference is substantial: among Journeys Home respondents, all on
+income support, those first homeless at 15 or below were 2.6 times as likely to have
+been in foster care (42.5 against 16.1 percent), and markedly more likely to have
+suffered physical or sexual abuse or had a parent serve jail time. A case-control design
+differences all of that out, which is why Bassuk is used and Flatau is not.
 
-*But this is not the object the model produces, and the difference is selection.* A
-parent who was homeless was already poor before anything was transmitted. A ratio taken
-against the whole population therefore carries selection AND transmission. The model
-computes transmission alone: it takes a child, cuts its income by δ_h, and asks how much
-likelier it is to be homeless, holding the distribution it is drawn from fixed. The
-matching empirical object would hold poverty fixed as well — children of homeless
-parents against children of otherwise similar poor households, not against everyone.
-
-Among a population already receiving housing assistance the share with a homeless parent
-is far above a quarter. At a base of one half the same formula gives R = 2.23, against
-the model's 2.02. No published figure gives that base for either country, so the model's
-ratio can be **bounded, not matched**:
-
-| comparison | base | implied R |
-|---|---|---|
-| against the whole population (selection + transmission) | 0.13 / 0.26 | 5.3 – 6.3 |
-| against an already-assisted population (transmission) | ≈ 0.50 | ≈ 2.2 |
-| model at Chetty's δ_h = 0.31 | — | **2.02** |
-
-*Direct evidence that the selection is large.* Cobb-Clark and Zhu (2015, IZA DP 9426)
-compare Journeys Home respondents first homeless at 15 or below with those first
-homeless later. Both groups are on income support, so poverty is already held fixed,
-and they still differ on everything a childhood can differ on:
-
-| childhood characteristic | first homeless ≤15 | first homeless >15 |
-|---|---|---|
-| foster care | 0.425 | 0.161 |
-| physical abuse | 0.816 | 0.584 |
-| sexual abuse | 0.480 | 0.275 |
-| emotional abuse | 0.760 | 0.556 |
-| parent served jail time | 0.162 | 0.095 |
-| parental drinking or gambling | 0.285 | 0.203 |
-
-A transmission ratio taken against the general population credits the housing penalty
-with all of this as well, which is why 5 to 6 cannot be what δ_h reproduces. The same
-paper reports that 27 percent of Journeys Home respondents were first homeless before
-16, and 96 percent had been homeless at some point.
-
-*Why the Journeys Home microdata were not used.* They would give the poverty-held-fixed
-ratio directly, from `HFHLAGE < 18` crossed with `JHSTRATA`, but access needs a DSS
-application and possibly a fee, and Cobb-Clark and Zhu's published tables settle the
-qualitative point without it — their own dependent variable is employment, so the paper
-cannot supply the ratio itself. Journeys Home has no parental-homelessness question
-either, so it could never reproduce Flatau's statistic. The variables and the access
-route are recorded in `data/journeys_home/README.md` should the point estimate ever be
-worth the application.
+*Journeys Home.* Its microdata would give an independent poverty-held-fixed ratio, from
+`HFHLAGE < 18` crossed with `JHSTRATA`, but access needs a DSS application and possibly
+a fee, and it has no parental-homelessness question so it could not reproduce Flatau in
+any case. The variables and the access route are recorded in
+`data/journeys_home/README.md`.
 
 
 What can be said is that δ_h is not asked to carry more than the earnings evidence
