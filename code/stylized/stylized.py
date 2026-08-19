@@ -140,7 +140,7 @@ class P:
     # SHARES THAT SUM TO ONE. The weight on consumption is 1-gam-th, so gam is
     # the housing budget share proper rather than gam/(1+gam+th). gam is set to
     # 0.268 of non drug spending, which is the share in the data.
-    # THETA IS 0.21 AND NOT 0.11, and the two period model is what allows it. In
+    # THETA IS 0.20 AND NOT 0.11, and the two period model is what allows it. In
     # the three period model raising theta bought a drug spending share at the
     # cost of the income gradient: users stopped being poor. Here the mortality
     # channel is strong enough to hold the gradient while theta rises.
@@ -201,9 +201,12 @@ class P:
     # mortality channel alone is switched on at full strength. Below one, users
     # are poorer than average and mortality has reversed the income gradient by
     # itself, which is the mechanism this model exists to show. It crosses one
-    # between 0.22 and 0.23. So 0.23 buys a 24 per cent spending share and loses
-    # the reversal; 0.21 buys 20 per cent and keeps it with room to spare.
-    th    = 0.21      # weight on drug use
+    # between 0.22 and 0.23, so 0.23 buys a 24 per cent spending share and loses
+    # the reversal. 0.20 is the setting: a round number, a spending share of 18.4
+    # per cent, and a mortality channel that drives users to a sixth of average
+    # income on its own rather than to the 0.39 that 0.21 gives. The extra two
+    # points of spending that 0.21 would buy are not worth the margin.
+    th    = 0.20      # weight on drug use
     b     = 0.009     # Stone Geary subsistence; th/b is the pull of the first unit
     gam   = 0.2144    # CALIBRATED to the housing share. Starting value only
     # A PERIOD IS THIRTY YEARS, so the discount factor and the interest rate are
