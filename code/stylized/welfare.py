@@ -247,9 +247,9 @@ def tab_welfare(par, pV=1.0):
          r'First, no externality}} \\',
          f'\\quad Households strictly worse off & & {pc(100*worse,1)} \\\\',
          f'\\quad Households strictly better off & & {pc(100*better,1)} \\\\',
-         f'\\quad Consumption equivalent loss, those affected & '
+         f'\\quad Consumption equivalent, those affected & '
          f'& {pc(100*among)} \\\\',
-         f'\\quad Consumption equivalent loss, whole population & '
+         f'\\quad Consumption equivalent, whole population & '
          f'& {pc(100*avg,3)} \\\\',
          r'\bottomrule', r'\end{tabular}']
     with open(os.path.join(OUT, 'tab_welfare.tex'), 'w') as f:

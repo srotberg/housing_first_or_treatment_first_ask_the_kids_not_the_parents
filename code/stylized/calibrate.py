@@ -328,7 +328,7 @@ def bracket_sud(par, lo=None, hi=None, iters=16):
     return float(np.sqrt(lo * hi))
 
 
-def calibrate(par=None, sweeps=5, verbose=True):
+def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None):
     par = par or P()
     for s in range(sweeps):
         # HOUSING FIRST, THEN THE VALUE OF LIFE. aleph used to run first and the
@@ -361,11 +361,22 @@ def calibrate(par=None, sweeps=5, verbose=True):
         # CHECKPOINT EVERY SWEEP. This process has been killed mid run four
         # times by the container reclaiming background work, and each time the
         # whole calibration was lost because the only write was at the end. Now
-        # each sweep leaves calibrated.json on disk, so a kill costs one sweep
+        # each sweep leaves a checkpoint on disk, so a kill costs one sweep
         # rather than all of them, and the next run can be seeded from it.
+        #
+        # THE CHECKPOINT IS NOT calibrated.json, AND THAT MATTERS. It used to be,
+        # and calibrate() is called by scan_theta.py as well as by this file, so
+        # four theta scans running in parallel each overwrote the canonical
+        # calibration every sweep with a point from their own scan. Everything
+        # read off the model while they ran, including a diagnosis of the
+        # mortality channel, was computed at whichever theta had checkpointed
+        # last. The file the note is built from is written in one place only, by
+        # this file's __main__, and every other caller checkpoints under its own
+        # name.
         import json as _json
         _json.dump({n: getattr(par, n) for n, _, _, _ in PAIRS} | {'th': par.th, 'gam': par.gam},
-                   open('calibrated.json', 'w'), indent=1)
+                   open(checkpoint or f'checkpoint_th_{par.th:.2f}.json', 'w'),
+                   indent=1)
         if verbose:
             m = stats(par)
             worst = max(abs(m[k] / TARGET[k] - 1.0) for k in TARGET)
@@ -403,7 +414,9 @@ def report(par):
 
 if __name__ == '__main__':
     import json
-    par = calibrate()
+    # only this entry point writes the canonical file, and it checkpoints into
+    # it too, because here the run IS the calibration the note is built from
+    par = calibrate(checkpoint='calibrated.json')
     report(par)
     json.dump({n: getattr(par, n) for n, _, _, _ in PAIRS}
               | {'th': par.th, 'gam': par.gam},

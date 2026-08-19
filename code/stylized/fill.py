@@ -116,7 +116,10 @@ def numbers(base):
 # WHAT CHANGED SINCE THE LAST VERSION THE READER SAW, marked rather than
 # described. numbers_prev.json holds this same dictionary computed at the
 # previous calibration, so a number is red if and only if it actually moved.
-# Recompute it with scratchpad/baseline.py whenever a reviewed version ships.
+# Refresh it with `python3 fill.py --freeze` once a version has been sent out,
+# so the next round's red marks what moved since THAT version and not since
+# some older one. (The comment here used to point at scratchpad/baseline.py,
+# which does not exist.)
 PREV = os.path.join(HERE, 'numbers_prev.json')
 
 
@@ -135,8 +138,14 @@ def mark(new, prev):
 
 
 if __name__ == '__main__':
+    import sys
     base = with_(P(), **json.load(open(os.path.join(HERE, 'calibrated.json'))))
     n = numbers(base)
+    if '--freeze' in sys.argv:
+        json.dump(n, open(PREV, 'w'), indent=1)
+        print(f'   froze {len(n)} numbers into numbers_prev.json; '
+              'the next run marks what moves from here')
+        raise SystemExit
     prev = json.load(open(PREV)) if os.path.exists(PREV) else None
     if prev is None:
         print('   numbers_prev.json missing: nothing will be marked red')

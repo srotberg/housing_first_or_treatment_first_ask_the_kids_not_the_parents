@@ -187,9 +187,8 @@ def tab_children(par, pV=1.0):
          r'\multicolumn{5}{@{}l}{\emph{Panel A. Transmission: what each income '
          r'penalty implies}} \\',
          r"$\delta_d$ & & Child's SUD rate & Ratio & "
-         r'Loss to the child \\', r'\midrule']
-    # every model output in this table moved with the recalibration
-    R = lambda x: '' + x + ''
+         r'Consumption equivalent \\', r'\midrule']
+    R = lambda x: x
     for d, sud, ratio, loss in rows:
         lab = f'{d:.2f}' + (r'\ \ (calibrated)' if abs(d - DEL_D) < 1e-9 else '')
         L.append(f'{lab} & & {R(f"{100*sud:.2f}")}\\% & {R(f"{ratio:.2f}")} '
@@ -197,10 +196,10 @@ def tab_children(par, pV=1.0):
     L += [r'\addlinespace',
           r'\multicolumn{5}{@{}l}{\emph{Panel B. Does the externality reverse '
           r'the ranking?}} \\',
-          f'\\quad Private welfare loss from conditionality & & & & '
+          f'\\quad Private cost of conditionality & & & & '
           f'{R(f"{100*priv:.3f}")}\\% \\\\',
           f'\\quad Disorder cases prevented & & & & {R(f"{100*dsud:.3f}")} pp \\\\',
-          f'\\quad Damage to the child of one such case & & & & '
+          f'\\quad Consumption equivalent to the child, one case & & & & '
           f'{R(f"{100*per_case:.0f}")}\\% \\\\',
           f'\\quad Externality gain from conditionality & & & & '
           f'{R(f"{100*gain:.3f}")}\\% \\\\',
