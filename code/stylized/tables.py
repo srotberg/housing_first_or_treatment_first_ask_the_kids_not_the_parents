@@ -29,7 +29,7 @@ def write(name, body):
 EXTERNAL = [
     ('Preferences and demographics', [
         ('beta', r'\beta', 'Discount factor over a thirty year period',
-         r'$0.99$ annually, compounded', '{:.3f}'),
+         'ANN', '{:.3f}'),
         ('R', 'R', 'Gross interest rate over a thirty year period',
          r'Set to $1/\beta$', '{:.3f}'),
         ('phi0', r'\phi_0', 'Survival over a period, no SUD',
@@ -122,6 +122,9 @@ def tab_external(base):
             L.append(r'\addlinespace')
         L.append(r'\multicolumn{4}{@{}l}{\emph{%s}} \\' % head)
         for attr, sym, desc, src, fmt in rows:
+            # the annual rate is the model's, not a number typed into the table
+            if src == 'ANN':
+                src = f'${base.beta_ann:.3f}$ annually, compounded'
             raw = None if attr is None else getattr(base, attr)
             if attr in PER_YBAR:
                 raw = raw / ybar

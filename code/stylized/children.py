@@ -114,7 +114,7 @@ def transmission(par, policy='HF', pV=None):
     print(f'   {"delta":>8s}{"child use":>12s}{"child disorder":>16s}'
           f'{"ratio":>9s}{"cons. loss":>13s}')
     out = []
-    for d in (0.0, 0.10, 0.20, 0.25, 0.30, 0.35, 0.40, 0.50):
+    for d in (0.0, 0.10, 0.20, 0.30, DEL_D, 0.50, 0.60, 0.70):
         u = shifted(use, d)
         sud = u * prog
         # welfare damage to the child, in units of one lifetime income
@@ -146,14 +146,44 @@ def verdict(par, del_d, pV=1.0, omega=1.0, kids=1.0):
           f'{kids} child per household, weight {omega}')
     print(f'      private welfare loss from conditionality : {priv:.5f}')
     print(f'      disorder cases prevented                 : {100*dsud:.3f} pp')
-    print(f'      damage per case, one child               : {100*per_case:.2f}%')
+    print(f'      consumption equivalent to the child, one case: {100*per_case:.2f}%')
     print(f'      externality gain from conditionality     : {gain:.5f}')
     print(f'      ratio, gain over loss                    : {gain/max(priv,1e-12):.2f}')
     print(f'      Treatment First preferred?               : {gain > priv}')
     return priv, gain
 
 
-DEL_D = 0.30      # parental disorder, from the transmission ratio
+# DELTA_D IS CALIBRATED, NOT SET, and it is calibrated to the MIDDLE of the
+# epidemiological range rather than to its bottom. McGovern et al. (2023) put the
+# child of a parent with a disorder at two to four times the risk of acquiring
+# one; delta_d = 0.30 delivered 2.1, which is the bottom of that range while the
+# note claimed the middle. It is now solved for the ratio of 3.
+#
+# The solve is cheap because the ratio does not depend on anything the solve
+# moves: shifted() reads the same use grid at a shifted income, so child_grid is
+# computed once and the bisection is arithmetic on it. prog cancels out of the
+# ratio, so the disorder ratio and the use ratio are the same number.
+RATIO_TARGET = 3.0
+
+
+def solve_del_d(par, target=RATIO_TARGET, lo=0.0, hi=0.95, iters=44):
+    """The income penalty that puts the child of a user at `target` times the
+    risk of the child of a clean parent."""
+    _, use = child_grid(par, 'HF', par.pV)
+    base = shifted(use, 0.0)
+    for _ in range(iters):
+        mid = 0.5 * (lo + hi)
+        if shifted(use, mid) / max(base, 1e-12) > target:
+            hi = mid
+        else:
+            lo = mid
+    return 0.5 * (lo + hi)
+
+
+import os as _os
+_HERE = _os.path.dirname(_os.path.abspath(__file__))
+DEL_D = solve_del_d(with_(P(), **json.load(
+    open(_os.path.join(_HERE, 'calibrated.json')))))
 DEL_H = 0.31      # parental homelessness, from Chetty, Hendren and Katz (2016)
 
 
@@ -169,7 +199,7 @@ def tab_children(par, pV=1.0):
     prog = m['prog']
     base = shifted(use, 0.0) * prog
     rows = []
-    for d in (0.0, 0.20, DEL_D, 0.40):
+    for d in (0.0, 0.20, DEL_D, 0.60):
         u = shifted(use, d)
         rows.append((d, u * prog, u * prog / max(base, 1e-12),
                      cev(par, shifted(v1, 0.0) - shifted(v1, d))))

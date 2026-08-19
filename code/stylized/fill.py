@@ -15,7 +15,7 @@ import numpy as np
 from stylized import P, with_, value1
 from calibrate import YG, W, stats, bracket, TARGET
 from welfare import cev, v1_pop
-from children import child_grid, shifted, DEL_D
+from children import child_grid, shifted, DEL_D, RATIO_TARGET, verdict
 from run import _scaled
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -97,6 +97,17 @@ def numbers(base):
     progb = stats(with_(base, policy='HF', pV=base.pV))['prog']
     ratio = shifted(useb, DEL_D) / max(shifted(useb, 0.0), 1e-12)
     out['ratio'] = f'{ratio:.1f}'
+    out['del_d'] = f'{DEL_D:.2f}'
+    out['ratio_t'] = f'{RATIO_TARGET:.0f}'
+    # THE SMALLEST GAIN OVER LOSS ANYWHERE IN PANEL A that is not the zero
+    # penalty, so the note can say the ranking survives every penalty it shows
+    # WITHOUT the reader having to take it on trust, and so the claim breaks
+    # loudly if it ever stops being true.
+    _r = []
+    for _d in (0.20, DEL_D, 0.60):
+        _p, _g = verdict(base, _d, pV=1.0)
+        _r.append(_g / max(_p, 1e-12))
+    out['ratiomin'] = f'{min(_r):.0f}'
     v1u, _ = child_grid(base, 'HF', 1.0)
     per_case = cev(base, shifted(v1u, 0.0) - shifted(v1u, DEL_D))
     priv = float((WW * cev(base, vh - vt)).sum())

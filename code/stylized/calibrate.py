@@ -163,7 +163,7 @@ W = W * len(W)  # calibrate.py uses W unnormalised elsewhere; scale is irrelevan
 # at every point it runs 0.065 at lam = 60, 0.221 at 121 and 0.9998 at 250. The
 # population rate is bounded by participation and moves smoothly.
 TARGET = dict(part=0.0513, homeless=0.00399, sud=0.0368, vsl=80.0,
-              dshare=0.11, housing_share=0.30, hspend=0.268,
+              dshare=0.20, housing_share=0.30, hspend=0.268,
               bot50=BOT50_TARGET)
 
 # ORDER MATTERS, and participation goes LAST. Every one of these parameters
@@ -187,7 +187,9 @@ TARGET = dict(part=0.0513, homeless=0.00399, sud=0.0368, vsl=80.0,
 # VSL, which steepens the income gradient, and leaves the spending share where it
 # was.
 #
-# THETA IS SET, NOT CALIBRATED, and the reason is worth recording because the
+# SUPERSEDED, and left because the arithmetic in it is still the reason the
+# target is 20 per cent rather than the 34.7 in the data.
+# THETA WAS SET, NOT CALIBRATED, and the reason is worth recording because the
 # obvious alternative was tried and fails. The natural target is the 11 per cent
 # of income that users who are not addicted spend on drugs, which is what the
 # full model matches. This model cannot reach it while keeping users poor. Two
@@ -210,7 +212,12 @@ TARGET = dict(part=0.0513, homeless=0.00399, sud=0.0368, vsl=80.0,
 # poor is the same fact as the income gradient, not an independent one. So the
 # spending share is reported as an untargeted moment that the model misses, and
 # theta stays set with gamma = 0.268 * (1 - theta) alongside it.
-# THETA AND GAMMA ARE SET, NOT BRACKETED. Freeing them was tried twice and it
+# SUPERSEDED: THETA AND GAMMA ARE BOTH BRACKETED NOW. gamma has been on hspend
+# for some time, and theta joined it on the drug spending share once the target
+# moved from 11 per cent to 20. The paragraph below records why freeing them
+# failed when gamma was TIED to theta as 0.268(1-theta), which is the version
+# that collapsed, and it is kept because the tie is the thing not to reinstate.
+# THETA AND GAMMA WERE SET, NOT BRACKETED. Freeing them was tried twice and it
 # collapses: gamma couples the housing weight to the homelessness margin through
 # the value of the street, the h_hl bracket loses its interior solution, and the
 # sweep walks to h_hl = 0.055 with homelessness at 25 per cent. They are chosen
@@ -227,7 +234,20 @@ TARGET = dict(part=0.0513, homeless=0.00399, sud=0.0368, vsl=80.0,
 # rather than a calibration.
 LAM_LO, LAM_HI = 0.05, 4000.0
 
-PAIRS = [('gam', 'hspend', 0.02, 0.70),
+# THETA IS BRACKETED IN A NARROW WINDOW, and the window is the point. dshare is
+# bimodal in theta and the two branches are far apart: refitting b only, the share
+# runs 1.8 per cent at theta = 0.14, 5.2 at 0.21, then jumps to 18.8 at 0.22 and
+# 32.7 at 0.24. On the low branch users buy a hair above nothing; on the high one
+# they buy a lot, and past 0.235 or so the users are the RICH, which is the result
+# the model exists to produce running backwards (r_use is 4.08 at theta = 0.24).
+# A bracket wide enough to contain both branches is not bisecting a monotone
+# function and lands wherever the first monotonicity test happens to point. On
+# [0.215, 0.240] the share is monotone and the gradient holds throughout, so that
+# is the window, and the sweep warns if the answer arrives at either end of it.
+TH_LO, TH_HI = 0.215, 0.240
+
+PAIRS = [('th', 'dshare', TH_LO, TH_HI),
+         ('gam', 'hspend', 0.02, 0.70),
          ('h_hl', 'homeless', 1e-7, 0.49),
          ('aleph', 'vsl', 0.20, 24.0),
          ('lam', 'sud', LAM_LO, LAM_HI),
@@ -328,7 +348,7 @@ def bracket_sud(par, lo=None, hi=None, iters=16):
     return float(np.sqrt(lo * hi))
 
 
-def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None):
+def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=()):
     par = par or P()
     for s in range(sweeps):
         # HOUSING FIRST, THEN THE VALUE OF LIFE. aleph used to run first and the
@@ -340,6 +360,18 @@ def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None):
         # GAMMA FIRST, then the street. Both move homelessness, so whichever runs
         # last is the one whose moment is actually hit, and homelessness is the
         # one that has to be.
+        # THETA FIRST. It and gamma share the consumption weight 1-gam-th, so
+        # each moves the other's moment, and theta moves participation hard
+        # enough that the share has to be read at a b that puts participation
+        # back on target: hence bracket_with_b rather than bracket.
+        # fix=('th',) is what scan_theta.py needs: it asks what the model looks
+        # like AT a given theta, so calibrating theta away would answer a
+        # different question.
+        if 'th' not in fix:
+            par = with_(par, th=bracket_with_b(par, 'th', 'dshare', TH_LO, TH_HI))
+        if 'th' not in fix and (par.th <= TH_LO * 1.001 or par.th >= TH_HI * 0.999):
+            print(f'   WARNING: theta arrived at a bound, {par.th:.4f} in '
+                  f'[{TH_LO}, {TH_HI}]; the drug spending share is not hit')
         par = with_(par, gam=bracket(par, 'gam', 'hspend', 0.02, 0.70))
         par = with_(par, h_hl=bracket(par, 'h_hl', 'homeless', 1e-7, 0.49))
         par = with_(par, aleph=bracket(par, 'aleph', 'vsl', 0.20, 24.0, iters=26))
@@ -404,8 +436,8 @@ def report(par):
     print('  ' + '   '.join(f'{n}={getattr(par, n):.4g}' for n, _, _, _ in PAIRS))
     print(f"\n  income of users / average : {m['r_use']:.3f}")
     print(f"  share of homeless with the disorder : {m['sud_of_homeless']:.3f}")
-    print(f"  drug spending / income among users  : {m['dshare']:.4f}"
-          "   (untargeted; see the note on theta)")
+    print(f"  income of the poorest household / average : "
+          f"{float(YG.min() / (W / W.sum() @ YG)):.3f}")
     from stylized import value1
     v1 = np.array([value1(par, y, 'HF') for y in YG])
     print(f"  minimum ex ante value of life over the grid : {v1.min():.3f}")

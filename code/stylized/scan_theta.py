@@ -49,7 +49,9 @@ from run import _scaled
 def point(th, sweeps=4):
     t = time.time()
     par = with_(P(), th=th, gam=0.25 * (1.0 - th))
-    par = calibrate(par, sweeps=sweeps, verbose=False)
+    # theta is an internally calibrated parameter now, so it has to be held
+    # fixed here or the scan would calibrate away the thing it is scanning
+    par = calibrate(par, sweeps=sweeps, verbose=False, fix=('th',))
     m = stats(par)
     row = dict(th=th, gam=par.gam, aleph=par.aleph, h_hl=par.h_hl,
                lam=par.lam, b=par.b, secs=time.time() - t)
