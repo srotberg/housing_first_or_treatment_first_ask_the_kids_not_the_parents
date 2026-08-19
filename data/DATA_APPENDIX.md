@@ -277,6 +277,16 @@ nonresidential fixed assets are roughly two years of output and all private fixe
 assets roughly three; three is the figure used and the run reports if β pins at a
 bound trying to reach it.
 
+**κ_V, the voucher eligibility cutoff — half of median income.** HUD's Housing Choice
+Voucher programme sets eligibility at the *very low income* limit, 50 percent of area
+median income, adjusted for family size. Two simplifications: the model has one
+national income distribution rather than area limits, and it applies the cutoff to
+income rather than to family-size-adjusted income. One thing the model does not carry
+is HUD's targeting rule, that at least 75 percent of new vouchers go to households at
+or below 30 percent of area median income, so the model's recipients are drawn from
+the eligible population in proportion rather than skewed to the bottom of it. π_V
+picks up the level of coverage, not its slope.
+
 **h̲ and h̄, the two ends of the rental ladder — 13.2 and 62.7 percent.** ACS 2023,
 table B25042, tenure by bedrooms, **universe occupied housing units**, N =
 131,332,360. The six bedroom categories are collapsed to three: none or one, two,

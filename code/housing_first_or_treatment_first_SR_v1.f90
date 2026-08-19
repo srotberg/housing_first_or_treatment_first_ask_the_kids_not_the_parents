@@ -1264,7 +1264,15 @@
         ! adjuster*(96.0-7.5) = 885, which is 2.6 times the parameter itself, so it
         ! was clamped to its floor of 0.01 and then spent five iterations climbing
         ! back. The step is now bounded relatively as well, below.
-        real(8) :: value_of_life=(1-perceived_probability_lower)*143.06028602039615+perceived_probability_lower*120
+        ! ALEPH IS SEEDED WHERE THE TARGET PUTS IT, not where the old units did.
+        ! At 143.06 the model produced a value of life of 1,068 times average
+        ! labour income against a target of 80, and the trust region halves aleph
+        ! at most once an iteration, so four iterations were spent walking down a
+        ! ladder whose bottom is known: the ratio is close to linear in aleph, so
+        ! 80/1068 of 143.06 is about 11. Every block downstream of the risk term
+        ! was reading a model in which dying was worth thirteen times what the
+        ! calibration says, which is why drug quantities sat on their floor.
+        real(8) :: value_of_life=(1-perceived_probability_lower)*11.0d0+perceived_probability_lower*120
         real(8) :: value_of_life_step_1=0
         
         real(8) :: max_initial_endowment=7
