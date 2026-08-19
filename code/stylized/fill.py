@@ -39,6 +39,7 @@ def numbers(base):
     out['dth1'] = f'{100*(1.0 - base.phi0*(1.0 - base.kap)):.0f}'
     out['beta_ann'] = f'{base.beta_ann:.3f}'
     out['vsl_t'] = f'{TARGET["vsl"]:.0f}'
+    out['dshare_t'] = f'{100*TARGET["dshare"]:.0f}'
     mb = stats(base)
     out['dshare_m'] = f'{100*mb["dshare"]:.2f}'
     # the conversion from use to disorder is IMPLIED here rather than
