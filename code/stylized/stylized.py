@@ -547,16 +547,20 @@ def _states(par, d, policy, y, used=0):
         # household that is well below the rent on the smallest unit, so the
         # disorder can put the roof at risk, which is what the voucher insures.
         inc = y if e == 0 else par.repl * min(y, par.ycap)
-        # THE FLOOR IS MEANS TESTED ON THIS STATE'S INCOME, which is what a food
-        # stamp top up is: it fills the gap between what the household has and
-        # the floor, and pays nothing to a household already above it.
-        inc = inc + max(0.0, par.cfloor - par.ctaper * inc)
+        # FOOD ASSISTANCE IS MEANS TESTED ON THIS STATE'S INCOME and paid on the
+        # statutory rule: the maximum allotment less the fraction ctaper of
+        # income, so it is withdrawn as income rises rather than clawed back one
+        # for one. It is returned SEPARATELY as well as added, because it is
+        # paid in kind and cannot be spent on rent, which is the constraint
+        # c >= F in the quantitative model.
+        fs = max(0.0, par.cfloor - par.ctaper * inc)
+        inc = inc + fs
         # MEANS TEST. A voucher can only reach a household whose income in that
         # state is below the mean. Every unemployed household passes the test;
         # employed households pass only in the bottom part of the distribution.
         pv = par.pV if (covered and inc <= par.yV) else 0.0
         for rmul, prb in ((par.kappa_r, pv), (1.0, 1.0 - pv)):
-            out.append((pe * prb, inc, rmul))
+            out.append((pe * prb, inc, rmul, fs))
     return out
 
 
@@ -599,7 +603,7 @@ def solve_period2(par, y, policy, used=0):
     R2 = np.zeros((par.na, 2))            # rent actually paid, for the housing share
     G2 = np.zeros((par.na, 2))            # voucher outlay in period 2
     for d in (0, 1):
-        for p, inc, rmul in _states(par, d, policy, y, used):
+        for p, inc, rmul, fs in _states(par, d, policy, y, used):
             if p <= 1e-14:
                 continue
             cash = par.R * ag + inc
@@ -607,7 +611,11 @@ def solve_period2(par, y, policy, used=0):
             rnt = np.zeros(par.na); out = np.zeros(par.na)
             for h, rent, street in _options(par, rmul):
                 c = cash - rent
-                v = np.where(c > 1e-9,
+                # FOOD ASSISTANCE CANNOT PAY RENT. c >= fs is the in kind
+                # restriction, the same constraint the quantitative model
+                # imposes; an option that would need the transfer to cover the
+                # rent is not in the choice set.
+                v = np.where((c > 1e-9) & (c >= fs - 1e-12),
                              (1.0 - par.gam - par.th) * np.log(np.maximum(c, 1e-12))
                              + par.gam * np.log(h) + par.aleph, -np.inf)
                 # what the voucher pays on this option: the rest of the market
@@ -622,7 +630,7 @@ def solve_period2(par, y, policy, used=0):
     return ag, W2, H2, R2, G2
 
 
-def _branch(par, ag, inc, rmul, vg, cont):
+def _branch(par, ag, inc, rmul, vg, cont, fs=0.0):
     """
     Period 1, one branch of the drug decision: the value at each v on the grid,
     maximised over housing and saving, with the choice recorded.
@@ -636,7 +644,9 @@ def _branch(par, ag, inc, rmul, vg, cont):
     st = np.zeros(cash.shape); rn = np.zeros(cash.shape); sb = np.zeros(cash.shape)
     for h, rent, street in _options(par, rmul):
         c = cash - rent
-        u = np.where(c > 1e-9,
+        # FOOD ASSISTANCE CANNOT PAY RENT, the same c >= F restriction as in
+        # the quantitative model.
+        u = np.where((c > 1e-9) & (c >= fs - 1e-12),
                      (1.0 - par.gam - par.th) * np.log(np.maximum(c, 1e-12))
                      + par.gam * np.log(h) + par.aleph + par.beta * cont,
                      -np.inf)
@@ -684,7 +694,7 @@ def period1(par, y, policy=None):
     cont0 = (s0 * W2c[:, 0])[None, :]
 
     out = []
-    for p, inc, rmul in _states(par, 0, policy, y, used=0):
+    for p, inc, rmul, fs in _states(par, 0, policy, y, used=0):
         vg = np.concatenate(([0.0], np.linspace(1e-4, 0.5 * inc, par.nv - 1)))
         pid = (1.0 - np.exp(-par.lam * vg))[:, None]
         # SURVIVAL INSIDE THE EXPECTATION over the realised disorder. Not
@@ -858,7 +868,7 @@ def aggregates(par, ygrid, w, policy=None):
                     hcost += m2 * float(np.interp(a, ag, Rx[:, d]))
                     cost += m2 * float(np.interp(a, ag, Gx[:, d])) / par.R
                     hexp += m2 * par.R * a
-                    for p2, inc2, _ in _states(par, d, policy, y, uu):
+                    for p2, inc2, _, _ in _states(par, d, policy, y, uu):
                         hinc += m2 * p2 * inc2
                         hexp += m2 * p2 * inc2
 
@@ -904,16 +914,16 @@ def vsl(par, y=1.0, policy=None):
     W2u = W2c if policy == 'HF' else solve_period2(par, y, policy, used=1)[1]
     s0, s1 = par.phi0, par.phi0 * (1.0 - par.kap)
     tot = 0.0
-    for p, inc, rmul in _states(par, 0, policy, y, used=0):
+    for p, inc, rmul, fs in _states(par, 0, policy, y, used=0):
         if p <= 1e-14:
             continue
         vg = np.concatenate(([0.0], np.linspace(1e-4, 0.5 * inc, par.nv - 1)))
         pid = (1.0 - np.exp(-par.lam * vg))[:, None]
         cont = (1.0 - pid) * s0 * W2u[None, :, 0] + pid * s1 * W2u[None, :, 1]
         rm = _p1_rmul(par, policy, rmul)
-        val, aa, _, rr, _ = _branch(par, ag, inc, rm, vg, cont)
+        val, aa, _, rr, _ = _branch(par, ag, inc, rm, vg, cont, fs)
         cont0 = np.repeat((s0 * W2c[:, 0])[None, :], 2, axis=0)
-        v0, a0, _, r0, _ = _branch(par, ag, inc, rmul, np.zeros(2), cont0)
+        v0, a0, _, r0, _ = _branch(par, ag, inc, rmul, np.zeros(2), cont0, fs)
         tot_v = (val + par.th * (np.log(par.b + vg) - np.log(par.b))
                  - par.omega * par.chdmg * (1.0 - np.exp(-par.lam * vg)))
         k = int(np.argmax(tot_v[1:])) + 1
