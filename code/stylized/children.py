@@ -69,7 +69,7 @@ Run:  python3 children.py
 
 import json
 import numpy as np
-from stylized import P, with_, value1, use_prob, homeless_prob
+from stylized import P, with_, value1, use_prob, ever_homeless_prob
 from calibrate import YG, W, stats
 from welfare import cev
 
@@ -89,13 +89,19 @@ def child_grid(par, policy, pV):
 
 
 def child_homeless_grid(par, policy, pV):
-    """The probability of being on the street at each income, period 1.
+    """The probability of being on the street in EITHER period, at each income.
 
-    The analogue of the use grid, and it is period 1 for the same reason: that
-    is where the household's own draws are realised, so it is the object a
-    parent's income penalty shifts."""
+    IT USED TO BE PERIOD 1 ALONE, by analogy with the use grid, on the grounds
+    that period 1 is where the household's own draws are realised. That reason
+    holds for use, since v is only chosen in period 1, and does not hold for
+    homelessness: a household can lose its roof in either period, and under
+    Treatment First the ones that lose it are exactly those whose voucher is
+    withdrawn after they acquire the disorder, which happens at the transition
+    into period 2. Keyed on period 1 alone, the homelessness that conditionality
+    itself causes could never reach a child, so the channel was switched off by
+    a timing assumption rather than by economics."""
     q = with_(par, policy=policy, pV=pV)
-    return np.array([homeless_prob(q, y, policy) for y in YG], dtype=float)
+    return np.array([ever_homeless_prob(q, y, policy) for y in YG], dtype=float)
 
 
 def shifted(vals, delta):

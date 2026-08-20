@@ -2,8 +2,6 @@
 The note's tables, written straight to LaTeX so they can never drift from the
 code. Run:  python3 tables.py
 
-    tab_channels.tex   who uses, as each channel is scaled up
-    tab_policy.tex     the two policy forces
 """
 
 import json
@@ -221,5 +219,3 @@ if __name__ == '__main__':
     print('tables')
     tab_external(base)
     tab_internal(base)
-    tab_channels(base)
-    tab_policy(base)

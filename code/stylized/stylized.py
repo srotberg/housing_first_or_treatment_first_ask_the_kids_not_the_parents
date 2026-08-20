@@ -693,6 +693,44 @@ def homeless_prob(par, y, policy=None):
     return float(tot)
 
 
+def ever_homeless_prob(par, y, policy=None):
+    """The probability a household at income y is on the street in EITHER period.
+
+    WHY THIS EXISTS, and why the child's penalty uses it. The inherited penalty
+    used to key on period 1 homelessness alone, on the grounds that period 1 is
+    where the household's own draws are realised. For drug use that is right,
+    since v is only chosen in period 1. For homelessness it is not: a household
+    can lose its roof in either period, and under Treatment First the households
+    that lose it are precisely the ones whose voucher is withdrawn AFTER they
+    acquire the disorder, which happens at the transition into period 2. Keyed
+    on period 1 alone, the homelessness that conditionality itself causes could
+    never reach a child, so the channel was switched off by a timing assumption
+    rather than by economics.
+
+    The two periods are not independent, so this is computed along paths rather
+    than as one minus the product of two survival probabilities: for each period
+    1 draw, the household's saving and realised disorder determine the period 2
+    branch it faces, and the street indicator is read there.
+    """
+    policy = policy or par.policy
+    ag, W2c, H2c, _, _ = solve_period2(par, y, policy, used=0)
+    if policy == 'HF':
+        H2u = H2c
+    else:
+        _, _, H2u, _, _ = solve_period2(par, y, policy, used=1)
+    tot = 0.0
+    for p, g, v, bu, bn, *_ in period1(par, y, policy):
+        uses = g > 0.0
+        a, street1 = (bu if uses else bn)[0], (bu if uses else bn)[1]
+        pid = (1.0 - float(np.exp(-par.lam * v))) if uses else 0.0
+        Hx = H2u if uses else H2c
+        street2 = sum(pd * float(np.interp(a, ag, Hx[:, d]))
+                      for d, pd in ((1, pid), (0, 1.0 - pid)))
+        # homeless in period 1 OR period 2, along this path
+        tot += p * (street1 + (1.0 - street1) * street2)
+    return float(tot)
+
+
 def value1(par, y, policy=None):
     """
     V1(y): lifetime value at the household's own optimum, which is what welfare
@@ -705,7 +743,7 @@ def value1(par, y, policy=None):
                      in period1(par, y, policy)))
 
 
-def threshold(par, ygrid, policy=None):
+def threshold(par, ygrid, policy=None, edges=None, cdf=None):
     """
     The use region, with its boundaries resolved exactly.
 
@@ -749,13 +787,29 @@ def threshold(par, ygrid, policy=None):
                     lo = mid
                 else:
                     hi = mid
-            w = (0.5 * (lo + hi) - ygrid[i]) / (ygrid[i + 1] - ygrid[i])
+            ystar = 0.5 * (lo + hi)
+            # THE SHARE OF A CELL INSIDE THE USE REGION IS A FACT ABOUT THE
+            # DISTRIBUTION, not about where the grid happened to put its nodes.
+            # It used to be linear in income between the two node VALUES, which
+            # is only a good approximation when a cell is narrow and its mass is
+            # spread evenly across it. The lowest cell is neither: it pools the
+            # foot of the distribution at one income, so a linear rule credited
+            # it with a fraction that had no meaning and made its whole mass
+            # switch as a block. With the true CDF the fraction is the mass of
+            # that cell actually below the threshold, which is smooth in the
+            # threshold and correct for wide cells and narrow ones alike.
+            if cdf is not None and edges is not None:
+                lo_p, hi_p = edges[i], edges[i + 1]
+                w = (cdf(ystar) - lo_p) / max(hi_p - lo_p, 1e-14)
+            else:
+                w = (ystar - ygrid[i]) / (ygrid[i + 1] - ygrid[i])
+            w = min(max(w, 0.0), 1.0)
             frac[i, s], frac[i + 1, s] = ((w, 0.0) if G[i, s] > 0.0
                                           else (0.0, 1.0 - w))
     return PR, np.clip(frac, 0.0, 1.0), VV, BU, BN, INC
 
 
-def aggregates(par, ygrid, w, policy=None):
+def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None):
     """
     Everything the calibration and the note read off the model.
 
@@ -768,7 +822,7 @@ def aggregates(par, ygrid, w, policy=None):
     the disorder rate, are period 1 objects, since that is where v is chosen.
     """
     policy = policy or par.policy
-    PR, frac, VV, BU, BN, INC = threshold(par, ygrid, policy)
+    PR, frac, VV, BU, BN, INC = threshold(par, ygrid, policy, edges, cdf)
     ww = w / w.sum(); ybar = (ww * ygrid).sum()
     s0, s1 = par.phi0, par.phi0 * (1.0 - par.kap)
 

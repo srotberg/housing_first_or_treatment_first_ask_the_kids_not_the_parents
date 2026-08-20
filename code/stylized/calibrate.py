@@ -308,7 +308,19 @@ assert abs(P().yV - YV_HALF_MEDIAN) < 5e-4, (
     f'yV is {P().yV} but half of median income at SIG={SIG:.4f} is '
     f'{YV_HALF_MEDIAN:.4f}; set yV in stylized.py to match')
 
+# THE CELL EDGES AND THE TRUE CDF, handed to aggregates so the share of a cell
+# inside the use region is read off the distribution rather than interpolated
+# across the gap between two node values. EDGES[i] is the cumulative mass below
+# cell i, so EDGES[i+1] - EDGES[i] is that cell's weight by construction.
+def CDF(y):
+    """P(income <= y) for the lognormal the grid discretises, mean one."""
+    if y <= 0.0:
+        return 0.0
+    return _ndtr((math.log(y) + 0.5 * SIG * SIG) / SIG)
+
+
 YG, W = _grid(SIG)
+EDGES = np.concatenate(([0.0], np.cumsum(W)))
 W = W * len(W)  # calibrate.py uses W unnormalised elsewhere; scale is irrelevant
 
 # LAMBDA TARGETS THE SAME MOMENT AS THE LIFE CYCLE MODEL. It used to target
@@ -437,7 +449,7 @@ def stats(par):
     # spans a region where users spend a fifth of income on drugs and are still
     # poorer than average: at theta = 0.20, gamma = 0.10 the model gives a drug
     # share of 0.20 with users at 0.29 of average income.
-    m = aggregates(par, YG, W)
+    m = aggregates(par, YG, W, edges=EDGES, cdf=CDF)
     m['vsl'] = vsl(par)
     # the grid is built from SIG, so this moment does not depend on par at
     # all; it is reported here so it passes through the same convergence

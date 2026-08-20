@@ -38,7 +38,7 @@ import json
 import os
 import numpy as np
 
-from stylized import P, with_, value1, use_prob, homeless_prob
+from stylized import P, with_, value1, use_prob, homeless_prob, ever_homeless_prob
 from calibrate import YG, W, stats
 from welfare import cev
 from children import DEL_D, DEL_H
@@ -70,9 +70,19 @@ def _policy_grids(par, policy, pV):
     q = with_(par, policy=policy, pV=pV)
     v1 = np.array([value1(q, y, policy) for y in YG])
     use = np.array([use_prob(q, y, policy) for y in YG], dtype=float)
+    # TWO HOMELESSNESS OBJECTS, and they are not the same one. What a cohort
+    # PASSES ON is whether the parent was ever unhoused, in either period, since
+    # that is what the child's penalty is keyed on. What the figure REPORTS is
+    # the realised period 1 rate, which is the rate the model is calibrated to
+    # and the one comparable with the data. Using the first for both would
+    # overstate the published homelessness rate; using the second for both would
+    # switch off the channel by which conditionality's own revocations reach a
+    # child.
     hl = np.array([homeless_prob(q, y, policy) for y in YG], dtype=float)
+    ev = np.array([ever_homeless_prob(q, y, policy) for y in YG], dtype=float)
     prog = stats(q)['prog']
-    return v1, np.clip(use * prog, 0.0, 1.0), np.clip(hl, 0.0, 1.0)
+    return (v1, np.clip(use * prog, 0.0, 1.0), np.clip(hl, 0.0, 1.0),
+            np.clip(ev, 0.0, 1.0))
 
 
 def _shifts():
@@ -167,8 +177,8 @@ def _rest_point(sud, hl, iters=400, tol=1e-14):
 def path(par, policy, pV, p0, v1_base, w0, n=GENERATIONS):
     """Newborn welfare for n cohorts after the reform lands, as a consumption
     equivalent against the pre reform rest point."""
-    v1, sud, hl = _policy_grids(par, policy, pV)
-    v1b, sudb, hlb = _policy_grids(par, BASE_POLICY, par.pV)
+    v1, sud, hl, ev = _policy_grids(par, policy, pV)
+    v1b, sudb, hlb, evb = _policy_grids(par, BASE_POLICY, par.pV)
     out = [(0, 0.0, p0.copy(), _outcome(p0, hlb), _outcome(p0, sudb))]
     p = p0.copy()
     for t in range(1, n + 1):
@@ -179,7 +189,7 @@ def path(par, policy, pV, p0, v1_base, w0, n=GENERATIONS):
         w = _welfare(p, v1)
         out.append((t, float(cev(par, w - w0)), p.copy(),
                     _outcome(p, hl), _outcome(p, sud)))
-        p = _step(p, sud, hl)
+        p = _step(p, sud, ev)
     return out
 
 
@@ -187,8 +197,8 @@ def run(par=None, n=GENERATIONS):
     here = os.path.dirname(os.path.abspath(__file__))
     par = par or with_(P(), **json.load(open(os.path.join(here, 'calibrated.json'))))
 
-    v1b, sudb, hlb = _policy_grids(par, BASE_POLICY, par.pV)
-    p0 = _rest_point(sudb, hlb)
+    v1b, sudb, hlb, evb = _policy_grids(par, BASE_POLICY, par.pV)
+    p0 = _rest_point(sudb, evb)
     w0 = _welfare(p0, v1b)
     print(f'PRE REFORM REST POINT, {BASE_POLICY} at pi_V = {par.pV}')
     print(f'   share of children born to a parent with the disorder : '
