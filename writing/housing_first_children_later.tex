@@ -656,7 +656,7 @@ u(c,h,v) \;=\; (1-\gamma-\theta)\log c \;+\; \gamma \log h
 The three weights sum to one, so $\gamma$ is the housing budget share.
 Drugs enter only in the first period, since that is the only period in which $v$
 is chosen, and housing is chosen each period from a three point grid
-$\{h_1,\underline h,\bar h\}$. The pair $(\theta,b)$ governs the drug term: the marginal
+$\{h_1,\textcolor{red}{h_2},\textcolor{red}{h_3}\}$. The pair $(\theta,b)$ governs the drug term: the marginal
 utility of the $v$th unit is $\theta/(b+v)$, so $\theta$ mostly sets how much a
 user uses and $b$ whether anyone uses at all. The Stone-Geary form keeps the
 first unit's marginal utility finite, which is what generates non-users at
@@ -730,8 +730,8 @@ Each period the household chooses
 \begin{equation}\label{eq:opts}
 h_k \in \{h_1,\ \textcolor{red}{h_2},\ \textcolor{red}{h_3}\}, \qquad h_1 < \textcolor{red}{h_2} < \textcolor{red}{h_3} ,
 \end{equation}
-homelessness ($h_1$), a small unit ($\textcolor{red}{h_2}$) and a standard unit
-($\textcolor{red}{h_3}$). Homelessness is free and delivers less housing services than
+homelessness ($h_1$), a small unit ($h_2$) and a standard unit
+($h_3$). Homelessness is free and delivers less housing services than
 the market does.\footnote{Two rented sizes is the fewest that lets a
 household economise on housing rather than lose it. With one, homelessness comes
 out at 14.40 percent against a target of $0.399$, at any $h_1$.}
@@ -834,8 +834,8 @@ over.
 
 Income support replaces half of previous earnings on a base capped at mean
 income, in line with statutory state rules. The two rental sizes are set
-such that the standard unit, \textcolor{red}{$h_3=\bar h$}, costs $0.41$ of mean income and the
-small unit, \textcolor{red}{$h_2=\underline h$}, is a quarter of it. The voucher parameters are institutional: covered
+such that the standard unit, \textcolor{red}{$h_3$}, costs $0.41$ of mean income and the
+small unit, \textcolor{red}{$h_2$}, is a quarter of it. The voucher parameters are institutional: covered
 tenants pay $30$ percent of market rent, eligibility is capped at half of median income, $\kappa_V = 0.50$, and $\pi_V = 0.266$ is the ratio of recipients to the income eligible population in the 2023 Picture of Subsidized
 Households, published by the Department of Housing and Urban Development (HUD). The weight on drugs is set at $\theta = 0.23$.\footnote{A $\theta$ large enough to
 match the $35$ percent of income the average user spends on drugs makes the drug too
@@ -1183,6 +1183,63 @@ more, which is the opposite direction from the tax.
 
 
 
+\subsection{\textcolor{red}{The transition}}\label{sec:trans}
+
+\textcolor{red}{Everything so far compares rest points, which is the natural way to read a
+two period model but hides the thing the argument turns on. Treatment First takes
+from the household in front of it and gives to the one after. A comparison of
+rest points reports the sum of those two and cannot show that they land on
+different people at different times. A transition can, and this model has one.}
+
+\textcolor{red}{The link across generations is not persistence of income, which
+Section~\ref{sec:kids} deliberately leaves out, but the penalty. A child's income
+is a fresh draw from the same distribution multiplied by $(1-\delta_d)$ if its
+parent acquired the disorder and by $(1-\delta_h)$ if its parent was unhoused, so
+what a cohort inherits is a mixture over the four penalty types
+$\{1,\ 1-\delta_d,\ 1-\delta_h,\ (1-\delta_d)(1-\delta_h)\}$. That mixture is a
+Markov chain: the share of a cohort carrying each penalty is decided by how many
+of the cohort before it used and how many were unhoused, which depends in turn on
+the incomes that cohort was born with. Change the policy and the chain moves to a
+new rest point. It converges quickly, because the base draw is redrawn every
+generation and only the penalty is passed on, so a handful of cohorts shows all
+of it.}
+
+\textcolor{red}{Figure~\ref{fig:trans} runs the experiment from the world as it
+is, Housing First at the observed $\pi_V=0.266$, to universal cover under
+each policy, and plots the expected lifetime value of each newborn cohort as a
+consumption equivalent against the starting point. Cohort $0$ is the old rest
+point by construction. Cohort $1$ is the one the reform lands on: it was born
+into the old income distribution and lives under the new rule, so it pays
+conditionality's cost and collects none of its benefit. The two policies are
+almost indistinguishable there, 62.01 percent against 62.13 percent,
+and Treatment First is the lower of the two. That difference is the private loss
+of Section~\ref{sec:nox}, seen on the only cohort that bears it.}
+
+\textcolor{red}{From the second cohort on the paths separate, and they separate
+because the parent generation they were born to is different. Under Treatment
+First the share of children born to a parent with the disorder falls from
+5.94 percent to 0.00 percent and newborn welfare settles at
+80.66 percent. Under Housing First the same share \emph{rises}, to
+10.75 percent, because a voucher that arrives whatever the household does
+is worth most to the household that uses, and welfare settles at 53.36
+percent. The ranking the static comparison delivers is therefore not a
+knife edge that one generation's accounting produces: it is a level difference
+between two rest points, reached within two or three cohorts, and paid for
+by the single cohort standing at the switch.}
+
+\begin{figure}[!tb]
+\centering
+\includegraphics[width=0.66\textwidth]{figures/stylized_transition.pdf}
+\caption{\textcolor{red}{Newborn welfare after the reform}}
+\label{fig:trans}
+\notes{0.66\textwidth}{\textcolor{red}{Note: expected lifetime value of each
+newborn cohort, as a consumption equivalent against the pre reform rest point.
+The reform moves the programme from Housing First at $\pi_V=0.266$ to
+universal cover under the policy named. Cohort $1$ is born into the old income
+distribution and lives under the new rule.}}
+\end{figure}
+
+
 %======================================================================
 \section{The quantitative model}\label{sec:full}
 
@@ -1282,8 +1339,8 @@ The two penalties, $\rho_d$ and $\rho_m$, are in the model to generate a
 large share of homeless households being employed, consistent with the data.
 Employed homelessness cannot be produced by unemployment alone:
 something has to leave a household poor while it is still in a job.
-Both are calibrated internally, and \textcolor{red}{on two features of the same population: $\rho_d$ on the share of the}
-\textcolor{red}{homeless who are employed, and $\rho_m$ on their income relative to the average.}
+Both are calibrated internally, and on two features of the same population: $\rho_d$ on the share of the
+homeless who are employed, and $\rho_m$ on their income relative to the average.
 
 Labour income is taxed with the Heathcote et al.\ (2017) function and
 capital income at a flat rate $\tau_k$,
@@ -1327,12 +1384,10 @@ doubling up; it carries a small service flow and no rent, a fixed
 fraction of the smallest rental rather than a level of its own. The three rental
 sizes are pinned at both ends and spaced by a curvature between them,
 \begin{equation}\label{eq:fhouse}
-h_2=\underline h,\qquad
-h_3=\underline h+\Big(\tfrac{1}{2}\big(\bar h-\underline h\big)^{1/\varsigma}\Big)^{\varsigma},
-\qquad h_4=\bar h,
+h_3=\textcolor{red}{h_2}+\Big(\tfrac{1}{2}\big(\textcolor{red}{h_4}-\textcolor{red}{h_2}\big)^{1/\varsigma}\Big)^{\varsigma},
 \end{equation}
-so three parameters describe the grid: $\underline h$ the smallest
-rental size, $\bar h$ the largest, and $\varsigma$ the curvature that
+so three parameters describe the grid: \textcolor{red}{$h_2$} the smallest
+rental size, \textcolor{red}{$h_4$} the largest, and $\varsigma$ the curvature that
 places the rung between them. At $\varsigma=1$ the ladder is uniform and at
 $\varsigma>1$ the middle rung sits closer to the bottom, which is what a housing
 size distribution with most households in the largest category requires.
@@ -2015,7 +2070,7 @@ from opposite ends.
 \emph{who} participates. Neither policy acts on them directly; they decide how much
 there is for a policy to act on.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$\theta$, the weight on the drug in utility.]
+\item[$\theta$, the weight on \textcolor{red}{drugs} in utility.]
 How much a household wants the drug at all, against consumption and
 housing. It is the level of the temptation where $b$ is its curvature, and it is
 the parameter the amount spent on drugs, when it does, turns on. As it
@@ -2187,17 +2242,14 @@ fall ill. When it rises, the penalty shrinks, so the private cost of
 illness falls and, because the child's draw improves with it, the externality falls
 too. Its
 value is chosen so the model generates the average labour income of the
-homeless relative to the average, $19.1$ percent. \textcolor{red}{That is a moment about the homeless}
-\textcolor{red}{rather than about the mentally ill, and deliberately so. The employment rate given SMI}
-\textcolor{red}{already brackets $\kappa_{uem}$, so it cannot also bracket $\rho_m$, and with the extensive}
-\textcolor{red}{margin spoken for the intensive one needs a moment of its own. The income of the}
-\textcolor{red}{homeless is where both penalties bind: $\rho_d$ decides how many of the homeless work}
-\textcolor{red}{and $\rho_m$ how poor the ones who do are, so the two are bracketed as a pair. A survey}
-\textcolor{red}{ratio for SMI would not serve, for the reason given in the note to $\kappa_{uem}$ below:}
-\textcolor{red}{employed adults aged $26$ and over with SMI earn $85.7$ percent of what employed adults}
-\textcolor{red}{without it earn in the 2024 public use file, $81.4$ percent counting part time work as}
-\textcolor{red}{well, and the state in this model is the high disability end of that distribution,}
-\textcolor{red}{where the penalty is larger.}
+homeless relative to the average, $19.1$ percent.\textcolor{red}{\footnote{The moment is about the
+homeless rather than about the mentally ill because the employment rate given SMI
+already brackets $\kappa_{uem}$, which leaves the intensive margin without one, and the
+income of the homeless is where both penalties bind: $\rho_d$ decides how many of the
+homeless work and $\rho_m$ how poor the ones who do are. A survey ratio would not serve.
+Employed adults aged $26$ and over with SMI earn $85.7$ percent of what employed adults
+without it earn in the 2024 public use file, and the state here is the high disability
+end of that distribution, as the note to $\kappa_{uem}$ explains.}}
 \item[$\kappa_{uem}$, the employment multiplier for SMI.] The same as
 $\rho_m$ but on the extensive margin, and where the chain does most of its work, since employment is what mental
 illness costs most. Increase it and the private cost rises, because being
@@ -2207,7 +2259,7 @@ narrows, which is a distortion on top of both. A child of a treated parent is le
 earnings and lowers its chance of being unhoused, so part of Treatment First's
 return never appears in the treated household's own drug use. Its value is chosen
 so the model generates the employment rate given SMI, about $30$ percent, the
-midpoint of the range for high disability diagnoses.\footnote{\textcolor{red}{The state in this model is not NSDUH's serious mental illness.}
+midpoint of the range for high disability diagnoses.\footnote{\textcolor{red}{The state in this model is not NSDUH's SMI.}
 It is an illness severe enough to cut productivity by
 $\rho_m$ and to raise the chance of losing work, which is the high disability end of
 the distribution rather than its whole. Roughly a fifth of people with schizophrenia
@@ -2429,7 +2481,7 @@ it.
 
 \paragraph{Rental ladder.} These three parameters build the grid of dwelling sizes a renter chooses from, and they fix how the rungs are spaced.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$\underline h$ and $\bar h$, the rental ladder.] The smallest and
+\item[\textcolor{red}{$h_2$} and \textcolor{red}{$h_4$}, the rental ladder.] The smallest and
 the largest rental size. The ladder is pinned at both ends and the rung between
 them follows from the curvature $\varsigma$.
 I choose the two ends to match the two ends of the distribution of occupied units
@@ -2445,7 +2497,7 @@ denominator.
 I set it at $1.8$ rather than calibrate it, because with three rental sizes the
 size distribution carries two free numbers and the two ends of the ladder already
 take them. What the curvature does is place the middle rung: the middle size sits a
-fraction $(1/2)^{\varsigma}$ of the way from $\underline h$ to $\bar h$, so at
+fraction $(1/2)^{\varsigma}$ of the way from \textcolor{red}{$h_2$} to \textcolor{red}{$h_4$}, so at
 $\varsigma=1.8$ it sits $28.7$ percent of the way up from the smallest rental
 rather than the $50$ percent a uniform ladder would give. At the calibrated ends
 the three rental sizes stand in the ratio $1 : 1.46 : 2.59$. The two renter cost

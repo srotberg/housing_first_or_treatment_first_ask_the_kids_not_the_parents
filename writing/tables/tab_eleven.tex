@@ -17,10 +17,10 @@ $\rho_d$ & Earnings lost to a SUD & Int. & Employment rate of the homeless, HUD 
 $\kappa_{ued}$ & Employment multiplier, SUD & Int. & Unemployment rate given a SUD, NSDUH 2024 & 16.25\% & \textemdash & \textemdash \\
 $h_1$ & Service flow of homelessness & Int. & Homelessness rate, HUD 2023 & 0.399\% & \textemdash & \textemdash \\
 $\kappa_{\phi H}(j)$ & Increased mortality when homeless & Ext. & Mortality ratios by age, Baggett et al.\ (2013) & 9.1 to 1.1 & n.a. & 4.41 to 1.09 \\
-$\kappa_{ueH}$ & Employment multiplier, homeless & Ext. & Desmond and Gershenson (2016) & 0.80 & n.a. & 0.80 \\
+$\kappa_{ueH}$ & \textcolor{red}{Employment lost to homelessness} & Ext. & Desmond and Gershenson (2016) & 0.80 & n.a. & 0.80 \\
 $\zeta_{DI}$ & Disability replacement, SMI & Ext. & SSDI and SSI rates, SSA 2023 & 0.25 & n.a. & 0.25 \\
 $\underline c$ & Food stamp consumption floor & Int. & Food stamps over labour income, USDA & 0.42\% & \textemdash & \textemdash \\
-$\pi_V$ & Voucher lottery probability & Int. & Recipients over eligible, HUD 2023 & 26.6\% & \textemdash & \textemdash \\
+$\pi_V$ & \textcolor{red}{Chance of drawing a voucher} & Int. & Recipients over eligible, HUD 2023 & 26.6\% & \textemdash & \textemdash \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{Mental illness chain}} \\
 $\iota$ & SUD multiplier on SMI onset & Ext. & Danish registers, Nielsen et al.\ (2017) & 2.00 & n.a. & 2.00 \\
@@ -47,6 +47,6 @@ $\sigma_{\ell}$ & Curvature on leisure & Ext. & Frisch elasticity, Chetty (2012)
 $\nu_2$ & Drug supply curvature & Ext. & Supply elasticity, Mace et al.\ (2020) & 1.46 & n.a. & 1.68 \\
 \bottomrule
 \end{tabular}}\usebox{\ntbox}
-\tabnote{Note: n.a.\ in the Model column marks a parameter that is set from outside rather than calibrated inside the model. For those the model produces no internal target to compare with the data, so the cell reads n.a.\ rather than a dash, which keeps them distinct from the internally calibrated parameters. \textcolor{red}{Two rows report an elasticity in the Data column and the parameter that delivers it in the Value column, since the source measures the elasticity and the model is written in the parameter: $\sigma_{\ell}$, where a Frisch elasticity of $0.5$ needs a curvature of $3.00$, and $\nu_2$, where a supply elasticity of $1.46$ needs a curvature of $1.68$ through $1/(\nu_2-1)$.}}
+\tabnote{Note: n.a.\ in the Model column marks a parameter that is set from outside rather than calibrated inside the model. For those the model produces no internal target to compare with the data, so the cell reads n.a.\ rather than a dash, which keeps them distinct from the internally calibrated parameters. Two rows report an elasticity in the Data column and the parameter that delivers it in the Value column, since the source measures the elasticity and the model is written in the parameter: $\sigma_{\ell}$, where a Frisch elasticity of $0.5$ needs a curvature of $3.00$, and $\nu_2$, where a supply elasticity of $1.46$ needs a curvature of $1.68$ through $1/(\nu_2-1)$.}
 \endgroup
 \end{table}

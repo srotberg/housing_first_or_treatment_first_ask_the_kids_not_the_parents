@@ -62,7 +62,7 @@ EXTERNAL = [
         # average income 0.978, so the same object is 0.41 of average income; a
         # table that printed 0.40 next to a source line saying 0.41 was asking
         # the reader to reconcile two numbers for one parameter.
-        ('h_lg', r'\bar h', 'Standard rental unit', 'Set', '{:.2f}'),
+        ('h_lg', r'h_3', 'Standard rental unit', 'Set', '{:.2f}'),
         # The ratio is stated in the TEXT and not here. Printing "a quarter of
         # the standard unit" beside 0.10 next to a 0.41 invites the reader to
         # multiply by four, get 0.40, and conclude the table is wrong. It is not:
@@ -72,12 +72,12 @@ EXTERNAL = [
         # quarter of h_lg, and printing 0.10 beside the standard unit's 0.41
         # invited the reader to multiply by four and find 0.40. Writing the
         # relation itself is exact and there is nothing left to check.
-        ('h_sm', r'\underline h', 'Small rental unit', 'Set', r'0.25\times\bar h'),
+        ('h_sm', r'h_2', 'Small rental unit', 'Set', r'0.25\times h_3'),
         ('kappa_r', r'\kappa_r', "Tenant's share of the rent when covered",
          'HUD voucher rules', '{:.2f}'),
         ('kV', r'\kappa_V', 'Voucher means test, share of median income',
          'HUD income limits', '{:.2f}'),
-        ('pV', r'\pi_V', 'Voucher generosity in the baseline',
+        ('pV', r'\pi_V', 'Chance of drawing a voucher',
          'HUD 2023, recipients over eligible', '{:.3f}'),
     ]),
 ]
@@ -88,10 +88,10 @@ EXTERNAL = [
 # calibrate.SIG. None means "read SIG", and the row is otherwise an ordinary
 # internally calibrated one.
 INTERNAL = [
-    (None, r'\sigma_y', 'Dispersion of the fixed draw',
-     "Bottom half's share of earnings, SCF 2022", 'bot50', '{:.2%}', '{:.3f}'),
-    ('gam', r'\gamma', 'Weight on housing',
-     'Housing over expenditure net of drugs, CEX 2024', 'hspend', '{:.2%}',
+    (None, r'\sigma_y', 'Dispersion of productivity',
+     "Bottom half's share of earnings, SCF 2022", 'bot50', '{:.1%}', '{:.3f}'),
+    ('gam', r'\gamma', 'Weight on housing services',
+     'Housing over expenditure net of drugs, CEX 2024', 'hspend', '{:.1%}',
      '{:.3f}'),
     ('aleph', r'\aleph', 'Flow value of being alive',
      'Value of a statistical life, Viscusi and Aldy (2003)', 'vsl', '{:.1f}', '{:.3f}'),
