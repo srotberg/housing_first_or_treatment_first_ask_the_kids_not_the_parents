@@ -288,7 +288,11 @@ def tab_children(par, pV=1.0):
     prog = m['prog']
     base = shifted(use, 0.0) * prog
     rows = []
-    for d in (0.0, 0.20, DEL_D, 0.60):
+    # SORTED, because the calibrated value is inserted among fixed ones and
+    # lands wherever it falls. At del_d = 0.61 the panel read 0.00, 0.20, 0.61
+    # (calibrated), 0.60, which invites the reader to check a ratio that is not
+    # monotone down the column when in fact it is.
+    for d in sorted({0.0, 0.20, DEL_D, 0.60}):
         u = shifted(use, d)
         rows.append((d, u * prog, u * prog / max(base, 1e-12),
                      cev(par, shifted(v1, 0.0) - shifted(v1, d))))
