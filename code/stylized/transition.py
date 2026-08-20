@@ -395,6 +395,18 @@ def numbers(paths, par=None, cg=None):
     # HOW FAR THE LAST TWO COHORTS ARE APART, the honest test that the path has
     # actually stopped moving rather than merely reached the end of the array.
     d['tr_drift'] = f'{100*max(abs(tf[-1][1]-tf[-2][1]), abs(hf[-1][1]-hf[-2][1])):.4f}'
+    # THE GENEROSITY MARGIN AGAINST THE CONDITIONALITY MARGIN, on the one
+    # cohort that bears the reform. The experiment moves two dials at once:
+    # coverage from the observed pi_V to universal, and, under Treatment First,
+    # the sobriety condition. Cohort 1's RISE is what the first dial is worth;
+    # the GAP between the two policies is what the second one costs. The ratio
+    # is the paper's answer to why the two paths are nearly on top of each other
+    # at the reform, and it is a result, so it is computed rather than typed.
+    _rise = 0.5 * (tf[1][1] + hf[1][1])
+    _gap = abs(tf[1][1] - hf[1][1])
+    d['tr_gen_rise'] = f'{100*_rise:.2f}'
+    d['tr_t1_gap'] = f'{100*_gap:.2f}'
+    d['tr_gen_vs_cond'] = (f'{_rise / _gap:.0f}' if _gap > 1e-9 else 'many')
     # WHICH OF THE TWO THE COHORT AT THE SWITCH PREFERS. The gap is under a
     # tenth of a point, so which way it falls is not robust to a recalibration.
     d['tr_t1_dir'] = _dir(tf[1][1], hf[1][1], 'above', 'below', tol=1e-6,
