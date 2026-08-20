@@ -41,6 +41,22 @@ def numbers(base):
     out['beta_ann'] = f'{base.beta_ann:.3f}'
     out['vsl_t'] = f'{TARGET["vsl"]:.0f}'
     out['dshare_t'] = f'{100*TARGET["dshare"]:.0f}'
+    out['pvbase'] = f'{base.pV:.3f}'
+
+    # THE GRID, quoted in the footnote where the income distribution is
+    # introduced. The pooled share is read off the weights rather than typed,
+    # so it cannot drift from the grid the model is actually solved on.
+    out['gridn'] = f'{len(YG)}'
+    out['poolpct'] = f'{100.0 * W[0] / W.sum():.1f}'
+
+    # THE FOOD ASSISTANCE ABLATION. These two are the forced share of
+    # homelessness, at h_hl near zero, with and without the transfer that used
+    # to be in this model, and they are RECORDED rather than recomputed: the
+    # transfer is gone, so the model can no longer produce the second number.
+    # The experiment is in the note at the head of calibrate.py.
+    out['forced_nofs'] = '0.305'
+    out['forced_fs'] = '0.288'
+
     mb = stats(base)
     out['dshare_m'] = f'{100*mb["dshare"]:.2f}'
     # the conversion from use to disorder is IMPLIED here rather than
@@ -155,10 +171,25 @@ def mark(new, prev):
     return out, moved
 
 
+def _transition(out):
+    """The transition numbers, from the file transition.py writes.
+
+    They are read rather than recomputed because the transition solves the
+    model under two policies for several cohorts, which is far more work than
+    filling in a number, and transition.py runs before this file."""
+    p = os.path.join(HERE, 'transition_numbers.json')
+    if not os.path.exists(p):
+        print('   transition_numbers.json missing: run transition.py first')
+        return
+    for k, v in json.load(open(p)).items():
+        out.setdefault(k, v)
+
+
 if __name__ == '__main__':
     import sys
     base = with_(P(), **json.load(open(os.path.join(HERE, 'calibrated.json'))))
     n = numbers(base)
+    _transition(n)
     if '--freeze' in sys.argv:
         json.dump(n, open(PREV, 'w'), indent=1)
         print(f'   froze {len(n)} numbers into numbers_prev.json; '

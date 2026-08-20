@@ -14,8 +14,8 @@ four penalty types,
 and that mixture is a Markov chain: the share of a cohort carrying each penalty
 is decided by how many of the previous cohort used and how many were unhoused,
 which in turn depends on the incomes that cohort was born with. Change the
-policy and the chain starts moving, geometrically, to a new rest point. Five to
-ten cohorts is enough to see all of it.
+policy and the chain starts moving, geometrically, to a new rest point. It
+settles in two or three cohorts, so five is enough to see all of it.
 
 WHY THE PICTURE IS WORTH A SECTION. The paper's whole claim is that Treatment
 First buys the child at the parent's expense, and a static comparison cannot
@@ -48,7 +48,11 @@ LY = np.log(YG)
 
 BASE_POLICY = 'HF'      # the world as it is: rationed vouchers, no condition
 PV_OPT = 1.0            # the optimal Treatment First programme is universal
-GENERATIONS = 8
+# FIVE COHORTS, because the chain settles in two or three. The mixture a cohort
+# is born into depends on its parent's outcomes and nothing further back, since
+# the base draw is redrawn every generation, so the path is at its new rest
+# point almost immediately. Showing eight would be five flat markers.
+GENERATIONS = 5
 
 
 def _at(vals, s):
