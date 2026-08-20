@@ -39,7 +39,12 @@ def compare(a, b, name, more='higher', less='lower', same='the same as',
 
 def numbers(base, fig):
     """The prose's numbers. `fig` is figure_numbers.json, already loaded."""
-    out = dict(fig)
+    # KEYS BEGINNING WITH AN UNDERSCORE ARE NOT PLACEHOLDERS. run.py exports a
+    # few diagnostics for verify.py to assert on, _part_misses among them, and
+    # they are ints rather than formatted strings. They have no @@name@@ in the
+    # prose, so they are dropped here rather than being marked up and offered to
+    # the substituter.
+    out = {k: v for k, v in fig.items() if not k.startswith('_') or k == '_raw'}
     raw = dict(out.pop('_raw'))
     wel = _welfare()
     raw.update(wel.pop('_raw'))

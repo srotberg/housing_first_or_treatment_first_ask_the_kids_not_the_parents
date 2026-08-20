@@ -39,8 +39,8 @@
 % inside it. Maths is fine, $14.2$ is one word.
 \makeatletter
 \newlength{\cw@len}
-\newcommand{\cw}[1]{{\color{red}\settowidth{\cw@len}{#1}%
-  \rlap{\rule[0.55ex]{\cw@len}{0.4pt}}\hspace{0pt}#1}}
+\newcommand{\cw}[1]{\settowidth{\cw@len}{#1}%
+  \rlap{\rule[0.55ex]{\cw@len}{0.4pt}}\hspace{0pt}#1}
 \newcommand{\cut}[1]{\cut@scan#1 \@nil}
 \def\cut@scan#1 #2\@nil{\cw{#1}\ifx\relax#2\relax\else\space\cut@scan#2\@nil\fi}
 \makeatother
@@ -746,14 +746,14 @@ and $\pi_V$, the share of eligible households actually covered, is a policy
 dial of Section~\ref{sec:mh}.
 
 The two policies differ in exactly one respect, the last indicator in
-equation~\eqref{eq:vouch}. \textbf{Housing First} \textcolor{red}{(HF)} covers every eligible
-household regardless of $(d',v)$. \textbf{Treatment First} \textcolor{red}{(TF)} covers only
+equation~\eqref{eq:vouch}. \textbf{Housing First} (HF) covers every eligible
+household regardless of $(d',v)$. \textbf{Treatment First} (TF) covers only
 households that satisfy the sobriety condition, $v=0$ and $d'=0$, which is the
-rule in the quantitative model as well. \textcolor{red}{The condition is applied to the
+rule in the quantitative model as well. The condition is applied to the
 period in which the voucher is paid, so what it tests differs by period: every
 household is born clean, so $d'=0$ holds for everyone in period 1 and only $v$
 can fail the condition there, while in period 2 there is no drug choice, $v=0$
-holds by construction, and only the disorder can fail it.} Since policy coverage in the states
+holds by construction, and only the disorder can fail it. Since policy coverage in the states
 that follow drug use is the only difference, the gap between them is the moral
 hazard and the whole of it.
 
@@ -762,8 +762,8 @@ Every household arrives clean, so the period 1 voucher is drawn before $v$ is
 chosen and conditionality cannot screen anyone out on entry. The order
 within the period is therefore: the household chooses $v$, the policy rule is
 then applied to the voucher it drew, and it chooses housing knowing what rent it
-faces. So under Treatment First a household that \textcolor{red}{uses (period 1), or carries the
-disorder (period 2), is} subject to
+faces. So under Treatment First a household that uses (period 1), or carries the
+disorder (period 2), is subject to
 full market rent immediately, in the period concerned.
 
 \subsubsection{The household's problem}\label{sec:problem}
@@ -896,7 +896,7 @@ $@@q_b@@$ percent.
 \label{fig:who}
 \notes{0.62\textwidth}{Note: the vertical axis is average income of users over
 the population average, on a log scale, and $b$ is recalibrated at every point
-\textcolor{red}{so that the model targets a participation rate of $@@q_b@@$ percent at every point.} The black dotted line marks
+so that the model targets a participation rate of $@@q_b@@$ percent at every point. The black dotted line marks
 the calibrated strength; everything to the right of it is extrapolation.}
 \end{figure}
 
@@ -916,8 +916,8 @@ fully switched on, and at $@@scanhi_pc@@$ percent it is @@r_unemp125@@, still @@
 one and no closer to turning. A resource penalty does not produce the concentration of
 drug use at the bottom.
 
-Why should the two channels differ at all, \textcolor{red}{when in both the disorder
-punishes the household?} Because only one of them has a bite that grows with what the household
+Why should the two channels differ at all, when in both the disorder
+punishes the household? Because only one of them has a bite that grows with what the household
 has. Flow utility is logarithmic, so a \emph{proportional} loss of income costs
 a number of utils that hardly moves with income: a household earning below the
 cap $\bar y$ that loses its job and falls back on income support gives up
@@ -929,7 +929,7 @@ price of using \emph{falls} as income rises, and that is what puts use at the to
 to begin with. A charge that does not vary with income cannot reverse a price
 that does.
 
-\textcolor{red}{Mortality is a different object.} What it destroys is the whole
+Mortality is a different object. What it destroys is the whole
 continuation value: the consumption of a life still to be lived, and $\aleph$,
 the value of being alive at all, which does not shrink as consumption does. That
 value rises with permanent income, so the expected cost of using rises with
@@ -938,7 +938,7 @@ and it is the rich who stop first. The reversal is therefore not that mortality
 is the larger penalty; it is that mortality is the only one of the two whose
 \textcolor{red}{size rises quickly with income.} The household with more to
 lose loses more, and loses disproportionally more than it gains from drugs.
-\textcolor{red}{This is the work of $\aleph$ in equation~\eqref{eq:u}, and it is worth saying
+This is the work of $\aleph$ in equation~\eqref{eq:u}, and it is worth saying
 why a constant can do it. What the household weighs against the drug is the cost
 of dying measured in \emph{consumption}, which is the continuation value divided
 by the marginal utility of consumption. Flow utility is logarithmic, so that
@@ -946,12 +946,12 @@ marginal utility is $1/c$ and a term worth $\aleph$ utils is worth $c\aleph$
 goods: constant in utility is \emph{proportional to consumption} in the units
 the household actually trades off. The consumption part of the continuation
 contributes about $c\log c$, which is small and negative for a poor household,
-so it is the constant that carries the income gradient in the value of a life.}
+so it is the constant that carries the income gradient in the value of a life.
 
 %======================================================================
 \subsection{How does housing assistance shape the drug use decision?}\label{sec:mh}
 
-The two forces of question 2, \textcolor{red}{moral hazard and the value of life,} can be separated exactly, because they differ in
+The two forces of question 2, moral hazard and the value of life, can be separated exactly, because they differ in
 what happens to a household that uses. Under Treatment First the voucher is
 withdrawn from any household that violates the sobriety condition, so only the
 value of life force operates. Under Housing First it is not, so both channels
@@ -970,7 +970,7 @@ life force, marked at the right. The dashed line is the generosity of the
 current programme, $\pi_V = @@pvbase@@$.}
 \end{figure}
 
-Figure~\ref{fig:mh} traces both as generosity rises\textcolor{red}{, that is across values of $\pi_V$}.
+Figure~\ref{fig:mh} traces both as generosity rises, that is across values of $\pi_V$.
 \textcolor{red}{Both comparisons here are between long-run steady states, each the rest point of
 the economy under a policy that has always been in place. Section~\ref{sec:trans}
 follows the path between them.} With no programme at all,
@@ -1370,13 +1370,13 @@ y^{n}=\tau_{\ell}\,(y^{g})^{\xi}\;+\;(1-\tau_k)\,r\,a ,
 with $y^{n}$ denoting after tax income, where $\xi$ governs progressivity
 and $\tau_{\ell}$ the level. Households can
 receive two transfers, both means-tested on gross income as the programmes
-themselves are. \textcolor{red}{Food assistance pays the maximum allotment $\underline c\,\bar y$, with $\underline c$ expressed}
-\textcolor{red}{as a share of average income, less the fraction $\varrho$ of means-tested income, which is the}
-\textcolor{red}{statutory rule and the same rule the stylized model uses,} and the voucher covers rent above a
+themselves are. Food assistance pays the maximum allotment $\underline c\,\bar y$, with $\underline c$ expressed
+as a share of average income, less the fraction $\varrho$ of means-tested income, which is the
+statutory rule and the same rule the stylized model uses, and the voucher covers rent above a
 tenant contribution of $\kappa_r$ of gross earnings, the same $\kappa_r$ as
 in Section~\ref{sec:support},
 \begin{equation}\label{eq:ftrans}
-F=\max\big\{0,\ \underline c\,\bar y-\textcolor{red}{\varrho\,}(y^{g}+ra)\big\},
+F=\max\big\{0,\ \underline c\,\bar y-\varrho\,(y^{g}+ra)\big\},
 \qquad
 V\!ch=\mathbf{1}\{\eta=1\}\,\mathbf{1}\{h'\neq h_1\}\,
 \max\big\{0,\ p_r\, h'-\kappa_r\,y^{g}\big\}.
@@ -1405,10 +1405,10 @@ doubling up; it carries a small service flow and no rent, a fixed
 fraction of the smallest rental rather than a level of its own. The three rental
 sizes are pinned at both ends and spaced by a curvature between them,
 \begin{equation}\label{eq:fhouse}
-h_3=\textcolor{red}{h_2}+\Big(\tfrac{1}{2}\big(\textcolor{red}{h_4}-\textcolor{red}{h_2}\big)^{1/\varsigma}\Big)^{\varsigma},
+h_3=h_2+\Big(\tfrac{1}{2}\big(h_4-h_2\big)^{1/\varsigma}\Big)^{\varsigma},
 \end{equation}
-so three parameters describe the grid: \textcolor{red}{$h_2$} the smallest
-rental size, \textcolor{red}{$h_4$} the largest, and $\varsigma$ the curvature that
+so three parameters describe the grid: $h_2$ the smallest
+rental size, $h_4$ the largest, and $\varsigma$ the curvature that
 places the rung between them. At $\varsigma=1$ the ladder is uniform and at
 $\varsigma>1$ the middle rung sits closer to the bottom, which is what a housing
 size distribution with most households in the largest category requires.
@@ -1636,7 +1636,7 @@ additionally lost with probability $p_{\text{det}}$ by a household that uses
 drugs or has a SUD, and
 with probability $p_{\text{fp}}$ by one that did not,
 \begin{equation}\label{eq:fpol}
-\Pr(\eta'=1)=\Pr(\eta'=1)^{\textcolor{red}{\text{HF}}}\times
+\Pr(\eta'=1)=\Pr(\eta'=1)^{\text{HF}}\times
 \begin{cases}
 1-p_{\text{fp}} & \text{if } (v=0 \ \text{and } d=0) \ \text{or } \tau=1,\\
 1-p_{\text{det}} & \text{otherwise} .
@@ -1653,9 +1653,9 @@ There is no fifth case: treatment is available only when $d=1$, and it forbids
 use, so no household is ever both in treatment and using.
 
 This is the one place where the quantitative model changes the \emph{logic} of
-Section~\ref{sec:mh} rather than its setting. \textcolor{red}{There, conditionality is perfectly
+Section~\ref{sec:mh} rather than its setting. There, conditionality is perfectly
 enforced: a household that fails the condition always loses the voucher, and one
-that meets it never does. @@tfdeter@@.} Here detection is imperfect and so are households: some fail
+that meets it never does. @@tfdeter@@. Here detection is imperfect and so are households: some fail
 the condition because they cannot get clean, and some fail it because the test is
 wrong. Those two groups are the empirical case for Housing First, neither exists
 in the stylized model, and that is why its welfare numbers were illustration.
@@ -1728,7 +1728,7 @@ subject to the budget~\eqref{eq:fbudget}, the income
 definitions~\eqref{eq:fincome} to~\eqref{eq:ftrans}, the choice
 set of dwellings~\eqref{eq:fchoice}, $\tau=0$ whenever $d=0$, $n=0$
 whenever $j\ge J_R$ or
-$e\neq1$, $v=0$ whenever $\tau=1$, $a'\ge0$, $c\ge F$ so that \textcolor{red}{the food stamp payment cannot be saved, since it is paid in kind,} and $V(J{+}1,\cdot)=0$
+$e\neq1$, $v=0$ whenever $\tau=1$, $a'\ge0$, $c\ge F$ so that the food stamp payment cannot be saved, since it is paid in kind, and $V(J{+}1,\cdot)=0$
 with $\phi(J)=0$, so that at the last age the
 child is the whole continuation. The integral runs over next period's
 state $s'=(a',y,e',d',m',\eta')$; the second line of~\eqref{eq:fbellman} is the
@@ -1844,7 +1844,7 @@ v=\max\Big\{0,\ \frac{x-c}{p_v}\Big\},
 whose corner is the abstention decision: a household buys nothing when the
 Stone-Geary endowment already exceeds what it wants, which is how a large $b$
 deters use and is the threshold of Section~\ref{sec:problem}. The outer
-maximum on $c$ is the food stamp \textcolor{red}{payment $F$}. Where it binds the Cobb-Douglas split no
+maximum on $c$ is the food stamp payment $F$. Where it binds the Cobb-Douglas split no
 longer describes the allocation: consumption is held at $F$ and the drug takes
 what the budget leaves, so the floor changes behaviour and not only welfare. Where the third
 term is present the answer lies between~\eqref{eq:fcvstatic} and abstention,
@@ -1855,7 +1855,7 @@ Hours then solve
 \begin{equation}\label{eq:ffoc}
 u_c(c)\,\frac{\partial x}{\partial n}\;=\;\omega_{\ell}(1-n)^{-\sigma_{\ell}} ,
 \end{equation}
-and the clawbacks in~\eqref{eq:ftrans}, at \textcolor{red}{the statutory rate $\varrho$} for food stamps and
+and the clawbacks in~\eqref{eq:ftrans}, at the statutory rate $\varrho$ for food stamps and
 $\kappa_r$ for the voucher, make $\partial x/\partial n$ jump \emph{up} at the
 hours where each transfer runs out, because the clawback stops. That is the
 welfare trap, and it is the channel through which conditionality changes labour
@@ -1879,7 +1879,7 @@ budget in every simulation,
 \end{equation}
 
 In the stylized model the two policies
-\textcolor{red}{@@costclose@@} and the comparison
+@@costclose@@ and the comparison
 is unaffected. Here a policy that houses more households spends more,
 $\tau_{\ell}$ rises to pay for it, and the higher tax lowers the after tax
 return to an extra hour: it enters~\eqref{eq:ffoc} through
@@ -1983,16 +1983,16 @@ because the transition exercise in the results needs it.
 
 \section{Calibrating the quantitative model}\label{sec:fullcal}
 
-The model has \textcolor{red}{fifty four} parameters, some of which vary in value by
-age. \textcolor{red}{Twenty nine} are calibrated externally, from data or from the literature,
+The model has fifty four parameters, some of which vary in value by
+age. Twenty nine are calibrated externally, from data or from the literature,
 and twenty five are calibrated internally, inside the model. Four further parameters
 govern drug testing and detection; they are inert in the benchmark, where nothing
 is conditional, so they are set with the Treatment First experiment rather than
 here. They are
 split across the two tables of this section: twenty nine are the main story
-of this paper and its policy analysis (Table~\ref{tab:eleven}, \textcolor{red}{seventeen}
-internally and \textcolor{red}{twelve} externally calibrated), and \textcolor{red}{twenty five} are standard
-(Table~\ref{tab:stdparams}, eight internally and \textcolor{red}{seventeen} externally).
+of this paper and its policy analysis (Table~\ref{tab:eleven}, seventeen
+internally and twelve externally calibrated), and twenty five are standard
+(Table~\ref{tab:stdparams}, eight internally and seventeen externally).
 
 The tables carry the parameter, its description, the moment and source used to
 fix its value, and the value itself. The text alongside each table adds what a table
@@ -2007,7 +2007,7 @@ behind every target sit next to the code that reads them.
 
 \subsection{The twenty nine parameters that carry the story of this paper}
 
-\textcolor{red}{Twenty five} of the \textcolor{red}{fifty four} are common to most life-cycle models, whereas the rest are specific to this paper, and all twenty nine of those carry its main story and policy analysis. They are set out in Table~\ref{tab:eleven},
+Twenty five of the fifty four are common to most life-cycle models, whereas the rest are specific to this paper, and all twenty nine of those carry its main story and policy analysis. They are set out in Table~\ref{tab:eleven},
 with the parameter, its description,
 and the moment and source used to fix its value, which is given in the last
 column. They are discussed one at a time below because they are the parameters a
@@ -2034,7 +2034,7 @@ internalises only $\omega$ of the part that falls on its child, and $\omega$ is
 small, which is what leaves something for a policy to correct. And the
 \textbf{distortion} is what the programmes cost in behaviour, and it comes from two
 places. The programmes create distortions due to their design:
-assistance is means-tested\textcolor{red}{, food stamps are clawed back at $\varrho$} and the rent share is clawed back at $\kappa_r$,
+assistance is means-tested, food stamps are clawed back at $\varrho$ and the rent share is clawed back at $\kappa_r$,
 so a recipient who works more loses eligibility or part of the transfer, which requires
 even higher taxes on everyone else to fund even larger programmes. And
 assistance is paid for by
@@ -2090,7 +2090,7 @@ from opposite ends.
 \emph{who} participates. Neither policy acts on them directly; they decide how much
 there is for a policy to act on.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$\theta$, the weight on \textcolor{red}{drugs} in utility.]
+\item[$\theta$, the weight on drugs in utility.]
 How much a household wants the drug at all, against consumption and
 housing. It is the level of the temptation where $b$ is its curvature, and it is
 the parameter the amount spent on drugs, when it does, turns on. As it
@@ -2214,9 +2214,9 @@ how far a household can fall. Raise it and the private cost of that
 state falls, and the externality on a child likelier to reach it falls, at the price
 of a higher tax on everybody else. It is set externally at $@@q_zeta_di@@$,
 from Social Security Disability Insurance (SSDI) and Supplemental Security Income (SSI) replacement rates, SSA 2023.
-\item[$\underline c$, the food stamp \textcolor{red}{maximum allotment}.]
-\textcolor{red}{The largest transfer food assistance pays, and so what it is worth to a household with no}
-\textcolor{red}{income of its own. It belongs here rather than among the}
+\item[$\underline c$, the food stamp maximum allotment.]
+The largest transfer food assistance pays, and so what it is worth to a household with no
+income of its own. It belongs here rather than among the
 standard parameters. When it rises, the private cost of every bad
 state falls, so a voucher is worth less at the margin and the externality on a
 child likelier to reach those states falls too, while the distortionary
@@ -2263,14 +2263,14 @@ fall ill. When it rises, the penalty shrinks, so the private cost of
 illness falls and, because the child's draw improves with it, the externality falls
 too. Its
 value is chosen so the model generates the average labour income of the
-homeless relative to the average, $@@q_rho_m@@$ percent.\textcolor{red}{\footnote{The moment is about the
+homeless relative to the average, $@@q_rho_m@@$ percent.\footnote{The moment is about the
 homeless rather than about the mentally ill because the employment rate given SMI
 already brackets $\kappa_{uem}$, which leaves the intensive margin without one, and the
 income of the homeless is where both penalties bind: $\rho_d$ decides how many of the
 homeless work and $\rho_m$ how poor the ones who do are. A survey ratio would not serve.
 Employed adults aged $26$ and over with SMI earn $85.7$ percent of what employed adults
 without it earn in the 2024 public use file, and the state here is the high disability
-end of that distribution, as the note to $\kappa_{uem}$ explains.}}
+end of that distribution, as the note to $\kappa_{uem}$ explains.}
 \item[$\kappa_{uem}$, the employment multiplier for SMI.] The same as
 $\rho_m$ but on the extensive margin, and where the chain does most of its work, since employment is what mental
 illness costs most. Increase it and the private cost rises, because being
@@ -2280,7 +2280,7 @@ narrows, which is a distortion on top of both. A child of a treated parent is le
 earnings and lowers its chance of being unhoused, so part of Treatment First's
 return never appears in the treated household's own drug use. Its value is chosen
 so the model generates the employment rate given SMI, about $@@q_kappa_uem@@$ percent, the
-midpoint of the range for high disability diagnoses.\footnote{\textcolor{red}{The state in this model is not NSDUH's SMI.}
+midpoint of the range for high disability diagnoses.\footnote{The state in this model is not NSDUH's SMI.
 It is an illness severe enough to cut productivity by
 $\rho_m$ and to raise the chance of losing work, which is the high disability end of
 the distribution rather than its whole. Roughly a fifth of people with schizophrenia
@@ -2456,9 +2456,9 @@ little role.
 
 \subsection{Standard parameters}
 
-The remaining \textcolor{red}{twenty five} parameters are more conventional, and I record them so
+The remaining twenty five parameters are more conventional, and I record them so
 that the calibration can be reproduced. Eight of them I calibrate inside the model,
-against a moment, because no source reads them off directly; the other \textcolor{red}{seventeen} I set
+against a moment, because no source reads them off directly; the other seventeen I set
 from outside, from an estimate or from statute. Table~\ref{tab:stdparams} and the
 entries below run in the same seven blocks, and each entry gives the moment or the
 source that fixes the parameter together with the value that moment takes in the
@@ -2502,7 +2502,7 @@ it.
 
 \paragraph{Rental ladder.} These three parameters build the grid of dwelling sizes a renter chooses from, and they fix how the rungs are spaced.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[\textcolor{red}{$h_2$} and \textcolor{red}{$h_4$}, the rental ladder.] The smallest and
+\item[$h_2$ and $h_4$, the rental ladder.] The smallest and
 the largest rental size. The ladder is pinned at both ends and the rung between
 them follows from the curvature $\varsigma$.
 I choose the two ends to match the two ends of the distribution of occupied units
@@ -2518,7 +2518,7 @@ denominator.
 I set it at $1.8$ rather than calibrate it, because with three rental sizes the
 size distribution carries two free numbers and the two ends of the ladder already
 take them. What the curvature does is place the middle rung: the middle size sits a
-fraction $(1/2)^{\varsigma}$ of the way from \textcolor{red}{$h_2$} to \textcolor{red}{$h_4$}, so at
+fraction $(1/2)^{\varsigma}$ of the way from $h_2$ to $h_4$, so at
 $\varsigma=1.8$ it sits $28.7$ percent of the way up from the smallest rental
 rather than the $50$ percent a uniform ladder would give. At the calibrated ends
 the three rental sizes stand in the ratio $1 : 1.46 : 2.59$. The two renter cost
@@ -2614,7 +2614,7 @@ and state benefit maxima that the Department of Labor compiles in its comparison
 state unemployment insurance laws
 (\url{https://oui.doleta.gov/unemploy/statelaws.asp}).
 
-\item[\textcolor{red}{$\varrho$, the food stamp clawback rate.}] \textcolor{red}{The rate at which food assistance is withdrawn as income rises. I set it to thirty percent, which is the statutory rule rather than an estimate: a household\textquotesingle s monthly allotment is the maximum allotment for its size reduced by thirty percent of its net monthly income (7 CFR 273.10). It is the same rule and the same rate in the stylized model of Section~\ref{sec:stylized}. It matters beyond the level of the transfer because it is the implicit marginal tax the programme puts on earnings for the households the paper is about, and because a transfer withdrawn one for one, which is what a pure consumption floor would be, gives every household below the floor the same resources and so the same behaviour.}
+\item[$\varrho$, the food stamp clawback rate.] The rate at which food assistance is withdrawn as income rises. I set it to thirty percent, which is the statutory rule rather than an estimate: a household\textquotesingle s monthly allotment is the maximum allotment for its size reduced by thirty percent of its net monthly income (7 CFR 273.10). It is the same rule and the same rate in the stylized model of Section~\ref{sec:stylized}. It matters beyond the level of the transfer because it is the implicit marginal tax the programme puts on earnings for the households the paper is about, and because a transfer withdrawn one for one, which is what a pure consumption floor would be, gives every household below the floor the same resources and so the same behaviour.
 
 \item[$\kappa_V$ and $\kappa_r$, the voucher rules.] These two set the income
 cutoff for eligibility and the tenant's contribution, and I take both from HUD's own
@@ -2761,9 +2761,9 @@ No such inversion exists in the quantitative model, and three features of flow u
 in equation~\eqref{eq:futil} are why. The flow value of being alive $\aleph$ is additive,
 so it does not scale with consumption. The drug enters through $\log(b+v)$ with a
 Stone-Geary shifter, so scaling consumption does not scale the drug term
-proportionately. And food assistance \textcolor{red}{pays exactly the}
-households the paper is about, \textcolor{red}{and it is withdrawn at the rate $\varrho$ rather than one for one,}
-\textcolor{red}{so scaling their consumption scales their resources by less than the scaling factor.} $\Delta$ is therefore solved numerically, by bisection on
+proportionately. And food assistance pays exactly the
+households the paper is about, and it is withdrawn at the rate $\varrho$ rather than one for one,
+so scaling their consumption scales their resources by less than the scaling factor. $\Delta$ is therefore solved numerically, by bisection on
 the newborn's expected value.
 
 
