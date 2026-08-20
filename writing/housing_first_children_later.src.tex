@@ -578,40 +578,43 @@ fifty three parameters, which is what the welfare and fiscal questions
 require,
 but it also makes it hard to see which pieces of the environment do the
 heavy lifting. This note strips the environment down to help understand the
-main drivers in the model, but where my three main questions are still well
+main drivers in the model, but where \textcolor{red}{the} three main questions \textcolor{red}{of this paper are} still well
 posed.
 
 Households are perfectly forward-looking, here and in the quantitative model.
-They face the true hazard of acquiring a SUD, they know what carrying one would
-cost them, and they make no mistakes. Nothing below rests on misperception, on
-myopia, or on a taste that changes once the household has used.
+They \textcolor{red}{know} the true hazard of acquiring a SUD, they \textcolor{red}{are aware of} what carrying one would
+cost them, and they make no mistakes. Nothing below rests on misperception, \textcolor{red}{myopia, self control,} or on a taste that changes once the household has used.
 
 \begin{enumerate}\setlength{\itemsep}{0.3em}\setlength{\parskip}{0em}
 
 \item \textbf{Who uses drugs?} In the data, use is concentrated at the bottom of
-the income distribution. Drugs here are a \emph{luxury} good bought at a
+the income distribution, \textcolor{red}{and it is not universal there either: most poor households}
+\textcolor{red}{do not use at all. Both facts have to hold at once, which is why the drug is}
+\textcolor{red}{modelled as a good that is bought rather than a state that is entered.} Drugs here are a \emph{luxury} good bought at a
 price: the Stone-Geary form in equation~\eqref{eq:u} below means the share of
 income spent on them rises with income, so left to itself the environment
-concentrates use at the \emph{top}. Which feature of the environment reverses
-the concentration from the top to the bottom?
+concentrates use at the \emph{top}. \textcolor{red}{Two risks push the other way, and each}
+\textcolor{red}{costs the household something: a SUD raises the chance of losing work, which}
+\textcolor{red}{costs earnings, and it raises the chance of dying, which costs the rest of a}
+\textcolor{red}{life. The question is which of the two reverses the concentration from the top}
+\textcolor{red}{to the bottom.}
 
 \item \textbf{How does housing assistance shape the drug use decision?} A
 voucher pulls drug use in two opposite directions. It raises the value of
 staying clean, because a housed future is worth more than a homeless one and
 using puts that future at risk: call this the value of life force, and it lowers
-use. In contrast, it cushions the consequence of acquiring a SUD, because
+use. In contrast, \textcolor{red}{if the voucher is unconditional, then} it cushions the consequence of acquiring a SUD, because
 a household that acquires one is housed anyway: call this the moral hazard
 force, and it raises use. Both are first order, so theory does not sign the
-effect of housing assistance on drug use, and the question is quantitative.
+effect of \textcolor{red}{unconditional housing assistance} on drug use, and the question is quantitative.
 
-\item \textbf{When is Treatment First better than Housing First?} In a model
-without externalities, and where the two programmes cost the same to
+\item \textbf{When is Treatment First better than Housing First?} \textcolor{red}{In this model,} without externalities, and where the two programmes cost the same to
 run, never. Housing First always raises welfare when agents
 are forward-looking, as they are here. A SUD creates a genuine tension,
 since the same voucher that insures a household also makes the risk it insures
 more attractive, but that tension does not raise welfare, because Treatment
 First only removes an option that a household can take under Housing First as
-well. However, if a SUD and homelessness generate externalities, such
+well. However, if a SUD \textcolor{red}{generates} externalities, such
 as affecting the earning potential of the children of parents with a SUD, then
 Treatment First may be preferred, on the evidence above. The
 model's work here is to show why Housing First raises welfare whenever
@@ -622,8 +625,8 @@ and then show how the externality that overturns it works.
 \end{enumerate}
 
 The model is qualitative throughout: the calibration is rough by design, there
-is no validation exercise, and every component that obscures the mechanisms has
-been removed and the model refitted without it. What remains are the main
+is no validation exercise, and \textcolor{red}{components that obscure} the mechanisms \textcolor{red}{have}
+been removed and the model refitted without \textcolor{red}{them}. What remains are the main
 drivers of the results. The welfare evaluations below are for illustration only; the full
 quantitative model is what settles the main question, which is whether Treatment
 First raises welfare relative to Housing First in a model that fits the data.
@@ -721,10 +724,15 @@ y & \text{if } e = 1,\\[0.2em]
 \end{cases}
 \end{equation}
 with $\psi$ the replacement rate and $\bar y$ a cap on the earnings base. There
-is no other income risk. The level of $\psi$ is what links the SUD to
-homelessness: for the poorest households half of income can fall short of the
-rent on the smallest unit, so an unemployed household there cannot house itself
-out of current income.
+is no other income risk. \textcolor{red}{Food assistance is then paid on top, on the
+statutory rule: the maximum allotment $\underline c$ less the fraction $\varrho$
+of income, so resources in a state with income $y^{s}$ are}
+\textcolor{red}{$y^{s}+\max\{0,\ \underline c-\varrho\,y^{s}\}$. It is the same rule and the same two
+numbers as the quantitative model's.}\textcolor{red}{\footnote{The stylized model needs the transfer for a reason the quantitative model does not make visible. Income support is proportional, so without it every household below the eleventh percentile is on the street because it cannot pay rather than because it chose to: homelessness comes out at $1.32$ percent against a target of $0.399$ and $h_1$ sits at its floor with no power to move the rate. The transfer converts forced homelessness into chosen homelessness, which is the interior solution the calibration needs. The taper matters as much as the level, because a hard floor gives every household below it the same income, so they cross the margin as one block and the rate jumps from zero to $1.7$ percent with nothing in between.}}
+\textcolor{red}{What links the SUD to homelessness is then the level of $\psi$ and
+$\underline c$ together:} for the poorest households \textcolor{red}{income while unemployed barely covers the}
+\textcolor{red}{rent on the smallest unit, so an unemployed household there can house itself only by
+consuming almost nothing.}
 
 Each period the household chooses
 \begin{equation}\label{eq:opts}
@@ -833,7 +841,9 @@ National Survey on Drug Use and Health (NSDUH) 2024 for respondents aged 26 and
 over.
 
 Income support replaces half of previous earnings on a base capped at mean
-income, in line with statutory state rules. The two rental sizes are set
+income, in line with statutory state rules. \textcolor{red}{Food assistance pays a maximum allotment of}
+\textcolor{red}{$\underline c=@@cfloor@@$ of average income, withdrawn at $\varrho=@@ctaper@@$ per dollar of income,}
+\textcolor{red}{which is the SNAP rule at 7 CFR 273.10 and the allotment the quantitative model calibrates.} The two rental sizes are set
 such that the standard unit, \textcolor{red}{$h_3$}, costs $0.41$ of mean income and the
 small unit, \textcolor{red}{$h_2$}, is a quarter of it. The voucher parameters are institutional: covered
 tenants pay $30$ percent of market rent, eligibility is capped at half of median income, $\kappa_V = 0.50$, and $\pi_V = 0.266$ is the ratio of recipients to the income eligible population in the 2023 Picture of Subsidized
@@ -1350,12 +1360,13 @@ y^{n}=\tau_{\ell}\,(y^{g})^{\xi}\;+\;(1-\tau_k)\,r\,a ,
 with $y^{n}$ denoting after tax income, where $\xi$ governs progressivity
 and $\tau_{\ell}$ the level. Households can
 receive two transfers, both means-tested on gross income as the programmes
-themselves are. A food stamp floor tops means-tested income up to $\underline c\,\bar y$, with $\underline c$ the floor
-expressed as a share of average income, and the voucher covers rent above a
+themselves are. \textcolor{red}{Food assistance pays the maximum allotment $\underline c\,\bar y$, with $\underline c$ expressed}
+\textcolor{red}{as a share of average income, less the fraction $\varrho$ of means-tested income, which is the}
+\textcolor{red}{statutory rule and the same rule the stylized model uses,} and the voucher covers rent above a
 tenant contribution of $\kappa_r$ of gross earnings, the same $\kappa_r$ as
 in Section~\ref{sec:support},
 \begin{equation}\label{eq:ftrans}
-F=\max\big\{0,\ \underline c\,\bar y-(y^{g}+ra)\big\},
+F=\max\big\{0,\ \underline c\,\bar y-\textcolor{red}{\varrho\,}(y^{g}+ra)\big\},
 \qquad
 V\!ch=\mathbf{1}\{\eta=1\}\,\mathbf{1}\{h'\neq h_1\}\,
 \max\big\{0,\ p_r\, h'-\kappa_r\,y^{g}\big\}.
@@ -2194,8 +2205,9 @@ how far a household can fall. Raise it and the private cost of that
 state falls, and the externality on a child likelier to reach it falls, at the price
 of a higher tax on everybody else. It is set externally at $0.25$,
 from Social Security Disability Insurance (SSDI) and Supplemental Security Income (SSI) replacement rates, SSA 2023.
-\item[$\underline c$, the food stamp consumption floor.]
-The floor under consumption, and it belongs here rather than among the
+\item[$\underline c$, the food stamp \textcolor{red}{maximum allotment}.]
+\textcolor{red}{The largest transfer food assistance pays, and so what it is worth to a household with no}
+\textcolor{red}{income of its own. It belongs here rather than among the}
 standard parameters. When it rises, the private cost of every bad
 state falls, so a voucher is worth less at the margin and the externality on a
 child likelier to reach those states falls too, while the distortionary
@@ -2738,9 +2750,9 @@ No such inversion exists in the quantitative model, and three features of flow u
 in equation~\eqref{eq:futil} are why. The flow value of being alive $\aleph$ is additive,
 so it does not scale with consumption. The drug enters through $\log(b+v)$ with a
 Stone-Geary shifter, so scaling consumption does not scale the drug term
-proportionately. And the food stamp floor $\underline c$ binds for exactly the
-households the paper is about, so their consumption does not scale at all until the
-scaling lifts them off it. $\Delta$ is therefore solved numerically, by bisection on
+proportionately. And food assistance \textcolor{red}{pays exactly the}
+households the paper is about, \textcolor{red}{and it is withdrawn at the rate $\varrho$ rather than one for one,}
+\textcolor{red}{so scaling their consumption scales their resources by less than the scaling factor.} $\Delta$ is therefore solved numerically, by bisection on
 the newborn's expected value.
 
 

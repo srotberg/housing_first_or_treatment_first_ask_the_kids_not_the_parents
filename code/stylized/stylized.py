@@ -350,6 +350,43 @@ class P:
     repl  = 0.50      # replacement rate
     ycap  = 1.00      # earnings base capped at this multiple of average income
 
+    # THE CONSUMPTION FLOOR, and why the model cannot do without one.
+    #
+    # Income support is proportional, so it leaves the bottom of the
+    # distribution with almost nothing: at the fifth percentile half of income
+    # is two per cent of the mean against a rent of ten. Those households are
+    # FORCED onto the street, and the mass in that region is a property of the
+    # income distribution rather than of anything the model calibrates. With the
+    # nodes placed by quantile, which is the correct discretisation, eleven per
+    # cent of households cannot pay the small rent while unemployed,
+    # homelessness comes out at 1.32 per cent against a target of 0.399, and the
+    # h_hl bracket corners at its floor: the street can be worth nothing and the
+    # rate does not move, because nobody in it is choosing. The old log spaced
+    # grid hid the same mass by truncating below it.
+    #
+    # THE QUANTITATIVE MODEL ALREADY HAS THIS PARAMETER. It is max_food_cost in
+    # the Fortran, a food stamp top up to 0.126 of average income, calibrated
+    # there on food stamps over labour income of 0.42 per cent, and it appears
+    # in Table 5 as \underline c. The stylized model simply did not carry it, so
+    # this is an alignment rather than an addition, and the value is the
+    # quantitative model's rather than a new free parameter.
+    #
+    # IT DOES NOT ABOLISH HOMELESSNESS, it converts it from forced to chosen. A
+    # household at the floor that pays the 0.10 rent has 0.026 left to consume,
+    # so it takes the street whenever h_hl is worth more than about an eighth of
+    # the small unit. That is a threshold in h_hl, which is exactly the interior
+    # solution the bracket needs.
+    # THE TAPER IS THE STATUTORY ONE, and it is needed as well as the level. A
+    # HARD floor, which is what the Fortran writes, gives every household below
+    # it the SAME income, and one atom of households then crosses the
+    # homelessness margin together: measured, homelessness jumps from 0 to 1.72
+    # per cent between h_hl = 0.006 and 0.007 and never takes a value at the
+    # 0.399 target. SNAP does not work that way. The benefit is the maximum
+    # allotment less thirty cents per dollar of net income, so resources after
+    # the transfer are strictly increasing in income and no atom forms.
+    cfloor = 0.126    # maximum allotment, share of average income
+    ctaper = 0.30     # benefit reduction rate, the statutory SNAP figure
+
     # HOUSING. Rent per unit of housing services is the NUMERAIRE, p_r = 1, so
     # a unit size and its rent are the same number.
     #
@@ -424,7 +461,7 @@ class P:
     kV    = 0.50      # MEANS TEST, the share of MEDIAN income below which a
                       # household is eligible. This is the quantitative model's
                       # kappa_V and the paper uses the same symbol for both.
-    yV    = 0.3168    # the level kV implies, kV times median income. It has moved
+    yV    = 0.3151    # the level kV implies, kV times median income. It has moved
                       # twice with the grid: 0.2591 at 30 log spaced nodes, 0.2477
                       # at 120, and 0.3172 once the nodes were placed by quantile
                       # and the top tail stopped being truncated. The last move is
@@ -510,6 +547,10 @@ def _states(par, d, policy, y, used=0):
         # household that is well below the rent on the smallest unit, so the
         # disorder can put the roof at risk, which is what the voucher insures.
         inc = y if e == 0 else par.repl * min(y, par.ycap)
+        # THE FLOOR IS MEANS TESTED ON THIS STATE'S INCOME, which is what a food
+        # stamp top up is: it fills the gap between what the household has and
+        # the floor, and pays nothing to a household already above it.
+        inc = inc + max(0.0, par.cfloor - par.ctaper * inc)
         # MEANS TEST. A voucher can only reach a household whose income in that
         # state is below the mean. Every unemployed household passes the test;
         # employed households pass only in the bottom part of the distribution.

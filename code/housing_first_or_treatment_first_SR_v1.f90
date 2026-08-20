@@ -1475,6 +1475,18 @@
         real(8), parameter :: consumption_tax=0
         real(8) :: max_food_cost=&
             ((1-perceived_probability_lower)*0.126+perceived_probability_lower*0.132)/(1+consumption_tax)
+        ! THE BENEFIT REDUCTION RATE, the statutory SNAP taper. The benefit is
+        ! the maximum allotment less thirty cents per dollar of net income
+        ! rather than a top up to a hard floor. It used to be a hard floor,
+        ! which is not the programme and, more to the point, is not a rule the
+        ! stylized model of Section 2 can carry: a hard floor gives every
+        ! household below it the SAME income, so one atom of households crosses
+        ! the homelessness margin together and the rate jumps from zero to 1.72
+        ! per cent with nothing in between, never taking the 0.399 the model is
+        ! calibrated to. With the taper, resources after the transfer are
+        ! strictly increasing in income and no atom forms. The two models use
+        ! the same rule.
+        real(8), parameter :: food_stamp_taper=0.30d0
                                                                         
         real(8), dimension(0:have_two_rental_markets) :: convexity_of_rental_company=&
             (1-perceived_probability_lower)*2.35+perceived_probability_lower*2.35
@@ -4459,7 +4471,7 @@
                                             avg_income_to_use_1,avg_income_to_use_2,labor_supply_used,in_retirement)
                                         
                                         food_stamps_1=max((max_food_cost*(1+consumption_tax)*avg_income_to_use_1-&
-                                            (total_income+max(financial_grid(financial_index),0.d0)*&
+                                            food_stamp_taper*(total_income+max(financial_grid(financial_index),0.d0)*&
                                             risk_free_rate(time_period))),0.d0)
                                                                     
                                     end if
@@ -7762,7 +7774,7 @@
                                         avg_net_wealth_to_use_1) then
                                                             
                                         food_stamps_1=max((max_food_cost*(1+consumption_tax)*avg_income_to_use_1-&
-                                            (income_1+max(financial_grid(financial_index),0.d0)*risk_free_rate(time_period))),0.d0)
+                                            food_stamp_taper*(income_1+max(financial_grid(financial_index),0.d0)*risk_free_rate(time_period))),0.d0)
                                                                     
                                     end if
                                     
@@ -10758,7 +10770,7 @@
                                             avg_net_wealth_to_use_1) then
                                                                                         
                                             food_stamps_1=max((max_food_cost*(1+consumption_tax)*avg_income_to_use_1-&
-                                                (total_income+max(financial_grid(financial_index),0.d0)*&
+                                                food_stamp_taper*(total_income+max(financial_grid(financial_index),0.d0)*&
                                                 risk_free_rate(time_period))),0.d0)
                                                                         
                                         end if
@@ -15614,7 +15626,7 @@
         if (assets_1<threshold_for_food_stamps_as_perc_of_average_net_wealth*avg_net_wealth_to_use_1) then
                                 
             food_stamps_1=max((max_food_cost*(1+consumption_tax)*avg_income_to_use_1-&
-                (gross_wage_income_1+risk_free_rate(time_period)*max(financial_grid(financial_index_1),0.d0))),0.d0)
+                food_stamp_taper*(gross_wage_income_1+risk_free_rate(time_period)*max(financial_grid(financial_index_1),0.d0))),0.d0)
                                         
         end if
         
@@ -16178,7 +16190,7 @@
                 avg_net_wealth_to_use_1) then
                             
                 food_stamps_recieved=max(max_food_cost*(1+consumption_tax)*avg_income_to_use_1-&
-                    (gross_wage_income+risk_free_rate(time_period)*max(financial_grid(financial_index_1),0.d0)),0.d0)
+                    food_stamp_taper*(gross_wage_income+risk_free_rate(time_period)*max(financial_grid(financial_index_1),0.d0)),0.d0)
                     
             end if
             
@@ -16339,7 +16351,7 @@
             if (assets_1<threshold_for_food_stamps_as_perc_of_average_net_wealth*avg_net_wealth_to_use_1) then
                                 
                 food_stamps_recieved=max((max_food_cost*(1+consumption_tax)*avg_income_to_use_1-&
-                    (gross_wage_income+risk_free_rate(time_period)*max(financial_grid(financial_index_1),0.d0))),0.d0)
+                    food_stamp_taper*(gross_wage_income+risk_free_rate(time_period)*max(financial_grid(financial_index_1),0.d0))),0.d0)
                                             
             end if
             
@@ -17774,7 +17786,7 @@
         if (assets_1<threshold_for_food_stamps_as_perc_of_average_net_wealth*&
             avg_net_wealth_to_use_1) then
                                 
-            food_stamps_1=max(max_food_cost*(1+consumption_tax)*avg_income_to_use_1-income_1,0.d0)
+            food_stamps_1=max(max_food_cost*(1+consumption_tax)*avg_income_to_use_1-food_stamp_taper*income_1,0.d0)
                                         
         end if
                                                                                                                             

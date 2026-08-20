@@ -46,11 +46,14 @@ EXTERNAL = [
          'NSDUH 2024, age 26+', '{:.4f}'),
     ]),
     ('Income support', [
-        ('repl', r'\psi', 'Replacement rate while unemployed',
+        ('repl', r'\psi', 'UI replacement rate',
          'DOL, statutory UI rates', '{:.2f}'),
-        ('ycap', r'\bar y',
-         'Cap on the earnings base, multiple of average income',
+        ('ycap', r'\bar y', 'Cap on the earnings base',
          'DOL, state benefit maxima', '{:.2f}'),
+        ('cfloor', r'\underline c', 'Food stamp maximum allotment',
+         "The quantitative model's calibration", '{:.3f}'),
+        ('ctaper', r'\varrho', 'Food stamp taper rate',
+         'SNAP statute, 7 CFR 273.10', '{:.2f}'),
     ]),
     ('Housing, drugs and the voucher', [
         ('pr', 'p_r', 'Rent per unit of housing services', 'Normalisation',
@@ -73,9 +76,9 @@ EXTERNAL = [
         # invited the reader to multiply by four and find 0.40. Writing the
         # relation itself is exact and there is nothing left to check.
         ('h_sm', r'h_2', 'Small rental unit', 'Set', r'0.25\times h_3'),
-        ('kappa_r', r'\kappa_r', "Tenant's share of the rent when covered",
+        ('kappa_r', r'\kappa_r', "Tenant's share of the rent",
          'HUD voucher rules', '{:.2f}'),
-        ('kV', r'\kappa_V', 'Voucher means test, share of median income',
+        ('kV', r'\kappa_V', 'Voucher means test',
          'HUD income limits', '{:.2f}'),
         ('pV', r'\pi_V', 'Chance of drawing a voucher',
          'HUD 2023, recipients over eligible', '{:.3f}'),

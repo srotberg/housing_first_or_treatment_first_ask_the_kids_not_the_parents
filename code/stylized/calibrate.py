@@ -167,45 +167,33 @@ def _ndtri(p, lo=-12.0, hi=12.0, iters=80):
 
 GRID_N = 120
 GRID_KAPPA = 2.0      # above one packs the nodes toward the bottom
-GRID_QF = 0.05        # the bottom pool: households that cannot rent at all
-GRID_CMARGIN = 0.02   # what the second pool has left after paying the small rent
 
-# THE BOTTOM OF THE GRID IS POOLED, AND IT HAS TO BE. A lognormal that leaves the
-# poorer half with 17.2 per cent of earnings puts 10.7 per cent of households
-# below y = 0.20, and 0.20 is exactly where income support, half of income,
-# stops covering the 0.10 rent on the small unit. Resolved node by node, every
-# one of those households is FORCED onto the street: h_hl can be worth nothing
-# and the rate does not move, because nobody in it is choosing. The bracket
-# corners at its floor with homelessness at 1.32 per cent against 0.399, which
-# is what the first quantile grid did.
+# EVERY NODE IS THE CONDITIONAL MEAN OF THE LOGNORMAL ON ITS OWN INTERVAL, not
+# the quantile at the interval's midpoint. Two things follow. The mean is one by
+# construction rather than by rescaling, and the bottom interval, which runs all
+# the way to zero, is represented by the mass it actually carries instead of by
+# a quantile chosen arbitrarily close to the tail. The old grid truncated at the
+# two tenths of a percentile and the truncation point, not the model, was what
+# set how many households could not afford to rent.
 #
-# The old log spaced grid hid the same mass by truncating below it, so the 0.35
-# per cent it reported was a property of the lowest node rather than of the
-# model. Neither number is the model's answer; the discretisation was answering.
+# GRID_KAPPA PUTS THE DENSITY AT THE BOTTOM, which is where the drug, housing
+# and homelessness margins all sit. At kappa = 2 two thirds of the nodes lie
+# below the median.
 #
-# POOLING IS ALL OR NOTHING, which is what dictates the shape here. A pool sits
-# at its own conditional mean, so it is either wholly below the floor or wholly
-# above it: the first single pool whose mean clears 0.20 is the bottom 23 per
-# cent, and it leaves nobody forced at all. Two pools give the split the model
-# actually wants.
+# WHAT POOLING THE BOTTOM WAS TRIED FOR, AND WHY IT IS NOT HERE. A lognormal
+# matching the bottom half's 17.2 per cent leaves 10.7 per cent of households
+# below y = 0.20, and 0.20 is where half of income stops covering the 0.10 rent
+# on the small unit. Resolved finely, every one of them is FORCED onto the
+# street and h_hl has no interior solution. Pooling the bottom was measured and
+# does not fix it: a pool sits at its own conditional mean, so it is either
+# wholly below the affordability floor or wholly above it, and the first pool
+# that clears 0.20 is the bottom 23 per cent. Pooling the bottom five per cent
+# made homelessness WORSE, 1.96 per cent against 1.32, because the pool at 0.096
+# cannot pay the rent even while employed. The margin is at the eleventh
+# percentile, not in the tail, so no discretisation reaches it.
 #
-#   THE FIRST POOL, the bottom GRID_QF, sits at 0.096. Half of that is 0.048
-#   against a rent of 0.100, so these households cannot rent out of income at
-#   all and reach a roof only through a voucher. They are homelessness that no
-#   preference parameter can talk them out of.
-#
-#   THE SECOND POOL runs from GRID_QF up to whatever percentile puts its mean at
-#   2*(h_sm + GRID_CMARGIN) = 0.24. Half of that is 0.12, so paying the 0.10
-#   rent leaves 0.02 to consume. They CAN rent and would rather not, which is
-#   the margin h_hl prices: raise the value of the street and they take it,
-#   lower it and they pay. It is a fifth of all households, so the bracket has
-#   room to land on 0.399 from either side.
-#
-# Above the second pool the nodes are quantile spaced with exponent GRID_KAPPA,
-# which keeps the density in the lower middle where the drug and housing margins
-# are. Every node is the CONDITIONAL MEAN of the lognormal on its own interval
-# rather than the quantile at the interval's midpoint, so the grid integrates to
-# the distribution exactly: the mean is one by construction, not by rescaling.
+# THE MISSING PIECE WAS A CONSUMPTION FLOOR, and the quantitative model already
+# has one. See P.cfloor in stylized.py.
 def _tail_mean(sig, q):
     """E[Y 1{F(Y) < q}] for a lognormal with mean one."""
     if q <= 0.0:
@@ -215,35 +203,12 @@ def _tail_mean(sig, q):
     return _ndtr(_ndtri(q) - sig)
 
 
-def _cond_mean(sig, a, b):
-    """E[Y | a < F(Y) < b], the value a pool of that mass sits at."""
-    return (_tail_mean(sig, b) - _tail_mean(sig, a)) / (b - a)
-
-
-def _q_margin(sig, q_f, target, hi=0.95):
-    """The percentile the second pool has to reach for its mean to hit target."""
-    lo = q_f + 1e-9
-    for _ in range(90):
-        mid = 0.5 * (lo + hi)
-        if _cond_mean(sig, q_f, mid) < target:
-            lo = mid
-        else:
-            hi = mid
-    return 0.5 * (lo + hi)
-
-
-def _grid(sig, n=GRID_N, kappa=GRID_KAPPA, q_f=GRID_QF):
-    # the affordability floor is a fact about the OTHER parameters, not a knob:
-    # income support repl on the small unit's rent p_r * h_sm.
-    par = P()
-    floor = par.pr * par.h_sm / par.repl
-    q_m = _q_margin(sig, q_f, floor + 2.0 * GRID_CMARGIN)
-    u = np.arange(n - 1) / (n - 2.0)
-    p = np.concatenate(([0.0, q_f], q_m + (1.0 - q_m) * u ** kappa))
+def _grid(sig, n=GRID_N, kappa=GRID_KAPPA):
+    p = (np.arange(n + 1) / n) ** kappa
     p[-1] = 1.0
     w = np.diff(p)
-    yg = np.array([_cond_mean(sig, a, b) for a, b in zip(p[:-1], p[1:])])
-    return yg, w
+    tv = np.array([_tail_mean(sig, q) for q in p])
+    return np.diff(tv) / w, w
 
 
 def _bottom_half_share(sig):
