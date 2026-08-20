@@ -535,7 +535,7 @@ def bracket_sud(par, lo=None, hi=None, iters=16):
     return float(np.sqrt(lo * hi))
 
 
-def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=(), tol=0.003):
+def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=(), tol=0.007):
     par = par or P()
     for s in range(sweeps):
         # HOUSING FIRST, THEN THE VALUE OF LIFE. aleph used to run first and the
@@ -604,6 +604,18 @@ def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=(), tol=0.0
         # test needs at least two sweeps behind it because the first sweep off a
         # seed can look converged on moments the seed already fitted while the
         # parameters that move them have not been re-solved together yet.
+        # THE TOLERANCE CANNOT BE TIGHTER THAN ABOUT 0.006, and that is a
+        # property of the sweep order rather than of the bisections. b runs LAST
+        # so that participation is the moment actually hit, and it is: the gap
+        # there is zero to four decimals. But aleph and the lambda-b loop both
+        # run AFTER h_hl and both move homelessness a little, so the street is
+        # fitted and then moved off by half a per cent, every sweep, forever.
+        # Two successive sweeps agreed to five significant figures on lambda and
+        # on b while reporting the same 0.006, which is what a structural
+        # residual looks like: a tolerance below it does not buy accuracy, it
+        # just runs the remaining sweeps. Reordering to put h_hl last would
+        # close it and open a worse one, because h_hl moves the value of being
+        # unhoused and so moves participation.
         if s >= 1 and worst < tol:
             if verbose:
                 print(f'  converged: every targeted moment within '
