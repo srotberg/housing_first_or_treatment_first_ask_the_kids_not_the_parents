@@ -425,7 +425,7 @@ class P:
     kV    = 0.50      # MEANS TEST, the share of MEDIAN income below which a
                       # household is eligible. This is the quantitative model's
                       # kappa_V and the paper uses the same symbol for both.
-    yV    = 0.3141    # the level kV implies, kV times median income. It has moved
+    yV    = 0.3061    # the level kV implies, kV times median income. It has moved
                       # twice with the grid: 0.2591 at 30 log spaced nodes, 0.2477
                       # at 120, and 0.3172 once the nodes were placed by quantile
                       # and the top tail stopped being truncated. The last move is
@@ -803,24 +803,41 @@ def threshold(par, ygrid, policy=None, edges=None, cdf=None):
                 else:
                     hi = mid
             ystar = 0.5 * (lo + hi)
-            # THE SHARE OF A CELL INSIDE THE USE REGION IS A FACT ABOUT THE
-            # DISTRIBUTION, not about where the grid happened to put its nodes.
-            # It used to be linear in income between the two node VALUES, which
-            # is only a good approximation when a cell is narrow and its mass is
-            # spread evenly across it. The lowest cell is neither: it pools the
-            # foot of the distribution at one income, so a linear rule credited
-            # it with a fraction that had no meaning and made its whole mass
-            # switch as a block. With the true CDF the fraction is the mass of
-            # that cell actually below the threshold, which is smooth in the
-            # threshold and correct for wide cells and narrow ones alike.
-            if cdf is not None and edges is not None:
-                lo_p, hi_p = edges[i], edges[i + 1]
-                w = (cdf(ystar) - lo_p) / max(hi_p - lo_p, 1e-14)
-            else:
-                w = (ystar - ygrid[i]) / (ygrid[i + 1] - ygrid[i])
-            w = min(max(w, 0.0), 1.0)
-            frac[i, s], frac[i + 1, s] = ((w, 0.0) if G[i, s] > 0.0
-                                          else (0.0, 1.0 - w))
+            # EACH CELL IS SPLIT AGAINST ITS OWN EDGES. This is the fix for a
+            # bug that made participation a STEP FUNCTION OF b and cost three
+            # rewrites of the income grid before it was found in the right
+            # place. The old code computed ONE fraction w, the mass of cell i
+            # below the threshold, and then handed cell i+1 the complement
+            # 1 - w. But w is measured against cell i's edges, and the node
+            # values are conditional means, so a threshold lying between two
+            # node values is not necessarily inside cell i: when it falls inside
+            # cell i+1, cdf(ystar) exceeds edges[i+1], w clips to one, and cell
+            # i+1 is handed a flat zero. The whole cell then leaves the use
+            # region in one go and stays out until the threshold reaches the
+            # next cell, which is exactly the plateau-and-jump participation
+            # curve that no b could thread: flat at 5.234 per cent, then 4.276,
+            # with the 5.13 target in the gap between them.
+            #
+            # Splitting each cell against its own edges is smooth in ystar by
+            # construction: as the threshold sweeps up through cell i its share
+            # runs from one to zero, and only then does cell i+1 begin to fall.
+            def _share(cell, above):
+                """Mass fraction of `cell` on the use side of ystar."""
+                if cdf is None or edges is None:
+                    lo_y = ygrid[cell]
+                    hi_y = ygrid[cell + 1] if cell + 1 < n else ygrid[cell]
+                    if hi_y <= lo_y:
+                        return 1.0 if (ystar <= lo_y) == above else 0.0
+                    f = (ystar - lo_y) / (hi_y - lo_y)
+                else:
+                    lo_p, hi_p = edges[cell], edges[cell + 1]
+                    f = (cdf(ystar) - lo_p) / max(hi_p - lo_p, 1e-14)
+                f = min(max(f, 0.0), 1.0)
+                return 1.0 - f if above else f
+
+            above = not (G[i, s] > 0.0)      # the use region lies above ystar
+            frac[i, s] = _share(i, above)
+            frac[i + 1, s] = _share(i + 1, above)
 
     # THE LOWEST CELL IS NO LONGER SPECIAL, and the sub grid that used to
     # integrate it is deleted. It took the MASS of users from incomes inside the

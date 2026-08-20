@@ -215,21 +215,22 @@ def _cond_mean(sig, a, b):
     return (_tail_mean(sig, b) - _tail_mean(sig, a)) / (b - a)
 
 
-def _floor_level(sig, target, lo=1e-6, hi=0.90):
+def _trunc_level(sig, target, lo=1e-6, hi=0.90):
     """
-    The raw threshold t whose FLOORED distribution puts its atom at `target`.
+    The raw threshold t whose TRUNCATED distribution has its lowest income at
+    `target` once the survivors are renormalised to mean one.
 
-    Flooring raises the mean, and income is normalised to mean one, so the two
-    have to be solved together: censoring at t gives a mean M(t) and an atom at
-    t/M(t), and we want that atom at `target`. One bisection in t does it.
+    Truncating raises the mean of what is left, and income is normalised to mean
+    one, so the two have to be solved together: dropping everyone below t leaves
+    a mean M(t) = E[Y | Y > t] and a lowest income of t/M(t). One bisection in t.
     """
-    def atom_at(t):
+    def lowest(t):
         q = _ndtr((math.log(t) + 0.5 * sig * sig) / sig)
-        m = t * q + (1.0 - _tail_mean(sig, q))
+        m = (1.0 - _tail_mean(sig, q)) / max(1.0 - q, 1e-14)
         return t / m
     for _ in range(200):
         mid = 0.5 * (lo + hi)
-        if atom_at(mid) < target:
+        if lowest(mid) < target:
             lo = mid
         else:
             hi = mid
@@ -269,59 +270,59 @@ def _pool(sig, floor, hi=0.60):
 
 
 POOL_MARGIN = 1.08    # superseded by GRID_FLOOR; kept for scan_theta.py
-# THE ATOM CLEARS THE RENT BY EIGHT PER CENT. It has to clear it by something:
-# a household whose income equals its rent exactly consumes nothing and its
-# flow utility is minus infinity. Eight per cent puts the atom at 0.108 of mean
-# income, which is where the pooled cell it replaces used to sit.
-GRID_FLOOR = 1.08
+# THE LOWEST INCOME CLEARS THE RENT BY EIGHT PER CENT. It has to clear it by
+# something: a household whose income equals its rent exactly consumes nothing
+# and its flow utility is minus infinity. Eight per cent puts the poorest
+# household at 0.108 of mean income, where the pooled cell used to sit.
+TRUNC_FLOOR = 1.08
 
 
 def _grid(sig, n=GRID_N, kappa=GRID_KAPPA):
     """
-    The income grid: one atom at the rent floor, then the lognormal above it.
+    The income grid: the lognormal TRUNCATED below the rent on the smallest unit.
 
-    WHY FLOORING RATHER THAN POOLING, which is what this used to do. A household
-    whose income falls below the rent on the smallest unit cannot rent at all
-    and is on the street whatever the street is worth, so the deep tail of the
-    lognormal drives homelessness to 1.25 per cent against a target of 0.399 and
-    leaves h_1 with nothing to decide. Pooling the bottom 6.68 per cent into one
-    mass point at its conditional mean solved that, and created a worse problem:
-    the pool is LARGER THAN THE PARTICIPATION TARGET of 5.13 per cent, so the
-    cell either uses or it does not and participation is a step function of b
-    with no value delivering the target.
+    THE HISTORY MATTERS HERE, because two earlier versions of this function each
+    fixed one defect and created another.
 
-    Integrating the drug decision over a sub grid inside the pool was a patch
-    for that, and it was WRONG in a way worth recording. It took the MASS of
-    users from incomes inside the pool, down to 0.002, and the DOSE from the
-    pool's single representative at 0.108, where the household does not use at
-    all and the reported dose is the smallest positive point on the drug grid.
-    Half of all users were carrying a disorder probability of 0.45 read off a
-    household that was not using, against the 0.97 to 1.00 of the households
-    actually supplying the mass. lambda then had nothing to fit but that grid
-    constant and ran to 5972, and the model's SUD rate moved from 2.5 to 5.1 per
-    cent when the drug grid's smallest positive dose moved from 1e-6 to 1e-3
-    with every parameter held fixed. A targeted moment must not be a function of
-    a numerical bound.
+    Households below the rent on the smallest unit cannot rent at all and are on
+    the street whatever the street is worth, so the deep tail of a lognormal
+    drives homelessness to 1.25 per cent against a target of 0.399 and leaves
+    h_1 with nothing to decide. POOLING the bottom 6.68 per cent into one mass
+    point at its conditional mean fixed that and left the pool WIDER THAN THE
+    5.13 PER CENT PARTICIPATION TARGET, so the cell used or did not as a block
+    and no b delivered the target. Integrating the drug decision over a sub grid
+    inside the pool was a patch for that, and it took the MASS of users from
+    incomes inside the pool while taking the DOSE from the pool's single
+    representative, which is a different household: half of all users carried a
+    disorder probability read off a household that was not using, and lambda ran
+    to 5972 fitting that grid constant.
 
-    Flooring keeps the economics that motivated pooling, that the poorest
-    households can rent and rent badly, without either defect: the 2.5 per cent
-    genuinely below the rent become an atom AT the floor, everything above it is
-    resolved node by node, and the participation margin at 5.13 per cent lands
-    on a resolved node because 5.13 exceeds 2.5. One population, one policy
-    function, and no special case anywhere downstream.
+    FLOORING the distribution at the rent instead was better and still not
+    enough. The atom is smaller, 3.08 per cent rather than 6.68, but it is still
+    an atom of identical households, and measured directly it moved
+    participation from 5.93 to 3.17 per cent as b crossed the value that flips
+    it. The target of 5.13 sits inside that jump, so b still could not reach it.
+
+    TRUNCATION removes the atom rather than shrinking it. The distribution is
+    conditional on being able to rent, every cell carries a small mass, and
+    participation is continuous in b, which is what a bracketing calibration
+    needs. The economic claim is the one the pooling note always made: a
+    household at the third percentile of PERMANENT income over a thirty year
+    period is the tail of a functional form rather than a household the data
+    contains. Truncation states that claim directly instead of stacking those
+    households at a single income and pretending they are one type.
     """
     par = P()
-    t = _floor_level(sig, GRID_FLOOR * par.pr * par.h_sm)
+    t = _trunc_level(sig, TRUNC_FLOOR * par.pr * par.h_sm)
     q_f = _ndtr((math.log(t) + 0.5 * sig * sig) / sig)
-    mean = t * q_f + (1.0 - _tail_mean(sig, q_f))
-    u = np.arange(n) / (n - 1.0)
-    p = np.concatenate(([0.0], q_f + (1.0 - q_f) * u ** kappa))
-    p[-1] = 1.0
+    u = np.arange(n + 1) / float(n)
+    p = q_f + (1.0 - q_f) * u ** kappa
+    p[0], p[-1] = q_f, 1.0
     w = np.diff(p)
     tv = np.array([_tail_mean(sig, q) for q in p])
     v = np.diff(tv) / w
-    v[0] = t                      # the atom sits AT the floor, not at its own mean
-    return v / mean, w            # normalised so mean income is one exactly
+    mean = float((w * v).sum() / w.sum())
+    return v / mean, w / w.sum()
 
 
 def _bottom_half_share(sig):
@@ -379,11 +380,32 @@ assert abs(P().yV - YV_HALF_MEDIAN) < 5e-4, (
 # inside the use region is read off the distribution rather than interpolated
 # across the gap between two node values. EDGES[i] is the cumulative mass below
 # cell i, so EDGES[i+1] - EDGES[i] is that cell's weight by construction.
+# THE GRID'S OWN SCALE, so CDF and EDGES speak the same language. This is the
+# fix for the second half of the step function bug. threshold() splits a
+# boundary cell by comparing cdf(ystar) against EDGES, the cumulative masses of
+# the cells, so the two have to be the same measure. They stopped being the same
+# the moment the grid was truncated and renormalised: EDGES run 0 to 1 over the
+# SURVIVORS, while CDF was still the raw lognormal running q_f to 1, and the
+# grid's incomes had additionally been divided through by the survivors' mean.
+# Comparing them put the threshold in the wrong cell, so a cell could be handed
+# a fraction of a third when it should have been whole, and participation moved
+# in jumps of a cell's mass with the calibration target inside one of them.
+Q_F = _ndtr((math.log(_trunc_level(SIG, TRUNC_FLOOR * P().pr * P().h_sm))
+             + 0.5 * SIG * SIG) / SIG)
+GRID_MEAN = (1.0 - _tail_mean(SIG, Q_F)) / max(1.0 - Q_F, 1e-14)
+
+
 def CDF(y):
-    """P(income <= y) for the lognormal the grid discretises, mean one."""
+    """
+    P(income <= y) for the distribution THE GRID ACTUALLY HOLDS: the lognormal
+    conditional on clearing the rent, renormalised to mean one. Returns a share
+    of the surviving mass, which is what EDGES measures.
+    """
     if y <= 0.0:
         return 0.0
-    return _ndtr((math.log(y) + 0.5 * SIG * SIG) / SIG)
+    raw = y * GRID_MEAN
+    q = _ndtr((math.log(raw) + 0.5 * SIG * SIG) / SIG)
+    return min(max((q - Q_F) / max(1.0 - Q_F, 1e-14), 0.0), 1.0)
 
 
 YG, W = _grid(SIG)
