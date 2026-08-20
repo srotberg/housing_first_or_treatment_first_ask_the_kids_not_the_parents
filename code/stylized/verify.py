@@ -164,9 +164,25 @@ _vh, _ = _cgrid(BASE, 'HF', T.PV_OPT)
 _vt, _ = _cgrid(BASE, 'TF', T.PV_OPT)
 _priv = float((WW * _cev(BASE, _vh - _vt)).sum())
 _gap = paths['HF'][1][1] - paths['TF'][1][1]
-chk('the cohort 1 gap is the private loss, not a coincidence',
-    abs(_gap - _priv) < 0.15 * max(_priv, 1e-9),
-    f'cohort 1 gap {100*_gap:.4f}%, private loss {100*_priv:.4f}%')
+chk('the cohort 1 gap exceeds the private loss alone',
+    _gap > _priv,
+    f'cohort 1 gap {100*_gap:.4f}%, private loss {100*_priv:.4f}%; the gap must '
+    'also carry the homelessness the revocations inflicted on cohort 1 parents')
+# THE REVOCATIONS HAVE TO REACH THE CHILD. Cohort 1's parent lived period 2
+# under the new rule, so Treatment First must hand cohort 1 a mixture with MORE
+# of its members born to an unhoused parent than Housing First does. If these
+# two are equal the bridge is not wired up and the chain is back to being
+# identical at cohort 1 by construction.
+_sb_t, _eb_t = T._bridge_grids(BASE, 'TF', T.PV_OPT)
+_sb_h, _eb_h = T._bridge_grids(BASE, 'HF', T.PV_OPT)
+_p1t, _p1h = T._step(p0, _sb_t, _eb_t), T._step(p0, _sb_h, _eb_h)
+chk('conditionality puts more of cohort 1 behind an unhoused parent',
+    (_p1t[2] + _p1t[3]) > (_p1h[2] + _p1h[3]) + 1e-6,
+    f'TF {100*(_p1t[2]+_p1t[3]):.3f}% against HF {100*(_p1h[2]+_p1h[3]):.3f}%')
+chk('the disorder cohort 1 inherits is settled before the reform',
+    abs((_p1t[1] + _p1t[3]) - (_p1h[1] + _p1h[3])) < 1e-6,
+    'the caught generation chose under the old rule, so its disorder rate '
+    'cannot depend on which policy replaced it')
 
 print('\n=== 7. the shape of the policy curve ===')
 # NOT A TEST FOR MONOTONICITY. Participation SHOULD be hump shaped in

@@ -170,3 +170,29 @@ penalty types; nothing is redrawn every generation, the capital stock and the
 distribution both carry state, and the speed of convergence is not known in
 advance. Run it long, verify the tail is flat, then truncate for display only
 after seeing that it is. Never pick the horizon first.
+
+## 9. The generation the reform catches must parent the first new cohort
+
+The child's penalty keys on the parent's WHOLE life. That was fixed once, for
+the rest points, and it survived in one more place: the first step off them.
+
+`path()` handed cohort 1 the pre reform rest point, which is the mixture a
+parent produces when it lives its whole life under the old rule. Cohort 1's
+parent does not. It was young before the reform and old when the reform landed,
+so its second period was lived under the NEW policy, and under Treatment First
+that is exactly when the voucher is taken from a household carrying a disorder
+acquired before the condition existed. Keyed on the old rest point, the
+homelessness conditionality itself causes could never reach a child, and the two
+policies were identical on cohort 1 BY CONSTRUCTION rather than as a finding.
+
+Wired up, the caught generation hands Treatment First a cohort with 0.902 per
+cent born behind an unhoused parent against 0.643 under Housing First, and the
+cohort 1 welfare gap widens. The disorder share it hands over is identical under
+both, and must be: that generation chose whether to use before the condition
+existed.
+
+**For the quantitative model:** the transition's first periods are parented by
+households whose lives straddle the reform. Build the bridge explicitly. The
+test that it is wired up is that the two policies differ in what the first new
+cohort inherits; if they do not, the channel is switched off by an accounting
+convention rather than by economics.

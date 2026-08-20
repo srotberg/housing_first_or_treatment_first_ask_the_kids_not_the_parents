@@ -101,6 +101,56 @@ def _policy_grids(par, policy, pV):
             np.clip(ev, 0.0, 1.0))
 
 
+
+def _bridge_grids(par, new_policy, pv_new):
+    """
+    The disorder and ever-unhoused grids for the generation the reform CATCHES
+    MID LIFE: period 1 chosen under the OLD rule, period 2 lived under the NEW.
+
+    THIS IS THE GENERATION THAT PARENTS COHORT 1, and until this existed the
+    chain did not know it. path() handed cohort 1 the pre reform rest point,
+    which is the mixture produced by a parent who lived its WHOLE life under the
+    old rule. Cohort 1's parent did not: it was young before the reform and old
+    when the reform landed, so its period 2 was lived under the new policy, and
+    under Treatment First that is precisely when its voucher is taken away for a
+    disorder acquired before the rule existed. Keyed on the old rest point, the
+    homelessness that conditionality itself creates could never reach a child,
+    and the two policies were identical on cohort 1 BY CONSTRUCTION rather than
+    as a finding.
+
+    This is the same mistake as the one recorded in TRANSITION_LESSONS section
+    on the child's inherited penalty, in its last hiding place: fixed there for
+    the rest points, still present here for the first step off them.
+
+    The disorder is settled in period 1 and so does not depend on the new
+    policy; being unhoused can happen in either period and so does.
+    """
+    from stylized import period1, solve_period2
+    old = with_(par, pV=par.pV, policy=BASE_POLICY)
+    new = with_(par, pV=pv_new, policy=new_policy)
+    sud = np.zeros(len(YG))
+    ev = np.zeros(len(YG))
+    for i, y in enumerate(YG):
+        ag, _, H2c, _, _ = solve_period2(new, y, new_policy, used=0)
+        if new_policy == 'HF':
+            H2u = H2c
+        else:
+            _, _, H2u, _, _ = solve_period2(new, y, new_policy, used=1)
+        s_tot = e_tot = 0.0
+        for p, gain, v, bu, bn, _inc, _own in period1(old, y, BASE_POLICY):
+            uses = gain > 0.0
+            a, street1 = (bu if uses else bn)[0], (bu if uses else bn)[1]
+            pid = (1.0 - float(np.exp(-old.lam * v))) if uses else 0.0
+            Hx = H2u if uses else H2c
+            street2 = sum(pd * float(np.interp(a, ag, Hx[:, d]))
+                          for d, pd in ((1, pid), (0, 1.0 - pid)))
+            s_tot += p * pid
+            e_tot += p * (street1 + (1.0 - street1) * street2)
+        sud[i] = s_tot
+        ev[i] = e_tot
+    return np.clip(sud, 0.0, 1.0), np.clip(ev, 0.0, 1.0)
+
+
 def _shifts():
     return np.array([1.0, 1.0 - DEL_D, 1.0 - DEL_H,
                      (1.0 - DEL_D) * (1.0 - DEL_H)])
@@ -211,12 +261,16 @@ def path(par, policy, pV, p0, v1_base, w0, n=GENERATIONS):
     v1, sud, hl, ev = _policy_grids(par, policy, pV)
     v1b, sudb, hlb, evb = _policy_grids(par, BASE_POLICY, par.pV)
     out = [(0, 0.0, p0.copy(), _outcome(p0, hlb), _outcome(p0, sudb))]
-    p = p0.copy()
+    # COHORT 1 IS BORN TO THE GENERATION THE REFORM CAUGHT, not to a generation
+    # that lived entirely under the old rule. Its parent chose in period 1 under
+    # the old policy and lived period 2 under the new one, so the mixture it
+    # inherits already carries whatever the new rule did to that parent, which
+    # under Treatment First includes the homelessness its own revocations
+    # caused. Handing cohort 1 the pre reform rest point made the two policies
+    # identical there by construction.
+    sud_b, ev_b = _bridge_grids(par, policy, pV)
+    p = _step(p0, sud_b, ev_b)
     for t in range(1, n + 1):
-        # the cohort BORN at t-1 lives under the new policy, and the mixture it
-        # was born into is the one the previous cohort handed it. Cohort 1 is
-        # therefore born into the OLD rest point and lives under the NEW rule.
-        # It is NOT the cohort that pays for the reform: see caught().
         w = _welfare(p, v1)
         out.append((t, float(cev(par, w - w0)), p.copy(),
                     _outcome(p, hl), _outcome(p, sud)))
@@ -405,6 +459,17 @@ def numbers(paths, par=None, cg=None):
     _rise = 0.5 * (tf[1][1] + hf[1][1])
     _gap = abs(tf[1][1] - hf[1][1])
     d['tr_gen_rise'] = f'{100*_rise:.2f}'
+    # HOW MUCH OF COHORT 1 IS BORN BEHIND AN UNHOUSED PARENT under each policy.
+    # The difference is conditionality's revocations reaching a child one
+    # generation later, which is the channel the chain used to be blind to.
+    _sb_t, _eb_t = _bridge_grids(par, 'TF', PV_OPT)
+    _sb_h, _eb_h = _bridge_grids(par, 'HF', PV_OPT)
+    _p0 = tf[0][2]
+    _p1t, _p1h = _step(_p0, _sb_t, _eb_t), _step(_p0, _sb_h, _eb_h)
+    d['tr_c1_hl_tf'] = f'{100*(_p1t[2]+_p1t[3]):.3f}'
+    d['tr_c1_hl_hf'] = f'{100*(_p1h[2]+_p1h[3]):.3f}'
+    d['tr_c1_hl_dir'] = _dir(_p1t[2]+_p1t[3], _p1h[2]+_p1h[3],
+                             'more', 'fewer', tol=1e-6, same='as many')
     d['tr_t1_gap'] = f'{100*_gap:.2f}'
     d['tr_gen_vs_cond'] = (f'{_rise / _gap:.0f}' if _gap > 1e-9 else 'many')
     # WHICH OF THE TWO THE COHORT AT THE SWITCH PREFERS. The gap is under a
