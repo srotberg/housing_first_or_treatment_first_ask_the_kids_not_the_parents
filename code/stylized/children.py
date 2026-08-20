@@ -185,7 +185,7 @@ def verdict(par, del_d, pV=1.0, omega=1.0, kids=1.0):
     print(f'      externality gain from conditionality     : {gain:.5f}')
     print(f'      ratio, gain over loss                    : {gain/max(priv,1e-12):.2f}')
     print(f'      Treatment First preferred?               : {gain > priv}')
-    return priv, gain
+    return priv, gain, per_case
 
 
 # DELTA_D IS CALIBRATED, NOT SET, and it is calibrated to the MIDDLE of the
@@ -321,8 +321,14 @@ def tab_children(par, pV=1.0):
         u = shifted(use, d)
         rows.append((d, u * prog, u * prog / max(base, 1e-12),
                      cev(par, shifted(v1, 0.0) - shifted(v1, d))))
-    v1u, _ = child_grid(par, 'HF', pV)
-    per_case = cev(par, shifted(v1u, 0.0) - shifted(v1u, DEL_D))
+    # PER CASE COMES FROM verdict(), NOT FROM A SECOND CALCULATION HERE. It used
+    # to be recomputed on this line as cev of the averaged value difference,
+    # while the gain below came from verdict() using the average of individual
+    # equivalents. The panel then printed a per case figure and a gain that were
+    # not the same object, and its own arithmetic did not check out: 9.489
+    # points at 101.9 per cent each multiplies to 9.67, against a printed gain
+    # of 11.158.
+    priv, gain, per_case = verdict(par, DEL_D, pV=pV)
     # WHERE THE NUMBER COMES FROM, because it is large enough to want checking.
     # A permanent income cut of del_d costs a household with log utility exactly
     # log(1-del_d) of flow utility in every period, so the consumption equivalent
@@ -336,7 +342,6 @@ def tab_children(par, pV=1.0):
     print(f'      of which the income cut alone          : {100*income_only:.1f}%')
     print(f'      of which the behavioural response      : '
           f'{100*(per_case-income_only):.1f}%')
-    priv, gain = verdict(par, DEL_D, pV=pV)
     # Panel B is entirely at pV, the policy comparison. Panel A is entirely at
     # the baseline. Mixing the two silently reported a 1.68 pp gap where the
     # universal cover gap is 0.25.
@@ -386,7 +391,8 @@ def tab_children(par, pV=1.0):
         # the calibrated penalty has already been solved a few lines above, so
         # it is reused rather than solved again: verdict() is minutes, not
         # milliseconds.
-        p_, g = (priv, gain) if abs(d - DEL_D) < 1e-12 else verdict(par, d, pV=pV)
+        p_, g = ((priv, gain) if abs(d - DEL_D) < 1e-12
+                 else verdict(par, d, pV=pV)[:2])
         ratios.append(g / max(p_, 1e-12))
     here = os.path.dirname(os.path.abspath(__file__))
     dd = {'priv': f'{100 * priv:.3f}',

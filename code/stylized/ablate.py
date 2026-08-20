@@ -122,7 +122,7 @@ if __name__ == '__main__':
         except Exception as exc:
             print(f'{name:36s}   failed: {exc}')
             continue
-        v = verdict(r, ref)
+        v = verdict(r, ref)[:2]
         if ref is None:
             ref = r
         print(f"{name:36s}{r['part']:7.4f}{r['homeless']:10.5f}"

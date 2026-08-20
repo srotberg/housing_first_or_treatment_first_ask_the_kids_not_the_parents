@@ -266,6 +266,12 @@ def _params(out):
         return
     for k, v in json.load(open(p)).items():
         out.setdefault(k, v)
+    # AND EVERY OTHER DECLARATION, as f_<name>. Same setdefault discipline: a
+    # linked table row keeps its q_<name>, and anything the stylized model
+    # computes itself wins over a constant of the same name.
+    for k, v in _fortran_all().items():
+        out.setdefault(k, v)
+    _derived_from_fortran(out)
 
 
 def _figures(base):

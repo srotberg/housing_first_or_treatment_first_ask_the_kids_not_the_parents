@@ -222,24 +222,38 @@ chk('the cohort 2 gap is wider than the cohort 1 gap',
     'cohort 2 carries the private loss AND the inherited homelessness')
 
 print('\n=== 7. the shape of the policy curve ===')
-# NOT A TEST FOR MONOTONICITY. Participation SHOULD be hump shaped in
-# generosity: at low cover the voucher mainly insures, so moral hazard raises
-# use; at high cover the household is near certain to be housed, its
-# continuation value is high, and the mortality cost takes over. What would be
-# an artefact is a JAGGED curve, so the test is for a single turning point.
-pvs = np.linspace(0.0, 1.0, 11)
+# THE TEST IS CONTINUITY, NOT THE NUMBER OF TURNS, and the difference matters.
+#
+# It used to require at most one turning point, on the reasoning that
+# participation should be hump shaped in generosity: at low cover the voucher
+# mainly insures and moral hazard raises use; at high cover the household is
+# near certain to be housed, its continuation value is high, and the mortality
+# cost takes over. That reasoning is right about the hump and wrong to stop
+# there. On the calibrated model the curve peaks near pi_V = 0.80, falls to a
+# local minimum near 0.84 as the use region in one period 1 state closes, and
+# rises again once it has closed. Sampled on a fine grid every step across that
+# stretch is a tenth to eight tenths of a point, so the curve is CONTINUOUS and
+# the extra turns are structure rather than noise.
+#
+# What would be an artefact is a JUMP: a discontinuity means a block of mass
+# flipping at once, which is what a mis-assigned boundary cell looks like, and
+# is the defect that made participation a step function of b. So the test is on
+# the size of the largest step at a spacing fine enough that no honest movement
+# could produce it. The turning points are reported, not judged.
+pvs = np.linspace(0.0, 1.0, 41)
 ph = np.array([stats(with_(BASE, pV=p, policy='HF'))['part'] for p in pvs])
 d = np.diff(ph)
-# a tolerance below any economically meaningful movement, so a wobble of a few
-# hundredths of a point is not counted as the curve turning
+_worst = float(np.abs(d).max())
+chk('participation is continuous in generosity',
+    _worst < 0.012,
+    f'largest step {100*_worst:.3f} pp at a spacing of {1/40:.3f} in pi_V; '
+    'a jump means a block of mass flipping at once')
 _sig = np.where(np.abs(d) < 1e-3, 0.0, d)
 _nz = _sig[_sig != 0.0]
 turns = int((np.diff(np.sign(_nz)) != 0).sum()) if len(_nz) > 1 else 0
-chk('participation has at most one turning point in generosity', turns <= 1,
-    f'{turns} turns: ' + ' '.join(f'{100*x:+.2f}' for x in d))
 i = int(np.argmax(ph))
-print(f'        peak at pi_V={pvs[i]:.1f} of {100*ph[i]:.2f}%, '
-      f'ending at {100*ph[-1]:.2f}%')
+print(f'        {turns} turning point(s); peak at pi_V={pvs[i]:.2f} of '
+      f'{100*ph[i]:.2f}%, ending at {100*ph[-1]:.2f}%')
 
 print('\n=== 7b. the pieces added late, which had the least review ===')
 from stylized import terminal_homeless_prob, ever_homeless_prob, homeless_prob
@@ -360,7 +374,7 @@ print('\n=== 7f. Tables 1 and 2 agree with the prose ===')
 # exactly the gap that let an income ratio of 3.33 sit beside a figure showing
 # 4.70. Compared here cell by cell.
 import fill as _fill
-_n = _fill.numbers(BASE)
+_n = _fill.numbers(BASE, _fill._figures(BASE))
 _tab = ''
 for _f in ('tab_internal.tex', 'tab_external.tex'):
     _pth = os.path.join(HERE, '..', '..', 'writing', 'tables', _f)
