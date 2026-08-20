@@ -337,6 +337,29 @@ for _f in ('tab_external.tex', 'tab_internal.tex', 'tab_welfare.tex',
         os.path.exists(_p) and os.path.getmtime(_p) >= _cal,
         'rerun build.sh')
 
+print('\n=== 7f. Tables 1 and 2 agree with the prose ===')
+# THE ONE PLACE A NUMBER IS STILL PRODUCED TWICE. Tables 3 and 4 are written by
+# the same files that export their numbers for the prose, and the figures are
+# too, so those cannot disagree. Tables 1 and 2 are written by tables.py while
+# the prose's copies of the same parameters are formatted by fill.py. Both read
+# calibrated.json, so they share a SOURCE, but not a code path, and that is
+# exactly the gap that let an income ratio of 3.33 sit beside a figure showing
+# 4.70. Compared here cell by cell.
+import fill as _fill
+_n = _fill.numbers(BASE)
+_tab = ''
+for _f in ('tab_internal.tex', 'tab_external.tex'):
+    _pth = os.path.join(HERE, '..', '..', 'writing', 'tables', _f)
+    if os.path.exists(_pth):
+        _tab += open(_pth).read()
+for _key, _label in (('beta', 'beta'), ('th', 'theta'), ('vsl_t', 'the VSL'),
+                     ('h3', 'the standard unit'), ('kV', 'the eligibility cap')):
+    _v = _n.get(_key)
+    if _v is None:
+        continue
+    chk(f'{_label} in the prose appears in Tables 1 or 2',
+        str(_v) in _tab, f'prose says {_v}')
+
 print('\n=== 8. the paper quotes what the tables state ===')
 src = open(os.path.join(TAB, '..', 'housing_first_children_later.tex'), encoding='utf-8').read()
 for label, val in (('participation under HF at universal cover', f'{100*mh["part"]:.2f}'),
