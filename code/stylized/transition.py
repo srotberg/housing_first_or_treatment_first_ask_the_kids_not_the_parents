@@ -343,7 +343,7 @@ def figure(paths, cg=None):
             t = [r[0] for r in paths[lab]][:show + 1]
             y = [100 * r[idx] for r in paths[lab]][:show + 1]
             ax.plot(t, y, label=name, markersize=5, **sty)
-        ax.set_xlabel('cohort, generations after the reform')
+        ax.set_xlabel('cohort of newborns after the reform')
         ax.set_ylabel(ylab)
         ax.set_title(ttl, loc='left', fontsize=11, fontweight='bold')
     axes[0].axhline(0.0, color='0.35', lw=1.0, ls=':')
@@ -352,7 +352,7 @@ def figure(paths, cg=None):
         # marked apart, since it is measured over its remaining period only
         axes[0].plot([0], [-100 * cg['cev']], marker='v', ms=9, color='#b2182b',
                      ls='none',
-                     label='caught mid life, Treatment First')
+                     label='initial old, Treatment First')
     # ONE LEGEND, UNDER THE FIGURE. It used to sit inside panel (a) at centre
     # right, unframed, which put it on top of the Housing First line: the dashed
     # series ran straight through the labels and neither could be read. There is

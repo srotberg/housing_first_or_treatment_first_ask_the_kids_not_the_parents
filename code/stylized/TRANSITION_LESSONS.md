@@ -177,7 +177,7 @@ The child's penalty keys on the parent's WHOLE life. That was fixed once, for
 the rest points, and it survived in one more place: the first steps off them.
 
 `path()` gave every cohort after the reform the mixture the previous cohort
-produced under the NEW policy, so the generation the reform caught mid life
+produced under the NEW policy, so the initial old
 never parented anybody. Its extra homelessness, which under Treatment First is
 caused by the revocations themselves, was computed for the welfare marker and
 then dropped on the floor. The two policies were identical on inheritance
@@ -186,15 +186,16 @@ forever, by construction rather than as a finding.
 THE TIMING IS THE WHOLE CONTENT, and it is easy to get one generation wrong in
 either direction:
 
-- **Cohort 1 inherits nothing from the reform, and should not.** Its income draw
+- **The initial newborns inherit nothing from the reform, and should not.** Its income draw
   was settled by a parent who completed BOTH periods before the condition
   existed. The two policies hand cohort 1 the same mixture, and its welfare gap
   is the private loss alone.
-- **Cohort 2 is the first that inherits the reform.** Its parent is the caught
+- **The second cohort is the first that inherits the reform.** Its parent is the caught
   generation: young under the old rule, old when the reform landed, stripped of
   the voucher under Treatment First for a disorder acquired before the condition
   existed.
-- **From cohort 3 the parent lived its whole life under the new rule** and the
+- **From the third cohort the parents are the second cohort of old, who lived
+  their whole lives under the new rule,** and the
   chain is stationary in the policy.
 
 Wired up this way the stylized model puts 0.983 per cent of cohort 2 behind an
@@ -204,7 +205,7 @@ welfare gap widens from 0.074 to 0.110 points, and the ranking flips at cohort 3
 **The tests that the bridge is in the right place, both of which must pass.**
 Cohort 1's inherited mixture must be IDENTICAL under the two policies; if it is
 not, the bridge is a generation too early. Cohort 2's must DIFFER, and differ
-only in the housing margin, since the caught generation's disorder was settled
+only in the housing margin, since the initial old's disorder was settled
 before the reform; if it does not, the bridge is missing.
 
 **For the quantitative model:** the first periods of the transition are parented
