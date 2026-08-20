@@ -149,8 +149,40 @@ for k in ('TF', 'HF'):
     chk(f'{k}: the path has settled by the last cohorts',
         max(last) - min(last) < 1e-3, f'{last}')
 chk('TF ends above HF', paths['TF'][-1][1] > paths['HF'][-1][1])
-chk('TF costs the cohort it lands on', paths['TF'][1][1] < paths['HF'][1][1],
-    'conditionality must not be free to the cohort that bears it')
+# THE SHAPE OF THE TRANSITION IS A PREDICTION, not an observation, and each
+# leg of it follows from something the model asserts elsewhere. Checked leg by
+# leg so a recalibration cannot quietly break one of them.
+#
+# LEG 1. Cohort 1 can only be WEAKLY worse off under conditionality. It inherits
+# identically under the two policies, so all that separates them is that an
+# option has been removed with nothing given back: the dominance argument of
+# Section 3.6.1 applied to one cohort. Weak, not strict, because at a high
+# enough coverage nobody uses and there is nothing to take away.
+chk('cohort 1 is weakly worse off under conditionality',
+    paths['TF'][1][1] <= paths['HF'][1][1] + 1e-12,
+    f"TF {100*paths['TF'][1][1]:.4f}% against HF {100*paths['HF'][1][1]:.4f}%")
+# LEG 2. Cohort 2 must be STRICTLY worse off. Its parent is the generation the
+# reform caught, whose vouchers conditionality revoked, so it inherits worse
+# draws on top of bearing the private loss itself.
+chk('cohort 2 is strictly worse off under conditionality',
+    paths['TF'][2][1] < paths['HF'][2][1] - 1e-12,
+    'the caught generation was put on the street and its children are born '
+    'behind that')
+# LEG 3. From there on conditionality gains, and it gains because the cohorts
+# it made worse off use less, carry the disorder less, and are unhoused less, so
+# the cohorts after them inherit better draws. If this never happens the
+# externality channel is not doing what the paper says it does.
+_flip = next((t for t in range(1, len(paths['TF']))
+              if paths['TF'][t][1] > paths['HF'][t][1]), None)
+chk('conditionality goes ahead at some cohort and stays ahead',
+    _flip is not None and all(paths['TF'][t][1] > paths['HF'][t][1]
+                              for t in range(_flip, len(paths['TF']))),
+    f'flips at cohort {_flip}')
+chk('conditionality dips before it gains',
+    paths['TF'][2][1] <= paths['TF'][1][1] + 1e-12
+    and paths['TF'][-1][1] > paths['TF'][1][1],
+    'the path must fall on the cohort that inherits the revocations and then '
+    'rise above where it started')
 # WHY THE TWO POLICIES ARE NEARLY LEVEL ON COHORT 1, which reads as a bug and is
 # not one. That cohort lives its whole life under the new rule, so it can keep
 # its voucher by not using; the only households worse off under conditionality
