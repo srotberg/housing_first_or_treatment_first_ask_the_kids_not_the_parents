@@ -211,3 +211,38 @@ before the reform; if it does not, the bridge is missing.
 **For the quantitative model:** the first periods of the transition are parented
 by households whose lives straddle the reform. Build that bridge explicitly and
 decide which cohort it lands on before writing any of it down.
+
+## 10. The stylized model's early losses are a THEOREM, the full model's are not
+
+In the stylized model the sign of each group's welfare change at the reform is
+settled before any number is computed, and only the magnitude is open:
+
+- **initial newborns** — weakly worse off. An option is removed and nothing is
+  given back. This is the dominance argument of Section 3.6.1 on one cohort.
+- **second cohort of newborns** — strictly worse off. Their parents, the initial
+  old, were more likely to be unhoused, so they inherit worse draws.
+- **initial old** — strictly worse off. The voucher is revoked for some of them
+  and nothing is added for anybody.
+
+So a stylized transition MUST open with welfare losses. That is a property of
+the environment, not a result about housing policy, and neither the paper nor
+the code should present it as one.
+
+**The quantitative model is not bound this way, and its transition must not be
+built as though it were.** Two channels absent from the stylized model push the
+other way:
+
+1. **The government budget clears in EVERY period of the transition**, not just
+   at the endpoints. Treatment First covers fewer tenants, spends less, and so
+   taxes less from the period the reform lands. The early cohorts pay those
+   lower taxes over their whole lives. A transition that balances the budget
+   only in the long run, or that holds taxes fixed on the path, throws this away
+   and will reproduce the stylized model's losses as an artefact.
+2. **Altruism is calibrated rather than zero.** A parent partly internalises the
+   gain its own abstinence hands its child, so the private loss is strictly
+   smaller than the same calculation gives here.
+
+Either can outweigh the option loss and the inherited penalty. If the
+quantitative transition comes out with the stylized model's sign pattern,
+CHECK THE TAX PATH FIRST: the most likely explanation is that the budget was not
+being cleared period by period.
