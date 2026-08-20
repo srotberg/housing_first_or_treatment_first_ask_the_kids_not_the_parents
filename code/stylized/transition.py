@@ -261,20 +261,31 @@ def path(par, policy, pV, p0, v1_base, w0, n=GENERATIONS):
     v1, sud, hl, ev = _policy_grids(par, policy, pV)
     v1b, sudb, hlb, evb = _policy_grids(par, BASE_POLICY, par.pV)
     out = [(0, 0.0, p0.copy(), _outcome(p0, hlb), _outcome(p0, sudb))]
-    # COHORT 1 IS BORN TO THE GENERATION THE REFORM CAUGHT, not to a generation
-    # that lived entirely under the old rule. Its parent chose in period 1 under
-    # the old policy and lived period 2 under the new one, so the mixture it
-    # inherits already carries whatever the new rule did to that parent, which
-    # under Treatment First includes the homelessness its own revocations
-    # caused. Handing cohort 1 the pre reform rest point made the two policies
-    # identical there by construction.
+    # WHO PARENTS WHOM, and the timing is the whole content of this loop.
+    #
+    # COHORT 1 IS NOT WORSE OFF THROUGH INHERITANCE, and should not be. Its
+    # income draw was settled by a parent who completed BOTH periods before the
+    # condition existed, so there is nothing about the new policy in what it
+    # inherits. What separates the two policies for cohort 1 is only the private
+    # loss: its own members who would have used, and now cannot without losing
+    # the voucher.
+    #
+    # COHORT 2 IS THE ONE THAT INHERITS THE REFORM. Its parent is the generation
+    # the reform caught mid life: young under the old rule, old when the reform
+    # landed, and under Treatment First stripped of the voucher for a disorder
+    # acquired before the condition existed. That generation's extra
+    # homelessness is transmitted here and nowhere else, so this is the step
+    # where conditionality's own revocations first reach a child.
+    #
+    # From cohort 3 on the parent lived its whole life under the new rule and
+    # the chain is stationary in the policy.
     sud_b, ev_b = _bridge_grids(par, policy, pV)
-    p = _step(p0, sud_b, ev_b)
+    p = p0.copy()
     for t in range(1, n + 1):
         w = _welfare(p, v1)
         out.append((t, float(cev(par, w - w0)), p.copy(),
                     _outcome(p, hl), _outcome(p, sud)))
-        p = _step(p, sud, ev)
+        p = _step(p, sud_b, ev_b) if t == 1 else _step(p, sud, ev)
     return out
 
 
@@ -459,17 +470,22 @@ def numbers(paths, par=None, cg=None):
     _rise = 0.5 * (tf[1][1] + hf[1][1])
     _gap = abs(tf[1][1] - hf[1][1])
     d['tr_gen_rise'] = f'{100*_rise:.2f}'
-    # HOW MUCH OF COHORT 1 IS BORN BEHIND AN UNHOUSED PARENT under each policy.
-    # The difference is conditionality's revocations reaching a child one
-    # generation later, which is the channel the chain used to be blind to.
-    _sb_t, _eb_t = _bridge_grids(par, 'TF', PV_OPT)
-    _sb_h, _eb_h = _bridge_grids(par, 'HF', PV_OPT)
-    _p0 = tf[0][2]
-    _p1t, _p1h = _step(_p0, _sb_t, _eb_t), _step(_p0, _sb_h, _eb_h)
-    d['tr_c1_hl_tf'] = f'{100*(_p1t[2]+_p1t[3]):.3f}'
-    d['tr_c1_hl_hf'] = f'{100*(_p1h[2]+_p1h[3]):.3f}'
-    d['tr_c1_hl_dir'] = _dir(_p1t[2]+_p1t[3], _p1h[2]+_p1h[3],
+    # HOW MUCH OF COHORT 2 IS BORN BEHIND AN UNHOUSED PARENT under each policy.
+    # Cohort 2's parent is the generation the reform caught mid life, so this is
+    # where conditionality's own revocations first reach a child. Cohort 1's
+    # parent completed both periods before the condition existed, which is why
+    # the two policies hand cohort 1 the SAME mixture and its gap is the private
+    # loss alone.
+    d['tr_c2_hl_tf'] = f'{100*(tf[2][2][2]+tf[2][2][3]):.3f}'
+    d['tr_c2_hl_hf'] = f'{100*(hf[2][2][2]+hf[2][2][3]):.3f}'
+    d['tr_c2_hl_dir'] = _dir(tf[2][2][2]+tf[2][2][3], hf[2][2][2]+hf[2][2][3],
                              'more', 'fewer', tol=1e-6, same='as many')
+    d['tr_c1_gap'] = f'{100*abs(tf[1][1]-hf[1][1]):.3f}'
+    d['tr_c2_gap'] = f'{100*abs(tf[2][1]-hf[2][1]):.3f}'
+    # WHICH COHORT THE RANKING FLIPS ON, which is a result and moves with the
+    # calibration: the first cohort at which Treatment First is ahead.
+    _fl = next((t for t in range(1, len(tf)) if tf[t][1] > hf[t][1]), None)
+    d['tr_flip'] = _words(_fl) if _fl else 'no'
     d['tr_t1_gap'] = f'{100*_gap:.2f}'
     d['tr_gen_vs_cond'] = (f'{_rise / _gap:.0f}' if _gap > 1e-9 else 'many')
     # WHICH OF THE TWO THE COHORT AT THE SWITCH PREFERS. The gap is under a

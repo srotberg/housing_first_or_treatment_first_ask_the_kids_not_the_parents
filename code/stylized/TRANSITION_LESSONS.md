@@ -171,28 +171,42 @@ distribution both carry state, and the speed of convergence is not known in
 advance. Run it long, verify the tail is flat, then truncate for display only
 after seeing that it is. Never pick the horizon first.
 
-## 9. The generation the reform catches must parent the first new cohort
+## 9. The generation the reform catches parents the SECOND new cohort
 
 The child's penalty keys on the parent's WHOLE life. That was fixed once, for
-the rest points, and it survived in one more place: the first step off them.
+the rest points, and it survived in one more place: the first steps off them.
 
-`path()` handed cohort 1 the pre reform rest point, which is the mixture a
-parent produces when it lives its whole life under the old rule. Cohort 1's
-parent does not. It was young before the reform and old when the reform landed,
-so its second period was lived under the NEW policy, and under Treatment First
-that is exactly when the voucher is taken from a household carrying a disorder
-acquired before the condition existed. Keyed on the old rest point, the
-homelessness conditionality itself causes could never reach a child, and the two
-policies were identical on cohort 1 BY CONSTRUCTION rather than as a finding.
+`path()` gave every cohort after the reform the mixture the previous cohort
+produced under the NEW policy, so the generation the reform caught mid life
+never parented anybody. Its extra homelessness, which under Treatment First is
+caused by the revocations themselves, was computed for the welfare marker and
+then dropped on the floor. The two policies were identical on inheritance
+forever, by construction rather than as a finding.
 
-Wired up, the caught generation hands Treatment First a cohort with 0.902 per
-cent born behind an unhoused parent against 0.643 under Housing First, and the
-cohort 1 welfare gap widens. The disorder share it hands over is identical under
-both, and must be: that generation chose whether to use before the condition
-existed.
+THE TIMING IS THE WHOLE CONTENT, and it is easy to get one generation wrong in
+either direction:
 
-**For the quantitative model:** the transition's first periods are parented by
-households whose lives straddle the reform. Build the bridge explicitly. The
-test that it is wired up is that the two policies differ in what the first new
-cohort inherits; if they do not, the channel is switched off by an accounting
-convention rather than by economics.
+- **Cohort 1 inherits nothing from the reform, and should not.** Its income draw
+  was settled by a parent who completed BOTH periods before the condition
+  existed. The two policies hand cohort 1 the same mixture, and its welfare gap
+  is the private loss alone.
+- **Cohort 2 is the first that inherits the reform.** Its parent is the caught
+  generation: young under the old rule, old when the reform landed, stripped of
+  the voucher under Treatment First for a disorder acquired before the condition
+  existed.
+- **From cohort 3 the parent lived its whole life under the new rule** and the
+  chain is stationary in the policy.
+
+Wired up this way the stylized model puts 0.983 per cent of cohort 2 behind an
+unhoused parent under Treatment First against 0.732 under Housing First, the
+welfare gap widens from 0.074 to 0.110 points, and the ranking flips at cohort 3.
+
+**The tests that the bridge is in the right place, both of which must pass.**
+Cohort 1's inherited mixture must be IDENTICAL under the two policies; if it is
+not, the bridge is a generation too early. Cohort 2's must DIFFER, and differ
+only in the housing margin, since the caught generation's disorder was settled
+before the reform; if it does not, the bridge is missing.
+
+**For the quantitative model:** the first periods of the transition are parented
+by households whose lives straddle the reform. Build that bridge explicitly and
+decide which cohort it lands on before writing any of it down.
