@@ -151,6 +151,22 @@ for k in ('TF', 'HF'):
 chk('TF ends above HF', paths['TF'][-1][1] > paths['HF'][-1][1])
 chk('TF costs the cohort it lands on', paths['TF'][1][1] < paths['HF'][1][1],
     'conditionality must not be free to the cohort that bears it')
+# WHY THE TWO POLICIES ARE NEARLY LEVEL ON COHORT 1, which reads as a bug and is
+# not one. That cohort lives its whole life under the new rule, so it can keep
+# its voucher by not using; the only households worse off under conditionality
+# are the ones who would have used, and they are few. The gap therefore IS the
+# private loss of Section 3.6.1 and has to equal it. Checked rather than
+# asserted, because the last time these two looked equal the cause was a bug in
+# the revocation rule.
+from children import child_grid as _cgrid
+from welfare import cev as _cev
+_vh, _ = _cgrid(BASE, 'HF', T.PV_OPT)
+_vt, _ = _cgrid(BASE, 'TF', T.PV_OPT)
+_priv = float((WW * _cev(BASE, _vh - _vt)).sum())
+_gap = paths['HF'][1][1] - paths['TF'][1][1]
+chk('the cohort 1 gap is the private loss, not a coincidence',
+    abs(_gap - _priv) < 0.15 * max(_priv, 1e-9),
+    f'cohort 1 gap {100*_gap:.4f}%, private loss {100*_priv:.4f}%')
 
 print('\n=== 7. the shape of the policy curve ===')
 # NOT A TEST FOR MONOTONICITY. Participation SHOULD be hump shaped in

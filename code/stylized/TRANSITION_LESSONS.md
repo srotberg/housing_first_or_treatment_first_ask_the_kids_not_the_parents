@@ -146,3 +146,27 @@ Two differences between the models are DELIBERATE and are not bugs: the
 quantitative model exempts a household in treatment from the condition, and it
 enforces the condition imperfectly, with a detection rate and a false positive
 rate. The stylized model has neither, and says so.
+
+## 8. The transition horizon is not the display horizon
+
+A transition must be COMPUTED over a horizon long enough that convergence is a
+finding, and DISPLAYED over one short enough to read. These are different
+numbers and conflating them turns an assumption into a result.
+
+The failure is quiet. A settling test measures each cohort against the last one
+computed, so a path still drifting at the end of a short run reports the end and
+reads as converged. The stylized model ran five cohorts and asserted it had
+settled in two or three; five could never have shown otherwise.
+
+**The stylized model** now runs `GENERATIONS_LONG = 20` and draws
+`max(GENERATIONS_SHOW, settle + 2)`, so a path that turns out to be slow extends
+the figure rather than being clipped into looking fast. It also exports
+`tr_horizon`, what was computed, and `tr_drift`, the gap between the last two
+cohorts, so the claim can be checked rather than trusted.
+
+**The quantitative model needs far more: fifty to a hundred periods.** It is a
+sequence of general equilibrium prices rather than a Markov chain on four
+penalty types; nothing is redrawn every generation, the capital stock and the
+distribution both carry state, and the speed of convergence is not known in
+advance. Run it long, verify the tail is flat, then truncate for display only
+after seeing that it is. Never pick the horizon first.

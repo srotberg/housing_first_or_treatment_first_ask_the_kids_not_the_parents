@@ -48,11 +48,27 @@ LY = np.log(YG)
 
 BASE_POLICY = 'HF'      # the world as it is: rationed vouchers, no condition
 PV_OPT = 1.0            # the optimal Treatment First programme is universal
-# FIVE COHORTS, because the chain settles in two or three. The mixture a cohort
-# is born into depends on its parent's outcomes and nothing further back, since
-# the base draw is redrawn every generation, so the path is at its new rest
-# point almost immediately. Showing eight would be five flat markers.
-GENERATIONS = 5
+# COMPUTE LONG, PLOT SHORT, and do not confuse the two. The chain settles in two
+# or three cohorts here, but a horizon of five CANNOT ESTABLISH that: _settle
+# measures each path against the LAST cohort computed, so if the path were still
+# drifting at cohort five it would report five and read as converged. The claim
+# that the economy has reached its rest point is only worth as much as the
+# horizon behind it.
+#
+# So the chain is run out to GENERATIONS_LONG and the figure draws the first
+# GENERATIONS_SHOW, extended automatically if the path has not settled inside
+# them. Showing twenty would be seventeen flat markers; computing five would be
+# an assumption wearing the clothes of a result.
+#
+# THE SAME APPLIES WITH FORCE TO THE QUANTITATIVE MODEL, where the transition is
+# a genuine sequence of general equilibrium prices rather than a Markov chain on
+# four penalty types, nothing redraws every generation, and the speed of
+# convergence is not known in advance. That transition should be run for twenty
+# periods or more and truncated for display only after the path is seen to be
+# flat, never truncated at a horizon chosen first.
+GENERATIONS_LONG = 20
+GENERATIONS_SHOW = 5
+GENERATIONS = GENERATIONS_LONG
 
 
 def _at(vals, s):
@@ -248,13 +264,19 @@ def figure(paths, cg=None):
     fig, axes = plt.subplots(1, 3, figsize=(13.2, 3.9))
     S = (('TF', 'Treatment First', dict(color='#b2182b', marker='o')),
          ('HF', 'Housing First', dict(color='#2166ac', marker='s', ls='--')))
+    # DRAW ONLY WHAT IS WORTH LOOKING AT, having computed far more. The cut is
+    # the settling cohort plus two, floored at GENERATIONS_SHOW, so a path that
+    # turns out to be slow extends the figure rather than being clipped into
+    # looking fast.
+    show = max(GENERATIONS_SHOW, _settle_index(paths['TF'], paths['HF']) + 2)
+    show = min(show, len(paths['TF']) - 1)
     for ax, idx, ttl, ylab in (
             (axes[0], 1, '(a) Newborn welfare', 'consumption equivalent (\%)'),
             (axes[1], 3, '(b) Homelessness', 'rate (\%)'),
             (axes[2], 4, '(c) Share with a SUD', 'rate (\%)')):
         for lab, name, sty in S:
-            t = [r[0] for r in paths[lab]]
-            y = [100 * r[idx] for r in paths[lab]]
+            t = [r[0] for r in paths[lab]][:show + 1]
+            y = [100 * r[idx] for r in paths[lab]][:show + 1]
             ax.plot(t, y, label=name, markersize=5, **sty)
         ax.set_xlabel('cohort, generations after the reform')
         ax.set_ylabel(ylab)
@@ -263,12 +285,20 @@ def figure(paths, cg=None):
     if cg is not None:
         # the generation already in period 2 at the switch, on the same axis but
         # marked apart, since it is measured over its remaining period only
-        axes[0].plot([0], [-100 * cg['cev']], marker='v', ms=8, color='#b2182b',
-                     ls='none', label='caught mid life, TF')
-        axes[0].annotate('caught\nmid life', xy=(0, -100 * cg['cev']),
-                         xytext=(0.35, -100 * cg['cev'] * 0.72), fontsize=8.5,
-                         color='#b2182b')
-    axes[0].legend(loc='center right', fontsize=9)
+        axes[0].plot([0], [-100 * cg['cev']], marker='v', ms=9, color='#b2182b',
+                     ls='none',
+                     label='caught mid life, Treatment First')
+    # ONE LEGEND, UNDER THE FIGURE. It used to sit inside panel (a) at centre
+    # right, unframed, which put it on top of the Housing First line: the dashed
+    # series ran straight through the labels and neither could be read. There is
+    # no reliably empty corner inside a panel whose two series cross and then
+    # separate, so the legend goes outside the axes altogether, where it cannot
+    # collide with data whatever the numbers do on the next calibration.
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc='lower center', ncol=len(labels),
+               fontsize=9.5, frameon=False,
+               bbox_to_anchor=(0.5, -0.02), columnspacing=2.4)
+    fig.subplots_adjust(bottom=0.30)
     save(fig, 'stylized_transition')
     return fig
 
@@ -289,12 +319,17 @@ def _words(n):
             6: 'six', 7: 'seven', 8: 'eight', 9: 'nine'}.get(n, str(n))
 
 
-def _settle(tf, hf, tol=1e-3):
+def _settle_index(tf, hf, tol=1e-3):
     """
     The first cohort after which BOTH paths stay within tol of their rest point.
 
     Counted from cohort 1, the first born under the new rule, so the answer is
     the number of cohorts the transition takes and not an index into the array.
+
+    THIS IS ONLY AS GOOD AS THE HORIZON. It measures every cohort against the
+    LAST one computed, so on a short run a path still drifting at the end
+    reports the end and reads as converged. That is why the chain is run to
+    GENERATIONS_LONG and only the figure is truncated.
     """
     n = min(len(tf), len(hf))
     last = n - 1
@@ -304,7 +339,12 @@ def _settle(tf, hf, tol=1e-3):
                for j in range(i, n)):
             k = i
             break
-    k = max(k, 1)
+    return max(k, 1)
+
+
+def _settle(tf, hf, tol=1e-3):
+    """_settle_index as the word the prose uses."""
+    k = _settle_index(tf, hf, tol)
     # SPELLED OUT, because the paper spells small numerals in prose.
     word = ('one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight',
             'nine', 'ten')
@@ -345,9 +385,16 @@ def numbers(paths, par=None, cg=None):
     # WHICH COHORT THE PATHS HAVE SETTLED BY, to a tenth of a point of the rest
     # point, rather than the "two or three" the text used to assert.
     d['tr_settle'] = _settle(tf, hf)
-    # HOW MANY COHORTS THE FIGURE ACTUALLY DRAWS. The text used to promise
-    # "five", which is only true while GENERATIONS is five.
-    d['tr_gens'] = _words(len(tf) - 1)
+    # HOW MANY COHORTS THE FIGURE ACTUALLY DRAWS, which is not how many were
+    # computed. The chain runs to GENERATIONS_LONG so that the settling claim
+    # has a horizon behind it; the figure shows the settling cohort plus two.
+    d['tr_gens'] = _words(min(max(GENERATIONS_SHOW,
+                                  _settle_index(tf, hf) + 2), len(tf) - 1))
+    # THE HORIZON THE CLAIM RESTS ON, so the note can say what was computed.
+    d['tr_horizon'] = _words(len(tf) - 1)
+    # HOW FAR THE LAST TWO COHORTS ARE APART, the honest test that the path has
+    # actually stopped moving rather than merely reached the end of the array.
+    d['tr_drift'] = f'{100*max(abs(tf[-1][1]-tf[-2][1]), abs(hf[-1][1]-hf[-2][1])):.4f}'
     # WHICH OF THE TWO THE COHORT AT THE SWITCH PREFERS. The gap is under a
     # tenth of a point, so which way it falls is not robust to a recalibration.
     d['tr_t1_dir'] = _dir(tf[1][1], hf[1][1], 'above', 'below', tol=1e-6,

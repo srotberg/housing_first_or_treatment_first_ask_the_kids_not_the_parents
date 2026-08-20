@@ -1208,7 +1208,10 @@ of the cohort before it used and how many were unhoused, which depends in turn o
 the incomes that cohort was born with. Change the policy and the chain moves to a
 new rest point. It converges quickly, because the base draw is redrawn every
 generation and only the penalty is passed on, so it is at its new rest point
-within \textcolor{red}{@@tr_settle@@ cohorts and @@tr_gens@@} are enough to show all of it.
+\textcolor{red}{within @@tr_settle@@ cohorts. The chain is run out to @@tr_horizon@@ cohorts so
+that this is a finding rather than an artefact of where the computation stopped;
+the last two differ by @@tr_drift@@ of a percentage point, and the figure draws
+the first @@tr_gens@@.}
 
 Figure~\ref{fig:trans} runs the experiment from the world as it
 is, Housing First at the observed $\pi_V=@@pvbase@@$, to universal cover under
