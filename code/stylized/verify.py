@@ -366,13 +366,18 @@ for _f in ('tab_internal.tex', 'tab_external.tex'):
     _pth = os.path.join(HERE, '..', '..', 'writing', 'tables', _f)
     if os.path.exists(_pth):
         _tab += open(_pth).read()
-for _key, _label in (('beta', 'beta'), ('th', 'theta'), ('vsl_t', 'the VSL'),
-                     ('h3', 'the standard unit'), ('kV', 'the eligibility cap')):
+# EVERY VALUE THE PROSE AND THE TABLES BOTH STATE. Established by asking which
+# of fill.py's parameter outputs appear verbatim in the two table files; the
+# rest are quoted in one place only and cannot disagree with anything.
+_BOTH = ('beta', 'th', 'kap', 'phi0', 'u1', 'h3', 'h2frac', 'kV', 'vsl_t',
+         'ratio_t', 'smrd')
+for _key in _BOTH:
     _v = _n.get(_key)
     if _v is None:
         continue
-    chk(f'{_label} in the prose appears in Tables 1 or 2',
-        str(_v) in _tab, f'prose says {_v}')
+    chk(f'{_key} agrees between the prose and Tables 1 or 2',
+        str(_v) in _tab,
+        f'fill.py says {_v}; tables.py prints something else')
 
 print('\n=== 8. the paper quotes what the tables state ===')
 src = open(os.path.join(TAB, '..', 'housing_first_children_later.tex'), encoding='utf-8').read()

@@ -90,3 +90,22 @@ bibliography page numbers and other papers' odds ratios all collide with
 parameter values. A genuine collision goes in `ALLOW` with a reason; anything
 else gets a placeholder. Run it whenever a number is added, and after every
 sweep.
+
+## Still to do: the quantitative model's tables and figures
+
+Sections 1 to 3 are fully wired: every number in the prose is an `@@name@@`
+filled from the script that also draws the figure or builds the table it appears
+in, so the two cannot disagree. Tables 5 and 6 are wired to the Fortran through
+`code/paper/sync_tables.py`.
+
+**What is not yet wired is everything else in Section 4 onward**: the experiment
+tables, the non targeted moment tables, and the quantitative model's figures.
+Those still state numbers that the prose repeats by hand. The author has asked
+for the same treatment there, table by table and figure by figure.
+
+The pattern to follow is the one that works here, and the rule that makes it
+work is this: **the script that produces a table or a figure is the script that
+exports the numbers the prose quotes.** Not a second script that recomputes
+them from the same source, which is how an income ratio of 3.33 came to sit
+beside a figure showing 4.70. Where a number is unavoidably produced twice,
+`verify.py` compares the two, which is what the check on Tables 1 and 2 does.
