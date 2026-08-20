@@ -165,54 +165,38 @@ ANCHOR = r'\section{The quantitative model}'
 
 def _black_notes(src):
     """
-    Notes, captions and footnotes BEFORE THE QUANTITATIVE MODEL carry no red.
+    EVERYTHING BEFORE THE QUANTITATIVE MODEL IS BLACK. No exceptions: not the
+    prose, not the tables, not the figures, not the notes, not the footnotes.
 
-    A note or a caption is furniture: it restates the conditions a table was
-    computed under, and a number moving inside one is not an edit the reader
-    needs flagged. Red there is noise that competes with the red on the prose,
-    which is the red that means something. The rule is applied here rather than
-    by hand because the wrappers are put in by mark() a few lines above, so
-    anything hand-cleared would come back on the next build.
+    This started as a rule about table notes and captions and was widened twice,
+    each time by hand, each time coming back on the next build because mark()
+    puts the wrappers in a few lines above. It is now the whole of the front of
+    the paper, applied here so it cannot come back at all.
 
-    Only ahead of the anchor: from the quantitative model onward the note's own
-    red conventions apply and this leaves them alone.
+    The author is auditing Sections 1 to 3 and wants them clean. Red ahead of
+    the anchor is noise; if something in there genuinely needs flagging it can be
+    marked deliberately in the source AFTER this runs, which is the only way red
+    should ever appear there.
     """
     cut = src.find(ANCHOR)
     if cut < 0:
         raise SystemExit('   fill.py: the section anchor moved; _black_notes '
                          'would silently clear the whole paper')
     head, tail = src[:cut], src[cut:]
-    for macro in ('\\tabnote{', '\\caption{', '\\footnote{'):
-        k = 0
+    for opener in ('\\new{', '\\textcolor{red}{'):
         while True:
-            j = head.find(macro, k)
+            j = head.find(opener)
             if j < 0:
                 break
-            e = j + len(macro)
+            k = j + len(opener)
             d = 1
-            while d and e < len(head):
-                if head[e] == '{':
+            while d and k < len(head):
+                if head[k] == '{':
                     d += 1
-                elif head[e] == '}':
+                elif head[k] == '}':
                     d -= 1
-                e += 1
-            body = head[j:e]
-            fixed = body
-            while True:
-                q = fixed.find('\\new{')
-                if q < 0:
-                    break
-                r = q + len('\\new{')
-                dd = 1
-                while dd and r < len(fixed):
-                    if fixed[r] == '{':
-                        dd += 1
-                    elif fixed[r] == '}':
-                        dd -= 1
-                    r += 1
-                fixed = fixed[:q] + fixed[q + len('\\new{'):r - 1] + fixed[r:]
-            head = head[:j] + fixed + head[e:]
-            k = j + len(fixed)
+                k += 1
+            head = head[:j] + head[j + len(opener):k - 1] + head[k:]
     return head + tail
 
 

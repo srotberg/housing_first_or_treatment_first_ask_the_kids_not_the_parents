@@ -30,7 +30,7 @@
 % so grepping the generated file for the macro finds what moved, and grepping
 % .src.tex for the at signs finds every number the stylized pipeline still
 % supplies and the quantitative model has yet to replace.
-\newcommand{\new}[1]{\textcolor{red}{#1}}
+\newcommand{\new}[1]{#1}
 % The cut macro below marks a PROPOSED DELETION: red and struck through, so the reader sees what
 % would go before it goes. ulem is not in this installation, and a single rule over a
 % whole phrase cannot break across lines, so the rule is drawn word by word: each word
@@ -444,7 +444,7 @@ stronger for it. They estimate that a move to a lower-poverty neighbourhood befo
 adult earnings by thirty one percent, and the gain falls with the age at the move,
 which says that what is transmitted is the environment a child is raised in rather than
 anything the child carries. The penalty the model needs to match Bassuk implies an
-earnings loss of \new{9} percent, so an estimate the calibration never saw
+earnings loss of 9 percent, so an estimate the calibration never saw
 reproduces one it did. Fogli and Guerrieri (2019) put the same mechanism inside a
 general equilibrium model, where parents choose the neighbourhood they raise a child in
 and local spillovers feed back into the return to education; $\delta_h$ is the reduced
@@ -1075,7 +1075,7 @@ programme; Panel B is at universal cover, one child per household, no
 discounting across generations. Every consumption equivalent here is the proportional rise in consumption, at every date and in every state, worth as much as the difference in lifetime value, so it is a compensating variation and can exceed one hundred percent.}
 \end{table}
 
-\textcolor{red}{One of the externalities} modelled in this paper is the one imposed on the
+One of the externalities modelled in this paper is the one imposed on the
 children of households with a SUD, and it runs through income rather than through
 preferences. I have considered two alternatives, but both seem to be at odds
 with reality. Letting the child of a parent with a SUD inherit a stronger taste, a lower $b$,
@@ -1120,9 +1120,9 @@ set to zero, so that the channel where a parent does take some account of what i
 does to its child is present and only the remainder is external.}
 
 The disorder penalty $\delta_d$ is calibrated rather than set: it is chosen so that
-a child of a parent who acquired \textcolor{red}{a} SUD is 3 times as likely to acquire
+a child of a parent who acquired a SUD is 3 times as likely to acquire
 one, the middle of the epidemiological range of two to four in McGovern et al.\
-(2023). That takes $\delta_d = \new{0.43}$, shown in
+(2023). That takes $\delta_d = 0.43$, shown in
 Table~\ref{tab:children}.
 
 The homelessness penalty $\delta_h$ is calibrated in a similar way, on the transmission of
@@ -1130,7 +1130,7 @@ its own condition, so the two penalties are matched to the same kind of moment. 
 Worcester, Massachusetts, with odds
 ratios of $1.80$ and $2.41$.
 $\delta_h$ is set so the child of a homeless parent (at the time of their death) is 2.10 times as likely to
-be homeless themselves, the midpoint of the two, which takes $\delta_h = \new{0.09}$.
+be homeless themselves, the midpoint of the two, which takes $\delta_h = 0.09$.
 What these magnitudes mean, and what the evidence says about them, is taken up in the
 calibration of the quantitative model, Section~\ref{sec:fullcal}. Here $\delta_d$ and
 $\delta_h$ are illustrating the mechanism rather than measuring it.
@@ -1189,159 +1189,18 @@ more, which is the opposite direction from the tax.
 
 \subsection{The transition}\label{sec:trans}
 
-Everything so far compares rest points, which \textcolor{red}{removes one of the key points the argument turns on}.
-\textcolor{red}{Treatment First takes something immediately and gives back only after an
-adjustment period has elapsed. In the period of implementation, households with a
-SUD can do nothing about their condition, but the policy removes their benefit,
-and the benefit of lower substance use materialises only for the generations
-after them. A transition captures that adjustment stage, and
-Figure~\ref{fig:trans} shows it.}
+Comparing rest points hides what the argument turns on. Treatment First takes
+immediately and gives back only later: at implementation a household with a SUD
+can do nothing about its condition but loses its voucher, and lower substance use
+pays off only for the generations after it.
 
-The link across generations is not persistence of income, which
-Section~\ref{sec:kids} deliberately leaves out, but the penalty. A child's income
-is a fresh draw from the same distribution multiplied by $(1-\delta_d)$ if its
-parent acquired the disorder and by $(1-\delta_h)$ if its parent was unhoused \textcolor{red}{when it died}, so
-what a cohort inherits is a mixture over the four penalty types
-$\{1,\ 1-\delta_d,\ 1-\delta_h,\ (1-\delta_d)(1-\delta_h)\}$. That mixture is a
-Markov chain: the share of a cohort carrying each penalty is decided by how many
-of the cohort before it used and how many were unhoused, which depends in turn on
-the incomes that cohort was born with. Change the policy and the chain moves to a
-new rest point. It converges quickly, because the base draw is redrawn every
-generation and only the penalty is passed on, so it is at its new rest point
-\textcolor{red}{within three cohorts. The chain is run out to \new{20} cohorts so
-that this is a finding rather than an artefact of where the computation stopped;
-the last two differ by \new{0.0000} of a percentage point, and the figure draws
-the first \new{five}.}
-
-Figure~\ref{fig:trans} runs the experiment from the world as it
-is, Housing First at the observed $\pi_V=0.266$, to universal cover under
-each policy, and plots the expected lifetime value of each newborn cohort as a
-consumption equivalent \textcolor{red}{(CEV)} against the starting point. \textcolor{red}{Two groups are alive when
-the reform lands and it is worth naming them before reading the figure. The
-\emph{initial old} are in their second period: they chose whether to use under
-the old rule, and a disorder cannot be recovered from in a terminal period. The
-\emph{initial newborns} are in their first period, born to parents who had
-completed both of theirs before the condition existed. The initial newborns are
-cohort $1$ in the figure, the \emph{second cohort of newborns} is cohort $2$, the
-\emph{third cohort of newborns} is cohort $3$, and so on; cohort $0$ is the old
-rest point by construction.}
-
-\textcolor{red}{The initial newborns pay conditionality's cost and collect none of its benefit.
-The two policies are almost indistinguishable there, \new{19.60} percent against
-\new{19.68} percent, with Treatment First below Housing First. That
-difference is the private loss of Section~\ref{sec:nox} and nothing else, and it
-is worth being clear about why nothing else can be in it. The initial newborns'
-income draws were settled by the generation before the initial old, which
-finished under the old rule, so the two policies hand them the same distribution
-of inherited penalties. The only households among them who are worse off under
-conditionality are those who would have used, and at this participation rate
-there are few.}
-
-\textcolor{red}{The second cohort of newborns is the first that inherits the reform, because its
-parents are the initial old. Under Treatment First those parents were stripped of the
-voucher for a disorder acquired before the condition existed, and the revocation
-put them on the street; their children are born behind it. \new{0.983}
-percent of the second cohort of newborns is born to a parent who was unhoused under
-Treatment First against \new{0.732} percent under Housing First, and the gap
-between the two welfare paths widens from \new{0.074} to \new{0.110}
-percentage points. What the second cohort of newborns does not inherit differently is the
-disorder: the initial old chose whether to use before the condition existed, so
-their disorder rate is the same whichever policy replaced the old one. Only the
-housing margin, which is the one revocation actually touches, moves. From the
-third cohort of newborns on the parents are the second cohort of old, who lived
-their whole lives under the new rule, and the chain is stationary in the policy.}
-
-\textcolor{red}{The path has three legs, and each follows from something already established
-rather than from the calibration. The initial newborns can only be \emph{weakly}
-worse off: they inherit identically under the two policies, so all that
-separates them is that conditionality has removed an option and given nothing
-back, which is the dominance argument of Section~\ref{sec:nox} applied to a
-single cohort. The second cohort of newborns must be \emph{strictly} worse off, because on top
-of bearing that same private loss it inherits from parents the revocations put
-on the street. From the \new{three} cohort onward conditionality gains, and
-it gains through exactly the cohorts it made worse off: they use less, so fewer
-of them carry the disorder, so fewer of them are unhoused, and the cohorts born
-after them inherit better draws on both counts. The cost falls on the initial
-old and the two cohorts at the front; the benefit accrues to every cohort behind
-them, which is the sense in which the ranking the static comparison delivers is
-a statement about the long run rather than about the reform.}
-
-\textcolor{red}{Three things are worth separating here, because in this model they are
-\emph{signs} rather than findings and only their magnitudes are open. The
-initial newborns can only be weakly worse off under conditionality, since an
-option is removed and nothing is given back; how much is a quantitative
-question, but the direction is not. The second cohort of newborns must be
-strictly worse off, since their parents were more likely to be unhoused; again
-only the magnitude is open. And the initial old are strictly worse off, since
-the voucher is revoked for some of them and for nobody is anything added. A
-transition in this model therefore \emph{has} to open with welfare losses. That
-is a property of the environment, not a result about housing policy, and it
-should not be read as one.}
-
-\textcolor{red}{The quantitative model is not bound
-that way, and the difference is worth stating before Section~\ref{sec:full}
-begins. Two things absent here work in the opposite direction. The first is the
-government budget, which has to clear in \emph{every} period of the transition
-and not merely in the long run: Treatment First covers fewer tenants, so it
-spends less, so the taxes that fund it are lower from the period the reform
-lands. The initial newborns and the second cohort of newborns pay those lower
-taxes over their whole lives, and if the saving is large enough it can outweigh
-the loss of the option and the worse draws they inherit. The second is
-altruism. Here a parent counts nothing of what it does to its child, so the
-private loss is the full loss; in the quantitative model $\omega$ is calibrated
-rather than set to zero, so a parent partly internalises the gain its own
-abstinence hands the child, and the private loss is smaller than the same
-calculation makes it here. Whether the early cohorts lose at all is therefore a
-quantitative question there, with the sign genuinely in doubt, where here it is
-settled in advance.}
-
-\textcolor{red}{That both policies lift this cohort by about the same large amount is worth
-dwelling on, because it is the clearest statement of what is and is not at stake
-in the conditionality debate. The reform moves two dials at once. It takes
-coverage from the observed $\pi_V=0.266$ to universal, and under Treatment
-First it also imposes the sobriety condition. The first dial is worth
-\new{19.64} percent of consumption to the initial newborns. The
-second costs them \new{0.07} percent. The generosity margin is therefore about
-\new{266} times the conditionality margin, and the two paths sit on top
-of each other for the initial newborns for that reason rather than by coincidence: almost
-nobody uses, so almost nobody meets the condition, and a household that does not
-use is housed identically under either rule. Whether to attach a condition is a
-second order question next to how many vouchers to fund, and it stays second
-order until the penalty reaches a child.}
-
-There is a cost no cohort line can show, and it is where conditionality's
-burden actually falls: on the \textcolor{red}{initial old}. Every cohort in the figure lives its
-whole life under one policy and they did not. They chose whether to use under
-the old rule, period 2 is terminal so a disorder cannot be recovered from, and
-Treatment First withdraws the voucher from those of them carrying a disorder
-acquired before the rule existed, with no period left in which to shed it. They
-lose \new{2.1} percent of consumption, against the \new{19.60} against
-\new{19.68} of the \textcolor{red}{initial newborns}, and \new{0.52} percent of them are put
-on the street by the revocation itself. That is \new{28} times what
-the \textcolor{red}{initial newborns bear}, and it is the sense in which the transition is costly
-while it lasts. \textcolor{red}{It is also the same homelessness the second cohort of
-newborns inherits: the initial old are its parents, so what conditionality does
-to them is not a cost that ends with them.}
-
-\textcolor{red}{Panels (b) and (c) show the mechanism behind panel (a). Homelessness in
-panel (b) \new{falls} from \new{0.73} percent at the old rest point to
-\new{0.00} percent under Treatment First and \new{falls} to \new{0.00}
-percent under Housing First, so the conditional programme ends up
-\new{level with} the unconditional one on the margin $\delta_h$ prices. Panel (c)
-is the one that decides the ranking: it is the share of each cohort's parents
-carrying the disorder, and it is what the child's penalty keys on.}
-
-From the second cohort on the paths separate, and they separate
-because the parent generation they were born to is different. Under Treatment
-First the share of children born to a parent with the disorder falls from
-\new{4.58} percent to 0.00 percent and newborn welfare settles at
-\new{23.69} percent. Under Housing First the same share \emph{rises}, to
-\new{9.28} percent, because a voucher that arrives whatever the household does
-is worth most to the household that uses, and welfare settles at \new{15.96}
-percent. The ranking the static comparison delivers is therefore not a
-knife edge that one generation's accounting produces: it is a level difference
-between two rest points, reached within three cohorts, and paid for
-by the single cohort standing at the switch.
+The link across generations is the penalty, not persistence of income. A child's
+income is a fresh draw times $(1-\delta_d)$ if its parent acquired the disorder
+and $(1-\delta_h)$ if its parent was unhoused when it died, so a cohort inherits
+a mixture over the four penalty types, and that mixture is a Markov chain in the
+policy. Only the penalty is passed on, so the chain settles within
+three cohorts; it is run to 20 so that this is a finding
+rather than an artefact of the horizon, and the figure draws five.
 
 \begin{figure}[!tb]
 \centering
@@ -1360,8 +1219,45 @@ measured over its remaining period rather than a full life. Cohort 1 is the
 initial newborns, cohort 2 the second cohort of newborns, and so on.}
 \end{figure}
 
+Figure~\ref{fig:trans} moves the programme from Housing First at
+$\pi_V=0.266$ to universal cover under each policy. Two groups are alive at
+the reform: the \emph{initial old}, in their second period, who chose under the
+old rule and cannot recover in a terminal period; and the \emph{initial
+newborns}, born to parents who finished before the condition existed. They are
+cohort $1$, the \emph{second cohort of newborns} cohort $2$, and so on.
 
-%======================================================================
+Each of the three legs is a \emph{sign} fixed in advance here, with only its
+magnitude open. The initial newborns can only be weakly worse off: conditionality
+removes an option and gives nothing back, and they inherit identically under both
+policies, so their gap, 19.60 against 19.68 percent, is the private
+loss of Section~\ref{sec:nox} and nothing else. The second cohort of newborns
+must be strictly worse off, because its parents are the initial old, whom
+Treatment First stripped of the voucher for a disorder acquired before the
+condition existed: 0.983 percent of it is born to an unhoused parent
+against 0.732, widening the gap from 0.074 to 0.110
+points. Its inherited \emph{disorder} is identical, having been settled before
+the reform. The initial old are strictly worse off too, losing 2.1
+percent of consumption, 28 times what the initial newborns bear,
+with 0.52 percent put on the street by the revocation itself.
+
+From the three cohort conditionality gains, through exactly the cohorts it
+hurt: they use less, so fewer carry the disorder and fewer are unhoused, and
+those after inherit better draws, which is what panels (b) and (c) show. The cost
+falls on the initial old and the two cohorts behind them, the benefit on every
+cohort after. Both policies lift the initial newborns by the same
+19.64 percent, because the reform moves two dials of very different
+size: coverage is worth that much, conditionality costs 0.07 percent, a
+ratio of 266 to one.
+
+That a transition here \emph{must} open with losses is a property of this
+environment, not a result about housing policy. The quantitative model is not
+bound that way, for two reasons absent here: its budget clears every period, so
+Treatment First, covering fewer tenants, taxes less from the moment the reform
+lands and the early cohorts pay less for life; and altruism is calibrated rather
+than zero, so a parent internalises part of what its abstinence hands its child.
+Whether the early cohorts lose at all is a quantitative question in
+Section~\ref{sec:full}, settled in advance only here.
+
 \section{The quantitative model}\label{sec:full}
 
 This section describes the model the paper's numbers come from. Where
