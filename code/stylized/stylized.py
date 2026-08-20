@@ -473,6 +473,9 @@ def fields(par):
 
 H_RATIO = 0.25    # the small unit as a fraction of the standard one
 
+# how finely the pooled bottom cell is swept when its use mass is added up
+SUB_CELL = 16
+
 
 def with_(par, **kw):
     f = fields(par); f.update(kw)
@@ -807,39 +810,39 @@ def threshold(par, ygrid, policy=None, edges=None, cdf=None):
             frac[i, s], frac[i + 1, s] = ((w, 0.0) if G[i, s] > 0.0
                                           else (0.0, 1.0 - w))
 
-    # THE CROSSING CAN LIE BELOW THE LOWEST NODE, inside its own cell, and the
-    # scan above cannot see it because it only looks between nodes. That matters
-    # here and nowhere else, because the lowest cell is the pooled foot of the
-    # distribution: it spans a wide range of income and its node sits at the
-    # cell's conditional mean, well above its bottom. Measured at the calibrated
-    # parameters, at a generosity of 0.9 the node itself no longer uses, gain
-    # -0.003, while households at a fifth of its income still do, gain +0.33.
-    # Without this the whole cell was credited with zero and participation fell
-    # three and a half points in one step, which is what produced the kink in
-    # the policy curves. It is not a numerical nicety: those households use in
-    # the model and were being counted as if they did not.
+    # THE LOWEST CELL IS INTEGRATED, not interpolated. Two reasons, and the
+    # first was found the hard way. Its use decision is NOT monotone in income:
+    # measured at the calibrated parameters the gain runs +0.386, +0.065,
+    # +0.056, +0.077 across the bottom of the cell, so a single bisection can
+    # find at most one crossing of several and a probe at one fixed income
+    # switches the whole correction on and off as that point changes sign. That
+    # put a nine tenths of a point step into participation and left the target
+    # of 5.13 in a hole the b bracket could not reach. And the cell is wide: it
+    # pools the foot of the distribution, so which part of it uses is a real
+    # question rather than a rounding one.
+    #
+    # So the cell is swept on a sub grid and the mass where the household uses
+    # is added up from the CDF. No bisection, no probe, and nothing switches
+    # discontinuously: a sub interval entering or leaving the use region moves
+    # the total by its own mass, which is small.
     if cdf is not None and edges is not None:
         w0 = max(edges[1] - edges[0], 1e-14)
-        for s in range(ns):
-            if np.isnan(G[0, s]) or G[0, s] > 0.0 or frac[0, s] > 0.0:
-                continue                      # already using, or already split
-            y_lo = ygrid[0] * 0.1
-            r = period1(par, y_lo, policy)
-            g_lo = r[s][1] if s < len(r) else np.nan
-            if np.isnan(g_lo) or g_lo <= 0.0:
-                continue                      # nobody below the node uses
-            lo, hi = y_lo, ygrid[0]
-            for _ in range(30):
-                mid = 0.5 * (lo + hi)
-                r = period1(par, mid, policy)
-                gm = r[s][1] if s < len(r) else np.nan
-                if np.isnan(gm):
-                    break
-                if gm > 0.0:
-                    lo = mid
-                else:
-                    hi = mid
-            frac[0, s] = min(max(cdf(0.5 * (lo + hi)) / w0, 0.0), 1.0)
+        y_edges = np.geomspace(ygrid[0] * 0.02, ygrid[1], SUB_CELL + 1)
+        mids = 0.5 * (y_edges[:-1] + y_edges[1:])
+        sub_m = np.array([cdf(y_edges[k + 1]) - cdf(y_edges[k])
+                          for k in range(SUB_CELL)])
+        gains = np.full((SUB_CELL, ns), np.nan)
+        for k, ym in enumerate(mids):
+            r = period1(par, float(ym), policy)
+            for sidx in range(min(ns, len(r))):
+                gains[k, sidx] = r[sidx][1]
+        for sidx in range(ns):
+            g = gains[:, sidx]
+            good = np.isfinite(g)
+            if not good.any():
+                continue
+            frac[0, sidx] = min(max(float(sub_m[good & (g > 0.0)].sum() / w0),
+                                    0.0), 1.0)
 
     return PR, np.clip(frac, 0.0, 1.0), VV, BU, BN, INC
 

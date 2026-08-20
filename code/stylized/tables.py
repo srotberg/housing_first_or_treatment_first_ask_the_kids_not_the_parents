@@ -28,7 +28,7 @@ EXTERNAL = [
     ('Preferences and demographics', [
         ('beta', r'\beta', 'Discount factor over a thirty year period',
          'ANN', '{:.3f}'),
-        ('R', 'R', 'Gross interest rate over a thirty year period',
+        ('R', 'R', 'Interest rate over a thirty year period',
          r'Set to $1/\beta$', '{:.3f}'),
         ('phi0', r'\bar\phi', 'Survival over a period, no SUD',
          'SSA period life table, ages 25--55', '{:.2f}'),

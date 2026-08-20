@@ -577,13 +577,13 @@ model is built to match facts of that kind. It has six state variables and
 fifty four parameters, which is what the welfare and fiscal questions
 require,
 but it also makes it hard to see which pieces of the environment do the
-heavy lifting. This note strips the environment down to help \textcolor{red}{see} the
-main drivers in the model, but where \textcolor{red}{the} three main questions of this paper are still well
+heavy lifting. This note strips the environment down to help see the
+main drivers in the model, but where three main questions of this paper are still well
 posed.
 
 Households are perfectly forward-looking, here and in the quantitative model.
 They know the true hazard of acquiring a SUD, they are aware of what carrying one would
-cost them, and they make no mistakes. Nothing below rests on misperception, myopia, self control, or on a taste that changes once the household has used. \textcolor{red}{The model abstracts from government and from how the programmes are funded; both enter the quantitative model of Section~\ref{sec:full}.}
+cost them, and they make no mistakes. Nothing below rests on misperception, myopia, self control, or on a taste that changes once the household has used. The model abstracts from government and from how the programmes are funded; both enter the quantitative model of Section~\ref{sec:full}.
 
 \begin{enumerate}\setlength{\itemsep}{0.3em}\setlength{\parskip}{0em}
 
@@ -637,10 +637,10 @@ First raises welfare relative to Housing First in a model that fits the data.
 \subsubsection{Households and preferences}
 
 There are two periods and a continuum of households. A period stands for
-thirty years of adult life, so the two of them span ages \textcolor{red}{twenty six} to eighty five.
+thirty years of adult life, so the two of them span ages twenty six to eighty five.
 Parameters with a natural annual counterpart are compounded to that length: the
 discount factor is $\beta$ per period, the gross interest rate is $R=1/\beta$ so
-that $\beta R = 1$, and $\bar\phi$ is survival over thirty years. Notation follows \textcolor{red}{the full model in Section~\ref{sec:full}}.
+that $\beta R = 1$, and $\bar\phi$ is survival over thirty years. Notation follows the full model in Section~\ref{sec:full}.
 
 A household is characterised by its productivity $y$, fixed over its
 life and lognormally distributed across households, $\log y \sim
@@ -655,8 +655,8 @@ drug consumption $v$,
 u(c,h,v) \;=\; (1-\gamma-\theta)\log c \;+\; \gamma \log h
 \;+\; \theta\big[\log(b+v)-\log b\big] \;+\; \aleph .
 \end{equation}
-The three weights sum to one\textcolor{red}{, where the weight on housing consumption is $\gamma$ and the weight on drug consumption is $\theta$}.
-Drugs enter only in the first period, since that is the only period in which \textcolor{red}{I allow $v$ to be chosen}, and housing is chosen each period from a three point grid
+The three weights sum to one, where the weight on housing consumption is $\gamma$ and the weight on drug consumption is $\theta$.
+Drugs enter only in the first period, since that is the only period in which I allow $v$ to be chosen, and housing is chosen each period from a three point grid
 $\{h_1,h_2,h_3\}$. The pair $(\theta,b)$ governs the drug term: the marginal
 utility of the $v$th unit is $\theta/(b+v)$, so $\theta$ mostly sets how much a
 user uses and $b$ whether anyone uses at all. The Stone-Geary form keeps the
@@ -678,15 +678,15 @@ use $v\ge0$, which for simplicity is the only period in which it chooses whether
 to use, and saving, paying market rent $p_r$ on
 whatever unit it picks. It starts with no assets.
 
-\textcolor{red}{Using drugs generates the risk
-of a SUD, increasing in $v$,}
+Using drugs generates the risk
+of a SUD, increasing in $v$,
 \begin{equation}\label{eq:hazard}
 \pi(v) \;=\; 1 - e^{-\lambda v} .
 \end{equation}
 Because $\pi$ is increasing in $v$, the household internalises that using more
 is riskier, so the intensive and extensive margins are not separate decisions.
 
-\paragraph{\textcolor{red}{Acquiring a SUD and the death penalty}.} The SUD $d'\in\{0,1\}$ is realised with
+\paragraph{Acquiring a SUD and the death penalty.} The SUD $d'\in\{0,1\}$ is realised with
 probability $\pi(v)$ for households that used and with probability zero for the
 rest, and the household survives into period 2 with probability
 \begin{equation}\label{eq:surv}
@@ -695,11 +695,11 @@ rest, and the household survives into period 2 with probability
 so $\kappa_{\phi d}$ is the proportional reduction in survival caused by the SUD.
 The mortality penalty applies here, and here only.
 
-\paragraph{Period 2.} \textcolor{red}{This is the terminal period,} after which the household dies with certainty. A
+\paragraph{Period 2.} This is the terminal period, after which the household dies with certainty. A
 household without the SUD is unemployed with probability $u_0$ and one with
 the SUD with the higher probability $u_1$; if unemployed it receives income
-support. The voucher is drawn again, subject to the policy rule \textcolor{red}{described in Section~\ref{sec:mh}}. The household
-chooses consumption and housing, there is no drug use decision \textcolor{red}{(the reason is shown in Section~\ref{sec:problem})}, and assets are
+support. The voucher is drawn again, subject to the policy rule \textcolor{red}{(Section~\ref{sec:mh})}. The household
+chooses consumption and housing, there is no drug use decision \textcolor{red}{(Section~\ref{sec:problem})}, and assets are
 run down with nothing bequeathed.
 
 \subsubsection{Employment, income support and housing}\label{sec:support}
@@ -734,7 +734,7 @@ Writing $\eta\in\{0,1\}$ for whether one is held,
 \Pr(\eta'=1 \mid y', d', v) \;=\; \pi_V \cdot \mathbf{1}\{y' \le \kappa_V\,y^{\text{med}}\}
 \cdot \mathbf{1}\{\text{policy covers } (d',v)\},
 \end{equation}
-where $\kappa_V\,y^{\text{med}}$ is the threshold for eligibility\textcolor{red}{, $y^{\text{med}}$ is median income,}
+where $\kappa_V\,y^{\text{med}}$ is the threshold for eligibility, $y^{\text{med}}$ is median income,
 and a household holding one pays the fraction $\kappa_r$ of market rent, so the
 rent paid on option $k$ is
 \begin{equation}\label{eq:rent}
@@ -742,12 +742,12 @@ r_k(\eta) \;=\; p_r\,h_k\big[\kappa_r \eta + (1-\eta)\big]\cdot
 \mathbf{1}\{k \ne 0\},
 \end{equation}
 which is zero when the household is homeless. Vouchers operate in both periods,
-and $\pi_V$, the share of eligible households actually covered, is \textcolor{red}{a} policy
+and $\pi_V$, the share of eligible households actually covered, is a policy
 dial of Section~\ref{sec:mh}.
 
 The two policies differ in exactly one respect, the last indicator in
-equation~\eqref{eq:vouch}. \textbf{Housing First} covers every eligible
-household regardless of $(d',v)$. \textbf{Treatment First} covers only
+equation~\eqref{eq:vouch}. \textbf{Housing First} \textcolor{red}{(HF)} covers every eligible
+household regardless of $(d',v)$. \textbf{Treatment First} \textcolor{red}{(TF)} covers only
 households that satisfy the sobriety condition, $v=0$ and $d'=0$, which is the
 rule in the quantitative model as well. Since policy coverage in the states
 that follow drug use is the only difference, the gap between them is the moral
@@ -759,7 +759,7 @@ chosen and conditionality cannot screen anyone out on entry. The order
 within the period is therefore: the household chooses $v$, the policy rule is
 then applied to the voucher it drew, and it chooses housing knowing what rent it
 faces. So under Treatment First a household that uses would be subject to
-\textcolor{red}{full market rent} immediately and again in period 2.
+full market rent immediately and again in period 2\textcolor{red}{, whether or not it goes on to acquire the SUD: the condition is $v=0$ and $d'=0$, and using fails the first of them.}
 
 \subsubsection{The household's problem}\label{sec:problem}
 
@@ -767,22 +767,22 @@ faces. So under Treatment First a household that uses would be subject to
 Let $a$ be assets carried in. Period 2 is terminal, so the household consumes
 everything and chooses housing,
 \begin{equation}\label{eq:v2}
-\textcolor{red}{V_2(a',y,e',\eta',d')} = \max_{\{k\}}
+V_2(a',y,e',\eta',d') = \max_{\{k\}}
 \Big\{ (1-\gamma-\theta)\log c + \gamma \log h_k + \aleph \Big\},
-\qquad c = R\textcolor{red}{a'} + y^{g}(y,\textcolor{red}{e'}) - r_k(\textcolor{red}{\eta'}),
+\qquad c = Ra' + y^{g}(y,e') - r_k(\eta'),
 \end{equation}
-and write \textcolor{red}{$V_2(a',y,d') = \mathbb{E}\big[V_2(a',y,e',\eta',d')\mid y,d'\big]$} for its
-expectation over the period 2 employment and voucher draws\textcolor{red}{, the SUD having already been realised at the transition}. In period 1 the
+and write $V_2(a',y,d') = \mathbb{E}\big[V_2(a',y,e',\eta',d')\mid y,d'\big]$ for its
+expectation over the period 2 employment and voucher draws, the SUD having already been realised at the transition. In period 1 the
 household draws $(e,\eta)$ and then chooses housing, drug use and saving,
 \begin{equation}\label{eq:v1}
 V_1(y,e,\eta) = \max_{\{k,\,v \ge 0,\,a' \ge 0\}}
 \Big\{ (1-\gamma-\theta)\log c + \gamma \log h_k
 + \theta[\log(b+v)-\log b] + \aleph
-+ \beta\, \mathbb{E}_{d'}\Big[\phi(d')\,\textcolor{red}{V_2(a',y,d')}\Big] \Big\},
++ \beta\, \mathbb{E}_{d'}\Big[\phi(d')\,V_2(a',y,d')\Big] \Big\},
 \end{equation}
 with $c = y^{g}(y,e) - r_k(\eta) - p_v v - a'$ and $d'=1$ with the use dependent
 probability of~\eqref{eq:hazard}. Survival sits inside the expectation over
-$d'$ because it depends on which $d'$ is realised. \textcolor{red}{A household uses if the value at its best positive $v$ exceeds the value at $v=0$.}
+$d'$ because it depends on which $d'$ is realised. A household uses if the value at its best positive $v$ exceeds the value at $v=0$.
 
 
 %======================================================================
@@ -801,7 +801,7 @@ mortality channel would be losing to impatience rather than to anything the mode
 is about, so a higher factor corrects for the coarseness of the horizon rather
 than making a claim about preferences.} and the gross interest rate is
 $R=1/\beta$, and survival over
-a period is $\bar\phi = 0.91$, from the Social Security Administration (SSA) period life table for twenty five to fifty five. For the SUD, the
+a period is $\bar\phi = 0.91$, from the Social Security Administration (SSA) period life table for \textcolor{red}{twenty six} to fifty five. For the SUD, the
 proportional fall in survival is $\kappa_{\phi d} = 0.49$ , derived by compounding an annual mortality ratio of $8$, the midpoint of the range in Hjorth\o j et al.\
 (2023), so a clean household's chance of dying before period 2 is 9
 percent and a household that acquires a SUD has a 53 percent chance of
@@ -811,17 +811,17 @@ survival goes from $\bar\phi=0.91$ to $\bar\phi(1-\kappa_{\phi d})=0.47$ and the
 dying is one minus that.}
 The two unemployment probabilities are measured directly. $u_0 = 0.049$
 is the headline civilian unemployment rate from the Bureau of Labor Statistics
-(BLS) Current Population Survey, series UNRATE as distributed by Federal Reserve
+(BLS) Current Population Survey \textcolor{red}{(CPS)}, series UNRATE as distributed by Federal Reserve
 Economic Data (FRED), averaged over 2014 to 2024. And $u_1 = 0.1625$ is from the
 National Survey on Drug Use and Health (NSDUH) 2024 for respondents aged 26 and
 over.
 
 Income support replaces half of previous earnings on a base capped at mean
-income, in line with statutory state rules.\footnote{There is no food assistance here, and the quantitative model of Section~\ref{sec:full} has it. It was added and then removed. On the statutory rule, paid in kind so that it could not cover rent, it changes nothing this model is for: with the bottom of the income distribution pooled the homelessness rate reaches its target without it, and the share of homelessness that is forced rather than chosen is 0.305 percent against 0.288 percent with the transfer, so the pooling does that work and not the transfer. A model whose purpose is to be easy to follow should not carry a parameter, a moment, a taper and an in kind restriction that change none of its answers.} The two rental sizes are set
+income, in line with statutory state rules. The two rental sizes are set
 such that the standard unit, $h_3$, costs $0.40$ of mean income and the
 small unit, $h_2$, is a quarter of it. The voucher parameters are institutional: covered
-tenants pay $0.30$ percent of market rent, eligibility is capped at half of median income, $\kappa_V = 0.50$, and $\pi_V = 0.266$ is the ratio of recipients to the income eligible population in the 2023 Picture of Subsidized
-Households, published by the Department of Housing and Urban Development (HUD). The weight on drugs is set at $\theta = 0.23$.\footnote{A $\theta$ large enough to
+tenants pay $\textcolor{red}{30}$ percent of market rent, eligibility is capped at half of median income, $\kappa_V = 0.50$, and $\pi_V = 0.266$ is the ratio of recipients to the income eligible population in the 2023 Picture of Subsidized
+Households, published by \textcolor{red}{HUD}. The weight on drugs is set at $\theta = 0.23$.\footnote{A $\theta$ large enough to
 match the $35$ percent of income the average user spends on drugs makes the drug too
 valuable to be deterred by a death that arrives thirty years later, and users stop
 being poor: by $\theta=0.23$ the mortality channel no longer reverses the income
@@ -836,7 +836,7 @@ on the moment it moves most rather than fitted jointly. The dispersion of log
 permanent income $\sigma_y$ is matched to how unequal earnings are at the bottom: in
 the 2022 Survey of Consumer Finances (SCF), households aged $26$ to $65$ with positive wage
 and salary income hold $17.2$ percent of total earnings in the poorer half of the
-distribution. The share falls in $\sigma_y$, so one number identifies it, and the
+distribution, and the
 quantitative model of Section~\ref{sec:full} is calibrated to the same moment.
 The weight on
 housing $\gamma$ is matched to the $26.8$ percent of total expenditure that

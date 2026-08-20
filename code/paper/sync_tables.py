@@ -115,6 +115,13 @@ def run(freeze=False, dry=False):
                 cells[ci] = ' ' + (RED % new if changed else new) + ' '
             shape = _shape(cells[4]) or (False, 2, False)
             nums[name] = _fmt(x, (shape[0], shape[1], False)).replace(r'\%', '')
+            # A PERCENT VARIANT FOR EVERY ROW. The tenant's contribution is 0.30
+            # in the table and thirty per cent in the sentence beside it, and
+            # the prose quoted the table's number followed by the word percent,
+            # so it read 0.30 percent. Exporting both forms means a sentence can
+            # take the one it needs instead of the one the table happens to
+            # print, and the mistake cannot recur silently.
+            nums[name + '_pc'] = f'{100.0 * x:g}'
             if prev is not None and prev.get(name) != nums[name]:
                 moved.append(name)
             if changed:
