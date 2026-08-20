@@ -142,23 +142,37 @@ def caught(par, pv_new=PV_OPT):
     old = with_(par, pV=par.pV, policy=BASE_POLICY)
     new_h = with_(par, pV=pv_new, policy='HF')
     new_t = with_(par, pV=pv_new, policy='TF')
+    # THEY ARE NOT DRAWN FROM THE BASE DISTRIBUTION. This generation was itself
+    # born into the pre reform rest point, so its income carries whatever
+    # penalty its own parent handed it. Iterating over the unshifted grid
+    # treated them as richer than they are, and they are the households the
+    # answer is about.
+    v1b, sudb, hlb, evb = _policy_grids(par, BASE_POLICY, par.pV)
+    p_mix = _rest_point(sudb, evb)
     dv = mass = hl_h = hl_t = 0.0
-    for i, y in enumerate(YG):
-        for p, gain, v, bu, bn, inc, _own in period1(old, y, BASE_POLICY):
-            uses = gain > 0.0
-            a = (bu if uses else bn)[0]
-            pid = (1.0 - np.exp(-old.lam * v)) if uses else 0.0
-            for d, pd in ((1, pid), (0, 1.0 - pid)):
-                m = WW[i] * p * pd
-                if m <= 0.0:
-                    continue
+    for sft, psft in zip(_shifts(), p_mix):
+        if psft <= 0.0:
+            continue
+        for i, y0 in enumerate(YG):
+            y = y0 * sft
+            for p, gain, v, bu, bn, inc, _own in period1(old, y, BASE_POLICY):
+                uses = gain > 0.0
+                a = (bu if uses else bn)[0]
+                pid = (1.0 - np.exp(-old.lam * v)) if uses else 0.0
+                # solved ONCE per (income, use) pair, not once per disorder
+                # draw: the period 2 problem does not depend on d, which only
+                # selects a column of the answer.
                 agh, W2h, H2h, _, _ = solve_period2(new_h, y, 'HF', used=int(uses))
                 agt, W2t, H2t, _, _ = solve_period2(new_t, y, 'TF', used=int(uses))
-                dv += m * (float(np.interp(a, agh, W2h[:, d]))
-                           - float(np.interp(a, agt, W2t[:, d])))
-                hl_h += m * float(np.interp(a, agh, H2h[:, d]))
-                hl_t += m * float(np.interp(a, agt, H2t[:, d]))
-                mass += m
+                for d, pd in ((1, pid), (0, 1.0 - pid)):
+                    m = psft * WW[i] * p * pd
+                    if m <= 0.0:
+                        continue
+                    dv += m * (float(np.interp(a, agh, W2h[:, d]))
+                               - float(np.interp(a, agt, W2t[:, d])))
+                    hl_h += m * float(np.interp(a, agh, H2h[:, d]))
+                    hl_t += m * float(np.interp(a, agt, H2t[:, d]))
+                    mass += m
     dv /= max(mass, 1e-12)
     return dict(cev=float(cev(par, dv)), hl_hf=hl_h / max(mass, 1e-12),
                 hl_tf=hl_t / max(mass, 1e-12))

@@ -172,6 +172,24 @@ i = int(np.argmax(ph))
 print(f'        peak at pi_V={pvs[i]:.1f} of {100*ph[i]:.2f}%, '
       f'ending at {100*ph[-1]:.2f}%')
 
+print('\n=== 7b. the pieces added late, which had the least review ===')
+from stylized import ever_homeless_prob, homeless_prob
+q = with_(BASE, pV=BASE.pV, policy='TF')
+p1 = np.array([homeless_prob(q, y, 'TF') for y in YG])
+ev = np.array([ever_homeless_prob(q, y, 'TF') for y in YG])
+chk('ever homeless is never below period 1 homeless',
+    bool(np.all(ev >= p1 - 1e-12)), f'worst {float((p1-ev).max()):.2e}')
+chk('ever homeless is a probability',
+    bool(np.all((ev >= -1e-12) & (ev <= 1 + 1e-12))))
+cg = T.caught(BASE)
+chk('the caught generation loses rather than gains', cg['cev'] > 0,
+    f"{100*cg['cev']:.2f}%")
+chk('revocation cannot reduce their homelessness', cg['hl_tf'] >= cg['hl_hf'] - 1e-12,
+    f"HF {100*cg['hl_hf']:.3f}% TF {100*cg['hl_tf']:.3f}%")
+chk('their loss exceeds the newborn cohort\'s',
+    cg['cev'] > abs(paths['TF'][1][1] - paths['HF'][1][1]),
+    'this is the point of computing them separately')
+
 print('\n=== 8. the paper quotes what the tables state ===')
 src = open(os.path.join(TAB, '..', 'housing_first_children_later.tex'), encoding='utf-8').read()
 for label, val in (('participation under HF at universal cover', f'{100*mh["part"]:.2f}'),
