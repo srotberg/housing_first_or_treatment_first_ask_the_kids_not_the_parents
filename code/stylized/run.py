@@ -335,8 +335,19 @@ def figure_numbers(base):
                if abs(pp - TARGET['part']) > 5e-4)
     d['partnote'] = ('throughout' if miss == 0 else
                      f'at every point of the scan but {miss} of the '
-                     f'{2 * len(sc)}, where participation is a step function of '
-                     '$b$ and no value of it delivers the target')
+                     f'{2 * len(sc)}, where it is a step function of $b$ and no '
+                     'value of it delivers the target')
+    # AND THE BODY TEXT MAKES THE SAME PROMISE, so it has to carry the same
+    # caveat. It claimed the amount of drug use was identical along both curves,
+    # which is the whole basis for reading the figure as a statement about WHO
+    # uses rather than how many, and at ten of the twenty two points it is not.
+    d['partclaim'] = ('The amount of drug use is therefore identical all along '
+                      'both curves and the only thing moving is which '
+                      'households use' if miss == 0 else
+                      'The amount of drug use is therefore the same along both '
+                      f'curves, and the only thing moving is which households '
+                      f'use, at every point but the {miss} where participation '
+                      'is a step function of $b$')
 
     # THE ENDS OF FIGURE 2, which the policy paragraph reads off directly.
     m0, mt, mh = mT[0], mT[-1], mH[-1]

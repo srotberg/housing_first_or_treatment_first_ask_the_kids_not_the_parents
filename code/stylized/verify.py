@@ -233,6 +233,24 @@ else:
         abs(_half - _off) <= 0.06 * abs(_off),
         f'with the channel off {_off:.2f}, at half strength {_half:.2f}')
 
+print('\n=== 7e. nothing in the build is older than the calibration ===')
+# A STALE EXPORT IS THE FAILURE MODE THAT ACTUALLY HAPPENED. Every file below is
+# written from calibrated.json, so any one of them older than it is a number in
+# the paper that belongs to a calibration the paper no longer describes.
+_cal = os.path.getmtime(os.path.join(HERE, 'calibrated.json'))
+for _f in ('figure_numbers.json', 'welfare_numbers.json',
+           'children_numbers.json', 'transition_numbers.json'):
+    _p = os.path.join(HERE, _f)
+    chk(f'{_f} is not older than calibrated.json',
+        os.path.exists(_p) and os.path.getmtime(_p) >= _cal,
+        'rerun build.sh')
+for _f in ('tab_external.tex', 'tab_internal.tex', 'tab_welfare.tex',
+           'tab_children.tex'):
+    _p = os.path.join(TAB, _f)
+    chk(f'{_f} is not older than calibrated.json',
+        os.path.exists(_p) and os.path.getmtime(_p) >= _cal,
+        'rerun build.sh')
+
 print('\n=== 8. the paper quotes what the tables state ===')
 src = open(os.path.join(TAB, '..', 'housing_first_children_later.tex'), encoding='utf-8').read()
 for label, val in (('participation under HF at universal cover', f'{100*mh["part"]:.2f}'),
