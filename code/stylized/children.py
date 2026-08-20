@@ -362,9 +362,13 @@ def tab_children(par, pV=1.0):
     # the ranking survives every penalty shown is an assertion about this panel
     # and has to break loudly if it stops being true.
     import json as _json
-    ratios = [g / max(p_, 1e-12)
-              for d in sorted({0.20, DEL_D, 0.60})
-              for p_, g in (verdict(par, d, pV=pV),)]
+    ratios = []
+    for d in sorted({0.20, DEL_D, 0.60}):
+        # the calibrated penalty has already been solved a few lines above, so
+        # it is reused rather than solved again: verdict() is minutes, not
+        # milliseconds.
+        p_, g = (priv, gain) if abs(d - DEL_D) < 1e-12 else verdict(par, d, pV=pV)
+        ratios.append(g / max(p_, 1e-12))
     here = os.path.dirname(os.path.abspath(__file__))
     dd = {'priv': f'{100 * priv:.3f}',
           'dsud': f'{100 * dsud:.3f}',
