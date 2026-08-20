@@ -203,8 +203,47 @@ def _tail_mean(sig, q):
     return _ndtr(_ndtri(q) - sig)
 
 
+def _cond_mean(sig, a, b):
+    """E[Y | a < F(Y) < b], the value a pool of that mass sits at."""
+    return (_tail_mean(sig, b) - _tail_mean(sig, a)) / (b - a)
+
+
+def _pool(sig, floor, hi=0.60):
+    """The smallest bottom pool whose conditional mean clears the floor.
+
+    THE FLOOR IS THE RENT ON THE SMALLEST UNIT, and it is a real threshold
+    rather than a numerical one. Food assistance is paid in kind, so rent comes
+    out of the household's own income: a household whose income in a state falls
+    below p_r*h_sm cannot rent at all, employed or not, and is on the street
+    whatever the street is worth. In a lognormal matching the bottom half's 17.2
+    per cent that is 2.5 per cent of households, which puts homelessness at 1.25
+    per cent against a target of 0.399 and leaves h_hl with nothing to decide.
+    Those households are an artefact of resolving the very bottom of a lognormal
+    node by node: a household at the third percentile of PERMANENT income for a
+    thirty year period is not a household the data contains, it is the tail of a
+    functional form. Pooling the bottom into one mass point at its own
+    conditional mean keeps the mean and the bottom half's share exactly, and
+    puts the poorest households where the poorest households in the data are:
+    able to rent, badly.
+    """
+    lo = 1e-9
+    for _ in range(90):
+        mid = 0.5 * (lo + hi)
+        if _cond_mean(sig, 0.0, mid) < floor:
+            lo = mid
+        else:
+            hi = mid
+    return 0.5 * (lo + hi)
+
+
+POOL_MARGIN = 1.08    # the pool clears the rent by eight per cent
+
+
 def _grid(sig, n=GRID_N, kappa=GRID_KAPPA):
-    p = (np.arange(n + 1) / n) ** kappa
+    par = P()
+    q_f = _pool(sig, POOL_MARGIN * par.pr * par.h_sm)
+    u = np.arange(n) / (n - 1.0)
+    p = np.concatenate(([0.0], q_f + (1.0 - q_f) * u ** kappa))
     p[-1] = 1.0
     w = np.diff(p)
     tv = np.array([_tail_mean(sig, q) for q in p])
@@ -278,6 +317,12 @@ W = W * len(W)  # calibrate.py uses W unnormalised elsewhere; scale is irrelevan
 # population rate is bounded by participation and moves smoothly.
 TARGET = dict(part=0.0513, homeless=0.00399, sud=0.0368, vsl=80.0,
               dshare=0.20, housing_share=0.30, hspend=0.268,
+              # FOOD ASSISTANCE OVER LABOUR INCOME. The same target and the same
+              # source as the quantitative model's: government spending on food
+              # stamps over average labour income, 0.42 per cent, from the USDA.
+              # The allotment is calibrated to it in BOTH models rather than set
+              # in one and calibrated in the other.
+              fsshare=0.0042,
               bot50=BOT50_TARGET)
 
 # ORDER MATTERS, and participation goes LAST. Every one of these parameters
@@ -365,13 +410,19 @@ LAM_LO, LAM_HI = 0.05, 4000.0
 # between 0.22 and 0.23, so theta = 0.21 buys a spending share of about 20 per
 # cent with the reversal comfortably intact, and theta = 0.23 buys 24 per cent
 # with no reversal at all. frontier.py is the scan.
-PAIRS = [('gam', 'hspend', 0.02, 0.70),
+PAIRS = [# THE ALLOTMENT GOES FIRST. It shifts resources at the bottom, so
+         # every bracket after it is solved on the transfer the data implies
+         # rather than on a guess, and its own moment is barely touched by
+         # anything that follows.
+         ('cfloor', 'fsshare', 0.005, 0.30),
+         ('gam', 'hspend', 0.02, 0.70),
          ('h_hl', 'homeless', 1e-7, 0.49),
          ('aleph', 'vsl', 0.20, 24.0),
          ('lam', 'sud', LAM_LO, LAM_HI),
          ('b', 'part', 1e-5, 0.30)]
 
 LABEL = {'part': 'drug participation rate',
+         'fsshare': 'food assistance over labour income',
          'sud': 'adult SUD rate',
          'hspend': 'housing spending / non drug spending',
          'housing_share': 'housing spending / income',
@@ -478,6 +529,7 @@ def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=()):
         # GAMMA FIRST, then the street. Both move homelessness, so whichever runs
         # last is the one whose moment is actually hit, and homelessness is the
         # one that has to be.
+        par = with_(par, cfloor=bracket(par, 'cfloor', 'fsshare', 0.005, 0.30))
         par = with_(par, gam=bracket(par, 'gam', 'hspend', 0.02, 0.70))
         par = with_(par, h_hl=bracket(par, 'h_hl', 'homeless', 1e-7, 0.49))
         par = with_(par, aleph=bracket(par, 'aleph', 'vsl', 0.20, 24.0, iters=26))
@@ -554,6 +606,7 @@ def polish(par, verbose=True):
     """
     if verbose:
         print(f'\npolishing at theta = {par.th:.4f}')
+    par = with_(par, cfloor=bracket(par, 'cfloor', 'fsshare', 0.005, 0.30))
     par = with_(par, gam=bracket(par, 'gam', 'hspend', 0.02, 0.70))
     par = with_(par, h_hl=bracket(par, 'h_hl', 'homeless', 1e-7, 0.49))
     par = with_(par, aleph=bracket(par, 'aleph', 'vsl', 0.20, 24.0, iters=26))

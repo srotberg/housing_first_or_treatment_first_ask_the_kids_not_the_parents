@@ -461,7 +461,7 @@ class P:
     kV    = 0.50      # MEANS TEST, the share of MEDIAN income below which a
                       # household is eligible. This is the quantitative model's
                       # kappa_V and the paper uses the same symbol for both.
-    yV    = 0.3151    # the level kV implies, kV times median income. It has moved
+    yV    = 0.3155    # the level kV implies, kV times median income. It has moved
                       # twice with the grid: 0.2591 at 30 log spaced nodes, 0.2477
                       # at 120, and 0.3172 once the nodes were placed by quantile
                       # and the top tail stopped being truncated. The last move is
@@ -701,10 +701,10 @@ def period1(par, y, policy=None):
         # phi * E W2: see the note at the head of this file.
         cont = (1.0 - pid) * s0 * W2u[None, :, 0] + pid * s1 * W2u[None, :, 1]
         vu, au, su, ru, gu = _branch(par, ag, inc, _p1_rmul(par, policy, rmul),
-                                     vg, cont)
+                                     vg, cont, fs)
         # v = 0 is solved on its own, because the household still holds the
         # voucher it drew and faces the clean continuation.
-        v0, a0, s_0, r0, g0 = _branch(par, ag, inc, rmul, np.zeros(1), cont0)
+        v0, a0, s_0, r0, g0 = _branch(par, ag, inc, rmul, np.zeros(1), cont0, fs)
 
         pen = par.omega * par.chdmg * (1.0 - np.exp(-par.lam * vg))
         tot = vu + par.th * (np.log(par.b + vg) - np.log(par.b)) - pen
@@ -718,7 +718,7 @@ def period1(par, y, policy=None):
         out.append((p, gain, float(vg[k]),
                     (float(au[k]), float(su[k]), float(ru[k]), float(gu[k])),
                     (float(a0[0]), float(s_0[0]), float(r0[0]), float(g0[0])),
-                    float(inc), own))
+                    float(inc), own, float(fs)))
     return out
 
 
@@ -775,11 +775,12 @@ def threshold(par, ygrid, policy=None):
     ns = max(len(r) for r in rows)
     n = len(ygrid)
     PR = np.zeros((n, ns)); G = np.full((n, ns), np.nan); VV = np.zeros((n, ns))
-    INC = np.zeros((n, ns))
+    INC = np.zeros((n, ns)); FS = np.zeros((n, ns))
     BU = np.zeros((n, ns, 4)); BN = np.zeros((n, ns, 4))
     for i, r in enumerate(rows):
-        for s, (p, g, v, bu, bn, inc, _own) in enumerate(r):
+        for s, (p, g, v, bu, bn, inc, _own, fs) in enumerate(r):
             PR[i, s] = p; G[i, s] = g; VV[i, s] = v; INC[i, s] = inc
+            FS[i, s] = fs
             BU[i, s] = bu; BN[i, s] = bn
     frac = (G > 0.0).astype(float)
     for s in range(ns):
@@ -802,7 +803,7 @@ def threshold(par, ygrid, policy=None):
             w = (0.5 * (lo + hi) - ygrid[i]) / (ygrid[i + 1] - ygrid[i])
             frac[i, s], frac[i + 1, s] = ((w, 0.0) if G[i, s] > 0.0
                                           else (0.0, 1.0 - w))
-    return PR, np.clip(frac, 0.0, 1.0), VV, BU, BN, INC
+    return PR, np.clip(frac, 0.0, 1.0), VV, BU, BN, INC, FS
 
 
 def aggregates(par, ygrid, w, policy=None):
@@ -818,7 +819,7 @@ def aggregates(par, ygrid, w, policy=None):
     the disorder rate, are period 1 objects, since that is where v is chosen.
     """
     policy = policy or par.policy
-    PR, frac, VV, BU, BN, INC = threshold(par, ygrid, policy)
+    PR, frac, VV, BU, BN, INC, FS = threshold(par, ygrid, policy)
     ww = w / w.sum(); ybar = (ww * ygrid).sum()
     s0, s1 = par.phi0, par.phi0 * (1.0 - par.kap)
 
@@ -830,6 +831,14 @@ def aggregates(par, ygrid, w, policy=None):
     # tenant actually pays, net of any voucher, on both sides of the ratio, so
     # the object is an outlay share exactly as the survey measures it.
     hexp = 0.0
+    # FOOD ASSISTANCE OUTLAY AND LABOUR INCOME, the two sides of the moment the
+    # allotment is calibrated on. The quantitative model targets government
+    # spending on food stamps over average labour income, 0.42 per cent, and
+    # this is the same object: the transfer paid in both periods, period 2
+    # discounted at R exactly as the voucher outlay is, over income net of the
+    # transfer itself so the denominator is earnings rather than resources.
+    fsout = 0.0
+    linc = 0.0
     for i, y in enumerate(ygrid):
         ag, _, H2c, R2c, G2c = solve_period2(par, y, policy, used=0)
         if policy == 'HF':
@@ -852,6 +861,7 @@ def aggregates(par, ygrid, w, policy=None):
                 mass += mm
                 hl += mm * street
                 hcost += mm * rent; hinc += mm * INC[i, s]; cost += mm * sub
+                fsout += mm * FS[i, s]; linc += mm * (INC[i, s] - FS[i, s])
                 hexp += mm * (INC[i, s] - (par.p_v * VV[i, s] if uu else 0.0) - a)
                 # period 2: the disorder is drawn at the transition and survival
                 # depends on it
@@ -868,9 +878,11 @@ def aggregates(par, ygrid, w, policy=None):
                     hcost += m2 * float(np.interp(a, ag, Rx[:, d]))
                     cost += m2 * float(np.interp(a, ag, Gx[:, d])) / par.R
                     hexp += m2 * par.R * a
-                    for p2, inc2, _, _ in _states(par, d, policy, y, uu):
+                    for p2, inc2, _, fs2 in _states(par, d, policy, y, uu):
                         hinc += m2 * p2 * inc2
                         hexp += m2 * p2 * inc2
+                        fsout += m2 * p2 * fs2 / par.R
+                        linc += m2 * p2 * (inc2 - fs2) / par.R
 
     use = (PR * frac).sum(axis=1)
     return dict(part=float(part), sud=float(sud),
@@ -891,6 +903,10 @@ def aggregates(par, ygrid, w, policy=None):
                 # is what h_lg is calibrated on.
                 hspend=float(hcost / max(hexp, 1e-12)),
                 cost=float(cost),
+                # FOOD ASSISTANCE OVER LABOUR INCOME, the moment the maximum
+                # allotment is bracketed on, and the same one the quantitative
+                # model uses.
+                fsshare=float(fsout / max(linc, 1e-12)),
                 use=use, v=(PR * frac * VV).sum(axis=1) / np.maximum(use, 1e-12))
 
 

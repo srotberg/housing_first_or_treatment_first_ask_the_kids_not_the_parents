@@ -30,7 +30,7 @@
 % so grepping the generated file for the macro finds what moved, and grepping
 % .src.tex for the at signs finds every number the stylized pipeline still
 % supplies and the quantitative model has yet to replace.
-\newcommand{\new}[1]{\textcolor{red}{#1}}
+\newcommand{\new}[1]{#1}
 % The cut macro below marks a PROPOSED DELETION: red and struck through, so the reader sees what
 % would go before it goes. ulem is not in this installation, and a single rule over a
 % whole phrase cannot break across lines, so the rule is drawn word by word: each word
@@ -589,18 +589,18 @@ cost them, and they make no mistakes. Nothing below rests on misperception, myop
 
 \item \textbf{Who uses drugs?} In the data, use is concentrated at the bottom of
 the income distribution, and it is not universal there either: most poor households
-do not use at all. Both facts have to hold \textcolor{red}{together. I model drugs as a}
-\textcolor{red}{\emph{luxury} good bought at a price, which is what delivers the second: not}
-\textcolor{red}{all households choose to consume them. However, left to itself} the Stone-Geary form in equation~\eqref{eq:u} below \textcolor{red}{means the share of}
-\textcolor{red}{income spent on them rises with income, so the environment}
+do not use at all. Both facts have to hold together. I model drugs as a
+\emph{luxury} good bought at a price, which is what delivers the second: not
+all households choose to consume them. However, left to itself the Stone-Geary form in equation~\eqref{eq:u} below means the share of
+income spent on them rises with income, so the environment
 concentrates use at the \emph{top}. Two risks push the other way, and each
 costs the household something: a SUD raises the chance of losing work, which
-costs earnings, and it raises the chance of dying, which costs \textcolor{red}{the value of the life}
-\textcolor{red}{it has left.} The question is which of the two reverses the concentration from the top
-to the bottom\textcolor{red}{, and I show that it is the risk of death.}
+costs earnings, and it raises the chance of dying, which costs the value of the life
+it has left. The question is which of the two reverses the concentration from the top
+to the bottom, and I show that it is the risk of death.
 
-\item \textbf{How does housing assistance shape the drug use decision?} \textcolor{red}{(Un)conditional}
-\textcolor{red}{housing assistance} pulls drug use in two opposite directions. It raises the value of
+\item \textbf{How does housing assistance shape the drug use decision?} (Un)conditional
+assistance pulls drug use in two opposite directions. It raises the value of
 staying clean, because a housed future is worth more than a homeless one and
 using puts that future at risk: call this the value of life force, and it lowers
 use. In contrast, if the voucher is unconditional, then it cushions the consequence of acquiring a SUD, because
@@ -726,13 +726,12 @@ y & \text{if } e = 1,\\[0.2em]
 with $\psi$ the replacement rate and $\bar y$ a cap on the earnings base. There
 is no other income risk.
 
-\textcolor{red}{Food assistance is paid on top, on the}
-\textcolor{red}{statutory rule: the maximum allotment $\underline c$ less the fraction $\varrho$}
-\textcolor{red}{of income, so a household in a state with income $y^{s}$ receives}
-\textcolor{red}{$F(y^{s})=\max\{0,\ \underline c-\varrho\,y^{s}\}$, and it is paid in kind: it can only be}
-\textcolor{red}{spent on consumption, so it cannot pay rent. That restriction is the constraint}
-\textcolor{red}{$c \ge F$, and it is the same rule, the same two numbers and the same restriction}
-\textcolor{red}{as the quantitative model's in equation~\eqref{eq:ftrans}.}\textcolor{red}{\footnote{The stylized model needs the food assistance for a reason the quantitative model does not make visible. Income support is proportional, so without it every household below the eleventh percentile is on the street because it cannot pay rather than because it chose to: homelessness comes out at $1.32$ percent against a target of $0.399$ and $h_1$ sits at its floor with no power to move the rate. The transfer converts enough forced homelessness into chosen homelessness to leave the bracket an interior solution. The taper matters as much as the level, because a hard floor gives every household below it the same income, so they cross the margin as one block and the rate jumps from zero to $1.7$ percent with nothing in between.}}
+Food assistance is paid on top, on the
+statutory rule: the maximum allotment $\underline c$ less the fraction $\varrho$
+of income, so a household in a state with income $y^{s}$ receives
+$F(y^{s})=\max\{0,\ \underline c-\varrho\,y^{s}\}$, and it is paid in kind: it can only be
+spent on consumption, so it cannot pay rent. That restriction is the constraint
+$c \ge F$.\textcolor{red}{\footnote{The stylized model needs the food assistance for a reason the quantitative model does not make visible. Income support is proportional, so without it a poor household that pays rent out of its own income has almost nothing left to consume and prefers the street however bad the street is: homelessness comes out at $1.34$ percent against a target of $0.399$ and $h_1$ sits at its floor with no power to move the rate. The transfer cannot pay the rent, but it can pay for consumption, which is what makes paying rent bearable and leaves $h_1$ deciding the margin. The taper matters as much as the level, because a hard floor gives every household below it the same income, so they cross the margin as one block and the rate jumps from zero to $1.7$ percent with nothing in between.}}
 
 Each period the household chooses
 \begin{equation}\label{eq:opts}
@@ -788,8 +787,8 @@ everything and chooses housing,
 \begin{aligned}
 W_2(a,y,e,\eta,d) &= \max_{\{k\}}
 \Big\{ (1-\gamma-\theta)\log c + \gamma \log h_k + \aleph \Big\},\\
-c &= Ra + y^{g}(y,e) \textcolor{red}{+ F\big(y^{g}(y,e)\big)} - r_k(\eta),
-\qquad \textcolor{red}{c \ge F\big(y^{g}(y,e)\big)},
+c &= Ra + y^{g}(y,e) + F\big(y^{g}(y,e)\big) - r_k(\eta),
+\qquad c \ge F\big(y^{g}(y,e)\big),
 \end{aligned}
 \end{equation}
 and write $W_2(a,y,d) = \mathbb{E}\big[W_2(a,y,e,\eta,d)\mid y,d\big]$ for its
@@ -801,12 +800,9 @@ V_1(y,e,\eta) = \max_{\{k,\,v \ge 0,\,a' \ge 0\}}
 + \theta[\log(b+v)-\log b] + \aleph
 + \beta\, \mathbb{E}_{d'}\Big[\phi(d')\,W_2(a',y,d')\Big] \Big\},
 \end{equation}
-with $c = y^{g}(y,e) \textcolor{red}{+ F(y^{g}(y,e)) }- r_k(\eta) - p_v v - a'$\textcolor{red}{, subject to $c \ge F(y^{g}(y,e))$,}
+with $c = y^{g}(y,e) + F(y^{g}(y,e)) - r_k(\eta) - p_v v - a'$, subject to $c \ge F(y^{g}(y,e))$,
 and $d'=1$ with the use dependent
-probability of~\eqref{eq:hazard}. \textcolor{red}{The voucher enters both periods through the rent}
-\textcolor{red}{$r_k(\eta)$ in equation~\eqref{eq:rent}, and food assistance through $F$, which is added to}
-\textcolor{red}{resources and then bounded away from rent by the in kind restriction: a household}
-\textcolor{red}{can pay rent only out of its own income.} Survival sits inside the expectation over
+probability of~\eqref{eq:hazard}. Survival sits inside the expectation over
 $d'$ because it depends on which $d'$ is realised.
 
 A household uses if the value at its best positive $v$ exceeds the value at
@@ -848,15 +844,10 @@ National Survey on Drug Use and Health (NSDUH) 2024 for respondents aged 26 and
 over.
 
 Income support replaces half of previous earnings on a base capped at mean
-income, in line with statutory state rules. Food assistance pays a maximum allotment of
-$\underline c=@@cfloor@@$ of average income, withdrawn at $\varrho=@@ctaper@@$ per dollar of income.
-\textcolor{red}{The two numbers are of different kinds and only one of them is a rule. The taper is}
-\textcolor{red}{statutory, thirty percent of net income at 7 CFR 273.10. The allotment is not: it is}
-\textcolor{red}{$@@cfloor@@$ because that is what the quantitative model's calibration returns when it is}
-\textcolor{red}{matched to food stamp spending of $0.42$ percent of labour income, and it is larger than}
-\textcolor{red}{the statutory allotment for a single adult because a model household stands for a real}
-\textcolor{red}{one of more than one person. Taking it from there rather than calibrating it again is}
-\textcolor{red}{what keeps the two models on the same transfer.} The two rental sizes are set
+income, in line with statutory state rules. \textcolor{red}{Food assistance is withdrawn at}
+\textcolor{red}{$\varrho=@@ctaper@@$ per dollar of income, which is statutory, thirty percent of net}
+\textcolor{red}{income at 7 CFR 273.10; the maximum allotment it is withdrawn from is calibrated}
+\textcolor{red}{inside the model and appears below.} The two rental sizes are set
 such that the standard unit, $h_3$, costs $0.40$ of mean income and the
 small unit, $h_2$, is a quarter of it. The voucher parameters are institutional: covered
 tenants pay $30$ percent of market rent, eligibility is capped at half of median income, $\kappa_V = 0.50$, and $\pi_V = 0.266$ is the ratio of recipients to the income eligible population in the 2023 Picture of Subsidized
@@ -870,8 +861,14 @@ percent and keeps the gradient, which is the trade this very simple model can ma
 
 \subsubsection{Internal calibration}
 
-Six parameters are set inside the model, in Table~\ref{tab:int}, each bracketed
-on the moment it moves most rather than fitted jointly. The dispersion of log
+\textcolor{red}{Seven} parameters are set inside the model, in Table~\ref{tab:int}, each bracketed
+on the moment it moves most rather than fitted jointly. \textcolor{red}{The maximum food stamp allotment $\underline c$ is matched to government spending on food}
+\textcolor{red}{assistance of $0.42$ percent of labour income, from the United States Department of}
+\textcolor{red}{Agriculture (USDA), which is the same moment and the same source the quantitative}
+\textcolor{red}{model uses, so the transfer is calibrated rather than set in either model. The outlay}
+\textcolor{red}{rises in $\underline c$, so one number identifies it, and it is bracketed first because it}
+\textcolor{red}{shifts resources at the bottom and every bracket after it should be solved on the}
+\textcolor{red}{transfer the data implies rather than on a guess.} The dispersion of log
 permanent income $\sigma_y$ is matched to how unequal earnings are at the bottom: in
 the 2022 Survey of Consumer Finances (SCF), households aged $26$ to $65$ with positive wage
 and salary income hold $17.2$ percent of total earnings in the poorer half of the
