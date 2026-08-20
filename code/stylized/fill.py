@@ -165,7 +165,7 @@ ANCHOR = r'\section{The quantitative model}'
 
 def _black_notes(src):
     """
-    Table notes and figure captions BEFORE THE QUANTITATIVE MODEL carry no red.
+    Notes, captions and footnotes BEFORE THE QUANTITATIVE MODEL carry no red.
 
     A note or a caption is furniture: it restates the conditions a table was
     computed under, and a number moving inside one is not an edit the reader
@@ -182,7 +182,7 @@ def _black_notes(src):
         raise SystemExit('   fill.py: the section anchor moved; _black_notes '
                          'would silently clear the whole paper')
     head, tail = src[:cut], src[cut:]
-    for macro in ('\\tabnote{', '\\caption{'):
+    for macro in ('\\tabnote{', '\\caption{', '\\footnote{'):
         k = 0
         while True:
             j = head.find(macro, k)
