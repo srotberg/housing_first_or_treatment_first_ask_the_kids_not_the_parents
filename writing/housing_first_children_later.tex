@@ -645,7 +645,7 @@ quantitative model throughout.
 
 A household is characterised by its productivity $y$, fixed over its
 life and lognormally distributed across households, $\log y \sim
-\mathcal{N}(-\tfrac12\sigma_y^2, \sigma_y^2)$, so mean income is one. Households
+\mathcal{N}(-\tfrac12\sigma_y^2, \sigma_y^2)$, so mean income is one.\textcolor{red}{\footnote{The distribution is solved on a 120 point grid whose nodes are the conditional means of the lognormal on intervals that narrow towards the bottom, where the drug and housing margins are, so mean income is one and the poorer half's share of earnings is its target exactly rather than after rescaling. The lowest interval is the exception: it pools the bottom 6.7 percent of households into a single mass point at their own conditional mean. That is a substantive choice and not a numerical one. Resolved node by node, the foot of a lognormal contains households whose permanent income over a thirty year period falls below the rent on the smallest unit; they are on the street whatever the street is worth, so $h_1$ has nothing left to decide. Pooling puts the poorest households where the poorest households in the data are, able to rent and badly.}} Households
 differ in $y$, in age $j\in\{1,2\}$, in employment status $e\in\{0,1\}$, in
 voucher receipt $\eta\in\{0,1\}$ and in SUD status $d\in\{0,1\}$, all
 discussed below, and in nothing else.
@@ -726,13 +726,6 @@ y & \text{if } e = 1,\\[0.2em]
 with $\psi$ the replacement rate and $\bar y$ a cap on the earnings base. There
 is no other income risk.
 
-Food assistance is paid on top, on the
-statutory rule: the maximum allotment $\underline c$ less the fraction $\varrho$
-of income, so a household in a state with income $y^{s}$ receives
-$F(y^{s})=\max\{0,\ \underline c-\varrho\,y^{s}\}$, and it is paid in kind: it can only be
-spent on consumption, so it cannot pay rent. That restriction is the constraint
-$c \ge F$.\textcolor{red}{\footnote{The stylized model needs the food assistance for a reason the quantitative model does not make visible. Income support is proportional, so without it a poor household that pays rent out of its own income has almost nothing left to consume and prefers the street however bad the street is: homelessness comes out at $1.34$ percent against a target of $0.399$ and $h_1$ sits at its floor with no power to move the rate. The transfer cannot pay the rent, but it can pay for consumption, which is what makes paying rent bearable and leaves $h_1$ deciding the margin. The taper matters as much as the level, because a hard floor gives every household below it the same income, so they cross the margin as one block and the rate jumps from zero to $1.7$ percent with nothing in between.}}
-
 Each period the household chooses
 \begin{equation}\label{eq:opts}
 h_k \in \{h_1,\ h_2,\ h_3\}, \qquad h_1 < h_2 < h_3 ,
@@ -784,12 +777,9 @@ market rent immediately and again in period 2.
 Let $a$ be assets carried in. Period 2 is terminal, so the household consumes
 everything and chooses housing,
 \begin{equation}\label{eq:v2}
-\begin{aligned}
-W_2(a,y,e,\eta,d) &= \max_{\{k\}}
-\Big\{ (1-\gamma-\theta)\log c + \gamma \log h_k + \aleph \Big\},\\
-c &= Ra + y^{g}(y,e) + F\big(y^{g}(y,e)\big) - r_k(\eta),
-\qquad c \ge F\big(y^{g}(y,e)\big),
-\end{aligned}
+W_2(a,y,e,\eta,d) = \max_{\{k\}}
+\Big\{ (1-\gamma-\theta)\log c + \gamma \log h_k + \aleph \Big\},
+\qquad c = Ra + y^{g}(y,e) - r_k(\eta),
 \end{equation}
 and write $W_2(a,y,d) = \mathbb{E}\big[W_2(a,y,e,\eta,d)\mid y,d\big]$ for its
 expectation over the period 2 employment and voucher draws. In period 1 the
@@ -800,8 +790,7 @@ V_1(y,e,\eta) = \max_{\{k,\,v \ge 0,\,a' \ge 0\}}
 + \theta[\log(b+v)-\log b] + \aleph
 + \beta\, \mathbb{E}_{d'}\Big[\phi(d')\,W_2(a',y,d')\Big] \Big\},
 \end{equation}
-with $c = y^{g}(y,e) + F(y^{g}(y,e)) - r_k(\eta) - p_v v - a'$, subject to $c \ge F(y^{g}(y,e))$,
-and $d'=1$ with the use dependent
+with $c = y^{g}(y,e) - r_k(\eta) - p_v v - a'$ and $d'=1$ with the use dependent
 probability of~\eqref{eq:hazard}. Survival sits inside the expectation over
 $d'$ because it depends on which $d'$ is realised.
 
@@ -844,10 +833,7 @@ National Survey on Drug Use and Health (NSDUH) 2024 for respondents aged 26 and
 over.
 
 Income support replaces half of previous earnings on a base capped at mean
-income, in line with statutory state rules. \textcolor{red}{Food assistance is withdrawn at}
-\textcolor{red}{$\varrho=0.30$ per dollar of income, which is statutory, thirty percent of net}
-\textcolor{red}{income at 7 CFR 273.10; the maximum allotment it is withdrawn from is calibrated}
-\textcolor{red}{inside the model and appears below.} The two rental sizes are set
+income, in line with statutory state rules.\textcolor{red}{\footnote{There is no food assistance here, and the quantitative model of Section~\ref{sec:full} has it. It was added and then removed. On the statutory rule, paid in kind so that it could not cover rent, it changes nothing this model is for: with the bottom of the income distribution pooled the homelessness rate reaches its target without it, and the share of homelessness that is forced rather than chosen is 0.305 percent against 0.288 percent with the transfer, so the pooling does that work and not the transfer. A model whose purpose is to be easy to follow should not carry a parameter, a moment, a taper and an in kind restriction that change none of its answers.}} The two rental sizes are set
 such that the standard unit, $h_3$, costs $0.40$ of mean income and the
 small unit, $h_2$, is a quarter of it. The voucher parameters are institutional: covered
 tenants pay $30$ percent of market rent, eligibility is capped at half of median income, $\kappa_V = 0.50$, and $\pi_V = 0.266$ is the ratio of recipients to the income eligible population in the 2023 Picture of Subsidized
@@ -861,14 +847,8 @@ percent and keeps the gradient, which is the trade this very simple model can ma
 
 \subsubsection{Internal calibration}
 
-\textcolor{red}{Seven} parameters are set inside the model, in Table~\ref{tab:int}, each bracketed
-on the moment it moves most rather than fitted jointly. \textcolor{red}{The maximum food stamp allotment $\underline c$ is matched to government spending on food}
-\textcolor{red}{assistance of $0.42$ percent of labour income, from the United States Department of}
-\textcolor{red}{Agriculture (USDA), which is the same moment and the same source the quantitative}
-\textcolor{red}{model uses, so the transfer is calibrated rather than set in either model. The outlay}
-\textcolor{red}{rises in $\underline c$, so one number identifies it, and it is bracketed first because it}
-\textcolor{red}{shifts resources at the bottom and every bracket after it should be solved on the}
-\textcolor{red}{transfer the data implies rather than on a guess.} The dispersion of log
+Six parameters are set inside the model, in Table~\ref{tab:int}, each bracketed
+on the moment it moves most rather than fitted jointly. The dispersion of log
 permanent income $\sigma_y$ is matched to how unequal earnings are at the bottom: in
 the 2022 Survey of Consumer Finances (SCF), households aged $26$ to $65$ with positive wage
 and salary income hold $17.2$ percent of total earnings in the poorer half of the

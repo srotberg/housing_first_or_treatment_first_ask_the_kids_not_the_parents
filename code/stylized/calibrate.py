@@ -192,8 +192,15 @@ GRID_KAPPA = 2.0      # above one packs the nodes toward the bottom
 # cannot pay the rent even while employed. The margin is at the eleventh
 # percentile, not in the tail, so no discretisation reaches it.
 #
-# THE MISSING PIECE WAS A CONSUMPTION FLOOR, and the quantitative model already
-# has one. See P.cfloor in stylized.py.
+# A CONSUMPTION FLOOR WAS TRIED AND REMOVED. The quantitative model has one and
+# the stylized model was given one to match, on the statutory SNAP rule and paid
+# in kind so it could not cover rent. It was then ablated and it does not earn
+# its place: with the bottom pooled the model passes through the 0.399 target
+# without it, at h_hl near 0.00055, and the FORCED share of homelessness is
+# 0.305 per cent against 0.288 with the transfer. The pool does that work, not
+# the transfer, and a model whose purpose is to be easy to follow should not
+# carry a parameter, a moment, a taper and an in kind restriction that change
+# nothing. The quantitative model keeps its own.
 def _tail_mean(sig, q):
     """E[Y 1{F(Y) < q}] for a lognormal with mean one."""
     if q <= 0.0:
@@ -317,12 +324,6 @@ W = W * len(W)  # calibrate.py uses W unnormalised elsewhere; scale is irrelevan
 # population rate is bounded by participation and moves smoothly.
 TARGET = dict(part=0.0513, homeless=0.00399, sud=0.0368, vsl=80.0,
               dshare=0.20, housing_share=0.30, hspend=0.268,
-              # FOOD ASSISTANCE OVER LABOUR INCOME. The same target and the same
-              # source as the quantitative model's: government spending on food
-              # stamps over average labour income, 0.42 per cent, from the USDA.
-              # The allotment is calibrated to it in BOTH models rather than set
-              # in one and calibrated in the other.
-              fsshare=0.0042,
               bot50=BOT50_TARGET)
 
 # ORDER MATTERS, and participation goes LAST. Every one of these parameters
@@ -410,19 +411,13 @@ LAM_LO, LAM_HI = 0.05, 4000.0
 # between 0.22 and 0.23, so theta = 0.21 buys a spending share of about 20 per
 # cent with the reversal comfortably intact, and theta = 0.23 buys 24 per cent
 # with no reversal at all. frontier.py is the scan.
-PAIRS = [# THE ALLOTMENT GOES FIRST. It shifts resources at the bottom, so
-         # every bracket after it is solved on the transfer the data implies
-         # rather than on a guess, and its own moment is barely touched by
-         # anything that follows.
-         ('cfloor', 'fsshare', 0.005, 0.30),
-         ('gam', 'hspend', 0.02, 0.70),
+PAIRS = [('gam', 'hspend', 0.02, 0.70),
          ('h_hl', 'homeless', 1e-7, 0.49),
          ('aleph', 'vsl', 0.20, 24.0),
          ('lam', 'sud', LAM_LO, LAM_HI),
          ('b', 'part', 1e-5, 0.30)]
 
 LABEL = {'part': 'drug participation rate',
-         'fsshare': 'food assistance over labour income',
          'sud': 'adult SUD rate',
          'hspend': 'housing spending / non drug spending',
          'housing_share': 'housing spending / income',
@@ -529,7 +524,6 @@ def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=()):
         # GAMMA FIRST, then the street. Both move homelessness, so whichever runs
         # last is the one whose moment is actually hit, and homelessness is the
         # one that has to be.
-        par = with_(par, cfloor=bracket(par, 'cfloor', 'fsshare', 0.005, 0.30))
         par = with_(par, gam=bracket(par, 'gam', 'hspend', 0.02, 0.70))
         par = with_(par, h_hl=bracket(par, 'h_hl', 'homeless', 1e-7, 0.49))
         par = with_(par, aleph=bracket(par, 'aleph', 'vsl', 0.20, 24.0, iters=26))
@@ -606,7 +600,6 @@ def polish(par, verbose=True):
     """
     if verbose:
         print(f'\npolishing at theta = {par.th:.4f}')
-    par = with_(par, cfloor=bracket(par, 'cfloor', 'fsshare', 0.005, 0.30))
     par = with_(par, gam=bracket(par, 'gam', 'hspend', 0.02, 0.70))
     par = with_(par, h_hl=bracket(par, 'h_hl', 'homeless', 1e-7, 0.49))
     par = with_(par, aleph=bracket(par, 'aleph', 'vsl', 0.20, 24.0, iters=26))

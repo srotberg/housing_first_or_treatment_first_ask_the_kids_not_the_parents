@@ -50,8 +50,6 @@ EXTERNAL = [
          'DOL, statutory UI rates', '{:.2f}'),
         ('ycap', r'\bar y', 'Cap on the earnings base',
          'DOL, state benefit maxima', '{:.2f}'),
-        ('ctaper', r'\varrho', 'Food stamp taper rate',
-         'SNAP statute, 7 CFR 273.10', '{:.2f}'),
     ]),
     ('Housing, drugs and the voucher', [
         ('pr', 'p_r', 'Rent per unit of housing services', 'Normalisation',
@@ -89,8 +87,6 @@ EXTERNAL = [
 # calibrate.SIG. None means "read SIG", and the row is otherwise an ordinary
 # internally calibrated one.
 INTERNAL = [
-    ('cfloor', r'\underline c', 'Food stamp maximum allotment',
-     'Food stamps over labour income, USDA', 'fsshare', '{:.2%}', '{:.4f}'),
     (None, r'\sigma_y', 'Dispersion of productivity',
      "Bottom half's share of earnings, SCF 2022", 'bot50', '{:.1%}', '{:.3f}'),
     ('gam', r'\gamma', 'Weight on housing services',
