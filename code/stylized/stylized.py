@@ -751,7 +751,7 @@ def value1(par, y, policy=None):
     It is an expectation over the period 1 employment and voucher draws, since
     those are realised before anything is chosen.
     """
-    return float(sum(p * own for p, _, _, _, _, _, own
+    return float(sum(p * own for p, _, _, _, _, _, own, *_
                      in period1(par, y, policy)))
 
 
