@@ -336,7 +336,11 @@ def tab_children(par, pV=1.0):
           f'{R(f"{100*priv:.3f}")}\\% \\\\',
           f'\\quad Disorder cases prevented & & & & {R(f"{100*dsud:.3f}")} pp \\\\',
           f'\\quad Consumption equivalent to the child, one case & & & & '
-          f'{R(f"{100*per_case:.0f}")}\\% \\\\',
+          # ONE DECIMAL, so the panel's arithmetic can be checked from the
+          # panel. At a whole percent the row read 9.209 points at 197 per
+          # cent each, which multiplies to 18.14 against a printed gain of
+          # 18.119: the true figure is 196.75 and the rounding hid it.
+          f'{R(f"{100*per_case:.1f}")}\\% \\\\',
           f'\\quad Externality gain from conditionality & & & & '
           f'{R(f"{100*gain:.3f}")}\\% \\\\',
           f'\\quad Gain over loss & & & & {R(f"{gain/max(priv,1e-12):.1f}")} \\\\',
