@@ -29,3 +29,9 @@ age distribution alive at the reform rather than following newborn cohorts,
 and the child's inherited penalty must key on the parent's whole life rather
 than on one period, or conditionality's own revocations can never reach a
 child.
+
+Section 7 of that file is the other half of the rule, and it is also standing:
+**a bug found in the stylized model is checked against the quantitative model
+before it is closed**, and the answer is written into the table there, whether
+it carried across or not. The stylized model is small enough that its mistakes
+get found; the quantitative model is not, so it inherits the search.

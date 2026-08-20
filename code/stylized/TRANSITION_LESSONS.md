@@ -115,3 +115,25 @@ point, and it is easier to build it that way than to retrofit it:
    moral hazard gives way to the value of life. Test for a single turning point,
    not for monotonicity; testing the wrong property sent me chasing real
    economics as if it were an artefact.
+
+
+---
+
+## 7. WHEN A BUG IS FOUND HERE, CHECK THE FULL MODEL FOR IT
+
+Standing instruction. The stylized model is small enough that its mistakes are
+found; the quantitative model is not. Every fix here gets carried across, or is
+recorded as not applying, with the reason.
+
+The audit as of the revocation fix:
+
+| bug found in the stylized model | does the quantitative model have it? |
+|---|---|
+| Period 2 revoked the voucher on a HISTORY of use, when there is no period 2 drug choice and only the disorder can fail the condition | **No.** `calculate_housing_voucher` zeroes the voucher when the household is addicted NOW, or is choosing to use NOW (`future_addiction_index_1 >= 1`). Both are current-period tests; nothing there looks at a history. The stylized model was the one out of line, and the fix brought it into line. |
+| The child's inherited penalty keyed on the parent's PERIOD 1 only, so homelessness that conditionality itself causes could never reach a child | **No.** `expected_child_value(addiction_index, is_homeless_1)` enters the continuation at EVERY age, weighted by the chance the parent does not survive it, so the parent's state at whatever age it dies is what the child inherits. A revocation at 50 that puts the household on the street does reach a child born at 50. |
+| Aggregating a decision threshold off the grid's geometry rather than off the true CDF | **Does not arise.** The quantitative model carries a distribution over grid points and evaluates the drug choice at each point, so there is no cell for a threshold to fall inside. |
+
+Two differences between the models are DELIBERATE and are not bugs: the
+quantitative model exempts a household in treatment from the condition, and it
+enforces the condition imperfectly, with a detection rate and a false positive
+rate. The stylized model has neither, and says so.
