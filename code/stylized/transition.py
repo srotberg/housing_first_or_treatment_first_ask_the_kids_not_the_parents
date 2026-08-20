@@ -106,6 +106,54 @@ def _welfare(p, v1):
                for s, ps in zip(_shifts(), p))
 
 
+def _outcome(p, g):
+    """A cohort's own realised rate of something, given the mixture it is born
+    into: its homelessness, or its disorder rate. The welfare path says what the
+    reform is worth; these say through what."""
+    return sum(ps * float((WW * _at(g, s)).sum())
+               for s, ps in zip(_shifts(), p))
+
+
+def caught(par, pv_new=PV_OPT):
+    """THE GENERATION THE REFORM CATCHES MID LIFE, which the cohort path cannot
+    show and which is where conditionality's cost actually falls.
+
+    Every cohort in the path lives its whole life under one policy. The
+    households in period 2 when the policy changes did not: they chose whether
+    to use under the OLD rule, period 2 is terminal so a disorder cannot be
+    recovered from, and Treatment First now withdraws their voucher for a
+    decision taken before the rule existed. They are the transition's cost, and
+    a figure that omits them makes conditionality look nearly free.
+
+    Returns the consumption equivalent they lose and the homelessness the
+    revocation itself creates, integrating over the assets they actually saved
+    and the disorder they actually drew under the old programme."""
+    from stylized import period1, solve_period2
+    old = with_(par, pV=par.pV, policy=BASE_POLICY)
+    new_h = with_(par, pV=pv_new, policy='HF')
+    new_t = with_(par, pV=pv_new, policy='TF')
+    dv = mass = hl_h = hl_t = 0.0
+    for i, y in enumerate(YG):
+        for p, gain, v, bu, bn, inc, _own in period1(old, y, BASE_POLICY):
+            uses = gain > 0.0
+            a = (bu if uses else bn)[0]
+            pid = (1.0 - np.exp(-old.lam * v)) if uses else 0.0
+            for d, pd in ((1, pid), (0, 1.0 - pid)):
+                m = WW[i] * p * pd
+                if m <= 0.0:
+                    continue
+                agh, W2h, H2h, _, _ = solve_period2(new_h, y, 'HF', used=int(uses))
+                agt, W2t, H2t, _, _ = solve_period2(new_t, y, 'TF', used=int(uses))
+                dv += m * (float(np.interp(a, agh, W2h[:, d]))
+                           - float(np.interp(a, agt, W2t[:, d])))
+                hl_h += m * float(np.interp(a, agh, H2h[:, d]))
+                hl_t += m * float(np.interp(a, agt, H2t[:, d]))
+                mass += m
+    dv /= max(mass, 1e-12)
+    return dict(cev=float(cev(par, dv)), hl_hf=hl_h / max(mass, 1e-12),
+                hl_tf=hl_t / max(mass, 1e-12))
+
+
 def _rest_point(sud, hl, iters=400, tol=1e-14):
     p = np.array([1.0, 0.0, 0.0, 0.0])
     for _ in range(iters):
@@ -120,15 +168,17 @@ def path(par, policy, pV, p0, v1_base, w0, n=GENERATIONS):
     """Newborn welfare for n cohorts after the reform lands, as a consumption
     equivalent against the pre reform rest point."""
     v1, sud, hl = _policy_grids(par, policy, pV)
-    out = [(0, 0.0, p0.copy())]
+    v1b, sudb, hlb = _policy_grids(par, BASE_POLICY, par.pV)
+    out = [(0, 0.0, p0.copy(), _outcome(p0, hlb), _outcome(p0, sudb))]
     p = p0.copy()
     for t in range(1, n + 1):
         # the cohort BORN at t-1 lives under the new policy, and the mixture it
         # was born into is the one the previous cohort handed it. Cohort 1 is
-        # therefore born into the OLD rest point and lives under the NEW rule,
-        # which is exactly the cohort that pays for the reform.
+        # therefore born into the OLD rest point and lives under the NEW rule.
+        # It is NOT the cohort that pays for the reform: see caught().
         w = _welfare(p, v1)
-        out.append((t, float(cev(par, w - w0)), p.copy()))
+        out.append((t, float(cev(par, w - w0)), p.copy(),
+                    _outcome(p, hl), _outcome(p, sud)))
         p = _step(p, sud, hl)
     return out
 
@@ -152,32 +202,53 @@ def run(par=None, n=GENERATIONS):
         paths[lab] = path(par, pol, PV_OPT, p0, v1b, w0, n)
         print(f'\n{lab} at pi_V = {PV_OPT}')
         print(f'   {"cohort":>7s}{"cons equiv":>13s}{"born to SUD":>14s}'
-              f'{"born unhoused":>16s}')
-        for t, c, p in paths[lab]:
+              f'{"born unhoused":>16s}{"homeless":>11s}{"has a SUD":>12s}')
+        for t, c, p, hl, sud in paths[lab]:
             print(f'   {t:7d}{100*c:12.4f}%{100*(p[1]+p[3]):13.3f}%'
-                  f'{100*(p[2]+p[3]):15.3f}%')
+                  f'{100*(p[2]+p[3]):15.3f}%{100*hl:10.3f}%{100*sud:11.3f}%')
     return paths
 
 
-def figure(paths):
+def figure(paths, cg=None):
+    """Three panels: what the reform is worth to each cohort, and through what.
+
+    The welfare panel alone invites the reading that conditionality is nearly
+    free, because the cohorts in it all choose not to use and so never lose a
+    voucher. The homelessness and disorder panels show the mechanism doing the
+    work, and the marker on the welfare panel shows the generation the reform
+    catches mid life, which no cohort line can carry.
+    """
     from run import style, save
     plt = style()
-    fig, ax = plt.subplots(figsize=(6.4, 4.0))
-    for lab, sty in (('TF', dict(color='#b2182b', marker='o')),
-                     ('HF', dict(color='#2166ac', marker='s', ls='--'))):
-        t = [r[0] for r in paths[lab]]
-        c = [100 * r[1] for r in paths[lab]]
-        ax.plot(t, c, label='Treatment First' if lab == 'TF' else 'Housing First',
-                markersize=5, **sty)
-    ax.axhline(0.0, color='0.35', lw=1.0, ls=':')
-    ax.set_xlabel('cohort, generations after the reform')
-    ax.set_ylabel('newborn welfare, consumption equivalent (\\%)')
-    ax.legend(loc='best')
+    fig, axes = plt.subplots(1, 3, figsize=(13.2, 3.9))
+    S = (('TF', 'Treatment First', dict(color='#b2182b', marker='o')),
+         ('HF', 'Housing First', dict(color='#2166ac', marker='s', ls='--')))
+    for ax, idx, ttl, ylab in (
+            (axes[0], 1, 'A. Newborn welfare', 'consumption equivalent (\%)'),
+            (axes[1], 3, 'B. Homelessness', 'rate (\%)'),
+            (axes[2], 4, 'C. Share with a SUD', 'rate (\%)')):
+        for lab, name, sty in S:
+            t = [r[0] for r in paths[lab]]
+            y = [100 * r[idx] for r in paths[lab]]
+            ax.plot(t, y, label=name, markersize=5, **sty)
+        ax.set_xlabel('cohort, generations after the reform')
+        ax.set_ylabel(ylab)
+        ax.set_title(ttl, loc='left', fontsize=11, fontweight='bold')
+    axes[0].axhline(0.0, color='0.35', lw=1.0, ls=':')
+    if cg is not None:
+        # the generation already in period 2 at the switch, on the same axis but
+        # marked apart, since it is measured over its remaining period only
+        axes[0].plot([0], [-100 * cg['cev']], marker='v', ms=8, color='#b2182b',
+                     ls='none', label='caught mid life, TF')
+        axes[0].annotate('caught\nmid life', xy=(0, -100 * cg['cev']),
+                         xytext=(0.35, -100 * cg['cev'] * 0.72), fontsize=8.5,
+                         color='#b2182b')
+    axes[0].legend(loc='center right', fontsize=9)
     save(fig, 'stylized_transition')
     return fig
 
 
-def numbers(paths, par=None):
+def numbers(paths, par=None, cg=None):
     """The placeholders Section 3.7 of the paper reads."""
     import json as _json
     here = os.path.dirname(os.path.abspath(__file__))
@@ -191,6 +262,9 @@ def numbers(paths, par=None):
          'tr_sud0': f'{100*(tf[0][2][1]+tf[0][2][3]):.2f}',
          'tr_sudtf': f'{100*(tf[-1][2][1]+tf[-1][2][3]):.2f}',
          'tr_sudhf': f'{100*(hf[-1][2][1]+hf[-1][2][3]):.2f}'}
+    if cg is not None:
+        d['tr_caught'] = f'{100*cg["cev"]:.1f}'
+        d['tr_caught_hl'] = f'{100*cg["hl_tf"]:.2f}'
     out = os.path.join(here, 'transition_numbers.json')
     _json.dump(d, open(out, 'w'), indent=1)
     print('   wrote transition_numbers.json')
@@ -201,5 +275,10 @@ def numbers(paths, par=None):
 
 if __name__ == '__main__':
     paths = run()
-    figure(paths)
-    numbers(paths)
+    import json as _j, os as _o
+    par = with_(P(), **_j.load(open(_o.path.join(_o.path.dirname(_o.path.abspath(__file__)), 'calibrated.json'))))
+    cg = caught(par)
+    print('\ncaught mid life: loses %.2f%% of consumption; homeless %.3f%% under HF, %.3f%% under TF'
+          % (100*cg['cev'], 100*cg['hl_hf'], 100*cg['hl_tf']))
+    figure(paths, cg)
+    numbers(paths, cg=cg)

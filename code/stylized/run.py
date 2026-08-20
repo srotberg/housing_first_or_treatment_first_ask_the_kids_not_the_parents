@@ -144,6 +144,15 @@ def fig_moral_hazard(base):
     H = np.array([stats(with_(base, pV=p, policy='HF'))['part'] for p in pVs])
     T = np.array([stats(with_(base, pV=p, policy='TF'))['part'] for p in pVs])
 
+    # THE CEILING IS THE HIGHEST CURVE, not the no programme rate. It used to be
+    # 1.22 times T[0], which worked only while Housing First stayed below the no
+    # programme line. On the rebuilt calibration Housing First RISES above it,
+    # to 9.21 per cent against 4.34, so the red curve ran clean off the top of
+    # the axis and the figure showed a moral hazard band with no curve bounding
+    # it. Any limit written in terms of one series will break the first time the
+    # ranking of the series changes.
+    top = 100 * max(H.max(), T.max(), T[0]) * 1.16
+
     fig, ax = plt.subplots(figsize=(7.4, 4.6))
     # The two shaded regions must be DISJOINT or the picture is mud. An earlier
     # version shaded (TF, HF) and (TF, no programme), which overlap everywhere.
@@ -159,11 +168,11 @@ def fig_moral_hazard(base):
             label='Treatment First')
     ax.axhline(100 * T[0], color='0.45', lw=1.0, ls=':')
     ax.axvline(base.pV, color='0.45', lw=1.0, ls='--')
-    ax.text(base.pV + 0.012, 100 * T[0] * 0.06, 'current programme',
+    ax.text(base.pV + 0.012, top * 0.04, 'current programme',
             fontsize=8.5, color='0.4', rotation=90, va='bottom')
-    ax.set_ylim(-0.45, 100 * T[0] * 1.22)
+    ax.set_ylim(-0.45, top)
     ax.set_xlim(-0.02, 1.14)
-    ax.text(0.02, 100 * T[0] + 0.14, 'No voucher programme', fontsize=8.5,
+    ax.text(0.02, 100 * T[0] + top * 0.02, 'No voucher programme', fontsize=8.5,
             color='0.4')
     # the value of life force is the WHOLE drop, so mark it as a span at the
     # right hand edge rather than as a region that overlaps the others
@@ -172,7 +181,7 @@ def fig_moral_hazard(base):
                 arrowprops=dict(arrowstyle='<->', color='#2C6FAD', lw=1.3))
     ax.text(xb - 0.015, 100 * (T[0] + T[-1]) / 2, 'Value of life',
             rotation=90, ha='right', va='center', fontsize=9, color='#2C6FAD')
-    ax.text(0.62, 100 * (T[5] + H[5]) / 2, 'Moral hazard', fontsize=9,
+    ax.text(0.62, 100 * (T[5] + H[5]) / 2 + top * 0.03, 'Moral hazard', fontsize=9,
             color='#C0392B', ha='center', va='center')
     ax.set_xlabel('Voucher generosity $\\pi_V$: '
                   'share of eligible households covered')
