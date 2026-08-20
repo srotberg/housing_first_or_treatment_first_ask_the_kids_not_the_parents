@@ -249,9 +249,9 @@ def figure(paths, cg=None):
     S = (('TF', 'Treatment First', dict(color='#b2182b', marker='o')),
          ('HF', 'Housing First', dict(color='#2166ac', marker='s', ls='--')))
     for ax, idx, ttl, ylab in (
-            (axes[0], 1, 'A. Newborn welfare', 'consumption equivalent (\%)'),
-            (axes[1], 3, 'B. Homelessness', 'rate (\%)'),
-            (axes[2], 4, 'C. Share with a SUD', 'rate (\%)')):
+            (axes[0], 1, '(a) Newborn welfare', 'consumption equivalent (\%)'),
+            (axes[1], 3, '(b) Homelessness', 'rate (\%)'),
+            (axes[2], 4, '(c) Share with a SUD', 'rate (\%)')):
         for lab, name, sty in S:
             t = [r[0] for r in paths[lab]]
             y = [100 * r[idx] for r in paths[lab]]
@@ -280,6 +280,13 @@ def _dir(now, was, up, down, tol=5e-5, same='holds'):
     wherever the sentence around the word would not read as English with the
     default: "Treatment First is the holds of the two" is not a sentence."""
     return up if now > was + tol else (down if now < was - tol else same)
+
+
+
+def _words(n):
+    """Small integers as words, which is how the prose states them."""
+    return {1: 'one', 2: 'two', 3: 'three', 4: 'four', 5: 'five',
+            6: 'six', 7: 'seven', 8: 'eight', 9: 'nine'}.get(n, str(n))
 
 
 def _settle(tf, hf, tol=1e-3):
@@ -322,12 +329,25 @@ def numbers(paths, par=None, cg=None):
     # way the parent generation's disorder rate moves turn when the numbers do.
     # Both are results, and the Housing First one in particular is the sign of a
     # difference between two rest points, not a fact of arithmetic.
+    # THE HOMELESSNESS PANEL'S OWN NUMBERS. Panel B was drawn and never read:
+    # the prose worked through welfare and the disorder share and left the
+    # middle panel to the reader. These are its three points.
+    d['tr_hl0'] = f'{100*tf[0][3]:.2f}'
+    d['tr_hltf'] = f'{100*tf[-1][3]:.2f}'
+    d['tr_hlhf'] = f'{100*hf[-1][3]:.2f}'
+    d['tr_hltf_dir'] = _dir(tf[-1][3], tf[0][3], 'rises', 'falls')
+    d['tr_hlhf_dir'] = _dir(hf[-1][3], hf[0][3], 'rises', 'falls')
+    d['tr_hl_cmp'] = _dir(tf[-1][3], hf[-1][3], 'above', 'below',
+                          tol=5e-5, same='level with')
     s0 = tf[0][2][1] + tf[0][2][3]
     d['tr_sudtf_dir'] = _dir(tf[-1][2][1] + tf[-1][2][3], s0, 'rises', 'falls')
     d['tr_sudhf_dir'] = _dir(hf[-1][2][1] + hf[-1][2][3], s0, 'rises', 'falls')
     # WHICH COHORT THE PATHS HAVE SETTLED BY, to a tenth of a point of the rest
     # point, rather than the "two or three" the text used to assert.
     d['tr_settle'] = _settle(tf, hf)
+    # HOW MANY COHORTS THE FIGURE ACTUALLY DRAWS. The text used to promise
+    # "five", which is only true while GENERATIONS is five.
+    d['tr_gens'] = _words(len(tf) - 1)
     # WHICH OF THE TWO THE COHORT AT THE SWITCH PREFERS. The gap is under a
     # tenth of a point, so which way it falls is not robust to a recalibration.
     d['tr_t1_dir'] = _dir(tf[1][1], hf[1][1], 'above', 'below', tol=1e-6,

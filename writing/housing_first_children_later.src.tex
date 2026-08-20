@@ -1189,17 +1189,18 @@ more, which is the opposite direction from the tax.
 
 \subsection{The transition}\label{sec:trans}
 
-Everything so far compares rest points, which is the natural way to read a
-two period model but hides the thing the argument turns on. Treatment First takes
-from the household in front of it and gives to the one after. A comparison of
-rest points reports the sum of those two and cannot show that they land on
-different people at different times. A transition can, and this model has one:
-Figure~\ref{fig:trans} shows it, and the rest of this section reads it.
+Everything so far compares rest points, which \textcolor{red}{removes one of the key points the argument turns on}.
+\textcolor{red}{Treatment First takes something immediately and gives back only after an
+adjustment period has elapsed. In the period of implementation, households with a
+SUD can do nothing about their condition, but the policy removes their benefit,
+and the benefit of lower substance use materialises only for the generations
+after them. A transition captures that adjustment stage, and
+Figure~\ref{fig:trans} shows it.}
 
 The link across generations is not persistence of income, which
 Section~\ref{sec:kids} deliberately leaves out, but the penalty. A child's income
 is a fresh draw from the same distribution multiplied by $(1-\delta_d)$ if its
-parent acquired the disorder and by $(1-\delta_h)$ if its parent was unhoused, so
+parent acquired the disorder and by $(1-\delta_h)$ if its parent was unhoused \textcolor{red}{when it died}, so
 what a cohort inherits is a mixture over the four penalty types
 $\{1,\ 1-\delta_d,\ 1-\delta_h,\ (1-\delta_d)(1-\delta_h)\}$. That mixture is a
 Markov chain: the share of a cohort carrying each penalty is decided by how many
@@ -1207,12 +1208,12 @@ of the cohort before it used and how many were unhoused, which depends in turn o
 the incomes that cohort was born with. Change the policy and the chain moves to a
 new rest point. It converges quickly, because the base draw is redrawn every
 generation and only the penalty is passed on, so it is at its new rest point
-within two or three cohorts and five are enough to show all of it.
+within \textcolor{red}{@@tr_settle@@ cohorts and @@tr_gens@@} are enough to show all of it.
 
 Figure~\ref{fig:trans} runs the experiment from the world as it
 is, Housing First at the observed $\pi_V=@@pvbase@@$, to universal cover under
 each policy, and plots the expected lifetime value of each newborn cohort as a
-consumption equivalent against the starting point. Cohort $0$ is the old rest
+consumption equivalent \textcolor{red}{(CEV)} against the starting point. Cohort $0$ is the old rest
 point by construction. Cohort $1$ is the one the reform lands on: it was born
 into the old income distribution and lives under the new rule, so it pays
 conditionality's cost and collects none of its benefit. The two policies are
@@ -1232,6 +1233,14 @@ the @@tr_t1_tf@@ against @@tr_t1_hf@@ of the cohort born at the switch, and
 That is @@tr_caught_ratio@@ times what the newborn cohort bears, and it is the
 sense in which the transition is costly while it lasts.
 
+\textcolor{red}{Panels (b) and (c) show the mechanism behind panel (a). Homelessness in
+panel (b) @@tr_hltf_dir@@ from @@tr_hl0@@ percent at the old rest point to
+@@tr_hltf@@ percent under Treatment First and @@tr_hlhf_dir@@ to @@tr_hlhf@@
+percent under Housing First, so the conditional programme ends up
+@@tr_hl_cmp@@ the unconditional one on the margin $\delta_h$ prices. Panel (c)
+is the one that decides the ranking: it is the share of each cohort's parents
+carrying the disorder, and it is what the child's penalty keys on.}
+
 From the second cohort on the paths separate, and they separate
 because the parent generation they were born to is different. Under Treatment
 First the share of children born to a parent with the disorder @@tr_sudtf_dir@@ from
@@ -1249,13 +1258,13 @@ by the single cohort standing at the switch.
 \includegraphics[width=\textwidth]{figures/stylized_transition.pdf}
 \caption{The transition after the reform}
 \label{fig:trans}
-\notes{\textwidth}{Note: Panel A is the expected lifetime value
+\notes{\textwidth}{Note: Panel (a) is the expected lifetime value
 of each newborn cohort, as a consumption equivalent against the pre reform rest
-point; Panels B and C are that cohort's own homelessness and disorder rates, so
+point; panels (b) and (c) are that cohort's own homelessness and disorder rates, so
 the welfare path can be read against the mechanism producing it. The reform moves
 the programme from Housing First at $\pi_V=@@pvbase@@$ to universal cover under
 the policy named. Cohort $1$ is born into the old income distribution and lives
-under the new rule. The marker in Panel A is the generation already in period 2
+under the new rule. The marker in panel (a) is the generation already in period 2
 when the reform lands, which no cohort line can carry: it is measured over its
 remaining period rather than a full life.}
 \end{figure}
