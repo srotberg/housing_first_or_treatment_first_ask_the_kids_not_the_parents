@@ -24,6 +24,20 @@ WRITE = os.path.normpath(os.path.join(HERE, '..', '..', 'writing'))
 WW = W / W.sum()
 
 
+def compare(a, b, name, more='higher', less='lower', same='the same as',
+            tol=0.0):
+    """Words for an inequality, so a sentence turns when its numbers do.
+
+    Returns {name+'dir'} for the direction word and {name+'gap'} for the size of
+    the gap, both as strings the prose can quote. Any sentence in the paper that
+    asserts one quantity is above or below another should take its direction
+    word from here, because the assertion is a result and results move.
+    """
+    d = a - b
+    w = more if d > tol else (less if d < -tol else same)
+    return {name + 'dir': w, name + 'gap': f'{abs(d):.4f}'}
+
+
 def numbers(base):
     out = {}
     pc = lambda z, n=2: f'{100*z:.{n}f}'
@@ -100,6 +114,19 @@ def numbers(base):
     out['sudt'] = pc(mt['sud'], 3)
     out['costh'] = f'{mh["cost"]:.4f}'
     out['costt'] = f'{mt["cost"]:.4f}'
+    # THE SENTENCE THAT COMPARES THEM HAS TO TURN WITH THEM. The two outlays
+    # are within a fraction of a percent of each other and which is the larger
+    # is not robust to a recalibration, so the prose around them is generated
+    # from the same comparison rather than typed. A sweep that flipped the sign
+    # and left the paragraph saying "more expensive" would be a contradiction no
+    # reader could resolve and no test would catch.
+    out.update(compare(mt['cost'], mh['cost'], 'cost',
+                       more='more', less='less', same='no more'))
+    out['costdearer'] = ('the dearer' if mt['cost'] > mh['cost']
+                         else 'the cheaper' if mt['cost'] < mh['cost']
+                         else 'no dearer')
+    # which of the two offsetting effects wins is the same comparison
+    out['costeffect'] = 'first' if mt['cost'] > mh['cost'] else 'second'
 
     # welfare at universal cover
     vh = v1_pop(base, 'HF', 1.0)
@@ -171,6 +198,22 @@ def mark(new, prev):
     return out, moved
 
 
+def _params(out):
+    """The quantitative model's table numbers, from the Fortran declarations.
+
+    sync_tables.py reads them out of the Fortran, pushes them into Tables 5 and
+    6 and writes them here, so the prose quotes the same number the table does
+    and neither is typed. setdefault, not assignment: a name this file already
+    computes from the stylized model wins, since that one is the model's own
+    output rather than a target read off a declaration."""
+    p = os.path.normpath(os.path.join(HERE, '..', 'paper', 'params_numbers.json'))
+    if not os.path.exists(p):
+        print('   params_numbers.json missing: run code/paper/sync_tables.py first')
+        return
+    for k, v in json.load(open(p)).items():
+        out.setdefault(k, v)
+
+
 def _transition(out):
     """The transition numbers, from the file transition.py writes.
 
@@ -189,6 +232,7 @@ if __name__ == '__main__':
     import sys
     base = with_(P(), **json.load(open(os.path.join(HERE, 'calibrated.json'))))
     n = numbers(base)
+    _params(n)
     _transition(n)
     if '--freeze' in sys.argv:
         json.dump(n, open(PREV, 'w'), indent=1)
