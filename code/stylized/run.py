@@ -370,6 +370,19 @@ def figure_numbers(base):
                        else 'no dearer')
     d['costeffect'] = 'first' if mt['cost'] > mh['cost'] else 'second'
 
+    # WHETHER CONDITIONALITY DETERS EVERYONE, which Section 4 contrasts the
+    # quantitative model against. It used to say "Treatment First deters everyone
+    # and nobody is thrown off the rolls", which was true only while the period 2
+    # condition revoked on a history of use: once it tests the current period, a
+    # few households use anyway and are revoked, and the contrast has to say so.
+    if mt['part'] < 5e-5:
+        d['tfdeter'] = ('Treatment First deters everyone, so nobody is ever '
+                        'thrown off the rolls')
+    else:
+        d['tfdeter'] = ('Treatment First deters all but '
+                        f'{100 * mt["part"]:.2f} percent of households, and that '
+                        'remainder is what conditionality actually revokes')
+
     # PANEL (a) OF FIGURE 3, whose two claims in the prose are both orderings and
     # so both have to follow the curves. That the two policies end at zero
     # homelessness is a result, not an identity, and which of them runs lower on

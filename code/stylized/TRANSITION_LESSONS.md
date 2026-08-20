@@ -17,7 +17,9 @@ use under the old rule, a disorder cannot be recovered from once the last period
 is terminal, and conditionality now withdraws their voucher for a decision taken
 before the rule existed. They lose **8.7 per cent of consumption**, and 0.64 per
 cent of them are put on the street by the revocation itself. Two orders of
-magnitude more than the cohort path showed.
+magnitude more than the cohort path showed. (Those two figures were computed
+under the old period 2 rule and have not been restated; the point they make is
+about the size of the gap, which the fix does not close.)
 
 **For the full model.** There is no single "caught" generation there, there are
 fifty four of them, one per age. Every household alive at the reform has a
@@ -29,17 +31,24 @@ close to the end to benefit from the treatment the policy is buying.
 
 ## 2. Check whether the deterred margin is empty before believing a small cost
 
-Under Treatment First at universal cover the stylized model has participation of
-exactly zero at every income. Nobody uses, so nobody is revoked, so nobody is
-made homeless, so no child inherits the homelessness penalty. The policy's cost
-is the loss of an OPTION, not a realised penalty, which is why it looks small.
+Under Treatment First at universal cover the stylized model USED TO HAVE
+participation of exactly zero at every income. Nobody used, so nobody was
+revoked, so nobody was made homeless, so no child inherited the homelessness
+penalty. The policy's cost was the loss of an OPTION rather than a realised
+penalty, which is why it looked small.
 
-That is a real result but it is knife edge in a specific way: it holds at
-universal cover and need not hold at lower generosity, where some households
-still use and the revocation actually fires. **Before reporting that a
+**That turned out to be a symptom of the revocation bug, not a property of the
+model.** The period 2 condition was testing a history of use rather than the
+current period, so any household that used in period 1 lost its period 2
+voucher whatever happened to it, and the deterrent was strong enough to empty
+the margin completely. With the condition testing the current period, as the
+quantitative model's does, participation under Treatment First at universal
+cover is small but positive and the revocation actually fires.
+
+The lesson stands and is now better evidenced: **before reporting that a
 conditional policy is cheap, check whether anyone is actually subject to the
-condition in equilibrium.** If the answer is nobody, say so, because the reader
-will otherwise assume the number prices a revocation that never happens.
+condition in equilibrium.** An answer of exactly nobody is worth treating as a
+bug report and not as a result until it has been chased down.
 
 ## 3. Watch which period an inherited penalty keys on
 
