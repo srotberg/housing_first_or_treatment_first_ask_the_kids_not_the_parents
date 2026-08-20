@@ -214,6 +214,44 @@ def mark(new, prev):
     return out, moved
 
 
+def _derived_from_fortran(out):
+    """
+    Numbers the prose DERIVES from two Fortran declarations rather than quoting
+    one. The conversion rate from use to disorder is the SUD rate over the
+    participation rate, and Section 5 uses it twice to weight the drug spending
+    share. Typed, it was 0.717 and 0.283 beside two rates that the calibration
+    moves, so the arithmetic in the sentence could stop being true of its own
+    inputs.
+    """
+    F = _fortran_all()
+    try:
+        sud = float(F['f_sud_rate_data'])
+        part = float(F['f_participation_rate_data'])
+    except (KeyError, ValueError):
+        return
+    r = sud / part
+    out.setdefault('convrate', f'{r:.3f}')
+    out.setdefault('convrest', f'{1.0 - r:.3f}')
+
+
+def _fortran_all():
+    """
+    fortran_numbers.json, every Fortran declaration as f_<name>.
+
+    params_numbers.json carries only the 36 constants that are rows of Tables 5
+    and 6. The quantitative model's prose quotes many more than its tables
+    state, so this exposes all of them and lets a sentence read the declaration
+    rather than repeat it.
+    """
+    p = os.path.normpath(os.path.join(HERE, '..', 'paper',
+                                      'fortran_numbers.json'))
+    if not os.path.exists(p):
+        print('   fortran_numbers.json missing: run '
+              'code/paper/export_consts.py first')
+        return {}
+    return json.load(open(p))
+
+
 def _params(out):
     """The quantitative model's table numbers, from the Fortran declarations.
 

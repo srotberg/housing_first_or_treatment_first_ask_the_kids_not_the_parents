@@ -43,6 +43,9 @@ python3 children.py
 echo "== transition"
 python3 transition.py
 
+echo "== the Fortran's constants, all of them"
+python3 "$ROOT/code/paper/export_consts.py"
+
 echo "== the Fortran's parameter tables"
 python3 "$ROOT/code/paper/sync_tables.py"
 
