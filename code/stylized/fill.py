@@ -14,9 +14,8 @@ import os
 import numpy as np
 from stylized import P, with_, value1, H_RATIO
 from calibrate import YG, W, stats, bracket, TARGET
-from welfare import cev, v1_pop
 from children import (child_grid, shifted, DEL_D, DEL_H, RATIO_TARGET,
-                      ratio_h, verdict)
+                      ratio_h)
 from frontier import TH_BREAK
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -41,7 +40,11 @@ def compare(a, b, name, more='higher', less='lower', same='the same as',
 def numbers(base, fig):
     """The prose's numbers. `fig` is figure_numbers.json, already loaded."""
     out = dict(fig)
-    raw = out.pop('_raw')
+    raw = dict(out.pop('_raw'))
+    wel = _welfare()
+    raw.update(wel.pop('_raw'))
+    out.update(wel)
+    out.update(_children())
     pc = lambda z, n=2: f'{100*z:.{n}f}'
 
     out['beta'] = f'{base.beta:.3f}'
@@ -112,25 +115,15 @@ def numbers(base, fig):
     # reader could resolve and no test would catch.
 
     # welfare at universal cover
-    vh = v1_pop(base, 'HF', 1.0)
-    vt = v1_pop(base, 'TF', 1.0)
-    lam = cev(base, vh - vt)
-    hit = lam > 1e-6
-    out['worse'] = f'{100*float((WW * (vt < vh - 1e-9)).sum()):.1f}'
-    # NOBODY BETTER OFF IS A RESULT, NOT AN ASSUMPTION. Treatment First offers a
-    # strict subset of Housing First's coverage, so no household should gain
-    # from it, and verify.py checks the same property. The sentence that states
-    # it takes its wording from here so that a violation would show up in the
-    # paper rather than only in a test.
-    better = 100.0 * float((WW * (vt > vh + 1e-9)).sum())
-    out['betteroff'] = ('none is better off' if better < 0.05
-                        else f'{better:.1f} percent are better off')
-    out['cev_aff'] = pc(float((WW * lam)[hit].sum() / max(WW[hit].sum(), 1e-12)))
-    out['cev_pop'] = pc(float((WW * lam).sum()), 3)
+    # THE WELFARE NUMBERS ARE TABLE 3'S OWN CELLS, written by welfare.py when it
+    # built the table and merged into `out` at the top of this function. They are
+    # not recomputed here. That includes whether anyone is better off under
+    # Treatment First, which is a RESULT and not an assumption: the conditional
+    # policy covers a strict subset of what the unconditional one covers, so
+    # nobody should gain, and verify.py checks the same property independently.
 
     # the externality on children
     v1b, useb = child_grid(base, 'HF', base.pV)
-    progb = stats(with_(base, policy='HF', pV=base.pV))['prog']
     ratio = shifted(useb, DEL_D) / max(shifted(useb, 0.0), 1e-12)
     out['ratio'] = f'{ratio:.1f}'
     out['del_d'] = f'{DEL_D:.2f}'
@@ -140,25 +133,11 @@ def numbers(base, fig):
     # UNTARGETED: what delta_h, set from Chetty et al., implies for how much
     # likelier the child of a homeless parent is to be homeless itself
     out['ratio_h'] = f'{ratio_h(base):.2f}'
-    # THE SMALLEST GAIN OVER LOSS ANYWHERE IN PANEL A that is not the zero
-    # penalty, so the note can say the ranking survives every penalty it shows
-    # WITHOUT the reader having to take it on trust, and so the claim breaks
-    # loudly if it ever stops being true.
-    _r = []
-    for _d in (0.20, DEL_D, 0.60):
-        _p, _g = verdict(base, _d, pV=1.0)
-        _r.append(_g / max(_p, 1e-12))
-    out['ratiomin'] = f'{min(_r):.0f}'
-    v1u, _ = child_grid(base, 'HF', 1.0)
-    per_case = cev(base, shifted(v1u, 0.0) - shifted(v1u, DEL_D))
-    priv = float((WW * cev(base, vh - vt)).sum())
-    dsud = raw['sudh'] - raw['sudt']
-    gain = dsud * per_case
-    out['percase'] = pc(per_case, 1)
-    out['priv'] = pc(priv, 3)
-    out['dsud'] = pc(dsud, 3)
-    out['gain'] = pc(gain, 3)
-    out['ratiogl'] = f'{gain / max(priv, 1e-12):.1f}'
+    # PANEL B OF TABLE 4 IS NOT RECOMPUTED HERE either. children.py writes every
+    # cell of it while it builds the table, including the smallest gain over loss
+    # anywhere in Panel A, and _children() merges them in at the top of this
+    # function. The private cost row is Table 3's population consumption
+    # equivalent, and verify.py checks that the two agree.
 
     v1 = np.array([value1(base, y, 'HF') for y in YG])
     out['minv1'] = f'{v1.min():.2f}'
@@ -217,6 +196,27 @@ def _figures(base):
     p = os.path.join(HERE, 'figure_numbers.json')
     if not os.path.exists(p):
         raise SystemExit('   figure_numbers.json missing: run run.py first')
+    return json.load(open(p))
+
+
+def _children():
+    """children_numbers.json, written by children.py while it built Table 4."""
+    p = os.path.join(HERE, 'children_numbers.json')
+    if not os.path.exists(p):
+        raise SystemExit('   children_numbers.json missing: run children.py first')
+    return json.load(open(p))
+
+
+def _welfare():
+    """
+    welfare_numbers.json, written by welfare.py while it built Table 3.
+
+    Same contract as _figures: a number that a table states is computed by
+    whatever writes that table, once.
+    """
+    p = os.path.join(HERE, 'welfare_numbers.json')
+    if not os.path.exists(p):
+        raise SystemExit('   welfare_numbers.json missing: run welfare.py first')
     return json.load(open(p))
 
 

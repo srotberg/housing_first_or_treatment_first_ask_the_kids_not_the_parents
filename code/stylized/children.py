@@ -355,6 +355,28 @@ def tab_children(par, pV=1.0):
         f.write('\n'.join(L) + '\n')
     print('   wrote tab_children.tex')
 
+    # AND THE SAME NUMBERS FOR THE PROSE, for the reason set out in welfare.py:
+    # the paragraph beside a table quotes that table's cells rather than a second
+    # computation of them. The smallest gain-over-loss ratio anywhere in Panel A
+    # other than at the zero penalty is here too, because the sentence that says
+    # the ranking survives every penalty shown is an assertion about this panel
+    # and has to break loudly if it stops being true.
+    import json as _json
+    ratios = [g / max(p_, 1e-12)
+              for d in sorted({0.20, DEL_D, 0.60})
+              for p_, g in (verdict(par, d, pV=pV),)]
+    here = os.path.dirname(os.path.abspath(__file__))
+    dd = {'priv': f'{100 * priv:.3f}',
+          'dsud': f'{100 * dsud:.3f}',
+          'percase': f'{100 * per_case:.1f}',
+          'gain': f'{100 * gain:.3f}',
+          'ratiogl': f'{gain / max(priv, 1e-12):.1f}',
+          'ratiomin': f'{min(ratios):.0f}',
+          'ratiominword': 'exceeds' if min(ratios) > 1.0 else 'does not exceed'}
+    with open(os.path.join(here, 'children_numbers.json'), 'w') as f:
+        _json.dump(dd, f, indent=1)
+    print('   wrote children_numbers.json')
+
 
 if __name__ == '__main__':
     base = with_(P(), **json.load(open('calibrated.json')))

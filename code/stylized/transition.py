@@ -273,9 +273,13 @@ def figure(paths, cg=None):
     return fig
 
 
-def _dir(now, was, up, down, tol=5e-5):
-    """The word for which way a share moved, so a sentence turns with it."""
-    return up if now > was + tol else (down if now < was - tol else 'holds')
+def _dir(now, was, up, down, tol=5e-5, same='holds'):
+    """The word for which way a share moved, so a sentence turns with it.
+
+    `same` is what to say when the two are within tol, and it has to be given
+    wherever the sentence around the word would not read as English with the
+    default: "Treatment First is the holds of the two" is not a sentence."""
+    return up if now > was + tol else (down if now < was - tol else same)
 
 
 def _settle(tf, hf, tol=1e-3):
@@ -324,6 +328,10 @@ def numbers(paths, par=None, cg=None):
     # WHICH COHORT THE PATHS HAVE SETTLED BY, to a tenth of a point of the rest
     # point, rather than the "two or three" the text used to assert.
     d['tr_settle'] = _settle(tf, hf)
+    # WHICH OF THE TWO THE COHORT AT THE SWITCH PREFERS. The gap is under a
+    # tenth of a point, so which way it falls is not robust to a recalibration.
+    d['tr_t1_dir'] = _dir(tf[1][1], hf[1][1], 'above', 'below', tol=1e-6,
+                          same='level with')
     if cg is not None:
         d['tr_caught'] = f'{100*cg["cev"]:.1f}'
         d['tr_caught_hl'] = f'{100*cg["hl_tf"]:.2f}'

@@ -15,6 +15,9 @@ from that one place.
 | anything the stylized model computes | the model itself | `code/stylized/fill.py` → `@@name@@` |
 | a stylized parameter or target | `stylized.py` / `calibrate.py` | `code/stylized/tables.py` → Tables 1 and 2 |
 | a transition number | `transition.py` | `transition_numbers.json` → `fill.py` |
+| a number a figure shows | `run.py`, while it draws | `figure_numbers.json` → `fill.py` |
+| a cell of Table 3 | `welfare.py`, while it writes the table | `welfare_numbers.json` → `fill.py` |
+| a cell of Table 4 | `children.py`, while it writes the table | `children_numbers.json` → `fill.py` |
 
 ## Adding a parameter or a result
 
@@ -30,12 +33,12 @@ from that one place.
 4. Quote it in the prose as `@@q_<symbol>@@`, never as a digit.
 5. Run `python3 writing/check_numbers.py`. It should stay clean.
 
-## Numbers that also appear on a figure
+## Numbers that also appear on a figure or in a table
 
-If the prose quotes a number that a figure shows, **the figure computes it and
-the prose reads it**. `run.py` writes `figure_numbers.json` while it draws, and
-`fill.py` loads that file rather than recomputing. Never compute such a number
-twice.
+If the prose quotes a number that a figure or a table shows, **whatever draws
+the figure or writes the table computes it, and the prose reads it**. `run.py`,
+`welfare.py`, `children.py` and `transition.py` each write a small JSON beside
+their output and `fill.py` merges all four. Never compute such a number twice.
 
 This is not a tidiness rule. The note went to press saying the income ratio was
 "unchanged at 3.33" at half the mortality channel's strength, beside a figure

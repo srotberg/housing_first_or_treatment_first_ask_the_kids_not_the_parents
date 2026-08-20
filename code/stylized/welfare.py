@@ -256,6 +256,23 @@ def tab_welfare(par, pV=1.0):
         f.write('\n'.join(L) + '\n')
     print('   wrote tab_welfare.tex')
 
+    # AND THE SAME NUMBERS FOR THE PROSE. Every one of these is a cell of the
+    # table above, and fill.py used to compute each of them a second time. Two
+    # computations of one number are two numbers: they agree until one of the
+    # two code paths changes, and then the sentence contradicts the table it is
+    # pointing at. The paragraph now quotes the table's own cells.
+    import json as _json
+    here = os.path.dirname(os.path.abspath(__file__))
+    d = {'worse': f'{100 * worse:.1f}',
+         'cev_aff': f'{100 * among:.2f}',
+         'cev_pop': f'{100 * avg:.3f}',
+         'betteroff': ('none is better off' if better < 5e-4
+                       else f'{100 * better:.1f} percent are better off'),
+         '_raw': {'priv': float(avg)}}
+    with open(os.path.join(here, 'welfare_numbers.json'), 'w') as f:
+        _json.dump(d, f, indent=1)
+    print('   wrote welfare_numbers.json')
+
 
 if __name__ == '__main__':
     base = with_(P(), **json.load(open('calibrated.json')))
