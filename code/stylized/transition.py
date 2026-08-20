@@ -378,6 +378,14 @@ def _dir(now, was, up, down, tol=5e-5, same='holds'):
 
 
 
+
+def _ordinal(n):
+    """Small integers as ordinal words. The prose says "from the third cohort",
+    so a cardinal here reads as "from the three cohort"."""
+    return {1: 'first', 2: 'second', 3: 'third', 4: 'fourth', 5: 'fifth',
+            6: 'sixth', 7: 'seventh', 8: 'eighth', 9: 'ninth'}.get(n, f'{n}th')
+
+
 def _words(n):
     """Small integers as words, which is how the prose states them."""
     return {1: 'one', 2: 'two', 3: 'three', 4: 'four', 5: 'five',
@@ -485,7 +493,7 @@ def numbers(paths, par=None, cg=None):
     # WHICH COHORT THE RANKING FLIPS ON, which is a result and moves with the
     # calibration: the first cohort at which Treatment First is ahead.
     _fl = next((t for t in range(1, len(tf)) if tf[t][1] > hf[t][1]), None)
-    d['tr_flip'] = _words(_fl) if _fl else 'no'
+    d['tr_flip'] = _ordinal(_fl) if _fl else 'no'
     d['tr_t1_gap'] = f'{100*_gap:.2f}'
     d['tr_gen_vs_cond'] = (f'{_rise / _gap:.0f}' if _gap > 1e-9 else 'many')
     # WHICH OF THE TWO THE COHORT AT THE SWITCH PREFERS. The gap is under a
