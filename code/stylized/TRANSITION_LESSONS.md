@@ -102,12 +102,28 @@ point, and it is easier to build it that way than to retrofit it:
    model there is a caught generation at every age, and the worst hit will be in
    middle age: old enough to carry a disorder, too near the end to gain from the
    treatment the policy buys.
-2. **Key the child's inherited penalty on the parent's WHOLE life**, not on one
-   period. Keyed on the first period alone, the homelessness that conditionality
-   causes by revoking vouchers never reaches a child, and the mechanism is
-   switched off by a timing assumption rather than by economics. This was
-   corrected in the stylized model, and it doubled the share of children born to
-   an ever unhoused parent, from 0.49 to 1.13 per cent.
+2. **Key the child's inherited penalty on the period the parent DIES in**, which
+   is also the period conditionality acts in. This was got wrong twice, once in
+   each direction, and both errors were invisible in the output.
+
+   Keyed on the FIRST period alone, the homelessness conditionality causes by
+   revoking vouchers never reaches a child at all: the voucher is withdrawn at
+   the transition into period 2, so the mechanism is switched off by a timing
+   assumption rather than by economics.
+
+   Keyed on EITHER period, which was the overcorrection, a parent transmits a
+   penalty it picked up under the OLD regime even when the new programme housed
+   it for the whole of its final period. In the transition that produced
+   nonsense: under universal Housing First, where nobody is unhoused, 0.73 per
+   cent of the second cohort of newborns was still being born behind an unhoused
+   parent, because their parents had been unhoused years earlier under the old
+   rationed programme. The author caught this by asking the obvious question,
+   which is that under universal Housing First the initial old must be housed.
+
+   Period 2 is right on both counts, and equation (11) already said so: the
+   penalty is keyed on a parent "unhoused when it died". With it, Housing First
+   transmits nothing at the reform and the entire difference between the two
+   policies is conditionality's own revocations, 0.33 per cent against 0.00.
 3. **Report the mechanism beside the welfare.** Homelessness and disorder rates
    by cohort, on the same figure. One welfare panel invites the reading that
    nothing is happening.

@@ -38,7 +38,7 @@ import json
 import os
 import numpy as np
 
-from stylized import P, with_, value1, use_prob, homeless_prob, ever_homeless_prob
+from stylized import P, with_, value1, use_prob, homeless_prob, terminal_homeless_prob
 from calibrate import YG, W, stats
 from welfare import cev
 from children import DEL_D, DEL_H
@@ -95,7 +95,7 @@ def _policy_grids(par, policy, pV):
     # switch off the channel by which conditionality's own revocations reach a
     # child.
     hl = np.array([homeless_prob(q, y, policy) for y in YG], dtype=float)
-    ev = np.array([ever_homeless_prob(q, y, policy) for y in YG], dtype=float)
+    ev = np.array([terminal_homeless_prob(q, y, policy) for y in YG], dtype=float)
     prog = stats(q)['prog']
     return (v1, np.clip(use * prog, 0.0, 1.0), np.clip(hl, 0.0, 1.0),
             np.clip(ev, 0.0, 1.0))
@@ -139,13 +139,19 @@ def _bridge_grids(par, new_policy, pv_new):
         s_tot = e_tot = 0.0
         for p, gain, v, bu, bn, _inc, _own in period1(old, y, BASE_POLICY):
             uses = gain > 0.0
-            a, street1 = (bu if uses else bn)[0], (bu if uses else bn)[1]
+            a = (bu if uses else bn)[0]
             pid = (1.0 - float(np.exp(-old.lam * v))) if uses else 0.0
             Hx = H2u if uses else H2c
             street2 = sum(pd * float(np.interp(a, ag, Hx[:, d]))
                           for d, pd in ((1, pid), (0, 1.0 - pid)))
             s_tot += p * pid
-            e_tot += p * (street1 + (1.0 - street1) * street2)
+            # PERIOD 2 ONLY, because that is when the household dies and when
+            # conditionality acts. Counting period 1 as well had the initial old
+            # transmitting a penalty picked up under the OLD rationed programme
+            # even when the new universal one housed them for the whole of their
+            # second period, so children were born behind a Housing First that
+            # had housed their parents.
+            e_tot += p * street2
         sud[i] = s_tot
         ev[i] = e_tot
     return np.clip(sud, 0.0, 1.0), np.clip(ev, 0.0, 1.0)

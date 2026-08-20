@@ -242,14 +242,28 @@ print(f'        peak at pi_V={pvs[i]:.1f} of {100*ph[i]:.2f}%, '
       f'ending at {100*ph[-1]:.2f}%')
 
 print('\n=== 7b. the pieces added late, which had the least review ===')
-from stylized import ever_homeless_prob, homeless_prob
+from stylized import terminal_homeless_prob, ever_homeless_prob, homeless_prob
 q = with_(BASE, pV=BASE.pV, policy='TF')
 p1 = np.array([homeless_prob(q, y, 'TF') for y in YG])
+tm = np.array([terminal_homeless_prob(q, y, 'TF') for y in YG])
 ev = np.array([ever_homeless_prob(q, y, 'TF') for y in YG])
-chk('ever homeless is never below period 1 homeless',
-    bool(np.all(ev >= p1 - 1e-12)), f'worst {float((p1-ev).max()):.2e}')
-chk('ever homeless is a probability',
-    bool(np.all((ev >= -1e-12) & (ev <= 1 + 1e-12))))
+chk('terminal homelessness is a probability',
+    bool(np.all((tm >= -1e-12) & (tm <= 1 + 1e-12))))
+chk('ever homeless is never below either single period',
+    bool(np.all(ev >= p1 - 1e-12)) and bool(np.all(ev >= tm - 1e-12)))
+# THE CHILD'S PENALTY KEYS ON THE PERIOD THE PARENT DIES IN, which is also the
+# period conditionality acts in. Under universal Housing First nobody is
+# unhoused, so nothing can be transmitted; if this is above zero the penalty is
+# reading a period the new programme has already fixed.
+_hf = np.array([terminal_homeless_prob(with_(BASE, pV=1.0, policy='HF'), y, 'HF')
+                for y in YG])
+chk('universal Housing First transmits no homelessness penalty',
+    float((WW * _hf).sum()) < 1e-9,
+    f'{100*float((WW*_hf).sum()):.4f}% of parents unhoused at death')
+_tf = np.array([terminal_homeless_prob(with_(BASE, pV=1.0, policy='TF'), y, 'TF')
+                for y in YG])
+chk('universal Treatment First transmits some, through its revocations',
+    float((WW * _tf).sum()) >= float((WW * _hf).sum()))
 cg = T.caught(BASE)
 chk('the caught generation loses rather than gains', cg['cev'] > 0,
     f"{100*cg['cev']:.2f}%")

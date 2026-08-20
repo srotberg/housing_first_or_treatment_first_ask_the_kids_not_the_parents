@@ -69,7 +69,7 @@ Run:  python3 children.py
 
 import json
 import numpy as np
-from stylized import P, with_, value1, use_prob, ever_homeless_prob
+from stylized import P, with_, value1, use_prob, terminal_homeless_prob
 from calibrate import YG, W, stats
 from welfare import cev
 
@@ -101,7 +101,7 @@ def child_homeless_grid(par, policy, pV):
     itself causes could never reach a child, so the channel was switched off by
     a timing assumption rather than by economics."""
     q = with_(par, policy=policy, pV=pV)
-    return np.array([ever_homeless_prob(q, y, policy) for y in YG], dtype=float)
+    return np.array([terminal_homeless_prob(q, y, policy) for y in YG], dtype=float)
 
 
 def shifted(vals, delta):

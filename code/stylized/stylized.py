@@ -708,6 +708,42 @@ def homeless_prob(par, y, policy=None):
     return float(tot)
 
 
+def terminal_homeless_prob(par, y, policy=None):
+    """
+    The probability a household at income y is on the street IN PERIOD 2, which
+    is the period it dies in.
+
+    THIS IS WHAT THE CHILD'S PENALTY KEYS ON, and getting it wrong in either
+    direction breaks something. Keyed on PERIOD 1 alone, conditionality's own
+    revocations could never reach a child, because the voucher is withdrawn at
+    the transition into period 2. Keyed on EITHER period, which is what it used
+    to be, a parent who was unhoused before the reform transmits a penalty even
+    when the new programme housed it for the whole of its second period: under
+    universal Housing First the initial old are housed when they die, and their
+    children were still being born behind a penalty picked up under the old
+    rationed programme years earlier.
+
+    Period 2 is the right one on both counts. It is when the household dies,
+    which is what equation (11) says the penalty is keyed on, and it is when
+    conditionality acts, so a revocation reaches the child exactly as it should.
+    """
+    policy = policy or par.policy
+    ag, W2c, H2c, _, _ = solve_period2(par, y, policy, used=0)
+    if policy == 'HF':
+        H2u = H2c
+    else:
+        _, _, H2u, _, _ = solve_period2(par, y, policy, used=1)
+    tot = 0.0
+    for p, g, v, bu, bn, *_ in period1(par, y, policy):
+        uses = g > 0.0
+        a = (bu if uses else bn)[0]
+        pid = (1.0 - float(np.exp(-par.lam * v))) if uses else 0.0
+        Hx = H2u if uses else H2c
+        tot += p * sum(pd * float(np.interp(a, ag, Hx[:, d]))
+                       for d, pd in ((1, pid), (0, 1.0 - pid)))
+    return float(tot)
+
+
 def ever_homeless_prob(par, y, policy=None):
     """The probability a household at income y is on the street in EITHER period.
 
