@@ -131,8 +131,9 @@ def caught(par, pv_new=PV_OPT):
     Every cohort in the path lives its whole life under one policy. The
     households in period 2 when the policy changes did not: they chose whether
     to use under the OLD rule, period 2 is terminal so a disorder cannot be
-    recovered from, and Treatment First now withdraws their voucher for a
-    decision taken before the rule existed. They are the transition's cost, and
+    recovered from, and Treatment First now withdraws the voucher from those of
+    them carrying a disorder they acquired before the rule existed, with no
+    period left in which to shed it. They are the transition's cost, and
     a figure that omits them makes conditionality look nearly free.
 
     Returns the consumption equivalent they lose and the homelessness the

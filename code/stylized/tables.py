@@ -7,7 +7,7 @@ code. Run:  python3 tables.py
 import json
 import os
 import numpy as np
-from stylized import P, with_
+from stylized import P, with_, H_RATIO
 from calibrate import bracket, stats
 from run import _scaled
 
@@ -69,7 +69,8 @@ EXTERNAL = [
         # quarter of h_lg, and printing 0.10 beside the standard unit's 0.41
         # invited the reader to multiply by four and find 0.40. Writing the
         # relation itself is exact and there is nothing left to check.
-        ('h_sm', r'h_2', 'Small rental unit', 'Set', r'0.25\times h_3'),
+        ('h_sm', r'h_2', 'Small rental unit', 'Set',
+         r'%g\times h_3' % H_RATIO),
         ('kappa_r', r'\kappa_r', "Tenant's share of the rent",
          'HUD voucher rules', '{:.2f}'),
         ('kV', r'\kappa_V', 'Voucher means test',

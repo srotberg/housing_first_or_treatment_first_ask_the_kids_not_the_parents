@@ -102,11 +102,13 @@ def fig_who_uses(base):
     # that is still falling hard, and it leaves the unemployment channel's
     # failure looking like it might be about to turn. It is not.
     sc = np.linspace(0.0, SCAN_HI, 11)
-    curves = {}
+    curves, parts = {}, {}
     for which, col, ls, mk in (('mortality', '#2C6FAD', '-', 'o'),
                                ('unemployment', '#D9822B', '--', 's')):
-        r_ = [stats(_scaled(base, which, s))['r_use'] for s in sc]
+        m_ = [stats(_scaled(base, which, s)) for s in sc]
+        r_ = [x['r_use'] for x in m_]
         curves[which] = r_
+        parts[which] = [x['part'] for x in m_]
         ax.plot(100 * sc, r_, ls, color=col, marker=mk, ms=4.5,
                 label=f'{which} channel')
     ax.axhline(1.0, color='0.3', lw=1.1)
@@ -141,7 +143,7 @@ def fig_who_uses(base):
                 va='bottom', fontsize=8.5, color='0.4')
     fig.tight_layout()
     save(fig, 'stylized_who_uses')
-    return sc, curves
+    return sc, curves, parts
 
 
 def fig_moral_hazard(base):
@@ -289,7 +291,7 @@ def figure_numbers(base):
     the figure showed. Anything that appears on a figure is now computed once,
     here, and read from this file by fill.py.
     """
-    sc, curves = fig_who_uses(base)
+    sc, curves, parts = fig_who_uses(base)
     pVs, H, T, mH, mT = fig_moral_hazard(base)
     fig_margins(base)
 
@@ -328,12 +330,9 @@ def figure_numbers(base):
     # At the far end of the mortality curve participation is a step function of
     # b and no b delivers the target, so the figure's note cannot promise a flat
     # participation rate without checking first.
-    miss = 0
-    for which in ('mortality', 'unemployment'):
-        for s_ in sc:
-            if abs(stats(_scaled(base, which, float(s_)))['part']
-                   - TARGET['part']) > 5e-4:
-                miss += 1
+    miss = sum(1 for which in ('mortality', 'unemployment')
+               for pp in parts[which]
+               if abs(pp - TARGET['part']) > 5e-4)
     d['partnote'] = ('throughout' if miss == 0 else
                      f'at every point of the scan but {miss} of the '
                      f'{2 * len(sc)}, where participation is a step function of '
@@ -359,6 +358,19 @@ def figure_numbers(base):
                        else 'the cheaper' if mt['cost'] < mh['cost']
                        else 'no dearer')
     d['costeffect'] = 'first' if mt['cost'] > mh['cost'] else 'second'
+
+    # PANEL (a) OF FIGURE 3, whose two claims in the prose are both orderings and
+    # so both have to follow the curves. That the two policies end at zero
+    # homelessness is a result, not an identity, and which of them runs lower on
+    # the way there is a result the conditional policy could lose.
+    hlH = np.array([m['homeless'] for m in mH])
+    hlT = np.array([m['homeless'] for m in mT])
+    top = max(float(hlH[-1]), float(hlT[-1]))
+    d['hluniv'] = 'zero' if top < 5e-5 else f'{100 * top:.2f} percent'
+    interior = slice(1, -1)
+    gap = float(np.mean(hlT[interior] - hlH[interior]))
+    d['hltfdir'] = ('below' if gap < -1e-7 else
+                    'above' if gap > 1e-7 else 'on top of')
 
     # THE RAW VALUES TOO, under a key the placeholder filler ignores. fill.py
     # needs the SUD rates at full precision to form the externality's gain, and

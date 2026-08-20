@@ -404,7 +404,18 @@ TARGET = dict(part=0.0513, homeless=0.00399, sud=0.0368, vsl=80.0,
 # and uses more, and lambda has to be smaller to keep the same share of users
 # progressing. A bracket that cannot reach a small lambda would report a corner
 # rather than a calibration.
-LAM_LO, LAM_HI = 0.05, 4000.0
+#
+# AND IT REACHES FAR UP, FOR A REASON WORTH KNOWING. The ceiling was 4000 and it
+# BOUND: with b refit at every trial the adult SUD rate reaches 3.38 per cent at
+# lambda = 4000 against a target of 3.68, so every trial read low, the bracket
+# walked to its ceiling and reported a corner as a calibration. The rate does not
+# saturate below the target, it just gets there slowly, because a household that
+# faces a steeper hazard per unit BUYS FEWER UNITS: v falls roughly as 1/lambda,
+# so pi(v) = 1 - exp(-lambda v) creeps rather than jumps. It crosses the target
+# between 4000 and 8000 and reaches its own ceiling, prog = 1 and hence
+# sud = part = 5.13 per cent, by 20000. So the bracket runs to 20000, which is
+# where the moment stops responding rather than where patience ran out.
+LAM_LO, LAM_HI = 0.05, 20000.0
 
 # THETA IS SET, NOT BRACKETED, and a correction to what an earlier version of this
 # comment said. It claimed the drug spending share is bimodal in theta, running

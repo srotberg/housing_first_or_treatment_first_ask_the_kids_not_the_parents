@@ -12,7 +12,7 @@ Run:  python3 fill.py
 import json
 import os
 import numpy as np
-from stylized import P, with_, value1
+from stylized import P, with_, value1, H_RATIO
 from calibrate import YG, W, stats, bracket, TARGET
 from welfare import cev, v1_pop
 from children import (child_grid, shifted, DEL_D, DEL_H, RATIO_TARGET,
@@ -70,8 +70,11 @@ def numbers(base, fig):
     # rather than calibrated, so they move rarely, which is exactly why typing
     # them is dangerous: the copy in the prose survives a change to the class
     # for as long as nobody reads that sentence against the table.
-    out['h3'] = f'{base.h_lg:.2f}'
-    out['h2frac'] = f'{base.h_sm / base.h_lg:.2f}'
+    # AS A MULTIPLE OF AVERAGE INCOME, which is the convention Table 1 prints it
+    # in. Average income is one by construction, so the two agree today; they
+    # would stop agreeing silently if the grid ever moved off that normalisation.
+    out['h3'] = f'{base.h_lg / float((WW * YG).sum()):.2f}'
+    out['h2frac'] = f'{H_RATIO:g}'
     out['kV'] = f'{base.kV:.2f}'
     out['smrd'] = f'{base.smr_d:.0f}'
     out['th_break'] = f'{TH_BREAK:.2f}'
