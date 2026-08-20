@@ -401,6 +401,12 @@
         ! the numerator rises and the ratio rises with the penalty.
         real(8) :: penalty_child_addicted=0.30
         real(8), parameter :: child_sud_ratio_data=3.0d0
+        ! THE CHILD HOMELESSNESS RATIO delta_h IS MATCHED TO, from the two odds
+        ! ratios in Bassuk et al. (1997), 1.80 on the mother's side and 2.41 on
+        ! the father's. Their midpoint. It was stated in the note's parameter
+        ! table and typed again in the prose with nothing declaring it, so it was
+        ! the one target in that table with no source of truth behind it.
+        real(8), parameter :: child_homeless_ratio_data=2.10d0
         real(8) :: penalty_child_addicted_adjuster=5*10.d0**(-2)
         real(8), parameter :: penalty_child_adjuster_start=5*10.d0**(-2)
         real(8), parameter :: penalty_child_adjuster_damping=0.5

@@ -358,8 +358,10 @@ def figure_numbers(base):
     d['costdir'] = ('more' if mt['cost'] > mh['cost']
                     else 'less' if mt['cost'] < mh['cost'] else 'no more')
     d['costgap'] = f'{abs(mt["cost"] - mh["cost"]):.4f}'
-    d['costdearer'] = ('the dearer' if mt['cost'] > mh['cost']
-                       else 'the cheaper' if mt['cost'] < mh['cost']
+    # NO ARTICLE. The prose reads "ends up slightly @@costdearer@@", so the
+    # word supplies the comparative alone.
+    d['costdearer'] = ('dearer' if mt['cost'] > mh['cost']
+                       else 'cheaper' if mt['cost'] < mh['cost']
                        else 'no dearer')
     d['costeffect'] = 'first' if mt['cost'] > mh['cost'] else 'second'
     # HOW CLOSE THE TWO OUTLAYS ARE, which Section 4 leans on when it says the

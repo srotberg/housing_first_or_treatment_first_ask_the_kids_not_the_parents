@@ -156,7 +156,26 @@ def verdict(par, del_d, pV=1.0, omega=1.0, kids=1.0):
     mh = stats(with_(par, pV=pV, policy='HF'))
     mt = stats(with_(par, pV=pV, policy='TF'))
     dsud = mh['sud'] - mt['sud']
-    per_case = cev(par, shifted(v1h, 0.0) - shifted(v1h, del_d))
+    # THE PER CASE VALUE IS AN AVERAGE OF CEVs, not the CEV of an average, so
+    # that it is the same kind of object as priv above and the ratio of the two
+    # is like for like. cev is exp(dv/periods) - 1, so the order matters: taking
+    # the CEV of the averaged value difference reported 231.8 per cent where
+    # averaging each child's own CEV gives 264.3, and the gain over loss ratio
+    # moved from 362 to 413 on that alone.
+    #
+    # WHY A PRODUCT IS EXACT HERE and does not need a separate numerical solve.
+    # A child's baseline income is an independent draw from the same lognormal
+    # as everyone else, so a spared child's expected value does not depend on
+    # WHICH parent was spared, and the per case value is the same number for
+    # every case. The child generation's value is then linear in the share of
+    # parents carrying the disorder, and the difference between two policies is
+    # exactly that share difference times the per case value. The only channel
+    # this misses is delta_h, and at universal cover both policies drive
+    # homelessness to zero, so it contributes nothing.
+    ly = np.log(YG)
+    v_pen = np.interp(ly + np.log(1.0 - del_d), ly, v1h,
+                      left=v1h[0], right=v1h[-1])
+    per_case = float((WW * cev(par, v1h - v_pen)).sum())
     gain = omega * kids * dsud * per_case
     print(f'\n   VERDICT at pi_V = {pV}, del_d = {del_d}, '
           f'{kids} child per household, weight {omega}')

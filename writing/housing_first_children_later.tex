@@ -207,9 +207,9 @@ adult earnings by $31$ percent (Chetty et al., 2016). This half favours Housing 
 since the policy that houses more people is the one that stops more of these chains.
 
 All three penalties are disciplined against data. The disorder penalty is set so that
-a child of a parent with a SUD is three times as likely to acquire one itself, the
+a child of a parent with a SUD is \textcolor{red}{3} times as likely to acquire one itself, the
 middle of the two to four McGovern et al.\ (2023) report; the homelessness penalty so that
-the child of a homeless parent is $2.1$ times as likely to be homeless itself, the midpoint
+the child of a homeless parent is \textcolor{red}{2.10} times as likely to be homeless \textcolor{red}{themselves}, the midpoint
 of the two measures in Bassuk et al.\ (1997). What makes these externalities is
 that a parent counts only a fraction $\omega$ of what it does to its child, so the
 remainder is external whenever $\omega<1$, and $\omega$ is calibrated inside the
@@ -1069,16 +1069,17 @@ they live. The \new{second} effect is the larger, so the conditional programme e
 \centering
 \caption{The externality on children}\label{tab:children}
 \sbox{\ntbox}{\input{tables/tab_children}}\usebox{\ntbox}
-\tabnote{Note: Panel A is at the baseline programme, $\pi_V=\new{0.266}$,
+\tabnote{Note: Panel A is at the baseline programme, $\pi_V=0.266$,
 since the transmission ratio in the data comes from an economy with a rationed
 programme; Panel B is at universal cover, one child per household, no
 discounting across generations. Every consumption equivalent here is the proportional rise in consumption, at every date and in every state, worth as much as the difference in lifetime value, so it is a compensating variation and can exceed one hundred percent.}
 \end{table}
 
-I model an externality that runs through income rather than through
+\textcolor{red}{The externality modelled in this paper is the one imposed on the children of
+households with a SUD, and it runs through income} rather than through
 preferences. I have considered two alternatives, but both seem to be at odds
-with reality. Letting the child of a user inherit a stronger taste, a lower $b$,
-matches a higher odds ratio for SUD for the child but has the wrong welfare sign: $b$ enters only
+with reality. Letting the child of \textcolor{red}{a parent with a SUD} inherit a stronger taste, a lower $b$,
+matches a higher odds ratio for SUD for the child\textcolor{red}{, observed in the data,} but has \textcolor{red}{counterfactually the wrong} welfare sign: $b$ enters only
 through $\theta\log(1+v/b)$, so a lower one raises the child's objective at every
 $v>0$ and its lifetime value with it. So the specification says that a child
 who inherits a stronger taste for drugs is \emph{made better off} by inheriting
@@ -1087,25 +1088,27 @@ household substance abuse is one of the adverse childhood experiences in Felitti
 et al.\ (1998), and it predicts higher rates of depression, worse self-reported
 health and lower life satisfaction in adulthood; the children of parents with a
 SUD also have lower educational attainment, which is the premise of the
-transmission literature $\delta_d$ is calibrated against (McGovern et al., 2023).
+transmission literature $\delta_d$\textcolor{red}{, presented shortly below,} is calibrated against (McGovern et al., 2023).
 A model in which the transmitted trait raises the child's own welfare cannot be
-describing any of that, whatever it does to the transmission rate. Letting it inherit a greater
-susceptibility, a higher $\lambda$, fails another way, since a child facing a
-higher chance of converting use into a SUD optimally uses \emph{less} ex ante, which is at odds with the
-data: children of parents with a SUD are \emph{more} likely to use, not less.
+describing any of that, whatever it does to the transmission rate.
 
-Income works on both counts, and it works through the channels explored in
+\textcolor{red}{Alternatively, letting} it inherit a greater
+susceptibility, a higher $\lambda$, fails another way\textcolor{red}{. A child facing a
+higher chance of converting use into a SUD optimally uses \emph{less} ex ante, which is at odds with the
+data: children of parents with a SUD are \emph{more} likely to use, not less.}
+
+\textcolor{red}{In contrast to the above, income} works on both counts, and it works through the channels explored in
 Section~\ref{sec:who}: lower permanent income is unambiguously bad to receive,
 and this model already puts users at the bottom, so a child born poorer is
 mechanically more likely to use, which is aligned with the data. It is also
-supported by the evidence, and it stands in for more than income alone: a parent
+supported by the \textcolor{red}{empirical} evidence, and it stands in for more than income alone: a parent
 who diverts spending and time to drugs invests less in the child's education and
 development, and the income penalty is the reduced form of all of that (Chetty et al., 2016; McGovern et al., 2023). The income
 gradient does the whole job, so the model transmits a SUD across generations
 \emph{without transmitting any preference for drugs}.
 
 A child's baseline income is drawn from the same lognormal as everyone else, and
-the entire link is the penalty
+the entire link is \textcolor{red}{a} penalty
 \begin{equation}\label{eq:kids}
 y_{\text{child}} \;=\; y_{\text{base}}\,
 (1-\delta_d)^{\mathbf{1}\{\text{parent acquired the SUD}\}}\,
@@ -1117,30 +1120,28 @@ set to zero, so that the channel where a parent does take some account of what i
 does to its child is present and only the remainder is external.}
 
 The disorder penalty $\delta_d$ is calibrated rather than set: it is chosen so that
-the child of a parent who acquired the SUD is 3 times as likely to acquire
+\textcolor{red}{a} child of a parent who acquired the SUD is 3 times as likely to acquire
 one, the middle of the epidemiological range of two to four in McGovern et al.\
-(2023) and the alcohol literature. That takes $\delta_d = \new{0.64}$, shown in
+(2023). That takes $\delta_d = \new{0.64}$, shown in
 Table~\ref{tab:children}.
 
-The homelessness penalty $\delta_h$ is calibrated the same way, on the transmission of
-its own condition, so the two penalties are matched to the same kind of moment rather
-than one to a ratio and the other to a coefficient. Bassuk et al.\ (1997) is a case-control study of $220$ homeless mothers and $216$ low-income housed mothers in
+The homelessness penalty $\delta_h$ is calibrated \textcolor{red}{in a similar way}, on the transmission of
+its own condition, so the two penalties are matched to the same kind of moment. Bassuk et al.\ (1997) is a case-control study of $220$ homeless mothers and $216$ low-income housed mothers in
 Worcester, Massachusetts, with odds
-ratios of $1.80$ and $2.41$. Both arms are poor, so the comparison isolates
-transmission from the poverty that accompanies it and needs no population base rate.
-$\delta_h$ is set so the child of a homeless parent is 2.10 times as likely to
-be homeless itself, the midpoint of the two, which takes $\delta_h = \new{0.30}$.
+ratios of $1.80$ and $2.41$.
+$\delta_h$ is set so the child of a homeless parent \textcolor{red}{(at the time of their death)} is 2.10 times as likely to
+be homeless \textcolor{red}{themselves}, the midpoint of the two, which takes $\delta_h = \new{0.30}$.
 What these magnitudes mean, and what the evidence says about them, is taken up in the
 calibration of the quantitative model, Section~\ref{sec:fullcal}. Here $\delta_d$ and
 $\delta_h$ are illustrating the mechanism rather than measuring it.
 
 The two penalties also do different work: both policies drive
-homelessness to \new{zero} at universal cover, so $\delta_h$ prices the programme
+homelessness to \new{zero} at universal \textcolor{red}{coverage}, so $\delta_h$ prices the programme
 against no programme while $\delta_d$ decides Treatment First against Housing
 First.
 
 
-Panel B puts the two sides together and they are not close. The private cost of
+Panel B \textcolor{red}{of Table~\ref{tab:children}} puts the two sides together and they are not close. The private cost of
 conditionality, in the first row, is \new{0.068} percent of consumption, small
 because only \new{10.8} percent of households are affected. Against that,
 conditionality prevents \new{10.394} percentage points of SUD cases in the
@@ -1149,12 +1150,20 @@ of consumption to one child, shown in the third row. The gain in the fourth row 
 product of those two, since one prevented case spares one child: \new{10.394}
 percentage points times \new{231.8} percent gives \new{24.096} percent of
 consumption, which is \new{352.6} times the private loss of the first row.
+\textcolor{red}{The product is exact rather than an approximation, and it is the
+independence in~\eqref{eq:kids} that makes it so: a child's baseline income is
+drawn from the same distribution whoever its parent is, so what a spared child
+gains does not depend on which parent was spared. The child generation's value
+is then linear in the share of parents carrying the disorder, and the difference
+between two policies is exactly that share difference times the per case value.
+Both figures are averages of households' own consumption equivalents, so the
+ratio compares like with like.}
 That ratio \new{exceeds} one for every $\delta_d$ in Panel A except $\delta_d=0$, where
 by construction there is no externality to price; at the smallest penalty shown it is
 still \new{51} times the private loss. 
 
 All of this is a crude illustration, so the impacts of
-policies can be unreasonably large. Its point is to show that an
+policies can be unreasonably large. Its point is to show \textcolor{red}{how an}
 externality can reverse a welfare ranking that is
 otherwise airtight. Which way the comparison actually
 goes is a question about magnitudes, and that is what the quantitative model of
@@ -1164,9 +1173,9 @@ the next section is for.
 The quantitative model carries two further channels absent here, and
 they are different in kind as well as in sign, which is another substantive reason
 the welfare ranking is a question of magnitudes. The first is not an externality at
-all but the distortions the programme creates and the distortionary taxes
-required to pay for it; the second is an externality of the
-same type as the one on children.
+all but the distortions the programme creates \textcolor{red}{and} the distortionary taxes
+required to pay for \textcolor{red}{it create}; the second is an externality of the
+same type as the one on children\textcolor{red}{, but not directly on children}.
 
 \begin{itemize}\setlength{\itemsep}{0.15em}
 \item \textbf{Programmes distort the decisions of recipients and are
@@ -1180,8 +1189,7 @@ distorts their labour supply.
 
 \item \textbf{Homelessness is a disamenity in itself.} Households dislike
 homelessness around them and not only their own, so the aggregate rate is an
-argument of everyone's utility. This one is an externality, and it
-survives any way of paying for the programme. It runs in favour of whichever policy houses
+argument of everyone's utility. \textcolor{red}{This externality runs} in favour of whichever policy houses
 more, which is the opposite direction from the tax.
 \end{itemize}
 
@@ -1193,7 +1201,8 @@ Everything so far compares rest points, which is the natural way to read a
 two period model but hides the thing the argument turns on. Treatment First takes
 from the household in front of it and gives to the one after. A comparison of
 rest points reports the sum of those two and cannot show that they land on
-different people at different times. A transition can, and this model has one.
+different people at different times. A transition can, and this model has one:
+\textcolor{red}{Figure~\ref{fig:trans} shows it, and the rest of this section reads it.}
 
 The link across generations is not persistence of income, which
 Section~\ref{sec:kids} deliberately leaves out, but the penalty. A child's income
@@ -2402,7 +2411,7 @@ leads to homelessness in the first place, again leaving
 the private cost mostly unchanged. It is calibrated internally, on the
 transmission of its own condition, exactly as $\delta_d$ is: Bassuk et al.\ (1997)
 compare $220$ homeless mothers with $216$ low-income housed mothers and find odds ratios of $1.80$ and $2.41$. $\delta_h$
-is set so the child of a homeless parent is $2.1$ times as likely to be homeless
+is set so the child of a homeless parent is $\new{2.10}$ times as likely to be homeless
 themselves, the midpoint of the two. Because both arms of that study are poor households, the target
 isolates transmission from the poverty that accompanies it.
 \item[$\kappa_x$, the disamenity of homelessness.]\label{sec:fleftout} The only term through which one

@@ -159,6 +159,63 @@ def numbers(base, fig):
 PREV = os.path.join(HERE, 'numbers_prev.json')
 
 
+
+ANCHOR = r'\section{The quantitative model}'
+
+
+def _black_notes(src):
+    """
+    Table notes and figure captions BEFORE THE QUANTITATIVE MODEL carry no red.
+
+    A note or a caption is furniture: it restates the conditions a table was
+    computed under, and a number moving inside one is not an edit the reader
+    needs flagged. Red there is noise that competes with the red on the prose,
+    which is the red that means something. The rule is applied here rather than
+    by hand because the wrappers are put in by mark() a few lines above, so
+    anything hand-cleared would come back on the next build.
+
+    Only ahead of the anchor: from the quantitative model onward the note's own
+    red conventions apply and this leaves them alone.
+    """
+    cut = src.find(ANCHOR)
+    if cut < 0:
+        raise SystemExit('   fill.py: the section anchor moved; _black_notes '
+                         'would silently clear the whole paper')
+    head, tail = src[:cut], src[cut:]
+    for macro in ('\\tabnote{', '\\caption{'):
+        k = 0
+        while True:
+            j = head.find(macro, k)
+            if j < 0:
+                break
+            e = j + len(macro)
+            d = 1
+            while d and e < len(head):
+                if head[e] == '{':
+                    d += 1
+                elif head[e] == '}':
+                    d -= 1
+                e += 1
+            body = head[j:e]
+            fixed = body
+            while True:
+                q = fixed.find('\\new{')
+                if q < 0:
+                    break
+                r = q + len('\\new{')
+                dd = 1
+                while dd and r < len(fixed):
+                    if fixed[r] == '{':
+                        dd += 1
+                    elif fixed[r] == '}':
+                        dd -= 1
+                    r += 1
+                fixed = fixed[:q] + fixed[q + len('\\new{'):r - 1] + fixed[r:]
+            head = head[:j] + fixed + head[e:]
+            k = j + len(fixed)
+    return head + tail
+
+
 def mark(new, prev):
     """Wrap every value that moved in \new{}, and leave the rest black."""
     out, moved = {}, []
@@ -261,6 +318,7 @@ if __name__ == '__main__':
     import re
     for m in re.findall(r'@@[a-zA-Z_0-9]+@@', src):
         missing.add(m)
+    src = _black_notes(src)
     open(os.path.join(WRITE, 'housing_first_children_later.tex'), 'w').write(src)
     for k in sorted(n):
         print(f'   {k:12s} {n[k]}')
