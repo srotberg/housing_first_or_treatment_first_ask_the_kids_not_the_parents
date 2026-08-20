@@ -369,6 +369,12 @@ def figure_numbers(base):
                        else 'the cheaper' if mt['cost'] < mh['cost']
                        else 'no dearer')
     d['costeffect'] = 'first' if mt['cost'] > mh['cost'] else 'second'
+    # HOW CLOSE THE TWO OUTLAYS ARE, which Section 4 leans on when it says the
+    # stylized comparison is unaffected by the budget. That is a result about
+    # this calibration, not an identity, so the phrase follows the numbers.
+    _rel = abs(mt['cost'] - mh['cost']) / max(mh['cost'], 1e-12)
+    d['costclose'] = ('happen to cost very nearly the same' if _rel < 0.02
+                      else f'differ in cost by {100 * _rel:.1f} percent')
 
     # WHETHER CONDITIONALITY DETERS EVERYONE, which Section 4 contrasts the
     # quantitative model against. It used to say "Treatment First deters everyone
