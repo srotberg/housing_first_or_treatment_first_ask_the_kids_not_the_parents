@@ -15,16 +15,18 @@ $u_0$ & Unemployment probability, no SUD & BLS CPS via FRED, 2014 to 2024 & $0.0
 $u_1$ & Unemployment probability, with a SUD & NSDUH 2024, age 26+ & $0.1625$ \\
 \addlinespace
 \multicolumn{4}{@{}l}{\emph{Income support}} \\
-$\psi$ & Replacement rate while unemployed & DOL, statutory UI rates & $0.50$ \\
-$\bar y$ & Cap on the earnings base, multiple of average income & DOL, state benefit maxima & $1.00$ \\
+$\psi$ & \textcolor{red}{UI replacement rate} & DOL, statutory UI rates & $0.50$ \\
+$\bar y$ & \textcolor{red}{Cap on the earnings base} & DOL, state benefit maxima & $1.00$ \\
+\textcolor{red}{$\underline c$} & \textcolor{red}{Food stamp maximum allotment} & \textcolor{red}{The quantitative model's calibration} & \textcolor{red}{$0.126$} \\
+\textcolor{red}{$\varrho$} & \textcolor{red}{Food stamp taper rate} & \textcolor{red}{SNAP statute, 7 CFR 273.10} & \textcolor{red}{$0.30$} \\
 \addlinespace
 \multicolumn{4}{@{}l}{\emph{Housing, drugs and the voucher}} \\
 $p_r$ & Rent per unit of housing services & Normalisation & $1.00$ \\
 $p_v$ & Price of a unit of drugs & Normalisation & $1.00$ \\
-\textcolor{red}{$h_3$} & Standard rental unit & Set & $0.44$ \\
+\textcolor{red}{$h_3$} & Standard rental unit & Set & \textcolor{red}{$0.40$} \\
 \textcolor{red}{$h_2$} & Small rental unit & Set & \textcolor{red}{$0.25\times h_3$} \\
-$\kappa_r$ & Tenant's share of the rent when covered & HUD voucher rules & $0.30$ \\
-$\kappa_V$ & Voucher means test, share of median income & HUD income limits & $0.50$ \\
-$\pi_V$ & Voucher generosity in the baseline & HUD 2023, recipients over eligible & $0.266$ \\
+$\kappa_r$ & \textcolor{red}{Tenant's share of the rent} & HUD voucher rules & $0.30$ \\
+$\kappa_V$ & \textcolor{red}{Voucher means test} & HUD income limits & $0.50$ \\
+$\pi_V$ & \textcolor{red}{Chance of drawing a voucher} & HUD 2023, recipients over eligible & $0.266$ \\
 \bottomrule
 \end{tabular}

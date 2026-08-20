@@ -844,7 +844,7 @@ Income support replaces half of previous earnings on a base capped at mean
 income, in line with statutory state rules. \textcolor{red}{Food assistance pays a maximum allotment of}
 \textcolor{red}{$\underline c=@@cfloor@@$ of average income, withdrawn at $\varrho=@@ctaper@@$ per dollar of income,}
 \textcolor{red}{which is the SNAP rule at 7 CFR 273.10 and the allotment the quantitative model calibrates.} The two rental sizes are set
-such that the standard unit, \textcolor{red}{$h_3$}, costs $0.41$ of mean income and the
+such that the standard unit, \textcolor{red}{$h_3$}, costs \textcolor{red}{$0.40$} of mean income and the
 small unit, \textcolor{red}{$h_2$}, is a quarter of it. The voucher parameters are institutional: covered
 tenants pay $30$ percent of market rent, eligibility is capped at half of median income, $\kappa_V = 0.50$, and $\pi_V = 0.266$ is the ratio of recipients to the income eligible population in the 2023 Picture of Subsidized
 Households, published by the Department of Housing and Urban Development (HUD). The weight on drugs is set at $\theta = @@th@@$.\footnote{A $\theta$ large enough to
@@ -1718,8 +1718,7 @@ subject to the budget~\eqref{eq:fbudget}, the income
 definitions~\eqref{eq:fincome} to~\eqref{eq:ftrans}, the choice
 set of dwellings~\eqref{eq:fchoice}, $\tau=0$ whenever $d=0$, $n=0$
 whenever $j\ge J_R$ or
-$e\neq1$, $v=0$ whenever $\tau=1$, $a'\ge0$, $c\ge F$ so that
-consumption never falls below the food stamp floor, and $V(J{+}1,\cdot)=0$
+$e\neq1$, $v=0$ whenever $\tau=1$, $a'\ge0$, $c\ge F$ so that \textcolor{red}{the food stamp payment cannot be saved, since it is paid in kind,} and $V(J{+}1,\cdot)=0$
 with $\phi(J)=0$, so that at the last age the
 child is the whole continuation. The integral runs over next period's
 state $s'=(a',y,e',d',m',\eta')$; the second line of~\eqref{eq:fbellman} is the
@@ -1835,7 +1834,7 @@ v=\max\Big\{0,\ \frac{x-c}{p_v}\Big\},
 whose corner is the abstention decision: a household buys nothing when the
 Stone-Geary endowment already exceeds what it wants, which is how a large $b$
 deters use and is the threshold of Section~\ref{sec:problem}. The outer
-maximum on $c$ is the food stamp floor. Where it binds the Cobb-Douglas split no
+maximum on $c$ is the food stamp \textcolor{red}{payment $F$}. Where it binds the Cobb-Douglas split no
 longer describes the allocation: consumption is held at $F$ and the drug takes
 what the budget leaves, so the floor changes behaviour and not only welfare. Where the third
 term is present the answer lies between~\eqref{eq:fcvstatic} and abstention,
@@ -1846,7 +1845,7 @@ Hours then solve
 \begin{equation}\label{eq:ffoc}
 u_c(c)\,\frac{\partial x}{\partial n}\;=\;\omega_{\ell}(1-n)^{-\sigma_{\ell}} ,
 \end{equation}
-and the clawbacks in~\eqref{eq:ftrans}, at a rate of one for food stamps and
+and the clawbacks in~\eqref{eq:ftrans}, at \textcolor{red}{the statutory rate $\varrho$} for food stamps and
 $\kappa_r$ for the voucher, make $\partial x/\partial n$ jump \emph{up} at the
 hours where each transfer runs out, because the clawback stops. That is the
 welfare trap, and it is the channel through which conditionality changes labour
@@ -2025,7 +2024,7 @@ internalises only $\omega$ of the part that falls on its child, and $\omega$ is
 small, which is what leaves something for a policy to correct. And the
 \textbf{distortion} is what the programmes cost in behaviour, and it comes from two
 places. The programmes create distortions due to their design:
-assistance is means-tested and the rent share is clawed back at $\kappa_r$,
+assistance is means-tested\textcolor{red}{, food stamps are clawed back at $\varrho$} and the rent share is clawed back at $\kappa_r$,
 so a recipient who works more loses eligibility or part of the transfer, which requires
 even higher taxes on everyone else to fund even larger programmes. And
 assistance is paid for by
@@ -2604,6 +2603,8 @@ times average income, respectively, taking both from the statutory replacement r
 and state benefit maxima that the Department of Labor compiles in its comparison of
 state unemployment insurance laws
 (\url{https://oui.doleta.gov/unemploy/statelaws.asp}).
+
+\item[\textcolor{red}{$\varrho$, the food stamp clawback rate.}] \textcolor{red}{The rate at which food assistance is withdrawn as income rises. I set it to thirty percent, which is the statutory rule rather than an estimate: a household\textquotesingle s monthly allotment is the maximum allotment for its size reduced by thirty percent of its net monthly income (7 CFR 273.10). It is the same rule and the same rate in the stylized model of Section~\ref{sec:stylized}. It matters beyond the level of the transfer because it is the implicit marginal tax the programme puts on earnings for the households the paper is about, and because a transfer withdrawn one for one, which is what a pure consumption floor would be, gives every household below the floor the same resources and so the same behaviour.}
 
 \item[$\kappa_V$ and $\kappa_r$, the voucher rules.] These two set the income
 cutoff for eligibility and the tenant's contribution, and I take both from HUD's own
