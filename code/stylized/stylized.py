@@ -806,6 +806,41 @@ def threshold(par, ygrid, policy=None, edges=None, cdf=None):
             w = min(max(w, 0.0), 1.0)
             frac[i, s], frac[i + 1, s] = ((w, 0.0) if G[i, s] > 0.0
                                           else (0.0, 1.0 - w))
+
+    # THE CROSSING CAN LIE BELOW THE LOWEST NODE, inside its own cell, and the
+    # scan above cannot see it because it only looks between nodes. That matters
+    # here and nowhere else, because the lowest cell is the pooled foot of the
+    # distribution: it spans a wide range of income and its node sits at the
+    # cell's conditional mean, well above its bottom. Measured at the calibrated
+    # parameters, at a generosity of 0.9 the node itself no longer uses, gain
+    # -0.003, while households at a fifth of its income still do, gain +0.33.
+    # Without this the whole cell was credited with zero and participation fell
+    # three and a half points in one step, which is what produced the kink in
+    # the policy curves. It is not a numerical nicety: those households use in
+    # the model and were being counted as if they did not.
+    if cdf is not None and edges is not None:
+        w0 = max(edges[1] - edges[0], 1e-14)
+        for s in range(ns):
+            if np.isnan(G[0, s]) or G[0, s] > 0.0 or frac[0, s] > 0.0:
+                continue                      # already using, or already split
+            y_lo = ygrid[0] * 0.1
+            r = period1(par, y_lo, policy)
+            g_lo = r[s][1] if s < len(r) else np.nan
+            if np.isnan(g_lo) or g_lo <= 0.0:
+                continue                      # nobody below the node uses
+            lo, hi = y_lo, ygrid[0]
+            for _ in range(30):
+                mid = 0.5 * (lo + hi)
+                r = period1(par, mid, policy)
+                gm = r[s][1] if s < len(r) else np.nan
+                if np.isnan(gm):
+                    break
+                if gm > 0.0:
+                    lo = mid
+                else:
+                    hi = mid
+            frac[0, s] = min(max(cdf(0.5 * (lo + hi)) / w0, 0.0), 1.0)
+
     return PR, np.clip(frac, 0.0, 1.0), VV, BU, BN, INC
 
 

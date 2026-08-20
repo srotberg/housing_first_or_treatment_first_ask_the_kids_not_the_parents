@@ -152,17 +152,25 @@ chk('TF ends above HF', paths['TF'][-1][1] > paths['HF'][-1][1])
 chk('TF costs the cohort it lands on', paths['TF'][1][1] < paths['HF'][1][1],
     'conditionality must not be free to the cohort that bears it')
 
-print('\n=== 7. the non monotonicity, quantified ===')
+print('\n=== 7. the shape of the policy curve ===')
+# NOT A TEST FOR MONOTONICITY. Participation SHOULD be hump shaped in
+# generosity: at low cover the voucher mainly insures, so moral hazard raises
+# use; at high cover the household is near certain to be housed, its
+# continuation value is high, and the mortality cost takes over. What would be
+# an artefact is a JAGGED curve, so the test is for a single turning point.
 pvs = np.linspace(0.0, 1.0, 11)
 ph = np.array([stats(with_(BASE, pV=p, policy='HF'))['part'] for p in pvs])
 d = np.diff(ph)
-if (d < -1e-4).any():
-    i = int(np.argmin(d))
-    warn('participation is not monotone in generosity under HF',
-         f'largest fall {100*d[i]:.2f}pp between pi_V={pvs[i]:.1f} and {pvs[i+1]:.1f}; '
-         f'the pooled bottom node holds {100*WW[0]:.1f}% of households at one income')
-else:
-    print('  ok    participation monotone in generosity under HF')
+# a tolerance below any economically meaningful movement, so a wobble of a few
+# hundredths of a point is not counted as the curve turning
+_sig = np.where(np.abs(d) < 1e-3, 0.0, d)
+_nz = _sig[_sig != 0.0]
+turns = int((np.diff(np.sign(_nz)) != 0).sum()) if len(_nz) > 1 else 0
+chk('participation has at most one turning point in generosity', turns <= 1,
+    f'{turns} turns: ' + ' '.join(f'{100*x:+.2f}' for x in d))
+i = int(np.argmax(ph))
+print(f'        peak at pi_V={pvs[i]:.1f} of {100*ph[i]:.2f}%, '
+      f'ending at {100*ph[-1]:.2f}%')
 
 print('\n=== 8. the paper quotes what the tables state ===')
 src = open(os.path.join(TAB, '..', 'housing_first_children_later.tex'), encoding='utf-8').read()

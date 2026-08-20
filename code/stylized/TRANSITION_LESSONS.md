@@ -77,3 +77,41 @@ made of and make an empty deterred margin visible immediately.
 - **Assets matter for the size of the answer.** The caught generation's loss is
   32.6 per cent computed at zero assets and 8.7 per cent integrating over the
   assets they actually saved. Never quote the zero asset figure.
+
+---
+
+## 6. THE FULL MODEL'S TRANSITION MUST BE REDONE TO MATCH THIS ONE
+
+Standing instruction, not a suggestion. Everything above was found by writing
+the stylized model's transition, getting it wrong, and being corrected. The
+full model's transition has to end up aligned with the stylized one on every
+point, and it is easier to build it that way than to retrofit it:
+
+1. **Integrate over the whole age distribution alive at the reform**, not just
+   newborn cohorts. In the stylized model this was the difference between a cost
+   of 0.08 percentage points and one of 8.7 per cent of consumption. In the full
+   model there is a caught generation at every age, and the worst hit will be in
+   middle age: old enough to carry a disorder, too near the end to gain from the
+   treatment the policy buys.
+2. **Key the child's inherited penalty on the parent's WHOLE life**, not on one
+   period. Keyed on the first period alone, the homelessness that conditionality
+   causes by revoking vouchers never reaches a child, and the mechanism is
+   switched off by a timing assumption rather than by economics. This was
+   corrected in the stylized model, and it doubled the share of children born to
+   an ever unhoused parent, from 0.49 to 1.13 per cent.
+3. **Report the mechanism beside the welfare.** Homelessness and disorder rates
+   by cohort, on the same figure. One welfare panel invites the reading that
+   nothing is happening.
+4. **Check whether anyone is actually subject to the condition** before
+   reporting that conditionality is cheap. In the stylized model nobody uses
+   under Treatment First at universal cover, so nobody is ever revoked and the
+   cost is the loss of an option rather than a realised penalty. Say so.
+5. **Aggregate off the true distribution, not the grid's geometry.** Where a
+   decision threshold falls inside a cell, the share of that cell inside the
+   region is a CDF difference, and the threshold can lie BELOW the cell's node
+   as well as above it. Missing the second case cost three and a half points of
+   participation in one step here.
+6. **A hump is not a bug.** Participation should rise then fall in generosity as
+   moral hazard gives way to the value of life. Test for a single turning point,
+   not for monotonicity; testing the wrong property sent me chasing real
+   economics as if it were an artefact.
