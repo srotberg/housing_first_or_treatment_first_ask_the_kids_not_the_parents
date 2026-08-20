@@ -14,7 +14,9 @@ In short:
   from `compare()` in `fill.py`, so it turns when the numbers do;
 - `writing/check_numbers.py` catches anything typed that a table also states;
 - red marks what moved, produced by `\new{}` and by `sync_tables.py`, and is
-  cleared only before Section 3.7, by `writing/strip_red_before_transition.py`.
+  cleared by `writing/strip_red_before_transition.py` only ahead of the
+  quantitative model's section, so Section 4 onward accumulates red until the
+  author has read it.
 
 ## The full model's transition
 

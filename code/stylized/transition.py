@@ -272,6 +272,33 @@ def figure(paths, cg=None):
     return fig
 
 
+def _dir(now, was, up, down, tol=5e-5):
+    """The word for which way a share moved, so a sentence turns with it."""
+    return up if now > was + tol else (down if now < was - tol else 'holds')
+
+
+def _settle(tf, hf, tol=1e-3):
+    """
+    The first cohort after which BOTH paths stay within tol of their rest point.
+
+    Counted from cohort 1, the first born under the new rule, so the answer is
+    the number of cohorts the transition takes and not an index into the array.
+    """
+    n = min(len(tf), len(hf))
+    last = n - 1
+    k = last
+    for i in range(1, n):
+        if all(abs(p[j][1] - p[last][1]) <= tol for p in (tf, hf)
+               for j in range(i, n)):
+            k = i
+            break
+    k = max(k, 1)
+    # SPELLED OUT, because the paper spells small numerals in prose.
+    word = ('one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight',
+            'nine', 'ten')
+    return word[k - 1] if k <= len(word) else str(k)
+
+
 def numbers(paths, par=None, cg=None):
     """The placeholders Section 3.7 of the paper reads."""
     import json as _json
@@ -286,9 +313,25 @@ def numbers(paths, par=None, cg=None):
          'tr_sud0': f'{100*(tf[0][2][1]+tf[0][2][3]):.2f}',
          'tr_sudtf': f'{100*(tf[-1][2][1]+tf[-1][2][3]):.2f}',
          'tr_sudhf': f'{100*(hf[-1][2][1]+hf[-1][2][3]):.2f}'}
+    # THE DIRECTION WORDS, so the two sentences in Section 3.7 that assert which
+    # way the parent generation's disorder rate moves turn when the numbers do.
+    # Both are results, and the Housing First one in particular is the sign of a
+    # difference between two rest points, not a fact of arithmetic.
+    s0 = tf[0][2][1] + tf[0][2][3]
+    d['tr_sudtf_dir'] = _dir(tf[-1][2][1] + tf[-1][2][3], s0, 'rises', 'falls')
+    d['tr_sudhf_dir'] = _dir(hf[-1][2][1] + hf[-1][2][3], s0, 'rises', 'falls')
+    # WHICH COHORT THE PATHS HAVE SETTLED BY, to a tenth of a point of the rest
+    # point, rather than the "two or three" the text used to assert.
+    d['tr_settle'] = _settle(tf, hf)
     if cg is not None:
         d['tr_caught'] = f'{100*cg["cev"]:.1f}'
         d['tr_caught_hl'] = f'{100*cg["hl_tf"]:.2f}'
+        # HOW MUCH WORSE THE CAUGHT GENERATION HAS IT than the cohort born at
+        # the switch. The text called this "two orders of magnitude", which was
+        # true of one run and is not a thing to leave typed.
+        born = abs(tf[1][1] - hf[1][1])
+        d['tr_caught_ratio'] = (f'{abs(cg["cev"]) / born:.0f}'
+                                if born > 1e-9 else 'many')
     out = os.path.join(here, 'transition_numbers.json')
     _json.dump(d, open(out, 'w'), indent=1)
     print('   wrote transition_numbers.json')

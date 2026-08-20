@@ -39,7 +39,6 @@ ALLOW = [
     ('1.80', 'odds ratios'),          # Bassuk et al., not the ladder curvature
     ('2.41', 'odds ratios'),
     ('0.40', 'social security'),      # the retirement replacement rate
-    ('0.40', 'standard unit'),        # the stylized model's own rental size
     ('25', 'ages'), ('25', '25 to 44'), ('25', '25--34'), ('25', '25--48'),
     ('30', 'Housing costs above'), ('30', 'quadratic in age'),
     ('35', '35 to 54'), ('35', '35--44'),
@@ -61,9 +60,6 @@ ALLOW = [
     ('5.6', 'overall level'),
     ('0.5', 'Frisch elasticity'),            # sigma_ell in its source's units
     ('9.1', 'race adjusted'), ('1.1', 'falling to'),
-    ('0.266', 'ratio of recipients'), ('0.266', 'current programme'),
-    ('0.266', 'baseline programme'),
-    ('0.50', 'capped at half of median'),
     ('0.25', 'Social Security Disability'),
 ]
 
@@ -84,6 +80,12 @@ def main(strict=False):
     s = s[s.index(r'\section{Introduction}'):]
     s = re.sub(r'@@[a-zA-Z_0-9]+@@', '', s)
     s = re.sub(r'\\(?:label|ref|eqref|cite[a-z]*|url|href)\{[^}]*\}', '', s)
+    # LAYOUT LENGTHS ARE NOT QUANTITIES. A figure's width in \textwidth and the
+    # matching width passed to \notes collide with parameter values often
+    # enough to bury the real hits: 0.62 is both a figure width and a cell of
+    # the welfare table.
+    s = re.sub(r'width\s*=\s*[\d.]+\\textwidth', '', s)
+    s = re.sub(r'\\notes\{[\d.]+\\textwidth\}', r'\\notes{}', s)
     tab = cells()
     hits = []
     for m in re.finditer(r'(?<![\w.\\])(\d+\.\d+)(?![\w])', s):

@@ -30,6 +30,26 @@ from that one place.
 4. Quote it in the prose as `@@q_<symbol>@@`, never as a digit.
 5. Run `python3 writing/check_numbers.py`. It should stay clean.
 
+## Numbers that also appear on a figure
+
+If the prose quotes a number that a figure shows, **the figure computes it and
+the prose reads it**. `run.py` writes `figure_numbers.json` while it draws, and
+`fill.py` loads that file rather than recomputing. Never compute such a number
+twice.
+
+This is not a tidiness rule. The note went to press saying the income ratio was
+"unchanged at 3.33" at half the mortality channel's strength, beside a figure
+that showed 4.70 at that point and 4.70 with the channel off; the sentence
+contradicted the picture above it and the arithmetic inside it. Two of the
+scan's points also fail to hit the participation target, which the figure's own
+note used to deny; `partnote` now states it.
+
+The other half of the same rule: **build with `code/stylized/build.sh` and
+nothing else.** A hand-maintained substituter that filled `@@name@@` from a JSON
+of typed values was used once to save a rebuild, and it silently replaced
+generated numbers with stale ones throughout the note. It has been deleted. If
+a rebuild is too slow, wait for it.
+
 ## Sentences that assert an inequality
 
 A sentence that says one quantity is larger than another is stating a
@@ -55,9 +75,9 @@ moved in `\new{}`, which is red. `sync_tables.py` does the same against
 without anyone deciding to mark it. Freeze a new baseline with `--freeze` on
 each, and only once the reader has seen the current round.
 
-Red is cleared at the start of a round only up to the end of Section 3.6, by
-`writing/strip_red_before_transition.py`. From the transition onward it
-accumulates until the reader says otherwise.
+Red is cleared at the start of a round only up to the start of the quantitative
+model's section, by `writing/strip_red_before_transition.py`. From Section 4
+onward it accumulates until the reader says otherwise.
 
 ## The checker
 

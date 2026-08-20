@@ -492,21 +492,34 @@ def _states(par, d, policy, y, used=0):
     (probability, income level, tenant's rent multiplier) given d and whether
     the household used drugs in period 1.
 
-    POLICY. Treatment First withdraws the voucher from any household that
-    violates the sobriety condition, which is v > 0 OR d = 1, and not only from
-    those that went on to acquire the disorder. That is exactly the rule in the
-    full model, where voucher receipt is revoked with certainty whenever v > 0.
-    Housing First withdraws it from nobody. That single difference is the whole
-    experiment.
+    POLICY. Treatment First withdraws the voucher from any household that fails
+    the sobriety condition IN THE PERIOD THE VOUCHER IS PAID, which is current
+    use or a current disorder. Housing First withdraws it from nobody. That
+    single difference is the whole experiment.
 
-    This is called for BOTH periods. In period 1 it is called at d = 0 with
-    used = 0, because the voucher is drawn on arrival, before v is chosen, so
-    nobody has yet violated anything; the condition then bites within the period
-    through _p1_rmul, which strips the voucher from a period 1 household that
-    goes on to choose v > 0.
+    This is called for BOTH periods, and the condition reads differently in each
+    because the drug choice does not exist in both.
+
+    In period 1 it is called at d = 0 with used = 0: the voucher is drawn on
+    arrival, before v is chosen, so nobody has yet violated anything. The
+    condition then bites WITHIN the period through _p1_rmul, which strips the
+    voucher from a period 1 household that goes on to choose v > 0.
+
+    IN PERIOD 2 THE CONDITION IS d = 0 AND NOTHING ELSE, because there is no
+    period 2 drug choice: v is chosen once, in period 1, so v = 0 in period 2 by
+    construction and a sobriety test applied to the current period cannot fail on
+    it. A household that used in period 1 and did not acquire the disorder
+    arrives in period 2 clean, and a rule that tests the current period must
+    cover it. This is also what keeps the stylized model aligned with the
+    quantitative one, where revocation is on CURRENT use and a household that
+    used a decade ago and is clean today is covered; the earlier rule here
+    revoked on a history of use, which is a different and much harsher policy,
+    and it made Treatment First look better than the rule the paper describes.
+    The `used` argument is kept because both call sites pass it and it documents
+    the history at the call, but it no longer enters the condition.
     """
     pu = par.u1 if d == 1 else par.u0
-    covered = (policy == 'HF') or (d == 0 and not used)
+    covered = (policy == 'HF') or (d == 0)
     out = []
     for e, pe in ((0, 1.0 - pu), (1, pu)):
         # Lose your job and income support replaces the fraction repl of what

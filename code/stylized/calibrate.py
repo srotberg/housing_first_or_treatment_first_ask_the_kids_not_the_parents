@@ -524,7 +524,7 @@ def bracket_sud(par, lo=None, hi=None, iters=16):
     return float(np.sqrt(lo * hi))
 
 
-def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=()):
+def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=(), tol=0.003):
     par = par or P()
     for s in range(sweeps):
         # HOUSING FIRST, THEN THE VALUE OF LIFE. aleph used to run first and the
@@ -573,20 +573,31 @@ def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=()):
         _json.dump({n: getattr(par, n) for n, _, _, _ in PAIRS} | {'th': par.th, 'gam': par.gam},
                    open(checkpoint or f'checkpoint_th_{par.th:.2f}.json', 'w'),
                    indent=1)
+        # ONLY THE MOMENTS SOMETHING IS ACTUALLY BRACKETED ON. TARGET
+        # also carries housing_share, which nothing calibrates: gamma is
+        # bracketed on hspend, housing over spending net of drugs, while
+        # housing_share is housing over income, a separate untargeted
+        # moment sitting about seven per cent below its data value. A
+        # convergence test that counted it reported every converged sweep
+        # as seven per cent off, forever.
+        m = stats(par)
+        worst = max(abs(m[mom] / TARGET[mom] - 1.0)
+                    for _, mom, _, _ in PAIRS)
         if verbose:
-            m = stats(par)
-            # ONLY THE MOMENTS SOMETHING IS ACTUALLY BRACKETED ON. TARGET
-            # also carries housing_share, which nothing calibrates: gamma is
-            # bracketed on hspend, housing over spending net of drugs, while
-            # housing_share is housing over income, a separate untargeted
-            # moment sitting about seven per cent below its data value. A
-            # convergence test that counted it reported every converged sweep
-            # as seven per cent off, forever.
-            worst = max(abs(m[mom] / TARGET[mom] - 1.0)
-                        for _, mom, _, _ in PAIRS)
             print(f'  sweep {s+1}  worst relative gap {worst:7.3f}   '
                   f'aleph={par.aleph:.4g}  h_hl={par.h_hl:.4g}  '
-                  f'lam={par.lam:.4g}  b={par.b:.4g}')
+                  f'lam={par.lam:.4g}  b={par.b:.4g}', flush=True)
+        # STOP WHEN EVERY TARGETED MOMENT IS HIT. Each bracket restarts from its
+        # own bounds every sweep, so a converged sweep reproduces itself: the
+        # remaining sweeps cost a quarter of an hour each and move nothing. The
+        # test needs at least two sweeps behind it because the first sweep off a
+        # seed can look converged on moments the seed already fitted while the
+        # parameters that move them have not been re-solved together yet.
+        if s >= 1 and worst < tol:
+            if verbose:
+                print(f'  converged: every targeted moment within '
+                      f'{100 * tol:.1f} per cent', flush=True)
+            break
     # GAMMA IS NOT RE-IMPOSED HERE. It used to be returned as 0.25*(1-theta),
     # which silently overwrote the value the (theta, gamma) scan chose: at
     # theta = 0.20 that is 0.200 rather than 0.2225, and the two are on opposite

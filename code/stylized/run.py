@@ -20,6 +20,13 @@ import numpy as np
 from stylized import P, with_, use_prob, aggregates
 from calibrate import YG, W, bracket, stats, TARGET
 
+
+# HOW FAR PAST THE CALIBRATED STRENGTH THE CHANNEL SCAN RUNS. Figure 2's
+# horizontal axis ends here and three sentences in Section 3.4 quote it, so it
+# is a constant rather than a literal inside the scan: fill.py exports it as
+# @@scanhi_pc@@ and the prose reads it from there.
+SCAN_HI = 1.25
+
 OUT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                     '..', '..', 'writing', 'figures'))
 
@@ -94,7 +101,7 @@ def fig_who_uses(base):
     # reader unable to tell a channel that has just crossed the line from one
     # that is still falling hard, and it leaves the unemployment channel's
     # failure looking like it might be about to turn. It is not.
-    sc = np.linspace(0.0, 1.25, 11)
+    sc = np.linspace(0.0, SCAN_HI, 11)
     curves = {}
     for which, col, ls, mk in (('mortality', '#2C6FAD', '-', 'o'),
                                ('unemployment', '#D9822B', '--', 's')):
@@ -141,8 +148,15 @@ def fig_moral_hazard(base):
     """Figure 2: the two forces as the voucher becomes more generous."""
     plt = style()
     pVs = np.array([0.0, 0.1, 0.2, 0.3, 0.45, 0.6, 0.75, 0.9, 1.0])
-    H = np.array([stats(with_(base, pV=p, policy='HF'))['part'] for p in pVs])
-    T = np.array([stats(with_(base, pV=p, policy='TF'))['part'] for p in pVs])
+    # THE WHOLE MOMENT DICT AT EVERY POINT, not just participation. The prose
+    # quotes homelessness, the SUD rate and the voucher outlay at the two ends
+    # of this figure, and it used to recompute them in fill.py. Two computations
+    # of the same number are two numbers, and they drifted: the note went to
+    # press quoting an income ratio the figure beside it did not show.
+    mH = [stats(with_(base, pV=p, policy='HF')) for p in pVs]
+    mT = [stats(with_(base, pV=p, policy='TF')) for p in pVs]
+    H = np.array([m['part'] for m in mH])
+    T = np.array([m['part'] for m in mT])
 
     # THE CEILING IS THE HIGHEST CURVE, not the no programme rate. It used to be
     # 1.22 times T[0], which worked only while Housing First stayed below the no
@@ -200,7 +214,7 @@ def fig_moral_hazard(base):
     print(f'     universal Housing First   {100*H[-1]:6.2f}'
           f'   moral hazard  {100*(H[-1]-T[-1]):+6.2f}')
     print(f'     net effect of Housing First         {100*(H[-1]-H[0]):+6.2f}')
-    return pVs, H, T
+    return pVs, H, T, mH, mT
 
 
 def fig_margins(base):
@@ -219,16 +233,17 @@ def fig_margins(base):
                         sud=np.array([x['sud'] for x in m]),
                         part=np.array([x['part'] for x in m]))
 
-    out['use'] = {pol: np.array([x['part'] for x in
-                                 [stats(with_(base, pV=p, policy=pol)) for p in pVs]])
-                  for pol in ('HF', 'TF')}
+    # NO SECOND PASS FOR PARTICIPATION. There used to be an out['use'] here that
+    # solved the whole grid again under both policies to get a series out[pol]
+    # already carried, and the panel loop never reached it: eighteen solves that
+    # produced a number nothing read.
     fig, axes = plt.subplots(1, 3, figsize=(12.2, 3.6))
     panels = ((axes[0], 'homeless', 'Homelessness rate, percent', '(a)'),
               (axes[1], 'part', 'Drug use, percent', '(b)'),
               (axes[2], 'sud', 'Share with a SUD, percent', '(c)'))
     for ax, key, lab, tag in panels:
         for pol, col, mk in (('HF', '#C0392B', 'o'), ('TF', '#2C6FAD', 's')):
-            y = out[pol][key] if key in out[pol] else out['use'][pol]
+            y = out[pol][key]
             ax.plot(pVs, 100 * y, color=col, marker=mk, ms=4.0,
                     label='Housing First' if pol == 'HF' else 'Treatment First')
         ax.axvline(base.pV, color='0.55', lw=0.9, ls='--')
@@ -251,9 +266,120 @@ def fig_margins(base):
     return pVs, out
 
 
+# THE WORDS FOR A FRACTION OF THE CHANNEL, so the sentence that says over how
+# much of it the reversal happens follows the curve instead of being typed. It
+# was typed, it said "the last quarter", and the curve said half.
+_FRACTION = ((1.0, 'whole'), (0.75, 'three quarters'), (2.0 / 3.0, 'two thirds'),
+             (0.5, 'half'), (1.0 / 3.0, 'third'), (0.25, 'quarter'),
+             (0.125, 'eighth'))
+
+
+def _fraction_word(x):
+    return min(_FRACTION, key=lambda fw: abs(fw[0] - x))[1]
+
+
+def figure_numbers(base):
+    """
+    Every number the prose quotes off a figure, written from the figure itself.
+
+    WHY THIS EXISTS. fill.py used to recompute these, so the note and the plot
+    beside it were two independent calculations of the same object. They
+    disagreed in print: the text quoted an income ratio of 3.33 at half strength
+    against 2.62 with the channel off, which is not "unchanged" and was not what
+    the figure showed. Anything that appears on a figure is now computed once,
+    here, and read from this file by fill.py.
+    """
+    sc, curves = fig_who_uses(base)
+    pVs, H, T, mH, mT = fig_moral_hazard(base)
+    fig_margins(base)
+
+    mort = np.asarray(curves['mortality'])
+    unem = np.asarray(curves['unemployment'])
+
+    def at(curve, s):
+        i = int(np.argmin(np.abs(sc - s)))
+        return float(curve[i])
+
+    d = {'r_off': f'{at(mort, 0.0):.2f}',
+         'r_mort': f'{at(mort, 1.0):.2f}',
+         'r_mort_half': f'{at(mort, 0.5):.2f}',
+         'r_mort125': f'{at(mort, SCAN_HI):.2f}',
+         'r_unemp': f'{at(unem, 1.0):.2f}',
+         'r_unemp125': f'{at(unem, SCAN_HI):.2f}',
+         'scanhi_pc': f'{100.0 * SCAN_HI:.0f}'}
+
+    # STILL ABOVE ONE is a claim, and the contrast with the mortality channel
+    # rests on it, so the word comes from the number.
+    hi = at(unem, SCAN_HI)
+    d['runemphidir'] = 'above' if hi > 1.0 else ('below' if hi < 1.0 else 'at')
+
+    # OVER HOW MUCH OF THE CHANNEL THE REVERSAL HAPPENS. The last grid point at
+    # or below the calibrated strength where the ratio is still within five per
+    # cent of its value with the channel off is where the fall begins, so the
+    # reversal occupies what is left of the channel.
+    off = at(mort, 0.0)
+    start = 0.0
+    for s_, r_ in zip(sc, mort):
+        if s_ <= 1.0 + 1e-9 and abs(r_ - off) <= 0.05 * abs(off):
+            start = float(s_)
+    d['revfrac'] = _fraction_word(max(1.0 - start, 0.0))
+
+    # WHETHER b COULD ACTUALLY HOLD PARTICIPATION at every point of Figure 1.
+    # At the far end of the mortality curve participation is a step function of
+    # b and no b delivers the target, so the figure's note cannot promise a flat
+    # participation rate without checking first.
+    miss = 0
+    for which in ('mortality', 'unemployment'):
+        for s_ in sc:
+            if abs(stats(_scaled(base, which, float(s_)))['part']
+                   - TARGET['part']) > 5e-4:
+                miss += 1
+    d['partnote'] = ('throughout' if miss == 0 else
+                     f'at every point of the scan but {miss} of the '
+                     f'{2 * len(sc)}, where participation is a step function of '
+                     '$b$ and no value of it delivers the target')
+
+    # THE ENDS OF FIGURE 2, which the policy paragraph reads off directly.
+    m0, mt, mh = mT[0], mT[-1], mH[-1]
+    d['p0'] = f'{100 * m0["part"]:.2f}'
+    d['pt'] = f'{100 * mt["part"]:.2f}'
+    d['ph'] = f'{100 * mh["part"]:.2f}'
+    d['vol'] = f'{100 * (mt["part"] - m0["part"]):+.2f}'
+    d['mh'] = f'{100 * (mh["part"] - mt["part"]):+.2f}'
+    d['net'] = f'{100 * (mh["part"] - m0["part"]):+.2f}'
+    d['hl0'] = f'{100 * m0["homeless"]:.2f}'
+    d['sudh'] = f'{100 * mh["sud"]:.3f}'
+    d['sudt'] = f'{100 * mt["sud"]:.3f}'
+    d['costh'] = f'{mh["cost"]:.4f}'
+    d['costt'] = f'{mt["cost"]:.4f}'
+    d['costdir'] = ('more' if mt['cost'] > mh['cost']
+                    else 'less' if mt['cost'] < mh['cost'] else 'no more')
+    d['costgap'] = f'{abs(mt["cost"] - mh["cost"]):.4f}'
+    d['costdearer'] = ('the dearer' if mt['cost'] > mh['cost']
+                       else 'the cheaper' if mt['cost'] < mh['cost']
+                       else 'no dearer')
+    d['costeffect'] = 'first' if mt['cost'] > mh['cost'] else 'second'
+
+    # THE RAW VALUES TOO, under a key the placeholder filler ignores. fill.py
+    # needs the SUD rates at full precision to form the externality's gain, and
+    # reading them back out of a rounded string would put a third version of the
+    # same number into circulation.
+    d['_raw'] = {'sudh': float(mh['sud']), 'sudt': float(mt['sud']),
+                 'costh': float(mh['cost']), 'costt': float(mt['cost']),
+                 'parth': float(mh['part']), 'partt': float(mt['part']),
+                 'part0': float(m0['part'])}
+
+    here = os.path.dirname(os.path.abspath(__file__))
+    with open(os.path.join(here, 'figure_numbers.json'), 'w') as f:
+        json.dump(d, f, indent=1)
+    print('\n   wrote figure_numbers.json')
+    for k, v in d.items():
+        if not k.startswith('_'):
+            print(f'      {k:12s} {v}')
+    return d
+
+
 if __name__ == '__main__':
     base = with_(P(), **json.load(open('calibrated.json')))
     print('figures')
-    fig_who_uses(base)
-    fig_moral_hazard(base)
-    fig_margins(base)
+    figure_numbers(base)

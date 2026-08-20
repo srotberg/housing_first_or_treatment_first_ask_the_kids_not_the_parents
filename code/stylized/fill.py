@@ -17,7 +17,7 @@ from calibrate import YG, W, stats, bracket, TARGET
 from welfare import cev, v1_pop
 from children import (child_grid, shifted, DEL_D, DEL_H, RATIO_TARGET,
                       ratio_h, verdict)
-from run import _scaled
+from frontier import TH_BREAK
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 WRITE = os.path.normpath(os.path.join(HERE, '..', '..', 'writing'))
@@ -38,8 +38,10 @@ def compare(a, b, name, more='higher', less='lower', same='the same as',
     return {name + 'dir': w, name + 'gap': f'{abs(d):.4f}'}
 
 
-def numbers(base):
-    out = {}
+def numbers(base, fig):
+    """The prose's numbers. `fig` is figure_numbers.json, already loaded."""
+    out = dict(fig)
+    raw = out.pop('_raw')
     pc = lambda z, n=2: f'{100*z:.{n}f}'
 
     out['beta'] = f'{base.beta:.3f}'
@@ -63,13 +65,16 @@ def numbers(base):
     out['gridn'] = f'{len(YG)}'
     out['poolpct'] = f'{100.0 * W[0] / W.sum():.1f}'
 
-    # THE FOOD ASSISTANCE ABLATION. These two are the forced share of
-    # homelessness, at h_hl near zero, with and without the transfer that used
-    # to be in this model, and they are RECORDED rather than recomputed: the
-    # transfer is gone, so the model can no longer produce the second number.
-    # The experiment is in the note at the head of calibrate.py.
-    out['forced_nofs'] = '0.305'
-    out['forced_fs'] = '0.288'
+    # THE HOUSING AND VOUCHER SETTINGS. Every one of these is also a row of
+    # Table 1, and the prose used to type them again beside it. They are set
+    # rather than calibrated, so they move rarely, which is exactly why typing
+    # them is dangerous: the copy in the prose survives a change to the class
+    # for as long as nobody reads that sentence against the table.
+    out['h3'] = f'{base.h_lg:.2f}'
+    out['h2frac'] = f'{base.h_sm / base.h_lg:.2f}'
+    out['kV'] = f'{base.kV:.2f}'
+    out['smrd'] = f'{base.smr_d:.0f}'
+    out['th_break'] = f'{TH_BREAK:.2f}'
 
     mb = stats(base)
     out['dshare_m'] = f'{100*mb["dshare"]:.2f}'
@@ -90,43 +95,18 @@ def numbers(base):
     # one rental size only: the model that fails to calibrate
     out['homeless1'] = pc(stats(with_(base, h_sm=base.h_lg))['homeless'])
 
-    # the two channels, both ends
-    out['r_off'] = f'{stats(_scaled(base, "mortality", 0.0))["r_use"]:.2f}'
-    out['r_mort'] = f'{stats(_scaled(base, "mortality", 1.0))["r_use"]:.2f}'
-    out['r_mort_half'] = f'{stats(_scaled(base, "mortality", 0.5))["r_use"]:.2f}'
-    out['r_unemp'] = f'{stats(_scaled(base, "unemployment", 1.0))["r_use"]:.2f}'
-    # past the calibrated point, which is what the figure now shows
-    out['r_mort125'] = f'{stats(_scaled(base, "mortality", 1.25))["r_use"]:.2f}'
-    out['r_unemp125'] = f'{stats(_scaled(base, "unemployment", 1.25))["r_use"]:.2f}'
-
-    # the policy experiment
-    m0 = stats(with_(base, pV=0.0, policy='HF'))
-    mt = stats(with_(base, pV=1.0, policy='TF'))
-    mh = stats(with_(base, pV=1.0, policy='HF'))
-    out['p0'] = pc(m0['part'])
-    out['pt'] = pc(mt['part'])
-    out['ph'] = pc(mh['part'])
-    out['vol'] = f'{100*(mt["part"]-m0["part"]):+.2f}'
-    out['mh'] = f'{100*(mh["part"]-mt["part"]):+.2f}'
-    out['net'] = f'{100*(mh["part"]-m0["part"]):+.2f}'
-    out['hl0'] = pc(m0['homeless'])
-    out['sudh'] = pc(mh['sud'], 3)
-    out['sudt'] = pc(mt['sud'], 3)
-    out['costh'] = f'{mh["cost"]:.4f}'
-    out['costt'] = f'{mt["cost"]:.4f}'
+    # THE TWO CHANNELS AND THE POLICY EXPERIMENT ARE NOT COMPUTED HERE. Every
+    # one of those numbers appears on Figure 1 or Figure 2, so run.py computes
+    # it once while it draws the figure and writes it to figure_numbers.json,
+    # and _figures() below reads it in. Recomputing them here is what let the
+    # note quote an income ratio of 3.33 at half strength beside a figure that
+    # showed 4.70.
     # THE SENTENCE THAT COMPARES THEM HAS TO TURN WITH THEM. The two outlays
     # are within a fraction of a percent of each other and which is the larger
     # is not robust to a recalibration, so the prose around them is generated
     # from the same comparison rather than typed. A sweep that flipped the sign
     # and left the paragraph saying "more expensive" would be a contradiction no
     # reader could resolve and no test would catch.
-    out.update(compare(mt['cost'], mh['cost'], 'cost',
-                       more='more', less='less', same='no more'))
-    out['costdearer'] = ('the dearer' if mt['cost'] > mh['cost']
-                         else 'the cheaper' if mt['cost'] < mh['cost']
-                         else 'no dearer')
-    # which of the two offsetting effects wins is the same comparison
-    out['costeffect'] = 'first' if mt['cost'] > mh['cost'] else 'second'
 
     # welfare at universal cover
     vh = v1_pop(base, 'HF', 1.0)
@@ -134,6 +114,14 @@ def numbers(base):
     lam = cev(base, vh - vt)
     hit = lam > 1e-6
     out['worse'] = f'{100*float((WW * (vt < vh - 1e-9)).sum()):.1f}'
+    # NOBODY BETTER OFF IS A RESULT, NOT AN ASSUMPTION. Treatment First offers a
+    # strict subset of Housing First's coverage, so no household should gain
+    # from it, and verify.py checks the same property. The sentence that states
+    # it takes its wording from here so that a violation would show up in the
+    # paper rather than only in a test.
+    better = 100.0 * float((WW * (vt > vh + 1e-9)).sum())
+    out['betteroff'] = ('none is better off' if better < 0.05
+                        else f'{better:.1f} percent are better off')
     out['cev_aff'] = pc(float((WW * lam)[hit].sum() / max(WW[hit].sum(), 1e-12)))
     out['cev_pop'] = pc(float((WW * lam).sum()), 3)
 
@@ -161,7 +149,7 @@ def numbers(base):
     v1u, _ = child_grid(base, 'HF', 1.0)
     per_case = cev(base, shifted(v1u, 0.0) - shifted(v1u, DEL_D))
     priv = float((WW * cev(base, vh - vt)).sum())
-    dsud = mh['sud'] - mt['sud']
+    dsud = raw['sudh'] - raw['sudt']
     gain = dsud * per_case
     out['percase'] = pc(per_case, 1)
     out['priv'] = pc(priv, 3)
@@ -214,6 +202,21 @@ def _params(out):
         out.setdefault(k, v)
 
 
+def _figures(base):
+    """
+    figure_numbers.json, written by run.py while it drew the figures.
+
+    It is an ERROR for this file to be missing or stale rather than something to
+    work around: every number in it appears on a figure, and a note whose text
+    and figure disagree is worse than one that fails to build. run.py runs
+    before this file in build.sh.
+    """
+    p = os.path.join(HERE, 'figure_numbers.json')
+    if not os.path.exists(p):
+        raise SystemExit('   figure_numbers.json missing: run run.py first')
+    return json.load(open(p))
+
+
 def _transition(out):
     """The transition numbers, from the file transition.py writes.
 
@@ -231,7 +234,7 @@ def _transition(out):
 if __name__ == '__main__':
     import sys
     base = with_(P(), **json.load(open(os.path.join(HERE, 'calibrated.json'))))
-    n = numbers(base)
+    n = numbers(base, _figures(base))
     _params(n)
     _transition(n)
     if '--freeze' in sys.argv:

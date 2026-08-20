@@ -578,7 +578,7 @@ fifty four parameters, which is what the welfare and fiscal questions
 require,
 but it also makes it hard to see which pieces of the environment do the
 heavy lifting. This note strips the environment down to help see the
-main drivers in the model, but where three main questions of this paper are still well
+main drivers in the model, but where \textcolor{red}{the} main questions of this paper are still well
 posed.
 
 Households are perfectly forward-looking, here and in the quantitative model.
@@ -599,8 +599,8 @@ costs earnings, and it raises the chance of dying, which costs the value of the 
 it has left. The question is which of the two reverses the concentration from the top
 to the bottom, and I show that it is the risk of death.
 
-\item \textbf{How does housing assistance shape the drug use decision?} (Un)conditional
-assistance pulls drug use in two opposite directions. It raises the value of
+\item \textbf{How does housing assistance shape the drug use decision?} \textcolor{red}{Housing
+assistance} pulls drug use in two opposite directions. It raises the value of
 staying clean, because a housed future is worth more than a homeless one and
 using puts that future at risk: call this the value of life force, and it lowers
 use. In contrast, if the voucher is unconditional, then it cushions the consequence of acquiring a SUD, because
@@ -698,8 +698,8 @@ The mortality penalty applies here, and here only.
 \paragraph{Period 2.} This is the terminal period, after which the household dies with certainty. A
 household without the SUD is unemployed with probability $u_0$ and one with
 the SUD with the higher probability $u_1$; if unemployed it receives income
-support. The voucher is drawn again, subject to the policy rule \textcolor{red}{(Section~\ref{sec:mh})}. The household
-chooses consumption and housing, there is no drug use decision \textcolor{red}{(Section~\ref{sec:problem})}, and assets are
+support \textcolor{red}{(Section~\ref{sec:support})}. The voucher is drawn again, subject to the policy rule (Section~\ref{sec:mh}). The household
+chooses consumption and housing, there is no drug use decision, and assets are
 run down with nothing bequeathed.
 
 \subsubsection{Employment, income support and housing}\label{sec:support}
@@ -746,10 +746,13 @@ and $\pi_V$, the share of eligible households actually covered, is a policy
 dial of Section~\ref{sec:mh}.
 
 The two policies differ in exactly one respect, the last indicator in
-equation~\eqref{eq:vouch}. \textbf{Housing First} \textcolor{red}{(HF)} covers every eligible
-household regardless of $(d',v)$. \textbf{Treatment First} \textcolor{red}{(TF)} covers only
+equation~\eqref{eq:vouch}. \textbf{Housing First} covers every eligible
+household regardless of $(d',v)$. \textbf{Treatment First} covers only
 households that satisfy the sobriety condition, $v=0$ and $d'=0$, which is the
-rule in the quantitative model as well. Since policy coverage in the states
+rule in the quantitative model as well. \textcolor{red}{The condition is applied to the
+period in which the voucher is paid, so what it can test differs by period: in
+period 1 both parts are live, while in period 2 there is no drug choice, $v=0$
+there by construction, and only the disorder can fail it.} Since policy coverage in the states
 that follow drug use is the only difference, the gap between them is the moral
 hazard and the whole of it.
 
@@ -758,8 +761,15 @@ Every household arrives clean, so the period 1 voucher is drawn before $v$ is
 chosen and conditionality cannot screen anyone out on entry. The order
 within the period is therefore: the household chooses $v$, the policy rule is
 then applied to the voucher it drew, and it chooses housing knowing what rent it
-faces. So under Treatment First a household that uses would be subject to
-full market rent immediately and again in period 2\textcolor{red}{, whether or not it goes on to acquire the SUD: the condition is $v=0$ and $d'=0$, and using fails the first of them.}
+faces. So under Treatment First a household that uses is subject to
+full market rent immediately, in the period it uses\textcolor{red}{. What happens to it in period 2
+depends on how the gamble turned out, and not on the use itself: it makes no
+drug choice in period 2, so the only part of the condition that can bite there
+is $d'=0$. A household that used and acquired the SUD pays market rent again; a
+household that used and escaped it arrives clean and is covered again. That is
+what makes conditionality in this model a penalty on the disorder rather than a
+penalty on a history of use, and it is the rule the quantitative model applies
+period by period}.
 
 \subsubsection{The household's problem}\label{sec:problem}
 
@@ -801,8 +811,8 @@ mortality channel would be losing to impatience rather than to anything the mode
 is about, so a higher factor corrects for the coarseness of the horizon rather
 than making a claim about preferences.} and the gross interest rate is
 $R=1/\beta$, and survival over
-a period is $\bar\phi = @@phi0@@$, from the Social Security Administration (SSA) period life table for \textcolor{red}{twenty six} to fifty five. For the SUD, the
-proportional fall in survival is $\kappa_{\phi d} = @@kap@@$ , derived by compounding an annual mortality ratio of $8$, the midpoint of the range in Hjorth\o j et al.\
+a period is $\bar\phi = @@phi0@@$, from the Social Security Administration (SSA) period life table for twenty six to fifty five. For the SUD, the
+proportional fall in survival is $\kappa_{\phi d} = @@kap@@$ , derived by compounding an annual mortality ratio of $@@smrd@@$, the midpoint of the range in Hjorth\o j et al.\
 (2023), so a clean household's chance of dying before period 2 is @@dth0@@
 percent and a household that acquires a SUD has a @@dth1@@ percent chance of
 dying before period 2.\footnote{The second figure is not $\kappa_{\phi d}$ and should not be
@@ -811,20 +821,20 @@ survival goes from $\bar\phi=@@phi0@@$ to $\bar\phi(1-\kappa_{\phi d})=@@phi1@@$
 dying is one minus that.}
 The two unemployment probabilities are measured directly. $u_0 = @@u0@@$
 is the headline civilian unemployment rate from the Bureau of Labor Statistics
-(BLS) Current Population Survey \textcolor{red}{(CPS)}, series UNRATE as distributed by Federal Reserve
+(BLS) Current Population Survey (CPS), series UNRATE as distributed by Federal Reserve
 Economic Data (FRED), averaged over 2014 to 2024. And $u_1 = @@u1@@$ is from the
 National Survey on Drug Use and Health (NSDUH) 2024 for respondents aged 26 and
 over.
 
 Income support replaces half of previous earnings on a base capped at mean
 income, in line with statutory state rules. The two rental sizes are set
-such that the standard unit, $h_3$, costs $0.40$ of mean income and the
-small unit, $h_2$, is a quarter of it. The voucher parameters are institutional: covered
-tenants pay $\textcolor{red}{@@q_kappa_r_pc@@}$ percent of market rent, eligibility is capped at half of median income, $\kappa_V = 0.50$, and $\pi_V = 0.266$ is the ratio of recipients to the income eligible population in the 2023 Picture of Subsidized
-Households, published by \textcolor{red}{HUD}. The weight on drugs is set at $\theta = @@th@@$.\footnote{A $\theta$ large enough to
+such that the standard unit, $h_3$, costs $@@h3@@$ of mean income and the
+small unit, $h_2$, is $@@h2frac@@$ of it. The voucher parameters are institutional: covered
+tenants pay $@@q_kappa_r_pc@@$ percent of market rent, eligibility is capped at half of median income, $\kappa_V = @@kV@@$, and $\pi_V = @@pvbase@@$ is the ratio of recipients to the income eligible population in the 2023 Picture of Subsidized
+Households, published by HUD. The weight on drugs is set at $\theta = @@th@@$.\footnote{A $\theta$ large enough to
 match the $@@q_theta@@$ percent of income the average user spends on drugs makes the drug too
 valuable to be deterred by a death that arrives thirty years later, and users stop
-being poor: by $\theta=0.23$ the mortality channel no longer reverses the income
+being poor: by $\theta=@@th_break@@$ the mortality channel no longer reverses the income
 gradient on its own, and the average user is richer than average. Setting $\theta = @@th@@$ gives a spending share of @@dshare_m@@
 percent and keeps the gradient, which is the trade this very simple model can make.}
 
@@ -849,8 +859,7 @@ estimates are put in current dollars. The pull of the first unit $b$ is matched
 to a drug participation rate of $@@q_b@@$ percent from NSDUH 2024 for
 respondents aged 26 and over, housing services on the street
 $h_1$ to a homelessness rate of $@@q_h_1@@$ percent from the 2023 HUD PiT count, and the SUD hazard $\lambda$ to the $@@q_lambda@@$ percent
-of adults aged $26$ and over carrying a SUD in NSDUH 2024, which is the moment the
-quantitative model matches too.
+of adults aged $26$ and over carrying a SUD in NSDUH 2024.
 
 \begin{table}[!tb]
 \centering
@@ -882,7 +891,7 @@ through $\kappa_{\phi d}$ in equation~\eqref{eq:surv}.
 The \emph{unemployment channel} is that it costs you a job with probability
 $u_1-u_0$, and if income support cannot cover the rent you downsize, live on
 less, or lose your home. Figure~\ref{fig:who} scales each from nothing to
-$125$ percent of its
+$@@scanhi_pc@@$ percent of its
 calibrated value, recalibrating $b$ at every point so participation stays at
 $@@q_b@@$ percent. The amount of drug use is therefore identical all along both
 curves and the only thing moving is which households use.
@@ -894,7 +903,7 @@ curves and the only thing moving is which households use.
 \label{fig:who}
 \notes{0.62\textwidth}{Note: the vertical axis is average income of users over
 the population average, on a log scale, and $b$ is recalibrated at every point
-so that participation is $@@q_b@@$ percent throughout. The black dotted line marks
+so that participation is $@@q_b@@$ percent @@partnote@@. The black dotted line marks
 the calibrated strength; everything to the right of it is extrapolation.}
 \end{figure}
 
@@ -902,29 +911,39 @@ The result is sharper than the statement that mortality matters more. That chann
 takes the income ratio from @@r_off@@ with nothing switched on down to @@r_mort@@ at
 full strength. At half of its
 calibrated value the ratio is unchanged at @@r_mort_half@@, and the reversal
-begins to happen over the last quarter of the channel. That threshold is a feature of the
+begins to happen over the last \textcolor{red}{@@revfrac@@} of the channel. That threshold is a feature of the
 mechanism rather than an artefact. What mortality destroys is a continuation value,
 and a household only stops using when the expected loss of that value exceeds what
 the drug is worth to it; below the point where it does, a stronger penalty changes
-nothing about who uses, and above it the ordering flips at once. Past the calibrated
-point the ratio is flat, @@r_mort125@@ at $125$ percent against @@r_mort@@ at $100$,
-so the calibration does not sit on the edge of the cliff but on the floor beyond
-it.
+nothing about who uses, and above it the ordering \textcolor{red}{starts to flip}.
 
 In contrast, the unemployment channel does
 not reverse it at all, leaving users at @@r_unemp@@ times average income even
-fully switched on, and at $125$ percent it is @@r_unemp125@@, still above
-one and no closer to turning. Strengthening the resource penalty by a quarter
-does not begin to do what mortality does. A resource penalty does not produce the concentration of
+fully switched on, and at $@@scanhi_pc@@$ percent it is @@r_unemp125@@, still @@runemphidir@@
+one and no closer to turning. A resource penalty does not produce the concentration of
 drug use at the bottom.
 
-A mortality penalty is different in kind. A resource penalty scales with the
-very thing it is meant to offset, since taking a fixed share of a large income
-still leaves a large income, so it cannot outrun the fact that drugs are cheaper
-in utility terms for the rich. What mortality destroys is not resources but a
-continuation value, and the continuation value rises with permanent income. The
-household with more to lose loses more, and loses proportionally more than it
-gains from drugs being relatively cheap. That is the work of $\aleph$ in
+\textcolor{red}{Why should the two channels differ at all, when both make the disorder
+worse? Because only one of them has a bite that grows with what the household
+has. Flow utility is logarithmic, so a \emph{proportional} loss of income costs
+a number of utils that hardly moves with income: a household earning below the
+cap $\bar y$ that loses its job and falls back on income support gives up
+$-\log\psi$, whatever it was earning. Multiplied by the $u_1-u_0$ chance of it
+happening, the resource channel is close to a flat charge for using. What it has
+to overturn is not flat at all. Buying $v$ units costs a rich household almost
+nothing in consumption terms and a poor household a great deal, so the utility
+price of using \emph{falls} as income rises, and that is what puts use at the top
+to begin with. A charge that does not vary with income cannot reverse a price
+that does. Mortality is a different object. What it destroys is the whole
+continuation value: the consumption of a life still to be lived, and $\aleph$,
+the value of being alive at all, which does not shrink as consumption does. That
+value rises with permanent income, so the expected cost of using rises with
+income at the same time as its utility price falls. Past a point the two cross,
+and it is the rich who stop first. The reversal is therefore not that mortality
+is the larger penalty; it is that mortality is the only one of the two whose
+size is tied to what the household stands to lose. The household with more to
+lose loses more, and loses disproportionally more than it gains from drugs.}
+That is the work of $\aleph$ in
 equation~\eqref{eq:u}: it is the part of the continuation value that does not
 shrink as consumption falls.
 
@@ -947,7 +966,7 @@ isolates the value of life force.
 \notes{0.66\textwidth}{Note: the red band is the moral hazard force and the blue
 band above it is what Housing First delivers net; together they are the value of
 life force, marked at the right. The dashed line is the generosity of the
-current programme, $\pi_V = 0.266$.}
+current programme, $\pi_V = @@pvbase@@$.}
 \end{figure}
 
 Figure~\ref{fig:mh} traces both as generosity rises. With no programme at all,
@@ -1010,7 +1029,7 @@ statement about drug use and not about welfare.
 
 Panel B of
 Table~\ref{tab:welfare} puts welfare numbers on it: @@worse@@ percent of households are
-strictly worse off under Treatment First, none is better off, and those affected
+strictly worse off under Treatment First, @@betteroff@@, and those affected
 lose @@cev_aff@@ percent of consumption. Those are exactly the households
 that use: a household that never uses faces the same voucher rule under both
 policies and is indifferent between them. The figure is not the $@@q_b@@$
@@ -1049,7 +1068,7 @@ tell them apart.
 \centering
 \caption{The externality on children}\label{tab:children}
 \sbox{\ntbox}{\input{tables/tab_children}}\usebox{\ntbox}
-\tabnote{Note: Panel A is at the baseline programme, $\pi_V=0.266$,
+\tabnote{Note: Panel A is at the baseline programme, $\pi_V=@@pvbase@@$,
 since the transmission ratio in the data comes from an economy with a rationed
 programme; Panel B is at universal cover, one child per household, no
 discounting across generations. Every consumption equivalent here is the proportional rise in consumption, at every date and in every state, worth as much as the difference in lifetime value, so it is a compensating variation and can exceed one hundred percent.}
@@ -1207,19 +1226,19 @@ recovered from, and Treatment First withdraws their voucher for a decision taken
 before the rule existed. They lose @@tr_caught@@ percent of consumption, against
 the @@tr_t1_tf@@ against @@tr_t1_hf@@ of the cohort born at the switch, and
 @@tr_caught_hl@@ percent of them are put on the street by the revocation itself.
-That is two orders of magnitude more than the newborn cohort bears, and it is the
+That is @@tr_caught_ratio@@ times what the newborn cohort bears, and it is the
 sense in which the transition is costly while it lasts.
 
 From the second cohort on the paths separate, and they separate
 because the parent generation they were born to is different. Under Treatment
-First the share of children born to a parent with the disorder falls from
+First the share of children born to a parent with the disorder @@tr_sudtf_dir@@ from
 @@tr_sud0@@ percent to @@tr_sudtf@@ percent and newborn welfare settles at
-@@tr_inf_tf@@ percent. Under Housing First the same share \emph{rises}, to
+@@tr_inf_tf@@ percent. Under Housing First the same share \emph{@@tr_sudhf_dir@@}, to
 @@tr_sudhf@@ percent, because a voucher that arrives whatever the household does
 is worth most to the household that uses, and welfare settles at @@tr_inf_hf@@
 percent. The ranking the static comparison delivers is therefore not a
 knife edge that one generation's accounting produces: it is a level difference
-between two rest points, reached within two or three cohorts, and paid for
+between two rest points, reached within @@tr_settle@@ cohorts, and paid for
 by the single cohort standing at the switch.
 
 \begin{figure}[!tb]

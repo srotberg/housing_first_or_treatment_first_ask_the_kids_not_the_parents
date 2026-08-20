@@ -190,6 +190,49 @@ chk('their loss exceeds the newborn cohort\'s',
     cg['cev'] > abs(paths['TF'][1][1] - paths['HF'][1][1]),
     'this is the point of computing them separately')
 
+print('\n=== 7c. the revocation rule ===')
+# THE PERIOD 2 CONDITION IS THE DISORDER AND NOTHING ELSE. There is no period 2
+# drug choice, so a household that used in period 1 and escaped the disorder
+# must face the same period 2 problem as one that never used. When the rule
+# revoked on a history of use instead, these two differed and Treatment First
+# was a harsher policy than the one the paper describes.
+_p2_clean = solve_period2(BASE, 0.6, 'TF', used=0)
+_p2_used = solve_period2(BASE, 0.6, 'TF', used=1)
+chk('period 2 does not punish a past use that came to nothing',
+    bool(np.allclose(_p2_clean[1], _p2_used[1], rtol=0, atol=1e-12)),
+    'the period 2 value function must not depend on period 1 use')
+# AND THE POLICY STILL HAS TEETH: the disorder itself must still cost the
+# voucher under Treatment First, or the two policies would be identical.
+_hf = stats(with_(BASE, pV=1.0, policy='HF'))
+_tf = stats(with_(BASE, pV=1.0, policy='TF'))
+chk('the two policies still differ at universal cover',
+    abs(_hf['part'] - _tf['part']) > 1e-6,
+    f"HF {100*_hf['part']:.3f}%  TF {100*_tf['part']:.3f}%")
+
+print('\n=== 7d. the figures and the prose quote the same numbers ===')
+# EVERY NUMBER ON A FIGURE IS COMPUTED ONCE, by run.py, and read by fill.py.
+# This recomputes two of them the long way and compares, which is the only way
+# to catch figure_numbers.json going stale against the model.
+_fp = os.path.join(HERE, 'figure_numbers.json')
+if not os.path.exists(_fp):
+    warn('figure numbers', 'figure_numbers.json missing; run run.py')
+else:
+    _fig = json.load(open(_fp))
+    from run import _scaled
+    _r_half = stats(_scaled(BASE, 'mortality', 0.5))['r_use']
+    chk('the income ratio at half strength matches the figure',
+        abs(float(_fig['r_mort_half']) - _r_half) < 0.005,
+        f"file {_fig['r_mort_half']}  recomputed {_r_half:.2f}")
+    chk('participation under HF at universal cover matches the figure',
+        abs(float(_fig['ph']) - 100 * _hf['part']) < 0.005,
+        f"file {_fig['ph']}  recomputed {100*_hf['part']:.2f}")
+    # AND THE SENTENCE THAT CALLS IT UNCHANGED has to be true of the numbers
+    # beside it, which it was not: 3.33 was printed as "unchanged" against 2.62.
+    _off, _half = float(_fig['r_off']), float(_fig['r_mort_half'])
+    chk('"unchanged at half strength" is true of the two numbers printed',
+        abs(_half - _off) <= 0.06 * abs(_off),
+        f'with the channel off {_off:.2f}, at half strength {_half:.2f}')
+
 print('\n=== 8. the paper quotes what the tables state ===')
 src = open(os.path.join(TAB, '..', 'housing_first_children_later.tex'), encoding='utf-8').read()
 for label, val in (('participation under HF at universal cover', f'{100*mh["part"]:.2f}'),

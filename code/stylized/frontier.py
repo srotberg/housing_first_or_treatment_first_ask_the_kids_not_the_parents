@@ -29,6 +29,11 @@ WHAT IS SCREENED. A point is admissible only if
 and among the admissible points the best is the one with the LARGEST drug
 spending share, since that is the moment being traded away.
 
+WHERE THE SCREEN FAILS. TH_BREAK below is the theta at which r_mort first rises
+above one, so it is the point past which the paper's mechanism is gone. The
+footnote in Section 3.3 quotes it, and quotes it from here rather than typing
+it, so a rerun of this scan that moves the crossing moves the sentence too.
+
 WHY A SCAN AND NOT A SOLVE. Solving theta on a spending share target and then
 reading the deterrent off answers one target at a time and hides the shape. The
 share is bimodal in theta and the admissible window is narrow, so the useful
@@ -45,7 +50,20 @@ from stylized import P, with_, value1
 from calibrate import stats, bracket, _b_for, YG, calibrate
 from run import _scaled
 
-BASE = with_(P(), **json.load(open('calibrated.json')))
+# THE THETA AT WHICH THE MORTALITY SCREEN FAILS, read off the scan below rather
+# than solved for: r_mort crosses one between 0.22 and 0.23 at the calibrated
+# dispersion, so 0.23 is the first grid point where the model no longer says
+# what it exists to say. Reproduce with `python3 frontier.py` and read the
+# r_mort column. fill.py quotes it as @@th_break@@.
+TH_BREAK = 0.23
+# LAZY, NOT AT IMPORT. This used to read calibrated.json at module level, so
+# importing anything from this file did file I/O against a relative path and
+# failed from any other directory. fill.py imports TH_BREAK from here, so it has
+# to be importable without touching the disk.
+def _base():
+    import os
+    here = os.path.dirname(os.path.abspath(__file__))
+    return with_(P(), **json.load(open(os.path.join(here, 'calibrated.json'))))
 
 
 def at(beta_ann, th, sweeps=2):
@@ -60,7 +78,7 @@ def at(beta_ann, th, sweeps=2):
     Every point here is therefore a full calibration at a fixed theta, which is
     what makes the points comparable with each other and with the baseline.
     """
-    q = with_(BASE, beta_ann=beta_ann, beta=beta_ann**30, R=1.0/beta_ann**30,
+    q = with_(_base(), beta_ann=beta_ann, beta=beta_ann**30, R=1.0/beta_ann**30,
               th=th)
     return calibrate(q, sweeps=sweeps, verbose=False, fix=('th',),
                      checkpoint=f'checkpoint_front_{beta_ann}_{th:.3f}.json')
