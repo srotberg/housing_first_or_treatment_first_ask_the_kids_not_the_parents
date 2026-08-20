@@ -264,7 +264,7 @@ overturns the dominance result works.
 
 A full-fledged quantitative model follows, to quantify the mechanisms and the welfare
 implications of Housing First against Treatment First. It is a general equilibrium
-life-cycle economy, in Section~\ref{sec:full}, with six state variables and \textcolor{red}{fifty four} parameters. It carries endogenous homelessness, drug use, the SUD, recovery, serious
+life-cycle economy, in Section~\ref{sec:full}, with six state variables and fifty four parameters. It carries endogenous homelessness, drug use, the SUD, recovery, serious
 mental illness (SMI), employment and mortality, together with a drug market that
 clears, so drug prices respond to policy, and a government budget that balances. It
 also considers the costs of enforcing conditionality, and imperfect detection.
@@ -574,16 +574,16 @@ In the data, drug use is concentrated among low-income households, most of the
 homeless do not carry a SUD, and housing vouchers
 reach only about a quarter of the households eligible for them. The quantitative
 model is built to match facts of that kind. It has six state variables and
-\textcolor{red}{fifty four} parameters, which is what the welfare and fiscal questions
+fifty four parameters, which is what the welfare and fiscal questions
 require,
 but it also makes it hard to see which pieces of the environment do the
-heavy lifting. This note strips the environment down to help understand the
-main drivers in the model, but where three main questions of this paper are still well
+heavy lifting. This note strips the environment down to help \textcolor{red}{see} the
+main drivers in the model, but where \textcolor{red}{the} three main questions of this paper are still well
 posed.
 
 Households are perfectly forward-looking, here and in the quantitative model.
 They know the true hazard of acquiring a SUD, they are aware of what carrying one would
-cost them, and they make no mistakes. Nothing below rests on misperception, myopia, self control, or on a taste that changes once the household has used.
+cost them, and they make no mistakes. Nothing below rests on misperception, myopia, self control, or on a taste that changes once the household has used. \textcolor{red}{The model abstracts from government and from how the programmes are funded; both enter the quantitative model of Section~\ref{sec:full}.}
 
 \begin{enumerate}\setlength{\itemsep}{0.3em}\setlength{\parskip}{0em}
 
@@ -637,15 +637,14 @@ First raises welfare relative to Housing First in a model that fits the data.
 \subsubsection{Households and preferences}
 
 There are two periods and a continuum of households. A period stands for
-thirty years of adult life, so the two of them span ages twenty five to eighty five.
+thirty years of adult life, so the two of them span ages \textcolor{red}{twenty six} to eighty five.
 Parameters with a natural annual counterpart are compounded to that length: the
 discount factor is $\beta$ per period, the gross interest rate is $R=1/\beta$ so
-that $\beta R = 1$, and $\bar\phi$ is survival over thirty years. Notation follows the
-quantitative model throughout.
+that $\beta R = 1$, and $\bar\phi$ is survival over thirty years. Notation follows \textcolor{red}{the full model in Section~\ref{sec:full}}.
 
 A household is characterised by its productivity $y$, fixed over its
 life and lognormally distributed across households, $\log y \sim
-\mathcal{N}(-\tfrac12\sigma_y^2, \sigma_y^2)$, so mean income is one.\textcolor{red}{\footnote{The distribution is solved on a @@gridn@@ point grid whose nodes are the conditional means of the lognormal on intervals that narrow towards the bottom, where the drug and housing margins are, so mean income is one and the poorer half's share of earnings is its target exactly rather than after rescaling. The lowest interval is the exception: it pools the bottom @@poolpct@@ percent of households into a single mass point at their own conditional mean. That is a substantive choice and not a numerical one. Resolved node by node, the foot of a lognormal contains households whose permanent income over a thirty year period falls below the rent on the smallest unit; they are on the street whatever the street is worth, so $h_1$ has nothing left to decide. Pooling puts the poorest households where the poorest households in the data are, able to rent and badly.}} Households
+\mathcal{N}(-\tfrac12\sigma_y^2, \sigma_y^2)$, so mean income is one. Households
 differ in $y$, in age $j\in\{1,2\}$, in employment status $e\in\{0,1\}$, in
 voucher receipt $\eta\in\{0,1\}$ and in SUD status $d\in\{0,1\}$, all
 discussed below, and in nothing else.
@@ -656,9 +655,8 @@ drug consumption $v$,
 u(c,h,v) \;=\; (1-\gamma-\theta)\log c \;+\; \gamma \log h
 \;+\; \theta\big[\log(b+v)-\log b\big] \;+\; \aleph .
 \end{equation}
-The three weights sum to one, so $\gamma$ is the housing budget share.
-Drugs enter only in the first period, since that is the only period in which $v$
-is chosen, and housing is chosen each period from a three point grid
+The three weights sum to one\textcolor{red}{, where the weight on housing consumption is $\gamma$ and the weight on drug consumption is $\theta$}.
+Drugs enter only in the first period, since that is the only period in which \textcolor{red}{I allow $v$ to be chosen}, and housing is chosen each period from a three point grid
 $\{h_1,h_2,h_3\}$. The pair $(\theta,b)$ governs the drug term: the marginal
 utility of the $v$th unit is $\theta/(b+v)$, so $\theta$ mostly sets how much a
 user uses and $b$ whether anyone uses at all. The Stone-Geary form keeps the
@@ -677,16 +675,18 @@ drawn with the unemployment probability $u_0$, and a household that is income
 eligible draws a voucher with probability $\pi_V$; these are the same two
 lotteries it faces again in period 2. It then chooses consumption, housing, drug
 use $v\ge0$, which for simplicity is the only period in which it chooses whether
-to use, and saving, paying market rent $p_r$, which is normalised to one, on
-whatever unit it picks. It starts with no assets. Using drugs generates the risk
-of a SUD, increasing in $v$,
+to use, and saving, paying market rent $p_r$ on
+whatever unit it picks. It starts with no assets.
+
+\textcolor{red}{Using drugs generates the risk
+of a SUD, increasing in $v$,}
 \begin{equation}\label{eq:hazard}
 \pi(v) \;=\; 1 - e^{-\lambda v} .
 \end{equation}
 Because $\pi$ is increasing in $v$, the household internalises that using more
 is riskier, so the intensive and extensive margins are not separate decisions.
 
-\paragraph{The transition.} The SUD $d'\in\{0,1\}$ is realised with
+\paragraph{\textcolor{red}{Acquiring a SUD and the death penalty}.} The SUD $d'\in\{0,1\}$ is realised with
 probability $\pi(v)$ for households that used and with probability zero for the
 rest, and the household survives into period 2 with probability
 \begin{equation}\label{eq:surv}
@@ -695,22 +695,12 @@ rest, and the household survives into period 2 with probability
 so $\kappa_{\phi d}$ is the proportional reduction in survival caused by the SUD.
 The mortality penalty applies here, and here only.
 
-\paragraph{Period 2.} Terminal, after which the household dies with certainty. A
+\paragraph{Period 2.} \textcolor{red}{This is the terminal period,} after which the household dies with certainty. A
 household without the SUD is unemployed with probability $u_0$ and one with
 the SUD with the higher probability $u_1$; if unemployed it receives income
-support. The voucher is drawn again, subject to the policy rule. The household
-chooses consumption and housing, there is no drug use decision, and assets are
+support. The voucher is drawn again, subject to the policy rule \textcolor{red}{described in Section~\ref{sec:mh}}. The household
+chooses consumption and housing, there is no drug use decision \textcolor{red}{(the reason is shown in Section~\ref{sec:problem})}, and assets are
 run down with nothing bequeathed.
-
-\paragraph{Mortality, and where the SUD is realised.} Mortality is a tax on
-a continuation value, so the SUD can only cost anything if a future remains
-when it is carried. That does not require a third period. It requires the
-SUD to be drawn at a \emph{transition} rather than inside the terminal
-period, and here it is drawn on the way into period 2, with survival over that
-transition depending on it, so acquiring it puts the whole of period 2 at risk.
-Realise it inside the last period instead and death costs nothing because
-nothing follows it, and the mechanism the model rests on falls silent.
-
 
 \subsubsection{Employment, income support and housing}\label{sec:support}
 
@@ -744,7 +734,7 @@ Writing $\eta\in\{0,1\}$ for whether one is held,
 \Pr(\eta'=1 \mid y', d', v) \;=\; \pi_V \cdot \mathbf{1}\{y' \le \kappa_V\,y^{\text{med}}\}
 \cdot \mathbf{1}\{\text{policy covers } (d',v)\},
 \end{equation}
-where $\kappa_V\,y^{\text{med}}$ is the threshold for eligibility,
+where $\kappa_V\,y^{\text{med}}$ is the threshold for eligibility\textcolor{red}{, $y^{\text{med}}$ is median income,}
 and a household holding one pays the fraction $\kappa_r$ of market rent, so the
 rent paid on option $k$ is
 \begin{equation}\label{eq:rent}
@@ -752,7 +742,7 @@ r_k(\eta) \;=\; p_r\,h_k\big[\kappa_r \eta + (1-\eta)\big]\cdot
 \mathbf{1}\{k \ne 0\},
 \end{equation}
 which is zero when the household is homeless. Vouchers operate in both periods,
-and $\pi_V$, the share of eligible households actually covered, is the policy
+and $\pi_V$, the share of eligible households actually covered, is \textcolor{red}{a} policy
 dial of Section~\ref{sec:mh}.
 
 The two policies differ in exactly one respect, the last indicator in
@@ -769,7 +759,7 @@ chosen and conditionality cannot screen anyone out on entry. The order
 within the period is therefore: the household chooses $v$, the policy rule is
 then applied to the voucher it drew, and it chooses housing knowing what rent it
 faces. So under Treatment First a household that uses would be subject to
-market rent immediately and again in period 2.
+\textcolor{red}{full market rent} immediately and again in period 2.
 
 \subsubsection{The household's problem}\label{sec:problem}
 
@@ -777,28 +767,22 @@ market rent immediately and again in period 2.
 Let $a$ be assets carried in. Period 2 is terminal, so the household consumes
 everything and chooses housing,
 \begin{equation}\label{eq:v2}
-W_2(a,y,e,\eta,d) = \max_{\{k\}}
+\textcolor{red}{V_2(a',y,e',\eta',d')} = \max_{\{k\}}
 \Big\{ (1-\gamma-\theta)\log c + \gamma \log h_k + \aleph \Big\},
-\qquad c = Ra + y^{g}(y,e) - r_k(\eta),
+\qquad c = R\textcolor{red}{a'} + y^{g}(y,\textcolor{red}{e'}) - r_k(\textcolor{red}{\eta'}),
 \end{equation}
-and write $W_2(a,y,d) = \mathbb{E}\big[W_2(a,y,e,\eta,d)\mid y,d\big]$ for its
-expectation over the period 2 employment and voucher draws. In period 1 the
+and write \textcolor{red}{$V_2(a',y,d') = \mathbb{E}\big[V_2(a',y,e',\eta',d')\mid y,d'\big]$} for its
+expectation over the period 2 employment and voucher draws\textcolor{red}{, the SUD having already been realised at the transition}. In period 1 the
 household draws $(e,\eta)$ and then chooses housing, drug use and saving,
 \begin{equation}\label{eq:v1}
 V_1(y,e,\eta) = \max_{\{k,\,v \ge 0,\,a' \ge 0\}}
 \Big\{ (1-\gamma-\theta)\log c + \gamma \log h_k
 + \theta[\log(b+v)-\log b] + \aleph
-+ \beta\, \mathbb{E}_{d'}\Big[\phi(d')\,W_2(a',y,d')\Big] \Big\},
++ \beta\, \mathbb{E}_{d'}\Big[\phi(d')\,\textcolor{red}{V_2(a',y,d')}\Big] \Big\},
 \end{equation}
 with $c = y^{g}(y,e) - r_k(\eta) - p_v v - a'$ and $d'=1$ with the use dependent
 probability of~\eqref{eq:hazard}. Survival sits inside the expectation over
-$d'$ because it depends on which $d'$ is realised.
-
-A household uses if the value at its best positive $v$ exceeds the value at
-$v=0$. Households differ only in $y$ and in the draw $(e,\eta)$, which is the
-same lottery for everyone, so within a draw the decision defines a set of income
-intervals on which use occurs, and participation at a given income is the
-probability of drawing a state in which the household uses.
+$d'$ because it depends on which $d'$ is realised. \textcolor{red}{A household uses if the value at its best positive $v$ exceeds the value at $v=0$.}
 
 
 %======================================================================
@@ -833,7 +817,7 @@ National Survey on Drug Use and Health (NSDUH) 2024 for respondents aged 26 and
 over.
 
 Income support replaces half of previous earnings on a base capped at mean
-income, in line with statutory state rules.\textcolor{red}{\footnote{There is no food assistance here, and the quantitative model of Section~\ref{sec:full} has it. It was added and then removed. On the statutory rule, paid in kind so that it could not cover rent, it changes nothing this model is for: with the bottom of the income distribution pooled the homelessness rate reaches its target without it, and the share of homelessness that is forced rather than chosen is @@forced_nofs@@ percent against @@forced_fs@@ percent with the transfer, so the pooling does that work and not the transfer. A model whose purpose is to be easy to follow should not carry a parameter, a moment, a taper and an in kind restriction that change none of its answers.}} The two rental sizes are set
+income, in line with statutory state rules.\footnote{There is no food assistance here, and the quantitative model of Section~\ref{sec:full} has it. It was added and then removed. On the statutory rule, paid in kind so that it could not cover rent, it changes nothing this model is for: with the bottom of the income distribution pooled the homelessness rate reaches its target without it, and the share of homelessness that is forced rather than chosen is @@forced_nofs@@ percent against @@forced_fs@@ percent with the transfer, so the pooling does that work and not the transfer. A model whose purpose is to be easy to follow should not carry a parameter, a moment, a taper and an in kind restriction that change none of its answers.} The two rental sizes are set
 such that the standard unit, $h_3$, costs $0.40$ of mean income and the
 small unit, $h_2$, is a quarter of it. The voucher parameters are institutional: covered
 tenants pay $@@q_kappa_r@@$ percent of market rent, eligibility is capped at half of median income, $\kappa_V = 0.50$, and $\pi_V = 0.266$ is the ratio of recipients to the income eligible population in the 2023 Picture of Subsidized
@@ -1183,15 +1167,15 @@ more, which is the opposite direction from the tax.
 
 
 
-\subsection{\textcolor{red}{The transition}}\label{sec:trans}
+\subsection{The transition}\label{sec:trans}
 
-\textcolor{red}{Everything so far compares rest points, which is the natural way to read a
+Everything so far compares rest points, which is the natural way to read a
 two period model but hides the thing the argument turns on. Treatment First takes
 from the household in front of it and gives to the one after. A comparison of
 rest points reports the sum of those two and cannot show that they land on
-different people at different times. A transition can, and this model has one.}
+different people at different times. A transition can, and this model has one.
 
-\textcolor{red}{The link across generations is not persistence of income, which
+The link across generations is not persistence of income, which
 Section~\ref{sec:kids} deliberately leaves out, but the penalty. A child's income
 is a fresh draw from the same distribution multiplied by $(1-\delta_d)$ if its
 parent acquired the disorder and by $(1-\delta_h)$ if its parent was unhoused, so
@@ -1202,9 +1186,9 @@ of the cohort before it used and how many were unhoused, which depends in turn o
 the incomes that cohort was born with. Change the policy and the chain moves to a
 new rest point. It converges quickly, because the base draw is redrawn every
 generation and only the penalty is passed on, so it is at its new rest point
-within two or three cohorts and five are enough to show all of it.}
+within two or three cohorts and five are enough to show all of it.
 
-\textcolor{red}{Figure~\ref{fig:trans} runs the experiment from the world as it
+Figure~\ref{fig:trans} runs the experiment from the world as it
 is, Housing First at the observed $\pi_V=@@pvbase@@$, to universal cover under
 each policy, and plots the expected lifetime value of each newborn cohort as a
 consumption equivalent against the starting point. Cohort $0$ is the old rest
@@ -1213,9 +1197,9 @@ into the old income distribution and lives under the new rule, so it pays
 conditionality's cost and collects none of its benefit. The two policies are
 almost indistinguishable there, @@tr_t1_tf@@ percent against @@tr_t1_hf@@ percent,
 and Treatment First is the lower of the two. That difference is the private loss
-of Section~\ref{sec:nox}, seen on the only cohort that bears it.}
+of Section~\ref{sec:nox}, seen on the only cohort that bears it.
 
-\textcolor{red}{There is a cost the cohort path cannot show, and it is where conditionality's
+There is a cost the cohort path cannot show, and it is where conditionality's
 burden actually falls. Every cohort in the figure lives its whole life under one
 policy. The households in period 2 when the policy changes did not: they chose
 whether to use under the old rule, period 2 is terminal so a disorder cannot be
@@ -1224,9 +1208,9 @@ before the rule existed. They lose @@tr_caught@@ percent of consumption, against
 the @@tr_t1_tf@@ against @@tr_t1_hf@@ of the cohort born at the switch, and
 @@tr_caught_hl@@ percent of them are put on the street by the revocation itself.
 That is two orders of magnitude more than the newborn cohort bears, and it is the
-sense in which the transition is costly while it lasts.}
+sense in which the transition is costly while it lasts.
 
-\textcolor{red}{From the second cohort on the paths separate, and they separate
+From the second cohort on the paths separate, and they separate
 because the parent generation they were born to is different. Under Treatment
 First the share of children born to a parent with the disorder falls from
 @@tr_sud0@@ percent to @@tr_sudtf@@ percent and newborn welfare settles at
@@ -1236,14 +1220,14 @@ is worth most to the household that uses, and welfare settles at @@tr_inf_hf@@
 percent. The ranking the static comparison delivers is therefore not a
 knife edge that one generation's accounting produces: it is a level difference
 between two rest points, reached within two or three cohorts, and paid for
-by the single cohort standing at the switch.}
+by the single cohort standing at the switch.
 
 \begin{figure}[!tb]
 \centering
 \includegraphics[width=\textwidth]{figures/stylized_transition.pdf}
-\caption{\textcolor{red}{The transition after the reform}}
+\caption{The transition after the reform}
 \label{fig:trans}
-\notes{\textwidth}{\textcolor{red}{Note: Panel A is the expected lifetime value
+\notes{\textwidth}{Note: Panel A is the expected lifetime value
 of each newborn cohort, as a consumption equivalent against the pre reform rest
 point; Panels B and C are that cohort's own homelessness and disorder rates, so
 the welfare path can be read against the mechanism producing it. The reform moves
@@ -1251,7 +1235,7 @@ the programme from Housing First at $\pi_V=@@pvbase@@$ to universal cover under
 the policy named. Cohort $1$ is born into the old income distribution and lives
 under the new rule. The marker in Panel A is the generation already in period 2
 when the reform lands, which no cohort line can carry: it is measured over its
-remaining period rather than a full life.}}
+remaining period rather than a full life.}
 \end{figure}
 
 

@@ -1,6 +1,6 @@
 """
 Strip this round's red from the sections that have been signed off, and leave
-everything from Section 3.7 onward alone.
+everything from Section 4 onward alone.
 
 THE RULE. Red marks one round's edits, so it is cleared at the start of the
 next round. That holds only up to the end of Section 3.6. From the transition
@@ -24,7 +24,10 @@ P = 'housing_first_children_later.src.tex'
 # THE ANCHOR IS THE LABEL, not the section title, because the title is itself
 # wrapped in red at the moment and a stripper that keyed on the title would
 # stop finding it the first time it ran.
-ANCHOR = r'\label{sec:trans}'
+# THE BOUNDARY MOVED. It was the start of the transition, Section 3.7, while
+# that section was still unread. The whole of Section 3 has now been audited,
+# so red is cleared up to the quantitative model and accumulates from there.
+ANCHOR = r'\section{The quantitative model}'
 TOK = r'\textcolor{red}{'
 # the two macro definitions carry red of their own and are not edits
 KEEP = (r'\newcommand{\new}', r'\newcommand{\cw}', r'\def\cw')
@@ -65,7 +68,6 @@ def main(dry=False):
     if s.count(ANCHOR) != 1:
         sys.exit(f'refusing to run: found {s.count(ANCHOR)} copies of {ANCHOR}')
     cut = s.index(ANCHOR)
-    cut = s.rfind('\\subsection', 0, cut)          # start of the transition
     head, tail = s[:cut], s[cut:]
     before, kept = head.count(TOK), tail.count(TOK)
     new_head = _strip(head)
