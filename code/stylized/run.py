@@ -326,28 +326,21 @@ def figure_numbers(base):
             start = float(s_)
     d['revfrac'] = _fraction_word(max(1.0 - start, 0.0))
 
-    # WHETHER b COULD ACTUALLY HOLD PARTICIPATION at every point of Figure 1.
-    # At the far end of the mortality curve participation is a step function of
-    # b and no b delivers the target, so the figure's note cannot promise a flat
-    # participation rate without checking first.
-    miss = sum(1 for which in ('mortality', 'unemployment')
-               for pp in parts[which]
-               if abs(pp - TARGET['part']) > 5e-4)
-    d['partnote'] = ('throughout' if miss == 0 else
-                     f'at every point of the scan but {miss} of the '
-                     f'{2 * len(sc)}, where it is a step function of $b$ and no '
-                     'value of it delivers the target')
-    # AND THE BODY TEXT MAKES THE SAME PROMISE, so it has to carry the same
-    # caveat. It claimed the amount of drug use was identical along both curves,
-    # which is the whole basis for reading the figure as a statement about WHO
-    # uses rather than how many, and at ten of the twenty two points it is not.
-    d['partclaim'] = ('The amount of drug use is therefore identical all along '
-                      'both curves and the only thing moving is which '
-                      'households use' if miss == 0 else
-                      'The amount of drug use is therefore the same along both '
-                      f'curves, and the only thing moving is which households '
-                      f'use, at every point but the {miss} where participation '
-                      'is a step function of $b$')
+    # WHETHER b ACTUALLY HELD PARTICIPATION at every point of Figure 1. The
+    # note now states flatly that the model targets the participation rate at
+    # every point, which is a promise rather than a hedge, so the number of
+    # points that miss is exported and verify.py FAILS THE BUILD if any does.
+    # It used to be a hedge in the note itself, naming the ten of twenty two
+    # points that missed; those were an artefact of the pooled bottom cell
+    # being wider than the participation target, and flooring the grid removed
+    # them. If they ever come back the build says so rather than the paper
+    # quietly claiming something untrue.
+    d['_part_misses'] = sum(1 for which in ('mortality', 'unemployment')
+                            for pp in parts[which]
+                            if abs(pp - TARGET['part']) > 5e-4)
+    d['_part_worst'] = max(abs(pp - TARGET['part'])
+                           for which in ('mortality', 'unemployment')
+                           for pp in parts[which])
 
     # THE ENDS OF FIGURE 2, which the policy paragraph reads off directly.
     m0, mt, mh = mT[0], mT[-1], mH[-1]

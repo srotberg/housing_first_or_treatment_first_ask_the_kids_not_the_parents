@@ -746,13 +746,14 @@ and $\pi_V$, the share of eligible households actually covered, is a policy
 dial of Section~\ref{sec:mh}.
 
 The two policies differ in exactly one respect, the last indicator in
-equation~\eqref{eq:vouch}. \textbf{Housing First} covers every eligible
-household regardless of $(d',v)$. \textbf{Treatment First} covers only
+equation~\eqref{eq:vouch}. \textbf{Housing First} \textcolor{red}{(HF)} covers every eligible
+household regardless of $(d',v)$. \textbf{Treatment First} \textcolor{red}{(TF)} covers only
 households that satisfy the sobriety condition, $v=0$ and $d'=0$, which is the
 rule in the quantitative model as well. \textcolor{red}{The condition is applied to the
-period in which the voucher is paid, so what it can test differs by period: in
-period 1 both parts are live, while in period 2 there is no drug choice, $v=0$
-there by construction, and only the disorder can fail it.} Since policy coverage in the states
+period in which the voucher is paid, so what it tests differs by period: every
+household is born clean, so $d'=0$ holds for everyone in period 1 and only $v$
+can fail the condition there, while in period 2 there is no drug choice, $v=0$
+holds by construction, and only the disorder can fail it.} Since policy coverage in the states
 that follow drug use is the only difference, the gap between them is the moral
 hazard and the whole of it.
 
@@ -761,15 +762,9 @@ Every household arrives clean, so the period 1 voucher is drawn before $v$ is
 chosen and conditionality cannot screen anyone out on entry. The order
 within the period is therefore: the household chooses $v$, the policy rule is
 then applied to the voucher it drew, and it chooses housing knowing what rent it
-faces. So under Treatment First a household that uses is subject to
-full market rent immediately, in the period it uses\textcolor{red}{. What happens to it in period 2
-depends on how the gamble turned out, and not on the use itself: it makes no
-drug choice in period 2, so the only part of the condition that can bite there
-is $d'=0$. A household that used and acquired the SUD pays market rent again; a
-household that used and escaped it arrives clean and is covered again. That is
-what makes conditionality in this model a penalty on the disorder rather than a
-penalty on a history of use, and it is the rule the quantitative model applies
-period by period}.
+faces. So under Treatment First a household that \textcolor{red}{uses (period 1), or carries the
+disorder (period 2), is} subject to
+full market rent immediately, in the period concerned.
 
 \subsubsection{The household's problem}\label{sec:problem}
 
@@ -865,7 +860,6 @@ of adults aged $26$ and over carrying a SUD in NSDUH 2024.
 \centering
 \caption{Externally set parameters}\label{tab:ext}
 \sbox{\ntbox}{\input{tables/tab_external}}\usebox{\ntbox}
-\tabnote{Note: every parameter here is set from outside, so none has a model counterpart to report against the data.}
 \end{table}
 
 \begin{table}[!tb]
@@ -893,7 +887,7 @@ $u_1-u_0$, and if income support cannot cover the rent you downsize, live on
 less, or lose your home. Figure~\ref{fig:who} scales each from nothing to
 $@@scanhi_pc@@$ percent of its
 calibrated value, recalibrating $b$ at every point so participation stays at
-$@@q_b@@$ percent. @@partclaim@@.
+$@@q_b@@$ percent.
 
 \begin{figure}[!tb]
 \centering
@@ -902,7 +896,7 @@ $@@q_b@@$ percent. @@partclaim@@.
 \label{fig:who}
 \notes{0.62\textwidth}{Note: the vertical axis is average income of users over
 the population average, on a log scale, and $b$ is recalibrated at every point
-so that participation is $@@q_b@@$ percent @@partnote@@. The black dotted line marks
+so that the model targets a participation rate of $@@q_b@@$ percent at every point. The black dotted line marks
 the calibrated strength; everything to the right of it is extrapolation.}
 \end{figure}
 
@@ -922,8 +916,8 @@ fully switched on, and at $@@scanhi_pc@@$ percent it is @@r_unemp125@@, still @@
 one and no closer to turning. A resource penalty does not produce the concentration of
 drug use at the bottom.
 
-\textcolor{red}{Why should the two channels differ at all, when both make the disorder
-worse? Because only one of them has a bite that grows with what the household
+\textcolor{red}{Why should the two channels differ at all, when in both the disorder
+punishes the household? Because only one of them has a bite that grows with what the household
 has. Flow utility is logarithmic, so a \emph{proportional} loss of income costs
 a number of utils that hardly moves with income: a household earning below the
 cap $\bar y$ that loses its job and falls back on income support gives up
@@ -933,23 +927,31 @@ to overturn is not flat at all. Buying $v$ units costs a rich household almost
 nothing in consumption terms and a poor household a great deal, so the utility
 price of using \emph{falls} as income rises, and that is what puts use at the top
 to begin with. A charge that does not vary with income cannot reverse a price
-that does. Mortality is a different object. What it destroys is the whole
+that does.}
+
+\textcolor{red}{Mortality is a different object.} What it destroys is the whole
 continuation value: the consumption of a life still to be lived, and $\aleph$,
 the value of being alive at all, which does not shrink as consumption does. That
 value rises with permanent income, so the expected cost of using rises with
 income at the same time as its utility price falls. Past a point the two cross,
 and it is the rich who stop first. The reversal is therefore not that mortality
 is the larger penalty; it is that mortality is the only one of the two whose
-size is tied to what the household stands to lose. The household with more to
+size rises with income. The household with more to
 lose loses more, and loses disproportionally more than it gains from drugs.}
-That is the work of $\aleph$ in
-equation~\eqref{eq:u}: it is the part of the continuation value that does not
-shrink as consumption falls.
+This is the work of $\aleph$ in equation~\eqref{eq:u}, and it is worth saying
+why a constant can do it. What the household weighs against the drug is the cost
+of dying measured in \emph{consumption}, which is the continuation value divided
+by the marginal utility of consumption. Flow utility is logarithmic, so that
+marginal utility is $1/c$ and a term worth $\aleph$ utils is worth $c\aleph$
+goods: constant in utility is \emph{proportional to consumption} in the units
+the household actually trades off. The consumption part of the continuation
+contributes about $c\log c$, which is small and negative for a poor household,
+so it is the constant that carries the income gradient in the value of a life.
 
 %======================================================================
 \subsection{How does housing assistance shape the drug use decision?}\label{sec:mh}
 
-The two forces of question 2 can be separated exactly, because they differ in
+The two forces of question 2, \textcolor{red}{moral hazard and the value of life,} can be separated exactly, because they differ in
 what happens to a household that uses. Under Treatment First the voucher is
 withdrawn from any household that violates the sobriety condition, so only the
 value of life force operates. Under Housing First it is not, so both channels
@@ -968,7 +970,7 @@ life force, marked at the right. The dashed line is the generosity of the
 current programme, $\pi_V = @@pvbase@@$.}
 \end{figure}
 
-Figure~\ref{fig:mh} traces both as generosity rises. With no programme at all,
+Figure~\ref{fig:mh} traces both as generosity rises\textcolor{red}{, that is across values of $\pi_V$}. With no programme at all,
 @@p0@@ percent of households use. Universal Treatment First takes that to
 @@pt@@ percent, a value of life force of @@vol@@ percentage points; universal
 Housing First leaves it at @@ph@@ percent, so the moral hazard force is
@@ -976,6 +978,16 @@ Housing First leaves it at @@ph@@ percent, so the moral hazard force is
 first order and they work against each other, which is the central feature of
 the problem. Anyone asserting that housing the homeless must increase drug use,
 or must reduce it, is making a quantitative claim that needs to be tested.
+\textcolor{red}{Neither end of that range is the calibrated participation rate of $@@q_b@@$ percent,
+and it should not be: the model is calibrated at the generosity of the current
+programme, $\pi_V = @@pvbase@@$, which lies between them. Housing assistance
+raises use, so the calibrated rate sits above the no programme figure of @@p0@@
+percent and below the @@ph@@ percent that universal Housing First would deliver.}
+
+\textcolor{red}{Both comparisons here are between long run steady states, each the rest point of
+the economy under a policy that has always been in place. Section~\ref{sec:trans}
+follows the path between them, where the generation alive at the reform is
+treated differently from the generations born into it.}
 
 Figure~\ref{fig:margins} plots the homelessness and SUD outcomes for each
 programme as its generosity changes, alongside drug use. In panel (a) the two
@@ -1011,7 +1023,7 @@ the states in which Treatment First does. The budget set is weakly larger in
 every state and strictly larger in one, so a household that optimises cannot be
 worse off under Housing First:
 \begin{equation}\label{eq:dom}
-V_1(y;\ \textcolor{red}{\text{Housing First}},\ \pi_V) \;\ge\; V_1(y;\ \textcolor{red}{\text{Treatment First}},\ \pi_V)
+V_1(y;\ \textcolor{red}{\text{HF}},\ \pi_V) \;\ge\; V_1(y;\ \textcolor{red}{\text{TF}},\ \pi_V)
 \qquad \text{for every } y,
 \end{equation}
 with equality exactly for households that never use. Put the other way round, a
@@ -1634,7 +1646,7 @@ additionally lost with probability $p_{\text{det}}$ by a household that uses
 drugs or has a SUD, and
 with probability $p_{\text{fp}}$ by one that did not,
 \begin{equation}\label{eq:fpol}
-\Pr(\eta'=1)=\Pr(\eta'=1)^{\textcolor{red}{\text{Housing First}}}\times
+\Pr(\eta'=1)=\Pr(\eta'=1)^{\textcolor{red}{\text{HF}}}\times
 \begin{cases}
 1-p_{\text{fp}} & \text{if } (v=0 \ \text{and } d=0) \ \text{or } \tau=1,\\
 1-p_{\text{det}} & \text{otherwise} .

@@ -232,6 +232,23 @@ else:
     chk('"unchanged at half strength" is true of the two numbers printed',
         abs(_half - _off) <= 0.06 * abs(_off),
         f'with the channel off {_off:.2f}, at half strength {_half:.2f}')
+print("\n=== 7d2. the participation promise in Figure 1 ===")
+# THE NOTE SAYS the model targets the participation rate at every point of the
+# scan. That was false at ten of twenty two points under the pooled grid and the
+# note carried a hedge naming them; the hedge is gone at the author's request, so
+# the promise is enforced here instead and a build that breaks it fails.
+_fg = os.path.join(HERE, 'figure_numbers.json')
+if os.path.exists(_fg):
+    _f = json.load(open(_fg))
+    if '_part_misses' not in _f:
+        warn('figure_numbers.json predates the check', 'rerun run.py')
+    else:
+        chk('b holds participation on target at every point of the scan',
+            int(_f['_part_misses']) == 0,
+            f"{_f['_part_misses']} point(s) miss, worst by "
+            f"{100 * float(_f['_part_worst']):.3f} points")
+else:
+    warn('figure_numbers.json is missing', 'rerun run.py')
 
 print('\n=== 7e. nothing in the build is older than the calibration ===')
 # A STALE EXPORT IS THE FAILURE MODE THAT ACTUALLY HAPPENED. Every file below is

@@ -215,8 +215,33 @@ def _cond_mean(sig, a, b):
     return (_tail_mean(sig, b) - _tail_mean(sig, a)) / (b - a)
 
 
+def _floor_level(sig, target, lo=1e-6, hi=0.90):
+    """
+    The raw threshold t whose FLOORED distribution puts its atom at `target`.
+
+    Flooring raises the mean, and income is normalised to mean one, so the two
+    have to be solved together: censoring at t gives a mean M(t) and an atom at
+    t/M(t), and we want that atom at `target`. One bisection in t does it.
+    """
+    def atom_at(t):
+        q = _ndtr((math.log(t) + 0.5 * sig * sig) / sig)
+        m = t * q + (1.0 - _tail_mean(sig, q))
+        return t / m
+    for _ in range(200):
+        mid = 0.5 * (lo + hi)
+        if atom_at(mid) < target:
+            lo = mid
+        else:
+            hi = mid
+    return 0.5 * (lo + hi)
+
+
 def _pool(sig, floor, hi=0.60):
     """The smallest bottom pool whose conditional mean clears the floor.
+
+    SUPERSEDED BY FLOORING, and kept only because the scans in scan_theta.py
+    still import it. Read _floor_level and _grid for what the model does now,
+    and the note over GRID_FLOOR for why pooling had to go.
 
     THE FLOOR IS THE RENT ON THE SMALLEST UNIT, and it is a real threshold
     rather than a numerical one. Food assistance is paid in kind, so rent comes
@@ -243,18 +268,60 @@ def _pool(sig, floor, hi=0.60):
     return 0.5 * (lo + hi)
 
 
-POOL_MARGIN = 1.08    # the pool clears the rent by eight per cent
+POOL_MARGIN = 1.08    # superseded by GRID_FLOOR; kept for scan_theta.py
+# THE ATOM CLEARS THE RENT BY EIGHT PER CENT. It has to clear it by something:
+# a household whose income equals its rent exactly consumes nothing and its
+# flow utility is minus infinity. Eight per cent puts the atom at 0.108 of mean
+# income, which is where the pooled cell it replaces used to sit.
+GRID_FLOOR = 1.08
 
 
 def _grid(sig, n=GRID_N, kappa=GRID_KAPPA):
+    """
+    The income grid: one atom at the rent floor, then the lognormal above it.
+
+    WHY FLOORING RATHER THAN POOLING, which is what this used to do. A household
+    whose income falls below the rent on the smallest unit cannot rent at all
+    and is on the street whatever the street is worth, so the deep tail of the
+    lognormal drives homelessness to 1.25 per cent against a target of 0.399 and
+    leaves h_1 with nothing to decide. Pooling the bottom 6.68 per cent into one
+    mass point at its conditional mean solved that, and created a worse problem:
+    the pool is LARGER THAN THE PARTICIPATION TARGET of 5.13 per cent, so the
+    cell either uses or it does not and participation is a step function of b
+    with no value delivering the target.
+
+    Integrating the drug decision over a sub grid inside the pool was a patch
+    for that, and it was WRONG in a way worth recording. It took the MASS of
+    users from incomes inside the pool, down to 0.002, and the DOSE from the
+    pool's single representative at 0.108, where the household does not use at
+    all and the reported dose is the smallest positive point on the drug grid.
+    Half of all users were carrying a disorder probability of 0.45 read off a
+    household that was not using, against the 0.97 to 1.00 of the households
+    actually supplying the mass. lambda then had nothing to fit but that grid
+    constant and ran to 5972, and the model's SUD rate moved from 2.5 to 5.1 per
+    cent when the drug grid's smallest positive dose moved from 1e-6 to 1e-3
+    with every parameter held fixed. A targeted moment must not be a function of
+    a numerical bound.
+
+    Flooring keeps the economics that motivated pooling, that the poorest
+    households can rent and rent badly, without either defect: the 2.5 per cent
+    genuinely below the rent become an atom AT the floor, everything above it is
+    resolved node by node, and the participation margin at 5.13 per cent lands
+    on a resolved node because 5.13 exceeds 2.5. One population, one policy
+    function, and no special case anywhere downstream.
+    """
     par = P()
-    q_f = _pool(sig, POOL_MARGIN * par.pr * par.h_sm)
+    t = _floor_level(sig, GRID_FLOOR * par.pr * par.h_sm)
+    q_f = _ndtr((math.log(t) + 0.5 * sig * sig) / sig)
+    mean = t * q_f + (1.0 - _tail_mean(sig, q_f))
     u = np.arange(n) / (n - 1.0)
     p = np.concatenate(([0.0], q_f + (1.0 - q_f) * u ** kappa))
     p[-1] = 1.0
     w = np.diff(p)
     tv = np.array([_tail_mean(sig, q) for q in p])
-    return np.diff(tv) / w, w
+    v = np.diff(tv) / w
+    v[0] = t                      # the atom sits AT the floor, not at its own mean
+    return v / mean, w            # normalised so mean income is one exactly
 
 
 def _bottom_half_share(sig):

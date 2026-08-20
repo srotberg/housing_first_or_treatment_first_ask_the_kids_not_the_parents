@@ -425,7 +425,7 @@ class P:
     kV    = 0.50      # MEANS TEST, the share of MEDIAN income below which a
                       # household is eligible. This is the quantitative model's
                       # kappa_V and the paper uses the same symbol for both.
-    yV    = 0.3155    # the level kV implies, kV times median income. It has moved
+    yV    = 0.3141    # the level kV implies, kV times median income. It has moved
                       # twice with the grid: 0.2591 at 30 log spaced nodes, 0.2477
                       # at 120, and 0.3172 once the nodes were placed by quantile
                       # and the top tail stopped being truncated. The last move is
@@ -474,7 +474,6 @@ def fields(par):
 H_RATIO = 0.25    # the small unit as a fraction of the standard one
 
 # how finely the pooled bottom cell is swept when its use mass is added up
-SUB_CELL = 16
 
 
 def with_(par, **kw):
@@ -823,39 +822,22 @@ def threshold(par, ygrid, policy=None, edges=None, cdf=None):
             frac[i, s], frac[i + 1, s] = ((w, 0.0) if G[i, s] > 0.0
                                           else (0.0, 1.0 - w))
 
-    # THE LOWEST CELL IS INTEGRATED, not interpolated. Two reasons, and the
-    # first was found the hard way. Its use decision is NOT monotone in income:
-    # measured at the calibrated parameters the gain runs +0.386, +0.065,
-    # +0.056, +0.077 across the bottom of the cell, so a single bisection can
-    # find at most one crossing of several and a probe at one fixed income
-    # switches the whole correction on and off as that point changes sign. That
-    # put a nine tenths of a point step into participation and left the target
-    # of 5.13 in a hole the b bracket could not reach. And the cell is wide: it
-    # pools the foot of the distribution, so which part of it uses is a real
-    # question rather than a rounding one.
+    # THE LOWEST CELL IS NO LONGER SPECIAL, and the sub grid that used to
+    # integrate it is deleted. It took the MASS of users from incomes inside the
+    # cell and the DOSE from the cell's single representative, which is a
+    # different household: at the calibrated parameters the representative did
+    # not use at all, so its reported dose was the smallest positive point on
+    # the drug grid and half of all users carried a disorder probability of 0.45
+    # that belonged to nobody. lambda had nothing left to fit but that grid
+    # constant and ran to 5972, and the SUD rate moved by a factor of two when
+    # the drug grid's floor moved, with every parameter held fixed.
     #
-    # So the cell is swept on a sub grid and the mass where the household uses
-    # is added up from the CDF. No bisection, no probe, and nothing switches
-    # discontinuously: a sub interval entering or leaving the use region moves
-    # the total by its own mass, which is small.
-    if cdf is not None and edges is not None:
-        w0 = max(edges[1] - edges[0], 1e-14)
-        y_edges = np.geomspace(ygrid[0] * 0.02, ygrid[1], SUB_CELL + 1)
-        mids = 0.5 * (y_edges[:-1] + y_edges[1:])
-        sub_m = np.array([cdf(y_edges[k + 1]) - cdf(y_edges[k])
-                          for k in range(SUB_CELL)])
-        gains = np.full((SUB_CELL, ns), np.nan)
-        for k, ym in enumerate(mids):
-            r = period1(par, float(ym), policy)
-            for sidx in range(min(ns, len(r))):
-                gains[k, sidx] = r[sidx][1]
-        for sidx in range(ns):
-            g = gains[:, sidx]
-            good = np.isfinite(g)
-            if not good.any():
-                continue
-            frac[0, sidx] = min(max(float(sub_m[good & (g > 0.0)].sum() / w0),
-                                    0.0), 1.0)
+    # The grid now floors the distribution at the rent rather than pooling
+    # across it, so the bottom cell is an ordinary cell of 2.5 per cent and the
+    # participation margin at 5.13 per cent falls on a resolved node above it.
+    # See _grid in calibrate.py. If a bottom cell ever again needs integrating,
+    # integrate the WHOLE decision over the sub grid, dose included, never the
+    # mass alone.
 
     return PR, np.clip(frac, 0.0, 1.0), VV, BU, BN, INC
 
