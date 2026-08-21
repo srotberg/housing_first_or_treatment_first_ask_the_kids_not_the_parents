@@ -2065,11 +2065,18 @@
                                                    
         real(8), dimension(0:have_two_rental_markets) :: rental_management_costs_calibrated=2.9157271938684660E-002
                                                                
-        real(8), dimension(0:have_two_rental_markets) :: rent_calibrated=1.00
+        ! THE FIXED RENT IS THE ONE THE MODEL PRODUCES, not a round number.
+        ! rent_to_housing_price*calibrated_stationary_housing_price is
+        ! 0.083*13=1.079, and rental_management_costs_calibrated above is the
+        ! management cost that level implies, so renormalising these three to
+        ! one left them disagreeing with the rent every household actually
+        ! faced and with each other. Rent is fixed, which is what the paper
+        ! needs; it is not fixed at one.
+        real(8), dimension(0:have_two_rental_markets) :: rent_calibrated=1.079
     
-        real(8) :: average_rent_calibrated=1.00
+        real(8) :: average_rent_calibrated=1.079
                                    
-        real(8), dimension(0:have_two_rental_markets) :: long_run_rent=1.00
+        real(8), dimension(0:have_two_rental_markets) :: long_run_rent=1.079
                                  
         real(8) :: calibrated_stationary_housing_price=13
                                 
@@ -2501,7 +2508,8 @@
         real(8), dimension(unemployment_grid_size,employment_grid_size) :: probability_came_from_past_employment_index_1,&
             probability_came_from_past_employment_index_2
             
-        real(8), dimension(transition_length,employment_grid_size) :: model_unemployment_by_employment,mass_by_employment_1
+        real(8), dimension(transition_length,employment_grid_size) :: model_unemployment_by_employment,mass_by_employment_1,&
+            total_mass_by_employment
                                                 
         integer :: in_retirement,newborn_household
         
@@ -7453,6 +7461,7 @@
         addiction_share_of_income_by_employment(time_period,:)=0
         percent_addicted_by_employment(time_period,:)=0
         mass_by_employment(time_period,:)=0
+        total_mass_by_employment(time_period,:)=0
         model_average_spent_on_addiction_by_addicted(time_period)=0
         model_treatment_take_up(time_period)=0
         model_mass_with_sud(time_period)=0
@@ -7636,6 +7645,12 @@
                                     distribution_mass_used=distribution_stationary(years_left_on_mortgage_index)%&
                                         vector_transition_real(time_period_used,age_index,financial_index,&
                                         unemployment_index,employment_index,housing_status_index,voucher_index)
+
+                                    ! THE DENOMINATOR OF THE DISORDER RATE BY PRODUCTIVITY, and it has
+                                    ! to be counted here, where every household passes, rather than
+                                    ! inside the block that only households with the disorder reach.
+                                    total_mass_by_employment(time_period,employment_index)=&
+                                        total_mass_by_employment(time_period,employment_index)+distribution_mass_used
                                                                                                                      
                                     if (years_left_on_mortgage_index>1) then
                                         
@@ -8049,7 +8064,18 @@
                                         
                                         mass_by_employment(time_period,employment_index)=&
                                             mass_by_employment(time_period,employment_index)+distribution_mass_used
-                                            
+
+                                        ! EVERY HOUSEHOLD WITH THE DISORDER COUNTS HERE. This block is
+                                        ! already reached only when sud_of is one, so the mass added is
+                                        ! the disorder's, and the sub-block below narrows to the employed
+                                        ! for a different statistic. Counting the numerator inside that
+                                        ! narrower test made this the employment rate among households
+                                        ! with the disorder rather than the disorder rate by productivity,
+                                        ! which is what delta_d is calibrated against.
+                                        percent_addicted_by_employment(time_period,employment_index)=&
+                                            percent_addicted_by_employment(time_period,employment_index)+&
+                                            distribution_mass_used
+
                                         if ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==1)) then
                                             
                                             addiction_share_of_income_by_employment(time_period,employment_index)=&
@@ -8057,10 +8083,6 @@
                                                 (frac_spent_on_addiction_used*total_consumption_used/&
                                                 (income_1+risk_free_rate(time_period)*&
                                                 max(financial_grid(financial_index),0.d0)))*distribution_mass_used
-                                                
-                                            percent_addicted_by_employment(time_period,employment_index)=&
-                                                percent_addicted_by_employment(time_period,employment_index)+&
-                                                distribution_mass_used
                                                                                 
                                             employment_mass(time_period,employment_index)=&
                                                 employment_mass(time_period,employment_index)+distribution_mass_used
@@ -8646,24 +8668,24 @@
 
             end if
                 
-            ! GUARDED, BECAUSE AN EMPTY NODE GAVE NaN AND THE NaN WAS LOAD BEARING.
+            ! THE DISORDER RATE AT A PRODUCTIVITY NODE is the mass with the
+            ! disorder there over the WHOLE population there, so the denominator
+            ! is total_mass_by_employment. mass_by_employment is accumulated
+            ! inside the block only households with the disorder reach, so
+            ! dividing by it returned a share of the disordered rather than a
+            ! rate, and the profile it produced was near one at every node with
+            ! anyone on it and zero elsewhere. delta_d is calibrated on a ratio
+            ! of two averages of this profile, so it was chasing a statistic
+            ! that could not respond to the penalty.
             !
-            ! A productivity node with no mass made this 0/0. The three lowest
-            ! nodes are empty in the stationary distribution, so the profile came
-            ! out NaN exactly where the children of a disordered parent are
-            ! concentrated. The child SUD ratio is a weighted average of this
-            ! profile, so it was NaN too, and the gap that drives delta_d was
-            ! meaningless: delta_d ran to its 0.9 bound while the reported ratio
-            ! wandered between 1.05 and 1.39 with no relation to the penalty.
-            !
-            ! An empty node contributes nothing rather than poisoning the
-            ! average. If the node is empty there is no one there to be
-            ! addicted, so zero is also the right answer on its own terms.
-            if (mass_by_employment(time_period,employment_index)>10.d0**(-12)) then
+            ! The guard stays: a node with no population is 0/0, and zero is
+            ! also right on its own terms, since no one there can carry the
+            ! disorder.
+            if (total_mass_by_employment(time_period,employment_index)>10.d0**(-12)) then
 
                 percent_addicted_by_employment(time_period,employment_index)=&
                     percent_addicted_by_employment(time_period,employment_index)/&
-                    mass_by_employment(time_period,employment_index)
+                    total_mass_by_employment(time_period,employment_index)
 
             else
 
@@ -19975,8 +19997,22 @@
         end if
         
         if (is_counterfactual==0) then
-                                                
-            rent(time_period,:)=rent_to_housing_price*housing_price(time_period)
+
+            ! PINNED WHEN THE RENT IS FIXED. This is the assignment that sets the
+            ! rent every loop, and it tracks housing_price; leaving it free while
+            ! the calibration constants were fixed is what let the two disagree.
+            ! With fix_rent on, the level is rent_calibrated and the management
+            ! cost below is derived from it, so the counterfactual's inverse of
+            ! that formula returns the same rent.
+            if (fix_rent==0) then
+
+                rent(time_period,:)=rent_to_housing_price*housing_price(time_period)
+
+            else
+
+                rent(time_period,:)=rent_calibrated(:)
+
+            end if
                             
             if (infinite_elasticity_of_rental_supply==1) then
                                                 
@@ -30044,6 +30080,8 @@
             ! distributions and the ratio they imply says which it is.
             write(*,*) "=== delta_d diagnostic ==="
             write(*,*) "percent_addicted_by_employment=", percent_addicted_by_employment(1,:)
+            write(*,*) "mass with the disorder by node=", mass_by_employment(1,:)
+            write(*,*) "population by node            =", total_mass_by_employment(1,:)
             write(*,*) "newborn prob, clean parent   =", newborn_employment_probability(:,0,1)
             write(*,*) "newborn prob, disordered     =", newborn_employment_probability(:,1,1)
             write(*,*) "employment_grid               =", employment_grid(1,:)
