@@ -1622,16 +1622,16 @@ across ages 20 to 34, 35 to 54 and 55 to 64. Basically flat.
 
 \paragraph{Unemployment risk.} Job finding and separation probabilities are
 \begin{equation}\label{eq:femp}
-\pi^{ue}=\min\Big\{1,\ \bar\pi^{ue}\,\kappa_{ueH}^{\mathbf{1}\{h'=h_1\}}
-\kappa_{ued}^{\mathbf{1}\{d=1\}}\kappa_{uem}^{\mathbf{1}\{m=1\}}\Big\},
-\qquad
-\pi^{eu}=\min\Big\{1,\ \bar\pi^{eu}\,\kappa_{ueH}^{-\mathbf{1}\{h'=h_1\}}
+\pi^{ue}=\min\Big\{1,\ \bar\pi^{ue}\,\kappa_{ueH}^{-\mathbf{1}\{h'=h_1\}}
 \kappa_{ued}^{-\mathbf{1}\{d=1\}}\kappa_{uem}^{-\mathbf{1}\{m=1\}}\Big\},
+\qquad
+\pi^{eu}=\min\Big\{1,\ \bar\pi^{eu}\,\kappa_{ueH}^{\mathbf{1}\{h'=h_1\}}
+\kappa_{ued}^{\mathbf{1}\{d=1\}}\kappa_{uem}^{\mathbf{1}\{m=1\}}\Big\},
 \end{equation}
 with $\bar\pi^{ue}$ and $\bar\pi^{eu}$ the baseline job finding and
 separation rates, respectively, and $\kappa_{ueH}$, $\kappa_{ued}$ and $\kappa_{uem}$ the
 multipliers for homelessness, the SUD and SMI, respectively, so each multiplier
-below one makes a job likelier to lose and regaining one less likely.
+\new{above} one makes a job likelier to lose and regaining one less likely.
 
 \paragraph{The child's productivity penalty.}
 A parent with a SUD, or one who ends up on the street, lowers the
@@ -1952,7 +1952,8 @@ together conserve the population.
 
 Here $\phi(j,\cdot)$ is evaluated at the household's own $(h'(j,s),d,m)$. The mass that
 does not survive, plus the mass at $j=J$, is replaced by newborns at $j=1$ with
-zero assets, clean, without SMI and without a voucher, and subject to the
+zero assets, clean and without a voucher, \new{carrying SMI with the prevalence
+observed at age one rather than none of it}, and subject to the
 same unemployment shocks as anyone else, whose
 productivity is drawn from the unconditional distribution $\Omega_y$ of
 permanent productivity across households scaled by the
