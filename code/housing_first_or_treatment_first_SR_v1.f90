@@ -973,6 +973,9 @@
         real(8) :: relative_share_of_housing=0.16
         real(8) :: distance_relative_share_of_housing
         real(8) :: relative_share_of_housing_adjuster=5*10.d0**(-2)
+        real(8), parameter :: relative_share_of_housing_adjuster_start=5*10.d0**(-2)
+        real(8) :: previous_gap_relative_share_of_housing=0
+        integer :: have_gap_relative_share_of_housing=0
         real(8) :: stopping_rule_relative_share_of_housing=10.d0**(-3)
         
         real(8) :: sd_fixed_employment_newborn=0.309 !0.309
@@ -1173,14 +1176,23 @@
         real(8) :: stopping_rule_max_food_cost=10.d0**(-4)
 
         real(8) :: voucher_probability_adjuster=1*10.d0**(-1)
+        real(8), parameter :: voucher_probability_adjuster_start=1*10.d0**(-1)
+        real(8) :: previous_gap_voucher_probability=0
+        integer :: have_gap_voucher_probability=0
         real(8) :: distance_voucher_probability
         real(8) :: stopping_rule_voucher_probability=10.d0**(-3)
 
         real(8) :: separation_rate_adjuster=1*10.d0**(-1)
+        real(8), parameter :: separation_rate_adjuster_start=1*10.d0**(-1)
+        real(8) :: previous_gap_separation_rate=0
+        integer :: have_gap_separation_rate=0
         real(8) :: distance_separation_rate
         real(8) :: stopping_rule_separation_rate=10.d0**(-3)
 
         real(8) :: employment_multiplier_adjuster=2*10.d0**(0)
+        real(8), parameter :: employment_multiplier_adjuster_start=2*10.d0**(0)
+        real(8) :: previous_gap_employment_multiplier=0
+        integer :: have_gap_employment_multiplier=0
         real(8) :: distance_employment_multiplier
         real(8) :: stopping_rule_employment_multiplier=10.d0**(-3)
 
@@ -1609,6 +1621,10 @@
                  
         real(8) :: labor_income_tax_rate=(1-perceived_probability_lower)*0.75+perceived_probability_lower*0.69
         real(8) :: labor_income_tax_rate_adjuster=5*10.d0**(-1)
+        real(8), parameter :: labor_income_tax_rate_adjuster_start=5*10.d0**(-1)
+        real(8) :: previous_gap_labor_income_tax_rate=0
+        integer :: have_gap_labor_income_tax_rate=0
+        real(8), parameter :: damp_adjuster_floor=10.d0**(-4)
         ! THE STOPPING RULE EXISTED AND THE DISTANCE DID NOT.
         !
         ! The retention scale is updated every loop against an average labour
@@ -3103,6 +3119,49 @@
             integer, intent(in) :: i_1
             sud_of=(i_1-1)/(3*number_of_smi_states)
         end function
+
+        subroutine damp_on_flip(adj_1,gap_1,prev_gap_1,have_gap_1,start_1,floor_1)
+
+            ! THE PATTERN, ONCE. A fixed adjuster on an elastic moment overshoots,
+            ! the gap changes sign, and the parameter rings for ever without
+            ! getting closer. Halving the step on a sign flip turns the rule into
+            ! a bisection, which converges on any monotone response however steep;
+            ! growing it back when the sign holds stops it creeping afterwards.
+            !
+            ! Written out inline four times before this — for delta_d, for b, for
+            ! aleph's trust radius and for size_homelessness — and the fifth
+            ! through ninth are these. The instruments that had it converged; the
+            ! ones that did not oscillated: voucher coverage went 9.7, 26.7, 12.7,
+            ! 47.3 per cent off across four loops, and the employment multiplier
+            ! reached its target and left again, 7.5, 0.3, 15.8.
+            !
+            ! The caller owns the state, because each instrument needs its own and
+            ! the checkpoint has to save it.
+
+            implicit none
+
+            real(8), intent(inout) :: adj_1,prev_gap_1
+            integer, intent(inout) :: have_gap_1
+            real(8), intent(in) :: gap_1,start_1,floor_1
+
+            if (have_gap_1==1) then
+
+                if ((gap_1*prev_gap_1)<0) then
+
+                    adj_1=max(adj_1*0.5d0,floor_1)
+
+                else
+
+                    adj_1=min(adj_1*1.2d0,start_1)
+
+                end if
+
+            end if
+
+            prev_gap_1=gap_1
+            have_gap_1=1
+
+        end subroutine
 
         integer function idx_of(e_1,m_1,d_1)
             implicit none
@@ -27856,6 +27915,21 @@
             write(71,'(F30.15)') size_homelessness_adjuster
             write(71,'(F30.15)') previous_gap_size_homelessness
             write(71,'(I10)') have_gap_size_homelessness
+            write(71,'(F30.15)') voucher_probability_adjuster
+            write(71,'(F30.15)') previous_gap_voucher_probability
+            write(71,'(I10)') have_gap_voucher_probability
+            write(71,'(F30.15)') separation_rate_adjuster
+            write(71,'(F30.15)') previous_gap_separation_rate
+            write(71,'(I10)') have_gap_separation_rate
+            write(71,'(F30.15)') employment_multiplier_adjuster
+            write(71,'(F30.15)') previous_gap_employment_multiplier
+            write(71,'(I10)') have_gap_employment_multiplier
+            write(71,'(F30.15)') relative_share_of_housing_adjuster
+            write(71,'(F30.15)') previous_gap_relative_share_of_housing
+            write(71,'(I10)') have_gap_relative_share_of_housing
+            write(71,'(F30.15)') labor_income_tax_rate_adjuster
+            write(71,'(F30.15)') previous_gap_labor_income_tax_rate
+            write(71,'(I10)') have_gap_labor_income_tax_rate
 
         close(71)
 
@@ -28006,9 +28080,101 @@
 
             end if
 
+
+            if (state_ios_1==0) then
+
+                read(72,'(F30.15)',iostat=state_ios_1) voucher_probability_adjuster
+
+            end if
+
+            if (state_ios_1==0) then
+
+                read(72,'(F30.15)',iostat=state_ios_1) previous_gap_voucher_probability
+
+            end if
+
+            if (state_ios_1==0) then
+
+                read(72,'(I10)',iostat=state_ios_1) have_gap_voucher_probability
+
+            end if
+
+            if (state_ios_1==0) then
+
+                read(72,'(F30.15)',iostat=state_ios_1) separation_rate_adjuster
+
+            end if
+
+            if (state_ios_1==0) then
+
+                read(72,'(F30.15)',iostat=state_ios_1) previous_gap_separation_rate
+
+            end if
+
+            if (state_ios_1==0) then
+
+                read(72,'(I10)',iostat=state_ios_1) have_gap_separation_rate
+
+            end if
+
+            if (state_ios_1==0) then
+
+                read(72,'(F30.15)',iostat=state_ios_1) employment_multiplier_adjuster
+
+            end if
+
+            if (state_ios_1==0) then
+
+                read(72,'(F30.15)',iostat=state_ios_1) previous_gap_employment_multiplier
+
+            end if
+
+            if (state_ios_1==0) then
+
+                read(72,'(I10)',iostat=state_ios_1) have_gap_employment_multiplier
+
+            end if
+
+            if (state_ios_1==0) then
+
+                read(72,'(F30.15)',iostat=state_ios_1) relative_share_of_housing_adjuster
+
+            end if
+
+            if (state_ios_1==0) then
+
+                read(72,'(F30.15)',iostat=state_ios_1) previous_gap_relative_share_of_housing
+
+            end if
+
+            if (state_ios_1==0) then
+
+                read(72,'(I10)',iostat=state_ios_1) have_gap_relative_share_of_housing
+
+            end if
+
+            if (state_ios_1==0) then
+
+                read(72,'(F30.15)',iostat=state_ios_1) labor_income_tax_rate_adjuster
+
+            end if
+
+            if (state_ios_1==0) then
+
+                read(72,'(F30.15)',iostat=state_ios_1) previous_gap_labor_income_tax_rate
+
+            end if
+
+            if (state_ios_1==0) then
+
+                read(72,'(I10)',iostat=state_ios_1) have_gap_labor_income_tax_rate
+
+            end if
+
             if (state_ios_1/=0) then
 
-                write(*,*) "calibration_state.dat predates the damping state; the trust region",&
+                write(*,*) "calibration_state.dat predates some damping state; anything missing",&
+                    " starts from its declared value. The trust region",&
                     " starts at", value_of_life_trust_start, " and the homelessness adjuster at",&
                     size_homelessness_adjuster_start
                 value_of_life_trust=value_of_life_trust_start
@@ -28978,6 +29144,11 @@
                             
                     else
                     
+                        call damp_on_flip(relative_share_of_housing_adjuster,&
+                            mass_of_renters_at_housing_spending(1,1)-SW_renters_spend_over_X_on_hous_2,&
+                            previous_gap_relative_share_of_housing,have_gap_relative_share_of_housing,&
+                            relative_share_of_housing_adjuster_start,damp_adjuster_floor)
+                        write(*,*) "relative_share_of_housing_adjuster=", relative_share_of_housing_adjuster
                         relative_share_of_housing=&
                             min(max(relative_share_of_housing-relative_share_of_housing_adjuster*&
                             (mass_of_renters_at_housing_spending(1,1)-SW_renters_spend_over_X_on_hous_2),0.01),0.9) 
@@ -29199,6 +29370,11 @@
                     ! marginal rate it would be absurd. Anyone auditing signs from
                     ! the variable names will read this one as inverted and be
                     ! wrong, which is why the note is here rather than nowhere.
+                    call damp_on_flip(labor_income_tax_rate_adjuster,&
+                        model_average_labour_income_tax(1)-average_labor_income_tax_data,&
+                        previous_gap_labor_income_tax_rate,have_gap_labor_income_tax_rate,&
+                        labor_income_tax_rate_adjuster_start,damp_adjuster_floor)
+                    write(*,*) "labor_income_tax_rate_adjuster=", labor_income_tax_rate_adjuster
                     labor_income_tax_rate=max(min(labor_income_tax_rate+labor_income_tax_rate_adjuster*&
                         (model_average_labour_income_tax(1)-average_labor_income_tax_data),2.d0),0.d0)
 
@@ -29970,6 +30146,11 @@
                     ! pi_V, the voucher lottery, on recipients over the income
                     ! eligible. Coverage rises in it, so subtract the gap.
                     write(*,*) "probability_of_voucher_benchmark_used=", probability_of_voucher_benchmark_used
+                    call damp_on_flip(voucher_probability_adjuster,&
+                        model_eligibles_getting_voucher(1)-voucher_coverage_data,&
+                        previous_gap_voucher_probability,have_gap_voucher_probability,&
+                        voucher_probability_adjuster_start,damp_adjuster_floor)
+                    write(*,*) "voucher_probability_adjuster=", voucher_probability_adjuster
                     probability_of_voucher_benchmark_used=&
                         max(min(probability_of_voucher_benchmark_used-voucher_probability_adjuster*&
                         (model_eligibles_getting_voucher(1)-voucher_coverage_data),1.d0),10.d0**(-5))
@@ -29981,6 +30162,11 @@
                     ! bar pi^eu, the separation rate, on the unemployment rate.
                     ! Unemployment rises in it, so subtract the gap.
                     write(*,*) "probability_becoming_unemployed=", probability_becoming_unemployed
+                    call damp_on_flip(separation_rate_adjuster,&
+                        model_fraction_unemployed(1)-unemployment_rate_data,&
+                        previous_gap_separation_rate,have_gap_separation_rate,&
+                        separation_rate_adjuster_start,damp_adjuster_floor)
+                    write(*,*) "separation_rate_adjuster=", separation_rate_adjuster
                     probability_becoming_unemployed=&
                         max(min(probability_becoming_unemployed-separation_rate_adjuster*&
                         (model_fraction_unemployed(1)-unemployment_rate_data),1.d0),10.d0**(-6))
@@ -29994,6 +30180,11 @@
                     ! unemployment among those with the disorder rises in it.
                     write(*,*) "multiple_of_probabilities_of_employment_if_addicted=", &
                         multiple_of_probabilities_of_employment_if_addicted
+                    call damp_on_flip(employment_multiplier_adjuster,&
+                        model_fraction_addicted_and_unemployed(1)-unemployment_rate_sud_data,&
+                        previous_gap_employment_multiplier,have_gap_employment_multiplier,&
+                        employment_multiplier_adjuster_start,damp_adjuster_floor)
+                    write(*,*) "employment_multiplier_adjuster=", employment_multiplier_adjuster
                     multiple_of_probabilities_of_employment_if_addicted=&
                         max(min(multiple_of_probabilities_of_employment_if_addicted-&
                         employment_multiplier_adjuster*&
