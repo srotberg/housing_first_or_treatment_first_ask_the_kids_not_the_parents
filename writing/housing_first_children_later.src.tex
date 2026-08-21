@@ -1304,15 +1304,15 @@ object: $\gamma$ and $\theta$ are the housing and drug weights in both, $b$ is t
 same Stone-Geary endowment, $\aleph$ the same flow value of being alive, $\lambda$
 the same SUD hazard, $\psi$ and $\bar y$ the same replacement rate and
 earnings base cap, $r$ the same risk-free rate, and $\beta$ is the discount
-factor and nothing else.
+factor.
 
-\subsection{Demographics, the state and the choice set}
+\subsection{Demographics, \new{and the state and choice sets}}
 
 Households enter as adults, live at most $J$ annual periods and retire at
 $J_R$, and $j$ indexes age within that span. Survival from $j$ to $j+1$ is
-$\phi(j,h',d,m,\tau)$ in~\eqref{eq:fsurv}, and it depends on age, on the housing
-\emph{chosen} this period, on the SUD and on SMI,
-and on whether the household is in treatment, since treatment means it is
+$\phi(j,h',d,m,\tau)$ in~\eqref{eq:fsurv}, \new{where} it depends on age, \new{the housing
+\emph{chosen} this period, the SUD and SMI,
+and whether} the household is in treatment, since treatment means it is
 not using, and thus is less likely to die. Newborns replace the dead
 exactly, so the mass of households is constant. The individual
 state is
@@ -1352,12 +1352,13 @@ Equation~\eqref{eq:u} is the logarithmic case of this bundle with hours fixed.
 The rest are new, and there are three of them. Leisure makes hours a margin,
 at weight $\omega_{\ell}$ and curvature $\sigma_{\ell}$ over the $1-n$ hours
 not worked. SUD treatment costs utility, $\bar\tau^{u}$ in each
-period the household takes it up, $\tau=1$. And homelessness carries a
-disamenity, $\kappa_x$ per unit of the aggregate homelessness rate $H$, borne by
-every household and priced on the headcount alone, which is what makes
-homelessness an externality here rather than only a private misfortune;
+period the household takes it up, $\tau=1$. And \new{aggregate homelessness, $H$,} carries a
+disamenity, $\kappa_x$ per unit, borne by
+every household, which is what makes
+homelessness an \new{externality for everyone} here rather than only a private misfortune;
 Section~\ref{sec:fleftout} takes it up. Outside the bundle, $\sigma$ is the
-coefficient of relative risk aversion.
+coefficient of relative risk aversion\new{, and its inverse is the elasticity of
+intertemporal substitution}.
 
 \subsection{Income, taxes and transfers}\label{sec:ftaxes}
 
@@ -1375,26 +1376,28 @@ n\,y\,\varepsilon(j)\,\rho_{d}^{\mathbf{1}\{d=1\}}\rho_{m}^{\mathbf{1}\{m=1\}}
 \end{cases}
 \end{equation}
 taking the cases in the order they appear. Retirement income replaces $40$
-percent of the productivity state with no health penalty, since social security
-is not means-tested on health. For the employed, $\varepsilon(j)$ is
+percent of the productivity state with no \new{SMI} penalty, since social security
+is not means-tested on \new{SMI}. For the employed, $\varepsilon(j)$ is
 the deterministic age profile of efficiency and $\rho_d$ and
-$\rho_m$ are productivity penalties applied \emph{conditional on working}.
+$\rho_m$ are productivity penalties applied \new{to the SUD and to SMI respectively,}
+\emph{conditional on working}.
 The three employment states are work, $e=1$, the first period of a spell
 out of work, $e=2$, and non-employment thereafter, $e=3$, so the last two cases
 are both unemployment and the disability case is the income of a household that
 is out of work and carries SMI. Unemployment insurance (UI) is paid in the first period of a spell only, at
 the replacement rate $\psi$ on an earnings base capped at average income
 $\bar y$, both as in equation~\eqref{eq:inc}. $\zeta_{DI}$ is the rate at which disability
-insurance (DI) replaces the income of a non-employed household with SMI.
+insurance (DI) replaces the income of a non-employed household with SMI\new{, and that
+DI does not stop until the household recovers}.
 
 The two penalties, $\rho_d$ and $\rho_m$, are in the model to generate a
 large share of homeless households being employed, consistent with the data.
 Employed homelessness cannot be produced by unemployment alone:
-something has to leave a household poor while it is still in a job.
+something has to leave a household poor \new{enough} while it \new{still has} a job.
 Both are calibrated internally, and on two features of the same population: $\rho_d$ on the share of the
 homeless who are employed, and $\rho_m$ on their income relative to the average.
 
-Labour income is taxed with the Heathcote et al.\ (2017) function and
+Labour income is taxed \new{progressively} with the Heathcote et al.\ (2017) function and
 capital income at a flat rate $\tau_k$,
 \begin{equation}\label{eq:ftax}
 y^{n}=\tau_{\ell}\,(y^{g})^{\xi}\;+\;(1-\tau_k)\,r\,a ,
@@ -1413,9 +1416,10 @@ F=\max\big\{0,\ \underline c\,\bar y-\varrho\,(y^{g}+ra)\big\},
 V\!ch=\mathbf{1}\{\eta=1\}\,\mathbf{1}\{h'\neq h_1\}\,
 \max\big\{0,\ p_r\, h'-\kappa_r\,y^{g}\big\}.
 \end{equation}
-A homeless voucher holder does not lose the voucher: retention depends on income
+\new{A voucher holder who becomes homeless} does not lose the voucher: retention depends on income
 eligibility, not on housing, so the entitlement survives and simply pays nothing
-until the household rents again. Eligibility itself is equation~\eqref{eq:felig}, and the two policies' rules for withdrawing a voucher are set out with it.
+until the household rents again. Eligibility itself is \new{set out in
+Section~\ref{sec:fvoucher}}, equation~\eqref{eq:felig}, and the two policies' rules for withdrawing a voucher are set out with it.
 
 \subsection{The budget constraint}
 
@@ -1424,17 +1428,16 @@ c+p_v v+a' \;=\; y^{n}+a\;-\;p_r\, h'\,\mathbf{1}\{h'\neq h_1\}\;+\;V\!ch+F,
 \qquad c>0,\ v\ge0,\ a'\ge0 .
 \end{equation}
 The drug price is $p_v$ and market rent is $p_r$, both as in
-Section~\ref{sec:support}, and $a$ is assets carried in. Note what is absent:
-treatment, which costs utility, and bequests, which go to the government.
-How $c$, $v$ and $n$ are chosen out of it is with the rest of the
-optimisation, in Section~\ref{sec:fproblem}.
+Section~\ref{sec:support}. Note what is absent:
+treatment, which costs utility, and bequests \new{from deceased households}, which go to the government.
+How $c$, \new{$h$,} $v$ and $n$ are chosen out of it is with the rest of the
+optimisation, in Section~\ref{sec:fproblem}. \new{Rents are held fixed at
+$@@f_average_rent_calibrated@@$ across every simulation.}
 
-\subsection{Housing, and the homelessness loop}
+\subsection{Housing and the homelessness loop}
 
-Housing is a four point grid. $h_1$ is literal homelessness, sleeping rough or in
-an emergency shelter, which is the HUD point-in-time definition and excludes
-doubling up; it carries a small service flow and no rent, a fixed
-fraction of the smallest rental rather than a level of its own. The three rental
+Housing is \new{the four point grid shown in~\eqref{eq:fhouse}}. $h_1$ is literal homelessness, sleeping rough or in
+an emergency shelter. The three rental
 sizes are pinned at both ends and spaced by a curvature between them,
 \begin{equation}\label{eq:fhouse}
 h_3=h_2+\Big(\tfrac{1}{2}\big(h_4-h_2\big)^{1/\varsigma}\Big)^{\varsigma},
@@ -1450,11 +1453,8 @@ the employment transitions~\eqref{eq:femp} and the SUD recovery
 hazard~\eqref{eq:frecover}, through $\kappa_{\phi H}(j)$ and $\kappa_{ueH}$
 in Section~\ref{sec:fcosts} and $\mu_H$ in Section~\ref{sec:fdrug}. It raises
 mortality, worsens both employment margins and lowers the chance of
-recovering from the SUD. Mental illness is the one thing it does not reach.
-The SMI chain runs on its own, and that is a finding rather than an omission: the
-trial that housed people with serious mental illness looked for an effect on
-their symptoms and did not find one, while finding large effects on their
-housing. Section~\ref{sec:fsmi} gives it.
+recovering from the SUD. \new{SMI} is the one thing it does not reach.
+\new{The SMI chain runs on its own, for the reason given in Section~\ref{sec:fsmi}.}
 
 \subsection{Drug use, the SUD, recovery and treatment}\label{sec:fdrug}
 
@@ -1474,8 +1474,10 @@ disorder to damage, so the model produces too much of it.} A household with the 
 \end{equation}
 with $\bar\pi_r$ the baseline annual chance of recovering while housed,
 clean of SMI and untreated, and three multipliers on it:
-$\mu_H<1$, so recovery is harder on the street, $\mu_m<1$, harder with
-SMI, and $g>1$ the treatment effect.
+$\mu_H<1$, \new{which means that} recovery is harder on the street, $\mu_m<1$,
+\new{which implies that recovery is harder with
+SMI, and $g>1$ is the treatment effect, which means that recovery is more likely
+in treatment}.
 
 $\mu_H$ is how housing acts on drug use here, and it is worth being
 exact about what that claim is and is not. Housing does not change what a
@@ -1540,8 +1542,8 @@ $\mu_m$ in~\eqref{eq:frecover}, and
 disability income, for which eligibility is being out of work with SMI and
 the replacement rate is $\zeta_{DI}$. It does not change the utility function.
 
-The mental health chain does \emph{not} depend on housing, and that is
-a finding in the data rather than an omission. In the At Home / Chez Soi randomised trial, $1{,}198$
+\new{The SMI chain does \emph{not} depend on housing, and that is
+a finding in the data rather than an omission.} In the At Home / Chez Soi randomised trial, $1{,}198$
 homeless adults with SMI across four cities, assignment to housing
 with intensive case management produced no detectable effect on symptom severity
 at any wave, while producing large effects on housing stability, its primary
@@ -1651,7 +1653,7 @@ principally an externality rather than a pure personal cost, which is what makes
 candidate for policy in a way that mortality and unemployment risk, both fully
 internalised, are not.
 
-\subsection{The voucher, and the two policies}
+\subsection{The voucher, and the two policies}\label{sec:fvoucher}
 
 A household without a voucher draws one with probability $\pi_V$, the same
 lottery probability as in Section~\ref{sec:support}, if it is income
