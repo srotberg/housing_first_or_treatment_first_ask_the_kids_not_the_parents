@@ -744,9 +744,7 @@ def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=(), tol=0.0
         # off the target theta had just been set to, every sweep, forever --
         # which is the residual the note above h_hl and aleph describes, and
         # there is no reason to add a third one on purpose.
-        if 'th' not in fix:
-            par = with_(par, th=bracket_with_b(par, 'th', 'dshare', 0.02, 0.45,
-                                               iters=18))
+
         # LAM AND B ARE SOLVED JOINTLY, not once each. prog is very nearly a
         # step function in lam at the calibrated dispersion: with b refit at
         # every trial it runs 0.065 at lam = 60, 0.221 at 121 and 0.9998 at 250,
@@ -759,7 +757,22 @@ def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=(), tol=0.0
         # could not reach the moment. Alternating the two to a fixed point fixes
         # it: b still runs last, so participation is still the moment that is
         # actually hit, but lam is re-solved against the b that will survive.
+        # THETA IS INSIDE THE LOOP, for exactly the reason lambda is. Run once
+        # ahead of it, theta was set on the drug spending share and then lambda
+        # moved underneath it -- 222 to 192 to 176 over two sweeps -- and a
+        # different SUD hazard changes the quantity used, so dshare came out 32
+        # and then 26 per cent off the target theta had just been bracketed on.
+        # The gap was closing at about a fifth a sweep, which does not reach the
+        # tolerance inside the sweep budget. The three are coupled through the
+        # quantity used: theta sets how much a user buys, lambda turns that
+        # quantity into a disorder rate, and b decides who uses at all.
+        # Alternating all three to a fixed point is what the note above already
+        # prescribes for lambda and b, and b still runs LAST, so participation
+        # is still the moment that is actually hit.
         for _ in range(4):
+            if 'th' not in fix:
+                par = with_(par, th=bracket_with_b(par, 'th', 'dshare',
+                                                   0.02, 0.45, iters=18))
             if 'lam' not in fix:
                 par = with_(par, lam=bracket_sud(par, LAM_LO, LAM_HI))
             if 'b' not in fix:
@@ -847,19 +860,24 @@ def polish(par, verbose=True):
     """
     One pass over everything EXCEPT theta, at the final theta.
 
-    The sweep ends on theta, so the parameters bracketed before it are fitted to
-    the theta that theta has just replaced. On the last sweep there is no next
-    sweep to correct that, and the model written out carries a street and a
-    housing weight that belong to a different theta: after sweep one the
-    homelessness rate sat 17 per cent off its target for exactly this reason.
-    This runs the rest of the sweep once more with theta held where it landed,
-    so every moment but the drug spending share is on target at the theta that
-    is reported, and the drug spending share moves only by however much the
-    others move it.
+    The housing block is bracketed BEFORE theta and is therefore fitted to the
+    theta that theta then replaces. On the last sweep there is no next sweep to
+    correct that, and the model written out carries a street and a housing
+    weight that belong to a different theta: after sweep one the homelessness
+    rate sat 17 per cent off its target for exactly this reason. This runs the
+    rest of the sweep once more with theta held where it landed, so every moment
+    but the drug spending share is on target at the theta that is reported, and
+    the drug spending share moves only by however much the others move it.
+
+    h_2 IS IN THIS LIST. It was not, and it is a bracketed parameter now: left
+    out, the small unit stayed at whatever the last sweep gave it while gamma
+    and the street were re-fitted around it, which is the same defect this
+    function exists to remove.
     """
     if verbose:
         print(f'\npolishing at theta = {par.th:.4f}')
     par = with_(par, gam=bracket(par, 'gam', 'hspend', 0.02, 0.70))
+    par = with_(par, h_sm=bracket(par, 'h_sm', 'hsmall', 0.01, H_SM_HI))
     par = with_(par, h_hl=bracket(par, 'h_hl', 'homeless', 1e-7, 0.49))
     par = with_(par, aleph=bracket(par, 'aleph', 'vsl', 0.20, 24.0, iters=26))
     for _ in range(2):
