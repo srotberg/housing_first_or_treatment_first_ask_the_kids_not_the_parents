@@ -281,7 +281,7 @@ def caught(par, pv_new=PV_OPT):
     # answer is about.
     v1b, sudb, hlb, evb = _policy_grids(par, BASE_POLICY, par.pV)
     p_mix = _rest_point(sudb, _hl_by_shift(par, BASE_POLICY, par.pV))
-    dv = dv_h = dv_t = mass = hl_h = hl_t = 0.0
+    dv = dv_h = dv_t = mass = hl_h = hl_t = hl_o = 0.0
     for sft, psft in zip(_shifts(), p_mix):
         if psft <= 0.0:
             continue
@@ -299,8 +299,8 @@ def caught(par, pv_new=PV_OPT):
                 # AND THE COUNTERFACTUAL WHERE NOTHING CHANGES, so each policy
                 # can be priced against the pre reform world the way every
                 # cohort in the figure is, rather than only against each other.
-                ago, W2o, _, _, _ = solve_period2(old, y, BASE_POLICY,
-                                                  used=int(uses))
+                ago, W2o, H2o, _, _ = solve_period2(old, y, BASE_POLICY,
+                                                    used=int(uses))
                 for d, pd in ((1, pid), (0, 1.0 - pid)):
                     m = psft * WW[i] * p * pd
                     if m <= 0.0:
@@ -313,6 +313,9 @@ def caught(par, pv_new=PV_OPT):
                     dv_t += m * (_wt - _wo)
                     hl_h += m * float(np.interp(a, agh, H2h[:, d]))
                     hl_t += m * float(np.interp(a, agt, H2t[:, d]))
+                    # the benchmark: what this generation's homelessness would
+                    # have been had the old rationed programme simply continued
+                    hl_o += m * float(np.interp(a, ago, H2o[:, d]))
                     mass += m
     dv /= max(mass, 1e-12)
     dv_h /= max(mass, 1e-12)
@@ -322,7 +325,8 @@ def caught(par, pv_new=PV_OPT):
                 # every cohort line is already drawn on
                 cev_hf=float(cev(par, dv_h)), cev_tf=float(cev(par, dv_t)),
                 hl_hf=hl_h / max(mass, 1e-12),
-                hl_tf=hl_t / max(mass, 1e-12))
+                hl_tf=hl_t / max(mass, 1e-12),
+                hl_old=hl_o / max(mass, 1e-12))
 
 
 def _rest_point(sud, hl, iters=400, tol=1e-14):
@@ -455,6 +459,23 @@ def figure(paths, cg=None):
                              fontsize=8.5, color=col, fontweight='bold')
         axes[0].plot([], [], marker='v', ms=9, color='0.35', ls='none',
                      label='initial old, at cohort 0')
+        # THE INITIAL OLD IN PANEL (b) TOO, with the benchmark they are measured
+        # against. Panel (a) showed what the reform is worth to them and panel
+        # (b) did not show what it does to their housing, which is the channel
+        # the welfare number runs through and the one that reaches their
+        # children. The open marker is the counterfactual: their homelessness
+        # had the old rationed programme simply continued.
+        for dx, key, col in ((-0.17, 'hl_tf', '#b2182b'),
+                             (0.17, 'hl_hf', '#2166ac')):
+            axes[1].plot([dx], [100 * cg[key]], marker='v', ms=11, color=col,
+                         ls='none', markeredgecolor='white',
+                         markeredgewidth=0.9, zorder=6)
+        axes[1].plot([0.0], [100 * cg['hl_old']], marker='o', ms=8,
+                     mfc='none', mec='0.35', mew=1.3, ls='none', zorder=6)
+        axes[1].annotate('no reform', xy=(0.0, 100 * cg['hl_old']),
+                         xytext=(6, 4), textcoords='offset points',
+                         fontsize=8, color='0.35')
+        axes[1].set_xlim(-0.45, show + 0.35)
         # ROOM BELOW ZERO for the markers and their labels, so nothing is
         # clipped by the axis the way the single marker used to be.
         _lo = min(100 * cg['cev_tf'], 100 * cg['cev_hf'], 0.0)
@@ -633,17 +654,29 @@ def numbers(paths, par=None, cg=None):
     d['tr_t1_dir'] = _dir(tf[1][1], hf[1][1], 'above', 'below', tol=1e-6,
                           same='level with')
     if cg is not None:
-        d['tr_caught'] = f'{100*cg["cev"]:.1f}'
         d['tr_caught_hl'] = f'{100*cg["hl_tf"]:.2f}'
         # EACH POLICY AGAINST THE PRE REFORM WORLD, so the prose can quote the
         # initial old on the same axis the figure now draws them on.
         d['tr_caught_tf'] = f'{100*cg["cev_tf"]:+.1f}'
         d['tr_caught_hf'] = f'{100*cg["cev_hf"]:+.1f}'
+        # WHAT CONDITIONALITY TAKES FROM THEM IS THE GAP BETWEEN THE TWO
+        # NUMBERS THE FIGURE PLOTS, and it has to be computed that way rather
+        # than as cev of the value difference. cev is exp(dv/periods) - 1, so
+        # cev(A - B) is not cev(A) - cev(B): the first route reported 2.1 per
+        # cent beside a panel showing +10.8 and +8.5, whose difference is 2.3,
+        # and a reader checking the figure against the sentence found neither.
+        _gap = cg['cev_hf'] - cg['cev_tf']
+        d['tr_caught'] = f'{100*_gap:.1f}'
+        d['tr_caught_hl_old'] = f'{100*cg["hl_old"]:.2f}'
+        d['tr_caught_hl_hf'] = f'{100*cg["hl_hf"]:.2f}'
         # HOW MUCH WORSE THE CAUGHT GENERATION HAS IT than the cohort born at
         # the switch. The text called this "two orders of magnitude", which was
         # true of one run and is not a thing to leave typed.
+        # BUILT FROM THE SAME GAP THE SENTENCE ABOVE QUOTES, so the two cannot
+        # disagree. It used to divide cev of the value difference by the
+        # newborns' gap, which is a ratio of two objects measured differently.
         born = abs(tf[1][1] - hf[1][1])
-        d['tr_caught_ratio'] = (f'{abs(cg["cev"]) / born:.0f}'
+        d['tr_caught_ratio'] = (f'{abs(_gap) / born:.0f}'
                                 if born > 1e-9 else 'many')
     out = os.path.join(here, 'transition_numbers.json')
     _json.dump(d, open(out, 'w'), indent=1)
