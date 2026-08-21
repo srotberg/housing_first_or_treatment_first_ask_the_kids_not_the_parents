@@ -903,6 +903,47 @@ def _period1_chunk(job):
     return [period1(par, y, policy) for y in ys]
 
 
+def _cross_job(job):
+    """One threshold crossing, bisected to the income at which the sign turns."""
+    par, policy, s, lo, hi, sgn = job
+    for _ in range(24):
+        mid = 0.5 * (lo + hi)
+        r = period1(par, mid, policy)
+        gm = r[s][1] if s < len(r) else np.nan
+        if np.isnan(gm):
+            break
+        if (gm > 0.0) == sgn:
+            lo = mid
+        else:
+            hi = mid
+    return 0.5 * (lo + hi)
+
+
+def _map_crossings(jobs):
+    """Bisect every crossing, in parallel when that is worth it.
+
+    THE CROSSINGS ARE WHERE A CALIBRATION SPENDS ITS TIME, which is not where
+    the seed spends its time and is why this was missed. At the seed no
+    household sits near its use threshold, so period1 is called once per income
+    and the grid is the whole cost. At a calibrated point there are crossings,
+    each a 24 step bisection, and they ran sequentially in the parent: 312
+    period1 calls per solve of which only the 120 on the grid were parallel. A
+    pool over 38 per cent of the work caps at 1.4x however many cores it is
+    given, which is what the process table showed, the parent busier than its
+    four workers put together.
+
+    Each bisection is sequential in itself, but the crossings do not depend on
+    each other, so they run as concurrent chains. ONE JOB PER CROSSING rather
+    than chunks of them: a chain is 24 solves against about a millisecond of
+    dispatch, and equal chunks leave workers idle whenever the count of
+    crossings is not a multiple of the pool.
+    """
+    n = _n_workers()
+    if n <= 1 or _IN_WORKER or len(jobs) < 2:
+        return [_cross_job(j) for j in jobs]
+    return list(_pool(n).map(_cross_job, jobs))
+
+
 def _map_period1(par, ygrid, policy):
     """period1 at every income on the grid, in parallel when that is worth it."""
     n = _n_workers()
@@ -948,59 +989,64 @@ def threshold(par, ygrid, policy=None, edges=None, cdf=None):
             PR[i, s] = p; G[i, s] = g; VV[i, s] = v; INC[i, s] = inc
             BU[i, s] = bu; BN[i, s] = bn
     frac = (G > 0.0).astype(float)
+    # EVERY CROSSING IS FOUND FIRST, THEN ALL OF THEM ARE BISECTED, THEN THE
+    # SHARES ARE APPLIED. The crossings are read straight off G, which is
+    # already complete, so nothing in the search depends on a bisection and no
+    # bisection depends on another; splitting the one loop into three phases is
+    # what lets the middle phase run concurrently.
+    #
+    # THE APPLY PHASE KEEPS THE ORIGINAL ORDER, s and then increasing i, because
+    # two crossings in the same state can both write the boundary cell between
+    # them and the later write has to win exactly as it did when this was one
+    # pass.
+    cross = []
     for s in range(ns):
         for i in range(n - 1):
             if np.isnan(G[i, s]) or np.isnan(G[i + 1, s]):
                 continue
             if (G[i, s] > 0.0) == (G[i + 1, s] > 0.0):
                 continue
-            lo, hi, sgn = ygrid[i], ygrid[i + 1], G[i, s] > 0.0
-            for _ in range(24):
-                mid = 0.5 * (lo + hi)
-                r = period1(par, mid, policy)
-                gm = r[s][1] if s < len(r) else np.nan
-                if np.isnan(gm):
-                    break
-                if (gm > 0.0) == sgn:
-                    lo = mid
-                else:
-                    hi = mid
-            ystar = 0.5 * (lo + hi)
-            # EACH CELL IS SPLIT AGAINST ITS OWN EDGES. This is the fix for a
-            # bug that made participation a STEP FUNCTION OF b and cost three
-            # rewrites of the income grid before it was found in the right
-            # place. The old code computed ONE fraction w, the mass of cell i
-            # below the threshold, and then handed cell i+1 the complement
-            # 1 - w. But w is measured against cell i's edges, and the node
-            # values are conditional means, so a threshold lying between two
-            # node values is not necessarily inside cell i: when it falls inside
-            # cell i+1, cdf(ystar) exceeds edges[i+1], w clips to one, and cell
-            # i+1 is handed a flat zero. The whole cell then leaves the use
-            # region in one go and stays out until the threshold reaches the
-            # next cell, which is exactly the plateau-and-jump participation
-            # curve that no b could thread: flat at 5.234 per cent, then 4.276,
-            # with the 5.13 target in the gap between them.
-            #
-            # Splitting each cell against its own edges is smooth in ystar by
-            # construction: as the threshold sweeps up through cell i its share
-            # runs from one to zero, and only then does cell i+1 begin to fall.
-            def _share(cell, above):
-                """Mass fraction of `cell` on the use side of ystar."""
-                if cdf is None or edges is None:
-                    lo_y = ygrid[cell]
-                    hi_y = ygrid[cell + 1] if cell + 1 < n else ygrid[cell]
-                    if hi_y <= lo_y:
-                        return 1.0 if (ystar <= lo_y) == above else 0.0
-                    f = (ystar - lo_y) / (hi_y - lo_y)
-                else:
-                    lo_p, hi_p = edges[cell], edges[cell + 1]
-                    f = (cdf(ystar) - lo_p) / max(hi_p - lo_p, 1e-14)
-                f = min(max(f, 0.0), 1.0)
-                return 1.0 - f if above else f
+            cross.append((s, i, ygrid[i], ygrid[i + 1], bool(G[i, s] > 0.0)))
 
-            above = not (G[i, s] > 0.0)      # the use region lies above ystar
-            frac[i, s] = _share(i, above)
-            frac[i + 1, s] = _share(i + 1, above)
+    stars = _map_crossings([(par, policy, s, lo, hi, sgn)
+                            for s, _i, lo, hi, sgn in cross])
+
+    for (s, i, _lo, _hi, _sgn), ystar in zip(cross, stars):
+        # EACH CELL IS SPLIT AGAINST ITS OWN EDGES. This is the fix for a
+        # bug that made participation a STEP FUNCTION OF b and cost three
+        # rewrites of the income grid before it was found in the right
+        # place. The old code computed ONE fraction w, the mass of cell i
+        # below the threshold, and then handed cell i+1 the complement
+        # 1 - w. But w is measured against cell i's edges, and the node
+        # values are conditional means, so a threshold lying between two
+        # node values is not necessarily inside cell i: when it falls inside
+        # cell i+1, cdf(ystar) exceeds edges[i+1], w clips to one, and cell
+        # i+1 is handed a flat zero. The whole cell then leaves the use
+        # region in one go and stays out until the threshold reaches the
+        # next cell, which is exactly the plateau-and-jump participation
+        # curve that no b could thread: flat at 5.234 per cent, then 4.276,
+        # with the 5.13 target in the gap between them.
+        #
+        # Splitting each cell against its own edges is smooth in ystar by
+        # construction: as the threshold sweeps up through cell i its share
+        # runs from one to zero, and only then does cell i+1 begin to fall.
+        def _share(cell, above):
+            """Mass fraction of `cell` on the use side of ystar."""
+            if cdf is None or edges is None:
+                lo_y = ygrid[cell]
+                hi_y = ygrid[cell + 1] if cell + 1 < n else ygrid[cell]
+                if hi_y <= lo_y:
+                    return 1.0 if (ystar <= lo_y) == above else 0.0
+                f = (ystar - lo_y) / (hi_y - lo_y)
+            else:
+                lo_p, hi_p = edges[cell], edges[cell + 1]
+                f = (cdf(ystar) - lo_p) / max(hi_p - lo_p, 1e-14)
+            f = min(max(f, 0.0), 1.0)
+            return 1.0 - f if above else f
+
+        above = not (G[i, s] > 0.0)      # the use region lies above ystar
+        frac[i, s] = _share(i, above)
+        frac[i + 1, s] = _share(i + 1, above)
 
     # THE LOWEST CELL IS NO LONGER SPECIAL, and the sub grid that used to
     # integrate it is deleted. It took the MASS of users from incomes inside the
