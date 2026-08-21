@@ -23949,7 +23949,7 @@
             read(23,'(F15.12)') rent(time_period,:)
         close(23)
                     
-        rent_calibrated=rent(time_period,:)
+        if (fix_rent==0) rent_calibrated=rent(time_period,:)
         model_average_rent(time_period)=rent_calibrated(0)
                      
         open(unit=24,file="housing_stock"//trim(old_results)//".dat",action='read')
@@ -27847,6 +27847,11 @@
                     
             if (fix_rent==0) then
                 rent(1,:)=rent_to_housing_price*housing_price(1)*1.05
+            else
+                ! FIXED RENT STILL HAS TO BE SET. rent has no initialiser, so
+                ! guarding the assignments that would move it also removed the
+                ! one that gave it a value, and it ran on whatever was in memory.
+                rent(1,:)=rent_calibrated(:)
             end if
                                           
             risk_free_rate(1)=calibrated_risk_free_rate
@@ -27949,6 +27954,8 @@
                     
             if (fix_rent==0) then
                 rent(1,:)=housing_price(1)*himmelberg_etal_rent_to_price
+            else
+                rent(1,:)=rent_calibrated(:)
             end if
             
         end if
