@@ -1600,6 +1600,15 @@
         ! employment states stay, and with them the long spells that are what
         ! actually cost a household its housing.
         real(8), parameter :: probability_of_ui=1.0
+
+        ! UI DURATION. With this at one an unbroken unemployment spell is
+        ! insured in its first period only and pays nothing after, which is what
+        ! the paper describes and what employment_transition's own comment
+        ! claimed it already did. At zero the spell stays in whichever state it
+        ! entered, so UI runs for as long as the spell does; that was the
+        ! behaviour before, and it is kept switchable because the two differ a
+        ! great deal in how costly the disorder's unemployment risk is.
+        integer, parameter :: ui_first_period_only=1
                 
         real(8) :: utility_improvement=include_addiction*0
         real(8) :: utility_improvement_adjuster=0
@@ -3833,12 +3842,29 @@
 
             else
 
-                ! Out of work, with or without UI. Finding a job returns to 1;
-                ! otherwise the spell continues in the SAME state, which is what
-                ! keeps UI a first period only benefit.
+                ! Out of work, with or without UI. Finding a job returns to 1.
+                !
+                ! UI IS A FIRST PERIOD BENEFIT, AND THE SPELL HAS TO LEAVE STATE
+                ! 3 FOR THAT TO BE TRUE. State 3 is insured unemployment and
+                ! state 2 pays nothing, so continuing the spell in the SAME
+                ! state, which is what this branch used to do for both, paid the
+                ! benefit again in every period of an unbroken spell. The
+                ! comment here asserted the opposite -- that staying put "keeps
+                ! UI a first period only benefit" -- which is exactly backwards:
+                ! with probability_of_ui at one every job loser enters state 3
+                ! and never left it, so state 2 carried no mass and unemployment
+                ! was insured for life. That is not the programme, and it is not
+                ! what Section 4.10 of the paper says the model does.
+                !
+                ! An unbroken spell therefore steps 1 -> 3 -> 2 -> 2 -> ...:
+                ! insured in the first period out of work, nothing after it.
                 if (e_f_1==1) then
 
                     employment_transition=find_1
+
+                elseif ((ui_first_period_only==1) .AND. (e_c_1==3)) then
+
+                    if (e_f_1==2) employment_transition=1-find_1
 
                 elseif (e_f_1==e_c_1) then
 
@@ -21942,8 +21968,13 @@
             unemployment_process(:,3,1,1,0,:)=probability_becoming_employed
             unemployment_process(:,3,1,2,0,:)=probability_becoming_employed/(1+increased_prob_if_homeless)
             
-            unemployment_process(:,3,3,1,0,:)=(1-probability_becoming_employed)
-            unemployment_process(:,3,3,2,0,:)=1-probability_becoming_employed/(1+increased_prob_if_homeless)
+            ! 3 -> 2, not 3 -> 3: the insured period is the first one only, so
+            ! a spell that continues moves to the state that pays nothing. Kept
+            ! in step with employment_transition, which is the live builder at
+            ! two SMI states and which verify_unemployment_process checks this
+            ! block against at one.
+            unemployment_process(:,3,2,1,0,:)=(1-probability_becoming_employed)
+            unemployment_process(:,3,2,2,0,:)=1-probability_becoming_employed/(1+increased_prob_if_homeless)
             
             unemployment_process(:,2,1,1,0,:)=probability_becoming_employed
             unemployment_process(:,2,1,2,0,:)=probability_becoming_employed/(1+increased_prob_if_homeless)
@@ -21969,8 +22000,8 @@
             unemployment_process(:,6,4,1,1,:)=probability_becoming_employed_if_addicted
             unemployment_process(:,6,4,2,1,:)=probability_becoming_employed_if_addicted/(1+increased_prob_if_homeless)
             
-            unemployment_process(:,6,6,1,1,:)=(1-probability_becoming_employed_if_addicted)
-            unemployment_process(:,6,6,2,1,:)=1-probability_becoming_employed_if_addicted/(1+increased_prob_if_homeless)
+            unemployment_process(:,6,5,1,1,:)=(1-probability_becoming_employed_if_addicted)
+            unemployment_process(:,6,5,2,1,:)=1-probability_becoming_employed_if_addicted/(1+increased_prob_if_homeless)
             
             unemployment_process(:,5,4,1,1,:)=probability_becoming_employed_if_addicted
             unemployment_process(:,5,4,2,1,:)=probability_becoming_employed_if_addicted/(1+increased_prob_if_homeless)
@@ -22007,8 +22038,8 @@
             unemployment_process(:,2,5,1,1,:)=(1-probability_becoming_employed_if_addicted)
             unemployment_process(:,2,5,2,1,:)=(1-probability_becoming_employed_if_addicted/(1+increased_prob_if_homeless))
             
-            unemployment_process(:,3,6,1,1,:)=(1-probability_becoming_employed_if_addicted)
-            unemployment_process(:,3,6,2,1,:)=(1-probability_becoming_employed_if_addicted/(1+increased_prob_if_homeless))
+            unemployment_process(:,3,5,1,1,:)=(1-probability_becoming_employed_if_addicted)
+            unemployment_process(:,3,5,2,1,:)=(1-probability_becoming_employed_if_addicted/(1+increased_prob_if_homeless))
             
             unemployment_process(:,3,4,1,1,:)=probability_becoming_employed_if_addicted
             unemployment_process(:,3,4,2,1,:)=probability_becoming_employed_if_addicted/(1+increased_prob_if_homeless)
@@ -22037,8 +22068,8 @@
             unemployment_process(:,6,1,1,0,:)=probability_becoming_employed
             unemployment_process(:,6,1,2,0,:)=probability_becoming_employed/(1+increased_prob_if_homeless)
             
-            unemployment_process(:,6,3,1,0,:)=(1-probability_becoming_employed)
-            unemployment_process(:,6,3,2,0,:)=1-probability_becoming_employed/(1+increased_prob_if_homeless)
+            unemployment_process(:,6,2,1,0,:)=(1-probability_becoming_employed)
+            unemployment_process(:,6,2,2,0,:)=1-probability_becoming_employed/(1+increased_prob_if_homeless)
             
             unemployment_process(:,5,1,1,0,:)=probability_becoming_employed
             unemployment_process(:,5,1,2,0,:)=probability_becoming_employed/(1+increased_prob_if_homeless)
