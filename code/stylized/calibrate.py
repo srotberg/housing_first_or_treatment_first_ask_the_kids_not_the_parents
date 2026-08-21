@@ -1,12 +1,13 @@
 """
-A rough calibration of the stylized two period model. Five parameters, five
+A rough calibration of the stylized two period model. Six parameters, six
 targets.
 
     gam     housing over non drug spending             26.8 %
     h_hl    homelessness rate                          0.399 %
     aleph   value of a statistical life                80 annual incomes
-    lam     share of users who acquire a SUD           33.2 %
-    b       drug participation rate                    5.13 %
+    lam     adult SUD rate, moderate or severe         4.54 %
+    th      drug spending / income among users         20 %
+    b       drug participation rate                    10.13 %
 
 THE RENTAL SIZES ARE SET AND GAMMA IS CALIBRATED, which is the conventional order
 and the third arrangement tried. The grid is a market fact quoted to the reader,
@@ -423,7 +424,15 @@ W = W * len(W)  # calibrate.py uses W unnormalised elsewhere; scale is irrelevan
 # endogenous objects, and it is very nearly a step function in lam: with b refit
 # at every point it runs 0.065 at lam = 60, 0.221 at 121 and 0.9998 at 250. The
 # population rate is bounded by participation and moves smoothly.
-TARGET = dict(part=0.0513, homeless=0.00399, sud=0.0368, vsl=80.0,
+# THE TWO POPULATION RATES ARE THE SURVEY'S OWN SEVERITY SPLIT. NSDUH 2024
+# adults 26 and over, from the file in data/: mild drug use disorder is 5.59 per
+# cent and moderate or severe is 4.54, so any disorder is 10.13. Participation is
+# the whole of that and the SUD rate is the moderate-or-severe part, which is the
+# split the extraction code in data/ already uses and the one the life cycle
+# model now targets. The old pair, 0.0513 and 0.0368, matched no cut of that
+# variable and implied that 72 per cent of users carry a disorder where the
+# survey says 45.
+TARGET = dict(part=0.1013, homeless=0.00399, sud=0.0454, vsl=80.0,
               dshare=0.20, housing_share=0.30, hspend=0.268,
               bot50=BOT50_TARGET)
 
@@ -523,7 +532,11 @@ LAM_LO, LAM_HI = 0.05, 20000.0
 # between 0.22 and 0.23, so theta = 0.21 buys a spending share of about 20 per
 # cent with the reversal comfortably intact, and theta = 0.23 buys 24 per cent
 # with no reversal at all. frontier.py is the scan.
+# THETA IS BRACKETED, which the note above already said and the list did not do.
+# gamma moved onto hspend and theta never followed, so the drug spending share
+# stayed an untargeted moment the model missed. It is targeted now.
 PAIRS = [('gam', 'hspend', 0.02, 0.70),
+         ('th', 'dshare', 0.02, 0.45),
          ('h_hl', 'homeless', 1e-7, 0.49),
          ('aleph', 'vsl', 0.20, 24.0),
          ('lam', 'sud', LAM_LO, LAM_HI),

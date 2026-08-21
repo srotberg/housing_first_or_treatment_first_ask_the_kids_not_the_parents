@@ -245,7 +245,8 @@ One mechanism of the model decides who the two policies treat differently, and i
 central enough to state here. Two facts about drug use have to be reproduced
 together. It is concentrated at the bottom of the income distribution, and it is not
 universal: most households do not use at all, so there is a margin at zero, with a
-participation rate of $5.13$ percent among adults aged $26$ and over in the 2024 National Survey on Drug Use and Health (NSDUH). To
+participation rate of $10.13$ percent among adults aged $26$ and over in the 2024 National Survey on Drug Use and Health (NSDUH), which is the share
+with a drug use disorder of any severity, mild included. To
 generate both I model drugs as a luxury good bought at a price, which puts most
 households at a corner where they optimally consume none. Left to its own devices,
 however, that same assumption concentrates use at the \emph{top}, since the share of
@@ -827,7 +828,7 @@ such that the standard unit, $h_3$, costs $0.40$ of mean income and the
 small unit, $h_2$, is $0.25$ of it. The voucher parameters are institutional: covered
 tenants pay $30$ percent of market rent, eligibility is capped at half of median income, $\kappa_V = 0.50$, and $\pi_V = 0.266$ is the ratio of recipients to the income-eligible population in the 2023 Picture of Subsidized
 Households, published by HUD. The weight on drugs is set at $\theta = 0.20$.\footnote{A $\theta$ large enough to
-match the $35$ percent of income the average user spends on drugs makes the drug too
+match the $20$ percent of income the average user spends on drugs makes the drug too
 valuable to be deterred by a death that arrives thirty years later, and users stop
 being poor: by $\theta=0.23$ the mortality channel no longer reverses the income
 gradient on its own, and the average user is richer than average. Setting $\theta = 0.20$ gives a spending share of 20.22
@@ -851,10 +852,10 @@ of being alive $\aleph$ is matched to a value of a statistical life of 80
 times average annual income, about \$9 million against a mean household income of
 \$113,000, which is the range surveyed by Viscusi and Aldy (2003) once their
 estimates are put in current dollars. The pull of the first unit $b$ is matched
-to a drug participation rate of $5.13$ percent from NSDUH 2024 for
-respondents aged 26 and over, housing services on the street
-$h_1$ to a homelessness rate of $0.399$ percent from the 2023 HUD PiT count, and the SUD hazard $\lambda$ to the $3.68$ percent
-of adults aged $26$ and over carrying a SUD in NSDUH 2024.
+to a drug participation rate of $10.13$ percent from NSDUH 2024 for
+respondents aged 26 and over with a disorder of any severity, housing services on the street
+$h_1$ to a homelessness rate of $0.399$ percent from the 2023 HUD PiT count, and the SUD hazard $\lambda$ to the $4.54$ percent
+of adults aged $26$ and over carrying a moderate or severe SUD in NSDUH 2024.
 
 \begin{table}[!tb]
 \centering
@@ -887,7 +888,7 @@ $u_1-u_0$, and if income support cannot cover the rent you downsize, live on
 less, or lose your home. Figure~\ref{fig:who} scales each from nothing to
 $125$ percent of its
 calibrated value, recalibrating $b$ at every point so participation stays at
-$5.13$ percent.
+$10.13$ percent.
 
 \begin{figure}[!tb]
 \centering
@@ -896,7 +897,7 @@ $5.13$ percent.
 \label{fig:who}
 \notes{0.62\textwidth}{Note: the vertical axis is average income of users over
 the population average, on a log scale, and $b$ is recalibrated at every point
-so that the model targets a participation rate of $5.13$ percent at every point. The black dotted line marks
+so that the model targets a participation rate of $10.13$ percent at every point. The black dotted line marks
 the calibrated strength; everything to the right of it is extrapolation.}
 \end{figure}
 
@@ -1037,7 +1038,7 @@ Table~\ref{tab:welfare} puts welfare numbers on it: 9.7 percent of households ar
 strictly worse off under Treatment First, none is better off, and those affected
 lose 0.64 percent of consumption. Those are exactly the households
 that use: a household that never uses faces the same voucher rule under both
-policies and is indifferent between them. The figure is not the $5.13$
+policies and is indifferent between them. The figure is not the $10.13$
 percent participation rate of Section~\ref{sec:cal} because the programmes
 compared here are universal, rather than the rationed benchmark that rate is
 measured at.
@@ -2124,7 +2125,7 @@ the parameter the amount spent on drugs, when it does, turns on. As it
 rises use rises on the extensive and intensive margins, so the private
 cost and the externality both rise and there is more for
 either policy to act on. It is calibrated internally to drug spending
-over income across users, $35$ percent. \new{Retail expenditure is from
+over income across users, $\new{20}$ percent. \new{Retail expenditure is from
 Midgette et al.\ (2019), which estimates what Americans spend on cannabis,
 cocaine, heroin and methamphetamine; the National Survey on Drug Use and Health
 (NSDUH) supplies the use and disorder rates but not spending, which it does not
@@ -2142,23 +2143,34 @@ weights:
 \end{equation*}
 where $\bar v_g$ and $\bar y_g$ are the average drug quantity and
 average income in group $g$, and $\mu_e$ and $\mu_d$ are the masses without and
-with the disorder. The target follows from the two group ratios and the split
-between them: users without a disorder spend $11$ percent of income on the drug
-and users with one spend $44$, and the two are weighted by the share of users
-who carry the disorder, which the SUD rate and the participation rate imply.
-\new{The ratio for users carrying a disorder is disciplined by the two studies that
-measure spending and income on the same people: Roddy and Greenwald (2009) report
+with the disorder. \new{\cut{The target follows from the two group ratios and the
+split between them: users without a disorder spend 11 percent of income on the
+drug and users with one spend 44, weighted by the share of users who carry the
+disorder.}} \new{The target itself is the aggregate the model's moment has
+to reproduce, total retail spending over the total income of users, which needs
+no assumption about how spending divides between the two groups. Midgette et
+al.\ (2019) put 2016 retail spending on cannabis, cocaine, heroin and
+methamphetamine at 146 billion dollars, of which 136 billion is accounted for by
+the daily and near-daily users who do almost all of it. NSDUH 2024 puts users at
+$\new{10.13}$ percent of adults aged 26 and over and their mean personal income at
+34,344 dollars for a mild disorder and 28,213 for a moderate or severe one, so
+the income of the using population is 691 billion. That gives
+$\new{0.2}$.
+
+The two studies that measure spending and income on the same people are
+consistent with the disordered end of that: Roddy and Greenwald (2009) report
 heroin-dependent volunteers spending about three quarters of a monthly wage
 income of 723 dollars, and North and Pollio (2017) report homeless cocaine users
-spending about half of theirs.}
-That gives $0.35$.
+spending about half of theirs. Both samples are far more dependent than the
+average user here, so they bound the share from above rather than estimating
+it.}
 \item[$b$, whether a household uses at all.] The marginal value of the drug goes
 as $\theta/(b+v)$, so a larger $b$ makes the first units worth less and a household
 with little to spend buys nothing. As $b$ rises use falls, so the
 private cost and the externality both fall, and housing assistance is
 less likely to be translated into more spending on drugs: $b$ is the size of the
 moral hazard. Its value is chosen so the
-model generates a drug participation rate of $5.13$ percent, the NSDUH 2024 figure
+model generates a drug participation rate of $\new{10.13}$ percent, the NSDUH 2024 figure
 for adults aged 26 and over, which identifies it sharply because participation is
 close to a threshold function of $b$.
 \item[$\lambda$, the hazard per unit used.] This is what makes using \emph{more}
@@ -2167,7 +2179,7 @@ into a disorder. Raise $\lambda$ and both the private cost and the
 externality rise, and Housing First's moral hazard costs more, since it is
 $\lambda$ that converts an extra voucher into a higher SUD rate Treatment First
 attempts to cure. Its value is chosen so the model generates the share
-of adults carrying a SUD, $3.68$ percent among those aged $26$
+of adults carrying a SUD, $\new{4.54}$ percent among those aged $26$
 and over in NSDUH 2024.
 \item[$\bar\kappa_{\phi d}$, increased mortality with a SUD.] This is the parameter the whole
 paper turns on. Mortality truncates the value of life for a user, which

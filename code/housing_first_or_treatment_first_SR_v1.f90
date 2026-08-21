@@ -1103,35 +1103,55 @@
         real(8) :: distance_probability_of_becoming_addicted
         real(8) :: stopping_rule_probability_of_becoming_addicted=10.d0**(-3)
 
-        ! NSDUH 2024, adults 26 and over. The moment the hazard above is matched
-        ! to, and the one the note's internal table already says lambda hits.
-        real(8), parameter :: sud_rate_data=0.0368
+        ! NSDUH 2024, adults 26 and over, MODERATE OR SEVERE drug use disorder,
+        ! svyrdudany in (2,3) on the file in data/. Weighted share 0.0454.
+        !
+        ! It was 0.0368, which matched no cut of that variable. Together with the
+        ! old participation rate it implied that 72 per cent of users carry a
+        ! disorder; the survey's own split of mild against moderate-or-severe
+        ! puts that at 45 per cent, and the two rates have to come from the same
+        ! variable or the weights built from them mean nothing.
+        real(8), parameter :: sud_rate_data=0.0454
 
         ! THE ELEVEN THE NOTE CALLS CALIBRATED AND THE CODE HELD FIXED.
         ! Each with the moment its table row names. Where the moment is a first
         ! stage cross sectional one it is bracketed in the loop below; the three
         ! that need a second stage experiment are marked as such and are freed
         ! but not yet driven, because the experiment does not exist to drive them.
-        ! DRUG SPENDING OVER INCOME, AVERAGED ACROSS USERS.
+        ! DRUG SPENDING OVER INCOME, ACROSS USERS. 0.20, and it is now built
+        ! from three measured things rather than from two asserted ratios.
         !
-        ! The moment this is compared with divides total drug spending by total
-        ! income over the EXPERIMENTERS, which is every household that buys any
-        ! drug, not the subset carrying a disorder. At 0.44 the target was a with
-        ! disorder number attached to an all user average, and no household in
-        ! the model spends anything like that share on the drug.
+        ! It was 0.35, a weighted average of 11 per cent for users without a
+        ! disorder and 44 for users with one, both attributed to NSDUH. NSDUH
+        ! does not collect expenditure, so whatever those two numbers were, that
+        ! was not their source.
         !
-        ! 0.35 is that average. Users without a disorder spend 11 per cent of
-        ! income on the drug and users with one spend 44, and the share of users
-        ! carrying a disorder is sud_rate_data over participation_rate_data,
-        ! 0.0368/0.0513 = 0.717. So 0.717*0.44 + 0.283*0.11 = 0.3467.
+        ! THE CONSTRUCTION. Total retail spending over the total income of users,
+        ! which needs no assumption about how spending divides between the two
+        ! groups:
         !
-        ! The weight is taken from the two NSDUH rates the model already targets,
-        ! rather than from lambda's conversion rate of 33.2 per cent, which would
-        ! give 0.22 instead. The two do not agree: a 33.2 per cent conversion at a
-        ! 5.13 per cent participation rate implies a disorder rate near 1.7 per
-        ! cent, not 3.68. Whichever of those two NSDUH numbers is wrong, this
-        ! target moves with it.
-        real(8), parameter :: drug_spending_share_data=0.35
+        !   spending  Midgette et al. (2019), 2016 retail: cannabis 52, heroin
+        !             43, methamphetamine 27, cocaine 24, in billions. Counting
+        !             cannabis at the daily and near-daily share of its spending
+        !             gives 136; counting all four gives 146; hard drugs alone
+        !             give 94.
+        !   users     NSDUH 2024 adults 26+, 10.13 per cent, of whom 4.54 points
+        !             carry a moderate or severe disorder.
+        !   income    NSDUH 2024 personal income at category midpoints, survey
+        !             weighted, from the file in data/: 34,344 for mild and
+        !             28,213 for moderate or severe, so 691 billion in total.
+        !
+        ! 136/691 = 0.197 and 146/691 = 0.211. The number is 0.20.
+        !
+        ! WHY IT WAS 0.35 BEFORE, and it was not the spending figure that was
+        ! wrong. The share is spending over users times income, so halving the
+        ! user base doubles it. The old participation rate of 5.13 per cent put
+        ! the same spending on half as many people; on that base the identical
+        ! aggregates give 0.44. The three targets move together or not at all.
+        !
+        ! The one input still doing work is the cannabis share, which moves the
+        ! answer between 0.136 and 0.211. See code/paper/drug_spending_target.py.
+        real(8), parameter :: drug_spending_share_data=0.20
         real(8) :: drug_share_experimenters_1=0
         real(8) :: drug_share_addicted_1=0
         real(8) :: drug_share_weighted_1=0
@@ -1141,7 +1161,11 @@
         real(8) :: model_vsl_ratio_1=0
         logical :: use_experimenters_1=.FALSE.
         logical :: use_addicts_1=.FALSE.
-        real(8), parameter :: participation_rate_data=0.0513
+        ! NSDUH 2024, adults 26 and over, ANY drug use disorder including mild,
+        ! svyrdudany in (1,2,3). Weighted share 0.1013. Mild counts as using and
+        ! moderate or severe counts as carrying the disorder, which is the split
+        ! the extraction code in data/ already uses.
+        real(8), parameter :: participation_rate_data=0.1013
         ! THE VALUE OF A STATISTICAL LIFE, AS A MULTIPLE OF AVERAGE LABOUR
         ! INCOME. It used to be 7.5, the figure in millions of dollars, compared
         ! against a model quantity that is a sum of V/MU_c and so is denominated
