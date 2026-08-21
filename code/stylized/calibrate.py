@@ -659,8 +659,18 @@ def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=(), tol=0.0
         # last is the one whose moment is actually hit, and homelessness is the
         # one that has to be.
         par = with_(par, gam=bracket(par, 'gam', 'hspend', 0.02, 0.70))
+        # h_sm BEFORE h_hl, for the reason gamma runs before the street: both
+        # move homelessness, a cheaper small unit takes households off it, and
+        # whichever runs last is the one whose moment is actually hit. The
+        # homelessness rate is the one that has to be, so the street runs last.
+        par = with_(par, h_sm=bracket(par, 'h_sm', 'hsmall', 0.01, 0.39))
         par = with_(par, h_hl=bracket(par, 'h_hl', 'homeless', 1e-7, 0.49))
         par = with_(par, aleph=bracket(par, 'aleph', 'vsl', 0.20, 24.0, iters=26))
+        # THETA BEFORE THE DRUG PAIR. lam and b are bracketed on the disorder
+        # rate and on participation and both move with the quantity used, so
+        # theta is settled before they are chased; b still runs last, so
+        # participation is still the moment that is actually hit.
+        par = with_(par, th=bracket(par, 'th', 'dshare', 0.02, 0.45))
         # LAM AND B ARE SOLVED JOINTLY, not once each. prog is very nearly a
         # step function in lam at the calibrated dispersion: with b refit at
         # every trial it runs 0.065 at lam = 60, 0.221 at 121 and 0.9998 at 250,
@@ -706,9 +716,15 @@ def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=(), tol=0.0
         worst = max(abs(m[mom] / TARGET[mom] - 1.0)
                     for _, mom, _, _ in PAIRS)
         if verbose:
-            print(f'  sweep {s+1}  worst relative gap {worst:7.3f}   '
-                  f'aleph={par.aleph:.4g}  h_hl={par.h_hl:.4g}  '
-                  f'lam={par.lam:.4g}  b={par.b:.4g}', flush=True)
+            # EVERY BRACKETED PARAMETER, and the moment that is worst. The line
+            # named four of them, which predated gamma, theta and h_sm being
+            # bracketed, so the three most recently added were the three a
+            # reader could not see.
+            wmom = max(PAIRS, key=lambda P_: abs(m[P_[1]] / TARGET[P_[1]] - 1.0))[1]
+            print(f'  sweep {s+1}  worst {worst:7.3f} on {wmom:9s} '
+                  f'gam={par.gam:.4g} th={par.th:.4g} h_sm={par.h_sm:.4g} '
+                  f'h_hl={par.h_hl:.4g} aleph={par.aleph:.4g} '
+                  f'lam={par.lam:.4g} b={par.b:.4g}', flush=True)
         # STOP WHEN EVERY TARGETED MOMENT IS HIT. Each bracket restarts from its
         # own bounds every sweep, so a converged sweep reproduces itself: the
         # remaining sweeps cost a quarter of an hour each and move nothing. The
