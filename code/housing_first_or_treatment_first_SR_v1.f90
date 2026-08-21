@@ -1180,6 +1180,13 @@
         real(8), parameter :: addiction_scalar_damping=0.5
         real(8), parameter :: addiction_scalar_growth=1.2
         real(8), parameter :: addiction_scalar_floor=10.d0**(-4)
+        ! The band theta and b are held in. See the two update rules for why
+        ! they are absolute rather than only trust regions.
+        real(8), parameter :: theta_lo=0.05d0
+        real(8), parameter :: theta_hi=0.30d0
+        real(8), parameter :: b_lo=1.d0*10.d0**(-4)
+        real(8), parameter :: b_hi=0.05d0
+
         real(8) :: gap_addiction_scalar_1=0,previous_gap_addiction_scalar=0
         integer :: have_gap_addiction_scalar=0
         real(8) :: lambda_secant_slope_1=0
@@ -28540,7 +28547,30 @@
 
         close(72)
 
+        ! CLAMP THETA AND b INTO THEIR BAND ON RESUME. The bounds in the update
+        ! rules only bite when an update runs, so a resumed state carrying the
+        ! old out of band values would spend a whole loop on them first. A state
+        ! written before the band existed carries theta at 0.667 and b at 0.99.
+        if ((relative_share_of_addiction_1<theta_lo) .OR. &
+            (relative_share_of_addiction_1>theta_hi)) then
+
+            write(*,*) "theta out of band on resume:", relative_share_of_addiction_1, &
+                " clamped into [", theta_lo, ",", theta_hi, "]"
+            relative_share_of_addiction_1=max(min(relative_share_of_addiction_1,theta_hi),theta_lo)
+
+        end if
+
+        if ((addiction_scalar_1<b_lo) .OR. (addiction_scalar_1>b_hi)) then
+
+            write(*,*) "b out of band on resume:", addiction_scalar_1, &
+                " clamped into [", b_lo, ",", b_hi, "]"
+            addiction_scalar_1=max(min(addiction_scalar_1,b_hi),b_lo)
+
+        end if
+
         write(*,*) "resumed from calibration_state.dat, written after loop", resumed_loop_count
+        write(*,*) "relative_share_of_addiction_1=", relative_share_of_addiction_1
+        write(*,*) "addiction_scalar_1=", addiction_scalar_1
         write(*,*) "lambda_addiction=", lambda_addiction
         write(*,*) "largest_house_size=", largest_house_size
         write(*,*) "smallest_rental_relative_to_lowest_income=", smallest_rental_relative_to_lowest_income
@@ -30449,11 +30479,21 @@
                         drug_share_gap_1=max(min(drug_share_weighted_1-&
                             drug_spending_share_data,1.d0),-1.d0)
 
+                        ! ABSOLUTE BOUNDS, not only a trust region. The trust
+                        ! region bounds each STEP and lets the level walk
+                        ! anywhere, which is how theta reached 0.667: two thirds
+                        ! of the utility bundle on the drug, against a quarter on
+                        ! consumption and six per cent on housing. That is not a
+                        ! preference anyone would defend, and it was reached while
+                        ! the drug first order condition still had its sign
+                        ! inverted. The stylized model uses 0.20 and the note says
+                        ! the two share this parameter, so the band is set around
+                        ! that.
                         relative_share_of_addiction_1=&
                             max(min(relative_share_of_addiction_1-&
                             relative_share_of_addiction_adj*drug_share_gap_1,&
-                            min(0.9d0,2*relative_share_of_addiction_1)),&
-                            max(10.d0**(-4),relative_share_of_addiction_1/2))
+                            min(theta_hi,2*relative_share_of_addiction_1)),&
+                            max(theta_lo,relative_share_of_addiction_1/2))
 
                         distance_relative_share_of_addiction_1=&
                             abs(drug_share_weighted_1-drug_spending_share_data)
@@ -30502,11 +30542,21 @@
                     previous_gap_addiction_scalar=gap_addiction_scalar_1
                     have_gap_addiction_scalar=1
 
+                    ! ABSOLUTE BOUNDS ON b TOO, and they matter more than
+                    ! theta's because b sets the ABSTENTION CORNER. The static
+                    ! split buys nothing when x <= b*(w_c/w_v), so with b at 0.99
+                    ! and theta at 0.667 the corner sat at 0.40 against a poorest
+                    ! household's total consumption of 0.45: the bottom of the
+                    ! distribution was one per cent of its consumption away from
+                    ! being priced out of the drug entirely. At theta of 0.2 the
+                    ! same b would put the corner at about 4b, which is above
+                    ! every household in the model. The stylized model uses 0.009.
                     addiction_scalar_1=max(min(addiction_scalar_1*&
                         (1+addiction_scalar_adjuster*&
                         gap_addiction_scalar_1/&
                         max(participation_rate_data,10.d0**(-12))),&
-                        10*addiction_scalar_1),addiction_scalar_1/10)
+                        min(b_hi,10*addiction_scalar_1)),&
+                        max(b_lo,addiction_scalar_1/10))
                     distance_addiction_scalar=abs(gap_addiction_scalar_1)
                     write(*,*) "addiction_scalar_adjuster=", addiction_scalar_adjuster
                     write(*,*) "addiction_scalar_1=", addiction_scalar_1
