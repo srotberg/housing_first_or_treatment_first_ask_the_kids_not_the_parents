@@ -163,6 +163,21 @@ quantitative model exempts a household in treatment from the condition, and it
 enforces the condition imperfectly, with a detection rate and a false positive
 rate. The stylized model has neither, and says so.
 
+The rule runs the other way too, and the calibration of the quantitative model
+turned up three bugs that had to be checked back against the stylized model:
+
+| bug found in the quantitative model | does the stylized model have it? |
+|---|---|
+| The disorder rate by productivity, which delta_d is calibrated on, was the mass with the disorder AND EMPLOYED over the mass with the disorder, so it was an employment rate that read about 0.87 wherever anyone stood and zero elsewhere | **Does not arise.** The stylized model has no productivity grid to condition a disorder rate on; the child's outcome is `terminal_homeless_prob` evaluated at the child's own income, which is a rate over the whole population at that income by construction. |
+| The newborn productivity draw ignored the parent, so `newborn_employment_probability` and therefore delta_d reached the parent's continuation value and the cross section not at all | **No.** `children.py` draws the child's income from the penalised distribution and solves the child's problem at that income, so the penalty is in the child's outcome and not only in the parent's valuation of it. This is the one place the stylized model was right and the quantitative model was not. |
+| Newborns were seeded without the age-one SMI prevalence, so mental illness was built up by onset from age two alone and came out three times too small | **Does not apply.** The stylized model has no mental illness state. |
+
+The second row is worth stating as a general point rather than an entry: a
+penalty that enters only the parent's continuation value and not the child's
+realised state will still let its own moment converge, because the moment is
+computed off the penalty's own array. Nothing fails; the mechanism is simply
+absent from the model. Both models now put the penalty in the child.
+
 ## 8. The transition horizon is not the display horizon
 
 A transition must be COMPUTED over a horizon long enough that convergence is a
