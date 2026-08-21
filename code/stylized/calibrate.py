@@ -696,7 +696,17 @@ def bracket_sud(par, lo=None, hi=None, iters=16):
 
 
 def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=(), tol=0.007):
+    # fix IS HONOURED NOW, AND IT HAS TO BE. It sat in this signature unused
+    # while theta was a SET parameter, where holding it was what the sweep did
+    # anyway, so frontier.py could pass fix=('th',) and get what it asked for by
+    # accident. Bracketing theta broke that silently and in the worst way: every
+    # point of the frontier scan would have re-solved theta to the same
+    # calibrated value, so the theta column would have named a number the row
+    # was not computed at, every row would have been the same model, and
+    # TH_BREAK -- which the paper quotes as the point past which its mechanism
+    # is gone -- would have been read off a scan that never varied theta.
     par = par or P()
+    fix = set(fix)
     for s in range(sweeps):
         # HOUSING FIRST, THEN THE VALUE OF LIFE. aleph used to run first and the
         # calibration reported a VSL of 129 against a target of 80: aleph was on
@@ -707,14 +717,18 @@ def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=(), tol=0.0
         # GAMMA FIRST, then the street. Both move homelessness, so whichever runs
         # last is the one whose moment is actually hit, and homelessness is the
         # one that has to be.
-        par = with_(par, gam=bracket(par, 'gam', 'hspend', 0.02, 0.70))
+        if 'gam' not in fix:
+            par = with_(par, gam=bracket(par, 'gam', 'hspend', 0.02, 0.70))
         # h_sm BEFORE h_hl, for the reason gamma runs before the street: both
         # move homelessness, a cheaper small unit takes households off it, and
         # whichever runs last is the one whose moment is actually hit. The
         # homelessness rate is the one that has to be, so the street runs last.
-        par = with_(par, h_sm=bracket(par, 'h_sm', 'hsmall', 0.01, H_SM_HI))
-        par = with_(par, h_hl=bracket(par, 'h_hl', 'homeless', 1e-7, 0.49))
-        par = with_(par, aleph=bracket(par, 'aleph', 'vsl', 0.20, 24.0, iters=26))
+        if 'h_sm' not in fix:
+            par = with_(par, h_sm=bracket(par, 'h_sm', 'hsmall', 0.01, H_SM_HI))
+        if 'h_hl' not in fix:
+            par = with_(par, h_hl=bracket(par, 'h_hl', 'homeless', 1e-7, 0.49))
+        if 'aleph' not in fix:
+            par = with_(par, aleph=bracket(par, 'aleph', 'vsl', 0.20, 24.0, iters=26))
         # THETA BEFORE THE DRUG PAIR. lam and b are bracketed on the disorder
         # rate and on participation and both move with the quantity used, so
         # theta is settled before they are chased; b still runs last, so
@@ -730,8 +744,9 @@ def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=(), tol=0.0
         # off the target theta had just been set to, every sweep, forever --
         # which is the residual the note above h_hl and aleph describes, and
         # there is no reason to add a third one on purpose.
-        par = with_(par, th=bracket_with_b(par, 'th', 'dshare', 0.02, 0.45,
-                                           iters=18))
+        if 'th' not in fix:
+            par = with_(par, th=bracket_with_b(par, 'th', 'dshare', 0.02, 0.45,
+                                               iters=18))
         # LAM AND B ARE SOLVED JOINTLY, not once each. prog is very nearly a
         # step function in lam at the calibrated dispersion: with b refit at
         # every trial it runs 0.065 at lam = 60, 0.221 at 121 and 0.9998 at 250,
@@ -745,8 +760,10 @@ def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=(), tol=0.0
         # it: b still runs last, so participation is still the moment that is
         # actually hit, but lam is re-solved against the b that will survive.
         for _ in range(4):
-            par = with_(par, lam=bracket_sud(par, LAM_LO, LAM_HI))
-            par = with_(par, b=_b_for(par, iters=30))
+            if 'lam' not in fix:
+                par = with_(par, lam=bracket_sud(par, LAM_LO, LAM_HI))
+            if 'b' not in fix:
+                par = with_(par, b=_b_for(par, iters=30))
         # CHECKPOINT EVERY SWEEP. This process has been killed mid run four
         # times by the container reclaiming background work, and each time the
         # whole calibration was lost because the only write was at the end. Now
@@ -774,14 +791,22 @@ def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=(), tol=0.0
         # convergence test that counted it reported every converged sweep
         # as seven per cent off, forever.
         m = stats(par)
-        worst = max(abs(m[mom] / TARGET[mom] - 1.0)
-                    for _, mom, _, _ in PAIRS)
+        # ONLY THE MOMENTS SOMETHING IS STILL FREE TO MOVE. A held parameter's
+        # moment is off by however far the hold puts it, which is the point of
+        # holding it, and counting it would report every sweep of a frontier
+        # point as unconverged and run all of them for nothing.
+        live = [(n, mom) for n, mom, _, _ in PAIRS if n not in fix]
+        # default=0.0 for the degenerate case where everything is held:
+        # nothing is free to move, so there is nothing left to converge.
+        worst = max((abs(m[mom] / TARGET[mom] - 1.0) for _, mom in live),
+                    default=0.0)
         if verbose:
             # EVERY BRACKETED PARAMETER, and the moment that is worst. The line
             # named four of them, which predated gamma, theta and h_sm being
             # bracketed, so the three most recently added were the three a
             # reader could not see.
-            wmom = max(PAIRS, key=lambda P_: abs(m[P_[1]] / TARGET[P_[1]] - 1.0))[1]
+            wmom = max(live, key=lambda P_: abs(m[P_[1]] / TARGET[P_[1]] - 1.0),
+                       default=(None, 'nothing free'))[1]
             print(f'  sweep {s+1}  worst {worst:7.3f} on {wmom:9s} '
                   f'gam={par.gam:.4g} th={par.th:.4g} h_sm={par.h_sm:.4g} '
                   f'h_hl={par.h_hl:.4g} aleph={par.aleph:.4g} '

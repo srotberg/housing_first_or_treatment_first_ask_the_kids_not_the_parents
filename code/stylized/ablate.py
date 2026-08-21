@@ -111,7 +111,12 @@ if __name__ == '__main__':
     # that missed its targets, and that has to be visible here.
     print(f"{'removed':36s}{'part':>7s}{'homeless':>10s}{'r_use':>8s}"
           f"{'val life':>10s}{'moral hz':>10s}")
-    print(f"{'   TARGETS':36s}{0.0513:7.4f}{0.00399:10.5f}")
+    # THE TARGETS COME FROM THE DICT THE CALIBRATION BRACKETS AGAINST, not
+    # typed here. Participation was retargeted from 5.13 per cent to 10.13 when
+    # the two population rates were put on NSDUH's own severity split, and this
+    # line went on printing 5.13 beside a model column that was fitted to 10.13.
+    from calibrate import TARGET as _T
+    print(f"{'   TARGETS':36s}{_T['part']:7.4f}{_T['homeless']:10.5f}")
     base = with_(P(), **json.load(open('calibrated.json')))
     ref = None
     for name, kw in CHANNELS:
