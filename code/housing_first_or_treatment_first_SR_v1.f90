@@ -1394,6 +1394,26 @@
         ! below target. 20 moves it about 0.08 per iteration at the current gap,
         ! which crosses the [0,1] range in roughly a dozen equilibrium solves.
         real(8) :: size_homelessness_adjuster=20
+
+        ! AND THE TRAVERSE HAS TO DAMP, for aleph's reason. The adjuster is
+        ! twenty and the gap is a rate, so a gap of 0.031 moves the parameter by
+        ! 0.62 on a parameter bounded in [0,1]: it went 0.531 to 0 in one step,
+        ! then 0 to 0.0798, then back to 0. Homelessness is the paper's headline
+        ! moment and it was being read off a parameter slamming between its
+        ! bounds.
+        !
+        ! The bracket cannot rescue it yet. A bracket whose endpoints were priced
+        ! at different values of life is correctly discarded, aleph is still
+        ! moving twenty per cent a loop against a five per cent tolerance, so the
+        ! bracket is thrown away every loop and the traverse is all there is.
+        ! Damping the traverse is what makes the traverse usable in the meantime,
+        ! and it costs nothing once the bracket does survive.
+        real(8), parameter :: size_homelessness_adjuster_start=20
+        real(8), parameter :: size_homelessness_damping=0.5
+        real(8), parameter :: size_homelessness_growth=1.2
+        real(8), parameter :: size_homelessness_adjuster_floor=10.d0**(-2)
+        real(8) :: gap_size_homelessness_1=0,previous_gap_size_homelessness=0
+        integer :: have_gap_size_homelessness=0
         real(8) :: distance_size_homelessness
         real(8) :: stopping_rule_size_homelessness=10.d0**(-3)
 
@@ -27833,6 +27853,9 @@
             write(71,'(F30.15)') value_of_life_trust
             write(71,'(F30.15)') previous_gap_value_of_life
             write(71,'(I10)') have_gap_value_of_life
+            write(71,'(F30.15)') size_homelessness_adjuster
+            write(71,'(F30.15)') previous_gap_size_homelessness
+            write(71,'(I10)') have_gap_size_homelessness
 
         close(71)
 
@@ -27965,13 +27988,35 @@
 
             end if
 
+            if (state_ios_1==0) then
+
+                read(72,'(F30.15)',iostat=state_ios_1) size_homelessness_adjuster
+
+            end if
+
+            if (state_ios_1==0) then
+
+                read(72,'(F30.15)',iostat=state_ios_1) previous_gap_size_homelessness
+
+            end if
+
+            if (state_ios_1==0) then
+
+                read(72,'(I10)',iostat=state_ios_1) have_gap_size_homelessness
+
+            end if
+
             if (state_ios_1/=0) then
 
-                write(*,*) "calibration_state.dat predates the value of life trust region;",&
-                    " it starts at", value_of_life_trust_start
+                write(*,*) "calibration_state.dat predates the damping state; the trust region",&
+                    " starts at", value_of_life_trust_start, " and the homelessness adjuster at",&
+                    size_homelessness_adjuster_start
                 value_of_life_trust=value_of_life_trust_start
                 previous_gap_value_of_life=0
                 have_gap_value_of_life=0
+                size_homelessness_adjuster=size_homelessness_adjuster_start
+                previous_gap_size_homelessness=0
+                have_gap_size_homelessness=0
 
             end if
 
@@ -30184,8 +30229,31 @@
 
                         ! No bracket yet, so traverse, which is what the adjuster
                         ! is good at.
+                        gap_size_homelessness_1=model_fraction_homeless(1)-fraction_homeless_data
+
+                        if (have_gap_size_homelessness==1) then
+
+                            if ((gap_size_homelessness_1*previous_gap_size_homelessness)<0) then
+
+                                size_homelessness_adjuster=max(size_homelessness_adjuster*&
+                                    size_homelessness_damping,size_homelessness_adjuster_floor)
+
+                            else
+
+                                size_homelessness_adjuster=min(size_homelessness_adjuster*&
+                                    size_homelessness_growth,size_homelessness_adjuster_start)
+
+                            end if
+
+                        end if
+
+                        previous_gap_size_homelessness=gap_size_homelessness_1
+                        have_gap_size_homelessness=1
+
+                        write(*,*) "size_homelessness_adjuster=", size_homelessness_adjuster
+
                         size_homelessness=max(min(size_homelessness-size_homelessness_adjuster*&
-                            (model_fraction_homeless(1)-fraction_homeless_data),1.d0),0.d0)
+                            gap_size_homelessness_1,1.d0),0.d0)
 
                         ! Say so if the traverse has run out of room. At a street
                         ! worth as much as housing_size(0) and free, a model still
