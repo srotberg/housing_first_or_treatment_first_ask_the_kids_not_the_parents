@@ -29138,18 +29138,43 @@
                             ! more than the hazard moves conversion the difference in
                             ! prevalence carries b's sign, not lambda's.
                             !
-                            ! Measured on the run this guard was written for: onset went
-                            ! from 1.19e-3 to 2.08e-3 while prevalence went from 5.79e-4 to
-                            ! 7.31e-6, because b had cut participation thirteenfold in the
-                            ! same loop. The implied slope was -1.55, the secant asked for
-                            ! an onset of -0.055, the clamp turned that into onset over
-                            ! four, and prevalence fell another eighty fold. The model was
-                            ! being driven to zero by the instrument meant to raise it.
+                            ! WHAT WAS ACTUALLY MEASURED ON THE RUN THIS GUARD WAS ADDED
+                            ! FOR, since the first reading of it was wrong and the wrong
+                            ! reading is the more tempting one. Prevalence fell from 5.79e-4
+                            ! to 7.31e-6 while b cut participation thirteenfold in the same
+                            ! loop, and it looked as though the secant had inverted. It had
+                            ! not. onset_at_mean is recomputed each loop at the MODEL'S OWN
+                            ! mean quantity, and that mean collapsed from 1.09e-2 to 1.19e-3
+                            ! along with participation, so the onset fell from 1.19e-3 to
+                            ! 1.30e-4 even though lambda QUADRUPLED, from 0.1095 to 0.4381,
+                            ! which is its clamp. The slope came out at +1.86, the secant
+                            ! was not rejected, and it asked for an onset of 0.0685 that the
+                            ! clamp cut to four times the current one. Lambda was pushing as
+                            ! hard as it is allowed to, in the right direction, the whole
+                            ! time.
                             !
-                            ! A contaminated secant falls back to the proportional rule,
-                            ! which cannot point the wrong way: it scales the hazard by the
-                            ! ratio of target prevalence to model prevalence and both are
-                            ! positive.
+                            ! So the collapse was b's alone, and b's damping is what fixes
+                            ! it. The lesson lambda carries is a different one: a hazard
+                            ! clipped to a factor of four a loop cannot hold prevalence
+                            ! while another instrument moves the population it acts on by a
+                            ! factor of thirteen. Damping b is what makes lambda's clamp
+                            ! sufficient.
+                            !
+                            ! The slope test stays, because a contaminated slope CAN come
+                            ! out negative and there is nothing to be gained from stepping
+                            ! on it. It is a safeguard against a case that can arise and not
+                            ! a fix for one that did. A rejected secant falls back to the
+                            ! proportional rule, which cannot point the wrong way: it scales
+                            ! the hazard by target over model and both are positive.
+                            !
+                            ! WORTH KNOWING WHEN READING THE SECANT AT ALL: because the two
+                            ! onsets are measured at two different mean quantities, the
+                            ! slope is not a clean derivative of prevalence in the hazard.
+                            ! It mixes in the change in how much users buy. That is a
+                            ! consequence of calibrating the onset at the mean rather than
+                            ! calibrating lambda directly, which is deliberate and is
+                            ! explained above, but it means the secant is an approximation
+                            ! and should be read as one.
                             lambda_secant_slope_1=0
 
                             if (abs(model_fraction_addicted(1)-previous_sud_rate)>10.d0**(-12)) then
