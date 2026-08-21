@@ -646,6 +646,27 @@
         ! stays at rent_calibrated across simulations, which is what makes two
         ! counterfactuals comparable. Rental company profits are zero, which is
         ! the free entry condition that goes with perfectly elastic supply.
+        ! MARKET RENT DOES NOT MOVE. At one, every assignment that would change
+        ! rent(1,:) is skipped, so p_r is the same number in the benchmark and
+        ! in every counterfactual. That is what makes two counterfactuals
+        ! comparable, and it is what the paper assumes: p_r appears in the
+        ! budget constraint and in the voucher rule and is never solved for.
+        !
+        ! PERFECTLY ELASTIC SUPPLY IS NOT ENOUGH ON ITS OWN. It zeroes excess
+        ! demand, so the market clearing step hands back the rent it was given,
+        ! but rent was ALSO being calibrated in a separate loop against a rent
+        ! to price ratio and against the homeownership rate. Homeownership is
+        ! switched off in this paper, so that second moment is vacuous and was
+        ! moving rent to chase it. Both had to stop.
+        !
+        ! THE LEVEL IS ONE, matching the stylized model, where p_r is the
+        ! numeraire. The level is arbitrary; what matters is that it is fixed.
+        ! Renormalising it needed care because 1.079 was written into
+        ! model_average_rent as a literal, which would have quietly kept the old
+        ! level after the declarations changed and left the reported rent
+        ! describing a different price from the one households pay. That
+        ! assignment now reads rent(1,0), so it tracks whatever p_r is set to.
+        integer, parameter :: fix_rent=1
         integer, parameter :: infinite_elasticity_of_rental_supply=1
         integer, parameter :: other_rental_supply_elasticity=1
         integer, parameter :: zero_elasticity=0       
@@ -2044,11 +2065,11 @@
                                                    
         real(8), dimension(0:have_two_rental_markets) :: rental_management_costs_calibrated=2.9157271938684660E-002
                                                                
-        real(8), dimension(0:have_two_rental_markets) :: rent_calibrated=1.079
+        real(8), dimension(0:have_two_rental_markets) :: rent_calibrated=1.00
     
-        real(8) :: average_rent_calibrated=1.079
+        real(8) :: average_rent_calibrated=1.00
                                    
-        real(8), dimension(0:have_two_rental_markets) :: long_run_rent=1.079
+        real(8), dimension(0:have_two_rental_markets) :: long_run_rent=1.00
                                  
         real(8) :: calibrated_stationary_housing_price=13
                                 
@@ -22839,7 +22860,7 @@
                 write(*,*) "smallest_house_size=", smallest_house_size
                 write(*,*) "smallest_house_size*free_market_rent_to_house_price*&
                     housing_price(1)/net_income_lowest=", &
-                    (smallest_house_size*1.079)/net_income_lowest    
+                    (smallest_house_size*rent(1,0))/net_income_lowest    
                     
             else
             
@@ -27824,7 +27845,9 @@
         
             housing_price(1)=calibrated_stationary_housing_price
                     
-            rent(1,:)=rent_to_housing_price*housing_price(1)*1.05
+            if (fix_rent==0) then
+                rent(1,:)=rent_to_housing_price*housing_price(1)*1.05
+            end if
                                           
             risk_free_rate(1)=calibrated_risk_free_rate
             mortgage_interest_rate(1)=risk_free_rate(1)+mortgage_interest_gap
@@ -27924,11 +27947,15 @@
                 
         if (use_old_results==0) then
                     
-            rent(1,:)=housing_price(1)*himmelberg_etal_rent_to_price
+            if (fix_rent==0) then
+                rent(1,:)=housing_price(1)*himmelberg_etal_rent_to_price
+            end if
             
         end if
         
-        model_average_rent(1)=1.079
+        ! TRACKS THE RENT rather than repeating its value. Hardcoded, this
+        ! silently kept the old level after p_r was renormalised.
+        model_average_rent(1)=rent(1,0)
         
         call set_smallest_house_size()
         
@@ -28705,10 +28732,12 @@
                         
                         write(*,*) "rent(1)/housing_price=", rent(1,:)/housing_price(1)
                         
-                        distance_rent_to_price=abs(model_homeownership_rate(1)-SCF_homeownership_rate)
+                        distance_rent_to_price=(1-fix_rent)*abs(model_homeownership_rate(1)-SCF_homeownership_rate)
                             
-                        rent(1,:)=rent(1,:)-rent_to_price_adjuster*&
-                            (model_homeownership_rate(1)-SCF_homeownership_rate)
+                        if (fix_rent==0) then
+                            rent(1,:)=rent(1,:)-rent_to_price_adjuster*&
+                                (model_homeownership_rate(1)-SCF_homeownership_rate)
+                        end if
                         
                         write(*,*) "rent(1)/housing_price=", rent(1,:)/housing_price(1)
                         write(*,*) "distance_rent_to_price=", distance_advantage_to_owning
@@ -28718,8 +28747,10 @@
                     
                         write(*,*) "rent(1)=", rent(1,:)
                     
-                        rent(1,:)=rent(1,:)-rent_to_price_adjuster*&
-                            (rent(1,:)/housing_price(1)-rent_to_housing_price)
+                        if (fix_rent==0) then
+                            rent(1,:)=rent(1,:)-rent_to_price_adjuster*&
+                                (rent(1,:)/housing_price(1)-rent_to_housing_price)
+                        end if
                             
                         write(*,*) "rent(1)=", rent(1,:)
                             
@@ -29784,8 +29815,10 @@
         
                 distance_rental_market(1)=maxval((abs(himmelberg_etal_rent_to_price-(rent(1,:)/housing_price(1)))))
                     
-                rent(1,:)=rent(1,:)+rental_market_adjuster*(himmelberg_etal_rent_to_price-&
-                    (rent(1,:)/housing_price(1)))
+                if (fix_rent==0) then
+                    rent(1,:)=rent(1,:)+rental_market_adjuster*(himmelberg_etal_rent_to_price-&
+                        (rent(1,:)/housing_price(1)))
+                end if
                     
             else
             
