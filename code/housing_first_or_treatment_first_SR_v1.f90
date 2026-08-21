@@ -970,7 +970,10 @@
         real(8), parameter :: risk_aversion_housing=2
         real(8), parameter :: relative_share_of_housing_0=&
             (1-perceived_probability_lower)*0.278+perceived_probability_lower*0.31
-        real(8) :: relative_share_of_housing=0.16
+        ! Starts at the value the utility was actually using while gamma was
+        ! disconnected, so a cold start begins where the model has been solving
+        ! rather than at a number nothing ever faced.
+        real(8) :: relative_share_of_housing=0.278
         real(8) :: distance_relative_share_of_housing
         real(8) :: relative_share_of_housing_adjuster=5*10.d0**(-2)
         real(8), parameter :: relative_share_of_housing_adjuster_start=5*10.d0**(-2)
@@ -27635,11 +27638,29 @@
 
         relative_share_of_addiction=relative_share_of_addiction_1
 
-        relative_share_of_housing_1=relative_share_of_housing_0*(1-relative_share_of_addiction_1)
-        relative_share_of_housing_2=relative_share_of_housing_0*(1-relative_share_of_addiction_2)
+        ! GAMMA IS THE HOUSING WEIGHT AND HAS TO BE THE ONE THE UTILITY READS.
+        ! These four lines built the weights from relative_share_of_housing_0, a
+        ! PARAMETER fixed at 0.278, while the sweep calibrated
+        ! relative_share_of_housing against the rent to income share. So the
+        ! instrument could not move its own moment: gamma ran to its floor of
+        ! 0.01 and the moment sat at 0.52 against a target of 0.268 for the whole
+        ! run, and gamma's only remaining effect was as (1-gamma) on the
+        ! consumption term of the executed branch.
+        !
+        ! It is a wiring error and not a modelling choice. The note defines gamma
+        ! as the Cobb-Douglas share of the bundle that goes on housing, targeted
+        ! at 26.8 per cent of expenditure net of drugs from the 2024 CEX, which is
+        ! exactly avg_rent_to_income_data. Same object, same target; the utility
+        ! was simply reading a different variable.
+        !
+        ! The nesting is unchanged, so the weights still sum to one: within the
+        ! non-drug bundle gamma goes to housing and 1-gamma to consumption, and
+        ! the bundle itself carries 1-theta.
+        relative_share_of_housing_1=relative_share_of_housing*(1-relative_share_of_addiction_1)
+        relative_share_of_housing_2=relative_share_of_housing*(1-relative_share_of_addiction_2)
 
-        relative_share_of_consumption_1=(1-relative_share_of_housing_0)*(1-relative_share_of_addiction_1)
-        relative_share_of_consumption_2=(1-relative_share_of_housing_0)*(1-relative_share_of_addiction_2)
+        relative_share_of_consumption_1=(1-relative_share_of_housing)*(1-relative_share_of_addiction_1)
+        relative_share_of_consumption_2=(1-relative_share_of_housing)*(1-relative_share_of_addiction_2)
 
         ! The Stone-Geary shifter. b is constant across every state and choice,
         ! so b_sud_ratio is one and the two are the same number; the line is kept
