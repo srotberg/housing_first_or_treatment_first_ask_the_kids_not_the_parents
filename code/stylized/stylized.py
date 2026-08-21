@@ -943,7 +943,7 @@ def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None):
     for i, y in enumerate(ygrid):
         ag, _, H2c, R2c, G2c, S2c = solve_period2(par, y, policy, used=0)
         if policy == 'HF':
-            H2u, R2u, G2u = H2c, R2c, G2c
+            H2u, R2u, G2u, S2u = H2c, R2c, G2c, S2c
         else:
             _, _, H2u, R2u, G2u, S2u = solve_period2(par, y, policy, used=1)
         for s in range(PR.shape[1]):
