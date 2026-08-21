@@ -171,6 +171,22 @@ turned up three bugs that had to be checked back against the stylized model:
 | The disorder rate by productivity, which delta_d is calibrated on, was the mass with the disorder AND EMPLOYED over the mass with the disorder, so it was an employment rate that read about 0.87 wherever anyone stood and zero elsewhere | **Does not arise.** The stylized model has no productivity grid to condition a disorder rate on; the child's outcome is `terminal_homeless_prob` evaluated at the child's own income, which is a rate over the whole population at that income by construction. |
 | The newborn productivity draw ignored the parent, so `newborn_employment_probability` and therefore delta_d reached the parent's continuation value and the cross section not at all | **No.** `children.py` draws the child's income from the penalised distribution and solves the child's problem at that income, so the penalty is in the child's outcome and not only in the parent's valuation of it. This is the one place the stylized model was right and the quantitative model was not. |
 | Newborns were seeded without the age-one SMI prevalence, so mental illness was built up by onset from age two alone and came out three times too small | **Does not apply.** The stylized model has no mental illness state. |
+| The drug first order condition scaled both marginal utilities by `(1-sigma)*utility_1`, but `calculate_flow_utility` appends `aleph` and `bar_tau^u` before returning, so the scale was `X^(1-sigma) - aleph` and came out NEGATIVE. The condition was then negative at every point of its bracket, the bisection never saw a sign change, and every household the risk term applied to abstained completely | **No, and it is immune twice over.** Flow utility is logarithmic, so there is no `(1-sigma)` factor anywhere for `aleph` to contaminate: `par.aleph` is a pure additive constant in `_branch` and `solve_period2` and never multiplies a derivative. And the drug quantity is chosen by `np.argmax` over the value on `vg`, which compares LEVELS of the objective rather than solving a marginal condition, so a mis-scaled derivative has nothing to act on. |
+
+The last row is the sharpest methodological difference between the two models
+found so far, and it is worth stating as a rule. **The stylized model picks the
+drug quantity by searching the objective; the quantitative model picks it by
+solving a first order condition.** Only the second can be silently inverted,
+because only the second depends on the derivative being assembled correctly. The
+Fortran's own comment argued the bisection was safe because "the objective rises
+then falls across it" -- which is true of the CORRECT condition, and the scale
+error broke that premise without breaking anything the compiler or the solver
+could see. The bisection ran to convergence every time and returned a corner.
+
+The practical form of the rule: where the quantitative model replaces a search
+with a first order condition for speed, the two must be checked against each
+other at least once at a real state, because a sign error in the condition
+produces a converged answer rather than a failure.
 
 The second row is worth stating as a general point rather than an entry: a
 penalty that enters only the parent's continuation value and not the child's
