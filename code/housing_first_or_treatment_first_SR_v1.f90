@@ -1781,6 +1781,22 @@
         ! (0 or 1) and whether the parent was homeless (1 housed, 2 homeless)
         real(8), dimension(employment_grid_size,0:1,1:2) :: newborn_employment_probability
 
+        ! WHOSE CHILDREN THE NEWBORNS ARE. newborn_employment_probability is a
+        ! draw conditional on the parent's disorder and housing status, so using
+        ! it needs the shares of the households actually being replaced, which is
+        ! the mass dying in each state rather than the mass living in it. The
+        ! initial value puts every parent in the clean housed cell, which makes
+        ! the newborn draw the unconditional one until a distribution has been
+        ! solved and can say otherwise.
+        real(8), dimension(0:1,1:2) :: newborn_parent_share=&
+            reshape((/1.d0,0.d0,0.d0,0.d0/),(/2,2/))
+        real(8), dimension(0:1,1:2) :: newborn_parent_share_acc=0
+
+        real(8), dimension(employment_grid_size) :: newborn_productivity_draw
+        real(8), dimension(threshold_addiction_index) :: newborn_state_draw
+        integer :: newborn_d_index_1,newborn_h_index_1
+        real(8) :: newborn_smi_at_birth
+
         ! THE CHILD IN THE CONTINUATION, AT EVERY AGE. The written model has the
         ! household value its child at weight omega whenever it does not survive,
         ! so the continuation is
@@ -4298,6 +4314,7 @@
         model_mass_smi(time_period)=0
         model_smi_mass_by_age(:)=0
         model_mass_by_age(:)=0
+        newborn_parent_share_acc(:,:)=0
         model_smi_and_homeless(time_period)=0
         model_smi_and_employed(time_period)=0
         model_homeless_labour_income(time_period)=0
@@ -5093,6 +5110,14 @@
                                         is_addicted_1=1
                                         
                                     end if
+
+                                    ! Weighted by the probability of dying, because a newborn
+                                    ! replaces a household that dies and the death hazard is
+                                    ! itself a function of the disorder and of homelessness.
+                                    newborn_parent_share_acc(is_addicted_1,is_homeless_1)=&
+                                        newborn_parent_share_acc(is_addicted_1,is_homeless_1)+&
+                                        distribution_mass_used*(1-survival_probability(age_index,is_homeless_1,&
+                                        is_addicted_1,smi_of(unemployment_index)))
                                     
                                     if (amortization_used>1) then
                                     
@@ -5736,6 +5761,20 @@
             " employment rate given SMI=", model_employment_rate_given_smi(time_period)
         write(*,*) "homeless income share=", model_homeless_income_share(time_period), &
             " employed share of homeless=", model_employed_share_of_homeless(time_period)
+
+        ! The shares only replace the standing ones when there is mass to divide
+        ! by, so the first sweep of a cold start keeps the clean housed default
+        ! rather than dividing by zero.
+        if (sum(newborn_parent_share_acc(:,:))>10.d0**(-12)) then
+
+            newborn_parent_share(:,:)=newborn_parent_share_acc(:,:)/sum(newborn_parent_share_acc(:,:))
+
+        end if
+
+        write(*,*) "parents replaced by newborns: clean housed=", newborn_parent_share(0,1), &
+            " clean homeless=", newborn_parent_share(0,2), &
+            " disordered housed=", newborn_parent_share(1,1), &
+            " disordered homeless=", newborn_parent_share(1,2)
             
         model_fraction_homeless_owners(time_period)=model_fraction_homeless_owners(time_period)/&
             model_fraction_homeless(time_period)
@@ -18807,7 +18846,73 @@
             end if
             
             if ((have_probablistic_death==1) .OR. (newborns_inherit_addiction==0)) then
-            
+
+                ! THIS IS THE NEWBORN ROW, AND IT IS THE ONLY ONE. The branch
+                ! below, which builds newborns out of the households that die and
+                ! is the one both newborn arrays were written for, is unreachable:
+                ! have_probablistic_death is one and newborns_inherit_addiction is
+                ! zero, so this arm always runs. Everything the model says about
+                ! who a newborn is has to be said here.
+                !
+                ! It used to say two things that are not the model's.
+                !
+                ! THE PRODUCTIVITY DRAW IGNORED THE PARENT. It was
+                ! unconditional_employment_probability, the ergodic distribution of
+                ! the productivity process, so delta_d moved
+                ! newborn_employment_probability and nothing downstream ever read
+                ! it. The child penalty entered the parent's continuation value
+                ! through expected_child_value and entered the cross section
+                ! nowhere: parents were told their child would be poorer and the
+                ! children were then drawn as though it were not so. The moment
+                ! delta_d is calibrated on is computed off
+                ! newborn_employment_probability directly, so it would have
+                ! converged with the mechanism absent from the model.
+                !
+                ! THE SMI DRAW WAS EMPTY. unconditional_unemployment_probability is
+                ! (1,0,0) on its first three entries and zero on the SMI block,
+                ! hardcoded, so every newborn was born clean, employed and without
+                ! mental illness. The profile says 12.1 per cent of them have it at
+                ! age one. With nobody born carrying it, prevalence was built by
+                ! onset from age two alone and came out at 1.4 per cent against a
+                ! profile averaging 4.8, age one read exactly 0.00000 against
+                ! 0.12129, and lambda_m, kappa_uem, rho_m and rho_d are all
+                ! calibrated on moments of a population that was three times too
+                ! small. verify_newborn_process passes and always did: the array it
+                ! checks is right and was never read.
+                !
+                ! Newborns are still born employed and clean, which is the model's
+                ! convention and not what was wrong.
+                newborn_productivity_draw(:)=0
+
+                do newborn_d_index_1=0,1
+
+                    do newborn_h_index_1=1,2
+
+                        newborn_productivity_draw(:)=newborn_productivity_draw(:)+&
+                            newborn_parent_share(newborn_d_index_1,newborn_h_index_1)*&
+                            newborn_employment_probability(:,newborn_d_index_1,newborn_h_index_1)
+
+                    end do
+
+                end do
+
+                newborn_smi_at_birth=0
+
+                if ((number_of_smi_states>1) .AND. (allocated(smi_prevalence_by_age))) then
+
+                    newborn_smi_at_birth=smi_prevalence_by_age(1)
+
+                end if
+
+                newborn_state_draw(:)=0
+                newborn_state_draw(idx_of(1,0,0))=1-newborn_smi_at_birth
+
+                if (number_of_smi_states>1) then
+
+                    newborn_state_draw(idx_of(1,1,0))=newborn_smi_at_birth
+
+                end if
+
                 do future_employment_index=1,employment_grid_size
             
                     do future_unemployment_index=1,threshold_addiction_index
@@ -18818,8 +18923,8 @@
                                 initial_endowment(future_employment_index),&
                                 future_unemployment_index,future_employment_index,0,0)=&
                                 fraction_with_positive_wealth(future_employment_index)*&
-                                unconditional_employment_probability(future_employment_index)*&
-                                unconditional_unemployment_probability(future_unemployment_index)
+                                newborn_productivity_draw(future_employment_index)*&
+                                newborn_state_draw(future_unemployment_index)
                                                                                                 
                         end if
                         
@@ -18827,8 +18932,8 @@
                             negative_financial_grid_size,future_unemployment_index,&
                             future_employment_index,0,0)=&
                             (1-fraction_with_positive_wealth(future_employment_index))*&
-                            unconditional_employment_probability(future_employment_index)*&    
-                            unconditional_unemployment_probability(future_unemployment_index)
+                            newborn_productivity_draw(future_employment_index)*&    
+                            newborn_state_draw(future_unemployment_index)
                             
                     end do
                         
