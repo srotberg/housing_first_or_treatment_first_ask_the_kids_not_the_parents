@@ -29133,6 +29133,18 @@
                         ! consumption and the drug, so the household buys more of
                         ! it and the rent to income ratio RISES. A model above
                         ! target therefore calls for a smaller gamma.
+                        !
+                        ! THE DAMPING GOES ON THIS BRANCH, because this is the one
+                        ! that runs: target_renters_rent_to_income is one. It was
+                        ! first put on the else, where it compiled, printed
+                        ! nothing and did nothing, and the only way to see that
+                        ! was that its adjuster never appeared in the log beside
+                        ! the other eight.
+                        call damp_on_flip(relative_share_of_housing_adjuster,&
+                            model_avg_housing_spending_renters(1)-avg_rent_to_income_data,&
+                            previous_gap_relative_share_of_housing,have_gap_relative_share_of_housing,&
+                            relative_share_of_housing_adjuster_start,damp_adjuster_floor)
+                        write(*,*) "relative_share_of_housing_adjuster=", relative_share_of_housing_adjuster
                         relative_share_of_housing=&
                             min(max(relative_share_of_housing-relative_share_of_housing_adjuster*&
                             (model_avg_housing_spending_renters(1)-avg_rent_to_income_data),0.01),0.9) 
@@ -29144,11 +29156,6 @@
                             
                     else
                     
-                        call damp_on_flip(relative_share_of_housing_adjuster,&
-                            mass_of_renters_at_housing_spending(1,1)-SW_renters_spend_over_X_on_hous_2,&
-                            previous_gap_relative_share_of_housing,have_gap_relative_share_of_housing,&
-                            relative_share_of_housing_adjuster_start,damp_adjuster_floor)
-                        write(*,*) "relative_share_of_housing_adjuster=", relative_share_of_housing_adjuster
                         relative_share_of_housing=&
                             min(max(relative_share_of_housing-relative_share_of_housing_adjuster*&
                             (mass_of_renters_at_housing_spending(1,1)-SW_renters_spend_over_X_on_hous_2),0.01),0.9) 
