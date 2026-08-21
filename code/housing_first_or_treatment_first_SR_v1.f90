@@ -491,7 +491,22 @@
 
         ! The two wage penalties, on together. Off reproduces the model before
         ! they were wired, which is what makes their contribution measurable.
-        integer, parameter :: include_wage_penalties=1
+        ! THE TWO PRODUCTIVITY PENALTIES ARE SWITCHED SEPARATELY, because they
+        ! are not the same object and shutting both together costs something
+        ! shutting one does not.
+        !
+        ! rho_d is off. The price of the cheapest dwelling now carries the
+        ! employed share of the homeless, and two instruments cannot chase one
+        ! moment; rho_d was also the force making the disorder's cost fall on
+        ! the poor through the rent threshold, which is a non-homotheticity
+        ! running the wrong way for the gradient of use in income.
+        !
+        ! rho_m stays on. Shutting it collapsed the SMI share of the homeless
+        ! from 5.8 per cent to 0.6, because it is the only reason an EMPLOYED
+        ! household with SMI is poor: unlike the disorder, SMI does not make a
+        ! household spend its income away, so nothing substitutes for it.
+        integer, parameter :: include_rho_d=0
+        integer, parameter :: include_rho_m=1
 
         ! TWO SMI STATES. This doubles the unemployment grid from 6 to 12 and
         ! switches unemployment_process from the hand written block to the
@@ -1678,6 +1693,24 @@
         real(8) :: housing_status_grid_expander_adjuster=1*10.d0**(-1)
         real(8) :: distance_housing_status_grid_expander
         real(8) :: stopping_rule_housing_status_grid_expander=10.d0**(-3)
+
+        ! THE CURVATURE IS NOW AN INSTRUMENT, on the share of the housed in the
+        ! SMALLEST rental. It was held at 1.8 and nothing targeted the interior
+        ! of the size distribution, which is exactly what the model got wrong:
+        ! 1.6 per cent of the housed in the middle rung against 24 in the data,
+        ! and 94 per cent in the largest against 63. Two rungs were pinned and
+        ! the one between them was left wherever the curvature happened to put
+        ! it.
+        !
+        ! THE SIGN. h_3 = h_2 + (1/2)^varsigma (h_4 - h_2), so a LARGER varsigma
+        ! pulls the middle rung down towards the smallest one and takes mass out
+        ! of the smallest category. Too little mass there therefore calls for a
+        ! smaller varsigma, which is the sign below.
+        real(8), parameter :: housing_status_grid_expander_adjuster_start=1*10.d0**(-1)
+        real(8), parameter :: housing_status_grid_expander_floor=10.d0**(-3)
+        real(8) :: gap_housing_status_grid_expander=0
+        real(8) :: previous_gap_housing_status_grid_expander=0
+        integer :: have_gap_housing_status_grid_expander=0
         
         real(8) :: smallest_rental_relative_to_lowest_income=(1-perceived_probability_lower)*0.0361+perceived_probability_lower*0.19
         ! ON, and the sign is the same story as the expander. A larger smallest
@@ -5665,8 +5698,8 @@
                                         model_average_labour_income(time_period)=model_average_labour_income(time_period)+&
                                             labor_supply_used*employment_grid(age_index,employment_index)*&
                                             labour_deterministic_efficiency(age_index)*&
-                                            (rho_d**(min(sud_of(unemployment_index),1)*include_wage_penalties))*&
-                                            (rho_m**(min(smi_of(unemployment_index),1)*include_wage_penalties))*&
+                                            (rho_d**(min(sud_of(unemployment_index),1)*include_rho_d))*&
+                                            (rho_m**(min(smi_of(unemployment_index),1)*include_rho_m))*&
                                             distribution_mass_used
 
                                         ! THE PENALTIES BELONG IN THE MOMENT TOO. The budget
@@ -5677,8 +5710,8 @@
                                         model_all_labour_income(time_period)=model_all_labour_income(time_period)+&
                                             labor_supply_used*employment_grid(age_index,employment_index)*&
                                             labour_deterministic_efficiency(age_index)*&
-                                            (rho_d**(min(sud_of(unemployment_index),1)*include_wage_penalties))*&
-                                            (rho_m**(min(smi_of(unemployment_index),1)*include_wage_penalties))*&
+                                            (rho_d**(min(sud_of(unemployment_index),1)*include_rho_d))*&
+                                            (rho_m**(min(smi_of(unemployment_index),1)*include_rho_m))*&
                                             distribution_mass_used
 
                                         if (housing_status_index_used==lowest_housing_grid_point) then
@@ -5687,8 +5720,8 @@
                                                 model_homeless_labour_income(time_period)+&
                                                 labor_supply_used*employment_grid(age_index,employment_index)*&
                                                 labour_deterministic_efficiency(age_index)*&
-                                                (rho_d**(min(sud_of(unemployment_index),1)*include_wage_penalties))*&
-                                                (rho_m**(min(smi_of(unemployment_index),1)*include_wage_penalties))*&
+                                                (rho_d**(min(sud_of(unemployment_index),1)*include_rho_d))*&
+                                                (rho_m**(min(smi_of(unemployment_index),1)*include_rho_m))*&
                                                 distribution_mass_used
 
                                         end if
@@ -16075,8 +16108,8 @@
         ! unemployment_index is safe to read here: the loop over it sits OUTSIDE
         ! the omp parallel do, which runs over the financial index.
         max_gross_wage_income_1=employment_grid(age_index,employment_index)*labour_deterministic_efficiency(age_index)*&
-            (rho_d**(min(sud_of(unemployment_index),1)*include_wage_penalties))*&
-            (rho_m**(min(smi_of(unemployment_index),1)*include_wage_penalties))
+            (rho_d**(min(sud_of(unemployment_index),1)*include_rho_d))*&
+            (rho_m**(min(smi_of(unemployment_index),1)*include_rho_m))
         
         after_tax_wealth_net_of_expenses_1=after_tax_wealth_net_of_expenses_1-&
             (gross_wage_income_1-wage_income_tax_paid_1+food_stamps_1+housing_voucher_1+housing_voucher_2)
@@ -28153,6 +28186,12 @@
             write(71,'(F30.15)') employment_multiplier_adjuster
             write(71,'(F30.15)') previous_gap_employment_multiplier
             write(71,'(I10)') have_gap_employment_multiplier
+            ! Appended last, so a state file written before the curvature became
+            ! an instrument still reads: the tolerant reads below stop at the
+            ! end of it and leave these at their declared values.
+            write(71,'(F30.15)') housing_status_grid_expander_adjuster
+            write(71,'(F30.15)') previous_gap_housing_status_grid_expander
+            write(71,'(I10)') have_gap_housing_status_grid_expander
             write(71,'(F30.15)') relative_share_of_housing_adjuster
             write(71,'(F30.15)') previous_gap_relative_share_of_housing
             write(71,'(I10)') have_gap_relative_share_of_housing
@@ -28367,6 +28406,24 @@
             if (state_ios_1==0) then
 
                 read(72,'(I10)',iostat=state_ios_1) have_gap_employment_multiplier
+
+            end if
+
+            if (state_ios_1==0) then
+
+                read(72,'(F30.15)',iostat=state_ios_1) housing_status_grid_expander_adjuster
+
+            end if
+
+            if (state_ios_1==0) then
+
+                read(72,'(F30.15)',iostat=state_ios_1) previous_gap_housing_status_grid_expander
+
+            end if
+
+            if (state_ios_1==0) then
+
+                read(72,'(I10)',iostat=state_ios_1) have_gap_housing_status_grid_expander
 
             end if
 
@@ -29555,8 +29612,32 @@
                         write(*,*) "largest_house_size=", largest_house_size
                         write(*,*) "distance_largest_house_size=", distance_largest_house_size
 
-                        distance_housing_status_grid_expander=0
-                            
+                        ! The curvature, on the smallest category's share. The
+                        ! largest is already carried by largest_house_size and the
+                        ! three shares add to one, so these two pin the whole
+                        ! distribution.
+                        gap_housing_status_grid_expander=&
+                            model_housing_size_dist(1,0)-housing_size_dist_data(0)
+
+                        call damp_on_flip(housing_status_grid_expander_adjuster,&
+                            gap_housing_status_grid_expander,&
+                            previous_gap_housing_status_grid_expander,&
+                            have_gap_housing_status_grid_expander,&
+                            housing_status_grid_expander_adjuster_start,&
+                            housing_status_grid_expander_floor)
+
+                        housing_status_grid_expander=&
+                            min(max(housing_status_grid_expander+&
+                            housing_status_grid_expander_adjuster*&
+                            gap_housing_status_grid_expander,1.d0),5.d0)
+
+                        distance_housing_status_grid_expander=&
+                            abs(model_housing_size_dist(1,0)-housing_size_dist_data(0))
+
+                        write(*,*) "housing_status_grid_expander=", housing_status_grid_expander, &
+                            " distance_housing_status_grid_expander=", &
+                            distance_housing_status_grid_expander
+
                         distance_rent_to_price=0
                                                 
                     else
@@ -29612,15 +29693,30 @@
                     
                     if (calibrate_smallest_house_size==1) then
 
-                        ! TARGETED ON THE SIZE DISTRIBUTION, not on a housing cost
-                        ! share. See housing_size_dist_data for why.
+                        ! THE SMALLEST RENTAL TARGETS THE EMPLOYED SHARE OF THE
+                        ! HOMELESS, and the size distribution is left to the other
+                        ! two rungs.
+                        !
+                        ! The price of the cheapest dwelling is what decides
+                        ! whether a household with a job can be housed at all, so
+                        ! it is the natural instrument for that share and rho_d is
+                        ! not: rho_d was being asked both to set the level of
+                        ! employed homelessness AND to say how costly the disorder
+                        ! is at every income, and the second job is what fixes the
+                        ! sign of drug use in income.
+                        !
+                        ! THE SIGN. Too many of the homeless are employed when the
+                        ! cheapest unit is too dear for a working household to
+                        ! take, so a positive gap calls for a SMALLER unit, which
+                        ! is the sign the update below already had for its old
+                        ! moment.
                         write(*,*) "model_housing_size_dist=", model_housing_size_dist(1,:)
                         write(*,*) "housing_size_dist_data=", housing_size_dist_data
                         write(*,*) "smallest_rental_relative_to_lowest_income=", &
                             smallest_rental_relative_to_lowest_income
 
                         gap_house_size_1=&
-                            model_housing_size_dist(1,0)-housing_size_dist_data(0)
+                            model_employed_share_of_homeless(1)-employed_share_of_homeless_data
 
                         if (have_gap_smallest_house_size==1) then
 
@@ -29649,8 +29745,8 @@
                             min(max(smallest_rental_relative_to_lowest_income-smallest_house_size_adjuster*&
                             gap_house_size_1,0.d0),10.d0) 
                                                                      
-                        distance_smallest_house_size=abs(model_housing_size_dist(1,0)-&
-                            housing_size_dist_data(0))
+                        distance_smallest_house_size=&
+                            abs(model_employed_share_of_homeless(1)-employed_share_of_homeless_data)
                                                          
                     else
                     
@@ -30611,7 +30707,7 @@
                     end if
 
                     if ((rho_m_adjuster>0) .AND. (number_of_smi_states>1) .AND. &
-                        (include_wage_penalties==1)) then
+                        (include_rho_m==1)) then
 
                         rho_m=min(max(rho_m-rho_m_adjuster*&
                             (model_homeless_income_share(1)-homeless_income_share_data),&
@@ -30628,7 +30724,7 @@
 
                     end if
 
-                    if ((rho_d_adjuster>0) .AND. (include_wage_penalties==1)) then
+                    if ((rho_d_adjuster>0) .AND. (include_rho_d==1)) then
 
                         rho_d=min(max(rho_d+rho_d_adjuster*&
                             (model_employed_share_of_homeless(1)-employed_share_of_homeless_data),&
