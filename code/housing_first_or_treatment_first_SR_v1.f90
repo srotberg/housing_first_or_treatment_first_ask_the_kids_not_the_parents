@@ -501,12 +501,36 @@
         ! the poor through the rent threshold, which is a non-homotheticity
         ! running the wrong way for the gradient of use in income.
         !
-        ! rho_m stays on. Shutting it collapsed the SMI share of the homeless
-        ! from 5.8 per cent to 0.6, because it is the only reason an EMPLOYED
-        ! household with SMI is poor: unlike the disorder, SMI does not make a
-        ! household spend its income away, so nothing substitutes for it.
+        ! rho_m is off too, and the argument for keeping it was wrong.
+        !
+        ! kappa_uem ALREADY CARRIES SMI INTO POVERTY. It multiplies separation
+        ! and divides job finding, and the model's employment rate given SMI is
+        ! 0.368 against a target of 0.30, converging down from 0.414 with
+        ! kappa_uem still inside its bound. The channel is present, live and
+        ! calibrated, and it is the one doing the work.
+        !
+        ! (A steady state computed from the two transition rates alone gives
+        ! 0.187, which is NOT the moment: SMI is acquired by households already
+        ! employed and recovered from at lambda_m, so the SMI population is
+        ! refreshed with the employed and never reaches that steady state. The
+        ! measured rate is the object the calibration targets.)
+        !
+        ! WORSE, rho_m INVERTED THE RETURN TO WORK. It was pinned at its floor of
+        ! 0.05, so an employed household with SMI kept five per cent of its wage,
+        ! while a non-employed one with SMI draws DI at zeta_DI = 0.25. Working
+        ! made an SMI household five times POORER, so the SMI households the
+        ! model put on the street were the ones with jobs. That is why shutting
+        ! rho_m collapsed the SMI share of the homeless: it removed an artefact,
+        ! not a mechanism. The share is 0.25 in the data and the model reaches at
+        ! most 0.058 with rho_m at its floor, so it was never delivering that
+        ! moment either.
+        !
+        ! What SMI does now: kappa_uem takes it out of work, DI carries its
+        ! income there, lambda_m carries its share of the homeless, kappa_phi_m
+        ! its mortality and mu_m its SUD recovery. rho_m has no job left that is
+        ! not already assigned.
         integer, parameter :: include_rho_d=0
-        integer, parameter :: include_rho_m=1
+        integer, parameter :: include_rho_m=0
 
         ! TWO SMI STATES. This doubles the unemployment grid from 6 to 12 and
         ! switches unemployment_process from the hand written block to the
