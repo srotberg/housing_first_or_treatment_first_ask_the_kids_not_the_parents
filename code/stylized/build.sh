@@ -64,6 +64,9 @@ python3 check_numbers.py
 echo "== checking that every acronym is defined on first use"
 python3 check_acronyms.py
 
+echo "== checking the hyphenation of compound modifiers"
+python3 check_hyphens.py
+
 echo "== verifying the model"
 cd "$ROOT/code/stylized"
 python3 verify.py

@@ -35,3 +35,18 @@ Section 7 of that file is the other half of the rule, and it is also standing:
 before it is closed**, and the answer is written into the table there, whether
 it carried across or not. The stylized model is small enough that its mistakes
 get found; the quantitative model is not, so it inherits the search.
+
+## Prose conventions
+
+`writing/NUMBERS.md` carries three standing rules with a checker each, and
+`code/stylized/build.sh` runs all three:
+
+- **numbers** are generated, never typed (`check_numbers.py`);
+- **acronyms** are spelled out with the acronym in brackets on first use and
+  only the acronym after (`check_acronyms.py`);
+- **compound modifiers** are hyphenated in front of a noun and not when the same
+  words are a noun phrase: a long-run equilibrium, but in the long run
+  (`check_hyphens.py`).
+
+The hyphenation rule applies to ANY multi-word modifier, not only the ones
+already in the list. Read the section in NUMBERS.md before adding prose.

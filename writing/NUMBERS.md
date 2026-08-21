@@ -130,3 +130,41 @@ Survey on Drug Use and Health (NSDUH)" does.
 bibliography, and reports any acronym used more than once whose first
 appearance is not a definition. Run it with `check_numbers.py` before sending a
 draft.
+
+## Hyphenation of compound modifiers
+
+**A hyphen joins words that act together as a single modifier in front of a
+noun. The same words take no hyphen when they are a noun phrase in their own
+right.** The test is positional, not lexical, so no word list decides it: you
+have to look at what follows.
+
+    a long-run equilibrium          but   in the long run
+    a consumption-equivalent variation    measured in consumption equivalents
+    the pre-reform rest point             before the reform
+    a point-in-time count                 measured at a point in time
+    the income-eligible population        the household is income eligible
+    the value-of-life force               the value of life being risked
+
+This applies to ANY such phrase, not the ones already listed. When writing a
+two-or-more word modifier before a noun, hyphenate it.
+
+**The expansion of an acronym is subject to the same rule**, which is how
+"consumption equivalent (CEV)" was caught twice: first for leaving the V
+unexplained, then for missing the hyphen in "consumption-equivalent variation".
+
+**Three classes stay hyphenated wherever they appear**, including predicatively
+and as nouns, because they are established forms rather than positional
+compounds: `means-tested`, `forward-looking`, `take-up`, `point-in-time`. And a
+compound adjective used substantively keeps its hyphen: "the income-eligible".
+
+`writing/check_hyphens.py` scans the prose in both directions, for a known
+compound sitting unhyphenated before a noun and for a hyphen where the phrase is
+a noun. It strips red edit marks first, since a `\textcolor{red}{}` wrapper puts
+a brace between a compound and the noun it modifies and makes a correct phrase
+look wrong. Run it with `check_numbers.py` and `check_acronyms.py` before
+sending a draft; `build.sh` runs all three.
+
+FALSE POSITIVES ARE EXPECTED and are the reason it prints rather than fails.
+Established open compounds stay open even attributively: "moral hazard force",
+"general equilibrium model". Those are in OPEN. Add to it with a reason rather
+than silencing the check.
