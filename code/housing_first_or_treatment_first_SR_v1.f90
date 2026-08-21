@@ -28897,9 +28897,17 @@
                                 
                     write(*,*) "model_labor_supply(1)/model_total_hours(1)=", &
                         model_labor_supply(1)/model_total_hours(1)
-                                                 
-                    write(*,*) "relative_share_of_housing=", relative_share_of_leisure
-                    write(*,*) "distance_relative_share_of_housing=", distance_relative_share_of_housing
+
+                    ! LABELLED WITH THE PARAMETER THEY ACTUALLY CARRY. These two
+                    ! printed the LEISURE weight under the HOUSING label and then
+                    ! repeated the housing distance, so the log showed
+                    ! relative_share_of_housing taking two different values a line
+                    ! apart, one of them 7.85 against a parameter bounded at 0.9.
+                    ! It also corrupts export_moments.py, which takes the last
+                    ! printed value for a label, so the housing weight in the
+                    ! paper would have been the leisure weight.
+                    write(*,*) "relative_share_of_leisure=", relative_share_of_leisure
+                    write(*,*) "distance_relative_share_of_leisure=", distance_relative_share_of_leisure
                                              
                     write(*,*) "housing_status_grid_expander=", housing_status_grid_expander
                         
