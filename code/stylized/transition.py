@@ -461,6 +461,30 @@ def figure(paths, cg=None):
         _hi = max(100 * r[1] for lab in paths for r in paths[lab][:show + 1])
         axes[0].set_ylim(_lo - max(1.0, 0.10 * (_hi - _lo)), _hi * 1.10)
         axes[0].set_xlim(-0.45, show + 0.35)
+    # A ZOOM ON THE COHORTS WHERE CONDITIONALITY IS BEHIND. The whole point of
+    # the first two cohorts is that Treatment First is below Housing First
+    # there, by 0.07 and 0.19 points, and on an axis that has to carry a swing
+    # of twenty five points those two lines are the same line. The main panel
+    # stays to scale, which is what makes the long run gap honest, and an inset
+    # magnifies the region where the short run gap lives. Its limits come from
+    # the data, so it cannot end up empty or clipped on the next calibration.
+    if cg is not None and show >= 2:
+        _y12 = [100 * paths[k][t][1] for k in ('TF', 'HF') for t in (1, 2)]
+        _pad = max(0.06 * (max(_y12) - min(_y12)), 0.02)
+        ins = axes[0].inset_axes([0.40, 0.10, 0.56, 0.34])
+        for lab, name, sty in S:
+            ins.plot([r[0] for r in paths[lab]][1:3],
+                     [100 * r[1] for r in paths[lab]][1:3],
+                     markersize=4, **sty)
+        ins.set_xlim(0.85, 2.15)
+        ins.set_ylim(min(_y12) - _pad, max(_y12) + _pad)
+        ins.set_xticks([1, 2])
+        ins.tick_params(labelsize=7.5)
+        ins.set_title('detail: cohorts 1 and 2', fontsize=8, pad=2)
+        for sp in ins.spines.values():
+            sp.set_linewidth(0.6)
+        axes[0].indicate_inset_zoom(ins, edgecolor='0.55', lw=0.8, alpha=0.85)
+
     # ONE LEGEND, UNDER THE FIGURE. It used to sit inside panel (a) at centre
     # right, unframed, which put it on top of the Housing First line: the dashed
     # series ran straight through the labels and neither could be read. There is
