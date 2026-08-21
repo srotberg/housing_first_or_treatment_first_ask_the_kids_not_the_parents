@@ -278,6 +278,26 @@ def _fortran_all():
     return json.load(open(p))
 
 
+def _model_all():
+    """
+    model_numbers.json, every scalar the calibration printed as m_<name>.
+
+    The other half of what Section 4 onward quotes. f_<name> is what the model
+    is TOLD, from the declarations; m_<name> is what it PRODUCES, from the run's
+    own output. A moment the run stops printing disappears from the file and any
+    sentence reading it fails at fill time, which is the point: a stale model
+    number in the prose is exactly what this pipeline exists to prevent, and it
+    is the kind that no table would catch.
+    """
+    p = os.path.normpath(os.path.join(HERE, '..', 'paper',
+                                      'model_numbers.json'))
+    if not os.path.exists(p):
+        print('   model_numbers.json missing: run '
+              'code/paper/export_moments.py <run.log> after a calibration')
+        return {}
+    return json.load(open(p))
+
+
 def _params(out):
     """The quantitative model's table numbers, from the Fortran declarations.
 
@@ -296,6 +316,9 @@ def _params(out):
     # linked table row keeps its q_<name>, and anything the stylized model
     # computes itself wins over a constant of the same name.
     for k, v in _fortran_all().items():
+        out.setdefault(k, v)
+    # AND WHAT THE MODEL PRODUCED, as m_<name>, on the same terms.
+    for k, v in _model_all().items():
         out.setdefault(k, v)
     _derived_from_fortran(out)
 
