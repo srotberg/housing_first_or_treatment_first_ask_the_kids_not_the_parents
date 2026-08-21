@@ -69,6 +69,7 @@ sequence, which cannot leave the band.
 """
 
 import math
+import os
 import numpy as np
 from stylized import P, with_, aggregates, vsl
 
@@ -441,15 +442,37 @@ W = W * len(W)  # calibrate.py uses W unnormalised elsewhere; scale is irrelevan
 # model now targets. The old pair, 0.0513 and 0.0368, matched no cut of that
 # variable and implied that 72 per cent of users carry a disorder where the
 # survey says 45.
+def _hsmall_target():
+    """Sizes 1 and 2 of the ACS split, from the file the Fortran's target uses."""
+    import csv as _csv
+    f = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                     '..', '..', 'data', 'us_housing_dist.csv')
+    with open(os.path.normpath(f)) as fh:
+        rows = {int(r['size']): float(r['share']) for r in _csv.DictReader(fh)}
+    return rows[1] + rows[2]
+
+
+_HSMALL = _hsmall_target()
+
 TARGET = dict(part=0.1013, homeless=0.00399, sud=0.0454, vsl=80.0,
               dshare=0.20, housing_share=0.30, hspend=0.268,
               bot50=BOT50_TARGET,
-              # AMERICAN COMMUNITY SURVEY B25042, occupied units, the same table
-              # the quantitative model's three-way size distribution comes from,
-              # collapsed to this model's two rentals: 13.2 per cent of
-              # households are in a unit of no bedroom or one. h_lg stays set at
-              # its market value and h_sm is bracketed on this.
-              hsmall=0.132065)
+              # AMERICAN COMMUNITY SURVEY B25042, occupied units, read from
+              # data/us_housing_dist.csv, which is the same file the
+              # quantitative model's three-way size distribution comes from.
+              #
+              # THE COLLAPSE IS TO TWO SIZES AND IT IS NOT THE SMALL BIN. This
+              # model has two rentals where the quantitative model has three, so
+              # its h_2 is everything below the standard family unit, not the
+              # studio-and-one-bedroom bin alone. Targeting that bin, 13.2 per
+              # cent, was a mistake of exactly one bin: the share is INCREASING
+              # in h_sm over the whole admissible range and bottoms out near 24
+              # per cent as the small unit goes to nothing, so 13.2 sits below
+              # anything the model can produce and the bracket ran to its lower
+              # bound. Sizes 1 and 2 together, 37.3 per cent, are what h_2
+              # stands for here, and they are interior: the model gives 32.0 per
+              # cent at h_sm = 0.05 and 41.7 at 0.10.
+              hsmall=_HSMALL)
 
 # ORDER MATTERS, and participation goes LAST. Every one of these parameters
 # moves participation: lam makes drugs riskier, h_hl changes what is at stake in
@@ -550,9 +573,27 @@ LAM_LO, LAM_HI = 0.05, 20000.0
 # THETA IS BRACKETED, which the note above already said and the list did not do.
 # gamma moved onto hspend and theta never followed, so the drug spending share
 # stayed an untargeted moment the model missed. It is targeted now.
+# THE SMALL UNIT CANNOT OUTGROW THE GRID IT IS PART OF. _grid truncates the
+# income distribution below TRUNC_FLOOR times the rent on the small unit, and it
+# does so ONCE, at import, from the class value of h_sm. So a trial h_sm above
+# that value prices the poorest households on the grid out of the only unit they
+# could afford: they cannot rent at all, they are homeless whatever the street
+# is worth, and homelessness runs from 0.4 per cent at h_sm = 0.10 to 3.0 at
+# 0.15 and 20 at 0.39. None of that is the model answering a question about unit
+# sizes; it is the grid and the parameter disagreeing about what the small unit
+# is. Capping the bracket at the floor keeps every trial on a grid that matches
+# it. The cap does not bind at the answer, which is near 0.075.
+#
+# THIS DOES NOT CARRY TO THE QUANTITATIVE MODEL, and it was checked there before
+# this was closed. Its smallest rental is
+# smallest_rental_relative_to_lowest_income, a RATIO to the lowest income on the
+# grid rather than an absolute size, so the unit moves with the grid by
+# construction and cannot outrun it. See TRANSITION_LESSONS.md section 7.
+H_SM_HI = float(YG[0]) / (TRUNC_FLOOR * P().pr)
+
 PAIRS = [('gam', 'hspend', 0.02, 0.70),
          ('th', 'dshare', 0.02, 0.45),
-         ('h_sm', 'hsmall', 0.01, 0.39),
+         ('h_sm', 'hsmall', 0.01, H_SM_HI),
          ('h_hl', 'homeless', 1e-7, 0.49),
          ('aleph', 'vsl', 0.20, 24.0),
          ('lam', 'sud', LAM_LO, LAM_HI),
@@ -671,7 +712,7 @@ def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=(), tol=0.0
         # move homelessness, a cheaper small unit takes households off it, and
         # whichever runs last is the one whose moment is actually hit. The
         # homelessness rate is the one that has to be, so the street runs last.
-        par = with_(par, h_sm=bracket(par, 'h_sm', 'hsmall', 0.01, 0.39))
+        par = with_(par, h_sm=bracket(par, 'h_sm', 'hsmall', 0.01, H_SM_HI))
         par = with_(par, h_hl=bracket(par, 'h_hl', 'homeless', 1e-7, 0.49))
         par = with_(par, aleph=bracket(par, 'aleph', 'vsl', 0.20, 24.0, iters=26))
         # THETA BEFORE THE DRUG PAIR. lam and b are bracketed on the disorder

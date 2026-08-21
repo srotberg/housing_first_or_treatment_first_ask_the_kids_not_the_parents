@@ -863,9 +863,11 @@ respondents aged 26 and over \new{with a disorder of any severity}, housing serv
 $h_1$ to a homelessness rate of $@@q_h_1@@$ percent from the 2023 HUD PiT count, and the SUD hazard $\lambda$ to the $@@q_lambda@@$ percent
 of adults aged $26$ and over carrying a \new{moderate or severe} SUD in NSDUH 2024.
 \new{The small rental unit $h_2$ is matched to the $@@hsmall_t@@$ percent of housed
-households living in a unit of no bedroom or one, from table B25042 of the 2023
-American Community Survey, which is the source the quantitative model's size
-distribution comes from as well.}
+households living in a unit with fewer than three bedrooms, from table B25042 of
+the 2023 American Community Survey, which is the source the quantitative model's
+size distribution comes from as well. This model has two rentals where that one
+has three, so $h_2$ stands for everything below the standard family unit rather
+than for the smallest bin alone.}
 \new{The weight on the drug $\theta$ is matched to the same drug spending share as
 the quantitative model, $@@q_theta@@$ percent of income across users. It was set
 rather than bracketed while that target stood at a level this model could not
