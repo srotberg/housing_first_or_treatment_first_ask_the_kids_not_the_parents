@@ -435,6 +435,13 @@ def figure(paths, cg=None):
         ax.set_xlabel('cohort of newborns after the reform')
         ax.set_ylabel(ylab)
         ax.set_title(ttl, loc='left', fontsize=11, fontweight='bold')
+        # THE SAME X AXIS ON ALL THREE PANELS. Panels (a) and (b) carry the
+        # initial old to the left of cohort 0 and had their limits widened to
+        # make room; panel (c) kept matplotlib's default, so the three sets of
+        # ticks sat at different places across the figure and cohort 3 in one
+        # panel was not above cohort 3 in the next.
+        ax.set_xlim(-0.45, show + 0.35)
+        ax.set_xticks(list(range(show + 1)))
     axes[0].axhline(0.0, color='0.35', lw=1.0, ls=':')
     if cg is not None:
         # THE INITIAL OLD, UNDER BOTH POLICIES, drawn where they can be read.
@@ -475,13 +482,11 @@ def figure(paths, cg=None):
         axes[1].annotate('no reform', xy=(0.0, 100 * cg['hl_old']),
                          xytext=(6, 4), textcoords='offset points',
                          fontsize=8, color='0.35')
-        axes[1].set_xlim(-0.45, show + 0.35)
         # ROOM BELOW ZERO for the markers and their labels, so nothing is
         # clipped by the axis the way the single marker used to be.
         _lo = min(100 * cg['cev_tf'], 100 * cg['cev_hf'], 0.0)
         _hi = max(100 * r[1] for lab in paths for r in paths[lab][:show + 1])
         axes[0].set_ylim(_lo - max(1.0, 0.10 * (_hi - _lo)), _hi * 1.10)
-        axes[0].set_xlim(-0.45, show + 0.35)
     # A ZOOM ON THE COHORTS WHERE CONDITIONALITY IS BEHIND. The whole point of
     # the first two cohorts is that Treatment First is below Housing First
     # there, by 0.07 and 0.19 points, and on an axis that has to carry a swing
