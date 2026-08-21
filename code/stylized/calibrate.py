@@ -719,7 +719,19 @@ def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=(), tol=0.0
         # rate and on participation and both move with the quantity used, so
         # theta is settled before they are chased; b still runs last, so
         # participation is still the moment that is actually hit.
-        par = with_(par, th=bracket(par, 'th', 'dshare', 0.02, 0.45))
+        #
+        # WITH b REFIT AT EVERY TRIAL, which is what bracket_with_b exists for
+        # and what its docstring already named theta as needing. dshare is drug
+        # spending over income AMONG USERS, so it is only defined on whoever is
+        # using, and theta moves who that is: read at a stale b the bracket is
+        # comparing spending shares across different populations. Wired to the
+        # plain bracket it would also have made the sweep's own convergence test
+        # unreachable, because b is refit LAST every sweep and would move dshare
+        # off the target theta had just been set to, every sweep, forever --
+        # which is the residual the note above h_hl and aleph describes, and
+        # there is no reason to add a third one on purpose.
+        par = with_(par, th=bracket_with_b(par, 'th', 'dshare', 0.02, 0.45,
+                                           iters=18))
         # LAM AND B ARE SOLVED JOINTLY, not once each. prog is very nearly a
         # step function in lam at the calibrated dispersion: with b refit at
         # every trial it runs 0.065 at lam = 60, 0.221 at 121 and 0.9998 at 250,
