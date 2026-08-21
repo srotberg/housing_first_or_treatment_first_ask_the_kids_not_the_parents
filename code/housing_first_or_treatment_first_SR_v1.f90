@@ -1958,6 +1958,10 @@
         real(8), allocatable, dimension(:,:,:,:,:,:) :: newborn_unemployment_process
         
         real(8), parameter :: replacement_rate_ui=0.5
+
+        ! Social security replaces this share of the productivity state, the
+        ! 0.40 of eq:fincome.
+        real(8), parameter :: ss_replacement_rate=0.40
         real(8), parameter :: max_ui_as_perc_of_avg_inc=1
         ! bar pi^ue, the annual job finding rate. The note's external table sets it at
         ! 0.55; the code had 0.2974.
@@ -2217,22 +2221,29 @@
         real(8), dimension(transition_length) :: total_imputed_rents
         real(8), dimension(transition_length) :: total_renters_income
                                                    
-        real(8), dimension(0:have_two_rental_markets) :: rental_management_costs_calibrated=2.9157271938684660E-002
+        ! Scaled by 1/1.079 with the rent, so it is still the management cost
+        ! the rent level implies.
+        real(8), dimension(0:have_two_rental_markets) :: rental_management_costs_calibrated=2.7022494845861594E-002
                                                                
-        ! THE FIXED RENT IS THE ONE THE MODEL PRODUCES, not a round number.
-        ! rent_to_housing_price*calibrated_stationary_housing_price is
-        ! 0.083*13=1.079, and rental_management_costs_calibrated above is the
-        ! management cost that level implies, so renormalising these three to
-        ! one left them disagreeing with the rent every household actually
-        ! faced and with each other. Rent is fixed, which is what the paper
-        ! needs; it is not fixed at one.
-        real(8), dimension(0:have_two_rental_markets) :: rent_calibrated=1.079
+        ! RENT IS NORMALISED TO ONE, and the housing price moves to keep the
+        ! rent to price ratio at its data value rather than the other way round.
+        !
+        ! Rent is rent_to_housing_price*calibrated_stationary_housing_price. The
+        ! earlier attempt at this set the three rent constants to one and left
+        ! the price at 13, so the constants said one while the market routine
+        ! still produced 0.083*13=1.079 and every household faced that. The fix
+        ! is to move the price: at 1/0.083 the product is one by construction,
+        ! Himmelberg's ratio is untouched, and the management cost that the old
+        ! level implied is scaled by the same factor so the three still agree.
+        ! Rent is a unit of account here, so this is a change of units and
+        ! nothing else; the sizes and the income levels recalibrate against it.
+        real(8), dimension(0:have_two_rental_markets) :: rent_calibrated=1.d0
     
-        real(8) :: average_rent_calibrated=1.079
+        real(8) :: average_rent_calibrated=1.d0
                                    
-        real(8), dimension(0:have_two_rental_markets) :: long_run_rent=1.079
+        real(8), dimension(0:have_two_rental_markets) :: long_run_rent=1.d0
                                  
-        real(8) :: calibrated_stationary_housing_price=13
+        real(8) :: calibrated_stationary_housing_price=1.d0/himmelberg_etal_rent_to_price
                                 
         real(8) :: long_run_stationary_housing_price=13
                                         
@@ -2805,7 +2816,8 @@
         real(8), dimension(transition_length) :: total_govt_revenues,govt_revenues_from_labour_income,&
             govt_revenues_from_consumption,govt_revenues_from_investment_income,govt_revenues_from_property_tax,&
             govt_spending_on_ss,net_govt_revenues,govt_spending_on_mortgage_interest_deductions,fraction_using_MID,&
-            govt_lump_sum_transfers,govt_spending_on_ui,govt_spending_on_homeless,govt_spending_on_addicts,&
+            govt_lump_sum_transfers,govt_spending_on_ui,govt_spending_on_di,&
+            govt_spending_on_homeless,govt_spending_on_addicts,&
             govt_spending_on_food_stamps,govt_spending_on_housing_vouchers,govt_ss_wasted,govt_spending_on_housing_vouchers_2,&
             govt_revenues_to_use_in_tests
         
@@ -3187,6 +3199,46 @@
             implicit none
             integer, intent(in) :: i_1
             sud_of=(i_1-1)/(3*number_of_smi_states)
+        end function
+
+        ! WHAT A WORKING AGE HOUSEHOLD OUT OF WORK RECEIVES, IN ONE PLACE.
+        !
+        ! eq:fincome gives UI in the first period of a spell and DI thereafter
+        ! to a household carrying SMI, and nothing otherwise. This was written
+        ! out at four sites: the household's own income and three statistics
+        ! that have to agree with it. They did not -- the statistics kept the
+        ! old UI base after the income was corrected would have been the next
+        ! drift, and one of them multiplied the mass with a plus sign. A single
+        ! function is the only way the four cannot disagree again.
+        !
+        ! The note's e=2, the insured period, is emp_of 3 here; the note's e=3,
+        ! non-employment after it, is emp_of 2.
+        real(8) function out_of_work_income(unemployment_index_1,employment_index_1,avg_income_1)
+
+            implicit none
+
+            integer, intent(in) :: unemployment_index_1,employment_index_1
+            real(8), intent(in) :: avg_income_1
+            real(8) :: base_1
+
+            out_of_work_income=0
+
+            base_1=employment_grid(age_index,employment_index_1)*&
+                labour_deterministic_efficiency(age_index)
+
+            if (emp_of(unemployment_index_1)==3) then
+
+                ! psi * min{y eps(j), ybar}: the rate multiplies the capped base.
+                out_of_work_income=replacement_rate_ui*&
+                    min(base_1,max_ui_as_perc_of_avg_inc*avg_income_1)
+
+            elseif ((emp_of(unemployment_index_1)==2) .AND. &
+                (smi_of(unemployment_index_1)>=1)) then
+
+                out_of_work_income=zeta_DI*base_1
+
+            end if
+
         end function
 
         subroutine damp_on_flip(adj_1,gap_1,prev_gap_1,have_gap_1,start_1,floor_1)
@@ -4122,17 +4174,24 @@
             
         else
         
+            ! THE THREE WORKING AGE CASES OF eq:fincome, IN THE NOTE'S ORDER.
+            ! The note numbers the states e=1 work, e=2 the first period of a
+            ! spell, e=3 non-employment after it; the code's emp_of numbers the
+            ! insured state 3 and the uninsured state 2, so the note's e=2 is
+            ! emp_of 3 here and the note's e=3 is emp_of 2. Only the labels
+            ! differ.
             if ((emp_of(unemployment_index_1)==1)) then
                         
                 income_1=labor_supply_1*&
                     employment_grid(age_index,employment_index_1)*&
                     labour_deterministic_efficiency(age_index)
                     
-            elseif (((sud_of(unemployment_index_1)==0 .AND. emp_of(unemployment_index_1)==3)) .OR. &
-                ((sud_of(unemployment_index_1)==1 .AND. emp_of(unemployment_index_1)==3))) then
+            else
             
-                income_1=min(replacement_rate_ui*avg_income_to_use_2,&
-                    max_ui_as_perc_of_avg_inc*avg_income_to_use_1)
+                ! UI in the insured period, DI after it for a household with
+                ! SMI, nothing otherwise. See out_of_work_income.
+                income_1=out_of_work_income(unemployment_index_1,&
+                    employment_index_1,avg_income_to_use_1)
             
             end if                             
                                     
@@ -5658,12 +5717,11 @@
                                                 labor_supply_used*employment_grid(age_index,employment_index)*&
                                                 labour_deterministic_efficiency(age_index)*distribution_mass_used
                                                 
-                                        elseif (((sud_of(unemployment_index)==0 .AND. emp_of(unemployment_index)==3)) .OR. &
-                                            ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==3))) then
+                                        else
                                     
                                             model_average_income(time_period)=model_average_income(time_period)+&
-                                                min(replacement_rate_ui*avg_income_to_use_2,&
-                                                max_ui_as_perc_of_avg_inc*avg_income_to_use_1)*distribution_mass_used
+                                                out_of_work_income(unemployment_index,employment_index,&
+                                                avg_income_to_use_1)*distribution_mass_used
                                         
                                         end if
                                         
@@ -7694,6 +7752,7 @@
         govt_spending_on_ss(time_period)=0
         govt_ss_wasted(time_period)=0
         govt_spending_on_ui(time_period)=0
+        govt_spending_on_di(time_period)=0
         govt_spending_on_homeless(time_period)=0
         govt_spending_on_addicts(time_period)=0
         govt_spending_on_food_stamps(time_period)=0
@@ -8423,12 +8482,20 @@
                                                                                  
                                     else
                                     
-                                        if (((sud_of(unemployment_index)==0 .AND. emp_of(unemployment_index)==3)) .OR. &
-                                            ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==3))) then
+                                        ! UI and DI are separate outlays in eq:fgovt and are
+                                        ! separated here, so the budget carries both and the run
+                                        ! can report what each costs.
+                                        if (emp_of(unemployment_index)==3) then
                                         
                                             govt_spending_on_ui(time_period)=govt_spending_on_ui(time_period)+&
                                                 income_1*distribution_mass_used
                                                       
+                                        elseif ((emp_of(unemployment_index)==2) .AND. &
+                                            (smi_of(unemployment_index)>=1)) then
+                                        
+                                            govt_spending_on_di(time_period)=govt_spending_on_di(time_period)+&
+                                                income_1*distribution_mass_used
+                                        
                                         end if
                                              
                                     end if
@@ -9182,7 +9249,8 @@
 
         govt_revenues_to_use_in_tests(time_period)=&
             total_govt_revenues(time_period)-govt_spending_on_ss(time_period)-&
-            govt_spending_on_ui(time_period)-govt_spending_on_homeless(time_period)-govt_spending_on_addicts(time_period)-&
+            govt_spending_on_ui(time_period)-govt_spending_on_di(time_period)-&
+            govt_spending_on_homeless(time_period)-govt_spending_on_addicts(time_period)-&
             govt_spending_on_food_stamps(time_period)-govt_spending_on_housing_vouchers(time_period)-&
             govt_spending_on_housing_vouchers_2(time_period)-govt_spending_on_drug_tests+(1-include_bequests)*&
             (model_bequests(time_period)-value_of_initial_assets)
@@ -10042,13 +10110,12 @@
                                                 (labor_supply_used*employment_grid(age_index,employment_index)*&
                                                 labour_deterministic_efficiency(age_index))*distribution_mass_used
                                                 
-                                        elseif (((sud_of(unemployment_index)==0 .AND. emp_of(unemployment_index)==3)) .OR. &
-                                            ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==3))) then
+                                        else
                                                                                 
                                             average_income(time_period,employment_index_to_use)=&
                                                 average_income(time_period,employment_index_to_use)+&
-                                                min(replacement_rate_ui*avg_income_to_use_2,&
-                                                max_ui_as_perc_of_avg_inc*avg_income_to_use_1)*distribution_mass_used
+                                                out_of_work_income(unemployment_index,employment_index,&
+                                                avg_income_to_use_1)*distribution_mass_used
                                                                   
                                         end if
                                     
@@ -11529,14 +11596,16 @@
                                                     personal_exemption),0.d0)**curvature_of_labor_income_taxes)*&
                                                     distribution_mass_used
                                                     
-                                            elseif (((sud_of(unemployment_index)==0 .AND. emp_of(unemployment_index)==3)) .OR. &
-                                                ((sud_of(unemployment_index)==1 .AND. emp_of(unemployment_index)==3))) then
+                                            else
                                             
+                                                ! The mass MULTIPLIES the income here. It was a plus
+                                                ! sign, which added the population to the income and
+                                                ! made this accumulator neither one thing nor the
+                                                ! other; every sibling accumulator uses a product.
                                                 income_by_age_renter(time_period,age_index)=&
                                                     income_by_age_renter(time_period,age_index)+&
-                                                    (min(replacement_rate_ui*avg_income_to_use_2,&
-                                                    max_ui_as_perc_of_avg_inc*avg_income_to_use_1))+&
-                                                    distribution_mass_used
+                                                    out_of_work_income(unemployment_index,employment_index,&
+                                                    avg_income_to_use_1)*distribution_mass_used
                                             
                                             end if
                                                 
@@ -23141,45 +23210,25 @@
                                           
         end do
                                         
-        ! Looping over all possible last period employment states
+        ! SOCIAL SECURITY IS 0.40 TIMES THE PRODUCTIVITY STATE, which is what
+        ! eq:fincome says and what the calibration table reports.
+        !
+        ! This was the US PIA bend point schedule applied to lifetime income
+        ! relative to the average: 0.9 below 0.3, 0.27+0.32*(x-0.3) to 2,
+        ! 0.81+0.15*(x-2) to 4.1, and a flat 1.13 above. That is a progressive,
+        ! capped benefit and the note describes a linear one, so a reader
+        ! working from eq:fincome had the wrong retirement income at every node
+        ! and badly wrong at the ends: 90 per cent replacement at the bottom
+        ! against 40, and a cap at the top where the note has none.
+        !
+        ! The base is y and not y*eps(j), because eps is the age profile of
+        ! earnings and there is no work in retirement; productivity is fixed
+        ! over the life cycle, so employment_grid at any age is the same y.
         do employment_index=1,employment_grid_size
-            
-            if ((model_lifetime_income_conditional_on_last_period_shock(employment_index)/&
-                model_average_lifetime_income_conditional_on_last_period_shock)<=0.3) then
-                
-                ! Computes social security benefits
-                model_ss_benefits(employment_index)=&
-                    0.9*(model_lifetime_income_conditional_on_last_period_shock(employment_index)/&
-                    model_average_lifetime_income_conditional_on_last_period_shock)
-                
-            elseif (((model_lifetime_income_conditional_on_last_period_shock(employment_index)/&
-                model_average_lifetime_income_conditional_on_last_period_shock)>0.3) .AND. &
-                ((model_lifetime_income_conditional_on_last_period_shock(employment_index)/&
-                model_average_lifetime_income_conditional_on_last_period_shock)<=2)) then
-                
-                ! Computes social security benefits
-                model_ss_benefits(employment_index)=&
-                    0.27+0.32*(model_lifetime_income_conditional_on_last_period_shock(employment_index)/&
-                    model_average_lifetime_income_conditional_on_last_period_shock-0.3)
-                        
-            elseif (((model_lifetime_income_conditional_on_last_period_shock(employment_index)/&
-                model_average_lifetime_income_conditional_on_last_period_shock)>2) .AND. &
-                ((model_lifetime_income_conditional_on_last_period_shock(employment_index)/&
-                model_average_lifetime_income_conditional_on_last_period_shock)<=4.1)) then
-                
-                ! Computes social security benefits
-                model_ss_benefits(employment_index)=&
-                    0.81+0.15*(model_lifetime_income_conditional_on_last_period_shock(employment_index)/&
-                    model_average_lifetime_income_conditional_on_last_period_shock-2)
-                
-            elseif ((model_lifetime_income_conditional_on_last_period_shock(employment_index)/&
-                model_average_lifetime_income_conditional_on_last_period_shock)>4.1) then
-            
-                ! Computes social security benefits
-                model_ss_benefits(employment_index)=1.13
-                    
-            end if
-            
+
+            model_ss_benefits(employment_index)=&
+                ss_replacement_rate*employment_grid(1,employment_index)
+
         end do
         
         if (loop_count<5) then

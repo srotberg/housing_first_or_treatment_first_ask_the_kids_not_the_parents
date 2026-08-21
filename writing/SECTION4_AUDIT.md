@@ -85,10 +85,26 @@ now does; **MISMATCH** it does not and the resolution is the author's call;
 | Government outlay includes DI | **MISSING**, as above. |
 | Newborns start with zero assets, clean, **without SMI**, without a voucher | **MISMATCH.** Newborns are seeded with SMI at the age-one prevalence, `newborn_smi_at_birth=smi_prevalence_by_age(1)`, about 0.121. That seeding was added deliberately: without it the chain built SMI by onset from age two alone and the all-ages rate came out three times too small. The code is right and the note's sentence is stale. |
 
-## Open items that are the author's call
+## Open items: all closed
 
-1. **Disability insurance is not in the model.** `zeta_DI=0.25` occurs exactly once in 32,000 lines, its own declaration. The note gives DI its own case in the income equation, lists it as one of the five things SMI affects, gives it an entry in the calibration table, and puts it in the government budget. Either DI gets implemented or all four of those come out.
-2. **Retirement income.** The note says `0.40*y`. The code uses the US PIA bend points on lifetime income relative to average: 0.9 below 0.3, `0.27+0.32*(x-0.3)` to 2, `0.81+0.15*(x-2)` to 4.1, flat 1.13 above. The code's version is the more realistic one; the note describes a different model.
-3. **The UI earnings base.** The note says `psi*min{y*eps(j), ybar}`, the household's own current earnings. The code pays `min(psi*average_labour_income_at_the_node, cap*average_income)`, which carries neither the age profile nor `rho_d`/`rho_m`. Real UI is based on a prior-earnings base period, so the code may well be the better object, but the equation does not describe it.
-4. **Rents normalised to one.** `rent_calibrated=1.079`. Pure scaling, but the sentence is not literally true until the code is renormalised.
-5. **The treatment abstention restriction.** Removing `v=0` under treatment was approved earlier. It has not been done, and doing it contradicts both Section 4.6 and the mortality argument in Section 4.8, which justifies the treatment exemption BY the abstention. Both would have to move together.
+Resolved by moving the CODE to the note, on the author's instruction.
+
+| item | what was done |
+|---|---|
+| **Disability insurance was not in the model.** `zeta_DI=0.25` occurred exactly once in 32,000 lines, its own declaration, while the note gave DI a case in the income equation, a place in the list of what SMI affects, an entry in the calibration table and a line in the government budget. | **IMPLEMENTED.** A household that is out of work past the insured period and carries SMI now receives `zeta_DI*y*eps(j)`, and it does not stop until the household recovers, which the state encodes on its own: the uninsured state persists until a job is found and SMI until `lambda_m` fires. `govt_spending_on_di` is accumulated separately and subtracted in the budget, so eq:fgovt's outlay side is complete. |
+| **Retirement income** was the US PIA bend point schedule on lifetime income relative to the average, not the note's `0.40*y`. | **REPLACED** by `ss_replacement_rate*y` with the rate at 0.40. The old schedule replaced 90 per cent at the bottom against the note's 40 and capped the top, where the note has no cap. |
+| **The UI earnings base** was `min(psi*node average income, cap*average income)`, which carried neither the age profile nor `rho_d`/`rho_m` and put the cap on the benefit rather than on the base. | **REPLACED** by `psi*min{y*eps(j), ybar}`, the note's rule. |
+| **Rents were not normalised to one**, `rent_calibrated=1.079`. | **NORMALISED.** The earlier attempt set the rent constants to one and left `calibrated_stationary_housing_price` at 13, so the market routine still produced `0.083*13=1.079` and the constants lied. The price is now `1/himmelberg_etal_rent_to_price`, so the product is one by construction and Himmelberg's ratio is untouched; the management cost is scaled by the same factor. |
+| **The treatment abstention restriction.** | **KEPT**, on instruction. `optimize_frac_spent_on_addiciton` returns `frac_spent_on_addiction=0` whenever treatment is taken, which is what Section 4.6 says and what the mortality exemption in Section 4.8 is justified by. Note and code agree; nothing to do. |
+
+Two further repairs found while doing this:
+
+- **`out_of_work_income` now exists.** What a working age household out of work receives was written out at FOUR sites: its own income and three statistics that have to agree with it. That is how the UI rule drifted in the first place, so the rule now lives in one function and the four sites call it.
+- **`income_by_age_renter` added the population to the income.** It accumulated `(benefit) + distribution_mass_used` where every sibling accumulator uses a product. Fixed in the same pass.
+
+## Where the note was the one that moved
+
+| item | what was done |
+|---|---|
+| Equation (femp) had `kappa^{+1}` on job finding and `kappa^{-1}` on separation, making a `kappa` BELOW one the bad case | **NOTE CORRECTED.** The code does the reverse and so does this section's own prose, which says of `kappa_ued` that raising it raises the private cost. Exponents swapped; the sentence now reads "above one". |
+| Newborns were described as arriving without SMI | **NOTE CORRECTED.** They are seeded at the age-one prevalence, about 0.121, which was added deliberately: building the chain by onset from age two alone left the all-ages rate three times too small. |
