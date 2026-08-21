@@ -27696,7 +27696,30 @@
         ! the one moment when this file is being touched and a half written file
         ! that parses is worse than no file at all.
         !
-        ! V2 ADDS THE FOUR SMI PARAMETERS. They were wired into the update block
+        ! V3 ADDS EVERYTHING ELSE THE UPDATE BLOCK MOVES, which was most of it.
+        ! v2 saved thirty eight items and the update block moves sixty. Among the
+        ! twenty two missing were b, aleph, cbar, pi_V, theta, sigma_y, omega,
+        ! delta_d, mu_homeless, the separation rate and the employment multiplier,
+        ! together with the damping and bracket state of beta, delta_d, b and
+        ! size_homelessness.
+        !
+        ! This is not a small loss on a restart, it is a WORSE state than a cold
+        ! start. Measured: a resume put lambda back at 1.7585, where six loops had
+        ! left it, and b back at its declared 0.2537, where loop zero had left it.
+        ! Those two are calibrated against each other, so the model came back with
+        ! a hazard tuned for a population that b no longer produces, and
+        ! participation jumped from 0.0044 to 0.117 against a target of 0.0513.
+        ! The container kills this run about every fifty minutes and a loop takes
+        ! fifteen, so without this the sweep cannot accumulate three loops of
+        ! progress before losing most of it again.
+        !
+        ! Deliberately NOT saved: rental_market_adjuster, which is set before it
+        ! is read, and the three previous_* convergence checks, which only make
+        ! the first resumed loop report a large distance against its own last
+        ! value. Saving something set before use is how a resume starts differing
+        ! from a run that was never killed.
+        !
+        ! V2 ADDED THE FOUR SMI PARAMETERS. They were wired into the update block
         ! and not into this file, so a resumed run picked the housing and drug
         ! parameters up where they left off and sent lambda_m, kappa_uem, rho_m
         ! and rho_d back to their declared values. That is worse than not
@@ -27710,7 +27733,7 @@
 
         open(unit=71,file="calibration_state.tmp",action='write',status='replace')
 
-            write(71,'(A)') "calibration_state_v2"
+            write(71,'(A)') "calibration_state_v3"
             write(71,'(F30.15)') discount_factor
             write(71,'(F30.15)') discount_factor_on_child
             write(71,'(F30.15)') minimum_inheritance
@@ -27750,6 +27773,35 @@
             write(71,'(F30.15)') kappa_uem
             write(71,'(F30.15)') rho_m
             write(71,'(F30.15)') rho_d
+            write(71,'(F30.15)') addiction_scalar_1
+            write(71,'(F30.15)') addiction_scalar_adjuster
+            write(71,'(F30.15)') previous_gap_addiction_scalar
+            write(71,'(I10)') have_gap_addiction_scalar
+            write(71,'(F30.15)') max_food_cost
+            write(71,'(F30.15)') mu_homeless
+            write(71,'(F30.15)') penalty_child_addicted
+            write(71,'(F30.15)') penalty_child_addicted_adjuster
+            write(71,'(F30.15)') previous_gap_penalty_child
+            write(71,'(I10)') have_gap_penalty_child
+            write(71,'(F30.15)') probability_becoming_unemployed
+            write(71,'(F30.15)') probability_of_voucher_benchmark_used
+            write(71,'(F30.15)') relative_share_of_addiction_1
+            write(71,'(F30.15)') sd_permanent_productivity
+            write(71,'(F30.15)') value_of_life
+            write(71,'(F30.15)') value_of_life_at_bracket
+            write(71,'(F30.15)') weight_on_child
+            write(71,'(F30.15)') multiple_of_probabilities_of_employment_if_addicted
+            write(71,'(F30.15)') discount_factor_adjuster
+            write(71,'(F30.15)') discount_factor_lo
+            write(71,'(F30.15)') discount_factor_hi
+            write(71,'(F30.15)') discount_factor_lo_moment
+            write(71,'(F30.15)') discount_factor_hi_moment
+            write(71,'(F30.15)') previous_gap_discount_factor
+            write(71,'(I10)') have_gap_discount_factor
+            write(71,'(F30.15)') size_homelessness_lo
+            write(71,'(F30.15)') size_homelessness_hi
+            write(71,'(F30.15)') size_homelessness_lo_moment
+            write(71,'(F30.15)') size_homelessness_hi_moment
 
         close(71)
 
@@ -27784,9 +27836,9 @@
 
             read(72,'(A)') state_tag_1
 
-            if (trim(state_tag_1) .NE. "calibration_state_v2") then
+            if (trim(state_tag_1) .NE. "calibration_state_v3") then
 
-                write(*,*) "calibration_state.dat is not version 2, ignoring it"
+                write(*,*) "calibration_state.dat is not version 3, ignoring it"
                 close(72)
 
                 return
@@ -27832,6 +27884,35 @@
             read(72,'(F30.15)') kappa_uem
             read(72,'(F30.15)') rho_m
             read(72,'(F30.15)') rho_d
+            read(72,'(F30.15)') addiction_scalar_1
+            read(72,'(F30.15)') addiction_scalar_adjuster
+            read(72,'(F30.15)') previous_gap_addiction_scalar
+            read(72,'(I10)') have_gap_addiction_scalar
+            read(72,'(F30.15)') max_food_cost
+            read(72,'(F30.15)') mu_homeless
+            read(72,'(F30.15)') penalty_child_addicted
+            read(72,'(F30.15)') penalty_child_addicted_adjuster
+            read(72,'(F30.15)') previous_gap_penalty_child
+            read(72,'(I10)') have_gap_penalty_child
+            read(72,'(F30.15)') probability_becoming_unemployed
+            read(72,'(F30.15)') probability_of_voucher_benchmark_used
+            read(72,'(F30.15)') relative_share_of_addiction_1
+            read(72,'(F30.15)') sd_permanent_productivity
+            read(72,'(F30.15)') value_of_life
+            read(72,'(F30.15)') value_of_life_at_bracket
+            read(72,'(F30.15)') weight_on_child
+            read(72,'(F30.15)') multiple_of_probabilities_of_employment_if_addicted
+            read(72,'(F30.15)') discount_factor_adjuster
+            read(72,'(F30.15)') discount_factor_lo
+            read(72,'(F30.15)') discount_factor_hi
+            read(72,'(F30.15)') discount_factor_lo_moment
+            read(72,'(F30.15)') discount_factor_hi_moment
+            read(72,'(F30.15)') previous_gap_discount_factor
+            read(72,'(I10)') have_gap_discount_factor
+            read(72,'(F30.15)') size_homelessness_lo
+            read(72,'(F30.15)') size_homelessness_hi
+            read(72,'(F30.15)') size_homelessness_lo_moment
+            read(72,'(F30.15)') size_homelessness_hi_moment
 
         close(72)
 
