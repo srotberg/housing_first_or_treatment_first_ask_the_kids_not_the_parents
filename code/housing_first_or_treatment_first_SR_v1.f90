@@ -2144,18 +2144,24 @@
         ! (1-sigma) and then appends two terms that are not functions of the
         ! quantities: the value of life, and bar_tau^u when treatment is taken.
         ! Multiplying THAT by (1-sigma) to recover the aggregate is only correct
-        ! if the appended terms are zero, and aleph is not. At the current point
-        ! aleph is 2.92 against a goods aggregate of order 2, so with sigma at 2
-        ! the factor (1-sigma)*(u_goods + aleph) = X^(1-sigma) - aleph comes out
-        ! NEGATIVE where the aggregate X^(1-sigma) is positive. It is the sign
-        ! that matters and not the size: with the scale negative the marginal
-        ! condition is negative at every point of the bracket, the bisection
-        ! never finds a sign change, and it walks the consumption share to one.
-        ! EVERY HOUSEHOLD THE RISK TERM APPLIES TO THEREFORE ABSTAINS COMPLETELY,
-        ! which is why the disorder rate is a hole at the productivity nodes
-        ! where the disorder is worth avoiding and positive only where it is not,
-        ! and why raising the death penalty cannot move any of it. This records
-        ! the aggregate before either term is appended.
+        ! if the appended terms are zero, and aleph is not.
+        !
+        ! WHAT GOES WRONG IS A SIGN, AND IT TURNS OVER AT A CONSUMPTION LEVEL.
+        ! With sigma at 2 the code's factor is (1-sigma)*(u_goods + aleph) =
+        ! S/X - aleph, where X is the Cobb-Douglas aggregate, against a true
+        ! scale of S/X. The two agree in sign only while S/X exceeds aleph, that
+        ! is only for households POOR enough that X < S/aleph; aleph is 2.92 at
+        ! the current point, so the crossover sits at X of about 0.34. Above it
+        ! the scale is negative where the aggregate is positive, and then the
+        ! marginal condition is negative at every point of the bracket: the
+        ! bisection never sees a sign change and walks the consumption share to
+        ! one. The routine therefore leaves poor households roughly right by
+        ! accident and drives richer ones to complete abstention. That is a
+        ! gradient the arithmetic manufactures rather than one the model
+        ! derives, and no size of death penalty can move it, because the term
+        ! the penalty enters is subtracted from one whose sign is already wrong.
+        !
+        ! Records the aggregate before either term is appended.
         real(8) :: flow_utility_goods_only=0
 
         ! Whether the household being evaluated is in treatment this period.
