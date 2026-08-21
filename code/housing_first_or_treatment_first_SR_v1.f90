@@ -1206,8 +1206,21 @@
         real(8), parameter :: addiction_scalar_floor=10.d0**(-4)
         ! The band theta and b are held in. See the two update rules for why
         ! they are absolute rather than only trust regions.
+        ! THE CEILING IS SET BY THE BREAK POINT, not by taste. The stylized
+        ! model's appendix scan finds that by theta = 0.23 the mortality channel
+        ! no longer reverses the income gradient and the average user stops
+        ! being poorer than average: a drug that valuable is not deterred by a
+        ! death that arrives later. Above that point the model cannot produce
+        ! the fact it exists to explain, whatever the death penalty is set to,
+        ! which is why sweeping kappa_phi_d at theta = 0.667 moved nothing.
+        !
+        ! 0.25 rather than 0.23, because the break was measured in the two
+        ! period model and this one is annual over sixty years, so its own break
+        ! need not sit in the same place. A calibration that wants to go above
+        ! 0.25 is then reporting that it cannot hit the spending share without
+        ! losing the gradient, which is worth seeing rather than hiding.
         real(8), parameter :: theta_lo=0.05d0
-        real(8), parameter :: theta_hi=0.30d0
+        real(8), parameter :: theta_hi=0.25d0
         real(8), parameter :: b_lo=1.d0*10.d0**(-4)
         real(8), parameter :: b_hi=0.05d0
 

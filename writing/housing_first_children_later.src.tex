@@ -827,12 +827,16 @@ income, in line with statutory state rules. The two rental sizes are set
 such that the standard unit, $h_3$, costs $@@h3@@$ of mean income and the
 small unit, $h_2$, is $@@h2frac@@$ of it. The voucher parameters are institutional: covered
 tenants pay $@@q_kappa_r_pc@@$ percent of market rent, eligibility is capped at half of median income, $\kappa_V = @@kV@@$, and $\pi_V = @@pvbase@@$ is the ratio of recipients to the income-eligible population in the 2023 Picture of Subsidized
-Households, published by HUD. The weight on drugs is set at $\theta = @@th@@$.\footnote{A $\theta$ large enough to
-match the $@@q_theta@@$ percent of income the average user spends on drugs makes the drug too
-valuable to be deterred by a death that arrives thirty years later, and users stop
-being poor: by $\theta=@@th_break@@$ the mortality channel no longer reverses the income
-gradient on its own, and the average user is richer than average. Setting $\theta = @@th@@$ gives a spending share of @@dshare_m@@
-percent and keeps the gradient, which is the trade this very simple model can make.}
+Households, published by HUD. The weight on drugs is \new{calibrated}.\footnote{\new{$\theta$ cannot be raised without
+limit, and the ceiling is what makes the mechanism work rather than a matter of
+taste. A drug valuable enough is not deterred by a death that arrives thirty
+years later, so past $\theta=@@th_break@@$ the mortality channel no longer reverses the
+income gradient on its own and the average user stops being poorer than average.
+That used to be a binding trade, because the target was a spending share of $35$
+percent and no $\theta$ below the break could reach it. At the
+$@@q_theta@@$ percent this paper now targets it is not: $\theta = @@th@@$ delivers a
+spending share of @@dshare_m@@ percent, below the break, so the model matches what
+users spend and keeps the gradient at the same time.}}
 
 
 \subsubsection{Internal calibration}
