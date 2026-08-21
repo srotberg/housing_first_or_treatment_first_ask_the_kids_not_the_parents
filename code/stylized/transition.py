@@ -329,6 +329,50 @@ def caught(par, pv_new=PV_OPT):
                 hl_old=hl_o / max(mass, 1e-12))
 
 
+def caught_coverage(par, pv_new=PV_OPT):
+    """
+    The share of the INITIAL OLD actually holding a voucher in period 2, under
+    the old rule and under each new one.
+
+    WHY THIS IS NOT pi_V. pi_V is recipients over the INCOME ELIGIBLE, and
+    eligibility is capped at kappa_V times median income, so the population
+    share covered is pi_V times the eligible share. And under Treatment First it
+    is smaller again: an eligible household that carries the disorder fails the
+    condition and holds no voucher however generous the programme is. Quoting
+    the eligible share as though universal coverage reached all of it is true of
+    Housing First and false of Treatment First, which is the whole point of the
+    section.
+    """
+    from stylized import period1, _states
+    old = with_(par, pV=par.pV, policy=BASE_POLICY)
+    v1b, sudb, hlb, evb = _policy_grids(par, BASE_POLICY, par.pV)
+    p_mix = _rest_point(sudb, _hl_by_shift(par, BASE_POLICY, par.pV))
+    out = {}
+    for lab, pol, pv in (('old', BASE_POLICY, par.pV),
+                         ('hf', 'HF', pv_new), ('tf', 'TF', pv_new)):
+        new = with_(par, pV=pv, policy=pol)
+        cov = mass = 0.0
+        for sft, psft in zip(_shifts(), p_mix):
+            if psft <= 0.0:
+                continue
+            for i, y0 in enumerate(YG):
+                y = y0 * sft
+                for p, gain, v, bu, bn, inc, _own in period1(old, y, BASE_POLICY):
+                    uses = gain > 0.0
+                    pid = (1.0 - float(np.exp(-old.lam * v))) if uses else 0.0
+                    for d, pd in ((1, pid), (0, 1.0 - pid)):
+                        m = psft * WW[i] * p * pd
+                        if m <= 0.0:
+                            continue
+                        for p2, inc2, _ in _states(new, d, pol, y, uses):
+                            elig = 1.0 if inc2 <= new.yV else 0.0
+                            ok = elig * (1.0 if (pol == 'HF' or d == 0) else 0.0)
+                            cov += m * p2 * ok * pv
+                            mass += m * p2
+        out[lab] = cov / max(mass, 1e-12)
+    return out
+
+
 def _rest_point(sud, hl, iters=400, tol=1e-14):
     p = np.array([1.0, 0.0, 0.0, 0.0])
     for _ in range(iters):
@@ -678,6 +722,10 @@ def numbers(paths, par=None, cg=None):
         _gap = cg['cev_hf'] - cg['cev_tf']
         d['tr_caught'] = f'{100*_gap:.1f}'
         d['tr_caught_hl_old'] = f'{100*cg["hl_old"]:.2f}'
+        _cv = caught_coverage(par, PV_OPT)
+        d['tr_cov_old'] = f'{100*_cv["old"]:.1f}'
+        d['tr_cov_hf'] = f'{100*_cv["hf"]:.1f}'
+        d['tr_cov_tf'] = f'{100*_cv["tf"]:.1f}'
         d['tr_caught_hl_hf'] = f'{100*cg["hl_hf"]:.2f}'
         # HOW MUCH WORSE THE CAUGHT GENERATION HAS IT than the cohort born at
         # the switch. The text called this "two orders of magnitude", which was
