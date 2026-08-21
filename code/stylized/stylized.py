@@ -613,28 +613,53 @@ def _branch(par, ag, inc, rmul, vg, cont):
 
     cont is the continuation E_{d'}[phi(d') W2(a',y,d')] on (v, a'), which is
     where the mortality penalty enters, INSIDE the expectation over d'.
+
+    ONE INDEX IS CARRIED, NOT FOUR RECORDS, and the reason is that this function
+    was two thirds of a calibration sweep. The option loop used to keep the
+    street flag, the rent, the voucher outlay and the small-unit flag as four
+    running (nv, na) arrays, updated by four np.where calls per option, so
+    twelve full-array writes per call. Only one cell of each is ever read: the
+    saving that wins at each v. Carrying the winning option's INDEX instead
+    costs one np.where per option and the four records are gathered at the end
+    from three-element lookup tables, on the n points that are actually used.
+
+    THE TIE RULE IS UNCHANGED. The comparison is still strict, so an exact tie
+    still goes to the EARLIER option, and the dead case still reports a choice
+    of zero rather than option zero: where nothing is affordable the value stays
+    at minus infinity and the mask below zeroes the record, which is what the
+    initialised arrays did.
     """
     n = len(vg)
     cash = (inc - par.p_v * vg[:, None]) - ag[None, :]
+    opts = _options(par, rmul)
     val = np.full(cash.shape, -np.inf)
-    st = np.zeros(cash.shape); rn = np.zeros(cash.shape); sb = np.zeros(cash.shape)
-    sm = np.zeros(cash.shape)
-    for h, rent, street in _options(par, rmul):
+    idx = np.zeros(cash.shape, dtype=np.intp)
+    for o, (h, rent, street) in enumerate(opts):
         c = cash - rent
         u = np.where(c > 1e-9,
                      (1.0 - par.gam - par.th) * np.log(np.maximum(c, 1e-12))
                      + par.gam * np.log(h) + par.aleph + par.beta * cont,
                      -np.inf)
-        s = 0.0 if street else par.pr * h * (1.0 - rmul)
-        is_small = 0.0 if street else float(h == par.h_sm)
-        st = np.where(u > val, street, st)
-        rn = np.where(u > val, rent, rn)
-        sb = np.where(u > val, s, sb)
-        sm = np.where(u > val, is_small, sm)
-        val = np.maximum(val, u)
+        better = u > val
+        idx = np.where(better, o, idx)
+        val = np.where(better, u, val)
+
+    h_o = np.array([h for h, _, _ in opts])
+    rent_o = np.array([r for _, r, _ in opts])
+    st_o = np.array([float(s) for _, _, s in opts])
+    sb_o = np.where(st_o > 0.0, 0.0, par.pr * h_o * (1.0 - rmul))
+    sm_o = np.where(st_o > 0.0, 0.0, (h_o == par.h_sm).astype(float))
+
     ia = np.argmax(val, axis=1)
     k = np.arange(n)
-    return val[k, ia], ag[ia], st[k, ia], rn[k, ia], sb[k, ia], sm[k, ia]
+    best = val[k, ia]
+    jj = idx[k, ia]
+    live = np.isfinite(best)
+    return (best, ag[ia],
+            np.where(live, st_o[jj], 0.0),
+            np.where(live, rent_o[jj], 0.0),
+            np.where(live, sb_o[jj], 0.0),
+            np.where(live, sm_o[jj], 0.0))
 
 
 def period1(par, y, policy=None):
@@ -808,6 +833,87 @@ def value1(par, y, policy=None):
                      in period1(par, y, policy)))
 
 
+# ---------------------------------------------------------------------------
+# THE INCOME GRID IS SOLVED ACROSS PROCESSES, because a calibration sweep is
+# about fourteen hundred model solves and each one solves the same period 1
+# problem at every point of a 120 point income grid, independently. Nothing
+# else in the sweep can be run in parallel: the seven parameters are bracketed
+# in a fixed order because each bracket is read at the parameters the previous
+# one fixed, and a bisection is sequential by construction. The grid is the one
+# place where the work is genuinely independent, and it is where essentially
+# all of the time goes.
+#
+# THE POOL IS PERSISTENT. It is built once, on first use, and reused for every
+# solve after that; a pool per solve would pay the fork cost fourteen hundred
+# times a sweep and lose more than it saves.
+#
+# WORKERS NEVER FORK AGAIN. threshold() runs inside the workers as well as in
+# the parent, so the flag below marks a child and sends it down the serial path.
+# Without it each worker would build a pool of its own and the process count
+# would square.
+#
+# STYLIZED_WORKERS sets the count. Unset, it takes the smaller of four and the
+# core count. Set it to 1 to turn the pool off entirely, which is what to do
+# when something else on the machine wants the cores, and what the timing
+# comparisons in this file were run against.
+import os as _os
+
+_IN_WORKER = False
+_POOL = None
+
+
+def _n_workers():
+    n = _os.environ.get('STYLIZED_WORKERS')
+    try:
+        n = int(n)
+    except (TypeError, ValueError):
+        n = 0
+    return n if n > 0 else min(4, _os.cpu_count() or 1)
+
+
+def _mark_worker():
+    global _IN_WORKER
+    _IN_WORKER = True
+
+
+def _close_pool():
+    global _POOL
+    if _POOL is not None:
+        _POOL.terminate()
+        _POOL = None
+
+
+def _pool(n):
+    global _POOL
+    if _POOL is None:
+        import atexit
+        import multiprocessing as mp
+        _POOL = mp.get_context('fork').Pool(n, initializer=_mark_worker)
+        atexit.register(_close_pool)
+    return _POOL
+
+
+def _period1_chunk(job):
+    par, ys, policy = job
+    return [period1(par, y, policy) for y in ys]
+
+
+def _map_period1(par, ygrid, policy):
+    """period1 at every income on the grid, in parallel when that is worth it."""
+    n = _n_workers()
+    ys = list(ygrid)
+    if n <= 1 or _IN_WORKER or len(ys) < 4 * n:
+        return [period1(par, y, policy) for y in ys]
+    # TWICE AS MANY CHUNKS AS WORKERS, so a slow chunk does not hold the whole
+    # solve open while three workers sit idle.
+    size = -(-len(ys) // (2 * n))
+    jobs = [(par, ys[i:i + size], policy) for i in range(0, len(ys), size)]
+    out = []
+    for r in _pool(n).map(_period1_chunk, jobs):
+        out.extend(r)
+    return out
+
+
 def threshold(par, ygrid, policy=None, edges=None, cdf=None):
     """
     The use region, with its boundaries resolved exactly.
@@ -824,7 +930,7 @@ def threshold(par, ygrid, policy=None, edges=None, cdf=None):
     branches of (a', street, rent, voucher outlay), plus the state's income.
     """
     policy = policy or par.policy
-    rows = [period1(par, y, policy) for y in ygrid]
+    rows = _map_period1(par, ygrid, policy)
     ns = max(len(r) for r in rows)
     n = len(ygrid)
     PR = np.zeros((n, ns)); G = np.full((n, ns), np.nan); VV = np.zeros((n, ns))
