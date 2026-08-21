@@ -262,3 +262,36 @@ Either can outweigh the option loss and the inherited penalty. If the
 quantitative transition comes out with the stylized model's sign pattern,
 CHECK THE TAX PATH FIRST: the most likely explanation is that the budget was not
 being cleared period by period.
+
+## 11. Audit of the late stylized bugs against the Fortran
+
+Section 7 says a bug found in the stylized model is checked against the
+quantitative model before it is closed, and the answer written down whether it
+carried across or not. Three bugs were found after that table was last filled.
+All three were checked; **none of them is present in the Fortran.**
+
+| stylized bug | Fortran counterpart | verdict |
+|---|---|---|
+| Boundary cell split against the wrong cell's edges | `compute_asset_lottery` | **Clear.** Two point lottery whose weight sets the lottery's MEAN to the parabola vertex. Refuses rather than extrapolating at either end of the range, on a non concave fit, and when the vertex leaves the bracket. Documented as effectively inert: 12 of 177,120 calls fire. |
+| Interpolating a step function at a shifted income | `create_newborn_employment_probability` | **Clear, and built the right way round.** It shifts the productivity DISTRIBUTION across nodes and then evaluates policies at real grid points, rather than evaluating a policy at a shifted income. The split preserves the mean of log productivity; mass below the bottom node piles onto it, which is conservative. |
+| A CDF and a set of grid masses measured on different bases | `rent_to_income_cdf` | **Clear.** The histogram is cumulated and then divided by `total_renters_to_consider`, which is accumulated in the same loop off the same mass. Same measure both sides. |
+| Child's penalty keyed on the wrong period | `newborn_employment_probability(:, is_addicted_1, is_homeless_2)` | **Clear, and it was the STYLIZED model that had to move.** `is_homeless_2` is the housing status the household chose for the period in which it may die, so the penalty conditions on the parent's state at death, which is what equation (11) says. The stylized model keyed on period 1, then on either period, and was corrected to death timing to match this. |
+
+### Two configuration findings, which are not bugs
+
+**The transition is switched off.** `solve_transition_dynamics` is written
+`is_counterfactual*0+(1-is_counterfactual)*0`, which is identically zero however
+`is_counterfactual` is set, so `transition_length` collapses to 1. The machinery
+is all present and has never run in this configuration.
+
+When it is switched on, two things the stylized model had to learn are already
+right here: the horizon is 75 periods, and the government budget distance is
+computed in EVERY period of the path with the maximum driving the convergence
+loop, not merely at the endpoints. `adjust_taxes` is 1 and
+`clear_only_vouchers_govt_budget` is 0, so the whole budget clears rather than
+the voucher line alone. Lesson 10's diagnostic is therefore already satisfied.
+
+**`calibrate_only_rental_management_costs` is dead.** It is declared and written
+to the output file but never read anywhere, so it restricts nothing. It reads
+like a switch that would confine the calibration to one parameter, and it does
+not.
