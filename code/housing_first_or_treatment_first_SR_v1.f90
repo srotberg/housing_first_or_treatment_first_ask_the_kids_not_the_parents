@@ -629,7 +629,24 @@
         integer, parameter :: include_bequest_motive=0
         integer, parameter :: include_bequests=1
         
-        integer, parameter :: infinite_elasticity_of_rental_supply=0
+        ! RENTS ARE FIXED. THIS PAPER HAS NO ENDOGENOUS RENTAL MARKET.
+        !
+        ! The paper treats market rent p_r as a parameter throughout: it appears
+        ! in the budget constraint and in the voucher rule and is never solved
+        ! for, and the stylized model sets it as the numeraire and leaves it
+        ! there. The code was clearing a rental market anyway, moving rent by a
+        ! secant step on excess demand and carrying distance_rental_market into
+        ! the convergence test, where it sat at 0.68 and gated the whole loop.
+        ! So the model was solving for a price the paper does not have, and the
+        ! calibration could not converge until it had.
+        !
+        ! At one, total_rental_supply is set equal to total_rental_demand, so
+        ! excess demand is identically zero, the secant step returns the rent it
+        ! was given, and distance_rental_market is zero by construction. Rent
+        ! stays at rent_calibrated across simulations, which is what makes two
+        ! counterfactuals comparable. Rental company profits are zero, which is
+        ! the free entry condition that goes with perfectly elastic supply.
+        integer, parameter :: infinite_elasticity_of_rental_supply=1
         integer, parameter :: other_rental_supply_elasticity=1
         integer, parameter :: zero_elasticity=0       
         real(8), parameter :: mortgage_deductibility=0
@@ -8595,12 +8612,43 @@
         
         do employment_index=1,employment_grid_size
         
-            addiction_share_of_income_by_employment(time_period,employment_index)=&
-                addiction_share_of_income_by_employment(time_period,employment_index)/&
-                employment_mass(time_period,employment_index)
+            ! GUARDED for the same reason as the profile below it.
+            if (employment_mass(time_period,employment_index)>10.d0**(-12)) then
+
+                addiction_share_of_income_by_employment(time_period,employment_index)=&
+                    addiction_share_of_income_by_employment(time_period,employment_index)/&
+                    employment_mass(time_period,employment_index)
+
+            else
+
+                addiction_share_of_income_by_employment(time_period,employment_index)=0
+
+            end if
                 
-            percent_addicted_by_employment(time_period,employment_index)=&
-                percent_addicted_by_employment(time_period,employment_index)/mass_by_employment(time_period,employment_index)
+            ! GUARDED, BECAUSE AN EMPTY NODE GAVE NaN AND THE NaN WAS LOAD BEARING.
+            !
+            ! A productivity node with no mass made this 0/0. The three lowest
+            ! nodes are empty in the stationary distribution, so the profile came
+            ! out NaN exactly where the children of a disordered parent are
+            ! concentrated. The child SUD ratio is a weighted average of this
+            ! profile, so it was NaN too, and the gap that drives delta_d was
+            ! meaningless: delta_d ran to its 0.9 bound while the reported ratio
+            ! wandered between 1.05 and 1.39 with no relation to the penalty.
+            !
+            ! An empty node contributes nothing rather than poisoning the
+            ! average. If the node is empty there is no one there to be
+            ! addicted, so zero is also the right answer on its own terms.
+            if (mass_by_employment(time_period,employment_index)>10.d0**(-12)) then
+
+                percent_addicted_by_employment(time_period,employment_index)=&
+                    percent_addicted_by_employment(time_period,employment_index)/&
+                    mass_by_employment(time_period,employment_index)
+
+            else
+
+                percent_addicted_by_employment(time_period,employment_index)=0
+
+            end if
             
         end do
         
