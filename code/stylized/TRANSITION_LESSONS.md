@@ -178,6 +178,35 @@ realised state will still let its own moment converge, because the moment is
 computed off the penalty's own array. Nothing fails; the mechanism is simply
 absent from the model. Both models now put the penalty in the child.
 
+### Carried forward: newborn_parent_share needs a time index before the transition runs
+
+Not a bug in the steady state and a bug in the transition, recorded here rather
+than found later, which is the whole point of this file.
+
+The newborn productivity draw is now a mixture of
+`newborn_employment_probability` over the parents being replaced, and those
+weights live in `newborn_parent_share`, accumulated by the statistics sweep as
+the mass dying in each disorder and housing cell. The array has no time
+dimension. In the stationary solve that is correct and cheap, because there is
+one period and one distribution. In a transition it is wrong in the way that is
+hardest to see: period t's newborns would be drawn against whichever period's
+statistics ran last, so the composition of the parents would lag or lead the
+distribution it is supposed to describe, and it would do so silently, since
+every number involved stays a well formed probability.
+
+The fix is a time index, `newborn_parent_share(transition_length,0:1,1:2)`,
+written by the sweep at the period it just measured and read by the distribution
+iteration at the period it is building. It has to go in BEFORE the transition is
+turned on, not after: the symptom is a composition that is slightly off in a
+model where the composition is the mechanism, and nothing about it looks wrong
+on inspection.
+
+This matters more here than it would in most models. Under `fixed_productivity`
+the newborn draw is the household's productivity for life, so the parent
+composition at the reform date is what the whole cohort carries through the
+transition, and getting it from the wrong period misdates the reform's effect on
+the generation the paper is about.
+
 ## 8. The transition horizon is not the display horizon
 
 A transition must be COMPUTED over a horizon long enough that convergence is a
