@@ -66,6 +66,55 @@ def rules():
     return got
 
 
+def live_distances(log):
+    """parameter -> the distance the run last printed for it.
+
+    The sweep zeroes a distance when its adjuster is zero, which is how a
+    parameter that is deliberately not calibrated announces itself. Reading that
+    beats evaluating every adjuster declaration against every flag in the file.
+    """
+    got = {}
+    pat = re.compile(r'distance_(\w+?)(?:\(1\))?=\s*([-\d.]+(?:[eEdD][-+]?\d+)?)')
+    for line in open(log, errors='replace'):
+        for name, val in pat.findall(line):
+            try:
+                got[name] = float(val.replace('D', 'E').replace('d', 'e'))
+            except ValueError:
+                pass
+    return got
+
+
+def zero_adjusters():
+    """The parameters whose adjuster is zero, from the declarations.
+
+    The sweep guards each update on its adjuster, so a zero one means the
+    parameter is deliberately frozen and its moment is not a miss. Three are
+    frozen in this paper because homeownership is switched off. Not all of these
+    print a distance, so reading the log alone misses them, and the declarations
+    are where the fact actually lives.
+    """
+    src = open(FORTRAN, errors='replace').read()
+    src = re.sub(r'&\s*\n\s*', '', src)
+    syms = {}
+    for m in re.finditer(r'^\s*(?:integer|real\(8\))\s*,\s*parameter\s*::\s*(\w+)\s*=\s*([^!\n]+)',
+                         src, re.M):
+        try:
+            syms[m.group(1)] = eval(m.group(2).replace('d0', 'e0').replace('D0', 'e0'),
+                                    {'__builtins__': {}}, dict(syms))
+        except Exception:
+            pass
+    frozen = set()
+    for m in re.finditer(r'^\s*real\(8\)\s*(?:,\s*parameter\s*)?::\s*(\w+)_adjuster\s*=\s*([^!\n]+)',
+                         src, re.M):
+        try:
+            if eval(m.group(2).replace('d0', 'e0').replace('D0', 'e0'),
+                    {'__builtins__': {}}, dict(syms)) == 0:
+                frozen.add(m.group(1))
+        except Exception:
+            pass
+    return frozen
+
+
 def main():
     if len(sys.argv) < 2:
         print(__doc__)
@@ -75,7 +124,10 @@ def main():
     consts = json.load(open(os.path.join(HERE, 'fortran_numbers.json')))
     pair, rule = pairs(), rules()
 
-    rows, missing = [], []
+    live = live_distances(sys.argv[1])
+    frozen = zero_adjusters()
+
+    rows, held, missing = [], [], []
     for name, (model_expr, target_expr) in sorted(pair.items()):
         label = export_moments.sanitise(model_expr)
         target_name = 'f_' + re.sub(r'\(\d+\)', '', target_expr)
@@ -84,6 +136,18 @@ def main():
             continue
         model, target = printed[label], float(consts[target_name])
         gap = abs(model - target) / max(abs(target), 1e-12)
+
+        # A PARAMETER WHOSE ADJUSTER IS ZERO IS NOT BEING CALIBRATED, and its
+        # moment is not a miss. The sweep says so itself by zeroing the distance
+        # while the gap stays wide, which is the only signal that does not
+        # require evaluating the adjuster's declaration against every flag in
+        # the file. Three of them are held in this paper because homeownership
+        # is switched off, and ranking them alongside live moments overstates
+        # what is left to do.
+        if (name in frozen or (name in live and live[name] == 0.0)) and gap > 1e-6:
+            held.append((name, model, target))
+            continue
+
         clears = name in rule and abs(model - target) <= rule[name]
         rows.append((gap, name, model, target, clears))
 
@@ -96,6 +160,12 @@ def main():
     print('-' * 76)
     print(f'{sum(1 for r in rows if r[4])} of {len(rows)} on target, '
           f'{sum(1 for r in rows if not r[4] and r[0] <= 0.03)} within three per cent')
+
+    if held:
+        print('\nheld, not calibrated: the sweep zeroes these distances, so the gap '
+              'is not a miss')
+        for name, model, target in held:
+            print(f'  {name:32s} model {model:12.6g}   its target {target:12.6g}')
 
     if missing:
         print('\nnot reported, because the run did not print the model side as a '
