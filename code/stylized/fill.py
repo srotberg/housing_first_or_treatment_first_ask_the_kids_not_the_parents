@@ -66,6 +66,12 @@ def numbers(base, fig):
     out['vsl_t'] = f'{TARGET["vsl"]:.0f}'
     out['dshare_t'] = f'{100*TARGET["dshare"]:.0f}'
     out['pvbase'] = f'{base.pV:.3f}'
+    # THE SAME COVERAGE AS A PERCENTAGE, AND WHAT THE REFORM ADDS. The prose
+    # says the reform moves most of a generation from market rent to a fraction
+    # of it, and "most" is a number: pi_V of them already held a voucher and the
+    # rest do not, so the reform newly covers 1 - pi_V.
+    out['pvbase_pc'] = f'{100 * base.pV:.1f}'
+    out['pvnew_pc'] = f'{100 * (1.0 - base.pV):.1f}'
 
     # THE GRID, quoted in the footnote where the income distribution is
     # introduced. The pooled share is read off the weights rather than typed,
