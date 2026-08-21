@@ -1117,6 +1117,25 @@
         real(8) :: distance_addiction_scalar
         real(8) :: stopping_rule_addiction_scalar=10.d0**(-3)
 
+        ! B OSCILLATES WITHOUT DAMPING, because participation is far more elastic
+        ! in it than a fixed adjuster assumes. Measured: b rose 48.7 per cent and
+        ! participation fell from 0.176 to 0.0136, past a target of 0.0513 and by
+        ! a factor of thirteen. An undamped rule then reverses and overshoots the
+        ! other way for ever, and it takes the SUD rate with it, because the
+        ! households who convert are drawn from the ones who use.
+        !
+        ! Halving the step whenever the gap changes sign turns the rule into a
+        ! bisection, which converges on any monotone response however steep.
+        ! Growing it back slowly when the sign holds keeps it from creeping once
+        ! the oscillation has been squeezed out. Same idiom as delta_d's.
+        real(8), parameter :: addiction_scalar_adjuster_start=2*10.d0**(-1)
+        real(8), parameter :: addiction_scalar_damping=0.5
+        real(8), parameter :: addiction_scalar_growth=1.2
+        real(8), parameter :: addiction_scalar_floor=10.d0**(-4)
+        real(8) :: gap_addiction_scalar_1=0,previous_gap_addiction_scalar=0
+        integer :: have_gap_addiction_scalar=0
+        real(8) :: lambda_secant_slope_1=0
+
         real(8) :: value_of_life_adjuster=1*10.d0**(1)
         real(8) :: distance_value_of_life
         real(8) :: stopping_rule_value_of_life=10.d0**(-2)
@@ -29110,16 +29129,55 @@
                             ! bracket, and it falls back to the proportional rule
                             ! whenever the two prevalences are too close to
                             ! divide by.
+                            ! AND THE SECANT IS ONLY READ WHEN ITS SLOPE HAS THE SIGN THE
+                            ! MODEL GUARANTEES. Prevalence rises in the onset hazard with
+                            ! everything else held fixed, so a measured slope that is
+                            ! negative is not news about the model, it is a reading taken
+                            ! through another instrument's move. This loop is Gauss-Seidel:
+                            ! b moved in the same pass, and when it moves participation by
+                            ! more than the hazard moves conversion the difference in
+                            ! prevalence carries b's sign, not lambda's.
+                            !
+                            ! Measured on the run this guard was written for: onset went
+                            ! from 1.19e-3 to 2.08e-3 while prevalence went from 5.79e-4 to
+                            ! 7.31e-6, because b had cut participation thirteenfold in the
+                            ! same loop. The implied slope was -1.55, the secant asked for
+                            ! an onset of -0.055, the clamp turned that into onset over
+                            ! four, and prevalence fell another eighty fold. The model was
+                            ! being driven to zero by the instrument meant to raise it.
+                            !
+                            ! A contaminated secant falls back to the proportional rule,
+                            ! which cannot point the wrong way: it scales the hazard by the
+                            ! ratio of target prevalence to model prevalence and both are
+                            ! positive.
+                            lambda_secant_slope_1=0
+
+                            if (abs(model_fraction_addicted(1)-previous_sud_rate)>10.d0**(-12)) then
+
+                                lambda_secant_slope_1=(onset_at_mean_1-previous_onset_at_mean)/&
+                                    (model_fraction_addicted(1)-previous_sud_rate)
+
+                            end if
+
                             if ((have_lambda_secant==1) .AND. &
                                 (abs(model_fraction_addicted(1)-previous_sud_rate)>10.d0**(-6)) .AND. &
-                                (abs(onset_at_mean_1-previous_onset_at_mean)>10.d0**(-12))) then
+                                (abs(onset_at_mean_1-previous_onset_at_mean)>10.d0**(-12)) .AND. &
+                                (lambda_secant_slope_1>0)) then
 
                                 onset_step_1=onset_at_mean_1-&
                                     (model_fraction_addicted(1)-sud_rate_data)*&
-                                    (onset_at_mean_1-previous_onset_at_mean)/&
-                                    (model_fraction_addicted(1)-previous_sud_rate)
+                                    lambda_secant_slope_1
 
                             elseif (model_fraction_addicted(1)>10.d0**(-8)) then
+
+                                if ((have_lambda_secant==1) .AND. (lambda_secant_slope_1<=0) .AND. &
+                                    (abs(model_fraction_addicted(1)-previous_sud_rate)>10.d0**(-6))) then
+
+                                    write(*,*) "lambda secant REJECTED, slope=", lambda_secant_slope_1, &
+                                        ": prevalence moved against the hazard, so another instrument",&
+                                        " moved more than this one. Falling back to the proportional rule."
+
+                                end if
 
                                 onset_step_1=onset_at_mean_1*&
                                     (sud_rate_data/model_fraction_addicted(1))
@@ -29580,12 +29638,34 @@
                     ! normalised by the target so it cannot be worse than minus
                     ! one however empty the model is. Skipping the update there
                     ! left the model parked at the corner it needed to leave.
+                    gap_addiction_scalar_1=model_exprimenters(1)-participation_rate_data
+
+                    if (have_gap_addiction_scalar==1) then
+
+                        if ((gap_addiction_scalar_1*previous_gap_addiction_scalar)<0) then
+
+                            addiction_scalar_adjuster=max(addiction_scalar_adjuster*&
+                                addiction_scalar_damping,addiction_scalar_floor)
+
+                        else
+
+                            addiction_scalar_adjuster=min(addiction_scalar_adjuster*&
+                                addiction_scalar_growth,addiction_scalar_adjuster_start)
+
+                        end if
+
+                    end if
+
+                    previous_gap_addiction_scalar=gap_addiction_scalar_1
+                    have_gap_addiction_scalar=1
+
                     addiction_scalar_1=max(min(addiction_scalar_1*&
                         (1+addiction_scalar_adjuster*&
-                        (model_exprimenters(1)-participation_rate_data)/&
+                        gap_addiction_scalar_1/&
                         max(participation_rate_data,10.d0**(-12))),&
                         10*addiction_scalar_1),addiction_scalar_1/10)
-                    distance_addiction_scalar=abs(model_exprimenters(1)-participation_rate_data)
+                    distance_addiction_scalar=abs(gap_addiction_scalar_1)
+                    write(*,*) "addiction_scalar_adjuster=", addiction_scalar_adjuster
                     write(*,*) "addiction_scalar_1=", addiction_scalar_1
                     write(*,*) "distance_addiction_scalar=", distance_addiction_scalar
 
