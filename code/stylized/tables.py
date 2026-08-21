@@ -95,13 +95,19 @@ INTERNAL = [
      'Value of a statistical life, Viscusi and Aldy (2003)', 'vsl', '{:.1f}', '{:.3f}'),
     ('b', 'b', 'Whether a household uses', 'Drug participation, NSDUH 2024',
      'part', '{:.2%}', '{:.5f}'),
+    # THETA IS BRACKETED NOW, on the same drug spending share the life cycle
+    # model targets. It was set while that target stood at a level this model
+    # could not reach; the target is the aggregate share, 20 per cent, and it is
+    # reachable, so the two models no longer disagree about what a user spends.
+    ('th', r'\theta', 'Weight on the drug',
+     'Drug spending over income among users', 'dshare', '{:.1%}', '{:.3f}'),
     ('h_hl', 'h_1', 'Service flow of homelessness', 'Homelessness rate, HUD 2023',
      'homeless', '{:.3%}', '{:.5f}'),
-    # THE MOMENT IS THE ADULT SUD RATE, not the share of users who progress.
-    # The life cycle model targets 3.68 per cent from NSDUH 2024 and this model
-    # used to target a progression rate of 33.2 per cent, which at a
-    # participation rate of 5.13 implies a population rate of 1.70: the two
-    # models were calibrated to inconsistent numbers for the same object.
+    # THE MOMENT IS THE ADULT SUD RATE, not the share of users who progress,
+    # and it is the MODERATE OR SEVERE rate: NSDUH 2024 adults 26 and over,
+    # svyrdudany in (2,3), 4.54 per cent, with participation the whole of any
+    # severity at 10.13. The two rates have to come from the same variable, and
+    # the old pair, 3.68 and 5.13, matched no cut of it.
     ('lam', r'\lambda', 'SUD hazard per unit used',
      'Adult SUD rate, NSDUH 2024', 'sud', '{:.2%}', '{:.1f}'),
 ]
