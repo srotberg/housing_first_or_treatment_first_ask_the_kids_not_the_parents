@@ -71,7 +71,21 @@ def numbers(base, fig):
     # of it, and "most" is a number: pi_V of them already held a voucher and the
     # rest do not, so the reform newly covers 1 - pi_V.
     out['pvbase_pc'] = f'{100 * base.pV:.1f}'
-    out['pvnew_pc'] = f'{100 * (1.0 - base.pV):.1f}'
+    # THE SHARE ACTUALLY HOLDING A VOUCHER, which is NOT pi_V. pi_V is
+    # recipients over the INCOME ELIGIBLE population, and eligibility is capped
+    # at kappa_V times median income, so the covered share is pi_V times the
+    # eligible share. Reading pi_V as a population share made the prose say the
+    # reform moved 73 per cent of a generation onto vouchers when it moves 17
+    # points, and the eligible population is only 23 per cent to begin with.
+    from stylized import _states as _st
+    _elig = 0.0
+    for _i, _y in enumerate(YG):
+        for _p, _inc, _rm in _st(base, 0, 'HF', float(_y), used=0):
+            if _inc <= base.yV:
+                _elig += WW[_i] * _p
+    out['elig_pc'] = f'{100 * _elig:.1f}'
+    out['cov_base_pc'] = f'{100 * _elig * base.pV:.1f}'
+    out['cov_univ_pc'] = f'{100 * _elig:.1f}'
 
     # THE GRID, quoted in the footnote where the income distribution is
     # introduced. The pooled share is read off the weights rather than typed,
