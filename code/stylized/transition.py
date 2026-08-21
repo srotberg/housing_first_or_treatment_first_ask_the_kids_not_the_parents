@@ -456,6 +456,11 @@ def figure(paths, cg=None):
         # cohort line already uses, so the initial old can be compared with the
         # initial newborns directly. They sit at cohort 0, offset so they do not
         # collide, in their policies' own colours, each labelled with its value.
+        # PANEL (a) KEEPS A SMALL OFFSET, panel (b) does not, and the reason is
+        # the value labels. Here each marker is annotated with its own number,
+        # and two labels on one vertical line run into each other; there the
+        # markers are bare, so they sit exactly on the cohort 0 gridline where
+        # they can be read against the tick.
         for dx, key, col in ((-0.17, 'cev_tf', '#b2182b'),
                              (0.17, 'cev_hf', '#2166ac')):
             yv = 100 * cg[key]
@@ -472,8 +477,8 @@ def figure(paths, cg=None):
         # the welfare number runs through and the one that reaches their
         # children. The open marker is the counterfactual: their homelessness
         # had the old rationed programme simply continued.
-        for dx, key, col in ((-0.17, 'hl_tf', '#b2182b'),
-                             (0.17, 'hl_hf', '#2166ac')):
+        for dx, key, col in ((0.0, 'hl_tf', '#b2182b'),
+                             (0.0, 'hl_hf', '#2166ac')):
             axes[1].plot([dx], [100 * cg[key]], marker='v', ms=11, color=col,
                          ls='none', markeredgecolor='white',
                          markeredgewidth=0.9, zorder=6)
