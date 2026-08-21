@@ -478,8 +478,13 @@ H_RATIO = 0.25    # the small unit as a fraction of the standard one
 
 def with_(par, **kw):
     f = fields(par); f.update(kw)
-    # THE SMALL UNIT IS A QUARTER OF THE STANDARD ONE, and both are SET, so the
-    # tie only fires for the diagnostics that move h_lg on purpose.
+    # THIS TIE IS DORMANT AND IT IS ALSO A TRAP. h_sm is CALIBRATED now, on the
+    # share of the housed in the small unit, so a quarter of h_lg is no longer
+    # what it is; nothing in the calibration, the tables, the figures or the
+    # ablation moves h_lg through with_(), which is the only reason the tie has
+    # not already clobbered a calibrated value with a ratio nobody measured. If
+    # a diagnostic is ever written that does move h_lg, it has to pass h_sm
+    # explicitly or re-bracket it, not inherit the quarter.
     if 'h_lg' in kw and 'h_sm' not in kw:
         f['h_sm'] = H_RATIO * f['h_lg']
     return clone(**f)

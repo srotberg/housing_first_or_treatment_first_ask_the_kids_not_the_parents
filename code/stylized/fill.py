@@ -12,7 +12,7 @@ Run:  python3 fill.py
 import json
 import os
 import numpy as np
-from stylized import P, with_, value1, H_RATIO
+from stylized import P, with_, value1
 from calibrate import YG, W, stats, bracket, TARGET
 from children import (child_grid, shifted, DEL_D, DEL_H, RATIO_TARGET,
                       ratio_h)
@@ -102,7 +102,23 @@ def numbers(base, fig):
     # in. Average income is one by construction, so the two agree today; they
     # would stop agreeing silently if the grid ever moved off that normalisation.
     out['h3'] = f'{base.h_lg / float((WW * YG).sum()):.2f}'
-    out['h2frac'] = f'{H_RATIO:g}'
+    # h2frac IS GONE. It printed H_RATIO, the fixed quarter h_sm used to be set
+    # at, and h_sm is bracketed now on the share of the housed in the small
+    # unit, so the ratio is an outcome of the calibration rather than a choice.
+    # Its value is in Table 2 with the other calibrated parameters and the prose
+    # no longer quotes it.
+    # HOW MANY PARAMETERS TABLE 2 HOLDS, counted from the table rather than
+    # typed into the sentence that introduces it. It went from seven to eight
+    # when h_2 moved out of the external table, and the sentence said seven for
+    # as long as it took to notice.
+    # THE SMALL UNIT'S TARGET, from the dict the bracket actually reads rather
+    # than typed into the sentence beside it. It is the same American Community
+    # Survey table the quantitative model's size distribution comes from,
+    # collapsed to this model's two rentals.
+    out['hsmall_t'] = f'{100 * TARGET["hsmall"]:.1f}'
+    from tables import INTERNAL as _INTERNAL
+    _WORD = {6: 'Six', 7: 'Seven', 8: 'Eight', 9: 'Nine', 10: 'Ten'}
+    out['n_int'] = _WORD.get(len(_INTERNAL), str(len(_INTERNAL)))
     out['kV'] = f'{base.kV:.2f}'
     out['smrd'] = f'{base.smr_d:.0f}'
     out['th_break'] = f'{TH_BREAK:.2f}'

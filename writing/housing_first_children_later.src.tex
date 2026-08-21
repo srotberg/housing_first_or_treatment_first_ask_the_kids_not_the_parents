@@ -823,9 +823,11 @@ National Survey on Drug Use and Health (NSDUH) 2024 for respondents aged 26 and
 over.
 
 Income support replaces half of previous earnings on a base capped at mean
-income, in line with statutory state rules. The two rental sizes are set
+income, in line with statutory state rules. \cut{The two rental sizes are set
 such that the standard unit, $h_3$, costs $@@h3@@$ of mean income and the
-small unit, $h_2$, is $@@h2frac@@$ of it. The voucher parameters are institutional: covered
+small unit, $h_2$, is $@@h2frac@@$ of it.}\new{Only the standard rental unit is set,
+at $h_3 = @@h3@@$ of mean income; the small unit $h_2$ is calibrated, on the share
+of housed households living in one.} The voucher parameters are institutional: covered
 tenants pay $@@q_kappa_r_pc@@$ percent of market rent, eligibility is capped at half of median income, $\kappa_V = @@kV@@$, and $\pi_V = @@pvbase@@$ is the ratio of recipients to the income-eligible population in the 2023 Picture of Subsidized
 Households, published by HUD. The weight on drugs is \new{calibrated}.\footnote{\new{$\theta$ cannot be raised without
 limit, and the ceiling is what makes the mechanism work rather than a matter of
@@ -841,7 +843,7 @@ users spend and keeps the gradient at the same time.}}
 
 \subsubsection{Internal calibration}
 
-\new{Seven} parameters are set inside the model, in Table~\ref{tab:int}, each bracketed
+\new{@@n_int@@} parameters are set inside the model, in Table~\ref{tab:int}, each bracketed
 on the moment it moves most rather than fitted jointly. The dispersion of log
 permanent income $\sigma_y$ is matched to how unequal earnings are at the bottom: in
 the 2022 Survey of Consumer Finances (SCF), households aged $26$ to $65$ with positive wage
@@ -860,6 +862,10 @@ to a drug participation rate of $@@q_b@@$ percent from NSDUH 2024 for
 respondents aged 26 and over \new{with a disorder of any severity}, housing services on the street
 $h_1$ to a homelessness rate of $@@q_h_1@@$ percent from the 2023 HUD PiT count, and the SUD hazard $\lambda$ to the $@@q_lambda@@$ percent
 of adults aged $26$ and over carrying a \new{moderate or severe} SUD in NSDUH 2024.
+\new{The small rental unit $h_2$ is matched to the $@@hsmall_t@@$ percent of housed
+households living in a unit of no bedroom or one, from table B25042 of the 2023
+American Community Survey, which is the source the quantitative model's size
+distribution comes from as well.}
 \new{The weight on the drug $\theta$ is matched to the same drug spending share as
 the quantitative model, $@@q_theta@@$ percent of income across users. It was set
 rather than bracketed while that target stood at a level this model could not

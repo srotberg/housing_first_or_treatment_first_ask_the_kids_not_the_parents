@@ -7,7 +7,7 @@ code. Run:  python3 tables.py
 import json
 import os
 import numpy as np
-from stylized import P, with_, H_RATIO
+from stylized import P, with_
 from calibrate import bracket, stats
 from run import _scaled
 
@@ -55,22 +55,21 @@ EXTERNAL = [
         ('p_v', 'p_v', 'Price of a unit of drugs',
          'Normalisation', '{:.2f}'),
         # QUOTED AS A MULTIPLE OF AVERAGE INCOME, like the two rows above them,
-        # rather than in model units. The model's numeraire makes h_lg 0.40 and
-        # average income 0.978, so the same object is 0.41 of average income; a
-        # table that printed 0.40 next to a source line saying 0.41 was asking
-        # the reader to reconcile two numbers for one parameter.
+        # rather than in model units, and Table 2 quotes h_2 the same way. The
+        # division is a no-op while average income is exactly one, which is what
+        # the calibrated grid gives today, so 0.40 is both; it stops being a
+        # no-op the moment the grid moves off that normalisation, which is the
+        # only reason to keep it. It was written when average income was 0.978
+        # and the table printed 0.40 beside a source line saying 0.41.
         ('h_lg', r'h_3', 'Standard rental unit', 'Set', '{:.2f}'),
-        # The ratio is stated in the TEXT and not here. Printing "a quarter of
-        # the standard unit" beside 0.10 next to a 0.41 invites the reader to
-        # multiply by four, get 0.40, and conclude the table is wrong. It is not:
-        # h_sm is exactly h_lg/4 and both are correctly rounded. But a table
-        # should not set a check it fails.
-        # THE VALUE IS THE RATIO, not a rounded decimal. h_sm is exactly a
-        # quarter of h_lg, and printing 0.10 beside the standard unit's 0.41
-        # invited the reader to multiply by four and find 0.40. Writing the
-        # relation itself is exact and there is nothing left to check.
-        ('h_sm', r'h_2', 'Small rental unit', 'Set',
-         r'%g\times h_3' % H_RATIO),
+        # h_2 IS NOT HERE ANY MORE. It used to be Set, at exactly a quarter of
+        # h_3, and printed as the ratio rather than as a decimal so that a
+        # reader could not multiply 0.10 by four, get 0.40 against h_3's 0.41,
+        # and conclude the table was wrong. It is now bracketed on the share of
+        # the housed in the smaller of the two units, so it is an internally
+        # calibrated parameter and its row is in Table 2 with the others. The
+        # quarter is gone with it: the ratio the calibration picks is whatever
+        # reproduces the size distribution, not a number chosen in advance.
         ('kappa_r', r'\kappa_r', "Tenant's share of the rent",
          'HUD voucher rules', '{:.2f}'),
         ('kV', r'\kappa_V', 'Voucher means test',
@@ -103,6 +102,15 @@ INTERNAL = [
      'Drug spending over income among users', 'dshare', '{:.1%}', '{:.3f}'),
     ('h_hl', 'h_1', 'Service flow of homelessness', 'Homelessness rate, HUD 2023',
      'homeless', '{:.3%}', '{:.5f}'),
+    # h_2 IS CALIBRATED, NOT SET, and its target is the same American Community
+    # Survey size distribution the quantitative model matches: B25042, occupied
+    # units, collapsed to this model's two rentals, so 13.2 per cent of
+    # households are in a unit of no bedroom or one. h_3 stays at its market
+    # value and h_2 is bracketed on the share, which is the arrangement the
+    # quantitative model uses and the reason the fixed quarter was dropped.
+    ('h_sm', r'h_2', 'Small rental unit',
+     'Share of the housed in the small unit, ACS 2023', 'hsmall',
+     '{:.1%}', '{:.3f}'),
     # THE MOMENT IS THE ADULT SUD RATE, not the share of users who progress,
     # and it is the MODERATE OR SEVERE rate: NSDUH 2024 adults 26 and over,
     # svyrdudany in (2,3), 4.54 per cent, with participation the whole of any
@@ -154,8 +162,17 @@ def tab_internal(base):
          r'\toprule',
          r'Parameter & Description & Target moment & Data & Model & Value \\',
          r'\midrule']
+    from calibrate import YG, W
+    ww = W / W.sum(); ybar = float((ww * YG).sum())
+    # QUOTED AS A MULTIPLE OF AVERAGE INCOME, exactly as h_3 is in Table 1.
+    # h_2 is a housing service flow and the only other one the reader sees is
+    # scaled that way, so leaving this in model units would put 0.10 beside a
+    # 0.41 that is measured differently.
+    PER_YBAR = {'h_sm'}
     for attr, sym, desc, mom, key, mfmt, vfmt in INTERNAL:
         val = SIG if attr is None else getattr(base, attr)
+        if attr in PER_YBAR:
+            val = val / ybar
         L.append(f'${sym}$ & {desc} & {mom} & '
                  f'{mfmt.format(TARGET[key]).replace("%", chr(92) + "%")} & '
                  f'{mfmt.format(m[key]).replace("%", chr(92) + "%")} & '

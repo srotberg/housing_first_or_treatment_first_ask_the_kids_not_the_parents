@@ -10,12 +10,20 @@ targets.
     h_sm    share of the housed in the small unit      13.2 %
     b       drug participation rate                    10.13 %
 
-THE RENTAL SIZES ARE SET AND GAMMA IS CALIBRATED, which is the conventional order
-and the third arrangement tried. The grid is a market fact quoted to the reader,
-h_lg = 0.40 of mean income and h_sm a quarter of that; the weight on housing is a
-preference, and a preference is what a model is entitled to infer. Working
-backwards recovers the same object, since a gamma and a grid that reproduce the
-share are two descriptions of one calibration.
+THE STANDARD UNIT IS SET AND GAMMA IS CALIBRATED, which is the conventional
+order and the third arrangement tried. h_lg = 0.40 of mean income is a market
+fact quoted to the reader; the weight on housing is a preference, and a
+preference is what a model is entitled to infer. Working backwards recovers the
+same object, since a gamma and a grid that reproduce the share are two
+descriptions of one calibration.
+
+THE SMALL UNIT IS NO LONGER A FIXED QUARTER OF IT. h_sm used to be set at
+h_lg/4, a ratio chosen in advance rather than measured, and the model then said
+whatever that implied about how households sort across the two units: 45.7 per
+cent of the housed in the small one against 13.2 in the data. It is bracketed
+now, on that share, which is the arrangement the quantitative model already uses
+for its three-way size distribution. One rental size is a market fact and the
+other is inferred from how many households live in it.
 
 WHAT WAS TRIED BEFORE, both of which failed. Setting BOTH, gamma from the
 expenditure survey and h_lg from an SCF housing cost to income ratio, aims two
