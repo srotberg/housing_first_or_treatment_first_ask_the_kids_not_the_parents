@@ -61,6 +61,9 @@ echo "   wrote writing/housing_first_children_later.pdf"
 echo "== checking that nothing in the prose is typed"
 python3 check_numbers.py
 
+echo "== checking that every acronym is defined on first use"
+python3 check_acronyms.py
+
 echo "== verifying the model"
 cd "$ROOT/code/stylized"
 python3 verify.py

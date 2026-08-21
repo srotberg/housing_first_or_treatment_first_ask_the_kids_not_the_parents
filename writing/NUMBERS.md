@@ -109,3 +109,24 @@ exports the numbers the prose quotes.** Not a second script that recomputes
 them from the same source, which is how an income ratio of 3.33 came to sit
 beside a figure showing 4.70. Where a number is unavoidably produced twice,
 `verify.py` compares the two, which is what the check on Tables 1 and 2 does.
+
+## Acronyms
+
+**Every acronym is spelled out in full on its FIRST use with the acronym in
+brackets, and only the acronym is used after that.** Before writing an acronym,
+check whether it has already appeared. If it has, use the acronym alone and do
+not repeat the full name. If it has not, write the full name and put the acronym
+in brackets after it.
+
+The expansion has to account for every letter. "Consumption equivalent (CEV)"
+was wrong for that reason: the V had nothing behind it. It is a consumption
+equivalent VARIATION.
+
+The acronym belongs in its own brackets, not folded into a citation. "(National
+Survey on Drug Use and Health, NSDUH 2024)" defines nothing; "the 2024 National
+Survey on Drug Use and Health (NSDUH)" does.
+
+`writing/check_acronyms.py` scans the prose, ignoring comments and the
+bibliography, and reports any acronym used more than once whose first
+appearance is not a definition. Run it with `check_numbers.py` before sending a
+draft.
