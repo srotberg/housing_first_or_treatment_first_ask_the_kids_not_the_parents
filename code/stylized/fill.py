@@ -183,7 +183,13 @@ def _black_notes(src):
         raise SystemExit('   fill.py: the section anchor moved; _black_notes '
                          'would silently clear the whole paper')
     head, tail = src[:cut], src[cut:]
-    for opener in ('\\new{', '\\textcolor{red}{'):
+    # ONLY THE AUTOMATIC MARKS. \new{} is what mark() wraps a moved number in,
+    # and that is the clutter the author does not want ahead of the anchor.
+    # \textcolor{red}{} in the SOURCE is a deliberate edit mark, put there by
+    # hand to show what changed this round, and blacking it defeats the point of
+    # marking it: a whole round of edits to Section 3.7 was invisible because
+    # this loop stripped them on the way out.
+    for opener in ('\\new{',):
         while True:
             j = head.find(opener)
             if j < 0:
