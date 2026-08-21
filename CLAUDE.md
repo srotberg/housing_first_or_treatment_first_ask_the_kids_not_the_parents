@@ -50,3 +50,29 @@ get found; the quantitative model is not, so it inherits the search.
 
 The hyphenation rule applies to ANY multi-word modifier, not only the ones
 already in the list. Read the section in NUMBERS.md before adding prose.
+
+## Never write unmarked prose into the paper
+
+**Anything I add to the paper goes in `\new{}`, and anything I add that the
+author did not ask for should not go in at all.** The author reads the paper
+between rounds by looking at what is red; text that arrives in black is text
+they have no way of knowing I wrote.
+
+The rule has a trap in it that has already sprung once. Red is stripped at the
+START of a round, so a block added in round $n$ is red exactly once, in the PDF
+sent at the end of round $n$. If the author's round $n+1$ comments do not
+mention it, the strip turns it black and it becomes indistinguishable from
+prose they wrote themselves. **A paragraph I authored is therefore only ever
+visible for one round**, which is why the second half of the rule matters more
+than the first:
+
+- responding to a comment: edit, mark it `\new{}`, that is the job;
+- explaining something to the author: say it in chat, NOT in the paper;
+- noticing something the paper should say: say so in chat and ask, rather than
+  writing the paragraph and letting the strip bury it a round later.
+
+The case that produced this rule: a paragraph explaining that `ybar` and median
+gross income are held at their benchmark values was written up from a
+conversation about what the code does and inserted into the competitive
+equilibrium definition. It was never requested, it went black after one round,
+and it had to be removed in full.
