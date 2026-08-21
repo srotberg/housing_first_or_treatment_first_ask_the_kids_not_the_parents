@@ -2643,7 +2643,7 @@
             model_mass_smi,model_smi_and_homeless,model_smi_and_employed,&
             model_homeless_labour_income,model_all_labour_income,&
             model_smi_share_of_homeless,model_employment_rate_given_smi,&
-            model_mass_homeless_raw,model_mass_total_raw,&
+            model_mass_homeless_raw,model_mass_total_raw,model_mass_homeless_working_age,&
             model_homeless_income_share,model_employed_share_of_homeless,&
             model_fraction_spent_on_addiction,model_fraction_spent_on_addiction_experimenters,&
             model_fraction_addicted_homeless_no_vouchers,model_average_spent_on_addiction_by_addicted,&
@@ -4645,6 +4645,7 @@
         model_fraction_of_unemployed_homeless(time_period)=0
         model_fraction_of_homeless_and_addicted_unemployed(time_period)=0
         model_mass_homeless_raw(time_period)=0
+        model_mass_homeless_working_age(time_period)=0
         model_mass_total_raw(time_period)=0
         model_mass_smi(time_period)=0
         model_smi_mass_by_age(:)=0
@@ -4965,7 +4966,15 @@
                                                                                                                     
                                     end if
                                     
-                                    if ((emp_of(unemployment_index)>1)) then
+                                    ! UNEMPLOYMENT IS A WORKING AGE STATE. Retirees keep
+                                    ! whatever employment index they carried in, and the
+                                    ! retirement transition is absorbing, so without this
+                                    ! guard they were counted in every employment moment
+                                    ! below. Most of them carry emp_of 1, so they entered
+                                    ! the EMPLOYED share of the homeless as employed, and
+                                    ! about thirty per cent of the model's homeless are
+                                    ! retired.
+                                    if ((emp_of(unemployment_index)>1) .AND. (in_retirement==0)) then
                                     
                                         model_fraction_unemployed(time_period)=&
                                             model_fraction_unemployed(time_period)+distribution_mass_used
@@ -5131,6 +5140,28 @@
                                         ! This counter depends on no later normalisation.
                                         model_mass_homeless_raw(time_period)=&
                                             model_mass_homeless_raw(time_period)+distribution_mass_used
+
+                                        ! THE BASE FOR THE HOMELESS INCOME SHARE, AND IT HAS TO
+                                        ! MATCH ITS NUMERATOR.
+                                        !
+                                        ! model_homeless_labour_income is accumulated inside
+                                        ! "in_retirement==0 .AND. emp_of==1", so it is working age
+                                        ! labour income. The raw mass above counts EVERY homeless
+                                        ! household including retirees, and about thirty per cent
+                                        ! of the model's homeless are retired. Dividing working age
+                                        ! earnings by an all ages head count understated the
+                                        ! homeless mean by that thirty per cent, against a
+                                        ! population mean whose base, model_mass_total_raw, already
+                                        ! excludes retirees. The two sides were not the same
+                                        ! population, which is the same error that was found and
+                                        ! fixed in model_mass_total_raw itself.
+                                        if (in_retirement==0) then
+
+                                            model_mass_homeless_working_age(time_period)=&
+                                                model_mass_homeless_working_age(time_period)+&
+                                                distribution_mass_used
+
+                                        end if
                                             
                                         if (age_index>life_span-retirement_span) then
                                         
@@ -5999,7 +6030,20 @@
         model_fraction_of_unemployed_homeless(time_period)=model_fraction_of_unemployed_homeless(time_period)/&
             model_fraction_unemployed(time_period)
             
-        model_fraction_unemployed(time_period)=model_fraction_unemployed(time_period)/sum_of_distribution
+        ! The unemployment RATE is unemployed over the working age population,
+        ! not over everyone: sum_of_distribution includes retirees, who are now
+        ! excluded from the numerator, so the rate would read low by the retired
+        ! share. model_mass_total_raw is the working age base.
+        if (model_mass_total_raw(time_period)>10.d0**(-12)) then
+
+            model_fraction_unemployed(time_period)=model_fraction_unemployed(time_period)/&
+                model_mass_total_raw(time_period)
+
+        else
+
+            model_fraction_unemployed(time_period)=0
+
+        end if
         
         model_fraction_addicted_and_unemployed(time_period)=model_fraction_addicted_and_unemployed(time_period)/&
             model_fraction_addicted(time_period)
@@ -6008,8 +6052,19 @@
         model_fraction_homeless_and_addicted(time_period)=model_fraction_homeless_and_addicted(time_period)/&
             model_fraction_homeless(time_period)
         
-        model_fraction_of_homeless_unemployed(time_period)=model_fraction_of_homeless_unemployed(time_period)/&
-            model_fraction_homeless(time_period)
+        ! Working age on both sides now: the numerator excludes retirees, so the
+        ! base must too.
+        if (model_mass_homeless_working_age(time_period)>10.d0**(-12)) then
+
+            model_fraction_of_homeless_unemployed(time_period)=&
+                model_fraction_of_homeless_unemployed(time_period)/&
+                model_mass_homeless_working_age(time_period)
+
+        else
+
+            model_fraction_of_homeless_unemployed(time_period)=0
+
+        end if
 
         ! The employed share of the homeless is the complement of the moment
         ! immediately above, so it is not accumulated separately.
@@ -6030,12 +6085,13 @@
 
         end if
 
-        if ((model_mass_homeless_raw(time_period)>10.d0**(-12)) .AND. &
+        if ((model_mass_homeless_working_age(time_period)>10.d0**(-12)) .AND. &
             (model_all_labour_income(time_period)>10.d0**(-12)) .AND. &
             (model_mass_total_raw(time_period)>10.d0**(-12))) then
 
             model_homeless_income_share(time_period)=&
-                (model_homeless_labour_income(time_period)/model_mass_homeless_raw(time_period))/&
+                (model_homeless_labour_income(time_period)/&
+                model_mass_homeless_working_age(time_period))/&
                 (model_all_labour_income(time_period)/model_mass_total_raw(time_period))
 
         else
