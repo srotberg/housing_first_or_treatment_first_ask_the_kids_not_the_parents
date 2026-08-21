@@ -1,5 +1,5 @@
 """
-A rough calibration of the stylized two period model. Six parameters, six
+A rough calibration of the stylized two period model. Seven parameters, seven
 targets.
 
     gam     housing over non drug spending             26.8 %
@@ -7,6 +7,7 @@ targets.
     aleph   value of a statistical life                80 annual incomes
     lam     adult SUD rate, moderate or severe         4.54 %
     th      drug spending / income among users         20 %
+    h_sm    share of the housed in the small unit      13.2 %
     b       drug participation rate                    10.13 %
 
 THE RENTAL SIZES ARE SET AND GAMMA IS CALIBRATED, which is the conventional order
@@ -434,7 +435,13 @@ W = W * len(W)  # calibrate.py uses W unnormalised elsewhere; scale is irrelevan
 # survey says 45.
 TARGET = dict(part=0.1013, homeless=0.00399, sud=0.0454, vsl=80.0,
               dshare=0.20, housing_share=0.30, hspend=0.268,
-              bot50=BOT50_TARGET)
+              bot50=BOT50_TARGET,
+              # AMERICAN COMMUNITY SURVEY B25042, occupied units, the same table
+              # the quantitative model's three-way size distribution comes from,
+              # collapsed to this model's two rentals: 13.2 per cent of
+              # households are in a unit of no bedroom or one. h_lg stays set at
+              # its market value and h_sm is bracketed on this.
+              hsmall=0.132065)
 
 # ORDER MATTERS, and participation goes LAST. Every one of these parameters
 # moves participation: lam makes drugs riskier, h_hl changes what is at stake in
@@ -537,6 +544,7 @@ LAM_LO, LAM_HI = 0.05, 20000.0
 # stayed an untargeted moment the model missed. It is targeted now.
 PAIRS = [('gam', 'hspend', 0.02, 0.70),
          ('th', 'dshare', 0.02, 0.45),
+         ('h_sm', 'hsmall', 0.01, 0.39),
          ('h_hl', 'homeless', 1e-7, 0.49),
          ('aleph', 'vsl', 0.20, 24.0),
          ('lam', 'sud', LAM_LO, LAM_HI),
@@ -548,6 +556,7 @@ LABEL = {'part': 'drug participation rate',
          'housing_share': 'housing spending / income',
          'homeless': 'homelessness rate',
          'dshare': 'drug spending / income among users',
+         'hsmall': 'share of the housed in the small unit',
          'vsl': 'value of a statistical life, annual incomes',
          'prog': 'share of users who acquire a SUD',
          'bot50': "bottom half's share of earnings"}

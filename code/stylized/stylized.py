@@ -560,8 +560,12 @@ def solve_period2(par, y, policy, used=0):
     """
     Period 2, which is terminal: assets are run down and nothing is bequeathed.
 
-    Returns (assets grid, W2, street share, rent paid, voucher outlay), each
-    indexed by the assets grid and by the disorder d. The last of these is the
+    Returns (assets grid, W2, street share, rent paid, voucher outlay, small
+    unit share), each indexed by the assets grid and by the disorder d. The last
+    is the share choosing the SMALLER of the two rentals, carried the same way
+    the street share is: as a probability over the discrete choice, so that
+    interpolating it across the assets grid stays a share rather than becoming
+    an interpolated SIZE that belongs to neither option. The last of these is the
     government's expected spending on this household in period 2. It is pure
     accounting: nothing in the household's problem depends on it, and the
     household never pays for it. It exists so that the two policies can be
@@ -573,6 +577,7 @@ def solve_period2(par, y, policy, used=0):
     W2 = np.zeros((par.na, 2)); H2 = np.zeros((par.na, 2))
     R2 = np.zeros((par.na, 2))            # rent actually paid, for the housing share
     G2 = np.zeros((par.na, 2))            # voucher outlay in period 2
+    S2 = np.zeros((par.na, 2))            # chose the small rental, for the size distribution
     for d in (0, 1):
         for p, inc, rmul in _states(par, d, policy, y, used):
             if p <= 1e-14:
@@ -580,6 +585,7 @@ def solve_period2(par, y, policy, used=0):
             cash = par.R * ag + inc
             best = np.full(par.na, -np.inf); onst = np.zeros(par.na)
             rnt = np.zeros(par.na); out = np.zeros(par.na)
+            sml = np.zeros(par.na)
             for h, rent, street in _options(par, rmul):
                 c = cash - rent
                 v = np.where(c > 1e-9,
@@ -588,13 +594,16 @@ def solve_period2(par, y, policy, used=0):
                 # what the voucher pays on this option: the rest of the market
                 # rent. Zero on the street, which is free to begin with.
                 s = 0.0 if street else par.pr * h * (1.0 - rmul)
+                is_small = 0.0 if street else float(h == par.h_sm)
                 onst = np.where(v > best, street, onst)
                 rnt = np.where(v > best, rent, rnt)
                 out = np.where(v > best, s, out)
+                sml = np.where(v > best, is_small, sml)
                 best = np.maximum(best, v)
             W2[:, d] += p * best; H2[:, d] += p * onst
             R2[:, d] += p * rnt;  G2[:, d] += p * out
-    return ag, W2, H2, R2, G2
+            S2[:, d] += p * sml
+    return ag, W2, H2, R2, G2, S2
 
 
 def _branch(par, ag, inc, rmul, vg, cont):
@@ -609,6 +618,7 @@ def _branch(par, ag, inc, rmul, vg, cont):
     cash = (inc - par.p_v * vg[:, None]) - ag[None, :]
     val = np.full(cash.shape, -np.inf)
     st = np.zeros(cash.shape); rn = np.zeros(cash.shape); sb = np.zeros(cash.shape)
+    sm = np.zeros(cash.shape)
     for h, rent, street in _options(par, rmul):
         c = cash - rent
         u = np.where(c > 1e-9,
@@ -616,13 +626,15 @@ def _branch(par, ag, inc, rmul, vg, cont):
                      + par.gam * np.log(h) + par.aleph + par.beta * cont,
                      -np.inf)
         s = 0.0 if street else par.pr * h * (1.0 - rmul)
+        is_small = 0.0 if street else float(h == par.h_sm)
         st = np.where(u > val, street, st)
         rn = np.where(u > val, rent, rn)
         sb = np.where(u > val, s, sb)
+        sm = np.where(u > val, is_small, sm)
         val = np.maximum(val, u)
     ia = np.argmax(val, axis=1)
     k = np.arange(n)
-    return val[k, ia], ag[ia], st[k, ia], rn[k, ia], sb[k, ia]
+    return val[k, ia], ag[ia], st[k, ia], rn[k, ia], sb[k, ia], sm[k, ia]
 
 
 def period1(par, y, policy=None):
@@ -653,7 +665,7 @@ def period1(par, y, policy=None):
     # household that used, so period 2 is worth less after v > 0 even before the
     # disorder is realised. Under Housing First the two coincide and the second
     # solve is skipped.
-    ag, W2c, _, _, _ = solve_period2(par, y, policy, used=0)
+    ag, W2c, _, _, _, _ = solve_period2(par, y, policy, used=0)
     W2u = W2c if policy == 'HF' else solve_period2(par, y, policy, used=1)[1]
     s0, s1 = par.phi0, par.phi0 * (1.0 - par.kap)
     cont0 = (s0 * W2c[:, 0])[None, :]
@@ -665,11 +677,11 @@ def period1(par, y, policy=None):
         # SURVIVAL INSIDE THE EXPECTATION over the realised disorder. Not
         # phi * E W2: see the note at the head of this file.
         cont = (1.0 - pid) * s0 * W2u[None, :, 0] + pid * s1 * W2u[None, :, 1]
-        vu, au, su, ru, gu = _branch(par, ag, inc, _p1_rmul(par, policy, rmul),
+        vu, au, su, ru, gu, mu_ = _branch(par, ag, inc, _p1_rmul(par, policy, rmul),
                                      vg, cont)
         # v = 0 is solved on its own, because the household still holds the
         # voucher it drew and faces the clean continuation.
-        v0, a0, s_0, r0, g0 = _branch(par, ag, inc, rmul, np.zeros(1), cont0)
+        v0, a0, s_0, r0, g0, m0_ = _branch(par, ag, inc, rmul, np.zeros(1), cont0)
 
         pen = par.omega * par.chdmg * (1.0 - np.exp(-par.lam * vg))
         tot = vu + par.th * (np.log(par.b + vg) - np.log(par.b)) - pen
@@ -681,8 +693,10 @@ def period1(par, y, policy=None):
         # the child.
         own = float(tot[k] + pen[k]) if gain > 0.0 else float(v0[0])
         out.append((p, gain, float(vg[k]),
-                    (float(au[k]), float(su[k]), float(ru[k]), float(gu[k])),
-                    (float(a0[0]), float(s_0[0]), float(r0[0]), float(g0[0])),
+                    (float(au[k]), float(su[k]), float(ru[k]), float(gu[k]),
+                     float(mu_[k])),
+                    (float(a0[0]), float(s_0[0]), float(r0[0]), float(g0[0]),
+                     float(m0_[0])),
                     float(inc), own))
     return out
 
@@ -728,11 +742,11 @@ def terminal_homeless_prob(par, y, policy=None):
     conditionality acts, so a revocation reaches the child exactly as it should.
     """
     policy = policy or par.policy
-    ag, W2c, H2c, _, _ = solve_period2(par, y, policy, used=0)
+    ag, W2c, H2c, _, _, _ = solve_period2(par, y, policy, used=0)
     if policy == 'HF':
         H2u = H2c
     else:
-        _, _, H2u, _, _ = solve_period2(par, y, policy, used=1)
+        _, _, H2u, _, _, _ = solve_period2(par, y, policy, used=1)
     tot = 0.0
     for p, g, v, bu, bn, *_ in period1(par, y, policy):
         uses = g > 0.0
@@ -764,11 +778,11 @@ def ever_homeless_prob(par, y, policy=None):
     branch it faces, and the street indicator is read there.
     """
     policy = policy or par.policy
-    ag, W2c, H2c, _, _ = solve_period2(par, y, policy, used=0)
+    ag, W2c, H2c, _, _, _ = solve_period2(par, y, policy, used=0)
     if policy == 'HF':
         H2u = H2c
     else:
-        _, _, H2u, _, _ = solve_period2(par, y, policy, used=1)
+        _, _, H2u, _, _, _ = solve_period2(par, y, policy, used=1)
     tot = 0.0
     for p, g, v, bu, bn, *_ in period1(par, y, policy):
         uses = g > 0.0
@@ -815,7 +829,9 @@ def threshold(par, ygrid, policy=None, edges=None, cdf=None):
     n = len(ygrid)
     PR = np.zeros((n, ns)); G = np.full((n, ns), np.nan); VV = np.zeros((n, ns))
     INC = np.zeros((n, ns))
-    BU = np.zeros((n, ns, 4)); BN = np.zeros((n, ns, 4))
+    # FIVE, not four: the branch now carries the small-unit indicator alongside
+    # assets, the street, rent and the voucher.
+    BU = np.zeros((n, ns, 5)); BN = np.zeros((n, ns, 5))
     for i, r in enumerate(rows):
         for s, (p, g, v, bu, bn, inc, _own) in enumerate(r):
             PR[i, s] = p; G[i, s] = g; VV[i, s] = v; INC[i, s] = inc
@@ -914,6 +930,10 @@ def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None):
 
     part = spend = uinc = sud = 0.0
     hl = hl_sud = hcost = hinc = cost = mass = 0.0
+    # THE SIZE DISTRIBUTION, over the HOUSED only. The American Community
+    # Survey's universe for it is occupied units, so the street is not in the
+    # denominator, exactly as in the quantitative model's counterpart.
+    smallmass = housedmass = 0.0
     # NON DRUG EXPENDITURE, which is what the Consumer Expenditure Survey share
     # is a share OF. In period 1 it is income less drug spending less saving; in
     # period 2, which is terminal, it is the whole of cash. Rent here is what the
@@ -921,11 +941,11 @@ def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None):
     # the object is an outlay share exactly as the survey measures it.
     hexp = 0.0
     for i, y in enumerate(ygrid):
-        ag, _, H2c, R2c, G2c = solve_period2(par, y, policy, used=0)
+        ag, _, H2c, R2c, G2c, S2c = solve_period2(par, y, policy, used=0)
         if policy == 'HF':
             H2u, R2u, G2u = H2c, R2c, G2c
         else:
-            _, _, H2u, R2u, G2u = solve_period2(par, y, policy, used=1)
+            _, _, H2u, R2u, G2u, S2u = solve_period2(par, y, policy, used=1)
         for s in range(PR.shape[1]):
             if PR[i, s] <= 0.0:
                 continue
@@ -933,7 +953,7 @@ def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None):
                                (0, ww[i] * PR[i, s] * (1.0 - frac[i, s]), BN[i, s])):
                 if mm <= 0.0:
                     continue
-                a, street, rent, sub = br
+                a, street, rent, sub, small1 = br
                 pid = (1.0 - np.exp(-par.lam * VV[i, s])) if uu else 0.0
                 if uu:
                     part += mm; spend += mm * par.p_v * VV[i, s]
@@ -941,6 +961,7 @@ def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None):
                 # period 1: everyone alive, mass one
                 mass += mm
                 hl += mm * street
+                smallmass += mm * small1; housedmass += mm * (1.0 - street)
                 hcost += mm * rent; hinc += mm * INC[i, s]; cost += mm * sub
                 hexp += mm * (INC[i, s] - (par.p_v * VV[i, s] if uu else 0.0) - a)
                 # period 2: the disorder is drawn at the transition and survival
@@ -951,8 +972,11 @@ def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None):
                     if m2 <= 0.0:
                         continue
                     street2 = float(np.interp(a, ag, Hx[:, d]))
+                    Sx = S2u if uu else S2c
                     mass += m2
                     hl += m2 * street2
+                    smallmass += m2 * float(np.interp(a, ag, Sx[:, d]))
+                    housedmass += m2 * (1.0 - street2)
                     if d == 1:
                         hl_sud += m2 * street2
                     hcost += m2 * float(np.interp(a, ag, Rx[:, d]))
@@ -974,6 +998,12 @@ def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None):
                 homeless=float(hl / max(mass, 1e-12)),
                 sud_of_homeless=float(hl_sud / max(hl, 1e-12)),
                 housing_share=float(hcost / max(hinc, 1e-12)),
+                # SHARE OF THE HOUSED IN THE SMALLER RENTAL. The American
+                # Community Survey table B25042, occupied units, puts 13.2 per
+                # cent of households in a unit of no bedroom or one, which is
+                # the small cell of this model's two. It is what h_sm is
+                # calibrated on; h_lg stays set at its market value.
+                hsmall=float(smallmass / max(housedmass, 1e-12)),
                 # RENT OVER NON DRUG EXPENDITURE. The frictionless Cobb-Douglas
                 # benchmark for it is gam/(1-th), so this is the moment that
                 # says whether the discrete housing grid, the street and the
@@ -1000,7 +1030,7 @@ def vsl(par, y=1.0, policy=None):
     therefore the willingness to pay for survival, one for one.
     """
     policy = policy or par.policy
-    ag, W2c, _, _, _ = solve_period2(par, y, policy, used=0)
+    ag, W2c, _, _, _, _ = solve_period2(par, y, policy, used=0)
     W2u = W2c if policy == 'HF' else solve_period2(par, y, policy, used=1)[1]
     s0, s1 = par.phi0, par.phi0 * (1.0 - par.kap)
     tot = 0.0
@@ -1011,9 +1041,9 @@ def vsl(par, y=1.0, policy=None):
         pid = (1.0 - np.exp(-par.lam * vg))[:, None]
         cont = (1.0 - pid) * s0 * W2u[None, :, 0] + pid * s1 * W2u[None, :, 1]
         rm = _p1_rmul(par, policy, rmul)
-        val, aa, _, rr, _ = _branch(par, ag, inc, rm, vg, cont)
+        val, aa, _, rr, _, _ = _branch(par, ag, inc, rm, vg, cont)
         cont0 = np.repeat((s0 * W2c[:, 0])[None, :], 2, axis=0)
-        v0, a0, _, r0, _ = _branch(par, ag, inc, rmul, np.zeros(2), cont0)
+        v0, a0, _, r0, _, _ = _branch(par, ag, inc, rmul, np.zeros(2), cont0)
         tot_v = (val + par.th * (np.log(par.b + vg) - np.log(par.b))
                  - par.omega * par.chdmg * (1.0 - np.exp(-par.lam * vg)))
         k = int(np.argmax(tot_v[1:])) + 1
