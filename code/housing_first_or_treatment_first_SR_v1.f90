@@ -2137,6 +2137,27 @@
         real(8) :: drug_risk_value=0
         integer :: drug_risk_active=0
 
+        ! THE SCALE OF THE DRUG FIRST ORDER CONDITION, and it is the goods
+        ! aggregate ALONE.
+        !
+        ! calculate_flow_utility returns the Cobb-Douglas aggregate over
+        ! (1-sigma) and then appends two terms that are not functions of the
+        ! quantities: the value of life, and bar_tau^u when treatment is taken.
+        ! Multiplying THAT by (1-sigma) to recover the aggregate is only correct
+        ! if the appended terms are zero, and aleph is not. At the current point
+        ! aleph is 2.92 against a goods aggregate of order 2, so with sigma at 2
+        ! the factor (1-sigma)*(u_goods + aleph) = X^(1-sigma) - aleph comes out
+        ! NEGATIVE where the aggregate X^(1-sigma) is positive. It is the sign
+        ! that matters and not the size: with the scale negative the marginal
+        ! condition is negative at every point of the bracket, the bisection
+        ! never finds a sign change, and it walks the consumption share to one.
+        ! EVERY HOUSEHOLD THE RISK TERM APPLIES TO THEREFORE ABSTAINS COMPLETELY,
+        ! which is why the disorder rate is a hole at the productivity nodes
+        ! where the disorder is worth avoiding and positive only where it is not,
+        ! and why raising the death penalty cannot move any of it. This records
+        ! the aggregate before either term is appended.
+        real(8) :: flow_utility_goods_only=0
+
         ! Whether the household being evaluated is in treatment this period.
         ! Read in two places that cannot take it as an argument without changing
         ! every caller: the drug split, which it forces to zero, and flow
@@ -2628,6 +2649,19 @@
             
         real(8), dimension(transition_length,employment_grid_size) :: model_unemployment_by_employment,mass_by_employment_1,&
             total_mass_by_employment
+            
+        ! THE ONSET GRADIENT, and it is the object the whole child channel turns
+        ! on. percent_addicted_by_employment is a STOCK: it mixes the onset rate
+        ! with productivity mobility and with how long the disorder lasts, so a
+        ! rising stock does not by itself say the FLOW rises. These accumulate
+        ! the drug quantity actually chosen by households who do NOT have the
+        ! disorder, the mass of those households, and the onset hazard their
+        ! quantities imply, all by productivity node. Their ratio is the flow
+        ! onset rate by productivity, which is what delta_d needs to be steep in
+        ! and what the data say should FALL with income.
+        real(8), dimension(transition_length,employment_grid_size) :: &
+            drug_quantity_by_employment,clean_mass_by_employment,&
+            onset_hazard_by_employment,clean_consumption_by_employment
                                                 
         integer :: in_retirement,newborn_household
         
@@ -2849,6 +2883,7 @@
         !$omp threadprivate(total_consumption_choice)
         !$omp threadprivate(drug_risk_value)
         !$omp threadprivate(drug_risk_active)
+        !$omp threadprivate(flow_utility_goods_only)
         !$omp threadprivate(treatment_choice_now)
         !$omp threadprivate(secant_guess)
         !$omp threadprivate(have_secant_guess)
@@ -7646,6 +7681,10 @@
         percent_addicted_by_employment(time_period,:)=0
         mass_by_employment(time_period,:)=0
         total_mass_by_employment(time_period,:)=0
+        drug_quantity_by_employment(time_period,:)=0
+        clean_mass_by_employment(time_period,:)=0
+        onset_hazard_by_employment(time_period,:)=0
+        clean_consumption_by_employment(time_period,:)=0
         model_average_spent_on_addiction_by_addicted(time_period)=0
         model_treatment_take_up(time_period)=0
         model_mass_with_sud(time_period)=0
@@ -7835,6 +7874,36 @@
                                     ! inside the block that only households with the disorder reach.
                                     total_mass_by_employment(time_period,employment_index)=&
                                         total_mass_by_employment(time_period,employment_index)+distribution_mass_used
+
+                                    ! THE FLOW, restricted to households who can still acquire the
+                                    ! disorder. A household that already has it is not at risk, so
+                                    ! including it would average the onset rate over people for whom
+                                    ! the hazard is not defined.
+                                    if (sud_of(unemployment_index)==0) then
+
+                                        clean_mass_by_employment(time_period,employment_index)=&
+                                            clean_mass_by_employment(time_period,employment_index)+&
+                                            distribution_mass_used
+
+                                        drug_quantity_by_employment(time_period,employment_index)=&
+                                            drug_quantity_by_employment(time_period,employment_index)+&
+                                            (frac_spent_on_addiction_used*total_consumption_used/&
+                                            price_of_addictive_good)*distribution_mass_used
+
+                                        clean_consumption_by_employment(time_period,employment_index)=&
+                                            clean_consumption_by_employment(time_period,employment_index)+&
+                                            total_consumption_used*distribution_mass_used
+
+                                        ! The hazard is averaged, not evaluated at the average
+                                        ! quantity: 1-exp(-lambda v) is concave, so the two differ
+                                        ! and it is the average hazard that generates the flow.
+                                        onset_hazard_by_employment(time_period,employment_index)=&
+                                            onset_hazard_by_employment(time_period,employment_index)+&
+                                            addiction_onset_hazard(frac_spent_on_addiction_used*&
+                                            total_consumption_used/price_of_addictive_good)*&
+                                            distribution_mass_used
+
+                                    end if
                                                                                                                      
                                     if (years_left_on_mortgage_index>1) then
                                         
@@ -8874,6 +8943,35 @@
             else
 
                 percent_addicted_by_employment(time_period,employment_index)=0
+
+            end if
+
+            ! The flow onset rate at this node, and the drug quantity and total
+            ! consumption behind it. Dividing quantity by consumption gives the
+            ! DRUG BUDGET SHARE, which is the number that says whether the
+            ! gradient is a preference or a deterrence result: with homothetic
+            ! preferences and a cost of the disorder proportional to income the
+            ! share is constant by construction, so a flat share means no force
+            ! in the model is tilting use against income.
+            if (clean_mass_by_employment(time_period,employment_index)>10.d0**(-12)) then
+
+                drug_quantity_by_employment(time_period,employment_index)=&
+                    drug_quantity_by_employment(time_period,employment_index)/&
+                    clean_mass_by_employment(time_period,employment_index)
+
+                onset_hazard_by_employment(time_period,employment_index)=&
+                    onset_hazard_by_employment(time_period,employment_index)/&
+                    clean_mass_by_employment(time_period,employment_index)
+
+                clean_consumption_by_employment(time_period,employment_index)=&
+                    clean_consumption_by_employment(time_period,employment_index)/&
+                    clean_mass_by_employment(time_period,employment_index)
+
+            else
+
+                drug_quantity_by_employment(time_period,employment_index)=0
+                onset_hazard_by_employment(time_period,employment_index)=0
+                clean_consumption_by_employment(time_period,employment_index)=0
 
             end if
             
@@ -15285,15 +15383,16 @@
             
         end if   
         
-        if (frac_spent_on_addiction_1>0) then
-        
-            flow_utility_1=flow_utility_1+value_of_life
-            
-        else
-        
-            flow_utility_1=flow_utility_1+value_of_life
-        
-        end if
+        ! Recorded before anything additive is appended, because the drug first
+        ! order condition needs the aggregate and not the level. See the
+        ! declaration of flow_utility_goods_only.
+        flow_utility_goods_only=flow_utility_1
+
+        ! The value of life is charged whether or not the household uses: the
+        ! two arms of the test this replaces were character for character the
+        ! same, which is what a condition means once it no longer conditions on
+        ! anything.
+        flow_utility_1=flow_utility_1+value_of_life
         
         ! bar_tau^u, charged wherever flow utility is evaluated so that the
         ! value function, the comparison routine and the welfare calculations
@@ -17107,7 +17206,14 @@
             ! Flow utility is the Cobb-Douglas aggregate over (1-sigma), so the
             ! aggregate itself is that times (1-sigma), and the two marginal
             ! utilities are the aggregate times the share over its argument.
-            scale_1=(1-risk_aversion_consumption)*utility_1
+            !
+            ! THE AGGREGATE, NOT THE LEVEL. utility_1 carries the value of life
+            ! and bar_tau^u on top of the aggregate, and multiplying those by
+            ! (1-sigma) does not recover a marginal utility of anything; with
+            ! sigma above one it returns a large negative number and inverts the
+            ! whole condition. flow_utility_goods_only is the same call's
+            ! aggregate, recorded before either term is appended.
+            scale_1=(1-risk_aversion_consumption)*flow_utility_goods_only
 
             marginal_1=scale_1*(share_v_1/(b_1+v_1))-&
                 scale_1*(price_of_addictive_good_1*share_c_1/cons_x_1)-&
@@ -30860,6 +30966,16 @@
             write(*,*) "percent_addicted_by_employment=", percent_addicted_by_employment(1,:)
             write(*,*) "mass with the disorder by node=", mass_by_employment(1,:)
             write(*,*) "population by node            =", total_mass_by_employment(1,:)
+            ! THE FLOW, beside the stock. The stock above can rise with
+            ! productivity because onset does, or because the disorder lasts
+            ! longer up there, or because productivity drifts down after onset.
+            ! Only the flow says which, and only the budget share says whether
+            ! any force in the model tilts use against income.
+            write(*,*) "onset hazard by node (flow)  =", onset_hazard_by_employment(1,:)
+            write(*,*) "drug quantity by node        =", drug_quantity_by_employment(1,:)
+            write(*,*) "consumption by node          =", clean_consumption_by_employment(1,:)
+            write(*,*) "DRUG BUDGET SHARE by node    =", drug_quantity_by_employment(1,:)*&
+                price_of_addictive_good/max(clean_consumption_by_employment(1,:),10.d0**(-12))
             write(*,*) "newborn prob, clean parent   =", newborn_employment_probability(:,0,1)
             write(*,*) "newborn prob, disordered     =", newborn_employment_probability(:,1,1)
             write(*,*) "employment_grid               =", employment_grid(1,:)
