@@ -134,7 +134,7 @@ chk('private cost equals Table 3 population equivalent',
 print('\n=== 6. the transition ===')
 import transition as T
 _g = T._policy_grids(BASE, T.BASE_POLICY, BASE.pV)
-p0 = T._rest_point(_g[1], _g[3])   # steps on EVER homeless, what the child inherits
+p0 = T._rest_point(_g[1], T._hl_by_shift(BASE, T.BASE_POLICY, BASE.pV))
 chk('the rest point is a probability vector',
     abs(p0.sum() - 1.0) < 1e-9 and bool(np.all(p0 >= -1e-12)))
 v1b, sudb, hlb, evb = T._policy_grids(BASE, T.BASE_POLICY, BASE.pV)

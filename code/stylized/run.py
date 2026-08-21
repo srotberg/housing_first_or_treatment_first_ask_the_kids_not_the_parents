@@ -119,9 +119,17 @@ def fig_who_uses(base):
     from matplotlib.ticker import NullFormatter, NullLocator, FixedLocator
     ax.yaxis.set_minor_locator(NullLocator())
     ax.yaxis.set_minor_formatter(NullFormatter())
-    ax.yaxis.set_major_locator(FixedLocator([0.1, 0.2, 0.5, 1.0, 2.0, 4.0]))
-    ax.set_yticklabels(['0.1', '0.2', '0.5', '1.0', '2.0', '4.0'])
-    ax.set_ylim(0.1, 6.0)
+    # TICKS THE READER CAN ACTUALLY READ A VALUE AGAINST. The top labelled tick
+    # used to be 4.0 with the axis running to 6.0, so a curve ending at 4.85 sat
+    # in unlabelled space and there was nothing to measure it by: the text said
+    # 4.85 and the figure could not be checked against it. Ticks now run to 5
+    # and the axis stops just above, with light gridlines so a value between two
+    # ticks can still be placed.
+    ax.yaxis.set_major_locator(FixedLocator([0.1, 0.2, 0.5, 1.0, 2.0, 3.0, 5.0]))
+    ax.set_yticklabels(['0.1', '0.2', '0.5', '1.0', '2.0', '3.0', '5.0'])
+    ax.set_ylim(0.10, 5.6)
+    ax.grid(axis='y', which='major', color='0.88', lw=0.7, zorder=0)
+    ax.set_axisbelow(True)
     ax.set_xlim(-3, 128)
     ax.set_xticks([0, 25, 50, 75, 100, 125])
     # the calibrated point, so the extrapolation past it reads as extrapolation
@@ -141,6 +149,18 @@ def fig_who_uses(base):
     ax.annotate('users are POORER than average',
                 xy=(0.985, 0.015), xycoords='axes fraction', ha='right',
                 va='bottom', fontsize=8.5, color='0.4')
+    # THE TWO ENDPOINTS, PRINTED ON THE CURVE. The prose quotes them and the
+    # reader should not have to interpolate a log axis to check.
+    for which, col in (('mortality', '#2C6FAD'), ('unemployment', '#D9822B')):
+        y_end = curves[which][-1]
+        ax.annotate(f'{y_end:.2f}', xy=(100 * sc[-1], y_end),
+                    xytext=(4, -2), textcoords='offset points',
+                    fontsize=8.5, color=col, fontweight='bold', va='center')
+    y0 = curves['mortality'][0]
+    ax.annotate(f'{y0:.2f}', xy=(0, y0), xytext=(2, 6),
+                textcoords='offset points', fontsize=8.5, color='0.25',
+                fontweight='bold')
+    ax.set_xlim(-3, 136)
     fig.tight_layout()
     save(fig, 'stylized_who_uses')
     return sc, curves, parts

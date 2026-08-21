@@ -1203,60 +1203,69 @@ the two, or both, and that mixture is a Markov chain in the policy.
 \includegraphics[width=\textwidth]{figures/stylized_transition.pdf}
 \caption{The transition after the reform}
 \label{fig:trans}
-\notes{\textwidth}{Note: panel (a) is each cohort's expected lifetime value as a
-consumption equivalent against the pre reform rest point; panels (b) and (c) are
-that cohort's own homelessness and disorder rates. Cohort $1$ is the initial
-newborns, cohort $2$ the second cohort of newborns, and so on. The marker in
-panel (a) is the initial old, measured over their remaining period rather than a
-full life, which no cohort line can carry.}
+\notes{\textwidth}{Note: Panel (a) is the expected lifetime value
+of each newborn cohort, as a consumption equivalent against the pre reform rest
+point; panels (b) and (c) are that cohort's own homelessness and disorder rates, so
+the welfare path can be read against the mechanism producing it. The reform moves
+the programme from Housing First at $\pi_V=@@pvbase@@$ to universal cover under
+the policy named. Cohort $1$ is born into the old income distribution and lives
+under the new rule. The marker in panel (a) is the initial old, the generation
+already in period 2 when the reform lands, which no cohort line can carry: it is
+measured over its remaining period rather than a full life. Cohort 1 is the
+initial newborns, cohort 2 the second cohort of newborns, and so on.}
 \end{figure}
 
 Figure~\ref{fig:trans} moves the programme from Housing First at
 $\pi_V=@@pvbase@@$ to universal coverage under each policy. Two groups are alive
 in the period it is implemented: the \emph{initial old}, in their second period,
 who chose under the old rule and cannot recover in a terminal one; and the
-\emph{initial newborns}, born to parents who finished before the condition
-existed. They are cohort $1$, the \emph{second cohort of newborns} cohort $2$,
-and so on. Welfare is a consumption equivalent against the pre reform rest
+\emph{initial newborns}, born to parents who finished before \textcolor{red}{Treatment First was implemented}. Welfare is a consumption equivalent against the pre reform rest
 point, so ``percent'' means percent of lifetime consumption.
 
-Each of the three legs has a known sign here, with only its magnitude open. The
-initial newborns can only be weakly worse off, since conditionality removes an
-option and gives nothing back and they inherit identically under both policies:
-they gain @@tr_t1_tf@@ percent against @@tr_t1_hf@@, so conditionality costs
-them @@tr_c1_gap@@ percent, the private loss of Section~\ref{sec:nox} and
-nothing else. The second cohort of
-newborns must be strictly worse off, because its parents are the initial old,
-whom Treatment First stripped of the voucher for a disorder acquired before the
-condition existed: @@tr_c2_hl_tf@@ percent of it is born to a parent who was
-unhoused at some point against @@tr_c2_hl_hf@@ percent, and the welfare gap
-widens from @@tr_c1_gap@@ to @@tr_c2_gap@@ percent. Those shares are not
-homelessness under the new programme; the initial old spent their \emph{first}
-period under the old rationed one, which is why they are above zero under
-Housing First too. What that cohort inherits identically is the \emph{disorder},
-settled before the condition existed and beyond any policy's reach after the
-fact, so only the housing margin differs. The initial old are strictly worse off too, losing @@tr_caught@@ percent,
-@@tr_caught_ratio@@ times what the initial newborns bear, with @@tr_caught_hl@@
-percent put on the street by the revocation itself.
+\textcolor{red}{Each of the generations affected has a known sign here}, with only its
+magnitude open. The initial newborns can only be weakly worse off, since
+conditionality removes an option and gives nothing back and they inherit
+identically under both policies: they gain @@tr_t1_tf@@ percent against
+@@tr_t1_hf@@, so conditionality costs them @@tr_c1_gap@@ percent.
 
-From the @@tr_flip@@ cohort of newborns onward conditionality gains, through the
-very cohorts it hurt: they use less, so fewer carry the disorder and their
-children inherit better draws. Homelessness is zero for every cohort under both
+The second cohort of newborns must be strictly worse off, because its parents are
+the initial old, whom Treatment First stripped of the voucher for a disorder
+acquired before \textcolor{red}{it was implemented}: @@tr_c2_hl_tf@@ percent of it is born to a
+parent who was unhoused \textcolor{red}{under universal Treatment First} against
+@@tr_c2_hl_hf@@ percent \textcolor{red}{under universal Housing First}, and the welfare gap
+widens from @@tr_c1_gap@@ to @@tr_c2_gap@@ percent. What that cohort inherits
+identically is the \emph{disorder}, settled before the condition existed and
+beyond any policy's reach after the fact, so only the housing margin differs.
+
+The initial old are strictly worse off too. Panel~(a) prices them against the
+same pre reform world every cohort line is drawn against: they gain
+@@tr_caught_tf@@ percent under Treatment First and @@tr_caught_hf@@ percent
+under Housing First, so conditionality costs them @@tr_caught@@ percent,
+@@tr_caught_ratio@@ times what the initial newborns bear, with @@tr_caught_hl@@
+percent put on the street by the revocation \textcolor{red}{under Treatment First}.
+\textcolor{red}{That is the same figure the second cohort of newborns inherits, because the
+initial old are its parents: what conditionality does to them is not a cost that
+ends with them.}
+
+From the @@tr_flip@@ cohort of newborns onward \textcolor{red}{universal Treatment First raises welfare above universal Housing First}, through the very cohorts it
+hurt: \textcolor{red}{nobody uses, so nobody carries the disorder, and their children
+inherit better draws}. Homelessness is zero for every cohort under both
 policies, since at universal coverage every household holds a voucher and can
-afford the small unit, so all the separation is in panel (c). The cost falls on
-the initial old and the two cohorts behind them, and the benefit is reaped by
-every cohort after. Both policies lift the initial newborns by very nearly the
-same amount because the reform moves two dials of very different size: coverage
-is worth about @@tr_gen_rise@@ percent to them, conditionality costs
-@@tr_t1_gap@@, a ratio of @@tr_gen_vs_cond@@ to one.
+afford the small unit, so all the separation is in panel~(c)\textcolor{red}{, where the
+disorder share rises under universal Housing First and so more children inherit
+worse draws than under universal Treatment First, which has none}. The cost
+falls on the initial old and the two cohorts behind them, and the benefit is
+reaped by every cohort after. Both policies lift the initial newborns by very
+nearly the same amount because the reform moves two dials of very different
+size: coverage is worth about @@tr_gen_rise@@ percent to them, conditionality
+costs \textcolor{red}{only} @@tr_t1_gap@@ \textcolor{red}{percent}, a ratio of @@tr_gen_vs_cond@@ to one.
 
 That a transition here \emph{must} open with losses is a property of this
-environment, not a result about housing policy. But the quantitative model is
-not bound that way, for two reasons absent here: its budget clears every period,
-so Treatment First, covering fewer tenants, taxes less from the moment the
-reform lands and the early cohorts pay less for life; and altruism is calibrated
-rather than zero, so a parent internalises part of what its abstinence hands its
-lineage later on.
+environment. \textcolor{red}{But} the quantitative model is not bound that way, for two
+reasons absent here: its budget clears every period, so Treatment First,
+covering fewer tenants, taxes less from the moment the reform lands and the
+early cohorts pay less for life; and altruism is calibrated \textcolor{red}{to a number greater than zero}, so a parent internalises part of what its abstinence
+\textcolor{red}{and the lower taxes Treatment First brings hand its lineage later on}.
 
 \section{The quantitative model}\label{sec:full}
 

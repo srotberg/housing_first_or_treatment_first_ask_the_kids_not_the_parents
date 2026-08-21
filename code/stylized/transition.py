@@ -72,12 +72,32 @@ GENERATIONS = GENERATIONS_LONG
 
 
 def _at(vals, s):
-    """vals evaluated at income y*s on the grid, interpolated in log income.
+    """
+    vals evaluated at income y*s, interpolated in log income.
 
-    Outside the grid the end values are carried, which is the same convention
-    children.shifted uses and matters only for the bottom pool, where the use
-    and homelessness probabilities are already flat."""
+    INTERPOLATING THE ANSWER IS NOT GOOD ENOUGH FOR THE HOMELESSNESS GRIDS and
+    this is kept only for the ones where it is. Whether a household is unhoused
+    is very nearly a step in income, housed on one side of the rent and not on
+    the other, and interpolating a step between two nodes understates it badly:
+    measured against the same quantity solved AT the shifted income, this route
+    put the initial old's terminal homelessness under Treatment First at 0.33
+    per cent where the exact answer is 0.52, an error of well over half. The
+    author caught it because the transition quoted both numbers in one
+    paragraph and they did not line up.
+
+    Use _solve_at for anything that keys on a threshold. This remains correct
+    for smooth objects like V1.
+    """
     return np.interp(LY + np.log(s), LY, vals, left=vals[0], right=vals[-1])
+
+
+def _solve_at(fn, s):
+    """
+    fn evaluated at income y*s by SOLVING there, not by interpolating a grid
+    solved elsewhere. Costs one model solve per node per shift, which is why it
+    is used only where the interpolation error is first order.
+    """
+    return np.array([fn(float(y) * float(s)) for y in YG], dtype=float)
 
 
 def _policy_grids(par, policy, pV):
@@ -100,6 +120,44 @@ def _policy_grids(par, policy, pV):
     return (v1, np.clip(use * prog, 0.0, 1.0), np.clip(hl, 0.0, 1.0),
             np.clip(ev, 0.0, 1.0))
 
+
+
+def _hl_by_shift(par, policy, pV):
+    """
+    Terminal homelessness SOLVED at each shifted income, one array per penalty
+    type. See the note on _at: this quantity is a step in income and cannot be
+    interpolated from a grid solved at unshifted incomes without losing more
+    than half of it.
+    """
+    q = with_(par, policy=policy, pV=pV)
+    return {float(s): np.clip(
+        _solve_at(lambda y: terminal_homeless_prob(q, y, policy), s), 0.0, 1.0)
+        for s in _shifts()}
+
+
+def _bridge_hl_by_shift(par, new_policy, pv_new):
+    """The same, for the generation the reform catches mid life."""
+    from stylized import period1, solve_period2
+    old = with_(par, pV=par.pV, policy=BASE_POLICY)
+    new = with_(par, pV=pv_new, policy=new_policy)
+
+    def one(y):
+        ag, _, H2c, _, _ = solve_period2(new, y, new_policy, used=0)
+        if new_policy == 'HF':
+            H2u = H2c
+        else:
+            _, _, H2u, _, _ = solve_period2(new, y, new_policy, used=1)
+        tot = 0.0
+        for p, gain, v, bu, bn, _inc, _own in period1(old, y, BASE_POLICY):
+            uses = gain > 0.0
+            a = (bu if uses else bn)[0]
+            pid = (1.0 - float(np.exp(-old.lam * v))) if uses else 0.0
+            Hx = H2u if uses else H2c
+            tot += p * sum(pd * float(np.interp(a, ag, Hx[:, d]))
+                           for d, pd in ((1, pid), (0, 1.0 - pid)))
+        return tot
+
+    return {float(s): np.clip(_solve_at(one, s), 0.0, 1.0) for s in _shifts()}
 
 
 def _bridge_grids(par, new_policy, pv_new):
@@ -174,7 +232,8 @@ def _step(p, sud, hl):
         if ps <= 0.0:
             continue
         d = _at(sud, s)
-        h = _at(hl, s)
+        # SOLVED at the shifted income, not interpolated: see _at.
+        h = hl[float(s)] if isinstance(hl, dict) else _at(hl, s)
         out[0] += ps * float((WW * (1 - d) * (1 - h)).sum())
         out[1] += ps * float((WW * d * (1 - h)).sum())
         out[2] += ps * float((WW * (1 - d) * h).sum())
@@ -221,8 +280,8 @@ def caught(par, pv_new=PV_OPT):
     # treated them as richer than they are, and they are the households the
     # answer is about.
     v1b, sudb, hlb, evb = _policy_grids(par, BASE_POLICY, par.pV)
-    p_mix = _rest_point(sudb, evb)
-    dv = mass = hl_h = hl_t = 0.0
+    p_mix = _rest_point(sudb, _hl_by_shift(par, BASE_POLICY, par.pV))
+    dv = dv_h = dv_t = mass = hl_h = hl_t = 0.0
     for sft, psft in zip(_shifts(), p_mix):
         if psft <= 0.0:
             continue
@@ -237,17 +296,32 @@ def caught(par, pv_new=PV_OPT):
                 # selects a column of the answer.
                 agh, W2h, H2h, _, _ = solve_period2(new_h, y, 'HF', used=int(uses))
                 agt, W2t, H2t, _, _ = solve_period2(new_t, y, 'TF', used=int(uses))
+                # AND THE COUNTERFACTUAL WHERE NOTHING CHANGES, so each policy
+                # can be priced against the pre reform world the way every
+                # cohort in the figure is, rather than only against each other.
+                ago, W2o, _, _, _ = solve_period2(old, y, BASE_POLICY,
+                                                  used=int(uses))
                 for d, pd in ((1, pid), (0, 1.0 - pid)):
                     m = psft * WW[i] * p * pd
                     if m <= 0.0:
                         continue
-                    dv += m * (float(np.interp(a, agh, W2h[:, d]))
-                               - float(np.interp(a, agt, W2t[:, d])))
+                    _wh = float(np.interp(a, agh, W2h[:, d]))
+                    _wt = float(np.interp(a, agt, W2t[:, d]))
+                    _wo = float(np.interp(a, ago, W2o[:, d]))
+                    dv += m * (_wh - _wt)
+                    dv_h += m * (_wh - _wo)
+                    dv_t += m * (_wt - _wo)
                     hl_h += m * float(np.interp(a, agh, H2h[:, d]))
                     hl_t += m * float(np.interp(a, agt, H2t[:, d]))
                     mass += m
     dv /= max(mass, 1e-12)
-    return dict(cev=float(cev(par, dv)), hl_hf=hl_h / max(mass, 1e-12),
+    dv_h /= max(mass, 1e-12)
+    dv_t /= max(mass, 1e-12)
+    return dict(cev=float(cev(par, dv)),
+                # each policy against the pre reform world, which is the axis
+                # every cohort line is already drawn on
+                cev_hf=float(cev(par, dv_h)), cev_tf=float(cev(par, dv_t)),
+                hl_hf=hl_h / max(mass, 1e-12),
                 hl_tf=hl_t / max(mass, 1e-12))
 
 
@@ -285,13 +359,18 @@ def path(par, policy, pV, p0, v1_base, w0, n=GENERATIONS):
     #
     # From cohort 3 on the parent lived its whole life under the new rule and
     # the chain is stationary in the policy.
-    sud_b, ev_b = _bridge_grids(par, policy, pV)
+    sud_b, _ev_b = _bridge_grids(par, policy, pV)
+    # SOLVED AT EACH SHIFTED INCOME. Interpolating these off the unshifted grid
+    # lost more than half of the initial old's terminal homelessness, 0.33
+    # against an exact 0.52, because being unhoused is a step in income.
+    ev_b = _bridge_hl_by_shift(par, policy, pV)
+    ev_s = _hl_by_shift(par, policy, pV)
     p = p0.copy()
     for t in range(1, n + 1):
         w = _welfare(p, v1)
         out.append((t, float(cev(par, w - w0)), p.copy(),
                     _outcome(p, hl), _outcome(p, sud)))
-        p = _step(p, sud_b, ev_b) if t == 1 else _step(p, sud, ev)
+        p = _step(p, sud_b, ev_b) if t == 1 else _step(p, sud, ev_s)
     return out
 
 
@@ -300,7 +379,7 @@ def run(par=None, n=GENERATIONS):
     par = par or with_(P(), **json.load(open(os.path.join(here, 'calibrated.json'))))
 
     v1b, sudb, hlb, evb = _policy_grids(par, BASE_POLICY, par.pV)
-    p0 = _rest_point(sudb, evb)
+    p0 = _rest_point(sudb, _hl_by_shift(par, BASE_POLICY, par.pV))
     w0 = _welfare(p0, v1b)
     print(f'PRE REFORM REST POINT, {BASE_POLICY} at pi_V = {par.pV}')
     print(f'   share of children born to a parent with the disorder : '
@@ -354,11 +433,34 @@ def figure(paths, cg=None):
         ax.set_title(ttl, loc='left', fontsize=11, fontweight='bold')
     axes[0].axhline(0.0, color='0.35', lw=1.0, ls=':')
     if cg is not None:
-        # the generation already in period 2 at the switch, on the same axis but
-        # marked apart, since it is measured over its remaining period only
-        axes[0].plot([0], [-100 * cg['cev']], marker='v', ms=9, color='#b2182b',
-                     ls='none',
-                     label='initial old, Treatment First')
+        # THE INITIAL OLD, UNDER BOTH POLICIES, drawn where they can be read.
+        # There used to be one marker, Treatment First only, priced against
+        # Housing First rather than against the pre reform world, sitting half
+        # off the bottom of the axis beside an arrow annotation. Neither what
+        # the loss was nor what it was a loss AGAINST could be read off it, and
+        # the obvious question, what the same generation gets under Housing
+        # First, had no answer on the figure at all.
+        #
+        # Both are now priced against the pre reform rest point, the axis every
+        # cohort line already uses, so the initial old can be compared with the
+        # initial newborns directly. They sit at cohort 0, offset so they do not
+        # collide, in their policies' own colours, each labelled with its value.
+        for dx, key, col in ((-0.17, 'cev_tf', '#b2182b'),
+                             (0.17, 'cev_hf', '#2166ac')):
+            yv = 100 * cg[key]
+            axes[0].plot([dx], [yv], marker='v', ms=11, color=col, ls='none',
+                         markeredgecolor='white', markeredgewidth=0.9, zorder=6)
+            axes[0].annotate(f'{yv:+.1f}', xy=(dx, yv), xytext=(0, -14),
+                             textcoords='offset points', ha='center',
+                             fontsize=8.5, color=col, fontweight='bold')
+        axes[0].plot([], [], marker='v', ms=9, color='0.35', ls='none',
+                     label='initial old, at cohort 0')
+        # ROOM BELOW ZERO for the markers and their labels, so nothing is
+        # clipped by the axis the way the single marker used to be.
+        _lo = min(100 * cg['cev_tf'], 100 * cg['cev_hf'], 0.0)
+        _hi = max(100 * r[1] for lab in paths for r in paths[lab][:show + 1])
+        axes[0].set_ylim(_lo - max(1.0, 0.10 * (_hi - _lo)), _hi * 1.10)
+        axes[0].set_xlim(-0.45, show + 0.35)
     # ONE LEGEND, UNDER THE FIGURE. It used to sit inside panel (a) at centre
     # right, unframed, which put it on top of the Housing First line: the dashed
     # series ran straight through the labels and neither could be read. There is
@@ -509,6 +611,10 @@ def numbers(paths, par=None, cg=None):
     if cg is not None:
         d['tr_caught'] = f'{100*cg["cev"]:.1f}'
         d['tr_caught_hl'] = f'{100*cg["hl_tf"]:.2f}'
+        # EACH POLICY AGAINST THE PRE REFORM WORLD, so the prose can quote the
+        # initial old on the same axis the figure now draws them on.
+        d['tr_caught_tf'] = f'{100*cg["cev_tf"]:+.1f}'
+        d['tr_caught_hf'] = f'{100*cg["cev_hf"]:+.1f}'
         # HOW MUCH WORSE THE CAUGHT GENERATION HAS IT than the cohort born at
         # the switch. The text called this "two orders of magnitude", which was
         # true of one run and is not a thing to leave typed.
