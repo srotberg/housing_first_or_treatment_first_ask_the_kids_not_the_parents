@@ -40,7 +40,7 @@
 \makeatletter
 \newlength{\cw@len}
 \newcommand{\cw}[1]{\settowidth{\cw@len}{#1}%
-  \rlap{\rule[0.55ex]{\cw@len}{0.4pt}}\hspace{0pt}#1}
+  \rlap{\rule[0.55ex]{\cw@len}{0.4pt}}#1}
 \newcommand{\cut}[1]{\cut@scan#1 \@nil}
 \def\cut@scan#1 #2\@nil{\cw{#1}\ifx\relax#2\relax\else\space\cut@scan#2\@nil\fi}
 \makeatother
@@ -1306,7 +1306,7 @@ the same SUD hazard, $\psi$ and $\bar y$ the same replacement rate and
 earnings base cap, $r$ the same risk-free rate, and $\beta$ is the discount
 factor.
 
-\subsection{\new{Demographics and the state and choice sets}}
+\subsection{Demographics and the state and choice sets}
 
 Households enter as adults, live at most $J$ annual periods and retire at
 $J_R$, and $j$ indexes age within that span. Survival from $j$ to $j+1$ is
@@ -1431,11 +1431,11 @@ The drug price is $p_v$ and market rent is $p_r$, both as in
 Section~\ref{sec:support}. Note what is absent:
 treatment, which costs utility, and bequests from deceased households, which go to the government.
 How $c$, $h$, $v$ and $n$ are chosen out of it is with the rest of the
-optimisation, in Section~\ref{sec:fproblem}. \new{Rents are normalised to one and held fixed across every simulation.}
+optimisation, in Section~\ref{sec:fproblem}. Rents are normalised to one and held fixed across every simulation.
 
 \subsection{Housing and the homelessness loop}
 
-Housing is \new{the four point grid shown in~\eqref{eq:fchoice}}. $h_1$ is literal homelessness, sleeping rough or in
+Housing is the four point grid shown in~\eqref{eq:fchoice}. $h_1$ is literal homelessness, sleeping rough or in
 an emergency shelter. The three rental
 sizes are pinned at both ends and spaced by a curvature between them,
 \begin{equation}\label{eq:fhouse}
@@ -1453,7 +1453,7 @@ hazard~\eqref{eq:frecover}, through $\kappa_{\phi H}(j)$ and $\kappa_{ueH}$
 in Section~\ref{sec:fcosts} and $\mu_H$ in Section~\ref{sec:fdrug}. It raises
 mortality, worsens both employment margins and lowers the chance of
 recovering from the SUD. SMI is the one thing it does not reach.
-The SMI chain runs on its own, \new{with} the reason given in Section~\ref{sec:fsmi}.
+The SMI chain runs on its own, with the reason given in Section~\ref{sec:fsmi}.
 
 \subsection{Drug use, the SUD, recovery and treatment}\label{sec:fdrug}
 
@@ -1559,7 +1559,7 @@ best available trial looked for and did not find.
 \kappa_{\phi m}^{\mathbf{1}\{m=1\}}\Big\},
 \end{equation}
 with $\bar\phi(j)$ the baseline survival age profile and
-$\kappa_{\phi H}(j)$ and $\kappa_{\phi d}(j)$ two \new{age-varying} multipliers,
+$\kappa_{\phi H}(j)$ and $\kappa_{\phi d}(j)$ two age-varying multipliers,
 and $\kappa_{\phi m}$ one that is not,
 raising the death hazard for homelessness, the SUD and SMI
 respectively. The SUD multiplier is switched off in a period the
@@ -1568,11 +1568,11 @@ as an argument at all. The excess mortality of the disorder is
 overwhelmingly a mortality of use, poisoning above all, and treatment forbids use
 in the period it is taken, so a household that is not using does not carry it.
 I make this assumption because that is what the cause-specific evidence
-shows.\new{\footnote{In the data, the meta-analyses of mortality among people using extramedical opioids report
+shows.\footnote{In the data, the meta-analyses of mortality among people using extramedical opioids report
 overdose as the largest single contributor to the excess (Larney et al., 2020;
 Degenhardt et al., 2011), and in the Centers for Disease Control and Prevention (CDC) WONDER database drug poisoning alone accounts for about
 a fifth of all deaths at ages 25 to 44, which is the moment
-Section~\ref{sec:fvalid} reports the model against.}}
+Section~\ref{sec:fvalid} reports the model against.}
 $\bar\phi(j)$ is the SSA period life table for ages 26 to 85, with the sexes
 combined by survivor weight, $q=[l^Mq^M+l^Fq^F]/[l^M+l^F]$.
 
@@ -1589,12 +1589,12 @@ what housing does.
 
 Three things are observed and two are solved for. Observed: $RR(j)$,
 Baggett's ratio; $\sigma_d(j)$, the shape of the SUD's mortality effect over age;
-and $s$, \new{the share of the homeless with a SUD}. Solved for: $\kappa_{\phi d}(j)$ and
+and $s$, the share of the homeless with a SUD. Solved for: $\kappa_{\phi d}(j)$ and
 $\kappa_{\phi H}(j)$, one age profile from each equation. Picking the single
-number $\bar\kappa_{\phi d}$\new{, the level of the SUD's own mortality multiplier at the age where
-its effect peaks,} settles both: the first equation turns it into
+number $\bar\kappa_{\phi d}$, the level of the SUD's own mortality multiplier at the age where
+its effect peaks, settles both: the first equation turns it into
 $\kappa_{\phi d}(j)$ at every age, and the second then reads
-$\kappa_{\phi H}(j)$ off \new{$\kappa_{\phi d}(j)$ and} Baggett's ratio at every age.
+$\kappa_{\phi H}(j)$ off $\kappa_{\phi d}(j)$ and Baggett's ratio at every age.
 
 Undoing the mixture needs the SUD's own multiplier at each age. That is what
 $\sigma_d(j)$ supplies: the age profile of drug poisoning deaths from CDC WONDER 2023,
@@ -1618,9 +1618,9 @@ between $6$ and $10$ (Degenhardt et al., 2011; Hser et al., 2017; Larney et al.,
 
 $\kappa_{\phi m}$ carries no age argument because the data give it basically
 none. Olfson et al.\ (2015) give all-cause standardised mortality ratios for schizophrenia of $3.6$, $3.4$ and $4.0$
-across ages 20 to 34, 35 to 54 and 55 to 64. \new{Basically flat}.
+across ages 20 to 34, 35 to 54 and 55 to 64. Basically flat.
 
-\paragraph{Unemployment risk.} Job finding and separation \new{probabilities} are
+\paragraph{Unemployment risk.} Job finding and separation probabilities are
 \begin{equation}\label{eq:femp}
 \pi^{ue}=\min\Big\{1,\ \bar\pi^{ue}\,\kappa_{ueH}^{\mathbf{1}\{h'=h_1\}}
 \kappa_{ued}^{\mathbf{1}\{d=1\}}\kappa_{uem}^{\mathbf{1}\{m=1\}}\Big\},
@@ -1629,25 +1629,26 @@ across ages 20 to 34, 35 to 54 and 55 to 64. \new{Basically flat}.
 \kappa_{ued}^{-\mathbf{1}\{d=1\}}\kappa_{uem}^{-\mathbf{1}\{m=1\}}\Big\},
 \end{equation}
 with $\bar\pi^{ue}$ and $\bar\pi^{eu}$ the baseline job finding and
-separation rates\new{, respectively,} and $\kappa_{ueH}$, $\kappa_{ued}$ and $\kappa_{uem}$ the
-multipliers for homelessness, the SUD and SMI\new{, respectively}, so each multiplier
-below one makes \new{a job likelier to lose and regaining one less likely}.
+separation rates, respectively, and $\kappa_{ueH}$, $\kappa_{ued}$ and $\kappa_{uem}$ the
+multipliers for homelessness, the SUD and SMI, respectively, so each multiplier
+below one makes a job likelier to lose and regaining one less likely.
 
-\paragraph{The child's \new{productivity penalty}.}
+\paragraph{The child's productivity penalty.}
 A parent with a SUD, or one who ends up on the street, lowers the
 productivity ($y_{\text{child}}$) its
 child is born with, through $\delta_d$ and $\delta_h$ respectively, as shown
-in~\eqref{eq:fnewborn} in Section~\ref{sec:fnewbornsec}\new{: $\delta_d$ is the
-proportional cut to the child's productivity draw when the parent carries the SUD,
-and $\delta_h$ the cut when the parent is homeless}. That is a risk to the
+in~\eqref{eq:fnewborn} in Section~\ref{sec:fnewbornsec}: $\delta_d$ is the
+proportional cut to the child's productivity draw when the parent carries the
+\new{SUD at the time of death}, and $\delta_h$ the cut when the parent is
+\new{homeless at the time of death}. That is a risk to the
 household's own objective only
 to the extent that $\omega$, the weight the parent places on its child's
-lifetime utility in~\eqref{eq:fbellman}, is positive. \new{It is therefore the one risk here that
-\new{carries}} an externality rather than a pure personal cost, which is what makes it a
+lifetime utility in~\eqref{eq:fbellman}, is positive. It is therefore the one risk here that
+carries an externality rather than a pure personal cost, which is what makes it a
 candidate for policy in a way that mortality and unemployment risk, both fully
-internalised, \new{do not}.
+internalised, do not.
 
-\subsection{The voucher, and the two policies}\label{sec:fvoucher}
+\subsection{\new{The voucher and the two policies}}\label{sec:fvoucher}
 
 A household without a voucher draws one with probability $\pi_V$, the same
 lottery probability as in Section~\ref{sec:support}, if it is income
@@ -1662,7 +1663,7 @@ median gross income $y^{\text{med}}$.
 Under Housing First that is the whole rule. Under Treatment First the voucher is
 additionally lost with probability $p_{\text{det}}$ by a household that uses
 drugs or has a SUD, and
-with probability $p_{\text{fp}}$ by one that did not,
+with probability $p_{\text{fp}}$ by one \new{who does not},
 \begin{equation}\label{eq:fpol}
 \Pr(\eta'=1)=\Pr(\eta'=1)^{\text{HF}}\times
 \begin{cases}
@@ -1670,7 +1671,7 @@ with probability $p_{\text{fp}}$ by one that did not,
 1-p_{\text{det}} & \text{otherwise} .
 \end{cases}
 \end{equation}
-There are four cases and the rule covers them. A clean household that does
+There are four cases and the rule covers \new{all of them}. A clean household that does
 not use meets the condition and faces only the false positive rate $p_{\text{fp}}$.
 A clean household that uses fails it and faces $p_{\text{det}}$. A household
 carrying the disorder that does not take treatment fails it and faces
@@ -1680,13 +1681,12 @@ Section~\ref{sec:fdrug}, so it meets the condition and faces $p_{\text{fp}}$.
 There is no fifth case: treatment is available only when $d=1$, and it forbids
 use, so no household is ever both in treatment and using.
 
-This is the one place where the quantitative model changes the \emph{logic} of
-Section~\ref{sec:mh} rather than its setting. There, conditionality is perfectly
+\new{This means that in contrast to Section~\ref{sec:mh}, enforcement here is not
+perfect both ways}. There, conditionality is perfectly
 enforced: a household that fails the condition always loses the voucher, and one
-that meets it never does. Treatment First deters everyone, so nobody is ever thrown off the rolls. Here detection is imperfect and so are households: some fail
-the condition because they cannot get clean, and some fail it because the test is
-wrong. Those two groups are the empirical case for Housing First, neither exists
-in the stylized model, and that is why its welfare numbers were illustration.
+that meets it never does. Treatment First deters everyone, so nobody is ever thrown off the rolls. Here detection is imperfect: some fail
+the condition \new{even when they are clean (a false positive), and some pass even
+though they are using (a false negative)}.
 
 \subsection{The shocks, collected}\label{sec:fshocks}
 
@@ -1696,11 +1696,11 @@ independent transitions. Collecting them in one place:
 \paragraph{Productivity $y$.} Fixed over the life cycle, so $y'=y$.
 I do this for two reasons. First, it is what keeps the child's
 penalty~\eqref{eq:fnewborn} a shift
-along a single scalar rather than a shift across the nodes of an \new{age-varying}
+along a single scalar rather than a shift across the nodes of an age-varying
 discretisation, which significantly reduces the computation time to
 manageable levels. Second, it still captures the key mechanisms, because
-unemployment and the penalty $\rho_d$ are the income risks that link the SUD to
-housing, and those are retained in full.
+unemployment and the penalty $\rho_d$ are the income risks that link \new{income to
+the SUD and the SUD to income}, and those are retained in full.
 
 \paragraph{Employment $e$.} A household that loses their job receives insurance
 with certainty for one year. With $\pi^{ue}$ and $\pi^{eu}$
@@ -1720,8 +1720,9 @@ e'=3 & \text{w.p. } 1-\pi^{ue},
 \end{equation}
 State $2$ is reachable only from employment and never from itself, so a
 household is in it for the
-first year out of work and in state $3$, which pays nothing, from the second year
-on. One year is if anything generous: most states pay for twenty six weeks.
+first year out of work and \new{then moves to} state $3$, which pays nothing, from
+the second year
+on. One year is if anything generous: most states pay for twenty six \new{weeks only}.
 
 \paragraph{The SUD $d$.} By~\eqref{eq:fd} if $d=0$ and~\eqref{eq:frecover}
 if $d=1$, conditioning on the chosen $v$, $h'$ and $\tau$.
