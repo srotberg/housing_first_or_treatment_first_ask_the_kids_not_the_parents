@@ -1023,6 +1023,9 @@
         
         real(8) :: distance_relative_share_of_leisure
         real(8) :: relative_share_of_leisure_adjuster=5*10.d0**(-1)
+        real(8), parameter :: relative_share_of_leisure_adjuster_start=5*10.d0**(-1)
+        real(8) :: previous_gap_relative_share_of_leisure=0
+        integer :: have_gap_relative_share_of_leisure=0
         real(8) :: stopping_rule_relative_share_of_leisure=10.d0**(-3)
         
         real(8) :: relative_share_of_addiction=0.13
@@ -27946,6 +27949,9 @@
             write(71,'(F30.15)') lambda_clamp
             write(71,'(F30.15)') previous_gap_lambda_addiction
             write(71,'(I10)') have_gap_lambda_addiction
+            write(71,'(F30.15)') relative_share_of_leisure_adjuster
+            write(71,'(F30.15)') previous_gap_relative_share_of_leisure
+            write(71,'(I10)') have_gap_relative_share_of_leisure
 
         close(71)
 
@@ -28202,6 +28208,24 @@
             if (state_ios_1==0) then
 
                 read(72,'(I10)',iostat=state_ios_1) have_gap_lambda_addiction
+
+            end if
+
+            if (state_ios_1==0) then
+
+                read(72,'(F30.15)',iostat=state_ios_1) relative_share_of_leisure_adjuster
+
+            end if
+
+            if (state_ios_1==0) then
+
+                read(72,'(F30.15)',iostat=state_ios_1) previous_gap_relative_share_of_leisure
+
+            end if
+
+            if (state_ios_1==0) then
+
+                read(72,'(I10)',iostat=state_ios_1) have_gap_relative_share_of_leisure
 
             end if
 
@@ -29206,9 +29230,37 @@
                                         
                     write(*,*) "relative_share_of_housing=", relative_share_of_housing 
                                     
+                    ! MULTIPLICATIVE, BECAUSE THE PARAMETER AND ITS MOMENT ARE NOT ON
+                    ! THE SAME SCALE. The moment is a share of hours, bounded in
+                    ! [0,1], so the gap can never exceed 0.4 in magnitude, while
+                    ! the weight sits around 6.5. An additive step of
+                    ! adjuster times gap is therefore at most 0.2 on a parameter
+                    ! of 6.5, about three per cent a loop, and it does not care
+                    ! how far away the moment is.
+                    !
+                    ! Measured: 6.786, 6.598, 6.411, falling 0.19 a loop while
+                    ! labour supply sat at 0.025 against a target of 0.4. Not
+                    ! stuck, and not a corner either — only two per cent of
+                    ! households choose zero hours, so there is no grid to blame.
+                    ! Just a rule that would need about thirty more loops, six
+                    ! hours of wall clock, to cover ground a proportional step
+                    ! covers in four.
+                    !
+                    ! Normalising the gap by the target makes the step
+                    ! proportional to the parameter, which is what a scale-free
+                    ! weight calls for, and the damping keeps it from ringing once
+                    ! it arrives. Direction is unchanged: a model below target
+                    ! still lowers the weight.
+                    call damp_on_flip(relative_share_of_leisure_adjuster,&
+                        model_labor_supply(1)/model_total_hours(1)-avg_labor_supply_data,&
+                        previous_gap_relative_share_of_leisure,have_gap_relative_share_of_leisure,&
+                        relative_share_of_leisure_adjuster_start,damp_adjuster_floor)
+                    write(*,*) "relative_share_of_leisure_adjuster=", relative_share_of_leisure_adjuster
                     relative_share_of_leisure=&
-                        min(max(relative_share_of_leisure+relative_share_of_leisure_adjuster*&
-                        (model_labor_supply(1)/model_total_hours(1)-avg_labor_supply_data),0.01),1000.d0) 
+                        min(max(relative_share_of_leisure*&
+                        (1+relative_share_of_leisure_adjuster*&
+                        (model_labor_supply(1)/model_total_hours(1)-avg_labor_supply_data)/&
+                        max(avg_labor_supply_data,10.d0**(-12))),0.01),1000.d0) 
                                                                  
                     distance_relative_share_of_leisure=&
                         abs(model_labor_supply(1)/model_total_hours(1)-avg_labor_supply_data)
