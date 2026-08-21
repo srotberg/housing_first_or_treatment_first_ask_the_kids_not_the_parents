@@ -353,7 +353,7 @@ def tab_children(par, pV=1.0):
          r'\multicolumn{5}{@{}l}{\emph{Panel A. Transmission: what each income '
          r'penalty implies}} \\',
          r"$\delta_d$ & & Child's SUD rate & Ratio & "
-         r'Consumption equivalent \\', r'\midrule']
+         r'CEV \\', r'\midrule']
     R = lambda x: x
     for d, sud, ratio, loss in rows:
         lab = f'{d:.2f}' + (r'\ \ (calibrated)' if abs(d - DEL_D) < 1e-9 else '')
@@ -365,7 +365,7 @@ def tab_children(par, pV=1.0):
           f'\\quad Private cost of conditionality & & & & '
           f'{R(f"{100*priv:.3f}")}\\% \\\\',
           f'\\quad Disorder cases prevented & & & & {R(f"{100*dsud:.3f}")} pp \\\\',
-          f'\\quad Consumption equivalent to the child, one case & & & & '
+          f'\\quad CEV to the child, one case & & & & '
           # ONE DECIMAL, so the panel's arithmetic can be checked from the
           # panel. At a whole percent the row read 9.209 points at 197 per
           # cent each, which multiplies to 18.14 against a printed gain of

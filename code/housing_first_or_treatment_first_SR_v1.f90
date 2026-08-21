@@ -29944,8 +29944,36 @@
             write(*,*) "model_total_net_wealth/model_GDP_incl_imput_rent=", &
                 model_total_net_wealth(1)/model_GDP_incl_imput_rent(1)
             write(*,*) "model_fraction_of_homeowners_with_mortgage=", model_fraction_of_homeowners_with_mortgage(1)
+            ! THE DELTA_D DIAGNOSTIC, and it is on because delta_d is pinned.
+            !
+            ! The child SUD ratio is a weighted average of
+            ! percent_addicted_by_employment under two newborn distributions,
+            ! one shifted down by the penalty and one not. It can therefore only
+            ! move as far as THAT PROFILE IS STEEP: if the disorder rate is flat
+            ! across productivity, no shift of the distribution changes the
+            ! average and delta_d runs to its bound producing a ratio near one,
+            ! which is what it does. Printing the profile beside the two
+            ! distributions and the ratio they imply says which it is.
+            write(*,*) "=== delta_d diagnostic ==="
+            write(*,*) "percent_addicted_by_employment=", percent_addicted_by_employment(1,:)
+            write(*,*) "newborn prob, clean parent   =", newborn_employment_probability(:,0,1)
+            write(*,*) "newborn prob, disordered     =", newborn_employment_probability(:,1,1)
+            write(*,*) "employment_grid               =", employment_grid(1,:)
+            write(*,*) "penalty_child_addicted=", penalty_child_addicted
+            child_sud_num_1=0
+            child_sud_den_1=0
+            do child_node_index_1=1,employment_grid_size
+                child_sud_num_1=child_sud_num_1+&
+                    newborn_employment_probability(child_node_index_1,1,1)*&
+                    percent_addicted_by_employment(1,child_node_index_1)
+                child_sud_den_1=child_sud_den_1+&
+                    newborn_employment_probability(child_node_index_1,0,1)*&
+                    percent_addicted_by_employment(1,child_node_index_1)
+            end do
+            write(*,*) "child SUD ratio implied=", child_sud_num_1/max(child_sud_den_1,10.d0**(-12)),&
+                " against target", child_sud_ratio_data
+            write(*,*) "=== end delta_d diagnostic ==="
 !            write(*,*) "model_addiction_by_employment=", model_addiction_by_employment(:)
-!            write(*,*) "percent_addicted_by_employment=", percent_addicted_by_employment(1,:)
                         
             do i=1,include_addiction+1
                 write(*,*) "welfare_by_addiction,", welfare_by_addiction(1,i)
