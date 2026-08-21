@@ -1139,6 +1139,19 @@
         integer :: have_gap_addiction_scalar=0
         real(8) :: lambda_secant_slope_1=0
 
+        ! LAMBDA'S CLAMP IS A TRUST REGION AND HAS TO SHRINK LIKE ONE. The secant
+        ! is clipped to a factor of four either way, which stops a bad step but
+        ! does not stop a ringing one: the SUD rate went 0.0513 over target,
+        ! 0.0112 under, then 0.1824 over, five times the target, because each
+        ! secant step lands on the clamp and reverses. Halving the factor on a
+        ! sign flip makes it a bisection in the same way aleph's radius is, and
+        ! the floor keeps it a real step rather than a stall.
+        real(8) :: lambda_clamp=4
+        real(8), parameter :: lambda_clamp_start=4
+        real(8), parameter :: lambda_clamp_floor=1.05
+        real(8) :: gap_lambda_addiction_1=0,previous_gap_lambda_addiction=0
+        integer :: have_gap_lambda_addiction=0
+
         real(8) :: value_of_life_adjuster=1*10.d0**(1)
 
         ! ALEPH'S TRUST REGION HAS TO SHRINK OR IT IS A TWO CYCLE. The adjuster
@@ -27930,6 +27943,9 @@
             write(71,'(F30.15)') labor_income_tax_rate_adjuster
             write(71,'(F30.15)') previous_gap_labor_income_tax_rate
             write(71,'(I10)') have_gap_labor_income_tax_rate
+            write(71,'(F30.15)') lambda_clamp
+            write(71,'(F30.15)') previous_gap_lambda_addiction
+            write(71,'(I10)') have_gap_lambda_addiction
 
         close(71)
 
@@ -28168,6 +28184,24 @@
             if (state_ios_1==0) then
 
                 read(72,'(I10)',iostat=state_ios_1) have_gap_labor_income_tax_rate
+
+            end if
+
+            if (state_ios_1==0) then
+
+                read(72,'(F30.15)',iostat=state_ios_1) lambda_clamp
+
+            end if
+
+            if (state_ios_1==0) then
+
+                read(72,'(F30.15)',iostat=state_ios_1) previous_gap_lambda_addiction
+
+            end if
+
+            if (state_ios_1==0) then
+
+                read(72,'(I10)',iostat=state_ios_1) have_gap_lambda_addiction
 
             end if
 
@@ -29593,8 +29627,29 @@
 
                             end if
 
-                            onset_step_1=max(min(onset_step_1,4*onset_at_mean_1),&
-                                onset_at_mean_1/4)
+                            gap_lambda_addiction_1=model_fraction_addicted(1)-sud_rate_data
+
+                            if (have_gap_lambda_addiction==1) then
+
+                                if ((gap_lambda_addiction_1*previous_gap_lambda_addiction)<0) then
+
+                                    lambda_clamp=max(1+(lambda_clamp-1)*0.5d0,lambda_clamp_floor)
+
+                                else
+
+                                    lambda_clamp=min(1+(lambda_clamp-1)*1.2d0,lambda_clamp_start)
+
+                                end if
+
+                            end if
+
+                            previous_gap_lambda_addiction=gap_lambda_addiction_1
+                            have_gap_lambda_addiction=1
+
+                            write(*,*) "lambda_clamp=", lambda_clamp
+
+                            onset_step_1=max(min(onset_step_1,lambda_clamp*onset_at_mean_1),&
+                                onset_at_mean_1/lambda_clamp)
 
                             previous_onset_at_mean=onset_at_mean_1
                             previous_sud_rate=model_fraction_addicted(1)
