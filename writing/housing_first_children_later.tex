@@ -1402,7 +1402,7 @@ capital income at a flat rate $\tau_k$,
 \begin{equation}\label{eq:ftax}
 y^{n}=\tau_{\ell}\,(y^{g})^{\xi}\;+\;(1-\tau_k)\,r\,a ,
 \end{equation}
-with $y^{n}$ denoting after tax income, where $\xi$ governs progressivity
+with $y^{n}$ denoting \new{after-tax} income, where $\xi$ governs progressivity
 and $\tau_{\ell}$ the level. Households can
 receive two transfers, both means-tested on gross income as the programmes
 themselves are. Food assistance pays the maximum allotment $\underline c\,\bar y$, with $\underline c$ expressed
@@ -1631,7 +1631,7 @@ across ages 20 to 34, 35 to 54 and 55 to 64. Basically flat.
 with $\bar\pi^{ue}$ and $\bar\pi^{eu}$ the baseline job finding and
 separation rates, respectively, and $\kappa_{ueH}$, $\kappa_{ued}$ and $\kappa_{uem}$ the
 multipliers for homelessness, the SUD and SMI, respectively, so each multiplier
-\new{above} one makes a job likelier to lose and regaining one less likely.
+above one makes a job likelier to lose and regaining one less likely.
 
 \paragraph{The child's productivity penalty.}
 A parent with a SUD, or one who ends up on the street, lowers the
@@ -1753,30 +1753,36 @@ V(j,a,y,e,d,m,\eta)=\max_{\{n,\,h',\,v,\,\tau,\,a'\}}\ \Bigg\{\
 -\ \mathbb{E}\,V\big(1,0,y_{\text{base}},e',0,0,0\big)\Big]\Bigg\}
 \end{aligned}
 \end{equation}
-subject to the budget~\eqref{eq:fbudget}, the income
-definitions~\eqref{eq:fincome} to~\eqref{eq:ftrans}, the choice
-set of dwellings~\eqref{eq:fchoice}, $\tau=0$ whenever $d=0$, $n=0$
-whenever $j\ge J_R$ or
-$e\neq1$, $v=0$ whenever $\tau=1$, $a'\ge0$, $c\ge F$ so that the food stamp payment cannot be saved, since it is paid in kind, and $V(J{+}1,\cdot)=0$
-with $\phi(J)=0$, so that at the last age the
-child is the whole continuation. The integral runs over next period's
+\new{subject to the budget~\eqref{eq:fbudget}, the income
+definitions~\eqref{eq:fincome} to~\eqref{eq:ftrans}, and the choice
+set of dwellings~\eqref{eq:fchoice}.
+
+Four restrictions apply to the choices. Treatment is available only to a
+household that carries the disorder, $\tau=0$ whenever $d=0$, and it requires
+abstention, $v=0$ whenever $\tau=1$. Hours are zero for anyone not working,
+$n=0$ whenever $j\ge J_R$ or $e\neq1$. Borrowing is not allowed, $a'\ge0$, and
+$c\ge F$, so that the food stamp payment cannot be saved, since it is paid in
+kind.
+
+The terminal condition is $V(J{+}1,\cdot)=0$ with $\phi(J)=0$, so at the last
+age the child is the whole continuation.} The integral runs over next period's
 state $s'=(a',y,e',d',m',\eta')$; the second line of~\eqref{eq:fbellman} is the
 household's own continuation, and the third is the child's expected lifetime
 utility, entered at age one with zero assets and with its own employment status
 $e'$ drawn as any newborn's is.
 
-A
-household that does not survive from $j$ to $j+1$ leaves a child, so the
-continuation is the survival weighted value of its own next period plus the death
-weighted value of what the household's own state costs that child,
-each discounted, with $y_{\text{child}}$
-as defined in~\eqref{eq:fnewborn}. What that buys is a second route by
+\new{A household that does not survive from $j$ to $j+1$ leaves a child. The
+continuation is therefore two terms, each discounted: the survival-weighted
+value of the household's own next period, and the death-weighted value of what
+its own state costs that child, with $y_{\text{child}}$ as defined
+in~\eqref{eq:fnewborn}.} What that buys is a second route by
 which the household's own decisions, to use and to go unhoused, reach its child.
 $\phi(j,\cdot)$ itself depends on the dwelling chosen, so the housing
 decision moves the weight on the two terms directly. The drug does not move it
 within the period, because $\phi$ takes the disorder as a state and $v$ only raises
 the chance of carrying it \emph{next} period. The drug reaches the child through the
-continuation instead, which is where the first-order condition below picks it up.
+continuation instead, which is where the first-order
+condition~\new{\eqref{eq:ffoc}} picks it up.
 
 The third line is a \emph{difference} and not a level, and the
 distinction is not cosmetic. Written as a level, $\omega$ times the child's
@@ -1785,7 +1791,8 @@ because it is the death branch that carries it. A SUD raises the death hazard
 several fold, so a level would pay most to exactly the households the paper is
 about, and it would do so for reasons that have nothing to do with the child.
 
-Subtracting the value of a child born to a clean, housed parent removes that. The
+Subtracting the value of a child born to a parent who was clean and housed
+\new{when they died} removes that. The
 term is zero for a household in the reference state and negative otherwise, so
 what enters the decision is only the loss the parent's own state imposes on its
 child, weighted by the chance that child is born at all.
@@ -1799,24 +1806,18 @@ carried a SUD or was homeless, and both depend on $v$ and $h'$, the child
 term in~\eqref{eq:fbellman} is
 what puts the child inside the parent's drug and housing decision.
 
-What remains external is more than $1-\omega$ once one looks past the
-child. A child born with the penalty is likelier to develop a SUD and SMI, and be
-unhoused, when its own death draw arrives, so it is likelier to pass the penalty on,
-and the parent's decision could ripple through its entire lineage.
-Equation~\eqref{eq:fbellman} does price that chain, but geometrically: the child's
-value $V(1,\cdot)$ on the third line contains its own $\omega$ weighted child term, so
-generation $k$ enters the parent's problem at $\omega^k$, times the discounting and
-the death probabilities along the way, and $1-\omega^k$ of it stays outside. The
-penalty itself does not compound, since every newborn draws afresh from $\Omega_y$
-in~\eqref{eq:fnewborn} and takes at most one $\delta_d$ and one $\delta_h$; what
-compounds is the chance of taking it at all. So the object here is not a transfer from
-one parent to one child but a hazard running down a line of descendants.
-To save space, the rest of the paper does not restate that whole line
-every time the externality comes up, and speaks of the cost to the child instead. What
+\new{The chain down the lineage is priced geometrically: the child's value
+$V(1,\cdot)$ on the third line contains its own $\omega$-weighted child term, so
+generation $k$ enters the parent's problem at $\omega^k$ and $1-\omega^k$ of it
+stays outside.} What
 is meant throughout is the lineage.
 
 \paragraph{How the choices separate, and where they do not.}
-Taking hours, the dwelling and next
+\new{The problem looks like five choices at once, but most of it separates. Hours,
+the dwelling and saving can be taken as given while the drug and consumption are
+split out of what remains, and that split is where the whole of the model's
+substance sits: it is the one margin on which the household weighs a flow
+pleasure against a change in its own future state.} Taking hours, the dwelling and next
 period assets as given, what is left to divide
 between consumption and the drug is
 \begin{equation}\label{eq:fresource}
@@ -1824,7 +1825,7 @@ x\;=\;y^{n}+a\;-\;p_r\,h'\,\mathbf{1}\{h'\neq h_1\}\;+\;V\!ch+F\;-\;a' ,
 \end{equation}
 so the budget~\eqref{eq:fbudget} reads $c+p_v v=x$ and the whole of the
 remaining problem is one number: how to split $x$ between $c$ and $v$, since
-either one determines the other.
+either \new{determines} the other.
 
 Were the drug an ordinary good, one whose only consequence is the flow
 utility it delivers this period, that split would follow from flow utility
@@ -1851,14 +1852,12 @@ the marginal utility level matters here and not in an ordinary two good
 problem. That third term is the marginal hazard $\pi_d'(v)=\lambda e^{-\lambda
 v}$ times what the disorder costs, the gap between the two continuation values.
 That gap is where the externality on the child enters the drug decision,
-and it is why there is no fourth term. Each continuation value carries its own child
-term, at $d'=0$ and at $d'=1$, so the difference between them already contains the
-$\omega$ share of what the disorder costs the child alongside what it costs the
-household itself. A fourth term would be needed only if using raised the chance the
-child's term is realised within the period, and it does not: $\phi$ depends on the
-disorder as a state, not on how much is bought today.
-This is Section~\ref{sec:stylized}'s mechanism inside the quantitative model:
-because $\pi_d$ rises in $v$, how much to use is not decided on the budget alone.
+and it is why there is no fourth term.\footnote{\new{Each continuation value carries
+its own child term, at $d'=0$ and at $d'=1$, so the difference between them already
+contains the $\omega$ share of what the disorder costs the child alongside what it
+costs the household itself. A fourth term would be needed only if using raised the
+chance the child's term is realised within the period, and it does not: $\phi$
+depends on the disorder as a state, not on how much is bought today.}}
 
 There are two cases in which the third term is zero, and in both the
 household faces no such trade-off: one
@@ -1871,7 +1870,7 @@ c=\max\Big\{F,\ \frac{1-\gamma-\theta}{1-\gamma}\big(x+p_v b\big)\Big\},
 v=\max\Big\{0,\ \frac{x-c}{p_v}\Big\},
 \end{equation}
 whose corner is the abstention decision: a household buys nothing when the
-Stone-Geary endowment already exceeds what it wants, which is how a large $b$
+Stone-Geary endowment already exceeds what it wants, which is how \new{$b>0$}
 deters use and is the threshold of Section~\ref{sec:problem}. The outer
 maximum on $c$ is the food stamp payment $F$. Where it binds the Cobb-Douglas split no
 longer describes the allocation: consumption is held at $F$ and the drug takes
@@ -1886,14 +1885,17 @@ u_c(c)\,\frac{\partial x}{\partial n}\;=\;\omega_{\ell}(1-n)^{-\sigma_{\ell}} ,
 \end{equation}
 and the clawbacks in~\eqref{eq:ftrans}, at the statutory rate $\varrho$ for food stamps and
 $\kappa_r$ for the voucher, make $\partial x/\partial n$ jump \emph{up} at the
-hours where each transfer runs out, because the clawback stops. That is the
-welfare trap, and it is the channel through which conditionality changes labour
-supply rather than only consumption.
+hours where each transfer runs out, because the clawback stops\new{: an extra hour
+is worth more once the transfer is gone, so the household works more and takes
+less leisure}. That is the
+welfare trap. \new{It is the transfers that create it, and both policies pay
+them; conditionality reaches labour supply only through \emph{who holds a
+voucher}, since a household that loses one no longer faces its clawback.}
 
 \subsection{The government}
 
 The government pays social security, unemployment insurance,
-disability, food stamps and
+\new{disability insurance}, food stamps and
 vouchers, and supplies a public good $\bar G$ that does
 not enter private consumption and is held fixed across simulations, so that
 policies are compared at a constant level of it. It finances this with the two
@@ -1907,27 +1909,26 @@ budget in every simulation,
 \underbrace{SS+UI+DI+F+V\!ch+\bar G}_{\text{outlay}} .
 \end{equation}
 
-In the stylized model the two policies
-happen to cost very nearly the same and the comparison
-is unaffected. Here a policy that houses more households spends more,
-$\tau_{\ell}$ rises to pay for it, and the higher tax lowers the after tax
+\new{Here a policy} that houses more households spends more,
+$\tau_{\ell}$ rises to pay for it, and the higher tax lowers the \new{after-tax}
 return to an extra hour: it enters~\eqref{eq:ffoc} through
-$\partial x/\partial n$, which is net of the tax schedule
+$\partial x/\partial n$, which is \new{net-of-tax} as
 in~\eqref{eq:ftax}, so hours fall and saving with them, for everyone,
 including the households the programme never reaches,
 and it runs against Housing First.
 
 \subsection{The drug market}
 
-Drug production has cost $C(S_v)=\frac{\nu_1}{\nu_2}S_v^{\nu_2}$, where
+Drug production has \new{convex} cost $C(S_v)=\frac{\nu_1}{\nu_2}S_v^{\nu_2}$, where
 $S_v$ is the aggregate quantity. Supply satisfies
 \begin{equation}\label{eq:fdrug}
 p_v=\nu_1 S_v^{\nu_2-1},
 \qquad S_v=\int v(s)\,\mathrm{d}\Phi(s),
 \end{equation}
-with price elasticity of supply $1/(\nu_2-1)$ and $\nu_1$ normalised so
-that the quantity supplied equals the quantity demanded at the benchmark
-price, which is normalised to one. The supply elasticity, its range
+\new{so that $1/(\nu_2-1)$ is the price elasticity of supply. It is $\nu_1$ that is
+normalised, and it is set so that the quantity supplied equals the quantity
+demanded at the benchmark price of one. The price itself is not fixed: it changes
+across simulations to clear the drug market.} The supply elasticity, its range
 and the evidence behind them are set in Section~\ref{sec:fullcal}.
 
 \subsection{The law of motion and newborns}\label{sec:fnewbornsec}
@@ -1952,8 +1953,8 @@ together conserve the population.
 
 Here $\phi(j,\cdot)$ is evaluated at the household's own $(h'(j,s),d,m)$. The mass that
 does not survive, plus the mass at $j=J$, is replaced by newborns at $j=1$ with
-zero assets, clean and without a voucher, \new{carrying SMI with the prevalence
-observed at age one rather than none of it}, and subject to the
+zero assets, clean and without a voucher, carrying SMI with the prevalence
+observed at age one rather than none of it, and subject to the
 same unemployment shocks as anyone else, whose
 productivity is drawn from the unconditional distribution $\Omega_y$ of
 permanent productivity across households scaled by the
