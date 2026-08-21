@@ -1137,6 +1137,34 @@
         real(8) :: lambda_secant_slope_1=0
 
         real(8) :: value_of_life_adjuster=1*10.d0**(1)
+
+        ! ALEPH'S TRUST REGION HAS TO SHRINK OR IT IS A TWO CYCLE. The adjuster
+        ! is ten and the gap is tens, so the step is hundreds and ALWAYS lands on
+        ! the clamp. A fixed clamp then means the rule is not "step by the gap",
+        ! it is "multiply by 1.5 or by 0.5", and the sign alternates every loop
+        ! because each move overshoots. Measured over five loops: 16.5, 24.75,
+        ! 12.375, 18.5625, 9.28125 — ratios of exactly 1.5, 0.5, 1.5, 0.5, with a
+        ! net drift down of a quarter every two loops toward the floor.
+        !
+        ! It costs more than aleph. size_homelessness discards its bracket
+        ! whenever the value of life moves more than
+        ! bracket_value_of_life_tolerance, because endpoints priced at different
+        ! values of life are not a bracket, and aleph moving fifty per cent every
+        ! loop discards it every loop. Homelessness slammed 0.041, 0, 0.0798 with
+        ! no bracket ever surviving to bisect on.
+        !
+        ! Halving the RADIUS on a sign flip turns the same rule into a
+        ! multiplicative bisection: 1.5 and 0.5 become 1.25 and 0.8, then 1.125
+        ! and 0.889, and aleph pins down geometrically instead of ringing.
+        ! Growing it back when the sign holds keeps it from creeping once the
+        ! ringing has stopped. Same idiom as b's and delta_d's.
+        real(8) :: value_of_life_trust=0.5
+        real(8), parameter :: value_of_life_trust_start=0.5
+        real(8), parameter :: value_of_life_trust_damping=0.5
+        real(8), parameter :: value_of_life_trust_growth=1.2
+        real(8), parameter :: value_of_life_trust_floor=10.d0**(-3)
+        real(8) :: gap_value_of_life_1=0,previous_gap_value_of_life=0
+        integer :: have_gap_value_of_life=0
         real(8) :: distance_value_of_life
         real(8) :: stopping_rule_value_of_life=10.d0**(-2)
 
@@ -27802,6 +27830,9 @@
             write(71,'(F30.15)') size_homelessness_hi
             write(71,'(F30.15)') size_homelessness_lo_moment
             write(71,'(F30.15)') size_homelessness_hi_moment
+            write(71,'(F30.15)') value_of_life_trust
+            write(71,'(F30.15)') previous_gap_value_of_life
+            write(71,'(I10)') have_gap_value_of_life
 
         close(71)
 
@@ -27821,6 +27852,7 @@
 
         logical :: state_exists_1
         character(len=40) :: state_tag_1
+        integer :: state_ios_1
 
         inquire(file="calibration_state.dat",exist=state_exists_1)
 
@@ -27913,6 +27945,35 @@
             read(72,'(F30.15)') size_homelessness_hi
             read(72,'(F30.15)') size_homelessness_lo_moment
             read(72,'(F30.15)') size_homelessness_hi_moment
+
+            ! READ TOLERANTLY FROM HERE ON, so a state file written before these
+            ! fields existed still resumes instead of being thrown away. A short
+            ! file leaves them at their declared values, which is what a fresh
+            ! start would use anyway, and the alternative is a version bump that
+            ! discards every loop already paid for.
+            read(72,'(F30.15)',iostat=state_ios_1) value_of_life_trust
+
+            if (state_ios_1==0) then
+
+                read(72,'(F30.15)',iostat=state_ios_1) previous_gap_value_of_life
+
+            end if
+
+            if (state_ios_1==0) then
+
+                read(72,'(I10)',iostat=state_ios_1) have_gap_value_of_life
+
+            end if
+
+            if (state_ios_1/=0) then
+
+                write(*,*) "calibration_state.dat predates the value of life trust region;",&
+                    " it starts at", value_of_life_trust_start
+                value_of_life_trust=value_of_life_trust_start
+                previous_gap_value_of_life=0
+                have_gap_value_of_life=0
+
+            end if
 
         close(72)
 
@@ -29806,10 +29867,34 @@
                         ! moves it by 885 and any starting value below that lands on a
                         ! clamp. Halving or one and a half times per iteration is
                         ! still fast and cannot overshoot into a bound.
+                        gap_value_of_life_1=model_vsl_ratio_1-vsl_data
+
+                        if (have_gap_value_of_life==1) then
+
+                            if ((gap_value_of_life_1*previous_gap_value_of_life)<0) then
+
+                                value_of_life_trust=max(value_of_life_trust*&
+                                    value_of_life_trust_damping,value_of_life_trust_floor)
+
+                            else
+
+                                value_of_life_trust=min(value_of_life_trust*&
+                                    value_of_life_trust_growth,value_of_life_trust_start)
+
+                            end if
+
+                        end if
+
+                        previous_gap_value_of_life=gap_value_of_life_1
+                        have_gap_value_of_life=1
+
+                        write(*,*) "value_of_life_trust=", value_of_life_trust
+
                         value_of_life_step_1=value_of_life-value_of_life_adjuster*&
-                            (model_vsl_ratio_1-vsl_data)
+                            gap_value_of_life_1
                         value_of_life_step_1=max(min(value_of_life_step_1,&
-                            1.5d0*value_of_life),0.5d0*value_of_life)
+                            (1+value_of_life_trust)*value_of_life),&
+                            value_of_life/(1+value_of_life_trust))
                         value_of_life=max(min(value_of_life_step_1,10.d0**(4)),10.d0**(-2))
                         distance_value_of_life=abs(model_vsl_ratio_1-vsl_data)
 
