@@ -1990,7 +1990,7 @@ A competitive equilibrium is a collection of
 $\big\{\{n_t(j,\cdot),\,h'_t(j,\cdot),\,v_t(j,\cdot),\,\tau_t(j,\cdot),\,a'_t(j,\cdot)\}_{j=1}^{J}\big\}_{t=0}^{\infty}$;
 \item distributions $\big\{\{\Phi_t(j,\cdot)\}_{j=1}^{J}\big\}_{t=0}^{\infty}$; and
 \item prices, policies and aggregates
-$\big\{\tau_{\ell t},\,p_{vt},\,\new{y^{\text{med}}_t},\,H_t\big\}_{t=0}^{\infty}$,
+$\big\{\tau_{\ell t},\,p_{vt},\,\bar y_t,\,y^{\text{med}}_t,\,H_t\big\}_{t=0}^{\infty}$,
 \end{itemize}
 such that, at every date $t$,
 
@@ -2003,9 +2003,23 @@ together with the newborn rule~\eqref{eq:fnewborn} and~\eqref{eq:flomnew};
 \item the drug market clears at $p_{vt}$, so~\eqref{eq:fdrug} holds with
 aggregate drug demand $S_{vt}=\int v_t(s)\,\mathrm{d}\Phi_t$;
 \item the public good is supplied at its assigned level, $G_t=\bar G$;
-\item \new{median gross income $y^{\text{med}}_t$} and the homelessness
+\item $\bar y_t$, median gross income $y^{\text{med}}_t$ and the homelessness
 rate $H_t$ are the aggregates implied by $\Phi_t$.
 \end{enumerate}
+
+\new{Two of those aggregates are held fixed across the policy simulations, as
+$\bar G$ is: the earnings base cap $\bar y$ and median gross income
+$y^{\text{med}}$. They are equilibrium objects in the benchmark, where they
+follow from $\Phi$ as stated, and they are then frozen at those benchmark
+values. The reason is that they are not prices but \emph{programme parameters}:
+$\bar y$ caps the unemployment insurance base and scales the food stamp
+allotment, and $y^{\text{med}}$ sets the voucher eligibility cutoff
+in~\eqref{eq:felig}. Letting them float would mean that a policy which changes
+the income distribution also silently rewrites the eligibility rules of every
+programme it is being compared against, so a difference between two policies
+would mix what the policy does with what it did to its own means test. The
+homelessness rate $H_t$ is not frozen, since it is a genuine aggregate the
+disamenity prices rather than a rule any programme is written in terms of.}
 
 A stationary equilibrium is the special case in which all of these are
 constant and $\Phi_{t+1}=\Phi_t$, which is what the calibration and the
