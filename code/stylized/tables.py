@@ -70,6 +70,17 @@ EXTERNAL = [
         # calibrated parameter and its row is in Table 2 with the others. The
         # quarter is gone with it: the ratio the calibration picks is whatever
         # reproduces the size distribution, not a number chosen in advance.
+        # THETA IS SET AGAIN, and the round trip is worth recording. It was set,
+        # then bracketed on a 20 per cent drug spending share once that target
+        # was corrected down from 35, then set again when the share turned out
+        # to be discontinuous in theta -- it climbs to about 18.9 per cent and
+        # jumps to 29, so 20 is in the gap and a bisection aimed there narrows
+        # onto the jump. The binding constraint is not the gap but the
+        # mechanism: past theta of about 0.245 the mortality channel alone puts
+        # users ABOVE average income and the paper stops saying what it exists
+        # to say. 0.2334 leaves that margin wide. The drug spending share is an
+        # untargeted moment now.
+        ('th', r'\theta', 'Weight on the drug', 'Set; see the text', '{:.4f}'),
         ('kappa_r', r'\kappa_r', "Tenant's share of the rent",
          'HUD voucher rules', '{:.2f}'),
         ('kV', r'\kappa_V', 'Voucher means test',
@@ -94,12 +105,6 @@ INTERNAL = [
      'Value of a statistical life, Viscusi and Aldy (2003)', 'vsl', '{:.1f}', '{:.3f}'),
     ('b', 'b', 'Whether a household uses', 'Drug participation, NSDUH 2024',
      'part', '{:.2%}', '{:.5f}'),
-    # THETA IS BRACKETED NOW, on the same drug spending share the life cycle
-    # model targets. It was set while that target stood at a level this model
-    # could not reach; the target is the aggregate share, 20 per cent, and it is
-    # reachable, so the two models no longer disagree about what a user spends.
-    ('th', r'\theta', 'Weight on the drug',
-     'Drug spending over income among users', 'dshare', '{:.1%}', '{:.3f}'),
     ('h_hl', 'h_1', 'Service flow of homelessness', 'Homelessness rate, HUD 2023',
      'homeless', '{:.3%}', '{:.5f}'),
     # h_2 IS CALIBRATED, NOT SET, and its target is the same American Community

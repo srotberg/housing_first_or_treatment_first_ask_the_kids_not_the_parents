@@ -592,7 +592,6 @@ LAM_LO, LAM_HI = 0.05, 20000.0
 H_SM_HI = float(YG[0]) / (TRUNC_FLOOR * P().pr)
 
 PAIRS = [('gam', 'hspend', 0.02, 0.70),
-         ('th', 'dshare', 0.02, 0.45),
          ('h_sm', 'hsmall', 0.01, H_SM_HI),
          ('h_hl', 'homeless', 1e-7, 0.49),
          ('aleph', 'vsl', 0.20, 24.0),
@@ -770,9 +769,6 @@ def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=(), tol=0.0
         # prescribes for lambda and b, and b still runs LAST, so participation
         # is still the moment that is actually hit.
         for _ in range(4):
-            if 'th' not in fix:
-                par = with_(par, th=bracket_with_b(par, 'th', 'dshare',
-                                                   0.02, 0.45, iters=18))
             if 'lam' not in fix:
                 par = with_(par, lam=bracket_sud(par, LAM_LO, LAM_HI))
             if 'b' not in fix:

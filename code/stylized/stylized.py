@@ -206,7 +206,33 @@ class P:
     # per cent, and a mortality channel that drives users to a sixth of average
     # income on its own rather than to the 0.39 that 0.21 gives. The extra two
     # points of spending that 0.21 would buy are not worth the margin.
-    th    = 0.20      # weight on drug use
+    # THETA IS SET AT 0.2334 AND NOT CALIBRATED, and the reason is a trade the
+    # model cannot avoid rather than a choice about fit.
+    #
+    # Bracketing theta on a 20 per cent drug spending share does not converge,
+    # because the share is DISCONTINUOUS in theta: it climbs to about 18.9 per
+    # cent, jumps to about 29, and 20 falls in the gap. A bisection aimed into
+    # that gap narrows onto the jump and reports whichever side it last
+    # evaluated, which is what five sweeps of it did -- theta walked 0.197,
+    # 0.206, 0.222, 0.233, 0.243, 0.249, 0.254, crossed the jump and stayed on
+    # the far branch with the moment 41 per cent off.
+    #
+    # THE BINDING CONSTRAINT IS NOT THE GAP, IT IS THE MECHANISM. r_mort, the
+    # income ratio among users with the mortality channel alone at full
+    # strength, has to stay BELOW ONE or the paper no longer says that mortality
+    # is what makes the poor the users. Measured at fully recalibrated points:
+    #
+    #   theta    dshare   r_mort
+    #   0.2334    ~18%     0.322   holds, with room
+    #   0.2429   18.22%    0.837   holds, barely
+    #   0.2494   18.63%    1.285   FAILS
+    #
+    # So the ceiling on drug spending with the mechanism intact is about 18.4
+    # per cent, and every extra tenth of a point costs margin on the claim the
+    # paper exists to make. 0.2334 buys the mechanism a wide margin, 0.322
+    # against a threshold of one, for a spending share a little under the RAND
+    # derived 20. The share is an UNTARGETED moment now and is reported as one.
+    th    = 0.2334    # weight on drug use, SET; see above
     b     = 0.009     # Stone Geary subsistence; th/b is the pull of the first unit
     gam   = 0.2144    # CALIBRATED to the housing share. Starting value only
     # A PERIOD IS THIRTY YEARS, so the discount factor and the interest rate are
