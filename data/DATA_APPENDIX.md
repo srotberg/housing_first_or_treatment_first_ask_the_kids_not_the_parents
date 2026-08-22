@@ -412,7 +412,10 @@ PIA bend point schedule (0.9 below 0.3 of average, then 0.27+0.32(x−0.3) to 2,
 note describes a linear rate, so a reader working from equation (13) had the wrong
 retirement income at every node and badly wrong at the ends.
 
-**p_det and p_fp, how well conditionality is enforced — 0.90 and 0.05.** Set, not
+**p_det and p_fp, how well conditionality is enforced — 0.90 and 0.05.**
+*Counterfactual parameters, not calibration ones.* `voucher_conditional_on_clean`
+is zero in the benchmark, so neither binds there and neither belongs in Table 5;
+they are set with the Treatment First experiment and reported with it. Set, not
 measured. These are what separate the quantitative model's conditionality from the
 stylized model's, where the condition is perfectly enforced and perfectly met: here
 some households fail it because they cannot get clean and some fail it because the
@@ -420,7 +423,9 @@ test is wrong, and those two groups are the empirical case for Housing First. No
 programme publishes a detection rate for a drug screen in a housing programme, so
 both are set at plausible values and the counterfactuals report the range.
 
-**c_test, the cost of running one test — 0.031 percent of average earnings.** The
+**c_test, the cost of running one test — 0.031 percent of average earnings.**
+*Counterfactual parameter, like the two rates above: nothing is screened in the
+benchmark.* The
 Texas fiscal note puts a test at about $35 and Oklahoma at $20 for the screen plus
 $141 for confirming a positive; against average household income near $113,000 the
 screen alone is 0.031 percent. It is a **lower bound on the administrative burden

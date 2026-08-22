@@ -51,9 +51,6 @@ LINKS = {
     r'$\varrho$':                'food_stamp_taper',
     r'$J_E$':                    'max_age_to_choose_addiction',
     r'$\psi_R$':                 'ss_replacement_rate',
-    r'$p_{\mathrm{det}}$':       'probability_of_detection',
-    r'$p_{\mathrm{fp}}$':        'probability_of_false_positive',
-    r'$c_{\mathrm{test}}$':      'cost_per_drug_test',
 }
 
 # Rows whose Data column is deliberately NOT the linked constant, because the

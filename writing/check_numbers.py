@@ -58,7 +58,6 @@ ALLOW = [
     ('13.2', 'B25042'), ('62.7', 'B25042'),  # the ACS shares, quoted at their source
     ('24.1', 'middle unit size'),            # the middle share, likewise
     ('17.2', 'poorer half'),                 # already a placeholder elsewhere
-    ('5.6', 'overall level'),
     ('0.5', 'Frisch elasticity'),            # sigma_ell in its source's units
     ('9.1', 'race adjusted'), ('1.1', 'falling to'),
     ('0.25', 'Social Security Disability'),

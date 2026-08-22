@@ -1403,10 +1403,9 @@ n\,y\,\varepsilon(j)\,\rho_{d}^{\mathbf{1}\{d=1\}}\rho_{m}^{\mathbf{1}\{m=1\}}
 \end{cases}
 \end{equation}
 taking the cases in the order they appear. Retirement income replaces
-\new{$@@q_psi_r_pc@@$} percent of the productivity state with no SMI penalty, since social security
-is not means-tested on SMI\new{; $\psi_R$ is the replacement rate and the base is $y$
-rather than $y\,\varepsilon(j)$, since there is no work in retirement for the age
-profile to apply to}. For the employed, $\varepsilon(j)$ is
+\new{a fixed share $\psi_R$ of} the productivity state with no SMI penalty, since social security
+is not means-tested on SMI\new{. The base is $y$ rather than $y\,\varepsilon(j)$,
+since there is no work in retirement for the age profile to apply to}. For the employed, $\varepsilon(j)$ is
 the deterministic age profile of efficiency and $\rho_d$ and
 $\rho_m$ are productivity penalties applied to the SUD and to SMI respectively,
 \emph{conditional on working}. Both are set to one in the benchmark, so the
@@ -1533,7 +1532,7 @@ to undertake and can decline.
 \subsection{Serious mental illness}\label{sec:fsmi}
 
 $m$ is an exogenous two state Markov chain representing SMI, whose
-prevalence $s_m(j)$ averages about $5.5$ percent of adults, defined by substantial functional
+prevalence $s_m(j)$ is \new{a small share} of adults, defined by substantial functional
 impairment, rather than any mental illness, which is roughly a quarter of adults
 and includes mild anxiety: a state that halves productivity cannot sensibly cover
 a quarter of the population.
@@ -1707,13 +1706,6 @@ treatment is abstaining, $v=0$ by the restriction in
 Section~\ref{sec:fdrug}, so it meets the condition and faces $p_{\text{fp}}$.
 There is no fifth case: treatment is available only when $d=1$, and it forbids
 use, so no household is ever both in treatment and using.
-
-\new{Both rates are set rather than calibrated, at $p_{\mathrm{det}}=@@q_p_mathrm_det@@$ and
-$p_{\mathrm{fp}}=@@q_p_mathrm_fp@@$, and the government pays $c_{\mathrm{test}}=@@q_c_mathrm_test_pc@@$ percent of
-average earnings for every household it screens, which is a lower bound on the
-administrative burden: it is the assay cost in the state fiscal notes for the
-public assistance programmes that have tried testing, and the programme level
-figures are far larger once staffing is counted.}
 
 This means that in contrast to Section~\ref{sec:mh}, enforcement here is not
 perfect both ways. There, conditionality is perfectly
@@ -2663,7 +2655,7 @@ mental illness hazards are measured against.
 
 \item[$s_m(j)$, the age profile of SMI prevalence.]
 The target is the share of adults carrying serious mental illness at each age $j$
-in NSDUH 2024, which integrates to $@@q_s_m_j@@$ percent across all ages; the $5.6$ percent
+in NSDUH 2024, which integrates to $@@q_s_m_j@@$ percent across all ages; \new{that}
 is the overall level and the profile is what is matched, age by age. It sits here
 rather than in Section~\ref{sec:fullcal} because it is the baseline profile, in the
 same way the survival table is: what this paper adds is $\iota$, the multiplier a SUD
@@ -2699,6 +2691,12 @@ Section~\ref{sec:fullcal} a cost the model actually bears.
 
 \paragraph{Transfers and the voucher rule.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
+\item[$\psi_R$, the social security replacement rate.] \new{Retirement income is
+$\psi_R=@@q_psi_r@@$ times the productivity state for the last $J-J_R$ years of life,
+from the Social Security Administration. The base is permanent productivity rather
+than current earnings, since there is no work in retirement for the age profile to
+apply to. As it rises the old are richer, so the value of a life still to be lived
+rises and with it the cost of a disorder that shortens it.}
 \item[$\psi$ and $\bar y$, unemployment insurance.] These two set the replacement
 rate and the cap on the earnings it is paid on. I set them to fifty percent and one
 times average income, respectively, taking both from the statutory replacement rates

@@ -42,7 +42,7 @@
 % \input from
 % their own .tex, so a caption saying how many rows its table has could not be
 % generated any other way. Counted off the Set column of the tables themselves.
-\newcommand{\nmain}{\new{thirty two}}
+\newcommand{\nmain}{twenty nine}
 \newcommand{\nstd}{\new{twenty six}}
 % The cut macro below marks a PROPOSED DELETION: red and struck through, so the reader sees what
 % would go before it goes. ulem is not in this installation, and a single rule over a
@@ -278,7 +278,7 @@ overturns the dominance result works.
 
 A full-fledged quantitative model follows, to quantify the mechanisms and the welfare
 implications of Housing First against Treatment First. It is a general equilibrium
-life-cycle economy, in Section~\ref{sec:full}, with six state variables and \new{fifty eight} parameters. It carries endogenous homelessness, drug use, the SUD, recovery, serious
+life-cycle economy, in Section~\ref{sec:full}, with six state variables and \new{fifty five} parameters. It carries endogenous homelessness, drug use, the SUD, recovery, serious
 mental illness (SMI), employment and mortality, together with a drug market that
 clears, so drug prices respond to policy, and a government budget that balances. It
 also considers the costs of enforcing conditionality, and imperfect detection.
@@ -588,7 +588,7 @@ In the data, drug use is concentrated among low-income households, most of the
 homeless do not carry a SUD, and housing vouchers
 reach only about a quarter of the households eligible for them. The quantitative
 model is built to match facts of that kind. It has six state variables and
-\new{fifty eight} parameters, which is what the welfare and fiscal questions
+\new{fifty five} parameters, which is what the welfare and fiscal questions
 require,
 but it also makes it hard to see which pieces of the environment do the
 heavy lifting. This note strips the environment down to help see the
@@ -1403,10 +1403,9 @@ n\,y\,\varepsilon(j)\,\rho_{d}^{\mathbf{1}\{d=1\}}\rho_{m}^{\mathbf{1}\{m=1\}}
 \end{cases}
 \end{equation}
 taking the cases in the order they appear. Retirement income replaces
-\new{$\new{40}$} percent of the productivity state with no SMI penalty, since social security
-is not means-tested on SMI\new{; $\psi_R$ is the replacement rate and the base is $y$
-rather than $y\,\varepsilon(j)$, since there is no work in retirement for the age
-profile to apply to}. For the employed, $\varepsilon(j)$ is
+\new{a fixed share $\psi_R$ of} the productivity state with no SMI penalty, since social security
+is not means-tested on SMI\new{. The base is $y$ rather than $y\,\varepsilon(j)$,
+since there is no work in retirement for the age profile to apply to}. For the employed, $\varepsilon(j)$ is
 the deterministic age profile of efficiency and $\rho_d$ and
 $\rho_m$ are productivity penalties applied to the SUD and to SMI respectively,
 \emph{conditional on working}. Both are set to one in the benchmark, so the
@@ -1533,7 +1532,7 @@ to undertake and can decline.
 \subsection{Serious mental illness}\label{sec:fsmi}
 
 $m$ is an exogenous two state Markov chain representing SMI, whose
-prevalence $s_m(j)$ averages about $5.5$ percent of adults, defined by substantial functional
+prevalence $s_m(j)$ is \new{a small share} of adults, defined by substantial functional
 impairment, rather than any mental illness, which is roughly a quarter of adults
 and includes mild anxiety: a state that halves productivity cannot sensibly cover
 a quarter of the population.
@@ -1707,13 +1706,6 @@ treatment is abstaining, $v=0$ by the restriction in
 Section~\ref{sec:fdrug}, so it meets the condition and faces $p_{\text{fp}}$.
 There is no fifth case: treatment is available only when $d=1$, and it forbids
 use, so no household is ever both in treatment and using.
-
-\new{Both rates are set rather than calibrated, at $p_{\mathrm{det}}=\new{0.90}$ and
-$p_{\mathrm{fp}}=\new{0.05}$, and the government pays $c_{\mathrm{test}}=\new{0.031}$ percent of
-average earnings for every household it screens, which is a lower bound on the
-administrative burden: it is the assay cost in the state fiscal notes for the
-public assistance programmes that have tried testing, and the programme level
-figures are far larger once staffing is counted.}
 
 This means that in contrast to Section~\ref{sec:mh}, enforcement here is not
 perfect both ways. There, conditionality is perfectly
@@ -2044,15 +2036,15 @@ considered as well, in Section~\ref{sec:trans}.
 
 \section{Calibrating the quantitative model}\label{sec:fullcal}
 
-The model has \new{fifty eight} parameters, some of which vary in value by
-age. \new{Thirty four} are calibrated externally, from data or from the literature,
+The model has \new{fifty five} parameters, some of which vary in value by
+age. \new{Thirty one} are calibrated externally, from data or from the literature,
 and twenty four are calibrated internally. Four further parameters
 govern drug testing and detection; they do not play a role in the benchmark, where nothing
 is conditional, but they do under Treatment First, which is where they are
 set. The calibrated parameters are
-split across the two tables of this section: \new{thirty two} are the main story
+split across the two tables of this section: twenty nine are the main story
 of this paper and its policy analysis (Table~\ref{tab:eleven}, fifteen
-internally and \new{seventeen} externally calibrated), and \new{twenty six} are standard
+internally and fourteen externally calibrated), and \new{twenty six} are standard
 (Table~\ref{tab:stdparams}, nine internally and \new{seventeen} externally).
 
 The tables carry the parameter, its description, the moment and source used to
@@ -2066,9 +2058,9 @@ without reference to this text. The package also carries the datasets
 themselves, so nothing has to be downloaded to reproduce any of this: the extracts
 behind every target sit next to the code that reads them.
 
-\subsection{The \new{thirty two} parameters that carry the story of this paper}
+\subsection{The twenty nine parameters that carry the story of this paper}
 
-\new{Twenty six} of the \new{fifty eight} are common to most life-cycle models, whereas the rest are specific to this paper, and all \new{thirty two} of those carry its main story and policy analysis. They are set out in Table~\ref{tab:eleven},
+\new{Twenty six} of the \new{fifty five} are common to most life-cycle models, whereas the rest are specific to this paper, and all twenty nine of those carry its main story and policy analysis. They are set out in Table~\ref{tab:eleven},
 with the parameter, its description,
 and the moment and source used to fix its value, which is given in the last
 column. They are discussed one at a time below because they are the parameters a
@@ -2663,7 +2655,7 @@ mental illness hazards are measured against.
 
 \item[$s_m(j)$, the age profile of SMI prevalence.]
 The target is the share of adults carrying serious mental illness at each age $j$
-in NSDUH 2024, which integrates to $5.6$ percent across all ages; the $5.6$ percent
+in NSDUH 2024, which integrates to $5.6$ percent across all ages; \new{that}
 is the overall level and the profile is what is matched, age by age. It sits here
 rather than in Section~\ref{sec:fullcal} because it is the baseline profile, in the
 same way the survival table is: what this paper adds is $\iota$, the multiplier a SUD
@@ -2699,6 +2691,12 @@ Section~\ref{sec:fullcal} a cost the model actually bears.
 
 \paragraph{Transfers and the voucher rule.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
+\item[$\psi_R$, the social security replacement rate.] \new{Retirement income is
+$\psi_R=\new{0.40}$ times the productivity state for the last $J-J_R$ years of life,
+from the Social Security Administration. The base is permanent productivity rather
+than current earnings, since there is no work in retirement for the age profile to
+apply to. As it rises the old are richer, so the value of a life still to be lived
+rises and with it the cost of a disorder that shortens it.}
 \item[$\psi$ and $\bar y$, unemployment insurance.] These two set the replacement
 rate and the cap on the earnings it is paid on. I set them to fifty percent and one
 times average income, respectively, taking both from the statutory replacement rates
