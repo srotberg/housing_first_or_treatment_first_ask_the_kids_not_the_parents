@@ -278,7 +278,7 @@ overturns the dominance result works.
 
 A full-fledged quantitative model follows, to quantify the mechanisms and the welfare
 implications of Housing First against Treatment First. It is a general equilibrium
-life-cycle economy, in Section~\ref{sec:full}, with six state variables and fifty four parameters. It carries endogenous homelessness, drug use, the SUD, recovery, serious
+life-cycle economy, in Section~\ref{sec:full}, with six state variables and \new{@@n_all@@} parameters. It carries endogenous homelessness, drug use, the SUD, recovery, serious
 mental illness (SMI), employment and mortality, together with a drug market that
 clears, so drug prices respond to policy, and a government budget that balances. It
 also considers the costs of enforcing conditionality, and imperfect detection.
@@ -588,7 +588,7 @@ In the data, drug use is concentrated among low-income households, most of the
 homeless do not carry a SUD, and housing vouchers
 reach only about a quarter of the households eligible for them. The quantitative
 model is built to match facts of that kind. It has six state variables and
-fifty four parameters, which is what the welfare and fiscal questions
+\new{@@n_all@@} parameters, which is what the welfare and fiscal questions
 require,
 but it also makes it hard to see which pieces of the environment do the
 heavy lifting. This note strips the environment down to help see the
@@ -753,7 +753,7 @@ and a household holding one pays the fraction $\kappa_r$ of market rent, so the
 rent paid on option $k$ is
 \begin{equation}\label{eq:rent}
 r_k(\eta) \;=\; p_r\,h_k\big[\kappa_r \eta + (1-\eta)\big]\cdot
-\mathbf{1}\{k \ne 0\},
+\mathbf{1}\{k \ne \new{1}\},
 \end{equation}
 which is zero when the household is homeless. Vouchers operate in both periods,
 and $\pi_V$, the share of eligible households actually covered, is a policy
@@ -817,7 +817,7 @@ appendix gives the arithmetic.
 
 Table~\ref{tab:ext} lists the parameters set outside the model. Preferences and
 demographics are conventional: the discount factor over a thirty-year period
-is $\beta = @@beta@@$\footnote{The annual discount rate here is higher than the one in the
+is $\beta = @@beta@@$\footnote{The annual discount \new{factor} here is higher than the one in the
 quantitative model, and this is deliberate. A period here is thirty years, so
 every consequence of using drugs arrives thirty years after the decision,
 whereas in the quantitative model consequences arrive annually and compound. A
@@ -851,8 +851,8 @@ Households, published by HUD.
 
 \subsubsection{Internal calibration}
 
-@@n_styl@@ parameters are set inside the model, in Table~\ref{tab:int}, each bracketed
-on the moment it moves most rather than fitted jointly. The dispersion of log
+@@n_styl@@ parameters are set inside the model, in Table~\ref{tab:int}, each \new{matched}
+\new{to} the moment it moves most rather than fitted jointly. The dispersion of log
 permanent income $\sigma_y$ is matched to how unequal earnings are at the bottom: in
 the 2022 Survey of Consumer Finances (SCF), households aged $26$ to $65$ with positive wage
 and salary income hold $@@q_sigma_y@@$ percent of total earnings in the poorer half of the
@@ -860,8 +860,9 @@ distribution, and the
 quantitative model of Section~\ref{sec:full} is calibrated to the same moment.
 The weight on
 housing $\gamma$ is matched to the $@@q_gamma@@$ percent of total expenditure that
-shelter plus utilities take in the 2024 Consumer Expenditure Survey (CEX),
-housing over expenditure net of drugs. The flow value
+shelter plus utilities take in the 2024 Consumer Expenditure Survey (CEX)\new{; the model
+counterpart is housing over expenditure net of drugs, since the survey's total has no
+drug spending in it}. The flow value
 of being alive $\aleph$ is matched to a value of a statistical life of @@vsl_t@@
 times average annual income, about \$9 million against a mean household income of
 \$113,000, which is the range surveyed by Viscusi and Aldy (2003) once their
@@ -876,16 +877,10 @@ households living in a unit with fewer than three bedrooms, from table B25042 of
 the 2023 American Community Survey, which is the source the quantitative model's
 size distribution comes from as well.
 The weight on drugs $\theta$ is matched to the drug spending share, the
-\new{$@@q_theta@@$ percent of income users spend on the drug, which divides retail
+$@@q_theta@@$ percent of income users spend on the drug, which divides retail
 expenditure on the four drugs, from Midgette et al.\ (2019) for 2016 carried to
-2024 dollars, by the family income of the using population in NSDUH 2024.}
-\cut{$@@q_theta@@$ percent of income users spend on the drug, which
-divides retail expenditure on the four drugs by the family income of the using
-population. $\theta$ is found by scanning rather than by bisecting on the
-moment, because the share is not continuous in $\theta$: it rises to about
-$@@dshare_top@@$ percent and then jumps to nearly thirty, so a bisection aimed
-between the two branches narrows onto the jump instead of converging. Scanning
-finds $\theta=@@th@@$, at which the model spends $@@dshare_m@@$ percent.}
+2024 dollars, by the family income of the using population in NSDUH 2024.
+
 
 \begin{table}[!tb]
 \centering
@@ -918,7 +913,7 @@ $u_1-u_0$, and if income support cannot cover the rent you downsize, live on
 less, or lose your home. Figure~\ref{fig:who} scales each from nothing to
 $@@scanhi_pc@@$ percent of its
 calibrated value, recalibrating $b$ at every point so participation stays at
-$@@q_b@@$ percent.
+$@@q_b@@$ percent\new{, which it does at every point of the scan but @@part_miss_n@@}.
 
 \begin{figure}[!tb]
 \centering
@@ -927,7 +922,12 @@ $@@q_b@@$ percent.
 \label{fig:who}
 \notes{0.62\textwidth}{Note: the vertical axis is average income of users over
 the population average, on a log scale, and $b$ is recalibrated at every point
-so that the model targets a participation rate of $@@q_b@@$ percent at every point. The black dotted line marks
+so that the model targets a participation rate of $@@q_b@@$ percent at every point.
+\new{It is delivered at every point of the scan but @@part_miss_n@@, both on the mortality
+curve. Participation is a step function of $b$ there, because a whole interval of
+incomes changes its housing rung at once and the value of using changes with it, and
+the target sits strictly inside the jump, so no $b$ delivers it; the larger of the two
+misses is @@part_miss_worst@@ percentage points.} The black dotted line marks
 the calibrated strength; everything to the right of it is extrapolation.}
 \end{figure}
 
@@ -1144,7 +1144,7 @@ the entire link is a penalty
 \begin{equation}\label{eq:kids}
 y_{\text{child}} \;=\; y_{\text{base}}\,
 (1-\delta_d)^{\mathbf{1}\{\text{parent acquired a SUD}\}}\,
-(1-\delta_h)^{\mathbf{1}\{\text{parent was homeless}\}} ,
+(1-\delta_h)^{\mathbf{1}\{\text{parent was homeless \new{when it died}}\}} ,
 \end{equation}
 which the parent does not internalise at all. That is what makes it an externality.\footnote{In the quantitative
 model the altruism of parents towards their children is calibrated rather than
@@ -1306,8 +1306,9 @@ ends with them.
 From the @@tr_flip@@ cohort of newborns onward universal Treatment First raises welfare above universal Housing First, through the very cohorts it
 hurt: nobody uses, so nobody carries the disorder, and their children
 inherit better draws. Homelessness is zero for every cohort under both
-policies, since at universal coverage every household holds a voucher and can
-afford the small unit, so all the separation is in Panel~(c), where the
+policies, since \new{the voucher is means tested and every household poor enough to be at
+risk of the street is income eligible, so at universal coverage it holds one and can
+afford the small unit}, so all the separation is in Panel~(c), where the
 disorder share rises under universal Housing First and so more children inherit
 worse draws than under universal Treatment First, which has none.
 
@@ -1411,9 +1412,9 @@ percent of the productivity state with no SMI penalty, since social security
 is not means-tested on SMI. For the employed, $\varepsilon(j)$ is
 the deterministic age profile of efficiency and $\rho_d$ and
 $\rho_m$ are productivity penalties applied to the SUD and to SMI respectively,
-\emph{conditional on working}. \new{Both are set to one in the benchmark, so the
+\emph{conditional on working}. Both are set to one in the benchmark, so the
 income equation is written in general and the two penalties are inactive in it;
-Table~\ref{tab:eleven} says so and Section~\ref{sec:fullcal} says why.}\query{Flagged:
+Table~\ref{tab:eleven} says so and Section~\ref{sec:fullcal} says why.\query{Flagged:
 keep the two penalties in the model at all, or take them out of the income
 equation?}
 The three employment states are work, $e=1$, the first period of a spell
@@ -1425,16 +1426,8 @@ $\bar y$, both as in equation~\eqref{eq:inc}. $\zeta_{DI}$ is the rate at which 
 insurance (DI) replaces the income of a non-employed household with SMI, and that
 DI does not stop until the household recovers.
 
-Employed homelessness cannot be produced by unemployment alone:
-something has to leave a household poor enough while it still has a job.
-
-\cut{What leaves it poor enough is the price of the cheapest dwelling. A household
-with a job that cannot afford $h_2$ is homeless with a job, so $h_2$ is what
-generates the employed share of the homeless and is calibrated on it. The two
-proportional penalties are set to one in the benchmark: with $h_2$ carrying that
-share a second instrument would chase the same moment, and the extensive margin
-already carries both conditions into poverty, through $\kappa_{ued}$ for the
-disorder and $\kappa_{uem}$ for the illness.}
+\cut{Employed homelessness cannot be produced by unemployment alone:
+something has to leave a household poor enough while it still has a job.}
 
 Labour income is taxed progressively with the Heathcote et al.\ (2017) function and
 capital income at a flat rate $\tau_k$,
@@ -2188,7 +2181,7 @@ where $\bar v_g$ and $\bar y_g$ are the average drug quantity and
 average income in group $g$, and $\mu_e$ and $\mu_d$ are the masses without and
 with the disorder. The target itself is the aggregate the model's moment has
 to reproduce, total retail spending over the total income of users, which needs
-no assumption about how spending divides between the two groups. \new{Midgette et
+no assumption about how spending divides between the two groups. Midgette et
 al.\ (2019) supply the numerator, 2016 retail spending on the four drugs, carried
 to 2024 dollars with the Consumer Price Index for All Urban Consumers (CPI-U);
 NSDUH 2024 supplies the denominator, the family income of the adults aged 26 and
@@ -2196,31 +2189,10 @@ over who use, family income rather than personal because the model's $y$ is what
 household pays its rent and buys its consumption and its drug out of. That gives
 $@@f_drug_spending_share_data@@$. Section 1 of the data appendix carries the
 arithmetic, what each of the two corrections is worth on its own, and the one
-assumption left in it, the midpoint of the survey's open top income band.}
-\cut{Midgette et
-al.\ (2019) put 2016 retail spending on cannabis, cocaine, heroin and
-methamphetamine at 146 billion dollars, of which 136 billion is accounted for by
-the daily and near-daily users who do almost all of it. Two things have to be
-made comparable before that is divided by anything. The spending is in 2016
-dollars and the survey's incomes are in 2024, so it is carried forward by the
-Consumer Price Index for All Urban Consumers (CPI-U) to
-$@@spend24@@$ billion. And the denominator is FAMILY income rather than personal
-income, because the model's $y$ is what a household has to pay its rent, buy its
-consumption and buy the drug out of. NSDUH 2024 puts users at $@@q_b@@$ percent of
-adults aged 26 and over, $@@n_users@@$ million people, with mean family income of
-$@@user_inc@@$ dollars, so the income of the using population is $@@user_inc_bn@@$
-billion. That gives $@@f_drug_spending_share_data@@$.}
+assumption left in it, the midpoint of the survey's open top income band.
 
-\cut{Neither correction is a choice between defensible alternatives, and it is
-worth saying what each is worth because they pull opposite ways: with neither
-the share is $@@share_uncorrected@@$ percent, with the income correction alone
-$@@share_income_only@@$ and with the price correction alone
-$@@share_price_only@@$, so each on its own moves the answer further than the two
-together do. What is left is one
-assumption, the open top income band in the survey, which runs from 75,000
-dollars upward with no ceiling. Its midpoint is set at 100,000, the convention
-behind the personal income figures above; at 75,000 the share is
-$@@share_lo@@$ percent and at 125,000 it is $@@share_hi@@$ percent.}
+
+
 
 The two studies that measure spending and income on the same people are
 consistent with the disordered end of that: Roddy and Greenwald (2009) report

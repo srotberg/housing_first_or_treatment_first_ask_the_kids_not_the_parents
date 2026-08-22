@@ -26,9 +26,12 @@ corrected; the quantitative model's must end up aligned with it on every point
 listed there, and it is far easier to build it that way than to retrofit it.
 The two that cost the most to find: a transition must integrate over the whole
 age distribution alive at the reform rather than following newborn cohorts,
-and the child's inherited penalty must key on the parent's whole life rather
-than on one period, or conditionality's own revocations can never reach a
-child.
+and the child's inherited penalty must key on the period the parent DIES in,
+which is also the period conditionality acts in. Keyed on the first period
+alone, conditionality's own revocations can never reach a child; keyed on
+either period, a parent transmits a penalty picked up before the reform even
+when the new programme housed it for the whole of its second period. Both
+errors were made and both were invisible in the output.
 
 Section 7 of that file is the other half of the rule, and it is also standing:
 **a bug found in the stylized model is checked against the quantitative model

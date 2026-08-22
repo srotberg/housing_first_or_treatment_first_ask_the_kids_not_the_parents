@@ -300,6 +300,14 @@ def _fraction_word(x):
     return min(_FRACTION, key=lambda fw: abs(fw[0] - x))[1]
 
 
+# Small counts as words, so a sentence can say "two of twenty two" without the
+# number being typed into it.
+_WORDS = ('no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight',
+          'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen',
+          'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty',
+          'twenty one', 'twenty two', 'twenty three', 'twenty four')
+
+
 def figure_numbers(base):
     """
     Every number the prose quotes off a figure, written from the figure itself.
@@ -346,21 +354,35 @@ def figure_numbers(base):
             start = float(s_)
     d['revfrac'] = _fraction_word(max(1.0 - start, 0.0))
 
-    # WHETHER b ACTUALLY HELD PARTICIPATION at every point of Figure 1. The
-    # note now states flatly that the model targets the participation rate at
-    # every point, which is a promise rather than a hedge, so the number of
-    # points that miss is exported and verify.py FAILS THE BUILD if any does.
-    # It used to be a hedge in the note itself, naming the ten of twenty two
-    # points that missed; those were an artefact of the pooled bottom cell
-    # being wider than the participation target, and flooring the grid removed
-    # them. If they ever come back the build says so rather than the paper
-    # quietly claiming something untrue.
+    # WHETHER b ACTUALLY HELD PARTICIPATION at every point of Figure 1, and
+    # WHERE IT CANNOT. Ten of twenty two points missed under the pooled bottom
+    # cell and flooring the grid removed those, so the note was allowed to
+    # promise the target at every point and verify.py failed the build on any
+    # miss. Two points on the mortality curve miss anyway, and they are not a
+    # bisection failure: participation is a STEP function of b there, falling
+    # 9.34 to 8.09 per cent across one step at 0.75 of the calibrated mortality
+    # and 9.15 to 7.68 at 1.125, with the 8.90 target strictly inside the jump.
+    # A whole interval of incomes changes its housing rung at once, and the
+    # value of using changes with it, so the set of users is not continuous in
+    # b. No value of b delivers the target at those two points and none exists
+    # to be found.
+    #
+    # THE NOTE THEREFORE STATES THE EXCEPTION and quotes both numbers from here
+    # rather than promising something the model cannot do. verify.py no longer
+    # fails on a miss, because a miss is a property of the model; it fails when
+    # a miss is TOO BIG to be a step, which is what a broken bisection would
+    # look like.
     d['_part_misses'] = sum(1 for which in ('mortality', 'unemployment')
                             for pp in parts[which]
                             if abs(pp - TARGET['part']) > 5e-4)
     d['_part_worst'] = max(abs(pp - TARGET['part'])
                            for which in ('mortality', 'unemployment')
                            for pp in parts[which])
+    # The prose facing forms of the same two numbers.
+    d['part_miss_n'] = _WORDS[d['_part_misses']] if d['_part_misses'] < len(_WORDS) \
+        else str(d['_part_misses'])
+    d['part_miss_worst'] = f'{100 * d["_part_worst"]:.1f}'
+    d['part_scan_n'] = _WORDS[2 * len(sc)] if 2 * len(sc) < len(_WORDS) else str(2 * len(sc))
 
     # THE ENDS OF FIGURE 2, which the policy paragraph reads off directly.
     m0, mt, mh = mT[0], mT[-1], mH[-1]

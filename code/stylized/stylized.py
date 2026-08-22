@@ -297,7 +297,15 @@ class P:
     beta  = 0.995 ** 30
     R     = 1.0 / (0.995 ** 30)
     years = 30.0      # years in a period, used to put the VSL in annual units
-    phi0  = 0.91      # survival over one period, clean: ages 25 to 55, CDC
+    phi0  = 0.91      # survival over one period, clean: ages 26 to 55, SSA
+    # THE SOURCE AND THE AGES BOTH SAID SOMETHING THE PACKAGE DOES NOT HOLD.
+    # This read 'ages 25 to 55, CDC'. The table in data/ is the SSA period
+    # life table 4.C6 and it starts at 26, so there is no 25 to read and no
+    # CDC table behind it. Thirty years of exposure from 26 means surviving
+    # ages 26 through 55, which the packaged table puts at 0.9199 rather than
+    # 0.91; the gap is carried over from the source this used to name and is
+    # flagged in the note rather than changed here, because moving it moves
+    # every number in the stylized section.
     # SET SO THAT NO HOUSEHOLD HAS A NEGATIVE VALUE OF LIFE. When the poorest
     # household's continuation goes below zero, dying is worth more than living
     # and it then WANTS the extra mortality the disorder brings, which inverts
@@ -458,8 +466,11 @@ class P:
     # So the realised share is an untargeted moment this model misses, for the
     # same kind of reason it misses the drug spending share, and it is reported
     # as one.
-    h_lg  = 0.40      # SET: the standard unit, 41 per cent of mean income
-    h_sm  = 0.10      # SET: a quarter of the standard unit
+    h_lg  = 0.40      # SET: the standard unit, 40 per cent of mean income
+    h_sm  = 0.10      # CALIBRATED, on the share of the housed in the small
+                      # unit. This is the class default and calibrated.json
+                      # overrides it; the comment said SET, which it has not
+                      # been since the share became its moment.
     h_hl  = 0.05      # the street. CALIBRATED to the homelessness rate
     pr    = 1.00      # rent per unit of housing services: the numeraire
     pV    = 0.266     # probability a voucher arrives, conditional on eligibility.
@@ -835,7 +846,12 @@ def terminal_homeless_prob(par, y, policy=None):
 def ever_homeless_prob(par, y, policy=None):
     """The probability a household at income y is on the street in EITHER period.
 
-    WHY THIS EXISTS, and why the child's penalty uses it. The inherited penalty
+    THE CHILD'S PENALTY DOES NOT USE THIS. It keys on period 2 alone, which is
+    the period the household dies in; see terminal_homeless_prob above for why
+    either-period was tried and rejected. This is kept as a diagnostic, and
+    verify.py asserts it is never below either single period.
+
+    WHY IT WAS WRITTEN. The inherited penalty
     used to key on period 1 homelessness alone, on the grounds that period 1 is
     where the household's own draws are realised. For drug use that is right,
     since v is only chosen in period 1. For homelessness it is not: a household
