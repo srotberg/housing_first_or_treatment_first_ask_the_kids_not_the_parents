@@ -648,6 +648,21 @@
         real(8) :: stopping_rule_rho_d=10.d0**(-3)
         real(8) :: rho_d_adjuster=5*10.d0**(-2)
         real(8), parameter :: employed_share_of_homeless_data=0.50
+
+        ! THE SMALLEST RENTAL MUST STAY A DWELLING. Its bracket used to be
+        ! bounded below at zero and run 2 got there, at which point
+        ! smallest_house_size is zero, the grid runs 0, h_max/2**varsigma, h_max,
+        ! and a rental of zero size delivers log(0) of housing services so
+        ! nothing ever takes it. Rent on it is zero too, so no household can be
+        ! priced onto the street: homelessness went to exactly zero and stayed
+        ! there, h_1 ran away against a gap frozen at -0.399 points, and the
+        ! empty set guard below froze h_2 at the bound permanently.
+        !
+        ! A BOUND MUST NOT DESTROY THE MOMENT IT IS CALIBRATED ON, because the
+        ! gap read there is constant and the update can never reverse. The floor
+        ! is set inside the region where homelessness was observed to respond:
+        ! h_2 = 0.0137 produced 0.83 per cent in run 2's second loop.
+        real(8), parameter :: smallest_rental_floor=0.01d0
         integer, parameter :: have_two_rental_markets=0
 
         ! A SECANT ON THE RENTAL MARKET TOO, for the same reason as lambda.
@@ -29951,8 +29966,30 @@
                         ! not missed, it is unmeasurable.
                         if (model_mass_homeless_raw(1)<=10.d0**(-12)) then
 
-                            write(*,*) "h_2 HELD: no homeless mass, so the employed share of the homeless"
-                            write(*,*) "   is not measurable and smallest_rental_relative_to_lowest_income does not move"
+                            ! UNMEASURABLE, OR UNMEASURABLE BECAUSE OF THE BOUND?
+                            ! Holding is right for the first and a trap for the
+                            ! second: at the floor, zero homelessness is itself
+                            ! evidence that the cheapest dwelling is too cheap,
+                            ! which IS information about h_2 even though the
+                            ! conditional moment carries none. Back off the floor
+                            ! rather than freeze against it.
+                            if (smallest_rental_relative_to_lowest_income<=&
+                                smallest_rental_floor*(1+10.d0**(-9))) then
+
+                                smallest_rental_relative_to_lowest_income=&
+                                    min(1.5d0*smallest_rental_relative_to_lowest_income+&
+                                    smallest_rental_floor,10.d0)
+
+                                write(*,*) "h_2 BACKED OFF ITS FLOOR: no homelessness at the floor means the"
+                                write(*,*) "   cheapest dwelling is too cheap; h_2 raised to ", &
+                                    smallest_rental_relative_to_lowest_income
+
+                            else
+
+                                write(*,*) "h_2 HELD: no homeless mass, so the employed share of the homeless"
+                                write(*,*) "   is not measurable and smallest_rental_relative_to_lowest_income does not move"
+
+                            end if
 
                             distance_smallest_house_size=1
 
@@ -29988,7 +30025,7 @@
 
                         smallest_rental_relative_to_lowest_income=&
                             min(max(smallest_rental_relative_to_lowest_income-smallest_house_size_adjuster*&
-                            gap_house_size_1,0.d0),10.d0) 
+                            gap_house_size_1,smallest_rental_floor),10.d0) 
                                                                      
                         distance_smallest_house_size=&
                             abs(model_employed_share_of_homeless(1)-employed_share_of_homeless_data)
