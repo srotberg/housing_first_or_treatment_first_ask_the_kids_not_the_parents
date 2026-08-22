@@ -29,6 +29,8 @@ LOG = os.path.join(HERE, 'supervisor_run.log')
 JOURNAL = os.path.join(HERE, 'SUPERVISOR_JOURNAL.md')
 REPORT = os.path.join(HERE, 'paper', 'calibration_report.py')
 HISTORY = os.path.join(HERE, 'progress_history.json')
+SCRATCH = ('/tmp/claude-0/-home-user-housing-first-or-treatment-first/'
+           '43825369-02f4-5759-bc82-a1a582111d14/scratchpad')
 
 sys.path.insert(0, HERE)
 
@@ -38,11 +40,59 @@ def running(name):
     return name in r.stdout.split()
 
 
+def supervisor_running():
+    """True when the supervisor is a process, not when its NAME is on a line.
+
+    A substring test over `ps -eo args` reports the supervisor up whenever any
+    command line anywhere on the machine happens to contain its name -- an
+    editor, a grep, or the very shell command that patched this file, which is
+    how it was caught. The same self-match once killed a loop as it was being
+    launched. So the test is positional: the process's own argv[0] has to be a
+    python and argv[1] has to be the script.
+    """
+    out = subprocess.run(['ps', '-eo', 'args'], capture_output=True,
+                         text=True).stdout
+    for line in out.splitlines():
+        parts = line.split()
+        if len(parts) >= 2 and os.path.basename(parts[0]).startswith('python') \
+                and os.path.basename(parts[1]) == 'supervise_calibration.py':
+            return True
+    return False
+
+
 def head():
     model = 'up' if running('hftf') else 'DOWN'
-    sup = 'up' if 'supervise_calibration' in subprocess.run(
-        ['ps', '-eo', 'args'], capture_output=True, text=True).stdout else 'DOWN'
-    return f'model {model}, supervisor {sup}, {advancing()}{parallelism()}'
+    sup = 'up' if supervisor_running() else 'DOWN'
+    # The parallelism reading is taken off the supervisor's log, so it says
+    # nothing once the model is down: it would report the contention of
+    # whatever was running when the log stopped, which is not now.
+    tail = parallelism() if model == 'up' else ''
+    return f'model {model}, supervisor {sup}, {advancing()}{tail}'
+
+
+def sideline():
+    """What the machine is doing when the supervisor is not the thing on it.
+
+    WHY IT IS IN THE REPORT. A report that says "model DOWN, supervisor DOWN" and
+    stops is true and useless: the calibration is stopped often enough for a
+    validation run, and a reader with only that line cannot tell a validation in
+    progress from a machine sitting idle after a crash. This names the other run
+    when there is one.
+    """
+    args = subprocess.run(['ps', '-eo', 'args'], capture_output=True,
+                          text=True).stdout
+    others = sorted({a.strip().lstrip('./') for a in args.splitlines()
+                     if a.strip().lstrip('./').startswith('hftf')
+                     and a.strip().lstrip('./') != 'hftf'})
+    status = os.path.join(SCRATCH, 'gridsweep_status.txt')
+    lines = []
+    if others:
+        lines.append('  also running: ' + ', '.join(others))
+    if os.path.exists(status):
+        done = [x for x in open(status).read().splitlines() if x.strip()]
+        if done:
+            lines.append('  grid sweep: ' + '; '.join(done[-3:]))
+    return lines
 
 
 def advancing():
@@ -181,6 +231,8 @@ def main():
     verdict, rows = moments()
 
     print(f'CALIBRATION PROGRESS  |  {head()}')
+    for line in sideline():
+        print(line)
     print(f'  loops {n}   distribution stalls {stalls}   guarded holds {holds}')
     print(f'  supervisor interventions {acted}' + (f'   last: {last}' if last else ''))
     print(f'  {verdict}')
