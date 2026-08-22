@@ -2343,6 +2343,24 @@
         integer :: drug_risk_housing_index=0
         integer :: drug_risk_ownership=0
         real(8), dimension(financial_grid_size) :: flow_utility_vector
+
+        ! THE WINNING BRANCH'S THREE POINTS, KEPT AS THE SEARCH GOES.
+        !
+        ! PERFORMANCE_NOTES section 11 measured the asset lottery firing twelve
+        ! times in 177,120 calls, and found the cause was not geometry but this:
+        ! the a' search loops over housing choices refilling the utility vectors
+        ! on each branch, so on return they hold the LAST branch searched rather
+        ! than the one that won. The guard in compute_asset_lottery notices and
+        ! refuses, correctly, since a parabola fitted to another branch's values
+        ! would put the lottery in a different basin. Nine refusals in ten were
+        ! that test.
+        !
+        ! These carry the three values the parabola needs, written only when a
+        ! branch becomes the new global best, which is the moment the winner is
+        ! known. Threadprivate, like the vectors they replace.
+        integer :: interp_won_index_1=-1
+        real(8) :: interp_won_y0_1,interp_won_y1_1,interp_won_y2_1
+        logical :: interp_won_ok_1=.false.
         real(8), dimension(financial_grid_size) :: future_utility_vector,future_bequest_vector,future_leisure_vector
         
         real(8) :: flow_utility_internal,future_utility_internal,future_bequest_internal,future_leisure_internal
@@ -3094,6 +3112,25 @@
         ! INSIDE the optimisation rather than be applied after it: the flow
         ! utility changes with consumption, so the argmax can move. That is a
         ! real change to the a' search and not a one line fix.
+        ! OFF, AND THE REASON IS NOT THE ONE IN SECTIONS 11 AND 15. Those
+        ! describe two defects in the lottery, and section 11's is now fixed: it
+        ! reads the winning branch's own three points, and with that its refusal
+        ! rate on the branch match test went from 90.9 per cent to zero and it
+        ! fired 159,822 times in 177,120 rather than twelve.
+        !
+        ! IT STILL SHOULD NOT BE ON, because the model already does what the
+        ! lottery was for. internal_computations refines a' on a sub grid of
+        ! fin_num_of_internal = 50 points spanning the interval around the coarse
+        ! point, so the policy's a' is already off grid and already fine. The
+        ! lottery then places a SECOND, coarser estimate of the same quantity,
+        ! fitted to a parabola through three COARSE points, and the distribution
+        ! carries that while the policy carries the refined one. They disagree,
+        ! and the disagreement is the budget residual section 15 measured: with
+        ! the lottery on and section 11 fixed the check still fired 31,530 times.
+        !
+        ! So the coarse grid is a SEARCH grid and the refinement is what sets
+        ! precision. That is the ground on which a coarser grid should be argued,
+        ! not the lottery.
         integer, parameter :: interpolate_a_prime=0
         !$omp threadprivate(interp_frac_1)
         !$omp threadprivate(interp_neighbour_1)
@@ -3136,6 +3173,8 @@
         integer, parameter :: report_lottery_diagnostics=1
 
         !$omp threadprivate(flow_utility_vector)
+        !$omp threadprivate(interp_won_index_1,interp_won_y0_1,interp_won_y1_1)
+        !$omp threadprivate(interp_won_y2_1,interp_won_ok_1)
         !$omp threadprivate(future_utility_vector)
         !$omp threadprivate(future_bequest_vector)
         !$omp threadprivate(future_leisure_vector)
@@ -3711,17 +3750,26 @@
 
         end if
 
-        ! THE VECTORS MUST DESCRIBE THE BRANCH THAT WON, and there is an exact
-        ! test for it rather than an argument.
+        ! THE WINNING BRANCH'S OWN THREE POINTS, not whatever the vectors hold.
         !
-        ! The a' search loops over housing choices, refilling these vectors on
-        ! each branch, so on return they hold the LAST branch searched and not
-        ! necessarily the optimal one. Fitting a parabola to the wrong branch
-        ! would place the lottery in another basin entirely. If the value at the
-        ! recorded optimum matches the value actually recorded, the vectors are
-        ! the winning branch's; if it does not, they are not, and the lottery
-        ! refuses rather than guessing.
-        if (abs(flow_utility_vector(opt_1)+future_utility_vector(opt_1)-recorded_value_1)>&
+        ! This used to read flow_utility_vector and future_utility_vector
+        ! directly, and they hold the LAST housing branch searched rather than
+        ! the one that won, so the exact-value test below refused nine times in
+        ! ten and the lottery fired twelve times in 177,120 calls. The three
+        ! points are now captured at the moment a branch becomes the global
+        ! best, which is where the winner is known.
+        !
+        ! THE EXACT TEST IS KEPT, as a check rather than a filter: if what was
+        ! captured does not reproduce the value actually recorded, something has
+        ! gone out of step and refusing is still right.
+        if ((.not.interp_won_ok_1) .OR. (interp_won_index_1/=opt_1)) then
+
+            interp_counters(2,interp_slot_1)=interp_counters(2,interp_slot_1)+1
+            return
+
+        end if
+
+        if (abs(interp_won_y1_1-recorded_value_1)>&
             10.d0**(-8)*max(abs(recorded_value_1),1.d0)) then
 
             interp_counters(2,interp_slot_1)=interp_counters(2,interp_slot_1)+1
@@ -3740,9 +3788,9 @@
 
         end if
 
-        y0_1=flow_utility_vector(opt_1-1)+future_utility_vector(opt_1-1)
-        y1_1=flow_utility_vector(opt_1)+future_utility_vector(opt_1)
-        y2_1=flow_utility_vector(opt_1+1)+future_utility_vector(opt_1+1)
+        y0_1=interp_won_y0_1
+        y1_1=interp_won_y1_1
+        y2_1=interp_won_y2_1
 
         ! An unreachable neighbour carries a sentinel rather than a value, and a
         ! parabola through a sentinel is meaningless.
@@ -13668,6 +13716,27 @@
                         if (value_function_renter_renter>largest_value) then
                                                                     
                             largest_value=value_function_renter_renter
+
+                            ! THE THREE POINTS THE LOTTERY WILL NEED, taken here
+                            ! because here is where the winning branch is known
+                            ! and its vectors are still the ones in scope. An
+                            ! interior argmax only: at either end there is no
+                            ! parabola to fit and the lottery refuses anyway.
+                            interp_won_ok_1=.false.
+                            interp_won_index_1=future_financial_index
+
+                            if ((future_financial_index>1) .AND. &
+                                (future_financial_index<financial_grid_size)) then
+
+                                interp_won_y0_1=flow_utility_vector(future_financial_index-1)+&
+                                    future_utility_vector(future_financial_index-1)
+                                interp_won_y1_1=flow_utility_vector(future_financial_index)+&
+                                    future_utility_vector(future_financial_index)
+                                interp_won_y2_1=flow_utility_vector(future_financial_index+1)+&
+                                    future_utility_vector(future_financial_index+1)
+                                interp_won_ok_1=.true.
+
+                            end if
                                                         
                             optimal_renter_renter_indeces(1)=future_financial_index
                             
@@ -17550,6 +17619,7 @@
         
         implicit none
         
+        
         integer :: financial_index,fin_index_1,ownership_status_index_1,can_purchase_new_house,years_of_amortization_1,&
             housing_status_index_1,space_lived_in_index_1,time_period,adjust_budget,can_consume_drugs,&
             become_renter,smallest_house,second_smallest_house,max_future_mortgage_index_2,owner_to_owner_stay_2,&
@@ -17741,6 +17811,7 @@
         ! hardcoded to.
         call compute_asset_lottery(fin_index_1,negative_financial_grid_size,financial_grid_size,&
             value_function_1)
+
 
         frac_mov_optimal_1(years_left_on_mortgage_index)%&
             vector_transition_real(time_period,age_index,financial_index,&

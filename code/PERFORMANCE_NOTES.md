@@ -784,3 +784,57 @@ local now, renamed `budget_residual_1`. Nothing in the model reads it, so the
 race only ever corrupted the diagnostic, but a diagnostic you cannot trust is
 worse than no diagnostic.
 
+
+---
+
+## 16. The lottery's branch-match bug is fixed, and the lottery still should not be on
+
+Section 11 diagnosed the asset lottery firing twelve times in 177,120 calls and
+named the cause: the `a'` search loops over housing choices refilling
+`flow_utility_vector` and `future_utility_vector` on each branch, so on return
+they hold the LAST branch searched rather than the one that won, and the guard
+refused. Nine refusals in ten were that test.
+
+**Fixed, and the counters say so exactly.** The three values the parabola needs
+are captured at the moment a branch becomes the new global best, which is where
+the winner is known, in threadprivate storage alongside the vectors they
+replace. Measured over one backward induction:
+
+```
+                     before          after
+calls                177,120         177,120
+fired                     12 (0.007%)  159,822 (90.2%)
+refused branch match 160,995 (90.9%)        0 (0.0%)
+refused geometry      16,113 (9.1%)    17,298 (9.8%)
+```
+
+**And it still should not be switched on**, for a reason neither section 11 nor
+section 15 states. `internal_computations` already refines `a'` on a sub grid of
+`fin_num_of_internal = 50` points spanning the interval around the coarse point.
+The policy's `a'` is therefore ALREADY off grid and already fine, and the lottery
+adds a second, coarser estimate of the same quantity, fitted to a parabola
+through three COARSE points. The policy then carries the refined `a'` and the
+distribution carries the lottery's, they disagree, and the disagreement is
+exactly the budget residual section 15 measured: with the lottery on and the
+branch match bug fixed, the check still fired 31,530 times.
+
+Section 15's fix was `interpolate_a_prime=0` and that remains right. The branch
+match fix is kept because it is a real bug and because the counters are the only
+evidence that would ever justify turning the lottery on.
+
+### What this means for the asset grid
+
+Section 11 wanted the grid cut from 41 points to 25 on the strength of the
+lottery. The lottery is not the argument. **The refinement is**: the coarse grid
+is a SEARCH grid whose job is to bracket the optimum, and the fifty point
+refinement is what sets precision. A coarser search grid means fewer refinements
+run, each spanning a wider interval at the same fifty points, so precision falls
+but does not fall to the coarse spacing.
+
+The `a'` search is quadratic in the coarse grid, so forty positive points to
+twenty five is 2.56x, which on the measured loop cost takes a calibration from
+about 130 hours to about 50. That is worth having and it is NOT free: the
+budget's own warning applies, that the notches which make the objective not
+single peaked live here, voucher eligibility as a step in income and the food
+stamp floor, and that is where the welfare comparison happens. Any cut has to be
+validated at both sizes against the targeted moments and both counterfactuals.
