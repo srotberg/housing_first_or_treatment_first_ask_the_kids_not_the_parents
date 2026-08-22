@@ -791,10 +791,14 @@
         integer, parameter :: remove_tax_and_depreciation=1
                                                         
         integer, parameter :: do_internal_computations=1
-        ! EIGHTY, RAISED WITH THE COARSE GRID'S CUT so the sub grid spacing is
-        ! unchanged: the refinement spans the two neighbouring coarse gaps, which
-        ! are 40/25 = 1.6 times wider at 25 points, and 50 x 1.6 = 80.
-        integer :: fin_num_of_internal=80
+        ! SIXTY TWO, SET SO THAT THE SUB GRID'S SPACING DOES NOT DEPEND ON THE
+        ! COARSE GRID. The refinement spans the two coarse gaps neighbouring the
+        ! search's answer, and those gaps scale as 1/n, so holding n x fin fixed
+        ! holds the sub grid spacing fixed. The model was built at 50 x 50, so
+        ! the constant is 2500 and forty points want 62. It also holds the
+        ! refinement's cost fixed, which is what makes the coarse grid the only
+        ! thing that varies when grids are compared.
+        integer :: fin_num_of_internal=62
         ! ZERO MEANS CALIBRATE. At one, every distance_* is set to zero and the
         ! whole parameter update block is skipped, so the program re-solves the
         ! equilibrium at fixed parameters and reports the result. That is what it
@@ -1965,21 +1969,38 @@
         ! function of income which includes r*a, the food stamp floor kinks, and
         ! housing is discrete. Coarsening this grid coarsens exactly the dimension
         ! that carries the notches.
-        ! TWENTY FIVE COARSE POINTS, NOT FORTY, AND THE REFINEMENT KEEPS THE
-        ! PRECISION. The coarse grid is a SEARCH grid: nothing is read off it,
-        ! because a policy read off it would be wrong, which is what the asset
-        ! lottery was doing when it fitted a parabola through three coarse points
-        ! and broke the budget constraint. internal_computations is what answers,
-        ! on a sub grid spanning the two neighbouring coarse gaps.
+        ! TWENTY FIVE WAS TRIED AND THE EVIDENCE FOR IT WAS VOID. The argument
+        ! was that the coarse grid is only a SEARCH grid, that nothing is read
+        ! off it because internal_computations refines a' on a sub grid spanning
+        ! the two neighbouring coarse gaps, and that widening the coarse gaps by
+        ! 40/25 while raising the sub grid by the same factor therefore holds
+        ! precision at 2.56x the speed. Half of that is right: the a' CHOICE is
+        ! refined off grid. The other half is not. The a' STATE is on grid, and
+        ! every place that asks what a household has -- its financial income,
+        ! its wealth, its bequest, whether it clears a voucher's income test --
+        ! reads financial_grid(financial_index). The distribution is carried on
+        ! the same points. So the coarse grid is the state space, and cutting it
+        ! coarsens the state space.
         !
-        ! THE ARITHMETIC IS WHY THIS IS FREE RATHER THAN A TRADE. The a' search
-        ! is quadratic in the coarse grid, so 40 to 25 is (40/25)^2 = 2.56x. The
-        ! refinement is linear in fin_num_of_internal and runs once per coarse
-        ! point, so its total cost is points x sub points: 25 x 80 is 2000, and
-        ! 40 x 50 was 2000. Unchanged. Widening the coarse gaps by 40/25 = 1.6
-        ! and raising the sub grid by the same 1.6 leaves the sub grid SPACING
-        ! exactly where it was, so precision is held, not traded.
-        integer, parameter :: positive_financial_grid_size=25
+        ! THE MEASUREMENT THAT SEEMED TO SETTLE IT MEASURED SOMETHING ELSE. The
+        ! 25 point build's first moment block was held against the 40 point
+        ! build's and read as a 10.7 per cent error in average net wealth and a
+        ! 619 per cent rise in distribution sweeps. Both builds had loaded a warm
+        ! start distribution, and the 25 point build had loaded the 40 point
+        ! build's, because read_calibration_distribution did not check the shape:
+        ! it filled an 86 element layout from a 101 element file and got a
+        ! distribution summing to 45.7 instead of 51.4. The sweeps and the wealth
+        ! gap are that, not the grid. The stamp added to
+        ! write_calibration_distribution is what stops it happening again.
+        !
+        ! SO THE GRID IS BACK AT FORTY WHILE THE REAL COMPARISON IS RUN: three
+        ! cold solves at 25, 40 and 50 with the warm start deleted on every side
+        ! and fin_num_of_internal set so that n x fin is 2500 at each, which
+        ! holds both the refinement's cost and its sub grid spacing fixed and
+        ! leaves the state grid as the only thing that moves. Forty is itself an
+        ! unvalidated cut from the fifty this model was built with, so it is in
+        ! that comparison too rather than assumed.
+        integer, parameter :: positive_financial_grid_size=40
         integer, parameter :: negative_financial_grid_size=61
         
         integer, parameter :: grid_gaps=coarse_grid*10+(1-coarse_grid)
@@ -28860,6 +28881,28 @@
 
     end do
 
+    ! THE SHAPE STAMP, AND WHY THE WARM START IS WORTHLESS WITHOUT IT. The two
+    ! files are a bare list of numbers with nothing in them that says what shape
+    ! they were written at, and the reader fills an array of whatever shape the
+    ! build it is running in happens to have. So a run at a different asset grid
+    ! reads them anyway. If the new array is SMALLER the read succeeds and
+    ! silently loads a distribution that is the first fraction of each slice of
+    ! another one, which is not a distribution: an asset grid cut from forty
+    ! positive points to twenty five loaded a warm start summing to 45.7 against
+    ! the 51.4 it was written with, took 2445 sweeps to grind back from it, and
+    ! the moments it then reported were compared against another build's and read
+    ! as evidence about the grid. They were evidence about this bug. If the new
+    ! array is LARGER the read hits end of file and the run dies outright, which
+    ! is the same bug wearing a louder coat.
+    !
+    ! So the count of elements is written beside them, and a warm start whose
+    ! count does not match is refused.
+    open(unit=73,file="calibration_distribution_shape.tmp",action='write',status='replace')
+        write(73,*) size(distribution_stationary(1)%vector_transition_real(1,:,:,:,:,:,:))
+    close(73)
+
+    call rename("calibration_distribution_shape.tmp","calibration_distribution_shape.dat")
+
     end subroutine
 
     subroutine read_calibration_distribution()
@@ -28873,18 +28916,50 @@
 
     implicit none
 
-    integer :: dist_index_1
-    logical :: exists_1,exists_2
+    integer :: dist_index_1,stamped_size_1,actual_size_1
+    logical :: exists_1,exists_2,exists_3
     character*1 :: string_used_1
 
     have_warm_distribution=0
 
     inquire(file="calibration_distribution1.dat",exist=exists_1)
     inquire(file="calibration_distribution2.dat",exist=exists_2)
+    inquire(file="calibration_distribution_shape.dat",exist=exists_3)
 
     if (.NOT. (exists_1 .AND. exists_2)) then
 
         write(*,*) "no warm start distribution, initialising from the age one cross section"
+
+        return
+
+    end if
+
+    ! THE SHAPE HAS TO MATCH. See write_calibration_distribution for what
+    ! happens when it does not, which is that nothing happens: the read
+    ! succeeds and the distribution is wrong. An unstamped pair is refused
+    ! rather than trusted, because a pair from before the stamp existed cannot
+    ! be told apart from a pair written at another grid.
+    actual_size_1=size(distribution_stationary(1)%vector_transition_real(1,:,:,:,:,:,:))
+
+    if (.NOT. exists_3) then
+
+        write(*,*) "WARM START REFUSED: the distribution files carry no shape stamp, &
+            &so the grid they were written at is unknown. Initialising from the age &
+            &one cross section."
+
+        return
+
+    end if
+
+    open(unit=74,file="calibration_distribution_shape.dat",action='read')
+        read(74,*) stamped_size_1
+    close(74)
+
+    if (stamped_size_1/=actual_size_1) then
+
+        write(*,*) "WARM START REFUSED: written at", stamped_size_1, &
+            "elements, this build wants", actual_size_1, &
+            ". Initialising from the age one cross section."
 
         return
 

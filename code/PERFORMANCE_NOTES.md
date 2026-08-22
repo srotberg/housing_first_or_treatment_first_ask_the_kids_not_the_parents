@@ -838,3 +838,69 @@ budget's own warning applies, that the notches which make the objective not
 single peaked live here, voucher eligibility as a step in income and the food
 stamp floor, and that is where the welfare comparison happens. Any cut has to be
 validated at both sizes against the targeted moments and both counterfactuals.
+
+## 17. The warm start had no shape stamp, and it voided a grid comparison
+
+`read_calibration_distribution` loaded `calibration_distribution{1,2}.dat` on
+nothing but their existence. The files are a bare list of numbers with nothing
+in them saying what array they came out of, and the reader fills whatever array
+the running build happens to declare. So a build at a different asset grid reads
+them anyway, and which way it fails depends on which direction the grid moved:
+
+- **smaller array, silent corruption.** A cut from 40 positive asset points to
+  25 takes the array from 101 points to 86. The read succeeds, having taken the
+  first 86/101 of each slice of somebody else's distribution. The log said
+  `warm start distribution loaded, sum= 45.718` where the file had been written
+  with 51.362.
+- **larger array, loud death.** Going the other way, 40 to 50, the read runs off
+  the end: `Fortran runtime error: End of file`. That is the same bug wearing a
+  louder coat, and it is the better of the two.
+
+**What it cost.** The 25 point build's first moment block was compared against
+the 40 point build's and read as evidence about the grid: average net wealth
+10.7 per cent lower, bequests 12.9 per cent lower, the first distribution solve
+taking 2445 sweeps against 340. All of it was the corrupt warm start. The 2445
+sweeps are the distribution grinding back from a guess that was missing an
+eighth of its mass, and the wealth gap is what that leaves behind at a tolerance
+of 2e-4.
+
+**The fix.** `write_calibration_distribution` writes the element count to
+`calibration_distribution_shape.dat`, and the reader refuses a warm start whose
+count does not match — and refuses an unstamped pair too, because a pair from
+before the stamp existed cannot be told apart from a pair written at another
+grid. Refusing costs one cold distribution solve. Accepting costs a wrong
+answer that looks like a right one.
+
+**The general form, which is worth more than the instance.** A restart file that
+does not carry the shape of what it holds is not a restart file, it is a length
+of tape. Every one of them in this program should say what it is: the parameter
+state file happens to be safe, because it is scalars read one at a time with
+`iostat`, but that is luck rather than design.
+
+## 18. What the grid comparison has to look like to mean anything
+
+The comparison that was voided is worth redoing, and this is the shape it has to
+have. Three things have to be held down or it measures the wrong thing.
+
+**Both sides cold.** Delete the warm start on every side. Otherwise the two
+builds start their distributions from different places and the difference in
+where they end up at a finite tolerance is start dependence, not discretisation.
+
+**Both sides at the declared parameters.** Only the FIRST moment block, the one
+printed after the first distribution solve, is comparable. Every later block
+sits behind a parameter update that used the previous block's moments, so by
+loop one the two builds are answering different questions. `grid_check.py` reads
+the first block and nothing else for exactly this reason, and it prints the
+parameters next to the moments so that a run which is not in fact like for like
+shows itself.
+
+**The sub grid held fixed.** `fin_num_of_internal` is set so that
+`positive_financial_grid_size * fin_num_of_internal` is 2500 at every grid: 25 x
+100, 40 x 62, 50 x 50. The refinement spans the two coarse gaps either side of
+the search's answer and those gaps scale as 1/n, so this holds the sub grid's
+spacing fixed, and it holds the refinement's cost fixed as well. What is left
+varying is the state grid, which is the thing under test.
+
+Forty is in that comparison rather than assumed. The model was built at fifty;
+forty is an earlier unvalidated cut of mine whose own comment says in as many
+words that it must be validated, and it never was.
