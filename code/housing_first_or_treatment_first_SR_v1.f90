@@ -971,6 +971,13 @@
         ! sections 9.1 and 9.2 of PERFORMANCE_NOTES.md.
         integer, parameter :: accelerate_distribution=0
 
+        ! ONE AT A TIME, AND ONLY WHILE SOMETHING IS BEING DIAGNOSED. Prints the
+        ! location of the worst cell every hundredth distribution sweep, which is
+        ! how a plateaued distance gets read: a max pinned to one state is an
+        ! oscillating knife edge, a max that wanders is the whole distribution
+        ! still moving.
+        integer, parameter :: diagnose_distribution_max=1
+
         ! HOW MANY SWEEPS THE DISTRIBUTION LOOP WILL DO BEFORE GIVING UP. It had
         ! no cap at all, so a residual that stalls above the operative tolerance
         ! spun forever and the only symptom was a log printing the same number;
@@ -19039,9 +19046,18 @@
         integer :: financial_index,has_house,time_period,track_housing_1,voucher_index_1
         integer :: number_of_threads_used,loop_only_over_oldest,amortization_used,is_addicted_1
         real(8) :: sum_distribution_implied,sum_distribution_guess,avg_income_to_use_1,avg_income_to_use_2
+        ! WHAT THE SWEEPS ACTUALLY REACHED, kept separately because the stall
+        ! path zeroes distance_distribution to break the loop and DIST_DONE
+        ! would otherwise report a stalled solve as having finished at zero.
+        real(8) :: distance_distribution_reached
+        integer, dimension(6) :: dist_argmax_1
         integer :: newborn_census_i
         real(8) :: newborn_census_clean,newborn_census_smi
         character*1 :: string_used
+
+        ! Negative rather than zero, so a DIST_DONE printed without a sweep
+        ! having run says so instead of claiming perfect convergence.
+        distance_distribution_reached=-1.d0
                 
         if (partial_equilibrium==1) then
         
@@ -20025,6 +20041,34 @@
                 distance_distribution=0
                     
             end if
+
+            distance_distribution_reached=distance_distribution
+
+            ! WHERE THE WORST CELL IS, every hundredth sweep. The distance is a
+            ! max over cells, and a max that plateaus says nothing about whether
+            ! one state is oscillating or the whole distribution is drifting.
+            ! The location is what tells those apart, and it is printed rarely
+            ! enough to cost nothing.
+            if ((diagnose_distribution_max==1) .AND. (solve_transition_dynamics==0) .AND. &
+                (mod(loop_count_dist,100)==0)) then
+
+                do i=1,2
+
+                    dist_argmax_1=maxloc(abs(&
+                        distribution_implied(i)%vector_transition_real(time_period,:,:,:,:,:,:)-&
+                        distribution_guess(i)%vector_transition_real(time_period,:,:,:,:,:,:)))
+
+                    write(*,*) "DIST_MAX sweep=", loop_count_dist, " block=", i, &
+                        " at=", dist_argmax_1, " gap=", maxval(abs(&
+                        distribution_implied(i)%vector_transition_real(time_period,:,:,:,:,:,:)-&
+                        distribution_guess(i)%vector_transition_real(time_period,:,:,:,:,:,:))), &
+                        " mass_there=", distribution_guess(i)%vector_transition_real(time_period,&
+                        dist_argmax_1(1),dist_argmax_1(2),dist_argmax_1(3),dist_argmax_1(4),&
+                        dist_argmax_1(5),dist_argmax_1(6))
+
+                end do
+
+            end if
                         
             do i=1,2
             
@@ -20152,7 +20196,7 @@
         if (solve_transition_dynamics==0) then
 
             write(*,*) "DIST_DONE sweeps=", loop_count_dist, &
-                " final_distance=", distance_distribution
+                " final_distance=", distance_distribution_reached
 
         end if
 
