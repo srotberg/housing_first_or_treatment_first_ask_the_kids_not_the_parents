@@ -32,11 +32,12 @@
 % supplies and the quantitative model has yet to replace.
 \newcommand{\new}[1]{\textcolor{red}{#1}}
 % THE PARAMETER COUNTS AS MACROS, so the two table files can quote them too.
-% fill.py only rewrites @@name@@ in this file, and the tables are \input from
+% fill.py only rewrites its placeholders in this file, and the tables are
+% \input from
 % their own .tex, so a caption saying how many rows its table has could not be
 % generated any other way. Counted off the Set column of the tables themselves.
-\newcommand{\nmain}{twenty nine}
-\newcommand{\nstd}{twenty five}
+\newcommand{\nmain}{\new{twenty nine}}
+\newcommand{\nstd}{\new{twenty five}}
 % The cut macro below marks a PROPOSED DELETION: red and struck through, so the reader sees what
 % would go before it goes. ulem is not in this installation, and a single rule over a
 % whole phrase cannot break across lines, so the rule is drawn word by word: each word
@@ -251,7 +252,7 @@ One mechanism of the model decides who the two policies treat differently, and i
 central enough to state here. Two facts about drug use have to be reproduced
 together. It is concentrated at the bottom of the income distribution, and it is not
 universal: most households do not use at all, so there is a margin at zero, with a
-participation rate of $8.90$ percent among adults aged $26$ and over in the 2024 National Survey on Drug Use and Health (NSDUH), which is the share
+participation rate of $\new{8.90}$ percent among adults aged $26$ and over in the 2024 National Survey on Drug Use and Health (NSDUH), which is the share
 with a drug use disorder of any severity, mild included. To
 generate both I model drugs as a luxury good bought at a price, which puts most
 households at a corner where they optimally consume none. Left to its own devices,
@@ -299,14 +300,14 @@ homeless caretaker. Each is a place the model can be caught.
 
 
 The stylized model delivers the result in a form that can be read off. At universal
-cover and with no externality, 7.4 percent of households are strictly worse
+cover and with no externality, \new{7.4} percent of households are strictly worse
 off under Treatment First and none is better off, so the private cost of
-conditionality is 0.049 percent of consumption in the aggregate: small, because
+conditionality is \new{0.049} percent of consumption in the aggregate: small, because
 so few households are affected, and unambiguous in sign. Switching the externality
-on, conditionality prevents 5.219 percentage points of disorder cases, and
-preventing one case is worth 147.3 percent of consumption to
+on, conditionality prevents \new{5.219} percentage points of disorder cases, and
+preventing one case is worth \new{147.3} percent of consumption to
 one child. The product is
-7.686 percent, which is 158.1 times the private loss. Housing First is
+\new{7.686} percent, which is \new{158.1} times the private loss. Housing First is
 better for every household taken one at a time, and worse once one counts the
 children of the households it fails to deter. 
 
@@ -731,7 +732,7 @@ homelessness ($h_1$), a small unit ($h_2$) and a standard unit
 ($h_3$). Homelessness is free and delivers less housing services than
 the market does.\footnote{Two rented sizes is the fewest that lets a
 household economise on housing rather than lose it. With one, homelessness comes
-out at 25.68 percent against a target of $0.399$, at any $h_1$.}
+out at \new{25.68} percent against a target of $0.399$, at any $h_1$.}
 
 A voucher covers part of the rent, is means-tested and is rationed. It is drawn
 independently each period, which is a simplification relative to the
@@ -829,31 +830,16 @@ National Survey on Drug Use and Health (NSDUH) 2024 for respondents aged 26 and
 over.
 
 Income support replaces half of previous earnings on a base capped at mean
-income, in line with statutory state rules. Only the standard rental unit is set,
+income, in line with statutory state rules. \new{Only the standard rental unit is set,
 at $h_3 = 0.40$ of mean income; the small unit $h_2$ is calibrated, on the share
-of housed households living in one. The voucher parameters are institutional: covered
+of housed households living in one.} The voucher parameters are institutional: covered
 tenants pay $30$ percent of market rent, eligibility is capped at half of median income, $\kappa_V = 0.50$, and $\pi_V = 0.266$ is the ratio of recipients to the income-eligible population in the 2023 Picture of Subsidized
-Households, published by HUD. The weight on drugs is set at $\theta = 0.23$, and
-it is set rather than calibrated because the drug spending share cannot be aimed
-at.\footnote{$\theta$ cannot be raised without
-limit, and the ceiling is what makes the mechanism work rather than a matter of
-taste. A drug valuable enough is not deterred by a death that arrives thirty
-years later, so past a $\theta$ of about $0.245$ the mortality channel no longer
-reverses the income gradient on its own and the average user stops being poorer
-than average. Two things stop $\theta$ from being calibrated on the spending
-share below that ceiling. The share is DISCONTINUOUS in $\theta$: it climbs to
-about $19$ percent and then jumps to nearly thirty, so the $16$
-percent the quantitative model targets falls in the gap between the two branches
-and no $\theta$ delivers it. And the ceiling binds first in any case, since the
-mortality channel gives out at a share of about $18.4$ percent, below
-the branch top. So $\theta$ is set at a value that leaves the mechanism a wide
-margin, and the spending share it implies, $15.22$ percent, is reported as
-an untargeted moment rather than matched.}
+Households, published by HUD.
 
 
 \subsubsection{Internal calibration}
 
-Seven parameters are set inside the model, in Table~\ref{tab:int}, each bracketed
+\new{Eight} parameters are set inside the model, in Table~\ref{tab:int}, each bracketed
 on the moment it moves most rather than fitted jointly. The dispersion of log
 permanent income $\sigma_y$ is matched to how unequal earnings are at the bottom: in
 the 2022 Survey of Consumer Finances (SCF), households aged $26$ to $65$ with positive wage
@@ -868,21 +854,40 @@ of being alive $\aleph$ is matched to a value of a statistical life of 80
 times average annual income, about \$9 million against a mean household income of
 \$113,000, which is the range surveyed by Viscusi and Aldy (2003) once their
 estimates are put in current dollars. The pull of the first unit $b$ is matched
-to a drug participation rate of $8.90$ percent from NSDUH 2024 for
+to a drug participation rate of $\new{8.90}$ percent from NSDUH 2024 for
 respondents aged 26 and over with a disorder of any severity, housing services on the street
 $h_1$ to a homelessness rate of $0.399$ percent from the 2023 HUD PiT count, and the SUD hazard $\lambda$ to the $3.68$ percent
 of adults aged $26$ and over carrying a moderate or severe SUD in NSDUH 2024.
-The small rental unit $h_2$ is matched to the $37.3$ percent of housed
+\new{The small rental unit $h_2$ is matched to the $\new{37.3}$ percent of housed
 households living in a unit with fewer than three bedrooms, from table B25042 of
 the 2023 American Community Survey, which is the source the quantitative model's
 size distribution comes from as well. This model has two rentals where that one
 has three, so $h_2$ stands for everything below the standard family unit rather
-than for the smallest bin alone.
-\cut{The weight on the drug $\theta$ is matched to the same drug spending share as
-the quantitative model, $16$ percent of income across users. It was set
-rather than bracketed while that target stood at a level this model could not
-reach; at $16$ percent it can, so it is calibrated here on the same
-moment and the two models no longer disagree about what a user spends.}
+than for the smallest bin alone.}
+\new{The weight on drugs $\theta$ is matched to the drug spending share, the
+$\new{16}$ percent of income users spend on the drug. That target is built
+from two sources, because no survey collects both halves of it: Midgette et
+al.\ (2019) estimate retail spending on cannabis, cocaine, heroin and
+methamphetamine at $136$ billion dollars in 2016, which the Consumer Price Index
+for All Urban Consumers carries to $\new{177.8}$ billion in 2024 dollars, and
+NSDUH 2024 puts the using population at $\new{20.2}$ million adults aged $26$
+and over with mean family income of $\new{54,216}$ dollars, or $\new{1,097}$
+billion in all. The denominator is family income rather than personal income
+because the model's $y$ is what a household pays its rent and buys its
+consumption out of, and both sides are put in the same year's dollars; the
+quantitative model of Section~\ref{sec:full} builds the same moment the same
+way. It is found by scanning
+$\theta$ rather than by bisecting on the moment, because the share is not
+continuous in $\theta$: it rises to about $\new{19}$ percent and then jumps
+to nearly thirty, so a bisection aimed between the two branches narrows onto the
+jump instead of converging. Scanning finds $\theta = \new{0.23}$, at which the model
+spends $\new{15.22}$ percent.\footnote{\new{$\theta$ also cannot be raised
+without limit, and the ceiling is what makes the mechanism work rather than a
+matter of taste: a drug valuable enough is not deterred by a death that arrives
+thirty years later, so past a $\theta$ of about $\new{0.245}$ the mortality
+channel no longer reverses the income gradient on its own. The calibrated value
+sits well below that, and with the mortality channel alone at full strength
+users still hold $\new{0.33}$ of average income.}}}
 
 \begin{table}[!tb]
 \centering
@@ -904,7 +909,7 @@ income distribution, and it starts from the force that any answer has to
 overcome. Drugs are a luxury good bought at a price, so a household with
 twice the income gives up less utility per dollar spent on them. With no consequences
 at all for acquiring a SUD that is the only force operating, and drug use
-concentrates at the top: the average user then earns 3.87 times the
+concentrates at the top: the average user then earns \new{3.87} times the
 population average.
 
 Two features of the environment are candidates to reverse it. The
@@ -915,7 +920,7 @@ $u_1-u_0$, and if income support cannot cover the rent you downsize, live on
 less, or lose your home. Figure~\ref{fig:who} scales each from nothing to
 $125$ percent of its
 calibrated value, recalibrating $b$ at every point so participation stays at
-$8.90$ percent.
+$\new{8.90}$ percent.
 
 \begin{figure}[!tb]
 \centering
@@ -924,23 +929,23 @@ $8.90$ percent.
 \label{fig:who}
 \notes{0.62\textwidth}{Note: the vertical axis is average income of users over
 the population average, on a log scale, and $b$ is recalibrated at every point
-so that the model targets a participation rate of $8.90$ percent at every point. The black dotted line marks
+so that the model targets a participation rate of $\new{8.90}$ percent at every point. The black dotted line marks
 the calibrated strength; everything to the right of it is extrapolation.}
 \end{figure}
 
 The result is sharper than the statement that mortality matters more. That channel
-takes the income ratio from 3.87 with nothing switched on down to 0.33 at
+takes the income ratio from \new{3.87} with nothing switched on down to \new{0.33} at
 full strength. At half of its
-calibrated value the ratio is unchanged at 3.87, and the reversal
-begins to happen over the last quarter of the channel. That threshold is a feature of the
+calibrated value the ratio is unchanged at \new{3.87}, and the reversal
+begins to happen over the last \new{quarter} of the channel. That threshold is a feature of the
 mechanism rather than an artefact. What mortality destroys is a continuation value,
 and a household only stops using when the expected loss of that value exceeds what
 the drug is worth to it; below the point where it does, a stronger penalty changes
 nothing about who uses, and above it the ordering starts to flip.
 
 In contrast, the unemployment channel does
-not reverse it at all, leaving users at 3.87 times average income even
-fully switched on, and at $125$ percent it is 3.87, still above
+not reverse it at all, leaving users at \new{3.87} times average income even
+fully switched on, and at $125$ percent it is \new{3.87}, still above
 one and no closer to turning. A resource penalty does not produce the concentration of
 drug use at the bottom.
 
@@ -1002,23 +1007,23 @@ Figure~\ref{fig:mh} traces both as generosity rises, that is across values of $\
 Both comparisons here are between long-run steady states, each the rest point of
 the economy under a policy that has always been in place. Section~\ref{sec:trans}
 follows the path between them. With no programme at all,
-12.88 percent of households use. Universal Treatment First takes that to
-0.00 percent, a value-of-life force of -12.88 percentage points; universal
-Housing First leaves it at 6.93 percent, so the moral hazard force is
-+6.93 points and the net effect of Housing First is -5.95. Both forces are
+\new{12.88} percent of households use. Universal Treatment First takes that to
+0.00 percent, a value-of-life force of \new{-12.88} percentage points; universal
+Housing First leaves it at \new{6.93} percent, so the moral hazard force is
+\new{+6.93} points and the net effect of Housing First is \new{-5.95}. Both forces are
 first order and they work against each other, which is the central feature of
 the problem. Anyone asserting that housing the homeless must increase drug use,
 or must reduce it, is making a quantitative claim that needs to be tested.
 
 Figure~\ref{fig:margins} plots the homelessness and SUD outcomes for each
 programme as its generosity changes, alongside drug use. In Panel (a) the two
-policies end in the same place on homelessness, both driving it from 0.75
+policies end in the same place on homelessness, both driving it from \new{0.75}
 percent with no
 programme to zero, and along the way Treatment First is if anything slightly
 below Housing First, because the households it deters from using never acquire
 the SUD that puts their housing at risk. Panel (b) repeats
 Figure~\ref{fig:mh} here for convenience. The larger difference is
-in Panel (c), where at universal cover Housing First leaves 5.219 percent of
+in Panel (c), where at universal cover Housing First leaves \new{5.219} percent of
 the population carrying the SUD and Treatment First leaves 0.000
 percent. What the moral hazard buys is extra SUD cases among households that
 are housed either way.
@@ -1057,15 +1062,15 @@ and no choice of parameters overturns it.
 It follows that the moral hazard is not an inefficiency. Households here face the
 true SUD hazard and make no mistakes, so the extra use Housing First
 induces is not a wedge to be closed but a household optimally taking a risk it
-is now better able to bear. The +6.93 points of Section~\ref{sec:mh} are a
+is now better able to bear. The \new{+6.93} points of Section~\ref{sec:mh} are a
 statement about drug use and not about welfare.
 
 Panel B of
-Table~\ref{tab:welfare} puts welfare numbers on it: 7.4 percent of households are
+Table~\ref{tab:welfare} puts welfare numbers on it: \new{7.4} percent of households are
 strictly worse off under Treatment First, none is better off, and those affected
-lose 0.66 percent of consumption. Those are exactly the households
+lose \new{0.66} percent of consumption. Those are exactly the households
 that use: a household that never uses faces the same voucher rule under both
-policies and is indifferent between them. The figure is not the $8.90$
+policies and is indifferent between them. The figure is not the $\new{8.90}$
 percent participation rate of Section~\ref{sec:cal} because the programmes
 compared here are universal, rather than the rationed benchmark that rate is
 measured at.
@@ -1083,7 +1088,7 @@ income.}
 
 A fixed budget does not rescue the welfare case for conditionality either.
 Treatment First is only marginally \emph{less} expensive than Housing First at universal
-cover, 0.0937 against 0.0940, so matching on cost rather than on generosity
+cover, \new{0.0937} against \new{0.0940}, so matching on cost rather than on generosity
 changes nothing. The reason both produce similar fiscal costs is the
 following. Survival into period 2 falls from 0.91 to 0.47 with a SUD,
 so the extra households Housing First puts into the SUD state die sooner and
@@ -1151,7 +1156,7 @@ does to its child is present and only the remainder is external.}
 The disorder penalty $\delta_d$ is calibrated rather than set: it is chosen so that
 a child of a parent who acquired a SUD is 3 times as likely to acquire
 one, the middle of the epidemiological range of two to four in McGovern et al.\
-(2023). That takes $\delta_d = 0.46$, shown in
+(2023). That takes $\delta_d = \new{0.46}$, shown in
 Table~\ref{tab:children}.
 
 The homelessness penalty $\delta_h$ is calibrated in a similar way, on the transmission of
@@ -1171,17 +1176,17 @@ First.
 
 
 Panel B of Table~\ref{tab:children} puts the two sides together and they are not close. The private cost of
-conditionality, in the first row, is 0.049 percent of consumption, small
-because only 7.4 percent of households are affected. Against that,
-conditionality prevents 5.219 percentage points of SUD cases in the
-second row, and preventing one of them is worth 147.3 percent
+conditionality, in the first row, is \new{0.049} percent of consumption, small
+because only \new{7.4} percent of households are affected. Against that,
+conditionality prevents \new{5.219} percentage points of SUD cases in the
+second row, and preventing one of them is worth \new{147.3} percent
 of consumption to one child, shown in the third row. The gain in the fourth row is the
-product of those two, since one prevented case spares one child: 5.219
-percentage points times 147.3 percent gives 7.686 percent of
-consumption, which is 158.1 times the private loss of the first row.
+product of those two, since one prevented case spares one child: \new{5.219}
+percentage points times \new{147.3} percent gives \new{7.686} percent of
+consumption, which is \new{158.1} times the private loss of the first row.
 That ratio exceeds one for every $\delta_d$ in Panel A except $\delta_d=0$, where
 by construction there is no externality to price; at the smallest penalty shown it is
-still 43 times the private loss. 
+still \new{43} times the private loss. 
 
 All of this is a crude illustration, so the impacts of
 policies can be unreasonably large. Its point is to show how an
@@ -1254,23 +1259,23 @@ point, so ``percent'' means percent of lifetime consumption.
 Each of the generations affected has a known sign here, with only its
 magnitude open. The initial newborns can only be weakly worse off, since
 conditionality removes an option and gives nothing back and they inherit
-identically under both policies: they gain 15.48 percent against
-15.54, so conditionality costs them 0.060 percent (see cohort $1$ in Panel~(a) of Figure~\ref{fig:trans}).
+identically under both policies: they gain \new{15.48} percent against
+\new{15.54}, so conditionality costs them \new{0.060} percent (see cohort $1$ in Panel~(a) of Figure~\ref{fig:trans}).
 
 The second cohort of newborns must be strictly worse off, because its parents are
 the initial old, whom Treatment First stripped of the voucher for a disorder
-acquired before it was implemented: 0.534 percent of it is born to a
+acquired before it was implemented: \new{0.534} percent of it is born to a
 parent who was unhoused under universal Treatment First against
-0.003 percent under universal Housing First, and the welfare gap
-widens from 0.060 to 0.235 percent (see cohort $2$ in Panel~(a) of Figure~\ref{fig:trans}). What that cohort inherits
+\new{0.003} percent under universal Housing First, and the welfare gap
+widens from \new{0.060} to \new{0.235} percent (see cohort $2$ in Panel~(a) of Figure~\ref{fig:trans}). What that cohort inherits
 identically is the \emph{disorder}, settled before the condition existed and
 beyond any policy's reach after the fact, so only the housing margin differs.
 
 The initial old are the ones conditionality costs most, and the figure is
 careful about what that means. The triangles in Panel~(a) of Figure~\ref{fig:trans} price them against the same pre-reform
 world every cohort line is drawn against, and on that axis they gain under
-\emph{both} policies, +7.6 percent under Treatment First and
-+8.6 under Housing First: universal coverage is worth a great deal
+\emph{both} policies, \new{+7.6} percent under Treatment First and
+\new{+8.6} under Housing First: universal coverage is worth a great deal
 even to a generation whose condition is an unchanged state.
 The gain is that large because the voucher is a rent subsidy to
 everyone it covers rather than a rescue for the few it takes off the street. A
@@ -1278,7 +1283,7 @@ covered household pays $30$ percent of market rent, and $\pi_V$ is
 the share of the \emph{income-eligible} who receive one, eligibility being
 capped at $\kappa_V$ times median income. Raising $\pi_V$ to one takes the share
 of this generation actually holding a voucher from 6.5 percent to
-24.3 percent under Housing First and 22.1 percent under
+\new{24.3} percent under Housing First and \new{22.1} percent under
 Treatment First. The two differ because an eligible household that carries the
 disorder fails the condition and holds no voucher however generous the
 programme is, which is conditionality's whole mechanism seen on one generation.
@@ -1288,10 +1293,10 @@ the subsidy's effect on their welfare, and thus on aggregate
 welfare, is correspondingly large.
 
 What conditionality does is take
-0.9 percent of that away from universal Housing First, 15 times what it takes from
+\new{0.9} percent of that away from universal Housing First, \new{15} times what it takes from
 the initial newborns. This is because it puts 0.53 percent of them on the street
 through the revocation itself, against 0.00 percent under universal
-Housing First and 0.70 percent had the old programme simply
+Housing First and \new{0.70} percent had the old programme simply
 continued, which Panel~(b) now shows alongside the cohorts. They are worse off than universal Housing First would have
 left them, and better off than before the reform, because universal coverage
 houses more of them than the rationed programme did, even with
@@ -1311,8 +1316,8 @@ worse draws than under universal Treatment First, which has none.
 To sum up, the cost falls on the initial old and the two cohorts behind them, and the benefit is
 reaped by every cohort after. Both policies lift the initial newborns by very
 nearly the same amount because the reform moves two dials of very different
-size: coverage is worth about 15.51 percent to them, conditionality
-costs only 0.06 percent, a ratio of 257 to one.
+size: coverage is worth about \new{15.51} percent to them, conditionality
+costs only \new{0.06} percent, a ratio of \new{257} to one.
 
 That a transition here \emph{must} open with losses is a property of this
 environment. But the quantitative model is not bound that way, for two
