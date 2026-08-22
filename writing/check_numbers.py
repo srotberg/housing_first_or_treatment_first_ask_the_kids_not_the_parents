@@ -56,6 +56,7 @@ ALLOW = [
     ('9.1', 'by band'), ('1.1', 'by band'),  # the validation table's own row
     ('0.20', 'willing to pay'),              # kappa_x quoted in its source's units
     ('13.2', 'B25042'), ('62.7', 'B25042'),  # the ACS shares, quoted at their source
+    ('24.1', 'middle unit size'),            # the middle share, likewise
     ('17.2', 'poorer half'),                 # already a placeholder elsewhere
     ('5.6', 'overall level'),
     ('0.5', 'Frisch elasticity'),            # sigma_ell in its source's units
