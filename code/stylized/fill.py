@@ -13,7 +13,7 @@ import json
 import os
 import numpy as np
 from stylized import P, with_, value1
-from calibrate import YG, W, stats, bracket, TARGET
+from calibrate import YG, W, stats, bracket, TARGET, _drug_targets
 from children import (child_grid, shifted, DEL_D, DEL_H, RATIO_TARGET,
                       ratio_h)
 from frontier import TH_BREAK, DSHARE_TOP, DSHARE_CEIL
@@ -177,6 +177,18 @@ def numbers(base, fig):
     # it. They are read off the Set column of the two table files, which is the
     # only place that says whether a parameter is calibrated inside the model or
     # set outside it.
+    # THE DRUG SPENDING TARGET AND ITS ARITHMETIC, from the csv the data script
+    # writes, so the note quotes the same numbers the calibration is fitted to.
+    _d = _drug_targets()
+    out['spend24'] = f'{_d["spend_2024_bn"]:.1f}'
+    out['n_users'] = f'{_d["n_users_m"]:.1f}'
+    out['user_inc'] = f'{_d["user_family_income"]:,.0f}'
+    out['user_inc_bn'] = f'{_d["user_income_bn"]:,.0f}'
+    out['share_uncorrected'] = f'{100 * _d["share_uncorrected"]:.1f}'
+    out['share_income_only'] = f'{100 * _d["share_income_only"]:.1f}'
+    out['share_price_only'] = f'{100 * _d["share_price_only"]:.1f}'
+    out['share_lo'] = f'{100 * _d["share_top_75000"]:.1f}'
+    out['share_hi'] = f'{100 * _d["share_top_125000"]:.1f}'
     out.update(_param_counts())
     # THE SMALL UNIT'S TARGET, from the dict the bracket actually reads rather
     # than typed into the sentence beside it. It is the same American Community

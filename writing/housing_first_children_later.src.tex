@@ -2187,11 +2187,30 @@ to reproduce, total retail spending over the total income of users, which needs
 no assumption about how spending divides between the two groups. Midgette et
 al.\ (2019) put 2016 retail spending on cannabis, cocaine, heroin and
 methamphetamine at 146 billion dollars, of which 136 billion is accounted for by
-the daily and near-daily users who do almost all of it. NSDUH 2024 puts users at
+the daily and near-daily users who do almost all of it. \new{Two things have to be
+made comparable before that is divided by anything. The spending is in 2016
+dollars and the survey's incomes are in 2024, so it is carried forward by the
+Consumer Price Index for All Urban Consumers (CPI-U) to
+$@@spend24@@$ billion. And the denominator is FAMILY income rather than personal
+income, because the model's $y$ is what a household has to pay its rent, buy its
+consumption and buy the drug out of. NSDUH 2024 puts users at $@@q_b@@$ percent of
+adults aged 26 and over, $@@n_users@@$ million people, with mean family income of
+$@@user_inc@@$ dollars, so the income of the using population is $@@user_inc_bn@@$
+billion. That gives $@@f_drug_spending_share_data@@$.}\cut{NSDUH 2024 puts users at
 $@@q_b@@$ percent of adults aged 26 and over and their mean personal income at
 34,344 dollars for a mild disorder and 28,213 for a moderate or severe one, so
-the income of the using population is 691 billion. That gives
-$@@f_drug_spending_share_data@@$.
+the income of the using population is 691 billion.}
+
+\new{Neither correction is a choice between defensible alternatives, and it is
+worth saying what each is worth because they pull opposite ways: with neither
+the share is $@@share_uncorrected@@$ percent, with the income correction alone
+$@@share_income_only@@$ and with the price correction alone
+$@@share_price_only@@$, so each on its own moves the answer further than the two
+together do. What is left is one
+assumption, the open top income band in the survey, which runs from 75,000
+dollars upward with no ceiling. Its midpoint is set at 100,000, the convention
+behind the personal income figures above; at 75,000 the share is
+$@@share_lo@@$ percent and at 125,000 it is $@@share_hi@@$ percent.}
 
 The two studies that measure spending and income on the same people are
 consistent with the disordered end of that: Roddy and Greenwald (2009) report

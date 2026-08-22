@@ -99,6 +99,24 @@ def main():
         w.writerow(['user_family_income', main_row['family_income'],
                     'NSDUH 2024, 26+, any disorder, mean family income',
                     f'top band at {TOP_MAIN}'])
+        w.writerow(['user_personal_income', main_row['personal_income'],
+                    'NSDUH 2024, 26+, any disorder, mean personal income',
+                    f'top band at {TOP_MAIN}'])
+        w.writerow(['n_users_m', round(n_users / 1e6, 1),
+                    'NSDUH 2024, 26+, any disorder, millions', ''])
+        w.writerow(['user_income_bn', main_row['user_income_bn'],
+                    'family income of the using population, $bn', ''])
+        w.writerow(['spend_2024_bn', round(spend24, 1),
+                    'RAND 2016 retail spending carried to 2024 by CPI-U', ''])
+        # WHAT EACH CORRECTION IS WORTH, so the note can say it rather than
+        # assert that the two nearly cancel.
+        per_bn = n_users * main_row['personal_income'] / 1e9
+        w.writerow(['share_uncorrected', round(SPEND_2016_BN / per_bn, 5),
+                    '2016 spending over personal income: neither correction', ''])
+        w.writerow(['share_income_only', round(SPEND_2016_BN / main_row['user_income_bn'], 5),
+                    'family income but 2016 dollars: income correction alone', ''])
+        w.writerow(['share_price_only', round(spend24 / per_bn, 5),
+                    'personal income in 2024 dollars: price correction alone', ''])
         for r in rows:
             w.writerow([f'share_top_{r["top_band"]}', r['share'],
                         'sensitivity to the open top income band', ''])
