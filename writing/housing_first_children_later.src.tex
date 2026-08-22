@@ -31,6 +31,12 @@
 % .src.tex for the at signs finds every number the stylized pipeline still
 % supplies and the quantitative model has yet to replace.
 \newcommand{\new}[1]{\textcolor{red}{#1}}
+% A STANDING FLAG, which survives the strip between rounds. \new and \cut both
+% mark what changed since the last version and are cleared when the next round
+% starts, so neither can carry an open question forward. \query holds one: a
+% short red note in the margin asking whether a passage should be there at all.
+% It is not prose and must be gone before the note is circulated.
+\newcommand{\query}[1]{\marginpar{\raggedright\footnotesize\textcolor{red}{#1}}}
 % THE PARAMETER COUNTS AS MACROS, so the two table files can quote them too.
 % fill.py only rewrites its placeholders in this file, and the tables are
 % \input from
@@ -46,8 +52,8 @@
 % inside it. Maths is fine, $14.2$ is one word.
 \makeatletter
 \newlength{\cw@len}
-\newcommand{\cw}[1]{\settowidth{\cw@len}{#1}%
-  \rlap{\rule[0.55ex]{\cw@len}{0.4pt}}#1}
+\newcommand{\cw}[1]{{\settowidth{\cw@len}{#1}%
+  \rlap{\textcolor{red}{\rule[0.55ex]{\cw@len}{0.4pt}}}\textcolor{red}{\hspace{0pt}#1}}}
 \newcommand{\cut}[1]{\cut@scan#1 \@nil}
 \def\cut@scan#1 #2\@nil{\cw{#1}\ifx\relax#2\relax\else\space\cut@scan#2\@nil\fi}
 \makeatother
@@ -801,11 +807,11 @@ $d'$ because it depends on which $d'$ is realised. A household uses if the value
 %======================================================================
 \subsection{Calibration}\label{sec:cal}
 
-\new{Every target below is documented in full in the replication package's data
+Every target below is documented in full in the replication package's data
 appendix, \texttt{data/DATA\_APPENDIX.md}, which names the
 dataset behind each one, its year and universe, and the computation that turns it
 into the number quoted here. What follows gives the moment and its source; the
-appendix gives the arithmetic.}
+appendix gives the arithmetic.
 
 \subsubsection{External calibration}
 
@@ -865,18 +871,21 @@ respondents aged 26 and over with a disorder of any severity, housing services o
 $h_1$ to a homelessness rate of $@@q_h_1@@$ percent from the 2023 HUD PiT count, and the SUD hazard $\lambda$ to the $@@q_lambda@@$ percent
 of adults aged $26$ and over carrying a moderate or severe SUD in NSDUH 2024.
 
-\new{The} small rental unit $h_2$ is matched to the $@@hsmall_t@@$ percent of housed
+The small rental unit $h_2$ is matched to the $@@hsmall_t@@$ percent of housed
 households living in a unit with fewer than three bedrooms, from table B25042 of
 the 2023 American Community Survey, which is the source the quantitative model's
 size distribution comes from as well.
 The weight on drugs $\theta$ is matched to the drug spending share, the
-$@@q_theta@@$ percent of income users spend on the drug, which
+\new{$@@q_theta@@$ percent of income users spend on the drug, which divides retail
+expenditure on the four drugs, from Midgette et al.\ (2019) for 2016 carried to
+2024 dollars, by the family income of the using population in NSDUH 2024.}
+\cut{$@@q_theta@@$ percent of income users spend on the drug, which
 divides retail expenditure on the four drugs by the family income of the using
-population. \new{$\theta$ is found by scanning rather than by bisecting on the
+population. $\theta$ is found by scanning rather than by bisecting on the
 moment, because the share is not continuous in $\theta$: it rises to about
 $@@dshare_top@@$ percent and then jumps to nearly thirty, so a bisection aimed
 between the two branches narrows onto the jump instead of converging. Scanning
-finds $\theta = @@th@@$, at which the model spends $@@dshare_m@@$ percent.}
+finds $\theta=@@th@@$, at which the model spends $@@dshare_m@@$ percent.}
 
 \begin{table}[!tb]
 \centering
@@ -1404,7 +1413,9 @@ the deterministic age profile of efficiency and $\rho_d$ and
 $\rho_m$ are productivity penalties applied to the SUD and to SMI respectively,
 \emph{conditional on working}. \new{Both are set to one in the benchmark, so the
 income equation is written in general and the two penalties are inactive in it;
-Table~\ref{tab:eleven} says so and Section~\ref{sec:fullcal} says why.}
+Table~\ref{tab:eleven} says so and Section~\ref{sec:fullcal} says why.}\query{Flagged:
+keep the two penalties in the model at all, or take them out of the income
+equation?}
 The three employment states are work, $e=1$, the first period of a spell
 out of work, $e=2$, and non-employment thereafter, $e=3$, so the last two cases
 are both unemployment and the disability case is the income of a household that
@@ -1416,11 +1427,8 @@ DI does not stop until the household recovers.
 
 Employed homelessness cannot be produced by unemployment alone:
 something has to leave a household poor enough while it still has a job.
-\cut{The two penalties, $\rho_d$ and $\rho_m$, are in the model to generate a
-large share of homeless households being employed, consistent with the data.
-Both are calibrated internally, and on two features of the same population: $\rho_d$ on the share of the
-homeless who are employed, and $\rho_m$ on their income relative to the average.}
-\new{What leaves it poor enough is the price of the cheapest dwelling. A household
+
+\cut{What leaves it poor enough is the price of the cheapest dwelling. A household
 with a job that cannot afford $h_2$ is homeless with a job, so $h_2$ is what
 generates the employed share of the homeless and is calibrated on it. The two
 proportional penalties are set to one in the benchmark: with $h_2$ carrying that
@@ -1564,8 +1572,7 @@ Danish registers any SUD predicts conversion to schizophrenia
 with a hazard ratio of $1.34$, opioid use disorder $2.74$
 (Nielsen et al., 2017).
 
-SMI then affects \cut{five}\new{four} objects: \cut{productivity conditional on working
-through $\rho_m$ in~\eqref{eq:fincome},} both employment margins through
+SMI then affects four objects:  both employment margins through
 $\kappa_{uem}$ in~\eqref{eq:femp}, mortality through $\kappa_{\phi m}$
 in~\eqref{eq:fsurv}, the SUD recovery hazard through
 $\mu_m$ in~\eqref{eq:frecover}, and
@@ -1730,8 +1737,8 @@ penalty~\eqref{eq:fnewborn} a shift
 along a single scalar rather than a shift across the nodes of an age-varying
 discretisation, which significantly reduces the computation time to
 manageable levels. Second, it still captures the key mechanisms, because
-unemployment \cut{and the penalty $\rho_d$ are}\new{is} the income risk that links income to
-the SUD and the SUD to income, and \cut{those are}\new{it is} retained in full.
+unemployment is the income risk that links income to
+the SUD and the SUD to income, and it is retained in full.
 
 \paragraph{Employment $e$.} A household that loses their job receives insurance
 with certainty for one year. With $\pi^{ue}$ and $\pi^{eu}$
@@ -2097,7 +2104,7 @@ homelessness.
 
 Lastly, the
 \textbf{distortion} is what the programmes cost in behaviour, and it comes from two
-places. The programmes create distortions\new{:}
+places. The programmes create distortions:
 assistance is means-tested,
 eligibility depends on income and assistance is clawed back at a rate of $\kappa_r$,
 so a recipient who works more loses eligibility or part of the transfer, which requires
@@ -2107,27 +2114,27 @@ assistance is paid for by
 distortionary taxes, which lower the after-tax return to an hour for households
 neither policy ever reaches.
 
-\emph{Housing First is redistributionary, \new{reduces}
-two externalities, but \new{amplifies} a different externality.}
+\emph{Housing First is redistributionary, reduces
+two externalities, but amplifies a different externality.}
  A child of a housed parent does not
 carry the penalty $\delta_h$ prices, and aggregate homelessness falls, which every
-household values through $\kappa_x$. However, it \new{magnifies} one at the same time,
+household values through $\kappa_x$. However, it magnifies one at the same time,
 because assistance that arrives whatever a household does insures it against the
 consequences of using, this creates moral hazard, and so the SUD rate rises and reaches the child through
 $\delta_d$.
 
-\emph{Treatment First does not redistribute, \new{mitigates} an
-externality, but \new{strengthens} two others.} Curing the parent is how the
+\emph{Treatment First does not redistribute, mitigates an
+externality, but strengthens two others.} Curing the parent is how the
 externality on the child's worse draw, $\delta_d$, is avoided.
 But conditioning assistance means some households do not receive it
 and end up homeless, especially upon implementation, and
-over a transition to a new long-run equilibrium it \new{amplifies} the two externalities Housing First reduces. The transition matters on its own account: a household that wants to stop cannot do it
+over a transition to a new long-run equilibrium it amplifies the two externalities Housing First reduces. The transition matters on its own account: a household that wants to stop cannot do it
 immediately, and the transition is costly while it lasts, which is why the
 policy analysis reports the transition and not only the long-run steady states.
 
 \emph{And general equilibrium offsets some of the effects.} First, the drug price is
 endogenous, so curing
-disorders lowers drug demand, which lowers \new{the equilibrium price}, and makes using cheaper for those
+disorders lowers drug demand, which lowers the equilibrium price, and makes using cheaper for those
 still deciding. Second, when the government spends more on
 either policy and the tax rises, hours fall, the tax base
 shrinks and the tax has to rise again. Third, Treatment First has an offset of
@@ -2181,7 +2188,16 @@ where $\bar v_g$ and $\bar y_g$ are the average drug quantity and
 average income in group $g$, and $\mu_e$ and $\mu_d$ are the masses without and
 with the disorder. The target itself is the aggregate the model's moment has
 to reproduce, total retail spending over the total income of users, which needs
-no assumption about how spending divides between the two groups. Midgette et
+no assumption about how spending divides between the two groups. \new{Midgette et
+al.\ (2019) supply the numerator, 2016 retail spending on the four drugs, carried
+to 2024 dollars with the Consumer Price Index for All Urban Consumers (CPI-U);
+NSDUH 2024 supplies the denominator, the family income of the adults aged 26 and
+over who use, family income rather than personal because the model's $y$ is what a
+household pays its rent and buys its consumption and its drug out of. That gives
+$@@f_drug_spending_share_data@@$. Section 1 of the data appendix carries the
+arithmetic, what each of the two corrections is worth on its own, and the one
+assumption left in it, the midpoint of the survey's open top income band.}
+\cut{Midgette et
 al.\ (2019) put 2016 retail spending on cannabis, cocaine, heroin and
 methamphetamine at 146 billion dollars, of which 136 billion is accounted for by
 the daily and near-daily users who do almost all of it. Two things have to be
@@ -2193,9 +2209,9 @@ income, because the model's $y$ is what a household has to pay its rent, buy its
 consumption and buy the drug out of. NSDUH 2024 puts users at $@@q_b@@$ percent of
 adults aged 26 and over, $@@n_users@@$ million people, with mean family income of
 $@@user_inc@@$ dollars, so the income of the using population is $@@user_inc_bn@@$
-billion. That gives $@@f_drug_spending_share_data@@$.
+billion. That gives $@@f_drug_spending_share_data@@$.}
 
-Neither correction is a choice between defensible alternatives, and it is
+\cut{Neither correction is a choice between defensible alternatives, and it is
 worth saying what each is worth because they pull opposite ways: with neither
 the share is $@@share_uncorrected@@$ percent, with the income correction alone
 $@@share_income_only@@$ and with the price correction alone
@@ -2204,7 +2220,7 @@ together do. What is left is one
 assumption, the open top income band in the survey, which runs from 75,000
 dollars upward with no ceiling. Its midpoint is set at 100,000, the convention
 behind the personal income figures above; at 75,000 the share is
-$@@share_lo@@$ percent and at 125,000 it is $@@share_hi@@$ percent.
+$@@share_lo@@$ percent and at 125,000 it is $@@share_hi@@$ percent.}
 
 The two studies that measure spending and income on the same people are
 consistent with the disordered end of that: Roddy and Greenwald (2009) report
@@ -2259,14 +2275,10 @@ states, everything here moves the private value and the externality together.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\rho_d$, earnings lost to a SUD while still working.] It reduces the value
 of life when a household acquires a SUD, since the earnings it costs would have
-been enjoyed for the rest of that life. \cut{It also does a job nothing else can: it
-lets an \emph{employed} household be poor enough to be priced out of housing, which
-an employment effect alone cannot deliver, since that makes essentially
-every homeless household
-jobless, whereas about half are not in the data.}
-\new{What lets an \emph{employed} household be poor enough to be priced out of
+been enjoyed for the rest of that life. 
+What lets an \emph{employed} household be poor enough to be priced out of
 housing is $h_2$, the price of the cheapest dwelling, which is why about half of the
-homeless are employed in the model as in the data.} As $\rho_d$ rises the penalty shrinks,
+homeless are employed in the model as in the data. As $\rho_d$ rises the penalty shrinks,
 so the private cost falls and, because the impact on the child is less
 harmful, the externality declines. These earnings are lost whether the
 household is housed or homeless, so treatment affects
@@ -2276,12 +2288,11 @@ was shown to matter little for \emph{who} uses. That is a statement about the
 calibrated model, not the parameter: raising $\rho_d$ with $b$ held fixed does
 change who uses, but $b$ is recalibrated to the participation rate each time the
 penalty changes, and once it is, the composition of users is back where it started.}
-\cut{Its value is chosen so the model generates the employment rate of the homeless,
-$50$ percent, from HUD's 2023 point-in-time count and the Treatment Episode Data Set, Admissions (TEDS-A) 2022.}
-\new{It is set to one in the benchmark, so the disorder costs earnings only by
+
+It is set to one in the benchmark, so the disorder costs earnings only by
 costing the job. The employed share of the homeless is $h_2$'s moment, and
 $\kappa_{ued}$ already carries the disorder into poverty, so a proportional
-penalty on top of them would be a third instrument on two moments.}
+penalty on top of them would be a third instrument on two moments.
 \item[$\kappa_{ued}$, the employment multiplier for a SUD.] The same channel on the
 extensive margin: regaining employment is less likely and losing it more likely with
 a disorder. Raise it and the private cost rises, even more than for
@@ -2365,22 +2376,13 @@ disorder faces onset at $\iota$ times the baseline rate, so treatment reduces me
 illness in a roundabout way and recovers these earnings for households that never
 fall ill. When it rises, the penalty shrinks, so the private cost of
 illness falls and, because the child's draw improves with it, the externality falls
-too. \cut{Its
-value is chosen so the model generates the average labour income of the
-homeless relative to the average, $19.1$ percent.\footnote{The moment is about the
-homeless rather than about the mentally ill because the employment rate given SMI
-already brackets $\kappa_{uem}$, which leaves the intensive margin without one, and the
-income of the homeless is where both penalties bind: $\rho_d$ decides how many of the
-homeless work and $\rho_m$ how poor the ones who do are. A survey ratio would not serve.
-Employed adults aged $26$ and over with SMI earn $85.7$ percent of what employed adults
-without it earn in the 2024 public use file, and the state here is the high disability
-end of that distribution, as the note to $\kappa_{uem}$ explains.}}
-\new{It is set to one in the benchmark, for the same reason as $\rho_d$ and for one
+too. 
+It is set to one in the benchmark, for the same reason as $\rho_d$ and for one
 of its own. Working with SMI would otherwise pay less than not working with it,
 because a non-employed household with the illness draws disability insurance at
 $\zeta_{DI}$, so the penalty inverted the return to work at the values that fitted.
 The income of the homeless relative to the average is reported with the untargeted
-moments instead.}
+moments instead.
 \item[$\kappa_{uem}$, the employment multiplier for SMI.] The same as
 $\rho_m$ but on the extensive margin, and where the chain does most of its work, since employment is what mental
 illness costs most. Increase it and the private cost rises, because being
@@ -2391,8 +2393,7 @@ earnings and lowers its chance of being unhoused, so part of Treatment First's
 return never appears in the treated household's own drug use. Its value is chosen
 so the model generates the employment rate given SMI, about $@@q_kappa_uem@@$ percent, the
 midpoint of the range for high disability diagnoses.\footnote{The state in this model is not NSDUH's SMI.
-It is an illness severe enough \cut{to cut productivity by
-$\rho_m$ and} to raise the chance of losing work, which is the high disability end of
+It is an illness severe enough  to raise the chance of losing work, which is the high disability end of
 the distribution rather than its whole. Roughly a fifth of people with schizophrenia
 are in work and $12$ percent full time, against $48$ to $73$ percent for any mental
 illness, and $@@q_kappa_uem@@$ percent is the midpoint of that high disability range. It is the
@@ -2610,46 +2611,34 @@ rises leisure is worth more, households work less, and average hours fall with
 it.
 \end{description}
 
-\paragraph{Rental ladder.} These three parameters build the grid of dwelling sizes a renter chooses from, and they fix how the rungs are spaced. \new{Each rung answers to one moment.}
+\paragraph{Rental ladder.} These three parameters build the grid of dwelling sizes a renter chooses from, and they fix how the rungs are spaced. Each rung answers to one moment.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$h_2$, the smallest rental size.] \new{The price of the cheapest dwelling is
+\item[$h_2$, the smallest rental size.] The price of the cheapest dwelling is
 what decides whether a household with a job can be housed at all, so this is the
 parameter that sets how much of homelessness is employed homelessness. Its value is
 chosen so the model generates the employment rate of the homeless, $@@q_h_2@@$
 percent, from HUD's 2023 point-in-time count and the Treatment Episode Data Set,
 Admissions (TEDS-A) 2022. Raise it and the bottom rung is dearer, so a working
-household is priced onto the street and that share rises.}
-\cut{The smallest and
-the largest rental size. The ladder is pinned at both ends and the rung between
-them follows from the curvature $\varsigma$.
-I choose the two ends to match the two ends of the distribution of occupied units
-by number of bedrooms in the 2023 American Community Survey, table B25042: $13.2$
-percent of households sit in the smallest category and $62.7$ percent in the
-largest. Three shares carry two free numbers, so the two sizes identify them and the
-middle share follows by complementarity, which is why I set the curvature rather
-than calibrate it. Each end moves its own share, which is what identifies them
-separately.}
+household is priced onto the street and that share rises.
+
 \item[$\varsigma$, the curvature of the rental ladder, and so $h_3$.]
-\new{The curvature is what places the middle rung, which sits a
+The curvature is what places the middle rung, which sits a
 fraction $(1/2)^{\varsigma}$ of the way from $h_2$ to $h_4$, so it is calibrated on
 the share of the housed living in the middle unit size, $24.1$ percent in the 2023
 American Community Survey, table B25042. Raise it and the middle rung falls towards
-the smallest, the middle dwelling gets cheaper and that share rises.}
-\cut{I set it at $@@f_housing_status_grid_expander@@$ rather than calibrate it, because with three rental sizes the
-size distribution carries two free numbers and the two ends of the ladder already
-take them. What the curvature does is place the middle rung: the middle size sits a
-fraction $(1/2)^{\varsigma}$ of the way from $h_2$ to $h_4$, so at}
+the smallest, the middle dwelling gets cheaper and that share rises.
+
 At $\varsigma=@@f_housing_status_grid_expander@@$ it sits $28.7$ percent of the way up from the smallest rental
 rather than the $50$ percent a uniform ladder would give. At the calibrated ends
 the three rental sizes stand in the ratio $1 : 1.46 : 2.59$.
-\item[$h_4$, the largest rental size.] \new{The top of the ladder, calibrated on the
+\item[$h_4$, the largest rental size.] The top of the ladder, calibrated on the
 share of the housed in the largest unit size, $62.7$ percent in the same table
 B25042.
 Three shares carry two free numbers, so with $\varsigma$ holding the middle share
 this one pins the whole distribution and the smallest category follows.
 The universe is occupied units, so the
 model counterpart conditions on being housed, and the homeless are in neither
-denominator.} The two renter cost
+denominator. The two renter cost
 shares are left untargeted and serve as a check instead, reported with the other
 untargeted moments in Section~\ref{sec:fvalid}.
 
