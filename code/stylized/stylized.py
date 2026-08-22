@@ -1071,42 +1071,79 @@ def threshold(par, ygrid, policy=None, edges=None, cdf=None):
     stars = _map_crossings([(par, policy, s, lo, hi, sgn)
                             for s, _i, lo, hi, sgn in cross])
 
-    for (s, i, _lo, _hi, _sgn), ystar in zip(cross, stars):
-        # EACH CELL IS SPLIT AGAINST ITS OWN EDGES. This is the fix for a
-        # bug that made participation a STEP FUNCTION OF b and cost three
-        # rewrites of the income grid before it was found in the right
-        # place. The old code computed ONE fraction w, the mass of cell i
-        # below the threshold, and then handed cell i+1 the complement
-        # 1 - w. But w is measured against cell i's edges, and the node
-        # values are conditional means, so a threshold lying between two
-        # node values is not necessarily inside cell i: when it falls inside
-        # cell i+1, cdf(ystar) exceeds edges[i+1], w clips to one, and cell
-        # i+1 is handed a flat zero. The whole cell then leaves the use
-        # region in one go and stays out until the threshold reaches the
-        # next cell, which is exactly the plateau-and-jump participation
-        # curve that no b could thread: flat at 5.234 per cent, then 4.276,
-        # with the 5.13 target in the gap between them.
-        #
-        # Splitting each cell against its own edges is smooth in ystar by
-        # construction: as the threshold sweeps up through cell i its share
-        # runs from one to zero, and only then does cell i+1 begin to fall.
-        def _share(cell, above):
-            """Mass fraction of `cell` on the use side of ystar."""
-            if cdf is None or edges is None:
-                lo_y = ygrid[cell]
-                hi_y = ygrid[cell + 1] if cell + 1 < n else ygrid[cell]
-                if hi_y <= lo_y:
-                    return 1.0 if (ystar <= lo_y) == above else 0.0
-                f = (ystar - lo_y) / (hi_y - lo_y)
-            else:
-                lo_p, hi_p = edges[cell], edges[cell + 1]
-                f = (cdf(ystar) - lo_p) / max(hi_p - lo_p, 1e-14)
-            f = min(max(f, 0.0), 1.0)
-            return 1.0 - f if above else f
+    # THE USE REGION IS BUILT ONCE PER STATE AND THEN INTEGRATED, rather than
+    # each crossing writing the two cells beside it.
+    #
+    # WHY IT HAD TO CHANGE. Writing per crossing is correct only while no cell
+    # is the boundary of two of them, and the use region is NOT always an
+    # interval: at some parameter values it is the top block PLUS a single
+    # isolated cell in the middle of the income distribution, where a household
+    # sits on a housing rung boundary and using tips which rung it takes. That
+    # cell has a crossing on each side, both write it, and the second write
+    # wins, so its share was one of the two halves rather than the overlap of
+    # them. As the isolated region shrank the share did not shrink with it: it
+    # stayed finite until the pair of crossings vanished and then the whole cell
+    # left at once.
+    #
+    # That is a STEP IN PARTICIPATION AS A FUNCTION OF b of about 1.25 points,
+    # and it is what made two points of Figure 1's channel scan unreachable: the
+    # 8.90 per cent target sat strictly inside the jump, so no b delivered it and
+    # the bisection returned an endpoint. It is the same family as the bug the
+    # note below records, and it survived that fix because the fix was written to
+    # preserve the old later-write-wins behaviour exactly.
+    #
+    # WHAT IT DOES NOW. For each state the crossings are turned into a union of
+    # intervals in the measure the mass is counted in, and every cell is given
+    # the fraction of itself lying inside that union. One crossing gives exactly
+    # what the per crossing code gave; two crossings around one cell now give
+    # their overlap, which goes to zero smoothly as the region closes.
+    def _pos(y):
+        """Where y sits in the measure the cells are weighed in."""
+        return cdf(y) if (cdf is not None and edges is not None) else y
 
-        above = not (G[i, s] > 0.0)      # the use region lies above ystar
-        frac[i, s] = _share(i, above)
-        frac[i + 1, s] = _share(i + 1, above)
+    def _cell_edges(cell):
+        if cdf is not None and edges is not None:
+            return edges[cell], edges[cell + 1]
+        lo_y = ygrid[cell]
+        hi_y = ygrid[cell + 1] if cell + 1 < n else ygrid[cell]
+        return lo_y, hi_y
+
+    by_state = {}
+    for (s, i, _lo, _hi, _sgn), ystar in zip(cross, stars):
+        by_state.setdefault(s, []).append((i, float(ystar)))
+
+    for s, items in by_state.items():
+        items.sort()
+        # The boundaries in measure space, forced non decreasing: a crossing
+        # between cells i and i+1 cannot sit below one found earlier, and a
+        # bisection landing a hair out of order must not invert an interval.
+        pts = []
+        for _i, ystar in items:
+            q = _pos(ystar)
+            pts.append(q if not pts else max(q, pts[-1]))
+        # Membership alternates across the boundaries, and the segment holding
+        # the lowest income is the one the lowest node's own decision names.
+        inside = bool(G[0, s] > 0.0)
+        lo_edge, _ = _cell_edges(0)
+        _, hi_edge = _cell_edges(n - 1)
+        segs = []
+        left = lo_edge
+        for q in pts:
+            if inside and q > left:
+                segs.append((left, q))
+            left = q
+            inside = not inside
+        if inside and hi_edge > left:
+            segs.append((left, hi_edge))
+        for cell in range(n):
+            a, b_ = _cell_edges(cell)
+            width = b_ - a
+            if width <= 0:
+                continue
+            covered = 0.0
+            for u, v in segs:
+                covered += max(0.0, min(b_, v) - max(a, u))
+            frac[cell, s] = min(max(covered / width, 0.0), 1.0)
 
     # THE LOWEST CELL IS NO LONGER SPECIAL, and the sub grid that used to
     # integrate it is deleted. It took the MASS of users from incomes inside the
