@@ -107,8 +107,14 @@ INTERNAL = [
     #
     # FOUR FIGURES BECAUSE THE THIRD ONE MATTERS: the mortality channel gives
     # out near 0.245 and this sits at 0.2350.
+    # THE SOURCE LINE NAMES RAND ONLY, and it has to. This column is a plain l
+    # so no row can wrap, and the note at the head of tab_internal warns that
+    # widening any description overflows the text block: at 63 characters this
+    # cell put the table 64pt over, against a previous longest of 52. The full
+    # construction, which also needs NSDUH for the denominator, is in the prose
+    # where theta is presented.
     ('th', r'\theta', 'Weight on drugs in utility',
-     'Drug spending over income among users, RAND 2016 and NSDUH 2024',
+     'Drug spending over income among users, RAND 2016',
      'dshare', '{:.1%}', '{:.4f}'),
     ('h_hl', 'h_1', 'Service flow of homelessness', 'Homelessness rate, HUD 2023',
      'homeless', '{:.3%}', '{:.5f}'),
