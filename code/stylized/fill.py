@@ -16,7 +16,7 @@ from stylized import P, with_, value1
 from calibrate import YG, W, stats, bracket, TARGET
 from children import (child_grid, shifted, DEL_D, DEL_H, RATIO_TARGET,
                       ratio_h)
-from frontier import TH_BREAK
+from frontier import TH_BREAK, DSHARE_TOP, DSHARE_CEIL
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 WRITE = os.path.normpath(os.path.join(HERE, '..', '..', 'writing'))
@@ -36,6 +36,65 @@ def compare(a, b, name, more='higher', less='lower', same='the same as',
     w = more if d > tol else (less if d < -tol else same)
     return {name + 'dir': w, name + 'gap': f'{abs(d):.4f}'}
 
+
+
+# ---------------------------------------------------------------------------
+_ONES = {1: 'one', 2: 'two', 3: 'three', 4: 'four', 5: 'five', 6: 'six',
+         7: 'seven', 8: 'eight', 9: 'nine', 10: 'ten', 11: 'eleven',
+         12: 'twelve', 13: 'thirteen', 14: 'fourteen', 15: 'fifteen',
+         16: 'sixteen', 17: 'seventeen', 18: 'eighteen', 19: 'nineteen'}
+_TENS = {2: 'twenty', 3: 'thirty', 4: 'forty', 5: 'fifty', 6: 'sixty',
+         7: 'seventy', 8: 'eighty', 9: 'ninety'}
+
+
+def _word(n):
+    """The paper spells these out, and OPEN rather than hyphenated: fifty four."""
+    if n in _ONES:
+        return _ONES[n]
+    t, u = divmod(n, 10)
+    return _TENS[t] + (' ' + _ONES[u] if u else '')
+
+
+def _param_counts():
+    """Rows of the two parameter tables, split by the Set column.
+
+    Table 5 is the parameters that carry this paper's story and Table 6 the
+    standard ones; each row says Int. or Ext. in its third cell. Counting them
+    here is what stops the prose and the tables disagreeing, which is the same
+    rule the numbers themselves follow.
+    """
+    import re as _re
+    tab = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                        '..', '..', 'writing', 'tables'))
+
+    def one(name):
+        n_int = n_ext = 0
+        for line in open(os.path.join(tab, name)):
+            s_ = line.strip()
+            if (not s_.endswith(r'\\') or s_.startswith(r'\multicolumn')
+                    or s_.startswith('Parameter &')):
+                continue
+            cells = s_[:-2].split('&')
+            if len(cells) < 3:
+                continue
+            c = _re.sub(r'[^A-Za-z.]', '', cells[2])
+            if c.startswith('Int'):
+                n_int += 1
+            elif c.startswith('Ext'):
+                n_ext += 1
+        return n_int, n_ext
+
+    mi, me = one('tab_eleven.tex')
+    si, se = one('tab_standard.tex')
+    out = {'n_all': _word(mi + me + si + se),
+           'n_ext': _word(me + se), 'n_int': _word(mi + si),
+           'n_main': _word(mi + me), 'n_main_int': _word(mi), 'n_main_ext': _word(me),
+           'n_std': _word(si + se), 'n_std_int': _word(si), 'n_std_ext': _word(se)}
+    # A CAPITALISED FORM FOR THE ONES THAT OPEN A SENTENCE. LaTeX has no
+    # portable way to upcase the first letter of a macro's expansion, and
+    # \MakeUppercase would shout the whole word.
+    out.update({k + '_cap': v[0].upper() + v[1:] for k, v in list(out.items())})
+    return out
 
 def numbers(base, fig):
     """The prose's numbers. `fig` is figure_numbers.json, already loaded."""
@@ -111,17 +170,38 @@ def numbers(base, fig):
     # typed into the sentence that introduces it. It went from seven to eight
     # when h_2 moved out of the external table, and the sentence said seven for
     # as long as it took to notice.
+    # HOW MANY PARAMETERS EACH TABLE HOLDS, COUNTED FROM THE TABLES. The prose
+    # typed seven of these numbers -- fifty four in total, twenty nine external,
+    # twenty five internal, and the two tables' own splits -- and a table that
+    # gains or loses a row leaves every one of them wrong with nothing to catch
+    # it. They are read off the Set column of the two table files, which is the
+    # only place that says whether a parameter is calibrated inside the model or
+    # set outside it.
+    out.update(_param_counts())
     # THE SMALL UNIT'S TARGET, from the dict the bracket actually reads rather
     # than typed into the sentence beside it. It is the same American Community
     # Survey table the quantitative model's size distribution comes from,
     # collapsed to this model's two rentals.
     out['hsmall_t'] = f'{100 * TARGET["hsmall"]:.1f}'
+    # HOW MANY PARAMETERS THE STYLIZED MODEL'S TABLE 2 HOLDS, counted from the
+    # table rather than typed into the sentence that introduces it. It went from
+    # seven to eight when h_2 moved out of the external table, and back to seven
+    # when theta left the internal one, and the sentence said seven throughout.
+    #
+    # NAMED n_styl AND NOT n_int. It was n_int, which is also what
+    # _param_counts() calls the QUANTITATIVE model's internally calibrated
+    # count, and this assignment runs second: the stylized model's seven
+    # silently overwrote the quantitative model's twenty five, in a sentence
+    # about a different table in a different section of the paper.
     from tables import INTERNAL as _INTERNAL
-    _WORD = {6: 'Six', 7: 'Seven', 8: 'Eight', 9: 'Nine', 10: 'Ten'}
-    out['n_int'] = _WORD.get(len(_INTERNAL), str(len(_INTERNAL)))
+    out['n_styl'] = _word(len(_INTERNAL)).capitalize()
     out['kV'] = f'{base.kV:.2f}'
     out['smrd'] = f'{base.smr_d:.0f}'
-    out['th_break'] = f'{TH_BREAK:.2f}'
+    out['th_break'] = f'{TH_BREAK:.3f}'
+    # THE TWO EDGES OF THE DISCONTINUITY, from frontier.py where they were
+    # measured, so the note cannot quote one number and the scan another.
+    out['dshare_top'] = f'{100 * DSHARE_TOP:.0f}'
+    out['dshare_ceil'] = f'{100 * DSHARE_CEIL:.1f}'
 
     mb = stats(base)
     out['dshare_m'] = f'{100*mb["dshare"]:.2f}'

@@ -55,7 +55,27 @@ from run import _scaled
 # dispersion, so 0.23 is the first grid point where the model no longer says
 # what it exists to say. Reproduce with `python3 frontier.py` and read the
 # r_mort column. fill.py quotes it as @@th_break@@.
-TH_BREAK = 0.23
+# MEASURED AT THE CURRENT CALIBRATION, not the one this file's scan was first
+# run at. r_mort, the income ratio among users with the mortality channel alone
+# at full strength, has to stay below one. At fully recalibrated points it runs
+# 0.322 at theta 0.2334, 0.837 at 0.2429 and 1.285 at 0.2494, so it crosses at
+# about 0.245. The old 0.23 was read off a scan at sigma_y = 0.75, a lambda
+# targeting the use-to-disorder conversion rather than the adult rate, and h_2
+# pinned at a quarter of h_3; all three have since changed.
+TH_BREAK = 0.245
+
+# THE DRUG SPENDING SHARE IS DISCONTINUOUS IN THETA, and both edges of that are
+# quoted in the note, so both live here. Measured with lambda and b refit at
+# every point: the share climbs 18.04, 18.39, 18.77, 18.84, 18.96 per cent over
+# theta 0.2400 to 0.2460 and is 29.13 at 0.2480, so the lower branch tops out
+# just under nineteen and the far branch starts near thirty. Twenty per cent,
+# which the quantitative model targets, is in the gap.
+DSHARE_TOP = 0.1896       # the top of the lower branch, at theta 0.2460
+
+# WHERE THE MECHANISM GIVES OUT, which binds before the branch top does. r_mort
+# crosses one at theta 0.245 and the share there, interpolated between the
+# fully recalibrated points at 0.2429 and 0.2494, is 18.4 per cent.
+DSHARE_CEIL = 0.184
 # LAZY, NOT AT IMPORT. This used to read calibrated.json at module level, so
 # importing anything from this file did file I/O against a relative path and
 # failed from any other directory. fill.py imports TH_BREAK from here, so it has

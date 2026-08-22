@@ -31,6 +31,12 @@
 % .src.tex for the at signs finds every number the stylized pipeline still
 % supplies and the quantitative model has yet to replace.
 \newcommand{\new}[1]{\textcolor{red}{#1}}
+% THE PARAMETER COUNTS AS MACROS, so the two table files can quote them too.
+% fill.py only rewrites @@name@@ in this file, and the tables are \input from
+% their own .tex, so a caption saying how many rows its table has could not be
+% generated any other way. Counted off the Set column of the tables themselves.
+\newcommand{\nmain}{@@n_main@@}
+\newcommand{\nstd}{@@n_std@@}
 % The cut macro below marks a PROPOSED DELETION: red and struck through, so the reader sees what
 % would go before it goes. ulem is not in this installation, and a single rule over a
 % whole phrase cannot break across lines, so the rule is drawn word by word: each word
@@ -245,8 +251,8 @@ One mechanism of the model decides who the two policies treat differently, and i
 central enough to state here. Two facts about drug use have to be reproduced
 together. It is concentrated at the bottom of the income distribution, and it is not
 universal: most households do not use at all, so there is a margin at zero, with a
-participation rate of $@@q_b@@$ percent among adults aged $26$ and over in the 2024 National Survey on Drug Use and Health (NSDUH)\new{, which is the share
-with a drug use disorder of any severity, mild included}. To
+participation rate of $@@q_b@@$ percent among adults aged $26$ and over in the 2024 National Survey on Drug Use and Health (NSDUH), which is the share
+with a drug use disorder of any severity, mild included. To
 generate both I model drugs as a luxury good bought at a price, which puts most
 households at a corner where they optimally consume none. Left to its own devices,
 however, that same assumption concentrates use at the \emph{top}, since the share of
@@ -823,27 +829,31 @@ National Survey on Drug Use and Health (NSDUH) 2024 for respondents aged 26 and
 over.
 
 Income support replaces half of previous earnings on a base capped at mean
-income, in line with statutory state rules. \cut{The two rental sizes are set
-such that the standard unit, $h_3$, costs $@@h3@@$ of mean income and the
-small unit, $h_2$, is $@@h2frac@@$ of it.}\new{Only the standard rental unit is set,
+income, in line with statutory state rules. \new{Only the standard rental unit is set,
 at $h_3 = @@h3@@$ of mean income; the small unit $h_2$ is calibrated, on the share
 of housed households living in one.} The voucher parameters are institutional: covered
 tenants pay $@@q_kappa_r_pc@@$ percent of market rent, eligibility is capped at half of median income, $\kappa_V = @@kV@@$, and $\pi_V = @@pvbase@@$ is the ratio of recipients to the income-eligible population in the 2023 Picture of Subsidized
-Households, published by HUD. The weight on drugs is \new{calibrated}.\footnote{\new{$\theta$ cannot be raised without
+Households, published by HUD. \new{The weight on drugs is set at $\theta = @@th@@$, and
+it is set rather than calibrated because the drug spending share cannot be aimed
+at.}\footnote{\new{$\theta$ cannot be raised without
 limit, and the ceiling is what makes the mechanism work rather than a matter of
 taste. A drug valuable enough is not deterred by a death that arrives thirty
-years later, so past $\theta=@@th_break@@$ the mortality channel no longer reverses the
-income gradient on its own and the average user stops being poorer than average.
-That used to be a binding trade, because the target was a spending share of $35$
-percent and no $\theta$ below the break could reach it. At the
-$@@q_theta@@$ percent this paper now targets it is not: $\theta = @@th@@$ delivers a
-spending share of @@dshare_m@@ percent, below the break, so the model matches what
-users spend and keeps the gradient at the same time.}}
+years later, so past a $\theta$ of about $@@th_break@@$ the mortality channel no longer
+reverses the income gradient on its own and the average user stops being poorer
+than average. Two things stop $\theta$ from being calibrated on the spending
+share below that ceiling. The share is DISCONTINUOUS in $\theta$: it climbs to
+about $@@dshare_top@@$ percent and then jumps to nearly thirty, so the $@@q_theta@@$
+percent the quantitative model targets falls in the gap between the two branches
+and no $\theta$ delivers it. And the ceiling binds first in any case, since the
+mortality channel gives out at a share of about $@@dshare_ceil@@$ percent, below
+the branch top. So $\theta$ is set at a value that leaves the mechanism a wide
+margin, and the spending share it implies, $@@dshare_m@@$ percent, is reported as
+an untargeted moment rather than matched.}}
 
 
 \subsubsection{Internal calibration}
 
-\new{@@n_int@@} parameters are set inside the model, in Table~\ref{tab:int}, each bracketed
+@@n_styl@@ parameters are set inside the model, in Table~\ref{tab:int}, each bracketed
 on the moment it moves most rather than fitted jointly. The dispersion of log
 permanent income $\sigma_y$ is matched to how unequal earnings are at the bottom: in
 the 2022 Survey of Consumer Finances (SCF), households aged $26$ to $65$ with positive wage
@@ -859,16 +869,16 @@ times average annual income, about \$9 million against a mean household income o
 \$113,000, which is the range surveyed by Viscusi and Aldy (2003) once their
 estimates are put in current dollars. The pull of the first unit $b$ is matched
 to a drug participation rate of $@@q_b@@$ percent from NSDUH 2024 for
-respondents aged 26 and over \new{with a disorder of any severity}, housing services on the street
+respondents aged 26 and over with a disorder of any severity, housing services on the street
 $h_1$ to a homelessness rate of $@@q_h_1@@$ percent from the 2023 HUD PiT count, and the SUD hazard $\lambda$ to the $@@q_lambda@@$ percent
-of adults aged $26$ and over carrying a \new{moderate or severe} SUD in NSDUH 2024.
+of adults aged $26$ and over carrying a moderate or severe SUD in NSDUH 2024.
 \new{The small rental unit $h_2$ is matched to the $@@hsmall_t@@$ percent of housed
 households living in a unit with fewer than three bedrooms, from table B25042 of
 the 2023 American Community Survey, which is the source the quantitative model's
 size distribution comes from as well. This model has two rentals where that one
 has three, so $h_2$ stands for everything below the standard family unit rather
 than for the smallest bin alone.}
-\new{The weight on the drug $\theta$ is matched to the same drug spending share as
+\cut{The weight on the drug $\theta$ is matched to the same drug spending share as
 the quantitative model, $@@q_theta@@$ percent of income across users. It was set
 rather than bracketed while that target stood at a level this model could not
 reach; at $@@q_theta@@$ percent it can, so it is calibrated here on the same
@@ -2028,20 +2038,21 @@ considered as well, in Section~\ref{sec:trans}.
 
 \section{Calibrating the quantitative model}\label{sec:fullcal}
 
-The model has fifty four parameters, some of which vary in value by
-age. Twenty nine are calibrated externally, from data or from the literature,
-and twenty five are calibrated internally, inside the model. Four further parameters
-govern drug testing and detection; they are inert in the benchmark, where nothing
-is conditional, so they are set with the Treatment First experiment rather than
-here. They are
-split across the two tables of this section: twenty nine are the main story
-of this paper and its policy analysis (Table~\ref{tab:eleven}, seventeen
-internally and twelve externally calibrated), and twenty five are standard
-(Table~\ref{tab:stdparams}, eight internally and seventeen externally).
+The model has \new{@@n_all@@} parameters, some of which vary in value by
+age. \new{@@n_ext_cap@@} are calibrated externally, from data or from the literature,
+and \new{@@n_int@@} are calibrated internally.\cut{, inside the model.} Four further parameters
+govern drug testing and detection; they \new{do not play a role in the} benchmark, where nothing
+is conditional, \new{but they do under Treatment First, which is where they are
+set.}\cut{so they are set with the Treatment First experiment rather than
+here.} \new{The calibrated parameters are}\cut{They are}
+split across the two tables of this section: \new{@@n_main@@} are the main story
+of this paper and its policy analysis (Table~\ref{tab:eleven}, \new{@@n_main_int@@}
+internally and \new{@@n_main_ext@@} externally calibrated), and \new{@@n_std@@} are standard
+(Table~\ref{tab:stdparams}, \new{@@n_std_int@@} internally and \new{@@n_std_ext@@} externally).
 
 The tables carry the parameter, its description, the moment and source used to
 fix its value, and the value itself. The text alongside each table adds what a table
-has no room for: the intuition for what each parameter does, and why its moment
+has no room for: the intuition for what each parameter does, and \new{how} its moment
 identifies it. Every estimate that goes into them is documented in full in the
 replication package: \texttt{data/DATA\_APPENDIX.md} names the dataset behind each
 target, its year and universe, and the computation that turns it into the number
@@ -2050,9 +2061,9 @@ without reference to this text. The package also carries the datasets
 themselves, so nothing has to be downloaded to reproduce any of this: the extracts
 behind every target sit next to the code that reads them.
 
-\subsection{The twenty nine parameters that carry the story of this paper}
+\subsection{The \new{@@n_main@@} parameters that carry the story of this paper}
 
-Twenty five of the fifty four are common to most life-cycle models, whereas the rest are specific to this paper, and all twenty nine of those carry its main story and policy analysis. They are set out in Table~\ref{tab:eleven},
+\new{@@n_std_cap@@} of the \new{@@n_all@@} are common to most life-cycle models, whereas the rest are specific to this paper, and all \new{@@n_main@@} of those carry its main story and policy analysis. They are set out in Table~\ref{tab:eleven},
 with the parameter, its description,
 and the moment and source used to fix its value, which is given in the last
 column. They are discussed one at a time below because they are the parameters a
@@ -2066,57 +2077,68 @@ Three things decide the ranking between Housing First and Treatment
 First. The \textbf{private value} is what a household
 itself gains from being housed and from not carrying a disorder: consumption, a
 dwelling rather than the street or shelter, and above all the years of life that
-homelessness and the disorder take away. The \textbf{externality} is what
+homelessness and the disorder take away.
+
+\new{The} \textbf{externality} is what
 lands on somebody else: on the child, who inherits not the disorder
 or homelessness but a
 worse productivity draw associated with the parent's SUD
 and with the parent's homelessness, which $\delta_d$ and $\delta_h$
 price separately. This means that the child is
 likelier in turn to be poor, to use, to acquire
-a disorder and mental illness as a consequence, to be unhoused and to die young.
-The externality also lands on everybody, through the disamenity of aggregate homelessness. The parent
+a disorder and mental illness as a consequence, to be unhoused and to die \new{earlier}\cut{young}.
+\cut{The externality also lands on everybody, through the disamenity of aggregate homelessness.} The parent
 internalises only $\omega$ of the part that falls on its child, and $\omega$ is
-small, which is what leaves something for a policy to correct. And the
+small, which is what leaves something for a policy to correct. \new{Another
+externality lands on everybody, through the disamenity of aggregate
+homelessness.}
+
+\new{Lastly, the}\cut{And the}
 \textbf{distortion} is what the programmes cost in behaviour, and it comes from two
 places. The programmes create distortions due to their design:
-assistance is means-tested, food stamps are clawed back at $\varrho$ and the rent share is clawed back at $\kappa_r$,
+assistance is means-tested\cut{, food stamps are clawed back at $\varrho$ and the rent share is clawed back at $\kappa_r$},
+\new{eligibility depends on income and assistance is clawed back at a rate of $\kappa_r$,}
 so a recipient who works more loses eligibility or part of the transfer, which requires
-even higher taxes on everyone else to fund even larger programmes. And
+even higher taxes on everyone else to fund even larger programmes. \new{On top of
+that,}\cut{And}
 assistance is paid for by
-distortionary taxes, which lower the after tax return to an hour for households
+distortionary taxes, which lower the \new{after-tax}\cut{after tax} return to an hour for households
 neither policy ever reaches.
 
-\emph{Housing First is redistribution, removes externalities, but
-creates another.}
-Mechanically it removes two externalities: a child of a housed parent does not
+\emph{Housing First \new{is redistributionary}\cut{is redistribution}, removes
+\new{two} externalities, but creates \new{a different externality}\cut{another}.}
+\cut{Mechanically it removes two externalities:} \new{A} child of a housed parent does not
 carry the penalty $\delta_h$ prices, and aggregate homelessness falls, which every
 household values through $\kappa_x$. However, it creates one at the same time,
 because assistance that arrives whatever a household does insures it against the
-consequences of using, so the SUD rate rises and reaches the child through
+consequences of using\new{, this creates moral hazard, and so}\cut{, so} the SUD rate rises and reaches the child through
 $\delta_d$.
 
-\emph{Treatment First does not redistribute, removes an
-externality but creates two others.} Curing the parent is how the child's worse draw is avoided.
+\emph{Treatment First does not redistribute, \new{eliminates}\cut{removes} an
+externality\new{,} but creates two others.} Curing the parent is how \new{the
+externality on the child's worse draw, $\delta_d$, is avoided}\cut{the child's worse draw is avoided}.
 But conditioning assistance means some households do not receive it
-and end up homeless, especially in the short run, and
-over that horizon it creates the two externalities Housing First removes. The short
-run matters on its own account: a household that wants to stop cannot do it
+and end up homeless, especially \new{upon implementation}\cut{in the short run}, and
+over \new{a transition to a new long-run equilibrium}\cut{that horizon} it creates the two externalities Housing First removes. The \new{transition}\cut{short
+run} matters on its own account: a household that wants to stop cannot do it
 immediately, and the transition is costly while it lasts, which is why the
-policy analysis reports the transition and not only the steady states.
+policy analysis reports the transition and not only the \new{long-run} steady states.
 
-\emph{And general equilibrium returns part of it.} First, the drug price is
+\emph{And general equilibrium \new{offsets some of the effects}\cut{returns part of it}.} First, the drug price is
 endogenous, set by the supply curve that $\nu_1$ and $\nu_2$ describe, so curing
-disorders lowers drug demand, lowers the price, and makes using cheaper for those
-still deciding: part of what treatment removes comes back through
-lower prices. Second, when the government spends more on
-either policy and the tax rises, hours fall, the base
+disorders lowers drug demand\new{, which lowers the price}\cut{, lowers the price}, and makes using cheaper for those
+still deciding\new{.}\cut{: part of what treatment removes comes back through
+lower prices.} Second, when the government spends more on
+either policy and the tax rises, hours fall, the \new{tax base}\cut{base}
 shrinks and the tax has to rise again. Third, Treatment First has an offset of
-its own in the other direction: sending more households into treatment raises the
+its own in the other direction: \new{conditionality induces more households to
+seek treatment to help them recover more quickly, and this helps reduce the
+externality on newborns during the transition.}\cut{sending more households into treatment raises the
 recovery rate faced by everyone deciding whether to use, and those
 consequences affect a newborn when it makes its own decisions, so the policy
-changes behaviour beyond the households it treats. And because $\kappa_x$ is levied on the
+changes behaviour beyond the households it treats.} And because $\kappa_x$ is levied on the
 aggregate headcount, any movement in homelessness feeds back into everyone's
-utility. So the mechanical effects above are upper bounds on both sides.
+utility.\cut{ So the mechanical effects above are upper bounds on both sides.}
 
 \medskip
 
@@ -2142,11 +2164,11 @@ the parameter the amount spent on drugs, when it does, turns on. As it
 rises use rises on the extensive and intensive margins, so the private
 cost and the externality both rise and there is more for
 either policy to act on. It is calibrated internally to drug spending
-over income across users, $@@q_theta@@$ percent. \new{Retail expenditure is from
+over income across users, $@@q_theta@@$ percent. Retail expenditure is from
 Midgette et al.\ (2019), which estimates what Americans spend on cannabis,
 cocaine, heroin and methamphetamine; the National Survey on Drug Use and Health
 (NSDUH) supplies the use and disorder rates but not spending, which it does not
-collect.} The moment is
+collect. The moment is
 built in two steps, because users are not one group. Households that buy without
 carrying a disorder and households that carry one have very different ratios, so
 each group's own total drug spending is divided by that group's own total income,
@@ -2160,10 +2182,7 @@ weights:
 \end{equation*}
 where $\bar v_g$ and $\bar y_g$ are the average drug quantity and
 average income in group $g$, and $\mu_e$ and $\mu_d$ are the masses without and
-with the disorder. \new{\cut{The target follows from the two group ratios and the
-split between them: users without a disorder spend 11 percent of income on the
-drug and users with one spend 44, weighted by the share of users who carry the
-disorder.}} \new{The target itself is the aggregate the model's moment has
+with the disorder. The target itself is the aggregate the model's moment has
 to reproduce, total retail spending over the total income of users, which needs
 no assumption about how spending divides between the two groups. Midgette et
 al.\ (2019) put 2016 retail spending on cannabis, cocaine, heroin and
@@ -2180,7 +2199,7 @@ heroin-dependent volunteers spending about three quarters of a monthly wage
 income of 723 dollars, and North and Pollio (2017) report homeless cocaine users
 spending about half of theirs. Both samples are far more dependent than the
 average user here, so they bound the share from above rather than estimating
-it.}
+it.
 \item[$b$, whether a household uses at all.] The marginal value of the drug goes
 as $\theta/(b+v)$, so a larger $b$ makes the first units worth less and a household
 with little to spend buys nothing. As $b$ rises use falls, so the
@@ -2912,9 +2931,9 @@ executive order.
 \item Bradizza, C. M., P. R. Stasiewicz and N. D. Paas (2006). ``Relapse to alcohol and drug use among individuals diagnosed with co-occurring mental health and substance use disorders: A review.'' \emph{Clinical Psychology Review} 26(2), 162--78.
 \item Card, D. (1999). ``The Causal Effect of Education on Earnings.'' In O. Ashenfelter and D. Card (eds.), \emph{Handbook of Labor Economics}, vol.\ 3A, 1801--63. Amsterdam: Elsevier.
 \item Caulkins, J. P. (2001). ``Drug Prices and Emergency Department Mentions for Cocaine and Heroin.'' \emph{American Journal of Public Health} 91(9), 1446--48.
-\item \new{Midgette, G., S. Davenport, J. P. Caulkins and B. Kilmer (2019). ``What America's Users Spend on Illegal Drugs, 2006--2016.'' Santa Monica, CA: RAND Corporation.}
-\item \new{North, C. S. and D. E. Pollio (2017). ``Financing Cocaine Use in a Homeless Population.'' \emph{Behavioral Sciences} 7(4), 74.}
-\item \new{Roddy, J. and M. K. Greenwald (2009). ``An Economic Analysis of Income and Expenditures by Heroin-Using Research Volunteers.'' \emph{Substance Use \& Misuse} 44(11), 1503--18.}
+\item Midgette, G., S. Davenport, J. P. Caulkins and B. Kilmer (2019). ``What America's Users Spend on Illegal Drugs, 2006--2016.'' Santa Monica, CA: RAND Corporation.
+\item North, C. S. and D. E. Pollio (2017). ``Financing Cocaine Use in a Homeless Population.'' \emph{Behavioral Sciences} 7(4), 74.
+\item Roddy, J. and M. K. Greenwald (2009). ``An Economic Analysis of Income and Expenditures by Heroin-Using Research Volunteers.'' \emph{Substance Use \& Misuse} 44(11), 1503--18.
 \item Chetty, R. (2012). ``Bounds on Elasticities with Optimization Frictions: A Synthesis of Micro and Macro Evidence on Labor Supply.'' \emph{Econometrica} 80(3), 969--1018.
 \item Bassuk, E. L., J. C. Buckner, L. F. Weinreb, A. Browne, S. S. Bassuk, R. Dawson and J. N. Perloff (1997). ``Homelessness in Female-Headed Families: Childhood and Adult Risk and Protective Factors.'' \emph{American Journal of Public Health} 87(2), 241--248.
 \item Chetty, R., N. Hendren and L. Katz (2016). ``The Effects of Exposure to Better Neighborhoods on Children.'' \emph{American Economic Review} 106(4), 855--902.

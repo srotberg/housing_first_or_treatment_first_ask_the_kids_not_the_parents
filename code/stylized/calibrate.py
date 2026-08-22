@@ -922,7 +922,7 @@ if __name__ == '__main__':
               if k in keep}
         seed = with_(P(), **kw)
         print(f'seeded from calibrated.json; theta seeded at {seed.th:.4f} '
-              f'and bracketed on the drug spending share')
+              f'and SET there: the drug spending share is untargeted')
     par = calibrate(seed, checkpoint='calibrated.json')
     par = polish(par)
     report(par)
