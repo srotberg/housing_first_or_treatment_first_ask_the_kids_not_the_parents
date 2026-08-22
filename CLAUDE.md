@@ -39,6 +39,20 @@ before it is closed**, and the answer is written into the table there, whether
 it carried across or not. The stylized model is small enough that its mistakes
 get found; the quantitative model is not, so it inherits the search.
 
+## The model section states the model, the calibration section states the numbers
+
+**No calibration number appears in Section 4.** The model section names a
+parameter and says what it does; the value belongs in Section 5 and in the
+tables, and nowhere else. This is easy to break by accident, because a sentence
+explaining what a parameter is reads naturally with its value attached, and it
+was broken twice in one round: a bare `0.40` inside the income equation, and the
+detection rates quoted beside the policy rule that uses them.
+
+**A parameter that only binds in a counterfactual is not a calibration
+parameter.** `p_det`, `p_fp` and `c_test` do nothing in the benchmark, where
+`voucher_conditional_on_clean = 0`, so they belong with the experiment rather
+than in Table 5. Check what a parameter multiplies before giving it a row.
+
 ## Prose conventions
 
 `writing/NUMBERS.md` carries three standing rules with a checker each, and
