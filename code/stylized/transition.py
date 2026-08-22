@@ -142,11 +142,11 @@ def _bridge_hl_by_shift(par, new_policy, pv_new):
     new = with_(par, pV=pv_new, policy=new_policy)
 
     def one(y):
-        ag, _, H2c, _, _ = solve_period2(new, y, new_policy, used=0)
+        ag, _, H2c, _, _, _ = solve_period2(new, y, new_policy, used=0)
         if new_policy == 'HF':
             H2u = H2c
         else:
-            _, _, H2u, _, _ = solve_period2(new, y, new_policy, used=1)
+            _, _, H2u, _, _, _ = solve_period2(new, y, new_policy, used=1)
         tot = 0.0
         for p, gain, v, bu, bn, _inc, _own in period1(old, y, BASE_POLICY):
             uses = gain > 0.0
@@ -189,11 +189,11 @@ def _bridge_grids(par, new_policy, pv_new):
     sud = np.zeros(len(YG))
     ev = np.zeros(len(YG))
     for i, y in enumerate(YG):
-        ag, _, H2c, _, _ = solve_period2(new, y, new_policy, used=0)
+        ag, _, H2c, _, _, _ = solve_period2(new, y, new_policy, used=0)
         if new_policy == 'HF':
             H2u = H2c
         else:
-            _, _, H2u, _, _ = solve_period2(new, y, new_policy, used=1)
+            _, _, H2u, _, _, _ = solve_period2(new, y, new_policy, used=1)
         s_tot = e_tot = 0.0
         for p, gain, v, bu, bn, _inc, _own in period1(old, y, BASE_POLICY):
             uses = gain > 0.0
@@ -294,12 +294,12 @@ def caught(par, pv_new=PV_OPT):
                 # solved ONCE per (income, use) pair, not once per disorder
                 # draw: the period 2 problem does not depend on d, which only
                 # selects a column of the answer.
-                agh, W2h, H2h, _, _ = solve_period2(new_h, y, 'HF', used=int(uses))
-                agt, W2t, H2t, _, _ = solve_period2(new_t, y, 'TF', used=int(uses))
+                agh, W2h, H2h, _, _, _ = solve_period2(new_h, y, 'HF', used=int(uses))
+                agt, W2t, H2t, _, _, _ = solve_period2(new_t, y, 'TF', used=int(uses))
                 # AND THE COUNTERFACTUAL WHERE NOTHING CHANGES, so each policy
                 # can be priced against the pre reform world the way every
                 # cohort in the figure is, rather than only against each other.
-                ago, W2o, H2o, _, _ = solve_period2(old, y, BASE_POLICY,
+                ago, W2o, H2o, _, _, _ = solve_period2(old, y, BASE_POLICY,
                                                     used=int(uses))
                 for d, pd in ((1, pid), (0, 1.0 - pid)):
                     m = psft * WW[i] * p * pd

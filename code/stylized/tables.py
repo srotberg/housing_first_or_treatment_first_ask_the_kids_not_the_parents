@@ -32,8 +32,17 @@ EXTERNAL = [
          r'Set to $1/\beta$', '{:.3f}'),
         ('phi0', r'\bar\phi', 'Survival over a period, no SUD',
          'SSA period life table, ages 25--55', '{:.2f}'),
+        # THETA IS SET, AND THIS IS ITS ONLY ROW. It was briefly added to the
+        # internal table as well, when the drug spending share looked
+        # reachable, and this row was not removed at the time, so theta stood
+        # in both tables at once until the duplicate showed up in the rendered
+        # output. It is set because the share is DISCONTINUOUS in theta,
+        # climbing to about 19 per cent and jumping to 29, so a bisection aimed
+        # at a target inside that gap narrows onto the jump instead of
+        # converging. Four figures because the third one matters: the mortality
+        # channel gives out near 0.245 and this sits at 0.2350.
         ('th', r'\theta', 'Weight on drugs in utility',
-         r'Set; see the text', '{:.2f}'),
+         r'Set; see the text', '{:.4f}'),
     ]),
     ('The SUD', [
         ('kap', r'\kappa_{\phi d}', 'Fall in survival with a SUD, over a thirty year period',
@@ -70,17 +79,6 @@ EXTERNAL = [
         # calibrated parameter and its row is in Table 2 with the others. The
         # quarter is gone with it: the ratio the calibration picks is whatever
         # reproduces the size distribution, not a number chosen in advance.
-        # THETA IS SET AGAIN, and the round trip is worth recording. It was set,
-        # then bracketed on a 20 per cent drug spending share once that target
-        # was corrected down from 35, then set again when the share turned out
-        # to be discontinuous in theta -- it climbs to about 18.9 per cent and
-        # jumps to 29, so 20 is in the gap and a bisection aimed there narrows
-        # onto the jump. The binding constraint is not the gap but the
-        # mechanism: past theta of about 0.245 the mortality channel alone puts
-        # users ABOVE average income and the paper stops saying what it exists
-        # to say. 0.2334 leaves that margin wide. The drug spending share is an
-        # untargeted moment now.
-        ('th', r'\theta', 'Weight on the drug', 'Set; see the text', '{:.4f}'),
         ('kappa_r', r'\kappa_r', "Tenant's share of the rent",
          'HUD voucher rules', '{:.2f}'),
         ('kV', r'\kappa_V', 'Voucher means test',
