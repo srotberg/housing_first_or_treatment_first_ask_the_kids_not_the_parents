@@ -16,7 +16,11 @@ OUT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
 os.makedirs(OUT, exist_ok=True)
 
 
+from tablered import mark as _mark_changes_body
+
+
 def write(name, body):
+    body = _mark_changes_body(name, body)
     with open(os.path.join(OUT, name), 'w') as f:
         f.write(body)
     print(f'   wrote {name}')

@@ -375,8 +375,9 @@ def tab_children(par, pV=1.0):
           f'{R(f"{100*gain:.3f}")}\\% \\\\',
           f'\\quad Gain over loss & & & & {R(f"{gain/max(priv,1e-12):.1f}")} \\\\',
           r'\bottomrule', r'\end{tabular}']
+    from tablered import mark
     with open(os.path.join(OUT, 'tab_children.tex'), 'w') as f:
-        f.write('\n'.join(L) + '\n')
+        f.write(mark('tab_children.tex', '\n'.join(L) + '\n'))
     print('   wrote tab_children.tex')
 
     # AND THE SAME NUMBERS FOR THE PROSE, for the reason set out in welfare.py:

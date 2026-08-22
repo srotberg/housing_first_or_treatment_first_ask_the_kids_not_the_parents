@@ -293,45 +293,25 @@ ANCHOR = r'\section{The quantitative model}'
 
 def _black_notes(src):
     """
-    EVERYTHING BEFORE THE QUANTITATIVE MODEL IS BLACK. No exceptions: not the
-    prose, not the tables, not the figures, not the notes, not the footnotes.
+    NO LONGER BLACKENS ANYTHING, and the reason is a standing instruction.
 
-    This started as a rule about table notes and captions and was widened twice,
-    each time by hand, each time coming back on the next build because mark()
-    puts the wrappers in a few lines above. It is now the whole of the front of
-    the paper, applied here so it cannot come back at all.
+    This used to strip every \new{} ahead of \section{The quantitative model},
+    on the rule that the author was auditing Sections 1 to 3 and wanted them
+    clean. That rule is withdrawn: the author now asks for every change to be
+    red, in Section 3 and its calibration explicitly, so that a round's edits can
+    be read rather than taken on trust.
 
-    The author is auditing Sections 1 to 3 and wants them clean. Red ahead of
-    the anchor is noise; if something in there genuinely needs flagging it can be
-    marked deliberately in the source AFTER this runs, which is the only way red
-    should ever appear there.
+    It is kept as a no-op rather than deleted because the blackening was widened
+    three times by hand and came back each time, so a future round that wants a
+    clean front section should re-enable it HERE, in one place, rather than
+    stripping marks somewhere else again.
+
+    THE COST OF THE OLD RULE IS WORTH RECORDING. \new{} is what mark() wraps a
+    moved number in AND what an edit is marked with by hand, so blackening one
+    blackened both: a whole round of edits to Section 3.7 went out invisible,
+    and so did this round's until the author said the changes were not showing.
     """
-    cut = src.find(ANCHOR)
-    if cut < 0:
-        raise SystemExit('   fill.py: the section anchor moved; _black_notes '
-                         'would silently clear the whole paper')
-    head, tail = src[:cut], src[cut:]
-    # ONLY THE AUTOMATIC MARKS. \new{} is what mark() wraps a moved number in,
-    # and that is the clutter the author does not want ahead of the anchor.
-    # \textcolor{red}{} in the SOURCE is a deliberate edit mark, put there by
-    # hand to show what changed this round, and blacking it defeats the point of
-    # marking it: a whole round of edits to Section 3.7 was invisible because
-    # this loop stripped them on the way out.
-    for opener in ('\\new{',):
-        while True:
-            j = head.find(opener)
-            if j < 0:
-                break
-            k = j + len(opener)
-            d = 1
-            while d and k < len(head):
-                if head[k] == '{':
-                    d += 1
-                elif head[k] == '}':
-                    d -= 1
-                k += 1
-            head = head[:j] + head[j + len(opener):k - 1] + head[k:]
-    return head + tail
+    return src
 
 
 def mark(new, prev):

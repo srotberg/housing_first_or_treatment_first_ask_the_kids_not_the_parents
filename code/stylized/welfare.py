@@ -252,8 +252,9 @@ def tab_welfare(par, pV=1.0):
          f'\\quad CEV, whole population & '
          f'& {pc(100*avg,3)} \\\\',
          r'\bottomrule', r'\end{tabular}']
+    from tablered import mark
     with open(os.path.join(OUT, 'tab_welfare.tex'), 'w') as f:
-        f.write('\n'.join(L) + '\n')
+        f.write(mark('tab_welfare.tex', '\n'.join(L) + '\n'))
     print('   wrote tab_welfare.tex')
 
     # AND THE SAME NUMBERS FOR THE PROSE. Every one of these is a cell of the
