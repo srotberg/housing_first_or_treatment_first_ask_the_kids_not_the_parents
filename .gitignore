@@ -60,3 +60,9 @@ code/*baseline_benchmark.txt
 # supervisor makes when it intervenes.
 code/progress_reports.txt
 code/progress_history.json
+
+# The compiled model. The supervisor rebuilds it on every intervention, so
+# tracking a 1.4 MB binary here would add that much to history each time, for an
+# artefact the source reproduces exactly.
+code/hftf
+code/hftf_*
