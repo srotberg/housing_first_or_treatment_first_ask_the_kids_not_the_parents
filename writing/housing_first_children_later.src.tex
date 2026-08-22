@@ -1393,7 +1393,7 @@ Gross income depends on age, employment, productivity and health,
 \begin{equation}\label{eq:fincome}
 y^{g}(j,y,e,d,m,n)=
 \begin{cases}
-\new{\psi_R}\,y & j\ge J_{R} \quad\text{(social security)}\\[2pt]
+\psi_R\,y & j\ge J_{R} \quad\text{(social security)}\\[2pt]
 n\,y\,\varepsilon(j)\,\rho_{d}^{\mathbf{1}\{d=1\}}\rho_{m}^{\mathbf{1}\{m=1\}}
  & j<J_{R},\ e=1 \quad\text{(employed)}\\[2pt]
 \psi\,\min\{y\,\varepsilon(j),\ \bar y\}
@@ -1403,9 +1403,9 @@ n\,y\,\varepsilon(j)\,\rho_{d}^{\mathbf{1}\{d=1\}}\rho_{m}^{\mathbf{1}\{m=1\}}
 \end{cases}
 \end{equation}
 taking the cases in the order they appear. Retirement income replaces
-\new{a fixed share $\psi_R$ of} the productivity state with no SMI penalty, since social security
-is not means-tested on SMI\new{. The base is $y$ rather than $y\,\varepsilon(j)$,
-since there is no work in retirement for the age profile to apply to}. For the employed, $\varepsilon(j)$ is
+a fixed share $\psi_R$ of the productivity state with no SMI penalty, since social security
+is not means-tested on SMI. The base is $y$ rather than $y\,\varepsilon(j)$,
+since there is no work in retirement for the age profile to apply to. For the employed, $\varepsilon(j)$ is
 the deterministic age profile of efficiency and $\rho_d$ and
 $\rho_m$ are productivity penalties applied to the SUD and to SMI respectively,
 \emph{conditional on working}. Both are set to one in the benchmark, so the
@@ -1532,7 +1532,7 @@ to undertake and can decline.
 \subsection{Serious mental illness}\label{sec:fsmi}
 
 $m$ is an exogenous two state Markov chain representing SMI, whose
-prevalence $s_m(j)$ is \new{a small share} of adults, defined by substantial functional
+prevalence $s_m(j)$ is a small share of adults, defined by substantial functional
 impairment, rather than any mental illness, which is roughly a quarter of adults
 and includes mild anxiety: a state that halves productivity cannot sensibly cover
 a quarter of the population.
@@ -1712,9 +1712,9 @@ perfect both ways. There, conditionality is perfectly
 enforced: a household that fails the condition always loses the voucher, and one
 that meets it never does. @@tfdeter@@. Here detection is imperfect: some fail
 the condition even when they are clean (a false positive), and some pass even
-though they are using (a false negative). \new{Neither rate binds in the benchmark,
+though they are using (a false negative). Neither rate binds in the benchmark,
 where no voucher is conditional, so both are set with the experiment in
-Section~\ref{sec:experiments} rather than in the calibration.}
+Section~\ref{sec:experiments} rather than in the calibration.
 
 \subsection{The shocks, collected}\label{sec:fshocks}
 
@@ -2657,7 +2657,7 @@ mental illness hazards are measured against.
 
 \item[$s_m(j)$, the age profile of SMI prevalence.]
 The target is the share of adults carrying serious mental illness at each age $j$
-in NSDUH 2024, which integrates to $@@q_s_m_j@@$ percent across all ages; \new{that}
+in NSDUH 2024, which integrates to $@@q_s_m_j@@$ percent across all ages; that
 is the overall level and the profile is what is matched, age by age. It sits here
 rather than in Section~\ref{sec:fullcal} because it is the baseline profile, in the
 same way the survival table is: what this paper adds is $\iota$, the multiplier a SUD
@@ -2693,12 +2693,12 @@ Section~\ref{sec:fullcal} a cost the model actually bears.
 
 \paragraph{Transfers and the voucher rule.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$\psi_R$, the social security replacement rate.] \new{Retirement income is
+\item[$\psi_R$, the social security replacement rate.] Retirement income is
 $\psi_R=@@q_psi_r@@$ times the productivity state for the last $J-J_R$ years of life,
 from the Social Security Administration. The base is permanent productivity rather
 than current earnings, since there is no work in retirement for the age profile to
 apply to. As it rises the old are richer, so the value of a life still to be lived
-rises and with it the cost of a disorder that shortens it.}
+rises and with it the cost of a disorder that shortens it.
 \item[$\psi$ and $\bar y$, unemployment insurance.] These two set the replacement
 rate and the cap on the earnings it is paid on. I set them to fifty percent and one
 times average income, respectively, taking both from the statutory replacement rates
@@ -2885,7 +2885,7 @@ administering the test. The rungs do not commute, so a fixed order is reported
 together with the interaction term.
 \end{enumerate}
 
-\new{\paragraph{The parameters the experiment introduces.} Three of the model's
+\paragraph{The parameters the experiment introduces.} Three of the model's
 parameters do nothing in the benchmark and are therefore set here rather than in
 Section~\ref{sec:fullcal}: nothing is screened when no voucher is conditional, so
 none of them binds until Treatment First is imposed. The detection rate is
@@ -2899,7 +2899,7 @@ on the administrative burden and is meant as one: it is the assay cost in the st
 fiscal notes of the public assistance programmes that have tried testing, and the
 programme level figures are far larger once staffing is counted, so the cost of
 administering the test is a rung of the shutdown ladder rather than a settled
-number.}
+number.
 
 %======================================================================
 \section{Discussion}\label{sec:discussion}
