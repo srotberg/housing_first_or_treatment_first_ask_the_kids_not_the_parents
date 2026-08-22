@@ -42,8 +42,8 @@
 % \input from
 % their own .tex, so a caption saying how many rows its table has could not be
 % generated any other way. Counted off the Set column of the tables themselves.
-\newcommand{\nmain}{twenty nine}
-\newcommand{\nstd}{twenty five}
+\newcommand{\nmain}{\new{thirty two}}
+\newcommand{\nstd}{\new{twenty six}}
 % The cut macro below marks a PROPOSED DELETION: red and struck through, so the reader sees what
 % would go before it goes. ulem is not in this installation, and a single rule over a
 % whole phrase cannot break across lines, so the rule is drawn word by word: each word
@@ -278,7 +278,7 @@ overturns the dominance result works.
 
 A full-fledged quantitative model follows, to quantify the mechanisms and the welfare
 implications of Housing First against Treatment First. It is a general equilibrium
-life-cycle economy, in Section~\ref{sec:full}, with six state variables and fifty four parameters. It carries endogenous homelessness, drug use, the SUD, recovery, serious
+life-cycle economy, in Section~\ref{sec:full}, with six state variables and \new{fifty eight} parameters. It carries endogenous homelessness, drug use, the SUD, recovery, serious
 mental illness (SMI), employment and mortality, together with a drug market that
 clears, so drug prices respond to policy, and a government budget that balances. It
 also considers the costs of enforcing conditionality, and imperfect detection.
@@ -588,7 +588,7 @@ In the data, drug use is concentrated among low-income households, most of the
 homeless do not carry a SUD, and housing vouchers
 reach only about a quarter of the households eligible for them. The quantitative
 model is built to match facts of that kind. It has six state variables and
-fifty four parameters, which is what the welfare and fiscal questions
+\new{fifty eight} parameters, which is what the welfare and fiscal questions
 require,
 but it also makes it hard to see which pieces of the environment do the
 heavy lifting. This note strips the environment down to help see the
@@ -1000,10 +1000,10 @@ Figure~\ref{fig:mh} traces both as generosity rises, that is across values of $\
 Both comparisons here are between long-run steady states, each the rest point of
 the economy under a policy that has always been in place. Section~\ref{sec:trans}
 follows the path between them. With no programme at all,
-\new{12.83} percent of households use. Universal Treatment First takes that to
-0.00 percent, a value-of-life force of \new{-12.83} percentage points; universal
+12.83 percent of households use. Universal Treatment First takes that to
+0.00 percent, a value-of-life force of -12.83 percentage points; universal
 Housing First leaves it at 6.93 percent, so the moral hazard force is
-+6.93 points and the net effect of Housing First is \new{-5.90}. Both forces are
++6.93 points and the net effect of Housing First is -5.90. Both forces are
 first order and they work against each other, which is the central feature of
 the problem. Anyone asserting that housing the homeless must increase drug use,
 or must reduce it, is making a quantitative claim that needs to be tested.
@@ -1138,7 +1138,7 @@ A child's baseline income is drawn from the same lognormal as everyone else, and
 the entire link is a penalty
 \begin{equation}\label{eq:kids}
 y_{\text{child}} \;=\; y_{\text{base}}\,
-(1-\delta_d)^{\mathbf{1}\{\text{parent \new{had} a SUD \new{when it died}}\}}\,
+(1-\delta_d)^{\mathbf{1}\{\text{parent had a SUD when it died}\}}\,
 (1-\delta_h)^{\mathbf{1}\{\text{parent was homeless when it died}\}} ,
 \end{equation}
 which the parent does not internalise at all. That is what makes it an externality.\footnote{In the quantitative
@@ -1393,7 +1393,7 @@ Gross income depends on age, employment, productivity and health,
 \begin{equation}\label{eq:fincome}
 y^{g}(j,y,e,d,m,n)=
 \begin{cases}
-0.40\,y & j\ge J_{R} \quad\text{(social security)}\\[2pt]
+\new{\psi_R}\,y & j\ge J_{R} \quad\text{(social security)}\\[2pt]
 n\,y\,\varepsilon(j)\,\rho_{d}^{\mathbf{1}\{d=1\}}\rho_{m}^{\mathbf{1}\{m=1\}}
  & j<J_{R},\ e=1 \quad\text{(employed)}\\[2pt]
 \psi\,\min\{y\,\varepsilon(j),\ \bar y\}
@@ -1402,9 +1402,11 @@ n\,y\,\varepsilon(j)\,\rho_{d}^{\mathbf{1}\{d=1\}}\rho_{m}^{\mathbf{1}\{m=1\}}
 0 & \text{otherwise,}
 \end{cases}
 \end{equation}
-taking the cases in the order they appear. Retirement income replaces $40$
-percent of the productivity state with no SMI penalty, since social security
-is not means-tested on SMI. For the employed, $\varepsilon(j)$ is
+taking the cases in the order they appear. Retirement income replaces
+\new{$\new{40}$} percent of the productivity state with no SMI penalty, since social security
+is not means-tested on SMI\new{; $\psi_R$ is the replacement rate and the base is $y$
+rather than $y\,\varepsilon(j)$, since there is no work in retirement for the age
+profile to apply to}. For the employed, $\varepsilon(j)$ is
 the deterministic age profile of efficiency and $\rho_d$ and
 $\rho_m$ are productivity penalties applied to the SUD and to SMI respectively,
 \emph{conditional on working}. Both are set to one in the benchmark, so the
@@ -1706,6 +1708,13 @@ Section~\ref{sec:fdrug}, so it meets the condition and faces $p_{\text{fp}}$.
 There is no fifth case: treatment is available only when $d=1$, and it forbids
 use, so no household is ever both in treatment and using.
 
+\new{Both rates are set rather than calibrated, at $p_{\mathrm{det}}=\new{0.90}$ and
+$p_{\mathrm{fp}}=\new{0.05}$, and the government pays $c_{\mathrm{test}}=\new{0.031}$ percent of
+average earnings for every household it screens, which is a lower bound on the
+administrative burden: it is the assay cost in the state fiscal notes for the
+public assistance programmes that have tried testing, and the programme level
+figures are far larger once staffing is counted.}
+
 This means that in contrast to Section~\ref{sec:mh}, enforcement here is not
 perfect both ways. There, conditionality is perfectly
 enforced: a household that fails the condition always loses the voucher, and one
@@ -1986,11 +1995,11 @@ same unemployment shocks as anyone else, whose
 productivity is drawn from the unconditional distribution $\Omega_y$ of
 permanent productivity across households scaled by the
 transmission penalties $\delta_d$ for a child whose parent carried the SUD
-\new{when it died} and $\delta_h$ for one whose parent was homeless \new{then},
+when it died and $\delta_h$ for one whose parent was homeless then,
 \begin{equation}\label{eq:fnewborn}
 y_{\text{child}}\ \sim\ \Omega_y\ \text{ scaled by }\
-(1-\delta_d)^{\mathbf{1}\{\text{parent had a SUD \new{when it died}}\}}\,
-(1-\delta_h)^{\mathbf{1}\{\text{parent was homeless \new{when it died}}\}} .
+(1-\delta_d)^{\mathbf{1}\{\text{parent had a SUD when it died}\}}\,
+(1-\delta_h)^{\mathbf{1}\{\text{parent was homeless when it died}\}} .
 \end{equation}
 
 The evidence behind both penalties is set out in
@@ -2035,16 +2044,16 @@ considered as well, in Section~\ref{sec:trans}.
 
 \section{Calibrating the quantitative model}\label{sec:fullcal}
 
-The model has fifty four parameters, some of which vary in value by
-age. Thirty are calibrated externally, from data or from the literature,
+The model has \new{fifty eight} parameters, some of which vary in value by
+age. \new{Thirty four} are calibrated externally, from data or from the literature,
 and twenty four are calibrated internally. Four further parameters
 govern drug testing and detection; they do not play a role in the benchmark, where nothing
 is conditional, but they do under Treatment First, which is where they are
 set. The calibrated parameters are
-split across the two tables of this section: twenty nine are the main story
+split across the two tables of this section: \new{thirty two} are the main story
 of this paper and its policy analysis (Table~\ref{tab:eleven}, fifteen
-internally and fourteen externally calibrated), and twenty five are standard
-(Table~\ref{tab:stdparams}, nine internally and sixteen externally).
+internally and \new{seventeen} externally calibrated), and \new{twenty six} are standard
+(Table~\ref{tab:stdparams}, nine internally and \new{seventeen} externally).
 
 The tables carry the parameter, its description, the moment and source used to
 fix its value, and the value itself. The text alongside each table adds what a table
@@ -2057,9 +2066,9 @@ without reference to this text. The package also carries the datasets
 themselves, so nothing has to be downloaded to reproduce any of this: the extracts
 behind every target sit next to the code that reads them.
 
-\subsection{The twenty nine parameters that carry the story of this paper}
+\subsection{The \new{thirty two} parameters that carry the story of this paper}
 
-Twenty five of the fifty four are common to most life-cycle models, whereas the rest are specific to this paper, and all twenty nine of those carry its main story and policy analysis. They are set out in Table~\ref{tab:eleven},
+\new{Twenty six} of the \new{fifty eight} are common to most life-cycle models, whereas the rest are specific to this paper, and all \new{thirty two} of those carry its main story and policy analysis. They are set out in Table~\ref{tab:eleven},
 with the parameter, its description,
 and the moment and source used to fix its value, which is given in the last
 column. They are discussed one at a time below because they are the parameters a
@@ -2533,9 +2542,9 @@ little role.
 
 \subsection{Standard parameters}
 
-The remaining twenty five parameters are more conventional, and I record them so
+The remaining \new{twenty six} parameters are more conventional, and I record them so
 that the calibration can be reproduced. Nine of them I calibrate inside the model,
-against a moment, because no source reads them off directly; the other sixteen I set
+against a moment, because no source reads them off directly; the other \new{seventeen} I set
 from outside, from an estimate or from statute. Table~\ref{tab:stdparams} and the
 entries below run in the same seven blocks, and each entry gives the moment or the
 source that fixes the parameter together with the value that moment takes in the
