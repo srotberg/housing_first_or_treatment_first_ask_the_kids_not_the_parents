@@ -81,7 +81,15 @@ def run(freeze=False, dry=False):
         p = os.path.join(TAB, f)
         lines = open(p, encoding='utf-8').read().split('\n')
         for i, line in enumerate(lines):
-            if r'\\' not in line or ('& Int. &' not in line and '& Ext. &' not in line):
+            # A SET CELL WRAPPED IN RED IS STILL A SET CELL. Matching the
+            # literal '& Int. &' made every row whose Set column carries this
+            # round's mark invisible here, so a newly added parameter exported
+            # nothing and its placeholder came out unfilled. fill.py's
+            # _param_counts had the same blind spot and was fixed the same way.
+            if r'\\' not in line:
+                continue
+            _set = re.search(r'&\s*(?:\\textcolor\{red\}\{)?\s*(Int|Ext)\.', line)
+            if _set is None:
                 continue
             cells = line.rstrip().rstrip('\\').rstrip('\\').split('&')
             if len(cells) != 7:
@@ -103,7 +111,7 @@ def run(freeze=False, dry=False):
                     nums.setdefault(name, lit)
                 continue
             x = C[k]
-            cols = [4] if '& Int. &' in line else [4, 6]
+            cols = [4] if _set.group(1) == 'Int' else [4, 6]
             changed = False
             for ci in cols:
                 shape = _shape(cells[ci])

@@ -1138,7 +1138,7 @@ A child's baseline income is drawn from the same lognormal as everyone else, and
 the entire link is a penalty
 \begin{equation}\label{eq:kids}
 y_{\text{child}} \;=\; y_{\text{base}}\,
-(1-\delta_d)^{\mathbf{1}\{\text{parent \new{had} a SUD \new{when it died}}\}}\,
+(1-\delta_d)^{\mathbf{1}\{\text{parent had a SUD when it died}\}}\,
 (1-\delta_h)^{\mathbf{1}\{\text{parent was homeless when it died}\}} ,
 \end{equation}
 which the parent does not internalise at all. That is what makes it an externality.\footnote{In the quantitative
@@ -1393,7 +1393,7 @@ Gross income depends on age, employment, productivity and health,
 \begin{equation}\label{eq:fincome}
 y^{g}(j,y,e,d,m,n)=
 \begin{cases}
-0.40\,y & j\ge J_{R} \quad\text{(social security)}\\[2pt]
+\new{\psi_R}\,y & j\ge J_{R} \quad\text{(social security)}\\[2pt]
 n\,y\,\varepsilon(j)\,\rho_{d}^{\mathbf{1}\{d=1\}}\rho_{m}^{\mathbf{1}\{m=1\}}
  & j<J_{R},\ e=1 \quad\text{(employed)}\\[2pt]
 \psi\,\min\{y\,\varepsilon(j),\ \bar y\}
@@ -1402,9 +1402,11 @@ n\,y\,\varepsilon(j)\,\rho_{d}^{\mathbf{1}\{d=1\}}\rho_{m}^{\mathbf{1}\{m=1\}}
 0 & \text{otherwise,}
 \end{cases}
 \end{equation}
-taking the cases in the order they appear. Retirement income replaces $40$
-percent of the productivity state with no SMI penalty, since social security
-is not means-tested on SMI. For the employed, $\varepsilon(j)$ is
+taking the cases in the order they appear. Retirement income replaces
+\new{$@@q_psi_r_pc@@$} percent of the productivity state with no SMI penalty, since social security
+is not means-tested on SMI\new{; $\psi_R$ is the replacement rate and the base is $y$
+rather than $y\,\varepsilon(j)$, since there is no work in retirement for the age
+profile to apply to}. For the employed, $\varepsilon(j)$ is
 the deterministic age profile of efficiency and $\rho_d$ and
 $\rho_m$ are productivity penalties applied to the SUD and to SMI respectively,
 \emph{conditional on working}. Both are set to one in the benchmark, so the
@@ -1706,6 +1708,13 @@ Section~\ref{sec:fdrug}, so it meets the condition and faces $p_{\text{fp}}$.
 There is no fifth case: treatment is available only when $d=1$, and it forbids
 use, so no household is ever both in treatment and using.
 
+\new{Both rates are set rather than calibrated, at $p_{\mathrm{det}}=@@q_p_mathrm_det@@$ and
+$p_{\mathrm{fp}}=@@q_p_mathrm_fp@@$, and the government pays $c_{\mathrm{test}}=@@q_c_mathrm_test_pc@@$ percent of
+average earnings for every household it screens, which is a lower bound on the
+administrative burden: it is the assay cost in the state fiscal notes for the
+public assistance programmes that have tried testing, and the programme level
+figures are far larger once staffing is counted.}
+
 This means that in contrast to Section~\ref{sec:mh}, enforcement here is not
 perfect both ways. There, conditionality is perfectly
 enforced: a household that fails the condition always loses the voucher, and one
@@ -1986,11 +1995,11 @@ same unemployment shocks as anyone else, whose
 productivity is drawn from the unconditional distribution $\Omega_y$ of
 permanent productivity across households scaled by the
 transmission penalties $\delta_d$ for a child whose parent carried the SUD
-\new{when it died} and $\delta_h$ for one whose parent was homeless \new{then},
+when it died and $\delta_h$ for one whose parent was homeless then,
 \begin{equation}\label{eq:fnewborn}
 y_{\text{child}}\ \sim\ \Omega_y\ \text{ scaled by }\
-(1-\delta_d)^{\mathbf{1}\{\text{parent had a SUD \new{when it died}}\}}\,
-(1-\delta_h)^{\mathbf{1}\{\text{parent was homeless \new{when it died}}\}} .
+(1-\delta_d)^{\mathbf{1}\{\text{parent had a SUD when it died}\}}\,
+(1-\delta_h)^{\mathbf{1}\{\text{parent was homeless when it died}\}} .
 \end{equation}
 
 The evidence behind both penalties is set out in

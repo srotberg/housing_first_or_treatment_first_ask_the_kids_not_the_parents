@@ -404,6 +404,30 @@ consequence of the housing grid rather than the grid itself.
 Productivity is a permanent draw in the benchmark, so only the dispersion is
 operative.
 
+**ψ_R, the social security replacement rate — 0.40.** SSA. Retirement income is
+0.40 times the productivity state, not 0.40 times current earnings, because there
+is no work in retirement for the age profile ε(j) to apply to. This replaced the US
+PIA bend point schedule (0.9 below 0.3 of average, then 0.27+0.32(x−0.3) to 2,
+0.81+0.15(x−2) to 4.1, flat 1.13 above), which is progressive and capped where the
+note describes a linear rate, so a reader working from equation (13) had the wrong
+retirement income at every node and badly wrong at the ends.
+
+**p_det and p_fp, how well conditionality is enforced — 0.90 and 0.05.** Set, not
+measured. These are what separate the quantitative model's conditionality from the
+stylized model's, where the condition is perfectly enforced and perfectly met: here
+some households fail it because they cannot get clean and some fail it because the
+test is wrong, and those two groups are the empirical case for Housing First. No
+programme publishes a detection rate for a drug screen in a housing programme, so
+both are set at plausible values and the counterfactuals report the range.
+
+**c_test, the cost of running one test — 0.031 percent of average earnings.** The
+Texas fiscal note puts a test at about $35 and Oklahoma at $20 for the screen plus
+$141 for confirming a positive; against average household income near $113,000 the
+screen alone is 0.031 percent. It is a **lower bound on the administrative burden
+and is meant as one**: the programme level figures are far larger once staffing is
+counted, and Arkansas spent $32,507 to run five tests in 2017. The counterfactual
+reports the range rather than resting on the assay cost.
+
 **r, the risk free rate — 0.03 annually.** Kaplan, Moll and Violante (2018/2020),
 the standard annual real return used in this class of life-cycle models. β is set
 against it so that the two are mutually consistent rather than chosen
