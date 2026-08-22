@@ -106,14 +106,20 @@ chk('share worse off', abs(num(c['Households strictly worse off'][2]) - 100 * wo
     f'table {num(c["Households strictly worse off"][2])} vs {100*worse:.2f}')
 pop = float((WW * lam).sum())
 chk('population consumption equivalent',
-    abs(num(c['Consumption equivalent, whole population'][2]) - 100 * pop) < 0.005,
-    f'table {num(c["Consumption equivalent, whole population"][2])} vs {100*pop:.4f}')
+    abs(num(c['CEV, whole population'][2]) - 100 * pop) < 0.005,
+    f'table {num(c["CEV, whole population"][2])} vs {100*pop:.4f}')
 
+# THE ROW LABELS BELONG TO THE TABLES, AND THEY GET SHORTENED TO FIT. This file
+# reads tab_welfare.tex and tab_children.tex by their first column, so a label
+# trimmed for column width breaks it with a KeyError rather than a failed check.
+# 'Consumption equivalent, whole population' became 'CEV, whole population' and
+# 'Consumption equivalent to the child, one case' became 'CEV to the child, one
+# case', and nothing noticed until a build ran this again.
 print('\n=== 5. Table 4 internal arithmetic ===')
 rows = {r[0].replace(r'\quad', '').strip(): r for r in cells('tab_children.tex')}
 priv = num(rows['Private cost of conditionality'][-1])
 dsud = num(rows['Disorder cases prevented'][-1])
-per = num(rows['Consumption equivalent to the child, one case'][-1])
+per = num(rows['CEV to the child, one case'][-1])
 gain = num(rows['Externality gain from conditionality'][-1])
 ratio = num(rows['Gain over loss'][-1])
 # the tolerance has to admit the printed precision of per_case, or the check
@@ -129,7 +135,7 @@ chk('ratio equals gain over loss', abs(ratio - gain / priv) < 1.0,
 chk('cases prevented equals the SUD gap in Table 3',
     abs(dsud - 100 * (mh['sud'] - mt['sud'])) < 0.02)
 chk('private cost equals Table 3 population equivalent',
-    abs(priv - num(c['Consumption equivalent, whole population'][2])) < 1e-9)
+    abs(priv - num(c['CEV, whole population'][2])) < 1e-9)
 
 print('\n=== 6. the transition ===')
 import transition as T
