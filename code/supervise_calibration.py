@@ -41,8 +41,14 @@ LOG = os.path.join(HERE, 'supervisor_run.log')
 JOURNAL = os.path.join(HERE, 'SUPERVISOR_JOURNAL.md')
 REPORT = os.path.join(HERE, 'paper', 'calibration_report.py')
 
-COMPILE = ['gfortran', SRC, '-mcmodel=medium', '-fopenmp', '-O2',
-           '-ffree-line-length-none', '-o', BIN]
+# -O3 RATHER THAN -O2, MEASURED AND NOT ASSUMED: 1.15x on the sixteen expensive
+# ages, 162.5 seconds against 141.8, with the cores otherwise idle so the two
+# were comparable. -march=native was in that measurement and is deliberately NOT
+# here: it lets the compiler contract multiplies and adds into FMAs, which
+# changes results in the last bits, and a calibration that has to be reproducible
+# on another machine should not depend on which instructions this one has.
+COMPILE = ['gfortran', SRC, '-mcmodel=medium', '-fopenmp', '-O3',
+           '-funroll-loops', '-ffree-line-length-none', '-o', BIN]
 
 # ---------------------------------------------------------------------------
 # WHAT A LOOP LOOKS LIKE IN THE LOG. The calibration prints loop_count= once a
