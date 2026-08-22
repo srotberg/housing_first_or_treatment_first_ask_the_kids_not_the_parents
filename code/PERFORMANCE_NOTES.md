@@ -784,3 +784,123 @@ local now, renamed `budget_residual_1`. Nothing in the model reads it, so the
 race only ever corrupted the diagnostic, but a diagnostic you cannot trust is
 worse than no diagnostic.
 
+
+---
+
+## 16. The lottery's branch-match bug is fixed, and the lottery still should not be on
+
+Section 11 diagnosed the asset lottery firing twelve times in 177,120 calls and
+named the cause: the `a'` search loops over housing choices refilling
+`flow_utility_vector` and `future_utility_vector` on each branch, so on return
+they hold the LAST branch searched rather than the one that won, and the guard
+refused. Nine refusals in ten were that test.
+
+**Fixed, and the counters say so exactly.** The three values the parabola needs
+are captured at the moment a branch becomes the new global best, which is where
+the winner is known, in threadprivate storage alongside the vectors they
+replace. Measured over one backward induction:
+
+```
+                     before          after
+calls                177,120         177,120
+fired                     12 (0.007%)  159,822 (90.2%)
+refused branch match 160,995 (90.9%)        0 (0.0%)
+refused geometry      16,113 (9.1%)    17,298 (9.8%)
+```
+
+**And it still should not be switched on**, for a reason neither section 11 nor
+section 15 states. `internal_computations` already refines `a'` on a sub grid of
+`fin_num_of_internal = 50` points spanning the interval around the coarse point.
+The policy's `a'` is therefore ALREADY off grid and already fine, and the lottery
+adds a second, coarser estimate of the same quantity, fitted to a parabola
+through three COARSE points. The policy then carries the refined `a'` and the
+distribution carries the lottery's, they disagree, and the disagreement is
+exactly the budget residual section 15 measured: with the lottery on and the
+branch match bug fixed, the check still fired 31,530 times.
+
+Section 15's fix was `interpolate_a_prime=0` and that remains right. The branch
+match fix is kept because it is a real bug and because the counters are the only
+evidence that would ever justify turning the lottery on.
+
+### What this means for the asset grid
+
+Section 11 wanted the grid cut from 41 points to 25 on the strength of the
+lottery. The lottery is not the argument. **The refinement is**: the coarse grid
+is a SEARCH grid whose job is to bracket the optimum, and the fifty point
+refinement is what sets precision. A coarser search grid means fewer refinements
+run, each spanning a wider interval at the same fifty points, so precision falls
+but does not fall to the coarse spacing.
+
+The `a'` search is quadratic in the coarse grid, so forty positive points to
+twenty five is 2.56x, which on the measured loop cost takes a calibration from
+about 130 hours to about 50. That is worth having and it is NOT free: the
+budget's own warning applies, that the notches which make the objective not
+single peaked live here, voucher eligibility as a step in income and the food
+stamp floor, and that is where the welfare comparison happens. Any cut has to be
+validated at both sizes against the targeted moments and both counterfactuals.
+
+## 17. The warm start had no shape stamp, and it voided a grid comparison
+
+`read_calibration_distribution` loaded `calibration_distribution{1,2}.dat` on
+nothing but their existence. The files are a bare list of numbers with nothing
+in them saying what array they came out of, and the reader fills whatever array
+the running build happens to declare. So a build at a different asset grid reads
+them anyway, and which way it fails depends on which direction the grid moved:
+
+- **smaller array, silent corruption.** A cut from 40 positive asset points to
+  25 takes the array from 101 points to 86. The read succeeds, having taken the
+  first 86/101 of each slice of somebody else's distribution. The log said
+  `warm start distribution loaded, sum= 45.718` where the file had been written
+  with 51.362.
+- **larger array, loud death.** Going the other way, 40 to 50, the read runs off
+  the end: `Fortran runtime error: End of file`. That is the same bug wearing a
+  louder coat, and it is the better of the two.
+
+**What it cost.** The 25 point build's first moment block was compared against
+the 40 point build's and read as evidence about the grid: average net wealth
+10.7 per cent lower, bequests 12.9 per cent lower, the first distribution solve
+taking 2445 sweeps against 340. All of it was the corrupt warm start. The 2445
+sweeps are the distribution grinding back from a guess that was missing an
+eighth of its mass, and the wealth gap is what that leaves behind at a tolerance
+of 2e-4.
+
+**The fix.** `write_calibration_distribution` writes the element count to
+`calibration_distribution_shape.dat`, and the reader refuses a warm start whose
+count does not match — and refuses an unstamped pair too, because a pair from
+before the stamp existed cannot be told apart from a pair written at another
+grid. Refusing costs one cold distribution solve. Accepting costs a wrong
+answer that looks like a right one.
+
+**The general form, which is worth more than the instance.** A restart file that
+does not carry the shape of what it holds is not a restart file, it is a length
+of tape. Every one of them in this program should say what it is: the parameter
+state file happens to be safe, because it is scalars read one at a time with
+`iostat`, but that is luck rather than design.
+
+## 18. What the grid comparison has to look like to mean anything
+
+The comparison that was voided is worth redoing, and this is the shape it has to
+have. Three things have to be held down or it measures the wrong thing.
+
+**Both sides cold.** Delete the warm start on every side. Otherwise the two
+builds start their distributions from different places and the difference in
+where they end up at a finite tolerance is start dependence, not discretisation.
+
+**Both sides at the declared parameters.** Only the FIRST moment block, the one
+printed after the first distribution solve, is comparable. Every later block
+sits behind a parameter update that used the previous block's moments, so by
+loop one the two builds are answering different questions. `grid_check.py` reads
+the first block and nothing else for exactly this reason, and it prints the
+parameters next to the moments so that a run which is not in fact like for like
+shows itself.
+
+**The sub grid held fixed.** `fin_num_of_internal` is set so that
+`positive_financial_grid_size * fin_num_of_internal` is 2500 at every grid: 25 x
+100, 40 x 62, 50 x 50. The refinement spans the two coarse gaps either side of
+the search's answer and those gaps scale as 1/n, so this holds the sub grid's
+spacing fixed, and it holds the refinement's cost fixed as well. What is left
+varying is the state grid, which is the thing under test.
+
+Forty is in that comparison rather than assumed. The model was built at fifty;
+forty is an earlier unvalidated cut of mine whose own comment says in as many
+words that it must be validated, and it never was.
