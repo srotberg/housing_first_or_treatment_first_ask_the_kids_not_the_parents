@@ -42,7 +42,7 @@ def head():
     model = 'up' if running('hftf') else 'DOWN'
     sup = 'up' if 'supervise_calibration' in subprocess.run(
         ['ps', '-eo', 'args'], capture_output=True, text=True).stdout else 'DOWN'
-    return f'model {model}, supervisor {sup}, {advancing()}'
+    return f'model {model}, supervisor {sup}, {advancing()}{parallelism()}'
 
 
 def advancing():
@@ -60,6 +60,30 @@ def advancing():
     if age < 90:
         return f'log grew {age:.0f}s ago'
     return f'LOG UNTOUCHED FOR {age / 60:.0f} MINUTES'
+
+
+def parallelism():
+    """CPU seconds over wall seconds on the last few ages: how many cores the
+    solve is actually getting.
+
+    WHY IT IS REPORTED. A stray process took half the machine for six minutes and
+    the only symptom was the wall time per age nearly doubling while the CPU time
+    per age did not move. Nothing in the report said so, and the natural reading
+    of a slower wall time is that the model got harder, not that something else
+    turned up. The ratio separates the two: it falls when a core is stolen and
+    does not move when the work grows.
+    """
+    try:
+        txt = open(LOG, errors='ignore').read()
+    except FileNotFoundError:
+        return ''
+    hits = re.findall(r'AGE_TIME age=\s*\d+\s+wall_s=\s*([0-9.]+)\s+cpu_s=\s*([0-9.]+)', txt)
+    hits = [(float(w), float(c)) for w, c in hits[-6:] if float(w) > 1.0]
+    if not hits:
+        return ''
+    ratio = sum(c for _, c in hits) / sum(w for w, _ in hits)
+    flag = '' if ratio >= 3.0 else '  <-- CONTENDED, something else is using the cores'
+    return f', {ratio:.1f} of 4 cores{flag}'
 
 
 def loops():
