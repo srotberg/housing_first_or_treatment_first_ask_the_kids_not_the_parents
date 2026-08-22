@@ -68,3 +68,52 @@ def mark(name, body):
                 rest.append(r'\textcolor{red}{%s}' % c if moved else c)
         out.append(cells[0] + ' & ' + ' & '.join(rest) + r' \\')
     return '\n'.join(out)
+
+
+# ---------------------------------------------------------------------------
+# FREEZING THE BASELINE. The three red markers are refreshed together at the
+# start of a comment round -- fill.py --freeze, sync_tables.py --freeze and this
+# -- so that red means one thing across the whole note: moved since the version
+# the author last read. This was being done by hand, which is how the four
+# stylized tables came back red for changes the author had already seen.
+#
+# It reads the BUILT tables rather than regenerating them, so it freezes exactly
+# what was sent out. Run it before applying a round's comments, never after.
+_FILES = ('tab_internal.tex', 'tab_external.tex', 'tab_welfare.tex',
+          'tab_children.tex')
+
+
+def _cells(path):
+    rows = {}
+    for line in open(path):
+        s = line.strip()
+        if not s.endswith(r'\\') or s.startswith(r'\multicolumn') or '&' not in s:
+            continue
+        cells = [_bare(c.strip()) for c in s[:-2].split('&')]
+        rows[cells[0]] = cells[1:]
+    return rows
+
+
+def _bare(cell):
+    """The cell as it reads without this round's mark, so a frozen baseline
+    never carries a wrapper into the next comparison."""
+    m = re.fullmatch(r'\\textcolor\{red\}\{(.*)\}', cell)
+    return m.group(1).strip() if m else cell
+
+
+def freeze():
+    tab = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                        '..', '..', 'writing', 'tables'))
+    out = {}
+    for f in _FILES:
+        p = os.path.join(tab, f)
+        if os.path.exists(p):
+            out[f] = _cells(p)
+    json.dump(out, open(_PREV, 'w'), indent=1)
+    n = sum(len(v) for v in out.values())
+    print(f'   froze {n} rows across {len(out)} stylized tables into '
+          'tables_prev.json; the next build marks what moves from here')
+
+
+if __name__ == '__main__':
+    freeze()
