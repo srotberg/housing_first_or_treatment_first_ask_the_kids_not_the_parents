@@ -2056,7 +2056,9 @@ identifies it. Every estimate that goes into them is documented in full in the
 replication package: \texttt{data/DATA\_APPENDIX.md} names the dataset behind each
 target, its year and universe, and the computation that turns it into the number
 reported here, so that any of them can be reproduced from the public microdata
-without reference to this text. The package also carries the datasets
+without reference to this text. \new{What follows therefore gives the moment, its
+source and its value, and nothing else: the construction of every one of them is in
+the appendix and is not repeated here.} The package also carries the datasets
 themselves, so nothing has to be downloaded to reproduce any of this: the extracts
 behind every target sit next to the code that reads them.
 
@@ -2158,46 +2160,12 @@ the parameter the amount spent on drugs, when it does, turns on. As it
 rises use rises on the extensive and intensive margins, so the private
 cost and the externality both rise and there is more for
 either policy to act on. It is calibrated internally to drug spending
-over income across users, $16.2$ percent. Retail expenditure is from
-Midgette et al.\ (2019), which estimates what Americans spend on cannabis,
-cocaine, heroin and methamphetamine; the National Survey on Drug Use and Health
-(NSDUH) supplies the use and disorder rates but not spending, which it does not
-collect. The moment is
-built in two steps, because users are not one group. Households that buy without
-carrying a disorder and households that carry one have very different ratios, so
-each group's own total drug spending is divided by that group's own total income,
-and the two ratios are then averaged with their shares of the using population as
-weights:
-\begin{equation*}
-\text{drug share}\;=\;
-\frac{\mu_e}{\mu_e+\mu_d}\,\frac{p_v \bar v_e}{\bar y_e}
-\;+\;
-\frac{\mu_d}{\mu_e+\mu_d}\,\frac{p_v \bar v_d}{\bar y_d},
-\end{equation*}
-where $\bar v_g$ and $\bar y_g$ are the average drug quantity and
-average income in group $g$, and $\mu_e$ and $\mu_d$ are the masses without and
-with the disorder. The target itself is the aggregate the model's moment has
-to reproduce, total retail spending over the total income of users, which needs
-no assumption about how spending divides between the two groups. Midgette et
-al.\ (2019) supply the numerator, 2016 retail spending on the four drugs, carried
-to 2024 dollars with the Consumer Price Index for All Urban Consumers (CPI-U);
-NSDUH 2024 supplies the denominator, the family income of the adults aged 26 and
-over who use, family income rather than personal because the model's $y$ is what a
-household pays its rent and buys its consumption and its drug out of. That gives
-$0.162$. Section 1 of the data appendix carries the
-arithmetic, what each of the two corrections is worth on its own, and the one
-assumption left in it, the midpoint of the survey's open top income band.
+over income across users, $16.2$ percent. \new{The numerator is retail spending
+on cannabis, cocaine, heroin and methamphetamine in Midgette et al.\ (2019), carried
+to 2024 dollars; the denominator is the family income of adults aged 26 and over who
+use, in NSDUH 2024, which collects use and disorder but not spending. Section 1 of
+the data appendix builds the moment from those two.}
 
-
-
-
-The two studies that measure spending and income on the same people are
-consistent with the disordered end of that: Roddy and Greenwald (2009) report
-heroin-dependent volunteers spending about three quarters of a monthly wage
-income of 723 dollars, and North and Pollio (2017) report homeless cocaine users
-spending about half of theirs. Both samples are far more dependent than the
-average user here, so they bound the share from above rather than estimating
-it.
 \item[$b$, whether a household uses at all.] The marginal value of the drug goes
 as $\theta/(b+v)$, so a larger $b$ makes the first units worth less and a household
 with little to spend buys nothing. As $b$ rises use falls, so the
@@ -2242,7 +2210,8 @@ of the reason for it is worth. The voucher itself closes the block,
 since it is the instrument that acts on all of them. Because the child inherits a higher chance of landing in these
 states, everything here moves the private value and the externality together.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$\rho_d$, earnings lost to a SUD while still working.] It reduces the value
+\item[$\rho_d$, earnings lost to a SUD while still working.]\query{Flagged: keep
+$\rho_d$ or take it out?} It reduces the value
 of life when a household acquires a SUD, since the earnings it costs would have
 been enjoyed for the rest of that life. 
 What lets an \emph{employed} household be poor enough to be priced out of
@@ -2339,7 +2308,8 @@ so the private cost falls, because fewer years are spent ill, and the externalit
 falls with it, since a child who is likelier to acquire a SUD and
 through it SMI has a higher value of life. It is calibrated internally to the SMI
 share of the homeless in Gutwinski et al.\ (2021), $25$ percent.
-\item[$\rho_m$, earnings lost to SMI.] The counterpart of $\rho_d$ for mental
+\item[$\rho_m$, earnings lost to SMI.]\query{Flagged: keep $\rho_m$ or take it
+out?} The counterpart of $\rho_d$ for mental
 illness, and it reaches the comparison through $\iota$: a household carrying the
 disorder faces onset at $\iota$ times the baseline rate, so treatment reduces mental
 illness in a roundabout way and recovers these earnings for households that never
@@ -2445,16 +2415,9 @@ rises the parent counts more of the child's loss, so the externality left
 for a policy to correct is smaller. Identifying it in the model requires
 care, because \emph{every} household here has a child, born after it dies, so there is no parent
 against non-parent comparison to run in the benchmark. The moment is a
-counterfactual instead. In NSDUH 2024 past-month use among parents is $0.845$ of
-use among non-parents, with parents reweighted to the non-parents' joint
-distribution of age, income, sex and marital status so the gap is behaviour rather
-than composition. The child term of the household's problem in
-Section~\ref{sec:fproblem}, equation~\eqref{eq:fbellman}, is the only
-thing that makes a household in the model use less than it would if it did not
-have a child, so its
-value is chosen so that removing the child's penalty at the calibrated parameters
-raises drug use by $18.3$ percent, which is that same ratio read the
-way the model reads it: the counterfactual raises use from the parent level.
+counterfactual instead. \new{Its value is chosen so that removing the child's
+penalty at the calibrated parameters raises drug use by $18.3$ percent, the
+gap between parents and non-parents in NSDUH 2024 read the way the model reads it.}
 \item[$\delta_d$, what the child loses to a parent's SUD.] The child does not inherit
 the disorder, only a worse
 productivity draw, and that lower expected draw is what makes it likelier to be poor, to use, to
@@ -2492,10 +2455,8 @@ accounting. As it rises the externality from the aggregate headcount
 grows, which loads whichever policy houses more people. Setting it high should
 mostly favour Housing First, so the higher figure is taken as the baseline and a ranking
 that still favours Treatment First survives the assumption least kind to it. It is
-calibrated externally from the contingent valuation in Loubi\`ere et al.\ (2020):
-\euro{}57 a year among the $42$ percent of respondents willing to pay anything,
-which is $0.20$ percent of average annual earnings, against \euro{}23 and $0.08$
-percent averaged over all respondents.
+calibrated externally \new{at $0.2$ percent of average annual earnings,
+from the contingent valuation in Loubi\`ere et al.\ (2020).}
 \item[$\sigma_{\ell}$, the curvature on leisure.]
 The curvature that turns $\omega_{\ell}$ into an elasticity: together
 they decide how far hours actually move when the after tax wage does. The two are
@@ -2597,9 +2558,7 @@ the share of the housed living in the middle unit size, $24.1$ percent in the 20
 American Community Survey, table B25042. Raise it and the middle rung falls towards
 the smallest, the middle dwelling gets cheaper and that share rises.
 
-At $\varsigma=1.8$ it sits $28.7$ percent of the way up from the smallest rental
-rather than the $50$ percent a uniform ladder would give. At the calibrated ends
-the three rental sizes stand in the ratio $1 : 1.46 : 2.59$.
+
 \item[$h_4$, the largest rental size.] The top of the ladder, calibrated on the
 share of the housed in the largest unit size, $62.7$ percent in the same table
 B25042.
@@ -2633,9 +2592,7 @@ are poor enough to be at risk of homelessness and of acquiring a SUD. In the 202
 SCF, households aged $26$ to $65$ with positive wage and
 salary income hold $17.2$ percent of total earnings in the poorer half of the
 distribution, and $\sigma_y$ is chosen to reproduce that share. The share falls in
-$\sigma_y$, so the mapping is monotone and one number identifies it. Two untargeted shares come out alongside: the model's top tenth holds $38.5$ percent of
-earnings against $41.1$ in the data, and its bottom tenth holds $1.1$ percent against
-$0.99$.
+$\sigma_y$, so the mapping is monotone and one number identifies it.
 
 \item[$\bar\pi^{eu}$, the job separation rate.] Chosen to reproduce the aggregate
 unemployment rate in the BLS Current Population Survey (CPS) over 2014 to 2024,
@@ -2755,6 +2712,9 @@ everything needed to replicate them: the dataset, the year, the universe, the
 computation, and the three cases where the universe rather than the arithmetic
 decides the number. The package ships those datasets as well, so none of them has
 to be downloaded first. The standardised mortality ratio below is age-weighted.
+\new{Two shares of the earnings distribution come out alongside the one $\sigma_y$ is
+chosen on and are untargeted: the model's top tenth holds $38.5$ percent of earnings
+against $41.1$ in the data, and its bottom tenth $1.1$ percent against $0.99$.}
 The last row is the intergenerational transmission the paper turns on, and it is the
 one moment here that needs a word about its construction. Bassuk et al.\ (1997) is a
 case-control study of $220$ homeless mothers and $216$ low-income housed mothers, so
