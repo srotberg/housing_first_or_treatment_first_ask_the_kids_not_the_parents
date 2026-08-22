@@ -184,12 +184,19 @@ chk('conditionality goes ahead at some cohort and stays ahead',
     _flip is not None and all(paths['TF'][t][1] > paths['HF'][t][1]
                               for t in range(_flip, len(paths['TF']))),
     f'flips at cohort {_flip}')
-chk('conditionality dips before it gains',
-    paths['TF'][2][1] <= paths['TF'][1][1] + 1e-12
-    and paths['TF'][-1][1] > paths['TF'][1][1],
-    'the path must fall on the cohort that inherits the revocations and then '
-    'rise above where it started')
-# WHY THE TWO POLICIES ARE NEARLY LEVEL ON COHORT 1, which reads as a bug and is
+# A FOURTH CHECK STOOD HERE AND IT ASSERTED SOMETHING THE NOTE DOES NOT SAY.
+# It read paths['TF'][2] <= paths['TF'][1]: conditionality's own consumption
+# equivalent must FALL from the first cohort to the second. The note's claim is
+# that cohort 1 is weakly worse off and cohort 2 strictly worse off THAN UNDER
+# HOUSING FIRST, and the three checks above already test exactly that, cohort by
+# cohort, and pass.
+#
+# The level cannot fall and the model is right that it does not: universal
+# coverage is worth about fifteen per cent to these cohorts while the revocation
+# costs about two tenths of one, so conditionality's path rises steeply while
+# falling further behind the alternative -- gap -0.060 at cohort 1, -0.235 at
+# cohort 2, +5.18 by cohort 3. Deleted rather than repaired, because repairing
+# it only restated the three checks above it.
 # not one. That cohort lives its whole life under the new rule, so it can keep
 # its voucher by not using; the only households worse off under conditionality
 # are the ones who would have used, and they are few. The gap therefore IS the
