@@ -157,6 +157,63 @@ the 2e-4 tolerance and the 4000 sweep cap. Worth watching across loops: the file
 records 655 as a normal cost later in a calibration, so a count climbing toward
 that is expected and a count climbing past it is the signal the cap exists for.
 
+## Run 2 is STUCK, and stopped at loop 12. The corner, and how it was reached
+
+Not a stall and not a crash. The calibration walked into a corner it cannot walk
+out of, and every piece of the chain is in the log.
+
+**h_2 ran to its lower bound of exactly zero.**
+`smallest_rental_relative_to_lowest_income` went 0.0361, 0.0137, 0.0224, 0.0188,
+0.0123, 0.0045, 0.0000. Its update is bounded by `min(max(...,0.d0),10.d0)`, so
+zero is a permitted value, and `smallest_house_size = smallest_rental_relative_to
+_lowest_income`. The smallest rental therefore has zero size and zero rent, which
+is not a cheap dwelling but no dwelling: with `housing_size(0)=0` the grid runs
+0, h_max/2^varsigma, h_max, and a rental of zero size delivers log(0) of housing
+services, so nothing ever takes it.
+
+**From there homelessness is identically zero.** 0.83 per cent, 0.042, 0.044,
+0.0053, 0.0012, then exactly 0 for five consecutive loops.
+
+**So h_1 runs away against a moment that cannot respond.** `size_homelessness`
+went 0.30, 0.38, 0.41, 0.44, 0.48, 0.53, 0.59, 0.66, 0.74, 0.82, with the steps
+GROWING. Its gap is a constant -0.399 percentage points every loop, so the update
+pushes the same way forever and accelerates as the adjuster grows on a gap that
+never flips sign.
+
+**And the empty set guard is now part of the trap.** It holds h_2 whenever there
+are no homeless households. That is right when the moment is unmeasurable, but
+here h_2 sitting AT the bound is what causes the unmeasurability, so h_2 can
+never come back up. One runaway was fixed and a frozen parameter created in its
+place.
+
+### What the report showed while this was happening
+
+Against loop 4, at loop 12 three moments had improved and six had got worse, and
+treatment take up had gone from 6 per cent off to 91. That is the signature to
+watch for: not divergence in one place but a general drift, because the housing
+block had stopped responding to anything.
+
+### Three things to fix before restarting
+
+1. **A floor on h_2 strictly above zero.** The root cause, and a one line bound.
+   The bracket has to stay inside the space of real dwellings.
+2. **The guard must tell "unmeasurable" from "unmeasurable because I am at a
+   bound".** With homelessness at zero AND h_2 at its floor, holding is wrong:
+   the zero is itself evidence the bottom rung is too cheap, so h_2 should be
+   backed off the bound rather than frozen against it.
+3. **A loud report when any bracket sits at a bound for consecutive loops.**
+   Nothing said a word while h_2 sat at zero for five loops. It was found by
+   tracing the series by hand, which is not a method.
+
+### The lesson, stated generally
+
+A bracket bounded at a value that DESTROYS the moment it is calibrated on cannot
+recover, because the gap it reads there is constant. Bounds must be chosen so
+that the moment still responds at them. This is the same class as the empty set
+guard: a parameter must never be updated from, or frozen by, a moment that
+carries no information about it.
+
 ## Status
 
-Run 2 in progress, past loop 1. No stall so far.
+Run 2 stopped at loop 12, stuck. Awaiting a decision on the floor for h_2 before
+run 3.
