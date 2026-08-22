@@ -21,6 +21,7 @@ import os
 import re
 import subprocess
 import sys
+import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 LOG = os.path.join(HERE, 'supervisor_run.log')
@@ -39,7 +40,24 @@ def head():
     model = 'up' if running('hftf') else 'DOWN'
     sup = 'up' if 'supervise_calibration' in subprocess.run(
         ['ps', '-eo', 'args'], capture_output=True, text=True).stdout else 'DOWN'
-    return f'model {model}, supervisor {sup}'
+    return f'model {model}, supervisor {sup}, {advancing()}'
+
+
+def advancing():
+    """Whether the log is still growing, and how long since it last did.
+
+    A ten minute cadence is shorter than a calibration loop, which costs fifteen
+    to twenty minutes, so a report that repeats the previous one is normal. This
+    is what tells that apart from a hang: a repeat with a log that grew seconds
+    ago is a loop in progress, a repeat with a log untouched for an hour is not.
+    """
+    try:
+        age = time.time() - os.path.getmtime(LOG)
+    except OSError:
+        return 'no log yet'
+    if age < 90:
+        return f'log grew {age:.0f}s ago'
+    return f'LOG UNTOUCHED FOR {age / 60:.0f} MINUTES'
 
 
 def loops():
