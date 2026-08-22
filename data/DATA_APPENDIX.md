@@ -21,6 +21,27 @@ CSVs the Fortran reads. `README.md` lists
 the regeneration commands and `FINDINGS.md` records what each source implied when
 it arrived, including the targets it called into question.
 
+> [!CAUTION]
+> **Changed in this round.** Markdown carries no red, so the changes the paper
+> would show in red are listed here, and each one is also flagged in place in the
+> entry it belongs to.
+>
+> - **θ** — the whole entry is rewritten. The old 35 percent was attributed to
+>   NSDUH, which collects no expenditure at all; the target is now 16.2 percent,
+>   built from RAND for the numerator and NSDUH 2024 for the denominator.
+> - **b** — 5.13 → 8.90 percent. The old figure was the eighteen and over rate
+>   under a heading that said 26 and over.
+> - **λ** — the implied conversion from use to disorder, 71.7 → 41.3 percent,
+>   following b.
+> - **s_m(j)** — was written p_m(j), 5.5 percent, NSDUH 2023. The symbol matched
+>   nothing in the note and the level and vintage were a release behind Table 6.
+> - **the rental ladder** — was h̲ and h̄, two ends of three shares. It is now
+>   h_2, h_3 and h_4, which is what the model has and what the note calls them.
+> - **r** — a new entry. The risk free rate stood in Table 6 with no line here.
+>
+> Every other parameter in Tables 5 and 6 was read against this file one at a
+> time; none is missing and none of the rest disagreed.
+
 ---
 
 ## 1. Who uses drugs
