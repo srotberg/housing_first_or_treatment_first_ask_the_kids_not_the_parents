@@ -134,7 +134,29 @@ and set their distance to 1 rather than 0, so the calibration does not report
 convergence on a moment it cannot measure. `h_1` is what creates homelessness,
 through `size_homelessness`; until it has, neither bracket has anything to read.
 
+## Run 2: the guards are validated
+
+They did the thing they were written for, and the log shows both halves of it.
+
+**Loop 1, homelessness zero.** `h_2 HELD` and `lambda_m HELD` both fired and
+`smallest_rental_relative_to_lowest_income` stayed at its declared 0.0361. In run
+1, with no guard, the same loop drove it to 0.0111 chasing a fabricated +0.5 gap.
+
+**Loop 2, homelessness present.** The employed share of the homeless reads
+0.9032 and their income share 0.4524, both computed on a non-empty set. The
+moments are measurable, the guards release, and the brackets have something real
+to read. `h_1` created the homeless population within one loop, which is what the
+guard's comment predicted it would.
+
+Two further guards of the same family were already in the file and fire on the
+same loop, `mu_homeless HELD` and `omega HELD`, so this pattern is the
+codebase's own convention rather than something imported.
+
+**The distribution keeps converging.** 95 sweeps to 1.70e-4 on loop 2, against
+the 2e-4 tolerance and the 4000 sweep cap. Worth watching across loops: the file
+records 655 as a normal cost later in a calibration, so a count climbing toward
+that is expected and a count climbing past it is the signal the cap exists for.
+
 ## Status
 
-Run 2 launched with the guards, the cap and the per loop report, from a cold
-start again.
+Run 2 in progress, past loop 1. No stall so far.
