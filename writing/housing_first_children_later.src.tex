@@ -833,22 +833,7 @@ income, in line with statutory state rules. \new{Only the standard rental unit i
 at $h_3 = @@h3@@$ of mean income; the small unit $h_2$ is calibrated, on the share
 of housed households living in one.} The voucher parameters are institutional: covered
 tenants pay $@@q_kappa_r_pc@@$ percent of market rent, eligibility is capped at half of median income, $\kappa_V = @@kV@@$, and $\pi_V = @@pvbase@@$ is the ratio of recipients to the income-eligible population in the 2023 Picture of Subsidized
-Households, published by HUD. \new{The weight on drugs is set at $\theta = @@th@@$, and
-it is set rather than calibrated because the drug spending share cannot be aimed
-at.}\footnote{\new{$\theta$ cannot be raised without
-limit, and the ceiling is what makes the mechanism work rather than a matter of
-taste. A drug valuable enough is not deterred by a death that arrives thirty
-years later, so past a $\theta$ of about $@@th_break@@$ the mortality channel no longer
-reverses the income gradient on its own and the average user stops being poorer
-than average. Two things stop $\theta$ from being calibrated on the spending
-share below that ceiling. The share is DISCONTINUOUS in $\theta$: it climbs to
-about $@@dshare_top@@$ percent and then jumps to nearly thirty, so the $@@q_theta@@$
-percent the quantitative model targets falls in the gap between the two branches
-and no $\theta$ delivers it. And the ceiling binds first in any case, since the
-mortality channel gives out at a share of about $@@dshare_ceil@@$ percent, below
-the branch top. So $\theta$ is set at a value that leaves the mechanism a wide
-margin, and the spending share it implies, $@@dshare_m@@$ percent, is reported as
-an untargeted moment rather than matched.}}
+Households, published by HUD.
 
 
 \subsubsection{Internal calibration}
@@ -878,11 +863,20 @@ the 2023 American Community Survey, which is the source the quantitative model's
 size distribution comes from as well. This model has two rentals where that one
 has three, so $h_2$ stands for everything below the standard family unit rather
 than for the smallest bin alone.}
-\cut{The weight on the drug $\theta$ is matched to the same drug spending share as
-the quantitative model, $@@q_theta@@$ percent of income across users. It was set
-rather than bracketed while that target stood at a level this model could not
-reach; at $@@q_theta@@$ percent it can, so it is calibrated here on the same
-moment and the two models no longer disagree about what a user spends.}
+\new{The weight on drugs $\theta$ is matched to the drug spending share, the
+$@@q_theta@@$ percent of income users spend on the drug, which is the same moment
+and the same construction the quantitative model uses. It is found by scanning
+$\theta$ rather than by bisecting on the moment, because the share is not
+continuous in $\theta$: it rises to about $@@dshare_top@@$ percent and then jumps
+to nearly thirty, so a bisection aimed between the two branches narrows onto the
+jump instead of converging. Scanning finds $\theta = @@th@@$, at which the model
+spends $@@dshare_m@@$ percent.\footnote{\new{$\theta$ also cannot be raised
+without limit, and the ceiling is what makes the mechanism work rather than a
+matter of taste: a drug valuable enough is not deterred by a death that arrives
+thirty years later, so past a $\theta$ of about $@@th_break@@$ the mortality
+channel no longer reverses the income gradient on its own. The calibrated value
+sits well below that, and with the mortality channel alone at full strength
+users still hold $@@r_mort@@$ of average income.}}}
 
 \begin{table}[!tb]
 \centering

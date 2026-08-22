@@ -32,17 +32,6 @@ EXTERNAL = [
          r'Set to $1/\beta$', '{:.3f}'),
         ('phi0', r'\bar\phi', 'Survival over a period, no SUD',
          'SSA period life table, ages 25--55', '{:.2f}'),
-        # THETA IS SET, AND THIS IS ITS ONLY ROW. It was briefly added to the
-        # internal table as well, when the drug spending share looked
-        # reachable, and this row was not removed at the time, so theta stood
-        # in both tables at once until the duplicate showed up in the rendered
-        # output. It is set because the share is DISCONTINUOUS in theta,
-        # climbing to about 19 per cent and jumping to 29, so a bisection aimed
-        # at a target inside that gap narrows onto the jump instead of
-        # converging. Four figures because the third one matters: the mortality
-        # channel gives out near 0.245 and this sits at 0.2350.
-        ('th', r'\theta', 'Weight on drugs in utility',
-         r'Set; see the text', '{:.4f}'),
     ]),
     ('The SUD', [
         ('kap', r'\kappa_{\phi d}', 'Fall in survival with a SUD, over a thirty year period',
@@ -103,6 +92,20 @@ INTERNAL = [
      'Value of a statistical life, Viscusi and Aldy (2003)', 'vsl', '{:.1f}', '{:.3f}'),
     ('b', 'b', 'Whether a household uses', 'Drug participation, NSDUH 2024',
      'part', '{:.2%}', '{:.5f}'),
+    # THETA IS AN INTERNALLY CALIBRATED ROW, reported against the moment it is
+    # chosen to match like every other row here. It is found by a SCAN rather
+    # than a bisection, and that is a fact about the moment rather than about
+    # the parameter: the drug spending share is discontinuous in theta, climbing
+    # to about 19 per cent and jumping to 29, so a bisection aimed between those
+    # branches narrows onto the jump instead of converging. Scanning theta for
+    # the value whose share matches the data is what calibrating on a moment
+    # means; only the method of search differs.
+    #
+    # FOUR FIGURES BECAUSE THE THIRD ONE MATTERS: the mortality channel gives
+    # out near 0.245 and this sits at 0.2350.
+    ('th', r'\theta', 'Weight on drugs in utility',
+     'Drug spending over income among users, RAND 2016 and NSDUH 2024',
+     'dshare', '{:.1%}', '{:.4f}'),
     ('h_hl', 'h_1', 'Service flow of homelessness', 'Homelessness rate, HUD 2023',
      'homeless', '{:.3%}', '{:.5f}'),
     # h_2 IS CALIBRATED, NOT SET, and its target is the same American Community
@@ -114,11 +117,13 @@ INTERNAL = [
     ('h_sm', r'h_2', 'Small rental unit',
      'Share of the housed in the small unit, ACS 2023', 'hsmall',
      '{:.1%}', '{:.3f}'),
-    # THE MOMENT IS THE ADULT SUD RATE, not the share of users who progress,
-    # and it is the MODERATE OR SEVERE rate: NSDUH 2024 adults 26 and over,
-    # svyrdudany in (2,3), 4.54 per cent, with participation the whole of any
-    # severity at 10.13. The two rates have to come from the same variable, and
-    # the old pair, 3.68 and 5.13, matched no cut of it.
+    # THE MOMENT IS THE ADULT SUD RATE, not the share of users who progress, and
+    # it is the MODERATE OR SEVERE rate on the model's own universe: NSDUH 2024,
+    # AGE3 >= 7 for 26 and over, svyrdudany in (2,3), 3.68 per cent, with
+    # participation the whole of any severity at 8.90. Both come from the same
+    # variable and the same universe, which two earlier pairs did not: 5.13 and
+    # 3.68 matched no single cut, and 10.13 and 4.54 were the EIGHTEEN and over
+    # figures while the note said 26 and over throughout.
     ('lam', r'\lambda', 'SUD hazard per unit used',
      'Adult SUD rate, NSDUH 2024', 'sud', '{:.2%}', '{:.1f}'),
 ]
