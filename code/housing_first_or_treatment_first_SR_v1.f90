@@ -791,7 +791,10 @@
         integer, parameter :: remove_tax_and_depreciation=1
                                                         
         integer, parameter :: do_internal_computations=1
-        integer :: fin_num_of_internal=50
+        ! EIGHTY, RAISED WITH THE COARSE GRID'S CUT so the sub grid spacing is
+        ! unchanged: the refinement spans the two neighbouring coarse gaps, which
+        ! are 40/25 = 1.6 times wider at 25 points, and 50 x 1.6 = 80.
+        integer :: fin_num_of_internal=80
         ! ZERO MEANS CALIBRATE. At one, every distance_* is set to zero and the
         ! whole parameter update block is skipped, so the program re-solves the
         ! equilibrium at fixed parameters and reports the result. That is what it
@@ -1962,7 +1965,21 @@
         ! function of income which includes r*a, the food stamp floor kinks, and
         ! housing is discrete. Coarsening this grid coarsens exactly the dimension
         ! that carries the notches.
-        integer, parameter :: positive_financial_grid_size=40
+        ! TWENTY FIVE COARSE POINTS, NOT FORTY, AND THE REFINEMENT KEEPS THE
+        ! PRECISION. The coarse grid is a SEARCH grid: nothing is read off it,
+        ! because a policy read off it would be wrong, which is what the asset
+        ! lottery was doing when it fitted a parabola through three coarse points
+        ! and broke the budget constraint. internal_computations is what answers,
+        ! on a sub grid spanning the two neighbouring coarse gaps.
+        !
+        ! THE ARITHMETIC IS WHY THIS IS FREE RATHER THAN A TRADE. The a' search
+        ! is quadratic in the coarse grid, so 40 to 25 is (40/25)^2 = 2.56x. The
+        ! refinement is linear in fin_num_of_internal and runs once per coarse
+        ! point, so its total cost is points x sub points: 25 x 80 is 2000, and
+        ! 40 x 50 was 2000. Unchanged. Widening the coarse gaps by 40/25 = 1.6
+        ! and raising the sub grid by the same 1.6 leaves the sub grid SPACING
+        ! exactly where it was, so precision is held, not traded.
+        integer, parameter :: positive_financial_grid_size=25
         integer, parameter :: negative_financial_grid_size=61
         
         integer, parameter :: grid_gaps=coarse_grid*10+(1-coarse_grid)
