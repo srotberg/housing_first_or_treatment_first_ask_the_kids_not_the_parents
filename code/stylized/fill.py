@@ -120,7 +120,9 @@ def numbers(base, fig):
 
     out['beta'] = f'{base.beta:.3f}'
     out['R'] = f'{base.R:.3f}'
-    out['u0'] = f'{base.u0:.3f}'
+    # FOUR PLACES, LIKE THE TABLE. At three the sentence said 0.049 while
+    # Table 1 beside it said 0.0485, which is one number printed two ways.
+    out['u0'] = f'{base.u0:.4f}'
     out['u1'] = f'{base.u1:.4f}'
     out['phi0'] = f'{base.phi0:.2f}'
     out['pV'] = f'{base.pV:.2f}'
