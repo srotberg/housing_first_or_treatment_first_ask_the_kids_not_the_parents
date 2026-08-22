@@ -227,12 +227,21 @@ class P:
     #   0.2429   18.22%    0.837   holds, barely
     #   0.2494   18.63%    1.285   FAILS
     #
-    # So the ceiling on drug spending with the mechanism intact is about 18.4
-    # per cent, and every extra tenth of a point costs margin on the claim the
-    # paper exists to make. 0.2334 buys the mechanism a wide margin, 0.322
-    # against a threshold of one, for a spending share a little under the RAND
-    # derived 20. The share is an UNTARGETED moment now and is reported as one.
-    th    = 0.2334    # weight on drug use, SET; see above
+    # 0.2429 IS CHOSEN, as the largest share with a MEASURED r_mort below one.
+    # The lower branch tops out at 18.96 per cent and the next attainable value
+    # is 29, so 18.22 is as close to the RAND derived 20 as this model reaches
+    # while the mechanism survives; the last 0.7 points to the branch top invert
+    # it. The margin is thin, 0.837 against a threshold of one, and is stated as
+    # such rather than hidden.
+    #
+    # WHAT THE READER SEES IS r_use, AND IT IS 0.22 EVERYWHERE. The income ratio
+    # among users in the calibrated model runs 0.220 to 0.237 over this whole
+    # range of theta and is nearly flat in it, so users come out far poorer than
+    # average whatever theta is set to. It is r_mort, the mortality-only
+    # counterfactual that carries the claim, that theta actually moves.
+    #
+    # The share is an UNTARGETED moment now and is reported as one.
+    th    = 0.2429    # weight on drug use, SET; see above
     b     = 0.009     # Stone Geary subsistence; th/b is the pull of the first unit
     gam   = 0.2144    # CALIBRATED to the housing share. Starting value only
     # A PERIOD IS THIRTY YEARS, so the discount factor and the interest rate are
