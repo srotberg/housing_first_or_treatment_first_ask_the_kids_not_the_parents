@@ -59,6 +59,25 @@ WATCH = {
     'size_homelessness': r'size_homelessness=\s*' + _NUM,
     'largest_house_size': r'largest_house_size=\s*' + _NUM,
     'grid_expander': r'housing_status_grid_expander=\s*' + _NUM,
+    'lambda_m': r'lambda_m=\s*' + _NUM,
+    'mu_homeless': r'mu_homeless=\s*' + _NUM,
+    'kappa_uem': r'kappa_uem=\s*' + _NUM,
+    'discount_factor': r'discount_factor=\s*' + _NUM,
+    'relative_share_housing': r'relative_share_of_housing=\s*' + _NUM,
+    'relative_share_leisure': r'relative_share_of_leisure=\s*' + _NUM,
+}
+
+# The Fortran name of each watched parameter's step size. Shrinking a step is
+# the one remedy that is generically safe: an oscillation with growing
+# amplitude always means the step is too big, whatever the parameter means.
+ADJUSTER = {
+    'smallest_rental': 'smallest_house_size_adjuster',
+    'size_homelessness': 'size_homelessness_adjuster',
+    'largest_house_size': 'largest_house_size_adjuster',
+    'grid_expander': 'housing_status_grid_expander_adjuster',
+    'lambda_m': 'lambda_m_adjuster',
+    'mu_homeless': 'mu_homeless_adjuster',
+    'kappa_uem': 'kappa_uem_adjuster',
 }
 
 # Moments, so a parameter moving against a moment that does not respond can be
@@ -82,6 +101,8 @@ BOUNDS = {
 PIN_LOOPS = 3        # loops on a bound before it counts as pinned
 RUNAWAY_LOOPS = 5    # loops of one-way movement against a flat moment
 FLAT_LOOPS = 5       # loops of a moment not moving at all
+FROZEN_LOOPS = 6     # loops of a parameter not moving at all
+OSCILLATE_LOOPS = 5  # loops of alternating, growing steps
 
 
 def _f(x):
@@ -206,7 +227,59 @@ def diagnose_distribution_stall(path):
     return None
 
 
-DIAGNOSES = [diagnose_pinned_at_bound, diagnose_dead_moment, diagnose_runaway]
+def diagnose_frozen_parameter(loops):
+    """Any watched parameter that has not moved at all for several loops.
+
+    GENERIC ON PURPOSE, because a parameter can freeze for more reasons than a
+    bound: a guard holding it, an adjuster that has damped to nothing, a gap
+    that has gone exactly zero. Detection generalises; the REMEDY does not, so
+    anything without a reasoned entry in BOUNDS escalates rather than being
+    guessed at.
+    """
+    for name in WATCH:
+        v = series(loops, name)
+        if len(v) < FROZEN_LOOPS:
+            continue
+        tail = v[-FROZEN_LOOPS:]
+        if max(tail) - min(tail) > max(abs(tail[-1]), 1e-12) * 1e-9:
+            continue
+        if name in BOUNDS:
+            return dict(name=f'{name} frozen at {tail[-1]:g}',
+                        evidence=f'unchanged for {FROZEN_LOOPS} loops',
+                        remedy='widen_bound', target=name)
+        return dict(name=f'{name} frozen at {tail[-1]:g}',
+                    evidence=(f'unchanged for {FROZEN_LOOPS} loops, and there is '
+                              f'no reasoned remedy for this parameter'),
+                    remedy='escalate', target=name)
+    return None
+
+
+def diagnose_oscillation(loops):
+    """A parameter alternating direction with growing amplitude.
+
+    This one IS generic: whatever the parameter means, a step that overshoots
+    further each time is too big. Shrinking it is safe because it cannot move
+    the fixed point, only how the search approaches it.
+    """
+    for name in WATCH:
+        v = series(loops, name)
+        if len(v) < OSCILLATE_LOOPS or name not in ADJUSTER:
+            continue
+        v = v[-OSCILLATE_LOOPS:]
+        steps = [v[i + 1] - v[i] for i in range(len(v) - 1)]
+        if any(s == 0 for s in steps):
+            continue
+        alternating = all(steps[i] * steps[i + 1] < 0 for i in range(len(steps) - 1))
+        growing = all(abs(steps[i + 1]) > abs(steps[i]) for i in range(len(steps) - 1))
+        if alternating and growing:
+            return dict(name=f'{name} oscillating with growing amplitude',
+                        evidence=f'steps {[round(x, 6) for x in steps]}',
+                        remedy='shrink_adjuster', target=name)
+    return None
+
+
+DIAGNOSES = [diagnose_pinned_at_bound, diagnose_dead_moment, diagnose_runaway,
+             diagnose_oscillation, diagnose_frozen_parameter]
 
 
 # ---------------------------------------------------------------------------
@@ -234,7 +307,44 @@ def widen_bound(target):
     return True, f'{target} {spec["kind"]} raised from {old:g} to {new:g}'
 
 
-REMEDIES = {'widen_bound': widen_bound}
+def shrink_adjuster(target):
+    """Halve a step that is overshooting. Cannot move the fixed point.
+
+    THE WHOLE RIGHT HAND SIDE IS REPLACED, not the first number in it. These are
+    declared as expressions, 1*10.d0**(-1) and 5*10.d0**(-2), and a pattern that
+    matches the leading coefficient happens to give the right answer for those
+    two and would write 5d0.d0**(-1) for a declaration with no leading
+    coefficient. The current value comes from the same parser the paper uses, so
+    the expression is evaluated rather than pattern matched, and what goes back
+    is a plain literal.
+    """
+    name = ADJUSTER.get(target)
+    if name is None:
+        return False, 'no adjuster known for ' + target
+    sys.path.insert(0, os.path.join(HERE, 'paper'))
+    try:
+        from fortran_consts import constants
+        old = constants(SRC).get(name)
+    except Exception as exc:                       # noqa: BLE001
+        return False, 'could not evaluate ' + name + ': ' + str(exc)
+    if old is None:
+        return False, name + ' is not a constant this parser can read'
+    new_v = old / 2.0
+    if new_v < 1e-6:
+        return False, (name + ' is already ' + format(old, 'g') + '; halving it '
+                       'again would stop the search rather than steady it')
+    txt = open(SRC).read()
+    m = re.search(r'^([ \t]*real\(8\)[ \t]*::[ \t]*' + re.escape(name)
+                  + r'[ \t]*=[ \t]*)(.+?)[ \t]*$', txt, re.M)
+    if m is None:
+        return False, 'could not find the declaration of ' + name
+    txt = txt[:m.start(2)] + _fortran(new_v) + txt[m.end(2):]
+    open(SRC, 'w').write(txt)
+    return True, (name + ' halved from ' + format(old, 'g') + ' to '
+                  + format(new_v, 'g'))
+
+
+REMEDIES = {'widen_bound': widen_bound, 'shrink_adjuster': shrink_adjuster}
 
 
 # ---------------------------------------------------------------------------
