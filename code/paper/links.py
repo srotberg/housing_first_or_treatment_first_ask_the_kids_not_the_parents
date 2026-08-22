@@ -21,13 +21,12 @@ LINKS = {
     r'$b$':                      'participation_rate_data',
     r'$\lambda$':                'sud_rate_data',
     r'$\aleph$':                 'vsl_data',
-    r'$\rho_d$':                 'employed_share_of_homeless_data',
+    r'$h_2$':                    'employed_share_of_homeless_data',
     r'$\kappa_{ued}$':           'unemployment_rate_sud_data',
     r'$h_1$':                    'fraction_homeless_data',
     r'$\underline c$':           'food_stamps_share_data',
     r'$\pi_V$':                  'voucher_coverage_data',
     r'$\lambda_m$':              'smi_share_of_homeless_data',
-    r'$\rho_m$':                 'homeless_income_share_data',
     r'$\kappa_{uem}$':           'employment_rate_given_smi_data',
     r'$\mu_H$':                  'milby_recovery_ratio_data',
     r'$\bar\tau^{u}$':           'treatment_take_up_data',
@@ -50,7 +49,6 @@ LINKS = {
     r'$\kappa_V$':               'threshold_income_vouchers',
     r'$\kappa_r$':               'rent_to_income_ratio_vouchers',
     r'$\varrho$':                'food_stamp_taper',
-    r'$\varsigma$':              'housing_status_grid_expander',
     r'$J_E$':                    'max_age_to_choose_addiction',
 }
 

@@ -77,7 +77,14 @@ def _param_counts():
             cells = s_[:-2].split('&')
             if len(cells) < 3:
                 continue
-            c = _re.sub(r'[^A-Za-z.]', '', cells[2])
+            # A CELL MARKED RED IS STILL A CELL. sync_tables.py and the round
+            # marking both wrap a changed cell in \textcolor{red}{...}, and
+            # stripping punctuation from that leaves 'textcolorredInt.', which
+            # starts with neither Int nor Ext. Every red row would then have
+            # fallen out of the count silently, and the count is what the prose
+            # quotes.
+            c = _re.sub(r'\\textcolor\{red\}\{(.*?)\}', r'\1', cells[2])
+            c = _re.sub(r'[^A-Za-z.]', '', c)
             if c.startswith('Int'):
                 n_int += 1
             elif c.startswith('Ext'):

@@ -38,6 +38,13 @@ it arrived, including the targets it called into question.
 > - **the rental ladder** — was h̲ and h̄, two ends of three shares. It is now
 >   h_2, h_3 and h_4, which is what the model has and what the note calls them.
 > - **r** — a new entry. The risk free rate stood in Table 6 with no line here.
+> - **h_2** — a new entry, and the moment moved. h_2 is calibrated on the employed
+>   share of the homeless, not on a unit size share.
+> - **ς** — was written as set at 1.8. It is calibrated, and on the middle unit
+>   share; it used to run on the smallest, which is the same fixed point but the
+>   wrong attribution.
+> - **ρ_d and ρ_m** — both are switched off in the benchmark and neither is
+>   calibrated on anything. Both entries claimed a moment.
 >
 > Every other parameter in Tables 5 and 6 was read against this file one at a
 > time; none is missing and none of the rest disagreed.
@@ -124,8 +131,11 @@ depends on what a unit of the model is worth.
 
 ## 2. What using and being homeless cost
 
-**ρ_d, earnings lost to a disorder — a 50 percent employment rate among the
-homeless.** HUD 2023. The moment is employment among literally homeless adults.
+**ρ_d, earnings lost to a disorder — no moment; set to one.** The 50 percent
+employment rate among the homeless (HUD 2023, employment among literally homeless
+adults) is now h_2's moment, in section 6 below, because the price of the cheapest
+dwelling is what prices a working household onto the street. ρ_d is switched off in
+the benchmark (`include_rho_d = 0`) and κ_ued carries the disorder into poverty.
 
 **κ_ued, the employment multiplier for a disorder — a 16.25 percent unemployment
 rate given a disorder.** NSDUH 2024, adults 26 and over with a past year disorder.
@@ -154,18 +164,24 @@ overstate coverage.
 the homeless.** Gutwinski et al. (2021), a meta regression of prevalence among
 homeless people in high income countries.
 
-**ρ_m, earnings lost to mental illness — income of the homeless at 19.1 percent of
-average.** Meyer, Wyse, Meyer, Grunwaldt and Wu (2024), NBER Working Paper 32323,
-from the 2010 Census linked to restricted use tax and administrative records. The
-attribution is inferred rather than quoted: Referee 1's comment 2(c)(i) gives the
+**ρ_m, earnings lost to mental illness — no moment; set to one.** It is switched
+off in the benchmark (`include_rho_m = 0`) for two reasons. Its moment would have
+been homeless conditional, like ρ_d's, so the two were identified jointly rather
+than separately and neither cleanly. And it inverted the return to work: pinned at
+its floor of 0.05 an employed household with SMI kept five percent of its wage while
+a non-employed one draws disability insurance at ζ_DI = 0.25, so the SMI households
+the model put on the street were the ones with jobs. κ_uem carries the illness into
+poverty instead, on the extensive margin, and it is calibrated and live.
+
+*The moment it used to carry, now untargeted.* Income of the homeless at 19.1
+percent of average. Meyer, Wyse, Meyer, Grunwaldt and Wu (2024), NBER Working Paper
+32323, from the 2010 Census linked to restricted use tax and administrative records.
+The attribution is inferred rather than quoted: Referee 1's comment 2(c)(i) gives the
 19.1 percent alongside an employment rate of 40 to 52 percent among the homeless,
 and that pair is verbatim the headline of that paper, 52 percent of the sheltered
 and 40 percent of the unsheltered in formal employment. The paper itself could not
 be opened from the machine this was written on, so the table number behind the 19.1
-still needs checking. The moment is the ratio of mean income among the homeless to
-the population mean. Note that this and ρ_d are both homeless
-conditional moments, so the two penalties are identified jointly rather than
-separately; the paper says so.
+still needs checking. It is reported with the untargeted moments.
 
 **κ_uem, the employment multiplier for mental illness — a 30 percent employment
 rate given SMI.** NOT an NSDUH number, and the table used to say it was. It is the
@@ -180,9 +196,10 @@ and 45.8 percent against 47.2 percent are employed full time. On NSDUH's own
 definition of SMI there is almost no employment gap.
 
 *Resolved: keep the high disability target.* The state in the model is not NSDUH's
-SMI. It is an illness severe enough to cut productivity by ρ_m and to raise the
+SMI. It is an illness severe enough to raise the
 chance of losing work, which is the high disability end of the distribution rather
-than the whole of it. The clinical range for that end is what 30 percent is the
+than the whole of it. (This read "severe enough to cut productivity by ρ_m and to
+raise the chance of losing work"; with ρ_m off, losing the work is the whole of it.) The clinical range for that end is what 30 percent is the
 midpoint of, and it is the closest measurement available for the population the state
 represents. A survey number for a population the state is not would be worse. The
 paper carries this as a footnote on κ_uem rather than leaving the reader to find it. The distinction
@@ -334,15 +351,46 @@ or below 30 percent of area median income, so the model's recipients are drawn f
 the eligible population in proportion rather than skewed to the bottom of it. π_V
 picks up the level of coverage, not its slope.
 
-**h_2, h_3 and h_4, the rental ladder — 13.2 / 24.1 / 62.7 percent.** ACS 2023,
+**The rental ladder — 24.1 and 62.7 percent, for h_3 and h_4.** ACS 2023,
 table B25042, tenure by bedrooms, **universe occupied housing units**, N =
 131,332,360. The six bedroom categories are collapsed to three: none or one, two,
-and three or more. The model's four housing states are h_1 for the street and
-h_2 < h_3 < h_4 for the three rentals, so the three shares are the targets for
-h_2, h_3 and h_4 in that order. Table B25041 covers all housing units
+and three or more, giving 13.2 / 24.1 / 62.7. The model's four housing states are
+h_1 for the street and h_2 < h_3 < h_4 for the three rentals. Only two of the three
+shares are targets, because three shares carry two free numbers: ς places h_3 and
+matches the middle share, h_4 matches the top share, and the smallest category
+follows by complementarity. h_2 is not identified by a size share at all — see the
+entry immediately below. Table B25041 covers all housing units
 including about ten percent vacant and is the wrong universe; it is kept in `raw/`
 only so the difference is checkable. Since the universe is occupied units, the model
 counterpart conditions on being housed and the homeless are in neither denominator.
+
+**h_2, the smallest rental size — a 50 percent employment rate among the homeless.**
+HUD's 2023 point-in-time count for the level of homelessness and TEDS-A 2022 for the
+composition; `employed_share_of_homeless_data` in the declaration. The moment is not
+a size share, because the price of the cheapest dwelling is what decides whether a
+household with a job can be housed at all, and nothing else in the model prices a
+working household onto the street. Raise h_2 and the bottom rung is dearer, so more
+of homelessness is employed homelessness.
+
+*This moment used to be ρ_d's.* Two instruments cannot chase one moment, and the
+proportional earnings penalties ρ_d and ρ_m are both switched off in the benchmark
+(`include_rho_d = include_rho_m = 0`), so neither is calibrated on anything. What
+carries a disorder or an illness into poverty is the extensive margin, κ_ued and
+κ_uem, both of which are calibrated and live.
+
+**ς, the curvature of the rental ladder — the 24.1 percent middle share.** It is
+calibrated, not set. The curvature places the middle rung a fraction (1/2)^ς of the
+way from the smallest size to the largest, so it is what moves the share of the
+housed living in the middle unit, and that share is its moment. At 1.8 the middle
+rung sits 28.7 percent of the way up rather than the 50 percent a uniform ladder
+gives, and the three sizes stand at 1 : 1.46 : 2.59.
+
+*It used to run on the SMALLEST category's share.* With h_4 holding the top share
+that is the same fixed point, because the three shares add to one, so the calibrated
+ladder does not move. What was wrong was the attribution: the smallest share is not
+h_2's moment, so pointing the curvature at it aimed a rung at a share the rung below
+was thought to own. The update's sign flips with the moment, since a larger ς takes
+mass out of the smallest category and into the middle one.
 
 **Two renter cost shares, untargeted.** ACS 2023: 49.5 percent of renter households
 spend more than thirty percent of income on housing and 26.5 percent more than half.
@@ -473,13 +521,6 @@ at age 56 having risen 65 percent, then falls 4 percent to the last working age.
 ### Preferences and the grid
 
 **σ, risk aversion — 2.** Attanasio and Weber (2010).
-
-**ς, the curvature of the rental ladder — 1.8.** Set rather than estimated. With
-three rental sizes the size distribution carries two free numbers and the two ends
-take them, so a third parameter chasing the same shares would not be identified. The
-curvature places the middle rung a fraction (1/2)^ς of the way from the smallest size
-to the largest, so 1.8 puts it 28.7 percent of the way up rather than the 50 percent a
-uniform ladder gives. At the calibrated ends the three sizes stand at 1 : 1.46 : 2.59.
 
 ### The drug market
 

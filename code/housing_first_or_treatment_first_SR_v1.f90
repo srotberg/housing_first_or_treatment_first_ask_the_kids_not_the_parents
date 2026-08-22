@@ -1763,17 +1763,29 @@
         real(8) :: stopping_rule_housing_status_grid_expander=10.d0**(-3)
 
         ! THE CURVATURE IS NOW AN INSTRUMENT, on the share of the housed in the
-        ! SMALLEST rental. It was held at 1.8 and nothing targeted the interior
+        ! MIDDLE rental. It was held at 1.8 and nothing targeted the interior
         ! of the size distribution, which is exactly what the model got wrong:
         ! 1.6 per cent of the housed in the middle rung against 24 in the data,
         ! and 94 per cent in the largest against 63. Two rungs were pinned and
         ! the one between them was left wherever the curvature happened to put
         ! it.
         !
-        ! THE SIGN. h_3 = h_2 + (1/2)^varsigma (h_4 - h_2), so a LARGER varsigma
-        ! pulls the middle rung down towards the smallest one and takes mass out
-        ! of the smallest category. Too little mass there therefore calls for a
-        ! smaller varsigma, which is the sign below.
+        ! ONE MOMENT PER RUNG. h_2 is the cheapest dwelling and answers to the
+        ! employed share of the homeless, because its price is what decides
+        ! whether a working household can be housed at all. h_4 answers to the
+        ! share at the top size. The curvature places h_3, so the share in the
+        ! middle unit is its moment. This ran on the SMALLEST category's share
+        ! until then, which is the same fixed point while largest_house_size
+        ! holds the top share, because the three shares add to one; what was
+        ! wrong was the attribution, not the answer. The smallest category's
+        ! share is not h_2's moment, so nothing was left owning it.
+        !
+        ! THE SIGN, AND IT FLIPPED WITH THE MOMENT. h_3 = h_2 + (1/2)^varsigma
+        ! (h_4 - h_2), so a LARGER varsigma pulls the middle rung down towards
+        ! the smallest one, makes the middle unit cheaper, and takes mass out of
+        ! the smallest category and INTO the middle one. Too little mass in the
+        ! middle therefore calls for a LARGER varsigma, so the update subtracts
+        ! its gap where the old one added.
         real(8), parameter :: housing_status_grid_expander_adjuster_start=1*10.d0**(-1)
         real(8), parameter :: housing_status_grid_expander_floor=10.d0**(-3)
         real(8) :: gap_housing_status_grid_expander=0
@@ -29759,12 +29771,33 @@
                         write(*,*) "largest_house_size=", largest_house_size
                         write(*,*) "distance_largest_house_size=", distance_largest_house_size
 
-                        ! The curvature, on the smallest category's share. The
-                        ! largest is already carried by largest_house_size and the
-                        ! three shares add to one, so these two pin the whole
-                        ! distribution.
+                        ! THE CURVATURE, ON THE MIDDLE CATEGORY'S SHARE, which
+                        ! is h_3's own moment and nobody else's.
+                        !
+                        ! Each rung of the ladder now answers to one moment. h_2
+                        ! is the cheapest dwelling and is set by the employed
+                        ! share of the homeless, because the price of that rung
+                        ! is what decides whether a working household can be
+                        ! housed at all. h_4 is set by the share at the top size.
+                        ! That leaves h_3, and the share living in the middle
+                        ! unit is the moment left over for it.
+                        !
+                        ! This used to run on the SMALLEST category's share. With
+                        ! largest_house_size holding the top share the two are
+                        ! the same fixed point, because the three shares add to
+                        ! one, so nothing about the calibrated ladder moves. What
+                        ! moves is the attribution: the smallest category's share
+                        ! is not h_2's moment any more, and pointing the curvature
+                        ! at it was aiming a rung at a share the rung below owns.
+                        !
+                        ! THE SIGN FLIPS WITH THE MOMENT. Raising the expander
+                        ! pulls h_3 down toward h_2 (h_3 = h_2 + (h_4-h_2)/2**e),
+                        ! so the middle unit gets cheaper and takes households off
+                        ! the bottom rung: share(0) falls and share(1) rises. The
+                        ! old update added the gap, which is right for a moment
+                        ! that falls in e; this one subtracts it.
                         gap_housing_status_grid_expander=&
-                            model_housing_size_dist(1,0)-housing_size_dist_data(0)
+                            model_housing_size_dist(1,1)-housing_size_dist_data(1)
 
                         call damp_on_flip(housing_status_grid_expander_adjuster,&
                             gap_housing_status_grid_expander,&
@@ -29774,12 +29807,12 @@
                             housing_status_grid_expander_floor)
 
                         housing_status_grid_expander=&
-                            min(max(housing_status_grid_expander+&
+                            min(max(housing_status_grid_expander-&
                             housing_status_grid_expander_adjuster*&
                             gap_housing_status_grid_expander,1.d0),5.d0)
 
                         distance_housing_status_grid_expander=&
-                            abs(model_housing_size_dist(1,0)-housing_size_dist_data(0))
+                            abs(model_housing_size_dist(1,1)-housing_size_dist_data(1))
 
                         write(*,*) "housing_status_grid_expander=", housing_status_grid_expander, &
                             " distance_housing_status_grid_expander=", &
