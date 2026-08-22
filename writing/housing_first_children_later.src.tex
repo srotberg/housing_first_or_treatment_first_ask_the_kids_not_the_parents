@@ -1712,7 +1712,9 @@ perfect both ways. There, conditionality is perfectly
 enforced: a household that fails the condition always loses the voucher, and one
 that meets it never does. @@tfdeter@@. Here detection is imperfect: some fail
 the condition even when they are clean (a false positive), and some pass even
-though they are using (a false negative).
+though they are using (a false negative). \new{Neither rate binds in the benchmark,
+where no voucher is conditional, so both are set with the experiment in
+Section~\ref{sec:experiments} rather than in the calibration.}
 
 \subsection{The shocks, collected}\label{sec:fshocks}
 
@@ -2882,6 +2884,22 @@ response that carries the tax distortion, the drug price response, and the cost 
 administering the test. The rungs do not commute, so a fixed order is reported
 together with the interaction term.
 \end{enumerate}
+
+\new{\paragraph{The parameters the experiment introduces.} Three of the model's
+parameters do nothing in the benchmark and are therefore set here rather than in
+Section~\ref{sec:fullcal}: nothing is screened when no voucher is conditional, so
+none of them binds until Treatment First is imposed. The detection rate is
+$p_{\mathrm{det}}=@@f_probability_of_detection@@$ and the false positive rate
+$p_{\mathrm{fp}}=@@f_probability_of_false_positive@@$, both set rather than measured,
+since no programme publishes a detection rate for a drug screen in a housing
+programme; the counterfactuals report the range around them rather than resting on
+the point. The government pays $c_{\mathrm{test}}=@@f_cost_per_drug_test_pc@@$ percent
+of average earnings for every household it screens. That last figure is a lower bound
+on the administrative burden and is meant as one: it is the assay cost in the state
+fiscal notes of the public assistance programmes that have tried testing, and the
+programme level figures are far larger once staffing is counted, so the cost of
+administering the test is a rung of the shutdown ladder rather than a settled
+number.}
 
 %======================================================================
 \section{Discussion}\label{sec:discussion}
