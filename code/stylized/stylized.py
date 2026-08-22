@@ -227,21 +227,30 @@ class P:
     #   0.2429   18.22%    0.837   holds, barely
     #   0.2494   18.63%    1.285   FAILS
     #
-    # 0.2429 IS CHOSEN, as the largest share with a MEASURED r_mort below one.
-    # The lower branch tops out at 18.96 per cent and the next attainable value
-    # is 29, so 18.22 is as close to the RAND derived 20 as this model reaches
-    # while the mechanism survives; the last 0.7 points to the branch top invert
-    # it. The margin is thin, 0.837 against a threshold of one, and is stated as
-    # such rather than hidden.
+    # THETA IS SET AT 0.2350, and both the value and the reason changed when the
+    # data behind the target was rebuilt.
     #
-    # WHAT THE READER SEES IS r_use, AND IT IS 0.22 EVERYWHERE. The income ratio
-    # among users in the calibrated model runs 0.220 to 0.237 over this whole
-    # range of theta and is nearly flat in it, so users come out far poorer than
-    # average whatever theta is set to. It is r_mort, the mortality-only
-    # counterfactual that carries the claim, that theta actually moves.
+    # The spending share cannot be BRACKETED on: it is discontinuous in theta,
+    # climbing to about 19 per cent and jumping to 29, so a bisection aimed into
+    # that gap narrows onto the jump. It is set instead, at the theta whose
+    # share matches the data, and the share is reported as an untargeted moment.
     #
-    # The share is an UNTARGETED moment now and is reported as one.
-    th    = 0.2429    # weight on drug use, SET; see above
+    # WHAT CHANGED. The target was 20 per cent, built by dividing 2016 spending
+    # by 2024 PERSONAL income, and reaching it cost more theta than the
+    # mortality channel could carry: r_mort, the income ratio among users with
+    # mortality alone at full strength, crossed one at about theta 0.245 while
+    # the share was still under 19. Correcting the target to 16.2 -- family
+    # income, since that is what this model's budget constraint spends, and both
+    # sides in one year's dollars -- and correcting the population rates to the
+    # model's own 26-and-over universe moved the target down to meet the model
+    # rather than the other way round. See data/make_drug_spending_target.py.
+    #
+    # MEASURED AT 0.2350, with lambda and b refit: a spending share of 16.32 per
+    # cent against a target of 16.20, users at 0.218 of average income, and
+    # r_mort at 0.330. r_mort runs 0.315 to 0.331 over theta 0.220 to 0.238, so
+    # this sits on a plateau rather than near an edge: the mechanism is not
+    # merely below its threshold of one, it is vivid.
+    th    = 0.2350    # weight on drug use, SET; see above
     b     = 0.009     # Stone Geary subsistence; th/b is the pull of the first unit
     gam   = 0.2144    # CALIBRATED to the housing share. Starting value only
     # A PERIOD IS THIRTY YEARS, so the discount factor and the interest rate are
