@@ -864,8 +864,18 @@ size distribution comes from as well. This model has two rentals where that one
 has three, so $h_2$ stands for everything below the standard family unit rather
 than for the smallest bin alone.}
 \new{The weight on drugs $\theta$ is matched to the drug spending share, the
-$@@q_theta@@$ percent of income users spend on the drug, which is the same moment
-and the same construction the quantitative model uses. It is found by scanning
+$@@q_theta@@$ percent of income users spend on the drug. That target is built
+from two sources, because no survey collects both halves of it: Midgette et
+al.\ (2019) estimate retail spending on cannabis, cocaine, heroin and
+methamphetamine at $136$ billion dollars in 2016, which the Consumer Price Index
+for All Urban Consumers carries to $@@spend24@@$ billion in 2024 dollars, and
+NSDUH 2024 puts the using population at $@@n_users@@$ million adults aged $26$
+and over with mean family income of $@@user_inc@@$ dollars, or $@@user_inc_bn@@$
+billion in all. The denominator is family income rather than personal income
+because the model's $y$ is what a household pays its rent and buys its
+consumption out of, and both sides are put in the same year's dollars; the
+quantitative model of Section~\ref{sec:full} builds the same moment the same
+way. It is found by scanning
 $\theta$ rather than by bisecting on the moment, because the share is not
 continuous in $\theta$: it rises to about $@@dshare_top@@$ percent and then jumps
 to nearly thirty, so a bisection aimed between the two branches narrows onto the
