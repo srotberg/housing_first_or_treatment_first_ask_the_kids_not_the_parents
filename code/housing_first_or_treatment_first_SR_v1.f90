@@ -1111,7 +1111,7 @@
         ! disorder; the survey's own split of mild against moderate-or-severe
         ! puts that at 45 per cent, and the two rates have to come from the same
         ! variable or the weights built from them mean nothing.
-        real(8), parameter :: sud_rate_data=0.0454
+        real(8), parameter :: sud_rate_data=0.0368
 
         ! THE ELEVEN THE NOTE CALLS CALIBRATED AND THE CODE HELD FIXED.
         ! Each with the moment its table row names. Where the moment is a first
@@ -1151,7 +1151,7 @@
         !
         ! The one input still doing work is the cannabis share, which moves the
         ! answer between 0.136 and 0.211. See code/paper/drug_spending_target.py.
-        real(8), parameter :: drug_spending_share_data=0.20
+        real(8), parameter :: drug_spending_share_data=0.1620
         real(8) :: drug_share_experimenters_1=0
         real(8) :: drug_share_addicted_1=0
         real(8) :: drug_share_weighted_1=0
@@ -1165,7 +1165,7 @@
         ! svyrdudany in (1,2,3). Weighted share 0.1013. Mild counts as using and
         ! moderate or severe counts as carrying the disorder, which is the split
         ! the extraction code in data/ already uses.
-        real(8), parameter :: participation_rate_data=0.1013
+        real(8), parameter :: participation_rate_data=0.0890
         ! THE VALUE OF A STATISTICAL LIFE, AS A MULTIPLE OF AVERAGE LABOUR
         ! INCOME. It used to be 7.5, the figure in millions of dollars, compared
         ! against a model quantity that is a sum of V/MU_c and so is denominated

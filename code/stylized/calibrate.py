@@ -442,6 +442,27 @@ W = W * len(W)  # calibrate.py uses W unnormalised elsewhere; scale is irrelevan
 # model now targets. The old pair, 0.0513 and 0.0368, matched no cut of that
 # variable and implied that 72 per cent of users carry a disorder where the
 # survey says 45.
+def _drug_targets():
+    """participation, the SUD rate and the spending share, from data/.
+
+    All three were typed and two were wrong. The population rates in use were
+    the EIGHTEEN and over figures, 10.13 and 4.54 per cent, while the model's
+    households are 26 and over and the note says so throughout; its own universe
+    gives 8.90 and 3.68. The spending share divided 2016 spending by 2024
+    PERSONAL income and got 19.7; family income is what this model's budget
+    constraint spends and the two sides have to be in one year's dollars, which
+    gives 16.2. See data/make_drug_spending_target.py.
+    """
+    import csv as _csv
+    f = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                     '..', '..', 'data', 'drug_spending_target.csv')
+    with open(os.path.normpath(f)) as fh:
+        return {r['quantity']: float(r['value']) for r in _csv.DictReader(fh)}
+
+
+_DRUG = _drug_targets()
+
+
 def _hsmall_target():
     """Sizes 1 and 2 of the ACS split, from the file the Fortran's target uses."""
     import csv as _csv
@@ -454,8 +475,9 @@ def _hsmall_target():
 
 _HSMALL = _hsmall_target()
 
-TARGET = dict(part=0.1013, homeless=0.00399, sud=0.0454, vsl=80.0,
-              dshare=0.20, housing_share=0.30, hspend=0.268,
+TARGET = dict(part=_DRUG['participation'], homeless=0.00399, sud=_DRUG['sud_rate'], vsl=80.0,
+              dshare=_DRUG['drug_spending_share'],
+              housing_share=0.30, hspend=0.268,
               bot50=BOT50_TARGET,
               # AMERICAN COMMUNITY SURVEY B25042, occupied units, read from
               # data/us_housing_dist.csv, which is the same file the
