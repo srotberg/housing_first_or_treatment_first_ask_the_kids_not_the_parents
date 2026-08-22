@@ -801,6 +801,12 @@ $d'$ because it depends on which $d'$ is realised. A household uses if the value
 %======================================================================
 \subsection{Calibration}\label{sec:cal}
 
+\new{Every target below is documented in full in the replication package's data
+appendix, \texttt{data/DATA\_APPENDIX.md}, which names the
+dataset behind each one, its year and universe, and the computation that turns it
+into the number quoted here. What follows gives the moment and its source; the
+appendix gives the arithmetic.}
+
 \subsubsection{External calibration}
 
 Table~\ref{tab:ext} lists the parameters set outside the model. Preferences and
@@ -830,9 +836,9 @@ National Survey on Drug Use and Health (NSDUH) 2024 for respondents aged 26 and
 over.
 
 Income support replaces half of previous earnings on a base capped at mean
-income, in line with statutory state rules. \new{Only the standard rental unit is set,
+income, in line with statutory state rules. Only the standard rental unit is set,
 at $h_3 = 0.40$ of mean income; the small unit $h_2$ is calibrated, on the share
-of housed households living in one.} The voucher parameters are institutional: covered
+of housed households living in one. The voucher parameters are institutional: covered
 tenants pay $30$ percent of market rent, eligibility is capped at half of median income, $\kappa_V = 0.50$, and $\pi_V = 0.266$ is the ratio of recipients to the income-eligible population in the 2023 Picture of Subsidized
 Households, published by HUD.
 
@@ -858,36 +864,19 @@ to a drug participation rate of $\new{8.90}$ percent from NSDUH 2024 for
 respondents aged 26 and over with a disorder of any severity, housing services on the street
 $h_1$ to a homelessness rate of $0.399$ percent from the 2023 HUD PiT count, and the SUD hazard $\lambda$ to the $3.68$ percent
 of adults aged $26$ and over carrying a moderate or severe SUD in NSDUH 2024.
-\new{The small rental unit $h_2$ is matched to the $\new{37.3}$ percent of housed
+
+\new{The} small rental unit $h_2$ is matched to the $\new{37.3}$ percent of housed
 households living in a unit with fewer than three bedrooms, from table B25042 of
 the 2023 American Community Survey, which is the source the quantitative model's
-size distribution comes from as well. This model has two rentals where that one
-has three, so $h_2$ stands for everything below the standard family unit rather
-than for the smallest bin alone.}
-\new{The weight on drugs $\theta$ is matched to the drug spending share, the
-$\new{16}$ percent of income users spend on the drug. That target is built
-from two sources, because no survey collects both halves of it: Midgette et
-al.\ (2019) estimate retail spending on cannabis, cocaine, heroin and
-methamphetamine at $136$ billion dollars in 2016, which the Consumer Price Index
-for All Urban Consumers carries to $\new{177.8}$ billion in 2024 dollars, and
-NSDUH 2024 puts the using population at $\new{20.2}$ million adults aged $26$
-and over with mean family income of $\new{54,216}$ dollars, or $\new{1,097}$
-billion in all. The denominator is family income rather than personal income
-because the model's $y$ is what a household pays its rent and buys its
-consumption out of, and both sides are put in the same year's dollars; the
-quantitative model of Section~\ref{sec:full} builds the same moment the same
-way. It is found by scanning
-$\theta$ rather than by bisecting on the moment, because the share is not
-continuous in $\theta$: it rises to about $\new{19}$ percent and then jumps
-to nearly thirty, so a bisection aimed between the two branches narrows onto the
-jump instead of converging. Scanning finds $\theta = \new{0.23}$, at which the model
-spends $\new{15.22}$ percent.\footnote{\new{$\theta$ also cannot be raised
-without limit, and the ceiling is what makes the mechanism work rather than a
-matter of taste: a drug valuable enough is not deterred by a death that arrives
-thirty years later, so past a $\theta$ of about $\new{0.245}$ the mortality
-channel no longer reverses the income gradient on its own. The calibrated value
-sits well below that, and with the mortality channel alone at full strength
-users still hold $\new{0.33}$ of average income.}}}
+size distribution comes from as well.
+The weight on drugs $\theta$ is matched to the drug spending share, the
+$\new{16.2}$ percent of income users spend on the drug, which
+divides retail expenditure on the four drugs by the family income of the using
+population. \new{$\theta$ is found by scanning rather than by bisecting on the
+moment, because the share is not continuous in $\theta$: it rises to about
+$\new{19}$ percent and then jumps to nearly thirty, so a bisection aimed
+between the two branches narrows onto the jump instead of converging. Scanning
+finds $\theta = \new{0.23}$, at which the model spends $\new{15.22}$ percent.}
 
 \begin{table}[!tb]
 \centering
@@ -2043,21 +2032,20 @@ considered as well, in Section~\ref{sec:trans}.
 
 \section{Calibrating the quantitative model}\label{sec:fullcal}
 
-The model has \new{\new{fifty four}} parameters, some of which vary in value by
-age. \new{\new{Twenty nine}} are calibrated externally, from data or from the literature,
-and \new{\new{twenty five}} are calibrated internally.\cut{, inside the model.} Four further parameters
-govern drug testing and detection; they \new{do not play a role in the} benchmark, where nothing
-is conditional, \new{but they do under Treatment First, which is where they are
-set.}\cut{so they are set with the Treatment First experiment rather than
-here.} \new{The calibrated parameters are}\cut{They are}
-split across the two tables of this section: \new{\new{twenty nine}} are the main story
-of this paper and its policy analysis (Table~\ref{tab:eleven}, \new{\new{seventeen}}
-internally and \new{\new{twelve}} externally calibrated), and \new{\new{twenty five}} are standard
-(Table~\ref{tab:stdparams}, \new{\new{eight}} internally and \new{\new{seventeen}} externally).
+The model has \new{fifty four} parameters, some of which vary in value by
+age. \new{Twenty nine} are calibrated externally, from data or from the literature,
+and \new{twenty five} are calibrated internally. Four further parameters
+govern drug testing and detection; they do not play a role in the benchmark, where nothing
+is conditional, but they do under Treatment First, which is where they are
+set. The calibrated parameters are
+split across the two tables of this section: \new{twenty nine} are the main story
+of this paper and its policy analysis (Table~\ref{tab:eleven}, \new{seventeen}
+internally and \new{twelve} externally calibrated), and \new{twenty five} are standard
+(Table~\ref{tab:stdparams}, \new{eight} internally and \new{seventeen} externally).
 
 The tables carry the parameter, its description, the moment and source used to
 fix its value, and the value itself. The text alongside each table adds what a table
-has no room for: the intuition for what each parameter does, and \new{how} its moment
+has no room for: the intuition for what each parameter does, and how its moment
 identifies it. Every estimate that goes into them is documented in full in the
 replication package: \texttt{data/DATA\_APPENDIX.md} names the dataset behind each
 target, its year and universe, and the computation that turns it into the number
@@ -2066,9 +2054,9 @@ without reference to this text. The package also carries the datasets
 themselves, so nothing has to be downloaded to reproduce any of this: the extracts
 behind every target sit next to the code that reads them.
 
-\subsection{The \new{\new{twenty nine}} parameters that carry the story of this paper}
+\subsection{The \new{twenty nine} parameters that carry the story of this paper}
 
-\new{\new{Twenty five}} of the \new{\new{fifty four}} are common to most life-cycle models, whereas the rest are specific to this paper, and all \new{\new{twenty nine}} of those carry its main story and policy analysis. They are set out in Table~\ref{tab:eleven},
+\new{Twenty five} of the \new{fifty four} are common to most life-cycle models, whereas the rest are specific to this paper, and all \new{twenty nine} of those carry its main story and policy analysis. They are set out in Table~\ref{tab:eleven},
 with the parameter, its description,
 and the moment and source used to fix its value, which is given in the last
 column. They are discussed one at a time below because they are the parameters a
@@ -2084,66 +2072,61 @@ itself gains from being housed and from not carrying a disorder: consumption, a
 dwelling rather than the street or shelter, and above all the years of life that
 homelessness and the disorder take away.
 
-\new{The} \textbf{externality} is what
+The \textbf{externality} is what
 lands on somebody else: on the child, who inherits not the disorder
 or homelessness but a
 worse productivity draw associated with the parent's SUD
 and with the parent's homelessness, which $\delta_d$ and $\delta_h$
 price separately. This means that the child is
 likelier in turn to be poor, to use, to acquire
-a disorder and mental illness as a consequence, to be unhoused and to die \new{earlier}\cut{young}.
-\cut{The externality also lands on everybody, through the disamenity of aggregate homelessness.} The parent
+a disorder and mental illness as a consequence, to be unhoused and to die earlier.
+ The parent
 internalises only $\omega$ of the part that falls on its child, and $\omega$ is
-small, which is what leaves something for a policy to correct. \new{Another
+small, which is what leaves something for a policy to correct. Another
 externality lands on everybody, through the disamenity of aggregate
-homelessness.}
+homelessness.
 
-\new{Lastly, the}\cut{And the}
+Lastly, the
 \textbf{distortion} is what the programmes cost in behaviour, and it comes from two
-places. The programmes create distortions due to their design:
-assistance is means-tested\cut{, food stamps are clawed back at $\varrho$ and the rent share is clawed back at $\kappa_r$},
-\new{eligibility depends on income and assistance is clawed back at a rate of $\kappa_r$,}
+places. The programmes create distortions\new{:}
+assistance is means-tested,
+eligibility depends on income and assistance is clawed back at a rate of $\kappa_r$,
 so a recipient who works more loses eligibility or part of the transfer, which requires
-even higher taxes on everyone else to fund even larger programmes. \new{On top of
-that,}\cut{And}
+even higher taxes on everyone else to fund even larger programmes. On top of
+that,
 assistance is paid for by
-distortionary taxes, which lower the \new{after-tax}\cut{after tax} return to an hour for households
+distortionary taxes, which lower the after-tax return to an hour for households
 neither policy ever reaches.
 
-\emph{Housing First \new{is redistributionary}\cut{is redistribution}, removes
-\new{two} externalities, but creates \new{a different externality}\cut{another}.}
-\cut{Mechanically it removes two externalities:} \new{A} child of a housed parent does not
+\emph{Housing First is redistributionary, \new{reduces}
+two externalities, but \new{amplifies} a different externality.}
+ A child of a housed parent does not
 carry the penalty $\delta_h$ prices, and aggregate homelessness falls, which every
-household values through $\kappa_x$. However, it creates one at the same time,
+household values through $\kappa_x$. However, it \new{magnifies} one at the same time,
 because assistance that arrives whatever a household does insures it against the
-consequences of using\new{, this creates moral hazard, and so}\cut{, so} the SUD rate rises and reaches the child through
+consequences of using, this creates moral hazard, and so the SUD rate rises and reaches the child through
 $\delta_d$.
 
-\emph{Treatment First does not redistribute, \new{eliminates}\cut{removes} an
-externality\new{,} but creates two others.} Curing the parent is how \new{the
-externality on the child's worse draw, $\delta_d$, is avoided}\cut{the child's worse draw is avoided}.
+\emph{Treatment First does not redistribute, \new{mitigates} an
+externality, but \new{strengthens} two others.} Curing the parent is how the
+externality on the child's worse draw, $\delta_d$, is avoided.
 But conditioning assistance means some households do not receive it
-and end up homeless, especially \new{upon implementation}\cut{in the short run}, and
-over \new{a transition to a new long-run equilibrium}\cut{that horizon} it creates the two externalities Housing First removes. The \new{transition}\cut{short
-run} matters on its own account: a household that wants to stop cannot do it
+and end up homeless, especially upon implementation, and
+over a transition to a new long-run equilibrium it \new{amplifies} the two externalities Housing First reduces. The transition matters on its own account: a household that wants to stop cannot do it
 immediately, and the transition is costly while it lasts, which is why the
-policy analysis reports the transition and not only the \new{long-run} steady states.
+policy analysis reports the transition and not only the long-run steady states.
 
-\emph{And general equilibrium \new{offsets some of the effects}\cut{returns part of it}.} First, the drug price is
-endogenous, set by the supply curve that $\nu_1$ and $\nu_2$ describe, so curing
-disorders lowers drug demand\new{, which lowers the price}\cut{, lowers the price}, and makes using cheaper for those
-still deciding\new{.}\cut{: part of what treatment removes comes back through
-lower prices.} Second, when the government spends more on
-either policy and the tax rises, hours fall, the \new{tax base}\cut{base}
+\emph{And general equilibrium offsets some of the effects.} First, the drug price is
+endogenous, so curing
+disorders lowers drug demand, which lowers \new{the equilibrium price}, and makes using cheaper for those
+still deciding. Second, when the government spends more on
+either policy and the tax rises, hours fall, the tax base
 shrinks and the tax has to rise again. Third, Treatment First has an offset of
-its own in the other direction: \new{conditionality induces more households to
+its own in the other direction: conditionality induces more households to
 seek treatment to help them recover more quickly, and this helps reduce the
-externality on newborns during the transition.}\cut{sending more households into treatment raises the
-recovery rate faced by everyone deciding whether to use, and those
-consequences affect a newborn when it makes its own decisions, so the policy
-changes behaviour beyond the households it treats.} And because $\kappa_x$ is levied on the
+externality on newborns during the transition. And because $\kappa_x$ is levied on the
 aggregate headcount, any movement in homelessness feeds back into everyone's
-utility.\cut{ So the mechanical effects above are upper bounds on both sides.}
+utility.
 
 \medskip
 
@@ -2169,7 +2152,7 @@ the parameter the amount spent on drugs, when it does, turns on. As it
 rises use rises on the extensive and intensive margins, so the private
 cost and the externality both rise and there is more for
 either policy to act on. It is calibrated internally to drug spending
-over income across users, $\new{16}$ percent. Retail expenditure is from
+over income across users, $\new{16.2}$ percent. Retail expenditure is from
 Midgette et al.\ (2019), which estimates what Americans spend on cannabis,
 cocaine, heroin and methamphetamine; the National Survey on Drug Use and Health
 (NSDUH) supplies the use and disorder rates but not spending, which it does not
@@ -2192,7 +2175,7 @@ to reproduce, total retail spending over the total income of users, which needs
 no assumption about how spending divides between the two groups. Midgette et
 al.\ (2019) put 2016 retail spending on cannabis, cocaine, heroin and
 methamphetamine at 146 billion dollars, of which 136 billion is accounted for by
-the daily and near-daily users who do almost all of it. \new{Two things have to be
+the daily and near-daily users who do almost all of it. Two things have to be
 made comparable before that is divided by anything. The spending is in 2016
 dollars and the survey's incomes are in 2024, so it is carried forward by the
 Consumer Price Index for All Urban Consumers (CPI-U) to
@@ -2201,12 +2184,9 @@ income, because the model's $y$ is what a household has to pay its rent, buy its
 consumption and buy the drug out of. NSDUH 2024 puts users at $\new{8.90}$ percent of
 adults aged 26 and over, $\new{20.2}$ million people, with mean family income of
 $\new{54,216}$ dollars, so the income of the using population is $\new{1,097}$
-billion. That gives $\new{0.162}$.}\cut{NSDUH 2024 puts users at
-$\new{8.90}$ percent of adults aged 26 and over and their mean personal income at
-34,344 dollars for a mild disorder and 28,213 for a moderate or severe one, so
-the income of the using population is 691 billion.}
+billion. That gives $\new{0.162}$.
 
-\new{Neither correction is a choice between defensible alternatives, and it is
+Neither correction is a choice between defensible alternatives, and it is
 worth saying what each is worth because they pull opposite ways: with neither
 the share is $\new{18.4}$ percent, with the income correction alone
 $\new{12.4}$ and with the price correction alone
@@ -2215,7 +2195,7 @@ together do. What is left is one
 assumption, the open top income band in the survey, which runs from 75,000
 dollars upward with no ceiling. Its midpoint is set at 100,000, the convention
 behind the personal income figures above; at 75,000 the share is
-$\new{19.0}$ percent and at 125,000 it is $\new{14.1}$ percent.}
+$\new{19.0}$ percent and at 125,000 it is $\new{14.1}$ percent.
 
 The two studies that measure spending and income on the same people are
 consistent with the disordered end of that: Roddy and Greenwald (2009) report

@@ -21,44 +21,89 @@ CSVs the Fortran reads. `README.md` lists
 the regeneration commands and `FINDINGS.md` records what each source implied when
 it arrived, including the targets it called into question.
 
+> [!CAUTION]
+> **Changed in this round.** Markdown carries no red, so the changes the paper
+> would show in red are listed here, and each one is also flagged in place in the
+> entry it belongs to.
+>
+> - **θ** — the whole entry is rewritten. The old 35 percent was attributed to
+>   NSDUH, which collects no expenditure at all; the target is now 16.2 percent,
+>   built from RAND for the numerator and NSDUH 2024 for the denominator.
+> - **b** — 5.13 → 8.90 percent. The old figure was the eighteen and over rate
+>   under a heading that said 26 and over.
+> - **λ** — the implied conversion from use to disorder, 71.7 → 41.3 percent,
+>   following b.
+> - **s_m(j)** — was written p_m(j), 5.5 percent, NSDUH 2023. The symbol matched
+>   nothing in the note and the level and vintage were a release behind Table 6.
+> - **the rental ladder** — was h̲ and h̄, two ends of three shares. It is now
+>   h_2, h_3 and h_4, which is what the model has and what the note calls them.
+> - **r** — a new entry. The risk free rate stood in Table 6 with no line here.
+>
+> Every other parameter in Tables 5 and 6 was read against this file one at a
+> time; none is missing and none of the rest disagreed.
+
 ---
 
 ## 1. Who uses drugs
 
-**θ, the weight on drugs in utility — 35 percent of income spent on the drug,
-averaged across users.** NSDUH 2024, adults 26 and over. The moment divides drug
-spending by income over every household that buys any drug, not the subset
-carrying a disorder. Users without a disorder spend about 11 percent of income on
-the drug and users with one about 44 percent. The share of users carrying a
-disorder is the disorder rate over the participation rate, 0.0368/0.0513 = 0.717,
-so the weighted average is 0.717 × 0.44 + 0.283 × 0.11 = 0.347, reported as 35
-percent. The weight comes from the two NSDUH rates the model already targets
-rather than from the conversion rate; see the note under λ for why those two do not
-agree with each other.
+**θ, the weight on drugs in utility — 16.2 percent of income spent on the drug,
+across users.** RAND/ONDCP for the numerator and NSDUH 2024 for the denominator,
+because no single source carries both halves. `make_drug_spending_target.py`
+computes it and writes `drug_spending_target.csv`; both models read that file.
 
-*The stylized model targets 20 percent, not 34.7, and the difference is not a data
-disagreement.* A period there is thirty years, so every consequence of using arrives
-once, at the end, rather than compounding annually. Buying the same spending share
-therefore takes a larger weight on the drug, and past about θ = 0.22 the drug becomes
-too valuable to be deterred by a distant death: at θ = 0.24 the average user earns
-four times the population average and the income gradient the model exists to explain
-has reversed. With the whole model recalibrated at each θ the share runs 15.2, 18.4,
-20.2, 21.6 and 24.2 percent at θ from 0.18 to 0.23, and the mortality channel stops
-reversing the gradient on its own somewhere between 0.22 and 0.23. Twenty percent is
-what the two period model can carry with the mechanism intact.
+*The numerator.* Midgette et al. (2019), "What America's Users Spend on Illegal
+Drugs, 2006–2016", put 2016 retail expenditure on cannabis, cocaine, heroin and
+methamphetamine at 146 billion dollars, of which 136 billion is done by the daily
+and near-daily users who account for almost all of it. That is 2016 dollars, and
+CPI-U (BLS CUUR0000SA0, 240.007 → 313.689) carries it to 177.8 billion in 2024.
 
-**b, whether a household uses — 5.13 percent participation.** NSDUH 2024, past
-year illicit drug use disorder module, adults 26 and over. Restricting to 26 and
-over matters: including 12 to 25 year olds roughly doubles the rate, and the model
-begins at 26.
+*The denominator.* NSDUH 2024, AGE3 ≥ 7 for adults 26 and over, `svyrdudany` in
+(1,2,3) for any drug use disorder: 8.90 percent of 227.3 million adults, or 20.2
+million people, with mean FAMILY income of 54,216 dollars — 1,097 billion in all.
+Family income, not personal, because the model's *y* is what a household pays its
+rent and buys its consumption out of. 177.8/1097 = **16.2 percent**.
+
+*Two corrections, and they pull opposite ways.* The earlier figure divided 2016
+spending by 2024 PERSONAL income and got 18.4 percent. Correcting the denominator
+alone gives 12.4 and correcting the price level alone gives 24.0, which is why
+the uncorrected number looked plausible. Neither correction is a choice between
+defensible alternatives: 2016 spending cannot be divided by 2024 income, and a
+household model cannot be fed personal income.
+
+*The one assumption.* NSDUH reports income in seven bands with the top one open
+at 75,000 and over. Its midpoint is set at 100,000, the convention behind the
+personal income figures quoted above; at 75,000 the share is 19.0 percent and at
+125,000 it is 14.1.
+
+*What the earlier 35 percent was.* It was built as a weighted average of 11
+percent for users without a disorder and 44 with one, and attributed to NSDUH.
+NSDUH does not collect expenditure, so that citation was wrong whatever the
+numbers were. The construction above replaces it.
+
+*The stylized model.* θ is not bracketed there, because the spending share is
+discontinuous in θ: it climbs to about 19 percent and jumps to 29, so a bisection
+aimed between the branches narrows onto the jump. θ is found by scanning instead,
+at 0.2350, where the model spends 15.2 percent. Past about θ = 0.245 the
+mortality channel stops reversing the income gradient on its own, and the
+calibrated value sits well below that.
+
+**b, whether a household uses — 8.90 percent participation.** NSDUH 2024, past
+year illicit drug use disorder module, `svyrdudany` in (1,2,3), AGE3 ≥ 7 for
+adults 26 and over. The universe matters twice over. Including 12 to 25 year olds
+raises the rate, and the model begins at 26. And the figure in use until recently,
+10.13 percent, was the EIGHTEEN and over rate while this appendix and the note
+both said 26 and over throughout; on the model's own universe it is 8.90.
 
 **λ, the SUD hazard per unit used — a 3.68 percent adult disorder rate.** NSDUH
-2024, adults 26 and over. This is the level, not the conversion rate from use to
+2024, `svyrdudany` in (2,3) for moderate or severe, AGE3 ≥ 7 for adults 26 and
+over. This and participation now come from one variable and one universe, which
+two earlier pairs did not: 5.13 and 3.68 matched no single cut, and 10.13 and
+4.54 were both the eighteen and over figures. This is the level, not the conversion rate from use to
 disorder. The two published numbers are not mutually consistent: a conversion of
-33.2 percent applied to a 5.13 percent participation rate implies a disorder rate
-near 1.7 percent, not 3.68. The level is the better measured of the two, so it is
-the one matched, and the conversion the model implies, 71.7 percent, is reported
-rather than imposed. The stylized model is calibrated to the same 3.68 percent
+33.2 percent applied to the 8.90 percent participation rate implies a disorder
+rate near 2.95 percent, not 3.68. The level is the better measured of the two, so
+it is the one matched, and the conversion the model implies, 3.68/8.90 = 41.3
+percent, is reported rather than imposed. The stylized model is calibrated to the same 3.68 percent
 level, having previously targeted the 33.2 percent conversion, so the two models no
 longer carry inconsistent numbers for the same object.
 
@@ -144,9 +189,11 @@ paper carries this as a footnote on κ_uem rather than leaving the reader to fin
 is load bearing: any mental illness covers roughly a quarter of adults, and a state
 that halves productivity cannot sensibly cover a quarter of the population.
 
-**p_m(j), the age profile of SMI prevalence — 5.5 percent overall.** NSDUH 2023.
-The object matched is the profile by age; the 5.5 percent is the level it
-integrates to. The onset hazard is not read off directly but backed out of the
+**s_m(j), the age profile of SMI prevalence — 5.6 percent overall.** NSDUH 2024.
+The object matched is the profile by age; the 5.6 percent is the level it
+integrates to. (This entry read p_m(j), 5.5 percent and NSDUH 2023: the symbol
+matched nothing in the note, which uses s_m(j) throughout, and the level and the
+year were both a release behind the declaration Table 6 is generated from.) The onset hazard is not read off directly but backed out of the
 profile and the exit rate, so the whole profile is reproduced by construction.
 
 ---
@@ -287,10 +334,12 @@ or below 30 percent of area median income, so the model's recipients are drawn f
 the eligible population in proportion rather than skewed to the bottom of it. π_V
 picks up the level of coverage, not its slope.
 
-**h̲ and h̄, the two ends of the rental ladder — 13.2 and 62.7 percent.** ACS 2023,
+**h_2, h_3 and h_4, the rental ladder — 13.2 / 24.1 / 62.7 percent.** ACS 2023,
 table B25042, tenure by bedrooms, **universe occupied housing units**, N =
 131,332,360. The six bedroom categories are collapsed to three: none or one, two,
-and three or more, giving 13.2 / 24.1 / 62.7. Table B25041 covers all housing units
+and three or more. The model's four housing states are h_1 for the street and
+h_2 < h_3 < h_4 for the three rentals, so the three shares are the targets for
+h_2, h_3 and h_4 in that order. Table B25041 covers all housing units
 including about ten percent vacant and is the wrong universe; it is kept in `raw/`
 only so the difference is checkable. Since the universe is occupied units, the model
 counterpart conditions on being housed and the homeless are in neither denominator.
@@ -306,6 +355,12 @@ consequence of the housing grid rather than the grid itself.
 **σ_y, the dispersion of productivity — 0.20 in logs.** Storesletten et al. (2004).
 Productivity is a permanent draw in the benchmark, so only the dispersion is
 operative.
+
+**r, the risk free rate — 0.03 annually.** Kaplan, Moll and Violante (2018/2020),
+the standard annual real return used in this class of life-cycle models. β is set
+against it so that the two are mutually consistent rather than chosen
+independently. (This entry was missing: r appeared in Table 6 with its source but
+had no line here, which a sweep of the two tables against this file turned up.)
 
 ---
 

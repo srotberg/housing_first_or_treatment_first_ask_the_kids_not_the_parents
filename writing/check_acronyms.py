@@ -34,6 +34,7 @@ ALLOW = {
     'JAMA', 'NBER',                                # journal and series names in citations
     'DI',                                          # appears only as a maths subscript
     'WONDER',                                      # defined jointly as "(CDC WONDER)"
+    'DATA',                                        # part of the filename DATA_APPENDIX.md
 }
 
 
