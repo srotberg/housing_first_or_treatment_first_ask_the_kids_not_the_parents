@@ -19,6 +19,7 @@ Run:  python3 progress_report.py
 
 import os
 import re
+import json
 import subprocess
 import sys
 import time
@@ -27,6 +28,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 LOG = os.path.join(HERE, 'supervisor_run.log')
 JOURNAL = os.path.join(HERE, 'SUPERVISOR_JOURNAL.md')
 REPORT = os.path.join(HERE, 'paper', 'calibration_report.py')
+HISTORY = os.path.join(HERE, 'progress_history.json')
 
 sys.path.insert(0, HERE)
 
@@ -99,6 +101,56 @@ def moments():
     return verdict, rows
 
 
+def track(n_loops, med, worst):
+    """Keep one point per loop, so the RATE can be measured rather than guessed.
+
+    WHY THIS EXISTS. Asked how long the calibration would take, the only honest
+    answer was that there was no basis for one: the per loop cost was measured
+    but the rate at which gaps close was not, and run 2 never converged so it
+    could not supply one either. A history of the median gap by loop is what
+    turns that into arithmetic.
+    """
+    hist = []
+    if os.path.exists(HISTORY):
+        try:
+            hist = json.load(open(HISTORY))
+        except Exception:                              # noqa: BLE001
+            hist = []
+    if not hist or hist[-1]['loops'] != n_loops:
+        hist.append(dict(loops=n_loops, median=med, worst=worst, t=time.time()))
+        json.dump(hist[-400:], open(HISTORY, 'w'))
+    return hist
+
+
+def rate(hist):
+    """What the history says about how fast it is closing, and what is left.
+
+    Deliberately crude and deliberately hedged. Gaps do not close at a constant
+    rate and this cannot see the coupling between brackets, so it reports the
+    trend over the last stretch and an extrapolation, and says plainly when the
+    trend is flat or going the wrong way rather than dividing by a negative
+    number and printing a confident nonsense.
+    """
+    pts = [h for h in hist if h.get('median') is not None]
+    if len(pts) < 4:
+        return 'not enough loops yet to measure a rate'
+    a, b = pts[0], pts[-1]
+    dl = b['loops'] - a['loops']
+    if dl <= 0:
+        return 'no completed loops between the two ends of the history'
+    per_loop = (b['median'] - a['median']) / dl
+    hours = (b['t'] - a['t']) / 3600.0
+    loop_h = hours / dl if dl else 0
+    if per_loop >= -1e-9:
+        return (f'median gap {a["median"]:.0f}% to {b["median"]:.0f}% over {dl} '
+                f'loops: NOT closing, so no estimate can be made from it')
+    need = b['median'] / -per_loop
+    return (f'median gap {a["median"]:.0f}% to {b["median"]:.0f}% over {dl} loops, '
+            f'{-per_loop:.1f} points a loop; at that rate about {need:.0f} more '
+            f'loops, {need * loop_h:.0f} hours, and coupling makes that a floor '
+            f'rather than a forecast')
+
+
 def main():
     n, stalls, holds = loops()
     acted, last = interventions()
@@ -118,6 +170,7 @@ def main():
             print(f'    {name:<34s} {mod:>12s} vs {tgt:>10s}   {off:6.1f}%')
         med = sorted(r_[3] for r_ in rows)[len(rows) // 2]
         print(f'  median gap {med:.1f}%   worst {worst[0][3]:.1f}%')
+        print('  ' + rate(track(n, med, worst[0][3])))
 
 
 if __name__ == '__main__':
