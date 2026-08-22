@@ -42,3 +42,13 @@ global_vars.mod
 # Python bytecode
 __pycache__/
 *.pyc
+
+# Quantitative model run outputs. These are rewritten on every solve and one of
+# them, calibration_distribution1.dat, is 67 MB, so tracking them adds that much
+# to history on every round for a file nothing reads across runs. They are
+# reproduced by running the model, which is what the replication package asks
+# the reader to do; only calibration_state.dat is worth keeping and it is the
+# resume checkpoint, kept because this container is ephemeral.
+code/*.dat
+code/*baseline_benchmark.txt
+!code/calibration_state.dat

@@ -383,36 +383,27 @@ else:
         abs(_half - _off) <= 0.06 * abs(_off),
         f'with the channel off {_off:.2f}, at half strength {_half:.2f}')
 print("\n=== 7d2. the participation promise in Figure 1 ===")
-# WHERE b CANNOT HOLD PARTICIPATION, AND HOW BADLY. Ten of twenty two points
-# missed under the pooled bottom cell; flooring the grid removed those, and this
-# then demanded zero misses. Two remain, and they are a property of the model
-# rather than a broken bisection: participation is a step function of b at those
-# points and the target sits strictly inside the jump, so no b delivers it. The
-# note says so and quotes both numbers, so demanding zero here would fail a build
-# whose paper is telling the truth.
+# THE NOTE SAYS the model targets the participation rate at every point of the
+# scan, flatly and with no hedge, so the promise is enforced here and a build
+# that breaks it fails.
 #
-# WHAT IS STILL WORTH FAILING ON is a miss too large to be a step. The two steps
-# are 1.25 and 1.47 percentage points wide, so a miss can be at most about that;
-# anything materially larger is a bisection that stopped short or a bracket that
-# does not contain the root, which is a bug and not a feature. The bound is set
-# at two points, above the widest step seen and far below what a failed bracket
-# gives, which returns an endpoint and misses by tens of points.
-_PART_MISS_BOUND = 0.02
+# IT CAN BE DEMANDED AGAIN. Two points used to miss and the hedge named them.
+# They were not a bisection failure but a step: threshold() wrote the boundary
+# cells per crossing, and where the use region is the top block PLUS one
+# isolated interior cell that cell is the boundary of two crossings, so the
+# second write overwrote the first and its share never shrank to zero. The
+# region now integrates as a union of intervals and participation passes
+# smoothly through the target at both points.
 _fg = os.path.join(HERE, 'figure_numbers.json')
 if os.path.exists(_fg):
     _f = json.load(open(_fg))
     if '_part_misses' not in _f:
         warn('figure_numbers.json predates the check', 'rerun run.py')
     else:
-        chk('every miss on the scan is small enough to be the model\'s own step',
-            float(_f['_part_worst']) <= _PART_MISS_BOUND,
+        chk('b holds participation on target at every point of the scan',
+            int(_f['_part_misses']) == 0,
             f"{_f['_part_misses']} point(s) miss, worst by "
-            f"{100 * float(_f['_part_worst']):.3f} points, bound is "
-            f"{100 * _PART_MISS_BOUND:.1f}")
-        chk('the note quotes the same count of misses the scan produced',
-            _f.get('part_miss_n') is not None
-            and _f.get('part_miss_worst') is not None,
-            'part_miss_n or part_miss_worst is missing: rerun run.py')
+            f"{100 * float(_f['_part_worst']):.3f} points")
 else:
     warn('figure_numbers.json is missing', 'rerun run.py')
 

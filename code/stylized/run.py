@@ -367,22 +367,18 @@ def figure_numbers(base):
     # b. No value of b delivers the target at those two points and none exists
     # to be found.
     #
-    # THE NOTE THEREFORE STATES THE EXCEPTION and quotes both numbers from here
-    # rather than promising something the model cannot do. verify.py no longer
-    # fails on a miss, because a miss is a property of the model; it fails when
-    # a miss is TOO BIG to be a step, which is what a broken bisection would
-    # look like.
+    # BOTH ARE REACHABLE AGAIN, so the note promises the target at every point
+    # with no hedge and verify.py fails the build on any miss. What made them
+    # unreachable was threshold() writing boundary cells per crossing: where the
+    # use region is the top block plus one isolated interior cell, that cell is
+    # the boundary of two crossings and the second write overwrote the first, so
+    # its share never shrank to zero and the whole cell left at once.
     d['_part_misses'] = sum(1 for which in ('mortality', 'unemployment')
                             for pp in parts[which]
                             if abs(pp - TARGET['part']) > 5e-4)
     d['_part_worst'] = max(abs(pp - TARGET['part'])
                            for which in ('mortality', 'unemployment')
                            for pp in parts[which])
-    # The prose facing forms of the same two numbers.
-    d['part_miss_n'] = _WORDS[d['_part_misses']] if d['_part_misses'] < len(_WORDS) \
-        else str(d['_part_misses'])
-    d['part_miss_worst'] = f'{100 * d["_part_worst"]:.1f}'
-    d['part_scan_n'] = _WORDS[2 * len(sc)] if 2 * len(sc) < len(_WORDS) else str(2 * len(sc))
 
     # THE ENDS OF FIGURE 2, which the policy paragraph reads off directly.
     m0, mt, mh = mT[0], mT[-1], mH[-1]

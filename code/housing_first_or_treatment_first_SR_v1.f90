@@ -949,6 +949,16 @@
         ! sections 9.1 and 9.2 of PERFORMANCE_NOTES.md.
         integer, parameter :: accelerate_distribution=0
 
+        ! HOW MANY SWEEPS THE DISTRIBUTION LOOP WILL DO BEFORE GIVING UP. It had
+        ! no cap at all, so a residual that stalls above the operative tolerance
+        ! spun forever and the only symptom was a log printing the same number;
+        ! a previous run sat there for more than 125 sweeps with the residual
+        ! rising. A fresh start reaches 2e-4 in about 110 sweeps and the file's
+        ! own note records 655 as a normal cost later in a calibration, so 4000
+        ! is far above anything healthy and only catches a loop that is not
+        ! going to converge.
+        integer, parameter :: max_distribution_sweeps=4000
+
         real(8) :: weight_on_housing_price=0.5
                                         
         real(8), parameter :: risk_aversion_consumption=2
@@ -19995,9 +20005,33 @@
                 end if
                 
             end if
+
+            ! STOP RATHER THAN SPIN. See max_distribution_sweeps above. The loop
+            ! carries on with the best distribution it reached, which is what the
+            ! caller would have got from another thousand sweeps anyway, and says
+            ! so loudly enough to be greppable.
+            if (loop_count_dist>=max_distribution_sweeps) then
+
+                write(*,*) "DIST_STALL: gave up after ", loop_count_dist, &
+                    " sweeps with distance ", distance_distribution, &
+                    " against a stopping rule of ", stopping_rule_stationary_distribution
+
+                distance_distribution=0
+
+            end if
                        
         end do
         
+        ! WHAT THE DISTRIBUTION COST AND WHAT IT REACHED, one line a loop, so a
+        ! sweep count that is creeping up across calibration loops is visible
+        ! before it becomes a run that never ends.
+        if (solve_transition_dynamics==0) then
+
+            write(*,*) "DIST_DONE sweeps=", loop_count_dist, &
+                " final_distance=", distance_distribution
+
+        end if
+
         if ((partial_equilibrium==0) .OR. (how_many_iterations_to_do_on_distribution>0)) then
         
             do i=1,2
@@ -29895,6 +29929,37 @@
                         write(*,*) "smallest_rental_relative_to_lowest_income=", &
                             smallest_rental_relative_to_lowest_income
 
+                        ! A MOMENT MEASURED ON AN EMPTY SET IS NOT A MOMENT.
+                        ! model_fraction_of_homeless_unemployed is set to zero by
+                        ! the else branch that guards its division, so with no
+                        ! homeless households the employed share reads a clean
+                        ! 1.0 and the gap against 0.50 is a fabricated +0.5.
+                        !
+                        ! IT IS NOT SELF CORRECTING, which is why it has to be
+                        ! guarded rather than waited out. A positive gap calls
+                        ! for a SMALLER cheapest dwelling; a smaller one is
+                        ! cheaper, so it houses MORE people, so homelessness
+                        ! stays at zero and the gap never changes. At a cold
+                        ! start this drove smallest_rental_relative_to_lowest_income
+                        ! from 0.0361 to 0.0111 in a single loop and would have
+                        ! run it to its lower bound.
+                        !
+                        ! h_1 IS WHAT CREATES HOMELESSNESS, through
+                        ! size_homelessness, and until it has, this bracket has
+                        ! nothing to read. Holding the parameter and refusing to
+                        ! report convergence is the honest state: the moment is
+                        ! not missed, it is unmeasurable.
+                        if (model_mass_homeless_raw(1)<=10.d0**(-12)) then
+
+                            write(*,*) "h_2 HELD: no homeless mass, so the employed share of the homeless"
+                            write(*,*) "   is not measurable and smallest_rental_relative_to_lowest_income does not move"
+
+                            distance_smallest_house_size=1
+
+                            goto 8801
+
+                        end if
+
                         gap_house_size_1=&
                             model_employed_share_of_homeless(1)-employed_share_of_homeless_data
 
@@ -29927,6 +29992,8 @@
                                                                      
                         distance_smallest_house_size=&
                             abs(model_employed_share_of_homeless(1)-employed_share_of_homeless_data)
+
+8801                    continue
                                                          
                     else
                     
@@ -30845,6 +30912,23 @@
 
                     if ((lambda_m_adjuster>0) .AND. (number_of_smi_states>1)) then
 
+                        ! THE SAME EMPTY SET PROBLEM AS h_2. With no homeless
+                        ! households model_smi_share_of_homeless is set to zero
+                        ! by the branch that guards its division, so the gap
+                        ! against 0.25 is a fabricated -0.25 and lambda_m is
+                        ! driven by a moment that does not exist. Hold it until
+                        ! there is a homeless population to measure the share on.
+                        if (model_mass_homeless_raw(1)<=10.d0**(-12)) then
+
+                            write(*,*) "lambda_m HELD: no homeless mass, so the SMI share of the homeless"
+                            write(*,*) "   is not measurable and lambda_m does not move"
+
+                            distance_lambda_m=1
+
+                            goto 8802
+
+                        end if
+
                         ! THE FLOOR IS THE PROFILE'S, NOT 0.001. Below
                         ! lambda_m_floor the onset identity has no non negative
                         ! solution, the SMI state empties, and every SMI moment
@@ -30871,6 +30955,8 @@
                             abs(model_smi_share_of_homeless(1)-smi_share_of_homeless_data)
 
                         write(*,*) "lambda_m=", lambda_m, " distance_lambda_m=", distance_lambda_m
+
+8802                    continue
 
                     else
 
