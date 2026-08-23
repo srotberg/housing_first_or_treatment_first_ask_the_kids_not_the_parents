@@ -35,6 +35,35 @@ SCRATCH = ('/tmp/claude-0/-home-user-housing-first-or-treatment-first/'
 sys.path.insert(0, HERE)
 
 
+def live_log():
+    """The log the model is ACTUALLY writing to, which is not always the path.
+
+    A tracked log gets replaced by `git reset --hard`, which unlinks the inode
+    the running process holds open: the model writes on into a deleted file and
+    the visible path freezes at whatever the checkout left. That is not
+    hypothetical, it happened for half an hour and this report said the run had
+    not moved since age 3 while it was three loops in. If the model's fd 1 points
+    at a deleted file, read it through /proc instead.
+    """
+    r = subprocess.run(['ps', '-eo', 'pid,comm'], capture_output=True, text=True)
+    pids = [ln.split()[0] for ln in r.stdout.splitlines()[1:]
+            if len(ln.split()) > 1 and ln.split()[1] == 'hftf']
+    for pid in pids:
+        try:
+            tgt = os.readlink(f'/proc/{pid}/fd/1')
+        except OSError:
+            continue
+        if tgt.endswith('(deleted)'):
+            live = os.path.join(HERE, 'recovered_run.log')
+            try:
+                with open(f'/proc/{pid}/fd/1', 'rb') as src, open(live, 'wb') as dst:
+                    dst.write(src.read())
+                return live
+            except OSError:
+                return LOG
+    return LOG
+
+
 def running(name):
     r = subprocess.run(['ps', '-eo', 'comm'], capture_output=True, text=True)
     return name in r.stdout.split()
@@ -104,7 +133,7 @@ def advancing():
     ago is a loop in progress, a repeat with a log untouched for an hour is not.
     """
     try:
-        age = time.time() - os.path.getmtime(LOG)
+        age = time.time() - os.path.getmtime(live_log())
     except OSError:
         return 'no log yet'
     if age < 90:
@@ -124,7 +153,7 @@ def parallelism():
     does not move when the work grows.
     """
     try:
-        txt = open(LOG, errors='ignore').read()
+        txt = open(live_log(), errors='ignore').read()
     except FileNotFoundError:
         return ''
     hits = re.findall(r'AGE_TIME age=\s*\d+\s+wall_s=\s*([0-9.]+)\s+cpu_s=\s*([0-9.]+)', txt)
@@ -138,7 +167,7 @@ def parallelism():
 
 def loops():
     try:
-        txt = open(LOG, errors='ignore').read()
+        txt = open(live_log(), errors='ignore').read()
     except FileNotFoundError:
         return 0, 0, 0
     n = len(re.findall(r'^\s*loop_count=', txt, re.M))
@@ -160,7 +189,7 @@ def moments():
     """The report's table, trimmed to what fits a progress note."""
     if not os.path.exists(REPORT):
         return 'no calibration_report.py', []
-    r = subprocess.run([sys.executable, REPORT, LOG], capture_output=True,
+    r = subprocess.run([sys.executable, REPORT, live_log()], capture_output=True,
                        text=True, cwd=os.path.dirname(REPORT))
     verdict = 'no verdict yet'
     m = re.search(r'(\d+) of (\d+) on target(?:, (\d+) within three per cent)?',
