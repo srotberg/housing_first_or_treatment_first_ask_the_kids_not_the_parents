@@ -84,6 +84,19 @@ def live_distances(log):
     return got
 
 
+# THE ROW'S NAME IS NOT ALWAYS THE VARIABLE'S NAME. A row is named for the
+# parameter as the paper calls it; the model prints the Fortran variable, and for
+# three of them the two differ, which is why their value column was empty while
+# the parameter was moving every loop.
+PARAM_NAME = {
+    'voucher_probability': 'probability_of_voucher_benchmark_used',
+    'employment_multiplier': 'multiple_of_probabilities_of_employment_if_addicted',
+    'separation_rate': 'probability_becoming_unemployed',
+    'smallest_house_size': 'smallest_rental_relative_to_lowest_income',
+    'probability_of_becoming_addicted': 'lambda_addiction',
+}
+
+
 def param_values(path):
     """Each parameter's own value, as the model last printed it.
 
@@ -211,7 +224,7 @@ def main():
             continue
 
         clears = name in rule and abs(model - target) <= rule[name]
-        val = values.get(name)
+        val = values.get(PARAM_NAME.get(name, name))
 
         # ONE ROW PER MOMENT, NOT PER PARAMETER. Two parameters can be moved by
         # the same moment -- h_2 and rho_d both by the employed share of the

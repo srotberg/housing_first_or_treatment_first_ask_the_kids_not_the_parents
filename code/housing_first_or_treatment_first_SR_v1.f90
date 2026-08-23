@@ -1349,7 +1349,11 @@
         ! 0.25 is then reporting that it cannot hit the spending share without
         ! losing the gradient, which is worth seeing rather than hiding.
         real(8), parameter :: theta_lo=0.05d0
-        real(8), parameter :: theta_hi=0.25d0
+        ! RAISED TO 0.30 ON THE AUTHOR'S INSTRUCTION. The reasoning above still
+        ! stands and the guard that enforces it is unchanged: theta may not rise
+        ! while the income gradient is inverted, so the extra slack is available
+        ! only where the model still puts the users at the bottom.
+        real(8), parameter :: theta_hi=0.30d0
         ! B'S CEILING HAD NO ARGUMENT BEHIND IT AND IT BOUND. At 0.05 the
         ! bracket sat exactly on it: participation came out at 76.0 per cent
         ! against a target of 8.90, the update asked for b to rise by a factor of
@@ -29101,6 +29105,10 @@
                         smallest_rental_relative_to_lowest_income, "->", handover_value
                     smallest_rental_relative_to_lowest_income=handover_value
                     smallest_house_size=handover_value
+
+                case ("lambda_m")
+                    write(*,*) "HANDOVER lambda_m:", lambda_m, "->", handover_value
+                    lambda_m=max(min(handover_value,0.5d0),lambda_m_floor)
 
                 case ("weight_on_child")
                     write(*,*) "HANDOVER weight_on_child:", weight_on_child, "->", handover_value
