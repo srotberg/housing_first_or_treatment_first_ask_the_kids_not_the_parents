@@ -80,6 +80,12 @@ WATCH = {
     'discount_factor': r'discount_factor=\s*' + _NUM,
     'relative_share_housing': r'relative_share_of_housing=\s*' + _NUM,
     'relative_share_leisure': r'relative_share_of_leisure=\s*' + _NUM,
+    'addiction_scalar': r'addiction_scalar_1=\s*' + _NUM,
+    # THE FACT THE PAPER EXISTS TO EXPLAIN, watched like a parameter because a
+    # calibration that hits every target while the rich are the users has not
+    # succeeded at anything. It is not a target and no bracket moves on it.
+    'income_of_users': r'model_avg_income_drug_users/model_average_labour_income,\s*' + _NUM,
+    'income_of_disordered': r'model_average_income_addicted/model_average_labour_income\.\s*' + _NUM,
 }
 
 # The Fortran name of each watched parameter's step size. Shrinking a step is
@@ -110,6 +116,22 @@ BOUNDS = {
         # pinning is that the moment stops responding at or below it, so raise.
         widen=lambda v: v * 2.0,
         limit=0.20,
+    ),
+    # B'S CEILING, ADDED AFTER IT PINNED FOR A WHOLE RUN AND NOTHING NOTICED.
+    # b sat exactly at 0.05 while the update asked for 2.5 times that, so
+    # participation stayed at 76 per cent against a target of 8.90 and every
+    # other moment was being read off a model where three quarters of the
+    # population used. This is precisely what diagnose_pinned_at_bound is for,
+    # and it could not act because the bound was not in this table.
+    'addiction_scalar': dict(
+        decl='real(8), parameter :: b_hi=',
+        kind='ceiling',
+        widen=lambda v: v * 4.0,
+        # One is where the marginal value of the first unit, theta/b, falls to
+        # the order of the marginal utility of consumption and there is no
+        # interior participation left to find. Past four it is not a bracket
+        # that needs widening.
+        limit=4.0,
     ),
 }
 
@@ -168,16 +190,27 @@ def current_bound(target):
 # restart, so each needs several loops of agreement before it fires.
 
 def diagnose_pinned_at_bound(loops):
-    """A parameter sitting on a bound while its moment says nothing."""
-    v = series(loops, 'smallest_rental')
-    floor = current_bound('smallest_rental')
-    if len(v) < PIN_LOOPS or floor is None:
-        return None
-    tail = v[-PIN_LOOPS:]
-    if all(abs(x - floor) <= max(floor, 1e-12) * 1e-6 for x in tail):
-        return dict(name='h_2 pinned at its floor',
-                    evidence=f'smallest_rental at {floor:g} for {PIN_LOOPS} loops',
-                    remedy='widen_bound', target='smallest_rental')
+    """Any parameter sitting on its bound while the update asks it to move.
+
+    THIS USED TO CHECK ONE PARAMETER BY NAME, and the one it did not check is
+    the one that pinned. b sat exactly on its ceiling of 0.05 for a whole run
+    while participation stayed at 76 per cent against a target of 8.90, and
+    every other moment was being read off a model in which three quarters of
+    the population used. A diagnosis written for a catalogue should read the
+    catalogue.
+    """
+    for target in BOUNDS:
+        v = series(loops, target)
+        bound = current_bound(target)
+        if len(v) < PIN_LOOPS or bound is None:
+            continue
+        tail = v[-PIN_LOOPS:]
+        if all(abs(x - bound) <= max(abs(bound), 1e-12) * 1e-6 for x in tail):
+            kind = BOUNDS[target].get('kind', 'bound')
+            return dict(name=f'{target} pinned at its {kind}',
+                        evidence=f'{target} at {bound:g} for {PIN_LOOPS} loops '
+                                 f'while its update kept asking it to move',
+                        remedy='widen_bound', target=target)
     return None
 
 
@@ -228,6 +261,36 @@ def diagnose_runaway(loops):
     return dict(name='h_1 running away against a moment that does not respond',
                 evidence=ev + ', and h_2 is not at its floor, so the cause is elsewhere',
                 remedy='escalate', target='size_homelessness')
+
+
+def diagnose_inverted_gradient(loops):
+    """The users stopped being poorer than average.
+
+    NOT A MOMENT AND NOT A BRACKET'S JOB. No parameter is calibrated on this and
+    nothing in the sweep will notice it, which is exactly why the supervisor has
+    to: the paper's mechanism is that mortality truncates the value of life for a
+    user and so reverses the income gradient, and a calibration that reaches
+    every target with the average user richer than average has produced a model
+    that cannot make the paper's argument.
+
+    Escalates rather than fixes. The repair is a modelling decision -- theta's
+    ceiling is the break point above which the reversal fails, so a gradient that
+    inverts while theta sits on that ceiling means the drug spending target and
+    the gradient cannot both be had -- and that is not a search problem.
+    """
+    v = series(loops, 'income_of_disordered')
+    if len(v) < PIN_LOOPS:
+        return None
+    tail = v[-PIN_LOOPS:]
+    if all(x > 1.0 for x in tail):
+        return dict(name='the income gradient has inverted',
+                    evidence=('income of the disordered over average income is '
+                              + ', '.join(f'{x:.3f}' for x in tail)
+                              + f' across {PIN_LOOPS} loops: the users are not the '
+                                'poor, which is the fact the model exists to '
+                                'produce'),
+                    remedy='escalate', target='relative_share_of_addiction_1')
+    return None
 
 
 def diagnose_distribution_stall(path):
@@ -294,7 +357,8 @@ def diagnose_oscillation(loops):
 
 
 DIAGNOSES = [diagnose_pinned_at_bound, diagnose_dead_moment, diagnose_runaway,
-             diagnose_oscillation, diagnose_frozen_parameter]
+             diagnose_oscillation, diagnose_frozen_parameter,
+             diagnose_inverted_gradient]
 
 
 # ---------------------------------------------------------------------------
@@ -423,10 +487,25 @@ def checkpoint(loops):
                    f'{gaps[len(gaps) // 2]:.3f}\t{gaps[-1]:.3f}\t'
                    f'{m.group(1) if m else ""}\t{m.group(2) if m else ""}\n')
     if row is not None:
-        head = '' if os.path.exists(PROGRESS) else (
-            'loop\tutc\tmedian_gap_pct\tworst_gap_pct\ton_target\tof\n')
+        # A CUMULATIVE INDEX, BECAUSE THE LOOP COUNTER RESETS. Every container
+        # rebuild relaunches the run and the Fortran starts counting loops from
+        # one again, so the file read 1,2,3,4,5,2 and the series it exists to
+        # provide -- how fast the gaps close -- could not be read off it at all.
+        # seq counts rows; cold marks the first row after a relaunch, whose
+        # distribution was rebuilt from scratch and which is therefore not
+        # comparable with the rows around it.
+        exists = os.path.exists(PROGRESS)
+        seq = 1
+        if exists:
+            with open(PROGRESS) as f:
+                seq = max(1, sum(1 for _ in f))
+        head = '' if exists else (
+            'seq\tloop\tcold\tutc\tmedian_gap_pct\tworst_gap_pct\ton_target\tof\n')
+        cold = 1 if n <= 1 else 0
+        fields = row.rstrip('\n').split('\t')
         with open(PROGRESS, 'a') as f:
-            f.write(head + row)
+            f.write(head + '\t'.join([str(seq), fields[0], str(cold)]
+                                     + fields[1:]) + '\n')
     if os.path.exists(LOG):
         shutil.copyfile(LOG, BANKED_LOG)
     paths = [pth for pth in (STATE, PROGRESS, BANKED_LOG, JOURNAL)
