@@ -400,9 +400,12 @@ consequence of the housing grid rather than the grid itself.
 **ω_ℓ, the weight on leisure — average hours worked of 40 percent.** Guvenen et al.
 (2023).
 
-**σ_y, the dispersion of productivity — 0.20 in logs.** Storesletten et al. (2004).
-Productivity is a permanent draw in the benchmark, so only the dispersion is
-operative.
+**σ_y, the dispersion of productivity — the bottom half's share of earnings, 17.2
+percent.** SCF 2022. Productivity is a permanent draw in the benchmark, so only the
+dispersion is operative, and it is calibrated INSIDE the model on that share rather
+than set from Storesletten et al. (2004)'s 0.20 in logs, which is what this entry
+used to say. Section 8 below sets out why the share and not the standard
+deviation.
 
 **ψ_R, the social security replacement rate — 0.40.** SSA. Retirement income is
 0.40 times the productivity state, not 0.40 times current earnings, because there
@@ -462,6 +465,15 @@ Department of Labor's comparison of state unemployment insurance laws; κ_V = ha
 median income, HUD's very low income limit, and κ_r = 30 percent of income, the
 tenant contribution under the Housing Choice Voucher programme.
 
+**ϱ, the food stamp clawback rate — 0.30.** SNAP statute rather than an estimate: a
+household's monthly allotment is the maximum allotment for its size reduced by
+thirty percent of its net monthly income (7 CFR 273.10). The same rule and the same
+rate are used in the stylized model. It matters beyond the level of the transfer,
+because it is the implicit marginal tax the programme puts on earnings for exactly
+the households this paper is about; a transfer withdrawn one for one would give
+every household below the floor the same resources and so the same behaviour. This
+parameter is in Table 6 and in the paper's Section 5 and had no entry here.
+
 **φ̄(j), baseline survival — SSA period life table 4.C6**, ages 26 to 85, sexes
 combined by **survivor weight** rather than averaged. Averaging the two columns is
 wrong because the surviving population is increasingly female with age.
@@ -498,7 +510,16 @@ identify the effect of a disorder on subsequent onset rather than the cross sect
 association.
 
 **μ_m, the recovery multiplier under dual diagnosis — 0.82.** Bradizza et al. (2006),
-a review of relapse among people carrying both a disorder and a mental illness.
+a review of relapse among people carrying both a substance use disorder and a mood,
+anxiety, schizophrenia-spectrum or personality disorder.
+
+*The arithmetic, which this entry did not carry.* Dual diagnosis cohorts relapse at
+39.8 percent against 26.4 percent without a co-occurring disorder, an odds ratio of
+1.85 for difficulty maintaining abstinence. Sustained remission is therefore 1 −
+0.398 = 0.602 against 1 − 0.264 = 0.736, and 0.602 / 0.736 = 0.82. Converting the
+odds ratio to a risk ratio at that base rate gives the same figure. The derivation
+was in the old model note and in `code/simple/params.f90` and was lost when the
+paper was rewritten; the paper now carries it in μ_m's entry as well.
 
 **ζ_DI, the disability replacement rate for mental illness — 0.25.** SSA 2023, SSDI
 and SSI award rates and benefit levels for beneficiaries qualifying on a mental
@@ -516,8 +537,11 @@ gradient come from one experiment rather than two.
 
 ### Externalities
 
-**δ_h, the child's earnings penalty for homelessness — 0.31.** Chetty et al. (2016);
-see section 5.
+**δ_h is NOT externally set, and does not belong in this section.** It is
+calibrated inside the model on the child homelessness ratio of 2.1 from Bassuk et
+al. (1997); section 5 above is its entry. This heading used to carry it at 0.31
+from Chetty et al. (2016), which was the value before it was brought inside, and
+Table 5 has said `Int.` since.
 
 **κ_x, the disamenity of aggregate homelessness — 0.20 percent of annual earnings,
 which enters as 0.002.** Loubière et al. (2020), a contingent valuation across
@@ -528,11 +552,13 @@ loads whichever policy houses more people. The lower figure, €23, is 0.08 perc
 and enters as 0.0008; an earlier version of this file gave that number as the value
 of the 0.20 percent baseline, which was wrong.
 
-**κ_x is not yet in the Fortran.** It appears in the household's problem in the
-paper and `grep -ci kappa_x` over the source returns zero. Because the headcount is
-aggregate and taken as given, its absence cannot move any policy function, so no
-calibrated moment depends on it; what it changes is the welfare comparison across
-steady states, which is where the paper uses it.
+**κ_x is in the Fortran.** It is declared at `kappa_x=0.002d0` and enters flow
+utility as `-kappa_x*model_fraction_homeless(1)`. This entry previously said it was
+absent, which was true when it was written and is not now. Because the headcount is
+aggregate and taken as given by every household, `kappa_x*H` is a constant inside
+the household's problem and cannot move any policy function, so no calibrated
+moment depends on it; what it changes is the welfare comparison across steady
+states, which is where the paper uses it.
 
 ### Employment and labour supply
 
@@ -657,7 +683,13 @@ half's share is not a check, because it is the target.
 
 None of these is fitted. Each is produced endogenously by the model and is a place
 the model can be caught, so the derivation of the data side matters as much as for a
-target. They are listed in the order the paper's validation section lists them.
+target. They are listed in the order the paper's validation section lists them, with
+two exceptions that are derived elsewhere in this file rather than repeated here:
+the **earnings shares of the bottom and top tenths**, 0.99 and 41.1 percent from
+SCF 2022, come out alongside the share σ_y is calibrated on and are derived in
+section 8 with it; and the **odds that a homeless adult had a homeless caretaker**,
+1.8 and 2.4 from Bassuk et al. (1997), are derived in section 5 with δ_h, which is
+calibrated on the same study.
 
 **Homelessness rate for 25-34, 35-44, 45-54, 55-64 and 65+, and the shares of the homeless across those bands.** HUD point
 in time count 2024, by age band, against Census population for the same bands.
