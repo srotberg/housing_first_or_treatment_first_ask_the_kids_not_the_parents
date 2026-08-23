@@ -479,13 +479,23 @@ def checkpoint(loops):
     if os.path.exists(REPORT):
         r = subprocess.run([sys.executable, REPORT, LOG], capture_output=True,
                            text=True, cwd=os.path.dirname(REPORT))
-        gaps = [float(g) for g in re.findall(r'\s([\d.]+)%\s*$', r.stdout, re.M)]
+        # BY NAME, NOT JUST BY NUMBER, so the median compares like with like.
+        # omega's moment is only computed on some loops, so the row's moment
+        # count alternates 16, 17, and its gap is large enough to move the
+        # median on its own: the series read 60.3, 31.4, 40.8, 64.4, 30.6, which
+        # is that alternation and not the calibration. It is excluded from the
+        # median and reported in its own column.
+        named = re.findall(r'^(\S+)\s+\S+\s+\S+\s+([\d.]+)%\s*$',
+                           r.stdout, re.M)
+        omega = next((float(v) for k, v in named if k == 'weight_on_child'), None)
+        gaps = [float(v) for k, v in named if k != 'weight_on_child']
         m = re.search(r'(\d+) of (\d+) on target', r.stdout)
         if gaps:
             gaps.sort()
             row = (f'{n}\t{time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}\t'
                    f'{gaps[len(gaps) // 2]:.3f}\t{gaps[-1]:.3f}\t'
-                   f'{m.group(1) if m else ""}\t{m.group(2) if m else ""}\n')
+                   f'{m.group(1) if m else ""}\t{m.group(2) if m else ""}\t'
+                   f'{"" if omega is None else f"{omega:.1f}"}\n')
     if row is not None:
         # A CUMULATIVE INDEX, BECAUSE THE LOOP COUNTER RESETS. Every container
         # rebuild relaunches the run and the Fortran starts counting loops from
@@ -500,7 +510,8 @@ def checkpoint(loops):
             with open(PROGRESS) as f:
                 seq = max(1, sum(1 for _ in f))
         head = '' if exists else (
-            'seq\tloop\tcold\tutc\tmedian_gap_pct\tworst_gap_pct\ton_target\tof\n')
+            'seq\tloop\tcold\tutc\tmedian_gap_pct\tworst_gap_pct\ton_target\tof'
+            '\tomega_gap_pct\n')
         cold = 1 if n <= 1 else 0
         fields = row.rstrip('\n').split('\t')
         with open(PROGRESS, 'a') as f:
