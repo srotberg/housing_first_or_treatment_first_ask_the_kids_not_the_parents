@@ -29281,6 +29281,17 @@
 
             close(79,status='delete')
 
+            ! BANK THE HANDOVER BEFORE THE FIRST SOLVE, OR IT CAN BE LOST. The
+            ! file is deleted as it is read, and calibration_state.dat is only
+            ! rewritten at the END of a loop. A run that is killed part way
+            ! through its first solve therefore loses the handover entirely: the
+            ! file is gone, the state still holds the old value, and the next
+            ! launch resumes at the value the handover was meant to replace with
+            ! nothing anywhere saying so. That happened to h_2, which was handed
+            ! 0.0015, killed mid solve, and came back at 0.0048.
+            call write_calibration_state()
+            write(*,*) "handover banked into calibration_state.dat before the first solve"
+
         end if
 
         write(*,*) "resumed from calibration_state.dat, written after loop", resumed_loop_count
