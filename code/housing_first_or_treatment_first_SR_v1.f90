@@ -33513,9 +33513,32 @@
             
             write(*,*) "loop_count=", loop_count
 
-            ! THE NEXT POINT OF THE SWEEP. The moments of the point just
-            ! finished are already in the log above this line, so the driver
-            ! reads them from the loop segment and this only has to move b on.
+            ! THE MEASUREMENT, WRITTEN WHERE IT CANNOT BE MISPAIRED.
+            !
+            ! Reading it back out of the log means deciding which side of the
+            ! loop boundary a print belongs to, and the model prints its moments
+            ! and its next b on opposite sides of that line -- three separate
+            ! console prints of model_exprimenters, on a pass whose statistics
+            ! appear above the loop counter rather than below it. Written here,
+            ! at the foot of the pass, addiction_scalar_1 is still the b this
+            ! pass ran at and the moments are the ones it finished with, so the
+            ! pairing is a fact rather than an inference.
+            if (sweep_addiction_scalar==1) then
+
+                open(unit=78,file="B_SWEEP_RAW.tsv",action='write',position='append')
+                write(78,'(6(E24.15,A1))') addiction_scalar_1, char(9),&
+                    model_exprimenters(1), char(9),&
+                    model_total_drug_users(1), char(9),&
+                    model_fraction_addicted(1), char(9),&
+                    model_avg_income_drug_users(1)/&
+                        max(model_average_labour_income(1),10.d0**(-12)), char(9),&
+                    model_average_income_addicted(1)/&
+                        max(model_average_labour_income(1),10.d0**(-12)), char(9)
+                close(78)
+
+            end if
+
+            ! THE NEXT POINT OF THE SWEEP.
             if (sweep_addiction_scalar==1) then
 
                 sweep_index=sweep_index+1
