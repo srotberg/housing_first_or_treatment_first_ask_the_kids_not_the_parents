@@ -117,3 +117,55 @@ left on the street.
 kappa 13.79. A parameter that has more than tripled while its moment has not
 moved is either paired with the wrong moment or saturated, and neither is a
 bound tweak, so it is recorded rather than damped.
+
+## Parameters drifting one way
+
+Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
+
+- `largest_house_size` moved 0.1276 to 0.3697, one way across 24 loops, and its moment is not reported as a scalar
+- `kappa_uem` moved 4.415 to 13.79, one way across 24 loops, and its moment is not reported as a scalar
+- `relative_share_housing` moved 0.2743 to 0.1265, one way across 24 loops, and its moment is not reported as a scalar
+- `relative_share_leisure` moved 3.495 to 0.5733, one way across 24 loops, and its moment is not reported as a scalar
+
+## 2026-08-23 12:50 UTC: omega's moment is not measuring omega
+
+The omega gap has moved away for three checkpoints, 177 to 210 to 257 per cent,
+and the sign is wrong: switching the child term off LOWERS drug use in five of
+the last six loops, where the mechanism says it must raise it. It is not the
+counterfactual's own convergence. The diagnostic put in for exactly this question
+answers it every loop: 61 to 83 sweeps, reached between 2e-05 and 5.7e-04
+against a stopping rule of 6e-4, capped zero every time.
+
+**The term is too small to move the moment at all.** It is
+`beta*(1-survival)*omega*[E[V_child(d,h)] - E[V_child(0,1)]]`. Omega has been
+between 0.000 and 0.024 all run; `(1-survival)` is the chance the child is born,
+order 1e-2 at working age; and the note at line 21805 measures the gradient in
+`E[V_child]` at 60.291 against 60.276, or 0.015 utils. The product is order 1e-6
+utils. A term worth a millionth of a util does not change drug participation by
+twenty nine per cent.
+
+**The log proves it directly.** In loop 3 the counterfactual returned
+0.19214831778983701 users with the child penalty off, which is loop 1's BASELINE
+to all seventeen digits. Switching the term off changed the distribution by
+nothing at all. What differs between the two numbers the gap is built from is
+therefore not the child term:
+
+    loop 1   counterfactual 0.136837   baseline 0.192148   gap -0.288
+    loop 3   counterfactual 0.192148   ( = loop 1's baseline, exactly)
+
+**Where the difference comes from.** The counterfactual is solved first, from
+whatever distribution the previous loop left, and then `initialize_feasible_
+distribution` is skipped from loop 3 onwards, so the baseline's distribution
+solve starts from the counterfactual's. The two numbers are a distribution
+reached from the previous loop's baseline under one policy, and a distribution
+reached from THAT under the current loop's parameters. The distribution does not
+converge in max norm at any grid and stops on a 6e-4 rule under a 200 sweep cap,
+so the difference between the two is the loop's other parameter updates plus
+path dependence. It is attributed to omega in full.
+
+So the omega bracket is calibrating on a number that does not respond to omega,
+which is why its gap wanders with the sign of whatever else moved that loop. The
+fix is a modelling decision -- measure the counterfactual and the baseline from
+the SAME starting distribution, which means solving the baseline first and
+re-seeding the counterfactual from it, or holding the moment until the two can
+be priced from a common point -- so it is recorded rather than changed here.
