@@ -186,3 +186,11 @@ Recorded, not acted on: damping a drift or repairing a moment pairing is a model
 - `largest_house_size` moved 0.1276 to 0.3835, one way across 26 loops, and its moment is not reported as a scalar
 - `kappa_uem` moved 4.415 to 15.42, one way across 25 loops, and its moment is 21.7 per cent off
 - `relative_share_housing` moved 0.2743 to 0.1017, one way across 25 loops, and its moment is 32.9 per cent off
+
+## Parameters drifting one way
+
+Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
+
+- `size_homelessness` moved 0.263 to 0.1, one way across 9 loops, and its moment is not reported as a scalar
+- `kappa_uem` moved 4.415 to 15.77, one way across 29 loops, and its moment is not reported as a scalar
+- `relative_share_housing` moved 0.2743 to 0.09162, one way across 28 loops, and its moment is not reported as a scalar

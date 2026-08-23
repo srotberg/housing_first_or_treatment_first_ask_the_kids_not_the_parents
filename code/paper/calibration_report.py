@@ -1,27 +1,38 @@
+"""Every parameter the model calibrates internally, in ONE table.
+
+HOW TO REPORT A CALIBRATION, AND HOW THIS GOT IT WRONG THREE TIMES.
+
+The reader wants one list: every parameter that is being calibrated, the value it
+currently holds, the moment it is aimed at, and how far off it is. Anything that
+splits that list hides rows, and each of the three splits this file grew hid a
+different set.
+
+1. A row per PARAMETER rather than per MOMENT double counted the two moments that
+   move two parameters each, so a fourteen moment table read as sixteen and the
+   median counted those two twice.
+
+2. Parameters whose moment is not a scalar the report can evaluate -- a vector, an
+   expression, a target that is not a declaration -- were pushed into a footnote
+   with their names only. Seven calibrated parameters moving every loop looked
+   inert because of it.
+
+3. The value column was read by the row's name, and a row is named for the
+   parameter as the paper calls it while the model prints the Fortran variable.
+   Where the two differ the column was blank, which reads as "not calibrated"
+   rather than "looked in the wrong place". PARAM_NAME below is the fix and it
+   has to be extended whenever a row is added.
+
+So: ONE table, every internally calibrated parameter in it, a status column
+saying why a row has no gap rather than removing the row. The only parameters
+dropped entirely are those whose own include flag is zero, because those are
+switched off in the model rather than merely unreportable, and they come back the
+moment the flag does.
+
+Read the parameter's value from a pattern ANCHORED to the start of its line. The
+model prints distance_X= directly under X=, and this project has twice read the
+distance and called it the parameter.
 """
-Where every calibrated moment stands, model against target, from the run itself.
 
-WHY THIS EXISTS. The sweep prints one distance per parameter and stops there, so
-reading how a calibration is doing means holding forty stopping rules and forty
-data targets in your head at once. Worse, a distance is an absolute number
-against a target on its own scale, so 0.0368 and 59.4 say nothing about which is
-the bigger miss until you know both scales.
-
-WHAT IT DOES. Each parameter's distance in the Fortran is written as
-abs(<model quantity> - <data target>), so the pairing is already in the source
-and does not have to be maintained by hand here. This joins those three things:
-the pair, parsed out of the Fortran; the model side, taken from the run's own
-output by export_moments.py's parser; and the target, from the declarations by
-way of fortran_numbers.json. It reports the gap in RELATIVE terms so the misses
-can be ranked against each other, and says whether each clears its own rule.
-
-The three convergence checks that compare a quantity to its own previous value
-rather than to data (average labour income, median income, average net wealth)
-are reported separately, since a small number there means "stopped moving" and
-not "matches anything".
-
-Run:  python3 calibration_report.py <run.log>
-"""
 
 import json
 import os
@@ -191,7 +202,9 @@ def main():
         label = ALIAS.get(label, label)
         target_name = 'f_' + re.sub(r'\(\d+\)', '', target_expr)
         if label not in printed or target_name not in consts:
-            missing.append((name, model_expr, target_expr))
+            flag = consts.get('f_include_' + name)
+            if flag is None or float(flag) != 0:
+                missing.append((name, model_expr, target_expr))
             continue
         model, target = printed[label], float(consts[target_name])
         gap = abs(model - target) / max(abs(target), 1e-12)
@@ -219,11 +232,13 @@ def main():
         if flag is not None and float(flag) == 0:
             continue
 
+        status = ''
         if (name in frozen or (name in live and live[name] == 0.0)) and gap > 1e-6:
-            held.append((name, model, target))
-            continue
+            status = 'held'
 
         clears = name in rule and abs(model - target) <= rule[name]
+        if clears:
+            status = 'ON TARGET'
         val = values.get(PARAM_NAME.get(name, name))
 
         # ONE ROW PER MOMENT, NOT PER PARAMETER. Two parameters can be moved by
@@ -236,42 +251,35 @@ def main():
         key = (label, target_name)
         if key in seen:
             i = seen[key]
-            g, nm, mo, ta, cl, vv = rows[i]
-            rows[i] = (g, nm + '+' + name, mo, ta, cl or clears, vv if vv is not None else val)
+            g, nm, mo, ta, cl, vv, st = rows[i]
+            rows[i] = (g, nm + '+' + name, mo, ta, cl or clears,
+                       vv if vv is not None else val, st or status)
             continue
         seen[key] = len(rows)
-        rows.append((gap, name, model, target, clears, val))
+        rows.append((gap, name, model, target, clears, val, status))
 
     rows.sort(reverse=True)
-    print(f'{"parameter":50s} {"value":>12s} {"model":>13s} {"target":>13s} {"off by":>9s}  ')
-    print('-' * 105)
-    for gap, name, model, target, clears, val in rows:
-        mark = 'ON TARGET' if clears else ''
+    # THE UNREPORTABLE ONES ARE ROWS TOO, at the foot with a status rather than
+    # in a footnote, because they are calibrated and moving like the rest.
+    for name, model_expr, target_expr in missing:
+        rows.append((-1.0, name, None, None, False,
+                     values.get(PARAM_NAME.get(name, name)), 'no scalar moment'))
+
+    w = max(len(r[1]) for r in rows) + 2
+    print(f'{"parameter":{w}s} {"value":>12s} {"model":>13s} {"target":>13s} '
+          f'{"off by":>9s}  status')
+    print('-' * (w + 62))
+    for gap, name, model, target, clears, val, status in rows:
         v = '--' if val is None else f'{val:.6g}'
-        print(f'{name:50s} {v:>12s} {model:13.6g} {target:13.6g} {gap*100:8.1f}%  {mark}')
-    print('-' * 105)
-    print(f'{sum(1 for r in rows if r[4])} of {len(rows)} on target, '
-          f'{sum(1 for r in rows if not r[4] and r[0] <= 0.03)} within three per cent')
-
-    if held:
-        print('\nheld, not calibrated: the sweep zeroes these distances, so the gap '
-              'is not a miss')
-        for name, model, target in held:
-            v = values.get(PARAM_NAME.get(name, name))
-            vs = '--' if v is None else f'{v:.6g}'
-            print(f'  {name:32s} value {vs:>12s}   model {model:12.6g}   '
-                  f'its target {target:12.6g}')
-
-    if missing:
-        # THE PARAMETER IS STILL WORTH SHOWING even when its moment is a vector,
-        # an expression the report cannot evaluate, or a target that is not a
-        # declaration. These are calibrated parameters moving every loop, and
-        # printing only their names made them look inert.
-        print('\nmoment not reportable as a scalar, but the parameter is live:')
-        for name, model_expr, target_expr in missing:
-            v = values.get(PARAM_NAME.get(name, name))
-            vs = '--' if v is None else f'{v:.6g}'
-            print(f'  {name:32s} value {vs:>12s}   {model_expr} vs {target_expr}')
+        mo = '--' if model is None else f'{model:.6g}'
+        ta = '--' if target is None else f'{target:.6g}'
+        off = '--' if model is None else f'{gap*100:.1f}%'
+        print(f'{name:{w}s} {v:>12s} {mo:>13s} {ta:>13s} {off:>9s}  {status}')
+    print('-' * (w + 62))
+    live_rows = [r for r in rows if r[2] is not None]
+    print(f'{sum(1 for r in live_rows if r[4])} of {len(live_rows)} on target, '
+          f'{sum(1 for r in live_rows if not r[4] and r[0] <= 0.03)} within three per cent'
+          f'; {len(rows)} parameters calibrated internally')
 
 
 if __name__ == '__main__':
