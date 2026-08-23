@@ -205,6 +205,7 @@ ALIAS = {
     # export_moments names the printed vector _1, _2, _3 in print order. The map
     # therefore shifts by one, and it was not shifted here: h_3's row scored the
     # cheapest rung against the middle rung's target.
+    'model_housing_size_dist_1_0': 'model_housing_size_dist_1',
     'model_housing_size_dist_1_1': 'model_housing_size_dist_2',
     'model_housing_size_dist_1_housing_status_grid_size_1':
         'model_housing_size_dist_3',
@@ -232,6 +233,7 @@ ALIAS = {
 # scalar for housing_size_dist_data(1); the run prints the vector and
 # export_moments names its elements. Same zero indexed shift as above.
 TARGET_IN_LOG = {
+    'housing_size_dist_data(0)': 'housing_size_dist_data_1',
     'housing_size_dist_data(1)': 'housing_size_dist_data_2',
     'housing_size_dist_data(2)': 'housing_size_dist_data_3',
 }
