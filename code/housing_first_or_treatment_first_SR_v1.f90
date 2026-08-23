@@ -29575,16 +29575,23 @@
                 ! part of the way to the counterfactual and the gap it reports is
                 ! a partial adjustment rather than the moment.
                 !
-                ! IT IS PRINTED BECAUSE THE SIGN CAME OUT WRONG ONCE. At loop 3 of
-                ! a cold run, removing the penalty CUT use by 75 per cent where
-                ! the mechanism says it should raise it by about 18: the term is
-                ! zero for a clean housed parent and negative otherwise, so
-                ! removing it makes the disordered states cheaper and use should
-                ! rise. Whether that was the model sitting far from its calibrated
-                ! point -- participation was seven times its target at that loop
-                ! -- or something wrong in the counterfactual cannot be told from
-                ! the number alone, so the run now says what the number was
-                ! measured on.
+                ! IT IS PRINTED BECAUSE THE SIGN CAME OUT WRONG ONCE, AND THE
+                ! PRINT ANSWERED IT. At loop 3 of a cold run, removing the
+                ! penalty CUT use by 75 per cent where the mechanism says it
+                ! should raise it: the term is zero for a clean housed parent and
+                ! negative otherwise, so removing it makes the disordered states
+                ! cheaper and use should rise. That could have been the
+                ! counterfactual's own distribution stopping half way, since it
+                ! re-solves from the baseline's under the sweep cap.
+                !
+                ! IT WAS NOT. Measured once participation came down: 61 sweeps,
+                ! reached 7.2e-5 against a stopping rule of 6e-4, capped = 0. The
+                ! counterfactual converges properly and the sign is now the right
+                ! one, +0.93 against a target of +0.18, which says omega is too
+                ! large rather than that anything is broken. The gap RISES in
+                ! omega, so the update lowers it, which is the documented
+                ! direction. The print stays: it is two numbers a loop and it is
+                ! the difference between reading that gap and guessing at it.
                 write(*,*) "omega counterfactual: drug users with the child penalty off =",&
                     drug_users_without_child, " counterfactual distribution sweeps =",&
                     loop_count_dist, " reached =", distance_distribution_reached,&
