@@ -48,6 +48,13 @@ STATE = os.path.join(HERE, 'calibration_state.dat')
 # visible log freezes at whatever the checkout put there. Copying at checkpoint
 # keeps the live handle stable and still banks the content.
 BANKED_LOG = os.path.join(HERE, 'calibration_run.log')
+# THE PARAMETER TRACE, APPEND ONLY AND ACROSS CONTAINERS. calibration_run.log is
+# a copy of the CURRENT container's log and holds the two or three loops it
+# lived for, so a stall spanning ten loops cannot be seen in it at all: the
+# median gap sat at 52.6, 44.2, 47.8, 48.4, 46.5 across five loops and there was
+# no way to ask which bracket had stopped moving. One row per loop, every
+# watched parameter, surviving every rebuild.
+PARAMS = os.path.join(HERE, 'CALIBRATION_PARAMS.tsv')
 PROGRESS = os.path.join(HERE, 'CALIBRATION_PROGRESS.tsv')
 
 # -O3 RATHER THAN -O2, MEASURED AND NOT ASSUMED: 1.15x on the sixteen expensive
@@ -519,7 +526,20 @@ def checkpoint(loops):
                                      + fields[1:]) + '\n')
     if os.path.exists(LOG):
         shutil.copyfile(LOG, BANKED_LOG)
-    paths = [pth for pth in (STATE, PROGRESS, BANKED_LOG, JOURNAL)
+    # ONE ROW PER LOOP OF EVERY WATCHED PARAMETER, so a stall can be attributed.
+    if loops:
+        names = sorted(WATCH)
+        last = loops[-1]
+        if not os.path.exists(PARAMS):
+            with open(PARAMS, 'w') as f:
+                f.write('utc\tloop\t' + '\t'.join(names) + '\n')
+        with open(PARAMS, 'a') as f:
+            f.write(time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
+                    + f'\t{n}\t'
+                    + '\t'.join('' if k not in last else f'{last[k]:.6g}'
+                                 for k in names) + '\n')
+
+    paths = [pth for pth in (STATE, PROGRESS, PARAMS, BANKED_LOG, JOURNAL)
              if os.path.exists(pth)]
     if paths:
         commit(f'Calibration checkpoint, loop {n}', paths)
