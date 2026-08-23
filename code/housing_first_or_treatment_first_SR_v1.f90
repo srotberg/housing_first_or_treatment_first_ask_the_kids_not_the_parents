@@ -669,7 +669,16 @@
         ! gap read there is constant and the update can never reverse. The floor
         ! is set inside the region where homelessness was observed to respond:
         ! h_2 = 0.0137 produced 0.83 per cent in run 2's second loop.
-        real(8), parameter :: smallest_rental_floor=0.01d0
+        ! THE FLOOR WAS 0.01 AND h_2 HAS TO GO WELL BELOW IT. The employed
+        ! share of the homeless reads 0.995 against a target of 0.50, and the
+        ! cheapest dwelling is the instrument for it: too dear a unit is what
+        ! leaves a working household on the street. 0.01 was set when the
+        ! productivity grid had nine evenly spaced nodes and its bottom node was
+        ! not poor; on the thirteen quantile placed nodes the bottom of the
+        ! distribution is genuinely poor, so homelessness survives a much
+        ! cheaper unit than it used to and the old floor is a wall rather than a
+        ! guard.
+        real(8), parameter :: smallest_rental_floor=0.004d0
         integer, parameter :: have_two_rental_markets=0
 
         ! A SECANT ON THE RENTAL MARKET TOO, for the same reason as lambda.
@@ -31918,15 +31927,26 @@
 
                         write(*,*) "size_homelessness_adjuster=", size_homelessness_adjuster
 
+                        ! THE LADDER MUST BE STRICTLY INCREASING, and this
+                        ! bound is what guarantees it: h_1 is built as
+                        ! housing_size(0)*size_homelessness, so a ceiling of 1
+                        ! admits h_1 = h_2 exactly, a street worth as much as
+                        ! the cheapest room and free, at which point the rung
+                        ! above the street buys nothing and the housing
+                        ! dimension collapses at the bottom. 0.9 keeps the
+                        ! inequality strict and still leaves homelessness as
+                        ! attractive as the traverse can need: the current
+                        ! value is 0.10, so this binds on nothing today and
+                        ! stops the degenerate case if the update ever runs.
                         size_homelessness=max(min(size_homelessness-size_homelessness_adjuster*&
-                            gap_size_homelessness_1,1.d0),0.d0)
+                            gap_size_homelessness_1,0.9d0),0.d0)
 
                         ! Say so if the traverse has run out of room. At a street
                         ! worth as much as housing_size(0) and free, a model still
                         ! below target is not a failure of this update: nothing in
                         ! the housing ladder makes homelessness attractive, so the
                         ! rental grid or the food floor is what has to move.
-                        if ((size_homelessness>=1.d0) .AND. &
+                        if ((size_homelessness>=0.9d0) .AND. &
                             (model_fraction_homeless(1)<fraction_homeless_data)) then
 
                             write(*,*) "size_homelessness IS AT ITS CEILING 1 and homelessness is ",&
