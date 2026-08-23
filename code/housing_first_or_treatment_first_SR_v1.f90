@@ -29614,8 +29614,16 @@
             ! the rest of this loop reads describes the baseline and not this.
             ! Switching the child term off means setting its weight to zero, which
             ! is exactly what the moment describes.
+            ! NOT DURING A SWEEP, for two reasons. It costs a full extra value
+            ! function solve and distribution convergence on every pass, about a
+            ! third of the pass, and nothing in a sweep of b reads it. Worse, it
+            ! leaves its own converged distribution behind for the baseline solve
+            ! to start from, so the number the sweep is measuring would carry the
+            ! counterfactual's path in it. That path dependence is the fault
+            ! already recorded against omega's own moment; there is no reason to
+            ! feed it into a curve meant to isolate b.
             if ((calibrate_weight_on_child==1) .AND. (include_child_in_continuation==1)&
-                .AND. (loop_count>=1)) then
+                .AND. (loop_count>=1) .AND. (sweep_addiction_scalar==0)) then
 
                 child_penalty_off=1
 
