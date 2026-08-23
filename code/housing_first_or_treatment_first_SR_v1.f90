@@ -678,7 +678,15 @@
         ! distribution is genuinely poor, so homelessness survives a much
         ! cheaper unit than it used to and the old floor is a wall rather than a
         ! guard.
-        real(8), parameter :: smallest_rental_floor=0.004d0
+        ! LOWERED AGAIN, TO 0.0005. h_2 stood at 0.0048 against a floor of
+        ! 0.004, so the floor was one step away from binding, and the instruction
+        ! is to take the cheapest room a great deal lower still. What the model
+        ! has measured so far is that this lowers the NUMBER of employed homeless
+        ! but raises their SHARE -- 0.934 at h_2=0.0158, 0.978 at 0.0048 -- since
+        ! a cheaper room houses the unemployed faster than the employed. The
+        ! floor is not the place to argue that; it is the place to stop the
+        ! parameter going somewhere meaningless, and 0.0005 is still a room.
+        real(8), parameter :: smallest_rental_floor=0.0005d0
         integer, parameter :: have_two_rental_markets=0
 
         ! A SECANT ON THE RENTAL MARKET TOO, for the same reason as lambda.

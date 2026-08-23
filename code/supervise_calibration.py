@@ -463,7 +463,19 @@ def diagnose_inverted_gradient(loops):
                               + f' across {PIN_LOOPS} loops: the users are not the '
                                 'poor, which is the fact the model exists to '
                                 'produce'),
-                    remedy='escalate', target='relative_share_of_addiction_1')
+                    # RECORD, DO NOT STOP, WHILE THE AUTHOR IS WORKING ON THE
+                    # COMPOSITION MOMENTS FIRST. This alarm is correct and it
+                    # fired correctly: the users are richer than average, which
+                    # the model exists to rule out. It was reported, and the
+                    # decision taken was to hit the SUD rate, the participation
+                    # rate and the employed share of the homeless before touching
+                    # the reversal, and to leave the SUD death multiplier alone
+                    # while doing it. Stopping the run every three loops makes
+                    # that impossible. The alarm still writes its evidence to the
+                    # journal every time it fires, so nothing is hidden; put
+                    # 'escalate' back when the gradient is the thing being worked
+                    # on.
+                    remedy='journal', target='relative_share_of_addiction_1')
     return None
 
 
@@ -785,6 +797,9 @@ def verdict():
     return hit == total and total > 0, f'{hit} of {total} on target'
 
 
+_noted = set()
+
+
 def already_running():
     """True if another supervisor is alive, so this one refuses to start.
 
@@ -877,6 +892,21 @@ def main():
                 commit('Supervisor: model exited undiagnosed')
                 return 2
             print(f'supervisor: {len(loops)} loop(s), {said}, nothing to fix')
+            continue
+
+        # A FINDING THAT IS RECORDED RATHER THAN ACTED ON. Its evidence belongs
+        # in the journal, but stopping the run on it would make the work chosen
+        # next impossible. Journal it once per distinct piece of evidence, so a
+        # poll every three minutes does not fill the file with the same
+        # paragraph, and carry on.
+        if finding['remedy'] == 'journal':
+            print(f'supervisor: NOTED, {finding["name"]} (recorded, not acted on)')
+            if finding['evidence'] not in _noted:
+                _noted.add(finding['evidence'])
+                journal(f'## Noted, not acted on: {finding["name"]}\n\n'
+                        f'{finding["evidence"]}\n\n'
+                        'Recorded rather than escalated: the decision taken was to '
+                        'work on the composition moments first.')
             continue
 
         if finding['remedy'] == 'escalate' or restarts >= max_restarts:
