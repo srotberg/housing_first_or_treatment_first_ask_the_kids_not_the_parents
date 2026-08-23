@@ -30625,7 +30625,24 @@
                         ! nothing to read. Holding the parameter and refusing to
                         ! report convergence is the honest state: the moment is
                         ! not missed, it is unmeasurable.
-                        if (model_mass_homeless_raw(1)<=10.d0**(-12)) then
+                        ! A SLIVER IS AS UNMEASURABLE AS AN EMPTY SET. The
+                        ! guard below fired only at EXACTLY zero homeless mass,
+                        ! and the failure it was written for arrives long before
+                        ! that. At a homelessness rate of 0.06 per cent against a
+                        ! target of 0.40, the employed share of the homeless is a
+                        ! conditional mean over a seventh of the population the
+                        ! moment is meant to describe; it read 0.99 and drove h_2
+                        ! from 0.006 to 0.0048 in one loop, toward a floor of
+                        ! 0.004, on evidence that is mostly sampling of a corner.
+                        !
+                        ! h_1 IS WHAT RESTORES THE POPULATION, through
+                        ! size_homelessness, and h_2 has nothing to read until it
+                        ! has. A quarter of the target is the threshold: below it
+                        ! the conditional share is not informative about the
+                        ! price of the cheapest room, and holding is honest where
+                        ! moving is noise.
+                        if ((model_mass_homeless_raw(1)<=10.d0**(-12)) .OR. &
+                            (model_fraction_homeless(1)<0.25d0*fraction_homeless_data)) then
 
                             ! UNMEASURABLE, OR UNMEASURABLE BECAUSE OF THE BOUND?
                             ! Holding is right for the first and a trap for the
@@ -31920,6 +31937,32 @@
 
                                 size_homelessness_adjuster=max(size_homelessness_adjuster*&
                                     size_homelessness_damping,size_homelessness_adjuster_floor)
+
+                            else if (abs(gap_size_homelessness_1)>&
+                                0.5d0*fraction_homeless_data) then
+
+                                ! DAMPING IS A MEMORY OF A DIFFERENT REGIME. The
+                                ! adjuster is halved on every sign flip and grown
+                                ! by a fifth on every same signed loop, which is
+                                ! right beside a solution and wrong far from one:
+                                ! after enough flips it stood at 0.067 against a
+                                ! gap of 0.0034, a step of 0.0002 on a parameter
+                                ! of 0.099, so an eighty five per cent miss moved
+                                ! by two parts in a thousand a loop and would
+                                ! have taken hundreds of solves.
+                                !
+                                ! A gap of half the target is not near a solution.
+                                ! Re-arm rather than creep, and let the overshoot
+                                ! do its job: the first sign flip after it
+                                ! establishes the bracket, and the bisection below
+                                ! closes the window in about seven solves however
+                                ! wide it is. That is what the bracket is for, and
+                                ! creeping never reaches it.
+                                size_homelessness_adjuster=size_homelessness_adjuster_start
+
+                                write(*,*) "size_homelessness adjuster RE-ARMED: the gap is ", &
+                                    gap_size_homelessness_1, " against a target of ", &
+                                    fraction_homeless_data
 
                             else
 
