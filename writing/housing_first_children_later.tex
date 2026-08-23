@@ -108,8 +108,8 @@
 \noindent Should housing assistance be conditioned on sobriety? With no externalities
 or distortions, and forward-looking households accounting for the true hazard,
 conditionality simply removes an option, so Housing First weakly dominates Treatment First at equal
-generosity and cost. The case for Treatment First rests elsewhere. I separate two externalities, the distortions
-that fund the programme, and the programme's own distortions, in
+generosity and cost. The case for Treatment First rests elsewhere. I separate two externalities \textcolor{red}{from distortions
+that fund the programme and from the programme's own distortions using}
 a general-equilibrium life-cycle model with endogenous homelessness, drug use and
 mortality, calibrated to United States data. The decisive channel is intergenerational: a
 parent's disorder and homelessness pass worse draws to their child, reversing the ranking.
@@ -1656,7 +1656,9 @@ what housing does.
 Three things are observed and two are solved for. Observed: $RR(j)$,
 Baggett's ratio; $\sigma_d(j)$, the shape of the SUD's mortality effect over age;
 and $s$, the share of the homeless with a SUD. Solved for: $\kappa_{\phi d}(j)$ and
-$\kappa_{\phi H}(j)$, one age profile from each equation. Picking the single
+$\kappa_{\phi H}(j)$, one age profile from each equation. \new{$RR(j)$ and $s$
+are inputs to this step and not moments the model is asked to reproduce, so
+neither appears among the validation moments in Section~\ref{sec:fvalid}.} Picking the single
 number $\bar\kappa_{\phi d}$, the level of the SUD's own mortality multiplier at the age where
 its effect peaks, settles both: the first equation turns it into
 $\kappa_{\phi d}(j)$ at every age, and the second then reads
@@ -2745,14 +2747,17 @@ free in every counterfactual. It is an equilibrium object rather than a dial.
 
 \subsection{Validation}\label{sec:fvalid}
 
-None of the moments below is fitted. Each is produced endogenously by a model
+\new{None of the moments below is fitted, with one qualification: the
+homelessness rate's overall level is a calibration target, so what is tested in
+the first row is the profile across the five age bands rather than the level of
+it.} Each is produced endogenously by a model
 with sixty single ages, and each is a place the model can be caught.
 Section~9 of \texttt{data/}\allowbreak\texttt{DATA\_APPENDIX.md} in the replication
 package derives the data side of each, and it is the place to go for
 everything needed to replicate them: the dataset, the year, the universe, the
 computation, and the three cases where the universe rather than the arithmetic
 decides the number. The package ships those datasets as well, so none of them has
-to be downloaded first. The standardised mortality ratio below is age-weighted.
+to be downloaded first.
 Two shares of the earnings distribution come out alongside the one $\sigma_y$ is
 chosen on and are untargeted: the model's top tenth holds $38.5$ percent of earnings
 against $41.1$ in the data, and its bottom tenth $1.1$ percent against $0.99$.
@@ -2791,7 +2796,6 @@ Drug poisonings as a share of deaths, 25--44 & about 20 percent & CDC WONDER \\
 Earnings shares, bottom tenth and top tenth & 0.99 and 41.1 percent & SCF 2022 \\
 Bottom half's share of net worth & 2.52 percent & Fed DFA \\
 Housing costs above 30 and 50 percent of income & 40.6 and 17.5 percent & SCF 2022 \\
-Standardised mortality ratio, homeless, by band & 9.1, 4.5, 1.1 for 25--44, 45--64, 65--84 & Baggett et al.\ (2013) \\
 Tenant contribution rate & 31.2 percent & HUD PSH 2023 \\
 Voucher holders with wages as main income & 28 percent & HUD PSH 2023 \\
 Income with a moderate or severe SUD & 71.1 percent of average & NSDUH 2024 \\
@@ -2800,7 +2804,6 @@ Labour force participation, with a SUD against without & 65.8 against 61.5 perce
 Homeless at treatment admission & 14.5 percent & TEDS-A 2022 \\
 Psychiatric problem alongside SUD at admission & 43.1 percent & TEDS-A 2022 \\
 Working at all, homeless in treatment & 6.6 percent & TEDS-A 2022 \\
-SUD share of the homeless & 21.7 percent & Gutwinski et al.\ (2021) \\
 Price elasticity of demand, participation & $-0.63$ & Saffer and Chaloupka (1999) \\
 Price elasticity of demand, intensive margin & $-0.55$ & Midpoint, Section~\ref{sec:literature} \\
 Odds a homeless adult had a homeless caretaker & 1.8 to 2.4 & Bassuk et al.\ (1997) \\
