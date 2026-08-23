@@ -1910,8 +1910,24 @@
         ! untaxed on the strength of grepping for tau_k, which is the note's
         ! name for it and not the code's. It was there all along.
         
-        real(8) :: housing_status_grid_expander=1.8
-        real(8) :: housing_status_grid_expander_adjuster=1*10.d0**(-1)
+        ! H_3 IS EXTERNAL NOW, AND THAT IS WHAT MAKES THE LADDER IDENTIFIED.
+        !
+        ! Three rungs were carrying three moments: h_2 on the employed share of
+        ! the homeless, varsigma on the middle bin's share and h_4 on the top
+        ! bin's. Three shares carry only two free numbers, so the third was
+        ! always going to be absorbed somewhere, and it was absorbed by the
+        ! weight on housing: gamma came out at 0.088 against a housing
+        ! expenditure share of 0.35, which is a weight doing no work because the
+        ! quantities are doing it instead.
+        !
+        ! So the middle rung is FIXED, at the midpoint between h_2 and h_4, and
+        ! varsigma is no longer calibrated. h_2 is set on the employed share of
+        ! the homeless and h_4 on the top bin's mass, one moment each, and the
+        ! middle bin's share falls out of the model as a check rather than being
+        ! aimed at. At varsigma = 1 the middle rung sits exactly half way, since
+        ! h_3 = h_2 + (1/2)^varsigma*(h_4 - h_2).
+        real(8) :: housing_status_grid_expander=1.0
+        real(8) :: housing_status_grid_expander_adjuster=0
         real(8) :: distance_housing_status_grid_expander
         real(8) :: stopping_rule_housing_status_grid_expander=10.d0**(-3)
 
@@ -29116,6 +29132,11 @@
                         smallest_rental_relative_to_lowest_income, "->", handover_value
                     smallest_rental_relative_to_lowest_income=handover_value
                     smallest_house_size=handover_value
+
+                case ("housing_status_grid_expander")
+                    write(*,*) "HANDOVER housing_status_grid_expander:",&
+                        housing_status_grid_expander, "->", handover_value
+                    housing_status_grid_expander=handover_value
 
                 case ("lambda_addiction")
                     write(*,*) "HANDOVER lambda_addiction:", lambda_addiction, "->", handover_value
