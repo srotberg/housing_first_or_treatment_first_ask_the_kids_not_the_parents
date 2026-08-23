@@ -36,7 +36,14 @@
 % starts, so neither can carry an open question forward. \query holds one: a
 % short red note in the margin asking whether a passage should be there at all.
 % It is not prose and must be gone before the note is circulated.
-\newcommand{\query}[1]{\marginpar{\raggedright\footnotesize#1}}
+% A FLAG IS A FOOTNOTE, NOT A MARGIN NOTE, AND THAT IS NOT A STYLE CHOICE.
+% As a \marginpar it broke float placement: the run reported "Float(s) lost",
+% the standard parameters table was never placed, its \label went with it, and
+% the three references to it printed as ??. That is the same ?? flagged in the
+% margin two rounds ago and explained away then as a stale build; it was this.
+% Rebuilt with \query made a no-op the run is clean, which is what identifies
+% the cause. Blue, so a flag is never mistaken for a round's red.
+\newcommand{\query}[1]{\footnote{\textcolor{blue}{#1}}}
 % THE PARAMETER COUNTS AS MACROS, so the two table files can quote them too.
 % fill.py only rewrites its placeholders in this file, and the tables are
 % \input from
@@ -272,7 +279,7 @@ equilibrium use concentrates at the bottom.
 
 I make the argument in two models, and I start by building
 the intuition. A stylized
-two-period model\textcolor{red}{ with rational forward-looking households,
+two-period model \textcolor{red}{with rational forward-looking households,
 calibrated to United States data,} in Section~\ref{sec:stylized}, shows how the increased mortality risk
 mechanism reverses the income gradient at its clearest, and how the externality that
 overturns the dominance result works.
@@ -2956,6 +2963,8 @@ intergenerational: what a parent's disorder and homelessness cost the child who
 replaces it. Close on what that implies for a policy debate currently being settled by
 executive order.
 
+
+\clearpage
 
 \section*{References}
 
