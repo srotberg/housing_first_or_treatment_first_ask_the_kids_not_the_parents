@@ -21,7 +21,19 @@ LINKS = {
     r'$b$':                      'participation_rate_data',
     r'$\lambda_d$':              'sud_rate_data',
     r'$\aleph$':                 'vsl_data',
-    r'$h_2$':                    'employed_share_of_homeless_data',
+    # h_2 AND h_4 ARE THE TWO ENDS OF THE RENTAL LADDER, and each answers to its
+    # own end of the size distribution. h_2 used to point at the employed share
+    # of the homeless; that moment could not be had at the same time as the
+    # homelessness RATE, since both were asked of h_2 and wanted values six to
+    # eight times apart, and it is untargeted now. The elements are named in
+    # PRINT order, so _1 is the smallest rung and _3 the largest, one more than
+    # the Fortran index.
+    r'$h_2$':                    'housing_size_dist_data_1',
+    r'$h_4$':                    'housing_size_dist_data_3',
+    # rho_d TAKES THE MOMENT h_2 VACATED. It was switched off while h_2 carried
+    # the employed share of the homeless; h_2 answers to the size distribution
+    # now, so this is the instrument that moment has.
+    r'$\rho_d$':                 'employed_share_of_homeless_data',
     r'$\kappa_{ued}$':           'unemployment_rate_sud_data',
     r'$h_1$':                    'fraction_homeless_data',
     r'$\underline c$':           'food_stamps_share_data',

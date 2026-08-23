@@ -536,7 +536,18 @@
         ! income there, lambda_m carries its share of the homeless, kappa_phi_m
         ! its mortality and mu_m its SUD recovery. rho_m has no job left that is
         ! not already assigned.
-        integer, parameter :: include_rho_d=0
+        ! rho_d IS BACK ON, AND IT IS THE INSTRUMENT h_2 VACATED. It was switched
+        ! off because h_2 already carried the employed share of the homeless, and
+        ! a proportional income penalty on top of it would have been a third
+        ! instrument on two moments. h_2 now answers to the bottom of the size
+        ! distribution instead, because the employed share and the homelessness
+        ! RATE could not both be had from it, so that moment has no instrument
+        ! left and this is the one that fits it: a household with the disorder
+        ! earns rho_d of what it otherwise would at every income, so it is poorer
+        ! whether or not it is working, and the disorder correlates with
+        ! unemployment through kappa_ued, which moves the composition of the
+        ! homeless rather than their number.
+        integer, parameter :: include_rho_d=1
         integer, parameter :: include_rho_m=0
 
         ! TWO SMI STATES. This doubles the unemployment grid from 6 to 12 and
@@ -28826,6 +28837,7 @@
             write(71,'(F30.15)') mu_homeless
             write(71,'(F30.15)') penalty_child_addicted
             write(71,'(F30.15)') penalty_child_addicted_adjuster
+
             write(71,'(F30.15)') previous_gap_penalty_child
             write(71,'(I10)') have_gap_penalty_child
             write(71,'(F30.15)') probability_becoming_unemployed
@@ -28842,6 +28854,32 @@
             write(71,'(F30.15)') discount_factor_lo_moment
             write(71,'(F30.15)') discount_factor_hi_moment
             write(71,'(F30.15)') previous_gap_discount_factor
+
+            ! THE SHARES THE CHILD'S PENALTY IS APPLIED THROUGH, IN THEIR OWN
+            ! FILE. Leaving them unbanked switched the intergenerational channel
+            ! off at every restart: newborn_parent_share is built by the
+            ! AGGREGATION, which runs after the distribution, so the first
+            ! distribution of a fresh process used the declared default, all mass
+            ! on clean and housed parents, which is the UNPENALISED draw. The
+            ! trace showed exactly that, (1, 0, 0, 0) at the point the draw is
+            ! mixed, while the previous process had measured 0.894 clean against
+            ! 0.106 disordered.
+            !
+            ! NOT APPENDED TO calibration_state.dat, AND THAT WAS TRIED FIRST.
+            ! The state record's write and read orders diverge at the tail: the
+            ! writer ends at previous_gap_discount_factor and the reader at
+            ! voucher_probability_adjuster, so the file carries records the
+            ! reader never consumes. Four reads appended at the end therefore
+            ! picked up those trailing values rather than hitting end of file,
+            ! and resumed the shares as 0.0102 and 1e-15. A separate file cannot
+            ! be misaligned by anything.
+            open(unit=73,file="newborn_parent_share.dat",status='replace')
+                write(73,'(F30.15)') newborn_parent_share(0,1)
+                write(73,'(F30.15)') newborn_parent_share(1,1)
+                write(73,'(F30.15)') newborn_parent_share(0,2)
+                write(73,'(F30.15)') newborn_parent_share(1,2)
+            close(73)
+
             write(71,'(I10)') have_gap_discount_factor
             write(71,'(F30.15)') size_homelessness_lo
             write(71,'(F30.15)') size_homelessness_hi
@@ -29039,6 +29077,24 @@
             if (state_ios_1==0) then
 
                 read(72,'(F30.15)',iostat=state_ios_1) voucher_probability_adjuster
+
+            ! Its own file, so nothing in the state record can misalign it.
+            open(unit=73,file="newborn_parent_share.dat",status='old',iostat=state_ios_1)
+            if (state_ios_1==0) then
+                read(73,'(F30.15)',iostat=state_ios_1) newborn_parent_share(0,1)
+                if (state_ios_1==0) read(73,'(F30.15)',iostat=state_ios_1) newborn_parent_share(1,1)
+                if (state_ios_1==0) read(73,'(F30.15)',iostat=state_ios_1) newborn_parent_share(0,2)
+                if (state_ios_1==0) read(73,'(F30.15)',iostat=state_ios_1) newborn_parent_share(1,2)
+                close(73)
+            end if
+            if (state_ios_1/=0) then
+                newborn_parent_share=reshape((/1.d0,0.d0,0.d0,0.d0/),(/2,2/))
+                write(*,*) "no banked newborn parent shares, so the first distribution is"
+                write(*,*) "   built with no transmission and it rebuilds from loop two"
+            end if
+            write(*,*) "newborn_parent_share resumed: clean housed=", newborn_parent_share(0,1), &
+                " disordered housed=", newborn_parent_share(1,1)
+
 
             end if
 

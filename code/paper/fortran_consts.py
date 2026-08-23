@@ -23,6 +23,11 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.normpath(os.path.join(HERE, '..',
                                     'housing_first_or_treatment_first_SR_v1.f90'))
 
+_ARRAY = re.compile(
+    r'^\s*(?:real\(8\)|integer)\s*(?:,\s*parameter\s*)?'
+    r'(?:,\s*dimension\([^)]*\)\s*)(?:,\s*parameter\s*)?::\s*'
+    r'([a-z_0-9]+)\s*=\s*\(/(.+?)/\)', re.I | re.M | re.S)
+
 _DECL = re.compile(
     r'^\s*(?:real\(8\)|integer)\s*(?:,\s*parameter\s*)?::\s*'
     r'([a-z_0-9]+)\s*=\s*(.+?)\s*(?:!.*)?$', re.I | re.M)
@@ -62,6 +67,24 @@ def constants(path=SRC):
         v = _num(expr, out)
         if v is not None:
             out.setdefault(name, v)
+
+    # ARRAY PARAMETERS, ELEMENT BY ELEMENT. _DECL only matches a scalar
+    # declaration, so a Fortran parameter ARRAY exports nothing at all, and a
+    # target that lives in one cannot be linked to a symbol or quoted in the
+    # prose. housing_size_dist_data is exactly that: the rental ladder's three
+    # data shares, which are h_2's moment and h_4's.
+    #
+    # ELEMENTS ARE NAMED IN PRINT ORDER, _1 _2 _3, NOT BY FORTRAN INDEX. The
+    # array is declared over 0:2, and export_moments.py already names the
+    # printed vector's elements _1 _2 _3, so following the print keeps the two
+    # halves of the pipeline speaking the same language. The Fortran index is
+    # one less than the suffix, and that is the trap: index (1) is _2.
+    for m in _ARRAY.finditer(txt):
+        name, body = m.group(1), m.group(2)
+        for i, piece in enumerate(body.split(','), start=1):
+            v = _num(piece, out)
+            if v is not None:
+                out.setdefault(f'{name}_{i}', v)
     return out
 
 
