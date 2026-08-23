@@ -150,6 +150,19 @@ MOMENTS = {
 # it happens. It is reported, not treated as a fault.
 DOCUMENTED_FLOOR = {'utility_cost_treatment': 0.0}
 
+# A FLOOR THE MODEL COMPUTES RATHER THAN DECLARES, keyed by the sentence the
+# model prints when it reaches it. lambda_m's floor comes from the SMI
+# prevalence profile, so it is not a number that can be written above.
+ANNOUNCED_FLOOR = {'lambda_m': 'lambda_m IS AT ITS FLOOR'}
+
+
+def _log_text():
+    try:
+        with open(LOG, errors='ignore') as fh:
+            return fh.read()[-2_000_000:]
+    except OSError:
+        return ''
+
 # The only bounds the supervisor may move. Nothing outside this table is edited.
 BOUNDS = {
     'smallest_rental': dict(
@@ -509,6 +522,23 @@ def diagnose_frozen_parameter(loops):
             continue
         floor = DOCUMENTED_FLOOR.get(name)
         if floor is not None and abs(tail[-1] - floor) <= 1e-12:
+            continue
+
+        # A FLOOR THE MODEL COMPUTES AND ANNOUNCES IS A DOCUMENTED FLOOR TOO.
+        # DOCUMENTED_FLOOR above holds constants, and lambda_m's floor is not a
+        # constant: it is implied by the SMI prevalence profile, below which the
+        # onset identity has no non negative solution, so it moves with the
+        # profile and cannot be written here. The model says so in as many words
+        # when it gets there --
+        #
+        #   lambda_m IS AT ITS FLOOR ... the profile cannot deliver this moment:
+        #   the prevalence path, the onset identity and this target are not
+        #   mutually consistent.
+        #
+        # -- and a parameter resting on a bound the model has already explained
+        # is not a frozen bracket. Killing the run over it destroys the work in
+        # flight and tells no one anything the log did not already say.
+        if ANNOUNCED_FLOOR.get(name) and ANNOUNCED_FLOOR[name] in _log_text():
             continue
         if name in BOUNDS:
             return dict(name=f'{name} frozen at {tail[-1]:g}',
