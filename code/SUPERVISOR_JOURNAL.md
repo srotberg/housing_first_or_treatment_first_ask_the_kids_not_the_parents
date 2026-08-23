@@ -39,3 +39,81 @@ now rather than fixed, because raising or damping it is a modelling call.
 
 Converging: the leisure share is 3.3 per cent off, the tax rate 0.7, the
 separation rate 4.2, the addiction hazard 6.4, the voucher probability 7.6.
+
+## Parameters drifting one way
+
+Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
+
+- `largest_house_size` moved 0.1276 to 0.3697, one way across 24 loops
+- `kappa_uem` moved 4.415 to 13.79, one way across 24 loops
+- `relative_share_housing` moved 0.2743 to 0.1265, one way across 24 loops
+- `relative_share_leisure` moved 3.495 to 0.5733, one way across 24 loops
+
+## Parameters drifting one way
+
+Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
+
+- `largest_house_size` moved 0.1276 to 0.3697, one way across 24 loops, and its moment is not reported as a scalar
+- `kappa_uem` moved 4.415 to 13.79, one way across 24 loops, and its moment is not reported as a scalar
+- `relative_share_housing` moved 0.2743 to 0.1265, one way across 24 loops, and its moment is not reported as a scalar
+- `relative_share_leisure` moved 3.495 to 0.5733, one way across 24 loops, and its moment is not reported as a scalar
+
+## Parameters drifting one way
+
+Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
+
+- `largest_house_size` moved 0.1276 to 0.3697, one way across 24 loops, and its moment is not reported as a scalar
+- `kappa_uem` moved 4.415 to 13.79, one way across 24 loops, and its moment is not reported as a scalar
+- `relative_share_housing` moved 0.2743 to 0.1265, one way across 24 loops, and its moment is not reported as a scalar
+- `relative_share_leisure` moved 3.495 to 0.5733, one way across 24 loops, and its moment is not reported as a scalar
+
+## Parameters drifting one way
+
+Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
+
+- `largest_house_size` moved 0.1276 to 0.3697, one way across 24 loops, and its moment is not reported as a scalar
+- `kappa_uem` moved 4.415 to 13.79, one way across 24 loops, and its moment is 58.7 per cent off
+- `relative_share_housing` moved 0.2743 to 0.1265, one way across 24 loops, and its moment is 48.0 per cent off
+- `relative_share_leisure` moved 3.495 to 0.5733, one way across 24 loops, and its moment is 10.4 per cent off
+
+## 2026-08-23 12:20 UTC: homelessness is a step function and h_1 cannot land on the target
+
+The container rebuilt and the run was restored from the branch tip and relaunched
+at loop 5. Two things in the banked logs are worth a person's attention.
+
+**h_1's moment is not monotone in h_1, and the bracket keeps being thrown away.**
+Measured across the run, homelessness against the parameter that sets the service
+flow of the street:
+
+    h_1 0.2943 -> 4.15e-04     h_1 0.2596 -> 6.73e-05
+    h_1 0.2981 -> 2.32e-03     h_1 0.2630 -> 6.17e-06
+    h_1 0.2962 -> 1.46e-02     h_1 0.2515 -> 3.14e-02
+    h_1 0.2825 -> 1.58e-02     h_1 0.2363 -> 3.43e-02
+
+A three per cent cut in the parameter, 0.2596 to 0.2515, moves the moment by a
+factor of 470, and the 3.99e-03 target sits inside that jump. The direction
+reverses twice. The log carries the model's own verdict three times over: two
+`size_homelessness BRACKET DISCARDED` lines, one for the moment falling when the
+parameter rose and one for it rising when the parameter fell, and a third for
+beta, whose wealth to output ratio rose when the discount factor was lowered.
+
+The declaration at line 1630 anticipated exactly this and says what it means:
+the bracket is valid only if its endpoints were priced under the same value of
+life, and *"if the violations keep coming, the message they carry is that this
+parameter cannot be calibrated while the value of life is still moving under it,
+and the answer to that is to sequence the loop rather than to bisect harder."*
+The violations are coming. Sequencing the loop is a structural change to the
+calibration and is left for the author.
+
+This is also why four other moments cannot be identified. mu_H is HELD whenever
+no homeless household carries the disorder, lambda_m moves only in the loops
+where there is homeless mass to measure the SMI share on, and rho_m and rho_d
+are measured on whatever handful of households the step function happens to have
+left on the street.
+
+**kappa_uem is buying nothing.** It has risen at every one of twenty four loops,
+4.42 to 13.79, and the employment rate given SMI has wandered between 0.43 and
+0.54 throughout against a target of 0.30: 0.486 at kappa 8.62 and 0.476 at
+kappa 13.79. A parameter that has more than tripled while its moment has not
+moved is either paired with the wrong moment or saturated, and neither is a
+bound tweak, so it is recorded rather than damped.

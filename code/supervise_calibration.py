@@ -248,6 +248,97 @@ def banked_loops():
     return rows
 
 
+# Drifts already written to the journal, so a three minute poll does not write
+# the same paragraph twenty times an hour.
+_NOTED = set()
+
+# A parameter that has moved one way for this many loops, by this much in total,
+# is drifting rather than converging.
+DRIFT_LOOPS, DRIFT_SIZE = 8, 0.5
+
+
+# WATCH shortens a few Fortran names; the report prints them in full.
+REPORT_NAME = {
+    'relative_share_housing': 'relative_share_of_housing',
+    'relative_share_leisure': 'relative_share_of_leisure',
+    'smallest_rental': 'smallest_house_size',
+    'utility_cost_treatment': 'utility_cost_of_treatment',
+    'grid_expander': 'housing_status_grid_expander',
+    'addiction_scalar': 'relative_share_of_addiction_1',
+}
+
+
+def report_gaps():
+    """Each parameter's current gap in per cent, from the report itself."""
+    if not os.path.exists(REPORT):
+        return {}
+    r = subprocess.run([sys.executable, REPORT, LOG], capture_output=True,
+                       text=True, cwd=os.path.dirname(REPORT))
+    out = {}
+    for line in r.stdout.splitlines():
+        m = re.match(r'^(\S+)\s+\S+\s+\S+\s+([\d.]+)%', line)
+        if m:
+            # Rows are keyed on the moment, so one row can name two parameters.
+            for nm in m.group(1).split('+'):
+                out[nm] = float(m.group(2))
+    return out
+
+
+def note_drift(loops):
+    """Write one journal paragraph per parameter that is drifting, and no more.
+
+    WHY THIS IS NOT A DIAGNOSIS. diagnose_runaway escalates, and escalating kills
+    the run; it is also hard coded to size_homelessness and so could not see
+    kappa_uem more than double over twenty loops while the employment rate given
+    SMI sat between 0.43 and 0.54 against a target of 0.30. A parameter buying
+    nothing with a sixty per cent move is worth a person's attention, but it is
+    not worth throwing away the ten brackets that ARE converging, and whether to
+    damp it or repair its pairing is a modelling call rather than a bound tweak.
+    So this only records. The supervisor keeps running.
+    """
+    gaps = report_gaps()
+    out = []
+    for name in WATCH:
+        v = series(loops, name)
+        if len(v) < DRIFT_LOOPS or name in _NOTED:
+            continue
+        # Consecutive repeats collapsed: a checkpoint that lands inside a loop
+        # records the loop again, and a zero step is neither up nor down.
+        v = [x for i, x in enumerate(v) if i == 0 or x != v[i - 1]]
+        if len(v) < DRIFT_LOOPS:
+            continue
+        # THE WHOLE ONE WAY RUN, not a fixed window. A drift that compounds
+        # slowly clears no threshold inside eight loops and is obvious across
+        # twenty five: kappa_uem gained 21 per cent over its last eight and 212
+        # per cent over the run. So walk back while the sign holds and measure
+        # the move over what that finds.
+        i = len(v) - 1
+        sign = 1 if v[-1] > v[-2] else -1
+        while i > 0 and (v[i] - v[i - 1]) * sign > 0:
+            i -= 1
+        run, base = v[i:], max(abs(v[i]), 1e-12)
+        if len(run) >= DRIFT_LOOPS and abs(run[-1] - run[0]) / base >= DRIFT_SIZE:
+            _NOTED.add(name)
+            g = gaps.get(REPORT_NAME.get(name, name))
+            # THE MOVE ALONE SAYS NOTHING. A bracket walking one way for twenty
+            # loops is what convergence looks like: the leisure share went 3.50
+            # to 0.57 doing exactly that and its moment is now within ten per
+            # cent. What separates a drift from a bracket doing its job is
+            # whether the moment came with it, so the gap is printed beside the
+            # move and a paragraph without one says so rather than implying a
+            # fault.
+            where = ('its moment is not reported as a scalar' if g is None
+                     else f'its moment is {g:.1f} per cent off')
+            out.append(f'- `{name}` moved {run[0]:.4g} to {run[-1]:.4g}, one way '
+                       f'across {len(run)} loops, and {where}')
+    if out:
+        journal('## Parameters drifting one way\n\n'
+                'Recorded, not acted on: damping a drift or repairing a moment '
+                'pairing is a modelling call, and escalating would kill a run '
+                'whose other brackets are converging.\n\n' + '\n'.join(out))
+    return out
+
+
 def series(loops, name):
     return [r[name] for r in loops if name in r]
 
@@ -605,11 +696,22 @@ def checkpoint(loops):
         if not os.path.exists(PARAMS):
             with open(PARAMS, 'w') as f:
                 f.write('utc\tloop\t' + '\t'.join(names) + '\n')
-        with open(PARAMS, 'a') as f:
-            f.write(time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
-                    + f'\t{n}\t'
-                    + '\t'.join('' if k not in last else f'{last[k]:.6g}'
-                                 for k in names) + '\n')
+        row = '\t'.join('' if k not in last else f'{last[k]:.6g}' for k in names)
+        # A CHECKPOINT IS NOT A LOOP. Checkpoints run every three minutes and a
+        # loop takes about seven, so appending unconditionally wrote the same
+        # loop two or three times over. Repeats are not harmless: a drift is
+        # detected on consecutive one way steps, and a repeated row inserts a
+        # step of exactly zero, which is neither up nor down and breaks the run.
+        prev = ''
+        if os.path.exists(PARAMS):
+            with open(PARAMS) as f:
+                tail = f.readlines()
+            if len(tail) > 1:
+                prev = tail[-1].rstrip('\n').split('\t', 2)[-1]
+        if row != prev:
+            with open(PARAMS, 'a') as f:
+                f.write(time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
+                        + f'\t{n}\t' + row + '\n')
 
     paths = [pth for pth in (STATE, PROGRESS, PARAMS, BANKED_LOG, JOURNAL)
              if os.path.exists(pth)]
@@ -707,6 +809,7 @@ def main():
         # unbanked calibration never finishes. A few seconds against seven
         # minutes a loop.
         here = read_loops(LOG)
+        note_drift(loops)
         if len(loops) > banked:
             banked = len(loops)
             # checkpoint appends THIS container's latest loop, so it is handed
