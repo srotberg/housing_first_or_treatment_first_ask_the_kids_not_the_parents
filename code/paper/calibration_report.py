@@ -177,9 +177,38 @@ ALIAS = {
     'model_homeless_income_share': 'homeless_income_share',
     'drug_share_weighted_1': 'drug_share_weighted_by_their_population_shares',
     'child_use_gap_1': 'model_child_use_gap',
-    'model_housing_size_dist_1_1': 'model_housing_size_dist_1',
+    # THE FORTRAN ARRAY IS ZERO INDEXED AND THE PRINT IS NOT. Both
+    # model_housing_size_dist and housing_size_dist_data are declared over
+    # 0:housing_status_grid_size-1, so element (1,1) is the SECOND rung, while
+    # export_moments names the printed vector _1, _2, _3 in print order. The map
+    # therefore shifts by one, and it was not shifted here: h_3's row scored the
+    # cheapest rung against the middle rung's target.
+    'model_housing_size_dist_1_1': 'model_housing_size_dist_2',
     'model_housing_size_dist_1_housing_status_grid_size_1':
         'model_housing_size_dist_3',
+    # FOUR MOMENTS THE MODEL PRINTS UNDER A DIFFERENT NAME THAN THE UPDATE USES.
+    # Each of these read "no scalar moment" and sat at the foot of the table
+    # with no value, no target and no gap, which reads as a parameter that is
+    # not being calibrated rather than one the report could not find. All four
+    # move every loop.
+    # NOT ALIASED TO govt_spending_on_food_stamps/model_output, THOUGH IT IS THE
+    # ONLY FOOD STAMP RATIO THE RUN PRINTS. The update divides by average LABOUR
+    # INCOME and the print divides by OUTPUT, so the aliased row scored a gap of
+    # 99 per cent against a target the calibration was never comparing to. A
+    # moment printed under one denominator is not the moment updated under
+    # another; the Fortran now prints the ratio its own update uses.
+    'model_recovery_housed_over_model_recovery_homeless': 'model_recovery_ratio',
+    'model_bottom_half_earnings_share': 'bottom_half_s_share_of_productivity',
+    'model_vsl_ratio_1': 'model_value_of_life_over_model_average_labour_income',
+}
+
+# A TARGET THAT LIVES IN THE LOG RATHER THAN IN A DECLARATION. The rental
+# ladder's data shares are a Fortran parameter ARRAY, so export_consts.py has no
+# scalar for housing_size_dist_data(1); the run prints the vector and
+# export_moments names its elements. Same zero indexed shift as above.
+TARGET_IN_LOG = {
+    'housing_size_dist_data(1)': 'housing_size_dist_data_2',
+    'housing_size_dist_data(2)': 'housing_size_dist_data_3',
 }
 
 
@@ -201,12 +230,16 @@ def main():
         label = export_moments.sanitise(model_expr)
         label = ALIAS.get(label, label)
         target_name = 'f_' + re.sub(r'\(\d+\)', '', target_expr)
-        if label not in printed or target_name not in consts:
+        in_log = TARGET_IN_LOG.get(target_expr)
+        if label not in printed or (target_name not in consts and
+                                    (in_log is None or in_log not in printed)):
             flag = consts.get('f_include_' + name)
             if flag is None or float(flag) != 0:
                 missing.append((name, model_expr, target_expr))
             continue
-        model, target = printed[label], float(consts[target_name])
+        model = printed[label]
+        target = (float(consts[target_name]) if target_name in consts
+                  else printed[in_log])
         gap = abs(model - target) / max(abs(target), 1e-12)
 
         # A PARAMETER WHOSE ADJUSTER IS ZERO IS NOT BEING CALIBRATED, and its

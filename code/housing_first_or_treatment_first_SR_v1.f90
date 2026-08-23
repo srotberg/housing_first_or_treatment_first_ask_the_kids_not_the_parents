@@ -1783,7 +1783,7 @@
         ! the bracket kept being discarded on. At thirteen nodes packed toward
         ! the bottom the first carries 0.164 per cent and six of them lie below
         ! the fifteenth percentile, where the housing and drug margins sit.
-        integer, parameter :: employment_grid_size=13
+        integer, parameter :: employment_grid_size=17
         integer, parameter :: productivity_below_which_to_reduce_ss=employment_grid_size
         real(8) :: scaling_of_ss=(1-reduce_ss_by_half)*1+reduce_ss_by_half*0.5
         real(8) :: scaling_of_ss_adjuster=0
@@ -22091,7 +22091,7 @@
         ! resolution is worth paying for. At 2.5 with thirteen nodes the bottom
         ! interval carries 0.164 per cent of households, comfortably under the
         ! 0.399 per cent the homelessness target asks for.
-        real(8), parameter :: y_grid_kappa=2.5d0
+        real(8), parameter :: y_grid_kappa=2.8d0
         real(8), dimension(employment_grid_size+1) :: p_edge_1,tail_mean_1
         real(8) :: sum_of_dist,sum_of_unconditional_unemployment
         integer, intent(in) :: time_period
@@ -31591,6 +31591,14 @@
                         max_food_cost=max(min(max_food_cost-max_food_cost_adjuster*&
                             (govt_spending_on_food_stamps(1)/model_average_labour_income(1)-&
                             food_stamps_share_data),1.d0),10.d0**(-4))
+                        ! PRINT THE RATIO THIS UPDATE COMPARES. The run printed
+                        ! only govt_spending_on_food_stamps/model_output, and a
+                        ! report reading that against food_stamps_share_data
+                        ! scored a 99 per cent miss on a comparison the
+                        ! calibration never makes.
+                        write(*,*) "govt_spending_on_food_stamps/model_average_labour_income=", &
+                            govt_spending_on_food_stamps(1)/model_average_labour_income(1)
+
                         distance_max_food_cost=&
                             abs(govt_spending_on_food_stamps(1)/model_average_labour_income(1)-food_stamps_share_data)
                         write(*,*) "max_food_cost=", max_food_cost
