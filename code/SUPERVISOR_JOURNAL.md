@@ -296,3 +296,9 @@ Recorded rather than escalated: the decision taken was to work on the compositio
 Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
 
 - `largest_house_size` moved 0.3835 to 0.092, one way across 16 loops, and its moment is not reported as a scalar
+
+## Noted, not acted on: the income gradient has inverted
+
+income of the disordered over average income is 1.110, 1.141, 1.206 across 3 loops: the users are not the poor, which is the fact the model exists to produce
+
+Recorded rather than escalated: the decision taken was to work on the composition moments first.
