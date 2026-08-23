@@ -254,3 +254,9 @@ Recorded, not acted on: damping a drift or repairing a moment pairing is a model
 income of the disordered over average income is 1.118, 1.110, 1.141 across 3 loops: the users are not the poor, which is the fact the model exists to produce
 
 Not fixed automatically: outside the catalogue. This one needs a person.
+
+## Parameters drifting one way
+
+Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
+
+- `smallest_rental` moved 0.0169 to 0.0015, one way across 9 loops, and its moment is not reported as a scalar
