@@ -806,7 +806,36 @@
         ! calibration. It is the wrong setting for FINDING one, and it was on:
         ! size_homelessness sat at its starting 0.21 through every loop while
         ! homelessness fell from 1.2e-4 to 4.6e-5 against a target of 3.99e-3.
-        integer, parameter :: re_do_simulation_with_fixed_parameters=0
+        ! A SWEEP OF b, BECAUSE THE JOINT SEARCH CANNOT FIND IT.
+        !
+        ! Participation runs at 0.145 against a target of 0.089 and everything
+        ! downstream of it is unidentified at that level: theta is pinned at its
+        ! ceiling trying to reach a drug spending share that too many users make
+        ! unreachable, and the income gradient, the spending share and the
+        ! treatment margin are all measured on a population twice the size it
+        ! should be. b is the parameter that sets participation -- the marginal
+        ! value of the first unit is theta/b, so participation FALLS in b -- and
+        ! the joint sweep cannot pin it because every other parameter moves
+        ! underneath it in the same loop, which is visible in the run: b at
+        ! 0.0911 gave participation of 0.271 in one loop and 0.135 in another.
+        !
+        ! So b is swept ALONE, at fixed everything else, and the value that hits
+        ! 0.089 is read off the curve. Set sweep_addiction_scalar to 1 and put
+        ! the grid in B_SWEEP_GRID.txt, one value a line. Parameter updating is
+        ! switched off with it, which is what re_do_simulation_with_fixed_
+        ! parameters is for, so nothing else moves while the curve is measured.
+        integer, parameter :: sweep_addiction_scalar=1
+        integer, parameter :: max_sweep_points=64
+        real(8), dimension(max_sweep_points) :: sweep_b_grid=0
+        integer :: sweep_points=0
+        ! ITS OWN COUNTER, NOT loop_count. loop_count is incremented twice per
+        ! calibration pass -- once deep in the housing state copy and once at the
+        ! foot of the sweep -- which is why the checkpoints read loop 3 and loop 5
+        ! where three and five passes had not run. Indexing a grid by it would take
+        ! every other point and then run off the end.
+        integer :: sweep_index=1
+
+        integer, parameter :: re_do_simulation_with_fixed_parameters=sweep_addiction_scalar
         integer, parameter :: calibrate_only_rental_management_costs=1
                                                                                                                                                                                                                                                                                                                                     
         real(8), parameter :: property_tax_deductibility=0
@@ -29483,7 +29512,37 @@
         ! the only thing that had changed was that a previous loop had left a
         ! checkpoint on disk for it to read.
         call read_calibration_distribution()
-                                    
+
+        ! THE SWEEP'S GRID, READ RATHER THAN COMPILED IN, so a container that
+        ! rebuilds mid sweep resumes on the points that are left: the driver
+        ! rewrites this file with the remainder before each launch, and
+        ! loop_count then indexes it from one either way.
+        if (sweep_addiction_scalar==1) then
+
+            open(unit=77,file="B_SWEEP_GRID.txt",action='read',status='old',iostat=sweep_points)
+            if (sweep_points/=0) then
+                write(*,*) "B SWEEP: no B_SWEEP_GRID.txt, nothing to sweep"
+                stop
+            end if
+            sweep_points=0
+            do
+                if (sweep_points>=max_sweep_points) exit
+                read(77,*,end=7701) sweep_b_grid(sweep_points+1)
+                sweep_points=sweep_points+1
+            end do
+7701        close(77)
+
+            if (sweep_points==0) then
+                write(*,*) "B SWEEP COMPLETE: the grid file is empty"
+                stop
+            end if
+
+            addiction_scalar_1=sweep_b_grid(1)
+            write(*,*) "B SWEEP: ", sweep_points, " points, starting at b=",&
+                addiction_scalar_1
+
+        end if
+
         do while((distance_rental_market(1)>stopping_rule_rental_market) .OR. &
             (distance_discount_factor>stopping_rule_discount_factor) .OR. &
             (distance_discount_factor_on_child>stopping_rule_discount_factor_on_child) .OR. &
@@ -33453,6 +33512,26 @@
             loop_count=loop_count+1
             
             write(*,*) "loop_count=", loop_count
+
+            ! THE NEXT POINT OF THE SWEEP. The moments of the point just
+            ! finished are already in the log above this line, so the driver
+            ! reads them from the loop segment and this only has to move b on.
+            if (sweep_addiction_scalar==1) then
+
+                sweep_index=sweep_index+1
+
+                if (sweep_index>sweep_points) then
+
+                    write(*,*) "B SWEEP COMPLETE: ", sweep_points, " points measured"
+                    stop
+
+                end if
+
+                addiction_scalar_1=sweep_b_grid(sweep_index)
+                write(*,*) "B SWEEP point ", sweep_index, " of ", sweep_points,&
+                    " at b=", addiction_scalar_1
+
+            end if
 
             ! A DISTANCE THAT IS NOT A NUMBER MUST NOT READ AS CONVERGED.
             !
