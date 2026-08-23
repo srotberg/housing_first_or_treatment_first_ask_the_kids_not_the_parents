@@ -76,23 +76,38 @@ LOOP_MARK = re.compile(r'^\s*loop_count=\s*(\d+)', re.M)
 _NUM = r'([-+]?[0-9]*\.?[0-9]+(?:[EDed][-+]?[0-9]+)?)'
 
 # Adding a parameter here is what makes it watched.
+#
+# EVERY PATTERN IS ANCHORED TO THE START OF ITS LINE, and that is not tidiness.
+# The model prints "distance_relative_share_of_leisure=" right after
+# "relative_share_of_leisure=", read_loops keeps the LAST match in a loop, and an
+# unanchored name is a substring of its own distance line: six of the fourteen
+# columns were reading the convergence distance rather than the parameter, which
+# reads as a parameter falling smoothly to zero -- a runaway -- when what is
+# actually happening is the bracket converging. lambda_m was worse still,
+# matching a setup line from build_smi_onset and so reading the same number every
+# loop, which reads as a frozen parameter. Anchor, then check with the audit at
+# the foot of rebuild_params_trace.py, which fails loudly on an ambiguous name.
+_A = r'(?m)^\s*'
 WATCH = {
-    'smallest_rental': r'smallest_rental_relative_to_lowest_income=\s*' + _NUM,
-    'size_homelessness': r'size_homelessness=\s*' + _NUM,
-    'largest_house_size': r'largest_house_size=\s*' + _NUM,
-    'grid_expander': r'housing_status_grid_expander=\s*' + _NUM,
-    'lambda_m': r'lambda_m=\s*' + _NUM,
-    'mu_homeless': r'mu_homeless=\s*' + _NUM,
-    'kappa_uem': r'kappa_uem=\s*' + _NUM,
-    'discount_factor': r'discount_factor=\s*' + _NUM,
-    'relative_share_housing': r'relative_share_of_housing=\s*' + _NUM,
-    'relative_share_leisure': r'relative_share_of_leisure=\s*' + _NUM,
-    'addiction_scalar': r'addiction_scalar_1=\s*' + _NUM,
+    'smallest_rental': _A + r'smallest_rental_relative_to_lowest_income=\s*' + _NUM,
+    'size_homelessness': _A + r'size_homelessness=\s*' + _NUM,
+    'largest_house_size': _A + r'largest_house_size=\s*' + _NUM,
+    'grid_expander': _A + r'housing_status_grid_expander=\s*' + _NUM,
+    'lambda_m': _A + r'lambda_m=\s*' + _NUM,
+    'mu_homeless': _A + r'mu_homeless=\s*' + _NUM,
+    'kappa_uem': _A + r'kappa_uem=\s*' + _NUM,
+    'discount_factor': _A + r'discount_factor=\s*' + _NUM,
+    'relative_share_housing': _A + r'relative_share_of_housing=\s*' + _NUM,
+    'relative_share_leisure': _A + r'relative_share_of_leisure=\s*' + _NUM,
+    'addiction_scalar': _A + r'addiction_scalar_1=\s*' + _NUM,
     # THE FACT THE PAPER EXISTS TO EXPLAIN, watched like a parameter because a
     # calibration that hits every target while the rich are the users has not
     # succeeded at anything. It is not a target and no bracket moves on it.
-    'income_of_users': r'model_avg_income_drug_users/model_average_labour_income,\s*' + _NUM,
-    'income_of_disordered': r'model_average_income_addicted/model_average_labour_income\.\s*' + _NUM,
+    'income_of_users': _A + r'model_avg_income_drug_users/model_average_labour_income,\s*' + _NUM,
+    'income_of_disordered': _A + r'model_average_income_addicted/model_average_labour_income\.\s*' + _NUM,
+    # Treatment take up is the moment furthest from its target, so this is the
+    # parameter to watch when the run stalls.
+    'utility_cost_treatment': _A + r'utility_cost_of_treatment=\s*' + _NUM,
 }
 
 # The Fortran name of each watched parameter's step size. Shrinking a step is
@@ -111,8 +126,22 @@ ADJUSTER = {
 # Moments, so a parameter moving against a moment that does not respond can be
 # told from a bracket that is merely slow.
 MOMENTS = {
-    'homelessness': r'model_fraction_homeless\(1\)=\s*' + _NUM,
+    'homelessness': _A + r'model_fraction_homeless\(1\)=\s*' + _NUM,
 }
+
+# Parameters the model itself documents as able to sit on a bound, with the
+# value they sit at. A parameter here is NOT frozen when it reads that value: it
+# has arrived somewhere the model has a printed explanation for, and stopping a
+# sixteen moment calibration over it would throw away the fifteen that are still
+# moving.
+#
+# bar_tau^u is the only one so far. At a utility cost of zero treatment is free
+# in utils and still costs the household its drug spending, because taking it
+# forces abstention, so a take up of zero is not this bracket failing -- it says
+# the BENEFIT side is too small, which is g, mu_H, pi_r and the abstention, and
+# no value of bar_tau^u reaches the target. The model prints exactly that when
+# it happens. It is reported, not treated as a fault.
+DOCUMENTED_FLOOR = {'utility_cost_treatment': 0.0}
 
 # The only bounds the supervisor may move. Nothing outside this table is edited.
 BOUNDS = {
@@ -177,6 +206,46 @@ def read_loops(path):
         if rec:
             out.append(rec)
     return out
+
+
+def banked_loops():
+    """Every loop of the whole run, from the trace that outlives the container.
+
+    WHY EVERY DIAGNOSIS WAS BLIND. read_loops reads the CURRENT log, and the
+    container rebuilds every half hour, so it never returned more than the two or
+    three loops that container lived for. RUNAWAY_LOOPS is 5 and FROZEN_LOOPS is
+    6: neither could ever be reached, and a parameter climbing one way for
+    fourteen loops went unnoticed because no single log held fourteen loops.
+    Reconstructed from the checkpoint commits afterwards, three pathologies were
+    sitting there in plain sight.
+
+    The trace is banked to git each loop, so it is the run's memory. The current
+    log is appended to it because the trace lags by one checkpoint.
+
+    ROWS ALTERNATE and that is expected. The model prints its moments and its
+    new parameters on opposite sides of the loop_count line the log is split on,
+    so a loop banked mid way lands as two rows, one carrying the income ratios
+    and one the parameters. Read a column downwards and it is the right series
+    either way: series() drops the rows a name is missing from.
+    """
+    rows = []
+    if not os.path.exists(PARAMS):
+        return rows
+    with open(PARAMS) as f:
+        head = f.readline().rstrip('\n').split('\t')
+        for line in f:
+            f_ = line.rstrip('\n').split('\t')
+            rec = {}
+            for k, v in zip(head, f_):
+                if k in ('utc', 'loop') or not v:
+                    continue
+                try:
+                    rec[k] = float(v)
+                except ValueError:
+                    pass
+            if rec:
+                rows.append(rec)
+    return rows
 
 
 def series(loops, name):
@@ -327,6 +396,9 @@ def diagnose_frozen_parameter(loops):
             continue
         tail = v[-FROZEN_LOOPS:]
         if max(tail) - min(tail) > max(abs(tail[-1]), 1e-12) * 1e-9:
+            continue
+        floor = DOCUMENTED_FLOOR.get(name)
+        if floor is not None and abs(tail[-1] - floor) <= 1e-12:
             continue
         if name in BOUNDS:
             return dict(name=f'{name} frozen at {tail[-1]:g}',
@@ -596,16 +668,20 @@ def main():
     while True:
         time.sleep(poll)
         alive = proc.poll() is None
-        loops = read_loops(LOG)
+        # THE WHOLE RUN, not this container's slice of it. See banked_loops.
+        loops = banked_loops() + read_loops(LOG)
         done, said = verdict()
 
         # BANK EVERY LOOP. See checkpoint(): nothing that is not pushed survives
         # a container restart, and the box rebuilds itself often enough that an
         # unbanked calibration never finishes. A few seconds against seven
         # minutes a loop.
+        here = read_loops(LOG)
         if len(loops) > banked:
             banked = len(loops)
-            checkpoint(loops)
+            # checkpoint appends THIS container's latest loop, so it is handed
+            # the current log's loops rather than the merged history.
+            checkpoint(here or loops)
 
         if done:
             print(f'supervisor: CONVERGED, {said}')
