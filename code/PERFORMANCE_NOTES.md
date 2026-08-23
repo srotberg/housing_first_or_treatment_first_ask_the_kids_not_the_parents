@@ -953,3 +953,41 @@ anything.
 
 `diagnose_distribution_max` stays on: at a two hundred sweep cap it costs two
 lines a loop, and those two lines are the standing evidence that the cap is safe.
+
+## 20. The container rebuilds every half hour, and the idle time cost more than the rebuild
+
+Four rebuilds between 04:20 and 06:20. Each one kills the run. The supervisor
+banks its parameter state to git every loop, so a rebuild costs one loop rather
+than the calibration -- but only once something relaunches it, and until now that
+was a scheduled check up to thirty minutes later. Against a sixteen minute loop
+the waiting was the larger loss.
+
+`.claude/hooks/session-start.sh` relaunches it when the container comes up, so
+the gap closes to nothing.
+
+**Three guards on a hook that takes four cores for hours.**
+
+*It runs only in the remote environment.* On a laptop it would seize the machine
+without being asked.
+
+*Its off switch is a file, not an edit.* `code/CALIBRATION_ACTIVE` has to be
+present or the hook exits. Stopping the calibration is `rm`, starting it is
+`touch`. A hook whose only off switch is editing the hook is a trap, and this one
+fires on every session in the repository.
+
+*Its idempotence test is positional.* The obvious test,
+`ps -eo args | grep supervise_calibration.py`, matches any command line that
+mentions the script -- an editor, a grep, the shell launching it -- so the hook
+would decline to start the thing it exists to start. Measured with one supervisor
+actually running and a decoy shell alongside: the substring test reported four
+matches, the positional test one. That same self match has killed a report loop
+mid launch and made a progress report claim the supervisor was up when it was
+down.
+
+The check is `argv[0]` is a python and `argv[1]` is the script:
+
+```sh
+ps -eo args= | awk '{ n = split($1, p, "/"); m = split($2, q, "/");
+                      if (p[n] ~ /^python/ && q[m] == "supervise_calibration.py") found = 1 }
+                    END { exit found ? 0 : 1 }'
+```
