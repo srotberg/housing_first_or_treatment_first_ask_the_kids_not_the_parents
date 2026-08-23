@@ -232,9 +232,15 @@ def main():
         if flag is not None and float(flag) == 0:
             continue
 
+        # A PARAMETER WITH A ZERO ADJUSTER IS NOT BEING CALIBRATED, so it has no
+        # place in a table of the ones that are. It was shown as "held" with its
+        # gap, which invited the gap to be read as a miss: the discount factor on
+        # the child sat at the top of the table at a hundred per cent off while
+        # nothing was moving it. Homeownership being switched off is what zeroes
+        # these, and they return the moment it is switched back on.
         status = ''
         if (name in frozen or (name in live and live[name] == 0.0)) and gap > 1e-6:
-            status = 'held'
+            continue
 
         clears = name in rule and abs(model - target) <= rule[name]
         if clears:
