@@ -333,7 +333,7 @@ nothing back, so in the model 7.4 percent are strictly worse off under Treatment
 and none is better off. Switching on the externality a parent imposes on its child, both from homelessness and from a SUD, turns the ranking, but only in the long run, from the third
 cohort of newborns onward, since in this model a household deterred by Treatment First from using never acquires
 the disorder and its children inherit better draws. Conditionality, however, takes
-immediately in this model and gives back only later (though the quantitative model carries channels through which it can also give something back at once\textcolor{red}{, explained shortly below}): a household
+immediately in this model and gives back only later (though the quantitative model carries channels through which it can also give something back at once, explained shortly below): a household
 already carrying the disorder when the reform lands can do nothing about its
 condition here, and loses its voucher anyway. So Housing First
 is still ahead in the short run, but by very little, costing the generation caught
@@ -2671,7 +2671,7 @@ puts on that onset, and that is where the interaction lives.
 (2020).
 
 \item[$\xi$, tax progressivity.] The exponent on income in the tax schedule of
-Section~\ref{sec:ftaxes} \new{is set to} $0.85$ from Heathcote et al.\ (2017). It determines the progressivity of the labour income tax. That in turn decides
+Section~\ref{sec:ftaxes} is set to $0.85$ from Heathcote et al.\ (2017). It determines the progressivity of the labour income tax. That in turn decides
 how much a programme's bill falls on the households it is meant to help, and how much
 on everybody else.
 
@@ -2689,41 +2689,42 @@ makes both programmes distortionary.
 
 \end{description}
 
-\paragraph{\new{Social security benefits and programmes' rules}.}
+\paragraph{Social security benefits and programmes' rules.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\psi_R$, the social security replacement rate.] Retirement income is
-$\psi_R=0.40$ times the \new{base productivity state} for the last $J-J_R$ years of life,
-from the SSA. As it rises the old are richer \new{(at the expense of the young, who are subject to higher distortionary taxes)}, so the value of a life still to be lived
+$\psi_R=0.40$ times the base productivity state for the last $J-J_R$ years of life,
+from the SSA. As it rises the old are richer (at the expense of the young, who are subject to higher distortionary taxes), so the value of a life still to be lived
 rises and with it the cost of a disorder that shortens it.
-\item[$\psi_{ui}$ and $\bar y$, unemployment insurance.] These two set the \new{UI replacement}
+\item[$\psi_{ui}$ and $\bar y$, unemployment insurance.] These two set the UI replacement
 rate and the cap on the earnings it is paid on. I set them to fifty percent and one
 times average income, respectively, taking both from the statutory replacement rates
 and state benefit maxima that the Department of Labor compiles in its comparison of
-state \new{UI} laws
+state UI laws
 (\url{https://oui.doleta.gov/unemploy/statelaws.asp}).
 
-\item[$\varrho$, the food stamp clawback rate.] \new{This is the} rate at which food assistance is withdrawn as income rises. I set it to thirty percent, which is the statutory rule: a household\textquotesingle s monthly allotment is the maximum allotment for its size reduced by thirty percent of its net monthly income (7 CFR 273.10). \new{It matters beyond the level of the transfer, because it is the implicit marginal tax the programme puts on earnings for the households the paper is about: an extra dollar earned costs a household on food assistance $\varrho$ of a dollar of its allotment}.
+\item[$\varrho$, the food stamp clawback rate.] This is the rate at which food assistance is withdrawn as income rises. I set it to thirty percent, which is the statutory rule: a household\textquotesingle s monthly allotment is the maximum allotment for its size reduced by thirty percent of its net monthly income (7 CFR 273.10). It matters beyond the level of the transfer, because it is the implicit marginal tax the programme puts on earnings for the households the paper is about: an extra dollar earned costs a household on food assistance $\varrho$ of a dollar of its allotment.
 
 \item[$\kappa_V$ and $\kappa_r$, the voucher rules.] These two set the income
 cutoff for eligibility and the tenant's contribution, and I take both from HUD's own
 rules. I set them to half of median income and thirty
 percent, respectively. The first is the very low-income limit HUD publishes
 annually with its income limits
-(\url{https://www.huduser.gov/portal/datasets/il.html}); the second is the share \new{of rent a tenant pays when} a voucher covers the rest, under the Housing Choice
+(\url{https://www.huduser.gov/portal/datasets/il.html}); the second is the share of rent a tenant pays when a voucher covers the rest, under the Housing Choice
 Voucher programme
 (\url{https://www.hud.gov/helping-americans/housing-choice-vouchers}).
 
 \end{description}
 
-\paragraph{Drug market.} These three parameters describe the drug market: the first
+\paragraph{Drug market.} These three parameters describe \new{the rest of} the drug
+market\new{, closing the loop on the elasticity parameter explained in Section~\ref{sec:fullcal}}: the first
 fixes who can enter it, and the other two fix the units in which its price and
 quantity are measured.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$J_E$, the maximum age at which use can begin.] I set it to fifty five in model terms, which corresponds to age $80$ in the data.
+\item[$J_E$, the maximum age at which use can begin \new{(whereas households with a SUD above this age can continue to use)}.] I set it to fifty five in model terms, which corresponds to age $80$ in the data.
 It is there so that use cannot begin in the last few years of life, where almost no
 continuation value remains to be lost and the private cost of using is therefore
 close to zero. That is an artefact of the horizon rather than a feature of the world:
-to keep the age dimension manageable the model imposes certain mortality by age $85$,
+to keep the age dimension manageable the model imposes certain mortality \new{after} age $85$,
 so a household near the end knows death is coming with certainty and a disorder costs
 it almost nothing. Without the cap the model would let use begin exactly there, and
 at the final age it would be worse than that, since a household that acquires the
@@ -2732,7 +2733,7 @@ disorder carries literally no consequence and only the flow benefit of using, wh
 cannot be a reasonable description of the choice either.
 
 \item[$\nu_1$, the supply shifter.] A pure normalisation, chosen so that supply
-equals demand at $p_v=1$ in the benchmark. It normalises units, not behaviour.
+equals demand at $p_v=1$ in the benchmark\new{, and held fixed across experiments}. It normalises units, not behaviour.
 
 \item[$p_v$, the drug price.] Set to one by normalisation in the benchmark, but
 free in every counterfactual. It is an equilibrium object rather than a dial.
@@ -2745,10 +2746,14 @@ free in every counterfactual. It is an equilibrium object rather than a dial.
 None of the moments below is fitted. Each is produced endogenously by a model
 with sixty single ages, and each is a place the model can be caught.
 Section~9 of \texttt{data/}\allowbreak\texttt{DATA\_APPENDIX.md} in the replication
-package derives the data side of every one of them, and it is the place to go for
+package derives the data side of \new{all but two of them}, and it is the place to go for
 everything needed to replicate them: the dataset, the year, the universe, the
 computation, and the three cases where the universe rather than the arithmetic
-decides the number. The package ships those datasets as well, so none of them has
+decides the number. \new{The two it does not carry are named where they come
+from instead: the intensive margin elasticity is the midpoint of the range in
+Section~\ref{sec:literature}, and the earnings shares of the two tenths fall out of
+the same distribution $\sigma_y$ is calibrated on, which Section~\ref{sec:fullcal}
+derives.} The package ships those datasets as well, so none of them has
 to be downloaded first. The standardised mortality ratio below is age-weighted.
 Two shares of the earnings distribution come out alongside the one $\sigma_y$ is
 chosen on and are untargeted: the model's top tenth holds $38.5$ percent of earnings
@@ -2787,6 +2792,7 @@ Standardised mortality ratio, homeless & 9.1, 4.5, 1.1 by band & Baggett et al. 
 Tenant contribution rate & 31.2 percent & HUD \\
 Voucher holders with wages as main income & 28 percent & HUD \\
 Income, moderate or severe SUD over average & 71.1 percent & NSDUH 2024 \\
+\new{Average income of drug users} & \new{$0.74\times$ average income} & \new{NSDUH 2024} \\
 Labour force participation, SUD against clean & 65.8 against 61.5 percent & NSDUH 2024 \\
 Homeless at treatment admission & 14.5 percent & TEDS-A 2022 \\
 Psychiatric problem alongside SUD at admission & 43.1 percent & TEDS-A 2022 \\
