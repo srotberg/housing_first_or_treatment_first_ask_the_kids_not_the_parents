@@ -19788,6 +19788,24 @@
 
                 end do
 
+                ! WHY THE POPULATION IS NOT SHIFTING. The realised mass by
+                ! productivity node matches the unconditional lognormal to three
+                ! significant figures at every node, and it should not: a tenth
+                ! of parents carry the disorder, their children's draw puts
+                ! nearly four times the mass in the bottom three nodes, and
+                ! productivity is permanent, so the stationary cross section IS
+                ! the newborn draw. Something between this mixture and the
+                ! distribution is losing the penalty. Print the mixture and the
+                ! shares that built it, so the next loop says which.
+                write(*,*) "newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=", &
+                    newborn_parent_share(0,1), newborn_parent_share(1,1), &
+                    newborn_parent_share(0,2), newborn_parent_share(1,2)
+                write(*,*) "newborn_productivity_draw=", newborn_productivity_draw(:)
+                write(*,*) "newborn_employment_probability, clean housed=", &
+                    newborn_employment_probability(:,0,1)
+                write(*,*) "newborn_employment_probability, disordered housed=", &
+                    newborn_employment_probability(:,1,1)
+
                 newborn_smi_at_birth=0
 
                 if ((number_of_smi_states>1) .AND. (allocated(smi_prevalence_by_age))) then
