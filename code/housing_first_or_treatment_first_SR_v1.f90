@@ -2776,6 +2776,12 @@
         integer :: choose_to_own
                                                                              
         real(8) :: distance_distribution=1
+        ! WHAT THE SWEEPS ACTUALLY REACHED, in the module rather than local to
+        ! converge_to_stationary_equilibrium, because the callers need it: the
+        ! omega counterfactual reports whether its own distribution settled, and
+        ! a solve that left on the sweep cap gives a partial adjustment rather
+        ! than the moment.
+        real(8) :: distance_distribution_reached=-1
         
         real(8), dimension(life_span) :: cohort_population
         real(8) :: total_population
@@ -19083,10 +19089,6 @@
         integer :: financial_index,has_house,time_period,track_housing_1,voucher_index_1
         integer :: number_of_threads_used,loop_only_over_oldest,amortization_used,is_addicted_1
         real(8) :: sum_distribution_implied,sum_distribution_guess,avg_income_to_use_1,avg_income_to_use_2
-        ! WHAT THE SWEEPS ACTUALLY REACHED, kept separately because the stall
-        ! path zeroes distance_distribution to break the loop and DIST_DONE
-        ! would otherwise report a stalled solve as having finished at zero.
-        real(8) :: distance_distribution_reached
         integer, dimension(6) :: dist_argmax_1
         integer :: dist_dim_1
         real(8) :: dist_mass_1,dist_wealth_1
@@ -29546,8 +29548,27 @@
 
                 child_penalty_off=0
 
+                ! WHETHER THE COUNTERFACTUAL'S OWN DISTRIBUTION SETTLED, which
+                ! decides whether its sign can be read at all. The counterfactual
+                ! re-solves the distribution from the baseline's, and the sweep
+                ! cap is two hundred; a solve that leaves on the cap has moved
+                ! part of the way to the counterfactual and the gap it reports is
+                ! a partial adjustment rather than the moment.
+                !
+                ! IT IS PRINTED BECAUSE THE SIGN CAME OUT WRONG ONCE. At loop 3 of
+                ! a cold run, removing the penalty CUT use by 75 per cent where
+                ! the mechanism says it should raise it by about 18: the term is
+                ! zero for a clean housed parent and negative otherwise, so
+                ! removing it makes the disordered states cheaper and use should
+                ! rise. Whether that was the model sitting far from its calibrated
+                ! point -- participation was seven times its target at that loop
+                ! -- or something wrong in the counterfactual cannot be told from
+                ! the number alone, so the run now says what the number was
+                ! measured on.
                 write(*,*) "omega counterfactual: drug users with the child penalty off =",&
-                    drug_users_without_child
+                    drug_users_without_child, " counterfactual distribution sweeps =",&
+                    loop_count_dist, " reached =", distance_distribution_reached,&
+                    " capped =", merge(1,0,loop_count_dist>=max_distribution_sweeps)
 
             end if
 
