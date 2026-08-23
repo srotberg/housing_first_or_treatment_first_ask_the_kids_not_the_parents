@@ -30641,100 +30641,54 @@
                     
                     if (calibrate_smallest_house_size==1) then
 
-                        ! THE SMALLEST RENTAL TARGETS THE EMPLOYED SHARE OF THE
-                        ! HOMELESS, and the size distribution is left to the other
-                        ! two rungs.
+                        ! THE SMALLEST RENTAL TARGETS THE SHARE LIVING IN THE
+                        ! SMALLEST UNIT. It used to target the employed share of
+                        ! the homeless, and that target could not be had at the
+                        ! same time as the homelessness RATE, because both were
+                        ! being asked of this one parameter and they wanted
+                        ! values six to eight times apart. The run measured it:
                         !
-                        ! The price of the cheapest dwelling is what decides
-                        ! whether a household with a job can be housed at all, so
-                        ! it is the natural instrument for that share and rho_d is
-                        ! not: rho_d was being asked both to set the level of
-                        ! employed homelessness AND to say how costly the disorder
-                        ! is at every income, and the second job is what fixes the
-                        ! sign of drug use in income.
+                        !   h_2      room as a share    homelessness   employed
+                        !            of poorest income      rate       share
+                        !   0.0158        45.9%           0.0075        0.934
+                        !   0.0048        13.0%           0.00045       0.978
+                        !   0.0015         5.3%           0.0000068     0.499
                         !
-                        ! THE SIGN. Too many of the homeless are employed when the
-                        ! cheapest unit is too dear for a working household to
-                        ! take, so a positive gap calls for a SMALLER unit, which
-                        ! is the sign the update below already had for its old
-                        ! moment.
+                        ! The 0.50 employed share needs 0.0015, where the
+                        ! cheapest room costs five per cent of the poorest
+                        ! household's income and essentially nobody is priced out
+                        ! of housing, so homelessness collapses to six hundred
+                        ! times below target and h_1 cannot recover it: making
+                        ! the street relatively worse cannot put people on it
+                        ! when a room is nearly free.
+                        !
+                        ! The size distribution's bottom rung is the moment this
+                        ! parameter can actually carry, and it agrees with the
+                        ! homelessness rate about where h_2 belongs. Measured
+                        ! across the run, the share on the smallest rung rises
+                        ! monotonically in h_2 -- 0.004 at 0.0015, 0.048 at
+                        ! 0.0048, 0.236 at 0.0144, 0.398 at 0.0169 -- and crosses
+                        ! its target of 0.132 near h_2 = 0.011, which is also
+                        ! where the homelessness rate wants it.
+                        !
+                        ! THE SIGN IS UNCHANGED, and that is not luck: the share
+                        ! rises in h_2 and the update subtracts the gap, so a
+                        ! share below target raises h_2, which is the direction
+                        ! the table above shows.
+                        !
+                        ! THE EMPTY SET GUARD IS GONE WITH THE OLD MOMENT. The
+                        ! size distribution is taken over HOUSED households, who
+                        ! are never absent, so there is no conditional mean over
+                        ! a vanishing population to protect against here. Leaving
+                        ! the guard in would have frozen h_2 at exactly the point
+                        ! it is needed, since homelessness is near zero now.
                         write(*,*) "model_housing_size_dist=", model_housing_size_dist(1,:)
                         write(*,*) "housing_size_dist_data=", housing_size_dist_data
                         write(*,*) "smallest_rental_relative_to_lowest_income=", &
                             smallest_rental_relative_to_lowest_income
 
-                        ! A MOMENT MEASURED ON AN EMPTY SET IS NOT A MOMENT.
-                        ! model_fraction_of_homeless_unemployed is set to zero by
-                        ! the else branch that guards its division, so with no
-                        ! homeless households the employed share reads a clean
-                        ! 1.0 and the gap against 0.50 is a fabricated +0.5.
-                        !
-                        ! IT IS NOT SELF CORRECTING, which is why it has to be
-                        ! guarded rather than waited out. A positive gap calls
-                        ! for a SMALLER cheapest dwelling; a smaller one is
-                        ! cheaper, so it houses MORE people, so homelessness
-                        ! stays at zero and the gap never changes. At a cold
-                        ! start this drove smallest_rental_relative_to_lowest_income
-                        ! from 0.0361 to 0.0111 in a single loop and would have
-                        ! run it to its lower bound.
-                        !
-                        ! h_1 IS WHAT CREATES HOMELESSNESS, through
-                        ! size_homelessness, and until it has, this bracket has
-                        ! nothing to read. Holding the parameter and refusing to
-                        ! report convergence is the honest state: the moment is
-                        ! not missed, it is unmeasurable.
-                        ! A SLIVER IS AS UNMEASURABLE AS AN EMPTY SET. The
-                        ! guard below fired only at EXACTLY zero homeless mass,
-                        ! and the failure it was written for arrives long before
-                        ! that. At a homelessness rate of 0.06 per cent against a
-                        ! target of 0.40, the employed share of the homeless is a
-                        ! conditional mean over a seventh of the population the
-                        ! moment is meant to describe; it read 0.99 and drove h_2
-                        ! from 0.006 to 0.0048 in one loop, toward a floor of
-                        ! 0.004, on evidence that is mostly sampling of a corner.
-                        !
-                        ! h_1 IS WHAT RESTORES THE POPULATION, through
-                        ! size_homelessness, and h_2 has nothing to read until it
-                        ! has. A quarter of the target is the threshold: below it
-                        ! the conditional share is not informative about the
-                        ! price of the cheapest room, and holding is honest where
-                        ! moving is noise.
-                        if ((model_mass_homeless_raw(1)<=10.d0**(-12)) .OR. &
-                            (model_fraction_homeless(1)<0.25d0*fraction_homeless_data)) then
-
-                            ! UNMEASURABLE, OR UNMEASURABLE BECAUSE OF THE BOUND?
-                            ! Holding is right for the first and a trap for the
-                            ! second: at the floor, zero homelessness is itself
-                            ! evidence that the cheapest dwelling is too cheap,
-                            ! which IS information about h_2 even though the
-                            ! conditional moment carries none. Back off the floor
-                            ! rather than freeze against it.
-                            if (smallest_rental_relative_to_lowest_income<=&
-                                smallest_rental_floor*(1+10.d0**(-9))) then
-
-                                smallest_rental_relative_to_lowest_income=&
-                                    min(1.5d0*smallest_rental_relative_to_lowest_income+&
-                                    smallest_rental_floor,10.d0)
-
-                                write(*,*) "h_2 BACKED OFF ITS FLOOR: no homelessness at the floor means the"
-                                write(*,*) "   cheapest dwelling is too cheap; h_2 raised to ", &
-                                    smallest_rental_relative_to_lowest_income
-
-                            else
-
-                                write(*,*) "h_2 HELD: no homeless mass, so the employed share of the homeless"
-                                write(*,*) "   is not measurable and smallest_rental_relative_to_lowest_income does not move"
-
-                            end if
-
-                            distance_smallest_house_size=1
-
-                            goto 8801
-
-                        end if
-
                         gap_house_size_1=&
-                            model_employed_share_of_homeless(1)-employed_share_of_homeless_data
+                            model_housing_size_dist(1,0)-housing_size_dist_data(0)
 
                         if (have_gap_smallest_house_size==1) then
 
@@ -30764,7 +30718,7 @@
                             gap_house_size_1,smallest_rental_floor),10.d0) 
                                                                      
                         distance_smallest_house_size=&
-                            abs(model_employed_share_of_homeless(1)-employed_share_of_homeless_data)
+                            abs(model_housing_size_dist(1,0)-housing_size_dist_data(0))
 
 8801                    continue
                                                          
