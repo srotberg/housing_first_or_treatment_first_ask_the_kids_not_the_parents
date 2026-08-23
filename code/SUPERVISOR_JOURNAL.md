@@ -39,3 +39,12 @@ now rather than fixed, because raising or damping it is a modelling call.
 
 Converging: the leisure share is 3.3 per cent off, the tax rate 0.7, the
 separation rate 4.2, the addiction hazard 6.4, the voucher probability 7.6.
+
+## Parameters drifting one way
+
+Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
+
+- `largest_house_size` moved 0.1276 to 0.3697, one way across 24 loops
+- `kappa_uem` moved 4.415 to 13.79, one way across 24 loops
+- `relative_share_housing` moved 0.2743 to 0.1265, one way across 24 loops
+- `relative_share_leisure` moved 3.495 to 0.5733, one way across 24 loops
