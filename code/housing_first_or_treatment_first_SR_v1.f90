@@ -29221,6 +29221,10 @@
                     write(*,*) "HANDOVER lambda_m:", lambda_m, "->", handover_value
                     lambda_m=max(min(handover_value,0.5d0),lambda_m_floor)
 
+                case ("kappa_uem")
+                    write(*,*) "HANDOVER kappa_uem:", kappa_uem, "->", handover_value
+                    kappa_uem=max(min(handover_value,40.d0),1.d0)
+
                 case ("weight_on_child")
                     write(*,*) "HANDOVER weight_on_child:", weight_on_child, "->", handover_value
                     weight_on_child=max(min(handover_value,1.d0),0.d0)
@@ -31728,9 +31732,20 @@
                         ! employment effect altogether, and left a distance that
                         ! could never fall below its stopping rule, so the loop
                         ! could not terminate however well anything else fitted.
+                        ! THE CEILING WAS 20 AND kappa_uem WALKED INTO IT.
+                        ! It reached 17.98 with the employment rate given SMI
+                        ! still at 0.68 against a target of 0.30, so three more
+                        ! loops would have parked it on the bound with the
+                        ! moment untouched and the distance unable to fall.
+                        ! A bound a parameter can reach while its moment is
+                        ! still wide is indistinguishable, from the loop's
+                        ! point of view, from a moment the model cannot hit.
+                        ! 40 is not a belief about the penalty's size: it is far
+                        ! enough away that reaching it would be evidence, not an
+                        ! artefact of where the ceiling was put.
                         kappa_uem=min(max(kappa_uem+kappa_uem_adjuster*&
                             (model_employment_rate_given_smi(1)-employment_rate_given_smi_data),&
-                            1.0d0),20.d0)
+                            1.0d0),40.d0)
 
                         distance_kappa_uem=&
                             abs(model_employment_rate_given_smi(1)-employment_rate_given_smi_data)
