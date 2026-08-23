@@ -252,7 +252,14 @@
         ! against the non parent level instead, so omega was being calibrated to
         ! a target roughly fifteen per cent too small.
         real(8), parameter :: child_use_gap_data=1.d0/0.845d0-1.d0
-        real(8) :: weight_on_child_adjuster=2*10.d0**(-2)
+        ! SMALL ON PURPOSE, so omega climbs from zero rather than jumping.
+        ! Its moment is a difference between two equilibrium solves and carries
+        ! their path in it, so a large step turns that noise into a large move:
+        ! the measured gap has been +4.31, +1.31, -0.18, -0.23, +0.93 and -0.29
+        ! across consecutive loops at an omega that never left 0.02. Starting at
+        ! zero and rising slowly keeps the parameter where the mechanism says it
+        ! belongs, small, while the moment settles.
+        real(8) :: weight_on_child_adjuster=2*10.d0**(-3)
         real(8) :: distance_weight_on_child=1
         real(8) :: stopping_rule_weight_on_child=10.d0**(-2)
         real(8) :: drug_users_without_child=0
@@ -843,7 +850,8 @@
         real(8), dimension(max_sweep_points) :: sweep_b_grid=0
         integer :: sweep_points=0
         integer :: handover_status=1
-        real(8) :: handover_b=-1
+        real(8) :: handover_value=-1
+        character(len=64) :: handover_name
         ! ITS OWN COUNTER, NOT loop_count. loop_count is incremented twice per
         ! calibration pass -- once deep in the housing state copy and once at the
         ! foot of the sweep -- which is why the checkpoints read loop 3 and loop 5
@@ -29052,26 +29060,65 @@
 
         end if
 
-        ! The handover file, if the sweep left one. Read after the band clamp
-        ! above so a value outside [b_lo, b_hi] is refused the same way a resumed
-        ! one is, and deleted so it cannot apply twice.
-        open(unit=79,file="B_HANDOVER.txt",action='read',status='old',iostat=handover_status)
+        ! THE HANDOVER FILE, AND IT CONSUMES ITSELF.
+        !
+        ! Putting a value chosen outside the loop back into it means putting it
+        ! into calibration_state.dat, which is written positionally: 128 of its
+        ! lines differ between two runs, so no diff identifies a parameter's
+        ! offset and it cannot be edited by hand. The model takes the value from
+        ! a file instead, AFTER the state is read, and deletes the file as it
+        ! does. One pass later the state carries it like any other parameter and
+        ! the loop owns it again; a standing override would PIN a parameter
+        ! rather than seed it, which is the opposite of what a handover is for.
+        !
+        ! One "name value" pair a line. Unknown names are reported and ignored
+        ! rather than silently dropped, because a typo in a handover is
+        ! indistinguishable from a parameter that would not move.
+        open(unit=79,file="PARAM_HANDOVER.txt",action='read',status='old',iostat=handover_status)
         if (handover_status==0) then
 
-            read(79,*,iostat=handover_status) handover_b
+            do
+
+                read(79,*,iostat=handover_status) handover_name, handover_value
+                if (handover_status/=0) exit
+
+                select case (trim(handover_name))
+
+                case ("addiction_scalar_1")
+                    write(*,*) "HANDOVER addiction_scalar_1:", addiction_scalar_1, "->", handover_value
+                    addiction_scalar_1=max(min(handover_value,b_hi),b_lo)
+
+                case ("size_homelessness")
+                    write(*,*) "HANDOVER size_homelessness:", size_homelessness, "->", handover_value
+                    size_homelessness=handover_value
+
+                case ("smallest_rental_relative_to_lowest_income")
+                    ! BOTH, because the ratio is what the bracket moves and the
+                    ! size is what the model prices, and the size is only rebuilt
+                    ! from the ratio before the first loop. A resumed run that
+                    ! set one and not the other would carry the old dwelling.
+                    write(*,*) "HANDOVER smallest_rental:",&
+                        smallest_rental_relative_to_lowest_income, "->", handover_value
+                    smallest_rental_relative_to_lowest_income=handover_value
+                    smallest_house_size=handover_value
+
+                case ("weight_on_child")
+                    write(*,*) "HANDOVER weight_on_child:", weight_on_child, "->", handover_value
+                    weight_on_child=max(min(handover_value,1.d0),0.d0)
+
+                case ("relative_share_of_addiction_1")
+                    write(*,*) "HANDOVER relative_share_of_addiction_1:",&
+                        relative_share_of_addiction_1, "->", handover_value
+                    relative_share_of_addiction_1=max(min(handover_value,theta_hi),theta_lo)
+
+                case default
+                    write(*,*) "HANDOVER IGNORED, unknown name: ", trim(handover_name)
+
+                end select
+
+            end do
+
             close(79,status='delete')
-
-            if ((handover_status==0) .AND. (handover_b>=b_lo) .AND. (handover_b<=b_hi)) then
-
-                write(*,*) "B HANDOVER: addiction_scalar_1 taken from the sweep,",&
-                    addiction_scalar_1, " ->", handover_b
-                addiction_scalar_1=handover_b
-
-            else
-
-                write(*,*) "B HANDOVER REFUSED: unreadable or out of band,", handover_b
-
-            end if
 
         end if
 
