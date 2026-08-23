@@ -3657,7 +3657,14 @@
         integer function survival_sud_of(d_1,treatment_1)
             implicit none
             integer, intent(in) :: d_1,treatment_1
-            survival_sud_of=d_1*(1-treatment_1*include_treatment)
+            ! THE DISORDER STILL KILLS WHILE IT IS BEING TREATED. This used to
+            ! return d_1*(1-treatment_1), so a household in treatment was priced
+            ! as though it did not carry the disorder at all for one period: the
+            ! mortality penalty was suspended for the length of the course. That
+            ! made treatment a second benefit on top of the recovery multiplier
+            ! and is not what a course of treatment does. Treatment now buys the
+            ! multiplier and nothing else.
+            survival_sud_of=d_1
         end function
 
         ! THE STONE GEARY SHIFTER, in one place. It depends on whether the
@@ -17307,19 +17314,23 @@
         real(8) :: total_consumption_choice_1,total_consumption_choice_2
         integer, intent(in) :: addiction_index_1
         
-        ! TREATMENT FORBIDS USE IN THE PERIOD IT IS TAKEN. That is the larger of
-        ! its two costs for a household carrying the disorder, and without it
-        ! treatment is a free multiplier on recovery that every such household
-        ! takes, which no utility cost can undo because the cost buys the
-        ! multiplier outright.
-        if ((include_treatment==1) .AND. (treatment_choice_now==1)) then
-
-            frac_spent_on_addiction=0
-            total_consumption_choice=consumption_choice
-
-            return
-
-        end if
+        ! TREATMENT NO LONGER FORBIDS USE, and the reason is that forbidding it
+        ! left bar_tau^u unidentified.
+        !
+        ! It used to set frac_spent_on_addiction to zero, so taking treatment
+        ! meant giving up the drug for the period. The comment that stood here
+        ! warned that without the abstention treatment is a free multiplier on
+        ! recovery that every household takes and no utility cost can undo. The
+        ! run says the opposite happened: at a utility cost of ZERO take up was
+        ! 0.0128 against a target of 0.245, and bar_tau^u sat on its floor with
+        ! nowhere to go. The abstention is worth more than the multiplier, so the
+        ! cost could only bind from below, where it has no room.
+        !
+        ! With use allowed, treatment is the recovery multiplier and bar_tau^u is
+        ! its only price. At zero cost every household carrying the disorder
+        ! takes it, and the bracket raises the cost until take up falls to the
+        ! target: the parameter is identified FROM ABOVE, which is the side it
+        ! has room on.
 
         if ((addiction_index_1>=1) .AND. (consumption_choice>0) .AND. (relative_share_of_addiction>0)) then
                                 
@@ -29105,6 +29116,14 @@
                         smallest_rental_relative_to_lowest_income, "->", handover_value
                     smallest_rental_relative_to_lowest_income=handover_value
                     smallest_house_size=handover_value
+
+                case ("lambda_addiction")
+                    write(*,*) "HANDOVER lambda_addiction:", lambda_addiction, "->", handover_value
+                    lambda_addiction=handover_value
+
+                case ("largest_house_size")
+                    write(*,*) "HANDOVER largest_house_size:", largest_house_size, "->", handover_value
+                    largest_house_size=handover_value
 
                 case ("lambda_m")
                     write(*,*) "HANDOVER lambda_m:", lambda_m, "->", handover_value
