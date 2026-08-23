@@ -622,7 +622,37 @@ def compile_model():
     return r.returncode == 0, (r.stderr or '')[-2000:]
 
 
+def kill_strays():
+    """Kill any hftf left over from a supervisor that is no longer here.
+
+    A SECOND RUN IS NOT A SPARE, IT IS A CORRUPTION. Killing the supervisor does
+    not kill the model: the child is reparented to init and keeps going, and it
+    keeps writing calibration_state.dat and the distribution files that the
+    replacement run reads and writes too. Two runs on a four core box also halve
+    each other's speed. This happened on the 23rd -- an orphan ran for fifteen
+    minutes beside its replacement -- and it happens by construction every time
+    the container rebuilds, so the launch path clears them rather than the
+    operator remembering to.
+
+    Matched on the parent being init, so this can never reach a live sibling.
+    """
+    out = subprocess.run(['ps', '-eo', 'pid,ppid,args'], capture_output=True,
+                         text=True).stdout
+    for line in out.splitlines()[1:]:
+        parts = line.split(None, 2)
+        if len(parts) < 3:
+            continue
+        pid, ppid, args = parts
+        if args.strip().endswith('hftf') and ppid == '1':
+            print(f'supervisor: killing orphaned model, pid {pid}')
+            try:
+                os.kill(int(pid), signal.SIGKILL)
+            except (OSError, ValueError):
+                pass
+
+
 def launch():
+    kill_strays()
     env = dict(os.environ, OMP_NUM_THREADS='4', OMP_STACKSIZE='512M',
                GFORTRAN_UNBUFFERED_ALL='1')
     f = open(LOG, 'a')
