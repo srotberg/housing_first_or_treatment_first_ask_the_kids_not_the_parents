@@ -487,10 +487,25 @@ def checkpoint(loops):
                    f'{gaps[len(gaps) // 2]:.3f}\t{gaps[-1]:.3f}\t'
                    f'{m.group(1) if m else ""}\t{m.group(2) if m else ""}\n')
     if row is not None:
-        head = '' if os.path.exists(PROGRESS) else (
-            'loop\tutc\tmedian_gap_pct\tworst_gap_pct\ton_target\tof\n')
+        # A CUMULATIVE INDEX, BECAUSE THE LOOP COUNTER RESETS. Every container
+        # rebuild relaunches the run and the Fortran starts counting loops from
+        # one again, so the file read 1,2,3,4,5,2 and the series it exists to
+        # provide -- how fast the gaps close -- could not be read off it at all.
+        # seq counts rows; cold marks the first row after a relaunch, whose
+        # distribution was rebuilt from scratch and which is therefore not
+        # comparable with the rows around it.
+        exists = os.path.exists(PROGRESS)
+        seq = 1
+        if exists:
+            with open(PROGRESS) as f:
+                seq = max(1, sum(1 for _ in f))
+        head = '' if exists else (
+            'seq\tloop\tcold\tutc\tmedian_gap_pct\tworst_gap_pct\ton_target\tof\n')
+        cold = 1 if n <= 1 else 0
+        fields = row.rstrip('\n').split('\t')
         with open(PROGRESS, 'a') as f:
-            f.write(head + row)
+            f.write(head + '\t'.join([str(seq), fields[0], str(cold)]
+                                     + fields[1:]) + '\n')
     if os.path.exists(LOG):
         shutil.copyfile(LOG, BANKED_LOG)
     paths = [pth for pth in (STATE, PROGRESS, BANKED_LOG, JOURNAL)
