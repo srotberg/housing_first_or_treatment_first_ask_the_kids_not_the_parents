@@ -824,10 +824,26 @@
         ! the grid in B_SWEEP_GRID.txt, one value a line. Parameter updating is
         ! switched off with it, which is what re_do_simulation_with_fixed_
         ! parameters is for, so nothing else moves while the curve is measured.
-        integer, parameter :: sweep_addiction_scalar=1
+        integer, parameter :: sweep_addiction_scalar=0
+
+        ! THE HANDOVER FROM THE SWEEP, AND IT CONSUMES ITSELF.
+        !
+        ! The sweep answers a question the joint loop could not: which b gives the
+        ! target participation at everything else held. Getting that answer back
+        ! into the calibration means putting it into calibration_state.dat, which
+        ! is written positionally and cannot be edited by hand -- 128 of its lines
+        ! differ between two runs, so there is no diff that identifies b's offset.
+        !
+        ! So the model takes it from a file instead, AFTER the state is read, and
+        ! deletes the file as it does. One pass later the state carries the new b
+        ! like any other parameter and the joint loop owns it again; leaving the
+        ! override standing would pin b instead of seeding it, which is the
+        ! opposite of what the sweep was for.
         integer, parameter :: max_sweep_points=64
         real(8), dimension(max_sweep_points) :: sweep_b_grid=0
         integer :: sweep_points=0
+        integer :: handover_status=1
+        real(8) :: handover_b=-1
         ! ITS OWN COUNTER, NOT loop_count. loop_count is incremented twice per
         ! calibration pass -- once deep in the housing state copy and once at the
         ! foot of the sweep -- which is why the checkpoints read loop 3 and loop 5
@@ -29033,6 +29049,29 @@
             write(*,*) "b out of band on resume:", addiction_scalar_1, &
                 " clamped into [", b_lo, ",", b_hi, "]"
             addiction_scalar_1=max(min(addiction_scalar_1,b_hi),b_lo)
+
+        end if
+
+        ! The handover file, if the sweep left one. Read after the band clamp
+        ! above so a value outside [b_lo, b_hi] is refused the same way a resumed
+        ! one is, and deleted so it cannot apply twice.
+        open(unit=79,file="B_HANDOVER.txt",action='read',status='old',iostat=handover_status)
+        if (handover_status==0) then
+
+            read(79,*,iostat=handover_status) handover_b
+            close(79,status='delete')
+
+            if ((handover_status==0) .AND. (handover_b>=b_lo) .AND. (handover_b<=b_hi)) then
+
+                write(*,*) "B HANDOVER: addiction_scalar_1 taken from the sweep,",&
+                    addiction_scalar_1, " ->", handover_b
+                addiction_scalar_1=handover_b
+
+            else
+
+                write(*,*) "B HANDOVER REFUSED: unreadable or out of band,", handover_b
+
+            end if
 
         end if
 
