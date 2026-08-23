@@ -231,25 +231,27 @@ a child of a parent with a SUD is @@ratio_t@@ times as likely to acquire one its
 middle of the two to four McGovern et al.\ (2023) report; the homelessness penalty so that
 the child of a homeless parent is @@ratio_h@@ times as likely to be homeless themselves, the midpoint
 of the two measures in Bassuk et al.\ (1997). What makes these externalities is
-that a parent counts only a fraction $\omega$ of what it does to its child, so the
-remainder is external whenever $\omega<1$, and $\omega$ is calibrated inside the
+that a parent counts only \textcolor{red}{a fraction of what it does to its child,
+so the remainder is external whenever that fraction is less than one. It is
+calibrated inside the
 quantitative model to how far drug use rises when altruism is switched off, so the
-fraction a parent does internalise is disciplined by observed behaviour. Either way, what is a
+part a parent does internalise is disciplined by observed behaviour.} Either way, what is a
 private problem for the parent is a childhood for the child, and the child does not
 choose it.
 
 The impact does not end with the child: through the child it ripples out to the whole
-lineage. The parent values its own child
-at $\omega$, that child values the grandchild at $\omega$ again, so generation $k$
-enters the parent's problem at $\omega^k$: what one decision costs is a line of
+lineage. \textcolor{red}{The parent counts that fraction of what happens to its own
+child, that child counts the same fraction again of what happens to the grandchild,
+and so on down, so each further generation enters the parent's problem at a smaller
+weight than the last:} what one decision costs is a line of
 descendants, and the share left external rises at every link.
 
 The second externality runs through the aggregate rather than through the family.
 Households dislike homelessness around them whether or not it is their own child's, so
 a policy that leaves more people on the street imposes a cost on everyone, and that is
 what makes the homelessness rate a genuine fixed-point problem rather than
-accounting. The paper prices it as a disamenity $\kappa_x$ per
-unit of the aggregate homelessness rate in flow utility, set from the contingent
+accounting. The paper prices it as a \textcolor{red}{disamenity carried in flow utility, in
+proportion to} the aggregate homelessness rate, set from the contingent
 valuation in Loubi\`ere et al.\ (2020), where the Europeans willing to pay anything to
 end homelessness would pay $0.20$ percent of average annual earnings a year.
 
@@ -277,77 +279,83 @@ continuation value of life, and that loss rises faster than income does, so in
 equilibrium use concentrates at the bottom.
 
 
-I make the argument in two models, and I start by building
-the intuition. A stylized
-two-period model \textcolor{red}{with rational forward-looking households,
-calibrated to United States data,} in Section~\ref{sec:stylized}, shows how the increased mortality risk
-mechanism reverses the income gradient at its clearest, and how the externality that
-overturns the dominance result works.
-\textcolor{red}{A household draws a productivity, works or does not, and chooses
-how much of the drug to buy; that choice sets the hazard of acquiring a disorder,
+\textcolor{red}{I make the argument in two models, a stylized model for the
+intuition and a full quantitative model for the policy analysis. The stylized
+model is a life-cycle model with two periods of life and rational forward-looking
+households, calibrated to United States data. It shows that mechanism at its
+clearest, and shows how the externality that overturns the dominance result
+works. A household draws a productivity, is unemployed or not, and chooses how
+much of the drug to buy; the last choice sets the hazard of acquiring a disorder,
 and the disorder raises both the chance of dying and the chance of losing the job.
 It chooses where to live, on the street or in one of two rentals, and it may hold
 a means-tested voucher. It dies at the end of the second period leaving one child,
 whose own productivity draw is penalised if the parent carried the disorder or was
-unhoused, and the parent values that child at a weight $\omega$. It carries no
-government budget, so it does not consider the source from which either programme
-is paid for; that is deliberate, so the mechanisms can be seen clearly, and the
-quantitative model takes up the detail.}
+unhoused, and the parent does not value that child's utility at all, which is what
+makes the penalty an externality. There is no government budget in it, so it does
+not consider the source from which either programme is paid for; that is
+deliberate, so the mechanisms can be seen clearly, and the quantitative model
+takes up the detail.}
+
 It separates the two penalties a disorder carries. Scaled from
 nothing to full strength, the death penalty takes the average user from
 @@r_off@@ times average income to @@r_mort@@ times it; the unemployment penalty
 leaves it at @@r_unemp@@. Flow utility is logarithmic, so losing a job costs a
 household about the same number of utils whatever it earns, and what that penalty
 has to overturn is not flat at all: a fixed quantity of the drug costs a rich
-household little \textcolor{red}{in utility} and a poor household a great deal
-\textcolor{red}{in utility}, so the utility price of using
-falls as income rises, and a \textcolor{red}{cost} that does not vary
-\textcolor{red}{strongly enough} with income cannot reverse
-a price that does. \textcolor{red}{In contrast, mortality} destroys the whole continuation value, including
-$\aleph$ \textcolor{red}{(the value of being alive at all, which is positive
-even for households with low consumption)}, which is worth more to a richer
-household in the units it actually trades off, so \textcolor{red}{when the death
-penalty is large enough} it is the rich who
-stop first.
+household little in utility and a poor household a great deal in utility, so the
+utility price of using falls as income rises, and a cost that does not vary
+strongly enough with income cannot reverse a price that does. In contrast,
+mortality destroys the whole continuation value, including
+\textcolor{red}{the value of being alive at all, which is positive
+even for households with low consumption, and that} is worth more to a richer
+household in the units it actually trades off, so when the death
+penalty is large enough it is the rich who stop first.
 
-\textcolor{red}{The experiment is the reform itself. The programme moves from
-Housing First at its current generosity to universal coverage, under Housing First
-and then under Treatment First, and each generation alive or born after it is
-priced against the world before it in percent of lifetime consumption.}
-\textcolor{red}{Using the same model, I also separate} the two forces housing assistance sets
+The experiment is the reform itself. The programme moves from
+Housing First at \textcolor{red}{its benchmark rationing} to universal coverage, under Housing First
+and then under Treatment First, and \textcolor{red}{each newborn cohort, along
+with the generation already alive when it lands,} is priced against the world
+before it in percent of lifetime consumption.
+\textcolor{red}{This experiment first separates} the two forces housing assistance sets
 against each other, because they differ in what happens to a household that uses.
 Treatment First withdraws the voucher from a household that violates the sobriety
 condition, so only the value of life is at stake; Housing First does not, so moral
 hazard operates as well. Both are first order and they work against each other,
 which is why whether housing the homeless raises or lowers drug use is a
 quantitative question rather than one that can be settled by assertion.
+
 \textcolor{red}{Setting} the externalities and the distortions aside\textcolor{red}{,} Housing First
-is weakly better for every household: \textcolor{red}{when households are forward
-looking and rational,} conditionality removes an option and gives
+is weakly better for every household: when households are forward
+looking and rational, conditionality removes an option and gives
 nothing back, so @@worse@@ percent are strictly worse off under Treatment First
-and none is better off. \textcolor{red}{Switching} on the externality that a parent's disorder imposes
-on its child \textcolor{red}{turns the ranking}, but only in the long run, from the @@tr_flip@@
-cohort of newborns onward, since \textcolor{red}{in this model} a household deterred from using never acquires
+and none is better off. Switching on the externality that a parent's disorder imposes
+on its child turns the ranking, but only in the long run, from the @@tr_flip@@
+cohort of newborns onward, since in this model a household deterred from using never acquires
 the disorder and its children inherit better draws. Conditionality takes at once
 and repays later: a household already carrying the disorder when the reform lands
-can do nothing about its condition \textcolor{red}{in this model, though it can in
-the quantitative one,} and loses its voucher anyway. So Housing First
-is still ahead in the short run, \textcolor{red}{but} by very little, costing the generation caught
+can do nothing about its condition in this model, though it can in
+the quantitative one, and loses its voucher anyway. So Housing First
+is still ahead in the short run, but by very little, costing the generation caught
 that way @@tr_caught@@ percent of lifetime consumption and the first cohort of
 newborns @@tr_c1_gap@@ percent.
 
-A full-fledged quantitative model follows, to quantify the mechanisms and the welfare
-implications of Housing First against Treatment First. It is a general equilibrium
+\textcolor{red}{The full quantitative model that follows quantifies the mechanisms
+and the welfare implications of Housing First against Treatment First, and settles
+whether that ranking survives in an environment that fits the data.} It is a general equilibrium
 life-cycle economy, in Section~\ref{sec:full}, with six state variables and @@n_all@@ parameters. It carries endogenous homelessness, drug use, the SUD, recovery, serious
 mental illness (SMI), employment and mortality, together with a drug market that
-clears, so drug prices respond to policy, and a government budget that balances. It
+clears, so drug prices respond to policy, and a government budget that balances\textcolor{red}{,
+so the tax rate responds to what either programme costs}. It
 also considers the costs of enforcing conditionality, and imperfect detection.
 Conditionality there is enforced by a test that is wrong in both directions, so some
 households lose the voucher though they meet the condition and some keep it though
-they do not, and the government pays to run the test. Both
-models are calibrated to United States data, and the calibration is set out parameter
-by parameter in Section~\ref{sec:cal} for the stylized model and
-Section~\ref{sec:fullcal} for the quantitative one.
+they do not, and the government pays to run the test.
+\textcolor{red}{It is calibrated to United States data as well, and both
+calibrations are set out parameter by parameter, in Section~\ref{sec:cal} for the
+stylized model and Section~\ref{sec:fullcal} for the quantitative one. Three
+things the stylized model cannot do it does: the drug price responds to the number
+of users, the two policies can be separated on generosity as well as on
+conditionality, and the short run can be told from the long run.}
 
 The model is also validated on a long list of moments that no parameter is fitted to,
 set out in Section~\ref{sec:fvalid}. Among the larger ones: the homelessness rate by
@@ -360,32 +368,6 @@ percent of income on housing; the income and labour force participation of house
 with a disorder relative to those without; the disorder share of the homeless; the
 price elasticity of drug participation; and the odds that a homeless adult had a
 homeless caretaker. Each is a place the model can be caught.
-
-
-
-
-
-The stylized model delivers the result in a form that can be read off. At universal
-cover and with no externality, @@worse@@ percent of households are strictly worse
-off under Treatment First and none is better off, so the private cost of
-conditionality is @@priv@@ percent of consumption in the aggregate: small, because
-so few households are affected, and unambiguous in sign. Switching the externality
-on, conditionality prevents @@dsud@@ percentage points of disorder cases, and
-preventing one case is worth @@percase@@ percent of consumption to
-one child. The product is
-@@gain@@ percent, which is @@ratiogl@@ times the private loss. Housing First is
-better for every household taken one at a time, and worse once one counts the
-children of the households it fails to deter. 
-
-
-
-The quantitative model is what settles whether that ranking survives in an
-environment that fits the data, where the drug price responds to the number of
-users, the tax rate responds to the programme's
-cost, and the two policies can be separated on generosity as well as on
-conditionality. It is also what allows the short run and the long run to be
-distinguished.
-
 
 
 %======================================================================
@@ -2490,7 +2472,7 @@ care, because \emph{every} household here has a child, born after it dies, so
 on its face it would seem like there is no parent
 against non-parent comparison to run in the benchmark. I solve this with a
 counterfactual moment instead. I choose its value so that removing the child's
-penalty \new{(fixing the other parameters' values)} raises drug use by $@@q_omega@@$ percent, the
+penalty (fixing the other parameters' values) raises drug use by $@@q_omega@@$ percent, the
 gap between parents and non-parents in NSDUH 2024 read the way the model reads it.
 \item[$\delta_d$, what the child loses to a parent's SUD.] The child does not inherit
 the disorder, only a worse
@@ -2563,15 +2545,15 @@ little role.
 
 \subsection{Standard parameters}
 
-The remaining @@n_std@@ parameters are more conventional, and I record them so
-that the calibration can be reproduced. @@n_std_int_cap@@ of them I calibrate inside the model,
+The remaining @@n_std@@ parameters are more conventional, and I record \new{the
+values I use} so that the calibration can be reproduced. @@n_std_int_cap@@ of them I calibrate inside the model,
 against a moment, because no source reads them off directly; the other @@n_std_ext@@ I set
 from outside, from an estimate or from statute. Table~\ref{tab:stdparams} and the
 entries below run in the same seven blocks, and each entry gives the moment or the
 source that fixes the parameter together with the value that moment takes in the
 data. The Model column reports what the model produces against that value, and it
-does so only for the eight I calibrate internally, since the other sixteen have no
-target to reproduce.
+does so only for the \new{@@n_std_int@@} I calibrate internally, since the other
+\new{@@n_std_ext@@} have no target to reproduce.
 
 These parameters are not inert in the experiments. For example, the discount
 factor governs how heavily a household weighs a death later in life, the dispersion
@@ -2585,16 +2567,15 @@ but that they are not specific to this paper.
 
 \paragraph{Preferences.} The four parameters in this block say what a household wants, and what it is willing to give up to get it.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$\sigma$, risk aversion.] Set to the standard value of two, following
-Attanasio and Weber (2010). Increase it and consumption is smoother and insurance is
+\item[$\sigma$, risk aversion.] \new{I set it to} the standard value of two, following
+Attanasio and Weber (2010). Increase it and \new{households want smoother
+consumption} and insurance is
 worth more, so the voucher is worth more; it also sets the marginal utility of
 consumption, so it enters every welfare comparison in the paper.
-\item[$\gamma$, the weight on housing services.] The Cobb-Douglas share of the
+\item[$\gamma$, the weight on housing services.] \new{This is the} Cobb-Douglas share of the
 bundle that goes on housing, so it fixes what a dwelling is worth against
 consumption and against the drug. I choose it so that housing takes $@@q_gamma@@$ percent of expenditure net of drugs, as
-shelter plus utilities do in the 2024 Consumer Expenditure Survey, which is the same
-moment and the same definition the stylized model of Section~\ref{sec:stylized}
-uses. As $\gamma$
+shelter plus utilities do in the 2024 Consumer Expenditure Survey. As $\gamma$
 rises housing is worth more against consumption and the drug, households buy more of
 it, and that expenditure share rises with it.
 \item[$\beta$, the discount factor.] It is chosen so that wealth over output
