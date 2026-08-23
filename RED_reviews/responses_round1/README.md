@@ -59,14 +59,15 @@ the first flag to the second when it was checked against the source:
 |---|---|---|
 | the drug price clears a finite supply curve | R3, R1, AE | **built.** There is a supply curve, `drug_supply_shifter * quantity^(curvature-1)`, an implied price, and an update loop; the elasticity is 1.46 |
 | serious mental illness is a state of the model | R1, editor, AE | **built.** `number_of_smi_states = 2`, and the state index carries `m` |
-| the homelessness disamenity is priced | R2 C2, editor | **still written only.** `grep -ci kappa_x` over the source returns 0 |
+| the homelessness disamenity is priced | R2 C2, editor | **built.** `kappa_x` is declared at 0.002 and enters flow utility as `-kappa_x*model_fraction_homeless(1)` |
+| the quantitative model solves a transition path | R1 3(d), editor | **written, not running.** `solve_transition_dynamics` is a parameter fixed at 0, so the transition branches are compiled out. The stylized model's transition IS solved and reported |
 
-Two of the three have closed since the first draft and the letters now say so in
-the present tense. The third has not, and the letters say that too: it is flagged
-`\open` in R2's C2 and named explicitly in the editor letter, because the
-alternative is letting an editor find it. Its absence cannot move a policy function,
-since the headcount is aggregate and taken as given, so no calibrated moment depends
-on it; what it changes is the welfare comparison across steady states.
+All three of the first list have closed. The fourth row is the one that has not,
+and it replaced a claim that said "Done": R1's 3(d) and the editor letter now
+distinguish the stylized model's transition, which is solved and carries that
+section's result, from the quantitative model's, which is written and switched
+off while the calibration runs. The alternative is letting a referee find the
+switch.
 
 Three further things were corrected in this pass:
 
@@ -100,11 +101,14 @@ hazard instead, which is six times worse on the street, is a transition
 probability rather than a taste, and is what Milby actually measures. The upshot is
 that C1 and C5 turn out to be the same request, which the letters now say.
 
-**The homelessness disamenity is back.** An earlier draft dropped it, which was a
-change of mind against Referee 2 who had asked for it. It is carried again, priced
-from Loubiere et al.'s contingent valuation and on the headcount alone with no
-extra weight on the homeless who carry a disorder, since that is what the survey
-asked about. It is in the written model and not yet in the code.
+**The homelessness disamenity is back, and now in the code.** An earlier draft
+dropped it, which was a change of mind against Referee 2 who had asked for it. It
+is carried again, priced from Loubiere et al.'s contingent valuation and on the
+headcount alone with no extra weight on the homeless who carry a disorder, since
+that is what the survey asked about. The baseline is the HIGHER of their two
+figures, 0.20 per cent of average earnings, because a larger disamenity favours
+whichever policy houses more people and a ranking that survives it is the stronger
+claim. The editor letter had that backwards and now does not.
 
 **The Stone-Geary shifter is now constant too**, which goes further than R2's C5
 and R3's M2(a) asked. Flow utility is the same function of consumption, housing

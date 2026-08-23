@@ -158,12 +158,15 @@ rather than the literally homeless one; and the homelessness target was a person
 rate where the model's agent is a household.
 
 \item \textbf{The disamenity of homelessness is priced from survey evidence
-rather than set to zero.} Referee~2 (C2) asked for it. It is now in the model,
-calibrated to Loubi\`ere et al.'s eight country contingent valuation, \euro{}23 a
-year on average to end homelessness, which is 0.08 per cent of average annual
-earnings, with the \euro{}57 among those willing to pay anything as the top of a
-reported range. It prices the headcount alone, with no extra weight on the
-homeless who carry a disorder, because that is what the survey asked about.
+rather than set to zero.} Referee~2 (C2) asked for it. It is in the model and in
+the code, calibrated to Loubi\`ere et al.'s eight country contingent valuation.
+The baseline is the \emph{higher} of their two figures, \euro{}57 a year among the
+42 per cent willing to pay anything, which is 0.20 per cent of average annual
+earnings; the \euro{}23 averaged over all respondents, 0.08 per cent, is the other
+end of the reported range. The higher figure is the baseline on purpose: a larger
+disamenity favours whichever policy houses more people, so a ranking that survives
+it is the stronger claim. It prices the headcount alone, with no extra weight on
+the homeless who carry a disorder, because that is what the survey asked about.
 
 \item \textbf{The stylized model no longer sets two parameters from one fact.}
 The Cobb-Douglas weight on housing was taken from the Consumer Expenditure
@@ -490,7 +493,11 @@ was claiming more than it established, comment A1 and Referee~1 comment 1e.
 Referee~1 asks for proper transition paths rather than a several period partial
 equilibrium adjustment, comment 3d. With the housing market general equilibrium
 cut, a transition path iterates on the labour tax and the drug price alone, which
-makes it feasible. It is now solved properly.
+makes it feasible. The stylized model solves and reports one, and it is what that
+section's result rests on. The quantitative model's transition is written and the
+code carries it, but the switch is off while the calibration runs, so what I report
+from that model at present are steady state comparisons. I say so in the letter to
+Referee~1 rather than let one word cover both.
 }
 
 \vspace{1em}

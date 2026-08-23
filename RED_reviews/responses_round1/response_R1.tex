@@ -446,15 +446,26 @@ strategy, of a several-period PE adjustment, to be a half-measure that is limite
 in its informativeness and opens up more questions than it answers.''
 \end{referee}
 \begin{response}
-Done. This became feasible once the housing market general equilibrium was cut at
-the Associate Editor's request: a transition path now iterates on the labour
-income tax and the drug price alone.
+Agreed, and the half measure is gone. Cutting the housing market general
+equilibrium at the Associate Editor's request is what makes a proper path
+feasible: it leaves the labour income tax and the drug price to iterate on, and
+nothing else.
+
+\open The path is solved and reported in the stylized model of
+Section~\ref{sec:stylized}, where it is what the section's headline result rests
+on. In the quantitative model the transition is written and the code carries it,
+but it is compiled out at present --- \texttt{solve\_transition\_dynamics} is a
+parameter fixed at zero --- and the paths I report from that model are steady
+state comparisons. I would rather say that than let the word ``done'' cover a
+switch that is off. The remaining work is not the solver but the calibration it
+has to run on top of, which is in progress.
 
 The path matters for the paper's interpretation of the trial evidence, which is
 why the half measure was not good enough. Housing responds within a year while
 substance use disorder adjusts over a decade, so a three year experiment is well
 powered on housing and badly powered on use, whatever the long run effect. That
-argument requires an actual path, not an assertion.
+argument requires an actual path, not an assertion, and it is why the stylized
+model reports one rather than asserting the same thing in words.
 \end{response}
 
 %======================================================================
