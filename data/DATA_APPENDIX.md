@@ -720,6 +720,24 @@ annualised as 12 × rent / income. This is a different universe from the ACS 49.
 26.5 percent quoted with the rental ladder, which is why the two pairs of numbers
 differ, and both are reported rather than reconciled.
 
+**Earnings shares, bottom tenth and top tenth — 0.99 and 41.1 percent.** SCF 2022
+(`SCF_2022.dta`), the same universe and the same weights as the bottom half's share
+sigma_y is calibrated on in Section 4: households aged 26 to 65 with positive wage
+and salary income (`wageinc > 0`), weighted by `wgt`. Rank that universe by wage and
+salary income and take each decile's share of total earnings. The two tenths come out
+of the same computation as the target and are not themselves targeted, which is why
+they belong here: sigma_y is identified by the bottom half alone, so the tails are
+free to miss.
+
+**Price elasticity of demand, intensive margin — −0.55.** The one moment here with no
+dataset behind it, and it is the midpoint of a published range rather than an
+estimate: the intensive margin runs between about −0.3 and −0.8 across the literature
+set out in Section 2 of the paper, with Olmstead et al. (2015) at −0.80 for heroin
+among regular users at the far end. The check on the model is therefore that it lands
+inside the range, not that it reproduces the midpoint. The participation elasticity
+beside it is a single estimate, Saffer and Chaloupka (1999), and is treated the usual
+way.
+
 **Standardised mortality ratio, homeless — 9.1, 4.5, 1.1 by band** (age weighted). Baggett et
 al. (2013), ages 25–44, 45–64 and 65–84. This is the profile the age varying
 homelessness multiplier is built from, so the check is that the model reproduces the

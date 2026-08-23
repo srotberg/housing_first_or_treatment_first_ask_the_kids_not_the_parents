@@ -886,7 +886,7 @@ income, in line with statutory state rules. Only the standard rental unit is set
 at $h_3 = 0.40$ of mean income; the small unit $h_2$ is calibrated, on the share
 of housed households living in one. The voucher parameters are institutional: covered
 tenants pay $30$ percent of market rent, eligibility is capped at half of median income, $\kappa_V = 0.50$, and $\pi_V = 0.266$ is the ratio of recipients to the income-eligible population in the 2023 Picture of Subsidized
-Households, published by HUD.
+Households \textcolor{red}{(PSH)}, published by HUD.
 
 
 \subsubsection{Internal calibration}
@@ -909,7 +909,7 @@ times average annual income, about \$9 million against a mean household income o
 estimates are put in current dollars. The pull of the first unit $b$ is matched
 to a drug participation rate of $8.90$ percent from NSDUH 2024 for
 respondents aged 26 and over with a disorder of any severity, housing services on the street
-$h_1$ to a homelessness rate of $0.399$ percent from the 2023 HUD PiT count, and the SUD hazard $\lambda_d$ to the $\new{3.68}$ percent
+$h_1$ to a homelessness rate of $0.399$ percent from the 2023 HUD PiT count, and the SUD hazard $\lambda_d$ to the $3.68$ percent
 of adults aged $26$ and over carrying a moderate or severe SUD in NSDUH 2024.
 
 The small rental unit $h_2$ is matched to the $37.3$ percent of housed
@@ -2217,7 +2217,7 @@ drug consumption into a disorder. Raise $\lambda_d$ and both the private cost an
 externality rise, and the moral hazard costs more, since it is
 $\lambda_d$ that converts an extra voucher under Housing First into a higher
 SUD rate that Treatment First then attempts to cure. Its value is chosen so the model generates the share
-of adults carrying a SUD, $\new{3.68}$ percent among those aged $26$
+of adults carrying a SUD, $3.68$ percent among those aged $26$
 and over in NSDUH 2024.
 \item[$\bar\kappa_{\phi d}$, increased mortality with a SUD.] This is the parameter the whole
 paper turns on. Mortality truncates the value of life for a user, which
@@ -2715,19 +2715,19 @@ Voucher programme
 
 \end{description}
 
-\paragraph{Drug market.} These three parameters describe \new{the rest of} the drug
-market\new{, closing the loop on the elasticity parameter explained in Section~\ref{sec:fullcal}}: the first
+\paragraph{Drug market.} These three parameters describe the rest of the drug
+market, closing the loop on the elasticity parameter explained in Section~\ref{sec:fullcal}: the first
 fixes who can enter it, and the other two fix the units in which its price and
 quantity are measured.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 % THE PARENTHETICAL BELONGS IN THE BODY, NOT THE LABEL. A description
 % label does not wrap: it is typeset on one line and runs off the page,
 % which is what it did here.
-\item[$J_E$, the maximum age at which use can begin.] \new{Households that already carry a SUD above this age can continue to use.} I set it to fifty five in model terms, which corresponds to age $80$ in the data.
+\item[$J_E$, the maximum age at which use can begin.] Households that already carry a SUD above this age can continue to use. I set it to fifty five in model terms, which corresponds to age $80$ in the data.
 It is there so that use cannot begin in the last few years of life, where almost no
 continuation value remains to be lost and the private cost of using is therefore
 close to zero. That is an artefact of the horizon rather than a feature of the world:
-to keep the age dimension manageable the model imposes certain mortality \new{after} age $85$,
+to keep the age dimension manageable the model imposes certain mortality after age $85$,
 so a household near the end knows death is coming with certainty and a disorder costs
 it almost nothing. Without the cap the model would let use begin exactly there, and
 at the final age it would be worse than that, since a household that acquires the
@@ -2736,7 +2736,7 @@ disorder carries literally no consequence and only the flow benefit of using, wh
 cannot be a reasonable description of the choice either.
 
 \item[$\nu_1$, the supply shifter.] A pure normalisation, chosen so that supply
-equals demand at $p_v=1$ in the benchmark\new{, and held fixed across experiments}. It normalises units, not behaviour.
+equals demand at $p_v=1$ in the benchmark, and held fixed across experiments. It normalises units, not behaviour.
 
 \item[$p_v$, the drug price.] Set to one by normalisation in the benchmark, but
 free in every counterfactual. It is an equilibrium object rather than a dial.
@@ -2749,14 +2749,12 @@ free in every counterfactual. It is an equilibrium object rather than a dial.
 None of the moments below is fitted. Each is produced endogenously by a model
 with sixty single ages, and each is a place the model can be caught.
 Section~9 of \texttt{data/}\allowbreak\texttt{DATA\_APPENDIX.md} in the replication
-package derives the data side of \new{all but two of them}, and it is the place to go for
+package derives the data side of \new{every one of them}, and it is the place to go for
 everything needed to replicate them: the dataset, the year, the universe, the
 computation, and the three cases where the universe rather than the arithmetic
-decides the number. \new{The two it does not carry are named where they come
-from instead: the intensive margin elasticity is the midpoint of the range in
-Section~\ref{sec:literature}, and the earnings shares of the two tenths fall out of
-the same distribution $\sigma_y$ is calibrated on, which Section~\ref{sec:fullcal}
-derives.} The package ships those datasets as well, so none of them has
+decides the number. \new{One of them has no dataset behind it and the appendix says
+so: the intensive margin elasticity is the midpoint of a published range, so the check
+is that the model lands inside the range rather than on the midpoint.} The package ships those datasets as well, so none of them has
 to be downloaded first. The standardised mortality ratio below is age-weighted.
 Two shares of the earnings distribution come out alongside the one $\sigma_y$ is
 chosen on and are untargeted: the model's top tenth holds $38.5$ percent of earnings
@@ -2787,20 +2785,20 @@ Homelessness rate, 25--34, 35--44, 45--54, 55--64, 65+
 Shares of the homeless across those bands
  & 26.0, 27.2, 21.0, 18.4, 7.5 percent & HUD PiT 2024 \\
 Returns to homelessness within 24 months & 17.4 percent & HUD SPM 2024 \\
-Drug poisonings as a share of deaths, 25 to 44 & about 20 percent & CDC WONDER \\
+Drug poisonings as a share of deaths, \new{25--44} & about 20 percent & CDC WONDER \\
 Earnings shares, bottom tenth and top tenth & 0.99 and 41.1 percent & SCF 2022 \\
 Bottom half's share of net worth & 2.52 percent & Fed DFA \\
 Housing costs above 30 and 50 percent of income & 40.6 and 17.5 percent & SCF 2022 \\
-Standardised mortality ratio, homeless & 9.1, 4.5, 1.1 by band & Baggett et al. \\
-Tenant contribution rate & 31.2 percent & HUD \\
-Voucher holders with wages as main income & 28 percent & HUD \\
-Income, moderate or severe SUD over average & 71.1 percent & NSDUH 2024 \\
-\new{Average income of drug users} & \new{$0.74\times$ average income} & \new{NSDUH 2024} \\
-Labour force participation, SUD against clean & 65.8 against 61.5 percent & NSDUH 2024 \\
+Standardised mortality ratio, homeless, \new{25--44, 45--64, 65--84} & 9.1, 4.5, 1.1 by band & Baggett et al.\ \new{(2013)} \\
+Tenant contribution rate & 31.2 percent & \new{HUD PSH 2023} \\
+Voucher holders with wages as main income & 28 percent & \new{HUD PSH 2023} \\
+\new{Income with a moderate or severe SUD} & 71.1 percent \new{of average} & NSDUH 2024 \\
+\new{Income of drug users} & \new{74.0} percent \new{of average} & NSDUH 2024 \\
+Labour force participation, \new{with a SUD against without} & 65.8 against 61.5 percent & NSDUH 2024 \\
 Homeless at treatment admission & 14.5 percent & TEDS-A 2022 \\
 Psychiatric problem alongside SUD at admission & 43.1 percent & TEDS-A 2022 \\
 Working at all, homeless in treatment & 6.6 percent & TEDS-A 2022 \\
-Drug use disorder share of the homeless & 21.7 percent & Gutwinski et al.\ (2021) \\
+\new{SUD} share of the homeless & 21.7 percent & Gutwinski et al.\ (2021) \\
 Price elasticity of demand, participation & $-0.63$ & Saffer and Chaloupka (1999) \\
 Price elasticity of demand, intensive margin & $-0.55$ & Midpoint, Section~\ref{sec:literature} \\
 Odds a homeless adult had a homeless caretaker & 1.8 to 2.4 & Bassuk et al.\ (1997) \\
