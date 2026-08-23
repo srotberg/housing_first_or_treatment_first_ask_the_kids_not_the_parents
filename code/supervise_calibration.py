@@ -40,6 +40,8 @@ BIN = os.path.join(HERE, 'hftf')
 LOG = os.path.join(HERE, 'supervisor_run.log')
 JOURNAL = os.path.join(HERE, 'SUPERVISOR_JOURNAL.md')
 REPORT = os.path.join(HERE, 'paper', 'calibration_report.py')
+STATE = os.path.join(HERE, 'calibration_state.dat')
+PROGRESS = os.path.join(HERE, 'CALIBRATION_PROGRESS.tsv')
 
 # -O3 RATHER THAN -O2, MEASURED AND NOT ASSUMED: 1.15x on the sixteen expensive
 # ages, 162.5 seconds against 141.8, with the cores otherwise idle so the two
@@ -367,11 +369,60 @@ def journal(entry):
         f.write('\n' + entry + '\n')
 
 
-def commit(message):
-    for cmd in (['git', 'add', '-A'],
+def commit(message, paths=None):
+    """Commit and push. Named paths by preference, never `add -A` blindly.
+
+    An earlier version added everything and swept a 67 MB distribution file into
+    history. The ignore rules cover that now, but a calibration commits every
+    loop for hours and one mistake in those rules would be committed hundreds of
+    times before anyone looked.
+    """
+    add = ['git', 'add'] + (list(paths) if paths else ['-A'])
+    for cmd in (add,
                 ['git', 'commit', '-q', '-m', message],
                 ['git', 'push', '-q', 'origin', 'HEAD']):
         subprocess.run(cmd, cwd=ROOT, capture_output=True)
+
+
+def checkpoint(loops):
+    """Put the calibration somewhere a container restart cannot reach.
+
+    WHY THIS IS NOT OPTIONAL. The box rebuilds itself. It did so at 00:30 on the
+    23rd, twelve minutes before this was written, and it took with it the run
+    log holding three loops of run 3 and every validation log in the scratchpad:
+    the repository is re-cloned from the remote on restart, /tmp is gone, and the
+    scratchpad comes back from a snapshot days old. Nothing that is not PUSHED
+    survives. A calibration of twelve hours on a box that rebuilds every ten
+    therefore does not finish at all unless each loop is banked.
+
+    WHAT IS BANKED. The parameter state, which is what a resume actually needs;
+    the run log, so a diagnosis is still possible afterwards; and one row per
+    loop in a tab separated file, which is the thing that answers how many loops
+    are left. The two distribution files are NOT banked -- 60 MB a loop is not a
+    commit, and rebuilding the distribution cold from the age one cross section
+    costs about five hundred sweeps, four minutes, against the seven a loop
+    takes. That is the right trade.
+    """
+    n = len(loops)
+    row = None
+    if os.path.exists(REPORT):
+        r = subprocess.run([sys.executable, REPORT, LOG], capture_output=True,
+                           text=True, cwd=os.path.dirname(REPORT))
+        gaps = [float(g) for g in re.findall(r'\s([\d.]+)%\s*$', r.stdout, re.M)]
+        m = re.search(r'(\d+) of (\d+) on target', r.stdout)
+        if gaps:
+            gaps.sort()
+            row = (f'{n}\t{time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}\t'
+                   f'{gaps[len(gaps) // 2]:.3f}\t{gaps[-1]:.3f}\t'
+                   f'{m.group(1) if m else ""}\t{m.group(2) if m else ""}\n')
+    if row is not None:
+        head = '' if os.path.exists(PROGRESS) else (
+            'loop\tutc\tmedian_gap_pct\tworst_gap_pct\ton_target\tof\n')
+        with open(PROGRESS, 'a') as f:
+            f.write(head + row)
+    paths = [pth for pth in (STATE, PROGRESS, LOG, JOURNAL) if os.path.exists(pth)]
+    if paths:
+        commit(f'Calibration checkpoint, loop {n}', paths)
 
 
 def compile_model():
@@ -415,14 +466,26 @@ def main():
     if not ok:
         print('supervisor: COMPILE FAILED\n' + err)
         return 1
+    if os.path.exists(STATE):
+        print('supervisor: calibration_state.dat is present, the model will resume '
+              'from it; the distribution is rebuilt cold, which is one loop of cost')
     proc, restarts = launch(), 0
     print(f'supervisor: launched pid {proc.pid}, polling every {poll}s')
 
+    banked = -1
     while True:
         time.sleep(poll)
         alive = proc.poll() is None
         loops = read_loops(LOG)
         done, said = verdict()
+
+        # BANK EVERY LOOP. See checkpoint(): nothing that is not pushed survives
+        # a container restart, and the box rebuilds itself often enough that an
+        # unbanked calibration never finishes. A few seconds against seven
+        # minutes a loop.
+        if len(loops) > banked:
+            banked = len(loops)
+            checkpoint(loops)
 
         if done:
             print(f'supervisor: CONVERGED, {said}')

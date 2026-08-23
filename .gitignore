@@ -66,3 +66,9 @@ code/progress_history.json
 # artefact the source reproduces exactly.
 code/hftf
 code/hftf_*
+
+# THE CALIBRATION'S OWN RECORD, kept against the global *.log rule.
+# The container rebuilds itself and re-clones the repository, so a log
+# that is not committed is a log that is gone: the run log holding three
+# loops of run 3 was lost that way. The supervisor commits it each loop.
+!code/supervisor_run.log
