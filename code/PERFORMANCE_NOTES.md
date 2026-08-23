@@ -904,3 +904,52 @@ varying is the state grid, which is the thing under test.
 Forty is in that comparison rather than assumed. The model was built at fifty;
 forty is an earlier unvalidated cut of mine whose own comment says in as many
 words that it must be validated, and it never was.
+
+## 19. The distribution's stopping rule was testing a cell; the calibration reads integrals
+
+**The measurement.** One cold solve at forty asset points, run deliberately past
+its stopping rule, printing the aggregates every hundred sweeps:
+
+| sweep | total mass | mean asset holding |
+|---|---|---|
+| 100 | 50.809632 | 17.569917 |
+| 200 | 50.824837 | 17.579886 |
+| 300 | 50.808369 | 17.565126 |
+| 400 | 50.814141 | 17.574984 |
+| 500 | 50.808708 | 17.567627 |
+| 600 | 50.807790 | 17.563002 |
+| 700 | 50.804555 | 17.560933 |
+
+Mass moves by 0.040 per cent across six hundred sweeps and the mean asset
+holding by 0.108 per cent, neither with a trend. Over the same span the max norm
+read 2.7e-3, 3.1e-3 and 1.9e-3, also with no trend.
+
+**So the two are measuring different things, and only one of them is the
+calibration's.** The stopping rule is `maxval(abs(implied - guess))`, a max over
+CELLS of a difference in LEVELS. The calibration reads shares and averages, which
+are integrals over those cells, and the integrals are done by sweep one hundred
+while individual cells go on wobbling forever. The worst cell holds mass of order
+0.02 and wobbles by about a tenth of itself; it carries five hundredths of one per
+cent of the population.
+
+**What it cost.** A rule of 2e-4 sits BELOW the amplitude of the bounce, so a
+solve terminated whenever the oscillation happened to dip under it. That is the
+whole explanation of sweep counts of 61, 73, 91, 148, 340, 520 and 4000 across
+loops of one calibration, and of a loop costing anywhere between seven and
+forty-five minutes.
+
+**The rule now.** `stopping_rule_stationary_distribution = 6e-4` as an early exit
+and `max_distribution_sweeps = 200` as the binding one. The cap is the more
+useful of the two here for a reason beyond cost: it makes every loop's
+distribution the same distance from its fixed point, where a lottery-terminated
+solve moves the moments between loops for reasons that have nothing to do with
+the parameters.
+
+Hitting the cap is normal now, so `DIST_STALL` no longer fires on it — only when
+the distance reached is above `distribution_alarm_distance = 1e-2`, which is a
+solve that has gone wrong rather than one that stopped on schedule. Otherwise the
+supervisor would diagnose a stall every loop and the word would stop meaning
+anything.
+
+`diagnose_distribution_max` stays on: at a two hundred sweep cap it costs two
+lines a loop, and those two lines are the standing evidence that the cap is safe.
