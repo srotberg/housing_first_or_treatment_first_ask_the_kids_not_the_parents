@@ -17,7 +17,8 @@
 #
 # ORDER MATTERS IN TWO PLACES. sync_tables.py has to run before fill.py, because
 # fill.py merges params_numbers.json to answer the @@q_*@@ placeholders. And
-# check_numbers.py has to run after the fill, because it reads the filled file.
+# check_numbers.py has to run after the fill, because it reads the filled file,
+# and check_spacing.py after the typeset, because half of it reads the PDF.
 #
 # ablate.py is NOT run here either. It recalibrates the whole model once per
 # component; run it by hand when a component changes.
@@ -66,6 +67,9 @@ python3 check_acronyms.py
 
 echo "== checking the hyphenation of compound modifiers"
 python3 check_hyphens.py
+
+echo "== checking that no two words have run together"
+python3 check_spacing.py
 
 echo "== verifying the model"
 cd "$ROOT/code/stylized"
