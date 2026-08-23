@@ -46,7 +46,7 @@ EXTERNAL = [
          'NSDUH 2024, age 26+', '{:.4f}'),
     ]),
     ('Income support', [
-        ('repl', r'\psi', 'UI replacement rate',
+        ('repl', r'\psi_{ui}', 'UI replacement rate',
          'DOL, statutory UI rates', '{:.2f}'),
         ('ycap', r'\bar y', 'Cap on the earnings base',
          'DOL, state benefit maxima', '{:.2f}'),
@@ -134,7 +134,7 @@ INTERNAL = [
     # variable and the same universe, which two earlier pairs did not: 5.13 and
     # 3.68 matched no single cut, and 10.13 and 4.54 were the EIGHTEEN and over
     # figures while the note said 26 and over throughout.
-    ('lam', r'\lambda', 'SUD hazard per unit used',
+    ('lam', r'\lambda_d', 'SUD hazard per unit used',
      'Adult SUD rate, NSDUH 2024', 'sud', '{:.2%}', '{:.1f}'),
 ]
 

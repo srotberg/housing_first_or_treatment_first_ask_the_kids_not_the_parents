@@ -19,7 +19,7 @@ LINKS = {
     # --- Table 5, the parameters that carry the story
     r'$\theta$':                 'drug_spending_share_data',
     r'$b$':                      'participation_rate_data',
-    r'$\lambda$':                'sud_rate_data',
+    r'$\lambda_d$':              'sud_rate_data',
     r'$\aleph$':                 'vsl_data',
     r'$h_2$':                    'employed_share_of_homeless_data',
     r'$\kappa_{ued}$':           'unemployment_rate_sud_data',
@@ -45,7 +45,7 @@ LINKS = {
     r'$r$':                      'risk_free_rate_data',
     r'$\xi$':                    'curvature_of_labor_income_taxes',
     r'$\tau_k$':                 'investment_income_tax',
-    r'$\psi$':                   'replacement_rate_ui',
+    r'$\psi_{ui}$':              'replacement_rate_ui',
     r'$\kappa_V$':               'threshold_income_vouchers',
     r'$\kappa_r$':               'rent_to_income_ratio_vouchers',
     r'$\varrho$':                'food_stamp_taper',
