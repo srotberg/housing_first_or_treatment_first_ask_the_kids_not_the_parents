@@ -21,34 +21,6 @@ CSVs the Fortran reads. `README.md` lists
 the regeneration commands and `FINDINGS.md` records what each source implied when
 it arrived, including the targets it called into question.
 
-> [!CAUTION]
-> **Changed in this round.** Markdown carries no red, so the changes the paper
-> would show in red are listed here, and each one is also flagged in place in the
-> entry it belongs to.
->
-> - **θ** — the whole entry is rewritten. The old 35 percent was attributed to
->   NSDUH, which collects no expenditure at all; the target is now 16.2 percent,
->   built from RAND for the numerator and NSDUH 2024 for the denominator.
-> - **b** — 5.13 → 8.90 percent. The old figure was the eighteen and over rate
->   under a heading that said 26 and over.
-> - **λ** — the implied conversion from use to disorder, 71.7 → 41.3 percent,
->   following b.
-> - **s_m(j)** — was written p_m(j), 5.5 percent, NSDUH 2023. The symbol matched
->   nothing in the note and the level and vintage were a release behind Table 6.
-> - **the rental ladder** — was h̲ and h̄, two ends of three shares. It is now
->   h_2, h_3 and h_4, which is what the model has and what the note calls them.
-> - **r** — a new entry. The risk free rate stood in Table 6 with no line here.
-> - **h_2** — a new entry, and the moment moved. h_2 is calibrated on the employed
->   share of the homeless, not on a unit size share.
-> - **ς** — was written as set at 1.8. It is calibrated, and on the middle unit
->   share; it used to run on the smallest, which is the same fixed point but the
->   wrong attribution.
-> - **ρ_d and ρ_m** — both are switched off in the benchmark and neither is
->   calibrated on anything. Both entries claimed a moment.
->
-> Every other parameter in Tables 5 and 6 was read against this file one at a
-> time; none is missing and none of the rest disagreed.
-
 ---
 
 ## 1. Who uses drugs
@@ -173,7 +145,7 @@ a non-employed one draws disability insurance at ζ_DI = 0.25, so the SMI househ
 the model put on the street were the ones with jobs. κ_uem carries the illness into
 poverty instead, on the extensive margin, and it is calibrated and live.
 
-*The moment it used to carry, now untargeted.* Income of the homeless at 19.1
+*A moment ρ_m does not carry, reported untargeted.* Income of the homeless at 19.1
 percent of average. Meyer, Wyse, Meyer, Grunwaldt and Wu (2024), NBER Working Paper
 32323, from the 2010 Census linked to restricted use tax and administrative records.
 The attribution is inferred rather than quoted: Referee 1's comment 2(c)(i) gives the
@@ -184,7 +156,7 @@ be opened from the machine this was written on, so the table number behind the 1
 still needs checking. It is reported with the untargeted moments.
 
 **κ_uem, the employment multiplier for mental illness — a 30 percent employment
-rate given SMI.** NOT an NSDUH number, and the table used to say it was. It is the
+rate given SMI.** Not an NSDUH number. It is the
 midpoint of the employment range for high disability diagnoses in the clinical
 literature: roughly a fifth of people with schizophrenia are in work, 12 percent
 full time, against 48 to 73 percent for any mental illness. The source needs
@@ -208,9 +180,7 @@ that halves productivity cannot sensibly cover a quarter of the population.
 
 **s_m(j), the age profile of SMI prevalence — 5.6 percent overall.** NSDUH 2024.
 The object matched is the profile by age; the 5.6 percent is the level it
-integrates to. (This entry read p_m(j), 5.5 percent and NSDUH 2023: the symbol
-matched nothing in the note, which uses s_m(j) throughout, and the level and the
-year were both a release behind the declaration Table 6 is generated from.) The onset hazard is not read off directly but backed out of the
+integrates to. The onset hazard is not read off directly but backed out of the
 profile and the exit rate, so the whole profile is reproduced by construction.
 
 ---
@@ -385,12 +355,12 @@ housed living in the middle unit, and that share is its moment. At 1.8 the middl
 rung sits 28.7 percent of the way up rather than the 50 percent a uniform ladder
 gives, and the three sizes stand at 1 : 1.46 : 2.59.
 
-*It used to run on the SMALLEST category's share.* With h_4 holding the top share
-that is the same fixed point, because the three shares add to one, so the calibrated
-ladder does not move. What was wrong was the attribution: the smallest share is not
-h_2's moment, so pointing the curvature at it aimed a rung at a share the rung below
-was thought to own. The update's sign flips with the moment, since a larger ς takes
-mass out of the smallest category and into the middle one.
+*Why the middle share and not the smallest.* With h_4 holding the top share the two
+are the same fixed point, because the three shares add to one, so the calibrated
+ladder is the same either way. The attribution is not: the smallest share is h_2's,
+so aiming the curvature at it would point a rung at a share the rung below owns. The
+update's sign follows the moment, since a larger ς takes mass out of the smallest
+category and into the middle one.
 
 **Two renter cost shares, untargeted.** ACS 2023: 49.5 percent of renter households
 spend more than thirty percent of income on housing and 26.5 percent more than half.
@@ -402,10 +372,8 @@ consequence of the housing grid rather than the grid itself.
 
 **σ_y, the dispersion of productivity — the bottom half's share of earnings, 17.2
 percent.** SCF 2022. Productivity is a permanent draw in the benchmark, so only the
-dispersion is operative, and it is calibrated INSIDE the model on that share rather
-than set from Storesletten et al. (2004)'s 0.20 in logs, which is what this entry
-used to say. Section 8 below sets out why the share and not the standard
-deviation.
+dispersion is operative. It is calibrated inside the model on that share, and
+Section 8 below sets out why the share and not the standard deviation.
 
 **ψ_R, the social security replacement rate — 0.40.** SSA. Retirement income is
 0.40 times the productivity state, not 0.40 times current earnings, because there
@@ -439,8 +407,7 @@ reports the range rather than resting on the assay cost.
 **r, the risk free rate — 0.03 annually.** Kaplan, Moll and Violante (2018/2020),
 the standard annual real return used in this class of life-cycle models. β is set
 against it so that the two are mutually consistent rather than chosen
-independently. (This entry was missing: r appeared in Table 6 with its source but
-had no line here, which a sweep of the two tables against this file turned up.)
+independently.
 
 ---
 
@@ -471,8 +438,7 @@ thirty percent of its net monthly income (7 CFR 273.10). The same rule and the s
 rate are used in the stylized model. It matters beyond the level of the transfer,
 because it is the implicit marginal tax the programme puts on earnings for exactly
 the households this paper is about; a transfer withdrawn one for one would give
-every household below the floor the same resources and so the same behaviour. This
-parameter is in Table 6 and in the paper's Section 5 and had no entry here.
+every household below the floor the same resources and so the same behaviour.
 
 **φ̄(j), baseline survival — SSA period life table 4.C6**, ages 26 to 85, sexes
 combined by **survivor weight** rather than averaged. Averaging the two columns is
@@ -513,13 +479,38 @@ association.
 a review of relapse among people carrying both a substance use disorder and a mood,
 anxiety, schizophrenia-spectrum or personality disorder.
 
-*The arithmetic, which this entry did not carry.* Dual diagnosis cohorts relapse at
+*The arithmetic.* Dual diagnosis cohorts relapse at
 39.8 percent against 26.4 percent without a co-occurring disorder, an odds ratio of
 1.85 for difficulty maintaining abstinence. Sustained remission is therefore 1 −
 0.398 = 0.602 against 1 − 0.264 = 0.736, and 0.602 / 0.736 = 0.82. Converting the
-odds ratio to a risk ratio at that base rate gives the same figure. The derivation
-was in the old model note and in `code/simple/params.f90` and was lost when the
-paper was rewritten; the paper now carries it in μ_m's entry as well.
+odds ratio to a risk ratio at that base rate gives the same figure.
+
+*Corroborated on a population sample, which is the better universe.* Bradizza et al.
+is a review of treatment samples, and μ_m applies to the whole disordered population
+rather than to people entering treatment. McCabe, West, Strobbe and Boyd (2018),
+*Journal of Substance Abuse Treatment*, run the same comparison on NESARC-III: 8,503
+US adults with a prior-to-past-year DSM-5 SUD, classified by past-year outcome into
+abstinence, asymptomatic use, partial remission and persistent/recurrent SUD
+(`related_lit/McCabe_West_Strobbe_Boyd_2018_Persistence_Remission_DSM5_SUD_NESARC_III_JSAT.pdf`).
+
+Their Table 1 gives the composition of each outcome group by comorbidity, so the
+rate BY comorbidity comes from inverting it against the weighted outcome
+prevalences in their abstract (abstinence 14.2, asymptomatic 36.9, partial 10.9,
+persistent 38.1 percent):
+
+| comorbidity | remission, none | remission, comorbid | ratio |
+|---|---:|---:|---:|
+| mood disorder, abstinent or asymptomatic | 52.2% | 41.4% | **0.79** |
+| mood disorder, not persistent/recurrent | 64.2% | 50.1% | **0.78** |
+| anxiety disorder, abstinent or asymptomatic | 51.5% | 47.8% | 0.93 |
+| anxiety disorder, not persistent/recurrent | 62.9% | 56.9% | 0.90 |
+
+DSM-5 mood disorders there are bipolar, dysthymia and major depressive disorder,
+which is the closer analogue of this model's SMI state — an illness severe enough
+to raise the chance of losing work — than the anxiety group is. **0.82 sits inside
+what the better source supports and next to its mood-disorder figure**, so the value
+stands and is now sourced on a population sample as well as a treatment one.
+`nesarc_mu_m.py` in `data/` reproduces the table.
 
 **ζ_DI, the disability replacement rate for mental illness — 0.25.** SSA 2023, SSDI
 and SSI award rates and benefit levels for beneficiaries qualifying on a mental
@@ -537,24 +528,16 @@ gradient come from one experiment rather than two.
 
 ### Externalities
 
-**δ_h is NOT externally set, and does not belong in this section.** It is
-calibrated inside the model on the child homelessness ratio of 2.1 from Bassuk et
-al. (1997); section 5 above is its entry. This heading used to carry it at 0.31
-from Chetty et al. (2016), which was the value before it was brought inside, and
-Table 5 has said `Int.` since.
-
 **κ_x, the disamenity of aggregate homelessness — 0.20 percent of annual earnings,
 which enters as 0.002.** Loubière et al. (2020), a contingent valuation across
 Europe: €57 a year among the 42 percent of respondents willing to pay anything,
 against €23 averaged over all respondents. The higher figure is taken as the
 baseline, because it is the one least kind to Treatment First: a larger disamenity
 loads whichever policy houses more people. The lower figure, €23, is 0.08 percent
-and enters as 0.0008; an earlier version of this file gave that number as the value
-of the 0.20 percent baseline, which was wrong.
+and enters as 0.0008.
 
 **κ_x is in the Fortran.** It is declared at `kappa_x=0.002d0` and enters flow
-utility as `-kappa_x*model_fraction_homeless(1)`. This entry previously said it was
-absent, which was true when it was written and is not now. Because the headcount is
+utility as `-kappa_x*model_fraction_homeless(1)`. Because the headcount is
 aggregate and taken as given by every household, `kappa_x*H` is a constant inside
 the household's problem and cannot move any policy function, so no calibrated
 moment depends on it; what it changes is the welfare comparison across steady
@@ -683,8 +666,8 @@ half's share is not a check, because it is the target.
 
 None of these is fitted. Each is produced endogenously by the model and is a place
 the model can be caught, so the derivation of the data side matters as much as for a
-target. They are listed in the order the paper's validation section lists them, with
-two exceptions that are derived elsewhere in this file rather than repeated here:
+target. They are listed in the order the paper's validation section lists them. Two are
+derived elsewhere in this file rather than repeated here:
 the **earnings shares of the bottom and top tenths**, 0.99 and 41.1 percent from
 SCF 2022, come out alongside the share σ_y is calibrated on and are derived in
 section 8 with it; and the **odds that a homeless adult had a homeless caretaker**,
