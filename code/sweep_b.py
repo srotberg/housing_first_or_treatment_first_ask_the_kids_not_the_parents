@@ -21,6 +21,7 @@ rather than restarts.
 import os
 import re
 import shutil
+import signal
 import subprocess
 import sys
 import time
@@ -125,12 +126,20 @@ def bank(rows):
 
 
 def write_remaining():
-    """The grid file gets what is LEFT, so a relaunch resumes."""
+    """ONE POINT PER LAUNCH, and the rest of the grid stays on the shelf.
+
+    The model runs a single pass and stops, because the tail of the calibration
+    body it used to step b in is never reached and because that body updates
+    parameters the sweep is meant to hold. So the grid file gets the first point
+    still outstanding and nothing else; the driver relaunches for the next. Each
+    process therefore starts from the same banked state and the same banked
+    distribution, which is what makes the curve a function of b alone.
+    """
     have = done_points()
     left = [b for b in full_grid()
             if not any(abs(b - d) <= abs(b) * 1e-9 for d in have)]
     with open(GRID, 'w') as f:
-        f.write('\n'.join(f'{b:.10g}' for b in left) + ('\n' if left else ''))
+        f.write(f'{left[0]:.10g}\n' if left else '')
     return left
 
 
@@ -153,23 +162,24 @@ def main():
             print('sweep: every point measured')
             return 0
         print(f'sweep: {len(done_points())} done, {len(left)} left, launching')
-        open(LOG, 'w').close()
-        proc, banked = launch(), 0
+        before = len(measured(LOG))
+        proc = launch()
         while True:
             time.sleep(poll)
             rows = measured(LOG)
-            if len(rows) > banked:
-                bank(rows[banked:])
-                banked = len(rows)
+            if len(rows) > before:
+                bank(rows[before:])
                 print(f'sweep: banked {rows[-1]["b"]:.4g} -> '
                       f'{rows[-1]["participation"]:.5f}')
-            txt = open(LOG, errors='ignore').read()
-            if DONE.search(txt):
-                print('sweep: the model reports the grid exhausted')
-                return 0
-            if proc.poll() is not None:
-                print('sweep: the model exited, relaunching on what is left')
                 break
+            if proc.poll() is not None:
+                # The model stops itself once its one point is written, so an
+                # exit with nothing new is a failure, not a finish.
+                print('sweep: the model exited without writing a point')
+                break
+        if proc.poll() is None:
+            os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
+            time.sleep(2)
 
 
 if __name__ == '__main__':

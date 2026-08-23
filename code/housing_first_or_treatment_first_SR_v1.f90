@@ -31924,6 +31924,46 @@
 !            write(*,*) "model_fraction_homeless_owners,", model_fraction_homeless_owners(1)
             write(*,*) "model_fraction_addicted=", model_fraction_addicted(1)
             write(*,*) "model_exprimenters=", model_exprimenters(1)
+            ! ONE POINT PER PROCESS, AND IT ENDS HERE.
+            !
+            ! The foot of the calibration sweep is where b was being stepped, and
+            ! that foot is never reached: seven passes ran in an hour, each with
+            ! its own solve and its own converged distribution, and not one
+            ! printed the announcement sitting three lines under the loop
+            ! counter's increment. The tail of that body does not execute, so a
+            ! grid indexed there never moves off its first point.
+            !
+            ! It could not have been clean if it had. re_do_simulation_with_fixed_
+            ! parameters does not freeze everything: sd_permanent_productivity was
+            ! still being updated pass by pass, and participation at a FIXED b
+            ! drifted 0.3326, 0.3244, 0.3327 across three of them, which is the
+            ! contamination the sweep exists to avoid.
+            !
+            ! So a sweep runs ONE point and stops. The distribution has converged
+            ! by here (DIST_DONE prints above the loop counter and the moments
+            ! below it), addiction_scalar_1 is the b this process was launched at,
+            ! and nothing has updated yet. The driver relaunches for the next
+            ! point, which costs a solve and buys a curve that is a function of b
+            ! and of nothing else.
+            if (sweep_addiction_scalar==1) then
+
+                open(unit=78,file="B_SWEEP_RAW.tsv",action='write',position='append')
+                write(78,'(6(E24.15,A1))') addiction_scalar_1, char(9),&
+                    model_exprimenters(1), char(9),&
+                    model_total_drug_users(1), char(9),&
+                    model_fraction_addicted(1), char(9),&
+                    model_avg_income_drug_users(1)/&
+                        max(model_average_labour_income(1),10.d0**(-12)), char(9),&
+                    model_average_income_addicted(1)/&
+                        max(model_average_labour_income(1),10.d0**(-12)), char(9)
+                close(78)
+
+                write(*,*) "B SWEEP POINT DONE at b=", addiction_scalar_1,&
+                    " participation=", model_exprimenters(1)
+                stop
+
+            end if
+
             write(*,*) "model_fraction_addicted+model_exprimenters=", model_fraction_addicted(1)+model_exprimenters(1)
             write(*,*) "model_exprimenters/model_total_drug_users=", model_exprimenters(1)/model_total_drug_users(1)
             write(*,*) "model_fraction_addicted_who_are_homeless,", model_fraction_addicted_who_are_homeless(1)
@@ -33531,49 +33571,6 @@
             loop_count=loop_count+1
             
             write(*,*) "loop_count=", loop_count
-
-            ! THE MEASUREMENT, WRITTEN WHERE IT CANNOT BE MISPAIRED.
-            !
-            ! Reading it back out of the log means deciding which side of the
-            ! loop boundary a print belongs to, and the model prints its moments
-            ! and its next b on opposite sides of that line -- three separate
-            ! console prints of model_exprimenters, on a pass whose statistics
-            ! appear above the loop counter rather than below it. Written here,
-            ! at the foot of the pass, addiction_scalar_1 is still the b this
-            ! pass ran at and the moments are the ones it finished with, so the
-            ! pairing is a fact rather than an inference.
-            if (sweep_addiction_scalar==1) then
-
-                open(unit=78,file="B_SWEEP_RAW.tsv",action='write',position='append')
-                write(78,'(6(E24.15,A1))') addiction_scalar_1, char(9),&
-                    model_exprimenters(1), char(9),&
-                    model_total_drug_users(1), char(9),&
-                    model_fraction_addicted(1), char(9),&
-                    model_avg_income_drug_users(1)/&
-                        max(model_average_labour_income(1),10.d0**(-12)), char(9),&
-                    model_average_income_addicted(1)/&
-                        max(model_average_labour_income(1),10.d0**(-12)), char(9)
-                close(78)
-
-            end if
-
-            ! THE NEXT POINT OF THE SWEEP.
-            if (sweep_addiction_scalar==1) then
-
-                sweep_index=sweep_index+1
-
-                if (sweep_index>sweep_points) then
-
-                    write(*,*) "B SWEEP COMPLETE: ", sweep_points, " points measured"
-                    stop
-
-                end if
-
-                addiction_scalar_1=sweep_b_grid(sweep_index)
-                write(*,*) "B SWEEP point ", sweep_index, " of ", sweep_points,&
-                    " at b=", addiction_scalar_1
-
-            end if
 
             ! A DISTANCE THAT IS NOT A NUMBER MUST NOT READ AS CONVERGED.
             !
