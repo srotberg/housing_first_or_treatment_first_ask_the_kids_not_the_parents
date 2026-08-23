@@ -520,6 +520,11 @@ def diagnose_frozen_parameter(loops):
         tail = v[-FROZEN_LOOPS:]
         if max(tail) - min(tail) > max(abs(tail[-1]), 1e-12) * 1e-9:
             continue
+        # HELD BY DESIGN IS NOT FROZEN. Checked before anything else, because a
+        # parameter with a zero adjuster has no bracket to be stuck in.
+        if name in _HELD or REPORT_NAME.get(name, name) in _HELD:
+            continue
+
         floor = DOCUMENTED_FLOOR.get(name)
         if floor is not None and abs(tail[-1] - floor) <= 1e-12:
             continue
@@ -827,7 +832,45 @@ def verdict():
     return hit == total and total > 0, f'{hit} of {total} on target'
 
 
+def held_by_design():
+    """Parameters whose adjuster is zero in the Fortran, so nothing moves them.
+
+    A PARAMETER NOBODY IS MOVING IS NOT A FROZEN BRACKET. Every update in the
+    sweep is guarded on its own adjuster, so a zero adjuster is the file saying
+    "this one is set externally". h_3, the housing grid expander, is held that
+    way on purpose, and diagnose_frozen_parameter read its constancy as a stall
+    and killed a run over it. The declarations are where the fact lives; the
+    parameter prints no distance to read it from.
+    """
+    try:
+        src = open(SRC, errors='replace').read()
+    except OSError:
+        return set()
+    src = re.sub(r'&\s*\n\s*', '', src)
+    syms = {}
+    for m in re.finditer(r'^\s*(?:integer|real\(8\))\s*,\s*parameter\s*::\s*(\w+)\s*=\s*([^!\n]+)',
+                         src, re.M):
+        try:
+            syms[m.group(1)] = eval(m.group(2).replace('d0', 'e0').replace('D0', 'e0'),
+                                    {'__builtins__': {}}, dict(syms))
+        except Exception:
+            pass
+    out = set()
+    for m in re.finditer(r'^\s*real\(8\)\s*(?:,\s*parameter\s*)?::\s*(\w+)_adjuster\s*=\s*([^!\n]+)',
+                         src, re.M):
+        try:
+            if eval(m.group(2).replace('d0', 'e0').replace('D0', 'e0'),
+                    {'__builtins__': {}}, dict(syms)) == 0:
+                out.add(m.group(1))
+        except Exception:
+            pass
+    return out
+
+
 _noted = set()
+
+# Computed once: the declarations do not change while the supervisor runs.
+_HELD = held_by_design()
 
 
 def already_running():
