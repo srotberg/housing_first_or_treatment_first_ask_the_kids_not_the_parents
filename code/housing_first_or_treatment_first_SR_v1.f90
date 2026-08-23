@@ -1297,8 +1297,28 @@
         ! losing the gradient, which is worth seeing rather than hiding.
         real(8), parameter :: theta_lo=0.05d0
         real(8), parameter :: theta_hi=0.25d0
+        ! B'S CEILING HAD NO ARGUMENT BEHIND IT AND IT BOUND. At 0.05 the
+        ! bracket sat exactly on it: participation came out at 76.0 per cent
+        ! against a target of 8.90, the update asked for b to rise by a factor of
+        ! 2.5, and the ceiling refused every time. Nothing else in the
+        ! calibration can be read while that is true, because with three quarters
+        ! of the population using, the users ARE the population: the average
+        ! income of a user came out at 0.82 of the mean and of a household with
+        ! the disorder at 1.007, which is not a finding about the income gradient
+        ! but an arithmetic consequence of the extensive margin being wrong.
+        !
+        ! ONE RATHER THAN A GUESS AT THE RIGHT VALUE. theta's ceiling is set by an
+        ! economic break point, the value above which mortality stops reversing
+        ! the gradient, and it should bind when the model cannot do its job. b's
+        ! should only bind where the model stops making sense, and that is where
+        ! the drug is worth so little at the first unit that nobody uses at any
+        ! income: the marginal value of the first unit is theta/b, so at b = 1 and
+        ! theta in [0.05, 0.25] it is 0.05 to 0.25, of the same order as the
+        ! marginal utility of consumption. Above that there is no interior
+        ! participation to find. Where inside the band participation is matched is
+        ! for the bracket to discover, not for this line to decide.
         real(8), parameter :: b_lo=1.d0*10.d0**(-4)
-        real(8), parameter :: b_hi=0.05d0
+        real(8), parameter :: b_hi=1.0d0
 
         real(8) :: gap_addiction_scalar_1=0,previous_gap_addiction_scalar=0
         integer :: have_gap_addiction_scalar=0
@@ -31069,6 +31089,33 @@
                         write(*,*) "relative_share_of_addiction_1=", relative_share_of_addiction_1
                         write(*,*) "distance_relative_share_of_addiction_1=",&
                             distance_relative_share_of_addiction_1
+
+                        ! THETA ON ITS CEILING IS A RESULT, NOT A STUCK SEARCH,
+                        ! and it has to be said out loud or it reads as neither.
+                        ! The ceiling is the break point above which mortality
+                        ! stops reversing the income gradient, so a calibration
+                        ! pressed against it is reporting that it cannot reach
+                        ! the drug spending share while keeping the poor as the
+                        ! users. That is the fact the paper exists to explain, so
+                        ! losing it silently is the worst outcome available.
+                        if ((relative_share_of_addiction_1>=theta_hi*(1-10.d0**(-9)))&
+                            .AND. (drug_share_weighted_1<drug_spending_share_data)) then
+
+                            write(*,*) "THETA PINNED AT ITS CEILING: theta=",&
+                                relative_share_of_addiction_1, " and the drug share is",&
+                                drug_share_weighted_1, " against a target of",&
+                                drug_spending_share_data, &
+                                ". The update wants theta HIGHER and the ceiling is the",&
+                                " break point above which mortality stops reversing the",&
+                                " income gradient. Check the gradient before trusting",&
+                                " any other moment: income of users over average is",&
+                                model_avg_income_drug_users(1)/&
+                                max(model_average_labour_income(1),10.d0**(-12)),&
+                                " and of the disordered",&
+                                model_average_income_addicted(1)/&
+                                max(model_average_labour_income(1),10.d0**(-12))
+
+                        end if
 
                     else
 
