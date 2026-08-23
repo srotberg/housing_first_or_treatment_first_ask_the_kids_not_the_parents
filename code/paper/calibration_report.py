@@ -115,6 +115,24 @@ def zero_adjusters():
     return frozen
 
 
+# WHAT THE FORTRAN CALLS IT AGAINST WHAT IT PRINTS. The distance expressions name
+# variables; the write statements use human labels, and the two do not always
+# agree. Nine targeted moments went unreported for that reason alone, including
+# most of the ones this paper is about. Each entry here is a variable name on the
+# left and the sanitised print label on the right, checked against the log.
+ALIAS = {
+    'model_smi_share_of_homeless': 'SMI_share_of_homeless',
+    'model_employment_rate_given_smi': 'employment_rate_given_SMI',
+    'model_employed_share_of_homeless': 'employed_share_of_homeless',
+    'model_homeless_income_share': 'homeless_income_share',
+    'drug_share_weighted_1': 'drug_share_weighted_by_their_population_shares',
+    'child_use_gap_1': 'model_child_use_gap',
+    'model_housing_size_dist_1_1': 'model_housing_size_dist_1',
+    'model_housing_size_dist_1_housing_status_grid_size_1':
+        'model_housing_size_dist_3',
+}
+
+
 def main():
     if len(sys.argv) < 2:
         print(__doc__)
@@ -130,6 +148,7 @@ def main():
     rows, held, missing = [], [], []
     for name, (model_expr, target_expr) in sorted(pair.items()):
         label = export_moments.sanitise(model_expr)
+        label = ALIAS.get(label, label)
         target_name = 'f_' + re.sub(r'\(\d+\)', '', target_expr)
         if label not in printed or target_name not in consts:
             missing.append((name, model_expr, target_expr))
