@@ -84,6 +84,32 @@ def live_distances(log):
     return got
 
 
+def param_values(path):
+    """Each parameter's own value, as the model last printed it.
+
+    ANCHORED, because the model prints distance_X= directly under X= and an
+    unanchored name is a substring of its own distance line. Reading the
+    distance and calling it the parameter is a mistake this project has already
+    made once, in the supervisor's watch list, and it reads as a parameter
+    converging smoothly to zero.
+    """
+    try:
+        txt = open(path, errors='ignore').read()
+    except OSError:
+        return {}
+    out = {}
+    for m in re.finditer(r'(?m)^\s*([a-z_][a-z_0-9]*)=\s*'
+                         r'([-+]?[0-9]*\.?[0-9]+(?:[EDed][-+]?[0-9]+)?)\s*$', txt):
+        name, v = m.group(1), m.group(2)
+        if name.startswith(('distance_', 'previous_', 'stopping_rule_')):
+            continue
+        try:
+            out[name] = float(v.replace('D', 'E').replace('d', 'e'))
+        except ValueError:
+            pass
+    return out
+
+
 def zero_adjusters():
     """The parameters whose adjuster is zero, from the declarations.
 
@@ -144,6 +170,7 @@ def main():
 
     live = live_distances(sys.argv[1])
     frozen = zero_adjusters()
+    values = param_values(sys.argv[1])
 
     rows, held, missing, seen = [], [], [], {}
     for name, (model_expr, target_expr) in sorted(pair.items()):
@@ -163,11 +190,28 @@ def main():
         # the file. Three of them are held in this paper because homeownership
         # is switched off, and ranking them alongside live moments overstates
         # what is left to do.
+        # A PARAMETER SWITCHED OFF IS NOT A MISS, AND NOT A ROW EITHER.
+        # include_rho_d and include_rho_m are zero, and they enter the model as
+        # rho**(sud*include_rho), so the multiplier is exactly one: the penalty
+        # is absent and its update is gated on the same flag, so nothing moves
+        # it. Its adjuster is still non-zero, though, which is why the frozen
+        # test below never caught it and rho_m sat in the table at eighty eight
+        # per cent off, inflating the median with a gap no parameter owns. A row
+        # whose own include flag is off is dropped entirely rather than held: it
+        # comes back the moment the flag does.
+        # The constants come back as STRINGS, so compare as a number: '0' is
+        # not 0 and the test read as always false, which is why rho_m survived
+        # a first attempt at this.
+        flag = consts.get('f_include_' + name)
+        if flag is not None and float(flag) == 0:
+            continue
+
         if (name in frozen or (name in live and live[name] == 0.0)) and gap > 1e-6:
             held.append((name, model, target))
             continue
 
         clears = name in rule and abs(model - target) <= rule[name]
+        val = values.get(name)
 
         # ONE ROW PER MOMENT, NOT PER PARAMETER. Two parameters can be moved by
         # the same moment -- h_2 and rho_d both by the employed share of the
@@ -179,19 +223,20 @@ def main():
         key = (label, target_name)
         if key in seen:
             i = seen[key]
-            g, nm, mo, ta, cl = rows[i]
-            rows[i] = (g, nm + '+' + name, mo, ta, cl or clears)
+            g, nm, mo, ta, cl, vv = rows[i]
+            rows[i] = (g, nm + '+' + name, mo, ta, cl or clears, vv if vv is not None else val)
             continue
         seen[key] = len(rows)
-        rows.append((gap, name, model, target, clears))
+        rows.append((gap, name, model, target, clears, val))
 
     rows.sort(reverse=True)
-    print(f'{"parameter":50s} {"model":>13s} {"target":>13s} {"off by":>9s}  ')
-    print('-' * 92)
-    for gap, name, model, target, clears in rows:
+    print(f'{"parameter":50s} {"value":>12s} {"model":>13s} {"target":>13s} {"off by":>9s}  ')
+    print('-' * 105)
+    for gap, name, model, target, clears, val in rows:
         mark = 'ON TARGET' if clears else ''
-        print(f'{name:50s} {model:13.6g} {target:13.6g} {gap*100:8.1f}%  {mark}')
-    print('-' * 92)
+        v = '--' if val is None else f'{val:.6g}'
+        print(f'{name:50s} {v:>12s} {model:13.6g} {target:13.6g} {gap*100:8.1f}%  {mark}')
+    print('-' * 105)
     print(f'{sum(1 for r in rows if r[4])} of {len(rows)} on target, '
           f'{sum(1 for r in rows if not r[4] and r[0] <= 0.03)} within three per cent')
 
