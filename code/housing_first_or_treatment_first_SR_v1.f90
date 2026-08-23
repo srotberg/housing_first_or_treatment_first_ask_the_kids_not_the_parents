@@ -28943,6 +28943,11 @@
             read(72,'(F30.15)') max_food_cost
             read(72,'(F30.15)') mu_homeless
             read(72,'(F30.15)') penalty_child_addicted
+            ! A STATE FILE WRITTEN UNDER THE OLD CEILING MUST NOT SURVIVE THE NEW
+            ! ONE. The banked value is 0.9, and without this clamp the solve that
+            ! reads it runs a whole loop at the old penalty before the update at
+            ! the end of it brings the parameter inside the cap.
+            penalty_child_addicted=max(min(penalty_child_addicted,0.4d0),0.d0)
             read(72,'(F30.15)') penalty_child_addicted_adjuster
             read(72,'(F30.15)') previous_gap_penalty_child
             read(72,'(I10)') have_gap_penalty_child
@@ -31243,9 +31248,34 @@
                                 " target =", child_sud_ratio_data
                             write(*,*) "penalty_child_addicted=", penalty_child_addicted
 
+                            ! A NINETY PER CENT CUT TO THE CHILD'S PRODUCTIVITY
+                            ! IS NOT A PENALTY, IT IS A DIFFERENT MODEL. The cap
+                            ! was 0.9 and the parameter sat on it, which
+                            ! multiplies the child's productivity by a tenth and
+                            ! lands every child of a parent with the disorder in
+                            ! the bottom nodes of the grid. Two things follow and
+                            ! both were visible in the output without the cause
+                            ! being visible.
+                            !
+                            ! It manufactures a population of very low
+                            ! productivity households who work and cannot afford
+                            ! even the cheapest room, which is most of why the
+                            ! employed share of the homeless would not come down
+                            ! however far h_2 fell.
+                            !
+                            ! And it drives its OWN moment the wrong way. The
+                            ! bottom of the grid has essentially no drug use, so
+                            ! pushing the child further down lowers the child's
+                            ! SUD rate; the ratio read 0.0027 against a target of
+                            ! 3, the update read that as too low and raised the
+                            ! penalty again, and it ran to the cap on the wrong
+                            ! side of a relationship that is not monotone.
+                            !
+                            ! Forty per cent is the ceiling. penalty_child_homeless
+                            ! is 0.31 and already inside it.
                             penalty_child_addicted=&
                                 max(min(penalty_child_addicted-penalty_child_addicted_adjuster*&
-                                gap_penalty_child_1,0.9d0),0.d0)
+                                gap_penalty_child_1,0.4d0),0.d0)
 
                             distance_penalty_child_addicted=abs(gap_penalty_child_1)
 
