@@ -257,13 +257,21 @@ def main():
         print('\nheld, not calibrated: the sweep zeroes these distances, so the gap '
               'is not a miss')
         for name, model, target in held:
-            print(f'  {name:32s} model {model:12.6g}   its target {target:12.6g}')
+            v = values.get(PARAM_NAME.get(name, name))
+            vs = '--' if v is None else f'{v:.6g}'
+            print(f'  {name:32s} value {vs:>12s}   model {model:12.6g}   '
+                  f'its target {target:12.6g}')
 
     if missing:
-        print('\nnot reported, because the run did not print the model side as a '
-              'scalar or the target is not a declaration:')
+        # THE PARAMETER IS STILL WORTH SHOWING even when its moment is a vector,
+        # an expression the report cannot evaluate, or a target that is not a
+        # declaration. These are calibrated parameters moving every loop, and
+        # printing only their names made them look inert.
+        print('\nmoment not reportable as a scalar, but the parameter is live:')
         for name, model_expr, target_expr in missing:
-            print(f'  {name:32s} {model_expr} vs {target_expr}')
+            v = values.get(PARAM_NAME.get(name, name))
+            vs = '--' if v is None else f'{v:.6g}'
+            print(f'  {name:32s} value {vs:>12s}   {model_expr} vs {target_expr}')
 
 
 if __name__ == '__main__':
