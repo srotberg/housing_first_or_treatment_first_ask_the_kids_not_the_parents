@@ -308,3 +308,9 @@ Recorded rather than escalated: the decision taken was to work on the compositio
 Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
 
 - `smallest_rental` moved 0.0169 to 0.0015, one way across 9 loops, and its moment is not reported as a scalar
+
+## Stopped: grid_expander frozen at 1
+
+unchanged for 6 loops, and there is no reasoned remedy for this parameter
+
+Not fixed automatically: outside the catalogue. This one needs a person.
