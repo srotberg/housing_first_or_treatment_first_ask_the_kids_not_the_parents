@@ -119,13 +119,14 @@ does and does not transfer. Their externality is about neighbourhood housing
 not the right one to import. What transfers is the identification logic. I use a
 contingent valuation approach for the calibration moment instead.
 
-\open It is in the model as written and \emph{not yet in the code}, which I would
-rather say than imply otherwise: the term appears in the household's problem in the
-paper, and the Fortran does not yet carry it. Because the aggregate headcount is
-taken as given by every household, its absence cannot move a single policy function,
-so nothing in the calibration depends on it; what it changes is the welfare
-comparison across steady states, which is where I use it, and that is why it has to
-be built before I report that comparison.
+\thisround It is now in the code as well as in the written model: $\kappa_x$ is
+declared and enters flow utility as $-\kappa_x H$, with $H$ the aggregate
+homelessness rate. An earlier draft of this letter said it was written but not yet
+built, and that is no longer true. Because the aggregate headcount is taken as
+given by every household, $\kappa_x H$ is a constant inside the household's
+problem and cannot move a single policy function, so nothing in the calibration
+depends on it; what it changes is the welfare comparison across steady states,
+which is where I use it.
 
 It is priced from the evidence you would want it priced from rather than asserted.
 Loubi\`ere et al.\ (2020) ask adults in eight European countries what they would pay
