@@ -260,3 +260,9 @@ Not fixed automatically: outside the catalogue. This one needs a person.
 Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
 
 - `smallest_rental` moved 0.0169 to 0.0015, one way across 9 loops, and its moment is not reported as a scalar
+
+## Stopped: lambda_m frozen at 0.0441274
+
+unchanged for 6 loops, and there is no reasoned remedy for this parameter
+
+Not fixed automatically: outside the catalogue. This one needs a person.
