@@ -32,6 +32,7 @@ BANKED_LOG = os.path.join(HERE, 'b_sweep_run.log')
 GRID = os.path.join(HERE, 'B_SWEEP_GRID.txt')
 FULL = os.path.join(HERE, 'B_SWEEP_FULL.txt')
 OUT = os.path.join(HERE, 'B_SWEEP.tsv')
+RAW = os.path.join(HERE, 'B_SWEEP_RAW.tsv')
 
 _NUM = r'([-+]?[0-9]*\.?[0-9]+(?:[EDed][-+]?[0-9]+)?)'
 ANNOUNCE = re.compile(r'B SWEEP(?::\s+\d+\s+points, starting at b=|'
@@ -47,7 +48,8 @@ COLS = {
     'income_of_disordered': (r'(?m)^\s*model_average_income_addicted/'
                              r'model_average_labour_income\.\s*' + _NUM),
 }
-NAMES = ['b'] + list(COLS)
+NAMES = ['b', 'participation', 'total_users', 'fraction_addicted',
+         'income_of_users', 'income_of_disordered']
 
 
 def _f(x):
@@ -69,32 +71,31 @@ def done_points():
 
 
 def measured(path):
-    """Each announced b paired with the moments printed before the next one.
+    """The rows the model wrote itself, not a reading of its log.
 
-    The announcement at the foot of a pass names the b the NEXT pass will run
-    at, so a point's moments are the ones between its own announcement and the
-    following one. Read that way the pairing cannot slip, which matters more
-    here than anywhere: a sweep whose x and y are off by one reports a curve
-    that is not the model's.
+    THE LOG CANNOT SETTLE THE PAIRING. The model prints model_exprimenters from
+    three separate places and prints its statistics on the opposite side of the
+    loop counter from the b it moves to, so pairing a b with a participation
+    means deciding which side of a boundary a print falls on. It writes the pair
+    itself now, at the foot of the pass, where addiction_scalar_1 is still the b
+    that pass ran at and the moments are the ones it finished with. `path` is
+    ignored; it is kept so the caller reads the same way it did.
     """
+    del path
     try:
-        txt = open(path, errors='ignore').read()
+        rows = open(RAW, errors='ignore').read().splitlines()
     except FileNotFoundError:
         return []
-    marks = [(m.start(), _f(m.group(1))) for m in ANNOUNCE.finditer(txt)]
     out = []
-    for i, (pos, b) in enumerate(marks):
-        end = marks[i + 1][0] if i + 1 < len(marks) else len(txt)
-        chunk = txt[pos:end]
-        rec = {'b': b}
-        for name, pat in COLS.items():
-            hit = re.findall(pat, chunk)
-            if hit:
-                rec[name] = _f(hit[0])
-        # A point counts as measured only once participation is in, which is
-        # the whole reason for the sweep; the rest is context.
-        if 'participation' in rec:
-            out.append(rec)
+    for line in rows:
+        f = [x for x in line.split('\t') if x.strip()]
+        if len(f) < 6:
+            continue
+        try:
+            v = [_f(x) for x in f[:6]]
+        except ValueError:
+            continue
+        out.append(dict(zip(NAMES, v)))
     return out
 
 
@@ -109,7 +110,7 @@ def bank(rows):
                                 for k in NAMES) + '\n')
     if os.path.exists(LOG):
         shutil.copyfile(LOG, BANKED_LOG)
-    subprocess.run(['git', 'add', OUT, BANKED_LOG, FULL], cwd=ROOT)
+    subprocess.run(['git', 'add', OUT, BANKED_LOG, FULL, RAW], cwd=ROOT)
     subprocess.run(['git', 'commit', '-q', '-m',
                     f'b sweep: {len(done_points())} of {len(full_grid())} points'],
                    cwd=ROOT)
