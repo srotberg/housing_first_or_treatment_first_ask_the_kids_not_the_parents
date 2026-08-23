@@ -2265,8 +2265,7 @@ $\rho_d$ or take it out?} It reduces the value
 of life when a household acquires a SUD, since the earnings it costs would have
 been enjoyed for the rest of that life. 
 What lets an \emph{employed} household be poor enough to be priced out of
-housing is $h_2$, the price of the cheapest dwelling, which is why about half of the
-homeless are employed in the model as in the data. As $\rho_d$ rises the penalty shrinks,
+housing is $h_2$, the price of the cheapest dwelling. As $\rho_d$ rises the penalty shrinks,
 so the private cost falls and, because the impact on the child is less
 harmful, the externality declines. These earnings are lost whether the
 household is housed or homeless, so treatment affects
@@ -2278,10 +2277,14 @@ calibrated model, not the parameter: raising $\rho_d$ with $b$ held fixed does
 change who uses, but $b$ is recalibrated to the participation rate each time the
 penalty changes, and once it is, the composition of users is back where it started.}
 
-It is set to one in the benchmark, so the disorder costs earnings only by
-costing the job. The employed share of the homeless is $h_2$'s moment, and
-$\kappa_{ued}$ already carries the disorder into poverty, so a proportional
-penalty on top of them would be a third instrument on two moments.
+\new{It is what makes the disorder costly at every income rather than only through
+the job, so it is what decides how much of the homeless population is working:
+$\kappa_{ued}$ carries the disorder into unemployment, and this carries it into
+poverty even when the household keeps its job. Its value is chosen so the model
+generates the $50$ percent of homeless
+adults who are employed, from HUD's 2023 PiT count and the Treatment Episode Data
+Set, Admissions (TEDS-A) 2022. Raise it and the penalty shrinks, so a working
+household with the disorder can afford housing again and that share falls.}
 \item[$\kappa_{ued}$, the employment multiplier for a SUD.] This parameter
 decides how much less likely regaining employment is, and how much more likely
 losing it is, with a disorder. Raise it and the private cost rises, the
@@ -2602,20 +2605,20 @@ it.
 
 \paragraph{Rental ladder.} These three parameters build the grid of dwelling sizes a renter chooses from, and they fix how the rungs are spaced. Each rung answers to one moment.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$h_2$, the smallest rental size.] The price of the cheapest dwelling is
-what decides whether a household with a job can be housed at all, so this is the
-parameter that sets what fraction of homeless households are employed. Its value is
-chosen so the model generates the employment rate of the homeless, $50$
-percent, from HUD's 2023 PiT count and the Treatment Episode Data Set,
-Admissions (TEDS-A) 2022. Raise it and the bottom rung is dearer, so more working
-households are priced onto the street and that share rises.
+\item[$h_2$, the smallest rental size.] \new{The size of the cheapest dwelling
+is what decides how many households take the bottom rung rather than move up,
+so its value is chosen so the model generates the $\new{13}$ percent of housed
+households living in the smallest unit size in the 2023 ACS, table B25042.
+Raise it and the bottom rung is larger and dearer relative to the rung above,
+which is nearly the same dwelling at nearly the same price, so more households
+stay on it and that share rises.}
 
 \item[$\varsigma$, the curvature of the rental ladder, which determines $h_3$.]
-The curvature is what places the middle rung, which sits a
-fraction $(1/2)^{\varsigma}$ of the way from $h_2$ to $h_4$, so it is calibrated on
-the share of the housed living in the middle unit size, $24.1$ percent in the 2023
-ACS, table B25042. Raise it and the middle rung falls towards
-the smallest, the middle dwelling gets cheaper and that share rises.
+\new{The curvature places the middle rung, a fraction $(1/2)^{\varsigma}$ of the
+way from $h_2$ to $h_4$. It is set rather than calibrated: the three shares sum
+to one, so matching the smallest with $h_2$ and the largest with $h_4$ matches
+the middle as well, and a third instrument on it would have no moment of its
+own left to answer to.}
 
 
 \item[$h_4$, the largest rental size.] The top of the ladder, calibrated on the
