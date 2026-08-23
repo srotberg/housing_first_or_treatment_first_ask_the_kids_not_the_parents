@@ -1764,8 +1764,18 @@
         real(8) :: value_of_life_at_bracket=-1
         real(8), parameter :: bracket_value_of_life_tolerance=0.05
         
-        integer, parameter :: employment_grid_size=9
-        integer, parameter :: productivity_below_which_to_reduce_ss=9
+        ! THIRTEEN, AND PLACED BY QUANTILE RATHER THAN EVENLY IN LOGS. Nine
+        ! nodes spread uniformly over plus and minus three standard deviations
+        ! put neighbouring incomes a factor of 2.07 apart and left the bottom of
+        ! the distribution as three lumps carrying 0.43, 2.61 and 9.99 per cent.
+        ! The homelessness target is 0.399 per cent, SMALLER THAN THE BOTTOM
+        ! LUMP, so the attainable rates near it were about zero, 0.43 and 3.04
+        ! per cent and no h_1 could land between them: that is the step function
+        ! the bracket kept being discarded on. At thirteen nodes packed toward
+        ! the bottom the first carries 0.164 per cent and six of them lie below
+        ! the fifteenth percentile, where the housing and drug margins sit.
+        integer, parameter :: employment_grid_size=13
+        integer, parameter :: productivity_below_which_to_reduce_ss=employment_grid_size
         real(8) :: scaling_of_ss=(1-reduce_ss_by_half)*1+reduce_ss_by_half*0.5
         real(8) :: scaling_of_ss_adjuster=0
         real(8) :: distance_scaling_of_ss
@@ -2035,12 +2045,21 @@
             (1-perceived_probability_lower)*0.63724801720916613+perceived_probability_lower*0.63724801720916613
         real(8) :: median_income_calibrated=&
             (1-perceived_probability_lower)*0.47598081051989916+perceived_probability_lower*0.47595992169857460
-        real(8), dimension(employment_grid_size) :: average_labor_income_by_employment_calibrated=&
-            include_addiction*&
-            (/0.20183596147399999,0.25387659584000000,0.32573341962899999,0.43099784501299998,&
-            0.57869126790199998,0.76842039107000004,1.0258526731700000,1.3911730433400000,1.9293284858660000/)+&
-            (1-include_addiction)*(/0.188012404278,0.252153720361,0.327663079872,0.433664983268,0.572493125585,&
-            0.765393288547,0.973910709767,1.291599624892,1.816341129330/)
+        ! ZEROED BECAUSE THE GRID IT WAS TAKEN ON NO LONGER EXISTS.
+        !
+        ! These were average labour income at each of NINE evenly spaced nodes,
+        ! written down from a finished benchmark. The grid is thirteen nodes
+        ! placed by quantile now, so every one of those numbers belongs to a
+        ! household that is not on the grid any more. They are used only when
+        ! is_counterfactual is one, where they hold the benchmark's income
+        ! profile fixed, so the benchmark run does not touch them -- but a
+        ! counterfactual run against a stale profile would price every household
+        ! against a different economy and say nothing about the policy.
+        !
+        ! So they are zero, and the guard below refuses to run a counterfactual
+        ! until they are refreshed from the recalibrated benchmark. Silence here
+        ! would be worse than a stop: the counterfactual would produce numbers.
+        real(8), dimension(employment_grid_size) :: average_labor_income_by_employment_calibrated=0
                         
         real(8) :: average_financial_calibrated=0.46422622482515985
         real(8) :: average_net_wealth_calibrated=include_addiction*1.6578927058902298417+(1-include_addiction)*1.8927058902298417
@@ -3670,6 +3689,45 @@
         ! so treating a household as fully clean for the period overstates what
         ! one period of abstention buys. The weaker form would scale the
         ! multiplier down rather than remove it.
+        ! THE MEAN OF A MEAN-ONE LOGNORMAL BELOW ITS q-TH QUANTILE, which is
+        ! Phi(Phi^{-1}(q) - sigma). Differencing it across two quantiles and
+        ! dividing by the mass between them gives the conditional mean of that
+        ! interval, which is where a node belongs: it makes the discretisation
+        ! integrate to the distribution rather than to a truncation of it.
+        real(8) function lognormal_tail_mean(q_1,sigma_1)
+            implicit none
+            real(8), intent(in) :: q_1,sigma_1
+            if (q_1<=0) then
+                lognormal_tail_mean=0
+            else if (q_1>=1) then
+                lognormal_tail_mean=1
+            else
+                lognormal_tail_mean=&
+                    (1+erf((normal_quantile(q_1)-sigma_1)/sqrt(2.d0)))/2
+            end if
+        end function
+
+        ! THE NORMAL QUANTILE BY BISECTION, because Fortran has erf and no
+        ! inverse of it. Eighty halvings of [-12,12] is machine precision here
+        ! and it is called once per node per loop, so the cost is nothing.
+        real(8) function normal_quantile(p_1)
+            implicit none
+            real(8), intent(in) :: p_1
+            real(8) :: lo_1,hi_1,mid_1
+            integer :: iter_1
+            lo_1=-12
+            hi_1=12
+            do iter_1=1,80
+                mid_1=0.5d0*(lo_1+hi_1)
+                if (((1+erf(mid_1/sqrt(2.d0)))/2)<p_1) then
+                    lo_1=mid_1
+                else
+                    hi_1=mid_1
+                end if
+            end do
+            normal_quantile=0.5d0*(lo_1+hi_1)
+        end function
+
         integer function survival_sud_of(d_1,treatment_1)
             implicit none
             integer, intent(in) :: d_1,treatment_1
@@ -22018,6 +22076,14 @@
         real(8) :: s_deviation_top=3
         real(8) :: s_deviation_bottom=3
         real(8) :: sd_fixed_y,width_fixed_y
+        ! ABOVE ONE PACKS THE NODES TOWARD THE BOTTOM, which is the stylized
+        ! model's GRID_KAPPA and the same reasoning: the drug, housing and
+        ! homelessness margins all sit at the bottom, so that is where the
+        ! resolution is worth paying for. At 2.5 with thirteen nodes the bottom
+        ! interval carries 0.164 per cent of households, comfortably under the
+        ! 0.399 per cent the homelessness target asks for.
+        real(8), parameter :: y_grid_kappa=2.5d0
+        real(8), dimension(employment_grid_size+1) :: p_edge_1,tail_mean_1
         real(8) :: sum_of_dist,sum_of_unconditional_unemployment
         integer, intent(in) :: time_period
          
@@ -22115,37 +22181,72 @@
         ! rather than at retirement, and the grid is frozen at its mid working
         ! life width so that the cross sectional dispersion is the average of
         ! what the stochastic process delivered.
+        ! A COUNTERFACTUAL AGAINST A ZEROED BENCHMARK PROFILE IS NOT A
+        ! COUNTERFACTUAL. average_labor_income_by_employment_calibrated holds the
+        ! benchmark's income by node and was taken on the nine node grid, so it
+        ! is zero until the recalibrated benchmark refills it. Running anyway
+        ! would price every household against an economy with no income in it and
+        ! still produce numbers, which is the failure mode worth stopping for.
+        if ((is_counterfactual==1) .AND. &
+            (sum(abs(average_labor_income_by_employment_calibrated))<=0)) then
+
+            write(*,*) "STOP: average_labor_income_by_employment_calibrated is empty."
+            write(*,*) "   It was taken on the nine node grid and this build has",&
+                employment_grid_size, " nodes placed by quantile."
+            write(*,*) "   Recalibrate the benchmark and write the new profile in",&
+                " before running a counterfactual."
+            stop
+
+        end if
+
         if (fixed_productivity==1) then
         
-            ! The nodes are evenly spaced in logs between -s_deviation_bottom
-            ! and +s_deviation_top standard deviations of the permanent draw,
-            ! with the mean of log productivity zero by construction, which is
-            ! the same shape the frozen grid had and the shape the probability
-            ! rebuild below assumes.
-            do employment_index=1,employment_grid_size
-            
-                ! MEAN PRODUCTIVITY IS ONE AT EVERY sigma_y, and the shift by
-                ! -sigma_y^2/2 below is what makes it so. Without it the mean of
-                ! LOG productivity is zero, so the mean of the LEVEL is
-                ! exp(sigma_y^2/2) and moves with sigma_y: calibrating sigma_y
-                ! from 0.75 to 1.15 raised mean income by 47 per cent and
-                ! silently rescaled every level denominated parameter against
-                ! it, the drug price, the Stone-Geary endowment, the consumption
-                ! floor, the rent and the voucher means test among them. The
-                ! poorest node fell from 0.079 of the mean to 0.016 at the same
-                ! time, which pinned the bottom of the distribution at an
-                ! unchanged consumption floor, and the model produced no drug
-                ! use at all. sigma_y is a dispersion parameter and must not
-                ! move the scale. This is also the normalisation the stylized
-                ! model uses, so the two now agree.
-                employment_grid(1,employment_index)=&
-                    exp(-0.5d0*sd_permanent_productivity**2&
-                    -s_deviation_bottom*sd_permanent_productivity+&
-                    (s_deviation_bottom+s_deviation_top)*sd_permanent_productivity*&
-                    real(employment_index-1)/real(employment_grid_size-1))
-                
+            ! NODES AT THE CONDITIONAL MEAN OF QUANTILE INTERVALS.
+            !
+            ! The old placement spread the nodes evenly in logs between plus and
+            ! minus three standard deviations and then read each node's mass off
+            ! a midpoint of that spacing. Two things came of it. The tails were
+            ! truncated, so the truncation point rather than the model decided
+            ! how many households could not afford to rent, which is the fault
+            ! the stylized model recorded fixing and which was never checked
+            ! against this one. And the mass sat in a few large lumps at the
+            ! bottom, so homelessness moved in steps far wider than its target.
+            !
+            ! Now the CDF is cut at p_i = (i/n)^kappa, each node is the mean of
+            ! the lognormal conditional on falling in its own interval, and each
+            ! node's mass is that interval's mass. Nothing is truncated: the
+            ! bottom interval runs to zero and the top to infinity, and both are
+            ! represented by the mass they actually carry. Mean productivity is
+            ! one by construction rather than by rescaling, since the interval
+            ! means weighted by the interval masses sum to the whole mean.
+            do employment_index=1,employment_grid_size+1
+
+                p_edge_1(employment_index)=&
+                    (real(employment_index-1,8)/real(employment_grid_size,8))**y_grid_kappa
+
             end do
-        
+
+            p_edge_1(1)=0
+            p_edge_1(employment_grid_size+1)=1
+
+            do employment_index=1,employment_grid_size+1
+
+                tail_mean_1(employment_index)=&
+                    lognormal_tail_mean(p_edge_1(employment_index),sd_permanent_productivity)
+
+            end do
+
+            do employment_index=1,employment_grid_size
+
+                unconditional_employment_probability(employment_index)=&
+                    p_edge_1(employment_index+1)-p_edge_1(employment_index)
+
+                employment_grid(1,employment_index)=&
+                    (tail_mean_1(employment_index+1)-tail_mean_1(employment_index))/&
+                    max(unconditional_employment_probability(employment_index),10.d0**(-14))
+
+            end do
+
             do age_index=1,life_span
             
                 employment_grid(age_index,:)=employment_grid(1,:)
@@ -22167,33 +22268,13 @@
             ! sigma cannot be read off it by dividing. It is taken directly.
             sd_fixed_y=sd_permanent_productivity
             
-            width_fixed_y=(log(employment_grid(1,employment_grid_size))-&
-                log(employment_grid(1,1)))/(employment_grid_size-1)
-            
-            ! THE LOG MEAN IS -sigma^2/2, NOT ZERO, so it is added back before
-            ! standardising. Leaving it out would put the probabilities on a
-            ! distribution shifted away from the grid the nodes sit on.
-            unconditional_employment_probability(1)=&
-                (1+erf(((log(employment_grid(1,1))+0.5*width_fixed_y+&
-                0.5d0*sd_fixed_y**2)/sd_fixed_y)/sqrt(2.d0)))/2
-            
-            do employment_index=2,employment_grid_size-1
-            
-                unconditional_employment_probability(employment_index)=&
-                    (1+erf(((log(employment_grid(1,employment_index))+0.5*width_fixed_y+&
-                    0.5d0*sd_fixed_y**2)/sd_fixed_y)/sqrt(2.d0)))/2-&
-                    (1+erf(((log(employment_grid(1,employment_index))-0.5*width_fixed_y+&
-                    0.5d0*sd_fixed_y**2)/sd_fixed_y)/sqrt(2.d0)))/2
-            
-            end do
-            
-            unconditional_employment_probability(employment_grid_size)=&
-                1-(1+erf(((log(employment_grid(1,employment_grid_size))-0.5*width_fixed_y+&
-                0.5d0*sd_fixed_y**2)/sd_fixed_y)/sqrt(2.d0)))/2
-            
-            unconditional_employment_probability=unconditional_employment_probability/&
-                sum(unconditional_employment_probability)
-            
+            ! THE MASSES CAME WITH THE NODES, so there is nothing to rebuild.
+            ! This used to recover a width from the grid and read each node's
+            ! mass off a midpoint of that width, which only works when the nodes
+            ! are evenly spaced. They are not any more: the mass IS the interval
+            ! it was cut from, and it sums to one by construction.
+            sd_fixed_y=sd_permanent_productivity
+
             ! THE MOMENT sigma_y IS CALIBRATED ON. The share of productivity
             ! held by the bottom half of the distribution, with the node the
             ! median falls inside split at the median rather than assigned
@@ -23828,25 +23909,15 @@
             
         end if
         
-        if (loop_count<1) then
-        
-            if (include_addiction==1) then
-                                                                                        
-                model_ss_benefits=&
-                    (/0.13001534512509200,0.17576061828112619,0.20208866093555292,0.23909514735434345,&
-                    0.29111407634379632,0.36423955558341353,0.46704102272962378,0.55949652015928697,&
-                    0.65474754651858269/)
-                    
-            else
-            
-                model_ss_benefits=&
-                    (/0.126749628889,0.171317574599,0.196984311342,0.233061271454,0.283773592667,&
-                    0.355062311295,0.455281618466,0.545360175224,0.638218693045/)
-            
-            end if
-        
-        end if
-            
+        ! THE STORED SEED IS GONE WITH THE GRID IT WAS TAKEN ON.
+        !
+        ! This overwrote the benefits computed just above with nine numbers
+        ! written down from a finished benchmark, to save the first loop the work
+        ! of finding them. The grid is thirteen nodes placed by quantile now, so
+        ! each of those numbers belongs to a node that no longer exists, and a
+        ! seed on the wrong grid is worse than no seed: it is a first loop priced
+        ! against a different economy. The computed values stand on their own.
+
         if (loop_count<5) then
                                 
             do employment_index=1,employment_grid_size
