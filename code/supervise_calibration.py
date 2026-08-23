@@ -785,7 +785,40 @@ def verdict():
     return hit == total and total > 0, f'{hit} of {total} on target'
 
 
+def already_running():
+    """True if another supervisor is alive, so this one refuses to start.
+
+    TWO SUPERVISORS IS TWO MODELS. Each relaunches its own on death and each
+    writes calibration_state.dat, so they overwrite each other's checkpoints and
+    halve each other's cores. It happened: a supervisor from an earlier launch
+    survived a kill and sat for sixteen minutes with no model, about to start a
+    second one beside the live run.
+
+    Matched POSITIONALLY. `ps | grep supervise_calibration` matches the shell
+    whose own command line contains the string, which is the trap this project
+    has fallen into four times: argv[0] is a python and argv[1] is this script.
+    """
+    me = os.getpid()
+    out = subprocess.run(['ps', '-eo', 'pid,args'], capture_output=True,
+                         text=True).stdout
+    for line in out.splitlines()[1:]:
+        parts = line.split()
+        if len(parts) < 3:
+            continue
+        pid, argv0, argv1 = parts[0], parts[1], parts[2]
+        if (int(pid) != me and 'python' in os.path.basename(argv0)
+                and os.path.basename(argv1) == os.path.basename(__file__)):
+            return int(pid)
+    return None
+
+
 def main():
+    other = already_running()
+    if other:
+        print(f'supervisor: another supervisor is already running as pid {other}; '
+              'refusing to start a second')
+        return 0
+
     max_restarts, poll = 12, 180
     for i, a in enumerate(sys.argv):
         if a == '--max-restarts':
