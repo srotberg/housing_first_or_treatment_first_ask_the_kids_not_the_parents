@@ -248,3 +248,9 @@ Recorded, not acted on: damping a drift or repairing a moment pairing is a model
 Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
 
 - `largest_house_size` moved 0.3835 to 0.09865, one way across 15 loops, and its moment is not reported as a scalar
+
+## Stopped: the income gradient has inverted
+
+income of the disordered over average income is 1.118, 1.110, 1.141 across 3 loops: the users are not the poor, which is the fact the model exists to produce
+
+Not fixed automatically: outside the catalogue. This one needs a person.
