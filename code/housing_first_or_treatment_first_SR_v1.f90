@@ -22443,7 +22443,22 @@
         use global_vars
         
         integer :: cutoff_age_1,cutoff_age_2
-        real(8), parameter :: increased_prob_if_homeless=0.2,increased_prob_to_be_addicted=0
+        ! THE HOMELESS JOB PENALTY IS WHAT DECIDES WHETHER HOMELESSNESS AND WORK CAN
+        ! COEXIST, and it was 0.2, which is barely a penalty at all: separation
+        ! times 1.2 and job finding divided by 1.2. The employed share of the
+        ! homeless read 0.94 against a target of 0.50, and lowering h_2 does not
+        ! touch it -- taking the cheapest room from 0.0158 to 0.006 cut
+        ! homelessness by ninety two per cent and moved the share the WRONG way,
+        ! because a cheaper room houses the poorest first and leaves on the
+        ! street whoever chooses it while able to afford one.
+        !
+        ! At the steady state the employment rate among the homeless is
+        ! f/(f+s(1+iph)^2); with f=0.55 and s=0.0107 a target of 0.50 needs
+        ! (1+iph)^2 near 51, so iph near 6. Homelessness spells are short, so the
+        ! stock never reaches that steady state and the realised share sits above
+        ! it -- the same lesson kappa_uem taught against short SMI spells -- so
+        ! this starts above the steady state value rather than at it.
+        real(8), parameter :: increased_prob_if_homeless=8.0,increased_prob_to_be_addicted=0
         
         if (include_vouchers==0) then
         
