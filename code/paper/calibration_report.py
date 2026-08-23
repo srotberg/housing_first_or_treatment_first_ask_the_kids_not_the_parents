@@ -145,7 +145,7 @@ def main():
     live = live_distances(sys.argv[1])
     frozen = zero_adjusters()
 
-    rows, held, missing = [], [], []
+    rows, held, missing, seen = [], [], [], {}
     for name, (model_expr, target_expr) in sorted(pair.items()):
         label = export_moments.sanitise(model_expr)
         label = ALIAS.get(label, label)
@@ -168,15 +168,30 @@ def main():
             continue
 
         clears = name in rule and abs(model - target) <= rule[name]
+
+        # ONE ROW PER MOMENT, NOT PER PARAMETER. Two parameters can be moved by
+        # the same moment -- h_2 and rho_d both by the employed share of the
+        # homeless, and both addiction hazards by the share addicted -- and
+        # printed once each they read as two independent misses. The median gap
+        # then counts that moment twice, which is how a sixteen row table came
+        # to describe fourteen moments. Joined with a plus so the name stays one
+        # token: checkpoint() reads this table with a whitespace split.
+        key = (label, target_name)
+        if key in seen:
+            i = seen[key]
+            g, nm, mo, ta, cl = rows[i]
+            rows[i] = (g, nm + '+' + name, mo, ta, cl or clears)
+            continue
+        seen[key] = len(rows)
         rows.append((gap, name, model, target, clears))
 
     rows.sort(reverse=True)
-    print(f'{"parameter":34s} {"model":>13s} {"target":>13s} {"off by":>9s}  ')
-    print('-' * 76)
+    print(f'{"parameter":50s} {"model":>13s} {"target":>13s} {"off by":>9s}  ')
+    print('-' * 92)
     for gap, name, model, target, clears in rows:
         mark = 'ON TARGET' if clears else ''
-        print(f'{name:34s} {model:13.6g} {target:13.6g} {gap*100:8.1f}%  {mark}')
-    print('-' * 76)
+        print(f'{name:50s} {model:13.6g} {target:13.6g} {gap*100:8.1f}%  {mark}')
+    print('-' * 92)
     print(f'{sum(1 for r in rows if r[4])} of {len(rows)} on target, '
           f'{sum(1 for r in rows if not r[4] and r[0] <= 0.03)} within three per cent')
 
