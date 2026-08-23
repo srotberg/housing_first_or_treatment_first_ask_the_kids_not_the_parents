@@ -275,6 +275,42 @@ the intuition. A stylized
 two-period model, in Section~\ref{sec:stylized}, shows how the increased mortality risk
 mechanism reverses the income gradient at its clearest, and how the externality that
 overturns the dominance result works.
+\textcolor{red}{It separates the two penalties a disorder carries. Scaled from
+nothing to full strength, the death penalty takes the average user from
+3.87 times average income to 0.33 times it; the unemployment penalty
+leaves it at 3.87. Flow utility is logarithmic, so losing a job costs a
+household about the same number of utils whatever it earns, and what that penalty
+has to overturn is not flat at all: a fixed quantity of the drug costs a rich
+household little and a poor household a great deal, so the utility price of using
+falls as income rises, and a charge that does not vary with income cannot reverse
+a price that does. Mortality destroys the whole continuation value, including
+$\aleph$, the value of being alive at all, which is worth more to a richer
+household in the units it actually trades off, so past a point it is the rich who
+stop first.}
+
+\textcolor{red}{The same model separates the two forces housing assistance sets
+against each other, because they differ in what happens to a household that uses.
+Treatment First withdraws the voucher from a household that violates the sobriety
+condition, so only the value of life is at stake; Housing First does not, so moral
+hazard operates as well. Both are first order and they work against each other,
+which is why whether housing the homeless raises or lowers drug use is a
+quantitative question rather than one that can be settled by assertion.}
+
+\textcolor{red}{Set the externalities and the distortions aside and Housing First
+is weakly better for every household: conditionality removes an option and gives
+nothing back, so 7.4 percent are strictly worse off under Treatment First
+and none is better off. Switch on the externality that a parent's disorder imposes
+on its child and the ranking turns, but only in the long run, from the third
+cohort of newborns onward, since a household deterred from using never acquires
+the disorder and its children inherit better draws. Conditionality takes at once
+and repays later: a household already carrying the disorder when the reform lands
+can do nothing about its condition and loses its voucher anyway. So Housing First
+is still ahead in the short run, and by very little, costing the generation caught
+that way 0.9 percent of lifetime consumption and the first cohort of
+newborns 0.060 percent. It is small because universal coverage is worth a
+great deal even to a household whose condition is an unchanged state, the voucher
+being a rent subsidy to everyone it covers rather than a rescue for the few it
+takes off the street, and conditionality takes only a slice of that back.}
 
 A full-fledged quantitative model follows, to quantify the mechanisms and the welfare
 implications of Housing First against Treatment First. It is a general equilibrium
@@ -2367,53 +2403,56 @@ externally at $2.5$, the middle of the standardised mortality ratios for SMI in
 Olfson et al.\ (2015).
 \end{description}
 
-\paragraph{Recovery and treatment.} Both policies work on this block,
+\paragraph{Recovery and treatment.} Both policies work \new{through parameters in this} block,
 since recovery is what Treatment First buys directly and what Housing First buys by
 housing people. The first two set how much recovery there is to buy and the last two
 how much of it a policy can reach.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$\bar\pi_r$, the baseline SUD recovery rate.] The hazard of getting out of the
+\item[$\bar\pi_r$, the baseline SUD recovery rate.] \new{This parameter is the hazard} of getting out of the
 disorder for a housed household, which is the level everything else in this block
 scales. As it rises disorders end sooner on their own, so the private
 cost of acquiring one falls and the externality falls with it, and there is less for
 either policy to buy. It is set externally from the ten-year remission rate in Vaillant (1995), which gives an annual hazard of
 $0.025$.
-\item[$\mu_H$, SUD recovery when homeless.] How much less likely recovery from the
+\item[$\mu_H$, SUD recovery when homeless.] \new{The value of this parameter determines how} much less likely recovery from the
 disorder is for an unhoused household than a housed one. It matters more than the
 level $\bar\pi_r$ because it is a \emph{gradient}: it is what a voucher buys beyond
-shelter. As it falls the gradient steepens, so housing buys more
+shelter. As it falls \new{(i.e., SUD recovery while unhoused is lower)} the gradient steepens, so housing buys more
 recovery: the private value of a voucher rises and the externality falls. Near one, assistance is a transfer and the
 moral hazard stands unopposed. Its value is chosen so the model generates the
 increase in recovery housing produced in Milby et al.\ (2005), a randomised trial on
-cocaine-dependent homeless adults: $6.60$ weeks abstinent in the housed arm against
-$4.48$ homeless, so housing raises recovery by $47.3$ percent.
-\item[$g$, the treatment effect on recovery.] Treatment First's instrument, and the
-parameter its case rests on most directly. Raise it and treatment works
-better, so a household that carries the disorder is more easily cured, and
-therefore the private cost falls, with the household spending less of its
-life carrying one. The
-externality falls with it, and by the same route: a child who acquires a disorder is
-also more easily cured, so what its parent hands on costs it less of its own life. It is set externally at $1.35$, the
+cocaine-dependent homeless adults: \new{an average of} $6.60$ weeks abstinent in the housed arm against
+$4.48$ \new{in the} homeless, so housing raises recovery by $47.3$ percent.
+\item[$g$, the treatment effect on recovery.] \new{This is the instrument through
+which Treatment First reaches households that already carry a SUD, which is what
+matters for short-run impacts, since on implementation some households are already
+in the SUD state.} Raise it and treatment \new{is more likely to cure a SUD}, so a
+household that carries the disorder is more \new{likely to be cured}, and
+therefore the private cost falls, with the household \new{choosing to go to
+treatment} spending less of its life carrying one. The
+externality falls with it, \new{because} a child who acquires a disorder is
+also more \new{able to address their disorder}, so what its parent hands on costs it less of its own life. It is set externally at $1.35$, the
 odds ratio in Milby et al.\ (2005).
 \item[$\bar\tau^{u}$, the utility cost of treatment.] Take up is a choice, not a
 rule, and this is what makes households decline treatment they might gain
-from in the future. When it rises, fewer take treatment, so the externality rises, since
+from in the future. When it rises, fewer \new{opt for} treatment, so the externality rises, since
 more people remain with a SUD and thus more children are born with lower
 incomes, which leads to higher SUD incidence, and the private cost rises too, since
-treatment is costly. It is calibrated internally to treatment take-up among adults
-with a SUD, $24.5$ percent in NSDUH 2024.
+treatment is costly. It is calibrated internally to treatment take-up\new{: $24.5$ percent
+of adults with a SUD received substance use treatment in the past year in NSDUH
+2024}.
 \end{description}
 
-\paragraph{Externalities and distortions.} This block is about what causes the
-externalities and the distortions. This is where the ranking between Housing
-First and Treatment First is decided, since the private comparison already favours
-Housing First, holding externalities and distortions aside.
+\paragraph{Externalities and distortions.} \new{The parameters in this block decide
+the strength of the externalities and distortions.} This \new{affects} the ranking
+between Housing First and Treatment First, since the private comparison already
+favours Housing First, holding externalities and distortions aside.
 The first three are what a parent's disorder and a
 parent's homelessness cost the child, and the fourth is what the
 homelessness of strangers costs everybody. All four are externalities in the strict
 sense: one household's choice enters another household's utility directly without
 being internalised by the household making the decision, and it
-would still do so if the programmes were paid for with a non-distortionary tax, such
+would still do so \new{even} if the programmes were paid for with a non-distortionary tax, such
 as a lump sum tax. The
 last is not an externality but a distortion, and it closes the block for that
 reason: it says what it costs to raise the revenue either programme needs rather
@@ -2423,10 +2462,11 @@ than whose utility a choice lands in.
 its own state costs its child, and $\omega$ is small. As it
 rises the parent counts more of the child's loss, so the externality left
 for a policy to correct is smaller. Identifying it in the model requires
-care, because \emph{every} household here has a child, born after it dies, so there is no parent
-against non-parent comparison to run in the benchmark. The moment is a
-counterfactual instead. Its value is chosen so that removing the child's
-penalty at the calibrated parameters raises drug use by $18.3$ percent, the
+care, because \emph{every} household here has a child, born after it dies, so
+\new{on its face it would seem like there} is no parent
+against non-parent comparison to run in the benchmark. \new{I solve this with a
+counterfactual moment instead. I choose its value} so that removing the child's
+penalty at \new{the other parameters' values} raises drug use by $18.3$ percent, the
 gap between parents and non-parents in NSDUH 2024 read the way the model reads it.
 \item[$\delta_d$, what the child loses to a parent's SUD.] The child does not inherit
 the disorder, only a worse
@@ -2437,17 +2477,11 @@ earlier.
 disorder: Treatment First by curing the parent, Housing First because recovery is
 easier once housed,
 while the parent's own private cost is largely unchanged, which is exactly what makes it an
-externality. No paper estimates the effect of a parent's SUD on a child's lifetime
-earnings directly, which is why the penalty is calibrated to the disorder ratio
-rather than lifted from an estimate. Its target is the ratio of disorder rates
+externality. \new{To my knowledge, no} paper estimates the effect of a parent's SUD on a child's lifetime
+earnings directly, which is why \new{I calibrate the penalty} to the disorder ratio
+rather than \new{lifting it} from an estimate. Its target is the ratio of disorder rates
 between the children of parents with and without a disorder, which McGovern et
-al.\ (2023) put between two and four; the midpoint, three, is the target value. The
-moment does not need the parent's type carried through the child's whole life. The
-only thing $\delta_d$ changes about a child is the productivity it is born with,
-and the model already holds the distribution of that draw conditional on the
-parent's disorder, and the disorder rate at each productivity level; the ratio is
-those two contracted against each other, at the same parental housing status so
-the comparison isolates the disorder.
+al.\ (2023) put between two and four; the midpoint, three, is the target value.
 \item[$\delta_h$, what the child loses to homelessness.] It works through the same
 compounding draw as $\delta_d$, and as it rises it loads whichever policy houses
 more people: Housing First directly, Treatment First by removing the disorder that
@@ -2456,28 +2490,27 @@ the private cost mostly unchanged. It is calibrated internally, on the
 transmission of its own condition, exactly as $\delta_d$ is: Bassuk et al.\ (1997)
 compare $220$ homeless mothers with $216$ low-income housed mothers and find odds ratios of $1.80$ and $2.41$. $\delta_h$
 is set so the child of a homeless parent is $2.10$ times as likely to be homeless
-themselves, the midpoint of the two. Because both arms of that study are poor households, the target
-isolates transmission from the poverty that accompanies it.
-\item[$\kappa_x$, the disamenity of homelessness.]\label{sec:fleftout} The only term through which one
-household's housing status enters the utility of another who is not its own child,
+themselves, the midpoint of the two.
+\item[$\kappa_x$, the disamenity of homelessness.]\label{sec:fleftout} \new{This is the
+only parameter} through which one
+household's housing status \new{is connected to} the utility of another who is not its own child,
 which is what makes the homelessness rate a genuine fixed-point problem rather than
 accounting. As it rises the externality from the aggregate headcount
 grows, which loads whichever policy houses more people. Setting it high should
-mostly favour Housing First, so the higher figure is taken as the baseline and a ranking
+mostly favour Housing First, so \new{I take the upper end estimate for this
+disamenity as} the baseline, and a ranking
 that still favours Treatment First survives the assumption least kind to it. It is
 calibrated externally at $0.2$ percent of average annual earnings,
 from the contingent valuation in Loubi\`ere et al.\ (2020).
 \item[$\sigma_{\ell}$, the curvature on leisure.]
 The curvature that turns $\omega_{\ell}$ into an elasticity: together
-they decide how far hours actually move when the after tax wage does. The two are
+they decide how far hours actually move when the \new{after-tax} wage does. The two are
 not the same dial. $\omega_{\ell}$ sets what an hour of leisure is worth against
 consumption, so it fixes the level of hours; $\sigma_{\ell}$ sets how fast that
 worth falls as leisure is given up, so it fixes how far hours move when the wage
-changes. One pins the average, the other the response to a tax. It belongs
-here because the size of the
-distortion is exactly what this parameter sets: at a high curvature hours barely
+changes. One pins the average, the other the response to a tax. \new{At} a high curvature hours barely
 respond and the tax that funds either policy is close to a lump sum, at a low one
-the same revenue costs far more in forgone work. Raise it and labour supply is less
+\new{raising the same revenues with it} costs far more in forgone work. Raise it and labour supply is less
 elastic, so the distortion falls and both policies look cheaper, without touching
 the private value or the externality at all. It is set externally to produce a
 Frisch elasticity of $0.5$, from Chetty (2012).
@@ -2486,22 +2519,21 @@ Frisch elasticity of $0.5$, from Chetty (2012).
 
 \paragraph{Drug market.} One parameter of the drug market belongs here.
 It is what makes the drug price endogenous, so drug use affects drug demand and the
-drug price in equilibrium; the normalisation and the price it fixes are standard
-and sit in Table~\ref{tab:stdparams}. This is a general equilibrium offset that
+drug price in equilibrium. This is a \new{general-equilibrium} offset that
 runs against Treatment First in particular. Curing households takes them out of the
 drug market, demand falls and so does the price, and a cheaper drug draws other
 households in. Some of what the policy removes is handed back through the price,
 and how much depends entirely on this parameter.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$\nu_2$, the drug supply curvature.] Set so that the price elasticity of
+\item[$\nu_2$, the drug supply curvature.] \new{I set it so} that the price elasticity of
 supply is $1.46$, which is what Mace et al.\ (2020) estimate for cannabis on
-Washington State administrative data. There is no direct estimate for an illicit
+Washington State administrative data. \new{To the best of my knowledge, there} is no direct estimate for an illicit
 drug, and cannabis is the closest market there is: it remains a Schedule I
 substance federally, so even a state licensed producer works without interstate
 trade, without ordinary banking and under federal prohibition, which is the set of
 frictions an illicit supplier faces.
- When it rises, supply is more elastic, so the price moves less when demand does, and the general equilibrium offset to treatment shrinks: at a very elastic supply,
-curing households barely lowers the price, so general equilibrium effects play
+ When it rises, supply is more elastic, so the price moves less when demand does, and the \new{general-equilibrium} offset to treatment shrinks: at a very elastic supply,
+curing households barely lowers the price, so \new{general-equilibrium} effects play
 little role.
 \end{description}
 
