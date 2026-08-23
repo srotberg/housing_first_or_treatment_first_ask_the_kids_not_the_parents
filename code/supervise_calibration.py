@@ -103,6 +103,13 @@ WATCH = {
     # THE FACT THE PAPER EXISTS TO EXPLAIN, watched like a parameter because a
     # calibration that hits every target while the rich are the users has not
     # succeeded at anything. It is not a target and no bracket moves on it.
+    #
+    # AND THE TEST IS ONE, NOT ZERO. The users are not meant to be destitute:
+    # Table 7 puts the average income of drug users at 0.74 of the average in
+    # NSDUH 2024, against a benchmark model that produced 0.41 and was too poor
+    # rather than not poor enough. A ratio drifting UP toward 0.74 is the model
+    # getting closer to the data, not a gradient failing, and only a ratio above
+    # one says the rich have become the users. Do not read a rise as a fault.
     'income_of_users': _A + r'model_avg_income_drug_users/model_average_labour_income,\s*' + _NUM,
     'income_of_disordered': _A + r'model_average_income_addicted/model_average_labour_income\.\s*' + _NUM,
     # Treatment take up is the moment furthest from its target, so this is the
