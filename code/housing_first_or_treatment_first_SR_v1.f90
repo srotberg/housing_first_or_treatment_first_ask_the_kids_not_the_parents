@@ -31077,11 +31077,50 @@
                         ! inverted. The stylized model uses 0.20 and the note says
                         ! the two share this parameter, so the band is set around
                         ! that.
-                        relative_share_of_addiction_1=&
-                            max(min(relative_share_of_addiction_1-&
-                            relative_share_of_addiction_adj*drug_share_gap_1,&
-                            min(theta_hi,2*relative_share_of_addiction_1)),&
-                            max(theta_lo,relative_share_of_addiction_1/2))
+                        ! THETA MAY NOT RISE WHILE THE GRADIENT IS INVERTED.
+                        !
+                        ! The drug spending share and the income gradient pull
+                        ! theta opposite ways, and only one of them is the fact
+                        ! the model exists to produce. Measured: as b rose and
+                        ! participation fell from 76.6 per cent to 14.6, the
+                        ! average user went from 0.85 of mean income to 1.54 and
+                        ! the average household with the disorder to 1.87, while
+                        ! the spending share FELL from 9.6 per cent to 5.9
+                        ! against a target of 16.2. Those are the same fact:
+                        ! the share is spending over INCOME, so users who are
+                        ! rich carry a small share however much they buy, and
+                        ! the update reads that as a reason to raise theta.
+                        !
+                        ! Raising it is the wrong direction. theta_hi is the
+                        ! break point above which mortality stops reversing the
+                        ! gradient, so a bracket pressing upward through it is
+                        ! walking further into the region where the mechanism
+                        ! does not work, chasing a share it cannot reach from
+                        ! there. The guard lets theta FALL on the share as
+                        ! before and refuses to let it RISE while the average
+                        ! household with the disorder is richer than the mean.
+                        if ((model_average_income_addicted(1)>&
+                            model_average_labour_income(1)) .AND.&
+                            (drug_share_gap_1<0)) then
+
+                            write(*,*) "THETA HELD: the gradient is inverted, income of the",&
+                                " disordered over the mean is",&
+                                model_average_income_addicted(1)/&
+                                max(model_average_labour_income(1),10.d0**(-12)),&
+                                " and the share asks theta HIGHER. Refusing: the ceiling is",&
+                                " the break point where mortality stops reversing the",&
+                                " gradient, so raising theta chases a share that cannot be",&
+                                " reached from above it."
+
+                        else
+
+                            relative_share_of_addiction_1=&
+                                max(min(relative_share_of_addiction_1-&
+                                relative_share_of_addiction_adj*drug_share_gap_1,&
+                                min(theta_hi,2*relative_share_of_addiction_1)),&
+                                max(theta_lo,relative_share_of_addiction_1/2))
+
+                        end if
 
                         distance_relative_share_of_addiction_1=&
                             abs(drug_share_weighted_1-drug_spending_share_data)
