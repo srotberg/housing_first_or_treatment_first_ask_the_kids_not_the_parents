@@ -117,3 +117,12 @@ left on the street.
 kappa 13.79. A parameter that has more than tripled while its moment has not
 moved is either paired with the wrong moment or saturated, and neither is a
 bound tweak, so it is recorded rather than damped.
+
+## Parameters drifting one way
+
+Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
+
+- `largest_house_size` moved 0.1276 to 0.3697, one way across 24 loops, and its moment is not reported as a scalar
+- `kappa_uem` moved 4.415 to 13.79, one way across 24 loops, and its moment is not reported as a scalar
+- `relative_share_housing` moved 0.2743 to 0.1265, one way across 24 loops, and its moment is not reported as a scalar
+- `relative_share_leisure` moved 3.495 to 0.5733, one way across 24 loops, and its moment is not reported as a scalar
