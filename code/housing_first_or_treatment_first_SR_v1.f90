@@ -29666,7 +29666,18 @@
             ! converged, distribution_stationary is the better guess and the
             ! flag is cleared, so this reverts to the old behaviour from the
             ! second loop of a resumed run onwards.
-            if (((loop_count<3) .OR. (re_do_simulation_with_fixed_parameters==1)) .AND. &
+            !
+            ! A SWEEP IS EXEMPT, and it has to be. re_do_simulation_with_fixed_
+            ! parameters is normally a single re-run of a finished calibration,
+            ! where paying for a cold distribution once is nothing; a sweep is
+            ! one pass per grid point, and forcing the age one cross section on
+            ! every one of them costs the 655 sweeps this file warns about at
+            ! each. Measured: forty eight minutes without a single completed
+            ! pass, against seven for a calibration loop. Consecutive points
+            ! differ in b alone, so the previous point's converged distribution
+            ! is the better guess, exactly as it is between calibration loops.
+            if (((loop_count<3) .OR. ((re_do_simulation_with_fixed_parameters==1)&
+                .AND. (sweep_addiction_scalar==0))) .AND. &
                 (have_warm_distribution==0)) then
 
                 call initialize_feasible_distribution(1)
