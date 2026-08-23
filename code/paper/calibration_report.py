@@ -51,9 +51,28 @@ def pairs():
     """parameter -> (model quantity, data target), read out of the Fortran."""
     src = open(FORTRAN, errors='replace').read()
     src = re.sub(r'&\s*\n\s*', '', src)            # join continuations
+    # A DISTANCE WRITTEN THROUGH A NAMED GAP IS STILL A DISTANCE. Some blocks
+    # compute the gap once, use it for the adjuster's sign test AND for the
+    # update, and then write distance_X=abs(gap_X_1). Reading only the inline
+    # form dropped three parameters that are calibrated every loop and never
+    # appeared in the report at all: beta against wealth over output, b against
+    # the participation rate, and the child's penalty against the ratio of
+    # disorder rates across generations. Follow the gap back to where it is
+    # assigned. A gap assigned in two places is ambiguous and is skipped; both
+    # of those (gap_house_size_1, for h_2 and h_4) already match inline.
+    gap_of = {}
+    seen_twice = set()
+    for m in re.finditer(r'^\s*(gap_\w+)\s*=\s*([^\n!]*?)\s*$', src, re.M):
+        g, e = m.group(1), m.group(2).strip()
+        if g in gap_of and gap_of[g] != e:
+            seen_twice.add(g)
+        gap_of[g] = e
+
     out = {}
     for m in re.finditer(r'distance_(\w+)\s*=\s*abs\(([^\n]*?)\)\s*$', src, re.M):
         name, expr = m.group(1), m.group(2).strip()
+        if expr in gap_of and expr not in seen_twice:
+            expr = gap_of[expr]
         hit = re.match(r'^(.+?)\s*-\s*(\w*_data(?:\(\d+\))?)$', expr)
         if hit:
             out.setdefault(name, (hit.group(1).strip(), hit.group(2).strip()))
@@ -100,6 +119,9 @@ def live_distances(log):
 # three of them the two differ, which is why their value column was empty while
 # the parameter was moving every loop.
 PARAM_NAME = {
+    # b is declared and printed as addiction_scalar_1; the block that calibrates
+    # it is named for the parameter without the suffix.
+    'addiction_scalar': 'addiction_scalar_1',
     'voucher_probability': 'probability_of_voucher_benchmark_used',
     'employment_multiplier': 'multiple_of_probabilities_of_employment_if_addicted',
     'separation_rate': 'probability_becoming_unemployed',
@@ -200,6 +222,9 @@ ALIAS = {
     'model_recovery_housed_over_model_recovery_homeless': 'model_recovery_ratio',
     'model_bottom_half_earnings_share': 'bottom_half_s_share_of_productivity',
     'model_vsl_ratio_1': 'model_value_of_life_over_model_average_labour_income',
+    # THREE THAT ARRIVED WITH THE NAMED GAP FIX, and print under their own names.
+    'wealth_to_output_model_1': 'wealth_to_output_model',
+    'child_sud_ratio_model_1': 'child_SUD_ratio_model',
 }
 
 # A TARGET THAT LIVES IN THE LOG RATHER THAN IN A DECLARATION. The rental
