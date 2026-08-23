@@ -19051,6 +19051,9 @@
         ! would otherwise report a stalled solve as having finished at zero.
         real(8) :: distance_distribution_reached
         integer, dimension(6) :: dist_argmax_1
+        integer :: dist_dim_1
+        real(8) :: dist_mass_1,dist_wealth_1
+        real(8), dimension(0:housing_status_grid_size-1) :: dist_housing_1
         integer :: newborn_census_i
         real(8) :: newborn_census_clean,newborn_census_smi
         character*1 :: string_used
@@ -20044,11 +20047,27 @@
 
             distance_distribution_reached=distance_distribution
 
-            ! WHERE THE WORST CELL IS, every hundredth sweep. The distance is a
-            ! max over cells, and a max that plateaus says nothing about whether
-            ! one state is oscillating or the whole distribution is drifting.
-            ! The location is what tells those apart, and it is printed rarely
-            ! enough to cost nothing.
+            ! WHERE THE WORST CELL IS AND WHETHER THE MOMENTS STILL MOVE,
+            ! every hundredth sweep.
+            !
+            ! TWO QUESTIONS, AND THE SECOND IS THE ONE THAT MATTERS. The first is
+            ! whether the max is pinned to one state or wanders, which tells an
+            ! oscillating knife edge apart from a distribution still propagating.
+            ! The second is whether the AGGREGATES have stopped moving while the
+            ! max has not. The stopping rule is a max over cells of a difference
+            ! in LEVELS, and the calibration does not read a cell: it reads
+            ! integrals. A max of 2e-3 in a distribution carrying mass 51 can sit
+            ! on top of aggregates that are stable to five decimal places, and if
+            ! it does then the rule is testing the wrong thing and a solve that
+            ! runs 4000 sweeps was finished at 100.
+            !
+            ! THE INDICES HAVE TO BE PUT BACK. maxloc on an array EXPRESSION
+            ! returns positions counted from one, and this array does not start
+            ! at one in any of its dimensions: assets run from
+            ! negative_financial_grid_size, housing from lowest_housing_grid_point
+            ! and vouchers from zero. Reading the mass at the raw maxloc is
+            ! reading a different cell, and for assets it is outside the array
+            ! altogether. The first version of this did exactly that.
             if ((diagnose_distribution_max==1) .AND. (solve_transition_dynamics==0) .AND. &
                 (mod(loop_count_dist,100)==0)) then
 
@@ -20058,8 +20077,18 @@
                         distribution_implied(i)%vector_transition_real(time_period,:,:,:,:,:,:)-&
                         distribution_guess(i)%vector_transition_real(time_period,:,:,:,:,:,:)))
 
+                    do dist_dim_1=1,6
+
+                        dist_argmax_1(dist_dim_1)=dist_argmax_1(dist_dim_1)+&
+                            lbound(distribution_guess(i)%vector_transition_real,dist_dim_1+1)-1
+
+                    end do
+
                     write(*,*) "DIST_MAX sweep=", loop_count_dist, " block=", i, &
-                        " at=", dist_argmax_1, " gap=", maxval(abs(&
+                        " age=", dist_argmax_1(1), " fin=", dist_argmax_1(2), &
+                        " uem=", dist_argmax_1(3), " emp=", dist_argmax_1(4), &
+                        " hou=", dist_argmax_1(5), " vch=", dist_argmax_1(6), &
+                        " gap=", maxval(abs(&
                         distribution_implied(i)%vector_transition_real(time_period,:,:,:,:,:,:)-&
                         distribution_guess(i)%vector_transition_real(time_period,:,:,:,:,:,:))), &
                         " mass_there=", distribution_guess(i)%vector_transition_real(time_period,&
@@ -20067,6 +20096,46 @@
                         dist_argmax_1(5),dist_argmax_1(6))
 
                 end do
+
+                ! THE AGGREGATES, on the implied distribution, to fifteen digits
+                ! so that "stopped moving" can be read off two consecutive lines
+                ! rather than guessed at. Mass by housing status is the closest
+                ! cheap stand-in for the moments the calibration brackets on: the
+                ! homelessness rate and the size distribution are both built out
+                ! of these sums, and the mean asset holding drives the wealth
+                ! target.
+                dist_mass_1=0
+                dist_wealth_1=0
+                dist_housing_1(:)=0
+
+                do i=1,2
+
+                    dist_mass_1=dist_mass_1+&
+                        sum(distribution_implied(i)%vector_transition_real(time_period,:,:,:,:,:,:))
+
+                    do dist_dim_1=lbound(distribution_implied(i)%vector_transition_real,6),&
+                        ubound(distribution_implied(i)%vector_transition_real,6)
+
+                        dist_housing_1(dist_dim_1)=dist_housing_1(dist_dim_1)+&
+                            sum(distribution_implied(i)%vector_transition_real&
+                            (time_period,:,:,:,:,dist_dim_1,:))
+
+                    end do
+
+                    do dist_dim_1=lbound(distribution_implied(i)%vector_transition_real,3),&
+                        ubound(distribution_implied(i)%vector_transition_real,3)
+
+                        dist_wealth_1=dist_wealth_1+max(financial_grid(dist_dim_1),0.d0)*&
+                            sum(distribution_implied(i)%vector_transition_real&
+                            (time_period,:,dist_dim_1,:,:,:,:))
+
+                    end do
+
+                end do
+
+                write(*,'(A,I6,A,F22.15,A,F22.15,A,3F22.15)') " DIST_MOM sweep=", &
+                    loop_count_dist, " mass=", dist_mass_1, " wealth=", dist_wealth_1, &
+                    " by_housing=", dist_housing_1(:)
 
             end if
                         
