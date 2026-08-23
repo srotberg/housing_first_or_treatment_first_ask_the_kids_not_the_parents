@@ -391,6 +391,16 @@ def figure_numbers(base):
     d['hl0'] = f'{100 * m0["homeless"]:.2f}'
     d['sudh'] = f'{100 * mh["sud"]:.3f}'
     d['sudt'] = f'{100 * mt["sud"]:.3f}'
+    # HOW PANEL (b) AND PANEL (c) CAN MOVE IN OPPOSITE DIRECTIONS. Housing First
+    # takes participation DOWN relative to no programme and the share with a
+    # disorder UP, which reads as a contradiction until the intensive margin is
+    # named: fewer households use, and each one that does uses much more,
+    # because it keeps its voucher and the drug is a luxury. The hazard is
+    # 1-exp(-lambda v), so it is the dose that converts a user into a case.
+    # These are the conversion rates among USERS at the two ends.
+    d['sud0'] = f'{100 * m0["sud"]:.3f}'
+    d['conv0'] = f'{100 * m0["sud"] / m0["part"]:.1f}'
+    d['convh'] = f'{100 * mh["sud"] / mh["part"]:.1f}'
     d['costh'] = f'{mh["cost"]:.4f}'
     d['costt'] = f'{mt["cost"]:.4f}'
     d['costdir'] = ('more' if mt['cost'] > mh['cost']
