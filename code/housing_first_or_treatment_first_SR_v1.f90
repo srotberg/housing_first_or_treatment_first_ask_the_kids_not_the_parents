@@ -971,11 +971,13 @@
         ! sections 9.1 and 9.2 of PERFORMANCE_NOTES.md.
         integer, parameter :: accelerate_distribution=0
 
-        ! ONE AT A TIME, AND ONLY WHILE SOMETHING IS BEING DIAGNOSED. Prints the
-        ! location of the worst cell every hundredth distribution sweep, which is
-        ! how a plateaued distance gets read: a max pinned to one state is an
-        ! oscillating knife edge, a max that wanders is the whole distribution
-        ! still moving.
+        ! LEFT ON, because at a two hundred sweep cap it costs two lines a loop
+        ! and those two lines are the evidence that the cap is safe: DIST_MOM
+        ! reports the aggregates the calibration actually reads, so a loop whose
+        ! integrals are still moving at sweep two hundred shows itself instead of
+        ! being assumed away. DIST_MAX reports where the worst cell is, which is
+        ! what told an oscillating knife edge apart from a distribution still
+        ! propagating when the cap was chosen.
         integer, parameter :: diagnose_distribution_max=1
 
         ! HOW MANY SWEEPS THE DISTRIBUTION LOOP WILL DO BEFORE GIVING UP. It had
@@ -986,7 +988,42 @@
         ! own note records 655 as a normal cost later in a calibration, so 4000
         ! is far above anything healthy and only catches a loop that is not
         ! going to converge.
-        integer, parameter :: max_distribution_sweeps=4000
+        ! TWO HUNDRED, AND IT IS A STOPPING RULE NOW RATHER THAN A GUARD AGAINST
+        ! A HANG. The distribution does not converge in the max norm at any asset
+        ! grid: cold solves at 25, 40 and 50 points all fall to about 1e-3 by
+        ! sweep fifty and then bounce between 5e-4 and 3e-3 for thousands of
+        ! sweeps with no trend, so a stopping rule below the amplitude of that
+        ! bounce terminates on a draw. That is what produced sweep counts of 61,
+        ! 73, 91, 148, 340, 520 and 4000 across loops of the same calibration.
+        !
+        ! THE AGGREGATES DO SETTLE, WHICH IS WHAT THE CALIBRATION READS. A solve
+        ! run deliberately past its rule and printing DIST_MOM every hundred
+        ! sweeps gives, over sweeps 100 to 600:
+        !
+        !     total mass         50.8096 .. 50.8248   a range of 0.034 per cent
+        !     mean asset holding 17.5631 .. 17.5799   a range of 0.096 per cent
+        !     mass by housing    50.5478 .. 50.5648   a range of 0.034 per cent
+        !
+        ! while the max norm over that same span read 2.7e-3, 3.1e-3 and 1.9e-3
+        ! with no trend. The rule was testing a cell and the calibration reads an
+        ! integral, and by sweep one hundred the integrals are done. Running to
+        ! four thousand bought nothing and cost half an hour a loop.
+        !
+        ! SO THE CAP IS THE BINDING RULE and 6e-4 is the early exit for a solve
+        ! that genuinely settles. Truncating at a fixed sweep count is also the
+        ! more useful of the two for a calibration, because it makes every loop's
+        ! distribution the same distance from its fixed point: a lottery
+        ! terminated solve moves the moments between loops for reasons that have
+        ! nothing to do with the parameters.
+        integer, parameter :: max_distribution_sweeps=200
+
+        ! WHEN A CAPPED SOLVE IS WORTH SHOUTING ABOUT. Hitting the cap is now
+        ! normal, so DIST_STALL must not fire on it or the supervisor diagnoses a
+        ! stall every loop and the word stops meaning anything. It fires only
+        ! when the distance reached is far above where the bounce lives, which
+        ! is a solve that has genuinely gone wrong rather than one that stopped
+        ! on schedule.
+        real(8), parameter :: distribution_alarm_distance=1.d0*10.d0**(-2)
 
         real(8) :: weight_on_housing_price=0.5
                                         
@@ -20249,9 +20286,13 @@
             ! so loudly enough to be greppable.
             if (loop_count_dist>=max_distribution_sweeps) then
 
-                write(*,*) "DIST_STALL: gave up after ", loop_count_dist, &
-                    " sweeps with distance ", distance_distribution, &
-                    " against a stopping rule of ", stopping_rule_stationary_distribution
+                if (distance_distribution>distribution_alarm_distance) then
+
+                    write(*,*) "DIST_STALL: gave up after ", loop_count_dist, &
+                        " sweeps with distance ", distance_distribution, &
+                        " against a stopping rule of ", stopping_rule_stationary_distribution
+
+                end if
 
                 distance_distribution=0
 
@@ -29542,7 +29583,7 @@
             ! read to three and four decimals.
             if (include_addiction==1) then
 
-                stopping_rule_stationary_distribution=2*10.d0**(-4)
+                stopping_rule_stationary_distribution=6*10.d0**(-4)
 
             end if
             
@@ -32327,7 +32368,7 @@
             
             if (include_addiction==1) then
             
-                stopping_rule_stationary_distribution=2*10.d0**(-4)
+                stopping_rule_stationary_distribution=6*10.d0**(-4)
             
             end if
             
