@@ -28,6 +28,7 @@ Run:  python3 supervise_calibration.py [--max-restarts N] [--poll SECONDS]
 
 import os
 import re
+import shutil
 import signal
 import subprocess
 import sys
@@ -41,6 +42,12 @@ LOG = os.path.join(HERE, 'supervisor_run.log')
 JOURNAL = os.path.join(HERE, 'SUPERVISOR_JOURNAL.md')
 REPORT = os.path.join(HERE, 'paper', 'calibration_report.py')
 STATE = os.path.join(HERE, 'calibration_state.dat')
+# THE BANKED COPY OF THE LOG, WHICH IS NOT THE LOG ITSELF. The running model
+# holds LOG open, and a tracked file gets replaced by `git reset --hard`, which
+# unlinks the inode under the process: it writes on into a deleted file and the
+# visible log freezes at whatever the checkout put there. Copying at checkpoint
+# keeps the live handle stable and still banks the content.
+BANKED_LOG = os.path.join(HERE, 'calibration_run.log')
 PROGRESS = os.path.join(HERE, 'CALIBRATION_PROGRESS.tsv')
 
 # -O3 RATHER THAN -O2, MEASURED AND NOT ASSUMED: 1.15x on the sixteen expensive
@@ -420,7 +427,10 @@ def checkpoint(loops):
             'loop\tutc\tmedian_gap_pct\tworst_gap_pct\ton_target\tof\n')
         with open(PROGRESS, 'a') as f:
             f.write(head + row)
-    paths = [pth for pth in (STATE, PROGRESS, LOG, JOURNAL) if os.path.exists(pth)]
+    if os.path.exists(LOG):
+        shutil.copyfile(LOG, BANKED_LOG)
+    paths = [pth for pth in (STATE, PROGRESS, BANKED_LOG, JOURNAL)
+             if os.path.exists(pth)]
     if paths:
         commit(f'Calibration checkpoint, loop {n}', paths)
 

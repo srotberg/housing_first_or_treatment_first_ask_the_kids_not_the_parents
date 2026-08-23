@@ -29,13 +29,43 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, 'model_numbers.json')
 
-# " label=   0.1234" or " label(1)=  0.1234", one value only. A line carrying a
-# second number after the first is a vector and is skipped: naming its elements
-# is a decision, not a parse.
-LINE = re.compile(
-    r'^\s*(?P<label>[A-Za-z][^=]{0,120}?)\s*=\s*'
-    r'(?P<value>[-+]?\d+\.?\d*(?:[eEdD][-+]?\d+)?)\s*$'
+# " label=   0.1234" or " label(1)=  0.1234".
+#
+# TWO PAIRS ON A LINE IS NOT A VECTOR, and the difference matters. The Fortran
+# prints some moments two to a line --
+#
+#     SMI share of homeless=  0.0256  employment rate given SMI=  0.8692
+#
+# -- and a pattern anchored to the end of the line sees neither of them. Nine
+# targeted moments were invisible to the calibration report that way, which is
+# most of the ones this paper is about: the SMI share of the homeless, the
+# employment rate given SMI, the employed share of the homeless.
+#
+# A VECTOR still has to be skipped, because naming its elements is a decision
+# rather than a parse. The two are told apart by counting NAMES, not numbers:
+# one name followed by several numbers is a vector; several names each followed
+# by one number is several moments.
+PAIR = re.compile(
+    r'(?P<label>[A-Za-z][^=]{0,120}?)\s*=\s*'
+    r'(?P<value>[-+]?\d+\.?\d*(?:[eEdD][-+]?\d+)?)'
+    r'(?P<trailing>(?:\s+[-+]?\d+\.?\d*(?:[eEdD][-+]?\d+)?)*)'
 )
+
+
+# NAMED VECTOR PRINTS. The parser skips a vector because naming its elements is a
+# decision; these are the decisions, made explicitly. Each entry maps the label
+# the Fortran prints to the names its elements carry, in order. Without this the
+# rental ladder's three moments -- which are h_2's, varsigma's and h_4's -- are
+# invisible to the calibration report.
+VECTORS = {
+    'model_housing_size_dist': ('model_housing_size_dist_1',
+                                'model_housing_size_dist_2',
+                                'model_housing_size_dist_3'),
+    'housing_size_dist_data': ('housing_size_dist_data_1',
+                               'housing_size_dist_data_2',
+                               'housing_size_dist_data_3'),
+}
+VEC = re.compile(r'^\s*(?P<label>[A-Za-z][A-Za-z0-9_ ()]{0,60})=\s*(?P<values>.*)$')
 
 
 def sanitise(label):
@@ -58,17 +88,30 @@ def parse(path):
     found = {}
     with open(path, errors='replace') as fh:
         for line in fh:
-            m = LINE.match(line.rstrip('\n'))
-            if not m:
+            bare = line.rstrip('\n')
+            v = VEC.match(bare)
+            if v and sanitise(v.group('label')) in VECTORS:
+                names = VECTORS[sanitise(v.group('label'))]
+                vals = re.findall(r"[-+]?\d+\.?\d*(?:[eEdD][-+]?\d+)?", v.group("values").replace("D","E").replace("d","e"))
+                for nm, raw in zip(names, vals):
+                    try:
+                        found[nm] = float(raw)
+                    except ValueError:
+                        pass
                 continue
-            name = sanitise(m.group('label'))
-            if not name or name[0].isdigit():
-                continue
-            raw = m.group('value').replace('D', 'E').replace('d', 'e')
-            try:
-                found[name] = float(raw)
-            except ValueError:
-                continue
+            for m in PAIR.finditer(bare):
+                # a number following the value, with no name of its own, makes
+                # this a vector print rather than a moment
+                if m.group('trailing').strip():
+                    continue
+                name = sanitise(m.group('label'))
+                if not name or name[0].isdigit():
+                    continue
+                raw = m.group('value').replace('D', 'E').replace('d', 'e')
+                try:
+                    found[name] = float(raw)
+                except ValueError:
+                    continue
     return found
 
 
