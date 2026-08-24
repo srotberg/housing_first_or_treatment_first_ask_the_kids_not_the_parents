@@ -1919,6 +1919,13 @@
         ! nine cannot say whether onset begins the year work ends or fifteen
         ! years later. The two have different causes and different fixes.
         real(8), dimension(life_span) :: model_users_by_age=0
+        ! THE DENOMINATOR HAS TO BE COUNTED IN THE SAME PLACE AS THE NUMERATOR.
+        ! model_mass_by_age is accumulated three thousand lines away in a
+        ! different loop nest, and dividing one by the other gave a use rate of
+        ! exactly 200 per cent at every age from 26 to 80: the two passes do not
+        ! visit each household the same number of times. Counted here, beside the
+        ! users, whatever the nest does to one it does to the other.
+        real(8), dimension(life_span) :: model_alive_by_age=0
         real(8), dimension(life_span) :: kappa_phi_h_by_age=1
         ! ASSIGNED, at the midpoint of the literature range. All cause standardised
         ! mortality ratios for opioid use disorder run 6 to 10, so 8 is the middle
@@ -5111,6 +5118,7 @@
         model_smi_mass_by_age(:)=0
         model_mass_by_age(:)=0
         model_users_by_age(:)=0
+        model_alive_by_age(:)=0
         newborn_parent_share_acc(:,:)=0
         model_smi_and_homeless(time_period)=0
         model_smi_and_employed(time_period)=0
@@ -8546,6 +8554,11 @@
                                     ! inside the block that only households with the disorder reach.
                                     total_mass_by_employment(time_period,employment_index)=&
                                         total_mass_by_employment(time_period,employment_index)+distribution_mass_used
+
+                                    ! Every household passes here, which is what
+                                    ! the use rate by age needs under it.
+                                    model_alive_by_age(age_index)=&
+                                        model_alive_by_age(age_index)+distribution_mass_used
 
                                     ! THE FLOW, restricted to households who can still acquire the
                                     ! disorder. A household that already has it is not at risk, so
@@ -32623,8 +32636,8 @@
             ! and the data age is model age plus twenty five.
             write(*,*) "use rate by single age, model age 1 = data age 26:"
             do i=1,life_span
-                if (model_mass_by_age(i)>10.d0**(-14)) then
-                    write(*,*) "USE_BY_AGE", i, i+25, model_users_by_age(i)/model_mass_by_age(i)
+                if (model_alive_by_age(i)>10.d0**(-14)) then
+                    write(*,*) "USE_BY_AGE", i, i+25, model_users_by_age(i)/model_alive_by_age(i)
                 else
                     write(*,*) "USE_BY_AGE", i, i+25, 0.d0
                 end if
