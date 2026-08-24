@@ -52,6 +52,10 @@ COLS = {
 }
 NAMES = ['b', 'participation', 'total_users', 'fraction_addicted',
          'income_of_users', 'income_of_disordered']
+HANDOVER = os.path.join(HERE, 'PARAM_HANDOVER.txt')
+# The lambda the point in flight was launched at, so bank() can record the
+# pair rather than only the half the model prints.
+CURRENT_LAMBDA = [None]
 
 
 def _f(x):
@@ -59,17 +63,52 @@ def _f(x):
 
 
 def full_grid():
-    with open(FULL) as f:
-        return [_f(x) for x in f.read().split()]
+    """The grid, as (b, lambda) pairs. A line may name lambda or leave it.
+
+    B ALONE COULD NOT ANSWER THE QUESTION. At b = 0.05 participation is 0.069
+    against a target of 0.089 and the disorder rate is 0.000327 against 0.0368:
+    b lands one moment and empties the other, because onset is
+    1-exp(-lambda*quantity) and b is what sets quantity. So the two move
+    together or neither is measured, and a sweep point is a PAIR.
+
+    lambda goes in through PARAM_HANDOVER.txt rather than through the grid
+    file, because the model already reads that after the state and deletes it
+    as it does, so no Fortran change is needed and the value cannot outlive the
+    point it was set for. A line with one number leaves lambda at whatever the
+    banked state holds, which is the old behaviour exactly.
+    """
+    out = []
+    for line in open(FULL):
+        parts = line.split()
+        if not parts:
+            continue
+        out.append((_f(parts[0]), _f(parts[1]) if len(parts) > 1 else None))
+    return out
 
 
 def done_points():
-    """The b values already measured, read back from the banked results."""
+    """The (b, lambda) pairs already measured, read back from the banked results.
+
+    KEYED ON THE PAIR, not on b. Two points can share a b and differ in lambda,
+    and keyed on b alone the second would be skipped as already done.
+    """
     if not os.path.exists(OUT):
         return []
     with open(OUT) as f:
         rows = f.read().splitlines()[1:]
-    return [_f(r.split('\t')[1]) for r in rows if r.strip()]
+    out = []
+    for r in rows:
+        if not r.strip():
+            continue
+        f_ = r.split('\t')
+        lam = None
+        if len(f_) > 7 and f_[7].strip():
+            try:
+                lam = _f(f_[7])
+            except ValueError:
+                lam = None
+        out.append((_f(f_[1]), lam))
+    return out
 
 
 def measured(path):
@@ -137,12 +176,15 @@ def merge_to_main(root):
 def bank(rows):
     if not os.path.exists(OUT):
         with open(OUT, 'w') as f:
-            f.write('utc\t' + '\t'.join(NAMES) + '\n')
+            f.write('utc\t' + '\t'.join(NAMES) + '\tlambda\n')
     with open(OUT, 'a') as f:
         for rec in rows:
+            rec.setdefault('lambda', CURRENT_LAMBDA[0])
             f.write(time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()) + '\t'
                     + '\t'.join('' if k not in rec else f'{rec[k]:.6g}'
-                                for k in NAMES) + '\n')
+                                for k in NAMES)
+                    + '\t' + ('' if rec.get('lambda') is None
+                              else f'{rec["lambda"]:.6g}') + '\n')
     if os.path.exists(LOG):
         shutil.copyfile(LOG, BANKED_LOG)
     subprocess.run(['git', 'add', OUT, BANKED_LOG, FULL, RAW], cwd=ROOT)
@@ -170,11 +212,25 @@ def write_remaining():
     process therefore starts from the same banked state and the same banked
     distribution, which is what makes the curve a function of b alone.
     """
+    def same(x, y):
+        if x is None or y is None:
+            return x is None and y is None
+        return abs(x - y) <= abs(x) * 1e-9
+
     have = done_points()
-    left = [b for b in full_grid()
-            if not any(abs(b - d) <= abs(b) * 1e-9 for d in have)]
+    left = [pt for pt in full_grid()
+            if not any(same(pt[0], d[0]) and same(pt[1], d[1]) for d in have)]
     with open(GRID, 'w') as f:
-        f.write(f'{left[0]:.10g}\n' if left else '')
+        f.write(f'{left[0][0]:.10g}\n' if left else '')
+    # LAMBDA FOR THIS POINT ONLY. The model deletes the handover as it reads it,
+    # so it cannot leak into the next point; a point that names no lambda gets
+    # no handover and runs at the banked value.
+    if os.path.exists(HANDOVER):
+        os.remove(HANDOVER)
+    CURRENT_LAMBDA[0] = left[0][1] if left else None
+    if left and left[0][1] is not None:
+        with open(HANDOVER, 'w') as f:
+            f.write(f'"lambda_addiction" {left[0][1]:.10g}\n')
     return left
 
 
