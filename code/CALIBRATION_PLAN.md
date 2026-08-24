@@ -276,3 +276,22 @@ A round closes only when the generation in flight has landed. Half its points is
 the test. Spawning the next generation while the last one is still solving is
 how this loop breaks: the arms then differ from a centre that has already moved,
 and every pair they were meant to form is worthless.
+
+### A conditional moment is refused until its population is real
+
+Most of these targets are conditional — the disordered share of USERS, the
+mental-illness share of THE HOMELESS, take-up among THE DISORDERED. While the
+conditioning population is far from its own target the conditional moment is
+measured over almost nobody, and calibrating against it moves a parameter for no
+reason at all.
+
+The case that produced the rule: lambda_m at 0.50 and at 0.90 returned the SAME
+share of the homeless with mental illness, 0.0440, identical to seventeen
+figures, against a target of 0.25. It looked like a parameter that saturates and
+cannot reach its target. It was neither — homelessness in those points was 0.034
+per cent, so the share was being read off almost nobody.
+
+converge.py now refuses a reading whose conditioning moment is more than a factor
+of three from its own target, and says which moment gated it. That is what
+orders the calibration: b and the value of life first, then the homelessness
+rate, and only then the eight parameters that live inside those populations.

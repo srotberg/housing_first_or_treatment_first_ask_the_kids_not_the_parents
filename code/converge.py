@@ -39,6 +39,30 @@ from suggest_next import OWNS, points                    # noqa: E402
 # share of 0.21 against a target of 0.413.
 RATIO = {'lambda_addiction': ('lambda_d', 'b', 0.4130)}
 
+# A MOMENT MEASURED OVER AN EMPTY POPULATION SAYS NOTHING. Most of these targets
+# are conditional: the disordered share of users, the mental-illness share of the
+# homeless, take-up among the disordered. While the conditioning population is
+# far from its own target the conditional moment is noise, and calibrating
+# against it moves a parameter for no reason.
+#
+# lambda_m is the case that made this rule. At 0.50 and at 0.90 it produced the
+# SAME share of the homeless with mental illness, 0.0440, identical to seventeen
+# figures against a target of 0.25 -- because homelessness in those points was
+# 0.034 per cent, so the share was being read off almost nobody. The parameter
+# looked saturated and untargetable; it was neither, it was ungated.
+#
+# Each entry is the moment that has to be near its own target first, and how far
+# off it may be, as a factor, before the reading is refused.
+GATE = {
+    'lambda_addiction':                      ('b', 0.0890, 3.0),
+    'relative_share_of_addiction_1':         ('b', 0.0890, 3.0),
+    'utility_cost_of_treatment':             ('b', 0.0890, 3.0),
+    'penalty_child_addicted':                ('b', 0.0890, 3.0),
+    'multiple_of_probabilities_of_employment_if_addicted': ('b', 0.0890, 3.0),
+    'lambda_m':                              ('h_1', 0.00399, 3.0),
+    'penalty_child_homeless':                ('h_1', 0.00399, 3.0),
+}
+
 MAX_STEP = 3.0          # no parameter may move by more than this factor in one generation
 PAIRED = ('addiction_scalar_1', 'value_of_life')         # the two that must be solved together
 RUNNER = os.path.join(HERE, 'run_one_point.sh')
@@ -112,7 +136,7 @@ def secant(key, target, pts, here):
     for vec, mom, _name in pts:
         y = read(mom, key)
         if key in vec and y is not None:
-            cands.append((vec, vec[key], y))
+            cands.append((vec, vec[key], y, mom))
     usable = []
     for i in range(len(cands)):
         for j in range(i + 1, len(cands)):
@@ -126,10 +150,17 @@ def secant(key, target, pts, here):
                 continue
             brackets = (a[2] - target) * (b[2] - target) <= 0
             near = min(abs(a[1] - here), abs(b[1] - here))
-            usable.append((not brackets, near, a[1], a[2], b[1], b[2], brackets))
+            usable.append((not brackets, near, a[1], a[2], b[1], b[2], brackets,
+                           a[3], b[3]))
     if not usable:
         return None, None
-    _, _, x1, y1, x2, y2, brackets = min(usable)
+    _, _, x1, y1, x2, y2, brackets, m1, m2 = min(usable)
+    if key in GATE:
+        gm, gt, tol = GATE[key]
+        for m in (m1, m2):
+            got = m.get(gm)
+            if got is None or got <= 0 or not (gt / tol <= got <= gt * tol):
+                return None, 'gated on ' + gm
     if min(x1, x2, y1, y2, target) > 0 and abs(math.log(y2 / y1)) > 1e-12:
         f = math.log(target / y1) / math.log(y2 / y1)
         want, how = math.exp(math.log(x1) + f * math.log(x2 / x1)), 'log-log'
@@ -177,7 +208,7 @@ def main():
         moved[key] = new
         print('%-52s %12.5g %12s %12.5g %9s'
               % (key, now, ('%.5g' % want) if want else '-', new, how))
-        if how in ('no pair', 'off the span') \
+        if how in ('no pair', 'off the span') or how.startswith('gated') \
                 or abs(math.log(max(new, 1e-12) / max(now, 1e-12))) > 0.05:
             arms.append(key)
 
