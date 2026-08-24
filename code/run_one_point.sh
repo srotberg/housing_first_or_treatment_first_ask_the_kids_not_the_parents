@@ -23,12 +23,17 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
+# THE DEFAULTS ARE THE CENTRE OF THE CURRENT GENERATION, so an arm of the search
+# is one name=value pair and nothing else, and every arm is a matched pair with
+# the centre. b and the value of life are where the users ridge and the value of
+# life ridge cross (code/ridge_solve.py); the rest is the vector generation one
+# held fixed.
 declare -A P=(
-    [addiction_scalar_1]=0.005
-    [value_of_life]=31
+    [addiction_scalar_1]=0.02457
+    [value_of_life]=35.09
     [lambda_addiction]=1.5
     [relative_share_of_addiction_1]=0.38
-    [size_homelessness]=0.6
+    [size_homelessness]=0.2128
     [discount_factor]=0.993
     [relative_share_of_leisure]=2.4
     [labor_income_tax_rate]=0.753746
