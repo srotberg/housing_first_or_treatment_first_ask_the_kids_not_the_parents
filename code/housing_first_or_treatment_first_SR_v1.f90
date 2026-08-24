@@ -24771,8 +24771,23 @@
                             
         end do
         
-        fraction_with_drug_spending_relative_to_average(index_drug_1(1))=&
-            fraction_with_drug_spending_relative_to_average(index_drug_1(1))/total_experimenters_1
+        ! INDEX_DRUG_1 IS ONLY EVER ASSIGNED INSIDE THE LOOP ABOVE, in the branch
+        ! a household with positive drug spending enters. A draw that leaves no
+        ! drug spending anywhere in the distribution never enters it, and this
+        ! line then indexed the array with an uninitialised integer and wrote
+        ! outside it. The segfault therefore appears only once use collapses, it
+        ! carries no message of its own, and it lands in the aggregation, which
+        ! is ahead of every moment print, so a loop that hits it scores nothing.
+        ! Normalise the whole array, which is what the bin counts need in any
+        ! case, and only when there is a mass to divide by.
+        write(*,*) "total_experimenters_1=", total_experimenters_1
+
+        if (total_experimenters_1>0) then
+
+            fraction_with_drug_spending_relative_to_average(:)=&
+                fraction_with_drug_spending_relative_to_average(:)/total_experimenters_1
+
+        end if
                                                     
         index_drug_1(1)=min(max(minloc(fraction_with_drug_spending_relative_to_average(:)-&
             fraction_light_users,1,mask=fraction_with_drug_spending_relative_to_average(:)-&

@@ -465,3 +465,145 @@ Recorded, not acted on: damping a drift or repairing a moment pairing is a model
 Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
 
 - `kappa_uem` moved 12 to 21.89, one way across 14 loops, and its moment is not reported as a scalar
+
+## Parameters drifting one way
+
+Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
+
+- `smallest_rental` moved 0.0015 to 0.01287, one way across 8 loops, and its moment is not reported as a scalar
+- `relative_share_housing` moved 0.2743 to 0.09134, one way across 25 loops, and its moment is not reported as a scalar
+- `relative_share_leisure` moved 0.5733 to 1.64, one way across 19 loops, and its moment is not reported as a scalar
+
+## Parameters drifting one way
+
+Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
+
+- `kappa_uem` moved 12 to 22.32, one way across 14 loops, and its moment is not reported as a scalar
+
+## Parameters drifting one way
+
+Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
+
+- `smallest_rental` moved 0.0015 to 0.01287, one way across 8 loops, and its moment is not reported as a scalar
+- `relative_share_housing` moved 0.2743 to 0.09134, one way across 25 loops, and its moment is not reported as a scalar
+- `relative_share_leisure` moved 0.5733 to 1.64, one way across 19 loops, and its moment is not reported as a scalar
+
+## Parameters drifting one way
+
+Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
+
+- `kappa_uem` moved 12 to 22.68, one way across 14 loops, and its moment is not reported as a scalar
+
+## Parameters drifting one way
+
+Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
+
+- `smallest_rental` moved 0.0015 to 0.01287, one way across 8 loops, and its moment is not reported as a scalar
+- `relative_share_housing` moved 0.2743 to 0.09134, one way across 25 loops, and its moment is not reported as a scalar
+- `relative_share_leisure` moved 0.5733 to 1.64, one way across 19 loops, and its moment is not reported as a scalar
+
+## Parameters drifting one way
+
+Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
+
+- `kappa_uem` moved 12 to 23.07, one way across 14 loops, and its moment is not reported as a scalar
+
+## Parameters drifting one way
+
+Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
+
+- `smallest_rental` moved 0.0015 to 0.01287, one way across 8 loops, and its moment is not reported as a scalar
+- `relative_share_housing` moved 0.2743 to 0.09134, one way across 25 loops, and its moment is not reported as a scalar
+- `relative_share_leisure` moved 0.5733 to 1.64, one way across 19 loops, and its moment is not reported as a scalar
+
+## Parameters drifting one way
+
+Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
+
+- `kappa_uem` moved 12 to 23.34, one way across 14 loops, and its moment is not reported as a scalar
+
+## Parameters drifting one way
+
+Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
+
+- `smallest_rental` moved 0.0015 to 0.01287, one way across 8 loops, and its moment is not reported as a scalar
+- `relative_share_housing` moved 0.2743 to 0.09134, one way across 25 loops, and its moment is not reported as a scalar
+- `relative_share_leisure` moved 0.5733 to 1.64, one way across 19 loops, and its moment is not reported as a scalar
+
+## Parameters drifting one way
+
+Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
+
+- `kappa_uem` moved 12 to 23.53, one way across 14 loops, and its moment is not reported as a scalar
+
+## Parameters drifting one way
+
+Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
+
+- `smallest_rental` moved 0.0015 to 0.01287, one way across 8 loops, and its moment is not reported as a scalar
+- `relative_share_housing` moved 0.2743 to 0.09134, one way across 25 loops, and its moment is not reported as a scalar
+- `relative_share_leisure` moved 0.5733 to 1.64, one way across 19 loops, and its moment is not reported as a scalar
+
+## The model exited and nothing in the catalogue matched
+
+Stopping rather than restarting blind.
+
+## Parameters drifting one way
+
+Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
+
+- `smallest_rental` moved 0.0015 to 0.01287, one way across 8 loops, and its moment is not reported as a scalar
+- `relative_share_housing` moved 0.2743 to 0.09134, one way across 25 loops, and its moment is not reported as a scalar
+- `relative_share_leisure` moved 0.5733 to 1.64, one way across 19 loops, and its moment is not reported as a scalar
+
+## The model exited and nothing in the catalogue matched
+
+Stopping rather than restarting blind.
+
+## Parameters drifting one way
+
+Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
+
+- `smallest_rental` moved 0.0015 to 0.01287, one way across 8 loops, and its moment is not reported as a scalar
+- `relative_share_housing` moved 0.2743 to 0.09134, one way across 25 loops, and its moment is not reported as a scalar
+- `relative_share_leisure` moved 0.5733 to 1.64, one way across 19 loops, and its moment is not reported as a scalar
+
+## The model exited and nothing in the catalogue matched
+
+Stopping rather than restarting blind.
+
+## Parameters drifting one way
+
+Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
+
+- `smallest_rental` moved 0.0015 to 0.01287, one way across 8 loops, and its moment is not reported as a scalar
+- `relative_share_housing` moved 0.2743 to 0.09134, one way across 25 loops, and its moment is not reported as a scalar
+- `relative_share_leisure` moved 0.5733 to 1.64, one way across 19 loops, and its moment is not reported as a scalar
+
+## The model exited and nothing in the catalogue matched
+
+Stopping rather than restarting blind.
+
+## Parameters drifting one way
+
+Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
+
+- `smallest_rental` moved 0.0015 to 0.01287, one way across 8 loops, and its moment is not reported as a scalar
+- `relative_share_housing` moved 0.2743 to 0.09134, one way across 25 loops, and its moment is not reported as a scalar
+- `relative_share_leisure` moved 0.5733 to 1.64, one way across 19 loops, and its moment is not reported as a scalar
+
+## The model exited and nothing in the catalogue matched
+
+Stopping rather than restarting blind.
+
+## Parameters drifting one way
+
+Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
+
+- `smallest_rental` moved 0.0015 to 0.01287, one way across 8 loops, and its moment is not reported as a scalar
+- `relative_share_housing` moved 0.2743 to 0.09134, one way across 25 loops, and its moment is not reported as a scalar
+- `relative_share_leisure` moved 0.5733 to 1.64, one way across 19 loops, and its moment is not reported as a scalar
+
+## The model exited and nothing in the catalogue matched
+
+Stopping rather than restarting blind.
