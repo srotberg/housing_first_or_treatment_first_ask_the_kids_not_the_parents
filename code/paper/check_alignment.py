@@ -48,11 +48,13 @@ def rows():
             setcol = re.sub(r'\\textcolor\{\w+\}\{([^}]*)\}', r'\1', cells[2]).strip()
             if setcol.rstrip('.') not in ('Int', 'Ext'):
                 continue
-            out.append((cells[0], setcol.rstrip('.'), os.path.basename(path)))
+            out.append((cells[0], setcol.rstrip('.'), os.path.basename(path),
+                        cells[4] if len(cells) > 4 else ''))
     return out
 
 
 def main():
+    data_of = {}
     pair = R.pairs()                      # parameter -> (model expr, target expr)
     frozen = R.zero_adjusters()
     src = open(R.FORTRAN, errors='replace').read()
@@ -82,10 +84,35 @@ def main():
         for k in keys(target):
             owner.setdefault(k, []).append(name)
 
-    bad, seen = [], set()
+    # THE VALUE IN THE CELL AGAINST THE VALUE IN THE CODE. The Set column can
+    # agree while the number does not: the table states a target and the Fortran
+    # declares one, and nothing has ever compared them. Percentages, dollars and
+    # ratios are all written differently in the two, so a cell is only judged
+    # when it parses to a plain number and the constant is known; anything else
+    # is reported as unchecked rather than guessed at.
+    consts = {}
+    for m in re.finditer(r'(?m)^\s*real\(8\),\s*parameter\s*::\s*(\w+)\s*=\s*'
+                         r'([-+0-9.dDeE*^ ]+?)\s*$', src):
+        try:
+            consts[m.group(1)] = float(m.group(2).replace('d', 'e').replace('D', 'e'))
+        except ValueError:
+            pass
+
+    def cell_value(text):
+        t = re.sub(r'\\textcolor\{\w+\}\{([^}]*)\}', r'\1', text)
+        t = t.replace('\\%', '%').replace('\\$', '$').replace('\\,', '')
+        m = re.fullmatch(r'\s*([-+]?[0-9]*\.?[0-9]+)\s*(%?)\s*', t)
+        if not m:
+            return None
+        v = float(m.group(1))
+        return v / 100 if m.group(2) else v
+
+    bad, seen, checked_value = [], set(), 0
     print(f'{"row":26s} {"table says":11s} {"target constant":34s} code')
     print('-' * 104)
-    for sym, says, table in rows():
+    for sym, says, table, datacell in rows():
+        if sym not in data_of:
+            data_of[sym] = cell_value(datacell)
         if sym in seen:
             continue
         seen.add(sym)
@@ -110,8 +137,24 @@ def main():
         flag = '' if agree else '   <<< MISALIGNED'
         if not agree:
             bad.append((sym, says, code, table))
+        want, got = data_of.get(sym), consts.get(target)
+        if want is not None and got is not None and sym not in links.UNITS_DIFFER:
+            checked_value += 1
+            if abs(want - got) > 1e-6 * max(abs(got), 1.0):
+                flag += f'   <<< VALUE table {want:g} vs code {got:g}'
+                bad.append((sym, f'value {want:g}', f'code has {got:g}', table))
         print(f'{sym:26s} {says:11s} {target:34s} {code}{flag}')
     print('-' * 104)
+    # WHAT IT DID NOT CHECK, said out loud. A checker that reports only failures
+    # reads as full coverage when it is partial, which is how an eye check came
+    # to be trusted in the first place.
+    print(f'\nSet column: every row judged. '
+          f'Stated value: {checked_value} of {len(seen)} rows compared against the '
+          f'Fortran constant; the rest have no link, an expression rather than a '
+          f'literal, or units the source states differently.')
+    print('NOT CHECKED HERE: whether a correctly Int. row brackets on the RIGHT '
+          'model quantity. b was marked Int. against participation_rate_data and '
+          'compared with model_exprimenters when 8.90 per cent is ALL users.')
     if bad:
         print(f'\n{len(bad)} row(s) where the table and the code disagree:')
         for sym, says, code, table in bad:
