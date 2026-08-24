@@ -53,9 +53,9 @@ COLS = {
 NAMES = ['b', 'participation', 'total_users', 'fraction_addicted',
          'income_of_users', 'income_of_disordered']
 HANDOVER = os.path.join(HERE, 'PARAM_HANDOVER.txt')
-# The lambda the point in flight was launched at, so bank() can record the
-# pair rather than only the half the model prints.
-CURRENT_LAMBDA = [None]
+# The parameters the point in flight was launched at, so bank() records the
+# whole vector rather than only the half the model prints.
+CURRENT_SET = [{}]
 
 
 def _f(x):
@@ -63,34 +63,54 @@ def _f(x):
 
 
 def full_grid():
-    """The grid, as (b, lambda) pairs. A line may name lambda or leave it.
+    """The grid. Each line is a b, then any number of name=value assignments.
 
-    B ALONE COULD NOT ANSWER THE QUESTION. At b = 0.05 participation is 0.069
-    against a target of 0.089 and the disorder rate is 0.000327 against 0.0368:
-    b lands one moment and empties the other, because onset is
-    1-exp(-lambda*quantity) and b is what sets quantity. So the two move
-    together or neither is measured, and a sweep point is a PAIR.
+    A POINT IS A PARAMETER VECTOR, not a scalar. The moments that decide whether
+    the model has an equilibrium worth calibrating from are not owned by b
+    alone: b sets the quantity used, lambda turns quantity into the disorder,
+    aleph prices the death risk that deters both, h_1 prices the street, and the
+    employment multiplier decides how much of the unemployment the disordered
+    account for. Sweeping one at a time measures each in a world where the other
+    four are wrong, which is how b came to be measured at a lambda of 0.225 that
+    put the disorder rate at 0.000327 against a target of 0.0368.
 
-    lambda goes in through PARAM_HANDOVER.txt rather than through the grid
-    file, because the model already reads that after the state and deletes it
-    as it does, so no Fortran change is needed and the value cannot outlive the
-    point it was set for. A line with one number leaves lambda at whatever the
-    banked state holds, which is the old behaviour exactly.
+    So a line reads
+
+        0.047 lambda_addiction=4.5 value_of_life=11 size_homelessness=0.304
+
+    The first field is b, which the model takes from B_SWEEP_GRID.txt. Every
+    other field goes into PARAM_HANDOVER.txt, which the model reads after the
+    state and deletes as it does, so nothing outlives the point it was set for.
+    Any name the Fortran's handover select case knows may be used. A line with
+    only a b runs everything else at the banked value, which is what the first
+    three points did, so they stay comparable.
+
+    A # starts a comment, because a grid is easier to read when the design is
+    written beside it.
     """
     out = []
     for line in open(FULL):
+        line = line.split('#')[0]
         parts = line.split()
         if not parts:
             continue
-        out.append((_f(parts[0]), _f(parts[1]) if len(parts) > 1 else None))
+        extra = {}
+        for tok in parts[1:]:
+            if '=' not in tok:
+                raise SystemExit(f'sweep: grid line {line.strip()!r} has a field '
+                                 f'{tok!r} that is not name=value')
+            k, v = tok.split('=', 1)
+            extra[k] = _f(v)
+        out.append((_f(parts[0]), extra))
     return out
 
 
 def done_points():
-    """The (b, lambda) pairs already measured, read back from the banked results.
+    """The points already measured, as (b, {name: value}) read back from the bank.
 
-    KEYED ON THE PAIR, not on b. Two points can share a b and differ in lambda,
-    and keyed on b alone the second would be skipped as already done.
+    KEYED ON THE WHOLE VECTOR, not on b. Two points can share a b and differ in
+    lambda or in aleph, and keyed on b alone every one after the first would be
+    skipped as already done.
     """
     if not os.path.exists(OUT):
         return []
@@ -101,13 +121,16 @@ def done_points():
         if not r.strip():
             continue
         f_ = r.split('\t')
-        lam = None
+        extra = {}
         if len(f_) > 7 and f_[7].strip():
-            try:
-                lam = _f(f_[7])
-            except ValueError:
-                lam = None
-        out.append((_f(f_[1]), lam))
+            for tok in f_[7].split():
+                if '=' in tok:
+                    k, v = tok.split('=', 1)
+                    try:
+                        extra[k] = _f(v)
+                    except ValueError:
+                        pass
+        out.append((_f(f_[1]), extra))
     return out
 
 
@@ -176,15 +199,15 @@ def merge_to_main(root):
 def bank(rows):
     if not os.path.exists(OUT):
         with open(OUT, 'w') as f:
-            f.write('utc\t' + '\t'.join(NAMES) + '\tlambda\n')
+            f.write('utc\t' + '\t'.join(NAMES) + '\tset\n')
     with open(OUT, 'a') as f:
         for rec in rows:
-            rec.setdefault('lambda', CURRENT_LAMBDA[0])
+            rec.setdefault('set', ' '.join(f'{k}={v:.10g}' for k, v
+                                          in sorted(CURRENT_SET[0].items())))
             f.write(time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()) + '\t'
                     + '\t'.join('' if k not in rec else f'{rec[k]:.6g}'
                                 for k in NAMES)
-                    + '\t' + ('' if rec.get('lambda') is None
-                              else f'{rec["lambda"]:.6g}') + '\n')
+                    + '\t' + (rec.get('set') or '') + '\n')
     if os.path.exists(LOG):
         shutil.copyfile(LOG, BANKED_LOG)
     subprocess.run(['git', 'add', OUT, BANKED_LOG, FULL, RAW], cwd=ROOT)
@@ -210,27 +233,30 @@ def write_remaining():
     parameters the sweep is meant to hold. So the grid file gets the first point
     still outstanding and nothing else; the driver relaunches for the next. Each
     process therefore starts from the same banked state and the same banked
-    distribution, which is what makes the curve a function of b alone.
+    distribution, which is what makes the curve a function of the point alone.
     """
     def same(x, y):
-        if x is None or y is None:
-            return x is None and y is None
-        return abs(x - y) <= abs(x) * 1e-9
+        return abs(x - y) <= abs(x) * 1e-9 + 1e-15
+
+    def same_point(a, c):
+        if not same(a[0], c[0]) or set(a[1]) != set(c[1]):
+            return False
+        return all(same(a[1][k], c[1][k]) for k in a[1])
 
     have = done_points()
-    left = [pt for pt in full_grid()
-            if not any(same(pt[0], d[0]) and same(pt[1], d[1]) for d in have)]
+    left = [pt for pt in full_grid() if not any(same_point(pt, d) for d in have)]
     with open(GRID, 'w') as f:
         f.write(f'{left[0][0]:.10g}\n' if left else '')
-    # LAMBDA FOR THIS POINT ONLY. The model deletes the handover as it reads it,
-    # so it cannot leak into the next point; a point that names no lambda gets
-    # no handover and runs at the banked value.
+    # THIS POINT'S PARAMETERS ONLY. The model deletes the handover as it reads
+    # it, so nothing leaks into the next point; a point that names nothing gets
+    # no handover and runs everything at the banked value.
     if os.path.exists(HANDOVER):
         os.remove(HANDOVER)
-    CURRENT_LAMBDA[0] = left[0][1] if left else None
-    if left and left[0][1] is not None:
+    if left and left[0][1]:
         with open(HANDOVER, 'w') as f:
-            f.write(f'"lambda_addiction" {left[0][1]:.10g}\n')
+            for k, v in sorted(left[0][1].items()):
+                f.write(f'"{k}" {v:.10g}\n')
+    CURRENT_SET[0] = left[0][1] if left else {}
     return left
 
 
