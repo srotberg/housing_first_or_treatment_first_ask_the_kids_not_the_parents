@@ -31976,7 +31976,24 @@
                     ! normalised by the target so it cannot be worse than minus
                     ! one however empty the model is. Skipping the update there
                     ! left the model parked at the corner it needed to leave.
-                    gap_addiction_scalar_1=model_exprimenters(1)-participation_rate_data
+                    ! ALL USERS, NOT THE EXPERIMENTERS ALONE.
+                    !
+                    ! participation_rate_data is NSDUH's svyrdudany in (1,2,3),
+                    ! which is ANY drug use disorder INCLUDING MILD: the data
+                    ! appendix calls it "whether a household uses" and quotes
+                    ! the conversion the model implies as 3.68/8.90 = 41.3 per
+                    ! cent, which only reads that way if 8.90 is the whole user
+                    ! population. model_exprimenters is the users WITHOUT the
+                    ! disorder, so bracketing b on it asked the model for 8.90
+                    ! per cent mild users PLUS 3.68 per cent disordered ones,
+                    ! 12.58 per cent in total against a survey figure of 8.90,
+                    ! and it put the disordered share of users at 29.3 per cent
+                    ! where the survey says 41.3.
+                    !
+                    ! model_total_drug_users is exactly the sum: the log prints
+                    ! model_fraction_addicted+model_exprimenters beside it and
+                    ! the two agree to the last digit.
+                    gap_addiction_scalar_1=model_total_drug_users(1)-participation_rate_data
 
                     if (have_gap_addiction_scalar==1) then
 
