@@ -28535,7 +28535,33 @@
                 if (shape_1/=shape_1) shape_1=0
                 if (rr_1/=rr_1) rr_1=1
 
-                shape_sud_profile(i_1)=max(shape_1,0.d0)
+                ! THE SUD MULTIPLIER IS FLAT AT ITS LEVEL, NOT SHAPED BY
+                ! OVERDOSE. shape_sud in the csv is r(a)/max(r) with
+                !
+                !     r(a) = overdose hazard given SUD / all cause baseline
+                !
+                ! and make_mortality_multipliers.py says in as many words that
+                ! overdose is only ABOUT HALF of SUD excess mortality, the rest
+                ! running through liver disease, endocarditis, hepatitis, HIV,
+                ! suicide and accidents. Applying overdose's profile to the whole
+                ! penalty imposes a collapse the other half does not have, and
+                ! the denominator makes it worse: all cause baseline mortality
+                ! explodes with age, so r(a) falls two orders of magnitude
+                ! largely because of what is underneath it rather than because
+                ! the disorder becomes safe.
+                !
+                ! What it produced: a multiplier of 1.07 at data age 75, a
+                ! disorder that raises a seventy five year old's chance of dying
+                ! by seven per cent, against published all cause SMRs for the
+                ! disorder of six to ten. Every household in the model started
+                ! using at data age 69, where the shape collapses, and the use
+                ! rate went from zero to ninety nine per cent in three years.
+                !
+                ! Flat at the level puts the multiplier at the literature's own
+                ! number at every age. rr_homeless is still read from the file
+                ! and still age varying: it is measured directly by Baggett et
+                ! al. and nothing here touches it.
+                shape_sud_profile(i_1)=1.d0
                 rr_homeless_profile(i_1)=max(rr_1,1.d0)
 
             end do
