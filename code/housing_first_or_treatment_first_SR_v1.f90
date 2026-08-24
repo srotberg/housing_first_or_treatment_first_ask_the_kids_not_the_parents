@@ -32480,6 +32480,29 @@
             ! and nothing has updated yet. The driver relaunches for the next
             ! point, which costs a solve and buys a curve that is a function of b
             ! and of nothing else.
+            ! THE AGE PROFILE PRINTS ABOVE THE SWEEP'S STOP, and that is the whole
+            ! reason it sits here rather than with the other moments. A sweep
+            ! point writes its row and STOPS, so anything printed below that
+            ! branch is never printed by a sweep at all: the curve came back as
+            ! six numbers a point with no age distribution behind any of them,
+            ! and the one question the curve is being measured to answer -- who
+            ! uses at the b that hits the target -- could not be read off it.
+            do i=1,9
+                write(*,*) "model_drug_use_by_age_group=", model_drug_use_by_age_group(1,i)
+            end do
+            ! The RATE, not the count, and by single age: the share of the
+            ! households alive at each age who use. Printed from the last age
+            ! backwards is the wrong way round for reading, so it goes forwards,
+            ! and the data age is model age plus twenty five.
+            write(*,*) "use rate by single age, model age 1 = data age 26:"
+            do i=1,life_span
+                if (model_alive_by_age(i)>10.d0**(-14)) then
+                    write(*,*) "USE_BY_AGE", i, i+25, model_users_by_age(i)/model_alive_by_age(i)
+                else
+                    write(*,*) "USE_BY_AGE", i, i+25, 0.d0
+                end if
+            end do
+
             if (sweep_addiction_scalar==1) then
 
                 open(unit=78,file="B_SWEEP_RAW.tsv",action='write',position='append')
@@ -32649,21 +32672,6 @@
             write(*,*) "increase_in_newborns_bequests=", increase_in_newborns_bequests
             do i=1,5
                 write(*,*) "homelessness_by_age_group=", homelessness_by_age_group(1,i)
-            end do
-            do i=1,9
-                write(*,*) "model_drug_use_by_age_group=", model_drug_use_by_age_group(1,i)
-            end do
-            ! The RATE, not the count, and by single age: the share of the
-            ! households alive at each age who use. Printed from the last age
-            ! backwards is the wrong way round for reading, so it goes forwards,
-            ! and the data age is model age plus twenty five.
-            write(*,*) "use rate by single age, model age 1 = data age 26:"
-            do i=1,life_span
-                if (model_alive_by_age(i)>10.d0**(-14)) then
-                    write(*,*) "USE_BY_AGE", i, i+25, model_users_by_age(i)/model_alive_by_age(i)
-                else
-                    write(*,*) "USE_BY_AGE", i, i+25, 0.d0
-                end if
             end do
             write(*,*) "model_fraction_homeless=", model_fraction_homeless(1)
             write(*,*) "model_fraction_addicted=", model_fraction_addicted(1)
