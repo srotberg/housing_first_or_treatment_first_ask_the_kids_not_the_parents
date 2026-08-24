@@ -121,6 +121,14 @@ def done_points():
         if not r.strip():
             continue
         f_ = r.split('\t')
+        # A ROW THAT DOES NOT PARSE IS SKIPPED, NOT FATAL. This killed a sweep:
+        # a merge left conflict markers in the bank for a few minutes, and
+        # "<<<<<<< HEAD" splits to one field, so f_[1] raised IndexError and the
+        # driver died mid run with no model behind it. The bank recovered a
+        # minute later and the driver did not. Nothing here is worth losing a
+        # sweep over -- an unreadable row simply is not a measured point.
+        if len(f_) < 2:
+            continue
         extra = {}
         if len(f_) > 7 and f_[7].strip():
             for tok in f_[7].split():
@@ -130,7 +138,11 @@ def done_points():
                         extra[k] = _f(v)
                     except ValueError:
                         pass
-        out.append((_f(f_[1]), extra))
+        try:
+            b_ = _f(f_[1])
+        except ValueError:
+            continue
+        out.append((b_, extra))
     return out
 
 
