@@ -63,8 +63,15 @@ PROGRESS = os.path.join(HERE, 'CALIBRATION_PROGRESS.tsv')
 # here: it lets the compiler contract multiplies and adds into FMAs, which
 # changes results in the last bits, and a calibration that has to be reproducible
 # on another machine should not depend on which instructions this one has.
+# -g AND -fbacktrace COST NOTHING AND BUY THE ONLY THING A CRASH REPORT NEEDS.
+# The model segfaulted three times in a row at the same point and the backtrace
+# read "#0 0x1501b4023e59 in ???" for every frame, because the binary carried no
+# debug information. -g does not disable any optimisation at -O3; it only keeps
+# the line table, so the next crash names its own line instead of costing a
+# morning of reading the file around it.
 COMPILE = ['gfortran', SRC, '-mcmodel=medium', '-fopenmp', '-O3',
-           '-funroll-loops', '-ffree-line-length-none', '-o', BIN]
+           '-funroll-loops', '-ffree-line-length-none', '-g', '-fbacktrace',
+           '-o', BIN]
 
 # ---------------------------------------------------------------------------
 # WHAT A LOOP LOOKS LIKE IN THE LOG. The calibration prints loop_count= once a
