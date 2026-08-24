@@ -71,6 +71,17 @@ python3 check_hyphens.py
 echo "== checking that no two words have run together"
 python3 check_spacing.py
 
+# THE SET COLUMN AGAINST THE CODE, AND NOT BY EYE. links.py says the mapping is
+# "checked by eye once", and TRANSITION_LESSONS records the same check as a
+# standing instruction after rho_d was found holding a moment h_2 had taken. An
+# instruction to read carefully passes once and then rots: delta_h sat marked
+# Int. in Table 11, with its target constant declared in the Fortran and used
+# nowhere, while penalty_child_homeless was a compile time parameter that no
+# update touched. Nothing re-read the instruction, so nothing caught it. This
+# runs every build instead.
+echo "== checking the tables' Set column against what the code calibrates"
+python3 ../paper/check_alignment.py
+
 echo "== verifying the model"
 cd "$ROOT/code/stylized"
 python3 verify.py
