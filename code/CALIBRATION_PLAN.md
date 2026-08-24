@@ -394,3 +394,34 @@ it there, and none of them slows the search:
 THE CENTRE MUST BE SPAWNED EVERY ROUND. It is not one point among many; it is
 the other half of every pair in the generation. Generation four's was forgotten
 and every arm in it lost its partner.
+
+## lambda and b are the second entangled pair
+
+Measured 24 August, at lambda 22, sweeping b over six decades:
+
+    b        users     disordered share
+    1e-7     0.99995   0.893
+    1e-4     0.99993   0.889
+    1e-3     0.99987   0.885
+    3e-3     0.99905   0.869
+    1e-2     0.760     0.832
+    (target) 0.089     0.413
+
+Three things follow, and two of them contradict what was believed here before.
+
+**lambda reaches the disorder share comfortably.** It overshoots: 0.89 against a
+target of 0.413. The earlier reading that lambda had no traction was taken
+entirely at lambda 1.5 and was worthless. The share runs 0.028 at lambda 1.5 and
+0.89 at lambda 22, so the target is bracketed and the answer is near lambda 8 to
+12.
+
+**b does not need to be small.** Everything from 1e-7 to 1e-3 is a flat plateau
+at essentially total use; going lower buys nothing. The cliff is between 0.01,
+where 76 per cent use, and 0.038, where 0.0035 per cent do -- four orders of
+magnitude of user rate across a 3.8-fold change in b.
+
+**They must be solved together.** Each moves both the user rate and the
+disordered share, exactly as b and the value of life do. A ridge in (lambda, b)
+is being measured now at lambda 5.5, 8, 12, 16 and 22, with b set at each to put
+the user rate on target, which gives the share along the ridge and so the lambda
+that hits 0.413 with the user rate where it belongs.
