@@ -116,7 +116,7 @@ around a point that is already close, which is what the slow updates are for.
 
 ## THE BLOCKS, and the order they are worked in
 
-Twenty three parameters are calibrated internally. Moving them all at once is
+Twenty four parameters are calibrated internally. Moving them all at once is
 what produced a world with 75 per cent participation, because a parameter whose
 moment is measured on a population set by another parameter is not identified,
 it is guessing. So they are worked in BLOCKS: within a block the members
@@ -195,17 +195,37 @@ while take up sat at zero.
 ### F. Across generations  — needs C
 
     penalty_child_addicted      child's disorder rate over parent's   3.00
+    penalty_child_homeless      child's homelessness rate over        2.10
+                                parent's, Bassuk et al. (1997)
     weight_on_child             no scalar moment
     fixed_cost_to_moving        no scalar moment
 
-Last because the moment is a ratio of one generation's disorder rate to
-another's, so it needs C settled twice over.
+Last because each moment is a ratio of one generation's rate to another's, so
+it needs C settled twice over.
+
+delta_h WAS NOT CALIBRATED AT ALL until 24 August. Table 11 gave it as Int.
+against 2.10, child_homeless_ratio_data = 2.10 was declared in the Fortran and
+used nowhere, and penalty_child_homeless was a compile time parameter of 0.31.
+Its moment did not exist and had to be built:
+percent_homeless_by_employment, the homelessness rate by productivity node,
+accumulated in the same pass as its denominator. The ratio mirrors delta_d's,
+varying the parent's HOMELESSNESS at clean where delta_d varies the parent's
+DISORDER at housed.
+
+`code/paper/check_alignment.py` runs in build.sh and fails the build when a
+table row's Set column disagrees with what the code does. It found this one. It
+does NOT check whether a correctly Int. row brackets on the right model
+QUANTITY, which is the class the b bug belonged to.
 
 ### Not calibrated in this configuration
 
     discount_factor_on_child, housing_status_grid_expander,
     minimum_inheritance         adjusters are zero
-    rho_d, rho_m                include flags are off
+    rho_d, rho_m                include flags are off, so each enters as
+                                rho**(state*include_rho), a multiplier of one
+
+Twenty four calibrated plus five not calibrated is the twenty nine the report's
+accounting line should show.
 
 ### How a block is run
 
