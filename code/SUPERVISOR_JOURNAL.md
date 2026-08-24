@@ -433,3 +433,9 @@ Recorded, not acted on: damping a drift or repairing a moment pairing is a model
 Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
 
 - `relative_share_leisure` moved 0.5751 to 1.84, one way across 27 loops, and its moment is not reported as a scalar
+
+## Parameters drifting one way
+
+Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
+
+- `kappa_uem` moved 12.41 to 18.76, one way across 20 loops, and its moment is not reported as a scalar
