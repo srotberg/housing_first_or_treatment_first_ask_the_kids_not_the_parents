@@ -3884,6 +3884,99 @@
 
         end function
 
+        subroutine print_all_moments()
+
+            ! EVERY TARGETED MOMENT, ON EVERY PASS, BESIDE ITS TARGET.
+            !
+            ! A sweep point writes its row and STOPS, above almost all of the
+            ! moment prints, and several moments are computed only inside the
+            ! parameter update block, which a sweep skips entirely. Between them
+            ! that left a sweep reporting six numbers out of twenty two, and the
+            ! missing ones were fixed one at a time as the author asked for each:
+            ! the drug spending share, then the value of life, then wealth over
+            ! output. That is the wrong way round. This prints the lot.
+            !
+            ! The two child ratios and the drug share are recomputed here rather
+            ! than read, because the variables that hold them are only assigned
+            ! in the update block. They are functions of aggregates the
+            ! distribution pass has already built, so they cost nothing.
+
+            implicit none
+
+            real(8) :: w2o_1,vsl_1,csud_n_1,csud_d_1,chom_n_1,chom_d_1
+            integer :: k_1
+
+            w2o_1=model_total_net_wealth(1)/max(model_GDP_incl_imput_rent(1),10.d0**(-12))
+            vsl_1=model_value_of_life(1)/max(model_average_labour_income(1),10.d0**(-12))
+
+            csud_n_1=0
+            csud_d_1=0
+            chom_n_1=0
+            chom_d_1=0
+            do k_1=1,employment_grid_size
+                csud_n_1=csud_n_1+newborn_employment_probability(k_1,1,1)*&
+                    percent_addicted_by_employment(1,k_1)
+                csud_d_1=csud_d_1+newborn_employment_probability(k_1,0,1)*&
+                    percent_addicted_by_employment(1,k_1)
+                chom_n_1=chom_n_1+newborn_employment_probability(k_1,0,2)*&
+                    percent_homeless_by_employment(1,k_1)
+                chom_d_1=chom_d_1+newborn_employment_probability(k_1,0,1)*&
+                    percent_homeless_by_employment(1,k_1)
+            end do
+
+            write(*,*) "===== ALL TARGETED MOMENTS ====="
+            write(*,*) "MOMENT sigma_y   bottom half earnings share  model=",&
+                model_bottom_half_earnings_share, " target=", bottom_half_earnings_share_data
+            write(*,*) "MOMENT tau_l     average labour income tax   model=",&
+                model_average_labour_income_tax(1), " target=", average_labor_income_tax_data
+            write(*,*) "MOMENT omega_l   labour supply / total hours model=",&
+                model_labor_supply(1)/max(model_total_hours(1),10.d0**(-12)),&
+                " target=", avg_labor_supply_data
+            write(*,*) "MOMENT beta      wealth over output          model=",&
+                w2o_1, " target=", wealth_to_output_data
+            write(*,*) "MOMENT h_2       share in the smallest unit  model=",&
+                model_housing_size_dist(1,0), " target=", housing_size_dist_data(0)
+            write(*,*) "MOMENT h_4       share in the largest unit   model=",&
+                model_housing_size_dist(1,housing_status_grid_size-1),&
+                " target=", housing_size_dist_data(2)
+            write(*,*) "MOMENT gamma     housing spending, renters   model=",&
+                model_avg_housing_spending_renters(1), " target=", avg_rent_to_income_data
+            write(*,*) "MOMENT h_1       homelessness rate           model=",&
+                model_fraction_homeless(1), " target=", fraction_homeless_data
+            write(*,*) "MOMENT b         total drug users            model=",&
+                model_total_drug_users(1), " target=", participation_rate_data
+            write(*,*) "MOMENT lambda_d  disorder rate               model=",&
+                model_fraction_addicted(1), " target=", sud_rate_data
+            write(*,*) "MOMENT theta     drug spending share         model=",&
+                weighted_drug_share_now(), " target=", drug_spending_share_data
+            write(*,*) "MOMENT aleph     value of life / income      model=",&
+                vsl_1, " target=", vsl_data
+            write(*,*) "MOMENT pi_eu     unemployment rate           model=",&
+                model_fraction_unemployed(1), " target=", unemployment_rate_data
+            write(*,*) "MOMENT kappa_ued unemployment given SUD      model=",&
+                model_fraction_addicted_and_unemployed(1), " target=", unemployment_rate_sud_data
+            write(*,*) "MOMENT kappa_uem employment given SMI        model=",&
+                model_employment_rate_given_smi(1), " target=", employment_rate_given_smi_data
+            write(*,*) "MOMENT lambda_m  SMI share of the homeless   model=",&
+                model_smi_share_of_homeless(1), " target=", smi_share_of_homeless_data
+            write(*,*) "MOMENT pi_V      eligibles with a voucher    model=",&
+                model_eligibles_getting_voucher(1), " target=", voucher_coverage_data
+            write(*,*) "MOMENT cbar      food stamps / labour income model=",&
+                govt_spending_on_food_stamps(1)/max(model_average_labour_income(1),10.d0**(-12)),&
+                " target=", food_stamps_share_data
+            write(*,*) "MOMENT tau_u     treatment take up           model=",&
+                model_treatment_take_up(1), " target=", treatment_take_up_data
+            write(*,*) "MOMENT mu_H      recovery housed / homeless  model=",&
+                model_recovery_housed(1)/max(model_recovery_homeless(1),10.d0**(-12)),&
+                " target=", milby_recovery_ratio_data
+            write(*,*) "MOMENT delta_d   child SUD ratio             model=",&
+                csud_n_1/max(csud_d_1,10.d0**(-12)), " target=", child_sud_ratio_data
+            write(*,*) "MOMENT delta_h   child homelessness ratio    model=",&
+                chom_n_1/max(chom_d_1,10.d0**(-12)), " target=", child_homeless_ratio_data
+            write(*,*) "===== END OF MOMENTS ====="
+
+        end subroutine
+
         function weighted_drug_share_now() result(share_1)
 
             ! THE DRUG SPENDING SHARE, COMPUTED WHERE A SWEEP CAN SEE IT.
@@ -33061,8 +33154,29 @@
 
             if (sweep_addiction_scalar==1) then
 
+                call print_all_moments()
+
                 write(*,*) "drug share, weighted by their population shares =",&
                     weighted_drug_share_now(), " target =", drug_spending_share_data
+
+                ! THE VALUE OF LIFE AND WEALTH OVER OUTPUT, WHERE A SWEEP CAN SEE
+                ! THEM. Both were computed only inside the parameter update block,
+                ! which a sweep skips, so neither had appeared in a single sweep
+                ! point: the log carried zero occurrences of either across twelve
+                ! of them. They are aleph's moment and beta's, the two the author
+                ! asked to be kept near their targets, and a sweep that cannot see
+                ! them cannot say whether the pins are right. Both are ratios of
+                ! aggregates the distribution pass has already built.
+                write(*,*) "model_value_of_life(1)=", model_value_of_life(1),&
+                    " over average labour income =",&
+                    model_value_of_life(1)/max(model_average_labour_income(1),10.d0**(-12)),&
+                    " target =", vsl_data
+                write(*,*) "wealth_to_output_model =",&
+                    model_total_net_wealth(1)/max(model_GDP_incl_imput_rent(1),10.d0**(-12)),&
+                    " target =", wealth_to_output_data
+                write(*,*) "labour supply over total hours =",&
+                    model_labor_supply(1)/max(model_total_hours(1),10.d0**(-12)),&
+                    " target =", avg_labor_supply_data
 
                 open(unit=78,file="B_SWEEP_RAW.tsv",action='write',position='append')
                 write(78,'(7(E24.15,A1))') addiction_scalar_1, char(9),&

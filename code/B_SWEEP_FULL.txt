@@ -1,20 +1,16 @@
-# BLOCK A IS PINNED NOW, not left at whatever the corner produced.
-# aleph 120, 3.5x the banked 34.4153, because 34.4 gave a value of life over
-# labour income of 30.09 against a target of 80 and the sweep had been
-# pinning aleph at its declared 11.0. Aleph prices the mortality risk that
-# deters use, so it may pull the user pool down by itself.
-# beta 0.99, down from 0.9943, on wealth over output of 4.23 against 3.
-# leisure weight 3.0, up from 2.6489, on labour supply 0.4567 against 0.400.
-# the labour tax stays: 0.2127 is inside the 20 to 24 per cent band.
-# gamma = 0.28*(1-theta) on the author's instruction, so housing takes 28
-# per cent of what the drug does not: at theta 0.38 that is 0.1736.
+# BLOCK C at the author's vector. Block A pinned; gamma is TIED to theta in
+# the model as 0.28*(1-theta) and must not be listed here.
+#
+# aleph 120 emptied the model at b = 0.08: users exactly zero, against 0.759
+# at b = 0.06 when aleph was 11. The b curve has shifted left by more than an
+# order of magnitude, so b comes DOWN.
+# h_1 raised to 0.42: at 0.2128 with aleph 120 homelessness was exactly zero,
+# so the street has to be worth MORE once the death penalty prices use right.
+# leisure weight 2.4: 3.0 gave labour supply 0.2800 against a target of 0.400.
+#
+# Every point now prints ALL twenty two targeted moments beside their targets,
+# through print_all_moments, called above the sweep's stop.
 
-# ONLY OUTSTANDING POINTS LIVE HERE. The measured ones are in B_SWEEP.tsv
-# and were listed here as well, which was harmless while the pinned vector
-# never changed. It changed -- aleph, beta and the leisure weight -- so every
-# historical row's vector stopped matching its grid line, done_points read
-# them all as outstanding, and the driver started re-measuring b = 0.005.
-
-0.08 lambda_addiction=1.5 relative_share_of_addiction_1=0.38 size_homelessness=0.2128 discount_factor=0.99 kappa_uem=1 labor_income_tax_rate=0.753746 lambda_m=0.067 multiple_of_probabilities_of_employment_if_addicted=2.7 penalty_child_addicted=0.3 probability_becoming_unemployed=0.0155 probability_of_voucher_benchmark_used=0.06 relative_share_of_housing=0.1736 relative_share_of_leisure=3 sd_permanent_productivity=0.953396 utility_cost_of_treatment=0.02 value_of_life=120
-0.06 lambda_addiction=1.5 relative_share_of_addiction_1=0.38 size_homelessness=0.2128 discount_factor=0.99 kappa_uem=1 labor_income_tax_rate=0.753746 lambda_m=0.067 multiple_of_probabilities_of_employment_if_addicted=2.7 penalty_child_addicted=0.3 probability_becoming_unemployed=0.0155 probability_of_voucher_benchmark_used=0.06 relative_share_of_housing=0.1736 relative_share_of_leisure=3 sd_permanent_productivity=0.953396 utility_cost_of_treatment=0.02 value_of_life=120
-0.10 lambda_addiction=1.5 relative_share_of_addiction_1=0.38 size_homelessness=0.2128 discount_factor=0.99 kappa_uem=1 labor_income_tax_rate=0.753746 lambda_m=0.067 multiple_of_probabilities_of_employment_if_addicted=2.7 penalty_child_addicted=0.3 probability_becoming_unemployed=0.0155 probability_of_voucher_benchmark_used=0.06 relative_share_of_housing=0.1736 relative_share_of_leisure=3 sd_permanent_productivity=0.953396 utility_cost_of_treatment=0.02 value_of_life=120
+0.02 lambda_addiction=1.5 relative_share_of_addiction_1=0.38 size_homelessness=0.42 discount_factor=0.99 kappa_uem=1 labor_income_tax_rate=0.753746 lambda_m=0.067 multiple_of_probabilities_of_employment_if_addicted=2.7 penalty_child_addicted=0.3 probability_becoming_unemployed=0.0155 probability_of_voucher_benchmark_used=0.06 relative_share_of_leisure=2.4 sd_permanent_productivity=0.953396 utility_cost_of_treatment=0.02 value_of_life=120
+0.01 lambda_addiction=1.5 relative_share_of_addiction_1=0.38 size_homelessness=0.42 discount_factor=0.99 kappa_uem=1 labor_income_tax_rate=0.753746 lambda_m=0.067 multiple_of_probabilities_of_employment_if_addicted=2.7 penalty_child_addicted=0.3 probability_becoming_unemployed=0.0155 probability_of_voucher_benchmark_used=0.06 relative_share_of_leisure=2.4 sd_permanent_productivity=0.953396 utility_cost_of_treatment=0.02 value_of_life=120
+0.04 lambda_addiction=1.5 relative_share_of_addiction_1=0.38 size_homelessness=0.42 discount_factor=0.99 kappa_uem=1 labor_income_tax_rate=0.753746 lambda_m=0.067 multiple_of_probabilities_of_employment_if_addicted=2.7 penalty_child_addicted=0.3 probability_becoming_unemployed=0.0155 probability_of_voucher_benchmark_used=0.06 relative_share_of_leisure=2.4 sd_permanent_productivity=0.953396 utility_cost_of_treatment=0.02 value_of_life=120
