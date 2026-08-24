@@ -48,9 +48,22 @@ def points():
     for path in sorted(glob.glob(os.path.join(HERE, 'points', '*.txt'))):
         txt = open(path, errors='replace').read()
         m = TAG.search(txt)
-        if not m:
-            continue
-        vec = dict(zip(('b', 'aleph', 'lam', 'th', 'h'), (_f(g) for g in m.groups())))
+        if m:
+            vec = dict(zip(('b', 'aleph', 'lam', 'th', 'h'),
+                           (_f(g) for g in m.groups())))
+        else:
+            # THE FILENAME IS THE FALLBACK. The first workers were given the
+            # recipe in their prompt and wrote the moments block with no header,
+            # so the vector lives only in the name they were told to use. Later
+            # workers run run_one_point.sh, which writes a header. Both have to
+            # parse or the early points drop out of every secant.
+            base = os.path.basename(path)
+            got = dict(re.findall(r'(b|aleph|lam|th|h)([0-9.]+)', base))
+            if 'b' not in got or 'aleph' not in got:
+                continue
+            vec = {'b': _f(got['b']), 'aleph': _f(got['aleph']),
+                   'lam': _f(got.get('lam', 1.5)), 'th': _f(got.get('th', 0.38)),
+                   'h': _f(got.get('h', 0.42))}
         mom = {}
         for r in ROW.finditer(txt):
             try:
