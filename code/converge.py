@@ -29,6 +29,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
+import loss_history                                      # noqa: E402
 import ridge_solve                                       # noqa: E402
 import score_points                                      # noqa: E402
 from suggest_next import OWNS, points                    # noqa: E402
@@ -111,6 +112,7 @@ ON_TARGET = 0.03        # a moment this close to its target needs no arm at all
 ARM_MIN, ARM_MAX = 1.15, 3.0
 
 MAX_STEP = 3.0          # no parameter may move by more than this factor in one generation
+TRUST_FLOOR = 1.25      # never shrink the step below this
 PAIRED = ('addiction_scalar_1', 'value_of_life')         # the two that must be solved together
 RUNNER = os.path.join(HERE, 'run_one_point.sh')
 GENFILE = os.path.join(HERE, 'GENERATION.txt')
@@ -161,6 +163,31 @@ def runner_defaults():
     """The vector the runner currently defaults to."""
     txt = open(RUNNER).read()
     return {k: float(v) for k, v in re.findall(r'\[(\w+)\]=([-+0-9.eE]+)', txt)}
+
+
+def trust_step():
+    """How far any parameter may move this round.
+
+    A TRUST REGION, BECAUSE A ROUND THAT MADE THINGS WORSE IS EVIDENCE THE STEP
+    WAS TOO LONG. Every parameter moves at once, and they interact: generation
+    four moved h_2 by a factor of 2.6, kappa_ued by a half and the voucher
+    probability by a third in one go, and came back worse than generation three
+    on both the best point and the median. The secants were not wrong
+    individually; the step was too long for them to hold jointly.
+
+    So the cap halves after a generation that did not improve, and relaxes back
+    toward the full step after one that did. The centre itself is already safe --
+    it starts from the best measured point, so a bad round is not compounded --
+    but without this the next step is just as long as the one that missed.
+    """
+    best_by_gen = loss_history.by_generation()
+    if len(best_by_gen) < 2:
+        return MAX_STEP
+    gens = sorted(best_by_gen)
+    latest, previous = best_by_gen[gens[-1]], min(best_by_gen[g] for g in gens[:-1])
+    if latest > previous:
+        return max(TRUST_FLOOR, MAX_STEP / 2.0)
+    return MAX_STEP
 
 
 def best_point_moments():
@@ -308,7 +335,8 @@ def capped(key, here, want):
     """A step no larger than MAX_STEP either way, and never through zero."""
     if want is None or want != want or want <= 0 or here <= 0:
         return here
-    return clip(key, max(here / MAX_STEP, min(here * MAX_STEP, want)))
+    step = trust_step()
+    return clip(key, max(here / step, min(here * step, want)))
 
 
 def emitted():

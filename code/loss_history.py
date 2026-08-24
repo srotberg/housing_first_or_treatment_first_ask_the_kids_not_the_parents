@@ -39,6 +39,22 @@ def generation_of():
     return where
 
 
+def by_generation():
+    """generation -> best loss in it, for the trust region to read."""
+    where = generation_of()
+    best = {}
+    for path in sorted(os.listdir(os.path.join(HERE, 'points'))):
+        if not path.endswith('.txt'):
+            continue
+        got = score_points.loss(score_points.read(os.path.join(HERE, 'points', path))[1])
+        if not got:
+            continue
+        gen = where.get(path, 1)
+        if gen not in best or got[0] < best[gen]:
+            best[gen] = got[0]
+    return best
+
+
 def main():
     where = generation_of()
     rows = {}
