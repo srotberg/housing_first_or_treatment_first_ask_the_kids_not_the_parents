@@ -29599,6 +29599,46 @@
                     write(*,*) "HANDOVER weight_on_child:", weight_on_child, "->", handover_value
                     weight_on_child=max(min(handover_value,1.d0),0.d0)
 
+                ! THE INSTRUMENTS THAT RAN AWAY AT THE CORNER, so a good
+                ! starting point can be handed in rather than hand edited into a
+                ! positional checkpoint. Measured against their own declared
+                ! values after loops run at 75 per cent participation:
+                ! lambda 33x, the treatment cost 106x, kappa_uem 23x and the
+                ! employment multiplier 6x. A one per cent per loop trust region
+                ! only makes sense from a sensible start, and these were not one.
+                case ("utility_cost_of_treatment")
+                    write(*,*) "HANDOVER utility_cost_of_treatment:",&
+                        utility_cost_of_treatment, "->", handover_value
+                    utility_cost_of_treatment=max(min(handover_value,10.d0),0.d0)
+
+                case ("probability_becoming_unemployed")
+                    write(*,*) "HANDOVER probability_becoming_unemployed:",&
+                        probability_becoming_unemployed, "->", handover_value
+                    probability_becoming_unemployed=&
+                        max(min(handover_value,1.d0),10.d0**(-6))
+
+                case ("multiple_of_probabilities_of_employment_if_addicted")
+                    write(*,*) "HANDOVER employment multiplier:",&
+                        multiple_of_probabilities_of_employment_if_addicted,&
+                        "->", handover_value
+                    multiple_of_probabilities_of_employment_if_addicted=&
+                        max(min(handover_value,20.d0),1.d0)
+
+                case ("value_of_life")
+                    write(*,*) "HANDOVER value_of_life:", value_of_life, "->", handover_value
+                    value_of_life=max(min(handover_value,10.d0**(4)),10.d0**(-2))
+
+                case ("penalty_child_addicted")
+                    write(*,*) "HANDOVER penalty_child_addicted:",&
+                        penalty_child_addicted, "->", handover_value
+                    penalty_child_addicted=max(min(handover_value,0.4d0),0.d0)
+
+                case ("probability_of_voucher_benchmark_used")
+                    write(*,*) "HANDOVER voucher probability:",&
+                        probability_of_voucher_benchmark_used, "->", handover_value
+                    probability_of_voucher_benchmark_used=&
+                        max(min(handover_value,1.d0),10.d0**(-5))
+
                 case ("relative_share_of_addiction_1")
                     write(*,*) "HANDOVER relative_share_of_addiction_1:",&
                         relative_share_of_addiction_1, "->", handover_value
