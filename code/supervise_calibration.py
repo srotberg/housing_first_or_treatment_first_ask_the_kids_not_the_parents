@@ -829,6 +829,19 @@ def verdict():
     if not m:
         return False, 'the report gave no verdict yet'
     hit, total = int(m.group(1)), int(m.group(2))
+
+    # A VERDICT READ OFF A NEARLY EMPTY LOG IS NOT A VERDICT. total is however
+    # many parameters the report could SCORE, which depends on what the log
+    # happens to contain; the number that are calibrated at all comes from the
+    # Fortran and does not. On a log a few minutes old only one parameter had
+    # printed its moment, it happened to be on target, and "1 of 1 on target"
+    # declared the calibration converged and stopped a run that was nowhere
+    # near it. Convergence needs most of the parameters to have reported.
+    n = re.search(r'(\d+) parameters calibrated internally', r.stdout)
+    known = int(n.group(1)) if n else 0
+    if known and total < 0.8 * known:
+        return False, (f'{hit} of {total} on target, but only {total} of {known} '
+                       f'calibrated parameters have reported a moment yet')
     return hit == total and total > 0, f'{hit} of {total} on target'
 
 

@@ -52,6 +52,13 @@ __pycache__/
 code/*.dat
 code/*baseline_benchmark.txt
 !code/calibration_state.dat
+# The newborn parent shares are the other half of the resume state. They are
+# built by the AGGREGATION, which runs after the distribution, so a fresh
+# process's first distribution uses the declared default of all clean housed
+# parents -- the UNPENALISED draw -- and the intergenerational channel starts
+# switched off. Two container rebuilds cost a loop each to that before this
+# exception was added.
+!code/newborn_parent_share.dat
 
 # The supervisor's own running output. progress_reports.txt gains an entry every
 # ten minutes and progress_history.json a point every loop, for as long as a
