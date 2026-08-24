@@ -350,14 +350,24 @@
         ! than a claim about where use should peak: if use now piles at the top
         ! of working life instead, the deterrent itself is too weak, which is a
         ! statement about aleph and the mortality channel and not about J_E.
-        ! HELD AT 55 FOR ONE DIAGNOSTIC LOOP. The question is whether onset
-        ! begins the year work ends, model age 41 and data age 66, or only close
-        ! to the end of life. The first says the deterrent collapses as soon as
-        ! labour income does; the second says it only fails where almost no life
-        ! remains. They call for different fixes, and the nine age groups cannot
-        ! tell them apart because model ages 40 to 60 are one bucket. Put back to
-        ! 40, the last working age, once the per age profile has been read.
-        integer, parameter :: max_age_to_choose_addiction=55
+        ! THE DIAGNOSTIC LOOP ANSWERED IT: ONSET IS AT DATA AGE 69, AND IT IS A
+        ! CLIFF. The use rate by single age read zero everywhere through data 68,
+        ! then 54 per cent at 69, 71 at 70, 93 at 71 and about 99 from 72 to 80.
+        ! Not the year work ends, not the end of life: three years into
+        ! retirement, and from nobody to everybody in three years.
+        !
+        ! It sits exactly where shape_sud collapses. The SUD mortality multiplier
+        ! is 1 + (level-1)*shape, and shape falls from 0.891 at data 32 to 0.063
+        ! at 69, 0.030 at 70 and 0.011 at 75, so the multiplier is 1.07 by 75: a
+        ! disorder that raises the chance of dying by seven per cent. The
+        ! deterrent fails twice over at the same place, once because almost no
+        ! life remains to lose and once because the disorder has stopped being
+        ! dangerous.
+        !
+        ! 40 is the last working age, so onset can no longer begin in retirement
+        ! at all. It is a backstop against the horizon, not the fix: the fix is
+        ! the profile, and that is a data decision for the author.
+        integer, parameter :: max_age_to_choose_addiction=40
         integer, parameter :: max_age_to_choose_homelessness=59
         
         integer, parameter :: include_varying_household_size=0
