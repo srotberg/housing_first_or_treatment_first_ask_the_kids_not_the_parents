@@ -575,6 +575,11 @@ def main():
         for key, gap in sorted(settled, key=lambda kv: abs(kv[1] or 0)):
             print('   settled  %-52s gap %+.1f%%' % (key, 100 * (gap or 0)))
 
+    # RUNNING converge TWICE GIVES TWO DIFFERENT GENERATIONS. --write re-centres
+    # the runner, so a second read-only run computes a further step and arms
+    # around that further centre, while the workers still start from the centre
+    # --write wrote. Spawn from THIS run's own printed arms, never from a fresh
+    # invocation afterwards.
     if '--write' in sys.argv:
         txt = open(RUNNER).read()
         for key, v in moved.items():
