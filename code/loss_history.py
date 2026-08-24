@@ -67,9 +67,10 @@ def main():
             continue
         rows.setdefault(where.get(path, 1), []).append((got[0], path))
 
-    print('%-12s %8s %10s %10s %10s   %s'
-          % ('generation', 'points', 'best', 'median', 'worst', 'best point'))
-    print('-' * 78)
+    print('%-12s %8s %10s %10s %10s %7s %6s %6s %6s   %s'
+          % ('generation', 'points', 'best', 'median', 'worst',
+             'w/in 5%', '10%', '25%', '50%', 'best point'))
+    print('-' * 118)
     best_so_far = None
     for gen in sorted(rows):
         ls = sorted(rows[gen])
@@ -78,8 +79,18 @@ def main():
         if best_so_far is None or ls[0][0] < best_so_far:
             best_so_far = ls[0][0]
             mark = '  <- new best'
-        print('%-12s %8d %10.3f %10.3f %10.3f   %s%s'
-              % ('gen %d' % gen, len(ls), ls[0][0], med, ls[-1][0], ls[0][1], mark))
+        # HOW MANY MOMENTS ARE ACTUALLY NEAR TARGET, beside the loss. The loss is
+        # weighted three times on b and lambda_d and twice on theta, aleph and
+        # h_1, so it can report a round as worse while the count of moments near
+        # target goes up -- which is exactly what generation four did. Both
+        # numbers belong in the same table.
+        _h, mt = score_points.read(os.path.join(HERE, 'points', ls[0][1]))
+        rel = sorted(abs(m - t) / abs(t) for m, t in mt.values()
+                     if t and m == m)
+        near = [sum(1 for x in rel if x < c) for c in (0.05, 0.10, 0.25, 0.50)]
+        print('%-12s %8d %10.3f %10.3f %10.3f %7d %6d %6d %6d   %s%s'
+              % ('gen %d' % gen, len(ls), ls[0][0], med, ls[-1][0],
+                 near[0], near[1], near[2], near[3], ls[0][1], mark))
     return 0
 
 
