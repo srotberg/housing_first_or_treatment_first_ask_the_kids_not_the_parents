@@ -536,18 +536,19 @@
         ! income there, lambda_m carries its share of the homeless, kappa_phi_m
         ! its mortality and mu_m its SUD recovery. rho_m has no job left that is
         ! not already assigned.
-        ! rho_d IS BACK ON, AND IT IS THE INSTRUMENT h_2 VACATED. It was switched
-        ! off because h_2 already carried the employed share of the homeless, and
-        ! a proportional income penalty on top of it would have been a third
-        ! instrument on two moments. h_2 now answers to the bottom of the size
-        ! distribution instead, because the employed share and the homelessness
-        ! RATE could not both be had from it, so that moment has no instrument
-        ! left and this is the one that fits it: a household with the disorder
-        ! earns rho_d of what it otherwise would at every income, so it is poorer
-        ! whether or not it is working, and the disorder correlates with
-        ! unemployment through kappa_ued, which moves the composition of the
-        ! homeless rather than their number.
-        integer, parameter :: include_rho_d=1
+        ! rho_d STAYS OFF, AND THE CONDITION FOR TURNING IT ON HAS NOT BEEN MET.
+        ! It enters as rho_d**(sud*include_rho_d), so at zero the multiplier is
+        ! exactly one and the disorder costs earnings only by costing the job.
+        !
+        ! It was switched on once, on the argument that h_2 had vacated the
+        ! employed share of the homeless and that moment had no instrument left.
+        ! That was premature: the agreed plan is that the employed share is an
+        ! UNTARGETED statistic, and rho_d is the fallback only if the calibration
+        ! cannot do a good job without it. Switching it on before that is known
+        ! spends an instrument on a moment nobody asked to hit, and it starts
+        ! ninety four per cent off, which drags every other bracket while it
+        ! travels.
+        integer, parameter :: include_rho_d=0
         integer, parameter :: include_rho_m=0
 
         ! TWO SMI STATES. This doubles the unemployment grid from 6 to 12 and
