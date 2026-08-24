@@ -327,7 +327,30 @@
         ! NSDUH moment in the paper. Computed from the public use file, the same
         ! universe that gives the 3.71 per cent disorder rate lambda targets.
         real(8), parameter :: treatment_take_up_data=0.245
-        integer, parameter :: max_age_to_choose_addiction=55
+        ! J_E WAS 55, WHICH IS DATA AGE 80, AND EVERY USER IN THE MODEL WAS OLD.
+        ! The age profile of use read
+        !
+        !   0  0  0  0  0  0  0  0  1.0
+        !
+        ! over the nine age groups, so all of it sat in group nine, model age 40
+        ! and above, which is data age 65 and above. Retirement begins at
+        ! life_span-retirement_span+1 = 41, so use was concentrated in retirement
+        ! and J_E permitted onset fifteen years into it.
+        !
+        ! That is exactly the artefact this parameter exists to prevent. The
+        ! private cost of using is the continuation value of life the disorder
+        ! truncates, and in retirement there is almost none left, so the drug is
+        ! nearly free. It also corrupts everything measured on users: their
+        ! "income" is social security, which is a function of the productivity
+        ! index, so the disorder appears to rise with productivity and the users
+        ! appear richer than average.
+        !
+        ! 40 is the last working age, so onset can no longer begin in retirement
+        ! at all. This is the minimal change that removes the artefact rather
+        ! than a claim about where use should peak: if use now piles at the top
+        ! of working life instead, the deterrent itself is too weak, which is a
+        ! statement about aleph and the mortality channel and not about J_E.
+        integer, parameter :: max_age_to_choose_addiction=40
         integer, parameter :: max_age_to_choose_homelessness=59
         
         integer, parameter :: include_varying_household_size=0
