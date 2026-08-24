@@ -250,6 +250,27 @@ def main():
         print(__doc__)
         raise SystemExit(2)
 
+    # A SWEEP LOG CANNOT BE SCORED, AND SAYS SO RATHER THAN PRETENDING.
+    #
+    # A sweep point writes its row and STOPS, above most of the moment prints,
+    # and it holds every parameter fixed. Read off one, sixteen of twenty five
+    # rows come back "no scalar moment" and the nine that do score are scored
+    # at whatever b that point ran at -- which, at the top of the grid, is a
+    # model with nobody in it: employment given serious mental illness (SMI)
+    # reads 0.9997 against 0.3, and four parameters read exactly a hundred per
+    # cent off because their moment is zero. Those are artefacts of an empty
+    # population, not gaps, and a table that prints them next to the word
+    # "target" invites them to be acted on.
+    log_text = open(sys.argv[1], errors='replace').read()
+    if 'B SWEEP POINT DONE' in log_text:
+        print('THIS IS A SWEEP LOG, NOT A CALIBRATION LOG. A sweep point stops')
+        print('above most of the moment prints and holds every parameter fixed,')
+        print('so the rows below are mostly empty and the ones that score are')
+        print('scored on one b at frozen everything else. Read the curve in')
+        print('B_SWEEP.tsv instead, and read this table again once the joint')
+        print('loop is running.')
+        print()
+
     printed = export_moments.parse(sys.argv[1])
     consts = json.load(open(os.path.join(HERE, 'fortran_numbers.json')))
     pair, rule = pairs(), rules()
