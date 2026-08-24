@@ -1,30 +1,33 @@
+loop 2, 2026-08-24T19:38:29Z
+
 parameter                                                  value     -> after moment                                                                  model        target    off by  status
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-size_homelessness                                       0.374663            0 model_fraction_homeless                                             0.0921072       0.00399   2208.5%  
-addiction_scalar                                           1e-07  1.44416e-07 model_exprimenters                                                   0.747841         0.089    740.3%  
-lambda_addiction+probability_of_becoming_addicted       0.917909     0.225139 model_fraction_addicted                                              0.246687        0.0368    570.3%  
+size_homelessness                                              0         0.42 model_fraction_homeless                                             0.0921072       0.00399   2208.5%  CORNER
+lambda_addiction+probability_of_becoming_addicted       0.225139          1.5 model_fraction_addicted                                              0.246687        0.0368    570.3%  CORNER
 separation_rate                                         0.005881        1e-06 model_fraction_unemployed                                            0.150086        0.0485    209.5%  
-employment_multiplier                                    16.8997      16.2475 model_fraction_addicted_and_unemployed                               0.488576        0.1625    200.7%  
+employment_multiplier                                    16.2475          2.7 model_fraction_addicted_and_unemployed                               0.488576        0.1625    200.7%  
 utility_cost_of_treatment                                2.12423            0 model_treatment_take_up                                             0.0333082         0.245     86.4%  
-lambda_m                                               0.0441274            = SMI_share_of_homeless                                               0.0488402          0.25     80.5%  
+lambda_m                                               0.0441274        0.067 SMI_share_of_homeless                                               0.0488402          0.25     80.5%  
 penalty_child_addicted                                       0.4            = child_SUD_ratio_model                                                 1.02576             3     65.8%  
 value_of_life                                            34.4153            = model_value_of_life_over_model_average_labour_income                  30.0876            80     62.4%  
-discount_factor                                         0.994329     0.993912 wealth_to_output_model                                                4.23061             3     41.0%  
-relative_share_of_addiction_1                            0.29357     0.295633 drug_share_weighted_by_their_population_shares                       0.120728         0.162     25.5%  
+discount_factor                                         0.993912         0.99 wealth_to_output_model                                                4.23061             3     41.0%  
+relative_share_of_addiction_1                           0.295633         0.38 drug_share_weighted_by_their_population_shares                       0.120728         0.162     25.5%  
 relative_share_of_housing                               0.190749     0.193938 model_avg_housing_spending_renters                                   0.204222         0.268     23.8%  
 voucher_probability                                    0.0141242    0.0141347 model_eligibles_getting_voucher                                      0.207125         0.266     22.1%  
-kappa_uem                                                 23.526            = employment_rate_given_SMI                                            0.352912           0.3     17.6%  
-relative_share_of_leisure                                2.47349      2.64894 model_labor_supply_over_model_total_hours                            0.456748           0.4     14.2%  
-largest_house_size                                     0.0841139    0.0830253 model_housing_size_dist_3                                            0.583178      0.626723      6.9%  
-labor_income_tax_rate                                   0.759414     0.753746 model_average_labour_income_tax                                      0.212664         0.224      5.1%  
+kappa_uem                                                 23.526            1 employment_rate_given_SMI                                            0.352912           0.3     17.6%  
+relative_share_of_leisure                                2.64894          2.4 model_labor_supply_over_model_total_hours                            0.456748           0.4     14.2%  
+largest_house_size                                     0.0830253            = model_housing_size_dist_3                                            0.583178      0.626723      6.9%  
+labor_income_tax_rate                                   0.753746     0.753746 model_average_labour_income_tax                                      0.212664         0.224      5.1%  
 mu_homeless                                             0.703387            = model_recovery_ratio                                                  1.43039       1.47321      2.9%  
 max_food_cost                                           0.008937    0.0089412 govt_spending_on_food_stamps_over_model_average_labour_income      0.00411602        0.0042      2.0%  ON TARGET
-smallest_house_size                                    0.0157715    0.0157977 model_housing_size_dist_1                                            0.129426      0.132065      2.0%  
+smallest_house_size                                    0.0157977            = model_housing_size_dist_1                                            0.129426      0.132065      2.0%  
 sd_permanent_productivity                               0.953396            = bottom_half_s_share_of_productivity                                  0.171999         0.172      0.0%  ON TARGET
+addiction_scalar                                     1.44416e-07            = --                                                                         --            --        --  no scalar moment
 fixed_cost_to_moving                                          --           -- --                                                                         --            --        --  no scalar moment
+penalty_child_homeless                                        --           -- --                                                                         --            --        --  no scalar moment
 weight_on_child                                               --           -- --                                                                         --            --        --  no scalar moment
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-2 of 21 on target, 2 within three per cent; 23 parameters calibrated internally
+2 of 20 on target, 2 within three per cent; 24 parameters calibrated internally
 
 5 parameter(s) NOT calibrated in this configuration, and therefore not rows above:
   discount_factor_on_child                     its adjuster is zero, nothing moves it
@@ -33,4 +36,4 @@ weight_on_child                                               --           -- --
   rho_d                                        include_rho_d is 0, the channel is off
   rho_m                                        include_rho_m is 0, the channel is off
 
-accounted for: 23 calibrated + 5 not calibrated = 28 parameters with a target in the Fortran
+accounted for: 24 calibrated + 5 not calibrated = 29 parameters with a target in the Fortran
