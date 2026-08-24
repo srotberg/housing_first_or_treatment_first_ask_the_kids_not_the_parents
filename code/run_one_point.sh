@@ -29,28 +29,28 @@ cd "$(dirname "$0")"
 # life ridge cross (code/ridge_solve.py); the rest is the vector generation one
 # held fixed.
 declare -A P=(
-    [addiction_scalar_1]=0.0275022
-    [value_of_life]=34.8331
-    [lambda_addiction]=1.5
-    [relative_share_of_addiction_1]=0.38
-    [size_homelessness]=0.68259
+    [addiction_scalar_1]=0.0263228
+    [value_of_life]=34.8897
+    [lambda_addiction]=4.5
+    [relative_share_of_addiction_1]=0.47023
+    [size_homelessness]=0.564487
     [discount_factor]=0.993881
-    [relative_share_of_leisure]=2.55924
-    [labor_income_tax_rate]=0.753746
-    [sd_permanent_productivity]=0.953396
+    [relative_share_of_leisure]=2.76316
+    [labor_income_tax_rate]=0.720039
+    [sd_permanent_productivity]=0.953392
     [kappa_uem]=1
-    [lambda_m]=0.067
-    [multiple_of_probabilities_of_employment_if_addicted]=2.59294
-    [penalty_child_addicted]=0.3
-    [penalty_child_homeless]=0.31
+    [lambda_m]=0.0661866
+    [multiple_of_probabilities_of_employment_if_addicted]=2.43741
+    [penalty_child_addicted]=0.301061
+    [penalty_child_homeless]=0.310755
     [probability_becoming_unemployed]=0.0294178
-    [probability_of_voucher_benchmark_used]=0.012136
-    [utility_cost_of_treatment]=0.02
-    [smallest_rental_relative_to_lowest_income]=0.0412373
-    [largest_house_size]=0.0830253
-    [weight_on_child]=0.5
-    [max_food_cost]=0.0042
-    [mu_homeless]=0.6788
+    [probability_of_voucher_benchmark_used]=0.0121367
+    [utility_cost_of_treatment]=0.0200222
+    [smallest_rental_relative_to_lowest_income]=0.0376935
+    [largest_house_size]=0.10649
+    [weight_on_child]=0.499999
+    [max_food_cost]=0.00441137
+    [mu_homeless]=0.708003
 )
 for a in "$@"; do
     k=${a%%=*}; v=${a#*=}
