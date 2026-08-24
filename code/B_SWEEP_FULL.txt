@@ -1,18 +1,20 @@
-# lambda = 1 is SETTLED: at b = 0.04 it gives a disordered share of users of
-# 0.4180 against a target of 0.4130. The author's reading was right.
+# lambda = 1 settled (share 0.4180 against 0.4130 at b = 0.04).
 #
-# b is not. Total users came out 0.9652 against 0.0890, and raising lambda
-# ENLARGES the user pool rather than only redistributing within it, because
-# the disorder is absorbing: at lambda 0.225 b = 0.05 gave 0.069 users, at
-# lambda 1 b = 0.04 gives 0.965. So b rises from here, not falls.
+# b = 0.12 is back in play. It gave ZERO users at lambda 0.225, but lambda 1
+# shifts the whole curve right -- b = 0.04 went from about 0.4 users to 0.965
+# -- so the old reading there does not bind. The author's point is b = 0.12,
+# lambda 1, theta 0.35, and it goes first.
 #
-# The lambda 4.5 contrast is dropped; it was there to bracket lambda and
-# lambda no longer needs bracketing.
+# theta is swept alongside now: 0.35 against its declared 0.4265 at the same
+# b, so the drug spending share can be read against 0.1620 without confounding
+# it with a change in b. The only measurement of that share so far is 0.1207
+# at theta 0.2936, from the joint loop at a corner where 75 per cent used.
 
-0.005 lambda_addiction=4.5 kappa_uem=1 lambda_m=0.067 multiple_of_probabilities_of_employment_if_addicted=2.7 penalty_child_addicted=0.3 probability_becoming_unemployed=0.0155 probability_of_voucher_benchmark_used=0.06 relative_share_of_addiction_1=0.4265298835 size_homelessness=0.304 utility_cost_of_treatment=0.02 value_of_life=11
-0.01 lambda_addiction=4.5 kappa_uem=1 lambda_m=0.067 multiple_of_probabilities_of_employment_if_addicted=2.7 penalty_child_addicted=0.3 probability_becoming_unemployed=0.0155 probability_of_voucher_benchmark_used=0.06 relative_share_of_addiction_1=0.4265298835 size_homelessness=0.304 utility_cost_of_treatment=0.02 value_of_life=11
-0.04 lambda_addiction=1 kappa_uem=1 lambda_m=0.067 multiple_of_probabilities_of_employment_if_addicted=2.7 penalty_child_addicted=0.3 probability_becoming_unemployed=0.0155 probability_of_voucher_benchmark_used=0.06 relative_share_of_addiction_1=0.4265298835 size_homelessness=0.304 utility_cost_of_treatment=0.02 value_of_life=11
-0.05 lambda_addiction=1 kappa_uem=1 lambda_m=0.067 multiple_of_probabilities_of_employment_if_addicted=2.7 penalty_child_addicted=0.3 probability_becoming_unemployed=0.0155 probability_of_voucher_benchmark_used=0.06 relative_share_of_addiction_1=0.4265298835 size_homelessness=0.304 utility_cost_of_treatment=0.02 value_of_life=11
-0.06 lambda_addiction=1 kappa_uem=1 lambda_m=0.067 multiple_of_probabilities_of_employment_if_addicted=2.7 penalty_child_addicted=0.3 probability_becoming_unemployed=0.0155 probability_of_voucher_benchmark_used=0.06 relative_share_of_addiction_1=0.4265298835 size_homelessness=0.304 utility_cost_of_treatment=0.02 value_of_life=11
-0.07 lambda_addiction=1 kappa_uem=1 lambda_m=0.067 multiple_of_probabilities_of_employment_if_addicted=2.7 penalty_child_addicted=0.3 probability_becoming_unemployed=0.0155 probability_of_voucher_benchmark_used=0.06 relative_share_of_addiction_1=0.4265298835 size_homelessness=0.304 utility_cost_of_treatment=0.02 value_of_life=11
-0.08 lambda_addiction=1 kappa_uem=1 lambda_m=0.067 multiple_of_probabilities_of_employment_if_addicted=2.7 penalty_child_addicted=0.3 probability_becoming_unemployed=0.0155 probability_of_voucher_benchmark_used=0.06 relative_share_of_addiction_1=0.4265298835 size_homelessness=0.304 utility_cost_of_treatment=0.02 value_of_life=11
+0.005 lambda_addiction=4.5 relative_share_of_addiction_1=0.4265298835 kappa_uem=1 lambda_m=0.067 multiple_of_probabilities_of_employment_if_addicted=2.7 penalty_child_addicted=0.3 probability_becoming_unemployed=0.0155 probability_of_voucher_benchmark_used=0.06 size_homelessness=0.304 utility_cost_of_treatment=0.02 value_of_life=11
+0.01 lambda_addiction=4.5 relative_share_of_addiction_1=0.4265298835 kappa_uem=1 lambda_m=0.067 multiple_of_probabilities_of_employment_if_addicted=2.7 penalty_child_addicted=0.3 probability_becoming_unemployed=0.0155 probability_of_voucher_benchmark_used=0.06 size_homelessness=0.304 utility_cost_of_treatment=0.02 value_of_life=11
+0.04 lambda_addiction=1 relative_share_of_addiction_1=0.4265298835 kappa_uem=1 lambda_m=0.067 multiple_of_probabilities_of_employment_if_addicted=2.7 penalty_child_addicted=0.3 probability_becoming_unemployed=0.0155 probability_of_voucher_benchmark_used=0.06 size_homelessness=0.304 utility_cost_of_treatment=0.02 value_of_life=11
+0.05 lambda_addiction=1 relative_share_of_addiction_1=0.4265298835 kappa_uem=1 lambda_m=0.067 multiple_of_probabilities_of_employment_if_addicted=2.7 penalty_child_addicted=0.3 probability_becoming_unemployed=0.0155 probability_of_voucher_benchmark_used=0.06 size_homelessness=0.304 utility_cost_of_treatment=0.02 value_of_life=11
+0.12 lambda_addiction=1 relative_share_of_addiction_1=0.35 kappa_uem=1 lambda_m=0.067 multiple_of_probabilities_of_employment_if_addicted=2.7 penalty_child_addicted=0.3 probability_becoming_unemployed=0.0155 probability_of_voucher_benchmark_used=0.06 size_homelessness=0.304 utility_cost_of_treatment=0.02 value_of_life=11
+0.08 lambda_addiction=1 relative_share_of_addiction_1=0.35 kappa_uem=1 lambda_m=0.067 multiple_of_probabilities_of_employment_if_addicted=2.7 penalty_child_addicted=0.3 probability_becoming_unemployed=0.0155 probability_of_voucher_benchmark_used=0.06 size_homelessness=0.304 utility_cost_of_treatment=0.02 value_of_life=11
+0.20 lambda_addiction=1 relative_share_of_addiction_1=0.35 kappa_uem=1 lambda_m=0.067 multiple_of_probabilities_of_employment_if_addicted=2.7 penalty_child_addicted=0.3 probability_becoming_unemployed=0.0155 probability_of_voucher_benchmark_used=0.06 size_homelessness=0.304 utility_cost_of_treatment=0.02 value_of_life=11
+0.12 lambda_addiction=1 relative_share_of_addiction_1=0.4265298835 kappa_uem=1 lambda_m=0.067 multiple_of_probabilities_of_employment_if_addicted=2.7 penalty_child_addicted=0.3 probability_becoming_unemployed=0.0155 probability_of_voucher_benchmark_used=0.06 size_homelessness=0.304 utility_cost_of_treatment=0.02 value_of_life=11
