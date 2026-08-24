@@ -909,7 +909,7 @@
         ! the grid in B_SWEEP_GRID.txt, one value a line. Parameter updating is
         ! switched off with it, which is what re_do_simulation_with_fixed_
         ! parameters is for, so nothing else moves while the curve is measured.
-        integer, parameter :: sweep_addiction_scalar=0
+        integer, parameter :: sweep_addiction_scalar=1
 
         ! THE HANDOVER FROM THE SWEEP, AND IT CONSUMES ITSELF.
         !

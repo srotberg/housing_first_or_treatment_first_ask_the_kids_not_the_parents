@@ -20,6 +20,7 @@ rather than restarts.
 """
 import os
 import re
+import resource
 import shutil
 import signal
 import subprocess
@@ -143,6 +144,22 @@ def write_remaining():
     return left
 
 
+def _child_setup():
+    """Own session, and an unlimited stack. Same reasoning as the supervisor's.
+
+    The model puts large automatic arrays on the stack, so inheriting the
+    launching shell's limit means the sweep runs with 8 MB whenever it is not
+    started by hand after a `ulimit -s unlimited`, and a sweep point that dies
+    that way looks exactly like a b at which the model cannot solve.
+    """
+    os.setsid()
+    try:
+        resource.setrlimit(resource.RLIMIT_STACK,
+                           (resource.RLIM_INFINITY, resource.RLIM_INFINITY))
+    except (ValueError, OSError):
+        pass
+
+
 def launch():
     env = dict(os.environ, OMP_NUM_THREADS='4', OMP_STACKSIZE='512M',
                GFORTRAN_UNBUFFERED_ALL='1')
@@ -151,7 +168,7 @@ def launch():
     f.flush()
     return subprocess.Popen(['./hftf'], cwd=HERE, stdout=f,
                             stderr=subprocess.STDOUT, env=env,
-                            preexec_fn=os.setsid)
+                            preexec_fn=_child_setup)
 
 
 def main():
