@@ -29,6 +29,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
+import jacobian                                          # noqa: E402
 import loss_history                                      # noqa: E402
 import ridge_solve                                       # noqa: E402
 import score_points                                      # noqa: E402
@@ -465,6 +466,29 @@ def main():
 
     moved, arms, settled = {}, [], []
     best_moments = best_point_moments()
+
+    # THE JACOBIAN LEADS WHERE IT EXISTS. Every arm measured how all twenty-two
+    # moments answered one parameter; the secant used one number from each and
+    # discarded the cross effects, which is what let size_homelessness take the
+    # homelessness rate from 0.03 per cent to 12.9 with nothing to stop it. The
+    # solve moves the whole vector together, so a parameter that would wreck
+    # another moment is held back by that moment's row.
+    #
+    # It steps from THE GENERATION CENTRE, because that is the point the
+    # derivatives were measured around. Where a parameter has no column -- no
+    # arm came back for it -- the secant still answers.
+    sent = emitted()[0]
+    jac, jac_info = (None, None)
+    if sent:
+        jac, jac_info = jacobian.step(sent, jacobian.points(), trust=trust_step())
+    if jac:
+        here = dict(here)
+        here.update({k: v for k, v in sent.items() if k in here})
+        print('Jacobian: %d moments against %d parameters around %s, damping %.3g, '
+              'using %.0f%% of the trust region.\n'
+              % (len(jac_info['moments']), len(jac), jac_info['reference'],
+                 jac_info['damping'] if isinstance(jac_info['damping'], float) else -1,
+                 100 * jac_info.get('used', 0)))
     print('%d point(s) measured. Centre of the generation just run:\n' % len(pts))
     print('%-52s %12s %12s %12s %9s' % ('parameter', 'now', 'secant says', 'capped to', 'how'))
     print('-' * 102)
@@ -479,6 +503,20 @@ def main():
             want, how = secant(key, RATIO[key][2] if key in RATIO else OWNS[key][1],
                                pts, now)
             how = how or 'no pair'
+        # ORDER OF EVIDENCE: an interpolation across a measured bracket beats a
+        # linearisation, and a linearisation that accounts for cross effects
+        # beats an extrapolated secant.
+        #
+        # size_homelessness is the case. Two measured points put the homelessness
+        # rate at 0.03 per cent and at 12.9, with the 0.399 target between them,
+        # and interpolating in logs lands on 0.345. The Jacobian, linear around
+        # one of those points and held by the trust region, says 0.564 -- true to
+        # the derivative and wrong about the curve, because the response is a
+        # cliff. Where the bracket exists it is simply better information.
+        bracketed = how in ('log-log', 'linear')
+        if jac and key in jac and not bracketed:
+            want = clip(key, now * math.exp(jac[key]))
+            how = 'jacobian'
         new = capped(key, now, want)
         if key in AUTHOR_SET:
             new = clip(key, AUTHOR_SET[key])
@@ -496,6 +534,7 @@ def main():
             settled.append((key, gap if gap is not None else 0.0))
 
     arms_emitted = []
+    centre_of_generation = sent or here
     print('\nTHE NEXT GENERATION: centre, then one arm per parameter still moving.')
     print('\n  bash code/run_one_point.sh            # centre')
     for key, values in AUTHOR_PROBE.items():
@@ -510,11 +549,13 @@ def main():
             print('  bash code/run_one_point.sh %s=%.6g%s' % (key, v, extra))
     for key, factor in arms:
         v = moved[key]
-        # Push toward the side the moment says it needs to go: a moment above its
-        # target wants the parameter moved the way that brings it down, and which
-        # way that is comes from the sign of the secant's own step when there is
-        # one, from up when there is not.
-        side = clip(key, v * factor)
+        # THE ARM GOES THE WAY THE CENTRE IS TRAVELLING, so the two of them
+        # bracket the answer. Placing it always above meant that a parameter
+        # being cut -- size_homelessness, moving 0.68 down toward 0.35 -- was
+        # probed at 1.7, away from the answer and off the end of the curve, and
+        # the round after it still had no bracket to interpolate across.
+        falling = v < centre_of_generation.get(key, v)
+        side = clip(key, v / factor) if falling else clip(key, v * factor)
         for side in (side,):
             if abs(math.log(max(side, 1e-12) / max(v, 1e-12))) < 0.02:
                 side = clip(key, v / factor)
