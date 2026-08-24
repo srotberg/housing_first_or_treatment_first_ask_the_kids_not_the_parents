@@ -120,7 +120,15 @@ B_ELASTICITY = -4.0     # d ln(users) / d ln(b), the slope every populated slice
 # 0.032 -- but each of them also knocked the user rate off target, so none was a
 # clean reading. Probed wide here, with b compensating, to settle whether lambda
 # can carry the moment at all.
-AUTHOR_SET = {'lambda_addiction': 4.5}
+#
+# utility_cost_of_treatment: SETTLED at 0.268 by the penalty sweep of 24 August.
+# Take-up ran 0.86 at a penalty of 0.02, 0.512 at 0.15, 0.2009 at 0.3135, 0.0589
+# at 1 and exactly zero at 3 and at 10, against a target of 0.245, so the answer
+# interpolates between 0.15 and 0.3135. Left as an author setting rather than a
+# secant because the moment is conditional on the disordered population, which
+# is still moving; when lambda settles this should be re-read and released.
+AUTHOR_SET = {'lambda_addiction': 4.5,
+              'utility_cost_of_treatment': 0.268}
 #
 # utility_cost_of_treatment: probed to the model's own ceiling on the author's
 # instruction of 24 August. Treatment take-up is 252 per cent high and this is
