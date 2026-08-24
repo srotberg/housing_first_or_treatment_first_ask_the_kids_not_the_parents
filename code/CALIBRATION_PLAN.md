@@ -89,152 +89,29 @@ and are kept for the shape of the b curve rather than as answers:
 Total users cross 0.0890 near **b = 0.0474** on this curve. The disordered share
 is nowhere near 0.4130 anywhere on it, which is what lambda is for.
 
-## Round 1, staged, everything else at declared values
+## Block C so far, everything else at declared values
 
-    b       lambda   total users   disorder   disordered share   experimenters
-    0.005    4.5        0.9997      0.8127        0.8130            0.1870
-    0.01     4.5        0.9987      0.8071        0.8081            0.1916
-    0.04     1.0        0.9652      0.4034        0.4180            0.5618
-    TARGET               0.0890     0.0368        0.4130            0.0522
+    b       lambda  theta    users     disorder   d.share   drug share
+    0.005    4.5    0.4265   0.9997    0.8127     0.8130      --
+    0.01     4.5    0.4265   0.9987    0.8071     0.8081      --
+    0.04     1.0    0.4265   0.9652    0.4034     0.4179      --
+    0.05     1.0    0.4265   0.9474    0.3507     0.3702    0.2111
+    0.12     1.0    0.35     0.000158  7.7e-07    0.0049    0.0084
+    TARGET                   0.0890    0.0368     0.4130    0.1620
 
-**lambda = 1 is SETTLED.** At b = 0.04 it gives a disordered share of users of
-0.4180 against a target of 0.4130. The author read that off the 41.3 per cent
-conversion before it was measured. The lambda 4.5 points are kept only as the
-saturated contrast: at that hazard the share is 0.81 whatever b is.
+**lambda = 1 is settled.** The disordered share was 0.4179 at b = 0.04 and
+0.3702 at b = 0.05, bracketing 0.4130.
 
-**b has to RISE, and the reason is worth keeping.** Raising lambda ENLARGES the
-user pool rather than only redistributing within it, because the disorder is
-absorbing: more onset means more households stuck using. At lambda 0.225,
-b = 0.05 gave 0.069 total users; at lambda 1, b = 0.04 gives 0.965. So the b
-that lands 0.0890 users at lambda 1 is well above 0.05, not the 0.047 the old
-curve suggested. Grid: 0.05, 0.06, 0.07, 0.08 at lambda 1.
+**b is bracketed between 0.05 and 0.12 and the crossing is near 0.063.** At 0.05
+the model has 94.7 per cent of the population using; at 0.12 it has 0.0158 per
+cent. Nothing between has been measured yet, and the b curve is steep enough
+that this is the only interval that matters. Grid: 0.06, 0.07, 0.08.
 
-Note the share will drift as b rises, since a larger b means less quantity and
-so less onset. If it falls much below 0.4130 at the b that lands total users,
-lambda comes up a little to compensate. That is a joint move of two parameters
-around a point that is already close, which is what the slow updates are for.
-
-## THE BLOCKS, and the order they are worked in
-
-Twenty four parameters are calibrated internally. Moving them all at once is
-what produced a world with 75 per cent participation, because a parameter whose
-moment is measured on a population set by another parameter is not identified,
-it is guessing. So they are worked in BLOCKS: within a block the members
-genuinely interact and have to move together; between blocks the earlier one is
-upstream of the later and is pinned once it is reasonable.
-
-"Reasonable" here does not mean converged. It means no moment in a corner, so
-the next block is measured against a population that exists.
-
-### A. Income, hours, wealth  — upstream of everything
-
-    sd_permanent_productivity   bottom half's share of productivity   0.172
-    labor_income_tax_rate       average labour income tax             0.224
-    relative_share_of_leisure   labour supply over total hours        0.400
-    discount_factor (beta)      wealth to output                      3.00
-
-Every other moment in the model is a ratio to income or to wealth, so if these
-are wrong every later block is measured on the wrong scale. They barely touch
-drug use, which is what makes them safe to do first. Three of the four are
-already within about fifteen per cent and sd_permanent_productivity is on
-target.
-
-### B. Housing  — needs A's income distribution
-
-    smallest_house_size (h_2)   share in the smallest unit            0.1321
-    largest_house_size (h_4)    share in the largest                  0.6267
-    relative_share_of_housing   housing spending share of renters     0.268
-    size_homelessness (h_1)     homelessness rate                     0.00399
-
-These four are one ladder and cannot be set apart: h_2 fixes the affordability
-floor, h_4 the top rung, the spending share the whole ladder's price, and h_1
-what the street is worth relative to the bottom of it. The homelessness rate is
-the paper's headline moment and it is the one most sensitive to A: it is the
-share of households that cannot afford the cheapest unit, so it is read off the
-bottom of the income distribution.
-
-### C. Drugs  — needs A, interacts with B
-
-    addiction_scalar (b)        total drug users                      0.0890
-    lambda_addiction            disorder rate                         0.0368
-                                (equivalently, disordered share       0.4130)
-    relative_share_of_addiction share of income spent on drugs        0.1620
-    value_of_life (aleph)       value of life over labour income      80
-
-The four are one margin. b sets the quantity used, the quantity drives onset
-through 1-exp(-lambda*quantity), theta scales the spending that quantity
-implies, and aleph prices the mortality risk that deters all of it. This is the
-block being worked now.
-
-### D. Labour market penalties and mental illness  — needs C
-
-    separation_rate             unemployment rate                     0.0485
-    employment_multiplier       unemployment among the disordered     0.1625
-    kappa_uem                   employment rate given SMI             0.300
-    lambda_m                    SMI share of the homeless             0.250
-
-D is downstream of C by arithmetic, not by taste: total unemployment is the
-disordered share times their rate plus everyone else's, so the separation rate
-cannot be identified until the disordered share is near 3.68 per cent. At 24.67
-per cent the disordered alone contributed 12.05 points against a total target of
-4.85, and the separation rate was driven to its floor trying to absorb it.
-
-### E. Programmes and transfers  — needs B and C
-
-    voucher_probability         eligibles receiving a voucher         0.266
-    max_food_cost               food stamps over labour income        0.0042
-    utility_cost_of_treatment   treatment take up given a disorder    0.245
-    mu_homeless                 recovery housed over recovery homeless 1.473
-
-Each is a rate over a population the earlier blocks define: vouchers over the
-eligible, treatment over those with the disorder, the recovery ratio over the
-homeless with the disorder. With any of those populations empty the moment is
-not small, it is undefined, which is how the treatment cost reached its floor
-while take up sat at zero.
-
-### F. Across generations  — needs C
-
-    penalty_child_addicted      child's disorder rate over parent's   3.00
-    penalty_child_homeless      child's homelessness rate over        2.10
-                                parent's, Bassuk et al. (1997)
-    weight_on_child             no scalar moment
-    fixed_cost_to_moving        no scalar moment
-
-Last because each moment is a ratio of one generation's rate to another's, so
-it needs C settled twice over.
-
-delta_h WAS NOT CALIBRATED AT ALL until 24 August. Table 11 gave it as Int.
-against 2.10, child_homeless_ratio_data = 2.10 was declared in the Fortran and
-used nowhere, and penalty_child_homeless was a compile time parameter of 0.31.
-Its moment did not exist and had to be built:
-percent_homeless_by_employment, the homelessness rate by productivity node,
-accumulated in the same pass as its denominator. The ratio mirrors delta_d's,
-varying the parent's HOMELESSNESS at clean where delta_d varies the parent's
-DISORDER at housed.
-
-`code/paper/check_alignment.py` runs in build.sh and fails the build when a
-table row's Set column disagrees with what the code does. It found this one. It
-does NOT check whether a correctly Int. row brackets on the right model
-QUANTITY, which is the class the b bug belonged to.
-
-### Not calibrated in this configuration
-
-    discount_factor_on_child, housing_status_grid_expander,
-    minimum_inheritance         adjusters are zero
-    rho_d, rho_m                include flags are off, so each enters as
-                                rho**(state*include_rho), a multiplier of one
-
-Twenty four calibrated plus five not calibrated is the twenty nine the report's
-accounting line should show.
-
-### How a block is run
-
-The sweep already does this: a point pins every parameter outside the block at a
-sensible value through PARAM_HANDOVER.txt and varies the block's members. When
-the block's moments are all out of their corners, its members are pinned in turn
-and the next block's grid is written. Only when every block is reasonable does
-`diagnostic_simulation` go to 0 and the joint loop move all twenty three
-together at one per cent a loop.
+**theta comes DOWN, not up.** At theta = 0.4265 and b = 0.05 the drug spending
+share was 0.2111 against a target of 0.1620, thirty per cent high. The reading
+at b = 0.12 is 0.0084, but with essentially no users it means nothing: a share
+among users is undefined when the user pool is empty, which is why the theta
+contrast waits for a b that lands the pool.
 
 ## The order of work the author has set
 
