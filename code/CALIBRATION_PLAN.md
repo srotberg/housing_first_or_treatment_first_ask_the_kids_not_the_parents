@@ -326,3 +326,51 @@ not wake it: the target sat idle for twelve minutes with no change of state, and
 there is no `send_message` for these sessions. Each generation therefore creates
 its own workers. They are tagged `simulations`, so `list_sessions` with that tag
 is the roster of every point ever run.
+
+## The round, start to finish
+
+This is the whole procedure. A triggered check-in follows it without asking.
+
+1. `git pull --rebase origin claude/two-period-addiction-hazard-d7gb61`
+2. `python3 code/converge.py`. Its first line says how many of the emitted arms
+   came back and names any that did not.
+   - Arms missing and the generation is under forty minutes old: they are still
+     solving. Change nothing, say nothing, re-arm for ten minutes, stop.
+   - Arms missing and older than that: those workers failed. Re-run exactly those
+     arms as fresh sessions, then wait for them. A generation with holes in it
+     does not produce a centre.
+3. `python3 code/ridge_solve.py` for the entangled pair.
+4. `python3 code/converge.py --write`. This moves every parameter, re-centres
+   run_one_point.sh, and records the new generation in GENERATION.txt.
+5. Commit the new centre together with this file and push to the branch and to
+   main.
+6. Spawn one session per emitted arm, plus the centre. Every session:
+   `source_url=https://github.com/srotberg/housing_first_children_later`,
+   `source_revision=claude/two-period-addiction-hazard-d7gb61`,
+   `tags=["simulations"]`, and the worker prompt above with the arm substituted
+   and the commit message labelled `gen<N> worker: <arm>`.
+7. Report to the author, in this order and every round without being asked:
+   `python3 code/loss_history.py` first, because the loss between iterations is
+   what they asked to see; then `python3 code/gap_table.py`; then the new centre.
+   Never ask them to approve a round.
+8. Re-arm for twenty five minutes and stop.
+
+### What is being calibrated, exactly
+
+The paper's table marks twenty four rows internally calibrated. Of those:
+
+- **twenty two are free instruments the search sets**, every one of them reachable
+  through the handover and given an arm by converge.py;
+- **gamma is calibrated but tied**, at `0.28*(1-theta)`, so it moves when theta
+  does and gets no arm of its own;
+- **varsigma is not calibrated at all.** The table's Set column says internal, and
+  the prose in the parameter list says the opposite: the three housing shares sum
+  to one, so matching the smallest with h_2 and the largest with h_4 matches the
+  middle as well, and a third instrument would have no moment of its own. The
+  table and the prose disagree and the prose is right. THIS IS FOR THE AUTHOR TO
+  FIX; do not edit the table without being asked.
+
+Three of the twenty two were unreachable until 24 August: `max_food_cost` and
+`mu_homeless` had no handover case, and `weight_on_child` had one but was absent
+from the runner. All three own a targeted moment and were being carried at their
+declared values while those moments were scored as misses.
