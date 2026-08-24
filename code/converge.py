@@ -83,6 +83,33 @@ COMPENSATED_MOMENT = 'b'
 COMPENSATED_TARGET = 0.0890
 B_ELASTICITY = -4.0     # d ln(users) / d ln(b), the slope every populated slice measures
 
+# HOW MANY ARMS A GENERATION IS WORTH.
+#
+# Every arm is one worker session and about twenty minutes, so an arm that
+# cannot teach anything is pure cost. Three rules cut a generation from
+# thirty-seven arms to roughly half that without slowing the search:
+#
+#   A parameter already on its target gets NO arm. Five of them sit inside three
+#   per cent -- b, the value of life, sigma_y, beta, the unemployment rate --
+#   and re-bracketing them every round measures what is already known.
+#
+#   A parameter whose secant read cleanly gets ONE arm. The direction is known;
+#   the centre has already moved to the predicted answer, and a single arm to one
+#   side is enough to bracket the target if the prediction missed.
+#
+#   Everything else gets exactly ONE arm. Two-sided brackets were redundant from
+#   the start: THE CENTRE IS ITSELF A MEASURED POINT, so one arm and the centre
+#   already make the pair a secant needs. Bracketing both ways bought a second
+#   point on a curve the centre had already anchored, at the price of a whole
+#   worker session each time.
+#
+#   The arm's SIZE is scaled to how far the moment is: a parameter 250 per cent
+#   off is probed at the full step, one 10 per cent off at a twentieth of it. A
+#   fixed factor of 1.6 either barely moved the badly-wrong parameters or
+#   overshot the nearly-right ones.
+ON_TARGET = 0.03        # a moment this close to its target needs no arm at all
+ARM_MIN, ARM_MAX = 1.15, 3.0
+
 MAX_STEP = 3.0          # no parameter may move by more than this factor in one generation
 PAIRED = ('addiction_scalar_1', 'value_of_life')         # the two that must be solved together
 RUNNER = os.path.join(HERE, 'run_one_point.sh')
@@ -134,6 +161,39 @@ def runner_defaults():
     """The vector the runner currently defaults to."""
     txt = open(RUNNER).read()
     return {k: float(v) for k, v in re.findall(r'\[(\w+)\]=([-+0-9.eE]+)', txt)}
+
+
+def best_point_moments():
+    """The moments of the best measured point, for judging what is on target."""
+    best, best_loss = {}, None
+    for path in sorted(glob.glob(os.path.join(HERE, 'points', '*.txt'))):
+        _head, mt = score_points.read(path)
+        got = score_points.loss(mt)
+        if got and (best_loss is None or got[0] < best_loss):
+            best, best_loss = mt, got[0]
+    return best
+
+
+def arm_factor(gap):
+    """How far to push the arm: as far as the moment is wrong, within reason."""
+    if gap is None or gap != gap:
+        return 1.6
+    return max(ARM_MIN, min(ARM_MAX, 1.0 + abs(gap)))
+
+
+def relative_gap(key, moments):
+    """How far this parameter's own moment is from its target, as a fraction."""
+    name = RATIO[key][0] if key in RATIO else OWNS[key][0]
+    if key in RATIO:
+        num, den, target = RATIO[key]
+        a, b = moments.get(num), moments.get(den)
+        if not a or not b or b[0] <= 0:
+            return None
+        return (a[0] / b[0] - target) / target
+    got = moments.get(name)
+    if not got or got[1] == 0 or got[0] != got[0]:
+        return None
+    return (got[0] - got[1]) / abs(got[1])
 
 
 def centre_now():
@@ -361,7 +421,8 @@ def main():
     data = ridge_solve.measured()
     cross, _, _, _ = ridge_solve.solve(data)
 
-    moved, arms = {}, []
+    moved, arms, settled = {}, [], []
+    best_moments = best_point_moments()
     print('%d point(s) measured. Centre of the generation just run:\n' % len(pts))
     print('%-52s %12s %12s %12s %9s' % ('parameter', 'now', 'secant says', 'capped to', 'how'))
     print('-' * 102)
@@ -380,18 +441,30 @@ def main():
         moved[key] = new
         print('%-52s %12.5g %12s %12.5g %9s'
               % (key, now, ('%.5g' % want) if want else '-', new, how))
-        if how in ('no pair', 'off the span') or how.startswith('gated') \
-                or abs(math.log(max(new, 1e-12) / max(now, 1e-12))) > 0.05:
-            arms.append(key)
+        blind = how in ('no pair', 'off the span') or how.startswith('gated')
+        gap = relative_gap(key, best_moments)
+        if gap is not None and abs(gap) < ON_TARGET and not blind:
+            settled.append((key, gap))          # on target and understood: no arm
+        elif blind or abs(math.log(max(new, 1e-12) / max(now, 1e-12))) > 0.005:
+            arms.append((key, arm_factor(gap)))
+        else:
+            settled.append((key, gap if gap is not None else 0.0))
 
     arms_emitted = []
     print('\nTHE NEXT GENERATION: centre, then one arm per parameter still moving.')
     print('\n  bash code/run_one_point.sh            # centre')
-    for key in arms:
+    for key, factor in arms:
         v = moved[key]
-        for side in (clip(key, v * ARM), clip(key, v / ARM)):
+        # Push toward the side the moment says it needs to go: a moment above its
+        # target wants the parameter moved the way that brings it down, and which
+        # way that is comes from the sign of the secant's own step when there is
+        # one, from up when there is not.
+        side = clip(key, v * factor)
+        for side in (side,):
             if abs(math.log(max(side, 1e-12) / max(v, 1e-12))) < 0.02:
-                continue          # the bound has pinned this arm onto the centre
+                side = clip(key, v / factor)
+            if abs(math.log(max(side, 1e-12) / max(v, 1e-12))) < 0.02:
+                continue          # both bounds pin this arm onto the centre
             extra = ''
             if key in COMPENSATE:
                 b = compensation(key, side, pts, moved['addiction_scalar_1'])
@@ -399,6 +472,12 @@ def main():
                     extra = ' addiction_scalar_1=%.6g' % b
             arms_emitted.append('%s=%.6g%s' % (key, side, extra))
             print('  bash code/run_one_point.sh %s=%.6g%s' % (key, side, extra))
+
+    if settled:
+        print('\nNo arm for these: their moment is already within %d per cent and '
+              'their direction is understood.' % int(100 * ON_TARGET))
+        for key, gap in sorted(settled, key=lambda kv: abs(kv[1] or 0)):
+            print('   settled  %-52s gap %+.1f%%' % (key, 100 * (gap or 0)))
 
     if '--write' in sys.argv:
         txt = open(RUNNER).read()

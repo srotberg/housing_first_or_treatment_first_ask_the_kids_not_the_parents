@@ -374,3 +374,23 @@ Three of the twenty two were unreachable until 24 August: `max_food_cost` and
 `mu_homeless` had no handover case, and `weight_on_child` had one but was absent
 from the runner. All three own a targeted moment and were being carried at their
 declared values while those moments were scored as misses.
+
+### What a generation costs, and why it costs that
+
+A generation is now about eighteen sessions, not thirty-seven. Three rules got
+it there, and none of them slows the search:
+
+- **The centre is a measured point, so one arm per parameter is enough.**
+  Two-sided brackets were redundant from the start: the pair a secant needs is
+  the centre and the arm. Bracketing both ways bought a second point on a curve
+  the centre had already anchored, at the price of a worker session each time.
+- **A parameter already within three per cent of its target gets no arm.**
+  Re-measuring what is already known is the purest waste in the loop.
+- **The arm's size is scaled to how wrong the moment is**, from a fifth of a step
+  at ten per cent off up to the full factor of three at a hundred per cent or
+  worse. A fixed factor barely moved the badly-wrong parameters and overshot the
+  nearly-right ones.
+
+THE CENTRE MUST BE SPAWNED EVERY ROUND. It is not one point among many; it is
+the other half of every pair in the generation. Generation four's was forgotten
+and every arm in it lost its partner.
