@@ -373,3 +373,32 @@ the voucher line alone. Lesson 10's diagnostic is therefore already satisfied.
 to the output file but never read anywhere, so it restricts nothing. It reads
 like a switch that would confine the calibration to one parameter, and it does
 not.
+
+## The quantitative model's transition is thirty periods
+
+The author's decision of 24 August. The Fortran currently declares
+
+    transition_length = (1-solve_transition_dynamics)*1 + solve_transition_dynamics*75
+
+so the constant says seventy five and the plan says thirty. Change it when the
+transition is actually turned on, not before: it sizes several allocatable
+arrays and there is no reason to carry the cost while the calibration is still
+moving.
+
+WHAT IT WILL COST, so nobody is surprised. A steady state solves in nine to
+eighteen minutes on four cores, and that is already a fixed point over the age
+loop. A transition adds a second fixed point, over the whole PATH of prices, so
+the cost is the period count times one age pass times the number of path
+iterations. On the measured numbers that is eight to fifteen hours on four cores
+for thirty periods, and the width comes from the path iterations rather than the
+periods.
+
+AND IT DOES NOT PARALLELISE THE WAY THE CALIBRATION DOES. A transition is one
+sequential fixed point in time, so a fleet of containers cannot be thrown at it;
+only the OpenMP loop over ages helps, which is about three and a half times.
+Thirty points every twenty five minutes is a calibration number and does not
+carry over.
+
+Before committing an overnight run, set transition_length to three or five and
+time one solve. The passes are near linear in the period count, so it
+extrapolates, and it costs half an hour on a spare container.
