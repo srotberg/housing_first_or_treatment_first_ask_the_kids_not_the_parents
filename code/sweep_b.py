@@ -101,6 +101,39 @@ def measured(path):
     return out
 
 
+
+def merge_to_main(root):
+    """Fast forward main onto the branch and push it, every time.
+
+    THE STANDING RULE IS THAT MAIN CARRIES THE WORK, and the automation was
+    only pushing the branch: a container rebuild restores from a PINNED commit,
+    and every hand made commit in this session has gone to both, so leaving the
+    machine made ones on the branch alone put the two out of step by hours of
+    loops. Failure here is not fatal -- the branch push already succeeded and
+    that is what a resume reads -- so it reports and returns rather than
+    raising.
+    """
+    br = subprocess.run(['git', 'rev-parse', '--abbrev-ref', 'HEAD'],
+                        cwd=root, capture_output=True, text=True).stdout.strip()
+    if not br or br == 'main':
+        return
+    steps = [['git', 'checkout', '-q', 'main'],
+             ['git', 'merge', '-q', br, '-m', f"Merge branch '{br}'"]]
+    ok = all(subprocess.run(c, cwd=root, capture_output=True).returncode == 0
+             for c in steps)
+    if ok:
+        for wait in (0, 2, 4, 8):
+            if wait:
+                time.sleep(wait)
+            if subprocess.run(['git', 'push', '-q', 'origin', 'main'], cwd=root,
+                              capture_output=True).returncode == 0:
+                break
+        else:
+            print('main push failed; the branch is pushed and a resume reads that',
+                  flush=True)
+    subprocess.run(['git', 'checkout', '-q', br], cwd=root, capture_output=True)
+
+
 def bank(rows):
     if not os.path.exists(OUT):
         with open(OUT, 'w') as f:
@@ -122,6 +155,7 @@ def bank(rows):
         r = subprocess.run(['git', 'push', '-u', 'origin', 'HEAD'], cwd=ROOT,
                            capture_output=True, text=True)
         if r.returncode == 0:
+            merge_to_main(ROOT)
             return
     print('sweep: push failed, the point is committed locally')
 
