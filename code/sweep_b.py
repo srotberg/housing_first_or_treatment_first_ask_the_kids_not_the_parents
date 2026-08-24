@@ -51,7 +51,7 @@ COLS = {
                              r'model_average_labour_income\.\s*' + _NUM),
 }
 NAMES = ['b', 'participation', 'total_users', 'fraction_addicted',
-         'income_of_users', 'income_of_disordered']
+         'income_of_users', 'income_of_disordered', 'drug_share']
 HANDOVER = os.path.join(HERE, 'PARAM_HANDOVER.txt')
 # The parameters the point in flight was launched at, so bank() records the
 # whole vector rather than only the half the model prints.
@@ -153,10 +153,14 @@ def measured(path):
     out = []
     for line in rows:
         f = [x for x in line.split('\t') if x.strip()]
+        # SIX OR SEVEN. The drug spending share was added as a seventh column
+        # mid run, so rows written before it have six and must still parse: a
+        # stricter test would have made every earlier row vanish, and the
+        # driver counts rows to decide what is new to bank.
         if len(f) < 6:
             continue
         try:
-            v = [_f(x) for x in f[:6]]
+            v = [_f(x) for x in f[:7]]
         except ValueError:
             continue
         out.append(dict(zip(NAMES, v)))

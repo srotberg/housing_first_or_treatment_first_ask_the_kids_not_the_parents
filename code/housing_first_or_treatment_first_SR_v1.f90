@@ -3834,6 +3834,59 @@
 
         end function
 
+        function weighted_drug_share_now() result(share_1)
+
+            ! THE DRUG SPENDING SHARE, COMPUTED WHERE A SWEEP CAN SEE IT.
+            !
+            ! The moment was computed inside the parameter update block, which a
+            ! sweep skips entirely, so it never printed once in a sweep: the log
+            ! carried zero occurrences of it across eleven points. That is the
+            ! moment theta owns, and theta is one of the parameters the staged
+            ! search pins at a declared value, so a sweep that cannot see the
+            ! share cannot say whether the pin is the right one.
+            !
+            ! Everything it needs is an aggregate the distribution pass has
+            ! already built, so it can be evaluated any time after aggregation.
+            ! The update block now takes its value from here too, so there is one
+            ! definition rather than two that can drift.
+
+            implicit none
+
+            real(8) :: share_1,floor_1,share_e_1,share_a_1
+            logical :: ok_e_1,ok_a_1
+
+            floor_1=10.d0**(-1)*model_average_labour_income(1)
+            share_e_1=model_experimenters_total_drug_spending_to_total_income(1)
+            share_a_1=model_addicted_total_addiction_spending_to_total_income(1)
+
+            ok_e_1=(model_mass_experimenters(1)>0) .AND. (share_e_1>=0) .AND. &
+                (model_experimenters_total_income(1)>&
+                floor_1*model_mass_experimenters(1))
+            ok_a_1=(model_mass_addicts(1)>0) .AND. (share_a_1>=0) .AND. &
+                (model_addicted_total_income(1)>floor_1*model_mass_addicts(1))
+
+            if (ok_e_1 .AND. ok_a_1) then
+
+                share_1=(model_mass_experimenters(1)*share_e_1+&
+                    model_mass_addicts(1)*share_a_1)/&
+                    (model_mass_experimenters(1)+model_mass_addicts(1))
+
+            elseif (ok_e_1) then
+
+                share_1=share_e_1
+
+            elseif (ok_a_1) then
+
+                share_1=share_a_1
+
+            else
+
+                share_1=-1
+
+            end if
+
+        end function
+
         function move_factor(model_1,target_1,escape_1) result(factor_1)
 
             ! HOW FAR THIS PARAMETER MAY MOVE THIS LOOP, from the state of the
@@ -31824,28 +31877,21 @@
                         (model_addicted_total_income(1)>&
                         income_floor_1*model_mass_addicts(1))
 
-                    if (use_experimenters_1 .AND. use_addicts_1) then
+                    ! ONE DEFINITION, in weighted_drug_share_now, so the value
+                    ! the sweep records and the value the bracket moves on cannot
+                    ! drift apart. The tests below survive only to say WHICH group
+                    ! was dropped, which the function has no business printing.
+                    drug_share_weighted_1=weighted_drug_share_now()
 
-                        drug_share_weighted_1=&
-                            (model_mass_experimenters(1)*drug_share_experimenters_1+&
-                            model_mass_addicts(1)*drug_share_addicted_1)/&
-                            (model_mass_experimenters(1)+model_mass_addicts(1))
+                    if (use_experimenters_1 .AND. (.NOT. use_addicts_1)) then
 
-                    else if (use_experimenters_1) then
-
-                        drug_share_weighted_1=drug_share_experimenters_1
                         write(*,*) "drug share: the group with a disorder has no income to speak of,",&
                             " so the moment is the experimenters alone this iteration"
 
-                    else if (use_addicts_1) then
+                    else if (use_addicts_1 .AND. (.NOT. use_experimenters_1)) then
 
-                        drug_share_weighted_1=drug_share_addicted_1
                         write(*,*) "drug share: the experimenters have no income to speak of,",&
                             " so the moment is the group with a disorder alone this iteration"
-
-                    else
-
-                        drug_share_weighted_1=-1
 
                     end if
 
@@ -32779,15 +32825,19 @@
 
             if (sweep_addiction_scalar==1) then
 
+                write(*,*) "drug share, weighted by their population shares =",&
+                    weighted_drug_share_now(), " target =", drug_spending_share_data
+
                 open(unit=78,file="B_SWEEP_RAW.tsv",action='write',position='append')
-                write(78,'(6(E24.15,A1))') addiction_scalar_1, char(9),&
+                write(78,'(7(E24.15,A1))') addiction_scalar_1, char(9),&
                     model_exprimenters(1), char(9),&
                     model_total_drug_users(1), char(9),&
                     model_fraction_addicted(1), char(9),&
                     model_avg_income_drug_users(1)/&
                         max(model_average_labour_income(1),10.d0**(-12)), char(9),&
                     model_average_income_addicted(1)/&
-                        max(model_average_labour_income(1),10.d0**(-12)), char(9)
+                        max(model_average_labour_income(1),10.d0**(-12)), char(9),&
+                    weighted_drug_share_now(), char(9)
                 close(78)
 
                 write(*,*) "B SWEEP POINT DONE at b=", addiction_scalar_1,&
