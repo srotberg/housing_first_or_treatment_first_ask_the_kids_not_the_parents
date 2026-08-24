@@ -173,11 +173,21 @@ def secant(key, target, pts, here):
                 return None, 'gated on ' + gm
     if min(x1, x2, y1, y2, target) > 0 and abs(math.log(y2 / y1)) > 1e-12:
         f = math.log(target / y1) / math.log(y2 / y1)
-        want, how = math.exp(math.log(x1) + f * math.log(x2 / x1)), 'log-log'
+        # DO THE ARITHMETIC IN LOGS AND LOOK AT IT BEFORE EXPONENTIATING. A pair
+        # taken across a nearly flat response gives an enormous exponent, and
+        # math.exp raises OverflowError rather than returning something the span
+        # check could then refuse -- which killed the round outright the first
+        # time a clamped arm made two points agree.
+        lg = math.log(x1) + f * math.log(x2 / x1)
+        if not (-700.0 < lg < 700.0):
+            return None, 'off the span'
+        want, how = math.exp(lg), 'log-log'
     elif abs(y2 - y1) < 1e-15:
         return None, None
     else:
         want, how = x1 + (target - y1) / (y2 - y1) * (x2 - x1), 'linear'
+    if want != want or want in (float('inf'), float('-inf')):
+        return None, 'off the span'
     if not brackets:
         lo, hi = min(x1, x2), max(x1, x2)
         if not (lo / 4.0 <= want <= hi * 4.0):
