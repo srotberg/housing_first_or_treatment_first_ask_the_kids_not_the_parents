@@ -1446,7 +1446,15 @@
         ! stands and the guard that enforces it is unchanged: theta may not rise
         ! while the income gradient is inverted, so the extra slack is available
         ! only where the model still puts the users at the bottom.
-        real(8), parameter :: theta_hi=0.30d0
+        ! RAISED AGAIN, TO 0.5, ON THE AUTHOR'S INSTRUCTION. The guard above is
+        ! unchanged: theta may not rise while the income gradient is inverted,
+        ! so the extra slack is available only where the model still puts the
+        ! users at the bottom. The ceiling also has to clear theta's OWN
+        ! declared value, which is 0.4265: at 0.30 the parameter started above
+        ! the highest value the calibration was allowed to give it and the
+        ! clamp pulled it down on the first read, so the declared value was
+        ! never the starting point it was written to be.
+        real(8), parameter :: theta_hi=0.50d0
         ! B'S CEILING HAD NO ARGUMENT BEHIND IT AND IT BOUND. At 0.05 the
         ! bracket sat exactly on it: participation came out at 76.0 per cent
         ! against a target of 8.90, the update asked for b to rise by a factor of
