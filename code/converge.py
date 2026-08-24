@@ -66,6 +66,7 @@ GATE = {
 MAX_STEP = 3.0          # no parameter may move by more than this factor in one generation
 PAIRED = ('addiction_scalar_1', 'value_of_life')         # the two that must be solved together
 RUNNER = os.path.join(HERE, 'run_one_point.sh')
+GENFILE = os.path.join(HERE, 'GENERATION.txt')
 ARM = 1.6               # an arm sits this factor either side of the centre
 
 # WHAT EACH PARAMETER MAY BE. A secant knows nothing about what a number means,
@@ -183,8 +184,56 @@ def capped(key, here, want):
     return clip(key, max(here / MAX_STEP, min(here * MAX_STEP, want)))
 
 
+def emitted():
+    """The generation that was last sent out: its centre and its arms."""
+    if not os.path.exists(GENFILE):
+        return None, []
+    centre, arms = {}, []
+    for line in open(GENFILE):
+        line = line.strip()
+        if line.startswith('CENTRE '):
+            k, _, v = line[7:].partition('=')
+            centre[k] = float(v)
+        elif line.startswith('ARM '):
+            k, _, v = line[4:].partition('=')
+            arms.append((k, float(v)))
+    return centre, arms
+
+
+def coverage(pts, centre, arms):
+    """Which arms actually came back.
+
+    NINETEEN OF THIRTY WORKERS ONCE CAME BACK WITH NOTHING -- their containers
+    had no clone of the repository and they sat blocked -- and the round read
+    that as "no pair", which is a statement about the data and was a statement
+    about the fleet. An arm that was sent and did not land has to be visible as
+    a MISSING arm, not as a parameter that happens to have no secant.
+    """
+    landed, missing = [], []
+    for key, value in arms:
+        want = dict(centre)
+        want[key] = value
+        hit = any(set(v) == set(want)
+                  and all(abs(v[k] - want[k]) <= 1e-9 * max(1.0, abs(want[k])) for k in want)
+                  for v, _m, _n in pts)
+        (landed if hit else missing).append((key, value))
+    return landed, missing
+
+
 def main():
     pts = points()
+    centre_sent, arms_sent = emitted()
+    if arms_sent:
+        landed, missing = coverage(pts, centre_sent, arms_sent)
+        print('THE GENERATION JUST RUN: %d of %d arms came back.'
+              % (len(landed), len(arms_sent)))
+        if missing:
+            print('These arms were sent and never landed. They are NOT parameters '
+                  'without a secant; they are points that were never measured, and '
+                  'the fleet has to be asked why before the round is closed:')
+            for key, value in missing:
+                print('   MISSING  %s=%g' % (key, value))
+        print()
     here = centre_now()
     data = ridge_solve.measured()
     cross, _, _, _ = ridge_solve.solve(data)
@@ -226,7 +275,21 @@ def main():
         for key, v in moved.items():
             txt = re.sub(r'(\[%s\]=)[-+0-9.eE]+' % re.escape(key), r'\g<1>%.6g' % v, txt)
         open(RUNNER, 'w').write(txt)
-        print('\nrun_one_point.sh re-centred.')
+        # RECORD WHAT IS BEING SENT OUT, so the next round can tell an arm that
+        # came back empty from an arm that was never run at all.
+        new_centre = dict(centre_now())
+        new_centre.update(moved)
+        with open(GENFILE, 'w') as fh:
+            for key in sorted(new_centre):
+                fh.write('CENTRE %s=%.10g\n' % (key, new_centre[key]))
+            for key in arms:
+                v = moved[key]
+                for side in (clip(key, v * ARM), clip(key, v / ARM)):
+                    if abs(math.log(max(side, 1e-12) / max(v, 1e-12))) < 0.02:
+                        continue
+                    fh.write('ARM %s=%.10g\n' % (key, side))
+        print('\nrun_one_point.sh re-centred; the generation is recorded in '
+              'GENERATION.txt so the next round can check that it came back.')
     else:
         print('\n(--write to move the runner defaults to the new centre)')
     return 0

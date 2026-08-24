@@ -295,3 +295,34 @@ converge.py now refuses a reading whose conditioning moment is more than a facto
 of three from its own target, and says which moment gated it. That is what
 orders the calibration: b and the value of life first, then the homelessness
 rate, and only then the eight parameters that live inside those populations.
+
+### A round is not closed until the generation is accounted for
+
+`converge.py --write` records the generation it emits in `code/GENERATION.txt`,
+centre and arms both, and the next run checks each arm against the points on
+disk and prints the ones that never came back.
+
+This exists because nineteen of generation three's thirty workers came back with
+NOTHING: their containers had no clone of the repository — "repo not found;
+/home/user empty", "git clone denied by auto-mode classifier" — and they sat
+blocked while the round read the result as "no pair". That is a statement about
+the data, and this was a statement about the fleet. The centre itself was among
+the nineteen, which is why almost every arm appeared to have no partner.
+
+Two consequences, both standing:
+
+- **The worker prompt clones the repository if the container does not have it**,
+  and the session is created with `source_url` and `source_revision` set
+  explicitly rather than inherited. A worker that still cannot find the repo
+  says so in one line and stops instead of improvising.
+- **Missing arms are re-run before the round closes.** A generation with holes
+  in it does not produce a centre; it produces a smaller generation that has to
+  be finished first.
+
+### The sessions cannot be reused
+
+A routine bound to an existing worker session, fired with `fire_trigger`, does
+not wake it: the target sat idle for twelve minutes with no change of state, and
+there is no `send_message` for these sessions. Each generation therefore creates
+its own workers. They are tagged `simulations`, so `list_sessions` with that tag
+is the roster of every point ever run.
