@@ -1452,7 +1452,15 @@
         ! marginal utility of consumption. Above that there is no interior
         ! participation to find. Where inside the band participation is matched is
         ! for the bracket to discover, not for this line to decide.
-        real(8), parameter :: b_lo=1.d0*10.d0**(-4)
+        ! THE FLOOR WAS 1e-4 AND b HAS TO GO WELL BELOW IT. b is the Stone-Geary
+        ! endowment, so the marginal value of the first unit is theta/b: a
+        ! SMALLER b makes starting to use more attractive, not less. With the SUD
+        ! mortality multiplier flat at 8 and on the hazard, nobody in the model
+        ! uses at any age, and b is the parameter that decides whether anyone
+        ! uses at all. It cannot restore participation from a floor four orders
+        ! of magnitude above where it needs to sit; the update's own comment puts
+        ! b at order 1e-8, which is why its step is multiplicative.
+        real(8), parameter :: b_lo=1.d0*10.d0**(-8)
         real(8), parameter :: b_hi=1.0d0
 
         real(8) :: gap_addiction_scalar_1=0,previous_gap_addiction_scalar=0
