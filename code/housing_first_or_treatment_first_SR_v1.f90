@@ -482,7 +482,34 @@
         integer :: have_gap_penalty_child=0
         integer, parameter :: calibrate_penalty_child_addicted=1
         integer :: child_node_index_1
-        real(8), parameter :: penalty_child_homeless=0.31
+        ! DELTA_H, AND IT IS CALIBRATED, WHICH IT SAYS IT IS AND WAS NOT.
+        !
+        ! Table 11 gives delta_h as internally calibrated against a child
+        ! homelessness ratio of 2.10, the midpoint of Bassuk et al.'s (1997)
+        ! odds ratios of 1.80 and 2.41, and child_homeless_ratio_data = 2.10
+        ! has been declared a few lines above all along. It appeared exactly
+        ! once in the whole file, at its own declaration: nothing bracketed on
+        ! it, because delta_h was a compile time PARAMETER of 0.31 that no
+        ! update could touch. The paper reported a fitted number that was never
+        ! fitted. check_alignment.py now fails the build on this class.
+        !
+        ! Its moment mirrors delta_d's exactly. delta_d weights the newborn
+        ! productivity draw by the disorder rate at each node and varies the
+        ! parent's DISORDER at housed; delta_h weights by the homelessness rate
+        ! at each node and varies the parent's HOMELESSNESS at clean. The third
+        ! index is 1 for housed and 2 for homeless, since the penalty's exponent
+        ! is h_index-1.
+        real(8) :: penalty_child_homeless=0.31
+        real(8) :: penalty_child_homeless_adjuster=5*10.d0**(-2)
+        real(8), parameter :: penalty_child_homeless_adjuster_start=5*10.d0**(-2)
+        real(8) :: distance_penalty_child_homeless=1
+        real(8) :: stopping_rule_penalty_child_homeless=5*10.d0**(-2)
+        real(8) :: gap_penalty_child_homeless_1=0,previous_gap_penalty_child_homeless=0
+        integer :: have_gap_penalty_child_homeless=0
+        real(8) :: child_homeless_ratio_model_1=0
+        real(8) :: child_homeless_num_1=0,child_homeless_den_1=0
+        real(8) :: penalty_child_homeless_step_1=0
+        integer, parameter :: calibrate_penalty_child_homeless=1
 
         ! THE WEIGHT PARENTS PUT ON THEIR CHILDREN. Zero means the damage above
         ! is entirely external. It is calibrated to the drug use gap between
@@ -3281,7 +3308,8 @@
             average_age_of_homeowner,average_income,average_housing_costs,mass_inheritance,&
             average_consumption,average_house_inheritance,average_house_non_inheritance,&
             mass_non_inheritance,addiction_share_of_income_by_employment,employment_mass,&
-            percent_addicted_by_employment,model_average_labour_income_by_employment,&
+            percent_addicted_by_employment,percent_homeless_by_employment,&
+            model_average_labour_income_by_employment,&
             average_age_of_homeowner_by_employment,mass_homeowners_by_employment
             
         real(8), dimension(transition_length,2) :: welfare_by_addiction,mass_by_addiction,&
@@ -8600,6 +8628,7 @@
         model_fraction_light_users(time_period)=0
         addiction_share_of_income_by_employment(time_period,:)=0
         percent_addicted_by_employment(time_period,:)=0
+        percent_homeless_by_employment(time_period,:)=0
         mass_by_employment(time_period,:)=0
         total_mass_by_employment(time_period,:)=0
         drug_quantity_by_employment(time_period,:)=0
@@ -8795,6 +8824,26 @@
                                     ! inside the block that only households with the disorder reach.
                                     total_mass_by_employment(time_period,employment_index)=&
                                         total_mass_by_employment(time_period,employment_index)+distribution_mass_used
+
+                                    ! THE HOMELESSNESS RATE BY PRODUCTIVITY, and it is counted HERE,
+                                    ! in the same pass as the denominator above and after
+                                    ! housing_status_index_used is set, rather than beside the other
+                                    ! homelessness statistics further up. A numerator and a
+                                    ! denominator accumulated in different loop nests is how the use
+                                    ! rate by age came to read exactly 200 per cent.
+                                    !
+                                    ! This is delta_h's moment. Table 11 gives delta_h as internally
+                                    ! calibrated against a child homelessness ratio of 2.10, the
+                                    ! midpoint of Bassuk et al.'s odds ratios of 1.80 and 2.41, and
+                                    ! child_homeless_ratio_data has been declared for it all along;
+                                    ! there was simply nothing in the model to compare it with.
+                                    if (housing_status_index_used==lowest_housing_grid_point) then
+
+                                        percent_homeless_by_employment(time_period,employment_index)=&
+                                            percent_homeless_by_employment(time_period,employment_index)+&
+                                            distribution_mass_used
+
+                                    end if
 
                                     ! Every household passes here, which is what
                                     ! the use rate by age needs under it.
@@ -9877,9 +9926,14 @@
                     percent_addicted_by_employment(time_period,employment_index)/&
                     total_mass_by_employment(time_period,employment_index)
 
+                percent_homeless_by_employment(time_period,employment_index)=&
+                    percent_homeless_by_employment(time_period,employment_index)/&
+                    total_mass_by_employment(time_period,employment_index)
+
             else
 
                 percent_addicted_by_employment(time_period,employment_index)=0
+                percent_homeless_by_employment(time_period,employment_index)=0
 
             end if
 
@@ -29292,7 +29346,17 @@
             write(71,'(I10)') have_gap_lambda_addiction
             write(71,'(F30.15)') relative_share_of_leisure_adjuster
             write(71,'(F30.15)') previous_gap_relative_share_of_leisure
+            ! AT THE TAIL, AND NOT WHERE IT READS BEST. calibration_state.dat is
+            ! positional: an entry inserted in the middle shifts every value
+            ! after it, and a checkpoint written before delta_h existed would be
+            ! read one field out from that point on, silently. The tail is the
+            ! only place a new field can go, because the read there is guarded by
+            ! iostat and an older file simply runs out.
             write(71,'(I10)') have_gap_relative_share_of_leisure
+            write(71,'(F30.15)') penalty_child_homeless
+            write(71,'(F30.15)') penalty_child_homeless_adjuster
+            write(71,'(F30.15)') previous_gap_penalty_child_homeless
+            write(71,'(I10)') have_gap_penalty_child_homeless
 
         close(71)
 
@@ -29608,6 +29672,10 @@
             if (state_ios_1==0) then
 
                 read(72,'(I10)',iostat=state_ios_1) have_gap_relative_share_of_leisure
+                read(72,'(F30.15)',iostat=state_ios_1) penalty_child_homeless
+                read(72,'(F30.15)',iostat=state_ios_1) penalty_child_homeless_adjuster
+                read(72,'(F30.15)',iostat=state_ios_1) previous_gap_penalty_child_homeless
+                read(72,'(I10)',iostat=state_ios_1) have_gap_penalty_child_homeless
 
             end if
 
@@ -29761,6 +29829,11 @@
                     write(*,*) "HANDOVER penalty_child_addicted:",&
                         penalty_child_addicted, "->", handover_value
                     penalty_child_addicted=max(min(handover_value,0.4d0),0.d0)
+
+                case ("penalty_child_homeless")
+                    write(*,*) "HANDOVER penalty_child_homeless:",&
+                        penalty_child_homeless, "->", handover_value
+                    penalty_child_homeless=max(min(handover_value,0.4d0),0.d0)
 
                 case ("probability_of_voucher_benchmark_used")
                     write(*,*) "HANDOVER voucher probability:",&
@@ -30342,6 +30415,7 @@
             (distance_mu_homeless>stopping_rule_mu_homeless) .OR. &
             (distance_weight_on_child>stopping_rule_weight_on_child) .OR. &
             (distance_penalty_child_addicted>stopping_rule_penalty_child_addicted) .OR. &
+            (distance_penalty_child_homeless>stopping_rule_penalty_child_homeless) .OR. &
             (distance_labor_income_tax_rate>stopping_rule_labor_income_tax_rate) .OR. &
             (distance_sd_permanent_productivity>stopping_rule_sd_permanent_productivity) .OR. (loop_count<1))
                         
@@ -31802,6 +31876,89 @@
                     else
 
                         distance_penalty_child_addicted=0
+
+                    end if
+
+                    ! DELTA_H, on the ratio of child homelessness rates. It
+                    ! mirrors delta_d above: that one weights the newborn
+                    ! productivity draw by the disorder rate at each node and
+                    ! varies the parent's DISORDER at housed, this one weights by
+                    ! the homelessness rate at each node and varies the parent's
+                    ! HOMELESSNESS at clean. The third index is 1 for housed and
+                    ! 2 for homeless, because the penalty's exponent is h_index-1.
+                    if (calibrate_penalty_child_homeless==1) then
+
+                        child_homeless_num_1=0
+                        child_homeless_den_1=0
+
+                        do child_node_index_1=1,employment_grid_size
+
+                            child_homeless_num_1=child_homeless_num_1+&
+                                newborn_employment_probability(child_node_index_1,0,2)*&
+                                percent_homeless_by_employment(1,child_node_index_1)
+
+                            child_homeless_den_1=child_homeless_den_1+&
+                                newborn_employment_probability(child_node_index_1,0,1)*&
+                                percent_homeless_by_employment(1,child_node_index_1)
+
+                        end do
+
+                        if (child_homeless_den_1>10.d0**(-10)) then
+
+                            child_homeless_ratio_model_1=&
+                                child_homeless_num_1/child_homeless_den_1
+
+                            gap_penalty_child_homeless_1=&
+                                child_homeless_ratio_model_1-child_homeless_ratio_data
+
+                            call damp_on_flip(penalty_child_homeless_adjuster,&
+                                gap_penalty_child_homeless_1,&
+                                previous_gap_penalty_child_homeless,&
+                                have_gap_penalty_child_homeless,&
+                                penalty_child_homeless_adjuster_start,damp_adjuster_floor)
+
+                            ! SIGN, STATED RATHER THAN INFERRED. The penalty
+                            ! shifts the child DOWN the productivity grid, since
+                            ! shifted_log adds log(penalty) and the penalty is
+                            ! below one, and homelessness FALLS in productivity.
+                            ! So the child's homelessness rate, and the ratio with
+                            ! it, RISES in the penalty: a model ratio below target
+                            ! calls for a larger penalty, which is what
+                            ! subtracting the gap does.
+                            penalty_child_homeless_step_1=penalty_child_homeless-&
+                                penalty_child_homeless_adjuster*gap_penalty_child_homeless_1
+                            call trust_step(penalty_child_homeless_step_1,&
+                                penalty_child_homeless,&
+                                move_factor(child_homeless_ratio_model_1,&
+                                child_homeless_ratio_data,escape_factor),10.d0**(-3))
+                            penalty_child_homeless=&
+                                max(min(penalty_child_homeless_step_1,0.4d0),0.d0)
+
+                            distance_penalty_child_homeless=&
+                                abs(gap_penalty_child_homeless_1)
+
+                            write(*,*) "child homelessness ratio model =",&
+                                child_homeless_ratio_model_1,&
+                                " target =", child_homeless_ratio_data
+                            write(*,*) "penalty_child_homeless=", penalty_child_homeless,&
+                                " distance_penalty_child_homeless=",&
+                                distance_penalty_child_homeless
+
+                            ! The newborn draw is built from this penalty too, so
+                            ! it is rebuilt here for the same reason delta_d's is.
+                            call create_newborn_employment_probability()
+
+                        else
+
+                            write(*,*) "child homelessness ratio has an empty denominator:",&
+                                " delta_h held at", penalty_child_homeless
+                            distance_penalty_child_homeless=1
+
+                        end if
+
+                    else
+
+                        distance_penalty_child_homeless=0
 
                     end if
 
