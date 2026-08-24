@@ -952,7 +952,25 @@
         ! every other point and then run off the end.
         integer :: sweep_index=1
 
-        integer, parameter :: re_do_simulation_with_fixed_parameters=sweep_addiction_scalar
+        ! ONE SIMULATION AT A FIXED PARAMETER VECTOR, PRINTING EVERYTHING.
+        !
+        ! The order of work is: put the parameters somewhere sensible by hand,
+        ! simulate once and READ the moments, adjust whatever came back in a
+        ! corner, simulate again, and only turn the slow updates on when the
+        ! equilibrium has something in it to work with. A moment at zero or at
+        ! one is not a gap the calibration can close, it is the absence of the
+        ! margin the parameter acts on, and a one per cent per loop update
+        ! started from there spends a day discovering that.
+        !
+        ! The sweep already ran with updating off, but a sweep point STOPS after
+        ! writing its row, above most of the moment prints, so it cannot be used
+        ! to read an equilibrium. This flag gives the same freeze without the
+        ! stop: set diagnostic_simulation to 1, hand the parameters in through
+        ! PARAM_HANDOVER.txt, and the run solves, aggregates and prints every
+        ! moment exactly as a calibration loop would, then leaves them alone.
+        integer, parameter :: diagnostic_simulation=0
+        integer, parameter :: re_do_simulation_with_fixed_parameters=&
+            max(sweep_addiction_scalar,diagnostic_simulation)
         integer, parameter :: calibrate_only_rental_management_costs=1
                                                                                                                                                                                                                                                                                                                                     
         real(8), parameter :: property_tax_deductibility=0
