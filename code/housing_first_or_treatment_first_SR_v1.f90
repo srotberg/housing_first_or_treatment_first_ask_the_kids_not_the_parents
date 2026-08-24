@@ -1472,7 +1472,13 @@
         ! the highest value the calibration was allowed to give it and the
         ! clamp pulled it down on the first read, so the declared value was
         ! never the starting point it was written to be.
-        real(8), parameter :: theta_hi=0.50d0
+        ! 0.7 ON THE AUTHOR'S INSTRUCTION, AND SO 0.55 IS A VALUE NOT A CLAMP. The handover clamps to this
+        ! ceiling, so asking for 0.55 with the ceiling at 0.50 would have set
+        ! 0.50 and reported success: the same silent bind that put theta at
+        ! 0.29357 for a whole calibration when the ceiling was 0.30. The
+        ! headroom is deliberate -- a ceiling exactly at the value being tried
+        ! cannot tell a converged parameter from a pinned one.
+        real(8), parameter :: theta_hi=0.70d0
         ! B'S CEILING HAD NO ARGUMENT BEHIND IT AND IT BOUND. At 0.05 the
         ! bracket sat exactly on it: participation came out at 76.0 per cent
         ! against a target of 8.90, the update asked for b to rise by a factor of
