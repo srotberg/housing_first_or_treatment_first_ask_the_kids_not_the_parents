@@ -85,14 +85,23 @@ BOUNDS = {
     'sd_permanent_productivity':             (0.10, 3.0),
     'probability_becoming_unemployed':       (0.001, 0.500),
     'multiple_of_probabilities_of_employment_if_addicted': (1.0, 50.0),
-    'kappa_uem':                             (0.01, 5.0),
-    'lambda_m':                              (0.001, 0.990),
+    # THE MODEL CLAMPS THIS ONE TO [1, 40] ON THE WAY IN. Arms at 0.30 and 0.10
+    # were both silently set to 1 and came back as the centre, which the round
+    # then read as "no pair".
+    'kappa_uem':                             (1.0, 40.0),
+    # CLAMPED TO 0.5 ON THE WAY IN, and floored by the prevalence profile. Arms
+    # at 0.50 and 0.90 were the SAME point, which is why they returned a share
+    # identical to seventeen figures.
+    'lambda_m':                              (0.046, 0.500),
     'probability_of_voucher_benchmark_used': (0.0005, 0.900),
     'utility_cost_of_treatment':             (0.0001, 5.0),
     'penalty_child_addicted':                (0.001, 5.0),
     'penalty_child_homeless':                (0.001, 5.0),
     'smallest_rental_relative_to_lowest_income': (0.001, 0.900),
     'largest_house_size':                    (0.005, 3.0),
+    'weight_on_child':                       (0.0, 1.0),
+    'max_food_cost':                         (0.0002, 0.05),
+    'mu_homeless':                           (0.05, 1.0),
 }
 
 

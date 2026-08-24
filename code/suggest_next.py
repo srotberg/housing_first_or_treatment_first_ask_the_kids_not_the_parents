@@ -34,6 +34,12 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 # parameter names run_one_point.sh accepts; the names in the middle are what
 # print_all_moments labels the moment.
 OWNS = {
+    # The three that the search could not reach until the model learned to
+    # accept them. Each owns a moment the paper targets.
+    'weight_on_child': ('omega', 0.0),
+    'max_food_cost': ('cbar', 0.0042),
+    'mu_homeless': ('mu_H', 1.4732142857142856),
+
     'addiction_scalar_1':                    ('b',        0.0890),
     'lambda_addiction':                      ('lambda_d', 0.0368),
     'relative_share_of_addiction_1':         ('theta',    0.1620),

@@ -48,6 +48,9 @@ declare -A P=(
     [utility_cost_of_treatment]=0.02
     [smallest_rental_relative_to_lowest_income]=0.0157977
     [largest_house_size]=0.0830253
+    [weight_on_child]=0.5
+    [max_food_cost]=0.0042
+    [mu_homeless]=0.6788
 )
 for a in "$@"; do
     k=${a%%=*}; v=${a#*=}

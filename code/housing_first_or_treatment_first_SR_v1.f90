@@ -29922,6 +29922,21 @@
                     write(*,*) "HANDOVER weight_on_child:", weight_on_child, "->", handover_value
                     weight_on_child=max(min(handover_value,1.d0),0.d0)
 
+                ! THE LAST TWO INTERNALLY CALIBRATED PARAMETERS THAT COULD NOT
+                ! BE HANDED IN. The paper calibrates twenty four parameters
+                ! internally; the search could set twenty one of them, so the
+                ! food stamp ceiling and the recovery ratio were being carried
+                ! at whatever the declaration said while their moments were
+                ! counted as misses. A parameter that owns a moment and cannot
+                ! be set is a parameter that cannot be calibrated.
+                case ("max_food_cost")
+                    write(*,*) "HANDOVER max_food_cost:", max_food_cost, "->", handover_value
+                    max_food_cost=max(handover_value,0.d0)
+
+                case ("mu_homeless")
+                    write(*,*) "HANDOVER mu_homeless:", mu_homeless, "->", handover_value
+                    mu_homeless=max(min(handover_value,1.d0),0.d0)
+
                 ! THE INSTRUMENTS THAT RAN AWAY AT THE CORNER, so a good
                 ! starting point can be handed in rather than hand edited into a
                 ! positional checkpoint. Measured against their own declared

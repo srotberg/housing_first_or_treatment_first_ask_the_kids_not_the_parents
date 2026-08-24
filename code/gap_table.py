@@ -35,7 +35,11 @@ WHAT = {
     'penalty_child_homeless': 'delta_h',
     'smallest_rental_relative_to_lowest_income': 'h_2',
     'largest_house_size': 'h_4',
+    'weight_on_child': 'omega', 'max_food_cost': 'cbar', 'mu_homeless': 'mu_H',
 }
+# Calibrated internally but not free: gamma is tied to theta inside the model as
+# 0.28*(1-theta), so it moves when theta does and has no arm of its own.
+TIED = {'relative_share_of_housing': ('gamma', 'tied to theta as 0.28*(1-theta)')}
 LABEL = {
     'b': 'total drug users', 'lambda_d': 'disordered share of users',
     'theta': 'drug spending share', 'aleph': 'value of life / income',
@@ -104,10 +108,25 @@ def main():
             continue
         gap = (got - tgt) / abs(tgt) if tgt else float('nan')
         rows.append((-abs(gap), key, short, vec[key], tgt, got, '%+.0f%%' % (100 * gap), note))
+    for key, (short, why) in TIED.items():
+        if short in mom:
+            tgt, got = targets.get(short, float('nan')), mom[short]
+            gap = (got - tgt) / abs(tgt) if tgt else float('nan')
+            rows.append((-abs(gap), key, short, vec.get(key, float('nan')),
+                         tgt, got, '%+.0f%%' % (100 * gap), why))
     for _, key, short, val, tgt, got, gap, note in sorted(rows):
         print('%-52s %11.5g   %-27s %11.5g %11s %9s   %s'
               % (key, val, '%-9s %s' % (short, LABEL.get(short, '')), tgt,
                  ('%.5g' % got) if got is not None and got == got else '-', gap, note))
+
+    got = score_points.loss(mt)
+    n_int = len(rows)
+    print('-' * 145)
+    print('%d internally calibrated parameters shown. Loss over the %d moments '
+          'this point reported: %.3f' % (n_int, got[1], got[0]))
+    print('The loss is the mean absolute RELATIVE gap, weighted 3x on b and '
+          'lambda_d and 2x on theta, aleph and h_1, capped at 5 per moment so a '
+          'ratio whose denominator empties cannot dominate it.')
     return 0
 
 
