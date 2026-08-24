@@ -673,10 +673,24 @@ def commit(message, paths=None):
     times before anyone looked.
     """
     add = ['git', 'add'] + (list(paths) if paths else ['-A'])
-    for cmd in (add,
-                ['git', 'commit', '-q', '-m', message],
-                ['git', 'push', '-q', 'origin', 'HEAD']):
+    for cmd in (add, ['git', 'commit', '-q', '-m', message]):
         subprocess.run(cmd, cwd=ROOT, capture_output=True)
+
+    # THE PUSH IS THE PART THAT MATTERS AND IT WAS FAILING SILENTLY. A commit
+    # that is not pushed is not a checkpoint: the container rebuilds itself back
+    # to a PINNED commit, so anything only in the local history goes with it.
+    # The remote intermittently returns HTTP 403 through the proxy, and with
+    # capture_output and no return code check a failed push looked exactly like
+    # a successful one. The loop 33 checkpoint sat unpushed that way and would
+    # have cost three loops of b's climb had a rebuild landed first.
+    for attempt in range(4):
+        r = subprocess.run(['git', 'push', '-q', 'origin', 'HEAD'],
+                           cwd=ROOT, capture_output=True, text=True)
+        if r.returncode == 0:
+            return
+        time.sleep(2 ** attempt)
+    print(f'supervisor: PUSH FAILED after four attempts, the checkpoint is local '
+          f'only and a rebuild will lose it: {r.stderr.strip()[:200]}', flush=True)
 
 
 def checkpoint(loops):
