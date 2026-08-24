@@ -367,7 +367,16 @@
         ! 40 is the last working age, so onset can no longer begin in retirement
         ! at all. It is a backstop against the horizon, not the fix: the fix is
         ! the profile, and that is a data decision for the author.
-        integer, parameter :: max_age_to_choose_addiction=40
+        ! BACK TO 55, BECAUSE THE DETERRENT NOW WORKS AT OLD AGES. J_E was
+        ! dropped to 40, the last working age, as a backstop while the SUD
+        ! mortality multiplier collapsed to 1.07 by data age 75 and every
+        ! household started using at 69. It is a multiplier of 8 at every age
+        ! now, applied to the hazard, so an old user's chance of dying in the
+        ! year runs from 10 per cent at 65 to 49 at 85 against 2.1 and 8.1
+        ! before. Holding J_E down would hide whether that is enough: at 55 the
+        ! model is free to put use back in retirement if the deterrent still
+        ! does not bite, and the per age profile will say so.
+        integer, parameter :: max_age_to_choose_addiction=55
         integer, parameter :: max_age_to_choose_homelessness=59
         
         integer, parameter :: include_varying_household_size=0
