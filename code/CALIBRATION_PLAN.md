@@ -89,29 +89,69 @@ and are kept for the shape of the b curve rather than as answers:
 Total users cross 0.0890 near **b = 0.0474** on this curve. The disordered share
 is nowhere near 0.4130 anywhere on it, which is what lambda is for.
 
-## Block C so far, everything else at declared values
+## What is pinned while block C is swept
+
+Block A is HELD, not left where the corner put it. The handover could not name
+these until 24 August, so they had been drifting under every point measured
+before then:
+
+    value_of_life (aleph)        120      3.5x the banked 34.4153. That gave a
+                                          value of life over labour income of
+                                          30.09 against a target of 80, and the
+                                          sweep had been pinning aleph at its
+                                          DECLARED 11.0, lower still. Aleph
+                                          prices the mortality risk that deters
+                                          use, so every b measured before this
+                                          was compensating for a death penalty
+                                          several times too cheap.
+    discount_factor (beta)       0.99     wealth over output was 4.23 against 3
+    relative_share_of_leisure    3.0      labour supply 0.4567 against 0.400
+    labor_income_tax_rate        0.7537   gives 0.2127, inside 20 to 24 per cent
+    sd_permanent_productivity    0.9534   bottom half share on target
+    relative_share_of_housing    TIED     see below
+
+**gamma is tied to theta**: `gamma = 0.28*(1-theta)`, so housing takes 28 per
+cent of what the drug does not. They are exponents in the same Cobb Douglas
+bundle and calibrating them independently lets the housing share drift as theta
+moves. `apply_gamma_tie` is called after the state is read, after a handover and
+after theta's own update, because theta moves in all three places; gamma's own
+bracket and distance are off while the tie holds. At theta 0.38 gamma is 0.1736
+and the housing spending share should come back near 27 per cent.
+`tie_gamma_to_theta = 0` frees it again.
+
+ONLY OUTSTANDING POINTS BELONG IN B_SWEEP_FULL.txt. Measured points were listed
+there too, which was harmless while the pinned vector never changed. It changed,
+every historical row's vector stopped matching its grid line, and the driver
+began re-measuring b = 0.005.
+
+## Block C so far
 
     b       lambda  theta    users     disorder   d.share   drug share
     0.005    4.5    0.4265   0.9997    0.8127     0.8130      --
     0.01     4.5    0.4265   0.9987    0.8071     0.8081      --
     0.04     1.0    0.4265   0.9652    0.4034     0.4179      --
     0.05     1.0    0.4265   0.9474    0.3507     0.3702    0.2111
+    0.06     1.0    0.35     0.7585    0.1117     0.1472    0.0943
     0.12     1.0    0.35     0.000158  7.7e-07    0.0049    0.0084
     TARGET                   0.0890    0.0368     0.4130    0.1620
 
-**lambda = 1 is settled.** The disordered share was 0.4179 at b = 0.04 and
-0.3702 at b = 0.05, bracketing 0.4130.
+Every one of those ran at aleph 11 and an unpinned block A, so they say more
+about the shape of the curves than about where the answer is.
 
-**b is bracketed between 0.05 and 0.12 and the crossing is near 0.063.** At 0.05
-the model has 94.7 per cent of the population using; at 0.12 it has 0.0158 per
-cent. Nothing between has been measured yet, and the b curve is steep enough
-that this is the only interval that matters. Grid: 0.06, 0.07, 0.08.
+**The b curve is not log linear.** 0.947, 0.759, then 0.000158 across 0.05, 0.06
+and 0.12: flat, then a cliff somewhere above 0.06. Interpolating through it gave
+0.0634 and was badly wrong.
 
-**theta comes DOWN, not up.** At theta = 0.4265 and b = 0.05 the drug spending
-share was 0.2111 against a target of 0.1620, thirty per cent high. The reading
-at b = 0.12 is 0.0084, but with essentially no users it means nothing: a share
-among users is undefined when the user pool is empty, which is why the theta
-contrast waits for a b that lands the pool.
+**theta is bracketed**: 0.4265 gave a spending share of 0.2111 and 0.35 gives
+0.0943, against 0.1620, so it sits near 0.38 to 0.40. Both readings come from
+b's with far too many users, so hold that loosely.
+
+**The disordered share is very sensitive to b**: 0.4179 at b = 0.04 and 0.1472
+at 0.06. lambda 1 was right AT b = 0.04, so at the b that lands the pool lambda
+comes UP.
+
+**Homelessness is alive**: 0.0110 against 0.00399 at h_1 = 0.304, the first time
+this session it was neither zero nor nine per cent.
 
 ## The order of work the author has set
 
