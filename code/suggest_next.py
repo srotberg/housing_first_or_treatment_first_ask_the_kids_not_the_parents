@@ -26,51 +26,81 @@ import re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
-# parameter in the point's tag -> the moment it owns, and that moment's target
+# EVERY CALIBRATED PARAMETER, ITS MOMENT AND THAT MOMENT'S TARGET.
+#
+# A search that can only move five parameters is not a search of the space.
+# Twenty four are calibrated and each owns a moment, so each gets a secant the
+# moment a matched pair exists for it. The names on the left are the Fortran
+# parameter names run_one_point.sh accepts; the names in the middle are what
+# print_all_moments labels the moment.
 OWNS = {
-    'b':     ('b',        0.0890),
-    'lam':   ('lambda_d', 0.0368),
-    'th':    ('theta',    0.1620),
-    'aleph': ('aleph',   80.0),
-    'h':     ('h_1',      0.00399),
+    'addiction_scalar_1':                    ('b',        0.0890),
+    'lambda_addiction':                      ('lambda_d', 0.0368),
+    'relative_share_of_addiction_1':         ('theta',    0.1620),
+    'value_of_life':                         ('aleph',   80.0),
+    'size_homelessness':                     ('h_1',      0.00399),
+    'discount_factor':                       ('beta',     3.0),
+    'relative_share_of_leisure':             ('omega_l',  0.400),
+    'labor_income_tax_rate':                 ('tau_l',    0.224),
+    'sd_permanent_productivity':             ('sigma_y',  0.172),
+    'probability_becoming_unemployed':       ('pi_eu',    0.0485),
+    'multiple_of_probabilities_of_employment_if_addicted':
+                                             ('kappa_ued', 0.1625),
+    'kappa_uem':                             ('kappa_uem', 0.300),
+    'lambda_m':                              ('lambda_m', 0.250),
+    'probability_of_voucher_benchmark_used': ('pi_V',     0.266),
+    'utility_cost_of_treatment':             ('tau_u',    0.245),
+    'penalty_child_addicted':                ('delta_d',  3.00),
+    'penalty_child_homeless':                ('delta_h',  2.10),
+    'smallest_rental_relative_to_lowest_income': ('h_2',  0.132065),
+    'largest_house_size':                    ('h_4',      0.626723),
 }
-TAG = re.compile(r'point\s+b([0-9.eE+-]+)_aleph([0-9.eE+-]+)_lam([0-9.eE+-]+)'
-                 r'_th([0-9.eE+-]+)_h([0-9.eE+-]+)')
+VEC = re.compile(r'^VECTOR\s+(.*)$', re.M)
 ROW = re.compile(r'MOMENT\s+(\S+)\s+.*?model=\s*([-+0-9.eEdD]+)\s+target=\s*([-+0-9.eEdD]+)')
-
-
 def _f(x):
     return float(str(x).replace('D', 'E').replace('d', 'e'))
 
 
 def points():
+    """(vector, moments, filename) for every measured point.
+
+    THE VECTOR IS READ FROM THE POINT FILE, not from its name. The filename is a
+    hash now, because a name that encodes nineteen parameters is unreadable and
+    a name that encodes five silently drops the rest.
+    """
     out = []
     for path in sorted(glob.glob(os.path.join(HERE, 'points', '*.txt'))):
         txt = open(path, errors='replace').read()
-        m = TAG.search(txt)
+        m = VEC.search(txt)
+        vec = {}
         if m:
-            vec = dict(zip(('b', 'aleph', 'lam', 'th', 'h'),
-                           (_f(g) for g in m.groups())))
+            for tok in m.group(1).split():
+                if '=' in tok:
+                    k, v = tok.split('=', 1)
+                    try:
+                        vec[k] = _f(v)
+                    except ValueError:
+                        pass
         else:
-            # THE FILENAME IS THE FALLBACK. The first workers were given the
-            # recipe in their prompt and wrote the moments block with no header,
-            # so the vector lives only in the name they were told to use. Later
-            # workers run run_one_point.sh, which writes a header. Both have to
-            # parse or the early points drop out of every secant.
-            base = os.path.basename(path)
-            got = dict(re.findall(r'(b|aleph|lam|th|h)([0-9.]+)', base))
-            if 'b' not in got or 'aleph' not in got:
-                continue
-            vec = {'b': _f(got['b']), 'aleph': _f(got['aleph']),
-                   'lam': _f(got.get('lam', 1.5)), 'th': _f(got.get('th', 0.38)),
-                   'h': _f(got.get('h', 0.42))}
+            # THE EARLY POINTS CARRY THEIR VECTOR ONLY IN THEIR NAME, because
+            # their workers were given the recipe in a prompt and wrote no
+            # header. Recover what is there so they still feed the secants.
+            got = dict(re.findall(r'(b|aleph|lam|th|h)([0-9]+(?:\.[0-9]+)?)',
+                                  os.path.basename(path)))
+            if 'b' in got:
+                vec['addiction_scalar_1'] = _f(got['b'])
+            if 'aleph' in got:
+                vec['value_of_life'] = _f(got['aleph'])
+            vec['lambda_addiction'] = _f(got.get('lam', 1.5))
+            vec['relative_share_of_addiction_1'] = _f(got.get('th', 0.38))
+            vec['size_homelessness'] = _f(got.get('h', 0.42))
         mom = {}
         for r in ROW.finditer(txt):
             try:
                 mom[r.group(1)] = _f(r.group(2))
             except ValueError:
                 pass
-        if mom:
+        if mom and vec:
             out.append((vec, mom, os.path.basename(path)))
     return out
 
@@ -99,9 +129,12 @@ def main():
         for i in range(len(pts)):
             for j in range(i + 1, len(pts)):
                 a, b = pts[i][0], pts[j][0]
+                if key not in a or key not in b:
+                    continue
                 if abs(a[key] - b[key]) < 1e-15:
                     continue
-                if any(abs(a[k] - b[k]) > 1e-15 for k in a if k != key):
+                shared = set(a) & set(b)
+                if any(abs(a[k] - b[k]) > 1e-15 for k in shared if k != key):
                     continue
                 ya, yb = pts[i][1].get(moment), pts[j][1].get(moment)
                 if ya is None or yb is None:
