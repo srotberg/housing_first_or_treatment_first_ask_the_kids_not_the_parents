@@ -221,6 +221,12 @@ ALIAS = {
     # moment printed under one denominator is not the moment updated under
     # another; the Fortran now prints the ratio its own update uses.
     'model_recovery_housed_over_model_recovery_homeless': 'model_recovery_ratio',
+    # gamma's moment is the RENTERS series. The Fortran printed it under the
+    # label "model_avg_housing_spending_all", which a second print further down
+    # the loop uses for the genuinely all households series, so the label alone
+    # picked whichever came first. The print is renamed; this entry is what the
+    # report reads.
+    'model_avg_housing_spending_renters': 'model_avg_housing_spending_renters',
     'model_bottom_half_earnings_share': 'bottom_half_s_share_of_productivity',
     'model_vsl_ratio_1': 'model_value_of_life_over_model_average_labour_income',
     # THREE THAT ARRIVED WITH THE NAMED GAP FIX, and print under their own names.
