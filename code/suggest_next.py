@@ -27,6 +27,9 @@ import re
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 691bcaed7545bcde2537ac1c4d2d1d6ed9bd31e3
 # EVERY CALIBRATED PARAMETER, ITS MOMENT AND THAT MOMENT'S TARGET.
 #
 # A search that can only move five parameters is not a search of the space.
@@ -58,6 +61,7 @@ OWNS = {
 }
 VEC = re.compile(r'^VECTOR\s+(.*)$', re.M)
 ROW = re.compile(r'MOMENT\s+(\S+)\s+.*?model=\s*([-+0-9.eEdD]+)\s+target=\s*([-+0-9.eEdD]+)')
+<<<<<<< HEAD
 =======
 # parameter in the point's tag -> the moment it owns, and that moment's target
 OWNS = {
@@ -73,12 +77,17 @@ ROW = re.compile(r'MOMENT\s+(\S+)\s+.*?model=\s*([-+0-9.eEdD]+)\s+target=\s*([-+
 
 
 >>>>>>> d038272 (Interpolate each parameter to its target from matched pairs of points)
+=======
+>>>>>>> 691bcaed7545bcde2537ac1c4d2d1d6ed9bd31e3
 def _f(x):
     return float(str(x).replace('D', 'E').replace('d', 'e'))
 
 
 def points():
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 691bcaed7545bcde2537ac1c4d2d1d6ed9bd31e3
     """(vector, moments, filename) for every measured point.
 
     THE VECTOR IS READ FROM THE POINT FILE, not from its name. The filename is a
@@ -111,6 +120,7 @@ def points():
             vec['lambda_addiction'] = _f(got.get('lam', 1.5))
             vec['relative_share_of_addiction_1'] = _f(got.get('th', 0.38))
             vec['size_homelessness'] = _f(got.get('h', 0.42))
+<<<<<<< HEAD
 =======
     out = []
     for path in sorted(glob.glob(os.path.join(HERE, 'points', '*.txt'))):
@@ -120,6 +130,8 @@ def points():
             continue
         vec = dict(zip(('b', 'aleph', 'lam', 'th', 'h'), (_f(g) for g in m.groups())))
 >>>>>>> d038272 (Interpolate each parameter to its target from matched pairs of points)
+=======
+>>>>>>> 691bcaed7545bcde2537ac1c4d2d1d6ed9bd31e3
         mom = {}
         for r in ROW.finditer(txt):
             try:
@@ -127,10 +139,14 @@ def points():
             except ValueError:
                 pass
 <<<<<<< HEAD
+<<<<<<< HEAD
         if mom and vec:
 =======
         if mom:
 >>>>>>> d038272 (Interpolate each parameter to its target from matched pairs of points)
+=======
+        if mom and vec:
+>>>>>>> 691bcaed7545bcde2537ac1c4d2d1d6ed9bd31e3
             out.append((vec, mom, os.path.basename(path)))
     return out
 
@@ -160,17 +176,23 @@ def main():
             for j in range(i + 1, len(pts)):
                 a, b = pts[i][0], pts[j][0]
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 691bcaed7545bcde2537ac1c4d2d1d6ed9bd31e3
                 if key not in a or key not in b:
                     continue
                 if abs(a[key] - b[key]) < 1e-15:
                     continue
                 shared = set(a) & set(b)
                 if any(abs(a[k] - b[k]) > 1e-15 for k in shared if k != key):
+<<<<<<< HEAD
 =======
                 if abs(a[key] - b[key]) < 1e-15:
                     continue
                 if any(abs(a[k] - b[k]) > 1e-15 for k in a if k != key):
 >>>>>>> d038272 (Interpolate each parameter to its target from matched pairs of points)
+=======
+>>>>>>> 691bcaed7545bcde2537ac1c4d2d1d6ed9bd31e3
                     continue
                 ya, yb = pts[i][1].get(moment), pts[j][1].get(moment)
                 if ya is None or yb is None:
