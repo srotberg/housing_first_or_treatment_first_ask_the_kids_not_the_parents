@@ -21,6 +21,7 @@ per generation. That cap is what stops the search thrashing; it is deliberately
 looser than the one-per-cent-a-loop the model's own updater uses, because here
 the pairs are measured rather than guessed.
 """
+import glob
 import math
 import os
 import re
@@ -29,6 +30,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import ridge_solve                                       # noqa: E402
+import score_points                                      # noqa: E402
 from suggest_next import OWNS, points                    # noqa: E402
 
 # A MOMENT THAT MUST BE READ CONDITIONALLY. lambda owns the share of users whose
@@ -62,6 +64,24 @@ GATE = {
     'lambda_m':                              ('h_1', 0.00399, 3.0),
     'penalty_child_homeless':                ('h_1', 0.00399, 3.0),
 }
+
+# AN ARM THAT KNOCKS THE POPULATION OFF TARGET MEASURES A DIFFERENT ECONOMY.
+# theta and lambda each move the TOTAL user rate as hard as b does: at the
+# generation-three centre, theta 0.25 gave 0.6 per cent of the population using
+# and theta 0.55 gave 85 per cent, against a target of 8.9. Their own moments
+# were then read where users were ten times or a tenth of target, and the gate
+# refused all of them -- correctly, and permanently, because every arm would do
+# the same thing again.
+#
+# So an arm on one of these carries a COMPENSATING move in b, sized from the
+# measured elasticity of the user rate to b, chosen to put the user rate back on
+# target. The arm then differs from the centre in the parameter under test and
+# in nothing that matters, which is what a secant needs.
+COMPENSATE = {'lambda_addiction': 'addiction_scalar_1',
+              'relative_share_of_addiction_1': 'addiction_scalar_1'}
+COMPENSATED_MOMENT = 'b'
+COMPENSATED_TARGET = 0.0890
+B_ELASTICITY = -4.0     # d ln(users) / d ln(b), the slope every populated slice measures
 
 MAX_STEP = 3.0          # no parameter may move by more than this factor in one generation
 PAIRED = ('addiction_scalar_1', 'value_of_life')         # the two that must be solved together
@@ -110,10 +130,38 @@ def clip(key, v):
     return max(lo, min(hi, v))
 
 
-def centre_now():
-    """The vector the runner currently defaults to: the centre of this generation."""
+def runner_defaults():
+    """The vector the runner currently defaults to."""
     txt = open(RUNNER).read()
     return {k: float(v) for k, v in re.findall(r'\[(\w+)\]=([-+0-9.eE]+)', txt)}
+
+
+def centre_now():
+    """Where the next generation is centred: THE BEST MEASURED POINT, not the
+    vector that was sent out.
+
+    The secants alone will not carry an improvement that a measured arm already
+    demonstrates. size_homelessness is the case: an arm at 0.45 halved the
+    homelessness gap against a centre of 0.2128, and its own secant was refused
+    as an extrapolation, so a centre built from secants alone stayed at 0.2128
+    and threw the measurement away. Starting from the best point and applying
+    the secants on top keeps both -- what the search measured and what it
+    inferred.
+    """
+    here = runner_defaults()
+    best, best_loss = None, None
+    for path in sorted(glob.glob(os.path.join(HERE, 'points', '*.txt'))):
+        got = score_points.loss(score_points.read(path)[1])
+        if got and (best_loss is None or got[0] < best_loss):
+            for vec, _mom, name in points():
+                if name == os.path.basename(path):
+                    best, best_loss = vec, got[0]
+                    break
+    if best:
+        for key in here:
+            if key in best:
+                here[key] = best[key]
+    return here
 
 
 def read(mom, key):
@@ -219,6 +267,51 @@ def emitted():
     return centre, arms
 
 
+def compensation(key, value, pts, b_centre):
+    """The b that puts the user rate back on target when `key` is set to `value`.
+
+    Read from a measured point that actually ran `key` at that value: its user
+    rate says how far the arm moved the population, and the elasticity says how
+    much b has to give back. Without such a point there is nothing to compensate
+    from and the arm goes out plain.
+    """
+    # How the user rate responds to this parameter, from every point that ran it
+    # at the centre's b. One exact match is rare, so the response is fitted and
+    # the arm's user rate predicted from it.
+    # Every point that ran this parameter counts, whatever b it ran at: its user
+    # rate is first normalised to the centre's b through the same elasticity.
+    # Filtering on b instead of normalising threw away every point, because the
+    # centre had already moved off the b those points were measured at.
+    obs = []
+    for vec, mom, _n in pts:
+        if key not in vec or 'addiction_scalar_1' not in vec:
+            continue
+        u, b = mom.get(COMPENSATED_MOMENT), vec['addiction_scalar_1']
+        if not u or u <= 0 or b <= 0 or vec[key] <= 0:
+            continue
+        obs.append((math.log(vec[key]),
+                    math.log(u) - B_ELASTICITY * (math.log(b) - math.log(b_centre))))
+    obs = sorted(set(obs))
+    if len(obs) < 2:
+        return None
+    lv = math.log(value)
+    exact = [o for o in obs if abs(o[0] - lv) < 1e-9]
+    if exact:
+        u = math.exp(exact[0][1])
+    else:
+        obs.sort(key=lambda o: abs(o[0] - lv))
+        (x1, y1), (x2, y2) = obs[0], obs[1]
+        if abs(x2 - x1) < 1e-12:
+            return None
+        u = math.exp(y1 + (lv - x1) * (y2 - y1) / (x2 - x1))
+    if not (1e-6 < u < 1.0):
+        return None
+    if abs(math.log(COMPENSATED_TARGET / u)) < 0.05:
+        return None                       # the arm already sits on target
+    want = b_centre * math.exp(math.log(COMPENSATED_TARGET / u) / B_ELASTICITY)
+    return clip('addiction_scalar_1', want)
+
+
 def coverage(pts, centre, arms):
     """Which arms actually came back.
 
@@ -287,7 +380,12 @@ def main():
         for side in (clip(key, v * ARM), clip(key, v / ARM)):
             if abs(math.log(max(side, 1e-12) / max(v, 1e-12))) < 0.02:
                 continue          # the bound has pinned this arm onto the centre
-            print('  bash code/run_one_point.sh %s=%.6g' % (key, side))
+            extra = ''
+            if key in COMPENSATE:
+                b = compensation(key, side, pts, moved['addiction_scalar_1'])
+                if b:
+                    extra = ' addiction_scalar_1=%.6g' % b
+            print('  bash code/run_one_point.sh %s=%.6g%s' % (key, side, extra))
 
     if '--write' in sys.argv:
         txt = open(RUNNER).read()
@@ -296,7 +394,7 @@ def main():
         open(RUNNER, 'w').write(txt)
         # RECORD WHAT IS BEING SENT OUT, so the next round can tell an arm that
         # came back empty from an arm that was never run at all.
-        new_centre = dict(centre_now())
+        new_centre = dict(here)
         new_centre.update(moved)
         with open(GENFILE, 'w') as fh:
             for key in sorted(new_centre):

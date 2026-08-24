@@ -29,24 +29,24 @@ cd "$(dirname "$0")"
 # life ridge cross (code/ridge_solve.py); the rest is the vector generation one
 # held fixed.
 declare -A P=(
-    [addiction_scalar_1]=0.02609
-    [value_of_life]=34.99
+    [addiction_scalar_1]=0.0275022
+    [value_of_life]=34.8331
     [lambda_addiction]=1.5
     [relative_share_of_addiction_1]=0.38
-    [size_homelessness]=0.2128
-    [discount_factor]=0.993
-    [relative_share_of_leisure]=2.4
+    [size_homelessness]=0.68259
+    [discount_factor]=0.993881
+    [relative_share_of_leisure]=2.55924
     [labor_income_tax_rate]=0.753746
     [sd_permanent_productivity]=0.953396
     [kappa_uem]=1
     [lambda_m]=0.067
-    [multiple_of_probabilities_of_employment_if_addicted]=5.4
+    [multiple_of_probabilities_of_employment_if_addicted]=2.59294
     [penalty_child_addicted]=0.3
     [penalty_child_homeless]=0.31
-    [probability_becoming_unemployed]=0.030
-    [probability_of_voucher_benchmark_used]=0.02
+    [probability_becoming_unemployed]=0.0294178
+    [probability_of_voucher_benchmark_used]=0.012136
     [utility_cost_of_treatment]=0.02
-    [smallest_rental_relative_to_lowest_income]=0.0157977
+    [smallest_rental_relative_to_lowest_income]=0.0412373
     [largest_house_size]=0.0830253
     [weight_on_child]=0.5
     [max_food_cost]=0.0042
