@@ -323,7 +323,7 @@ def main():
     frozen = zero_adjusters()
     log_txt, series = param_values(sys.argv[1])
 
-    rows, held, missing, seen = [], [], [], {}
+    rows, held, missing, seen, excluded = [], [], [], {}, []
     for name, (model_expr, target_expr) in sorted(pair.items()):
         label = export_moments.sanitise(model_expr)
         label = ALIAS.get(label, label)
@@ -361,6 +361,7 @@ def main():
         # a first attempt at this.
         flag = consts.get('f_include_' + name)
         if flag is not None and float(flag) == 0:
+            excluded.append((name, 'include_' + name + ' is 0, the channel is off'))
             continue
 
         # A PARAMETER WITH A ZERO ADJUSTER IS NOT BEING CALIBRATED, so it has no
@@ -370,7 +371,11 @@ def main():
         # nothing was moving it. Homeownership being switched off is what zeroes
         # these, and they return the moment it is switched back on.
         status = ''
-        if (name in frozen or (name in live and live[name] == 0.0)) and gap > 1e-6:
+        if name in frozen and gap > 1e-6:
+            excluded.append((name, 'its adjuster is zero, nothing moves it'))
+            continue
+        if name in live and live[name] == 0.0 and gap > 1e-6:
+            excluded.append((name, 'the model zeroes its distance in this configuration'))
             continue
 
         clears = name in rule and abs(model - target) <= rule[name]
@@ -437,6 +442,21 @@ def main():
     print(f'{sum(1 for r in live_rows if r[4])} of {len(live_rows)} on target, '
           f'{sum(1 for r in live_rows if not r[4] and r[0] <= 0.03)} within three per cent'
           f'; {len(rows)} parameters calibrated internally')
+
+    # EVERY PARAMETER IS EITHER A ROW OR A NAMED EXCLUSION, never absent. The
+    # row count moved between logs -- twenty three off a calibration log and
+    # twenty five off a sweep -- because a parameter the model happened not to
+    # print was silently dropped, and a table that quietly changes length cannot
+    # be checked for completeness by reading it. Anything not shown above is
+    # listed here with the reason it is not being calibrated.
+    if excluded:
+        print()
+        print(f'{len(excluded)} parameter(s) NOT calibrated in this configuration, '
+              f'and therefore not rows above:')
+        for name, why in sorted(excluded):
+            print(f'  {name:44s} {why}')
+    print(f'\naccounted for: {len(rows)} calibrated + {len(excluded)} not calibrated '
+          f'= {len(rows) + len(excluded)} parameters with a target in the Fortran')
 
 
 if __name__ == '__main__':

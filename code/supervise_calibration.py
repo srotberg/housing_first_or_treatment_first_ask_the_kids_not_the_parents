@@ -56,6 +56,8 @@ BANKED_LOG = os.path.join(HERE, 'calibration_run.log')
 # no way to ask which bracket had stopped moving. One row per loop, every
 # watched parameter, surviving every rebuild.
 PARAMS = os.path.join(HERE, 'CALIBRATION_PARAMS.tsv')
+TABLE = os.path.join(HERE, 'CALIBRATION_TABLE.txt')
+TABLE_HISTORY = os.path.join(HERE, 'CALIBRATION_TABLE_HISTORY.txt')
 PROGRESS = os.path.join(HERE, 'CALIBRATION_PROGRESS.tsv')
 
 # -O3 RATHER THAN -O2, MEASURED AND NOT ASSUMED: 1.15x on the sixteen expensive
@@ -759,6 +761,21 @@ def checkpoint(loops):
         # median on its own: the series read 60.3, 31.4, 40.8, 64.4, 30.6, which
         # is that alternation and not the calibration. It is excluded from the
         # median and reported in its own column.
+        # THE WHOLE TABLE, EVERY LOOP, ON DISK AND IN GIT. The author has asked
+        # for the full list each round -- every internally calibrated parameter
+        # with its value, its moment, the model, the target and the gap -- and
+        # asking for it by hand each time is how a round goes by without it.
+        # The report accounts for every parameter with a target in the Fortran,
+        # as a row or as a named exclusion, so a short table is a visible fact
+        # rather than a silent omission.
+        with open(TABLE, 'w') as f:
+            f.write(f'loop {n}, {time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}\n\n')
+            f.write(r.stdout)
+        with open(TABLE_HISTORY, 'a') as f:
+            f.write(f'\n===== loop {n}, '
+                    f'{time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())} =====\n')
+            f.write(r.stdout)
+
         named = report_rows(r.stdout)
         omega = next((v for k, v in named if k == 'weight_on_child'), None)
         gaps = [v for k, v in named if k != 'weight_on_child']
@@ -816,7 +833,8 @@ def checkpoint(loops):
                 f.write(time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
                         + f'\t{n}\t' + row + '\n')
 
-    paths = [pth for pth in (STATE, PROGRESS, PARAMS, BANKED_LOG, JOURNAL)
+    paths = [pth for pth in (STATE, PROGRESS, PARAMS, BANKED_LOG, JOURNAL,
+                             TABLE, TABLE_HISTORY)
              if os.path.exists(pth)]
     if paths:
         commit(f'Calibration checkpoint, loop {n}', paths)
