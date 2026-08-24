@@ -747,7 +747,11 @@ rest, and the household survives into period 2 with probability
 \begin{equation}\label{eq:surv}
 \phi(d') \;=\; \bar\phi\,(1-\kappa_{\phi d} d'),
 \end{equation}
-so $\kappa_{\phi d}$ is the proportional reduction in survival caused by the SUD.
+so $\kappa_{\phi d}$ is the proportional reduction in survival caused by the SUD.\new{
+It is written as a proportional fall here and as a hazard ratio in the
+quantitative model of Section~\ref{sec:full}; the two are the same statement,
+since raising survival to the ratio is what a period of thirty years of a fixed
+hazard ratio delivers.}
 The mortality penalty applies here, and here only.
 
 \paragraph{Period 2.} This is the terminal period, after which the household dies with certainty. A
@@ -868,8 +872,10 @@ is about, so a higher factor corrects for the coarseness of the horizon rather
 than making a claim about preferences.} and the gross interest rate is
 $R=1/\beta$, and survival over
 a period is $\bar\phi = @@phi0@@$, from the Social Security Administration (SSA) period life table for twenty six to fifty five. For the SUD, the
-proportional fall in survival is $\kappa_{\phi d} = @@kap@@$ , derived by compounding an annual mortality ratio of $@@smrd@@$, the midpoint of the range in Hjorth\o j et al.\
-(2023), so a clean household's chance of dying before period 2 is @@dth0@@
+proportional fall in survival is $\kappa_{\phi d} = @@kap@@$ , \new{implied by a
+mortality \emph{rate} ratio of $@@smrd@@$, the midpoint of the range in Hjorth\o j et al.\
+(2023): survival with the disorder is $\bar\phi^{\,@@smrd@@}$ over the period, so
+$\kappa_{\phi d}=1-\bar\phi^{\,@@smrd@@-1}$}, so a clean household's chance of dying before period 2 is @@dth0@@
 percent and a household that acquires a SUD has a @@dth1@@ percent chance of
 dying before period 2.\footnote{The second figure is not $\kappa_{\phi d}$ and should not be
 read as one: $\kappa_{\phi d}$ is the proportional fall in the chance of \emph{surviving}, so
@@ -1632,16 +1638,20 @@ best available trial looked for and did not find.
 
 \paragraph{Death risk.}\label{sec:fdeath} Survival is
 \begin{equation}\label{eq:fsurv}
-\phi(j,h',d,m,\tau)=1-\min\Big\{1,\ (1-\bar\phi(j))\,
+\phi(j,h',d,m,\tau)=\bar\phi(j)^{\,
 \kappa_{\phi H}(j)^{\mathbf{1}\{h'=h_1\}}\,
-\kappa_{\phi d}(j)^{\mathbf{1}\{d=1\}\mathbf{1}\{\tau=0\}}\,
-\kappa_{\phi m}^{\mathbf{1}\{m=1\}}\Big\},
+\kappa_{\phi d}^{\mathbf{1}\{d=1\}\mathbf{1}\{\tau=0\}}\,
+\kappa_{\phi m}^{\mathbf{1}\{m=1\}}},
 \end{equation}
 with $\bar\phi(j)$ the baseline survival age profile and
-$\kappa_{\phi H}(j)$ and $\kappa_{\phi d}(j)$ two age-varying multipliers,
-and $\kappa_{\phi m}$ one that is not,
+\new{$\kappa_{\phi H}(j)$ an age-varying multiplier and $\kappa_{\phi d}$ and
+$\kappa_{\phi m}$ two that are not,
 raising the death hazard for homelessness, the SUD and SMI
-respectively. The SUD multiplier is switched off in a period the
+respectively. Each is a ratio of mortality \emph{rates}, which is what the
+sources measure, so each multiplies the hazard rather than the death
+probability: survival is raised to their product. The two coincide while the
+baseline is small and part company where it is not, and raising survival to a
+power is bounded in $[0,1]$ without a cap.} The SUD multiplier is switched off in a period the
 household is in treatment, $\tau=1$, which is why the survival function takes $\tau$
 as an argument at all. The excess mortality of the disorder is
 overwhelmingly a mortality of use, poisoning above all, and treatment forbids use
@@ -1666,26 +1676,17 @@ itself, so the published ratio
 is a mixture of two effects and attributing all of it to housing would overstate
 what housing does.
 
-Three things are observed and two are solved for. Observed: $RR(j)$,
-Baggett's ratio; $\sigma_d(j)$, the shape of the SUD's mortality effect over age;
-and $s$, the share of the homeless with a SUD. Solved for: $\kappa_{\phi d}(j)$ and
-$\kappa_{\phi H}(j)$, one age profile from each equation. $RR(j)$ and $s$
-are inputs to this step and not moments the model is asked to reproduce, so
-neither appears among the validation moments in Section~\ref{sec:fvalid}. Picking the single
-number $\bar\kappa_{\phi d}$, the level of the SUD's own mortality multiplier at the age where
-its effect peaks, settles both: the first equation turns it into
-$\kappa_{\phi d}(j)$ at every age, and the second then reads
-$\kappa_{\phi H}(j)$ off $\kappa_{\phi d}(j)$ and Baggett's ratio at every age.
-
-Undoing the mixture needs the SUD's own multiplier at each age. That is what
-$\sigma_d(j)$ supplies: the age profile of drug poisoning deaths from CDC WONDER 2023,
-normalised to one at the age where it peaks, so $\sigma_d(j)$ is the share of the
-SUD's peak mortality effect that is present at age $j$. Writing
-$\bar\kappa_{\phi d}$ for the level of the SUD multiplier,
+\new{Two things are observed and one is solved for. Observed: $RR(j)$,
+Baggett's ratio, and $s$, the share of the homeless with a SUD. Solved for:
+$\kappa_{\phi H}(j)$. Both inputs are inputs to this step and not moments the
+model is asked to reproduce, so neither appears among the validation moments in
+Section~\ref{sec:fvalid}. The SUD multiplier carries no age argument: it is a
+hazard ratio, and the sources report it as a level for the disorder rather than
+as a profile. What falls with age is the ratio of death \emph{probabilities},
+and that falls on its own once a fixed hazard ratio meets a rising baseline,
+so imposing a declining profile on top would count the same compression twice.}
 \begin{equation}\label{eq:fhaz}
-\kappa_{\phi d}(j) = 1+(\bar\kappa_{\phi d}-1)\,\sigma_d(j),
-\qquad
-\kappa_{\phi H}(j) = \max\Big\{1,\ \frac{RR(j)}{(1-s)+s\,\kappa_{\phi d}(j)}\Big\}.
+\kappa_{\phi H}(j) = \max\Big\{1,\ \frac{RR(j)}{(1-s)+s\,\kappa_{\phi d}}\Big\}.
 \end{equation}
 The denominator is the average mortality multiplier in Baggett's population:
 a share $1-s$ of it carries homelessness alone and a share $s$ carries the SUD as

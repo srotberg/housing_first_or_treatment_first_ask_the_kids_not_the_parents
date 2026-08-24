@@ -4235,15 +4235,12 @@
     real(8) function survival_with_smi(base_survival_1,smi_1)
 
         ! eq:fsurv. survival_probability already carries age, homelessness and
-        ! the SUD; SMI multiplies the death HAZARD on top of that, which is not
-        ! the same as scaling the survival probability. So the hazard is taken
-        ! out, multiplied, and put back:
+        ! the SUD; SMI multiplies the death HAZARD on top of that:
         !
-        !     s' = 1 - (1 - s) * kappa_phi_m
+        !     s' = s ** kappa_phi_m
         !
-        ! This is the same repair made when the homelessness and SUD multipliers
-        ! stopped being added and started being multiplied. Adding excesses and
-        ! multiplying hazards agree only when both are small, and neither is.
+        ! Hazards multiply, so exponents on survival multiply, and the result is
+        ! bounded in [0,1] without a guard.
 
         implicit none
 
@@ -4257,7 +4254,11 @@
 
         end if
 
-        survival_with_smi=max(1.d0-(1.d0-base_survival_1)*kappa_phi_m,0.d0)
+        ! ON THE HAZARD, like the other two. The comment above described taking
+        ! the hazard out, multiplying and putting it back, but 1-(1-s)*kappa
+        ! multiplies the death PROBABILITY, which is a different object once the
+        ! baseline stops being small.
+        survival_with_smi=base_survival_1**kappa_phi_m
 
     end function
 
@@ -21516,8 +21517,18 @@
 
         do i=1,life_span
 
-            survival_probability(i,2,0,0)=1-min(1.d0,&
-                (1-survival_probability(i,1,0,0))*kappa_phi_h_by_age(i))
+            ! THE MULTIPLIERS ARE HAZARD RATIOS, SO THEY GO ON THE HAZARD.
+            ! A standardised mortality ratio is a ratio of RATES, and this
+            ! multiplied the death PROBABILITY instead. The two agree only while
+            ! the baseline is small: at a baseline of 0.0012 at data age 26 they
+            ! are the same to three decimals, and at 0.0805 at 85 a ratio of
+            ! eight gives 0.644 one way and 0.489 the other. Raising survival to
+            ! the power of the multiplier is the constant hazard ratio, it is
+            ! bounded in [0,1] by construction so the min disappears with it, and
+            ! it reproduces on its own the compression of the measured ratio with
+            ! age that the literature reports.
+            survival_probability(i,2,0,0)=&
+                survival_probability(i,1,0,0)**kappa_phi_h_by_age(i)
 
         end do
                     
@@ -21528,8 +21539,8 @@
         
             do i=1,life_span
 
-                survival_probability(i,1,include_addiction,0)=1-min(1.d0,&
-                    (1-survival_probability(i,1,0,0))*kappa_phi_d_by_age(i))
+                survival_probability(i,1,include_addiction,0)=&
+                    survival_probability(i,1,0,0)**kappa_phi_d_by_age(i)
 
             end do
                                 
@@ -21538,8 +21549,10 @@
                 
             do i=1,life_span
 
-                survival_probability(i,2,include_addiction,0)=1-min(1.d0,&
-                    (1-survival_probability(i,1,0,0))*kappa_phi_h_by_age(i)*kappa_phi_d_by_age(i))
+                ! Hazards multiply, so the exponents multiply.
+                survival_probability(i,2,include_addiction,0)=&
+                    survival_probability(i,1,0,0)**&
+                    (kappa_phi_h_by_age(i)*kappa_phi_d_by_age(i))
 
             end do
                 

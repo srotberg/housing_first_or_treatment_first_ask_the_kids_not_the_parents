@@ -340,9 +340,20 @@ class P:
     # same object while carrying two different values is exactly the
     # inconsistency the AE's letter objects to. kap is DERIVED from it, not set
     # to it: an annual ratio does not transfer to a thirty year period, so the
-    # annual hazard is compounded. 6.9 gave kap = 0.4302; 8.0 gives 0.4876.
+    # ON THE HAZARD, as in the quantitative model. smr_d is a ratio of RATES, so
+    # it belongs on the hazard rather than on the death probability, and then the
+    # compounding collapses: annual survival with the disorder is p**smr_d, so
+    # over the thirty years of a period it is phi0**smr_d, and
+    #
+    #     kap = 1 - phi0**smr_d / phi0 = 1 - phi0**(smr_d - 1).
+    #
+    # The old form multiplied the annual death PROBABILITY by smr_d and
+    # compounded that. The two agree while the annual hazard is small and this
+    # one is: 0.4876 against 0.4832, nine tenths of a per cent apart. The change
+    # is made for consistency with the full model rather than because it moves
+    # anything here.
     smr_d = 8.0       # mortality rate ratio with a SUD. Hjorthoj et al. (2023)
-    kap   = 1.0 - (1.0 - smr_d * (1.0 - 0.91 ** (1.0 / 30.0))) ** 30 / 0.91
+    kap   = 1.0 - 0.91 ** (smr_d - 1.0)
     u1    = 0.1625    # RESOURCE: the disorder costs you a job. Measured.
 
     # NO RECOVERY PARAMETER. rho needed a period to recover INTO and there is

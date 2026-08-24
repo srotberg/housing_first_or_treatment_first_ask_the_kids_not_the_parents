@@ -379,3 +379,9 @@ Recorded, not acted on: damping a drift or repairing a moment pairing is a model
 - `lambda_m` moved 0.1478 to 0.04413, one way across 8 loops, and its moment is not reported as a scalar
 - `relative_share_housing` moved 0.08765 to 0.1446, one way across 19 loops, and its moment is not reported as a scalar
 - `relative_share_leisure` moved 0.5751 to 1.314, one way across 24 loops, and its moment is not reported as a scalar
+
+## Parameters drifting one way
+
+Recorded, not acted on: damping a drift or repairing a moment pairing is a modelling call, and escalating would kill a run whose other brackets are converging.
+
+- `smallest_rental` moved 0.0015 to 0.01227, one way across 8 loops, and its moment is not reported as a scalar
