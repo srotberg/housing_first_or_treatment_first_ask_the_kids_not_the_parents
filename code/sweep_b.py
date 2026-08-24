@@ -210,8 +210,15 @@ def bank(rows):
             f.write('utc\t' + '\t'.join(NAMES) + '\tset\n')
     with open(OUT, 'a') as f:
         for rec in rows:
-            rec.setdefault('set', ' '.join(f'{k}={v:.10g}' for k, v
-                                          in sorted(CURRENT_SET[0].items())))
+            recorded = ' '.join(f'{k}={v:.10g}' for k, v
+                                in sorted(CURRENT_SET[0].items()))
+            if not recorded:
+                try:
+                    recorded = open(os.path.join(HERE,
+                                                 'B_SWEEP_SET.txt')).read().strip()
+                except OSError:
+                    recorded = ''
+            rec.setdefault('set', recorded)
             f.write(time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()) + '\t'
                     + '\t'.join('' if k not in rec else f'{rec[k]:.6g}'
                                 for k in NAMES)
@@ -247,7 +254,17 @@ def write_remaining():
         return abs(x - y) <= abs(x) * 1e-9 + 1e-15
 
     def same_point(a, c):
-        if not same(a[0], c[0]) or set(a[1]) != set(c[1]):
+        # A BANKED ROW WITH NO SET RECORDED MATCHES ON b ALONE, and it has to.
+        # b = 0.12 banked without its set column, so its key could never equal
+        # the grid line's eleven names, the point read as outstanding and the
+        # driver relaunched the SAME twenty minute solve every time it finished
+        # it. A row whose vector was not recorded cannot be told apart from
+        # another at the same b, so the only safe reading is that the b is done.
+        if not same(a[0], c[0]):
+            return False
+        if not c[1]:
+            return True
+        if set(a[1]) != set(c[1]):
             return False
         return all(same(a[1][k], c[1][k]) for k in a[1])
 
@@ -265,6 +282,11 @@ def write_remaining():
             for k, v in sorted(left[0][1].items()):
                 f.write(f'"{k}" {v:.10g}\n')
     CURRENT_SET[0] = left[0][1] if left else {}
+    # BANKED TO DISK TOO. The global is lost whenever the driver restarts while
+    # a model is mid solve, and the row then lands with an empty set column.
+    with open(os.path.join(HERE, 'B_SWEEP_SET.txt'), 'w') as f:
+        f.write(' '.join(f'{k}={v:.10g}'
+                         for k, v in sorted(CURRENT_SET[0].items())) + '\n')
     return left
 
 
