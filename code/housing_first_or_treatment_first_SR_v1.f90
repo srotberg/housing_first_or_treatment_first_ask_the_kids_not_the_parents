@@ -1506,6 +1506,22 @@
         ! headroom is deliberate -- a ceiling exactly at the value being tried
         ! cannot tell a converged parameter from a pinned one.
         real(8), parameter :: theta_hi=0.70d0
+
+        ! GAMMA IS TIED TO THETA FOR NOW, on the author's instruction:
+        ! gamma = 0.28*(1-theta), so housing takes 28 per cent of whatever the
+        ! drug does not. The two are exponents in the same Cobb Douglas bundle,
+        ! so calibrating them independently lets the housing share drift as
+        ! theta moves and the pair stop summing to anything meaningful. At
+        ! theta = 0.38 this is 0.1736, and the simulation should return about 27
+        ! per cent of income spent on housing.
+        !
+        ! It is a TIE and not a reparameterisation: gamma's own bracket is
+        ! skipped while tie_gamma_to_theta is one, and the author will free it
+        ! again. apply_gamma_tie is called wherever theta can change -- after
+        ! the state is read, after a handover and after theta's own update --
+        ! rather than once at setup, because theta moves in all three places.
+        integer, parameter :: tie_gamma_to_theta=1
+        real(8), parameter :: gamma_share_of_non_drug=0.28d0
         ! B'S CEILING HAD NO ARGUMENT BEHIND IT AND IT BOUND. At 0.05 the
         ! bracket sat exactly on it: participation came out at 76.0 per cent
         ! against a target of 8.90, the update asked for b to rise by a factor of
@@ -3920,6 +3936,23 @@
             end if
 
         end function
+
+        subroutine apply_gamma_tie()
+
+            ! gamma = 0.28*(1-theta) while the tie is on, and nothing otherwise.
+            ! Called after every place theta can change, so the two cannot fall
+            ! out of step between one and the next.
+
+            implicit none
+
+            if (tie_gamma_to_theta==1) then
+
+                relative_share_of_housing=gamma_share_of_non_drug*&
+                    (1.d0-relative_share_of_addiction_1)
+
+            end if
+
+        end subroutine
 
         function move_factor(model_1,target_1,escape_1) result(factor_1)
 
@@ -29830,6 +29863,36 @@
                         penalty_child_addicted, "->", handover_value
                     penalty_child_addicted=max(min(handover_value,0.4d0),0.d0)
 
+                ! BLOCK A, SO IT CAN BE PINNED WHILE A LATER BLOCK IS SWEPT.
+                ! Income, hours, wealth and the tax rate are upstream of every
+                ! other moment, and while block C was being swept they were
+                ! running at whatever the corner had left them: labour supply
+                ! 0.4567 against 0.400, wealth over output 4.23 against 3. A
+                ! block cannot be held if the handover cannot name it.
+                case ("discount_factor")
+                    write(*,*) "HANDOVER discount_factor:", discount_factor, "->", handover_value
+                    discount_factor=min(max(handover_value,0.5d0),1.05d0)
+
+                case ("relative_share_of_leisure")
+                    write(*,*) "HANDOVER relative_share_of_leisure:",&
+                        relative_share_of_leisure, "->", handover_value
+                    relative_share_of_leisure=min(max(handover_value,0.01d0),1000.d0)
+
+                case ("labor_income_tax_rate")
+                    write(*,*) "HANDOVER labor_income_tax_rate:",&
+                        labor_income_tax_rate, "->", handover_value
+                    labor_income_tax_rate=max(min(handover_value,2.d0),0.d0)
+
+                case ("relative_share_of_housing")
+                    write(*,*) "HANDOVER relative_share_of_housing:",&
+                        relative_share_of_housing, "->", handover_value
+                    relative_share_of_housing=min(max(handover_value,0.01d0),0.9d0)
+
+                case ("sd_permanent_productivity")
+                    write(*,*) "HANDOVER sd_permanent_productivity:",&
+                        sd_permanent_productivity, "->", handover_value
+                    sd_permanent_productivity=max(min(handover_value,3.d0),10.d0**(-2))
+
                 case ("penalty_child_homeless")
                     write(*,*) "HANDOVER penalty_child_homeless:",&
                         penalty_child_homeless, "->", handover_value
@@ -29845,6 +29908,7 @@
                     write(*,*) "HANDOVER relative_share_of_addiction_1:",&
                         relative_share_of_addiction_1, "->", handover_value
                     relative_share_of_addiction_1=max(min(handover_value,theta_hi),theta_lo)
+                    call apply_gamma_tie()
 
                 case default
                     write(*,*) "HANDOVER IGNORED, unknown name: ", trim(handover_name)
@@ -30344,6 +30408,8 @@
         ! The symptom was a binary that had just run fine crashing on startup, and
         ! the only thing that had changed was that a previous loop had left a
         ! checkpoint on disk for it to read.
+        call apply_gamma_tie()
+
         call read_calibration_distribution()
 
         ! THE SWEEP'S GRID, READ RATHER THAN COMPILED IN, so a container that
@@ -30958,11 +31024,16 @@
                             previous_gap_relative_share_of_housing,have_gap_relative_share_of_housing,&
                             relative_share_of_housing_adjuster_start,damp_adjuster_floor)
                         write(*,*) "relative_share_of_housing_adjuster=", relative_share_of_housing_adjuster
-                        relative_share_of_housing=&
+                        if (tie_gamma_to_theta==0) relative_share_of_housing=&
                             min(max(relative_share_of_housing-relative_share_of_housing_adjuster*&
                             (model_avg_housing_spending_renters(1)-avg_rent_to_income_data),0.01),0.9) 
                                                                      
-                        distance_relative_share_of_housing=&
+                        ! WHILE THE TIE IS ON, gamma is not being calibrated and its
+                        ! moment is not a miss: it is whatever 0.28*(1-theta)
+                        ! gives. A live distance would keep the joint loop running
+                        ! on a bracket that is switched off.
+                        if (tie_gamma_to_theta==1) distance_relative_share_of_housing=0
+                        if (tie_gamma_to_theta==0) distance_relative_share_of_housing=&
                             abs(model_avg_housing_spending_renters(1)-avg_rent_to_income_data)
                                     
                         ! THE LABEL SAID "all" AND THE VARIABLE IS THE RENTERS
@@ -30978,7 +31049,7 @@
                             
                     else
                     
-                        relative_share_of_housing=&
+                        if (tie_gamma_to_theta==0) relative_share_of_housing=&
                             min(max(relative_share_of_housing-relative_share_of_housing_adjuster*&
                             (mass_of_renters_at_housing_spending(1,1)-SW_renters_spend_over_X_on_hous_2),0.01),0.9) 
                                                                      
@@ -32131,6 +32202,8 @@
                                 max(theta_lo,relative_share_of_addiction_1/2))
 
                         end if
+
+                        call apply_gamma_tie()
 
                         distance_relative_share_of_addiction_1=&
                             abs(drug_share_weighted_1-drug_spending_share_data)
