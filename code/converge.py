@@ -31,6 +31,14 @@ sys.path.insert(0, HERE)
 import ridge_solve                                       # noqa: E402
 from suggest_next import OWNS, points                    # noqa: E402
 
+# A MOMENT THAT MUST BE READ CONDITIONALLY. lambda owns the share of users whose
+# use is disordered, not the disorder rate in the population, and while the user
+# rate is ten times its target the disorder rate is ten times its target too.
+# Reading lambda off the raw rate sent it to 0.004; read off the share, the same
+# two points say it must RISE, because 0.19 disordered out of 0.91 users is a
+# share of 0.21 against a target of 0.413.
+RATIO = {'lambda_addiction': ('lambda_d', 'b', 0.4130)}
+
 MAX_STEP = 3.0          # no parameter may move by more than this factor in one generation
 PAIRED = ('addiction_scalar_1', 'value_of_life')         # the two that must be solved together
 RUNNER = os.path.join(HERE, 'run_one_point.sh')
@@ -74,34 +82,67 @@ def centre_now():
     return {k: float(v) for k, v in re.findall(r'\[(\w+)\]=([-+0-9.eE]+)', txt)}
 
 
+def read(mom, key):
+    """The moment `key` owns, conditional where it has to be read that way."""
+    if key in RATIO:
+        num, den, _ = RATIO[key]
+        a, b = mom.get(num), mom.get(den)
+        if a is None or b is None or b <= 0:
+            return None
+        return a / b
+    return mom.get(OWNS[key][0])
+
+
 def secant(key, target, pts, here):
-    """The value of `key` that hits its target, from the two measured points
-    nearest the centre that differ in `key` alone."""
-    moment = OWNS[key][0]
-    pairs = []
-    for i in range(len(pts)):
-        for j in range(i + 1, len(pts)):
-            a, b = pts[i][0], pts[j][0]
-            if key not in a or key not in b or abs(a[key] - b[key]) < 1e-15:
+    """The value of `key` that hits its target, from the pair that brackets it.
+
+    THE TWO POINTS MUST DECLARE THE SAME PARAMETERS. A point that names two of
+    them and a point that names nineteen cannot be differenced: the seventeen
+    the first says nothing about are exactly the seventeen that might differ.
+
+    THE PAIR SHOULD BRACKET THE TARGET. These responses are flat and then fall
+    off a cliff, and a secant across two points on the flat extrapolates to
+    nonsense -- generation two's points on the flat put the b that gives 0.089
+    users at two hundred thousand. A pair that does not bracket is used only if
+    its answer stays near the span it was measured over, and is marked with a
+    star so a reading that is really an extrapolation is never mistaken for one
+    that is not.
+    """
+    cands = []
+    for vec, mom, _name in pts:
+        y = read(mom, key)
+        if key in vec and y is not None:
+            cands.append((vec, vec[key], y))
+    usable = []
+    for i in range(len(cands)):
+        for j in range(i + 1, len(cands)):
+            a, b = cands[i], cands[j]
+            if set(a[0]) != set(b[0]) or abs(a[1] - b[1]) < 1e-15:
                 continue
-            shared = set(a) & set(b)
-            if any(abs(a[k] - b[k]) > 1e-15 for k in shared if k != key):
+            if any(abs(a[0][k] - b[0][k]) > 1e-12 * max(1.0, abs(a[0][k]))
+                   for k in a[0] if k != key):
                 continue
-            ya, yb = pts[i][1].get(moment), pts[j][1].get(moment)
-            if ya is None or yb is None or abs(ya - yb) < 1e-15:
+            if abs(a[2] - b[2]) < 1e-15:
                 continue
-            near = min(abs(math.log(max(a[key], 1e-12) / max(here, 1e-12))),
-                       abs(math.log(max(b[key], 1e-12) / max(here, 1e-12))))
-            pairs.append((near, a[key], ya, b[key], yb))
-    if not pairs:
+            brackets = (a[2] - target) * (b[2] - target) <= 0
+            near = min(abs(a[1] - here), abs(b[1] - here))
+            usable.append((not brackets, near, a[1], a[2], b[1], b[2], brackets))
+    if not usable:
         return None, None
-    _, x1, y1, x2, y2 = min(pairs)
+    _, _, x1, y1, x2, y2, brackets = min(usable)
     if min(x1, x2, y1, y2, target) > 0 and abs(math.log(y2 / y1)) > 1e-12:
         f = math.log(target / y1) / math.log(y2 / y1)
-        return math.exp(math.log(x1) + f * math.log(x2 / x1)), 'log-log'
-    if abs(y2 - y1) < 1e-15:
+        want, how = math.exp(math.log(x1) + f * math.log(x2 / x1)), 'log-log'
+    elif abs(y2 - y1) < 1e-15:
         return None, None
-    return x1 + (target - y1) / (y2 - y1) * (x2 - x1), 'linear'
+    else:
+        want, how = x1 + (target - y1) / (y2 - y1) * (x2 - x1), 'linear'
+    if not brackets:
+        lo, hi = min(x1, x2), max(x1, x2)
+        if not (lo / 4.0 <= want <= hi * 4.0):
+            return None, 'off the span'
+        how += '*'
+    return want, how
 
 
 def capped(key, here, want):
@@ -115,7 +156,7 @@ def main():
     pts = points()
     here = centre_now()
     data = ridge_solve.measured()
-    cross, _, _ = ridge_solve.solve(data)
+    cross, _, _, _ = ridge_solve.solve(data)
 
     moved, arms = {}, []
     print('%d point(s) measured. Centre of the generation just run:\n' % len(pts))
@@ -129,13 +170,15 @@ def main():
             want = cross[0] if key == 'addiction_scalar_1' else cross[1]
             how = 'ridges'
         else:
-            want, how = secant(key, OWNS[key][1], pts, now)
+            want, how = secant(key, RATIO[key][2] if key in RATIO else OWNS[key][1],
+                               pts, now)
             how = how or 'no pair'
         new = capped(key, now, want)
         moved[key] = new
         print('%-52s %12.5g %12s %12.5g %9s'
               % (key, now, ('%.5g' % want) if want else '-', new, how))
-        if how == 'no pair' or abs(math.log(max(new, 1e-12) / max(now, 1e-12))) > 0.05:
+        if how in ('no pair', 'off the span') \
+                or abs(math.log(max(new, 1e-12) / max(now, 1e-12))) > 0.05:
             arms.append(key)
 
     print('\nTHE NEXT GENERATION: centre, then one arm per parameter still moving.')
