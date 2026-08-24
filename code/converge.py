@@ -130,7 +130,7 @@ AUTHOR_SET = {'lambda_addiction': 4.5}
 # extrapolated to a claim about a 500-fold move, on a response that is flat and
 # then falls off a cliff, which is the one shape this model keeps producing. The
 # highest value ever run is 0.15. These probe 1, 3 and 10.
-AUTHOR_PROBE = {'lambda_addiction': (9.0, 18.0),
+AUTHOR_PROBE = {'lambda_addiction': (9.0, 18.0, 30.0, 60.0),
                 'utility_cost_of_treatment': (1.0, 3.0, 10.0)}
 
 ON_TARGET = 0.03        # a moment this close to its target needs no arm at all
@@ -149,7 +149,14 @@ ARM = 1.6               # an arm sits this factor either side of the centre
 # rather than being sent out to fail.
 BOUNDS = {
     'addiction_scalar_1':                    (1e-10, 1.0),
-    'lambda_addiction':                      (0.01, 20.0),
+    # NO CEILING IN THE MODEL: the handover takes lambda_addiction verbatim, and
+    # the onset hazard is 1 - exp(-lambda * drug quantity), so a large enough
+    # lambda drives the disordered share arbitrarily close to one. The search's
+    # own cap of 20 was the only thing in the way, and it sat just below the
+    # value the arithmetic points at: the share is 0.0284 at lambda 1.5, so
+    # lambda * q is about 0.0288 and q about 0.019, and reaching 0.413 needs
+    # lambda * q near 0.533 -- lambda around 28.
+    'lambda_addiction':                      (0.01, 200.0),
     'relative_share_of_addiction_1':         (0.01, 0.70),
     'value_of_life':                         (1.0, 500.0),
     'size_homelessness':                     (0.01, 5.0),
