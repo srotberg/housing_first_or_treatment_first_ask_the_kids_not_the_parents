@@ -8,7 +8,7 @@ written once and fires for days; a file in the repository is updated by the
 same commit as the thing it describes. Read this first, and update it when the
 state changes rather than editing the routines.
 
-Last updated 24 August 15:56 UTC.
+Last updated 24 August 16:25 UTC.
 
 ## What is running
 
@@ -91,13 +91,28 @@ is nowhere near 0.4130 anywhere on it, which is what lambda is for.
 
 ## Round 1, staged, everything else at declared values
 
-    b        lambda   total users   disorder   disordered share
-    0.005     4.5        0.9997      0.8127        0.8130
+    b       lambda   total users   disorder   disordered share   experimenters
+    0.005    4.5        0.9997      0.8127        0.8130            0.1870
+    0.01     4.5        0.9987      0.8071        0.8081            0.1916
+    0.04     1.0        0.9652      0.4034        0.4180            0.5618
+    TARGET               0.0890     0.0368        0.4130            0.0522
 
-lambda 4.5 saturates the hazard at a low b, where the quantity used is large.
-The remaining points are 0.01, 0.03, 0.04, 0.05 at the same lambda; 0.03 to 0.05
-is where total users are the right size, so it is those three that read lambda
-off the disordered share.
+**lambda = 1 is SETTLED.** At b = 0.04 it gives a disordered share of users of
+0.4180 against a target of 0.4130. The author read that off the 41.3 per cent
+conversion before it was measured. The lambda 4.5 points are kept only as the
+saturated contrast: at that hazard the share is 0.81 whatever b is.
+
+**b has to RISE, and the reason is worth keeping.** Raising lambda ENLARGES the
+user pool rather than only redistributing within it, because the disorder is
+absorbing: more onset means more households stuck using. At lambda 0.225,
+b = 0.05 gave 0.069 total users; at lambda 1, b = 0.04 gives 0.965. So the b
+that lands 0.0890 users at lambda 1 is well above 0.05, not the 0.047 the old
+curve suggested. Grid: 0.05, 0.06, 0.07, 0.08 at lambda 1.
+
+Note the share will drift as b rises, since a larger b means less quantity and
+so less onset. If it falls much below 0.4130 at the b that lands total users,
+lambda comes up a little to compensate. That is a joint move of two parameters
+around a point that is already close, which is what the slow updates are for.
 
 ## The order of work the author has set
 
