@@ -2098,6 +2098,23 @@
         ! running, is not moved by the loop at all.
         real(8), parameter :: max_move_per_loop=1.d0*10.d0**(-2)
         real(8), parameter :: trust_factor=1.d0+max_move_per_loop
+
+        ! ESCAPE AND REFINE ARE DIFFERENT PROBLEMS AND NEED DIFFERENT STEPS.
+        !
+        ! One per cent a loop is the right step when the model is near its
+        ! target and wrong when it is in a corner, because a corner is not a
+        ! small distance to walk: a participation rate of 0.905 against 0.089,
+        ! or homelessness of exactly zero, is the absence of the margin the
+        ! parameter acts on, and refining toward it a hundredth at a time
+        ! spends a day discovering that. The two regimes are told apart by the
+        ! MOMENT, not by the parameter: a moment below a tenth of its target or
+        ! above five times it is a corner, and the parameter that owns it is
+        ! allowed to move fast until the moment is back in range. Everything
+        ! else keeps the one per cent.
+        real(8), parameter :: corner_low=0.1d0
+        real(8), parameter :: corner_high=5.d0
+        real(8), parameter :: escape_factor=2.d0
+        real(8), parameter :: escape_factor_b=10.d0
         ! THE STOPPING RULE EXISTED AND THE DISTANCE DID NOT.
         !
         ! The retention scale is updated every loop against an average labour
@@ -3812,6 +3829,33 @@
                 (smi_of(unemployment_index_1)>=1)) then
 
                 out_of_work_income=zeta_DI*base_1
+
+            end if
+
+        end function
+
+        function move_factor(model_1,target_1,escape_1) result(factor_1)
+
+            ! HOW FAR THIS PARAMETER MAY MOVE THIS LOOP, from the state of the
+            ! moment it owns rather than from a fixed schedule. In range, the
+            ! author's one per cent. In a corner, escape_1, until the moment is
+            ! back in range and the slow rule takes over by itself. The test is
+            ! relative to the target so it needs no bespoke bound per moment,
+            ! and it reads the same for a rate, a ratio and a share.
+
+            implicit none
+
+            real(8), intent(in) :: model_1,target_1,escape_1
+            real(8) :: factor_1
+
+            if ((abs(target_1)>10.d0**(-12)) .AND. &
+                ((model_1<corner_low*target_1) .OR. (model_1>corner_high*target_1))) then
+
+                factor_1=escape_1
+
+            else
+
+                factor_1=trust_factor
 
             end if
 
@@ -29857,7 +29901,7 @@
         
         real(8) :: mass_at_top_financial,a,b,c,d
         real(8) :: mean_drug_quantity_1,onset_at_mean_1,onset_step_1,treatment_step_1,&
-            separation_step_1
+            separation_step_1,b_move_1,lambda_move_1
         character*1 :: string_used
         integer :: last_period_of_life,addiction_index
         integer, dimension(1) :: index_drug_1
@@ -31373,8 +31417,12 @@
 
                             write(*,*) "lambda_clamp=", lambda_clamp
 
-                            onset_step_1=max(min(onset_step_1,lambda_clamp*onset_at_mean_1),&
-                                onset_at_mean_1/lambda_clamp)
+                            lambda_move_1=max(lambda_clamp,&
+                                move_factor(model_fraction_addicted(1),&
+                                sud_rate_data,escape_factor))
+                            write(*,*) "MOVE MODE lambda_addiction=", lambda_move_1
+                            onset_step_1=max(min(onset_step_1,lambda_move_1*onset_at_mean_1),&
+                                onset_at_mean_1/lambda_move_1)
 
                             previous_onset_at_mean=onset_at_mean_1
                             previous_sud_rate=model_fraction_addicted(1)
@@ -31477,7 +31525,11 @@
                         have_treatment_secant=1
 
                         call trust_step(treatment_step_1,utility_cost_of_treatment,&
-                            trust_factor,10.d0**(-2))
+                            move_factor(model_treatment_take_up(1),&
+                            treatment_take_up_data,escape_factor),10.d0**(-2))
+                        write(*,*) "MOVE MODE utility_cost_of_treatment=",&
+                            move_factor(model_treatment_take_up(1),&
+                            treatment_take_up_data,escape_factor)
                         utility_cost_of_treatment=max(min(treatment_step_1,10.d0),0.d0)
 
                         distance_utility_cost_of_treatment=&
@@ -31954,12 +32006,15 @@
                     ! being priced out of the drug entirely. At theta of 0.2 the
                     ! same b would put the corner at about 4b, which is above
                     ! every household in the model. The stylized model uses 0.009.
+                    b_move_1=move_factor(model_exprimenters(1),&
+                        participation_rate_data,escape_factor_b)
+                    write(*,*) "MOVE MODE addiction_scalar_1=", b_move_1
                     addiction_scalar_1=max(min(addiction_scalar_1*&
                         (1+addiction_scalar_adjuster*&
                         gap_addiction_scalar_1/&
                         max(participation_rate_data,10.d0**(-12))),&
-                        min(b_hi,10*addiction_scalar_1)),&
-                        max(b_lo,addiction_scalar_1/10))
+                        min(b_hi,b_move_1*addiction_scalar_1)),&
+                        max(b_lo,addiction_scalar_1/b_move_1))
                     distance_addiction_scalar=abs(gap_addiction_scalar_1)
                     write(*,*) "addiction_scalar_adjuster=", addiction_scalar_adjuster
                     write(*,*) "addiction_scalar_1=", addiction_scalar_1
@@ -32079,7 +32134,11 @@
                         separation_rate_adjuster*&
                         (model_fraction_unemployed(1)-unemployment_rate_data)
                     call trust_step(separation_step_1,probability_becoming_unemployed,&
-                        trust_factor,10.d0**(-5))
+                        move_factor(model_fraction_unemployed(1),&
+                        unemployment_rate_data,escape_factor),10.d0**(-5))
+                    write(*,*) "MOVE MODE separation_rate=",&
+                        move_factor(model_fraction_unemployed(1),&
+                        unemployment_rate_data,escape_factor)
                     probability_becoming_unemployed=&
                         max(min(separation_step_1,1.d0),10.d0**(-6))
                     distance_separation_rate=abs(model_fraction_unemployed(1)-unemployment_rate_data)
@@ -32425,7 +32484,12 @@
                         size_homelessness_step_1=size_homelessness-&
                             size_homelessness_adjuster*gap_size_homelessness_1
                         call trust_step(size_homelessness_step_1,size_homelessness,&
-                            trust_factor,size_homelessness_max_step)
+                            move_factor(model_fraction_homeless(1),&
+                            fraction_homeless_data,escape_factor),&
+                            size_homelessness_max_step)
+                        write(*,*) "MOVE MODE size_homelessness=",&
+                            move_factor(model_fraction_homeless(1),&
+                            fraction_homeless_data,escape_factor)
                         size_homelessness=max(min(size_homelessness_step_1,0.9d0),&
                             size_homelessness_floor)
 

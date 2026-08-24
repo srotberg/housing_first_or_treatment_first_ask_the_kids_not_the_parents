@@ -381,6 +381,14 @@ def main():
         clears = name in rule and abs(model - target) <= rule[name]
         if clears:
             status = 'ON TARGET'
+        # A CORNER IS NOT A LARGE GAP, and the difference decides how the model
+        # is allowed to move. Below a tenth of the target or above five times
+        # it, the margin the parameter acts on is effectively absent, and the
+        # model's move_factor gives that parameter room to escape instead of
+        # the one per cent it uses to refine. Flagging it here is what lets the
+        # table be read as "is there anything to work with yet".
+        elif abs(target) > 1e-12 and (model < 0.1 * target or model > 5 * target):
+            status = 'CORNER'
         val, nxt = value_at(series, log_txt, PARAM_NAME.get(name, name), label)
 
         # ONE ROW PER MOMENT, NOT PER PARAMETER. Two parameters can be moved by
