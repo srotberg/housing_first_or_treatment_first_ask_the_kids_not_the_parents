@@ -1497,9 +1497,9 @@
         ! secant step lands on the clamp and reverses. Halving the factor on a
         ! sign flip makes it a bisection in the same way aleph's radius is, and
         ! the floor keeps it a real step rather than a stall.
-        real(8) :: lambda_clamp=4
-        real(8), parameter :: lambda_clamp_start=4
-        real(8), parameter :: lambda_clamp_floor=1.05
+        real(8) :: lambda_clamp=1.01
+        real(8), parameter :: lambda_clamp_start=1.01
+        real(8), parameter :: lambda_clamp_floor=1.001
         real(8) :: gap_lambda_addiction_1=0,previous_gap_lambda_addiction=0
         integer :: have_gap_lambda_addiction=0
 
@@ -1811,7 +1811,7 @@
         ! again at 0.3747 to 0. Capping the move leaves nine loops to traverse
         ! the range, which is the pace the adjuster was sized for in the first
         ! place, and the damping then works on top of it as intended.
-        real(8), parameter :: size_homelessness_max_step=0.1
+        real(8), parameter :: size_homelessness_max_step=10.d0**(-3)
         real(8) :: size_homelessness_step_1=0
         real(8) :: gap_size_homelessness_1=0,previous_gap_size_homelessness=0
         integer :: have_gap_size_homelessness=0
@@ -2045,6 +2045,33 @@
         real(8) :: previous_gap_labor_income_tax_rate=0
         integer :: have_gap_labor_income_tax_rate=0
         real(8), parameter :: damp_adjuster_floor=10.d0**(-4)
+
+        ! THE MOST ANY PARAMETER MAY MOVE IN ONE LOOP, on the author's
+        ! instruction, and ONE constant so it is changed in one place.
+        !
+        ! Measured over a single loop, with the report finally pairing each
+        ! parameter with the moment it produced, three instruments moved a
+        ! hundred per cent and landed on their floor and a fourth moved
+        ! seventy five, while every other one moved under eight. A parameter
+        ! that lands on its bound every loop is not being calibrated, and the
+        ! moments measured beside it are measured at the bound.
+        !
+        ! WHAT THIS COSTS, because the number is a judgement and the arithmetic
+        ! should be visible when it is changed. A cap of one per cent closes a
+        ! gap of forty per cent in about thirty five loops and one of eighty in
+        ! about sixty; at roughly twenty minutes a loop that is twelve to twenty
+        ! hours. A cap of five per cent closes the same gaps in seven and twelve
+        ! loops, and on the measured data it would still bind on nothing except
+        ! the four that were slamming, since the healthy instruments move
+        ! between nought and seven per cent unaided.
+        !
+        ! b IS DELIBERATELY NOT CAPPED BY THIS. Its bracket spans six decades --
+        ! 10^-7 gives participation of 0.748 and 0.0827 gives zero -- and at one
+        ! per cent a loop it could not cross a single decade in five hundred
+        ! loops. It is bounded to a factor of ten a loop and, while the sweep is
+        ! running, is not moved by the loop at all.
+        real(8), parameter :: max_move_per_loop=1.d0*10.d0**(-2)
+        real(8), parameter :: trust_factor=1.d0+max_move_per_loop
         ! THE STOPPING RULE EXISTED AND THE DISTANCE DID NOT.
         !
         ! The retention scale is updated every loop against an average labour
@@ -3763,6 +3790,43 @@
             end if
 
         end function
+
+        subroutine trust_step(step_1,current_1,factor_1,allowance_1)
+
+            ! A NEWTON OR SECANT STEP NEEDS A TRUST REGION, and three of them did
+            ! not have one. Measured over a single loop, with the report finally
+            ! pairing each parameter with the moment it produced:
+            !
+            !   utility_cost_of_treatment  2.12423   -> 0          -100%, its floor
+            !   separation_rate            0.005881  -> 1e-6       -100%, its floor
+            !   lambda's onset             0.917909  -> 0.225139    -75%
+            !
+            ! against every other instrument moving under eight per cent. A
+            ! secant is exactly right when the response is locally linear and
+            ! unbounded when it is not, and at a corner it is never linear: the
+            ! treatment secant divided by a take up that had barely moved, and
+            ! the separation step was 0.0102 on a parameter of 0.0059, 173 per
+            ! cent of it, so the clamp at the floor was the only thing that
+            ! stopped it going negative. A parameter that lands on its bound
+            ! every loop is not being calibrated, and the moments measured next
+            ! to it are measured at the bound rather than at an answer.
+            !
+            ! So bound the step multiplicatively around where the parameter is,
+            ! with an absolute allowance so one sitting at or near zero can still
+            ! leave it. This is aleph's trust region, which already works, made
+            ! available to the others rather than written out a fourth time.
+
+            implicit none
+
+            real(8), intent(inout) :: step_1
+            real(8), intent(in) :: current_1,factor_1,allowance_1
+            real(8) :: hi_1,lo_1
+
+            hi_1=max(current_1*factor_1,current_1+allowance_1)
+            lo_1=min(current_1/factor_1,current_1-allowance_1)
+            step_1=max(min(step_1,hi_1),lo_1)
+
+        end subroutine
 
         subroutine damp_on_flip(adj_1,gap_1,prev_gap_1,have_gap_1,start_1,floor_1)
 
@@ -29726,7 +29790,8 @@
         logical :: file_exists
         
         real(8) :: mass_at_top_financial,a,b,c,d
-        real(8) :: mean_drug_quantity_1,onset_at_mean_1,onset_step_1,treatment_step_1
+        real(8) :: mean_drug_quantity_1,onset_at_mean_1,onset_step_1,treatment_step_1,&
+            separation_step_1
         character*1 :: string_used
         integer :: last_period_of_life,addiction_index
         integer, dimension(1) :: index_drug_1
@@ -31345,6 +31410,8 @@
                         previous_treatment_take_up=model_treatment_take_up(1)
                         have_treatment_secant=1
 
+                        call trust_step(treatment_step_1,utility_cost_of_treatment,&
+                            trust_factor,10.d0**(-2))
                         utility_cost_of_treatment=max(min(treatment_step_1,10.d0),0.d0)
 
                         distance_utility_cost_of_treatment=&
@@ -31942,9 +32009,13 @@
                         previous_gap_separation_rate,have_gap_separation_rate,&
                         separation_rate_adjuster_start,damp_adjuster_floor)
                     write(*,*) "separation_rate_adjuster=", separation_rate_adjuster
+                    separation_step_1=probability_becoming_unemployed-&
+                        separation_rate_adjuster*&
+                        (model_fraction_unemployed(1)-unemployment_rate_data)
+                    call trust_step(separation_step_1,probability_becoming_unemployed,&
+                        trust_factor,10.d0**(-5))
                     probability_becoming_unemployed=&
-                        max(min(probability_becoming_unemployed-separation_rate_adjuster*&
-                        (model_fraction_unemployed(1)-unemployment_rate_data),1.d0),10.d0**(-6))
+                        max(min(separation_step_1,1.d0),10.d0**(-6))
                     distance_separation_rate=abs(model_fraction_unemployed(1)-unemployment_rate_data)
                     write(*,*) "probability_becoming_unemployed=", probability_becoming_unemployed
                     write(*,*) "distance_separation_rate=", distance_separation_rate
@@ -32287,9 +32358,8 @@
                         ! stops the degenerate case if the update ever runs.
                         size_homelessness_step_1=size_homelessness-&
                             size_homelessness_adjuster*gap_size_homelessness_1
-                        size_homelessness_step_1=max(min(size_homelessness_step_1,&
-                            size_homelessness+size_homelessness_max_step),&
-                            size_homelessness-size_homelessness_max_step)
+                        call trust_step(size_homelessness_step_1,size_homelessness,&
+                            trust_factor,size_homelessness_max_step)
                         size_homelessness=max(min(size_homelessness_step_1,0.9d0),&
                             size_homelessness_floor)
 
