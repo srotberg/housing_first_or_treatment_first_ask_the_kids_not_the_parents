@@ -108,6 +108,20 @@ B_ELASTICITY = -4.0     # d ln(users) / d ln(b), the slope every populated slice
 #   off is probed at the full step, one 10 per cent off at a twentieth of it. A
 #   fixed factor of 1.6 either barely moved the badly-wrong parameters or
 #   overshot the nearly-right ones.
+# WHAT THE AUTHOR HAS SET BY HAND, applied after the secants and overriding
+# them. The search reads its own measurements; the author reads the economics,
+# and where the two disagree this is where the author's call is recorded so it
+# survives every automated round rather than being re-argued each time.
+#
+# lambda_addiction: raised from 1.5 on the author's instruction of 24 August.
+# Its moment, the disordered share of users, sits 94 per cent low, and the three
+# values measured so far (0.6, 1.5, 3.0) moved that share only between 0.028 and
+# 0.032 -- but each of them also knocked the user rate off target, so none was a
+# clean reading. Probed wide here, with b compensating, to settle whether lambda
+# can carry the moment at all.
+AUTHOR_SET = {'lambda_addiction': 4.5}
+AUTHOR_PROBE = {'lambda_addiction': (9.0, 18.0)}
+
 ON_TARGET = 0.03        # a moment this close to its target needs no arm at all
 ARM_MIN, ARM_MAX = 1.15, 3.0
 
@@ -466,6 +480,9 @@ def main():
                                pts, now)
             how = how or 'no pair'
         new = capped(key, now, want)
+        if key in AUTHOR_SET:
+            new = clip(key, AUTHOR_SET[key])
+            how = 'author'
         moved[key] = new
         print('%-52s %12.5g %12s %12.5g %9s'
               % (key, now, ('%.5g' % want) if want else '-', new, how))
@@ -481,6 +498,16 @@ def main():
     arms_emitted = []
     print('\nTHE NEXT GENERATION: centre, then one arm per parameter still moving.')
     print('\n  bash code/run_one_point.sh            # centre')
+    for key, values in AUTHOR_PROBE.items():
+        for v in values:
+            v = clip(key, v)
+            extra = ''
+            if key in COMPENSATE:
+                b = compensation(key, v, pts, moved['addiction_scalar_1'])
+                if b:
+                    extra = ' addiction_scalar_1=%.6g' % b
+            arms_emitted.append('%s=%.6g%s' % (key, v, extra))
+            print('  bash code/run_one_point.sh %s=%.6g%s' % (key, v, extra))
     for key, factor in arms:
         v = moved[key]
         # Push toward the side the moment says it needs to go: a moment above its
