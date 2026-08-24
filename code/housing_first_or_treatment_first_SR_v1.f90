@@ -350,7 +350,14 @@
         ! than a claim about where use should peak: if use now piles at the top
         ! of working life instead, the deterrent itself is too weak, which is a
         ! statement about aleph and the mortality channel and not about J_E.
-        integer, parameter :: max_age_to_choose_addiction=40
+        ! HELD AT 55 FOR ONE DIAGNOSTIC LOOP. The question is whether onset
+        ! begins the year work ends, model age 41 and data age 66, or only close
+        ! to the end of life. The first says the deterrent collapses as soon as
+        ! labour income does; the second says it only fails where almost no life
+        ! remains. They call for different fixes, and the nine age groups cannot
+        ! tell them apart because model ages 40 to 60 are one bucket. Put back to
+        ! 40, the last working age, once the per age profile has been read.
+        integer, parameter :: max_age_to_choose_addiction=55
         integer, parameter :: max_age_to_choose_homelessness=59
         
         integer, parameter :: include_varying_household_size=0
@@ -1880,6 +1887,11 @@
         ! the profile it is the mortality.
         real(8), dimension(life_span) :: model_smi_mass_by_age=0
         real(8), dimension(life_span) :: model_mass_by_age=0
+        ! DRUG USE BY SINGLE AGE. The nine age groups put model ages 40 to 60 in
+        ! one bucket, which is data 65 to 85, so a profile reading 1.0 in group
+        ! nine cannot say whether onset begins the year work ends or fifteen
+        ! years later. The two have different causes and different fixes.
+        real(8), dimension(life_span) :: model_users_by_age=0
         real(8), dimension(life_span) :: kappa_phi_h_by_age=1
         ! ASSIGNED, at the midpoint of the literature range. All cause standardised
         ! mortality ratios for opioid use disorder run 6 to 10, so 8 is the middle
@@ -5070,6 +5082,7 @@
         model_mass_smi(time_period)=0
         model_smi_mass_by_age(:)=0
         model_mass_by_age(:)=0
+        model_users_by_age(:)=0
         newborn_parent_share_acc(:,:)=0
         model_smi_and_homeless(time_period)=0
         model_smi_and_employed(time_period)=0
@@ -8871,6 +8884,9 @@
                                                 
                                         model_drug_use_by_age_group(time_period,age_group_1)=&
                                             model_drug_use_by_age_group(time_period,age_group_1)+distribution_mass_used
+
+                                        model_users_by_age(age_index)=&
+                                            model_users_by_age(age_index)+distribution_mass_used
                                             
                                         model_drug_use_percent_by_age_group(time_period,age_group_1)=&
                                             model_drug_use_percent_by_age_group(time_period,age_group_1)+&
@@ -32534,6 +32550,18 @@
             end do
             do i=1,9
                 write(*,*) "model_drug_use_by_age_group=", model_drug_use_by_age_group(1,i)
+            end do
+            ! The RATE, not the count, and by single age: the share of the
+            ! households alive at each age who use. Printed from the last age
+            ! backwards is the wrong way round for reading, so it goes forwards,
+            ! and the data age is model age plus twenty five.
+            write(*,*) "use rate by single age, model age 1 = data age 26:"
+            do i=1,life_span
+                if (model_mass_by_age(i)>10.d0**(-14)) then
+                    write(*,*) "USE_BY_AGE", i, i+25, model_users_by_age(i)/model_mass_by_age(i)
+                else
+                    write(*,*) "USE_BY_AGE", i, i+25, 0.d0
+                end if
             end do
             write(*,*) "model_fraction_homeless=", model_fraction_homeless(1)
             write(*,*) "model_fraction_addicted=", model_fraction_addicted(1)
