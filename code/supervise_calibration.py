@@ -704,37 +704,29 @@ def journal(entry):
 
 
 def merge_to_main(root):
-    """Fast forward main onto the branch and push it, every time.
+    """Fast forward main onto this branch WITHOUT touching the working tree.
 
-    THE STANDING RULE IS THAT MAIN CARRIES THE WORK, and the automation was
-    only pushing the branch: a container rebuild restores from a PINNED commit,
-    and every hand made commit in this session has gone to both, so leaving the
-    machine made ones on the branch alone put the two out of step by hours of
-    loops. Failure here is not fatal -- the branch push already succeeded and
-    that is what a resume reads -- so it reports and returns rather than
-    raising.
+    CHECKING MAIN OUT AND BACK CHURNS FILES UNDER A RUNNING DRIVER, and it cost
+    a measured point. B_SWEEP.tsv was reverted mid sweep to a version without
+    the row just banked, done_points stopped seeing b = 0.05 as done, and the
+    driver spent another eighteen minutes measuring it a second time. Two
+    processes doing checkouts in one worktree is the whole problem.
+
+    `git push origin HEAD:main` moves the remote ref and never switches the
+    tree. It fast forwards when main is an ancestor of HEAD, which it is
+    whenever the branch has already been pushed, and refuses rather than
+    forcing when it is not. Failure is reported and not raised: the branch push
+    has already succeeded and that is what a resume reads.
     """
-    br = subprocess.run(['git', 'rev-parse', '--abbrev-ref', 'HEAD'],
-                        cwd=root, capture_output=True, text=True).stdout.strip()
-    if not br or br == 'main':
-        return
-    steps = [['git', 'checkout', '-q', 'main'],
-             ['git', 'merge', '-q', br, '-m', f"Merge branch '{br}'"]]
-    ok = all(subprocess.run(c, cwd=root, capture_output=True).returncode == 0
-             for c in steps)
-    if ok:
-        for wait in (0, 2, 4, 8):
-            if wait:
-                time.sleep(wait)
-            if subprocess.run(['git', 'push', '-q', 'origin', 'main'], cwd=root,
-                              capture_output=True).returncode == 0:
-                break
-        else:
-            print('main push failed; the branch is pushed and a resume reads that',
-                  flush=True)
-    subprocess.run(['git', 'checkout', '-q', br], cwd=root, capture_output=True)
-
-
+    for wait in (0, 2, 4, 8):
+        if wait:
+            time.sleep(wait)
+        r = subprocess.run(['git', 'push', '-q', 'origin', 'HEAD:main'],
+                           cwd=root, capture_output=True, text=True)
+        if r.returncode == 0:
+            return
+    print('main push failed; the branch is pushed and a resume reads that',
+          flush=True)
 def commit(message, paths=None):
     """Commit and push. Named paths by preference, never `add -A` blindly.
 
