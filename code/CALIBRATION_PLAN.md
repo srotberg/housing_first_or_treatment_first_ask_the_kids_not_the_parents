@@ -8,41 +8,65 @@ written once and fires for days; a file in the repository is updated by the
 same commit as the thing it describes. Read this first, and update it when the
 state changes rather than editing the routines.
 
-Last updated 24 August 15:25 UTC.
+Last updated 24 August 15:40 UTC.
 
 ## What is running
 
-The b sweep, driven by `code/sweep_b.py`, NOT `supervise_calibration.py`. Do not
-start the joint calibration loop while it runs.
+A STAGED VECTOR SEARCH, driven by `code/sweep_b.py`, NOT
+`supervise_calibration.py`. Do not start the joint calibration loop while it
+runs.
 
-A sweep point is a **(b, lambda) PAIR**. `B_SWEEP_FULL.txt` holds the grid, one
-point a line, `b` alone or `b lambda`. lambda is handed to the model through
-`PARAM_HANDOVER.txt`, which the model reads after the state and deletes as it
-does, so it cannot outlive its point. A line with one number runs at the banked
-lambda, which is 0.225139.
+A sweep point is a **parameter VECTOR**. `B_SWEEP_FULL.txt` holds the grid, one
+point a line:
 
-Results bank to `B_SWEEP.tsv` as each point lands, and the driver pushes the
-branch and merges main.
+    0.047 lambda_addiction=4.5 value_of_life=11 size_homelessness=0.304
 
-## The curve so far
+The first field is b, which the model reads from `B_SWEEP_GRID.txt`. Every other
+field goes to `PARAM_HANDOVER.txt`, which the model reads after the state and
+deletes as it does, so nothing outlives its point. Any name the Fortran's
+handover `select case` knows may be used. A line with only a b runs everything
+else at the banked value. `#` starts a comment. `done_points` is keyed on the
+whole vector, so two points may share a b and differ elsewhere.
 
-    b       participation   users     disorder     income of users   lambda
-    0.01       0.9051       0.9595    0.0544          0.675          0.225139
-    0.03       0.7456       0.7569    0.0114          0.544          0.225139
-    0.05       0.0690       0.0694    0.000327        0.477          0.225139
+Results bank to `B_SWEEP.tsv` as each point lands, with the vector recorded in
+the `set` column, and the driver pushes the branch and merges main.
+
+### Why staged and not a five dimensional grid
+
+Three levels each over h_1, b, lambda, aleph and the employment multiplier is
+243 solves at about twenty minutes each: **eighty one hours**. Two levels each is
+thirty two points and eleven hours. What the search needs is not every cell but
+every parameter measured in a world where the others are not absurd. The author
+has agreed to stages.
+
+**Round 1** (running): lambda at 4.5, b swept DOWN over 0.005, 0.01, 0.02, 0.03,
+with the other nine instruments pinned at their DECLARED values on every point.
+b goes down because lambda rising twenty fold from 0.225 moves experimenters
+into the disorder and pulls participation down with it.
+
+**Round 2**: aleph and the employment multiplier, at whatever b and lambda round
+1 lands on. Both act THROUGH use, so measuring them at a b and lambda that
+produce no sensible use measures nothing.
+
+**Then**: h_1 against the homelessness rate, once there is a population to be
+homeless.
+
+## The curve measured at the BANKED parameters
+
+These three ran before the staging, at lambda 0.225139 and the banked vector,
+and are kept for the shape of the b curve rather than as answers:
+
+    b       participation   users     disorder     income of users
+    0.01       0.9051       0.9595    0.0544          0.675
+    0.03       0.7456       0.7569    0.0114          0.544
+    0.05       0.0690       0.0694    0.000327        0.477
 
 Targets: participation 0.0890, disorder 0.0368.
 
 **b alone cannot land both.** Participation crosses its target near b = 0.047;
 the disorder crosses ITS target near b = 0.015. Onset is
 `1 - exp(-lambda*quantity)` and b sets the quantity, so the two moments are one
-margin and need two instruments. Hence the pair grid.
-
-Remaining: 0.045 and 0.047 to finish the b curve, then b held at 0.047 while
-lambda goes 2.25, 7.5 and 25 (x10, x33, x111). Raising lambda moves
-experimenters into the disorder and pulls participation DOWN, so b comes back
-down in a second round. Measure lambda's response at fixed b first, then
-re-solve for b: two rounds of five points, not a blind two dimensional grid.
+margin and need two instruments. That is why lambda joined the search.
 
 ## The order of work the author has set
 
