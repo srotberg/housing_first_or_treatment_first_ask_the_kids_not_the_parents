@@ -29,8 +29,8 @@ cd "$(dirname "$0")"
 # life ridge cross (code/ridge_solve.py); the rest is the vector generation one
 # held fixed.
 declare -A P=(
-    [addiction_scalar_1]=0.02457
-    [value_of_life]=35.09
+    [addiction_scalar_1]=0.02609
+    [value_of_life]=34.99
     [lambda_addiction]=1.5
     [relative_share_of_addiction_1]=0.38
     [size_homelessness]=0.2128
