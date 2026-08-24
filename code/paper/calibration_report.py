@@ -323,31 +323,41 @@ def main():
         key = (label, target_name)
         if key in seen:
             i = seen[key]
-            g, nm, mo, ta, cl, vv, st = rows[i]
+            g, nm, mo, ta, cl, vv, st, lb = rows[i]
             rows[i] = (g, nm + '+' + name, mo, ta, cl or clears,
-                       vv if vv is not None else val, st or status)
+                       vv if vv is not None else val, st or status, lb)
             continue
         seen[key] = len(rows)
-        rows.append((gap, name, model, target, clears, val, status))
+        rows.append((gap, name, model, target, clears, val, status, label))
 
     rows.sort(reverse=True)
     # THE UNREPORTABLE ONES ARE ROWS TOO, at the foot with a status rather than
     # in a footnote, because they are calibrated and moving like the rest.
     for name, model_expr, target_expr in missing:
         rows.append((-1.0, name, None, None, False,
-                     values.get(PARAM_NAME.get(name, name)), 'no scalar moment'))
+                     values.get(PARAM_NAME.get(name, name)), 'no scalar moment',
+                     None))
 
+    # THE MOMENT IS NAMED, not just valued. A table of parameter, value, model
+    # and target says which numbers disagree but not what the parameter is
+    # being asked to match, and the name is the only thing that says whether
+    # the pairing is the intended one -- which is how h_2 was found chasing the
+    # employed share of the homeless while the ladder's curvature ran on the
+    # smallest size share.
     w = max(len(r[1]) for r in rows) + 2
-    print(f'{"parameter":{w}s} {"value":>12s} {"model":>13s} {"target":>13s} '
-          f'{"off by":>9s}  status')
-    print('-' * (w + 62))
-    for gap, name, model, target, clears, val, status in rows:
+    mw = max([len(r[7]) for r in rows if r[7]] + [len('moment')]) + 2
+    print(f'{"parameter":{w}s} {"value":>12s} {"moment":{mw}s} '
+          f'{"model":>13s} {"target":>13s} {"off by":>9s}  status')
+    print('-' * (w + mw + 63))
+    for gap, name, model, target, clears, val, status, label in rows:
         v = '--' if val is None else f'{val:.6g}'
         mo = '--' if model is None else f'{model:.6g}'
         ta = '--' if target is None else f'{target:.6g}'
         off = '--' if model is None else f'{gap*100:.1f}%'
-        print(f'{name:{w}s} {v:>12s} {mo:>13s} {ta:>13s} {off:>9s}  {status}')
-    print('-' * (w + 62))
+        lb = '--' if label is None else label
+        print(f'{name:{w}s} {v:>12s} {lb:{mw}s} '
+              f'{mo:>13s} {ta:>13s} {off:>9s}  {status}')
+    print('-' * (w + mw + 63))
     live_rows = [r for r in rows if r[2] is not None]
     print(f'{sum(1 for r in live_rows if r[4])} of {len(live_rows)} on target, '
           f'{sum(1 for r in live_rows if not r[4] and r[0] <= 0.03)} within three per cent'
