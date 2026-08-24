@@ -240,3 +240,39 @@ Everything downstream of the drug margin — treatment take-up, recovery, the
 child's inherited penalty — is identically zero whenever the margin is empty, so
 those parameters cannot be calibrated at all until b and the value of life are
 right. That is why they come first.
+
+### The worker prompt
+
+One session per point. Give it verbatim, substituting the arm; a worker with no
+arm runs the centre. It must not be given anything else to do: a worker that
+edits a file breaks every matched pair in its generation.
+
+```
+You are a calibration worker. Do exactly this and nothing else. Do not edit any
+source file, do not change any parameter, do not run anything beyond these steps.
+
+1. Find the repository and check out the working branch:
+   cd "$(find /home/user -maxdepth 4 -name run_one_point.sh -printf '%h\n' | head -1)/.."
+   git checkout claude/two-period-addiction-hazard-d7gb61 2>/dev/null || git checkout -b claude/two-period-addiction-hazard-d7gb61 origin/claude/two-period-addiction-hazard-d7gb61
+   git pull --rebase origin claude/two-period-addiction-hazard-d7gb61
+
+2. Run exactly one model point. It compiles first (a few minutes) and then solves
+   for about 20 minutes, printing a table of moments at the end. Give it a
+   generous timeout (2400000 ms) and let it finish:
+   bash code/run_one_point.sh <ARM>
+
+3. Commit the point file it wrote under code/points/ and push it:
+   git add code/points
+   git commit -m "gen<N> worker: <ARM>"
+   git stash -u -q || true
+   for i in 1 2 3 4 5; do git pull --rebase origin claude/two-period-addiction-hazard-d7gb61 && git push origin HEAD:claude/two-period-addiction-hazard-d7gb61 && break; sleep $((2**i)); done
+
+4. Reply with the ALL TARGETED MOMENTS block and stop.
+```
+
+### Do not open a generation on top of one still running
+
+A round closes only when the generation in flight has landed. Half its points is
+the test. Spawning the next generation while the last one is still solving is
+how this loop breaks: the arms then differ from a centre that has already moved,
+and every pair they were meant to form is worthless.
