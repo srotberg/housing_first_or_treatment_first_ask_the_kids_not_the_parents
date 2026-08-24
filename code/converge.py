@@ -127,7 +127,21 @@ B_ELASTICITY = -4.0     # d ln(users) / d ln(b), the slope every populated slice
 # interpolates between 0.15 and 0.3135. Left as an author setting rather than a
 # secant because the moment is conditional on the disordered population, which
 # is still moving; when lambda settles this should be re-read and released.
-AUTHOR_SET = {'lambda_addiction': 4.5,
+#
+# lambda_addiction and addiction_scalar_1: SOLVED TOGETHER, 24 August, by a ridge
+# that held the user rate on target while lambda moved. At lambda 9, b 0.0215
+# gives 7.66 per cent using against a target of 8.9 and a disordered share of
+# 0.4033 against 0.413 -- both within a few per cent at the same point, after
+# five generations in which the share sat 94 per cent low. Interpolating the
+# remaining gap on users, between b 0.0215 (7.66 per cent) and 0.0243 (2.89 per
+# cent), gives b 0.0211 and a share near 0.42.
+#
+# The reading that lambda had no traction was taken entirely at lambda 1.5. The
+# reading that the share flattened short of target was taken at points whose own
+# user rate was two to six times off, and correcting them with an assumed
+# exponent was worse than measuring them.
+AUTHOR_SET = {'lambda_addiction': 9.0,
+              'addiction_scalar_1': 0.0211,
               'utility_cost_of_treatment': 0.268}
 #
 # utility_cost_of_treatment: probed to the model's own ceiling on the author's
@@ -138,8 +152,12 @@ AUTHOR_SET = {'lambda_addiction': 4.5,
 # extrapolated to a claim about a 500-fold move, on a response that is flat and
 # then falls off a cliff, which is the one shape this model keeps producing. The
 # highest value ever run is 0.15. These probe 1, 3 and 10.
-AUTHOR_PROBE = {'lambda_addiction': (9.0, 18.0, 30.0, 60.0),
-                'utility_cost_of_treatment': (1.0, 3.0, 10.0)}
+# CLEARED once both questions were answered. The lambda probes ran to 60 and the
+# treatment probes to the model's ceiling of 10; both instruments turned out to
+# reach their targets comfortably, so continuing to spend sessions on them buys
+# nothing. Their compensation had also gone stale -- it was still proposing b
+# near 0.005 for a lambda 9 arm, which puts the whole population back on drugs.
+AUTHOR_PROBE = {}
 
 ON_TARGET = 0.03        # a moment this close to its target needs no arm at all
 ARM_MIN, ARM_MAX = 1.15, 3.0
