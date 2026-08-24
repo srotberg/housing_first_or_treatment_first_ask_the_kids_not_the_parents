@@ -1638,10 +1638,10 @@ best available trial looked for and did not find.
 
 \paragraph{Death risk.}\label{sec:fdeath} Survival is
 \begin{equation}\label{eq:fsurv}
-\phi(j,h',d,m,\tau)=\bar\phi(j)^{\,
+\new{\phi(j,h',d,m,\tau)=\bar\phi(j)^{\,
 \kappa_{\phi H}(j)^{\mathbf{1}\{h'=h_1\}}\,
 \kappa_{\phi d}^{\mathbf{1}\{d=1\}\mathbf{1}\{\tau=0\}}\,
-\kappa_{\phi m}^{\mathbf{1}\{m=1\}}},
+\kappa_{\phi m}^{\mathbf{1}\{m=1\}}}},
 \end{equation}
 with $\bar\phi(j)$ the baseline survival age profile and
 \new{$\kappa_{\phi H}(j)$ an age-varying multiplier and $\kappa_{\phi d}$ and
@@ -1686,17 +1686,18 @@ as a profile. What falls with age is the ratio of death \emph{probabilities},
 and that falls on its own once a fixed hazard ratio meets a rising baseline,
 so imposing a declining profile on top would count the same compression twice.}
 \begin{equation}\label{eq:fhaz}
-\kappa_{\phi H}(j) = \max\Big\{1,\ \frac{RR(j)}{(1-s)+s\,\kappa_{\phi d}}\Big\}.
+\new{\kappa_{\phi H}(j) = \max\Big\{1,\ \frac{RR(j)}{(1-s)+s\,\kappa_{\phi d}}\Big\}}.
 \end{equation}
 The denominator is the average mortality multiplier in Baggett's population:
 a share $1-s$ of it carries homelessness alone and a share $s$ carries the SUD as
 well. Dividing the observed ratio by it leaves the homelessness effect on its
 own.
 
-$\bar\kappa_{\phi d}$ is assigned from the literature on all-cause
+\new{$\kappa_{\phi d}$ is assigned from the literature on all-cause
 standardised mortality ratios for opioid use disorder, which report values
 between $6$ and $10$ (Degenhardt et al., 2011; Hser et al., 2017; Larney et al.,
-2020),.
+2020). Those are ratios of rates, which is why it enters as an exponent on
+survival rather than as a factor on the death probability.}
 
 $\kappa_{\phi m}$ carries no age argument because the data give it basically
 none. Olfson et al.\ (2015) give all-cause standardised mortality ratios for schizophrenia of $3.6$, $3.4$ and $4.0$
@@ -2234,18 +2235,20 @@ $\lambda_d$ that converts an extra voucher under Housing First into a higher
 SUD rate that Treatment First then attempts to cure. Its value is chosen so the model generates the share
 of adults carrying a SUD, $@@q_lambda_d@@$ percent among those aged $26$
 and over in NSDUH 2024.
-\item[$\bar\kappa_{\phi d}$, increased mortality with a SUD.] This is the parameter the whole
+\item[\new{$\kappa_{\phi d}$}, increased mortality with a SUD.] This is the parameter the whole
 paper turns on. Mortality truncates the value of life for a user, which
 hits households with the highest life values hardest and thus reverses the income
 gradient, making the poor the users rather than the rich. When it rises,
 the private cost rises, and the externality rises
 with it, since a child born to a parent who died with a SUD has a lower
 value of life. Both policies reduce these deaths, Treatment First by curing
-and Housing First too, because recovery is less likely when homeless. It is calibrated externally, at the midpoint of the
-standardised mortality ratios for SUD in Hjorth\o j et al.\ (2023), which run six to
-ten, with the age profile from CDC WONDER 2023.
+and Housing First too, because recovery is less likely when homeless. \new{It is set externally, at the midpoint of the
+standardised mortality ratios for SUD in Hjorth\o j et al.\ (2023), which run six
+to ten, and it carries no age profile: it is a ratio of mortality rates, so it
+multiplies the hazard, and the ratio of death \emph{probabilities} it implies
+falls with age on its own as the baseline rises.}
 \item[$\aleph$, the flow value of being alive.] $\aleph$ is the other half
-of the mortality mechanism: $\bar\kappa_{\phi d}$ sets how much a SUD raises the chance of dying and
+of the mortality mechanism: \new{$\kappa_{\phi d}$} sets how much a SUD raises the chance of dying and
 $\aleph$ sets what the life being lost is worth. Increase it and the private
 value of every life either policy saves rises, and use falls, so the externality
 falls. Its
@@ -2308,7 +2311,7 @@ of a voucher. Baggett et al.\ (2013) give race
 adjusted mortality ratios for homeless adults of about $9.1$ at ages 25 to 44,
 falling to $1.1$ at 65 to 84. Those are totals for a population most of which also
 carries a SUD, so it is set externally age by age net of that composition, which is
-why it is derived jointly with $\bar\kappa_{\phi d}$ rather than read off directly,
+why it is derived jointly with \new{$\kappa_{\phi d}$} rather than read off directly,
 as set out in Section~\ref{sec:fdeath} at~\eqref{eq:fhaz}.
 \item[$\kappa_{ueH}$, the employment multiplier for homelessness.]
 This parameter decides how much more likely a homeless household is to lose
