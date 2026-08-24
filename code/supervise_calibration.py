@@ -296,6 +296,36 @@ REPORT_NAME = {
 }
 
 
+def report_rows(text):
+    """(parameter, gap in per cent) for each row of the report's table.
+
+    COUNTING COLUMNS BROKE ONCE AND BROKE SILENTLY. Both readers of this table
+    were written as `^(\\S+)\\s+\\S+\\s+\\S+\\s+([\\d.]+)%`, three fields and then the
+    gap. A `value` column was added to the report and a `moment` column after
+    it, and neither regex was touched: they matched NOTHING from that day on,
+    so report_gaps returned an empty dict and note_drift wrote no journal row
+    at all. Nothing failed, the supervisor simply stopped seeing gaps, which is
+    the machinery that catches an adjuster moving too fast or too slow.
+
+    So find the gap by what it IS -- the field ending in a per cent sign -- and
+    the parameter by its position at the head of the line. A row with no per
+    cent is a parameter with no scalar moment and has no gap to report.
+    """
+    out = []
+    for line in text.splitlines():
+        parts = line.split()
+        if len(parts) < 2 or not parts[0][:1].isalpha():
+            continue
+        pct = [x for x in parts[1:] if x.endswith('%')]
+        if not pct:
+            continue
+        try:
+            out.append((parts[0], float(pct[-1].rstrip('%'))))
+        except ValueError:
+            continue
+    return out
+
+
 def report_gaps():
     """Each parameter's current gap in per cent, from the report itself."""
     if not os.path.exists(REPORT):
@@ -303,12 +333,10 @@ def report_gaps():
     r = subprocess.run([sys.executable, REPORT, LOG], capture_output=True,
                        text=True, cwd=os.path.dirname(REPORT))
     out = {}
-    for line in r.stdout.splitlines():
-        m = re.match(r'^(\S+)\s+\S+\s+\S+\s+([\d.]+)%', line)
-        if m:
-            # Rows are keyed on the moment, so one row can name two parameters.
-            for nm in m.group(1).split('+'):
-                out[nm] = float(m.group(2))
+    # Rows are keyed on the moment, so one row can name two parameters.
+    for name, gap in report_rows(r.stdout):
+        for nm in name.split('+'):
+            out[nm] = gap
     return out
 
 
@@ -731,10 +759,9 @@ def checkpoint(loops):
         # median on its own: the series read 60.3, 31.4, 40.8, 64.4, 30.6, which
         # is that alternation and not the calibration. It is excluded from the
         # median and reported in its own column.
-        named = re.findall(r'^(\S+)\s+\S+\s+\S+\s+([\d.]+)%\s*$',
-                           r.stdout, re.M)
-        omega = next((float(v) for k, v in named if k == 'weight_on_child'), None)
-        gaps = [float(v) for k, v in named if k != 'weight_on_child']
+        named = report_rows(r.stdout)
+        omega = next((v for k, v in named if k == 'weight_on_child'), None)
+        gaps = [v for k, v in named if k != 'weight_on_child']
         m = re.search(r'(\d+) of (\d+) on target', r.stdout)
         if gaps:
             gaps.sort()

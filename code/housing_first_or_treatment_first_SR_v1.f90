@@ -225,7 +225,13 @@
         ! the second stage the note describes and which is still not implemented.
         ! This is the stationary distribution's version of the same ratio.
         real(8), parameter :: milby_recovery_ratio_data=6.60d0/4.48d0
-        real(8) :: mu_homeless_adjuster=5*10.d0**(-2)
+        ! THE SAME MISMATCH AS kappa_uem'S, from the other direction. The
+        ! moment is the RATIO of recovery housed to recovery homeless, which
+        ! sits near 1.47, so its gaps are hundredths; mu_homeless is of order
+        ! 0.7. At 0.05 the step was 0.002, three tenths of one per cent a
+        ! loop, which cannot move the parameter anywhere it is not already.
+        ! At 0.5 a gap of 0.04 moves it three per cent a loop.
+        real(8) :: mu_homeless_adjuster=5*10.d0**(-1)
         real(8) :: distance_mu_homeless=1
         real(8) :: stopping_rule_mu_homeless=10.d0**(-2)
 
@@ -690,7 +696,16 @@
 
         real(8) :: distance_kappa_uem
         real(8) :: stopping_rule_kappa_uem=10.d0**(-3)
-        real(8) :: kappa_uem_adjuster=2*10.d0**(0)
+        ! TWENTY AND NOT TWO, because the moment and the parameter are two
+        ! orders of magnitude apart in scale and the step multiplies their
+        ! difference. kappa_uem runs in the tens; the employment rate given
+        ! serious mental illness (SMI) is a RATE, so its gap cannot exceed
+        ! one and in practice sits near 0.05. At two the step was 0.11 on a
+        ! parameter of 23.5, four tenths of one per cent a loop, so a gap of
+        ! 17.6 per cent needed forty loops to close and the bracket read as
+        ! frozen rather than slow. At twenty the same gap moves it 4.5 per
+        ! cent a loop, and the largest gap a rate can produce moves it 15.
+        real(8) :: kappa_uem_adjuster=2*10.d0**(1)
         real(8), parameter :: employment_rate_given_smi_data=0.30
 
         real(8) :: distance_rho_m
