@@ -8,7 +8,7 @@ written once and fires for days; a file in the repository is updated by the
 same commit as the thing it describes. Read this first, and update it when the
 state changes rather than editing the routines.
 
-Last updated 24 August 15:40 UTC.
+Last updated 24 August 15:56 UTC.
 
 ## What is running
 
@@ -51,22 +51,53 @@ produce no sensible use measures nothing.
 **Then**: h_1 against the homelessness rate, once there is a population to be
 homeless.
 
+## The two moments b and lambda have to land, and what they are
+
+**b owns TOTAL USERS, not the experimenters.** `participation_rate_data` = 0.0890
+is NSDUH 2024 `svyrdudany` in (1,2,3), ANY drug use disorder INCLUDING MILD,
+ages 26 and over: the data appendix calls it "whether a household uses". The
+update used to compare it against `model_exprimenters`, which excludes the
+disordered, and so asked for 8.90 per cent mild users PLUS 3.68 per cent
+disordered, 12.58 in total against a survey figure of 8.90. Fixed; b now
+brackets on `model_total_drug_users`.
+
+    total users            -> 0.0890
+    disorder               -> 0.0368
+    experimenters implied  -> 0.0522
+    disordered share of users -> 0.4130
+
+**lambda owns the disordered share of users**, 0.4130. That is the cleanest way
+to read it: the share is near zero when lambda is too small and near one when it
+is too large, and it does not depend on getting b right first.
+
+Two declaration comments quote 0.1013 and 0.0454 as the current cuts. Those are
+the EIGHTEEN and over figures; the model's universe is 26 and over, where the
+same variable gives 0.0890 and 0.0368, so the VALUES are right and the comments
+are behind. One of them reads as an instruction to change 0.0368 to 0.0454. Do
+not act on it; it is flagged for the author.
+
 ## The curve measured at the BANKED parameters
 
 These three ran before the staging, at lambda 0.225139 and the banked vector,
 and are kept for the shape of the b curve rather than as answers:
 
-    b       participation   users     disorder     income of users
-    0.01       0.9051       0.9595    0.0544          0.675
-    0.03       0.7456       0.7569    0.0114          0.544
-    0.05       0.0690       0.0694    0.000327        0.477
+    b       total users   disorder    disordered share   income of users
+    0.01       0.9595      0.0544         0.0567             0.675
+    0.03       0.7569      0.0114         0.0150             0.544
+    0.05       0.0694      0.000327       0.0047             0.477
 
-Targets: participation 0.0890, disorder 0.0368.
+Total users cross 0.0890 near **b = 0.0474** on this curve. The disordered share
+is nowhere near 0.4130 anywhere on it, which is what lambda is for.
 
-**b alone cannot land both.** Participation crosses its target near b = 0.047;
-the disorder crosses ITS target near b = 0.015. Onset is
-`1 - exp(-lambda*quantity)` and b sets the quantity, so the two moments are one
-margin and need two instruments. That is why lambda joined the search.
+## Round 1, staged, everything else at declared values
+
+    b        lambda   total users   disorder   disordered share
+    0.005     4.5        0.9997      0.8127        0.8130
+
+lambda 4.5 saturates the hazard at a low b, where the quantity used is large.
+The remaining points are 0.01, 0.03, 0.04, 0.05 at the same lambda; 0.03 to 0.05
+is where total users are the right size, so it is those three that read lambda
+off the disordered share.
 
 ## The order of work the author has set
 
