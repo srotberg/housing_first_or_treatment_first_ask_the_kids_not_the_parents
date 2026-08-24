@@ -262,8 +262,14 @@ def emitted():
             k, _, v = line[7:].partition('=')
             centre[k] = float(v)
         elif line.startswith('ARM '):
-            k, _, v = line[4:].partition('=')
-            arms.append((k, float(v)))
+            # An arm may set more than one parameter: a compensated arm moves b
+            # as well, and recording only the parameter under test made every
+            # such point unmatchable and so permanently "missing".
+            spec = {}
+            for tok in line[4:].split():
+                k, _, v = tok.partition('=')
+                spec[k] = float(v)
+            arms.append(spec)
     return centre, arms
 
 
@@ -322,13 +328,18 @@ def coverage(pts, centre, arms):
     a MISSING arm, not as a parameter that happens to have no secant.
     """
     landed, missing = [], []
-    for key, value in arms:
+    for spec in arms:
         want = dict(centre)
-        want[key] = value
+        want.update(spec)
+        # SIX SIGNIFICANT DIGITS IS THE PRECISION OF THE WHOLE PIPELINE. The
+        # runner writes its defaults with %.6g, so every point's vector carries
+        # six digits; comparing against a ten-digit record with a 1e-9 tolerance
+        # made every arm mismatch on the nine parameters it never touched, and
+        # the round read a full generation as "0 of 37 came back".
         hit = any(set(v) == set(want)
-                  and all(abs(v[k] - want[k]) <= 1e-9 * max(1.0, abs(want[k])) for k in want)
+                  and all(abs(v[k] - want[k]) <= 1e-5 * max(1.0, abs(want[k])) for k in want)
                   for v, _m, _n in pts)
-        (landed if hit else missing).append((key, value))
+        (landed if hit else missing).append(spec)
     return landed, missing
 
 
@@ -343,8 +354,8 @@ def main():
             print('These arms were sent and never landed. They are NOT parameters '
                   'without a secant; they are points that were never measured, and '
                   'the fleet has to be asked why before the round is closed:')
-            for key, value in missing:
-                print('   MISSING  %s=%g' % (key, value))
+            for spec in missing:
+                print('   MISSING  ' + ' '.join('%s=%g' % kv for kv in sorted(spec.items())))
         print()
     here = centre_now()
     data = ridge_solve.measured()
@@ -373,6 +384,7 @@ def main():
                 or abs(math.log(max(new, 1e-12) / max(now, 1e-12))) > 0.05:
             arms.append(key)
 
+    arms_emitted = []
     print('\nTHE NEXT GENERATION: centre, then one arm per parameter still moving.')
     print('\n  bash code/run_one_point.sh            # centre')
     for key in arms:
@@ -385,6 +397,7 @@ def main():
                 b = compensation(key, side, pts, moved['addiction_scalar_1'])
                 if b:
                     extra = ' addiction_scalar_1=%.6g' % b
+            arms_emitted.append('%s=%.6g%s' % (key, side, extra))
             print('  bash code/run_one_point.sh %s=%.6g%s' % (key, side, extra))
 
     if '--write' in sys.argv:
@@ -398,13 +411,9 @@ def main():
         new_centre.update(moved)
         with open(GENFILE, 'w') as fh:
             for key in sorted(new_centre):
-                fh.write('CENTRE %s=%.10g\n' % (key, new_centre[key]))
-            for key in arms:
-                v = moved[key]
-                for side in (clip(key, v * ARM), clip(key, v / ARM)):
-                    if abs(math.log(max(side, 1e-12) / max(v, 1e-12))) < 0.02:
-                        continue
-                    fh.write('ARM %s=%.10g\n' % (key, side))
+                fh.write('CENTRE %s=%.6g\n' % (key, new_centre[key]))
+            for spec in arms_emitted:
+                fh.write('ARM %s\n' % spec)
         print('\nrun_one_point.sh re-centred; the generation is recorded in '
               'GENERATION.txt so the next round can check that it came back.')
     else:
