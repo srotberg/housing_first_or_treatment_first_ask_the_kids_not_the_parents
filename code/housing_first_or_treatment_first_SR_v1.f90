@@ -30463,7 +30463,16 @@
                         distance_relative_share_of_housing=&
                             abs(model_avg_housing_spending_renters(1)-avg_rent_to_income_data)
                                     
-                        write(*,*) "model_avg_housing_spending_all=", model_avg_housing_spending_renters(1)
+                        ! THE LABEL SAID "all" AND THE VARIABLE IS THE RENTERS
+                        ! SERIES, and the other print of that label further down
+                        ! the loop really is the all households one. Two different
+                        ! quantities under one name, differing by more than a
+                        ! factor of two, and a reading keyed on the label picked
+                        ! whichever came first: it made gamma's moment look like
+                        ! 0.45 against a target of 0.268 when it is 0.19, which
+                        ! reverses which way gamma has to move.
+                        write(*,*) "model_avg_housing_spending_renters=", &
+                            model_avg_housing_spending_renters(1)
                             
                     else
                     
