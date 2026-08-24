@@ -1788,6 +1788,31 @@
         real(8), parameter :: size_homelessness_damping=0.5
         real(8), parameter :: size_homelessness_growth=1.2
         real(8), parameter :: size_homelessness_adjuster_floor=10.d0**(-2)
+
+        ! THE PARAMETER'S OWN FLOOR IS NOT ZERO, AND IT CANNOT BE.
+        !
+        ! h_1 is housing_size(0)*size_homelessness, and housing enters utility
+        ! as h**((1-sigma)*relative_share_of_housing) with no shifter. At a risk
+        ! aversion above one that exponent is NEGATIVE, so h_1 = 0 is not a very
+        ! small dwelling, it is MINUS INFINITY: homelessness stops being a bad
+        ! outcome and becomes an impossible one, and the model reports zero
+        ! homeless whatever else is true of it. The sweep measured exactly
+        ! 0.000000 homeless at b = 10^-4 and again at b = 0.12 with the
+        ! parameter banked at zero, which is not a result about housing, it is
+        ! the model refusing to price the street. Zero was the lower end of the
+        ! update's own clamp, so the traverse was allowed to walk into it.
+        real(8), parameter :: size_homelessness_floor=10.d0**(-2)
+
+        ! AND ONE STEP MAY NOT CROSS THE RANGE. The adjuster is twenty and the
+        ! gap is a rate: at a gap of 0.088 the step is 1.76 on a parameter
+        ! bounded in [0.01,0.9], twice the whole range, so the first step lands
+        ! on a bound whatever the gap is and the damping never gets to bite.
+        ! That is the 0.531 to 0 to 0.0798 to 0 recorded above, and it happened
+        ! again at 0.3747 to 0. Capping the move leaves nine loops to traverse
+        ! the range, which is the pace the adjuster was sized for in the first
+        ! place, and the damping then works on top of it as intended.
+        real(8), parameter :: size_homelessness_max_step=0.1
+        real(8) :: size_homelessness_step_1=0
         real(8) :: gap_size_homelessness_1=0,previous_gap_size_homelessness=0
         integer :: have_gap_size_homelessness=0
         real(8) :: distance_size_homelessness
@@ -29408,6 +29433,18 @@
 
             end if
 
+            ! AND CLAMP WHAT WAS READ, because a checkpoint written before this
+            ! floor existed carries the degenerate zero and would reinstate it
+            ! on the next resume, silently, having just been told the floor is
+            ! 0.01. The banked state at the time this was written held exactly
+            ! that.
+            if (size_homelessness<size_homelessness_floor) then
+                write(*,*) "size_homelessness read as", size_homelessness,&
+                    " which prices the street at minus infinity; raised to",&
+                    size_homelessness_floor
+                size_homelessness=size_homelessness_floor
+            end if
+
         close(72)
 
         ! CLAMP THETA AND b INTO THEIR BAND ON RESUME. The bounds in the update
@@ -29461,7 +29498,7 @@
 
                 case ("size_homelessness")
                     write(*,*) "HANDOVER size_homelessness:", size_homelessness, "->", handover_value
-                    size_homelessness=handover_value
+                    size_homelessness=max(min(handover_value,0.9d0),size_homelessness_floor)
 
                 case ("smallest_rental_relative_to_lowest_income")
                     ! BOTH, because the ratio is what the bracket moves and the
@@ -32248,8 +32285,13 @@
                         ! attractive as the traverse can need: the current
                         ! value is 0.10, so this binds on nothing today and
                         ! stops the degenerate case if the update ever runs.
-                        size_homelessness=max(min(size_homelessness-size_homelessness_adjuster*&
-                            gap_size_homelessness_1,0.9d0),0.d0)
+                        size_homelessness_step_1=size_homelessness-&
+                            size_homelessness_adjuster*gap_size_homelessness_1
+                        size_homelessness_step_1=max(min(size_homelessness_step_1,&
+                            size_homelessness+size_homelessness_max_step),&
+                            size_homelessness-size_homelessness_max_step)
+                        size_homelessness=max(min(size_homelessness_step_1,0.9d0),&
+                            size_homelessness_floor)
 
                         ! Say so if the traverse has run out of room. At a street
                         ! worth as much as housing_size(0) and free, a model still

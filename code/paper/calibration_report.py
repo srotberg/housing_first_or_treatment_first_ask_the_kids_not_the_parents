@@ -131,7 +131,21 @@ PARAM_NAME = {
 
 
 def param_values(path):
-    """Each parameter's own value, as the model last printed it.
+    """Each parameter's value AT THE SOLVE, and the value the update moved it to.
+
+    THE VALUE COLUMN WAS ONE UPDATE AHEAD OF THE MODEL COLUMN, and the row it
+    made was unreadable. A loop prints its moments and THEN its updated
+    parameters, and this read the last print in the file, so the table paired a
+    post-update parameter with the moment its pre-update value had produced.
+    It showed size_homelessness = 0 beside homelessness of 9.2 per cent, which
+    reads as a parameter that does nothing; what happened was that 9.2 per cent
+    was produced at 0.3747 and the update then slammed it to zero in a single
+    step. The author caught it by noticing the pair could not both be true.
+
+    So split on the aggregation, which runs before the moments and long before
+    the update block: the last print at or before it is the value that produced
+    what is reported, and the last print overall is what the next loop starts
+    from. A sweep log has no update block, so the two coincide.
 
     ANCHORED, because the model prints distance_X= directly under X= and an
     unanchored name is a substring of its own distance line. Reading the
@@ -143,17 +157,47 @@ def param_values(path):
         txt = open(path, errors='ignore').read()
     except OSError:
         return {}
-    out = {}
+    series = {}
     for m in re.finditer(r'(?m)^\s*([a-z_][a-z_0-9]*)=\s*'
                          r'([-+]?[0-9]*\.?[0-9]+(?:[EDed][-+]?[0-9]+)?)\s*$', txt):
         name, v = m.group(1), m.group(2)
         if name.startswith(('distance_', 'previous_', 'stopping_rule_')):
             continue
         try:
-            out[name] = float(v.replace('D', 'E').replace('d', 'e'))
+            val = float(v.replace('D', 'E').replace('d', 'e'))
         except ValueError:
-            pass
-    return out
+            continue
+        series.setdefault(name, []).append((m.start(), val))
+    return txt, series
+
+
+def value_at(series, txt, name, label):
+    """(value that produced the reported moment, value after the update).
+
+    NEITHER A FIXED ANCHOR NOR THE MOMENT'S OWN LINE WORKS, and both were tried.
+    The model computes its moments during the solve, runs the update block,
+    and only THEN prints the moments, so in the log the new parameter appears
+    ABOVE the moment its old value produced: size_homelessness printed 0.37466
+    up to line 4928, 0 at 4931, and model_fraction_homeless = 0.0921 at 4997.
+    Anchoring on the moment therefore picks the post-update value, which is the
+    error this was written to remove.
+
+    What is reliable is that the update block writes each parameter ONCE, at the
+    end, so the last CHANGE in the log is the update and the value before it is
+    the value the solve ran at. Collapse the series to consecutive distinct
+    values: the last is what the next loop starts from, the one before it is
+    what produced the moments being reported. A parameter that never moved has
+    one value and the two coincide.
+    """
+    del txt, label
+    got = series.get(name)
+    if not got:
+        return None, None
+    seq = []
+    for _, v in got:
+        if not seq or seq[-1] != v:
+            seq.append(v)
+    return (seq[-2] if len(seq) >= 2 else seq[-1]), seq[-1]
 
 
 def zero_adjusters():
@@ -277,7 +321,7 @@ def main():
 
     live = live_distances(sys.argv[1])
     frozen = zero_adjusters()
-    values = param_values(sys.argv[1])
+    log_txt, series = param_values(sys.argv[1])
 
     rows, held, missing, seen = [], [], [], {}
     for name, (model_expr, target_expr) in sorted(pair.items()):
@@ -332,7 +376,7 @@ def main():
         clears = name in rule and abs(model - target) <= rule[name]
         if clears:
             status = 'ON TARGET'
-        val = values.get(PARAM_NAME.get(name, name))
+        val, nxt = value_at(series, log_txt, PARAM_NAME.get(name, name), label)
 
         # ONE ROW PER MOMENT, NOT PER PARAMETER. Two parameters can be moved by
         # the same moment -- h_2 and rho_d both by the employed share of the
@@ -344,20 +388,24 @@ def main():
         key = (label, target_name)
         if key in seen:
             i = seen[key]
-            g, nm, mo, ta, cl, vv, st, lb = rows[i]
+            g, nm, mo, ta, cl, vv, st, lb, nx = rows[i]
             rows[i] = (g, nm + '+' + name, mo, ta, cl or clears,
-                       vv if vv is not None else val, st or status, lb)
+                       vv if vv is not None else val, st or status, lb,
+                       nx if nx is not None else nxt)
             continue
         seen[key] = len(rows)
-        rows.append((gap, name, model, target, clears, val, status, label))
+        rows.append((gap, name, model, target, clears, val, status, label, nxt))
 
     rows.sort(reverse=True)
     # THE UNREPORTABLE ONES ARE ROWS TOO, at the foot with a status rather than
     # in a footnote, because they are calibrated and moving like the rest.
     for name, model_expr, target_expr in missing:
         rows.append((-1.0, name, None, None, False,
-                     values.get(PARAM_NAME.get(name, name)), 'no scalar moment',
-                     None))
+                     value_at(series, log_txt,
+                              PARAM_NAME.get(name, name), None)[0],
+                     'no scalar moment', None,
+                     value_at(series, log_txt,
+                              PARAM_NAME.get(name, name), None)[1]))
 
     # THE MOMENT IS NAMED, not just valued. A table of parameter, value, model
     # and target says which numbers disagree but not what the parameter is
@@ -367,18 +415,24 @@ def main():
     # smallest size share.
     w = max(len(r[1]) for r in rows) + 2
     mw = max([len(r[7]) for r in rows if r[7]] + [len('moment')]) + 2
-    print(f'{"parameter":{w}s} {"value":>12s} {"moment":{mw}s} '
+    print(f'{"parameter":{w}s} {"value":>12s} {"-> after":>12s} {"moment":{mw}s} '
           f'{"model":>13s} {"target":>13s} {"off by":>9s}  status')
-    print('-' * (w + mw + 63))
-    for gap, name, model, target, clears, val, status, label in rows:
+    print('-' * (w + mw + 76))
+    for gap, name, model, target, clears, val, status, label, nxt in rows:
         v = '--' if val is None else f'{val:.6g}'
+        if nxt is None:
+            nv = '--'
+        elif val is not None and abs(nxt - val) <= 1e-12 * max(abs(val), 1.0):
+            nv = '='
+        else:
+            nv = f'{nxt:.6g}'
         mo = '--' if model is None else f'{model:.6g}'
         ta = '--' if target is None else f'{target:.6g}'
         off = '--' if model is None else f'{gap*100:.1f}%'
         lb = '--' if label is None else label
-        print(f'{name:{w}s} {v:>12s} {lb:{mw}s} '
+        print(f'{name:{w}s} {v:>12s} {nv:>12s} {lb:{mw}s} '
               f'{mo:>13s} {ta:>13s} {off:>9s}  {status}')
-    print('-' * (w + mw + 63))
+    print('-' * (w + mw + 76))
     live_rows = [r for r in rows if r[2] is not None]
     print(f'{sum(1 for r in live_rows if r[4])} of {len(live_rows)} on target, '
           f'{sum(1 for r in live_rows if not r[4] and r[0] <= 0.03)} within three per cent'
