@@ -30,6 +30,7 @@ import os
 import re
 import shutil
 import signal
+import resource
 import subprocess
 import sys
 import time
@@ -828,6 +829,24 @@ def kill_strays():
                 pass
 
 
+def _child_setup():
+    """Own session, and an unlimited stack.
+
+    THE STACK LIMIT USED TO BE INHERITED from whatever shell happened to start
+    the supervisor, which meant the model ran with an unlimited stack when it
+    was launched by hand after a `ulimit -s unlimited` and with 8 MB when
+    anything else started it. The model puts large automatic arrays on the
+    stack, so the second case is a segfault with no message that looks exactly
+    like a modelling bug. Set it here, where it does not depend on the caller.
+    """
+    os.setsid()
+    try:
+        resource.setrlimit(resource.RLIMIT_STACK,
+                           (resource.RLIM_INFINITY, resource.RLIM_INFINITY))
+    except (ValueError, OSError):
+        pass
+
+
 def launch():
     kill_strays()
     env = dict(os.environ, OMP_NUM_THREADS='4', OMP_STACKSIZE='512M',
@@ -837,7 +856,7 @@ def launch():
     f.flush()
     return subprocess.Popen(['./hftf'], cwd=HERE, stdout=f,
                             stderr=subprocess.STDOUT, env=env,
-                            preexec_fn=os.setsid)
+                            preexec_fn=_child_setup)
 
 
 def verdict():
