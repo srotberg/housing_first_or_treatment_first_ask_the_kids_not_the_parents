@@ -1460,7 +1460,15 @@
         ! uses at all. It cannot restore participation from a floor four orders
         ! of magnitude above where it needs to sit; the update's own comment puts
         ! b at order 1e-8, which is why its step is multiplicative.
-        real(8), parameter :: b_lo=1.d0*10.d0**(-8)
+        ! THE FLOOR IS 10^-10 AND NOT 10^-8, so that it cannot bind at the value
+        ! the author expects b to take. The marginal value of the first unit is
+        ! theta/b, so participation FALLS in b and the floor is the END OF THE
+        ! SCALE WITH THE MOST USE ON IT: a floor sitting inside the plausible
+        ! range refuses exactly the moves the calibration needs and reports
+        ! nothing, which is the failure the ceiling had at 0.05 and which is
+        ! recorded a few lines below. 10^-8 was inside that range, being the
+        ! value b was expected to need; 10^-10 is two decades clear of it.
+        real(8), parameter :: b_lo=1.d0*10.d0**(-10)
         real(8), parameter :: b_hi=1.0d0
 
         real(8) :: gap_addiction_scalar_1=0,previous_gap_addiction_scalar=0
