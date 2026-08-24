@@ -210,3 +210,33 @@ a problem.
   rebuild if `./hftf` is missing or older than the source, then from `code/`:
   `ulimit -s unlimited && setsid nohup python3 sweep_b.py > sweep_b_driver.log 2>&1 < /dev/null &`
 - A point is about twenty minutes, a cold solve each.
+
+## The generation loop (from 24 August)
+
+The calibration no longer advances one parameter at a time. Every round is a
+GENERATION: a centre, plus one arm per parameter, each arm differing from the
+centre in exactly one value. Each point is one worker session solving the model
+once and committing its moments to `code/points/`. Twenty-odd points arrive
+together, so every parameter gets a matched pair and therefore a secant in the
+same twenty minutes.
+
+  python3 code/ridge_solve.py     b and the value of life, solved together
+  python3 code/converge.py        every parameter moved, next generation emitted
+  python3 code/converge.py --write  the runner re-centred on the new vector
+
+**b AND THE VALUE OF LIFE ARE ENTANGLED AND MUST BE SOLVED TOGETHER.** This cost
+a generation to learn. Each of them moves both the drug margin and the value of
+life, so the b that gives 0.089 total users is 0.0277 at a value of life of 30
+and 0.0098 at 120, and the value of life that gives a ratio of 80 is 37.1 at
+b = 0.02 and 27.3 at b = 0.06. Both relations are straight lines in logs. The
+answer is where they cross, and it is on neither line taken alone: reading b off
+one slice and the value of life off another put generation two at b = 0.0096
+when the crossing is at b = 0.0261.
+
+Eighteen points put the crossing at b = 0.0261, value of life 35.0. Ten points
+had put it at 0.0246 and 35.1, so that pair has essentially converged.
+
+Everything downstream of the drug margin — treatment take-up, recovery, the
+child's inherited penalty — is identically zero whenever the margin is empty, so
+those parameters cannot be calibrated at all until b and the value of life are
+right. That is why they come first.
