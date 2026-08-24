@@ -121,7 +121,17 @@ B_ELASTICITY = -4.0     # d ln(users) / d ln(b), the slope every populated slice
 # clean reading. Probed wide here, with b compensating, to settle whether lambda
 # can carry the moment at all.
 AUTHOR_SET = {'lambda_addiction': 4.5}
-AUTHOR_PROBE = {'lambda_addiction': (9.0, 18.0)}
+#
+# utility_cost_of_treatment: probed to the model's own ceiling on the author's
+# instruction of 24 August. Treatment take-up is 252 per cent high and this is
+# the penalty that should push it down. The elasticity measured here, -0.030,
+# was taken between 0.0125 and 0.032 and was then used to argue the parameter
+# could never reach its target -- a derivative over a 2.5-fold range
+# extrapolated to a claim about a 500-fold move, on a response that is flat and
+# then falls off a cliff, which is the one shape this model keeps producing. The
+# highest value ever run is 0.15. These probe 1, 3 and 10.
+AUTHOR_PROBE = {'lambda_addiction': (9.0, 18.0),
+                'utility_cost_of_treatment': (1.0, 3.0, 10.0)}
 
 ON_TARGET = 0.03        # a moment this close to its target needs no arm at all
 ARM_MIN, ARM_MAX = 1.15, 3.0
@@ -158,7 +168,9 @@ BOUNDS = {
     # identical to seventeen figures.
     'lambda_m':                              (0.046, 0.500),
     'probability_of_voucher_benchmark_used': (0.0005, 0.900),
-    'utility_cost_of_treatment':             (0.0001, 5.0),
+    # THE MODEL ACCEPTS TEN; the search had capped itself at five for no reason
+    # the model gives. The highest value ever actually run was 0.15.
+    'utility_cost_of_treatment':             (0.0001, 10.0),
     'penalty_child_addicted':                (0.001, 5.0),
     'penalty_child_homeless':                (0.001, 5.0),
     'smallest_rental_relative_to_lowest_income': (0.001, 0.900),
