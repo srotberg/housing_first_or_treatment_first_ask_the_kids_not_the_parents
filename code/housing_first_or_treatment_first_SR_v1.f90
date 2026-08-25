@@ -756,6 +756,13 @@
         ! age-varying lambda_m, not a different constant.
         real(8) :: lambda_m=0.067
 
+        ! THE TARGET lambda_m IMPLEMENTS, which the table states beside the
+        ! hazard: a fifty per cent chance of recovery within ten years, so
+        ! 1-(1-lambda_m)**10 = 0.50. The Data column of an Ext. row states
+        ! the source's quantity and the Value column the model's, and for
+        ! this row they are a ten year probability and an annual hazard.
+        real(8), parameter :: smi_ten_year_recovery_data=0.50
+
         ! Assigned. Danish registers put the hazard ratio at 1.34 for any SUD
         ! and 2.74 for opioid use disorder; substance induced psychosis converts
         ! at a pooled rate near a quarter (Murrie et al., 2020).

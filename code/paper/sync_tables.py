@@ -30,7 +30,8 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from fortran_consts import constants
-from links import LINKS, UNITS_DIFFER
+from links import LINKS
+from links import DATA_LINKS as LINKS_DATA, UNITS_DIFFER
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 TAB = os.path.normpath(os.path.join(HERE, '..', '..', 'writing', 'tables'))
@@ -112,12 +113,18 @@ def run(freeze=False, dry=False):
                 continue
             x = C[k]
             cols = [4] if _set.group(1) == 'Int' else [4, 6]
+            # THE DATA COLUMN MAY STATE A DIFFERENT QUANTITY, and where it does
+            # links.DATA_LINKS names its own constant. Without this an Ext. row
+            # wrote both columns from one number, so lambda_m's ten year
+            # recovery probability of 50 per cent was overwritten by the annual
+            # hazard that delivers it.
+            xdata = C.get(LINKS_DATA.get(_bare(sym))) if _bare(sym) in LINKS_DATA else None
             changed = False
             for ci in cols:
                 shape = _shape(cells[ci])
                 if shape is None:
                     continue
-                new = _fmt(x, shape)
+                new = _fmt(xdata if (ci == 4 and xdata is not None) else x, shape)
                 if _bare(cells[ci]) != new:
                     changed = True
                 cells[ci] = ' ' + (RED % new if changed else new) + ' '
@@ -126,7 +133,8 @@ def run(freeze=False, dry=False):
             # default, so lambda_m exported as 0.07 while the table beside it
             # printed 0.067, and the prose quoted the rounded one. cells[6]
             # is the Value column and states the same quantity.
-            shape = _shape(cells[4]) or _shape(cells[6]) or (False, 2, False)
+            shape = (_shape(cells[6]) if xdata is not None else None) \
+                or _shape(cells[4]) or _shape(cells[6]) or (False, 2, False)
             nums[name] = _fmt(x, (shape[0], shape[1], False)).replace(r'\%', '')
             # A PERCENT VARIANT FOR EVERY ROW. The tenant's contribution is 0.30
             # in the table and thirty per cent in the sentence beside it, and

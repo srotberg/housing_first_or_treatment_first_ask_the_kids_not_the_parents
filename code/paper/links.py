@@ -81,3 +81,14 @@ UNITS_DIFFER = {
     r'$\aleph$': 'the source gives a value of life in dollars, the model in incomes',
     r'$\sigma_{\ell}$': 'the source gives a Frisch elasticity, the model a curvature',
 }
+
+# A ROW WHOSE DATA COLUMN STATES A DIFFERENT QUANTITY FROM ITS VALUE COLUMN.
+# LINKS above gives one constant per symbol, and for an Ext. row sync_tables
+# writes both columns from it. That is right when the source and the model state
+# the same thing and wrong when they do not: lambda_m's source is a ten year
+# recovery probability and its value is the annual hazard that delivers it, so
+# one constant cannot fill both. Where a symbol appears here, this constant
+# fills the Data column and LINKS fills the Value column.
+DATA_LINKS = {
+    r'$\lambda_m$':             'smi_ten_year_recovery_data',
+}
