@@ -4215,6 +4215,16 @@
 
                 baseline_users_for_gap=model_total_drug_users(1)
 
+                ! THE EVIDENCE HAS TO LAND INSIDE THIS BLOCK. run_one_point.sh
+                ! keeps only the lines between ALL TARGETED MOMENTS and END OF
+                ! MOMENTS, so anything printed elsewhere is discarded and a
+                ! reader of the point file cannot tell a live counterfactual from
+                ! a dead one. omega came back as exactly zero while b moved by a
+                ! factor of 3.7 with omega_c, which cannot both be true, and
+                ! there was no way to see which half was wrong.
+                write(*,*) "OMEGA_DIAG baseline users=", baseline_users_for_gap,&
+                    " child value=", expected_child_value
+
                 child_penalty_off=1
 
                 call solve_value_function_and_policy_functions(1)
@@ -4222,6 +4232,9 @@
                 call stationary_equilibrium_statistics(1)
 
                 drug_users_without_child=model_total_drug_users(1)
+
+                write(*,*) "OMEGA_DIAG counterfactual users=", drug_users_without_child,&
+                    " child value=", expected_child_value
 
                 child_penalty_off=0
 
