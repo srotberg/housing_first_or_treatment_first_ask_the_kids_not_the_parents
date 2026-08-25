@@ -264,7 +264,24 @@ def initial(pts):
     # reflection moves toward the best vertex regardless -- so it is spent on
     # reuse, with the loss as the tie-break.
     base = max(pts, key=lambda r: (_reuse(r, pts), -r[2]))
-    verts = [(base[0], base[2])]
+    # THE OVERRIDE APPLIES TO WHATEVER ANCHOR IS CHOSEN, not only to a seed used
+    # when nothing is measured. It was written into the no-points-measured branch
+    # alone, so the moment a handful of points carried the moment set the anchor
+    # came from the archive and the override was silently skipped: the first
+    # emitted vertex still read weight_on_child=0.02 after the seed had been set
+    # to 0.007. That is the same silent-no-op shape as the clamps and the \new
+    # macro, and it is why the emitted vertex is checked before anything spawns.
+    #
+    # Overriding a coordinate makes the archive's vertices around that anchor
+    # stop matching, which is correct: they were measured at the old value.
+    if SEED_OVERRIDE:
+        vec = dict(base[1])
+        if any(abs(vec.get(k, 0.0) - v) > 1e-12 for k, v in SEED_OVERRIDE.items()):
+            vec.update(SEED_OVERRIDE)
+            base = (to_log(vec), vec, float('inf'), base[3] + ' (override)')
+            print('   anchor coordinates overridden: %s'
+                  % ', '.join('%s=%g' % kv for kv in sorted(SEED_OVERRIDE.items())))
+    verts = [(base[0], base[2] if base[2] != float('inf') else None)]
     reused = 1
     for i, key in enumerate(BLOCK):
         edge = EDGE
