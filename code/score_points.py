@@ -42,6 +42,47 @@ WEIGHT = {'b': 3.0, 'lambda_d': 3.0, 'theta': 2.0, 'aleph': 2.0, 'h_1': 2.0,
 # A ratio that explodes when its denominator empties is not a miss.
 CAP = 5.0
 
+# A CONDITIONAL MOMENT MEASURED OVER NOBODY IS A MISS, NOT A HIT. Most of these
+# targets are conditional -- the disordered share of USERS, the mental illness
+# share of THE HOMELESS, take-up among THE DISORDERED -- and the model can empty
+# the conditioning population. Scoring the reading anyway does not merely lose
+# information, it PAYS for the emptying: at the point that led this search,
+# homelessness was 0.089 per cent against a target of 0.399, and delta_h came
+# back at +1 per cent and lambda_m at -27, both computed over almost nobody. The
+# loss read that as two moments nearly on target and ranked the point first,
+# ahead of a point whose homelessness was exact.
+#
+# So a gated moment whose conditioning moment is more than a factor of TOL from
+# its own target scores a full CAP. converge.py has had this rule for its
+# secants since generation three; the loss never did, which is why the search
+# could walk away from a homelessness rate it had already hit.
+#
+# Keyed by MOMENT here and by PARAMETER in converge.GATE, which is the same
+# claim from the two ends of each instrument.
+GATE = {
+    'lambda_d':  ('b', 3.0),
+    'theta':     ('b', 3.0),
+    'tau_u':     ('b', 3.0),
+    'delta_d':   ('b', 3.0),
+    'kappa_ued': ('b', 3.0),
+    'lambda_m':  ('h_1', 3.0),
+    'delta_h':   ('h_1', 3.0),
+}
+
+
+def gated(name, moments):
+    """Is this moment being read off a population the model has emptied?"""
+    if name not in GATE:
+        return False
+    cond, tol = GATE[name]
+    if cond not in moments:
+        return False
+    model, target = moments[cond]
+    if abs(target) < 1e-12:
+        return False
+    r = abs(model) / abs(target)
+    return r > tol or r < 1.0 / tol
+
 ROW = re.compile(r'MOMENT\s+(\S+)\s+.*?model=\s*([-+0-9.eEdD]+)\s+target=\s*([-+0-9.eEdD]+)')
 
 
@@ -68,7 +109,7 @@ def loss(moments):
     for name, (model, target) in moments.items():
         if abs(target) < 1e-12:
             continue
-        g = abs(model - target) / abs(target)
+        g = CAP if gated(name, moments) else abs(model - target) / abs(target)
         if g > CAP:
             g = CAP
         w = WEIGHT.get(name, 1.0)
