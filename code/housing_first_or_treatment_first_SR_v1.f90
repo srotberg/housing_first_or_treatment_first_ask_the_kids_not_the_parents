@@ -824,7 +824,15 @@
 
         real(8) :: distance_lambda_m
         real(8) :: stopping_rule_lambda_m=10.d0**(-3)
-        real(8) :: lambda_m_adjuster=1*10.d0**(-1)
+        ! LAMBDA_M IS EXTERNALLY SET, so its adjuster is zero. The SMI
+        ! recovery rate is taken from outside the model and the SMI share
+        ! of the homeless is now di_takeup's moment; leaving the adjuster
+        ! live pointed two instruments at one moment. It never fired in a
+        ! single point run, where every parameter is pinned at its handed
+        ! value, so no measured point changes - but the declaration said
+        ! Int. where the table and the design both say Ext., and
+        ! check_alignment.py was right to report it.
+        real(8) :: lambda_m_adjuster=0.d0
         real(8), parameter :: smi_share_of_homeless_data=0.25
 
         real(8) :: distance_kappa_uem
