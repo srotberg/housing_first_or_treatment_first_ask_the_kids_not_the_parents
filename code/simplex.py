@@ -183,8 +183,15 @@ def complete(mt):
 # it multiplies was inert when every archived point was measured: at 0.5 the
 # seed would sit at b = 1.80 per cent against a target of 8.9, and b carries
 # triple weight, so the first simplex would spend itself climbing out.
-SEED_OVERRIDE = {'weight_on_child': 0.008}
-# 0.008, NOT 0.02, AND TWO MOMENTS AGREE ON IT. Across omega_c 0.02 to 0.5 the
+SEED_OVERRIDE = {'weight_on_child': 0.007}
+# 0.007, WHERE OMEGA'S OWN MOMENT CROSSES ITS TARGET. A two point estimate
+# across 0.02 to 0.5 put it at 0.008 with b agreeing, but the mapping points
+# show b FLATTENS as omega_c falls: its local elasticity near the target is
+# -0.108 against -0.336 across the wide range, so b tops out near 0.077 and
+# cannot be brought to 0.089 by omega_c at any value. That is
+# addiction_scalar_1's job and it is in the block. omega_c is seeded where
+# ITS OWN moment lands, the use gap crossing 0.1834 at 0.0072. The wide
+# estimate, kept because it is the one the elasticities below refer to: Across omega_c 0.02 to 0.5 the
 # use gap has a log elasticity of +0.67 with respect to omega_c and the
 # participation rate one of -0.34. Solving each for its own target from the 0.02
 # point gives 0.0082 from the gap and 0.0081 from participation: one measured
