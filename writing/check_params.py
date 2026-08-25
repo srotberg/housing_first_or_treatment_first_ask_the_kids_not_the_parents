@@ -100,8 +100,12 @@ def table_rows():
         p = os.path.join(HERE, 'tables', fn)
         if not os.path.exists(p):
             continue
+        group = None
         for line in open(p):
             line = strip_red(line)
+            g = re.search(r'\\multicolumn\{\d+\}\{[^}]*\}\{\\emph\{([^}]*)\}\}', line)
+            if g:
+                group = g.group(1)
             if '&' not in line or line.lstrip().startswith('%'):
                 continue
             cells = [c.strip() for c in line.split('&')]
@@ -111,7 +115,7 @@ def table_rows():
             st = re.match(r'^(Int|Ext)\.', cells[2])
             if not st:
                 continue
-            out[norm(m.group(1))] = (st.group(1), fn)
+            out[norm(m.group(1))] = (st.group(1), fn, group, len(out))
     return out
 
 
@@ -146,14 +150,46 @@ def prose_items():
         elif internal:
             said = 'Int'
         for sym in syms:
-            out[norm(sym)] = said
+            out[norm(sym)] = (said, len(out))
     return out
+
+
+def order_report(rows, items):
+    """Where the prose runs the parameters in a different order from the table.
+
+    THE TABLE IS THE ORDER. A reader goes down Table 11 and looks each row up in
+    the text, so an entry that appears three parameters early is one the reader
+    has to hunt for. Nothing checked this and it drifted twice: eta_DI's entry
+    sat in the housing block while its row was in the mental illness chain, and
+    omega_m came before lambda_m in the prose and after it in the table.
+
+    Reported as the LONGEST COMMON SUBSEQUENCE against the table's order, so the
+    output names the entries that are out of place rather than every entry after
+    the first displaced one.
+    """
+    shared = [s for s in rows if s in items]
+    shared.sort(key=lambda s: rows[s][3])
+    seq = [items[s][1] for s in shared]
+    n = len(seq)
+    best = [1] * n
+    prev = [-1] * n
+    for i in range(n):
+        for j in range(i):
+            if seq[j] < seq[i] and best[j] + 1 > best[i]:
+                best[i], prev[i] = best[j] + 1, j
+    keep = set()
+    if n:
+        i = max(range(n), key=lambda k: best[k])
+        while i >= 0:
+            keep.add(i)
+            i = prev[i]
+    return [shared[i] for i in range(n) if i not in keep]
 
 
 def main():
     rows, items = table_rows(), prose_items()
     bad = []
-    for sym, said in sorted(items.items()):
+    for sym, (said, _) in sorted(items.items()):
         if sym in EXEMPT_ITEMS:
             continue
         if sym not in rows:
@@ -161,10 +197,13 @@ def main():
         elif said and rows[sym][0] != said:
             bad.append('  the table says %s., the prose says %s.:  $%s$'
                        % (rows[sym][0], said, sym))
-    for sym, (st, fn) in sorted(rows.items()):
+    for sym, (st, fn, group, _) in sorted(rows.items()):
         if sym in EXEMPT_ROWS or sym in items:
             continue
         bad.append('  in %-16s in no prose entry:  $%s$' % (fn + ',', sym))
+    for sym in order_report(rows, items):
+        bad.append('  out of the table\'s order in the prose:  $%s$   (%s)'
+                   % (sym, rows[sym][2] or 'no group'))
     if bad:
         print('parameters: text and tables disagree\n')
         print('\n'.join(bad))

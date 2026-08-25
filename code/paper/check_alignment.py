@@ -40,11 +40,19 @@ def rows():
         if not os.path.exists(path):
             continue
         for line in open(path, errors='replace'):
-            if not line.lstrip().startswith('$'):
+            # A SYMBOL WRAPPED IN RED IS STILL A SYMBOL. This required the line
+            # to START with '$', so every row marked as this round's change was
+            # invisible here: zeta_DI, the one parameter the SMI block now turns
+            # on, was skipped in silence the round it was introduced. The Set
+            # cell already had this fix; the symbol cell did not.
+            bare = re.sub(r'\\textcolor\{\w+\}\{(.*)\}', r'\1',
+                          line.lstrip().split('&')[0].strip())
+            if not bare.startswith('$'):
                 continue
             cells = [c.strip() for c in line.split('&')]
             if len(cells) < 3:
                 continue
+            cells[0] = bare
             setcol = re.sub(r'\\textcolor\{\w+\}\{([^}]*)\}', r'\1', cells[2]).strip()
             if setcol.rstrip('.') not in ('Int', 'Ext'):
                 continue
