@@ -105,7 +105,7 @@
 \begin{center}
 \begin{minipage}{0.86\textwidth}
 \begin{center}\textbf{Abstract}\end{center}
-\noindent \textcolor{red}{Should housing assistance be sobriety conditioned? With no
+\noindent Should housing assistance be sobriety conditioned? With no
 externalities or distortions, and forward-looking households accounting for true
 hazards, conditionality removes an option, so Housing First weakly dominates
 Treatment First at equal generosity and cost. The case for Treatment First rests
@@ -745,13 +745,11 @@ is riskier, so the intensive and extensive margins are not separate decisions.
 probability $\pi(v)$ for households that used and with probability zero for the
 rest, and the household survives into period 2 with probability
 \begin{equation}\label{eq:surv}
-\phi(d') \;=\; \bar\phi\,(1-\kappa_{\phi d} d'),
+\new{\phi(d') \;=\; \bar\phi^{\,\kappa_{\phi d}^{\,d'}},}
 \end{equation}
-so $\kappa_{\phi d}$ is the proportional reduction in survival caused by the SUD.\new{
-It is written as a proportional fall here and as a hazard ratio in the
-quantitative model of Section~\ref{sec:full}; the two are the same statement,
-since raising survival to the ratio is what a period of thirty years of a fixed
-hazard ratio delivers.}
+\new{so $\kappa_{\phi d}$ is the mortality \emph{rate} ratio with the SUD: the same
+object, written the same way, as in the quantitative model of
+Section~\ref{sec:full}.}
 The mortality penalty applies here, and here only.
 
 \paragraph{Period 2.} This is the terminal period, after which the household dies with certainty. A
@@ -871,16 +869,16 @@ mortality channel would be losing to impatience rather than to anything the mode
 is about, so a higher factor corrects for the coarseness of the horizon rather
 than making a claim about preferences.} and the gross interest rate is
 $R=1/\beta$, and survival over
-a period is $\bar\phi = @@phi0@@$, from the Social Security Administration (SSA) period life table for twenty six to fifty five. For the SUD, the
-proportional fall in survival is $\kappa_{\phi d} = @@kap@@$ , \new{implied by a
-mortality \emph{rate} ratio of $@@smrd@@$, the midpoint of the range in Hjorth\o j et al.\
-(2023): survival with the disorder is $\bar\phi^{\,@@smrd@@}$ over the period, so
-$\kappa_{\phi d}=1-\bar\phi^{\,@@smrd@@-1}$}, so a clean household's chance of dying before period 2 is @@dth0@@
+a period is $\bar\phi = @@phi0@@$, from the Social Security Administration (SSA) period life table for twenty six to fifty five. \new{For the SUD, the
+mortality rate ratio is $\kappa_{\phi d} = @@smrd@@$, the midpoint of the range in
+Hjorth\o j et al.\ (2023), so survival with the disorder is
+$\bar\phi^{\,@@smrd@@}$ over the period and the implied proportional fall in
+survival is $1-\bar\phi^{\,@@smrd@@-1} = @@kap@@$}, so a clean household's chance of dying before period 2 is @@dth0@@
 percent and a household that acquires a SUD has a @@dth1@@ percent chance of
-dying before period 2.\footnote{The second figure is not $\kappa_{\phi d}$ and should not be
-read as one: $\kappa_{\phi d}$ is the proportional fall in the chance of \emph{surviving}, so
-survival goes from $\bar\phi=@@phi0@@$ to $\bar\phi(1-\kappa_{\phi d})=@@phi1@@$ and the chance of
-dying is one minus that.}
+dying before period 2.\footnote{\new{The second figure is not $\kappa_{\phi d}$ and should not be
+read as one: $\kappa_{\phi d}$ is a ratio of mortality rates, so survival goes
+from $\bar\phi=@@phi0@@$ to $\bar\phi^{\,\kappa_{\phi d}}=@@phi1@@$ and the
+chance of dying is one minus that.}}
 The two unemployment probabilities are measured directly. $u_0 = @@u0@@$
 is the headline civilian unemployment rate from the Bureau of Labor Statistics
 (BLS) Current Population Survey (CPS), series UNRATE as distributed by Federal Reserve
@@ -920,7 +918,7 @@ $h_1$ to a homelessness rate of $@@q_h_1@@$ percent from the 2023 HUD PiT count,
 of adults aged $26$ and over carrying a moderate or severe SUD in NSDUH 2024.
 
 The small rental unit $h_2$ is matched to the $@@hsmall_t@@$ percent of housed
-households living in a unit with fewer than three bedrooms, from table B25042 of
+households living in a unit with fewer than three bedrooms, from \new{T}able B25042 of
 the 2023 American Community Survey (ACS), which is the source
 the quantitative model's size distribution comes from as well.
 The weight on drugs $\theta$ is matched to the drug spending share, the
@@ -937,7 +935,13 @@ expenditure on the four drugs, from Midgette et al.\ (2019) for 2016 carried to
 
 \begin{table}[!tb]
 \centering
-\caption{Internally calibrated parameters}\label{tab:int}
+\caption{Internally calibrated parameters\new{\query{FLAGGED: several model
+moments in this table sit a long way from their targets, and the fit is not yet
+good enough to report. The gaps are largest on the drug margin and on the SMI
+block; the latter is being rebuilt, since disability income was paid to every
+household with a serious mental illness and so insured exactly the households
+the homelessness moment is about. This caption should be removed once the
+calibration is closed.}}}\label{tab:int}
 \input{tables/tab_internal}
 \end{table}
 
@@ -1068,16 +1072,18 @@ the population carrying the SUD and Treatment First leaves @@sudt@@
 percent. What the moral hazard buys is extra SUD cases among households that
 are housed either way.
 
-\textcolor{red}{Panels (b) and (c) move in opposite directions under Housing First,
-and the reason is the intensive margin. Set against no programme at all,
+Panels (b) and (c) move in opposite directions under Housing First,
+and the reason is \new{that the programme acts on the extensive and intensive
+margins in opposite directions: it moves fewer households onto the drug, and
+those it does not deter it makes richer, so each of them uses more.} Set against no programme at all,
 universal Housing First takes participation \emph{down}, from @@p0@@ percent to
 @@ph@@ percent, while the share carrying the SUD goes \emph{up}, from @@sud0@@
-percent to @@sudh@@ percent. Fewer households use, and each one that does uses a
+percent to @@sudh@@ percent. Fewer households use, \new{but} each one that does uses a
 great deal more: a user keeps its voucher whatever it consumes, so it is richer
 than the same household would be under conditionality, and the drug is a luxury.
 Since the hazard is $\pi(v)=1-e^{-\lambda_d v}$, what turns a user into a case is
-the dose rather than the decision to use, and the share of users who acquire the
-disorder rises from @@conv0@@ percent to @@convh@@ percent.}
+\new{only the} dose rather than the decision to use, and the share of users who acquire the
+disorder rises from @@conv0@@ percent to @@convh@@ percent.
 
 \begin{figure}[!tb]
 \centering
@@ -1650,20 +1656,20 @@ best available trial looked for and did not find.
 
 \paragraph{Death risk.}\label{sec:fdeath} Survival is
 \begin{equation}\label{eq:fsurv}
-\new{\phi(j,h',d,m,\tau)=\bar\phi(j)^{\,
+\phi(j,h',d,m,\tau)=\bar\phi(j)^{\,
 \kappa_{\phi H}(j)^{\mathbf{1}\{h'=h_1\}}\,
 \kappa_{\phi d}^{\mathbf{1}\{d=1\}\mathbf{1}\{\tau=0\}}\,
-\kappa_{\phi m}^{\mathbf{1}\{m=1\}}}},
+\kappa_{\phi m}^{\mathbf{1}\{m=1\}}},
 \end{equation}
 with $\bar\phi(j)$ the baseline survival age profile and
-\new{$\kappa_{\phi H}(j)$ an age-varying multiplier and $\kappa_{\phi d}$ and
+$\kappa_{\phi H}(j)$ an age-varying multiplier and $\kappa_{\phi d}$ and
 $\kappa_{\phi m}$ two that are not,
 raising the death hazard for homelessness, the SUD and SMI
 respectively. Each is a ratio of mortality \emph{rates}, which is what the
 sources measure, so each multiplies the hazard rather than the death
 probability: survival is raised to their product. The two coincide while the
 baseline is small and part company where it is not, and raising survival to a
-power is bounded in $[0,1]$ without a cap.} The SUD multiplier is switched off in a period the
+power is bounded in $[0,1]$ without a cap. The SUD multiplier is switched off in a period the
 household is in treatment, $\tau=1$, which is why the survival function takes $\tau$
 as an argument at all. The excess mortality of the disorder is
 overwhelmingly a mortality of use, poisoning above all, and treatment forbids use
@@ -1688,28 +1694,24 @@ itself, so the published ratio
 is a mixture of two effects and attributing all of it to housing would overstate
 what housing does.
 
-\new{Two things are observed and one is solved for. Observed: $RR(j)$,
+Two things are observed and one is solved for. Observed: $RR(j)$,
 Baggett's ratio, and $s$, the share of the homeless with a SUD. Solved for:
 $\kappa_{\phi H}(j)$. Both inputs are inputs to this step and not moments the
 model is asked to reproduce, so neither appears among the validation moments in
-Section~\ref{sec:fvalid}. The SUD multiplier carries no age argument: it is a
-hazard ratio, and the sources report it as a level for the disorder rather than
-as a profile. What falls with age is the ratio of death \emph{probabilities},
-and that falls on its own once a fixed hazard ratio meets a rising baseline,
-so imposing a declining profile on top would count the same compression twice.}
+Section~\ref{sec:fvalid}.
 \begin{equation}\label{eq:fhaz}
-\new{\kappa_{\phi H}(j) = \max\Big\{1,\ \frac{RR(j)}{(1-s)+s\,\kappa_{\phi d}}\Big\}}.
+\kappa_{\phi H}(j) = \max\Big\{1,\ \frac{RR(j)}{(1-s)+s\,\kappa_{\phi d}}\Big\}.
 \end{equation}
 The denominator is the average mortality multiplier in Baggett's population:
 a share $1-s$ of it carries homelessness alone and a share $s$ carries the SUD as
 well. Dividing the observed ratio by it leaves the homelessness effect on its
 own.
 
-\new{$\kappa_{\phi d}$ is assigned from the literature on all-cause
+$\kappa_{\phi d}$ is assigned from the literature on all-cause
 standardised mortality ratios for opioid use disorder, which report values
 between $6$ and $10$ (Degenhardt et al., 2011; Hser et al., 2017; Larney et al.,
 2020). Those are ratios of rates, which is why it enters as an exponent on
-survival rather than as a factor on the death probability.}
+survival rather than as a factor on the death probability.
 
 $\kappa_{\phi m}$ carries no age argument because the data give it basically
 none. Olfson et al.\ (2015) give all-cause standardised mortality ratios for schizophrenia of $3.6$, $3.4$ and $4.0$
@@ -2651,20 +2653,20 @@ it.
 
 \paragraph{Rental ladder.} These three parameters build the grid of dwelling sizes a renter chooses from, and they fix how the rungs are spaced. Each rung answers to one moment.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$h_2$, the smallest rental size.] \new{The size of the cheapest dwelling
+\item[$h_2$, the smallest rental size.] The size of the cheapest dwelling
 is what decides how many households take the bottom rung rather than move up,
 so its value is chosen so the model generates the $@@q_h_2@@$ percent of housed
-households living in the smallest unit size in the 2023 ACS, table B25042.
+households living in the smallest unit size in the 2023 ACS, \new{T}able B25042.
 Raise it and the bottom rung is larger and dearer relative to the rung above,
 which is nearly the same dwelling at nearly the same price, so more households
-stay on it and that share rises.}
+stay on it and that share rises.
 
 \item[$\varsigma$, the curvature of the rental ladder, which determines $h_3$.]
-\new{The curvature places the middle rung, a fraction $(1/2)^{\varsigma}$ of the
+The curvature places the middle rung, a fraction $(1/2)^{\varsigma}$ of the
 way from $h_2$ to $h_4$. It is set rather than calibrated: the three shares sum
 to one, so matching the smallest with $h_2$ and the largest with $h_4$ matches
 the middle as well, and a third instrument on it would have no moment of its
-own left to answer to.}
+own left to answer to.
 
 
 \item[$h_4$, the largest rental size.] The top of the ladder, calibrated on the
