@@ -172,18 +172,42 @@ def save(st):
         json.dump(st, fh, indent=1)
 
 
+def moved_vertex(v0, x, phase):
+    if phase == 'reflect':
+        return [2 * v0[j] - x[j] for j in range(len(BLOCK))]
+    if phase == 'expand':
+        return [v0[j] + MU * (v0[j] - x[j]) for j in range(len(BLOCK))]
+    return [v0[j] + THETA * (x[j] - v0[j]) for j in range(len(BLOCK))]
+
+
 def step_set(verts, phase):
     """All n moved at once, the way MDS moves them."""
     v0 = verts[0][0]
     out = {}
     for i, (x, _l) in enumerate(verts[1:], start=1):
-        if phase == 'reflect':
-            y = [2 * v0[j] - x[j] for j in range(len(BLOCK))]
-        elif phase == 'expand':
-            y = [v0[j] + MU * (v0[j] - x[j]) for j in range(len(BLOCK))]
-        else:
-            y = [v0[j] + THETA * (x[j] - v0[j]) for j in range(len(BLOCK))]
-        out['%s%02d' % (phase[0], i)] = y
+        out['%s%02d' % (phase[0], i)] = moved_vertex(v0, x, phase)
+    return out
+
+
+# ONE BATCH PER ITERATION INSTEAD OF TWO. Plain MDS decides between expansion and
+# contraction by looking at the reflection first, which costs a second round trip
+# -- and a round trip here is twenty five minutes of wall clock, not a function
+# call. Evaluating all three sets at once removes it: the rule is applied with
+# everything already in hand, exactly as written, and a full iteration takes one
+# round.
+#
+# Two thirds of the points are not used by the step, and that is the price. It is
+# smaller than it looks: an unused expansion or contraction is still a measured
+# point in the archive, where the Jacobian and the loss history read it like any
+# other. What it really costs is sessions, so it is a choice and not a default
+# buried in the method -- the caller passes --speculative when the fleet has the
+# room, and takes the two round version when it does not.
+def speculative_set(verts):
+    v0 = verts[0][0]
+    out = {}
+    for i, (x, _l) in enumerate(verts[1:], start=1):
+        for phase in ('reflect', 'expand', 'contract'):
+            out['%s%02d' % (phase[0], i)] = moved_vertex(v0, x, phase)
     return out
 
 
@@ -280,7 +304,29 @@ def main():
         rays = [(t[k], f[k]) for k in sorted(f) if k.startswith('ray')]
         best_trial = min(f.values()) if f else None
 
-        if phase == 'reflect':
+        if phase == 'all':
+            # The whole rule, applied to results already in hand.
+            def group(letter):
+                return [(t[k], f[k]) for k in sorted(f)
+                        if k.startswith(letter) and not k.startswith('ray')]
+            R, E, C = group('r'), group('e'), group('c')
+            bR = min((l for _x, l in R), default=None)
+            bE = min((l for _x, l in E), default=None)
+            if bR is not None and bR < best_now:
+                if bE is not None and bE < bR:
+                    verts = [verts[0]] + E
+                    print('iteration %d: expanded, best %.3f -> %.3f'
+                          % (st['iter'], best_now, bE))
+                else:
+                    verts = [verts[0]] + R
+                    print('iteration %d: reflected, best %.3f -> %.3f'
+                          % (st['iter'], best_now, bR))
+            elif C:
+                verts = [verts[0]] + C
+                print('iteration %d: no reflection beat %.3f; contracted toward '
+                      'the best vertex.' % (st['iter'], best_now))
+            st['iter'] += 1
+        elif phase == 'reflect':
             if best_trial is not None and best_trial < best_now:
                 # The reflection found something. Keep it and try to go further.
                 st['reflected'] = [[x, l] for x, l in moved]
@@ -332,7 +378,13 @@ def main():
         print('\nCONVERGED: the widest edge is under two per cent.')
         return
 
-    t = step_set(verts, st['phase'])
+    if '--speculative' in sys.argv:
+        st['phase'] = 'all'
+        t = speculative_set(verts)
+    else:
+        if st.get('phase') == 'all':
+            st['phase'] = 'reflect'
+        t = step_set(verts, st['phase'])
     if st.get('best_direction'):
         t.update(ray_set(verts[0][0], st['best_direction']))
     jc = jacobian_candidate(verts, jacobian.points())
