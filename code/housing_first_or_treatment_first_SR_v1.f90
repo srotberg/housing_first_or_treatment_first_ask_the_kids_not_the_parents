@@ -716,6 +716,50 @@
         ! Assigned. SSDI and SSI replacement for the non employed with SMI.
         real(8), parameter :: zeta_DI=0.25
 
+        ! THE SHARE OF THEM WHO ACTUALLY RECEIVE IT, which was one until 25
+        ! August and should never have been.
+        !
+        ! The rule below paid zeta_DI to EVERY non-employed household with SMI,
+        ! immediately, with no take-up gate, no waiting period, no work history
+        ! test and no eligibility screen -- I grepped for all of them and there
+        ! were none. UI is a first period benefit, so an unbroken spell runs
+        ! 1 -> 3 -> 2 -> 2 -> ..., and from the second period on a household
+        ! WITHOUT SMI has exactly zero income while one WITH it has a quarter of
+        ! its earnings for ever. Serious mental illness was the only unemployment
+        ! insurance in the model.
+        !
+        ! That inverts the sign of the moment it is supposed to help deliver. SMI
+        ! is about five per cent of the population and 25 per cent of the
+        ! homeless in the data (Gutwinski et al.), so it should be over
+        ! represented on the street by roughly five times. The model had it at
+        ! 1.33 per cent of the homeless -- UNDER represented by nearly four. Both
+        ! lambda_m and the prevalence profile were being asked to repair a wrong
+        ! sign, which no setting of either can do: reaching 0.25 by prevalence
+        ! alone needs p around 0.83.
+        !
+        ! THE NUMBER. About 13.6 million US adults have SMI (5.2 per cent,
+        ! SAMHSA) and about 3 million receive SSI or SSDI on a mental disorder
+        ! basis, net of concurrent receipt, so take-up is near 0.22 across all of
+        ! them. The rule fires only for the NON-EMPLOYED, and the model's
+        ! employment rate given SMI is 0.329, so the rate that belongs here is
+        ! 0.22/0.671 = 0.33 and not 0.22. Scaling by 0.22 would have understated
+        ! the benefit by a third.
+        !
+        ! WHAT THIS IS AN APPROXIMATION OF, said plainly because it matters. DI
+        ! is lumpy: a third of these households get a quarter of their earnings
+        ! and two thirds get nothing. Paying all of them a third of a quarter is
+        ! the same expected transfer and NOT the same model, because homelessness
+        ! is a threshold and a threshold is not linear in income. Doing it
+        ! properly needs a third SMI state, with and without DI, and
+        ! number_of_smi_states is 2. The approximation errs toward MORE
+        ! homelessness among the SMI than the lumpy version, since nobody is left
+        ! fully insured; if the moment overshoots, this is the first suspect and
+        ! the third state is the fix.
+        !
+        ! Kept as two numbers rather than one product so that each stays
+        ! separately citable and separately checkable.
+        real(8) :: di_takeup=0.33
+
         real(8) :: distance_lambda_m
         real(8) :: stopping_rule_lambda_m=10.d0**(-3)
         real(8) :: lambda_m_adjuster=1*10.d0**(-1)
@@ -3894,7 +3938,7 @@
             elseif ((emp_of(unemployment_index_1)==2) .AND. &
                 (smi_of(unemployment_index_1)>=1)) then
 
-                out_of_work_income=zeta_DI*base_1
+                out_of_work_income=di_takeup*zeta_DI*base_1
 
             end if
 
@@ -29929,6 +29973,10 @@
                 case ("lambda_m")
                     write(*,*) "HANDOVER lambda_m:", lambda_m, "->", handover_value
                     lambda_m=max(min(handover_value,0.5d0),lambda_m_floor)
+
+                case ("di_takeup")
+                    write(*,*) "HANDOVER di_takeup:", di_takeup, "->", handover_value
+                    di_takeup=max(min(handover_value,1.d0),0.d0)
 
                 case ("kappa_uem")
                     write(*,*) "HANDOVER kappa_uem:", kappa_uem, "->", handover_value
