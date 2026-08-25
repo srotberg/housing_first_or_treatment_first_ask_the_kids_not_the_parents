@@ -53,7 +53,20 @@ OWNS = {
     'multiple_of_probabilities_of_employment_if_addicted':
                                              ('kappa_ued', 0.1625),
     'kappa_uem':                             ('kappa_uem', 0.300),
-    'lambda_m':                              ('lambda_m', 0.250),
+    # THE SMI SHARE OF THE HOMELESS IS AN ECONOMIC OUTCOME, SO ITS INSTRUMENT IS
+    # AN ECONOMIC ONE. lambda_m owned this moment until 25 August and it is a
+    # RECOVERY RATE: its only channel is spell length, and at its floor it
+    # delivers 0.0133 against a target of 0.25. Tuning it here is what let the DI
+    # bug hide -- the search spent generations pushing lambda_m down while every
+    # household with SMI was drawing a guaranteed quarter of its earnings and so
+    # could not become homeless. What decides whether a household with SMI ends
+    # up on the street is what it lives on once it is out of work, which is DI.
+    'di_takeup':                             ('lambda_m', 0.250),
+    # The SMI population share. Its target is the assigned profile evaluated at
+    # the model's own age weights, which the model computes and prints beside it,
+    # so the moment asks whether the model reproduces the profile's LEVEL once
+    # the SUD interaction has had its say.
+    'smi_onset_level':                       ('p_m', 0.0),
     'probability_of_voucher_benchmark_used': ('pi_V',     0.266),
     'utility_cost_of_treatment':             ('tau_u',    0.245),
     'penalty_child_addicted':                ('delta_d',  3.00),

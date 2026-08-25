@@ -666,6 +666,41 @@
         ! are coherent; this file follows the note.
         real(8), dimension(:), allocatable :: smi_prevalence_by_age
         real(8), dimension(:), allocatable :: smi_onset_by_age
+
+        ! THE ONSET SHAPE, WHICH WAS IN THE DATA FILE AND UNREAD.
+        ! us_mh_onset_shape.csv carries four columns -- age, shape_mh_onset,
+        ! implied_onset, smi_prevalence -- and the loader read only the fourth.
+        ! The shape is normalised to one at age 26 and implied_onset is exactly
+        ! shape times 0.003306, so the file was always laid out for a shape and
+        ! level split and the model was using the derived column instead.
+        real(8), dimension(:), allocatable :: smi_onset_shape_by_age
+
+        ! ONSET IS NOW A LEVEL ON THAT SHAPE, AND THE LEVEL IS CALIBRATED.
+        !
+        ! It used to be backed out of the prevalence profile by the accounting
+        ! identity, which made prevalence match BY CONSTRUCTION at any lambda_m
+        ! and so left lambda_m unidentified by the one moment it should own. With
+        ! the level free and the shape assigned, prevalence becomes an OUTCOME
+        ! the model can miss, lambda_m goes back to being assigned from the
+        ! recovery literature, and the level answers to the population share.
+        !
+        ! It also removes an artefact. The identity needs p(j+1) >= p(j)(1-lambda_m),
+        ! so a declining profile put a floor under lambda_m below which onset went
+        ! negative at 59 of 60 ages and the SMI state emptied -- a cliff the
+        ! calibration walked straight into. No identity, no floor.
+        !
+        ! And it lets the SUD interaction be honest. iota_smi doubles onset for
+        ! households with a disorder, so realised prevalence EXCEEDS whatever the
+        ! level alone implies, by more as the SUD rate rises. Under the identity
+        ! that error was silent; with the level calibrated on the population share
+        ! it is absorbed where it belongs.
+        !
+        ! The default is the file's own level at age 26.
+        real(8) :: smi_onset_level=0.003306
+
+        ! 1 uses the shape and level, 0 restores the prevalence identity. Both
+        ! are coherent; code/simple has always done it the first way.
+        integer, parameter :: smi_onset_from_shape=1
         ! THE SMALLEST lambda_m THE PROFILE ALLOWS.
         !
         ! The onset identity needs p(j+1) >= p(j)(1-lambda_m), so a declining
@@ -688,10 +723,37 @@
         ! direction forever.
         real(8) :: lambda_m_floor=0
 
-        ! Calibrated: SMI share of the homeless, 25 percent, Gutwinski et al.
-        ! (2021), pooling thirty nine studies. Start at the value code/simple
-        ! reached from Imrohoroglu and Zhao, about half improving within ten
-        ! years, 1-(1-0.5)^(1/10).
+        ! ASSIGNED, not calibrated. The SMI share of the homeless moved to
+        ! di_takeup on 25 August: that moment is an economic outcome and this is
+        ! a recovery hazard whose only channel is spell length.
+        !
+        ! THE OLD CITATION WAS WRONG AND IS REPLACED. It read "the value
+        ! code/simple reached from Imrohoroglu and Zhao, about half improving
+        ! within ten years". Imrohoroglu and Zhao are economists; that is where
+        ! the sibling model got a number, not where the number comes from.
+        !
+        ! The value survives the correction. 1-(1-0.5)^(1/10) = 0.06697 is a 50
+        ! per cent chance of recovery within ten years and a mean spell of 14.9
+        ! years, and the ten year clinical recovery literature brackets it:
+        !
+        !     schizophrenia spectrum            23%   -> lambda_m 0.026
+        !     first-episode schizophrenia   14.5-35%  -> lambda_m 0.016-0.043
+        !     psychotic bipolar spectrum        50%   -> lambda_m 0.067
+        !
+        ! SMI is not schizophrenia. By count it is mostly mood disorders, which
+        ! remit far more readily than the psychotic disorders those studies
+        ! follow, so the top of that range is the right end for a category-wide
+        ! rate and 0.067 is if anything conservative.
+        !
+        ! THE NATIONAL SOURCE, for whoever revisits this: Salzer, Brusilovskiy
+        ! and Townley, "National Estimates of Recovery-Remission From Serious
+        ! Mental Illness", Psychiatric Services 2018, n over 41,000, finds a
+        ! THIRD of those with a lifetime SMI in remission for at least the past
+        ! twelve months. That is a STOCK and lambda_m is a FLOW, so the two do
+        ! not map onto each other without a duration assumption -- which is why
+        ! it is quoted here rather than used. The same paper finds recovery low
+        ! until age 32 and rising after it, so the honest refinement is an
+        ! age-varying lambda_m, not a different constant.
         real(8) :: lambda_m=0.067
 
         ! Assigned. Danish registers put the hazard ratio at 1.34 for any SUD
@@ -715,6 +777,50 @@
 
         ! Assigned. SSDI and SSI replacement for the non employed with SMI.
         real(8), parameter :: zeta_DI=0.25
+
+        ! THE SHARE OF THEM WHO ACTUALLY RECEIVE IT, which was one until 25
+        ! August and should never have been.
+        !
+        ! The rule below paid zeta_DI to EVERY non-employed household with SMI,
+        ! immediately, with no take-up gate, no waiting period, no work history
+        ! test and no eligibility screen -- I grepped for all of them and there
+        ! were none. UI is a first period benefit, so an unbroken spell runs
+        ! 1 -> 3 -> 2 -> 2 -> ..., and from the second period on a household
+        ! WITHOUT SMI has exactly zero income while one WITH it has a quarter of
+        ! its earnings for ever. Serious mental illness was the only unemployment
+        ! insurance in the model.
+        !
+        ! That inverts the sign of the moment it is supposed to help deliver. SMI
+        ! is about five per cent of the population and 25 per cent of the
+        ! homeless in the data (Gutwinski et al.), so it should be over
+        ! represented on the street by roughly five times. The model had it at
+        ! 1.33 per cent of the homeless -- UNDER represented by nearly four. Both
+        ! lambda_m and the prevalence profile were being asked to repair a wrong
+        ! sign, which no setting of either can do: reaching 0.25 by prevalence
+        ! alone needs p around 0.83.
+        !
+        ! THE NUMBER. About 13.6 million US adults have SMI (5.2 per cent,
+        ! SAMHSA) and about 3 million receive SSI or SSDI on a mental disorder
+        ! basis, net of concurrent receipt, so take-up is near 0.22 across all of
+        ! them. The rule fires only for the NON-EMPLOYED, and the model's
+        ! employment rate given SMI is 0.329, so the rate that belongs here is
+        ! 0.22/0.671 = 0.33 and not 0.22. Scaling by 0.22 would have understated
+        ! the benefit by a third.
+        !
+        ! WHAT THIS IS AN APPROXIMATION OF, said plainly because it matters. DI
+        ! is lumpy: a third of these households get a quarter of their earnings
+        ! and two thirds get nothing. Paying all of them a third of a quarter is
+        ! the same expected transfer and NOT the same model, because homelessness
+        ! is a threshold and a threshold is not linear in income. Doing it
+        ! properly needs a third SMI state, with and without DI, and
+        ! number_of_smi_states is 2. The approximation errs toward MORE
+        ! homelessness among the SMI than the lumpy version, since nobody is left
+        ! fully insured; if the moment overshoots, this is the first suspect and
+        ! the third state is the fix.
+        !
+        ! Kept as two numbers rather than one product so that each stays
+        ! separately citable and separately checkable.
+        real(8) :: di_takeup=0.33
 
         real(8) :: distance_lambda_m
         real(8) :: stopping_rule_lambda_m=10.d0**(-3)
@@ -3216,6 +3322,7 @@
             model_mass_smi,model_smi_and_homeless,model_smi_and_employed,&
             model_homeless_labour_income,model_all_labour_income,&
             model_smi_share_of_homeless,model_employment_rate_given_smi,&
+            model_smi_prevalence,model_smi_prevalence_target,&
             model_mass_homeless_raw,model_mass_total_raw,model_mass_homeless_working_age,&
             model_homeless_income_share,model_employed_share_of_homeless,&
             model_fraction_spent_on_addiction,model_fraction_spent_on_addiction_experimenters,&
@@ -3894,7 +4001,7 @@
             elseif ((emp_of(unemployment_index_1)==2) .AND. &
                 (smi_of(unemployment_index_1)>=1)) then
 
-                out_of_work_income=zeta_DI*base_1
+                out_of_work_income=di_takeup*zeta_DI*base_1
 
             end if
 
@@ -3973,6 +4080,8 @@
                 model_fraction_addicted_and_unemployed(1), " target=", unemployment_rate_sud_data
             write(*,*) "MOMENT kappa_uem employment given SMI        model=",&
                 model_employment_rate_given_smi(1), " target=", employment_rate_given_smi_data
+            write(*,*) "MOMENT p_m       SMI population share        model=",&
+                model_smi_prevalence(1), " target=", model_smi_prevalence_target(1)
             write(*,*) "MOMENT lambda_m  SMI share of the homeless   model=",&
                 model_smi_share_of_homeless(1), " target=", smi_share_of_homeless_data
             write(*,*) "MOMENT pi_V      eligibles with a voucher    model=",&
@@ -6984,6 +7093,23 @@
 
             model_employment_rate_given_smi(time_period)=model_smi_and_employed(time_period)/&
                 model_mass_smi(time_period)
+
+        end if
+
+        ! THE SMI POPULATION SHARE, which smi_onset_level answers to, and what
+        ! the assigned profile says it should be at the model's own age weights.
+        ! Both over the same base, every age, so the ratio is a prevalence.
+        if (sum(model_mass_by_age(:))>10.d0**(-12)) then
+
+            model_smi_prevalence(time_period)=&
+                sum(model_smi_mass_by_age(:))/sum(model_mass_by_age(:))
+
+            if (allocated(smi_prevalence_by_age)) then
+
+                model_smi_prevalence_target(time_period)=&
+                    sum(smi_prevalence_by_age(:)*model_mass_by_age(:))/sum(model_mass_by_age(:))
+
+            end if
 
         end if
 
@@ -28829,9 +28955,11 @@
 
         allocate(smi_prevalence_by_age(life_span))
         allocate(smi_onset_by_age(life_span))
+        allocate(smi_onset_shape_by_age(life_span))
 
         smi_prevalence_by_age=0
         smi_onset_by_age=0
+        smi_onset_shape_by_age=0
 
         inquire(file="../data/us_mh_onset_shape.csv",exist=file_exists_1)
 
@@ -28863,10 +28991,14 @@
                 if (ios_1/=0) then
 
                     prev_1=smi_prevalence_by_age(max(i_1-1,1))
+                    shape_1=smi_onset_shape_by_age(max(i_1-1,1))
 
                 end if
 
                 smi_prevalence_by_age(i_1)=prev_1
+                ! KEPT, not discarded. The profile is still read, because it is
+                ! what the calibrated level is judged against.
+                smi_onset_shape_by_age(i_1)=shape_1
 
             end do
 
@@ -28921,6 +29053,23 @@
         real(8) :: p_now_1,p_next_1,onset_1
 
         clipped_1=0
+
+        if (smi_onset_from_shape==1) then
+
+            ! The assigned shape, scaled by the calibrated level. No identity, so
+            ! no floor under lambda_m and no clipping: onset is positive wherever
+            ! the shape is.
+            smi_onset_by_age=min(max(smi_onset_level*smi_onset_shape_by_age,0.d0),1.d0)
+
+            write(*,*) "build_smi_onset: shape x level. level=", smi_onset_level, &
+                " onset(1)=", smi_onset_by_age(1), " onset(30)=", smi_onset_by_age(30), &
+                " max=", maxval(smi_onset_by_age), " lambda_m=", lambda_m, &
+                " implied ergodic prevalence=", &
+                smi_onset_by_age(1)/max(smi_onset_by_age(1)+lambda_m,10.d0**(-12))
+
+            return
+
+        end if
 
         do j_1=1,life_span
 
@@ -29929,6 +30078,14 @@
                 case ("lambda_m")
                     write(*,*) "HANDOVER lambda_m:", lambda_m, "->", handover_value
                     lambda_m=max(min(handover_value,0.5d0),lambda_m_floor)
+
+                case ("smi_onset_level")
+                    write(*,*) "HANDOVER smi_onset_level:", smi_onset_level, "->", handover_value
+                    smi_onset_level=max(min(handover_value,1.d0),10.d0**(-8))
+
+                case ("di_takeup")
+                    write(*,*) "HANDOVER di_takeup:", di_takeup, "->", handover_value
+                    di_takeup=max(min(handover_value,1.d0),0.d0)
 
                 case ("kappa_uem")
                     write(*,*) "HANDOVER kappa_uem:", kappa_uem, "->", handover_value
