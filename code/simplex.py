@@ -1,43 +1,48 @@
-"""Nelder-Mead over the coupled drug block, run in parallel.
+"""Multi-directional search over all twenty two parameters, in parallel.
 
-WHY A SIMPLEX HERE AND A JACOBIAN EVERYWHERE ELSE.
+WHY NOT NELDER-MEAD OVER THE WHOLE VECTOR.
 
-Sixty seven per cent of the loss at the best point ever measured sits in five
-moments, and they split into two problems with different shapes:
+Two objections were raised to a twenty two parameter simplex and only one of
+them survives.
 
-    lambda_d  22.0%      the drug block: a curved valley in four parameters
-    kappa_uem 17.8%      an instrument that was pinned at its floor
-    b         11.6%      the drug block again
-    lambda_m   8.1%      the same pinned instrument, one step downstream
-    tau_u      7.8%
+The one that does not: that twenty three vertices is too many to initialise.
+Twenty three vertices is twenty three sessions, which is one round of this
+fleet, and the fleet already runs rounds that size. It costs a round, once.
 
-kappa_uem's share is not an optimisation problem at all -- no method moves a
-clamped parameter -- and it is handled by freeing the clamp and probing it.
+The one that does: NELDER-MEAD REPLACES ONE VERTEX PER ITERATION. Reflection,
+expansion and contraction all act on the worst vertex alone, and the other n
+stay exactly where they were. With twenty three vertices and a twenty minute
+solve, the simplex needs twenty three iterations -- close to eight hours -- before
+it has so much as touched each vertex once, and it needs several passes to move.
+Running the trials in parallel does not help, because the limit is not how many
+points can be evaluated at once. It is that the method only knows what to do with
+one of them.
 
-The drug block is a genuine optimisation problem and the Jacobian is the wrong
-tool for it. Its response is not smooth: CALIBRATION_PLAN.md records the b curve
-as 0.947, 0.759, then 0.000158 across 0.05, 0.06 and 0.12 -- "flat, then a cliff
-somewhere above 0.06" -- and interpolating through it gave 0.0634 and was badly
-wrong. A derivative measured anywhere on the flat says nothing about the cliff.
-Worse, the four parameters trade off against each other along a narrow curve, so
-a single-parameter arm toward the answer scores WORSE than the centre even when
-the answer lies that way: generation eight moved lambda alone from 5.06 to 9.11,
-in the direction the ridge map says the answer is, and the loss went from 0.455
-to 0.527. Only the joint move helps, and the trust region caps the joint move at
-1.4 a round.
+WHAT REPLACES IT.
 
-Nelder-Mead needs no derivatives, tolerates the cliff, and moves every parameter
-in the block together by construction. In four parameters it is five vertices,
-which is a size it handles well -- unlike the full twenty two, where it needs
-twenty three vertices and is known to stagnate.
+Multi-directional search (Torczon), which was designed for parallel machines and
+fixes exactly this. Every iteration reflects ALL n vertices through the best one
+at once:
 
-WHAT IS DIFFERENT HERE: textbook Nelder-Mead is sequential. It reflects, looks,
-then decides whether to expand or contract, one function evaluation at a time --
-which on a twenty minute solve would use one of eighteen parallel slots and be
-slower than what it replaces. So every trial the decision tree could reach is
-evaluated AT ONCE: reflection, expansion, and both contractions. The standard
-acceptance rules then run against results already in hand. Four points a round
-instead of one, same wall clock, and the logic is unchanged from the textbook.
+    r_i = v0 + (v0 - v_i)          i = 1 .. n
+
+If any reflection improves on the best vertex the whole reflected simplex is
+kept, and an expansion of all n is tried against it; if none does, all n are
+contracted toward the best. Every vertex moves every iteration, the n
+evaluations are independent, and unlike Nelder-Mead the method is provably
+convergent -- MDS keeps the simplex's shape, so it cannot collapse into a
+subspace and go blind, which is the failure Nelder-Mead is best known for and
+which gets worse as the dimension rises.
+
+So the parallelism is real rather than cosmetic: twenty two points a round, all
+at once, and after one round every parameter has moved.
+
+AND MANY STEPS ALONG THE DIRECTION, NOT ONE. MDS fixes the step SHAPE and takes
+it at one scale. The scale is the part worth sampling, and it is cheap: the ray
+through the best vertex along the winning direction is sampled at RAY scales in
+the same batch. That is the same argument that turned Nelder-Mead's four trials
+into sixteen -- the method samples a line, and a line deserves more than one
+point when the points are free.
 """
 
 import json
@@ -50,47 +55,27 @@ sys.path.insert(0, HERE)
 
 import jacobian                                          # noqa: E402
 import score_points                                      # noqa: E402
+from suggest_next import OWNS                            # noqa: E402
 
 STATE = os.path.join(HERE, 'SIMPLEX.txt')
 
-# The block. These four are coupled through the drug margin: b sets how many
-# use, lambda converts use into disorder, theta is the share of the bundle the
-# drug takes and aleph prices the mortality that deters it. They own b,
-# lambda_d, theta and aleph, which are 43 per cent of the loss between them.
-BLOCK = ['addiction_scalar_1', 'lambda_addiction',
-         'relative_share_of_addiction_1', 'value_of_life']
+# EVERY PARAMETER THAT OWNS A MOMENT. There is no background any more: a vertex
+# is the whole vector, so nothing can shift underneath the simplex and the
+# comparability rules the four parameter version needed are unnecessary here.
+BLOCK = sorted(OWNS)
 
-# THE TEXTBOOK'S FOUR TRIALS ARE FOUR POINTS ON ONE LINE, and once that is seen
-# the parallel version writes itself. Every move Nelder-Mead can make to the
-# worst vertex lies on the ray through the centroid:
-#
-#     x(t) = c + t * (c - worst)
-#
-# with t = -0.5 the inside contraction, +0.5 the outside contraction, +1 the
-# reflection and +2 the expansion. The method is already doing a line search; it
-# is just doing it with four samples, chosen so that a SEQUENTIAL implementation
-# can stop early. Nothing about the geometry wants four.
-#
-# So the ray is sampled properly. Sixteen points cost exactly what four cost when
-# they run at once, and they buy a far better move: the reflection ray is where
-# the whole step lives, and four samples across a factor of five cannot find its
-# minimum. t must stay above -1, since t = -1 IS the worst vertex.
-RAY = (-0.8, -0.6, -0.4, -0.2, 0.3, 0.5, 0.75, 1.0, 1.25, 1.5,
-       2.0, 2.5, 3.0, 4.0, 5.5, 7.0)
-SIGMA = 0.5
+# Torczon's coefficients.
+MU, THETA = 2.0, 0.5
 
-# A SIMPLEX THAT COLLAPSES CANNOT SEARCH. Sampling a ray densely and taking
-# whatever wins invites a replacement nearly on the face the other vertices span,
-# which leaves the simplex flat and blind in one direction ever after -- the
-# failure Nelder-Mead is best known for, and dense sampling makes it likelier
-# rather than less. So a candidate is refused if it costs more than this share of
-# the simplex's volume, and the next best on the ray is taken instead.
-VOLUME_FLOOR = 0.10
+# The initial simplex: each vertex is the base point with ONE coordinate moved by
+# this factor. It is the trust region the Jacobian is allowed, so the simplex
+# starts no wider than a step the search already believes in.
+EDGE = 1.4
 
-# THE SIMPLEX LIVES IN LOGS, like every other step in this calibration. These
-# parameters span four orders of magnitude between them and a reflection in
-# levels would propose a negative b long before it proposed a useful one.
-MATCH = 1e-4            # two vectors this close in logs are the same point
+# Scales sampled along the winning direction, on top of the MDS step.
+RAY = (-0.5, 0.5, 1.5, 2.5, 4.0, 6.0)
+
+MATCH = 1e-4
 
 
 def bounds(name):
@@ -115,7 +100,6 @@ def from_log(x):
 
 
 def measured():
-    """Every archive point, as (log-vector over the block, full vector, loss)."""
     out = []
     for vec, mt, name in jacobian.points():
         if any(k not in vec for k in BLOCK):
@@ -124,203 +108,129 @@ def measured():
     return out
 
 
-def look_up(x, pts, bg):
-    """The measured loss at this point, if the fleet has run it AT THIS BACKGROUND.
+def look_up(x, pts):
+    """The measured loss at this point, if the fleet has run it.
 
-    A point matching on the block alone is not this vertex; it is some other
-    generation's arm that happened to pass through the same four values.
+    A vertex is the whole vector, so a match here is a match on everything.
     """
     best = None
-    for lx, vec, loss, name in pts:
-        d = max(abs(a - b) for a, b in zip(lx, x))
-        if d < MATCH and same_background(vec, bg) and (best is None or loss < best[0]):
-            best = (loss, name)
+    for lx, _vec, loss, name in pts:
+        if max(abs(a - b) for a, b in zip(lx, x)) < MATCH:
+            if best is None or loss < best[0]:
+                best = (loss, name)
     return best
 
 
-def held(pts):
-    """The values of everything OUTSIDE the block, taken from the best point.
-
-    A simplex vertex is only comparable to another if the rest of the vector is
-    identical, so the block is optimised against a FIXED background and the
-    background is the best one known.
-    """
-    best = min(pts, key=lambda r: r[2])
-    return {k: v for k, v in best[1].items() if k not in BLOCK}
-
-
-def spec(vec, bg):
-    """The WHOLE vector, not just the block.
-
-    run_one_point.sh defaults to the current generation's centre, and
-    converge.py --write moves that centre every round. A command naming only the
-    four block parameters would therefore be evaluated against a different
-    background each generation -- the simplex would be measuring a function that
-    changes underneath it, which is the same error as building it from archive
-    points with mismatched backgrounds. Naming everything makes a vertex mean the
-    same thing whenever it is run.
-    """
-    out = dict(bg)
-    out.update({k: vec[k] for k in BLOCK})
-    return ' '.join('%s=%.6g' % (k, out[k]) for k in sorted(out))
-
-
-# A VERTEX IS ONLY A VERTEX IF THE REST OF THE VECTOR IS THE SAME. The simplex
-# is a function of four parameters and nothing else, so two points that differ in
-# size_homelessness as well as in b are not two evaluations of that function.
-# The archive holds a hundred and eighty points spread over eight generations and
-# every one of them has a different background; reusing them as vertices because
-# their block values are conveniently far apart would build the first simplex out
-# of numbers that are not comparable, and Nelder-Mead has no way to notice.
-#
-# So the background is fixed at the best point's, archive points are reused only
-# where they match it, and the rest are measured. It costs a few solves once.
-BACKGROUND = 1e-4
-
-
-def same_background(vec, bg):
-    for k, v in bg.items():
-        if k not in vec:
-            return False
-        if abs(math.log(max(vec[k], 1e-12) / max(v, 1e-12))) > BACKGROUND:
-            return False
-    return True
+def spec(vec):
+    return ' '.join('%s=%.6g' % (k, vec[k]) for k in sorted(vec))
 
 
 def initial(pts):
-    """A first simplex around the best point, at that point's background."""
-    best = min(pts, key=lambda r: r[2])
-    bg = {k: v for k, v in best[1].items() if k not in BLOCK}
-    verts = [(best[0], best[2])]
-    seen = [best[0]]
+    """Twenty three vertices: the best point, and it with each coordinate moved.
+
+    Any of them the fleet has already run is reused, in either direction -- the
+    four vertices launched for the earlier four parameter simplex are exactly
+    this shape and are picked up here rather than wasted.
+    """
+    base = min(pts, key=lambda r: r[2])
+    verts = [(base[0], base[2])]
     reused = 1
-    for lx, vec, loss, _n in sorted(pts, key=lambda r: r[2]):
-        if len(verts) > len(BLOCK):
-            break
-        if not same_background(vec, bg):
-            continue
-        if all(max(abs(a - b) for a, b in zip(lx, s)) > 0.05 for s in seen):
-            verts.append((lx, loss))
-            seen.append(lx)
+    for i, key in enumerate(BLOCK):
+        found = None
+        for sign in (1.0, -1.0):
+            x = list(base[0])
+            x[i] += sign * math.log(EDGE)
+            got = look_up(x, pts)
+            if got:
+                found = (x, got[0])
+                break
+        if found:
+            verts.append(found)
             reused += 1
-    # Whatever the archive cannot supply at this background is measured. The
-    # step is a factor of 1.4 in one coordinate, which is the same size as the
-    # trust region the Jacobian is allowed, so the first simplex is no wider
-    # than a step the search already believes in.
-    i = 0
-    while len(verts) <= len(BLOCK):
-        x = list(best[0])
-        x[i % len(BLOCK)] += math.log(1.4) * (1 if i % 2 == 0 else -1)
-        verts.append((x, None))
-        i += 1
-    print('%d vertices reused from the archive at the best point\'s background, '
-          '%d to measure.\n' % (reused, len(verts) - reused))
-    return verts, bg
+        else:
+            x = list(base[0])
+            x[i] += math.log(EDGE)
+            verts.append((x, None))
+    print('%d of %d vertices already measured, %d to run.\n'
+          % (reused, len(verts), len(verts) - reused))
+    return verts
 
 
 def load():
     if os.path.exists(STATE):
         with open(STATE) as fh:
-            return json.load(fh)
+            st = json.load(fh)
+        if st.get('block') == BLOCK:
+            return st
+        print('The state file is for a different parameter set; starting over.\n')
     return None
 
 
 def save(st):
+    st['block'] = BLOCK
     with open(STATE, 'w') as fh:
         json.dump(st, fh, indent=1)
 
 
-def centroid(verts):
-    n = len(verts) - 1
-    return [sum(v[0][i] for v in verts[:n]) / n for i in range(len(BLOCK))]
+def step_set(verts, phase):
+    """All n moved at once, the way MDS moves them."""
+    v0 = verts[0][0]
+    out = {}
+    for i, (x, _l) in enumerate(verts[1:], start=1):
+        if phase == 'reflect':
+            y = [2 * v0[j] - x[j] for j in range(len(BLOCK))]
+        elif phase == 'expand':
+            y = [v0[j] + MU * (v0[j] - x[j]) for j in range(len(BLOCK))]
+        else:
+            y = [v0[j] + THETA * (x[j] - v0[j]) for j in range(len(BLOCK))]
+        out['%s%02d' % (phase[0], i)] = y
+    return out
 
 
-def volume(verts):
-    """The simplex's volume, up to the constant factor that cancels in a ratio."""
-    x0 = verts[0][0] if isinstance(verts[0], (list, tuple)) else verts[0]
-    rows = []
-    for v in verts[1:]:
-        x = v[0] if isinstance(v, (list, tuple)) else v
-        rows.append([x[i] - x0[i] for i in range(len(BLOCK))])
-    n = len(rows)
-    m = [row[:] for row in rows]
-    det = 1.0
-    for i in range(n):
-        p = max(range(i, n), key=lambda r: abs(m[r][i]))
-        if abs(m[p][i]) < 1e-14:
-            return 0.0
-        if p != i:
-            m[i], m[p] = m[p], m[i]
-            det = -det
-        det *= m[i][i]
-        for r in range(i + 1, n):
-            fac = m[r][i] / m[i][i]
-            for c in range(i, n):
-                m[r][c] -= fac * m[i][c]
-    return abs(det)
+def jacobian_candidate(verts, pts):
+    """One extra trial: where the derivatives think the best vertex should go.
+
+    THE JACOBIAN IS NOT DISCARDED, IT IS DEMOTED TO A CANDIDATE. Direct search is
+    robust and slow; a linearisation is fast and, on this model, unreliable --
+    it has been wrong about the scale of a response, wrong across a cliff, and
+    right about the other eighteen parameters for eight generations. Running its
+    proposal as ONE point among twenty two costs one session and lets the
+    evidence decide, instead of the method having to be chosen in advance.
+    """
+    centre = from_log(verts[0][0])
+    try:
+        move, _info = jacobian.step(centre, pts, trust=1.4, regression=True)
+    except Exception:
+        return None
+    if not move:
+        return None
+    x = list(verts[0][0])
+    for i, key in enumerate(BLOCK):
+        if key in move:
+            x[i] += move[key]
+    v = from_log(x)
+    return [math.log(max(v[k], 1e-12)) for k in BLOCK]
 
 
-def trials(verts):
-    """The whole reflection ray at once, labelled by its coefficient."""
-    c = centroid(verts)
-    worst = verts[-1][0]
+def ray_set(v0, direction):
+    """The winning direction, sampled at several scales."""
     out = {}
     for t in RAY:
-        out['t%+.2f' % t] = [c[i] + t * (c[i] - worst[i]) for i in range(len(BLOCK))]
+        out['ray%+.1f' % t] = [v0[j] + t * direction[j] for j in range(len(BLOCK))]
     return out
 
 
-def advance(verts, t, f):
-    """Take the best point on the ray that keeps the simplex a simplex.
-
-    Nelder-Mead's acceptance rules exist to choose among four samples of this
-    ray without evaluating them all. With every sample in hand the choice is
-    simply the best one -- subject to the volume guard, which the textbook does
-    not need because four widely spaced samples rarely land on a face.
-
-    Returns (new vertices, what happened, whether a shrink is needed).
-    """
-    got = sorted(((loss, k) for k, loss in f.items() if loss is not None))
-    if not got:
-        return verts, 'nothing on the ray landed', False
-    worst = verts[-1][1]
-    v0 = volume(verts)
-    for loss, k in got:
-        if loss >= worst:
-            break
-        trial = verts[:-1] + [(t[k], loss)]
-        if v0 > 0 and volume(trial) < VOLUME_FLOOR * v0:
-            continue                    # too close to the face the others span
-        best_before = verts[0][1]
-        where = ('past the best vertex' if loss < best_before else 'accepted')
-        return trial, 'ray %s %s at loss %.3f (was %.3f)' % (k, where, loss, worst), False
-    return verts, 'nothing on the ray beat the worst vertex', True
-
-
-def shrink(verts):
-    x0 = verts[0][0]
-    out = [verts[0]]
-    for x, _l in verts[1:]:
-        out.append(([x0[i] + SIGMA * (x[i] - x0[i]) for i in range(len(BLOCK))], None))
-    return out
-
-
-def report(verts, pts):
-    print('%-12s %11s %11s %11s %11s %9s' %
-          ('vertex', 'b', 'lambda', 'theta', 'aleph', 'loss'))
-    print('-' * 70)
-    for i, (x, loss) in enumerate(verts):
-        v = from_log(x)
-        print('%-12s %11.5g %11.5g %11.5g %11.5g %9s'
-              % ('best' if i == 0 else ('worst' if i == len(verts) - 1 else str(i)),
-                 v['addiction_scalar_1'], v['lambda_addiction'],
-                 v['relative_share_of_addiction_1'], v['value_of_life'],
-                 '%.3f' % loss if loss is not None else 'not run'))
+def report(verts):
+    losses = [l for _x, l in verts if l is not None]
+    if losses:
+        print('simplex of %d vertices: best %.3f, median %.3f, worst %.3f'
+              % (len(verts), min(losses),
+                 sorted(losses)[len(losses) // 2], max(losses)))
     span = 0.0
     for i in range(len(BLOCK)):
         col = [x[i] for x, _l in verts]
         span = max(span, max(col) - min(col))
-    print('\nwidest edge: a factor of %.2f in one parameter' % math.exp(span))
+    print('widest edge: a factor of %.2f in one parameter' % math.exp(span))
     return span
 
 
@@ -331,67 +241,113 @@ def main():
         return
     st = load()
     if st is None or '--init' in sys.argv:
-        verts, bg = initial(pts)
-        st = {'iter': 0, 'vertices': [[x, l] for x, l in verts], 'trials': None,
-              'background': bg}
-        print('A FRESH SIMPLEX, built from the archive.\n')
+        verts = initial(pts)
+        st = {'iter': 0, 'phase': 'reflect', 'best_direction': None,
+              'vertices': [[x, l] for x, l in verts], 'trials': None,
+              'reflected': None}
+        print('A FRESH SIMPLEX over all %d parameters.\n' % len(BLOCK))
     verts = [(x, l) for x, l in st['vertices']]
-    bg = st['background']
+    verts = [(x, l if l is not None else
+              (look_up(x, pts)[0] if look_up(x, pts) else None)) for x, l in verts]
 
-    # Fill in any vertex whose point has landed since the last call.
-    filled = []
-    for x, loss in verts:
-        if loss is None:
-            got = look_up(x, pts, bg)
-            loss = got[0] if got else None
-        filled.append((x, loss))
-    verts = filled
-
-    if st.get('trials'):
-        t = {k: v for k, v in st['trials'].items()}
-        f = {}
-        for k, x in t.items():
-            got = look_up(x, pts, bg)
-            if got:
-                f[k] = got[0]
-        missing = [k for k in t if k not in f]
-        if missing and '--force' not in sys.argv:
-            print('iteration %d: still solving -- %s' % (st['iter'], ', '.join(missing)))
-            report(verts, pts)
-            return
-        verts, what, needs_shrink = advance(verts, t, f)
-        print('iteration %d: %s' % (st['iter'], what))
-        for k in sorted(f):
-            print('   %-9s loss %.3f' % (k, f[k]))
-        if needs_shrink:
-            verts = shrink(verts)
-            print('   the simplex shrinks toward its best vertex')
-        st['trials'] = None
-        st['iter'] += 1
-
+    # Any vertex still unmeasured has to be run before the simplex can step.
     if any(l is None for _x, l in verts):
-        print('\nVertices still to measure:\n')
-        for x, l in verts:
-            if l is None:
-                print('  bash code/run_one_point.sh %s' % spec(from_log(x), bg))
+        todo = [x for x, l in verts if l is None]
+        print('%d vertices still to measure:\n' % len(todo))
+        for x in todo:
+            print('  bash code/run_one_point.sh %s' % spec(from_log(x)))
         st['vertices'] = [[x, l] for x, l in verts]
-        save(st)
+        if '--write' in sys.argv:
+            save(st)
         return
 
+    # Resolve the batch in flight.
+    if st.get('trials'):
+        t = st['trials']
+        f = {}
+        for k, x in t.items():
+            got = look_up(x, pts)
+            if got:
+                f[k] = got[0]
+        if len(f) < len(t) and '--force' not in sys.argv:
+            print('iteration %d, %s: %d of %d points still solving'
+                  % (st['iter'], st['phase'], len(f), len(t)))
+            report(verts)
+            return
+        phase = st['phase']
+        best_now = verts[0][1]
+        moved = [(t[k], f[k]) for k in sorted(f) if not k.startswith('ray')]
+        rays = [(t[k], f[k]) for k in sorted(f) if k.startswith('ray')]
+        best_trial = min(f.values()) if f else None
+
+        if phase == 'reflect':
+            if best_trial is not None and best_trial < best_now:
+                # The reflection found something. Keep it and try to go further.
+                st['reflected'] = [[x, l] for x, l in moved]
+                st['phase'] = 'expand'
+                print('iteration %d: reflection improved the best vertex, '
+                      '%.3f -> %.3f. Expanding.' % (st['iter'], best_now, best_trial))
+            else:
+                st['phase'] = 'contract'
+                print('iteration %d: no reflection beat the best vertex (%.3f). '
+                      'Contracting.' % (st['iter'], best_now))
+        elif phase == 'expand':
+            ref = [(x, l) for x, l in st['reflected']]
+            best_ref = min(l for _x, l in ref)
+            if best_trial is not None and best_trial < best_ref:
+                verts = [verts[0]] + moved
+                print('iteration %d: the expanded simplex is better, %.3f -> %.3f.'
+                      % (st['iter'], best_ref, best_trial))
+            else:
+                verts = [verts[0]] + ref
+                print('iteration %d: the expansion did not beat the reflection; '
+                      'keeping the reflected simplex at %.3f.' % (st['iter'], best_ref))
+            st['reflected'] = None
+            st['phase'] = 'reflect'
+            st['iter'] += 1
+        else:
+            verts = [verts[0]] + moved
+            print('iteration %d: contracted toward the best vertex.' % st['iter'])
+            st['phase'] = 'reflect'
+            st['iter'] += 1
+
+        # A ray point that beat everything is worth taking whatever the phase says.
+        if rays:
+            br, bl = min(rays, key=lambda r: r[1])
+            if bl < min(l for _x, l in verts):
+                verts = [(br, bl)] + verts[:-1]
+                print('   a ray point beat every vertex at %.3f and becomes the best'
+                      % bl)
+
+        verts.sort(key=lambda v: v[1])
+        st['trials'] = None
+        st['vertices'] = [[x, l] for x, l in verts]
+        # The direction to sample next time: best vertex away from the worst.
+        v0, vn = verts[0][0], verts[-1][0]
+        st['best_direction'] = [v0[j] - vn[j] for j in range(len(BLOCK))]
+
     verts.sort(key=lambda v: v[1])
-    span = report(verts, pts)
-    t = trials(verts)
+    span = report(verts)
+    if span < 0.02:
+        print('\nCONVERGED: the widest edge is under two per cent.')
+        return
+
+    t = step_set(verts, st['phase'])
+    if st.get('best_direction'):
+        t.update(ray_set(verts[0][0], st['best_direction']))
+    jc = jacobian_candidate(verts, jacobian.points())
+    if jc is not None and max(abs(a - b) for a, b in zip(jc, verts[0][0])) > MATCH:
+        t['jacobian'] = jc
     st['vertices'] = [[x, l] for x, l in verts]
     st['trials'] = t
     if '--write' in sys.argv:
         save(st)
-    print('\nThe reflection ray, %d points, all at once (%s):\n'
-          % (len(t), '--write recorded them' if '--write' in sys.argv
+    print('\nIteration %d, %s: %d points, all at once (%s):\n'
+          % (st['iter'], st['phase'], len(t),
+             '--write recorded them' if '--write' in sys.argv
              else 'not recorded, pass --write'))
-    for k in sorted(t, key=lambda s: float(s[1:])):
-        print('  bash code/run_one_point.sh %s   # %s' % (spec(from_log(t[k]), bg), k))
-    if span < 0.02:
-        print('\nCONVERGED: the widest edge is under two per cent.')
+    for k in sorted(t):
+        print('  bash code/run_one_point.sh %s   # %s' % (spec(from_log(t[k])), k))
 
 
 if __name__ == '__main__':
