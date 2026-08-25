@@ -34,7 +34,15 @@
 % "Paragraph ended before \@textcolor was complete", and pdflatex then
 % returned nonzero, which set -e turned into a build that stopped before
 % every checker in build.sh. \color is a switch and survives \par.
-\newcommand{\new}[1]{#1}
+% \new MUST RENDER RED. strip_red.py rewrites this line to a passthrough,
+% \newcommand{\new}[1]{#1}, so that any \new left after a strip is inert.
+% That passthrough was committed once and every \new written afterwards
+% went in as plain black text: several rounds of marked edits were
+% invisible to the reader, in the intro, the calibration entries and the
+% citations alike, while table cells kept showing red because they use
+% \textcolor directly. check_red.py now fails the build if this line is
+% a passthrough while any \new remains in the file.
+\newcommand{\new}[1]{{\color{red}#1}}
 % A STANDING FLAG, which survives the strip between rounds. \new and \cut both
 % mark what changed since the last version and are cleared when the next round
 % starts, so neither can carry an open question forward. \query holds one: a
@@ -2361,7 +2369,7 @@ child of a user now inherits a higher chance of illness that is a consequence
 of the productivity penalty. Treatment First's return rises as $\iota$ rises,
 because curing the disorder now prevents some cases of SMI too. It is set externally at two, from the
 Danish registers in Nielsen et al.\ (2017).
-\new{\item[$\lambda_m$, the annual chance of recovering from SMI.] This parameter
+\item[\new{$\lambda_m$, the annual chance of recovering from SMI.}]\new{ This parameter
 governs how long an episode of mental illness lasts: it is the hazard of leaving
 the SMI state each year, so it sets the persistence of the illness rather than
 how many households ever acquire it. Raise it and mental illness is less
@@ -2371,7 +2379,7 @@ and through it SMI has a higher chance of recovery and a higher value of life. I
 is set externally at $\new{0.067}$, the annual hazard that gives a
 \new{$\new{50}$ per cent} chance of recovery within ten years,
 \new{the ten-year clinical recovery rate reported by {\AA}sb{\o} et al.\ (2022)}.}
-\new{\item[$\omega_m$, the level of the SMI onset profile.] This parameter
+\item[\new{$\omega_m$, the level of the SMI onset profile.}]\new{ This parameter
 governs how many households ever acquire mental illness: it scales the age
 profile of onset up or down without changing its shape, so it fixes the size of
 the SMI population rather than who reaches it or when. Raise it and both the
@@ -2379,7 +2387,7 @@ private cost and the externality rise, since a child is likelier to reach a stat
 that costs earnings, employment and years of life. It is calibrated internally,
 to the share of the population carrying SMI in NSDUH 2024, which is
 $4.82$ percent.}
-\new{\item[$\zeta_{DI}$, \new{disability insurance for the unemployed}.]
+\item[\new{$\zeta_{DI}$, disability insurance for the unemployed.}]\new{
 This parameter sets the floor under one of the worst states in the model,
 being ill and out of work, so it decides how far such a household can fall. Raise
 it and the private cost of that state falls, and with it the externality on a
@@ -2758,7 +2766,7 @@ quantity are measured.
 % THE PARENTHETICAL BELONGS IN THE BODY, NOT THE LABEL. A description
 % label does not wrap: it is typeset on one line and runs off the page,
 % which is what it did here.
-\new{\item[$\varrho$, the food stamp clawback rate.]} This is the rate at which food assistance is withdrawn as income rises. I set it to thirty percent, which is the statutory rule: a household\textquotesingle s monthly allotment is the maximum allotment for its size reduced by thirty percent of its net monthly income (7 CFR 273.10). It matters beyond the level of the transfer, because it is the implicit marginal tax the programme puts on earnings for the households the paper is about: an extra dollar earned costs a household on food assistance $\varrho$ of a dollar of its allotment.
+\item[\new{$\varrho$, the food stamp clawback rate.}] This is the rate at which food assistance is withdrawn as income rises. I set it to thirty percent, which is the statutory rule: a household\textquotesingle s monthly allotment is the maximum allotment for its size reduced by thirty percent of its net monthly income (7 CFR 273.10). It matters beyond the level of the transfer, because it is the implicit marginal tax the programme puts on earnings for the households the paper is about: an extra dollar earned costs a household on food assistance $\varrho$ of a dollar of its allotment.
 
 \item[$J_E$, the maximum age at which use can begin.] This restricts only households that do not have a SUD, not ones that already do. I set it to fifty five in model terms, which corresponds to age $80$ in the data.
 It is there so that use cannot begin in the last few years of life, where almost no
