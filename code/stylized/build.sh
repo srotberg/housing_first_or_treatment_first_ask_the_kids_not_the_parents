@@ -78,6 +78,16 @@ python3 check_spacing.py
 # that had passed to eta_DI, and omega_m and eta_DI were live calibrated
 # parameters appearing in no table at all. sync_tables.py syncs NUMBERS and does
 # not add rows or touch the Set column, so none of that was visible to it.
+# EVERY SOURCE WITH MORE THAN TWO AUTHORS IS CITED AS ET AL. A three author
+# paper written out reads perfectly naturally, which is exactly why the
+# convention drifts in a single edit and why this is a checker rather than a
+# note. It also now checks the ORDER of the prose entries against the order of
+# the table rows, which drifted twice unseen: eta_DI's entry sat in the housing
+# block while its row was in the mental illness chain, and varrho came before
+# the voucher rules in the text and after them in the table.
+echo "== checking the citation convention"
+python3 check_citations.py
+
 echo "== checking that the tables and the prose say the same thing"
 python3 check_params.py
 

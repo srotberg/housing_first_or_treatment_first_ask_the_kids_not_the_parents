@@ -2363,8 +2363,9 @@ how many households ever acquire it. Raise it and mental illness is less
 persistent, so the private cost falls, because fewer years are spent with SMI,
 and the externality falls with it, since a child who is likelier to acquire a SUD
 and through it SMI has a higher chance of recovery and a higher value of life. It
-is set externally at $\new{0.067}$, the annual hazard that gives a fifty per
-cent chance of recovery within ten years.}
+is set externally at $\new{0.067}$, the annual hazard that gives a
+\new{$\new{50}$ per cent} chance of recovery within ten years,
+\new{the ten-year clinical recovery rate reported by {\AA}sb{\o} et al.\ (2022)}.}
 \new{\item[$\omega_m$, the level of the SMI onset profile.] This parameter
 governs how many households ever acquire mental illness: it scales the age
 profile of onset up or down without changing its shape, so it fixes the size of
@@ -2410,7 +2411,7 @@ earnings and lowers its chance of being unhoused, so part of Treatment First's
 return appears in the health of the children of those treated for a SUD rather
 than in the treated household's own drug use. Its value is chosen
 so the model generates the employment rate given SMI, about $30$ percent, the
-midpoint of the range for high-disability diagnoses.
+midpoint of the range for high-disability diagnoses \new{in Mechanic et al.\ (2002)}.
 \item[$\mu_m$, the SUD recovery multiplier for SMI.] This parameter is the
 second direction of the
 chain: not only does a SUD increase the chance of SMI, but SMI also means
@@ -2729,8 +2730,6 @@ and state benefit maxima that the Department of Labor compiles in its comparison
 state UI laws
 (\url{https://oui.doleta.gov/unemploy/statelaws.asp}).
 
-\item[$\varrho$, the food stamp clawback rate.] This is the rate at which food assistance is withdrawn as income rises. I set it to thirty percent, which is the statutory rule: a household\textquotesingle s monthly allotment is the maximum allotment for its size reduced by thirty percent of its net monthly income (7 CFR 273.10). It matters beyond the level of the transfer, because it is the implicit marginal tax the programme puts on earnings for the households the paper is about: an extra dollar earned costs a household on food assistance $\varrho$ of a dollar of its allotment.
-
 \item[$\kappa_V$ and $\kappa_r$, the voucher rules.] These two set the income
 cutoff for eligibility and the tenant's contribution, and I take both from HUD's own
 rules. I set them to half of median income and thirty
@@ -2750,6 +2749,8 @@ quantity are measured.
 % THE PARENTHETICAL BELONGS IN THE BODY, NOT THE LABEL. A description
 % label does not wrap: it is typeset on one line and runs off the page,
 % which is what it did here.
+\item[$\varrho$, the food stamp clawback rate.] This is the rate at which food assistance is withdrawn as income rises. I set it to thirty percent, which is the statutory rule: a household\textquotesingle s monthly allotment is the maximum allotment for its size reduced by thirty percent of its net monthly income (7 CFR 273.10). It matters beyond the level of the transfer, because it is the implicit marginal tax the programme puts on earnings for the households the paper is about: an extra dollar earned costs a household on food assistance $\varrho$ of a dollar of its allotment.
+
 \item[$J_E$, the maximum age at which use can begin.] This restricts only households that do not have a SUD, not ones that already do. I set it to fifty five in model terms, which corresponds to age $80$ in the data.
 It is there so that use cannot begin in the last few years of life, where almost no
 continuation value remains to be lost and the private cost of using is therefore

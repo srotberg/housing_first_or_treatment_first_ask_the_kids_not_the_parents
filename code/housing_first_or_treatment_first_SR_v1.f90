@@ -791,6 +791,9 @@
         ! separately citable pieces does not make either piece estimable. The
         ! default is the old product, 0.25*0.33.
         real(8) :: zeta_DI=0.0825
+        real(8) :: zeta_DI_adjuster=1*10.d0**(-2)
+        real(8) :: distance_zeta_DI
+        real(8) :: stopping_rule_zeta_DI=10.d0**(-3)
 
         ! THE SHARE OF THEM WHO ACTUALLY RECEIVE IT, which was one until 25
         ! August and should never have been.
@@ -32794,6 +32797,36 @@
                     !   rho_d up      -> smaller penalty -> employed homeless can
                     !                    afford housing -> employed share of the
                     !                    homeless DOWN
+
+                    ! ZETA_DI OWNS THE SMI SHARE OF THE HOMELESS. It was
+                    ! lambda_m's moment until 25 August, and lambda_m's update
+                    ! below is kept at a zero adjuster rather than deleted so
+                    ! that what this loop used to do stays readable. A more
+                    ! generous transfer keeps households with SMI housed, so the
+                    ! share of the homeless carrying SMI FALLS as zeta_DI rises
+                    ! and the update SUBTRACTS the gap.
+                    if ((zeta_DI_adjuster>0) .AND. (number_of_smi_states>1) &
+                        .AND. (model_mass_homeless_raw(1)>10.d0**(-12))) then
+
+                        zeta_DI=min(max(zeta_DI-zeta_DI_adjuster*&
+                            (model_smi_share_of_homeless(1)-smi_share_of_homeless_data),&
+                            0.d0),1.d0)
+
+                        ! OWNERSHIP IS READ OFF THE DISTANCE, not off the
+                        ! update: calibration_report.pairs() builds the map from
+                        ! distance_X = abs(model - target), which is what
+                        ! check_alignment judges the table's Set column against.
+                        distance_zeta_DI=&
+                            abs(model_smi_share_of_homeless(1)-smi_share_of_homeless_data)
+
+                        write(*,*) "zeta_DI ->", zeta_DI, " SMI share of the homeless", &
+                            model_smi_share_of_homeless(1), " target", smi_share_of_homeless_data
+
+                    else
+
+                        distance_zeta_DI=0
+
+                    end if
 
                     if ((lambda_m_adjuster>0) .AND. (number_of_smi_states>1)) then
 
