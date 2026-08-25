@@ -180,6 +180,24 @@ def spec(vec):
     return ' '.join('%s=%.6g' % (k, vec[k]) for k in sorted(vec))
 
 
+def _reuse(cand, pts):
+    """How many of this candidate's vertices the fleet has already measured."""
+    n = 0
+    for i, key in enumerate(BLOCK):
+        edge = EDGE
+        if key in EDGE_OVERRIDE:
+            edge = EDGE_OVERRIDE[key] / max(cand[1][key], 1e-12)
+            if abs(math.log(max(edge, 1e-12))) < 1e-6:
+                edge = EDGE
+        for sign in (1.0, -1.0):
+            x = canon([cand[0][j] + (sign * math.log(edge) if j == i else 0.0)
+                       for j in range(len(BLOCK))])
+            if look_up(x, pts):
+                n += 1
+                break
+    return n
+
+
 def initial(pts):
     """Twenty three vertices: the best point, and it with each coordinate moved.
 
@@ -187,7 +205,16 @@ def initial(pts):
     four vertices launched for the earlier four parameter simplex are exactly
     this shape and are picked up here rather than wasted.
     """
-    base = min(pts, key=lambda r: r[2])
+    # THE ANCHOR IS THE POINT THAT REUSES THE MOST WORK, not simply the best
+    # one. Anchoring on the best point re-centres the whole simplex every time a
+    # new best lands, and every vertex around the previous anchor stops matching:
+    # when the weighting changed and zeta_DI replaced di_takeup, a simplex with
+    # 22 of 24 vertices measured reported 2, and would have spent 22 fresh points
+    # rebuilding what was already on disk. Which point anchors an INITIAL simplex
+    # is a free choice -- it only has to be non-degenerate, and the first
+    # reflection moves toward the best vertex regardless -- so it is spent on
+    # reuse, with the loss as the tie-break.
+    base = max(pts, key=lambda r: (_reuse(r, pts), -r[2]))
     verts = [(base[0], base[2])]
     reused = 1
     for i, key in enumerate(BLOCK):

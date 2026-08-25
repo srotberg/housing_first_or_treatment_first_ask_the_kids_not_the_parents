@@ -121,7 +121,12 @@ def run(freeze=False, dry=False):
                 if _bare(cells[ci]) != new:
                     changed = True
                 cells[ci] = ' ' + (RED % new if changed else new) + ' '
-            shape = _shape(cells[4]) or (False, 2, False)
+            # THE VALUE CELL'S SHAPE WHEN THE DATA CELL HAS NONE. An Ext. row
+            # whose Data column reads n.a. fell through to a two decimal
+            # default, so lambda_m exported as 0.07 while the table beside it
+            # printed 0.067, and the prose quoted the rounded one. cells[6]
+            # is the Value column and states the same quantity.
+            shape = _shape(cells[4]) or _shape(cells[6]) or (False, 2, False)
             nums[name] = _fmt(x, (shape[0], shape[1], False)).replace(r'\%', '')
             # A PERCENT VARIANT FOR EVERY ROW. The tenant's contribution is 0.30
             # in the table and thirty per cent in the sentence beside it, and
