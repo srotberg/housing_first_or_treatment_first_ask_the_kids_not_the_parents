@@ -231,6 +231,38 @@ Two things the simplex has to get right and did not on the first attempt:
   against a different background each time and the simplex would be tracking a
   function moving underneath it.
 
+## THE BATCH SIZE IS SET BY A SESSION LIMIT, AND IT WAS FOUND BY BREAKING IT
+
+Iteration zero was emitted as sixty seven points and FIVE of them ran. The other
+sixty two sessions all failed with the same line:
+
+    You've hit your session limit - resets 5:50am (UTC)
+
+The limit is a count of SESSIONS PER FIVE HOUR WINDOW on the account, and by
+03:40 the window had already absorbed twenty three vertices, four earlier
+simplex points, a dispatcher and forty odd manual spawns. Everything after that
+was rejected instantly. The workers were not slow and the code was not wrong;
+there was no budget left to run them.
+
+Three consequences, all standing:
+
+- **Size the batch to the remaining window, not to what the method could use.**
+  The information ceiling of an MDS iteration is 3n, and 3n is unaffordable here.
+  Plain MDS -- n reflection points, then n expansions or contractions next round
+  -- is TWENTY TWO points and costs two rounds of wall clock instead of one. That
+  is the affordable form and it is the default now.
+- **Check rate_limit_info BEFORE emitting, not before spawning.** A batch written
+  larger than the budget cannot be spawned, and clearing a half-spawned batch
+  costs a round: the state records points the fleet was never asked for, and the
+  simplex waits for them.
+- **A failed spawn is silent in the point archive.** Nothing distinguishes "never
+  ran" from "still solving" except the session's own status_detail, so a batch
+  that is missing most of its points after forty five minutes gets its sessions
+  checked rather than its wall clock extended.
+
+The five that did land were not wasted -- they are archive points like any other
+-- but iteration zero has to be re-emitted, and it is re-emitted at twenty two.
+
 ## What counts as finished
 
 The author, 25 August: "it is ok if we can't hit every single moment. It's many
