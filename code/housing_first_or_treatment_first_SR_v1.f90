@@ -272,6 +272,12 @@
         real(8) :: weight_on_child_saved=0
         integer, parameter :: calibrate_weight_on_child=1
 
+        ! WHETHER A POINT MEASURES OMEGA_C'S MOMENT. It costs a second
+        ! value function solve and distribution convergence, about a
+        ! third again on top of a point, and it is the only way the
+        ! search can see omega_c at all.
+        integer, parameter :: measure_child_gap=1
+
         ! THE COUNTERFACTUAL REMOVES THE PENALTY, NOT THE CHILD.
         !
         ! The child term is beta*(1-phi)*omega*E[V_child], weighted by the
@@ -4054,6 +4060,9 @@
             implicit none
 
             real(8) :: w2o_1,vsl_1,csud_n_1,csud_d_1,chom_n_1,chom_d_1
+            ! The counterfactual overwrites model_total_drug_users, so the
+            ! denominator of the gap has to be held before it runs.
+            real(8) :: baseline_users_for_gap
             integer :: k_1
 
             w2o_1=model_total_net_wealth(1)/max(model_GDP_incl_imput_rent(1),10.d0**(-12))
@@ -4125,6 +4134,56 @@
                 csud_n_1/max(csud_d_1,10.d0**(-12)), " target=", child_sud_ratio_data
             write(*,*) "MOMENT delta_h   child homelessness ratio    model=",&
                 chom_n_1/max(chom_d_1,10.d0**(-12)), " target=", child_homeless_ratio_data
+
+            ! OMEGA_C'S MOMENT, AND WHY IT IS LAST.
+            !
+            ! It is the only targeted moment that is not a statistic of the
+            ! solved equilibrium: it is the rise in use when the child term is
+            ! switched off, so measuring it costs a SECOND value function solve
+            ! and distribution convergence. Because a point run never entered
+            ! the parameter update block, where the counterfactual used to live,
+            ! omega_c was the one parameter in the search whose moment was never
+            ! measured -- twenty three moments printed, twenty four parameters
+            ! moved, and omega_c drifted with nothing pushing back. It sat at
+            ! 0.5 for that reason alone.
+            !
+            ! THE COUNTERFACTUAL LEAVES ITS DISTRIBUTION BEHIND, which is why the
+            ! old placement -- before the baseline -- contaminated every baseline
+            ! statistic that followed it, a fault the code already recorded
+            ! against this moment. Here it runs after the last of them, so the
+            ! baseline is read clean and only the counterfactual carries the
+            ! counterfactual's path. Nothing may be added below it.
+            if ((measure_child_gap==1) .AND. (include_child_in_continuation==1)&
+                .AND. (model_total_drug_users(1)>&
+                10.d0**(-1)*participation_rate_data)) then
+
+                baseline_users_for_gap=model_total_drug_users(1)
+
+                child_penalty_off=1
+
+                call solve_value_function_and_policy_functions(1)
+                call converge_to_stationary_equilibrium(1)
+                call stationary_equilibrium_statistics(1)
+
+                drug_users_without_child=model_total_drug_users(1)
+
+                child_penalty_off=0
+
+                write(*,*) "MOMENT omega     use rise, child term off    model=",&
+                    drug_users_without_child/baseline_users_for_gap-1.d0,&
+                    " target=", child_use_gap_data
+
+            else
+
+                ! NO BASELINE, NO GAP. A ratio taken against a using population
+                ! a tenth of its target is a statement about the denominator,
+                ! and printing it would enter the loss as if it were a
+                ! measurement. Say why instead.
+                write(*,*) "omega HELD: using population is", model_total_drug_users(1),&
+                    "against a target of", participation_rate_data,&
+                    "so the child use gap is not measurable"
+
+            end if
             write(*,*) "===== END OF MOMENTS ====="
 
         end subroutine

@@ -38,7 +38,7 @@ LABEL = {
     'omega_l': 'labour supply / hours', 'tau_l': 'average labour income tax',
     'sigma_y': 'bottom half earnings share', 'pi_eu': 'unemployment rate',
     'kappa_ued': 'unemployment given SUD', 'kappa_uem': 'employment given SMI',
-    'lambda_m': 'SMI share of the homeless', 'p_m': 'SMI share of the population', 'pi_V': 'eligibles with a voucher',
+    'lambda_m': 'SMI share of the homeless', 'p_m': 'SMI share of the population', 'omega': 'use rise, child term off', 'pi_V': 'eligibles with a voucher',
     'tau_u': 'treatment take up', 'delta_d': 'child SUD ratio',
     'delta_h': 'child homelessness ratio', 'h_2': 'share in smallest unit',
     'h_4': 'share in largest unit',
