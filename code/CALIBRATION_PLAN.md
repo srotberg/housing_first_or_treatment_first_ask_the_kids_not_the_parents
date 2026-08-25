@@ -153,6 +153,84 @@ comes UP.
 **Homelessness is alive**: 0.0110 against 0.00399 at h_1 = 0.304, the first time
 this session it was neither zero nor nine per cent.
 
+## Why the loss stopped falling, measured rather than guessed
+
+Eight generations and a hundred and eighty points have moved the best loss from
+0.481 to 0.421. That is not a search converging; it is a search stuck. The
+decomposition of the best point says why, and it is two different problems
+wearing one number:
+
+    moment       model     target   w   rel gap   share of loss   cumulative
+    lambda_d    0.00383    0.0368   3    -89.6%       22.0%          22.0%
+    kappa_uem    0.9536      0.30   1   +217.9%       17.8%          39.9%
+    b           0.04701     0.089   3    -47.2%       11.6%          51.5%
+    lambda_m    0.00160      0.25   1    -99.4%        8.1%          59.6%
+    tau_u        0.4794     0.245   1    +95.7%        7.8%          67.4%
+    theta        0.1050     0.162   2    -35.2%        5.8%          73.2%
+
+Five moments carry two thirds of it, and the remaining seventeen carry a third
+between them, most of them inside fifteen per cent. The search has not been
+failing at twenty two things; it has been failing at five.
+
+**kappa_uem and lambda_m are one problem, and it was not an optimisation problem
+at all.** They are 25.9 per cent of the loss and they share an instrument, which
+sat pinned at its floor of 1.0 for every generation. At one, kappa_uem is the
+identity: serious mental illness costs nothing on either employment margin. The
+declaration block says what SMI is supposed to do -- "kappa_uem takes it out of
+work, DI carries its income there, lambda_m carries its share of the homeless" --
+so with the multiplier at one the poverty channel is switched off, and the SMI
+share of the homeless is 0.0016 against a target of 0.25 because nothing has
+pushed anyone with SMI onto the street. No method moves a clamped parameter.
+Freeing it should collapse both moments at once, and that is what the probe at
+8.5 in generation nine is for.
+
+**b, lambda and theta are the other problem, and they are 39.4 per cent.** They
+need a large move that has to be made TOGETHER. The evidence that one at a time
+does not work is generation eight: lambda alone went from 5.06 to 9.11, in the
+direction the ridge map says the answer lies, and the loss went from 0.455 to
+0.527. Every other single-parameter arm was worse still, up to 2.03. The block
+sits in a narrow curved valley, single-parameter arms fall off it whichever way
+they go, and the trust region caps the joint move at a factor of 1.4 a round.
+
+## Nelder-Mead, on the block and not on the vector
+
+`code/simplex.py`. The Jacobian keeps the eighteen parameters it handles well;
+the four coupled ones get a simplex.
+
+The case for it on this block is that the block is where derivatives fail. The b
+curve recorded above is 0.947, 0.759, then 0.000158 across 0.05, 0.06 and 0.12 --
+flat and then a cliff -- and interpolating through it gave 0.0634 and was badly
+wrong. A slope measured on the flat says nothing about the cliff. Nelder-Mead
+needs no slope, tolerates the discontinuity, and moves all four parameters
+together by construction.
+
+The case AGAINST it on the whole vector is just as strong and it is why the
+Jacobian stays. Twenty two parameters need twenty three vertices before the
+method takes its first step, and it is known to stagnate well below that
+dimension. Worse for this fleet, it is sequential: reflect, look, then decide
+whether to expand or contract, one twenty-minute solve at a time, which would
+leave seventeen of eighteen parallel slots idle.
+
+**So the decision tree is evaluated in parallel instead of walked.** Every trial
+the textbook could ask for -- reflection, expansion, outside contraction, inside
+contraction -- goes out at once, and the standard acceptance rules then run
+against four results already in hand. The logic is unchanged; only the order is.
+Four points a round, one wall clock.
+
+Two things the simplex has to get right and did not on the first attempt:
+
+- **A vertex is only a vertex if the rest of the vector is identical.** The
+  archive's hundred and eighty points each carry their own background, and
+  building the first simplex from the ones whose block values were conveniently
+  spread would have compared numbers that are not comparable. Only points at the
+  best point's background are reused -- which turned out to be one of them, so
+  four vertices are measured.
+- **An emitted point names the WHOLE vector, not the four.** run_one_point.sh
+  defaults to the current generation's centre and `converge.py --write` moves
+  that centre every round, so a command naming only the block would be evaluated
+  against a different background each time and the simplex would be tracking a
+  function moving underneath it.
+
 ## The order of work the author has set
 
 1. The sweep pins b and lambda. **Report the curve; do not pick the values.**
