@@ -2710,6 +2710,18 @@
         ! child term is zero and the model starts where it used to be.
         integer, parameter :: include_child_in_continuation=1
         real(8), dimension(0:1,1:2) :: expected_child_value=0
+
+        ! WHETHER expected_child_value HAS EVER BEEN COMPUTED FOR REAL.
+        ! compute_expected_child_value returns zero while age one is still
+        ! the sentinel, and it is the sentinel on the first solve, so the
+        ! term was designed to switch on at the SECOND pass. The
+        ! calibration loop has one; a point run does not, so the child
+        ! externality was off in every point this fleet ever measured -- 19
+        ! points carrying MOMENT omega all reported a use gap of exactly
+        ! zero, which is what a no-op counterfactual looks like. This flag
+        ! lets a point run pay for one priming solve and then run with the
+        ! term live.
+        integer :: child_value_ready=0
         real(8), dimension(threshold_addiction_index) :: unconditional_unemployment_probability
         real(8), dimension(life_span,employment_grid_size,employment_grid_size) :: employment_process
         real(8), allocatable, dimension(:,:,:,:,:,:) :: unemployment_process
@@ -14594,16 +14606,26 @@
                         ! The child, weighted by the chance the household does not
                         ! survive this period and by omega. It does not depend on
                         ! a', since the estate goes to the government rather than
-                        ! to the child, so it shifts the level and the housing and
-                        ! drug choices through phi and leaves the saving decision
-                        ! alone.
+                        ! to the child, so it shifts the housing and drug choices
+                        ! and leaves the saving decision alone.
+                        !
+                        ! THE FIRST INDEX IS THE CHOICE, NOT THE INHERITED STATE.
+                        ! It read addiction_index, which is set once from
+                        ! unemployment_index before this loop and is the SUD state
+                        ! the household arrives with. The maximisation here is over
+                        ! future_addiction_index, so the term was identical across
+                        ! every drug choice and could not enter that decision at
+                        ! all -- a household could not weigh "if I use, my child is
+                        ! worse off", which is the whole content of omega's moment.
+                        ! The second index was already the choice: is_homeless_1 is
+                        ! set from future_housing_status_index_to_use above.
                         if (include_child_in_continuation==1) then
                         
                             future_utility_vector(future_financial_index)=&
                                 future_utility_vector(future_financial_index)+&
                                 discount_factor*&
                                 (1-survival_probability(age_index,is_homeless_1,survival_sud_of(addiction_index,treatment_choice_now),smi_of(unemployment_index)))*&
-                                weight_on_child*expected_child_value(addiction_index,is_homeless_1)
+                                weight_on_child*expected_child_value(future_addiction_index,is_homeless_1)
                         
                         end if
                         
@@ -22767,6 +22789,8 @@
         !
         ! The model already has a separate bequest motive for the value of leaving
         ! something behind, so the level was double counting it.
+        child_value_ready=1
+
         expected_child_value(1,1)=expected_child_value(1,1)-expected_child_value(0,1)
         expected_child_value(0,2)=expected_child_value(0,2)-expected_child_value(0,1)
         expected_child_value(1,2)=expected_child_value(1,2)-expected_child_value(0,1)
@@ -30955,6 +30979,29 @@
                     drug_users_without_child, " counterfactual distribution sweeps =",&
                     loop_count_dist, " reached =", distance_distribution_reached,&
                     " capped =", merge(1,0,loop_count_dist>=max_distribution_sweeps)
+
+            end if
+
+            ! THE PRIMING SOLVE, WITHOUT WHICH THE CHILD TERM IS NEVER LIVE.
+            !
+            ! compute_expected_child_value runs at the top of the solve and
+            ! returns zero while age one is still the sentinel, so the FIRST
+            ! solve of a run always faces a zero child term. The design assumed a
+            ! second pass would pick it up, which the calibration loop provides
+            ! and a point run does not. The consequence was total rather than
+            ! partial: nineteen points carrying MOMENT omega every one reported a
+            ! use gap of exactly 0.0000000000000000, because switching off a term
+            ! that is already zero is a no-op, and weight_on_child multiplied
+            ! nothing at 0.02, 0.5 and 0.7 alike.
+            !
+            ! So solve once to fill age one, which lets the next call compute the
+            ! term for real, then solve again with it live. It costs one extra
+            ! solve on the first pass of a run and nothing after that.
+            if ((include_child_in_continuation==1) .AND. (child_value_ready==0)) then
+
+                write(*,*) "PRIMING SOLVE: filling age one so the child term can be computed"
+
+                call solve_value_function_and_policy_functions(1)
 
             end if
 
