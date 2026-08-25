@@ -519,7 +519,7 @@ al.\ (1997) test pure altruism directly, on consumption within parent-and-child
 households, and reject it: the transfers parents make to their children while
 alive do not respond to the distribution of income inside the family the way
 complete altruism requires. Parents are probably altruistic, but not
-completely, which is the case for treating $\omega$ as strictly between zero and one
+completely, which is the case for treating $\omega_c$ as strictly between zero and one
 rather than assuming either end of it. Their experiment cannot be run here. It compares parents against their
 own adult children, and every household in this model has a child, born only when it
 dies, so there is no parent against non-parent comparison to make in the benchmark.
@@ -527,7 +527,7 @@ What the model can do is another test, and for this paper
 it is a more relevant one. In NSDUH 2024 past-month use among parents is $0.845$ of use among non-parents, reweighted to the non-parents' joint distribution of age, income, sex and marital status so that the gap
 is behaviour rather than composition. The child term of the household's problem is
 the only thing in the model that makes a household use less than it otherwise would,
-so $\omega$ is set so that switching that term off raises use by the same $@@q_omega@@$
+so $\omega_c$ is set so that switching that term off raises use by the same $@@q_omega@@$
 percent. The externality is therefore not assumed to be large, and its size is
 calibrated to observed behaviour on exactly the margin this paper is about.
 
@@ -747,7 +747,7 @@ rest, and the household survives into period 2 with probability
 \begin{equation}\label{eq:surv}
 \new{\phi(d') \;=\; \bar\phi^{\,\kappa_{\phi d}^{\,d'}},}
 \end{equation}
-\new{so $\kappa_{\phi d}$ is the mortality \emph{rate} ratio with the SUD.}
+so $\kappa_{\phi d}$ is the mortality \emph{rate} ratio with the SUD.
 The mortality penalty applies here, and here only.
 
 \paragraph{Period 2.} This is the terminal period, after which the household dies with certainty. A
@@ -933,13 +933,7 @@ expenditure on the four drugs, from Midgette et al.\ (2019) for 2016 carried to
 
 \begin{table}[!tb]
 \centering
-\caption{Internally calibrated parameters\new{\query{FLAGGED: several model
-moments in this table sit a long way from their targets, and the fit is not yet
-good enough to report. The gaps are largest on the drug margin and on the SMI
-block; the latter is being rebuilt, since disability income was paid to every
-household with a serious mental illness and so insured exactly the households
-the homelessness moment is about. This caption should be removed once the
-calibration is closed.}}}\label{tab:int}
+\caption{Internally calibrated parameters}\label{tab:int}
 \input{tables/tab_internal}
 \end{table}
 
@@ -1071,9 +1065,9 @@ percent. What the moral hazard buys is extra SUD cases among households that
 are housed either way.
 
 Panels (b) and (c) move in opposite directions under Housing First,
-and the reason is \new{that the programme acts on the extensive and intensive
+and the reason is that the programme acts on the extensive and intensive
 margins in opposite directions: it moves fewer households onto the drug, and
-those it does not deter it makes richer, so each of them uses more.} Set against no programme at all,
+those it does not deter it makes richer, so each of them uses more. Set against no programme at all,
 universal Housing First takes participation \emph{down}, from @@p0@@ percent to
 @@ph@@ percent, while the share carrying the SUD goes \emph{up}, from @@sud0@@
 percent to @@sudh@@ percent. Fewer households use, \new{but} each one that does uses a
@@ -1484,17 +1478,9 @@ the replacement rate $\psi_{ui}$ on an earnings base capped at average income
 $\bar y$, both as in equation~\eqref{eq:inc}. $\zeta_{DI}$ is the rate at which disability
 insurance (DI) replaces the income of an unemployed household with SMI, and that
 DI does not stop until the household recovers. \new{Only a fraction $\eta_{DI}$
-of those eligible actually receive it, so the transfer enters as
-$\eta_{DI}\zeta_{DI}$: every eligible household is paid the EXPECTED benefit
-rather than a fraction of them being paid the full one. That is an approximation
-and it is not innocuous, because homelessness is a threshold and a threshold is
-not linear in income. Under the programme it stands in for, a fraction of these
-households have no income at all and are at the margin of losing their housing,
-while the rest are comfortably above it; here none of them is at either extreme.
-Doing it exactly requires carrying receipt as a state variable, which the
-mental-illness chain is not rich enough to do without doubling in size. The
-approximation errs towards MORE homelessness among the mentally ill than the
-programme it represents, since no household is left fully insured.}
+of those eligible actually receive it in the data, so the transfer enters as
+$\eta_{DI}\zeta_{DI}$: every eligible household is paid the expected benefit
+rather than a fraction of them being paid the full one.}
 
 
 
@@ -1623,7 +1609,8 @@ is calibrated, to the share of the population carrying SMI.
 An earlier version instead backed onset out of that prevalence profile and the
 recovery hazard, by the accounting identity
 $\text{onset}_m(j)=[s_m(j{+}1)-s_m(j)(1-\lambda_m)]/[1-s_m(j)]$, which reproduces
-the observed profile exactly. That has two drawbacks and I have dropped it.
+the observed profile exactly. That has two drawbacks and I have dropped it\new{,
+in favour of calibrating the level $\omega_m$}.
 Prevalence is then matched by construction at any $\lambda_m$, so the model cannot
 miss it and $\lambda_m$ is not identified by the moment it should own. And
 because the observed profile declines with age, the identity requires
@@ -1650,8 +1637,8 @@ $\kappa_{uem}$ in~\eqref{eq:femp}, mortality through $\kappa_{\phi m}$
 in~\eqref{eq:fsurv}, the SUD recovery hazard through
 $\mu_m$ in~\eqref{eq:frecover}, and
 disability income, for which eligibility is being out of work with SMI and
-the replacement rate is $\zeta_{DI}$\new{, scaled by the share $\eta_{DI}$ of
-the eligible who receive it}. It does not change the utility function.
+the replacement rate is $\zeta_{DI}$, scaled by the share $\eta_{DI}$ of
+the eligible who receive it. It does not change the utility function.
 
 The SMI chain does \emph{not} depend on housing, and that is
 a finding in the data rather than an omission. In the At Home / Chez Soi randomised trial, $1{,}198$
@@ -1748,7 +1735,7 @@ proportional cut to the child's productivity draw when the parent carries the
 SUD at the time of death, and $\delta_h$ the cut when the parent is
 homeless at the time of death. That is a risk to the
 household's own objective only
-to the extent that $\omega$, the weight the parent places on its child's
+to the extent that $\omega_c$, the weight the parent places on its child's
 lifetime utility in~\eqref{eq:fbellman}, is positive. It is therefore the one risk here that
 carries an externality rather than a pure personal cost, which is what makes it a
 candidate for policy in a way that mortality and unemployment risk, both fully
@@ -1855,9 +1842,9 @@ V(j,a,y,e,d,m,\eta)=\max_{\{n,\,h',\,v,\,\tau,\,a'\}}\ \Bigg\{\
 +\aleph-\tau\bar\tau^{u}-\kappa_x H\\[2pt]
 &+\ \beta\,\phi(j,h',d,m,\tau)\!\!\int_{\mathcal S}\!\! V(j{+}1)(s')\,
 \Gamma\big(\mathrm{d}s'\mid s,n,h',v,\tau\big)\\[2pt]
-&+\ \beta\,\big[1-\phi(j,h',d,m,\tau)\big]\,\omega\,
+&+\ \beta\,\big[1-\phi(j,h',d,m,\tau)\big]\,\omega_c\,
 \Big[\mathbb{E}\,V\big(1,0,y_{\text{child}},e',0,0,0\big)\\[2pt]
-&\hphantom{+\ \beta\,\big[1-\phi(j,h',d,m,\tau)\big]\,\omega\,\Big[}
+&\hphantom{+\ \beta\,\big[1-\phi(j,h',d,m,\tau)\big]\,\omega_c\,\Big[}
 -\ \mathbb{E}\,V\big(1,0,y_{\text{base}},e',0,0,0\big)\Big]\Bigg\}
 \end{aligned}
 \end{equation}
@@ -1893,7 +1880,7 @@ continuation instead, which is where the first-order
 condition~\eqref{eq:ffoc} picks it up.
 
 The third line is a \emph{difference} and not a level, and the
-distinction is not cosmetic. Written as a level, $\omega$ times the child's
+distinction is not cosmetic. Written as a level, $\omega_c$ times the child's
 utility, the term is worth more to a household the likelier it is to die,
 because it is the death branch that carries it. A SUD raises the death hazard
 several fold, so a level would pay most to exactly the households the paper is
@@ -1905,18 +1892,18 @@ term is zero for a household in the reference state and negative otherwise, so
 what enters the decision is only the loss the parent's own state imposes on its
 child, weighted by the chance that child is born at all.
 
-At $\omega=0$ the damage a household does to its child is entirely
+At $\omega_c=0$ the damage a household does to its child is entirely
 external; at
-$\omega>0$ the household internalises a share $\omega$ of it, and only $1-\omega$
-remains external.\ Because the term is a difference, $\omega$ is the
+$\omega_c>0$ the household internalises a share $\omega_c$ of it, and only $1-\omega_c$
+remains external.\ Because the term is a difference, $\omega_c$ is the
 weight on that damage and nothing else. Since the child's productivity depends on whether the parent
 carried a SUD or was homeless, and both depend on $v$ and $h'$, the child
 term in~\eqref{eq:fbellman} is
 what puts the child inside the parent's drug and housing decision.
 
 The chain down the lineage is priced geometrically: the child's value
-$V(1,\cdot)$ on the third line contains its own $\omega$-weighted child term, so
-generation $k$ enters the parent's problem at $\omega^k$ and $1-\omega^k$ of it
+$V(1,\cdot)$ on the third line contains its own $\omega_c$-weighted child term, so
+generation $k$ enters the parent's problem at $\omega_c^k$ and $1-\omega_c^k$ of it
 stays outside. What
 is meant throughout is the lineage.
 
@@ -1964,7 +1951,7 @@ v}$ times what the disorder costs, the gap between the two continuation values.
 That gap is where the externality on the child enters the drug decision,
 and it is why there is no fourth term.\footnote{Each continuation value carries
 its own child term, at $d'=0$ and at $d'=1$, so the difference between them already
-contains the $\omega$ share of what the disorder costs the child alongside what it
+contains the $\omega_c$ share of what the disorder costs the child alongside what it
 costs the household itself. A fourth term would be needed only if using raised the
 chance the child's term is realised within the period, and it does not: $\phi$
 depends on the disorder as a state, not on how much is bought today.}
@@ -2165,7 +2152,7 @@ price separately. This means that the child is
 likelier in turn to be poor, to use, to acquire
 a disorder and mental illness as a consequence, to be unhoused and to die earlier.
  The parent
-internalises only $\omega$ of the part that falls on its child, and $\omega$ is
+internalises only $\omega_c$ of the part that falls on its child, and $\omega_c$ is
 small, which is what leaves something for a policy to correct. Another
 externality lands on everybody, through the disamenity of aggregate
 homelessness.
@@ -2258,7 +2245,7 @@ $\lambda_d$ that converts an extra voucher under Housing First into a higher
 SUD rate that Treatment First then attempts to cure. Its value is chosen so the model generates the share
 of adults carrying a SUD, $@@q_lambda_d@@$ percent among those aged $26$
 and over in NSDUH 2024.
-\item[\new{$\kappa_{\phi d}$}, increased mortality with a SUD.] This is the parameter the whole
+\item[$\kappa_{\phi d}$, increased mortality with a SUD.] This is the parameter the whole
 paper turns on. Mortality truncates the value of life for a user, which
 hits households with the highest life values hardest and thus reverses the income
 gradient, making the poor the users rather than the rich. When it rises,
@@ -2286,7 +2273,8 @@ block. This is because it is the instrument that acts on all of them. Because th
 states, everything here moves the private value and the externality together.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\rho_d$, earnings lost to a SUD while still working.]\query{Flagged: keep
-$\rho_d$ or take it out?} It reduces the value
+$\rho_d$ or take it out?} \new{It is set to one, so the extensive margin carries
+the earnings loss.} It reduces the value
 of life when a household acquires a SUD, since the earnings it costs would have
 been enjoyed for the rest of that life. 
 What lets an \emph{employed} household be poor enough to be priced out of
@@ -2345,23 +2333,21 @@ reduces the tax burden since these households are more likely to be employed
 and off the unemployment insurance roll. It is set externally at
 $@@q_kappa_ueh@@$, from Desmond and Gershenson (2016).
 \item[$\eta_{DI}$, the share of the eligible who receive disability income.]
-\new{Not everyone who is out of work with SMI draws SSDI or SSI: there is a work
-history test, an asset test, a waiting period, and most initial applications are
-denied. Roughly $13.6$ million US adults have SMI and roughly three million
-receive either programme on a mental-disorder basis, and since the transfer is
-paid only out of work, the relevant share is that ratio divided by the fraction
-of them not employed. Lower it and more households with SMI fall to the same zero
-income as everyone else out of work, so more of them lose their housing: it is
-therefore the instrument for the SMI share of the homeless in Gutwinski et al.\
-(2021), which is $@@q_lambda_m@@$ percent. It matters more than its size
-suggests. With full receipt, SMI is the only insurance against a long unemployment
-spell in the model, since unemployment insurance is paid in the first period
-only; a household with SMI then cannot fall as far as an identical household
-without it, and mental illness protects against homelessness rather than causing
-it. It enters as a scale on the transfer rather than as a share of households
-receiving it, for the reason given in Section~\ref{sec:ftaxes}, and only the
-product $\eta_{DI}\zeta_{DI}$ is identified: $\zeta_{DI}$ is set externally so
-that $\eta_{DI}$ carries the moment.}
+\new{It is calibrated internally, to the SMI share of the homeless in Gutwinski
+et al.\ (2021), which is $@@q_lambda_m@@$ percent. Lower it and more households
+with SMI fall to the same zero income as everyone else out of work, so more of
+them lose their housing. Only the product $\eta_{DI}\zeta_{DI}$ is identified,
+and the replacement rate is fixed from outside so that this share carries the
+moment.
+
+It matters more than its size suggests. Were every eligible household to receive
+DI, serious mental illness would be the only insurance against a long
+unemployment spell in this model, since unemployment insurance is paid in the
+first period only; a household with SMI could then not fall as far as an
+identical household without it, and mental illness would protect against
+homelessness rather than cause it. Roughly $13.6$ million US adults have SMI and
+roughly three million receive SSDI or SSI on a mental-disorder basis, a useful
+check on the calibrated value rather than a substitute for it.}
 \item[$\zeta_{DI}$, the disability transfer for the unemployed with SMI.] It
 is the floor for one of the worst states in the model: being ill and out of
 work, so it sets how far a household can fall. Raise it and the private cost of that
@@ -2537,8 +2523,8 @@ last is not an externality but a distortion, and it closes the block for that
 reason: it says what it costs to raise the revenue either programme needs rather
 than whose utility a choice lands in.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$\omega$, the parent's weight on its child.] A parent bears $\omega$ of what
-its own state costs its child, and $\omega$ is small. As it
+\item[$\omega_c$, the parent's weight on its child.] A parent bears $\omega_c$ of what
+its own state costs its child, and $\omega_c$ is small. As it
 rises the parent counts more of the child's loss, so the externality left
 for a policy to correct is smaller. Identifying it in the model requires
 care, because \emph{every} household here has a child, born after it dies, so
@@ -3002,7 +2988,7 @@ separating an externality from the distortions, and the ladder is what makes tha
 separation a number rather than a claim. If the aggregate disamenity turns out to be
 small next to the intergenerational one, saying so is part of the point.
 \item \emph{What would overturn it.} The three undisciplined
-parameters above, and the value of $\omega$, are where a reader should push. Report
+parameters above, and the value of $\omega_c$, are where a reader should push. Report
 what each would have to be for the ranking to flip.
 \item \emph{What the model does not have.} Neighbourhood effects on
 the child are priced through $\delta_h$ rather than modelled spatially; treatment

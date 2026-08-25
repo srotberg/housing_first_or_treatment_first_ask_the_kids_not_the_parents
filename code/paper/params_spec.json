@@ -186,13 +186,13 @@
   "group": "Mental illness chain",
   "sym": "$\\lambda_m$",
   "desc": "Chance of recovering from SMI",
-  "set": "Int.",
-  "moment": "SMI share of homeless, Gutwinski et al.\\ (2021)",
+  "set": "Ext.",
+  "moment": "50\\% recovery within ten years, clinical follow-up",
   "data_src": null,
   "data_kind": "raw",
-  "data_lit": "25\\%",
-  "model": "\\textemdash",
-  "value": "\\textemdash"
+  "data_lit": "n.a.",
+  "model": "n.a.",
+  "value": "0.067"
  },
  {
   "table": "main",
@@ -245,6 +245,32 @@
   "data_lit": "2.50",
   "model": "n.a.",
   "value": "2.50"
+ },
+ {
+  "table": "main",
+  "group": "Mental illness chain",
+  "sym": "$\\omega_m$",
+  "desc": "Level of the SMI onset profile",
+  "set": "Int.",
+  "moment": "SMI share of the population, NSDUH 2024",
+  "data_src": null,
+  "data_kind": "raw",
+  "data_lit": "4.82\\%",
+  "model": "\\textemdash",
+  "value": "\\textemdash"
+ },
+ {
+  "table": "main",
+  "group": "Mental illness chain",
+  "sym": "$\\eta_{DI}$",
+  "desc": "Share of the eligible receiving DI",
+  "set": "Int.",
+  "moment": "SMI share of the homeless, Gutwinski et al.\\ (2021)",
+  "data_src": null,
+  "data_kind": "raw",
+  "data_lit": "25\\%",
+  "model": "\\textemdash",
+  "value": "\\textemdash"
  },
  {
   "table": "main",
@@ -301,7 +327,7 @@
  {
   "table": "main",
   "group": "Externalities and distortions",
-  "sym": "$\\omega$",
+  "sym": "$\\omega_c$",
   "desc": "Weight on the child",
   "set": "Int.",
   "moment": "Use rise with altruism off, NSDUH 2024",
