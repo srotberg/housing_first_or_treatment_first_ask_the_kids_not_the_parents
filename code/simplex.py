@@ -447,7 +447,28 @@ def report(verts):
     return span
 
 
+def emit():
+    """Print the batch ALREADY RECORDED in the state file, and nothing else.
+
+    Spawning has to happen from the batch that was written, never from a fresh
+    solve: re-running the search after --write produces a different batch around
+    a centre the workers were not given, which broke two rounds under the old
+    method. This makes the recorded batch readable without recomputing anything,
+    so a dispatcher can spawn from it and so can a check-in that has lost the
+    printed output.
+    """
+    st = load()
+    if not st or not st.get('trials'):
+        print('no batch recorded')
+        return
+    for k in sorted(st['trials']):
+        print('%s\t%s' % (k, spec(from_log(st['trials'][k]))))
+
+
 def main():
+    if '--emit' in sys.argv:
+        emit()
+        return
     pts = measured()
     if not pts:
         print('no measured points')
