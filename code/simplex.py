@@ -183,7 +183,15 @@ def complete(mt):
 # it multiplies was inert when every archived point was measured: at 0.5 the
 # seed would sit at b = 1.80 per cent against a target of 8.9, and b carries
 # triple weight, so the first simplex would spend itself climbing out.
-SEED_OVERRIDE = {'weight_on_child': 0.02}
+SEED_OVERRIDE = {'weight_on_child': 0.008}
+# 0.008, NOT 0.02, AND TWO MOMENTS AGREE ON IT. Across omega_c 0.02 to 0.5 the
+# use gap has a log elasticity of +0.67 with respect to omega_c and the
+# participation rate one of -0.34. Solving each for its own target from the 0.02
+# point gives 0.0082 from the gap and 0.0081 from participation: one measured
+# through the counterfactual, one from the cross section, landing on the same
+# number to two figures. 0.02 left b 26 per cent short and the gap 82 per cent
+# over, and b carries triple weight in the loss, so a simplex built around it
+# would have spent itself discovering what these two lines already say.
 
 
 def measured(require=True):
