@@ -449,3 +449,30 @@ cliff in one move at generation four and take homelessness to thirty-two times
 target, and the two rounds after that inherited the wreck. Nothing measured is
 wasted: generation six's arms still give a Jacobian, it is simply applied at a
 point that is 0.48 rather than 0.86.
+
+## Two things that make the step trustworthy
+
+**The Jacobian comes from every nearby point, not from this generation's arms.**
+A hundred and fifty-five measured points carry a full vector and a full set of
+moments; the finite-difference assembly used one arm per parameter and ignored
+the rest, so every round re-measured what the archive already held. That is what
+made a round cost fifteen sessions. A weighted regression in log-parameter space
+now fits all of them, ninety-seven within the kernel at the current centre,
+which also removes the worse problem: an arm sized to how wrong a moment is
+probes furthest exactly where the response is least linear, so those
+"derivatives" were secants across the steepest part of a cliff.
+
+**A step is held to what it promised.** The solve predicts the residual after the
+step; the next round measures it. Their ratio is the trust-region gain: above
+0.75 the linearisation is holding and both the step and the moment cap widen,
+below 0.25 it is not and both tighten. Nothing else here can tell a wrong
+derivative from a long step, and the two need opposite responses -- three rounds
+of drift were treated as a step-length problem when the derivatives were the
+thing at fault.
+
+**The moment cap is the direct expression of "derivatives are off when far from
+target".** The parameter step is bounded, but what matters is how far the
+linearisation claims a MOMENT will move: a derivative measured where a moment is
+two hundred per cent off says nothing about the whole distance home. No moment
+may be predicted to move by more than the cap, which starts at 1.5 and earns its
+width back only by making predictions that come true.

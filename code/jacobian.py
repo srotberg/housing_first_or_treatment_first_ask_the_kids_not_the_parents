@@ -128,12 +128,30 @@ def assemble(centre, pts):
     return moments, params, J, r, w, rname
 
 
-def step(centre, pts, trust=1.5):
+# HOW FAR A LINEARISATION MAY BE TRUSTED IN MOMENT SPACE, not just parameter
+# space. A derivative measured where a moment is two hundred per cent off says
+# nothing about the whole distance back to target: the response is flat and then
+# cliffs, and the further the step the less the slope means. Bounding the
+# PREDICTED move of every moment is the direct expression of that -- a step is
+# refused not because some parameter moved a lot but because the linearisation
+# claims a moment will move further than a linearisation can be believed over.
+MOMENT_CAP = 1.5        # no moment may be predicted to move by more than this factor
+
+
+def step(centre, pts, trust=1.5, regression=True, moment_cap=None):
     """The log-space move for every parameter, damped to fit the trust region."""
-    got = assemble(centre, pts)
-    if got is None:
-        return None, None
-    moments, params, J, r, w, rname = got
+    got = assemble_regression(centre, pts) if regression else None
+    how = 'regression over %d points' % (got[5] if got else 0)
+    if got:
+        moments, params, J, r, w, _n = got
+        rname = 'local fit'
+    else:
+        got = assemble(centre, pts)
+        if got is None:
+            return None, None
+        moments, params, J, r, w, rname = got
+        how = 'finite differences'
+
     W = np.diag(w)
     A = J.T @ W @ J
     bvec = J.T @ W @ r
@@ -149,16 +167,98 @@ def step(centre, pts, trust=1.5):
             trial = np.linalg.solve(A + damping * np.eye(len(params)), bvec)
         except np.linalg.LinAlgError:
             continue
-        if np.max(np.abs(trial)) <= limit:
+        predicted = J @ trial
+        cap = math.log(moment_cap or MOMENT_CAP)
+        if np.max(np.abs(trial)) <= limit and np.max(np.abs(predicted)) <= cap:
             return dict(zip(params, trial)), {
                 'moments': moments, 'reference': rname, 'damping': damping,
                 'residual': float(np.linalg.norm(r)),
-                'used': float(np.max(np.abs(trial)) / limit)}
+                'used': float(np.max(np.abs(trial)) / limit),
+                'how': how,
+                'predicted_moment_move': float(np.max(np.abs(predicted))),
+                'predicted_residual': float(np.linalg.norm(r - predicted))}
         d = trial
     d = d * (limit / max(np.max(np.abs(d)), 1e-12))
     return dict(zip(params, d)), {'moments': moments, 'reference': rname,
                                   'damping': 'scaled', 'residual': float(np.linalg.norm(r)),
                                   'used': 1.0}
+
+
+# ---------------------------------------------------------------------------
+# THE JACOBIAN FROM EVERY NEARBY POINT, NOT JUST THE ONE-CHANGE ARMS.
+#
+# Two problems the finite-difference version cannot fix.
+#
+# IT THROWS AWAY ALMOST EVERYTHING MEASURED. A hundred and fifty-five points
+# carry a full vector and a full set of moments, and the finite-difference
+# assembly uses one arm per parameter from the current generation and ignores
+# the rest. Every round then has to re-measure derivatives that the archive
+# already contains, which is what makes a round cost fifteen sessions.
+#
+# ITS "DERIVATIVES" ARE SECANTS OVER LARGE STEPS. The arm size is scaled to how
+# wrong the moment is, up to a factor of three, so a parameter that is badly off
+# is probed furthest -- exactly where the response is least linear. On a
+# response that is flat and then falls off a cliff, a secant across that range
+# is not a derivative and using it as one is how size_homelessness crossed its
+# cliff in a single step.
+#
+# A weighted regression over the archive answers both. Points near the centre
+# dominate, points far away still inform the fit weakly, and the ridge term
+# keeps the solve conditioned when parameters have not been varied
+# independently. The bandwidth is in log-parameter distance, so a point that
+# differs by a factor of e in one parameter sits one unit away.
+def assemble_regression(centre, pts, bandwidth=0.8, ridge=1e-3):
+    """(moments, params, J, residual, weights, n_used) by local weighted regression."""
+    params = sorted(centre)
+    rows = []
+    for vec, mt, name in pts:
+        if set(vec) != set(centre):
+            continue
+        dp = []
+        ok = True
+        for k in params:
+            a, b = vec.get(k), centre.get(k)
+            if not a or not b or a <= 0 or b <= 0:
+                ok = False
+                break
+            dp.append(math.log(a / b))
+        if ok:
+            rows.append((np.array(dp), mt, name))
+    if len(rows) < 4:
+        return None
+
+    ref = min(rows, key=lambda r: float(np.linalg.norm(r[0])))
+    moments = sorted(k for k, (m, t) in ref[1].items()
+                     if t and t > 0 and m == m and abs(t) > 1e-12)
+    if not moments:
+        return None
+
+    X = np.array([r[0] for r in rows])
+    w = np.exp(-(np.linalg.norm(X, axis=1) / bandwidth) ** 2)
+    A = np.hstack([np.ones((len(rows), 1)), X])
+    WA = A * w[:, None]
+
+    J = np.zeros((len(moments), len(params)))
+    at_centre = {}
+    for i, name in enumerate(moments):
+        y = []
+        for _dp, mt, _n in rows:
+            got = mt.get(name)
+            y.append(math.log(max(got[0], FLOOR)) if got else math.log(FLOOR))
+        y = np.array(y)
+        M = A.T @ WA + ridge * np.eye(A.shape[1])
+        try:
+            coef = np.linalg.solve(M, A.T @ (w * y))
+        except np.linalg.LinAlgError:
+            continue
+        at_centre[name] = coef[0]                       # the fit's value AT the centre
+        for j in range(len(params)):
+            J[i][j] = max(-MAX_ELASTICITY, min(MAX_ELASTICITY, coef[1 + j]))
+
+    r = np.array([math.log(ref[1][n][1]) - at_centre.get(n, math.log(max(ref[1][n][0], FLOOR)))
+                  for n in moments])
+    wt = np.array([score_points.WEIGHT.get(n, 1.0) for n in moments])
+    return moments, params, J, r, wt, len(rows)
 
 
 if __name__ == '__main__':
@@ -169,10 +269,11 @@ if __name__ == '__main__':
         print('The centre of this generation has not been measured yet, so there '
               'is nothing to differentiate around.')
         raise SystemExit(1)
-    print('reference point %s, %d moments, %d parameters, damping %s, '
-          'step uses %.0f%% of the trust region'
-          % (info['reference'], len(info['moments']), len(d), info['damping'],
-             100 * info.get('used', 0)))
+    print('%s, %d moments, %d parameters, damping %s, step uses %.0f%% of the '
+          'trust region, largest predicted moment move %.2fx'
+          % (info.get('how', info['reference']), len(info['moments']), len(d),
+             info['damping'], 100 * info.get('used', 0),
+             math.exp(info.get('predicted_moment_move', 0))))
     print('residual norm in logs: %.3f\n' % info['residual'])
     print('%-52s %12s %12s %8s' % ('parameter', 'now', 'jacobian says', 'factor'))
     print('-' * 90)

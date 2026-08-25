@@ -191,6 +191,7 @@ TRUST_FLOOR = 1.10      # never shrink the step below this
 PAIRED = ('addiction_scalar_1', 'value_of_life')         # the two that must be solved together
 RUNNER = os.path.join(HERE, 'run_one_point.sh')
 GENFILE = os.path.join(HERE, 'GENERATION.txt')
+TRUSTFILE = os.path.join(HERE, 'TRUST.txt')
 ARM = 1.6               # an arm sits this factor either side of the centre
 
 # WHAT EACH PARAMETER MAY BE. A secant knows nothing about what a number means,
@@ -249,6 +250,39 @@ def runner_defaults():
     return {k: float(v) for k, v in re.findall(r'\[(\w+)\]=([-+0-9.eE]+)', txt)}
 
 
+def trust_state():
+    """What the last step predicted, so this one can find out if it was right."""
+    state = {}
+    if os.path.exists(TRUSTFILE):
+        for line in open(TRUSTFILE):
+            k, _, v = line.strip().partition(' ')
+            try:
+                state[k] = float(v)
+            except ValueError:
+                pass
+    return state
+
+
+def gain_ratio(state, residual_now):
+    """How much of the promised improvement actually arrived.
+
+    THE ONE HONEST TEST OF A DERIVATIVE. The solve predicts what the residual
+    will be after the step; the next round measures what it is. Their ratio is
+    the classic trust-region gain: near one the linearisation is holding and the
+    step may lengthen, near zero it is not and the step must shorten. Nothing
+    else here distinguishes a derivative that is wrong from a step that is long,
+    and the two need opposite responses.
+    """
+    before = state.get('residual')
+    predicted = state.get('predicted_residual')
+    if before is None or predicted is None:
+        return None
+    promised = before - predicted
+    if promised <= 1e-9:
+        return None
+    return (before - residual_now) / promised
+
+
 def trust_step():
     """How far any parameter may move this round.
 
@@ -264,6 +298,10 @@ def trust_step():
     it starts from the best measured point, so a bad round is not compounded --
     but without this the next step is just as long as the one that missed.
     """
+    state = trust_state()
+    held = state.get('trust')
+    if held:
+        return max(TRUST_FLOOR, min(MAX_STEP, held))
     best_by_gen = loss_history.by_generation()
     if len(best_by_gen) < 2:
         return MAX_STEP
@@ -549,7 +587,8 @@ def main():
     sent = emitted()[0]
     jac, jac_info = (None, None)
     if sent:
-        jac, jac_info = jacobian.step(sent, jacobian.points(), trust=trust_step())
+        jac, jac_info = jacobian.step(sent, jacobian.points(), trust=trust_step(),
+                                      moment_cap=trust_state().get('moment_cap'))
     if jac:
         # THE STEP IS APPLIED WHERE THE SEARCH STANDS, NOT WHERE THE DERIVATIVES
         # WERE MEASURED. This used to re-anchor the centre onto the generation
@@ -673,6 +712,26 @@ def main():
                 fh.write('CENTRE %s=%.6g\n' % (key, new_centre[key]))
             for spec in arms_emitted:
                 fh.write('ARM %s\n' % spec)
+        # RECORD WHAT THIS STEP PROMISES, so the next round can hold it to it.
+        if jac_info:
+            state = trust_state()
+            trust, cap = trust_step(), jacobian.MOMENT_CAP
+            rho = gain_ratio(state, jac_info['residual'])
+            if rho is not None:
+                if rho > 0.75:
+                    trust, cap = min(MAX_STEP, trust * 1.5), min(3.0, cap * 1.3)
+                    verdict = 'the last step delivered %.0f%% of what it promised, so both widen' % (100 * rho)
+                elif rho < 0.25:
+                    trust, cap = max(TRUST_FLOOR, trust / 2.0), max(1.1, cap / 1.3)
+                    verdict = 'the last step delivered only %.0f%% of what it promised, so both tighten' % (100 * rho)
+                else:
+                    verdict = 'the last step delivered %.0f%% of what it promised, so both hold' % (100 * rho)
+                print('\nGAIN: ' + verdict)
+            with open(TRUSTFILE, 'w') as fh:
+                fh.write('residual %.6f\n' % jac_info['residual'])
+                fh.write('predicted_residual %.6f\n' % jac_info.get('predicted_residual', jac_info['residual']))
+                fh.write('trust %.6f\n' % trust)
+                fh.write('moment_cap %.6f\n' % cap)
         print('\nrun_one_point.sh re-centred; the generation is recorded in '
               'GENERATION.txt so the next round can check that it came back.')
     else:
