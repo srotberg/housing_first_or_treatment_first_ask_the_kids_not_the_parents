@@ -467,7 +467,18 @@
         ! DIRECTION. A larger penalty moves the newborn distribution down the
         ! productivity grid, and the disorder is concentrated at the bottom, so
         ! the numerator rises and the ratio rises with the penalty.
-        real(8) :: penalty_child_addicted=0.30
+        ! EXTERNALLY SET, AT THE EARNINGS ESTIMATE. This is an earnings
+        ! penalty and there is a direct estimate of one: children exposed in
+        ! utero to the Swedish alcohol experiment earn about 24 per cent less
+        ! as adults (Nilsson 2017). It stopped being calibrated to delta_d
+        ! because that moment is not reachable through this channel. The
+        ! model's implied elasticity of SUD risk to log productivity is 0.73,
+        ! so a ratio of 2 needs a 61 per cent earnings cut; the data's own
+        ! gradient is 0.23 to 0.39, which needs 90 per cent. At 24 per cent
+        ! income delivers a ratio near 1.1 against an observed 2.0, so income
+        ! carries about a tenth to a fifth of the intergenerational
+        ! correlation and genes, environment and behaviour carry the rest.
+        real(8) :: penalty_child_addicted=0.24
         ! TWO, NOT THREE, AND THE CHANGE IS ABOUT WHICH POPULATION.
         !
         ! Three was the midpoint of a two to four range, but that range
@@ -496,7 +507,7 @@
         ! table and typed again in the prose with nothing declaring it, so it was
         ! the one target in that table with no source of truth behind it.
         real(8), parameter :: child_homeless_ratio_data=2.10d0
-        real(8) :: penalty_child_addicted_adjuster=5*10.d0**(-2)
+        real(8) :: penalty_child_addicted_adjuster=0.d0
         real(8), parameter :: penalty_child_adjuster_start=5*10.d0**(-2)
         real(8), parameter :: penalty_child_adjuster_damping=0.5
         real(8), parameter :: penalty_child_adjuster_growth=1.2
@@ -526,8 +537,13 @@
         ! at each node and varies the parent's HOMELESSNESS at clean. The third
         ! index is 1 for housed and 2 for homeless, since the penalty's exponent
         ! is h_index-1.
+        ! EXTERNALLY SET, for the same reason as penalty_child_addicted. Its
+        ! channel is steeper -- an elasticity near 1.19 rather than 0.73,
+        ! because homelessness is a threshold at the bottom of the productivity
+        ! distribution -- but delta_h still needs about 54 per cent to reach
+        ! 2.1, which the earnings evidence does not support either.
         real(8) :: penalty_child_homeless=0.31
-        real(8) :: penalty_child_homeless_adjuster=5*10.d0**(-2)
+        real(8) :: penalty_child_homeless_adjuster=0.d0
         real(8), parameter :: penalty_child_homeless_adjuster_start=5*10.d0**(-2)
         real(8) :: distance_penalty_child_homeless=1
         real(8) :: stopping_rule_penalty_child_homeless=5*10.d0**(-2)
@@ -4163,10 +4179,17 @@
             write(*,*) "MOMENT mu_H      recovery housed / homeless  model=",&
                 model_recovery_housed(1)/max(model_recovery_homeless(1),10.d0**(-12)),&
                 " target=", milby_recovery_ratio_data
-            write(*,*) "MOMENT delta_d   child SUD ratio             model=",&
-                csud_n_1/max(csud_d_1,10.d0**(-12)), " target=", child_sud_ratio_data
-            write(*,*) "MOMENT delta_h   child homelessness ratio    model=",&
-                chom_n_1/max(chom_d_1,10.d0**(-12)), " target=", child_homeless_ratio_data
+            ! UNTARGETED, NOT MOMENT. Both penalties are set from the earnings
+            ! literature now rather than calibrated to these ratios, because the
+            ! ratios are not reachable through an income channel at any earnings
+            ! penalty the evidence supports. They are reported so the paper can
+            ! say how much of the intergenerational correlation income carries,
+            ! and the prefix keeps them out of the loss: score_points reads
+            ! MOMENT lines.
+            write(*,*) "UNTARGETED delta_d child SUD ratio           model=",&
+                csud_n_1/max(csud_d_1,10.d0**(-12)), " observed=", child_sud_ratio_data
+            write(*,*) "UNTARGETED delta_h child homelessness ratio  model=",&
+                chom_n_1/max(chom_d_1,10.d0**(-12)), " observed=", child_homeless_ratio_data
 
             ! OMEGA_C'S MOMENT, AND WHY IT IS LAST.
             !

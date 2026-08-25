@@ -61,10 +61,8 @@ GATE = {
     'lambda_addiction':                      ('b', 0.0890, 3.0),
     'relative_share_of_addiction_1':         ('b', 0.0890, 3.0),
     'utility_cost_of_treatment':             ('b', 0.0890, 3.0),
-    'penalty_child_addicted':                ('b', 0.0890, 3.0),
     'multiple_of_probabilities_of_employment_if_addicted': ('b', 0.0890, 3.0),
     'zeta_DI':                               ('h_1', 0.00399, 3.0),
-    'penalty_child_homeless':                ('h_1', 0.00399, 3.0),
 }
 
 # AN ARM THAT KNOCKS THE POPULATION OFF TARGET MEASURES A DIFFERENT ECONOMY.
@@ -265,8 +263,6 @@ BOUNDS = {
     # THE MODEL ACCEPTS TEN; the search had capped itself at five for no reason
     # the model gives. The highest value ever actually run was 0.15.
     'utility_cost_of_treatment':             (0.0001, 10.0),
-    'penalty_child_addicted':                (0.001, 5.0),
-    'penalty_child_homeless':                (0.001, 5.0),
     'smallest_rental_relative_to_lowest_income': (0.001, 0.900),
     'largest_house_size':                    (0.005, 3.0),
     'weight_on_child':                       (0.0, 1.0),

@@ -69,8 +69,14 @@ OWNS = {
     'smi_onset_level':                       ('p_m', 0.0),
     'probability_of_voucher_benchmark_used': ('pi_V',     0.266),
     'utility_cost_of_treatment':             ('tau_u',    0.245),
-    'penalty_child_addicted':                ('delta_d',  3.00),
-    'penalty_child_homeless':                ('delta_h',  2.10),
+    # BOTH CHILD PENALTIES ARE EXTERNALLY SET NOW. They are earnings
+    # penalties, and delta_d and delta_h are not reachable through an
+    # income channel at any earnings penalty the evidence supports: the
+    # model's elasticity of SUD risk to log productivity is 0.73 and the
+    # data's is 0.23 to 0.39, so a ratio of 2 needs a 61 to 90 per cent
+    # earnings cut. penalty_child_addicted is Nilsson (2017)'s 0.24 and
+    # penalty_child_homeless stays at 0.31; the two ratios are reported
+    # untargeted.
     'smallest_rental_relative_to_lowest_income': ('h_2',  0.132065),
     'largest_house_size':                    ('h_4',      0.626723),
 }
