@@ -164,9 +164,26 @@ def canon(x):
 # against each other and call the difference progress.
 REQUIRED = ('omega',)
 
-
+# A ZERO omega IS A POINT FROM BEFORE THE COUNTERFACTUAL WAS FIXED. The child
+# term's counterfactual read back a user count that govt_revenues_calc never
+# recomputed, so it reported the BASELINE count and MOMENT omega came out as
+# exactly 0.0000000000000000 at every weight_on_child. Every point measured
+# before that fix carries the moment and carries it as an exact zero, so
+# requiring the moment's PRESENCE is no longer enough to tell the two models
+# apart -- and the two models are very different: at one vector b was 9.04 per
+# cent with the child channel off and 1.80 with it on.
 def complete(mt):
-    return all(k in mt for k in REQUIRED)
+    if not all(k in mt for k in REQUIRED):
+        return False
+    return abs(mt['omega'][0]) > 1e-12
+
+
+# WHERE TO START, WHEN NOTHING MEASURED CAN ANCHOR. The archive fixes the
+# location but weight_on_child's own coordinate is set here, because the channel
+# it multiplies was inert when every archived point was measured: at 0.5 the
+# seed would sit at b = 1.80 per cent against a target of 8.9, and b carries
+# triple weight, so the first simplex would spend itself climbing out.
+SEED_OVERRIDE = {'weight_on_child': 0.02}
 
 
 def measured(require=True):
@@ -539,6 +556,12 @@ def main():
             print('no measured points')
             return
         seed = min(old_pts, key=lambda r: r[2])
+        if SEED_OVERRIDE:
+            vec = dict(seed[1])
+            vec.update(SEED_OVERRIDE)
+            seed = (to_log(vec), vec, seed[2], seed[3])
+            print('   seed coordinates overridden: %s'
+                  % ', '.join('%s=%g' % kv for kv in sorted(SEED_OVERRIDE.items())))
         print('NO POINT CARRIES %s YET, so nothing is reused.\n'
               'Seeding the simplex at the best vector measured without it: '
               '%s, loss %.3f\n' % (' and '.join(REQUIRED), seed[3], seed[2]))
