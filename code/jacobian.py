@@ -56,7 +56,19 @@ def points():
     return out
 
 FLOOR = 1e-8            # a moment at zero is treated as this, so its log exists
-MAX_ELASTICITY = 25.0   # a single entry may not dominate the whole solve
+# AN ELASTICITY OF TWENTY-FIVE IS NOT A MEASUREMENT, IT IS A CLAMP HIT. The
+# largest entries in the fit were all sitting on the old limit, and they were
+# nonsense -- the housing ladder's top rung apparently moving the recovery ratio
+# by twenty. Those come from moments that blow up when a population empties, and
+# they made the whole solve singular: a condition number of ten to the nineteen,
+# which is why the step could only ever use two per cent of its trust region.
+MAX_ELASTICITY = 5.0    # a single entry may not dominate the whole solve
+
+# A MOMENT THE MODEL COULD NOT REALLY COMPUTE MUST NOT ENTER THE FIT. mu_H is a
+# ratio whose denominator is the disordered homeless, and it returns numbers
+# near ten to the twelfth when nobody is in that state. Read as a log it is a
+# residual of thirty and an elasticity at whatever the clamp allows.
+ABSURD = 100.0          # a model value this many times its target is not a measurement
 TOL = 1e-5              # two parameter values within this are the same value
 
 
@@ -135,7 +147,20 @@ def assemble(centre, pts):
 # PREDICTED move of every moment is the direct expression of that -- a step is
 # refused not because some parameter moved a lot but because the linearisation
 # claims a moment will move further than a linearisation can be believed over.
-MOMENT_CAP = 1.5        # no moment may be predicted to move by more than this factor
+# A FLAT CAP IS THE WRONG SHAPE. Bounding every moment's predicted move by the
+# same factor treats one that is two hundred per cent off exactly like one that
+# is five per cent off: the first needs a large move and the second must not
+# have one. Applied flat at 1.5 it damped the solve to thirty thousand and let
+# the step use two per cent of its trust region -- the search stopped rather
+# than became careful.
+#
+# The scale-free form is a fraction of each moment's OWN distance to target. A
+# moment may be predicted to close most of its gap and never to overshoot it,
+# which is exactly the caution the author asked for -- a derivative measured
+# where a moment is far off is not to be believed the whole way home -- without
+# forbidding the moves that matter.
+MOMENT_CAP = 1.5        # floor: every moment may always move at least this factor
+CLOSE_FRACTION = 0.8    # and at most this much of its own distance to target
 
 
 def step(centre, pts, trust=1.5, regression=True, moment_cap=None):
@@ -168,8 +193,9 @@ def step(centre, pts, trust=1.5, regression=True, moment_cap=None):
         except np.linalg.LinAlgError:
             continue
         predicted = J @ trial
-        cap = math.log(moment_cap or MOMENT_CAP)
-        if np.max(np.abs(trial)) <= limit and np.max(np.abs(predicted)) <= cap:
+        floor = math.log(moment_cap or MOMENT_CAP)
+        allowed = np.maximum(floor, CLOSE_FRACTION * np.abs(r))
+        if np.max(np.abs(trial)) <= limit and np.all(np.abs(predicted) <= allowed):
             return dict(zip(params, trial)), {
                 'moments': moments, 'reference': rname, 'damping': damping,
                 'residual': float(np.linalg.norm(r)),
@@ -207,7 +233,14 @@ def step(centre, pts, trust=1.5, regression=True, moment_cap=None):
 # keeps the solve conditioned when parameters have not been varied
 # independently. The bandwidth is in log-parameter distance, so a point that
 # differs by a factor of e in one parameter sits one unit away.
-def assemble_regression(centre, pts, bandwidth=0.8, ridge=1e-3):
+def usable(name, model, target):
+    """Is this a moment the model actually computed?"""
+    if target is None or target <= 0 or model != model:
+        return False
+    return FLOOR < model < ABSURD * target
+
+
+def assemble_regression(centre, pts, bandwidth=0.8, ridge=0.05):
     """(moments, params, J, residual, weights, n_used) by local weighted regression."""
     params = sorted(centre)
     rows = []
@@ -228,8 +261,7 @@ def assemble_regression(centre, pts, bandwidth=0.8, ridge=1e-3):
         return None
 
     ref = min(rows, key=lambda r: float(np.linalg.norm(r[0])))
-    moments = sorted(k for k, (m, t) in ref[1].items()
-                     if t and t > 0 and m == m and abs(t) > 1e-12)
+    moments = sorted(k for k, (m, t) in ref[1].items() if usable(k, m, t))
     if not moments:
         return None
 
@@ -255,8 +287,13 @@ def assemble_regression(centre, pts, bandwidth=0.8, ridge=1e-3):
         for j in range(len(params)):
             J[i][j] = max(-MAX_ELASTICITY, min(MAX_ELASTICITY, coef[1 + j]))
 
-    r = np.array([math.log(ref[1][n][1]) - at_centre.get(n, math.log(max(ref[1][n][0], FLOOR)))
-                  for n in moments])
+    # THE LEVEL COMES FROM THE MEASURED POINT, THE SLOPES FROM THE FIT. Taking
+    # the residual from the regression's own value at the centre makes the solve
+    # chase the fit's error as if it were the model's: a fit over a hundred
+    # points spread across six generations is not accurate AT a point, only
+    # around it. The nearest measured point is what the model actually says
+    # there, and the archive is only asked for the derivatives it is good for.
+    r = np.array([math.log(ref[1][n][1] / max(ref[1][n][0], FLOOR)) for n in moments])
     wt = np.array([score_points.WEIGHT.get(n, 1.0) for n in moments])
     return moments, params, J, r, wt, len(rows)
 
