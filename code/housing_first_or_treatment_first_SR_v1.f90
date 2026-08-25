@@ -29769,7 +29769,11 @@
             ! ONE. The banked value is 0.9, and without this clamp the solve that
             ! reads it runs a whole loop at the old penalty before the update at
             ! the end of it brings the parameter inside the cap.
-            penalty_child_addicted=max(min(penalty_child_addicted,0.4d0),0.d0)
+            ! THE CEILING IS 0.6, NOT 0.4. delta_d is 57 per cent short at the
+            ! leader and the simplex's vertex at 0.421 was SILENTLY CLAMPED to
+            ! 0.4, so the point measured the base and the search learned
+            ! nothing -- the same failure kappa_uem's arms had at 0.10 and 0.30.
+            penalty_child_addicted=max(min(penalty_child_addicted,0.6d0),0.d0)
             read(72,'(F30.15)') penalty_child_addicted_adjuster
             read(72,'(F30.15)') previous_gap_penalty_child
             read(72,'(I10)') have_gap_penalty_child
@@ -30169,7 +30173,7 @@
                 case ("penalty_child_addicted")
                     write(*,*) "HANDOVER penalty_child_addicted:",&
                         penalty_child_addicted, "->", handover_value
-                    penalty_child_addicted=max(min(handover_value,0.4d0),0.d0)
+                    penalty_child_addicted=max(min(handover_value,0.6d0),0.d0)
 
                 ! BLOCK A, SO IT CAN BE PINNED WHILE A LATER BLOCK IS SWEPT.
                 ! Income, hours, wealth and the tax rate are upstream of every
@@ -30204,7 +30208,7 @@
                 case ("penalty_child_homeless")
                     write(*,*) "HANDOVER penalty_child_homeless:",&
                         penalty_child_homeless, "->", handover_value
-                    penalty_child_homeless=max(min(handover_value,0.4d0),0.d0)
+                    penalty_child_homeless=max(min(handover_value,0.6d0),0.d0)
 
                 case ("probability_of_voucher_benchmark_used")
                     write(*,*) "HANDOVER voucher probability:",&
