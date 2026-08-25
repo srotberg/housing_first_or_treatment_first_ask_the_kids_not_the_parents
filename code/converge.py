@@ -775,7 +775,13 @@ def main():
         for key, gap in sorted(stale, key=lambda kv: -abs(kv[1] or 0)):
             print('   stale    %-52s gap %+.1f%%' % (key, 100 * (gap or 0)))
 
-    if simplex_owns:
+    if simplex_owns >= set(OWNS):
+        print('\nTHE SIMPLEX OWNS EVERY PARAMETER, so this round has no generation '
+              'to emit. code/simplex.py drives the search; converge.py is here for '
+              'the gap table, the loss history and the Jacobian, which simplex.py '
+              'runs as one candidate point among its own. Nothing below is a step '
+              'to take.')
+    elif simplex_owns:
         print('\nHeld by the simplex (code/simplex.py), which is searching them '
               'jointly because their responses are not smooth enough to '
               'differentiate:')
