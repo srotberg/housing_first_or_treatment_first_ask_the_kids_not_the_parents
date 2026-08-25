@@ -9,7 +9,7 @@ Parameter & Description & Set & Moment and source & Data & Model & Value \\
 $\theta$ & Weight on drugs in utility & Int. & Drug spending over income, Midgette et al.\ (2019) & 16.2\% & \textemdash & \textemdash \\
 $b$ & Whether a household uses & Int. & Drug participation, NSDUH 2024 & 8.90\% & \textemdash & \textemdash \\
 $\lambda_d$ & SUD hazard per unit used & Int. & Adult SUD rate, NSDUH 2024 & 3.68\% & \textemdash & \textemdash \\
-$\bar\kappa_{\phi d}$ & Increased mortality with a SUD & Ext. & Mortality ratios, Hjorth\o j et al.\ (2023) & 6 to 10 & n.a. & 8.00 \\
+\textcolor{red}{$\kappa_{\phi d}$} & Increased mortality with a SUD & Ext. & Mortality ratios, Hjorth\o j et al.\ (2023) & 6 to 10 & n.a. & 8.00 \\
 $\aleph$ & Flow value of being alive & Int. & Value of a statistical life, Viscusi and Aldy (2003) & \$9m & \textemdash & \textemdash \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{What using and being homeless cost, and the voucher}} \\
@@ -24,7 +24,9 @@ $\pi_V$ & Chance of drawing a voucher & Int. & Recipients over eligible, HUD 202
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{Mental illness chain}} \\
 $\iota$ & SUD multiplier on SMI onset & Ext. & Danish registers, Nielsen et al.\ (2017) & 2.00 & n.a. & 2.00 \\
-$\lambda_m$ & Chance of recovering from SMI & Int. & SMI share of homeless, Gutwinski et al.\ (2021) & 25\% & \textemdash & \textemdash \\
+$\lambda_m$ & Chance of recovering from SMI & \textcolor{red}{Ext.} & \textcolor{red}{$50\%$ recovery within ten years, clinical follow-up} & \textcolor{red}{n.a.} & \textcolor{red}{n.a.} & \textcolor{red}{0.067} \\
+\textcolor{red}{$\omega_m$} & \textcolor{red}{Level of the SMI onset profile} & \textcolor{red}{Int.} & \textcolor{red}{SMI share of the population, NSDUH 2024} & \textcolor{red}{4.82\%} & \textcolor{red}{\textemdash} & \textcolor{red}{\textemdash} \\
+\textcolor{red}{$\eta_{DI}$} & \textcolor{red}{Share of the eligible receiving DI} & \textcolor{red}{Int.} & \textcolor{red}{SMI share of homeless, Gutwinski et al.\ (2021)} & \textcolor{red}{25\%} & \textcolor{red}{\textemdash} & \textcolor{red}{\textemdash} \\
 $\rho_m$ & Earnings lost to SMI & Ext. & Set to one; the extensive margin carries it & 1.00 & n.a. & 1.00 \\
 $\kappa_{uem}$ & Employment multiplier, SMI & Int. & Employment with a high disability diagnosis & 30\% & \textemdash & \textemdash \\
 $\mu_m$ & SUD recovery multiplier, SMI & Ext. & Dual diagnosis relapse, Bradizza et al.\ (2006) & 0.82 & n.a. & 0.82 \\
@@ -37,7 +39,7 @@ $g$ & Treatment effect on recovery & Ext. & Odds ratio, Milby et al.\ (2005) & 1
 $\bar\tau^{u}$ & Utility cost of treatment & Int. & Treatment take up, NSDUH 2024 & 24.5\% & \textemdash & \textemdash \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{Externalities and distortions}} \\
-$\omega$ & Weight on the child & Int. & Use rise with altruism off, NSDUH 2024 & 18.3\% & \textemdash & \textemdash \\
+\textcolor{red}{$\omega_c$} & Weight on the child & Int. & Use rise with altruism off, NSDUH 2024 & 18.3\% & \textemdash & \textemdash \\
 $\delta_d$ & Child's earnings, parent SUD & Int. & Child SUD ratio, McGovern et al.\ (2023) & 3.00 & \textemdash & \textemdash \\
 $\delta_h$ & Child's earnings, homeless & Int. & Child homelessness ratio, Bassuk et al.\ (1997) & 2.10 & \textemdash & \textemdash \\
 $\kappa_x$ & Disamenity of homelessness & Ext. & Willingness to pay, Loubi\`ere et al.\ (2020) & 0.20\% & n.a. & 0.002 \\

@@ -71,6 +71,16 @@ python3 check_hyphens.py
 echo "== checking that no two words have run together"
 python3 check_spacing.py
 
+# THE TABLES AGAINST THE PROSE. check_alignment.py below judges the Set column
+# against the Fortran; this judges it against the note, which is a different
+# claim and drifted three ways at once while nothing was watching: varsigma was
+# marked Int. where the prose said set, lambda_m was still Int. against a moment
+# that had passed to eta_DI, and omega_m and eta_DI were live calibrated
+# parameters appearing in no table at all. sync_tables.py syncs NUMBERS and does
+# not add rows or touch the Set column, so none of that was visible to it.
+echo "== checking that the tables and the prose say the same thing"
+python3 check_params.py
+
 # THE SET COLUMN AGAINST THE CODE, AND NOT BY EYE. links.py says the mapping is
 # "checked by eye once", and TRANSITION_LESSONS records the same check as a
 # standing instruction after rho_d was found holding a moment h_2 had taken. An
