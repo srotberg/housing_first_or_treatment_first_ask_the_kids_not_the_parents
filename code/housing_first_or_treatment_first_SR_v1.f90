@@ -1402,22 +1402,38 @@
         !             cannabis at the daily and near-daily share of its spending
         !             gives 136; counting all four gives 146; hard drugs alone
         !             give 94.
-        !   users     NSDUH 2024 adults 26+, 10.13 per cent, of whom 4.54 points
-        !             carry a moderate or severe disorder.
-        !   income    NSDUH 2024 personal income at category midpoints, survey
-        !             weighted, from the file in data/: 34,344 for mild and
-        !             28,213 for moderate or severe, so 691 billion in total.
+        !   users     NSDUH 2024, ages 26 and over, ANY drug use disorder
+        !             INCLUDING MILD -- svyrdudany in (1,2,3), 8.90 per cent of
+        !             the universe, 20.2 million people. The denominator is ALL
+        !             users and not the 3.68 per cent carrying a moderate or
+        !             severe disorder: the spending figure is what users spend.
+        !   income    NSDUH 2024 FAMILY income at band midpoints, survey
+        !             weighted: 54,216 on average, so 1,095 billion in total.
         !
-        ! 136/691 = 0.197 and 146/691 = 0.211. The number is 0.20.
+        ! 177.8/1095.2 = 0.1623, and the declared value is that number.
         !
-        ! WHY IT WAS 0.35 BEFORE, and it was not the spending figure that was
-        ! wrong. The share is spending over users times income, so halving the
-        ! user base doubles it. The old participation rate of 5.13 per cent put
-        ! the same spending on half as many people; on that base the identical
-        ! aggregates give 0.44. The three targets move together or not at all.
+        ! THIS COMMENT USED TO SAY 0.20 AND THE DECLARATION SAID 0.1620, which is
+        ! how a stale note reads: it was the arithmetic before two corrections,
+        ! and both are in data/make_drug_spending_target.py rather than here.
+        !   - the denominator is FAMILY income, because the model's y is a
+        !     household's income and that is what its budget constraint spends;
+        !     personal income alone gave 0.197;
+        !   - 2016 spending cannot be divided by 2024 income, so the numerator is
+        !     reflated by CPI-U, 240.007 to 313.689.
+        ! Correcting only the denominator gives 0.124 and only the numerator
+        ! 0.241, which is why the uncorrected 0.197 looked reasonable.
         !
-        ! The one input still doing work is the cannabis share, which moves the
-        ! answer between 0.136 and 0.211. See code/paper/drug_spending_target.py.
+        ! It also quoted 10.13 and 4.54 per cent, which are the EIGHTEEN and over
+        ! cuts. The model's universe is 26 and over, where the same variable gives
+        ! 8.90 and 3.68, and those are the figures in use.
+        !
+        ! The one assumption left is NSDUH's open top income band, 75,000 and
+        ! over, whose midpoint is set at 100,000. Varying it from 75,000 to
+        ! 125,000 moves the share between 0.191 and 0.141.
+        !
+        ! code/paper/drug_spending_target.py is SUPERSEDED by
+        ! data/make_drug_spending_target.py and its header still describes a 0.35
+        ! target and a 5.13 per cent participation rate. Do not read it as current.
         real(8), parameter :: drug_spending_share_data=0.1620
         real(8) :: drug_share_experimenters_1=0
         real(8) :: drug_share_addicted_1=0
