@@ -64,8 +64,28 @@ STATE = os.path.join(HERE, 'SIMPLEX.txt')
 # comparability rules the four parameter version needed are unnecessary here.
 BLOCK = sorted(OWNS)
 
-# Torczon's coefficients.
+# Torczon's coefficients: contract to a half, reflect, expand to double.
 MU, THETA = 2.0, 0.5
+
+# EVERY VERTEX GETS ITS OWN RAY, not just the winning one.
+#
+# MDS moves vertex i along the line through the best vertex, x(t) = v0 + t*(v0 -
+# v_i), and the three coefficients above are three samples of it: -0.5 the
+# contraction, +1 the reflection, +2 the expansion. That is the same structure
+# Nelder-Mead had and the same waste: the method samples twenty two lines and
+# takes three points on each because a sequential implementation could not afford
+# more.
+#
+# The information ceiling of one iteration is "for each of the twenty two
+# directions, where along it is the best point", and more samples per direction is
+# strictly closer to that ceiling. So the scale list is a budget knob rather than
+# a constant: three scales is textbook MDS at 66 points, seven is a real line
+# search on all twenty two directions at once at 154, and nothing in the method
+# changes -- the acceptance rule still takes the best simplex it can build.
+#
+# Ordered so that a truncated list is still a sensible MDS: the first three are
+# the textbook's own.
+SCALES = (-0.5, 1.0, 2.0, 0.5, 3.0, -0.75, 4.0, 1.5, -0.25, 6.0)
 
 # The initial simplex: each vertex is the base point with ONE coordinate moved by
 # this factor. It is the trust region the Jacobian is allowed, so the simplex
@@ -217,13 +237,41 @@ def step_set(verts, phase):
 # other. What it really costs is sessions, so it is a choice and not a default
 # buried in the method -- the caller passes --speculative when the fleet has the
 # room, and takes the two round version when it does not.
-def speculative_set(verts):
+def speculative_set(verts, scales=3):
     v0 = verts[0][0]
+    use = SCALES[:max(3, scales)]
     out = {}
     for i, (x, _l) in enumerate(verts[1:], start=1):
-        for phase in ('reflect', 'expand', 'contract'):
-            out['%s%02d' % (phase[0], i)] = moved_vertex(v0, x, phase)
+        for t in use:
+            y = [v0[j] + t * (v0[j] - x[j]) for j in range(len(BLOCK))]
+            out['s%02d@%+.2f' % (i, t)] = y
     return out
+
+
+def resolve_speculative(verts, t, f):
+    """Build the best simplex the batch supports, one vertex at a time.
+
+    Classic MDS keeps a whole reflected or contracted simplex. With every scale
+    measured there is no reason to move all vertices by the same coefficient:
+    each vertex takes the best point on ITS OWN ray, which is a strictly better
+    simplex than any single-coefficient one, since the single coefficient is one
+    of the choices available to every vertex.
+
+    The best vertex is kept, as MDS keeps it.
+    """
+    out = [verts[0]]
+    improved = 0
+    for i, (x, loss) in enumerate(verts[1:], start=1):
+        best = (loss, x)
+        for k, l in f.items():
+            if not k.startswith('s%02d@' % i):
+                continue
+            if l < best[0]:
+                best = (l, t[k])
+        if best[1] is not x:
+            improved += 1
+        out.append((best[1], best[0]))
+    return out, improved
 
 
 def jacobian_candidate(verts, pts):
@@ -320,26 +368,11 @@ def main():
         best_trial = min(f.values()) if f else None
 
         if phase == 'all':
-            # The whole rule, applied to results already in hand.
-            def group(letter):
-                return [(t[k], f[k]) for k in sorted(f)
-                        if k.startswith(letter) and not k.startswith('ray')]
-            R, E, C = group('r'), group('e'), group('c')
-            bR = min((l for _x, l in R), default=None)
-            bE = min((l for _x, l in E), default=None)
-            if bR is not None and bR < best_now:
-                if bE is not None and bE < bR:
-                    verts = [verts[0]] + E
-                    print('iteration %d: expanded, best %.3f -> %.3f'
-                          % (st['iter'], best_now, bE))
-                else:
-                    verts = [verts[0]] + R
-                    print('iteration %d: reflected, best %.3f -> %.3f'
-                          % (st['iter'], best_now, bR))
-            elif C:
-                verts = [verts[0]] + C
-                print('iteration %d: no reflection beat %.3f; contracted toward '
-                      'the best vertex.' % (st['iter'], best_now))
+            verts, improved = resolve_speculative(verts, t, f)
+            print('iteration %d: %d of %d vertices improved on their own ray; '
+                  'best %.3f -> %.3f'
+                  % (st['iter'], improved, len(verts) - 1, best_now,
+                     min(l for _x, l in verts)))
             st['iter'] += 1
         elif phase == 'reflect':
             if best_trial is not None and best_trial < best_now:
@@ -395,7 +428,11 @@ def main():
 
     if '--speculative' in sys.argv:
         st['phase'] = 'all'
-        t = speculative_set(verts)
+        scales = 3
+        for a in sys.argv:
+            if a.startswith('--scales='):
+                scales = int(a.split('=')[1])
+        t = speculative_set(verts, scales)
     else:
         if st.get('phase') == 'all':
             st['phase'] = 'reflect'
