@@ -176,7 +176,14 @@ AUTHOR_SET = {}
 # reach their targets comfortably, so continuing to spend sessions on them buys
 # nothing. Their compensation had also gone stale -- it was still proposing b
 # near 0.005 for a lambda 9 arm, which puts the whole population back on drugs.
-AUTHOR_PROBE = {}
+# MEASURE THE ANSWER THE ODDS FIT NAMES, rather than walk to it a capped step at
+# a time. kappa_uem is the only instrument on the employment rate given serious
+# mental illness and the only moment never brought inside twenty five per cent.
+# Three measured points -- 1.0, 1.6 and 3.0 -- lie on a straight line in log odds
+# with residuals under 0.02 and put the answer at 8.5. That is an extrapolation,
+# so it is measured rather than believed: one point this generation settles
+# whether the relation holds where it matters.
+AUTHOR_PROBE = {'kappa_uem': [8.5]}
 
 ON_TARGET = 0.03        # a moment this close to its target needs no arm at all
 ARM_MIN, ARM_MAX = 1.15, 3.0
@@ -451,8 +458,17 @@ def secant(key, target, pts, here):
             got = m.get(gm)
             if got is None or got <= 0 or not (gt / tol <= got <= gt * tol):
                 return None, 'gated on ' + gm
-    if min(x1, x2, y1, y2, target) > 0 and abs(math.log(y2 / y1)) > 1e-12:
-        f = math.log(target / y1) / math.log(y2 / y1)
+    # THE MOMENT GOES ON THE SCALE ITS RESPONSE IS STRAIGHT IN, which for a
+    # share bounded by one is odds and not levels. Interpolating the employment
+    # rate given serious mental illness in levels, from 0.954 and 0.895 towards
+    # 0.300, reads the ceiling as a refusal to move and puts kappa_uem in the
+    # thousands; in odds the same points are a straight line and the answer is
+    # 8.5. See jacobian.scaled for the measurement that settled it.
+    sy1, sy2 = jacobian.scaled(y1, target), jacobian.scaled(y2, target)
+    st = jacobian.scaled(target, target)
+    if (min(x1, x2, y1, y2, target) > 0 and None not in (sy1, sy2, st)
+            and abs(sy2 - sy1) > 1e-12):
+        f = (st - sy1) / (sy2 - sy1)
         # DO THE ARITHMETIC IN LOGS AND LOOK AT IT BEFORE EXPONENTIATING. A pair
         # taken across a nearly flat response gives an enormous exponent, and
         # math.exp raises OverflowError rather than returning something the span
