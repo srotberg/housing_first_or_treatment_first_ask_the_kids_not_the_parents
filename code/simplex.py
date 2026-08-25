@@ -154,10 +154,27 @@ def canon(x):
     return to_log(from_log(x))
 
 
-def measured():
+# THE MOMENT SET IS PART OF THE LOSS, so two points measured over different
+# ones cannot be ranked against each other. The loss is a MEAN weighted gap: a
+# point reporting 24 moments and a point reporting 23 are on different scales,
+# and the extra moment drags the newer point down whenever it is worse than the
+# average of the others. omega joined the block when its counterfactual was
+# moved into print_all_moments, so every one of the 260 points on disk predates
+# it. Reusing them beside points that carry it would rank the two generations
+# against each other and call the difference progress.
+REQUIRED = ('omega',)
+
+
+def complete(mt):
+    return all(k in mt for k in REQUIRED)
+
+
+def measured(require=True):
     out = []
     for vec, mt, name in jacobian.points():
         if any(k not in vec for k in BLOCK):
+            continue
+        if require and not complete(mt):
             continue
         out.append((to_log(vec), vec, score_points.loss(mt)[0], name))
     return out
@@ -510,12 +527,32 @@ def main():
         emit()
         return
     pts = measured()
+    seed = None
     if not pts:
-        print('no measured points')
-        return
+        # NO POINT CARRIES THE CURRENT MOMENT SET YET. The archive still fixes
+        # WHERE to start -- the best vector under the moment set it was measured
+        # on is the best guess available -- but none of its vertices may be
+        # reused, so the simplex is built fresh around that vector and every one
+        # of its vertices is run.
+        old_pts = measured(require=False)
+        if not old_pts:
+            print('no measured points')
+            return
+        seed = min(old_pts, key=lambda r: r[2])
+        print('NO POINT CARRIES %s YET, so nothing is reused.\n'
+              'Seeding the simplex at the best vector measured without it: '
+              '%s, loss %.3f\n' % (' and '.join(REQUIRED), seed[3], seed[2]))
+        # THE SEED IS A LOCATION, NOT A MEASUREMENT. Leaving it in pts let
+        # look_up hand its old-moment-set loss straight back to the base vertex,
+        # which is the mixing this guard exists to prevent, one vertex at a time.
+        pts = []
     st = load()
     if st is None or '--init' in sys.argv:
-        verts = initial(pts)
+        verts = initial(pts if seed is None else [seed])
+        if seed is not None:
+            # the seed's own loss was measured on the old set, so it is not a
+            # measurement of this vertex either
+            verts = [(x, None) for x, _l in verts]
         st = {'iter': 0, 'phase': 'reflect', 'best_direction': None,
               'vertices': [[x, l] for x, l in verts], 'trials': None,
               'reflected': None}
