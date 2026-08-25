@@ -1462,7 +1462,7 @@ n\,y\,\varepsilon(j)\,\rho_{d}^{\mathbf{1}\{d=1\}}\rho_{m}^{\mathbf{1}\{m=1\}}
  & j<J_{R},\ e=1 \quad\text{(employed)}\\[2pt]
 \psi_{ui}\,\min\{y\,\varepsilon(j),\ \bar y\}
  & j<J_{R},\ e=2 \quad\text{(first year of a spell)}\\[2pt]
-\zeta_{DI}\,y\,\varepsilon(j) & j<J_{R},\ e=3,\ m=1 \quad\text{(disability)}\\[2pt]
+\new{\eta_{DI}\,\zeta_{DI}}\,y\,\varepsilon(j) & j<J_{R},\ e=3,\ m=1 \quad\text{(disability)}\\[2pt]
 0 & \text{otherwise,}
 \end{cases}
 \end{equation}
@@ -1485,7 +1485,18 @@ is out of work and carries SMI. Unemployment insurance (UI) is paid in the first
 the replacement rate $\psi_{ui}$ on an earnings base capped at average income
 $\bar y$, both as in equation~\eqref{eq:inc}. $\zeta_{DI}$ is the rate at which disability
 insurance (DI) replaces the income of an unemployed household with SMI, and that
-DI does not stop until the household recovers.
+DI does not stop until the household recovers. \new{Only a fraction $\eta_{DI}$
+of those eligible actually receive it, so the transfer enters as
+$\eta_{DI}\zeta_{DI}$: every eligible household is paid the EXPECTED benefit
+rather than a fraction of them being paid the full one. That is an approximation
+and it is not innocuous, because homelessness is a threshold and a threshold is
+not linear in income. Under the programme it stands in for, a fraction of these
+households have no income at all and are at the margin of losing their housing,
+while the rest are comfortably above it; here none of them is at either extreme.
+Doing it exactly requires carrying receipt as a state variable, which the
+mental-illness chain is not rich enough to do without doubling in size. The
+approximation errs towards MORE homelessness among the mentally ill than the
+programme it represents, since no household is left fully insured.}
 
 
 
@@ -1641,8 +1652,8 @@ $\kappa_{uem}$ in~\eqref{eq:femp}, mortality through $\kappa_{\phi m}$
 in~\eqref{eq:fsurv}, the SUD recovery hazard through
 $\mu_m$ in~\eqref{eq:frecover}, and
 disability income, for which eligibility is being out of work with SMI and
-the replacement rate is $\zeta_{DI}$\new{, received by a share $\eta_{DI}$ of
-those eligible}. It does not change the utility function.
+the replacement rate is $\zeta_{DI}$\new{, scaled by the share $\eta_{DI}$ of
+the eligible who receive it}. It does not change the utility function.
 
 The SMI chain does \emph{not} depend on housing, and that is
 a finding in the data rather than an omission. In the At Home / Chez Soi randomised trial, $1{,}198$
@@ -2351,7 +2362,10 @@ suggests. With full receipt, SMI is the only insurance against a long unemployme
 spell in the model, since unemployment insurance is paid in the first period
 only; a household with SMI then cannot fall as far as an identical household
 without it, and mental illness protects against homelessness rather than causing
-it.}
+it. It enters as a scale on the transfer rather than as a share of households
+receiving it, for the reason given in Section~\ref{sec:ftaxes}, and only the
+product $\eta_{DI}\zeta_{DI}$ is identified: $\zeta_{DI}$ is set externally so
+that $\eta_{DI}$ carries the moment.}
 \item[$\zeta_{DI}$, the disability transfer for the unemployed with SMI.] It
 is the floor for one of the worst states in the model: being ill and out of
 work, so it sets how far a household can fall. Raise it and the private cost of that
