@@ -198,7 +198,13 @@ def verdict(par, del_d, pV=1.0, omega=1.0, kids=1.0):
 # moves: shifted() reads the same use grid at a shifted income, so child_grid is
 # computed once and the bisection is arithmetic on it. prog cancels out of the
 # ratio, so the disorder ratio and the use ratio are the same number.
-RATIO_TARGET = 3.0
+# TWO, NOT THREE, and the quantitative model's child_sud_ratio_data moved
+# with it. Three was the midpoint of a two-to-four range that mixes studies
+# of one affected parent with studies of two; a child here has one parent.
+# On one-parent estimates the register evidence gives 1.44 (Mellentin et
+# al. 2016) and the US population-based study 2.51 (Yoon et al. 2013),
+# whose midpoint is 1.98.
+RATIO_TARGET = 2.0
 
 
 # DELTA_H IS CALIBRATED TOO, on the transmission of homelessness, so that both
