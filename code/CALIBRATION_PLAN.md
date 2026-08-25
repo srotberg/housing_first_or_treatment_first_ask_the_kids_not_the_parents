@@ -231,6 +231,44 @@ Two things the simplex has to get right and did not on the first attempt:
   against a different background each time and the simplex would be tracking a
   function moving underneath it.
 
+## What counts as finished
+
+The author, 25 August: "it is ok if we can't hit every single moment. It's many
+moments. As long as almost all are within 5-10 per cent or so, and maybe one a
+bit off it's ok."
+
+So the target is not zero and never was. Twenty two moments against twenty two
+instruments is not a system with an exact solution waiting to be found -- several
+of the targets come from different surveys, different years and different
+universes, and one of them (the SMI share of the homeless) is pooled across
+thirty nine studies. A search driven at zero would spend itself chasing the last
+per cent of moments that are already inside the noise of their own sources.
+
+    DONE_BAND        0.10     a moment inside ten per cent is landed
+    DONE_ALLOWED_OUT 1        and one may sit outside it
+
+`simplex.py` prints this every round as ACCEPTANCE: MET or not met, and stops on
+its own when the criterion holds and the simplex is tight.
+
+**IT IS A STATEMENT ABOUT THE WORST MOMENTS, NOT THE MEAN, and the loss is a
+mean.** A weighted mean of relative gaps can reach 0.10 with one moment two
+hundred per cent out and everything else perfect, which is exactly the outcome
+the criterion rules out. The mean stays as the thing the search minimises,
+because changing the objective now would break comparability with two hundred
+archive points, but it is not the thing the search is judged by. If the mean ever
+starts tolerating a straggler -- the count inside ten per cent stalling while the
+loss keeps falling -- that is the signal to switch the objective to a
+max-flavoured one, and it should be said out loud when it happens rather than
+noticed later.
+
+Where this stood when the criterion was written, at the best point of two hundred
+and four:
+
+    within  5%:  6 of 22
+    within 10%:  7 of 22
+    within 25%: 12 of 22
+    outside 10%: 15, worst tau_u at +149%
+
 ## The order of work the author has set
 
 1. The sweep pins b and lambda. **Report the curve; do not pick the values.**

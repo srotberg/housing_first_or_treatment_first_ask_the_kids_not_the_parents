@@ -381,6 +381,40 @@ def ray_set(v0, direction):
     return out
 
 
+# WHEN THIS IS DONE, in the author's words on 25 August: "it is ok if we can't
+# hit every single moment. It's many moments. As long as almost all are within
+# 5-10 per cent or so, and maybe one a bit off it's ok."
+#
+# That is a statement about the WORST moments and not about the mean, and the
+# loss is a weighted mean of relative gaps. A mean of 0.10 is reachable with one
+# moment two hundred per cent out and everything else perfect, which is the
+# outcome this criterion rules out. So the mean is still what the search
+# minimises -- changing it now would break comparability with two hundred
+# archive points -- and the criterion below is what the search is JUDGED by, and
+# it is printed every round.
+DONE_BAND = 0.10        # a moment inside this is landed
+DONE_ALLOWED_OUT = 1    # and this many may sit outside it
+
+
+def standing(mom):
+    """The acceptance scoreboard: how many moments are actually landed."""
+    g = sorted((abs(mo - t) / abs(t), k) for k, (mo, t) in mom.items()
+               if abs(t) > 1e-12)
+    within = {b: sum(1 for x, _k in g if x <= b) for b in (0.05, 0.10, 0.25)}
+    out = [(x, k) for x, k in g if x > DONE_BAND]
+    print('   within  5%%: %2d of %d' % (within[0.05], len(g)))
+    print('   within 10%%: %2d of %d' % (within[0.10], len(g)))
+    print('   within 25%%: %2d of %d' % (within[0.25], len(g)))
+    if out:
+        print('   outside %d%%: %d  -- worst %s at %+.0f%%'
+              % (100 * DONE_BAND, len(out), out[-1][1], 100 * out[-1][0]))
+    done = len(out) <= DONE_ALLOWED_OUT
+    print('   ACCEPTANCE: %s (%d outside %d%%, at most %d allowed)'
+          % ('MET' if done else 'not met', len(out), 100 * DONE_BAND,
+             DONE_ALLOWED_OUT))
+    return done
+
+
 def report(verts):
     losses = [l for _x, l in verts if l is not None]
     if losses:
@@ -496,8 +530,24 @@ def main():
 
     verts.sort(key=lambda v: v[1])
     span = report(verts)
+
+    # Judge the best vertex against the acceptance criterion, not against zero.
+    best_name = look_up(verts[0][0], pts)
+    if best_name:
+        for _v, mt, name in jacobian.points():
+            if name == best_name[1]:
+                print('\nthe best vertex, %s, against the criterion:' % name)
+                if standing(mt) and span < 0.10:
+                    print('\nSTOP: the criterion is met and the simplex is tight. '
+                          'Further rounds are polishing, not calibrating.')
+                    return
+                break
+
     if span < 0.02:
-        print('\nCONVERGED: the widest edge is under two per cent.')
+        print('\nCONVERGED on the parameters: the widest edge is under two per '
+              'cent, whatever the moments say. If the criterion above is not met '
+              'at this point, no vector nearby meets it and the remaining gaps '
+              'are a specification question rather than a search one.')
         return
 
     if '--speculative' in sys.argv:
