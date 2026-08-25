@@ -425,3 +425,27 @@ disordered share, exactly as b and the value of life do. A ridge in (lambda, b)
 is being measured now at lambda 5.5, 8, 12, 16 and 22, with b set at each to put
 the user rate on target, which gives the share along the ridge and so the lambda
 that hits 0.413 with the user rate where it belongs.
+
+## Judge a round by its centre, never by its luckiest arm
+
+The best-loss column stayed near 0.48 for four rounds and looked like a search
+that had stalled. It had not stalled; it was drifting. The CENTRE, which is the
+vector the search itself chose, went
+
+    gen 3   0.528
+    gen 4   0.782      homelessness thirty-two times its target
+    gen 5   0.795
+    gen 6   0.856      the three hand-pinned parameters failed to compose
+
+The best point in a generation is whichever arm happened to carry a lucky
+combination, often one inherited from an older centre, so reporting it hid three
+consecutive rounds of degradation. loss_history.py now prints the centre beside
+it, and the centre is the number that decides whether a round helped.
+
+RESET, 25 August, on the author's instruction. The centre goes back to the best
+vector ever measured, loss 0.480, and the step is cut from a factor of three to
+1.4 with a floor of 1.10. A step of three is what let size_homelessness cross its
+cliff in one move at generation four and take homelessness to thirty-two times
+target, and the two rounds after that inherited the wreck. Nothing measured is
+wasted: generation six's arms still give a Jacobian, it is simply applied at a
+point that is 0.48 rather than 0.86.

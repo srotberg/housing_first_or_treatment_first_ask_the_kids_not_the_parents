@@ -39,6 +39,39 @@ def generation_of():
     return where
 
 
+def centres():
+    """generation -> the loss of the CENTRE it produced.
+
+    THE HONEST MEASURE OF THE SEARCH. The best point in a generation is whichever
+    arm happened to carry a lucky combination, often an old one, so the best-loss
+    column stayed near 0.48 for four rounds while the centre -- the vector the
+    search actually chose -- went 0.528, 0.782, 0.795, 0.856. Reporting the best
+    hid three consecutive rounds of drift.
+    """
+    out = subprocess.run(
+        ['git', 'log', '--diff-filter=A', '--name-only', '--format=%x00%s', '--', 'code/points'],
+        cwd=os.path.dirname(HERE), capture_output=True, text=True).stdout
+    found = {}
+    for chunk in out.split('\x00'):
+        lines = [l for l in chunk.splitlines() if l.strip()]
+        if not lines:
+            continue
+        m = re.search(r'gen\s*(\d+)\w*\s+worker:\s*centre', lines[0], re.I)
+        if not m:
+            continue
+        for f in lines[1:]:
+            found.setdefault(int(m.group(1)), os.path.basename(f))
+    losses = {}
+    for gen, name in found.items():
+        path = os.path.join(HERE, 'points', name)
+        if not os.path.exists(path):
+            continue
+        got = score_points.loss(score_points.read(path)[1])
+        if got:
+            losses[gen] = (got[0], name)
+    return losses
+
+
 def by_generation():
     """generation -> best loss in it, for the trust region to read."""
     where = generation_of()
@@ -71,6 +104,7 @@ def main():
           % ('generation', 'points', 'best', 'median', 'worst',
              'w/in 5%', '10%', '25%', '50%', 'best point'))
     print('-' * 118)
+    cent = centres()
     best_so_far = None
     for gen in sorted(rows):
         ls = sorted(rows[gen])
@@ -88,9 +122,11 @@ def main():
         rel = sorted(abs(m - t) / abs(t) for m, t in mt.values()
                      if t and m == m)
         near = [sum(1 for x in rel if x < c) for c in (0.05, 0.10, 0.25, 0.50)]
-        print('%-12s %8d %10.3f %10.3f %10.3f %7d %6d %6d %6d   %s%s'
+        c = cent.get(gen)
+        print('%-12s %8d %10.3f %10.3f %10.3f %7d %6d %6d %6d   centre %s   %s%s'
               % ('gen %d' % gen, len(ls), ls[0][0], med, ls[-1][0],
-                 near[0], near[1], near[2], near[3], ls[0][1], mark))
+                 near[0], near[1], near[2], near[3],
+                 ('%.3f' % c[0]) if c else '  -  ', ls[0][1], mark))
     return 0
 
 

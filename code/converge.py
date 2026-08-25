@@ -181,8 +181,13 @@ AUTHOR_PROBE = {}
 ON_TARGET = 0.03        # a moment this close to its target needs no arm at all
 ARM_MIN, ARM_MAX = 1.15, 3.0
 
-MAX_STEP = 3.0          # no parameter may move by more than this factor in one generation
-TRUST_FLOOR = 1.25      # never shrink the step below this
+# TIGHT, on the author's instruction of 25 August, after the centre drifted from
+# 0.528 to 0.856 over three rounds while the step was allowed to be a factor of
+# three. A step that large lets one parameter cross a cliff -- size_homelessness
+# did exactly that at generation four and took the homelessness rate to
+# thirty-two times its target -- and the round after inherits the wreck.
+MAX_STEP = 1.4
+TRUST_FLOOR = 1.10      # never shrink the step below this
 PAIRED = ('addiction_scalar_1', 'value_of_life')         # the two that must be solved together
 RUNNER = os.path.join(HERE, 'run_one_point.sh')
 GENFILE = os.path.join(HERE, 'GENERATION.txt')
