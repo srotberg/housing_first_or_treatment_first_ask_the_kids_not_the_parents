@@ -164,9 +164,41 @@ def canon(x):
 # against each other and call the difference progress.
 REQUIRED = ('omega',)
 
-
+# A ZERO omega IS A POINT FROM BEFORE THE COUNTERFACTUAL WAS FIXED. The child
+# term's counterfactual read back a user count that govt_revenues_calc never
+# recomputed, so it reported the BASELINE count and MOMENT omega came out as
+# exactly 0.0000000000000000 at every weight_on_child. Every point measured
+# before that fix carries the moment and carries it as an exact zero, so
+# requiring the moment's PRESENCE is no longer enough to tell the two models
+# apart -- and the two models are very different: at one vector b was 9.04 per
+# cent with the child channel off and 1.80 with it on.
 def complete(mt):
-    return all(k in mt for k in REQUIRED)
+    if not all(k in mt for k in REQUIRED):
+        return False
+    return abs(mt['omega'][0]) > 1e-12
+
+
+# WHERE TO START, WHEN NOTHING MEASURED CAN ANCHOR. The archive fixes the
+# location but weight_on_child's own coordinate is set here, because the channel
+# it multiplies was inert when every archived point was measured: at 0.5 the
+# seed would sit at b = 1.80 per cent against a target of 8.9, and b carries
+# triple weight, so the first simplex would spend itself climbing out.
+SEED_OVERRIDE = {'weight_on_child': 0.007}
+# 0.007, WHERE OMEGA'S OWN MOMENT CROSSES ITS TARGET. A two point estimate
+# across 0.02 to 0.5 put it at 0.008 with b agreeing, but the mapping points
+# show b FLATTENS as omega_c falls: its local elasticity near the target is
+# -0.108 against -0.336 across the wide range, so b tops out near 0.077 and
+# cannot be brought to 0.089 by omega_c at any value. That is
+# addiction_scalar_1's job and it is in the block. omega_c is seeded where
+# ITS OWN moment lands, the use gap crossing 0.1834 at 0.0072. The wide
+# estimate, kept because it is the one the elasticities below refer to: Across omega_c 0.02 to 0.5 the
+# use gap has a log elasticity of +0.67 with respect to omega_c and the
+# participation rate one of -0.34. Solving each for its own target from the 0.02
+# point gives 0.0082 from the gap and 0.0081 from participation: one measured
+# through the counterfactual, one from the cross section, landing on the same
+# number to two figures. 0.02 left b 26 per cent short and the gap 82 per cent
+# over, and b carries triple weight in the loss, so a simplex built around it
+# would have spent itself discovering what these two lines already say.
 
 
 def measured(require=True):
@@ -232,7 +264,24 @@ def initial(pts):
     # reflection moves toward the best vertex regardless -- so it is spent on
     # reuse, with the loss as the tie-break.
     base = max(pts, key=lambda r: (_reuse(r, pts), -r[2]))
-    verts = [(base[0], base[2])]
+    # THE OVERRIDE APPLIES TO WHATEVER ANCHOR IS CHOSEN, not only to a seed used
+    # when nothing is measured. It was written into the no-points-measured branch
+    # alone, so the moment a handful of points carried the moment set the anchor
+    # came from the archive and the override was silently skipped: the first
+    # emitted vertex still read weight_on_child=0.02 after the seed had been set
+    # to 0.007. That is the same silent-no-op shape as the clamps and the \new
+    # macro, and it is why the emitted vertex is checked before anything spawns.
+    #
+    # Overriding a coordinate makes the archive's vertices around that anchor
+    # stop matching, which is correct: they were measured at the old value.
+    if SEED_OVERRIDE:
+        vec = dict(base[1])
+        if any(abs(vec.get(k, 0.0) - v) > 1e-12 for k, v in SEED_OVERRIDE.items()):
+            vec.update(SEED_OVERRIDE)
+            base = (to_log(vec), vec, float('inf'), base[3] + ' (override)')
+            print('   anchor coordinates overridden: %s'
+                  % ', '.join('%s=%g' % kv for kv in sorted(SEED_OVERRIDE.items())))
+    verts = [(base[0], base[2] if base[2] != float('inf') else None)]
     reused = 1
     for i, key in enumerate(BLOCK):
         edge = EDGE
@@ -539,6 +588,12 @@ def main():
             print('no measured points')
             return
         seed = min(old_pts, key=lambda r: r[2])
+        if SEED_OVERRIDE:
+            vec = dict(seed[1])
+            vec.update(SEED_OVERRIDE)
+            seed = (to_log(vec), vec, seed[2], seed[3])
+            print('   seed coordinates overridden: %s'
+                  % ', '.join('%s=%g' % kv for kv in sorted(SEED_OVERRIDE.items())))
         print('NO POINT CARRIES %s YET, so nothing is reused.\n'
               'Seeding the simplex at the best vector measured without it: '
               '%s, loss %.3f\n' % (' and '.join(REQUIRED), seed[3], seed[2]))
