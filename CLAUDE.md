@@ -68,6 +68,25 @@ than in Table 5. Check what a parameter multiplies before giving it a row.
 The hyphenation rule applies to ANY multi-word modifier, not only the ones
 already in the list. Read the section in NUMBERS.md before adding prose.
 
+## Red accumulates from Section 4 onward, and stripping it is a mistake
+
+`writing/strip_red.py` takes a file and removes every red wrapper in it. It must
+NOT be run on the whole note between rounds. The stripper for a comment round is
+`writing/strip_red_before_transition.py`, which clears red only up to the end of
+Section 3.6 and leaves everything from the transition onward alone, because the
+quantitative half is still being audited and the author reads it by looking at
+everything that has changed since they last saw it, not only at the most recent
+round's edits.
+
+This was got wrong once, in the round that collapsed eta_DI into zeta_DI: the
+whole file was stripped, several rounds of accumulated red in Sections 4 and 5
+went black in one step, and the author noticed and asked for it back. It was
+recoverable only because the red version was still in the last commit. Restore
+from git if it happens again -- and note that the four frozen baselines
+(`params_prev.json`, `numbers_prev.json`, `tables_prev.json` and the tables
+themselves) have to be restored with it, or the next build re-marks everything
+as moved.
+
 ## Never write unmarked prose into the paper
 
 **Anything I add to the paper goes in `\new{}`, and anything I add that the

@@ -1481,12 +1481,7 @@ is out of work and carries SMI. Unemployment insurance (UI) is paid in the first
 the replacement rate $\psi_{ui}$ on an earnings base capped at average income
 $\bar y$, both as in equation~\eqref{eq:inc}. $\zeta_{DI}$ is the rate at which disability
 insurance (DI) replaces the income of an unemployed household with SMI, and that
-DI does not stop until the household recovers. \new{It is an expected transfer
-rather than a statutory one: eligibility and take-up are not the same thing, and
-$\zeta_{DI}$ is the statutory replacement rate net of take-up, so every eligible
-household is paid the expected benefit rather than a fraction of them being paid
-the full one. Nothing in the model separates the two pieces, which is why it is
-one parameter and not two.}
+DI does not stop until the household recovers.
 
 
 
@@ -2368,13 +2363,8 @@ how many households ever acquire it. Raise it and mental illness is less
 persistent, so the private cost falls, because fewer years are spent with SMI,
 and the externality falls with it, since a child who is likelier to acquire a SUD
 and through it SMI has a higher chance of recovery and a higher value of life. It
-is set externally at $\new{0.07}$, the annual hazard that gives a fifty per
-cent chance of recovery within ten years. The ten-year clinical follow-up
-literature brackets that figure, at twenty-three per cent for schizophrenia
-spectrum disorders and fifty for psychotic bipolar spectrum disorders. SMI is not
-schizophrenia, and by count it is mostly mood disorders, which remit more readily
-than the psychotic disorders those studies follow, so the upper end is the right
-one for a category-wide rate.\query{Flagged: the ten-year recovery figures are
+is set externally at $\new{0.067}$, the annual hazard that gives a fifty per
+cent chance of recovery within ten years.\query{Flagged: the ten-year recovery figures are
 those of the Suffolk County Mental Health Project, Kotov et al.\ (2017). Confirm
 that is the intended source before the citation is set.}}
 \new{\item[$\omega_m$, the level of the SMI onset profile.] This parameter
@@ -2385,23 +2375,15 @@ private cost and the externality rise, since a child is likelier to reach a stat
 that costs earnings, employment and years of life. It is calibrated internally,
 to the share of the population carrying SMI in NSDUH 2024, which is
 $4.82$ percent.}
-\new{\item[$\zeta_{DI}$, the expected disability transfer for the unemployed with
-SMI.] This parameter sets the floor under one of the worst states in the model,
+\new{\item[$\zeta_{DI}$, \new{disability insurance for the unemployed with SMI}.]
+This parameter sets the floor under one of the worst states in the model,
 being ill and out of work, so it decides how far such a household can fall. Raise
 it and the private cost of that state falls, and with it the externality on a
 child likelier to reach it, at the price of a higher tax on everybody else; lower
 it and more households with SMI fall to the same zero income as everyone else out
 of work, so more of them lose their housing. It is calibrated internally, to the
 SMI share of the homeless in Gutwinski et al.\ (2021), which is
-$\new{25}$ percent.
-
-It is one parameter and not two. A statutory replacement rate and a take-up rate
-enter the model only through their product, so only the product is identified,
-and estimating both would be two instruments pointed at one moment. Reading the
-calibrated value against the pieces is still a useful check on it: Social
-Security Disability Insurance (SSDI) and Supplemental Security Income (SSI)
-replace about a quarter of earnings, and roughly three million of the
-$13.6$ million US adults with SMI receive either on a mental-disorder basis.}
+$\new{25}$ percent.}
 
 \item[$\rho_m$, earnings lost to SMI.]\query{Flagged: keep $\rho_m$ or take it
 out?} The counterpart of $\rho_d$ for mental
