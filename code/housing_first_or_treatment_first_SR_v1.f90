@@ -4215,13 +4215,36 @@
 
                 baseline_users_for_gap=model_total_drug_users(1)
 
+                ! THE EVIDENCE HAS TO LAND INSIDE THIS BLOCK. run_one_point.sh
+                ! keeps only the lines between ALL TARGETED MOMENTS and END OF
+                ! MOMENTS, so anything printed elsewhere is discarded and a
+                ! reader of the point file cannot tell a live counterfactual from
+                ! a dead one. omega came back as exactly zero while b moved by a
+                ! factor of 3.7 with omega_c, which cannot both be true, and
+                ! there was no way to see which half was wrong.
+                write(*,*) "OMEGA_DIAG baseline users=", baseline_users_for_gap,&
+                    " child value=", expected_child_value
+
                 child_penalty_off=1
 
                 call solve_value_function_and_policy_functions(1)
                 call converge_to_stationary_equilibrium(1)
                 call stationary_equilibrium_statistics(1)
 
+                ! model_total_drug_users IS BUILT IN govt_revenues_calc, NOT IN
+                ! stationary_equilibrium_statistics. Both counterfactual blocks
+                ! called only the latter, so the variable still held the BASELINE
+                ! count when it was read back: the ratio was exactly one and
+                ! omega came out as exactly 0.0000000000000000, at every value of
+                ! omega_c, which is what a variable that was never updated looks
+                ! like. The main path calls the two in this order, and so must
+                ! anything that wants a fresh count.
+                call govt_revenues_calc(1)
+
                 drug_users_without_child=model_total_drug_users(1)
+
+                write(*,*) "OMEGA_DIAG counterfactual users=", drug_users_without_child,&
+                    " child value=", expected_child_value
 
                 child_penalty_off=0
 
@@ -30969,6 +30992,16 @@
                 call solve_value_function_and_policy_functions(1)
                 call converge_to_stationary_equilibrium(1)
                 call stationary_equilibrium_statistics(1)
+
+                ! model_total_drug_users IS BUILT IN govt_revenues_calc, NOT IN
+                ! stationary_equilibrium_statistics. Both counterfactual blocks
+                ! called only the latter, so the variable still held the BASELINE
+                ! count when it was read back: the ratio was exactly one and
+                ! omega came out as exactly 0.0000000000000000, at every value of
+                ! omega_c, which is what a variable that was never updated looks
+                ! like. The main path calls the two in this order, and so must
+                ! anything that wants a fresh count.
+                call govt_revenues_calc(1)
 
                 drug_users_without_child=model_total_drug_users(1)
 
