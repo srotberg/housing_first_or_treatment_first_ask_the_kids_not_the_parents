@@ -551,8 +551,18 @@ def main():
     if sent:
         jac, jac_info = jacobian.step(sent, jacobian.points(), trust=trust_step())
     if jac:
+        # THE STEP IS APPLIED WHERE THE SEARCH STANDS, NOT WHERE THE DERIVATIVES
+        # WERE MEASURED. This used to re-anchor the centre onto the generation
+        # centre, on the reasoning that a linearisation belongs at the point it
+        # was taken. That silently threw away a reset: told to go back to the
+        # best measured vector at 0.480, the round re-anchored onto the 0.856
+        # centre the reset was undoing.
+        #
+        # A derivative carried a short distance is an approximation; a centre
+        # quietly replaced is a lost instruction. With the step capped at 1.4 the
+        # approximation is small, and the next generation's arms re-measure the
+        # derivatives where the centre now is.
         here = dict(here)
-        here.update({k: v for k, v in sent.items() if k in here})
         print('Jacobian: %d moments against %d parameters around %s, damping %.3g, '
               'using %.0f%% of the trust region.\n'
               % (len(jac_info['moments']), len(jac), jac_info['reference'],
