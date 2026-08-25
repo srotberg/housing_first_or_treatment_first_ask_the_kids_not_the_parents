@@ -140,9 +140,28 @@ B_ELASTICITY = -4.0     # d ln(users) / d ln(b), the slope every populated slice
 # reading that the share flattened short of target was taken at points whose own
 # user rate was two to six times off, and correcting them with an assumed
 # exponent was worse than measuring them.
-AUTHOR_SET = {'lambda_addiction': 9.0,
-              'addiction_scalar_1': 0.0211,
-              'utility_cost_of_treatment': 0.268}
+AUTHOR_SET = {}
+# EMPTIED 25 August, on the author's instruction, after the generation six centre
+# showed why it had to be.
+#
+# lambda 9, b 0.0211 and a treatment penalty of 0.268 were each measured cleanly
+# and each pinned here by hand. Put into one point together they gave a user rate
+# of 0.0175 against a target of 0.089, a disordered share 95 per cent low and a
+# take-up of 0.0045 against 0.245 -- every one of them worse than before, and the
+# loss up from 0.480 to 0.856.
+#
+# They do not compose because they move each other's moments. A higher treatment
+# penalty does not only cut take-up: it means fewer households ever recover,
+# which raises the expected cost of ever starting, which collapses the user rate,
+# which drags the disordered share down with it. Measuring one at a time answers
+# a question nobody asked -- what this parameter does while the others stay
+# wrong.
+#
+# The Jacobian exists for exactly this. It carries the cross effects, it now has
+# a full set of derivatives measured around this centre, and pinning parameters
+# by hand is the one thing that takes them out of its hands. Anything set here
+# again should be a value the author wants held FIXED, not a value the search is
+# meant to find.
 #
 # utility_cost_of_treatment: probed to the model's own ceiling on the author's
 # instruction of 24 August. Treatment take-up is 252 per cent high and this is
