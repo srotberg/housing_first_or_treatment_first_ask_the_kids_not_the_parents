@@ -131,11 +131,16 @@ def assemble(centre, pts):
             there = got[0] if got else None
             if there is None or there != there or here != here:
                 continue
-            dm = math.log(max(there, FLOOR)) - math.log(max(here, FLOOR))
+            tgt = rm[name][1]
+            a, bb = scaled(there, tgt), scaled(here, tgt)
+            if a is None or bb is None:
+                continue
+            dm = a - bb
             e = dm / dp
             J[i][j] = max(-MAX_ELASTICITY, min(MAX_ELASTICITY, e))
 
-    r = np.array([math.log(rm[n][1] / max(rm[n][0], FLOOR)) for n in moments])
+    r = np.array([scaled(rm[n][1], rm[n][1]) - scaled(rm[n][0], rm[n][1])
+                  for n in moments])
     w = np.array([score_points.WEIGHT.get(n, 1.0) for n in moments])
     return moments, params, J, r, w, rname
 
@@ -161,6 +166,43 @@ def assemble(centre, pts):
 # forbidding the moves that matter.
 MOMENT_CAP = 1.5        # floor: every moment may always move at least this factor
 CLOSE_FRACTION = 0.8    # and at most this much of its own distance to target
+
+
+# A SHARE IS MEASURED IN ODDS, NOT IN LEVELS. Nearly every moment here is a
+# share or a rate bounded by one, and a share close to that bound has almost no
+# room left in levels however much room the parameter behind it has. Fitting a
+# log-level elasticity there reads the ceiling as if it were the model refusing
+# to move.
+#
+# The case that produced this: the employment rate given serious mental illness
+# sits at 0.954 against a target of 0.300, and kappa_uem is the only instrument
+# on it -- at one there is no penalty and the mentally ill are employed like
+# everybody else, and as it rises separation is multiplied and job finding
+# divided, so the rate falls to zero. It must be able to reach 0.300 somewhere
+# in between, and the author said so. The log-level fit said its elasticity was
+# -0.133 and that even the ceiling of 40 would close about half the gap, and
+# that was reported. It was wrong. In log odds the same three measured points
+#
+#     kappa 1.0 -> 0.9536      1.6 -> 0.8954      3.0 -> 0.7392
+#
+# lie on a straight line of slope -1.80 with residuals under 0.02, and it puts
+# the answer at kappa = 8.5, comfortably inside the bound. The ceiling of 40
+# gives 0.026, nowhere near binding.
+#
+# For a small share the two transforms agree -- log(x/(1-x)) is log(x) + x to
+# first order -- so this changes nothing for the rates already near zero and
+# everything for the ones near one, which is exactly where the level fit fails.
+SHARE_CEILING = 1.0 - 1e-6
+
+
+def scaled(value, target):
+    """The moment on the scale its own fit should be linear in."""
+    if value is None or value != value:
+        return None
+    if target is not None and 0.0 < target < 1.0:
+        v = min(max(value, FLOOR), SHARE_CEILING)
+        return math.log(v) - math.log(1.0 - v)
+    return math.log(max(value, FLOOR))
 
 
 def step(centre, pts, trust=1.5, regression=True, moment_cap=None):
@@ -273,10 +315,12 @@ def assemble_regression(centre, pts, bandwidth=0.8, ridge=0.05):
     J = np.zeros((len(moments), len(params)))
     at_centre = {}
     for i, name in enumerate(moments):
+        tgt = ref[1][name][1]
         y = []
         for _dp, mt, _n in rows:
             got = mt.get(name)
-            y.append(math.log(max(got[0], FLOOR)) if got else math.log(FLOOR))
+            v = scaled(got[0], tgt) if got else None
+            y.append(v if v is not None else scaled(FLOOR, tgt))
         y = np.array(y)
         M = A.T @ WA + ridge * np.eye(A.shape[1])
         try:
@@ -293,7 +337,8 @@ def assemble_regression(centre, pts, bandwidth=0.8, ridge=0.05):
     # points spread across six generations is not accurate AT a point, only
     # around it. The nearest measured point is what the model actually says
     # there, and the archive is only asked for the derivatives it is good for.
-    r = np.array([math.log(ref[1][n][1] / max(ref[1][n][0], FLOOR)) for n in moments])
+    r = np.array([scaled(ref[1][n][1], ref[1][n][1]) - scaled(ref[1][n][0], ref[1][n][1])
+                  for n in moments])
     wt = np.array([score_points.WEIGHT.get(n, 1.0) for n in moments])
     return moments, params, J, r, wt, len(rows)
 
