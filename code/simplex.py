@@ -504,8 +504,12 @@ def main():
             if got:
                 f[k] = got[0]
         if len(f) < len(t) and '--force' not in sys.argv:
-            print('iteration %d, %s: %d of %d points still solving'
-                  % (st['iter'], st['phase'], len(f), len(t)))
+            # SAY WHICH NUMBER IS WHICH. This read "5 of 67 points still
+            # solving" while len(f) was the number that had LANDED, so a batch
+            # with five results looked like a batch with five stragglers, and
+            # the round was nearly resolved on five points out of sixty seven.
+            print('iteration %d, %s: %d of %d points have landed, %d still to come'
+                  % (st['iter'], st['phase'], len(f), len(t), len(t) - len(f)))
             report(verts)
             return
         phase = st['phase']
