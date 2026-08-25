@@ -181,6 +181,29 @@ AUTHOR_PROBE = {}
 ON_TARGET = 0.03        # a moment this close to its target needs no arm at all
 ARM_MIN, ARM_MAX = 1.15, 3.0
 
+# A PARAMETER THE JOINT SOLVE DECLINED TO MOVE IS NOT A PARAMETER THAT IS DONE.
+# The step is a compromise across twenty two moments, so it will leave a
+# parameter almost where it was whenever the fit thinks moving it costs more
+# elsewhere than it gains. Generation eight had five of those and their gaps were
+# 27, 53, 53, 57 and 80 per cent; they were dropped from the generation and then
+# printed under a heading claiming they were within three per cent of target.
+# A parameter with a large gap that the fit will not move is exactly the one
+# whose derivative is least trustworthy, so it gets an arm to re-measure it.
+#
+# The threshold is well below the gaps that produced the rule because the cost
+# of an arm is one parallel session and the fleet has the slots. ON_TARGET says
+# three per cent is converged, so a moment ten per cent out is a genuine miss and
+# worth a measurement rather than a place on the settled list.
+REFRESH_GAP = 0.10
+
+# AND THE STEP LENGTH IS MEASURED, NOT INFERRED A ROUND LATER. The gain ratio
+# compares one realised step against one prediction, so a step that overshoots
+# costs a whole generation to discover. These fractions of the joint step run as
+# their own points, in parallel with the arms, and the round closes knowing the
+# shape of the loss along the direction it actually travelled. They move many
+# parameters at once, so assemble() skips them; the regression uses them.
+LINE_SEARCH = (0.4, 0.7, 1.4)
+
 # TIGHT, on the author's instruction of 25 August, after the centre drifted from
 # 0.528 to 0.856 over three rounds while the step was allowed to be a factor of
 # three. A step that large lets one parameter cross a cliff -- size_homelessness
@@ -571,7 +594,7 @@ def main():
     data = ridge_solve.measured()
     cross, _, _, _ = ridge_solve.solve(data)
 
-    moved, arms, settled = {}, [], []
+    moved, arms, settled, stale = {}, [], [], []
     best_moments = best_point_moments()
 
     # THE JACOBIAN LEADS WHERE IT EXISTS. Every arm measured how all twenty-two
@@ -648,6 +671,11 @@ def main():
             settled.append((key, gap))          # on target and understood: no arm
         elif blind or abs(math.log(max(new, 1e-12) / max(now, 1e-12))) > 0.005:
             arms.append((key, arm_factor(gap)))
+        elif gap is not None and abs(gap) >= REFRESH_GAP:
+            # The fit left it where it was and its moment is a long way out.
+            # That is a stale derivative, not a settled parameter.
+            stale.append((key, gap))
+            arms.append((key, arm_factor(gap)))
         else:
             settled.append((key, gap if gap is not None else 0.0))
 
@@ -686,6 +714,35 @@ def main():
                     extra = ' addiction_scalar_1=%.6g' % b
             arms_emitted.append('%s=%.6g%s' % (key, side, extra))
             print('  bash code/run_one_point.sh %s=%.6g%s' % (key, side, extra))
+
+    # THE LINE SEARCH. One point per fraction, every parameter the step moved,
+    # scaled in logs so the fractions sit on the step itself rather than on a
+    # chord across it.
+    travelled = [k for k in moved
+                 if abs(math.log(max(moved[k], 1e-12)
+                                 / max(here.get(k, moved[k]) or moved[k], 1e-12))) > 0.005]
+    if len(travelled) >= 3:
+        print('\n  # along the joint step, to measure its length rather than '
+              'infer it next round')
+        for f in LINE_SEARCH:
+            spec = []
+            for key in sorted(travelled):
+                base = here[key]
+                v = clip(key, base * (moved[key] / base) ** f)
+                if abs(math.log(max(v, 1e-12) / max(base, 1e-12))) > 0.005:
+                    spec.append('%s=%.6g' % (key, v))
+            if len(spec) < 3:
+                continue
+            spec = ' '.join(spec)
+            arms_emitted.append(spec)
+            print('  bash code/run_one_point.sh %s' % spec)
+
+    if stale:
+        print('\nAn arm for these because the joint solve would not move them and '
+              'their moment is more than %d per cent out. Their derivative is the '
+              'thing being measured, not their level.' % int(100 * REFRESH_GAP))
+        for key, gap in sorted(stale, key=lambda kv: -abs(kv[1] or 0)):
+            print('   stale    %-52s gap %+.1f%%' % (key, 100 * (gap or 0)))
 
     if settled:
         print('\nNo arm for these: their moment is already within %d per cent and '
