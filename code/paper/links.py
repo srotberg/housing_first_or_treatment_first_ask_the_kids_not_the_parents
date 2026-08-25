@@ -42,7 +42,7 @@ LINKS = {
     r'$\kappa_{uem}$':           'employment_rate_given_smi_data',
     r'$\mu_H$':                  'milby_recovery_ratio_data',
     r'$\bar\tau^{u}$':           'treatment_take_up_data',
-    r'$\omega$':                 'child_use_gap_data',
+    r'$\omega_c$':               'child_use_gap_data',
     r'$\delta_d$':               'child_sud_ratio_data',
     r'$\delta_h$':               'child_homeless_ratio_data',
     r'$\kappa_{\phi m}$':        'kappa_phi_m',

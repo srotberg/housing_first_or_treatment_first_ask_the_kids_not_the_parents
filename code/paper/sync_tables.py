@@ -105,7 +105,7 @@ def run(freeze=False, dry=False):
                 # this whole file exists to prevent. The linked rows below are
                 # stronger, since their source is the declaration the model runs
                 # on, but a shared cell beats two typed copies either way.
-                lit = _bare(cells[6]) if _bare(cells[6]) not in ('n.a.', r'	extemdash') else _bare(cells[4])
+                lit = _bare(cells[6]) if _bare(cells[6]) not in ('n.a.', r'\textemdash') else _bare(cells[4])
                 lit = re.sub(r'^\$|\$$', '', lit).replace(r'\%', '')
                 if re.fullmatch(r'\d+\.?\d*', lit):
                     nums.setdefault(name, lit)
