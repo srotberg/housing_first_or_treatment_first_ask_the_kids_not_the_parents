@@ -286,6 +286,16 @@ def ratio_h(par, del_h=None):
     return shifted(hl, DEL_H if del_h is None else del_h) / max(base, 1e-12)
 
 
+def ratio_d(par, del_d=None):
+    """The child SUD ratio the model PRODUCES at delta_d: how much likelier the
+    child of a user is to use itself. Untargeted now, and reported for
+    validation, because the ratio is not reachable through an income channel at
+    any earnings penalty the evidence supports."""
+    _, use = child_grid(par, 'HF', par.pV)
+    base = shifted(use, 0.0)
+    return shifted(use, DEL_D if del_d is None else del_d) / max(base, 1e-12)
+
+
 def solve_del_d(par, target=RATIO_TARGET, lo=0.0, hi=0.95, iters=44):
     """The income penalty that puts the child of a user at `target` times the
     risk of the child of a clean parent."""
@@ -303,8 +313,23 @@ def solve_del_d(par, target=RATIO_TARGET, lo=0.0, hi=0.95, iters=44):
 import os as _os
 _HERE = _os.path.dirname(_os.path.abspath(__file__))
 _BASE = with_(P(), **json.load(open(_os.path.join(_HERE, 'calibrated.json'))))
-DEL_D = solve_del_d(_BASE)
-DEL_H = solve_del_h(_BASE)
+# SET EXTERNALLY, NOT SOLVED, exactly as the quantitative model now sets them.
+# These are earnings penalties, and the transmission ratios are not reachable
+# through an income channel at any earnings penalty the evidence supports: the
+# quantitative model's elasticity of SUD risk to log productivity is 0.73 and
+# the data's own gradient is 0.23 to 0.39, so a ratio of 2 needs a 61 to 90 per
+# cent earnings cut. DEL_D is Nilsson (2017)'s estimate for children exposed in
+# utero to the Swedish alcohol experiment; DEL_H keeps the value it had.
+#
+# solve_del_d and solve_del_h are kept, because the ratios they invert are now
+# reported as untargeted moments and the solvers are how the note computes what
+# penalty WOULD be needed.
+DEL_D = 0.24
+DEL_H = 0.31
+
+# What the externally set penalties actually deliver, for the untargeted table.
+RATIO_D_MODEL = ratio_d(_BASE)
+RATIO_H_MODEL = ratio_h(_BASE)
 
 
 def tab_children(par, pV=1.0):

@@ -15,7 +15,7 @@ import numpy as np
 from stylized import P, with_, value1
 from calibrate import YG, W, stats, bracket, TARGET, _drug_targets
 from children import (child_grid, shifted, DEL_D, DEL_H, RATIO_TARGET,
-                      ratio_h)
+                      ratio_h, ratio_d)
 from frontier import TH_BREAK, DSHARE_TOP, DSHARE_CEIL
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -274,7 +274,12 @@ def numbers(base, fig):
     out['del_h_pc'] = f'{100*DEL_H:.0f}'
     # UNTARGETED: what delta_h, set from Chetty et al., implies for how much
     # likelier the child of a homeless parent is to be homeless itself
+    # BOTH RATIOS ARE UNTARGETED NOW. The penalties are set from the
+    # earnings literature, so what the model delivers on each ratio is a
+    # validation number rather than a matched moment.
     out['ratio_h'] = f'{ratio_h(base):.2f}'
+    out['ratio_d_model'] = f'{ratio_d(base):.2f}'
+    out['ratio_h_model'] = f'{ratio_h(base):.2f}'
     # PANEL B OF TABLE 4 IS NOT RECOMPUTED HERE either. children.py writes every
     # cell of it while it builds the table, including the smallest gain over loss
     # anywhere in Panel A, and _children() merges them in at the top of this
