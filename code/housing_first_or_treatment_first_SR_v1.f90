@@ -29916,7 +29916,7 @@
 
                 case ("kappa_uem")
                     write(*,*) "HANDOVER kappa_uem:", kappa_uem, "->", handover_value
-                    kappa_uem=max(min(handover_value,40.d0),1.d0)
+                    kappa_uem=max(min(handover_value,100.d0),1.d0)
 
                 case ("weight_on_child")
                     write(*,*) "HANDOVER weight_on_child:", weight_on_child, "->", handover_value
@@ -32676,9 +32676,26 @@
                         ! 40 is not a belief about the penalty's size: it is far
                         ! enough away that reaching it would be evidence, not an
                         ! artefact of where the ceiling was put.
+                        !
+                        ! RAISED TO 100 on the author's instruction of 25 August,
+                        ! for the same reason and with more room. The moment was
+                        ! reported to them as close to unreachable on a log-LEVEL
+                        ! elasticity of -0.133; in log ODDS the three measured
+                        ! points at 1.0, 1.6 and 3.0 are a straight line of slope
+                        ! -1.80 and put the answer near 8.5, so neither 40 nor 100
+                        ! should ever bind. The point of the headroom is that if
+                        ! one of them does bind, that is now a fact about the
+                        ! model rather than about this constant.
+                        !
+                        ! Above kappa = 1/probability_becoming_unemployed, about
+                        ! 34 at the current value, sep_1 is clamped at one and
+                        ! only the job-finding side still responds. The employment
+                        ! rate keeps falling to zero, so the ceiling remains a
+                        ! ceiling and not a wall, but the log-odds line bends
+                        ! there and a fit taken across it should not be believed.
                         kappa_uem=min(max(kappa_uem+kappa_uem_adjuster*&
                             (model_employment_rate_given_smi(1)-employment_rate_given_smi_data),&
-                            1.0d0),40.d0)
+                            1.0d0),100.d0)
 
                         distance_kappa_uem=&
                             abs(model_employment_rate_given_smi(1)-employment_rate_given_smi_data)

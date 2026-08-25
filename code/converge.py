@@ -250,7 +250,7 @@ BOUNDS = {
     # THE MODEL CLAMPS THIS ONE TO [1, 40] ON THE WAY IN. Arms at 0.30 and 0.10
     # were both silently set to 1 and came back as the centre, which the round
     # then read as "no pair".
-    'kappa_uem':                             (1.0, 40.0),
+    'kappa_uem':                             (1.0, 100.0),
     # CLAMPED TO 0.5 ON THE WAY IN, and floored by the prevalence profile. Arms
     # at 0.50 and 0.90 were the SAME point, which is why they returned a share
     # identical to seventeen figures.
