@@ -499,6 +499,14 @@ is why $\delta_d$ is calibrated inside the model rather than lifted from a
 coefficient: these estimates imply that the effect is real and of first order, and the
 penalty itself is set to reproduce what the literature does measure for the children
 of parents with a SUD, the disorder ratio above.
+\new{That ratio is $@@q_delta_d@@$, and which population it describes matters.
+McGovern et al.\ (2023) report a range of two to four, but that range mixes
+studies of one affected parent with studies of two, and a child in this model has
+one parent. The two nationwide estimates for a single affected parent are $1.44$
+in the Danish register of $398{,}881$ offspring (Mellentin et al., 2016) and
+$2.51$ in the United States population-based study (Yoon et al., 2013). Their
+midpoint is the target. The two-parent figures from those same studies, $2.29$
+and $4.44$, are what carry the upper end of the wider range.}
 
 The third is that housing, and the poverty that comes with bad housing,
 is one of the environments doing the transmitting, and it affects the
@@ -2525,12 +2533,8 @@ while the parent's own private cost is largely unchanged, which is exactly what 
 externality. To my knowledge, no paper estimates the effect of a parent's SUD on a child's lifetime
 earnings directly, which is why I calibrate the penalty to the disorder ratio
 rather than lifting it from an estimate. Its target is the ratio of disorder rates
-between the children of parents with and without a disorder. \new{McGovern et al.\
-(2023) put it between two and four, but that range mixes studies of one affected
-parent with studies of two, and a child here has one. The two nationwide
-one-parent estimates are $1.44$ in the Danish register (Mellentin et al.\ 2016)
-and $2.51$ in the United States (Yoon et al.\ 2013), whose midpoint,
-$@@q_delta_d@@$, is the target value.}
+between the children of parents with and without a disorder. \new{Its value is $@@q_delta_d@@$, and
+Section~\ref{sec:literature} says which population it describes and why.}
 \item[$\delta_h$, what the child loses to homelessness.] It works through the same
 compounding draw as $\delta_d$, and as it rises it loads whichever policy houses
 more people: Housing First directly, Treatment First by removing the disorder that
