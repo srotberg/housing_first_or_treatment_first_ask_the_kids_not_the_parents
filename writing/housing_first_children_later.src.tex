@@ -1597,14 +1597,25 @@ and includes mild anxiety: a state that halves productivity cannot sensibly cove
 a quarter of the population.
 
 The onset rate is a function of age.
-Writing $s_m(j)$ for prevalence at age $j$ and $\lambda_m$ for the annual chance of
-leaving the state,
+\new{Writing $\varsigma_m(j)$ for its age profile, normalised to one at age $26$,
+and $\omega_m$ for its level,
 \begin{equation}\label{eq:fonsetage}
-\text{onset}_m(j)=\frac{s_m(j{+}1)-s_m(j)(1-\lambda_m)}{1-s_m(j)},
+\text{onset}_m(j)=\omega_m\,\varsigma_m(j).
 \end{equation}
-which is the accounting identity that reproduces the observed age
-profile exactly, backed out of the age profile of prevalence in NSDUH 2024 and the
-recovery hazard. The transitions are then
+The profile is taken from the age profile of prevalence in NSDUH 2024; the level
+is calibrated, to the share of the population carrying SMI.
+
+An earlier version instead backed onset out of that prevalence profile and the
+recovery hazard, by the accounting identity
+$\text{onset}_m(j)=[s_m(j{+}1)-s_m(j)(1-\lambda_m)]/[1-s_m(j)]$, which reproduces
+the observed profile exactly. That has two drawbacks and I have dropped it.
+Prevalence is then matched by construction at any $\lambda_m$, so the model cannot
+miss it and $\lambda_m$ is not identified by the moment it should own. And
+because the observed profile declines with age, the identity requires
+$s_m(j{+}1)\ge s_m(j)(1-\lambda_m)$, which puts a floor under $\lambda_m$: below
+it no non-negative onset reproduces the profile and the state empties. With a
+level on a profile there is no identity, no floor, and prevalence is a moment the
+model can fail.} The transitions are then
 \begin{equation}\label{eq:fonset}
 \Pr(m'=1\mid m=0,d)=\text{onset}_m(j)\cdot\iota^{\mathbf{1}\{d=1\}},
 \qquad
@@ -1624,7 +1635,8 @@ $\kappa_{uem}$ in~\eqref{eq:femp}, mortality through $\kappa_{\phi m}$
 in~\eqref{eq:fsurv}, the SUD recovery hazard through
 $\mu_m$ in~\eqref{eq:frecover}, and
 disability income, for which eligibility is being out of work with SMI and
-the replacement rate is $\zeta_{DI}$. It does not change the utility function.
+the replacement rate is $\zeta_{DI}$\new{, received by a share $\eta_{DI}$ of
+those eligible}. It does not change the utility function.
 
 The SMI chain does \emph{not} depend on housing, and that is
 a finding in the data rather than an omission. In the At Home / Chez Soi randomised trial, $1{,}198$
@@ -2323,6 +2335,21 @@ the table of a parameter loading Housing First's side. Moreover, it
 reduces the tax burden since these households are more likely to be employed
 and off the unemployment insurance roll. It is set externally at
 $@@q_kappa_ueh@@$, from Desmond and Gershenson (2016).
+\item[$\eta_{DI}$, the share of the eligible who receive disability income.]
+\new{Not everyone who is out of work with SMI draws SSDI or SSI: there is a work
+history test, an asset test, a waiting period, and most initial applications are
+denied. Roughly $13.6$ million US adults have SMI and roughly three million
+receive either programme on a mental-disorder basis, and since the transfer is
+paid only out of work, the relevant share is that ratio divided by the fraction
+of them not employed. Lower it and more households with SMI fall to the same zero
+income as everyone else out of work, so more of them lose their housing: it is
+therefore the instrument for the SMI share of the homeless in Gutwinski et al.\
+(2021), which is $@@q_lambda_m@@$ percent. It matters more than its size
+suggests. With full receipt, SMI is the only insurance against a long unemployment
+spell in the model, since unemployment insurance is paid in the first period
+only; a household with SMI then cannot fall as far as an identical household
+without it, and mental illness protects against homelessness rather than causing
+it.}
 \item[$\zeta_{DI}$, the disability transfer for the unemployed with SMI.] It
 is the floor for one of the worst states in the model: being ill and out of
 work, so it sets how far a household can fall. Raise it and the private cost of that
@@ -2363,12 +2390,27 @@ child of a user now inherits a higher chance of illness that is a consequence
 of the productivity penalty. Treatment First's return rises as $\iota$ rises,
 because curing the disorder now prevents some cases of SMI too. It is set externally at two, from the
 Danish registers in Nielsen et al.\ (2017).
+\item[$\omega_m$, the level of the SMI onset profile.] \new{It scales the
+age profile of onset up or down without changing its shape, so it sets how many
+households carry SMI at all rather than who or when. Raise it and both the
+private cost and the externality rise, since a child is likelier to reach a state
+that costs earnings, employment and years of life. It is calibrated internally to
+the share of the population carrying SMI.}
 \item[$\lambda_m$, the annual chance of recovering from SMI.] Raise it and mental
 illness is less persistent,
 so the private cost falls, because fewer years are spent with SMI, and the externality
 falls with it, since a child who is likelier to acquire a SUD and
-through it SMI has a higher chance of recovery and a higher value of life. It is calibrated internally to the SMI
-share of the homeless in Gutwinski et al.\ (2021), which is $@@q_lambda_m@@$ percent.
+through it SMI has a higher chance of recovery and a higher value of life. \new{It
+is set externally, at a fifty per cent chance of recovery within ten years. The
+ten-year clinical recovery literature brackets that figure: twenty-three per cent
+for schizophrenia spectrum disorders and fifty for psychotic bipolar spectrum
+disorders. SMI is not schizophrenia, and by count it is mostly mood disorders,
+which remit more readily than the psychotic disorders those studies follow, so
+the upper end is the right one for a category-wide rate.
+
+It was previously calibrated to the SMI share of the homeless. That moment is an
+economic outcome, and $\lambda_m$ is a recovery hazard whose only route to it is
+the length of a spell; the instrument for it is now $\eta_{DI}$ below.}
 \item[$\rho_m$, earnings lost to SMI.]\query{Flagged: keep $\rho_m$ or take it
 out?} The counterpart of $\rho_d$ for mental
 illness, and it reaches the comparison through $\iota$: a household carrying the
