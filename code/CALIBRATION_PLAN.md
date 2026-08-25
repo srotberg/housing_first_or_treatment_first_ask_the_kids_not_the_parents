@@ -263,6 +263,108 @@ Three consequences, all standing:
 The five that did land were not wasted -- they are archive points like any other
 -- but iteration zero has to be re-emitted, and it is re-emitted at twenty two.
 
+## The SMI block, redesigned 25 August
+
+    lambda_m           ASSIGNED     0.067, the recovery literature
+    iota_smi           ASSIGNED     2.0, onset doubled by a co-occurring disorder
+    zeta_DI            ASSIGNED     0.25, the SSDI and SSI replacement rate
+    smi_onset_level    CALIBRATED   the SMI population share
+    di_takeup          CALIBRATED   the SMI share of the homeless
+
+**Every instrument now has a channel to the moment beside it**, which the old
+arrangement did not. lambda_m owned the SMI share of the homeless and is a
+RECOVERY RATE: its only route to that moment is spell length, against an outcome
+that is a threshold in income. At its floor it delivered 0.0133 against 0.25.
+
+### What was actually wrong, and it was not the search
+
+Every non-employed household with SMI received DI: no take-up gate, no waiting
+period, no work history test, no eligibility screen. UI is a first period
+benefit, so from the second period out of work a household WITHOUT serious
+mental illness had exactly zero income and one WITH it had a quarter of its
+earnings, for ever. **Serious mental illness was the only unemployment insurance
+in the model**, handed to precisely the households the calibration wants on the
+street.
+
+So the model had SMI at 1.33 per cent of the homeless against a five per cent
+population share -- UNDER represented by nearly four, where the data says OVER
+represented by five. A factor of nineteen, and a wrong SIGN, which no setting of
+lambda_m or of the prevalence profile can repair: reaching 0.25 by prevalence
+alone needs p near 0.83.
+
+Take-up is now 0.33, from about 13.6 million US adults with SMI (5.2 per cent,
+SAMHSA) against about three million receiving SSI or SSDI on a mental disorder
+basis net of concurrent receipt -- 0.22 over all of them, divided by the 0.671
+who are not employed, because the rule fires only for those. THE PRIMARY TABLES
+WERE UNREACHABLE: ssa.gov is blocked by the container's egress proxy. Replace
+0.33 from SSI Annual Statistical Report 2023 table 39.A, DI Annual Statistical
+Report 2023 table 10.A, and the concurrent beneficiary total when they can be
+read.
+
+### Onset is a level on an assigned shape
+
+`onset(j) = smi_onset_level * shape(j)`, the shape from
+`data/us_mh_onset_shape.csv` and the level calibrated on the population share.
+
+The old design backed onset out of the prevalence profile by an accounting
+identity, which matched prevalence BY CONSTRUCTION at any lambda_m -- so the
+model could not miss it, and lambda_m was left unidentified by the one moment it
+should own. The identity also put a floor under lambda_m, because a declining
+profile needs p(j+1) >= p(j)(1-lambda_m): below about 0.046 the implied onset
+went negative at 59 of 60 ages, the SMI state emptied, and every SMI moment read
+zero. The calibration walked straight into that cliff. No identity, no floor.
+
+**THE SHAPE IS NOT INDEPENDENT DATA.** Solving the identity backwards from the
+file's `implied_onset` and `smi_prevalence` columns returns the same lambda at
+every age: 0.0670 at 26, 36, 46, 56, 66 and 76. The shape IS the identity's own
+output at lambda_m = 0.067, normalised to one at age 26. Two consequences, both
+standing:
+
+- at the default level of 0.003306 the new design reproduces the old one
+  exactly, so the change is not discontinuous, and 0.067 is confirmed as the
+  recovery rate the data file was built around;
+- **if lambda_m is ever changed, the shape must be rebuilt from the prevalence
+  profile at the new value**, or the age gradient of onset belongs to a recovery
+  rate the model no longer uses.
+
+The genuine data inputs behind this block are two: the prevalence profile and
+lambda_m. Everything else is a transformation of them or is calibrated.
+
+### Two things to watch
+
+**The calibrated level is not a citable hazard.** iota_smi doubles onset for
+households with a disorder, so realised prevalence exceeds what the level alone
+implies, by more as the SUD rate rises toward its 3.68 per cent target. The level
+is chosen so the MIXTURE matches and must not later be quoted as the raw onset
+rate for a clean household.
+
+**The age profile is now a check rather than a guarantee.** The old design
+reproduced the whole profile; this one matches its level and lets the gradient
+fall where the shape and the SUD interaction put it. The model prints prevalence
+by age against the profile, and that comparison is worth reading.
+
+### The DI parameters are collinear in the smooth form
+
+`income = di_takeup * zeta_DI * base`, so only the PRODUCT is identified:
+0.33 x 0.25, 0.165 x 0.5 and 1.0 x 0.0825 are the same model. Calibrating both
+on separate moments would leave one wandering with no effect on anything.
+
+They separate only with a third SMI state, with DI and without: take-up would
+then change HOW MANY households have zero income and generosity HOW FAR above the
+rent threshold the covered ones sit. That costs about twice the solve time and a
+state space change. The smooth form is an approximation of a lumpy programme and
+it errs toward MORE homelessness among the SMI, since nobody is left fully
+insured. **If the moment overshoots, that is the first suspect and the third
+state is the fix.**
+
+### THE ARCHIVE IS STALE
+
+All 211 points predate the DI fix and were computed with SMI fully insured.
+Their losses are not comparable with anything measured after it and the simplex
+restarts. That is a real cost and it is worth it: no search over the old model
+could have reached the target, because the mechanism the target is about was
+switched off.
+
 ## What counts as finished
 
 The author, 25 August: "it is ok if we can't hit every single moment. It's many
