@@ -85,6 +85,14 @@ python3 check_spacing.py
 # the table rows, which drifted twice unseen: eta_DI's entry sat in the housing
 # block while its row was in the mental illness chain, and varrho came before
 # the voucher rules in the text and after them in the table.
+# THE MARK ITSELF MUST WORK. strip_red.py rewrites \new to a passthrough so
+# that leftovers are inert; that passthrough was committed once and every \new
+# written afterwards rendered as black text, so several rounds of marked edits
+# were invisible while table cells kept showing red. Both states are valid LaTeX
+# and the build stayed green, which is why nothing caught it.
+echo "== checking that the red mark actually renders red"
+python3 check_red.py
+
 echo "== checking the citation convention"
 python3 check_citations.py
 
