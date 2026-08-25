@@ -688,10 +688,37 @@
         ! direction forever.
         real(8) :: lambda_m_floor=0
 
-        ! Calibrated: SMI share of the homeless, 25 percent, Gutwinski et al.
-        ! (2021), pooling thirty nine studies. Start at the value code/simple
-        ! reached from Imrohoroglu and Zhao, about half improving within ten
-        ! years, 1-(1-0.5)^(1/10).
+        ! ASSIGNED, not calibrated. The SMI share of the homeless moved to
+        ! di_takeup on 25 August: that moment is an economic outcome and this is
+        ! a recovery hazard whose only channel is spell length.
+        !
+        ! THE OLD CITATION WAS WRONG AND IS REPLACED. It read "the value
+        ! code/simple reached from Imrohoroglu and Zhao, about half improving
+        ! within ten years". Imrohoroglu and Zhao are economists; that is where
+        ! the sibling model got a number, not where the number comes from.
+        !
+        ! The value survives the correction. 1-(1-0.5)^(1/10) = 0.06697 is a 50
+        ! per cent chance of recovery within ten years and a mean spell of 14.9
+        ! years, and the ten year clinical recovery literature brackets it:
+        !
+        !     schizophrenia spectrum            23%   -> lambda_m 0.026
+        !     first-episode schizophrenia   14.5-35%  -> lambda_m 0.016-0.043
+        !     psychotic bipolar spectrum        50%   -> lambda_m 0.067
+        !
+        ! SMI is not schizophrenia. By count it is mostly mood disorders, which
+        ! remit far more readily than the psychotic disorders those studies
+        ! follow, so the top of that range is the right end for a category-wide
+        ! rate and 0.067 is if anything conservative.
+        !
+        ! THE NATIONAL SOURCE, for whoever revisits this: Salzer, Brusilovskiy
+        ! and Townley, "National Estimates of Recovery-Remission From Serious
+        ! Mental Illness", Psychiatric Services 2018, n over 41,000, finds a
+        ! THIRD of those with a lifetime SMI in remission for at least the past
+        ! twelve months. That is a STOCK and lambda_m is a FLOW, so the two do
+        ! not map onto each other without a duration assumption -- which is why
+        ! it is quoted here rather than used. The same paper finds recovery low
+        ! until age 32 and rising after it, so the honest refinement is an
+        ! age-varying lambda_m, not a different constant.
         real(8) :: lambda_m=0.067
 
         ! Assigned. Danish registers put the hazard ratio at 1.34 for any SUD
