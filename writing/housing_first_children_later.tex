@@ -747,9 +747,7 @@ rest, and the household survives into period 2 with probability
 \begin{equation}\label{eq:surv}
 \new{\phi(d') \;=\; \bar\phi^{\,\kappa_{\phi d}^{\,d'}},}
 \end{equation}
-\new{so $\kappa_{\phi d}$ is the mortality \emph{rate} ratio with the SUD: the same
-object, written the same way, as in the quantitative model of
-Section~\ref{sec:full}.}
+\new{so $\kappa_{\phi d}$ is the mortality \emph{rate} ratio with the SUD.}
 The mortality penalty applies here, and here only.
 
 \paragraph{Period 2.} This is the terminal period, after which the household dies with certainty. A
@@ -869,16 +867,16 @@ mortality channel would be losing to impatience rather than to anything the mode
 is about, so a higher factor corrects for the coarseness of the horizon rather
 than making a claim about preferences.} and the gross interest rate is
 $R=1/\beta$, and survival over
-a period is $\bar\phi = 0.91$, from the Social Security Administration (SSA) period life table for twenty six to fifty five. \new{For the SUD, the
+a period is $\bar\phi = 0.91$, from the Social Security Administration (SSA) period life table for twenty six to fifty five. For the SUD, the
 mortality rate ratio is $\kappa_{\phi d} = 8$, the midpoint of the range in
 Hjorth\o j et al.\ (2023), so survival with the disorder is
 $\bar\phi^{\,8}$ over the period and the implied proportional fall in
-survival is $1-\bar\phi^{\,8-1} = \new{0.48}$}, so a clean household's chance of dying before period 2 is 9
+survival is $1-\bar\phi^{\,8-1} = \new{0.48}$, so a clean household's chance of dying before period 2 is 9
 percent and a household that acquires a SUD has a 53 percent chance of
-dying before period 2.\footnote{\new{The second figure is not $\kappa_{\phi d}$ and should not be
+dying before period 2.\footnote{The second figure is not $\kappa_{\phi d}$ and should not be
 read as one: $\kappa_{\phi d}$ is a ratio of mortality rates, so survival goes
 from $\bar\phi=0.91$ to $\bar\phi^{\,\kappa_{\phi d}}=0.47$ and the
-chance of dying is one minus that.}}
+chance of dying is one minus that.}
 The two unemployment probabilities are measured directly. $u_0 = 0.0485$
 is the headline civilian unemployment rate from the Bureau of Labor Statistics
 (BLS) Current Population Survey (CPS), series UNRATE as distributed by Federal Reserve
@@ -1462,7 +1460,7 @@ n\,y\,\varepsilon(j)\,\rho_{d}^{\mathbf{1}\{d=1\}}\rho_{m}^{\mathbf{1}\{m=1\}}
  & j<J_{R},\ e=1 \quad\text{(employed)}\\[2pt]
 \psi_{ui}\,\min\{y\,\varepsilon(j),\ \bar y\}
  & j<J_{R},\ e=2 \quad\text{(first year of a spell)}\\[2pt]
-\zeta_{DI}\,y\,\varepsilon(j) & j<J_{R},\ e=3,\ m=1 \quad\text{(disability)}\\[2pt]
+\new{\eta_{DI}\,\zeta_{DI}}\,y\,\varepsilon(j) & j<J_{R},\ e=3,\ m=1 \quad\text{(disability)}\\[2pt]
 0 & \text{otherwise,}
 \end{cases}
 \end{equation}
@@ -1485,7 +1483,18 @@ is out of work and carries SMI. Unemployment insurance (UI) is paid in the first
 the replacement rate $\psi_{ui}$ on an earnings base capped at average income
 $\bar y$, both as in equation~\eqref{eq:inc}. $\zeta_{DI}$ is the rate at which disability
 insurance (DI) replaces the income of an unemployed household with SMI, and that
-DI does not stop until the household recovers.
+DI does not stop until the household recovers. \new{Only a fraction $\eta_{DI}$
+of those eligible actually receive it, so the transfer enters as
+$\eta_{DI}\zeta_{DI}$: every eligible household is paid the EXPECTED benefit
+rather than a fraction of them being paid the full one. That is an approximation
+and it is not innocuous, because homelessness is a threshold and a threshold is
+not linear in income. Under the programme it stands in for, a fraction of these
+households have no income at all and are at the margin of losing their housing,
+while the rest are comfortably above it; here none of them is at either extreme.
+Doing it exactly requires carrying receipt as a state variable, which the
+mental-illness chain is not rich enough to do without doubling in size. The
+approximation errs towards MORE homelessness among the mentally ill than the
+programme it represents, since no household is left fully insured.}
 
 
 
@@ -1641,8 +1650,8 @@ $\kappa_{uem}$ in~\eqref{eq:femp}, mortality through $\kappa_{\phi m}$
 in~\eqref{eq:fsurv}, the SUD recovery hazard through
 $\mu_m$ in~\eqref{eq:frecover}, and
 disability income, for which eligibility is being out of work with SMI and
-the replacement rate is $\zeta_{DI}$\new{, received by a share $\eta_{DI}$ of
-those eligible}. It does not change the utility function.
+the replacement rate is $\zeta_{DI}$\new{, scaled by the share $\eta_{DI}$ of
+the eligible who receive it}. It does not change the utility function.
 
 The SMI chain does \emph{not} depend on housing, and that is
 a finding in the data rather than an omission. In the At Home / Chez Soi randomised trial, $1{,}198$
@@ -2256,11 +2265,9 @@ gradient, making the poor the users rather than the rich. When it rises,
 the private cost rises, and the externality rises
 with it, since a child born to a parent who died with a SUD has a lower
 value of life. Both policies reduce these deaths, Treatment First by curing
-and Housing First too, because recovery is less likely when homeless. \new{It is set externally, at the midpoint of the
+and Housing First too, because recovery is less likely when homeless. It is set externally, at the midpoint of the
 standardised mortality ratios for SUD in Hjorth\o j et al.\ (2023), which run six
-to ten, and it carries no age profile: it is a ratio of mortality rates, so it
-multiplies the hazard, and the ratio of death \emph{probabilities} it implies
-falls with age on its own as the baseline rises.}
+to ten.
 \item[$\aleph$, the flow value of being alive.] $\aleph$ is the other half
 of the mortality mechanism: \new{$\kappa_{\phi d}$} sets how much a SUD raises the chance of dying and
 $\aleph$ sets what the life being lost is worth. Increase it and the private
@@ -2351,7 +2358,10 @@ suggests. With full receipt, SMI is the only insurance against a long unemployme
 spell in the model, since unemployment insurance is paid in the first period
 only; a household with SMI then cannot fall as far as an identical household
 without it, and mental illness protects against homelessness rather than causing
-it.}
+it. It enters as a scale on the transfer rather than as a share of households
+receiving it, for the reason given in Section~\ref{sec:ftaxes}, and only the
+product $\eta_{DI}\zeta_{DI}$ is identified: $\zeta_{DI}$ is set externally so
+that $\eta_{DI}$ carries the moment.}
 \item[$\zeta_{DI}$, the disability transfer for the unemployed with SMI.] It
 is the floor for one of the worst states in the model: being ill and out of
 work, so it sets how far a household can fall. Raise it and the private cost of that
