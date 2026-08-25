@@ -100,8 +100,8 @@ EDGE = 1.4
 # of the loss on its own and the log-odds fit across the three measured points
 # puts the answer near 8.5, so that is where its vertex goes. Starting it at 1.4
 # would spend several iterations walking somewhere the evidence already points.
-EDGE_OVERRIDE = {'kappa_uem': 8.5, 'di_takeup': 0.10}
-# di_takeup's vertex goes DOWN, not up. Its moment, the SMI share of the
+EDGE_OVERRIDE = {'kappa_uem': 8.5, 'zeta_DI': 0.025}
+# zeta_DI's vertex goes DOWN, not up. Its moment, the SMI share of the
 # homeless, is 0.0347 against a target of 0.25, and less DI coverage is what
 # raises it: an uncovered household with SMI falls to the same zero income as
 # everyone else out of work, and it is out of work about two thirds of the time
@@ -197,7 +197,7 @@ def initial(pts):
             # the vertex should BE, so the edge is whatever gets it there --
             # INCLUDING AN EDGE BELOW ONE. Clamping it above one silently
             # collapsed every downward override onto the base point, so
-            # di_takeup's vertex at 0.10 became a duplicate of the base and the
+            # zeta_DI's vertex became a duplicate of the base and the
             # simplex reported it as already measured.
             edge = EDGE_OVERRIDE[key] / max(base[1][key], 1e-12)
             if abs(math.log(max(edge, 1e-12))) < 1e-6:

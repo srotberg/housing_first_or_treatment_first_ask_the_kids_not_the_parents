@@ -63,7 +63,7 @@ GATE = {
     'utility_cost_of_treatment':             ('b', 0.0890, 3.0),
     'penalty_child_addicted':                ('b', 0.0890, 3.0),
     'multiple_of_probabilities_of_employment_if_addicted': ('b', 0.0890, 3.0),
-    'di_takeup':                             ('h_1', 0.00399, 3.0),
+    'zeta_DI':                               ('h_1', 0.00399, 3.0),
     'penalty_child_homeless':                ('h_1', 0.00399, 3.0),
 }
 
@@ -257,7 +257,7 @@ BOUNDS = {
     'lambda_m':                              (0.046, 0.500),
     # A share, so it cannot leave the unit interval. The model clamps it there
     # too; both ends are real and neither should ever bind.
-    'di_takeup':                             (0.0, 1.0),
+    'zeta_DI':                               (0.0, 1.0),
     # A hazard at age 26. The file's own level is 0.003306; two decades either
     # side of it is far more room than the moment should ever need.
     'smi_onset_level':                       (1e-5, 0.5),
