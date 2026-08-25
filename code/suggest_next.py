@@ -61,7 +61,7 @@ OWNS = {
     # household with SMI was drawing a guaranteed quarter of its earnings and so
     # could not become homeless. What decides whether a household with SMI ends
     # up on the street is what it lives on once it is out of work, which is DI.
-    'di_takeup':                             ('lambda_m', 0.250),
+    'zeta_DI':                               ('lambda_m', 0.250),
     # The SMI population share. Its target is the assigned profile evaluated at
     # the model's own age weights, which the model computes and prints beside it,
     # so the moment asks whether the model reproduces the profile's LEVEL once
@@ -75,6 +75,8 @@ OWNS = {
     'largest_house_size':                    ('h_4',      0.626723),
 }
 VEC = re.compile(r'^VECTOR\s+(.*)$', re.M)
+# The statutory rate zeta_DI carried before it absorbed take-up.
+OLD_STATUTORY_ZETA_DI = 0.25
 ROW = re.compile(r'MOMENT\s+(\S+)\s+.*?model=\s*([-+0-9.eEdD]+)\s+target=\s*([-+0-9.eEdD]+)')
 def _f(x):
     return float(str(x).replace('D', 'E').replace('d', 'e'))
@@ -100,6 +102,14 @@ def points():
                         vec[k] = _f(v)
                     except ValueError:
                         pass
+            # DI WAS TWO PARAMETERS UNTIL 25 AUGUST AND THE POINTS REMEMBER IT.
+            # The model only ever used the product di_takeup*zeta_DI, with
+            # zeta_DI fixed at 0.25, so a point recorded at di_takeup=x was run
+            # at an expected replacement rate of 0.25x. Translating it forward
+            # keeps every measured point in the search instead of discarding a
+            # simplex's worth of them over a renaming.
+            if 'di_takeup' in vec and 'zeta_DI' not in vec:
+                vec['zeta_DI'] = OLD_STATUTORY_ZETA_DI * vec.pop('di_takeup')
         else:
             # THE EARLY POINTS CARRY THEIR VECTOR ONLY IN THEIR NAME, because
             # their workers were given the recipe in a prompt and wrote no

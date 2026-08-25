@@ -724,7 +724,7 @@
         real(8) :: lambda_m_floor=0
 
         ! ASSIGNED, not calibrated. The SMI share of the homeless moved to
-        ! di_takeup on 25 August: that moment is an economic outcome and this is
+        ! zeta_DI on 25 August: that moment is an economic outcome and this is
         ! a recovery hazard whose only channel is spell length.
         !
         ! THE OLD CITATION WAS WRONG AND IS REPLACED. It read "the value
@@ -775,8 +775,15 @@
         ! Assigned. Dual diagnosis relapse of 39.8 against 26.4 percent.
         real(8), parameter :: mu_m=0.82
 
-        ! Assigned. SSDI and SSI replacement for the non employed with SMI.
-        real(8), parameter :: zeta_DI=0.25
+        ! CALIBRATED. The EXPECTED replacement rate for the non employed with
+        ! SMI: the statutory SSDI and SSI rate multiplied by the share who take
+        ! it up. It was two numbers, a statutory 0.25 and a take-up of 0.33, and
+        ! the model only ever used their product, so only the product was ever
+        ! identified. Two instruments on one moment is not a decomposition; it
+        ! is a collinearity, and splitting a calibrated number into two
+        ! separately citable pieces does not make either piece estimable. The
+        ! default is the old product, 0.25*0.33.
+        real(8) :: zeta_DI=0.0825
 
         ! THE SHARE OF THEM WHO ACTUALLY RECEIVE IT, which was one until 25
         ! August and should never have been.
@@ -818,15 +825,17 @@
         ! fully insured; if the moment overshoots, this is the first suspect and
         ! the third state is the fix.
         !
-        ! Kept as two numbers rather than one product so that each stays
-        ! separately citable and separately checkable.
-        real(8) :: di_takeup=0.33
+        ! WAS A SECOND PARAMETER, di_takeup, AND IS NOT ANY MORE. Only the
+        ! product ever entered the model, so only the product was identified;
+        ! zeta_DI above now IS that product, calibrated directly. The take-up
+        ! arithmetic in this comment is the check on its calibrated value, not a
+        ! parameter of its own.
 
         real(8) :: distance_lambda_m
         real(8) :: stopping_rule_lambda_m=10.d0**(-3)
         ! LAMBDA_M IS EXTERNALLY SET, so its adjuster is zero. The SMI
         ! recovery rate is taken from outside the model and the SMI share
-        ! of the homeless is now di_takeup's moment; leaving the adjuster
+        ! of the homeless is now zeta_DI's moment; leaving the adjuster
         ! live pointed two instruments at one moment. It never fired in a
         ! single point run, where every parameter is pinned at its handed
         ! value, so no measured point changes - but the declaration said
@@ -4009,7 +4018,7 @@
             elseif ((emp_of(unemployment_index_1)==2) .AND. &
                 (smi_of(unemployment_index_1)>=1)) then
 
-                out_of_work_income=di_takeup*zeta_DI*base_1
+                out_of_work_income=zeta_DI*base_1
 
             end if
 
@@ -30091,9 +30100,9 @@
                     write(*,*) "HANDOVER smi_onset_level:", smi_onset_level, "->", handover_value
                     smi_onset_level=max(min(handover_value,1.d0),10.d0**(-8))
 
-                case ("di_takeup")
-                    write(*,*) "HANDOVER di_takeup:", di_takeup, "->", handover_value
-                    di_takeup=max(min(handover_value,1.d0),0.d0)
+                case ("zeta_DI")
+                    write(*,*) "HANDOVER zeta_DI:", zeta_DI, "->", handover_value
+                    zeta_DI=max(min(handover_value,1.d0),0.d0)
 
                 case ("kappa_uem")
                     write(*,*) "HANDOVER kappa_uem:", kappa_uem, "->", handover_value

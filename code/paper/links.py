@@ -38,7 +38,16 @@ LINKS = {
     r'$h_1$':                    'fraction_homeless_data',
     r'$\underline c$':           'food_stamps_share_data',
     r'$\pi_V$':                  'voucher_coverage_data',
-    r'$\lambda_m$':              'smi_share_of_homeless_data',
+    # LAMBDA_M IS THE RECOVERY HAZARD, NOT THE MOMENT IT USED TO CARRY.
+    # This still pointed at smi_share_of_homeless_data, so Table 11 stated
+    # 0.250 for a parameter the Fortran declares at 0.067, and the prose
+    # quoting @@q_lambda_m@@ before the word percent read '0.25 percent'.
+    r'$\lambda_m$':              'lambda_m',
+    # AN INT. ROW'S DATA COLUMN IS THE MOMENT'S TARGET, not the parameter's
+    # own value: sync_tables writes cells[4] from this constant. Pointing
+    # it at zeta_DI turned the 25 per cent SMI share of the homeless into
+    # 8 per cent, the calibrated transfer, in the column beside its source.
+    r'$\zeta_{DI}$':             'smi_share_of_homeless_data',
     r'$\kappa_{uem}$':           'employment_rate_given_smi_data',
     r'$\mu_H$':                  'milby_recovery_ratio_data',
     r'$\bar\tau^{u}$':           'treatment_take_up_data',

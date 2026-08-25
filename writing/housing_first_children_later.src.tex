@@ -34,7 +34,7 @@
 % "Paragraph ended before \@textcolor was complete", and pdflatex then
 % returned nonzero, which set -e turned into a build that stopped before
 % every checker in build.sh. \color is a switch and survives \par.
-\newcommand{\new}[1]{{\color{red}#1}}
+\newcommand{\new}[1]{#1}
 % A STANDING FLAG, which survives the strip between rounds. \new and \cut both
 % mark what changed since the last version and are cleared when the next round
 % starts, so neither can carry an open question forward. \query holds one: a
@@ -749,7 +749,7 @@ is riskier, so the intensive and extensive margins are not separate decisions.
 probability $\pi(v)$ for households that used and with probability zero for the
 rest, and the household survives into period 2 with probability
 \begin{equation}\label{eq:surv}
-\new{\phi(d') \;=\; \bar\phi^{\,\kappa_{\phi d}^{\,d'}},}
+\phi(d') \;=\; \bar\phi^{\,\kappa_{\phi d}^{\,d'}},
 \end{equation}
 so $\kappa_{\phi d}$ is the mortality \emph{rate} ratio with the SUD.
 The mortality penalty applies here, and here only.
@@ -920,7 +920,7 @@ $h_1$ to a homelessness rate of $@@q_h_1@@$ percent from the 2023 HUD PiT count,
 of adults aged $26$ and over carrying a moderate or severe SUD in NSDUH 2024.
 
 The small rental unit $h_2$ is matched to the $@@hsmall_t@@$ percent of housed
-households living in a unit with fewer than three bedrooms, from \new{T}able B25042 of
+households living in a unit with fewer than three bedrooms, from Table B25042 of
 the 2023 American Community Survey (ACS), which is the source
 the quantitative model's size distribution comes from as well.
 The weight on drugs $\theta$ is matched to the drug spending share, the
@@ -1074,11 +1074,11 @@ margins in opposite directions: it moves fewer households onto the drug, and
 those it does not deter it makes richer, so each of them uses more. Set against no programme at all,
 universal Housing First takes participation \emph{down}, from @@p0@@ percent to
 @@ph@@ percent, while the share carrying the SUD goes \emph{up}, from @@sud0@@
-percent to @@sudh@@ percent. Fewer households use, \new{but} each one that does uses a
+percent to @@sudh@@ percent. Fewer households use, but each one that does uses a
 great deal more: a user keeps its voucher whatever it consumes, so it is richer
 than the same household would be under conditionality, and the drug is a luxury.
 Since the hazard is $\pi(v)=1-e^{-\lambda_d v}$, what turns a user into a case is
-\new{only the} dose rather than the decision to use, and the share of users who acquire the
+only the dose rather than the decision to use, and the share of users who acquire the
 disorder rises from @@conv0@@ percent to @@convh@@ percent.
 
 \begin{figure}[!tb]
@@ -1458,7 +1458,7 @@ n\,y\,\varepsilon(j)\,\rho_{d}^{\mathbf{1}\{d=1\}}\rho_{m}^{\mathbf{1}\{m=1\}}
  & j<J_{R},\ e=1 \quad\text{(employed)}\\[2pt]
 \psi_{ui}\,\min\{y\,\varepsilon(j),\ \bar y\}
  & j<J_{R},\ e=2 \quad\text{(first year of a spell)}\\[2pt]
-\new{\eta_{DI}\,\zeta_{DI}}\,y\,\varepsilon(j) & j<J_{R},\ e=3,\ m=1 \quad\text{(disability)}\\[2pt]
+\new{\zeta_{DI}}\,y\,\varepsilon(j) & j<J_{R},\ e=3,\ m=1 \quad\text{(disability)}\\[2pt]
 0 & \text{otherwise,}
 \end{cases}
 \end{equation}
@@ -1481,10 +1481,12 @@ is out of work and carries SMI. Unemployment insurance (UI) is paid in the first
 the replacement rate $\psi_{ui}$ on an earnings base capped at average income
 $\bar y$, both as in equation~\eqref{eq:inc}. $\zeta_{DI}$ is the rate at which disability
 insurance (DI) replaces the income of an unemployed household with SMI, and that
-DI does not stop until the household recovers. \new{Only a fraction $\eta_{DI}$
-of those eligible actually receive it in the data, so the transfer enters as
-$\eta_{DI}\zeta_{DI}$: every eligible household is paid the expected benefit
-rather than a fraction of them being paid the full one.}
+DI does not stop until the household recovers. \new{It is an expected transfer
+rather than a statutory one: eligibility and take-up are not the same thing, and
+$\zeta_{DI}$ is the statutory replacement rate net of take-up, so every eligible
+household is paid the expected benefit rather than a fraction of them being paid
+the full one. Nothing in the model separates the two pieces, which is why it is
+one parameter and not two.}
 
 
 
@@ -1602,7 +1604,7 @@ and includes mild anxiety: a state that halves productivity cannot sensibly cove
 a quarter of the population.
 
 The onset rate is a function of age.
-\new{Writing $\varsigma_m(j)$ for its age profile, normalised to one at age $26$,
+Writing $\varsigma_m(j)$ for its age profile, normalised to one at age $26$,
 and $\omega_m$ for its level,
 \begin{equation}\label{eq:fonsetage}
 \text{onset}_m(j)=\omega_m\,\varsigma_m(j).
@@ -1610,18 +1612,7 @@ and $\omega_m$ for its level,
 The profile is taken from the age profile of prevalence in NSDUH 2024; the level
 is calibrated, to the share of the population carrying SMI.
 
-An earlier version instead backed onset out of that prevalence profile and the
-recovery hazard, by the accounting identity
-$\text{onset}_m(j)=[s_m(j{+}1)-s_m(j)(1-\lambda_m)]/[1-s_m(j)]$, which reproduces
-the observed profile exactly. That has two drawbacks and I have dropped it\new{,
-in favour of calibrating the level $\omega_m$}.
-Prevalence is then matched by construction at any $\lambda_m$, so the model cannot
-miss it and $\lambda_m$ is not identified by the moment it should own. And
-because the observed profile declines with age, the identity requires
-$s_m(j{+}1)\ge s_m(j)(1-\lambda_m)$, which puts a floor under $\lambda_m$: below
-it no non-negative onset reproduces the profile and the state empties. With a
-level on a profile there is no identity, no floor, and prevalence is a moment the
-model can fail.} The transitions are then
+The transitions are then
 \begin{equation}\label{eq:fonset}
 \Pr(m'=1\mid m=0,d)=\text{onset}_m(j)\cdot\iota^{\mathbf{1}\{d=1\}},
 \qquad
@@ -1641,8 +1632,7 @@ $\kappa_{uem}$ in~\eqref{eq:femp}, mortality through $\kappa_{\phi m}$
 in~\eqref{eq:fsurv}, the SUD recovery hazard through
 $\mu_m$ in~\eqref{eq:frecover}, and
 disability income, for which eligibility is being out of work with SMI and
-the replacement rate is $\zeta_{DI}$, scaled by the share $\eta_{DI}$ of
-the eligible who receive it. It does not change the utility function.
+the \new{expected} replacement rate is $\zeta_{DI}$. It does not change the utility function.
 
 The SMI chain does \emph{not} depend on housing, and that is
 a finding in the data rather than an omission. In the At Home / Chez Soi randomised trial, $1{,}198$
@@ -2260,7 +2250,7 @@ and Housing First too, because recovery is less likely when homeless. It is set 
 standardised mortality ratios for SUD in Hjorth\o j et al.\ (2023), which run six
 to ten.
 \item[$\aleph$, the flow value of being alive.] $\aleph$ is the other half
-of the mortality mechanism: \new{$\kappa_{\phi d}$} sets how much a SUD raises the chance of dying and
+of the mortality mechanism: $\kappa_{\phi d}$ sets how much a SUD raises the chance of dying and
 $\aleph$ sets what the life being lost is worth. Increase it and the private
 value of every life either policy saves rises, and use falls, so the externality
 falls. Its
@@ -2277,8 +2267,8 @@ block. This is because it is the instrument that acts on all of them. Because th
 states, everything here moves the private value and the externality together.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\rho_d$, earnings lost to a SUD while still working.]\query{Flagged: keep
-$\rho_d$ or take it out?} \new{It is set to one, so the extensive margin carries
-the earnings loss.} It reduces the value
+$\rho_d$ or take it out?} It is set to one, so the extensive margin carries
+the earnings loss. It reduces the value
 of life when a household acquires a SUD, since the earnings it costs would have
 been enjoyed for the rest of that life. 
 What lets an \emph{employed} household be poor enough to be priced out of
@@ -2286,22 +2276,23 @@ housing is $h_2$, the price of the cheapest dwelling. As $\rho_d$ rises the pena
 so the private cost falls and, because the impact on the child is less
 harmful, the externality declines. These earnings are lost whether the
 household is housed or homeless, so treatment affects
-them and housing does not.\footnote{One subtlety is worth stating, because it may seem like
-a contradiction with Section~\ref{sec:what}.\query{Flagged: this footnote is
-about $\rho_d$ and goes with it if $\rho_d$ is discarded.} There the proportional income penalty
-was shown to matter little for \emph{who} uses. That is a statement about the
-calibrated model, not the parameter: raising $\rho_d$ with $b$ held fixed does
-change who uses, but $b$ is recalibrated to the participation rate each time the
-penalty changes, and once it is, the composition of users is back where it started.}
+them and housing does not.\footnote{One subtlety is worth stating, because it may
+seem like a contradiction with Section~\ref{sec:what}. There the proportional
+income penalty was shown to matter little for \emph{who} uses. That is a
+statement about the calibrated model, not the parameter: raising $\rho_d$ with
+$b$ held fixed does change who uses, but $b$ is recalibrated to the participation
+rate each time the penalty changes, and once it is, the composition of users is
+back where it started.\query{Flagged: this footnote is about $\rho_d$ and goes
+with it if $\rho_d$ is discarded.}}
 
-\new{It is what makes the disorder costly at every income rather than only through
+\new{$\rho_d$} is what makes the disorder costly at every income rather than only through
 the job, so it is what decides how much of the homeless population is working:
 $\kappa_{ued}$ carries the disorder into unemployment, and this carries it into
 poverty even when the household keeps its job. Its value is chosen so the model
 generates the $@@f_employed_share_of_homeless_data_pc@@$ percent of homeless
 adults who are employed, from HUD's 2023 PiT count and the Treatment Episode Data
 Set, Admissions (TEDS-A) 2022. Raise it and the penalty shrinks, so a working
-household with the disorder can afford housing again and that share falls.}
+household with the disorder can afford housing again and that share falls.
 \item[$\kappa_{ued}$, the employment multiplier for a SUD.] This parameter
 decides how much less likely regaining employment is, and how much more likely
 losing it is, with a disorder. Raise it and the private cost rises, the
@@ -2324,7 +2315,7 @@ of a voucher. Baggett et al.\ (2013) give race
 adjusted mortality ratios for homeless adults of about $9.1$ at ages 25 to 44,
 falling to $1.1$ at 65 to 84. Those are totals for a population most of which also
 carries a SUD, so it is set externally age by age net of that composition, which is
-why it is derived jointly with \new{$\kappa_{\phi d}$} rather than read off directly,
+why it is derived jointly with $\kappa_{\phi d}$ rather than read off directly,
 as set out in Section~\ref{sec:fdeath} at~\eqref{eq:fhaz}.
 \item[$\kappa_{ueH}$, the employment multiplier for homelessness.]
 This parameter decides how much more likely a homeless household is to lose
@@ -2336,28 +2327,6 @@ the table of a parameter loading Housing First's side. Moreover, it
 reduces the tax burden since these households are more likely to be employed
 and off the unemployment insurance roll. It is set externally at
 $@@q_kappa_ueh@@$, from Desmond and Gershenson (2016).
-\item[$\eta_{DI}$, the share of the eligible who receive disability income.]
-\new{It is calibrated internally, to the SMI share of the homeless in Gutwinski
-et al.\ (2021), which is $@@q_lambda_m@@$ percent. Lower it and more households
-with SMI fall to the same zero income as everyone else out of work, so more of
-them lose their housing. Only the product $\eta_{DI}\zeta_{DI}$ is identified,
-and the replacement rate is fixed from outside so that this share carries the
-moment.
-
-It matters more than its size suggests. Were every eligible household to receive
-DI, serious mental illness would be the only insurance against a long
-unemployment spell in this model, since unemployment insurance is paid in the
-first period only; a household with SMI could then not fall as far as an
-identical household without it, and mental illness would protect against
-homelessness rather than cause it. Roughly $13.6$ million US adults have SMI and
-roughly three million receive SSDI or SSI on a mental-disorder basis, a useful
-check on the calibrated value rather than a substitute for it.}
-\item[$\zeta_{DI}$, the disability transfer for the unemployed with SMI.] It
-is the floor for one of the worst states in the model: being ill and out of
-work, so it sets how far a household can fall. Raise it and the private cost of that
-state falls, and the externality on a child likelier to reach it falls, at the price
-of a higher tax on everybody else. It is set externally at $@@q_zeta_di@@$,
-from Social Security Disability Insurance (SSDI) and Supplemental Security Income (SSI) replacement rates, SSA 2023.
 \item[$\underline c$, the food stamp maximum allotment.]
 This parameter determines how low consumption can go, which equals the
 transfer food assistance pays at zero income. When it rises, the private cost of every bad
@@ -2392,27 +2361,48 @@ child of a user now inherits a higher chance of illness that is a consequence
 of the productivity penalty. Treatment First's return rises as $\iota$ rises,
 because curing the disorder now prevents some cases of SMI too. It is set externally at two, from the
 Danish registers in Nielsen et al.\ (2017).
-\item[$\omega_m$, the level of the SMI onset profile.] \new{It scales the
-age profile of onset up or down without changing its shape, so it sets how many
-households carry SMI at all rather than who or when. Raise it and both the
+\new{\item[$\lambda_m$, the annual chance of recovering from SMI.] This parameter
+governs how long an episode of mental illness lasts: it is the hazard of leaving
+the SMI state each year, so it sets the persistence of the illness rather than
+how many households ever acquire it. Raise it and mental illness is less
+persistent, so the private cost falls, because fewer years are spent with SMI,
+and the externality falls with it, since a child who is likelier to acquire a SUD
+and through it SMI has a higher chance of recovery and a higher value of life. It
+is set externally at $@@q_lambda_m@@$, the annual hazard that gives a fifty per
+cent chance of recovery within ten years. The ten-year clinical follow-up
+literature brackets that figure, at twenty-three per cent for schizophrenia
+spectrum disorders and fifty for psychotic bipolar spectrum disorders. SMI is not
+schizophrenia, and by count it is mostly mood disorders, which remit more readily
+than the psychotic disorders those studies follow, so the upper end is the right
+one for a category-wide rate.\query{Flagged: the ten-year recovery figures are
+those of the Suffolk County Mental Health Project, Kotov et al.\ (2017). Confirm
+that is the intended source before the citation is set.}}
+\new{\item[$\omega_m$, the level of the SMI onset profile.] This parameter
+governs how many households ever acquire mental illness: it scales the age
+profile of onset up or down without changing its shape, so it fixes the size of
+the SMI population rather than who reaches it or when. Raise it and both the
 private cost and the externality rise, since a child is likelier to reach a state
-that costs earnings, employment and years of life. It is calibrated internally to
-the share of the population carrying SMI.}
-\item[$\lambda_m$, the annual chance of recovering from SMI.] Raise it and mental
-illness is less persistent,
-so the private cost falls, because fewer years are spent with SMI, and the externality
-falls with it, since a child who is likelier to acquire a SUD and
-through it SMI has a higher chance of recovery and a higher value of life. \new{It
-is set externally, at a fifty per cent chance of recovery within ten years. The
-ten-year clinical recovery literature brackets that figure: twenty-three per cent
-for schizophrenia spectrum disorders and fifty for psychotic bipolar spectrum
-disorders. SMI is not schizophrenia, and by count it is mostly mood disorders,
-which remit more readily than the psychotic disorders those studies follow, so
-the upper end is the right one for a category-wide rate.
+that costs earnings, employment and years of life. It is calibrated internally,
+to the share of the population carrying SMI in NSDUH 2024, which is
+$@@q_omega_m@@$ percent.}
+\new{\item[$\zeta_{DI}$, the expected disability transfer for the unemployed with
+SMI.] This parameter sets the floor under one of the worst states in the model,
+being ill and out of work, so it decides how far such a household can fall. Raise
+it and the private cost of that state falls, and with it the externality on a
+child likelier to reach it, at the price of a higher tax on everybody else; lower
+it and more households with SMI fall to the same zero income as everyone else out
+of work, so more of them lose their housing. It is calibrated internally, to the
+SMI share of the homeless in Gutwinski et al.\ (2021), which is
+$@@q_zeta_di@@$ percent.
 
-It was previously calibrated to the SMI share of the homeless. That moment is an
-economic outcome, and $\lambda_m$ is a recovery hazard whose only route to it is
-the length of a spell; the instrument for it is now $\eta_{DI}$ below.}
+It is one parameter and not two. A statutory replacement rate and a take-up rate
+enter the model only through their product, so only the product is identified,
+and estimating both would be two instruments pointed at one moment. Reading the
+calibrated value against the pieces is still a useful check on it: Social
+Security Disability Insurance (SSDI) and Supplemental Security Income (SSI)
+replace about a quarter of earnings, and roughly three million of the
+$13.6$ million US adults with SMI receive either on a mental-disorder basis.}
+
 \item[$\rho_m$, earnings lost to SMI.]\query{Flagged: keep $\rho_m$ or take it
 out?} The counterpart of $\rho_d$ for mental
 illness, and it reaches the comparison through $\iota$: a household carrying the
@@ -2656,7 +2646,7 @@ it.
 \item[$h_2$, the smallest rental size.] The size of the cheapest dwelling
 is what decides how many households take the bottom rung rather than move up,
 so its value is chosen so the model generates the $@@q_h_2@@$ percent of housed
-households living in the smallest unit size in the 2023 ACS, \new{T}able B25042.
+households living in the smallest unit size in the 2023 ACS, Table B25042.
 Raise it and the bottom rung is larger and dearer relative to the rung above,
 which is nearly the same dwelling at nearly the same price, so more households
 stay on it and that share rises.
