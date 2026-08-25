@@ -72,6 +72,16 @@ MU, THETA = 2.0, 0.5
 # starts no wider than a step the search already believes in.
 EDGE = 1.4
 
+# A UNIFORM EDGE IS THE WRONG SHAPE WHEN ONE PARAMETER IS FAR MORE UNCERTAIN THAN
+# THE REST. The simplex should be as wide in each direction as the answer might
+# be, and for kappa_uem that is not 40 per cent: it has sat pinned at its floor
+# of 1.0 for every generation, where it is the identity and serious mental
+# illness costs nothing on either employment margin. Its moment is 17.8 per cent
+# of the loss on its own and the log-odds fit across the three measured points
+# puts the answer near 8.5, so that is where its vertex goes. Starting it at 1.4
+# would spend several iterations walking somewhere the evidence already points.
+EDGE_OVERRIDE = {'kappa_uem': 8.5}
+
 # Scales sampled along the winning direction, on top of the MDS step.
 RAY = (-0.5, 0.5, 1.5, 2.5, 4.0, 6.0)
 
@@ -136,10 +146,15 @@ def initial(pts):
     verts = [(base[0], base[2])]
     reused = 1
     for i, key in enumerate(BLOCK):
+        edge = EDGE
+        if key in EDGE_OVERRIDE:
+            # An absolute target rather than a factor: the override says where
+            # the vertex should BE, so the edge is whatever gets it there.
+            edge = max(EDGE_OVERRIDE[key] / max(base[1][key], 1e-12), 1.0 + 1e-9)
         found = None
         for sign in (1.0, -1.0):
             x = list(base[0])
-            x[i] += sign * math.log(EDGE)
+            x[i] += sign * math.log(edge)
             got = look_up(x, pts)
             if got:
                 found = (x, got[0])
@@ -149,7 +164,7 @@ def initial(pts):
             reused += 1
         else:
             x = list(base[0])
-            x[i] += math.log(EDGE)
+            x[i] += math.log(edge)
             verts.append((x, None))
     print('%d of %d vertices already measured, %d to run.\n'
           % (reused, len(verts), len(verts) - reused))
