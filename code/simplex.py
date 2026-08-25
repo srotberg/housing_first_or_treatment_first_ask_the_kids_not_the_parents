@@ -207,6 +207,56 @@ def save(st):
         json.dump(st, fh, indent=1)
 
 
+# A SIMPLEX THAT FLATTENS CANNOT SEARCH, AND THE PER-VERTEX RAY IS WHAT FLATTENS
+# IT. Torczon's convergence rests on applying ONE coefficient to every vertex:
+# that is a similarity transform about the best vertex, so the simplex's shape is
+# preserved exactly and it can never collapse into a subspace. Letting each
+# vertex take the best point on its own ray is a better step per round and it is
+# NOT a similarity transform -- twenty two independent choices can land the
+# vertices close to a common face, and the simplex is then blind in whatever
+# direction it lost, permanently.
+#
+# The guard was written for the Nelder-Mead version, dropped in the rewrite to
+# MDS, and is needed more here than it was there. A candidate simplex that costs
+# more than this share of the previous volume is refused, and the round falls
+# back to the single best coefficient applied to every vertex -- textbook MDS,
+# shape-preserving by construction.
+#
+# BE HONEST ABOUT WHAT THIS TEST MEASURES: volume, which conflates shape with
+# size. A uniform contraction is shape-preserving and still loses volume by
+# design, so it fails the test and takes the fallback -- where it finds itself
+# again, since the fallback IS that contraction. The effective rule is therefore
+# "the per-vertex form runs while the simplex is not shrinking, and every shrink
+# goes through the shape-preserving path". That is conservative in the right
+# direction and cheap to state, which a true shape test at this dimension is
+# not.
+VOLUME_FLOOR = 0.10
+
+
+def log_volume(verts):
+    """log of the simplex volume, up to the constant that cancels in a ratio.
+
+    In logs because twenty two edges of 0.34 multiply to about 1e-11, and the
+    ratio of two such numbers is not something to compute by dividing them.
+    """
+    x0 = verts[0][0]
+    m = [[v[0][i] - x0[i] for i in range(len(BLOCK))] for v in verts[1:]]
+    n = len(m)
+    total = 0.0
+    for i in range(n):
+        p = max(range(i, n), key=lambda r: abs(m[r][i]))
+        if abs(m[p][i]) < 1e-300:
+            return float('-inf')
+        if p != i:
+            m[i], m[p] = m[p], m[i]
+        total += math.log(abs(m[i][i]))
+        for r in range(i + 1, n):
+            fac = m[r][i] / m[i][i]
+            for c in range(i, n):
+                m[r][c] -= fac * m[i][c]
+    return total
+
+
 def moved_vertex(v0, x, phase):
     if phase == 'reflect':
         return [2 * v0[j] - x[j] for j in range(len(BLOCK))]
@@ -271,7 +321,31 @@ def resolve_speculative(verts, t, f):
         if best[1] is not x:
             improved += 1
         out.append((best[1], best[0]))
-    return out, improved
+
+    before = log_volume(verts)
+    after = log_volume(out)
+    if before > float('-inf') and after - before >= math.log(VOLUME_FLOOR):
+        return out, improved, 'per-vertex'
+
+    # Too flat. Fall back to one coefficient for every vertex, which is a
+    # similarity transform about the best vertex and cannot degenerate.
+    best_common, best_score = None, None
+    for scale in set(float(k.split('@')[1]) for k in f):
+        got = []
+        for i in range(1, len(verts)):
+            key = 's%02d@%+.2f' % (i, scale)
+            if key in f:
+                got.append((t[key], f[key]))
+        if len(got) != len(verts) - 1:
+            continue
+        score = min(l for _x, l in got)
+        if best_score is None or score < best_score:
+            best_common, best_score = got, score
+    if best_common is None:
+        return verts, 0, 'nothing usable'
+    moved_count = sum(1 for (nx, nl), (ox, ol) in zip(best_common, verts[1:])
+                      if nl < ol)
+    return [verts[0]] + best_common, moved_count, 'one coefficient (shape kept)'
 
 
 def jacobian_candidate(verts, pts):
@@ -368,10 +442,10 @@ def main():
         best_trial = min(f.values()) if f else None
 
         if phase == 'all':
-            verts, improved = resolve_speculative(verts, t, f)
-            print('iteration %d: %d of %d vertices improved on their own ray; '
+            verts, improved, how = resolve_speculative(verts, t, f)
+            print('iteration %d: %d of %d vertices improved, by %s; '
                   'best %.3f -> %.3f'
-                  % (st['iter'], improved, len(verts) - 1, best_now,
+                  % (st['iter'], improved, len(verts) - 1, how, best_now,
                      min(l for _x, l in verts)))
             st['iter'] += 1
         elif phase == 'reflect':
