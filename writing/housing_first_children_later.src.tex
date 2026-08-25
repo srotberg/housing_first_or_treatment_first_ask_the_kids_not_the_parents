@@ -30,7 +30,11 @@
 % so grepping the generated file for the macro finds what moved, and grepping
 % .src.tex for the at signs finds every number the stylized pipeline still
 % supplies and the quantitative model has yet to replace.
-\newcommand{\new}[1]{\textcolor{red}{#1}}
+% \textcolor is NOT \long: a red span that crossed a blank line died with
+% "Paragraph ended before \@textcolor was complete", and pdflatex then
+% returned nonzero, which set -e turned into a build that stopped before
+% every checker in build.sh. \color is a switch and survives \par.
+\newcommand{\new}[1]{{\color{red}#1}}
 % A STANDING FLAG, which survives the strip between rounds. \new and \cut both
 % mark what changed since the last version and are cleared when the next round
 % starts, so neither can carry an open question forward. \query holds one: a
@@ -114,7 +118,7 @@ from the programme's design's distortions using a general-equilibrium life-cycle
 model with endogenous homelessness, drug use and mortality, calibrated to United
 States data. The decisive channel is intergenerational: the ranking reverses when
 a parent does not fully account for their disorder and homelessness passing worse
-productivity draws to their child.}
+productivity draws to their child.
 
 \vspace{0.6em}
 \noindent\textit{Keywords:} homelessness; housing vouchers; substance
@@ -527,7 +531,7 @@ What the model can do is another test, and for this paper
 it is a more relevant one. In NSDUH 2024 past-month use among parents is $0.845$ of use among non-parents, reweighted to the non-parents' joint distribution of age, income, sex and marital status so that the gap
 is behaviour rather than composition. The child term of the household's problem is
 the only thing in the model that makes a household use less than it otherwise would,
-so $\omega_c$ is set so that switching that term off raises use by the same $@@q_omega@@$
+so $\omega_c$ is set so that switching that term off raises use by the same $@@q_omega_c@@$
 percent. The externality is therefore not assumed to be large, and its size is
 calibrated to observed behaviour on exactly the margin this paper is about.
 
@@ -2531,7 +2535,7 @@ care, because \emph{every} household here has a child, born after it dies, so
 on its face it would seem like there is no parent
 against non-parent comparison to run in the benchmark. I solve this with a
 counterfactual moment instead. I choose its value so that removing the child's
-penalty (fixing the other parameters' values) raises drug use by $@@q_omega@@$ percent, the
+penalty (fixing the other parameters' values) raises drug use by $@@q_omega_c@@$ percent, the
 gap between parents and non-parents in NSDUH 2024 read the way the model reads it.
 \item[$\delta_d$, what the child loses to a parent's SUD.] The child does not inherit
 the disorder, only a worse

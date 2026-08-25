@@ -46,6 +46,11 @@ ALLOW = [
     ('55', '55 to 64'), ('55', '55--64'), ('55', '55--68'),
     ('3.00', 'wealth over output'),
     # numbers that collide with a table cell but are a different quantity
+    # the age profile of homelessness, whose 45--54 cell is 0.250 per cent. It
+    # collides with zeta_DI's 0.25 replacement rate, a different quantity in a
+    # different table, and the collision only appeared when eta_DI and
+    # zeta_DI's rows began exporting numbers at all.
+    ('0.250', 'Homelessness rate'),
     ('0.80', 'conditional elasticity'),      # Olmstead, a demand elasticity
     ('0.55', 'elasticity of demand'),        # a demand elasticity, not the job finding rate
     ('1.46', 'elasticity of supply'),        # Mace, quoted as the elasticity

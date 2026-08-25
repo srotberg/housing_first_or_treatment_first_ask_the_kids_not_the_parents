@@ -90,7 +90,7 @@ python3 check_params.py
 # update touched. Nothing re-read the instruction, so nothing caught it. This
 # runs every build instead.
 echo "== checking the tables' Set column against what the code calibrates"
-python3 ../paper/check_alignment.py
+python3 "$ROOT/code/paper/check_alignment.py"
 
 echo "== verifying the model"
 cd "$ROOT/code/stylized"
