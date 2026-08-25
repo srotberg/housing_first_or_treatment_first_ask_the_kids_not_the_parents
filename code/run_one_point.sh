@@ -41,6 +41,7 @@ declare -A P=(
     [kappa_uem]=1.01931
     [lambda_m]=0.067
     [di_takeup]=0.33
+    [smi_onset_level]=0.003306
     [multiple_of_probabilities_of_employment_if_addicted]=2.43741
     [penalty_child_addicted]=0.301819
     [penalty_child_homeless]=0.31062

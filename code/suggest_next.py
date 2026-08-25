@@ -62,6 +62,11 @@ OWNS = {
     # could not become homeless. What decides whether a household with SMI ends
     # up on the street is what it lives on once it is out of work, which is DI.
     'di_takeup':                             ('lambda_m', 0.250),
+    # The SMI population share. Its target is the assigned profile evaluated at
+    # the model's own age weights, which the model computes and prints beside it,
+    # so the moment asks whether the model reproduces the profile's LEVEL once
+    # the SUD interaction has had its say.
+    'smi_onset_level':                       ('p_m', 0.0),
     'probability_of_voucher_benchmark_used': ('pi_V',     0.266),
     'utility_cost_of_treatment':             ('tau_u',    0.245),
     'penalty_child_addicted':                ('delta_d',  3.00),

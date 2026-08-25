@@ -258,6 +258,9 @@ BOUNDS = {
     # A share, so it cannot leave the unit interval. The model clamps it there
     # too; both ends are real and neither should ever bind.
     'di_takeup':                             (0.0, 1.0),
+    # A hazard at age 26. The file's own level is 0.003306; two decades either
+    # side of it is far more room than the moment should ever need.
+    'smi_onset_level':                       (1e-5, 0.5),
     'probability_of_voucher_benchmark_used': (0.0005, 0.900),
     # THE MODEL ACCEPTS TEN; the search had capped itself at five for no reason
     # the model gives. The highest value ever actually run was 0.15.
