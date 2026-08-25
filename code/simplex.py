@@ -129,6 +129,24 @@ def from_log(x):
     return clip(dict(zip(BLOCK, [math.exp(v) for v in x])))
 
 
+def canon(x):
+    """The vertex as it will actually be RUN, which is the only thing to store.
+
+    A POINT THAT HITS A BOUND CAN NEVER MATCH ITS OWN VERTEX. from_log clips into
+    BOUNDS, so the command sent to the fleet carries the clipped value while the
+    state file kept the unclipped one, and look_up compared the two in log space
+    and found them different for ever. The simplex then listed a vertex as
+    unmeasured after it had been measured, waited for it, and could not step.
+
+    discount_factor is where it showed up: base 0.993881 times an edge of 1.4 is
+    1.3914, the bound is 0.999, the fleet ran 0.999 and the state was still
+    holding 1.3914. Every clamp in this calibration has produced a bug of this
+    shape -- kappa_uem's arms at 0.10 and 0.30 were silent no-ops for the same
+    reason -- so nothing is stored that has not been through the clip first.
+    """
+    return to_log(from_log(x))
+
+
 def measured():
     out = []
     for vec, mt, name in jacobian.points():
@@ -173,8 +191,8 @@ def initial(pts):
             edge = max(EDGE_OVERRIDE[key] / max(base[1][key], 1e-12), 1.0 + 1e-9)
         found = None
         for sign in (1.0, -1.0):
-            x = list(base[0])
-            x[i] += sign * math.log(edge)
+            x = canon([base[0][j] + (sign * math.log(edge) if j == i else 0.0)
+                       for j in range(len(BLOCK))])
             got = look_up(x, pts)
             if got:
                 found = (x, got[0])
@@ -183,8 +201,8 @@ def initial(pts):
             verts.append(found)
             reused += 1
         else:
-            x = list(base[0])
-            x[i] += math.log(edge)
+            x = canon([base[0][j] + (math.log(edge) if j == i else 0.0)
+                       for j in range(len(BLOCK))])
             verts.append((x, None))
     print('%d of %d vertices already measured, %d to run.\n'
           % (reused, len(verts), len(verts) - reused))
@@ -270,7 +288,7 @@ def step_set(verts, phase):
     v0 = verts[0][0]
     out = {}
     for i, (x, _l) in enumerate(verts[1:], start=1):
-        out['%s%02d' % (phase[0], i)] = moved_vertex(v0, x, phase)
+        out['%s%02d' % (phase[0], i)] = canon(moved_vertex(v0, x, phase))
     return out
 
 
@@ -293,8 +311,8 @@ def speculative_set(verts, scales=3):
     out = {}
     for i, (x, _l) in enumerate(verts[1:], start=1):
         for t in use:
-            y = [v0[j] + t * (v0[j] - x[j]) for j in range(len(BLOCK))]
-            out['s%02d@%+.2f' % (i, t)] = y
+            out['s%02d@%+.2f' % (i, t)] = canon(
+                [v0[j] + t * (v0[j] - x[j]) for j in range(len(BLOCK))])
     return out
 
 
@@ -369,15 +387,15 @@ def jacobian_candidate(verts, pts):
     for i, key in enumerate(BLOCK):
         if key in move:
             x[i] += move[key]
-    v = from_log(x)
-    return [math.log(max(v[k], 1e-12)) for k in BLOCK]
+    return canon(x)
 
 
 def ray_set(v0, direction):
     """The winning direction, sampled at several scales."""
     out = {}
     for t in RAY:
-        out['ray%+.1f' % t] = [v0[j] + t * direction[j] for j in range(len(BLOCK))]
+        out['ray%+.1f' % t] = canon(
+            [v0[j] + t * direction[j] for j in range(len(BLOCK))])
     return out
 
 
