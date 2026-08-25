@@ -15,7 +15,7 @@ import numpy as np
 from stylized import P, with_, value1
 from calibrate import YG, W, stats, bracket, TARGET, _drug_targets
 from children import (child_grid, shifted, DEL_D, DEL_H, RATIO_TARGET,
-                      ratio_h, ratio_d)
+                      RATIO_H_TARGET, ratio_h, ratio_d)
 from frontier import TH_BREAK, DSHARE_TOP, DSHARE_CEIL
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -280,6 +280,22 @@ def numbers(base, fig):
     out['ratio_h'] = f'{ratio_h(base):.2f}'
     out['ratio_d_model'] = f'{ratio_d(base):.2f}'
     out['ratio_h_model'] = f'{ratio_h(base):.2f}'
+    out['del_d_pc'] = f'{100*DEL_D:.0f}'
+    out['ratio_h_t'] = f'{RATIO_H_TARGET:.1f}'
+    # THE SAME TWO NUMBERS SPELLED OUT, because the literature review writes its
+    # magnitudes in words and the introduction writes them in figures. Both come
+    # off DEL_D and DEL_H so neither can drift from the parameter it describes.
+    out['del_d_pcw'] = _word(int(round(100 * DEL_D)))
+    out['del_h_pcw'] = _word(int(round(100 * DEL_H)))
+    # THE DIRECTION WORDS FOR THE TWO UNTARGETED RATIOS. Each sentence says
+    # where the model lands relative to evidence it was never shown, and that
+    # is a result: delta_d and delta_h are set from the earnings estimates, so
+    # nothing holds either ratio on its side of the comparison. Take the word
+    # from the numbers so the sentence turns if a recalibration moves them.
+    out.update(compare(ratio_d(base), RATIO_TARGET, 'rd',
+                       more='above', less='below', same='level with'))
+    out.update(compare(ratio_h(base), RATIO_H_TARGET, 'rh',
+                       more='above', less='below', same='level with'))
     # PANEL B OF TABLE 4 IS NOT RECOMPUTED HERE either. children.py writes every
     # cell of it while it builds the table, including the smallest gain over loss
     # anywhere in Panel A, and _children() merges them in at the top of this

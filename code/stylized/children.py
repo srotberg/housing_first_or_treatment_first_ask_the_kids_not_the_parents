@@ -387,7 +387,12 @@ def tab_children(par, pV=1.0):
          r'CEV \\', r'\midrule']
     R = lambda x: x
     for d, sud, ratio, loss in rows:
-        lab = f'{d:.2f}' + (r'\ \ (calibrated)' if abs(d - DEL_D) < 1e-9 else '')
+        # NOT "(calibrated)". delta_d is set from Nilsson (2017), not solved
+        # for a transmission ratio, so the row that carries it is the baseline
+        # of the panel rather than the fitted one. The old label survived the
+        # change that made the penalty external and said the opposite of what
+        # the model now does.
+        lab = f'{d:.2f}' + (r'\ \ (baseline)' if abs(d - DEL_D) < 1e-9 else '')
         L.append(f'{lab} & & {R(f"{100*sud:.2f}")}\\% & {R(f"{ratio:.2f}")} '
                  f'& {R(f"{100*loss:.1f}")}\\% \\\\')
     L += [r'\addlinespace',

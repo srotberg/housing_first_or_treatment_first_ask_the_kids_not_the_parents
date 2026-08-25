@@ -227,7 +227,7 @@ acquire a SUD themselves, which then means they are likelier to lose work, to en
 the street and to die young. Evidence shows that children of a parent with a disorder
 are \new{between one and a half and two and a half} times more likely to acquire one
 themselves \new{when one parent is affected (Mellentin et al., 2016; Yoon et al., 2013)}, and
-the earnings loss is also visible in children exposed in utero to a Swedish  alcohol experiment, who earn about $24$ percent less as adults
+the earnings loss is also visible in children exposed in utero to a Swedish  alcohol experiment, who earn about $@@del_d_pc@@$ percent less as adults
 (Nilsson, 2017). This half favours Treatment First, since any use that conditionality
 deters is a chain it never starts.
 
@@ -236,15 +236,17 @@ parent's homelessness lowers the child's earnings, and everything that follows f
 lower earnings follows again. The evidence supports this channel as well. Children
 displaced from Chicago's public housing earned $16$ percent more a year as adults
 (Chyn, 2018), and a move to a lower-poverty neighbourhood before age thirteen raises
-adult earnings by $31$ percent (Chetty et al., 2016). This half favours Housing First,
+adult earnings by $@@del_h_pc@@$ percent (Chetty et al., 2016). This half favours Housing First,
 since the policy that houses more people is the one that stops more of these chains.
 
-All three penalties are disciplined against data. The disorder penalty is set so that
-a child of a parent with a SUD is @@ratio_t@@ times as likely to acquire one itself, \new{the
-midpoint of the two nationwide one-parent estimates, Mellentin et al.\ (2016) and Yoon
-et al.\ (2013)}; the homelessness penalty so that
-the child of a homeless parent is @@ratio_h@@ times as likely to be homeless themselves, the midpoint
-of the two measures in Bassuk et al.\ (1997). What makes these externalities is
+All three penalties are disciplined against data. \new{The disorder and homelessness
+penalties are set from the earnings estimates just quoted, which measure the object
+the model actually transmits, and the transmission ratios are then left untargeted:
+a child of a parent with a SUD is @@ratio_d_model@@ times as likely to acquire one
+itself, against a midpoint of @@ratio_t@@ in the two nationwide one-parent estimates,
+Mellentin et al.\ (2016) and Yoon et al.\ (2013); the child of a homeless parent is
+@@ratio_h_model@@ times as likely to be homeless themselves, against @@ratio_h_t@@ in
+Bassuk et al.\ (1997). Neither ratio was shown to the model.} What makes these externalities is
 that a parent counts only a fraction of what it does to its child,
 so the remainder is external whenever that fraction is less than one.
 The weight the parent puts on its child is
@@ -492,30 +494,36 @@ in earnings down to parental investment in education, most of it early. Card (19
 puts the return to a year of schooling at around ten percent. And Nilsson
 (2017) closes the loop on a parental substance shock in
 particular: children exposed in utero to a Swedish experiment that sharply raised
-alcohol availability earn about twenty four percent less as adults and finish less
+alcohol availability earn about @@del_d_pcw@@ percent less as adults and finish less
 schooling. What no study does
-is estimate the effect of a parent's SUD on a child's lifetime earnings directly. That
-is why $\delta_d$ is calibrated inside the model rather than lifted from a
-coefficient: these estimates imply that the effect is real and of first order, and the
-penalty itself is set to reproduce what the literature does measure for the children
-of parents with a SUD, the disorder ratio above.
+is estimate the effect of a parent's SUD on a child's lifetime earnings directly. \new{That
+gap is not one the model can close, so $\delta_d$ takes the closest thing the
+literature does measure and is Nilsson's coefficient itself: the penalty stands for
+what a parental substance shock does to the household a child is raised in, and that
+is what the Swedish experiment identifies. The disorder ratio it then implies is left
+untargeted and reported as a check.}
 
 The third is that housing, and the poverty that comes with bad housing,
 is one of the environments doing the transmitting, and it affects the
 transmission of earnings as well. Chyn (2018) finds that children
 displaced by Chicago's public housing demolitions earned sixteen percent more a year
-as adults. Bassuk et al.\ (1997) is what the homelessness penalty is calibrated
-to, and its case-control design is what makes it usable: among $220$ homeless mothers
-and $216$ low-income housed mothers,  a homeless caretaker is likelier in the homeless arm on both the mother's and the father's side, at odds ratios of $1.80$ and $2.41$, and $\delta_h$ is set so the model reproduces their
-midpoint.
+as adults. \new{Chetty et al.\ (2016) is what the homelessness penalty is set
+from. They estimate that a move to a lower-poverty neighbourhood before age thirteen
+raises adult earnings by @@del_h_pcw@@ percent, and the gain falls with the age at the
+move, which says that what is transmitted is the environment a child is raised in
+rather than anything the child carries. That environment is what $\delta_h$ stands
+for in equation~\eqref{eq:kids}, and it enters the child's problem as earnings and
+as nothing else, so $\delta_h$ takes their estimate directly.}
 
-Chetty et al.\ (2016) then becomes a check rather than the target, and it is the
-stronger for it. They estimate that a move to a lower-poverty neighbourhood before age thirteen raises
-adult earnings by thirty one percent, and the gain falls with the age at the move,
-which says that what is transmitted is the environment a child is raised in rather than
-anything the child carries. The penalty the model needs to match Bassuk implies an
-earnings loss of @@del_h_pc@@ percent, so an estimate the calibration never saw
-reproduces one it did. Fogli and Guerrieri (2019) put the same mechanism inside a
+\new{Bassuk et al.\ (1997) then becomes a check rather than the target, and the model is
+the stronger for it. Its case-control design is what makes it usable: among $220$
+homeless mothers and $216$ low-income housed mothers, a homeless caretaker is likelier
+in the homeless arm on both the mother's and the father's side, at odds ratios of
+$1.80$ and $2.41$, a midpoint of @@ratio_h_t@@. Shown an earnings estimate and never
+shown an odds ratio, the stylized model transmits homelessness at @@ratio_h_model@@,
+@@rhdir@@ that midpoint. The honest caveat runs the other way from the old ordering:
+Bassuk is observational and single-city where Chetty is quasi-experimental, so the
+check is the weaker of the two and the target the stronger.} Fogli and Guerrieri (2019) put the same mechanism inside a
 general equilibrium model, where parents choose the neighbourhood they raise a child in
 and local spillovers feed back into the return to education; $\delta_h$ is the reduced
 form of that feedback rather than a competing account of it.
@@ -1186,7 +1194,7 @@ household substance abuse is one of the adverse childhood experiences in Felitti
 et al.\ (1998), and it predicts higher rates of depression, worse self-reported
 health and lower life satisfaction in adulthood; the children of parents with a
 SUD also have lower educational attainment, which is the premise of the
-transmission literature $\delta_d$, presented shortly below, is calibrated against \new{(Mellentin et al., 2016; Yoon et al., 2013)}.
+transmission literature $\delta_d$, presented shortly below, is \new{checked against (Mellentin et al., 2016; Yoon et al., 2013)}.
 A model in which the transmitted trait raises the child's own welfare cannot be
 describing any of that, whatever it does to the transmission rate.
 
@@ -1217,20 +1225,28 @@ model the altruism of parents towards their children is calibrated rather than
 set to zero, so that the channel where a parent does take some account of what it
 does to its child is present and only the remainder is external.}
 
-The disorder penalty $\delta_d$ is calibrated rather than set: it is chosen so that
-a child of a parent who acquired a SUD is @@ratio_t@@ times as likely to acquire
-one, \new{the midpoint of the two nationwide estimates for a child with
-\emph{one} affected parent: $1.44$ in the Danish register of $398{,}881$
-offspring (Mellentin et al.\ 2016) and $2.51$ in the United States
-population-based study (Yoon et al.\ 2013)}. That takes $\delta_d = @@del_d@@$, shown in
-Table~\ref{tab:children}.
+\new{Both penalties are set rather than calibrated, and set from earnings estimates.
+Equation~\eqref{eq:kids} gives a parent's condition exactly one way to reach its
+child, through $y_{\text{child}}$, so the quantity $\delta_d$ and $\delta_h$ name is
+an earnings loss and the studies that measure one are the studies that identify them.
+$\delta_d = @@del_d@@$ is Nilsson (2017), who follows children exposed in utero to
+Sweden's regional experiment in strong beer and finds they earn @@del_d_pc@@ percent
+less as adults. $\delta_h = @@del_h@@$ is Chetty et al.\ (2016)'s @@del_h_pc@@ percent,
+the adult earnings gain from a move to a lower-poverty neighbourhood before age
+thirteen. Both are shown in Table~\ref{tab:children}.}
 
-The homelessness penalty $\delta_h$ is calibrated in a similar way, on the transmission of
-its own condition, so the two penalties are matched to the same kind of moment. Bassuk et al.\ (1997) is a case-control study of $220$ homeless mothers and $216$ low-income housed mothers in
-Worcester, Massachusetts, with odds
-ratios of $1.80$ and $2.41$.
-$\delta_h$ is set so the child of a homeless parent (at the time of their death) is @@ratio_h@@ times as likely to
-be homeless themselves, the midpoint of the two, which takes $\delta_h = @@del_h@@$.
+\new{The transmission ratios are what the model then delivers, untargeted, and they are
+where it can be caught. At $\delta_d = @@del_d@@$ a child of a parent who acquired a
+SUD is @@ratio_d_model@@ times as likely to acquire one itself, against a midpoint of
+@@ratio_t@@ in the two nationwide estimates for a child with \emph{one} affected
+parent: $1.44$ in the Danish register of $398{,}881$ offspring (Mellentin et al.\ 2016)
+and $2.51$ in the United States population-based study (Yoon et al.\ 2013). At
+$\delta_h = @@del_h@@$ the child of a homeless parent (at the time of their death) is
+@@ratio_h_model@@ times as likely to be homeless itself, against @@ratio_h_t@@, the
+midpoint of the two odds ratios in Bassuk et al.\ (1997), a case-control study of
+$220$ homeless mothers and $216$ low-income housed mothers in Worcester,
+Massachusetts, of $1.80$ and $2.41$. The model lands @@rddir@@ the evidence on the
+first and @@rhdir@@ it on the second.}
 What these magnitudes mean, and what the evidence says about them, is taken up in the
 calibration of the quantitative model, Section~\ref{sec:fullcal}. Here $\delta_d$ and
 $\delta_h$ are illustrating the mechanism rather than measuring it.
@@ -2523,20 +2539,21 @@ disorder: Treatment First by curing the parent, Housing First because recovery i
 easier once housed,
 while the parent's own private cost is largely unchanged, which is exactly what makes it an
 externality. To my knowledge, no paper estimates the effect of a parent's SUD on a child's lifetime
-earnings directly, which is why I calibrate the penalty to the disorder ratio
-rather than lifting it from an estimate. Its target is the ratio of disorder rates
-between the children of parents with and without a disorder. \new{Its value is $@@q_delta_d@@$, from
-Mellentin et al.\ (2016) and Yoon et al.\ (2013).}
+earnings directly. \new{It is set externally at $@@q_delta_d@@$, the earnings loss
+Nilsson (2017) measures for children exposed in utero to a Swedish alcohol experiment,
+and the disorder ratio it implies is reported with the untargeted moments rather than
+matched.}
 \item[$\delta_h$, what the child loses to homelessness.] It works through the same
 compounding draw as $\delta_d$, and as it rises it loads whichever policy houses
 more people: Housing First directly, Treatment First by removing the disorder that
 leads to homelessness in the first place, again leaving
-the private cost mostly unchanged. \new{It is set externally, alongside
-$\delta_d$, and the transmission ratio it used to be calibrated on is reported
-with the untargeted moments:} Bassuk et al.\ (1997)
-compare $220$ homeless mothers with $216$ low-income housed mothers and find odds ratios of $1.80$ and $2.41$. $\delta_h$
-is set so the child of a homeless parent is $@@q_delta_h@@$ times as likely to be homeless
-themselves, the midpoint of the two.
+the private cost mostly unchanged. \new{It is set externally alongside
+$\delta_d$, at $@@q_delta_h@@$, the adult earnings gain Chetty et al.\ (2016) measure
+from a move to a lower-poverty neighbourhood before age thirteen, and the transmission
+ratio it used to be calibrated on is reported with the untargeted moments instead:}
+Bassuk et al.\ (1997)
+compare $220$ homeless mothers with $216$ low-income housed mothers and find odds ratios of $1.80$ and $2.41$\new{, whose midpoint is what the model is
+then judged against}.
 \item[$\kappa_x$, the disamenity of homelessness.]\label{sec:fleftout} This is the
 only parameter through which one
 household's housing status is connected to the utility of another who is not its own child,
