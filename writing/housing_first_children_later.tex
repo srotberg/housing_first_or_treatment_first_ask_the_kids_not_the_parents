@@ -1627,7 +1627,7 @@ $\kappa_{uem}$ in~\eqref{eq:femp}, mortality through $\kappa_{\phi m}$
 in~\eqref{eq:fsurv}, the SUD recovery hazard through
 $\mu_m$ in~\eqref{eq:frecover}, and
 disability income, for which eligibility is being out of work with SMI and
-the \new{expected} replacement rate is $\zeta_{DI}$. It does not change the utility function.
+the replacement rate is $\zeta_{DI}$. It does not change the utility function.
 
 The SMI chain does \emph{not} depend on housing, and that is
 a finding in the data rather than an omission. In the At Home / Chez Soi randomised trial, $1{,}198$
@@ -2364,20 +2364,7 @@ persistent, so the private cost falls, because fewer years are spent with SMI,
 and the externality falls with it, since a child who is likelier to acquire a SUD
 and through it SMI has a higher chance of recovery and a higher value of life. It
 is set externally at $\new{0.067}$, the annual hazard that gives a fifty per
-cent chance of recovery within ten years.\query{Checked. The source is {\AA}sb{\o} et al.\ (2022),
-\emph{Schizophrenia Bulletin} 48(4):839--849, whose ten-year follow-up of a
-first-episode psychosis cohort reports clinical recovery of $50.0$ per cent for
-psychotic bipolar spectrum disorders and $22.9$ for schizophrenia spectrum, and
-$31.7$ for the sample as a whole. It is NOT Kotov et al.\ (2017), which reports
-declining trajectories and no recovery rate at all; that attribution was wrong
-and is corrected. Two things need your decision. The $50$ per cent is the
-psychotic bipolar subgroup in a first-episode psychosis cohort, not a rate for
-SMI as a category, and there is no established ten-year figure for the category:
-Salzer et al.\ (2018) find about a third of US adults with lifetime SMI
-currently in recovery-remission, a stock rather than a hazard, and
-J{\"a}{\"a}skel{\"a}inen et al.\ (2013) find a median of $13.5$ per cent for
-schizophrenia alone. So $\new{0.067}$ is defensible for a mood-disorder-dominated
-category but is an assumption, not a measured rate.}}
+cent chance of recovery within ten years.}
 \new{\item[$\omega_m$, the level of the SMI onset profile.] This parameter
 governs how many households ever acquire mental illness: it scales the age
 profile of onset up or down without changing its shape, so it fixes the size of
@@ -2386,7 +2373,7 @@ private cost and the externality rise, since a child is likelier to reach a stat
 that costs earnings, employment and years of life. It is calibrated internally,
 to the share of the population carrying SMI in NSDUH 2024, which is
 $4.82$ percent.}
-\new{\item[$\zeta_{DI}$, \new{disability insurance for the unemployed with SMI}.]
+\new{\item[$\zeta_{DI}$, \new{disability insurance for the unemployed}.]
 This parameter sets the floor under one of the worst states in the model,
 being ill and out of work, so it decides how far such a household can fall. Raise
 it and the private cost of that state falls, and with it the externality on a
@@ -2423,15 +2410,7 @@ earnings and lowers its chance of being unhoused, so part of Treatment First's
 return appears in the health of the children of those treated for a SUD rather
 than in the treated household's own drug use. Its value is chosen
 so the model generates the employment rate given SMI, about $30$ percent, the
-midpoint of the range for high-disability diagnoses.\query{Flagged: the employment
-figures in the footnote need a citation; the data appendix records the source as
-unnamed.}\footnote{The state in this model is not NSDUH's definition of SMI.
-It is an illness severe enough to raise the chance of losing work, which is the high-disability end of
-the distribution rather than its whole. Roughly a fifth of people with schizophrenia
-are employed, of which $12$ percent full time, against $48$ to $73$ percent for any mental
-illness, and $30$ percent is the midpoint of that high-disability range. It is the
-closest measurement available for the population the state represents, and it is used
-in preference to a survey number for a population the state is not.}
+midpoint of the range for high-disability diagnoses.
 \item[$\mu_m$, the SUD recovery multiplier for SMI.] This parameter is the
 second direction of the
 chain: not only does a SUD increase the chance of SMI, but SMI also means
