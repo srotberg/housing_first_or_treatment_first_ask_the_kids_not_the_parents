@@ -22,21 +22,12 @@ from converge import GATE, RATIO, read                     # noqa: E402
 from suggest_next import OWNS, points                      # noqa: E402
 import score_points                                        # noqa: E402
 
-WHAT = {
-    'addiction_scalar_1': 'b', 'lambda_addiction': 'lambda_d',
-    'relative_share_of_addiction_1': 'theta', 'value_of_life': 'aleph',
-    'size_homelessness': 'h_1', 'discount_factor': 'beta',
-    'relative_share_of_leisure': 'omega_l', 'labor_income_tax_rate': 'tau_l',
-    'sd_permanent_productivity': 'sigma_y', 'probability_becoming_unemployed': 'pi_eu',
-    'multiple_of_probabilities_of_employment_if_addicted': 'kappa_ued',
-    'kappa_uem': 'kappa_uem', 'lambda_m': 'lambda_m',
-    'probability_of_voucher_benchmark_used': 'pi_V',
-    'utility_cost_of_treatment': 'tau_u', 'penalty_child_addicted': 'delta_d',
-    'penalty_child_homeless': 'delta_h',
-    'smallest_rental_relative_to_lowest_income': 'h_2',
-    'largest_house_size': 'h_4',
-    'weight_on_child': 'omega', 'max_food_cost': 'cbar', 'mu_homeless': 'mu_H',
-}
+# WHAT A PARAMETER OWNS IS STATED ONCE, IN suggest_next.OWNS. This was a
+# hand-copied second copy and it drifted the moment lambda_m became
+# externally set: OWNS moved the SMI share of the homeless to di_takeup and
+# added smi_onset_level for p_m, while this still listed lambda_m and knew
+# nothing of either new parameter, so gap_table.py died on KeyError.
+WHAT = {k: v[0] for k, v in OWNS.items()}
 # Calibrated internally but not free: gamma is tied to theta inside the model as
 # 0.28*(1-theta), so it moves when theta does and has no arm of its own.
 TIED = {'relative_share_of_housing': ('gamma', 'tied to theta as 0.28*(1-theta)')}
@@ -47,7 +38,7 @@ LABEL = {
     'omega_l': 'labour supply / hours', 'tau_l': 'average labour income tax',
     'sigma_y': 'bottom half earnings share', 'pi_eu': 'unemployment rate',
     'kappa_ued': 'unemployment given SUD', 'kappa_uem': 'employment given SMI',
-    'lambda_m': 'SMI share of the homeless', 'pi_V': 'eligibles with a voucher',
+    'lambda_m': 'SMI share of the homeless', 'p_m': 'SMI share of the population', 'pi_V': 'eligibles with a voucher',
     'tau_u': 'treatment take up', 'delta_d': 'child SUD ratio',
     'delta_h': 'child homelessness ratio', 'h_2': 'share in smallest unit',
     'h_4': 'share in largest unit',
@@ -124,9 +115,17 @@ def main():
     print('-' * 145)
     print('%d internally calibrated parameters shown. Loss over the %d moments '
           'this point reported: %.3f' % (n_int, got[1], got[0]))
-    print('The loss is the mean absolute RELATIVE gap, weighted 3x on b and '
-          'lambda_d and 2x on theta, aleph and h_1, capped at 5 per moment so a '
-          'ratio whose denominator empties cannot dominate it.')
+    # GENERATED FROM THE DICT IT DESCRIBES. This sentence and the one in
+    # score_points.py were both typed, and both still said 2x on three moments
+    # after lambda_m became the fourth.
+    by_w = {}
+    for nm, w in sorted(score_points.WEIGHT.items()):
+        by_w.setdefault(w, []).append(nm)
+    how = ', '.join('%gx on %s' % (w, ' and '.join(ns))
+                    for w, ns in sorted(by_w.items(), reverse=True))
+    print('The loss is the mean absolute RELATIVE gap, weighted %s, capped at '
+          '%g per moment so a ratio whose denominator empties cannot dominate '
+          'it.' % (how, score_points.CAP))
     return 0
 
 

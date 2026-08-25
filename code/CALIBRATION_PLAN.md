@@ -726,3 +726,33 @@ linearisation claims a MOMENT will move: a derivative measured where a moment is
 two hundred per cent off says nothing about the whole distance home. No moment
 may be predicted to move by more than the cap, which starts at 1.5 and earns its
 width back only by making predictions that come true.
+
+### lambda_m's moment carries the weight h_1 carries
+
+The SMI share of the homeless was weighted one while the homelessness rate was
+weighted two, and the search noticed. Two vertices of the initial simplex
+returned an identical loss of 0.329 with that share at 0.095 and at 0.021, a
+factor of five apart: the moment eta_DI exists to own was not disciplining
+eta_DI at all, because a large miss on it cost less than a small miss on
+anything weighted higher. It is now 2.0, the same as h_1. The level of
+homelessness and its composition by mental illness are one claim seen from two
+sides and the paper turns on both.
+
+Re-weighting is cheap and safe here because no loss is stored anywhere:
+score_points.loss is recomputed from code/points/*.txt on every call, and
+simplex.py and jacobian.py both read score_points.WEIGHT rather than a copy. The
+LEVELS of the new series are not comparable with the old, only the ordering.
+
+What it changed: di_takeup=0.1 and max_food_cost were tied at 0.329 and are now
+0.338 and 0.348, so the tie broke toward the vertex that moves the moment. The
+only vertex whose loss FELL was addiction_scalar_1, whose SMI share of 0.185 is
+the closest to 0.25 anything has reached.
+
+Two typed copies of the weighting were found beside the dict they describe, in
+score_points.py and gap_table.py, both still naming three moments at 2x after
+lambda_m became the fourth. Both are generated from WEIGHT now.
+
+gap_table.py's WHAT was a hand-copied second copy of suggest_next.OWNS and had
+drifted the same way: it still listed lambda_m as a calibrated parameter and knew
+nothing of di_takeup or smi_onset_level, so it died on KeyError the first time it
+was run after the redesign. It is derived from OWNS now.

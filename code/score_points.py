@@ -31,7 +31,14 @@ import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-WEIGHT = {'b': 3.0, 'lambda_d': 3.0, 'theta': 2.0, 'aleph': 2.0, 'h_1': 2.0}
+# LAMBDA_M CARRIES THE SAME WEIGHT AS H_1. The level of homelessness and its
+# composition by mental illness are the same claim from two sides, and the
+# paper turns on both. At weight one the search traded the composition away
+# for nothing: two vertices reached an identical loss of 0.329 with the SMI
+# share of the homeless at 0.095 and at 0.021, a factor of five apart, so the
+# moment eta_DI was introduced to own was not disciplining eta_DI at all.
+WEIGHT = {'b': 3.0, 'lambda_d': 3.0, 'theta': 2.0, 'aleph': 2.0, 'h_1': 2.0,
+          'lambda_m': 2.0}
 # A ratio that explodes when its denominator empties is not a miss.
 CAP = 5.0
 
@@ -97,9 +104,13 @@ def main():
                 print(f'{"":>17}worst: {mom:<12s} model {model:>12.6g}  target {target:>10.6g}'
                       f'  off {g*100:.0f}%')
     print('-' * 100)
+    by_w = {}
+    for name, w in sorted(WEIGHT.items()):
+        by_w.setdefault(w, []).append(name)
+    how = ', '.join(f'{w:g}x on ' + ' and '.join(ns)
+                    for w, ns in sorted(by_w.items(), reverse=True))
     print(f'{len(rows)} point(s) scored. Lower loss is better. The loss is the mean '
-          f'absolute relative gap,\nweighted 3x on b and lambda_d, 2x on theta, aleph '
-          f'and h_1, and capped at {CAP:.0f} per moment.')
+          f'absolute relative gap,\nweighted {how}, and capped at {CAP:.0f} per moment.')
     return 0
 
 
