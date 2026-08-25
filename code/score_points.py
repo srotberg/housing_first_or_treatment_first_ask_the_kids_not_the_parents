@@ -67,6 +67,11 @@ GATE = {
     'kappa_ued': ('b', 3.0),
     'lambda_m':  ('h_1', 3.0),
     'delta_h':   ('h_1', 3.0),
+    # omega's gap is a ratio of using populations, so it is meaningless
+    # when the baseline one is empty. The model refuses to print it in
+    # that case rather than printing a fabricated number, so this is a
+    # second line of defence and not the first.
+    'omega':     ('b', 3.0),
 }
 
 
