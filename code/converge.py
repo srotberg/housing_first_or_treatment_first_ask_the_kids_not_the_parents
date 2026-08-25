@@ -611,6 +611,10 @@ def main():
     cross, _, _, _ = ridge_solve.solve(data)
 
     moved, arms, settled, stale = {}, [], [], []
+    simplex_owns = set()
+    if os.path.exists(os.path.join(HERE, 'SIMPLEX.txt')):
+        import simplex
+        simplex_owns = set(simplex.BLOCK)
     best_moments = best_point_moments()
 
     # THE JACOBIAN LEADS WHERE IT EXISTS. Every arm measured how all twenty-two
@@ -652,6 +656,17 @@ def main():
     for key in OWNS:
         now = here.get(key)
         if now is None:
+            continue
+        # TWO METHODS MAY NOT OWN ONE PARAMETER. While the simplex is running on
+        # the drug block, those four are its business: a Jacobian step on them
+        # would move the background the simplex measures its vertices against,
+        # and the simplex has no way to see that happen -- it would go on
+        # comparing losses that are no longer comparable, which is exactly the
+        # error its own construction guards against.
+        if key in simplex_owns:
+            moved[key] = now
+            print('%-52s %12.5g %12s %12.5g %9s'
+                  % (key, now, '-', now, 'simplex'))
             continue
         if key in PAIRED and cross:
             want = cross[0] if key == 'addiction_scalar_1' else cross[1]
@@ -759,6 +774,13 @@ def main():
               'thing being measured, not their level.' % int(100 * REFRESH_GAP))
         for key, gap in sorted(stale, key=lambda kv: -abs(kv[1] or 0)):
             print('   stale    %-52s gap %+.1f%%' % (key, 100 * (gap or 0)))
+
+    if simplex_owns:
+        print('\nHeld by the simplex (code/simplex.py), which is searching them '
+              'jointly because their responses are not smooth enough to '
+              'differentiate:')
+        for key in sorted(simplex_owns):
+            print('   simplex  %-52s %.6g' % (key, moved.get(key, float('nan'))))
 
     if settled:
         print('\nNo arm for these: their moment is already within %d per cent and '

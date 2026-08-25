@@ -60,9 +60,32 @@ STATE = os.path.join(HERE, 'SIMPLEX.txt')
 BLOCK = ['addiction_scalar_1', 'lambda_addiction',
          'relative_share_of_addiction_1', 'value_of_life']
 
-# Textbook coefficients. There is no reason to tune them before the method has
-# been seen to work.
-ALPHA, GAMMA, RHO, SIGMA = 1.0, 2.0, 0.5, 0.5
+# THE TEXTBOOK'S FOUR TRIALS ARE FOUR POINTS ON ONE LINE, and once that is seen
+# the parallel version writes itself. Every move Nelder-Mead can make to the
+# worst vertex lies on the ray through the centroid:
+#
+#     x(t) = c + t * (c - worst)
+#
+# with t = -0.5 the inside contraction, +0.5 the outside contraction, +1 the
+# reflection and +2 the expansion. The method is already doing a line search; it
+# is just doing it with four samples, chosen so that a SEQUENTIAL implementation
+# can stop early. Nothing about the geometry wants four.
+#
+# So the ray is sampled properly. Sixteen points cost exactly what four cost when
+# they run at once, and they buy a far better move: the reflection ray is where
+# the whole step lives, and four samples across a factor of five cannot find its
+# minimum. t must stay above -1, since t = -1 IS the worst vertex.
+RAY = (-0.8, -0.6, -0.4, -0.2, 0.3, 0.5, 0.75, 1.0, 1.25, 1.5,
+       2.0, 2.5, 3.0, 4.0, 5.5, 7.0)
+SIGMA = 0.5
+
+# A SIMPLEX THAT COLLAPSES CANNOT SEARCH. Sampling a ray densely and taking
+# whatever wins invites a replacement nearly on the face the other vertices span,
+# which leaves the simplex flat and blind in one direction ever after -- the
+# failure Nelder-Mead is best known for, and dense sampling makes it likelier
+# rather than less. So a candidate is refused if it costs more than this share of
+# the simplex's volume, and the next best on the ray is taken instead.
+VOLUME_FLOOR = 0.10
 
 # THE SIMPLEX LIVES IN LOGS, like every other step in this calibration. These
 # parameters span four orders of magnitude between them and a reflection in
@@ -212,42 +235,66 @@ def centroid(verts):
     return [sum(v[0][i] for v in verts[:n]) / n for i in range(len(BLOCK))]
 
 
+def volume(verts):
+    """The simplex's volume, up to the constant factor that cancels in a ratio."""
+    x0 = verts[0][0] if isinstance(verts[0], (list, tuple)) else verts[0]
+    rows = []
+    for v in verts[1:]:
+        x = v[0] if isinstance(v, (list, tuple)) else v
+        rows.append([x[i] - x0[i] for i in range(len(BLOCK))])
+    n = len(rows)
+    m = [row[:] for row in rows]
+    det = 1.0
+    for i in range(n):
+        p = max(range(i, n), key=lambda r: abs(m[r][i]))
+        if abs(m[p][i]) < 1e-14:
+            return 0.0
+        if p != i:
+            m[i], m[p] = m[p], m[i]
+            det = -det
+        det *= m[i][i]
+        for r in range(i + 1, n):
+            fac = m[r][i] / m[i][i]
+            for c in range(i, n):
+                m[r][c] -= fac * m[i][c]
+    return abs(det)
+
+
 def trials(verts):
-    """Every point the decision tree could ask for, all at once."""
+    """The whole reflection ray at once, labelled by its coefficient."""
     c = centroid(verts)
     worst = verts[-1][0]
-    xr = [c[i] + ALPHA * (c[i] - worst[i]) for i in range(len(BLOCK))]
-    xe = [c[i] + GAMMA * (xr[i] - c[i]) for i in range(len(BLOCK))]
-    xoc = [c[i] + RHO * (xr[i] - c[i]) for i in range(len(BLOCK))]
-    xic = [c[i] + RHO * (worst[i] - c[i]) for i in range(len(BLOCK))]
-    return {'reflect': xr, 'expand': xe, 'outside': xoc, 'inside': xic}
+    out = {}
+    for t in RAY:
+        out['t%+.2f' % t] = [c[i] + t * (c[i] - worst[i]) for i in range(len(BLOCK))]
+    return out
 
 
 def advance(verts, t, f):
-    """Standard Nelder-Mead acceptance, against trials already evaluated.
+    """Take the best point on the ray that keeps the simplex a simplex.
+
+    Nelder-Mead's acceptance rules exist to choose among four samples of this
+    ray without evaluating them all. With every sample in hand the choice is
+    simply the best one -- subject to the volume guard, which the textbook does
+    not need because four widely spaced samples rarely land on a face.
 
     Returns (new vertices, what happened, whether a shrink is needed).
     """
-    fr = f.get('reflect')
-    best, second_worst, worst = verts[0][1], verts[-2][1], verts[-1][1]
-    if fr is None:
-        return verts, 'reflection never landed', False
-    if fr < best:
-        fe = f.get('expand')
-        if fe is not None and fe < fr:
-            return verts[:-1] + [(t['expand'], fe)], 'expanded', False
-        return verts[:-1] + [(t['reflect'], fr)], 'reflected past the best', False
-    if fr < second_worst:
-        return verts[:-1] + [(t['reflect'], fr)], 'reflected', False
-    if fr < worst:
-        fo = f.get('outside')
-        if fo is not None and fo <= fr:
-            return verts[:-1] + [(t['outside'], fo)], 'contracted outside', False
-        return verts, 'outside contraction failed', True
-    fi = f.get('inside')
-    if fi is not None and fi < worst:
-        return verts[:-1] + [(t['inside'], fi)], 'contracted inside', False
-    return verts, 'inside contraction failed', True
+    got = sorted(((loss, k) for k, loss in f.items() if loss is not None))
+    if not got:
+        return verts, 'nothing on the ray landed', False
+    worst = verts[-1][1]
+    v0 = volume(verts)
+    for loss, k in got:
+        if loss >= worst:
+            break
+        trial = verts[:-1] + [(t[k], loss)]
+        if v0 > 0 and volume(trial) < VOLUME_FLOOR * v0:
+            continue                    # too close to the face the others span
+        best_before = verts[0][1]
+        where = ('past the best vertex' if loss < best_before else 'accepted')
+        return trial, 'ray %s %s at loss %.3f (was %.3f)' % (k, where, loss, worst), False
+    return verts, 'nothing on the ray beat the worst vertex', True
 
 
 def shrink(verts):
@@ -338,9 +385,10 @@ def main():
     st['trials'] = t
     if '--write' in sys.argv:
         save(st)
-    print('\nThe next four points, all at once (%s):\n'
-          % ('--write recorded them' if '--write' in sys.argv else 'not recorded, pass --write'))
-    for k in ('reflect', 'expand', 'outside', 'inside'):
+    print('\nThe reflection ray, %d points, all at once (%s):\n'
+          % (len(t), '--write recorded them' if '--write' in sys.argv
+             else 'not recorded, pass --write'))
+    for k in sorted(t, key=lambda s: float(s[1:])):
         print('  bash code/run_one_point.sh %s   # %s' % (spec(from_log(t[k]), bg), k))
     if span < 0.02:
         print('\nCONVERGED: the widest edge is under two per cent.')
