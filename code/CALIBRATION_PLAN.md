@@ -514,11 +514,34 @@ source file, do not change any parameter, do not run anything beyond these steps
 3. Commit the point file it wrote under code/points/ and push it:
    git add code/points
    git commit -m "gen<N> worker: <ARM>"
-   git stash -u -q || true
-   for i in 1 2 3 4 5; do git pull --rebase origin claude/two-period-addiction-hazard-d7gb61 && git push origin HEAD:claude/two-period-addiction-hazard-d7gb61 && break; sleep $((2**i)); done
+   for i in 1 2 3 4; do git pull --rebase origin claude/two-period-addiction-hazard-d7gb61 && git push origin HEAD:claude/two-period-addiction-hazard-d7gb61 && break; done
 
 4. Reply with the ALL TARGETED MOMENTS block and stop.
 ```
+
+#### Give the arm, never ask the worker to find it
+
+The arm goes into the prompt as literal text, or as a line number into a flat
+file of arms that the worker reads with `sed`:
+
+```
+bash code/run_one_point.sh $(sed -n '7p' code/arms4.txt)
+```
+
+It must never be an instruction to extract its own vertex out of `simplex.py`.
+Simplex 3 was spawned that way and five of its twenty-two workers never started:
+their containers had no numpy, so the import failed before the script reached a
+vector, and each of them stopped to ask about it. A flat file read positionally
+has no dependency to be missing. `code/ARMS4_README.md` records the same point
+next to the file.
+
+#### Do not stash in a worker
+
+An earlier worker prompt carried `git stash -u -q` before the pull. A worker
+that stashes leaves files behind it cannot judge, and it then stops to ask
+whether to keep them; one of simplex 3's did exactly that and never ran. A
+worker writes one point file and pushes it. If the push is rejected it rebases
+and pushes again, and nothing else.
 
 ### Do not open a generation on top of one still running
 
