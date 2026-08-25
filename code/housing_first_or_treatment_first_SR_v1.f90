@@ -468,7 +468,28 @@
         ! productivity grid, and the disorder is concentrated at the bottom, so
         ! the numerator rises and the ratio rises with the penalty.
         real(8) :: penalty_child_addicted=0.30
-        real(8), parameter :: child_sud_ratio_data=3.0d0
+        ! TWO, NOT THREE, AND THE CHANGE IS ABOUT WHICH POPULATION.
+        !
+        ! Three was the midpoint of a two to four range, but that range
+        ! mixes studies of ONE affected parent with studies of TWO, and
+        ! this model gives a child one parent. On one-parent estimates the
+        ! literature gives 1.44 in the Danish nationwide register of 398,881
+        ! offspring, 95 per cent CI 1.29 to 1.61 (Mellentin et al. 2016,
+        ! J Psychiatr Res), and 2.51 in the United States population based
+        ! study (Yoon et al. 2013, J Clin Psychiatry 74(8):795-801). Two is
+        ! their midpoint, 1.98, by the same convention that produced three.
+        ! The two-parent figures, 2.29 and 4.44 from the same two studies,
+        ! are what pushed the old two-to-four range up.
+        !
+        ! IT ALSO HAPPENS TO BE REACHABLE, and that is not why it changed.
+        ! penalty_child_addicted moves delta_d by about 1.2 per unit, so
+        ! three needed a penalty near 0.9 -- a ninety per cent earnings
+        ! loss for the child, against an earnings literature that supports
+        ! odds ratios of 1.33 to 1.89 on low socioeconomic status, or
+        ! something closer to a tenth to a quarter. Three was asking one
+        ! income channel to carry a correlation that genes, environment and
+        ! income produce together.
+        real(8), parameter :: child_sud_ratio_data=2.0d0
         ! THE CHILD HOMELESSNESS RATIO delta_h IS MATCHED TO, from the two odds
         ! ratios in Bassuk et al. (1997), 1.80 on the mother's side and 2.41 on
         ! the father's. Their midpoint. It was stated in the note's parameter
