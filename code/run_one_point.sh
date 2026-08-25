@@ -64,6 +64,22 @@ TAG=$(for k in "${!P[@]}"; do echo "$k=${P[$k]}"; done | sort | md5sum | cut -c1
 
 if [ ! -x hftf ] || [ housing_first_or_treatment_first_SR_v1.f90 -nt hftf ]; then
     echo "building..."
+    # THE COMPILER IS NOT ALWAYS THERE. Worker containers built from the
+    # 2.1.245 image arrived without gfortran and the run died at the build step
+    # with nothing measured; earlier images had it. Install it rather than fail,
+    # and say which happened, because a silent reinstall on every point would
+    # hide an image regression worth knowing about.
+    if ! command -v gfortran >/dev/null 2>&1; then
+        echo "run_one_point: gfortran absent from this container, installing"
+        (apt-get update -qq && apt-get install -y -qq gfortran) >/dev/null 2>&1 \
+            || (sudo apt-get update -qq && sudo apt-get install -y -qq gfortran) >/dev/null 2>&1
+        if ! command -v gfortran >/dev/null 2>&1; then
+            echo "run_one_point: gfortran could not be installed. Stopping."
+            exit 1
+        fi
+        echo "run_one_point: gfortran installed, $(gfortran --version | head -1)"
+    fi
+
     gfortran housing_first_or_treatment_first_SR_v1.f90 -mcmodel=medium -fopenmp \
         -O3 -funroll-loops -ffree-line-length-none -g -fbacktrace -o hftf
 fi
