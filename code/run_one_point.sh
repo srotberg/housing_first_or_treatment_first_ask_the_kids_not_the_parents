@@ -50,7 +50,7 @@ declare -A P=(
     [utility_cost_of_treatment]=0.0908753
     [smallest_rental_relative_to_lowest_income]=0.0244763
     [largest_house_size]=0.121252
-    [weight_on_child]=0.498038
+    [weight_on_child]=0.007
     [max_food_cost]=0.00498294
     [mu_homeless]=0.708003
 )

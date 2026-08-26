@@ -276,7 +276,11 @@
         ! value function solve and distribution convergence, about a
         ! third again on top of a point, and it is the only way the
         ! search can see omega_c at all.
-        integer, parameter :: measure_child_gap=1
+        ! 0 WHILE weight_on_child IS PINNED, 1 TO CALIBRATE IT. The child
+        ! counterfactual costs a third of a point's running time and omega is
+        ! out of the loss while the parameter is not being searched, so it is
+        ! switched off until the other parameters have converged.
+        integer, parameter :: measure_child_gap=0
 
         ! THE COUNTERFACTUAL REMOVES THE PENALTY, NOT THE CHILD.
         !
@@ -4209,7 +4213,20 @@
             ! against this moment. Here it runs after the last of them, so the
             ! baseline is read clean and only the counterfactual carries the
             ! counterfactual's path. Nothing may be added below it.
-            if ((measure_child_gap==1) .AND. (include_child_in_continuation==1)&
+            ! A DELIBERATE SKIP HAS TO BE DISTINGUISHABLE FROM A FAILED ONE.
+            ! The counterfactual is a whole extra solve, converge and statistics
+            ! pass -- about a third of a point's running time -- and while
+            ! weight_on_child is pinned rather than searched, omega is not in the
+            ! loss and paying for it every point buys nothing. But a point that
+            ! simply LACKS the moment cannot be told from one measured before the
+            ! counterfactual was fixed, which reported an exact zero, and those
+            ! must stay out of the search. So the skip announces itself, inside
+            ! the block run_one_point.sh keeps, and simplex.py reads that line.
+            if (measure_child_gap==0) then
+
+                write(*,*) "OMEGA SKIPPED    child counterfactual off by measure_child_gap"
+
+            elseif ((include_child_in_continuation==1)&
                 .AND. (model_total_drug_users(1)>&
                 10.d0**(-1)*participation_rate_data)) then
 
