@@ -571,10 +571,23 @@ before. zeta_DI is held externally at zero because it is an expected payment and
 ten of thirteen unemployed households with serious mental illness receive
 nothing, so any positive value gives all thirteen a floor that most do not have.
 
-The honest version of that is a state, not an average: at SMI onset the
-household is awarded DI with probability about 3/13 and then receives a
-replacement rate of 0.25 for as long as it stays ill, or receives nothing,
-permanently. That recovers the dispersion the average throws away, and the
+The honest version of that is a state, not an average: unemployment with SMI
+becomes TWO states rather than one. At onset the household is awarded DI with
+probability about 3/13 and then draws a replacement of about 0.25 for as long as
+it stays ill, or is not awarded it and draws nothing, permanently. What the 25
+per cent is a share of -- the household's own productivity or average income --
+is a detail to settle when it is built, not now.
+
+AND THE MEASUREMENTS SAY THE AVERAGE CANNOT SUBSTITUTE FOR IT. Three points now
+sit on zeta_DI with everything else held: 0.0825 gives lambda_m 0.0413, 0.0250
+gives 0.0759, 0.0100 gives 0.0843, against a target of 0.25. The elasticity is
+-0.51 over the first step and -0.11 over the second, so the response flattens
+hard; on the local slope 0.25 would want zeta_DI near 1e-6, which is to say no
+positive value reaches it and zero probably does not either. h_1 meanwhile holds
+at 0.0037 to 0.0039 throughout, so this is not the conditioning population
+emptying -- the moment is simply out of reach through this parameter. That is
+the case for the state, and it is why lambda_m is reported rather than matched
+in the meantime. That recovers the dispersion the average throws away, and the
 dispersion is the part that matters -- the ten with no floor are the households
 that fall to zero income and lose their housing, which is the margin the paper
 measures.
