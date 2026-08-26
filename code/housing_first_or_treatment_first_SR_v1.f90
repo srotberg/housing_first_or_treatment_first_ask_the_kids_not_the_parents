@@ -4313,6 +4313,38 @@
                     "so the child use gap is not measurable"
 
             end if
+            ! WHO IS HOMELESS, AND WHETHER THEY HAD A CHOICE. These are
+            ! diagnostics, not moments: the prefix is DIAG so nothing parses them
+            ! as targets and the moment count does not move. They are here rather
+            ! than in the wider log because run_one_point.sh keeps only this
+            ! block, and the question they answer -- why so few of the homeless
+            ! carry serious mental illness when most such households have no
+            ! income at all -- cannot be settled from the targeted moments.
+            !
+            ! homeless_by_choice counts a homeless household whose income PLUS
+            ! ASSETS exceed the rent on the smallest dwelling, so it could have
+            ! been housed and was not. Its complement is the households actually
+            ! shut out. If the first number is close to one, homelessness in this
+            ! model is a preference and not a constraint, and no parameter that
+            ! moves incomes will move the mental illness share of the street.
+            write(*,*) "DIAG homeless by choice, share of the homeless   =",&
+                model_fraction_homeless_by_choice(1)
+            write(*,*) "DIAG homeless receiving food stamps              =",&
+                model_fraction_homeless_recieving_food_stamps(1)
+            ! THE LOWER TAIL OF WEALTH IS WHAT DECIDES WHO CAN BE SHUT OUT, and
+            ! nothing in the loss pins it. beta is bracketed on wealth over
+            ! output, an AGGREGATE, and it currently sits nineteen per cent above
+            ! its target; the bottom half's share of net worth, 2.52 per cent in
+            ! the Fed distributional accounts, is reported with the untargeted
+            ! moments and never matched. A model can carry the right total wealth
+            ! with far too little of it concentrated, and then no household is
+            ! ever short of the smallest rent. These two say whether that is what
+            ! is happening.
+            write(*,*) "DIAG median assets to income                     =",&
+                model_median_assets_to_income(1)
+            write(*,*) "DIAG average assets of the homeless              =",&
+                model_avg_homeless_assets(1)
+
             write(*,*) "===== END OF MOMENTS ====="
 
         end subroutine
