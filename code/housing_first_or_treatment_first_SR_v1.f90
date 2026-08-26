@@ -4365,8 +4365,15 @@
             ! with far too little of it concentrated, and then no household is
             ! ever short of the smallest rent. These two say whether that is what
             ! is happening.
-            write(*,*) "DIAG median assets to income                     =",&
-                model_median_assets_to_income(1)
+            ! MEDIAN ASSETS TO INCOME IS NOT PRINTED HERE, AND MUST NOT BE
+            ! ADDED BACK. model_median_assets_to_income is declared, zeroed
+            ! once, and never assigned anywhere in this file, so it reads
+            ! exactly 0.000 in every run. It was printed here for four runs
+            ! and read as evidence that the median household holds nothing,
+            ! which would have contradicted the bottom half share below and
+            ! sent the search after a bug that does not exist. It is not a
+            ! measurement of anything. The live check on the shares below is
+            ! the histogram pair at the end of this block.
             write(*,*) "DIAG average assets of the homeless              =",&
                 model_avg_homeless_assets(1)
             write(*,*) "DIAG wealth share of the bottom  1 pct           =",&

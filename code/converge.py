@@ -245,7 +245,20 @@ BOUNDS = {
     # disordered rises from 0.03 toward the 0.41 the data needs -- so this
     # parameter, not lambda_addiction, is what lambda_d is stuck on. Simplex 4's
     # own arm for it was 0.658 and would have done exactly the wrong thing.
-    'relative_share_of_addiction_1':         (0.01, 0.51),
+    #
+    # THERE IS A SECOND CLIFF BELOW, AND THE LOWER BOUND NOW SITS ABOVE IT.
+    # 0.01 let the search walk into a dead zone as degenerate as the one above
+    # 0.51, in the other direction. Two controlled runs sharing lambda_addiction
+    # 9.0 and addiction_scalar_1 0.0215 and differing only here:
+    #     0.42  ->  b = 0.0086, lambda_d = 0.0010
+    #     0.36  ->  b = 0.0019, lambda_d = 0.00019, and theta returns the -1
+    #               sentinel because the using population it is measured over
+    #               has emptied
+    # against b = 0.089 in the data. So participation has already fallen by a
+    # factor of ten one rung below the anchor at 0.47023, and by 0.36 there is
+    # no drug block left to measure. An arm sent down there scores a gated miss
+    # and pushes the simplex away from the only band that works.
+    'relative_share_of_addiction_1':         (0.45, 0.51),
     'value_of_life':                         (1.0, 500.0),
     'size_homelessness':                     (0.01, 5.0),
     'discount_factor':                       (0.900, 0.999),
