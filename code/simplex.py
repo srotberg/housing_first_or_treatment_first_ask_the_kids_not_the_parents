@@ -119,26 +119,37 @@ EDGE = 1.4
 # puts the answer near 8.5, so that is where its vertex goes. Starting it at 1.4
 # would spend several iterations walking somewhere the evidence already points.
 EDGE_OVERRIDE = {'kappa_uem': 8.5,
-                 # THE TWO WORST GAPS THAT HAVE A WORKING INSTRUMENT.
-                 # relative_share_of_addiction_1 is what lambda_d is actually
-                 # stuck on (correlation 0.91 with the share of users who become
-                 # disordered, against 0.17 for anything else), and it also
-                 # brackets theta, which is 35 per cent low and wants the same
-                 # direction. Its arm goes just under the cliff at 0.51, not the
-                 # 0.658 simplex 4 sent, which lands in a degenerate economy.
-                 'relative_share_of_addiction_1': 0.495,
-                 # max_food_cost moves cbar cleanly, correlation 0.91 over 16
-                 # distinct values. The archive maps 0.00485 to a cbar of 0.0018
-                 # and 0.00782 to 0.0054, so 0.0072 brackets the 0.0042 target.
+                 # EVERY ENTRY BELOW IS A MEASURED VALUE, not a scaled guess.
+                 # Each comes from a controlled probe off the anchor, so the arm
+                 # lands where the moment is known to want it rather than a
+                 # factor of EDGE away from where it started.
+                 #
+                 # lambda_addiction: the two rungs that bracket the disorder
+                 # share of users, 9.0 giving a ratio of 0.146 and 16.0 giving
+                 # 0.548, put the 0.413 the data wants at 14.1.
+                 'lambda_addiction': 14.1,
+                 # and its companion, since the hazard pushes the user rate down
+                 # hard: at 9.0 a scalar of 0.0185 left b at 0.064 against 0.089.
+                 'addiction_scalar_1': 0.0176,
+                 # probability_becoming_unemployed at 0.0130 measured pi_eu at
+                 # 0.0471 against 0.0485, and the multiplier holds the SUD
+                 # unemployment ratio up while it does.
+                 'probability_becoming_unemployed': 0.0130,
+                 'multiple_of_probabilities_of_employment_if_addicted': 5.0364,
+                 # smallest_rental at 0.0207 measured h_2 at 0.134 against 0.132.
+                 'smallest_rental_relative_to_lowest_income': 0.0207,
+                 # value_of_life from d ln(aleph)/d ln(value_of_life) = 1.47.
+                 'value_of_life': 43.84,
+                 # max_food_cost at 0.0072 measured cbar at 0.0039 against 0.0042.
                  'max_food_cost': 0.0072,
-                 # pi_eu OVERSHOOTS at 0.0845 against 0.0485, so its arm has to
-                 # go DOWN. Simplex 4's went up, to 0.0412, and pi_eu duly got
-                 # worse, 0.1062. That pair is the cleanest elasticity in the
-                 # archive because nothing else differs between the two points:
-                 # d ln pi_eu / d ln p = 0.68, which puts the target at 0.0130.
-                 # A pooled correlation across all points said +0.06 and looked
-                 # like a dead instrument; it is not, the pooling was the fault.
-                 'probability_becoming_unemployed': 0.0130}
+                 # size_homelessness holds h_1 up, since three of the fixes above
+                 # push homelessness down; d ln(h_1)/d ln(size_homelessness)=3.15.
+                 'size_homelessness': 0.217}
+# relative_share_of_addiction_1 IS DELIBERATELY ABSENT. It carried 0.495 here,
+# which is the wrong direction twice over: the controlled probes show theta
+# FALLING as it rises from 0.470, and b tripling on the way, and the cliff at
+# 0.51 sits just above it. Its arm keeps the default until a probe measures the
+# downward side, which is the direction theta actually wants.
 # zeta_DI's vertex goes DOWN, not up. Its moment, the SMI share of the
 # homeless, is 0.0347 against a target of 0.25, and less DI coverage is what
 # raises it: an uncovered household with SMI falls to the same zero income as
@@ -277,6 +288,11 @@ SEED_OVERRIDE = {'weight_on_child': 0.007}
 # where theta drops further. A pooled count cannot see a non-monotone response,
 # because the pairs it counts are spread across both limbs.
 #
+# zeta_DI is gone for a third reason: it is set externally at zero now and owns
+# no moment at all, so a response sign for it points at nothing and can never
+# fire. test_arm_sign.py checks that every RESPONSE key still owns a moment and
+# caught this the moment OWNS changed, which is the whole point of the check.
+#
 # THE RULE THIS LEAVES: a RESPONSE entry is a claim about the neighbourhood of
 # the anchor, and a pair count taken across the whole archive is not evidence for
 # it. Anything contradicted by a controlled probe near the anchor comes out, and
@@ -297,7 +313,6 @@ RESPONSE = {
     'probability_becoming_unemployed':                    +1,   #  6 of 6
     'multiple_of_probabilities_of_employment_if_addicted': +1,  # 14 of 14
     'kappa_uem':                                          -1,   # 13 of 13
-    'zeta_DI':                                            -1,   #  4 of 4
     'smi_onset_level':                                    +1,   #  2 of 2
     'probability_of_voucher_benchmark_used':              +1,   # 11 of 11
     'utility_cost_of_treatment':                          -1,   # 19 of 20
