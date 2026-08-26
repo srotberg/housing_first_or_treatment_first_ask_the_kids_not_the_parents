@@ -837,8 +837,23 @@
         ! is a collinearity, and splitting a calibrated number into two
         ! separately citable pieces does not make either piece estimable. The
         ! default is the old product, 0.25*0.33.
-        real(8) :: zeta_DI=0.0825
-        real(8) :: zeta_DI_adjuster=1*10.d0**(-2)
+        ! SET TO ZERO, AND EXTERNALLY, NOT CALIBRATED.
+        !
+        ! zeta_DI is an EXPECTED payment: the two parameters it replaced were a
+        ! replacement rate and a take-up rate, and only their product ever entered
+        ! the budget constraint. But an expected payment hands every unemployed
+        ! household with SMI the same certain income, and that is not the world it
+        ! is standing in for. Only about a quarter of them receive disability
+        ! insurance at all; three quarters receive nothing, and it is the ones who
+        ! receive nothing who fall to zero income, lose their housing and end up
+        ! in the homelessness this paper is about. Averaging over the lottery
+        ! gives every one of them a floor that most of them do not have.
+        !
+        ! So the parameter is set to the modal case rather than the mean one.
+        ! Zero is the payment the household this model cares about actually gets.
+        real(8) :: zeta_DI=0.d0
+        ! EXTERNALLY SET, so the adjuster is zero and nothing brackets on it.
+        real(8) :: zeta_DI_adjuster=0.d0
         real(8) :: distance_zeta_DI
         real(8) :: stopping_rule_zeta_DI=10.d0**(-3)
 

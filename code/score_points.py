@@ -114,11 +114,17 @@ def read(path):
 # other parameter moves it. Scoring it would charge each point for a gap nothing
 # in the search can close, and rank on the noise.
 #
-# EXCLUDING IT EVERYWHERE IS WHAT KEEPS THE ARCHIVE COMPARABLE. The loss is a
+# lambda_m joins it for a different reason: zeta_DI, the only instrument that
+# moved the SMI share of the homeless, is now set to zero externally, so the
+# moment has nothing pointing at it and becomes a validation number rather than
+# a target. Scoring an unreachable moment charges every point the same fixed
+# penalty and tells the search nothing.
+#
+# EXCLUDING THEM EVERYWHERE IS WHAT KEEPS THE ARCHIVE COMPARABLE. The loss is a
 # MEAN weighted gap, so a point that measured omega and a point that skipped it
 # are otherwise on different denominators and cannot be ranked against each
 # other. Dropping it from both puts every point back on the same 21 moments.
-EXCLUDE = {'omega'}
+EXCLUDE = {'omega', 'lambda_m'}
 
 
 def loss(moments):

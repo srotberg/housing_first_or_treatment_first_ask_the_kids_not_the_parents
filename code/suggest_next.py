@@ -61,7 +61,6 @@ OWNS = {
     # household with SMI was drawing a guaranteed quarter of its earnings and so
     # could not become homeless. What decides whether a household with SMI ends
     # up on the street is what it lives on once it is out of work, which is DI.
-    'zeta_DI':                               ('lambda_m', 0.250),
     # The SMI population share. Its target is the assigned profile evaluated at
     # the model's own age weights, which the model computes and prints beside it,
     # so the moment asks whether the model reproduces the profile's LEVEL once

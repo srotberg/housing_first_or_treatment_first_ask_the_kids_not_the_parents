@@ -118,7 +118,7 @@ EDGE = 1.4
 # of the loss on its own and the log-odds fit across the three measured points
 # puts the answer near 8.5, so that is where its vertex goes. Starting it at 1.4
 # would spend several iterations walking somewhere the evidence already points.
-EDGE_OVERRIDE = {'kappa_uem': 8.5, 'zeta_DI': 0.025,
+EDGE_OVERRIDE = {'kappa_uem': 8.5,
                  # THE TWO WORST GAPS THAT HAVE A WORKING INSTRUMENT.
                  # relative_share_of_addiction_1 is what lambda_d is actually
                  # stuck on (correlation 0.91 with the share of users who become

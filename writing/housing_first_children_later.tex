@@ -1481,12 +1481,15 @@ is out of work and carries SMI. Unemployment insurance (UI) is paid in the first
 the replacement rate $\psi_{ui}$ on an earnings base capped at average income
 $\bar y$, both as in equation~\eqref{eq:inc}. $\zeta_{DI}$ is the rate at which disability
 insurance (DI) replaces the income of an unemployed household with SMI, and that
-DI does not stop until the household recovers. \new{It is an EXPECTED
-replacement, averaged over whether such a household receives DI at all: award
-rates are low and most never do, so the parameter is the product of what the
-programme pays and how rarely it pays it. Only that product ever enters the
-budget constraint, so only the product is identified, and it is calibrated
-directly rather than split into two numbers the model cannot separate.}
+DI does not stop until the household recovers. \new{It is set to zero. The parameter is an
+EXPECTED replacement, the product of what the programme pays and how often it
+pays it, because only that product ever enters the budget constraint. But an
+expected payment hands every unemployed household with SMI the same certain
+income, and that is not the world it stands in for: only about three in thirteen
+of them receive DI at all. Averaging over the lottery would give all of them a
+floor that most do not have, and it is precisely the ones with no floor who fall
+to zero income, lose their housing, and become the homelessness this paper is
+about. Zero is what the household this model cares about actually receives.}
 
 
 
@@ -2100,14 +2103,14 @@ considered as well, in Section~\ref{sec:trans}.
 \section{Calibrating the quantitative model}\label{sec:fullcal}
 
 The model has fifty six parameters, some of which vary in value by
-age. Thirty four are calibrated externally, from data or from the literature,
-and twenty two are calibrated internally. Four further parameters
+age. \new{Thirty five} are calibrated externally, from data or from the literature,
+and \new{twenty one} are calibrated internally. Four further parameters
 govern drug testing and detection; they do not play a role in the benchmark, where nothing
 is conditional, but they do under Treatment First, which is where they are
 set. The calibrated parameters are
 split across the two tables of this section: thirty are the main story
-of this paper and its policy analysis (Table~\ref{tab:eleven}, fourteen
-internally and sixteen externally calibrated), and twenty six are standard
+of this paper and its policy analysis (Table~\ref{tab:eleven}, \new{thirteen}
+internally and \new{seventeen} externally calibrated), and twenty six are standard
 (Table~\ref{tab:stdparams}, eight internally and eighteen externally).
 
 The tables carry the parameter, its description, the moment and source used to
@@ -2385,12 +2388,16 @@ being ill and out of work, so it decides how far such a household can fall. Rais
 it and the private cost of that state falls, and with it the externality on a
 child likelier to reach it, at the price of a higher tax on everybody else; lower
 it and more households with SMI fall to the same zero income as everyone else out
-of work, so more of them lose their housing. It is calibrated internally, to the
-SMI share of the homeless in Gutwinski et al.\ (2021), which is
-$25$ percent. \new{It calibrates low, and that is what the expected
-form of the parameter says it should be: it is a benefit most households with
-SMI never receive, so a small number here is rare receipt rather than a
-negligible benefit for those who get one.}
+of work, so more of them lose their housing. \new{It is set externally to zero,
+and the reason is the shape of the parameter rather than the size of the
+benefit. $\zeta_{DI}$ is an expected payment, so calibrating it to a positive
+number gives every unemployed household with SMI the same certain floor. About
+three in thirteen of them receive disability insurance; the other ten receive
+nothing at all, and those ten are the households that fall to zero income and
+lose their housing. A mean-field floor removes exactly the margin this paper
+measures. Setting the parameter to zero puts the model on the modal household
+rather than the average one, and the SMI share of the homeless is then reported
+with the untargeted moments rather than matched.}
 
 \item[$\rho_m$, earnings lost to SMI.]\query{Flagged: keep $\rho_m$ or take it
 out?} The counterpart of $\rho_d$ for mental
