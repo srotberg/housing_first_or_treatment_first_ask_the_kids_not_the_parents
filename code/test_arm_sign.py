@@ -41,6 +41,10 @@ CASES = [
     # the fallbacks, each of which must be UP rather than a guess
     ('lambda_addiction', {'lambda_d': 0.005}, +1.0,
      'its pairs split 6 to 11, so the sign is unknown and must not be guessed'),
+    ('relative_share_of_addiction_1', {'theta': 0.1046}, +1.0,
+     'its response is non-monotone near the anchor: theta falls from 0.1046 to '
+     '0.0744 as the parameter rises from 0.470 to 0.495, then climbs steeply, so '
+     'the 13-of-13 pooled count is not evidence and the sign must not be used'),
     ('weight_on_child', {'omega': 0.2}, +1.0,
      'OWNS states no target for it, so the gap has no direction'),
     ('probability_becoming_unemployed', {}, +1.0,
