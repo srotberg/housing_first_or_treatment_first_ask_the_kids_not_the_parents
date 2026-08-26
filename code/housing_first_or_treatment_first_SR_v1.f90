@@ -850,6 +850,25 @@
         ! Some do receive it, so zero is an approximation rather than a
         ! description. It is the closer of the two available to a group that
         ! mostly receives nothing.
+        !
+        ! WHY IT IS ONE NUMBER AND NOT A STATE. Whether a household draws DI is
+        ! genuinely a state: it is persistent, and it splits the population into
+        ! two groups facing different budget constraints. Carrying it would mean
+        ! another dimension on every value function and every distribution pass,
+        ! and this model is already slow enough that one more state costs a large
+        ! multiple of the running time. The expected payment is what buys that
+        ! back.
+        !
+        ! THE ALTERNATIVE, IF THE APPROXIMATION EVER TURNS OUT TO MATTER. Add a
+        ! permanent binary state at SMI onset: with probability about 3/13 the
+        ! household is awarded DI and receives a replacement rate of 0.25 for as
+        ! long as it remains ill, and otherwise it receives nothing, forever. That
+        ! is the object zeta_DI is averaging over, and it is the right way to
+        ! recover the dispersion the average throws away -- the ten who get
+        ! nothing are the ones who fall to zero income and lose their housing, and
+        ! a mean-field floor hides exactly that margin. It is not free: it is the
+        ! extra state above, which is why it is written down here rather than
+        ! built.
         real(8) :: zeta_DI=0.d0
         ! EXTERNALLY SET, so the adjuster is zero and nothing brackets on it.
         real(8) :: zeta_DI_adjuster=0.d0
