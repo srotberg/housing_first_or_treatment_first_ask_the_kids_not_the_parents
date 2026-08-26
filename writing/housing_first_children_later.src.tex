@@ -1481,7 +1481,12 @@ is out of work and carries SMI. Unemployment insurance (UI) is paid in the first
 the replacement rate $\psi_{ui}$ on an earnings base capped at average income
 $\bar y$, both as in equation~\eqref{eq:inc}. $\zeta_{DI}$ is the rate at which disability
 insurance (DI) replaces the income of an unemployed household with SMI, and that
-DI does not stop until the household recovers.
+DI does not stop until the household recovers. \new{It is an EXPECTED
+replacement, averaged over whether such a household receives DI at all: award
+rates are low and most never do, so the parameter is the product of what the
+programme pays and how rarely it pays it. Only that product ever enters the
+budget constraint, so only the product is identified, and it is calibrated
+directly rather than split into two numbers the model cannot separate.}
 
 
 
@@ -2382,7 +2387,10 @@ child likelier to reach it, at the price of a higher tax on everybody else; lowe
 it and more households with SMI fall to the same zero income as everyone else out
 of work, so more of them lose their housing. It is calibrated internally, to the
 SMI share of the homeless in Gutwinski et al.\ (2021), which is
-$@@q_zeta_di@@$ percent.
+$@@q_zeta_di@@$ percent. \new{It calibrates low, and that is what the expected
+form of the parameter says it should be: it is a benefit most households with
+SMI never receive, so a small number here is rare receipt rather than a
+negligible benefit for those who get one.}
 
 \item[$\rho_m$, earnings lost to SMI.]\query{Flagged: keep $\rho_m$ or take it
 out?} The counterpart of $\rho_d$ for mental
