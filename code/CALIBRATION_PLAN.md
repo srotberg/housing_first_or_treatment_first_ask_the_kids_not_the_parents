@@ -578,7 +578,46 @@ carries both the parameter and the moment.
 | `cbar` | 60% | `max_food_cost` | corr +0.91, works cleanly, just mis-set |
 | `h_2` | 50% | `smallest_house_size` | not in the block at all, so nothing is calibrating it |
 
-**lambda_d is stuck on relative_share_of_addiction_1, not lambda_addiction.** At
+**CORRECTED 26 AUGUST, BY CONTROLLED PROBES.** What follows below was read off
+pooled archive medians and is wrong. Five probes, each moving one parameter off
+the leader and nothing else, say:
+
+| relative_share_of_addiction_1 | b (target 0.089) | lambda_d (0.0368) | ratio (needs 0.413) |
+|---|---|---|---|
+| 0.470 | 0.073 | 0.0054 | 0.074 |
+| 0.485 | 0.107 | 0.0075 | 0.070 |
+| 0.495 | 0.154 | 0.0129 | 0.084 |
+| 0.505 | 0.217 | 0.0234 | 0.108 |
+
+The user rate triples while the ratio barely moves, and h_1 blows up with it.
+There is no window here: this parameter cannot deliver lambda_d at a valid b.
+
+`lambda_addiction` can, and it was dismissed too early. Controlled, from the
+leader to its own vertex:
+
+| lambda_addiction | b | lambda_d | ratio |
+|---|---|---|---|
+| 3.54 | 0.0727 | 0.00538 | 0.074 |
+| 4.95 | 0.0405 | 0.00370 | 0.091 |
+
+d ln(ratio)/d ln(lambda_addiction) = +0.63, and d ln(b)/d ln(lambda_addiction)
+= **-1.74**. So the hazard raises the ratio and pushes the user rate DOWN, which
+is why it looked ambiguous in the pooled pairs: it moves both, in opposite
+directions. That is exactly what makes it the right instrument once b is
+compensated -- lower `addiction_scalar_1` at the same time and the user rate
+comes back while the ratio keeps rising. The archive already holds one such
+point: lambda_addiction 9.0 with addiction_scalar_1 0.0215 gave b 0.0767 and
+lambda_d 0.0309, a ratio of 0.403 against the 0.413 wanted.
+
+THE LESSON, WHICH IS THE ONE SECTION 7 KEEPS MAKING: a pooled correlation over
+points that differ in everything is not evidence about an instrument. Both wrong
+readings here -- that relative_share_of_addiction_1 had a usable window, and
+that probability_becoming_unemployed was a dead lever at +0.06 -- came from
+pooling, and both were overturned by a single pair that differed in one
+parameter.
+
+**Superseded, kept for the record: lambda_d is stuck on
+relative_share_of_addiction_1, not lambda_addiction.** At
 the leader's own `lambda_addiction` the share of users who become disordered
 still spans 0.020 to 0.565 across points, which brackets the 0.413 the data
 needs, so `lambda_addiction` is not what holds it. Against
