@@ -737,6 +737,10 @@
         real(8), parameter :: wealth_bin_top=50.d0
         real(8), dimension(wealth_bins) :: wealth_hist_mass,wealth_hist_wealth
         real(8) :: bottom_half_wealth_share
+        ! the bottom 1, 5, 10, 25 and 50 per cent
+        real(8), dimension(5), parameter :: wealth_percentiles=&
+            (/0.01d0,0.05d0,0.10d0,0.25d0,0.50d0/)
+        real(8) :: wealth_hist_mass_check,wealth_hist_wealth_check
         real(8), dimension(:), allocatable :: smi_onset_shape_by_age
 
         ! ONSET IS NOW A LEVEL ON THAT SHAPE, AND THE LEVEL IS CALIBRATED.
@@ -3149,8 +3153,8 @@
         real(8), parameter :: empirical_land_to_housing_stock=0.314395015 
         real(8) :: land_to_housing_stock
         real(8) :: c_min,c_1,c_1_2  
-        integer :: wealth_bin_index
-        real(8) :: cumulative_mass_1,cumulative_wealth_1,share_of_bin_1
+        integer :: wealth_bin_index,percentile_index_1
+        real(8) :: cumulative_mass_1,cumulative_wealth_1,share_of_bin_1,percentile_1
         real(8) :: cutoff_housing_investment
         real(8), dimension(2) :: cutoff_housing_investment_bisection                 
         real(8), parameter :: stopping_rule_cutoff_housing_investment=10.d0**(-5) 
@@ -3493,6 +3497,7 @@
             model_average_assets_drug_users,model_drug_users_getting_voucher,model_eligibles_getting_voucher_relative_to_pop,&
             model_choose_addiction_when_income_is_low,model_average_drug_spending_experimenters,model_drug_threshold,&
             model_fraction_light_users
+        real(8), dimension(5,transition_length) :: model_wealth_share_below
             
         real(8) :: distance_drug_threshold,stopping_rule_drug_threshold=10.d0**(-4)
             
@@ -4364,8 +4369,23 @@
                 model_median_assets_to_income(1)
             write(*,*) "DIAG average assets of the homeless              =",&
                 model_avg_homeless_assets(1)
+            write(*,*) "DIAG wealth share of the bottom  1 pct           =",&
+                model_wealth_share_below(1,1)
+            write(*,*) "DIAG wealth share of the bottom  5 pct           =",&
+                model_wealth_share_below(2,1)
+            write(*,*) "DIAG wealth share of the bottom 10 pct           =",&
+                model_wealth_share_below(3,1)
+            write(*,*) "DIAG wealth share of the bottom 25 pct           =",&
+                model_wealth_share_below(4,1)
             write(*,*) "DIAG bottom half share of net worth              =",&
                 model_bottom_half_wealth_share(1), " data= 0.0252"
+            ! IS THE HISTOGRAM THE WHOLE DISTRIBUTION? Both should read 1.0. If
+            ! they do not, the shares above are read off the wrong denominator
+            ! and none of them mean anything.
+            write(*,*) "DIAG histogram mass / distribution  (want 1.0)   =",&
+                wealth_hist_mass_check
+            write(*,*) "DIAG histogram wealth / total wealth (want 1.0)  =",&
+                wealth_hist_wealth_check
 
             write(*,*) "===== END OF MOMENTS ====="
 
@@ -7293,28 +7313,46 @@
         ! per cent. A share far above that is a lower tail with too much in it,
         ! which is the same thing as saying nobody can be shut out of the
         ! smallest rent.
-        cumulative_mass_1=0
-        cumulative_wealth_1=0
+        do percentile_index_1=1,5
 
-        do wealth_bin_index=1,wealth_bins
+            percentile_1=wealth_percentiles(percentile_index_1)
+            cumulative_mass_1=0
+            cumulative_wealth_1=0
 
-            if (cumulative_mass_1+wealth_hist_mass(wealth_bin_index)>=&
-                0.5d0*sum_of_distribution) then
+            do wealth_bin_index=1,wealth_bins
 
-                share_of_bin_1=(0.5d0*sum_of_distribution-cumulative_mass_1)/&
-                    max(wealth_hist_mass(wealth_bin_index),10.d0**(-12))
-                cumulative_wealth_1=cumulative_wealth_1+&
-                    share_of_bin_1*wealth_hist_wealth(wealth_bin_index)
-                exit
+                if (cumulative_mass_1+wealth_hist_mass(wealth_bin_index)>=&
+                    percentile_1*sum_of_distribution) then
 
-            end if
+                    share_of_bin_1=(percentile_1*sum_of_distribution-cumulative_mass_1)/&
+                        max(wealth_hist_mass(wealth_bin_index),10.d0**(-12))
+                    cumulative_wealth_1=cumulative_wealth_1+&
+                        share_of_bin_1*wealth_hist_wealth(wealth_bin_index)
+                    exit
 
-            cumulative_mass_1=cumulative_mass_1+wealth_hist_mass(wealth_bin_index)
-            cumulative_wealth_1=cumulative_wealth_1+wealth_hist_wealth(wealth_bin_index)
+                end if
+
+                cumulative_mass_1=cumulative_mass_1+wealth_hist_mass(wealth_bin_index)
+                cumulative_wealth_1=cumulative_wealth_1+wealth_hist_wealth(wealth_bin_index)
+
+            end do
+
+            model_wealth_share_below(percentile_index_1,time_period)=cumulative_wealth_1/&
+                max(model_total_net_wealth(time_period),10.d0**(-12))
 
         end do
 
-        model_bottom_half_wealth_share(time_period)=cumulative_wealth_1/&
+        model_bottom_half_wealth_share(time_period)=model_wealth_share_below(5,time_period)
+
+        ! DOES THE HISTOGRAM ACTUALLY HOLD THE WHOLE DISTRIBUTION? If its mass
+        ! does not equal sum_of_distribution, or its wealth does not equal the
+        ! total, then the loop it is accumulated in covers less than the model
+        ! does and every share above is read off the wrong denominator. This is
+        ! the check that would catch that, and it is reported rather than
+        ! assumed, because a share of 27 per cent against a data figure of 2.5
+        ! is exactly the kind of number that ought to be doubted first.
+        wealth_hist_mass_check=sum(wealth_hist_mass)/max(sum_of_distribution,10.d0**(-12))
+        wealth_hist_wealth_check=sum(wealth_hist_wealth)/&
             max(model_total_net_wealth(time_period),10.d0**(-12))
             
         model_avg_mortgage_spending(time_period)=model_avg_mortgage_spending(time_period)/mass_of_owners(time_period)
