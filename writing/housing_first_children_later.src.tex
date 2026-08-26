@@ -225,28 +225,32 @@ The SUD externality works as follows. A parent's SUD lowers the child's own earn
 and a lower earning child is then likelier to decide to use and consequently to
 acquire a SUD themselves, which then means they are likelier to lose work, to end up on
 the street and to die young. Evidence shows that children of a parent with a disorder
-are \new{between one and a half and two and a half} times more likely to acquire one
-themselves \new{when one parent is affected (Mellentin et al., 2016; Yoon et al., 2013)}, and
+are between one and a half and two and a half times more likely to acquire one
+themselves when one parent is affected (Mellentin et al., 2016; Yoon et al., 2013), and
 the earnings loss is also visible in children exposed in utero to a Swedish  alcohol experiment, who earn about $@@del_d_pc@@$ percent less as adults
 (Nilsson, 2017). This half favours Treatment First, since any use that conditionality
 deters is a chain it never starts.
 
 Homelessness also creates an externality, and it runs through the same chain: a
 parent's homelessness lowers the child's earnings, and everything that follows from
-lower earnings follows again. The evidence supports this channel as well. Children
+lower earnings follows again. \new{Evidence shows that children of a parent who was
+homeless are about $1.8$ to $2.4$ times more likely to be homeless themselves
+(Bassuk et al., 1997), and the earnings loss shows up here as well:} Children
 displaced from Chicago's public housing earned $16$ percent more a year as adults
 (Chyn, 2018), and a move to a lower-poverty neighbourhood before age thirteen raises
 adult earnings by $@@del_h_pc@@$ percent (Chetty et al., 2016). This half favours Housing First,
 since the policy that houses more people is the one that stops more of these chains.
 
-All three penalties are disciplined against data. \new{The disorder and homelessness
-penalties are set from the earnings estimates just quoted, which measure the object
+\new{Both} penalties are disciplined against data. The disorder and homelessness
+penalties are set from the earnings estimates just quoted \new{($@@del_d_pc@@$ percent
+for the SUD and $@@del_h_pc@@$ percent for homelessness)}, which measure the object
 the model actually transmits, and the transmission ratios are then left untargeted:
-a child of a parent with a SUD is @@ratio_d_model@@ times as likely to acquire one
-itself, against a midpoint of @@ratio_t@@ in the two nationwide one-parent estimates,
-Mellentin et al.\ (2016) and Yoon et al.\ (2013); the child of a homeless parent is
-@@ratio_h_model@@ times as likely to be homeless themselves, against @@ratio_h_t@@ in
-Bassuk et al.\ (1997). Neither ratio was shown to the model.} What makes these externalities is
+\new{in the model,} a child of a parent with a SUD is @@ratio_d_model@@ times as likely to acquire one
+itself, against \new{@@ratio_t@@ in the data}; the child of a homeless parent is
+@@ratio_h_model@@ times as likely to be homeless themselves, against @@ratio_h_t@@ \new{in
+the data}.
+
+What makes these externalities is
 that a parent counts only a fraction of what it does to its child,
 so the remainder is external whenever that fraction is less than one.
 The weight the parent puts on its child is
@@ -476,8 +480,8 @@ record of the child welfare system documents it at scale: parental substance abu
 recorded at more than a third of removals. The epidemiological literature
 documents it too. Household substance abuse is one of the adverse childhood
 experiences of Felitti et al.\ (1998), and children of a parent with a SUD are
-\new{between one and a half and two and a half} times more likely to acquire one
-themselves \new{when one parent is affected (Mellentin et al., 2016; Yoon et al., 2013)}.
+between one and a half and two and a half times more likely to acquire one
+themselves when one parent is affected (Mellentin et al., 2016; Yoon et al., 2013).
 
 The second link is that the childhood shows up in the child's own adult
 earnings, and the mechanism is as follows. A parent who has lost their job
@@ -495,38 +499,29 @@ puts the return to a year of schooling at around ten percent. And Nilsson
 (2017) closes the loop on a parental substance shock in
 particular: children exposed in utero to a Swedish experiment that sharply raised
 alcohol availability earn about @@del_d_pcw@@ percent less as adults and finish less
-schooling. What no study does
-is estimate the effect of a parent's SUD on a child's lifetime earnings directly. \new{That
-gap is not one the model can close, so $\delta_d$ takes the closest thing the
-literature does measure and is Nilsson's coefficient itself: the penalty stands for
-what a parental substance shock does to the household a child is raised in, and that
-is what the Swedish experiment identifies. The disorder ratio it then implies is left
-untargeted and reported as a check.}
+schooling. \new{On the transmission of the disorder itself, Mellentin et al.\ (2016)
+follow $398{,}881$ offspring in the Danish registers and Yoon et al.\ (2013) a United
+States population-based sample, and both find a child with one affected parent
+likelier to acquire a SUD, at $1.44$ and $2.51$ respectively; McGovern et al.\ (2023)
+review the same transmission across maternal and paternal use.} What no study does
+is estimate the effect of a parent's SUD on a child's lifetime earnings directly.
 
 The third is that housing, and the poverty that comes with bad housing,
 is one of the environments doing the transmitting, and it affects the
 transmission of earnings as well. Chyn (2018) finds that children
 displaced by Chicago's public housing demolitions earned sixteen percent more a year
-as adults. \new{Chetty et al.\ (2016) is what the homelessness penalty is set
-from. They estimate that a move to a lower-poverty neighbourhood before age thirteen
-raises adult earnings by @@del_h_pcw@@ percent, and the gain falls with the age at the
-move, which says that what is transmitted is the environment a child is raised in
-rather than anything the child carries. That environment is what $\delta_h$ stands
-for in equation~\eqref{eq:kids}, and it enters the child's problem as earnings and
-as nothing else, so $\delta_h$ takes their estimate directly.}
+as adults. \new{Chetty et al.\ (2016) estimate that a move to a lower-poverty
+neighbourhood before age thirteen raises adult earnings by @@del_h_pcw@@ percent, and
+the gain falls with the age at the move, which says that what is transmitted is the
+environment a child is raised in rather than anything the child carries.}
 
-\new{Bassuk et al.\ (1997) then becomes a check rather than the target, and the model is
-the stronger for it. Its case-control design is what makes it usable: among $220$
-homeless mothers and $216$ low-income housed mothers, a homeless caretaker is likelier
-in the homeless arm on both the mother's and the father's side, at odds ratios of
-$1.80$ and $2.41$, a midpoint of @@ratio_h_t@@. Shown an earnings estimate and never
-shown an odds ratio, the stylized model transmits homelessness at @@ratio_h_model@@,
-@@rhdir@@ that midpoint. The honest caveat runs the other way from the old ordering:
-Bassuk is observational and single-city where Chetty is quasi-experimental, so the
-check is the weaker of the two and the target the stronger.} Fogli and Guerrieri (2019) put the same mechanism inside a
+\new{Bassuk et al.\ (1997) measure the transmission of homelessness itself. Its
+case-control design is what makes it usable: among $220$ homeless mothers and $216$
+low-income housed mothers, a homeless caretaker is likelier in the homeless arm on
+both the mother's and the father's side, at odds ratios of $1.80$ and $2.41$.} Fogli
+and Guerrieri (2019) put the same mechanism inside a
 general equilibrium model, where parents choose the neighbourhood they raise a child in
-and local spillovers feed back into the return to education; $\delta_h$ is the reduced
-form of that feedback rather than a competing account of it.
+and local spillovers feed back into the return to education.
 
 What this paper adds is not another estimate but a price:
 it puts these magnitudes inside an equilibrium model where the parent's use decision
@@ -1194,7 +1189,7 @@ household substance abuse is one of the adverse childhood experiences in Felitti
 et al.\ (1998), and it predicts higher rates of depression, worse self-reported
 health and lower life satisfaction in adulthood; the children of parents with a
 SUD also have lower educational attainment, which is the premise of the
-transmission literature $\delta_d$, presented shortly below, is \new{checked against (Mellentin et al., 2016; Yoon et al., 2013)}.
+transmission literature $\delta_d$, presented shortly below, is checked against (Mellentin et al., 2016; Yoon et al., 2013).
 A model in which the transmitted trait raises the child's own welfare cannot be
 describing any of that, whatever it does to the transmission rate.
 
@@ -1209,8 +1204,8 @@ and this model already puts users at the bottom, so a child born poorer is
 mechanically more likely to use, which is aligned with the data. It is also
 supported by the empirical evidence, and it stands in for more than income alone: a parent
 who diverts spending and time to drugs invests less in the child's education and
-development, and the income penalty is the reduced form of all of that (Chetty et al., 2016; McGovern et al., 2023). The income
-gradient does the whole job, so the model transmits a SUD across generations
+development. \new{The income
+gradient does the whole job}, so the model transmits a SUD across generations
 \emph{without transmitting any preference for drugs}.
 
 A child's baseline income is drawn from the same lognormal as everyone else, and
@@ -1225,28 +1220,12 @@ model the altruism of parents towards their children is calibrated rather than
 set to zero, so that the channel where a parent does take some account of what it
 does to its child is present and only the remainder is external.}
 
-\new{Both penalties are set rather than calibrated, and set from earnings estimates.
-Equation~\eqref{eq:kids} gives a parent's condition exactly one way to reach its
-child, through $y_{\text{child}}$, so the quantity $\delta_d$ and $\delta_h$ name is
-an earnings loss and the studies that measure one are the studies that identify them.
+\new{Both penalties are set from earnings estimates rather than calibrated.
 $\delta_d = @@del_d@@$ is Nilsson (2017), who follows children exposed in utero to
 Sweden's regional experiment in strong beer and finds they earn @@del_d_pc@@ percent
 less as adults. $\delta_h = @@del_h@@$ is Chetty et al.\ (2016)'s @@del_h_pc@@ percent,
 the adult earnings gain from a move to a lower-poverty neighbourhood before age
 thirteen. Both are shown in Table~\ref{tab:children}.}
-
-\new{The transmission ratios are what the model then delivers, untargeted, and they are
-where it can be caught. At $\delta_d = @@del_d@@$ a child of a parent who acquired a
-SUD is @@ratio_d_model@@ times as likely to acquire one itself, against a midpoint of
-@@ratio_t@@ in the two nationwide estimates for a child with \emph{one} affected
-parent: $1.44$ in the Danish register of $398{,}881$ offspring (Mellentin et al.\ 2016)
-and $2.51$ in the United States population-based study (Yoon et al.\ 2013). At
-$\delta_h = @@del_h@@$ the child of a homeless parent (at the time of their death) is
-@@ratio_h_model@@ times as likely to be homeless itself, against @@ratio_h_t@@, the
-midpoint of the odds ratios of $1.80$ and $2.41$ in Bassuk et al.\ (1997), a
-case-control study of $220$ homeless mothers and $216$ low-income housed mothers in
-Worcester, Massachusetts. The model lands @@rddir@@ the evidence on the
-first and @@rhdir@@ it on the second.}
 What these magnitudes mean, and what the evidence says about them, is taken up in the
 calibration of the quantitative model, Section~\ref{sec:fullcal}. Here $\delta_d$ and
 $\delta_h$ are illustrating the mechanism rather than measuring it.
@@ -1487,7 +1466,7 @@ n\,y\,\varepsilon(j)\,\rho_{d}^{\mathbf{1}\{d=1\}}\rho_{m}^{\mathbf{1}\{m=1\}}
  & j<J_{R},\ e=1 \quad\text{(employed)}\\[2pt]
 \psi_{ui}\,\min\{y\,\varepsilon(j),\ \bar y\}
  & j<J_{R},\ e=2 \quad\text{(first year of a spell)}\\[2pt]
-\new{\zeta_{DI}}\,y\,\varepsilon(j) & j<J_{R},\ e=3,\ m=1 \quad\text{(disability)}\\[2pt]
+\zeta_{DI}\,y\,\varepsilon(j) & j<J_{R},\ e=3,\ m=1 \quad\text{(disability)}\\[2pt]
 0 & \text{otherwise,}
 \end{cases}
 \end{equation}
@@ -2309,7 +2288,7 @@ rate each time the penalty changes, and once it is, the composition of users is
 back where it started.\query{Flagged: this footnote is about $\rho_d$ and goes
 with it if $\rho_d$ is discarded.}}
 
-\new{$\rho_d$} is what makes the disorder costly at every income rather than only through
+$\rho_d$ is what makes the disorder costly at every income rather than only through
 the job, so it is what decides how much of the homeless population is working:
 $\kappa_{ued}$ carries the disorder into unemployment, and this carries it into
 poverty even when the household keeps its job. Its value is chosen so the model
@@ -2385,7 +2364,7 @@ child of a user now inherits a higher chance of illness that is a consequence
 of the productivity penalty. Treatment First's return rises as $\iota$ rises,
 because curing the disorder now prevents some cases of SMI too. It is set externally at two, from the
 Danish registers in Nielsen et al.\ (2017).
-\item[\new{$\lambda_m$, the annual chance of recovering from SMI.}]\new{ This parameter
+\item[$\lambda_m$, the annual chance of recovering from SMI.] This parameter
 governs how long an episode of mental illness lasts: it is the hazard of leaving
 the SMI state each year, so it sets the persistence of the illness rather than
 how many households ever acquire it. Raise it and mental illness is less
@@ -2393,17 +2372,17 @@ persistent, so the private cost falls, because fewer years are spent with SMI,
 and the externality falls with it, since a child who is likelier to acquire a SUD
 and through it SMI has a higher chance of recovery and a higher value of life. It
 is set externally at $@@q_lambda_m@@$, the annual hazard that gives a
-\new{$@@f_smi_ten_year_recovery_data_pc@@$ per cent} chance of recovery within ten years,
-\new{the ten-year clinical recovery rate reported by {\AA}sb{\o} et al.\ (2022)}.}
-\item[\new{$\omega_m$, the level of the SMI onset profile.}]\new{ This parameter
+$@@f_smi_ten_year_recovery_data_pc@@$ per cent chance of recovery within ten years,
+the ten-year clinical recovery rate reported by {\AA}sb{\o} et al.\ (2022).
+\item[$\omega_m$, the level of the SMI onset profile.] This parameter
 governs how many households ever acquire mental illness: it scales the age
 profile of onset up or down without changing its shape, so it fixes the size of
 the SMI population rather than who reaches it or when. Raise it and both the
 private cost and the externality rise, since a child is likelier to reach a state
 that costs earnings, employment and years of life. It is calibrated internally,
 to the share of the population carrying SMI in NSDUH 2024, which is
-$@@q_omega_m@@$ percent.}
-\item[\new{$\zeta_{DI}$, disability insurance for the unemployed.}]\new{
+$@@q_omega_m@@$ percent.
+\item[$\zeta_{DI}$, disability insurance for the unemployed.]
 This parameter sets the floor under one of the worst states in the model,
 being ill and out of work, so it decides how far such a household can fall. Raise
 it and the private cost of that state falls, and with it the externality on a
@@ -2411,7 +2390,7 @@ child likelier to reach it, at the price of a higher tax on everybody else; lowe
 it and more households with SMI fall to the same zero income as everyone else out
 of work, so more of them lose their housing. It is calibrated internally, to the
 SMI share of the homeless in Gutwinski et al.\ (2021), which is
-$@@q_zeta_di@@$ percent.}
+$@@q_zeta_di@@$ percent.
 
 \item[$\rho_m$, earnings lost to SMI.]\query{Flagged: keep $\rho_m$ or take it
 out?} The counterpart of $\rho_d$ for mental
@@ -2440,7 +2419,7 @@ earnings and lowers its chance of being unhoused, so part of Treatment First's
 return appears in the health of the children of those treated for a SUD rather
 than in the treated household's own drug use. Its value is chosen
 so the model generates the employment rate given SMI, about $@@q_kappa_uem@@$ percent, the
-midpoint of the range for high-disability diagnoses \new{in Mechanic et al.\ (2002)}.
+midpoint of the range for high-disability diagnoses in Mechanic et al.\ (2002).
 \item[$\mu_m$, the SUD recovery multiplier for SMI.] This parameter is the
 second direction of the
 chain: not only does a SUD increase the chance of SMI, but SMI also means
@@ -2540,20 +2519,15 @@ easier once housed,
 while the parent's own private cost is largely unchanged, which is exactly what makes it an
 externality. To my knowledge, no paper estimates the effect of a parent's SUD on a child's lifetime
 earnings directly. \new{It is set externally at $@@q_delta_d@@$, the earnings loss
-Nilsson (2017) measures for children exposed in utero to a Swedish alcohol experiment,
-and the disorder ratio it implies is reported with the untargeted moments rather than
-matched.}
+Nilsson (2017) measures for children exposed in utero to a Swedish alcohol
+experiment.}
 \item[$\delta_h$, what the child loses to homelessness.] It works through the same
 compounding draw as $\delta_d$, and as it rises it loads whichever policy houses
 more people: Housing First directly, Treatment First by removing the disorder that
 leads to homelessness in the first place, again leaving
-the private cost mostly unchanged. \new{It is set externally alongside
-$\delta_d$, at $@@q_delta_h@@$, the adult earnings gain Chetty et al.\ (2016) measure
-from a move to a lower-poverty neighbourhood before age thirteen, and the transmission
-ratio it used to be calibrated on is reported with the untargeted moments instead:}
-Bassuk et al.\ (1997)
-compare $220$ homeless mothers with $216$ low-income housed mothers and find odds ratios of $1.80$ and $2.41$\new{, whose midpoint is what the model is
-then judged against}.
+the private cost mostly unchanged. \new{It is set externally at $@@q_delta_h@@$, the
+earnings loss from poverty that Chetty et al.\ (2016) measure: the adult earnings gain
+from a move to a lower-poverty neighbourhood before age thirteen.}
 \item[$\kappa_x$, the disamenity of homelessness.]\label{sec:fleftout} This is the
 only parameter through which one
 household's housing status is connected to the utility of another who is not its own child,
@@ -2770,7 +2744,7 @@ annually with its income limits
 Voucher programme
 (\url{https://www.hud.gov/helping-americans/housing-choice-vouchers}).
 
-\item[\new{$\varrho$, the food stamp clawback rate.}] This is the rate at which food assistance is withdrawn as income rises. I set it to thirty percent, which is the statutory rule: a household\textquotesingle s monthly allotment is the maximum allotment for its size reduced by thirty percent of its net monthly income (7 CFR 273.10). It matters beyond the level of the transfer, because it is the implicit marginal tax the programme puts on earnings for the households the paper is about: an extra dollar earned costs a household on food assistance $\varrho$ of a dollar of its allotment.
+\item[$\varrho$, the food stamp clawback rate.] This is the rate at which food assistance is withdrawn as income rises. I set it to thirty percent, which is the statutory rule: a household\textquotesingle s monthly allotment is the maximum allotment for its size reduced by thirty percent of its net monthly income (7 CFR 273.10). It matters beyond the level of the transfer, because it is the implicit marginal tax the programme puts on earnings for the households the paper is about: an extra dollar earned costs a household on food assistance $\varrho$ of a dollar of its allotment.
 \end{description}
 
 \paragraph{Drug market.} These three parameters describe the rest of the drug
@@ -2819,8 +2793,8 @@ to be downloaded first.
 Two shares of the earnings distribution come out alongside the one $\sigma_y$ is
 chosen on and are untargeted: the model's top tenth holds $38.5$ percent of earnings
 against $41.1$ in the data, and its bottom tenth $1.1$ percent against $0.99$.
-The last row is the intergenerational transmission the paper turns on, and it is the
-one moment here that needs a word about its construction. Bassuk et al.\ (1997) is a
+\new{The last three rows are the intergenerational transmission the paper turns on,
+and the homelessness one needs a word about its construction.} Bassuk et al.\ (1997) is a
 case-control study of $220$ homeless mothers and $216$ low-income housed mothers, so
 both arms are poor and the comparison isolates transmission from the poverty that
 accompanies it. The share whose primary female caretaker had ever been homeless was
@@ -2832,10 +2806,20 @@ substantial: among the households of the Journeys Home panel (Scutella
 et al., 2012), every one of them on income support, those first homeless as children
 were more than twice as likely to have been in foster care.
 
-\begin{center}\footnotesize\setlength{\tabcolsep}{4pt}
+\begin{table}[!tb]
+\centering
+\new{\caption{Moments the model is not asked to match}\label{tab:untargeted}}
+\footnotesize\setlength{\tabcolsep}{4pt}
 % l columns so no row can wrap. Measured at \footnotesize the widest entries are
 % 193.1 + 147.8 + 106.3 = 447.2pt, and two gaps at 4pt add 16pt, for 463.2pt inside
-% a 469.8pt text block. The first column grew when the age bands were spelled out.
+% a text block that is NOT 469.8pt. Measured with \settowidth at \footnotesize the
+% three columns are 193.09 + 147.81 + 106.26 = 447.16pt, and with the two 8pt gaps
+% that is 463.16pt against a block of 454.78pt, so the table has been 8.39pt too
+% wide for some time -- LaTeX reports exactly that overfull box, and it is there
+% with or without the two transmission rows added below, which were measured at
+% 185.80, 35.42 and 83.10pt and sit inside every column maximum. The 469.8pt in
+% this note was wrong, which is why appending against it looked safe.
+% The first column grew when the age bands were spelled out.
 % IT OVERFLOWED BY 23.4pt ONCE THE STANDARDISED MORTALITY RATIO SPELLED ITS
 % BANDS OUT IN THE LABEL. The bands moved to the data column, which was not the
 % binding column: its widest entry is the homelessness rate's five figures, and
@@ -2865,9 +2849,11 @@ Working at all, homeless in treatment & 6.6 percent & TEDS-A 2022 \\
 Price elasticity of demand, participation & $-0.63$ & Saffer and Chaloupka (1999) \\
 Price elasticity of demand, intensive margin & $-0.55$ & Midpoint, Section~\ref{sec:literature} \\
 Odds a homeless adult had a homeless caretaker & 1.8 to 2.4 & Bassuk et al.\ (1997) \\
+\new{Odds a child of a parent with a SUD acquires one} & \new{1.44} & \new{Mellentin et al.\ (2016)} \\
+\new{The same, United States} & \new{2.51} & \new{Yoon et al.\ (2013)} \\
 \bottomrule
 \end{tabular}
-\end{center}
+\end{table}
 
 Every parameter is disciplined, either by a moment the model is asked to
 reproduce or by an estimate taken from outside it, and
@@ -3064,8 +3050,8 @@ executive order.
 \item Mace, C., E. Patel and N. Seegert (2020). ``Marijuana Taxation and Imperfect Competition.'' \emph{National Tax Journal} 73(2), 545--92.
 \item McDaniel, C. (2007). ``Average Tax Rates on Consumption, Investment, Labor and Capital in the OECD 1950--2003.'' Working paper, Arizona State University.
 \item McGovern, R. et al.\ (2023). ``Maternal and paternal substance use and child substance use.'' \emph{Addiction} 118(5).
-\item \new{Mellentin, A.\ I.\ et al.\ (2016). ``The risk of offspring developing substance use disorders when exposed to one versus two parent(s) with alcohol use disorder: a nationwide, register-based cohort study.'' \emph{Journal of Psychiatric Research} 80.}
-\item \new{Yoon, G.\ et al.\ (2013). ``Impact of the number of parents with alcohol use disorder on alcohol use disorder in offspring: a population-based study.'' \emph{Journal of Clinical Psychiatry} 74(8), 795--801.}
+\item Mellentin, A.\ I.\ et al.\ (2016). ``The risk of offspring developing substance use disorders when exposed to one versus two parent(s) with alcohol use disorder: a nationwide, register-based cohort study.'' \emph{Journal of Psychiatric Research} 80.
+\item Yoon, G.\ et al.\ (2013). ``Impact of the number of parents with alcohol use disorder on alcohol use disorder in offspring: a population-based study.'' \emph{Journal of Clinical Psychiatry} 74(8), 795--801.
 \item Meyer, B. D., A. Wyse, G. Meyer, A. Grunwaldt and D. Wu (2024). ``Homelessness and the Persistence of Deprivation: Income, Employment, and Safety Net Participation.'' NBER Working Paper 32323.
 \item Milby, J., J. Schumacher, D. Wallace, M. Freedman and R. Vuchinich (2005). ``To house or not to house: the effects of providing housing to homeless substance abusers in treatment.'' \emph{American Journal of Public Health} 95(7), 1259--65.
 \item Murrie, B., J. Lappin, M. Large and G. Sara (2020). ``Transition of Substance-Induced, Brief, and Atypical Psychoses to Schizophrenia: A Systematic Review and Meta-analysis.'' \emph{Schizophrenia Bulletin} 46(3), 505--516.
