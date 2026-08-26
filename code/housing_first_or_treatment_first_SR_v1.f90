@@ -6882,8 +6882,34 @@
                                     ! below zero lands in the first bucket and
                                     ! everything above the top in the last, so no
                                     ! mass is lost at either end.
+                                    ! SCALE BY THE CALIBRATED AVERAGE, NOT THE
+                                    ! MEASURED ONE. model_average_labour_income
+                                    ! is zeroed at the top of this sweep and is
+                                    ! not accumulated until further down the same
+                                    ! household loop, so at THIS line it is still
+                                    ! zero. Dividing by it sent the max() guard to
+                                    ! 1e-8, every household with positive wealth
+                                    ! was clamped into the top bin and everything
+                                    ! at or below zero into the first, and the
+                                    ! percentile walk then split one occupied
+                                    ! bucket proportionally by mass. That returned
+                                    ! a share of exactly p times a constant at
+                                    ! every percentile -- 0.95 per cent of wealth
+                                    ! for the bottom 1 per cent, 47.5 for the
+                                    ! bottom half -- which reads as a perfectly
+                                    ! uniform distribution and is a measurement of
+                                    ! nothing. The histogram consistency pair could
+                                    ! not catch it: total mass and total wealth
+                                    ! were both right, because the error is in how
+                                    ! wealth is spread ACROSS bins.
+                                    !
+                                    ! average_labor_income_calibrated is a fixed
+                                    ! constant, in scope here and independent of
+                                    ! loop order, and it keeps the bin edges the
+                                    ! same across points, which is what makes the
+                                    ! shares comparable between vertices at all.
                                     wealth_bin_index=min(max(1+floor(wealth_bins*&
-                                        (net_wealth_1/max(model_average_labour_income(time_period),&
+                                        (net_wealth_1/max(average_labor_income_calibrated,&
                                         10.d0**(-8)))/wealth_bin_top),1),wealth_bins)
                                     wealth_hist_mass(wealth_bin_index)=&
                                         wealth_hist_mass(wealth_bin_index)+distribution_mass_used
