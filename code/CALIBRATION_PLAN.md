@@ -630,7 +630,39 @@ no single vertex of a multi-directional search can do -- it only appears after a
 reflection combines directions. `theta` is 35 per cent low and shares the
 instrument, so two of the five worst gaps want the same move.
 
-### lambda_m is not reachable, and the loss already knows it
+### lambda_m IS reachable; the dead-lever finding tested the wrong parameter
+
+**Retracted 26 August.** What follows below tested `lambda_m`, the chance of
+recovering from SMI, against the SMI-share-of-the-homeless moment. That is not
+the instrument. `suggest_next.OWNS` says the moment is bracketed by **`zeta_DI`**,
+the disability payment, and it always did. Moving `lambda_m` and finding the
+moment unmoved says nothing about whether the moment can be reached.
+
+Controlled on the right parameter -- the simplex 4 base against its leader, which
+differ in `zeta_DI` and nothing else:
+
+| zeta_DI | lambda_m | h_1 |
+|---|---|---|
+| 0.0825 | 0.0413 | 0.00369 |
+| 0.0250 | 0.0795 | 0.00385 |
+
+d ln(lambda_m)/d ln(zeta_DI) = **-0.55**, and h_1 barely moves, so the homeless
+population the share conditions on stays real. Extrapolated, 0.25 wants zeta_DI
+near 0.0031, which is an eightfold move and has to be bracketed rather than
+trusted -- but the lever is alive and the 70 per cent gap is attackable.
+
+The same round mislabelled `h_2` as having no instrument in the block. It has
+one: the Fortran sets `smallest_house_size` from
+`smallest_rental_relative_to_lowest_income`, which is in the block, and OWNS
+records the pairing. Controlled, d ln(h_2)/d ln(smallest_rental) = +0.80.
+
+TWO MISLABELS IN ONE TABLE, BOTH THE SAME MISTAKE: a moment was matched to a
+parameter by NAME rather than by reading OWNS. `lambda_m` the moment is not
+`lambda_m` the parameter, and `h_2` is not owned by the variable it sets. OWNS
+is the one place that states what a parameter brackets, and anything that
+re-derives it by hand will eventually re-derive it wrong.
+
+### Superseded: lambda_m is not reachable, and the loss already knows it
 
 `lambda_m` at 0.50 and at 0.90 return the SAME moment, 0.044038, and they do it
 where `h_1` is 0.000338 -- a homeless population of three in ten thousand
