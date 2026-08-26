@@ -78,7 +78,16 @@ if __name__ == "__main__":
     # From 19 August \new prints as ordinary text, so the definition carries no
     # red for the stripper to find. The guard is kept because the red form is
     # one edit away and stripping it silently un-reds every marked number.
-    DEF = "\\newcommand{\\new}[1]{\\textcolor{red}{#1}}"
+    # THE GUARD MUST MATCH THE DEFINITION THAT IS ACTUALLY IN THE FILE. It named
+    # the \\textcolor form while the file had carried {\\color{red}#1} since the
+    # macro was restored, and {\\color{red} is itself one of the three openers -- so
+    # a strip would have rewritten the definition to \\newcommand{\\new}[1]{#1} and
+    # turned every mark in the paper black. That is the passthrough bug that ran
+    # for several rounds before check_red.py was written to catch it, and it would
+    # have come back through the stripper rather than through an edit. Both forms
+    # are guarded now, and check_red.py is the backstop either way.
+    DEFS = ["\\newcommand{\\new}[1]{{\\color{red}#1}}",
+            "\\newcommand{\\new}[1]{\\textcolor{red}{#1}}"]
     # THE SAME TRAP CAUGHT \\cw. Its definition contains two red wrappers, and
     # stripping them turned every proposed deletion black: the rule was still
     # drawn and the text still struck, but nothing was red any more, so a whole
@@ -86,9 +95,16 @@ if __name__ == "__main__":
     CWDEF = ("\\newcommand{\\cw}[1]{{\\settowidth{\\cw@len}{#1}%\n"
              "  \\rlap{\\textcolor{red}{\\rule[0.55ex]{\\cw@len}{0.4pt}}}"
              "\\textcolor{red}{\\hspace{0pt}#1}}}")
-    guarded = DEF in src
-    if guarded:
-        src = src.replace(DEF, "@@NEWDEF@@")
+    guarded = None
+    for d in DEFS:
+        if d in src:
+            guarded = d
+            src = src.replace(d, "@@NEWDEF@@")
+            break
+    if guarded is None and "\\newcommand{\\new}" in src:
+        sys.exit("the \\new definition in the file matches no guarded form; "
+                 "add it to DEFS before stripping, or the strip will silently "
+                 "turn every mark in the paper black")
     cwguarded = CWDEF in src
     if cwguarded:
         src = src.replace(CWDEF, "@@CWDEF@@")
@@ -124,7 +140,7 @@ if __name__ == "__main__":
     # the mark goes.
     out = out.replace("\\hspace{0pt}", "")
     if guarded:
-        out = out.replace("@@NEWDEF@@", DEF)
+        out = out.replace("@@NEWDEF@@", guarded)
     if cwguarded:
         out = out.replace("@@CWDEF@@", CWDEF)
     open(p, "w").write(out)
