@@ -47,7 +47,12 @@ LINKS = {
     # own value: sync_tables writes cells[4] from this constant. Pointing
     # it at zeta_DI turned the 25 per cent SMI share of the homeless into
     # 8 per cent, the calibrated transfer, in the column beside its source.
-    r'$\zeta_{DI}$':             'smi_share_of_homeless_data',
+    # NOW THE PARAMETER, NOT ITS OLD MOMENT. zeta_DI is set externally at zero,
+    # so the Value column states the parameter and the link has to point at the
+    # parameter; pointing it at smi_share_of_homeless_data compared a value of
+    # zero against a 25 per cent data target and reported a disagreement that
+    # was really just the stale link.
+    r'$\zeta_{DI}$':             'zeta_DI',
     r'$\kappa_{uem}$':           'employment_rate_given_smi_data',
     r'$\mu_H$':                  'milby_recovery_ratio_data',
     r'$\bar\tau^{u}$':           'treatment_take_up_data',
