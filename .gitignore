@@ -83,3 +83,14 @@ code/hftf_*
 # that copy is what git carries.
 !code/calibration_run.log
 .claude/settings.local.json
+
+# REGENERATED ON EVERY MODEL RUN, SO TRACKING THEM MAKES EVERY WORKER DIRTY.
+# run_one_point.sh writes PARAM_HANDOVER.txt before each solve and the model
+# rewrites B_SWEEP_RAW.tsv during it. While they were tracked, every worker
+# came back with a modified tree, collided on push with the seven others
+# pushing at the same time, and spent turns resolving stashes instead of
+# solving points -- and an uncommitted change to one of them silently blocked
+# the merge to main. They are inputs and byproducts, not results; the results
+# are the point files.
+code/PARAM_HANDOVER.txt
+code/B_SWEEP_RAW.tsv
