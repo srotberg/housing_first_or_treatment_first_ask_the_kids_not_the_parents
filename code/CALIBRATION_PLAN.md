@@ -564,6 +564,27 @@ the test. Spawning the next generation while the last one is still solving is
 how this loop breaks: the arms then differ from a centre that has already moved,
 and every pair they were meant to form is worthless.
 
+### After the calibration: give DI its own state
+
+AGREED WITH THE AUTHOR, TO BE DONE ONCE THE OTHER PARAMETERS HAVE CONVERGED, not
+before. zeta_DI is held externally at zero because it is an expected payment and
+ten of thirteen unemployed households with serious mental illness receive
+nothing, so any positive value gives all thirteen a floor that most do not have.
+
+The honest version of that is a state, not an average: at SMI onset the
+household is awarded DI with probability about 3/13 and then receives a
+replacement rate of 0.25 for as long as it stays ill, or receives nothing,
+permanently. That recovers the dispersion the average throws away, and the
+dispersion is the part that matters -- the ten with no floor are the households
+that fall to zero income and lose their housing, which is the margin the paper
+measures.
+
+It is deferred because it is a whole extra dimension on every value function and
+every distribution pass, and this model is slow enough that one more state costs
+a large multiple of the running time. Adding it mid-search would also invalidate
+every measured point at once. So: converge first on the current structure, then
+add the state and refine the calibration around it.
+
 ### What each of the worst gaps is actually stuck on
 
 Read off the 290-point archive rather than guessed, at the leader of simplex 4
