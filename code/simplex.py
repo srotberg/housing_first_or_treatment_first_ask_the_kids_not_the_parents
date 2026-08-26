@@ -227,16 +227,33 @@ SEED_OVERRIDE = {'weight_on_child': 0.007}
 # pairs were found and how many agreed. A one-parameter arm is exactly the shape
 # that produces these pairs, so the archive is full of them.
 #
-# lambda_addiction is deliberately absent. Its pairs split 6 to 11, because it
-# moves lambda_d and b together and RATIO already reads its moment as a share of
-# b rather than as a rate. An ambiguous sign must not be guessed, so it keeps the
+# TWO PARAMETERS ARE DELIBERATELY ABSENT, and both were removed by controlled
+# probes rather than by the pair counts.
+#
+# lambda_addiction: its pairs split 6 to 11, because it moves lambda_d and b
+# together and RATIO already reads its moment as a share of b rather than as a
+# rate. Controlled, raising it LOWERS lambda_d (0.00538 to 0.00370) while
+# lowering b harder still, so the rate falls while the share rises -- a sign read
+# off the rate would send the arm exactly the wrong way.
+#
+# relative_share_of_addiction_1: its pairs were 13 of 13 for +1, and that is
+# WRONG NEAR THE ANCHOR. Five controlled probes give theta at 0.1046, 0.0866,
+# 0.0744, 0.0773, 0.3243 for the parameter at 0.470, 0.485, 0.495, 0.505, 0.658:
+# it FALLS before it rises. theta is below target, so a +1 sign sends the arm up,
+# where theta drops further. A pooled count cannot see a non-monotone response,
+# because the pairs it counts are spread across both limbs.
+#
+# THE RULE THIS LEAVES: a RESPONSE entry is a claim about the neighbourhood of
+# the anchor, and a pair count taken across the whole archive is not evidence for
+# it. Anything contradicted by a controlled probe near the anchor comes out, and
+# an absent parameter keeps the old upward arm, which is a known quantity rather
+# than a guess. An ambiguous sign must not be guessed, so it keeps the
 # default upward arm.
 RESPONSE = {
     'weight_on_child':                                    +1,   # 21 of 21
     'max_food_cost':                                      +1,   # 12 of 12
     'mu_homeless':                                        -1,   #  9 of 9
     'addiction_scalar_1':                                 -1,   # 78 of 78
-    'relative_share_of_addiction_1':                      +1,   # 13 of 13
     'value_of_life':                                      +1,   # 14 of 14
     'size_homelessness':                                  +1,   # 14 of 14
     'discount_factor':                                    +1,   #  6 of 6
