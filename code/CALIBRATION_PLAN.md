@@ -992,3 +992,58 @@ gap_table.py's WHAT was a hand-copied second copy of suggest_next.OWNS and had
 drifted the same way: it still listed lambda_m as a calibrated parameter and knew
 nothing of di_takeup or smi_onset_level, so it died on KeyError the first time it
 was run after the redesign. It is derived from OWNS now.
+
+
+## How workers are spawned, and why a trigger cannot do it
+
+A NIGHT WAS LOST TO THIS, so it is written down rather than remembered.
+
+Eight cron triggers were created with `create_new_session_on_fire`, on the
+reasoning that a trigger approved once would then spawn its own sessions
+forever with no further approval. That part was true. What was not true is
+that those sessions could do the work.
+
+**`create_trigger` has no `source_url` parameter.** A trigger-spawned session
+therefore starts with no repository attached, and this repository is private,
+so the session must clone it by hand -- with credentials it does not have. The
+egress proxy is explicit about it:
+
+    GitHub access to this repository is not enabled for this session.
+    Use add_repo to request access.          (HTTP 403)
+
+`GITHUB_TOKEN` in those containers is the literal placeholder
+`proxy-injected`, there is no `gh` CLI, no credential helper, and the repo's
+git endpoint returns 401 while a public repo returns 200 through the same
+proxy -- so it is an authorization gap, not a network one. Five of the eight
+workers diagnosed this independently and correctly, in their own transcripts,
+while the parent session was busy fixing something else.
+
+**`create_session` DOES take `source_url`**, and a session created with it has
+the repository checked out and credentials injected before its first turn. It
+is the only spawn path that works for a private repo. Confirmed: a session
+created with `source_url` set had the branch checked out and was running a
+point forty seconds later, in `auto` permission mode, with no approval prompt.
+
+So the architecture is:
+
+- the eight worker triggers and the coordinator trigger are DISABLED, renamed
+  to say why, and must stay that way;
+- two triggers bound to the parent session fire every half hour; the parent
+  session has the repository, runs `simplex.py` itself to advance rounds, and
+  spawns one `create_session` worker per unmeasured line of `ROUND.txt`.
+
+### The other bug, which was real but was not this one
+
+Launching a point as `nohup ... &` INSIDE a tool call does not work: the child
+is reaped when the launcher returns, the binary dies a second or two into its
+build, and no point file is ever written. The fix is to make the round line the
+FOREGROUND command of a call with `run_in_background` set. This was reproduced
+directly and is genuine -- but it was NOT what stopped the workers, because
+they never reached the code it lives in. Diagnosing it and assuming it was
+their problem cost most of a morning on top of the night.
+
+The lesson worth keeping: **when a fleet of workers fails, read one worker's
+own transcript before theorising.** Five of them were saying the answer
+plainly. A session's record is available through `get_session`, and the workers
+also send push notifications that do not arrive in the parent's notification
+queue.
