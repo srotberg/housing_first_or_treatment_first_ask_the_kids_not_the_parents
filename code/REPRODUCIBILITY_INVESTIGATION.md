@@ -74,3 +74,49 @@ problem than a lost day of compute.
 Re-run the incumbent's own vector and confirm it reproduces BEFORE trusting a
 round. That check takes one point and half an hour. It was never run, and a
 full day of search measured a fault instead of a model.
+
+## Further candidates eliminated, 23:50Z to 00:05Z
+
+5. **The bisect used the wrong Fortran.** It did not. The Fortran at 79e1af9 is
+   byte-identical to 20a5fc0, the last change before the anchor was committed,
+   and no Fortran commit falls in the window between them. The pre-change
+   binary tested WAS the one in force.
+
+6. **A data input changed.** No. The model reads only
+   `data/us_mh_onset_shape.csv` (19 Aug) and `data/us_mortality_multipliers.csv`
+   (16 Aug). Neither has been touched since.
+
+7. **The archive is internally inconsistent.** No, at least not on the axis
+   that is checkable: for every point tested, the VECTOR line hashes to the
+   filename, exactly as run_one_point.sh computes TAG. Vector and name agree.
+   (This does NOT rule out moments coming from a stale `worker_TAG.log`, which
+   remains untested.)
+
+8. **Thread-count non-determinism.** No. 412 of 422 archived points record
+   "4 cores", the anchor among them, and this container has 4.
+
+9. **A truncated run.** The anchor took 33 min and the re-run 12, but the
+   archive's runtimes span 8 to 54 min with a median of 14, so 12 is
+   unremarkable. `code/CALIBRATION_ACTIVE` is a marker for other scripts;
+   neither the Fortran nor run_one_point.sh reads it.
+
+## Where that leaves it
+
+Same code, same data, same disk state, same 24 parameters, same core count --
+and 0.2660 becomes 2.5642. Every cheap explanation is now excluded. What
+remains needs real work rather than another quick check:
+
+- **Whether the moments in a point file can come from a stale worker log.**
+  run_one_point.sh takes the VECTOR from its own `P` array but the moments from
+  `worker_${TAG}.log`. TAG hashes the PARAMETERS ONLY. If that log survived
+  from an earlier run of the same vector under different code, the file would
+  pair a correct vector with foreign moments and hash-check clean. This is the
+  strongest remaining lead and it is testable by looking for surviving
+  worker_*.log files older than their point files.
+- **Whether the anchor's 0.2660 was ever real.** If several other pre-26-August
+  points also fail to reproduce, the fault is systemic and old, not something
+  that happened on 26 August. Re-running two or three of them settles it and
+  costs about an hour.
+
+DO NOT propose a cause without a test that could refute it. Three confident
+diagnoses on 26 August were each built from reading a diff, and each was wrong.
