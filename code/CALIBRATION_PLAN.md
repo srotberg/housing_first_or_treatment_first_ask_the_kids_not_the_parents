@@ -535,6 +535,20 @@ vector, and each of them stopped to ask about it. A flat file read positionally
 has no dependency to be missing. `code/ARMS4_README.md` records the same point
 next to the file.
 
+#### Name the repository when you spawn a worker
+
+`create_session` without `source_url` gives the worker whatever the parent
+session inherits, and that is not reliable: nine of simplex 4's twenty-one
+workers came up with no checkout at all and stopped to ask for one. The cause
+was a rename. The repository is now
+
+    https://github.com/srotberg/housing_first_children_later
+
+and every push from a clone that still points at the old name comes back with
+`remote: This repository moved`. Pass `source_url` and `source_revision`
+explicitly on every spawn so the container is provisioned with the branch
+already on disk, and the worker never has to find or clone anything.
+
 #### Do not stash in a worker
 
 An earlier worker prompt carried `git stash -u -q` before the pull. A worker
