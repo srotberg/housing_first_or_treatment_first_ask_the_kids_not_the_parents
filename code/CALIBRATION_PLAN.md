@@ -564,6 +564,58 @@ the test. Spawning the next generation while the last one is still solving is
 how this loop breaks: the arms then differ from a centre that has already moved,
 and every pair they were meant to form is worthless.
 
+### Why so few of the homeless carry serious mental illness
+
+The SMI share of the homeless is 0.084 against a target of 0.25, and it is not
+that the model is short of people with SMI: the population share is 0.0458
+against 0.0482, and the age profile it reads has SMI at 12.1 per cent at age 26
+falling to 0.9 per cent at 85, so the mass is working age, not retired. The
+identity is
+
+    lambda_m = p*RR / (p*RR + (1-p))
+
+in the population share p and the relative risk RR of being homeless with SMI.
+At p = 0.0458 the model produces RR = 1.92; the data wants 6.59. Nothing else
+enters, so either the population share triples or the relative risk does.
+
+WHY THE RELATIVE RISK IS SO LOW. Homelessness here is a CHOICE, the lowest point
+of a housing grid, and
+
+    housing_size(lowest) = housing_size(0) * size_homelessness
+
+puts the street at about a tenth of the smallest rental's services. Giving that
+up costs roughly gamma*ln(1/0.101) = 0.67 in flow utility, which is large, so it
+is taken only when the rent is big against TOTAL RESOURCES -- assets included,
+not income. Zero income is not zero resources.
+
+That is the whole asymmetry. A SUD drains ten per cent of income every period
+forever, so the disordered reach any income shock with nothing banked. SMI cuts
+the chance of working but, with include_rho_m = 0, costs nothing when employed
+and drains nothing when not, so an SMI household arrives at unemployment with a
+full buffer and runs it down instead of taking the street. SMI is modelled as an
+INCOME shock in a world where homelessness is a WEALTH phenomenon.
+
+WHAT IS NOT PINNED. beta is bracketed on wealth over output, an aggregate, and
+sits nineteen per cent above target. The bottom half's share of net worth, 2.52
+per cent in the Fed distributional accounts, is in the untargeted table and is
+never matched. So nothing in the loss controls how many households hold almost
+nothing, which is exactly the group that can be shut out of the smallest rent. A
+model can carry the right total wealth with far too little of it concentrated,
+and then nobody is ever short.
+
+MEASURE BEFORE CHOOSING A LEVER. print_all_moments now reports four DIAG lines
+inside the block run_one_point.sh keeps: the share of the homeless who could
+have afforded the smallest rental out of income plus assets and chose the street
+anyway, the share receiving food stamps, median assets to income, and the
+average assets of the homeless. If the first is near one, homelessness is a
+preference rather than a constraint and no parameter that moves incomes will
+move the mental illness share of the street.
+
+The candidate levers, once those land: rho_m switched on so SMI drains
+resources rather than only employment; beta pushed to its own target so buffers
+stop being oversized; the smallest rental tightened, which h_2 wants anyway at
+fifty per cent over target; and, later and separately, the DI state below.
+
 ### After the calibration: give DI its own state
 
 AGREED WITH THE AUTHOR, TO BE DONE ONCE THE OTHER PARAMETERS HAVE CONVERGED, not
