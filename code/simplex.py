@@ -62,7 +62,25 @@ STATE = os.path.join(HERE, 'SIMPLEX.txt')
 # EVERY PARAMETER THAT OWNS A MOMENT. There is no background any more: a vertex
 # is the whole vector, so nothing can shift underneath the simplex and the
 # comparability rules the four parameter version needed are unnecessary here.
-BLOCK = sorted(OWNS)
+# WHAT IS PINNED WHILE THE OTHERS CONVERGE.
+#
+# weight_on_child does NOT pin the moment it owns. Across points sharing
+# weight_on_child = 0.007 and differing only elsewhere, omega runs from 0.019 to
+# 0.418 -- a factor of twenty two -- because the use rise with the child term off
+# is an equilibrium object that every other parameter moves. So while the rest of
+# the block is still travelling, omega measures them rather than it: searching on
+# it chases noise, and scoring on it charges every point for a gap it cannot
+# close.
+#
+# It is pinned at the value everything currently in flight carries, and it comes
+# back into the block once the others have settled, which is the only point at
+# which its own moment says anything about it. Its counterfactual is switched off
+# in the Fortran meanwhile (measure_child_gap), saving about a third of each
+# point's running time, and score_points drops omega from the loss for EVERY
+# point, old and new, so the archive stays comparable across the change.
+PINNED = {'weight_on_child': 0.007}
+
+BLOCK = sorted(k for k in OWNS if k not in PINNED)
 
 # Torczon's coefficients: contract to a half, reflect, expand to double.
 MU, THETA = 2.0, 0.5
@@ -192,7 +210,23 @@ REQUIRED = ('omega',)
 # requiring the moment's PRESENCE is no longer enough to tell the two models
 # apart -- and the two models are very different: at one vector b was 9.04 per
 # cent with the child channel off and 1.80 with it on.
-def complete(mt):
+def complete(mt, name=None):
+    """Whether this point was measured by the model as it now stands.
+
+    A ZERO omega still means a point from before the counterfactual was fixed,
+    and those stay out. But omega may now be ABSENT on purpose: while
+    weight_on_child is pinned the Fortran skips the counterfactual, which is a
+    third of a point's running time, and says so on an OMEGA SKIPPED line inside
+    the moment block. Absent-and-announced is a current point; absent-and-silent,
+    or present-and-zero, is not.
+    """
+    if name:
+        path = os.path.join(HERE, 'points', os.path.basename(str(name)))
+        try:
+            if 'OMEGA SKIPPED' in open(path, errors='replace').read():
+                return True
+        except OSError:
+            pass
     if not all(k in mt for k in REQUIRED):
         return False
     return abs(mt['omega'][0]) > 1e-12
@@ -343,7 +377,7 @@ def measured(require=True):
     for vec, mt, name in jacobian.points():
         if any(k not in vec for k in BLOCK):
             continue
-        if require and not complete(mt):
+        if require and not complete(mt, name):
             continue
         out.append((to_log(vec), vec, score_points.loss(mt)[0], name))
     return out

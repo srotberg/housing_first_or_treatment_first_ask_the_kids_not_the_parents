@@ -107,9 +107,25 @@ def read(path):
     return head, moments
 
 
+# A MOMENT WHOSE PARAMETER IS PINNED IS NOT SCORED, AND IS NOT SCORED FOR ANY
+# POINT, old or new. omega is the use rise with the child term off, and
+# weight_on_child is pinned while the rest of the block converges; across points
+# sharing weight_on_child = 0.007 omega runs from 0.019 to 0.418, because every
+# other parameter moves it. Scoring it would charge each point for a gap nothing
+# in the search can close, and rank on the noise.
+#
+# EXCLUDING IT EVERYWHERE IS WHAT KEEPS THE ARCHIVE COMPARABLE. The loss is a
+# MEAN weighted gap, so a point that measured omega and a point that skipped it
+# are otherwise on different denominators and cannot be ranked against each
+# other. Dropping it from both puts every point back on the same 21 moments.
+EXCLUDE = {'omega'}
+
+
 def loss(moments):
     tot, n, worst = 0.0, 0, []
     for name, (model, target) in moments.items():
+        if name in EXCLUDE:
+            continue
         if abs(target) < 1e-12:
             continue
         g = CAP if gated(name, moments) else abs(model - target) / abs(target)
@@ -122,7 +138,7 @@ def loss(moments):
     if not n:
         return float('inf'), 0, []
     worst.sort(reverse=True)
-    return tot / n, len(moments), worst[:4]
+    return tot / n, len([k for k in moments if k not in EXCLUDE]), worst[:4]
 
 
 def main():
