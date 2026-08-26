@@ -236,7 +236,16 @@ BOUNDS = {
     # lambda * q is about 0.0288 and q about 0.019, and reaching 0.413 needs
     # lambda * q near 0.533 -- lambda around 28.
     'lambda_addiction':                      (0.01, 200.0),
-    'relative_share_of_addiction_1':         (0.01, 0.70),
+    # THE CLIFF IS AT ABOUT 0.51, so the upper bound sits below it rather than at
+    # 0.70. Above the cliff the model has essentially everyone using: the archive
+    # puts b at 0.96 at 0.658 and 0.997 at 0.70, against a target of 0.089. An arm
+    # sent up there measures a degenerate economy, scores terribly, and tells the
+    # search to shrink AWAY from the band that is actually wanted. The usable
+    # window is 0.47 to 0.51, across which the share of users who become
+    # disordered rises from 0.03 toward the 0.41 the data needs -- so this
+    # parameter, not lambda_addiction, is what lambda_d is stuck on. Simplex 4's
+    # own arm for it was 0.658 and would have done exactly the wrong thing.
+    'relative_share_of_addiction_1':         (0.01, 0.51),
     'value_of_life':                         (1.0, 500.0),
     'size_homelessness':                     (0.01, 5.0),
     'discount_factor':                       (0.900, 0.999),

@@ -100,7 +100,19 @@ EDGE = 1.4
 # of the loss on its own and the log-odds fit across the three measured points
 # puts the answer near 8.5, so that is where its vertex goes. Starting it at 1.4
 # would spend several iterations walking somewhere the evidence already points.
-EDGE_OVERRIDE = {'kappa_uem': 8.5, 'zeta_DI': 0.025}
+EDGE_OVERRIDE = {'kappa_uem': 8.5, 'zeta_DI': 0.025,
+                 # THE TWO WORST GAPS THAT HAVE A WORKING INSTRUMENT.
+                 # relative_share_of_addiction_1 is what lambda_d is actually
+                 # stuck on (correlation 0.91 with the share of users who become
+                 # disordered, against 0.17 for anything else), and it also
+                 # brackets theta, which is 35 per cent low and wants the same
+                 # direction. Its arm goes just under the cliff at 0.51, not the
+                 # 0.658 simplex 4 sent, which lands in a degenerate economy.
+                 'relative_share_of_addiction_1': 0.495,
+                 # max_food_cost moves cbar cleanly, correlation 0.91 over 16
+                 # distinct values. The archive maps 0.00485 to a cbar of 0.0018
+                 # and 0.00782 to 0.0054, so 0.0072 brackets the 0.0042 target.
+                 'max_food_cost': 0.0072}
 # zeta_DI's vertex goes DOWN, not up. Its moment, the SMI share of the
 # homeless, is 0.0347 against a target of 0.25, and less DI coverage is what
 # raises it: an uncovered household with SMI falls to the same zero income as

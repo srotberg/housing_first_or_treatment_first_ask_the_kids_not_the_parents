@@ -564,6 +564,48 @@ the test. Spawning the next generation while the last one is still solving is
 how this loop breaks: the arms then differ from a centre that has already moved,
 and every pair they were meant to form is worthless.
 
+### What each of the worst gaps is actually stuck on
+
+Read off the 290-point archive rather than guessed, at the leader of simplex 4
+(`point_b39d5273d1`, loss 0.306). A correlation here is against every point that
+carries both the parameter and the moment.
+
+| moment | gap | its own instrument | works? |
+|---|---|---|---|
+| `lambda_d` | 85% | `lambda_addiction` | moves it, but is NOT the binding one |
+| `pi_eu` | 74% | `probability_becoming_unemployed` | corr +0.06 over 7 values; the archive minimum IS the target, so it sits on a floor |
+| `lambda_m` | 68% | `lambda_m` | **corr +0.002 over 13 values from 0.046 to 0.9. Dead.** |
+| `cbar` | 60% | `max_food_cost` | corr +0.91, works cleanly, just mis-set |
+| `h_2` | 50% | `smallest_house_size` | not in the block at all, so nothing is calibrating it |
+
+**lambda_d is stuck on relative_share_of_addiction_1, not lambda_addiction.** At
+the leader's own `lambda_addiction` the share of users who become disordered
+still spans 0.020 to 0.565 across points, which brackets the 0.413 the data
+needs, so `lambda_addiction` is not what holds it. Against
+`relative_share_of_addiction_1` the correlation is 0.913, and nothing else is
+above 0.17. The catch is a cliff: median b runs 0.077 at 0.470, 0.220 at 0.498,
+0.848 at 0.550 and 0.961 at 0.658. `lambda_d` reaches its target around 0.50,
+by which point b is already 2.5 times its own. Closing it needs
+`relative_share_of_addiction_1` and `addiction_scalar_1` to move TOGETHER, which
+no single vertex of a multi-directional search can do -- it only appears after a
+reflection combines directions. `theta` is 35 per cent low and shares the
+instrument, so two of the five worst gaps want the same move.
+
+### lambda_m is not reachable, and the loss already knows it
+
+`lambda_m` at 0.50 and at 0.90 return the SAME moment, 0.044038, and they do it
+where `h_1` is 0.000338 -- a homeless population of three in ten thousand
+against a target of four in a thousand. Every one of the eleven archive points
+that reaches `lambda_m` above 0.20 has `h_1` collapsed to 0.0004 or below. The
+moment is only ever "hit" by emptying the population it conditions on.
+
+`score_points.py` gates `lambda_m` on `h_1` and scores those as misses, so the
+loss is honest and no leader has been bought this way. But the standing
+position must be stated plainly: **a 25 per cent SMI share among the homeless
+has never been produced at a valid homelessness rate**, and no arm will fix
+that. It is a question about how SMI enters the homelessness loop in the
+Fortran, and it wants a code investigation rather than another point.
+
 ### A conditional moment is refused until its population is real
 
 Most of these targets are conditional — the disordered share of USERS, the
