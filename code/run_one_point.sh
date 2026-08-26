@@ -62,6 +62,36 @@ done
 
 TAG=$(for k in "${!P[@]}"; do echo "$k=${P[$k]}"; done | sort | md5sum | cut -c1-10)
 
+# A FAILURE THAT WRITES NOTHING IS INDISTINGUISHABLE FROM NOT HAVING STARTED.
+# Worker 2 of the first automated round ended its turn four minutes after firing
+# with no file in points/ and a status of SUCCEEDED. From outside there was no
+# way to tell whether it had skipped its line, failed to build, or never run --
+# and the health check's "has the point count moved" test reads a silent failure
+# as a point still solving. Every exit below now leaves a file behind.
+fail () {
+    mkdir -p points
+    {
+        echo "point $TAG FAILED: $1"
+        echo "FAILEDVECTOR (deliberately not a VECTOR line, so nothing treats"
+        echo "this as a measured point and skips re-running it)"
+        for k in $(echo "${!P[@]}" | tr ' ' '\n' | sort); do printf '  %s=%s\n' "$k" "${P[$k]}"; done
+    } > "points/point_${TAG}.FAILED.txt"
+    echo "run_one_point: $1" >&2
+    exit 1
+}
+
+# ALREADY MEASURED? THE SCRIPT DECIDES, NOT THE WORKER. The worker prompt used
+# to ask each worker to compare the parameter vector on its ROUND.txt line with
+# the VECTOR line of every file in points/ and skip on a match. Those two lists
+# are formatted differently and the round line carries 19 names against the
+# vector's 24, so the comparison was a judgement call, and a worker that judged
+# it wrong silently ran nothing. TAG is the md5 of the full sorted vector, which
+# is the same comparison done exactly, so the check belongs here.
+if [ -f "points/point_${TAG}.txt" ] && grep -q "END OF MOMENTS" "points/point_${TAG}.txt"; then
+    echo "run_one_point: $TAG is already measured, skipping"
+    exit 0
+fi
+
 if [ ! -x hftf ] || [ housing_first_or_treatment_first_SR_v1.f90 -nt hftf ]; then
     echo "building..."
     # THE COMPILER IS NOT ALWAYS THERE. Worker containers built from the
@@ -74,14 +104,17 @@ if [ ! -x hftf ] || [ housing_first_or_treatment_first_SR_v1.f90 -nt hftf ]; the
         (apt-get update -qq && apt-get install -y -qq gfortran) >/dev/null 2>&1 \
             || (sudo apt-get update -qq && sudo apt-get install -y -qq gfortran) >/dev/null 2>&1
         if ! command -v gfortran >/dev/null 2>&1; then
-            echo "run_one_point: gfortran could not be installed. Stopping."
-            exit 1
+            fail "gfortran absent and could not be installed"
         fi
         echo "run_one_point: gfortran installed, $(gfortran --version | head -1)"
     fi
 
     gfortran housing_first_or_treatment_first_SR_v1.f90 -mcmodel=medium -fopenmp \
-        -O3 -funroll-loops -ffree-line-length-none -g -fbacktrace -o hftf
+        -O3 -funroll-loops -ffree-line-length-none -g -fbacktrace -o hftf \
+        2> build_${TAG}.log || {
+            tail -20 "build_${TAG}.log" >&2
+            fail "the build failed; see build_${TAG}.log"
+        }
 fi
 
 # b reaches the model through the sweep grid; everything else through the handover.
