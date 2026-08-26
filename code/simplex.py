@@ -221,6 +221,106 @@ SEED_OVERRIDE = {'weight_on_child': 0.007}
 # would have spent itself discovering what these two lines already say.
 
 
+# WHICH WAY A PARAMETER MOVES ITS OWN MOMENT, measured rather than assumed. For
+# every pair of archive points that differ in this parameter and in NOTHING else,
+# the sign of d moment / d parameter; the comment on each line is how many such
+# pairs were found and how many agreed. A one-parameter arm is exactly the shape
+# that produces these pairs, so the archive is full of them.
+#
+# lambda_addiction is deliberately absent. Its pairs split 6 to 11, because it
+# moves lambda_d and b together and RATIO already reads its moment as a share of
+# b rather than as a rate. An ambiguous sign must not be guessed, so it keeps the
+# default upward arm.
+RESPONSE = {
+    'weight_on_child':                                    +1,   # 21 of 21
+    'max_food_cost':                                      +1,   # 12 of 12
+    'mu_homeless':                                        -1,   #  9 of 9
+    'addiction_scalar_1':                                 -1,   # 78 of 78
+    'relative_share_of_addiction_1':                      +1,   # 13 of 13
+    'value_of_life':                                      +1,   # 14 of 14
+    'size_homelessness':                                  +1,   # 14 of 14
+    'discount_factor':                                    +1,   #  6 of 6
+    'relative_share_of_leisure':                          -1,   #  9 of 9
+    'labor_income_tax_rate':                              -1,   # 10 of 10
+    'sd_permanent_productivity':                          -1,   #  8 of 8
+    'probability_becoming_unemployed':                    +1,   #  6 of 6
+    'multiple_of_probabilities_of_employment_if_addicted': +1,  # 14 of 14
+    'kappa_uem':                                          -1,   # 13 of 13
+    'zeta_DI':                                            -1,   #  4 of 4
+    'smi_onset_level':                                    +1,   #  2 of 2
+    'probability_of_voucher_benchmark_used':              +1,   # 11 of 11
+    'utility_cost_of_treatment':                          -1,   # 19 of 20
+    'smallest_rental_relative_to_lowest_income':          +1,   # 15 of 15
+    'largest_house_size':                                 +1,   # 10 of 11
+}
+
+
+def arm_sign(key, mom):
+    """Which way this parameter's arm should point, from the sign of its gap.
+
+    AN ARM USED TO GO UP ALWAYS, by a factor of EDGE. That is right when the
+    moment undershoots and exactly wrong when it overshoots, and simplex 4 paid
+    for it three times over: pi_eu was already at 0.1062 against a target of
+    0.0485 and its arm raised probability_becoming_unemployed, taking it further
+    out; mu_H was within one per cent and its arm pushed it to 0.907 against
+    1.473; relative_share_of_addiction_1 went up past the cliff at 0.51 into an
+    economy where everyone uses. Each of those cost a worker and forty minutes to
+    learn something already implied by the sign of the gap.
+
+    So the arm now points wherever its own moment has to go. The rule needs two
+    facts and both are known before anything is spawned: whether the moment is
+    above or below target at the anchor, and whether raising the parameter raises
+    or lowers it (RESPONSE, measured from the archive).
+
+    Returns +1.0 or -1.0, and +1.0 whenever it cannot tell -- an unknown
+    parameter, a moment the anchor did not report, or one of the two entries in
+    OWNS whose target is zero and so states no direction.
+    """
+    if key not in RESPONSE or key not in OWNS:
+        return 1.0
+    name, target = OWNS[key]
+    if name not in mom:
+        return 1.0
+    # A MOMENT IS A (model, target) PAIR HERE, not a number. Reading it as a
+    # number raised a TypeError the first time this ran, which was luck: had the
+    # comparison happened to succeed on something truthy the arms would have
+    # taken a silent, plausible, wrong direction, which is the shape of every
+    # expensive bug in this project.
+    val = mom[name]
+    pair = isinstance(val, (tuple, list))
+    model = val[0] if pair else val
+    # The point file states the target it was actually scored against, so prefer
+    # it to the copy in OWNS; OWNS is the fallback and states 0.0 for the two
+    # parameters whose moment has no scalar target, which is the no-direction
+    # sentinel below.
+    if pair and len(val) > 1 and val[1]:
+        target = val[1]
+    if not target or model is None:
+        return 1.0
+    # +1 means the moment has to RISE.
+    want = 1.0 if model < target else -1.0
+    return 1.0 if want * RESPONSE[key] > 0 else -1.0
+
+
+def moments_at(name):
+    """The moments the fleet recorded for one point file, by name.
+
+    THE NAME IS MATCHED LOOSELY ON PURPOSE. The anchor carries a ' (override)'
+    suffix once SEED_OVERRIDE has touched it, and points() may hand back a path
+    where the caller holds a basename. An exact match returned nothing for the
+    anchor the first time this ran, and every arm quietly fell back to pointing
+    up -- the old behaviour, restored by accident, which is the failure this
+    whole change exists to stop.
+    """
+    if not name:
+        return {}
+    want = os.path.basename(str(name).split(' (')[0]).strip()
+    for _vec, mt, nm in jacobian.points():
+        if os.path.basename(str(nm)).strip() == want:
+            return mt
+    return {}
+
+
 def measured(require=True):
     out = []
     for vec, mt, name in jacobian.points():
@@ -303,6 +403,12 @@ def initial(pts):
                   % ', '.join('%s=%g' % kv for kv in sorted(SEED_OVERRIDE.items())))
     verts = [(base[0], base[2] if base[2] != float('inf') else None)]
     reused = 1
+    # THE ANCHOR'S OWN MOMENTS DECIDE WHICH WAY EACH ARM POINTS. Read once, here,
+    # rather than per vertex: jacobian.points() re-reads every file on disk.
+    anchor_mom = moments_at(base[3])
+    down = []
+    if not anchor_mom:
+        print('   anchor moments unavailable; every arm points up, as it used to')
     for i, key in enumerate(BLOCK):
         edge = EDGE
         if key in EDGE_OVERRIDE:
@@ -327,11 +433,20 @@ def initial(pts):
             verts.append(found)
             reused += 1
         else:
-            x = canon([base[0][j] + (math.log(edge) if j == i else 0.0)
+            # An EDGE_OVERRIDE already names where the vertex should BE, so its
+            # sign is settled and arm_sign must not flip it back.
+            sgn = 1.0 if key in EDGE_OVERRIDE else arm_sign(key, anchor_mom)
+            x = canon([base[0][j] + (sgn * math.log(edge) if j == i else 0.0)
                        for j in range(len(BLOCK))])
+            if sgn < 0:
+                down.append(key)
             verts.append((x, None))
-    print('%d of %d vertices already measured, %d to run.\n'
+    print('%d of %d vertices already measured, %d to run.'
           % (reused, len(verts), len(verts) - reused))
+    if down:
+        print('   %d arm(s) point DOWN, because their moment overshoots: %s'
+              % (len(down), ', '.join(sorted(down))))
+    print()
     return verts
 
 
