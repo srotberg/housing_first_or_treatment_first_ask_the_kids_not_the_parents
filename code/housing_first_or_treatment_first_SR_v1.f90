@@ -720,6 +720,23 @@
         ! The shape is normalised to one at age 26 and implied_onset is exactly
         ! shape times 0.003306, so the file was always laid out for a shape and
         ! level split and the model was using the derived column instead.
+        ! THE LOWER TAIL OF WEALTH, WHICH NOTHING IN THE LOSS PINS. beta is
+        ! bracketed on wealth over output, an aggregate, and the bottom half's
+        ! share of net worth -- 2.52 per cent in the Fed distributional accounts
+        ! -- is reported with the untargeted moments and never matched. A model
+        ! can carry the right total with far too little of it concentrated, and
+        ! then no household is ever short of the smallest rent and homelessness
+        ! stops being a constraint.
+        !
+        ! The distribution is not stored in wealth order, so the share is read off
+        ! a histogram: mass and wealth are accumulated into WEALTH_BINS buckets of
+        ! net wealth measured in multiples of average labour income, and the
+        ! cumulative mass is walked afterwards to the median, interpolating
+        ! within the bucket that straddles it.
+        integer, parameter :: wealth_bins=400
+        real(8), parameter :: wealth_bin_top=50.d0
+        real(8), dimension(wealth_bins) :: wealth_hist_mass,wealth_hist_wealth
+        real(8) :: bottom_half_wealth_share
         real(8), dimension(:), allocatable :: smi_onset_shape_by_age
 
         ! ONSET IS NOW A LEVEL ON THAT SHAPE, AND THE LEVEL IS CALIBRATED.
@@ -3132,6 +3149,8 @@
         real(8), parameter :: empirical_land_to_housing_stock=0.314395015 
         real(8) :: land_to_housing_stock
         real(8) :: c_min,c_1,c_1_2  
+        integer :: wealth_bin_index
+        real(8) :: cumulative_mass_1,cumulative_wealth_1,share_of_bin_1
         real(8) :: cutoff_housing_investment
         real(8), dimension(2) :: cutoff_housing_investment_bisection                 
         real(8), parameter :: stopping_rule_cutoff_housing_investment=10.d0**(-5) 
@@ -3417,6 +3436,7 @@
             model_average_owner_occupied_unit_size,mass_of_owners,mass_of_owners_with_mortgage,model_total_efficiency_units,&
             mass_of_renters,model_bequests,model_youngest_assets,model_fraction_of_homeowners_with_mortgage_over_80_perc,&
             model_average_net_wealth,model_housing_value_per_capita,model_average_ss_benefits,&
+            model_bottom_half_wealth_share,&
             model_fraction_of_property_tax_paid_by_renters,model_wealth_of_owners,model_wealth_of_renters,&
             model_average_financial,model_mass_with_positive_financial,model_mass_switchers,&
             model_age_switchers_to_renting,model_prod_switchers_to_renting,model_financial_switchers_to_renting,&
@@ -4344,6 +4364,8 @@
                 model_median_assets_to_income(1)
             write(*,*) "DIAG average assets of the homeless              =",&
                 model_avg_homeless_assets(1)
+            write(*,*) "DIAG bottom half share of net worth              =",&
+                model_bottom_half_wealth_share(1), " data= 0.0252"
 
             write(*,*) "===== END OF MOMENTS ====="
 
@@ -5828,6 +5850,8 @@
         total_owners_to_consider=0
         
         model_total_net_wealth(time_period)=0
+        wealth_hist_mass=0
+        wealth_hist_wealth=0
         model_youngest_net_wealth_share(time_period)=0
         model_net_wealth_owners(time_period)=0
         model_net_wealth_renters(time_period)=0
@@ -6825,6 +6849,19 @@
                                                                          
                                     model_total_net_wealth(time_period)=model_total_net_wealth(time_period)+&
                                         net_wealth_1*distribution_mass_used
+
+                                    ! and into the wealth histogram, in multiples
+                                    ! of average labour income. Everything at or
+                                    ! below zero lands in the first bucket and
+                                    ! everything above the top in the last, so no
+                                    ! mass is lost at either end.
+                                    wealth_bin_index=min(max(1+floor(wealth_bins*&
+                                        (net_wealth_1/max(model_average_labour_income(time_period),&
+                                        10.d0**(-8)))/wealth_bin_top),1),wealth_bins)
+                                    wealth_hist_mass(wealth_bin_index)=&
+                                        wealth_hist_mass(wealth_bin_index)+distribution_mass_used
+                                    wealth_hist_wealth(wealth_bin_index)=&
+                                        wealth_hist_wealth(wealth_bin_index)+net_wealth_1*distribution_mass_used
                                         
                                     if (age_index<=youngest_ages_for_wealth_computation) then
                                     
@@ -7248,6 +7285,37 @@
             model_youngest_net_wealth_share(time_period)/model_total_net_wealth(time_period)
                             
         model_average_net_wealth(time_period)=model_total_net_wealth(time_period)/sum_of_distribution
+
+        ! THE BOTTOM HALF'S SHARE OF NET WORTH. Walk the histogram up until half
+        ! the mass is behind, splitting the bucket that straddles the median in
+        ! proportion to the mass taken from it, and divide the wealth so
+        ! collected by the total. The Fed distributional accounts put it at 2.52
+        ! per cent. A share far above that is a lower tail with too much in it,
+        ! which is the same thing as saying nobody can be shut out of the
+        ! smallest rent.
+        cumulative_mass_1=0
+        cumulative_wealth_1=0
+
+        do wealth_bin_index=1,wealth_bins
+
+            if (cumulative_mass_1+wealth_hist_mass(wealth_bin_index)>=&
+                0.5d0*sum_of_distribution) then
+
+                share_of_bin_1=(0.5d0*sum_of_distribution-cumulative_mass_1)/&
+                    max(wealth_hist_mass(wealth_bin_index),10.d0**(-12))
+                cumulative_wealth_1=cumulative_wealth_1+&
+                    share_of_bin_1*wealth_hist_wealth(wealth_bin_index)
+                exit
+
+            end if
+
+            cumulative_mass_1=cumulative_mass_1+wealth_hist_mass(wealth_bin_index)
+            cumulative_wealth_1=cumulative_wealth_1+wealth_hist_wealth(wealth_bin_index)
+
+        end do
+
+        model_bottom_half_wealth_share(time_period)=cumulative_wealth_1/&
+            max(model_total_net_wealth(time_period),10.d0**(-12))
             
         model_avg_mortgage_spending(time_period)=model_avg_mortgage_spending(time_period)/mass_of_owners(time_period)
 
