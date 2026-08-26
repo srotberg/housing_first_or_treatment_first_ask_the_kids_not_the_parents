@@ -112,7 +112,15 @@ EDGE_OVERRIDE = {'kappa_uem': 8.5, 'zeta_DI': 0.025,
                  # max_food_cost moves cbar cleanly, correlation 0.91 over 16
                  # distinct values. The archive maps 0.00485 to a cbar of 0.0018
                  # and 0.00782 to 0.0054, so 0.0072 brackets the 0.0042 target.
-                 'max_food_cost': 0.0072}
+                 'max_food_cost': 0.0072,
+                 # pi_eu OVERSHOOTS at 0.0845 against 0.0485, so its arm has to
+                 # go DOWN. Simplex 4's went up, to 0.0412, and pi_eu duly got
+                 # worse, 0.1062. That pair is the cleanest elasticity in the
+                 # archive because nothing else differs between the two points:
+                 # d ln pi_eu / d ln p = 0.68, which puts the target at 0.0130.
+                 # A pooled correlation across all points said +0.06 and looked
+                 # like a dead instrument; it is not, the pooling was the fault.
+                 'probability_becoming_unemployed': 0.0130}
 # zeta_DI's vertex goes DOWN, not up. Its moment, the SMI share of the
 # homeless, is 0.0347 against a target of 0.25, and less DI coverage is what
 # raises it: an uncovered household with SMI falls to the same zero income as
