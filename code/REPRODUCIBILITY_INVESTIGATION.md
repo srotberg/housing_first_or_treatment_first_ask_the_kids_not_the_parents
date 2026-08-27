@@ -120,3 +120,78 @@ remains needs real work rather than another quick check:
 
 DO NOT propose a cause without a test that could refute it. Three confident
 diagnoses on 26 August were each built from reading a diff, and each was wrong.
+
+## FOUND: the parameters never reach the model
+
+**2026-08-27 ~01:50Z. This supersedes every hypothesis above.**
+
+### The proof
+
+Three archived points, three completely different parameter vectors, re-run:
+
+| point | recorded loss | re-run loss |
+|---|---|---|
+| point_ad09bce9b1 | 0.2660 | **2.5642** |
+| point_0a9aeef808 | 0.2871 | **2.5642** |
+| point_d882c4a789 | 1.5301 | **2.5642** |
+
+Identical to four decimals, with identical moments (`cbar` 2.0326, `b` 0.95854,
+`lambda_d` 0.035822). A broken model gives varying wrong answers. One fixed
+answer for every input means the input is not being read.
+
+Confirmed directly: `value_of_life` set to **200.0** against the anchor's
+35.0957 -- a 5.7x change in a headline parameter -- returns loss 2.5642 and
+`aleph` -2.8374, unchanged to four decimals. And the model log contains
+**ZERO `HANDOVER` lines**, where the Fortran prints one per parameter it
+applies.
+
+`run_one_point.sh` has not been specifying points. The model runs one fixed
+configuration whatever is passed to it.
+
+### The mechanism, from the Fortran's own comment at line ~30425
+
+> THE HANDOVER FILE, AND IT CONSUMES ITSELF. ... The model takes the value
+> from a file instead, AFTER the state is read, and deletes the file as it
+> does.
+
+The handover is a ONE-SHOT SEED, not a specification. It is applied on top of
+`calibration_state.dat` and the file is deleted as it is consumed. It only
+takes effect if the run reaches that read with the file present. It currently
+never does -- no HANDOVER lines are printed at all.
+
+### What it explains
+
+Every confusing observation of 26 August, at once: three vectors giving one
+answer; "simplex arms" uniformly at ~2.5; "0 of 19 vertices improved"; the
+pre-change and post-change binaries agreeing exactly; zeta_DI having no effect;
+clearing the disk state changing nothing. None of those were about the model.
+
+### What it costs
+
+The 422-point archive records whatever calibration state each container
+inherited, NOT the parameters on its VECTOR line. Pre-26-August points DO
+differ from one another, so the handover worked at some point and broke at a
+specific moment. Finding when tells you which points are trustworthy.
+
+### The next steps, in order
+
+1. Find why the handover read is not reached. It is guarded by
+   `handover_status==0` from an `open(...status='old')`; if the file is absent
+   at that moment the whole block is skipped silently. Check whether an earlier
+   run deletes it before the read, or whether the read sits behind a branch the
+   current configuration does not enter.
+2. Find WHEN it broke, by bisecting over archived points: the last point whose
+   moments differ from its neighbours' is the last one that honoured its
+   parameters.
+3. Make a point specify itself. A parameter file that is consumed and deleted
+   cannot make a run reproducible; the model needs to read its parameters on
+   every run, or run_one_point.sh must verify the HANDOVER lines appear and
+   fail loudly when they do not.
+4. Only then re-establish a baseline and restart the search.
+
+### The rule this should leave behind
+
+`run_one_point.sh` must assert that the model echoed a HANDOVER line for every
+parameter it was given, and fail the point if not. A silent no-op in the one
+step that makes a measurement mean anything is what turned a full day of
+compute into noise.
