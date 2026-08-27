@@ -298,3 +298,89 @@ so there is no file channel through which a caller's vector can be dropped.
 `calibrated.json` is a *seed*: its absence means a cold start from the class
 defaults, which is a slower calibration and not a discarded specification. The
 defect is specific to a model whose parameters arrive by side channel.
+
+---
+
+## 27 August, later: bug two, and a supervisor nobody was watching
+
+### The leader does not reproduce, and it is not the build
+
+Re-measured the leader's exact vector cold with the handover fix. All 23
+parameters applied. Loss 0.304 against the archived 0.266; rank 41 against
+rank 1.
+
+The build was ruled out by rebuilding at `79e1af9`, the exact commit the leader
+was measured at, patched ONLY to move the handover past the early return, and
+running it cold on the same vector. The two binaries agree with each other on
+all 23 moments to better than 1e-4 relative and both disagree with the archive:
+
+| moment | archived | cold HEAD | cold 79e1af9 |
+|---|---|---|---|
+| b | 0.0729013 | 0.0578761 | 0.0578760 |
+| gamma | 0.290055 | 0.248740 | 0.248740 |
+| h_4 | 0.640946 | 0.576379 | 0.576379 |
+| aleph | 57.6674 | 66.6564 | 66.6564 |
+| cbar | 0.0039226 | 0.0024510 | 0.0024510 |
+
+So what the archived run had and a cold run does not is CONTAINER STATE.
+
+### What was in it: `.claude/hooks/session-start.sh`
+
+The hook relaunches `supervise_calibration.py` -- the JOINT CALIBRATION LOOP --
+on every remote session in this repository whenever `code/CALIBRATION_ACTIVE`
+exists. It fires on every session, which means it fired in **every worker
+container that measured a point**. It was found running here, unasked, ninety
+seconds after a container restart, taking four cores beside a controlled test.
+
+The supervisor writes `calibration_state.dat` and `calibration_distribution*.dat`
+at the end of every loop, and it MOVES every internally calibrated parameter as
+it goes. A point measured in such a container therefore read whatever the
+supervisor had most recently written, which is a moving target, and competed with
+it for the cores. That is the mechanism: an archived point is a measurement of
+its vector PLUS wherever the joint loop happened to be at that instant.
+
+The hook is not a bug; it is a documented device with `CALIBRATION_ACTIVE` as its
+off switch, and it exists because a container rebuild used to cost half an hour
+of idle. What was missing is that a POINT RUN and the JOINT LOOP must not share a
+container, and nothing said so.
+
+`code/CALIBRATION_ACTIVE` is now removed, which is the documented way to stop it,
+and the removal is committed so the next container does not bring it back.
+`touch code/CALIBRATION_ACTIVE` restarts it when the calibration resumes.
+
+### The named suspect inside that state
+
+Diffing the state a worker-era container carried against the one a cold run
+writes, over the region where the alignment is verified -- seven handed
+parameters land exactly where they should, through index 18 -- two economically
+meaningful scalars differ, and neither is in any point vector:
+
+| scalar | worker-era | cold (declared) |
+|---|---|---|
+| `relative_share_of_housing` | 0.19393803 | 0.14833560 |
+| `drug_supply_shifter` | 0.57224533 | 1.0 |
+
+`relative_share_of_housing` is internally calibrated, has its own adjuster in the
+joint loop, and IS a case in the Fortran's handover -- `run_one_point.sh` simply
+never hands it. Parameter updating is switched off during a b sweep, so whatever
+it starts at is what the point is measured at. `drug_supply_shifter` is solved
+inside the run, so it may converge to the same place regardless; not claimed.
+
+Both point the right way: a lower housing weight gives less housing spending
+(gamma 0.290 -> 0.249), costlier drugs give fewer users (b 0.0729 -> 0.0579).
+
+The state file's alignment is only verified through index 18, because
+`write_calibration_state` writes arrays (`rent(1,:)`, `housing_price`) that a
+line-by-line reading cannot step over, and the two files differ in length. There
+may be more differences past that point and this note does not claim there are not.
+
+### Open, and not to be asserted without a run behind it
+
+1. Does handing `relative_share_of_housing` at the worker-era value move the cold
+   moments back toward the archive? Running.
+2. Are two cold runs of the SAME binary bit-identical? The two builds gave
+   0.05787611 and 0.05787596, which is small but not zero, and until the
+   same-binary-twice test is run "deterministic" is not established.
+3. If the answer to 1 is yes, every internally calibrated parameter that is not in
+   the point vector has to go into it, and the 423-point archive has to be
+   re-measured before its ranking means anything.
