@@ -21,6 +21,24 @@ fi
 ROOT="${CLAUDE_PROJECT_DIR:-$(cd "$(dirname "$0")/../.." && pwd)}"
 [ -f "$ROOT/code/CALIBRATION_ACTIVE" ] || exit 0
 
+# AND THE OFF SWITCH HAS TO SURVIVE A STALE CHECKOUT, which the local file alone
+# does not. The container is restored from a snapshot that can sit several
+# commits behind the branch: the calibration was halted, CALIBRATION_ACTIVE was
+# removed and the removal was pushed, and the hook STILL relaunched the
+# supervisor after each of the next two restarts, because the snapshot predated
+# the removal and the file was back. Each time it ran the joint loop -- rewriting
+# calibration_state.dat -- in a container that was measuring points, which is the
+# defect the halt existed to stop.
+#
+# So the marker is read from the REMOTE TIP rather than from disk. It fails
+# CLOSED: no network, no branch, no answer means no supervisor, because a
+# supervisor that does not start costs one loop and a supervisor that starts when
+# it should not costs every measurement taken beside it.
+BRANCH=$(git -C "$ROOT" rev-parse --abbrev-ref HEAD 2>/dev/null) || exit 0
+[ -n "$BRANCH" ] && [ "$BRANCH" != "HEAD" ] || exit 0
+git -C "$ROOT" fetch --quiet origin "$BRANCH" 2>/dev/null || exit 0
+git -C "$ROOT" cat-file -e FETCH_HEAD:code/CALIBRATION_ACTIVE 2>/dev/null || exit 0
+
 # Idempotent: never a second supervisor beside the first.
 #
 # POSITIONAL, NOT A SUBSTRING. `ps -eo args | grep supervise_calibration.py`
