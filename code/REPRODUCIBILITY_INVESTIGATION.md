@@ -195,3 +195,106 @@ specific moment. Finding when tells you which points are trustworthy.
 parameter it was given, and fail the point if not. A silent no-op in the one
 step that makes a measurement mean anything is what turned a full day of
 compute into noise.
+
+---
+
+## RESOLVED, 27 August: the cause, the fix, and a correction to the section above
+
+### The cause
+
+`read_calibration_state()` has **two early returns above the handover read**:
+
+```fortran
+inquire(file="calibration_state.dat",exist=state_exists_1)
+if (.NOT. state_exists_1) then
+    write(*,*) "no calibration_state.dat, starting from the declared values"
+    return                      ! <-- 190 lines above the handover
+end if
+...
+if (trim(state_tag_1) .NE. "calibration_state_v3") then
+    ... ; return                ! <-- the second one
+end if
+```
+
+`calibration_state.dat` is **not in the repository**. A container that has never
+run the model therefore has none, takes the first return, and never opens
+`PARAM_HANDOVER.txt` at all. The run then solves at the values written in the
+Fortran declarations, prints a complete moments block, and says nothing about
+the vector it threw away.
+
+### The proof, in both directions
+
+| test | `calibration_state.dat` | binary | HANDOVER lines | `PARAM_HANDOVER.txt` after |
+|---|---|---|---|---|
+| A | absent | before the fix | **0 of 3** | still there, unread |
+| B | present | before the fix | 3 of 3 | consumed |
+| C | absent | **after the fix** | **3 of 3** | consumed |
+
+Test B is the control that says the handover code itself was never broken: with
+a state file present it applied `value_of_life` 34.4153 -> 200, exactly as
+written. Only the path to it was.
+
+### Why it stayed hidden for a day
+
+It bites the **first** run in a container that has never run the model, and only
+that one. That run's own calibration loop writes `calibration_state.dat` at the
+end of its first pass, so every later run in the same container finds the file,
+falls past the early return, and gets its handover. A worker that measured six
+points lost its first and honoured its other five.
+
+### The blast radius: one point in 423
+
+A run that discarded its handover ran the same declared vector as every other
+such run, so it has a fixed signature: `aleph` = -2.8373745075468442 and
+`cbar` = 2.0325575259878872, every time. Scanning the archive for it:
+
+```
+points measured with the handover DISCARDED : 1    (point_01658bd93e, rank 358, loss 2.564)
+points whose parameters reached the model   : 422
+```
+
+The leader at 0.266 and the whole ranking above it are unaffected.
+
+### The correction
+
+**The entry above concluded that every point measured on 26 August was invalid.
+That was wrong, and it should be read with this paragraph attached.** All three
+reproducibility re-runs it rests on were first runs in a container that had
+never run the model, so all three hit the bug; their agreeing to four decimals
+was the bug's signature and not evidence about the archive. The archive itself
+refutes the conclusion directly: of the 11 values of b measured by more than one
+point with the other 23 parameters differing, **all 11 give different moments**.
+The parameters were reaching the model in the workers. They were not reaching it
+here.
+
+The wider lesson is the one that was already written down and not followed: the
+inference ran from a diff and a coincidence rather than from a falsifiable test,
+and it was the fourth confident wrong diagnosis in the same investigation. Test A
+above -- run the binary, count the lines -- costs ninety seconds and would have
+settled it before any of the four.
+
+### What was changed
+
+1. **`apply_param_handover()`**, split out of `read_calibration_state` verbatim
+   and called by the caller straight afterwards, so the seed is applied whether
+   or not there is a state to resume from.
+2. **`run_one_point.sh` deletes `calibration_state.dat` and
+   `calibration_distribution*.dat` before each point**, so a point is a function
+   of its vector and nothing else. Without this the fix would have created a
+   second version of the same defect: the first point in a container now banks
+   its handover into a state file, and the second point -- whose handover is
+   consumed and deleted as it is read -- would resume from the first point's
+   parameters.
+3. **`run_one_point.sh` counts the HANDOVER lines and fails the point unless the
+   model echoed one for every parameter it was handed**, and records
+   `HANDOVER OK: n of n parameters applied` in the point file when it did. A
+   name the model does not recognise fails the point too.
+
+### The cross-check required by TRANSITION_LESSONS section 7
+
+Does it carry to the stylized model? **No.** The stylized model takes its
+parameters as function arguments -- `calibrate(seed, ...)`, `with_(P(), **kw)` --
+so there is no file channel through which a caller's vector can be dropped.
+`calibrated.json` is a *seed*: its absence means a cold start from the class
+defaults, which is a slower calibration and not a discarded specification. The
+defect is specific to a model whose parameters arrive by side channel.

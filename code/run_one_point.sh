@@ -117,6 +117,15 @@ if [ ! -x hftf ] || [ housing_first_or_treatment_first_SR_v1.f90 -nt hftf ]; the
         }
 fi
 
+# EVERY POINT STARTS FROM THE DECLARATIONS PLUS ITS OWN HANDOVER, so a point is
+# a function of its vector and nothing else. Left in place, calibration_state.dat
+# carries the PREVIOUS point's parameters and its adjusters, its trust regions
+# and its loop counter into this one, and the handover -- which consumes itself
+# as it is read -- is gone by the second run, so the second point would silently
+# re-measure the first. The warm start goes with it for the same reason: it is
+# keyed to the distribution the previous vector produced.
+rm -f calibration_state.dat calibration_distribution*.dat
+
 # b reaches the model through the sweep grid; everything else through the handover.
 printf '%s\n' "${P[addiction_scalar_1]}" > B_SWEEP_GRID.txt
 : > PARAM_HANDOVER.txt
@@ -124,6 +133,7 @@ for k in "${!P[@]}"; do
     [ "$k" = addiction_scalar_1 ] && continue
     printf '"%s" %s\n' "$k" "${P[$k]}" >> PARAM_HANDOVER.txt
 done
+WANT=$(wc -l < PARAM_HANDOVER.txt)
 
 ulimit -s unlimited
 echo "running $TAG on $(nproc) cores"
@@ -132,9 +142,32 @@ OMP_NUM_THREADS=$(nproc) OMP_STACKSIZE=512M GFORTRAN_UNBUFFERED_ALL=1 \
     ./hftf > "worker_${TAG}.log" 2>&1 || true
 MINS=$(( ($(date +%s) - START) / 60 ))
 
+# DID THE PARAMETERS ACTUALLY REACH THE MODEL? This is the check that was
+# missing, and its absence cost a night and an archive. The handover used to be
+# read at the foot of read_calibration_state, below two early returns, so on a
+# freshly cloned container -- which has no calibration_state.dat, because that
+# file is not in the repository -- it was never reached. The run then solved at
+# the values written in the Fortran declarations and printed a complete moments
+# block. Nothing anywhere said the vector had been discarded: three archived
+# points with different vectors re-ran to the same loss to four decimals before
+# anyone thought to count the HANDOVER lines, and there were none. The model
+# prints one line per parameter it applies, so the count is the proof, and a run
+# that cannot prove it must not be recorded as a point.
+GOT=$(grep -c "HANDOVER " "worker_${TAG}.log" 2>/dev/null || true)
+IGNORED=$(grep -c "HANDOVER IGNORED" "worker_${TAG}.log" 2>/dev/null || true)
+GOT=$((GOT - IGNORED))
+if [ "$IGNORED" -ne 0 ]; then
+    grep "HANDOVER IGNORED" "worker_${TAG}.log" >&2 || true
+    fail "the model did not recognise $IGNORED of the names it was handed"
+fi
+if [ "$GOT" -ne "$WANT" ]; then
+    fail "handover applied $GOT of $WANT parameters; this run did not measure the vector it was given"
+fi
+
 mkdir -p points
 {
     echo "point $TAG solved in ${MINS} min on $(nproc) cores"
+    echo "HANDOVER OK: $GOT of $WANT parameters applied"
     echo -n "VECTOR"
     for k in $(echo "${!P[@]}" | tr ' ' '\n' | sort); do printf ' %s=%s' "$k" "${P[$k]}"; done
     echo

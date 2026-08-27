@@ -30422,6 +30422,43 @@
 
         end if
 
+        ! THE HANDOVER IS NOT READ HERE ANY MORE, AND MOVING IT WAS THE
+        ! WHOLE BUG. It used to sit at the foot of this subroutine, which has
+        ! TWO early returns above it: one when calibration_state.dat does not
+        ! exist and one when it is not version 3. A container that had never
+        ! run the model -- which is every freshly cloned worker, because the
+        ! state file is not in the repository -- took the first of those and
+        ! returned before the handover was ever opened. The run then solved at
+        ! the values in the declarations, printed a full moments block, and
+        ! looked in every respect like a measured point. Three archived points
+        ! with different vectors re-ran to the same loss to four decimals with
+        ! no HANDOVER line anywhere in their logs; the parameters had never
+        ! reached the model. It is now apply_param_handover(), called by the
+        ! caller straight after this returns, so it runs on both paths.
+
+        write(*,*) "resumed from calibration_state.dat, written after loop", resumed_loop_count
+        write(*,*) "relative_share_of_addiction_1=", relative_share_of_addiction_1
+        write(*,*) "addiction_scalar_1=", addiction_scalar_1
+        write(*,*) "lambda_addiction=", lambda_addiction
+        write(*,*) "largest_house_size=", largest_house_size
+        write(*,*) "smallest_rental_relative_to_lowest_income=", smallest_rental_relative_to_lowest_income
+        write(*,*) "lambda_m=", lambda_m
+        write(*,*) "kappa_uem=", kappa_uem
+        write(*,*) "rho_m=", rho_m
+        write(*,*) "rho_d=", rho_d
+
+    end subroutine
+
+    subroutine apply_param_handover()
+
+        ! THE ONE SHOT SEED, SPLIT OUT OF read_calibration_state SO THAT IT RUNS
+        ! WHETHER OR NOT THERE IS A STATE FILE TO RESUME FROM. See the note at
+        ! the point it was taken from. Everything below is unchanged.
+
+        use Global_Vars
+
+        implicit none
+
         ! THE HANDOVER FILE, AND IT CONSUMES ITSELF.
         !
         ! Putting a value chosen outside the loop back into it means putting it
@@ -30615,18 +30652,8 @@
 
         end if
 
-        write(*,*) "resumed from calibration_state.dat, written after loop", resumed_loop_count
-        write(*,*) "relative_share_of_addiction_1=", relative_share_of_addiction_1
-        write(*,*) "addiction_scalar_1=", addiction_scalar_1
-        write(*,*) "lambda_addiction=", lambda_addiction
-        write(*,*) "largest_house_size=", largest_house_size
-        write(*,*) "smallest_rental_relative_to_lowest_income=", smallest_rental_relative_to_lowest_income
-        write(*,*) "lambda_m=", lambda_m
-        write(*,*) "kappa_uem=", kappa_uem
-        write(*,*) "rho_m=", rho_m
-        write(*,*) "rho_d=", rho_d
-
     end subroutine
+
 
     subroutine write_calibration_distribution()
 
@@ -30789,6 +30816,13 @@
 
         ! Pick up where a killed run left off, if it left anything.
         call read_calibration_state()
+
+        ! AND THEN THE HANDOVER, UNCONDITIONALLY. This call is the fix for the
+        ! defect described in apply_param_handover: the seed must be applied on
+        ! a first run in a fresh container exactly as it is on a resume, or a
+        ! point measured on such a container is a point measured at the
+        ! declared values with the vector it was asked for thrown away.
+        call apply_param_handover()
 
         ! THE SMOOTH HAZARD NEEDS THE TABULATED EXPECTATION. With the hoist off
         ! the two continuations are never formed separately, so there is nothing
