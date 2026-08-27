@@ -384,3 +384,48 @@ may be more differences past that point and this note does not claim there are n
 3. If the answer to 1 is yes, every internally calibrated parameter that is not in
    the point vector has to go into it, and the 423-point archive has to be
    re-measured before its ranking means anything.
+
+### The determinism test, and what it does not excuse
+
+Same binary, same vector, twice, cold. The two runs are NOT bit identical: the
+worst moment moves by 2.5e-5 relative (`lambda_d`), with `kappa_ued`, `tau_u` and
+`theta` at roughly 1e-5 and most of the rest below 1e-6. That is the shape of
+OpenMP reduction order -- floating point addition is not associative, the thread
+that finishes first varies, and an iterative solver stopping on a tolerance
+carries the difference forward.
+
+It does not matter at the scale anything here is decided on. **Both runs score
+0.304 to three decimals**, the archive's leader is 0.266, and the gap to explain
+is 0.038 -- three orders of magnitude above the noise. The top of the archive is
+separated by 0.001 between ranks, still forty times the noise. So run-to-run
+non-determinism is real, is worth knowing about, and is NOT what makes an
+archived point irreproducible.
+
+### Bug two, closed as a diagnosis
+
+Every alternative has a run behind its refutation:
+
+| candidate | verdict | what settled it |
+|---|---|---|
+| the build | refuted | HEAD and 79e1af9 agree cold on all 23 moments to better than 1e-4 |
+| run-to-run noise | refuted | two cold runs of one binary both score 0.304; worst moment wobble 2.5e-5 |
+| the internal loop moving the vector | refuted | parameter updating is switched off during a b sweep |
+| the handover | refuted | 23 of 23 applied, confirmed in the log of every run above |
+| inherited container state | **the cause** | the SessionStart hook ran the joint loop in every worker container, rewriting the state each point read |
+
+What remains is not a mystery but a decision. The archive's 423 points are each a
+real measurement, but of "this vector PLUS wherever the joint loop stood at that
+instant", and the quantity that varies between them is not the vector alone. The
+ranking across them is therefore not a ranking of vectors, and the search that
+was driven by that ranking was reading a signal it could not have been reading.
+
+### Two things that should change before any point is measured again
+
+1. **`relative_share_of_housing` and `housing_status_grid_expander` go into the
+   point vector.** The model accepts both today; `run_one_point.sh` simply never
+   hands them. Note this changes TAG, which is the md5 of the vector, so every
+   archived point's filename stops matching -- which is moot if the archive is
+   being re-measured and a blocker if it is not.
+2. **The joint loop and a point measurement must never share a container.** The
+   hook is the mechanism but the rule is the point: one of them owns
+   `calibration_state.dat` and the other reads it, and they cannot both be right.
