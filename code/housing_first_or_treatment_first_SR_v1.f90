@@ -20342,7 +20342,15 @@
         integer, dimension(6) :: dist_argmax_1
         integer :: dist_dim_1
         real(8) :: dist_mass_1,dist_wealth_1
-        real(8), dimension(0:housing_status_grid_size-1) :: dist_housing_1
+        ! FROM lowest_housing_grid_point, NOT FROM 0. The housing dimension of
+        ! the distribution starts at -1 -- homelessness -- and the loop that
+        ! fills this runs over that dimension's own bounds, so a declaration
+        ! from 0 made dist_housing_1(-1) a read-modify-write of the 8 bytes
+        ! below the array on every 100th sweep of every run: -fcheck caught it
+        ! at line ~21426 the first time the diagnostic fired. The victim of the
+        ! write is whatever the compiler placed there, and the homeless mass
+        ! never reached the DIST_MOM by_housing column it was meant for.
+        real(8), dimension(lowest_housing_grid_point:housing_status_grid_size-1) :: dist_housing_1
         integer :: newborn_census_i
         real(8) :: newborn_census_clean,newborn_census_smi
         character*1 :: string_used

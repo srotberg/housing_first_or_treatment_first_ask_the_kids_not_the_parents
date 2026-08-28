@@ -114,7 +114,28 @@ fix before reviving.
 
 ## The runtime evidence
 
-- `-fcheck=bounds,do,mem,pointer`, leader's vector, cold: RESULT RECORDED BELOW.
+### The bounds checker caught a live out-of-bounds WRITE in the first pass
+
+`-fcheck=bounds,do,mem,pointer`, leader's vector, cold. The value solve and the
+first hundred distribution sweeps ran clean; the first firing of the
+`diagnose_distribution_max` diagnostic then aborted:
+
+    At line 21426: Index '-1' of dimension 1 of array 'dist_housing_1'
+    below lower bound of 0
+
+`dist_housing_1` was declared `0:housing_status_grid_size-1`, but the housing
+dimension of the distribution starts at `lowest_housing_grid_point=-1` --
+homelessness -- and the filling loop correctly runs over that dimension's own
+lbound/ubound. So on EVERY 100th distribution sweep of EVERY production run
+(`diagnose_distribution_max=1`), the homeless mass was read-modify-written into
+the 8 bytes below the array. The victim is whatever the compiler placed there,
+so the damage is layout- and optimisation-dependent; what is certain is that
+the homeless column of the DIST_MOM by_housing diagnostic never received its
+mass. This is the only defect found so far that corrupts memory on the live
+path. Fixed by declaring the array from `lowest_housing_grid_point`; the
+bounds-checked run was relaunched from the fixed source to scan the remainder
+of the path (aggregation, moment construction).
+
 - `-ffpe-trap=invalid,zero`: RESULT RECORDED BELOW.
 
 ## The stylized-model cross-check (TRANSITION_LESSONS section 7)
