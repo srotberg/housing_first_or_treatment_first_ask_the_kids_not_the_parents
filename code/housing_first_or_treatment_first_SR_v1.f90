@@ -6517,9 +6517,19 @@
                                         
                                     total_income=total_income+risk_free_rate(time_period)*&
                                         max(financial_grid(financial_index),0.d0) !+food_stamps_1
+                                        ! max(...,1e-14), HERE AND AT THE FIVE RATIOS BELOW LIKE IT: a
+                                        ! massed cell CAN have exactly zero income -- unemployed, no
+                                        ! UI, zero assets, food stamps excluded from this measure --
+                                        ! and the ratio was then Inf. Every consumer already handles
+                                        ! that correctly (Inf fails the <=cap test and lands in the
+                                        ! top burden bin, which is the right economics for a
+                                        ! zero-income renter), so the floor changes NOTHING downstream:
+                                        ! the ratio is merely astronomically large instead of Inf,
+                                        ! takes the same branch, and stops raising the divide flag
+                                        ! that blocked the -ffpe-trap sweep.
                                                                             
                                     rent_to_income=(model_average_rent(time_period)*&
-                                        model_average_rental_unit_size(time_period))/total_income
+                                        model_average_rental_unit_size(time_period))/max(total_income,10.d0**(-14))
                                     
                                      if (rent_to_income<=max_rent_to_income) then
                                         
@@ -6687,7 +6697,7 @@
                                     if ((amortization_used==1) .AND. &
                                         (housing_status_index_used>=second_lowest_housing_grid_point)) then 
                                                                                                             
-                                        rent_to_income=(rent(time_period,low_quality_market)*lived_in_size_used)/total_income
+                                        rent_to_income=(rent(time_period,low_quality_market)*lived_in_size_used)/max(total_income,10.d0**(-14))
                                         housing_to_income_all=rent_to_income
 
                                         ! GAMMA'S MOMENT IS AN EXPENDITURE SHARE, NOT A
@@ -6757,7 +6767,7 @@
                                     elseif (housing_status_index_used==lowest_housing_grid_point) then
                                                                                                             
                                         rent_to_income=(model_average_rent(time_period)*&
-                                            model_average_rental_unit_size(time_period))/total_income
+                                            model_average_rental_unit_size(time_period))/max(total_income,10.d0**(-14))
                                                                     
                                         if (rent_to_income<=max_rent_to_income) then
                                         
@@ -6837,7 +6847,7 @@
                                                 (pay_mortgage_insurance_1*mortgage_insurance_premium+&
                                                 mortgage_interest_rate(time_period)+average_fraction_of_mortgage_repaid)+&
                                                 (property_tax(time_period)+housing_depreciation_rate*&
-                                                include_housing_depreciation_in_housing_costs))/total_income
+                                                include_housing_depreciation_in_housing_costs))/max(total_income,10.d0**(-14))
                                                 
                                             housing_to_income_owners=&
                                                 housing_price(time_period)*housing_size(housing_status_index_used)*&
@@ -6845,7 +6855,7 @@
                                                 (pay_mortgage_insurance_1*mortgage_insurance_premium+&
                                                 mortgage_interest_rate(time_period)+average_fraction_of_mortgage_repaid)+&
                                                 (property_tax(time_period)+housing_depreciation_rate*&
-                                                include_housing_depreciation_in_housing_costs))/total_income
+                                                include_housing_depreciation_in_housing_costs))/max(total_income,10.d0**(-14))
                                                 
                                             mortgage_to_income_owners=&
                                                 (-financial_grid(min(financial_index_used,negative_financial_grid_size))*&
@@ -11019,7 +11029,7 @@
                                     
                                     else
                                         
-                                        fraction_of_income_spent_on_housing=fraction_of_income_spent_on_housing/total_income
+                                        fraction_of_income_spent_on_housing=fraction_of_income_spent_on_housing/max(total_income,10.d0**(-14))
                                         
                                     end if
                                                 
