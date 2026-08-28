@@ -8128,40 +8128,38 @@
             sum(total_rental_demand_segmented(time_period,:))
         
         model_age_switchers_to_renting(time_period)=&
-            model_age_switchers_to_renting(time_period)/model_mass_switchers(time_period)
+            model_age_switchers_to_renting(time_period)/max(model_mass_switchers(time_period),10.d0**(-14))
             
         model_prod_switchers_to_renting(time_period)=&
-            model_prod_switchers_to_renting(time_period)/model_mass_switchers(time_period)
+            model_prod_switchers_to_renting(time_period)/max(model_mass_switchers(time_period),10.d0**(-14))
             
         model_financial_switchers_to_renting(time_period)=&
-            model_financial_switchers_to_renting(time_period)/model_mass_switchers(time_period)
+            model_financial_switchers_to_renting(time_period)/max(model_mass_switchers(time_period),10.d0**(-14))
             
         model_house_size_switchers_to_renting(time_period)=&
-            model_house_size_switchers_to_renting(time_period)/model_mass_switchers(time_period)
+            model_house_size_switchers_to_renting(time_period)/max(model_mass_switchers(time_period),10.d0**(-14))
                 
-        model_age_non_switcher_renters(time_period)=model_age_non_switcher_renters(time_period)/&
-            model_mass_non_switcher_renters(time_period)
+        model_age_non_switcher_renters(time_period)=model_age_non_switcher_renters(time_period)/max(model_mass_non_switcher_renters(time_period),10.d0**(-14))
             
-        model_prod_non_switcher_renters(time_period)=model_prod_non_switcher_renters(time_period)/&
-            model_mass_non_switcher_renters(time_period)
+        model_prod_non_switcher_renters(time_period)=model_prod_non_switcher_renters(time_period)/max(model_mass_non_switcher_renters(time_period),10.d0**(-14))
             
         model_financial_non_switcher_renters(time_period)=&
-            model_financial_non_switcher_renters(time_period)/model_mass_non_switcher_renters(time_period)
+            model_financial_non_switcher_renters(time_period)/max(model_mass_non_switcher_renters(time_period),10.d0**(-14))
             
         model_house_size_non_switcher_renters(time_period)=&
-            model_house_size_non_switcher_renters(time_period)/model_mass_non_switcher_renters(time_period)
+            model_house_size_non_switcher_renters(time_period)/max(model_mass_non_switcher_renters(time_period),10.d0**(-14))
             
         model_age_switchers_mortgages_to_renting(time_period)=&
-            model_age_switchers_mortgages_to_renting(time_period)/model_mass_switchers_mortgages(time_period)
+            model_age_switchers_mortgages_to_renting(time_period)/max(model_mass_switchers_mortgages(time_period),10.d0**(-14))
             
         model_prod_switchers_mortgages_to_renting(time_period)=&
-            model_prod_switchers_mortgages_to_renting(time_period)/model_mass_switchers_mortgages(time_period)
+            model_prod_switchers_mortgages_to_renting(time_period)/max(model_mass_switchers_mortgages(time_period),10.d0**(-14))
             
         model_financial_switchers_mortgages_to_renting(time_period)=&
-            model_financial_switchers_mortgages_to_renting(time_period)/model_mass_switchers_mortgages(time_period)
+            model_financial_switchers_mortgages_to_renting(time_period)/max(model_mass_switchers_mortgages(time_period),10.d0**(-14))
             
         model_house_size_switchers_mortgages_to_renting(time_period)=&
-            model_house_size_switchers_mortgages_to_renting(time_period)/model_mass_switchers_mortgages(time_period)
+            model_house_size_switchers_mortgages_to_renting(time_period)/max(model_mass_switchers_mortgages(time_period),10.d0**(-14))
         
         sum_of_distribution=0
         

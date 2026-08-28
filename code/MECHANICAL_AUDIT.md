@@ -193,6 +193,20 @@ the guard, which is the same number with a clean FPU. The sweep continues; each
 further trap gets the same treatment -- prove it masked, silence it at the
 source, rerun -- until the run reaches the moments block trapped.
 
+The third trap took three hours to reach (the run shared its four cores with
+an orphaned model process for all of them): line 8131, the tenure-switcher
+statistics in `stationary_equilibrium_statistics`. Twelve normalizations share
+three subpopulation masses as denominators -- `model_mass_switchers`,
+`model_mass_non_switcher_renters`, `model_mass_switchers_mortgages` -- and a
+sweep in which nobody switches tenure makes the first of them 0, so the first
+division is 0/0 (the numerators accumulate only alongside the mass). All
+twelve normalized statistics are dead ends: accumulated, normalized, and never
+read again anywhere in the file, so the NaN reached nothing. Same class as the
+21 statistics-tail denominators, same treatment: all three masses floored at
+`10.d0**(-14)` at every division site (12 sites, two of them split across a
+continuation line, which the first patch attempt missed and its count assert
+caught). The sweep was relaunched.
+
 ## The stylized-model cross-check (TRANSITION_LESSONS section 7)
 
 | bug found here | does the stylized model have it? |
