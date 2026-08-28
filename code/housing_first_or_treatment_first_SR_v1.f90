@@ -3769,7 +3769,17 @@
         integer :: max_future_mortgage_index_1,track_housing_2
                                                 
         !$omp threadprivate(gross_wage_income)  
-        !$omo threadprivate(cutoff_taxable_income)
+        ! THE SENTINEL BELOW WAS !$omo FOR AN UNKNOWN TIME, WHICH IS A COMMENT.
+        ! A misspelled OpenMP sentinel does not fail the build; it silently
+        ! deletes the directive. cutoff_taxable_income was therefore the one
+        ! work variable of this family SHARED across threads: every thread
+        ! writes it inside the budget routine and reads it back into its
+        ! optimal_* record, so the recorded value could be another thread's.
+        ! The value function itself was never wrong -- the callee recomputes
+        ! taxable income from the same formula -- and the recorded policy is
+        ! read by nothing today, which is why no number moved. Fixed because
+        ! the first consumer of that array would have inherited a data race.
+        !$omp threadprivate(cutoff_taxable_income)
         !$omp threadprivate(spending_on_housing)
         !$omp threadprivate(wage_income_tax_paid)
         !$omp threadprivate(total_household_working_wealth)
@@ -6522,7 +6532,17 @@
                                             max(financial_grid(financial_index),0.d0))/&
                                             model_average_income_plus_assets_previous
                                             
-                                    elseif (use_income_or_income_plus_assets==3) then
+                                    ! ==3 .OR. ==4, NOT ==3 ALONE. The live flag is 4, and this
+                                    ! ladder ended at 3, so income_to_avg_income was read
+                                    ! UNINITIALISED at every state below -- caught by
+                                    ! -Wuninitialized, invisible in the output because the
+                                    ! poisoned bin index only feeds the income-profile files.
+                                    ! At the flag's other two sites (the income CDF and the
+                                    ! quintile cut) 4 means income plus financial income plus
+                                    ! home equity, which is what this branch computes; the
+                                    ! ladder was evidently not extended when 4 was added.
+                                    elseif ((use_income_or_income_plus_assets==3) .OR. &
+                                        (use_income_or_income_plus_assets==4)) then
                                     
                                         if ((amortization_used==1) .AND. (years_left_on_mortgage_index==2)) then
                                         
@@ -20523,7 +20543,7 @@
                                          include_exogenous_endowment*financial_grid_size+(1-include_exogenous_endowment)*&
                                          (newborn_household*negative_financial_grid_size+(1-newborn_household)*financial_grid_size)
                                 
-                                        !thread_num=0
+                                        thread_num=0
                                         !$ thread_num=omp_get_thread_num()
 
                                         do housing_status_index=(1-has_house)*lowest_housing_grid_point+&
@@ -20969,7 +20989,7 @@
                                             (1-include_exogenous_endowment)*(newborn_household*negative_financial_grid_size+&
                                             (1-newborn_household)*financial_grid_size)
                                     
-                                            !thread_num=0
+                                            thread_num=0
                                             !$ thread_num=omp_get_thread_num()
                     
                                             do housing_status_index=(1-has_house)*lowest_housing_grid_point+&
@@ -24410,7 +24430,12 @@
         real(8), dimension(life_span,employment_grid_size), intent(out) :: z_grid_by_age
         real(8), dimension(life_span,employment_grid_size,employment_grid_size), intent(out) :: transition_prob_by_age
         real(8), dimension(life_span-retirement_span,employment_grid_size) :: probability_distribution
-        real(8), dimension(employment_grid_size), intent(out) :: unconditional_probability_distribution
+        ! intent(inout), NOT out: this routine never assigns the array, and
+        ! intent(out) makes it formally undefined on entry, so a compiler that
+        ! poisons intent(out) arguments would hand the caller garbage. The
+        ! caller builds the distribution itself afterwards, on the equal-mass
+        ! grid; this argument is carried for the interface only.
+        real(8), dimension(employment_grid_size), intent(inout) :: unconditional_probability_distribution
         real(8), dimension(life_span-retirement_span) :: width
         real(8) :: temp_upper,temp_lower
                 
@@ -24516,7 +24541,12 @@
         real(8), dimension(life_span,employment_grid_size), intent(in) :: z_grid_by_age
         real(8), dimension(life_span,employment_grid_size,employment_grid_size), intent(out) :: transition_prob_by_age
         real(8), dimension(life_span-retirement_span,employment_grid_size) :: probability_distribution
-        real(8), dimension(employment_grid_size), intent(out) :: unconditional_probability_distribution
+        ! intent(inout), NOT out: this routine never assigns the array, and
+        ! intent(out) makes it formally undefined on entry, so a compiler that
+        ! poisons intent(out) arguments would hand the caller garbage. The
+        ! caller builds the distribution itself afterwards, on the equal-mass
+        ! grid; this argument is carried for the interface only.
+        real(8), dimension(employment_grid_size), intent(inout) :: unconditional_probability_distribution
         real(8), dimension(life_span-retirement_span) :: width
         real(8) :: temp_upper,temp_lower
                 
@@ -31700,14 +31730,23 @@
                         
                     else
                     
-                        discount_factor_on_child=min(max(discount_factor_on_child-&
-                            discount_factor_on_child_adjuster*&
-                            ((model_median_assets_to_income(1)/model_median_assets_to_income(3))-&
-                            median_nw_to_income_old_to_mid_age_data),0.005),10000.d0) 
-                            
-                        distance_discount_factor_on_child=&
-                            abs((model_median_assets_to_income(1)/model_median_assets_to_income(3))-&
-                            median_nw_to_income_old_to_mid_age_data)
+                        ! THIS BRANCH CANNOT STEER, AND MUST NOT PRETEND TO. It
+                        ! updated the parameter from model_median_assets_to_income(1)
+                        ! over model_median_assets_to_income(3): the array has size
+                        ! num_percentiles=1, so index 3 is out of bounds, and it is
+                        ! assigned NOWHERE in this file, so index 1 is the zero it
+                        ! was initialised to. A run that entered here would walk
+                        ! discount_factor_on_child by 0/garbage and report a
+                        ! distance made of the same. Dead today only because
+                        ! discount_factor_on_child_adjuster=0; stop rather than
+                        ! run, for the reason the smooth-hazard guard gives: a
+                        ! model that still produces numbers is exactly how this
+                        ! would go unnoticed.
+                        write(*,*) "discount_factor_on_child is switched on with"
+                        write(*,*) "target_HO_of_old=0, but its alternative moment"
+                        write(*,*) "model_median_assets_to_income is never computed."
+                        write(*,*) "Compute the moment or set target_HO_of_old=1."
+                        stop
                     
                     end if
                             
