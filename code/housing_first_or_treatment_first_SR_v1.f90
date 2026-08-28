@@ -7625,8 +7625,8 @@
                     
         end do
                 
-        rent_to_income_cdf(time_period,:)=rent_to_income_cdf(time_period,:)/total_renters_to_consider
-        rent_to_income_homeless_cdf(time_period,:)=rent_to_income_homeless_cdf(time_period,:)/total_homeless_1
+        rent_to_income_cdf(time_period,:)=rent_to_income_cdf(time_period,:)/max(total_renters_to_consider,10.d0**(-14))
+        rent_to_income_homeless_cdf(time_period,:)=rent_to_income_homeless_cdf(time_period,:)/max(total_homeless_1,10.d0**(-14))
         
         median_index=minloc(rent_to_income_homeless_cdf(time_period,:),1,&
             mask=rent_to_income_homeless_cdf(time_period,:)-0.5>=0)
@@ -7648,7 +7648,7 @@
             
         end do
                 
-        LTV_cdf(time_period,:)=LTV_cdf(time_period,:)/total_owners_to_consider
+        LTV_cdf(time_period,:)=LTV_cdf(time_period,:)/max(total_owners_to_consider,10.d0**(-14))
         
         write(*,*) "rent_to_income_cdf(time_period,101)=", rent_to_income_cdf(time_period,101)
         write(*,*) "total_renters_to_consider=", total_renters_to_consider
@@ -7675,7 +7675,7 @@
                 
         do age_index=1,life_span
         
-            average_rent_by_age(age_index)=average_rent_by_age(age_index)/mass_of_renters_by_age(age_index)
+            average_rent_by_age(age_index)=average_rent_by_age(age_index)/max(mass_of_renters_by_age(age_index),10.d0**(-14))
             value_of_bequests_by_age(age_index)=value_of_bequests_by_age(age_index)/bequests_mass_by_age(age_index)
         
         end do
@@ -7684,7 +7684,7 @@
         
             model_average_labour_income_by_employment(time_period,employment_index)=&
                 model_average_labour_income_by_employment(time_period,employment_index)/&
-                mass_by_employment(time_period,employment_index)
+                max(mass_by_employment(time_period,employment_index),10.d0**(-14))
         
         end do
         
