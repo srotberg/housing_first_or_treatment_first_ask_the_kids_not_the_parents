@@ -151,7 +151,22 @@ solver, or the dist_housing_1 corruption having been numerically consequential.
 The attribution run -- same `-O3` flags, fixed against unfixed source -- is
 recorded below.
 
-- `-ffpe-trap=invalid,zero`: RESULT RECORDED BELOW.
+### The attribution run: the fixes are numerically neutral on the live path
+
+Fixed source against unfixed source, both at the production `-O3` flags, cold,
+the leader's vector. All 23 moments agree to a worst relative difference of
+2.3e-5 -- the size of the measured run-to-run thread wobble (2.5e-5), and on
+the same wobble-prone moments (`kappa_ued`, `lambda_d`, `theta`, `tau_u`). So:
+
+- every fix in this audit leaves the model's numbers unchanged, as each fix's
+  analysis predicted -- the corruption's victim was diagnostic-only, the race
+  fed an array nothing reads, the uninitialised ratio fed only profile files;
+- the moment drift seen in the `-O1` bounds-checked run against the `-O3` runs
+  was optimisation-level floating point amplified through the
+  tolerance-stopped solver, not the fixes;
+- no archived measurement needs a corruption adjustment.
+
+### `-ffpe-trap=invalid,zero`: RESULT RECORDED BELOW.
 
 ## The stylized-model cross-check (TRANSITION_LESSONS section 7)
 
