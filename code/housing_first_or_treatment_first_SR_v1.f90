@@ -7312,18 +7312,25 @@
             end do
 
         end do        
+        ! max(...,1e-14) ON EVERY SUBPOPULATION DENOMINATOR BELOW: an empty
+        ! subpopulation -- no owners, no retirees yet, nobody with a negative
+        ! value of life -- divided 0 by 0 and the statistic went NaN, which
+        ! is the same class the aggregates section already guards ('every
+        ! conditional statistic divides by max(denominator,1e-12)'). A
+        ! floored empty subpopulation reports 0 instead of NaN and stops
+        ! raising the invalid flag that halted the -ffpe-trap sweep here.
                 
-        model_average_ss_benefits(time_period)=model_average_ss_benefits(time_period)/sum_of_retirees
+        model_average_ss_benefits(time_period)=model_average_ss_benefits(time_period)/max(sum_of_retirees,10.d0**(-14))
         
-        model_net_wealth_owners(time_period)=model_net_wealth_owners(time_period)/model_total_owners(time_period)
+        model_net_wealth_owners(time_period)=model_net_wealth_owners(time_period)/max(model_total_owners(time_period),10.d0**(-14))
 
-        model_net_wealth_renters(time_period)=model_net_wealth_renters(time_period)/model_total_renters(time_period)
+        model_net_wealth_renters(time_period)=model_net_wealth_renters(time_period)/max(model_total_renters(time_period),10.d0**(-14))
         
         model_fraction_homeless_with_negative_value_of_life(time_period)=&
-            model_fraction_homeless_with_negative_value_of_life(time_period)/model_fraction_with_negative_value_of_life(time_period)
+            model_fraction_homeless_with_negative_value_of_life(time_period)/max(model_fraction_with_negative_value_of_life(time_period),10.d0**(-14))
         
         model_fraction_addicted_with_negative_value_of_life(time_period)=&
-            model_fraction_addicted_with_negative_value_of_life(time_period)/model_fraction_with_negative_value_of_life(time_period)
+            model_fraction_addicted_with_negative_value_of_life(time_period)/max(model_fraction_with_negative_value_of_life(time_period),10.d0**(-14))
         
         model_fraction_with_negative_value_of_life(time_period)=&
             model_fraction_with_negative_value_of_life(time_period)/sum_of_distribution
@@ -7337,15 +7344,15 @@
         end do
         
         model_fraction_addicted_who_are_homeless(time_period)=&
-            model_fraction_addicted_who_are_homeless(time_period)/model_fraction_addicted(time_period)
+            model_fraction_addicted_who_are_homeless(time_period)/max(model_fraction_addicted(time_period),10.d0**(-14))
         
-        model_addiction_by_employment(:)=model_addiction_by_employment(:)/model_fraction_addicted(time_period)
+        model_addiction_by_employment(:)=model_addiction_by_employment(:)/max(model_fraction_addicted(time_period),10.d0**(-14))
           
         model_fraction_choose_zero_work(time_period)=&
-            model_fraction_choose_zero_work(time_period)/model_mass_can_work(time_period)
+            model_fraction_choose_zero_work(time_period)/max(model_mass_can_work(time_period),10.d0**(-14))
             
         model_fraction_choose_little_work(time_period)=&
-            model_fraction_choose_little_work(time_period)/model_mass_can_work(time_period)
+            model_fraction_choose_little_work(time_period)/max(model_mass_can_work(time_period),10.d0**(-14))
           
         median_index=minloc(median_income_cdf(time_period,:),1,&
             mask=median_income_cdf(time_period,:)-0.5>=0)
@@ -7354,20 +7361,20 @@
             rent_to_income_ratios(time_period,max(median_index(1),1))
         
         model_fraction_of_homeless_and_addicted_unemployed(time_period)=&
-            model_fraction_of_homeless_and_addicted_unemployed(time_period)/model_fraction_homeless_and_addicted(time_period)
+            model_fraction_of_homeless_and_addicted_unemployed(time_period)/max(model_fraction_homeless_and_addicted(time_period),10.d0**(-14))
             
-        model_profile_of_homeless_old(:)=model_profile_of_homeless_old(:)/model_homelessness_old(time_period)
+        model_profile_of_homeless_old(:)=model_profile_of_homeless_old(:)/max(model_homelessness_old(time_period),10.d0**(-14))
             
-        model_homelessness_old(time_period)=model_homelessness_old(time_period)/model_fraction_homeless(time_period)
+        model_homelessness_old(time_period)=model_homelessness_old(time_period)/max(model_fraction_homeless(time_period),10.d0**(-14))
     
-        model_fraction_leaving_bequests(time_period)=model_fraction_leaving_bequests(time_period)/mass_dying(time_period)
+        model_fraction_leaving_bequests(time_period)=model_fraction_leaving_bequests(time_period)/max(mass_dying(time_period),10.d0**(-14))
         
         model_fraction_leaving_housing_bequests(time_period)=&
-            model_fraction_leaving_housing_bequests(time_period)/mass_dying(time_period)
+            model_fraction_leaving_housing_bequests(time_period)/max(mass_dying(time_period),10.d0**(-14))
                 
         model_total_investment_income(time_period)=model_financial(time_period)*risk_free_rate(time_period)
         
-        model_average_financial(time_period)=model_financial(time_period)/model_mass_with_positive_financial(time_period)
+        model_average_financial(time_period)=model_financial(time_period)/max(model_mass_with_positive_financial(time_period),10.d0**(-14))
         
         model_GDP(time_period)=model_output(time_period)
         
