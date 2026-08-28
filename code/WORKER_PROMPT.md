@@ -27,7 +27,7 @@ and only on the first point in a fresh container. Solving one point takes 25 to
       git checkout -b claude/two-period-addiction-hazard-d7gb61 origin/claude/two-period-addiction-hazard-d7gb61
     git pull --rebase origin claude/two-period-addiction-hazard-d7gb61
 
-Repository: https://github.com/srotberg/housing_first_or_treatment_first
+Repository: https://github.com/srotberg/housing_first_children_later
 If it is not already checked out in the home directory, clone it there.
 
 ## For each of your lines, in order
