@@ -166,7 +166,24 @@ the same wobble-prone moments (`kappa_ued`, `lambda_d`, `theta`, `tau_u`). So:
   tolerance-stopped solver, not the fixes;
 - no archived measurement needs a corruption adjustment.
 
-### `-ffpe-trap=invalid,zero`: RESULT RECORDED BELOW.
+### `-ffpe-trap=invalid,zero`: the IEEE_INVALID flag is a dead block's 0/0
+
+The trapped binary aborts at startup, in `set_SS_benefits`, before the first
+solve: the Bayes reversal that traces which employment state a retiree's
+lifetime income came from divides by column sums of `employment_process` and
+`unemployment_process`, and columns nothing transitions into sum to zero, so
+the reversal is 0/0 = NaN. This is where every production run's
+IEEE_INVALID_FLAG has been coming from.
+
+It reaches nothing. `model_lifetime_income_conditional_on_last_period_shock`
+and its average are consumed by NO other line of the file -- the benefit
+actually paid is the linear `ss_replacement_rate*employment_grid` rule computed
+just below (the block's own comment records replacing the PIA schedule). The
+two denominators are now floored at 1e-14 so the block is defined and the trap
+can scan past it; the block itself is a deletion candidate, the author's call.
+
+The trapped run was relaunched with the floors to scan the remainder of the
+path; its result is recorded below when it lands.
 
 ## The stylized-model cross-check (TRANSITION_LESSONS section 7)
 

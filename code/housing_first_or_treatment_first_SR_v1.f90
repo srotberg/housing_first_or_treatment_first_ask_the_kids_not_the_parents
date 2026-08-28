@@ -24985,10 +24985,24 @@
                                         probability_came_from_past_employment_index_1&
                                         (past_employment_index_2,past_employment_index_1)*&
                                         (employment_process(max(age_index-1,1),past_employment_index_3,past_employment_index_1)/&
-                                        sum(employment_process(max(age_index-1,1),:,past_employment_index_1)))*&
+                                        max(sum(employment_process(max(age_index-1,1),:,past_employment_index_1)),&
+                                        10.d0**(-14)))*&
                                         (unemployment_process(max(age_index-1,1),past_employment_index_4,&
-                                        past_employment_index_2,1,0,past_employment_index_1)/sum(unemployment_process&
-                                        (max(age_index-1,1),:,past_employment_index_2,1,0,past_employment_index_1)))
+                                        past_employment_index_2,1,0,past_employment_index_1)/max(sum(unemployment_process&
+                                        (max(age_index-1,1),:,past_employment_index_2,1,0,past_employment_index_1)),&
+                                        10.d0**(-14)))
+                                        ! THE FLOORS ABOVE MAKE A DEAD BLOCK DEFINED, NOT A LIVE ONE
+                                        ! RIGHT. Columns of the processes that nothing transitions
+                                        ! into sum to zero, the Bayes reversal was 0/0 = NaN, and that
+                                        ! NaN is where every run's IEEE_INVALID_FLAG came from -- fired
+                                        ! at startup, confirmed by -ffpe-trap aborting here before the
+                                        ! first solve. It never reached a number anyone read:
+                                        ! model_lifetime_income_conditional_on_last_period_shock and
+                                        ! its average are consumed by NOTHING -- the benefit paid is
+                                        ! the linear rule below. The floors exist so the FPE trap can
+                                        ! scan past this block for invalid arithmetic that matters;
+                                        ! the block itself is a candidate for deletion, the author's
+                                        ! call.
                                         
                                 end do
                             
