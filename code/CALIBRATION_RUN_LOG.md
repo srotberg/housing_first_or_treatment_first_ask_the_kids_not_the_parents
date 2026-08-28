@@ -217,3 +217,43 @@ carries no information about it.
 
 Run 2 stopped at loop 12, stuck. Awaiting a decision on the floor for h_2 before
 run 3.
+
+## 28 August, evening: the drug corner's attainability boundary, measured
+
+The author's steer -- a high onset hazard against a low participation scalar --
+was probed with seven dedicated points beside the simplex (A-G2, vectors in the
+PROBE_*.txt files, all cold, all receipt-verified). What the surface says:
+
+| point | lambda | scalar | uct | b (0.089) | lambda_d (0.0368) | ratio (0.413) |
+|---|---|---|---|---|---|---|
+| base | 3.54 | 0.0239 | 0.127 | 0.056 | 0.0042 | 0.075 |
+| A | 7.07 | 0.0176 | 0.127 | 0.161 | 0.0329 | 0.204 |
+| B | 10.6 | 0.0150 | 0.127 | 0.290 | 0.126 | 0.433 |
+| F | 10.6 | 0.0168 | 0.127 | 0.103 | 0.0291 | 0.284 |
+| G | 12.4 | 0.0168 | 0.127 | 0.070 | 0.0190 | 0.271 |
+| G2 | 12.4 | 0.0168 | 0.249 | 0.068 | 0.0171 | 0.253 |
+
+Three facts, each carried by measurements rather than a fit:
+
+1. **The corner works up to a point.** F holds BOTH drug moments within about
+   20 per cent -- against -37 and -89 at the base -- and is the best joint
+   approach measured.
+2. **The ratio saturates.** At participation near its target, disorder-per-user
+   plateaus at 0.25-0.28 whatever the hazard does (0.284 at lambda 10.6, 0.271
+   at 12.4), and B's 0.433 was a property of TRIPLE-target participation, not
+   of the hazard. Raising the treatment cost lowers rather than raises it (G2).
+3. **So b=0.089 and lambda_d=0.0368 are not jointly reachable through
+   lambda_addiction, addiction_scalar_1 and utility_cost_of_treatment.** The
+   standing disorder stock at target participation runs about 40-50 per cent
+   below target.
+
+What has NOT been tried: the OUTFLOW side. lambda_d is a stock; the probes all
+worked its inflow. The stopping/recovery probabilities
+(probability_of_stopping_addiction and relations) are externally assigned, and
+lowering recovery would raise the stock at any inflow -- at the cost of moving
+tau_u and mu_H, which their own levers would then have to re-absorb. Whether to
+open a recovery-side parameter to the search, or to revisit the use-to-disorder
+transition itself, is a modelling decision and the author's.
+
+The simplex continues regardless -- the boundary binds only the drug pair, and
+the other eighteen moments are converging around the treatment-cost vertex.
