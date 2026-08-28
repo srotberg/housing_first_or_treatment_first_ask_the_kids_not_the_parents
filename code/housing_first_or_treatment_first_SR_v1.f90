@@ -7435,22 +7435,22 @@
         wealth_hist_wealth_check=sum(wealth_hist_wealth)/&
             max(model_total_net_wealth(time_period),10.d0**(-12))
             
-        model_avg_mortgage_spending(time_period)=model_avg_mortgage_spending(time_period)/mass_of_owners(time_period)
+        model_avg_mortgage_spending(time_period)=model_avg_mortgage_spending(time_period)/max(mass_of_owners(time_period),10.d0**(-14))
 
-        model_avg_housing_spending_owners(time_period)=model_avg_housing_spending_owners(time_period)/mass_of_owners(time_period)
+        model_avg_housing_spending_owners(time_period)=model_avg_housing_spending_owners(time_period)/max(mass_of_owners(time_period),10.d0**(-14))
 
-        model_avg_housing_spending_all(time_period)=model_avg_housing_spending_all(time_period)/sum_of_distribution_not_be_homeless
+        model_avg_housing_spending_all(time_period)=model_avg_housing_spending_all(time_period)/max(sum_of_distribution_not_be_homeless,10.d0**(-14))
 
         model_avg_housing_spending_renters(time_period)=model_avg_housing_spending_renters(time_period)/&
-            model_mass_renters_to_consider(time_period)
+            max(model_mass_renters_to_consider(time_period),10.d0**(-14))
             
-        model_wealth_of_owners(time_period)=model_wealth_of_owners(time_period)/mass_of_owners(time_period)
+        model_wealth_of_owners(time_period)=model_wealth_of_owners(time_period)/max(mass_of_owners(time_period),10.d0**(-14))
                     
         model_fraction_unemployed_on_ui(time_period)=model_fraction_unemployed_on_ui(time_period)/&
-            model_fraction_unemployed(time_period)
+            max(model_fraction_unemployed(time_period),10.d0**(-14))
             
         model_fraction_of_unemployed_homeless(time_period)=model_fraction_of_unemployed_homeless(time_period)/&
-            model_fraction_unemployed(time_period)
+            max(model_fraction_unemployed(time_period),10.d0**(-14))
             
         ! The unemployment RATE is unemployed over the working age population,
         ! not over everyone: sum_of_distribution includes retirees, who are now
@@ -7459,7 +7459,7 @@
         if (model_mass_total_raw(time_period)>10.d0**(-12)) then
 
             model_fraction_unemployed(time_period)=model_fraction_unemployed(time_period)/&
-                model_mass_total_raw(time_period)
+                max(model_mass_total_raw(time_period),10.d0**(-14))
 
         else
 
@@ -7468,11 +7468,11 @@
         end if
         
         model_fraction_addicted_and_unemployed(time_period)=model_fraction_addicted_and_unemployed(time_period)/&
-            model_fraction_addicted(time_period)
+            max(model_fraction_addicted(time_period),10.d0**(-14))
         
-        model_fraction_addicted(time_period)=model_fraction_addicted(time_period)/sum_of_distribution
+        model_fraction_addicted(time_period)=model_fraction_addicted(time_period)/max(sum_of_distribution,10.d0**(-14))
         model_fraction_homeless_and_addicted(time_period)=model_fraction_homeless_and_addicted(time_period)/&
-            model_fraction_homeless(time_period)
+            max(model_fraction_homeless(time_period),10.d0**(-14))
         
         ! Working age on both sides now: the numerator excludes retirees, so the
         ! base must too.
@@ -7480,7 +7480,7 @@
 
             model_fraction_of_homeless_unemployed(time_period)=&
                 model_fraction_of_homeless_unemployed(time_period)/&
-                model_mass_homeless_working_age(time_period)
+                max(model_mass_homeless_working_age(time_period),10.d0**(-14))
 
         else
 
@@ -7499,7 +7499,7 @@
         if (model_mass_homeless_raw(time_period)>10.d0**(-12)) then
 
             model_smi_share_of_homeless(time_period)=model_smi_and_homeless(time_period)/&
-                model_mass_homeless_raw(time_period)
+                max(model_mass_homeless_raw(time_period),10.d0**(-14))
 
         else
 
@@ -7525,7 +7525,7 @@
         if (model_mass_smi(time_period)>10.d0**(-12)) then
 
             model_employment_rate_given_smi(time_period)=model_smi_and_employed(time_period)/&
-                model_mass_smi(time_period)
+                max(model_mass_smi(time_period),10.d0**(-14))
 
         end if
 
@@ -7606,15 +7606,15 @@
             " disordered homeless=", newborn_parent_share(1,2)
             
         model_fraction_homeless_owners(time_period)=model_fraction_homeless_owners(time_period)/&
-            model_fraction_homeless(time_period)
+            max(model_fraction_homeless(time_period),10.d0**(-14))
             
         model_homeless_2_years_or_more(time_period)=&
-            model_homeless_2_years_or_more(time_period)/model_fraction_homeless(time_period)
+            model_homeless_2_years_or_more(time_period)/max(model_fraction_homeless(time_period),10.d0**(-14))
                     
         model_fraction_homeless(time_period)=model_fraction_homeless(time_period)/&
             model_sum_of_lowest_productivities(time_period)
         
-        model_avg_rent_to_income_ratio(time_period)=model_avg_rent_to_income_ratio(time_period)/mass_of_legit_renters(time_period)
+        model_avg_rent_to_income_ratio(time_period)=model_avg_rent_to_income_ratio(time_period)/max(mass_of_legit_renters(time_period),10.d0**(-14))
         
         do i=2,number_of_grids_rent_to_income_cdf
         
@@ -7667,11 +7667,11 @@
         
         mortgage_interest_rate(time_period)=risk_free_rate(time_period)+mortgage_interest_gap
                                                         
-        model_average_labour_income(time_period)=model_average_labour_income(time_period)/model_total_workers(time_period)
-        model_average_income(time_period)=model_average_income(time_period)/sum_of_distribution
-        model_average_income_plus_assets(time_period)=model_average_income_plus_assets(time_period)/sum_of_distribution
+        model_average_labour_income(time_period)=model_average_labour_income(time_period)/max(model_total_workers(time_period),10.d0**(-14))
+        model_average_income(time_period)=model_average_income(time_period)/max(sum_of_distribution,10.d0**(-14))
+        model_average_income_plus_assets(time_period)=model_average_income_plus_assets(time_period)/max(sum_of_distribution,10.d0**(-14))
         model_average_income_plus_all_assets(time_period)=&
-            model_average_income_plus_all_assets(time_period)/sum_of_distribution
+            model_average_income_plus_all_assets(time_period)/max(sum_of_distribution,10.d0**(-14))
                 
         do age_index=1,life_span
         
