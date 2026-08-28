@@ -6188,11 +6188,21 @@
                                     
                                     if (age_index==1) then
                                     
-                                        call calculate_marginal_non_housing_utility&
-                                            (consumption_used,lived_in_size_used,addiction_used,addiction_consumption_1,MU_1)
-                                            
+                                        ! THE CALL SITS INSIDE THE MASS GUARD IT USED TO SIT
+                                        ! OUTSIDE OF. Evaluated at every age-one cell, it raised
+                                        ! 0**(-risk_aversion) at zero-mass corners where the cell
+                                        ! is infeasible and consumption or the dwelling is zero --
+                                        ! the Inf was then discarded by the guard below, so no
+                                        ! number ever moved, but the flags it raised are noise and
+                                        ! they stopped the -ffpe-trap sweep here. MU_1 feeds only
+                                        ! the massed accumulation, so calling only on mass is the
+                                        ! same number with a clean FPU.
                                         if (distribution_mass_used>0) then
                                                                     
+                                            call calculate_marginal_non_housing_utility&
+                                                (consumption_used,lived_in_size_used,addiction_used,&
+                                                addiction_consumption_1,MU_1)
+                                            
                                             model_value_of_life(time_period)=model_value_of_life(time_period)+&
                                                 (value_function_used/MU_1)*distribution_mass_used
                                                 

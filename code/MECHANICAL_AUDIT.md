@@ -182,8 +182,16 @@ just below (the block's own comment records replacing the PIA schedule). The
 two denominators are now floored at 1e-14 so the block is defined and the trap
 can scan past it; the block itself is a deletion candidate, the author's call.
 
-The trapped run was relaunched with the floors to scan the remainder of the
-path; its result is recorded below when it lands.
+The trapped run was relaunched with the floors and reached the AGGREGATION
+before the next trap: `calculate_marginal_non_housing_utility`, called for
+every age-one state cell to build `model_value_of_life` -- the aleph pipeline
+-- raised `0**(-risk_aversion)` at zero-mass corners where the cell is
+infeasible and consumption or the dwelling is zero. The Inf was discarded by
+the `distribution_mass_used>0` guard sitting directly below the call, so no
+number ever moved (aleph has always printed finite); the call now sits INSIDE
+the guard, which is the same number with a clean FPU. The sweep continues; each
+further trap gets the same treatment -- prove it masked, silence it at the
+source, rerun -- until the run reaches the moments block trapped.
 
 ## The stylized-model cross-check (TRANSITION_LESSONS section 7)
 
