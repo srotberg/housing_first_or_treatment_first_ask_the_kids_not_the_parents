@@ -53,6 +53,15 @@ declare -A P=(
     [weight_on_child]=0.007
     [max_food_cost]=0.00498294
     [mu_homeless]=0.708003
+    # THE TWO THAT MADE A POINT UNDER-SPECIFIED. Both are internally calibrated,
+    # both are handover cases the model has accepted all along, and neither was
+    # in the vector, so their values rode in on whatever calibration_state.dat
+    # the container carried -- which is bug two of REPRODUCIBILITY_INVESTIGATION.
+    # relative_share_of_housing owns gamma and is searched; the grid expander's
+    # adjuster is declared zero, so it is pinned here at its declared value and
+    # every point now states it explicitly.
+    [relative_share_of_housing]=0.1483356
+    [housing_status_grid_expander]=1.0
 )
 for a in "$@"; do
     k=${a%%=*}; v=${a#*=}

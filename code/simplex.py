@@ -387,11 +387,27 @@ def moments_at(name):
     return {}
 
 
+# A COORDINATE THE OLD ARCHIVE NEVER STATED. Every point measured before the
+# vector was widened lacks relative_share_of_housing on its VECTOR line, so the
+# BLOCK filter below retires the whole archive as MEASUREMENTS -- which is
+# right: those points were measured against a moving calibration_state.dat and
+# do not reproduce cold. The archive still fixes WHERE to start, so for
+# require=False -- the seeding path, where a point is a location and not a
+# measurement -- a missing coordinate in this dict is filled with the declared
+# value the model now runs at.
+SEED_FILL = {'relative_share_of_housing': 0.1483356}
+
+
 def measured(require=True):
     out = []
     for vec, mt, name in jacobian.points():
         if any(k not in vec for k in BLOCK):
-            continue
+            if require or any(k not in vec and k not in SEED_FILL for k in BLOCK):
+                continue
+            vec = dict(vec)
+            for k in BLOCK:
+                if k not in vec:
+                    vec[k] = SEED_FILL[k]
         if require and not complete(mt, name):
             continue
         out.append((to_log(vec), vec, score_points.loss(mt)[0], name))

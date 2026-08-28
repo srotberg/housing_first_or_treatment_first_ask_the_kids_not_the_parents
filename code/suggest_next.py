@@ -78,6 +78,13 @@ OWNS = {
     # untargeted.
     'smallest_rental_relative_to_lowest_income': ('h_2',  0.132065),
     'largest_house_size':                    ('h_4',      0.626723),
+    # IN THE VECTOR AT LAST. The housing preference weight is internally
+    # calibrated with its own adjuster and owns the renters' housing spending
+    # share, but no point vector ever named it, so every archived point
+    # measured it at whatever the container's calibration_state.dat held --
+    # 0.194 in the worker era against the declared 0.148, which is most of why
+    # no archived point ever reproduced cold. Searched from this round on.
+    'relative_share_of_housing':             ('gamma',    0.268),
 }
 VEC = re.compile(r'^VECTOR\s+(.*)$', re.M)
 # The statutory rate zeta_DI carried before it absorbed take-up.
