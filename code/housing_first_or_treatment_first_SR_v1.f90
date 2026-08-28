@@ -7278,7 +7278,7 @@
         
             income_to_avg_income_wide_pdf_1(time_period,i)=&
                 income_to_avg_income_wide_pdf_1(time_period,i)/&
-                mass_at_profile_income_to_avg_income_wide_1(time_period,2,i)
+                max(mass_at_profile_income_to_avg_income_wide_1(time_period,2,i),10.d0**(-14))
         
         end do
         
@@ -7291,7 +7291,7 @@
 
                 profile_by_income_to_avg_income_wide_1(time_period,2,j,i)=&
                     sum(profile_by_income_to_avg_income_wide_1(time_period,0:1,j,i))/&
-                    mass_at_profile_income_to_avg_income_wide_1(time_period,2,j)
+                    max(mass_at_profile_income_to_avg_income_wide_1(time_period,2,j),10.d0**(-14))
 
             end do
 
@@ -7305,7 +7305,7 @@
 
                     profile_by_income_to_avg_income_wide_1(time_period,k,j,i)=&
                         profile_by_income_to_avg_income_wide_1(time_period,k,j,i)/&
-                        mass_at_profile_income_to_avg_income_wide_1(time_period,k,j)
+                        max(mass_at_profile_income_to_avg_income_wide_1(time_period,k,j),10.d0**(-14))
 
                 end do
 
