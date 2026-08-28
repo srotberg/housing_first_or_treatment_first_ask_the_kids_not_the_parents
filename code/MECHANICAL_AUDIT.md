@@ -136,6 +136,21 @@ path. Fixed by declaring the array from `lowest_housing_grid_point`; the
 bounds-checked run was relaunched from the fixed source to scan the remainder
 of the path (aggregation, moment construction).
 
+### The relaunched bounds-checked run scanned the WHOLE path clean
+
+Exit 0, 23 of 23 handover lines, a full moments block, zero violations: value
+solve, distribution iteration with the fixed diagnostic firing, aggregation,
+moment construction. The live path is certified free of out-of-bounds
+references under `-fcheck=bounds,do,mem,pointer`.
+
+Its moments differ from the unfixed binary's cold runs by more than the 2.5e-5
+thread wobble (b 0.05814 against 0.05788, cbar 0.002529 against 0.002451).
+Two explanations are possible and the run cannot tell them apart: `-O1` against
+`-O3` floating-point differences amplified through the tolerance-stopped
+solver, or the dist_housing_1 corruption having been numerically consequential.
+The attribution run -- same `-O3` flags, fixed against unfixed source -- is
+recorded below.
+
 - `-ffpe-trap=invalid,zero`: RESULT RECORDED BELOW.
 
 ## The stylized-model cross-check (TRANSITION_LESSONS section 7)
