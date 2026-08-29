@@ -950,3 +950,54 @@ kappa_uem at 0.33 multiply to 3.0 points of a 7.5 point total. Every hypothesis
 I chased instead -- the flow rate, a typo, a definitional mismatch, the target
 itself -- was reached for before doing the one arithmetic that used the model's
 own published moments. Decompose the moment before theorising about it.
+
+
+## The author was right about pi_eu, and my SMI decomposition was wrong
+
+**MEASURED 22:50.** Driving `probability_becoming_unemployed` from 0.0228 to
+0.001, same vector otherwise:
+
+    pi_eu   0.07538 -> 0.00657     a factor of eleven
+
+The measured elasticity over that range is **0.780**, against 0.96 for a
+two-state flow and the **0.125** the archive marginal reported. That marginal
+is the FIFTH confounded correlation today overturned by a controlled
+experiment. The instrument was never weak; the archive was never a derivative.
+
+**MY DECOMPOSITION PREDICTED 0.0319 AND WAS WRONG, and the reason generalises.**
+It held the SMI block's contribution fixed at `p_m` times
+unemployment-among-SMI. But that second factor is itself an equilibrium object,
+`sep*k/(sep*k + find/k)`, which goes to zero with `sep` like everything else.
+The accounting identity was EXACT at the point where it was computed --
+reassembling 0.07538 against a measured 0.07538 -- and useless as a prediction,
+because it froze a component that was never frozen. **An identity that holds at
+a point says nothing about what moves when you push on it.** That it
+reconstructed the moment perfectly is what made it convincing, and the perfect
+reconstruction was guaranteed by construction rather than evidence of anything.
+
+pi_eu crosses 0.0485 at `p_eu` near **0.01296**, between the 0.005 and 0.01
+points already solving.
+
+## The interaction, which is the part that changes the plan
+
+The same move does this to everything else:
+
+    lambda_d   0.00807 -> 0.03143   +289 per cent, and -15 against target
+    b          0.08786 -> 0.21567   +145
+    tau_u      0.24400 -> 0.80300   +229
+    kappa_uem  0.32726 -> 0.92165   +182
+    kappa_ued  0.16562 -> 0.01534    -91
+    lambda_m   0.20272 -> 0.03893    -81
+    cbar       0.00331 -> 0.00088    -73
+
+**The separation rate is not a repair to apply after the drug block is set. It
+is one of the largest instruments ON the drug block**, because unemployment is
+what makes drug use affordable and attractive. lambda_d reaches -15 per cent
+here without touching lambda_addiction or addiction_scalar_1 at all -- the
+second best it has ever been, from a point launched to diagnose unemployment.
+
+So the two-stage plan -- fix b and lambda_d, then tune the rest -- cannot hold
+with p_eu in the second stage. The system is three instruments on three
+moments: `lambda_addiction`, `addiction_scalar_1` and
+`probability_becoming_unemployed` against `b`, `lambda_d` and `pi_eu`, and they
+have to move together.
