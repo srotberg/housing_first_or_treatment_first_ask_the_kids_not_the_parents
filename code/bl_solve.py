@@ -53,7 +53,20 @@ TARGET_LD = 0.0368
 TARGET_RATIO = TARGET_LD / TARGET_B
 
 RATIO_PARAM = 'lambda_addiction'
-B_PARAM = 'discount_factor'
+# THE b INSTRUMENT IS relative_share_of_addiction_1, NOT THE DISCOUNT FACTOR,
+# AND THE MEASUREMENT THAT SETTLED IT WAS RUN ON 29 AUGUST. Over the archive at
+# lambda near 6 the discount factor looked like the obvious choice: correlation
+# -0.94 with b and only +0.18 with the ratio, apparently a clean instrument.
+# At lambda 30 it is not. Sweeping it there, with everything else held:
+#
+#     discount   0.999 -> 0.984     b 0.0064 -> 0.0147   ratio 0.434 -> 0.332
+#     rsa_1     0.4539 -> 0.500     b 0.0064 -> 0.0244   ratio 0.434 -> 0.461
+#
+# The discount factor buys 2.3x on b and gives back a QUARTER of the ratio;
+# rsa_1 buys 3.8x and the ratio goes UP. So the near-zero correlation with the
+# ratio was a property of the low-lambda region and did not survive the move.
+# rsa_1 wins on both margins and is the instrument here.
+B_PARAM = 'relative_share_of_addiction_1'
 
 # A point belongs to this experiment only if every OTHER coordinate matches the
 # centre. The whole premise is that the rest is frozen, so a point that drifted
@@ -64,16 +77,20 @@ FROZEN_TOL = 1e-6
 # Newton on a 2x2 fitted from measurements is trustworthy over the range those
 # measurements span and nowhere else. The step is capped in e-folds of each
 # instrument's own coordinate.
-MAX_STEP = {RATIO_PARAM: 0.90, B_PARAM: 0.55}
+MAX_STEP = {RATIO_PARAM: 0.90, B_PARAM: 0.12}
 
 
-def rate(beta):
-    """The discount RATE, which is the well-conditioned coordinate. See above."""
-    return max(1.0 - beta, 1e-6)
+# The 1-beta transform existed because the discount factor lives at 0.999 and is
+# singular in logs. rsa_1 lives near 0.45 to 0.51 and is perfectly well behaved
+# in logs, so these are now the identity and the step is taken in log rsa_1.
+# They are kept rather than inlined so that swapping B_PARAM back to the
+# discount factor is a one line change and not a rewrite.
+def rate(x):
+    return max(x, 1e-6)
 
 
 def unrate(r):
-    return 1.0 - r
+    return r
 
 
 def points():
