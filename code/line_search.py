@@ -159,11 +159,112 @@ def clip(name, value):
     return min(max(value, lo), hi)
 
 
+# A ROUND IS DONE WHEN THE LADDER IS DONE, not when most of it is. Re-centring
+# on a partial ladder throws away the rung still solving, and the rung still
+# solving is disproportionately the LONG one -- a big step changes the model most
+# and takes longest to converge -- so a partial re-centre is biased towards short
+# steps, which is exactly the timidity this file exists to remove.
+STATE = os.path.join(HERE, 'LINE_SEARCH_STATE.txt')
+LADDER_FILE = os.path.join(HERE, 'LINE_SEARCH.txt')
+# Converged when a whole ladder cannot better the centre by this much. The
+# ladder spans 1.02x to 2.23x, so if none of eight lengths in the Gauss-Newton
+# direction buys half a per cent, the direction is exhausted, not merely short.
+CONVERGED_GAIN = 0.005
+
+
+def _tag(line):
+    import hashlib
+    vec = dict(t.split('=', 1) for t in line.split()[2:])
+    return hashlib.md5(''.join(f'{k}={vec[k]}\n' for k in sorted(vec)).encode()).hexdigest()[:10]
+
+
+def _landed():
+    """(loss, tag, rung) for every rung of the current ladder that has a point."""
+    out, missing = [], []
+    for i, line in enumerate(open(LADDER_FILE), 1):
+        line = line.strip()
+        if not line:
+            continue
+        tag = _tag(line)
+        p = os.path.join(HERE, 'points', f'point_{tag}.txt')
+        if os.path.exists(p) and 'END OF MOMENTS' in open(p, errors='replace').read():
+            _h, mt = score_points.read(p)
+            if mt:
+                out.append((score_points.loss(mt)[0], f'point_{tag}.txt', i))
+                continue
+        if os.path.exists(os.path.join(HERE, 'points', f'point_{tag}.FAILED.txt')):
+            continue                                    # a failed rung is not waited for
+        missing.append(i)
+    return out, missing
+
+
+def advance():
+    """Score the ladder; if it is complete, re-centre and write the next one."""
+    landed, missing = _landed()
+    if missing:
+        print(f'ladder: {len(landed)} of {len(landed) + len(missing)} rungs landed, '
+              f'still out {missing}')
+        return 0
+    if not landed:
+        print('ladder: every rung failed; not advancing')
+        return 1
+
+    landed.sort()
+    best_loss, best_name, best_rung = landed[0]
+    pts = [(v, m, n) for v, m, n in jacobian.points() if 'relative_share_of_housing' in v]
+    prev = min(score_points.loss(m)[0] for _v, m, _n in pts) if pts else float('inf')
+
+    print('ladder result, by rung:')
+    for L, name, rung in sorted(landed, key=lambda t: t[2]):
+        print(f'   rung {rung}  t={LADDER[rung-1]:<5} loss {L:.4f}')
+    gain = (prev - best_loss) / prev if prev else 0.0
+    print(f'best rung {best_rung} at {best_loss:.4f}; archive best {prev:.4f} '
+          f'({gain*100:+.1f}%)')
+
+    if best_loss >= prev * (1 - CONVERGED_GAIN):
+        print('CONVERGED: no length in this direction improves on the archive best.')
+        print('The direction is exhausted. Re-solve from a different centre, or the '
+              'remaining gap is a frontier rather than a search failure.')
+        return 3
+
+    with open(STATE, 'a') as fh:
+        fh.write(f'centre {best_name} loss {best_loss:.5f} rung {best_rung} '
+                 f'gain {gain*100:+.2f}%\n')
+    sys.argv = [sys.argv[0], '--centre', best_name, '--emit']
+    lines = []
+    import io
+    from contextlib import redirect_stdout
+    buf = io.StringIO()
+    with redirect_stdout(buf):
+        rc = main()
+    if rc:
+        print('could not build the next ladder around the new centre')
+        return rc
+    lines = [l for l in buf.getvalue().splitlines() if l.startswith('bash ')]
+    if len(lines) != len(LADDER):
+        print(f'expected {len(LADDER)} run lines, got {len(lines)}; not writing')
+        return 1
+    with open(LADDER_FILE, 'w') as fh:
+        fh.write('\n'.join(lines) + '\n')
+    print(f'ADVANCED: new ladder around {best_name}, {len(lines)} rungs written')
+    return 0
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--centre', help='point file to step from; default the best measured')
     ap.add_argument('--emit', action='store_true', help='print the run lines')
+    ap.add_argument('--advance', action='store_true',
+                    help='if every rung has landed, re-centre on the best and rewrite '
+                         'LINE_SEARCH.txt; otherwise report what is still out')
     args = ap.parse_args()
+
+    # THE LOOP, SO A ROUND DOES NOT NEED A HAND ON IT. --advance is what the
+    # engine trigger runs: it refuses to move while any rung is still out, so a
+    # slow worker cannot cause the centre to jump before its point is counted,
+    # and it re-solves the direction from the archive the new centre sits in.
+    if args.advance:
+        return advance()
 
     pts = [(v, m, n) for v, m, n in jacobian.points()
            if 'relative_share_of_housing' in v]            # new era only
