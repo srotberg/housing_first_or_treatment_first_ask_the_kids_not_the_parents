@@ -257,3 +257,60 @@ transition itself, is a modelling decision and the author's.
 
 The simplex continues regardless -- the boundary binds only the drug pair, and
 the other eighteen moments are converging around the treatment-cost vertex.
+
+## 29 August, small hours: what the simplex cannot see, measured off its own archive
+
+The contraction was accepted -- best 0.283 to 0.278, median 0.333 to 0.296, and
+the widest edge halved from a factor of 3.99 to 2.00, so the whole simplex came
+down rather than one vertex. The reflection is round 4.
+
+Then a question worth asking of any stalled search: for each moment, which
+measured point comes closest to its target, and how does that point's vector
+differ from the leader's? The archive answers it, and the answer is that the
+leader is not near the frontier on moments it could reach cheaply.
+
+| moment | w | leader | best measured | loss recoverable | the difference that carries it |
+|---|---|---|---|---|---|
+| lambda_d | 3 | 87% | 11% | 0.0851 | lambda_addiction 3.54 -> 7.07 |
+| b | 3 | 31% | 4% | 0.0298 | sd_permanent_productivity 0.953 -> 1.335 |
+| h_2 | 1 | 74% | 1% | 0.0268 | smallest_rental 0.0343 -> 0.0207 |
+| pi_eu | 1 | 74% | 3% | 0.0264 | probability_becoming_unemployed 0.0294 -> 0.013 |
+| theta | 2 | 41% | 16% | 0.0188 | lambda_addiction 3.54 -> 12.4 |
+| aleph | 2 | 16% | 0% | 0.0119 | utility_cost_of_treatment 0.151 -> 0.249 |
+| pi_V | 1 | 31% | 11% | 0.0073 | probability_of_voucher_benchmark_used 0.0087 -> 0.0121 |
+| kappa_uem | 1 | 18% | 0% | 0.0065 | largest_house_size 0.099 -> 0.117 |
+| gamma | 1 | 15% | 1% | 0.0052 | largest_house_size 0.099 -> 0.117 |
+| h_4 | 1 | 9% | 1% | 0.0031 | largest_house_size 0.099 -> 0.164 |
+| tau_l | 1 | 25% | 17% | 0.0031 | utility_cost_of_treatment 0.151 -> 0.249 |
+| mu_H | 1 | 7% | 0% | 0.0027 | utility_cost_of_treatment 0.151 -> 0.249 |
+| h_1 | 2 | 4% | 0% | 0.0023 | utility_cost_of_treatment 0.151 -> 0.249 |
+
+TWO THINGS FALL OUT OF THE RIGHT-HAND COLUMN, and neither is visible from the
+loss alone.
+
+**Instruments are shared, and the moments sharing one agree on the direction.**
+Four moments -- aleph, tau_l, mu_H and h_1 -- all want the treatment cost at
+0.249361, and three -- kappa_uem, gamma and h_4 -- all want the largest house
+size at 0.117139. They stack instead of competing, so a single point can carry
+0.035 of loss that reads as seven separate misses.
+
+**Every one of these is a LARGE single-coordinate move, which is exactly what
+the search cannot make.** Multi-directional search reflects all vertices through
+the best and accepts only if a vertex beats it, and each vertex differs from the
+best in one coordinate by a bounded step. A move of minus 56 per cent in the
+unemployment probability is several rounds of that away, and a point needing two
+such moves at once is unreachable no matter how many rounds run. The simplex is
+not stuck because it is badly placed; it is stuck because the geometry it walks
+in cannot express the step.
+
+Six probes, nested so an interaction shows rather than being inferred: A is the
+leader with the unemployment probability, the smallest rental and the voucher
+probability moved; B and C isolate the first two from the leader's own location;
+D is that pair; E adds the largest house size, all four non-drug; F adds the
+treatment cost, which is a drug-block parameter and therefore the one likeliest
+to buy its four moments by giving up lambda_d or b.
+
+If the non-drug instruments are independent, E lands near 0.18 -- which is the
+whole of what the search can deliver without touching the drug corner, arriving
+in one point rather than in weeks of rounds. If they interact, the nesting says
+which pair does it. Either way the answer is measured tonight.
