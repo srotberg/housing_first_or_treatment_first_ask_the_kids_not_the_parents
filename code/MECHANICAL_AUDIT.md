@@ -846,3 +846,47 @@ transition row, which is why the brackets above are still worth reading, but a
 fit pooling pre- and post-fix points is not safe. `PIEU_VERIFY_point.txt` will
 say how large the difference is; nothing more should be launched into
 `code/points/` until it does.
+
+
+## THE TYPO WAS INERT. I was wrong about the cause of the pi_eu miss.
+
+**MEASURED 21:20 ON 29 AUGUST.** `PIEU_VERIFY_point.txt` re-ran the vector of
+`point_08e5be251f` on the corrected model. Against the broken model:
+
+    pi_eu     0.0827458848  ->  0.0827469417     unchanged
+    b         0.1376390998  ->  0.1376436823     +0.003 per cent
+    lambda_d  0.0406445471  ->  0.0406499435     +0.013 per cent
+
+Five of twenty one moments move at all and the largest move is 0.013 per cent,
+against a solver reproducibility band of 2.5e-5. **Nothing changed.** The
+archive is NOT stale; all 90 points stand.
+
+**WHY IT WAS INERT, AND THE ANSWER IS COMPLETE.** Line 23943 sets
+`unemployment_process(1:cutoff_age_1,2,2,2,0,:)` -- the buggy one -- and line
+**24028 sets `unemployment_process(:,2,2,2,0,:)`**, the whole array, correct
+spelling, eighty five lines later. The blanket assignment overwrites the
+buggy one for every age. The line was dead code.
+
+**WHAT I GOT WRONG AND HOW.** The typo is real and the reasoning about the row
+sum was right in isolation: 0.4583 plus 1.0 is not 1. What I did not do was
+check whether that assignment SURVIVED, in a file with 119 write sites to the
+same array. I found a cause consistent with the symptom and stopped looking. I
+did flag the causation as unmeasured and made the verification the gate before
+retiring anything, which is the only reason this cost forty minutes rather than
+an archive.
+
+**KEEP THE FIX AND THE FLAG ANYWAY.** The code was wrong and is now right, and
+`-fimplicit-none` is a real improvement independent of this: it would have
+caught the typo at compile time, the class sweep it enabled came back clean,
+and it costs nothing. But neither is a fix for anything that was broken.
+
+**pi_eu IS STILL UNEXPLAINED AND STILL BLOCKS THE TEN PER CENT CRITERION.**
+The facts stand and now have nothing attached to them: never better than +45 per
+cent over 90 points, an elasticity of only +0.125 on its own instrument, and
+1.8 to 2.6 times the flow rate `p_eu/(p_eu+0.55)` at every point including ones
+where the drug population is empty. Something inflates unemployment relative to
+its own two-state flow and it is not this line. Candidates not yet checked: the
+job finding rate actually in force versus the declared 0.55; whether
+non-participants are being counted in the unemployed numerator; and the
+addicted and SMI separation multipliers, which raise the aggregate rate above
+the baseline flow by construction.
