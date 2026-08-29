@@ -710,3 +710,39 @@ through one instrument does not transfer to another instrument that moves the
 same moment. The ratio's behaviour is a property of the (instrument, moment)
 PAIR, not of the moment. The archive's pooled +0.224 on log b was an average
 over both channels and is the wrong number for either one.
+
+
+## lambda_d lands at +10 per cent, from -78
+
+**CANDIDATE line 1, point_08e5be251f, measured 20:23 on 29 August.**
+lambda_addiction 11.8, addiction_scalar_1 0.0185, rsa_1 0.5057, discount
+0.99715.
+
+    lambda_d  0.04064  against 0.0368    +10 per cent
+    b         0.13764  against 0.089     +55
+    theta     0.14247  against 0.162     -12   (was -37)
+    loss      0.3096                           (best is 0.2074)
+
+The substance use disorder rate has been -78 per cent at every point in this
+archive and -81 at the point the search started from. It is now +10. theta
+followed it up unprompted, -37 to -12, exactly as predicted: drug spending is
+measured over the disordered and was starved by the same thing.
+
+**THE LOSS IS WORSE AND THAT IS THE DEAL THE AUTHOR ASKED FOR** -- land b and
+lambda_d, tune the rest afterwards. What this point costs is tau_u at +205,
+h_1 at +72, lambda_m at -57 and mu_H at +32, every one of them measured over or
+driven by a drug population 55 per cent too large. They should come back as b
+does, and that is the claim the next point tests.
+
+**HOW GOOD THE PREDICTIONS WERE, WHICH IS THE PART WORTH KEEPING.**
+
+    b         predicted +58   came in +55    the elasticity held
+    lambda_d  predicted +85   came in +10    it did not
+
+The ratio came in at 0.2953 against a predicted 0.486. Traced back:
+`d log ratio / d log b` through addiction_scalar_1 was **-0.155 at lambda 30**
+and is **+0.532 here at lambda 11.8**. It changed SIGN between the two regions.
+So a local elasticity in this model is good for one step and no further, and
+every projection in this file more than one step out has been wrong -- the b
+interpolation by a factor of four, the ratio here by a factor of five. The
+BRACKET is what has actually worked, every time. Design brackets, not steps.
