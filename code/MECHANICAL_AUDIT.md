@@ -890,3 +890,63 @@ job finding rate actually in force versus the declared 0.55; whether
 non-participants are being counted in the unemployed numerator; and the
 addicted and SMI separation multipliers, which raise the aggregate rate above
 the baseline flow by construction.
+
+
+## pi_eu EXPLAINED: the SMI block carries forty per cent of the unemployment and the separation rate cannot touch it
+
+**FOUND 22:10 ON 29 AUGUST, prompted by the author asking why setting the
+separation rate near zero would not drive unemployment near zero.** It would
+not, and here is why.
+
+I had been reading `create_unemployment_process`. The LIVE builder is
+`employment_transition`, and it does this:
+
+    if (m_f_1>=1) then            ! the household has SMI
+        sep_1  = sep_1 * kappa_uem
+        find_1 = find_1 / kappa_uem
+    end if
+
+`kappa_uem` is **11.43** in the best point. So a household with serious mental
+illness faces a job finding rate of 0.55/11.43 = **4.8 per cent** instead of 55,
+and a separation rate 11.4 times higher. They are close to unemployable by
+construction, which is the parameter's purpose -- it is calibrated to hit
+employment-given-SMI of 30 per cent.
+
+**THE DECOMPOSITION RECONSTRUCTS THE MOMENT EXACTLY**, from the point's own
+other moments and nothing else:
+
+    SMI share            p_m       = 0.0448
+    unemployment there   1-kappa_uem_moment = 0.6727
+    SMI contribution     0.0448 x 0.6727    = 0.0301
+    everyone else, implied                  = 0.0474
+    reassembled                             = 0.07538
+    measured                                = 0.07538
+
+**SO THE SEPARATION RATE GOVERNS 95.5 PER CENT OF THE POPULATION AND IS NEARLY
+POWERLESS ON THE 4.5 PER CENT THAT CARRIES FORTY PER CENT OF THE UNEMPLOYMENT.**
+With a find rate of 4.8 per cent the SMI group sits deep in the flat part of
+sep/(sep+find), so its unemployment barely responds to sep. That is the whole
+explanation of the elasticity: 0.125 measured against 0.96 for a two-state flow.
+The instrument was never weak, it was diluted.
+
+**AND THE TARGET IS REACHABLE.** Holding the SMI block at its calibrated value:
+
+    need pi_eu 0.0485, SMI gives 0.0301, so everyone else must be 0.0192
+    p_eu = 0.55 x 0.0192 / (1 - 0.0192) = 0.01078
+
+The author guessed 0.01 unprompted. That point is in `PEU_ZERO.txt` and solving.
+
+**THE DECOMPOSITION MAKES THREE FALSIFIABLE PREDICTIONS**, and they differ from
+the naive two-state model by a factor of twenty at the bottom, so the sweep
+tests the explanation and not merely the direction:
+
+    p_eu 0.001  ->  0.0319   (naive: 0.0018)
+    p_eu 0.005  ->  0.0387   (naive: 0.0090)
+    p_eu 0.010  ->  0.0472   (naive: 0.0179)
+
+**WHY THIS TOOK SO LONG, WHICH IS THE PART TO LEARN FROM.** The answer was
+sitting in the model's own moment list the whole time: p_m at 4.5 per cent and
+kappa_uem at 0.33 multiply to 3.0 points of a 7.5 point total. Every hypothesis
+I chased instead -- the flow rate, a typo, a definitional mismatch, the target
+itself -- was reached for before doing the one arithmetic that used the model's
+own published moments. Decompose the moment before theorising about it.
