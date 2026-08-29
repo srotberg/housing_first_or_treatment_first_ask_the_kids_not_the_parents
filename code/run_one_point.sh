@@ -118,8 +118,23 @@ if [ ! -x hftf ] || [ housing_first_or_treatment_first_SR_v1.f90 -nt hftf ]; the
         echo "run_one_point: gfortran installed, $(gfortran --version | head -1)"
     fi
 
+    # -fimplicit-none IS NOT COSMETIC AND IT IS NOT OPTIONAL.
+    # On 29 August create_unemployment_process was found reading
+    # probability_becoming_employed1, with a trailing 1, declared nowhere in the
+    # file. That subroutine has no implicit none of its own -- the module it
+    # uses has one, but that does not reach a scope that merely uses it -- so
+    # the misspelling was accepted as an uninitialised implicit real and an
+    # unemployment transition row summed to about 1.46 instead of 1. The model
+    # had been creating households inside unemployment for as long as anyone
+    # can tell, and pi_eu was never within 45 per cent of its target.
+    # This flag turns exactly that into a compile error. Verified both ways:
+    # reintroducing the typo gives "Symbol 'probability_becoming_employed1' has
+    # no IMPLICIT type; did you mean 'probability_becoming_employed'?", and the
+    # corrected file compiles with ZERO such errors, so the typo was the only
+    # instance of its class in the whole 35,000 lines. It costs nothing at run
+    # time and it makes this bug unrepeatable.
     gfortran housing_first_or_treatment_first_SR_v1.f90 -mcmodel=medium -fopenmp \
-        -O3 -funroll-loops -ffree-line-length-none -g -fbacktrace -o hftf \
+        -fimplicit-none -O3 -funroll-loops -ffree-line-length-none -g -fbacktrace -o hftf \
         2> build_${TAG}.log || {
             tail -20 "build_${TAG}.log" >&2
             fail "the build failed; see build_${TAG}.log"

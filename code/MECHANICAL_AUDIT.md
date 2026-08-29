@@ -746,3 +746,58 @@ So a local elasticity in this model is good for one step and no further, and
 every projection in this file more than one step out has been wrong -- the b
 interpolation by a factor of four, the ratio here by a factor of five. The
 BRACKET is what has actually worked, every time. Design brackets, not steps.
+
+
+## A misspelled variable was creating households inside unemployment
+
+**FOUND 29 AUGUST 20:35, while asking why pi_eu had never come within 45 per
+cent of its target across 84 points.** `create_unemployment_process`, line
+~23931:
+
+    unemployment_process(...,2,2,2,0,:) = 1 - probability_becoming_employed1/(1+increased_prob_if_homeless)
+
+`probability_becoming_employed1`, with a trailing 1, is **declared nowhere in
+the file** and appears exactly once. The subroutine has no `implicit none` of
+its own -- the module it `use`s has one, but that does not reach a scope that
+merely uses it -- so the name was accepted as an uninitialised implicit real.
+
+**THE ROW COULD NOT SUM TO ONE.** Its companion two lines above, the find-a-job
+entry for the same state, is 0.55/1.2 = 0.4583. With the undefined value at
+zero the stay-unemployed entry is 1.0 and the pair sums to 1.4583. The
+normalisation lines nearby rebuild only the EMPLOYED row, as one minus the sum
+of its own off-diagonals; row two is written directly and never normalised, so
+nothing downstream could catch it. The identical block six lines below, for
+state 3, spells the name correctly -- which is what settles this as a typo
+rather than a deliberate asymmetry.
+
+**WHY IT FITS THE SYMPTOM.** The model delivered pi_eu at 1.8 to 2.6 times the
+textbook flow rate `p_eu/(p_eu+0.55)` at EVERY point, including ones where the
+drug population was empty, so it was never the drug channel. And pi_eu's
+elasticity on its own instrument was only +0.125, which is why pushing
+`probability_becoming_unemployed` around never worked: the search was fighting
+a leak.
+
+**THE CLASS SWEEP, AND IT COMES BACK CLEAN.** `-fimplicit-none` turns exactly
+this into a compile error. Validated both directions: reintroducing the typo
+produces `Symbol 'probability_becoming_employed1' at (1) has no IMPLICIT type;
+did you mean 'probability_becoming_employed'?`, and the corrected file compiles
+with **zero** such errors. So this was the ONLY instance of its class in the
+whole 35,000 lines, which is worth knowing -- the worry on finding a bug like
+this is always that it is one of many.
+
+The flag is now in both build paths, `run_one_point.sh` and
+`run_moment_stability.sh`, with the reasoning beside it. A full -O3 build with
+it is clean. It costs nothing at run time and makes the bug unrepeatable.
+
+**THIS IS THE THIRD BUG OF ITS SHAPE IN THIS FILE**, after the misspelled
+OpenMP sentinel that silently deleted a directive and the routine-local that
+shadowed a sibling's computed quantity. All three are names a compiler could
+have rejected and did not. The lesson is not "be careful with names"; it is
+that this codebase needs its compilers set to refuse, and two of the three
+would have been caught by flags that cost nothing.
+
+**WHAT IS NOT YET KNOWN.** That the typo CAUSED the pi_eu miss is measured by
+`PIEU_VERIFY_point.txt`, which re-runs the vector of `point_08e5be251f` -- which
+read pi_eu 0.08275 -- on the corrected model. If it comes back near 0.04 the
+archive is stale in full, exactly as the savings grid made the previous 566
+stale, and that goes to the author before anything is retired.

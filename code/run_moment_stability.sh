@@ -22,7 +22,10 @@ cd "$(dirname "$0")" || exit 1
 LOG=${1:-moment_stability.log}
 ulimit -s unlimited
 export OMP_STACKSIZE=512M OMP_NUM_THREADS=4 GFORTRAN_UNBUFFERED_ALL=1
-gfortran housing_first_or_treatment_first_SR_v1.f90 -mcmodel=medium -fopenmp -O3 \
+# -fimplicit-none: see the note in run_one_point.sh. It turns an undeclared
+# name into a compile error, which is how the unemployment typo of 29 August
+# would have been caught.
+gfortran housing_first_or_treatment_first_SR_v1.f90 -mcmodel=medium -fopenmp -fimplicit-none -O3 \
     -funroll-loops -ffree-line-length-none -o hftf_mom || exit 1
 # COLD ON PURPOSE. A warm start makes the first solve start somewhere else, and
 # where it starts is exactly what is under test.
