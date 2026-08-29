@@ -10443,12 +10443,12 @@
         end do
         
         model_fraction_light_users(time_period)=model_fraction_light_users(time_period)/&
-            model_exprimenters(time_period)
+            max(model_exprimenters(time_period),10.d0**(-14))
         
         if (model_mass_with_sud(time_period)>0) then
 
             model_treatment_take_up(time_period)=&
-                model_treatment_take_up(time_period)/model_mass_with_sud(time_period)
+                model_treatment_take_up(time_period)/max(model_mass_with_sud(time_period),10.d0**(-14))
 
         end if
 
@@ -10459,34 +10459,34 @@
         if (model_sud_mass_housed(time_period)>0) then
 
             model_recovery_housed(time_period)=&
-                model_recovery_housed(time_period)/model_sud_mass_housed(time_period)
+                model_recovery_housed(time_period)/max(model_sud_mass_housed(time_period),10.d0**(-14))
 
         end if
 
         if (model_sud_mass_homeless(time_period)>0) then
 
             model_recovery_homeless(time_period)=&
-                model_recovery_homeless(time_period)/model_sud_mass_homeless(time_period)
+                model_recovery_homeless(time_period)/max(model_sud_mass_homeless(time_period),10.d0**(-14))
 
         end if
 
         model_drugs_used_by_users_on_average(time_period)=&
-            model_drugs_used_by_users_on_average(time_period)/model_mass_total_users(time_period)
+            model_drugs_used_by_users_on_average(time_period)/max(model_mass_total_users(time_period),10.d0**(-14))
             
         model_drugs_used_by_experimenters_on_average(time_period)=&
-            model_drugs_used_by_experimenters_on_average(time_period)/model_mass_experimenters(time_period)
+            model_drugs_used_by_experimenters_on_average(time_period)/max(model_mass_experimenters(time_period),10.d0**(-14))
             
         model_drugs_used_by_addicts_on_average(time_period)=&
-            model_drugs_used_by_addicts_on_average(time_period)/model_mass_addicts(time_period)
+            model_drugs_used_by_addicts_on_average(time_period)/max(model_mass_addicts(time_period),10.d0**(-14))
             
         model_addiction_rate_by_age(time_period,:)=&
-            model_addiction_rate_by_age(time_period,:)/model_mass_addicts(time_period)
+            model_addiction_rate_by_age(time_period,:)/max(model_mass_addicts(time_period),10.d0**(-14))
             
         model_drug_use_by_age_group(time_period,:)=&
-            model_drug_use_by_age_group(time_period,:)/model_mass_total_users(time_period)
+            model_drug_use_by_age_group(time_period,:)/max(model_mass_total_users(time_period),10.d0**(-14))
                                                                                        
         model_experimentation_choice_by_age(time_period,:)=&
-            model_experimentation_choice_by_age(time_period,:)/model_mass_experimenters(time_period)
+            model_experimentation_choice_by_age(time_period,:)/max(model_mass_experimenters(time_period),10.d0**(-14))
         
         ! AFTER THIS BLOCK THESE TWO ARE RATIOS, spending over income, each
         ! summed over its group with the distribution's mass. Anything reading
@@ -10503,7 +10503,7 @@
 
             model_addicted_total_addiction_spending_to_total_income(time_period)=&
                 model_addicted_total_addiction_spending_to_total_income(time_period)/&
-                model_addicted_total_income(time_period)
+                max(model_addicted_total_income(time_period),10.d0**(-14))
 
         else
 
@@ -10515,7 +10515,7 @@
 
             model_experimenters_total_drug_spending_to_total_income(time_period)=&
                 model_experimenters_total_drug_spending_to_total_income(time_period)/&
-                model_experimenters_total_income(time_period)
+                max(model_experimenters_total_income(time_period),10.d0**(-14))
 
         else
 
@@ -10526,10 +10526,10 @@
         model_total_drug_users(time_period)=model_addicted(time_period)+model_exprimenters(time_period)
         
         model_average_drug_spending_experimenters(time_period)=&
-            model_average_drug_spending_experimenters(time_period)/model_exprimenters(time_period)
+            model_average_drug_spending_experimenters(time_period)/max(model_exprimenters(time_period),10.d0**(-14))
         
         model_addicts_getting_voucher(time_period)=&
-            model_addicts_getting_voucher(time_period)/model_eligibles_getting_voucher(time_period)
+            model_addicts_getting_voucher(time_period)/max(model_eligibles_getting_voucher(time_period),10.d0**(-14))
             
         sum_of_distribution=0
         
@@ -10544,49 +10544,49 @@
             model_eligibles_getting_voucher(time_period)/sum_of_distribution
             
         model_homeowners_experimenting(time_period)=&
-            model_homeowners_experimenting(time_period)/model_homeownership_rate(time_period)
+            model_homeowners_experimenting(time_period)/max(model_homeownership_rate(time_period),10.d0**(-14))
             
         model_experimenters_getting_voucher(time_period)=&
-            model_experimenters_getting_voucher(time_period)/model_eligibles_getting_voucher(time_period)
+            model_experimenters_getting_voucher(time_period)/max(model_eligibles_getting_voucher(time_period),10.d0**(-14))
 
         model_drug_users_getting_voucher(time_period)=&
-            model_drug_users_getting_voucher(time_period)/model_eligibles_getting_voucher(time_period)
+            model_drug_users_getting_voucher(time_period)/max(model_eligibles_getting_voucher(time_period),10.d0**(-14))
             
         model_avg_income_experimenters(time_period)=&
-            model_avg_income_experimenters(time_period)/model_exprimenters(time_period)
+            model_avg_income_experimenters(time_period)/max(model_exprimenters(time_period),10.d0**(-14))
             
         model_avg_income_drug_users(time_period)=&
-            model_avg_income_drug_users(time_period)/model_mass_total_users(time_period)
+            model_avg_income_drug_users(time_period)/max(model_mass_total_users(time_period),10.d0**(-14))
             
         model_avg_assets_experimenters(time_period)=&
-            model_avg_assets_experimenters(time_period)/model_exprimenters(time_period)
+            model_avg_assets_experimenters(time_period)/max(model_exprimenters(time_period),10.d0**(-14))
                 
         model_eligibles_getting_voucher(time_period)=&  
-            model_eligibles_getting_voucher(time_period)/model_eligibles(time_period)
+            model_eligibles_getting_voucher(time_period)/max(model_eligibles(time_period),10.d0**(-14))
         
         model_unemployment_by_employment(time_period,:)=&
-            model_unemployment_by_employment(time_period,:)/mass_by_employment_1(time_period,:)
+            model_unemployment_by_employment(time_period,:)/max(mass_by_employment_1(time_period,:),10.d0**(-14))
         
         addiction_rate_by_age(time_period,:)=&
-            addiction_rate_by_age(time_period,:)/mass_by_age(time_period,:)
+            addiction_rate_by_age(time_period,:)/max(mass_by_age(time_period,:),10.d0**(-14))
             
         homeless_and_addiction_rate_by_age(time_period,:)=&
-            homeless_and_addiction_rate_by_age(time_period,:)/mass_by_age(time_period,:)
+            homeless_and_addiction_rate_by_age(time_period,:)/max(mass_by_age(time_period,:),10.d0**(-14))
             
         model_fraction_choose_addiction_when_unemployed(time_period)=&
-            model_fraction_choose_addiction_when_unemployed(time_period)/model_mass_choose_addiction(time_period)
+            model_fraction_choose_addiction_when_unemployed(time_period)/max(model_mass_choose_addiction(time_period),10.d0**(-14))
             
         model_choose_addiction_when_income_is_low(time_period)=&
-            model_choose_addiction_when_income_is_low(time_period)/model_mass_choose_addiction(time_period)
+            model_choose_addiction_when_income_is_low(time_period)/max(model_mass_choose_addiction(time_period),10.d0**(-14))
             
         model_fraction_choose_addiction_when_homeless(time_period)=&
-            model_fraction_choose_addiction_when_homeless(time_period)/model_mass_choose_addiction(time_period)
+            model_fraction_choose_addiction_when_homeless(time_period)/max(model_mass_choose_addiction(time_period),10.d0**(-14))
             
         model_choose_addiction_when_retired(time_period)=&
-            model_choose_addiction_when_retired(time_period)/model_mass_choose_addiction(time_period)
+            model_choose_addiction_when_retired(time_period)/max(model_mass_choose_addiction(time_period),10.d0**(-14))
             
         model_fraction_choose_addiction(time_period)=&
-            model_fraction_choose_addiction(time_period)/model_mass_choose_addiction(time_period)
+            model_fraction_choose_addiction(time_period)/max(model_mass_choose_addiction(time_period),10.d0**(-14))
         
         model_average_spent_on_addiction_by_addicted(time_period)=&
             model_average_spent_on_addiction_by_addicted(time_period)/total_addited_1
@@ -10598,7 +10598,7 @@
 
                 addiction_share_of_income_by_employment(time_period,employment_index)=&
                     addiction_share_of_income_by_employment(time_period,employment_index)/&
-                    employment_mass(time_period,employment_index)
+                    max(employment_mass(time_period,employment_index),10.d0**(-14))
 
             else
 
@@ -10623,11 +10623,11 @@
 
                 percent_addicted_by_employment(time_period,employment_index)=&
                     percent_addicted_by_employment(time_period,employment_index)/&
-                    total_mass_by_employment(time_period,employment_index)
+                    max(total_mass_by_employment(time_period,employment_index),10.d0**(-14))
 
                 percent_homeless_by_employment(time_period,employment_index)=&
                     percent_homeless_by_employment(time_period,employment_index)/&
-                    total_mass_by_employment(time_period,employment_index)
+                    max(total_mass_by_employment(time_period,employment_index),10.d0**(-14))
 
             else
 
@@ -10647,15 +10647,15 @@
 
                 drug_quantity_by_employment(time_period,employment_index)=&
                     drug_quantity_by_employment(time_period,employment_index)/&
-                    clean_mass_by_employment(time_period,employment_index)
+                    max(clean_mass_by_employment(time_period,employment_index),10.d0**(-14))
 
                 onset_hazard_by_employment(time_period,employment_index)=&
                     onset_hazard_by_employment(time_period,employment_index)/&
-                    clean_mass_by_employment(time_period,employment_index)
+                    max(clean_mass_by_employment(time_period,employment_index),10.d0**(-14))
 
                 clean_consumption_by_employment(time_period,employment_index)=&
                     clean_consumption_by_employment(time_period,employment_index)/&
-                    clean_mass_by_employment(time_period,employment_index)
+                    max(clean_mass_by_employment(time_period,employment_index),10.d0**(-14))
 
             else
 
@@ -10668,10 +10668,10 @@
         end do
         
         model_average_assets_homeless_by_addiction(time_period,:)=model_average_assets_homeless_by_addiction(time_period,:)/&
-            model_mass_by_homeless_and_addiction(time_period,:)
+            max(model_mass_by_homeless_and_addiction(time_period,:),10.d0**(-14))
             
         model_average_income_homeless_by_addiction(time_period,:)=model_average_income_homeless_by_addiction(time_period,:)/&
-            model_mass_by_homeless_and_addiction(time_period,:)
+            max(model_mass_by_homeless_and_addiction(time_period,:),10.d0**(-14))
             
         model_average_income_addicted(time_period)=&
             model_average_income_addicted(time_period)/total_addited_1
@@ -10680,10 +10680,10 @@
             model_average_assets_addicted(time_period)/total_addited_1
             
         model_average_assets_drug_users(time_period)=&
-            model_average_assets_drug_users(time_period)/model_mass_total_users(time_period)
+            model_average_assets_drug_users(time_period)/max(model_mass_total_users(time_period),10.d0**(-14))
             
         model_age_by_addiction(time_period,:)=&
-            model_age_by_addiction(time_period,:)/model_mass_age_by_addiction(time_period,:)
+            model_age_by_addiction(time_period,:)/max(model_mass_age_by_addiction(time_period,:),10.d0**(-14))
                 
         model_fraction_addicted_homeless_no_vouchers(time_period)=&
             model_fraction_addicted_homeless_no_vouchers(time_period)/total_homeless_1
@@ -10692,7 +10692,7 @@
             model_fraction_spent_on_addiction(time_period)/total_addited_1
             
         model_fraction_spent_on_addiction_experimenters(time_period)=&
-            model_fraction_spent_on_addiction_experimenters(time_period)/model_exprimenters(time_period)
+            model_fraction_spent_on_addiction_experimenters(time_period)/max(model_exprimenters(time_period),10.d0**(-14))
                         
         model_fraction_homeless_by_choice(time_period)=&
             model_fraction_homeless_by_choice(time_period)/total_homeless_1
@@ -10814,10 +10814,10 @@
             model_financial(time_period)*risk_free_rate(time_period))
                      
         model_fraction_homeless_recieving_food_stamps(time_period)=&
-            model_fraction_homeless_recieving_food_stamps(time_period)/model_fraction_homeless(time_period)
+            model_fraction_homeless_recieving_food_stamps(time_period)/max(model_fraction_homeless(time_period),10.d0**(-14))
             
         model_food_stamps_share_to_homeless(time_period)=&
-            model_food_stamps_share_to_homeless(time_period)/model_fraction_homeless(time_period)
+            model_food_stamps_share_to_homeless(time_period)/max(model_fraction_homeless(time_period),10.d0**(-14))
         
         model_fraction_homeless(time_period)=model_fraction_homeless(time_period)/sum_of_distribution
                     
