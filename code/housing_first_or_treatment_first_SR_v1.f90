@@ -25311,8 +25311,28 @@
                            
         do i=negative_financial_grid_size+1,financial_grid_size
         
+            ! THE ENDPOINT MUST SURVIVE THE CURVATURE, AND IT DID NOT.
+            ! The last grid point is set just above to
+            ! max_times_labour_income_saved*employment_grid(1,employment_grid_size),
+            ! and is then OVERWRITTEN by distance**expander below. For the
+            ! declared cap to come back out, the distance has to be built from
+            ! top**(1/expander), so that (top**(1/expander))**expander = top.
+            ! It was built from top**(1/(expander+1)) instead, which returns
+            ! top**(expander/(expander+1)) = top**0.6 -- a cap of 1.28 times the
+            ! top labour income where the parameter plainly declares 3.2, short
+            ! by a factor of 2.51.
+            !
+            ! What it cost: 2.47 per cent of households sat exactly ON the last
+            ! grid point and 3.85 per cent in the last three, so two thirds of
+            ! the mass in that band was piled against the edge. A truncated top
+            ! understates total wealth, and every share read off that total is
+            ! inflated -- which is most of why the bottom half appeared to hold
+            ! 16.9 per cent of net worth against 2.52 in the data.
+            !
+            ! The curvature is unchanged; only the endpoint is now what the
+            ! declaration says it is.
             financial_grid_distance_positive(i)=(real(i)-real(negative_financial_grid_size))*&
-                ((financial_grid(financial_grid_size))**(real(1)/real(financial_grid_expander_positive+1)))/&
+                ((financial_grid(financial_grid_size))**(real(1)/real(financial_grid_expander_positive)))/&
                 (real(positive_financial_grid_size))
     
         end do
