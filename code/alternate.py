@@ -108,7 +108,14 @@ DRUG_MOMENTS = ['b', 'lambda_d', 'theta', 'h_1', 'tau_u',
 # Phase A steps are SHORT and there are several, because this is the half where
 # the response is flat and then cliffs and a derivative across that range is not
 # a derivative. Phase B is one short step because that half is near-linear.
-A_LADDER = (0.10, 0.20, 0.35, 0.55)
+# MEASURED 29 AUGUST, 03:20. The first phase A batch used 0.10 to 0.55 and
+# overshot catastrophically -- b at +258, +568 and +745 per cent, lambda_d at
+# +1014 -- for losses of 1.77 to 2.23. Nine parameters pulling together on three
+# drug moments is a far more potent direction than the four-parameter version
+# these lengths were guessed for, and the drug block's response is the flat-then-
+# cliff shape that made Nelder-Mead necessary here in the first place. Short
+# steps, and one long enough to confirm the turn is real rather than assumed.
+A_LADDER = (0.02, 0.05, 0.09, 0.16)
 B_LADDER = (0.12, 0.25)
 
 STATE = os.path.join(HERE, 'ALTERNATE_STATE.txt')
