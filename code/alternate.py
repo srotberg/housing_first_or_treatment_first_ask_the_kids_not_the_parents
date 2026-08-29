@@ -86,13 +86,24 @@ import score_points                                      # noqa: E402
 # ORDER among them is not measured, only that all of them are strong. That is
 # an argument for putting the whole group in one block rather than for ranking
 # them against each other.
+# pi_eu JOINS THE BLOCK TOO, on the author's second correction of 29 August, and
+# note first that it is misnamed in every discussion before this one: pi_eu is
+# the UNEMPLOYMENT RATE -- 8.45 per cent against a target of 4.85 -- not the
+# employment-to-unemployment transition probability. Its own instrument,
+# probability_becoming_unemployed, has an elasticity of only +0.70 on it. What
+# actually moves it is discount_factor at -2.14, with value_of_life and
+# addiction_scalar_1 behind that: impatience drives unemployment harder than the
+# separation rate does. Three of its six strongest movers were already block
+# members, so scoring it outside the block meant the block kept moving it with
+# nothing accountable for the result.
 DRUG_PARAMS = ['addiction_scalar_1', 'lambda_addiction',
                'relative_share_of_addiction_1', 'value_of_life',
                'discount_factor', 'size_homelessness',
                'smallest_rental_relative_to_lowest_income',
-               'relative_share_of_housing', 'labor_income_tax_rate']
+               'relative_share_of_housing', 'labor_income_tax_rate',
+               'probability_becoming_unemployed']
 DRUG_MOMENTS = ['b', 'lambda_d', 'theta', 'h_1', 'tau_u',
-                'aleph', 'beta', 'gamma', 'h_2', 'tau_l']
+                'aleph', 'beta', 'gamma', 'h_2', 'tau_l', 'pi_eu']
 
 # Phase A steps are SHORT and there are several, because this is the half where
 # the response is flat and then cliffs and a derivative across that range is not
