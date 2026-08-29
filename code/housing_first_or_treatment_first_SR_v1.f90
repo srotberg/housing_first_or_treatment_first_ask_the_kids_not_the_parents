@@ -8238,7 +8238,7 @@
                         
             average_age_of_homeowner_by_employment(time_period,employment_index)=&
                 average_age_of_homeowner_by_employment(time_period,employment_index)/&
-                mass_homeowners_by_employment(time_period,employment_index)
+                max(mass_homeowners_by_employment(time_period,employment_index),10.d0**(-14))
                     
         end do
                   
