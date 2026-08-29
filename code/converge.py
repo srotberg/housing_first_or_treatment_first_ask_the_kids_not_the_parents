@@ -268,7 +268,14 @@ BOUNDS = {
     'relative_share_of_leisure':             (0.10, 20.0),
     'labor_income_tax_rate':                 (0.05, 3.0),
     'sd_permanent_productivity':             (0.10, 3.0),
-    'probability_becoming_unemployed':       (0.001, 0.500),
+    # THE FLOOR WAS 0.001 AND THE FORTRAN'S IS 1e-6, so the search's own floor
+    # was a thousand times the model's. It never bound -- the search never went
+    # below 0.0164, sixteen times above its own limit -- so this is not why
+    # pi_eu could not be reached. Matched to the Fortran anyway: a bound that
+    # is tighter than the model's own is a constraint nobody put there on
+    # purpose, and the same shape of unused headroom is what trapped
+    # lambda_addiction at 4.5 to 6.9 for the whole calibration.
+    'probability_becoming_unemployed':       (1e-6, 0.500),
     'multiple_of_probabilities_of_employment_if_addicted': (1.0, 50.0),
     # THE MODEL CLAMPS THIS ONE TO [1, 40] ON THE WAY IN. Arms at 0.30 and 0.10
     # were both silently set to 1 and came back as the centre, which the round
