@@ -622,3 +622,55 @@ over all households and 0.0226 over 26-65, so the number in the code is right
 to within rounding and universe choice.
 
 Written to `data/SCF_wealth_shares.txt`.
+
+
+## beta becomes a BAND at 4.0 to 4.5, and it pins the discount factor rather than freeing it
+
+**THE AUTHOR'S DECISION, 29 AUGUST: take the wealth to output target from
+Piketty and Zucman (2014) and treat anything in 4.0 to 4.5 as a hit.**
+Implemented in `score_points.BAND`: inside the band the gap is zero, outside it
+the gap is measured to the nearer edge so the moment stays continuous. The
+current best goes from 0.2237 to 0.2076 and the ranking does not reshuffle;
+beta leaves the worst-four entirely.
+
+**THE CONVERSION WAS PUT TO THE AUTHOR AND THE BAND WAS CONFIRMED ANYWAY.**
+Piketty and Zucman measure private wealth over NATIONAL INCOME, about 0.85 of
+GDP, so their US 4.0 to 4.5 converts to roughly 3.4 to 3.8 against this model's
+denominator, which is output. Taking 4.0 to 4.5 directly is taking their number
+without the conversion. Recorded so the choice stays visible rather than being
+re-derived and doubted later; the band is implemented as given.
+
+**THE CONSEQUENCE THAT MATTERS FOR THE SEARCH, AND IT IS NOT THE OBVIOUS ONE.**
+The band does NOT free the discount factor to do the b repair. It pins it:
+
+    discount   beta        b     in band?
+    0.99180   3.030   0.2192      NO
+    0.99380   3.380   0.1866      NO
+    0.99580   3.779   0.1459      NO
+    0.99675   3.892   0.1504      NO
+    0.99810   4.188   0.0805      yes
+    0.99900   4.156   0.1156      yes
+
+Only 0.998 and above keeps beta inside 4.0 to 4.5. Under the old target of 3.0
+the search was pulled DOWN toward 0.9918, where beta is 3.03 -- and b there is
+0.219, two and a half times its own target. So the old target was actively
+pulling b off target, and the band stops that. That is the real gain, and it is
+worth more than it looks: b is the moment at weight three that the current best
+has to within one per cent.
+
+**BUT THE b REPAIR AT HIGH LAMBDA NOW HAS TO USE A DIFFERENT INSTRUMENT.** At
+lambda 30, b is 0.0064 and needs 0.089, a factor of fourteen, and the discount
+factor can no longer be spent on it. `addiction_scalar_1` is the candidate --
+bounded (1e-10, 1.0), currently 0.0172, so it has the range, and it owns no
+other headline moment. `relative_share_of_addiction_1` is boxed into
+(0.45, 0.51) and is too narrow for fourteen-fold on its own.
+
+**LAMBDA30_REPAIR.txt IS NOW PARTLY OFF THE PATH.** Its four points sweep the
+discount factor to 0.984 at lambda 30, which under the band puts beta far below
+4.0. They still measure the b response to the discount factor at lambda 30,
+which is worth having and is not available anywhere else, so they are left to
+finish -- but the point that eventually wins will not be one of them.
+
+**EVERY LOSS IN THIS FILE BEFORE THIS ENTRY IS ON THE OLD SCALE.** Comparisons
+across the change are not meaningful; the archive re-scores consistently, so
+rankings are, but levels are not.
