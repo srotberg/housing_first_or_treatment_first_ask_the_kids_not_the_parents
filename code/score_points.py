@@ -162,6 +162,40 @@ def band_gap(name, model):
     return abs(model - edge) / abs(edge)
 
 
+# THE AUTHOR'S ACCEPTANCE CRITERION, SET 29 AUGUST: every target within ten per
+# cent. That is a MINIMAX, not a mean, and it ranks differently from `loss` --
+# a point with nineteen moments exact and one at eighty per cent beats a point
+# with twenty at fifteen on the mean, and loses on this. The search has spent
+# the day being led by the mean toward exactly that shape: the best point by
+# loss has b to within one per cent and lambda_d at minus seventy eight.
+#
+# lambda_m is counted here even though `loss` excludes it. The exclusion is
+# right for the mean -- zeta_DI is externally zero so nothing points at the
+# moment, and charging every point the same fixed penalty tells the search
+# nothing -- but the author said ALL targets, and a moment nothing can reach is
+# exactly the kind the criterion needs to surface rather than hide. omega stays
+# out because the model declines to compute it rather than missing it.
+ACCEPT = 0.10
+
+
+def worst(moments, include_unreachable=True):
+    """(largest relative gap, its moment) under the author's ten per cent rule."""
+    out = []
+    for name, (model, target) in moments.items():
+        if name == 'omega':
+            continue
+        if not include_unreachable and name in EXCLUDE:
+            continue
+        if abs(target) < 1e-12:
+            continue
+        bg = band_gap(name, model)
+        g = bg if bg is not None else abs(model - target) / abs(target)
+        out.append((g, name))
+    if not out:
+        return float('inf'), None
+    return max(out)
+
+
 def loss(moments):
     tot, n, worst = 0.0, 0, []
     for name, (model, target) in moments.items():
