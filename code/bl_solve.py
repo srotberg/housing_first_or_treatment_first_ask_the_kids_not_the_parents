@@ -53,20 +53,33 @@ TARGET_LD = 0.0368
 TARGET_RATIO = TARGET_LD / TARGET_B
 
 RATIO_PARAM = 'lambda_addiction'
-# THE b INSTRUMENT IS relative_share_of_addiction_1, NOT THE DISCOUNT FACTOR,
-# AND THE MEASUREMENT THAT SETTLED IT WAS RUN ON 29 AUGUST. Over the archive at
-# lambda near 6 the discount factor looked like the obvious choice: correlation
-# -0.94 with b and only +0.18 with the ratio, apparently a clean instrument.
-# At lambda 30 it is not. Sweeping it there, with everything else held:
+# THE b INSTRUMENT IS addiction_scalar_1, WHICH IS THE MODEL'S OWN b.
 #
-#     discount   0.999 -> 0.984     b 0.0064 -> 0.0147   ratio 0.434 -> 0.332
-#     rsa_1     0.4539 -> 0.500     b 0.0064 -> 0.0244   ratio 0.434 -> 0.461
+# The author pointed this out on 29 August and the Fortran confirms it: the
+# declaration of addiction_scalar_1 calls it "b_1 in the written model", says
+# "participation is a threshold function of b", and the file carries a raise_b
+# flag that sets it. It is the Stone Geary shifter on the addictive good, and it
+# is the same object the stylized model calibrates as b -- there against the
+# participation rate, with lam against the SUD rate. That is the pairing:
 #
-# The discount factor buys 2.3x on b and gives back a QUARTER of the ratio;
-# rsa_1 buys 3.8x and the ratio goes UP. So the near-zero correlation with the
-# ratio was a property of the low-lambda region and did not survive the move.
-# rsa_1 wins on both margins and is the instrument here.
-B_PARAM = 'relative_share_of_addiction_1'
+#     addiction_scalar_1  ->  b, the user share
+#     lambda_addiction    ->  lambda_d, the disorder rate
+#
+# TWO WRONG INSTRUMENTS WERE TRIED FIRST AND BOTH FAILED FOR REASONS WORTH
+# KEEPING. The discount factor looked ideal over the archive at lambda near 6
+# -- correlation -0.94 with b, only +0.18 with the ratio -- and at lambda 30 it
+# dilutes the ratio by a quarter while buying only 2.3x on b. Then
+# relative_share_of_addiction_1 did far better, 3.8x on b with the ratio rising,
+# but the Newton step asked for 0.534 and its bound is 0.51, so it cannot carry
+# the move. addiction_scalar_1 has neither problem: it is bounded (1e-10, 1.0)
+# against a current value of 0.017, so the range is not a constraint at all.
+#
+# ITS OWN HAZARD, FROM THE COMMENT BESIDE IT: participation is a THRESHOLD
+# function of it, and the declaration records a run where it climbed eleven
+# iterations through participation of 87 to 96 per cent before entering the
+# right decade. Short steps here, and read the b that comes back rather than
+# trusting the linearisation.
+B_PARAM = 'addiction_scalar_1'
 
 # A point belongs to this experiment only if every OTHER coordinate matches the
 # centre. The whole premise is that the rest is frozen, so a point that drifted
@@ -77,7 +90,7 @@ FROZEN_TOL = 1e-6
 # Newton on a 2x2 fitted from measurements is trustworthy over the range those
 # measurements span and nowhere else. The step is capped in e-folds of each
 # instrument's own coordinate.
-MAX_STEP = {RATIO_PARAM: 0.90, B_PARAM: 0.12}
+MAX_STEP = {RATIO_PARAM: 0.90, B_PARAM: 0.70}
 
 
 # The 1-beta transform existed because the discount factor lives at 0.999 and is
