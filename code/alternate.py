@@ -131,10 +131,83 @@ def phase_of():
     return ('B' if parts[0] == 'A' else 'A'), parts[-1]
 
 
+def landed():
+    """(loss, name, line) for each line of the current batch that has a point."""
+    import hashlib
+    done, missing = [], []
+    defaults = {}
+    inp = False
+    for line in open(os.path.join(HERE, 'run_one_point.sh')):
+        if line.strip().startswith('declare -A P=('):
+            inp = True
+            continue
+        if inp and line.strip() == ')':
+            break
+        if inp:
+            import re as _re
+            m = _re.match(r'\s*\[([A-Za-z0-9_]+)\]=(\S+)', line)
+            if m:
+                defaults[m.group(1)] = m.group(2)
+    for i, line in enumerate(open(BATCH), 1):
+        line = line.strip()
+        if not line:
+            continue
+        vec = dict(defaults)
+        for tok in line.split()[2:]:
+            k, v = tok.split('=', 1)
+            vec[k] = v
+        tag = hashlib.md5(''.join(f'{k}={vec[k]}\n' for k in sorted(vec)).encode()).hexdigest()[:10]
+        p = os.path.join(HERE, 'points', f'point_{tag}.txt')
+        if os.path.exists(p) and 'END OF MOMENTS' in open(p, errors='replace').read():
+            _h, mt = score_points.read(p)
+            if mt:
+                done.append((score_points.loss(mt)[0], f'point_{tag}.txt', i))
+                continue
+        if os.path.exists(os.path.join(HERE, 'points', f'point_{tag}.FAILED.txt')):
+            continue
+        missing.append(i)
+    return done, missing
+
+
+def advance():
+    """Score this phase's batch; when it is complete, flip phase and emit."""
+    if not os.path.exists(BATCH):
+        print('no batch yet; run alternate.py to start phase A')
+        return 1
+    done, missing = landed()
+    if missing:
+        print(f'batch: {len(done)} of {len(done) + len(missing)} landed, still out {missing}')
+        return 0
+    if not done:
+        print('batch: every point failed; not advancing')
+        return 1
+    done.sort()
+    phase, _ = phase_of()
+    prev_phase = 'B' if phase == 'A' else 'A'
+    print(f'phase {prev_phase} batch complete:')
+    for L, name, i in sorted(done, key=lambda t: t[2]):
+        print(f'   line {i}  loss {L:.4f}  {name}')
+    print(f'best of batch {done[0][0]:.4f}')
+    # A PHASE A BATCH IS NOT JUDGED ON THE LOSS. It is meant to move the drug
+    # moments and it is expected to cost the others; phase B is what pays that
+    # back. Only the pair of phases together is allowed to be called a failure,
+    # which is why nothing here declares convergence on a single batch.
+    rc = main_emit()
+    return rc
+
+
+def main_emit():
+    sys.argv = [sys.argv[0]]
+    return main()
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--emit', action='store_true')
+    ap.add_argument('--advance', action='store_true')
     args = ap.parse_args()
+    if args.advance:
+        return advance()
 
     pts = [(v, m, n) for v, m, n in jacobian.points() if 'relative_share_of_housing' in v]
     L0, centre, cname = best_point()
