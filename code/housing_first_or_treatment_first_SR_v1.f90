@@ -8188,7 +8188,7 @@
             model_average_owner_occupied_unit_size_to_income(time_period)/max(mass_of_owners(time_period),10.d0**(-14))
             
         model_average_owner_occupied_unit_size_to_income_work_age(time_period)=&
-            model_average_owner_occupied_unit_size_to_income_work_age(time_period)/working_age_mass(time_period)
+            model_average_owner_occupied_unit_size_to_income_work_age(time_period)/max(working_age_mass(time_period),10.d0**(-14))
             
         model_average_owners_income(time_period)=model_average_owners_income(time_period)/max(mass_of_owners(time_period),10.d0**(-14))
              
@@ -8449,7 +8449,7 @@
             if (solve_transition_dynamics==0) then
                 
                 write(*,*) "model_wealth_of_top_x_perc(",wealth_of_top_x_perc_index,")/model_net_wealth=",&
-                    model_wealth_of_top_x_perc(wealth_of_top_x_perc_index)/model_total_net_wealth_1(time_period)
+                    model_wealth_of_top_x_perc(wealth_of_top_x_perc_index)/max(model_total_net_wealth_1(time_period),10.d0**(-14))
                 write(*,*) "stopping_rule_wealth_dist(",wealth_of_top_x_perc_index,")=",&
                     stopping_rule_wealth_dist(wealth_of_top_x_perc_index)
                                                         
@@ -27101,7 +27101,7 @@
             end do   
             do i=1,wealth_brackets
                 write(2,*) "model_wealth_of_top_x_perc(",i,")/model_net_wealth,",&
-                    model_wealth_of_top_x_perc(i)/model_total_net_wealth_1(time_period)
+                    model_wealth_of_top_x_perc(i)/max(model_total_net_wealth_1(time_period),10.d0**(-14))
                 write(2,*) "stopping_rule_wealth_dist(",i,"),", stopping_rule_wealth_dist(i)
             end do
             do i=1,5
