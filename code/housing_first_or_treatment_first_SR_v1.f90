@@ -8199,15 +8199,15 @@
             
         model_fraction_of_homeowners_with_mortgage_over_80_perc(time_period)=&
             model_fraction_of_homeowners_with_mortgage_over_80_perc(time_period)/&
-            (model_fraction_of_homeowners_with_mortgage(time_period)*mass_of_owners(time_period))
+            max(model_fraction_of_homeowners_with_mortgage(time_period)*mass_of_owners(time_period),10.d0**(-14))
             
         model_fraction_of_homeowners_with_mortgage_over_90_perc(time_period)=&
             model_fraction_of_homeowners_with_mortgage_over_90_perc(time_period)/&
-            (model_fraction_of_homeowners_with_mortgage(time_period)*mass_of_owners(time_period))
+            max(model_fraction_of_homeowners_with_mortgage(time_period)*mass_of_owners(time_period),10.d0**(-14))
             
         model_fraction_of_homeowners_with_mortgage_over_20_perc(time_period)=&
             model_fraction_of_homeowners_with_mortgage_over_20_perc(time_period)/&
-            (model_fraction_of_homeowners_with_mortgage(time_period)*mass_of_owners(time_period))
+            max(model_fraction_of_homeowners_with_mortgage(time_period)*mass_of_owners(time_period),10.d0**(-14))
                         
         model_wealth_of_renters(time_period)=model_wealth_of_renters(time_period)/max(mass_of_renters(time_period),10.d0**(-14))
             
