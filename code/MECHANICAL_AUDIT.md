@@ -259,3 +259,83 @@ mortgage; if they do, they belong to the benign family and get the same floor.
 | A misspelled OpenMP sentinel silently deleting a directive | **Does not arise.** The stylized model is single-threaded Python with no comment-pragmas that alter semantics; there is nothing whose misspelling degrades to a comment. |
 | A mode-flag ladder not extended when a new mode was added, falling through to an uninitialised value | **Does not arise today**: `grep elif` over `stylized.py` and `calibrate.py` returns zero if/elif ladders on mode flags. The class is worth naming there anyway: in Python the same mistake raises `UnboundLocalError` -- it fails loud where the Fortran failed silent, which is the difference that let this one run for weeks. |
 | A routine's local (`width`) shadowing a sibling's computed quantity and never being computed | **No.** The stylized model passes derived quantities as function arguments or recomputes them locally; there are no sibling routines sharing a convention that one forgot. |
+
+
+## The SUD rate cannot be reached from the parameters we search, and here is the arithmetic
+
+**MEASURED 29 AUGUST, over the whole 59-point post-grid-fix archive.**
+
+`lambda_d` -- the substance use disorder rate, the share of the WHOLE population
+in the disorder -- comes back at 0.7 per cent against a target of 3.68, off by
+81 per cent, at EVERY point ever measured. It is the single largest term in the
+loss and it has never moved. This is why.
+
+**IT IS NOT THAT THE SEARCH HAS NOT TRIED.** `lambda_addiction` spans 4.51 to
+6.93 across the archive, a range of 54 per cent, and the correlation between it
+and `lambda_d` over the 54 points with a loss below 0.6 is **-0.31** -- not weak,
+WRONG-SIGNED. The instrument the model names for this moment does not move it.
+
+**WHAT IS ACTUALLY PINNED IS THE RATIO.** `lambda_d / b`, the disordered share
+of users, sits between 0.077 and 0.093 at every sensible point in the archive.
+It is 0.41 in the data (0.0368 / 0.089). The model is not missing the SUD rate;
+it is delivering a disorder-to-use ratio five times too small, and no
+combination of the twenty-odd searched parameters shifts it.
+
+**THE FLOW BALANCE SAYS WHY.** In steady state, onset times the non-disordered
+users equals the recovery hazard times the disordered:
+
+    onset * (b - lambda_d) = probability_of_stopping_addiction * lambda_d
+
+so the ratio `lambda_d / b` is pinned by `onset / (onset + recovery)` and nothing
+else. Inverting it at the declared recovery rate of 0.025 gives the onset the
+model is actually delivering, point by point:
+
+| lambda_addiction | b | lambda_d | implied onset |
+|---|---|---|---|
+| 4.51 | 0.188 | 0.0157 | 0.00229 |
+| 5.19 | 0.083 | 0.0067 | 0.00220 |
+| 5.55 | 0.219 | 0.0185 | 0.00230 |
+| 5.83 | 0.085 | 0.0070 | 0.00225 |
+| 6.51 | 0.107 | 0.0082 | 0.00206 |
+
+Over all 54 points the implied onset lies in **0.00164 to 0.00307**. A 54 per
+cent range in the hazard produces a 5 per cent range in the onset it is supposed
+to control.
+
+**BECAUSE THE HAZARD IS A PRICE AND HOUSEHOLDS PAY IT BY USING LESS.** Under
+`smooth_addiction_hazard=1` the onset is `1 - exp(-lambda * quantity)` and the
+quantity is a CHOICE. Raise lambda and the household cuts the quantity by very
+nearly the reciprocal, so the product -- and therefore the onset, and therefore
+the disorder stock -- is invariant. The declared benchmark has this in plain
+sight: lambda 0.027364 at a mean quantity of 0.0585 gives an onset of 0.0016;
+we are running lambda at 5.5, two hundred times larger, and the implied onset is
+0.0022. The quantity has absorbed essentially all of it.
+
+**WHAT WOULD BE NEEDED.** To put `lambda_d` on 0.0368 while `b` stays on 0.089,
+the ratio has to be 0.41, so onset must be 0.70 times the recovery hazard:
+
+- **through the onset**: 0.0176, which is **8.1 times** what the model delivers,
+  and unreachable through `lambda_addiction` for the reason above;
+- **through the recovery hazard**: 0.0031 against the declared **0.025**, a
+  factor of eight the other way.
+
+`probability_of_stopping_addiction` is declared at 0.025 and is **not in the
+search vector**. It is the only quantity in the balance that is both free and
+effective. Its homeless counterpart is recomputed as
+`mu_homeless * probability_of_stopping_addiction`, so it would follow, and
+`mu_homeless` -- which owns the Milby ratio moment `mu_H`, currently within 1
+per cent -- would not have to move.
+
+**WHY REWEIGHTING THE LOSS DOES NOT HELP, AND WAS TESTED.** Raising
+`lambda_d`'s weight from 3 to 6 while dropping `beta` and `h_2` to 0.5 leaves
+the ranking of the archive COMPLETELY unchanged, top five identical in order.
+A moment that is 81 per cent off at every point is a constant added to every
+loss; weight cannot discriminate on it. The only points where `lambda_d` gets
+above 1.9 per cent are the ones where `b` runs to 0.22 and treatment take-up to
+0.59 -- the SUD rate bought by making a quarter of the population users, which
+is not the trade the weight was meant to buy.
+
+**THE HONEST STATEMENT.** The b target and the lambda_d target are, at a
+recovery hazard of 0.025 and with an endogenous quantity, arithmetically
+incompatible. This is not a search failure and more measurement will not fix it.
+It is a scope decision and it belongs to the author.
