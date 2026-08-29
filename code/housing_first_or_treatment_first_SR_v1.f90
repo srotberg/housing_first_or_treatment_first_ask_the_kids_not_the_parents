@@ -4406,6 +4406,18 @@
                 model_wealth_share_below(4,1)
             write(*,*) "DIAG bottom half share of net worth              =",&
                 model_bottom_half_wealth_share(1), " data= 0.0252"
+            ! THE ONSET IS A PRODUCT AND ONLY THE PRODUCT MATTERS. lambda is
+            ! searched, but what the disorder stock responds to is
+            ! 1-exp(-lambda*quantity) at the mean quantity, and the quantity is
+            ! a CHOICE. Over the whole archive of 29 August lambda spans 4.51 to
+            ! 6.93 while the onset implied by the flow balance stays inside
+            ! 0.0016 to 0.0031, which says the quantity is absorbing the hazard.
+            ! That was INFERRED from the flow balance, never seen; these two
+            ! lines make it visible in every point instead.
+            write(*,*) "DIAG mean drug quantity, users                   =",&
+                model_drugs_used_by_users_on_average(1)
+            write(*,*) "DIAG onset at the mean quantity                  =",&
+                1-exp(-lambda_addiction*model_drugs_used_by_users_on_average(1))
             write(*,*) "DIAG mass ON the top savings grid point          =",&
                 diag_mass_top_financial/max(sum_of_distribution,10.d0**(-12))
             write(*,*) "DIAG mass in the top THREE savings grid points   =",&
