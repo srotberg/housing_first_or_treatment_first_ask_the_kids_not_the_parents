@@ -512,3 +512,42 @@ twenty-four coordinates held at the current best so the result is a derivative
 rather than a confounded marginal: lambda = 30, 100 and 1000, against a search
 range that has never left 4.5 to 6.9. The stylized model's calibrated 106.8
 sits inside that span.
+
+
+## What the two targets actually require, and which instrument does which job
+
+**FROM THE CURRENT BEST (point_56bb8e81a5, loss 0.2237):**
+
+    b         0.0879  ->  0.0890    x1.01
+    lambda_d  0.00807 ->  0.0368    x4.56
+    ratio     0.0919  ->  0.4135    x4.50
+
+**b IS ALREADY ON TARGET.** It is one per cent low, and lowering it would move
+it away. The whole discrepancy is the ratio, and the ratio is the whole of
+lambda_d's gap: x4.50 against x4.56. Any instrument used to move b has to move
+it by one per cent and no more -- its real job is to HOLD b while lambda moves
+the ratio, because lambda cuts b hard as a side effect.
+
+**THE TWO INSTRUMENTS ARE TRIANGULAR, WHICH IS WHY THIS CAN WORK.** Over the
+archive:
+
+    corr(lambda_addiction, ratio) = +0.19    corr(lambda_addiction, b) = -0.36
+    corr(discount_factor,  ratio) = +0.18    corr(discount_factor,  b) = -0.94
+
+and the ratio is close to flat in the discount factor across the range measured
+-- 0.084, 0.073, 0.066, 0.083 as the discount falls from 0.9975 to 0.9910 while
+b nearly triples, 0.087 to 0.202. So lambda sets the ratio and the discount
+factor puts b back, and the second does not undo the first.
+
+**THE OVERSHOOT AND THE INTERACTION, BOTH WORTH WATCHING.**
+- lambda 30 gives a ratio of 0.434 against 0.414 wanted, so it slightly
+  OVERSHOOTS; the exact value is nearer 27 or 28, which is also what the
+  converge.py bound comment predicted from the arithmetic.
+- The discount factor also owns beta, which is +44 per cent. Restoring b from
+  0.0064 to 0.089 is a factor of FOURTEEN, and the archive only shows a factor
+  of 2.3 across 0.9975 to 0.9910. Reaching fourteen would take the discount far
+  below anything measured and would push beta through its target rather than
+  onto it. So the discount factor is unlikely to carry the b repair alone, and
+  relative_share_of_addiction_1 (corr +0.49 with b, +0.09 with the ratio) and
+  addiction_scalar_1 (+0.37) are the other two hands on it. That is a phase B
+  job, not a single sweep.
