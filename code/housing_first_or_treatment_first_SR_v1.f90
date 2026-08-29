@@ -23928,7 +23928,19 @@
             unemployment_process(1:cutoff_age_1,2,1,1,0,:)=probability_becoming_employed
             unemployment_process(1:cutoff_age_1,2,1,2,0,:)=probability_becoming_employed/(1+increased_prob_if_homeless)
             unemployment_process(1:cutoff_age_1,2,2,1,0,:)=1-probability_becoming_employed
-            unemployment_process(1:cutoff_age_1,2,2,2,0,:)=1-probability_becoming_employed1/(1+increased_prob_if_homeless)
+            ! WAS probability_becoming_employed1, WITH A TRAILING 1, AND THAT
+            ! NAME IS DECLARED NOWHERE IN THE FILE. This subroutine has no
+            ! implicit none -- the module it uses has one, but that does not
+            ! reach a scope that merely uses it -- so the misspelling was typed
+            ! implicitly as an uninitialised real and the line read
+            ! 1 - undefined/1.2 rather than 1 - 0.55/1.2. The row for an
+            ! unemployed homeless household then did not sum to one: its find-a-
+            ! job entry two lines above is 0.4583, so the pair summed to about
+            ! 1.4583 and the process was creating mass inside unemployment.
+            ! The identical block six lines below, for state 3, spells it
+            ! correctly, which is what settles that this is a typo and not a
+            ! deliberate asymmetry.
+            unemployment_process(1:cutoff_age_1,2,2,2,0,:)=1-probability_becoming_employed/(1+increased_prob_if_homeless)
             
             unemployment_process(1:cutoff_age_1,3,1,1,0,:)=probability_becoming_employed
             unemployment_process(1:cutoff_age_1,3,1,2,0,:)=probability_becoming_employed/(1+increased_prob_if_homeless)
