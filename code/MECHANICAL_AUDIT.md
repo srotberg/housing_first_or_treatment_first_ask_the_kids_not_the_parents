@@ -451,3 +451,64 @@ test is `LAMBDA_STRESS.txt`: two points at lambda 30 and 100, five and fifteen
 times the top of the searched range, with all twenty-four other coordinates
 held at the current best. That is the derivative, and until it lands the
 question of whether a large enough lambda would simply work is OPEN.
+
+
+## SECTION 7 CROSS-CHECK, RUNNING BACKWARDS: the stylized model found this first
+
+**THE AUTHOR SAID THE STYLIZED MODEL NEEDED A VERY LARGE LAMBDA, AND THE
+STYLIZED MODEL'S OWN CALIBRATION NOTE NOT ONLY CONFIRMS IT BUT DIAGNOSES THE
+QUANTITATIVE MODEL'S PROBLEM IN ADVANCE.** From `code/stylized/calibrate.py`,
+around the LAM_LO/LAM_HI bracket:
+
+    The rate does not saturate below the target, it just gets there slowly,
+    because a household that faces a steeper hazard per unit BUYS FEWER UNITS:
+    v falls roughly as 1/lambda, so pi(v) = 1 - exp(-lambda v) creeps rather
+    than jumps.
+
+That is the offset mechanism this file spent the afternoon inferring from the
+steady-state flow balance in the quantitative model. It was already written
+down, in the other model, with the same functional form and the same
+conclusion.
+
+**THE NUMBERS.** The stylized model's calibrated hazard:
+
+    calibrated.json            lam = 106.8
+    best_drug.json             lam =  84.6
+    calibrated_theta020.json   lam = 253.1
+
+and its bracket is `LAM_LO, LAM_HI = 0.05, 20000.0`, deliberately wide because
+a ceiling of 4000 BOUND: at lambda = 4000 the adult SUD rate reached 3.38 per
+cent against the same 3.68 target, so the bracket walked to its ceiling and
+reported a corner as a calibration.
+
+**THE QUANTITATIVE MODEL HAS BEEN SEARCHING LAMBDA OVER 4.51 TO 6.93.** That is
+twenty to fifty times below the stylized model's calibrated value for the same
+hazard in the same functional form against the same target. The search was
+never given room to reach the answer, and everything this file recorded about
+lambda "not moving lambda_d" was measured inside a window far too narrow to
+show movement. The correlations stand as facts about that window; the inference
+that the channel was structurally dead does not.
+
+**WHY THIS IS THE SECTION 7 RULE FAILING IN THE DIRECTION IT WAS NOT WRITTEN
+FOR.** The rule says a bug found in the stylized model is checked against the
+quantitative model before it is closed. Here the stylized model did not find a
+BUG, it found a CALIBRATION FACT -- that this hazard needs to be two orders of
+magnitude larger than a naive bracket allows -- and a fact is not a bug, so
+nothing triggered the cross-check and the quantitative model inherited a bracket
+built for the wrong scale. The rule should be read to cover both.
+
+**THE CEILING, WHICH IS THE REAL CONSTRAINT AND IS NOT LAMBDA.** The stylized
+model's SUD rate tops out at the PARTICIPATION rate: once every user
+progresses, sud = part = 5.13 per cent. The quantitative analogue is
+`lambda_d <= b`. Today b = 0.085 and the target is 0.0368, so the ceiling is
+comfortably above the target -- but b FALLS in lambda (correlation -0.36 over
+the archive, and b was already down to 0.050 at lambda 6.93). If b falls below
+0.0368 before the ratio rises enough, the target becomes unreachable no matter
+how large lambda is. That, and not the onset, is what the stress points have to
+settle.
+
+**STRESS POINTS NOW SPAN THREE ORDERS OF MAGNITUDE**, all with the other
+twenty-four coordinates held at the current best so the result is a derivative
+rather than a confounded marginal: lambda = 30, 100 and 1000, against a search
+range that has never left 4.5 to 6.9. The stylized model's calibrated 106.8
+sits inside that span.
