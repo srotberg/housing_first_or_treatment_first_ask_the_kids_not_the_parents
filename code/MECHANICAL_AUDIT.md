@@ -413,3 +413,41 @@ no change.
 **STILL THE AUTHOR'S CALL: this is a model change and nothing here is
 implemented.** What is needed from the author is the conversion number and its
 source.
+
+
+## Sharpening it: lambda is not dead, it has the wrong sign on b
+
+**The entry above says the onset channel does not respond to lambda. That is too
+strong, and the archive says something more precise.** Decompose the moment:
+
+    lambda_d  =  (disordered share of users)  x  (share of population who use)
+              =  ratio  x  b
+
+Over the 54 sensible points, correlations with `lambda_addiction`:
+
+    corr(lambda, ratio)     = +0.187      <- the intended effect, right sign
+    corr(lambda, b)         = -0.362      <- the side effect, twice as strong
+    corr(lambda, lambda_d)  = -0.385      <- the product, dominated by b
+
+So lambda DOES raise the disordered share of users. It raises it by making use
+more dangerous, which is also a reason not to use, so `b` falls harder than the
+ratio rises and the product goes backwards. The lowest-lambda point in the
+archive has b = 0.174 at a ratio of 0.085; the highest has b = 0.050 at a ratio
+of 0.109.
+
+**WHY RECOVERY IS A BETTER INSTRUMENT, STATED PROPERLY.** Not because lambda has
+no effect, but because the two instruments differ in their side effect on `b`.
+The onset is the probability that using CAUSES a disorder, so it is a direct
+deterrent to using. The recovery hazard sets how LONG a disorder lasts once
+acquired; it enters the value of using too, but at one remove and discounted, so
+it should move `b` less per unit of ratio bought. That is a conjecture about
+magnitudes, not a theorem, and it is worth measuring rather than asserting.
+
+**THESE ARE MARGINAL CORRELATIONS OVER A SEARCH THAT MOVED TWENTY PARAMETERS AT
+ONCE, so they are confounded and cannot be read as derivatives.** This file has
+already made that mistake once, reading a marginal correlation of +0.07 on
+lambda_addiction as a partial and being contradicted by the Jacobian. The clean
+test is `LAMBDA_STRESS.txt`: two points at lambda 30 and 100, five and fifteen
+times the top of the searched range, with all twenty-four other coordinates
+held at the current best. That is the derivative, and until it lands the
+question of whether a large enough lambda would simply work is OPEN.
