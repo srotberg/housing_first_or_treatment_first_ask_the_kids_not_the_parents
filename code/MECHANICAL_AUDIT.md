@@ -339,3 +339,77 @@ is not the trade the weight was meant to buy.
 recovery hazard of 0.025 and with an endogenous quantity, arithmetically
 incompatible. This is not a search failure and more measurement will not fix it.
 It is a scope decision and it belongs to the author.
+
+
+## The identification the author proposed: a FLOW for the onset, the STOCK for recovery
+
+**PROPOSED 29 AUGUST BY THE AUTHOR, and it is better than what this file
+recommended an hour earlier.** The note above ended by suggesting
+`probability_of_stopping_addiction` be opened and bracketed on the SUD rate,
+and it computed that recovery would have to FALL from 0.025 to 0.0031. That
+figure is right only while the onset stays broken -- it holds the model's
+DELIVERED onset of 0.0022 fixed and asks recovery to absorb the whole
+discrepancy. It is not the recommendation, and the direction it implies is
+wrong.
+
+**THE STRUCTURE.** Two parameters, two moments, and they separate cleanly:
+
+    onset    <- a FLOW moment: the rate at which use converts to a disorder
+    recovery <- the STOCK moment: the SUD prevalence, given that onset
+
+Prevalence is a function of the RATIO onset/(onset+recovery) and of nothing
+else, so it cannot identify both. A conversion flow identifies the onset on its
+own, and the prevalence then identifies recovery. Triangular, and it is exactly
+the shape the mental illness side already has: `lambda_m` is pinned by
+`1-(1-lambda_m)**10 = 0.50`, a recovery-within-ten-years probability. The
+addiction side has no analogue, which is the asymmetry.
+
+**WHY RECOVERY IS THE RIGHT INSTRUMENT FOR THE STOCK AND LAMBDA IS NOT.** The
+onset is `1-exp(-lambda*quantity)` and the quantity is a household CHOICE, so
+lambda is a price that households pay by using less; the archive shows the
+product moving 5 per cent while lambda moves 54. The recovery hazard is an
+exogenous transition probability with no such offset. Bracketing prevalence on
+recovery therefore works where bracketing it on lambda demonstrably does not.
+
+**THE DIRECTION REVERSES.** With the onset pinned to a data conversion rate --
+of order 0.02 to 0.05 a year, fifteen to twenty times what the model delivers --
+the ratio at recovery 0.025 would land far ABOVE the data's 0.41, so recovery
+must RISE to bring prevalence back down, not fall. Holding the target ratio at
+0.41 gives recovery = 1.44 * onset, so an onset of 0.046 wants recovery near
+0.066 and an onset of 0.023 wants 0.033. Both are above the declared 0.025.
+
+**THE OVERIDENTIFYING CHECK, AND IT PASSES.** A recovery hazard of 0.066 implies
+a median time to remission of 1-(1-0.066)**t = 0.5, or 10.1 years. The remission
+literature puts the median at roughly five years for cocaine and fourteen for
+alcohol, so 10.1 sits inside the band rather than at an edge. The prevalence
+target, the use target, the conversion flow and the remission duration are four
+numbers from three sources and they are mutually consistent at an onset near
+0.03-0.05 and a recovery near 0.05-0.07. The model is at onset 0.0022 and
+recovery 0.025: the onset is the broken one, by a factor of fifteen to twenty.
+
+**THE WEAK POINT, NAMED.** A cumulative use-to-dependence probability is per
+LIFETIME of use and the model's onset is per PERIOD of use, so converting one
+to the other needs a window assumption, and the implied hazard moves by a factor
+of two between a five year and a ten year window. An annual incidence -- past
+year SUD onset among past year users -- needs no such assumption and is the
+cleaner moment if one can be computed on the same universe as the 3.68 per cent.
+That universe is NSDUH adults 26 and over, illicit drug use disorder other than
+marijuana.
+
+**NOT CLEAN, AND WORTH SAYING.** Recovery also moves `b`: a shorter disorder
+means a different value of using, so the total user share responds too. The
+system is triangular in the direct channel, not in general equilibrium. It
+should still bracket, because the direct channel dominates, but the two brackets
+will interact and the loop should be run to convergence rather than one pass.
+
+**WHAT IT COSTS THE SEARCH.** `lambda_addiction` stops being searched and
+becomes derived each loop from the model's own mean quantity, which the existing
+secant block already computes. The vector loses a coordinate, the loss loses its
+single worst term, and `probability_of_stopping_addiction` gains an adjuster and
+a bracket on `sud_rate_data`. `probability_of_stopping_addiction_if_homeless`
+already follows as `mu_homeless * probability_of_stopping_addiction` and needs
+no change.
+
+**STILL THE AUTHOR'S CALL: this is a model change and nothing here is
+implemented.** What is needed from the author is the conversion number and its
+source.
