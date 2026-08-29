@@ -189,7 +189,7 @@ def solve(centre, verbose=True):
     fam = family(centre, pts)
     if verbose:
         print(f'family: {len(fam)} of {len(pts)} points share the frozen coordinates')
-        print(f"{'lambda':>9} {'discount':>9} {'b':>8} {'lambda_d':>9} {'ratio':>7}  point")
+        print(f"{RATIO_PARAM[:9]:>9} {B_PARAM[:9]:>9} {'b':>8} {'lambda_d':>9} {'ratio':>7}  point")
         for vec, mt, name in sorted(fam, key=lambda t: t[0][RATIO_PARAM]):
             b, ld = mt['b'][0], mt['lambda_d'][0]
             print(f'{vec[RATIO_PARAM]:9.3f} {vec[B_PARAM]:9.5f} {b:8.4f} '
@@ -202,9 +202,9 @@ def solve(centre, verbose=True):
     if verbose:
         print(f'\nfitted elasticities (residual {resid:.4f}):')
         print(f'  d log b     / d log lambda   = {J[0,0]:+.3f}')
-        print(f'  d log b     / d log(1-beta)  = {J[0,1]:+.3f}')
+        print(f'  d log b     / d log b_param  = {J[0,1]:+.3f}')
         print(f'  d log ratio / d log lambda   = {J[1,0]:+.3f}')
-        print(f'  d log ratio / d log(1-beta)  = {J[1,1]:+.3f}')
+        print(f'  d log ratio / d log b_param  = {J[1,1]:+.3f}')
     want = np.array([math.log(TARGET_B), math.log(TARGET_RATIO)])
     try:
         step = np.linalg.solve(J, want - f0)
