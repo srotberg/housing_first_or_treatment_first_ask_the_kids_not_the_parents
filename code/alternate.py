@@ -164,13 +164,50 @@ def best_point():
 
 
 def phase_of():
+    """(next phase, the previous batch's best point) from the state file."""
     if not os.path.exists(STATE):
         return 'A', None
-    last = [l for l in open(STATE) if l.strip()]
-    if not last:
+    lines = [l.split() for l in open(STATE) if l.strip()]
+    if not lines:
         return 'A', None
-    parts = last[-1].split()
-    return ('B' if parts[0] == 'A' else 'A'), parts[-1]
+    # The next phase is the opposite of the last one EMITTED. The state file
+    # also carries "<phase>done batchbest <point>" markers, which record a
+    # finished batch's winner and must not be mistaken for an emit line -- that
+    # is why the emitted phase is matched exactly rather than by first letter.
+    emitted = [p[0] for p in lines if p and p[0] in ('A', 'B')]
+    if not emitted:
+        return 'A', None
+    nxt = 'B' if emitted[-1] == 'A' else 'A'
+    prev_best = None
+    for parts in reversed(lines):
+        if 'batchbest' in parts:
+            prev_best = parts[parts.index('batchbest') + 1]
+            break
+    return nxt, prev_best
+
+
+# WHICH POINT EACH PHASE STEPS FROM, AND WHY THEY DIFFER.
+#
+# PHASE B MUST CENTRE ON PHASE A'S RESULT, NOT ON THE BEST MEASURED POINT.
+# This was wrong in the first version and the wrongness is total rather than
+# partial: phase B freezes the drug parameters AT ITS CENTRE, so centring it on
+# the old best freezes them at the values phase A had just moved away from, and
+# the whole cycle reduces to a repair of a point that needed no repair. The
+# 07:20 state file shows it plainly -- phase A and phase B both recorded
+# "centre point_34d3191241" -- and every drug-block gain phase A had bought
+# would have been discarded unmeasured.
+#
+# PHASE A CENTRES ON THE BEST MEASURED POINT. A phase A batch is EXPECTED to
+# score worse than where it started, so following it blindly would walk the
+# search downhill for as long as it ran. Starting each new cycle from the best
+# point that actually exists is what bounds that: phase A may spend a cycle
+# going nowhere, but it can never accumulate.
+def centre_for(phase, prev_best, pts):
+    if phase == 'B' and prev_best:
+        for vec, mt, name in pts:
+            if name == prev_best:
+                return score_points.loss(mt)[0], vec, name
+    return best_point()
 
 
 def landed():
@@ -226,6 +263,7 @@ def advance():
     done.sort()
     phase, _ = phase_of()
     prev_phase = 'B' if phase == 'A' else 'A'
+    batch_best = done[0][1]
     print(f'phase {prev_phase} batch complete:')
     for L, name, i in sorted(done, key=lambda t: t[2]):
         print(f'   line {i}  loss {L:.4f}  {name}')
@@ -234,6 +272,8 @@ def advance():
     # moments and it is expected to cost the others; phase B is what pays that
     # back. Only the pair of phases together is allowed to be called a failure,
     # which is why nothing here declares convergence on a single batch.
+    with open(STATE, 'a') as fh:
+        fh.write(f'{prev_phase}done batchbest {batch_best}\n')
     rc = main_emit()
     return rc
 
@@ -252,11 +292,11 @@ def main():
         return advance()
 
     pts = [(v, m, n) for v, m, n in jacobian.points() if 'relative_share_of_housing' in v]
-    L0, centre, cname = best_point()
+    phase, prev_best = phase_of()
+    L0, centre, cname = centre_for(phase, prev_best, pts)
     if centre is None:
         print('no points', file=sys.stderr)
         return 2
-    phase, _prev = phase_of()
 
     if phase == 'A':
         params, moments, ladder, tag = DRUG_PARAMS, DRUG_MOMENTS, A_LADDER, 'A%.2f'
