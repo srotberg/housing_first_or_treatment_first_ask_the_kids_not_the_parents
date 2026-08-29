@@ -55,20 +55,44 @@ import jacobian                                          # noqa: E402
 import line_search as ls                                 # noqa: E402
 import score_points                                      # noqa: E402
 
-# THREE PARAMETERS, NOT FOUR, AND THE FOURTH IS THE REASON THIS WORKS.
-# utility_cost_of_treatment looks like a drug parameter and is not one: it is the
-# COUPLING. Asked to serve the drug moments alone it wants to be cut by 0.77,
-# because cheap treatment moves people through the disordered state; asked to
-# serve all twenty moments from a point where the drug block is already right, it
-# wants to be RAISED by 1.00, because cheap treatment is also what empties
-# homelessness to -71 per cent and drives take-up to +268. Both solves are
-# correct inside their own view, which is exactly what a coupling parameter looks
-# like -- and putting it in phase A would let phase A re-make, every iteration,
-# the same bad bargain that sank the line search. It sits in the repair block,
-# where all the moments can see it.
+# THE BLOCK IS WHAT THE JACOBIAN SAYS IT IS, NOT WHAT ITS NAME SAYS.
+# The first cut of this file guessed the block from the parameter names --
+# addiction_scalar_1, lambda_addiction, relative_share_of_addiction_1 -- and the
+# fitted elasticities say that guess was wrong in both directions.
+#
+# lambda_addiction is NOT among the strongest movers of any drug moment. The
+# three that dominate b, lambda_d and tau_u are value_of_life, discount_factor
+# and addiction_scalar_1, all three at the elasticity clamp, which is
+# economically the sensible answer: whether a household uses turns on what it
+# holds its life to be worth and how hard it discounts the damage, not on the
+# hazard rate the state transition is written with.
+#
+# And h_1 belongs INSIDE, which is the author's correction of 29 August. Every
+# drug-block move measured that night swung homelessness violently -- -71 per
+# cent, +43, +105, -57 -- because value_of_life, relative_share_of_housing and
+# smallest_rental_relative_to_lowest_income move BOTH the drug moments and
+# homelessness. Leaving h_1 to the repair phase meant phase A broke it every
+# iteration and phase B had to buy it back, which is the same bad bargain the
+# alternation exists to avoid, merely split across two batches.
+#
+# So the block is CLOSED under the relation "moves, or is moved by": start from
+# the moments that are wrong, take the parameters that move them hardest, then
+# take the moments those parameters own, and stop when nothing new is added.
+# What falls outside is genuinely uncoupled -- sigma_y, cbar, p_m, omega_l,
+# kappa_ued, kappa_uem, mu_H, h_4, pi_eu, pi_V -- and those are exactly the
+# moments already sitting within a few per cent at the leader.
+#
+# A CAVEAT ON READING THE FIT. Several entries sit at the +/-5.0 clamp, so the
+# ORDER among them is not measured, only that all of them are strong. That is
+# an argument for putting the whole group in one block rather than for ranking
+# them against each other.
 DRUG_PARAMS = ['addiction_scalar_1', 'lambda_addiction',
-               'relative_share_of_addiction_1']
-DRUG_MOMENTS = ['b', 'lambda_d', 'theta']
+               'relative_share_of_addiction_1', 'value_of_life',
+               'discount_factor', 'size_homelessness',
+               'smallest_rental_relative_to_lowest_income',
+               'relative_share_of_housing', 'labor_income_tax_rate']
+DRUG_MOMENTS = ['b', 'lambda_d', 'theta', 'h_1', 'tau_u',
+                'aleph', 'beta', 'gamma', 'h_2', 'tau_l']
 
 # Phase A steps are SHORT and there are several, because this is the half where
 # the response is flat and then cliffs and a derivative across that range is not
