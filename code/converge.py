@@ -261,7 +261,27 @@ BOUNDS = {
     # factor of ten one rung below the anchor at 0.47023, and by 0.36 there is
     # no drug block left to measure. An arm sent down there scores a gated miss
     # and pushes the simplex away from the only band that works.
-    'relative_share_of_addiction_1':         (0.45, 0.51),
+    # WIDENED 29 AUGUST WITH THE AUTHOR'S APPROVAL, from (0.45, 0.51).
+    #
+    # THE OLD BOUND WAS 0.125 E-FOLDS WIDE AND THE SEARCH USED 100 PER CENT OF
+    # IT. For scale, lambda_addiction needed 5.52 e-folds of travel to take its
+    # moment from -81 per cent to +10, and probability_becoming_unemployed
+    # needed 3.43. A parameter allowed forty times less room than the two that
+    # actually had to move, and pressing on both ends of it every time, is not
+    # being calibrated; it is being held.
+    #
+    # AND ITS JUSTIFICATION DIED THIS MORNING. The reasoning above cites b at
+    # 0.96 for rsa_1 0.658 and a collapse below 0.36. Both come from the 566
+    # points retired by the savings-grid fix, and no post-grid point exists
+    # outside (0.45, 0.51) because this bound forbade one.
+    #
+    # SO THE NEW BOUND IS A JUDGEMENT, NOT A MEASUREMENT, and it is deliberately
+    # modest: three times the old room rather than the full range, because the
+    # pre-grid evidence probably had the SHAPE right -- degenerate economies at
+    # both ends -- even if the grid fix moved the levels. Widening straight to
+    # the old cliffs would spend solves measuring an economy where everybody
+    # uses. The joint solve can find the real edges from inside.
+    'relative_share_of_addiction_1':         (0.40, 0.58),
     'value_of_life':                         (1.0, 500.0),
     'size_homelessness':                     (0.01, 5.0),
     'discount_factor':                       (0.900, 0.999),
