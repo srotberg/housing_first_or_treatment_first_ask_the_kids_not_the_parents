@@ -222,6 +222,36 @@ alone), and -- the symmetric corner -- the two by `mass_of_renters` and one by
 aggregates that cannot be empty, so a zero there is a genuine fault the trap
 should still catch.
 
+The fifth trap corrected the fourth's reasoning, and this is the entry worth
+reading twice. Three denominators were deliberately left unfloored on the
+grounds that a whole-population aggregate cannot be empty, and one of them --
+`working_age_mass` -- trapped on the next run at line 8191. It is not the
+working-age population. Its single accumulator sits three conditions deep, in
+the `amortization_used>1` branch under `income_1>0` under `in_retirement==0`,
+so it is the mass of working-age owner-occupiers holding a mortgage with more
+than one year of amortization and positive income. It empties in exactly the
+all-renter corner the fourth trap was about. **The name was read instead of
+the accumulation site, and the name was wrong**; every remaining judgement of
+this kind in this file should be made by reading where the variable is summed.
+
+Re-checked the other two by their accumulators rather than their names:
+`model_total_income` is `model_output + investment income + bequests`, a
+genuine aggregate that no live point can zero, and stays unfloored;
+`model_total_net_wealth_1` sums net wealth over the whole distribution, which
+is exactly zero when every household rents with no financial assets -- the
+same early corner -- so it was floored at both its division sites before it
+could become the sixth trap. Sites floored this round: 3.
+
+The remaining unfloored denominators in the statistics and output routines are
+inventoried and the trap is left LIVE on them deliberately: `model_GDP`,
+`model_average_labour_income`, `model_average_net_wealth`, `median_income`,
+`housing_price`, `model_output`, `model_total_hours` and the rental-supply
+family are genuine aggregates or prices, and a zero in any of them is a real
+fault the sweep should still stop on. Two are conditional and may yet trap
+from the final output path -- `model_mortgages` and
+`homeowners_originating_mortgage`, both at a point where nobody holds a
+mortgage; if they do, they belong to the benign family and get the same floor.
+
 ## The stylized-model cross-check (TRANSITION_LESSONS section 7)
 
 | bug found here | does the stylized model have it? |
