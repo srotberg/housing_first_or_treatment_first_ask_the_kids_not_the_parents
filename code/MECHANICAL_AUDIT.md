@@ -801,3 +801,48 @@ would have been caught by flags that cost nothing.
 read pi_eu 0.08275 -- on the corrected model. If it comes back near 0.04 the
 archive is stale in full, exactly as the savings grid made the previous 566
 stale, and that goes to the author before anything is retired.
+
+
+## Both moments are bracketed, and so is the lambda that hits them together
+
+**AS OF 20:55 ON 29 AUGUST.** CANDIDATE line 2 closed the b bracket at
+lambda 11.8, and combined with the lambda 30 slice it brackets lambda itself.
+
+At lambda 11.8, rsa_1 0.5057, discount 0.99715:
+
+    addiction_scalar_1 0.0185   b +55%   lambda_d +10%   ratio 0.2953
+    addiction_scalar_1 0.0195   b -29%   lambda_d -71%   ratio 0.1694
+
+so b crosses its target at about 0.01905, with an elasticity of -14.8. But the
+RATIO collapses across that same interval, and interpolating each lambda-slice
+separately to the point where b = 0.089:
+
+    lambda 11.8   ratio 0.2165   ->  lambda_d -48 per cent
+    WANT          ratio 0.4135
+    lambda 30.0   ratio 0.5948   ->  lambda_d +44 per cent
+
+**SO THE PAIR IS BRACKETED IN BOTH DIRECTIONS AND THE CROSSING IS AT LAMBDA
+21.4**, with addiction_scalar_1 near 0.01862 to hold b at target there. That is
+the first time in this calibration that a single point can be named as the
+likely answer rather than a direction to walk in.
+
+**THE THING THAT MAKES THIS HARD, STATED PLAINLY.** The two instruments fight
+on the ratio. Raising lambda raises the disordered share and empties b; raising
+addiction_scalar_1 to put b back lowers the disordered share again. That is why
+five cycles of a search moving both at once went nowhere: every step traded one
+against the other and the mean loss could not tell the difference. Bracketing
+each at a FIXED value of the other is what separated them.
+
+**A CAUTION ON EVERYTHING ABOVE.** Every number here is an interpolation, and
+interpolations in this model have been wrong all day -- by a factor of four on
+a b step and five on a ratio, and the ratio's own elasticity in b changes SIGN
+between lambda 30 and lambda 11.8. Lambda 21.4 is where to MEASURE next, not a
+result. The bracket is real; the crossing inside it is a guess.
+
+**AND THE ARCHIVE IS NOW MIXED.** The unemployment typo was fixed at 20:35, so
+every point measured from that moment on is on a different model from the 86
+before it. The drug block is probably close to separable from an unemployment
+transition row, which is why the brackets above are still worth reading, but a
+fit pooling pre- and post-fix points is not safe. `PIEU_VERIFY_point.txt` will
+say how large the difference is; nothing more should be launched into
+`code/points/` until it does.
