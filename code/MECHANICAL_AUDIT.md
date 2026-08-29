@@ -674,3 +674,39 @@ finish -- but the point that eventually wins will not be one of them.
 **EVERY LOSS IN THIS FILE BEFORE THIS ENTRY IS ON THE OLD SCALE.** Comparisons
 across the change are not meaningful; the archive re-scores consistently, so
 rankings are, but levels are not.
+
+
+## The two b instruments pull the ratio in OPPOSITE directions
+
+**MEASURED, both at lambda 30 with everything else held.** Raising b:
+
+    addiction_scalar_1  0.01724 -> 0.0155   b 0.00636 -> 0.01303   ratio 0.434 -> 0.388
+    rsa_1               0.4539  -> 0.50     b 0.00636 -> 0.02440   ratio 0.434 -> 0.461
+
+    d log ratio / d log b  =  -0.155 through addiction_scalar_1
+                              +0.045 through relative_share_of_addiction_1
+
+So they are not interchangeable ways of moving the same quantity.
+`addiction_scalar_1` is the Stone Geary subsistence and works on WHO uses: it
+brings marginal households in, and a diluted pool has a lower disordered share.
+`relative_share_of_addiction_1` works on HOW MUCH the existing users buy, and
+that raises the share slightly. Same target moment, opposite side effect.
+
+**THIS INVALIDATES THE CANDIDATE PROJECTION, WHICH HELD THE RATIO CONSTANT.**
+Redone with the measured -0.155, from the lambda 12 point (b 0.2847, ratio
+0.4349), the CANDIDATE batch should give:
+
+    a_scalar 0.0185   b +58%   ratio 0.486   lambda_d +85%
+    a_scalar 0.0195   b  -7%   ratio 0.529   lambda_d +19%
+    a_scalar 0.0205   b -44%   ratio 0.572   lambda_d -22%
+
+against the constant-ratio prediction of lambda_d at -3 per cent for the middle
+line. b is still bracketed, which is what the batch is for, but lambda_d now
+looks likely to come in HIGH, and correcting it wants a LOWER lambda rather
+than the 11.8 those points carry.
+
+**THE GENERAL LESSON, WHICH THIS FILE KEEPS RELEARNING.** A response measured
+through one instrument does not transfer to another instrument that moves the
+same moment. The ratio's behaviour is a property of the (instrument, moment)
+PAIR, not of the moment. The archive's pooled +0.224 on log b was an average
+over both channels and is the wrong number for either one.
