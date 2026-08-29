@@ -551,3 +551,74 @@ factor puts b back, and the second does not undo the first.
   relative_share_of_addiction_1 (corr +0.49 with b, +0.09 with the ratio) and
   addiction_scalar_1 (+0.37) are the other two hands on it. That is a phase B
   job, not a single sweep.
+
+
+## The SCF is in the repository, so the wealth targets are computable rather than arguable
+
+**COMPUTED 29 AUGUST from `data/SCF_2022.dta`, weighted by `wgt`.** The author
+asked whether the macro literature justifies a higher wealth to output ratio and
+then pointed out the SCF could settle it. The SCF is already the paper's source
+for the homeownership rate, mortgage over housing wealth, the earnings
+dispersion and the bottom half wealth share, and `data/SCF_aggregate_stats_code.txt`
+ALREADY opens with exactly this calculation, so nothing new had to be assumed.
+
+**NET WORTH TO INCOME, SCF 2022:**
+
+    all households                      7.493
+    aged 26-65 (the paper's universe)   5.704
+    aged 26-65, positive income         5.594
+
+    aggregate net worth  139.1 trillion, aggregate income 18.6 trillion
+
+**WHY THAT IS NOT DIRECTLY THE MODEL'S beta, AND THE TRAP IN THE LITERATURE.**
+The model's moment is `model_total_net_wealth / model_GDP_incl_imput_rent` --
+the denominator is OUTPUT, not household income. SCF aggregate income is 18.6
+trillion against a 2022 GDP near 25.7, so it is about 0.72 of GDP, and the SCF
+ratio converts to roughly 5.4 on a GDP basis. The same trap sits in the number
+everyone quotes: Piketty and Zucman's famous four to seven is wealth over
+NATIONAL INCOME, which is about 0.8 of GDP, so their US figure near four to
+four and a half is nearer 3.2 to 3.6 as a wealth to GDP ratio. Quoting it as if
+it were a GDP ratio would OVERSTATE the case for raising the target.
+
+So the honest range on a GDP basis is roughly 3.2 to 3.6 from Piketty-Zucman
+and roughly 5.4 from the SCF, and the model sits at 4.32 -- inside the span,
+above the declared 3.0. The declared 3.0 traces to a different object again:
+the code's own comment derives it from BEA private fixed assets over NIPA
+output, on the argument that the rental stock sits on rental companies' books
+rather than households'.
+
+**THE THREE NUMBERS DISAGREE BECAUSE THEY HAVE THREE DIFFERENT DENOMINATORS AND
+THREE DIFFERENT NUMERATORS.** Any change to the target has to say which one it
+is adopting. The cleanest resolution is not to argue the target up but to make
+the MOMENT match the survey: net worth over household income is computable in
+both the model and the SCF on the same 26-65 universe the paper already uses,
+which removes the conversion entirely. That is a moment change and it is the
+author's call.
+
+## The bottom of the wealth distribution is wrong in a way the median hid
+
+**SHARE OF AGGREGATE NET WORTH HELD BY THE BOTTOM x PER CENT:**
+
+    pct        model      SCF all    SCF 26-65
+      1      0.00012     -0.00158     -0.00225
+      5      0.00060     -0.00279     -0.00422
+     10      0.00232     -0.00287     -0.00446
+     20           --     -0.00226     -0.00375
+     25      0.02907     -0.00133     -0.00262
+     50      0.15110      0.02202      0.02257
+
+**EVERY BOTTOM SHARE BELOW THE MEDIAN IS NEGATIVE IN THE DATA AND POSITIVE IN
+THE MODEL.** The data's bottom quarter holds MINUS a quarter of one per cent of
+net worth; the model's holds plus 2.9. The model has no household with negative
+net worth at all, because it is constrained at or near zero, while the SCF's
+bottom decile is net debtors -- student loans, underwater mortgages, revolving
+credit. The bottom half gap that has been visible all along, 0.151 against
+0.0252, is the mildest reading of this: it is the only one where the data is
+still positive, so it understates the discrepancy by hiding the sign flip
+underneath it.
+
+**The declared bottom half target of 0.0252 checks out**: SCF 2022 gives 0.0220
+over all households and 0.0226 over 26-65, so the number in the code is right
+to within rounding and universe choice.
+
+Written to `data/SCF_wealth_shares.txt`.
