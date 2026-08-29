@@ -58,6 +58,11 @@ ALLOW = [
     ('273.10', 'CFR'),                       # a regulation number
     ('0.35', 'times'),                       # the arithmetic behind the theta moment
     ('1.1', 'against $0.99$'),               # an untargeted earnings share
+    # The SCF net worth share of the bottom 5th percentile is -0.42 per cent.
+    # It collides with cbar's row in tab_eleven, where 0.42 per cent is the
+    # food stamp maximum allotment over labour income -- same digits, a
+    # different quantity in a different table, and opposite in sign.
+    ('0.42', 'Net worth shares'),
     ('9.1', 'by band'), ('1.1', 'by band'),  # the validation table's own row
     ('0.20', 'willing to pay'),              # kappa_x quoted in its source's units
     ('13.2', 'B25042'), ('62.7', 'B25042'),  # the ACS shares, quoted at their source
