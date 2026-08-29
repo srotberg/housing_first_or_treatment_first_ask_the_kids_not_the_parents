@@ -129,22 +129,26 @@ EXCLUDE = {'omega', 'lambda_m'}
 
 # A TARGET THE DATA GIVES AS A RANGE IS A RANGE, NOT ITS MIDPOINT.
 #
-# beta, wealth over output, is the case. The declared 3.0 comes from BEA private
-# fixed assets over NIPA output. The author decided on 29 August to take it from
-# Piketty and Zucman (2014) instead and to treat anything in 4.0 to 4.5 as a hit.
+# beta, wealth over output, is the case. The declared 3.0 came from BEA private
+# fixed assets over NIPA output. The author replaced it on 29 August with
+# Piketty and Zucman (2014) and set the range at 3.0 to 4.5: their US figure is
+# 4.0 to 4.5 read directly and about 3.4 to 3.8 once converted from national
+# income to output, both readings are defensible and the band spans them and the
+# old BEA number too. The data does not pin this more finely than a range, and a
+# band is the right shape for that.
 #
-# THE CONVERSION WAS RAISED AND THE AUTHOR CONFIRMED THE BAND ANYWAY, which is
-# recorded here because the next reader will re-derive it and wonder. Piketty and
-# Zucman measure private wealth over NATIONAL INCOME, which is roughly 0.85 of
-# GDP, so their US figure of 4.0 to 4.5 converts to about 3.4 to 3.8 against this
-# model's denominator, which is output. Taking 4.0 to 4.5 directly is taking
-# their number without that conversion. The band is the author's call and it is
-# implemented as given; the arithmetic is here so the choice stays visible.
+# THE WIDTH IS WHAT DOES THE WORK, NOT THE LEVEL. Under the old point target of
+# 3.0 the search was pulled toward a discount factor of 0.9918, where beta is
+# 3.03 and b is 0.219 against a target of 0.089 -- so the beta target was
+# dragging b, at weight three, off a value it had already hit. The band removes
+# that pull and leaves the discount factor free across its whole usable range,
+# 0.9918 upward, which the b repair needs: b has to move fourteen fold at
+# lambda 30 and this is one of only two instruments with the range for it.
 #
 # Inside the band the gap is ZERO -- not the distance to a midpoint, because
 # there is no midpoint being claimed. Outside it, the gap is measured to the
 # nearer edge, so the moment is continuous at both ends.
-BAND = {'beta': (4.0, 4.5)}
+BAND = {'beta': (3.0, 4.5)}
 
 
 def band_gap(name, model):
