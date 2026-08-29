@@ -92,3 +92,21 @@ success for a turn that measured nothing.
 - Do not edit any source file.
 - Another firing of you starts in an hour; it will skip whatever is already
   measured.
+
+## Line-search rungs, from 29 August
+
+The search is no longer a simplex round. It is a LINE SEARCH: one direction
+solved from the Jacobian, measured at eight lengths at once. Your trigger names
+a RUNG, and the rungs live in `code/LINE_SEARCH.txt`, not `code/ROUND.txt`.
+
+Everything else is unchanged -- the launch shape, the cold start, the HANDOVER
+assertion, the commit and push with fetch-and-rebase retries, and the rule that
+you never decide for yourself whether a point was already measured.
+
+**Why every rung matters, including the long ones.** The eight rungs span a
+largest-parameter move of 1.02x to 2.23x along the SAME direction, and the whole
+purpose is to find where the model stops following the linearisation. A long rung
+changes the model most, so it takes longest to converge and it is the one most
+likely to look stuck at forty minutes. It is also the one carrying the most
+information: the turning point of the curve is the measurement. Do not abandon a
+long rung early, and never substitute a shorter one for it.
