@@ -227,7 +227,10 @@ ARM = 1.6               # an arm sits this factor either side of the centre
 # These are the bounds the model itself imposes, and an arm is clipped into them
 # rather than being sent out to fail.
 BOUNDS = {
-    'addiction_scalar_1':                    (1e-10, 1.0),
+    # The author lowered the floor on 29 August: b may be arbitrarily small so
+    # long as it is strictly positive. Matches b_lo in the Fortran, which is now
+    # 1e-30. It has never bound -- the search sits near 0.017.
+    'addiction_scalar_1':                    (1e-30, 1.0),
     # NO CEILING IN THE MODEL: the handover takes lambda_addiction verbatim, and
     # the onset hazard is 1 - exp(-lambda * drug quantity), so a large enough
     # lambda drives the disordered share arbitrarily close to one. The search's

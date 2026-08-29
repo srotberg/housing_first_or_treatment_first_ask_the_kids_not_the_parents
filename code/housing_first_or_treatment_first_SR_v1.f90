@@ -1836,7 +1836,13 @@
         ! nothing, which is the failure the ceiling had at 0.05 and which is
         ! recorded a few lines below. 10^-8 was inside that range, being the
         ! value b was expected to need; 10^-10 is two decades clear of it.
-        real(8), parameter :: b_lo=1.d0*10.d0**(-10)
+        ! THE AUTHOR LOWERED THIS ON 29 AUGUST: b may be as small as it likes so
+        ! long as it is strictly positive. It was 1e-10. It has never bound --
+        ! the search sits near 0.017 and b's elasticity on the drug user share
+        ! is about minus fifteen, so 1e-8 would put essentially every household
+        ! on drugs -- but a floor that cannot bind costs nothing and a floor
+        ! that silently binds costs a mislabelled point, so it goes down.
+        real(8), parameter :: b_lo=1.d0*10.d0**(-30)
         real(8), parameter :: b_hi=1.0d0
 
         real(8) :: gap_addiction_scalar_1=0,previous_gap_addiction_scalar=0
@@ -30721,6 +30727,16 @@
 
                 case ("addiction_scalar_1")
                     write(*,*) "HANDOVER addiction_scalar_1:", addiction_scalar_1, "->", handover_value
+                    ! A SILENT CLAMP MISLABELS A POINT. The point's identity is
+                    ! the md5 of the vector REQUESTED, so if this clamp bites,
+                    ! the file is named for a value the model never ran and the
+                    ! archive quietly contains a lie. It has never bitten, and
+                    ! the floor below it is now 1e-30, but it must say so if it
+                    ! ever does.
+                    if (handover_value>b_hi .or. handover_value<b_lo) then
+                        write(*,*) "HANDOVER CLAMPED addiction_scalar_1: requested",&
+                            handover_value, "outside [", b_lo, ",", b_hi, "] -- THIS POINT IS MISLABELLED"
+                    end if
                     addiction_scalar_1=max(min(handover_value,b_hi),b_lo)
 
                 case ("size_homelessness")
