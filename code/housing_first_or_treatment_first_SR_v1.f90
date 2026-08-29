@@ -736,6 +736,16 @@
         integer, parameter :: wealth_bins=400
         real(8), parameter :: wealth_bin_top=50.d0
         real(8), dimension(wealth_bins) :: wealth_hist_mass,wealth_hist_wealth
+        ! IS THE SAVINGS GRID A BINDING CAP? The author's hypothesis of 29
+        ! August: a bottom half holding 16.9 per cent of net worth against 2.52
+        ! in the data can come from the TOP being truncated rather than the
+        ! bottom being rich, because every share is read off a total that a cap
+        ! has cut short. The financial grid runs to 1.2853 in 40 positive points
+        ! against 61 negative ones, so the savings side is both coarse and short.
+        ! These accumulate the mass sitting ON the last grid point and in the
+        ! last three, which is what bunching against a cap looks like. Diagnostic
+        ! only: nothing below reads them.
+        real(8) :: diag_mass_top_financial,diag_mass_top3_financial
         real(8) :: bottom_half_wealth_share
         ! the bottom 1, 5, 10, 25 and 50 per cent
         real(8), dimension(5), parameter :: wealth_percentiles=&
@@ -4396,6 +4406,10 @@
                 model_wealth_share_below(4,1)
             write(*,*) "DIAG bottom half share of net worth              =",&
                 model_bottom_half_wealth_share(1), " data= 0.0252"
+            write(*,*) "DIAG mass ON the top savings grid point          =",&
+                diag_mass_top_financial/max(sum_of_distribution,10.d0**(-12))
+            write(*,*) "DIAG mass in the top THREE savings grid points   =",&
+                diag_mass_top3_financial/max(sum_of_distribution,10.d0**(-12))
             ! IS THE HISTOGRAM THE WHOLE DISTRIBUTION? Both should read 1.0. If
             ! they do not, the shares above are read off the wrong denominator
             ! and none of them mean anything.
@@ -5889,6 +5903,8 @@
         model_total_net_wealth(time_period)=0
         wealth_hist_mass=0
         wealth_hist_wealth=0
+        diag_mass_top_financial=0
+        diag_mass_top3_financial=0
         model_youngest_net_wealth_share(time_period)=0
         model_net_wealth_owners(time_period)=0
         model_net_wealth_renters(time_period)=0
@@ -6955,6 +6971,13 @@
                                         wealth_hist_mass(wealth_bin_index)+distribution_mass_used
                                     wealth_hist_wealth(wealth_bin_index)=&
                                         wealth_hist_wealth(wealth_bin_index)+net_wealth_1*distribution_mass_used
+
+                                    if (financial_index==financial_grid_size) then
+                                        diag_mass_top_financial=diag_mass_top_financial+distribution_mass_used
+                                    end if
+                                    if (financial_index>=financial_grid_size-2) then
+                                        diag_mass_top3_financial=diag_mass_top3_financial+distribution_mass_used
+                                    end if
                                         
                                     if (age_index<=youngest_ages_for_wealth_computation) then
                                     
