@@ -207,6 +207,21 @@ read again anywhere in the file, so the NaN reached nothing. Same class as the
 continuation line, which the first patch attempt missed and its count assert
 caught). The sweep was relaunched.
 
+The fourth trap fell out of the third's fix: with the switcher block floored,
+the same statistics call ran on to line 8185 and divided by
+`mass_of_owners(time_period)` -- the diagnostic statistics run early in the
+solve, when the initial distribution has everyone renting and no one yet owns,
+so every owner-conditioned average is 0/0. At any converged point owners are
+roughly sixty per cent of households and the floor changes nothing. Floored in
+one batch, 11 sites: the four divisions by `mass_of_owners`, the four by
+`model_average_owner_occupied_unit_size` (zero exactly when owners are absent;
+a fifth textual match at line 8224 is inside a quoted write label and was left
+alone), and -- the symmetric corner -- the two by `mass_of_renters` and one by
+`total_renters`. NOT floored, deliberately: `working_age_mass`,
+`model_total_income` and `model_total_net_wealth_1` are whole-population
+aggregates that cannot be empty, so a zero there is a genuine fault the trap
+should still catch.
+
 ## The stylized-model cross-check (TRANSITION_LESSONS section 7)
 
 | bug found here | does the stylized model have it? |

@@ -8110,7 +8110,7 @@
         end do
         
         renters_by_rental(time_period,:)=&
-            renters_by_rental(time_period,:)/total_renters(time_period)
+            renters_by_rental(time_period,:)/max(total_renters(time_period),10.d0**(-14))
 
         if (sum(renters_by_rental(time_period,0:housing_status_grid_size-1))>0) then
 
@@ -8177,25 +8177,25 @@
         end if
                           
         model_average_rental_unit_size(time_period)=&
-            model_average_rental_unit_size(time_period)/mass_of_renters(time_period)
+            model_average_rental_unit_size(time_period)/max(mass_of_renters(time_period),10.d0**(-14))
             
         model_average_rent(time_period)=model_average_rent(time_period)/sum(total_rental_demand(time_period,:))
                         
         model_average_owner_occupied_unit_size(time_period)=&
-            model_average_owner_occupied_unit_size(time_period)/mass_of_owners(time_period)
+            model_average_owner_occupied_unit_size(time_period)/max(mass_of_owners(time_period),10.d0**(-14))
             
         model_average_owner_occupied_unit_size_to_income(time_period)=&
-            model_average_owner_occupied_unit_size_to_income(time_period)/mass_of_owners(time_period)
+            model_average_owner_occupied_unit_size_to_income(time_period)/max(mass_of_owners(time_period),10.d0**(-14))
             
         model_average_owner_occupied_unit_size_to_income_work_age(time_period)=&
             model_average_owner_occupied_unit_size_to_income_work_age(time_period)/working_age_mass(time_period)
             
-        model_average_owners_income(time_period)=model_average_owners_income(time_period)/mass_of_owners(time_period)
+        model_average_owners_income(time_period)=model_average_owners_income(time_period)/max(mass_of_owners(time_period),10.d0**(-14))
              
         model_homeownership_rate(time_period)=mass_of_owners(time_period)/sum_of_distribution_not_be_homeless
             
         model_fraction_of_homeowners_with_mortgage(time_period)=&
-            model_fraction_of_homeowners_with_mortgage(time_period)/mass_of_owners(time_period)
+            model_fraction_of_homeowners_with_mortgage(time_period)/max(mass_of_owners(time_period),10.d0**(-14))
             
         model_fraction_of_homeowners_with_mortgage_over_80_perc(time_period)=&
             model_fraction_of_homeowners_with_mortgage_over_80_perc(time_period)/&
@@ -8209,7 +8209,7 @@
             model_fraction_of_homeowners_with_mortgage_over_20_perc(time_period)/&
             (model_fraction_of_homeowners_with_mortgage(time_period)*mass_of_owners(time_period))
                         
-        model_wealth_of_renters(time_period)=model_wealth_of_renters(time_period)/mass_of_renters(time_period)
+        model_wealth_of_renters(time_period)=model_wealth_of_renters(time_period)/max(mass_of_renters(time_period),10.d0**(-14))
             
         if (solve_transition_dynamics==0) then
             
@@ -8222,7 +8222,7 @@
             write(*,*) "model_average_owner_occupied_unit_size(time_period)=", model_average_owner_occupied_unit_size(time_period)
             
             write(*,*) "model_average_rental_unit_size(time_period)/model_average_owner_occupied_unit_size(time_period)=", &
-                model_average_rental_unit_size(time_period)/model_average_owner_occupied_unit_size(time_period)
+                model_average_rental_unit_size(time_period)/max(model_average_owner_occupied_unit_size(time_period),10.d0**(-14))
             
             write(*,*) "model_fraction_of_homeowners_with_mortgage(time_period)=", &
                 model_fraction_of_homeowners_with_mortgage(time_period)
@@ -26854,7 +26854,7 @@
                 model_average_income_addicted(time_period)/model_average_labour_income(time_period)
             write(2,*) "model_avg_homeless_after_tax_income,", model_avg_homeless_after_tax_income(time_period)
             write(2,*) "housing_size(0)/model_average_owner_occupied_unit_size,",  &
-                housing_size(0)/model_average_owner_occupied_unit_size(time_period)
+                housing_size(0)/max(model_average_owner_occupied_unit_size(time_period),10.d0**(-14))
             write(2,*) "rent of smallest_rental,", rent(time_period,0)*housing_size(0)
             write(2,*) "rent to income of homeless,", rent(time_period,0)*housing_size(0)/&
                 model_avg_homeless_after_tax_income(time_period)
@@ -26888,9 +26888,9 @@
                 (model_average_owner_occupied_unit_size(time_period)*housing_price(time_period))/&
                 model_average_owners_income(time_period)
             write(2,*) "avg_rental_value_as_perc_of_owned_house_value,", &
-                100*(model_average_rental_unit_size(time_period)/model_average_owner_occupied_unit_size(time_period))
+                100*(model_average_rental_unit_size(time_period)/max(model_average_owner_occupied_unit_size(time_period),10.d0**(-14)))
             write(2,*) "smallest_rental_to_owned_house_value,", &
-                100*(housing_size(0)/model_average_owner_occupied_unit_size(time_period))
+                100*(housing_size(0)/max(model_average_owner_occupied_unit_size(time_period),10.d0**(-14)))
             write(2,*) "housing_price*model_average_owner_occupied_unit_size/model_average_labour_income,", &
                 housing_price(time_period)*model_average_owner_occupied_unit_size(time_period)/&
                 model_average_labour_income(time_period)
