@@ -314,3 +314,48 @@ If the non-drug instruments are independent, E lands near 0.18 -- which is the
 whole of what the search can deliver without touching the drug corner, arriving
 in one point rather than in weeks of rounds. If they interact, the nesting says
 which pair does it. Either way the answer is measured tonight.
+
+## 29 August, small hours: the wealth distribution, investigated and accepted
+
+The author raised the lower tail: the bottom half holds too much. It does. The
+model puts it at 16.8 per cent of net worth against 2.52 in the Fed
+distributional accounts, and the run's own diagnostic has printed that
+comparison all along. Three fixes were proposed and each was tested against the
+archive before anything was changed. **The decision, on the author's word, is
+that beta keeps targeting wealth over output at 3.0 and the asset side is not
+touched.** What follows is what was measured, so the choice reads as a choice.
+
+**Retarget the discount factor onto the bottom-half share: cannot reach.**
+Closing 0.169 to 0.0252 needs a log move of -1.91 against a fitted elasticity of
++6.3, which asks for a discount factor near 0.73. At the existing lower bound of
+0.90 the share is still 0.089 -- three and a half times target -- and wealth over
+output has collapsed to 0.88 against 3.0. Wiring in a target nothing can reach is
+the lambda_m mistake this project already made once.
+
+**Lower the unemployment risk, so the bottom saves less: right sign, wrong size.**
+Nineteen archived points already sit at probability_becoming_unemployed = 0.013
+against the leader's 0.0294. The bottom-half share moves from 0.1685 to 0.1633 --
+three per cent, where eighty-five is needed. At that setting the unemployment
+rate is 0.055 against a target of 0.0485, so unemployment is essentially FIXED
+there and the wealth distribution barely notices. The precautionary channel is
+real and it is not what holds wealth at the bottom.
+
+**Where the wealth actually is.** Not at the destitute end: the bottom tenth
+holds 0.28 per cent, which is right, and the bottom quarter 3.1. The whole
+discrepancy is the band between the twenty-fifth and fiftieth percentiles, which
+holds 13.7 per cent of net worth against roughly 2 in the data. Households just
+below the median are several times too wealthy, and no parameter moved tonight
+touched it.
+
+**The number that says what this costs the paper.** Average assets of the
+homeless: 0.1376, about eleven per cent of the top point on the savings grid. A
+homeless household with that much banked is not on the street because it ran out
+of money, and the model duly reports that 98 per cent of homelessness is BY
+CHOICE. That is a known limitation of the benchmark as it stands rather than a
+bug, and it is written here so nobody has to rediscover it.
+
+**Still open, and cheap:** whether the savings grid is a binding cap. It runs to
+1.2853 in forty positive points against sixty-one negative ones, so saving is
+resolved eleven times more coarsely than debt. Bunching on the last point would
+inflate every share above by cutting the total short. Two diagnostics were added
+to measure it and the reading is pending; it changes no number either way.
