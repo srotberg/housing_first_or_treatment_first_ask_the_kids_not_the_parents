@@ -135,6 +135,43 @@ PREFERENCES ARE CONSTANT ACROSS STATES and `recompute_derived_parameters` now
 asserts it. The author asked; the model was already correct, but the diagnostic
 printed `_1` under the `_2` label and would have hidden a divergence.
 
+## The SUD mortality level is now a coordinate of the search
+
+The author asked on 30 August to calibrate the death probability so the average
+income of drug users matches the data. The model puts it at **0.308** of average
+income against **0.740** in NSDUH, and households with a disorder at 0.385
+against 0.711, so users in this model are far poorer than users in the world.
+
+`kappa_phi_d_level` is the instrument. Survival is raised to the power of the
+multiplier, so the multiplier is what the disorder COSTS a household -- its
+whole continuation value -- and what it costs decides who is willing to bear it.
+It is now a handover case, has a default of 8.0 in `run_one_point.sh`, and is
+filled in at 8.0 by `next_batch.py`'s `IMPLICIT` for any VECTOR line written
+before 30 August, because every earlier point solved at the declared 8.0.
+
+**Two things about it that the search must not lose.**
+
+- It is **assigned in the note at the midpoint of a literature range**: all
+  cause standardised mortality ratios for opioid use disorder run 6 to 10. The
+  handover clamp is 1 to 30, deliberately wider, because a search that cannot
+  leave the range cannot report that the answer is outside it. But a calibrated
+  value outside 6 to 10 is a paper problem, not just a fit, and has to be
+  reported as one rather than quietly adopted.
+- **`drug deaths as a share of deaths at 25 to 44` is this parameter's own
+  moment**, and it is currently the model's best validation row at 23.9 per cent
+  against 20. Calibrating `kappa_phi_d_level` on the income of users spends the
+  parameter on a moment it controls only partly and turns that row from a check
+  into a passenger. Say so when reporting a fitted value.
+
+**The sign is not known.** Lower mortality makes the disorder cheaper, so
+households with more continuation value to lose become willing to use, which
+RAISES users' average income. Lower mortality also keeps poor households that
+already carry the disorder alive longer, which LOWERS it. `code/MORTALITY.txt`
+is four points at 2, 4, 12 and 20 to find out which wins before any step is
+taken. b and lambda_d drift on every arm, uncompensated on purpose: that drift
+is the compensation a later step has to carry, and an arm whose using population
+has collapsed says nothing about the income of users.
+
 ## Every point now carries the validation column
 
 The note's untargeted table, `tab:untargeted`, listed a data value and a source
