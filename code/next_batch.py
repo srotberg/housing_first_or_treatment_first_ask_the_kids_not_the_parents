@@ -118,7 +118,7 @@ COUPLED_AT = 0.10
 MAX_DRIFT = 0.20
 
 
-def drug_jacobian(A):
+def drug_jacobian(A, base_key=None):
     """d ln(b, lambda_d) / d ln(lambda_addiction, addiction_scalar_1), refit local.
 
     Comparable points only: identical in every coordinate except the two free
@@ -138,17 +138,30 @@ def drug_jacobian(A):
         key = tuple(sorted((k, x) for k, x in v.items() if k not in FREE))
         groups.setdefault(key, []).append((lam, float(v['addiction_scalar_1']), b, d))
     if not groups:
-        return None, 0
-    best = max(groups.values(), key=len)
+        return None, 0, True
+    # PREFER THE SLICE THE BASE ACTUALLY SITS ON. Taking the largest group is
+    # what made the first repair overshoot lambda_d by 2.84 times: the biggest
+    # comparable set is the original lambda/addiction_scalar_1 surface, and the
+    # base had since moved away from it in tau_u, h_1, mu_homeless and more, so
+    # the Jacobian was measured on a different slice of the model from the one
+    # it was applied to. b came back exactly -- its row is robust across slices
+    # -- and lambda_d did not, which is the row whose addiction_scalar_1
+    # elasticity has been seen anywhere between -9.7 and -85.
+    own = groups.get(base_key) if base_key is not None else None
+    if own is not None and len(own) >= 4:
+        best, foreign = own, False
+    else:
+        best = max(groups.values(), key=len) if groups else []
+        foreign = True
     if len(best) < 4:
-        return None, len(best)
+        return None, len(best), True
     X = np.column_stack([np.ones(len(best)), [math.log(p[0]) for p in best],
                          [math.log(p[1]) for p in best]])
     rows = []
     for i in (2, 3):
         c, *_ = np.linalg.lstsq(X, np.array([math.log(p[i]) for p in best]), rcond=None)
         rows.append(c[1:])
-    return np.array(rows), len(best)
+    return np.array(rows), len(best), foreign
 
 
 def coupling(A, param, base_v, base_m):
@@ -280,10 +293,12 @@ def main():
           f'lambda_d {100*(m["lambda_d"][0]/m["lambda_d"][1]-1):+.1f}%. '
           f'Worst remaining {100*worst:.0f} per cent.\n')
 
-    DJ, ndj = drug_jacobian(A)
+    base_key = tuple(sorted((k, x) for k, x in v.items() if k not in FREE))
+    DJ, ndj, DJ_foreign = drug_jacobian(A, base_key)
     if DJ is not None:
         print(f'drug block refit on {ndj} comparable points, '
-              f'condition {np.linalg.cond(DJ):.0f}\n')
+              f'condition {np.linalg.cond(DJ):.0f}'
+              + ('  (borrowed slice, steps halved)' if DJ_foreign else '')  + '\n')
     lines, skipped = [], []
     for param, mom in sorted(OWN.items(), key=lambda kv: -gap(kv[1], m[kv[1]]) if kv[1] in m else 0):
         if mom not in m or gap(mom, m[mom]) <= ACCEPT:
@@ -313,6 +328,8 @@ def main():
             step *= shrink
             x1 = max(lo, min(hi, x0 * math.exp(step)))
             fix = np.linalg.solve(DJ, np.array([-cpl[0] * step, -cpl[1] * step]))
+            if DJ_foreign:
+                fix = fix * 0.5
             note = f'  compensated, {shrink:.2f} of step, b drift {100*(math.exp(cpl[0]*step)-1):+.0f}%'
         else:
             fix = None
@@ -331,6 +348,8 @@ def main():
     if drift > RESTORE_AT and DJ is not None:
         fix = np.linalg.solve(DJ, np.array([math.log(m['b'][1] / m['b'][0]),
                                             math.log(m['lambda_d'][1] / m['lambda_d'][0])]))
+        if DJ_foreign:
+            fix = fix * 0.5
         rv = dict(v)
         for q, z in zip(FREE, fix):
             y0 = float(v[q]); qlo, qhi = FREE_BOUNDS[q]

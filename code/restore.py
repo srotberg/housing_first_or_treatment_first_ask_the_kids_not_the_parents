@@ -52,7 +52,7 @@ def mom(t, n):
     return float(m.group(1)) if m else None
 
 
-def drug_jacobian(lam_lo=15.0, lam_hi=19.0):
+def drug_jacobian(base_key=None, lam_lo=15.0, lam_hi=19.0):
     """Refit d ln(b, lambda_d) / d ln(lambda, as1) from the archive, locally.
 
     Only points that differ from one another in the two free coordinates alone
@@ -73,9 +73,22 @@ def drug_jacobian(lam_lo=15.0, lam_hi=19.0):
             continue
         key = tuple(sorted((k, val) for k, val in v.items() if k not in FREE))
         groups.setdefault(key, []).append((lam, float(v['addiction_scalar_1']), b, d))
-    best = max(groups.values(), key=len) if groups else []
+    # PREFER THE SLICE THE BASE ACTUALLY SITS ON. Taking the largest group is
+    # what made the first repair overshoot lambda_d by 2.84 times: the biggest
+    # comparable set is the original lambda/addiction_scalar_1 surface, and the
+    # base had since moved away from it in tau_u, h_1, mu_homeless and more, so
+    # the Jacobian was measured on a different slice of the model from the one
+    # it was applied to. b came back exactly -- its row is robust across slices
+    # -- and lambda_d did not, which is the row whose addiction_scalar_1
+    # elasticity has been seen anywhere between -9.7 and -85.
+    own = groups.get(base_key) if base_key is not None else None
+    if own is not None and len(own) >= 4:
+        best, foreign = own, False
+    else:
+        best = max(groups.values(), key=len) if groups else []
+        foreign = True
     if len(best) < 4:
-        return None, len(best)
+        return None, len(best), True
     X = np.column_stack([np.ones(len(best)),
                          [math.log(p[0]) for p in best],
                          [math.log(p[1]) for p in best]])
@@ -84,7 +97,7 @@ def drug_jacobian(lam_lo=15.0, lam_hi=19.0):
         y = np.array([math.log(p[idx]) for p in best])
         c, *_ = np.linalg.lstsq(X, y, rcond=None)
         out.append(c)
-    return out, len(best)
+    return out, len(best), foreign
 
 
 def main():
@@ -99,7 +112,8 @@ def main():
     b, d = mom(t, 'b'), mom(t, 'lambda_d')
     print(f'point_{tag}: b {100*(b/B_TARGET-1):+.1f}%, lambda_d {100*(d/LD_TARGET-1):+.1f}%')
 
-    (cb, cd), n = drug_jacobian()
+    base_key = tuple(sorted((k, x) for k, x in v.items() if k not in FREE))
+    (cb, cd), n, foreign = drug_jacobian(base_key)
     if cb is None:
         print('not enough comparable points to refit the drug block'); return 1
     A = np.array([[cb[1], cb[2]], [cd[1], cd[2]]])
@@ -111,6 +125,16 @@ def main():
         print('  WARNING: instruments nearly collinear here; the repair is unreliable.')
 
     step = np.linalg.solve(A, np.array([math.log(B_TARGET / b), math.log(LD_TARGET / d)]))
+    # A JACOBIAN FROM ANOTHER SLICE GETS A HALF STEP. When the base's own
+    # comparable set is too small to fit, the numbers come from a surface the
+    # base has drifted away from, and the one time that was done at full step
+    # lambda_d overshot by 2.84 times -- past its target and out the other side,
+    # +7.1 to -11.9 per cent. Half a step converges from either side instead of
+    # oscillating, and the fit sharpens as the base's own slice fills in.
+    if foreign:
+        step = step * 0.5
+        print(f'  base slice too small; Jacobian borrowed from {n} points '
+              f'elsewhere, so the step is halved')
     nv = dict(v)
     print()
     for p, s in zip(FREE, step):
