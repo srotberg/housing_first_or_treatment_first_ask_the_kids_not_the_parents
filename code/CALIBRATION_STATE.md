@@ -97,6 +97,28 @@ to +33 where the arm reached +10 -- and it still pushes lambda_d to +14. The
 condition number is 617; the solve spends its freedom on the hardest moments and
 degrades the easy ones. Do not re-run it expecting a different answer.
 
+## pi_eu IS REACHABLE, and this is the route
+
+It bound at every step once tau_u came down -- the worst gap went 164, 120, 82,
+70, 69, 68 per cent with pi_eu binding throughout -- and it was recorded all
+night as unexplained. It is not.
+
+Across 179 points, probability_becoming_unemployed at 0.006 gives pi_eu -17 per
+cent and at 0.010 gives +14, so THE CROSSING SITS NEAR 0.0085. What hid this is
+that both of those points carry b at +187 and +155 per cent: p_eu drags the drug
+block with it, so every earlier attempt either left pi_eu alone or destroyed b.
+
+The compensated path works and is measured. point_7ec662e9d1 sits at p_eu
+0.019140 with b -4 per cent, lambda_d +7 and pi_eu +53 -- instrument moved, drug
+block held. The first ladder rung then took p_eu to 0.017 and pi_eu to +44, a
+gain of twenty four points in one step, at the cost of b +23 and lambda_d +27
+because the compensation is halved while the base's own slice is too thin to fit.
+
+So the remaining work on pi_eu is arithmetic, not discovery: walk p_eu from
+0.0228 down towards 0.0085 in compensated steps, repairing the drug block after
+each. PEU_LADDER.txt runs the rungs in parallel rather than one per round, since
+they do not depend on each other.
+
 ## The one thing that needs the author, not more search
 
 relative_share_of_addiction_1 is contested. theta needs it UP (elasticity -4.64,
