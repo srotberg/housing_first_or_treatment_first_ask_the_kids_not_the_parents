@@ -75,9 +75,23 @@ PARAMS = [
     'size_homelessness',
     'kappa_uem',
     'multiple_of_probabilities_of_employment_if_addicted',
+    # AN INSTRUMENT FOR aleph, WHICH WAS A RESIDUAL WITH NOTHING TO MOVE IT.
+    # aleph sat in MOMENTS while value_of_life sat outside PARAMS, so the solve
+    # was being asked to hit nine residuals with eight instruments one of which
+    # could not touch its own. Its controlled elasticity is +1.63 and the pair
+    # that measured it already spans the target, 65.5 to 94.2 against 80.
+    'value_of_life',
+    # THE PARAMETER THAT HAS NEVER MOVED. lambda_m is bounded (0.046, 0.500),
+    # owns the SMI share of the homeless through the Fortran's own adjuster, and
+    # takes the single value 0.067 at every one of the 112 archive points, near
+    # the bottom of its range. Its moment reads -25 to -65 per cent across the
+    # ENTIRE lambda/addiction_scalar_1 surface -- wrong at every lambda and every
+    # b -- which is the signature of a moment missed by something the search does
+    # not vary rather than by the search.
+    'lambda_m',
 ]
 MOMENTS = ['b', 'lambda_d', 'pi_eu', 'tau_u', 'theta',
-           'h_1', 'kappa_uem', 'kappa_ued', 'aleph']
+           'h_1', 'kappa_uem', 'kappa_ued', 'aleph', 'lambda_m']
 
 # Which instrument the model's own comments say owns which moment. Used ONLY to
 # label the diagnostic; the solve uses the whole matrix and assumes no pairing.
@@ -88,7 +102,19 @@ OWN = {'lambda_addiction': 'lambda_d',
        'relative_share_of_addiction_1': 'theta',
        'size_homelessness': 'h_1',
        'kappa_uem': 'kappa_uem',
-       'multiple_of_probabilities_of_employment_if_addicted': 'kappa_ued'}
+       'multiple_of_probabilities_of_employment_if_addicted': 'kappa_ued',
+       'value_of_life': 'aleph',
+       'lambda_m': 'lambda_m'}
+
+# relative_share_of_addiction_1 IS THETA'S INSTRUMENT AND NOTHING ELSE'S. The
+# Fortran adjusts it against drug_share_weighted_1 - drug_spending_share_data and
+# clamps it between variables named theta_lo and theta_hi, so the pairing above
+# is the model's own. The search had been using it to reach the disorder ratio,
+# where it is violent -- 0.45 to 0.51 multiplies b by 5.7 and lambda_d by 18.6 --
+# and that is why theta and the SMI share of the homeless moved together against
+# it: raising it floods the homeless population with drug users and dilutes the
+# share, 0.256 to 0.085 across that same move. The ratio belongs to
+# lambda_addiction, b to addiction_scalar_1, and this to theta.
 
 # Weight the three that have blocked the calibration all day. This is not the
 # paper's loss -- it is the direction chooser, and it should spend its
