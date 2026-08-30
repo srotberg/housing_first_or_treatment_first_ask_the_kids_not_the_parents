@@ -282,6 +282,25 @@
         ! switched off until the other parameters have converged.
         integer, parameter :: measure_child_gap=0
 
+        ! WHETHER A POINT MEASURES THE TWO DRUG PRICE ELASTICITIES. They are
+        ! validation moments, not targets -- the participation margin against
+        ! Saffer and Chaloupka's -0.63 and the intensive margin against the
+        ! -0.3 to -0.8 range -- and the model produces both out of the drug
+        ! market and the utility weight with nothing disciplining either. They
+        ! cost what omega costs, a second solve and a second convergence, so
+        ! like omega they are off until a point is worth spending it on.
+        !
+        ! THE EXPERIMENT IS THE DEMAND CURVE AND NOT THE EQUILIBRIUM. The drug
+        ! market clears in the OUTER calibration loop, so setting the price here
+        ! and calling solve and converge directly holds it where it is put: the
+        ! quantity that comes back is the quantity demanded at the new price and
+        ! not a new equilibrium, which is what an elasticity of demand is.
+        ! Rents, house prices, taxes and inheritances are equally untouched for
+        ! the same reason.
+        integer, parameter :: measure_price_elasticity=0
+        real(8), parameter :: elasticity_price_step=0.10
+        real(8) :: val_price_base_1=0,val_users_base_1=0,val_qty_base_1=0
+
         ! THE COUNTERFACTUAL REMOVES THE PENALTY, NOT THE CHILD.
         !
         ! The child term is beta*(1-phi)*omega*E[V_child], weighted by the
@@ -4578,6 +4597,73 @@
                     "so the child use gap is not measurable"
 
             end if
+
+            ! THE TWO DRUG PRICE ELASTICITIES, and they go below omega because
+            ! a counterfactual leaves its distribution behind and this is one.
+            ! When omega has run, the base this would perturb is omega's world
+            ! and not the benchmark, so the two cannot both be measured in one
+            ! point and this one says so rather than printing a number off the
+            ! wrong base.
+            if (measure_price_elasticity==0) then
+
+                write(*,*) "ELASTICITY SKIPPED  drug price elasticities off by measure_price_elasticity"
+
+            elseif (measure_child_gap==1) then
+
+                write(*,*) "ELASTICITY SKIPPED  omega ran first and left its distribution behind"
+
+            elseif (model_total_drug_users(1)<=10.d0**(-8)) then
+
+                write(*,*) "ELASTICITY HELD     nobody uses, so a demand elasticity is not defined"
+
+            else
+
+                val_price_base_1=price_of_addictive_good
+                val_users_base_1=model_total_drug_users(1)
+                val_qty_base_1=model_drugs_used_by_users_on_average(1)
+
+                write(*,*) "ELASTICITY_DIAG base price=", val_price_base_1,&
+                    " users=", val_users_base_1, " quantity per user=", val_qty_base_1
+
+                ! The market clears in the OUTER loop, so the price stays where
+                ! it is put across a direct solve and converge. That is the
+                ! whole reason this measures a demand curve.
+                price_of_addictive_good=val_price_base_1*(1+elasticity_price_step)
+
+                call solve_value_function_and_policy_functions(1)
+                call converge_to_stationary_equilibrium(1)
+                call stationary_equilibrium_statistics(1)
+                ! model_total_drug_users is built in govt_revenues_calc and not
+                ! in stationary_equilibrium_statistics, which is the mistake
+                ! omega made and paid for.
+                call govt_revenues_calc(1)
+
+                write(*,*) "ELASTICITY_DIAG new price=", price_of_addictive_good,&
+                    " users=", model_total_drug_users(1),&
+                    " quantity per user=", model_drugs_used_by_users_on_average(1)
+
+                if ((model_total_drug_users(1)>10.d0**(-12)) .AND. &
+                    (val_users_base_1>10.d0**(-12))) then
+                    write(*,*) "UNTARGETED price elasticity, participation   model=",&
+                        log(model_total_drug_users(1)/val_users_base_1)/&
+                        log(1+elasticity_price_step), " observed=", -0.63d0
+                else
+                    write(*,*) "ELASTICITY HELD     participation went to zero at the higher price"
+                end if
+
+                if ((model_drugs_used_by_users_on_average(1)>10.d0**(-12)) .AND. &
+                    (val_qty_base_1>10.d0**(-12))) then
+                    write(*,*) "UNTARGETED price elasticity, intensive       model=",&
+                        log(model_drugs_used_by_users_on_average(1)/val_qty_base_1)/&
+                        log(1+elasticity_price_step), " observed=", -0.55d0
+                else
+                    write(*,*) "ELASTICITY HELD     quantity per user went to zero at the higher price"
+                end if
+
+                price_of_addictive_good=val_price_base_1
+
+            end if
+
             ! WHO IS HOMELESS, AND WHETHER THEY HAD A CHOICE. These are
             ! diagnostics, not moments: the prefix is DIAG so nothing parses them
             ! as targets and the moment count does not move. They are here rather
