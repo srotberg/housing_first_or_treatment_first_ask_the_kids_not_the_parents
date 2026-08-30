@@ -303,3 +303,50 @@ inventing zeros.
   permission prompt and is lost silently; one sat blocked for forty minutes on
   the batch measuring lambda_m. Tell it to `cat -n` the file, read the line, and
   issue a separate Bash call whose command is that line verbatim.
+
+
+## 30 August, 20:20 -- the housing block was scored against the wrong denominator, and the sign of the error flips when that is fixed
+
+`point_2d7b98ec04` is the first point measured after h_2 and gamma moved to
+total spending, and it says the opposite of everything measured before it.
+
+    h_2, share above half of INCOME     0.262   target 0.101   2.6x too HIGH
+    h_2, share above half of SPENDING   0.053   target 0.101   1.9x too LOW
+
+Same households, same model, same target number. The income denominator made
+the model look badly over-burdened and pointed the whole housing block at a
+CHEAPER rental ladder. On the denominator CEX actually measures, the model is
+under-burdened and the ladder has to go UP.
+
+That matters beyond h_2, because it aligns three things that were in conflict
+all afternoon:
+
+- the author's criterion for the smallest rung is that a low income household
+  cannot afford it, which needs a HIGHER floor;
+- h_2 at 0.053 against 0.101 needs MORE severe burden, which needs a higher
+  floor;
+- gamma at 0.2016 against 0.268 needs MORE housing spending, same direction.
+
+The earlier finding that all the severe burden sits in the largest unit still
+holds -- units 0 and 1 have exactly zero burdened households at every point
+measured so far -- so `largest_house_size` still owns the burden RATE and
+`smallest_rental_relative_to_lowest_income` still owns who is priced out. What
+changed is which way both have to move.
+
+WHAT NONE OF THIS FIXES. The relative risk of homelessness given a SUD is
+0.085 in the model against 2.44 in the data: the SIGN is wrong, not the size.
+The disorder makes a household LESS likely to be homeless here, because a
+household has to be able to afford the habit to have it, so the poorest do not
+use and the poorest are who ends up on the street. Users have income 0.308 of
+average and the homeless have 0.217 -- users are RICHER than the homeless. No
+setting of the rung sizes touches that. The candidate mechanism now being
+measured is whether a higher floor makes drug spending crowd out rent: a user
+spends about 19 per cent of expenditure on the habit while the cheapest unit
+costs about 6 per cent of average labour income, so today there is always room
+for both. FLOOR.txt tests it at 0.090, 0.105 and 0.150.
+
+STALE IN THE TRIGGER PROMPT. It still says "being off on h2 is ok". That was
+said when h_2 meant the share in the smallest unit. h_2 is the severe cost
+burden now, it has an instrument, and the author spent this evening on it. The
+concession stays in the STOPPING RULE so the loop can still terminate, but h_2
+is bracketed like everything else and should not be described as conceded.
