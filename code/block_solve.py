@@ -79,6 +79,17 @@ PARAMS = [
 MOMENTS = ['b', 'lambda_d', 'pi_eu', 'tau_u', 'theta',
            'h_1', 'kappa_uem', 'kappa_ued', 'aleph']
 
+# Which instrument the model's own comments say owns which moment. Used ONLY to
+# label the diagnostic; the solve uses the whole matrix and assumes no pairing.
+OWN = {'lambda_addiction': 'lambda_d',
+       'addiction_scalar_1': 'b',
+       'probability_becoming_unemployed': 'pi_eu',
+       'utility_cost_of_treatment': 'tau_u',
+       'relative_share_of_addiction_1': 'theta',
+       'size_homelessness': 'h_1',
+       'kappa_uem': 'kappa_uem',
+       'multiple_of_probabilities_of_employment_if_addicted': 'kappa_ued'}
+
 # Weight the three that have blocked the calibration all day. This is not the
 # paper's loss -- it is the direction chooser, and it should spend its
 # conditioning on the moments that have never come right.
@@ -89,8 +100,8 @@ WEIGHT = {'lambda_d': 3.0, 'b': 3.0, 'pi_eu': 3.0, 'tau_u': 2.0, 'theta': 2.0}
 # ratio's elasticity in b changes sign between lambda 11.8 and lambda 30.
 BANDWIDTH = 1.2
 RIDGE = 0.05
-MAX_EFOLD = 0.55
-LADDER = (0.15, 0.35, 0.60, 0.85)
+MAX_EFOLD = 1.10
+LADDER = (0.10, 0.28, 0.55, 1.00)
 
 
 def points():
@@ -122,14 +133,39 @@ def points():
 
 
 def local(centre, pts):
-    """Points near the centre, and how near, in e-folds of the instruments."""
+    """The DESIGN ONLY: the centre, and points differing from it in ONE coordinate.
+
+    THIS WAS A BANDWIDTH FILTER AND THE BANDWIDTH WAS NOT THE PROBLEM. Fitting
+    every archive point within 1.2 e-folds put roughly a hundred points into the
+    regression, and in every one of them all twenty-odd parameters differ at
+    once. That is the same confounding that has produced five wrong answers
+    today -- lambda's sign, addiction_scalar_1's sign, the discount factor's
+    effect on the ratio, pi_eu's elasticity at 0.125 against a true 0.78, and an
+    SMI decomposition that reconstructed a moment exactly and predicted nothing.
+
+    It showed up here as a flat contradiction. The single clean arm on
+    utility_cost_of_treatment -- one coordinate, 0.4 e-folds, everything else
+    identical -- measures d log tau_u / d log cost = -1.344. The pooled local
+    fit over the same neighbourhood returned -0.009, an instrument that looks
+    dead. The arm is right and the pool is confounded, and a solve that believed
+    the pool would have concluded tau_u had no instrument and spent its step
+    elsewhere.
+
+    So the fit uses the design and nothing else. That is what the design is FOR:
+    each arm moves one coordinate, so each column of the Jacobian is identified
+    by construction rather than by hoping the archive happens to span it. It
+    costs statistical power -- twelve points for eight columns -- and buys the
+    only thing that matters here, which is that the columns mean what they say.
+    """
     keep = []
     for vec, mt, name in pts:
         if any(k not in vec for k in PARAMS):
             continue
-        d = [abs(math.log(vec[k] / centre[k])) for k in PARAMS]
-        if max(d) <= BANDWIDTH:
-            keep.append((vec, mt, name, max(d)))
+        moved = [k for k in centre
+                 if k in vec and abs(vec[k] - centre[k]) > 1e-12 * max(1.0, abs(centre[k]))]
+        if len(moved) <= 1:
+            d = max([abs(math.log(vec[k] / centre[k])) for k in PARAMS] + [0.0])
+            keep.append((vec, mt, name, d))
     return keep
 
 
@@ -167,9 +203,17 @@ def solve(centre, mt0, fam, verbose=True):
     d = np.linalg.solve(Jm.T @ W @ Jm + RIDGE * np.eye(len(PARAMS)), Jm.T @ W @ r)
     if verbose:
         print(f'fit over {len(fam)} points within {BANDWIDTH} e-folds\n')
-        print('  own-instrument elasticities (the diagonal the pairing assumes):')
-        for i, k in enumerate(MOMENTS[:len(PARAMS)]):
-            print(f'    d log {k:10} / d log {PARAMS[i][:34]:34} = {Jm[i, i]:+.3f}')
+        # PAIR BY NAME, NOT BY POSITION. MOMENTS and PARAMS are not in the
+        # same order -- b belongs to addiction_scalar_1 and lambda_d to
+        # lambda_addiction, which are the first two of each list crossed over --
+        # so zipping them by index printed cross elasticities under the
+        # heading "own". The fit and the solve were always right; the label was
+        # not, and a mislabelled diagnostic is worse than none.
+        print('  own-instrument elasticities, paired by name:')
+        for par, mom in OWN.items():
+            if par in PARAMS and mom in MOMENTS:
+                print(f'    d log {mom:10} / d log {par[:34]:34} = '
+                      f'{Jm[MOMENTS.index(mom), PARAMS.index(par)]:+.3f}')
         print(f'\n  residual to close, in logs, weighted:')
         for i, k in enumerate(MOMENTS):
             print(f'    {k:11} {100*(math.exp(r[i])-1):+7.0f}%   weight {w[i]:.0f}')
