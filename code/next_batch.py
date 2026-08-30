@@ -203,9 +203,18 @@ def main():
     n = 1
     while os.path.exists(os.path.join(HERE, f'CORRECT_{n}.txt')):
         n += 1
+    # AND DO NOT WRITE A ROUND THAT IS IDENTICAL TO THE LAST ONE. The gate
+    # re-runs every half hour; while a round is still solving, nothing it reads
+    # has changed, so it would otherwise deposit a byte-identical batch file
+    # every firing and the numbering would stop meaning "round".
+    body = '\n'.join(l[-1] for l in lines) + ('\n' if lines else '')
+    prev = os.path.join(HERE, f'CORRECT_{n-1}.txt') if n > 1 else os.path.join(HERE, 'CORRECT.txt')
+    if os.path.exists(prev) and open(prev).read() == body:
+        print(f'identical to {os.path.basename(prev)}; nothing new to run.')
+        return 3
     out = os.path.join(HERE, f'CORRECT_{n}.txt')
     with open(out, 'w') as fh:
-        fh.write('\n'.join(l[-1] for l in lines) + ('\n' if lines else ''))
+        fh.write(body)
     print(f'{len(lines)} correction arms written to {os.path.basename(out)}, '
           f'from point_{tag}, one coordinate each:\n')
     print(f'{"parameter":52s} {"moment":10s} {"gap":>7s} {"elast":>7s} {"from":>10s} {"to":>10s}')
