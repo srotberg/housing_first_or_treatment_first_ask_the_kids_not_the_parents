@@ -371,6 +371,23 @@ def main():
 
     through.sort()
     worst, tag, v, m = through[0]
+
+    # THE AUTHOR'S STOPPING RULE, 30 August: "once we get below 10% for
+    # everything we can stop", and "being off on h2 is ok". h_2 is already in
+    # SKIP, and beta scores zero inside its 3.0-4.5 band, so `worst` here is
+    # exactly the quantity that has to fall under ten per cent. When it does the
+    # calibration is FINISHED and the loop must stop launching rather than keep
+    # spending containers on a solved problem.
+    if worst <= ACCEPT:
+        print(f'DONE. point_{tag} meets the author\'s rule: every target inside '
+              f'{100*ACCEPT:.0f} per cent except h_2, which is conceded.\n')
+        gaps = sorted(((gap(k, p), k, p) for k, p in m.items()), reverse=True)
+        for g, k, (mo, tg) in gaps:
+            note = '   <-- conceded' if k in SKIP else ''
+            print(f'  {k:10s} {mo:11.5f} vs {tg:11.5f}  {100*(mo/tg-1):+7.1f}%{note}')
+        print(f'\n  worst gap outside h_2: {100*worst:.1f} per cent')
+        print('\n  STOP. Do not launch another round. Tell the author.')
+        return 4
     print(f'GATE OPEN at point_{tag}: b {100*(m["b"][0]/m["b"][1]-1):+.1f}%, '
           f'lambda_d {100*(m["lambda_d"][0]/m["lambda_d"][1]-1):+.1f}%. '
           f'Worst remaining {100*worst:.0f} per cent.\n')
