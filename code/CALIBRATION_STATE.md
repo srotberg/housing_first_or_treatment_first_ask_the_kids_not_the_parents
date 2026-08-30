@@ -387,3 +387,40 @@ WHAT IT COSTS. h_1 overshoots to 0.0125 against 0.00399, three times the
 target, and size_homelessness is the instrument that pulls it back. And 0.105 is
 WORSE than 0.090 on the SUD share, so the optimum is interior, near 0.09, not at
 the top of the ladder.
+
+
+## 30 August, 21:20 -- the 25 point asset grid moved the drug block by a quarter, and the archive is not comparable across it
+
+Identical parameter vector, the only difference the grid:
+
+    point_d6ed8b6e2a   41 points   b 0.08673   lambda_d 0.03493   h_1 0.002669
+    point_3fdcabf7ae   25 points   b 0.06294   lambda_d 0.02122   h_1 0.002892
+
+b falls 27 per cent and lambda_d 39 per cent. Every commit between the two runs
+is a print or a label except f17a75a, the grid cut, so this is the grid.
+
+THE CLAIM THAT WAS WRONG, and it was made here in chat: that the coarse grid is
+only a SEARCH grid because internal_computations refines a' on 62 sub points, so
+cutting it costs nothing. It preserves the savings policy. It does not preserve
+b and lambda_d, and those two are what gate the search.
+
+WHAT IT INVALIDATES. All 246 points measured before f17a75a. They are not
+wrong -- they are measurements of a different model -- but they cannot be
+bracketed against a 25 point arm, and next_batch has been doing exactly that:
+its chosen base, point_144fe4c95a, is a 41 point measurement and every arm
+around it is a 25 point one. That is the likely reason CORRECT_22 ran nine arms
+and left the worst gap at 33 per cent with the base unmoved.
+
+WHAT TO DO ABOUT IT is the author's call, because it is a trade between speed
+and the two moments that gate everything:
+  - keep 25 and rebuild the archive, three times cheaper per point but from
+    scratch, roughly 250 points of history discarded;
+  - go back to 41 and keep the archive, at 25 minutes a point;
+  - something between, chosen by measuring b at 29 or 33 points and taking the
+    coarsest grid whose b is within a per cent or two of the 41 point value.
+The third is one or two points of work and is what I would put to the author
+first.
+
+UNTIL IT IS DECIDED, next_batch must not bracket across the grid boundary. The
+grid is stamped in every point measured after f17a75a and absent before it, so
+the filter is available and cheap.
