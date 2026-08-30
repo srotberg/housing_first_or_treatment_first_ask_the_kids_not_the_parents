@@ -424,3 +424,55 @@ first.
 UNTIL IT IS DECIDED, next_batch must not bracket across the grid boundary. The
 grid is stamped in every point measured after f17a75a and absent before it, so
 the filter is available and cheap.
+
+
+## 30 August, 22:00 -- the extensive margin, not the Stone Geary threshold, is what makes users poor
+
+Two diagnostics were added because nothing printed either of them, and
+together they close a question that had been argued all evening.
+
+THE AGE OF USERS. Two in five are 65 or older.
+
+    band     model   data
+    26-34    0.396   0.284
+    35-44    0.078   0.251
+    45-54    0.054   0.178
+    55-64    0.061   0.163
+    65+      0.411   0.124     mean age 52.6 vs 45.5
+
+U shaped: the young, who have no assets, and the old, who have no future,
+with a hole where most real users are. Worth about a fifth of the income gap
+and no more -- income of WORKING AGE users is 0.352 against 0.298 for all
+users, so removing the retirees closes 18 per cent of the distance to 0.74.
+
+THE STONE GEARY THRESHOLD IS NOT BINDING ON ANYONE, which kills a hypothesis
+recorded here in strong terms an hour ago. optimize_frac_spent_on_addiciton
+buys nothing unless C > (phi/theta) p b, and that threshold is 0.0162 while
+the mean C of households who buy NOTHING is 0.4029 -- twenty five times above
+it. So the closed form cannot be what selects users, and the claim that "the
+model's own theory says buyers must be rich" was about a margin that never
+binds. It governs HOW MUCH given that a household uses. WHETHER it uses is a
+separate discrete choice, policy_function_addiction, decided on continuation
+values, and that is where the poor are selected:
+
+    buyers      mean C 0.1405   mean income 0.1426
+    non-buyers  mean C 0.4029   mean income 0.5167
+
+THE BUFFER IS NOT THERE EITHER. The author's reading was that a household
+willing to risk the disorder has something to fall back on. In this model it
+does not:
+
+    assets of drug users        0.185 of average net worth
+    assets of experimenters     0.154
+    assets with a SUD           0.247
+
+Users are asset poor as well as income poor. If family resources are the
+real world mechanism, nothing in this model plays that role -- the endowment
+at 26 does not, and there is no ongoing transfer to an adult child.
+
+WHAT IS LEFT. Selection runs entirely through the continuation value: the
+poor use because their future is worth little. KAPPA1.txt tests it directly
+by removing the mortality cost, kappa_phi_d_level = 1.0, with
+addiction_scalar_1 cut to hold the use rate near the target, so the
+comparison is at a matched b rather than at b = 0.97 where the archive's low
+kappa points sit and where the income of users is 0.91 by arithmetic.
