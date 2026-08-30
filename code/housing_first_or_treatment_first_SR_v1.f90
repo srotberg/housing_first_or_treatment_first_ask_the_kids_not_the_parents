@@ -4512,6 +4512,11 @@
             ! disorder is responsible for are the ones that would not have
             ! happened at the clean hazard with age, homelessness and SMI
             ! held. Ages 26 to 44, because model age one is data age 26.
+            ! THE PARAMETER THE ROW ABOVE AND THE TWO INCOME ROWS ALL TURN ON,
+            ! printed beside them because it is now searchable and a point that
+            ! does not record it cannot be read.
+            write(*,*) "DIAG kappa_phi_d_level, SUD mortality level      =",&
+                kappa_phi_d_level
             write(*,*) "UNTARGETED drug deaths, share of deaths      model=",&
                 (val_deaths_all_young(1)-val_deaths_clean_young(1))/&
                 max(val_deaths_all_young(1),10.d0**(-14)),&
@@ -31346,6 +31351,31 @@
                 case ("weight_on_child")
                     write(*,*) "HANDOVER weight_on_child:", weight_on_child, "->", handover_value
                     weight_on_child=max(min(handover_value,1.d0),0.d0)
+
+                ! THE SUD MORTALITY LEVEL, WHICH IS SETTABLE BUT WAS NOT
+                ! HANDABLE. It is assigned at 8, the midpoint of the 6 to 10
+                ! range the literature gives for all cause standardised
+                ! mortality ratios in opioid use disorder, and it is the knob on
+                ! what the disorder COSTS a household: survival is raised to the
+                ! power of the multiplier, so the whole continuation value is
+                ! what a using household puts at risk. That makes it the natural
+                ! instrument for who is willing to use, and therefore for the
+                ! average income of users, which the model puts at 0.31 of
+                ! average against 0.74 in NSDUH.
+                !
+                ! The clamp is wide on purpose, 1 to 30, rather than the
+                ! literature's 6 to 10. A search that cannot leave the range
+                ! cannot report that the range is where the answer is not, and
+                ! that is a finding worth being able to reach. 1 is no excess
+                ! mortality at all, which is the floor the specification allows.
+                !
+                ! No rebuild is needed here: apply_param_handover runs before
+                ! initialize_variables_and_grids, which is the one place
+                ! build_mortality_multipliers is called from and where
+                ! survival_probability is built out of it.
+                case ("kappa_phi_d_level")
+                    write(*,*) "HANDOVER kappa_phi_d_level:", kappa_phi_d_level, "->", handover_value
+                    kappa_phi_d_level=max(min(handover_value,30.d0),1.d0)
 
                 ! THE LAST TWO INTERNALLY CALIBRATED PARAMETERS THAT COULD NOT
                 ! BE HANDED IN. The paper calibrates twenty four parameters

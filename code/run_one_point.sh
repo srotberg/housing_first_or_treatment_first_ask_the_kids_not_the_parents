@@ -62,6 +62,14 @@ declare -A P=(
     # every point now states it explicitly.
     [relative_share_of_housing]=0.1483356
     [housing_status_grid_expander]=1.0
+    # THE SUD MORTALITY LEVEL, ADDED 30 AUGUST. It was settable in the Fortran
+    # and not handable, so every point so far solved at its declared 8.0 --
+    # which is why 8.0 is the default here and why next_batch.py fills it in
+    # for a point whose VECTOR line predates it. Adding a name changes the md5
+    # of every future vector, so a point measured before today will not be
+    # recognised as already measured and will re-run once if it is asked for.
+    # That is the price of the name, and it is paid once.
+    [kappa_phi_d_level]=8.0
 )
 for a in "$@"; do
     k=${a%%=*}; v=${a#*=}

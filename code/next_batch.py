@@ -288,9 +288,23 @@ def bracket(A, param, moment, target, base_v):
     return None
 
 
+# A NAME ADDED TO THE VECTOR AFTER POINTS WERE ALREADY MEASURED. Every point
+# run before kappa_phi_d_level entered the handover solved at its declared 8.0,
+# so filling it in is not a guess about those points: it is what they actually
+# ran at. Without it the slice key -- which is built out of whatever names the
+# VECTOR line happens to carry -- differs on a coordinate nobody moved, and the
+# archive splits into a before and an after that can never bracket each other.
+IMPLICIT = {'kappa_phi_d_level': '8.0'}
+
+
 def vector(text):
     m = re.search(r'^\s*VECTOR (.*)$', text, re.M)
-    return dict(t.split('=', 1) for t in m.group(1).split() if '=' in t) if m else None
+    if not m:
+        return None
+    v = dict(t.split('=', 1) for t in m.group(1).split() if '=' in t)
+    for k, d in IMPLICIT.items():
+        v.setdefault(k, d)
+    return v
 
 
 def moments(text):
