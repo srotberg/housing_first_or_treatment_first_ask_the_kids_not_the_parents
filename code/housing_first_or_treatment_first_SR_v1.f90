@@ -4744,6 +4744,13 @@
                 model_average_income_addicted(1)/&
                 max(model_average_income(1),10.d0**(-14)),&
                 " observed=", 0.711d0
+            ! HOW BIG THE CORRECTION ABOVE WAS. This is the share of households
+            ! carrying the disorder that consume nothing, and it is exactly the
+            ! group whose income the three statistics above used to drop while
+            ! counting its mass. It was computed, written to a file and never
+            ! printed, so the bias was invisible from a point file.
+            write(*,*) "DIAG carriers of the disorder consuming no drugs =",&
+                model_addicts_consuming_no_drugs(1)
             write(*,*) "DIAG income of experimenters / average           =",&
                 model_avg_income_experimenters(1)/&
                 max(model_average_income(1),10.d0**(-14))
@@ -10288,7 +10295,22 @@
 
                                     end if
                                     
-                                    if (addiction_consumption_1>0) then
+                                    ! THE NUMERATOR HAS TO BE SUMMED OVER THE SET THE DENOMINATOR
+                                    ! COUNTS, and it was not. This guard used to be
+                                    ! addiction_consumption_1>0 alone -- households that BUY drugs --
+                                    ! while model_mass_total_users, which divides it, counts buyers
+                                    ! PLUS every household carrying the disorder whether it buys or
+                                    ! not. So a household with the disorder that consumes nothing
+                                    ! contributed its mass to the denominator and none of its income
+                                    ! to the numerator, and the average income of drug users came out
+                                    ! low by exactly that group's share of the user mass.
+                                    !
+                                    ! model_addicts_consuming_no_drugs exists precisely because the
+                                    ! group is not empty, so this was never a harmless mismatch. The
+                                    ! guard below is now character for character the one on
+                                    ! model_mass_total_users.
+                                    if (((addiction_consumption_1>0) .AND. (unemployment_index<=threshold_addiction_index)) .OR. &
+                                        (unemployment_index>threshold_addiction_index)) then
                                     
                                         model_avg_income_drug_users(time_period)=&
                                             model_avg_income_drug_users(time_period)+income_1*distribution_mass_used
@@ -10799,7 +10821,12 @@
                                                                             
                                     end if
                                     
-                                    if (is_addicted==1) then
+                                    ! THE SAME DENOMINATOR, SO THE SAME SET. is_addicted is 1 when
+                                    ! addiction_consumption_1>0, which means CONSUMES and not HAS THE
+                                    ! DISORDER whatever the name suggests, and this is divided by
+                                    ! model_mass_total_users like the income above.
+                                    if (((addiction_consumption_1>0) .AND. (unemployment_index<=threshold_addiction_index)) .OR. &
+                                        (unemployment_index>threshold_addiction_index)) then
                                                                         
                                         model_average_assets_drug_users(time_period)=&
                                             model_average_assets_drug_users(time_period)+&
@@ -10808,7 +10835,16 @@
                                             
                                     end if
                                     
-                                    if ((is_addicted==1) .AND. (unemployment_index>threshold_addiction_index)) then
+                                    ! EVERY HOUSEHOLD CARRYING THE DISORDER, WHICH IS WHAT DIVIDES
+                                    ! THESE TWO. total_addited_1 is guarded by
+                                    ! unemployment_index>threshold_addiction_index and nothing else,
+                                    ! so requiring is_addicted==1 here -- which means CONSUMES, not
+                                    ! HAS THE DISORDER -- dropped the income and assets of every
+                                    ! carrier consuming nothing while keeping their mass below the
+                                    ! line. NSDUH's 71.1 per cent is over everyone with a moderate or
+                                    ! severe disorder, consuming this year or not, so there is no
+                                    ! reading on which the old pair was the right one.
+                                    if (unemployment_index>threshold_addiction_index) then
                                     
                                         model_average_income_addicted(time_period)=&
                                             model_average_income_addicted(time_period)+&
