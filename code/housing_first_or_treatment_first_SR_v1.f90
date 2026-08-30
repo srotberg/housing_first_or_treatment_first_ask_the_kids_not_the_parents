@@ -4501,6 +4501,21 @@
                 val_treat_homeless_working(1)/max(val_treat_homeless(1),10.d0**(-14)),&
                 " observed=", 0.066d0
 
+            ! EMPLOYMENT AMONG THE HOMELESS. Computed as the complement of
+            ! model_fraction_of_homeless_unemployed, working age on both sides,
+            ! and written only to baseline_benchmark.txt -- so the only value
+            ! anyone could read was from a file six months old, which said every
+            ! working age homeless household was unemployed. Either that is a
+            ! real property of the benchmark or the ratio is degenerate, and a
+            ! number nobody can see from a point file cannot be told apart.
+            ! The validation table already carries the TEDS-A row for working at
+            ! all among the homeless IN TREATMENT, at 6.6 per cent, so this is
+            ! the population that row is a subset of.
+            write(*,*) "DIAG employed share of the homeless, working age =",&
+                model_employed_share_of_homeless(1)
+            write(*,*) "DIAG working age homeless mass                   =",&
+                model_mass_homeless_working_age(1)
+
             ! THE SUD SHARE OF THE HOMELESS, the untargeted half of the same
             ! Gutwinski meta regression lambda_m is calibrated to.
             write(*,*) "UNTARGETED SUD share of the homeless         model=",&
