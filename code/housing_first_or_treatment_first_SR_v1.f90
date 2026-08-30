@@ -11794,7 +11794,25 @@
                                     
                                     end if
                                                                                                         
-                                    if (amortization_used<=1) then
+                                    ! THE HOMELESS WERE IN THIS DENOMINATOR AND COULD NEVER
+                                    ! BE IN THE NUMERATOR, which is the third instance of that
+                                    ! fault found today. The burdened count above requires
+                                    ! housing_status_index_used >= second_lowest, so a homeless
+                                    ! household adds mass below the line and nothing above it.
+                                    !
+                                    ! At a homelessness rate of 0.27 per cent the bias was 0.3
+                                    ! per cent and harmless. It stops being harmless now that
+                                    ! h_2 is a TARGET and the mechanism proposed for hitting it
+                                    ! is to push households onto the street: every one that
+                                    ! goes would inflate this denominator and drop h_2 with no
+                                    ! household's burden changing, so the target would appear to
+                                    ! be met by the very move that was supposed to earn it.
+                                    !
+                                    ! SCF's universe is renters paying rent, and the homeless
+                                    ! are not in SCF at all, so excluding them is also what
+                                    ! matches the 10.1 per cent this is calibrated to.
+                                    if ((amortization_used<=1) .AND. &
+                                        (housing_status_index_used>=second_lowest_housing_grid_point)) then
                                     
                                         mass_of_renters_1=mass_of_renters_1+distribution_mass_used
                                     
