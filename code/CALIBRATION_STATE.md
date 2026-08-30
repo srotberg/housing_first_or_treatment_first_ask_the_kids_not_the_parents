@@ -14,75 +14,48 @@ led the search to a point with b exact and lambda_d at minus seventy eight.
 `beta` is banded (3.0, 4.5) on the author's instruction and scores zero inside
 it. `h_2`, the smallest-rental share, is conceded and need not be chased.
 
-## Honest position, 30 August 02:20
+## THE DRUG BLOCK IS CLOSED, 30 August 03:50
 
-NOT CONVERGING BY THE OLD METHOD. Over 110 points and twenty two hours the best
-worst-gap went 78 -> 60 per cent, the best mean gap 16.8 -> 15.1, and the count
-inside ten per cent 13 -> 14 of 20; the last twelve points moved none of them.
-Dropping lambda_d, pi_eu and h_2 from the score ENTIRELY still leaves the best
-point at a 35 per cent worst-gap, and the best points under different exclusions
-are different vectors. There is no point close on everything.
+`point_1855f8103d`: lambda_addiction 15.89, addiction_scalar_1 0.018367, rsa_1
+0.5057, lambda_m 0.067. **b +1.4 per cent, lambda_d +2.7** -- both inside the
+author's five per cent gate. 11 of 21 moments inside ten per cent.
 
-The author approved returning to the joint solve they asked for at 23:00 on the
-29th, which one-at-a-time bracketing had been substituting for.
+WHAT FINALLY WORKED, because it is the method to keep using. Every aimed step
+before this missed by factors of three to five, and all of them chained an
+elasticity measured in one region into another. This one fitted BOTH surfaces on
+BOTH instruments at once, over a band narrow enough to be locally log-linear --
+eight points with lambda between 16 and 18.5 --
 
-## The current best point on the drug block
+    ln b        : d/d ln lambda = -1.43,  d/d ln as1 = -15.4,  rms resid 0.068
+    ln lambda_d : d/d ln lambda = -0.99,  d/d ln as1 = -20.3,  rms resid 0.216
 
-`point_2a2bebba51`: lambda_addiction 18.3, addiction_scalar_1 0.018260, rsa_1
-0.5057, lambda_m 0.067. b -4.2 per cent, INSIDE the band for the first time in
-the drug block, with lambda_d +24.2 and 11 of 21 moments inside ten per cent,
-the best count on any single point.
+solved the two together, and checked the condition number (47) so the
+instruments were known not to be collinear BEFORE the step was taken. It
+predicted both moments on target; the model returned +1.4 and +2.7. First time
+all night a prediction and a measurement agreed.
 
-Its worst gap is 168 per cent on tau_u, so on the strict minimax it is NOT the
-best point -- `point_a310e2357f` still holds that at 60 per cent. What changed is
-that the moment which was blocking is nearly solved: lambda_d was the worst
-moment at 70 of 110 points.
+The earlier one-dimensional locus construction got the search into this band and
+was worth it, but it is superseded: fit locally in two dimensions, do not chain
+slopes.
 
-## THE WALL: b and the ratio are in tension, and it is narrowing
+`next_batch.py` opened on its own and spawned nine correction arms from this
+point. That gate stays the right shape for any future re-solve.
 
-Seventeen points now sit on the clean lambda/addiction_scalar_1 surface -- the
-points differing from a named centre in those two coordinates and nothing else.
-Laid out together they show why the drug block has never closed.
+## The SMI block needs a decision, not more search
 
-    lambda   as1        b        ratio (target 0.4135)
-     21.4  0.017800    +13%       +48%
-     20.0  0.018057     +5%       +41%
-     18.3  0.018050    +10%       +26%
-     18.3  0.018260     -4%       +30%
-     18.3  0.018470    -36%       -26%
-     15.0  0.017800    +80%       +10%
-     12.0  0.017237   +220%        +5%
-     21.4  0.018950    -72%        -3%
+lambda_m (the SMI share of the homeless) is at -54 per cent and is the first
+moment that looks genuinely OUT OF REACH through its own instrument. The
+parameter needs to fall to 0.035 to close the gap; its floor is 0.046. The
+damped step lands on the floor.
 
-WHERE b IS RIGHT THE RATIO IS +26 TO +48 PER CENT; WHERE THE RATIO IS RIGHT b IS
-OFF BY 70 TO 300. This is the same wall the search hit from a worse place -- 47
-of 48 points with b near target had a ratio near 0.09 and one had 0.61 -- but it
-has moved a long way, and the tension NARROWS as lambda falls: +48 per cent at
-lambda 21.4, +30 at 18.3, +10 at 15.
-
-## The fold, and why aimed steps keep missing here
-
-addiction_scalar_1 does not have one elasticity, it has two regimes. At lambda
-18.3, measured:
-
-    0.018050 -> 0.018260   d ln b/d ln as1 = -11.9,  d ln lambda_d/d ln as1 =  -9.7
-    0.018260 -> 0.018470   d ln b/d ln as1 = -35.2,  d ln lambda_d/d ln as1 = -84.8
-
-A plateau, then a cliff. Across the plateau the ratio is flat (+26 to +30 per
-cent) while b falls from +10 to -4; across the cliff the ratio collapses to -26.
-Any step sized on the plateau elasticity and taken across the cliff overshoots by
-a factor of three, which is what has happened repeatedly.
-
-THE OPEN QUESTION, and `LAMBDA15.txt` is measuring it: does lambda 15 have the
-same plateau-then-cliff shape? If it does, there is room to bring b down by 80
-per cent while the ratio stays near +10, and the drug block closes. Three points
-at addiction_scalar_1 0.01810, 0.01845 and 0.01880 locate the b crossing AND say
-which regime it is in.
-
-CAUTION ON LOCUS2.txt, already running. Its addiction_scalar_1 values came from a
-locus slope fitted before the cliff was measured, so its three lines are expected
-to land b near -11, -22 and -31 per cent rather than on target. Their ratios are
-still information; the batch is not the closing bracket it was built to be.
+Worse, the parameter moves BOTH SMI moments the same way -- 0.067 to 0.12 took
+the share of the homeless 0.154 to 0.105 AND the population share 0.045 to 0.028
+-- so pulling it down to lift the first will push the second, currently inside
+ten per cent at -8, out of it. smi_onset_level is now listed as the second
+instrument and owns the population share, which lets the next round repair what
+this one costs instead of oscillating. But if the share of the homeless is still
+far out after this round, it is a question for the author -- a floor to move or a
+target to concede -- and not something more points will solve.
 
 ## What remains, and that it is reachable
 
