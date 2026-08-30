@@ -66,7 +66,7 @@ same point, which is what the ladder and the secant did.
 ## What still binds, and whether it has an instrument
 
     h_1       -37%  size_homelessness             overshot by a bracket, step back
-    lambda_m  -33%  lambda_m                      FLOOR-BOUND, see below
+    lambda_m  -19%  lambda_m                      NOT floor-bound; see below
     tau_u     +31%  utility_cost_of_treatment     bracketed [0.6031, 0.6308]
     kappa_uem +28%  kappa_uem                     elasticity -1.05, moves freely
     kappa_ued -28%  multiple_of_prob..._addicted  coupled, compensate
@@ -74,18 +74,27 @@ same point, which is what the ladder and the secant did.
     aleph     -21%  value_of_life                 coupled, compensate
     h_2       +35%  conceded by the author
 
-## The one thing that needs the author, not more search
+## lambda_m is NOT floor-bound -- an earlier entry here was wrong
 
-relative_share_of_addiction_1 is contested. theta needs it UP (elasticity -4.64,
-re-measured on this round's own pair). The SMI share of the homeless needs it
-DOWN: that arm moved the moment +108 per cent, which would carry it from -54 to
-about -4, essentially on target. Its own parameter lambda_m cannot do the job --
-elasticity -0.08, and the step it wants lands on the floor of 0.046.
+This file, and two reports to the author, said the SMI share of the homeless
+could not be reached through its own instrument: elasticity -0.08, the step it
+wanted landing on the floor of 0.046, and a scope decision needed. That was
+wrong, and the way it was wrong is worth more than the conclusion.
 
-So one parameter is the only effective instrument for two moments that want
-opposite directions, and it is also violently coupled into the drug block. The
-options are the author's: concede one of the two moments, move lambda_m's floor,
-or add an instrument to the SMI block. More points will not resolve it.
+Nine controlled pairs exist on the lambda_m parameter. Eight give an elasticity
+between -0.65 and -1.01. One gives -0.08 -- and that one happened to be NEAREST
+the base, which is the pair `elasticity()` used to pick. On -0.08 the parameter
+must reach 0.035 and the moment is unreachable; on the median of -0.77 it needs
+0.051, comfortably inside the floor, and the moment is ordinary.
+
+The nearest pair is usually the SMALLEST step, which is the worst signal against
+the solver's reproducibility band. `elasticity()` now takes the MEDIAN over all
+controlled pairs, which needs no threshold or weighting and degrades gracefully:
+one pair is itself, two are their mean, nine ignore the outlier.
+
+relative_share_of_addiction_1 is still contested between theta and lambda_m, and
+that remains a real tension -- but it is no longer a reason to concede a moment,
+because lambda_m has a working instrument of its own.
 
 ## Rules that came out of specific mistakes
 

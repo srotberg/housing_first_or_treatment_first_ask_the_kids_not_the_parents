@@ -325,7 +325,7 @@ def archive():
 
 def elasticity(A, param, moment, near):
     """From archive pairs differing in ONE coordinate, the pair nearest `near`."""
-    best = None
+    cand = []
     for a, (va, ma) in A.items():
         for b, (vb, mb) in A.items():
             if a >= b or set(va) != set(vb):
@@ -340,10 +340,29 @@ def elasticity(A, param, moment, near):
             e = math.log(yb / ya) / math.log(xb / xa)
             if abs(e) < 1e-6:
                 continue
-            dist = abs(math.log(xa / float(near[param]))) if float(near[param]) > 0 else 0.0
-            if best is None or dist < best[1]:
-                best = (e, dist)
-    return best[0] if best else None
+            cand.append((e, abs(math.log(xb / xa))))
+    if not cand:
+        return None
+    # THE MEDIAN OVER PAIRS, NOT THE NEAREST PAIR. Preferring the pair closest to
+    # the base sounds right and is not: the nearest pair is usually the SMALLEST
+    # step, which is the worst signal against the solver's own reproducibility
+    # band, and one bad pair then sets the step for the whole round.
+    #
+    # lambda_m is the case that exposed it. Nine controlled pairs exist on that
+    # parameter and eight give an elasticity between -0.65 and -1.01; one gives
+    # -0.08, and that one was nearest the base, so the loop used it. On -0.08 the
+    # parameter has to reach 0.035 against a floor of 0.046 and the moment is
+    # unreachable -- which is what this file and two reports to the author said.
+    # On the median of -0.77 it needs 0.051, comfortably inside the floor, and
+    # the moment is fine. The pessimistic conclusion was an artefact of picking
+    # one pair out of nine.
+    #
+    # A median needs no threshold, no weighting and no judgement about which pair
+    # deserves trust, and it degrades gracefully: with one pair it is that pair,
+    # with two it is their mean, and with nine it ignores the outlier.
+    es = sorted(e for e, _ in cand)
+    n = len(es)
+    return es[n // 2] if n % 2 else 0.5 * (es[n // 2 - 1] + es[n // 2])
 
 
 def main():
