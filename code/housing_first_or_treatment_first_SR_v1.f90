@@ -2520,6 +2520,15 @@
         ! H_3 IS EXTERNAL NOW, AND THAT IS WHAT MAKES THE LADDER IDENTIFIED.
         !
         ! Three rungs were carrying three moments: h_2 on the employed share of
+        ! A NAMING COLLISION THE RENAME CREATED, AND IT WILL BITE SOMEONE.
+        ! The comments in this block use h_2, h_3 and h_4 for the three rental
+        ! BINS of the grid, smallest, middle and largest, and that is what the
+        ! algebra below means by them. The MOMENTS printed for the search now use
+        ! h_2 for the severe cost burden and h_3 for the share in the LARGEST
+        ! bin, on the author's instruction of 30 August. So h_3 in this block is
+        ! the middle bin and h_3 in the output is the top one. They are different
+        ! objects with the same name; read the block, not the label.
+        !
         ! the homeless, varsigma on the middle bin's share and h_4 on the top
         ! bin's. Three shares carry only two free numbers, so the third was
         ! always going to be absorbed somewhere, and it was absorbed by the

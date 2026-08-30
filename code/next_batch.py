@@ -93,6 +93,11 @@ OWN = {
     # ever moved the bottom of the housing ladder. A bigger smallest unit costs
     # more rent, so it raises the share paying over half of income.
     'smallest_rental_relative_to_lowest_income':            'h_2',
+    # AND THE TOP RUNG HAD NO INSTRUMENT EITHER. largest_house_size owns the
+    # share in the largest unit -- h_4 until the author's rename, h_3 now -- and
+    # like the bottom rung it sat in the vector with nothing mapped to it. It is
+    # only 1.7 per cent off, so this closes a hole rather than fixing a gap.
+    'largest_house_size':                                  'h_3',
     'kappa_uem':                                           'kappa_uem',
 }
 BOUNDS = {
@@ -108,6 +113,7 @@ BOUNDS = {
     'max_food_cost':                                       (0.0001, 1.0),
     'size_homelessness':                                   (0.01, 5.0),
     'smallest_rental_relative_to_lowest_income':            (0.005, 0.40),
+    'largest_house_size':                                  (0.02, 1.00),
     'kappa_uem':                                           (1.0, 100.0),
 }
 # beta is banded on the author's instruction; h_2 is conceded.

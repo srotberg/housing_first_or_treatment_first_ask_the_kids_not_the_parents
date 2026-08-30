@@ -77,7 +77,7 @@ OWNS = {
     # penalty_child_homeless stays at 0.31; the two ratios are reported
     # untargeted.
     'smallest_rental_relative_to_lowest_income': ('h_2',  0.132065),
-    'largest_house_size':                    ('h_4',      0.626723),
+    'largest_house_size':                    ('h_3',      0.626723),
     # IN THE VECTOR AT LAST. The housing preference weight is internally
     # calibrated with its own adjuster and owns the renters' housing spending
     # share, but no point vector ever named it, so every archived point

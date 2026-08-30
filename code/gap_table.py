@@ -41,7 +41,7 @@ LABEL = {
     'lambda_m': 'SMI share of the homeless', 'p_m': 'SMI share of the population', 'omega': 'use rise, child term off', 'pi_V': 'eligibles with a voucher',
     'tau_u': 'treatment take up', 'delta_d': 'child SUD ratio',
     'delta_h': 'child homelessness ratio', 'h_2': 'share in smallest unit',
-    'h_4': 'share in largest unit',
+    'h_3': 'share in largest unit',
 }
 
 
