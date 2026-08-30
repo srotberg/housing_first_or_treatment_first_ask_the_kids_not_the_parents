@@ -4733,6 +4733,19 @@
             write(*,*) "DIAG income of experimenters / average           =",&
                 model_avg_income_experimenters(1)/&
                 max(model_average_income(1),10.d0**(-14))
+            ! THE SAME TWO OVER AVERAGE LABOUR INCOME, WHICH IS NOT THE SAME
+            ! NUMBER AND IS THE ONE THE NOTE ALREADY QUOTES. The old benchmark's
+            ! 0.41 for drug users is a ratio to average LABOUR income, and the
+            ! rows above are ratios to average TOTAL income because that is what
+            ! NSDUH's income concept is. Printing only one of them guarantees
+            ! that someone eventually reads the new figure against the old and
+            ! calls a change of denominator a change in the model.
+            write(*,*) "DIAG income of drug users / labour income        =",&
+                model_avg_income_drug_users(1)/&
+                max(model_average_labour_income(1),10.d0**(-14))
+            write(*,*) "DIAG income with a SUD / labour income           =",&
+                model_average_income_addicted(1)/&
+                max(model_average_labour_income(1),10.d0**(-14))
             write(*,*) "DIAG mass ON the top savings grid point          =",&
                 diag_mass_top_financial/max(sum_of_distribution,10.d0**(-12))
             write(*,*) "DIAG mass in the top THREE savings grid points   =",&
