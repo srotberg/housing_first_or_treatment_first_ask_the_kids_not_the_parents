@@ -3875,6 +3875,30 @@
         ! the direct analogue of the 26.8.
         real(8), dimension(transition_length) :: val_burden50_expend_all,val_mass_expend_all,&
             val_burden50_expend_housed,val_mass_expend_housed,val_hous_expend_num,val_hous_expend_den
+
+        ! THE AGE OF DRUG USERS, WHICH NOTHING HAS EVER PRINTED.
+        !
+        ! Income of drug users is 0.30 of average against 0.74 in the data and
+        ! every explanation offered for it so far has been about SELECTION ON
+        ! INCOME: only households with little to lose take the addiction gamble.
+        ! There is a second explanation nobody has tested, and it needs no
+        ! mechanism at all. Using is a bet against the future, so the households
+        ! with the least future are the readiest to take it -- the OLD. A
+        ! retired user has a pension and no wage, so a user population skewed
+        ! old is a user population with low income for a reason that has nothing
+        ! to do with who is poor.
+        !
+        ! data/drug_use_age_distribution.xlsx has the answer for the data, users
+        ! aged 26 and over: 0.284 in 26-34, 0.251 in 35-44, 0.178 in 45-54,
+        ! 0.163 in 55-64 and 0.124 at 65 and over, mean age 45.5. If the model
+        ! puts its users in the last band the diagnosis changes completely.
+        !
+        ! Income among WORKING AGE users is the decisive line. If it is near
+        ! 0.74 while the overall figure is 0.30, then the gap is composition and
+        ! not selection.
+        real(8), dimension(transition_length,5) :: val_user_band
+        real(8), dimension(transition_length) :: val_user_age_num,val_user_mass_age,&
+            val_user_income_working,val_user_mass_working
         
         integer :: thread_num,thread_index,total_number_of_threads
         
@@ -4465,6 +4489,29 @@
                 val_burden50_expend_all(1)/max(val_mass_expend_all(1),10.d0**(-14))
             write(*,*) "DIAG over half of EXPENDITURE, housed only       =",&
                 val_burden50_expend_housed(1)/max(val_mass_expend_housed(1),10.d0**(-14))
+
+            ! WHERE THE DRUG USERS ARE IN THE LIFE CYCLE, and the line that
+            ! decides whether the income of users is a selection problem or a
+            ! composition one. Data shares among users aged 26 and over, from
+            ! data/drug_use_age_distribution.xlsx, are given beside each band.
+            write(*,*) "UNTARGETED mean age of drug users            model=",&
+                val_user_age_num(1)/max(val_user_mass_age(1),10.d0**(-14)),&
+                " observed=", 45.48d0
+            write(*,*) "UNTARGETED users aged 26-34, share           model=",&
+                val_user_band(1,1)/max(val_user_mass_age(1),10.d0**(-14)), " observed=", 0.28404d0
+            write(*,*) "UNTARGETED users aged 35-44, share           model=",&
+                val_user_band(1,2)/max(val_user_mass_age(1),10.d0**(-14)), " observed=", 0.25054d0
+            write(*,*) "UNTARGETED users aged 45-54, share           model=",&
+                val_user_band(1,3)/max(val_user_mass_age(1),10.d0**(-14)), " observed=", 0.17768d0
+            write(*,*) "UNTARGETED users aged 55-64, share           model=",&
+                val_user_band(1,4)/max(val_user_mass_age(1),10.d0**(-14)), " observed=", 0.16327d0
+            write(*,*) "UNTARGETED users aged 65 plus, share         model=",&
+                val_user_band(1,5)/max(val_user_mass_age(1),10.d0**(-14)), " observed=", 0.12445d0
+            write(*,*) "DIAG income of WORKING AGE drug users / average   =",&
+                (val_user_income_working(1)/max(val_user_mass_working(1),10.d0**(-14)))/&
+                max(model_average_income(1),10.d0**(-14))
+            write(*,*) "DIAG working age share of drug users             =",&
+                val_user_mass_working(1)/max(val_user_mass_age(1),10.d0**(-14))
             write(*,*) "DIAG aggregate rent / output                     =",&
                 aggregate_rent_spending(1)/max(model_output(1),10.d0**(-14))
             write(*,*) "DIAG asset grid, reachable points                =",&
@@ -10087,6 +10134,11 @@
         model_drug_users_getting_voucher(time_period)=0
         model_avg_income_experimenters(time_period)=0
         model_avg_income_drug_users(time_period)=0
+        val_user_band(time_period,:)=0
+        val_user_age_num(time_period)=0
+        val_user_mass_age(time_period)=0
+        val_user_income_working(time_period)=0
+        val_user_mass_working(time_period)=0
         model_avg_assets_experimenters(time_period)=0
         model_eligibles(time_period)=0
         model_fraction_recieving_food_stamps(time_period)=0
@@ -10585,7 +10637,42 @@
                                     
                                         model_avg_income_drug_users(time_period)=&
                                             model_avg_income_drug_users(time_period)+income_1*distribution_mass_used
-                                            
+
+                                        ! SAME GUARD, character for character, as the line
+                                        ! above. That is the whole point: three statistics have
+                                        ! been found today whose numerator and denominator ran
+                                        ! over different sets, so an age decomposition of this
+                                        ! average has to be summed over exactly the households
+                                        ! the average is summed over.
+                                        val_user_mass_age(time_period)=val_user_mass_age(time_period)+&
+                                            distribution_mass_used
+                                        val_user_age_num(time_period)=val_user_age_num(time_period)+&
+                                            (25.d0+real(age_index,8))*distribution_mass_used
+
+                                        if (age_index<=9) then
+                                            val_user_band(time_period,1)=val_user_band(time_period,1)+&
+                                                distribution_mass_used
+                                        elseif (age_index<=19) then
+                                            val_user_band(time_period,2)=val_user_band(time_period,2)+&
+                                                distribution_mass_used
+                                        elseif (age_index<=29) then
+                                            val_user_band(time_period,3)=val_user_band(time_period,3)+&
+                                                distribution_mass_used
+                                        elseif (age_index<=39) then
+                                            val_user_band(time_period,4)=val_user_band(time_period,4)+&
+                                                distribution_mass_used
+                                        else
+                                            val_user_band(time_period,5)=val_user_band(time_period,5)+&
+                                                distribution_mass_used
+                                        end if
+
+                                        if (age_index<=(life_span-retirement_span)) then
+                                            val_user_mass_working(time_period)=&
+                                                val_user_mass_working(time_period)+distribution_mass_used
+                                            val_user_income_working(time_period)=&
+                                                val_user_income_working(time_period)+income_1*distribution_mass_used
+                                        end if
+
                                     end if
                                     
                                     if ((addiction_consumption_1>0) .AND. &
