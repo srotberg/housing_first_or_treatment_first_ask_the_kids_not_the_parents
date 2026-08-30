@@ -326,10 +326,24 @@ def vector(text):
     return v
 
 
+# h_2 NAMES TWO DIFFERENT STATISTICS IN THIS ARCHIVE, AND ONLY THE LABEL
+# TELLS THEM APART. Until 30 August it was the share of housed households in
+# the smallest rental unit, target 0.132065; from then it is the share paying
+# more than half of income for housing, target 0.101. Every one of the 243
+# points measured before the change carries the old one. Reading both as "h_2"
+# would have the gate bracket a moment against points that measure something
+# else entirely -- a straddle built out of two different quantities, which is
+# exactly the class of error the bracket code already guards against across
+# slices. The label is in the point file, so use it.
+STALE_LABEL = {'h_2': 'smallest unit'}
+
+
 def moments(text):
     out = {}
-    for n, _, m, tg in re.findall(
+    for n, label, m, tg in re.findall(
             r'MOMENT (\S+)\s+(.*?)model=\s*([0-9.eE+-]+)\s+target=\s*([0-9.eE+-]+)', text):
+        if n in STALE_LABEL and STALE_LABEL[n] in label:
+            continue
         out[n] = (float(m), float(tg))
     return out
 
