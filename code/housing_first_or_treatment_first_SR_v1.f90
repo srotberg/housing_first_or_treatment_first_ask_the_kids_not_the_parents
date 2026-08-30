@@ -3780,6 +3780,17 @@
         ! already puts them. The rate needs its own denominator because
         ! homelessness_by_age is divided through by mass_by_age in a later pass.
         real(8), dimension(transition_length,5) :: val_homeless_band,val_mass_band
+        ! WHERE THE DISORDER IS, AGE BAND BY AGE BAND, AGAINST WHERE
+        ! HOMELESSNESS IS. The model puts 0.10 per cent of its homeless on a
+        ! disorder against 21.7 in Gutwinski, which is not a weak association but
+        ! a REVERSED one: a household carrying the disorder is 34 times LESS
+        ! likely to be homeless than a random household, where the data has it
+        ! 5.9 times MORE likely. The guards on that ratio are sound, so the
+        ! candidate explanation is composition -- 85 per cent of the model's
+        ! homeless are 26 to 34, and a disorder is a STOCK that accumulates with
+        ! age, so the two populations may simply not meet. These three make the
+        ! overlap visible instead of inferred.
+        real(8), dimension(transition_length,5) :: val_sud_band,val_homeless_sud_band
         integer :: val_band_1,val_is_homeless_1,val_is_sud_1,val_in_labour_force_1
         real(8) :: val_labour_income_1,val_gross_rent_1,val_treat_1
         
@@ -4409,6 +4420,18 @@
                     max(val_all_homeless_1/max(val_all_mass_1,10.d0**(-14)),10.d0**(-14)),&
                     " observed=", val_hud_rate_1(k_1)/0.002468d0
             end do
+            ! THE OVERLAP, BAND BY BAND. If the disorder rate is near zero in
+            ! the bands where the homeless are, the reversed association is
+            ! composition and not a defect in the housing choice.
+            do k_1=1,5
+                write(*,*) "DIAG disorder rate, band", k_1, "                    =",&
+                    val_sud_band(1,k_1)/max(val_mass_band(1,k_1),10.d0**(-14))
+            end do
+            do k_1=1,5
+                write(*,*) "DIAG SUD share of the homeless, band", k_1, "        =",&
+                    val_homeless_sud_band(1,k_1)/max(val_homeless_band(1,k_1),10.d0**(-14))
+            end do
+
             do k_1=1,5
                 write(*,*) "UNTARGETED share of the homeless, band", k_1, " model=",&
                     val_homeless_band(1,k_1)/max(val_all_homeless_1,10.d0**(-14)),&
@@ -13378,6 +13401,8 @@
         homelessness_by_age_group(time_period,:)=0
         val_homeless_band(time_period,:)=0
         val_mass_band(time_period,:)=0
+        val_sud_band(time_period,:)=0
+        val_homeless_sud_band(time_period,:)=0
         
         wealth_by_age_renter(time_period,:)=0
         income_by_age_renter(time_period,:)=0
@@ -13882,6 +13907,21 @@
                                     if (housing_status_index_used==lowest_housing_grid_point) then
                                         val_homeless_band(time_period,val_band_1)=&
                                             val_homeless_band(time_period,val_band_1)+distribution_mass_used
+                                    end if
+
+                                    ! CARRYING THE DISORDER, which is the test on
+                                    ! the unemployment index and NOT is_addicted,
+                                    ! since that one means consumes drugs.
+                                    if (unemployment_index>threshold_addiction_index) then
+
+                                        val_sud_band(time_period,val_band_1)=&
+                                            val_sud_band(time_period,val_band_1)+distribution_mass_used
+
+                                        if (housing_status_index_used==lowest_housing_grid_point) then
+                                            val_homeless_sud_band(time_period,val_band_1)=&
+                                                val_homeless_sud_band(time_period,val_band_1)+distribution_mass_used
+                                        end if
+
                                     end if
 
                                     if (housing_status_index_used==lowest_housing_grid_point) then
