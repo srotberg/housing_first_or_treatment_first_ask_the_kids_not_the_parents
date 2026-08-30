@@ -53,6 +53,14 @@ OWN = {
     'relative_share_of_addiction_1':                       'theta',
     'mu_homeless':                                         'mu_H',
     'lambda_m':                                            'lambda_m',
+    # THE SECOND HALF OF THE SMI PAIR. The parameter lambda_m moves BOTH SMI
+    # moments the same way -- raising it 0.067 to 0.12 took the share of the
+    # homeless 0.154 to 0.105 AND the population share 0.045 to 0.028 -- so it
+    # cannot fix one without breaking the other. smi_onset_level owns the
+    # population share: a controlled pair moves p_m by -6 per cent for a -20 per
+    # cent step while barely touching the share of the homeless, +1.25 per cent.
+    # Two moments, two instruments; only one of them had ever been listed.
+    'smi_onset_level':                                     'p_m',
     'value_of_life':                                       'aleph',
     'multiple_of_probabilities_of_employment_if_addicted': 'kappa_ued',
     'probability_of_voucher_benchmark_used':               'pi_V',
@@ -66,6 +74,7 @@ BOUNDS = {
     'relative_share_of_addiction_1':                       (0.40, 0.58),
     'mu_homeless':                                         (0.05, 1.0),
     'lambda_m':                                            (0.046, 0.500),
+    'smi_onset_level':                                     (1e-5, 0.5),
     'value_of_life':                                       (1.0, 500.0),
     'multiple_of_probabilities_of_employment_if_addicted': (1.0, 50.0),
     'probability_of_voucher_benchmark_used':               (0.0001, 0.999),
