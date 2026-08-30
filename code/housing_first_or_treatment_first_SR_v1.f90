@@ -4405,6 +4405,21 @@
                     " of whom over half of income=",&
                     val_burden50_by_unit(1,k_1)/max(val_mass_by_unit(1,k_1),10.d0**(-14))
             end do
+            ! AGGREGATE RENT OVER AGGREGATE INCOME, which is NOT what gamma
+            ! measures. gamma is model_avg_housing_spending_renters, a mass
+            ! weighted mean of household RATIOS, and a mean of ratios is not the
+            ! ratio of the means whenever the two are correlated -- which here
+            ! they are, since the burden is concentrated in the low income tail.
+            ! A data figure built as total rent over total income has to be
+            ! compared with this line and not with gamma.
+            !
+            ! aggregate_rent_spending is GROSS rent, before housing vouchers, and
+            ! covers housed renters only, so the homeless contribute nothing to
+            ! the numerator and their income is still in the denominator.
+            write(*,*) "DIAG aggregate rent / aggregate income           =",&
+                aggregate_rent_spending(1)/max(model_total_income(1),10.d0**(-14))
+            write(*,*) "DIAG aggregate rent / output                     =",&
+                aggregate_rent_spending(1)/max(model_output(1),10.d0**(-14))
             write(*,*) "DIAG asset grid, reachable points                =",&
                 real(positive_financial_grid_size+1,8)
             write(*,*) "DIAG share in the smallest unit                  =",&
