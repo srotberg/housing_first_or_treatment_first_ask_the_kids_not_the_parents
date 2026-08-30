@@ -4553,6 +4553,23 @@
                 val_nobuy_income(1)/max(val_nobuy_mass(1),10.d0**(-14))
             write(*,*) "DIAG buyers as a share of clean households      =",&
                 val_buy_mass(1)/max(val_buy_mass(1)+val_nobuy_mass(1),10.d0**(-14))
+
+            ! IS THERE A BUFFER BEHIND THE LOW INCOME? The author's reading is
+            ! that a household willing to risk the disorder is one with
+            ! something to fall back on -- rich parents in the data, wealth in
+            ! this model, since the model has no ongoing transfer from a parent
+            ! to an adult child and the endowment at age 26 is the whole of it.
+            ! The Stone Geary threshold is on total resources for consumption,
+            ! which include drawing wealth down, so a household with low income
+            ! and real assets is exactly the one the algebra says should buy.
+            ! These three were computed and never printed, so nobody could see
+            ! whether it does.
+            write(*,*) "DIAG assets of drug users / average net worth    =",&
+                model_average_assets_drug_users(1)/max(model_average_net_wealth(1),10.d0**(-14))
+            write(*,*) "DIAG assets of experimenters / average net worth =",&
+                model_avg_assets_experimenters(1)/max(model_average_net_wealth(1),10.d0**(-14))
+            write(*,*) "DIAG assets with a SUD / average net worth       =",&
+                model_average_assets_addicted(1)/max(model_average_net_wealth(1),10.d0**(-14))
             write(*,*) "DIAG aggregate rent / output                     =",&
                 aggregate_rent_spending(1)/max(model_output(1),10.d0**(-14))
             write(*,*) "DIAG asset grid, reachable points                =",&
