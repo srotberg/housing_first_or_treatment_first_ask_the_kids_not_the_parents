@@ -38,22 +38,51 @@ best point -- `point_a310e2357f` still holds that at 60 per cent. What changed i
 that the moment which was blocking is nearly solved: lambda_d was the worst
 moment at 70 of 110 points.
 
-## The locus, refitted on measured points
+## THE WALL: b and the ratio are in tension, and it is narrowing
 
-For each lambda there is one addiction_scalar_1 putting b on target; along that
-curve lambda_d is a function of lambda alone, so the two-instrument solve is a
-scalar root find. `locus.py` refits it from the archive -- it keeps only points
-differing from a named centre in lambda_addiction and addiction_scalar_1 alone,
-and interpolates between pairs that STRADDLE b = 0.089.
+Seventeen points now sit on the clean lambda/addiction_scalar_1 surface -- the
+points differing from a named centre in those two coordinates and nothing else.
+Laid out together they show why the drug block has never closed.
 
-    lambda 18.3 -> as1 0.018260, lambda_d +24.2%   (MEASURED)
-    lambda 11.8 -> as1 0.019059, lambda_d -47.7%   (interpolated)
+    lambda   as1        b        ratio (target 0.4135)
+     21.4  0.017800    +13%       +48%
+     20.0  0.018057     +5%       +41%
+     18.3  0.018050    +10%       +26%
+     18.3  0.018260     -4%       +30%
+     18.3  0.018470    -36%       -26%
+     15.0  0.017800    +80%       +10%
+     12.0  0.017237   +220%        +5%
+     21.4  0.018950    -72%        -3%
 
-    crossing at lambda 16.68, addiction_scalar_1 0.018459
+WHERE b IS RIGHT THE RATIO IS +26 TO +48 PER CENT; WHERE THE RATIO IS RIGHT b IS
+OFF BY 70 TO 300. This is the same wall the search hit from a worse place -- 47
+of 48 points with b near target had a ratio near 0.09 and one had 0.61 -- but it
+has moved a long way, and the tension NARROWS as lambda falls: +48 per cent at
+lambda 21.4, +30 at 18.3, +10 at 15.
 
-`LOCUS.txt` line 5 is already queued at lambda 16.5, as1 0.018485, within a hair
-of that. The ratio's elasticity in lambda, measured cleanly at fixed as1 from
-21.4 to 18, is +0.93.
+## The fold, and why aimed steps keep missing here
+
+addiction_scalar_1 does not have one elasticity, it has two regimes. At lambda
+18.3, measured:
+
+    0.018050 -> 0.018260   d ln b/d ln as1 = -11.9,  d ln lambda_d/d ln as1 =  -9.7
+    0.018260 -> 0.018470   d ln b/d ln as1 = -35.2,  d ln lambda_d/d ln as1 = -84.8
+
+A plateau, then a cliff. Across the plateau the ratio is flat (+26 to +30 per
+cent) while b falls from +10 to -4; across the cliff the ratio collapses to -26.
+Any step sized on the plateau elasticity and taken across the cliff overshoots by
+a factor of three, which is what has happened repeatedly.
+
+THE OPEN QUESTION, and `LAMBDA15.txt` is measuring it: does lambda 15 have the
+same plateau-then-cliff shape? If it does, there is room to bring b down by 80
+per cent while the ratio stays near +10, and the drug block closes. Three points
+at addiction_scalar_1 0.01810, 0.01845 and 0.01880 locate the b crossing AND say
+which regime it is in.
+
+CAUTION ON LOCUS2.txt, already running. Its addiction_scalar_1 values came from a
+locus slope fitted before the cliff was measured, so its three lines are expected
+to land b near -11, -22 and -31 per cent rather than on target. Their ratios are
+still information; the batch is not the closing bracket it was built to be.
 
 ## What remains, and that it is reachable
 
@@ -121,3 +150,8 @@ printed `_1` under the `_2` label and would have hidden a divergence.
 - A scope change -- opening an externally assigned parameter, moving a target --
   is the author's call. Fixing an outright bug is not, but say what it
   invalidates and MEASURE before believing it.
+- NEVER tell a worker to run its line through command substitution. A worker told
+  to run `bash code/run_one_point.sh $(sed -n "1p" FILE ...)` stalls on a
+  permission prompt and is lost silently; one sat blocked for forty minutes on
+  the batch measuring lambda_m. Tell it to `cat -n` the file, read the line, and
+  issue a separate Bash call whose command is that line verbatim.
