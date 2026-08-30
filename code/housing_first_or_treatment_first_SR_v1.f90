@@ -300,6 +300,14 @@
         integer, parameter :: measure_price_elasticity=0
         real(8), parameter :: elasticity_price_step=0.10
         real(8) :: val_price_base_1=0,val_users_base_1=0,val_qty_base_1=0
+        ! THE INTENSIVE MARGIN HAS TO BE DECOMPOSED OR IT CANNOT BE READ.
+        ! Quantity per USER mixes each household's own response to the price
+        ! with a shift in WHO is a user: addicts consume far more than
+        ! experimenters, and a price rise shrinks the disorder stock, so the mean
+        ! falls much faster than any individual's does. Olmstead's -0.80 is a
+        ! conditional elasticity among continuing regular users, which is the
+        ! per-addict number and not the per-user one.
+        real(8) :: val_qty_addict_base_1=0,val_qty_exper_base_1=0,val_addict_share_base_1=0
 
         ! THE COUNTERFACTUAL REMOVES THE PENALTY, NOT THE CHILD.
         !
@@ -4650,9 +4658,16 @@
                 val_price_base_1=price_of_addictive_good
                 val_users_base_1=model_total_drug_users(1)
                 val_qty_base_1=model_drugs_used_by_users_on_average(1)
+                val_qty_addict_base_1=model_drugs_used_by_addicts_on_average(1)
+                val_qty_exper_base_1=model_drugs_used_by_experimenters_on_average(1)
+                val_addict_share_base_1=model_mass_addicts(1)/&
+                    max(model_mass_addicts(1)+model_mass_experimenters(1),10.d0**(-14))
 
                 write(*,*) "ELASTICITY_DIAG base price=", val_price_base_1,&
                     " users=", val_users_base_1, " quantity per user=", val_qty_base_1
+                write(*,*) "ELASTICITY_DIAG base per addict=", val_qty_addict_base_1,&
+                    " per experimenter=", val_qty_exper_base_1,&
+                    " addict share of users=", val_addict_share_base_1
 
                 ! The market clears in the OUTER loop, so the price stays where
                 ! it is put across a direct solve and converge. That is the
@@ -4687,6 +4702,33 @@
                         log(1+elasticity_price_step), " observed=", -0.55d0
                 else
                     write(*,*) "ELASTICITY HELD     quantity per user went to zero at the higher price"
+                end if
+
+                write(*,*) "ELASTICITY_DIAG new per addict=", model_drugs_used_by_addicts_on_average(1),&
+                    " per experimenter=", model_drugs_used_by_experimenters_on_average(1),&
+                    " addict share of users=", model_mass_addicts(1)/&
+                    max(model_mass_addicts(1)+model_mass_experimenters(1),10.d0**(-14))
+
+                ! THE THREE PIECES THE PER-USER NUMBER IS MADE OF. The first is
+                ! the one the literature measures.
+                if ((model_drugs_used_by_addicts_on_average(1)>10.d0**(-12)) .AND. &
+                    (val_qty_addict_base_1>10.d0**(-12))) then
+                    write(*,*) "DIAG elasticity, quantity per ADDICT            =",&
+                        log(model_drugs_used_by_addicts_on_average(1)/val_qty_addict_base_1)/&
+                        log(1+elasticity_price_step)
+                end if
+                if ((model_drugs_used_by_experimenters_on_average(1)>10.d0**(-12)) .AND. &
+                    (val_qty_exper_base_1>10.d0**(-12))) then
+                    write(*,*) "DIAG elasticity, quantity per EXPERIMENTER      =",&
+                        log(model_drugs_used_by_experimenters_on_average(1)/val_qty_exper_base_1)/&
+                        log(1+elasticity_price_step)
+                end if
+                if ((val_addict_share_base_1>10.d0**(-12)) .AND. &
+                    (model_mass_addicts(1)+model_mass_experimenters(1)>10.d0**(-14))) then
+                    write(*,*) "DIAG elasticity, ADDICT SHARE of users          =",&
+                        log((model_mass_addicts(1)/(model_mass_addicts(1)+&
+                        model_mass_experimenters(1)))/val_addict_share_base_1)/&
+                        log(1+elasticity_price_step)
                 end if
 
                 price_of_addictive_good=val_price_base_1
