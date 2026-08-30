@@ -35,6 +35,8 @@ import os
 import re
 import sys
 
+import numpy as np
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 GATE = {'b': 0.05, 'lambda_d': 0.05}     # the author's five per cent, on both
@@ -85,6 +87,93 @@ BOUNDS = {
 # beta is banded on the author's instruction; h_2 is conceded.
 BAND = {'beta': (3.0, 4.5)}
 SKIP = {'h_2'}
+
+
+
+FREE = ('lambda_addiction', 'addiction_scalar_1')
+FREE_BOUNDS = {'lambda_addiction': (0.5, 20000.0), 'addiction_scalar_1': (1e-30, 1.0)}
+# A step is compensated when its predicted drift in b exceeds this, and shrunk
+# until the drift is no worse than MAX_DRIFT. Both come from the same finding:
+# four of the nine instruments drag b and lambda_d with them -- value_of_life by
+# -85 per cent, theta -74, pi_eu +44, kappa_ued +42 -- so moving them bare trades
+# one wrong moment for two right ones.
+COUPLED_AT = 0.10
+MAX_DRIFT = 0.20
+
+
+def drug_jacobian(A):
+    """d ln(b, lambda_d) / d ln(lambda_addiction, addiction_scalar_1), refit local.
+
+    Comparable points only: identical in every coordinate except the two free
+    ones. locus.py uses the same filter because four points once read b from
+    0.138 to 0.283 at identical lambda and addiction_scalar_1, differing only in
+    probability_becoming_unemployed.
+    """
+    import numpy as np
+    groups = {}
+    for tag, (v, m) in A.items():
+        if 'b' not in m or 'lambda_d' not in m:
+            continue
+        b, d = m['b'][0], m['lambda_d'][0]
+        lam = float(v.get('lambda_addiction', 0))
+        if b <= 0 or d <= 0 or not (15.0 <= lam <= 19.0):
+            continue
+        key = tuple(sorted((k, x) for k, x in v.items() if k not in FREE))
+        groups.setdefault(key, []).append((lam, float(v['addiction_scalar_1']), b, d))
+    if not groups:
+        return None, 0
+    best = max(groups.values(), key=len)
+    if len(best) < 4:
+        return None, len(best)
+    X = np.column_stack([np.ones(len(best)), [math.log(p[0]) for p in best],
+                         [math.log(p[1]) for p in best]])
+    rows = []
+    for i in (2, 3):
+        c, *_ = np.linalg.lstsq(X, np.array([math.log(p[i]) for p in best]), rcond=None)
+        rows.append(c[1:])
+    return np.array(rows), len(best)
+
+
+def coupling(A, param, base_v, base_m):
+    """Per e-fold of this parameter, the log change it causes in b and lambda_d.
+
+    Searched over ANY pair of archive points differing in this one coordinate,
+    not only pairs anchored at the current base. The base moves every round --
+    the gate re-opens on whichever point is best -- so a base-anchored search
+    finds nothing the moment the base advances, which is exactly what happened
+    the first time this was wired up: every arm came back uncoupled because the
+    arms had been measured at the PREVIOUS base and the new one differed from
+    them in five coordinates. Coupling is a property of the instrument, so the
+    pair that measures it does not have to touch the base at all.
+
+    The pair nearest the base in this coordinate wins, since these elasticities
+    are strongly local.
+    """
+    best = None
+    x_base = float(base_v[param]) if param in base_v else None
+    items = list(A.items())
+    for i in range(len(items)):
+        ta, (va, ma) = items[i]
+        for j in range(i + 1, len(items)):
+            tb, (vb, mb) = items[j]
+            if set(va) != set(vb):
+                continue
+            d = [k for k in va if va[k] != vb[k]]
+            if d != [param]:
+                continue
+            if not all(k in mm for mm in (ma, mb) for k in ('b', 'lambda_d')):
+                continue
+            xa, xb = float(va[param]), float(vb[param])
+            ya, yb = ma['b'][0], mb['b'][0]
+            da, db = ma['lambda_d'][0], mb['lambda_d'][0]
+            if min(xa, xb, ya, yb, da, db) <= 0 or abs(math.log(xb / xa)) < 1e-9:
+                continue
+            dx = math.log(xb / xa)
+            cand = (math.log(yb / ya) / dx, math.log(db / da) / dx)
+            dist = abs(math.log(xa / x_base)) if x_base else 0.0
+            if best is None or dist < best[1]:
+                best = (cand, dist)
+    return best[0] if best else None
 
 
 def vector(text):
@@ -171,6 +260,10 @@ def main():
           f'lambda_d {100*(m["lambda_d"][0]/m["lambda_d"][1]-1):+.1f}%. '
           f'Worst remaining {100*worst:.0f} per cent.\n')
 
+    DJ, ndj = drug_jacobian(A)
+    if DJ is not None:
+        print(f'drug block refit on {ndj} comparable points, '
+              f'condition {np.linalg.cond(DJ):.0f}\n')
     lines, skipped = [], []
     for param, mom in sorted(OWN.items(), key=lambda kv: -gap(kv[1], m[kv[1]]) if kv[1] in m else 0):
         if mom not in m or gap(mom, m[mom]) <= ACCEPT:
@@ -188,8 +281,27 @@ def main():
         if abs(math.log(x1 / x0)) < 1e-4:
             skipped.append(f'{param} (owns {mom}): at a bound, cannot move')
             continue
+        # COMPENSATE A COUPLED STEP INSTEAD OF EMITTING IT BARE. If this
+        # instrument drags b, shrink the step until the predicted drift is
+        # tolerable and fold in the lambda_addiction and addiction_scalar_1 that
+        # cancel what is left. Bare, these arms trade one wrong moment for the
+        # two that are finished.
+        note = ''
+        cpl = coupling(A, param, v, m)
+        if cpl and DJ is not None and abs(cpl[0] * step) > COUPLED_AT:
+            shrink = min(1.0, abs(math.log(1 + MAX_DRIFT) / (cpl[0] * step)))
+            step *= shrink
+            x1 = max(lo, min(hi, x0 * math.exp(step)))
+            fix = np.linalg.solve(DJ, np.array([-cpl[0] * step, -cpl[1] * step]))
+            note = f'  compensated, {shrink:.2f} of step, b drift {100*(math.exp(cpl[0]*step)-1):+.0f}%'
+        else:
+            fix = None
         nv = dict(v); nv[param] = f'{x1:.7g}'
-        lines.append((param, mom, x0, x1, e, 100 * (cur / tgt - 1),
+        if fix is not None:
+            for q, z in zip(FREE, fix):
+                y0 = float(v[q]); qlo, qhi = FREE_BOUNDS[q]
+                nv[q] = f'{max(qlo, min(qhi, y0 * math.exp(z))):.7g}'
+        lines.append((param, mom, x0, x1, e, 100 * (cur / tgt - 1), note,
                       'bash code/run_one_point.sh ' +
                       ' '.join(f'{k}={nv[k]}' for k in sorted(nv))))
 
@@ -218,8 +330,8 @@ def main():
     print(f'{len(lines)} correction arms written to {os.path.basename(out)}, '
           f'from point_{tag}, one coordinate each:\n')
     print(f'{"parameter":52s} {"moment":10s} {"gap":>7s} {"elast":>7s} {"from":>10s} {"to":>10s}')
-    for p, mo, x0, x1, e, g, _ in lines:
-        print(f'{p:52s} {mo:10s} {g:+6.0f}% {e:+7.2f} {x0:10.5g} {x1:10.5g}')
+    for p, mo, x0, x1, e, g, note, _ in lines:
+        print(f'{p:52s} {mo:10s} {g:+6.0f}% {e:+7.2f} {x0:10.5g} {x1:10.5g}{note}')
     for s in skipped:
         print(f'  skipped: {s}')
     return 0
