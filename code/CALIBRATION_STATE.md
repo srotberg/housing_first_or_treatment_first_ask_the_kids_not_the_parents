@@ -135,6 +135,44 @@ PREFERENCES ARE CONSTANT ACROSS STATES and `recompute_derived_parameters` now
 asserts it. The author asked; the model was already correct, but the diagnostic
 printed `_1` under the `_2` label and would have hidden a divergence.
 
+## Every point now carries the validation column
+
+The note's untargeted table, `tab:untargeted`, listed a data value and a source
+for twenty moments and nothing from the model beside any of them, so a table
+whose whole purpose is that the model can be caught on it had never been read
+against the model. Nineteen of the twenty rows now print inside the block
+`run_one_point.sh` keeps, as `UNTARGETED <name> model= ... observed= ...`, so
+they come free with every point from 30 August onward. Read them with
+
+    python3 code/paper/validation_report.py code/points/point_XXXXXXXXXX.txt
+
+which prints model, data and relative gap, and prints a row the point does NOT
+carry as missing rather than dropping it -- a table that silently loses a row
+reads as a table the model passed.
+
+Two rows are not free.
+
+- **The two drug price elasticities** need the price moved and the model
+  re-solved, so they sit behind `measure_price_elasticity`, which is 0 by
+  default and costs what `measure_child_gap` costs. Turn it on for a point
+  worth spending a second solve on. It refuses to run when `measure_child_gap`
+  is also on, because omega leaves its distribution behind and the elasticity
+  would then be measured off omega's world rather than the benchmark.
+
+- **Returns to homelessness within 24 months** is not implemented. It needs the
+  distribution pushed forward three periods from a seed of the currently
+  homeless, restricted after the first step to the ones who got housed. The
+  machinery exists in `compute_homelessness_duration`, which is a faithful
+  forward push and is commented out at its only call site, but it is written
+  age-by-age for a different question and answering this one means extracting
+  a one-step push out of `converge_to_stationary_equilibrium`. That is a
+  refactor of the most intricate loop in the file for one row of a validation
+  table, and it is the author's call whether to spend it.
+
+A point measured before this landed has none of these rows. It is not a failed
+point; it is an old one, and `validation_report.py` says so rather than
+inventing zeros.
+
 ## Standing operational rules
 
 - Every point runs through `run_one_point.sh`, cold, with the HANDOVER assertion.
