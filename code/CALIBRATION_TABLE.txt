@@ -1,37 +1,47 @@
-loop 108, 2026-08-30T16:55:46Z
+loop 1, 2026-08-30T17:17:07Z
 
-parameter                                 value     -> after moment                                        model        target    off by  status
----------------------------------------------------------------------------------------------------------------------------------------------------
-sd_permanent_productivity                    --           -- bottom_half_s_share_of_productivity         0.16905         0.172      1.7%  
-addiction_scalar                       0.253696            = --                                               --            --        --  no scalar moment
-discount_factor                         0.99715            = --                                               --            --        --  no scalar moment
-discount_factor_on_child                    700            = --                                               --            --        --  no scalar moment
-employment_multiplier                   2.77553            = --                                               --            --        --  no scalar moment
-fixed_cost_to_moving                         --           -- --                                               --            --        --  no scalar moment
-housing_status_grid_expander                  1            = --                                               --            --        --  no scalar moment
-kappa_uem                               21.1895            = --                                               --            --        --  no scalar moment
-labor_income_tax_rate                  0.752243            = --                                               --            --        --  no scalar moment
-lambda_addiction                        16.3285            = --                                               --            --        --  no scalar moment
-lambda_m                                  0.046            = --                                               --            --        --  no scalar moment
-largest_house_size                     0.111766            = --                                               --            --        --  no scalar moment
-max_food_cost                                --           -- --                                               --            --        --  no scalar moment
-minimum_inheritance                           0            = --                                               --            --        --  no scalar moment
-mu_homeless                                  --           -- --                                               --            --        --  no scalar moment
-penalty_child_addicted                       --           -- --                                               --            --        --  no scalar moment
-penalty_child_homeless                       --           -- --                                               --            --        --  no scalar moment
-probability_of_becoming_addicted        16.3285            = --                                               --            --        --  no scalar moment
-relative_share_of_addiction_1            0.5057            = --                                               --            --        --  no scalar moment
-relative_share_of_housing                    --           -- --                                               --            --        --  no scalar moment
-relative_share_of_leisure               3.05053            = --                                               --            --        --  no scalar moment
-separation_rate                              --           -- --                                               --            --        --  no scalar moment
-size_homelessness                     0.0758566            = --                                               --            --        --  no scalar moment
-smallest_house_size                   0.0377113            = --                                               --            --        --  no scalar moment
-utility_cost_of_treatment                    --           -- --                                               --            --        --  no scalar moment
-value_of_life                                --           -- --                                               --            --        --  no scalar moment
-voucher_probability                          --           -- --                                               --            --        --  no scalar moment
-weight_on_child                              --           -- --                                               --            --        --  no scalar moment
-zeta_DI                                      --           -- --                                               --            --        --  no scalar moment
----------------------------------------------------------------------------------------------------------------------------------------------------
-0 of 1 on target, 1 within three per cent; 29 parameters calibrated internally
+THIS IS A SWEEP LOG, NOT A CALIBRATION LOG. A sweep point stops
+above most of the moment prints and holds every parameter fixed,
+so the rows below are mostly empty and the ones that score are
+scored on one b at frozen everything else. Read the curve in
+B_SWEEP.tsv instead, and read this table again once the joint
+loop is running.
 
-accounted for: 29 calibrated + 0 not calibrated = 29 parameters with a target in the Fortran
+parameter                                                  value     -> after moment                                                   model        target    off by  status
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+relative_share_of_addiction_1                             0.5057            = drug_share_weighted_by_their_population_shares        0.230314         0.162     42.2%  
+lambda_addiction+probability_of_becoming_addicted        16.3285            = model_fraction_addicted                              0.0473317        0.0368     28.6%  
+discount_factor                                          0.99715            = wealth_to_output_model                                 3.50285             3     16.8%  
+kappa_uem                                                21.1895            = employment_rate_given_SMI                             0.327822           0.3      9.3%  
+labor_income_tax_rate                                   0.752243            = model_average_labour_income_tax                       0.240794         0.224      7.5%  
+relative_share_of_housing                               0.138404            = model_avg_housing_spending_renters                    0.248017         0.268      7.5%  
+size_homelessness                                      0.0758566            = model_fraction_homeless                             0.00390369       0.00399      2.2%  ON TARGET
+sd_permanent_productivity                                     --           -- bottom_half_s_share_of_productivity                    0.16905         0.172      1.7%  
+relative_share_of_leisure                                3.05053            = model_labor_supply_over_model_total_hours             0.396845           0.4      0.8%  
+addiction_scalar                                        0.253696            = --                                                          --            --        --  no scalar moment
+employment_multiplier                                    2.77553            = --                                                          --            --        --  no scalar moment
+fixed_cost_to_moving                                          --           -- --                                                          --            --        --  no scalar moment
+housing_status_grid_expander                                   1            = --                                                          --            --        --  no scalar moment
+largest_house_size                                      0.111766            = --                                                          --            --        --  no scalar moment
+max_food_cost                                                 --           -- --                                                          --            --        --  no scalar moment
+minimum_inheritance                                            0            = --                                                          --            --        --  no scalar moment
+mu_homeless                                                   --           -- --                                                          --            --        --  no scalar moment
+penalty_child_addicted                                        --           -- --                                                          --            --        --  no scalar moment
+penalty_child_homeless                                        --           -- --                                                          --            --        --  no scalar moment
+separation_rate                                               --           -- --                                                          --            --        --  no scalar moment
+smallest_house_size                                    0.0377113            = --                                                          --            --        --  no scalar moment
+utility_cost_of_treatment                                     --           -- --                                                          --            --        --  no scalar moment
+value_of_life                                                 --           -- --                                                          --            --        --  no scalar moment
+voucher_probability                                           --           -- --                                                          --            --        --  no scalar moment
+weight_on_child                                               --           -- --                                                          --            --        --  no scalar moment
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+1 of 9 on target, 2 within three per cent; 25 parameters calibrated internally
+
+5 parameter(s) NOT calibrated in this configuration, and therefore not rows above:
+  discount_factor_on_child                     its adjuster is zero, nothing moves it
+  lambda_m                                     its adjuster is zero, nothing moves it
+  rho_d                                        include_rho_d is 0, the channel is off
+  rho_m                                        include_rho_m is 0, the channel is off
+  zeta_DI                                      its adjuster is zero, nothing moves it
+
+accounted for: 25 calibrated + 5 not calibrated = 30 parameters with a target in the Fortran
