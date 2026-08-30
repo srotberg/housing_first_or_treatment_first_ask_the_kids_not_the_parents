@@ -325,6 +325,20 @@ def main():
                       'bash code/run_one_point.sh ' +
                       ' '.join(f'{k}={nv[k]}' for k in sorted(nv))))
 
+    # A base whose drug block has drifted gets a repair line of its own, so the
+    # arms and the restore run in the same round instead of alternating.
+    drift = max(gap('b', m['b']), gap('lambda_d', m['lambda_d']))
+    if drift > RESTORE_AT and DJ is not None:
+        fix = np.linalg.solve(DJ, np.array([math.log(m['b'][1] / m['b'][0]),
+                                            math.log(m['lambda_d'][1] / m['lambda_d'][0])]))
+        rv = dict(v)
+        for q, z in zip(FREE, fix):
+            y0 = float(v[q]); qlo, qhi = FREE_BOUNDS[q]
+            rv[q] = f'{max(qlo, min(qhi, y0 * math.exp(z))):.7g}'
+        lines.append(('RESTORE drug block', 'b, lambda_d', 0.0, 0.0, 0.0,
+                      100 * drift, '  repairs the base itself',
+                      'bash code/run_one_point.sh ' +
+                      ' '.join(f'{k}={rv[k]}' for k in sorted(rv))))
     # NEVER OVERWRITE A BATCH THAT IS STILL BEING CONSUMED. Workers read their
     # line out of this file and `git pull --rebase` between lines, so rewriting
     # it under them silently swaps the vectors on every line they have not
@@ -344,20 +358,6 @@ def main():
     if os.path.exists(prev) and open(prev).read() == body:
         print(f'identical to {os.path.basename(prev)}; nothing new to run.')
         return 3
-    # A base whose drug block has drifted gets a repair line of its own, so the
-    # arms and the restore run in the same round instead of alternating.
-    drift = max(gap('b', m['b']), gap('lambda_d', m['lambda_d']))
-    if drift > RESTORE_AT and DJ is not None:
-        fix = np.linalg.solve(DJ, np.array([math.log(m['b'][1] / m['b'][0]),
-                                            math.log(m['lambda_d'][1] / m['lambda_d'][0])]))
-        rv = dict(v)
-        for q, z in zip(FREE, fix):
-            y0 = float(v[q]); qlo, qhi = FREE_BOUNDS[q]
-            rv[q] = f'{max(qlo, min(qhi, y0 * math.exp(z))):.7g}'
-        lines.append(('RESTORE drug block', 'b, lambda_d', 0.0, 0.0, 0.0,
-                      100 * drift, '  repairs the base itself',
-                      'bash code/run_one_point.sh ' +
-                      ' '.join(f'{k}={rv[k]}' for k in sorted(rv))))
     out = os.path.join(HERE, f'CORRECT_{n}.txt')
     with open(out, 'w') as fh:
         fh.write(body)
