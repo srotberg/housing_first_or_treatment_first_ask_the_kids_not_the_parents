@@ -115,6 +115,9 @@ FREE_BOUNDS = {'lambda_addiction': (0.5, 20000.0), 'addiction_scalar_1': (1e-30,
 # -85 per cent, theta -74, pi_eu +44, kappa_ued +42 -- so moving them bare trades
 # one wrong moment for two right ones.
 COUPLED_AT = 0.10
+# How closely a foreign slice must reproduce the base's own reading of a moment,
+# at the base's own parameter value, before its bracket is trusted.
+TRANSFER_TOL = 0.15
 MAX_DRIFT = 0.20
 
 
@@ -230,10 +233,43 @@ def bracket(A, param, moment, target, base_v):
             continue
         key = tuple(sorted((k, val) for k, val in v.items() if k != param))
         groups.setdefault(key, []).append((x, y))
+    # THE BASE'S OWN SLICE ONLY. A bracket is a LEVEL, not a slope, and levels
+    # do not carry across slices. At 08:50 the fallback offered tau_u a bracket
+    # of [0.1543, 0.1929] measured on an old slice, when this base's own points
+    # put the crossing near 0.603 -- a factor of three and a half out, and it
+    # would have read as an interpolation rather than the extrapolation it is.
+    # A slope survives the move well enough to be worth damping and reusing; a
+    # level does not, so with no straddle here we fall back to the Newton step.
+    # A FOREIGN SLICE IS ADMISSIBLE ONLY IF IT IS SHOWN TO TRANSFER. A bracket is
+    # a LEVEL, and levels do not carry across slices for free: at 08:50 the
+    # fallback offered tau_u a bracket of [0.1543, 0.1929] from an old slice when
+    # this base's own points put the crossing near 0.603, a factor of three and a
+    # half out, dressed as an interpolation. But refusing every foreign slice is
+    # too strict in the other direction -- the slice holding the good tau_u
+    # bracket differs from the base in three coordinates and reads tau_u 0.32912
+    # where the base reads 0.34177, which is 3.8 per cent and plainly the same
+    # curve.
+    #
+    # So transferability is TESTED rather than assumed: a foreign slice qualifies
+    # only if it contains a point at (near) the base's own value of this
+    # parameter whose moment agrees with the base's to within TRANSFER_TOL. That
+    # is a direct measurement of whether the two slices lie on the same curve for
+    # this moment, which is exactly the question.
     base_key = tuple(sorted((k, val) for k, val in base_v.items() if k != param))
-    ordered = ([groups[base_key]] if base_key in groups else []) + \
-              [g for k, g in groups.items() if k != base_key]
     x_base = float(base_v[param])
+    y_base = None
+    for tag, (v, m) in A.items():
+        if tuple(sorted((k, val) for k, val in v.items() if k != param)) == base_key \
+                and abs(float(v[param]) - x_base) < 1e-12 and moment in m:
+            y_base = m[moment][0]
+            break
+    ordered = [groups[base_key]] if base_key in groups else []
+    for k, g in groups.items():
+        if k == base_key or y_base is None:
+            continue
+        near = [y for x, y in g if abs(math.log(x / x_base)) < 1e-6]
+        if near and abs(math.log(near[0] / y_base)) <= TRANSFER_TOL:
+            ordered.append(g)
     for pts in ordered:
         pts = sorted(set(pts))
         best = None
@@ -436,9 +472,19 @@ def main():
     # files to say so. This gate re-opens every firing and would have done
     # exactly that at 04:20, when it rewrote all nine arms from a new base while
     # six of the previous nine were still running. Each round gets its own file.
-    n = 1
-    while os.path.exists(os.path.join(HERE, f'CORRECT_{n}.txt')):
-        n += 1
+    # NEVER REUSE A NUMBER, even for a batch that has been deleted. The counter
+    # used to take the first free slot, so deleting CORRECT_7 and _8 -- they held
+    # an uncompensated step that would have tripled b -- freed the name and the
+    # next round wrote a completely different CORRECT_7. Any worker still holding
+    # that filename would silently run the wrong vectors. The high-water mark is
+    # kept on disk so it survives deletions.
+    mark = os.path.join(HERE, '.correct_seq')
+    used = int(open(mark).read().strip()) if os.path.exists(mark) else 0
+    for fn in os.listdir(HERE):
+        mm = re.match(r'CORRECT_(\d+)\.txt$', fn)
+        if mm:
+            used = max(used, int(mm.group(1)))
+    n = used + 1
     # AND DO NOT WRITE A ROUND THAT IS IDENTICAL TO THE LAST ONE. The gate
     # re-runs every half hour; while a round is still solving, nothing it reads
     # has changed, so it would otherwise deposit a byte-identical batch file
@@ -451,6 +497,8 @@ def main():
     out = os.path.join(HERE, f'CORRECT_{n}.txt')
     with open(out, 'w') as fh:
         fh.write(body)
+    with open(mark, 'w') as fh:
+        fh.write(str(n))
     print(f'{len(lines)} correction arms written to {os.path.basename(out)}, '
           f'from point_{tag}, one coordinate each:\n')
     print(f'{"parameter":52s} {"moment":10s} {"gap":>7s} {"elast":>7s} {"from":>10s} {"to":>10s}')
