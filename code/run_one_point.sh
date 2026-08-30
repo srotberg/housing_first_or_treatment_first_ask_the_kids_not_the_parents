@@ -79,6 +79,24 @@ done
 
 TAG=$(for k in "${!P[@]}"; do echo "$k=${P[$k]}"; done | sort | md5sum | cut -c1-10)
 
+# THE TAG OF THE SAME ECONOMICS BEFORE A NAME WAS ADDED TO THE VECTOR.
+#
+# Adding kappa_phi_d_level changed the md5 of every vector, so an arm measured
+# yesterday no longer matches its own file and would be solved a second time to
+# produce a byte-identical answer. Five of the eight arms of one batch were in
+# exactly that position, which is two and a half hours of compute for nothing.
+#
+# So a name whose value is still the default it had when it was introduced is
+# dropped, and the resulting LEGACY_TAG is checked as well. A point that moved
+# the parameter has a different value, does not qualify, and is measured -- which
+# is right, because it IS a different point. This mirrors next_batch.py's
+# IMPLICIT table and the two must be kept in step.
+declare -A LEGACY_DEFAULT=( [kappa_phi_d_level]=8.0 )
+LEGACY_TAG=$(for k in "${!P[@]}"; do
+    if [ -n "${LEGACY_DEFAULT[$k]+x}" ] && [ "${P[$k]}" = "${LEGACY_DEFAULT[$k]}" ]; then continue; fi
+    echo "$k=${P[$k]}"
+done | sort | md5sum | cut -c1-10)
+
 # A FAILURE THAT WRITES NOTHING IS INDISTINGUISHABLE FROM NOT HAVING STARTED.
 # Worker 2 of the first automated round ended its turn four minutes after firing
 # with no file in points/ and a status of SUCCEEDED. From outside there was no
@@ -106,6 +124,12 @@ fail () {
 # is the same comparison done exactly, so the check belongs here.
 if [ -f "points/point_${TAG}.txt" ] && grep -q "END OF MOMENTS" "points/point_${TAG}.txt"; then
     echo "run_one_point: $TAG is already measured, skipping"
+    exit 0
+fi
+if [ "$LEGACY_TAG" != "$TAG" ] && [ -f "points/point_${LEGACY_TAG}.txt" ] &&
+   grep -q "END OF MOMENTS" "points/point_${LEGACY_TAG}.txt"; then
+    echo "run_one_point: $TAG was measured as $LEGACY_TAG before the vector"
+    echo "run_one_point: gained a name it is still at the default of, skipping"
     exit 0
 fi
 
