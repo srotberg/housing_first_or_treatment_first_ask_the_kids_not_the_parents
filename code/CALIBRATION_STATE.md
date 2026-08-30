@@ -57,22 +57,58 @@ this one costs instead of oscillating. But if the share of the homeless is still
 far out after this round, it is a question for the author -- a floor to move or a
 target to concede -- and not something more points will solve.
 
-## What remains, and that it is reachable
+## What remains, and how each moment has to be reached
 
-Every moment still outside ten per cent has an instrument with a MEASURED
-elasticity, and six have already spanned their target in controlled pairs.
+The first correction round measured a single-coordinate arm for all nine
+remaining instruments at base point_1855f8103d. Eight of nine moved their own
+moment toward target. Four moments crossed into the band, and pi_eu -- recorded
+all night as the unexplained blocker, never better than +45 per cent over ninety
+points -- moved twenty five points in one step.
 
-    tau_u     +168%  utility_cost_of_treatment              e = -1.34, spanned
-    pi_eu      +74%  probability_becoming_unemployed        e = +0.78, crosses near 0.013
-    theta      +47%  relative_share_of_addiction_1          its true owner
-    mu_H       +34%  mu_homeless                            e = -1.17, lands within 3.5%
-    lambda_m   -31%  lambda_m                               NEVER MOVED in 114 points
-    aleph      -29%  value_of_life                          e = +1.63, spanned
-    kappa_ued  +28%  multiple_of_probabilities_..._addicted e = +0.86, spanned
-    pi_V       -16%  probability_of_voucher_benchmark_used  e = +0.74, spanned
+The arms also say what each instrument does to b and lambda_d, which are
+finished and must stay that way. THAT is what decides how each moment is
+reached:
 
-The author on 30 August 02:30: "it's ok, we can adjust the ones that are off
-later" -- land b and lambda_d first, then correct the rest off the Jacobian.
+    moment     now    instrument                       effect on b / lambda_d
+    ------------------------------------------------------------------------
+    h_1       +11%    size_homelessness                 +2  /  +0    move freely
+    mu_H      +10%    mu_homeless                       +2  /  +5    move freely
+    tau_u    +120%    utility_cost_of_treatment         -4  /  -7    move freely
+    pi_V       -5%    probability_of_voucher...          0  /  +2    in band
+    lambda_m  -53%    lambda_m                          -3  /  -8    FLOOR-BOUND
+    kappa_ued +10%    multiple_of_prob..._addicted     +42  / +61    needs repair
+    pi_eu     +45%    probability_becoming_unemployed  +44  / +64    needs repair
+    theta     +52%    relative_share_of_addiction_1    -74  / -83    needs repair
+    aleph     -10%    value_of_life                    -85  / -91    needs repair
+
+THE NESTED LOOP FOR A COUPLED INSTRUMENT. Step it SMALL, run `restore.py <tag>`
+to get the lambda_addiction and addiction_scalar_1 that put b and lambda_d back,
+measure, repeat. Small is not timidity: the fit that closed the drug block is
+local and log-linear over lambda 16 to 19 and cannot undo an 85 per cent move in
+b, so keep b inside roughly twenty per cent per step, where the repair has been
+verified. restore.py refits from the archive every call because the same
+elasticity reads -12 and -35 a few thousandths of addiction_scalar_1 apart.
+
+A JOINT LEAST SQUARES OVER ALL NINE IS WORSE AND HAS BEEN TRIED. joint_step.py
+solves the full measured 11-by-9 Jacobian with b and lambda_d weighted twelvefold
+to protect them. Its own predictions are inferior to the individual arms almost
+everywhere -- aleph -29 to -31 per cent where the arm alone reached -10, mu_H +36
+to +33 where the arm reached +10 -- and it still pushes lambda_d to +14. The
+condition number is 617; the solve spends its freedom on the hardest moments and
+degrades the easy ones. Do not re-run it expecting a different answer.
+
+## The one thing that needs the author, not more search
+
+relative_share_of_addiction_1 is contested. theta needs it UP (elasticity -4.64,
+re-measured on this round's own pair). The SMI share of the homeless needs it
+DOWN: that arm moved the moment +108 per cent, which would carry it from -54 to
+about -4, essentially on target. Its own parameter lambda_m cannot do the job --
+elasticity -0.08, and the step it wants lands on the floor of 0.046.
+
+So one parameter is the only effective instrument for two moments that want
+opposite directions, and it is also violently coupled into the drug block. The
+options are the author's: concede one of the two moments, move lambda_m's floor,
+or add an instrument to the SMI block. More points will not resolve it.
 
 ## Rules that came out of specific mistakes
 
