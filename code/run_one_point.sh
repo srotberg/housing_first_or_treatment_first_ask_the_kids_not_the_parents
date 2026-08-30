@@ -77,6 +77,35 @@ for a in "$@"; do
     P[$k]=$v
 done
 
+# THE HOUSING GRID INVERTS IF THE SMALLEST UNIT IS NOT SMALLER THAN THE LARGEST.
+#
+# housing_size(0)=smallest_rental..., housing_size(n-1)=largest_house_size, and
+# the interior points are laid out by
+#
+#   housing_status_grid_distance(i) = i*(largest-smallest)^(1/expander)/(n-1)
+#   housing_size = smallest + distance^expander
+#
+# so at smallest>largest the grid runs DOWNWARD and index n-1, which every
+# moment calls "the largest unit", is the CHEAPEST one. Nothing in the Fortran
+# notices: the run completes and prints a share in the largest unit that is
+# really the share in the smallest.
+#
+# This happened. The ladder point at smallest_rental=0.15 was solved against
+# largest_house_size=0.1118 and reported h_3 = 0.295 against a target of 0.627,
+# which reads as a large miss and is not a measurement of anything. Fail here
+# instead, and leave the FAILED file so it is visible.
+if awk -v a="${P[smallest_rental_relative_to_lowest_income]}" \
+       -v b="${P[largest_house_size]}" 'BEGIN{exit !(a+0 >= b+0)}'; then
+    echo "run_one_point: smallest_rental_relative_to_lowest_income=${P[smallest_rental_relative_to_lowest_income]}" >&2
+    echo "run_one_point: is not below largest_house_size=${P[largest_house_size]}; the housing" >&2
+    echo "run_one_point: grid would invert and every unit share would be reversed." >&2
+    mkdir -p points
+    printf 'point FAILED: inverted housing grid, smallest=%s largest=%s\n' \
+        "${P[smallest_rental_relative_to_lowest_income]}" "${P[largest_house_size]}" \
+        > "points/point_inverted_grid_$$.FAILED.txt"
+    exit 2
+fi
+
 TAG=$(for k in "${!P[@]}"; do echo "$k=${P[$k]}"; done | sort | md5sum | cut -c1-10)
 
 # THE TAG OF THE SAME ECONOMICS BEFORE A NAME WAS ADDED TO THE VECTOR.
