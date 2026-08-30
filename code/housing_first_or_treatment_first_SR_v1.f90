@@ -282,6 +282,25 @@
         ! switched off until the other parameters have converged.
         integer, parameter :: measure_child_gap=0
 
+        ! WHETHER A POINT MEASURES THE TWO DRUG PRICE ELASTICITIES. They are
+        ! validation moments, not targets -- the participation margin against
+        ! Saffer and Chaloupka's -0.63 and the intensive margin against the
+        ! -0.3 to -0.8 range -- and the model produces both out of the drug
+        ! market and the utility weight with nothing disciplining either. They
+        ! cost what omega costs, a second solve and a second convergence, so
+        ! like omega they are off until a point is worth spending it on.
+        !
+        ! THE EXPERIMENT IS THE DEMAND CURVE AND NOT THE EQUILIBRIUM. The drug
+        ! market clears in the OUTER calibration loop, so setting the price here
+        ! and calling solve and converge directly holds it where it is put: the
+        ! quantity that comes back is the quantity demanded at the new price and
+        ! not a new equilibrium, which is what an elasticity of demand is.
+        ! Rents, house prices, taxes and inheritances are equally untouched for
+        ! the same reason.
+        integer, parameter :: measure_price_elasticity=0
+        real(8), parameter :: elasticity_price_step=0.10
+        real(8) :: val_price_base_1=0,val_users_base_1=0,val_qty_base_1=0
+
         ! THE COUNTERFACTUAL REMOVES THE PENALTY, NOT THE CHILD.
         !
         ! The child term is beta*(1-phi)*omega*E[V_child], weighted by the
@@ -3731,6 +3750,30 @@
         real(8), dimension(transition_length,life_span,number_of_thresholds) :: model_rent_burden_by_age
                                         
         real(8) :: fraction_of_income_spent_on_housing
+
+        ! THE VALIDATION SECTION'S MODEL COLUMN. Table tab:untargeted gives a
+        ! data value and a source for every row and NOTHING from the model
+        ! beside them, so a table of twenty moments the model produces
+        ! endogenously has never once been read against the model. Most of the
+        ! rows only ever needed an accumulator alongside one the distribution
+        ! passes were already building. Each of these is written by exactly one
+        ! block and read only by print_all_moments, so a mistake in any of them
+        ! can produce a wrong validation number and cannot reach a target.
+        real(8), dimension(transition_length) :: val_treat_mass,val_treat_homeless,&
+            val_treat_smi,val_treat_homeless_working
+        real(8), dimension(transition_length) :: val_lfp_sud_num,val_lfp_sud_den,&
+            val_lfp_clean_num,val_lfp_clean_den,val_lfp_sud_work_den,val_lfp_clean_work_den
+        real(8), dimension(transition_length) :: val_deaths_all_young,val_deaths_clean_young
+        real(8), dimension(transition_length) :: val_voucher_mass,val_voucher_rent,&
+            val_voucher_income,val_voucher_wage_led
+        ! THE FIVE HUD POINT IN TIME BANDS: 25-34, 35-44, 45-54, 55-64 and 65
+        ! and over. Model age one is data age 26, so the cuts fall after age
+        ! index 9, 19, 29 and 39, which is where homelessness_by_age_group
+        ! already puts them. The rate needs its own denominator because
+        ! homelessness_by_age is divided through by mass_by_age in a later pass.
+        real(8), dimension(transition_length,5) :: val_homeless_band,val_mass_band
+        integer :: val_band_1,val_is_homeless_1,val_is_sud_1,val_in_labour_force_1
+        real(8) :: val_labour_income_1,val_gross_rent_1,val_treat_1
         
         integer :: thread_num,thread_index,total_number_of_threads
         
@@ -4220,6 +4263,15 @@
             ! denominator of the gap has to be held before it runs.
             real(8) :: baseline_users_for_gap
             integer :: k_1
+            ! THE VALIDATION BLOCK'S OWN SCRATCH. HUD's five band rates and
+            ! five band shares are written here rather than as parameters
+            ! because they belong to the one block that reads them.
+            real(8) :: val_all_homeless_1,val_all_mass_1,val_cum_1
+            real(8) :: val_earn_total_1,val_earn_bottom_1,val_earn_top_1
+            real(8), dimension(5) :: val_hud_rate_1=(/0.003161d0,0.003378d0,&
+                0.002912d0,0.002496d0,0.000770d0/)
+            real(8), dimension(5) :: val_hud_share_1=(/0.260d0,0.272d0,&
+                0.210d0,0.184d0,0.075d0/)
 
             w2o_1=model_total_net_wealth(1)/max(model_GDP_incl_imput_rent(1),10.d0**(-12))
             vsl_1=model_value_of_life(1)/max(model_average_labour_income(1),10.d0**(-12))
@@ -4318,6 +4370,177 @@
             write(*,*) "UNTARGETED delta_h child homelessness ratio  model=",&
                 chom_n_1/max(chom_d_1,10.d0**(-12)), " observed=", child_homeless_ratio_data
 
+            ! ============================================================
+            ! THE VALIDATION SECTION, tab:untargeted, WITH THE MODEL BESIDE
+            ! THE DATA. Every row of that table has carried a data value and
+            ! a source and no model number, which makes it a table of things
+            ! the model is not asked to match and also is not checked on.
+            ! The rows below are every one the benchmark can produce without
+            ! a second solve; the two price elasticities need the drug price
+            ! perturbed and re-solved, and returns to homelessness needs the
+            ! distribution pushed forward two periods, so neither is here.
+            ! ------------------------------------------------------------
+
+            ! THE HOMELESSNESS PROFILE BY AGE. HUD publishes the age
+            ! distribution for PEOPLE and h_1 is calibrated to a HOUSEHOLD
+            ! rate, so the level differs by construction and the PROFILE is
+            ! the check: each band's rate over the all band rate, against
+            ! HUD's own 1.281, 1.369, 1.180, 1.011 and 0.312.
+            val_all_homeless_1=sum(val_homeless_band(1,:))
+            val_all_mass_1=sum(val_mass_band(1,:))
+            write(*,*) "DIAG homelessness rate rebuilt from the bands    =",&
+                val_all_homeless_1/max(val_all_mass_1,10.d0**(-14))
+            do k_1=1,5
+                write(*,*) "UNTARGETED homelessness rate, band", k_1, " model=",&
+                    val_homeless_band(1,k_1)/max(val_mass_band(1,k_1),10.d0**(-14)),&
+                    " observed=", val_hud_rate_1(k_1)
+            end do
+            do k_1=1,5
+                write(*,*) "UNTARGETED homelessness profile, band", k_1, " model=",&
+                    (val_homeless_band(1,k_1)/max(val_mass_band(1,k_1),10.d0**(-14)))/&
+                    max(val_all_homeless_1/max(val_all_mass_1,10.d0**(-14)),10.d0**(-14)),&
+                    " observed=", val_hud_rate_1(k_1)/0.002468d0
+            end do
+            do k_1=1,5
+                write(*,*) "UNTARGETED share of the homeless, band", k_1, " model=",&
+                    val_homeless_band(1,k_1)/max(val_all_homeless_1,10.d0**(-14)),&
+                    " observed=", val_hud_share_1(k_1)
+            end do
+
+            ! THE TWO EARNINGS TENTHS, off the same productivity grid and the
+            ! same ergodic weights sigma_y's bottom half share is read from,
+            ! so the three are one computation and only the middle one is
+            ! targeted. The node the cut falls inside is split at the cut,
+            ! for the reason that computation gives.
+            val_earn_total_1=0
+            do k_1=1,employment_grid_size
+                val_earn_total_1=val_earn_total_1+&
+                    employment_grid(1,k_1)*unconditional_employment_probability(k_1)
+            end do
+            val_earn_bottom_1=0
+            val_cum_1=0
+            do k_1=1,employment_grid_size
+                if ((val_cum_1+unconditional_employment_probability(k_1))<=0.1d0) then
+                    val_earn_bottom_1=val_earn_bottom_1+&
+                        employment_grid(1,k_1)*unconditional_employment_probability(k_1)
+                    val_cum_1=val_cum_1+unconditional_employment_probability(k_1)
+                else
+                    val_earn_bottom_1=val_earn_bottom_1+employment_grid(1,k_1)*(0.1d0-val_cum_1)
+                    exit
+                end if
+            end do
+            val_earn_top_1=0
+            val_cum_1=0
+            do k_1=1,employment_grid_size
+                if ((val_cum_1+unconditional_employment_probability(k_1))<=0.9d0) then
+                    val_earn_top_1=val_earn_top_1+&
+                        employment_grid(1,k_1)*unconditional_employment_probability(k_1)
+                    val_cum_1=val_cum_1+unconditional_employment_probability(k_1)
+                else
+                    val_earn_top_1=val_earn_top_1+employment_grid(1,k_1)*(0.9d0-val_cum_1)
+                    exit
+                end if
+            end do
+            write(*,*) "UNTARGETED earnings share, bottom tenth      model=",&
+                val_earn_bottom_1/max(val_earn_total_1,10.d0**(-14)), " observed=", 0.0099d0
+            write(*,*) "UNTARGETED earnings share, top tenth         model=",&
+                1.d0-val_earn_top_1/max(val_earn_total_1,10.d0**(-14)), " observed=", 0.411d0
+
+            write(*,*) "UNTARGETED net worth share, bottom half      model=",&
+                model_bottom_half_wealth_share(1), " observed=", 0.0252d0
+
+            ! COST BURDEN AMONG RENTERS, at the same two cuts the model has
+            ! been carrying all along and never read: 0.30 and 0.50 of
+            ! income. The universe is renters, which is the SCF universe the
+            ! appendix derives 40.6 and 17.5 on.
+            write(*,*) "UNTARGETED renters above 30 pct of income    model=",&
+                mass_of_renters_at_housing_spending(1,1), " observed=", 0.406d0
+            write(*,*) "UNTARGETED renters above 50 pct of income    model=",&
+                mass_of_renters_at_housing_spending(1,2), " observed=", 0.175d0
+
+            ! THE TWO PICTURE OF SUBSIDIZED HOUSEHOLDS ROWS. The tenant
+            ! contribution rate is the check on kappa_r, which is set to
+            ! 0.30 against HUD's 31.2 per cent, and it can come in UNDER
+            ! 0.30 because a household whose rent is below kappa_r times its
+            ! income draws no voucher and pays the rent.
+            write(*,*) "UNTARGETED tenant contribution rate          model=",&
+                val_voucher_rent(1)/max(val_voucher_income(1),10.d0**(-14)),&
+                " observed=", 0.312d0
+            write(*,*) "UNTARGETED voucher holders, wages main       model=",&
+                val_voucher_wage_led(1)/max(val_voucher_mass(1),10.d0**(-14)),&
+                " observed=", 0.28d0
+
+            ! LABOUR FORCE PARTICIPATION. The pair is the row, not either
+            ! half: NSDUH has participation HIGHER with a disorder, so a
+            ! model that produces the penalty by pushing people out of the
+            ! labour force fails this even with both levels close.
+            write(*,*) "UNTARGETED participation, with a SUD         model=",&
+                val_lfp_sud_num(1)/max(val_lfp_sud_den(1),10.d0**(-14)),&
+                " observed=", 0.658d0
+            write(*,*) "UNTARGETED participation, without a SUD      model=",&
+                val_lfp_clean_num(1)/max(val_lfp_clean_den(1),10.d0**(-14)),&
+                " observed=", 0.615d0
+            ! THE SAME PAIR OVER WORKING AGE HOUSEHOLDS ONLY, which is not the
+            ! data's universe and is kept because it measures something else
+            ! worth knowing: if these are 1, the model has no extensive labour
+            ! supply margin at all and the participation row above is carried
+            ! entirely by the age composition of the two groups.
+            write(*,*) "DIAG participation, with a SUD, working age      =",&
+                val_lfp_sud_num(1)/max(val_lfp_sud_work_den(1),10.d0**(-14))
+            write(*,*) "DIAG participation, without a SUD, working age   =",&
+                val_lfp_clean_num(1)/max(val_lfp_clean_work_den(1),10.d0**(-14))
+
+            ! THE THREE TEDS-A ROWS, all on the flow into treatment.
+            write(*,*) "UNTARGETED homeless at treatment admission   model=",&
+                val_treat_homeless(1)/max(val_treat_mass(1),10.d0**(-14)),&
+                " observed=", 0.145d0
+            write(*,*) "UNTARGETED SMI alongside SUD at admission    model=",&
+                val_treat_smi(1)/max(val_treat_mass(1),10.d0**(-14)),&
+                " observed=", 0.431d0
+            write(*,*) "UNTARGETED working, homeless in treatment    model=",&
+                val_treat_homeless_working(1)/max(val_treat_homeless(1),10.d0**(-14)),&
+                " observed=", 0.066d0
+
+            ! EMPLOYMENT AMONG THE HOMELESS. Computed as the complement of
+            ! model_fraction_of_homeless_unemployed, working age on both sides,
+            ! and written only to baseline_benchmark.txt -- so the only value
+            ! anyone could read was from a file six months old, which said every
+            ! working age homeless household was unemployed. Either that is a
+            ! real property of the benchmark or the ratio is degenerate, and a
+            ! number nobody can see from a point file cannot be told apart.
+            ! The validation table already carries the TEDS-A row for working at
+            ! all among the homeless IN TREATMENT, at 6.6 per cent, so this is
+            ! the population that row is a subset of.
+            write(*,*) "DIAG employed share of the homeless, working age =",&
+                model_employed_share_of_homeless(1)
+            write(*,*) "DIAG working age homeless mass                   =",&
+                model_mass_homeless_working_age(1)
+
+            ! THE SUD SHARE OF THE HOMELESS, the untargeted half of the same
+            ! Gutwinski meta regression lambda_m is calibrated to.
+            write(*,*) "UNTARGETED SUD share of the homeless         model=",&
+                model_fraction_homeless_and_addicted(1), " observed=", 0.217d0
+
+            ! DRUG POISONINGS AS A SHARE OF DEATHS AT 25 TO 44. The model
+            ! has no cause of death; what it has is a survival probability
+            ! that takes the disorder as an argument, so the deaths the
+            ! disorder is responsible for are the ones that would not have
+            ! happened at the clean hazard with age, homelessness and SMI
+            ! held. Ages 26 to 44, because model age one is data age 26.
+            ! THE PARAMETER THE ROW ABOVE AND THE TWO INCOME ROWS ALL TURN ON,
+            ! printed beside them because it is now searchable and a point that
+            ! does not record it cannot be read.
+            write(*,*) "DIAG kappa_phi_d_level, SUD mortality level      =",&
+                kappa_phi_d_level
+            write(*,*) "UNTARGETED drug deaths, share of deaths      model=",&
+                (val_deaths_all_young(1)-val_deaths_clean_young(1))/&
+                max(val_deaths_all_young(1),10.d0**(-14)),&
+                " observed=", 0.20d0
+
+            write(*,*) "VALIDATION NOT COMPUTED: returns to homelessness within 24 months,",&
+                " and the two drug price elasticities; each needs a second solve."
+            ! ============================================================
+
             ! OMEGA_C'S MOMENT, AND WHY IT IS LAST.
             !
             ! It is the only targeted moment that is not a statistic of the
@@ -4403,6 +4626,73 @@
                     "so the child use gap is not measurable"
 
             end if
+
+            ! THE TWO DRUG PRICE ELASTICITIES, and they go below omega because
+            ! a counterfactual leaves its distribution behind and this is one.
+            ! When omega has run, the base this would perturb is omega's world
+            ! and not the benchmark, so the two cannot both be measured in one
+            ! point and this one says so rather than printing a number off the
+            ! wrong base.
+            if (measure_price_elasticity==0) then
+
+                write(*,*) "ELASTICITY SKIPPED  drug price elasticities off by measure_price_elasticity"
+
+            elseif (measure_child_gap==1) then
+
+                write(*,*) "ELASTICITY SKIPPED  omega ran first and left its distribution behind"
+
+            elseif (model_total_drug_users(1)<=10.d0**(-8)) then
+
+                write(*,*) "ELASTICITY HELD     nobody uses, so a demand elasticity is not defined"
+
+            else
+
+                val_price_base_1=price_of_addictive_good
+                val_users_base_1=model_total_drug_users(1)
+                val_qty_base_1=model_drugs_used_by_users_on_average(1)
+
+                write(*,*) "ELASTICITY_DIAG base price=", val_price_base_1,&
+                    " users=", val_users_base_1, " quantity per user=", val_qty_base_1
+
+                ! The market clears in the OUTER loop, so the price stays where
+                ! it is put across a direct solve and converge. That is the
+                ! whole reason this measures a demand curve.
+                price_of_addictive_good=val_price_base_1*(1+elasticity_price_step)
+
+                call solve_value_function_and_policy_functions(1)
+                call converge_to_stationary_equilibrium(1)
+                call stationary_equilibrium_statistics(1)
+                ! model_total_drug_users is built in govt_revenues_calc and not
+                ! in stationary_equilibrium_statistics, which is the mistake
+                ! omega made and paid for.
+                call govt_revenues_calc(1)
+
+                write(*,*) "ELASTICITY_DIAG new price=", price_of_addictive_good,&
+                    " users=", model_total_drug_users(1),&
+                    " quantity per user=", model_drugs_used_by_users_on_average(1)
+
+                if ((model_total_drug_users(1)>10.d0**(-12)) .AND. &
+                    (val_users_base_1>10.d0**(-12))) then
+                    write(*,*) "UNTARGETED price elasticity, participation   model=",&
+                        log(model_total_drug_users(1)/val_users_base_1)/&
+                        log(1+elasticity_price_step), " observed=", -0.63d0
+                else
+                    write(*,*) "ELASTICITY HELD     participation went to zero at the higher price"
+                end if
+
+                if ((model_drugs_used_by_users_on_average(1)>10.d0**(-12)) .AND. &
+                    (val_qty_base_1>10.d0**(-12))) then
+                    write(*,*) "UNTARGETED price elasticity, intensive       model=",&
+                        log(model_drugs_used_by_users_on_average(1)/val_qty_base_1)/&
+                        log(1+elasticity_price_step), " observed=", -0.55d0
+                else
+                    write(*,*) "ELASTICITY HELD     quantity per user went to zero at the higher price"
+                end if
+
+                price_of_addictive_good=val_price_base_1
+
+            end if
+
             ! WHO IS HOMELESS, AND WHETHER THEY HAD A CHOICE. These are
             ! diagnostics, not moments: the prefix is DIAG so nothing parses them
             ! as targets and the moment count does not move. They are here rather
@@ -4455,6 +4745,43 @@
                 model_drugs_used_by_users_on_average(1)
             write(*,*) "DIAG onset at the mean quantity                  =",&
                 1-exp(-lambda_addiction*model_drugs_used_by_users_on_average(1))
+            ! THE VALIDATION SECTION'S INCOME ROWS. The model has carried these
+            ! three averages all along and never printed one of them, so the
+            ! table in the note lists a data value and a source for each with no
+            ! model counterpart beside it. They are ratios to average income
+            ! because that is how NSDUH reports them: 74.0 per cent of average
+            ! for drug users and 71.1 for a moderate or severe disorder.
+            write(*,*) "UNTARGETED income of drug users              model=",&
+                model_avg_income_drug_users(1)/&
+                max(model_average_income(1),10.d0**(-14)),&
+                " observed=", 0.740d0
+            write(*,*) "UNTARGETED income with a SUD                 model=",&
+                model_average_income_addicted(1)/&
+                max(model_average_income(1),10.d0**(-14)),&
+                " observed=", 0.711d0
+            ! HOW BIG THE CORRECTION ABOVE WAS. This is the share of households
+            ! carrying the disorder that consume nothing, and it is exactly the
+            ! group whose income the three statistics above used to drop while
+            ! counting its mass. It was computed, written to a file and never
+            ! printed, so the bias was invisible from a point file.
+            write(*,*) "DIAG carriers of the disorder consuming no drugs =",&
+                model_addicts_consuming_no_drugs(1)
+            write(*,*) "DIAG income of experimenters / average           =",&
+                model_avg_income_experimenters(1)/&
+                max(model_average_income(1),10.d0**(-14))
+            ! THE SAME TWO OVER AVERAGE LABOUR INCOME, WHICH IS NOT THE SAME
+            ! NUMBER AND IS THE ONE THE NOTE ALREADY QUOTES. The old benchmark's
+            ! 0.41 for drug users is a ratio to average LABOUR income, and the
+            ! rows above are ratios to average TOTAL income because that is what
+            ! NSDUH's income concept is. Printing only one of them guarantees
+            ! that someone eventually reads the new figure against the old and
+            ! calls a change of denominator a change in the model.
+            write(*,*) "DIAG income of drug users / labour income        =",&
+                model_avg_income_drug_users(1)/&
+                max(model_average_labour_income(1),10.d0**(-14))
+            write(*,*) "DIAG income with a SUD / labour income           =",&
+                model_average_income_addicted(1)/&
+                max(model_average_labour_income(1),10.d0**(-14))
             write(*,*) "DIAG mass ON the top savings grid point          =",&
                 diag_mass_top_financial/max(sum_of_distribution,10.d0**(-12))
             write(*,*) "DIAG mass in the top THREE savings grid points   =",&
@@ -9469,6 +9796,19 @@
         clean_consumption_by_employment(time_period,:)=0
         model_average_spent_on_addiction_by_addicted(time_period)=0
         model_treatment_take_up(time_period)=0
+
+        val_treat_mass(time_period)=0
+        val_treat_homeless(time_period)=0
+        val_treat_smi(time_period)=0
+        val_treat_homeless_working(time_period)=0
+        val_lfp_sud_num(time_period)=0
+        val_lfp_sud_den(time_period)=0
+        val_lfp_clean_num(time_period)=0
+        val_lfp_clean_den(time_period)=0
+        val_lfp_sud_work_den(time_period)=0
+        val_lfp_clean_work_den(time_period)=0
+        val_deaths_all_young(time_period)=0
+        val_deaths_clean_young(time_period)=0
         model_mass_with_sud(time_period)=0
         model_sud_mass_housed(time_period)=0
         model_sud_mass_homeless(time_period)=0
@@ -9682,6 +10022,139 @@
                                     model_alive_by_age(age_index)=&
                                         model_alive_by_age(age_index)+distribution_mass_used
 
+                                    ! THE VALIDATION ROWS THIS PASS CAN SEE, put
+                                    ! where every household passes and where the
+                                    ! numerator and the denominator of each are
+                                    ! therefore in the same loop nest, for the
+                                    ! reason the comment above gives.
+                                    val_is_homeless_1=0
+                                    if (housing_status_index_used==lowest_housing_grid_point) then
+                                        val_is_homeless_1=1
+                                    end if
+                                    val_is_sud_1=0
+                                    if (unemployment_index>threshold_addiction_index) then
+                                        val_is_sud_1=1
+                                    end if
+                                    ! WORKING AT ALL. A household works if it is
+                                    ! in the employed state and chose positive
+                                    ! hours; the same test model_fraction_choose
+                                    ! _zero_work uses, so the two agree.
+                                    val_in_labour_force_1=0
+                                    if (in_retirement==0) then
+                                        if (emp_of(unemployment_index)>1) then
+                                            ! In a spell: unemployed, which is IN
+                                            ! the labour force and is how pi_eu
+                                            ! is measured a few blocks above.
+                                            val_in_labour_force_1=1
+                                        elseif (labor_supply_used>10.d0**(-7)) then
+                                            val_in_labour_force_1=2
+                                        end if
+                                    end if
+
+                                    ! LABOUR FORCE PARTICIPATION BY DISORDER
+                                    ! STATUS. NSDUH puts participation HIGHER
+                                    ! with a disorder, 65.8 against 61.5, which
+                                    ! is the informative half of this row: the
+                                    ! earnings penalty has to run through
+                                    ! unemployment conditional on participating
+                                    ! rather than through leaving the labour
+                                    ! force, and a model that reproduces the
+                                    ! level by pushing people out of it fails
+                                    ! the check it looks like it passes.
+                                    ! THE DENOMINATOR IS EVERY ADULT, NOT EVERY
+                                    ! WORKING AGE ADULT. NSDUH's 65.8 and 61.5
+                                    ! are participation among adults twenty six
+                                    ! and over, which includes the retired, and
+                                    ! the retired are most of what separates a
+                                    ! participation rate of 0.62 from one of 1.
+                                    ! Measured over working age households only
+                                    ! this row came back as exactly 1.0000 on
+                                    ! both arms, which is not the model failing
+                                    ! the check: it is the wrong universe, and
+                                    ! the exact 1 is worth keeping in its own
+                                    ! right because it says the model has NO
+                                    ! extensive margin -- every household in the
+                                    ! employed state chooses positive hours, so
+                                    ! nobody leaves the labour force except by
+                                    ! retiring.
+                                    if (val_is_sud_1==1) then
+                                        val_lfp_sud_den(time_period)=&
+                                            val_lfp_sud_den(time_period)+distribution_mass_used
+                                        if (val_in_labour_force_1>0) then
+                                            val_lfp_sud_num(time_period)=&
+                                                val_lfp_sud_num(time_period)+distribution_mass_used
+                                        end if
+                                        if (in_retirement==0) then
+                                            val_lfp_sud_work_den(time_period)=&
+                                                val_lfp_sud_work_den(time_period)+distribution_mass_used
+                                        end if
+                                    else
+                                        val_lfp_clean_den(time_period)=&
+                                            val_lfp_clean_den(time_period)+distribution_mass_used
+                                        if (val_in_labour_force_1>0) then
+                                            val_lfp_clean_num(time_period)=&
+                                                val_lfp_clean_num(time_period)+distribution_mass_used
+                                        end if
+                                        if (in_retirement==0) then
+                                            val_lfp_clean_work_den(time_period)=&
+                                                val_lfp_clean_work_den(time_period)+distribution_mass_used
+                                        end if
+                                    end if
+
+                                    ! THE THREE TEDS-A ROWS. The admissions file
+                                    ! is selected on entering publicly funded
+                                    ! treatment, so it is useful for ratios and
+                                    ! not levels, and the flow into treatment is
+                                    ! the right denominator for all three. All
+                                    ! ages enter, as they do in TEDS-A, which
+                                    ! means a retiree counts as not working.
+                                    if (val_is_sud_1==1) then
+
+                                        val_treat_1=real(policy_function_treatment(years_left_on_mortgage_index)%&
+                                            vector_transition_integer(time_period,age_index,financial_index,&
+                                            unemployment_index,employment_index,housing_status_index,&
+                                            voucher_index),8)*distribution_mass_used
+
+                                        val_treat_mass(time_period)=val_treat_mass(time_period)+val_treat_1
+
+                                        if (smi_of(unemployment_index)>=1) then
+                                            val_treat_smi(time_period)=val_treat_smi(time_period)+val_treat_1
+                                        end if
+
+                                        if (val_is_homeless_1==1) then
+                                            val_treat_homeless(time_period)=&
+                                                val_treat_homeless(time_period)+val_treat_1
+                                            if (val_in_labour_force_1==2) then
+                                                val_treat_homeless_working(time_period)=&
+                                                    val_treat_homeless_working(time_period)+val_treat_1
+                                            end if
+                                        end if
+
+                                    end if
+
+                                    ! DRUG POISONINGS AS A SHARE OF DEATHS AT
+                                    ! 25 TO 44. The model has no cause of death,
+                                    ! but survival_probability carries the
+                                    ! disorder as an argument, so the deaths the
+                                    ! disorder is responsible for are the deaths
+                                    ! that would not have happened at the clean
+                                    ! hazard, holding age, homelessness and SMI.
+                                    ! Model age one is data age 26, so ages 26 to
+                                    ! 44 are age_index 1 to 19; the data band
+                                    ! starts a year earlier and the model has no
+                                    ! twenty five year olds to give it.
+                                    if (age_index<=19) then
+
+                                        val_deaths_all_young(time_period)=val_deaths_all_young(time_period)+&
+                                            distribution_mass_used*(1-survival_probability(age_index,&
+                                            1+val_is_homeless_1,val_is_sud_1,smi_of(unemployment_index)))
+
+                                        val_deaths_clean_young(time_period)=val_deaths_clean_young(time_period)+&
+                                            distribution_mass_used*(1-survival_probability(age_index,&
+                                            1+val_is_homeless_1,0,smi_of(unemployment_index)))
+
+                                    end if
+
                                     ! THE FLOW, restricted to households who can still acquire the
                                     ! disorder. A household that already has it is not at risk, so
                                     ! including it would average the onset rate over people for whom
@@ -9837,7 +10310,22 @@
 
                                     end if
                                     
-                                    if (addiction_consumption_1>0) then
+                                    ! THE NUMERATOR HAS TO BE SUMMED OVER THE SET THE DENOMINATOR
+                                    ! COUNTS, and it was not. This guard used to be
+                                    ! addiction_consumption_1>0 alone -- households that BUY drugs --
+                                    ! while model_mass_total_users, which divides it, counts buyers
+                                    ! PLUS every household carrying the disorder whether it buys or
+                                    ! not. So a household with the disorder that consumes nothing
+                                    ! contributed its mass to the denominator and none of its income
+                                    ! to the numerator, and the average income of drug users came out
+                                    ! low by exactly that group's share of the user mass.
+                                    !
+                                    ! model_addicts_consuming_no_drugs exists precisely because the
+                                    ! group is not empty, so this was never a harmless mismatch. The
+                                    ! guard below is now character for character the one on
+                                    ! model_mass_total_users.
+                                    if (((addiction_consumption_1>0) .AND. (unemployment_index<=threshold_addiction_index)) .OR. &
+                                        (unemployment_index>threshold_addiction_index)) then
                                     
                                         model_avg_income_drug_users(time_period)=&
                                             model_avg_income_drug_users(time_period)+income_1*distribution_mass_used
@@ -10348,7 +10836,12 @@
                                                                             
                                     end if
                                     
-                                    if (is_addicted==1) then
+                                    ! THE SAME DENOMINATOR, SO THE SAME SET. is_addicted is 1 when
+                                    ! addiction_consumption_1>0, which means CONSUMES and not HAS THE
+                                    ! DISORDER whatever the name suggests, and this is divided by
+                                    ! model_mass_total_users like the income above.
+                                    if (((addiction_consumption_1>0) .AND. (unemployment_index<=threshold_addiction_index)) .OR. &
+                                        (unemployment_index>threshold_addiction_index)) then
                                                                         
                                         model_average_assets_drug_users(time_period)=&
                                             model_average_assets_drug_users(time_period)+&
@@ -10357,7 +10850,16 @@
                                             
                                     end if
                                     
-                                    if ((is_addicted==1) .AND. (unemployment_index>threshold_addiction_index)) then
+                                    ! EVERY HOUSEHOLD CARRYING THE DISORDER, WHICH IS WHAT DIVIDES
+                                    ! THESE TWO. total_addited_1 is guarded by
+                                    ! unemployment_index>threshold_addiction_index and nothing else,
+                                    ! so requiring is_addicted==1 here -- which means CONSUMES, not
+                                    ! HAS THE DISORDER -- dropped the income and assets of every
+                                    ! carrier consuming nothing while keeping their mass below the
+                                    ! line. NSDUH's 71.1 per cent is over everyone with a moderate or
+                                    ! severe disorder, consuming this year or not, so there is no
+                                    ! reading on which the old pair was the right one.
+                                    if (unemployment_index>threshold_addiction_index) then
                                     
                                         model_average_income_addicted(time_period)=&
                                             model_average_income_addicted(time_period)+&
@@ -11018,6 +11520,11 @@
         mass_renters_by_age(time_period,:)=0
         
         mass_of_renters_1=0
+
+        val_voucher_mass(time_period)=0
+        val_voucher_rent(time_period)=0
+        val_voucher_income(time_period)=0
+        val_voucher_wage_led(time_period)=0
         
         do age_index=1,life_span
         
@@ -11131,7 +11638,51 @@
                                         end if
                                         
                                     end if
-                                        
+
+                                    ! THE TWO PICTURE OF SUBSIDIZED HOUSEHOLDS
+                                    ! ROWS, and the universe is households that
+                                    ! actually draw a voucher rather than ones
+                                    ! that hold the eligibility index, since a
+                                    ! household above the income threshold or in
+                                    ! a unit the voucher does not cover receives
+                                    ! nothing and is not in HUD's file either.
+                                    if (housing_voucher_2>0) then
+
+                                        val_gross_rent_1=rent(time_period,low_quality_market)*lived_in_size_used
+
+                                        val_labour_income_1=0
+                                        if ((in_retirement==0) .AND. (emp_of(unemployment_index)==1)) then
+                                            val_labour_income_1=labor_supply_used*&
+                                                employment_grid(age_index,employment_index)*&
+                                                labour_deterministic_efficiency(age_index)
+                                        end if
+
+                                        val_voucher_mass(time_period)=val_voucher_mass(time_period)+&
+                                            distribution_mass_used
+
+                                        ! THE TENANT CONTRIBUTION RATE, as an
+                                        ! aggregate of rent over an aggregate of
+                                        ! income, because HUD's 31.2 per cent is
+                                        ! a mean monthly tenant rent over a mean
+                                        ! annual income and not a mean of ratios.
+                                        val_voucher_rent(time_period)=val_voucher_rent(time_period)+&
+                                            max(val_gross_rent_1-housing_voucher_2,0.d0)*distribution_mass_used
+
+                                        val_voucher_income(time_period)=val_voucher_income(time_period)+&
+                                            total_income*distribution_mass_used
+
+                                        ! WAGES AS THE MAIN INCOME. Income here
+                                        ! is wages, or a transfer, plus interest
+                                        ! on positive balances, so main means
+                                        ! more than half and nothing subtler is
+                                        ! available to mean.
+                                        if (val_labour_income_1>0.5d0*total_income) then
+                                            val_voucher_wage_led(time_period)=val_voucher_wage_led(time_period)+&
+                                                distribution_mass_used
+                                        end if
+
+                                    end if
+
                                     if ((amortization_used<=1) .AND. &
                                         (housing_status_index_used>=second_lowest_housing_grid_point)) then
                                         
@@ -12783,6 +13334,8 @@
         mass_by_age(time_period,:)=0
         homelessness_by_age(time_period,:)=0
         homelessness_by_age_group(time_period,:)=0
+        val_homeless_band(time_period,:)=0
+        val_mass_band(time_period,:)=0
         
         wealth_by_age_renter(time_period,:)=0
         income_by_age_renter(time_period,:)=0
@@ -13259,7 +13812,36 @@
                                     
                                     mass_by_age(time_period,age_index)=mass_by_age(time_period,age_index)+&
                                         distribution_mass_used
-                                        
+
+                                    ! THE HOMELESSNESS RATE BY BAND NEEDS ITS OWN
+                                    ! DENOMINATOR. homelessness_by_age_group is
+                                    ! normalised to shares of the homeless, which
+                                    ! is the table's second row and not its
+                                    ! first, and homelessness_by_age is divided
+                                    ! through by mass_by_age further down, so
+                                    ! neither can be recombined into a rate after
+                                    ! the fact. This carries the band's total
+                                    ! mass beside the band's homeless mass.
+                                    if (age_index<=9) then
+                                        val_band_1=1
+                                    elseif (age_index<=19) then
+                                        val_band_1=2
+                                    elseif (age_index<=29) then
+                                        val_band_1=3
+                                    elseif (age_index<=39) then
+                                        val_band_1=4
+                                    else
+                                        val_band_1=5
+                                    end if
+
+                                    val_mass_band(time_period,val_band_1)=&
+                                        val_mass_band(time_period,val_band_1)+distribution_mass_used
+
+                                    if (housing_status_index_used==lowest_housing_grid_point) then
+                                        val_homeless_band(time_period,val_band_1)=&
+                                            val_homeless_band(time_period,val_band_1)+distribution_mass_used
+                                    end if
+
                                     if (housing_status_index_used==lowest_housing_grid_point) then
                                     
                                         homelessness_by_age(time_period,age_index)=homelessness_by_age(time_period,age_index)+&
@@ -29939,6 +30521,41 @@
         ! so a robustness run can separate them in one place.
         addiction_scalar_2=b_sud_ratio*addiction_scalar_1
 
+        ! PREFERENCES ARE THE SAME IN BOTH STATES, AND THIS CHECKS IT RATHER
+        ! THAN ASSUMING IT. The _1 and _2 weights exist so that a robustness run
+        ! can let the disorder move tastes, which an earlier version of this
+        ! programme did. The benchmark does not: change_utility_for_addicts and
+        ! size_of_penalty are both parameters fixed at zero, so the algebra above
+        ! collapses _2 onto _1 and the housing and consumption weights follow,
+        ! and b_sud_ratio is one so the Stone-Geary shifter does too.
+        !
+        ! That is an argument about four compile-time constants, and it is the
+        ! kind of argument that stops being true without anyone noticing. The
+        ! shares enter the addicted state's utility directly, so a divergence
+        ! would not crash and would not look wrong in any moment -- it would
+        ! quietly make the disordered a different kind of household, which is a
+        ! claim the note does not make. This routine runs at initialisation and
+        ! after every calibration update, so checking here checks every solve.
+        if (abs(relative_share_of_addiction_2-relative_share_of_addiction_1)>10.d0**(-12) .OR. &
+            abs(relative_share_of_housing_2-relative_share_of_housing_1)>10.d0**(-12) .OR. &
+            abs(relative_share_of_consumption_2-relative_share_of_consumption_1)>10.d0**(-12) .OR. &
+            abs(addiction_scalar_2-addiction_scalar_1)>10.d0**(-12)) then
+
+            write(*,*) "PREFERENCES DIFFER ACROSS STATES, which the benchmark does not allow."
+            write(*,*) "   addiction   _1=", relative_share_of_addiction_1,&
+                " _2=", relative_share_of_addiction_2
+            write(*,*) "   housing     _1=", relative_share_of_housing_1,&
+                " _2=", relative_share_of_housing_2
+            write(*,*) "   consumption _1=", relative_share_of_consumption_1,&
+                " _2=", relative_share_of_consumption_2
+            write(*,*) "   scalar      _1=", addiction_scalar_1,&
+                " _2=", addiction_scalar_2
+            write(*,*) "   change_utility_for_addicts=", change_utility_for_addicts,&
+                " size_of_penalty=", size_of_penalty, " b_sud_ratio=", b_sud_ratio
+            stop
+
+        end if
+
         ! The SMI onset profile. Depends on lambda_m, which is calibrated, so it
         ! is rebuilt here rather than once at startup.
         if (allocated(smi_onset_by_age)) then
@@ -30786,6 +31403,31 @@
                     write(*,*) "HANDOVER weight_on_child:", weight_on_child, "->", handover_value
                     weight_on_child=max(min(handover_value,1.d0),0.d0)
 
+                ! THE SUD MORTALITY LEVEL, WHICH IS SETTABLE BUT WAS NOT
+                ! HANDABLE. It is assigned at 8, the midpoint of the 6 to 10
+                ! range the literature gives for all cause standardised
+                ! mortality ratios in opioid use disorder, and it is the knob on
+                ! what the disorder COSTS a household: survival is raised to the
+                ! power of the multiplier, so the whole continuation value is
+                ! what a using household puts at risk. That makes it the natural
+                ! instrument for who is willing to use, and therefore for the
+                ! average income of users, which the model puts at 0.31 of
+                ! average against 0.74 in NSDUH.
+                !
+                ! The clamp is wide on purpose, 1 to 30, rather than the
+                ! literature's 6 to 10. A search that cannot leave the range
+                ! cannot report that the range is where the answer is not, and
+                ! that is a finding worth being able to reach. 1 is no excess
+                ! mortality at all, which is the floor the specification allows.
+                !
+                ! No rebuild is needed here: apply_param_handover runs before
+                ! initialize_variables_and_grids, which is the one place
+                ! build_mortality_multipliers is called from and where
+                ! survival_probability is built out of it.
+                case ("kappa_phi_d_level")
+                    write(*,*) "HANDOVER kappa_phi_d_level:", kappa_phi_d_level, "->", handover_value
+                    kappa_phi_d_level=max(min(handover_value,30.d0),1.d0)
+
                 ! THE LAST TWO INTERNALLY CALIBRATED PARAMETERS THAT COULD NOT
                 ! BE HANDED IN. The paper calibrates twenty four parameters
                 ! internally; the search could set twenty one of them, so the
@@ -31315,7 +31957,7 @@
         write(*,*) "relative_share_of_addiction=", relative_share_of_addiction_2
         write(*,*) "relative_share_of_consumption_2=", relative_share_of_consumption_2
         write(*,*) "relative_share_of_housing_2=", relative_share_of_housing_2
-        write(*,*) "relative_share_of_addiction_2=", relative_share_of_addiction_1
+        write(*,*) "relative_share_of_addiction_2=", relative_share_of_addiction_2
         write(*,*) "relative_share_of_consumption_1=", relative_share_of_consumption_1
         write(*,*) "relative_share_of_housing_1=", relative_share_of_housing_1
         write(*,*) "relative_share_of_addiction_1=", relative_share_of_addiction_1

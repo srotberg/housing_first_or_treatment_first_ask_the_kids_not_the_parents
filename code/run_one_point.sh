@@ -62,6 +62,14 @@ declare -A P=(
     # every point now states it explicitly.
     [relative_share_of_housing]=0.1483356
     [housing_status_grid_expander]=1.0
+    # THE SUD MORTALITY LEVEL, ADDED 30 AUGUST. It was settable in the Fortran
+    # and not handable, so every point so far solved at its declared 8.0 --
+    # which is why 8.0 is the default here and why next_batch.py fills it in
+    # for a point whose VECTOR line predates it. Adding a name changes the md5
+    # of every future vector, so a point measured before today will not be
+    # recognised as already measured and will re-run once if it is asked for.
+    # That is the price of the name, and it is paid once.
+    [kappa_phi_d_level]=8.0
 )
 for a in "$@"; do
     k=${a%%=*}; v=${a#*=}
@@ -70,6 +78,24 @@ for a in "$@"; do
 done
 
 TAG=$(for k in "${!P[@]}"; do echo "$k=${P[$k]}"; done | sort | md5sum | cut -c1-10)
+
+# THE TAG OF THE SAME ECONOMICS BEFORE A NAME WAS ADDED TO THE VECTOR.
+#
+# Adding kappa_phi_d_level changed the md5 of every vector, so an arm measured
+# yesterday no longer matches its own file and would be solved a second time to
+# produce a byte-identical answer. Five of the eight arms of one batch were in
+# exactly that position, which is two and a half hours of compute for nothing.
+#
+# So a name whose value is still the default it had when it was introduced is
+# dropped, and the resulting LEGACY_TAG is checked as well. A point that moved
+# the parameter has a different value, does not qualify, and is measured -- which
+# is right, because it IS a different point. This mirrors next_batch.py's
+# IMPLICIT table and the two must be kept in step.
+declare -A LEGACY_DEFAULT=( [kappa_phi_d_level]=8.0 )
+LEGACY_TAG=$(for k in "${!P[@]}"; do
+    if [ -n "${LEGACY_DEFAULT[$k]+x}" ] && [ "${P[$k]}" = "${LEGACY_DEFAULT[$k]}" ]; then continue; fi
+    echo "$k=${P[$k]}"
+done | sort | md5sum | cut -c1-10)
 
 # A FAILURE THAT WRITES NOTHING IS INDISTINGUISHABLE FROM NOT HAVING STARTED.
 # Worker 2 of the first automated round ended its turn four minutes after firing
@@ -98,6 +124,12 @@ fail () {
 # is the same comparison done exactly, so the check belongs here.
 if [ -f "points/point_${TAG}.txt" ] && grep -q "END OF MOMENTS" "points/point_${TAG}.txt"; then
     echo "run_one_point: $TAG is already measured, skipping"
+    exit 0
+fi
+if [ "$LEGACY_TAG" != "$TAG" ] && [ -f "points/point_${LEGACY_TAG}.txt" ] &&
+   grep -q "END OF MOMENTS" "points/point_${LEGACY_TAG}.txt"; then
+    echo "run_one_point: $TAG was measured as $LEGACY_TAG before the vector"
+    echo "run_one_point: gained a name it is still at the default of, skipping"
     exit 0
 fi
 

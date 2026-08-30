@@ -122,3 +122,26 @@ externality, all regenerate from `fill.py`. The external table loses `rho`.
 
 Section 2, the quantitative model, is unaffected: it has sixty periods and the
 comparisons in it are to the stylized model's mechanisms, not to its horizon.
+
+## The wealth to income ratio, measured but not targeted
+
+Asked for on 30 August and parked, so it is written down rather than recomputed.
+
+The benchmark implies aggregate end-of-period-1 assets of 0.05943 against
+aggregate period-1 income of 0.96683, a ratio of **0.0615 per period**. A period
+is thirty years, so against an ANNUAL income flow that is **1.84**. The
+quantitative model targets 3.0 for its own wealth-over-output and is banded
+(3.0, 4.5), so the stylized model sits well below it.
+
+Nothing targets this. It falls out of the saving policy, which is why it is low.
+Two things would have to be settled before it could be calibrated to match:
+
+- the annualisation is a CONVENTION applied here, not something the model
+  states, and the raw model number is the per-period 0.0615;
+- period 2 is terminal, assets are run down and nothing is bequeathed, so this
+  is one cohort's peak saving and not a stationary stock. It is not the same
+  object as the quantitative model's wealth over output even after annualising.
+
+Recovered from `threshold()`, whose branch arrays carry a' in slot 0:
+aggregate over income weights and state probabilities, mixing the use and
+no-use branches by the cell's `frac`.
