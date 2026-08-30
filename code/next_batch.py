@@ -206,6 +206,52 @@ def coupling(A, param, base_v, base_m):
     return best[0] if best else None
 
 
+
+def bracket(A, param, moment, target, base_v):
+    """The value of `param` that puts `moment` on target, from a straddling pair.
+
+    GROUPED BY SLICE, NOT POOLED. Points are comparable only when they agree on
+    every coordinate except this one, so they are grouped by the rest of the
+    vector and a straddle is looked for INSIDE a group. Pooling across groups
+    was the first version and it is wrong in a way that is easy to miss: it
+    produced a bracket of [2.776, 2.776] for kappa_ued -- two points with the
+    same parameter value and different moments, because they sat on different
+    slices -- which interpolates to no move at all and looks like a result.
+
+    The base's own slice is preferred; other slices are used only if it has no
+    straddle, and then the nearest crossing wins. Degenerate pairs are rejected.
+    """
+    groups = {}
+    for tag, (v, m) in A.items():
+        if param not in v or moment not in m:
+            continue
+        x, y = float(v[param]), m[moment][0]
+        if x <= 0 or y <= 0:
+            continue
+        key = tuple(sorted((k, val) for k, val in v.items() if k != param))
+        groups.setdefault(key, []).append((x, y))
+    base_key = tuple(sorted((k, val) for k, val in base_v.items() if k != param))
+    ordered = ([groups[base_key]] if base_key in groups else []) + \
+              [g for k, g in groups.items() if k != base_key]
+    x_base = float(base_v[param])
+    for pts in ordered:
+        pts = sorted(set(pts))
+        best = None
+        for (x0, y0), (x1, y1) in zip(pts, pts[1:]):
+            if (y0 - target) * (y1 - target) > 0:
+                continue
+            if abs(math.log(x1 / x0)) < 1e-9 or abs(math.log(y1 / y0)) < 1e-9:
+                continue
+            f = (math.log(target) - math.log(y0)) / (math.log(y1) - math.log(y0))
+            x = x0 * math.exp(f * math.log(x1 / x0))
+            d = abs(math.log(x / x_base)) if x_base > 0 else 0.0
+            if best is None or d < best[1]:
+                best = ((x, x0, x1), d)
+        if best:
+            return best[0]
+    return None
+
+
 def vector(text):
     m = re.search(r'^\s*VECTOR (.*)$', text, re.M)
     return dict(t.split('=', 1) for t in m.group(1).split() if '=' in t) if m else None
@@ -303,16 +349,37 @@ def main():
     for param, mom in sorted(OWN.items(), key=lambda kv: -gap(kv[1], m[kv[1]]) if kv[1] in m else 0):
         if mom not in m or gap(mom, m[mom]) <= ACCEPT:
             continue
-        e = elasticity(A, param, mom, v)
-        if e is None:
+        # A BRACKET BEATS AN ELASTICITY. If two archive points on this
+        # instrument straddle the target, interpolate between them instead of
+        # stepping on a slope. tau_u is the case that forced this: its
+        # elasticity has measured -0.92, -0.52, -0.86 and -3.28 at four places
+        # on the same instrument, and the -0.86 step carried it from +34 per
+        # cent past the target to -39. That overshoot is not a loss -- it
+        # BRACKETS the target, and a log-interpolation between two measured
+        # points that straddle it does not depend on the slope being right
+        # anywhere.
+        br = bracket(A, param, mom, m[mom][1], v)
+        if br is not None:
+            x1, lo_, hi_ = br
+            x0 = float(v[param])
+            lo, hi = BOUNDS[param]
+            x1 = max(lo, min(hi, x1))
+            step = math.log(x1 / x0)
+            note = f'  bracket [{lo_:.4g}, {hi_:.4g}]'
+            e = float('nan')
+        else:
+            e = elasticity(A, param, mom, v)
+        if br is None and e is None:
             skipped.append(f'{param} (owns {mom}): no controlled pair in the archive')
             continue
         cur, tgt = m[mom]
-        step = DAMP * math.log(tgt / cur) / e
-        step = max(-MAX_EFOLD, min(MAX_EFOLD, step))
-        x0 = float(v[param])
-        lo, hi = BOUNDS[param]
-        x1 = max(lo, min(hi, x0 * math.exp(step)))
+        if br is None:
+            step = DAMP * math.log(tgt / cur) / e
+            step = max(-MAX_EFOLD, min(MAX_EFOLD, step))
+            x0 = float(v[param])
+            lo, hi = BOUNDS[param]
+            x1 = max(lo, min(hi, x0 * math.exp(step)))
+            note = ''
         if abs(math.log(x1 / x0)) < 1e-4:
             skipped.append(f'{param} (owns {mom}): at a bound, cannot move')
             continue
@@ -321,7 +388,11 @@ def main():
         # tolerable and fold in the lambda_addiction and addiction_scalar_1 that
         # cancel what is left. Bare, these arms trade one wrong moment for the
         # two that are finished.
-        note = ''
+        # A BRACKET STEP COUPLES JUST AS HARD AS A NEWTON STEP. The pi_eu
+        # bracket asks for probability_becoming_unemployed 0.02277 -> 0.0081,
+        # which at that instrument's measured coupling would roughly TRIPLE b.
+        # Interpolation makes the step's effect on its OWN moment trustworthy;
+        # it says nothing about what the step does to the drug block.
         cpl = coupling(A, param, v, m)
         if cpl and DJ is not None and abs(cpl[0] * step) > COUPLED_AT:
             shrink = min(1.0, abs(math.log(1 + MAX_DRIFT) / (cpl[0] * step)))
@@ -330,7 +401,7 @@ def main():
             fix = np.linalg.solve(DJ, np.array([-cpl[0] * step, -cpl[1] * step]))
             if DJ_foreign:
                 fix = fix * 0.5
-            note = f'  compensated, {shrink:.2f} of step, b drift {100*(math.exp(cpl[0]*step)-1):+.0f}%'
+            note += f'  compensated, {shrink:.2f} of step, b drift {100*(math.exp(cpl[0]*step)-1):+.0f}%'
         else:
             fix = None
         nv = dict(v); nv[param] = f'{x1:.7g}'
@@ -384,7 +455,8 @@ def main():
           f'from point_{tag}, one coordinate each:\n')
     print(f'{"parameter":52s} {"moment":10s} {"gap":>7s} {"elast":>7s} {"from":>10s} {"to":>10s}')
     for p, mo, x0, x1, e, g, note, _ in lines:
-        print(f'{p:52s} {mo:10s} {g:+6.0f}% {e:+7.2f} {x0:10.5g} {x1:10.5g}{note}')
+        el = '  bracket' if e != e else f'{e:+7.2f}'
+        print(f'{p:52s} {mo:10s} {g:+6.0f}% {el:>7s} {x0:10.5g} {x1:10.5g}{note}')
     for s in skipped:
         print(f'  skipped: {s}')
     return 0
