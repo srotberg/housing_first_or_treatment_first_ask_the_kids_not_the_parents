@@ -29939,6 +29939,41 @@
         ! so a robustness run can separate them in one place.
         addiction_scalar_2=b_sud_ratio*addiction_scalar_1
 
+        ! PREFERENCES ARE THE SAME IN BOTH STATES, AND THIS CHECKS IT RATHER
+        ! THAN ASSUMING IT. The _1 and _2 weights exist so that a robustness run
+        ! can let the disorder move tastes, which an earlier version of this
+        ! programme did. The benchmark does not: change_utility_for_addicts and
+        ! size_of_penalty are both parameters fixed at zero, so the algebra above
+        ! collapses _2 onto _1 and the housing and consumption weights follow,
+        ! and b_sud_ratio is one so the Stone-Geary shifter does too.
+        !
+        ! That is an argument about four compile-time constants, and it is the
+        ! kind of argument that stops being true without anyone noticing. The
+        ! shares enter the addicted state's utility directly, so a divergence
+        ! would not crash and would not look wrong in any moment -- it would
+        ! quietly make the disordered a different kind of household, which is a
+        ! claim the note does not make. This routine runs at initialisation and
+        ! after every calibration update, so checking here checks every solve.
+        if (abs(relative_share_of_addiction_2-relative_share_of_addiction_1)>10.d0**(-12) .OR. &
+            abs(relative_share_of_housing_2-relative_share_of_housing_1)>10.d0**(-12) .OR. &
+            abs(relative_share_of_consumption_2-relative_share_of_consumption_1)>10.d0**(-12) .OR. &
+            abs(addiction_scalar_2-addiction_scalar_1)>10.d0**(-12)) then
+
+            write(*,*) "PREFERENCES DIFFER ACROSS STATES, which the benchmark does not allow."
+            write(*,*) "   addiction   _1=", relative_share_of_addiction_1,&
+                " _2=", relative_share_of_addiction_2
+            write(*,*) "   housing     _1=", relative_share_of_housing_1,&
+                " _2=", relative_share_of_housing_2
+            write(*,*) "   consumption _1=", relative_share_of_consumption_1,&
+                " _2=", relative_share_of_consumption_2
+            write(*,*) "   scalar      _1=", addiction_scalar_1,&
+                " _2=", addiction_scalar_2
+            write(*,*) "   change_utility_for_addicts=", change_utility_for_addicts,&
+                " size_of_penalty=", size_of_penalty, " b_sud_ratio=", b_sud_ratio
+            stop
+
+        end if
+
         ! The SMI onset profile. Depends on lambda_m, which is calibrated, so it
         ! is rebuilt here rather than once at startup.
         if (allocated(smi_onset_by_age)) then
@@ -31315,7 +31350,7 @@
         write(*,*) "relative_share_of_addiction=", relative_share_of_addiction_2
         write(*,*) "relative_share_of_consumption_2=", relative_share_of_consumption_2
         write(*,*) "relative_share_of_housing_2=", relative_share_of_housing_2
-        write(*,*) "relative_share_of_addiction_2=", relative_share_of_addiction_1
+        write(*,*) "relative_share_of_addiction_2=", relative_share_of_addiction_2
         write(*,*) "relative_share_of_consumption_1=", relative_share_of_consumption_1
         write(*,*) "relative_share_of_housing_1=", relative_share_of_housing_1
         write(*,*) "relative_share_of_addiction_1=", relative_share_of_addiction_1
