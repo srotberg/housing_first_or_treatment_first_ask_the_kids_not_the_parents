@@ -3899,6 +3899,28 @@
         real(8), dimension(transition_length,5) :: val_user_band
         real(8), dimension(transition_length) :: val_user_age_num,val_user_mass_age,&
             val_user_income_working,val_user_mass_working
+
+        ! IS THE STONE GEARY THRESHOLD DOING WHAT THE ALGEBRA SAYS?
+        !
+        ! optimize_frac_spent_on_addiciton solves the static Cobb-Douglas split
+        !
+        !     c = phi (p b + C) / (phi + theta),   so   p v = (theta C - phi p b)/(phi + theta)
+        !
+        ! and buys nothing unless C > (phi/theta) p b. The shifter is ADDED to
+        ! the quantity, so the drug is a LUXURY: purchases are positive only
+        ! above a threshold in total consumption resources, and with b
+        ! calibrated so that six per cent buy, buyers should be the richest six
+        ! per cent.
+        !
+        ! Measured, the households that buy have a quarter of average income.
+        ! Both cannot be true. The distinction that might rescue it is that the
+        ! threshold is on C, total resources for consumption and drugs, and NOT
+        ! on income: a household with no assets and no rent to pay can have a
+        ! high C on a low income. So C is what has to be compared, and that is
+        ! what these carry -- mean C and mean income on each side of the
+        ! threshold, and the threshold itself.
+        real(8), dimension(transition_length) :: val_buy_mass,val_buy_C,val_buy_income,&
+            val_nobuy_mass,val_nobuy_C,val_nobuy_income
         
         integer :: thread_num,thread_index,total_number_of_threads
         
@@ -4512,6 +4534,25 @@
                 max(model_average_income(1),10.d0**(-14))
             write(*,*) "DIAG working age share of drug users             =",&
                 val_user_mass_working(1)/max(val_user_mass_age(1),10.d0**(-14))
+
+            ! DOES THE STONE GEARY THRESHOLD HOLD IN THE SOLVED MODEL?
+            ! The split buys nothing unless C > (phi/theta) p b, so a buyer must
+            ! have MORE total consumption resources than a non buyer, by
+            ! construction. If these two come out the other way round the
+            ! closed form and the distribution disagree and one of them is wrong.
+            write(*,*) "DIAG drug threshold, (phi/theta)*p*b            =",&
+                (relative_share_of_consumption_1/max(relative_share_of_addiction_1,10.d0**(-14)))*&
+                price_of_addictive_good*addiction_scalar_1
+            write(*,*) "DIAG buyers: mean C                             =",&
+                val_buy_C(1)/max(val_buy_mass(1),10.d0**(-14))
+            write(*,*) "DIAG non-buyers: mean C                         =",&
+                val_nobuy_C(1)/max(val_nobuy_mass(1),10.d0**(-14))
+            write(*,*) "DIAG buyers: mean income                        =",&
+                val_buy_income(1)/max(val_buy_mass(1),10.d0**(-14))
+            write(*,*) "DIAG non-buyers: mean income                    =",&
+                val_nobuy_income(1)/max(val_nobuy_mass(1),10.d0**(-14))
+            write(*,*) "DIAG buyers as a share of clean households      =",&
+                val_buy_mass(1)/max(val_buy_mass(1)+val_nobuy_mass(1),10.d0**(-14))
             write(*,*) "DIAG aggregate rent / output                     =",&
                 aggregate_rent_spending(1)/max(model_output(1),10.d0**(-14))
             write(*,*) "DIAG asset grid, reachable points                =",&
@@ -10139,6 +10180,12 @@
         val_user_mass_age(time_period)=0
         val_user_income_working(time_period)=0
         val_user_mass_working(time_period)=0
+        val_buy_mass(time_period)=0
+        val_buy_C(time_period)=0
+        val_buy_income(time_period)=0
+        val_nobuy_mass(time_period)=0
+        val_nobuy_C(time_period)=0
+        val_nobuy_income(time_period)=0
         model_avg_assets_experimenters(time_period)=0
         model_eligibles(time_period)=0
         model_fraction_recieving_food_stamps(time_period)=0
@@ -10675,6 +10722,31 @@
 
                                     end if
                                     
+                                    ! THE STONE GEARY THRESHOLD, TESTED RATHER THAN ASSUMED.
+                                    ! Over CLEAN households only, because the question is who
+                                    ! CHOOSES to buy; a household that already carries the
+                                    ! disorder is not making that choice for the first time.
+                                    ! C is total_consumption_used, the resources the split in
+                                    ! optimize_frac_spent_on_addiciton divides, which is the
+                                    ! object the threshold is on -- income is not.
+                                    if (unemployment_index<=threshold_addiction_index) then
+                                        if (addiction_consumption_1>0) then
+                                            val_buy_mass(time_period)=val_buy_mass(time_period)+&
+                                                distribution_mass_used
+                                            val_buy_C(time_period)=val_buy_C(time_period)+&
+                                                total_consumption_used*distribution_mass_used
+                                            val_buy_income(time_period)=val_buy_income(time_period)+&
+                                                income_1*distribution_mass_used
+                                        else
+                                            val_nobuy_mass(time_period)=val_nobuy_mass(time_period)+&
+                                                distribution_mass_used
+                                            val_nobuy_C(time_period)=val_nobuy_C(time_period)+&
+                                                total_consumption_used*distribution_mass_used
+                                            val_nobuy_income(time_period)=val_nobuy_income(time_period)+&
+                                                income_1*distribution_mass_used
+                                        end if
+                                    end if
+
                                     if ((addiction_consumption_1>0) .AND. &
                                         (unemployment_index<=threshold_addiction_index) .AND. &
                                         (include_probability_of_becoming_addicted==1)) then
