@@ -2762,7 +2762,24 @@
         ! leaves the state grid as the only thing that moves. Forty is itself an
         ! unvalidated cut from the fifty this model was built with, so it is in
         ! that comparison too rather than assumed.
-        integer, parameter :: positive_financial_grid_size=40
+        ! TWENTY FOUR POSITIVE POINTS, SO TWENTY FIVE REACHABLE ONES.
+        !
+        ! The author's instruction, to buy solve time ahead of a possible split
+        ! into patient and impatient types. Index negative_financial_grid_size
+        ! holds zero assets and everything below it is a MORTGAGE state, which
+        ! no household can occupy: max_amortization_years is 1, so has_house is
+        ! always 0 and the renter loop starts at that index. The reachable grid
+        ! is therefore zero plus the positive points -- 41 before, 25 now.
+        !
+        ! The RANGE does not change. The top point is set from
+        ! max_times_labour_income_saved*employment_grid(1,employment_grid_size)
+        ! and the curvature fills in between, so this is a coarser grid over the
+        ! same interval rather than a shorter one. Mass on the top point was
+        ! 8.2e-5 and on the top three 2.4e-4, so the endpoint was never binding.
+        !
+        ! Value function cost is roughly quadratic in this dimension, since every
+        ! state searches over future assets, so 41 to 25 is about 2.7 times.
+        integer, parameter :: positive_financial_grid_size=24
         integer, parameter :: negative_financial_grid_size=61
         
         integer, parameter :: grid_gaps=coarse_grid*10+(1-coarse_grid)
@@ -4367,6 +4384,12 @@
             ! The smallest unit's share is kept as a DIAGNOSTIC rather than a
             ! target, because the grid it describes is still the object the
             ! instrument moves and a reader needs it alongside.
+            ! WHICH ASSET GRID THIS POINT WAS SOLVED ON. Changing the grid
+            ! changes every moment, so a point measured on one grid cannot be
+            ! bracketed against a point measured on another -- and nothing in the
+            ! vector, the tag or the file said which. It does now.
+            write(*,*) "DIAG asset grid, reachable points                =",&
+                real(positive_financial_grid_size+1,8)
             write(*,*) "DIAG share in the smallest unit                  =",&
                 model_housing_size_dist(1,0)
             write(*,*) "MOMENT gamma     housing spending, renters   model=",&
