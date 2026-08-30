@@ -350,3 +350,40 @@ said when h_2 meant the share in the smallest unit. h_2 is the severe cost
 burden now, it has an instrument, and the author spent this evening on it. The
 concession stays in the STOPPING RULE so the loop can still terminate, but h_2
 is bracketed like everything else and should not be described as conceded.
+
+
+## 30 August, 20:50 -- raising the floor puts the SUD share of the homeless on target, and it was the one moment said to be out of reach
+
+The floor ladder, everything else held at the current vector:
+
+    floor    h_1       SUD share of homeless   by choice   h_2
+    0.0377   0.00289   0.00157                 0.911       0.0509
+    0.090    0.01249   0.19004                 0.839       0.0484
+    0.105    0.01650   0.16197                 0.904       0.0500
+    data     0.00399   0.217                               0.101
+
+The SUD share of the homeless moves 121-fold, from 0.0016 to 0.190 against a
+target of 0.217. That is the moment that was off by two orders of magnitude all
+day and that this file recorded, an hour ago, as structurally out of reach
+because the SIGN was wrong. It is not out of reach. The mechanism is the one the
+author named: the cheapest unit costs about 6 per cent of average labour income
+while a user spends about 19 per cent of expenditure on the habit, so today
+there is always room for both and the habit never costs anyone their housing.
+Raise the floor and it does.
+
+THE ARGUMENT THAT WAS WRONG, and it was made here in writing: that a higher
+floor could not create involuntary homelessness because 84 per cent of the
+homeless could pay the smallest rent out of income alone. True at the old floor,
+and irrelevant -- the point is not to price out the households who are already
+homeless, it is to price out the ones who are spending on drugs.
+
+IDENTIFICATION, MEASURED RATHER THAN ARGUED. h_2 is 0.0509, 0.0484, 0.0500
+across the whole ladder: the floor does not move it. So the two housing rungs
+are separate instruments after all -- the floor owns who is priced out,
+largest_house_size owns the burden rate through the share in the largest unit,
+which is where every burdened household sits at every point measured today.
+
+WHAT IT COSTS. h_1 overshoots to 0.0125 against 0.00399, three times the
+target, and size_homelessness is the instrument that pulls it back. And 0.105 is
+WORSE than 0.090 on the SUD share, so the optimum is interior, near 0.09, not at
+the top of the ladder.
