@@ -127,6 +127,75 @@ def read(path):
 EXCLUDE = {'omega', 'lambda_m'}
 
 
+# A TARGET THE DATA GIVES AS A RANGE IS A RANGE, NOT ITS MIDPOINT.
+#
+# beta, wealth over output, is the case. The declared 3.0 came from BEA private
+# fixed assets over NIPA output. The author replaced it on 29 August with
+# Piketty and Zucman (2014) and set the range at 3.0 to 4.5: their US figure is
+# 4.0 to 4.5 read directly and about 3.4 to 3.8 once converted from national
+# income to output, both readings are defensible and the band spans them and the
+# old BEA number too. The data does not pin this more finely than a range, and a
+# band is the right shape for that.
+#
+# THE WIDTH IS WHAT DOES THE WORK, NOT THE LEVEL. Under the old point target of
+# 3.0 the search was pulled toward a discount factor of 0.9918, where beta is
+# 3.03 and b is 0.219 against a target of 0.089 -- so the beta target was
+# dragging b, at weight three, off a value it had already hit. The band removes
+# that pull and leaves the discount factor free across its whole usable range,
+# 0.9918 upward, which the b repair needs: b has to move fourteen fold at
+# lambda 30 and this is one of only two instruments with the range for it.
+#
+# Inside the band the gap is ZERO -- not the distance to a midpoint, because
+# there is no midpoint being claimed. Outside it, the gap is measured to the
+# nearer edge, so the moment is continuous at both ends.
+BAND = {'beta': (3.0, 4.5)}
+
+
+def band_gap(name, model):
+    """Relative distance outside the band, or None if the moment has no band."""
+    if name not in BAND:
+        return None
+    lo, hi = BAND[name]
+    if lo <= model <= hi:
+        return 0.0
+    edge = lo if model < lo else hi
+    return abs(model - edge) / abs(edge)
+
+
+# THE AUTHOR'S ACCEPTANCE CRITERION, SET 29 AUGUST: every target within ten per
+# cent. That is a MINIMAX, not a mean, and it ranks differently from `loss` --
+# a point with nineteen moments exact and one at eighty per cent beats a point
+# with twenty at fifteen on the mean, and loses on this. The search has spent
+# the day being led by the mean toward exactly that shape: the best point by
+# loss has b to within one per cent and lambda_d at minus seventy eight.
+#
+# lambda_m is counted here even though `loss` excludes it. The exclusion is
+# right for the mean -- zeta_DI is externally zero so nothing points at the
+# moment, and charging every point the same fixed penalty tells the search
+# nothing -- but the author said ALL targets, and a moment nothing can reach is
+# exactly the kind the criterion needs to surface rather than hide. omega stays
+# out because the model declines to compute it rather than missing it.
+ACCEPT = 0.10
+
+
+def worst(moments, include_unreachable=True):
+    """(largest relative gap, its moment) under the author's ten per cent rule."""
+    out = []
+    for name, (model, target) in moments.items():
+        if name == 'omega':
+            continue
+        if not include_unreachable and name in EXCLUDE:
+            continue
+        if abs(target) < 1e-12:
+            continue
+        bg = band_gap(name, model)
+        g = bg if bg is not None else abs(model - target) / abs(target)
+        out.append((g, name))
+    if not out:
+        return float('inf'), None
+    return max(out)
+
+
 def loss(moments):
     tot, n, worst = 0.0, 0, []
     for name, (model, target) in moments.items():
@@ -134,7 +203,13 @@ def loss(moments):
             continue
         if abs(target) < 1e-12:
             continue
-        g = CAP if gated(name, moments) else abs(model - target) / abs(target)
+        bg = band_gap(name, model)
+        if gated(name, moments):
+            g = CAP
+        elif bg is not None:
+            g = bg
+        else:
+            g = abs(model - target) / abs(target)
         if g > CAP:
             g = CAP
         w = WEIGHT.get(name, 1.0)

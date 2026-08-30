@@ -751,6 +751,24 @@
         real(8), dimension(5), parameter :: wealth_percentiles=&
             (/0.01d0,0.05d0,0.10d0,0.25d0,0.50d0/)
         real(8) :: wealth_hist_mass_check,wealth_hist_wealth_check
+        ! THE SAME MACHINERY ON INCOME. The author asked on 29 August for the
+        ! bottom percentiles of the INCOME distribution alongside those of the
+        ! wealth distribution, and for the bottom half's wealth share to come
+        ! out. The bottom half is the one percentile where the SCF's net worth
+        ! share is still positive, so reporting only it hides that the model has
+        ! the SIGN wrong everywhere below: SCF 2022 over households aged 26 to
+        ! 65 puts the bottom 1st, 5th and 10th at -0.23, -0.42 and -0.45 per
+        ! cent, and the model has no household with negative net worth at all.
+        !
+        ! Binned exactly as wealth is, on total_income over the same fixed
+        ! average_labor_income_calibrated, so the bin edges do not move between
+        ! points and the shares stay comparable across the archive.
+        integer, parameter :: income_bins=400
+        real(8), parameter :: income_bin_top=50.d0
+        real(8), dimension(income_bins) :: income_hist_mass,income_hist_income
+        real(8) :: income_hist_mass_check
+        real(8), dimension(3), parameter :: bottom_percentiles=&
+            (/0.01d0,0.05d0,0.10d0/)
         real(8), dimension(:), allocatable :: smi_onset_shape_by_age
 
         ! ONSET IS NOW A LEVEL ON THAT SHAPE, AND THE LEVEL IS CALIBRATED.
@@ -1818,7 +1836,13 @@
         ! nothing, which is the failure the ceiling had at 0.05 and which is
         ! recorded a few lines below. 10^-8 was inside that range, being the
         ! value b was expected to need; 10^-10 is two decades clear of it.
-        real(8), parameter :: b_lo=1.d0*10.d0**(-10)
+        ! THE AUTHOR LOWERED THIS ON 29 AUGUST: b may be as small as it likes so
+        ! long as it is strictly positive. It was 1e-10. It has never bound --
+        ! the search sits near 0.017 and b's elasticity on the drug user share
+        ! is about minus fifteen, so 1e-8 would put essentially every household
+        ! on drugs -- but a floor that cannot bind costs nothing and a floor
+        ! that silently binds costs a mislabelled point, so it goes down.
+        real(8), parameter :: b_lo=1.d0*10.d0**(-30)
         real(8), parameter :: b_hi=1.0d0
 
         real(8) :: gap_addiction_scalar_1=0,previous_gap_addiction_scalar=0
@@ -3163,8 +3187,8 @@
         real(8), parameter :: empirical_land_to_housing_stock=0.314395015 
         real(8) :: land_to_housing_stock
         real(8) :: c_min,c_1,c_1_2  
-        integer :: wealth_bin_index,percentile_index_1
-        real(8) :: cumulative_mass_1,cumulative_wealth_1,share_of_bin_1,percentile_1
+        integer :: wealth_bin_index,income_bin_index,percentile_index_1
+        real(8) :: cumulative_mass_1,cumulative_wealth_1,cumulative_income_1,share_of_bin_1,percentile_1
         real(8) :: cutoff_housing_investment
         real(8), dimension(2) :: cutoff_housing_investment_bisection                 
         real(8), parameter :: stopping_rule_cutoff_housing_investment=10.d0**(-5) 
@@ -3508,6 +3532,7 @@
             model_choose_addiction_when_income_is_low,model_average_drug_spending_experimenters,model_drug_threshold,&
             model_fraction_light_users
         real(8), dimension(5,transition_length) :: model_wealth_share_below
+        real(8), dimension(3,transition_length) :: model_income_share_below
             
         real(8) :: distance_drug_threshold,stopping_rule_drug_threshold=10.d0**(-4)
             
@@ -4270,6 +4295,26 @@
             ! MOMENT lines.
             write(*,*) "UNTARGETED delta_d child SUD ratio           model=",&
                 csud_n_1/max(csud_d_1,10.d0**(-12)), " observed=", child_sud_ratio_data
+            ! THE BOTTOM OF BOTH DISTRIBUTIONS, UNTARGETED. SCF 2022, households
+            ! aged 26 to 65, the universe the paper already uses for wealth.
+            ! The observed net worth shares are NEGATIVE at all three, which is
+            ! the thing the bottom half share could not show: it is the only
+            ! percentile where the data is still positive, so reporting it alone
+            ! made a sign error look like a level error.
+            write(*,*) "UNTARGETED wealth share bottom  1 pct        model=",&
+                model_wealth_share_below(1,1), " observed=", -0.00225d0
+            write(*,*) "UNTARGETED wealth share bottom  5 pct        model=",&
+                model_wealth_share_below(2,1), " observed=", -0.00422d0
+            write(*,*) "UNTARGETED wealth share bottom 10 pct        model=",&
+                model_wealth_share_below(3,1), " observed=", -0.00446d0
+            write(*,*) "UNTARGETED income share bottom  1 pct        model=",&
+                model_income_share_below(1,1), " observed=", 0.00009d0
+            write(*,*) "UNTARGETED income share bottom  5 pct        model=",&
+                model_income_share_below(2,1), " observed=", 0.00288d0
+            write(*,*) "UNTARGETED income share bottom 10 pct        model=",&
+                model_income_share_below(3,1), " observed=", 0.00924d0
+            write(*,*) "DIAG income histogram mass / distribution (want 1.0) =",&
+                income_hist_mass_check
             write(*,*) "UNTARGETED delta_h child homelessness ratio  model=",&
                 chom_n_1/max(chom_d_1,10.d0**(-12)), " observed=", child_homeless_ratio_data
 
@@ -4396,16 +4441,20 @@
             ! the histogram pair at the end of this block.
             write(*,*) "DIAG average assets of the homeless              =",&
                 model_avg_homeless_assets(1)
-            write(*,*) "DIAG wealth share of the bottom  1 pct           =",&
-                model_wealth_share_below(1,1)
-            write(*,*) "DIAG wealth share of the bottom  5 pct           =",&
-                model_wealth_share_below(2,1)
-            write(*,*) "DIAG wealth share of the bottom 10 pct           =",&
-                model_wealth_share_below(3,1)
             write(*,*) "DIAG wealth share of the bottom 25 pct           =",&
                 model_wealth_share_below(4,1)
-            write(*,*) "DIAG bottom half share of net worth              =",&
-                model_bottom_half_wealth_share(1), " data= 0.0252"
+            ! THE ONSET IS A PRODUCT AND ONLY THE PRODUCT MATTERS. lambda is
+            ! searched, but what the disorder stock responds to is
+            ! 1-exp(-lambda*quantity) at the mean quantity, and the quantity is
+            ! a CHOICE. Over the whole archive of 29 August lambda spans 4.51 to
+            ! 6.93 while the onset implied by the flow balance stays inside
+            ! 0.0016 to 0.0031, which says the quantity is absorbing the hazard.
+            ! That was INFERRED from the flow balance, never seen; these two
+            ! lines make it visible in every point instead.
+            write(*,*) "DIAG mean drug quantity, users                   =",&
+                model_drugs_used_by_users_on_average(1)
+            write(*,*) "DIAG onset at the mean quantity                  =",&
+                1-exp(-lambda_addiction*model_drugs_used_by_users_on_average(1))
             write(*,*) "DIAG mass ON the top savings grid point          =",&
                 diag_mass_top_financial/max(sum_of_distribution,10.d0**(-12))
             write(*,*) "DIAG mass in the top THREE savings grid points   =",&
@@ -5903,6 +5952,8 @@
         model_total_net_wealth(time_period)=0
         wealth_hist_mass=0
         wealth_hist_wealth=0
+        income_hist_mass=0
+        income_hist_income=0
         diag_mass_top_financial=0
         diag_mass_top3_financial=0
         model_youngest_net_wealth_share(time_period)=0
@@ -6972,6 +7023,19 @@
                                     wealth_hist_wealth(wealth_bin_index)=&
                                         wealth_hist_wealth(wealth_bin_index)+net_wealth_1*distribution_mass_used
 
+                                    ! total_income is this household's own income,
+                                    ! set by the call to calculate_income further up
+                                    ! this same iteration, so it is the household
+                                    ! level counterpart of net_wealth_1 and not an
+                                    ! aggregate.
+                                    income_bin_index=min(max(1+floor(income_bins*&
+                                        (total_income/max(average_labor_income_calibrated,&
+                                        10.d0**(-8)))/income_bin_top),1),income_bins)
+                                    income_hist_mass(income_bin_index)=&
+                                        income_hist_mass(income_bin_index)+distribution_mass_used
+                                    income_hist_income(income_bin_index)=&
+                                        income_hist_income(income_bin_index)+total_income*distribution_mass_used
+
                                     if (financial_index==financial_grid_size) then
                                         diag_mass_top_financial=diag_mass_top_financial+distribution_mass_used
                                     end if
@@ -7446,6 +7510,52 @@
         end do
 
         model_bottom_half_wealth_share(time_period)=model_wealth_share_below(5,time_period)
+
+        ! THE SAME WALK ON INCOME, at the bottom 1, 5 and 10 per cent. The
+        ! bucket that straddles each cut is split in proportion to the mass
+        ! taken from it, exactly as above.
+        do percentile_index_1=1,3
+
+            percentile_1=bottom_percentiles(percentile_index_1)
+            cumulative_mass_1=0
+            cumulative_income_1=0
+
+            do income_bin_index=1,income_bins
+
+                if (cumulative_mass_1+income_hist_mass(income_bin_index)>=&
+                    percentile_1*sum_of_distribution) then
+
+                    share_of_bin_1=(percentile_1*sum_of_distribution-cumulative_mass_1)/&
+                        max(income_hist_mass(income_bin_index),10.d0**(-12))
+                    cumulative_income_1=cumulative_income_1+&
+                        share_of_bin_1*income_hist_income(income_bin_index)
+                    exit
+
+                end if
+
+                cumulative_mass_1=cumulative_mass_1+income_hist_mass(income_bin_index)
+                cumulative_income_1=cumulative_income_1+income_hist_income(income_bin_index)
+
+            end do
+
+            ! THE DENOMINATOR IS THE HISTOGRAM'S OWN TOTAL, AND THAT IS WEAKER
+            ! THAN WHAT THE WEALTH SHARES DO. The wealth version divides by
+            ! model_total_net_wealth, an aggregate accumulated independently, so
+            ! comparing the two catches a histogram that has missed households.
+            ! There is no household-level income aggregate to check against here
+            ! -- model_total_income is output plus investment income plus
+            ! bequests, which is not the sum of total_income over households --
+            ! so dividing by the histogram's own sum is the honest choice: it
+            ! makes these genuine shares that sum to one, at the cost of that
+            ! second check. The mass check below is what remains, and it still
+            ! catches the failure that matters, a histogram covering less than
+            ! the distribution does.
+            model_income_share_below(percentile_index_1,time_period)=cumulative_income_1/&
+                max(sum(income_hist_income),10.d0**(-12))
+
+        end do
+
+        income_hist_mass_check=sum(income_hist_mass)/max(sum_of_distribution,10.d0**(-12))
 
         ! DOES THE HISTOGRAM ACTUALLY HOLD THE WHOLE DISTRIBUTION? If its mass
         ! does not equal sum_of_distribution, or its wealth does not equal the
@@ -23824,7 +23934,19 @@
             unemployment_process(1:cutoff_age_1,2,1,1,0,:)=probability_becoming_employed
             unemployment_process(1:cutoff_age_1,2,1,2,0,:)=probability_becoming_employed/(1+increased_prob_if_homeless)
             unemployment_process(1:cutoff_age_1,2,2,1,0,:)=1-probability_becoming_employed
-            unemployment_process(1:cutoff_age_1,2,2,2,0,:)=1-probability_becoming_employed1/(1+increased_prob_if_homeless)
+            ! WAS probability_becoming_employed1, WITH A TRAILING 1, AND THAT
+            ! NAME IS DECLARED NOWHERE IN THE FILE. This subroutine has no
+            ! implicit none -- the module it uses has one, but that does not
+            ! reach a scope that merely uses it -- so the misspelling was typed
+            ! implicitly as an uninitialised real and the line read
+            ! 1 - undefined/1.2 rather than 1 - 0.55/1.2. The row for an
+            ! unemployed homeless household then did not sum to one: its find-a-
+            ! job entry two lines above is 0.4583, so the pair summed to about
+            ! 1.4583 and the process was creating mass inside unemployment.
+            ! The identical block six lines below, for state 3, spells it
+            ! correctly, which is what settles that this is a typo and not a
+            ! deliberate asymmetry.
+            unemployment_process(1:cutoff_age_1,2,2,2,0,:)=1-probability_becoming_employed/(1+increased_prob_if_homeless)
             
             unemployment_process(1:cutoff_age_1,3,1,1,0,:)=probability_becoming_employed
             unemployment_process(1:cutoff_age_1,3,1,2,0,:)=probability_becoming_employed/(1+increased_prob_if_homeless)
@@ -30605,6 +30727,16 @@
 
                 case ("addiction_scalar_1")
                     write(*,*) "HANDOVER addiction_scalar_1:", addiction_scalar_1, "->", handover_value
+                    ! A SILENT CLAMP MISLABELS A POINT. The point's identity is
+                    ! the md5 of the vector REQUESTED, so if this clamp bites,
+                    ! the file is named for a value the model never ran and the
+                    ! archive quietly contains a lie. It has never bitten, and
+                    ! the floor below it is now 1e-30, but it must say so if it
+                    ! ever does.
+                    if (handover_value>b_hi .or. handover_value<b_lo) then
+                        write(*,*) "HANDOVER CLAMPED addiction_scalar_1: requested",&
+                            handover_value, "outside [", b_lo, ",", b_hi, "] -- THIS POINT IS MISLABELLED"
+                    end if
                     addiction_scalar_1=max(min(handover_value,b_hi),b_lo)
 
                 case ("size_homelessness")

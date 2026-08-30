@@ -227,7 +227,10 @@ ARM = 1.6               # an arm sits this factor either side of the centre
 # These are the bounds the model itself imposes, and an arm is clipped into them
 # rather than being sent out to fail.
 BOUNDS = {
-    'addiction_scalar_1':                    (1e-10, 1.0),
+    # The author lowered the floor on 29 August: b may be arbitrarily small so
+    # long as it is strictly positive. Matches b_lo in the Fortran, which is now
+    # 1e-30. It has never bound -- the search sits near 0.017.
+    'addiction_scalar_1':                    (1e-30, 1.0),
     # NO CEILING IN THE MODEL: the handover takes lambda_addiction verbatim, and
     # the onset hazard is 1 - exp(-lambda * drug quantity), so a large enough
     # lambda drives the disordered share arbitrarily close to one. The search's
@@ -258,14 +261,41 @@ BOUNDS = {
     # factor of ten one rung below the anchor at 0.47023, and by 0.36 there is
     # no drug block left to measure. An arm sent down there scores a gated miss
     # and pushes the simplex away from the only band that works.
-    'relative_share_of_addiction_1':         (0.45, 0.51),
+    # WIDENED 29 AUGUST WITH THE AUTHOR'S APPROVAL, from (0.45, 0.51).
+    #
+    # THE OLD BOUND WAS 0.125 E-FOLDS WIDE AND THE SEARCH USED 100 PER CENT OF
+    # IT. For scale, lambda_addiction needed 5.52 e-folds of travel to take its
+    # moment from -81 per cent to +10, and probability_becoming_unemployed
+    # needed 3.43. A parameter allowed forty times less room than the two that
+    # actually had to move, and pressing on both ends of it every time, is not
+    # being calibrated; it is being held.
+    #
+    # AND ITS JUSTIFICATION DIED THIS MORNING. The reasoning above cites b at
+    # 0.96 for rsa_1 0.658 and a collapse below 0.36. Both come from the 566
+    # points retired by the savings-grid fix, and no post-grid point exists
+    # outside (0.45, 0.51) because this bound forbade one.
+    #
+    # SO THE NEW BOUND IS A JUDGEMENT, NOT A MEASUREMENT, and it is deliberately
+    # modest: three times the old room rather than the full range, because the
+    # pre-grid evidence probably had the SHAPE right -- degenerate economies at
+    # both ends -- even if the grid fix moved the levels. Widening straight to
+    # the old cliffs would spend solves measuring an economy where everybody
+    # uses. The joint solve can find the real edges from inside.
+    'relative_share_of_addiction_1':         (0.40, 0.58),
     'value_of_life':                         (1.0, 500.0),
     'size_homelessness':                     (0.01, 5.0),
     'discount_factor':                       (0.900, 0.999),
     'relative_share_of_leisure':             (0.10, 20.0),
     'labor_income_tax_rate':                 (0.05, 3.0),
     'sd_permanent_productivity':             (0.10, 3.0),
-    'probability_becoming_unemployed':       (0.001, 0.500),
+    # THE FLOOR WAS 0.001 AND THE FORTRAN'S IS 1e-6, so the search's own floor
+    # was a thousand times the model's. It never bound -- the search never went
+    # below 0.0164, sixteen times above its own limit -- so this is not why
+    # pi_eu could not be reached. Matched to the Fortran anyway: a bound that
+    # is tighter than the model's own is a constraint nobody put there on
+    # purpose, and the same shape of unused headroom is what trapped
+    # lambda_addiction at 4.5 to 6.9 for the whole calibration.
+    'probability_becoming_unemployed':       (1e-6, 0.500),
     'multiple_of_probabilities_of_employment_if_addicted': (1.0, 50.0),
     # THE MODEL CLAMPS THIS ONE TO [1, 40] ON THE WAY IN. Arms at 0.30 and 0.10
     # were both silently set to 1 and came back as the centre, which the round
