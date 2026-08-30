@@ -135,6 +135,84 @@ PREFERENCES ARE CONSTANT ACROSS STATES and `recompute_derived_parameters` now
 asserts it. The author asked; the model was already correct, but the diagnostic
 printed `_1` under the `_2` label and would have hidden a divergence.
 
+## STOP: the archive is on a different model as of 30 August evening
+
+Two changes today mean the 243 archived points describe a model that no longer
+exists. Do not launch a correction round until the equivalence run below has
+landed and been read.
+
+**The asset grid was cut from 41 reachable points to 25.** The author asked for
+it, to buy solve time. Every archived point was solved on 41. Every moment they
+report is a moment of a different model, and the gate's brackets, elasticities
+and drug-block Jacobians are all built out of them. A DIAG line now records the
+grid in each point so the two generations cannot be mixed silently; there is
+precedent for exactly this going wrong, in `points_pregrid`.
+
+**h_2 was redefined and is no longer conceded.** The trigger prompt still says
+"being off on h2 is ok". That was true when h_2 meant the share in the smallest
+rental unit. It now means the share paying more than half of income for housing,
+target 0.101 from SCF 2022 over ALL households, and the author wants it hit.
+`SKIP` in next_batch.py is empty. The old h_2 and the new one are told apart by
+their LABEL, via `STALE_LABEL`, because both are called h_2 in point files.
+
+Also renamed: the old h_4, the share in the largest unit, is now **h_3**. Its
+target is unchanged at 0.626723.
+
+## What the homelessness block actually does, measured on 30 August
+
+This is the day's main finding and it is not a calibration problem.
+
+- **92 per cent of the model's homeless are homeless BY CHOICE** (median over 242
+  points; 84 per cent at the best point). The test is income plus assets against
+  the rent on the smallest unit.
+- **The smallest unit costs 5.9 per cent of average labour income**, which is the
+  25th percentile of rents actually paid in SCF 2022. Nobody is priced out.
+- **88 per cent of the model's working-age homeless are employed**, against 40 to
+  52 per cent in Meyer et al. (2024). Their income is 19.1 per cent of average in
+  that paper; the model has never printed its counterpart until today.
+- **A household with the disorder is 34 times LESS likely to be homeless than a
+  random one.** The data has it 5.9 times MORE likely. The association is
+  reversed, not weak, and no point in the archive reaches a relative risk above
+  0.78 -- across kappa from 1 to 20, lambda_d from 0.001 to 0.92, and the
+  employment penalty on and off.
+
+**The recovery deterrent is NOT the cause.** mu_homeless=1.0 took mu_H from 1.425
+to 1.094 and moved the SUD share of the homeless from 0.001024 to 0.001042. That
+hypothesis was stated confidently here and is refuted; do not revive it.
+
+**The live hypothesis is the MORTALITY INTERACTION.** Survival is
+`survival(clean,housed)**(kappa_phi_h*kappa_phi_d)` -- the two hazards multiply.
+For a clean household the street multiplies the death hazard by up to 9; for an
+addict it multiplies an already 8-fold hazard, so the marginal cost of
+homelessness is about eight times larger for an addict. Two things fit: both
+multipliers collapse with age, and the relative risk runs 0.011, 0.039, 0.153,
+0.557, 1.07 across the five HUD bands; and at kappa_phi_d_level=1 the relative
+risk is 0.783 against 0.02 at 8.
+
+**And h_2's instrument is not identified against h_1.** `size_homelessness` sets
+the utility of the street and the smallest unit sets the utility of the cheapest
+housed alternative; the housed/homeless margin is the gap between them. So
+`smallest_rental_relative_to_lowest_income` moves h_1 directly. Two moments on
+two parameters that move one margin.
+
+## Data definitions that are settled but NOT yet adopted
+
+The NSDUH work is done and the numbers are verified against the 2024 codebook,
+which is now in `data/`. Nothing has been changed in the model on the strength of
+it, because a target change is the author's call.
+
+- `b` = 0.0890 is ANY drug use disorder including marijuana, svyrdudany in
+  (1,2,3), adults 26+ -- `age3 >= 7`, NOT the `age3 >= 4` the published income
+  script uses, which is the eighteen and over cut.
+- `lambda_d` = 0.0368 is moderate or severe, same universe.
+- The two income rows in the validation table are on the WRONG age cut and do not
+  reproduce: on 26+ they are 0.761 and 0.687, not 0.740 and 0.711.
+- Marijuana is 71 per cent of the moderate-or-severe target. Excluding it, any
+  non-marijuana disorder is 2.82 per cent with income 0.693 of average.
+- Regular non-marijuana use, 50+ days, is 1.59 per cent of adults with income
+  0.589, and 42.6 per cent of those users carry a disorder against the model's
+  40.3 -- the conditional structure is right, the levels are three times too big.
+
 ## The SUD mortality level is now a coordinate of the search
 
 The author asked on 30 August to calibrate the death probability so the average
