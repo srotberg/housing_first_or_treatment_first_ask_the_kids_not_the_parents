@@ -193,7 +193,17 @@ def main():
                       'bash code/run_one_point.sh ' +
                       ' '.join(f'{k}={nv[k]}' for k in sorted(nv))))
 
-    out = os.path.join(HERE, 'CORRECT.txt')
+    # NEVER OVERWRITE A BATCH THAT IS STILL BEING CONSUMED. Workers read their
+    # line out of this file and `git pull --rebase` between lines, so rewriting
+    # it under them silently swaps the vectors on every line they have not
+    # reached yet -- two bases mixed inside one batch, with nothing in the point
+    # files to say so. This gate re-opens every firing and would have done
+    # exactly that at 04:20, when it rewrote all nine arms from a new base while
+    # six of the previous nine were still running. Each round gets its own file.
+    n = 1
+    while os.path.exists(os.path.join(HERE, f'CORRECT_{n}.txt')):
+        n += 1
+    out = os.path.join(HERE, f'CORRECT_{n}.txt')
     with open(out, 'w') as fh:
         fh.write('\n'.join(l[-1] for l in lines) + ('\n' if lines else ''))
     print(f'{len(lines)} correction arms written to {os.path.basename(out)}, '
