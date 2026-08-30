@@ -3849,6 +3849,16 @@
         ! involuntarily homeless: if income alone already covers the rent, it
         ! cannot, and the binding margin has to be a ZERO income spell instead.
         real(8), dimension(transition_length) :: val_homeless_afford_on_income
+        ! WHERE THE SEVERE COST BURDEN ACTUALLY LIVES. h_2 is the share paying
+        ! over half of income for housing and its instrument was mapped to the
+        ! SMALLEST unit. But a household in the smallest unit needs income below
+        ! 11.8 per cent of average labour income to be burdened, where one in the
+        ! largest needs only 35 per cent -- and 63.6 per cent of renters are in
+        ! the largest. If the burden is concentrated there, the instrument for
+        ! h_2 is largest_house_size and not smallest_rental_..., and the mapping
+        ! made this afternoon is wrong. Split by unit and the answer is visible.
+        real(8), dimension(transition_length,lowest_housing_grid_point:housing_status_grid_size-1) :: &
+            val_burden50_by_unit,val_mass_by_unit
         
         integer :: thread_num,thread_index,total_number_of_threads
         
@@ -4388,6 +4398,13 @@
             ! changes every moment, so a point measured on one grid cannot be
             ! bracketed against a point measured on another -- and nothing in the
             ! vector, the tag or the file said which. It does now.
+            do k_1=second_lowest_housing_grid_point,housing_status_grid_size-1
+                write(*,*) "DIAG unit", k_1, " share of renters=",&
+                    val_mass_by_unit(1,k_1)/max(mass_of_renters_at_housing_spending(1,1)*0+&
+                    sum(val_mass_by_unit(1,second_lowest_housing_grid_point:)),10.d0**(-14)),&
+                    " of whom over half of income=",&
+                    val_burden50_by_unit(1,k_1)/max(val_mass_by_unit(1,k_1),10.d0**(-14))
+            end do
             write(*,*) "DIAG asset grid, reachable points                =",&
                 real(positive_financial_grid_size+1,8)
             write(*,*) "DIAG share in the smallest unit                  =",&
@@ -11701,6 +11718,8 @@
         mass_renters_by_age(time_period,:)=0
         
         mass_of_renters_1=0
+        val_burden50_by_unit(time_period,:)=0
+        val_mass_by_unit(time_period,:)=0
 
         val_voucher_mass(time_period)=0
         val_voucher_rent(time_period)=0
@@ -11815,6 +11834,10 @@
                                         (housing_status_index_used>=second_lowest_housing_grid_point)) then
                                     
                                         mass_of_renters_1=mass_of_renters_1+distribution_mass_used
+
+                                        val_mass_by_unit(time_period,housing_status_index_used)=&
+                                            val_mass_by_unit(time_period,housing_status_index_used)+&
+                                            distribution_mass_used
                                     
                                     end if
                                     
@@ -11936,6 +11959,12 @@
                                                             
                                                 mass_of_renters_at_housing_spending(time_period,i)=&
                                                     mass_of_renters_at_housing_spending(time_period,i)+distribution_mass_used
+
+                                                if (i==2) then
+                                                    val_burden50_by_unit(time_period,housing_status_index_used)=&
+                                                        val_burden50_by_unit(time_period,housing_status_index_used)+&
+                                                        distribution_mass_used
+                                                end if
                                                     
                                                 model_rent_burden_by_age(time_period,age_index,i)=&
                                                     model_rent_burden_by_age(time_period,age_index,i)+distribution_mass_used
