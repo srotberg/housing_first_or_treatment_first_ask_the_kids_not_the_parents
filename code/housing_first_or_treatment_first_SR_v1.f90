@@ -4854,6 +4854,22 @@
             ! shut out. If the first number is close to one, homelessness in this
             ! model is a preference and not a constraint, and no parameter that
             ! moves incomes will move the mental illness share of the street.
+            ! TWO DOCUMENTED MOMENTS FOR THE HOMELESS THAT NOTHING SCORED.
+            ! Both are in section 5 of DATA_APPENDIX.md and neither was ever
+            ! compared with the model. Meyer, Wyse, Meyer, Grunwaldt and Wu
+            ! (2024), NBER 32323, from the 2010 Census linked to tax and
+            ! administrative records: income of the homeless at 19.1 per cent of
+            ! average, and formal employment at 52 per cent of the sheltered and
+            ! 40 per cent of the unsheltered, so 0.46 at the midpoint.
+            !
+            ! The pair matters more than either alone. It says the homeless in
+            ! the world are POOR AND HALF OF THEM WORK, where the model's are
+            ! comfortable and nearly all of them work.
+            write(*,*) "UNTARGETED income of the homeless            model=",&
+                model_avg_homeless_income(1)/max(model_average_income(1),10.d0**(-14)),&
+                " observed=", 0.191d0
+            write(*,*) "UNTARGETED employed share of the homeless    model=",&
+                model_employed_share_of_homeless(1), " observed=", 0.460d0
             write(*,*) "DIAG homeless who could afford it on INCOME ALONE=",&
                 val_homeless_afford_on_income(1)
             write(*,*) "DIAG homeless by choice, share of the homeless   =",&
