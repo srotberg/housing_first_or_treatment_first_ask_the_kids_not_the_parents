@@ -4751,13 +4751,30 @@
                     write(*,*) "ELASTICITY HELD     participation went to zero at the higher price"
                 end if
 
-                if ((model_drugs_used_by_users_on_average(1)>10.d0**(-12)) .AND. &
-                    (val_qty_base_1>10.d0**(-12))) then
+                ! THE INTENSIVE MARGIN IS THE PER-ADDICT NUMBER, NOT THE PER-USER
+                ! ONE. Olmstead et al. measure a conditional elasticity among
+                ! continuing regular users. Quantity per USER moves whenever the
+                ! addict/experimenter mix shifts, and a price rise shrinks the
+                ! disorder stock, so that statistic mixes each household's own
+                ! response with a change in who is being averaged over. It read
+                ! -5.06 where the first order condition bounds an individual at
+                ! about -1.3, which is how the mismatch was caught.
+                if ((model_drugs_used_by_addicts_on_average(1)>10.d0**(-12)) .AND. &
+                    (val_qty_addict_base_1>10.d0**(-12))) then
                     write(*,*) "UNTARGETED price elasticity, intensive       model=",&
-                        log(model_drugs_used_by_users_on_average(1)/val_qty_base_1)/&
+                        log(model_drugs_used_by_addicts_on_average(1)/val_qty_addict_base_1)/&
                         log(1+elasticity_price_step), " observed=", -0.55d0
                 else
-                    write(*,*) "ELASTICITY HELD     quantity per user went to zero at the higher price"
+                    write(*,*) "ELASTICITY HELD     quantity per addict went to zero at the higher price"
+                end if
+
+                ! The per-user figure is kept as a diagnostic, since the gap
+                ! between it and the row above IS the composition effect.
+                if ((model_drugs_used_by_users_on_average(1)>10.d0**(-12)) .AND. &
+                    (val_qty_base_1>10.d0**(-12))) then
+                    write(*,*) "DIAG elasticity, quantity per USER (mixed)      =",&
+                        log(model_drugs_used_by_users_on_average(1)/val_qty_base_1)/&
+                        log(1+elasticity_price_step)
                 end if
 
                 write(*,*) "ELASTICITY_DIAG new per addict=", model_drugs_used_by_addicts_on_average(1),&
