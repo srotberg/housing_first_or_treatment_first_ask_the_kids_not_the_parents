@@ -335,14 +335,25 @@ def vector(text):
 # else entirely -- a straddle built out of two different quantities, which is
 # exactly the class of error the bracket code already guards against across
 # slices. The label is in the point file, so use it.
-STALE_LABEL = {'h_2': 'smallest unit'}
+# A MOMENT WHOSE DEFINITION CHANGED IS NOT COMPARABLE WITH ITS OWN PAST.
+#
+# h_2 has had three definitions in a day -- the share in the smallest unit,
+# then the share above half of INCOME, now the share above half of total
+# SPENDING -- and gamma's object moved from rent over income to housing over
+# expenditure at the same time. A point measured under an older definition
+# carries a number under the same name, and mixing them silently is how a
+# bracket walks away from a target it is already on. The label is what
+# distinguishes them, so a stale label drops the moment and the point is simply
+# re-measured when it is next asked for.
+STALE_LABEL = {'h_2': ['smallest unit', 'above half of income'],
+               'gamma': ['renters']}
 
 
 def moments(text):
     out = {}
     for n, label, m, tg in re.findall(
             r'MOMENT (\S+)\s+(.*?)model=\s*([0-9.eE+-]+)\s+target=\s*([0-9.eE+-]+)', text):
-        if n in STALE_LABEL and STALE_LABEL[n] in label:
+        if any(t in label for t in STALE_LABEL.get(n, ())):
             continue
         out[n] = (float(m), float(tg))
     return out

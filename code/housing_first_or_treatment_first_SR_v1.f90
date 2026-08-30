@@ -4402,8 +4402,24 @@
                 " target=", avg_labor_supply_data
             write(*,*) "MOMENT beta      wealth over output          model=",&
                 w2o_1, " target=", wealth_to_output_data
-            write(*,*) "MOMENT h_2       above half of income on rent model=",&
-                mass_of_renters_at_housing_spending(1,2), " target=", severe_cost_burden_data
+            ! h_2 IS ON TOTAL SPENDING, NOT ON INCOME, AND SO IS gamma BELOW.
+            !
+            ! The two housing moments were on different denominators. gamma's
+            ! 26.8 per cent is CEX shelter and utilities over TOTAL EXPENDITURE
+            ! and the 10.1 per cent beside it is the share of households paying
+            ! more than half of TOTAL EXPENDITURE on housing, from the same
+            ! survey. Both were being compared with income based objects, and
+            ! the income and expenditure versions are not close: a household at
+            ! the bottom spends more than it earns, so its housing over income
+            ! is large exactly where its housing over expenditure is not, and
+            ! that household is the one the headcount is made of.
+            !
+            ! Both objects now use the CEX denominator. The income versions are
+            ! kept below as UNTARGETED rows, because the 40.6 and 17.5 per cent
+            ! in the appendix are on income and are worth carrying.
+            write(*,*) "MOMENT h_2       above half of spending      model=",&
+                val_burden50_expend_all(1)/max(val_mass_expend_all(1),10.d0**(-14)),&
+                " target=", severe_cost_burden_data
             write(*,*) "MOMENT h_3       share in the largest unit   model=",&
                 model_housing_size_dist(1,housing_status_grid_size-1),&
                 " target=", housing_size_dist_data(2)
@@ -4455,8 +4471,17 @@
                 real(positive_financial_grid_size+1,8)
             write(*,*) "DIAG share in the smallest unit                  =",&
                 model_housing_size_dist(1,0)
-            write(*,*) "MOMENT gamma     housing spending, renters   model=",&
-                model_avg_housing_spending_renters(1), " target=", avg_rent_to_income_data
+            ! gamma ON THE DENOMINATOR ITS TARGET IS MEASURED ON. 26.8 per cent
+            ! is a ratio of MEANS over total expenditure; the old object was a
+            ! mass weighted mean of household rent over INCOME ratios, which is
+            ! neither the same denominator nor the same kind of average. CEX's
+            ! income based figure for the same numerator is 20.2 per cent, so
+            ! the old pairing aimed the target about a third high.
+            write(*,*) "MOMENT gamma     housing over expenditure    model=",&
+                val_hous_expend_num(1)/max(val_hous_expend_den(1),10.d0**(-14)),&
+                " target=", avg_rent_to_income_data
+            write(*,*) "UNTARGETED housing over income, renters      model=",&
+                model_avg_housing_spending_renters(1), " observed=", 0.202d0
             write(*,*) "MOMENT h_1       homelessness rate           model=",&
                 model_fraction_homeless(1), " target=", fraction_homeless_data
             write(*,*) "MOMENT b         total drug users            model=",&
@@ -4616,6 +4641,8 @@
             ! appendix derives 40.6 and 17.5 on.
             write(*,*) "UNTARGETED renters above 30 pct of income    model=",&
                 mass_of_renters_at_housing_spending(1,1), " observed=", 0.406d0
+            write(*,*) "UNTARGETED renters above 50 pct of income    model=",&
+                mass_of_renters_at_housing_spending(1,2), " observed=", 0.175d0
 
             ! THE TWO PICTURE OF SUBSIDIZED HOUSEHOLDS ROWS. The tenant
             ! contribution rate is the check on kappa_r, which is set to
