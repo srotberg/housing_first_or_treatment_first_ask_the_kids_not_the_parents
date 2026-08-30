@@ -3859,6 +3859,22 @@
         ! made this afternoon is wrong. Split by unit and the answer is visible.
         real(8), dimension(transition_length,lowest_housing_grid_point:housing_status_grid_size-1) :: &
             val_burden50_by_unit,val_mass_by_unit
+
+        ! HOUSING OVER TOTAL EXPENDITURE, WHICH IS THE CEX'S DENOMINATOR AND NOT
+        ! THE ONE THE BURDEN ROWS ABOVE USE.
+        !
+        ! gamma's target, 26.8 per cent, is CEX shelter and utilities over TOTAL
+        ! EXPENDITURE. The object it is scored against, model_avg_housing_spending
+        ! _renters, is a mean of household rent over INCOME ratios. Those are
+        ! different denominators and CEX's own income based figure is 20.2 per
+        ! cent, so the target is aimed about a third high against the object.
+        !
+        ! These four carry the expenditure version so the two can be compared
+        ! rather than argued about: the headcount above half of expenditure over
+        ! ALL households and over housed ones, and the aggregate ratio, which is
+        ! the direct analogue of the 26.8.
+        real(8), dimension(transition_length) :: val_burden50_expend_all,val_mass_expend_all,&
+            val_burden50_expend_housed,val_mass_expend_housed,val_hous_expend_num,val_hous_expend_den
         
         integer :: thread_num,thread_index,total_number_of_threads
         
@@ -4418,6 +4434,21 @@
             ! the numerator and their income is still in the denominator.
             write(*,*) "DIAG aggregate rent / aggregate income           =",&
                 aggregate_rent_spending(1)/max(model_total_income(1),10.d0**(-14))
+
+            ! THE CEX DENOMINATOR. 26.8 per cent is shelter and utilities over
+            ! TOTAL EXPENDITURE, so this line, not gamma's, is its analogue; and
+            ! the two headcounts beside it are the share of households paying
+            ! more than half of expenditure on housing, which is the object the
+            ! smallest rung is to be calibrated on. CEX's own income based
+            ! figure for the same numerator is 20.2 per cent, against the 26.8
+            ! on expenditure, so a gap between this line and gamma's is expected
+            ! and its size is the thing to read.
+            write(*,*) "DIAG aggregate housing / aggregate expenditure   =",&
+                val_hous_expend_num(1)/max(val_hous_expend_den(1),10.d0**(-14))
+            write(*,*) "DIAG over half of EXPENDITURE, all households    =",&
+                val_burden50_expend_all(1)/max(val_mass_expend_all(1),10.d0**(-14))
+            write(*,*) "DIAG over half of EXPENDITURE, housed only       =",&
+                val_burden50_expend_housed(1)/max(val_mass_expend_housed(1),10.d0**(-14))
             write(*,*) "DIAG aggregate rent / output                     =",&
                 aggregate_rent_spending(1)/max(model_output(1),10.d0**(-14))
             write(*,*) "DIAG asset grid, reachable points                =",&
@@ -11720,6 +11751,7 @@
             housing_status_index_used,addiction_used_1
         real(8) :: total_income,mass_of_renters_1,labor_supply_used,distribution_mass_used,lived_in_size_used,&
             avg_income_to_use_1,avg_income_to_use_2,housing_voucher_2
+        real(8) :: val_hous_outlay_1,val_total_expend_1,val_total_consumption_1
                 
         avg_income_to_use_1=is_counterfactual*average_labor_income_calibrated+&
             (1-is_counterfactual)*model_average_labour_income(time_period)
@@ -11735,6 +11767,13 @@
         mass_of_renters_1=0
         val_burden50_by_unit(time_period,:)=0
         val_mass_by_unit(time_period,:)=0
+
+        val_burden50_expend_all(time_period)=0
+        val_mass_expend_all(time_period)=0
+        val_burden50_expend_housed(time_period)=0
+        val_mass_expend_housed(time_period)=0
+        val_hous_expend_num(time_period)=0
+        val_hous_expend_den(time_period)=0
 
         val_voucher_mass(time_period)=0
         val_voucher_rent(time_period)=0
@@ -11949,6 +11988,62 @@
                                                                                                                                                                                                                                                                                     
                                     end if
                                     
+                                    ! THE EXPENDITURE DENOMINATOR, TAKEN BEFORE THE INCOME ONE
+                                    ! OVERWRITES THE OUTLAY.
+                                    !
+                                    ! fraction_of_income_spent_on_housing holds the housing OUTLAY
+                                    ! at this point and is divided by income three lines below, so
+                                    ! the expenditure version has to be formed here or not at all.
+                                    ! The outlay is recomputed rather than read off that variable
+                                    ! because a household that is homeless satisfies neither branch
+                                    ! above and would inherit the previous state's number.
+                                    !
+                                    ! Expenditure is the model's own: total consumption, which
+                                    ! already carries drug spending, plus the housing outlay. The
+                                    ! outlay is NET of the voucher, which is what the household pays
+                                    ! and what a consumer unit reports.
+                                    !
+                                    ! ALL households and HOUSED households are both accumulated.
+                                    ! The universe asked for is all households; CEX consumer units
+                                    ! are housed, so the two differ by the homelessness rate and the
+                                    ! difference should be stated rather than chosen silently.
+                                    val_total_consumption_1=&
+                                        policy_function_total_consumption(years_left_on_mortgage_index)%&
+                                        vector_transition_real(time_period,age_index,financial_index,&
+                                        unemployment_index,employment_index,housing_status_index,voucher_index)
+
+                                    val_hous_outlay_1=0
+                                    if ((amortization_used<=1) .AND. &
+                                        (housing_status_index_used>=second_lowest_housing_grid_point)) then
+                                        val_hous_outlay_1=max(rent(time_period,low_quality_market)*&
+                                            lived_in_size_used-housing_voucher_2,0.d0)
+                                    elseif (amortization_used>1) then
+                                        val_hous_outlay_1=fraction_of_income_spent_on_housing
+                                    end if
+
+                                    val_total_expend_1=val_total_consumption_1+val_hous_outlay_1
+
+                                    val_mass_expend_all(time_period)=val_mass_expend_all(time_period)+&
+                                        distribution_mass_used
+                                    val_hous_expend_num(time_period)=val_hous_expend_num(time_period)+&
+                                        val_hous_outlay_1*distribution_mass_used
+                                    val_hous_expend_den(time_period)=val_hous_expend_den(time_period)+&
+                                        val_total_expend_1*distribution_mass_used
+
+                                    if (val_hous_outlay_1>0.5d0*max(val_total_expend_1,10.d0**(-14))) then
+                                        val_burden50_expend_all(time_period)=&
+                                            val_burden50_expend_all(time_period)+distribution_mass_used
+                                    end if
+
+                                    if (housing_status_index_used>=second_lowest_housing_grid_point) then
+                                        val_mass_expend_housed(time_period)=&
+                                            val_mass_expend_housed(time_period)+distribution_mass_used
+                                        if (val_hous_outlay_1>0.5d0*max(val_total_expend_1,10.d0**(-14))) then
+                                            val_burden50_expend_housed(time_period)=&
+                                                val_burden50_expend_housed(time_period)+distribution_mass_used
+                                        end if
+                                    end if
+
                                     if (total_income==0) then
                                     
                                         fraction_of_income_spent_on_housing=1
