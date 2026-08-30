@@ -1395,6 +1395,27 @@
         ! in this one either.
         real(8), parameter, dimension(0:2) :: housing_size_dist_data=&
             (/0.132065d0,0.241212d0,0.626723d0/)
+
+        ! H_2 IS THE SEVERE COST BURDEN NOW, NOT THE SMALLEST UNIT'S SHARE.
+        !
+        ! The author's instruction on 30 August. The smallest unit's share is a
+        ! statement about a grid the model chose, so matching it disciplines the
+        ! grid rather than the economy; the share of households paying more than
+        ! half their income for shelter is a fact about the world, and it is what
+        ! the bottom of the ladder ought to be identified on.
+        !
+        ! 0.101 is SCF 2022, ALL households, owners and renters together, housing
+        ! cost above half of income. Owner cost is SCF's pirmort, twelve times the
+        ! monthly mortgage payment over income, scaled by 1.5 to stand in for
+        ! property tax and utilities -- the summary extract carries neither, so
+        ! that factor is an assumption and not a measurement. Unscaled the figure
+        ! is 0.078 and at 1.3 it is 0.092, so the assumption is worth about two
+        ! points. Renters alone give 0.181 and owners alone 0.025.
+        !
+        ! ALL households is the right universe BECAUSE EVERYONE RENTS HERE:
+        ! include_homeownership is 0, so the model's renters stand for the whole
+        ! population rather than for the third of it that rents in the data.
+        real(8), parameter :: severe_cost_burden_data=0.101d0
         real(8), parameter :: fraction_light_users=0.731
         
         integer, parameter :: target_HO_of_old=1
@@ -4320,11 +4341,16 @@
                 " target=", avg_labor_supply_data
             write(*,*) "MOMENT beta      wealth over output          model=",&
                 w2o_1, " target=", wealth_to_output_data
-            write(*,*) "MOMENT h_2       share in the smallest unit  model=",&
-                model_housing_size_dist(1,0), " target=", housing_size_dist_data(0)
-            write(*,*) "MOMENT h_4       share in the largest unit   model=",&
+            write(*,*) "MOMENT h_2       above half of income on rent model=",&
+                mass_of_renters_at_housing_spending(1,2), " target=", severe_cost_burden_data
+            write(*,*) "MOMENT h_3       share in the largest unit   model=",&
                 model_housing_size_dist(1,housing_status_grid_size-1),&
                 " target=", housing_size_dist_data(2)
+            ! The smallest unit's share is kept as a DIAGNOSTIC rather than a
+            ! target, because the grid it describes is still the object the
+            ! instrument moves and a reader needs it alongside.
+            write(*,*) "DIAG share in the smallest unit                  =",&
+                model_housing_size_dist(1,0)
             write(*,*) "MOMENT gamma     housing spending, renters   model=",&
                 model_avg_housing_spending_renters(1), " target=", avg_rent_to_income_data
             write(*,*) "MOMENT h_1       homelessness rate           model=",&
@@ -4486,8 +4512,6 @@
             ! appendix derives 40.6 and 17.5 on.
             write(*,*) "UNTARGETED renters above 30 pct of income    model=",&
                 mass_of_renters_at_housing_spending(1,1), " observed=", 0.406d0
-            write(*,*) "UNTARGETED renters above 50 pct of income    model=",&
-                mass_of_renters_at_housing_spending(1,2), " observed=", 0.175d0
 
             ! THE TWO PICTURE OF SUBSIDIZED HOUSEHOLDS ROWS. The tenant
             ! contribution rate is the check on kappa_r, which is set to

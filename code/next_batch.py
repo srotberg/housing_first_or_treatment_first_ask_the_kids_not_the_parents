@@ -85,6 +85,14 @@ OWN = {
     'probability_of_voucher_benchmark_used':               'pi_V',
     'max_food_cost':                                       'cbar',
     'size_homelessness':                                   'h_1',
+    # H_2 IS THE SEVERE COST BURDEN NOW, AND IT HAS AN INSTRUMENT AT LAST.
+    # It used to be the share in the smallest unit, was conceded by the author
+    # and sat in SKIP, and the parameter that owns it --
+    # smallest_rental_relative_to_lowest_income, the SIZE of the smallest rental
+    # -- was in the vector with no moment mapped to it, so nothing in the search
+    # ever moved the bottom of the housing ladder. A bigger smallest unit costs
+    # more rent, so it raises the share paying over half of income.
+    'smallest_rental_relative_to_lowest_income':            'h_2',
     'kappa_uem':                                           'kappa_uem',
 }
 BOUNDS = {
@@ -99,11 +107,16 @@ BOUNDS = {
     'probability_of_voucher_benchmark_used':               (0.0001, 0.999),
     'max_food_cost':                                       (0.0001, 1.0),
     'size_homelessness':                                   (0.01, 5.0),
+    'smallest_rental_relative_to_lowest_income':            (0.005, 0.40),
     'kappa_uem':                                           (1.0, 100.0),
 }
 # beta is banded on the author's instruction; h_2 is conceded.
 BAND = {'beta': (3.0, 4.5)}
-SKIP = {'h_2'}
+# NOTHING IS SKIPPED NOW. h_2 was conceded when it meant the share in the
+# smallest unit, which is a fact about a grid the model chose rather than about
+# the world. Redefined as the share paying more than half of income for shelter
+# it is a real moment and the author wants it hit.
+SKIP = set()
 
 
 
