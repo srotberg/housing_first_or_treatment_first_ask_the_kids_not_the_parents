@@ -3762,7 +3762,7 @@
         real(8), dimension(transition_length) :: val_treat_mass,val_treat_homeless,&
             val_treat_smi,val_treat_homeless_working
         real(8), dimension(transition_length) :: val_lfp_sud_num,val_lfp_sud_den,&
-            val_lfp_clean_num,val_lfp_clean_den
+            val_lfp_clean_num,val_lfp_clean_den,val_lfp_sud_work_den,val_lfp_clean_work_den
         real(8), dimension(transition_length) :: val_deaths_all_young,val_deaths_clean_young
         real(8), dimension(transition_length) :: val_voucher_mass,val_voucher_rent,&
             val_voucher_income,val_voucher_wage_led
@@ -4480,6 +4480,15 @@
             write(*,*) "UNTARGETED participation, without a SUD      model=",&
                 val_lfp_clean_num(1)/max(val_lfp_clean_den(1),10.d0**(-14)),&
                 " observed=", 0.615d0
+            ! THE SAME PAIR OVER WORKING AGE HOUSEHOLDS ONLY, which is not the
+            ! data's universe and is kept because it measures something else
+            ! worth knowing: if these are 1, the model has no extensive labour
+            ! supply margin at all and the participation row above is carried
+            ! entirely by the age composition of the two groups.
+            write(*,*) "DIAG participation, with a SUD, working age      =",&
+                val_lfp_sud_num(1)/max(val_lfp_sud_work_den(1),10.d0**(-14))
+            write(*,*) "DIAG participation, without a SUD, working age   =",&
+                val_lfp_clean_num(1)/max(val_lfp_clean_work_den(1),10.d0**(-14))
 
             ! THE THREE TEDS-A ROWS, all on the flow into treatment.
             write(*,*) "UNTARGETED homeless at treatment admission   model=",&
@@ -9769,6 +9778,8 @@
         val_lfp_sud_den(time_period)=0
         val_lfp_clean_num(time_period)=0
         val_lfp_clean_den(time_period)=0
+        val_lfp_sud_work_den(time_period)=0
+        val_lfp_clean_work_den(time_period)=0
         val_deaths_all_young(time_period)=0
         val_deaths_clean_young(time_period)=0
         model_mass_with_sud(time_period)=0
@@ -10023,21 +10034,43 @@
                                     ! force, and a model that reproduces the
                                     ! level by pushing people out of it fails
                                     ! the check it looks like it passes.
-                                    if (in_retirement==0) then
-                                        if (val_is_sud_1==1) then
-                                            val_lfp_sud_den(time_period)=&
-                                                val_lfp_sud_den(time_period)+distribution_mass_used
-                                            if (val_in_labour_force_1>0) then
-                                                val_lfp_sud_num(time_period)=&
-                                                    val_lfp_sud_num(time_period)+distribution_mass_used
-                                            end if
-                                        else
-                                            val_lfp_clean_den(time_period)=&
-                                                val_lfp_clean_den(time_period)+distribution_mass_used
-                                            if (val_in_labour_force_1>0) then
-                                                val_lfp_clean_num(time_period)=&
-                                                    val_lfp_clean_num(time_period)+distribution_mass_used
-                                            end if
+                                    ! THE DENOMINATOR IS EVERY ADULT, NOT EVERY
+                                    ! WORKING AGE ADULT. NSDUH's 65.8 and 61.5
+                                    ! are participation among adults twenty six
+                                    ! and over, which includes the retired, and
+                                    ! the retired are most of what separates a
+                                    ! participation rate of 0.62 from one of 1.
+                                    ! Measured over working age households only
+                                    ! this row came back as exactly 1.0000 on
+                                    ! both arms, which is not the model failing
+                                    ! the check: it is the wrong universe, and
+                                    ! the exact 1 is worth keeping in its own
+                                    ! right because it says the model has NO
+                                    ! extensive margin -- every household in the
+                                    ! employed state chooses positive hours, so
+                                    ! nobody leaves the labour force except by
+                                    ! retiring.
+                                    if (val_is_sud_1==1) then
+                                        val_lfp_sud_den(time_period)=&
+                                            val_lfp_sud_den(time_period)+distribution_mass_used
+                                        if (val_in_labour_force_1>0) then
+                                            val_lfp_sud_num(time_period)=&
+                                                val_lfp_sud_num(time_period)+distribution_mass_used
+                                        end if
+                                        if (in_retirement==0) then
+                                            val_lfp_sud_work_den(time_period)=&
+                                                val_lfp_sud_work_den(time_period)+distribution_mass_used
+                                        end if
+                                    else
+                                        val_lfp_clean_den(time_period)=&
+                                            val_lfp_clean_den(time_period)+distribution_mass_used
+                                        if (val_in_labour_force_1>0) then
+                                            val_lfp_clean_num(time_period)=&
+                                                val_lfp_clean_num(time_period)+distribution_mass_used
+                                        end if
+                                        if (in_retirement==0) then
+                                            val_lfp_clean_work_den(time_period)=&
+                                                val_lfp_clean_work_den(time_period)+distribution_mass_used
                                         end if
                                     end if
 
