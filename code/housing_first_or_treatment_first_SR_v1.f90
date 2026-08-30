@@ -3823,6 +3823,15 @@
         real(8), dimension(transition_length,5) :: val_sud_band,val_homeless_sud_band
         integer :: val_band_1,val_is_homeless_1,val_is_sud_1,val_in_labour_force_1
         real(8) :: val_labour_income_1,val_gross_rent_1,val_treat_1
+        ! CAN THE HOMELESS AFFORD THE SMALLEST UNIT OUT OF INCOME ALONE?
+        ! model_fraction_homeless_by_choice tests income PLUS assets, and the
+        ! model's homeless hold almost nothing -- average assets 0.108 against
+        ! economy-wide wealth near 3.9 -- so that test is close to an income
+        ! test already. Close is not the same as identical, and the difference
+        ! decides whether a type split that strips assets could make anyone
+        ! involuntarily homeless: if income alone already covers the rent, it
+        ! cannot, and the binding margin has to be a ZERO income spell instead.
+        real(8), dimension(transition_length) :: val_homeless_afford_on_income
         
         integer :: thread_num,thread_index,total_number_of_threads
         
@@ -4822,6 +4831,8 @@
             ! shut out. If the first number is close to one, homelessness in this
             ! model is a preference and not a constraint, and no parameter that
             ! moves incomes will move the mental illness share of the street.
+            write(*,*) "DIAG homeless who could afford it on INCOME ALONE=",&
+                val_homeless_afford_on_income(1)
             write(*,*) "DIAG homeless by choice, share of the homeless   =",&
                 model_fraction_homeless_by_choice(1)
             write(*,*) "DIAG homeless receiving food stamps              =",&
@@ -9962,6 +9973,7 @@
         total_homeless_1=0
         total_addicted_and_homeless_1=0
         model_fraction_homeless_by_choice(time_period)=0
+        val_homeless_afford_on_income(time_period)=0
         model_addicted_and_homeless_by_choice(time_period)=0         
         
         model_avg_homeless_income(time_period)=0
@@ -11102,6 +11114,18 @@
                                             
                                         end if
                                         
+                                        ! THE SAME TEST WITHOUT THE ASSETS, which is the
+                                        ! one that says whether stripping wealth could ever
+                                        ! price a household out of the smallest unit.
+                                        if (after_tax_income_2>&
+                                            rent(time_period,0)*housing_size(second_lowest_housing_grid_point)) then
+
+                                            val_homeless_afford_on_income(time_period)=&
+                                                val_homeless_afford_on_income(time_period)+&
+                                                distribution_mass_used
+
+                                        end if
+
                                         if ((after_tax_income_2+financial_grid(financial_index))>&
                                             rent(time_period,0)*housing_size(second_lowest_housing_grid_point)) then
                                             
@@ -11446,6 +11470,9 @@
                         
         model_fraction_homeless_by_choice(time_period)=&
             model_fraction_homeless_by_choice(time_period)/total_homeless_1
+
+        val_homeless_afford_on_income(time_period)=&
+            val_homeless_afford_on_income(time_period)/max(total_homeless_1,10.d0**(-14))
             
         model_addicted_and_homeless_by_choice(time_period)=&
             model_addicted_and_homeless_by_choice(time_period)/total_addicted_and_homeless_1
