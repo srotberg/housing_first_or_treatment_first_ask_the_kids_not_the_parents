@@ -1901,3 +1901,29 @@ Its measured elasticity on gamma is only 0.22 and it costs h_1 at -7.32, so it i
 weak and coupled. It is workable now only because h_1 has both
 `size_homelessness` and the food stamp floor holding it -- which it did not when
 this instrument was first tried and rejected.
+
+## TWO INTERNALS FROZEN, AND WHY THE DISTANCE HAD TO GO WITH THE ADJUSTER
+
+On the author's instruction to stop moving what does not need to move.
+`sd_permanent_productivity` (sigma_y, 1.7 per cent off) and
+`relative_share_of_leisure` (omega_l, 0.3) are held by
+`freeze_fitted_internals=1`. Both have been inside two per cent for the whole
+search while everything being stepped fought.
+
+**Zeroing the adjuster alone would have hung the loop.** Every point run
+converges roughly twenty-eight internal distances, and the block that zeroes
+them all is gated on `re_do_simulation_with_fixed_parameters`, which is
+`max(sweep_addiction_scalar, diagnostic_simulation)` -- both zero, so it does
+NOT run in a point. An adjuster at zero with its distance still live leaves the
+loop waiting on a parameter that can no longer move. Both distances are
+multiplied by `(1-freeze_fitted_internals)` for that reason.
+
+This is the same shape as the `max_food_cost` case earlier: that adjuster sat at
+zero for the whole SNAP period while `distance_max_food_cost` stayed live, which
+means the loop was iterating on a parameter nothing could move. Worth checking
+whether that cost time on every point in that period.
+
+`labor_income_tax_rate` is deliberately NOT frozen. tau_l is 6.1 per cent off,
+and the tax rate has to respond to the income distribution to hold average tax at
+target -- and the distribution is about to move a long way under kappa and the
+two betas.

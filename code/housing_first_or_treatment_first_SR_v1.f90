@@ -1343,6 +1343,20 @@
         ! PARAM_HANDOVER.txt, and the run solves, aggregates and prints every
         ! moment exactly as a calibration loop would, then leaves them alone.
         integer, parameter :: diagnostic_simulation=0
+
+        ! FREEZE THE INTERNALS THAT ARE ALREADY FITTED, on the author's
+        ! instruction to stop moving what does not need to move and focus on the
+        ! key parameters. sigma_y sits 1.7 per cent off and omega_l 0.3, and
+        ! they have been quietly inside two per cent for the whole search while
+        ! everything being stepped fought. Every point run converges roughly
+        ! twenty-eight internal distances, so holding two of them is real time.
+        !
+        ! THE DISTANCE MUST BE ZEROED TOO. re_do_simulation_with_fixed_parameters
+        ! is max(sweep_addiction_scalar, diagnostic_simulation) and both are
+        ! zero, so the block that zeroes every distance does NOT run here. An
+        ! adjuster set to zero without its distance leaves the loop waiting on a
+        ! parameter that can no longer move.
+        integer, parameter :: freeze_fitted_internals=1
         integer, parameter :: re_do_simulation_with_fixed_parameters=&
             max(sweep_addiction_scalar,diagnostic_simulation)
         integer, parameter :: calibrate_only_rental_management_costs=1
@@ -1691,7 +1705,7 @@
         ! width the KKK process happened to leave on the frozen grid, and it
         ! gave a bottom half share of 33 percent, an almost equal society.
         real(8) :: sd_permanent_productivity=1.00d0
-        real(8) :: sd_permanent_productivity_adjuster=2.d0
+        real(8) :: sd_permanent_productivity_adjuster=(1-freeze_fitted_internals)*(2.d0)
         real(8) :: distance_sd_permanent_productivity=1
         real(8) :: stopping_rule_sd_permanent_productivity=10.d0**(-3)
         integer, parameter :: calibrate_sd_permanent_productivity=1
@@ -1707,7 +1721,7 @@
         real(8) :: relative_share_of_leisure=(1-perceived_probability_lower)*8.5+perceived_probability_lower*3.1
         
         real(8) :: distance_relative_share_of_leisure
-        real(8) :: relative_share_of_leisure_adjuster=5*10.d0**(-1)
+        real(8) :: relative_share_of_leisure_adjuster=(1-freeze_fitted_internals)*(5*10.d0**(-1))
         real(8), parameter :: relative_share_of_leisure_adjuster_start=5*10.d0**(-1)
         real(8) :: previous_gap_relative_share_of_leisure=0
         integer :: have_gap_relative_share_of_leisure=0
@@ -33350,6 +33364,7 @@
                     3.d0),10.d0**(-2))
 
                 distance_sd_permanent_productivity=&
+                    (1-freeze_fitted_internals)*&
                     abs(model_bottom_half_earnings_share-bottom_half_earnings_share_data)
 
                 write(*,*) "sd_permanent_productivity=", sd_permanent_productivity,&
@@ -34018,6 +34033,7 @@
                         max(avg_labor_supply_data,10.d0**(-12))),0.01),1000.d0) 
                                                                  
                     distance_relative_share_of_leisure=&
+                        (1-freeze_fitted_internals)*&
                         abs(model_labor_supply(1)/model_total_hours(1)-avg_labor_supply_data)
                                 
                     write(*,*) "model_labor_supply(1)/model_total_hours(1)=", &
