@@ -90,6 +90,10 @@ OWN = {
     'multiple_of_probabilities_of_employment_if_addicted': 'kappa_ued',
     'probability_of_voucher_benchmark_used':               'pi_V',
     'size_homelessness':                                   'h_1',
+    # NOT given a moment. homeless_excess_death_risk sets the LEVEL of the
+    # deterrent and size_homelessness already owns h_1; giving both the same
+    # moment would be the duplicate-driver mistake beta was just cured of.
+    # It is in the vector so a point records it, and it moves by hand.
     # H_2 IS THE SEVERE COST BURDEN NOW, AND IT HAS AN INSTRUMENT AT LAST.
     # It used to be the share in the smallest unit, was conceded by the author
     # and sat in SKIP, and the parameter that owns it --

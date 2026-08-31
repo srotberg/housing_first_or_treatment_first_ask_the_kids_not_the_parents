@@ -50,6 +50,9 @@ declare -A P=(
     # ONE DISCOUNT FACTOR BY DEFAULT. Two is reachable by passing 2 here, but
     # the two-pass path does not yet reproduce the one-pass economy at equal
     # betas, so anything measured at 2 is provisional.
+    # THE FLAT EXCESS DEATH RISK FROM THE STREET, per period. Default is
+    # Baggett's implied excess at age 26, so only the age gradient is removed.
+    [homeless_excess_death_risk]=0.00396
     [number_of_beta_types]=1
     [utility_cost_of_treatment]=0.0908753
     # THE PRICE OF TREATMENT, HELD AT ZERO. It replaced the utility cost on 31

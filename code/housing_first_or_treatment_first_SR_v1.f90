@@ -2533,6 +2533,13 @@
         ! untargeted validation moment instead.
         real(8) :: kappa_phi_d_level=8.0
         real(8), parameter :: sud_share_of_homeless=0.217
+
+        ! FLAT EXCESS DEATH RISK FROM HOMELESSNESS. See build_kappa_phi.
+        ! The default is Baggett's own implied excess at age 26, so the youngest
+        ! household's deterrent is unchanged and only the AGE GRADIENT in it is
+        ! removed. It is a handover parameter so it can be calibrated.
+        integer, parameter :: homeless_death_risk_flat_in_age=1
+        real(8) :: homeless_excess_death_risk=0.00396d0
         integer :: mortality_profiles_loaded=0
                             
         ! UNEMPLOYMENT INSURANCE IS NOW CERTAIN FOR THE FIRST YEAR OF A SPELL
@@ -31798,8 +31805,37 @@
 
             kappa_phi_d_by_age(j_1)=1+(kappa_phi_d_level-1)*shape_sud_profile(j_1)
 
-            kappa_phi_h_by_age(j_1)=max(1.d0,rr_homeless_profile(j_1)/&
-                ((1-sud_share_of_homeless)+sud_share_of_homeless*kappa_phi_d_by_age(j_1)))
+            ! THE EXCESS DEATH RISK FROM THE STREET IS FLAT IN AGE, on the
+            ! author's instruction of 31 August. Not the MULTIPLIER, which is a
+            ! different thing and the wrong one.
+            !
+            ! The multiplier route -- Baggett's ratios, or the flat 1.6 the
+            ! note's external calibration table quotes from Meyer, Wyse and
+            ! Logani -- makes the excess ANNUAL DEATH PROBABILITY proportional
+            ! to baseline mortality, and baseline mortality rises elevenfold
+            ! between 26 and 65. Measured on this life table, the excess risk
+            ! from sleeping rough runs 1.00, 2.19 and 4.84 across 26, 45 and 65
+            ! under Baggett, and 1.00, 2.62 and 11.34 under a flat 1.6. Since
+            ! ninety four per cent of this model's homeless could afford rent
+            ! and are CHOOSING the street, that gradient is the deterrent they
+            ! choose against, and it is why the model puts ninety eight per cent
+            ! of its homeless under 35 against twenty six in the HUD count.
+            !
+            ! Holding the excess RISK flat instead makes the multiplier fall
+            ! with age -- 4.41 at 26 to 1.30 at 65 -- which is the only one of
+            ! the three specifications that is age neutral in the thing the
+            ! household actually trades off.
+            if (homeless_death_risk_flat_in_age==1) then
+
+                kappa_phi_h_by_age(j_1)=max(1.d0,1.d0+homeless_excess_death_risk/&
+                    max(1.d0-actual_survival_probability(j_1),10.d0**(-12)))
+
+            else
+
+                kappa_phi_h_by_age(j_1)=max(1.d0,rr_homeless_profile(j_1)/&
+                    ((1-sud_share_of_homeless)+sud_share_of_homeless*kappa_phi_d_by_age(j_1)))
+
+            end if
 
         end do
 
@@ -32834,6 +32870,11 @@
                 case ("discount_factor")
                     write(*,*) "HANDOVER discount_factor:", discount_factor, "->", handover_value
                     discount_factor=min(max(handover_value,0.5d0),1.05d0)
+
+                case ("homeless_excess_death_risk")
+                    write(*,*) "HANDOVER homeless_excess_death_risk:",&
+                        homeless_excess_death_risk, "->", handover_value
+                    homeless_excess_death_risk=max(min(handover_value,0.5d0),0.d0)
 
                 case ("number_of_beta_types")
                     write(*,*) "HANDOVER number_of_beta_types:",&

@@ -3158,3 +3158,63 @@ narrow, which is still progress.
 **AND IT UNBLOCKS kappa.** y_u is only readable where b is near target, which is
 why every kappa reading so far has been provisional. If this lands at b +1.2 per
 cent, the kappa bracket becomes worth measuring for the first time.
+
+## THE EXCESS DEATH RISK FROM THE STREET IS NOW FLAT IN AGE
+
+The author's instruction, and the reasoning that got there is worth keeping
+because the obvious version of it is wrong.
+
+**94 PER CENT OF THE MODEL'S HOMELESS ARE HOMELESS BY CHOICE.** The model's own
+diagnostic: `homeless who could afford it on INCOME ALONE = 0.9358` and
+`homeless by choice = 0.9358`, where by-choice tests income PLUS assets against
+the rent on the smallest dwelling. They are also 97.6 per cent employed against
+46 in Meyer et al., and their income is 0.274 of average against 0.191. The
+model's homeless are comfortable and working.
+
+So the age profile is not a profile of who cannot afford rent. It is a profile
+of who is willing to sleep rough, and what they trade off is the extra chance of
+dying.
+
+**THAT DETERRENT RISES STEEPLY WITH AGE, AND A FLAT MULTIPLIER MAKES IT WORSE.**
+
+    age     qx      (a) Baggett  x26   (b) flat 1.6  x26   (c) flat risk  x26
+     26   0.00116     0.00396   1.00     0.00070    1.00     0.00396    1.00
+     45   0.00304     0.00869   2.19     0.00183    2.62     0.00396    1.00
+     65   0.01316     0.01917   4.84     0.00790   11.34     0.00396    1.00
+
+(b) is the 1.6 the note's `external_calibration.tex` quotes from Meyer, Wyse and
+Logani, and which `increased_risk_of_death_homeless=0.6` still carries in the
+source. **A flat MULTIPLIER is not a flat RISK.** The excess is (kappa-1) times
+baseline mortality, and baseline mortality rises elevenfold over the working
+life, so the flat multiplier has the STEEPEST age gradient of the three. It
+would have made the profile younger, not older.
+
+(c) holds the excess RISK flat, which makes the multiplier fall with age:
+
+    age 26  4.41    age 35  3.10    age 45  2.30    age 55  1.66    age 65  1.30
+
+`homeless_death_risk_flat_in_age=1` selects it, `homeless_excess_death_risk`
+carries the level, defaulting to 0.00396 -- Baggett's own implied excess at 26,
+so the youngest household's deterrent is UNCHANGED and only the gradient is
+removed. It is a handover parameter, in the vector, and deliberately NOT given a
+moment in `next_batch.py`: `size_homelessness` already owns h_1 and giving both
+the same moment is the duplicate-driver mistake beta was cured of an hour ago.
+
+### WHAT THIS DOES NOT FIX, STATED IN ADVANCE
+
+Retirement. Homelessness is exactly zero from 66 onward and the reason is that
+social security plus accumulated assets always clear the lowest rung, not the
+death risk. Band 5 is 7.5 per cent of the homeless in the HUD count.
+
+And the level, not just the shape. Making the old less deterred raises
+homelessness at older ages but also raises the aggregate, so `size_homelessness`
+will have to come back down to hold h_1 at 0.399 per cent. The two move
+together and the profile is what should be read, not the level.
+
+### A DISAGREEMENT BETWEEN THE NOTE AND THE CODE, ALREADY ON RECORD
+
+`code/FORTRAN_AUDIT.md` line 538 has it: the note says kappa_phi_H is 1.6 flat,
+the code ran 4.41 falling to 1.09. That was true before this change and is still
+true after it, differently. **Section 5's external calibration table needs to
+say what the code now does** -- but that is prose in the paper and so the
+author's call, not mine, and it is not being edited here.
