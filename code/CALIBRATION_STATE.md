@@ -5193,3 +5193,60 @@ times: a rule about ownership was applied to a name without checking the name's
 scope. **Before disabling a reset or moving a counter's ownership, check whether
 the variable is declared at module level or inside the routine.** The two look
 identical at the call site and behave completely differently.
+
+## WHAT THE POOLED-MASS FIX SHOULD MOVE, AS A CHECKLIST AND NOT AS A TABLE
+
+The standing rule is that a mechanism is not a measurement and a table of
+corrected values derived from reasoning about a bug is not to be published. So
+what follows is a list of PREDICTIONS with the factor attached, to be checked
+against the first point measured on the fixed source and then thrown away.
+
+At two types the old denominator was `2 * m_impatient`; the truth is
+`m_patient + m_impatient`, and the measured histogram ratio puts that at
+`2.38 * m_impatient`. So every moment divided by `sum_of_distribution` was
+reading a denominator **1.19 times too small** and is expected to FALL by that
+factor; every moment divided by one of those is expected to RISE by it.
+
+  falls by ~1.19   `b`, total drug users
+                   `lambda_d`, the disorder rate
+                   `model_addicted`, `model_exprimenters`
+                   `model_average_income` and `model_average_income_plus_assets`
+                   `average_welfare_of_all_cohorts`
+  rises by ~1.19   anything divided by `model_average_income` -- `y_u` above all
+  rises            `w_bot`, but not by a clean factor: the percentile walk
+                   stopped at the 42nd percentile and now goes to the 50th, so
+                   the change is whatever wealth sits in that slice
+
+  unaffected       `gamma` and `h_2`, whose denominator is
+                   `sum_of_distribution_not_be_homeless` -- that one already
+                   accumulated across passes correctly and was never scaled
+                   `h_1`, normalised on `model_sum_of_lowest_productivities`
+                   everything at ONE discount-factor type, at every site
+
+If the first fixed point does not show `b` and `lambda_d` about a fifth lower
+and `y_u` about a fifth higher, the diagnosis is wrong and this section is the
+record of what was expected.
+
+## WHY NOTHING LANDED BETWEEN 21:00 AND 22:50 ON 31 AUGUST
+
+Three worker sessions were launched at 20:43, 21:00 and 21:01 and none of them
+produced a point. The cause was not a stalled worker, a permission prompt or a
+bad batch file: **the account hit its five-hour session limit at about 21:33**
+and every session was rejected with "You've hit your session limit, resets
+10:50pm UTC". `VALIDATE6` and `DRUGUP` both died there; `BETALOW` never got past
+installing gfortran.
+
+Two things follow for the engine.
+
+  1. A worker container has to install gfortran before it can build, which
+     costs it fifteen minutes of a rate-limited budget. **The coordinator's own
+     container already has gfortran.** Running a point here, in the background,
+     costs one Bash call and no session at all. When the fleet is rate limited
+     -- or whenever a single point is what is wanted rather than a fan-out --
+     run it here.
+  2. "Nothing landed in two firings" is in the engine prompt as the signal that
+     the fleet has drained, and the remedy given is to respawn. That remedy is
+     exactly wrong under a rate limit: respawning burns the budget that is
+     already exhausted. **Check `rate_limit_info.status` on a failed session
+     before respawning it.** A `rejected` status with a `resetsAt` is a clock to
+     wait out, not a fleet to rebuild.
