@@ -3088,3 +3088,33 @@ utility-cost line elsewhere in this file is the instrument for it. `cbar` and
 that were inside ten per cent at `d4ffbfdab5`, `theta` (0.9 -> 13.3) and
 `kappa_uem` (0.2 -> 25.9) were pushed out by this step, which is the cost of
 moving the drug block this far and is worth recovering in whatever comes next.
+## A PREDICTION FOR THE TWO-BETA AGE PROFILE, WRITTEN BEFORE THE MEASUREMENT
+
+`TWOBETA_UNTARGETED` will report the pooled profile. Recording the prediction
+now so the run can falsify it rather than confirm whatever is said afterwards.
+
+**The pooled share of the homeless in a band is a HOMELESS-weighted mix of the
+two types, not a population-weighted one.** Each type carries unit mass, but the
+impatient type generates more than twice as much homelessness -- h_1 of 0.00894
+at 0.95 and 0.01004 at 0.90, against 0.00395 for the patient control -- so it
+supplies about seventy per cent of the stock and the mixture sits about seventy
+per cent of the way to the impatient column, not halfway.
+
+    band    control   imp .95   imp .90    data
+      1      0.9787    0.9402    0.9224   0.260
+      2      0.0134    0.0339    0.0426   0.272
+      3      0.0038    0.0133    0.0171   0.210
+      4      0.0037    0.0113    0.0135   0.184
+      5      0.0004    0.0012    0.0043   0.075
+
+Predicted: band 1 lands near 0.92 at an impatient beta of 0.90, against a data
+value of 0.26. **The age profile stays badly wrong.**
+
+The per-type inputs come from the two void points, which are on model
+`920988590e` at a slightly different vector, so the arithmetic is approximate.
+The QUALITATIVE claim is not: the pooled value is bounded below by the
+pure-impatient column, which is 0.9003, so no mixture of these two types can put
+band 1 under ninety per cent. That bound holds whatever the weights.
+
+If the measurement comes back with band 1 much under 0.90, something in this
+reasoning is wrong and it is the reasoning that gets revised, not the number.
