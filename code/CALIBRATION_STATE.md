@@ -3340,3 +3340,107 @@ it tracks neither it is preferences, and the housing utility at the lowest rung
 is where to look.
 
 `AGEDIAG.txt` is one run at the reference vector to read them off.
+## REPAIR3_HALF MEASURED AGAINST ITS INTERPOLATION
+
+`point_4796363037`, model `d70ad1c545`, 29 of 29 parameters applied, 17 min on
+four cores. This is the f = 0.511 point of the REPAIR3 step, the one the section
+above predicted by linear interpolation between the two measured endpoints.
+
+    moment      predicted    measured    vs prediction    target    vs target
+    b             0.09011    0.083713          -7.1%      0.089        -5.9%
+    lambda_d      0.03635    0.034312          -5.6%      0.0368       -6.8%
+    pi_eu         0.05332    0.053566          +0.5%      0.0485      +10.4%
+
+**THE INTERPOLATION DID NOT HOLD.** The gate is five per cent on b and lambda_d
+and neither is inside it: b came in at -5.9 per cent and lambda_d at -6.8. Both
+missed in the SAME direction, each landing below the straight line drawn between
+the endpoints, so the two drug surfaces are convex in the step fraction over
+this interval rather than linear. The section above named that possibility --
+"if the truth is convex between them the measured value will miss and the pair
+will narrow" -- and that is what happened. It is a near miss, not a failure of
+the bracket: an interpolation inside a measured pair is still the right
+instrument here, it was simply evaluated on a chord that sits under the curve.
+
+pi_eu is the third confirmation that its column is trustworthy. It was predicted
++9.9 per cent against target and measured +10.4, half a per cent off its own
+prediction, which is the same behaviour it showed on the overshoot point. The
+drug instruments are the unreliable ones; the p_eu column is not.
+
+**THE PAIR NARROWS AND BOTH MOMENTS NOW AGREE ON THE SAME FRACTION.** b's target
+is still bracketed, now by 0.083713 below and 0.11909 above instead of 0.05982
+and 0.11909; lambda_d's by 0.034312 and 0.05097. Re-interpolating on the
+narrowed pair:
+
+    f implied by b        = 0.5841
+    f implied by lambda_d = 0.5840
+
+The two instruments were three percentage points of step apart at the last
+reading and are now within one ten-thousandth of each other, which is a much
+stronger signal than either number alone. The vector at f = 0.584:
+
+    addiction_scalar_1               0.01832949  -> 0.0184215254
+    lambda_addiction                   19.30858  -> 17.9829095
+    probability_becoming_unemployed 0.007541168  -> 0.00624047316
+
+Convexity means this second chord is again drawn under the curve, so the same
+bias should be expected a second time and the next reading should undershoot
+slightly rather than land exactly. The interval it is drawn across is now a
+quarter of the width, so the bias should be smaller by about that much.
+
+### EVERY TARGETED MOMENT AT THIS POINT, WORST FIRST
+
+    moment     description                      model      target      gap
+    w_bot      net worth share, bottom half    0.155384    0.025000   +521.5%
+    tau_u      treatment take up               0.942830    0.245000   +284.8%
+    cbar       food stamps / labour income     0.011368    0.004200   +170.7%
+    y_u        income of drug users            0.364526    0.740000    -50.7%
+    h_2        above half of spending          0.050923    0.101000    -49.6%
+    beta       wealth over output              3.964183    3.000000    +32.1%
+    gamma      housing over expenditure        0.185807    0.268000    -30.7%
+    aleph      value of life / income         57.954883   80.000000    -27.6%
+    kappa_ued  unemployment given SUD          0.124728    0.162500    -23.2%
+    lambda_m   SMI share of the homeless       0.193250    0.250000    -22.7%
+    kappa_uem  employment given SMI            0.335603    0.300000    +11.9%
+    pi_eu      unemployment rate               0.053566    0.048500    +10.4%
+    mu_H       recovery housed / homeless      1.322949    1.473214    -10.2%
+    theta      drug spending share             0.177788    0.162000     +9.7%
+    p_m        SMI population share            0.044848    0.048486     -7.5%
+    h_1        homelessness rate               0.003710    0.003990     -7.0%
+    h_3        share in the largest unit       0.669244    0.626723     +6.8%
+    lambda_d   disorder rate                   0.034312    0.036800     -6.8%
+    tau_l      average labour income tax       0.238712    0.224000     +6.6%
+    b          total drug users                0.083713    0.089000     -5.9%
+    pi_V       eligibles with a voucher        0.273785    0.266000     +2.9%
+    sigma_y    bottom half earnings share      0.169050    0.172000     -1.7%
+    omega_l    labour supply / total hours     0.400173    0.400000     +0.0%
+
+**THE WORST MOMENT IS `w_bot`, AT +521.5 PER CENT.** Excluding h_3 does not
+change the ranking: h_3 is at +6.8 per cent here, seventeenth of twenty three,
+nowhere near the top. The three above a hundred per cent are all previously
+recorded structural readings rather than new damage, and none of them is a
+consequence of this step:
+
+  - `w_bot` +521.5 is the one-beta reading. `discount_factor_impatient` does
+    nothing at `number_of_beta_types=1`, and this moment has sat at +516 and
+    +525 at the two neighbouring points, and +521.5 sits between them.
+  - `tau_u` +284.8 is treatment take-up at zero utility cost AND zero money
+    cost, which is the configuration this vector was deliberately run on
+    (`utility_cost_of_treatment=0`, `money_cost_of_treatment=0`). It was +285
+    at the overshoot point.
+  - `cbar` +170.7 and `y_u` -50.7 are close to their values at the endpoints of
+    this step.
+
+`theta` printed 0.1778, a real value and not the -1.0 empty-population
+sentinel, so the drug block is populated and lambda_d, tau_u and kappa_ued are
+being read off a real population rather than an emptied one.
+
+Of the moments that matter for the gate, ten are now inside ten per cent and
+b and lambda_d are both inside seven. That is the closest b has come on this
+model -- it was -7.5 at `point_7add914d47` -- but NOT the closest lambda_d,
+which was -1.7 at that same point; what is new is that both are close at once
+and at a vector whose pi_eu is also inside eleven.
+
+`y_u` at -50.7 is the reading the section above said would
+become worth trusting once b was near target; b is now within six per cent, so
+this is the first y_u reading on this branch that is worth acting on, and it is
+badly out.
