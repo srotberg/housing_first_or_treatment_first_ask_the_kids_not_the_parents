@@ -1738,3 +1738,43 @@ model that no longer exists.
 
 The 86 old points remain valuable as measurements of their own model and as the
 record of what was learned. They must not be scored beside new ones.
+
+## THE TWO-TYPE SPLIT WORKS FOR THE MOMENT IT WAS BUILT FOR
+
+`c6e8793eb5`, impatient beta 0.90 against a patient 0.99715, same vector
+otherwise as the one-type anchor:
+
+    w_bot   0.131 -> 0.01183   target 0.025    <- the target is now BRACKETED
+    beta    4.012 -> 2.893     band 3.0-4.5
+
+The wealth share of the bottom half was 5.2 times too fat with one discount
+factor and NOTHING in the parameter set could move it. With two it overshoots
+to slightly too thin, so 0.025 lies between beta_impatient 0.99715 and 0.90.
+Interpolating in logs puts it at about **0.929**.
+
+Everything else at that point is a wreck -- sixteen moments outside ten per
+cent, lambda_d at 2184 and b at 936, meaning 92 per cent of households use
+drugs. That is a step-size result, not a design fault: at beta 0.90 households
+discount the future so heavily that the addiction hazard stops deterring them,
+and `max_food_cost` is still stale on top of it. The next point is beta_impatient
+near 0.93 with cbar recalibrated.
+
+**THIS IS PROVISIONAL UNTIL THE VALIDATION LANDS.** TWOBETA line 1 sets the two
+betas EQUAL, so the two-pass model must reproduce the one-type model exactly.
+If any moment differs, the accumulation across passes is wrong and every number
+in this section is void. Do not build a round on these until that point is in
+and compared.
+
+## WHAT h_1 COST TO LEARN, AND THE LESSON
+
+h_1 bound for eighteen rounds. Several of those rounds went into proving it
+unreachable inside the parameter set -- correctly: it is collinear with lambda_m
+through `value_of_life` at ratios -1.063 against -1.048, and no combination of
+the two instruments separates them. Then the author changed the consumption
+floor and it closed to 1.9 per cent without a search.
+
+**A moment that is unreachable within the parameter set may be one model change
+away.** The Jacobian is the right tool for asking whether a step exists; it
+cannot tell you the model is wrong. When a moment resists for several rounds,
+say what would have to change about the MODEL rather than measuring the same
+instruments again -- three of this session's rounds would not have been needed.
