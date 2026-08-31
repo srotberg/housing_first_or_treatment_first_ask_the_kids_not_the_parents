@@ -7108,6 +7108,27 @@
         real(8) :: total_income,sum_of_distribution_1,sum_of_distribution_2,size_of_quintile=real(1)/real(number_of_quintiles)
         real(8) :: labor_supply_used,avg_income_to_use_1,avg_income_to_use_2,bequest_2,income_taxes_paid_1,&
             financial_income_1,home_equity_1
+
+        ! STATIC STORAGE, BECAUSE THESE ACCUMULATE ACROSS THE TWO PASSES.
+        !
+        ! Each of these is reset only when accumulating_beta_types is zero,
+        ! which is the first pass, and added to on every pass. That is the
+        ! right shape for a counter that has to hold both discount-factor
+        ! types -- but it is only correct if the value survives from one
+        ! call to the next, and a local without save does not. On the
+        ! second pass the routine is entered fresh, the reset is skipped,
+        ! and the accumulation lands on whatever the stack holds.
+        !
+        ! It has been working by accident: the calls come from the same
+        ! site in the same order, so the frame is usually reused and the
+        ! slot usually still holds the first pass's value. That is not a
+        ! guarantee, it is a property of this build. save makes it one.
+        !
+        ! These stay LOCAL rather than moving to module scope on purpose.
+        ! total_homeless_1 is the name of two different locals in two
+        ! different routines; merging them would pool two counts of the
+        ! same population into one divisor.
+        save :: sum_of_distribution_1, sum_of_distribution_2
         
         avg_income_to_use_1=is_counterfactual*average_labor_income_calibrated+&
             (1-is_counterfactual)*model_average_labour_income(time_period)
@@ -7416,6 +7437,27 @@
             model_average_income_plus_all_assets_previous
             
         integer, dimension(1) :: rent_to_income_index,LTV_index,median_index,income_to_avg_income_wide_index
+
+        ! STATIC STORAGE, BECAUSE THESE ACCUMULATE ACROSS THE TWO PASSES.
+        !
+        ! Each of these is reset only when accumulating_beta_types is zero,
+        ! which is the first pass, and added to on every pass. That is the
+        ! right shape for a counter that has to hold both discount-factor
+        ! types -- but it is only correct if the value survives from one
+        ! call to the next, and a local without save does not. On the
+        ! second pass the routine is entered fresh, the reset is skipped,
+        ! and the accumulation lands on whatever the stack holds.
+        !
+        ! It has been working by accident: the calls come from the same
+        ! site in the same order, so the frame is usually reused and the
+        ! slot usually still holds the first pass's value. That is not a
+        ! guarantee, it is a property of this build. save makes it one.
+        !
+        ! These stay LOCAL rather than moving to module scope on purpose.
+        ! total_homeless_1 is the name of two different locals in two
+        ! different routines; merging them would pool two counts of the
+        ! same population into one divisor.
+        save :: total_homeless_1, total_renters_to_consider, total_owners_to_consider
                 
         avg_income_to_use_1=is_counterfactual*average_labor_income_calibrated+&
             (1-is_counterfactual)*model_average_labour_income(time_period)
@@ -10871,6 +10913,27 @@
         
         integer :: financial_index,wealth_counter_2,time_period,wealth_of_top_x_perc_index,has_house
         real(8) :: frac_of_household_mas_to_add,sum_distribution_used,sum_of_distribution_of_old
+
+        ! STATIC STORAGE, BECAUSE THESE ACCUMULATE ACROSS THE TWO PASSES.
+        !
+        ! Each of these is reset only when accumulating_beta_types is zero,
+        ! which is the first pass, and added to on every pass. That is the
+        ! right shape for a counter that has to hold both discount-factor
+        ! types -- but it is only correct if the value survives from one
+        ! call to the next, and a local without save does not. On the
+        ! second pass the routine is entered fresh, the reset is skipped,
+        ! and the accumulation lands on whatever the stack holds.
+        !
+        ! It has been working by accident: the calls come from the same
+        ! site in the same order, so the frame is usually reused and the
+        ! slot usually still holds the first pass's value. That is not a
+        ! guarantee, it is a property of this build. save makes it one.
+        !
+        ! These stay LOCAL rather than moving to module scope on purpose.
+        ! total_homeless_1 is the name of two different locals in two
+        ! different routines; merging them would pool two counts of the
+        ! same population into one divisor.
+        save :: sum_of_distribution_of_old
                 
         if (accumulating_beta_types==0) sum_of_distribution_of_old=0
         
@@ -11188,6 +11251,27 @@
             total_homeless_1,after_tax_income_1,after_tax_income_2,frac_spent_on_addiction_used,housing_voucher_2,&
             total_addited_1,income_2,frac_getting_vouchers,homeowner_spending,total_addicted_and_homeless_1,bequest_1,&
             addiction_consumption_1
+
+        ! STATIC STORAGE, BECAUSE THESE ACCUMULATE ACROSS THE TWO PASSES.
+        !
+        ! Each of these is reset only when accumulating_beta_types is zero,
+        ! which is the first pass, and added to on every pass. That is the
+        ! right shape for a counter that has to hold both discount-factor
+        ! types -- but it is only correct if the value survives from one
+        ! call to the next, and a local without save does not. On the
+        ! second pass the routine is entered fresh, the reset is skipped,
+        ! and the accumulation lands on whatever the stack holds.
+        !
+        ! It has been working by accident: the calls come from the same
+        ! site in the same order, so the frame is usually reused and the
+        ! slot usually still holds the first pass's value. That is not a
+        ! guarantee, it is a property of this build. save makes it one.
+        !
+        ! These stay LOCAL rather than moving to module scope on purpose.
+        ! total_homeless_1 is the name of two different locals in two
+        ! different routines; merging them would pool two counts of the
+        ! same population into one divisor.
+        save :: total_addited_1, frac_getting_vouchers, total_homeless_1, total_addicted_and_homeless_1
             
         avg_income_to_use_1=is_counterfactual*average_labor_income_calibrated+&
             (1-is_counterfactual)*model_average_labour_income(time_period)
@@ -13291,6 +13375,27 @@
         real(8) :: total_income,mass_of_renters_1,labor_supply_used,distribution_mass_used,lived_in_size_used,&
             avg_income_to_use_1,avg_income_to_use_2,housing_voucher_2
         real(8) :: val_hous_outlay_1,val_total_expend_1,val_total_consumption_1
+
+        ! STATIC STORAGE, BECAUSE THESE ACCUMULATE ACROSS THE TWO PASSES.
+        !
+        ! Each of these is reset only when accumulating_beta_types is zero,
+        ! which is the first pass, and added to on every pass. That is the
+        ! right shape for a counter that has to hold both discount-factor
+        ! types -- but it is only correct if the value survives from one
+        ! call to the next, and a local without save does not. On the
+        ! second pass the routine is entered fresh, the reset is skipped,
+        ! and the accumulation lands on whatever the stack holds.
+        !
+        ! It has been working by accident: the calls come from the same
+        ! site in the same order, so the frame is usually reused and the
+        ! slot usually still holds the first pass's value. That is not a
+        ! guarantee, it is a property of this build. save makes it one.
+        !
+        ! These stay LOCAL rather than moving to module scope on purpose.
+        ! total_homeless_1 is the name of two different locals in two
+        ! different routines; merging them would pool two counts of the
+        ! same population into one divisor.
+        save :: mass_of_renters_1
                 
         avg_income_to_use_1=is_counterfactual*average_labor_income_calibrated+&
             (1-is_counterfactual)*model_average_labour_income(time_period)
@@ -15378,6 +15483,27 @@
             total_MID_value,labor_supply_used,avg_income_to_use_1,avg_income_to_use_2,rent_to_income_to_use,&
             addiction_consumption_1,total_consumption_used,bequest_2,income_taxes_paid_used,food_stamps_1,assets_1,&
             avg_net_wealth_to_use_1,frac_next_1,savings_1,total_income_1,mass_of_addicts,financial_income_1,home_equity_1
+
+        ! STATIC STORAGE, BECAUSE THESE ACCUMULATE ACROSS THE TWO PASSES.
+        !
+        ! Each of these is reset only when accumulating_beta_types is zero,
+        ! which is the first pass, and added to on every pass. That is the
+        ! right shape for a counter that has to hold both discount-factor
+        ! types -- but it is only correct if the value survives from one
+        ! call to the next, and a local without save does not. On the
+        ! second pass the routine is entered fresh, the reset is skipped,
+        ! and the accumulation lands on whatever the stack holds.
+        !
+        ! It has been working by accident: the calls come from the same
+        ! site in the same order, so the frame is usually reused and the
+        ! slot usually still holds the first pass's value. That is not a
+        ! guarantee, it is a property of this build. save makes it one.
+        !
+        ! These stay LOCAL rather than moving to module scope on purpose.
+        ! total_homeless_1 is the name of two different locals in two
+        ! different routines; merging them would pool two counts of the
+        ! same population into one divisor.
+        save :: mass_of_addicts, total_MID_value
 
         avg_income_to_use_1=is_counterfactual*average_labor_income_calibrated+&
             (1-is_counterfactual)*model_average_labour_income(time_period)
