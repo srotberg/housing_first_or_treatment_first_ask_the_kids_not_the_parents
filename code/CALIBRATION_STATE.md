@@ -1385,3 +1385,47 @@ worth doing if a later round has a reason to be at 4.4 at all.
 
 **Best point is unchanged: `620db1471b`, six outside ten per cent, worst h_1 at
 41.7.**
+
+## ROUND15 FAILED ENTIRELY, AND THE CAUSE IS ONE HABIT
+
+All three remaining lines left b and lambda_d high, and the best point did not
+move:
+
+    L1  value_of_life 36 + repair    b +48.2%  lambda_d +31.5%   out10 8
+    L2  pi_eu + kappa_uem held       b +47.3%  lambda_d +62.8%   out10 9
+    L4  value_of_life 35.3 + repair  b +21.3%  lambda_d +29.0%   out10 10
+
+**L2 moved no drug parameter at all** and still blew the block to 47 and 63 per
+cent. So this is not a bad repair, it is a missing one:
+`probability_becoming_unemployed` drags b and lambda_d hard on its own, which
+ROUND10 measured, and the line compensated `kappa_uem` while forgetting the drug
+block. L1 and L4 over-offset in the other direction, because
+`value_of_life`'s drag HERE is weaker than the column measured at
+`2f789d317c`, so the repair pushed the block past target rather than onto it.
+
+Both failures are the same habit: **a column measured at one point, used at
+another.** It has now cost four rounds -- the seven-coordinate pair, the lambda_m
+sign, the stale `lambda_addiction` column, and this. Every time, the fix
+afterwards has been to re-measure at the point being stepped from, and every time
+the next round has repeated it somewhere else, because the columns are re-measured
+one at a time while the steps use four at once.
+
+## ROUND16 STOPS DOING THAT
+
+Four bare arms, one coordinate each, all from `620db1471b`:
+
+    value_of_life                   34.587 -> 36
+    probability_becoming_unemployed 0.007098 -> 0.0050
+    addiction_scalar_1              0.018326 -> 0.0175
+    lambda_addiction                17.942 -> 15.5
+
+No combined step, no repair, nothing predicted. It buys a complete four-column
+Jacobian at ONE point covering aleph, pi_eu and the drug block -- the exact set
+every failed step needed -- and next round can take a single joint move that
+rests on nothing carried from anywhere else.
+
+A round spent measuring rather than stepping is cheaper than three more rounds
+of steps that overshoot, which is what the last two rounds have been.
+
+**Best point remains `620db1471b`: six moments outside ten per cent, worst h_1 at
+41.7, sum 1.42.**
