@@ -1043,3 +1043,60 @@ against the -17.6 and -36.0 read off the old narrow pair. The repair at
 step -- predicted b and lambda_d land about 20 per cent off rather than on
 target, which is progress toward them rather than a repair, and it widens the
 bracket again for the next one.
+
+## lambda_m THE PARAMETER IS NOT DEAD -- IT WAS MEASURED IN THE WRONG PLACE
+
+Recorded twice in this file as a dead instrument, on an elasticity of -0.064 for
+its own moment. That reading was taken at `smallest_rental=0.03771`. At 0.053,
+from a controlled pair (`e2ecd0039e` against `63028a1011`, differing in
+`lambda_m` alone):
+
+    lambda_m parameter 0.0663688 -> 0.15
+        lambda_m moment  elasticity -3.351
+        p_m              elasticity -0.868
+
+Strong, and NEGATIVE, so to RAISE the SMI share of the homeless the parameter
+must come DOWN. Every step taken on it so far has been upward, which is why it
+looked flat and then looked harmful. This is the third time in this search that a
+slope read at one place has been treated as a property of the instrument; the
+pattern is now unmistakable and the fix is the same each time -- re-measure the
+column at the point you intend to step from.
+
+## smi_onset_level IS NOT AN INSTRUMENT FOR lambda_m, BUT IT OWNS p_m
+
+Both arms are controlled and agree:
+
+    smi_onset_level 0.002761 -> 0.0045    lambda_m +0.086   p_m +0.298
+    smi_onset_level 0.002761 -> 0.0070    lambda_m +0.104   p_m +0.344
+
+lambda_m barely moves -- 66.1 per cent off to 64.6 and 62.6 -- while p_m goes to
+26.4 per cent off and the drug block collapses. So the answer to the question
+ROUND6 was built to settle is NO: this is not the third instrument for lambda_m.
+It is, however, a clean instrument for p_m, which is what it was always supposed
+to own, and that matters because `lambda_m` moves p_m too.
+
+## THE PAIR THAT MAY CLOSE BOTH
+
+Two moments, two controlled columns, opposite enough to separate:
+
+                     lambda_m    p_m
+    lambda_m param     -3.351   -0.868
+    smi_onset_level    +0.104   +0.321
+
+Solving at `3eae65c27e` asks for `lambda_m` 0.0663688 -> 0.04935 and
+`smi_onset_level` 0.002761 -> 0.001578, and predicts lambda_m 0.0982 -> 0.250 and
+p_m 0.0450 -> 0.0486, both on target. **Both steps go DOWN and every measured arm
+on both went UP**, so this is extrapolation to the far side of the base and is not
+to be believed until measured. ROUND7 lines 1-3 bracket it -- `lambda_m` at 0.050
+and 0.055, `smi_onset_level` at 0.0018 -- and line 4 takes the joint step.
+
+## THE DRUG REPAIR WORKED, AND h_1 IS HOLDING
+
+`3eae65c27e` is the base for ROUND7 because the clamped drug step did most of
+what was asked: **lambda_d 53.4 per cent off to 0.7**, and h_1 improved to 3.1
+per cent as a side effect. b overshot to 0.1221, 37.2 per cent high, which is the
+next thing to repair once lambda_m is settled -- it is the same two instruments
+and they are now measured over a wide bracket.
+
+At that point the remaining list is lambda_m 60.7, b 37.2, gamma 30.5, kappa_ued
+30.2, aleph 25.0, pi_eu 22.6, theta 18.0, and eight moments outside ten per cent.
