@@ -2227,3 +2227,25 @@ older ones. That is a conjecture about this model, not a result. It would be
 measured, not asserted.
 
 Both are modelling changes and so the author's call. Neither is being made now.
+
+## TREATMENT IS CHARGED IN UTILITY AGAIN, NOT ON RESOURCES
+
+The author's call, 31 August. `money_cost_of_treatment` is held at zero in
+`run_one_point.sh` and `utility_cost_of_treatment` owns tau_u in
+`next_batch.py`, bounded (0.0, 8.0) against the model's own clamp of [0,10].
+
+The switch is entirely in those two files. NEITHER cost is internally
+calibrated: `distance_money_cost_of_treatment` is declared at line 238 and never
+used anywhere, and `utility_cost_of_treatment_adjuster` is zero, so its one use
+at 34730 multiplies to nothing. Both are pure handover parameters. Nothing in
+the Fortran had to change.
+
+**THE KNOWN RISK, stated once and then proceeded past.** The reason the money
+cost was tried in the first place is that the utility cost ran to its FLOOR.
+The record at line 5744 of the model has it going 2.12423 -> 0, "-100%, its
+floor", with tau_u still short of target. Take-up is far too LOW (0.0076 against
+0.245 at the last measured point), and raising take-up means LOWERING the cost,
+which cannot go below zero. So utility cost may not be able to reach tau_u from
+above. If it pins at zero again the moment is not identified by this parameter
+and something else has to give -- but that is for the measurement to say, not
+for me to assume in advance.
