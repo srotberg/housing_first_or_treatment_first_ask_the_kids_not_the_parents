@@ -395,6 +395,22 @@ def gap(name, pair):
     return abs(m / tg - 1)
 
 
+# HASHES THAT ARE NUMERICALLY THE SAME MODEL.
+#
+# The stamp hashes the whole source, so a change that only renames a printed row
+# produces a new hash without changing a single computed number. That happened
+# when the income of drug users became MOMENT y_u: the diff is a comment, a
+# parameter constant used only in that write statement, and the row's label.
+# Points measured on 57a80a45e9 are therefore identical to what 6eeab9f2cc
+# produces and it would be wasteful to discard them.
+#
+# ONLY ADD A HASH HERE AFTER READING THE DIFF AND CONFIRMING NOTHING THE MODEL
+# COMPUTES CHANGED. This list is a claim about the source, not a convenience.
+EQUIVALENT_MODELS = {
+    '6eeab9f2cc': {'57a80a45e9'},
+}
+
+
 def current_model_hash():
     """The md5 of the source the archive would be compared against."""
     src = os.path.join(HERE, 'housing_first_or_treatment_first_SR_v1.f90')
@@ -418,13 +434,14 @@ def archive():
     than a batch aimed at a model that no longer exists.
     """
     want = current_model_hash()
+    ok = {want} | EQUIVALENT_MODELS.get(want, set())
     out, skipped = {}, 0
     for f in sorted(glob.glob(os.path.join(HERE, 'points', '*.txt'))):
         if f.endswith('.FAILED.txt'):
             continue
         t = open(f).read()
         mh = re.search(r'^MODEL (\S*)', t, re.M)
-        if not mh or mh.group(1) != want:
+        if not mh or mh.group(1) not in ok:
             skipped += 1
             continue
         v, m = vector(t), moments(t)
