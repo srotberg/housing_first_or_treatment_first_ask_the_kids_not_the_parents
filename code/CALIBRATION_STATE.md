@@ -5337,3 +5337,42 @@ as well as in the two beta settings. And the `aleph`, `cbar` and `tau_l` columns
 of the two-beta rows straddle a source change, as `TWOBETA_CAL_RESULT.md`
 records. The `w_bot` conclusion survives both caveats because of its size; the
 smaller rows should be re-measured on one build before they are quoted.
+
+## A POINT RAN ON A STALE BINARY, AND THE ARCHIVE'S MODEL STAMPS ARE ONLY AS GOOD AS THE BUILD TEST
+
+The first point launched in the coordinator's own container failed its handover
+assertion with six names unrecognised, among them `number_of_beta_types` and
+`discount_factor_impatient`. The names are all present in the source's
+`PARAM_HANDOVER` select case. The binary was the problem: `hftf` was dated 28
+seconds after the source, and a 38,000 line `-O3` build takes twenty five
+minutes, so it was not built from it. A `supervise_calibration.py` running in
+this checkout had been killed a minute earlier and left it behind.
+
+`run_one_point.sh` tested freshness with `source -nt hftf`. That test passes for
+any binary that merely wins on mtime, whatever it was built from.
+
+**The dangerous case is not the one that happened.** This binary predated six
+handover names, so the assertion caught it and nothing was archived. A binary
+one commit behind would have had every name, passed the assertion, solved, and
+been archived under `MODEL_HASH` -- which `run_one_point.sh` computes from the
+SOURCE while the moments come from the BINARY. That is a point stamped with a
+model it was never measured on, and nothing downstream can tell.
+
+The test is now on content: `hftf.srcmd5` records the md5 of the source the
+binary was built from, written only after a build that succeeded, and a binary
+with no stamp or a disagreeing one is deleted and rebuilt.
+
+**WHAT THIS MEANS FOR POINTS ALREADY IN THE ARCHIVE.** It is not possible to
+tell from a point file which binary produced it, so this cannot be audited
+retrospectively. Two things bound the exposure and neither eliminates it:
+
+  - Any point run on a binary predating the two-type commit would have failed
+    the handover assertion loudly, as this one did, and would not be in the
+    archive at all.
+  - A point run on a stale binary from WITHIN the two-type era is silent, and
+    the supervisor was in this checkout for an unknown period.
+
+The practical consequence is a reason to prefer FRESH measurements over archived
+ones whenever a conclusion turns on a small difference between points, and to
+treat cross-point comparisons that straddle a source change as indicative --
+which `TWOBETA_CAL_RESULT.md` already concluded on independent grounds.
