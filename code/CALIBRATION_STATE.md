@@ -2406,3 +2406,30 @@ only half the population carries it, so pushing pooled wealth over output to
 target moves the patient beta about twice as far as it would at one type -- and
 the further it goes, the more the two types differ. Ill-conditioned rather than
 wrong, and worth knowing before reading a fitted two-type point.
+
+## beta HAS ONE DRIVER NOW, NOT TWO
+
+`discount_factor` is out of `next_batch.py`'s OWN map on the author's
+instruction. The model bisects it on wealth over output inside every point run,
+so proposing a value externally was a duplicate driver with three costs: the
+search spent an arm on a moment that already had an owner, the model silently
+overrode the proposal, and the archived VECTOR line then recorded a discount
+factor the point did not run at -- which makes the point irreproducible from
+its own vector in that coordinate, and quietly poisons any bracket or
+elasticity read off the beta column.
+
+Its BOUNDS entry stays, annotated. `run_one_point.sh` still passes
+`discount_factor`, because the bisection needs a starting point and a vector
+that omitted it would leave the seed riding in on whatever
+`calibration_state.dat` happened to hold -- the under-specified-point failure
+this file already records for two other parameters.
+
+`discount_factor_impatient` is untouched and still owns `w_bot`. It is NOT
+internally calibrated: `distance_discount_factor_impatient` and
+`discount_factor_impatient_adjuster` are declared and used nowhere, so the
+external assignment is the only thing driving it and there is no duplicate to
+remove. The two-parameter, two-moment split the author asked for -- patient
+beta on wealth over output, impatient beta on the bottom half's wealth share --
+is now exactly what the code does.
+
+Fifteen parameters are searched externally, down from sixteen.

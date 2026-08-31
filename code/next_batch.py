@@ -118,7 +118,16 @@ OWN = {
     # keeps wealth over output, which is banded rather than pointed; the
     # impatient one owns the wealth share of the bottom half, which nothing
     # could move while there was a single beta.
-    'discount_factor':                                     'beta',
+    # discount_factor IS NOT HERE ANY MORE, AND beta HAS AN OWNER ALREADY.
+    # The model bisects the patient discount factor on wealth over output
+    # inside every point run -- distance_discount_factor sits in the
+    # calibration loop's while condition and the update is gated only on
+    # re_do_simulation_with_fixed_parameters, which is zero in a point. So
+    # proposing a value here was a DUPLICATE DRIVER: the search spent an arm on
+    # beta, the model overrode it, and the archived VECTOR line then recorded a
+    # discount factor the point did not actually run at. The vector value is
+    # still passed, as the bisection's starting point, which is what BOUNDS
+    # below is for.
     # w_bot's owner, and it can only move while number_of_beta_types is 2.
     # At one type it does nothing and the moment has no instrument.
     'discount_factor_impatient':                           'w_bot',
@@ -149,6 +158,7 @@ BOUNDS = {
     'largest_house_size':                                  (0.02, 1.00),
     'kappa_uem':                                           (1.0, 100.0),
     'max_food_cost':                                       (1e-4, 1.0),
+    # a SEED for the internal bisection, not a search range: see OWN above.
     'discount_factor':                                     (0.90, 0.999),
     'discount_factor_impatient':                           (0.50, 0.995),
     # Standardised mortality ratios for opioid use disorder run 6 to 10 in the
