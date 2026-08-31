@@ -7083,19 +7083,19 @@
         
         if (accumulating_beta_types==0) median_income_cdf(time_period,:)=0
         if (accumulating_beta_types==0) rent_to_income_homeless_cdf(time_period,:)=0
-        total_homeless_1=0
+        if (accumulating_beta_types==0) total_homeless_1=0
         if (accumulating_beta_types==0) LTV_cdf(time_period,:)=0
-        total_renters_to_consider=0    
-        total_owners_to_consider=0
+        if (accumulating_beta_types==0) total_renters_to_consider=0
+        if (accumulating_beta_types==0) total_owners_to_consider=0
         
         if (accumulating_beta_types==0) model_total_net_wealth(time_period)=0
-        wealth_hist_mass=0
-        wealth_hist_wealth=0
-        income_hist_mass=0
-        income_hist_sud=0
-        income_hist_income=0
-        diag_mass_top_financial=0
-        diag_mass_top3_financial=0
+        if (accumulating_beta_types==0) wealth_hist_mass=0
+        if (accumulating_beta_types==0) wealth_hist_wealth=0
+        if (accumulating_beta_types==0) income_hist_mass=0
+        if (accumulating_beta_types==0) income_hist_sud=0
+        if (accumulating_beta_types==0) income_hist_income=0
+        if (accumulating_beta_types==0) diag_mass_top_financial=0
+        if (accumulating_beta_types==0) diag_mass_top3_financial=0
         if (accumulating_beta_types==0) model_youngest_net_wealth_share(time_period)=0
         if (accumulating_beta_types==0) model_net_wealth_owners(time_period)=0
         if (accumulating_beta_types==0) model_net_wealth_renters(time_period)=0
@@ -7118,8 +7118,8 @@
         if (accumulating_beta_types==0) model_mortgages(time_period)=0
         if (accumulating_beta_types==0) model_bequests(time_period)=0
         if (accumulating_beta_types==0) model_total_inheritance(time_period)=0
-        value_of_bequests_by_age(:)=0
-        bequests_mass_by_age(:)=0
+        if (accumulating_beta_types==0) value_of_bequests_by_age(:)=0
+        if (accumulating_beta_types==0) bequests_mass_by_age(:)=0
         if (accumulating_beta_types==0) model_youngest_assets(time_period)=0
         if (accumulating_beta_types==0) model_financial_bequests(time_period)=0
         if (accumulating_beta_types==0) model_fraction_leaving_bequests(time_period)=0
@@ -7139,8 +7139,8 @@
         if (accumulating_beta_types==0) profile_of_chronic_homeless(time_period,:)=0
         if (accumulating_beta_types==0) mass_profile_of_chornic_homeless(time_period,:)=0
         if (accumulating_beta_types==0) model_homelessness_old(time_period)=0
-        model_profile_of_homeless_old(:)=0
-        model_addiction_by_employment(:)=0
+        if (accumulating_beta_types==0) model_profile_of_homeless_old(:)=0
+        if (accumulating_beta_types==0) model_addiction_by_employment(:)=0
         if (accumulating_beta_types==0) model_fraction_homeless_owners(time_period)=0
         if (accumulating_beta_types==0) model_fraction_of_homeless_unemployed(time_period)=0
         if (accumulating_beta_types==0) model_fraction_addicted_who_are_homeless(time_period)=0
@@ -7150,11 +7150,11 @@
         if (accumulating_beta_types==0) model_mass_homeless_working_age(time_period)=0
         if (accumulating_beta_types==0) model_mass_total_raw(time_period)=0
         if (accumulating_beta_types==0) model_mass_smi(time_period)=0
-        model_smi_mass_by_age(:)=0
-        model_mass_by_age(:)=0
-        model_users_by_age(:)=0
-        model_alive_by_age(:)=0
-        newborn_parent_share_acc(:,:,:)=0
+        if (accumulating_beta_types==0) model_smi_mass_by_age(:)=0
+        if (accumulating_beta_types==0) model_mass_by_age(:)=0
+        if (accumulating_beta_types==0) model_users_by_age(:)=0
+        if (accumulating_beta_types==0) model_alive_by_age(:)=0
+        if (accumulating_beta_types==0) newborn_parent_share_acc(:,:,:)=0
         if (accumulating_beta_types==0) model_smi_and_homeless(time_period)=0
         if (accumulating_beta_types==0) model_smi_and_employed(time_period)=0
         if (accumulating_beta_types==0) model_homeless_labour_income(time_period)=0
@@ -7167,7 +7167,7 @@
         if (accumulating_beta_types==0) model_fraction_unemployed(time_period)=0
         if (accumulating_beta_types==0) model_fraction_unemployed_on_ui(time_period)=0
         if (accumulating_beta_types==0) model_sum_of_lowest_productivities(time_period)=0
-        model_median_assets_to_income(:)=0
+        if (accumulating_beta_types==0) model_median_assets_to_income(:)=0
         
         if (accumulating_beta_types==0) model_fraction_addicted(time_period)=0
         if (accumulating_beta_types==0) model_fraction_addicted_and_unemployed(time_period)=0
@@ -9004,10 +9004,10 @@
         if (accumulating_beta_types==0) mass_of_owners(time_period)=0
         if (accumulating_beta_types==0) mass_of_owners_with_mortgage(time_period)=0
                 
-        largest_housing_size_consumed_in_equilibrium=0
-        fraction_with_largest_housing_size_consumed_in_eqilibrium=0
-        fraction_with_smallest_financial_in_eqilibrium=0
-        largest_financial_chosen_in_equilibrium=0
+        if (accumulating_beta_types==0) largest_housing_size_consumed_in_equilibrium=0
+        if (accumulating_beta_types==0) fraction_with_largest_housing_size_consumed_in_eqilibrium=0
+        if (accumulating_beta_types==0) fraction_with_smallest_financial_in_eqilibrium=0
+        if (accumulating_beta_types==0) largest_financial_chosen_in_equilibrium=0
         smallest_financial_chosen_in_equilibrium=financial_grid_size
         
         if (accumulating_beta_types==0) total_housing_demand(time_period)=0
@@ -10252,7 +10252,7 @@
         integer :: financial_index,wealth_counter_2,time_period,wealth_of_top_x_perc_index,has_house
         real(8) :: frac_of_household_mas_to_add,sum_distribution_used,sum_of_distribution_of_old
                 
-        sum_of_distribution_of_old=0
+        if (accumulating_beta_types==0) sum_of_distribution_of_old=0
         
         do i=1,2
                 
@@ -10597,7 +10597,7 @@
         if (accumulating_beta_types==0) model_addicted_total_income(time_period)=0
         if (accumulating_beta_types==0) model_experimenters_total_drug_spending_to_total_income(time_period)=0
         if (accumulating_beta_types==0) model_experimenters_total_income(time_period)=0
-        total_addited_1=0
+        if (accumulating_beta_types==0) total_addited_1=0
         if (accumulating_beta_types==0) model_addicted(time_period)=0
         if (accumulating_beta_types==0) model_exprimenters(time_period)=0
         if (accumulating_beta_types==0) model_total_drug_users(time_period)=0
@@ -10673,10 +10673,10 @@
         if (accumulating_beta_types==0) net_govt_revenues(time_period)=0
         
         if (accumulating_beta_types==0) model_fraction_addicted_homeless_no_vouchers(time_period)=0
-        frac_getting_vouchers=0
+        if (accumulating_beta_types==0) frac_getting_vouchers=0
         
-        total_homeless_1=0
-        total_addicted_and_homeless_1=0
+        if (accumulating_beta_types==0) total_homeless_1=0
+        if (accumulating_beta_types==0) total_addicted_and_homeless_1=0
         if (accumulating_beta_types==0) model_fraction_homeless_by_choice(time_period)=0
         if (accumulating_beta_types==0) val_homeless_afford_on_income(time_period)=0
         if (accumulating_beta_types==0) model_addicted_and_homeless_by_choice(time_period)=0
@@ -12432,7 +12432,7 @@
         if (accumulating_beta_types==0) model_rent_burden_by_age(time_period,:,:)=0
         if (accumulating_beta_types==0) mass_renters_by_age(time_period,:)=0
         
-        mass_of_renters_1=0
+        if (accumulating_beta_types==0) mass_of_renters_1=0
         if (accumulating_beta_types==0) val_burden50_by_unit(time_period,:)=0
         if (accumulating_beta_types==0) val_mass_by_unit(time_period,:)=0
 
@@ -14359,9 +14359,9 @@
         if (accumulating_beta_types==0) mass_by_income_quintile_2(time_period,:,:)=0
         
         if (accumulating_beta_types==0) model_addicts_consuming_no_drugs(time_period)=0
-        mass_of_addicts=0
+        if (accumulating_beta_types==0) mass_of_addicts=0
         
-        total_MID_value=0
+        if (accumulating_beta_types==0) total_MID_value=0
         
         if (simulation_ended==(compute_income_cdf+(1-compute_income_cdf)*1)) then
         
