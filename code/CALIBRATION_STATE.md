@@ -2803,3 +2803,46 @@ From `code/points/point_d4ffbfdab5.txt`, verbatim:
 
 All three read 1.0 to twelve places. The halved-denominator correction recorded
 above is in effect on this model and none of the three reads 2.0.
+## THE UTILITY COST BRACKET DOES NOT REACH tau_u, AND IT DRAGS b WITH IT
+
+Three rungs, one beta, model d70ad1c545:
+
+    utility cost   tau_u      b        y_u
+        0         0.90058   0.05982   0.34108
+        0.05      0.86350   0.05821   0.33755
+        0.5       0.47477   0.03792   0.26925
+    target        0.245     0.089     0.740
+
+**The target is below all three, so this is not yet a bracket.** The curve does
+steepen: 0.05 of cost bought 0.037 of take-up, while the step from 0.05 to 0.5
+bought 0.389, a slope of 0.865 per unit against 0.74. At that slope the target
+lands near 0.77, but the slope is still accelerating and that is an
+extrapolation past the pair, so `TAUU_HIGH.txt` measures 1.0 and 2.0 instead of
+assuming it.
+
+### THE COUPLING, WHICH IS THE PART THAT MATTERS
+
+Raising the cost of treatment LOWERS drug use: b falls from 0.05982 to 0.03792
+across the bracket, and y_u falls with it. The mechanism is an insurance effect
+and it runs the sensible way -- cheap treatment makes experimenting safer, so
+dear treatment deters initiation. It is not an artefact.
+
+But it means tau_u and b are NOT orthogonal, and they pull the SAME way when
+they need to pull opposite ways:
+
+    b needs to RISE   0.0598 -> 0.089
+    tau_u needs to FALL 0.901 -> 0.245, which lowers b
+
+Measured across the bracket, db/dtau_u is about 0.0514. Taking tau_u the whole
+0.655 it has to travel would cost 0.034 of b, carrying it from 0.060 to about
+0.026 -- from 33 per cent below target to seventy.
+
+**So REPAIR3's step is already stale in one coordinate.** It was computed at a
+utility cost of zero and its `addiction_scalar_1` increase was sized against b
+at 0.0598. Once the cost rises to whatever tau_u needs, b falls again and the
+repair has to be re-run at the new cost. That is not wasted: the repair's
+measured Jacobian is what will size the second attempt, and its point is the
+first one on this model with the drug block aimed at rather than drifting.
+
+The ordering that follows: bracket tau_u first, then repair b AT the cost that
+tau_u wants, not before it.
