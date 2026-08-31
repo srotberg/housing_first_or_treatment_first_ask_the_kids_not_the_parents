@@ -2052,3 +2052,85 @@ quoted.
 
 **A test with equal betas cannot find this class.** It only shows up when the
 two types differ, which is the configuration nothing has yet been measured in.
+
+## WHY HOMELESSNESS IS TOO YOUNG: THE UNEMPLOYMENT PROCESS HAS NO AGE DIMENSION
+
+The author asked whether middle-aged homelessness is low because their
+unemployment is not persistent enough. The structural answer is stronger than
+the question: in the live branch of `build_unemployment_process`
+(`include_addiction==1`, lines 25842 onward) EVERY assignment is
+`unemployment_process(:,...)`. The first index is age and it is a colon in every
+one of them. Separation, job-finding, UI receipt, and the addicted variants of
+all three are identical at 30 and at 60.
+
+The dead branch (`include_addiction==0`) does carry `cutoff_age_1` and
+`cutoff_age_2`, so the array was built to hold an age profile. Nothing has ever
+put one in it.
+
+The second source of heterogeneity is dead too. `adjusting_unemployment_
+probabilities_based_on_productivity` computes a profile and then overwrites it
+with `adjusted_probability_1=1`, so the separation rate does not vary with
+permanent productivity either. The only things that move the transition are
+homelessness itself (`increased_prob_if_homeless=0.2`), the disorder, and SMI.
+
+### THE PROFILE, MEASURED
+
+From `output/baseline_benchmark.txt`. NOTE THE DATE: 14 August, so this is the
+model before the food stamp revert, before the second beta and before any of the
+kappa work. The shape is almost certainly still right; the levels are not
+current and this should be re-measured.
+
+    band     model rate   data rate   ratio     model share   data share
+    25-34       0.626       0.316      1.98        34.7          26.0
+    35-44       0.632       0.338      1.87        38.4          27.2
+    45-54       0.296       0.291      1.02        17.5          21.0
+    55-64       0.158       0.250      0.63         8.7          18.4
+    65+         0.006       0.077      0.08         0.6           7.5
+
+Data is HUD PiT 2024, already in Table 8 as an untargeted moment.
+
+Read across the top row: the data profile is nearly FLAT from 25 to 64 --
+0.316, 0.338, 0.291, 0.250 -- and only falls at 65. The model's is a spike. It
+is twice the data before 45, right at 45-54, and then collapses.
+
+**Because the overall rate is a calibration target, the model buys its level by
+putting the mass in the wrong place.** h_1 can be inside one per cent while the
+age profile is wrong by a factor of two at both ends.
+
+### THE FAILURE IS NOT ONE FAILURE, IT IS TWO
+
+**55-64 is a persistence story and the author's hypothesis fits it.** These are
+working-age households facing an age-invariant job-finding rate. In the data the
+job-finding rate falls with age and unemployment duration rises steeply with it,
+so the model gives a 58 year old the re-employment prospects of a 28 year old.
+The CPS profile has to be pulled properly before it becomes a shape -- the
+direction is not in doubt, the magnitude is not yet measured here.
+
+**65+ is not a persistence story at all, and no age-varying job-finding rate can
+touch it.** Homelessness is EXACTLY ZERO from age 66 onward, every single age.
+Retirees are out of the labour market, so the unemployment process does not
+reach them; they live on social security and accumulated assets, and in this
+model that always covers the lowest rung. There is no hard constraint barring a
+homeless retiree -- nothing gates the lowest housing grid point on age -- so this
+is an outcome, and it says the retirement income floor is never low enough to
+put anyone on the street. Seven and a half per cent of the homeless in the data
+are 65 or over.
+
+### THE TEMPLATE ALREADY EXISTS IN THE MODEL
+
+`smi_onset_by_age = smi_onset_level * smi_onset_shape_by_age`, built in
+`build_smi_onset` and rebuilt whenever a calibrated parameter moves. A data shape
+over the life cycle multiplied by one calibrated level, so the level stays a
+calibration parameter and the shape is discipline from outside. An age-varying
+job-finding rate would follow that pattern exactly and would add no new
+calibration parameter.
+
+Not a repair, so not mine to make: this is a modelling change and the author's
+call. Recorded here with the measurement so the decision is taken against
+numbers.
+
+### ONE THING THIS IS NOT
+
+`calculate_homeownership_by_characteristics` is NOT affected by today's halved
+denominator bug. Both `homelessness_by_age` and its denominator `mass_by_age`
+have guarded resets, so both pool across the two passes and the ratio is right.
