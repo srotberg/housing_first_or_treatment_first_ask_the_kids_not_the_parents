@@ -1,0 +1,519 @@
+point 03248bccf5 solved in 10 min on 4 cores
+HANDOVER OK: 27 of 27 parameters applied
+VECTOR addiction_scalar_1=0.0191 discount_factor=0.99715 housing_status_grid_expander=1 kappa_phi_d_level=8.0 kappa_uem=21.18948 labor_income_tax_rate=0.7522432 lambda_addiction=16.32855 lambda_m=0.067 largest_house_size=0.1117662 max_food_cost=0.007331089 money_cost_of_treatment=0.06 mu_homeless=0.7790600 multiple_of_probabilities_of_employment_if_addicted=2.775534 penalty_child_addicted=0.24 penalty_child_homeless=0.31 probability_becoming_unemployed=0.009921329 probability_of_voucher_benchmark_used=0.01247027 relative_share_of_addiction_1=0.5057 relative_share_of_housing=0.1527137 relative_share_of_leisure=3.050529 sd_permanent_productivity=0.9651185 size_homelessness=0.06448100 smallest_rental_relative_to_lowest_income=0.03771127 smi_onset_level=0.002761206 utility_cost_of_treatment=0 value_of_life=34.58734 weight_on_child=0.007 zeta_DI=0
+ ===== ALL TARGETED MOMENTS =====
+ MOMENT sigma_y   bottom half earnings share  model=  0.16905002140174125       target=  0.17199999999999999     
+ MOMENT tau_l     average labour income tax   model=  0.24040844378240547       target=  0.22400000691413879     
+ MOMENT omega_l   labour supply / total hours model=  0.39237469699485455       target=  0.40000000596046448     
+ MOMENT beta      wealth over output          model=   3.7697107748749255       target=   3.0000000000000000     
+ MOMENT h_2       above half of spending      model=   3.9652694366525479E-002  target=  0.10100000000000001     
+ MOMENT h_3       share in the largest unit   model=  0.66483046991504358       target=  0.62672300000000003     
+ DIAG unit           0  share of renters=  0.12959834112450908       of whom over half of income=   0.0000000000000000     
+ DIAG unit           1  share of renters=  0.20557118896044729       of whom over half of income=   0.0000000000000000     
+ DIAG unit           2  share of renters=  0.66483046991504369       of whom over half of income=  0.40926841223204991     
+ DIAG aggregate rent / aggregate income           =  0.20943705760169723     
+ DIAG aggregate housing / aggregate expenditure   =  0.18563960549081282     
+ DIAG over half of EXPENDITURE, all households    =   3.9652694366525479E-002
+ DIAG over half of EXPENDITURE, housed only       =   3.9704617818694291E-002
+ UNTARGETED mean age of drug users            model=   43.935694816679337       observed=   45.479999999999997     
+ UNTARGETED users aged 26-34, share           model=  0.52509404706986140       observed=  0.28404000000000001     
+ UNTARGETED users aged 35-44, share           model=  0.12866729745692881       observed=  0.25053999999999998     
+ UNTARGETED users aged 45-54, share           model=   6.6290473753798984E-002  observed=  0.17768000000000000     
+ UNTARGETED users aged 55-64, share           model=   5.5613909792640866E-002  observed=  0.16327000000000000     
+ UNTARGETED users aged 65 plus, share         model=  0.22433427192680735       observed=  0.12445000000000001     
+ DIAG income of WORKING AGE drug users / average   =  0.35655712031705639     
+ DIAG working age share of drug users             =  0.78135018274907142     
+ DIAG users band           1  use rate=  0.25770852322842436       share with the disorder=  0.22402363483545715       income/average=  0.32164734995206901     
+ DIAG users band           2  use rate=   5.7907136839719882E-002  share with the disorder=  0.91875063641808274       income/average=  0.45300820916847867     
+ DIAG users band           3  use rate=   3.0905652432995732E-002  share with the disorder=  0.98628863412053347       income/average=  0.51429368086138583     
+ DIAG users band           4  use rate=   2.7809543985980779E-002  share with the disorder=  0.47356827873641061       income/average=  0.29211231494636558     
+ DIAG users band           5  use rate=   7.3567311024625770E-002  share with the disorder=  0.24514495910418971       income/average=  0.17188326964642717     
+ DIAG drug threshold, (phi/theta)*p*b            =   1.6085504930749454E-002
+ DIAG buyers: mean C                             =  0.13784445771273740     
+ DIAG non-buyers: mean C                         =  0.41322390048819718     
+ DIAG buyers: mean income                        =  0.12746005963726448     
+ DIAG non-buyers: mean income                    =  0.52787672547768172     
+ DIAG buyers as a share of clean households      =   5.5770626546065433E-002
+ DIAG assets of drug users / average net worth    =  0.15797722796249966     
+ DIAG assets of experimenters / average net worth =   8.0849208856294971E-002
+ DIAG assets with a SUD / average net worth       =  0.28245968573732499     
+ DIAG mass with a NEGATIVE value of life          =  0.20782521145600807     
+ DIAG lowest value of a period of life            =  -9.2975750235513175     
+ DIAG value of life, drug users                   =   18.094778818138685     
+ DIAG value of life, everyone else                =   19.725027861291931     
+ DIAG aleph itself, for scale                     =   34.587339999999998     
+ DIAG treatment price / average labour income     =  0.10067424733611174       data outpatient=   3.4000000000000002E-002  to   6.5000000000000002E-002
+ DIAG households receiving food stamps            =   8.4735907414952809       data=  0.12500000000000000     
+ DIAG max allotment, one person / avg labour inc   =   3.9586000000000003E-002  data=   3.9586000000000003E-002
+ DIAG max allotment at the mean household size     =   3.9586000000000003E-002
+ DIAG gross eligibility cutoff, one person         =  0.21487200000000001       data=  0.21487200000000001     
+ DIAG aggregate rent / output                     =  0.24111566723499367     
+ DIAG asset grid, reachable points                =   25.000000000000000     
+ DIAG share in the smallest unit                  =  0.12959834112450908     
+ MOMENT gamma     housing over expenditure    model=  0.18563960549081282       target=  0.26800000667572021     
+ UNTARGETED housing over income, renters      model=  0.25250513372888417       observed=  0.20200000000000001     
+ MOMENT h_1       homelessness rate           model=   1.3077434067214897E-003  target=   3.9900001138448715E-003
+ MOMENT b         total drug users            model=   8.7308580457954865E-002  target=   8.9000001549720764E-002
+ MOMENT lambda_d  disorder rate               model=   3.3400733760826216E-002  target=   3.6800000816583633E-002
+ MOMENT theta     drug spending share         model=  0.16156206351398733       target=  0.16200000047683716     
+ MOMENT aleph     value of life / income      model=   60.485658112636358       target=   80.000000000000000     
+ MOMENT pi_eu     unemployment rate           model=   5.8893260331368366E-002  target=   4.8500001430511475E-002
+ MOMENT kappa_ued unemployment given SUD      model=  0.11529437560071831       target=  0.16249999403953552     
+ MOMENT kappa_uem employment given SMI        model=  0.32139033660593586       target=  0.30000001192092896     
+ MOMENT p_m       SMI population share        model=   4.4480380527119119E-002  target=   4.8479864150360895E-002
+ MOMENT lambda_m  SMI share of the homeless   model=  0.36728150347275135       target=  0.25000000000000000     
+ MOMENT pi_V      eligibles with a voucher    model=  0.27179639199983863       target=  0.26600000262260437     
+ UNTARGETED food stamps / labour income       model=  0.20423583613351640       observed=   4.1999998502433300E-003
+ MOMENT tau_u     treatment take up           model=  0.25277495134507916       target=  0.24500000476837158     
+ MOMENT mu_H      recovery housed / homeless  model=   1.6086047829034837       target=   1.4732142857142856     
+ UNTARGETED delta_d child SUD ratio           model=   1.1710818724273611       observed=   2.0000000000000000     
+ UNTARGETED wealth share bottom  1 pct        model=   0.0000000000000000       observed=  -2.2499999999999998E-003
+ UNTARGETED wealth share bottom  5 pct        model=   0.0000000000000000       observed=  -4.2199999999999998E-003
+ UNTARGETED wealth share bottom 10 pct        model=   2.6102709920663939E-003  observed=  -4.4600000000000004E-003
+ UNTARGETED income share bottom  1 pct        model=   6.8366850600249187E-004  observed=   9.0000000000000006E-005
+ UNTARGETED income share bottom  5 pct        model=   3.4183425300124588E-003  observed=   2.8800000000000002E-003
+ UNTARGETED income share bottom 10 pct        model=   6.8366850600249177E-003  observed=   9.2399999999999999E-003
+ DIAG income histogram mass / distribution (want 1.0) =   1.0000000000000819     
+ DIAG SUD rate, income band           1  model=   3.6407572869124147E-002  data=  0.13650000000000001     
+ DIAG SUD rate, income band           2  model=   3.6290434115543925E-002  data=  0.13080000000000000     
+ DIAG SUD rate, income band           3  model=  0.11419082678024724       data=   9.1100000000000000E-002
+ DIAG SUD rate, income band           4  model=  0.10816307092048495       data=  0.10199999999999999     
+ DIAG SUD rate, income band           5  model=   1.8471318249799629E-002  data=   7.8600000000000003E-002
+ DIAG SUD rate, income band           6  model=   3.3841893598257615E-005  data=   7.1700000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ DIAG SUD rate, income band           7  model=   0.0000000000000000       data=   4.8200000000000000E-002
+ UNTARGETED delta_h child homelessness ratio  model=   1.7786565194461501       observed=   2.1000000000000001     
+ DIAG homelessness rate rebuilt from the bands    =   1.3077434067213969E-003
+ UNTARGETED homelessness rate, band           1  model=   7.3318823905809110E-003  observed=   3.1610000000000002E-003
+ UNTARGETED homelessness rate, band           2  model=   1.2397202394819718E-005  observed=   3.3779999999999999E-003
+ UNTARGETED homelessness rate, band           3  model=   3.9979480414164602E-006  observed=   2.9120000000000001E-003
+ UNTARGETED homelessness rate, band           4  model=   1.0252652850001566E-006  observed=   2.4960000000000000E-003
+ UNTARGETED homelessness rate, band           5  model=   3.7924954764787651E-007  observed=   7.6999999999999996E-004
+ UNTARGETED homelessness profile, band           1  model=   5.6065145141602715       observed=   1.2807941653160453     
+ UNTARGETED homelessness profile, band           2  model=   9.4798431642644336E-003  observed=   1.3687196110210695     
+ UNTARGETED homelessness profile, band           3  model=   3.0571349248394164E-003  observed=   1.1799027552674231     
+ UNTARGETED homelessness profile, band           4  model=   7.8399575920674500E-004  observed=   1.0113452188006482     
+ UNTARGETED homelessness profile, band           5  model=   2.9000302788654951E-004  observed=  0.31199351701782818     
+ DIAG disorder rate, band           1                     =   5.7732800101709468E-002
+ DIAG disorder rate, band           2                     =   5.3202218824641642E-002
+ DIAG disorder rate, band           3                     =   3.0481893724743303E-002
+ DIAG disorder rate, band           4                     =   1.3169717877885418E-002
+ DIAG disorder rate, band           5                     =   1.8034655452537088E-002
+ DIAG SUD share of the homeless, band           1         =   1.0528643091948099E-006
+ DIAG SUD share of the homeless, band           2         =   4.2568355060234358E-008
+ DIAG SUD share of the homeless, band           3         =   2.5643499905951229E-003
+ DIAG SUD share of the homeless, band           4         =   1.2705146105354325E-002
+ DIAG SUD share of the homeless, band           5         =   1.0000000000000000     
+ UNTARGETED share of the homeless, band           1  model=  0.99737433936922881       observed=  0.26000000000000001     
+ UNTARGETED share of the homeless, band           2  model=   1.8390526652203875E-003  observed=  0.27200000000000002     
+ UNTARGETED share of the homeless, band           3  model=   5.7251219267094122E-004  observed=  0.20999999999999999     
+ UNTARGETED share of the homeless, band           4  model=   1.3688636823135661E-004  observed=  0.18400000000000000     
+ UNTARGETED share of the homeless, band           5  model=   7.7209404648657639E-005  observed=   7.4999999999999997E-002
+ UNTARGETED earnings share, bottom tenth      model=   1.2506710850554971E-002  observed=   9.9000000000000008E-003
+ UNTARGETED earnings share, top tenth         model=  0.30866237764965687       observed=  0.41099999999999998     
+ UNTARGETED net worth share, bottom half      model=  0.13105011323687088       observed=   2.5200000000000000E-002
+ UNTARGETED renters above 30 pct of income    model=  0.41248535961949973       observed=  0.40600000000000003     
+ UNTARGETED renters above 50 pct of income    model=  0.27209411082562540       observed=  0.17499999999999999     
+ UNTARGETED tenant contribution rate          model=  0.49696011964737152       observed=  0.31200000000000000     
+ UNTARGETED voucher holders, wages main       model=  0.50131712974242182       observed=  0.28000000000000003     
+ UNTARGETED participation, with a SUD         model=  0.85956157864637739       observed=  0.65800000000000003     
+ UNTARGETED participation, without a SUD      model=  0.74644613489715439       observed=  0.61499999999999999     
+ DIAG participation, with a SUD, working age      =   1.0000000000000000     
+ DIAG households with no wage income, working age =   5.8893260331368366E-002  data=  0.13930000000000001     
+ DIAG participation, without a SUD, working age   =   1.0000000000000000     
+ UNTARGETED homeless at treatment admission   model=   0.0000000000000000       observed=  0.14499999999999999     
+ UNTARGETED SMI alongside SUD at admission    model=   1.1147687303402697E-002  observed=  0.43099999999999999     
+ UNTARGETED working, homeless in treatment    model=   0.0000000000000000       observed=   6.6000000000000003E-002
+ DIAG employed share of the homeless, working age =  0.96581553702540324     
+ DIAG working age homeless mass                   =   6.5750376503615635E-002
+ UNTARGETED SUD share of the homeless         model=   8.1466865723035152E-005  observed=  0.21700000000000000     
+ DIAG kappa_phi_d_level, SUD mortality level      =   8.0000000000000000     
+ UNTARGETED drug deaths, share of deaths      model=  0.25931106716719310       observed=  0.20000000000000001     
+ VALIDATION NOT COMPUTED: returns to homelessness within 24 months, and the two drug price elasticities; each needs a second solve.
+ OMEGA SKIPPED    child counterfactual off by measure_child_gap
+ ELASTICITY SKIPPED  drug price elasticities off by measure_price_elasticity
+ UNTARGETED income of the homeless            model=  0.28154684639683475       observed=  0.19100000000000000     
+ UNTARGETED employed share of the homeless    model=  0.96581553702540324       observed=  0.46000000000000002     
+ DIAG homeless who could afford it on INCOME ALONE=   1.0000000000000000     
+ DIAG homeless by choice, share of the homeless   =   1.0000000000000000     
+ DIAG homeless receiving food stamps              =   2.6932483015843010E-005
+ DIAG average assets of the homeless              =   2.3554036385566690E-002
+ DIAG wealth share of the bottom 25 pct           =   1.9738817328088572E-002
+ DIAG mean drug quantity, users                   =   3.9778995528330169E-002
+ DIAG onset at the mean quantity                  =  0.47771053671867347     
+ UNTARGETED income of drug users              model=  0.31608003855329336       observed=  0.73999999999999999     
+ UNTARGETED income with a SUD                 model=  0.44600771654262417       observed=  0.71099999999999997     
+ DIAG carriers of the disorder consuming no drugs =   0.0000000000000000     
+ DIAG income of experimenters / average           =  0.23557821838106285     
+ DIAG income of drug users / labour income        =  0.28694799531708093     
+ DIAG income with a SUD / labour income           =  0.40490067244874867     
+ DIAG mass ON the top savings grid point          =   1.0857748352368043E-004
+ DIAG mass in the top THREE savings grid points   =   4.9063498124827165E-004
+ DIAG histogram mass / distribution  (want 1.0)   =   1.0000000000000902     
+ DIAG histogram wealth / total wealth (want 1.0)  =   1.0000000000000755     
+ ===== END OF MOMENTS =====
