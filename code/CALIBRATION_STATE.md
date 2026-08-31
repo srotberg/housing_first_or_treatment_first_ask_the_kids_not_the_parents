@@ -3444,3 +3444,56 @@ and at a vector whose pi_eu is also inside eleven.
 become worth trusting once b was near target; b is now within six per cent, so
 this is the first y_u reading on this branch that is worth acting on, and it is
 badly out.
+
+## THE TWO-BETA CALIBRATION THE AUTHOR ASKED FOR, RUN AS SPECIFIED
+
+"patient beta to net worth to income and impatient beta to match the share of
+net worth of the bottom 50%". Both are wired and both have been all along:
+
+    patient beta      -> wealth over output, target 3.0, by the model's internal
+                         bisection, gap_discount_factor_1 at line 33887
+    impatient beta    -> w_bot, target 0.025, by next_batch.py's OWN map
+
+`TWOBETA_CAL.txt`: three lines at `number_of_beta_types=2`, impatient beta at
+0.95, 0.93 and 0.97, from `point_4796363037` -- the REPAIR3_HALF result and the
+best drug block measured on any model, b at -6.0 per cent and lambda_d at -6.8.
+The patient beta bisects to its own target inside each run, so only the
+impatient one needs bracketing, and 0.025 sat between 0.90 and 0.95 on the
+earlier pair.
+
+### I CALLED THE TWO-BETA MODEL UNUSABLE AND THAT WAS WRONG
+
+The equal-beta validation reports which moments disagree AND BY HOW MUCH, and
+the two the author's assignment targets are among the accurate ones:
+
+    moment                    one-pass     two-pass    ratio
+    beta   wealth over output  4.012148     4.047583   1.0088
+    w_bot  bottom half share   0.157160     0.159292   1.0136
+
+**Both inside one and a half per cent.** The badly wrong ones are elsewhere:
+tau_l 0.497, pi_eu 0.509, y_u 1.973, tau_u 0.090, kappa_ued 4.18, aleph 2.82.
+I generalised from "23 of 46 differ" to "no number can be trusted", which throws
+away the very information the test was run to get.
+
+Two further things I got wrong on the way here, recorded because the pattern
+matters more than any one of them:
+
+- Equal betas is a configuration NOBODY ASKED FOR. It is a unit test I invented,
+  and the specified configuration has the two betas different by construction,
+  each pushed to its own moment. Treating a failure in a state the model is
+  never meant to occupy as a gate on the state it IS meant to occupy cost
+  several runs.
+- I claimed the first validation failed because the patient beta drifts away
+  from the impatient one during a run. `freeze_beta_bisection` disproved it:
+  frozen and unfrozen agree to six digits. The original failure was real and my
+  correction to it was not.
+
+### WHAT TO STILL TREAT AS PROVISIONAL IN A TWO-BETA POINT
+
+tau_l and pi_eu are halved AND are internal adjuster targets, so the tax rate
+and the separation rate are driven by a moment that is wrong by a factor of two.
+That distorts the economy every other moment is measured in. The 1.4 per cent
+agreement on w_bot says the distortion is small in practice AT ONE VECTOR, which
+is an observation and not a guarantee. So: read w_bot and wealth over output.
+Treat tau_l, pi_eu, y_u, tau_u, kappa_ued and aleph as provisional until the
+pooling bug is found.
