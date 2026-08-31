@@ -1228,3 +1228,48 @@ and lambda_d 1.4 -> 10.4, both now high rather than low. The correction is small
 and **inside the bracket** -- lamA +0.070, as1 +0.0009 -- and is ROUND12 line 3.
 It also cost kappa_uem, which went outside ten per cent for the first time in
 several rounds, and that will need watching rather than assuming.
+
+## CORRECTION: THE pi_eu PAIR WAS NOT FREE, kappa_uem PAID FOR IT
+
+Recorded last round as the first coupling in this search that helps. The part
+about b and lambda_d is right -- they came out better -- but "closes pi_eu for
+free" is wrong, and the moment that paid was one I did not look at:
+
+    9ff7a5b81c   pi_eu 23.4%   kappa_uem  6.5%   lambda_m 16.1%
+    2f789d317c   pi_eu  3.8%   kappa_uem 33.5%   lambda_m 26.8%
+
+Lowering `probability_becoming_unemployed` swapped pi_eu for kappa_uem, one
+moment outside ten per cent for another, and cost lambda_m ten points as well.
+Both points sit at six outside. **Check the WHOLE vector before calling a step
+free**, not the moments the step was aimed at.
+
+## THE UNCLAMPED aleph REPAIR FAILED, AS THE BRACKET SAID IT WOULD
+
+ROUND12 line 1 took the `value_of_life` repair 5.4x outside the
+`addiction_scalar_1` bracket, deliberately, to see whether the locus held that
+far. It does not: b overshot to 84.9 per cent HIGH and lambda_d to 65.5, and
+aleph reached only 18.7 per cent rather than the 10.9 the bare arm gave, because
+the repair's own coordinates move aleph too. The linear locus is good to about
+two per cent in `addiction_scalar_1` and no further. Line 4, arming that
+parameter alone at 0.0175, is the way to widen it; nothing else should be
+extrapolated past it in the meantime.
+
+The in-bracket correction on the same round worked exactly: **b 13.0 per cent
+off to 0.7, lambda_d 10.4 to 3.7**, at `32fba2ab17`, which is now the best point
+of its family at six moments outside ten and worst 43.7 per cent on h_1.
+
+## kappa_uem IS A CLEAN TWO-FOR-ONE AND IS THIS ROUND
+
+`kappa_uem` the parameter has a measured elasticity of -0.952 on its own moment
+and +0.569 on lambda_m. Its own moment is 33.4 per cent HIGH at `32fba2ab17` and
+lambda_m is 27.1 per cent LOW, so raising the parameter fixes one and helps the
+other:
+
+    kappa_uem parameter 21.19 -> 28.67
+        kappa_uem moment  0.4001 -> 0.300   (33.4% -> 0)
+        lambda_m          0.1822 -> 0.2164  (27.1% -> 13.4%)
+
+If it lands, that is five moments outside ten per cent rather than six, and
+lambda_m stops being one of them. Lines 1 and 2 bracket it; lines 3 and 4 push
+kappa_ued to 4.0 with and without it, since kappa_ued is still 22.7 per cent off
+and its own drift is now measured at this point.
