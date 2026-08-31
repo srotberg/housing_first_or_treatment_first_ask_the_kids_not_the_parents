@@ -72,6 +72,10 @@ code/progress_history.json
 # tracking a 1.4 MB binary here would add that much to history each time, for an
 # artefact the source reproduces exactly.
 code/hftf
+# The build stamp beside the binary: the md5 of the source hftf was actually
+# built from. It describes one container's binary and means nothing in another,
+# so it belongs with the binary rather than in the history.
+code/hftf.srcmd5
 code/hftf_*
 
 # THE LIVE LOG STAYS IGNORED, AND A COPY IS WHAT GETS COMMITTED.
