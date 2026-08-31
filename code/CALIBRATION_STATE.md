@@ -1481,3 +1481,53 @@ repair; the box-constrained solve keeps both instruments inside their brackets
 and leaves b at 5.8 per cent and lambda_d at 3.7. ROUND17 line 3 is that step,
 line 4 is 70 per cent of it, line 1 the full four-column ridge and line 2 the
 targeted pi_eu pair.
+
+## THE HOUSING BLOCK WAS SEARCHED ON ONE PARAMETER OUT OF THREE
+
+The author's objection is correct and this section records the error rather than
+the excuse. h_1, h_2, gamma and aleph are the statistics a housing paper rests
+on, and they are the four still outside ten per cent. Two of them were declared
+unreachable on a search that never touched the relevant instrument.
+
+The ladder has exactly **three rungs** (`housing_status_grid_size=3`), and the
+distribution across them at `d25318fa67` is
+
+    unit 0   12.1% of renters   none over half of income
+    unit 1   20.8%              none over half of income
+    unit 2   67.1%              40.3% of them over half of income
+
+**Every household that h_2 counts is in the top rung.** h_2 and gamma are
+therefore properties of how expensive the TOP of the ladder is, and how many
+people are pushed into it. What the search has actually done to the three
+geometry parameters:
+
+    smallest_rental_relative_to_lowest_income   19 controlled pairs   (the BOTTOM rung)
+    largest_house_size                           1 pair, at a point where mu_H printed 2e12
+    housing_status_grid_expander                 0 pairs -- NEVER ARMED
+
+So "h_2 has no instrument" and "gamma has no instrument, confirmed four times"
+were concluded from nineteen measurements of the bottom rung, one broken
+measurement of the top, and none at all of the spacing. That is not a finding
+about the model, it is a hole in the search.
+
+It also explains a reading that should have been the tell: `relative_share_of_housing`
+has an elasticity of only **0.22** on gamma, where a Cobb-Douglas weight should
+be near one. With three discrete rungs the housing expenditure share is pinned by
+the SIZES on the grid, not by the preference weight. The low elasticity was
+evidence about the grid and it was read as evidence about the instrument.
+
+`ROUND18` arms both, bare, from the best point: `largest_house_size` at 0.13 and
+0.16, `housing_status_grid_expander` at 1.5 and 0.7.
+
+## h_1 AND lambda_m ARE COLLINEAR, WHICH IS A REAL RESULT
+
+Unlike the above, this one holds up. The two instruments that move the pair move
+it in the same direction:
+
+    value_of_life      h_1 -14.766   lambda_m +13.888   ratio -1.063
+    size_homelessness  h_1  +1.960   lambda_m  -1.870   ratio -1.048
+
+The ratios differ by 1.4 per cent. They do not span the plane, so no combination
+of them separates h_1 from lambda_m -- one slides along a locus, it does not step
+off it. Breaking that needs an instrument with a different ratio, and
+`smallest_rental` near its cliff is the only candidate seen so far.
