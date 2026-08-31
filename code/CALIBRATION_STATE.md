@@ -493,9 +493,11 @@ the grid.
 WHAT IT COSTS AND WHAT IT DOES NOT. It does not cost the moments. b and
 lambda_d are calibrated, so the grid error is absorbed into
 addiction_scalar_1 and lambda_addiction and the targets are still hit. What
-is grid dependent is the PARAMETER VALUE that hits them, which is worth one
-sentence in a robustness note rather than a change of plan: at 41 points the
+is grid dependent is the PARAMETER VALUE that hits them: at 41 points the
 same targets would be met at a different b.
+
+The author has ruled that this needs NO note in the paper. Recorded here so
+it is not raised again as an outstanding task.
 
 It also means the 268 point archive stays retired. That was already true --
 the mortality form, SNAP and the treatment cost all moved on 30 and 31
