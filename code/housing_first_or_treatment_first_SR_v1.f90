@@ -4629,6 +4629,27 @@
             write(*,*) "DIAG value of life, everyone else                =",&
                 val_ugoods_others(1)/max(val_umass_others(1),10.d0**(-14))
             write(*,*) "DIAG aleph itself, for scale                     =", value_of_life
+
+            ! WHO ACTUALLY GETS FOOD STAMPS, which the cbar moment cannot say.
+            ! cbar targets AGGREGATE spending over labour income, and an
+            ! aggregate can be hit with a tiny benefit paid to a great many
+            ! households or a proper one paid to few. The floor the poorest
+            ! household consumes against is the SECOND of those, and it is what
+            ! bounds the CRRA goods term from below.
+            !
+            ! In the data 12.5 per cent of households received SNAP in 2023, the
+            ! maximum allotment for one person was 291 dollars a month against
+            ! mean household wage income of 88,212, so 3.96 per cent of it, and
+            ! eligibility ran to 130 per cent of the poverty line, about 20 per
+            ! cent of average labour income. The model's maximum is
+            ! max_food_cost itself, since the consumption tax is zero, and its
+            ! cutoff is max_food_cost/0.30.
+            write(*,*) "DIAG households receiving food stamps            =",&
+                model_fraction_recieving_food_stamps(1), " data=", 0.125d0
+            write(*,*) "DIAG max allotment / average labour income       =",&
+                max_food_cost*(1+consumption_tax), " data 1 person=", 0.0396d0
+            write(*,*) "DIAG eligibility cutoff / avg labour income      =",&
+                max_food_cost*(1+consumption_tax)/food_stamp_taper, " data=", 0.20d0
             write(*,*) "DIAG aggregate rent / output                     =",&
                 aggregate_rent_spending(1)/max(model_output(1),10.d0**(-14))
             write(*,*) "DIAG asset grid, reachable points                =",&
