@@ -3879,3 +3879,39 @@ population barely intersect at this point. That is a strong statement and it sit
 next to `employed share of the homeless` at 0.98 against 0.46 -- the model's
 homeless are young, employed and clean, which is not the population the data
 describes.
+
+## TEN RUNTIME INVARIANTS, CHECKED ON EVERY POINT
+
+The model carried three: the histogram mass checks. **Those three are what
+caught the first pooling bug.** They had been printing 2.0000 for hours while
+the code was read and the diagnosis guessed at, wrongly, three separate times.
+Reading 38,000 lines does not find that class. A number that must be 1.0 and is
+not finds it on the first run.
+
+So the block now checks ten, each printing PASS or FAIL, with a count on the
+last line so a run can be triaged with one grep:
+
+  - the income histogram holds the whole distribution
+  - the wealth histogram holds the whole distribution
+  - the wealth histogram holds the whole of net worth
+  - THE RENTAL MARKET CLEARS: demand over supply is 1. If this fails the price
+    every household faces is wrong and with it every housing choice, so it is
+    the one invariant here that guards the economics rather than the reporting.
+  - six shares lie in [0,1]: homelessness, drug users, the disorder, SMI,
+    unemployment, homeownership. A share above one is a pooling error or a
+    denominator that lost its mass; a negative one is an accumulator running
+    backwards.
+  - the five age bands hold ALL of the homeless. This one is aimed squarely at
+    today's worst bug: `homelessness_by_age_group` is normalised to sum to one
+    by construction, so a failure means the normalisation ran against a
+    different population from the one the bands were filled from -- which is
+    exactly what a routine called once inside the two-pass loop and once outside
+    it produces.
+
+`check_one` and `check_range` are two small helpers beside `print_all_moments`.
+Adding an invariant is now one line.
+
+**This is the durable half of the audit.** Seven readers on 38,000 lines will
+find dead parameters, guard mismatches and index errors, and then they stop.
+These ten run on every point forever, including for the classes nobody thought
+to look for.

@@ -4750,6 +4750,55 @@
 
         end function
 
+
+        subroutine check_one(name_1,value_1,want_1,tol_1,fail_count_1)
+
+            ! One invariant: a quantity that must equal want_1.
+
+            implicit none
+
+            character(len=*), intent(in) :: name_1
+            real(8), intent(in) :: value_1,want_1,tol_1
+            integer, intent(inout) :: fail_count_1
+
+            if (abs(value_1-want_1)<=tol_1) then
+
+                write(*,'(A,A48,A,F16.10)') " INVARIANT PASS  ",name_1,"  = ",value_1
+
+            else
+
+                write(*,'(A,A48,A,F16.10,A,F8.4)') " INVARIANT FAIL  ",name_1,&
+                    "  = ",value_1,"   want ",want_1
+                fail_count_1=fail_count_1+1
+
+            end if
+
+        end subroutine
+
+        subroutine check_range(name_1,value_1,fail_count_1)
+
+            ! One invariant: a share, which must lie in the unit interval.
+
+            implicit none
+
+            character(len=*), intent(in) :: name_1
+            real(8), intent(in) :: value_1
+            integer, intent(inout) :: fail_count_1
+
+            if ((value_1>=0.d0) .AND. (value_1<=1.d0)) then
+
+                write(*,'(A,A48,A,F16.10)') " INVARIANT PASS  ",name_1,"  = ",value_1
+
+            else
+
+                write(*,'(A,A48,A,F16.10,A)') " INVARIANT FAIL  ",name_1,&
+                    "  = ",value_1,"   outside [0,1]"
+                fail_count_1=fail_count_1+1
+
+            end if
+
+        end subroutine
+
         subroutine print_all_moments()
 
             ! EVERY TARGETED MOMENT, ON EVERY PASS, BESIDE ITS TARGET.
@@ -4769,7 +4818,7 @@
 
             implicit none
 
-            integer :: diag_age_1
+            integer :: diag_age_1,diag_fail_1
 
             real(8) :: w2o_1,vsl_1,csud_n_1,csud_d_1,chom_n_1,chom_d_1
             ! The counterfactual overwrites model_total_drug_users, so the
@@ -5702,6 +5751,64 @@
                     "  renter income=", income_by_age_renter(1,diag_age_1)
 
             end do
+
+            ! ================= INVARIANTS =================
+            ! IDENTITIES THAT MUST HOLD BY CONSTRUCTION, CHECKED ON EVERY POINT.
+            !
+            ! The model already carried three of these -- the histogram mass
+            ! checks -- and they are what caught the first pooling bug: they had
+            ! been printing 2.0000 for hours while the code was read and the
+            ! diagnosis guessed at, wrongly, three times. Reading 38,000 lines
+            ! does not find this class. A number that must be 1.0 and is not
+            ! finds it on the first run.
+            !
+            ! Each line prints PASS or FAIL, and the last line is the count, so
+            ! a run can be triaged from one grep instead of an eye over a
+            ! hundred numbers.
+            write(*,*) "===== INVARIANTS ====="
+            diag_fail_1=0
+
+            call check_one("income histogram holds the whole distribution",&
+                income_hist_mass_check,1.d0,10.d0**(-6),diag_fail_1)
+            call check_one("wealth histogram holds the whole distribution",&
+                wealth_hist_mass_check,1.d0,10.d0**(-6),diag_fail_1)
+            call check_one("wealth histogram holds the whole of net worth",&
+                wealth_hist_wealth_check,1.d0,10.d0**(-6),diag_fail_1)
+
+            ! THE RENTAL MARKET CLEARS. Demand and supply are both accumulated
+            ! over both discount-factor types, and the rent that solves the
+            ! outer loop is the one that equates them. If this fails the price
+            ! every household faces is wrong, and with it every housing choice.
+            call check_one("rental market clears, demand over supply",&
+                sum(total_rental_demand(1,:))/&
+                max(sum(total_rental_supply(1,:)),10.d0**(-12)),&
+                1.d0,10.d0**(-3),diag_fail_1)
+
+            ! SHARES ARE SHARES. Every one of these is a fraction of a
+            ! population and cannot leave the unit interval. A share above one
+            ! is a pooling error or a denominator that lost its mass; a
+            ! negative one is an accumulator that went backwards.
+            call check_range("homelessness rate",model_fraction_homeless(1),diag_fail_1)
+            call check_range("drug users",model_total_drug_users(1),diag_fail_1)
+            call check_range("disorder rate",model_fraction_addicted(1),diag_fail_1)
+            call check_range("SMI population share",model_smi_prevalence(1),diag_fail_1)
+            call check_range("unemployment rate",model_fraction_unemployed(1),diag_fail_1)
+            call check_range("homeownership rate",model_homeownership_rate(1),diag_fail_1)
+
+            ! THE AGE BANDS PARTITION THE HOMELESS. homelessness_by_age_group is
+            ! normalised to sum to one by construction, so a failure here means
+            ! the normalisation ran against a different population from the one
+            ! the bands were filled from -- which is exactly what a routine
+            ! called twice, once inside the two-pass loop and once outside it,
+            ! produces.
+            call check_one("the five age bands hold all of the homeless",&
+                sum(homelessness_by_age_group(1,:)),1.d0,10.d0**(-6),diag_fail_1)
+
+            if (diag_fail_1==0) then
+                write(*,*) "INVARIANTS: all PASS"
+            else
+                write(*,*) "INVARIANTS: ", diag_fail_1, " FAILED -- see the lines above"
+            end if
 
             write(*,*) "===== END OF MOMENTS ====="
 
