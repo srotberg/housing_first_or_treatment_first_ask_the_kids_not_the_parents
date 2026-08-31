@@ -1273,3 +1273,43 @@ If it lands, that is five moments outside ten per cent rather than six, and
 lambda_m stops being one of them. Lines 1 and 2 bracket it; lines 3 and 4 push
 kappa_ued to 4.0 with and without it, since kappa_ued is still 22.7 per cent off
 and its own drift is now measured at this point.
+
+## NEW BEST POINT: e3fc6bd353. THE kappa_uem TWO-FOR-ONE LANDED
+
+    kappa_uem  33.4 per cent off -> 4.0
+    lambda_m   27.1 -> 16.5
+    b          0.7 -> 0.1        lambda_d  3.7 -> 1.9
+
+Six moments outside ten per cent, worst h_1 at 41.9. It ties `9ff7a5b81c` on the
+count and beats it on substance -- kappa_ued 22 against 29, pi_eu 16 against 23,
+everything else level -- so the sum of the gaps outside ten falls from 166 to
+151. Outside now: h_1 42, gamma 31, aleph 24, kappa_ued 22, lambda_m 16, pi_eu 16.
+
+## THE BRACKET WIDENER PAID OFF TWICE
+
+`addiction_scalar_1` at 0.0175 was a deliberate throwaway -- b came back at 181
+per cent and lambda_d at 329 -- but it is a controlled pair over a bracket **4.0
+times wider** than the one every repair has been clamped against, and the column
+re-measured over that range is:
+
+    b elasticity -17.00 (narrow bracket said -14.71)
+    lambda_d     -23.48 (narrow bracket said -21.58)
+
+Close enough that the narrow readings were sound, and the usable range is now
+0.0604 in logs rather than 0.0201. That is what makes the aleph route legitimate:
+`value_of_life` 36 with its repair now sits exactly AT the wide bracket edge
+instead of 5.4x outside it, and aleph is predicted 24.3 per cent off to 18.1.
+At 37 it would reach 13.6, but that repair asks `lambda_addiction` for 3.6x ITS
+bracket, so 36 is the step to take and the next one is measured from there.
+
+**A deliberately bad point can be the most valuable line in a round.** Its own
+moments were never the reason to run it.
+
+## THE lambda_addiction COLUMN IS THE OLDEST THING STILL IN USE
+
+Every drug repair in the last six rounds has used a `lambda_addiction` column of
+(-1.56 on b, -1.14 on lambda_d) measured on the `02c96e3721` slice, before five
+parameters moved. Its `addiction_scalar_1` partner has been re-measured three
+times since. ROUND14 line 2 arms `lambda_addiction` alone at 15.5 from the
+current best point, so the repairs stop resting on the one column nobody has
+checked.
