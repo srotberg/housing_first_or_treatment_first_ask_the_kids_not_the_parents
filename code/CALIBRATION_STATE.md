@@ -4268,3 +4268,41 @@ net loop depth zero and no `end do` crossed between them -- so none reads a stal
 value. A use-before-set does exist at line 11031, with no prior assignment
 anywhere; it is pre-existing and not one of these five, and is left for the next
 pass.
+
+## FIX 17: h_1 HAD TWO OWNERS
+
+[Audit B F2, Audit G 12] `model_fraction_homeless` was reset, accumulated AND
+divided in BOTH `stationary_equilibrium_statistics` and `govt_revenues_calc`.
+Both resets guarded to the first pass, so on the second pass the later routine
+accumulated a MASS on top of the RATE the earlier one had produced, then divided
+again:
+
+    after pass 2, SES   (M1+M2)/2          the correct pooled rate
+    after pass 2, GRC   ((M1+M2)/2 + M2)/2 = 1/4 h1 + 3/4 h2
+
+**A 1:3 mixture over-weighting the impatient type**, and h_1 is TARGETED --
+`size_homelessness` is bisected on it. Ownership given to
+`stationary_equilibrium_statistics`, which runs first.
+
+## THE SAME CLASS, DOCUMENTED AND NOT YET FIXED
+
+Six more variables are reset by more than one chain routine. All untargeted, so
+none of them moves a calibration; all of them make a reported statistic wrong at
+two types. Left deliberately rather than fixed blind, because each needs its
+universes confirmed and I have already introduced one regression today by moving
+fast on this exact class:
+
+    mass_by_employment          SES, GRC, CWBC, CHBC -- four owners. The worked
+                                example in Audit G: welfare-by-employment comes
+                                out HALVED and homeownership_by_employment at
+                                0.4 times truth.
+    mass_by_employment_and_age  CWBC, CHBC
+    total_homeless_1            SES, GRC
+    mass_of_owners              SES, SEHR -- dead while ownership is off
+    mass_renters_by_age         SEHR, calculate_household_housing_spending
+
+The rule to apply to each: exactly ONE routine may reset and accumulate a
+variable; the rest read it. The call order inside the loop is SES, SEHR, GRC,
+aggregate_consumption, welfare, housing_spending, welfare_by_characteristics,
+homeownership_by_characteristics, wealth_of_old -- and it is the same order in
+`long_run_counter_factual`, so the first owner in that list is always safe.

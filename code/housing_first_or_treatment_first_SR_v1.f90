@@ -11130,7 +11130,22 @@
         if (accumulating_beta_types==0) model_fraction_recieving_food_stamps(time_period)=0
         if (accumulating_beta_types==0) model_fraction_homeless_recieving_food_stamps(time_period)=0
         if (accumulating_beta_types==0) model_food_stamps_share_to_homeless(time_period)=0
-        if (accumulating_beta_types==0) model_fraction_homeless(time_period)=0
+        ! OWNED BY stationary_equilibrium_statistics, WHICH RUNS FIRST. Reset,
+        ! accumulation and division disabled here.
+        !
+        ! model_fraction_homeless was reset, accumulated AND divided in two chain
+        ! routines. Both resets are guarded to the first pass, so on the second
+        ! pass this routine accumulated a MASS on top of the RATE the earlier one
+        ! had already produced, then divided again: the value the h_1 bisection
+        ! read was a 1:3 mixture over-weighting the impatient type, not the 1:1
+        ! mixture the design intends. h_1 is a TARGETED moment and
+        ! size_homelessness is driven by it.
+        !
+        ! The two routines divide by different denominators -- lowest
+        ! productivities against sum_of_distribution -- but the first is
+        ! accumulated for every household with no condition, so despite its name
+        ! it is the same total mass. Keeping one owner is enough.
+        ! if (accumulating_beta_types==0) model_fraction_homeless(time_period)=0
         if (accumulating_beta_types==0) model_fraction_recieving_housing_vouchers(time_period)=0
         if (accumulating_beta_types==0) net_govt_revenues(time_period)=0
         
@@ -12077,8 +12092,23 @@
                                     
                                     if (housing_status_index_used==lowest_housing_grid_point) then
                                     
-                                        model_fraction_homeless(time_period)=model_fraction_homeless(time_period)+&
-                                            distribution_mass_used
+                                        ! OWNED BY stationary_equilibrium_statistics, WHICH RUNS FIRST. Reset,
+                                        ! accumulation and division disabled here.
+                                        !
+                                        ! model_fraction_homeless was reset, accumulated AND divided in two chain
+                                        ! routines. Both resets are guarded to the first pass, so on the second
+                                        ! pass this routine accumulated a MASS on top of the RATE the earlier one
+                                        ! had already produced, then divided again: the value the h_1 bisection
+                                        ! read was a 1:3 mixture over-weighting the impatient type, not the 1:1
+                                        ! mixture the design intends. h_1 is a TARGETED moment and
+                                        ! size_homelessness is driven by it.
+                                        !
+                                        ! The two routines divide by different denominators -- lowest
+                                        ! productivities against sum_of_distribution -- but the first is
+                                        ! accumulated for every household with no condition, so despite its name
+                                        ! it is the same total mass. Keeping one owner is enough.
+                                        ! model_fraction_homeless(time_period)=model_fraction_homeless(time_period)+&
+                                        ! distribution_mass_used
                                     
                                         govt_spending_on_homeless(time_period)=govt_spending_on_homeless(time_period)+&
                                             homeless_cost_govt_as_perc_of_avg_inc*avg_income_to_use_1*distribution_mass_used
@@ -12969,7 +12999,22 @@
                 model_food_stamps_share_to_homeless(time_period)/max(model_fraction_homeless(time_period),10.d0**(-14))
         end if
         
-        if (current_beta_type==number_of_beta_types) model_fraction_homeless(time_period)=model_fraction_homeless(time_period)/sum_of_distribution
+        ! OWNED BY stationary_equilibrium_statistics, WHICH RUNS FIRST. Reset,
+        ! accumulation and division disabled here.
+        !
+        ! model_fraction_homeless was reset, accumulated AND divided in two chain
+        ! routines. Both resets are guarded to the first pass, so on the second
+        ! pass this routine accumulated a MASS on top of the RATE the earlier one
+        ! had already produced, then divided again: the value the h_1 bisection
+        ! read was a 1:3 mixture over-weighting the impatient type, not the 1:1
+        ! mixture the design intends. h_1 is a TARGETED moment and
+        ! size_homelessness is driven by it.
+        !
+        ! The two routines divide by different denominators -- lowest
+        ! productivities against sum_of_distribution -- but the first is
+        ! accumulated for every household with no condition, so despite its name
+        ! it is the same total mass. Keeping one owner is enough.
+        ! if (current_beta_type==number_of_beta_types) model_fraction_homeless(time_period)=model_fraction_homeless(time_period)/sum_of_distribution
                     
         total_govt_revenues(time_period)=&
             govt_revenues_from_labour_income(time_period)+&
