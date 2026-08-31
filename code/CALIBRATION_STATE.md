@@ -2897,3 +2897,67 @@ VALIDATE2 settles the cost side. If it passes, the second beta is cheap and buys
 a six-fold improvement on an advertised moment. If it fails, dropping it is
 clearly right and w_bot goes back to being untargeted, which is what it was
 before the second beta was added.
+
+## WHAT THE SECOND BETA BUYS ON THE UNTARGETED SET: NOT YET MEASURABLE
+
+The author asks, setting w_bot aside, what two betas buy on the untargeted
+statistics. **It cannot be answered from the archive.** The only points ever run
+with the betas actually DIFFERENT are `point_38cd0063be` (0.95) and
+`point_c6e8793eb5` (0.90), both on model `920988590e`, and that model reports
+the LAST TYPE SOLVED rather than the pooled economy. Their untargeted block is
+the impatient half's own statistics, not the mixture's. Reading them as the
+answer would be reading one half of the population as if it were all of it.
+
+`TWOBETA_UNTARGETED.txt` is the measurement: impatient beta 0.95 and 0.90, at
+two types, with every other coordinate identical to `point_d4ffbfdab5`, which is
+therefore the one-beta control. Three points, one comparison, 46 untargeted
+moments each.
+
+### WHERE TO LOOK WHEN IT LANDS, AND WHY
+
+**The three bottom wealth shares, which are the sharpest test.** The data are
+NEGATIVE and the model cannot produce a negative number at all:
+
+    wealth share bottom  1 pct    model 0.00000   data -0.00225
+    wealth share bottom  5 pct    model 0.00044   data -0.00422
+    wealth share bottom 10 pct    model 0.00310   data -0.00446
+
+The bottom decile of the SCF is in DEBT. A one-beta economy of patient
+households does not borrow into negative net worth, so it puts the floor at
+zero and the sign is simply wrong. Impatient households are the standard way to
+get a household that borrows rather than saves. If the second beta cannot turn
+these three negative, its case is much weaker than w_bot alone suggests.
+
+**The homelessness age profile, which is the one I would bet on.** At this
+vector it is not merely wrong, it has collapsed:
+
+    share of the homeless   band 1  0.979   data 0.260
+                            band 2  0.013   data 0.272
+                            band 3  0.004   data 0.210
+                            band 4  0.004   data 0.184
+                            band 5  0.0004  data 0.075
+
+Ninety-eight per cent of the model's homeless are 25 to 34. This is far worse
+than the 34.7 per cent recorded from the August baseline, so it has moved a long
+way with the rest of the calibration and the earlier reading should not be
+quoted for the current model.
+
+The mechanism ties directly to the age question the author raised: homelessness
+here requires exhausting assets, the young hold none, and by 40 a patient
+household holds a buffer that no spell of the length this model generates can
+burn through. **An impatient household never builds that buffer.** It is exposed
+at 55 as much as at 30. If anything in this model can put weight in bands 3 to
+5 without touching the unemployment process, it is a household that does not
+save -- and that is exactly what the second beta adds.
+
+That is a hypothesis with a mechanism, not a result. It is also the cheapest
+test of it available: the run is needed anyway.
+
+Also worth watching, on the same logic: renters above 50 per cent of income
+(0.257 against 0.175, too many), the tenant contribution rate (0.471 against
+0.312) and the income and employed share of the homeless (0.274 against 0.191,
+and 0.976 against 0.460).
+
+NOT expected to move: the earnings shares. Beta heterogeneity acts on wealth,
+not on the earnings process, so the top tenth at 0.309 against 0.411 is
+somebody else's problem.
