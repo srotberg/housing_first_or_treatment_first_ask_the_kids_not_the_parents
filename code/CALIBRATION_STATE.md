@@ -4791,3 +4791,279 @@ repeated: excluding retirees RAISES `kappa_ued`, which is 0.1247 against a targe
 of 0.1625, and LOWERS `kappa_uem`, which is 0.3356 against 0.3000. Both move
 toward target. `theta`'s direction cannot be checked without the size of the
 bequest term, which is not printed.
+
+## b AND lambda_d BRACKETED AT TWO BETAS
+
+Three points were run to bracket `b` (target 0.089) and `lambda_d` (target
+0.0368) at two beta types, by cutting `addiction_scalar_1` below the value
+used at the last two-type point. **The bracket failed: both targets lie
+outside the measured range, and cutting `addiction_scalar_1` moved both
+moments further away rather than closer.**
+
+### FIRST, TWO CORRECTIONS TO THE PREMISE
+
+The brief for these runs described the anchor as "`addiction_scalar_1` =
+0.018421517, `b` = 0.60145, `lambda_d` = 0.25521, in
+`code/points/point_a4e79fb29e.txt`". Two of those three numbers do not
+belong to that file.
+
+    quantity              brief said      point_a4e79fb29e.txt actually has
+    addiction_scalar_1    0.018421517     0.0224532
+    b                     0.60145         0.30072648728203133
+    lambda_d              0.25521         0.25521304771452158    (agrees)
+
+`point_a4e79fb29e.txt` is nonetheless the right anchor: its VECTOR differs
+from the three run lines in `addiction_scalar_1` and in nothing else.
+Corroborating this, `code/B_SWEEP_GRID.txt` held `0.0224532` immediately
+before the first of these runs overwrote it.
+
+The 0.018421517 figure belongs to a DIFFERENT file,
+`code/points/point_6716556560.txt`, which is `number_of_beta_types=1` with
+`discount_factor_impatient` set equal to `discount_factor`. That is the
+one-type run in which `b` = 0.0877 and `lambda_d` = 0.0357 were on target.
+So the one-type scalar was attributed to the two-type row.
+
+The stated `b` of 0.60145 is exactly twice the file's 0.30073. Whether that
+is a transcription doubling or a separate halving bug of the `tau_l` family
+was not established here; it is flagged rather than diagnosed.
+
+The correction matters for the design of the sweep. Read as a cut from
+0.018421517, the three points are a 1-2% perturbation. Read from the true
+anchor of 0.0224532 they are a cut of 19 to 21%, which is what was actually
+run. And `b` at the anchor is 3.4 times its target, not 6.8; the "six times
+target" description holds for `lambda_d` alone.
+
+### (a) THE FOUR POINTS
+
+All four are `number_of_beta_types=2`, `discount_factor=0.99715`,
+`discount_factor_impatient=0.95`, identical in every parameter except
+`addiction_scalar_1`.
+
+    addiction_scalar_1        b    lambda_d       y_u     w_bot      beta   point
+              0.0178    0.50173     0.38210   0.54561   0.06317   2.79982   f386b7abb8
+              0.0180    0.48242     0.36931   0.53108   0.06273   2.80555   6989b023d1
+              0.0182    0.38883     0.32509   1.49692   0.07015   2.84741   aabf8dbf95
+           0.0224532    0.30073     0.25521   1.57250   0.06876   2.75077   a4e79fb29e  (anchor)
+
+    target               0.089      0.0368     0.740     0.025    3.0-4.5
+
+`beta` is below the 3.0-4.5 band at all four points, by a little (2.75-2.85).
+`w_bot` is 2.5 to 2.8 times its target at all four and barely moves.
+`y_u` is not monotone and not even close to smooth: it is about 1.5 at
+0.0182 and at 0.0224532, but about 0.53 at 0.0180 and 0.0178. It crosses its
+own target of 0.740 somewhere between 0.0180 and 0.0182, by falling through
+it, not by approaching it.
+
+### (b) NEITHER TARGET IS INSIDE THE MEASURED RANGE
+
+**`b`: NO.** Measured range over the three new points is 0.38883 to 0.50173;
+including the anchor it is 0.30073 to 0.50173. The target 0.089 lies BELOW
+all four. There is nothing to interpolate between, so no interpolated value
+of `addiction_scalar_1` exists.
+
+**`lambda_d`: NO.** Measured range over the three new points is 0.32509 to
+0.38210; including the anchor, 0.25521 to 0.38210. The target 0.0368 lies
+BELOW all four. Same conclusion.
+
+**Do the two agree?** The question as posed does not arise, because neither
+target is bracketed. What can be said is that across the four points in the
+table above both `b` and `lambda_d` FALL as `addiction_scalar_1` RISES, so
+cutting the scalar, which the sweep did, raises both, and reaching either
+target requires moving `addiction_scalar_1` UP from 0.0224532, not down.
+
+That is an endpoint statement, not a global one. The next subsection shows
+`b` is NOT monotone once the other two-type points in the repository are
+included, so the slope below should be read as the average over this
+interval and not as a local derivative.
+
+Extrapolating the anchor-to-0.0182 segment linearly (`b` slope about
+-20.71 per unit of `addiction_scalar_1`) puts `b` = 0.089 near
+`addiction_scalar_1` = 0.0327. The corresponding `lambda_d` slope, about
+-16.43, puts `lambda_d` = 0.0368 near 0.0357. Those disagree by 0.0031,
+about 9% of the midpoint 0.0342, so on this evidence `lambda_addiction`
+very likely does have to move as well. Both figures are extrapolations well
+outside the sampled interval, they assume a linearity the next subsection
+contradicts, and they are offered only as a direction to search rather than
+as a solution.
+
+### THE RESPONSE IS NON-MONOTONE, WHICH IS THE LARGER PROBLEM
+
+Every two-type point in `code/points` with `discount_factor_impatient=0.95`,
+sorted by `addiction_scalar_1`:
+
+    addiction_scalar_1        b    lambda_d   point
+              0.0178    0.50173     0.38210   f386b7abb8   (this sweep)
+              0.0180    0.48242     0.36931   6989b023d1   (this sweep)
+              0.0182    0.38883     0.32509   aabf8dbf95   (this sweep)
+          0.01832949    0.76120     0.31901   18da9be82d
+         0.018410013    0.76876     0.32084   445884ebe4
+           0.0224532    0.30073     0.25521   a4e79fb29e
+
+`b` is not monotone. It nearly DOUBLES between 0.0182 and 0.01832949, from
+0.38883 to 0.76120, then falls to 0.30073 by 0.0224532. A move of 0.00013 in
+the scalar changes `b` by 0.37. `lambda_d` is closer to monotone but inverts
+between 0.01832949 and 0.018410013.
+
+A jump of that size across an interval that narrow is not a smooth
+calibration response. Either the solver is landing in different equilibria
+across a knife edge in this region, or something is not converged. Fitting
+`b` by moving `addiction_scalar_1` alone is not going to work while this
+holds, and a bisection would be actively misleading here. This should be
+understood before more points are spent on the same one-dimensional search.
+
+### (c) FULL MOMENT TABLE, BEST OF THE THREE, WORST GAP FIRST
+
+Best is taken as closest on `b` and `lambda_d`, the two targets this sweep
+exists to hit: that is `addiction_scalar_1` = 0.0182, point `aabf8dbf95`,
+which is nearest on both. Note it is NOT the best on overall mean relative
+gap; 0.0180 is, because `y_u` happens to sit near its target there.
+
+Gap is |model - target| / |target|.
+
+    moment     description                          model        target   rel gap
+    cbar       food stamps / labour income       0.052368      0.004200   1146.9%
+    lambda_d   disorder rate                     0.325092      0.036800    783.4%
+    b          total drug users                  0.388829      0.089000    336.9%
+    tau_u      treatment take up                 0.958174      0.245000    291.1%
+    w_bot      net worth share, bottom half      0.070151      0.025000    180.6%
+    theta      drug spending share               0.363128      0.162000    124.2%
+    y_u        income of drug users              1.496925      0.740000    102.3%
+    pi_V       eligibles with a voucher          0.094311      0.266000     64.5%
+    tau_l      average labour income tax         0.089537      0.224000     60.0%
+    aleph      value of life / income          121.403798     80.000000     51.8%
+    lambda_m   SMI share of the homeless         0.123082      0.250000     50.8%
+    gamma      housing over expenditure          0.180316      0.268000     32.7%
+    h_3        share in the largest unit         0.430433      0.626723     31.3%
+    pi_eu      unemployment rate                 0.063583      0.048500     31.1%
+    h_2        above half of spending            0.072078      0.101000     28.6%
+    h_1        homelessness rate                 0.004594      0.003990     15.1%
+    mu_H       recovery housed / homeless        1.271251      1.473214     13.7%
+    kappa_ued  unemployment given SUD            0.140376      0.162500     13.6%
+    beta       wealth over output                2.847407      3.000000      5.1%
+    sigma_y    bottom half earnings share        0.169050      0.172000      1.7%
+    omega_l    labour supply / total hours       0.394667      0.400000      1.3%
+    kappa_uem  employment given SMI              0.303255      0.300000      1.1%
+    p_m        SMI population share              0.052825      0.052413      0.8%
+
+`tau_l` reads half its true value in a two-type run and is not a real gap;
+see the section above on `govt_revenues_calc`. Doubling it to 0.179 leaves a
+20% gap rather than 60%.
+
+`theta` is a real number here (0.363), not the -1.0 empty-population
+sentinel. At `addiction_scalar_1` = 0.0180 and 0.0178 it IS -1.0, so the
+drug-spending population is empty at those two points and `theta` should be
+ignored there. That the sentinel appears at two of the three points is worth
+noting on its own.
+
+`cbar` is the worst gap in THIS table, at 1147%, but it is not stably so.
+Across the three points it reads 0.052368, 0.002803 and 0.000040 against a
+target of 0.004200 -- a factor of about 1300 between the largest and the
+smallest, produced by a 2% change in `addiction_scalar_1`. It is worst-in-
+table at 0.0182, twelfth at 0.0180 and eighth at 0.0178. This is the same
+instability as the `b` jump documented above, in a second moment, and it is
+further evidence that this region is not being solved smoothly.
+
+### (d) DIAG age, BEST OF THE THREE (aabf8dbf95)
+
+    age   homeless   renter wealth   renter income   own
+     26   0.080644         0.00000        -0.03536   0.0
+     29   0.005809         0.34924        -0.02070   0.0
+     32   0.002246         0.58502        -0.01307   0.0
+     35   0.001234         0.73289        -0.00650   0.0
+     38   0.000799         0.87726        -0.00014   0.0
+     41   0.000590         1.01287         0.00597   0.0
+     44   0.000388         1.15509         0.01229   0.0
+     47   0.000309         1.30872         0.01852   0.0
+     50   0.000289         1.47356         0.02463   0.0
+     53   0.000284         1.65218         0.03044   0.0
+     56   0.000275         1.83434         0.03542   0.0
+     59   0.000463         2.00524         0.03878   0.0
+     62   0.000399         2.14609         0.04111   0.0
+     65   0.000488         2.26152         0.04187   0.0
+     68   0.000000         2.16613         0.62261   0.0
+     71   0.000000         1.97106         0.65787   0.0
+     74   0.000000         1.72899         0.70496   0.0
+     77   0.000000         1.41005         0.77099   0.0
+     80   0.000000         1.02267         0.87777   0.0
+     83   0.000000         0.63115         1.13872   0.0
+
+**Which column the homelessness profile tracks.** It tracks `renter wealth`,
+inversely, and the mechanism is visible in the first two rows: homelessness
+is at its maximum of 0.0806 at exactly the age where renter wealth is
+exactly 0.00000, and falls fourteen-fold in one three-year step as wealth
+reaches 0.349. It is the mirror image of the wealth accumulation profile.
+
+The correlations, over the fourteen ages where homelessness is non-zero and
+in logs, because the profile spans two orders of magnitude:
+
+    corr(log homeless, renter income) = -0.845
+    corr(log homeless, renter wealth) = -0.789
+    corr(log homeless, age)           = -0.749
+
+Renter income is marginally the tighter fit, but the two regressors rise
+together monotonically over ages 26 to 65, so this profile cannot cleanly
+separate them; the zero-wealth spike at entry is the discriminating evidence
+and it points at wealth. Neither explains the mild uptick from age 56 to 65,
+during which homelessness rises while both wealth and income are still
+rising.
+
+Two further things in this block:
+
+  - `own` is identically 0.0 at every age. There is no homeownership
+    anywhere in the model at this point, consistent with the
+    `homeownership rate` invariant reading 0.0000000000.
+  - homelessness is exactly 0.000000 from age 68 on, where renter income
+    jumps fifteen-fold at retirement.
+
+### (e) INVARIANTS -- PRESENT, AND NOT ALL PASS
+
+These three runs are the first points to carry an `INVARIANTS` block. **They
+do not all pass. Two of eleven FAIL at every one of the three points.**
+
+    invariant                                        0.0182      0.0180      0.0178
+    income histogram holds whole distribution   FAIL 1.19002  FAIL 1.18647  FAIL 1.18457
+    wealth histogram holds whole distribution   FAIL 1.19002  FAIL 1.18647  FAIL 1.18457
+    wealth histogram holds whole of net worth   PASS 1.00000  PASS 1.00000  PASS 1.00000
+    rental market clears, demand over supply    PASS 1.00000  PASS 1.00000  PASS 1.00000
+    homelessness rate                           PASS 0.00459  PASS 0.00463  PASS 0.00648
+    drug users                                  PASS 0.38883  PASS 0.48242  PASS 0.50173
+    disorder rate                               PASS 0.32509  PASS 0.36931  PASS 0.38210
+    SMI population share                        PASS 0.05282  PASS 0.05300  PASS 0.05330
+    unemployment rate                           PASS 0.06358  PASS 0.09474  PASS 0.09623
+    homeownership rate                          PASS 0.00000  PASS 0.00000  PASS 0.00000
+    the five age bands hold all of the homeless PASS 1.00000  PASS 1.00000  PASS 1.00000
+
+The two failures are the same number to eight digits within each run, and
+they are the two histograms that are supposed to hold the WHOLE
+distribution. The net worth histogram, which is a different object, passes at
+exactly 1.0, as do the rental market and the age-band partition.
+
+An overshoot of about 1.19 on two independent histograms, with the
+distribution-wide ones failing and the net-worth one passing, has the shape
+of the pooled-distribution accumulation problem across beta types already
+documented above for `tau_l` -- but the opposite sign, since `tau_l`
+UNDERCOUNTS by half and these OVERCOUNT by a fifth. The factor is not
+constant across the three points (1.19002, 1.18647, 1.18457), so it is not a
+clean count of types; it drifts with `addiction_scalar_1`. That drift argues
+against a pure double-counting bug and for something that depends on the
+distribution itself.
+
+This has NOT been diagnosed. It is recorded here because it is new
+information and because the histograms are inputs to `sigma_y` and `w_bot`,
+both of which are reported as passing moments above. `w_bot` being 2.5 to 2.8
+times its target at all four points, and immovable across a 19% change in
+`addiction_scalar_1`, is consistent with a histogram that does not sum to
+one, and should be re-checked once this is understood.
+
+### WHAT THIS SWEEP ESTABLISHES
+
+  1. Cutting `addiction_scalar_1` from 0.0224532 to 0.0178 does not bracket
+     `b` or `lambda_d`. It moves both further from target. The search
+     direction was backwards.
+  2. Both targets lie below the entire measured range, so no interpolation
+     is available and none is reported.
+  3. `b` responds non-monotonically to `addiction_scalar_1` in this region,
+     with a near-doubling across an interval of 0.00013. A one-dimensional
+     search on this parameter is not viable until that is explained.
+  4. The `INVARIANTS` block works and is already earning its place: two
+     checks fail at every point, on the distribution histograms.
