@@ -1,8 +1,21 @@
 # VERDICT: **FAIL** -- 188 of 237 model-generated values disagree beyond 4 significant figures (previous test: 135 of 242).
 
+> **Provenance: this measures commit `50e121d`, not the current head.**
+> Both runs were solved against `code/housing_first_or_treatment_first_SR_v1.f90`
+> at `md5 df02e3db80`, which is commit `50e121d` ("Give the homelessness rate a
+> single owner") -- the branch head when the runs started. The branch has since
+> advanced, and the source is now `md5 163f49d500`. Several of the commits that
+> landed in between target faults this test reports, in particular `9479667`
+> ("Give every shared counter one owner, and stop aleph doubling at two types")
+> and `84c1ee5` ("Fix two undefined reads in the secant and a race in the
+> distribution sweep"). **The counts and ratios below therefore describe
+> `50e121d` and should not be read as the current state of the branch.** Re-run
+> both lines of `code/VALIDATE3.txt` against the present head before drawing
+> conclusions about it.
+
 ## What was run
 
-Branch `claude/two-period-addiction-hazard-d7gb61`, source `md5 df02e3db80`, with the single
+Branch `claude/two-period-addiction-hazard-d7gb61`, source `md5 df02e3db80` (commit `50e121d`), with the single
 edit `freeze_beta_bisection=0 -> 1` in place for both runs and reverted afterwards. Both runs
 report the same compiled model, `MODEL 59adddbccd`, and both printed `HANDOVER OK: 31 of 31
 parameters applied` and ended with `===== END OF MOMENTS =====`.
