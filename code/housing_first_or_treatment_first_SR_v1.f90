@@ -1942,7 +1942,11 @@
         real(8) :: distance_value_of_life
         real(8) :: stopping_rule_value_of_life=10.d0**(-2)
 
-        real(8) :: max_food_cost_adjuster=5*10.d0**(-2)
+        ! ZERO. max_food_cost no longer enters the benefit -- snap_benefit does --
+        ! so calibrating it would move a number that multiplies nothing. It is
+        ! kept as a handover name so that a vector written before tonight still
+        ! loads.
+        real(8) :: max_food_cost_adjuster=0
         real(8) :: distance_max_food_cost
         real(8) :: stopping_rule_max_food_cost=10.d0**(-4)
 
@@ -2437,6 +2441,58 @@
         ! strictly increasing in income and no atom forms. The two models use
         ! the same rule.
         real(8), parameter :: food_stamp_taper=0.30d0
+
+        ! SNAP AS THE PROGRAMME ACTUALLY WORKS, FY2023, 48 states and DC.
+        !
+        ! What was here: one maximum allotment for every household, no size
+        ! scaling and no eligibility limit, with max_food_cost calibrated to
+        ! AGGREGATE spending over labour income. An aggregate can be hit with a
+        ! tiny benefit paid to a great many households or a proper benefit paid
+        ! to few, and it was the first: at max_food_cost = 0.00733 and a zero
+        ! consumption tax the maximum allotment was 0.73 per cent of average
+        ! labour income and the taper cut a household off above 2.4 per cent of
+        ! it. SNAP paid a one person household 291 dollars a month, 3.96 per
+        ! cent of mean household wage income, and ran eligibility to 130 per
+        ! cent of the poverty line, near 20 per cent. So the floor was five to
+        ! eighteen times too low and the cutoff eight times too tight, and
+        ! essentially no homeless household received anything.
+        !
+        ! It matters beyond the transfer. The floor is what stops the poorest
+        ! household's consumption reaching zero, and at sigma = 2 the CRRA goods
+        ! term is unbounded below as it does. That term sets what a period of
+        ! life is worth, aleph + u_goods, and the only cost of using drugs in
+        ! this model is dying. A floor five times too low manufactures the
+        ! households that select into use.
+        !
+        ! MAXIMUM ALLOTMENT BY HOUSEHOLD SIZE, as a multiple of the one person
+        ! allotment: 291, 535, 766, 973, 1155, 1386, 1532, 1751 dollars a month.
+        ! The schedule is concave, so a linear scaling would overpay large
+        ! households by a third at size six.
+        integer, parameter :: snap_max_size=8
+        real(8), dimension(snap_max_size), parameter :: snap_allotment_scale=&
+            (/1.000000d0,1.838488d0,2.632302d0,3.343643d0,3.969072d0,&
+              4.762887d0,5.264605d0,6.017182d0/)
+
+        ! The one person maximum allotment as a fraction of average labour
+        ! income: 291 dollars a month against mean household wage and salary
+        ! income of 88,212 in SCF 2022. EXTERNALLY ASSIGNED, not calibrated:
+        ! the author's instruction is that the programme be implemented as it
+        ! is rather than bent to reproduce its own total cost, so aggregate
+        ! spending is now a check and not a target.
+        real(8), parameter :: snap_max_allotment_one=0.039586d0
+
+        ! Gross income eligibility, 130 per cent of the federal poverty line:
+        ! 14,580 dollars for one person and 5,140 for each additional, times
+        ! 1.30, over the same 88,212.
+        real(8), parameter :: snap_gross_limit_one=0.214872d0
+        real(8), parameter :: snap_gross_limit_add=0.075744d0
+
+        ! The standard deduction, 193 dollars a month for one to three persons,
+        ! and the twenty per cent earned income deduction. Net income is what
+        ! the taper is charged on, and using gross instead overstates the
+        ! withdrawal for every working household.
+        real(8), parameter :: snap_standard_deduction=0.026256d0
+        real(8), parameter :: snap_earned_income_deduction=0.20d0
                                                                         
         real(8), dimension(0:have_two_rental_markets) :: convexity_of_rental_company=&
             (1-perceived_probability_lower)*2.35+perceived_probability_lower*2.35
@@ -4366,6 +4422,57 @@
             smi_of=mod((i_1-1)/3,number_of_smi_states)
         end function
 
+        ! SNAP IN ONE PLACE, BECAUSE IT WAS WRITTEN OUT EIGHT TIMES.
+        !
+        ! Eight call sites carried this formula and they did not agree: the one
+        ! in the labour supply block omitted food_stamp_taper altogether and so
+        ! withdrew the benefit at a hundred cents on the dollar instead of
+        ! thirty. That is the same fault as three others found today, a formula
+        ! duplicated until one copy drifts, and a function is the only fix that
+        ! stays fixed.
+        !
+        ! THE PROGRAMME, FY2023. The maximum allotment scales with household
+        ! size on SNAP's own concave schedule; a household is eligible only if
+        ! GROSS income is at or below 130 per cent of the poverty line for its
+        ! size; and the benefit is the allotment less thirty cents per dollar of
+        ! NET income, where net is gross after the twenty per cent earned income
+        ! deduction and the standard deduction. Charging the taper on gross, as
+        ! the old code did, overstates the withdrawal for every working
+        ! household.
+        real(8) function snap_benefit(hh_size_1,gross_income_1,avg_labour_1)
+
+            implicit none
+
+            real(8), intent(in) :: hh_size_1,gross_income_1,avg_labour_1
+            real(8) :: scale_1,limit_1,net_1,weight_1
+            integer :: n_lo_1,n_hi_1
+
+            ! Household size is a real in this model and the schedule is defined
+            ! on integers, so interpolate rather than truncate: truncating would
+            ! pay a household of 2.9 the two person allotment.
+            n_lo_1=max(1,min(snap_max_size,int(hh_size_1)))
+            n_hi_1=max(1,min(snap_max_size,n_lo_1+1))
+            weight_1=max(0.d0,min(1.d0,hh_size_1-real(n_lo_1,8)))
+            scale_1=(1.d0-weight_1)*snap_allotment_scale(n_lo_1)+weight_1*snap_allotment_scale(n_hi_1)
+
+            limit_1=(snap_gross_limit_one+snap_gross_limit_add*max(0.d0,hh_size_1-1.d0))*avg_labour_1
+
+            if (gross_income_1>limit_1) then
+
+                snap_benefit=0
+
+            else
+
+                net_1=max(0.d0,(1.d0-snap_earned_income_deduction)*gross_income_1-&
+                    snap_standard_deduction*avg_labour_1)
+
+                snap_benefit=max(0.d0,snap_max_allotment_one*scale_1*avg_labour_1-&
+                    food_stamp_taper*net_1)
+
+            end if
+
+        end function
+
         integer function sud_of(i_1)
             implicit none
             integer, intent(in) :: i_1
@@ -4646,10 +4753,12 @@
             ! cutoff is max_food_cost/0.30.
             write(*,*) "DIAG households receiving food stamps            =",&
                 model_fraction_recieving_food_stamps(1), " data=", 0.125d0
-            write(*,*) "DIAG max allotment / average labour income       =",&
-                max_food_cost*(1+consumption_tax), " data 1 person=", 0.0396d0
-            write(*,*) "DIAG eligibility cutoff / avg labour income      =",&
-                max_food_cost*(1+consumption_tax)/food_stamp_taper, " data=", 0.20d0
+            write(*,*) "DIAG max allotment, one person / avg labour inc   =",&
+                snap_max_allotment_one, " data=", 0.039586d0
+            write(*,*) "DIAG max allotment at the mean household size     =",&
+                snap_benefit(sum(actual_household_size)/real(life_span,8),0.d0,1.d0)
+            write(*,*) "DIAG gross eligibility cutoff, one person         =",&
+                snap_gross_limit_one, " data=", 0.214872d0
             write(*,*) "DIAG aggregate rent / output                     =",&
                 aggregate_rent_spending(1)/max(model_output(1),10.d0**(-14))
             write(*,*) "DIAG asset grid, reachable points                =",&
@@ -4689,9 +4798,18 @@
                 model_smi_share_of_homeless(1), " target=", smi_share_of_homeless_data
             write(*,*) "MOMENT pi_V      eligibles with a voucher    model=",&
                 model_eligibles_getting_voucher(1), " target=", voucher_coverage_data
-            write(*,*) "MOMENT cbar      food stamps / labour income model=",&
+            ! AGGREGATE FOOD STAMP SPENDING IS A CHECK NOW, NOT A TARGET.
+            ! SNAP is implemented as the programme runs -- allotment by
+            ! household size, gross income eligibility at 130 per cent of the
+            ! poverty line, thirty cents per dollar of net income -- and every
+            ! one of those is assigned from the statute rather than fitted. The
+            ! author's instruction was to implement it and not worry about the
+            ! total cost, and a parameter cannot be both assigned and
+            ! calibrated. So this row reports what the programme costs rather
+            ! than driving anything.
+            write(*,*) "UNTARGETED food stamps / labour income       model=",&
                 govt_spending_on_food_stamps(1)/max(model_average_labour_income(1),10.d0**(-12)),&
-                " target=", food_stamps_share_data
+                " observed=", food_stamps_share_data
             write(*,*) "MOMENT tau_u     treatment take up           model=",&
                 model_treatment_take_up(1), " target=", treatment_take_up_data
             write(*,*) "MOMENT mu_H      recovery housed / homeless  model=",&
@@ -7011,9 +7129,9 @@
                                         call calculate_income(unemployment_index,employment_index,total_income,&
                                             avg_income_to_use_1,avg_income_to_use_2,labor_supply_used,in_retirement)
                                         
-                                        food_stamps_1=max((max_food_cost*(1+consumption_tax)*avg_income_to_use_1-&
-                                            food_stamp_taper*(total_income+max(financial_grid(financial_index),0.d0)*&
-                                            risk_free_rate(time_period))),0.d0)
+                                        food_stamps_1=snap_benefit(actual_household_size(age_index),&
+                                            total_income+max(financial_grid(financial_index),0.d0)*&
+                                            risk_free_rate(time_period),avg_income_to_use_1)
                                                                     
                                     end if
                                     
@@ -10903,8 +11021,9 @@
                                     if (assets_1<threshold_for_food_stamps_as_perc_of_average_net_wealth*&
                                         avg_net_wealth_to_use_1) then
                                                             
-                                        food_stamps_1=max((max_food_cost*(1+consumption_tax)*avg_income_to_use_1-&
-                                            food_stamp_taper*(income_1+max(financial_grid(financial_index),0.d0)*risk_free_rate(time_period))),0.d0)
+                                        food_stamps_1=snap_benefit(actual_household_size(age_index),&
+                                            income_1+max(financial_grid(financial_index),0.d0)*&
+                                            risk_free_rate(time_period),avg_income_to_use_1)
                                                                     
                                     end if
                                     
@@ -14158,9 +14277,9 @@
                                         if (assets_1<threshold_for_food_stamps_as_perc_of_average_net_wealth*&
                                             avg_net_wealth_to_use_1) then
                                                                                         
-                                            food_stamps_1=max((max_food_cost*(1+consumption_tax)*avg_income_to_use_1-&
-                                                food_stamp_taper*(total_income+max(financial_grid(financial_index),0.d0)*&
-                                                risk_free_rate(time_period))),0.d0)
+                                            food_stamps_1=snap_benefit(actual_household_size(age_index),&
+                                                total_income+max(financial_grid(financial_index),0.d0)*&
+                                                risk_free_rate(time_period),avg_income_to_use_1)
                                                                         
                                         end if
                                         
@@ -19092,8 +19211,9 @@
         ! If they have no assets, they get can qualift for food stamps
         if (assets_1<threshold_for_food_stamps_as_perc_of_average_net_wealth*avg_net_wealth_to_use_1) then
                                 
-            food_stamps_1=max((max_food_cost*(1+consumption_tax)*avg_income_to_use_1-&
-                food_stamp_taper*(gross_wage_income_1+risk_free_rate(time_period)*max(financial_grid(financial_index_1),0.d0))),0.d0)
+            food_stamps_1=snap_benefit(actual_household_size(age_index),&
+                gross_wage_income_1+risk_free_rate(time_period)*max(financial_grid(financial_index_1),0.d0),&
+                avg_income_to_use_1)
                                         
         end if
         
@@ -19656,8 +19776,9 @@
             if (financial_grid(financial_index_1)<threshold_for_food_stamps_as_perc_of_average_net_wealth*&
                 avg_net_wealth_to_use_1) then
                             
-                food_stamps_recieved=max(max_food_cost*(1+consumption_tax)*avg_income_to_use_1-&
-                    food_stamp_taper*(gross_wage_income+risk_free_rate(time_period)*max(financial_grid(financial_index_1),0.d0)),0.d0)
+                food_stamps_recieved=snap_benefit(actual_household_size(age_index),&
+                    gross_wage_income+risk_free_rate(time_period)*max(financial_grid(financial_index_1),0.d0),&
+                    avg_income_to_use_1)
                     
             end if
             
@@ -19817,8 +19938,9 @@
     
             if (assets_1<threshold_for_food_stamps_as_perc_of_average_net_wealth*avg_net_wealth_to_use_1) then
                                 
-                food_stamps_recieved=max((max_food_cost*(1+consumption_tax)*avg_income_to_use_1-&
-                    food_stamp_taper*(gross_wage_income+risk_free_rate(time_period)*max(financial_grid(financial_index_1),0.d0))),0.d0)
+                food_stamps_recieved=snap_benefit(actual_household_size(age_index),&
+                    gross_wage_income+risk_free_rate(time_period)*max(financial_grid(financial_index_1),0.d0),&
+                    avg_income_to_use_1)
                                             
             end if
             
@@ -20721,8 +20843,12 @@
 
             if (assets_1<threshold_for_food_stamps_as_perc_of_average_net_wealth*avg_net_wealth_to_use_1) then
             
-                food_stamps_recieved_1=max((max_food_cost*(1+consumption_tax)*avg_income_to_use_1-&
-                    (optimal_gross_wage_income_1+risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0))),0.d0)
+                ! THIS SITE OMITTED food_stamp_taper, so it withdrew the benefit at a
+                ! hundred cents on the dollar instead of thirty. The function charges
+                ! the statutory rate here as everywhere else.
+                food_stamps_recieved_1=snap_benefit(actual_household_size(age_index),&
+                    optimal_gross_wage_income_1+risk_free_rate(time_period)*&
+                    max(financial_grid(financial_index),0.d0),avg_income_to_use_1)
                                                     
             end if
             
@@ -21266,7 +21392,7 @@
         if (assets_1<threshold_for_food_stamps_as_perc_of_average_net_wealth*&
             avg_net_wealth_to_use_1) then
                                 
-            food_stamps_1=max(max_food_cost*(1+consumption_tax)*avg_income_to_use_1-food_stamp_taper*income_1,0.d0)
+            food_stamps_1=snap_benefit(actual_household_size(age_index),income_1,avg_income_to_use_1)
                                         
         end if
                                                                                                                             

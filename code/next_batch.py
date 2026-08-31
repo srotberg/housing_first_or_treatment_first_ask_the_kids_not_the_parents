@@ -83,7 +83,6 @@ OWN = {
     'value_of_life':                                       'aleph',
     'multiple_of_probabilities_of_employment_if_addicted': 'kappa_ued',
     'probability_of_voucher_benchmark_used':               'pi_V',
-    'max_food_cost':                                       'cbar',
     'size_homelessness':                                   'h_1',
     # H_2 IS THE SEVERE COST BURDEN NOW, AND IT HAS AN INSTRUMENT AT LAST.
     # It used to be the share in the smallest unit, was conceded by the author
@@ -110,7 +109,6 @@ BOUNDS = {
     'value_of_life':                                       (1.0, 500.0),
     'multiple_of_probabilities_of_employment_if_addicted': (1.0, 50.0),
     'probability_of_voucher_benchmark_used':               (0.0001, 0.999),
-    'max_food_cost':                                       (0.0001, 1.0),
     'size_homelessness':                                   (0.01, 5.0),
     'smallest_rental_relative_to_lowest_income':            (0.005, 0.40),
     'largest_house_size':                                  (0.02, 1.00),
