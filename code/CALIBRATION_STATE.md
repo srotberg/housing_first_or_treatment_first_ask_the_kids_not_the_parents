@@ -1429,3 +1429,55 @@ of steps that overshoot, which is what the last two rounds have been.
 
 **Best point remains `620db1471b`: six moments outside ten per cent, worst h_1 at
 41.7, sum 1.42.**
+
+## THE FOUR-COLUMN JACOBIAN, AND WHAT IT SETTLES
+
+Measured at `620db1471b`, four bare single-coordinate arms, nothing carried:
+
+    moment      gap    value_of_life  prob_unemp  addiction_scalar_1  lambda_addiction
+    aleph      25.0%        +2.136       -0.104        +0.787            -0.000
+    pi_eu      16.8%        -2.442       +0.311        -4.153            -0.157
+    b           4.8%       -36.478       -0.979       -15.459            -1.532
+    lambda_d    5.8%       -45.413       -1.593       -23.154            -1.359
+    kappa_ued  12.3%        -8.382       +0.661        -0.803            -0.038
+    kappa_uem   4.1%        +0.352       -0.653        +0.642            +0.023
+    lambda_m   15.3%       +13.888       +0.414        +0.164            +0.046
+    h_1        41.7%       -14.766       +0.064        -0.835            -0.025
+    gamma      30.9%        +0.140       +0.035        +0.552            +0.030
+    theta       3.0%        +7.884       -0.512        -6.941            +0.119
+    tau_u       4.0%       -19.335       +0.035        +2.541            +0.523
+
+Three things fall out of it.
+
+**`lambda_addiction` is a clean repair instrument.** b -1.53, lambda_d -1.36,
+and every other column below 0.16 in absolute value. Nothing else in this model
+is remotely that selective, and it is why the repairs that stayed inside its
+bracket have all landed.
+
+**gamma has no instrument, confirmed a fourth time.** The best column is
+`addiction_scalar_1` at +0.552, which would need 14 times its bracket. **So the
+minimax cannot go below gamma's 30.9 per cent**, whatever else is done.
+
+**h_1, lambda_m and aleph all ride on `value_of_life` alone, and h_1 pulls the
+opposite way from the other two** -- elasticities -14.77, +13.89 and +2.14. That
+is the real reason h_1 has sat at 41.7 per cent for eight rounds: it was never
+under-instrumented, it was fighting two other moments over one instrument.
+
+## AND IT GIVES THE BEST STEP IN MANY ROUNDS
+
+Sweeping the one instrument the three of them share:
+
+    dlog      h_1    lambda_m   aleph    worst
+    0.0000   41.7%     15.3%    25.0%    41.7%   <- where the best point sits
+   -0.0140   28.3%     30.2%    27.2%    30.9%   <- gamma binds instead
+   -0.0350    2.2%     47.9%    30.4%    47.9%
+
+**The minimax over the whole vector falls from 41.7 per cent to 30.9**, and at
+that point gamma is the binding moment rather than h_1. h_1 is not closed --
+nothing closes it without giving lambda_m away -- but it stops being the worst.
+
+`value_of_life` drags b and lambda_d at -36.5 and -45.4, so the step needs a
+repair; the box-constrained solve keeps both instruments inside their brackets
+and leaves b at 5.8 per cent and lambda_d at 3.7. ROUND17 line 3 is that step,
+line 4 is 70 per cent of it, line 1 the full four-column ridge and line 2 the
+targeted pi_eu pair.
