@@ -2249,3 +2249,51 @@ which cannot go below zero. So utility cost may not be able to reach tau_u from
 above. If it pins at zero again the moment is not identified by this parameter
 and something else has to give -- but that is for the measurement to say, not
 for me to assume in advance.
+
+## h_3 IS CONCEDED, h_2 IS NOT. THE TWO SWAPPED ON 31 AUGUST
+
+The author, correcting me: "no h2 has to be close to 10.1%, but h3 can be off".
+`SKIP` in `next_batch.py` is now `{'h_3'}` and the stopping rule scores h_2.
+
+I had it backwards in the round before, and quoted the 30 August "being off on
+h2 is ok" at the author as though it still held. It does not, and the reason it
+does not is that h_2 is not the moment it was when that was said. It has been
+three different statistics in a week -- the share in the smallest unit, the
+share above half of INCOME, and now the share above half of TOTAL EXPENDITURE.
+Only the last is a fact about the world: 10.1 per cent in the CEX, on the same
+denominator as gamma's 26.8. The concession was made against the first of the
+three.
+
+h_3, the share sitting in the largest unit the model offers, is a fact about a
+grid the model chose. Its only instrument,
+`smallest_rental_relative_to_lowest_income`, moves it at -0.01, so it has no
+instrument at all. That is the one to concede.
+
+## THE SECOND BETA WORKS. IT HAS SIMPLY NEVER BEEN SWITCHED ON SINCE
+
+The author asked whether the two-beta runs improved the bottom half's share of
+net worth. Every point measured on the FIXED model has
+`discount_factor_impatient` equal to `discount_factor`, so it is one economy
+solved twice and w_bot cannot move. That is why it reads 0.159.
+
+Two points were run with the betas actually different, in TWOBETA.txt, and they
+were voided for a different reason. Their readings:
+
+    beta_impatient   w_bot     wealth/output    (target 0.025, band 3.0-4.5)
+      0.99715        0.15929       4.048
+      0.95           0.02265       3.015
+      0.90           0.01183       2.893
+
+**The target is bracketed between 0.95 and 0.90 and sits very close to 0.95**,
+where w_bot is 9 per cent off and wealth over output lands at 3.015 -- half a
+per cent from the centre of its band, which it has never been near.
+
+THE CAVEAT THAT KEEPS THIS A BRACKET AND NOT A RESULT. Those two points are on
+model 920988590e, whose histogram check reads 1.0 not because it was right but
+because numerator AND denominator were both per-type: it reports the LAST TYPE
+SOLVED, so 0.02265 is the impatient half's own bottom-half share and not the
+pooled economy's. The pooled number will differ. The BRACKET is what carries
+over -- w_bot falls steeply and monotonically in beta_impatient over
+[0.90, 0.99715], and 0.025 is inside it.
+
+So: re-measure 0.95 and 0.90 on the fixed model before believing any level.

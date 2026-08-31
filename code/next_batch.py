@@ -156,13 +156,19 @@ BOUNDS = {
     'kappa_phi_d_level':                                   (4.0, 10.0),
     'relative_share_of_housing':                           (0.02, 0.60),
 }
-# beta is banded on the author's instruction; h_2 is conceded.
+# beta is banded on the author's instruction; h_3 is conceded.
 BAND = {'beta': (3.0, 4.5)}
-# NOTHING IS SKIPPED NOW. h_2 was conceded when it meant the share in the
-# smallest unit, which is a fact about a grid the model chose rather than about
-# the world. Redefined as the share paying more than half of income for shelter
-# it is a real moment and the author wants it hit.
-SKIP = set()
+# h_3 IS CONCEDED, h_2 IS NOT. The two swapped on 31 August: "no h2 has to be
+# close to 10.1%, but h3 can be off".
+#
+# It is the right way round. h_2 is the share of households paying more than
+# half of TOTAL EXPENDITURE on housing, 10.1 per cent in the CEX -- a fact about
+# the world, on the same denominator as gamma. h_3 is the share sitting in the
+# largest unit the model offers, which is a fact about a grid the model chose
+# rather than about the world, and its only instrument
+# (smallest_rental_relative_to_lowest_income) moves it at -0.01, which is to say
+# it has no instrument at all.
+SKIP = {'h_3'}
 
 
 
@@ -536,19 +542,20 @@ def main():
     worst, tag, v, m = through[0]
 
     # THE AUTHOR'S STOPPING RULE, 30 August: "once we get below 10% for
-    # everything we can stop", and "being off on h2 is ok". h_2 is already in
-    # SKIP, and beta scores zero inside its 3.0-4.5 band, so `worst` here is
+    # everything we can stop". The concession moved from h_2 to h_3 on 31
+    # August. h_3 is in SKIP, and beta scores zero inside its 3.0-4.5 band, so
+    # `worst` here is
     # exactly the quantity that has to fall under ten per cent. When it does the
     # calibration is FINISHED and the loop must stop launching rather than keep
     # spending containers on a solved problem.
     if worst <= ACCEPT:
         print(f'DONE. point_{tag} meets the author\'s rule: every target inside '
-              f'{100*ACCEPT:.0f} per cent except h_2, which is conceded.\n')
+              f'{100*ACCEPT:.0f} per cent except h_3, which is conceded.\n')
         gaps = sorted(((gap(k, p), k, p) for k, p in m.items()), reverse=True)
         for g, k, (mo, tg) in gaps:
             note = '   <-- conceded' if k in SKIP else ''
             print(f'  {k:10s} {mo:11.5f} vs {tg:11.5f}  {100*(mo/tg-1):+7.1f}%{note}')
-        print(f'\n  worst gap outside h_2: {100*worst:.1f} per cent')
+        print(f'\n  worst gap outside h_3: {100*worst:.1f} per cent')
         print('\n  STOP. Do not launch another round. Tell the author.')
         return 4
     print(f'GATE OPEN at point_{tag}: b {100*(m["b"][0]/m["b"][1]-1):+.1f}%, '
