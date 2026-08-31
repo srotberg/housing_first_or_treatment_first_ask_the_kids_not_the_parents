@@ -164,6 +164,40 @@ if [ "$LEGACY_TAG" != "$TAG" ] && [ -f "points/point_${LEGACY_TAG}.txt" ] &&
     exit 0
 fi
 
+# ONE POINT AT A TIME PER CHECKOUT. Everything below this line is shared state
+# in the working directory -- the hftf binary, PARAM_HANDOVER.txt,
+# B_SWEEP_GRID.txt, calibration_state.dat -- and none of it is keyed to the tag.
+# Two runs started in the SAME directory therefore race, and the race is silent:
+# the handover is consumed as it is read, so a second run that rewrites
+# PARAM_HANDOVER.txt between the first run's write and the first run's read
+# hands the model the WRONG VECTOR. The count assertion below cannot catch it,
+# because it counts HANDOVER lines and the wrong vector has just as many. The
+# point is then archived under the md5 of the vector it was ASKED for while
+# holding the moments of the vector it was GIVEN -- a mislabelled point, which
+# is worse than a missing one, because nothing downstream can tell.
+#
+# This was reached on 31 August by running a batch through local subagents,
+# which share one checkout, instead of one container per worker. Four runs were
+# live in this directory at once; B_SWEEP_GRID.txt held a different point's
+# addiction_scalar_1 and PARAM_HANDOVER.txt had already been consumed. No point
+# was archived from it and the archive was verified clean afterwards, but only
+# because the runs were stopped before they finished.
+#
+# The lock makes the failure impossible rather than unlikely. Parallelism across
+# CONTAINERS is untouched -- each has its own directory and its own lock -- and
+# parallelism within one container was never real anyway: the solver takes every
+# core it can get, so two runs sharing four cores take longer than the same two
+# runs one after another.
+if command -v flock >/dev/null 2>&1; then
+    exec 9>".run_one_point.lock"
+    if ! flock -n 9; then
+        echo "run_one_point: another point is running in this checkout, waiting for it"
+        flock 9
+    fi
+else
+    echo "run_one_point: flock absent, cannot serialise; do not run two points here at once" >&2
+fi
+
 if [ ! -x hftf ] || [ housing_first_or_treatment_first_SR_v1.f90 -nt hftf ]; then
     echo "building..."
     # THE COMPILER IS NOT ALWAYS THERE. Worker containers built from the
