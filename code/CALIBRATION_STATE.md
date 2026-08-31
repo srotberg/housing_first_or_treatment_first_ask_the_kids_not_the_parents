@@ -5587,3 +5587,59 @@ rows in the table above, not `size_homelessness`.
     betas 0.907. The second beta helps and is nowhere near sufficient, which is
     what should be expected if the binding constraint is the missing route in
     rather than the strength of the savings motive.
+
+## HOW SUD AND SMI EACH REACH HOMELESSNESS, AND THE CHANNEL NEITHER OF THEM USES
+
+The author asked whether the unemployment rate of those with a disorder is being
+used to match their share of the homeless. It is not, for either disorder. Each
+one's labour market moment has its own instrument and its own data target:
+
+    moment                          target    model    instrument
+    kappa_ued unemployment | SUD    0.1625    0.1423   multiple_of_probabilities_
+                                                       of_employment_if_addicted
+    SUD share of the homeless       0.2170    0.0664   rho_d          (new)
+    kappa_uem employment | SMI      0.3000    0.2999   kappa_uem
+    lambda_m SMI share of homeless  0.2500    0.1297   lambda_m
+
+**But the two disorders reach homelessness by different mechanisms, and that is
+worth being deliberate about rather than inheriting.**
+
+  - SMI reaches it through the STOCK. The `lambda_m` parameter is the RECOVERY
+    rate from SMI, so slowing the exit leaves more SMI households alive in the
+    state and more of them turn up among the homeless.
+  - SUD now reaches it through IMPOVERISHMENT. `rho_d` cuts the wage of a
+    household with the disorder so it runs its assets down and ends on the
+    street.
+
+Neither is wrong, but they are not the same kind of instrument and they will not
+respond alike. In particular `lambda_m` cannot help the AGE profile, for the
+reason recorded above -- SMI onset and prevalence both fall steeply with age in
+the model's own data file -- while `rho_d` should, because the SUD stock
+accumulates with age where onset does not.
+
+### THE CHANNEL THAT DOES NOT EXIST, AND WHICH TODAY'S TWO CHANGES DO NOT ADD
+
+`kappa_ued` is 0.1423 against 0.1625. **The SUD-to-unemployment link is already
+roughly right.** Addicts in this model do lose their jobs at close to the data
+rate. They still do not become homeless, and the reason is that there is no
+unemployment-to-homelessness channel of any strength: the measured homelessness
+risk ratio for the unemployed runs 0.27 to 3.27 across the four two-beta points,
+never large, and unstable enough that only its smallness is trustworthy.
+
+`increased_prob_if_homeless` does NOT close that gap. It runs the other way --
+being homeless costs you the job -- which is the Housing First channel and is
+worth having, but it is not a route IN. After both of today's changes the model
+still contains nothing by which losing your job puts you on the street. `rho_d`
+connects the disorder to destitution directly and bypasses unemployment.
+
+If the mechanism is meant to run SUD -> unemployment -> homelessness, that is a
+THIRD change and it is a scope decision: making unemployment itself
+impoverishing, through UI generosity or duration or the food stamp floor. It has
+been put to the author and is not being made on this session's initiative.
+
+One candidate to settle rather than a finding: `cbar`, food stamps over labour
+income, reads 0.0532 against a target of 0.0042 at `point_445884ebe4`, which
+would say the safety net is twelve times more generous than intended and is
+exactly why an unemployed household can still pay rent. But `cbar` has the same
+aggregate-over-a-mean form as `aleph`, and that normalisation is the one applied
+and reverted this morning. Settle the normalisation before reading the level.
