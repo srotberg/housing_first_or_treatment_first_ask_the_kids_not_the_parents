@@ -3925,6 +3925,28 @@
         ! threshold, and the threshold itself.
         real(8), dimension(transition_length) :: val_buy_mass,val_buy_C,val_buy_income,&
             val_nobuy_mass,val_nobuy_C,val_nobuy_income
+
+        ! IS BEING ALIVE WORTH ANYTHING TO THE POOREST HOUSEHOLDS?
+        !
+        ! flow_utility_1 = flow_utility_goods_only + value_of_life, and the goods
+        ! term is CRRA at sigma = 2, so it is negative and unbounded below as
+        ! consumption falls. A period of life is therefore worth aleph + u_goods,
+        ! which is close to aleph at average consumption and a small fraction of
+        ! it at a quarter of average.
+        !
+        ! If it goes NEGATIVE the model stops being a model of a cost. A
+        ! household for which aleph + u_goods < 0 prefers not to be alive, so an
+        ! eightfold mortality multiplier is a BENEFIT to it and the drug is a way
+        ! of buying it. That would explain the selection completely and it would
+        ! be a defect rather than a mechanism, so it has to be counted rather
+        ! than assumed away.
+        !
+        ! Reconstructed here from the realised allocation and weighted by the
+        ! distribution, using the same expression as the live branch of
+        ! flow_utility, so it is the utility households actually got and not the
+        ! utility of a candidate choice.
+        real(8), dimension(transition_length) :: val_neg_life_mass,val_life_min,&
+            val_ugoods_users,val_umass_users,val_ugoods_others,val_umass_others
         
         integer :: thread_num,thread_index,total_number_of_threads
         
@@ -4590,6 +4612,23 @@
                 model_avg_assets_experimenters(1)/max(model_average_net_wealth(1),10.d0**(-14))
             write(*,*) "DIAG assets with a SUD / average net worth       =",&
                 model_average_assets_addicted(1)/max(model_average_net_wealth(1),10.d0**(-14))
+
+            ! IS A PERIOD OF LIFE WORTH ANYTHING TO THE POOREST? aleph is added
+            ! to a CRRA goods term that is negative and unbounded below, so the
+            ! value of being alive falls with consumption. If any mass sits
+            ! below zero, those households prefer not to be alive and an
+            ! eightfold mortality multiplier is a benefit to them rather than a
+            ! cost -- which would make the selection into drug use a defect and
+            ! not a mechanism.
+            write(*,*) "DIAG mass with a NEGATIVE value of life          =",&
+                val_neg_life_mass(1)
+            write(*,*) "DIAG lowest value of a period of life            =",&
+                val_life_min(1)
+            write(*,*) "DIAG value of life, drug users                   =",&
+                val_ugoods_users(1)/max(val_umass_users(1),10.d0**(-14))
+            write(*,*) "DIAG value of life, everyone else                =",&
+                val_ugoods_others(1)/max(val_umass_others(1),10.d0**(-14))
+            write(*,*) "DIAG aleph itself, for scale                     =", value_of_life
             write(*,*) "DIAG aggregate rent / output                     =",&
                 aggregate_rent_spending(1)/max(model_output(1),10.d0**(-14))
             write(*,*) "DIAG asset grid, reachable points                =",&
@@ -26793,6 +26832,7 @@
         integer :: time_period_used,pay_mortgage_insurance_1,housing_status_index_used,addiction_choice_used
         real(8) :: total_consumption_used,consumption_used,distribution_mass_used,lived_in_size_used,avg_income_to_use_1,&
             frac_spend_on_addiction_used,drug_spending_used,ratio_1,total_experimenters_1,weight_1=0.5
+        real(8) :: val_ugoods_1,val_life_1
                     
         avg_income_to_use_1=is_counterfactual*average_labor_income_calibrated+&
             (1-is_counterfactual)*model_average_labour_income(time_period)
@@ -26812,6 +26852,12 @@
         aggregate_housing_transaction_costs(time_period)=0
         aggregate_consumption(time_period)=0
         aggregate_total_consumption(time_period)=0
+        val_neg_life_mass(time_period)=0
+        val_life_min(time_period)=10.d0**(10)
+        val_ugoods_users(time_period)=0
+        val_umass_users(time_period)=0
+        val_ugoods_others(time_period)=0
+        val_umass_others(time_period)=0
         aggregate_spending_on_addiction(time_period)=0
         aggregate_mortgage_consumption(time_period)=0
         aggregate_rent_spending(time_period)=0
@@ -26932,6 +26978,44 @@
                                     
                                     end if
                                         
+                                    ! THE VALUE OF A PERIOD OF LIFE, HOUSEHOLD BY HOUSEHOLD.
+                                    ! Same expression as the live branch of flow_utility,
+                                    ! evaluated at the realised allocation.
+                                    val_ugoods_1=scaled_household_size(age_index)*&
+                                        (housing_status_utility_function(housing_status_index_used,&
+                                        age_index,0,min(addiction_choice_used,1))*&
+                                        max(consumption_used,10.d0**(-14))**&
+                                        ((1-risk_aversion_consumption)*relative_share_of_consumption_1)*&
+                                        ((b_shifter(min(addiction_choice_used,1),&
+                                        housing_size(housing_status_index_used))+&
+                                        (frac_spend_on_addiction_used*total_consumption_used)/&
+                                        max(price_of_addictive_good,10.d0**(-14)))**&
+                                        ((1-risk_aversion_consumption)*relative_share_of_addiction_1)))/&
+                                        (1-risk_aversion_consumption)
+
+                                    val_life_1=val_ugoods_1+value_of_life
+
+                                    if (val_life_1<0) then
+                                        val_neg_life_mass(time_period)=val_neg_life_mass(time_period)+&
+                                            distribution_mass_used
+                                    end if
+                                    if ((distribution_mass_used>10.d0**(-12)) .AND. &
+                                        (val_life_1<val_life_min(time_period))) then
+                                        val_life_min(time_period)=val_life_1
+                                    end if
+
+                                    if (drug_spending_used>0) then
+                                        val_umass_users(time_period)=val_umass_users(time_period)+&
+                                            distribution_mass_used
+                                        val_ugoods_users(time_period)=val_ugoods_users(time_period)+&
+                                            val_life_1*distribution_mass_used
+                                    else
+                                        val_umass_others(time_period)=val_umass_others(time_period)+&
+                                            distribution_mass_used
+                                        val_ugoods_others(time_period)=val_ugoods_others(time_period)+&
+                                            val_life_1*distribution_mass_used
+                                    end if
+
                                     aggregate_consumption(time_period)=aggregate_consumption(time_period)+&
                                         consumption_used*distribution_mass_used
                                         
