@@ -841,3 +841,71 @@ are the only instrument that can move the homelessness composition.
 One worker reported committing ROUND2 line 4 as `b1a14f7`; that object does not
 exist in the repository, so it committed in its own container and never pushed.
 Check the object, not the report.
+
+## THE smallest_rental LADDER: h_1 YES, h_2 NO, AND THE COMPOSITION GOES BACKWARDS
+
+All four rungs are measured on the `02c96e3721` slice. This was the round's
+priority and it answers the question, partly against the hypothesis:
+
+    sr        h_1        h_2      gamma   lambda_m | SUDofHL   employed   income
+    0.03771   0.001307   0.0394   0.1863   0.3688  | 0.00007   0.964      0.282
+    0.055     0.003771   0.0403   0.1880   0.0825  | 0.109     0.983      0.311
+    0.070     0.007769   0.0422   0.1927   0.0636  | 0.097     0.982      0.368
+    0.085     0.007115   0.0406   0.2010   0.1369  | 0.114     0.976      0.375
+    target    0.00399    0.101    0.268    0.25    | 0.217     0.460      0.191
+
+**h_1 is reachable.** It crosses its target between 0.055 and 0.070 and the
+slope on the first segment is +2.81 in logs. On the JOINT-A slice the same step
+took h_1 from 42.1 per cent off to 1.7.
+
+**h_2 is not.** Its supposed owner moves it from 0.0394 to 0.0422 across a
+ladder that more than doubles the rent floor, against a target of 0.101. Nothing
+else in the archive moves it either. **h_2 has no instrument in this model.**
+That bears directly on the disagreement recorded above between the engine
+prompt, which concedes h_2, and `next_batch.py`, which does not: whatever the
+author intends, it is not reachable through the housing ladder.
+
+**gamma is barely reachable**: 0.186 to 0.201 across the whole ladder, against
+0.268. Its only strong instrument, `relative_share_of_housing`, costs h_1 at an
+elasticity of -7.32 and is unusable.
+
+**The composition moves the wrong way.** The SUD share of the homeless does jump,
+0.00007 to about 0.11 against a target of 0.217, and then saturates. But the
+employed share RISES, 0.964 to 0.976, against a target of 0.460, and the income
+of the homeless RISES, 0.282 to 0.375, against 0.191. And at every rung, all the
+way to 0.085,
+
+    homeless by choice                    = 1.000
+    homeless who could afford it on income = 1.000
+
+**Raising the rent floor never shuts anybody out.** It makes the street
+attractive to RICHER households, because homelessness in this model is a choice
+at every income and a higher floor simply moves the indifference point up. There
+is no instrument here that makes the homeless poor or jobless; that requires
+households with neither income nor assets, which is the lower-tail-of-wealth
+question, and it is the author's call.
+
+## h_1 AND lambda_m CANNOT BOTH BE CLOSED
+
+Every instrument that raises h_1 lowers lambda_m, and the two moments now want
+to move the same way (h_1 +41.9 per cent, lambda_m +16.1). The ratios differ
+slightly between the two instruments -- `size_homelessness` moves them at
+-0.98, `smallest_rental` at -1.41 -- so a combination exists on paper, but it
+asks for `size_homelessness` at 0.133, far outside its range and past the point
+where it saturates at 0.075. Not reachable.
+
+The best available compromise is the minimax on the pair, at
+`smallest_rental` about 0.0398, where both sit near 32 per cent instead of
+h_1 at 41.9. `ROUND4.txt` brackets it at 0.0398 and 0.046, adds a
+`multiple_of_probabilities_of_employment_if_addicted` arm at 3.4 for kappa_ued
+(30.3 per cent off, elasticity +1.02), and one combined line.
+
+## THREE MOMENTS WITH NO SAFE INSTRUMENT
+
+- **aleph** (24.1 per cent off). `value_of_life` is the only instrument and every
+  arm is degenerate: at 38 the drug block collapses to b=0.0085 and
+  lambda_d=0.0014; at 48 and 55 homelessness dies and mu_H prints 1.7e12.
+- **h_2** (60.6 per cent off), as above.
+- **gamma** (30.7 per cent off), as above.
+
+`largest_house_size=0.145` is also degenerate: mu_H prints 2.1e12.
