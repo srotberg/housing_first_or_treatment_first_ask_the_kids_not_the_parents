@@ -910,7 +910,7 @@ h_1 at 41.9. `ROUND4.txt` brackets it at 0.0398 and 0.046, adds a
 
 `largest_house_size=0.145` is also degenerate: mu_H prints 2.1e12.
 
-## CORRECTION: h_1 IS REACHABLE, AND SO IS lambda_m WITH IT
+## CORRECTION (PART RIGHT, PART WRONG -- SEE THE SECOND CORRECTION BELOW)
 
 The section headed "h_1 and lambda_m cannot both be closed" is WRONG and is left
 in place only so the reasoning that produced it can be checked. Two mistakes,
@@ -975,3 +975,71 @@ second is already measured at 3.4 from the best point: kappa_ued improves 30.3
 to 16.9 per cent and the drug block is destroyed -- lambda_d 12.0 to 63.5, b 0.3
 to 50.0. It is only usable with a simultaneous drug repair, which is blocked on
 the same narrow `addiction_scalar_1` bracket.
+
+## SECOND CORRECTION: THE CLIFF IS REAL, THE "JOINT REGION" WAS NOT
+
+Of the two claims in the correction above, the first survives measurement and
+the second does not.
+
+**The cliff is real and h_1 IS reachable.** `e2ecd0039e`, at
+`size_homelessness` 0.074132 and `smallest_rental` 0.053, puts h_1 at 0.0038238
+against a target of 0.00399 -- **4.2 per cent off**, from 41.9.
+
+**"Past the cliff the two moments stop fighting" was wrong**, and the reason is
+a rule violation rather than bad luck. The +3.24 elasticity came from
+`75fb32aada` against `4f4d5c48f1`, and those two points differ in SEVEN
+coordinates: lambda_addiction, lambda_m, money_cost_of_treatment, mu_homeless,
+multiple_of_probabilities_of_employment_if_addicted,
+probability_becoming_unemployed and size_homelessness. It was never an
+elasticity, only a difference between two multi-coordinate points, and the
+standing rule that elasticities come from pairs differing in ONE coordinate
+exists precisely to stop this.
+
+A properly controlled pair at sr=0.053 -- `e2ecd0039e` against `6e3c543029`,
+differing in `size_homelessness` alone -- says:
+
+    h_1       elasticity +1.49
+    lambda_m  elasticity -1.38
+
+**Opposite signs, the same as at sr=0.03771.** h_1 and lambda_m fight
+everywhere measured. The three points built on the imagined joint region all
+came in with lambda_m between 66 and 72 per cent off.
+
+**BEFORE USING ANY PAIR, PRINT WHAT DIFFERS BETWEEN ITS TWO POINTS.** Both of
+the last two rounds' mistakes would have been caught by that one line, and it
+costs nothing:
+
+    sorted(k for k in set(va)|set(vb) if va.get(k)!=vb.get(k))
+
+## THE REAL TRADE, AND THE ONE UNTRIED INSTRUMENT
+
+The archive now contains both ends of the trade at one slice:
+
+    sr=0.03771  h_1 41.9% off, lambda_m 16.1% off   (worst-ex 41.9)
+    sr=0.053    h_1  4.2% off, lambda_m 66.1% off   (worst-ex 66.1)
+
+and the cliff between 0.046 and 0.053 means there is no useful midpoint: sr=0.043
+gives 42.9 and 29.3, sr=0.046 gives 44.6 and 46.5. Either h_1 or lambda_m, not
+both, unless a THIRD instrument moves lambda_m.
+
+`smi_onset_level` is that candidate and it has never been armed -- the gate
+reports "no controlled pair in the archive" for it every firing. It sets the
+stock of serious mental illness, so more of it should raise the SMI share of the
+homeless without touching the housing choice. `ROUND6` arms it at 0.0045 and
+0.0070 from `e2ecd0039e`, where h_1 is already solved, and re-tests `lambda_m`
+itself at 0.15 there, since its flatness was only ever measured at sr=0.03771.
+
+If neither moves lambda_m, then h_1 and lambda_m are jointly unreachable and
+which one to concede is the author's call.
+
+## THE DRUG LOCUS IS 4.7x WIDER NOW
+
+`c0f41297da` against `7830fbe852`, controlled, `addiction_scalar_1` alone:
+
+    step dlog -0.0201   b elasticity -14.71   lambda_d elasticity -21.58
+
+against the -17.6 and -36.0 read off the old narrow pair. The repair at
+`e2ecd0039e` still wants 2.8x this bracket, so ROUND6 line 4 takes the clamped
+step -- predicted b and lambda_d land about 20 per cent off rather than on
+target, which is progress toward them rather than a repair, and it widens the
+bracket again for the next one.
