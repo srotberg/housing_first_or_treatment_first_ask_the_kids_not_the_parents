@@ -9,11 +9,38 @@ precision.
 **It does not. The disagreement got worse, not better: 186 values now differ
 where 135 differed before.**
 
+## Which code this measures — read this first
+
+Both runs were built from commit **`13f5cc8`** ("Audit G: the driver and
+counterfactuals"), the branch head when this validation started. That commit
+does contain the tau_l fix the brief points to (`85c0d8d`, "Fix tau_l, the
+band-7 print, and a stale comment"), which is why tau_l no longer halves below.
+
+**Seven further source commits landed on this branch while the two runs were
+executing**, between 19:57 and 20:34 UTC, ending at `1e0c8be`:
+
+    7bc05ee Stop damp_on_flip resurrecting pinned adjusters
+    980f04c Normalise once, on the last pass, at all 187 sites
+    a636f31 Fix aleph, cbar, the age-profile mass and four unguarded trackers
+    45848e4 Fix an unassigned array index, a probability vector, and the loop that could not exit
+    eec57d6 Make the income-of-users numerators interest-inclusive
+    50e121d Give the homelessness rate a single owner
+    1e0c8be Revert the aleph and cbar normalisations, which the arithmetic contradicts
+
+Those commits touch `aleph`, `cbar`, the homelessness rate, the age-profile
+mass and the income-of-users numerators — which are among the quantities
+reported as disagreeing below. **The numbers in this file are therefore a
+correct measurement of `13f5cc8` and are already out of date with respect to
+the branch head.** The test should be re-run against `1e0c8be` before any of
+the diagnoses here are acted on. Nothing below has been adjusted to guess at
+what those commits changed.
+
 ## How this was run
 
 | | |
 |---|---|
 | Branch | `claude/two-period-addiction-hazard-d7gb61` |
+| Commit built and run | `13f5cc8` (branch head has since moved to `1e0c8be`) |
 | Source edit | `freeze_beta_bisection=0` -> `1` (line 1369), reverted before commit |
 | Run 1 | `number_of_beta_types=1`, point `fdee960558`, model `f0deae7141`, solved in 12 min |
 | Run 2 | `number_of_beta_types=2`, point `03ac59f09e`, solved in 21 min |
