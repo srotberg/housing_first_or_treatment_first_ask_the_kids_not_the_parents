@@ -5482,3 +5482,108 @@ So the young do not have negative income. The diagnostic does.
 `income_by_age_renter` is read by nothing except this print, so the fix moves no
 moment; it is held until the kappa sweep finishes so its four points stay on one
 build.
+
+## WHY THE YOUNG ARE ALL THE HOMELESS AND WHY THE HOMELESS ARE ALL EMPLOYED
+
+Both questions have one answer: **the model has almost no route ONTO the street
+except choosing to go there, and the household's asset position is a sufficient
+statistic for that choice.** Everything else follows.
+
+### (a) THE EMPLOYMENT PUZZLE IS A HARD-CODED 0.2, AND THE ARITHMETIC CLOSES
+
+The only link from homelessness to the labour market is
+`increased_prob_if_homeless`, at line 26961:
+
+    real(8), parameter :: increased_prob_if_homeless=0.2
+
+The homeless lose a job at `(1+x)` times the housed rate and find one at
+`1/(1+x)` times it, so the ratio of separation to job finding scales by
+`(1+x)**2`. A group whose odds ratio is multiplied by `k` has a steady-state
+employment rate of `1/(1+k*(s/f))`, and at the `pi_eu` target of 0.0485 the
+housed ratio `s/f` is 0.05097. So:
+
+    x        k=(1+x)^2     employed share of the homeless
+    0.0        1.00              0.9515
+    0.2        1.44              0.9316      <- what the model ships
+    1.0        4.00              0.8306
+    2.0        9.00              0.6855
+    3.0       16.00              0.5508
+    3.8       23.04              0.4599      <- the data's 0.46
+    5.0       36.00              0.3527
+
+**The measured employed share at `point_445884ebe4` is 0.9252 against 0.9316
+predicted by this formula.** Within seven parts in a thousand, on a formula that
+uses only `pi_eu` and the one parameter. That is not a coincidence and it is not
+selection: the composition of the homeless is essentially the mechanical
+steady state of a 20 per cent penalty.
+
+**To hit the data, `increased_prob_if_homeless` has to be about 3.8, not 0.2 --
+a factor of nineteen.** It is a `parameter`, a compile-time constant, so it is
+not in `PARAM_HANDOVER`, is not calibrated, and cannot be moved by a batch line.
+
+**THIS IS A SCOPE DECISION AND IT IS THE AUTHOR'S.** Turning a hard-coded
+constant into a calibrated parameter changes what the model is, and the value it
+would need is large enough that its effect on `h_1`, `pi_eu` and the whole drug
+block has to be measured rather than assumed. It is written up here and NOT
+changed.
+
+### (b) THE AGE PUZZLE IS THE SAME FACT
+
+Three separate routes should put a household who is not young onto the street,
+and every one of them is at roughly half its target or worse at
+`point_445884ebe4`:
+
+    route                                    model    data     ratio
+    employed share of the homeless          0.9252   0.4600     2.01
+    SUD share of the homeless               0.0664   0.2170     0.31
+    SMI share of the homeless (lambda_m)    0.1297   0.2500     0.52
+    income of the homeless                  0.4503   0.1910     2.36
+
+The model's homeless are too employed, too sober, too well, and **two and a
+third times too rich**. Those are four different measurements of one thing:
+nobody in this model is ever put on the street by something happening to them.
+
+What is left is the choice, and the choice is made on wealth. The homelessness
+penalty is a flow utility loss with NO age gradient --
+`housing_size(lowest_housing_grid_point) = housing_size(0)*size_homelessness`,
+one number for every household -- while the gain, the rent saved, is an absolute
+amount whose utility value falls as consumption rises. So homelessness is chosen
+by whoever has the highest marginal utility of consumption, which is whoever has
+the least wealth, which is whoever is youngest. The profile is the inverse of the
+age profile of wealth, and the numbers say exactly that:
+
+    age        26      29      32      35      41      47      53      59      65
+    homeless 0.0782  0.0049  0.0020  0.0011  0.0006  0.0003  0.0003  0.0005  0.0005
+    wealth   0.000   0.349   0.582   0.731   1.013   1.308   1.646   1.987   2.226
+
+The whole collapse -- a factor of sixteen -- happens over the three years in
+which renter wealth goes from exactly zero to 0.35. Age 26 is not special
+because of age. It is special because it is the only cohort with no assets.
+
+**And the model already contains the second population, in miniature.** The SUD
+share of the homeless BY BAND at the same point:
+
+    band            25-34   35-44   45-54   55-64     65+
+    SUD share      0.0215  0.2672  0.2305  0.1756  0.3594
+
+The young homeless are 2 per cent addicted and the older homeless are 18 to 36
+per cent addicted. So there ARE two distinct homeless populations here: a large
+young group who choose the street to build a buffer, and a small older group
+driven there by the disorder. **Matching the HUD profile means growing the
+second, not shrinking the first**, and the instruments for that are the three
+rows in the table above, not `size_homelessness`.
+
+### (c) WHAT THIS RULES OUT
+
+  - It is NOT the mortality gradient. Measured earlier: weighted by discounted
+    remaining life the deterrent runs 1.00, 1.37, 1.57, 1.79 from 26 to 58,
+    nearly flat, and making the excess death risk flat in age was tried and
+    reverted because it did not move the profile.
+  - It is NOT tenure. Nobody owns a home at any age in any point, so there is no
+    owner-versus-renter margin to explain anything.
+  - It is NOT that young renters cannot pay. The renter-income column that said
+    so was the broken diagnostic, now repaired.
+  - It is NOT the second beta's doing. One beta puts 0.980 in band one and two
+    betas 0.907. The second beta helps and is nowhere near sufficient, which is
+    what should be expected if the binding constraint is the missing route in
+    rather than the strength of the savings motive.
