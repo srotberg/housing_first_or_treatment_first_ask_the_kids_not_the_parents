@@ -885,7 +885,7 @@ is no instrument here that makes the homeless poor or jobless; that requires
 households with neither income nor assets, which is the lower-tail-of-wealth
 question, and it is the author's call.
 
-## h_1 AND lambda_m CANNOT BOTH BE CLOSED
+## h_1 AND lambda_m: THE CLAIM BELOW WAS WRONG, SEE THE CORRECTION AFTER IT
 
 Every instrument that raises h_1 lowers lambda_m, and the two moments now want
 to move the same way (h_1 +41.9 per cent, lambda_m +16.1). The ratios differ
@@ -909,3 +909,69 @@ h_1 at 41.9. `ROUND4.txt` brackets it at 0.0398 and 0.046, adds a
 - **gamma** (30.7 per cent off), as above.
 
 `largest_house_size=0.145` is also degenerate: mu_H prints 2.1e12.
+
+## CORRECTION: h_1 IS REACHABLE, AND SO IS lambda_m WITH IT
+
+The section headed "h_1 and lambda_m cannot both be closed" is WRONG and is left
+in place only so the reasoning that produced it can be checked. Two mistakes,
+both of the same kind: a slope was read off one chord and used as though it
+described the whole surface.
+
+**First mistake: the chord averaged over a threshold.** The h_1 slope of +2.81
+came from `smallest_rental` 0.03771 to 0.055. Measured finely on the JOINT-B
+slice, that segment is not a slope at all:
+
+    sr      0.03771   0.03984   0.046    0.055     0.070    0.085
+    h_1     0.00232   0.00233   0.00221  0.00406   0.00896  0.01123
+
+Flat, then slightly NEGATIVE, then a jump between 0.046 and 0.055. It is a cliff,
+not a gradient -- a marginal household switches to the street when the cheapest
+dwelling crosses a price. The minimax step built on the averaged slope predicted
+h_1 would reach 0.00270 and it came in at 0.00233, because 0.0398 is on the flat
+part. **h_1 IS reachable, at sr around 0.053 to 0.055**, where it lands within
+two to six per cent on both slices measured so far.
+
+**Second mistake: the sign of the size_homelessness/lambda_m relation is not
+global.** At sr=0.03771, raising `size_homelessness` raises h_1 and LOWERS
+lambda_m, which is where "every instrument moves them oppositely" came from. At
+sr=0.055 it raises BOTH:
+
+    at sr=0.055, size_homelessness 0.064481 -> 0.0747535
+        h_1       elasticity +0.49
+        lambda_m  elasticity +3.24
+
+So past the cliff the two moments stop fighting. Extrapolating within that pair,
+lambda_m reaches 0.25 at `size_homelessness` about 0.0909, and h_1 would then be
+about 12 per cent high -- worth measuring rather than trusting, since this is the
+second slope in this section to have been read too confidently.
+
+`ROUND5.txt` measures it: two points in the joint region (sr 0.053 with
+size_homelessness 0.085, and sr 0.055 with 0.090), one to locate the cliff on
+this slice (sr 0.053 alone), and one to widen the `addiction_scalar_1` bracket
+to 0.0188, which is what every pending drug repair is blocked on.
+
+## WHY CORRECT_24.txt WAS NOT LAUNCHED AS WRITTEN
+
+The gate opened and emitted six arms. Four are already known void from the
+archive, and launching them would spend four containers confirming what is
+measured:
+
+- `smallest_rental -> 0.0535` FOR h_2. The gate's own fitted elasticity is +0.06
+  and the ladder confirms it: h_2 goes 0.0394 to 0.0422 while the rent floor
+  more than doubles. This arm cannot move h_2 and it lands on the flat side of
+  the h_1 cliff.
+- `size_homelessness -> 0.0891` for h_1 at elasticity +2.18. That slope was
+  measured on 0.064481 to 0.075; the instrument saturates above 0.075, where
+  h_1 moves 0.002329 to 0.002400.
+- `value_of_life -> 40.837` for aleph. Every value_of_life arm is degenerate: at
+  38 the drug block collapses to b=0.0085 and lambda_d=0.0014, at 48 and 55
+  homelessness dies.
+- `lambda_m -> 0.0515` at its own elasticity of -0.06, which is the definition of
+  a dead instrument.
+
+The two sound arms are `probability_becoming_unemployed -> 0.00872` for pi_eu and
+`multiple_of_probabilities_of_employment_if_addicted -> 3.17` for kappa_ued. The
+second is already measured at 3.4 from the best point: kappa_ued improves 30.3
+to 16.9 per cent and the drug block is destroyed -- lambda_d 12.0 to 63.5, b 0.3
+to 50.0. It is only usable with a simultaneous drug repair, which is blocked on
+the same narrow `addiction_scalar_1` bracket.
