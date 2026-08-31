@@ -791,3 +791,53 @@ The rule, restated because it is easy to get wrong: workers are spawned with
 `create_session`, passing `source_url` and `source_revision`. Those two names
 belong to that tool. The `Agent` tool takes neither and runs in THIS container;
 seeing them in the standing rule is the tell that a fresh container was meant.
+
+## NEW BEST POINT: 2cf90f8525, AND THE RIDGE STEP TRANSFERS
+
+ROUND2 line 1 -- the joint ridge step WITH `probability_becoming_unemployed`
+allowed to move against its own moment -- landed and is the best point in the
+archive. Worst gap excluding h_2 is **h_1 at 42.1 per cent**, down from 67.2.
+
+The predictions held, which is the useful part: h_1 predicted 0.00246 came in at
+0.00231, kappa_uem predicted 0.28629 came in at 0.28315, lambda_m predicted
+0.24397 came in at 0.20692. tau_u closed to 0.3 per cent, theta to 1.2, mu_H to
+8.4, kappa_uem to 5.6. The Jacobian measured at `485225bf80` transfers to a step
+taken from `02c96e3721`.
+
+It cost pi_eu exactly as predicted, 20.1 -> 28.9 per cent. Whether that trade was
+right is still open: JOINT-B, the same step without that instrument, has not
+landed yet.
+
+**A NOTE ON THE OBJECTIVE.** The engine prompt says the minimax excludes h_2,
+but `SKIP` in `next_batch.py` is empty and its comment says so deliberately --
+h_2 was conceded when it meant the share in the smallest unit, and was
+un-conceded when it was redefined as the severe cost burden. The code is the
+newer statement of the author's intent, so both numbers are worth reporting:
+worst including h_2 is 59.9 per cent (h_2 itself), worst excluding it is 42.1
+(h_1). Do not quietly pick one.
+
+## THE DRUG-BLOCK LOCUS, MEASURED ON THE CURRENT SLICE AT LAST
+
+ROUND2B landed both arms and they are clean -- nothing outside the block moves
+more than eight per cent:
+
+    lambda_addiction   16.33 -> 13.0      b  elast -1.56   lambda_d elast  -1.14
+    addiction_scalar_1 .0191823 -> .01910 b  elast -17.6   lambda_d elast -36.0
+
+`restore.py` can fit again. Solving the two-by-two at the new best point asks for
+`addiction_scalar_1` to move -0.00463 in logs, which is 7.7 per cent PAST the
+arm that measured the -36 elasticity, so the step is clamped at the bracket edge
+and `lambda_addiction` takes up the slack by least squares. That lands b within
+0.4 per cent and lambda_d within 0.5, both from inside the measured pairs. The
+clamp matters here more than anywhere: restore.py's own note records this
+elasticity reading -12 in one place and -35 a few thousandths away.
+
+`ROUND3.txt` line 1 is that repair. Lines 2-4 are the three
+`smallest_rental_relative_to_lowest_income` arms re-based onto the new best
+point, because NONE of the three landed from ROUND2 -- every point in the
+archive still sits at 0.03771127 -- and they remain the round's priority: they
+are the only instrument that can move the homelessness composition.
+
+One worker reported committing ROUND2 line 4 as `b1a14f7`; that object does not
+exist in the repository, so it committed in its own container and never pushed.
+Check the object, not the report.
