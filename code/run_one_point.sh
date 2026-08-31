@@ -72,6 +72,24 @@ declare -A P=(
     # recognised as already measured and will re-run once if it is asked for.
     # That is the price of the name, and it is paid once.
     [kappa_phi_d_level]=8.0
+    # THE IMPATIENT DISCOUNT FACTOR, ADDED WITH THE TWO-TYPE MODEL. The commit
+    # that split households into a patient and an impatient type taught the
+    # Fortran's PARAM_HANDOVER and next_batch.py the name and did NOT teach it
+    # to this script, so TWOBETA.txt line 1 -- the equal-beta validation the
+    # whole two-type change rests on -- died at the argument loop with "unknown
+    # parameter" before a single point was solved.
+    #
+    # The default is the Fortran's DECLARED value, 0.900 at
+    # perceived_probability_lower=0, not a search centre: nothing has calibrated
+    # it yet, and matching the declaration means handing it over explicitly
+    # changes nothing. It is not added to LEGACY_DEFAULT below, deliberately.
+    # Every point in points/ was measured on the ONE-type model under a
+    # different MODEL hash, and the already-measured check does not compare
+    # model hashes -- so a legacy tag here would let a stale one-type point be
+    # served in place of a two-type run. The new name changing every tag is what
+    # keeps that from happening, and it also keeps this script in step with
+    # next_batch.py's IMPLICIT table, which the same commit left alone.
+    [discount_factor_impatient]=0.900
 )
 for a in "$@"; do
     k=${a%%=*}; v=${a#*=}
