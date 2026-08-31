@@ -1744,13 +1744,23 @@ record of what was learned. They must not be scored beside new ones.
 `c6e8793eb5`, impatient beta 0.90 against a patient 0.99715, same vector
 otherwise as the one-type anchor:
 
-    w_bot   0.131 -> 0.01183   target 0.025    <- the target is now BRACKETED
-    beta    4.012 -> 2.893     band 3.0-4.5
+    w_bot   0.15716 -> 0.01183   target 0.025    <- the target is now BRACKETED
+    beta    4.012   -> 2.893     band 3.0-4.5
 
-The wealth share of the bottom half was 5.2 times too fat with one discount
-factor and NOTHING in the parameter set could move it. With two it overshoots
-to slightly too thin, so 0.025 lies between beta_impatient 0.99715 and 0.90.
-Interpolating in logs puts it at about **0.929**.
+The wealth share of the bottom half was **6.3 times** too fat with one discount
+factor and NOTHING in the parameter set could move it. With two it overshoots to
+slightly too thin, so 0.025 lies between beta_impatient 0.99715 and 0.90.
+
+CAREFUL WITH THE 0.131 FIGURE that appears earlier in this file: that is the
+share on the PRE-revert model. On the reverted one, which is what the two-type
+point should be compared against, it is 0.15716. Comparing across the revert was
+the mistake the MODEL stamp exists to prevent and it was nearly made here.
+
+The interpolation is NOT tight. In logs it gives 0.927, linearly 0.909, and the
+0.018 between them is a large distance for this parameter -- b moved from 0.025
+to 0.92 across the interval, so the surface is violently curved. TWOBETA line 3
+at 0.95 sits inside the bracket and will pin it properly; do not step on the
+interpolation before that lands.
 
 Everything else at that point is a wreck -- sixteen moments outside ten per
 cent, lambda_d at 2184 and b at 936, meaning 92 per cent of households use
