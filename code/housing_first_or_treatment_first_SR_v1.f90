@@ -5878,7 +5878,12 @@
         ! the hazard out, multiplying and putting it back, but 1-(1-s)*kappa
         ! multiplies the death PROBABILITY, which is a different object once the
         ! baseline stops being small.
-        survival_with_smi=base_survival_1**kappa_phi_m
+        ! ON THE DEATH PROBABILITY TOO, for the same reason and capped the same
+        ! way. Leaving this one as an exponent while the other three multiply
+        ! would give a mentally ill household a different kind of penalty from
+        ! the one the disorder and homelessness carry, which is the fault this
+        ! block already records one level up.
+        survival_with_smi=1.d0-min(1.d0,kappa_phi_m*(1.d0-base_survival_1))
 
     end function
 
@@ -23868,8 +23873,26 @@
             ! bounded in [0,1] by construction so the min disappears with it, and
             ! it reproduces on its own the compression of the measured ratio with
             ! age that the literature reports.
+            ! THE MULTIPLIER GOES ON THE DEATH PROBABILITY, CAPPED AT ONE.
+            !
+            ! The previous line raised SURVIVAL to the power of the multiplier,
+            ! which is a constant hazard ratio and is bounded in [0,1] on its
+            ! own. It has one consequence the author does not want: the
+            ! multiplier it delivers on the DEATH PROBABILITY is not constant.
+            ! At kappa 8 it is 7.97 at data age 26 and 6.17 at 84, because
+            ! 1 - s**k saturates as s falls. The literature's number is a ratio
+            ! of death rates, and the author's requirement is that the disorder
+            ! raise the probability of death by the same factor at every age.
+            !
+            ! So the multiplier goes on the death probability and the result is
+            ! capped, which is what the min is for and why the exponent form's
+            ! automatic boundedness is no longer doing that job. The cap does
+            ! not bind at kappa_phi_d alone -- eight times the 0.0758 baseline
+            ! at 84 is 0.61 -- and can only bind where the homelessness
+            ! multiplier is also large, which is at young ages where the
+            ! baseline is tiny.
             survival_probability(i,2,0,0)=&
-                survival_probability(i,1,0,0)**kappa_phi_h_by_age(i)
+                1.d0-min(1.d0,kappa_phi_h_by_age(i)*(1.d0-survival_probability(i,1,0,0)))
 
         end do
                     
@@ -23881,7 +23904,7 @@
             do i=1,life_span
 
                 survival_probability(i,1,include_addiction,0)=&
-                    survival_probability(i,1,0,0)**kappa_phi_d_by_age(i)
+                    1.d0-min(1.d0,kappa_phi_d_by_age(i)*(1.d0-survival_probability(i,1,0,0)))
 
             end do
                                 
@@ -23890,10 +23913,10 @@
                 
             do i=1,life_span
 
-                ! Hazards multiply, so the exponents multiply.
+                ! The two multipliers multiply, as the exponents used to.
                 survival_probability(i,2,include_addiction,0)=&
-                    survival_probability(i,1,0,0)**&
-                    (kappa_phi_h_by_age(i)*kappa_phi_d_by_age(i))
+                    1.d0-min(1.d0,kappa_phi_h_by_age(i)*kappa_phi_d_by_age(i)*&
+                    (1.d0-survival_probability(i,1,0,0)))
 
             end do
                 
