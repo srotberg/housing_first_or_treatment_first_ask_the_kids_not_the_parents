@@ -47,6 +47,10 @@ declare -A P=(
     [penalty_child_homeless]=0.31
     [probability_becoming_unemployed]=0.0294178
     [probability_of_voucher_benchmark_used]=0.0121367
+    # ONE DISCOUNT FACTOR BY DEFAULT. Two is reachable by passing 2 here, but
+    # the two-pass path does not yet reproduce the one-pass economy at equal
+    # betas, so anything measured at 2 is provisional.
+    [number_of_beta_types]=1
     [utility_cost_of_treatment]=0.0908753
     # THE PRICE OF TREATMENT, HELD AT ZERO. It replaced the utility cost on 31
     # August and was switched back the same day on the author's instruction, so

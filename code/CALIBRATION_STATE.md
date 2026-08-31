@@ -2297,3 +2297,68 @@ over -- w_bot falls steeply and monotonically in beta_impatient over
 [0.90, 0.99715], and 0.025 is inside it.
 
 So: re-measure 0.95 and 0.90 on the fixed model before believing any level.
+
+## THE TWO-PASS PATH FAILS ITS OWN EQUAL-BETA TEST. ONE BETA IS THE LIVE MODEL
+
+`code/VALIDATION_RESULT.md`. Same 28-parameter vector, both discount factors
+equal, `number_of_beta_types` 2 against 1. With the betas equal the two-type
+population is two identical copies of the one-type population, so every moment
+must reproduce to machine precision. **23 of 46 MOMENT fields do not.**
+
+    moment      two-pass    one-pass   one/two    target
+    tau_l        0.1181      0.2376     2.012      0.224
+    pi_eu        0.0270      0.0530     1.963      0.0485
+    lambda_d     0.00289     0.00715    2.472      0.0368
+    aleph        162.0       57.5       0.355      80
+    kappa_ued    0.4294      0.1028     0.239      0.1625
+    tau_u        0.00758     0.0838    11.062      0.245
+    y_u          0.3359      0.1702     0.507      0.740
+    w_bot        0.15929     0.15716    0.987      0.025
+
+**READ THE ONE-PASS COLUMN AGAINST THE TARGETS.** tau_l is 6 per cent off at one
+type and 47 at two. pi_eu is 9 against 44. aleph is 28 against 103. kappa_ued is
+37 against 164. The one-type economy is not slightly better, it is a different
+and far better fitted model, and every round spent on the two-pass path was
+spent on numbers that were not measuring the model.
+
+**WHY IT PROPAGATES.** tau_l and pi_eu are INTERNAL ADJUSTER targets. About
+twenty-eight distances converge inside every point run. Feed an adjuster a
+statistic that is out by a factor of two and it drives its parameter to the
+wrong place, and then the tax rate and the separation rate are genuinely
+different and every other moment moves with them. That is why the disagreement
+is not confined to a clean family of doublings: tau_u differs by ELEVEN times,
+which no accumulator error produces directly.
+
+**WHAT IS NOT WRONG.** `w_bot` agrees to 1.3 per cent between the two runs, so
+today's pooled-denominator fix is right and the wealth histogram is being read
+correctly. The three `want 1.0` checks pass in both.
+
+**WHAT THE STATIC AUDIT FINDS AND DOES NOT.** Every simple normalisation
+`X = X / Y` in the two-pass chain now has matching guard status on both sides:
+zero mismatches across 410 pooled names. What it does find is the top-x-per-cent
+searches -- `pop_of_top_wealth_x_perc` and `pop_of_top_income_x_perc` are
+per-type counts divided by a pooled `sum_of_distribution`, at six sites, and
+those feed `distance_` variables that are convergence criteria, so the cutoff
+search itself converges to the wrong percentile. Real, and not enough on its own
+to explain tau_l.
+
+### number_of_beta_types IS A VECTOR COORDINATE NOW
+
+It was `integer, parameter :: number_of_beta_types=2`, with exactly two uses: the
+declaration and the driver's loop bound. Nothing dimensions on it. It is now
+`integer :: number_of_beta_types=1` with a handover case, so:
+
+- the one-type economy, which works, is the DEFAULT and needs no source edit;
+- the two-type economy is reachable by passing 2, so repair attempts can be
+  measured without rebuilding;
+- both live on ONE model hash in ONE archive, instead of forking it in two.
+
+`run_one_point.sh` carries `[number_of_beta_types]=1`. Every point tag changes,
+because the tag is the md5 of the whole sorted vector and the vector has a new
+coordinate. That cost is paid now rather than later, and it is cheap today
+because only two points exist on the current hash.
+
+`discount_factor_impatient` still owns `w_bot` in `next_batch.py`, and at one
+type it does nothing, so **w_bot has no instrument until the two-pass path is
+repaired**. That is the one thing the author asked for that this does not
+deliver.

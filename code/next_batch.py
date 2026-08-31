@@ -119,6 +119,8 @@ OWN = {
     # impatient one owns the wealth share of the bottom half, which nothing
     # could move while there was a single beta.
     'discount_factor':                                     'beta',
+    # w_bot's owner, and it can only move while number_of_beta_types is 2.
+    # At one type it does nothing and the moment has no instrument.
     'discount_factor_impatient':                           'w_bot',
     # THE MORTALITY PENALTY IS THE PRICE OF USING, so it decides WHO is willing
     # to pay it, and a high one leaves only the most desperate -- who are the

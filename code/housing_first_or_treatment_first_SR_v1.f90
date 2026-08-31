@@ -2178,7 +2178,19 @@
         ! the wealth share of the bottom half, target 0.025, which the model
         ! currently misses at 0.131 -- more than five times too fat, and the
         ! moment that most wants this change.
-        integer, parameter :: number_of_beta_types=2
+        ! A RUNTIME COORDINATE, NOT A COMPILE-TIME PARAMETER, and defaulting to
+        ! ONE type. The two-pass path fails its own equal-beta test -- with both
+        ! discount factors equal it does not reproduce the one-pass economy, and
+        ! the disagreement reaches the internal adjusters, so the tax rate and
+        ! the separation rate converge somewhere else and every moment moves
+        ! with them. Until that is repaired the one-type economy is the one that
+        ! can be calibrated, and it has to be reachable without editing and
+        ! rebuilding the source, which would fork the archive across two model
+        ! hashes for what is properly one coordinate of a point.
+        !
+        ! Its only other use is the loop bound in the benchmark driver, so
+        ! nothing dimensions on it and a variable is safe here.
+        integer :: number_of_beta_types=1
         real(8), parameter :: beta_type_weight=0.5d0
         ! Which type is being solved and measured right now. Read by the value
         ! function recursion in place of a single discount factor.
@@ -32812,6 +32824,11 @@
                 case ("discount_factor")
                     write(*,*) "HANDOVER discount_factor:", discount_factor, "->", handover_value
                     discount_factor=min(max(handover_value,0.5d0),1.05d0)
+
+                case ("number_of_beta_types")
+                    write(*,*) "HANDOVER number_of_beta_types:",&
+                        number_of_beta_types, "->", handover_value
+                    number_of_beta_types=max(min(nint(handover_value),2),1)
 
                 case ("discount_factor_impatient")
                     write(*,*) "HANDOVER discount_factor_impatient:",&
