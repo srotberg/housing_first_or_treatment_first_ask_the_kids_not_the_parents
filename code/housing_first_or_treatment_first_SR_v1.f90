@@ -2188,8 +2188,8 @@
         ! the wealth share of the bottom half, target 0.025, which the model
         ! currently misses at 0.131 -- more than five times too fat, and the
         ! moment that most wants this change.
-        ! A RUNTIME COORDINATE, NOT A COMPILE-TIME PARAMETER, and defaulting to
-        ! ONE type. The two-pass path fails its own equal-beta test -- with both
+        ! A RUNTIME COORDINATE, NOT A COMPILE-TIME PARAMETER, defaulting to TWO
+        ! types since the author moved to the two-type model. The two-pass path fails its own equal-beta test -- with both
         ! discount factors equal it does not reproduce the one-pass economy, and
         ! the disagreement reaches the internal adjusters, so the tax rate and
         ! the separation rate converge somewhere else and every moment moves
@@ -5191,7 +5191,17 @@
                         " data=", nsduh_band_rate(k_1)
                     val_earn_bottom_1=0
                     val_earn_total_1=0
-                    k_1=min(k_1+1,7)
+
+                    ! EXIT ONCE THE TOP BAND HAS BEEN REPORTED. k_1 was clamped
+                    ! at 7, so once the cumulative mass passed the last NSDUH
+                    ! cut the condition fired on EVERY remaining bin: band 7 was
+                    ! printed 372 times in a real point, and every print after
+                    ! the first is one bin's rate rather than the band's,
+                    ! because the accumulators are reset just above. A reader
+                    ! taking the last value got a single bin, not the band.
+                    if (k_1==7) exit
+
+                    k_1=k_1+1
                 end if
             end do
             write(*,*) "UNTARGETED delta_h child homelessness ratio  model=",&
@@ -36282,7 +36292,35 @@
                 (1-weight_on_labor_income)*previous_average_net_wealth
                                                     
             call function_of_utility_advantage_from_homeowning(1)
-            call govt_revenues_calc(1)
+
+            ! THE REFRESH CALL TO govt_revenues_calc WAS HERE AND IS REMOVED.
+            !
+            ! It ran AFTER the two-pass loop, where accumulating_beta_types is
+            ! back to zero, so every guarded reset inside it fired: it wiped the
+            ! pooled revenue totals and refilled them from
+            ! distribution_stationary, which by then holds only the LAST TYPE
+            ! SOLVED. Its denominators -- model_total_efficiency_units and
+            ! model_financial -- are accumulated elsewhere and stayed pooled, so
+            !
+            !     tau_l = one type's revenue / two types' income = HALF
+            !
+            ! and tau_l is an INTERNAL ADJUSTER TARGET, so the model drove
+            ! labor_income_tax_rate up until the halved number reached 0.224 --
+            ! toward twice the tax rate the data asks for, faced by every
+            ! household. Measured at 0.497 of its one-type value.
+            !
+            ! WHY REMOVING IT IS THE FIX RATHER THAN REPAIRING IT. The call
+            ! cannot be made to accumulate instead of reset: type 1's
+            ! distribution no longer exists here, so there is nothing to
+            ! accumulate onto and no way to rebuild the pooled object. What it
+            ! was for was refreshing revenues against the averages updated a few
+            ! lines above. Dropping it leaves every revenue quantity holding the
+            ! value the LOOP computed, which is pooled and correct, one outer
+            ! iteration stale -- and the next outer iteration re-runs the whole
+            ! chain against those same averages anyway. Stale and right beats
+            ! fresh and halved.
+            !
+            ! set_SS_benefits reads nothing govt_revenues_calc produces, checked.
             call set_SS_benefits(1)
             
             if ((zero_elasticity==0) .AND. (infinite_elasticity_of_rental_supply==0)) then

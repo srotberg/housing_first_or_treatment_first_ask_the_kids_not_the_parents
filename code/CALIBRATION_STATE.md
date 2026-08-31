@@ -3985,3 +3985,56 @@ re-solve, re-converge and re-run `stationary_equilibrium_statistics` and
 `govt_revenues_calc`, then never restore the baseline. They are skipped because
 `measure_child_gap=0`. Set it to 1 and every moment printed after that point is
 a single-type counterfactual's, silently.
+
+## THREE FIXES APPLIED ON THE AUTHOR'S INSTRUCTION
+
+### 1. tau_l: the post-loop refresh call is REMOVED  [LIVE, benchmark, economics]
+
+`call govt_revenues_calc(1)` in `calibrating_model`, after the two-pass loop
+where `accumulating_beta_types` is back to zero. Every guarded reset fired: it
+wiped the pooled revenue totals and refilled from `distribution_stationary`,
+which holds only the last type solved. Its denominators are accumulated
+elsewhere and stayed pooled.
+
+    tau_l = one type's revenue / two types' income = HALF.   Measured 0.497.
+
+tau_l is an internal adjuster target, so the model drove
+`labor_income_tax_rate` up until the halved number reached 0.224 -- toward twice
+the tax rate the data asks for, faced by every household. **The only bug found
+today that reaches the household's decision rather than the reporting.**
+
+Removed rather than repaired, because it cannot be repaired locally: type 1's
+distribution does not exist at that point, so there is nothing to accumulate
+onto. Dropping the call leaves every revenue quantity holding the value the LOOP
+computed -- pooled and correct, one outer iteration stale -- and the next outer
+iteration re-runs the whole chain anyway. `set_SS_benefits`, the only call
+between it and the adjusters, reads nothing `govt_revenues_calc` produces.
+
+### 2. The band-7 print that fired 372 times  [LIVE, reporting]
+
+`k_1=min(k_1+1,7)` pinned the band index at 7, so once cumulative mass passed
+the last NSDUH cut the print condition fired on every remaining bin. Band 7 was
+printed 372 times in `point_4796363037`. Every print after the first is ONE
+BIN's rate, not the band's, because the accumulators reset just above -- so a
+reader taking the last value got 0.0 where the band was 3.3e-8. Now exits after
+the top band. Numerically tiny; 370 lines of noise removed from every point.
+
+### 3. The stale comment on number_of_beta_types  [documentation]
+
+Said it defaulted to one type; it has defaulted to two since the author moved to
+the two-type model.
+
+## AND A CORRECTION THE AUTHOR MADE, WHICH KILLS A CLAIM OF MINE
+
+I wrote that the second beta BRACKETS y_u's target, on 0.3645 at one type
+against 1.5725 at two. The author: "you have too many users and too many SUD, so
+it is not fully comparable to the one beta model."
+
+Correct, and it voids the claim. At the two-type point b is 0.60 and lambda_d
+0.26, six times their targets. With that share using, the composition of users
+is nothing like the one-type point's, so the y_u difference is mostly the drug
+block being open and not the second beta.
+
+**The clean test is two betas WITH b AT 0.089**, which is what DRUG2B measures.
+If y_u sits near 0.740 there, the second beta helped. If it falls back toward
+0.36, it did not. Until then y_u at two betas says nothing.
