@@ -704,3 +704,7 @@ Recorded, not acted on: damping a drift or repairing a moment pairing is a model
 
 - `smallest_rental` moved 0.0015 to 0.03771, one way across 11 loops, and its moment is not reported as a scalar
 - `relative_share_leisure` moved 0.5733 to 3.051, one way across 22 loops, and its moment is not reported as a scalar
+
+## The model exited and nothing in the catalogue matched
+
+Stopping rather than restarting blind.
