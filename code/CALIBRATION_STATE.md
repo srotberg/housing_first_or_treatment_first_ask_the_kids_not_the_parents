@@ -3288,3 +3288,55 @@ compile-time parameter -- 0 Baggett, 1 flat excess risk, 2 flat multiplier 1.6
 well as its shape, and `size_homelessness` will have to move afterwards to hold
 h_1 at 0.399 per cent. The question this settles is which specification puts
 weight in bands 2 to 5, against HUD's 0.260, 0.272, 0.210, 0.184, 0.075.
+
+## THE MORTALITY GRADIENT IS NOT WHY THE HOMELESS ARE YOUNG. REVERTED
+
+I told the author the deterrent was 4.84 times larger at 65 than at 26 and built
+a change on it. That number was the excess death PROBABILITY and ignored what a
+death costs. Weighted by discounted expected remaining life on the housed life
+table at the model's own discount factor:
+
+    age   multiplier   excess qx   disc. years left   DETERRENT   x age 26
+     26      4.41       0.00396         47.7            0.189       1.00
+     34      4.46       0.00628         41.2            0.259       1.37
+     42      3.85       0.00748         34.7            0.259       1.37
+     50      3.60       0.01053         28.2            0.296       1.57
+     58      3.01       0.01550         21.8            0.337       1.79
+     66      2.32       0.01849         15.7            0.290       1.53
+     74      1.15       0.00396          9.7            0.038       0.20
+     82      1.09       0.00556          3.6            0.020       0.11
+
+**Nearly flat from 26 to 66.** The young face a far larger proportional risk and
+lose far more life per death, and the two very nearly cancel. A deterrent ratio
+of 1.37 between 26 and 34 cannot produce the EIGHTY-FOLD difference in
+homelessness rates between band 1 and band 2 that the model shows.
+
+And the last two rows finish it off: at 74 and 82 the deterrent COLLAPSES to a
+fifth and a tenth of the young's, so the street is far cheaper for the very old
+-- and band 5 is empty anyway. Whatever holds the old in housing, it is not fear
+of dying.
+
+`homeless_death_risk_flat_in_age` is back to 0, Baggett, on the author's
+instruction. The coordinate and the other two settings stay, because they cost
+nothing and DEATHRISK3 is already measuring them.
+
+## SO WHY ARE THEY YOUNG? NOT KNOWN, AND NOT TO BE GUESSED AT AGAIN
+
+The mortality story was the second explanation offered and the second to fail
+on measurement -- impatience was the first. The remaining candidate is the other
+side of the trade: what the household GAINS by not paying rent, which should be
+largest where the marginal value of resources is largest. But that is a
+hypothesis of exactly the kind that has now been wrong twice, and the model does
+not report by age the things that would settle it.
+
+`print_all_moments` now prints four columns, age by age:
+
+    homelessness rate, homeownership rate, renter wealth, renter income
+
+with the reasoning in the source. If homelessness tracks renter WEALTH it is a
+buffer story. If it tracks the OWNERSHIP rate it is tenure -- an owner cannot be
+homeless, and two thirds of this model's households sit in the largest unit. If
+it tracks neither it is preferences, and the housing utility at the lowest rung
+is where to look.
+
+`AGEDIAG.txt` is one run at the reference vector to read them off.

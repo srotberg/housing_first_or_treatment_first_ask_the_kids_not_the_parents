@@ -2542,7 +2542,7 @@
         ! 1 = flat excess RISK, so the multiplier falls with age
         ! 2 = flat MULTIPLIER of 1.6, which external_calibration.tex quotes
         ! A vector coordinate, so all three run from one build.
-        integer :: homeless_death_risk_flat_in_age=1
+        integer :: homeless_death_risk_flat_in_age=0
         real(8) :: homeless_excess_death_risk=0.00396d0
         integer :: mortality_profiles_loaded=0
                             
@@ -4761,6 +4761,8 @@
 
             implicit none
 
+            integer :: diag_age_1
+
             real(8) :: w2o_1,vsl_1,csud_n_1,csud_d_1,chom_n_1,chom_d_1
             ! The counterfactual overwrites model_total_drug_users, so the
             ! denominator of the gap has to be held before it runs.
@@ -5666,6 +5668,32 @@
                 wealth_hist_mass_check
             write(*,*) "DIAG histogram wealth / total wealth (want 1.0)  =",&
                 wealth_hist_wealth_check
+
+            ! WHY THE MODEL'S HOMELESS ARE ALL YOUNG. The band shares say 98
+            ! per cent of them are 25 to 34 against 26 in the HUD count, and the
+            ! mortality gradient does not explain it: weighted by discounted
+            ! remaining life the deterrent runs 1.00, 1.37, 1.57 and 1.79 across
+            ! 26, 34, 50 and 58, which is nearly flat, and it COLLAPSES after 70
+            ! where the model has no homeless at all. So the answer has to be on
+            ! the other side of the trade -- what the household gains by not
+            ! paying rent -- and that is not currently reported by age.
+            !
+            ! These four columns are the trade, age by age: how many are on the
+            ! street, how many own (an owner cannot be homeless), and what a
+            ! renter of that age holds and earns. If homelessness tracks renter
+            ! wealth it is a buffer story; if it tracks the ownership rate it is
+            ! a tenure story; if it tracks neither it is preferences.
+            write(*,*) "DIAG --- the age profile of the housing margin ---"
+            do diag_age_1=1,life_span,3
+
+                write(*,'(A,I3,A,F10.6,A,F9.5,A,F11.5,A,F11.5)') &
+                    "DIAG age ", 25+diag_age_1, &
+                    "  homeless=", homelessness_by_age(1,diag_age_1), &
+                    "  own=", homeownership_by_age(1,diag_age_1), &
+                    "  renter wealth=", wealth_by_age_renter(1,diag_age_1), &
+                    "  renter income=", income_by_age_renter(1,diag_age_1)
+
+            end do
 
             write(*,*) "===== END OF MOMENTS ====="
 
