@@ -2846,3 +2846,54 @@ first one on this model with the drug block aimed at rather than drifting.
 
 The ordering that follows: bracket tau_u first, then repair b AT the cost that
 tau_u wants, not before it.
+
+## kappa AT ONE BETA, ON THE AUTHOR'S INSTRUCTION
+
+"i would also explore the case with 1 beta and kappa chosen to match the income
+of users". `KAPPA_1B.txt` is that case: kappa 6.0 and 7.0 at the one-beta
+vector of `point_d4ffbfdab5`, which already sits at kappa 8 with y_u 0.34108.
+
+It repeats the KAPPA_REDO pair at one type instead of two, so the two brackets
+are directly comparable and the question of whether the second beta changes
+kappa's answer becomes a measurement rather than an argument. At two betas the
+pair gave y_u of 0.8398 and 0.6773 and straddled the target of 0.740; at one
+beta and kappa 8 y_u is 0.34108, well below the 0.6773 that two betas gave at
+kappa 7, so the one-type curve sits LOWER and the kappa that hits 0.740 may be
+below 6.
+
+The same caveat carries and is the reason this is a bracket and not an answer:
+b is 0.0598 at this vector against a target of 0.089, and y_u is only readable
+where b is near target.
+
+## DO THE TWO BETAS EARN THEIR KEEP? THEY DO A DIFFERENT JOB FROM kappa
+
+The author asks whether the second beta is needed now that kappa matches the
+income of users. The two are not substitutes and do not touch the same moment:
+
+    kappa_phi_d_level         -> y_u,   income of drug users
+    discount_factor_impatient -> w_bot, net worth share of the bottom half
+
+Dropping the second beta loses nothing on y_u. What it loses is w_bot, which at
+one beta reads 0.1563 against 0.025 -- SIX TIMES the target -- because nothing
+drives it there at all.
+
+So the real question is not "beta or kappa", it is **whether the bottom half's
+share of net worth is a moment this paper wants to hit**. It is currently in the
+targeted list, and Section 1 of the note advertises it in the untargeted
+validation set: "the earnings held by the bottom and top tenths and the share of
+net worth held by the bottom half". A six-fold miss on a number the paper
+reports is a visible weakness whether or not it is targeted.
+
+THE EVIDENCE FOR KEEPING, measured rather than argued. The unequal-beta pair put
+w_bot at 0.02265 at an impatient beta of 0.95, nine per cent from target, and
+carried wealth over output to 3.015 at the same time -- half a per cent from the
+centre of its band, which one beta has never managed (it sits at 4.00, inside
+the band but at its top). So the second beta closes two things at once.
+
+THE COST. One extra solve per point, ten minutes against twenty, plus a
+two-pass path whose equal-beta test has not yet passed.
+
+VALIDATE2 settles the cost side. If it passes, the second beta is cheap and buys
+a six-fold improvement on an advertised moment. If it fails, dropping it is
+clearly right and w_bot goes back to being untargeted, which is what it was
+before the second beta was added.
