@@ -3118,3 +3118,43 @@ band 1 under ninety per cent. That bound holds whatever the weights.
 
 If the measurement comes back with band 1 much under 0.90, something in this
 reasoning is wrong and it is the reasoning that gets revised, not the number.
+
+## REPAIR3 OVERSHOT, WHICH IS WHAT FINALLY BRACKETS b
+
+    moment    before    after    target    predicted
+    b        0.05982   0.11909   0.089      -8%   ->  measured +33.8%
+    lambda_d 0.02108   0.05097   0.0368    -13%   ->  measured +38.5%
+    pi_eu    0.05574   0.05100   0.0485     +3%   ->  measured  +5.2%
+
+The Jacobian was badly wrong on the two drug moments and close on the third. It
+predicted a step that would leave b eight per cent short and instead carried it
+thirty-four per cent past. pi_eu, whose column came from a different experiment
+(the PEU_LADDER rungs), landed where it said it would.
+
+**But the overshoot is worth more than a hit would have been.** b's target has
+never been bracketed on this model, and now it is: 0.05982 below and 0.11909
+above. So is lambda_d's: 0.02108 and 0.05097 around 0.0368. An interpolation
+inside a measured pair replaces a Jacobian that has just been shown to be
+unreliable here.
+
+Scanning the fraction of the step that minimises the worse of the two:
+
+    f = 0.511      b        -> 0.09011   +1.2%
+                   lambda_d -> 0.03635   -1.2%
+                   pi_eu    -> 0.05332   +9.9%
+
+    addiction_scalar_1               0.01832949  -> 0.018410013
+    lambda_addiction                   19.30858  -> 18.148733
+    probability_becoming_unemployed 0.007541168  -> 0.0064031725
+
+Both drug moments inside the five per cent gate, pi_eu just inside ten.
+`REPAIR3_HALF.txt`.
+
+The linearity this assumes is an interpolation between two measured points and
+not an extrapolation past them, which is the one form this file trusts. If the
+truth is convex between them the measured value will miss and the pair will
+narrow, which is still progress.
+
+**AND IT UNBLOCKS kappa.** y_u is only readable where b is near target, which is
+why every kappa reading so far has been provisional. If this lands at b +1.2 per
+cent, the kappa bracket becomes worth measuring for the first time.
