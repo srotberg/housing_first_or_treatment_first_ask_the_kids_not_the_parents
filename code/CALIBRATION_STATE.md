@@ -2612,3 +2612,44 @@ that has been validated.
 beta it has no instrument at all: `discount_factor_impatient` does nothing when
 `number_of_beta_types=1`. 525 per cent is what the moment reads when nothing is
 driving it, and it will stay there until the two-pass path is cleared.
+
+## GATE EXIT 2 ON THE NEW MODEL: THE DRUG BLOCK REOPENED, REPAIR EMITTED
+
+`next_batch.py` scored 2 of 103 points, skipping 101 measured on earlier models,
+and closed at exit 2: best on max(|b gap|,|lambda_d gap|) is `d4ffbfdab5` at
+42.7 per cent against a gate of 5. pi_eu is also out, at +14.9, so `repair3.py`
+is the right tool rather than `restore.py`.
+
+    Jacobian (rows b, lambda_d, pi_eu; cols lambda_addiction,
+              addiction_scalar_1, probability_becoming_unemployed)
+        b          -1.53   -26.33   -0.98
+        lambda_d   -1.36   -36.67   -1.59
+        pi_eu      -0.16    -2.52   +0.31
+        condition number 132
+
+        lambda_addiction                 19.3086   -> 17.0388
+        addiction_scalar_1             0.0183295   -> 0.0184871
+        probability_becoming_unemployed 0.0075412  -> 0.0053142
+
+        predicted  b -8%, lambda_d -13%, pi_eu +3%
+        from       b -33%, lambda_d -43%, pi_eu +15%
+
+`REPAIR3_d4ffbfdab5.txt`, one line, carrying `number_of_beta_types=1`,
+`money_cost_of_treatment=0` and `utility_cost_of_treatment=0`, so it is on the
+live configuration and not a stale one.
+
+## THE UTILITY COST IS FLATTER THAN IT LOOKED
+
+    utility cost   tau_u        target 0.245
+        0          0.90058
+        0.05       0.86350
+
+A cost step of 0.05 buys 0.037 of take-up. Naively that puts the target near
+0.88, but that is an EXTRAPOLATION seventeen times the length of the pair that
+produced it and the rule here is not to make it. Line 3 at 0.5 is still solving
+and will say whether the curve steepens.
+
+What is already settled is the direction and the sign of the problem: take-up
+overshoots at zero cost rather than pinning under target, so the instrument
+pushes the right way and has unbounded room above. Whether it needs a cost of
+0.5 or of 5 is for line 3 and, if necessary, a fourth point.
