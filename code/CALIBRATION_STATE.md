@@ -4755,3 +4755,39 @@ Every other temporary in that loop body is a threadprivate module variable.
 `voucher_index_1` and `is_addicted_1` were the two exceptions, and `is_addicted_1`
 is benign -- a function of an OUTER loop variable, so every thread writes the
 same value.
+
+## FIXES 20 AND 21: THE LAST OF THE SHARED-ACCUMULATOR CLASS, AND aleph AT TWO TYPES
+
+**20. Five more variables given a single owner.** [Audit G 12] Thirteen sites.
+`mass_by_employment` had FOUR owners, so it reached 5*M where the pooled mass is
+2*M -- every welfare-by-employment average halved and
+`homeownership_by_employment` at 0.4 times truth. Also
+`mass_by_employment_and_age`, `mass_of_owners`, `mass_renters_by_age` and
+`total_homeless_1`. First owner in call order keeps each; the rest read it.
+
+**21. aleph's aggregate no longer grows with the number of types.** Divided by
+`mass_passes`, NOT by the mass. The distinction is the whole lesson of the
+reverted attempt: the target was set against the aggregate form, so dividing by
+the mass of 51.1 destroys a moment that is 28 per cent off, while dividing by
+`mass_passes` removes only the spurious doubling and leaves every one-type value
+untouched -- `mass_passes` is 1 at one type.
+
+## WHAT IS DELIBERATELY NOT FIXED, AND WHY
+
+Audit B F10, F11 and F12 are three targeted moments whose universes do not match
+their targets: `kappa_ued` counts retirees on both sides where `pi_eu` two lines
+above excludes them, `kappa_uem` counts retirees as employed on a carried index,
+and `theta`'s two halves divide by income concepts that differ by a bequest.
+
+**These are NOT two-pass bugs.** They are wrong at one beta in exactly the same
+way, and the author's instruction is to get the code running the TWO-BETA model
+correctly. Fixing them changes what the moments mean and so changes every
+calibrated parameter that answers to them -- a bigger disturbance than the
+two-pass work, and one that should be made deliberately rather than in the same
+sweep.
+
+Both direction-check favourably, which is recorded here so the work is not
+repeated: excluding retirees RAISES `kappa_ued`, which is 0.1247 against a target
+of 0.1625, and LOWERS `kappa_uem`, which is 0.3356 against 0.3000. Both move
+toward target. `theta`'s direction cannot be checked without the size of the
+bequest term, which is not printed.

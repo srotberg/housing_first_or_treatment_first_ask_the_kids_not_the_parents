@@ -8959,6 +8959,22 @@
         ! level -- probably by dividing by mass_passes, not by the whole mass --
         ! and it needs the equal-beta test to confirm the factor first.
 
+        ! aleph's AGGREGATE MUST NOT GROW WITH THE NUMBER OF TYPES.
+        !
+        ! model_value_of_life is a mass-weighted SUM and its denominator at the
+        ! print site is a MEAN, so the ratio is proportional to total mass. The
+        ! target was set against that aggregate form -- dividing by the whole
+        ! mass of 51.1 puts a moment that is 28 per cent off at 98.6 per cent
+        ! off, which is how the first attempt at this was caught and reverted.
+        !
+        ! But at TWO types the sum runs over two passes while the mean does not,
+        ! so aleph doubles for a reason that has nothing to do with the value of
+        ! life. Dividing by mass_passes, NOT by the mass, removes exactly that
+        ! factor and leaves the one-type value untouched: mass_passes is 1 at one
+        ! type, so nothing measured at one beta moves.
+        if (current_beta_type==number_of_beta_types) &
+            model_value_of_life(time_period)=model_value_of_life(time_period)/mass_passes
+
         model_GDP(time_period)=model_output(time_period)
         
         model_total_income(time_period)=model_output(time_period)+&
@@ -9379,7 +9395,21 @@
         if (accumulating_beta_types==0) model_average_rent(time_period)=0
         if (accumulating_beta_types==0) mass_of_renters(time_period)=0
         if (accumulating_beta_types==0) model_wealth_of_renters(time_period)=0
-        if (accumulating_beta_types==0) mass_of_owners(time_period)=0
+        ! ONE OWNER PER VARIABLE. Reset and accumulation disabled here.
+        !
+        ! Every reset in the chain is guarded to the FIRST pass, which is safe only
+        ! if exactly one routine owns the variable. Where two or more each reset and
+        ! each accumulate, the guard that stops pass two resetting also lets each
+        ! routine start from whatever the previous one left, so the second pass adds
+        ! another copy of the second type on top of a finished total. Four owners of
+        ! mass_by_employment made it 5*M where the pooled mass is 2*M, so every
+        ! welfare-by-employment average was halved and homeownership_by_employment
+        ! came out at 0.4 times truth.
+        !
+        ! It is the same quantity in every owner, so the FIRST in call order keeps
+        ! it and the rest read it. The order is the same in the driver and in
+        ! long_run_counter_factual, so the value is always built before it is read.
+        ! if (accumulating_beta_types==0) mass_of_owners(time_period)=0
         if (accumulating_beta_types==0) mass_of_owners_with_mortgage(time_period)=0
                 
         if (accumulating_beta_types==0) largest_housing_size_consumed_in_equilibrium=0
@@ -9639,7 +9669,21 @@
                                         model_average_owners_income(time_period)=model_average_owners_income(time_period)+&
                                             income_1*distribution_mass_used
                                             
-                                        mass_of_owners(time_period)=mass_of_owners(time_period)+distribution_mass_used
+                                        ! ONE OWNER PER VARIABLE. Reset and accumulation disabled here.
+                                        !
+                                        ! Every reset in the chain is guarded to the FIRST pass, which is safe only
+                                        ! if exactly one routine owns the variable. Where two or more each reset and
+                                        ! each accumulate, the guard that stops pass two resetting also lets each
+                                        ! routine start from whatever the previous one left, so the second pass adds
+                                        ! another copy of the second type on top of a finished total. Four owners of
+                                        ! mass_by_employment made it 5*M where the pooled mass is 2*M, so every
+                                        ! welfare-by-employment average was halved and homeownership_by_employment
+                                        ! came out at 0.4 times truth.
+                                        !
+                                        ! It is the same quantity in every owner, so the FIRST in call order keeps
+                                        ! it and the rest read it. The order is the same in the driver and in
+                                        ! long_run_counter_factual, so the value is always built before it is read.
+                                        ! mass_of_owners(time_period)=mass_of_owners(time_period)+distribution_mass_used
                                         
                                         if (min(financial_grid(financial_index_used),0.d0)<0) then
                                         
@@ -11074,7 +11118,21 @@
         if (accumulating_beta_types==0) addiction_share_of_income_by_employment(time_period,:)=0
         if (accumulating_beta_types==0) percent_addicted_by_employment(time_period,:)=0
         if (accumulating_beta_types==0) percent_homeless_by_employment(time_period,:)=0
-        if (accumulating_beta_types==0) mass_by_employment(time_period,:)=0
+        ! ONE OWNER PER VARIABLE. Reset and accumulation disabled here.
+        !
+        ! Every reset in the chain is guarded to the FIRST pass, which is safe only
+        ! if exactly one routine owns the variable. Where two or more each reset and
+        ! each accumulate, the guard that stops pass two resetting also lets each
+        ! routine start from whatever the previous one left, so the second pass adds
+        ! another copy of the second type on top of a finished total. Four owners of
+        ! mass_by_employment made it 5*M where the pooled mass is 2*M, so every
+        ! welfare-by-employment average was halved and homeownership_by_employment
+        ! came out at 0.4 times truth.
+        !
+        ! It is the same quantity in every owner, so the FIRST in call order keeps
+        ! it and the rest read it. The order is the same in the driver and in
+        ! long_run_counter_factual, so the value is always built before it is read.
+        ! if (accumulating_beta_types==0) mass_by_employment(time_period,:)=0
         if (accumulating_beta_types==0) total_mass_by_employment(time_period,:)=0
         if (accumulating_beta_types==0) drug_quantity_by_employment(time_period,:)=0
         if (accumulating_beta_types==0) clean_mass_by_employment(time_period,:)=0
@@ -11158,7 +11216,21 @@
         if (accumulating_beta_types==0) model_fraction_addicted_homeless_no_vouchers(time_period)=0
         if (accumulating_beta_types==0) frac_getting_vouchers=0
         
-        if (accumulating_beta_types==0) total_homeless_1=0
+        ! ONE OWNER PER VARIABLE. Reset and accumulation disabled here.
+        !
+        ! Every reset in the chain is guarded to the FIRST pass, which is safe only
+        ! if exactly one routine owns the variable. Where two or more each reset and
+        ! each accumulate, the guard that stops pass two resetting also lets each
+        ! routine start from whatever the previous one left, so the second pass adds
+        ! another copy of the second type on top of a finished total. Four owners of
+        ! mass_by_employment made it 5*M where the pooled mass is 2*M, so every
+        ! welfare-by-employment average was halved and homeownership_by_employment
+        ! came out at 0.4 times truth.
+        !
+        ! It is the same quantity in every owner, so the FIRST in call order keeps
+        ! it and the rest read it. The order is the same in the driver and in
+        ! long_run_counter_factual, so the value is always built before it is read.
+        ! if (accumulating_beta_types==0) total_homeless_1=0
         if (accumulating_beta_types==0) total_addicted_and_homeless_1=0
         if (accumulating_beta_types==0) model_fraction_homeless_by_choice(time_period)=0
         if (accumulating_beta_types==0) val_homeless_afford_on_income(time_period)=0
@@ -12002,8 +12074,22 @@
                                             
                                         end if
                                         
-                                        mass_by_employment(time_period,employment_index)=&
-                                            mass_by_employment(time_period,employment_index)+distribution_mass_used
+                                        ! ONE OWNER PER VARIABLE. Reset and accumulation disabled here.
+                                        !
+                                        ! Every reset in the chain is guarded to the FIRST pass, which is safe only
+                                        ! if exactly one routine owns the variable. Where two or more each reset and
+                                        ! each accumulate, the guard that stops pass two resetting also lets each
+                                        ! routine start from whatever the previous one left, so the second pass adds
+                                        ! another copy of the second type on top of a finished total. Four owners of
+                                        ! mass_by_employment made it 5*M where the pooled mass is 2*M, so every
+                                        ! welfare-by-employment average was halved and homeownership_by_employment
+                                        ! came out at 0.4 times truth.
+                                        !
+                                        ! It is the same quantity in every owner, so the FIRST in call order keeps
+                                        ! it and the rest read it. The order is the same in the driver and in
+                                        ! long_run_counter_factual, so the value is always built before it is read.
+                                        ! mass_by_employment(time_period,employment_index)=&
+                                        ! mass_by_employment(time_period,employment_index)+distribution_mass_used
 
                                         ! EVERY HOUSEHOLD WITH THE DISORDER COUNTS HERE. This block is
                                         ! already reached only when sud_of is one, so the mass added is
@@ -13080,7 +13166,21 @@
         if (accumulating_beta_types==0) mass_of_homeowners_at_housing_spending(time_period,:)=0
         
         if (accumulating_beta_types==0) model_rent_burden_by_age(time_period,:,:)=0
-        if (accumulating_beta_types==0) mass_renters_by_age(time_period,:)=0
+        ! ONE OWNER PER VARIABLE. Reset and accumulation disabled here.
+        !
+        ! Every reset in the chain is guarded to the FIRST pass, which is safe only
+        ! if exactly one routine owns the variable. Where two or more each reset and
+        ! each accumulate, the guard that stops pass two resetting also lets each
+        ! routine start from whatever the previous one left, so the second pass adds
+        ! another copy of the second type on top of a finished total. Four owners of
+        ! mass_by_employment made it 5*M where the pooled mass is 2*M, so every
+        ! welfare-by-employment average was halved and homeownership_by_employment
+        ! came out at 0.4 times truth.
+        !
+        ! It is the same quantity in every owner, so the FIRST in call order keeps
+        ! it and the rest read it. The order is the same in the driver and in
+        ! long_run_counter_factual, so the value is always built before it is read.
+        ! if (accumulating_beta_types==0) mass_renters_by_age(time_period,:)=0
         
         if (accumulating_beta_types==0) mass_of_renters_1=0
         if (accumulating_beta_types==0) val_burden50_by_unit(time_period,:)=0
@@ -13401,8 +13501,22 @@
                                                             
                                         end do
                                                                                                                 
-                                        mass_renters_by_age(time_period,age_index)=mass_renters_by_age(time_period,age_index)+&
-                                            distribution_mass_used
+                                        ! ONE OWNER PER VARIABLE. Reset and accumulation disabled here.
+                                        !
+                                        ! Every reset in the chain is guarded to the FIRST pass, which is safe only
+                                        ! if exactly one routine owns the variable. Where two or more each reset and
+                                        ! each accumulate, the guard that stops pass two resetting also lets each
+                                        ! routine start from whatever the previous one left, so the second pass adds
+                                        ! another copy of the second type on top of a finished total. Four owners of
+                                        ! mass_by_employment made it 5*M where the pooled mass is 2*M, so every
+                                        ! welfare-by-employment average was halved and homeownership_by_employment
+                                        ! came out at 0.4 times truth.
+                                        !
+                                        ! It is the same quantity in every owner, so the FIRST in call order keeps
+                                        ! it and the rest read it. The order is the same in the driver and in
+                                        ! long_run_counter_factual, so the value is always built before it is read.
+                                        ! mass_renters_by_age(time_period,age_index)=mass_renters_by_age(time_period,age_index)+&
+                                        ! distribution_mass_used
                                                  
                                     elseif (amortization_used>1) then
                                                                                                                                     
@@ -13750,7 +13864,21 @@
         if (accumulating_beta_types==0) welfare_by_employment(time_period,:)=0
         if (accumulating_beta_types==0) welfare_by_employment_youngest(time_period,:)=0
         if (accumulating_beta_types==0) welfare_by_employment_youngest_old_dist(time_period,:)=0
-        if (accumulating_beta_types==0) mass_by_employment(time_period,:)=0
+        ! ONE OWNER PER VARIABLE. Reset and accumulation disabled here.
+        !
+        ! Every reset in the chain is guarded to the FIRST pass, which is safe only
+        ! if exactly one routine owns the variable. Where two or more each reset and
+        ! each accumulate, the guard that stops pass two resetting also lets each
+        ! routine start from whatever the previous one left, so the second pass adds
+        ! another copy of the second type on top of a finished total. Four owners of
+        ! mass_by_employment made it 5*M where the pooled mass is 2*M, so every
+        ! welfare-by-employment average was halved and homeownership_by_employment
+        ! came out at 0.4 times truth.
+        !
+        ! It is the same quantity in every owner, so the FIRST in call order keeps
+        ! it and the rest read it. The order is the same in the driver and in
+        ! long_run_counter_factual, so the value is always built before it is read.
+        ! if (accumulating_beta_types==0) mass_by_employment(time_period,:)=0
         if (accumulating_beta_types==0) mass_by_employment_youngest(time_period,:)=0
         if (accumulating_beta_types==0) wealth_by_employment(time_period,:)=0
         
@@ -14179,8 +14307,22 @@
                                             
                                     end if
                                     
-                                    mass_by_employment(time_period,employment_index_to_use)=&
-                                        mass_by_employment(time_period,employment_index_to_use)+distribution_mass_used
+                                    ! ONE OWNER PER VARIABLE. Reset and accumulation disabled here.
+                                    !
+                                    ! Every reset in the chain is guarded to the FIRST pass, which is safe only
+                                    ! if exactly one routine owns the variable. Where two or more each reset and
+                                    ! each accumulate, the guard that stops pass two resetting also lets each
+                                    ! routine start from whatever the previous one left, so the second pass adds
+                                    ! another copy of the second type on top of a finished total. Four owners of
+                                    ! mass_by_employment made it 5*M where the pooled mass is 2*M, so every
+                                    ! welfare-by-employment average was halved and homeownership_by_employment
+                                    ! came out at 0.4 times truth.
+                                    !
+                                    ! It is the same quantity in every owner, so the FIRST in call order keeps
+                                    ! it and the rest read it. The order is the same in the driver and in
+                                    ! long_run_counter_factual, so the value is always built before it is read.
+                                    ! mass_by_employment(time_period,employment_index_to_use)=&
+                                    ! mass_by_employment(time_period,employment_index_to_use)+distribution_mass_used
                                                                          
                                     if (years_left_on_mortgage_index<=1) then
                                     
@@ -15104,8 +15246,36 @@
         if (accumulating_beta_types==0) housing_size_by_employment_and_age(time_period,:,:)=0
         if (accumulating_beta_types==0) consumption_by_employment_and_age(time_period,:,:)=0
         if (accumulating_beta_types==0) wealth_by_employment_and_age(time_period,:,:)=0
-        if (accumulating_beta_types==0) mass_by_employment(time_period,:)=0
-        if (accumulating_beta_types==0) mass_by_employment_and_age(time_period,:,:)=0
+        ! ONE OWNER PER VARIABLE. Reset and accumulation disabled here.
+        !
+        ! Every reset in the chain is guarded to the FIRST pass, which is safe only
+        ! if exactly one routine owns the variable. Where two or more each reset and
+        ! each accumulate, the guard that stops pass two resetting also lets each
+        ! routine start from whatever the previous one left, so the second pass adds
+        ! another copy of the second type on top of a finished total. Four owners of
+        ! mass_by_employment made it 5*M where the pooled mass is 2*M, so every
+        ! welfare-by-employment average was halved and homeownership_by_employment
+        ! came out at 0.4 times truth.
+        !
+        ! It is the same quantity in every owner, so the FIRST in call order keeps
+        ! it and the rest read it. The order is the same in the driver and in
+        ! long_run_counter_factual, so the value is always built before it is read.
+        ! if (accumulating_beta_types==0) mass_by_employment(time_period,:)=0
+        ! ONE OWNER PER VARIABLE. Reset and accumulation disabled here.
+        !
+        ! Every reset in the chain is guarded to the FIRST pass, which is safe only
+        ! if exactly one routine owns the variable. Where two or more each reset and
+        ! each accumulate, the guard that stops pass two resetting also lets each
+        ! routine start from whatever the previous one left, so the second pass adds
+        ! another copy of the second type on top of a finished total. Four owners of
+        ! mass_by_employment made it 5*M where the pooled mass is 2*M, so every
+        ! welfare-by-employment average was halved and homeownership_by_employment
+        ! came out at 0.4 times truth.
+        !
+        ! It is the same quantity in every owner, so the FIRST in call order keeps
+        ! it and the rest read it. The order is the same in the driver and in
+        ! long_run_counter_factual, so the value is always built before it is read.
+        ! if (accumulating_beta_types==0) mass_by_employment_and_age(time_period,:,:)=0
         if (accumulating_beta_types==0) homeownership_by_age(time_period,:)=0
         if (accumulating_beta_types==0) model_assets_by_age(time_period,:)=0
         if (accumulating_beta_types==0) housing_size_by_age(time_period,:)=0
@@ -15582,12 +15752,40 @@
                                         min(financial_grid(financial_index),0.d0))+&
                                         max(financial_grid(financial_index),0.d0))*distribution_mass_used
                                                                 
-                                    mass_by_employment(time_period,employment_index_to_use)=&
-                                        mass_by_employment(time_period,employment_index_to_use)+distribution_mass_used
+                                    ! ONE OWNER PER VARIABLE. Reset and accumulation disabled here.
+                                    !
+                                    ! Every reset in the chain is guarded to the FIRST pass, which is safe only
+                                    ! if exactly one routine owns the variable. Where two or more each reset and
+                                    ! each accumulate, the guard that stops pass two resetting also lets each
+                                    ! routine start from whatever the previous one left, so the second pass adds
+                                    ! another copy of the second type on top of a finished total. Four owners of
+                                    ! mass_by_employment made it 5*M where the pooled mass is 2*M, so every
+                                    ! welfare-by-employment average was halved and homeownership_by_employment
+                                    ! came out at 0.4 times truth.
+                                    !
+                                    ! It is the same quantity in every owner, so the FIRST in call order keeps
+                                    ! it and the rest read it. The order is the same in the driver and in
+                                    ! long_run_counter_factual, so the value is always built before it is read.
+                                    ! mass_by_employment(time_period,employment_index_to_use)=&
+                                    ! mass_by_employment(time_period,employment_index_to_use)+distribution_mass_used
                                         
-                                    mass_by_employment_and_age(time_period,employment_index_to_use,age_index)=&
-                                        mass_by_employment_and_age(time_period,employment_index_to_use,age_index)+&
-                                        distribution_mass_used
+                                    ! ONE OWNER PER VARIABLE. Reset and accumulation disabled here.
+                                    !
+                                    ! Every reset in the chain is guarded to the FIRST pass, which is safe only
+                                    ! if exactly one routine owns the variable. Where two or more each reset and
+                                    ! each accumulate, the guard that stops pass two resetting also lets each
+                                    ! routine start from whatever the previous one left, so the second pass adds
+                                    ! another copy of the second type on top of a finished total. Four owners of
+                                    ! mass_by_employment made it 5*M where the pooled mass is 2*M, so every
+                                    ! welfare-by-employment average was halved and homeownership_by_employment
+                                    ! came out at 0.4 times truth.
+                                    !
+                                    ! It is the same quantity in every owner, so the FIRST in call order keeps
+                                    ! it and the rest read it. The order is the same in the driver and in
+                                    ! long_run_counter_factual, so the value is always built before it is read.
+                                    ! mass_by_employment_and_age(time_period,employment_index_to_use,age_index)=&
+                                    ! mass_by_employment_and_age(time_period,employment_index_to_use,age_index)+&
+                                    ! distribution_mass_used
                                         
                                     consumption_by_age(time_period,age_index)=consumption_by_age(time_period,age_index)+&
                                         consumption_used*distribution_mass_used
