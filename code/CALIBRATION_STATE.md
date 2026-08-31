@@ -2362,3 +2362,47 @@ because only two points exist on the current hash.
 type it does nothing, so **w_bot has no instrument until the two-pass path is
 repaired**. That is the one thing the author asked for that this does not
 deliver.
+
+## THE VALIDATION FAILURE WAS THE TEST, NOT THE MODEL. beta DOES NOT STAY EQUAL
+
+I reported the two-pass path as broken. That is not established, and the
+evidence I gave for it does not support it.
+
+**`discount_factor` is INTERNALLY CALIBRATED and `discount_factor_impatient` is
+NOT.** The patient beta is bisected on wealth over output inside every point
+run -- `distance_discount_factor` sits in the calibration loop's while
+condition, and the update at line 33905 is
+`discount_factor=0.5*(discount_factor_lo+discount_factor_hi)`, gated only on
+`re_do_simulation_with_fixed_parameters==1`, which is ZERO in a point run.
+`distance_discount_factor_impatient` and `discount_factor_impatient_adjuster`
+are both declared and never used anywhere.
+
+So a run that STARTS with the two equal does not KEEP them equal. The patient
+one bisects away from 0.99715 while the impatient one sits where the handover
+left it. **The two-pass "equal beta" run was a genuine two-type economy**, and a
+two-type economy has no obligation to reproduce a one-type one. The 23
+disagreeing moments are what two different economies look like, not what a
+pooling bug looks like. tau_l's ratio of 2.012 is a coincidence of magnitude.
+
+The pooling may still be wrong. It is now UNTESTED, which is a different and
+weaker statement than the one I made.
+
+### freeze_beta_bisection MAKES THE TEST MEAN WHAT IT CLAIMS
+
+`integer, parameter :: freeze_beta_bisection=0`, beside `freeze_fitted_internals`.
+At 1 it zeroes `distance_discount_factor` and gates all three sites that write
+`discount_factor` in the update block, so beta stays exactly where the vector
+puts it. `code/VALIDATE2.txt` is the re-test: two lines, identical but for
+`number_of_beta_types=1` and `=2`, to be run with the flag at 1. Because the
+type count is a vector coordinate now, the two lines have different tags and
+neither collides with anything.
+
+### AND A REAL IDENTIFICATION POINT, SEPARATE FROM THE BUG
+
+Patient beta is calibrated internally on wealth over output; impatient beta is
+set externally on w_bot. That is a coherent two-parameter, two-moment
+assignment. But the bisection sets the patient beta from a POOLED moment while
+only half the population carries it, so pushing pooled wealth over output to
+target moves the patient beta about twice as far as it would at one type -- and
+the further it goes, the more the two types differ. Ill-conditioned rather than
+wrong, and worth knowing before reading a fitted two-type point.

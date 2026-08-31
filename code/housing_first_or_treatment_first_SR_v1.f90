@@ -1357,6 +1357,16 @@
         ! adjuster set to zero without its distance leaves the loop waiting on a
         ! parameter that can no longer move.
         integer, parameter :: freeze_fitted_internals=1
+
+        ! FREEZES THE BISECTION ON beta, FOR THE EQUAL-BETA VALIDATION ONLY.
+        ! discount_factor is internally calibrated on wealth over output and
+        ! discount_factor_impatient is not, so a run started with the two equal
+        ! does NOT keep them equal: the patient one bisects away while the
+        ! impatient one sits where the handover left it. A two-pass run at
+        ! "equal betas" is therefore a genuine two-type economy and cannot be
+        ! expected to reproduce the one-type one. Set this to 1 to hold beta
+        ! where the vector puts it and make that test mean what it claims.
+        integer, parameter :: freeze_beta_bisection=0
         integer, parameter :: re_do_simulation_with_fixed_parameters=&
             max(sweep_addiction_scalar,diagnostic_simulation)
         integer, parameter :: calibrate_only_rental_management_costs=1
@@ -33881,7 +33891,7 @@
 
                         end if
 
-                        distance_discount_factor=abs(gap_discount_factor_1)
+                        distance_discount_factor=(1-freeze_beta_bisection)*abs(gap_discount_factor_1)
 
                         if ((discount_factor_lo>=0) .AND. &
                             (discount_factor_hi>discount_factor_lo)) then
@@ -33902,7 +33912,8 @@
 
                             else
 
-                                discount_factor=0.5d0*(discount_factor_lo+discount_factor_hi)
+                                if (freeze_beta_bisection==0) &
+                                    discount_factor=0.5d0*(discount_factor_lo+discount_factor_hi)
 
                                 write(*,*) "beta bisecting in [", discount_factor_lo, &
                                     ",", discount_factor_hi, "]"
@@ -33912,7 +33923,8 @@
                         else
 
                             ! No bracket yet, so traverse.
-                            discount_factor=min(max(discount_factor-discount_factor_adjuster*&
+                            if (freeze_beta_bisection==0) &
+                                discount_factor=min(max(discount_factor-discount_factor_adjuster*&
                                 gap_discount_factor_1,0.5d0),1.05d0)
 
                         end if
