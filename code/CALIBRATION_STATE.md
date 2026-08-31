@@ -1642,3 +1642,50 @@ over as tau_u's instrument, which it did before, so that part is a swap rather
 than a loss. But a MONETARY price has distributional bite that a utility cost
 does not: it is what stops a poor household buying treatment, which is close to
 the question the paper asks.
+
+## THE STAMP CAUGHT A CONTAMINATED ROUND ON ITS FIRST OUTING
+
+Two of ROUND18's four points carry a `MODEL` line and two do not, which splits
+the round across two models:
+
+    453ae48b31  largest_house_size 0.13   unstamped  -> PRE-revert, clean
+    b566bad1d3  expander 1.5              unstamped  -> PRE-revert, clean
+    db152f5587  largest_house_size 0.16   stamped    -> POST-revert, NOT comparable
+    350d9853df  expander 0.7              stamped    -> POST-revert, NOT comparable
+
+The two stamped points were run by workers that pulled the food stamp revert
+mid-round and rebuilt, exactly the hazard the stamp was added for. It worked on
+its first outing, and without it the 0.16 point would have gone into the
+`largest_house_size` ladder as though it were a clean arm.
+
+**The stamp itself was buggy and wrote an EMPTY hash.** The script does
+`cd "$(dirname "$0")"` at line 24, so a later `$(dirname "$0")` resolved to
+code/code and md5sum failed silently. Fixed: the hash is computed once after the
+cd, and the script now exits rather than writing an unidentifiable point. An
+empty stamp is nearly as bad as none. Note it still did its job -- the PRESENCE
+of the line was enough to sort the round.
+
+## THE CLEAN largest_house_size ARM, AND A VERY ENCOURAGING DIRTY ONE
+
+Clean, both on the pre-revert model, 0.1118 -> 0.13:
+
+    gamma  30.8 per cent off -> 22.2   elasticity +0.78
+    h_2    60.8 -> 49.1                elasticity +1.73
+
+The 0.16 point is on the reverted model, so it is NOT an elasticity and must not
+be read as one. But as a combined observation of both changes together it is the
+best housing block seen in this project:
+
+    gamma  0.24285  target 0.268    9.4 per cent off
+    h_2    0.10122  target 0.101    0.2 per cent off
+
+h_2, which was called unreachable four times, is essentially ON TARGET. Its cbar
+is 206.5 per cent off, which is the tell that it is the new model -- max_food_cost
+is a live moment again there and has not been recalibrated.
+
+So the combination to test on the reverted model is `largest_house_size` near
+0.16 with the drug block repaired: the arm costs b -5.56 and lambda_d -7.03,
+which is large but is what the locus repairs.
+
+`housing_status_grid_expander` is dead on both models: 1.0 -> 1.5 and 1.0 -> 0.7
+move gamma by under one per cent and h_2 by under a tenth.

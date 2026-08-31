@@ -101,7 +101,17 @@ if awk -v a="${P[smallest_rental_relative_to_lowest_income]}" \
     echo "run_one_point: smallest_rental_relative_to_lowest_income=${P[smallest_rental_relative_to_lowest_income]}" >&2
     echo "run_one_point: is not below largest_house_size=${P[largest_house_size]}; the housing" >&2
     echo "run_one_point: grid would invert and every unit share would be reversed." >&2
-    mkdir -p points
+    # THE MODEL HASH, COMPUTED HERE because the script cd'd to its own directory at
+# the top, which made an earlier "$(dirname "$0")" resolve to code/code and
+# stamp an EMPTY hash on two points before it was caught. An empty stamp is
+# nearly as bad as none, so fail loudly rather than write one.
+MODEL_HASH=$(md5sum ./housing_first_or_treatment_first_SR_v1.f90 | cut -c1-10)
+if [ -z "$MODEL_HASH" ]; then
+    echo "FATAL: could not hash the source; refusing to write an unidentifiable point" >&2
+    exit 1
+fi
+
+mkdir -p points
     printf 'point FAILED: inverted housing grid, smallest=%s largest=%s\n' \
         "${P[smallest_rental_relative_to_lowest_income]}" "${P[largest_house_size]}" \
         > "points/point_inverted_grid_$$.FAILED.txt"
@@ -295,7 +305,7 @@ mkdir -p points
     # is in the standing rules and has no detector; this is the detector. A
     # worker that pulls a source change mid-round and rebuilds now stamps the
     # new hash, so the point can be identified and discarded instead of trusted.
-    echo "MODEL $(md5sum "$(dirname "$0")/housing_first_or_treatment_first_SR_v1.f90" | cut -c1-10)"
+    echo "MODEL ${MODEL_HASH}"
     echo -n "VECTOR"
     for k in $(echo "${!P[@]}" | tr ' ' '\n' | sort); do printf ' %s=%s' "$k" "${P[$k]}"; done
     echo
