@@ -2183,3 +2183,47 @@ first time.
 RULE, AGAIN, HAVING BROKEN IT: MEASURE BEFORE BELIEVING IT. The instruction is
 in this file and in the engine prompt, and I still published a table of
 "corrected" values derived from a mechanism rather than from a run.
+
+## THE AGE PROFILE OF JOB FINDING: PARKED BY THE AUTHOR, WITH ONE FREE FINDING
+
+The author asked whether Krueger et al.\ is the baseline for the job finding
+rate, then said to park the whole question and see how the model fits first.
+Parked. Recorded here so it is not re-derived.
+
+**Yes, it is the baseline.** Section 5 of the note, at the paragraph for
+$\bar\pi^{ue}$: "the annual job finding rate ... which I set to @@q_bar_pi_ue@@
+from the annual exit rate Krueger et al.\ (2014) estimate on matched CPS
+panels." Krueger, Cramer and Cho (2014), Brookings Papers on Economic Activity.
+$\bar\pi^{eu}$ is then chosen to hit the CPS unemployment rate given it.
+
+**But that paper measures DURATION dependence, not an age profile.** Its subject
+is how the exit rate to employment falls with time already spent unemployed. It
+would not give an age profile without leaning on a demographic cut that is not
+what the paper is designed to estimate. An age profile needs matched-CPS UE
+transition rates by age, or published BLS duration-by-age tabulations, and
+neither is in `data/`.
+
+**THE FREE FINDING. The model already carries the state duration dependence
+needs, and does not use it.** Unemployment states 2 and 3 are distinct: 3 is the
+insured period and 2 is the uninsured continuation, and the transition is
+3 -> 2, so a spell that continues moves to the state that pays nothing. That is
+a one-period-of-unemployment marker sitting in the state vector already. But
+both states get the SAME exit rate:
+
+    25863   unemployment_process(:,3,1,1,0,:)=probability_becoming_employed
+    25874   unemployment_process(:,2,1,1,0,:)=probability_becoming_employed
+
+So the model distinguishes the long-term unemployed for UI purposes and then
+gives them a first-year household's chance of finding work. Making the rate out
+of state 2 lower than out of state 3 is exactly what Krueger et al.\ measures,
+costs NO new state variable, and adds one parameter.
+
+**And it has a mechanism for the age profile that an age-specific rate does not.**
+Homelessness in this model requires exhausting assets. The young hold none, so a
+SHORT spell puts them on the street; the middle-aged hold a buffer, so only a
+LONG spell does. Duration dependence fattens the tail of spell lengths, which
+disproportionately reaches the households that need a long spell to fall -- the
+older ones. That is a conjecture about this model, not a result. It would be
+measured, not asserted.
+
+Both are modelling changes and so the author's call. Neither is being made now.
