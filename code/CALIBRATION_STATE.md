@@ -4306,3 +4306,65 @@ variable; the rest read it. The call order inside the loop is SES, SEHR, GRC,
 aggregate_consumption, welfare, housing_spending, welfare_by_characteristics,
 homeownership_by_characteristics, wealth_of_old -- and it is the same order in
 `long_run_counter_factual`, so the first owner in that list is always safe.
+
+# ===================================================================
+# THE PLAN WHILE THE AUTHOR IS AWAY, 31 AUGUST 20:20
+# ===================================================================
+
+The author: "once the code is ready, start the calibration of the two beta
+model", and before that, "keep fixing and auditing, i will let you continue on
+your own". This is the standing plan. The engine fires every thirty minutes and
+should read THIS section first.
+
+## STEP 1 -- VALIDATE5 MUST PASS. Nothing else matters until it does.
+
+`session_01FWJv2tYBanDkntKvY6RRx9`, source `df02e3db80`. The equal-beta test:
+both discount factors equal, bisection frozen, so the two types are identical
+copies and all 242 reported numbers must match the one-type run. It found 135
+disagreements before the seventeen fixes.
+
+  - **PASS** -> go to step 2.
+  - **FAIL with a much smaller count** -> the remaining disagreements name the
+    remaining bugs, one per line, with the ratio. Fix those, re-run, repeat.
+    This is the loop that converges; do not start a calibration inside it.
+  - **FAIL with 135 again** -> something is wrong with the test or the checkout,
+    not the model. Check the source hash the worker actually ran.
+
+## STEP 2 -- RE-MEASURE THE DRUG BLOCK AT TWO TYPES
+
+Everything measured at two betas before 20:00 today is void: the 187-site
+normalisation bug alone changed every ratio by (1+T)/(2T) with T the denominator
+mass, so the error differs moment by moment and no scaling recovers it.
+
+`DRUG2B.txt` is written and its three lines are still the right experiment --
+`addiction_scalar_1` at 0.0182, 0.0180, 0.0178 from the drug-closed vector, at
+two betas. Re-launch it on the validated source. At two types the one-beta
+closure did NOT transfer: b came out at 0.601 against 0.089, because impatient
+households discount the future cost of the disorder and use far more. The
+elasticity of b on `addiction_scalar_1` measured 80 at one beta, so bracket,
+never step.
+
+## STEP 3 -- THEN THE CALIBRATION LOOP, AT TWO TYPES
+
+`number_of_beta_types` defaults to 2 in both the source and `run_one_point.sh`.
+The assignment the author specified: patient beta bisected internally on
+wealth over output, target 3.0; impatient beta driven by `next_batch.py` on
+`w_bot`, target 0.025. Both are wired and verified.
+
+Run the gate as normal. The archive has ZERO points on the fixed source, so seed
+first -- do not run `next_batch.py` against an empty archive.
+
+## WHAT TO WATCH, AND WHY
+
+  - **y_u.** Fix 16 made its numerator interest-inclusive to match its
+    denominator. The bias was downward and y_u has been failing downward all day
+    at 0.33 to 0.47 against 0.740, with kappa unable to close it. It may now come
+    in much closer without kappa moving at all. If it does, the kappa bracket
+    measured earlier is void and kappa should be re-sited.
+  - **The age profile.** Fix 10 found it was divided by three times one type's
+    mass instead of two, so every by-age number was half its true value. The
+    author has asked for this table repeatedly. It is in every point now as the
+    `DIAG age` block: homelessness, ownership, renter wealth, renter income.
+  - **h_1.** Fix 17 gave it a single owner; it had been a 1:3 mixture.
+  - **The ten INVARIANT lines.** All must read PASS on every point. If one FAILS
+    the point is not evidence, whatever its moments say.
