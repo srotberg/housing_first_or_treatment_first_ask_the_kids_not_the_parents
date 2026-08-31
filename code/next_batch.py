@@ -30,6 +30,7 @@ differing in ONE coordinate, nearest the winning point first. A parameter with n
 such pair gets no line, and says so, rather than being moved on a guess.
 """
 import glob
+import hashlib
 import math
 import os
 import re
@@ -383,15 +384,44 @@ def gap(name, pair):
     return abs(m / tg - 1)
 
 
+def current_model_hash():
+    """The md5 of the source the archive would be compared against."""
+    src = os.path.join(HERE, 'housing_first_or_treatment_first_SR_v1.f90')
+    h = hashlib.md5(open(src, 'rb').read()).hexdigest()[:10]
+    return h
+
+
 def archive():
-    out = {}
+    """Only points measured on the CURRENT source.
+
+    THE ARCHIVE SPANS MODELS NOW AND SCORING ACROSS THEM IS SILENTLY WRONG.
+    The point tag is the md5 of the parameter vector alone, so a vector
+    re-measured after a source change keeps its tag; nothing in the filename
+    or the vector says which model produced it. run_one_point.sh writes a
+    MODEL line for exactly this reason, and this is the consumer of it.
+
+    A point with no MODEL line predates the stamp and belongs to an older
+    source, so it is excluded rather than assumed current -- the whole point
+    is to stop old elasticities being mixed into a new step. If that leaves
+    too few points the caller says so; an empty batch is a better outcome
+    than a batch aimed at a model that no longer exists.
+    """
+    want = current_model_hash()
+    out, skipped = {}, 0
     for f in sorted(glob.glob(os.path.join(HERE, 'points', '*.txt'))):
         if f.endswith('.FAILED.txt'):
             continue
         t = open(f).read()
+        mh = re.search(r'^MODEL (\S*)', t, re.M)
+        if not mh or mh.group(1) != want:
+            skipped += 1
+            continue
         v, m = vector(t), moments(t)
         if v and 'b' in m and 'lambda_d' in m:
             out[os.path.basename(f)[6:-4]] = (v, m)
+    if skipped:
+        print('  %d of %d points are on a different model (%s) and were skipped'
+              % (skipped, skipped + len(out), want), file=sys.stderr)
     return out
 
 

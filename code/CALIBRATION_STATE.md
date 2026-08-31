@@ -1689,3 +1689,52 @@ which is large but is what the locus repairs.
 
 `housing_status_grid_expander` is dead on both models: 1.0 -> 1.5 and 1.0 -> 0.7
 move gamma by under one per cent and h_2 by under a tenth.
+
+## THE FOOD STAMP REVERT CLOSED h_1, WHICH NO PARAMETER COULD
+
+Same vector, `d25318fa67` on the old model against `d25318fa67_nosnap` on the
+reverted one:
+
+    h_1        41.8 per cent off ->  1.9    <- closed
+    pi_eu      20.3 ->  9.2                 <- closed
+    lambda_m   15.9 ->  6.7                 <- closed
+    h_2        60.8 -> 51.1
+    gamma      30.8 -> 30.3                 barely moves
+
+    lambda_d    6.5 -> 80.6                 <- opened
+    b           4.4 -> 72.3                 <- opened
+    tau_u       5.4 -> 65.8                 <- opened
+    theta       4.9 -> 58.6                 <- opened
+    kappa_ued   8.1 -> 36.7                 <- opened
+    cbar         --  -> 166.8               max_food_cost is live and stale
+
+**h_1 was the binding moment for eighteen rounds and had no instrument** -- it is
+collinear with lambda_m through `value_of_life`, ratios -1.063 against -1.048 --
+and the consumption floor closed it without a search. lambda_m came with it, so
+the collinearity stopped mattering rather than being solved.
+
+What opened is the drug block, and the reason is legible: `max_food_cost` is a
+calibrated parameter again sitting at a value the old rule chose, so the
+consumption floor for the poorest households is wrong, and that is exactly where
+drug users live. That block has the best measured instruments in the model. **h_1
+had none.** It is a good trade.
+
+gamma did not move, which is consistent with the top rung being its instrument
+rather than the transfer.
+
+## next_batch.py NOW REFUSES TO SCORE ACROSS MODELS
+
+The archive spans three sources and nothing in a filename or a vector says
+which. `archive()` reads the `MODEL` line and keeps only points matching the
+current source; a point with no stamp predates it and is EXCLUDED rather than
+assumed current. Right now that leaves zero usable points and the gate says "no
+archive", which is the correct answer -- an empty batch beats a batch aimed at a
+model that no longer exists.
+
+    unstamped     86   the pre-revert model
+    (empty)        2   post-revert, from the stamp bug
+    fcbd17f4c6     1   post-revert anchor
+    920988590e     0   CURRENT: two betas
+
+The 86 old points remain valuable as measurements of their own model and as the
+record of what was learned. They must not be scored beside new ones.
