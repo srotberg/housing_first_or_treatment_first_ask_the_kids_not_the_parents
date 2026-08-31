@@ -3218,3 +3218,39 @@ the code ran 4.41 falling to 1.09. That was true before this change and is still
 true after it, differently. **Section 5's external calibration table needs to
 say what the code now does** -- but that is prose in the paper and so the
 author's call, not mine, and it is not being edited here.
+
+## KAPPA AT ONE BETA
+
+`KAPPA_1B.txt` is now measured. Both lines solved at the one-beta vector of
+`point_d4ffbfdab5`, which supplies the kappa 8.0 row:
+
+    kappa   point         y_u              b              lambda_d         tau_u
+    ------  ------------  ---------------  -------------  ---------------  ---------------
+    6.0     cd817d0401    0.47060          0.37765        0.26045          0.96268
+    7.0     abc9b6aa2c    0.40835          0.18573        0.10954          0.95963
+    8.0     d4ffbfdab5    0.34108          0.05982        0.02108          0.90058
+    target                0.740            0.089          0.0368           0.245
+
+`y_u` falls monotonically in kappa across all three points, by roughly 0.062
+per unit of kappa between 6.0 and 7.0 and 0.067 between 7.0 and 8.0.
+
+**The target for `y_u` of 0.740 does NOT lie inside the measured pair 6.0 to
+7.0.** The pair spans 0.40835 to 0.47060, and 0.740 sits above the whole of it
+-- above even the kappa 6.0 endpoint, by 0.269. There is no interpolation to
+report. Since `y_u` decreases in kappa, the bracket has to extend DOWNWARD, to
+kappa below 6.0, and how far below is not something these three points can say:
+no value is quoted here because it would be an extrapolation off the end of the
+measured range, and the curve is under no obligation to stay linear over a gap
+that is more than four times the step already measured.
+
+This confirms the reading recorded above from kappa 8 alone -- that the one-type
+curve sits lower than the two-type one and the kappa matching 0.740 may be below
+6 -- and turns it from an inference into a measurement.
+
+WARNING, and it is why nothing here is an answer. `b` is nowhere near its target
+of 0.089 at these points, and the direction reverses across the bracket: it runs
+to 0.37765 at kappa 6.0 and 0.18573 at kappa 7.0, four times and twice the
+target, while at kappa 8.0 it falls to 0.05982, a third below it. `y_u` is only
+trustworthy where `b` is near target, so every kappa read off this bracket is
+provisional, and the two endpoints that would set a downward extension are the
+two where `b` is furthest wrong.
