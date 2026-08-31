@@ -2460,7 +2460,33 @@
         ! and different continuation values, so the two do not merge. The three
         ! employment states stay, and with them the long spells that are what
         ! actually cost a household its housing.
-        real(8), parameter :: probability_of_ui=1.0
+        ! THE SHARE OF JOB LOSERS WHO GET AN INSURED PERIOD AT ALL.
+        !
+        ! It was ONE, so every household that lost work entered emp_of 3, drew
+        ! the replacement rate for a period, and only then fell to emp_of 2,
+        ! which pays zeta_DI times the base and so, at zeta_DI = 0, pays
+        ! nothing. The consequence was not the transfer but the STATE: working
+        ! age participation came out at exactly 1.000 with and without the
+        ! disorder, because emp_of 2 could only ever be reached through an
+        ! insured period first and the model had no household that simply had no
+        ! income.
+        !
+        ! That is why the homeless are 89 per cent employed against 46 in the
+        ! data. Homelessness could only ever be drawn from the 5.7 per cent
+        ! temporarily unemployed on UI, never from households with nothing.
+        !
+        ! In SCF 2022, 13.9 per cent of households aged 26 to 64 have NO wage
+        ! income, and the model had none at all. About a quarter to a third of
+        ! unemployed Americans actually receive UI -- most are ineligible, have
+        ! exhausted it, or never applied -- and that share is lower still for the
+        ! unstable work histories this paper is about. So 0.30, externally
+        ! assigned from UI receipt rather than calibrated.
+        !
+        ! The duration structure needed no change: emp_of 3 already transits to
+        ! emp_of 1 on re-employment and to emp_of 2 otherwise, so the insured
+        ! period lasts exactly one period and always did. What was wrong was
+        ! only that everybody got one.
+        real(8), parameter :: probability_of_ui=0.30
 
         ! UI DURATION. With this at one an unbroken unemployment spell is
         ! insured in its first period only and pays nothing after, which is what
@@ -4101,6 +4127,13 @@
         ! utility of a candidate choice.
         real(8), dimension(transition_length) :: val_neg_life_mass,val_life_min,&
             val_ugoods_users,val_umass_users,val_ugoods_others,val_umass_others
+
+        ! HOUSEHOLDS WITH NO WAGE INCOME, working age. The household level
+        ! counterpart of non-participation, and the unit this model is on: the
+        ! participation rows are scored against PERSON rates while the model's
+        ! income is calibrated to household wage income, so they are not
+        ! comparable and this is. SCF 2022 gives 13.9 per cent for ages 26 to 64.
+        real(8), dimension(transition_length) :: val_nowage_working,val_mass_working
         
         integer :: thread_num,thread_index,total_number_of_threads
         
@@ -5144,6 +5177,16 @@
             ! entirely by the age composition of the two groups.
             write(*,*) "DIAG participation, with a SUD, working age      =",&
                 val_lfp_sud_num(1)/max(val_lfp_sud_work_den(1),10.d0**(-14))
+            ! HOUSEHOLDS WITH NO WAGE INCOME, which is the household level
+            ! counterpart of non-participation and the unit this model is on.
+            ! The participation rows above are scored against PERSON level
+            ! rates, 0.615 and 0.658, while the model's income is calibrated to
+            ! household wage income -- so they are not comparable and this row
+            ! is. SCF 2022 puts it at 13.9 per cent of households aged 26 to 64
+            ! and 29.5 per cent over 26 to 85.
+            write(*,*) "DIAG households with no wage income, working age =",&
+                val_nowage_working(1)/max(val_mass_working(1),10.d0**(-14)),&
+                " data=", 0.1393d0
             write(*,*) "DIAG participation, without a SUD, working age   =",&
                 val_lfp_clean_num(1)/max(val_lfp_clean_work_den(1),10.d0**(-14))
 
@@ -27246,6 +27289,8 @@
         aggregate_housing_transaction_costs(time_period)=0
         aggregate_consumption(time_period)=0
         aggregate_total_consumption(time_period)=0
+        val_nowage_working(time_period)=0
+        val_mass_working(time_period)=0
         val_neg_life_mass(time_period)=0
         val_life_min(time_period)=10.d0**(10)
         val_ugoods_users(time_period)=0
@@ -27386,6 +27431,18 @@
                                         max(price_of_addictive_good,10.d0**(-14)))**&
                                         ((1-risk_aversion_consumption)*relative_share_of_addiction_1)))/&
                                         (1-risk_aversion_consumption)
+
+                                    ! Working age, and no wage income means not in emp_of 1.
+                                    ! emp_of 3 draws UI and emp_of 2 draws zeta_DI, which is
+                                    ! zero, so the second is the state with nothing at all.
+                                    if (age_index<=(life_span-retirement_span)) then
+                                        val_mass_working(time_period)=val_mass_working(time_period)+&
+                                            distribution_mass_used
+                                        if (emp_of(unemployment_index)/=1) then
+                                            val_nowage_working(time_period)=&
+                                                val_nowage_working(time_period)+distribution_mass_used
+                                        end if
+                                    end if
 
                                     val_life_1=val_ugoods_1+value_of_life
 
