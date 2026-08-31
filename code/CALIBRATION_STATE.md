@@ -4038,3 +4038,53 @@ block being open and not the second beta.
 **The clean test is two betas WITH b AT 0.089**, which is what DRUG2B measures.
 If y_u sits near 0.740 there, the second beta helped. If it falls back toward
 0.36, it did not. Until then y_u at two betas says nothing.
+
+## TWO MORE FIXES: PINNED ADJUSTERS STAY PINNED  [Audit A, finding 2]
+
+`damp_on_flip`'s damping branch is `max(adj*0.5, floor)`. At `adj=0` that is
+`max(0, floor) = FLOOR`. So the first time a gap changed sign, an adjuster
+sitting at exactly zero jumped to the floor and then grew by 1.2 a loop up to
+its start value -- 1e-4 reaches 5e-2 in about thirty four loops. The growth
+branch, `min(0*1.2, start)=0`, was harmless; only the damping branch
+resurrected.
+
+Four adjusters reach `damp_on_flip`, every one documented as fixed:
+
+    relative_share_of_housing      "ZERO, AND DELIBERATELY ... next_batch.py
+                                    owns it across points instead"
+    relative_share_of_leisure      frozen by freeze_fitted_internals
+    housing_status_grid_expander   declared zero
+    penalty_child_homeless         "EXTERNALLY SET"
+
+and `penalty_child_addicted` has the same rule written out inline at 35143 with
+the same effect. Both sites now return early on a non-positive adjuster.
+
+**What it was doing.** In a calibrating run, delta_h, gamma and omega_l would
+move away from the values handed in on the vector, while the archive still
+recorded them as pinned. A parameter drifting with no record that it moved --
+which also means a point could not be reproduced from its own VECTOR line.
+
+Dead in a single-point run, because that is one loop and needs a sign FLIP.
+Live in any calibration loop, which is exactly what the author is about to run.
+
+## SO: IS THE TWO-BETA CALIBRATION READY? NOT YET, AND HERE IS THE LIST
+
+1. **VALIDATE4 must pass.** The equal-beta test on the fully fixed source is the
+   only complete check of the two-pass path -- with identical types every one of
+   242 reported numbers must match the one-type run. It failed twice; four
+   causes have been found and fixed; whether that was all of them is not
+   something reading can answer. Running, thirty minutes.
+
+2. **Audit A finding 1 is not fixed.** `distance_utility_cost_of_treatment`
+   gates the calibration while-loop, but `utility_cost_of_treatment_adjuster=0`,
+   so the distance can never fall below its stopping rule and the loop cannot
+   exit on it. Meanwhile the live cost, `money_cost_of_treatment`, has an
+   adjuster, a distance and a stopping rule referenced NOWHERE. This one needs
+   a decision: either tau_u is calibrated internally on one of the two costs, or
+   its distance comes out of the loop condition and next_batch owns it.
+
+3. **DRUG2B is measuring on the pre-tau_l source.** Its three points carry the
+   halved tax rate. The BRACKET on addiction_scalar_1 still transfers -- b is
+   monotone in it and steeply so -- but the levels do not, so whatever
+   `addiction_scalar_1` it identifies has to be re-measured on the fixed source
+   before it is believed.

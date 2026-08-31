@@ -5982,6 +5982,25 @@
             integer, intent(inout) :: have_gap_1
             real(8), intent(in) :: gap_1,start_1,floor_1
 
+            ! AN ADJUSTER AT ZERO IS PINNED AND MUST STAY PINNED.
+            !
+            ! The damping branch below is max(adj*0.5, floor). At adj=0 that is
+            ! max(0, floor) = FLOOR, so the first time the gap changes sign an
+            ! adjuster sitting at exactly zero jumps to the floor and then grows
+            ! by 1.2 a loop up to its start value -- 1e-4 reaches 5e-2 in about
+            ! thirty four loops. The growth branch, min(0*1.2, start)=0, is
+            ! harmless. Only the damping branch resurrects.
+            !
+            ! Four adjusters reach this, every one documented as fixed:
+            ! relative_share_of_housing ("ZERO, AND DELIBERATELY ... next_batch
+            ! owns it across points"), relative_share_of_leisure (frozen by
+            ! freeze_fitted_internals), housing_status_grid_expander, and
+            ! penalty_child_homeless ("EXTERNALLY SET"). The in-model loop would
+            ! move delta_h, gamma and omega_l away from the values handed in
+            ! while the archive still recorded them as pinned -- a parameter
+            ! drifting with no record that it moved.
+            if (adj_1<=0.d0) return
+
             if (have_gap_1==1) then
 
                 if ((gap_1*prev_gap_1)<0) then
@@ -35138,7 +35157,15 @@
 
                             if (have_gap_penalty_child==1) then
 
-                                if ((gap_penalty_child_1*previous_gap_penalty_child)<0) then
+                                ! AN ADJUSTER AT ZERO IS PINNED. Same rule as
+                                ! damp_on_flip, written out inline, and the same
+                                ! resurrection: max(0*damping, floor) is the
+                                ! floor, so penalty_child_addicted -- declared
+                                ! zero and commented "EXTERNALLY SET ... it
+                                ! stopped being calibrated" -- would start
+                                ! moving on the first sign flip.
+                                if ((gap_penalty_child_1*previous_gap_penalty_child)<0 &
+                                    .AND. (penalty_child_addicted_adjuster>0.d0)) then
 
                                     penalty_child_addicted_adjuster=&
                                         max(penalty_child_addicted_adjuster*penalty_child_adjuster_damping,&
