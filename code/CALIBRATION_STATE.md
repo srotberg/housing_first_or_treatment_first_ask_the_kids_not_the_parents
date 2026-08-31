@@ -507,3 +507,64 @@ The gain is 8 minutes a point against 25, measured over 246 old points and
 the first few new ones, a factor of 3.1. That is what makes a joint Jacobian
 affordable at all: seventeen points is forty minutes now and over two hours
 before.
+
+
+## 31 August, 02:30 -- five model changes, an empty archive, and nothing measured yet
+
+WHAT CHANGED TONIGHT, all committed, none yet measured:
+
+- mortality multiplies the DEATH PROBABILITY and is capped at one, so the
+  disorder raises death by exactly 8.00 at every age from 26 to 84. It was an
+  exponent on survival, which drifted from 7.97 to 6.17.
+- SNAP is implemented from the statute: allotment by household size on the
+  concave schedule, gross eligibility at 130 per cent of the poverty line,
+  thirty cents per dollar of NET income. The floor went from 0.73 per cent of
+  average labour income to 3.96 and the cutoff from 2.4 to 21.5. Aggregate
+  spending is a check now, not a target, and cbar is out of the searched set.
+- treatment costs MONEY, not utility. tau_u is a price, still bracketed on
+  take up of 24.5 per cent; utility_cost_of_treatment is held at zero. The
+  recovery effect is 2.0, assigned from buprenorphine remission of 18.8
+  against 10.4 per cent, where it was 1.35 from contingency management.
+- productivity is INTERGENERATIONALLY PERSISTENT, rho = 0.35, where it was
+  zero. A child's draw conditions on the parent's node, so delta_d now means
+  the effect NET of income transmission. The literature splits it about evenly,
+  which is the check: delta_d should end up doing half the work it was doing.
+- only 30 per cent of job losers get an insured period, where all of them did.
+  The unemployment RATE is algebraically unchanged, but the share of the
+  jobless with no income at all goes from 45 to 84 per cent and the mass with
+  nothing rises 1.86 fold.
+
+THE ARCHIVE IS RETIRED to code/points_pre31aug, all 270 points. Every one was
+solved under a superseded model, and leaving them in code/points would have
+been worse than losing them: run_one_point.sh skips a vector whose tag it
+already holds, so an archived point would come back silently as though it were
+current.
+
+THE FIRST ANCHOR CAME BACK DEAD and the cause is recorded in
+code/points_failed. Extending newborn_parent_share to carry the parent's node
+replaced its declaration initialiser with a plain zero, so no newborns were
+created and the population died out. Fixed by seeding the shares where the
+grid is built. sigma_y read 0.169 against 0.172 throughout, because it comes
+from the grid and not the distribution -- one healthy moment beside a dead
+model is the shape of this failure and worth recognising again.
+
+WHAT TO DO NEXT, in order:
+1. the anchor lands -> read it, and CHECK IT IS NOT ZEROS before using it.
+2. five one-coordinate arms around it: value_of_life, addiction_scalar_1,
+   lambda_addiction, size_homelessness, money_cost_of_treatment.
+3. solve the 4x4 jointly onto aleph 80, b 8.9 per cent, lambda_d 3.68 per
+   cent, h_1 0.4 per cent. These are heavily coupled -- value_of_life drags b
+   hard, and that coupling IS the mechanism -- so one coordinate secants fight
+   each other and a joint step is what converges.
+
+THE ROW TO READ FIRST is the employed share of the homeless, 0.895 before
+against 0.46 in the data. If it has not moved, the new zero income households
+are self insuring out of savings and the bottom half wealth share, 0.149
+against 0.025, is the binding constraint. That would argue for building beta
+heterogeneity BEFORE spending more rounds converging a model that cannot reach
+the moment. Two independent routes now point at that same change.
+
+STILL NEEDING THE AUTHOR: kill -9 on supervise_calibration.py, which has been
+up for ninety minutes and rewinds the checkout at every container wake, and on
+two stale local solvers. Every kill this session was refused by the permission
+classifier.

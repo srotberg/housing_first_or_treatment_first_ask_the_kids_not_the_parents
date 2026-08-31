@@ -25187,6 +25187,34 @@
 
             end do
 
+            ! THE NEWBORN'S PARENT SHARES HAVE TO START SOMEWHERE, and a
+            ! declaration initialiser cannot do it: the array is now indexed by
+            ! the parent's productivity node and the unconditional distribution
+            ! over nodes is not known until this loop has run.
+            !
+            ! The old declaration was reshape((/1,0,0,0/)), mass one in the
+            ! clean housed cell. Extending the array to carry the parent's node
+            ! and initialising it to zero left NO mass anywhere, so
+            ! newborn_productivity_draw came out zero, no newborns were created
+            ! and the population died out. Every distribution based moment came
+            ! back 0 or NaN while sigma_y, which is computed from the grid and
+            ! not the distribution, looked perfectly healthy.
+            !
+            ! Set here, and only if nothing has set it: a resumed run reads its
+            ! own shares from the state file and must not be overwritten.
+            if (sum(newborn_parent_share)<=10.d0**(-12)) then
+
+                newborn_parent_share=0
+
+                do employment_index=1,employment_grid_size
+
+                    newborn_parent_share(employment_index,0,1)=&
+                        p_edge_1(employment_index+1)-p_edge_1(employment_index)
+
+                end do
+
+            end if
+
             do employment_index=1,employment_grid_size
 
                 unconditional_employment_probability(employment_index)=&
