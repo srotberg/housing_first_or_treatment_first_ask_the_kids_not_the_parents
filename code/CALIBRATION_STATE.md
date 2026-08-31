@@ -3676,3 +3676,206 @@ for a single pass, called in a place where the pass count is no longer what it
 assumes.** The guards and the scaling are both correct in the context they were
 written for and both silently wrong outside it. Neither a syntax check nor a
 reading of the routine finds that; only asking who calls it, and when, does.
+
+## DRUGCLOSE MEASURED AGAINST ITS INTERPOLATION
+
+`points/point_6716556560.txt`, MODEL `dc8abdfbce`, HANDOVER OK 31 of 31, solved
+in 10 min on 4 cores. This is the f = 0.584 point on the three-point line of the
+section above, the one the interpolation said would put b and lambda_d on target
+simultaneously.
+
+A caveat on the hash, recorded because it is the standing hazard: the branch
+moved while this point was solving. `57863ad` ("Fix two more pooling bugs")
+changed the source, so HEAD now hashes `c7cb2b24b6` and this point is stamped
+`dc8abdfbce`. The measurement is of the PRE-FIX model and is labelled as such.
+Anything the pooling fixes touch -- the audit names tau_l, pi_eu, y_u, tau_u,
+kappa_ued and aleph as provisional under that bug -- has to be re-measured before
+it is read. b and lambda_d are not in that list.
+
+### (a) The drug block: both inside five per cent, and the interpolation held
+
+    measured    target    gap      predicted   gap vs prediction
+    b          0.087684   0.089     -1.5%      0.08899   -1.5%
+    lambda_d   0.035697   0.0368    -3.0%      0.03680   -3.0%
+
+**Both are inside five per cent, so the drug block gate is open.** It is the
+first time on this model that b and lambda_d have been simultaneously inside it.
+
+The interpolation was not merely close, it was correct to the accuracy it
+claimed: it predicted the two moments would land on target and they landed 1.5
+and 3.0 per cent below, both on the same side and both small. The line through
+the three measured points is real and the local linearity it assumed holds.
+
+### (b) Every targeted moment, worst first
+
+    moment                                       model        target      gap
+    w_bot      net worth share, bottom half     0.15623       0.025     +525%
+    tau_u      treatment take up                0.947152      0.245     +287%
+    cbar       food stamps / labour income      0.0109639     0.0042    +161%
+    y_u        income of drug users             0.364232      0.74       -51%
+    h_2        above half of spending           0.0512945     0.101      -49%   (conceded)
+    beta       wealth over output               3.96146       3.0        +32%   (banded 3.0-4.5, inside)
+    gamma      housing over expenditure         0.185575      0.268      -31%
+    lambda_m   SMI share of the homeless        0.175167      0.25       -30%
+    aleph      value of life / income          58.2037       80.0        -27%
+    kappa_ued  unemployment given SUD           0.122695      0.1625     -25%
+    kappa_uem  employment given SMI             0.341462      0.3        +14%
+    mu_H       recovery housed / homeless       1.32814       1.47321    -9.8%
+    pi_eu      unemployment rate                0.0530953     0.0485     +9.5%
+    theta      drug spending share              0.175902      0.162      +8.6%
+    p_m        SMI population share             0.0448898     0.0484979  -7.4%
+    h_3        share in the largest unit        0.668672      0.626723   +6.7%   (conceded)
+    tau_l      average labour income tax        0.238731      0.224      +6.6%
+    h_1        homelessness rate                0.00411101    0.00399    +3.0%
+    lambda_d   disorder rate                    0.0356975     0.0368     -3.0%
+    sigma_y    bottom half earnings share       0.16905       0.172      -1.7%
+    b          total drug users                 0.0876836     0.089      -1.5%
+    pi_V       eligibles with a voucher         0.269701      0.266      +1.4%
+    omega_l    labour supply / total hours      0.400355      0.4        +0.1%
+
+**The worst moment excluding h_3 is `w_bot`, the bottom-half net worth share, at
++525 per cent** -- 0.156 against a target of 0.025. h_3 does not need conceding
+here to get that answer: at +6.7 per cent it is the sixteenth worst of
+twenty-three and is itself inside ten. The concession is not costing anything at
+this point.
+
+Nine of twenty-three are inside ten per cent and thirteen are inside thirty. The
+three that dominate -- w_bot, tau_u, cbar -- are all above 160 per cent, and they
+are a different order of miss from everything below them: the gap falls from
++161 to -51 in one step. `theta` is 0.176, a real value and not the -1.0
+empty-population sentinel.
+
+### (c) THE AGE PROFILE OF THE HOUSING MARGIN
+
+    age    homeless      own    renter wealth   renter income
+     26    0.149708   0.00000        0.00000        -0.03582
+     29    0.005882   0.00000        0.32058        -0.02052
+     32    0.001413   0.00000        0.56279        -0.01043
+     35    0.000570   0.00000        0.80530        -0.00037
+     38    0.000326   0.00000        1.05852         0.00997
+     41    0.000185   0.00000        1.31175         0.02001
+     44    0.000110   0.00000        1.57106         0.02975
+     47    0.000073   0.00000        1.82889         0.03851
+     50    0.000066   0.00000        2.07752         0.04618
+     53    0.000061   0.00000        2.30847         0.05240
+     56    0.000055   0.00000        2.49855         0.05634
+     59    0.000078   0.00000        2.62823         0.05778
+     62    0.000078   0.00000        2.68586         0.05699
+     65    0.000071   0.00000        2.67277         0.05330
+     68    0.000000   0.00000        2.43250         0.63128
+     71    0.000000   0.00000        2.06073         0.62012
+     74    0.000000   0.00000        1.63830         0.60745
+     77    0.000000   0.00000        1.18256         0.59378
+     80    0.000000   0.00000        0.72744         0.58013
+     83    0.000000   0.00000        0.33151         0.56825
+
+**Homelessness tracks renter wealth. It does not track the ownership rate, and
+it cannot: the ownership column is 0.00000 at every one of the twenty ages
+printed.** There are no owners anywhere in this economy, so that column has no
+variation to explain anything with, and the tenure story is ruled out by
+inspection rather than by comparison.
+
+What the wealth column shows is the whole of the age profile in one movement.
+Renter wealth is exactly zero at 26 and homelessness is 0.1497 -- fifteen per
+cent of the cohort on the street. By 29 renter wealth is 0.32 and homelessness
+is 0.0059, a fall of a factor of twenty-five in one three-year step. By 32
+wealth is 0.56 and homelessness is 0.0014. The collapse is over before age 35,
+and it is over exactly as the first units of renter wealth are accumulated. From
+there wealth rises monotonically to 2.69 at 62 and homelessness grinds down to
+0.000055 at 56. Rank correlation over the fourteen ages where homelessness is
+non-zero is -0.82.
+
+Two things in the columns qualify that, and both are small:
+
+- Renter income rises over the same span, from -0.036 at 26 to +0.058 at 59, and
+  its rank correlation with homelessness is -0.83, indistinguishable from
+  wealth's. **Over the working life the wealth and income columns move together,
+  so this profile on its own does not separate them.** What it does separate is
+  either of them from ownership.
+- Past 68 the co-movement with wealth breaks: renter wealth falls back from 2.43
+  to 0.33 while homelessness stays at exactly zero. Renter income jumps at the
+  same age from 0.053 to 0.631 and stays there. So at retirement ages the two
+  right-hand columns diverge from each other, and homelessness -- already at
+  zero from 68 on -- follows neither.
+
+Read against the question the diagnostic was written to answer, the answer is
+the buffer story and not the tenure story, with the caveat that the buffer could
+be the wealth stock or the income flow and these twenty rows do not tell them
+apart over the ages where homelessness is positive.
+
+The remaining fact in the column is the one the diagnostic was added to explain:
+homelessness in this model is almost entirely an age-26 phenomenon. 0.1497 at
+26 against 0.0059 at 29 and nothing at all past 65.
+
+### (d) The untargeted set
+
+Read with the caveat in (a) -- this is the pre-pooling-fix model -- and against
+the standing note that the untargeted table is not worth much while y_u is 51
+per cent out. It is recorded because the gate is open and the author asked for
+it at a point with the drug block closed.
+
+    moment                                    model        observed
+    mean age of drug users                   44.3223      45.48
+    users aged 26-34, share                   0.493201     0.28404
+    users aged 35-44, share                   0.154772     0.25054
+    users aged 45-54, share                   0.0783022    0.17768
+    users aged 55-64, share                   0.0582706    0.16327
+    users aged 65 plus, share                 0.215454     0.12445
+    housing over income, renters              0.255199     0.202
+    delta_d child SUD ratio                   1.15755      2.0
+    wealth share bottom  1 pct                0.0         -0.00225
+    wealth share bottom  5 pct                0.000458318 -0.00422
+    wealth share bottom 10 pct                0.00313072  -0.00446
+    income share bottom  1 pct                0.000699866  0.00009
+    income share bottom  5 pct                0.00349933   0.00288
+    income share bottom 10 pct                0.00849702   0.00924
+    delta_h child homelessness ratio          2.67167      2.1
+    homelessness rate, band 1                 0.0226353    0.003161
+    homelessness rate, band 2                 0.000275785  0.003378
+    homelessness rate, band 3                 0.0000721794 0.002912
+    homelessness rate, band 4                 0.0000732767 0.002496
+    homelessness rate, band 5                 0.0000044099 0.00077
+    homelessness profile, band 1              5.50601      1.28079
+    homelessness profile, band 2              0.0670846    1.36872
+    homelessness profile, band 3              0.0175576    1.17990
+    homelessness profile, band 4              0.0178245    1.01135
+    homelessness profile, band 5              0.00107271   0.31199
+    share of the homeless, band 1             0.980298     0.26
+    share of the homeless, band 2             0.0130139    0.272
+    share of the homeless, band 3             0.00328807   0.21
+    share of the homeless, band 4             0.00311429   0.184
+    share of the homeless, band 5             0.000285312  0.075
+    earnings share, bottom tenth              0.0125067    0.0099
+    earnings share, top tenth                 0.308662     0.411
+    renters above 30 pct of income            0.411678     0.406
+    renters above 50 pct of income            0.257031     0.175
+    tenant contribution rate                  0.470537     0.312
+    voucher holders, wages main               0.483513     0.28
+    participation, with a SUD                 0.855880     0.658
+    participation, without a SUD              0.746606     0.615
+    homeless at treatment admission           0.000145722  0.145
+    SMI alongside SUD at admission            0.0187683    0.431
+    working, homeless in treatment            0.168283     0.066
+    SUD share of the homeless                 0.00120125   0.217
+    drug deaths, share of deaths              0.274794     0.2
+    income of the homeless                    0.238084     0.191
+    employed share of the homeless            0.980744     0.46
+    income with a SUD                         0.430890     0.711
+
+Four rows land close without having been targeted: renters above 30 per cent of
+income (0.412 against 0.406), the bottom-tenth earnings share, the bottom-five
+and bottom-ten income shares, and the mean age of drug users (44.3 against 45.5).
+
+The homelessness band rows are the same fact as the age profile seen along the
+income dimension: band 1 holds 98 per cent of the model's homeless against 26
+per cent in the data, and bands 2 through 5 are each one to two orders of
+magnitude below their observed rates. Homelessness in this economy is
+concentrated in one income band and one age in a way it is not in the data.
+
+Two rows are near-degenerate and worth naming rather than leaving in the list:
+`SUD share of the homeless` is 0.0012 against 0.217, and `homeless at treatment
+admission` is 0.00015 against 0.145. The homeless population and the SUD
+population barely intersect at this point. That is a strong statement and it sits
+next to `employed share of the homeless` at 0.98 against 0.46 -- the model's
+homeless are young, employed and clean, which is not the population the data
+describes.
