@@ -9491,7 +9491,14 @@
                 
         do age_index=1,life_span
         
-            average_rent_by_age(age_index)=average_rent_by_age(age_index)/max(mass_of_renters_by_age(age_index),10.d0**(-14))
+        ! NORMALISE ONLY ON THE LAST PASS. This division puts its result back
+        ! into the accumulator it reads, and the reset above is guarded to the
+        ! FIRST pass, so without this guard the second pass divides an already
+        ! divided value again and adds the second type on top of a finished
+        ! average. Nothing at one type moves: the condition is 1==1 there.
+        if (current_beta_type==number_of_beta_types) then
+                average_rent_by_age(age_index)=average_rent_by_age(age_index)/max(mass_of_renters_by_age(age_index),10.d0**(-14))
+        end if
             if (current_beta_type==number_of_beta_types) value_of_bequests_by_age(age_index)=value_of_bequests_by_age(age_index)/bequests_mass_by_age(age_index)
         
         end do
@@ -10128,10 +10135,24 @@
                                 
         end if
                 
-        fraction_with_largest_housing_size_consumed_in_eqilibrium=&
-            fraction_with_largest_housing_size_consumed_in_eqilibrium/sum_of_distribution
+        ! NORMALISE ONLY ON THE LAST PASS. This division puts its result back
+        ! into the accumulator it reads, and the reset above is guarded to the
+        ! FIRST pass, so without this guard the second pass divides an already
+        ! divided value again and adds the second type on top of a finished
+        ! average. Nothing at one type moves: the condition is 1==1 there.
+        if (current_beta_type==number_of_beta_types) then
+            fraction_with_largest_housing_size_consumed_in_eqilibrium=&
+                fraction_with_largest_housing_size_consumed_in_eqilibrium/sum_of_distribution
+        end if
             
-        fraction_with_smallest_financial_in_eqilibrium=fraction_with_smallest_financial_in_eqilibrium/sum_of_distribution
+        ! NORMALISE ONLY ON THE LAST PASS. This division puts its result back
+        ! into the accumulator it reads, and the reset above is guarded to the
+        ! FIRST pass, so without this guard the second pass divides an already
+        ! divided value again and adds the second type on top of a finished
+        ! average. Nothing at one type moves: the condition is 1==1 there.
+        if (current_beta_type==number_of_beta_types) then
+            fraction_with_smallest_financial_in_eqilibrium=fraction_with_smallest_financial_in_eqilibrium/sum_of_distribution
+        end if
                       
         do employment_index=1,employment_grid_size
                         
@@ -14775,8 +14796,15 @@
         
         do i=1,5 
         
-            model_LTV_by_age_group(time_period,i)=model_LTV_by_age_group(time_period,i)/&
-                mass_LTV_by_age_group(time_period,i)
+        ! NORMALISE ONLY ON THE LAST PASS. This division puts its result back
+        ! into the accumulator it reads, and the reset above is guarded to the
+        ! FIRST pass, so without this guard the second pass divides an already
+        ! divided value again and adds the second type on top of a finished
+        ! average. Nothing at one type moves: the condition is 1==1 there.
+        if (current_beta_type==number_of_beta_types) then
+                model_LTV_by_age_group(time_period,i)=model_LTV_by_age_group(time_period,i)/&
+                    mass_LTV_by_age_group(time_period,i)
+        end if
                 
             if (current_beta_type==number_of_beta_types) then
                 model_homeownership_by_age_group(time_period,i)=&
@@ -14804,8 +14832,15 @@
                     mass_by_employment_youngest(time_period,employment_index)
             end if
                 
-            MID_share_by_employment(time_period,employment_index)=MID_share_by_employment(time_period,employment_index)/&
-                govt_spending_on_mortgage_interest_deductions(time_period)
+        ! NORMALISE ONLY ON THE LAST PASS. This division puts its result back
+        ! into the accumulator it reads, and the reset above is guarded to the
+        ! FIRST pass, so without this guard the second pass divides an already
+        ! divided value again and adds the second type on top of a finished
+        ! average. Nothing at one type moves: the condition is 1==1 there.
+        if (current_beta_type==number_of_beta_types) then
+                MID_share_by_employment(time_period,employment_index)=MID_share_by_employment(time_period,employment_index)/&
+                    govt_spending_on_mortgage_interest_deductions(time_period)
+        end if
                 
             if (current_beta_type==number_of_beta_types) then
                 wealth_by_employment(time_period,employment_index)=wealth_by_employment(time_period,employment_index)/&
@@ -16382,11 +16417,25 @@
                                         
         end do
         
-        MID_share_by_income_quintile(time_period,:)=&
-            MID_share_by_income_quintile(time_period,:)/total_MID_value
+        ! NORMALISE ONLY ON THE LAST PASS. This division puts its result back
+        ! into the accumulator it reads, and the reset above is guarded to the
+        ! FIRST pass, so without this guard the second pass divides an already
+        ! divided value again and adds the second type on top of a finished
+        ! average. Nothing at one type moves: the condition is 1==1 there.
+        if (current_beta_type==number_of_beta_types) then
+            MID_share_by_income_quintile(time_period,:)=&
+                MID_share_by_income_quintile(time_period,:)/total_MID_value
+        end if
             
-        MID_itemizers_by_income_quintile(time_period,:)=&
-            MID_itemizers_by_income_quintile(time_period,:)/mass_by_income_quintile(time_period,:)
+        ! NORMALISE ONLY ON THE LAST PASS. This division puts its result back
+        ! into the accumulator it reads, and the reset above is guarded to the
+        ! FIRST pass, so without this guard the second pass divides an already
+        ! divided value again and adds the second type on top of a finished
+        ! average. Nothing at one type moves: the condition is 1==1 there.
+        if (current_beta_type==number_of_beta_types) then
+            MID_itemizers_by_income_quintile(time_period,:)=&
+                MID_itemizers_by_income_quintile(time_period,:)/mass_by_income_quintile(time_period,:)
+        end if
         
         if (simulation_ended==(compute_income_cdf+(1-compute_income_cdf)*1))  then
                 
@@ -29169,11 +29218,25 @@
 !            weight_1*model_average_drug_spending_experimenters(time_period)*&
 !            drug_spending_relative_to_average(index_drug_1(1))
                     
-        model_average_LTV_at_orgination(time_period)=&
-            model_average_LTV_at_orgination(time_period)/model_mass_origination(time_period)
+        ! NORMALISE ONLY ON THE LAST PASS. This division puts its result back
+        ! into the accumulator it reads, and the reset above is guarded to the
+        ! FIRST pass, so without this guard the second pass divides an already
+        ! divided value again and adds the second type on top of a finished
+        ! average. Nothing at one type moves: the condition is 1==1 there.
+        if (current_beta_type==number_of_beta_types) then
+            model_average_LTV_at_orgination(time_period)=&
+                model_average_LTV_at_orgination(time_period)/model_mass_origination(time_period)
+        end if
             
-        model_average_LTV_at_orgination_2(time_period)=&
-            model_average_LTV_at_orgination_2(time_period)/model_mass_origination_2(time_period)
+        ! NORMALISE ONLY ON THE LAST PASS. This division puts its result back
+        ! into the accumulator it reads, and the reset above is guarded to the
+        ! FIRST pass, so without this guard the second pass divides an already
+        ! divided value again and adds the second type on top of a finished
+        ! average. Nothing at one type moves: the condition is 1==1 there.
+        if (current_beta_type==number_of_beta_types) then
+            model_average_LTV_at_orgination_2(time_period)=&
+                model_average_LTV_at_orgination_2(time_period)/model_mass_origination_2(time_period)
+        end if
                                                     
         write(*,*) "aggregate_consumption", time_period, "=", aggregate_consumption(time_period)
         write(*,*) "aggregate_housing_consumption=", time_period, "=", aggregate_housing_consumption(time_period)
