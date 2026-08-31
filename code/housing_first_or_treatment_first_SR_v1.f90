@@ -195,13 +195,48 @@
 
         ! g in the note. An odds ratio of 1.22 for contingency management, which
         ! the note's external table carries as 1.35 on the hazard.
-        real(8), parameter :: treatment_effect_on_recovery=1.35
+        ! ASSIGNED, NOT CALIBRATED, AND RAISED TO THE STANDARD OF CARE. It was
+        ! 1.35, taken from an odds ratio of 1.22 for contingency management,
+        ! which is a behavioural ADJUNCT rather than the treatment a policy
+        ! called Treatment First would deliver. Medication for opioid use
+        ! disorder roughly doubles remission -- buprenorphine-naloxone 18.8 per
+        ! cent against 10.4, an odds ratio near 2.0 -- and randomised trials of
+        ! agonist medication against placebo at least double abstinence.
+        !
+        ! It matters for the paper's headline and not only for a moment. The
+        ! note compares Housing First with Treatment First, and representing
+        ! the treatment arm by an intervention that raises recovery odds by 22
+        ! per cent handicaps the comparison before it starts.
+        real(8), parameter :: treatment_effect_on_recovery=2.0
 
         ! bar_tau^u, calibrated on take up among those carrying the disorder.
         ! In utils, and flow utility here is negative and of order one, so the
         ! starting value is a small fraction of it; the bracket finds the rest.
-        real(8) :: utility_cost_of_treatment=0.02
-        real(8) :: utility_cost_of_treatment_adjuster=0.05
+        ! ZERO. Treatment costs MONEY now and nothing else. A flat subtraction in
+        ! utils is charged against aleph + u_goods, a total near 34 for a
+        ! household at average consumption and far smaller for a poor one, so it
+        ! was mildly regressive and touched no budget. The programme in reality
+        ! costs 3,000 to 5,700 dollars a year outpatient and 16,000 residential,
+        ! against mean household wage income of 88,212, so it is 3.4 to 6.5 per
+        ! cent of average labour income ambulatory and 18 to 25 residential.
+        ! Charged on resources, a household at the food stamp floor cannot pay
+        ! it at all and a household at twice average income barely notices --
+        ! which is the income gradient the utility cost never had.
+        real(8) :: utility_cost_of_treatment=0
+        real(8) :: utility_cost_of_treatment_adjuster=0
+
+        ! THE PRICE OF A PERIOD OF TREATMENT, in the model's consumption units,
+        ! calibrated on take up among those carrying the disorder. Calibrated
+        ! rather than assigned because the observed range is enormous -- 1,132
+        ! to 32,361 dollars an episode across settings and lengths, 1.3 to 37
+        ! per cent of average labour income -- so fitting inside it is
+        ! defensible in a way fitting the recovery effect is not. The moments
+        ! block reports it as a fraction of average labour income so it can be
+        ! read against that range.
+        real(8) :: money_cost_of_treatment=0.02
+        real(8) :: money_cost_of_treatment_adjuster=0.05
+        real(8) :: distance_money_cost_of_treatment
+        real(8) :: stopping_rule_money_cost_of_treatment=10.d0**(-3)
         real(8) :: distance_utility_cost_of_treatment
         real(8) :: stopping_rule_utility_cost_of_treatment=10.d0**(-3)
         real(8) :: previous_utility_cost_of_treatment=0
@@ -4736,6 +4771,16 @@
             write(*,*) "DIAG value of life, everyone else                =",&
                 val_ugoods_others(1)/max(val_umass_others(1),10.d0**(-14))
             write(*,*) "DIAG aleph itself, for scale                     =", value_of_life
+
+            ! THE PRICE OF TREATMENT AGAINST WHAT IT COSTS IN REALITY.
+            ! Outpatient runs 3,000 to 5,700 dollars a year and residential
+            ! 16,000 to 21,900, against mean household wage income of 88,212,
+            ! so 3.4 to 6.5 per cent of average labour income ambulatory and 18
+            ! to 25 residential. TEDS-A admissions are overwhelmingly
+            ! ambulatory, so the first range is the one to read this against.
+            write(*,*) "DIAG treatment price / average labour income     =",&
+                money_cost_of_treatment/max(model_average_labour_income(1),10.d0**(-14)),&
+                " data outpatient=", 0.034d0, " to", 0.065d0
 
             ! WHO ACTUALLY GETS FOOD STAMPS, which the cbar moment cannot say.
             ! cbar targets AGGREGATE spending over labour income, and an
@@ -18603,6 +18648,10 @@
         ! bar_tau^u, charged wherever flow utility is evaluated so that the
         ! value function, the comparison routine and the welfare calculations
         ! cannot disagree about what treatment costs.
+        ! Treatment's cost is monetary and is charged in
+        ! calculate_addiction_spending, on resources. utility_cost_of_treatment
+        ! is held at zero and this subtraction is kept so that a robustness run
+        ! can put a utility cost back beside the price in one place.
         if ((include_treatment==1) .AND. (treatment_choice_now==1)) then
 
             flow_utility_1=flow_utility_1-utility_cost_of_treatment
@@ -20008,6 +20057,29 @@
         if ((addiction_index_1>=1) .AND. (consumption_choice>0) .AND. (relative_share_of_addiction>0)) then
                                 
             total_consumption_choice_1=consumption_1
+
+            ! THE COST OF TREATMENT, CHARGED HERE AND NOWHERE ELSE.
+            !
+            ! This routine is entered only when addiction_index_1 >= 1, and
+            ! treatment is open only when addiction_index == 1, so the
+            ! households that can be in treatment are exactly the households
+            ! that reach this line, on both of its call paths. consumption_1 is
+            ! intent(in) and is read exactly once, here, so one charge covers
+            ! the budget completely -- which is the point, after a night in
+            ! which four separate quantities were found written out in several
+            ! places with one copy differing.
+            !
+            ! A household that cannot pay ends with consumption at the floor and
+            ! flow utility at minus infinity, so it never chooses treatment.
+            ! That is the mechanism and not a numerical guard: treatment it
+            ! cannot afford is treatment it does not take.
+            if ((include_treatment==1) .AND. (treatment_choice_now==1)) then
+
+                total_consumption_choice_1=max(total_consumption_choice_1-&
+                    money_cost_of_treatment,10.d0**(-10))
+
+            end if
+
             total_consumption_choice_2=total_consumption_choice_1
                     
             call optimize_frac_spent_on_addiciton&
@@ -32288,6 +32360,10 @@
                 ! lambda 33x, the treatment cost 106x, kappa_uem 23x and the
                 ! employment multiplier 6x. A one per cent per loop trust region
                 ! only makes sense from a sensible start, and these were not one.
+                case ("money_cost_of_treatment")
+                    write(*,*) "HANDOVER money_cost_of_treatment:", money_cost_of_treatment, "->", handover_value
+                    money_cost_of_treatment=max(handover_value,0.d0)
+
                 case ("utility_cost_of_treatment")
                     write(*,*) "HANDOVER utility_cost_of_treatment:",&
                         utility_cost_of_treatment, "->", handover_value

@@ -67,7 +67,10 @@ MAX_EFOLD = 0.35                          # no single step larger than this
 # variables named theta_lo and theta_hi. It is NOT a free instrument for the
 # disorder ratio, which is the error that flattened the loss.
 OWN = {
-    'utility_cost_of_treatment':                           'tau_u',
+    # tau_u IS A PRICE NOW, not a utility cost: treatment is charged on
+    # resources in calculate_addiction_spending, and
+    # utility_cost_of_treatment is held at zero.
+    'money_cost_of_treatment':                             'tau_u',
     'probability_becoming_unemployed':                     'pi_eu',
     'relative_share_of_addiction_1':                       'theta',
     'mu_homeless':                                         'mu_H',
@@ -100,7 +103,7 @@ OWN = {
     'kappa_uem':                                           'kappa_uem',
 }
 BOUNDS = {
-    'utility_cost_of_treatment':                           (0.0001, 10.0),
+    'money_cost_of_treatment':                              (0.0005, 1.0),
     'probability_becoming_unemployed':                     (1e-6, 0.500),
     'relative_share_of_addiction_1':                       (0.40, 0.58),
     'mu_homeless':                                         (0.05, 1.0),

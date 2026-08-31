@@ -48,6 +48,8 @@ declare -A P=(
     [probability_becoming_unemployed]=0.0294178
     [probability_of_voucher_benchmark_used]=0.0121367
     [utility_cost_of_treatment]=0.0908753
+    # THE PRICE OF TREATMENT, which replaced the utility cost on 31 August.
+    [money_cost_of_treatment]=0.02
     [smallest_rental_relative_to_lowest_income]=0.0244763
     [largest_house_size]=0.121252
     [weight_on_child]=0.007
