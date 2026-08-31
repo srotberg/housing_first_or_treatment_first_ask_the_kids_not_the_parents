@@ -2653,3 +2653,46 @@ What is already settled is the direction and the sign of the problem: take-up
 overshoots at zero cost rather than pinning under target, so the instrument
 pushes the right way and has unbounded room above. Whether it needs a cost of
 0.5 or of 5 is for line 3 and, if necessary, a fourth point.
+
+## THERE IS A kappa BRACKET AFTER ALL, AND y_u's TARGET IS INSIDE IT
+
+I told the author there was no usable bracket on kappa and only the single point
+at 8. Wrong: KAPPA_REDO had landed and I had not read it. Both its points are on
+`ab22a2f5ba`, the fixed denominator, both two beta, both with the money cost of
+treatment still at 0.0600702.
+
+    kappa      y_u        b        lambda_d     tau_u
+      6      0.8398     0.3545     0.1259      0.2079
+      7      0.6773     0.1423     0.0342      0.2274
+    target   0.740      0.089      0.0368      0.245
+
+**y_u STRADDLES ITS TARGET.** 0.740 sits between 0.8398 and 0.6773, at 0.614 of
+the way from 6 to 7, so linear interpolation puts kappa at about 6.6. That is an
+interpolation INSIDE a measured pair, which is the thing this file keeps saying
+to prefer, not an extrapolation past one.
+
+lambda_d at kappa 7 is 0.0342 against 0.0368, seven per cent out, and tau_u is
+0.2274 against 0.245, also seven. Neither is being aimed at by kappa.
+
+### WHY 6.6 IS AN UPPER BOUND AND NOT THE ANSWER
+
+b is 0.3545 at kappa 6 and 0.1423 at kappa 7, against a target of 0.089. BOTH
+ENDS OF THE BRACKET SIT ABOVE THE TARGET, one by four times and one by sixty per
+cent. When that many households use, users are close to the whole population and
+their average income drifts toward one for reasons that have nothing to do with
+the death multiplier. So y_u is INFLATED at both ends, more so at 6 than at 7.
+
+Correct b downward and y_u falls at every kappa, which means the kappa that
+delivers 0.740 at the right b is LOWER than 6.6. How much lower is not
+recoverable from this pair; it needs a point where b is near 0.089, which is
+what REPAIR3 is for.
+
+That is the same ordering the file already records and it now has numbers on it:
+**fix b first, then read kappa off y_u.** Reading kappa now would fit the
+artefact rather than the mechanism.
+
+### AND THEY ARE STILL PROVISIONAL
+
+Two beta points on a path whose equal-beta test has not yet passed. If VALIDATE2
+fails, the bracket goes with it. If it passes, the bracket stands and only needs
+re-siting at the corrected b.
