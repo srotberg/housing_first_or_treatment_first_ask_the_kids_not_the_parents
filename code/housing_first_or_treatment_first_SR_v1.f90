@@ -2218,6 +2218,41 @@
         ! only inside the loop, and silently became 1 for the routines that run
         ! after it -- which is a whole second copy of the bug it was fixing.
         integer :: mass_passes=1
+
+        ! THE POOLED MASS, ACCUMULATED, BECAUSE THE TYPES DO NOT CARRY EQUAL MASS.
+        !
+        ! Every chain routine recomputes the mass from distribution_stationary,
+        ! which holds only the type just solved, and then scaled it by
+        ! mass_passes. That is exact if and only if the discount-factor types
+        ! carry the same mass. They do not. Newborn cohorts are equal, but
+        ! survival is not: the impatient type is homeless and addicted more and
+        ! both carry excess mortality, so it dies faster and ends the life cycle
+        ! lighter.
+        !
+        ! The evidence is the INVARIANTS block, which is what caught this. The
+        ! two histogram-mass checks, which must read exactly 1.0, read 1.19002,
+        ! 1.18647 and 1.18457 at three points differing only in
+        ! addiction_scalar_1. A miscount of types would be a constant -- 2.0 or
+        ! 0.5 -- and would not drift with a drug parameter. A survival gap
+        ! between the types is exactly what drifts with it.
+        !
+        ! So the mass is accumulated here, one pass at a time, instead of being
+        ! reconstructed from a pass count. At one type this is identical to the
+        ! old code (one pass, factor one); at two equal-mass types it is
+        ! identical again; it differs only where the old code was wrong.
+        !
+        ! It is also correct OUTSIDE the loop, which the old code was not:
+        ! mass_passes is left at number_of_beta_types when the loop ends, so a
+        ! later call to a chain routine -- the omega counterfactual in
+        ! print_all_moments does exactly this, with one type solved -- doubled a
+        ! one-type mass. accumulating_beta_types is zero there, so these reset
+        ! and hold the one type actually present.
+        real(8) :: pooled_mass_all=0.d0
+        real(8) :: pooled_mass_retirees=0.d0
+        real(8) :: pooled_mass_youngest=0.d0
+        ! Each type's own mass, kept so the ratio between them can be printed
+        ! and so an aggregate can be put back on a one-type footing.
+        real(8) :: mass_by_beta_type(10)=0.d0
         integer :: income_cdf_levels_used=1
         real(8) :: discount_factor_patient_saved=0
 
@@ -5734,10 +5769,16 @@
             write(*,*) "DIAG income with a SUD / labour income           =",&
                 model_average_income_addicted(1)/&
                 max(model_average_labour_income(1),10.d0**(-14))
+            ! POOLED MASS, NOT sum_of_distribution. That variable is module
+            ! scope and calculate_cdf_of_incomes_earned -- eighth in the chain,
+            ! so it runs after the mass is built -- reuses it as a scratch
+            ! scalar holding ONE grid cell. Whatever it holds by the time this
+            ! prints is not a population. pooled_mass_all is owned by one
+            ! routine and nothing else writes it.
             write(*,*) "DIAG mass ON the top savings grid point          =",&
-                diag_mass_top_financial/max(sum_of_distribution,10.d0**(-12))
+                diag_mass_top_financial/max(pooled_mass_all,10.d0**(-12))
             write(*,*) "DIAG mass in the top THREE savings grid points   =",&
-                diag_mass_top3_financial/max(sum_of_distribution,10.d0**(-12))
+                diag_mass_top3_financial/max(pooled_mass_all,10.d0**(-12))
             ! IS THE HISTOGRAM THE WHOLE DISTRIBUTION? Both should read 1.0. If
             ! they do not, the shares above are read off the wrong denominator
             ! and none of them mean anything.
@@ -5785,6 +5826,22 @@
             ! Each line prints PASS or FAIL, and the last line is the count, so
             ! a run can be triaged from one grep instead of an eye over a
             ! hundred numbers.
+            ! THE MASS EACH DISCOUNT-FACTOR TYPE ACTUALLY CARRIES, and the
+            ! ratio between them. This is here because the two histogram
+            ! invariants below read 1.19 rather than 1.0 for three points, and
+            ! the diagnosis -- that the types do not weigh the same, so a
+            ! denominator built from one type's mass times a pass count is
+            ! wrong -- is a claim about these two numbers. If they come out
+            ! equal, the diagnosis is wrong and the 1.19 has another cause.
+            ! At one type the second entry is zero and the ratio is one.
+            write(*,'(A,F14.6,A,F14.6,A,F10.6)') &
+                " DIAG mass by beta type:  patient=", mass_by_beta_type(1), &
+                "  impatient=", mass_by_beta_type(2), &
+                "  patient/impatient=", &
+                mass_by_beta_type(1)/max(mass_by_beta_type(2),10.d0**(-12))
+            write(*,*) "DIAG pooled mass=", pooled_mass_all, &
+                " one-type equivalent=", mass_by_beta_type(1)
+
             write(*,*) "===== INVARIANTS ====="
             diag_fail_1=0
 
@@ -8769,12 +8826,25 @@
             
         end do
 
-        ! POOLED MASS, NOT ONE TYPE'S. The histograms and every other
-        ! accumulator above hold both discount-factor types once the
-        ! benchmark chain has run twice, so a denominator recomputed from
-        ! distribution_stationary -- which holds only the type just solved --
-        ! is short by exactly the number of passes. Scale it up.
-        sum_of_distribution=sum_of_distribution*mass_passes
+        ! POOLED MASS, NOT ONE TYPE'S, AND ACCUMULATED RATHER THAN SCALED.
+        !
+        ! The histograms and every other accumulator above hold both
+        ! discount-factor types once the benchmark chain has run twice, while
+        ! distribution_stationary holds only the type just solved. The old code
+        ! closed that gap by multiplying by the pass count, which is right only
+        ! if the types weigh the same. They do not -- see pooled_mass_all's
+        ! declaration for the measurement that says so -- so the passes are
+        ! added up instead.
+        !
+        ! This routine is FIRST of the nine in the chain, so it owns the reset
+        ! and every later routine in the same pass reads a total that already
+        ! includes the current type.
+        if (accumulating_beta_types==0) pooled_mass_all=0.d0
+        pooled_mass_all=pooled_mass_all+sum_of_distribution
+        if ((current_beta_type>=1) .AND. (current_beta_type<=size(mass_by_beta_type))) then
+            mass_by_beta_type(current_beta_type)=sum_of_distribution
+        end if
+        sum_of_distribution=pooled_mass_all
         
         sum_of_retirees=0
         
@@ -8786,12 +8856,11 @@
         
         end do
 
-        ! POOLED MASS, NOT ONE TYPE'S. The histograms and every other
-        ! accumulator above hold both discount-factor types once the
-        ! benchmark chain has run twice, so a denominator recomputed from
-        ! distribution_stationary -- which holds only the type just solved --
-        ! is short by exactly the number of passes. Scale it up.
-        sum_of_retirees=sum_of_retirees*mass_passes
+        ! POOLED MASS OF RETIREES, accumulated for the same reason and in the
+        ! same place as pooled_mass_all just above.
+        if (accumulating_beta_types==0) pooled_mass_retirees=0.d0
+        pooled_mass_retirees=pooled_mass_retirees+sum_of_retirees
+        sum_of_retirees=pooled_mass_retirees
         
         do i=1,number_of_wide_grids_income_to_avg_income_cdf
         
@@ -8968,12 +9037,22 @@
         ! off, which is how the first attempt at this was caught and reverted.
         !
         ! But at TWO types the sum runs over two passes while the mean does not,
-        ! so aleph doubles for a reason that has nothing to do with the value of
-        ! life. Dividing by mass_passes, NOT by the mass, removes exactly that
-        ! factor and leaves the one-type value untouched: mass_passes is 1 at one
-        ! type, so nothing measured at one beta moves.
-        if (current_beta_type==number_of_beta_types) &
-            model_value_of_life(time_period)=model_value_of_life(time_period)/mass_passes
+        ! so aleph grows for a reason that has nothing to do with the value of
+        ! life. What must be divided out is how much bigger the pooled
+        ! population is than the one-type population the target was set
+        ! against, and that is pooled_mass_all over the FIRST type's mass -- the
+        ! patient type, which is the one the one-beta model is.
+        !
+        ! This was written as a division by mass_passes, the pass count. That is
+        ! the same number only if the types weigh the same, and they do not: the
+        ! histogram invariants put the gap at about nineteen per cent of the
+        ! pooled total. The ratio below is exactly one at a single type, so
+        ! nothing measured at one beta moves, which is the property the pass
+        ! count was chosen for in the first place.
+        if (current_beta_type==number_of_beta_types) then
+            model_value_of_life(time_period)=model_value_of_life(time_period)/&
+                max(pooled_mass_all/max(mass_by_beta_type(1),10.d0**(-12)),10.d0**(-12))
+        end if
 
         model_GDP(time_period)=model_output(time_period)
         
@@ -9901,7 +9980,11 @@
         ! benchmark chain has run twice, so a denominator recomputed from
         ! distribution_stationary -- which holds only the type just solved --
         ! is short by exactly the number of passes. Scale it up.
-        sum_of_distribution=sum_of_distribution*mass_passes
+        ! POOLED MASS, READ NOT REBUILT. stationary_equilibrium_statistics runs
+        ! FIRST in every pass and has already added this type's mass, so the
+        ! total here is the real pooled mass rather than one type's scaled by a
+        ! pass count. The types do not weigh the same; see pooled_mass_all.
+        sum_of_distribution=pooled_mass_all
         
         if (solve_transition_dynamics==0) then
         
@@ -12710,7 +12793,11 @@
         ! benchmark chain has run twice, so a denominator recomputed from
         ! distribution_stationary -- which holds only the type just solved --
         ! is short by exactly the number of passes. Scale it up.
-        sum_of_distribution=sum_of_distribution*mass_passes
+        ! POOLED MASS, READ NOT REBUILT. stationary_equilibrium_statistics runs
+        ! FIRST in every pass and has already added this type's mass, so the
+        ! total here is the real pooled mass rather than one type's scaled by a
+        ! pass count. The types do not weigh the same; see pooled_mass_all.
+        sum_of_distribution=pooled_mass_all
             
         model_eligibles_getting_voucher_relative_to_pop(time_period)=&
             model_eligibles_getting_voucher(time_period)/sum_of_distribution
@@ -13058,7 +13145,11 @@
         ! benchmark chain has run twice, so a denominator recomputed from
         ! distribution_stationary -- which holds only the type just solved --
         ! is short by exactly the number of passes. Scale it up.
-        sum_of_distribution=sum_of_distribution*mass_passes
+        ! POOLED MASS, READ NOT REBUILT. stationary_equilibrium_statistics runs
+        ! FIRST in every pass and has already added this type's mass, so the
+        ! total here is the real pooled mass rather than one type's scaled by a
+        ! pass count. The types do not weigh the same; see pooled_mass_all.
+        sum_of_distribution=pooled_mass_all
         
         if (current_beta_type==number_of_beta_types) then
             model_drug_use_percent_by_age_group(time_period,:)=&
@@ -13790,7 +13881,11 @@
         ! benchmark chain has run twice, so a denominator recomputed from
         ! distribution_stationary -- which holds only the type just solved --
         ! is short by exactly the number of passes. Scale it up.
-        sum_of_distribution=sum_of_distribution*mass_passes
+        ! POOLED MASS, READ NOT REBUILT. stationary_equilibrium_statistics runs
+        ! FIRST in every pass and has already added this type's mass, so the
+        ! total here is the real pooled mass rather than one type's scaled by a
+        ! pass count. The types do not weigh the same; see pooled_mass_all.
+        sum_of_distribution=pooled_mass_all
         
         sum_of_distribution_youngest=0
                 
@@ -13806,7 +13901,15 @@
         ! benchmark chain has run twice, so a denominator recomputed from
         ! distribution_stationary -- which holds only the type just solved --
         ! is short by exactly the number of passes. Scale it up.
-        sum_of_distribution_youngest=sum_of_distribution_youngest*mass_passes
+        ! POOLED NEWBORN MASS, accumulated rather than scaled. The newborn
+        ! cohorts of the two types are the same size -- differential mortality
+        ! has not acted at age one -- so this agrees with the old pass-count
+        ! scaling here. It is accumulated anyway, so that one rule covers every
+        ! mass in the chain and none of them depends on the types weighing the
+        ! same. calculate_welfare runs once per pass and owns this one.
+        if (accumulating_beta_types==0) pooled_mass_youngest=0.d0
+        pooled_mass_youngest=pooled_mass_youngest+sum_of_distribution_youngest
+        sum_of_distribution_youngest=pooled_mass_youngest
         
         if (current_beta_type==number_of_beta_types) average_welfare_of_all_cohorts(time_period)=average_welfare_of_all_cohorts(time_period)/sum_of_distribution
         
@@ -14495,7 +14598,11 @@
         !
         ! The scaling was reverted here once, on the reasoning that this
         ! routine is per-type. It is not: it does not OWN this variable.
-        sum_of_distribution=sum_of_distribution*mass_passes
+        ! POOLED MASS, READ NOT REBUILT. stationary_equilibrium_statistics runs
+        ! FIRST in every pass and has already added this type's mass, so the
+        ! total here is the real pooled mass rather than one type's scaled by a
+        ! pass count. The types do not weigh the same; see pooled_mass_all.
+        sum_of_distribution=pooled_mass_all
         
         do age_index=1,life_span
         
