@@ -1976,3 +1976,79 @@ points. When both are in the two-by-two can be solved on measured columns.
 **y_u is only readable where b is near 0.089.** That has never yet been true on
 any point in this model version, which is why the income of drug users still has
 no trustworthy reading.
+
+## THE TWO-BETA POINTS WERE MEASURED ON A HALVED DENOMINATOR. ALL FOUR ARE VOID
+
+The re-validation of the two-pass accumulation did not pass. It failed, and the
+model's own diagnostic had been printing the failure on every two-beta point
+since the first one:
+
+    DIAG histogram mass / distribution (want 1.0)
+        point_110278961e (two betas, equal)      2.0000407534
+        point_5c932be8a2 (two betas, kappa 6)    2.0051297579
+        point_d25318fa67_nosnap (one beta)       1.0000000000
+
+**What went wrong.** The guard that suppresses an accumulator's reset on the
+second pass was applied to accumulators. It was not applied to the DENOMINATORS,
+because a denominator is not accumulated in the statistics loop -- it is
+recomputed from scratch, `sum_of_distribution=0` followed by a sum over
+`distribution_stationary`, which holds only the type just solved. So after two
+passes every numerator held two units of mass and every denominator held one.
+
+The earlier guard sweep could not have caught this. It keyed on a zero-assignment
+to a name carrying `(time_period)`, and none of these masses carry one.
+
+**What it invalidated.** Twenty-eight division sites in the two-pass chain, so
+every LEVEL moment on all four two-beta points is exactly twice its truth:
+
+    reported     truth      moment
+    h_1          0.00416 -> 0.00208   homelessness rate
+    b            0.02777 -> 0.01388   total drug users, kappa 8
+    b            0.35445 -> 0.17722   total drug users, kappa 6
+    lambda_d     0.00578 -> 0.00289   disorder rate, kappa 8
+
+RATIOS of two accumulated quantities are unaffected -- both sides doubled -- so
+sigma_y, omega_l, tau_l, beta, gamma, h_3, theta, kappa_ued and mu_H are as
+reported. `w_bot` is neither: its percentile walk asked for half of a one-type
+mass out of a two-type histogram, so it read the 25th percentile and divided by
+a doubled total. It is wrong in a direction that no simple factor undoes.
+
+**The fix.** Each of the ten mass recomputations inside the two-pass reporters
+is scaled to pooled mass, `sum_of_distribution=sum_of_distribution*(accumulating_beta_types+1)`,
+which is exact because each type carries unit mass and `beta_type_weight` is
+declared but never used, so the pooling is fifty-fifty by construction.
+`sum_of_distribution_not_be_homeless` accumulates in the big loop like the other
+426 and is guarded instead.
+
+Scaling was deliberately NOT applied in `set_SS_benefits`,
+`initialize_feasible_distribution` or `calculate_welfare_by_characteristics`.
+Those run per type inside the loop and their masses are per-type by design;
+scaling the SS benefit denominator on the second pass would have corrupted the
+second type's solve rather than its statistics.
+
+## THE SECOND, QUIETER TWO-BETA BUG: A ROUTINE THAT RECOMPUTES REPORTS ONE TYPE
+
+Distinct from the doubling and invisible to a test with equal betas. A statistics
+routine that rebuilds its object from `distribution_stationary` each pass, rather
+than accumulating into it, reports the LAST TYPE solved, not the pooled economy.
+Numerator and denominator are then consistent with each other, so nothing looks
+doubled and nothing looks wrong.
+
+`calculate_cdf_of_incomes_earned` was the case that matters: it builds the list
+of distinct income levels and their masses, and everything that reads an income
+band or a quintile reads it -- including the drug-use-by-income-band table the
+whole kappa argument is being run on. Under two different betas it would have
+handed back the impatient type's income distribution applied to the whole
+population. It is now pooled: the two mass counters and the two arrays carry
+across the pass, and the running count of distinct levels is carried in
+`income_cdf_levels_used` rather than in `i`, which the mortgage loop just above
+would otherwise clobber.
+
+Two consistent per-type pairs are left and are NOT bugs, because both sides
+recompute together: `average_rent_by_age / mass_of_renters_by_age`, and
+`model_wealth_of_top_x_perc / model_total_net_wealth_1`. Both are untargeted
+diagnostics and both report the last type. Worth pooling before either is
+quoted.
+
+**A test with equal betas cannot find this class.** It only shows up when the
+two types differ, which is the configuration nothing has yet been measured in.

@@ -2188,6 +2188,7 @@
         ! block is formed from accumulated components, so forming it again on
         ! the last pass gives the mixture rather than the last type.
         integer :: accumulating_beta_types=0
+        integer :: income_cdf_levels_used=1
         real(8) :: discount_factor_patient_saved=0
 
         real(8) :: discount_factor=(1-perceived_probability_lower)*0.944+perceived_probability_lower*0.951
@@ -6814,7 +6815,7 @@
         avg_income_to_use_1=is_counterfactual*average_labor_income_calibrated+&
             (1-is_counterfactual)*model_average_labour_income(time_period)
                    
-        sum_of_distribution_2=0
+        if (accumulating_beta_types==0) sum_of_distribution_2=0
         
         do i=1,2
         
@@ -6823,14 +6824,22 @@
                 
         end do
         
-        sum_of_distribution_1=0
+        if (accumulating_beta_types==0) sum_of_distribution_1=0
         
         time_period_used=time_period-solve_transition_dynamics
         
-        model_mass_of_households_by_income_earned(time_period,:)=0
-        model_incomes_earned(time_period,:)=-1
+        if (accumulating_beta_types==0) model_mass_of_households_by_income_earned(time_period,:)=0
+        if (accumulating_beta_types==0) model_incomes_earned(time_period,:)=-1
         
-        i=1
+        ! THE LIST OF DISTINCT INCOME LEVELS IS POOLED ACROSS THE DISCOUNT-FACTOR
+        ! TYPES, so the running count of levels has to survive the pass boundary.
+        ! It cannot simply be left in i: i is the mortgage index of the loop just
+        ! above, which clobbers it. Carry it in its own variable.
+        if (accumulating_beta_types==0) then
+            i=1
+        else
+            i=income_cdf_levels_used
+        end if
         
 !        write(*,*) "size_of_quintile=", size_of_quintile
         write(*,*) "computing incomes for cdf"
@@ -7003,6 +7012,8 @@
             end do
             
         end do ages_loop_1
+
+        income_cdf_levels_used=i
         
         model_incomes_earned_saved(time_period,:)=model_incomes_earned(time_period,:)
         
@@ -7261,7 +7272,7 @@
         average_rent_by_age=0
         mass_of_renters_by_age=0
         
-        sum_of_distribution_not_be_homeless=0
+        if (accumulating_beta_types==0) sum_of_distribution_not_be_homeless=0
                              
         do age_index=1,life_span
         
@@ -8534,6 +8545,13 @@
                 sum(distribution_stationary(i)%vector_transition_real(time_period,:,:,:,:,:,:))
             
         end do
+
+        ! POOLED MASS, NOT ONE TYPE'S. The histograms and every other
+        ! accumulator above hold both discount-factor types once the
+        ! benchmark chain has run twice, so a denominator recomputed from
+        ! distribution_stationary -- which holds only the type just solved --
+        ! is short by exactly the number of passes. Scale it up.
+        sum_of_distribution=sum_of_distribution*(accumulating_beta_types+1)
         
         sum_of_retirees=0
         
@@ -8544,6 +8562,13 @@
                 vector_transition_real(time_period,life_span-retirement_span+1:life_span,:,:,:,:,:))
         
         end do
+
+        ! POOLED MASS, NOT ONE TYPE'S. The histograms and every other
+        ! accumulator above hold both discount-factor types once the
+        ! benchmark chain has run twice, so a denominator recomputed from
+        ! distribution_stationary -- which holds only the type just solved --
+        ! is short by exactly the number of passes. Scale it up.
+        sum_of_retirees=sum_of_retirees*(accumulating_beta_types+1)
         
         do i=1,number_of_wide_grids_income_to_avg_income_cdf
         
@@ -9487,6 +9512,13 @@
                 sum(distribution_stationary(i)%vector_transition_real(time_period,:,:,:,:,:,:))
             
         end do
+
+        ! POOLED MASS, NOT ONE TYPE'S. The histograms and every other
+        ! accumulator above hold both discount-factor types once the
+        ! benchmark chain has run twice, so a denominator recomputed from
+        ! distribution_stationary -- which holds only the type just solved --
+        ! is short by exactly the number of passes. Scale it up.
+        sum_of_distribution=sum_of_distribution*(accumulating_beta_types+1)
         
         if (solve_transition_dynamics==0) then
         
@@ -9637,6 +9669,13 @@
                 sum(distribution_stationary(i)%vector_transition_real(time_period,:,:,:,:,:,:))
             
         end do
+
+        ! POOLED MASS, NOT ONE TYPE'S. The histograms and every other
+        ! accumulator above hold both discount-factor types once the
+        ! benchmark chain has run twice, so a denominator recomputed from
+        ! distribution_stationary -- which holds only the type just solved --
+        ! is short by exactly the number of passes. Scale it up.
+        sum_of_distribution=sum_of_distribution*(accumulating_beta_types+1)
         
         wealth_counter=0
         
@@ -9802,6 +9841,13 @@
                 sum(distribution_stationary(i)%vector_transition_real(time_period,:,:,:,:,:,:))
             
         end do
+
+        ! POOLED MASS, NOT ONE TYPE'S. The histograms and every other
+        ! accumulator above hold both discount-factor types once the
+        ! benchmark chain has run twice, so a denominator recomputed from
+        ! distribution_stationary -- which holds only the type just solved --
+        ! is short by exactly the number of passes. Scale it up.
+        sum_of_distribution=sum_of_distribution*(accumulating_beta_types+1)
         
         avg_income_to_use_1=is_counterfactual*average_labor_income_calibrated+&
             (1-is_counterfactual)*model_average_labour_income(time_period)
@@ -10065,6 +10111,13 @@
                 sum(distribution_stationary(i)%vector_transition_real(time_period,:,:,:,:,:,:))
             
         end do
+
+        ! POOLED MASS, NOT ONE TYPE'S. The histograms and every other
+        ! accumulator above hold both discount-factor types once the
+        ! benchmark chain has run twice, so a denominator recomputed from
+        ! distribution_stationary -- which holds only the type just solved --
+        ! is short by exactly the number of passes. Scale it up.
+        sum_of_distribution=sum_of_distribution*(accumulating_beta_types+1)
         
         avg_income_to_use_1=is_counterfactual*average_labor_income_calibrated+&
             (1-is_counterfactual)*model_average_labour_income(time_period)
@@ -12123,6 +12176,13 @@
                 sum(distribution_stationary(i)%vector_transition_real(time_period,:,:,:,:,:,:))
             
         end do
+
+        ! POOLED MASS, NOT ONE TYPE'S. The histograms and every other
+        ! accumulator above hold both discount-factor types once the
+        ! benchmark chain has run twice, so a denominator recomputed from
+        ! distribution_stationary -- which holds only the type just solved --
+        ! is short by exactly the number of passes. Scale it up.
+        sum_of_distribution=sum_of_distribution*(accumulating_beta_types+1)
             
         model_eligibles_getting_voucher_relative_to_pop(time_period)=&
             model_eligibles_getting_voucher(time_period)/sum_of_distribution
@@ -12384,6 +12444,13 @@
                 sum(distribution_stationary(i)%vector_transition_real(time_period,:,:,:,:,:,:))
             
         end do
+
+        ! POOLED MASS, NOT ONE TYPE'S. The histograms and every other
+        ! accumulator above hold both discount-factor types once the
+        ! benchmark chain has run twice, so a denominator recomputed from
+        ! distribution_stationary -- which holds only the type just solved --
+        ! is short by exactly the number of passes. Scale it up.
+        sum_of_distribution=sum_of_distribution*(accumulating_beta_types+1)
         
         model_drug_use_percent_by_age_group(time_period,:)=&
             model_drug_use_percent_by_age_group(time_period,:)/sum_of_distribution
@@ -13052,6 +13119,13 @@
                 sum(distribution_stationary(i)%vector_transition_real(time_period,:,:,:,:,:,:))
             
         end do
+
+        ! POOLED MASS, NOT ONE TYPE'S. The histograms and every other
+        ! accumulator above hold both discount-factor types once the
+        ! benchmark chain has run twice, so a denominator recomputed from
+        ! distribution_stationary -- which holds only the type just solved --
+        ! is short by exactly the number of passes. Scale it up.
+        sum_of_distribution=sum_of_distribution*(accumulating_beta_types+1)
         
         sum_of_distribution_youngest=0
                 
@@ -13061,6 +13135,13 @@
                 sum(distribution_stationary(i)%vector_transition_real(time_period,1,:,:,:,:,:))
             
         end do
+
+        ! POOLED MASS, NOT ONE TYPE'S. The histograms and every other
+        ! accumulator above hold both discount-factor types once the
+        ! benchmark chain has run twice, so a denominator recomputed from
+        ! distribution_stationary -- which holds only the type just solved --
+        ! is short by exactly the number of passes. Scale it up.
+        sum_of_distribution_youngest=sum_of_distribution_youngest*(accumulating_beta_types+1)
         
         average_welfare_of_all_cohorts(time_period)=average_welfare_of_all_cohorts(time_period)/sum_of_distribution
         
