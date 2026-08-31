@@ -4088,3 +4088,50 @@ Live in any calibration loop, which is exactly what the author is about to run.
    monotone in it and steeply so -- but the levels do not, so whatever
    `addiction_scalar_1` it identifies has to be re-measured on the fixed source
    before it is believed.
+
+## THE BIGGEST FINDING: 187 IN-PLACE NORMALISATIONS, AND THE FOUNDING ASSUMPTION IS FALSE
+
+Audit C, finding 1. The pattern, on `model_fraction_unemployed`:
+
+    reset       if (accumulating_beta_types==0) X=0     guarded to pass 1
+    accumulate  X = X + distribution_mass_used          correct
+    normalise   X = X / mass                            EVERY PASS, ungated
+
+    pass 1   X = u        then  X = u/T      a RATE is now in the accumulator
+    pass 2   X = u/T + u  then  X = (u/T + u)/(2T)      a rate plus a mass
+
+against a correct pooled `2u/2T = u/T`. The ratio is **(1+T)/(2T)**.
+
+**That is one only when T is exactly one.** The driver's comment asserts "each
+type's distribution carries unit mass, so summing both passes doubles the
+numerator and the denominator of every one of them" -- **and it does not**. The
+run log prints `sum(distribution_guess) = 51.718`, the life-cycle sum of cohort
+masses. So the factor is just above one half for a large denominator and blows
+up as `1/(2m)` for a small subpopulation.
+
+The whole two-pass design rests on that sentence, and the sentence is false.
+
+Audit C counted 69 in its own slice. Across the nine-routine chain there are
+**187**:
+
+    61  govt_revenues_calc
+    43  stationary_equilibrium_statistics
+    31  calculate_welfare_by_characteristics
+    26  stationary_equilibirum_homeownership_rate
+    20  calculate_homeownership_by_characteristics
+     3  calculate_household_housing_spending
+     3  calculate_welfare
+
+All 187 are now gated on `current_beta_type==number_of_beta_types`, so the
+division happens once, on the last pass, over the fully accumulated numerator
+and denominator. At one type that is every pass and nothing changes, which is
+why none of this was ever visible in the one-beta model.
+
+This also subsumes Audit B's F2: `model_fraction_homeless` was normalised in
+`stationary_equilibrium_statistics` and then re-accumulated and re-normalised in
+`govt_revenues_calc`, giving a 1:3 mixture of the two types instead of 1:1.
+Gating both normalisations fixes the pair.
+
+**Every two-beta number measured before this is void.** Not scaled by a known
+factor -- the error depends on the size of each denominator, so it differs
+moment by moment. Nothing measured at one beta is affected.
