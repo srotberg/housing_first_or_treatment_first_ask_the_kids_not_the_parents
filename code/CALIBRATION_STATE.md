@@ -5284,3 +5284,56 @@ retirees and non-participants are taken out, and it is consistent with
 confirming measurement is cheap and specific: on a fixed-source equal-beta run,
 `DIAG treatment price / average labour income` must read the same number in both
 lines. That is the check to make, rather than re-reading the code.
+
+## WHAT THE SECOND BETA BUYS AND WHAT IT COSTS, AT THE TWO ANCHORS
+
+The author asked directly whether the two-beta runs gave a better bottom-half
+net worth share. They do, and by a lot. The comparison is between the best
+one-type point, `point_6716556560` (`MODEL dc8abdfbce`), and the two-type
+anchor `point_a4e79fb29e` (`MODEL c7cb2b24b6`) with its impatient discount
+factor at 0.95, and the three `TWOBETA_CAL` points around it.
+
+    moment      target       one beta        two betas (0.93 / 0.95 / 0.97)
+    w_bot        0.025       0.15623         0.05446  0.06974  0.08434
+    b            0.089       0.08768         0.4243   0.7688   0.3614
+    lambda_d     0.0368      0.035697        0.3652   0.3208   0.2743
+    beta         3.0-4.5     3.9615          2.827    2.864    2.933
+    tau_u        0.245       0.94715         0.9671   0.9595   0.9559
+    h_1          0.00399     0.0041110       0.004644 0.009014 0.003812
+    h_2          0.101       0.051295        0.07438  0.0721   0.06646
+    aleph        80          58.204          119.2    121.7    5.064
+    y_u          0.74        0.36423         1.6056   1.4973   0.54379
+    pi_eu        0.0485      0.053095        0.06712  0.06413  0.08686
+    tau_l        0.224       0.23873         0.083067 0.089797 0.241
+
+**THE BUY. `w_bot` goes from 6.2 times its target to 2.2.** That is a factor of
+2.9, and it is the second beta rather than anything else: `w_bot` barely moved
+across a 19 per cent change in `addiction_scalar_1` in the DRUG2B sweep
+(0.06273 to 0.07015), so the parameter difference between the two anchors cannot
+account for it. `h_2` also improves, from 49 per cent short to 26 to 34 short.
+
+**THE COST is the drug block, and it is the author's own diagnosis.** `b` and
+`lambda_d` are both essentially ON TARGET at one beta -- 1.5 and 3.0 per cent
+short -- and both blow out to three to nine times target at two. That is the
+"too many users and too many SUD" the author named. It is a re-calibration
+problem rather than a defect: `addiction_scalar_1` moves both, in the right
+direction, and `DRUG_UP.txt` is the bracket for it. `beta` also falls from 3.96,
+comfortably inside its band, to 2.75-2.93, just below it.
+
+**WHAT THE SECOND BETA IS NOT RESPONSIBLE FOR.** Two of the largest gaps in the
+whole table are the same size at one beta as at two, so nothing about the
+two-type model caused them and nothing about it will fix them:
+
+  - `tau_u`, treatment take-up, is 0.947 at one beta against a target of 0.245.
+    That is +287 per cent, and at two betas it is +290. **It is at a corner in
+    both.** Almost everyone who could take treatment takes it.
+  - `aleph` is 27 per cent short at one beta.
+  - `y_u` is 51 per cent short at one beta and above target at two, so the
+    second beta moves it through its target rather than toward or away.
+
+TWO CAVEATS ON THIS TABLE, both real. The two anchors were measured on DIFFERENT
+BUILDS (`dc8abdfbce` against `c7cb2b24b6`) and differ in `addiction_scalar_1`
+as well as in the two beta settings. And the `aleph`, `cbar` and `tau_l` columns
+of the two-beta rows straddle a source change, as `TWOBETA_CAL_RESULT.md`
+records. The `w_bot` conclusion survives both caveats because of its size; the
+smaller rows should be re-measured on one build before they are quoted.
