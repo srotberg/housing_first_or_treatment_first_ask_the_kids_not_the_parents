@@ -568,3 +568,51 @@ STILL NEEDING THE AUTHOR: kill -9 on supervise_calibration.py, which has been
 up for ninety minutes and rewinds the checkout at every container wake, and on
 two stale local solvers. Every kill this session was refused by the permission
 classifier.
+
+## 31 August, 03:00 -- the anchor replicates, and the row to read first moved the WRONG WAY
+
+THE ANCHOR IS ALIVE AND INDEPENDENTLY REPLICATED. `point_485225bf80` was
+re-solved from scratch on the fixed source, in a separate container, without
+sight of the committed file. The two agree on every one of 57 MOMENT and
+UNTARGETED values to a maximum RELATIVE difference of 8.5e-05, the largest
+being the 55-64 user share; the targeted moments agree to seven significant
+figures. That is parallel-reduction ordering, not a difference. Histogram mass
+is 1.0000000000001 where it wants 1.0, and MOMENT theta is 0.182 rather than
+the -1.0 sentinel, so step 1 of the previous section -- read it and CHECK IT
+IS NOT ZEROS -- is discharged twice over.
+
+The replication also cost a repeat of the dead point. A run launched from
+7e67aad, before the newborn fix landed, reproduced `point_485225bf80` byte for
+byte apart from the wall-clock line: the same histogram mass 0, the same -1.0
+theta, the same healthy 0.169 sigma_y. The collapse is therefore fully
+deterministic in the source version and not a sporadic solver failure, which
+is worth knowing because it means the fix can be verified by the tag alone.
+
+THE ROW TO READ FIRST WENT THE WRONG WAY. The employed share of the homeless
+was 0.895 against 0.46 in the data before tonight's five changes. The
+prediction on file was that if it had NOT MOVED, the new zero-income
+households were self-insuring out of savings and beta heterogeneity should
+come before more convergence rounds. It did not fail to move -- it rose to
+0.966, and the supporting rows moved with it:
+
+    employed share of the homeless   0.966  vs 0.460   (was 0.895)
+    net worth share, bottom half     0.129  vs 0.025   (was 0.149)
+    wealth share of the bottom 25%   0.020
+    no wage income, working age      0.060  vs 0.139
+
+The insured-period change was supposed to take the jobless with no income at
+all from 45 to 84 per cent and raise the mass with nothing 1.86 fold. The
+working-age share with no wage income nonetheless sits at 6.0 per cent against
+13.9 in the data, less than half the target. So the new zero-income households
+exist and are still not showing up homeless-and-jobless: they are being
+absorbed by savings, exactly the mechanism the note anticipated, only more
+strongly than the "has not moved" case it was written for. The argument for
+building beta heterogeneity BEFORE spending more rounds converging is
+therefore stronger than the note allowed for, not weaker. Three independent
+routes now point at that same change.
+
+The four coupled targets stand at aleph 61.0 against 80, b 9.76 against 8.90
+per cent, lambda_d 4.35 against 3.68 per cent and h_1 0.131 against 0.399 per
+cent. h_1 is the outlier at -67 per cent and it is the same moment the homeless
+rows above are about, which is a further reason to think the binding
+constraint is the wealth distribution rather than the four coordinates.
