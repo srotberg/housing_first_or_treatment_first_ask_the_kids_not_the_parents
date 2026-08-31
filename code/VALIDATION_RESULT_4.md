@@ -16,8 +16,8 @@ counterfactuals"), the branch head when this validation started. That commit
 does contain the tau_l fix the brief points to (`85c0d8d`, "Fix tau_l, the
 band-7 print, and a stale comment"), which is why tau_l no longer halves below.
 
-**Seven further source commits landed on this branch while the two runs were
-executing**, between 19:57 and 20:34 UTC, ending at `1e0c8be`:
+**Eight further source commits landed on this branch while the two runs were
+executing and while this file was being written**, ending at `84c1ee5`:
 
     7bc05ee Stop damp_on_flip resurrecting pinned adjusters
     980f04c Normalise once, on the last pass, at all 187 sites
@@ -26,21 +26,29 @@ executing**, between 19:57 and 20:34 UTC, ending at `1e0c8be`:
     eec57d6 Make the income-of-users numerators interest-inclusive
     50e121d Give the homelessness rate a single owner
     1e0c8be Revert the aleph and cbar normalisations, which the arithmetic contradicts
+    84c1ee5 Fix two undefined reads in the secant and a race in the distribution sweep
 
 Those commits touch `aleph`, `cbar`, the homelessness rate, the age-profile
 mass and the income-of-users numerators — which are among the quantities
 reported as disagreeing below. **The numbers in this file are therefore a
 correct measurement of `13f5cc8` and are already out of date with respect to
-the branch head.** The test should be re-run against `1e0c8be` before any of
+the branch head.** The test should be re-run against `84c1ee5` before any of
 the diagnoses here are acted on. Nothing below has been adjusted to guess at
 what those commits changed.
+
+`84c1ee5` deserves particular attention: both runs here were solved on 4 cores,
+and a race in the distribution sweep is exactly the kind of defect that would
+produce widespread, non-systematic disagreement of the sort tabulated in
+section (e), and could equally explain the 2.0367e-05 histogram overshoot in
+section (f). The clean 2.0 ratios in section (b) are unlikely to come from a
+race — they look deterministic — but much of the long tail below may.
 
 ## How this was run
 
 | | |
 |---|---|
 | Branch | `claude/two-period-addiction-hazard-d7gb61` |
-| Commit built and run | `13f5cc8` (branch head has since moved to `1e0c8be`) |
+| Commit built and run | `13f5cc8` (branch head has since moved to `84c1ee5`) |
 | Source edit | `freeze_beta_bisection=0` -> `1` (line 1369), reverted before commit |
 | Run 1 | `number_of_beta_types=1`, point `fdee960558`, model `f0deae7141`, solved in 12 min |
 | Run 2 | `number_of_beta_types=2`, point `03ac59f09e`, solved in 21 min |
