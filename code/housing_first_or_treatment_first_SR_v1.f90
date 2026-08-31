@@ -828,6 +828,29 @@
         integer, parameter :: income_bins=400
         real(8), parameter :: income_bin_top=50.d0
         real(8), dimension(income_bins) :: income_hist_mass,income_hist_income
+        ! THE TILT: disorder mass in the same income bins, so the SUD rate can be
+        ! read as a function of income and compared with NSDUH band for band.
+        ! This is the statistic the whole question turns on. In the data, ages
+        ! 26 and over, the rate runs 13.65 per cent in the lowest income band to
+        ! 4.82 in the highest, a ratio of 2.83 -- a gentle slope, with 4.8 per
+        ! cent of the richest quarter of the population carrying a disorder. If
+        ! the model produces a step instead, no parameter that moves where the
+        ! step SITS will fix the income of users; only something that makes the
+        ! slope gentler will.
+        !
+        ! Compared on POPULATION SHARE rather than on dollars, because NSDUH's
+        ! bands are per person and the model's normaliser is average labour
+        ! income per household, so a dollar for dollar comparison would be
+        ! measuring the difference between the two denominators.
+        real(8), dimension(income_bins) :: income_hist_sud
+
+        ! NSDUH 2024, ages 26 and over, any substance use disorder. CUMULATIVE
+        ! population shares of its seven personal income bands, and the disorder
+        ! rate within each.
+        real(8), dimension(7), parameter :: nsduh_band_cum=&
+            (/0.137d0,0.281d0,0.391d0,0.496d0,0.591d0,0.740d0,1.000d0/)
+        real(8), dimension(7), parameter :: nsduh_band_rate=&
+            (/0.1365d0,0.1308d0,0.0911d0,0.1020d0,0.0786d0,0.0717d0,0.0482d0/)
         real(8) :: income_hist_mass_check
         real(8), dimension(3), parameter :: bottom_percentiles=&
             (/0.01d0,0.05d0,0.10d0/)
@@ -4889,6 +4912,39 @@
                 model_income_share_below(3,1), " observed=", 0.00924d0
             write(*,*) "DIAG income histogram mass / distribution (want 1.0) =",&
                 income_hist_mass_check
+
+            ! THE INCOME TILT OF THE DISORDER, band for band against NSDUH.
+            !
+            ! The bands are NSDUH's own, matched on POPULATION SHARE rather than
+            ! on dollars: 13.7 per cent of adults 26 and over are in its lowest
+            ! income band, then 14.4, 11.0, 10.5, 9.5, 14.9 and 25.9. Walking
+            ! the model's income histogram to the same cumulative shares gives
+            ! seven groups that are comparable without needing the two surveys'
+            ! income denominators to agree.
+            !
+            ! The observed rates are 0.1365, 0.1308, 0.0911, 0.1020, 0.0786,
+            ! 0.0717 and 0.0482, a ratio of 2.83 from bottom to top. That is the
+            ! shape to reproduce. A model that concentrates its disorder in one
+            ! narrow band will show a spike here however well it matches the
+            ! overall rate, and no parameter that moves where the spike sits
+            ! will lift the income of users.
+            val_cum_1=0
+            k_1=1
+            val_earn_bottom_1=0
+            val_earn_total_1=0
+            do i=1,income_bins
+                val_cum_1=val_cum_1+income_hist_mass(i)/max(sum(income_hist_mass),10.d0**(-14))
+                val_earn_bottom_1=val_earn_bottom_1+income_hist_sud(i)
+                val_earn_total_1=val_earn_total_1+income_hist_mass(i)
+                if ((val_cum_1>=nsduh_band_cum(k_1)) .OR. (i==income_bins)) then
+                    write(*,*) "DIAG SUD rate, income band", k_1, " model=",&
+                        val_earn_bottom_1/max(val_earn_total_1,10.d0**(-14)),&
+                        " data=", nsduh_band_rate(k_1)
+                    val_earn_bottom_1=0
+                    val_earn_total_1=0
+                    k_1=min(k_1+1,7)
+                end if
+            end do
             write(*,*) "UNTARGETED delta_h child homelessness ratio  model=",&
                 chom_n_1/max(chom_d_1,10.d0**(-12)), " observed=", child_homeless_ratio_data
 
@@ -6888,6 +6944,7 @@
         wealth_hist_mass=0
         wealth_hist_wealth=0
         income_hist_mass=0
+        income_hist_sud=0
         income_hist_income=0
         diag_mass_top_financial=0
         diag_mass_top3_financial=0
@@ -7968,6 +8025,10 @@
                                         10.d0**(-8)))/income_bin_top),1),income_bins)
                                     income_hist_mass(income_bin_index)=&
                                         income_hist_mass(income_bin_index)+distribution_mass_used
+                                    if (sud_of(unemployment_index)>=1) then
+                                        income_hist_sud(income_bin_index)=&
+                                            income_hist_sud(income_bin_index)+distribution_mass_used
+                                    end if
                                     income_hist_income(income_bin_index)=&
                                         income_hist_income(income_bin_index)+total_income*distribution_mass_used
 
