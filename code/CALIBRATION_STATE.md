@@ -3254,3 +3254,37 @@ target, while at kappa 8.0 it falls to 0.05982, a third below it. `y_u` is only
 trustworthy where `b` is near target, so every kappa read off this bracket is
 provisional, and the two endpoints that would set a downward extension are the
 two where `b` is furthest wrong.
+## THE THREE DEATH-RISK SPECIFICATIONS ARE BEING MEASURED, NOT ARGUED
+
+The author objected to the flat-risk change: a flat 1.6 multiplier lowers the
+deterrent for everyone, the old included, from 4.41 to 1.6 at 26 and from 2.46
+to 1.6 at 65. That is correct and my table did not contradict it. The
+disagreement is about WHICH OBJECT the household trades off.
+
+    Baggett -> flat 1.6      multiplier        excess death probability
+        age 26              4.41 -> 1.60       0.00396 -> 0.00070   (to 18%)
+        age 65              2.46 -> 1.60       0.01917 -> 0.00790   (to 41%)
+        age 75+             1.09 -> 1.60       an INCREASE
+
+On the multiplier the young's cut is bigger. On the excess PROBABILITY, which is
+(kappa-1) times baseline mortality and is what enters the value function, the
+young's cut is also bigger -- to eighteen per cent against forty one -- so the
+old-to-young ratio of the deterrent WORSENS, from 4.84 to 11.34. On that
+arithmetic a flat 1.6 makes the profile younger.
+
+**But the level effect cuts the other way and arithmetic cannot settle it.**
+Every household gets a cheaper street; which group crosses its indifference
+margin first depends on where each sits relative to it, and that is general
+equilibrium, not algebra. The author may be right and I may be reading a ratio
+where a level decides.
+
+`homeless_death_risk_flat_in_age` is now a VECTOR COORDINATE rather than a
+compile-time parameter -- 0 Baggett, 1 flat excess risk, 2 flat multiplier 1.6
+-- so all three run from one build and land in one archive.
+`DEATHRISK3.txt` is the three of them at an otherwise identical vector, with
+`point_d4ffbfdab5` as the reference.
+
+**Read the band shares, not h_1.** All three change the level of homelessness as
+well as its shape, and `size_homelessness` will have to move afterwards to hold
+h_1 at 0.399 per cent. The question this settles is which specification puts
+weight in bands 2 to 5, against HUD's 0.260, 0.272, 0.210, 0.184, 0.075.

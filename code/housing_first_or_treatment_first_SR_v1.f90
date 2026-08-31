@@ -2538,7 +2538,11 @@
         ! The default is Baggett's own implied excess at age 26, so the youngest
         ! household's deterrent is unchanged and only the AGE GRADIENT in it is
         ! removed. It is a handover parameter so it can be calibrated.
-        integer, parameter :: homeless_death_risk_flat_in_age=1
+        ! 0 = Baggett's age varying ratios, the status quo
+        ! 1 = flat excess RISK, so the multiplier falls with age
+        ! 2 = flat MULTIPLIER of 1.6, which external_calibration.tex quotes
+        ! A vector coordinate, so all three run from one build.
+        integer :: homeless_death_risk_flat_in_age=1
         real(8) :: homeless_excess_death_risk=0.00396d0
         integer :: mortality_profiles_loaded=0
                             
@@ -31830,6 +31834,16 @@
                 kappa_phi_h_by_age(j_1)=max(1.d0,1.d0+homeless_excess_death_risk/&
                     max(1.d0-actual_survival_probability(j_1),10.d0**(-12)))
 
+            elseif (homeless_death_risk_flat_in_age==2) then
+
+                ! THE NOTE'S OWN CALIBRATION: a flat MULTIPLIER of 1.6 from
+                ! Meyer, Wyse and Logani, which is what external_calibration.tex
+                ! says and what increased_risk_of_death_homeless already holds.
+                ! Kept as a setting rather than argued about, because whether it
+                ! shifts the age profile older or younger is a general
+                ! equilibrium question and not an arithmetic one.
+                kappa_phi_h_by_age(j_1)=1.d0+increased_risk_of_death_homeless
+
             else
 
                 kappa_phi_h_by_age(j_1)=max(1.d0,rr_homeless_profile(j_1)/&
@@ -32870,6 +32884,11 @@
                 case ("discount_factor")
                     write(*,*) "HANDOVER discount_factor:", discount_factor, "->", handover_value
                     discount_factor=min(max(handover_value,0.5d0),1.05d0)
+
+                case ("homeless_death_risk_flat_in_age")
+                    write(*,*) "HANDOVER homeless_death_risk_flat_in_age:",&
+                        homeless_death_risk_flat_in_age, "->", handover_value
+                    homeless_death_risk_flat_in_age=max(min(nint(handover_value),2),0)
 
                 case ("homeless_excess_death_risk")
                     write(*,*) "HANDOVER homeless_excess_death_risk:",&
