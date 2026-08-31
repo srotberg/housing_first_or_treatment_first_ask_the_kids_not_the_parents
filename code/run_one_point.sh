@@ -245,7 +245,34 @@ else
     echo "run_one_point: flock absent, cannot serialise; do not run two points here at once" >&2
 fi
 
-if [ ! -x hftf ] || [ housing_first_or_treatment_first_SR_v1.f90 -nt hftf ]; then
+# REBUILD ON THE SOURCE'S CONTENT, NOT ON ITS TIMESTAMP.
+#
+# The old test was `source -nt hftf`, and it is defeated by anything that leaves
+# a binary newer than the source it did not come from. That happened on 31
+# August: a supervise_calibration.py running in this checkout was killed
+# mid-flight and left an hftf dated 28 seconds after the source. A 38,000 line
+# -O3 build takes twenty five minutes, so 28 seconds is not a build -- but it is
+# newer, so the test said nothing to do, and the point ran on a binary from an
+# older source. It failed loudly only because that source predated six of the
+# handover names.
+#
+# It could have failed SILENTLY, and that is the reason for this change. MODEL_HASH
+# is computed from the SOURCE while the moments come from the BINARY, so a stale
+# binary that merely wins on mtime archives a point stamped with a model it was
+# never measured on. Nothing downstream can tell.
+#
+# hftf.srcmd5 records the md5 of the source the binary was actually built from.
+# A binary with no sidecar, or one whose sidecar disagrees, is not this source's.
+SRC_MD5=$(md5sum housing_first_or_treatment_first_SR_v1.f90 | cut -d" " -f1)
+BUILT_MD5=""
+[ -f hftf.srcmd5 ] && BUILT_MD5=$(cat hftf.srcmd5)
+if [ ! -x hftf ] || [ "$BUILT_MD5" != "$SRC_MD5" ]; then
+    if [ -x hftf ] && [ -n "$BUILT_MD5" ]; then
+        echo "run_one_point: hftf was built from $BUILT_MD5, source is $SRC_MD5"
+    elif [ -x hftf ]; then
+        echo "run_one_point: hftf carries no source stamp, treating it as stale"
+    fi
+    rm -f hftf hftf.srcmd5
     echo "building..."
     # THE COMPILER IS NOT ALWAYS THERE. Worker containers built from the
     # 2.1.245 image arrived without gfortran and the run died at the build step
@@ -283,6 +310,10 @@ if [ ! -x hftf ] || [ housing_first_or_treatment_first_SR_v1.f90 -nt hftf ]; the
             tail -20 "build_${TAG}.log" >&2
             fail "the build failed; see build_${TAG}.log"
         }
+    # Stamp it only after a build that succeeded, so a failed build never leaves
+    # a sidecar vouching for a binary that is not there.
+    printf '%s\n' "$SRC_MD5" > hftf.srcmd5
+    echo "run_one_point: built hftf from $SRC_MD5"
 fi
 
 # EVERY POINT STARTS FROM THE DECLARATIONS PLUS ITS OWN HANDOVER, so a point is
