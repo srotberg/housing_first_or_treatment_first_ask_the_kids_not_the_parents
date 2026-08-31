@@ -3915,3 +3915,73 @@ Adding an invariant is now one line.
 find dead parameters, guard mismatches and index errors, and then they stop.
 These ten run on every point forever, including for the classes nobody thought
 to look for.
+
+## THE tau_l BUG, FOUND BY THE CALL GRAPH. AND ELEVEN ROUTINES IN THE SAME SHAPE
+
+A line-range audit cannot find this class, because the defect is not in any one
+slice: it is a routine defined in one place and called from another, in a
+context it was not written for. So the call graph was built and every routine
+checked for the pattern that produced today's worst bug.
+
+**Eleven routines are called both inside the two-pass loop (lines 33803-33898)
+and outside it.**
+
+    calculate_aggregate_consumption        calculate_welfare
+    calculate_homeownership_by_char...     calculate_welfare_by_characteristics
+    calculate_household_housing_spending   converge_to_stationary_equilibrium
+    govt_revenues_calc                     initialize_feasible_distribution
+    solve_value_function_and_policy_...    stationary_equilibirum_homeownership_rate
+    stationary_equilibrium_statistics
+
+Most of the outside calls are in `long_run_counter_factual` and
+`transition_simulation`, which do not run in a point. Two are not.
+
+### THE LIVE ONE: govt_revenues_calc AT LINE 36285
+
+In `calibrating_model`, in the benchmark path, after the loop has ended and
+`accumulating_beta_types` is back to ZERO. So every guarded reset in that
+routine fires, and it refills from `distribution_stationary` -- which by then
+holds ONLY THE LAST TYPE SOLVED.
+
+    govt_revenues_from_labour_income   reset and refilled -> ONE type
+    model_total_efficiency_units       untouched, still     -> TWO types
+    model_financial                    untouched, still     -> TWO types
+
+    tau_l = govt_revenues_from_labour_income
+            / (model_total_efficiency_units + model_financial*r)
+          = one type's revenue over two types' income
+          = HALF
+
+**Measured: 0.497.** That is the mechanism and the number agrees.
+
+It matters more than a wrong print, because `tau_l` is an internal adjuster
+target: the model drives `labor_income_tax_rate` to make this halved number
+equal 0.224, so the tax rate converges to roughly twice what the data asks for,
+and every household in the model faces it. This is the one bug today that
+reaches the economics.
+
+### THE FIX IS NOT OBVIOUS AND IS NOT BEING MADE UNILATERALLY
+
+The call exists to refresh revenues after the driver has updated average labour
+income, median income and average net wealth for the internal calibration. It
+CANNOT simply be made to accumulate instead of reset: `distribution_stationary`
+no longer holds type 1 at that point, so there is nothing to accumulate onto.
+The candidates, none free:
+
+  1. move the refresh inside the two-pass loop -- but the averages it refreshes
+     against are pooled and updated once per outer iteration, so this changes
+     what is being computed, not just where;
+  2. keep both types' distributions alive so a post-loop routine can rebuild
+     the pooled object -- correct, and the largest change;
+  3. drop the call and accept revenues one outer iteration stale.
+
+This is a modelling decision about what the refresh is for, so it is the
+author's.
+
+### THE SECOND, GATED OFF BUT LIVE IF ENABLED
+
+`print_all_moments` contains two child-penalty counterfactual blocks that
+re-solve, re-converge and re-run `stationary_equilibrium_statistics` and
+`govt_revenues_calc`, then never restore the baseline. They are skipped because
+`measure_child_gap=0`. Set it to 1 and every moment printed after that point is
+a single-type counterfactual's, silently.
