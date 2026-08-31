@@ -5115,8 +5115,14 @@
             ! cent of average labour income. The model's maximum is
             ! max_food_cost itself, since the consumption tax is zero, and its
             ! cutoff is max_food_cost/0.30.
+            ! A SHARE, NOT A MASS. model_fraction_recieving_food_stamps is
+            ! accumulated as a mass and is divided by the distribution only at
+            ! the two file-writing sites, so this line printed 1.55 against a
+            ! data figure of 0.125 and read as a moment missing by a factor of
+            ! twelve. It is the mass on a population of about 51, not a share.
             write(*,*) "DIAG households receiving food stamps            =",&
-                model_fraction_recieving_food_stamps(1), " data=", 0.125d0
+                model_fraction_recieving_food_stamps(1)/max(pooled_mass_all,10.d0**(-12)),&
+                " data=", 0.125d0
             write(*,*) "DIAG max allotment / avg labour income           =",&
                 max_food_cost, " data=", 0.039586d0
             write(*,*) "DIAG gross eligibility cutoff                     =",&
@@ -5871,6 +5877,25 @@
             call check_range("SMI population share",model_smi_prevalence(1),diag_fail_1)
             call check_range("unemployment rate",model_fraction_unemployed(1),diag_fail_1)
             call check_range("homeownership rate",model_homeownership_rate(1),diag_fail_1)
+
+            ! SHARES OF THE HOMELESS. Each of these is a subset of the homeless
+            ! divided by the homeless, so each is bounded by one by construction
+            ! and a value above one means the divisor is not the homeless mass.
+            ! This is not hypothetical: total_homeless_1 is a LOCAL of the
+            ! routine that forms these, its reset was disabled on the mistaken
+            ! belief that an earlier routine owned it, and "homeless by choice"
+            ! duly printed 1.6552. Nothing flagged it.
+            call check_range("homeless by choice, share of the homeless",&
+                model_fraction_homeless_by_choice(1),diag_fail_1)
+            call check_range("homeless who could afford it on income",&
+                val_homeless_afford_on_income(1),diag_fail_1)
+            call check_range("employed share of the homeless",&
+                model_employed_share_of_homeless(1),diag_fail_1)
+            call check_range("SMI share of the homeless",&
+                model_smi_share_of_homeless(1),diag_fail_1)
+            call check_range("households receiving food stamps",&
+                model_fraction_recieving_food_stamps(1)/max(pooled_mass_all,10.d0**(-12)),&
+                diag_fail_1)
 
             ! THE AGE BANDS PARTITION THE HOMELESS. homelessness_by_age_group is
             ! normalised to sum to one by construction, so a failure here means
@@ -11313,7 +11338,26 @@
         ! It is the same quantity in every owner, so the FIRST in call order keeps
         ! it and the rest read it. The order is the same in the driver and in
         ! long_run_counter_factual, so the value is always built before it is read.
-        ! if (accumulating_beta_types==0) total_homeless_1=0
+        !
+        ! THAT RULE APPLIES TO MODULE VARIABLES ONLY, AND total_homeless_1 IS NOT
+        ! ONE. It is declared a local of this routine and, separately, a local of
+        ! stationary_equilibrium_statistics: two variables that happen to share a
+        ! name. So there is no earlier owner for this one to read. Disabling the
+        ! reset here did not hand ownership to another routine, it left this
+        ! routine's own local undefined on entry, and the eight homeless averages
+        ! normalised by it below were divided by whatever the stack held.
+        !
+        ! It printed plainly and was missed for a day: "homeless by choice, share
+        ! of the homeless" came out at 1.6552 in point_03ac59f09e, and a share of
+        ! the homeless cannot exceed one. Both by-choice diagnostics now have an
+        ! invariant so the next one is caught on the run that produces it.
+        !
+        ! The other nine disabled resets were checked against the declaration
+        ! block at the same time. mass_of_owners, mass_by_employment,
+        ! model_fraction_homeless, mass_renters_by_age, mass_by_age and
+        ! mass_by_employment_and_age are all module scope, so the one-owner rule
+        ! is sound for them and they are left alone.
+        if (accumulating_beta_types==0) total_homeless_1=0
         if (accumulating_beta_types==0) total_addicted_and_homeless_1=0
         if (accumulating_beta_types==0) model_fraction_homeless_by_choice(time_period)=0
         if (accumulating_beta_types==0) val_homeless_afford_on_income(time_period)=0
