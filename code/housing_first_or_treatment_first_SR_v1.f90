@@ -13814,6 +13814,18 @@
                 sum(distribution_stationary(i)%vector_transition_real(time_period,:,:,:,:,:,:))
             
         end do
+
+        ! POOLED MASS. This routine is SEVENTH of nine in the two-pass
+        ! loop and sum_of_distribution is MODULE scope, so the one-type
+        ! value it leaves here is what every later reader sees --
+        ! including print_all_moments, which runs after the loop has
+        ! ended and accumulating_beta_types is back to zero. That is why
+        ! the mass diagnostics came out at exactly 2.0: pooled
+        ! numerators over a denominator holding one type.
+        !
+        ! The scaling was reverted here once, on the reasoning that this
+        ! routine is per-type. It is not: it does not OWN this variable.
+        sum_of_distribution=sum_of_distribution*(accumulating_beta_types+1)
         
         do age_index=1,life_span
         

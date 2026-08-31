@@ -3553,3 +3553,42 @@ measured pair, and `discount_factor_impatient` owns w_bot and is bracketed.
 for the age profile of homelessness and the rest of the untargeted table at a
 properly calibrated point, and that is the right order: an age profile read off
 a point with y_u fifty per cent out is a profile of the wrong economy.
+
+## THE POOLING BUG, LOCALISED BY COMPARING DIAGNOSTICS RATHER THAN GUESSING
+
+Third attempt, and this one is a measurement. The two frozen-beta points differ
+only in `number_of_beta_types`, so every diagnostic that disagrees is a
+bookkeeping error. Comparing all 58:
+
+    ratio   diagnostic
+    1.9937  mass in the top THREE savings grid points
+    1.9950  mass ON the top savings grid point
+    2.0230  mass with a NEGATIVE value of life
+    2.0637  working age homeless mass
+    2.1886  average assets of the homeless
+
+**A clean family at exactly 2.0, and all of them are printed in
+`print_all_moments`**, which runs AFTER the two-pass loop has ended and
+`accumulating_beta_types` is back to zero. Pooled numerators over a denominator
+holding one type.
+
+**The cause.** `calculate_welfare_by_characteristics` is SEVENTH of the nine
+statistics routines in the loop. It recomputes `sum_of_distribution` from
+`distribution_stationary` and does not scale it to pooled mass. Since that
+variable is MODULE scope, the one-type value it leaves behind is what every
+later reader sees -- the eighth and ninth routines, and then every print.
+
+Positions 1, 2, 3, 3 and 5 all scale correctly. Position 7 does not, and it is
+the last one to touch the variable.
+
+**I caused it.** The scaling was applied to all seventeen sites, then reverted
+at seven of them on the reasoning that they were "per-type or outside the loop".
+This one is inside the loop, and the reasoning was wrong in a specific way worth
+naming: **the routine does not OWN the variable.** Whether a routine's own use
+of a shared module variable wants the one-type value says nothing about what the
+routines after it want, and `sum_of_distribution` is read by nine routines and
+two hundred lines of prints.
+
+`VALIDATE3.txt` re-runs the equal-beta test. If the 2.0 family goes to 1.0 the
+diagnosis holds; tau_l, halved for a reason not yet found, is the test of
+whether it was the ONLY cause.
