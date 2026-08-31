@@ -2458,3 +2458,120 @@ Expected: take-up rises as the cost falls, so line 1 should give the HIGHEST
 tau_u. If tau_u at a utility cost of zero is still below 0.245, the moment is
 not reachable from this instrument and that is the finding, recorded rather than
 worked around.
+
+## KAPPA COLUMN RE-MEASURED ON THE FIXED DENOMINATOR
+
+The two points of `code/KAPPA_REDO.txt`, solved on model `ab22a2f5ba` -- the
+source as it stood immediately after `b87a441`, the commit that scaled the
+two-pass masses to pooled mass. Both handed over 28 of 28 parameters and both
+closed with `END OF MOMENTS`, so both are measurements of the vector they were
+given.
+
+| | line 1 | line 2 |
+|---|---|---|
+| `kappa_phi_d_level` | 6 | 7.0 |
+| tag | `5c932be8a2` | `ed5b9fe138` |
+| file | `points/point_5c932be8a2.txt` | `points/point_ed5b9fe138.txt` |
+| solve time | 27 min | 25 min |
+
+
+### Every targeted moment, both points
+
+`target` is shown once where the two points share it; the two that differ are
+marked. All twenty-three targeted moments are listed.
+
+| moment | what it is | kappa 6 | kappa 7 | target |
+|---|---|---|---|---|
+| `sigma_y` | bottom half earnings share | 0.16905002140174125 | 0.16905002140174125 | 0.172 |
+| `tau_l` | average labour income tax | 0.11442914447442246 | 0.1167514189782618 | 0.2240000069141388 |
+| `omega_l` | labour supply / total hours | 0.40383530014564456 | 0.4033126901715104 | 0.4000000059604645 |
+| `beta` | wealth over output | 3.9690743327438036 | 4.013257577919592 | 3.0 |
+| `h_2` | above half of spending | 0.08054490001734889 | 0.059898611956434096 | 0.101 |
+| `h_3` | share in the largest unit | 0.6744297716959058 | 0.684812806847286 | 0.626723 |
+| `gamma` | housing over expenditure | 0.18723776812442583 | 0.1920012250460057 | 0.2680000066757202 |
+| `h_1` | homelessness rate | 0.005918915001538732 | 0.0050959584796382825 | 0.0039900001138448715 |
+| `b` | total drug users | 0.3544728441695787 | 0.14226821821056154 | 0.08900000154972076 |
+| `lambda_d` | disorder rate | 0.1258953181943336 | 0.03421332862142739 | 0.03680000081658363 |
+| `theta` | drug spending share | 0.2751468050212041 | 0.19583038526270236 | 0.16200000047683716 |
+| `aleph` | value of life / income | 144.44286034226735 | 157.92187936659454 | 80.0 |
+| `pi_eu` | unemployment rate | 0.04912738478728769 | 0.03284130204904531 | 0.048500001430511475 |
+| `kappa_ued` | unemployment given SUD | 0.1662437548607938 | 0.19184957407612943 | 0.16249999403953552 |
+| `kappa_uem` | employment given SMI | 0.27164468610016695 | 0.2935120453239533 | 0.30000001192092896 |
+| `p_m` | SMI population share | 0.050247230956804015 | 0.04572837424734653 | 0.050716882618654986 (k6) / 0.04892764961416063 (k7) |
+| `lambda_m` | SMI share of the homeless | 0.16848968637103492 | 0.18286001093074977 | 0.25 |
+| `pi_V` | eligibles with a voucher | 0.163555741937361 | 0.1738935087488769 | 0.26600000262260437 |
+| `cbar` | food stamps / labour income | 0.02560339832356143 | 0.01875429916397353 | 0.00419999985024333 |
+| `tau_u` | treatment take up | 0.20793996433365705 | 0.2274431835124974 | 0.24500000476837158 |
+| `mu_H` | recovery housed / homeless | 1.5582118318046048 | 1.6651877503782861 | 1.4732142857142856 |
+| `w_bot` | net worth share, bottom half | 0.1508205427270792 | 0.15739998644348707 | 0.025 |
+| `y_u` | income of drug users | 0.8398040361534324 | 0.6772915062602598 | 0.74 |
+
+### The three `want 1.0` diagnostics
+
+| DIAG | kappa 6 | kappa 7 |
+|---|---|---|
+| income histogram mass / distribution | 1.0025696551268057 | 1.0001326204170609 |
+| histogram mass / distribution | 1.0025696551268173 | 1.0001326204170731 |
+| histogram wealth / total wealth | 1.0000000000001539 | 1.0000000000001930 |
+
+**They read 1.0 and no longer read 2.0.** The kappa 6 vector had been measured
+before under the same tag and is kept alongside as
+`point_5c932be8a2_void_halved_denominator.txt`, so the two are directly
+comparable: the first two ratios were `2.0051297578649980` and
+`2.0051297578650247` and are now `1.0025696551268057` and
+`1.0025696551268173`, which is half, to the precision a re-solve preserves.
+
+Two qualifications, neither of which is the doubling.
+
+The first two ratios land on 1.0026 at kappa 6 and 1.0001 at kappa 7, not on
+1.0 to machine precision the way an untouched one-pass point does (those sit at
+1.0000000000001). That residual is pre-existing histogram slack, not a remnant
+of the halved denominator: it was carried doubled in the void file, and halving
+2.0051 gives 1.0026 exactly. It scales with the size of the drug-using
+population and is worth a look on its own, but it is a different question.
+
+The third ratio never read 2.0. Numerator and denominator both doubled, so it
+read 1.0000000000001372 before the fix and 1.0000000000001539 after. Only two
+of the three were ever evidence of the bug.
+
+### The correction table above does not match what was measured
+
+The section "What it invalidated" predicts every LEVEL moment is exactly twice
+its truth and lists `b` at kappa 6 going 0.35445 -> 0.17722. That is not what
+happened. At the same vector, before and after the fix:
+
+| moment | void file | re-measured | predicted |
+|---|---|---|---|
+| `h_1` | 0.0059186761757833 | 0.0059189150015387 | 0.00296 |
+| `b` | 0.35445396446262112 | 0.35447284416957869 | 0.17722 |
+| `lambda_d` | 0.25177165162774140 | 0.12589531819433361 | -- |
+| `w_bot` | 0.031401427868322791 | 0.15082054272707920 | not a simple factor |
+
+`h_1` and `b` are unchanged to five significant figures. Only `lambda_d` halved.
+`w_bot` moved by a factor of about five, in the direction the section already
+warned was not a simple factor, and now agrees with the one-pass point's 0.157
+rather than with its own previous 0.031.
+
+The one-pass point `point_110278961e_onebeta.txt` says the same thing from the
+other side: against its voided two-pass counterpart at the same vector, `h_1` is
+0.00391 against 0.00416 and `b` is 0.02462 against 0.02777 -- close, not half --
+while `lambda_d` moved *up*, 0.00715 against 0.00578.
+
+So the halved denominator reached `lambda_d` and `w_bot` and did not reach `h_1`
+or `b`, and the blanket claim that every level moment doubled is wrong. The list
+of twenty-eight division sites should be re-read against which moments actually
+moved before any of those numbers is quoted.
+
+### What these two points are and are not
+
+They are two-pass, two-type runs. `discount_factor` and
+`discount_factor_impatient` were both handed over at 0.99715, but `d092b49`
+establishes that the patient one is bisected internally on wealth over output
+while the impatient one is not, so the two did not stay equal through the solve.
+Neither point is an equal-beta run and neither should be read as one.
+
+They were also overtaken while they solved. `48a8e70` made the beta type count a
+vector coordinate defaulting to one and `d092b49` added `freeze_beta_bisection`,
+which is inert at its declared 0; the source is now `d70ad1c545`. Both points
+carry `MODEL ab22a2f5ba`, so they are identifiable, but the same two lines run
+today would take the one-type path and would not reproduce them.
