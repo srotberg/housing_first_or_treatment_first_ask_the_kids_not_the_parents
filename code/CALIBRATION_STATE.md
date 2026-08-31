@@ -476,3 +476,32 @@ by removing the mortality cost, kappa_phi_d_level = 1.0, with
 addiction_scalar_1 cut to hold the use rate near the target, so the
 comparison is at a matched b rather than at b = 0.97 where the archive's low
 kappa points sit and where the income of users is 0.91 by arithmetic.
+
+
+## 31 August, 01:45 -- the asset grid is 25 points, decided
+
+The author's call, and it closes the question opened when the cut from 41 to
+25 reachable points was measured against an IDENTICAL vector:
+
+    b         0.0867 at 41 points   0.0629 at 25    -27 per cent
+    lambda_d  0.0349                0.0212          -39 per cent
+    h_1       0.00267               0.00289          +8 per cent
+
+Every commit between those two runs was a print or a label, so the move is
+the grid.
+
+WHAT IT COSTS AND WHAT IT DOES NOT. It does not cost the moments. b and
+lambda_d are calibrated, so the grid error is absorbed into
+addiction_scalar_1 and lambda_addiction and the targets are still hit. What
+is grid dependent is the PARAMETER VALUE that hits them, which is worth one
+sentence in a robustness note rather than a change of plan: at 41 points the
+same targets would be met at a different b.
+
+It also means the 268 point archive stays retired. That was already true --
+the mortality form, SNAP and the treatment cost all moved on 30 and 31
+August -- but the grid alone would have done it.
+
+The gain is 8 minutes a point against 25, measured over 246 old points and
+the first few new ones, a factor of 3.1. That is what makes a joint Jacobian
+affordable at all: seventeen points is forty minutes now and over two hours
+before.
