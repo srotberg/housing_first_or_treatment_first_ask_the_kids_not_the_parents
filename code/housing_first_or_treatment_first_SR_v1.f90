@@ -20092,8 +20092,21 @@
                 x_1=(x_1+x_2)/2
                 
                 proceed_2=0
-                
-                distance_secant=abs(MU_1-MU_2)
+
+                ! THE BRACKET WIDTH, NOT THE MARGINAL UTILITIES. This is the
+                ! path where objective returned can_consume_1=0, and on that
+                ! path it assigns NEITHER of its intent(out) arguments, so
+                ! MU_1 and MU_2 are undefined here. Under gfortran the dummies
+                ! alias the caller's variables so what was read was the previous
+                ! iteration's pair rather than garbage, which is why it never
+                ! showed -- but the do while termination test depended on it.
+                !
+                ! The sibling branch a few lines below already terminates on
+                ! abs(x_0-x_2), which is the bisection's own bracket and is
+                ! always defined. The other three call sites guard on
+                ! can_consume_1==1 before reading MU; this one could not,
+                ! because it IS the not-consuming path.
+                distance_secant=abs(x_0-x_2)
                 
             end if
                         
@@ -20155,7 +20168,9 @@
                     x_0=x_1
                     x_1=(x_1+x_2)/2
                     proceed_2=0
-                    distance_secant=abs(MU_1-MU_2)
+                    ! Same undefined read as above, same fix: the bracket width,
+                    ! which is what the branch directly above this one uses.
+                    distance_secant=abs(x_0-x_2)
 
                 end if
 
@@ -20171,7 +20186,10 @@
         
         end if
         
-        if ((can_consume_1==1) .AND. (abs(MU_1-MU_1)>stopping_rule_secant) .AND. (x_1>0) .AND. (x_1<1)) then
+        ! WAS abs(MU_1-MU_1), IDENTICALLY ZERO, so this warning could never
+        ! fire. It exists to say the secant left its loop without converging.
+        ! Guarded on can_consume_1==1, so both marginal utilities are defined.
+        if ((can_consume_1==1) .AND. (abs(MU_1-MU_2)>stopping_rule_secant) .AND. (x_1>0) .AND. (x_1<1)) then
         
             write(*,*) "labor"
             write(*,*) "distance_secant=", distance_secant
@@ -23190,7 +23208,30 @@
                                     !$omp& price_of_addictive_good,policy_function_treatment,&
                                     !$omp& avg_income_to_use_1,avg_income_to_use_2,policy_function_labor_supply,in_retirement,&
                                     !$omp& median_income,financial_grid,risk_free_rate,median_income_calibrated,is_addicted_1,&
-                                    !$omp& voucher_index_1,survival_probability_for_dist_iteration)
+                                    !$omp& survival_probability_for_dist_iteration) &
+!
+! voucher_index_1 IS PRIVATE, NOT SHARED. It is WRITTEN inside this loop, once
+! per iteration, by compute_voucher_index_1, from is_homeless_2 -- which depends
+! on the policy's chosen future housing status and so varies with
+! financial_index, the loop index. Shared, that is a data race: two threads write
+! it and either may read the other's value, as the fourth subscript of
+! voucher_probabilities and as an argument to
+! calculate_future_voucher_index_and_opportunity.
+!
+! It is harmless in the benchmark ONLY by arithmetic accident: both
+! increased_prob_of_voucher_if_homeless multipliers are 1, so
+! voucher_probabilities is identical across its fourth index and a raced index
+! selects the same number. It becomes live nondeterminism the moment either
+! multiplier moves off 1 -- and line 36622 already carries a commented-out 5.81,
+! so someone has tried -- or in any Treatment First counterfactual, where
+! voucher_conditional_on_clean makes index 3 differ from 1 and 2 by the whole
+! detection and false-positive structure.
+!
+! Every other temporary in this loop body is a threadprivate module variable.
+! voucher_index_1 and is_addicted_1 were the two that are not, and is_addicted_1
+! is benign: it is a function of unemployment_index, an OUTER loop variable, so
+! every thread writes the same value to it.
+                                    !$omp& private(voucher_index_1)
 !                                                                        
                                     do financial_index=newborn_household*negative_financial_grid_size+&
                                          (1-newborn_household)*(has_house*1+(1-has_house)*negative_financial_grid_size),&

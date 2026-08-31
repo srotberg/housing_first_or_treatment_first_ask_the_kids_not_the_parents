@@ -4715,3 +4715,43 @@ only). Two are cosmetic: the band-7 print and a comment.
 
 **At TWO betas, essentially everything changes**, and no earlier two-beta number
 survives.
+
+## FIXES 18 AND 19
+
+**18. Two undefined reads in the labour-supply secant.** [Audit F-10] `objective`
+declares `MU_1` and `MU_2` `intent(out)` and assigns NEITHER on the
+`can_consume_1=0` path, so both are undefined on return. `secant` read them on
+exactly that path to set `distance_secant`, which is the `do while` termination
+test. Under gfortran the dummies alias the caller's variables, so what was read
+was the previous iteration's pair rather than garbage -- which is why it never
+showed, and why it is still an undefined read the loop's exit depended on.
+
+Both sites now use `abs(x_0-x_2)`, the bisection's own bracket width, which is
+what the SIBLING branch a few lines away already used and is always defined. The
+other three call sites guard on `can_consume_1==1` before reading MU; these two
+could not, because they are the not-consuming path.
+
+Adjacent: `abs(MU_1-MU_1)`, identically zero, so a warning that the secant left
+its loop unconverged could never fire. Now `abs(MU_1-MU_2)`, guarded on
+`can_consume_1==1` so both are defined.
+
+**19. A data race in the distribution sweep.** [Audit F-07] `voucher_index_1` was
+in the `shared` clause of an `!$omp parallel do default(none)` and WRITTEN inside
+the loop, once per iteration, from a quantity that varies with the loop index.
+Two threads write it and either may read the other's value -- as the fourth
+subscript of `voucher_probabilities` and as an argument to
+`calculate_future_voucher_index_and_opportunity`.
+
+Harmless in the benchmark ONLY by arithmetic accident: both
+`increased_prob_of_voucher_if_homeless` multipliers are 1, so
+`voucher_probabilities` is identical across its fourth index and a raced index
+picks the same number. **It becomes live nondeterminism the moment either
+multiplier moves off 1 -- line 36622 already carries a commented-out 5.81, so
+someone has tried -- or in any Treatment First counterfactual**, where
+`voucher_conditional_on_clean` makes index 3 differ from 1 and 2 by the whole
+detection and false-positive structure. Now `private`.
+
+Every other temporary in that loop body is a threadprivate module variable.
+`voucher_index_1` and `is_addicted_1` were the two exceptions, and `is_addicted_1`
+is benign -- a function of an OUTER loop variable, so every thread writes the
+same value.
