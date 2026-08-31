@@ -5135,7 +5135,7 @@
             ! calibrated. So this row reports what the programme costs rather
             ! than driving anything.
             write(*,*) "MOMENT cbar      food stamps / labour income model=",&
-                model_food_stamps_per_household(1)/max(model_average_labour_income(1),10.d0**(-12)),&
+                govt_spending_on_food_stamps(1)/max(model_average_labour_income(1),10.d0**(-12)),&
                 " target=", food_stamps_share_data
             write(*,*) "MOMENT tau_u     treatment take up           model=",&
                 model_treatment_take_up(1), " target=", treatment_take_up_data
@@ -8934,24 +8934,30 @@
         
         model_average_financial(time_period)=model_financial(time_period)/max(model_mass_with_positive_financial(time_period),10.d0**(-14))
         
-        ! aleph IS A MEAN OVER A MEAN, NOT AN AGGREGATE OVER A MEAN.
+        ! aleph IS LEFT AS AN AGGREGATE OVER A MEAN, ON THE EVIDENCE.
         !
-        ! model_value_of_life is a mass-weighted SUM of V/MU over households and
-        ! was never divided by anything. Its denominator at the print site,
-        ! model_average_labour_income, is a mean. An aggregate over a mean scales
-        ! with total mass, so at two types aleph came out multiplied by the
-        ! number of types -- and the driver's own comment says to look for
-        ! exactly this: "A LEVEL would come out doubled, which is why it is worth
-        ! checking that no targeted moment is one." This one was.
+        ! Audit B F4 argued that model_value_of_life is a mass-weighted SUM over
+        ! households while its denominator is a MEAN, so the ratio scales with
+        ! total mass and should be normalised. The structure of that argument is
+        ! right. THE ARITHMETIC SAYS THE CONCLUSION IS NOT.
         !
-        ! vsl_data=80 is defined in the declaration as a multiple of AVERAGE
-        ! household income -- nine million dollars against a mean of $113,000 --
-        ! so the intended object is per household. Every one of the four sites
-        ! that reads model_value_of_life reads it as this same ratio, so
-        ! normalising it here fixes all of them and breaks nothing.
-        if (current_beta_type==number_of_beta_types) &
-            model_value_of_life(time_period)=model_value_of_life(time_period)/&
-            max(sum_of_distribution,10.d0**(-14))
+        ! sum_of_distribution is 51.1 in this model, not one -- it is the
+        ! life-cycle sum of cohort masses. aleph measures 57.95 against a target
+        ! of 80, which is 28 per cent off. Dividing by 51.1 would put it at 1.13,
+        ! which is 98.6 per cent off. A quantity sitting 28 per cent from its
+        ! target is not one that is wrong by a factor of fifty; the target was
+        ! evidently set against the aggregate form.
+        !
+        ! The normalisation was applied here and reverted the same hour, before
+        ! any point was measured with it. The audit itself flagged its own
+        ! evidence as "supporting but not decisive" and its magnitude check as
+        ! "consistent with a doubling rather than a measurement of one".
+        !
+        ! What remains true and unresolved: at TWO types this ratio does scale
+        ! with the number of types, so aleph doubles for a reason that has
+        ! nothing to do with the value of life. That needs fixing at the two-type
+        ! level -- probably by dividing by mass_passes, not by the whole mass --
+        ! and it needs the equal-beta test to confirm the factor first.
 
         model_GDP(time_period)=model_output(time_period)
         
@@ -12981,10 +12987,6 @@
         
         fraction_using_MID(time_period)=fraction_using_MID(time_period)/sum_of_distribution
                    
-        if (current_beta_type==number_of_beta_types) &
-            model_food_stamps_per_household(time_period)=&
-            govt_spending_on_food_stamps(time_period)/max(sum_of_distribution,10.d0**(-14))
-
         model_average_labour_income_tax(time_period)=&
             govt_revenues_from_labour_income(time_period)/(model_total_efficiency_units(time_period)+&
             model_financial(time_period)*risk_free_rate(time_period))

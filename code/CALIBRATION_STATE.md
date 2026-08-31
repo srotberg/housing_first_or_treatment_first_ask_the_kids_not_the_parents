@@ -4659,3 +4659,59 @@ And `MOMENT theta` of -1.0 is an empty-population sentinel rather than a value. 
 did not arise here: theta reads 0.361578 and 0.373092 at the two points, so the
 population it is computed over was non-empty on both.
 
+## FIXES 8 AND 9 REVERTED. THE ARITHMETIC CONTRADICTED THE AUDIT
+
+The author asked whether any of these fixes would change the output. Checking
+that question found that two of mine would have changed it BADLY.
+
+Audit B F4 and F5 argued that `aleph` and `cbar` are aggregates over means, so
+both scale with total mass and should be normalised. The STRUCTURE of that
+argument is right. The arithmetic says the conclusion is not:
+
+    sum_of_distribution = 51.1     (the life-cycle sum of cohort masses)
+
+    aleph  measured 57.95    target 80       28 per cent off
+           after dividing by 51.1 -> 1.13    98.6 per cent off
+
+    cbar   measured 0.0157   target 0.0042
+           after dividing by 51.1 -> 0.000307, thirteen times too SMALL
+
+**A moment sitting 28 per cent from its target is not one that is wrong by a
+factor of fifty.** The targets were evidently set against the aggregate form.
+Both normalisations are reverted, before any point was measured with them.
+
+The audit flagged its own evidence honestly -- "supporting but not decisive" for
+F4, and its magnitude check as "consistent with a doubling rather than a
+measurement of one". I applied it anyway without checking the magnitude. That is
+the third time today reasoning-from-structure has beaten checking-a-number, and
+the third time it has been wrong.
+
+**WHAT REMAINS TRUE AND IS NOT FIXED.** At TWO types the ratio does scale with
+the number of types, so aleph doubles for a reason that has nothing to do with
+the value of life. The right correction there is a division by `mass_passes`,
+NOT by the whole mass -- and it needs the equal-beta test to confirm the factor
+before it is applied. Recorded in the source at the site.
+
+## ANSWERING THE QUESTION DIRECTLY: WHICH FIXES CHANGE THE OUTPUT
+
+**At ONE beta, almost nothing changes.** Every pooling fix is inert: the loop
+runs once, `accumulating_beta_types` is always 0 and
+`current_beta_type==number_of_beta_types` is always true. That covers fixes 1-5,
+10-12 and 17 and all 187 normalisation sites.
+
+Three DO change one-beta output:
+
+  - **Fix 16, y_u's numerator.** LIVE at one beta and it moves a targeted moment.
+    y_u should RISE. Every income-of-a-subgroup ratio moves with it.
+  - **Fix 15, the treatment distance.** The calibration loop could not exit on it
+    and ran to its iteration cap on every point. Points will now converge, so
+    the internally calibrated parameters will land somewhere else -- better, but
+    different.
+  - **Fix 7, damp_on_flip.** In a calibration loop, parameters documented as
+    pinned were drifting. They will now hold.
+
+Two are dead today: fix 13 (the transition is off) and fix 14 (initial guess
+only). Two are cosmetic: the band-7 print and a comment.
+
+**At TWO betas, essentially everything changes**, and no earlier two-beta number
+survives.
