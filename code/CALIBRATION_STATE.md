@@ -1313,3 +1313,49 @@ parameters moved. Its `addiction_scalar_1` partner has been re-measured three
 times since. ROUND14 line 2 arms `lambda_addiction` alone at 15.5 from the
 current best point, so the repairs stop resting on the one column nobody has
 checked.
+
+## NEW BEST: 620db1471b. AND THE OLD lambda_addiction COLUMN WAS WRONG
+
+`kappa_ued` at 4.0 with its repair landed clean -- **21.9 per cent off to 12.3**,
+b at 4.8 and lambda_d at 5.8 -- and the point now leads the archive on the sum of
+gaps outside ten per cent, 1.42 against the previous 1.52:
+
+    h_1 42, gamma 31, aleph 25, pi_eu 17, lambda_m 15, kappa_ued 12
+
+**The line that mattered most was the column check.** Re-measured on the current
+slice, `lambda_addiction` reads
+
+    b        -1.328   (the column used since ROUND9 said -1.56)
+    lambda_d -0.615   (said -1.14)
+
+The lambda_d elasticity is **little more than half** what every repair since
+ROUND9 has assumed. That is not a rounding difference, it is the reason the
+`value_of_life` 36 repair undershot on the same round: aleph reached 22.0 per
+cent instead of the predicted 18.1, and b and lambda_d were left at 32.4 and
+28.1, because the solver believed `lambda_addiction` would deliver nearly twice
+the lambda_d it actually does. Two rounds of clamped repairs were solved against
+it.
+
+**Both columns of the drug locus are now measured on the current slice**, so
+    J = [[-1.328, -17.00], [-0.615, -23.48]]
+and every repair from here rests on nothing older than this point. Re-derived
+with it, the `value_of_life` 36 step needs `addiction_scalar_1` at exactly its
+wide-bracket edge and `lambda_addiction` well inside, and predicts aleph 25.0 per
+cent off to 18.8.
+
+**Re-measure a column before trusting it at a new point, not after it fails.**
+This is the same lesson as the seven-coordinate pair and the lambda_m sign, and
+it has now cost three rounds.
+
+## ROUND15
+
+    1  value_of_life 36 + repair on the corrected columns   aleph 25.0 -> 18.8
+    2  pi_eu with kappa_uem HELD                            pi_eu 16.8 -> ~0
+    3  kappa_ued 4.4 + repair                               12.3 -> 3.8
+    4  value_of_life 35.3 + repair                          25.0 -> 21.9, brackets line 1
+
+Line 2 is the answer to the ROUND10 mistake. Lowering
+`probability_becoming_unemployed` closes pi_eu and pushes kappa_uem to 32 per
+cent off; `kappa_uem` the parameter has a measured elasticity of -0.952 on that
+moment, so the compensation is computed and carried in the same line rather than
+discovered a round later.
