@@ -2433,3 +2433,28 @@ beta on wealth over output, impatient beta on the bottom half's wealth share --
 is now exactly what the code does.
 
 Fifteen parameters are searched externally, down from sixteen.
+
+## THE ARCHIVE IS EMPTY ON THE CURRENT MODEL, SO THE GATE IS SEEDED, NOT RUN
+
+Model `d70ad1c545` carries the pooled-denominator fix, the income cdf pooling,
+`number_of_beta_types` as a vector coordinate, the utility treatment cost, and
+`freeze_beta_bisection`. ZERO points score on it, so `next_batch.py` has nothing
+to interpolate from and a batch built off it would be a guess dressed as a step.
+The gate was deliberately not run this firing.
+
+`ANCHOR1B.txt` seeds it with three lines, all at `number_of_beta_types=1` --
+the configuration that is validated and much better fitted -- taken from the
+one-pass vector, with the treatment price at zero and the utility cost
+bracketed at 0, 0.05 and 0.5.
+
+Three lines rather than one because the utility cost is the coordinate that just
+changed hands and its behaviour on this model is unmeasured. Seeding and
+bracketing the new instrument in the same round costs nothing extra: the archive
+needs points either way. A BRACKET BEATS AN ELASTICITY, and tau_u is the moment
+that forced that rule, its measured elasticity having come out at -0.92, -0.52,
+-0.86 and -3.28 at four places on the same instrument.
+
+Expected: take-up rises as the cost falls, so line 1 should give the HIGHEST
+tau_u. If tau_u at a utility cost of zero is still below 0.245, the moment is
+not reachable from this instrument and that is the finding, recorded rather than
+worked around.
