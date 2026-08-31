@@ -22532,7 +22532,7 @@
         implicit none
         
         integer, intent(in) :: time_period
-        integer :: has_house,financial_index,years_left_on_mortgage_index_used
+        integer :: has_house,financial_index
         integer, parameter :: only_26_year_olds=1
         character*1 :: string_used
                         
@@ -22761,10 +22761,19 @@
                                     do housing_status_index=(1-has_house)*lowest_housing_grid_point+&
                                         has_house*index_of_smallest_house_hhld_can_buy,housing_status_grid_size-1
                                                                                 
-                                        distribution_guess(years_left_on_mortgage_index_used)%vector_transition_real&
+                                        ! WAS years_left_on_mortgage_index_used, WHICH IS ASSIGNED
+                                        ! NOWHERE IN THE FILE. distribution_guess is dimension(1:2),
+                                        ! so an uninitialised integer here subscripts a derived type
+                                        ! out of bounds on both a read and a write, and it would not
+                                        ! fail loudly: a local integer most often reads 0, which is
+                                        ! one element below the array. The loop this sits inside runs
+                                        ! over years_left_on_mortgage_index, which is plainly what was
+                                        ! meant. Dead while solve_transition_dynamics=0; live the
+                                        ! moment the transition is switched on, which is being built.
+                                        distribution_guess(years_left_on_mortgage_index)%vector_transition_real&
                                             (0,age_index,financial_index,unemployment_index,employment_index,&
                                             housing_status_index,voucher_index)=&
-                                            distribution_guess(years_left_on_mortgage_index_used)%&
+                                            distribution_guess(years_left_on_mortgage_index)%&
                                             vector_transition_real(0,age_index,financial_index,&
                                             unemployment_index,employment_index,housing_status_index,voucher_index)+&
                                             distribution_to_fetch(years_left_on_mortgage_index)%vector_real&
@@ -25877,7 +25886,17 @@
         
             unconditional_unemployment_probability(1)=1 !0.95155279776391399
             unconditional_unemployment_probability(2)=0 !3.4048867272342742E-002
-            unconditional_unemployment_probability(3)=1-sum(unconditional_unemployment_probability(1:2))
+            ! COMPLETE THE ROW OVER THE WHOLE VECTOR, NOT OVER ITS FIRST TWO
+            ! ENTRIES. unconditional_unemployment_probability is six long: the
+            ! clean block 1:3 and the SMI block 4:6. Completing over 1:2 left the
+            ! SMI entries, filled from the stationary distribution just above,
+            ! outside the sum, so the vector totalled 1 plus the SMI share of the
+            ! clean population. It is the initial guess for the distribution
+            ! iteration, which converges to a fixed point independent of its
+            ! guess, so no reported moment moves -- but it inflated the starting
+            ! mass and the sum(distribution_guess) diagnostic, and cost sweeps.
+            unconditional_unemployment_probability(3)=1-sum(unconditional_unemployment_probability(1:2))&
+                -sum(unconditional_unemployment_probability(4:threshold_addiction_index))
             
         else
         
@@ -25908,7 +25927,17 @@
                 
             unconditional_unemployment_probability(1)=1 !0.95155279776391399
             unconditional_unemployment_probability(2)=0 !3.4048867272342742E-002
-            unconditional_unemployment_probability(3)=1-sum(unconditional_unemployment_probability(1:2))
+            ! COMPLETE THE ROW OVER THE WHOLE VECTOR, NOT OVER ITS FIRST TWO
+            ! ENTRIES. unconditional_unemployment_probability is six long: the
+            ! clean block 1:3 and the SMI block 4:6. Completing over 1:2 left the
+            ! SMI entries, filled from the stationary distribution just above,
+            ! outside the sum, so the vector totalled 1 plus the SMI share of the
+            ! clean population. It is the initial guess for the distribution
+            ! iteration, which converges to a fixed point independent of its
+            ! guess, so no reported moment moves -- but it inflated the starting
+            ! mass and the sum(distribution_guess) diagnostic, and cost sweeps.
+            unconditional_unemployment_probability(3)=1-sum(unconditional_unemployment_probability(1:2))&
+                -sum(unconditional_unemployment_probability(4:threshold_addiction_index))
                     
         end if
                                      
@@ -35474,8 +35503,23 @@
                             treatment_take_up_data,escape_factor)
                         utility_cost_of_treatment=max(min(treatment_step_1,10.d0),0.d0)
 
+                        ! ZEROED WHEN THE ADJUSTER IS ZERO, OR THE LOOP CANNOT EXIT.
+                        ! utility_cost_of_treatment_adjuster is 0, so the step below
+                        ! cannot move the parameter, so this distance can never fall
+                        ! below its stopping rule -- and it sits in the do while
+                        ! condition, so the calibration loop ran to its iteration cap
+                        ! on every point and stopped with the OTHER distances wherever
+                        ! they happened to be, rather than converged.
+                        !
+                        ! tau_u is owned externally by next_batch.py through
+                        ! utility_cost_of_treatment, so the moment is not abandoned;
+                        ! it is calibrated across points instead of inside the loop.
+                        ! This is the same shape as freeze_fitted_internals: an
+                        ! adjuster at zero must take its distance out of the
+                        ! convergence test with it.
                         distance_utility_cost_of_treatment=&
-                            abs(model_treatment_take_up(1)-treatment_take_up_data)
+                            merge(0.d0,abs(model_treatment_take_up(1)-treatment_take_up_data),&
+                            utility_cost_of_treatment_adjuster<=0.d0)
 
                         write(*,*) "utility_cost_of_treatment=", utility_cost_of_treatment
                         write(*,*) "distance_utility_cost_of_treatment=", &

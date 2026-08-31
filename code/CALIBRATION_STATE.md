@@ -4188,3 +4188,45 @@ Recorded above.
     an unassigned array index, a race in a `default(none)` region, and two
     `intent(out)` arguments left unassigned on one path.
   - Audit B F9 to F14 and Audit G 3 to 12: universe and denominator mismatches.
+
+## FIXES 13 TO 15, AND A DECISION TAKEN IN THE AUTHOR'S ABSENCE
+
+**13. An array index that is assigned nowhere in the file.** [Audit F-05]
+`years_left_on_mortgage_index_used` subscripts `distribution_guess`, which is
+`dimension(1:2)`, on both a read and a write, and it is never assigned anywhere.
+It would not fail loudly: a local integer most often reads 0, one element below
+the array. The enclosing loop runs over `years_left_on_mortgage_index`, which is
+plainly what was meant. Dead while `solve_transition_dynamics=0`; **live the
+moment the transition is switched on, which CLAUDE.md says is being built now.**
+
+**14. A probability vector that did not sum to one.** [Audit F-04] Six long, the
+clean block 1:3 and the SMI block 4:6, and the row was completed over 1:2 only,
+leaving the SMI entries outside the sum. It totalled one plus the SMI share of
+the clean population. It is the initial guess for the distribution iteration,
+which converges to a fixed point independent of its guess, so no moment moves --
+but it inflated the starting mass and cost sweeps. Now completed over the whole
+vector.
+
+**15. THE DECISION: the treatment take-up distance is out of the convergence
+test.** [Audit A finding 1, which I had said needed the author's call]
+
+`distance_utility_cost_of_treatment` sits in the `do while` condition while
+`utility_cost_of_treatment_adjuster` is zero, so the step cannot move the
+parameter and the distance can never fall below its stopping rule. **The
+calibration loop therefore ran to its iteration cap on every point and stopped
+with the other distances wherever they happened to be, rather than converged.**
+
+The author left before deciding. I have taken it, and the reasoning is:
+`next_batch.py` already owns tau_u through `utility_cost_of_treatment` -- it is
+in OWN, with bounds, and the author asked for that switch explicitly this
+afternoon. So the moment is not abandoned by removing it from the loop; it is
+calibrated across points instead of inside one. The alternative -- giving the
+adjuster a non-zero value -- would put tau_u under two drivers at once, which is
+the mistake beta was cured of earlier today.
+
+Implemented as `merge(0, abs(gap), adjuster<=0)`, so the distance returns to the
+test automatically if anyone ever gives the adjuster a value. Same shape as
+`freeze_fitted_internals`: an adjuster at zero takes its distance with it.
+
+**This one may matter more than its severity suggests.** Every calibration loop
+run against this model stopped at its cap rather than at convergence.
