@@ -5429,6 +5429,37 @@
             write(*,*) "DIAG working age homeless mass                   =",&
                 model_mass_homeless_working_age(1)
 
+            ! THE OTHER DIRECTION OF THE SAME CONDITIONAL, which the model has
+            ! always computed and never printed.
+            !
+            ! "employed share of the homeless" just above is P(employed |
+            ! homeless) and answers what the homeless look like. This is
+            ! P(homeless | unemployed) and answers whether unemployment is a
+            ! route INTO homelessness, which is the question the policy is
+            ! about. They are not interchangeable and the second cannot be
+            ! recovered from the first without the working-age mass.
+            !
+            ! The ratio to the working-age homelessness rate is printed beside
+            ! it because that is the unit-free version: how much more likely an
+            ! unemployed household is to be on the street than a household
+            ! drawn at random from the working-age population. One means
+            ! unemployment carries no extra risk at all.
+            write(*,*) "DIAG homelessness rate among the UNEMPLOYED      =",&
+                model_fraction_of_unemployed_homeless(1)
+            ! THE BASE HERE IS THE WORKING AGE HOMELESSNESS RATE, BUILT FROM
+            ! THE TWO RAW MASSES, and NOT model_fraction_homeless. That moment
+            ! is normalised on model_sum_of_lowest_productivities rather than on
+            ! a population, so dividing by it would put two different
+            ! denominators either side of the line and the ratio would not be a
+            ! ratio of rates. model_mass_total_raw is the working age base --
+            ! it is what model_fraction_unemployed is formed over -- and
+            ! model_mass_homeless_working_age is the homeless part of it, so
+            ! these two are the same population.
+            write(*,*) "DIAG   ... over the working age homelessness rate=",&
+                model_fraction_of_unemployed_homeless(1)/&
+                max(model_mass_homeless_working_age(1)/&
+                max(model_mass_total_raw(1),10.d0**(-14)),10.d0**(-14))
+
             ! THE SUD SHARE OF THE HOMELESS, the untargeted half of the same
             ! Gutwinski meta regression lambda_m is calibrated to.
             write(*,*) "UNTARGETED SUD share of the homeless         model=",&
@@ -5810,12 +5841,19 @@
             write(*,*) "DIAG --- the age profile of the housing margin ---"
             do diag_age_1=1,life_span,3
 
-                write(*,'(A,I3,A,F10.6,A,F9.5,A,F11.5,A,F11.5)') &
+                ! SUD AND MASS ARE HERE SO THE PROFILE CAN BE READ AND BANDED.
+                ! addiction_rate_by_age is the disorder rate at that age, over
+                ! the same mass_by_age the homelessness rate above uses, and it
+                ! was written to a csv and nowhere a point file could see it.
+                ! mass= is what any banding of these columns has to weight by.
+                write(*,'(A,I3,A,F10.6,A,F9.5,A,F11.5,A,F11.5,A,F10.6,A,F12.6)') &
                     "DIAG age ", 25+diag_age_1, &
                     "  homeless=", homelessness_by_age(1,diag_age_1), &
                     "  own=", homeownership_by_age(1,diag_age_1), &
                     "  renter wealth=", wealth_by_age_renter(1,diag_age_1), &
-                    "  renter income=", income_by_age_renter(1,diag_age_1)
+                    "  renter income=", income_by_age_renter(1,diag_age_1), &
+                    "  sud=", addiction_rate_by_age(1,diag_age_1), &
+                    "  mass=", mass_by_age(1,diag_age_1)
 
             end do
 
@@ -15540,6 +15578,10 @@
         ! same population into one divisor.
         save :: mass_of_addicts, total_MID_value
 
+        ! Scratch for the renter income diagnostic below, which has to mirror
+        ! the household's own tax function rather than approximate it.
+        real(8) :: diag_gross_1,diag_taxable_1
+
         avg_income_to_use_1=is_counterfactual*average_labor_income_calibrated+&
             (1-is_counterfactual)*model_average_labour_income(time_period)
                         
@@ -16225,14 +16267,37 @@
                                         else
                                         
                                             if ((emp_of(unemployment_index)==1)) then
-                                            
+
+                                                ! THE HOUSEHOLD'S OWN TAX FUNCTION, NOT AN APPROXIMATION OF IT.
+                                                !
+                                                ! This subtracted taxable**curvature and left out
+                                                ! labor_income_tax_rate altogether, where the budget
+                                                ! constraint subtracts taxable - rate*taxable**curvature
+                                                ! and floors the result at zero. With the rate at 0.75
+                                                ! and the curvature at 0.85 the difference is not small:
+                                                ! a taxable income of 0.04 pays NOTHING in the model,
+                                                ! because 0.04 - 0.752*0.0655 is negative and the floor
+                                                ! catches it, and paid 0.0655 here -- more than the whole
+                                                ! income. So this line printed NEGATIVE income for every
+                                                ! renter aged 26 to 38, which is the diagnostic and not
+                                                ! the model, and it is the obvious wrong explanation for
+                                                ! why the young are the ones who are homeless.
+                                                !
+                                                ! The deduction is still left out. It is per household
+                                                ! and not available here, and it only ever reduces the
+                                                ! tax, so what is printed is a lower bound on income
+                                                ! rather than a number that can go through zero.
+                                                diag_gross_1=labor_supply_used*&
+                                                    employment_grid(age_index,employment_index)*&
+                                                    labour_deterministic_efficiency(age_index)
+                                                diag_taxable_1=max(diag_gross_1-personal_exemption,0.d0)
+
                                                 income_by_age_renter(time_period,age_index)=&
                                                     income_by_age_renter(time_period,age_index)+&
-                                                    ((labor_supply_used*employment_grid(age_index,employment_index)*&
-                                                    labour_deterministic_efficiency(age_index))-&
-                                                    max((labor_supply_used*employment_grid(age_index,employment_index)*&
-                                                    labour_deterministic_efficiency(age_index)-&
-                                                    personal_exemption),0.d0)**curvature_of_labor_income_taxes)*&
+                                                    (diag_gross_1-&
+                                                    max(diag_taxable_1-&
+                                                    (labor_income_tax_rate+increase_in_labour_income_tax)*&
+                                                    diag_taxable_1**curvature_of_labor_income_taxes,0.d0))*&
                                                     distribution_mass_used
                                                     
                                             else
