@@ -114,22 +114,30 @@ done
 # largest_house_size=0.1118 and reported h_3 = 0.295 against a target of 0.627,
 # which reads as a large miss and is not a measurement of anything. Fail here
 # instead, and leave the FAILED file so it is visible.
-if awk -v a="${P[smallest_rental_relative_to_lowest_income]}" \
-       -v b="${P[largest_house_size]}" 'BEGIN{exit !(a+0 >= b+0)}'; then
-    echo "run_one_point: smallest_rental_relative_to_lowest_income=${P[smallest_rental_relative_to_lowest_income]}" >&2
-    echo "run_one_point: is not below largest_house_size=${P[largest_house_size]}; the housing" >&2
-    echo "run_one_point: grid would invert and every unit share would be reversed." >&2
-    # THE MODEL HASH, COMPUTED HERE because the script cd'd to its own directory at
+# THE MODEL HASH, COMPUTED HERE because the script cd'd to its own directory at
 # the top, which made an earlier "$(dirname "$0")" resolve to code/code and
 # stamp an EMPTY hash on two points before it was caught. An empty stamp is
 # nearly as bad as none, so fail loudly rather than write one.
+#
+# IT MUST BE COMPUTED AT TOP LEVEL. This block was pasted INSIDE the inverted
+# grid failure branch below, which is the one path that never reaches the point
+# file, so MODEL_HASH was set only when the grid inverted and was unset on every
+# run that actually solved. Under set -u the "MODEL ${MODEL_HASH}" line then
+# killed the script AFTER the solve, mid-write, leaving a point file holding a
+# header and no moments -- twenty minutes of compute recorded as a truncated
+# file. Keep this above the first exit path.
 MODEL_HASH=$(md5sum ./housing_first_or_treatment_first_SR_v1.f90 | cut -c1-10)
 if [ -z "$MODEL_HASH" ]; then
     echo "FATAL: could not hash the source; refusing to write an unidentifiable point" >&2
     exit 1
 fi
 
-mkdir -p points
+if awk -v a="${P[smallest_rental_relative_to_lowest_income]}" \
+       -v b="${P[largest_house_size]}" 'BEGIN{exit !(a+0 >= b+0)}'; then
+    echo "run_one_point: smallest_rental_relative_to_lowest_income=${P[smallest_rental_relative_to_lowest_income]}" >&2
+    echo "run_one_point: is not below largest_house_size=${P[largest_house_size]}; the housing" >&2
+    echo "run_one_point: grid would invert and every unit share would be reversed." >&2
+    mkdir -p points
     printf 'point FAILED: inverted housing grid, smallest=%s largest=%s\n' \
         "${P[smallest_rental_relative_to_lowest_income]}" "${P[largest_house_size]}" \
         > "points/point_inverted_grid_$$.FAILED.txt"
