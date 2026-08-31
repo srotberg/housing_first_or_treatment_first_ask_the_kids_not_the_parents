@@ -616,3 +616,84 @@ per cent, lambda_d 4.35 against 3.68 per cent and h_1 0.131 against 0.399 per
 cent. h_1 is the outlier at -67 per cent and it is the same moment the homeless
 rows above are about, which is a further reason to think the binding
 constraint is the wealth distribution rather than the four coordinates.
+
+## ROUND 1's JACOBIAN, AND THE THREE HOLES IN IT
+
+Thirteen one-coordinate arms around `point_485225bf80` were measured and read as
+a full moment-by-arm elasticity matrix rather than one arm at a time. Reading
+each arm only against the moment it owns is what made three of them look usable
+when they are not, so the matrix is the object to keep.
+
+The best point on the current model is `point_02c96e3721`
+(`money_cost_of_treatment=0.06`): worst gap 67.2 per cent on h_1, ten moments
+outside ten per cent, against the base's 136.5 per cent and twelve.
+
+**Three arms are degenerate and must not be re-used as directions.**
+`value_of_life=48` and `value_of_life=55`, and `addiction_scalar_1=0.0215`, all
+drive homelessness to nothing; mu_H is then a ratio with an empty denominator
+and prints around 1.7e12. aleph does rise with `value_of_life` -- 61 at 34.6,
+104 at 48, 126 at 55 -- so the target of 80 is bracketed between 34.6 and 48 and
+Newton in logs puts it at 41. But the two arms that bracket it also destroy the
+homeless population, so aleph cannot simply be walked up: the step has to be
+small and it has to be checked against h_1. Hence the 38 arm this round.
+
+**`size_homelessness` saturates at 0.075.** The ladder is
+
+    0.064481 -> h_1 0.001314, lambda_m 0.3669
+    0.075    -> h_1 0.002329, lambda_m 0.2093     (elasticities +3.79, -3.72)
+    0.085    -> h_1 0.002400, lambda_m 0.2058     (elasticities +0.02, -0.13)
+
+so the whole of the instrument's power is spent between 0.0645 and 0.075 and
+there is nothing above it. Two consequences. The chord to use is the lower one;
+a Jacobian built from the 0.075-to-0.085 pair reports the instrument as dead and
+sends the solver to the e-fold cap for no gain, which is what the first joint
+solve did. And `lambda_m` crosses its target of 0.25 inside that segment, at
+about 0.0715, while h_1 only reaches 0.0019 against a target of 0.00399. **h_1
+cannot be closed with `size_homelessness`.**
+
+**`lambda_m` the parameter is not an instrument for `lambda_m` the moment**: its
+own elasticity is -0.064, flat. The moment's real instrument is
+`size_homelessness` at -3.72. Two moments, one instrument, and they happen to
+want the same direction, which is the only reason this is not yet a problem.
+
+**`relative_share_of_housing` raises gamma at an elasticity of 0.22 and costs
+h_1 at -7.32.** The arm at 0.21 took gamma from 30.7 to 25.6 per cent off and in
+the same step drove h_1 to 0.000127, lambda_m to 1.0, b to 0.153 and h_3 to
+0.818: worst gap 300 per cent, rms 86.5 against the base's 41.7. It is not a
+usable direction and it is left out of the joint step. Note also that
+`tie_gamma_to_theta=1` makes this parameter a function of theta by default; the
+handover overrides it and the override sticks, but nothing else should assume it
+is free.
+
+### The three holes
+
+Four of the worst gaps are in the housing block -- h_1 67 per cent low, h_2 61
+per cent low, gamma 30 per cent low, h_3 7 per cent high -- and the block has
+essentially one measured instrument, the one that cannot be used. So:
+
+- **h_2 has no measured column at all.** Its owner,
+  `smallest_rental_relative_to_lowest_income`, sets `housing_size(0)`, the
+  bottom rung of the ladder, and has never been armed. Raising it makes the
+  cheapest dwelling dearer, which should raise the share paying over half of
+  spending, the share choosing the street, and housing's share of expenditure --
+  h_2, h_1 and gamma, the three moments that are all low. It is the highest
+  value arm available and it gets three of this round's eight lines, at 0.055,
+  0.070 and 0.085, to buy the curvature as well as the slope.
+- **beta has no column.** `discount_factor` has never been armed; beta is 26 per
+  cent high.
+- **aleph has no usable column**, for the reason above.
+
+### The joint step, and why there are two of them
+
+A ridge solve in logs over the seven instruments with usable columns, damped at
+0.7 and capped at 0.35 e-folds, takes the residual norm from 1.293 to 0.562 and
+predicts lambda_m 47.5 -> 2.4 per cent, h_1 67.2 -> 38.3, b 9.0 -> 0.9, mu_H
+10.5 -> 3.0. It buys that partly by sacrificing pi_eu, 20.1 -> 28.6 per cent,
+because it moves `probability_becoming_unemployed` UP against its own moment in
+order to serve lambda_d, b and kappa_ued, which all want it up.
+
+Whether an instrument's own moment or the cross terms should win is exactly the
+question the bracketing method exists to settle, and it is cheaper to measure
+than to argue: line 1 is the step with that instrument, line 2 the step without
+it (residual norm 0.698, pi_eu held at 21.4 per cent). Next round keeps whichever
+actually landed better.
