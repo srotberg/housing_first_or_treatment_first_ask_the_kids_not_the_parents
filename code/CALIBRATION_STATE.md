@@ -1577,3 +1577,68 @@ Intergenerational persistence at rho=0.35 bought almost nothing:
 
 269 points before the change against 82 after. The intergenerational channel is
 carried by the income penalties, not by the persistence.
+
+## THE AUTHOR'S DECISIONS, 31 AUGUST ~14:30
+
+**The two discount factors are both calibrated, and the author set the brackets:**
+
+    beta_impatient   on the WEALTH SHARE OF THE BOTTOM, target 0.025
+    beta_patient     on wealth over output, inside its 3.0-4.5 band
+
+So neither is assigned and no spread has to be guessed. The bottom-half share is
+currently 0.131 against 0.025 -- more than five times too fat -- and it is the
+moment that most wants this change.
+
+**largest_house_size is the housing instrument.** Measured controlled at
+`d25318fa67`, 0.1118 -> 0.13:
+
+    gamma  30.8 per cent off -> 22.2   elasticity +0.78
+    h_2    60.8 -> 49.1                elasticity +1.73
+
+against the +0.22 on `relative_share_of_housing` and the +0.06 the gate fitted
+on `smallest_rental`, both of which were used to call these moments unreachable.
+Extrapolating inside the bracket, gamma closes near 0.155 and h_2 near 0.18, both
+well inside the (0.02, 1.00) bound. The cost is the drug block, b -4.19 and
+lambda_d -3.56, which is exactly what the locus repairs inside its brackets.
+
+`housing_status_grid_expander` is dead: every elasticity at or below 0.05. Of the
+three geometry parameters the TOP RUNG is the instrument and the other two are
+not.
+
+## THE HOUSING BLOCK IS UNDER-DETERMINED WITH THREE RUNGS
+
+Four housing moments -- h_1, h_2, h_3, gamma -- and effectively two working
+instruments, `smallest_rental` and `largest_house_size`, since the expander does
+nothing. That is two equations short however well each is measured.
+
+`housing_status_grid_size` is a compile-time parameter at 3. Every array is
+dimensioned on it, `lowest_housing_grid_point=-1` is the street and
+`second_lowest_housing_grid_point=0` the first rung, and the per-unit
+diagnostics already loop from the second lowest to `housing_status_grid_size-1`.
+Nothing hardcodes three. Raising it is a one-line change and the value function
+is LINEAR in that index, so 3 to 5 costs about 1.7 times the solve.
+
+It is also the natural fix for h_2 specifically: h_2 is a statistic about
+DISPERSION in housing burden, and with three rungs holding 12, 21 and 67 per
+cent there is almost none to measure.
+
+## THE TREATMENT PRICE DID MATTER, JUST NOT FOR WHAT IT WAS ADDED FOR
+
+Recorded because the author's recollection was the opposite and the arms are
+unambiguous. Controlled, 0.02 -> 0.06:
+
+    tau_u   136.5 per cent off -> 9.4   elasticity -0.70
+    mu_H     39.5 -> 10.5
+    theta    12.2 -> 6.8
+
+It is the instrument that closed tau_u, and nothing else has been found for it.
+But it did NOT do the job it was introduced for: the income of working age drug
+users went 0.405 to 0.355 against a target of 0.74 -- the WRONG WAY. And the
+price it settled at is 0.100 of average labour income against 0.034 to 0.065 for
+real outpatient treatment, so it is one and a half to three times too expensive.
+
+Two things to weigh before removing it. `utility_cost_of_treatment` has to take
+over as tau_u's instrument, which it did before, so that part is a swap rather
+than a loss. But a MONETARY price has distributional bite that a utility cost
+does not: it is what stops a poor household buying treatment, which is close to
+the question the paper asks.
