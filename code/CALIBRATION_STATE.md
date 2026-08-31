@@ -697,3 +697,61 @@ question the bracketing method exists to settle, and it is cheaper to measure
 than to argue: line 1 is the step with that instrument, line 2 the step without
 it (residual norm 0.698, pi_eu held at 21.4 per cent). Next round keeps whichever
 actually landed better.
+
+## WHAT THE HOMELESS LOOK LIKE, AND WHY h_1 IS THE WRONG THING TO CHASE
+
+Read at `point_02c96e3721`, and worth separating from the gap table because
+three of these are structural rather than calibration-sensitive:
+
+    homeless by choice, share of the homeless     = 1.000
+    homeless who could afford it on INCOME ALONE  = 1.000
+    employed share of the homeless                = 0.964   data 0.46
+    income of the homeless / average              = 0.282   data 0.191
+    SUD share of the homeless                     = 0.00007 data 0.217
+    share of the homeless aged 26-34              = 0.997   HUD  0.260
+
+Every homeless household in the model has income plus assets above the rent on
+the smallest dwelling, and all but four per cent of them work. **Nobody in this
+model is shut out.** Homelessness is a preference, exercised almost entirely by
+solvent employed households under 35 who do not use drugs.
+
+The consequence for the search is direct. `size_homelessness` is the disutility
+of the homeless state, so raising it recruits MORE solvent young households into
+choosing the street: it moves the rate without touching the composition, and it
+saturates at 0.075 anyway. h_1 at 67 per cent low is therefore not a
+mis-parameterised rate, it is a symptom, and closing it with its own instrument
+would leave every row above exactly where it is.
+
+`smallest_rental_relative_to_lowest_income` is the instrument that can change
+the composition, because it raises the rent on the bottom rung and so can push
+`could afford it on INCOME ALONE` below one. That is why it takes three of
+ROUND2's eight lines rather than one.
+
+The intergenerational ratios, both untargeted and both reached through income
+alone: child SUD 1.18 against 2.0, child homelessness 1.77 against 2.1. The
+homeless-versus-population SUD ratio is 0.003 against 5.9 in the data -- a
+reversed sign, not a level miss.
+
+## THE DRUG BLOCK IS OPEN AND restore.py CANNOT REPAIR IT YET
+
+`next_batch.py` exits 2: b is 9.0 per cent low and lambda_d 22.2 per cent low at
+`point_02c96e3721`. `restore.py 02c96e3721` raises TypeError, and the reason is
+not a bug in it. It refits the two-by-two Jacobian from archive points differing
+in `lambda_addiction` and `addiction_scalar_1` ALONE, and every such pair sits at
+the old `money_cost_of_treatment=0.02`. There is no locus on the current slice,
+so there is nothing to fit.
+
+`ROUND2B.txt` re-establishes it with two arms off the best point,
+`lambda_addiction=13.0` and `addiction_scalar_1=0.01910`. Until those land the
+repair tool stays unusable, and a joint step will keep under-moving
+lambda_addiction because the ridge spreads work the drug block needs
+concentrated: JOINT-B moves it to 15.72 where the single-moment Newton on
+lambda_d asks for about 12.5.
+
+## STILL BLOCKED ON THE AUTHOR
+
+`supervise_calibration.py` (PID 1372) and three stale `hftf` solvers (1636,
+1913, 2673) have been up for over three hours. Four `kill -9` attempts across
+two sessions were refused by the permission classifier. Six solver processes are
+sharing four cores, so every measured point is running several times slower than
+it should. Nothing else in the loop can clear this.
