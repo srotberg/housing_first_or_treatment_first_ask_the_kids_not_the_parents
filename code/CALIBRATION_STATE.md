@@ -3621,3 +3621,58 @@ Order:
      0.95 and 0.93, which is where w_bot's target was bracketed.
   3. TWOBETA_CAL -- already running, the impatient beta bracket at 0.93/0.95/0.97.
   4. Then the gate, at two types, on whatever survives.
+
+## CHECKED PROPERLY, ON THE AUTHOR'S INSTRUCTION. THREE MORE BUGS, ONE CLASS
+
+"you need to check it". The check was: for every module-scope mass recomputed
+per pass inside the loop, which routines READ it afterwards? That is the
+question that catches this class, because a routine can be internally consistent
+and still poison everything downstream of it.
+
+**IT ALSO SHOWED MY LIST OF THE TWO-PASS CHAIN WAS WRONG.** The driver calls
+nine routines, and `stationary_equilibrium_wealth_distribution`,
+`stationary_equilibrium_income_distribution` and
+`stationary_equilibrium_income_bottom_distribution` are NOT among them. I had
+been auditing four routines that do not run in the loop and missing what does.
+`calculate_cdf_of_incomes_earned` IS in it, nested inside position 8.
+
+### 1. THE SCALING WAS RIGHT ONLY INSIDE THE LOOP
+
+`(accumulating_beta_types+1)` is the pass number, which is what a recomputed mass
+must be scaled by -- INSIDE the loop. After the loop that expression is 1, so
+every routine running afterwards scaled by nothing while reading pooled
+accumulators. `stationary_equilibrium_wealth_distribution` is called at 36568,
+after the loop ends at 33782, and divides pooled wealth by a one-type mass.
+
+Replaced at all eleven sites by `mass_passes`, which the driver sets to
+`current_beta_type` inside the loop and to `number_of_beta_types` after it. One
+expression, correct in both places.
+
+### 2. A ROUTINE CALLED TWICE, THE SECOND TIME DESTRUCTIVELY
+
+`calculate_homeownership_by_characteristics` was called inside the loop once per
+type AND again at 36562. Out there `accumulating_beta_types` is zero, so every
+one of its guarded resets fired: it wiped the pooled totals and refilled them
+from `distribution_stationary`, which by then holds only the last type solved.
+
+**Every by-age number was the impatient half's, reported as the population's** --
+the homelessness profile, the ownership rate, renter wealth and renter income.
+Which is precisely the table the author asked for. Removed.
+
+Harmless at one type, which is why it survived: with one pass the wipe-and-refill
+reproduces exactly what was there.
+
+### 3. TWO DEAD ROUTINES
+
+`stationary_equilibrium_income_distribution` is never called from anywhere.
+`stationary_equilibrium_income_bottom_distribution` has only commented-out calls.
+Left alone -- deleting them is not a repair -- but noted so no one audits them
+again.
+
+### THE CLASS, WHICH IS THE POINT
+
+All three bugs, and the one before them, are the same shape: **a routine written
+for a single pass, called in a place where the pass count is no longer what it
+assumes.** The guards and the scaling are both correct in the context they were
+written for and both silently wrong outside it. Neither a syntax check nor a
+reading of the routine finds that; only asking who calls it, and when, does.

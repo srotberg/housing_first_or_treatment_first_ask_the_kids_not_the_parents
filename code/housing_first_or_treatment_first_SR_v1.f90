@@ -2210,6 +2210,14 @@
         ! block is formed from accumulated components, so forming it again on
         ! the last pass gives the mixture rather than the last type.
         integer :: accumulating_beta_types=0
+
+        ! HOW MANY PASSES HAVE ACCUMULATED INTO THE STATISTICS, which is what a
+        ! recomputed mass must be scaled by. Inside the two-pass loop it is the
+        ! pass number; AFTER the loop it is the total, because by then every
+        ! pass has contributed. Using (accumulating_beta_types+1) was correct
+        ! only inside the loop, and silently became 1 for the routines that run
+        ! after it -- which is a whole second copy of the bug it was fixing.
+        integer :: mass_passes=1
         integer :: income_cdf_levels_used=1
         real(8) :: discount_factor_patient_saved=0
 
@@ -8612,7 +8620,7 @@
         ! benchmark chain has run twice, so a denominator recomputed from
         ! distribution_stationary -- which holds only the type just solved --
         ! is short by exactly the number of passes. Scale it up.
-        sum_of_distribution=sum_of_distribution*(accumulating_beta_types+1)
+        sum_of_distribution=sum_of_distribution*mass_passes
         
         sum_of_retirees=0
         
@@ -8629,7 +8637,7 @@
         ! benchmark chain has run twice, so a denominator recomputed from
         ! distribution_stationary -- which holds only the type just solved --
         ! is short by exactly the number of passes. Scale it up.
-        sum_of_retirees=sum_of_retirees*(accumulating_beta_types+1)
+        sum_of_retirees=sum_of_retirees*mass_passes
         
         do i=1,number_of_wide_grids_income_to_avg_income_cdf
         
@@ -9579,7 +9587,7 @@
         ! benchmark chain has run twice, so a denominator recomputed from
         ! distribution_stationary -- which holds only the type just solved --
         ! is short by exactly the number of passes. Scale it up.
-        sum_of_distribution=sum_of_distribution*(accumulating_beta_types+1)
+        sum_of_distribution=sum_of_distribution*mass_passes
         
         if (solve_transition_dynamics==0) then
         
@@ -9736,7 +9744,7 @@
         ! benchmark chain has run twice, so a denominator recomputed from
         ! distribution_stationary -- which holds only the type just solved --
         ! is short by exactly the number of passes. Scale it up.
-        sum_of_distribution=sum_of_distribution*(accumulating_beta_types+1)
+        sum_of_distribution=sum_of_distribution*mass_passes
         
         wealth_counter=0
         
@@ -9908,7 +9916,7 @@
         ! benchmark chain has run twice, so a denominator recomputed from
         ! distribution_stationary -- which holds only the type just solved --
         ! is short by exactly the number of passes. Scale it up.
-        sum_of_distribution=sum_of_distribution*(accumulating_beta_types+1)
+        sum_of_distribution=sum_of_distribution*mass_passes
         
         avg_income_to_use_1=is_counterfactual*average_labor_income_calibrated+&
             (1-is_counterfactual)*model_average_labour_income(time_period)
@@ -10178,7 +10186,7 @@
         ! benchmark chain has run twice, so a denominator recomputed from
         ! distribution_stationary -- which holds only the type just solved --
         ! is short by exactly the number of passes. Scale it up.
-        sum_of_distribution=sum_of_distribution*(accumulating_beta_types+1)
+        sum_of_distribution=sum_of_distribution*mass_passes
         
         avg_income_to_use_1=is_counterfactual*average_labor_income_calibrated+&
             (1-is_counterfactual)*model_average_labour_income(time_period)
@@ -12243,7 +12251,7 @@
         ! benchmark chain has run twice, so a denominator recomputed from
         ! distribution_stationary -- which holds only the type just solved --
         ! is short by exactly the number of passes. Scale it up.
-        sum_of_distribution=sum_of_distribution*(accumulating_beta_types+1)
+        sum_of_distribution=sum_of_distribution*mass_passes
             
         model_eligibles_getting_voucher_relative_to_pop(time_period)=&
             model_eligibles_getting_voucher(time_period)/sum_of_distribution
@@ -12511,7 +12519,7 @@
         ! benchmark chain has run twice, so a denominator recomputed from
         ! distribution_stationary -- which holds only the type just solved --
         ! is short by exactly the number of passes. Scale it up.
-        sum_of_distribution=sum_of_distribution*(accumulating_beta_types+1)
+        sum_of_distribution=sum_of_distribution*mass_passes
         
         model_drug_use_percent_by_age_group(time_period,:)=&
             model_drug_use_percent_by_age_group(time_period,:)/sum_of_distribution
@@ -13186,7 +13194,7 @@
         ! benchmark chain has run twice, so a denominator recomputed from
         ! distribution_stationary -- which holds only the type just solved --
         ! is short by exactly the number of passes. Scale it up.
-        sum_of_distribution=sum_of_distribution*(accumulating_beta_types+1)
+        sum_of_distribution=sum_of_distribution*mass_passes
         
         sum_of_distribution_youngest=0
                 
@@ -13202,7 +13210,7 @@
         ! benchmark chain has run twice, so a denominator recomputed from
         ! distribution_stationary -- which holds only the type just solved --
         ! is short by exactly the number of passes. Scale it up.
-        sum_of_distribution_youngest=sum_of_distribution_youngest*(accumulating_beta_types+1)
+        sum_of_distribution_youngest=sum_of_distribution_youngest*mass_passes
         
         average_welfare_of_all_cohorts(time_period)=average_welfare_of_all_cohorts(time_period)/sum_of_distribution
         
@@ -13825,7 +13833,7 @@
         !
         ! The scaling was reverted here once, on the reasoning that this
         ! routine is per-type. It is not: it does not OWN this variable.
-        sum_of_distribution=sum_of_distribution*(accumulating_beta_types+1)
+        sum_of_distribution=sum_of_distribution*mass_passes
         
         do age_index=1,life_span
         
@@ -33688,6 +33696,7 @@
             do current_beta_type=1,number_of_beta_types
 
             accumulating_beta_types=current_beta_type-1
+            mass_passes=current_beta_type
             if (current_beta_type==1) discount_factor=discount_factor_patient_saved
             if (current_beta_type==2) discount_factor=discount_factor_impatient
 
@@ -33779,6 +33788,7 @@
             ! and back to resetting accumulators so nothing downstream inherits
             ! the suppression.
             discount_factor=discount_factor_patient_saved
+            mass_passes=number_of_beta_types
             accumulating_beta_types=0
             current_beta_type=1
             
@@ -36559,8 +36569,20 @@
 
         simulation_ended=0
         
-        call calculate_homeownership_by_characteristics(1)
-        
+        ! THE SECOND CALL TO calculate_homeownership_by_characteristics WAS
+        ! HERE AND HAS BEEN REMOVED. The two-pass loop already calls it, once
+        ! per type, and its accumulators are guarded so that the second pass
+        ! adds to the first. Calling it AGAIN out here, where
+        ! accumulating_beta_types is back to zero, made every one of those
+        ! guards fire: it wiped the pooled totals and refilled them from
+        ! distribution_stationary, which by this point holds only the LAST TYPE
+        ! SOLVED. Everything by age -- the homelessness profile, the ownership
+        ! rate, renter wealth and income -- was therefore the impatient half's,
+        ! reported as the whole population's.
+        !
+        ! Harmless at one type, which is why it survived. It is exactly the
+        ! shape of the other two pooling bugs: a routine written for one pass,
+        ! called in a place where the pass count is no longer what it assumes.
         write(*,*) "calculating inequality"
         
         if (use_old_results>=0) then
