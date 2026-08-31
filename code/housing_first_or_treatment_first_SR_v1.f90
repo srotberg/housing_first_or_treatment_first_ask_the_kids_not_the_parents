@@ -1649,7 +1649,15 @@
         ! rather than at a number nothing ever faced.
         real(8) :: relative_share_of_housing=0.278
         real(8) :: distance_relative_share_of_housing
-        real(8) :: relative_share_of_housing_adjuster=5*10.d0**(-2)
+        ! ZERO, AND DELIBERATELY. The internal update for this parameter is
+        ! STALE: it steps on model_avg_housing_spending_renters against
+        ! avg_rent_to_income_data, which is the INCOME-denominator object from
+        ! before gamma was moved to expenditure, and it is then overwritten by a
+        ! second update aimed at a different moment entirely, the mass of
+        ! renters spending over X. Freeing the tie without this would have let
+        ! that stale path drive the parameter against the wrong target.
+        ! next_batch.py owns it across points instead, like the other sixteen.
+        real(8) :: relative_share_of_housing_adjuster=0
         real(8), parameter :: relative_share_of_housing_adjuster_start=5*10.d0**(-2)
         real(8) :: previous_gap_relative_share_of_housing=0
         integer :: have_gap_relative_share_of_housing=0
@@ -1908,7 +1916,10 @@
         ! again. apply_gamma_tie is called wherever theta can change -- after
         ! the state is read, after a handover and after theta's own update --
         ! rather than once at setup, because theta moves in all three places.
-        integer, parameter :: tie_gamma_to_theta=1
+        ! FREED, ON THE AUTHOR'S INSTRUCTION. gamma was the one targeted moment
+        ! with no instrument: this parameter was pinned at 0.28*(1-theta), so
+        ! nothing could move housing's share of expenditure.
+        integer, parameter :: tie_gamma_to_theta=0
         real(8), parameter :: gamma_share_of_non_drug=0.28d0
         ! B'S CEILING HAD NO ARGUMENT BEHIND IT AND IT BOUND. At 0.05 the
         ! bracket sat exactly on it: participation came out at 76.0 per cent

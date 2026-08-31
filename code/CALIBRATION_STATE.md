@@ -1870,3 +1870,34 @@ it. Now swapped.
 **h_3 still has no real instrument** -- 0.16 from largest_house_size, which is
 needed for h_2, and -0.01 from smallest_rental. That is the standing argument
 for the fourth rung and the thing to watch in the fit.
+
+## gamma IS FREED, AND THE UNTIED PATH HAD A STALE BUG IN IT
+
+`tie_gamma_to_theta` is 0 on the author's instruction. gamma was the one
+targeted moment with no instrument -- `relative_share_of_housing` was pinned at
+0.28*(1-theta), so nothing could move housing's share of expenditure, and four
+rounds were spent confirming that.
+
+**Freeing the tie alone would have made things worse.** The untied branch of the
+internal calibration is stale in two ways, both left over from the round that
+moved gamma to the expenditure denominator:
+
+    if (tie_gamma_to_theta==0) relative_share_of_housing = ... -
+        (model_avg_housing_spending_renters - avg_rent_to_income_data)
+    if (tie_gamma_to_theta==0) relative_share_of_housing = ... -
+        (mass_of_renters_at_housing_spending(1,1) - SW_renters_spend_over_X_on_hous_2)
+
+The first steps on the INCOME-denominator object, which is not what gamma
+measures any more. The second overwrites it and aims at a different moment
+altogether, the mass of renters spending over X. So the branch that was dormant
+under the tie would have driven the parameter against the wrong target the
+moment it was switched on.
+
+`relative_share_of_housing_adjuster` is therefore set to 0 and `next_batch.py`
+owns the parameter across points, like the other seventeen. **Eighteen
+calibrated parameters, and every targeted moment now has an owner.**
+
+Its measured elasticity on gamma is only 0.22 and it costs h_1 at -7.32, so it is
+weak and coupled. It is workable now only because h_1 has both
+`size_homelessness` and the food stamp floor holding it -- which it did not when
+this instrument was first tried and rejected.

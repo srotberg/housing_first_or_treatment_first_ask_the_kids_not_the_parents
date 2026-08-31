@@ -124,6 +124,11 @@ OWN = {
     # against 7.2 and 4.8 per cent in NSDUH. Calibrated on the income of drug
     # users on the author's instruction, rather than assigned.
     'kappa_phi_d_level':                                   'y_u',
+    # gamma's instrument, freed on the author's instruction. Its measured
+    # elasticity on gamma is only 0.22 and it costs h_1 at -7.32, so it is a
+    # weak and coupled instrument -- but it is the only one, and h_1 now has
+    # both size_homelessness and the food stamp floor holding it.
+    'relative_share_of_housing':                           'gamma',
 }
 BOUNDS = {
     'money_cost_of_treatment':                              (0.0005, 1.0),
@@ -147,6 +152,7 @@ BOUNDS = {
     # a floor if it is needed, so the bracket is opened to it rather than to the
     # literature edge.
     'kappa_phi_d_level':                                   (4.0, 10.0),
+    'relative_share_of_housing':                           (0.02, 0.60),
 }
 # beta is banded on the author's instruction; h_2 is conceded.
 BAND = {'beta': (3.0, 4.5)}
