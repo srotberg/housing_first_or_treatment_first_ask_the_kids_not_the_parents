@@ -2959,7 +2959,37 @@
 
         ! newborn productivity distribution given the parent's disorder status
         ! (0 or 1) and whether the parent was homeless (1 housed, 2 homeless)
-        real(8), dimension(employment_grid_size,0:1,1:2) :: newborn_employment_probability
+        ! INTERGENERATIONAL PERSISTENCE OF PRODUCTIVITY, rho.
+        !
+        ! It was ZERO. newborn_employment_probability was indexed by the
+        ! parent's disorder and housing status and by nothing else, so a child
+        ! of a household at the top node and a child of one at the bottom drew
+        ! the SAME distribution. Poverty was redrawn every generation and the
+        ! model had no persistent disadvantage at all.
+        !
+        ! That is an identification problem and not only a realism one.
+        ! penalty_child_addicted is calibrated on the child disorder ratio,
+        ! which the data puts near two, and with no baseline persistence delta_d
+        ! has to explain the whole of it. In reality much of why the children of
+        ! addicted parents do badly is that those parents are poor and poor
+        ! parents have poor children for ordinary reasons. Attributing all of it
+        ! to the disorder biases the paper's central channel upward by
+        ! construction.
+        !
+        ! 0.35 is the intergenerational earnings elasticity, assigned rather than
+        ! calibrated. At rho = 0 this reduces exactly to the old behaviour, which
+        ! is what makes it testable against it.
+        real(8), parameter :: rho_intergenerational=0.35d0
+
+        ! The node boundaries in LOG productivity, filled where the grid is
+        ! built. Needed because the child's conditional distribution is
+        ! integrated over each node's interval rather than split between two
+        ! neighbours, which is exact where the two point split was not.
+        real(8), dimension(employment_grid_size+1) :: log_y_edge=0
+
+        ! CHILD node by PARENT node by the parent's disorder and housing status.
+        real(8), dimension(employment_grid_size,employment_grid_size,0:1,1:2) :: &
+            newborn_employment_probability
 
         ! WHOSE CHILDREN THE NEWBORNS ARE. newborn_employment_probability is a
         ! draw conditional on the parent's disorder and housing status, so using
@@ -2968,13 +2998,17 @@
         ! initial value puts every parent in the clean housed cell, which makes
         ! the newborn draw the unconditional one until a distribution has been
         ! solved and can say otherwise.
-        real(8), dimension(0:1,1:2) :: newborn_parent_share=&
-            reshape((/1.d0,0.d0,0.d0,0.d0/),(/2,2/))
-        real(8), dimension(0:1,1:2) :: newborn_parent_share_acc=0
+        ! The dying mass now has to be resolved by the parent's productivity
+        ! node as well, because that is what the child's draw conditions on. The
+        ! initial value puts every parent in the clean housed cell at the node
+        ! whose y is nearest one, so a newborn draws close to the unconditional
+        ! distribution until a solved distribution can say otherwise.
+        real(8), dimension(employment_grid_size,0:1,1:2) :: newborn_parent_share=0
+        real(8), dimension(employment_grid_size,0:1,1:2) :: newborn_parent_share_acc=0
 
         real(8), dimension(employment_grid_size) :: newborn_productivity_draw
         real(8), dimension(threshold_addiction_index) :: newborn_state_draw
-        integer :: newborn_d_index_1,newborn_h_index_1
+        integer :: newborn_d_index_1,newborn_h_index_1,newborn_parent_node_1
         real(8) :: newborn_smi_at_birth
 
         ! THE CHILD IN THE CONTINUATION, AT EVERY AGE. The written model has the
@@ -3005,7 +3039,11 @@
         ! separate test. On the first pass the value function is zero, so the
         ! child term is zero and the model starts where it used to be.
         integer, parameter :: include_child_in_continuation=1
-        real(8), dimension(0:1,1:2) :: expected_child_value=0
+        ! BY THE PARENT'S NODE TOO, now that the child's draw conditions on it.
+        ! A parent at the top node and one at the bottom no longer face the same
+        ! loss from passing a penalty on, because the child's whole distribution
+        ! differs and the value function is concave.
+        real(8), dimension(employment_grid_size,0:1,1:2) :: expected_child_value=0
 
         ! WHETHER expected_child_value HAS EVER BEEN COMPUTED FOR REAL.
         ! compute_expected_child_value returns zero while age one is still
@@ -3953,6 +3991,8 @@
         ! overlap visible instead of inferred.
         real(8), dimension(transition_length,5) :: val_sud_band,val_homeless_sud_band
         integer :: val_band_1,val_band_2,val_is_homeless_1,val_is_sud_1,val_in_labour_force_1
+        integer :: cd_index_1,ch_index_1,cp_index_1
+        real(8), dimension(0:1,1:2) :: csud_w_1
         real(8) :: val_labour_income_1,val_gross_rent_1,val_treat_1
         ! CAN THE HOMELESS AFFORD THE SMALLEST UNIT OUT OF INCOME ALONE?
         ! model_fraction_homeless_by_choice tests income PLUS assets, and the
@@ -4618,15 +4658,42 @@
             csud_d_1=0
             chom_n_1=0
             chom_d_1=0
+            ! THE CHILD'S DRAW IS CONDITIONAL ON THE PARENT'S NODE NOW, so
+            ! these two ratios need the marginal over parent nodes WITHIN each
+            ! parent state rather than a single row. Weighting by
+            ! newborn_parent_share renormalised inside the cell is what makes
+            ! the numerator and denominator comparable: the disordered and the
+            ! clean sit at different nodes, and it is precisely that difference
+            ! -- income persistence -- that used to be missing and that these
+            ! ratios are now meant to split from the direct penalty.
+            !
+            ! The literature says the split is roughly even: adjusting for
+            ! parental education, income, social class and family type removes
+            ! about half the effect of parental substance abuse on offspring
+            ! outcomes. So delta_d should fall to something like half the work
+            ! it was doing once rho carries the other half, and if it collapses
+            ! to nothing then rho is doing too much.
+            do cd_index_1=0,1
+                do ch_index_1=1,2
+                    csud_w_1(cd_index_1,ch_index_1)=&
+                        sum(newborn_parent_share(:,cd_index_1,ch_index_1))
+                end do
+            end do
             do k_1=1,employment_grid_size
-                csud_n_1=csud_n_1+newborn_employment_probability(k_1,1,1)*&
-                    percent_addicted_by_employment(1,k_1)
-                csud_d_1=csud_d_1+newborn_employment_probability(k_1,0,1)*&
-                    percent_addicted_by_employment(1,k_1)
-                chom_n_1=chom_n_1+newborn_employment_probability(k_1,0,2)*&
-                    percent_homeless_by_employment(1,k_1)
-                chom_d_1=chom_d_1+newborn_employment_probability(k_1,0,1)*&
-                    percent_homeless_by_employment(1,k_1)
+                do cp_index_1=1,employment_grid_size
+                    csud_n_1=csud_n_1+newborn_parent_share(cp_index_1,1,1)*&
+                        newborn_employment_probability(k_1,cp_index_1,1,1)*&
+                        percent_addicted_by_employment(1,k_1)/max(csud_w_1(1,1),10.d0**(-14))
+                    csud_d_1=csud_d_1+newborn_parent_share(cp_index_1,0,1)*&
+                        newborn_employment_probability(k_1,cp_index_1,0,1)*&
+                        percent_addicted_by_employment(1,k_1)/max(csud_w_1(0,1),10.d0**(-14))
+                    chom_n_1=chom_n_1+newborn_parent_share(cp_index_1,0,2)*&
+                        newborn_employment_probability(k_1,cp_index_1,0,2)*&
+                        percent_homeless_by_employment(1,k_1)/max(csud_w_1(0,2),10.d0**(-14))
+                    chom_d_1=chom_d_1+newborn_parent_share(cp_index_1,0,1)*&
+                        newborn_employment_probability(k_1,cp_index_1,0,1)*&
+                        percent_homeless_by_employment(1,k_1)/max(csud_w_1(0,1),10.d0**(-14))
+                end do
             end do
 
             write(*,*) "===== ALL TARGETED MOMENTS ====="
@@ -5678,6 +5745,14 @@
                 lognormal_tail_mean=&
                     (1+erf((normal_quantile(q_1)-sigma_1)/sqrt(2.d0)))/2
             end if
+        end function
+
+        ! THE STANDARD NORMAL CDF, in one place. Fortran has erf, and
+        ! Phi(x) = (1 + erf(x/sqrt(2)))/2.
+        real(8) function normal_cdf(x_1)
+            implicit none
+            real(8), intent(in) :: x_1
+            normal_cdf=(1.d0+erf(x_1/sqrt(2.d0)))/2.d0
         end function
 
         ! THE NORMAL QUANTILE BY BISECTION, because Fortran has erf and no
@@ -7006,7 +7081,7 @@
         model_mass_by_age(:)=0
         model_users_by_age(:)=0
         model_alive_by_age(:)=0
-        newborn_parent_share_acc(:,:)=0
+        newborn_parent_share_acc(:,:,:)=0
         model_smi_and_homeless(time_period)=0
         model_smi_and_employed(time_period)=0
         model_homeless_labour_income(time_period)=0
@@ -7866,8 +7941,8 @@
                                     ! Weighted by the probability of dying, because a newborn
                                     ! replaces a household that dies and the death hazard is
                                     ! itself a function of the disorder and of homelessness.
-                                    newborn_parent_share_acc(is_addicted_1,is_homeless_1)=&
-                                        newborn_parent_share_acc(is_addicted_1,is_homeless_1)+&
+                                    newborn_parent_share_acc(employment_index,is_addicted_1,is_homeless_1)=&
+                                        newborn_parent_share_acc(employment_index,is_addicted_1,is_homeless_1)+&
                                         distribution_mass_used*(1-survival_probability(age_index,is_homeless_1,&
                                         is_addicted_1,smi_of(unemployment_index)))
                                     
@@ -8723,16 +8798,17 @@
         ! The shares only replace the standing ones when there is mass to divide
         ! by, so the first sweep of a cold start keeps the clean housed default
         ! rather than dividing by zero.
-        if (sum(newborn_parent_share_acc(:,:))>10.d0**(-12)) then
+        if (sum(newborn_parent_share_acc(:,:,:))>10.d0**(-12)) then
 
-            newborn_parent_share(:,:)=newborn_parent_share_acc(:,:)/sum(newborn_parent_share_acc(:,:))
+            newborn_parent_share(:,:,:)=newborn_parent_share_acc(:,:,:)/&
+                sum(newborn_parent_share_acc(:,:,:))
 
         end if
 
-        write(*,*) "parents replaced by newborns: clean housed=", newborn_parent_share(0,1), &
-            " clean homeless=", newborn_parent_share(0,2), &
-            " disordered housed=", newborn_parent_share(1,1), &
-            " disordered homeless=", newborn_parent_share(1,2)
+        write(*,*) "parents replaced by newborns: clean housed=", sum(newborn_parent_share(:,0,1)), &
+            " clean homeless=", sum(newborn_parent_share(:,0,2)), &
+            " disordered housed=", sum(newborn_parent_share(:,1,1)), &
+            " disordered homeless=", sum(newborn_parent_share(:,1,2))
             
         model_fraction_homeless_owners(time_period)=model_fraction_homeless_owners(time_period)/&
             max(model_fraction_homeless(time_period),10.d0**(-14))
@@ -16526,7 +16602,7 @@
                                 future_utility_vector(future_financial_index)+&
                                 discount_factor*&
                                 (1-survival_probability(age_index,is_homeless_1,survival_sud_of(addiction_index,treatment_choice_now),smi_of(unemployment_index)))*&
-                                weight_on_child*expected_child_value(future_addiction_index,is_homeless_1)
+                                weight_on_child*expected_child_value(employment_index,future_addiction_index,is_homeless_1)
                         
                         end if
                         
@@ -22503,13 +22579,24 @@
                 ! convention and not what was wrong.
                 newborn_productivity_draw(:)=0
 
+                ! Contracted over the parent's productivity node as well as its
+                ! disorder and housing status, which is the whole of the
+                ! persistence change: newborn_parent_share now resolves the
+                ! dying mass by node and newborn_employment_probability holds
+                ! the child's distribution conditional on it.
                 do newborn_d_index_1=0,1
 
                     do newborn_h_index_1=1,2
 
-                        newborn_productivity_draw(:)=newborn_productivity_draw(:)+&
-                            newborn_parent_share(newborn_d_index_1,newborn_h_index_1)*&
-                            newborn_employment_probability(:,newborn_d_index_1,newborn_h_index_1)
+                        do newborn_parent_node_1=1,employment_grid_size
+
+                            newborn_productivity_draw(:)=newborn_productivity_draw(:)+&
+                                newborn_parent_share(newborn_parent_node_1,&
+                                newborn_d_index_1,newborn_h_index_1)*&
+                                newborn_employment_probability(:,newborn_parent_node_1,&
+                                newborn_d_index_1,newborn_h_index_1)
+
+                        end do
 
                     end do
 
@@ -22525,13 +22612,13 @@
                 ! distribution is losing the penalty. Print the mixture and the
                 ! shares that built it, so the next loop says which.
                 write(*,*) "newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=", &
-                    newborn_parent_share(0,1), newborn_parent_share(1,1), &
-                    newborn_parent_share(0,2), newborn_parent_share(1,2)
+                    sum(newborn_parent_share(:,0,1)), sum(newborn_parent_share(:,1,1)), &
+                    sum(newborn_parent_share(:,0,2)), sum(newborn_parent_share(:,1,2))
                 write(*,*) "newborn_productivity_draw=", newborn_productivity_draw(:)
-                write(*,*) "newborn_employment_probability, clean housed=", &
-                    newborn_employment_probability(:,0,1)
-                write(*,*) "newborn_employment_probability, disordered housed=", &
-                    newborn_employment_probability(:,1,1)
+                write(*,*) "newborn_employment_probability, clean housed, parent at the median node=", &
+                    newborn_employment_probability(:,(employment_grid_size+1)/2,0,1)
+                write(*,*) "newborn_employment_probability, disordered housed, parent at the median node=", &
+                    newborn_employment_probability(:,(employment_grid_size+1)/2,1,1)
 
                 newborn_smi_at_birth=0
 
@@ -22796,7 +22883,7 @@
                                                                     (1-survival_probability_for_dist_iteration(age_index,1,0,0))*&
                                                                     fraction_with_positive_wealth(employment_index)*&
                                                                     newborn_employment_probability(future_employment_index,&
-                                                                    is_addicted_1,is_homeless_2)*&
+                                                                    employment_index,is_addicted_1,is_homeless_2)*&
                                                                     newborn_unemployment_process(age_index,unemployment_index,&
                                                                     future_unemployment_index,is_homeless_2,&
                                                                     future_addiction_index_2,employment_index)*&
@@ -22820,7 +22907,7 @@
                                                                 (1-survival_probability_for_dist_iteration(age_index,1,0,0))*&
                                                                 (1-fraction_with_positive_wealth(employment_index))*&
                                                                 newborn_employment_probability(future_employment_index,&
-                                                                is_addicted_1,is_homeless_2)*&
+                                                                employment_index,is_addicted_1,is_homeless_2)*&
                                                                 newborn_unemployment_process(age_index,unemployment_index,&
                                                                 future_unemployment_index,is_homeless_2,future_addiction_index_2,&
                                                                 employment_index)*addiction_transition(is_addicted_1,&
@@ -24688,7 +24775,7 @@
         implicit none
         
         integer, intent(in) :: time_period
-        integer :: node_index_1,d_index_1,h_index_1
+        integer :: node_index_1,d_index_1,h_index_1,parent_node_1
         
         expected_child_value=0
 
@@ -24713,20 +24800,24 @@
         do d_index_1=0,1
         
             do h_index_1=1,2
-            
+
+              do parent_node_1=1,employment_grid_size
+
                 do node_index_1=1,employment_grid_size
                 
-                    expected_child_value(d_index_1,h_index_1)=&
-                        expected_child_value(d_index_1,h_index_1)+&
-                        newborn_employment_probability(node_index_1,d_index_1,h_index_1)*&
+                    expected_child_value(parent_node_1,d_index_1,h_index_1)=&
+                        expected_child_value(parent_node_1,d_index_1,h_index_1)+&
+                        newborn_employment_probability(node_index_1,parent_node_1,d_index_1,h_index_1)*&
                         value_function(1)%vector_transition_real&
                         (min(time_period+solve_transition_dynamics,transition_length),1,&
                         negative_financial_grid_size,1,node_index_1,0,0)
                 
                 end do
-            
+
+              end do
+
             end do
-        
+
         end do
 
         ! ONLY THE PENALTY ENTERS, NOT THE LEVEL.
@@ -24752,10 +24843,14 @@
         ! something behind, so the level was double counting it.
         child_value_ready=1
 
-        expected_child_value(1,1)=expected_child_value(1,1)-expected_child_value(0,1)
-        expected_child_value(0,2)=expected_child_value(0,2)-expected_child_value(0,1)
-        expected_child_value(1,2)=expected_child_value(1,2)-expected_child_value(0,1)
-        expected_child_value(0,1)=0
+        ! Differenced WITHIN each parent node, so what remains is the loss the
+        ! parent's own state imposes on its child holding the parent's
+        ! productivity fixed -- which is the object omega is the weight on, and
+        ! which is now different for a rich parent and a poor one.
+        expected_child_value(:,1,1)=expected_child_value(:,1,1)-expected_child_value(:,0,1)
+        expected_child_value(:,0,2)=expected_child_value(:,0,2)-expected_child_value(:,0,1)
+        expected_child_value(:,1,2)=expected_child_value(:,1,2)-expected_child_value(:,0,1)
+        expected_child_value(:,0,1)=0
 
         ! The counterfactual now simply removes what is left, which is the penalty
         ! alone. Switching it off makes using cheaper, so use RISES, which is the
@@ -24770,27 +24865,51 @@
     
     subroutine create_newborn_employment_probability()
 
-        ! Reallocate the unconditional productivity distribution downward by the
-        ! penalty, over the existing grid. Working in logs, a newborn that would
-        ! have drawn node i now sits at log y_i + log(penalty), which falls
-        ! between two nodes; the mass is split between them so that the mean of
-        ! log productivity moves by exactly log(penalty). Mass below the bottom
-        ! node piles onto it, which understates the penalty for the poorest
-        ! parents and is therefore conservative.
+        ! THE CHILD'S PRODUCTIVITY DRAW, CONDITIONAL ON THE PARENT'S.
+        !
+        ! An AR(1) in logs on the existing grid, with a level shift for the
+        ! parent's disorder and homelessness:
+        !
+        !   log y_child - mu = rho (log y_parent - mu) + log(penalty) + eps
+        !   eps ~ N(0, sigma^2 (1 - rho^2))
+        !
+        ! The innovation variance is sigma^2(1-rho^2) so that the STATIONARY
+        ! cross section still has log standard deviation sigma. That matters:
+        ! sd_permanent_productivity is calibrated on the bottom half earnings
+        ! share, and an AR(1) with the full sigma as its innovation would widen
+        ! the cross section and break that moment.
+        !
+        ! WHAT CHANGED AND WHY. rho used to be zero -- the draw was indexed by
+        ! the parent's disorder and housing status and nothing else, so children
+        ! of the top node and of the bottom node drew the same distribution and
+        ! poverty was redrawn every generation. That is an identification
+        ! problem: penalty_child_addicted is calibrated on the child disorder
+        ! ratio and with no baseline persistence it had to explain all of it,
+        ! when the literature finds that adjusting for parental education,
+        ! income, social class and family type removes about HALF the effect of
+        ! parental substance abuse on offspring outcomes. Both channels are real
+        ! and roughly equal, and only one of them was here.
+        !
+        ! At rho = 0 this reduces to the unconditional distribution shifted by
+        ! the penalty, which is the old behaviour, so the two are comparable.
+        !
+        ! THE PROBABILITIES ARE INTEGRATED, NOT SPLIT. Each cell's mass is the
+        ! normal measure of its own log interval, so a penalty is applied to the
+        ! distribution rather than to a pair of neighbouring nodes. The old two
+        ! point split was linear in logs and so preserved the geometric mean of
+        ! the pair, which overstated E[y] by about four per cent -- almost all
+        ! of it at the top node, where the gap from 1.32 to 3.09 is widest.
 
         use Global_Vars
 
         implicit none
 
-        integer :: d_index,h_index,node_index,lower_node
-        real(8) :: penalty,shifted_log,weight_lower
-        real(8), dimension(employment_grid_size) :: log_grid
+        integer :: d_index,h_index,child_index,parent_index
+        real(8) :: penalty,mu_1,sigma_e_1,mean_1,mass_1
 
-        do node_index=1,employment_grid_size
-
-            log_grid(node_index)=log(employment_grid(1,node_index))
-
-        end do
+        mu_1=-sd_permanent_productivity**2/2
+        sigma_e_1=sd_permanent_productivity*&
+            sqrt(max(1.d0-rho_intergenerational**2,10.d0**(-12)))
 
         newborn_employment_probability=0
 
@@ -24801,62 +24920,37 @@
                 penalty=((1-penalty_child_addicted)**(d_index*include_child_penalty))*&
                     ((1-penalty_child_homeless)**((h_index-1)*include_child_penalty))
 
-                do node_index=1,employment_grid_size
+                do parent_index=1,employment_grid_size
 
-                    shifted_log=log_grid(node_index)+log(penalty)
+                    mean_1=mu_1+rho_intergenerational*&
+                        (log(employment_grid(1,parent_index))-mu_1)+log(penalty)
 
-                    if (shifted_log<=log_grid(1)) then
+                    do child_index=1,employment_grid_size
 
-                        newborn_employment_probability(1,d_index,h_index)=&
-                            newborn_employment_probability(1,d_index,h_index)+&
-                            unconditional_employment_probability(node_index)
+                        newborn_employment_probability(child_index,parent_index,d_index,h_index)=&
+                            normal_cdf((log_y_edge(child_index+1)-mean_1)/sigma_e_1)-&
+                            normal_cdf((log_y_edge(child_index)-mean_1)/sigma_e_1)
+
+                    end do
+
+                    mass_1=sum(newborn_employment_probability(:,parent_index,d_index,h_index))
+
+                    if (mass_1>10.d0**(-14)) then
+
+                        newborn_employment_probability(:,parent_index,d_index,h_index)=&
+                            newborn_employment_probability(:,parent_index,d_index,h_index)/mass_1
 
                     else
 
-                        lower_node=1
-
-                        do while ((lower_node<employment_grid_size-1) .AND. &
-                            (log_grid(lower_node+1)<shifted_log))
-
-                            lower_node=lower_node+1
-
-                        end do
-
-                        weight_lower=(log_grid(lower_node+1)-shifted_log)/&
-                            (log_grid(lower_node+1)-log_grid(lower_node))
-
-                        weight_lower=max(0.d0,min(1.d0,weight_lower))
-
-                        newborn_employment_probability(lower_node,d_index,h_index)=&
-                            newborn_employment_probability(lower_node,d_index,h_index)+&
-                            weight_lower*unconditional_employment_probability(node_index)
-
-                        newborn_employment_probability(lower_node+1,d_index,h_index)=&
-                            newborn_employment_probability(lower_node+1,d_index,h_index)+&
-                            (1-weight_lower)*unconditional_employment_probability(node_index)
+                        newborn_employment_probability(1,parent_index,d_index,h_index)=1
 
                     end if
 
                 end do
 
-                newborn_employment_probability(:,d_index,h_index)=&
-                    newborn_employment_probability(:,d_index,h_index)/&
-                    sum(newborn_employment_probability(:,d_index,h_index))
-
             end do
 
         end do
-
-        if (loop_count<1) then
-
-            write(*,*) "newborn_employment_probability, clean and housed parent"
-            write(*,*) newborn_employment_probability(:,0,1)
-            write(*,*) "newborn_employment_probability, parent with the disorder"
-            write(*,*) newborn_employment_probability(:,1,1)
-            write(*,*) "newborn_employment_probability, homeless parent with the disorder"
-            write(*,*) newborn_employment_probability(:,1,2)
-
-        end if
 
     end subroutine
 
@@ -25022,6 +25116,26 @@
 
             p_edge_1(1)=0
             p_edge_1(employment_grid_size+1)=1
+
+            ! THE NODE BOUNDARIES IN LOG PRODUCTIVITY, kept for the newborn
+            ! draw. The grid is a lognormal of mean one, so its log has mean
+            ! -sigma^2/2, and node i covers the interval between the p_edge
+            ! quantiles of that distribution. The child's conditional
+            ! distribution is integrated over these intervals rather than split
+            ! between two neighbouring nodes, which is exact where the split was
+            ! not: the two point split preserved the GEOMETRIC mean of the pair
+            ! and so overstated E[y] by about four per cent, almost all of it at
+            ! the top node where the gap from 1.32 to 3.09 is widest.
+            do employment_index=1,employment_grid_size+1
+                if (p_edge_1(employment_index)<=0) then
+                    log_y_edge(employment_index)=-12.d0
+                else if (p_edge_1(employment_index)>=1) then
+                    log_y_edge(employment_index)=12.d0
+                else
+                    log_y_edge(employment_index)=-sd_permanent_productivity**2/2+&
+                        sd_permanent_productivity*normal_quantile(p_edge_1(employment_index))
+                end if
+            end do
 
             do employment_index=1,employment_grid_size+1
 
@@ -31822,10 +31936,10 @@
             ! and resumed the shares as 0.0102 and 1e-15. A separate file cannot
             ! be misaligned by anything.
             open(unit=73,file="newborn_parent_share.dat",status='replace')
-                write(73,'(F30.15)') newborn_parent_share(0,1)
-                write(73,'(F30.15)') newborn_parent_share(1,1)
-                write(73,'(F30.15)') newborn_parent_share(0,2)
-                write(73,'(F30.15)') newborn_parent_share(1,2)
+                ! THE WHOLE ARRAY, because it now resolves the dying mass by
+                ! the parent's productivity node as well and four scalars can no
+                ! longer carry it.
+                write(73,'(F30.15)') newborn_parent_share
             close(73)
 
             write(71,'(I10)') have_gap_discount_factor
@@ -32043,19 +32157,20 @@
             ! Its own file, so nothing in the state record can misalign it.
             open(unit=73,file="newborn_parent_share.dat",status='old',iostat=state_ios_1)
             if (state_ios_1==0) then
-                read(73,'(F30.15)',iostat=state_ios_1) newborn_parent_share(0,1)
-                if (state_ios_1==0) read(73,'(F30.15)',iostat=state_ios_1) newborn_parent_share(1,1)
-                if (state_ios_1==0) read(73,'(F30.15)',iostat=state_ios_1) newborn_parent_share(0,2)
-                if (state_ios_1==0) read(73,'(F30.15)',iostat=state_ios_1) newborn_parent_share(1,2)
+                read(73,'(F30.15)',iostat=state_ios_1) newborn_parent_share
                 close(73)
             end if
             if (state_ios_1/=0) then
-                newborn_parent_share=reshape((/1.d0,0.d0,0.d0,0.d0/),(/2,2/))
+                ! Every parent clean and housed, spread over nodes by the
+                ! unconditional distribution, which is what a newborn faces
+                ! before any distribution has been solved.
+                newborn_parent_share=0
+                newborn_parent_share(:,0,1)=unconditional_employment_probability(:)
                 write(*,*) "no banked newborn parent shares, so the first distribution is"
                 write(*,*) "   built with no transmission and it rebuilds from loop two"
             end if
-            write(*,*) "newborn_parent_share resumed: clean housed=", newborn_parent_share(0,1), &
-                " disordered housed=", newborn_parent_share(1,1)
+            write(*,*) "newborn_parent_share resumed: clean housed=", sum(newborn_parent_share(:,0,1)), &
+                " disordered housed=", sum(newborn_parent_share(:,1,1))
 
 
             end if
@@ -34476,11 +34591,11 @@
                         do child_node_index_1=1,employment_grid_size
 
                             child_sud_num_1=child_sud_num_1+&
-                                newborn_employment_probability(child_node_index_1,1,1)*&
+                                sum(newborn_parent_share(:,1,1)*newborn_employment_probability(child_node_index_1,:,1,1))/max(sum(newborn_parent_share(:,1,1)),10.d0**(-14))*&
                                 percent_addicted_by_employment(1,child_node_index_1)
 
                             child_sud_den_1=child_sud_den_1+&
-                                newborn_employment_probability(child_node_index_1,0,1)*&
+                                sum(newborn_parent_share(:,0,1)*newborn_employment_probability(child_node_index_1,:,0,1))/max(sum(newborn_parent_share(:,0,1)),10.d0**(-14))*&
                                 percent_addicted_by_employment(1,child_node_index_1)
 
                         end do
@@ -34593,11 +34708,11 @@
                         do child_node_index_1=1,employment_grid_size
 
                             child_homeless_num_1=child_homeless_num_1+&
-                                newborn_employment_probability(child_node_index_1,0,2)*&
+                                sum(newborn_parent_share(:,0,2)*newborn_employment_probability(child_node_index_1,:,0,2))/max(sum(newborn_parent_share(:,0,2)),10.d0**(-14))*&
                                 percent_homeless_by_employment(1,child_node_index_1)
 
                             child_homeless_den_1=child_homeless_den_1+&
-                                newborn_employment_probability(child_node_index_1,0,1)*&
+                                sum(newborn_parent_share(:,0,1)*newborn_employment_probability(child_node_index_1,:,0,1))/max(sum(newborn_parent_share(:,0,1)),10.d0**(-14))*&
                                 percent_homeless_by_employment(1,child_node_index_1)
 
                         end do
@@ -35844,18 +35959,18 @@
             write(*,*) "consumption by node          =", clean_consumption_by_employment(1,:)
             write(*,*) "DRUG BUDGET SHARE by node    =", drug_quantity_by_employment(1,:)*&
                 price_of_addictive_good/max(clean_consumption_by_employment(1,:),10.d0**(-12))
-            write(*,*) "newborn prob, clean parent   =", newborn_employment_probability(:,0,1)
-            write(*,*) "newborn prob, disordered     =", newborn_employment_probability(:,1,1)
+            write(*,*) "newborn prob, clean parent, median node =", newborn_employment_probability(:,(employment_grid_size+1)/2,0,1)
+            write(*,*) "newborn prob, disordered, median node   =", newborn_employment_probability(:,(employment_grid_size+1)/2,1,1)
             write(*,*) "employment_grid               =", employment_grid(1,:)
             write(*,*) "penalty_child_addicted=", penalty_child_addicted
             child_sud_num_1=0
             child_sud_den_1=0
             do child_node_index_1=1,employment_grid_size
                 child_sud_num_1=child_sud_num_1+&
-                    newborn_employment_probability(child_node_index_1,1,1)*&
+                    sum(newborn_parent_share(:,1,1)*newborn_employment_probability(child_node_index_1,:,1,1))/max(sum(newborn_parent_share(:,1,1)),10.d0**(-14))*&
                     percent_addicted_by_employment(1,child_node_index_1)
                 child_sud_den_1=child_sud_den_1+&
-                    newborn_employment_probability(child_node_index_1,0,1)*&
+                    sum(newborn_parent_share(:,0,1)*newborn_employment_probability(child_node_index_1,:,0,1))/max(sum(newborn_parent_share(:,0,1)),10.d0**(-14))*&
                     percent_addicted_by_employment(1,child_node_index_1)
             end do
             write(*,*) "child SUD ratio implied=", child_sud_num_1/max(child_sud_den_1,10.d0**(-12)),&
