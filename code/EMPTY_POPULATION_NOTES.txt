@@ -1,0 +1,205 @@
+WHERE THE MASS DISAPPEARS -- ANCHOR RUN 485225bf80, 31 AUGUST
+=============================================================
+
+HEADLINE: in this run it does not disappear at all. The population is alive,
+the distribution converges, and all twenty MOMENT lines come back finite. The
+empty population was real, it was diagnosed in 07bf975, and this run is the
+first measurement that confirms the fix on the vector that died.
+
+The anchor solves to tag 485225bf80, which is the SAME tag as one of the two
+points retired to code/points_failed. So this is a controlled before/after on
+one vector, not a new point.
+
+    moment      dead run (points_failed)      this run
+    theta       -1.0  (empty sentinel)        0.1818
+    tau_l       NaN                           0.2410
+    h_1         NaN                           0.0013
+    b           NaN                           0.0976
+    lambda_d    0.0                           0.0435
+    beta        0.0                           3.7379
+    omega_l     0.0                           0.3917
+    aleph       0.0                           60.98
+    pi_eu       0.0                           0.0604
+    sigma_y     0.16905002140174125           0.16905002140174125
+
+sigma_y is bit-identical across the two, which is the tell the original commit
+message called out: it is computed off the productivity grid and never touches
+the distribution, so it survives an empty population untouched. Every other
+moment moved from 0/NaN to a finite, plausible value.
+
+
+WHAT THE LOG SHOWS, IN ORDER
+----------------------------
+
+1. Cold start, as intended. Line 2 of the log:
+       "no calibration_state.dat, starting from the declared values"
+   run_one_point.sh:214 removes calibration_state.dat before every point, so
+   read_calibration_state takes its early return.
+
+2. The seed fires. At the mixing point in converge_to_stationary_equilibrium
+   the shares print, on every one of the 61 sweeps:
+       newborn_parent_share (clean housed, disordered housed, clean street,
+       disordered street) =  1.0000  0.0000  0.0000  0.0000
+   Sum one, in the clean housed cell. That is the value written by the
+   07bf975 seed at GKKOC_intergenerational_employment_process:25205. In the
+   dead run this line read 0.0 0.0 0.0 0.0, newborn_productivity_draw came out
+   identically zero, no newborns were created, and there was nothing for any
+   distribution-based moment to average over.
+
+3. newborn_productivity_draw is now a real lognormal ramp, 3.5e-04 rising
+   across the 17 nodes, rather than a vector of zeros.
+
+4. The distribution converges:
+       DIST_DONE sweeps=  61  final_distance=  2.5397493286165307E-005
+   61 sweeps, one "distribution distance" line each, monotone.
+
+5. Mass is conserved to 1e-13:
+       DIAG histogram mass / distribution  (want 1.0) = 1.0000000000000961
+       DIAG histogram wealth / total wealth (want 1.0) = 1.0000000000000957
+
+6. The aggregation finds real dying mass to bank for the next loop:
+       parents replaced by newborns: clean housed = 0.88029
+                                     clean homeless = 3.5062E-04
+                                     disordered housed = 0.11936
+                                     disordered homeless = 1.8636E-07
+
+   No occurrence of "weird", "strange" or "wrong_objective" anywhere in
+   3,581,728 lines.
+
+SO: the first sign of trouble in a DEAD run is the newborn_parent_share print
+at the FIRST distribution sweep of calibration loop 1 -- all four shares 0.0 --
+which is upstream of the first "distribution distance" line. Anything that
+reads DIST_DONE or the moments block is already downstream of the failure. That
+print is the place to look, and it is cheap to check.
+
+
+THREE THINGS THIS RUN TURNED UP THAT ARE NOT YET WRITTEN DOWN ANYWHERE
+----------------------------------------------------------------------
+
+(1) THE BUDGET CHECKER DOES NOT KNOW ABOUT THE PRICE OF TREATMENT.
+
+397,788 lines of this log -- of 3,581,728, and the reason the file is 174 MB
+rather than about 15 MB -- are
+
+    budget does not clear by   2.0000000000000018E-002
+
+and every distinct residual in the file rounds to 0.02, which is exactly
+money_cost_of_treatment for this vector. It is not a coincidence and it is not
+noise:
+
+  - the charge is applied at :20259, inside the addiction branch, and it
+    reduces total_consumption_choice_1 only;
+  - check_budget_constraint_clears (:21557) rebuilds the residual at :21651 as
+    after_tax_wealth_net_of_expenses_1 minus (savings + (1+tau_c)*consumption),
+    with no treatment term anywhere in it.
+
+So the household pays for treatment out of consumption, the checker never
+subtracts the payment, and it reports the full price as a violation for every
+state in which someone is in treatment. tau_u is 0.579 at this point, so that
+is a lot of states.
+
+This is a WRITE-ONLY diagnostic -- the whole thing sits inside a write block
+and changes no policy, no value function and no distribution -- so it did NOT
+cause the empty population, and the moments above are unaffected. But
+money_cost_of_treatment landed on 31 August, the same window as the breakage,
+so it is worth being explicit that it was looked at and cleared. What it does
+cost is an order of magnitude of log size and the ability to see anything else
+in the file. Worth deciding whether the fix is to add the treatment term to the
+checker or to note the payment as a genuine leak out of the household budget
+identity -- it leaves the household and goes to a provider that is not in the
+accounting. I have NOT touched the source.
+
+(2) code/newborn_parent_share.dat IS TRACKED, IS STALE, AND SURVIVES A COLD
+    START.
+
+The committed copy is FOUR lines:
+
+    1.000000000000000
+    0.000000000000000
+    0.000000000000000
+    0.000000000000000
+
+which is the OLD reshape((/1,0,0,0/)) shape. The array is now
+(employment_grid_size, 0:1, 1:2) = (17,0:1,1:2) = 68 elements. run_one_point.sh
+:214 removes calibration_state.dat and calibration_distribution*.dat but NOT
+this file, so it is the one piece of previous state that a "cold" start keeps.
+
+Reading 4 values into a 68-element array hits end of file, sets iostat, and the
+fallback at :32249 rebuilds the shares from the unconditional distribution --
+so today it degrades safely. It is worth knowing that the only thing standing
+between a stale banked file and a silently wrong newborn draw is that fallback
+plus the sum(...)<=1e-12 seed, and that the file in git no longer has the shape
+the code expects.
+
+(3) THE BANKED SHARES ARE ZEROED AT STARTUP, BEFORE THE SEED RUNS.
+
+Call order on a cold start is:
+
+    apply_param_handover (:32482) -> write_calibration_state (:32719)
+    calibrating_model (:32869)    -> read_calibration_state (:32887)
+                                  -> GKKOC_...employment_process (:32935)
+
+The handover banks the state FIRST, and at that moment newborn_parent_share is
+still at its declaration value of 0, so :32023 writes 68 zeros over
+newborn_parent_share.dat before the seed at :25205 has ever executed. That is
+why the working copy of that file is 68 zero lines after this run even though
+the run itself was healthy -- it is a pre-seed snapshot, not a measurement.
+
+The consequence to watch: a resumed run reads those 68 zeros with iostat==0, so
+the "no banked newborn parent shares" fallback does NOT fire; it is rescued
+only because the seed's sum(...)<=1e-12 test then catches it. Two independent
+safety nets currently overlap on this. If either moves, the population dies
+again and, on the evidence of the dead points, it dies silently except for
+theta = -1.0.
+
+
+A CAVEAT ON THIS MEASUREMENT
+----------------------------
+
+newborn_parent_share reads (1, 0, 0, 0) at all 61 sweeps, because the shares
+are rebuilt by the aggregation (:8844) which runs AFTER the distribution, and
+this is a single-loop measurement run. So this point is measured with NO
+intergenerational transmission: every newborn is drawn from a clean, housed,
+unpenalised parent mixture. That is the documented cold-start behaviour -- the
+comment at :32005 says so directly -- and not a bug, but it means the child
+penalty channel contributes nothing to the numbers in the table above. The
+0.880/0.119 split found by the aggregation is banked for a second loop that
+this run never takes.
+
+
+HOUSEKEEPING
+------------
+
+The log is committed as worker_485225bf80.log.gz. Uncompressed it is
+174,454,358 bytes, which is over GitHub's 100 MB hard limit per file and cannot
+be pushed; gzip takes it to 5.2 MB with nothing removed. Note also that
+.gitignore line 5 is "*.log", so the worker log has to be force-added -- a
+plain "git add code/worker_*.log" adds nothing at all and does so quietly.
+
+No source file was modified by this run.
+
+
+INDEPENDENTLY REPRODUCED, AND WHAT THE AGREEMENT IS WORTH
+---------------------------------------------------------
+
+A second session solved this same anchor concurrently and pushed its point
+file as 19c1698 while this run was still going. The two runs agree:
+
+    moment      that run              this run
+    sigma_y     0.16905002140174125   0.16905002140174125   (identical)
+    theta       0.18180243072858701   0.18180185859807327
+    beta        3.7379335153665889    3.7379360526158494
+    h_1         1.3135589094776959E-3 1.3135557300013628E-3
+    b           9.7557172343654408E-2 9.7556627831874299E-2
+
+Agreement to six or seven significant figures, with the residual difference
+in the last digits -- the solver's reproducibility band, from OpenMP
+reduction order. Two independent cold starts on the same vector both produce
+a live population, so the recovery is a property of the fix and not of one
+lucky run.
+
+code/points/point_485225bf80.txt in this commit is THAT run's file, kept
+because it landed first and one tag owns one file; the log committed here is
+this run's. They are different runs of the same vector, agreeing to the band
+above, and that is the only sense in which the log and the point file are not
+byte-for-byte the same measurement.
