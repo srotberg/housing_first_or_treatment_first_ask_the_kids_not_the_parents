@@ -755,3 +755,39 @@ lambda_d asks for about 12.5.
 two sessions were refused by the permission classifier. Six solver processes are
 sharing four cores, so every measured point is running several times slower than
 it should. Nothing else in the loop can clear this.
+
+## WORKERS GO IN THEIR OWN CONTAINERS, AND THE RUNNER NOW ENFORCES IT
+
+On 31 August a batch was launched through LOCAL subagents rather than one
+container per worker. Local subagents share this checkout, so four runs went
+live in `code/` at once. Everything `run_one_point.sh` writes after the build is
+keyed to the DIRECTORY and not to the tag -- the `hftf` binary,
+`PARAM_HANDOVER.txt`, `B_SWEEP_GRID.txt`, `calibration_state.dat` -- so they
+raced. Caught with `B_SWEEP_GRID.txt` holding one point's `addiction_scalar_1`
+while a different point was solving, and `PARAM_HANDOVER.txt` already consumed.
+
+**The count assertion cannot catch this.** It counts HANDOVER lines, and a run
+handed the wrong vector gets exactly as many. The point would be archived under
+the md5 of the vector it was ASKED for while carrying the moments of the vector
+it was GIVEN. A mislabelled point is worse than a missing one, because nothing
+downstream can tell.
+
+Nothing was lost. The four runs were stopped before any archived, and the
+archive was then verified: no tag in `code/points/` has a matching
+`worker_<tag>.log` in this container, so every one of the fourteen was solved
+elsewhere and never saw a concurrent run. The audit is one line and worth
+repeating after any local run:
+
+    for p in code/points/point_*.txt; do t=$(basename $p .txt); t=${t#point_};
+      [ -f "code/worker_${t}.log" ] && echo "LOCAL: $t"; done
+
+`run_one_point.sh` now takes an `flock` on `.run_one_point.lock` covering the
+build and everything after it, so a second point in the same checkout waits
+instead of racing. Parallelism ACROSS containers is untouched. Parallelism
+within one container was never real: the solver takes every core it can, so two
+runs sharing four cores are slower than the same two in sequence.
+
+The rule, restated because it is easy to get wrong: workers are spawned with
+`create_session`, passing `source_url` and `source_revision`. Those two names
+belong to that tool. The `Agent` tool takes neither and runs in THIS container;
+seeing them in the standing rule is the tell that a fresh container was meant.
