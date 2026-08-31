@@ -1194,3 +1194,37 @@ those were taken where the drug block was already broken; aleph also improved on
 its own from 24.7 to 21.9 when the block was repaired, which suggests the
 degeneracy was the block collapsing rather than the instrument itself. Worth one
 point to find out.
+
+## aleph IS REACHABLE, AND ITS INSTRUMENT IS NOT DEGENERATE -- IT IS EXPENSIVE
+
+Retried at the repaired point, `value_of_life` 34.587 -> 37 takes **aleph from
+21.9 per cent off to 10.9**, nearly inside. So the instrument works and the
+earlier verdict of "degenerate" was wrong about the cause, though right that the
+arms were unusable. Measured controlled at the healthy point:
+
+    aleph     elasticity   +1.96
+    b         elasticity  -31.04
+    lambda_d  elasticity  -40.10
+
+Those last two are the largest in the model and they are why every earlier arm
+looked degenerate: b lands at 0.0113 and lambda_d at 0.0025. The block does not
+collapse because the point was already sick; it collapses because this
+instrument is enormously coupled.
+
+**The repair is 5.4x outside the `addiction_scalar_1` bracket.** So this is not a
+step that can be taken safely and is not one to pretend otherwise about. ROUND12
+line 1 takes it anyway, unclamped, because it is the only route to aleph and
+because measuring it is how the bracket gets wide enough to trust; line 2 takes
+about 59 per cent of it at `value_of_life` 36; line 4 arms
+`addiction_scalar_1` alone at 0.0175, which widens the bracket from two per cent
+to about eight whatever else happens. Any of the three that survives makes the
+next repair legitimate rather than extrapolated.
+
+## THE kappa_ued STEP WORKED AND ITS REPAIR OVERSHOT
+
+`multiple_of_prob_emp_if_addicted` 3.2 -> 3.6 with the clamped repair took
+kappa_ued 33.6 per cent off to 22.8, but the repair over-corrected: b 2.5 -> 13.0
+and lambda_d 1.4 -> 10.4, both now high rather than low. The correction is small
+and **inside the bracket** -- lamA +0.070, as1 +0.0009 -- and is ROUND12 line 3.
+It also cost kappa_uem, which went outside ten per cent for the first time in
+several rounds, and that will need watching rather than assuming.
