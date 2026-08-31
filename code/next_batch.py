@@ -112,6 +112,12 @@ OWN = {
     # could move while there was a single beta.
     'discount_factor':                                     'beta',
     'discount_factor_impatient':                           'w_bot',
+    # THE MORTALITY PENALTY IS THE PRICE OF USING, so it decides WHO is willing
+    # to pay it, and a high one leaves only the most desperate -- who are the
+    # poorest. That is why the model has zero use in the top two income bands
+    # against 7.2 and 4.8 per cent in NSDUH. Calibrated on the income of drug
+    # users on the author's instruction, rather than assigned.
+    'kappa_phi_d_level':                                   'y_u',
 }
 BOUNDS = {
     'money_cost_of_treatment':                              (0.0005, 1.0),
@@ -130,6 +136,11 @@ BOUNDS = {
     'max_food_cost':                                       (1e-4, 1.0),
     'discount_factor':                                     (0.90, 0.999),
     'discount_factor_impatient':                           (0.50, 0.995),
+    # Standardised mortality ratios for opioid use disorder run 6 to 10 in the
+    # literature and 8 was the assigned midpoint. The author has authorised 4 as
+    # a floor if it is needed, so the bracket is opened to it rather than to the
+    # literature edge.
+    'kappa_phi_d_level':                                   (4.0, 10.0),
 }
 # beta is banded on the author's instruction; h_2 is conceded.
 BAND = {'beta': (3.0, 4.5)}

@@ -1828,6 +1828,10 @@
         ! the paper's Section 3 already uses.
         real(8), parameter :: vsl_data=80.d0
         real(8), parameter :: food_stamps_share_data=0.0042
+        ! NSDUH: drug users earn 74.0 per cent of average income. This was an
+        ! untargeted validation number until the author made kappa_phi_d_level
+        ! its instrument.
+        real(8), parameter :: drug_user_income_data=0.740d0
         real(8), parameter :: voucher_coverage_data=0.266
         real(8), parameter :: unemployment_rate_data=0.0485
         real(8), parameter :: unemployment_rate_sud_data=0.1625
@@ -5550,10 +5554,21 @@
             ! model counterpart beside it. They are ratios to average income
             ! because that is how NSDUH reports them: 74.0 per cent of average
             ! for drug users and 71.1 for a moderate or severe disorder.
-            write(*,*) "UNTARGETED income of drug users              model=",&
+            ! A TARGET NOW, ON THE AUTHOR'S INSTRUCTION, with kappa_phi_d_level
+            ! as its instrument. It was the model's largest untargeted failure --
+            ! users at 0.17 to 0.34 of average income against 0.74 -- and the
+            ! reason is that the mortality penalty is the price of using, so a
+            ! high one leaves only the most desperate willing to pay it. Making
+            ! it a moment puts that parameter under the loss instead of leaving
+            ! the failure to be reported.
+            !
+            ! READ IT ONLY WHERE b IS NEAR TARGET. If nearly everyone uses, the
+            ! users ARE the population and this reads close to one for reasons
+            ! that have nothing to do with the mechanism.
+            write(*,*) "MOMENT y_u       income of drug users        model=",&
                 model_avg_income_drug_users(1)/&
                 max(model_average_income(1),10.d0**(-14)),&
-                " observed=", 0.740d0
+                " target=", drug_user_income_data
             write(*,*) "UNTARGETED income with a SUD                 model=",&
                 model_average_income_addicted(1)/&
                 max(model_average_income(1),10.d0**(-14)),&

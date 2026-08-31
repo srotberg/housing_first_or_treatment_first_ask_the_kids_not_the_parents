@@ -1788,3 +1788,52 @@ away.** The Jacobian is the right tool for asking whether a step exists; it
 cannot tell you the model is wrong. When a moment resists for several rounds,
 say what would have to change about the MODEL rather than measuring the same
 instruments again -- three of this session's rounds would not have been needed.
+
+## kappa_phi_d_level IS CALIBRATED NOW, ON THE INCOME OF DRUG USERS
+
+The author's instruction. The mortality penalty is the PRICE of using, so it
+decides who is willing to pay it, and a high one leaves only the most desperate
+-- who are the poorest. That is the mechanism behind the model's largest
+untargeted failure:
+
+    use rate by income band, model against NSDUH, at b near target
+        band 1  4.6%   13.7%
+        band 2  3.2%   13.1%
+        band 3  9.5%    9.1%
+        band 4 11.4%   10.2%
+        band 5  2.1%    7.9%
+        band 6  0.003%  7.2%
+        band 7  0.000%  4.8%
+
+**Zero use in the top two bands.** Not a gradient that is too steep -- a cliff,
+and the missing income of drug users lives on the other side of it.
+
+The sign is measured, not assumed. Raising `value_of_life` from 34.59 to 37,
+which raises the cost of the death risk, took the income of users from 0.320 to
+0.157 and b from 0.091 to 0.011: a higher death cost squeezes use down to the
+most desperate. So the penalty must come DOWN to spread use up the distribution.
+
+    MOMENT y_u   income of drug users, target 0.740 (NSDUH)
+    kappa_phi_d_level bracketed on it, bounds (4.0, 10.0)
+
+Standardised mortality ratios for opioid use disorder run 6 to 10 and 8 was the
+assigned midpoint; the author has authorised 4 as a floor, so the bracket opens
+to it rather than to the literature edge. **Seventeen calibrated parameters.**
+
+**THIS RAISES THE BAR.** y_u enters the minimax and it is 55 to 77 per cent off
+at every point where b is readable, so the worst gap will jump when the next
+point lands. That is the intended consequence: the failure is now something the
+loss is trying to fix rather than something the report mentions.
+
+## THE TWO BETAS ARE KEPT IF THEY EARN IT ON THE UNTARGETED TABLE
+
+The author's standard: keep them if they help anything at all among the moments
+that are not targeted. So the test is not whether w_bot closes -- it is whether
+the untargeted table is better WITH the split than without, at a comparable fit.
+That comparison needs a well fitted point in each configuration, which is the
+sequence being run: validate, fit, then read the untargeted table.
+
+Note the two changes aim at different failures and are not alternatives.
+Beta heterogeneity targets WEALTH -- the bottom half share, 6.3 times too fat.
+kappa targets WHO USES -- zero use in the top two income bands. The untargeted
+table needs both.
