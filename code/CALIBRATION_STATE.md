@@ -1154,3 +1154,43 @@ Not search, and needing the author:
   of 0.40), and the rent floor (0.186 to 0.201 across the whole ladder).
 - **aleph**, 24.7 per cent. Every `value_of_life` arm is degenerate.
 - **h_2**, 60.4 per cent, no instrument at all.
+
+## pi_eu AND kappa_ued ARE DRUG-BLOCK COMPLEMENTS
+
+ROUND10's fourth line is the useful result and it was not the one designed to be.
+Taken separately, both instruments wreck the drug block:
+
+    probability_becoming_unemployed down    b 4.9 -> 32.1,  lambda_d 4.5 -> 48.7
+    multiple_of_prob_emp_if_addicted up     b 4.9 -> 34.2,  lambda_d 4.5 -> 45.0
+
+Taken together their drifts CANCEL, because they push b and lambda_d in opposite
+directions:
+
+    both        pi_eu 23.4 -> 3.8,  b 4.9 -> 2.5,  lambda_d 4.5 -> 1.4
+
+That is the first pair found in this search whose coupling helps rather than
+costs, and it closes pi_eu for free. `2f789d317c` therefore has six moments
+outside ten per cent with pi_eu, b and lambda_d all inside five.
+
+It also revealed that `probability_becoming_unemployed` down LOWERS kappa_ued
+hard -- 29.4 per cent off to 44.9 -- which is why kappa_ued reads 33.6 at the
+joint point despite its own parameter having been raised. So kappa_ued needs a
+bigger push than its own gap suggests, and the push has to be paid for out of
+the drug locus rather than out of pi_eu, which is now spent.
+
+## ROUND11: kappa_ued WITH THE REPAIR IN THE SAME LINE
+
+Rather than move kappa_ued and repair next round, both lines carry the repair
+computed from the measured columns:
+
+    param 3.2 -> 3.4   repair lamA +0.016, as1 -0.011   predicted b and lambda_d exactly on target
+    param 3.2 -> 3.6   repair lamA +0.000, as1 -0.020   as1 clamped at its bracket, b 0.5%, lambda_d 0.7%
+
+Line 2 runs 3.6 bare so the drift is measured at this point rather than carried
+from an older slice, which is what the two clamped predictions rest on.
+
+Line 3 retries `value_of_life` at 37. Every earlier arm on it was degenerate, but
+those were taken where the drug block was already broken; aleph also improved on
+its own from 24.7 to 21.9 when the block was repaired, which suggests the
+degeneracy was the block collapsing rather than the instrument itself. Worth one
+point to find out.
