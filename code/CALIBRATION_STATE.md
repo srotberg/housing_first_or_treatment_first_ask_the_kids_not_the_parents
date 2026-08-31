@@ -5250,3 +5250,37 @@ Two things follow for the engine.
      already exhausted. **Check `rate_limit_info.status` on a failed session
      before respawning it.** A `rejected` status with a `resetsAt` is a clock to
      wait out, not a fleet to rebuild.
+
+## THE SEVENTEENFOLD CLUSTER IS CLOSED, AND THE SEVENTEEN IS THE WORKING POPULATION
+
+`VALIDATION_RESULT_5.md`, measured on `50e121d`, reported three quantities off
+by almost exactly the same factor in the two-type run: `aleph` at 17.305, `cbar`
+at 17.051 and `DIAG treatment price / average labour income` at 17.274. All
+three divide by `model_average_labour_income`, so one fault produces three
+symptoms.
+
+The third one settles it without any modelling argument, because its numerator
+is a pure input. `money_cost_of_treatment` is 0.0600702 in both runs, so
+
+    one type   0.0600702 / 0.1006946494  =  0.59656
+    two types  0.0600702 / 0.005829414   = 10.30460      ratio 17.274
+
+**`model_average_labour_income` really was 17.27 times larger at two types.**
+
+The mechanism follows from the arithmetic. If the in-place division is gated to
+the FIRST pass instead of the last, then pass one divides and leaves the average,
+and pass two adds the second type's RAW SUM on top of it:
+
+    10.30460 - 0.59656 = 9.70804  = the second type's total labour income
+    9.70804 / 0.59656  = 16.27    = the number of workers behind that average
+
+Sixteen and a quarter workers on a population of about fifty-two is a
+participation rate of 31 per cent, which is what this life cycle gives once
+retirees and non-participants are taken out, and it is consistent with
+`omega_l` at 0.40. Nothing else in the model is near seventeen.
+
+**It is already fixed.** The division is now gated on
+`current_beta_type==number_of_beta_types` and nothing further is needed. The
+confirming measurement is cheap and specific: on a fixed-source equal-beta run,
+`DIAG treatment price / average labour income` must read the same number in both
+lines. That is the check to make, rather than re-reading the code.
