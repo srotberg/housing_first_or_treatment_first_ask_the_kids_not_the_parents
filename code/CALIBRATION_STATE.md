@@ -5376,3 +5376,109 @@ The practical consequence is a reason to prefer FRESH measurements over archived
 ones whenever a conclusion turns on a small difference between points, and to
 treat cross-point comparisons that straddle a source change as indicative --
 which `TWOBETA_CAL_RESULT.md` already concluded on independent grounds.
+
+## THE AGE PROFILE AND THE UNEMPLOYED, AT THE ANCHORS, AND ONE DIAGNOSTIC THAT IS WRONG
+
+### (a) THE SHARE OF THE HOMELESS BY AGE BAND
+
+    point             betas  imp     25-34    35-44    45-54    55-64      65+
+    6716556560          1    --     0.9803   0.0130   0.0033   0.0031   0.0003
+    f5d32f8765          2    0.93   0.9083   0.0521   0.0192   0.0178   0.0026
+    445884ebe4          2    0.95   0.9129   0.0499   0.0178   0.0174   0.0020
+    b1c5d0df00          2    0.97   0.9370   0.0349   0.0135   0.0133   0.0011
+    a4e79fb29e          2    0.95   0.9073   0.0539   0.0230   0.0145   0.0012
+    HUD                            0.2600   0.2720   0.2100   0.1840   0.0750
+
+The second beta moves band one from 0.980 to 0.907-0.937 and roughly quadruples
+every older band. **That is a real move in the right direction and it is
+nowhere near enough.** The gap that has to close is 0.91 against 0.26.
+
+### (b) THE HOMELESS ARE EMPLOYED, WHICH IS THE SAME PROBLEM SEEN SIDEWAYS
+
+    point             betas  imp    employed share of the homeless
+    6716556560          1    --                 0.9807
+    f5d32f8765          2    0.93               0.9153
+    445884ebe4          2    0.95               0.9252
+    b1c5d0df00          2    0.97               0.9766
+    a4e79fb29e          2    0.95               0.8101
+    data                                        0.4600
+
+So between 8 and 19 per cent of the model's homeless are unemployed against 54
+per cent in the data. The second beta improves this too, and by about the same
+disappointing margin as the age profile.
+
+`model_fraction_of_unemployed_homeless` -- the homelessness rate AMONG the
+unemployed, which is the other direction of the same conditional -- is
+accumulated and normalised in the model and **never printed**. It cannot be read
+off any point in the archive. A print is owed here; it is held until the kappa
+sweep finishes so the four points stay on one build.
+
+What CAN be derived without it is the risk ratio, because the working-age mass
+cancels:
+
+    P(homeless | unemployed) / P(homeless | working age)
+      = (1 - employed share of the homeless) / pi_eu
+
+    6716556560  1 beta        0.363
+    f5d32f8765  2 betas 0.93  1.262
+    445884ebe4  2 betas 0.95  1.167
+    b1c5d0df00  2 betas 0.97  0.270
+    a4e79fb29e  2 betas 0.95  3.265
+
+**This is too unstable to use.** It runs from 0.27 to 3.27 across four two-beta
+points, and the five points sit on five different builds. Its one robust feature
+is that it is nowhere near large: unemployment is not the route into
+homelessness in this model, at either number of betas. The employed shares above
+say the same thing from printed numbers, so prefer them.
+
+### (c) NOBODY OWNS A HOME, AT EITHER NUMBER OF BETAS
+
+`own` is exactly 0.00000 at all twenty printed ages in all five points, and the
+`homeownership rate` invariant reads 0.0000000000. The model has a full
+ownership sector -- mass_of_owners, mortgages, LTV at origination, the mortgage
+interest deduction -- and it is empty.
+
+This is NOT flagged as a defect, because it may be the intended configuration of
+this generation. It is recorded because it settles what the age profile can be
+about: **there is no tenure margin.** Every household is a renter, so the only
+choice is renting versus the street, and homelessness by age can only be a story
+about what a renter of that age can afford.
+
+And it is: homelessness by age tracks renter wealth almost exactly at 445884ebe4.
+
+    age        26      29      32      35      41      47      53      59      65
+    homeless 0.0782  0.0049  0.0020  0.0011  0.0006  0.0003  0.0003  0.0005  0.0005
+    wealth   0.000   0.349   0.582   0.731   1.013   1.308   1.646   1.987   2.226
+
+That is a buffer-stock story, not a preference story. The young are homeless
+because they hold nothing, and the drop from 7.8 per cent to 0.5 per cent
+happens over the three years in which renter wealth goes from zero to 0.35.
+
+### (d) THE RENTER INCOME COLUMN IN THAT BLOCK IS WRONG. DO NOT READ IT.
+
+The same `DIAG age` block prints `renter income` as NEGATIVE from age 26 to 38,
+which would have been the obvious explanation for everything in (c) and would
+have been wrong.
+
+`income_by_age_renter` computes, for an employed renter,
+
+    gross - max(gross - personal_exemption, 0)**curvature_of_labor_income_taxes
+
+while the budget constraint the household actually faces computes
+
+    taxable  = max(gross - exemption - deduction, 0)
+    tax_paid = max(taxable - (rate + increase) * taxable**curvature, 0)
+    net      = gross - tax_paid
+
+Three differences, and the first is fatal: **the diagnostic omits
+`labor_income_tax_rate` entirely**, so it subtracts `taxable**curvature` where
+the model subtracts `taxable - rate*taxable**curvature`. With the rate at 0.752
+and the curvature at 0.85, a taxable income of 0.04 pays ZERO tax in the model
+(0.04 - 0.752*0.0655 is negative, and the outer max floors it) and pays 0.0655
+in the diagnostic, which is more than the whole income. It also drops the
+deduction and the floor.
+
+So the young do not have negative income. The diagnostic does.
+`income_by_age_renter` is read by nothing except this print, so the fix moves no
+moment; it is held until the kappa sweep finishes so its four points stay on one
+build.
