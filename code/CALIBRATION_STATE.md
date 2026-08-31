@@ -2961,3 +2961,44 @@ and 0.976 against 0.460).
 NOT expected to move: the earnings shares. Beta heterogeneity acts on wealth,
 not on the earnings process, so the top tenth at 0.309 against 0.411 is
 somebody else's problem.
+
+## IMPATIENCE IS NOT THE MISSING MECHANISM FOR THE HOMELESSNESS AGE PROFILE
+
+I wrote, one round ago, that the homelessness age profile was the thing I would
+bet the second beta on: homelessness needs exhausted assets, an impatient
+household never builds a buffer, so it should be as exposed at 55 as at 30.
+
+Measured, the bet loses.
+
+    share of the homeless   one beta   imp 0.95   imp 0.90    data
+        band 1 (25-34)       0.9787     0.9232     0.9003    0.260
+        band 2 (35-44)       0.0134     0.0429     0.0541    0.272
+        band 3 (45-54)       0.0038     0.0175     0.0223    0.210
+        band 4 (55-64)       0.0037     0.0147     0.0174    0.184
+        band 5 (65+)         0.0004     0.0016     0.0059    0.075
+
+The direction is right and the mechanism is real: bands 3 and 4 rise about
+five-fold and band 5 fifteen-fold. But band 1 only falls from 98 to 90 per cent
+against a data value of 26, so the movement is a rounding error against the gap.
+
+**AND THIS IS AN UPPER BOUND, not a sample of the mixture.** These two points are
+on model `920988590e`, which reports the LAST TYPE SOLVED -- so the 0.9003
+column is an economy in which EVERY household is impatient at a discount factor
+of 0.90, not one in which half are. Half-and-half must land between the control
+and that column. Reading the per-type numbers is legitimate here precisely
+because that model computes numerator and denominator consistently per type; it
+is the pooling that was wrong, and pooling is not what is being read.
+
+So: even a population made entirely of very impatient households puts nine in
+ten of its homeless under 35. Impatience is not what is missing.
+
+**WHAT THIS LEAVES.** The earlier diagnosis stands and is now the only candidate:
+entry requires exhausted assets and exit is fast, so the stock never ages. The
+unemployment process has no age dimension at all, and homelessness is exactly
+zero from 66 onward because retirement income always covers the lowest rung.
+Impatience removes the buffer but does not slow the exit, and it does not reach
+retirees at all -- band 5 goes from 0.0004 to 0.0059 against a target of 0.075,
+still more than ten times short at the extreme of the instrument.
+
+Recorded so the second beta is judged on what it does do -- the wealth
+distribution -- and not on this.
