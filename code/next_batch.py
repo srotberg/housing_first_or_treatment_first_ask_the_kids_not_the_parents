@@ -146,6 +146,24 @@ OWN = {
     # weak and coupled instrument -- but it is the only one, and h_1 now has
     # both size_homelessness and the food stamp floor holding it.
     'relative_share_of_housing':                           'gamma',
+    # OPENED ON THE AUTHOR'S INSTRUCTION, both previously compile-time constants.
+    #
+    # increased_prob_if_homeless is the labour market cost of the street: the
+    # homeless lose a job at (1+x) times the housed rate and find one at 1/(1+x)
+    # times it. It owns the employed share of the homeless, and the ownership is
+    # not a guess -- the steady state formula 1/(1+(1+x)**2*(s/f)), with nothing
+    # in it but pi_eu and this parameter, predicts 0.9316 at the assigned 0.2
+    # against 0.9252 measured. It is also the Housing First channel itself, so
+    # leaving it assigned assigns the counterfactual's main result.
+    'increased_prob_if_homeless':                          'emp_homeless',
+    # rho_d is the earnings penalty of a substance use disorder, switched on
+    # here for the first time. It owns the SUD share of the homeless, and
+    # through it the age profile: lambda_d pins the NUMBER of addicts, so the
+    # only way to put more older households on the street is to make the
+    # disorder impoverishing rather than more common. SMI cannot do that job --
+    # its onset shape falls from 1.000 at 26 to 0.154 at 66 -- and the SUD stock
+    # accumulates with age where onset does not.
+    'rho_d':                                               'sud_homeless',
 }
 BOUNDS = {
     'utility_cost_of_treatment':                            (0.0, 8.0),
@@ -171,6 +189,12 @@ BOUNDS = {
     # literature edge.
     'kappa_phi_d_level':                                   (4.0, 10.0),
     'relative_share_of_housing':                           (0.02, 0.60),
+    # Zero is no penalty at all; the ceiling is well past the 3.8 the steady
+    # state formula asks for, so the bracket is not clipped before it gets there.
+    'increased_prob_if_homeless':                          (0.0, 20.0),
+    # One is no penalty; the floor is 0.05 rather than zero because zero
+    # earnings for every addict is a corner and not a calibration.
+    'rho_d':                                               (0.05, 1.0),
 }
 # beta is banded on the author's instruction; h_3 is conceded.
 BAND = {'beta': (3.0, 4.5)}
@@ -185,6 +209,21 @@ BAND = {'beta': (3.0, 4.5)}
 # (smallest_rental_relative_to_lowest_income) moves it at -0.01, which is to say
 # it has no instrument at all.
 SKIP = {'h_3'}
+
+# MOMENTS WITH AN INSTRUMENT THAT DO NOT GATE THE STOPPING RULE.
+#
+# Not the same thing as SKIP. h_3 is CONCEDED -- the author agreed it can be off
+# and nothing is trying to hit it. These two are being actively driven, by
+# increased_prob_if_homeless and rho_d, and are simply not what the loop stops
+# on: the author chose to score the homelessness age profile itself rather than
+# its proximate causes, so h_age1..h_age5 are in the minimax and these are the
+# diagnostics that say WHY the profile moved.
+#
+# Keeping them out of the minimax also stops the loop being held open by a
+# moment whose target the model may not be able to reach at all. The employed
+# share needs increased_prob_if_homeless near 3.8 against an assigned 0.2, and
+# what that does to h_1, pi_eu and the drug block is not yet measured.
+UNSCORED = {'emp_homeless', 'sud_homeless'}
 
 
 
@@ -418,6 +457,42 @@ def moments(text):
         if any(t in label for t in STALE_LABEL.get(n, ())):
             continue
         out[n] = (float(m), float(tg))
+
+    # THE AGE PROFILE IS SCORED NOW, ON THE AUTHOR'S INSTRUCTION.
+    #
+    # The five homelessness rates by age band print as UNTARGETED lines with an
+    # observed= column rather than MOMENT lines with a target=, because no
+    # single parameter owns any one of them. They are scored anyway: the author
+    # chose to put the profile itself into the minimax and to leave the employed
+    # and SUD shares of the homeless as diagnostics, which is targeting the
+    # thing wanted rather than its proximate causes.
+    #
+    # They enter under h_age1..h_age5 so nothing collides with a MOMENT name,
+    # and the MOMENT/UNTARGETED distinction keeps its old meaning: a MOMENT has
+    # an instrument in OWN, these do not. The gate proposes no step for them
+    # directly; it is increased_prob_if_homeless and rho_d that move them, and
+    # these five say whether it worked.
+    #
+    # The band is 25-34, 35-44, 45-54, 55-64, 65+ and the HUD shares behind the
+    # observed column are 0.26, 0.272, 0.21, 0.184 and 0.075. At the point that
+    # prompted this the model needed band one to fall by a factor of eight and
+    # the four older ones to rise by 2.5 to 14.
+    for n, m, ob in re.findall(
+            r'UNTARGETED homelessness rate, band\s+(\d+)\s+model=\s*'
+            r'([0-9.eE+-]+)\s+observed=\s*([0-9.eE+-]+)', text):
+        out['h_age' + n] = (float(m), float(ob))
+
+    # AND THE TWO SHARES THE NEW INSTRUMENTS ANSWER TO. These are parsed so that
+    # increased_prob_if_homeless and rho_d have a moment to bracket on, and they
+    # are listed in UNSCORED so they do not gate the stopping rule: the author
+    # chose to score the age profile itself and leave these as diagnostics.
+    for pat, key in ((r'UNTARGETED employed share of the homeless\s+model=\s*'
+                      r'([0-9.eE+-]+)\s+observed=\s*([0-9.eE+-]+)', 'emp_homeless'),
+                     (r'UNTARGETED SUD share of the homeless\s+model=\s*'
+                      r'([0-9.eE+-]+)\s+observed=\s*([0-9.eE+-]+)', 'sud_homeless')):
+        hit = re.search(pat, text)
+        if hit:
+            out[key] = (float(hit.group(1)), float(hit.group(2)))
     return out
 
 
@@ -558,7 +633,8 @@ def main():
     through = []
     for tag, (v, m) in A.items():
         if all(g in m and gap(g, m[g]) <= tol[g] for g in tol):
-            rest = {k: gap(k, p) for k, p in m.items() if k not in SKIP}
+            rest = {k: gap(k, p) for k, p in m.items()
+                    if k not in SKIP and k not in UNSCORED}
             through.append((max(rest.values()), tag, v, m))
     if not through:
         best = min(((max(gap('b', m['b']), gap('lambda_d', m['lambda_d'])), tag)
@@ -583,7 +659,8 @@ def main():
               f'{100*ACCEPT:.0f} per cent except h_3, which is conceded.\n')
         gaps = sorted(((gap(k, p), k, p) for k, p in m.items()), reverse=True)
         for g, k, (mo, tg) in gaps:
-            note = '   <-- conceded' if k in SKIP else ''
+            note = ('   <-- conceded' if k in SKIP else
+                '   <-- driven, not scored' if k in UNSCORED else '')
             print(f'  {k:10s} {mo:11.5f} vs {tg:11.5f}  {100*(mo/tg-1):+7.1f}%{note}')
         print(f'\n  worst gap outside h_3: {100*worst:.1f} per cent')
         print('\n  STOP. Do not launch another round. Tell the author.')

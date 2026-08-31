@@ -83,6 +83,13 @@ declare -A P=(
     # recognised as already measured and will re-run once if it is asked for.
     # That is the price of the name, and it is paid once.
     [kappa_phi_d_level]=8.0
+    # OPENED ON THE AUTHOR'S INSTRUCTION, both previously compile-time constants.
+    # increased_prob_if_homeless is the labour market cost of the street and the
+    # instrument for the employed share of the homeless; rho_d is the earnings
+    # penalty of a substance use disorder and the instrument for the SUD share of
+    # them. Their defaults are the values they were assigned at.
+    [increased_prob_if_homeless]=0.2
+    [rho_d]=0.85
     # THE IMPATIENT DISCOUNT FACTOR, ADDED WITH THE TWO-TYPE MODEL. The commit
     # that split households into a patient and an impatient type taught the
     # Fortran's PARAM_HANDOVER and next_batch.py the name and did NOT teach it
@@ -169,7 +176,7 @@ TAG=$(for k in "${!P[@]}"; do echo "$k=${P[$k]}"; done | sort | md5sum | cut -c1
 # the parameter has a different value, does not qualify, and is measured -- which
 # is right, because it IS a different point. This mirrors next_batch.py's
 # IMPLICIT table and the two must be kept in step.
-declare -A LEGACY_DEFAULT=( [kappa_phi_d_level]=8.0 )
+declare -A LEGACY_DEFAULT=( [kappa_phi_d_level]=8.0 [increased_prob_if_homeless]=0.2 [rho_d]=0.85 )
 LEGACY_TAG=$(for k in "${!P[@]}"; do
     if [ -n "${LEGACY_DEFAULT[$k]+x}" ] && [ "${P[$k]}" = "${LEGACY_DEFAULT[$k]}" ]; then continue; fi
     echo "$k=${P[$k]}"

@@ -739,7 +739,30 @@
         ! spends an instrument on a moment nobody asked to hit, and it starts
         ! ninety four per cent off, which drags every other bracket while it
         ! travels.
-        integer, parameter :: include_rho_d=0
+        ! rho_d IS NOW ON, ON THE AUTHOR'S INSTRUCTION, AND THE CONDITION THE
+        ! NOTE ABOVE SET HAS BEEN MET.
+        !
+        ! The note said rho_d is the fallback if the calibration cannot do a good
+        ! job with the employed share of the homeless left untargeted. That is
+        ! no longer the question it was: the employed share now has its own
+        ! instrument in increased_prob_if_homeless, so rho_d is not being spent
+        ! on it. It is being spent on the AGE PROFILE, which is a different job
+        ! and the only lever that can do it.
+        !
+        ! Why it is the only one. Matching the HUD profile needs the homelessness
+        ! rate to fall by a factor of eight in the 25-34 band and rise by two and
+        ! a half to fourteen in the four older ones. More SMI cannot do that: the
+        ! model reads its onset shape from us_mh_onset_shape.csv, which falls
+        ! from 1.000 at 26 to 0.154 at 66, and the prevalence column falls from
+        ! 0.121 to 0.021, so SMI is a young condition in onset AND in stock and
+        ! more of it makes band one worse. More addicts cannot do it either,
+        ! because lambda_d is a targeted moment and the number of addicts is
+        ! pinned. What is left is making the disorder IMPOVERISHING, so that an
+        ! addicted household of any age runs its assets down and ends up on the
+        ! street -- and because the SUD stock accumulates with age while onset
+        ! does not, that lands disproportionately on the old. The older homeless
+        ! are already 18 to 36 per cent SUD against 2 per cent for the young.
+        integer, parameter :: include_rho_d=1
         integer, parameter :: include_rho_m=0
 
         ! TWO SMI STATES. This doubles the unemployment grid from 6 to 12 and
@@ -1099,6 +1122,29 @@
         ! robust findings are on the employment margin. That is why it is
         ! calibrated to an employment composition moment rather than assigned
         ! from a wage regression.
+        ! THE LABOUR MARKET COST OF BEING ON THE STREET, NOW CALIBRATED.
+        !
+        ! The homeless lose a job at (1+x) times the housed rate and find one at
+        ! 1/(1+x) times it, so their ratio of separation to job finding scales by
+        ! (1+x)**2. A group whose odds ratio is multiplied by k has a steady
+        ! state employment rate of 1/(1+k*(s/f)), and at the pi_eu target the
+        ! housed s/f is 0.051. That formula, with nothing in it but pi_eu and
+        ! this parameter, predicts 0.9316 at x=0.2 against 0.9252 MEASURED at
+        ! point_445884ebe4 -- within seven parts in a thousand. The employed
+        ! share of the homeless is therefore not a selection result, it is the
+        ! mechanical steady state of this number.
+        !
+        ! It was a hard-coded 0.2 inside create_unemployment_process, which put
+        ! the employed share of the homeless at 0.93 against 0.46 in the data.
+        ! The same formula says 0.46 needs x near 3.8, nineteen times as large.
+        !
+        ! It is opened on the author's instruction, and it is the right one to
+        ! open: this is the Housing First channel itself. Housing a household
+        ! removes the penalty and it finds work, so how much employment the
+        ! policy buys is exactly the strength of this parameter, and leaving it
+        ! at an assigned value assigns the counterfactual's main result.
+        real(8) :: increased_prob_if_homeless=0.2
+
         real(8) :: rho_d=0.85
 
         real(8) :: distance_rho_d
@@ -26958,7 +27004,7 @@
         ! What the moment was actually reporting was the child's penalty at 0.9
         ! manufacturing a class of workers too poor for any room. That is capped
         ! at 0.4 now, and this stays where the evidence put it.
-        real(8), parameter :: increased_prob_if_homeless=0.2,increased_prob_to_be_addicted=0
+        real(8), parameter :: increased_prob_to_be_addicted=0
         
         if (include_vouchers==0) then
         
@@ -34155,6 +34201,27 @@
                 case ("weight_on_child")
                     write(*,*) "HANDOVER weight_on_child:", weight_on_child, "->", handover_value
                     weight_on_child=max(min(handover_value,1.d0),0.d0)
+
+                ! THE LABOUR MARKET COST OF THE STREET. See the declaration for
+                ! the arithmetic that makes this the instrument for the employed
+                ! share of the homeless. The floor is zero, which is no penalty
+                ! at all; the ceiling is 20, well past the 3.8 the steady state
+                ! formula asks for, so the bracket is not clipped before it gets
+                ! there.
+                case ("increased_prob_if_homeless")
+                    write(*,*) "HANDOVER increased_prob_if_homeless:", &
+                        increased_prob_if_homeless, "->", handover_value
+                    increased_prob_if_homeless=max(min(handover_value,20.d0),0.d0)
+
+                ! THE EARNINGS PENALTY OF A SUBSTANCE USE DISORDER. It enters as
+                ! rho_d**(sud*include_rho_d), so it is a multiplier on the wage
+                ! of a household with the disorder and one means no penalty. The
+                ! floor is 0.05 rather than zero because zero earnings for every
+                ! addict is a corner, not a calibration, and the ceiling is one
+                ! because a disorder that RAISES the wage is not on the table.
+                case ("rho_d")
+                    write(*,*) "HANDOVER rho_d:", rho_d, "->", handover_value
+                    rho_d=max(min(handover_value,1.d0),0.05d0)
 
                 ! THE SUD MORTALITY LEVEL, WHICH IS SETTABLE BUT WAS NOT
                 ! HANDABLE. It is assigned at 8, the midpoint of the 6 to 10
