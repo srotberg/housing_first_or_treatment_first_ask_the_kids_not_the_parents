@@ -4230,3 +4230,41 @@ test automatically if anyone ever gives the adjuster a value. Same shape as
 
 **This one may matter more than its severity suggests.** Every calibration loop
 run against this model stopped at its cap rather than at convergence.
+
+## FIX 16: y_u's NUMERATOR EXCLUDED INTEREST INCOME WHILE ITS DENOMINATOR INCLUDED IT
+
+[Audit B F9] LIVE, TARGETED, and it points the way the failure points.
+
+    numerator    model_avg_income_drug_users, accumulated with income_1
+                 = social security, or earnings, or UI/DI. NO interest.
+    denominator  model_average_income, which adds
+                 r*max(a,0)*mass UNCONDITIONALLY.
+
+The interest-inclusive object, `income_2`, is computed a hundred lines above the
+numerator's accumulation and used for the voucher eligibility test just below it,
+but was not used here.
+
+**Why it is a mismatch and not a convention.** NSDUH's income variable is total
+personal income, so the 0.740 target is the interest-inclusive ratio. And the
+model's users are not asset-poor: `assets of drug users / average net worth`
+prints 0.4589, against a wealth-to-output ratio near four, so the omitted term is
+large.
+
+**The bias is DOWNWARD, and y_u has been failing downward all day** -- 0.33 to
+0.47 against 0.740, with kappa unable to close it. This may be a large part of
+why. Not measured; the direction is unambiguous.
+
+Five numerators switched to `income_2`, all with the same fault:
+
+    model_avg_income_drug_users     y_u, targeted
+    val_user_inc_band               the NSDUH income-band gradient
+    val_user_income_working         income of working-age users
+    model_average_income_addicted   UNTARGETED income with a SUD
+    model_avg_homeless_income       UNTARGETED income of the homeless
+
+**Checked before believing it**: `income_2` is assigned at 11521 and 11959, and
+every one of the five new uses sits in the SAME loop body as its assignment --
+net loop depth zero and no `end do` crossed between them -- so none reads a stale
+value. A use-before-set does exist at line 11031, with no prior assignment
+anywhere; it is pre-existing and not one of these five, and is left for the next
+pass.

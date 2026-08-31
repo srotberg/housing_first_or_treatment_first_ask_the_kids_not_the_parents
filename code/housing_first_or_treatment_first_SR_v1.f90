@@ -11621,8 +11621,17 @@
                                     if (((addiction_consumption_1>0) .AND. (unemployment_index<=threshold_addiction_index)) .OR. &
                                         (unemployment_index>threshold_addiction_index)) then
                                     
+                                        ! INCOME INCLUDING INTEREST, TO MATCH THE DENOMINATOR. These ratios divide by
+                                        ! model_average_income, which adds r*max(a,0) unconditionally, while the
+                                        ! numerators were accumulated with income_1, which is social security,
+                                        ! earnings or UI/DI and NO interest. NSDUH's income variable is total
+                                        ! personal income, so the 0.740 target is the interest-inclusive ratio --
+                                        ! and the model's users are not asset-poor, holding about half of average
+                                        ! net worth against a wealth-to-output ratio near four, so the omitted
+                                        ! term is large. The mismatch biases y_u DOWN, which is the direction of
+                                        ! the failure it has been showing all day: 0.33 to 0.47 against 0.740.
                                         model_avg_income_drug_users(time_period)=&
-                                            model_avg_income_drug_users(time_period)+income_1*distribution_mass_used
+                                            model_avg_income_drug_users(time_period)+income_2*distribution_mass_used
 
                                         ! SAME GUARD, character for character, as the line
                                         ! above. That is the whole point: three statistics have
@@ -11650,7 +11659,7 @@
                                         val_user_band(time_period,val_band_2)=&
                                             val_user_band(time_period,val_band_2)+distribution_mass_used
                                         val_user_inc_band(time_period,val_band_2)=&
-                                            val_user_inc_band(time_period,val_band_2)+income_1*distribution_mass_used
+                                            val_user_inc_band(time_period,val_band_2)+income_2*distribution_mass_used
                                         if (unemployment_index>threshold_addiction_index) then
                                             val_user_sud_band(time_period,val_band_2)=&
                                                 val_user_sud_band(time_period,val_band_2)+distribution_mass_used
@@ -11660,7 +11669,7 @@
                                             val_user_mass_working(time_period)=&
                                                 val_user_mass_working(time_period)+distribution_mass_used
                                             val_user_income_working(time_period)=&
-                                                val_user_income_working(time_period)+income_1*distribution_mass_used
+                                                val_user_income_working(time_period)+income_2*distribution_mass_used
                                         end if
 
                                     end if
@@ -12222,7 +12231,7 @@
                                     
                                         model_average_income_addicted(time_period)=&
                                             model_average_income_addicted(time_period)+&
-                                            income_1*distribution_mass_used
+                                            income_2*distribution_mass_used
                                             
                                         model_average_assets_addicted(time_period)=&
                                             model_average_assets_addicted(time_period)+&
@@ -12268,7 +12277,7 @@
                                         
                                         model_avg_homeless_income(time_period)=&
                                             model_avg_homeless_income(time_period)+&
-                                            income_1*distribution_mass_used
+                                            income_2*distribution_mass_used
                                             
                                         after_tax_income_1=&
                                             (income_1-income_tax_used+(1-investment_income_tax)*&
