@@ -1359,3 +1359,29 @@ Line 2 is the answer to the ROUND10 mistake. Lowering
 cent off; `kappa_uem` the parameter has a measured elasticity of -0.952 on that
 moment, so the compensation is computed and carried in the same line rather than
 discovered a round later.
+
+## kappa_ued AT 4.4 CLOSES ITS OWN MOMENT AND IS A NET LOSS
+
+    kappa_ued  12.3 per cent off -> 0.3
+    b           4.8 -> 2.3
+    lambda_d    5.8 -> 11.0
+    tau_u       inside ten -> 19.1
+    theta       inside ten -> 15.6
+
+Eight moments outside ten per cent and a sum of 1.81, against `620db1471b`'s six
+and 1.42. **Closing kappa_ued outright costs more than leaving it at twelve per
+cent.** Judged on its own moment this is the cleanest hit of the whole search;
+judged on the vector it is the worst step of the round, and only the second
+reading is the one that counts. The instrument should stay at 4.0.
+
+This is the same error the pi_eu pair produced two rounds ago, caught earlier
+this time because the whole vector is now printed for every arm rather than the
+moments the step was aimed at. That habit is worth keeping.
+
+The lambda_d overshoot at that point is repairable and both steps are inside
+their brackets -- `lambda_addiction` to 18.95, `addiction_scalar_1` to 0.018049
+-- but repairing it would still leave tau_u and theta outside, so it is only
+worth doing if a later round has a reason to be at 4.4 at all.
+
+**Best point is unchanged: `620db1471b`, six outside ten per cent, worst h_1 at
+41.7.**
