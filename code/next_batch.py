@@ -101,6 +101,10 @@ OWN = {
     # only 1.7 per cent off, so this closes a hole rather than fixing a gap.
     'largest_house_size':                                  'h_3',
     'kappa_uem':                                           'kappa_uem',
+    # BACK, ON THE AUTHOR'S INSTRUCTION. The statutory SNAP schedule was right
+    # per household and wrong by a factor of 48 in aggregate, so the programme
+    # is a calibrated allotment again and cbar is a target again.
+    'max_food_cost':                                       'cbar',
 }
 BOUNDS = {
     'money_cost_of_treatment':                              (0.0005, 1.0),
@@ -116,6 +120,7 @@ BOUNDS = {
     'smallest_rental_relative_to_lowest_income':            (0.005, 0.40),
     'largest_house_size':                                  (0.02, 1.00),
     'kappa_uem':                                           (1.0, 100.0),
+    'max_food_cost':                                       (1e-4, 1.0),
 }
 # beta is banded on the author's instruction; h_2 is conceded.
 BAND = {'beta': (3.0, 4.5)}

@@ -2000,11 +2000,10 @@
         real(8) :: distance_value_of_life
         real(8) :: stopping_rule_value_of_life=10.d0**(-2)
 
-        ! ZERO. max_food_cost no longer enters the benefit -- snap_benefit does --
-        ! so calibrating it would move a number that multiplies nothing. It is
-        ! kept as a handover name so that a vector written before tonight still
-        ! loads.
-        real(8) :: max_food_cost_adjuster=0
+        ! LIVE AGAIN. max_food_cost is the allotment once more, so it is
+        ! calibrated on aggregate food stamp spending over labour income, which
+        ! is what food_stamps_share_data measures.
+        real(8) :: max_food_cost_adjuster=5*10.d0**(-2)
         real(8) :: distance_max_food_cost
         real(8) :: stopping_rule_max_food_cost=10.d0**(-4)
 
@@ -4581,26 +4580,25 @@
             ! Household size is a real in this model and the schedule is defined
             ! on integers, so interpolate rather than truncate: truncating would
             ! pay a household of 2.9 the two person allotment.
-            n_lo_1=max(1,min(snap_max_size,int(hh_size_1)))
-            n_hi_1=max(1,min(snap_max_size,n_lo_1+1))
-            weight_1=max(0.d0,min(1.d0,hh_size_1-real(n_lo_1,8)))
-            scale_1=(1.d0-weight_1)*snap_allotment_scale(n_lo_1)+weight_1*snap_allotment_scale(n_hi_1)
+            ! REVERTED TO THE CALIBRATED FLOOR, ON THE AUTHOR'S INSTRUCTION.
+            ! The statutory schedule was correct per household and wrong in
+            ! aggregate: it spent 20.4 per cent of labour income against 0.42
+            ! in the data, a factor of 48, because far more households in this
+            ! model fall under a realistic eligibility limit than in the world.
+            ! An aggregate that far out is not a detail of the transfer, it is
+            ! a different economy. So the programme is a single allotment
+            ! max_food_cost less the statutory taper on income, and
+            ! max_food_cost is calibrated on aggregate spending over labour
+            ! income again.
+            !
+            ! hh_size_1 and avg_labour_1 are unused now and kept only so the
+            ! nine call sites do not change.
+            scale_1=hh_size_1
+            limit_1=avg_labour_1
+            net_1=max(0.d0,gross_income_1)
+            weight_1=0
 
-            limit_1=(snap_gross_limit_one+snap_gross_limit_add*max(0.d0,hh_size_1-1.d0))*avg_labour_1
-
-            if (gross_income_1>limit_1) then
-
-                snap_benefit=0
-
-            else
-
-                net_1=max(0.d0,(1.d0-snap_earned_income_deduction)*gross_income_1-&
-                    snap_standard_deduction*avg_labour_1)
-
-                snap_benefit=max(0.d0,snap_max_allotment_one*scale_1*avg_labour_1-&
-                    food_stamp_taper*net_1)
-
-            end if
+            snap_benefit=max(0.d0,max_food_cost-food_stamp_taper*net_1)
 
         end function
 
@@ -4921,12 +4919,10 @@
             ! cutoff is max_food_cost/0.30.
             write(*,*) "DIAG households receiving food stamps            =",&
                 model_fraction_recieving_food_stamps(1), " data=", 0.125d0
-            write(*,*) "DIAG max allotment, one person / avg labour inc   =",&
-                snap_max_allotment_one, " data=", 0.039586d0
-            write(*,*) "DIAG max allotment at the mean household size     =",&
-                snap_benefit(sum(actual_household_size)/real(life_span,8),0.d0,1.d0)
-            write(*,*) "DIAG gross eligibility cutoff, one person         =",&
-                snap_gross_limit_one, " data=", 0.214872d0
+            write(*,*) "DIAG max allotment / avg labour income           =",&
+                max_food_cost, " data=", 0.039586d0
+            write(*,*) "DIAG gross eligibility cutoff                     =",&
+                max_food_cost/food_stamp_taper, " data=", 0.214872d0
             write(*,*) "DIAG aggregate rent / output                     =",&
                 aggregate_rent_spending(1)/max(model_output(1),10.d0**(-14))
             write(*,*) "DIAG asset grid, reachable points                =",&
@@ -4975,9 +4971,9 @@
             ! total cost, and a parameter cannot be both assigned and
             ! calibrated. So this row reports what the programme costs rather
             ! than driving anything.
-            write(*,*) "UNTARGETED food stamps / labour income       model=",&
+            write(*,*) "MOMENT cbar      food stamps / labour income model=",&
                 govt_spending_on_food_stamps(1)/max(model_average_labour_income(1),10.d0**(-12)),&
-                " observed=", food_stamps_share_data
+                " target=", food_stamps_share_data
             write(*,*) "MOMENT tau_u     treatment take up           model=",&
                 model_treatment_take_up(1), " target=", treatment_take_up_data
             write(*,*) "MOMENT mu_H      recovery housed / homeless  model=",&
