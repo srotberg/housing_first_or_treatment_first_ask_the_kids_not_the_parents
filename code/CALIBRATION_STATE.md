@@ -4368,3 +4368,294 @@ first -- do not run `next_batch.py` against an empty archive.
   - **h_1.** Fix 17 gave it a single owner; it had been a 1:3 mixture.
   - **The ten INVARIANT lines.** All must read PASS on every point. If one FAILS
     the point is not evidence, whatever its moments say.
+
+## THE DRUG-CLOSED VECTOR AT TWO BETAS
+
+`TWOBETA_DRUGCLOSE.txt`, both lines, run one at a time. Both printed
+`HANDOVER OK: 31 of 31 parameters applied` and both ended at
+`===== END OF MOMENTS =====`.
+
+    line   discount_factor_impatient   point file
+      1              0.95              code/points/point_a4e79fb29e.txt
+      2              0.93              code/points/point_d4997341f9.txt
+
+### THE VECTOR THAT RAN IS NOT THE DRUG-CLOSED VECTOR
+
+Read this before reading (a). `TWOBETA_DRUGCLOSE.txt` does not set
+`addiction_scalar_1`. `DRUGCLOSE.txt` does, at `0.018421517`, and that value is one
+of the three coordinates the drug closure interpolated -- it is named as such in
+THE DRUG BLOCK, CLOSED ON THREE MEASURED POINTS above, beside `lambda_addiction`
+and `probability_becoming_unemployed`. Diffing the two command lines, they differ
+in exactly three places:
+
+    addiction_scalar_1=0.018421517      present in DRUGCLOSE, ABSENT in TWOBETA_DRUGCLOSE
+    discount_factor_impatient           0.99715  ->  0.95 / 0.93   intended
+    number_of_beta_types                1        ->  2             intended
+
+`run_one_point.sh` hands `addiction_scalar_1` to the model through
+`B_SWEEP_GRID.txt` rather than through `PARAM_HANDOVER.txt`, so an omitted value
+falls back to the script default silently and the handover count still reads
+31 of 31. Both `VECTOR` lines record what actually ran:
+
+    addiction_scalar_1=0.0224532        the run_one_point.sh default, f = 0
+    addiction_scalar_1=0.018421517      what the closure asked for, f = 0.584
+
+**So the two points hold two of the three closed drug coordinates and the third at
+its pre-repair value.** `lambda_addiction` and `probability_becoming_unemployed`
+are at the closure; `addiction_scalar_1` is 21.9 per cent above it. Whatever (a)
+reports is therefore a property of a vector the closure never proposed, and the
+excess in `b` cannot be split between the missing coordinate and the second type
+from these two runs alone. **The run that splits it is line 1 with
+`addiction_scalar_1=0.018421517` appended**, which is one 25-minute solve.
+
+### THE TWO POINTS CARRY DIFFERENT MODEL STAMPS, AND IT DOES NOT MATTER HERE
+
+The branch moved under the runs. Line 1 is stamped `c7cb2b24b6` (commit `57863ad`,
+"Fix two more pooling bugs"); line 2 is stamped `597c747ad7` (commit `82a59ba`,
+"Check ten invariants on every point"). I read the diff between those two
+revisions of the Fortran: it adds `check_one`, `check_range` and one call block at
+the end of `print_all_moments`, and changes no quantity the model computes. The
+pair is comparable. Neither stamp is HEAD -- the source was `aaffea6ff8` when this
+section was written and had already moved to `df02e3db80` by the time it was
+committed -- so `next_batch.archive()` will not score either point until they are
+re-measured. The branch is being pushed to by more than one session at once and
+the source is moving faster than a 25-minute solve, which is the standing hazard
+here: a point is orphaned by a source change that lands while it is still solving.
+
+My own first solve of line 1 landed on the older `80a0966e5c` (commit `5292489`,
+before the pooling fix) and read `b` at 0.601452 -- exactly 2.0000 times the
+0.300726 the same vector gives on `c7cb2b24b6`, with `lambda_d`, `w_bot` and `beta`
+unmoved to five figures. That is the pooled-numerator signature again, and it is
+the reason the stale line-1 file was replaced rather than kept.
+
+### THE NOISE FLOOR, MEASURED RATHER THAN ASSUMED
+
+Line 2 was solved twice, same vector and same `597c747ad7`, in two containers.
+Across all 23 targeted moments the two readings differ by:
+
+    worst   tau_l         0.165 %
+    median  (all 23)      0.005 %
+
+**A 0.95-against-0.93 difference smaller than about 0.2 per cent is solver noise,
+not the discount factor.** `sigma_y`, `omega_l`, `p_m` and the two earnings shares
+all sit at or under that.
+
+### (a) b AND lambda_d: THE ONE-TYPE CLOSURE DID NOT TRANSFER
+
+At one beta the interpolated vector put `b` at 0.08899 and `lambda_d` at 0.03680,
+on targets of 0.089 and 0.0368. At two types, on the vector described above:
+
+    discount_factor_impatient        b     gap vs 0.089    lambda_d   gap vs 0.0368
+              0.95              0.300726     +237.9 %      0.255213     +593.5 %
+              0.93              0.360406     +305.0 %      0.309200     +740.2 %
+
+**Plainly: it did not transfer.** `b` is between three and four times its target
+and `lambda_d` between seven and nine times its, and both move further away as the
+impatient factor falls. Nothing here is a near miss to be interpolated back onto
+target; the drug block is open again at two types.
+
+The one honest qualification is the one above: `addiction_scalar_1` was not at its
+closed value in either run, so **"the closure did not transfer" is established for
+the vector that ran and not yet for the closure itself.** Both readings are
+consistent with either story and the deciding run is named above.
+
+### (b) w_bot AND beta: THE TARGET IS NOT BRACKETED
+
+These are the two moments the two-beta assignment aims at. The patient factor is
+bisected onto `beta` inside the model; the impatient factor is set from outside and
+aimed at `w_bot`.
+
+    discount_factor_impatient      w_bot    gap vs 0.025        beta   vs band 3.0-4.5
+              0.95              0.068756     +175.0 %      2.7508   below the band
+              0.93              0.050575     +102.3 %      2.7223   below the band
+
+**0.025 does NOT lie between the two measured `w_bot` values.** They are 0.050575 at
+0.93 and 0.068756 at 0.95; the target sits below both, so it is not bracketed and
+there is nothing to interpolate. The 0.02 step in the impatient factor moved
+`w_bot` down by 0.018181, which is 71.1 per cent of the distance from the 0.93
+reading to the target.
+
+Extrapolating the same slope, 0.9091 of `w_bot` per unit of the impatient factor,
+puts the crossing at **0.9019** -- outside the measured span by more than the span
+itself. That number is written down as the next place to solve and NOT as an
+answer: the bracket has to be closed by a run below 0.93 before any value is read
+off it.
+
+`beta` is below the 3.0 to 4.5 band at both points (2.7508 and 2.7223) even though
+it is the coordinate the model bisects and `freeze_beta_bisection` is 0. The
+internal bisection is not reaching its target from this vector, and that is a
+separate failure from the `w_bot` bracket, not a consequence of it.
+
+### (c) EVERY TARGETED MOMENT, BOTH POINTS, WORST FIRST
+
+Ranked on the larger of the two gaps.
+
+    moment     description                    target  |      0.95      gap  |      0.93      gap
+    cbar       food stamps / labour income    0.0042  |   0.05273  +1155.4% |   0.06088  +1349.4%
+    lambda_d   disorder rate                  0.0368  |   0.25521   +593.5% |   0.30920   +740.2%
+    b          total drug users                0.089  |   0.30073   +237.9% |   0.36041   +305.0%
+    tau_u      treatment take up               0.245  |   0.98502   +302.0% |   0.98762   +303.1%
+    w_bot      net worth share, bottom half    0.025  |   0.06876   +175.0% |   0.05057   +102.3%
+    theta      drug spending share             0.162  |   0.36158   +123.2% |   0.37309   +130.3%
+    y_u        income of drug users             0.74  |   1.57250   +112.5% |   1.63923   +121.5%
+    aleph      value of life / income             80  | 142.39205    +78.0% | 138.40334    +73.0%
+    pi_V       eligibles with a voucher        0.266  |   0.09626    -63.8% |   0.09167    -65.5%
+    h_1        homelessness rate             0.00399  |   0.00146    -63.4% |   0.00145    -63.6%
+    tau_l      average labour income tax       0.224  |   0.09579    -57.2% |   0.08914    -60.2%
+    h_3        share in the largest unit     0.62672  |   0.46895    -25.2% |   0.42595    -32.0%
+    gamma      housing over expenditure        0.268  |   0.18670    -30.3% |   0.18530    -30.9%
+    pi_eu      unemployment rate              0.0485  |   0.05817    +19.9% |   0.06247    +28.8%
+    h_2        above half of spending          0.101  |   0.07446    -26.3% |   0.07671    -24.0%
+    kappa_ued  unemployment given SUD         0.1625  |   0.13265    -18.4% |   0.13619    -16.2%
+    lambda_m   SMI share of the homeless        0.25  |   0.28070    +12.3% |   0.24337     -2.7%
+    mu_H       recovery housed / homeless     1.4732  |   1.33791     -9.2% |   1.31526    -10.7%
+    beta       wealth over output                  3  |   2.75077     -8.3% |   2.72233     -9.3%
+    kappa_uem  employment given SMI              0.3  |   0.31531     +5.1% |   0.31030     +3.4%
+    omega_l    labour supply / total hours       0.4  |   0.38266     -4.3% |   0.38209     -4.5%
+    sigma_y    bottom half earnings share      0.172  |   0.16905     -1.7% |   0.16905     -1.7%
+    p_m        SMI population share         0.050716/0.051532  |   0.05065     -0.1% |   0.05154     +0.0%
+
+`p_m` carries two targets because the SMI (serious mental illness) target is
+itself recomputed from the solved population.
+
+**Two invariants FAIL on line 2**, which is the only one of the two points whose
+stamp prints them at all:
+
+    INVARIANT FAIL     income histogram holds the whole distribution  =     1.1933543996   want   1.0000
+    INVARIANT FAIL     wealth histogram holds the whole distribution  =     1.1933543996   want   1.0000
+
+Nineteen per cent of surplus mass in the two histograms. `w_bot`, `sigma_y` and
+the six bottom-tail shares are all read off those histograms, so **(b) rests on a
+failing identity** and its numbers should be re-read once that is closed. Line 1
+predates the check and is presumed to carry the same failure.
+
+### (d) THE BY-AGE MARGIN
+
+    age  |            beta_imp 0.95            |            beta_imp 0.93
+         | homeless   own  rnt wealth rnt inc  | homeless   own  rnt wealth rnt inc
+     26  | 0.027525  0.00    0.00000 -0.03590 | 0.027525  0.00    0.00000 -0.03683
+     29  | 0.002745  0.00    0.32750 -0.02215 | 0.002718  0.00    0.29916 -0.02314
+     32  | 0.001208  0.00    0.53498 -0.01580 | 0.001256  0.00    0.48084 -0.01741
+     35  | 0.000632  0.00    0.67786 -0.00695 | 0.000697  0.00    0.61344 -0.01139
+     38  | 0.000375  0.00    0.82937 -0.00302 | 0.000466  0.00    0.76656 -0.00494
+     41  | 0.000218  0.00    0.96330  0.00310 | 0.000333  0.00    0.91362  0.00113
+     44  | 0.000187  0.00    1.09562  0.00897 | 0.000205  0.00    1.06070  0.00705
+     47  | 0.000179  0.00    1.23475  0.01463 | 0.000170  0.00    1.21016  0.01300
+     50  | 0.000156  0.00    1.38015  0.01984 | 0.000148  0.00    1.36586  0.01860
+     53  | 0.000136  0.00    1.52733  0.02431 | 0.000127  0.00    1.52435  0.02359
+     56  | 0.000124  0.00    1.66531  0.02754 | 0.000113  0.00    1.67539  0.02737
+     59  | 0.000111  0.00    1.78476  0.02954 | 0.000130  0.00    1.81162  0.02956
+     62  | 0.000158  0.00    1.87894  0.02971 | 0.000187  0.00    1.92089  0.03061
+     65  | 0.000114  0.00    1.94632  0.02874 | 0.000102  0.00    1.99979  0.03006
+     68  | 0.000000  0.00    1.82678  0.55172 | 0.000000  0.00    1.90253  0.56891
+     71  | 0.000000  0.00    1.62657  0.57362 | 0.000000  0.00    1.73026  0.59633
+     74  | 0.000000  0.00    1.39843  0.60402 | 0.000000  0.00    1.50636  0.63228
+     77  | 0.000000  0.00    1.12020  0.64789 | 0.000000  0.00    1.21388  0.68149
+     80  | 0.000000  0.00    0.78542  0.71446 | 0.000000  0.00    0.85325  0.75446
+     83  | 0.000000  0.00    0.41098  0.83903 | 0.000000  0.00    0.44751  0.89109
+
+**The homelessness profile tracks `renter income`, inversely, and it tracks the
+SIGN of it.** Over the working ages 26 to 65 the correlation of log homelessness
+with each column is:
+
+                        0.95      0.93
+    own                    --        --   identically zero, no information
+    renter wealth     -0.8876   -0.8817
+    renter income     -0.9277   -0.9254
+
+`renter income` wins at both points, but the ranking is not the point -- the two
+columns rise together over the working ages and either would fit. What separates
+them is the shape. Renter income is NEGATIVE from 26 to 38 and positive from 41
+on, and homelessness collapses by a factor of 126 between 26 and 41: it is
+0.027525 at 26, where renter income is at its most negative and renter wealth is
+exactly 0.00000, and it is flat at one to two parts in ten thousand from 41 on. At
+68 and beyond, where renter income steps up to 0.55 and above, homelessness is
+exactly zero at every age. `own` is 0.00 at every age at both points, because the
+homeownership rate is zero in this economy, so the second column is empty.
+
+The profile is far too steep against the data: `homelessness profile, band 1` in
+(e) is 4.64 and 4.45 against an observed 1.28, and band 1 holds 91 per cent of
+the model's homeless against an observed 26 per cent. Lowering the impatient
+factor from 0.95 to 0.93 barely touches it, which is the same answer IMPATIENCE IS
+NOT THE MISSING MECHANISM FOR THE HOMELESSNESS AGE PROFILE reached above, now at
+two types.
+
+### (e) EVERY UNTARGETED QUANTITY
+
+    quantity                                    observed  |      0.95        0.93
+    mean age of drug users                      45.48000  |  41.397945   42.390222
+    users aged 26-34, share                      0.28404  |   0.330875    0.301562
+    users aged 35-44, share                      0.25054  |   0.329812    0.314318
+    users aged 45-54, share                      0.17768  |   0.207619    0.228333
+    users aged 55-64, share                      0.16327  |   0.086334    0.106272
+    users aged 65 plus, share                    0.12445  |   0.045361    0.049514
+    housing over income, renters                 0.20200  |   0.128328    0.125085
+    delta_d child SUD ratio                      2.00000  |   1.016479    1.014560
+    wealth share bottom 1 pct                   -0.00225  |   0.000000    0.000000
+    wealth share bottom 5 pct                   -0.00422  |   0.000000    0.000000
+    wealth share bottom 10 pct                  -0.00446  |   0.000000    0.000000
+    income share bottom 1 pct                    0.00009  |   0.000553    0.000519
+    income share bottom 5 pct                    0.00288  |   0.002767    0.002596
+    income share bottom 10 pct                   0.00924  |   0.005533    0.005193
+    delta_h child homelessness ratio             2.10000  |   4.744696    5.282657
+    homelessness rate, band 1                    0.00316  |   0.011735    0.011180
+    homelessness rate, band 2                    0.00338  |   0.000659    0.000792
+    homelessness rate, band 3                    0.00291  |   0.000307    0.000294
+    homelessness rate, band 4                    0.00250  |   0.000222    0.000243
+    homelessness rate, band 5                    0.00077  |   0.000012    0.000011
+    homelessness profile, band 1                 1.28079  |   4.638916    4.447658
+    homelessness profile, band 2                 1.36872  |   0.260526    0.315123
+    homelessness profile, band 3                 1.17990  |   0.121453    0.117018
+    homelessness profile, band 4                 1.01135  |   0.087577    0.096668
+    homelessness profile, band 5                 0.31199  |   0.004812    0.004197
+    share of the homeless, band 1                0.26000  |   0.907328    0.893768
+    share of the homeless, band 2                0.27200  |   0.053945    0.066920
+    share of the homeless, band 3                0.21000  |   0.023038    0.022513
+    share of the homeless, band 4                0.18400  |   0.014524    0.015831
+    share of the homeless, band 5                0.07500  |   0.001164    0.000968
+    earnings share, bottom tenth                 0.00990  |   0.012507    0.012507
+    earnings share, top tenth                    0.41100  |   0.308662    0.308662
+    renters above 30 pct of income               0.40600  |   0.353238    0.342487
+    renters above 50 pct of income               0.17500  |   0.339943    0.331238
+    tenant contribution rate                     0.31200  |   0.701637    0.691518
+    voucher holders, wages main                  0.28000  |   0.471600    0.466618
+    participation, with a SUD                    0.65800  |   0.976447    0.971543
+    participation, without a SUD                 0.61500  |   0.642404    0.630494
+    homeless at treatment admission              0.14500  |   0.000357    0.000550
+    SMI alongside SUD at admission               0.43100  |   0.019566    0.023779
+    working, homeless in treatment               0.06600  |   0.061681    0.041682
+    SUD share of the homeless                    0.21700  |   0.060557    0.113572
+    drug deaths, share of deaths                 0.20000  |   0.829068    0.839731
+    income of the homeless                       0.19100  |   0.348951    0.313372
+    employed share of the homeless               0.46000  |   0.810052    0.777701
+    income with a SUD                            0.71100  |   1.655894    1.709808
+
+### PROVISIONAL
+
+**These six moments in this section are PROVISIONAL and are not to be calibrated
+against:**
+
+    tau_l      pi_eu      y_u      tau_u      kappa_ued      aleph
+
+An equal-beta validation found the two-pass code disagrees with the one-pass code
+on all six. `w_bot` and `beta` agreed to within 1.4 per cent in that test and are
+**not** provisional -- which is what makes (b) worth reading at all, and (c)
+readable only in the rows outside that list.
+
+Independently of the six, everything in this section inherits two further
+qualifications, both stated above: `addiction_scalar_1` was not at its closed value
+in either run, and the two histogram invariants fail.
+
+### FOUR THINGS THAT LOOK WRONG AND ARE NOT
+
+    lambda_addiction                     17.98304        deliberate
+    addiction_scalar_1                    0.0224532      deliberate as a DEFAULT --
+                                                         but see the first subsection:
+                                                         0.018421517 was intended
+    probability_becoming_unemployed       0.0062406018   deliberate
+    kappa_uem (the parameter, not the moment)  28.67112  deliberate
+
+And `MOMENT theta` of -1.0 is an empty-population sentinel rather than a value. It
+did not arise here: theta reads 0.361578 and 0.373092 at the two points, so the
+population it is computed over was non-empty on both.
+
