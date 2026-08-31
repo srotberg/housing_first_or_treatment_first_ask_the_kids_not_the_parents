@@ -1531,3 +1531,49 @@ The ratios differ by 1.4 per cent. They do not span the plane, so no combination
 of them separates h_1 from lambda_m -- one slides along a locus, it does not step
 off it. Breaking that needs an instrument with a different ratio, and
 `smallest_rental` near its cliff is the only candidate seen so far.
+
+## FOOD STAMPS REVERTED, AND EVERY POINT NOW RECORDS ITS MODEL
+
+The statutory SNAP schedule is out, on the author's instruction. It was correct
+per household and wrong by a factor of 48 in aggregate -- 20.4 per cent of
+labour income against 0.42 in the data -- because far more households in this
+model fall under a realistic eligibility limit than in the world. That is the
+same lower-tail problem as the bottom half's net worth share at 0.131 against
+0.025, showing up in a different place.
+
+The programme is a single allotment `max_food_cost` less the statutory taper,
+with `max_food_cost` calibrated on aggregate spending again. `MOMENT cbar` is a
+target, the adjuster is back at 5e-2, and `next_batch.py` maps it -- **fourteen
+calibrated parameters**. The taper stays: it predates the statutory schedule and
+without it every household below a hard floor has identical income, so one atom
+crosses the homelessness margin together and the rate jumps rather than passing
+through its target.
+
+**This invalidates every elasticity in the archive.** The food stamp floor enters
+the budget of every poor household, so the drug block, the housing block and the
+homelessness margin all move. The 84 points remain valid as measurements of the
+OLD model and must not be mixed with new ones.
+
+### The md5 hazard now has a detector
+
+The point tag is the md5 of the PARAMETER vector alone, so re-measuring a vector
+on a changed model reproduces the tag and silently replaces a real measurement.
+That has been a standing rule with no way to check it. `run_one_point.sh` now
+writes a `MODEL <hash>` line into every point, so a point measured on a different
+source can be identified and discarded rather than trusted.
+
+    model before the revert   9955099921
+    model after the revert    fcbd17f4c6
+
+Any point carrying neither hash predates the stamp; any ROUND18 point carrying
+`fcbd17f4c6` was rebuilt mid-round and is NOT comparable to the rest of ROUND18.
+
+### Odds ratios, asked and answered
+
+Intergenerational persistence at rho=0.35 bought almost nothing:
+
+    child SUD ratio           median 1.156 -> 1.189   target 2.0
+    child homelessness ratio  median 1.622 -> 1.690   target 2.1
+
+269 points before the change against 82 after. The intergenerational channel is
+carried by the income penalties, not by the persistence.

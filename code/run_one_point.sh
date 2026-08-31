@@ -289,6 +289,13 @@ mkdir -p points
 {
     echo "point $TAG solved in ${MINS} min on $(nproc) cores"
     echo "HANDOVER OK: $GOT of $WANT parameters applied"
+    # WHICH MODEL MEASURED THIS POINT. The tag is the md5 of the PARAMETER
+    # vector alone, so re-measuring the same vector on a changed model
+    # reproduces the tag and silently replaces a real measurement. That hazard
+    # is in the standing rules and has no detector; this is the detector. A
+    # worker that pulls a source change mid-round and rebuilds now stamps the
+    # new hash, so the point can be identified and discarded instead of trusted.
+    echo "MODEL $(md5sum "$(dirname "$0")/housing_first_or_treatment_first_SR_v1.f90" | cut -c1-10)"
     echo -n "VECTOR"
     for k in $(echo "${!P[@]}" | tr ' ' '\n' | sort); do printf ' %s=%s' "$k" "${P[$k]}"; done
     echo
