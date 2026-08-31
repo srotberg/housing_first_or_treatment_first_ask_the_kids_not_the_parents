@@ -2575,3 +2575,40 @@ vector coordinate defaulting to one and `d092b49` added `freeze_beta_bisection`,
 which is inert at its declared 0; the source is now `d70ad1c545`. Both points
 carry `MODEL ab22a2f5ba`, so they are identifiable, but the same two lines run
 today would take the one-type path and would not reproduce them.
+
+## THE UTILITY COST HAS PLENTY OF ROOM. MY CAVEAT WAS BACKWARDS
+
+`point_d4ffbfdab5`, one beta, utility cost ZERO, model d70ad1c545. All three
+`want 1.0` checks read 1.0000000000.
+
+    tau_u = 0.90058 against a target of 0.245
+
+**Take-up OVERSHOOTS by 268 per cent at zero cost.** I warned, when the author
+asked to switch back, that the utility cost had run to its floor before and
+might not be able to reach tau_u from above. The opposite is true on this model:
+at zero cost nine households in ten take treatment, so the cost has to go UP to
+bring take-up DOWN, and it has the whole range above zero to do it in. The old
+"-100%, its floor" record was about a different model and does not carry.
+
+Lines 2 and 3 of ANCHOR1B (0.05 and 0.5) will place the target inside the
+bracket rather than extrapolating to it.
+
+### THE ONE-BETA MODEL AT THIS VECTOR: TEN MOMENTS INSIDE TEN PER CENT
+
+    beta       0.0   theta      0.9   h_1       1.1   pi_V       1.2
+    omega_l    0.2   kappa_uem  0.2   sigma_y   1.7   tau_l      6.4
+    h_3        6.8   lambda_m   7.0   p_m       8.1
+
+    still out: w_bot 525, tau_u 268, cbar 182, y_u 54, h_2 49,
+               lambda_d 43, b 33, gamma 31, aleph 29, kappa_ued 17,
+               pi_eu 15, mu_H 13
+
+Compare the two-beta table at the equivalent vector: pi_V was 35 per cent off
+and is now 1.2, theta was 32 and is now 0.9, tau_l was 47 and is now 6.4, aleph
+was 103 and is now 29. This is a materially better economy and it is the one
+that has been validated.
+
+**w_bot is the exception and it is structural, not a fitting failure.** At one
+beta it has no instrument at all: `discount_factor_impatient` does nothing when
+`number_of_beta_types=1`. 525 per cent is what the moment reads when nothing is
+driving it, and it will stay there until the two-pass path is cleared.
