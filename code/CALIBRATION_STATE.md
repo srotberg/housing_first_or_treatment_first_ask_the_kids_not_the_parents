@@ -1837,3 +1837,36 @@ Note the two changes aim at different failures and are not alternatives.
 Beta heterogeneity targets WEALTH -- the bottom half share, 6.3 times too fat.
 kappa targets WHO USES -- zero use in the top two income bands. The untargeted
 table needs both.
+
+## THREE RUNGS FOR NOW, AND THE GRID MAPPING WAS BACKWARDS
+
+The author's call: fit h_1, h_2 and h_3 with the three rungs the model has, and
+consider a fourth later. The evidence for that is the h_2/h_3 trade, measured
+along the `largest_house_size` ladder:
+
+    lhs 0.1118   h_2 60.8 per cent off   h_3  7.1   unit 2 holds 67.1 per cent
+    lhs 0.13     h_2 49.1                h_3  9.6   unit 2 holds 68.7
+    lhs 0.16     h_2  0.2                h_3 11.8   unit 2 holds 70.1
+
+With three rungs an expensive top rung is necessarily a CROWDED one -- the
+households it prices out have nowhere to go but unit 1 or the street -- so
+closing h_2 pushes h_3 from 7.1 per cent off to 11.8. That is mild, and it was
+measured on a model that has since changed twice, so it is worth seeing where the
+two sit together on the current model before paying for a fourth rung. The
+fourth is a one-line change and the value function is linear in that index, so it
+costs about 20 to 26 minutes a point. Held in reserve.
+
+**THE OWNERSHIP WAS INVERTED.** Measured on controlled pairs:
+
+                            h_1     h_2     h_3
+    largest_house_size    -0.09    1.73    0.16
+    smallest_rental        2.81    0.06   -0.01
+
+`smallest_rental` owned h_2 at 0.06 and `largest_house_size` owned h_3 at 0.16.
+Each was assigned to the moment it moves LEAST, which is why h_2 was called
+unreachable four times: the search kept stepping the parameter that cannot move
+it. Now swapped.
+
+**h_3 still has no real instrument** -- 0.16 from largest_house_size, which is
+needed for h_2, and -0.01 from smallest_rental. That is the standing argument
+for the fourth rung and the thing to watch in the fit.

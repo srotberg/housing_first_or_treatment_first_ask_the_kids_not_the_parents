@@ -95,12 +95,18 @@ OWN = {
     # -- was in the vector with no moment mapped to it, so nothing in the search
     # ever moved the bottom of the housing ladder. A bigger smallest unit costs
     # more rent, so it raises the share paying over half of income.
-    'smallest_rental_relative_to_lowest_income':            'h_2',
+    # SWAPPED, on measured elasticities. This owned h_2 at 0.06 while
+    # largest_house_size moved h_2 at 1.73 -- each grid parameter was assigned
+    # to the moment it moves LEAST. smallest_rental's strongest moment is
+    # actually h_1 at 2.81, but size_homelessness already owns that and the
+    # food stamp floor has closed it, so it takes h_3 here. It moves h_3 at
+    # -0.01, which is to say h_3 has no real instrument at all.
+    'smallest_rental_relative_to_lowest_income':            'h_3',
     # AND THE TOP RUNG HAD NO INSTRUMENT EITHER. largest_house_size owns the
     # share in the largest unit -- h_4 until the author's rename, h_3 now -- and
     # like the bottom rung it sat in the vector with nothing mapped to it. It is
     # only 1.7 per cent off, so this closes a hole rather than fixing a gap.
-    'largest_house_size':                                  'h_3',
+    'largest_house_size':                                  'h_2',
     'kappa_uem':                                           'kappa_uem',
     # BACK, ON THE AUTHOR'S INSTRUCTION. The statutory SNAP schedule was right
     # per household and wrong by a factor of 48 in aggregate, so the programme
