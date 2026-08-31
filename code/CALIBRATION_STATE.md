@@ -5067,3 +5067,129 @@ one, and should be re-checked once this is understood.
      search on this parameter is not viable until that is explained.
   4. The `INVARIANTS` block works and is already earning its place: two
      checks fail at every point, on the distribution histograms.
+
+## THE INVARIANTS PAID FOR THEMSELVES, AND FOUR MORE FIXES CAME OUT OF IT
+
+The `INVARIANTS` block was added on the argument that a number which must be 1.0
+and is not finds a class of bug that reading 38,000 lines does not. Its first
+three points reported two FAILs, and following them produced four fixes. What
+follows is what each one was, how it was found, and what it does and does not
+move.
+
+### 1. The pooled mass was a pass count, not a mass
+
+The two histogram checks read 1.19002, 1.18647 and 1.18457 at three points
+differing only in `addiction_scalar_1`. Every chain routine rebuilt the mass
+from `distribution_stationary`, which holds only the type just solved, and
+multiplied by `mass_passes`. That is exact if and only if the two
+discount-factor types weigh the same, and they do not: newborn cohorts are
+equal but survival is not, so the type that is homeless and addicted more ends
+the life cycle lighter. **A miscount of types would have been a constant, 2.0 or
+0.5. A number that drifts with a drug parameter is a survival gap.**
+
+Nine sites now accumulate the real thing one pass at a time.
+`stationary_equilibrium_statistics` runs first in each pass and owns three
+accumulators -- the total, the retirees, and each type's own mass -- and the
+five later routines read the total instead of rebuilding it.
+
+**What this moves.** `w_bot`, and in the wrong direction. The old denominator was
+`2 * m_impatient` where the truth is `m_patient + m_impatient = 2.38 *
+m_impatient`, so `percentile_1 * sum_of_distribution` walked only to the 42nd
+percentile of the pooled mass and reported the bottom 42 per cent's share of
+wealth under the name of the bottom half's. The corrected walk goes further up
+the distribution and collects more, so `w_bot` -- already 2.2 to 3.4 times its
+target of 0.025 at every two-type point -- **gets larger, not smaller**. That is
+the honest consequence of a correct denominator and it is not a reason to keep
+the wrong one.
+
+`aleph`'s divisor was the same pass count and is now the measured ratio of
+pooled mass to the first type's, which is exactly one at a single type.
+
+**Nothing at one discount-factor type moves**, at any of the nine sites: one
+pass, factor one. And the equal-beta test could never have caught this, because
+equal betas make the masses equal by construction.
+
+### 2. A reset was disabled on a variable no other routine can own
+
+`total_homeless_1` is declared a local of `govt_revenues_calc` and, separately, a
+local of `stationary_equilibrium_statistics`. They are two variables that share
+a name. The one-owner rule applied in the previous round -- the first routine in
+call order keeps the counter and the rest read it -- holds for module variables
+and does not hold for these. Disabling the reset did not hand ownership to the
+earlier routine; it left this routine's own local undefined on entry, and the
+eight homeless averages normalised by it were divided by whatever the stack held.
+
+It printed plainly and went unread for a day. `point_03ac59f09e` reports
+`homeless by choice, share of the homeless` at **1.6552**, and a share of the
+homeless cannot exceed one.
+
+**What this moves.** Nothing targeted. Every quantity normalised by it appears
+on `DIAG` lines only: the average income, after-tax income, tax rate and assets
+of the homeless, the addicted-and-homeless averages, the two by-choice shares,
+and the rent-to-income distribution of the homeless. **The 94-per-cent
+"homeless by choice" figure reported earlier came off this divisor and should
+be treated as unmeasured until a point on the fixed source reports it.**
+
+Five range invariants now cover these, so the next one is caught by the run that
+makes it.
+
+### 3. Thirteen cross-pass counters had no storage that survives the call
+
+Thirteen locals are reset only when `accumulating_beta_types` is zero and added
+to on every pass, so that they hold both types by the time they are divisors.
+That is the right shape and it was missing its one requirement: **a local
+without `save` does not survive from one call to the next.** On the second pass
+the routine is entered fresh, the reset is skipped because the pass is not the
+first, and the accumulation lands on whatever the stack holds.
+
+It has been working by accident -- same call site, same order, frame usually
+reused -- which is a property of this build and not a guarantee. `save` makes it
+one. They stay local rather than moving to module scope on purpose:
+`total_homeless_1` is the name of two different locals counting the same
+population in two separate loops, and merging them would put two counts in one
+divisor.
+
+**What this moves.** Probably nothing, and that is the point: it converts an
+accident into a rule. None of the six routines contains an OpenMP directive and
+none is recursive, so static storage introduces no sharing.
+
+### 4. Nine more in-place normalisations outside the last-pass guard
+
+The same fault as the 187 already gated, found by matching `X = X / ...` in the
+chain routines against the list of variables reset under
+`accumulating_beta_types==0` rather than by reading. `average_rent_by_age`,
+the two owner-occupied unit size averages' companions, the two grid-adequacy
+corners, `model_LTV_by_age_group`, the three MID shares, and the two
+origination LTVs. None is a targeted moment.
+
+### WHAT WAS CHECKED AND LEFT ALONE
+
+  - The other nine disabled resets are all on module-scope variables
+    (`mass_of_owners`, `mass_by_employment`, `model_fraction_homeless`,
+    `mass_renters_by_age`, `mass_by_age`, `mass_by_employment_and_age`), so the
+    one-owner rule is sound for them. For each, exactly one accumulation site is
+    live and the duplicates are commented out, and in every case the live site
+    is in a routine that runs before every reader.
+  - `fraction_with_drug_spending_relative_to_average` and
+    `total_experimenters_1` are reset every pass and normalised every pass, so
+    the light-user threshold at 29211 is built from the last type alone. It is
+    left as it is because **its consumer is commented out and
+    `distance_drug_threshold` is set to zero**: the computation is dead. Pooling
+    it would change a number nothing reads.
+  - `mass_of_quintile` is reset every pass but divided by the pooled
+    `sum_of_distribution` at the two file-writing sites, so the quintile masses
+    in the written outputs are short by a type. Output files only; recorded, not
+    fixed.
+  - The omega counterfactual in `print_all_moments` re-solves and re-measures
+    with ONE type while the benchmark it is compared against has two. The mass
+    fix stops it doubling a one-type mass, but the comparison is still one type
+    against two. Recorded for the author; it is a design question, not a defect.
+
+### THE STANDING RULE THIS COST
+
+Two of these four -- the disabled reset and the missing `save` -- are faults in
+work done EARLIER THE SAME DAY to fix the pooling. The pattern is the same both
+times: a rule about ownership was applied to a name without checking the name's
+scope. **Before disabling a reset or moving a counter's ownership, check whether
+the variable is declared at module level or inside the routine.** The two look
+identical at the call site and behave completely differently.
