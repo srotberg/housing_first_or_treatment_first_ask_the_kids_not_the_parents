@@ -2696,3 +2696,110 @@ artefact rather than the mechanism.
 Two beta points on a path whose equal-beta test has not yet passed. If VALIDATE2
 fails, the bracket goes with it. If it passes, the bracket stands and only needs
 re-siting at the corrected b.
+
+## UTILITY COST OF TREATMENT, BRACKETED ON THE CURRENT MODEL
+
+Three points, ANCHOR1B lines 1-3, one beta, model `d70ad1c545`, identical in
+every coordinate except `utility_cost_of_treatment`. All three report
+`HANDOVER OK: 29 of 29` and all three close with `END OF MOMENTS`.
+
+| utility cost | point file | tag | tau_u | target |
+| --- | --- | --- | --- | --- |
+| 0 | `code/points/point_d4ffbfdab5.txt` | d4ffbfdab5 | 0.90058 | 0.245 |
+| 0.05 | `code/points/point_3194cee78d.txt` | 3194cee78d | 0.86350 | 0.245 |
+| 0.5 | `code/points/point_549be97e28.txt` | 549be97e28 | 0.47477 | 0.245 |
+
+Every `MOMENT` line of the three points, one column per point. The target is
+the same at all three except where marked `*`.
+
+| moment | description | cost 0 | cost 0.05 | cost 0.5 | target |
+| --- | --- | --- | --- | --- | --- |
+| `sigma_y` | bottom half earnings share | 0.16905 | 0.16905 | 0.16905 | 0.17200 |
+| `tau_l` | average labour income tax | 0.23828 | 0.23822 | 0.23786 | 0.22400 |
+| `omega_l` | labour supply / total hours | 0.40098 | 0.40101 | 0.40104 | 0.40000 |
+| `beta` | wealth over output | 4.00162 | 4.00313 | 4.01263 | 3.00000 |
+| `h_2` | above half of spending | 0.05113 | 0.05103 | 0.05007 | 0.10100 |
+| `h_3` | share in the largest unit | 0.66949 | 0.66902 | 0.67148 | 0.62672 |
+| `gamma` | housing over expenditure | 0.18628 | 0.18626 | 0.18672 | 0.26800 |
+| `h_1` | homelessness rate | 0.00395 | 0.00394 | 0.00392 | 0.00399 |
+| `b` | total drug users | 0.05982 | 0.05821 | 0.03792 | 0.08900 |
+| `lambda_d` | disorder rate | 0.02108 | 0.02003 | 0.01283 | 0.03680 |
+| `theta` | drug spending share | 0.16343 | 0.16136 | 0.18833 | 0.16200 |
+| `aleph` | value of life / income | 56.74720 | 56.74009 | 56.90349 | 80.00000 |
+| `pi_eu` | unemployment rate | 0.05574 | 0.05553 | 0.05410 | 0.04850 |
+| `kappa_ued` | unemployment given SUD | 0.13537 | 0.13450 | 0.12413 | 0.16250 |
+| `kappa_uem` | employment given SMI | 0.29935 | 0.29953 | 0.30079 | 0.30000 |
+| `p_m` | SMI population share | 0.04442 | 0.04439 | 0.04416 | 0.04834 `*` |
+| `lambda_m` | SMI share of the homeless | 0.23260 | 0.23280 | 0.23304 | 0.25000 |
+| `pi_V` | eligibles with a voucher | 0.26929 | 0.26939 | 0.27070 | 0.26600 |
+| `cbar` | food stamps / labour income | 0.01182 | 0.01178 | 0.01144 | 0.00420 |
+| `tau_u` | treatment take up | 0.90058 | 0.86350 | 0.47477 | 0.24500 |
+| `mu_H` | recovery housed / homeless | 1.27838 | 1.25273 | 1.04469 | 1.47321 |
+| `w_bot` | net worth share, bottom half | 0.15630 | 0.15644 | 0.15733 | 0.02500 |
+| `y_u` | income of drug users | 0.34108 | 0.33755 | 0.26925 | 0.74000 |
+
+`*` `p_m`'s target is not a constant: it reads 0.0483431, 0.0483317 and
+0.0482612 at costs 0, 0.05 and 0.5. It is a share of a population the model
+computes, so it moves a little with the point. No other target moves.
+
+`theta` is a real value at all three points, so the empty-population sentinel of
+-1.0 does not arise here.
+
+### (a) DOES tau_u RISE AS THE COST FALLS? YES, MONOTONICALLY
+
+    cost 0.5   tau_u 0.47477
+    cost 0.05  tau_u 0.86350
+    cost 0     tau_u 0.90058
+
+The sign is the expected one and there is no reversal in the bracket. The
+response is strongly non-linear: the whole interval from 0 to 0.05 buys 0.037 of
+take-up, while 0.05 to 0.5 buys 0.389. Take-up is flattening as the cost goes to
+zero, which is what a ceiling near one looks like.
+
+### (b) tau_u AT ZERO COST DOES NOT REACH 0.245, AND IT MISSES FROM ABOVE
+
+    tau_u(0) = 0.90058    target 0.245    difference +0.65558
+
+**It does not reach the target, but the shortfall is an overshoot, not a
+shortfall.** Zero cost is the top of the instrument's range, not the bottom, so
+this is the opposite of the moment being unreachable: at no cost at all nine
+households in ten take treatment, and the cost has to be RAISED to bring take-up
+down to 0.245. The instrument has the whole half-line above zero to work in.
+
+**What the three points do NOT do is bracket the target.** 0.245 lies below all
+three, the lowest of which is 0.47477 at a cost of 0.5, still 0.230 above
+target. Reading the answer off these points is therefore an extrapolation past
+the end of the measured range, not an interpolation inside it. On the local
+slope between 0.05 and 0.5, -0.864 per unit of cost, 0.245 would arrive at a
+cost of about 0.77; that number is an indication of where to put the next point
+and nothing more, because the response is visibly curved and the slope over the
+last stretch of the bracket need not continue. **A fourth point above 0.5 is
+what would close this**, and the target should be inside the pair before a value
+is read off it.
+
+### WHAT THE COST COSTS ELSEWHERE
+
+Raising the cost from 0 to 0.5 moves four other moments materially, and all four
+move AWAY from their targets:
+
+    b         0.05982 -> 0.03792  (target 0.089, 33% out becomes 57% out)
+    lambda_d  0.02108 -> 0.01283  (target 0.0368, 43% out becomes 65% out)
+    y_u       0.34108 -> 0.26925  (target 0.740, 54% out becomes 64% out)
+    theta     0.16343 -> 0.18833  (target 0.162, 0.9% out becomes 16% out)
+
+`mu_H` also falls, 1.27838 to 1.04469 against 1.47321, from 13 per cent out to
+29. So the cost that would deliver `tau_u` is not free: it is taken out of the
+use and disorder moments, which are already low, and it walks `theta` off a
+target it currently sits on. Whatever cost is eventually read off the extended
+bracket has to be re-checked against `b` and `lambda_d`, in that order.
+
+### THE want 1.0 DIAGNOSTICS AT LINE 1's POINT
+
+From `code/points/point_d4ffbfdab5.txt`, verbatim:
+
+     DIAG income histogram mass / distribution (want 1.0) =   1.0000000000000839
+     DIAG histogram mass / distribution  (want 1.0)   =   1.0000000000000908
+     DIAG histogram wealth / total wealth (want 1.0)  =   1.0000000000000910
+
+All three read 1.0 to twelve places. The halved-denominator correction recorded
+above is in effect on this model and none of the three reads 2.0.
