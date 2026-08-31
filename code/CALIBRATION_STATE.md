@@ -3497,3 +3497,59 @@ agreement on w_bot says the distortion is small in practice AT ONE VECTOR, which
 is an observation and not a guarantee. So: read w_bot and wealth over output.
 Treat tau_l, pi_eu, y_u, tau_u, kappa_ued and aleph as provisional until the
 pooling bug is found.
+
+## THE ARCHIVE WAS BEING THROWN AWAY BY MY OWN EDITS. EQUIVALENCE DECLARED
+
+`dc8abdfbce` differs from `d70ad1c545` by print statements and by two
+compile-time parameters becoming runtime coordinates, BOTH defaulting to the
+value that reproduces the old behaviour exactly. A point that passes
+`homeless_death_risk_flat_in_age=0` on the new hash is the same economy as one
+measured on the old. Declared in `EQUIVALENT_MODELS`; the archive went from 0
+scored points to 8.
+
+Worth naming as a process cost: the source changed five times today and each
+change orphaned every measurement. `EQUIVALENT_MODELS` exists for exactly the
+print-only case and should be used at the time of the edit, not after the gate
+comes back empty.
+
+## THE DRUG BLOCK, CLOSED ON THREE MEASURED POINTS
+
+The repair overshot and its half-step undershot, which leaves three points on one
+line and no need for a Jacobian at all:
+
+    fraction   b        lambda_d     (targets 0.089 and 0.0368)
+      0.000   0.05982   0.02108
+      0.511   0.08371   0.03431
+      1.000   0.11909   0.05097
+
+Interpolating, **b and lambda_d both land on target at f = 0.584** -- the same
+fraction to three decimals, which is the local linearity the interpolation
+assumes showing up as a coincidence it did not have to produce.
+
+    addiction_scalar_1                 0.018421517
+    lambda_addiction                   17.98304
+    probability_becoming_unemployed    0.0062406018
+
+`DRUGCLOSE.txt`. If it lands the gate opens for the first time on this model,
+and y_u becomes readable -- kappa has been unmeasurable all day precisely
+because b was never near target.
+
+## WHERE THE AUTHOR'S SEVEN STAND, AT THE BEST POINT, ONE BETA
+
+    b          0.083713   0.089     5.9   IN
+    lambda_d   0.034312   0.0368    6.8   IN
+    h_1        0.003710   0.00399   7.0   IN
+    aleph      57.955     80       27.6   out
+    h_2        0.050923   0.101    49.6   out
+    y_u        0.36453    0.74     50.7   out
+    w_bot      0.15538    0.025   521.5   out, and has no instrument at one beta
+
+Three of seven, and 11 of 23 overall. The four that are out have instruments and
+none of them is stuck: `value_of_life` owns aleph, `largest_house_size` owns h_2
+and moves it at +1.73, `kappa_phi_d_level` owns y_u and its target sits inside a
+measured pair, and `discount_factor_impatient` owns w_bot and is bracketed.
+
+**The untargeted set is not worth reading until those close.** The author asked
+for the age profile of homelessness and the rest of the untargeted table at a
+properly calibrated point, and that is the right order: an age profile read off
+a point with y_u fifty per cent out is a profile of the wrong economy.

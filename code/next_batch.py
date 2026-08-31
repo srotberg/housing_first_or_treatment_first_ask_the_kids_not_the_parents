@@ -444,6 +444,20 @@ def gap(name, pair):
 # COMPUTES CHANGED. This list is a claim about the source, not a convenience.
 EQUIVALENT_MODELS = {
     '6eeab9f2cc': {'57a80a45e9'},
+    # dc8abdfbce ADDS ONLY PRINTS AND DEFAULTS-PRESERVING COORDINATES to
+    # d70ad1c545, so a point measured on either is the same economy and the
+    # archive must not be thrown away for it. What changed:
+    #   - the by-age housing-margin DIAG block in print_all_moments, which is
+    #     write statements and nothing else;
+    #   - number_of_beta_types and homeless_death_risk_flat_in_age became
+    #     runtime coordinates rather than compile-time parameters, and BOTH
+    #     default to the value that reproduces the old behaviour exactly
+    #     (one type, Baggett's mortality ratios);
+    #   - freeze_beta_bisection, which defaults to 0 and gates nothing at 0.
+    # A point that passes homeless_death_risk_flat_in_age=0 on dc8abdfbce is
+    # therefore bit-comparable with one measured on d70ad1c545. A point that
+    # passes 1 or 2 is NOT, and is a different economy by intention.
+    'dc8abdfbce': {'d70ad1c545'},
 }
 
 
