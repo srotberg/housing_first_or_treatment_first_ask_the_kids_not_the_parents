@@ -3592,3 +3592,32 @@ two hundred lines of prints.
 `VALIDATE3.txt` re-runs the equal-beta test. If the 2.0 family goes to 1.0 the
 diagnosis holds; tau_l, halved for a reason not yet found, is the test of
 whether it was the ONLY cause.
+
+## TWO BETAS IS THE MODEL NOW. ONE BETA IS STOPPED
+
+The author: "you can stop running the one beta model, let's focus on the two
+beta model", and "i want it calibrated properly first to see what it gives".
+
+`number_of_beta_types` defaults to 2 in both the source and `run_one_point.sh`,
+so nothing runs one type by accident. The DRUGCLOSE run was interrupted; its
+vector is not wasted, it is the base of `TWOBETA_DRUGCLOSE.txt`.
+
+**CALIBRATED PROPERLY MEANS THE MOMENTS HAVE TO BE RIGHT FIRST.** At two types
+`tau_l` and `pi_eu` read half their true values, and both are internal adjuster
+targets: the model would drive the labour income tax rate and the separation
+rate to hit numbers that are wrong by a factor of two, and every parameter
+downstream would land somewhere wrong. `probability_becoming_unemployed` is also
+one of the three instruments the drug repair uses and pi_eu is its moment. So a
+two-type calibration run before the pooling fix is checked is a calibration to
+the wrong targets, which is worse than no calibration because it looks like one.
+
+`VALIDATE3.txt` is that check and it is 30 minutes, against roughly six hours
+for a full calibration loop. It is not a detour from the author's instruction,
+it is the first step of carrying it out.
+
+Order:
+  1. VALIDATE3 -- does the fix take the 2.0 family to 1.0, and does tau_l follow?
+  2. TWOBETA_DRUGCLOSE -- the closed drug vector at two types, impatient beta at
+     0.95 and 0.93, which is where w_bot's target was bracketed.
+  3. TWOBETA_CAL -- already running, the impatient beta bracket at 0.93/0.95/0.97.
+  4. Then the gate, at two types, on whatever survives.

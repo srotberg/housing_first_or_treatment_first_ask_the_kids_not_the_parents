@@ -2200,7 +2200,7 @@
         !
         ! Its only other use is the loop bound in the benchmark driver, so
         ! nothing dimensions on it and a variable is safe here.
-        integer :: number_of_beta_types=1
+        integer :: number_of_beta_types=2
         real(8), parameter :: beta_type_weight=0.5d0
         ! Which type is being solved and measured right now. Read by the value
         ! function recursion in place of a single discount factor.
