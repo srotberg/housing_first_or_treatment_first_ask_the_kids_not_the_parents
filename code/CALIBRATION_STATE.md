@@ -3002,3 +3002,89 @@ still more than ten times short at the extreme of the instrument.
 
 Recorded so the second beta is judged on what it does do -- the wealth
 distribution -- and not on this.
+
+## REPAIR3 MEASURED AGAINST ITS PREDICTION
+
+`REPAIR3_d4ffbfdab5.txt` solved as point `9eedd54f04` (10 min, 4 cores,
+HANDOVER OK: 29 of 29, MODEL `d70ad1c545` -- the same model hash that measured
+`d4ffbfdab5`, so the two points are comparable). Gap is `model/target - 1`, the
+convention that reproduces the starting figures below to a tenth of a per cent.
+
+    moment      start    predicted    measured    landed?
+    b            -33         -8         +33.8      no, overshot the target
+    lambda_d     -43        -13         +38.5      no, overshot the target
+    pi_eu        +15         +3          +5.1      close, still 2 points high
+
+**Two of the three did not land, and they did not miss by falling short -- they
+crossed.** The step was sized to take b from -33 to -8 and lambda_d from -43 to
+-13, that is, to close roughly three quarters of each gap from below. Instead b
+moved +67 points and lambda_d +81 points, landing about as far above target as
+they began below it, and the two gaps are now nearly the same size with the sign
+reversed. The realised move is close to three times the predicted one on b and
+roughly two and a half times on lambda_d.
+
+That is the signature of a Jacobian whose drug-block entries are too small in
+magnitude at this vector, not of a wrong sign or a wrong instrument: every
+direction is the one the linearisation said it would be. `addiction_scalar_1`
+carries the large entries (-26.3 on b, -36.7 on lambda_d) and moved only from
+0.0183295 to 0.0184871, so a modest error in those two numbers is enough to
+account for the overshoot on its own. The condition number of 132 already said
+the three-by-three was poorly conditioned.
+
+pi_eu is the one that behaved: predicted +3, measured +5.1, moving from +15.
+Its own column entry (+0.31) is the smallest in the matrix and most of its
+predicted movement came from the two drug-block columns, so it is worth noting
+that it landed reasonably well even though those columns turned out to be
+mis-scaled -- its remaining error is about the size of the ones that carried it.
+
+**What this says for the next step.** A second repair taken from the same
+Jacobian would be taken from a matrix now known to understate the drug-block
+response by a factor of two to three, and the gaps to close are of the same
+magnitude as the ones just crossed, so it would be at real risk of crossing
+back. The two points `d4ffbfdab5` and `9eedd54f04` differ in three coordinates
+and bracket the target on both b and lambda_d, which is a better basis for the
+next move than the linearisation was: a secant between them is available on
+exactly the moments that matter, and it is fitted to the response the model
+actually showed rather than to the one that was estimated.
+
+### EVERY TARGETED MOMENT AT POINT 9eedd54f04
+
+    moment      model         target        gap
+    sigma_y     0.16905       0.172           -1.7%
+    tau_l       0.239244      0.224           +6.8%
+    omega_l     0.39966       0.4             -0.1%
+    beta        3.90937       3              +30.3%
+    h_2         0.0498483     0.101          -50.6%
+    h_3         0.667475      0.626723        +6.5%
+    gamma       0.184644      0.268          -31.1%
+    h_1         0.00427346    0.00399         +7.1%
+    b           0.119086      0.089          +33.8%
+    lambda_d    0.0509748     0.0368         +38.5%
+    theta       0.18361       0.162          +13.3%
+    aleph       59.3982      80              -25.8%
+    pi_eu       0.0509975     0.0485          +5.1%
+    kappa_ued   0.110628      0.1625         -31.9%
+    kappa_uem   0.377837      0.3            +25.9%
+    p_m         0.0453705     0.0486614       -6.8%
+    lambda_m    0.171129      0.25           -31.5%
+    pi_V        0.273752      0.266           +2.9%
+    cbar        0.010701      0.0042        +154.8%
+    tau_u       0.943635      0.245         +285.2%
+    mu_H        1.34203       1.47321         -8.9%
+    w_bot       0.154122      0.025         +516.5%
+    y_u         0.355095      0.74           -52.0%
+
+`theta` printed a real value, 0.18361, not the -1.0 empty-population sentinel,
+so the drug population was non-empty at this vector.
+
+Four moments outside the drug block are worth flagging as unchanged in
+character rather than as new damage. `w_bot` at +516 is the structural one-beta
+reading recorded above: `discount_factor_impatient` does nothing at
+`number_of_beta_types=1`, and it was +525 at `d4ffbfdab5`. `tau_u` at +285 is
+treatment take-up at zero utility cost and zero money cost, which is the
+configuration this point was run on deliberately; it was +268 before, and the
+utility-cost line elsewhere in this file is the instrument for it. `cbar` and
+`y_u` are likewise close to their values at the previous point. Of the moments
+that were inside ten per cent at `d4ffbfdab5`, `theta` (0.9 -> 13.3) and
+`kappa_uem` (0.2 -> 25.9) were pushed out by this step, which is the cost of
+moving the drug block this far and is worth recovering in whatever comes next.
