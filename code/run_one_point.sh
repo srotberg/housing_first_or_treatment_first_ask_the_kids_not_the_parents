@@ -337,8 +337,39 @@ WANT=$(wc -l < PARAM_HANDOVER.txt)
 ulimit -s unlimited
 echo "running $TAG on $(nproc) cores"
 START=$(date +%s)
+
+# THE LABOR-SUPPLY SECANT WARNING FILLS THE DISK, so it is dropped before it
+# lands. 84c1ee5 "Fix two undefined reads in the secant" changed the guard on
+# the non-convergence warning at line ~20497 from abs(MU_1-MU_1), which is
+# identically zero and so could never fire, to abs(MU_1-MU_2), which is the
+# quantity the warning is about. That is the right condition. But the warning
+# sits in the household's INNER labor-supply solve, it is not throttled, and it
+# emits eleven write statements per occurrence, so on the first point actually
+# solved on that source it wrote past 800,000,000 lines and roughly 22 GB, ran
+# the container out of disk, and killed the run mid-solve -- after the model had
+# been solving for twenty minutes and before a single moment was written. The
+# point file was created at zero bytes and no moment was recorded.
+#
+# NO POINT IN points/ CARRIES A MODEL HASH FROM ON OR AFTER 84c1ee5 (the three
+# hashes since are cd64b3a190, 163f49d500 and 8e0688e2d4, and none of them
+# appears in the archive), so nothing had been solved on the live warning before
+# and this is why it went unnoticed for thirteen commits.
+#
+# THE FILTER IS MEASUREMENT-NEUTRAL. It drops only the twelve debug lines this
+# warning and its neighbours emit, all of which begin at column two because
+# write(*,*) leads with a space. Checked against every archived point: the
+# pattern matches 0 of the 48,144 lines in points/*.txt, so nothing it drops has
+# ever appeared in a moments block, a DIAG line, an INVARIANTS line or a
+# HANDOVER line. The model's arithmetic is untouched; only its stdout is.
+#
+# THIS IS A WORKAROUND AND NOT THE FIX. The fix is in the Fortran -- fire the
+# warning once, or count it and report the count with the invariants -- and it
+# belongs to whoever owns that file.
+SPAM='^ (labor|labor_supply_1=|distance_secant=|loop_1=|MU_1=|MU_2=|x_0=|x_1=|x_2=|addiction_index_1=|consumption_choice=|frac_spent_on_addiction=|taxable_income_1=)'
+set +o pipefail
 OMP_NUM_THREADS=$(nproc) OMP_STACKSIZE=512M GFORTRAN_UNBUFFERED_ALL=1 \
-    ./hftf > "worker_${TAG}.log" 2>&1 || true
+    ./hftf 2>&1 | grep -Ev "$SPAM" > "worker_${TAG}.log" || true
+set -o pipefail
 MINS=$(( ($(date +%s) - START) / 60 ))
 
 # DID THE PARAMETERS ACTUALLY REACH THE MODEL? This is the check that was
