@@ -4135,3 +4135,56 @@ Gating both normalisations fixes the pair.
 **Every two-beta number measured before this is void.** Not scaled by a known
 factor -- the error depends on the size of each denominator, so it differs
 moment by moment. Nothing measured at one beta is affected.
+
+## FIXES 8 TO 12, WORKING THROUGH THE AUDIT
+
+**8. aleph was a LEVEL over a mean, so it scaled with the number of types.**
+[Audit B F4] `model_value_of_life` is a mass-weighted SUM of V/MU and was never
+divided by anything; `model_average_labour_income` is a mean. The driver's own
+comment says to look for exactly this -- "A LEVEL would come out doubled, which
+is why it is worth checking that no targeted moment is one" -- and this one was.
+Normalised to a per-household mean on the last pass. All four sites that read
+`model_value_of_life` read it as this same ratio, so one division fixes them all.
+`vsl_data=80` is defined in the declaration as a multiple of AVERAGE household
+income, so per household is the intended object.
+
+**9. cbar was the second level-over-mean moment.** [Audit B F5] Same shape, but
+`govt_spending_on_food_stamps` is ALSO the government budget's spending line and
+the results file's level, so it cannot be normalised in place. A new
+`model_food_stamps_per_household` is computed once where the pooled mass is
+known, and the moment reads that. Note it read roughly right BEFORE, only
+because the duplicate `govt_revenues_calc` call was halving it; fixing that
+without this would have doubled cbar.
+
+**10. mass_by_age was rebuilt by three routines in sequence.** [Audit B F6] All
+three resets guarded to pass one, all three accumulating every pass, so
+`govt_revenues_calc` ended at M1+M2 (correct), `calculate_welfare_by_
+characteristics` at M1+2*M2 and `calculate_homeownership_by_characteristics` at
+M1+3*M2 -- and the last is where `homelessness_by_age` and `homeownership_by_age`
+are normalised. **The age profile the author asked for was reading half its true
+value.** It is the same quantity in all three, so the first owner's copy is kept
+and the later reset/accumulate pairs are disabled. The call order is the same in
+the driver and in `long_run_counter_factual`, so it is always built before read.
+
+**11. Four trackers reset unguarded.** [Audit C finding 5]
+`model_largest_negative_value_of_life` and
+`smallest_financial_chosen_in_equilibrium` are extreme-value trackers whose
+second-pass reset discarded the patient type's extreme entirely; both have
+guarded twins a line away, which is what marks them as oversights.
+`average_rent_by_age` and `mass_of_renters_by_age` are both halves of a ratio,
+internally consistent but describing only the last type solved.
+
+**12. Three one-type routines unscaled.** [Audit C finding 3, my own regression]
+Recorded above.
+
+## STILL OPEN, AND WHY
+
+  - Audit A finding 1: the treatment take-up distance gates a loop it cannot
+    close. Needs a decision, not a fix: either tau_u is calibrated internally on
+    one of the two costs, or its distance comes out of the loop condition.
+  - Audit E finding 1: the memoised expectation is not keyed on the treatment
+    choice. Counterfactual only, and the fix touches the solver's hot path.
+  - Audit F-04, F-05, F-07, F-10: a probability vector that does not sum to one,
+    an unassigned array index, a race in a `default(none)` region, and two
+    `intent(out)` arguments left unassigned on one path.
+  - Audit B F9 to F14 and Audit G 3 to 12: universe and denominator mismatches.

@@ -2552,6 +2552,16 @@
         ! A vector coordinate, so all three run from one build.
         integer :: homeless_death_risk_flat_in_age=0
         real(8) :: homeless_excess_death_risk=0.00396d0
+
+        ! FOOD STAMPS PER HOUSEHOLD. cbar is the second level-over-mean moment:
+        ! govt_spending_on_food_stamps is an AGGREGATE over the distribution and
+        ! model_average_labour_income is a MEAN, so the ratio scaled with total
+        ! mass. It cannot be normalised in place the way model_value_of_life
+        ! can, because the aggregate is also the government budget's spending
+        ! line (12943) and the results file's level (29603). So the per-household
+        ! figure is computed once, where the pooled mass is known, and the moment
+        ! reads this instead.
+        real(8), dimension(transition_length) :: model_food_stamps_per_household=0
         integer :: mortality_profiles_loaded=0
                             
         ! UNEMPLOYMENT INSURANCE IS NOW CERTAIN FOR THE FIRST YEAR OF A SPELL
@@ -5125,7 +5135,7 @@
             ! calibrated. So this row reports what the programme costs rather
             ! than driving anything.
             write(*,*) "MOMENT cbar      food stamps / labour income model=",&
-                govt_spending_on_food_stamps(1)/max(model_average_labour_income(1),10.d0**(-12)),&
+                model_food_stamps_per_household(1)/max(model_average_labour_income(1),10.d0**(-12)),&
                 " target=", food_stamps_share_data
             write(*,*) "MOMENT tau_u     treatment take up           model=",&
                 model_treatment_take_up(1), " target=", treatment_take_up_data
@@ -7433,7 +7443,11 @@
         if (accumulating_beta_types==0) model_fraction_with_negative_value_of_life(time_period)=0
         if (accumulating_beta_types==0) model_fraction_homeless_with_negative_value_of_life(time_period)=0
         if (accumulating_beta_types==0) model_fraction_addicted_with_negative_value_of_life(time_period)=0
-        model_largest_negative_value_of_life(time_period)=10000000
+        ! A MINIMUM TRACKER. Resetting on the second pass discards the patient type's
+        ! minimum entirely, so the printed lowest value of a period of life was the
+        ! impatient type's alone. Its maximum-tracker twin one line away IS guarded,
+        ! which is what makes this an oversight rather than a decision.
+        if (accumulating_beta_types==0) model_largest_negative_value_of_life(time_period)=10000000
         
         if (accumulating_beta_types==0) profile_by_income_to_avg_income_wide_1(time_period,:,:,:)=0
         if (accumulating_beta_types==0) mass_at_profile_income_to_avg_income_wide_1(time_period,:,:)=0
@@ -7474,8 +7488,12 @@
         if (accumulating_beta_types==0) total_rent_paid(time_period)=0
         if (accumulating_beta_types==0) total_imputed_rents(time_period)=0
           
-        average_rent_by_age=0
-        mass_of_renters_by_age=0
+        ! BOTH HALVES OF A RATIO, unguarded together. The ratio was internally consistent
+        ! but described only the LAST TYPE SOLVED, which matters because the age
+        ! profile of housing is what is being read.
+        if (accumulating_beta_types==0) average_rent_by_age=0
+        ! The denominator of the pair above.
+        if (accumulating_beta_types==0) mass_of_renters_by_age=0
         
         if (accumulating_beta_types==0) sum_of_distribution_not_be_homeless=0
                              
@@ -8916,6 +8934,25 @@
         
         model_average_financial(time_period)=model_financial(time_period)/max(model_mass_with_positive_financial(time_period),10.d0**(-14))
         
+        ! aleph IS A MEAN OVER A MEAN, NOT AN AGGREGATE OVER A MEAN.
+        !
+        ! model_value_of_life is a mass-weighted SUM of V/MU over households and
+        ! was never divided by anything. Its denominator at the print site,
+        ! model_average_labour_income, is a mean. An aggregate over a mean scales
+        ! with total mass, so at two types aleph came out multiplied by the
+        ! number of types -- and the driver's own comment says to look for
+        ! exactly this: "A LEVEL would come out doubled, which is why it is worth
+        ! checking that no targeted moment is one." This one was.
+        !
+        ! vsl_data=80 is defined in the declaration as a multiple of AVERAGE
+        ! household income -- nine million dollars against a mean of $113,000 --
+        ! so the intended object is per household. Every one of the four sites
+        ! that reads model_value_of_life reads it as this same ratio, so
+        ! normalising it here fixes all of them and breaks nothing.
+        if (current_beta_type==number_of_beta_types) &
+            model_value_of_life(time_period)=model_value_of_life(time_period)/&
+            max(sum_of_distribution,10.d0**(-14))
+
         model_GDP(time_period)=model_output(time_period)
         
         model_total_income(time_period)=model_output(time_period)+&
@@ -9343,7 +9380,9 @@
         if (accumulating_beta_types==0) fraction_with_largest_housing_size_consumed_in_eqilibrium=0
         if (accumulating_beta_types==0) fraction_with_smallest_financial_in_eqilibrium=0
         if (accumulating_beta_types==0) largest_financial_chosen_in_equilibrium=0
-        smallest_financial_chosen_in_equilibrium=financial_grid_size
+        ! SAME CLASS as the minimum tracker above, and its own guarded twin sits on the
+        ! line above it.
+        if (accumulating_beta_types==0) smallest_financial_chosen_in_equilibrium=financial_grid_size
         
         if (accumulating_beta_types==0) total_housing_demand(time_period)=0
         if (accumulating_beta_types==0) total_rental_demand(time_period,:)=0
@@ -12903,6 +12942,10 @@
         
         fraction_using_MID(time_period)=fraction_using_MID(time_period)/sum_of_distribution
                    
+        if (current_beta_type==number_of_beta_types) &
+            model_food_stamps_per_household(time_period)=&
+            govt_spending_on_food_stamps(time_period)/max(sum_of_distribution,10.d0**(-14))
+
         model_average_labour_income_tax(time_period)=&
             govt_revenues_from_labour_income(time_period)/(model_total_efficiency_units(time_period)+&
             model_financial(time_period)*risk_free_rate(time_period))
@@ -13626,7 +13669,21 @@
         time_period_used=time_period-solve_transition_dynamics
                 
         if (accumulating_beta_types==0) welfare_by_age(time_period,:)=0
-        if (accumulating_beta_types==0) mass_by_age(time_period,:)=0
+        ! OWNED BY govt_revenues_calc, WHICH RUNS FIRST. Reset and accumulation disabled here.
+        ! mass_by_age was reset AND accumulated in three routines that run in
+        ! sequence inside the two-pass loop, every reset guarded to the first pass.
+        ! So on pass two each routine added another copy of the second type on top
+        ! of what the previous one left: govt_revenues_calc ended at M1+M2, which is
+        ! correct, this routine at M1+2*M2, and calculate_homeownership_by_
+        ! characteristics at M1+3*M2 -- and the last is where homelessness_by_age
+        ! and homeownership_by_age are normalised, so the age profile the author is
+        ! reading came out at half its true value.
+        !
+        ! It is the same quantity in all three, so the first owner's copy is the one
+        ! to keep. The call order is govt_revenues_calc, then this, then
+        ! calculate_homeownership_by_characteristics, in the driver AND in
+        ! long_run_counter_factual, so the value is always built before it is read.
+        ! if (accumulating_beta_types==0) mass_by_age(time_period,:)=0
         
         if (accumulating_beta_types==0) welfare_by_age_and_addiction(time_period,:,:)=0
         if (accumulating_beta_types==0) mass_by_age_and_addiciton(time_period,:,:)=0
@@ -13849,8 +13906,22 @@
                                             
                                     end if
                                                                                 
-                                    mass_by_age(time_period,age_index)=mass_by_age(time_period,age_index)+&
-                                        distribution_mass_used
+                                    ! OWNED BY govt_revenues_calc, WHICH RUNS FIRST. Reset and accumulation disabled here.
+                                    ! mass_by_age was reset AND accumulated in three routines that run in
+                                    ! sequence inside the two-pass loop, every reset guarded to the first pass.
+                                    ! So on pass two each routine added another copy of the second type on top
+                                    ! of what the previous one left: govt_revenues_calc ended at M1+M2, which is
+                                    ! correct, this routine at M1+2*M2, and calculate_homeownership_by_
+                                    ! characteristics at M1+3*M2 -- and the last is where homelessness_by_age
+                                    ! and homeownership_by_age are normalised, so the age profile the author is
+                                    ! reading came out at half its true value.
+                                    !
+                                    ! It is the same quantity in all three, so the first owner's copy is the one
+                                    ! to keep. The call order is govt_revenues_calc, then this, then
+                                    ! calculate_homeownership_by_characteristics, in the driver AND in
+                                    ! long_run_counter_factual, so the value is always built before it is read.
+                                    ! mass_by_age(time_period,age_index)=mass_by_age(time_period,age_index)+&
+                                    ! distribution_mass_used
                                                                             
                                     mass_by_employment_and_age(time_period,employment_index,age_index)=&
                                         mass_by_employment_and_age(time_period,employment_index,age_index)+&
@@ -14982,7 +15053,21 @@
         if (accumulating_beta_types==0) homeownership_by_age(time_period,:)=0
         if (accumulating_beta_types==0) model_assets_by_age(time_period,:)=0
         if (accumulating_beta_types==0) housing_size_by_age(time_period,:)=0
-        if (accumulating_beta_types==0) mass_by_age(time_period,:)=0
+        ! OWNED BY govt_revenues_calc, WHICH RUNS FIRST. Reset and accumulation disabled here.
+        ! mass_by_age was reset AND accumulated in three routines that run in
+        ! sequence inside the two-pass loop, every reset guarded to the first pass.
+        ! So on pass two each routine added another copy of the second type on top
+        ! of what the previous one left: govt_revenues_calc ended at M1+M2, which is
+        ! correct, this routine at M1+2*M2, and calculate_homeownership_by_
+        ! characteristics at M1+3*M2 -- and the last is where homelessness_by_age
+        ! and homeownership_by_age are normalised, so the age profile the author is
+        ! reading came out at half its true value.
+        !
+        ! It is the same quantity in all three, so the first owner's copy is the one
+        ! to keep. The call order is govt_revenues_calc, then this, then
+        ! calculate_homeownership_by_characteristics, in the driver AND in
+        ! long_run_counter_factual, so the value is always built before it is read.
+        ! if (accumulating_beta_types==0) mass_by_age(time_period,:)=0
         if (accumulating_beta_types==0) homelessness_by_age(time_period,:)=0
         if (accumulating_beta_types==0) homelessness_by_age_group(time_period,:)=0
         if (accumulating_beta_types==0) val_homeless_band(time_period,:)=0
@@ -15463,8 +15548,22 @@
                                     housing_size_by_age(time_period,age_index)=housing_size_by_age(time_period,age_index)+&
                                         lived_in_size_used*distribution_mass_used
                                     
-                                    mass_by_age(time_period,age_index)=mass_by_age(time_period,age_index)+&
-                                        distribution_mass_used
+                                    ! OWNED BY govt_revenues_calc, WHICH RUNS FIRST. Reset and accumulation disabled here.
+                                    ! mass_by_age was reset AND accumulated in three routines that run in
+                                    ! sequence inside the two-pass loop, every reset guarded to the first pass.
+                                    ! So on pass two each routine added another copy of the second type on top
+                                    ! of what the previous one left: govt_revenues_calc ended at M1+M2, which is
+                                    ! correct, this routine at M1+2*M2, and calculate_homeownership_by_
+                                    ! characteristics at M1+3*M2 -- and the last is where homelessness_by_age
+                                    ! and homeownership_by_age are normalised, so the age profile the author is
+                                    ! reading came out at half its true value.
+                                    !
+                                    ! It is the same quantity in all three, so the first owner's copy is the one
+                                    ! to keep. The call order is govt_revenues_calc, then this, then
+                                    ! calculate_homeownership_by_characteristics, in the driver AND in
+                                    ! long_run_counter_factual, so the value is always built before it is read.
+                                    ! mass_by_age(time_period,age_index)=mass_by_age(time_period,age_index)+&
+                                    ! distribution_mass_used
 
                                     ! THE HOMELESSNESS RATE BY BAND NEEDS ITS OWN
                                     ! DENOMINATOR. homelessness_by_age_group is
