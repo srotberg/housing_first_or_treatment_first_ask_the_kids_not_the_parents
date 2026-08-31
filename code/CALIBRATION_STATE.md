@@ -2134,3 +2134,52 @@ numbers.
 `calculate_homeownership_by_characteristics` is NOT affected by today's halved
 denominator bug. Both `homelessness_by_age` and its denominator `mass_by_age`
 have guarded resets, so both pool across the two passes and the ratio is right.
+
+## THE FIX WORKS, AND MY ACCOUNT OF WHAT IT INVALIDATED WAS WRONG
+
+Measured, not predicted. Same vector, same equal betas, fixed model against the
+voided one:
+
+    DIAG histogram mass / distribution (want 1.0)
+        void   2.0000407534
+        fixed  1.0000203306        <- repaired
+
+    moment      fixed        void      new/old
+    lambda_d    0.0028915    0.0057831   0.500
+    pi_V        0.17305      0.12561     1.378
+    w_bot       0.15929      0.031967    4.983
+    every other moment                   1.000
+
+**Three moments moved. Not twenty.** I wrote in the section above that every
+level moment was exactly double its truth, and gave a table of corrected values
+for b, h_1 and lambda_d. That table was reasoning from the mechanism, not
+measurement, and it was wrong on two rows of three:
+
+    b at kappa 8   really is 0.02777, NOT 0.01388
+    b at kappa 6   really is 0.35445, NOT 0.17722
+    h_1            really is 0.00416, NOT 0.00208
+    lambda_d       WAS doubled; 0.00578 -> 0.00289 is right
+
+So **kappa=6 does overshoot b by four times**, exactly as first recorded, and
+the walk-back of that in the section above should be ignored. The 8-to-6 bracket
+still brackets b's target, but far less comfortably than the corrected numbers
+suggested.
+
+The bug bites only where a POOLED numerator meets a RECOMPUTED denominator.
+`lambda_d` is `model_fraction_addicted`, accumulated in the big loop of
+`stationary_equilibrium_statistics` with a guarded reset, divided by
+`sum_of_distribution` -- one of each, so it doubled. `b` and `h_1` come out of
+`govt_revenues_calc` and did not move, so whatever their numerators do they are
+in step with their denominator. The class is narrow and the only way to find its
+members is to measure, which is what the one-pass comparison now running is for.
+
+`w_bot` is the one that matters. At 0.15929 it is finally in line with the
+one-beta readings of 0.157, 0.131 and 0.176, which is the check that the
+percentile walk is now reading the median of a pooled histogram rather than the
+25th percentile of it. Against a target of 0.025 it is 537 per cent too high --
+which is the gap the impatient beta was added to close, now measurable for the
+first time.
+
+RULE, AGAIN, HAVING BROKEN IT: MEASURE BEFORE BELIEVING IT. The instruction is
+in this file and in the engine prompt, and I still published a table of
+"corrected" values derived from a mechanism rather than from a run.
