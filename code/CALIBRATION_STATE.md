@@ -1927,3 +1927,52 @@ whether that cost time on every point in that period.
 and the tax rate has to respond to the income distribution to hold average tax at
 target -- and the distribution is about to move a long way under kappa and the
 two betas.
+
+## THE DEATH MULTIPLIER IS THE CLIFF, CONFIRMED. kappa 8 -> 6, betas held equal
+
+    income band      kappa 8    kappa 6     NSDUH
+        1             2.2%       33.4%      13.7%
+        2             1.6%       11.9%      13.1%
+        3             0.2%       36.8%       9.1%
+        4             0.2%       50.2%      10.2%
+        5             0.02%      43.1%       7.9%
+        6             0.000%     20.0%       7.2%
+        7             0.000%      0.7%       4.8%
+
+**The cliff is gone.** Bands 6 and 7 went from literally zero to 20.0 and 0.7 per
+cent. The rich do start using once the death risk falls, which is the mechanism
+the author proposed and it is now measured rather than argued.
+
+    income of drug users   0.1702 -> 0.41991   target 0.740
+    b                      0.0246 -> 0.35445   target 0.089
+    lambda_d               0.0071 -> 0.25177   target 0.0368
+    h_1                    0.00391 -> 0.00592  target 0.00399
+    aleph                  57.5 -> 144.4       target 80
+
+**8 to 6 massively overshoots.** A third of the population uses. So kappa=4 is
+off the table rather than a floor that might be needed, and the bracket should
+eventually narrow -- but not before the kappa=4 point lands and confirms the
+slope, since one interval is not a curve.
+
+## kappa AND addiction_scalar_1 MUST BE SOLVED JOINTLY, NOT IN TURN
+
+Interpolating kappa from b alone gives 6.97. Extrapolating it from y_u alone
+gives 5.01. They disagree by two, and neither is usable:
+
+- b's target lies INSIDE the 8-to-6 bracket, so its interpolation is sound as far
+  as it goes -- but b is not kappa's moment, it is addiction_scalar_1's.
+- y_u's target lies OUTSIDE the bracket, so its number is an extrapolation. Worse,
+  the y_u reading of 0.42 at kappa 6 is INFLATED because b is 0.354 there: when a
+  third of the population uses, users are close to the population and their
+  average income drifts toward one for reasons that have nothing to do with the
+  mechanism. The same artefact as the two-beta point.
+
+So the next step is a two-by-two on (kappa_phi_d_level, addiction_scalar_1)
+against (y_u, b), not a step on either alone. kappa sets WHO uses -- the income
+gradient -- and addiction_scalar_1 sets HOW MANY. TWOBETA2 lines 2 and 3 are the
+addiction_scalar_1 column and are still solving; the kappa column is these two
+points. When both are in the two-by-two can be solved on measured columns.
+
+**y_u is only readable where b is near 0.089.** That has never yet been true on
+any point in this model version, which is why the income of drug users still has
+no trustworthy reading.
