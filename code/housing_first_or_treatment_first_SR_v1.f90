@@ -2138,7 +2138,38 @@
         real(8) :: distance_advantage_to_owning
         real(8) :: stopping_rule_advantage_to_owning=10.d0**(-3)
                
+        ! TWO DISCOUNT FACTORS, HALF THE HOUSEHOLDS EACH, ON THE AUTHOR'S
+        ! INSTRUCTION. A household is born patient or impatient and never
+        ! switches, so the two types share prices and the government budget and
+        ! nothing else.
+        !
+        ! Neither is assigned. The author set both brackets: the PATIENT one on
+        ! wealth over output inside its 3.0-4.5 band, which is what
+        ! discount_factor was already calibrated on, and the IMPATIENT one on
+        ! the wealth share of the bottom half, target 0.025, which the model
+        ! currently misses at 0.131 -- more than five times too fat, and the
+        ! moment that most wants this change.
+        integer, parameter :: number_of_beta_types=2
+        real(8), parameter :: beta_type_weight=0.5d0
+        ! Which type is being solved and measured right now. Read by the value
+        ! function recursion in place of a single discount factor.
+        integer :: current_beta_type=1
+        ! Set to one for every pass after the first, so the moment accumulators
+        ! sum across types instead of being reset. Every ratio in the moment
+        ! block is formed from accumulated components, so forming it again on
+        ! the last pass gives the mixture rather than the last type.
+        integer :: accumulating_beta_types=0
+        real(8) :: discount_factor_patient_saved=0
+
         real(8) :: discount_factor=(1-perceived_probability_lower)*0.944+perceived_probability_lower*0.951
+        ! The impatient type. Started well below the patient one so the two are
+        ! distinct from the first solve; it is calibrated from there.
+        real(8) :: discount_factor_impatient=(1-perceived_probability_lower)*0.900+perceived_probability_lower*0.907
+        real(8) :: discount_factor_impatient_adjuster=5*10.d0**(-3)
+        real(8) :: distance_discount_factor_impatient
+        real(8) :: stopping_rule_discount_factor_impatient=10.d0**(-3)
+        ! The target the author set for it.
+        real(8), parameter :: bottom_half_wealth_share_data=0.025d0
         real(8) :: discount_factor_adjuster=5*10.d0**(-3)
         real(8) :: distance_discount_factor
         ! A RATIO OF THREE CANNOT BE HIT TO ONE PART IN THIRTY THOUSAND. The old
@@ -5132,8 +5163,11 @@
             write(*,*) "UNTARGETED earnings share, top tenth         model=",&
                 1.d0-val_earn_top_1/max(val_earn_total_1,10.d0**(-14)), " observed=", 0.411d0
 
-            write(*,*) "UNTARGETED net worth share, bottom half      model=",&
-                model_bottom_half_wealth_share(1), " observed=", 0.0252d0
+            ! THE IMPATIENT TYPE'S BRACKET, set by the author. This was
+            ! untargeted while there was one discount factor and nothing could
+            ! move it; the impatient beta owns it now.
+            write(*,*) "MOMENT w_bot     net worth share, bottom half model=",&
+                model_bottom_half_wealth_share(1), " target=", bottom_half_wealth_share_data
 
             ! COST BURDEN AMONG RENTERS, at the same two cuts the model has
             ! been carrying all along and never read: 0.30 and 0.50 of
@@ -7043,18 +7077,18 @@
                                     
         time_period_used=time_period-solve_transition_dynamics
         
-        rent_to_income_cdf(time_period,:)=0
+        if (accumulating_beta_types==0) rent_to_income_cdf(time_period,:)=0
                         
-        income_to_avg_income_wide_pdf_1(time_period,:)=0
+        if (accumulating_beta_types==0) income_to_avg_income_wide_pdf_1(time_period,:)=0
         
-        median_income_cdf(time_period,:)=0
-        rent_to_income_homeless_cdf(time_period,:)=0
+        if (accumulating_beta_types==0) median_income_cdf(time_period,:)=0
+        if (accumulating_beta_types==0) rent_to_income_homeless_cdf(time_period,:)=0
         total_homeless_1=0
-        LTV_cdf(time_period,:)=0
+        if (accumulating_beta_types==0) LTV_cdf(time_period,:)=0
         total_renters_to_consider=0    
         total_owners_to_consider=0
         
-        model_total_net_wealth(time_period)=0
+        if (accumulating_beta_types==0) model_total_net_wealth(time_period)=0
         wealth_hist_mass=0
         wealth_hist_wealth=0
         income_hist_mass=0
@@ -7062,91 +7096,91 @@
         income_hist_income=0
         diag_mass_top_financial=0
         diag_mass_top3_financial=0
-        model_youngest_net_wealth_share(time_period)=0
-        model_net_wealth_owners(time_period)=0
-        model_net_wealth_renters(time_period)=0
-        model_total_owners(time_period)=0
-        model_total_renters(time_period)=0
-        model_financial(time_period)=0
-        model_mass_with_positive_financial(time_period)=0
-        model_average_financial(time_period)=0
-        model_financial_renters(time_period)=0
-        model_output(time_period)=0
-        model_total_income(time_period)=0
-        model_total_efficiency_units(time_period)=0
-        model_labor_supply(time_period)=0
-        model_fraction_choose_zero_work(time_period)=0
-        model_fraction_choose_little_work(time_period)=0
-        model_mass_can_work(time_period)=0
-        model_total_hours(time_period)=0
-        model_net_housing_wealth(time_period)=0
-        model_gross_housing_wealth(time_period)=0
-        model_mortgages(time_period)=0
-        model_bequests(time_period)=0
-        model_total_inheritance(time_period)=0
+        if (accumulating_beta_types==0) model_youngest_net_wealth_share(time_period)=0
+        if (accumulating_beta_types==0) model_net_wealth_owners(time_period)=0
+        if (accumulating_beta_types==0) model_net_wealth_renters(time_period)=0
+        if (accumulating_beta_types==0) model_total_owners(time_period)=0
+        if (accumulating_beta_types==0) model_total_renters(time_period)=0
+        if (accumulating_beta_types==0) model_financial(time_period)=0
+        if (accumulating_beta_types==0) model_mass_with_positive_financial(time_period)=0
+        if (accumulating_beta_types==0) model_average_financial(time_period)=0
+        if (accumulating_beta_types==0) model_financial_renters(time_period)=0
+        if (accumulating_beta_types==0) model_output(time_period)=0
+        if (accumulating_beta_types==0) model_total_income(time_period)=0
+        if (accumulating_beta_types==0) model_total_efficiency_units(time_period)=0
+        if (accumulating_beta_types==0) model_labor_supply(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_choose_zero_work(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_choose_little_work(time_period)=0
+        if (accumulating_beta_types==0) model_mass_can_work(time_period)=0
+        if (accumulating_beta_types==0) model_total_hours(time_period)=0
+        if (accumulating_beta_types==0) model_net_housing_wealth(time_period)=0
+        if (accumulating_beta_types==0) model_gross_housing_wealth(time_period)=0
+        if (accumulating_beta_types==0) model_mortgages(time_period)=0
+        if (accumulating_beta_types==0) model_bequests(time_period)=0
+        if (accumulating_beta_types==0) model_total_inheritance(time_period)=0
         value_of_bequests_by_age(:)=0
         bequests_mass_by_age(:)=0
-        model_youngest_assets(time_period)=0
-        model_financial_bequests(time_period)=0
-        model_fraction_leaving_bequests(time_period)=0
-        model_fraction_leaving_housing_bequests(time_period)=0
-        mass_dying(time_period)=0
-        total_renters_income(time_period)=0
-        mass_of_owners(time_period)=0
-        mass_of_legit_renters(time_period)=0
-        model_avg_rent_to_income_ratio(time_period)=0
-        model_avg_mortgage_spending(time_period)=0
-        model_avg_housing_spending_owners(time_period)=0
-        model_avg_housing_spending_all(time_period)=0
-        model_avg_housing_spending_renters(time_period)=0
-        model_mass_renters_to_consider(time_period)=0
-        model_fraction_homeless(time_period)=0
-        model_homeless_2_years_or_more(time_period)=0
-        profile_of_chronic_homeless(time_period,:)=0
-        mass_profile_of_chornic_homeless(time_period,:)=0        
-        model_homelessness_old(time_period)=0
+        if (accumulating_beta_types==0) model_youngest_assets(time_period)=0
+        if (accumulating_beta_types==0) model_financial_bequests(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_leaving_bequests(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_leaving_housing_bequests(time_period)=0
+        if (accumulating_beta_types==0) mass_dying(time_period)=0
+        if (accumulating_beta_types==0) total_renters_income(time_period)=0
+        if (accumulating_beta_types==0) mass_of_owners(time_period)=0
+        if (accumulating_beta_types==0) mass_of_legit_renters(time_period)=0
+        if (accumulating_beta_types==0) model_avg_rent_to_income_ratio(time_period)=0
+        if (accumulating_beta_types==0) model_avg_mortgage_spending(time_period)=0
+        if (accumulating_beta_types==0) model_avg_housing_spending_owners(time_period)=0
+        if (accumulating_beta_types==0) model_avg_housing_spending_all(time_period)=0
+        if (accumulating_beta_types==0) model_avg_housing_spending_renters(time_period)=0
+        if (accumulating_beta_types==0) model_mass_renters_to_consider(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_homeless(time_period)=0
+        if (accumulating_beta_types==0) model_homeless_2_years_or_more(time_period)=0
+        if (accumulating_beta_types==0) profile_of_chronic_homeless(time_period,:)=0
+        if (accumulating_beta_types==0) mass_profile_of_chornic_homeless(time_period,:)=0
+        if (accumulating_beta_types==0) model_homelessness_old(time_period)=0
         model_profile_of_homeless_old(:)=0
         model_addiction_by_employment(:)=0
-        model_fraction_homeless_owners(time_period)=0
-        model_fraction_of_homeless_unemployed(time_period)=0
-        model_fraction_addicted_who_are_homeless(time_period)=0
-        model_fraction_of_unemployed_homeless(time_period)=0
-        model_fraction_of_homeless_and_addicted_unemployed(time_period)=0
-        model_mass_homeless_raw(time_period)=0
-        model_mass_homeless_working_age(time_period)=0
-        model_mass_total_raw(time_period)=0
-        model_mass_smi(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_homeless_owners(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_of_homeless_unemployed(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_addicted_who_are_homeless(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_of_unemployed_homeless(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_of_homeless_and_addicted_unemployed(time_period)=0
+        if (accumulating_beta_types==0) model_mass_homeless_raw(time_period)=0
+        if (accumulating_beta_types==0) model_mass_homeless_working_age(time_period)=0
+        if (accumulating_beta_types==0) model_mass_total_raw(time_period)=0
+        if (accumulating_beta_types==0) model_mass_smi(time_period)=0
         model_smi_mass_by_age(:)=0
         model_mass_by_age(:)=0
         model_users_by_age(:)=0
         model_alive_by_age(:)=0
         newborn_parent_share_acc(:,:,:)=0
-        model_smi_and_homeless(time_period)=0
-        model_smi_and_employed(time_period)=0
-        model_homeless_labour_income(time_period)=0
-        model_all_labour_income(time_period)=0
-        model_smi_share_of_homeless(time_period)=0
-        model_employment_rate_given_smi(time_period)=0
-        model_homeless_income_share(time_period)=0
-        model_employed_share_of_homeless(time_period)=0
+        if (accumulating_beta_types==0) model_smi_and_homeless(time_period)=0
+        if (accumulating_beta_types==0) model_smi_and_employed(time_period)=0
+        if (accumulating_beta_types==0) model_homeless_labour_income(time_period)=0
+        if (accumulating_beta_types==0) model_all_labour_income(time_period)=0
+        if (accumulating_beta_types==0) model_smi_share_of_homeless(time_period)=0
+        if (accumulating_beta_types==0) model_employment_rate_given_smi(time_period)=0
+        if (accumulating_beta_types==0) model_homeless_income_share(time_period)=0
+        if (accumulating_beta_types==0) model_employed_share_of_homeless(time_period)=0
 
-        model_fraction_unemployed(time_period)=0
-        model_fraction_unemployed_on_ui(time_period)=0
-        model_sum_of_lowest_productivities(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_unemployed(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_unemployed_on_ui(time_period)=0
+        if (accumulating_beta_types==0) model_sum_of_lowest_productivities(time_period)=0
         model_median_assets_to_income(:)=0
         
-        model_fraction_addicted(time_period)=0
-        model_fraction_addicted_and_unemployed(time_period)=0
-        model_fraction_homeless_and_addicted(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_addicted(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_addicted_and_unemployed(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_homeless_and_addicted(time_period)=0
         
-        model_value_of_life(time_period)=0
-        model_fraction_with_negative_value_of_life(time_period)=0
-        model_fraction_homeless_with_negative_value_of_life(time_period)=0
-        model_fraction_addicted_with_negative_value_of_life(time_period)=0
+        if (accumulating_beta_types==0) model_value_of_life(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_with_negative_value_of_life(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_homeless_with_negative_value_of_life(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_addicted_with_negative_value_of_life(time_period)=0
         model_largest_negative_value_of_life(time_period)=10000000
         
-        profile_by_income_to_avg_income_wide_1(time_period,:,:,:)=0
-        mass_at_profile_income_to_avg_income_wide_1(time_period,:,:)=0
+        if (accumulating_beta_types==0) profile_by_income_to_avg_income_wide_1(time_period,:,:,:)=0
+        if (accumulating_beta_types==0) mass_at_profile_income_to_avg_income_wide_1(time_period,:,:)=0
                 
         do i=1,number_of_grids_rent_to_income_cdf
         
@@ -7166,23 +7200,23 @@
             
         end do
         
-        model_total_workers(time_period)=0
+        if (accumulating_beta_types==0) model_total_workers(time_period)=0
         
         model_average_income_previous=model_average_income(time_period)
         model_average_income_plus_assets_previous=model_average_income_plus_assets(time_period)
         model_average_income_plus_all_assets_previous=model_average_income_plus_all_assets(time_period)
                 
-        model_average_labour_income(time_period)=0
-        model_average_income(time_period)=0
-        model_average_income_plus_assets(time_period)=0
-        model_average_income_plus_all_assets(time_period)=0
-        model_average_ss_benefits(time_period)=0
+        if (accumulating_beta_types==0) model_average_labour_income(time_period)=0
+        if (accumulating_beta_types==0) model_average_income(time_period)=0
+        if (accumulating_beta_types==0) model_average_income_plus_assets(time_period)=0
+        if (accumulating_beta_types==0) model_average_income_plus_all_assets(time_period)=0
+        if (accumulating_beta_types==0) model_average_ss_benefits(time_period)=0
         
-        model_average_labour_income_by_employment(time_period,:)=0
-        mass_by_employment(time_period,:)=0
+        if (accumulating_beta_types==0) model_average_labour_income_by_employment(time_period,:)=0
+        if (accumulating_beta_types==0) mass_by_employment(time_period,:)=0
         
-        total_rent_paid(time_period)=0
-        total_imputed_rents(time_period)=0        
+        if (accumulating_beta_types==0) total_rent_paid(time_period)=0
+        if (accumulating_beta_types==0) total_imputed_rents(time_period)=0
           
         average_rent_by_age=0
         mass_of_renters_by_age=0
@@ -8706,7 +8740,7 @@
 
         else
 
-            model_fraction_unemployed(time_period)=0
+            if (accumulating_beta_types==0) model_fraction_unemployed(time_period)=0
 
         end if
         
@@ -8727,7 +8761,7 @@
 
         else
 
-            model_fraction_of_homeless_unemployed(time_period)=0
+            if (accumulating_beta_types==0) model_fraction_of_homeless_unemployed(time_period)=0
 
         end if
 
@@ -8746,7 +8780,7 @@
 
         else
 
-            model_smi_share_of_homeless(time_period)=0
+            if (accumulating_beta_types==0) model_smi_share_of_homeless(time_period)=0
 
         end if
 
@@ -8761,7 +8795,7 @@
 
         else
 
-            model_homeless_income_share(time_period)=0
+            if (accumulating_beta_types==0) model_homeless_income_share(time_period)=0
 
         end if
 
@@ -8953,22 +8987,22 @@
                             
         time_period_used=time_period-solve_transition_dynamics
                         
-        model_fraction_of_homeowners_with_mortgage(time_period)=0
-        model_fraction_of_homeowners_with_mortgage_over_20_perc(time_period)=0
-        model_fraction_of_homeowners_with_mortgage_over_80_perc(time_period)=0
-        model_fraction_of_homeowners_with_mortgage_over_90_perc(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_of_homeowners_with_mortgage(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_of_homeowners_with_mortgage_over_20_perc(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_of_homeowners_with_mortgage_over_80_perc(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_of_homeowners_with_mortgage_over_90_perc(time_period)=0
         
-        model_average_owner_occupied_unit_size(time_period)=0
-        model_average_owner_occupied_unit_size_to_income(time_period)=0
-        model_average_owner_occupied_unit_size_to_income_work_age(time_period)=0
-        working_age_mass(time_period)=0
-        model_average_owners_income(time_period)=0
-        model_average_rental_unit_size(time_period)=0
-        model_average_rent(time_period)=0
-        mass_of_renters(time_period)=0
-        model_wealth_of_renters(time_period)=0
-        mass_of_owners(time_period)=0    
-        mass_of_owners_with_mortgage(time_period)=0
+        if (accumulating_beta_types==0) model_average_owner_occupied_unit_size(time_period)=0
+        if (accumulating_beta_types==0) model_average_owner_occupied_unit_size_to_income(time_period)=0
+        if (accumulating_beta_types==0) model_average_owner_occupied_unit_size_to_income_work_age(time_period)=0
+        if (accumulating_beta_types==0) working_age_mass(time_period)=0
+        if (accumulating_beta_types==0) model_average_owners_income(time_period)=0
+        if (accumulating_beta_types==0) model_average_rental_unit_size(time_period)=0
+        if (accumulating_beta_types==0) model_average_rent(time_period)=0
+        if (accumulating_beta_types==0) mass_of_renters(time_period)=0
+        if (accumulating_beta_types==0) model_wealth_of_renters(time_period)=0
+        if (accumulating_beta_types==0) mass_of_owners(time_period)=0
+        if (accumulating_beta_types==0) mass_of_owners_with_mortgage(time_period)=0
                 
         largest_housing_size_consumed_in_equilibrium=0
         fraction_with_largest_housing_size_consumed_in_eqilibrium=0
@@ -8976,35 +9010,35 @@
         largest_financial_chosen_in_equilibrium=0
         smallest_financial_chosen_in_equilibrium=financial_grid_size
         
-        total_housing_demand(time_period)=0
-        total_rental_demand(time_period,:)=0
-        total_rental_demand_segmented(time_period,:)=0
-        renters_by_rental(time_period,:)=0
-        total_renters(time_period)=0
+        if (accumulating_beta_types==0) total_housing_demand(time_period)=0
+        if (accumulating_beta_types==0) total_rental_demand(time_period,:)=0
+        if (accumulating_beta_types==0) total_rental_demand_segmented(time_period,:)=0
+        if (accumulating_beta_types==0) renters_by_rental(time_period,:)=0
+        if (accumulating_beta_types==0) total_renters(time_period)=0
                 
-        average_age_of_homeowner_by_employment(time_period,:)=0
-        mass_homeowners_by_employment(time_period,:)=0
-        mass_renters_by_age(time_period,:)=0
+        if (accumulating_beta_types==0) average_age_of_homeowner_by_employment(time_period,:)=0
+        if (accumulating_beta_types==0) mass_homeowners_by_employment(time_period,:)=0
+        if (accumulating_beta_types==0) mass_renters_by_age(time_period,:)=0
             
-        model_mass_switchers(time_period)=0
-        model_age_switchers_to_renting(time_period)=0
-        model_prod_switchers_to_renting(time_period)=0
-        model_financial_switchers_to_renting(time_period)=0
-        model_house_size_switchers_to_renting(time_period)=0 
+        if (accumulating_beta_types==0) model_mass_switchers(time_period)=0
+        if (accumulating_beta_types==0) model_age_switchers_to_renting(time_period)=0
+        if (accumulating_beta_types==0) model_prod_switchers_to_renting(time_period)=0
+        if (accumulating_beta_types==0) model_financial_switchers_to_renting(time_period)=0
+        if (accumulating_beta_types==0) model_house_size_switchers_to_renting(time_period)=0
         
-        model_mass_non_switcher_renters(time_period)=0
-        model_age_non_switcher_renters(time_period)=0
-        model_prod_non_switcher_renters(time_period)=0
-        model_financial_non_switcher_renters(time_period)=0
-        model_house_size_non_switcher_renters(time_period)=0
+        if (accumulating_beta_types==0) model_mass_non_switcher_renters(time_period)=0
+        if (accumulating_beta_types==0) model_age_non_switcher_renters(time_period)=0
+        if (accumulating_beta_types==0) model_prod_non_switcher_renters(time_period)=0
+        if (accumulating_beta_types==0) model_financial_non_switcher_renters(time_period)=0
+        if (accumulating_beta_types==0) model_house_size_non_switcher_renters(time_period)=0
         
-        model_mass_switchers_mortgages(time_period)=0
-        model_age_switchers_mortgages_to_renting(time_period)=0
-        model_prod_switchers_mortgages_to_renting(time_period)=0
-        model_financial_switchers_mortgages_to_renting(time_period)=0
-        model_house_size_switchers_mortgages_to_renting(time_period)=0
+        if (accumulating_beta_types==0) model_mass_switchers_mortgages(time_period)=0
+        if (accumulating_beta_types==0) model_age_switchers_mortgages_to_renting(time_period)=0
+        if (accumulating_beta_types==0) model_prod_switchers_mortgages_to_renting(time_period)=0
+        if (accumulating_beta_types==0) model_financial_switchers_mortgages_to_renting(time_period)=0
+        if (accumulating_beta_types==0) model_house_size_switchers_mortgages_to_renting(time_period)=0
         
-        mass_by_age_and_employment(time_period,:,:)=0
+        if (accumulating_beta_types==0) mass_by_age_and_employment(time_period,:,:)=0
         
         do age_index=1,life_span
                     
@@ -9364,7 +9398,7 @@
 
         else
 
-            model_housing_size_dist(time_period,:)=0
+            if (accumulating_beta_types==0) model_housing_size_dist(time_period,:)=0
 
         end if
         
@@ -9486,7 +9520,7 @@
                     
         end do
                   
-        total_rental_supply(time_period,:)=0
+        if (accumulating_beta_types==0) total_rental_supply(time_period,:)=0
     
         if (is_counterfactual==1) then
         
@@ -10543,145 +10577,145 @@
                                     
         time_period_used=time_period-solve_transition_dynamics
         
-        govt_revenues_from_labour_income(time_period)=0
-        govt_spending_on_mortgage_interest_deductions(time_period)=0
-        fraction_using_MID(time_period)=0
-        govt_revenues_from_consumption(time_period)=0
-        govt_revenues_from_investment_income(time_period)=0
-        govt_revenues_from_property_tax(time_period)=0
-        govt_lump_sum_transfers(time_period)=0
-        govt_spending_on_ss(time_period)=0
-        govt_ss_wasted(time_period)=0
-        govt_spending_on_ui(time_period)=0
-        govt_spending_on_di(time_period)=0
-        govt_spending_on_homeless(time_period)=0
-        govt_spending_on_addicts(time_period)=0
-        govt_spending_on_food_stamps(time_period)=0
-        model_fraction_spent_on_addiction(time_period)=0
-        model_fraction_spent_on_addiction_experimenters(time_period)=0
-        model_addicted_total_addiction_spending_to_total_income(time_period)=0
-        model_addicted_total_income(time_period)=0
-        model_experimenters_total_drug_spending_to_total_income(time_period)=0
-        model_experimenters_total_income(time_period)=0
+        if (accumulating_beta_types==0) govt_revenues_from_labour_income(time_period)=0
+        if (accumulating_beta_types==0) govt_spending_on_mortgage_interest_deductions(time_period)=0
+        if (accumulating_beta_types==0) fraction_using_MID(time_period)=0
+        if (accumulating_beta_types==0) govt_revenues_from_consumption(time_period)=0
+        if (accumulating_beta_types==0) govt_revenues_from_investment_income(time_period)=0
+        if (accumulating_beta_types==0) govt_revenues_from_property_tax(time_period)=0
+        if (accumulating_beta_types==0) govt_lump_sum_transfers(time_period)=0
+        if (accumulating_beta_types==0) govt_spending_on_ss(time_period)=0
+        if (accumulating_beta_types==0) govt_ss_wasted(time_period)=0
+        if (accumulating_beta_types==0) govt_spending_on_ui(time_period)=0
+        if (accumulating_beta_types==0) govt_spending_on_di(time_period)=0
+        if (accumulating_beta_types==0) govt_spending_on_homeless(time_period)=0
+        if (accumulating_beta_types==0) govt_spending_on_addicts(time_period)=0
+        if (accumulating_beta_types==0) govt_spending_on_food_stamps(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_spent_on_addiction(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_spent_on_addiction_experimenters(time_period)=0
+        if (accumulating_beta_types==0) model_addicted_total_addiction_spending_to_total_income(time_period)=0
+        if (accumulating_beta_types==0) model_addicted_total_income(time_period)=0
+        if (accumulating_beta_types==0) model_experimenters_total_drug_spending_to_total_income(time_period)=0
+        if (accumulating_beta_types==0) model_experimenters_total_income(time_period)=0
         total_addited_1=0
-        model_addicted(time_period)=0
-        model_exprimenters(time_period)=0
-        model_total_drug_users(time_period)=0 
-        model_average_drug_spending_experimenters(time_period)=0
-        model_fraction_light_users(time_period)=0
-        addiction_share_of_income_by_employment(time_period,:)=0
-        percent_addicted_by_employment(time_period,:)=0
-        percent_homeless_by_employment(time_period,:)=0
-        mass_by_employment(time_period,:)=0
-        total_mass_by_employment(time_period,:)=0
-        drug_quantity_by_employment(time_period,:)=0
-        clean_mass_by_employment(time_period,:)=0
-        onset_hazard_by_employment(time_period,:)=0
-        clean_consumption_by_employment(time_period,:)=0
-        model_average_spent_on_addiction_by_addicted(time_period)=0
-        model_treatment_take_up(time_period)=0
+        if (accumulating_beta_types==0) model_addicted(time_period)=0
+        if (accumulating_beta_types==0) model_exprimenters(time_period)=0
+        if (accumulating_beta_types==0) model_total_drug_users(time_period)=0
+        if (accumulating_beta_types==0) model_average_drug_spending_experimenters(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_light_users(time_period)=0
+        if (accumulating_beta_types==0) addiction_share_of_income_by_employment(time_period,:)=0
+        if (accumulating_beta_types==0) percent_addicted_by_employment(time_period,:)=0
+        if (accumulating_beta_types==0) percent_homeless_by_employment(time_period,:)=0
+        if (accumulating_beta_types==0) mass_by_employment(time_period,:)=0
+        if (accumulating_beta_types==0) total_mass_by_employment(time_period,:)=0
+        if (accumulating_beta_types==0) drug_quantity_by_employment(time_period,:)=0
+        if (accumulating_beta_types==0) clean_mass_by_employment(time_period,:)=0
+        if (accumulating_beta_types==0) onset_hazard_by_employment(time_period,:)=0
+        if (accumulating_beta_types==0) clean_consumption_by_employment(time_period,:)=0
+        if (accumulating_beta_types==0) model_average_spent_on_addiction_by_addicted(time_period)=0
+        if (accumulating_beta_types==0) model_treatment_take_up(time_period)=0
 
-        val_treat_mass(time_period)=0
-        val_treat_homeless(time_period)=0
-        val_treat_smi(time_period)=0
-        val_treat_homeless_working(time_period)=0
-        val_lfp_sud_num(time_period)=0
-        val_lfp_sud_den(time_period)=0
-        val_lfp_clean_num(time_period)=0
-        val_lfp_clean_den(time_period)=0
-        val_lfp_sud_work_den(time_period)=0
-        val_lfp_clean_work_den(time_period)=0
-        val_deaths_all_young(time_period)=0
-        val_deaths_clean_young(time_period)=0
-        model_mass_with_sud(time_period)=0
-        model_sud_mass_housed(time_period)=0
-        model_sud_mass_homeless(time_period)=0
-        model_recovery_housed(time_period)=0
-        model_recovery_homeless(time_period)=0
-        model_drugs_used_by_users_on_average(time_period)=0
-        model_drugs_consumed_by_users(time_period)=0
-        model_drugs_used_by_experimenters_on_average(time_period)=0
-        model_mass_addicts(time_period)=0
-        model_drugs_used_by_addicts_on_average(time_period)=0
-        model_mass_experimenters(time_period)=0
-        model_mass_total_users(time_period)=0
-        employment_mass(time_period,:)=0
-        govt_spending_on_housing_vouchers(time_period)=0
-        govt_spending_on_housing_vouchers_2(time_period)=0
-        model_eligibles_getting_voucher(time_period)=0
-        model_eligibles_getting_voucher_relative_to_pop(time_period)=0
-        model_addicts_getting_voucher(time_period)=0
-        model_homeowners_experimenting(time_period)=0
-        model_experimenters_getting_voucher(time_period)=0
-        model_drug_users_getting_voucher(time_period)=0
-        model_avg_income_experimenters(time_period)=0
-        model_avg_income_drug_users(time_period)=0
-        val_user_band(time_period,:)=0
-        val_user_sud_band(time_period,:)=0
-        val_user_inc_band(time_period,:)=0
-        val_user_age_num(time_period)=0
-        val_user_mass_age(time_period)=0
-        val_user_income_working(time_period)=0
-        val_user_mass_working(time_period)=0
-        val_buy_mass(time_period)=0
-        val_buy_C(time_period)=0
-        val_buy_income(time_period)=0
-        val_nobuy_mass(time_period)=0
-        val_nobuy_C(time_period)=0
-        val_nobuy_income(time_period)=0
-        model_avg_assets_experimenters(time_period)=0
-        model_eligibles(time_period)=0
-        model_fraction_recieving_food_stamps(time_period)=0
-        model_fraction_homeless_recieving_food_stamps(time_period)=0
-        model_food_stamps_share_to_homeless(time_period)=0
-        model_fraction_homeless(time_period)=0
-        model_fraction_recieving_housing_vouchers(time_period)=0
-        net_govt_revenues(time_period)=0
+        if (accumulating_beta_types==0) val_treat_mass(time_period)=0
+        if (accumulating_beta_types==0) val_treat_homeless(time_period)=0
+        if (accumulating_beta_types==0) val_treat_smi(time_period)=0
+        if (accumulating_beta_types==0) val_treat_homeless_working(time_period)=0
+        if (accumulating_beta_types==0) val_lfp_sud_num(time_period)=0
+        if (accumulating_beta_types==0) val_lfp_sud_den(time_period)=0
+        if (accumulating_beta_types==0) val_lfp_clean_num(time_period)=0
+        if (accumulating_beta_types==0) val_lfp_clean_den(time_period)=0
+        if (accumulating_beta_types==0) val_lfp_sud_work_den(time_period)=0
+        if (accumulating_beta_types==0) val_lfp_clean_work_den(time_period)=0
+        if (accumulating_beta_types==0) val_deaths_all_young(time_period)=0
+        if (accumulating_beta_types==0) val_deaths_clean_young(time_period)=0
+        if (accumulating_beta_types==0) model_mass_with_sud(time_period)=0
+        if (accumulating_beta_types==0) model_sud_mass_housed(time_period)=0
+        if (accumulating_beta_types==0) model_sud_mass_homeless(time_period)=0
+        if (accumulating_beta_types==0) model_recovery_housed(time_period)=0
+        if (accumulating_beta_types==0) model_recovery_homeless(time_period)=0
+        if (accumulating_beta_types==0) model_drugs_used_by_users_on_average(time_period)=0
+        if (accumulating_beta_types==0) model_drugs_consumed_by_users(time_period)=0
+        if (accumulating_beta_types==0) model_drugs_used_by_experimenters_on_average(time_period)=0
+        if (accumulating_beta_types==0) model_mass_addicts(time_period)=0
+        if (accumulating_beta_types==0) model_drugs_used_by_addicts_on_average(time_period)=0
+        if (accumulating_beta_types==0) model_mass_experimenters(time_period)=0
+        if (accumulating_beta_types==0) model_mass_total_users(time_period)=0
+        if (accumulating_beta_types==0) employment_mass(time_period,:)=0
+        if (accumulating_beta_types==0) govt_spending_on_housing_vouchers(time_period)=0
+        if (accumulating_beta_types==0) govt_spending_on_housing_vouchers_2(time_period)=0
+        if (accumulating_beta_types==0) model_eligibles_getting_voucher(time_period)=0
+        if (accumulating_beta_types==0) model_eligibles_getting_voucher_relative_to_pop(time_period)=0
+        if (accumulating_beta_types==0) model_addicts_getting_voucher(time_period)=0
+        if (accumulating_beta_types==0) model_homeowners_experimenting(time_period)=0
+        if (accumulating_beta_types==0) model_experimenters_getting_voucher(time_period)=0
+        if (accumulating_beta_types==0) model_drug_users_getting_voucher(time_period)=0
+        if (accumulating_beta_types==0) model_avg_income_experimenters(time_period)=0
+        if (accumulating_beta_types==0) model_avg_income_drug_users(time_period)=0
+        if (accumulating_beta_types==0) val_user_band(time_period,:)=0
+        if (accumulating_beta_types==0) val_user_sud_band(time_period,:)=0
+        if (accumulating_beta_types==0) val_user_inc_band(time_period,:)=0
+        if (accumulating_beta_types==0) val_user_age_num(time_period)=0
+        if (accumulating_beta_types==0) val_user_mass_age(time_period)=0
+        if (accumulating_beta_types==0) val_user_income_working(time_period)=0
+        if (accumulating_beta_types==0) val_user_mass_working(time_period)=0
+        if (accumulating_beta_types==0) val_buy_mass(time_period)=0
+        if (accumulating_beta_types==0) val_buy_C(time_period)=0
+        if (accumulating_beta_types==0) val_buy_income(time_period)=0
+        if (accumulating_beta_types==0) val_nobuy_mass(time_period)=0
+        if (accumulating_beta_types==0) val_nobuy_C(time_period)=0
+        if (accumulating_beta_types==0) val_nobuy_income(time_period)=0
+        if (accumulating_beta_types==0) model_avg_assets_experimenters(time_period)=0
+        if (accumulating_beta_types==0) model_eligibles(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_recieving_food_stamps(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_homeless_recieving_food_stamps(time_period)=0
+        if (accumulating_beta_types==0) model_food_stamps_share_to_homeless(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_homeless(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_recieving_housing_vouchers(time_period)=0
+        if (accumulating_beta_types==0) net_govt_revenues(time_period)=0
         
-        model_fraction_addicted_homeless_no_vouchers(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_addicted_homeless_no_vouchers(time_period)=0
         frac_getting_vouchers=0
         
         total_homeless_1=0
         total_addicted_and_homeless_1=0
-        model_fraction_homeless_by_choice(time_period)=0
-        val_homeless_afford_on_income(time_period)=0
-        model_addicted_and_homeless_by_choice(time_period)=0         
+        if (accumulating_beta_types==0) model_fraction_homeless_by_choice(time_period)=0
+        if (accumulating_beta_types==0) val_homeless_afford_on_income(time_period)=0
+        if (accumulating_beta_types==0) model_addicted_and_homeless_by_choice(time_period)=0
         
-        model_avg_homeless_income(time_period)=0
-        model_avg_homeless_after_tax_income(time_period)=0
-        model_avg_homeless_tax_to_income(time_period)=0
-        model_avg_homeless_assets(time_period)=0
-        model_average_income_of_homeless_addicted(time_period)=0
-        model_average_assets_addicted_and_homeless(time_period)=0
+        if (accumulating_beta_types==0) model_avg_homeless_income(time_period)=0
+        if (accumulating_beta_types==0) model_avg_homeless_after_tax_income(time_period)=0
+        if (accumulating_beta_types==0) model_avg_homeless_tax_to_income(time_period)=0
+        if (accumulating_beta_types==0) model_avg_homeless_assets(time_period)=0
+        if (accumulating_beta_types==0) model_average_income_of_homeless_addicted(time_period)=0
+        if (accumulating_beta_types==0) model_average_assets_addicted_and_homeless(time_period)=0
         
-        model_average_assets_homeless_by_addiction(time_period,:)=0
-        model_average_income_homeless_by_addiction(time_period,:)=0
-        model_average_income_addicted(time_period)=0
-        model_average_assets_addicted(time_period)=0
-        model_average_assets_drug_users(time_period)=0
-        model_mass_by_homeless_and_addiction(time_period,:)=0
+        if (accumulating_beta_types==0) model_average_assets_homeless_by_addiction(time_period,:)=0
+        if (accumulating_beta_types==0) model_average_income_homeless_by_addiction(time_period,:)=0
+        if (accumulating_beta_types==0) model_average_income_addicted(time_period)=0
+        if (accumulating_beta_types==0) model_average_assets_addicted(time_period)=0
+        if (accumulating_beta_types==0) model_average_assets_drug_users(time_period)=0
+        if (accumulating_beta_types==0) model_mass_by_homeless_and_addiction(time_period,:)=0
         
-        model_age_by_addiction(time_period,:)=0
-        model_mass_age_by_addiction(time_period,:)=0
+        if (accumulating_beta_types==0) model_age_by_addiction(time_period,:)=0
+        if (accumulating_beta_types==0) model_mass_age_by_addiction(time_period,:)=0
         
-        model_addiction_rate_by_age(time_period,:)=0
-        model_experimentation_choice_by_age(time_period,:)=0
-        model_drug_use_by_age_group(time_period,:)=0
-        model_drug_use_percent_by_age_group(time_period,:)=0
+        if (accumulating_beta_types==0) model_addiction_rate_by_age(time_period,:)=0
+        if (accumulating_beta_types==0) model_experimentation_choice_by_age(time_period,:)=0
+        if (accumulating_beta_types==0) model_drug_use_by_age_group(time_period,:)=0
+        if (accumulating_beta_types==0) model_drug_use_percent_by_age_group(time_period,:)=0
         
-        addiction_rate_by_age(time_period,:)=0
-        homeless_and_addiction_rate_by_age(time_period,:)=0
-        mass_by_age(time_period,:)=0
+        if (accumulating_beta_types==0) addiction_rate_by_age(time_period,:)=0
+        if (accumulating_beta_types==0) homeless_and_addiction_rate_by_age(time_period,:)=0
+        if (accumulating_beta_types==0) mass_by_age(time_period,:)=0
         
-        model_fraction_choose_addiction_when_unemployed(time_period)=0
-        model_choose_addiction_when_income_is_low(time_period)=0
-        model_fraction_choose_addiction_when_homeless(time_period)=0
-        model_choose_addiction_when_retired(time_period)=0
-        model_fraction_choose_addiction(time_period)=0
-        model_mass_choose_addiction(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_choose_addiction_when_unemployed(time_period)=0
+        if (accumulating_beta_types==0) model_choose_addiction_when_income_is_low(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_choose_addiction_when_homeless(time_period)=0
+        if (accumulating_beta_types==0) model_choose_addiction_when_retired(time_period)=0
+        if (accumulating_beta_types==0) model_fraction_choose_addiction(time_period)=0
+        if (accumulating_beta_types==0) model_mass_choose_addiction(time_period)=0
         
-        model_unemployment_by_employment(time_period,:)=0
-        mass_by_employment_1(time_period,:)=0
+        if (accumulating_beta_types==0) model_unemployment_by_employment(time_period,:)=0
+        if (accumulating_beta_types==0) mass_by_employment_1(time_period,:)=0
                 
         do age_index=1,life_span
         
@@ -12112,7 +12146,7 @@
 
             else
 
-                addiction_share_of_income_by_employment(time_period,employment_index)=0
+                if (accumulating_beta_types==0) addiction_share_of_income_by_employment(time_period,employment_index)=0
 
             end if
                 
@@ -12141,8 +12175,8 @@
 
             else
 
-                percent_addicted_by_employment(time_period,employment_index)=0
-                percent_homeless_by_employment(time_period,employment_index)=0
+                if (accumulating_beta_types==0) percent_addicted_by_employment(time_period,employment_index)=0
+                if (accumulating_beta_types==0) percent_homeless_by_employment(time_period,employment_index)=0
 
             end if
 
@@ -12169,9 +12203,9 @@
 
             else
 
-                drug_quantity_by_employment(time_period,employment_index)=0
-                onset_hazard_by_employment(time_period,employment_index)=0
-                clean_consumption_by_employment(time_period,employment_index)=0
+                if (accumulating_beta_types==0) drug_quantity_by_employment(time_period,employment_index)=0
+                if (accumulating_beta_types==0) onset_hazard_by_employment(time_period,employment_index)=0
+                if (accumulating_beta_types==0) clean_consumption_by_employment(time_period,employment_index)=0
 
             end if
             
@@ -12392,27 +12426,27 @@
 
         time_period_used=time_period-solve_transition_dynamics
                 
-        mass_of_renters_at_housing_spending(time_period,:)=0
-        mass_of_homeowners_at_housing_spending(time_period,:)=0
+        if (accumulating_beta_types==0) mass_of_renters_at_housing_spending(time_period,:)=0
+        if (accumulating_beta_types==0) mass_of_homeowners_at_housing_spending(time_period,:)=0
         
-        model_rent_burden_by_age(time_period,:,:)=0
-        mass_renters_by_age(time_period,:)=0
+        if (accumulating_beta_types==0) model_rent_burden_by_age(time_period,:,:)=0
+        if (accumulating_beta_types==0) mass_renters_by_age(time_period,:)=0
         
         mass_of_renters_1=0
-        val_burden50_by_unit(time_period,:)=0
-        val_mass_by_unit(time_period,:)=0
+        if (accumulating_beta_types==0) val_burden50_by_unit(time_period,:)=0
+        if (accumulating_beta_types==0) val_mass_by_unit(time_period,:)=0
 
-        val_burden50_expend_all(time_period)=0
-        val_mass_expend_all(time_period)=0
-        val_burden50_expend_housed(time_period)=0
-        val_mass_expend_housed(time_period)=0
-        val_hous_expend_num(time_period)=0
-        val_hous_expend_den(time_period)=0
+        if (accumulating_beta_types==0) val_burden50_expend_all(time_period)=0
+        if (accumulating_beta_types==0) val_mass_expend_all(time_period)=0
+        if (accumulating_beta_types==0) val_burden50_expend_housed(time_period)=0
+        if (accumulating_beta_types==0) val_mass_expend_housed(time_period)=0
+        if (accumulating_beta_types==0) val_hous_expend_num(time_period)=0
+        if (accumulating_beta_types==0) val_hous_expend_den(time_period)=0
 
-        val_voucher_mass(time_period)=0
-        val_voucher_rent(time_period)=0
-        val_voucher_income(time_period)=0
-        val_voucher_wage_led(time_period)=0
+        if (accumulating_beta_types==0) val_voucher_mass(time_period)=0
+        if (accumulating_beta_types==0) val_voucher_rent(time_period)=0
+        if (accumulating_beta_types==0) val_voucher_income(time_period)=0
+        if (accumulating_beta_types==0) val_voucher_wage_led(time_period)=0
         
         do age_index=1,life_span
         
@@ -12831,10 +12865,10 @@
                 
         time_period_used=time_period-solve_transition_dynamics
         
-        average_welfare_of_all_cohorts(time_period)=0
-        average_welfare_of_youngest_cohort(time_period)=0
-        average_welfare_of_youngest_by_quintile(time_period,:)=0
-        population_by_quintile(time_period,:)=0
+        if (accumulating_beta_types==0) average_welfare_of_all_cohorts(time_period)=0
+        if (accumulating_beta_types==0) average_welfare_of_youngest_cohort(time_period)=0
+        if (accumulating_beta_types==0) average_welfare_of_youngest_by_quintile(time_period,:)=0
+        if (accumulating_beta_types==0) population_by_quintile(time_period,:)=0
         
         do age_index=1,life_span
         
@@ -13018,74 +13052,74 @@
 
         time_period_used=time_period-solve_transition_dynamics
                 
-        welfare_by_age(time_period,:)=0
-        mass_by_age(time_period,:)=0
+        if (accumulating_beta_types==0) welfare_by_age(time_period,:)=0
+        if (accumulating_beta_types==0) mass_by_age(time_period,:)=0
         
-        welfare_by_age_and_addiction(time_period,:,:)=0
-        mass_by_age_and_addiciton(time_period,:,:)=0
+        if (accumulating_beta_types==0) welfare_by_age_and_addiction(time_period,:,:)=0
+        if (accumulating_beta_types==0) mass_by_age_and_addiciton(time_period,:,:)=0
         
-        welfare_by_employment_and_age(time_period,:,:)=0
-        mass_by_employment_and_age(time_period,:,:)=0
+        if (accumulating_beta_types==0) welfare_by_employment_and_age(time_period,:,:)=0
+        if (accumulating_beta_types==0) mass_by_employment_and_age(time_period,:,:)=0
         
-        welfare_by_employment(time_period,:)=0
-        welfare_by_employment_youngest(time_period,:)=0
-        welfare_by_employment_youngest_old_dist(time_period,:)=0        
-        mass_by_employment(time_period,:)=0
-        mass_by_employment_youngest(time_period,:)=0
-        wealth_by_employment(time_period,:)=0
+        if (accumulating_beta_types==0) welfare_by_employment(time_period,:)=0
+        if (accumulating_beta_types==0) welfare_by_employment_youngest(time_period,:)=0
+        if (accumulating_beta_types==0) welfare_by_employment_youngest_old_dist(time_period,:)=0
+        if (accumulating_beta_types==0) mass_by_employment(time_period,:)=0
+        if (accumulating_beta_types==0) mass_by_employment_youngest(time_period,:)=0
+        if (accumulating_beta_types==0) wealth_by_employment(time_period,:)=0
         
-        welfare_by_addiction(time_period,:)=0
-        welfare_by_addiction_youngest(time_period,:)=0
-        lowest_welfare_of_addicted(time_period,:)=0
-        mass_by_addiction(time_period,:)=0
-        mass_by_addiction_youngest(time_period,:)=0
+        if (accumulating_beta_types==0) welfare_by_addiction(time_period,:)=0
+        if (accumulating_beta_types==0) welfare_by_addiction_youngest(time_period,:)=0
+        if (accumulating_beta_types==0) lowest_welfare_of_addicted(time_period,:)=0
+        if (accumulating_beta_types==0) mass_by_addiction(time_period,:)=0
+        if (accumulating_beta_types==0) mass_by_addiction_youngest(time_period,:)=0
         
-        welfare_by_homelessness(time_period,:)=0
-        mass_by_homelessness(time_period,:)=0
+        if (accumulating_beta_types==0) welfare_by_homelessness(time_period,:)=0
+        if (accumulating_beta_types==0) mass_by_homelessness(time_period,:)=0
         
-        fraction_with_mortgage(time_period,:)=0
-        fraction_renters_by_employment(time_period,:)=0
-        average_age_of_homeowner(time_period,:)=0
-        MID_share_by_employment(time_period,:)=0
+        if (accumulating_beta_types==0) fraction_with_mortgage(time_period,:)=0
+        if (accumulating_beta_types==0) fraction_renters_by_employment(time_period,:)=0
+        if (accumulating_beta_types==0) average_age_of_homeowner(time_period,:)=0
+        if (accumulating_beta_types==0) MID_share_by_employment(time_period,:)=0
         
-        welfare_by_unemployment(time_period,:)=0
-        mass_by_unemployment(time_period,:)=0
+        if (accumulating_beta_types==0) welfare_by_unemployment(time_period,:)=0
+        if (accumulating_beta_types==0) mass_by_unemployment(time_period,:)=0
                 
-        mass_of_renters_by_employment(time_period,:)=0
+        if (accumulating_beta_types==0) mass_of_renters_by_employment(time_period,:)=0
                 
-        average_income(time_period,:)=0
-        average_housing_costs(time_period,:)=0
-        average_consumption(time_period,:)=0
+        if (accumulating_beta_types==0) average_income(time_period,:)=0
+        if (accumulating_beta_types==0) average_housing_costs(time_period,:)=0
+        if (accumulating_beta_types==0) average_consumption(time_period,:)=0
         
-        average_house_inheritance(time_period,:)=0
-        average_house_non_inheritance(time_period,:)=0
+        if (accumulating_beta_types==0) average_house_inheritance(time_period,:)=0
+        if (accumulating_beta_types==0) average_house_non_inheritance(time_period,:)=0
         
-        mass_inheritance(time_period,:)=0
-        mass_non_inheritance(time_period,:)=0
+        if (accumulating_beta_types==0) mass_inheritance(time_period,:)=0
+        if (accumulating_beta_types==0) mass_non_inheritance(time_period,:)=0
         
-        welfare_by_employment_and_tenure(time_period,:,:)=0
-        wealth_by_employment_and_tenure(time_period,:,:)=0
-        consumption_by_employment_and_tenure(time_period,:,:)=0
-        housing_by_employment_and_tenure(time_period,:,:)=0
-        mortgage_by_employment_and_tenure(time_period,:,:)=0
-        mortgage_by_employment(time_period,:)=0
-        mass_by_mortgage_and_employment(time_period,:)=0
-        mass_by_employment_and_tenure(time_period,:,:)=0
+        if (accumulating_beta_types==0) welfare_by_employment_and_tenure(time_period,:,:)=0
+        if (accumulating_beta_types==0) wealth_by_employment_and_tenure(time_period,:,:)=0
+        if (accumulating_beta_types==0) consumption_by_employment_and_tenure(time_period,:,:)=0
+        if (accumulating_beta_types==0) housing_by_employment_and_tenure(time_period,:,:)=0
+        if (accumulating_beta_types==0) mortgage_by_employment_and_tenure(time_period,:,:)=0
+        if (accumulating_beta_types==0) mortgage_by_employment(time_period,:)=0
+        if (accumulating_beta_types==0) mass_by_mortgage_and_employment(time_period,:)=0
+        if (accumulating_beta_types==0) mass_by_employment_and_tenure(time_period,:,:)=0
         
-        welfare_by_employment_tenure_and_age(time_period,:,:,:)=0
-        mortgage_by_employment_tenure_and_age(time_period,:,:,:)=0
-        mass_by_employment_tenure_and_age(time_period,:,:,:)=0
+        if (accumulating_beta_types==0) welfare_by_employment_tenure_and_age(time_period,:,:,:)=0
+        if (accumulating_beta_types==0) mortgage_by_employment_tenure_and_age(time_period,:,:,:)=0
+        if (accumulating_beta_types==0) mass_by_employment_tenure_and_age(time_period,:,:,:)=0
         
-        welfare_by_ownership_status(time_period,:,:)=0
-        mass_by_ownership_status(time_period,:,:)=0
+        if (accumulating_beta_types==0) welfare_by_ownership_status(time_period,:,:)=0
+        if (accumulating_beta_types==0) mass_by_ownership_status(time_period,:,:)=0
         
-        mortgage_to_house_value_ratio_of_owners_by_age(time_period,:)=0
-        mass_mortgage_to_house_value_ratio_of_owners_by_age(time_period,:)=0
+        if (accumulating_beta_types==0) mortgage_to_house_value_ratio_of_owners_by_age(time_period,:)=0
+        if (accumulating_beta_types==0) mass_mortgage_to_house_value_ratio_of_owners_by_age(time_period,:)=0
         
-        model_LTV_by_age_group(time_period,:)=0
-        mass_LTV_by_age_group(time_period,:)=0
-        model_homeownership_by_age_group(time_period,:)=0
-        mass_by_age_group(time_period,:)=0
+        if (accumulating_beta_types==0) model_LTV_by_age_group(time_period,:)=0
+        if (accumulating_beta_types==0) mass_LTV_by_age_group(time_period,:)=0
+        if (accumulating_beta_types==0) model_homeownership_by_age_group(time_period,:)=0
+        if (accumulating_beta_types==0) mass_by_age_group(time_period,:)=0
         
         do age_index=1,life_span
                     
@@ -14285,46 +14319,46 @@
                         
         time_period_used=time_period-solve_transition_dynamics
         
-        homeownership_by_employment(time_period,:)=0
-        tenure_by_employment(time_period,:,:)=0
-        tenure_by_income_quintile(time_period,:,:)=0
-        rent_burden_by_income_quintile(time_period,:)=0
-        MID_share_by_income_quintile(time_period,:)=0
-        mass_by_income_quintile(time_period,:)=0
-        MID_itemizers_by_income_quintile(time_period,:)=0
-        housing_size_by_employment(time_period,:)=0
-        housing_size_by_employment_and_tenure(time_period,:,:)=0
-        mass_by_tenure_and_employment(time_period,:,:)=0
-        housing_size_by_employment_and_age(time_period,:,:)=0
-        consumption_by_employment_and_age(time_period,:,:)=0
-        wealth_by_employment_and_age(time_period,:,:)=0
-        mass_by_employment(time_period,:)=0
-        mass_by_employment_and_age(time_period,:,:)=0
-        homeownership_by_age(time_period,:)=0
-        model_assets_by_age(time_period,:)=0
-        housing_size_by_age(time_period,:)=0
-        mass_by_age(time_period,:)=0
-        homelessness_by_age(time_period,:)=0
-        homelessness_by_age_group(time_period,:)=0
-        val_homeless_band(time_period,:)=0
-        val_mass_band(time_period,:)=0
-        val_sud_band(time_period,:)=0
-        val_homeless_sud_band(time_period,:)=0
+        if (accumulating_beta_types==0) homeownership_by_employment(time_period,:)=0
+        if (accumulating_beta_types==0) tenure_by_employment(time_period,:,:)=0
+        if (accumulating_beta_types==0) tenure_by_income_quintile(time_period,:,:)=0
+        if (accumulating_beta_types==0) rent_burden_by_income_quintile(time_period,:)=0
+        if (accumulating_beta_types==0) MID_share_by_income_quintile(time_period,:)=0
+        if (accumulating_beta_types==0) mass_by_income_quintile(time_period,:)=0
+        if (accumulating_beta_types==0) MID_itemizers_by_income_quintile(time_period,:)=0
+        if (accumulating_beta_types==0) housing_size_by_employment(time_period,:)=0
+        if (accumulating_beta_types==0) housing_size_by_employment_and_tenure(time_period,:,:)=0
+        if (accumulating_beta_types==0) mass_by_tenure_and_employment(time_period,:,:)=0
+        if (accumulating_beta_types==0) housing_size_by_employment_and_age(time_period,:,:)=0
+        if (accumulating_beta_types==0) consumption_by_employment_and_age(time_period,:,:)=0
+        if (accumulating_beta_types==0) wealth_by_employment_and_age(time_period,:,:)=0
+        if (accumulating_beta_types==0) mass_by_employment(time_period,:)=0
+        if (accumulating_beta_types==0) mass_by_employment_and_age(time_period,:,:)=0
+        if (accumulating_beta_types==0) homeownership_by_age(time_period,:)=0
+        if (accumulating_beta_types==0) model_assets_by_age(time_period,:)=0
+        if (accumulating_beta_types==0) housing_size_by_age(time_period,:)=0
+        if (accumulating_beta_types==0) mass_by_age(time_period,:)=0
+        if (accumulating_beta_types==0) homelessness_by_age(time_period,:)=0
+        if (accumulating_beta_types==0) homelessness_by_age_group(time_period,:)=0
+        if (accumulating_beta_types==0) val_homeless_band(time_period,:)=0
+        if (accumulating_beta_types==0) val_mass_band(time_period,:)=0
+        if (accumulating_beta_types==0) val_sud_band(time_period,:)=0
+        if (accumulating_beta_types==0) val_homeless_sud_band(time_period,:)=0
         
-        wealth_by_age_renter(time_period,:)=0
-        income_by_age_renter(time_period,:)=0
-        consumption_by_age_renter(time_period,:)=0
-        consumption_by_age(time_period,:)=0
-        housing_consumption_by_age_renter(time_period,:)=0
-        mass_by_age_and_renter(time_period,:)=0
+        if (accumulating_beta_types==0) wealth_by_age_renter(time_period,:)=0
+        if (accumulating_beta_types==0) income_by_age_renter(time_period,:)=0
+        if (accumulating_beta_types==0) consumption_by_age_renter(time_period,:)=0
+        if (accumulating_beta_types==0) consumption_by_age(time_period,:)=0
+        if (accumulating_beta_types==0) housing_consumption_by_age_renter(time_period,:)=0
+        if (accumulating_beta_types==0) mass_by_age_and_renter(time_period,:)=0
         
-        model_drug_use_by_income_quintile(time_period,:)=0
-        mass_by_income_quintile_1(time_period,:)=0
+        if (accumulating_beta_types==0) model_drug_use_by_income_quintile(time_period,:)=0
+        if (accumulating_beta_types==0) mass_by_income_quintile_1(time_period,:)=0
 
-        profile_by_income_quintile(time_period,:,:,:)=0
-        mass_by_income_quintile_2(time_period,:,:)=0
+        if (accumulating_beta_types==0) profile_by_income_quintile(time_period,:,:,:)=0
+        if (accumulating_beta_types==0) mass_by_income_quintile_2(time_period,:,:)=0
         
-        model_addicts_consuming_no_drugs(time_period)=0
+        if (accumulating_beta_types==0) model_addicts_consuming_no_drugs(time_period)=0
         mass_of_addicts=0
         
         total_MID_value=0
@@ -27309,31 +27343,31 @@
                 
         time_period_used=time_period-solve_transition_dynamics
         
-        aggregate_housing_consumption(time_period)=0
-        aggregate_housing_transaction_costs(time_period)=0
-        aggregate_consumption(time_period)=0
-        aggregate_total_consumption(time_period)=0
-        val_nowage_working(time_period)=0
-        val_mass_working(time_period)=0
-        val_neg_life_mass(time_period)=0
+        if (accumulating_beta_types==0) aggregate_housing_consumption(time_period)=0
+        if (accumulating_beta_types==0) aggregate_housing_transaction_costs(time_period)=0
+        if (accumulating_beta_types==0) aggregate_consumption(time_period)=0
+        if (accumulating_beta_types==0) aggregate_total_consumption(time_period)=0
+        if (accumulating_beta_types==0) val_nowage_working(time_period)=0
+        if (accumulating_beta_types==0) val_mass_working(time_period)=0
+        if (accumulating_beta_types==0) val_neg_life_mass(time_period)=0
         val_life_min(time_period)=10.d0**(10)
-        val_ugoods_users(time_period)=0
-        val_umass_users(time_period)=0
-        val_ugoods_others(time_period)=0
-        val_umass_others(time_period)=0
-        aggregate_spending_on_addiction(time_period)=0
-        aggregate_mortgage_consumption(time_period)=0
-        aggregate_rent_spending(time_period)=0
-        aggregate_origination_costs(time_period)=0
-        aggregate_prepayment_costs(time_period)=0
-        aggregate_moving_costs(time_period)=0
-        model_average_LTV_at_orgination(time_period)=0
-        model_average_LTV_at_orgination_2(time_period)=0
-        model_mass_origination(time_period)=0
-        model_mass_origination_2(time_period)=0
-        homeowners_refinancing_own_home(time_period)=0
-        refinanced_mortgages(time_period)=0
-        homeowners_originating_mortgage(time_period)=0
+        if (accumulating_beta_types==0) val_ugoods_users(time_period)=0
+        if (accumulating_beta_types==0) val_umass_users(time_period)=0
+        if (accumulating_beta_types==0) val_ugoods_others(time_period)=0
+        if (accumulating_beta_types==0) val_umass_others(time_period)=0
+        if (accumulating_beta_types==0) aggregate_spending_on_addiction(time_period)=0
+        if (accumulating_beta_types==0) aggregate_mortgage_consumption(time_period)=0
+        if (accumulating_beta_types==0) aggregate_rent_spending(time_period)=0
+        if (accumulating_beta_types==0) aggregate_origination_costs(time_period)=0
+        if (accumulating_beta_types==0) aggregate_prepayment_costs(time_period)=0
+        if (accumulating_beta_types==0) aggregate_moving_costs(time_period)=0
+        if (accumulating_beta_types==0) model_average_LTV_at_orgination(time_period)=0
+        if (accumulating_beta_types==0) model_average_LTV_at_orgination_2(time_period)=0
+        if (accumulating_beta_types==0) model_mass_origination(time_period)=0
+        if (accumulating_beta_types==0) model_mass_origination_2(time_period)=0
+        if (accumulating_beta_types==0) homeowners_refinancing_own_home(time_period)=0
+        if (accumulating_beta_types==0) refinanced_mortgages(time_period)=0
+        if (accumulating_beta_types==0) homeowners_originating_mortgage(time_period)=0
                 
         do age_index=1,life_span
             
@@ -32658,6 +32692,11 @@
                     write(*,*) "HANDOVER discount_factor:", discount_factor, "->", handover_value
                     discount_factor=min(max(handover_value,0.5d0),1.05d0)
 
+                case ("discount_factor_impatient")
+                    write(*,*) "HANDOVER discount_factor_impatient:",&
+                        discount_factor_impatient, "->", handover_value
+                    discount_factor_impatient=max(min(handover_value,0.999d0),0.5d0)
+
                 case ("relative_share_of_leisure")
                     write(*,*) "HANDOVER relative_share_of_leisure:",&
                         relative_share_of_leisure, "->", handover_value
@@ -33381,6 +33420,28 @@
 
             end if
 
+            ! ================= THE TWO TYPES =================
+            ! Half the households are patient and half impatient, and a
+            ! household never switches, so the two share prices and the
+            ! government budget and nothing else. The whole chain -- solve,
+            ! distribution, statistics -- runs once per type, and the moment
+            ! accumulators are NOT reset on the second pass.
+            !
+            ! WHY THAT GIVES THE MIXTURE AND NOT THE SECOND TYPE. Every
+            ! targeted moment in this model is a ratio or a share. Each type's
+            ! distribution carries unit mass, so summing both passes doubles
+            ! the numerator and the denominator of every one of them and the
+            ! ratio is exactly the fifty-fifty mixture. No weighting is needed
+            ! and none is applied. A LEVEL would come out doubled, which is why
+            ! it is worth checking that no targeted moment is one.
+            discount_factor_patient_saved=discount_factor
+
+            do current_beta_type=1,number_of_beta_types
+
+            accumulating_beta_types=current_beta_type-1
+            if (current_beta_type==1) discount_factor=discount_factor_patient_saved
+            if (current_beta_type==2) discount_factor=discount_factor_impatient
+
             call solve_value_function_and_policy_functions(1)
                             
             ! A LOADED WARM START MUST NOT BE OVERWRITTEN. The initialisation
@@ -33462,6 +33523,15 @@
                         
             call calculate_homeownership_by_characteristics(1)            
             call stationary_equilibrium_wealth_distribution_of_old(1)
+
+            end do
+
+            ! Back to the patient value, which is the one the calibration owns,
+            ! and back to resetting accumulators so nothing downstream inherits
+            ! the suppression.
+            discount_factor=discount_factor_patient_saved
+            accumulating_beta_types=0
+            current_beta_type=1
             
             if (loop_count>0) then
             

@@ -105,6 +105,12 @@ OWN = {
     # per household and wrong by a factor of 48 in aggregate, so the programme
     # is a calibrated allotment again and cbar is a target again.
     'max_food_cost':                                       'cbar',
+    # THE TWO DISCOUNT FACTORS, on the brackets the author set. The patient one
+    # keeps wealth over output, which is banded rather than pointed; the
+    # impatient one owns the wealth share of the bottom half, which nothing
+    # could move while there was a single beta.
+    'discount_factor':                                     'beta',
+    'discount_factor_impatient':                           'w_bot',
 }
 BOUNDS = {
     'money_cost_of_treatment':                              (0.0005, 1.0),
@@ -121,6 +127,8 @@ BOUNDS = {
     'largest_house_size':                                  (0.02, 1.00),
     'kappa_uem':                                           (1.0, 100.0),
     'max_food_cost':                                       (1e-4, 1.0),
+    'discount_factor':                                     (0.90, 0.999),
+    'discount_factor_impatient':                           (0.50, 0.995),
 }
 # beta is banded on the author's instruction; h_2 is conceded.
 BAND = {'beta': (3.0, 4.5)}
