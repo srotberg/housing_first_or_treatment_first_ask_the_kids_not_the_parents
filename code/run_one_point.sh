@@ -375,7 +375,29 @@ START=$(date +%s)
 SPAM='^ (labor|labor_supply_1=|distance_secant=|loop_1=|MU_1=|MU_2=|x_0=|x_1=|x_2=|addiction_index_1=|consumption_choice=|frac_spent_on_addiction=|taxable_income_1=)'
 set +o pipefail
 OMP_NUM_THREADS=$(nproc) OMP_STACKSIZE=512M GFORTRAN_UNBUFFERED_ALL=1 \
-    ./hftf 2>&1 | grep -Ev "$SPAM" > "worker_${TAG}.log" || true
+    # A CAP ON THE LOG, BECAUSE ONE RUN WROTE 24 GB AND NEARLY FILLED THE DISK.
+    #
+    # On 31 August a point at discount_factor_impatient=0.91 was still going
+    # after forty two minutes with worker_727034dc25.log at 24,216,288,407
+    # bytes, on a container whose writable allowance was down to 3.3 GB. A
+    # normal log for this model is under 200 KB, so that is five orders of
+    # magnitude out and something was looping. Killing it and deleting the file
+    # took the disk from 92 per cent to 31.
+    #
+    # WHAT WAS LOOPING IS NOT KNOWN, because the file was deleted for space
+    # before its tail was sampled. That was the wrong order and the reason this
+    # cap exists rather than a diagnosis: head -c stops reading at the limit and
+    # the SIGPIPE takes the model down with it, so a runaway costs a bounded
+    # 2 GB and a failed point instead of the whole container. The next one also
+    # leaves its last 2 GB on disk to be read.
+    #
+    # 2 GB is ten thousand times a normal log, so nothing legitimate is clipped.
+    ./hftf 2>&1 | grep -Ev "$SPAM" | head -c 2000000000 > "worker_${TAG}.log" || true
+
+    if [ "$(stat -c %s "worker_${TAG}.log" 2>/dev/null || echo 0)" -ge 2000000000 ]; then
+        echo "run_one_point: the log hit its 2 GB cap; the model was looping" >&2
+        fail "log exceeded 2 GB, point abandoned -- see worker_${TAG}.log"
+    fi
 set -o pipefail
 MINS=$(( ($(date +%s) - START) / 60 ))
 
