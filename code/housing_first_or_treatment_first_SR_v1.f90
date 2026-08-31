@@ -3838,7 +3838,7 @@
         ! age, so the two populations may simply not meet. These three make the
         ! overlap visible instead of inferred.
         real(8), dimension(transition_length,5) :: val_sud_band,val_homeless_sud_band
-        integer :: val_band_1,val_is_homeless_1,val_is_sud_1,val_in_labour_force_1
+        integer :: val_band_1,val_band_2,val_is_homeless_1,val_is_sud_1,val_in_labour_force_1
         real(8) :: val_labour_income_1,val_gross_rent_1,val_treat_1
         ! CAN THE HOMELESS AFFORD THE SMALLEST UNIT OUT OF INCOME ALONE?
         ! model_fraction_homeless_by_choice tests income PLUS assets, and the
@@ -3896,7 +3896,11 @@
         ! Income among WORKING AGE users is the decisive line. If it is near
         ! 0.74 while the overall figure is 0.30, then the gap is composition and
         ! not selection.
-        real(8), dimension(transition_length,5) :: val_user_band
+        ! WHO THE OLD USERS ARE. val_user_band counts users; these split them.
+        ! _sud_ is the ones carrying the disorder, so the difference is
+        ! households that buy while clean, and _inc_ carries their income, since
+        ! a retired user's pension is a different story from a retired addict's.
+        real(8), dimension(transition_length,5) :: val_user_band,val_user_sud_band,val_user_inc_band
         real(8), dimension(transition_length) :: val_user_age_num,val_user_mass_age,&
             val_user_income_working,val_user_mass_working
 
@@ -4534,6 +4538,22 @@
                 max(model_average_income(1),10.d0**(-14))
             write(*,*) "DIAG working age share of drug users             =",&
                 val_user_mass_working(1)/max(val_user_mass_age(1),10.d0**(-14))
+
+            ! WHO THE OLD USERS ARE. Two in five users are 65 or over, and the
+            ! three columns here say whether that is a lot of retirees using a
+            ! little or a few using heavily, whether they carry the disorder or
+            ! merely buy, and what they live on. val_mass_band is the population
+            ! in the same five bands, built for the homelessness profile, so the
+            ! rate is a ratio of two masses over identical age cuts.
+            do k_1=1,5
+                write(*,*) "DIAG users band", k_1, " use rate=",&
+                    val_user_band(1,k_1)/max(val_mass_band(1,k_1),10.d0**(-14)),&
+                    " share with the disorder=",&
+                    val_user_sud_band(1,k_1)/max(val_user_band(1,k_1),10.d0**(-14)),&
+                    " income/average=",&
+                    (val_user_inc_band(1,k_1)/max(val_user_band(1,k_1),10.d0**(-14)))/&
+                    max(model_average_income(1),10.d0**(-14))
+            end do
 
             ! DOES THE STONE GEARY THRESHOLD HOLD IN THE SOLVED MODEL?
             ! The split buys nothing unless C > (phi/theta) p b, so a buyer must
@@ -10193,6 +10213,8 @@
         model_avg_income_experimenters(time_period)=0
         model_avg_income_drug_users(time_period)=0
         val_user_band(time_period,:)=0
+        val_user_sud_band(time_period,:)=0
+        val_user_inc_band(time_period,:)=0
         val_user_age_num(time_period)=0
         val_user_mass_age(time_period)=0
         val_user_income_working(time_period)=0
@@ -10714,20 +10736,24 @@
                                             (25.d0+real(age_index,8))*distribution_mass_used
 
                                         if (age_index<=9) then
-                                            val_user_band(time_period,1)=val_user_band(time_period,1)+&
-                                                distribution_mass_used
+                                            val_band_2=1
                                         elseif (age_index<=19) then
-                                            val_user_band(time_period,2)=val_user_band(time_period,2)+&
-                                                distribution_mass_used
+                                            val_band_2=2
                                         elseif (age_index<=29) then
-                                            val_user_band(time_period,3)=val_user_band(time_period,3)+&
-                                                distribution_mass_used
+                                            val_band_2=3
                                         elseif (age_index<=39) then
-                                            val_user_band(time_period,4)=val_user_band(time_period,4)+&
-                                                distribution_mass_used
+                                            val_band_2=4
                                         else
-                                            val_user_band(time_period,5)=val_user_band(time_period,5)+&
-                                                distribution_mass_used
+                                            val_band_2=5
+                                        end if
+
+                                        val_user_band(time_period,val_band_2)=&
+                                            val_user_band(time_period,val_band_2)+distribution_mass_used
+                                        val_user_inc_band(time_period,val_band_2)=&
+                                            val_user_inc_band(time_period,val_band_2)+income_1*distribution_mass_used
+                                        if (unemployment_index>threshold_addiction_index) then
+                                            val_user_sud_band(time_period,val_band_2)=&
+                                                val_user_sud_band(time_period,val_band_2)+distribution_mass_used
                                         end if
 
                                         if (age_index<=(life_span-retirement_span)) then
