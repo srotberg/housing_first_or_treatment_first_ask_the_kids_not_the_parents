@@ -1100,3 +1100,57 @@ and they are now measured over a wide bracket.
 
 At that point the remaining list is lambda_m 60.7, b 37.2, gamma 30.5, kappa_ued
 30.2, aleph 25.0, pi_eu 22.6, theta 18.0, and eight moments outside ten per cent.
+
+## BEST POINT: 9ff7a5b81c, SIX MOMENTS OUTSIDE TEN PER CENT
+
+The drug repair at `c0f41297da` landed exactly as the two-by-two predicted and
+both its steps were inside their measured brackets:
+
+    b         34.9 per cent off -> 4.9
+    lambda_d  35.8 per cent off -> 4.5
+
+taking the count outside ten per cent from eight to **six**, the fewest in the
+archive. Worst excluding h_2 is h_1 at 41.7 per cent. What remains there:
+
+    h_1 41.7   gamma 30.9   kappa_ued 29.4   aleph 24.7   pi_eu 23.4   lambda_m 16.1
+
+## h_1 HAS TWO INSTRUMENTS AND BOTH COST lambda_m THE SAME WAY
+
+`size_homelessness` does NOT saturate on this slice -- 0.074132 to 0.095 takes
+h_1 from 41.3 per cent off to **4.6** -- so the saturation recorded earlier
+belongs to the 0.064481 slice and nowhere else. But lambda_m goes 16.2 to 47.3.
+The rent floor does the same thing at a different price. Both close h_1, both
+break lambda_m, and the archive now holds four points showing it.
+
+The ratios differ enough on paper to separate them -- `size_homelessness` moves
+the pair at -0.954, `lambda_m` at -0.676 -- but solving the two-by-two asks for
+`lambda_m` at 0.0131, three times below the 0.0441274 floor its own data profile
+implies. **Not feasible.**
+
+`lambda_m` is also non-monotone across slices, which is worth recording because
+it has now produced three different readings: elasticity on its own moment
+-0.064 at sr=0.03771 on the old slice, -1.116 at sr=0.053, and **+1.025** at
+sr=0.03771 on the current one, where pinning it at its floor took the moment DOWN
+from 0.2096 to 0.1391 while h_1 improved to 7.6 per cent. Do not carry a sign for
+this parameter between points.
+
+## WHAT IS LEFT, AND WHICH PART IS SEARCH
+
+Reachable, and ROUND10 goes after both:
+- **pi_eu**, 23.4 per cent off, with a clean measured instrument
+  (`probability_becoming_unemployed`, elasticity +0.44) never applied at this
+  point. Full Newton asks 0.009921 -> 0.006149; lines 1 and 2 take 70 per cent
+  of that and all of it.
+- **kappa_ued**, 29.4 per cent off. `multiple_of_probabilities_of_employment_if_addicted`
+  closes it but drags the drug block hard -- at 3.4 it put lambda_d at 63.5 per
+  cent and b at 50. The drug locus repairs drifts of about 35 per cent inside its
+  brackets, so a smaller step at 3.2 plus a repair next round is the way in.
+
+Not search, and needing the author:
+- **h_1 against lambda_m.** Either 41.7 and 16.1, or about 5 and 45. No midpoint.
+- **gamma**, 30.9 per cent. Three routes ruled out: `relative_share_of_housing`
+  directly (costs h_1 at -7.32), the `apply_gamma_tie` route through
+  `relative_share_of_addiction_1` (elasticity -0.196, needs 0.079 against a bound
+  of 0.40), and the rent floor (0.186 to 0.201 across the whole ladder).
+- **aleph**, 24.7 per cent. Every `value_of_life` arm is degenerate.
+- **h_2**, 60.4 per cent, no instrument at all.
