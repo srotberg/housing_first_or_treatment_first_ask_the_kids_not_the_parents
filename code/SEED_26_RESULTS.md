@@ -760,3 +760,54 @@ bracket points that should recover roughly +38 per cent on b and +29 per cent on
 lambda_d, leaving both near -20 per cent -- not closed, but honestly obtained,
 and the pair can then be bracketed at the new configuration exactly as it was
 before.
+
+# JOINT B ALSO FAILED, AND IT OVERTURNS MY CRITICISM OF THE STEP CAP
+
+`point_27e77ccbd2`, all sixteen invariants PASS. Holding
+`relative_share_of_housing` worked as intended -- `h_1` did not collapse to
+2e-6 this time and `gamma` came to -5.2 per cent -- but the point still misses,
+and it misses because **every large step overshot**.
+
+| prediction | measured | |
+|---|---|---|
+| cbar 0.0042 | **0.0084168** | +100.4 per cent, twice the prediction |
+| h_1 +0.1 per cent | **-67.3 per cent** | least squares failed completely |
+| tau_u 0.245 | **0.3736** | the bracket root missed by half |
+| gamma +4.5 per cent | -5.2 per cent | close |
+| h_2 -2.3 per cent | -21.6 per cent | missed |
+
+The `cbar` number is the clearest. Its exponent measured **1.759** locally over a
+x2.41 step. Over the x2.77 step to 0.020292 the implied exponent is **3.583** --
+the response more than doubles its curvature within a factor of three of the
+parameter. That is not an error in the measurement; it is the measurement being
+local in a way I did not allow for.
+
+## The correction
+
+At the 06:50 firing I wrote that `MAX_EFOLD` of 0.35 is "right for borrowed
+slopes and conservative for directly measured ones", and that driving from
+measured brackets closes gaps faster than the gate's capped steps. **Two failed
+joint points say that was wrong.** The cap is not about the provenance of the
+slope. It is about the RANGE over which any slope, however carefully measured,
+stays valid -- and on this model that range is well under half an e-fold for the
+housing and food-stamp instruments. The author's cap encodes something the seed
+round then had to learn the hard way.
+
+The corollary is unwelcome but clear: `cbar` at -83 per cent, `pi_V` at -48 per
+cent, `h_1` at -62 per cent and `tau_u` at +308 per cent cannot be closed in one
+move each. At 0.35 e-folds a round, `cbar` alone needs three or four rounds, and
+the rounds interact. This is a long iteration, not a solve.
+
+## Where the archive stands on the real objective
+
+| point | worst gap | binds | inside 10% |
+|---|---|---|---|
+| **4150720d61** (arm 2) | **272.3%** | h_share1 | **8** |
+| 27e77ccbd2 (joint B) | 273.1% | h_share1 | 5 |
+| 0d88184946 (arm 10) | 308.1% | tau_u | 8 |
+| 9a13317e65 (anchor) | 308.1% | tau_u | 8 |
+
+Joint B is second and cut the worst NON-composition gap from 308 per cent to 100
+per cent, but it holds fewer moments inside ten per cent than the anchor does.
+Arm 2 remains the best point, and **both of the two leaders now bind on
+`h_share1`**, which is the blocker the author has to rule on.
