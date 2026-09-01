@@ -99,10 +99,22 @@ OWN = {
     # assigned". So the unemployment shock carries the whole channel and rho_d
     # is held at one.
     #
-    # WHAT THIS COSTS, said plainly: kappa_ued, unemployment given SUD, was a
-    # data moment at 0.1625 and the model had it at 0.1423. It no longer has an
-    # instrument and will drift. It is in UNSCORED rather than deleted, so it is
-    # still measured and reported at every point.
+    # kappa_ued IS AN OUTPUT NOW, AND THAT IS THE POINT, NOT A COST.
+    #
+    # It was written up here as a price being paid -- a data moment at 0.1625
+    # given up. The author's answer is that it is not a moment worth defending:
+    # "It's ok if the unemployment rates of those with SUD and SMI are not
+    # aligned with the data we have. We don't truly know what they are so we
+    # calibrate them." The unemployment rate of people with a substance use
+    # disorder is not measured with the confidence the HUD age profile or the CEX
+    # cost-burden headcount are, so it is the right one to let float.
+    #
+    # So kappa_ued is reported as an untargeted OUTPUT at every point, not as a
+    # miss. UNSCORED is where it belongs and nothing more is owed to it.
+    #
+    # A consequence for when the paper is written: the calibration table should
+    # show this rate as CALIBRATED, with the SUD share of the homeless as its
+    # target, rather than as an assigned number the model happens to reproduce.
     'multiple_of_probabilities_of_employment_if_addicted': 'sud_homeless',
     'probability_of_voucher_benchmark_used':               'pi_V',
     'size_homelessness':                                   'h_1',
@@ -133,15 +145,20 @@ OWN = {
     # the SMI share of the homeless, rather than to the employment rate of the
     # SMI population.
     #
-    # THE COST HERE IS LARGER AND IS WORTH SEEING. The kappa_uem MOMENT --
-    # employment given SMI -- is currently hit almost exactly, 0.2999 against a
-    # target of 0.3000. Re-pointing its instrument gives that up. It is also the
-    # measurement that sits least comfortably with the premise: if seventy per
-    # cent of the SMI population is already out of work and only thirteen per
-    # cent of the homeless have SMI, then "too few unemployed with SMI" is not
-    # what is holding lambda_m down, and pushing the employment rate past its own
-    # data target may not move the homelessness share much. That is a
-    # measurement to make, not an argument for refusing the instruction.
+    # THE EMPLOYMENT RATE OF THE SMI POPULATION IS AN OUTPUT NOW TOO, on the same
+    # reasoning: not known well enough to be worth pinning, so calibrated rather
+    # than assigned. It was being hit almost exactly, 0.2999 against 0.3000, and
+    # it will drift. That is intended.
+    #
+    # ONE MEASUREMENT STILL SITS AGAINST THE PREMISE and is worth keeping in view
+    # while the sweep runs. Seventy per cent of the SMI population is ALREADY out
+    # of work and only thirteen per cent of the homeless have SMI, so too few
+    # unemployed with SMI may not be what is holding lambda_m down. Raising
+    # kappa_uem from 28.7 to 90 takes non-employment from about 0.70 to about
+    # 0.90, a fifth again on a high base, where the SUD arm has far more room.
+    # And SMI is a young condition here in onset AND in stock, so a lambda_m that
+    # does move will move the youngest band. A measurement to make, not an
+    # argument for refusing the instruction.
     'kappa_uem':                                           'lambda_m',
     # BACK, ON THE AUTHOR'S INSTRUCTION. The statutory SNAP schedule was right
     # per household and wrong by a factor of 48 in aggregate, so the programme
@@ -252,11 +269,13 @@ SKIP = {'h_3'}
 # share needs increased_prob_if_homeless near 3.8 against an assigned 0.2, and
 # what that does to h_1, pi_eu and the drug block is not yet measured.
 UNSCORED = {'emp_homeless', 'sud_homeless',
-            # ORPHANED BY THE RE-POINTING ABOVE. Both were data moments with
-            # instruments; their instruments now answer to the two homelessness
-            # shares instead, so neither can be driven and neither should hold
-            # the stopping rule open. They are still parsed, still reported, and
-            # a large drift in either is a reason to revisit the decision.
+            # OUTPUTS, ON THE AUTHOR'S INSTRUCTION, and not orphans. The
+            # unemployment rate of those with a substance use disorder and the
+            # employment rate of the SMI population are not known well enough to
+            # be worth pinning -- "we don't truly know what they are so we
+            # calibrate them" -- so their parameters answer to the two
+            # homelessness shares and these two are what comes out. Reported at
+            # every point, never scored; a drift is information, not a miss.
             'kappa_ued', 'kappa_uem'}
 
 

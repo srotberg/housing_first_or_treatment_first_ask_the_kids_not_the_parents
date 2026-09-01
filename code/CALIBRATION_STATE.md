@@ -5643,3 +5643,71 @@ would say the safety net is twelve times more generous than intended and is
 exactly why an unemployed household can still pay rent. But `cbar` has the same
 aggregate-over-a-mean form as `aleph`, and that normalisation is the one applied
 and reverted this morning. Settle the normalisation before reading the level.
+
+## THE TWO DISORDER UNEMPLOYMENT RATES ARE CALIBRATED, NOT ASSIGNED
+
+The author's ruling, in their own words:
+
+    "It's ok if the unemployment rates of those with SUD and SMI are not aligned
+    with the data we have. We don't truly know what they are so we calibrate
+    them."
+
+So `kappa_ued` and the employment-given-SMI moment are OUTPUTS. Their parameters
+-- `multiple_of_probabilities_of_employment_if_addicted` and `kappa_uem` -- now
+answer to the SUD and SMI shares of the homeless instead, and the two labour
+rates are what falls out. They are reported at every point and never scored; a
+drift in either is information rather than a miss. This is the whole of the
+first coherence objection raised against the re-pointing and it is now closed.
+
+**For the paper.** Table 5 and the calibration section will need these shown as
+CALIBRATED, with the homelessness shares as their targets, rather than as
+assigned numbers the model happens to reproduce. Not edited -- the author has
+asked to hold paper edits.
+
+### WHERE THE MAP STANDS, AUDITED RATHER THAN ASSERTED
+
+Seventeen externally searched parameters, one moment each, **no duplicate
+drivers**:
+
+    discount_factor_impatient                            -> w_bot
+    increased_prob_if_homeless                           -> emp_homeless
+    kappa_phi_d_level                                    -> y_u
+    kappa_uem                                            -> lambda_m
+    largest_house_size                                   -> h_2
+    max_food_cost                                        -> cbar
+    mu_homeless                                          -> mu_H
+    multiple_of_probabilities_of_employment_if_addicted  -> sud_homeless
+    probability_becoming_unemployed                      -> pi_eu
+    probability_of_voucher_benchmark_used                -> pi_V
+    relative_share_of_addiction_1                        -> theta
+    relative_share_of_housing                            -> gamma
+    size_homelessness                                    -> h_1
+    smallest_rental_relative_to_lowest_income            -> h_3
+    smi_onset_level                                      -> p_m
+    utility_cost_of_treatment                            -> tau_u
+    value_of_life                                        -> aleph
+
+`b` and `lambda_d` are driven by the drug-block repair path on
+`addiction_scalar_1` and `lambda_addiction`, not by the gate. `beta`, `tau_l`,
+`omega_l` and `sigma_y` are bisected inside the model. `h_3` is conceded.
+
+### THE ONE OBJECTION THAT REMAINS: THE STOPPING RULE MAY BE UNREACHABLE
+
+`h_age1` to `h_age5` are in the minimax and **no parameter owns any of them.**
+That is deliberate -- the author chose to score the outcome rather than its
+proximate causes -- but it means the loop cannot stop until five undriven
+moments are all inside ten per cent, and band one is currently 736 per cent out
+(0.02641 against 0.00316).
+
+The rule as it stands is therefore a test the search may never pass, and it will
+never report DONE even if every moment that HAS an instrument is inside ten per
+cent. Three ways out, for the author:
+
+  1. leave it, and read the gap table by hand rather than waiting for exit 4;
+  2. score ONE summary of the profile instead of five bands -- the share of the
+     homeless in band one, 0.91 against 0.26, carries the whole issue in a
+     single number and is one constraint rather than five;
+  3. score the five bands at a looser tolerance than the ten per cent the other
+     moments use, on the grounds that no instrument points at them.
+
+Not decided here. Put to the author.
