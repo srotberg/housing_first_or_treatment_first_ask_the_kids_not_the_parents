@@ -6238,3 +6238,73 @@ kills any `supervise_calibration.py` it finds and removes the marker. This is th
 standing instruction ("If up: kill -9 it, remove the marker") turned into a loop
 rather than a check, because the supervisor has now appeared during a firing and
 a check only catches it every twenty minutes.
+
+## WHY MORE UNEMPLOYMENT WILL NOT FIX THE HOMELESS COMPOSITION ON ITS OWN
+
+The author asked why raising unemployment would not fix it, given UI lasts one
+period and only thirty per cent of job losers get it. The mechanism is right and
+the arithmetic supports it:
+
+```
+probability_becoming_employed            0.55        spell 1.8 years
+  ... if addicted (divided by 4)         0.1375      spell 7.3 years
+probability_becoming_unemployed          0.00568
+  ... if addicted (times 4)              0.0227      steady-state u given SUD 14.2%
+probability_of_ui                        0.30        so 70 per cent get nothing at all
+```
+
+(The declarations of `probability_becoming_unemployed_if_addicted` and
+`..._employed_if_addicted` read zero at lines 3381-3382, which looks like frozen
+employment for the addicted. They are overwritten at 33586 from
+`multiple_of_probabilities_of_employment_if_addicted`. Not a bug; checked.)
+
+Against wealth buffers of, at zero income and consumption near 0.30 a period:
+
+```
+age 26  wealth 0.000  ->  0.00 periods      age 35  wealth 0.521  ->  1.74 periods
+age 29  wealth 0.236  ->  0.79 periods      age 41  wealth 0.749  ->  2.50 periods
+```
+
+**A household that loses its job faces a spell several times longer than its
+savings can cover, at every age.** It should be destitute within one to three
+years. So the author is right that the mechanism is there, and the question is
+why it produces no homelessness.
+
+### Because the bottom rung of the housing ladder is too cheap to fall off
+
+`DIAG homeless who could afford it on INCOME ALONE` reads **exactly 1.0000** at
+every point measured today, as does `homeless by choice`. Every homeless
+household could have paid the rent out of current income. **No household is ever
+priced out of housing**, so homelessness is always a choice and never a
+constraint, and enlarging the pool of jobless households simply produces more
+jobless households who can still afford the smallest unit.
+
+The parameter that sets that rung is
+`smallest_rental_relative_to_lowest_income`, currently 0.0377, and at line 28809
+the scaling its own name describes is commented out:
+
+```
+smallest_house_size=smallest_rental_relative_to_lowest_income   !net_income_lowest*smallest_rental_relative_to_lowest_income/1.079
+```
+
+so the smallest unit is the raw parameter rather than a fraction of the lowest
+income. Whether that is deliberate is the author's to say; the consequence is
+that the cheapest dwelling does not scale with the bottom of the income
+distribution.
+
+### And that parameter is parked on a moment it cannot move
+
+`OWN` assigns `smallest_rental_relative_to_lowest_income` to `h_3`, where
+`next_batch.py`'s own comment records it moving the moment at **-0.01** -- which
+is nothing -- while noting in the same breath that "smallest_rental's strongest
+moment is actually h_1 at 2.81". So the one parameter controlling whether anyone
+can be priced out of housing is assigned to a moment it does not move, and has
+never been stepped on anything meaningful.
+
+**The order that follows from this**: raising the price of the bottom rung is
+what creates involuntary homelessness; more unemployment then feeds it. Done the
+other way round the extra unemployment changes nothing. This is a measurement to
+make, not a conclusion: the arm is `smallest_rental_relative_to_lowest_income`
+from the best point, one coordinate, watching `homeless by choice` and
+`could afford it on income alone` for the first departure from 1.0000 in the
+whole session.
