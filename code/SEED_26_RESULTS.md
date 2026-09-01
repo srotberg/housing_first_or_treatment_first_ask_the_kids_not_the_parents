@@ -608,3 +608,72 @@ With no guard against a zero slope it will keep raising that parameter every
 round, buying nothing and cutting `h_1` each time. Recorded rather than patched:
 the sensible fix is for `emp_homeless` to leave the scored set once the author
 has ruled on the composition problem, and that is the author's call.
+
+# THE SEED ROUND IS COMPLETE, AND IT FOUND A BLOCKER
+
+Twelve arms, all twelve solved, all sixteen invariants passing at every one.
+
+## Arm 12 -- multiple_of_probabilities_of_employment_if_addicted 4 -> 8
+
+`point_e1884ef6cb`. Doubling the job-loss multiplier for the disorder took the
+SUD share of the homeless from 3.37e-10 to **exactly 0.0**, the wrong direction,
+while collapsing the drug economy: b **-75.6 per cent**, lambda_d **-89.5 per
+cent**. `kappa_ued` behaved as expected, 0.129 -> 0.283. A fourth channel into
+the composition of the homeless, and a fourth failure.
+
+## Scoring every point on the REAL objective changes the answer
+
+The gate ranks points by the drug block. The author's objective is a minimax
+over every scored moment except `h_3`. Scored properly, using `next_batch.py`'s
+own `UNSCORED`, `SKIP` and `BAND` definitions:
+
+| point | worst gap | binds | inside 10% |
+|---|---|---|---|
+| **4150720d61** (arm 2) | **272.3%** | **h_share1** | 8 |
+| 9a13317e65 (anchor) | 308.1% | tau_u | 8 |
+| 0d88184946 (arm 10) | 308.1% | tau_u | 8 |
+| 336ada07ca (arm 3) | 308.2% | tau_u | 8 |
+| debfb4e931 (arm 9) | 308.2% | tau_u | 8 |
+
+The best point on the true objective is **arm 2**, not the anchor, and it is
+better for one reason: it is the only point in the entire archive where
+`utility_cost_of_treatment` is not zero, so `tau_u` is not pinned at +308 per
+cent.
+
+## And then h_share1 binds, at +272 per cent, and nothing moves it
+
+`h_share1` -- the share of the homeless in the youngest age band -- **is a scored
+moment**. `UNSCORED` contains `h_share2` through `h_share5` and NOT `h_share1`.
+Its target is 0.26. Across every point measured this round:
+
+```
+9a13317e65  0.96818      00b99e6297  0.97073
+4150720d61  0.96809      b640a5352d  0.95303
+409b58e45c  0.97239      e1884ef6cb  0.96803
+```
+
+**Every value is between 0.953 and 0.972, against a target of 0.26.** Four
+instruments were pointed at the composition of the homeless through four
+different economic channels -- wealth (arm 4), the amenity value of homelessness
+(arm 5), the employment risk of being homeless raised nineteen-fold (arm 11), and
+the employment risk of the disorder doubled (arm 12) -- and the widest spread any
+of them produced across the whole set is **two percentage points**.
+
+## What this means for the stopping rule
+
+The objective is "once we get below 10 per cent for everything". `tau_u` can be
+closed: arm 2 brackets it and the root is near `utility_cost_of_treatment` =
+1.584. Once it is closed, **`h_share1` becomes the binding moment at about +272
+per cent, and this round has established that no available instrument moves it.**
+
+So the stopping rule is **not reachable in the current model**, and the reason is
+a single structural fact rather than a search failure: homelessness is a choice
+here, `homeless by choice` reads exactly 1.0000 at every one of the twelve
+points, and any instrument that makes homelessness worse for a group stops that
+group choosing it instead of changing who is homeless.
+
+**This needs the author's decision, and it is the one thing blocking the
+calibration.** The options are a model change that creates involuntary
+homelessness, or moving `h_share1` into `UNSCORED` beside `h_share2` to
+`h_share5` and conceding the age profile as `h_3` was conceded. The second is a
+one-line change and is the author's to make, not mine.
