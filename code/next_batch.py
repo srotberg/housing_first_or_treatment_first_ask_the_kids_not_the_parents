@@ -358,7 +358,11 @@ BOUNDS = {
     'value_of_life':                                       (1.0, 500.0),
     'multiple_of_probabilities_of_employment_if_addicted': (1.0, 50.0),
     'probability_of_voucher_benchmark_used':               (0.0001, 0.999),
-    'size_homelessness':                                   (0.01, 5.0),
+    # The Fortran's floor moved off the ratio and onto the street itself, so the
+    # ratio may now go far below 0.01. Its lower bound here follows: at a rung of
+    # 1.5 a street of 0.0005 is a ratio of 0.00033, and the old bound would have
+    # clamped it back to thirty times that.
+    'size_homelessness':                                   (1e-6, 5.0),
     'smallest_rental_relative_to_lowest_income':            (0.005, 0.40),
     # In units of average labour income, so 1.0 hands every newborn a year of
     # it. The upper end is deliberately generous: nothing yet says where the
@@ -1238,6 +1242,41 @@ def main():
         else:
             fix = None
         nv = dict(v); nv[param] = f'{x1:.7g}'
+
+        # THE SEARCH COORDINATE IS THE STREET, NOT THE RATIO.
+        #
+        # The author's assignment, 1 September: "H2 targets the fraction of
+        # homeless employed and h1 the overall homelessness". Both of those are
+        # SIZES in their head, and only one of them is a parameter. The street is
+        # built at line 26238 as housing_size(0)*size_homelessness -- the rung
+        # TIMES the ratio -- so the handed-in parameter is the ratio, and moving
+        # the rung drags the street with it.
+        #
+        # That makes the two instruments the author assigned strongly coupled in
+        # the wrong direction: stepping the rung to move emp_homeless also moves
+        # the homelessness rate, and the arm on the ratio then has to undo it.
+        # It also produced an arm whose six points made the street ABSOLUTELY
+        # BETTER in five of them while the rung rose, which is the opposite of
+        # what was asked for.
+        #
+        # So the rung's step holds the STREET fixed and rescales the ratio, and
+        # the ratio's own step is read as a step in the street. After this the
+        # two are as close to orthogonal as the model allows: the rung decides
+        # who is priced out, the street decides how bad being priced out is.
+        RUNG, RATIO = 'smallest_rental_relative_to_lowest_income', 'size_homelessness'
+        if RUNG in nv and RATIO in nv:
+            street0 = float(v[RUNG]) * float(v[RATIO])
+            if param == RUNG:
+                target_street = street0
+            elif param == RATIO:
+                target_street = street0 * (float(x1) / float(v[RATIO]))
+            else:
+                target_street = None
+            if target_street is not None:
+                rlo, rhi = BOUNDS[RATIO]
+                r = target_street / float(nv[RUNG])
+                nv[RATIO] = f'{max(rlo, min(rhi, r)):.7g}'
+
         if fix is not None:
             for q, z in zip(FREE, fix):
                 y0 = float(v[q]); qlo, qhi = FREE_BOUNDS[q]
