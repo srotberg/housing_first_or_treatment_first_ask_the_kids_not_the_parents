@@ -459,3 +459,17 @@ the evidence. It is the second moment in this round with no usable path --
 `w_bot` is the other -- and unlike `w_bot` this one is blocked by an externally
 assigned bound rather than by coupling, which makes it a scope question rather
 than a search question.
+
+## Arm 9 -- probability_becoming_unemployed x0.861, owns pi_eu. Nearly clean, and it lands.
+
+`point_debfb4e931`, all sixteen invariants PASS.
+
+`pi_eu` goes 0.053542 -> **0.050076** against 0.0485, so +10.4 per cent becomes
+**+3.3 per cent** and the moment is inside ten per cent in a single step. The
+elasticity is 0.446; landing it exactly needs
+`probability_becoming_unemployed` = **0.0049995**.
+
+Coupling is moderate and tolerable: b +6.1 per cent and lambda_d +9.3 per cent,
+which leaves both still inside ten per cent of their own targets (+3.4 and +6.3).
+This is the third usable instrument, after `size_homelessness` and the voucher
+lottery.
