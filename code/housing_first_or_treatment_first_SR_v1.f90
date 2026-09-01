@@ -1642,6 +1642,29 @@
         ! ALL households is the right universe BECAUSE EVERYONE RENTS HERE:
         ! include_homeownership is 0, so the model's renters stand for the whole
         ! population rather than for the third of it that rents in the data.
+        ! THE DENOMINATOR MISMATCH IS KNOWN AND THE AUTHOR HAS ACCEPTED IT.
+        ! Do not "fix" this by moving the target or the object.
+        !
+        ! The model object above is val_burden50_expend_all over
+        ! val_mass_expend_all -- the headcount above half of total SPENDING. This
+        ! constant is SCF 2022, above half of INCOME. They are not the same
+        ! denominator, and on 1 September the mismatch was put to the author
+        ! explicitly, alongside the two consistent alternatives: point at rent50
+        ! against the 0.181 recorded above for SCF renters alone, or compute a CEX
+        ! headcount over total outlays to match the 26.8 gamma uses. Their answer
+        ! was "YES, USE the 10.1% ... i think that works fine."
+        !
+        ! So it stands, and the reason it is defensible is that income and
+        ! expenditure differ by saving, which is small in the tail this headcount
+        ! counts: a household paying more than half of income for shelter is not
+        ! saving much, so its income and its outlays are close and the two
+        ! headcounts nearly coincide there. The bias is toward the model reading
+        ! LOW against this target, since expenditure exceeds income for the
+        ! dissaving poor.
+        !
+        ! WHAT THE PAPER OWES THE READER: the calibration table should say the
+        ! model counterpart is measured over total expenditure while the SCF
+        ! figure is over income, rather than letting the row imply they match.
         real(8), parameter :: severe_cost_burden_data=0.101d0
         real(8), parameter :: fraction_light_users=0.731
         
