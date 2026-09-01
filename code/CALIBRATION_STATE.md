@@ -5711,3 +5711,60 @@ cent. Three ways out, for the author:
      moments use, on the grounds that no instrument points at them.
 
 Not decided here. Put to the author.
+
+## cbar IS THE WORST SCORING MOMENT AND ITS DEFINITION IS NOT SETTLED
+
+With the profile scored through `h_share1`, the gap table on `point_445884ebe4`
+puts `cbar` first at **1166 per cent**, ahead of `lambda_d` at 772 and `b` at
+764. So it is now the moment the minimax chases hardest. Three things about it
+are unresolved and they move it by a factor of about thirty between them.
+
+### (a) A FALSE LEAD, RECORDED SO IT IS NOT FOLLOWED AGAIN
+
+The first check looked decisive and was wrong. Food-stamp spending is 0.053169
+in the printed units, the maximum allotment prints as 0.0073311, and 3.9556
+households receive it, so spending is 1.833 times the most those recipients
+could possibly draw -- which would be impossible, since `snap_benefit =
+max(0, max_food_cost - food_stamp_taper*net_1)` is a hard cap with no household
+size scaling.
+
+It is not impossible, because **the DIAG line compares a level against a ratio.**
+`DIAG max allotment / avg labour income` prints `max_food_cost` RAW and sets it
+beside 0.039586, which the comment derives as 291 dollars a month over mean wage
+income of 88,212. That comparison is only valid if average labour income is one
+in model units, and it is about 0.6. The true ratio is
+`max_food_cost/model_average_labour_income`, near 0.012, so the allotment is
+about three times too small rather than five, and the 1.833 dissolves. The same
+applies to `DIAG gross eligibility cutoff`, which prints
+`max_food_cost/food_stamp_taper` against 0.214872.
+
+Both lines should divide by `model_average_labour_income`. Held, with the rest
+of the source, until the UNEMP round lands.
+
+### (b) THE DENOMINATOR IS A MEAN AND THE LABEL SAYS OTHERWISE
+
+    cbar = govt_spending_on_food_stamps / model_average_labour_income
+
+An aggregate over a MEAN, which is dimensionally the same object as `aleph` --
+and the note on `aleph` concluded its target "was evidently set against the
+aggregate form". Whether the same is true here is not recorded anywhere.
+
+### (c) THE TARGET HAS NO DOCUMENTED CONSTRUCTION
+
+`food_stamps_share_data=0.0042` at line 1908 carries NO comment. Every target
+around it does: `participation_rate_data` explains its NSDUH severity split,
+`vsl_data` explains the nine million over $113,000, `drug_user_income_data`
+cites NSDUH. This one is a bare number.
+
+It matters because the reading changes the gap by more than an order of
+magnitude. SNAP outlays in FY2023 were about $113bn against a GDP near $27.7tn,
+a ratio of 0.0041, which matches 0.0042 to two digits -- but that is recall of
+US aggregates rather than anything the repository states, and if it is right then
+the denominator should be OUTPUT and not average labour income, and the moment as
+computed is meaningless rather than badly missed.
+
+**A QUESTION FOR THE AUTHOR, not a change.** How was 0.0042 built? Total SNAP
+outlays over GDP, over total labour income, or something else? Until that is
+answered, `cbar` is the binding constraint of the whole calibration on a target
+nobody can reconstruct, and there is a case for moving it to UNSCORED so the
+search is not driven by it. Not done here.
