@@ -45,8 +45,38 @@ OWN = [
     ('relative_share_of_leisure', 'omega_l'),
     ('labor_income_tax_rate', 'tau_l'),
     ('sd_permanent_productivity', 'sigma_y'),
+    ('smallest_rental_relative_to_lowest_income', 'h_2'),
     ('weight_on_child', 'omega_c'),
 ]
+
+
+def _cross_check():
+    """Warn if this file's scored set has drifted from next_batch.py's.
+
+    It had. h_2 was in next_batch's OWN and missing from the list above, so the
+    author's table showed twenty-one moments where the search was working
+    twenty-two, and the omitted one was sitting at minus twenty-seven per cent.
+    It did not bind, so nothing looked wrong. The same class of divergence over
+    rent50 made the printed loss read 162.8 against a true 100.1 earlier the
+    same day, which is why this is checked rather than remembered.
+
+    Deliberately a warning and not an import: the whole reason OWN is duplicated
+    here is that a broken next_batch.py must not stop the author seeing where
+    things stand.
+    """
+    try:
+        sys.path.insert(0, HERE)
+        import next_batch as _nb
+    except Exception:
+        return
+    mine = {m for _, m in OWN} - SKIP - UNSCORED
+    theirs = set(_nb.OWN.values()) - _nb.SKIP - _nb.UNSCORED
+    if mine != theirs:
+        for m in sorted(theirs - mine):
+            print(f'WARNING: next_batch.py scores {m} and gaps.py does not.')
+        for m in sorted(mine - theirs):
+            print(f'WARNING: gaps.py scores {m} and next_batch.py does not.')
+        print('The loss below is over gaps.py\'s set. Reconcile the two files.\n')
 # moments that are printed and deliberately not scored, with the reason
 NOTE = {'h_3': 'conceded, a fact about a grid the model chose',
         'w_bot': 'conceded with the second beta; nothing moves it at one type',
@@ -98,6 +128,7 @@ def gap(k, pair):
 
 
 def main():
+    _cross_check()
     global _MAP, _OK
     _MAP = _mh.build_map()
     h, cfg = model_hash(), config()
@@ -142,13 +173,20 @@ def main():
     head = (f'point_{tag}  MODEL {h}  beta types {cfg}  {n} points in this economy\n'
             f'LOSS (minimax over scored) {100*worst:.1f}%   median {100*med:.1f}%   '
             f'inside ten per cent {sum(1 for x in g.values() if x <= .10)} of {len(g)}')
-    if not improved:
+    # --force PRINTS THE TABLE REGARDLESS. The gate above exists so that the
+    # hourly firing does not spam an unchanged table at the author, and that is
+    # the right default. But the author asks for the table directly -- "can you
+    # show me the gaps table" -- more often than the loss improves, and working
+    # around the gate by hand each time is how a hand-computed table that
+    # disagreed with the loss got shown once already.
+    if not improved and '--force' not in sys.argv:
         print(f'loss unchanged at {100*prev[key]["worst"]:.1f}% '
               f'(best still point_{prev[key]["tag"]}); table not reprinted.')
         print(head)
         return 0
 
-    print('LOSS IMPROVED -- full table below.\n')
+    print('LOSS IMPROVED -- full table below.\n' if improved
+          else 'loss unchanged; table printed on request.\n')
     print(head + '\n')
     rows = []
     for p, mo in OWN:
