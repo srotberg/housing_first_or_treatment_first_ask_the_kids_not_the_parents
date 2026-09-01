@@ -1465,6 +1465,26 @@
         ! adjuster set to zero without its distance leaves the loop waiting on a
         ! parameter that can no longer move.
         integer, parameter :: freeze_fitted_internals=1
+        ! SPLIT IN TWO, because the two internals it froze are no longer in the
+        ! same state. The freeze was applied when BOTH were fitted -- the note
+        ! above records sigma_y at 1.7 per cent off and omega_l at 0.3 -- but the
+        ! model has moved a long way since: the housing ladder was restructured,
+        ! the asset grid was recurved, pi_eu was retargeted, and the newborn
+        ! endowment became a transfer. sigma_y rode all of that and still reads
+        ! 1.7 per cent off. omega_l did not: it reads 0.184 against 0.400, FIFTY
+        ! FOUR per cent out, frozen at a value that fitted a model that no longer
+        ! exists.
+        !
+        ! A frozen parameter whose moment has drifted is worse than a held one,
+        ! because the moment is still SCORED. omega_l would have held the ten per
+        ! cent rule open on its own, with nothing in the search or in the model
+        ! able to move it. The author's instruction of 1 September:
+        ! "omega_ell should target the 0.4 as before".
+        !
+        ! So the leisure share is calibrated again and sigma_y stays frozen,
+        ! which is the whole point of splitting the flag rather than clearing it.
+        integer, parameter :: freeze_sd_permanent_productivity=freeze_fitted_internals
+        integer, parameter :: freeze_relative_share_of_leisure=0
 
         ! FREEZES THE BISECTION ON beta, FOR THE EQUAL-BETA VALIDATION ONLY.
         ! discount_factor is internally calibrated on wealth over output and
@@ -1842,7 +1862,7 @@
         ! width the KKK process happened to leave on the frozen grid, and it
         ! gave a bottom half share of 33 percent, an almost equal society.
         real(8) :: sd_permanent_productivity=1.00d0
-        real(8) :: sd_permanent_productivity_adjuster=(1-freeze_fitted_internals)*(2.d0)
+        real(8) :: sd_permanent_productivity_adjuster=(1-freeze_sd_permanent_productivity)*(2.d0)
         real(8) :: distance_sd_permanent_productivity=1
         real(8) :: stopping_rule_sd_permanent_productivity=10.d0**(-3)
         integer, parameter :: calibrate_sd_permanent_productivity=1
@@ -1858,7 +1878,7 @@
         real(8) :: relative_share_of_leisure=(1-perceived_probability_lower)*8.5+perceived_probability_lower*3.1
         
         real(8) :: distance_relative_share_of_leisure
-        real(8) :: relative_share_of_leisure_adjuster=(1-freeze_fitted_internals)*(5*10.d0**(-1))
+        real(8) :: relative_share_of_leisure_adjuster=(1-freeze_relative_share_of_leisure)*(5*10.d0**(-1))
         real(8), parameter :: relative_share_of_leisure_adjuster_start=5*10.d0**(-1)
         real(8) :: previous_gap_relative_share_of_leisure=0
         integer :: have_gap_relative_share_of_leisure=0
@@ -35459,7 +35479,7 @@
                     3.d0),10.d0**(-2))
 
                 distance_sd_permanent_productivity=&
-                    (1-freeze_fitted_internals)*&
+                    (1-freeze_sd_permanent_productivity)*&
                     abs(model_bottom_half_earnings_share-bottom_half_earnings_share_data)
 
                 write(*,*) "sd_permanent_productivity=", sd_permanent_productivity,&
@@ -36164,7 +36184,7 @@
                         max(avg_labor_supply_data,10.d0**(-12))),0.01),1000.d0) 
                                                                  
                     distance_relative_share_of_leisure=&
-                        (1-freeze_fitted_internals)*&
+                        (1-freeze_relative_share_of_leisure)*&
                         abs(model_labor_supply(1)/model_total_hours(1)-avg_labor_supply_data)
                                 
                     write(*,*) "model_labor_supply(1)/model_total_hours(1)=", &

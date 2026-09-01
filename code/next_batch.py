@@ -312,7 +312,23 @@ BAND = {'beta': (3.0, 4.5)}
 # rather than about the world, and its only instrument
 # (smallest_rental_relative_to_lowest_income) moves it at -0.01, which is to say
 # it has no instrument at all.
-SKIP = {'h_3'}
+SKIP = {'h_3',
+        # D2, ON THE AUTHOR'S INSTRUCTION OF 1 SEPTEMBER: "h_2 should
+        # essentially be chosen to match the rent50 target (that is the same as
+        # the smallest rental relative to lowest income)."
+        #
+        # h_2 counts renters above half of total EXPENDITURE and rent50 counts
+        # renters above half of INCOME. They are the same cost burden read two
+        # ways, and one parameter sets both -- the size of the cheapest rental.
+        # h_2 was left orphaned when largest_house_size had to be held so that
+        # smallest_rental could own rent50, and the answer is that it never
+        # needed its own instrument: closing rent50 closes it.
+        #
+        # It stays parsed and reported at every point. It is simply not a second
+        # target competing with the first for one parameter, which is the
+        # duplicate-driver mistake read backwards -- one instrument, two scored
+        # moments, no way to satisfy both.
+        'h_2'}
 
 # MOMENTS WITH AN INSTRUMENT THAT DO NOT GATE THE STOPPING RULE.
 #
@@ -327,7 +343,28 @@ SKIP = {'h_3'}
 # moment whose target the model may not be able to reach at all. The employed
 # share needs increased_prob_if_homeless near 3.8 against an assigned 0.2, and
 # what that does to h_1, pi_eu and the drug block is not yet measured.
-UNSCORED = {'emp_homeless', 'sud_homeless',
+# emp_homeless IS SCORED AGAIN, on the author's answer to D3, 1 September. The
+# question put to them was whether to push the cheapest rent until the unemployed
+# are priced out, accepting what that does to rent50 and gamma, or to leave the
+# employed share of the homeless as a reported output. The answer -- "you'll need
+# to adjust both to match the data" -- is that rent50 and gamma both stay on
+# their own targets while the affordability channel is pushed, rather than being
+# allowed to drift as the price of it.
+#
+# WHAT THAT COSTS TO BELIEVE, stated because the archive argues with it. The
+# moment's owner is increased_prob_if_homeless and the one point that ever moved
+# it -- 3.8, nineteen times the assigned 0.2 -- made the employed share WORSE,
+# 0.961 against 0.46. That parameter changes what happens after a household is
+# homeless, not who becomes homeless, and the composition is decided in the
+# housing choice: 99 per cent of the model's homeless are homeless by choice.
+#
+# Two other things do move it, both measured today. The newborn transfer took it
+# 0.956 to 0.785 across the sweep, by removing the youngest -- who are almost all
+# employed -- from the street. And the affordability channel is the author's own
+# instrument for it. So the moment is scored with three things acting on it and
+# its nominal owner the weakest of the three, which is worth watching rather than
+# pretending is clean.
+UNSCORED = {'sud_homeless',
             # THE PROFILE IS SCORED THROUGH h_share1 ALONE, so the other four
             # shares and all five rates are reported and not scored. h_share1 is
             # the share of the homeless aged 25 to 34, 0.91 against 0.26; these
