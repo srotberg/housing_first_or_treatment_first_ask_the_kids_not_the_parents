@@ -19,7 +19,50 @@ The moment h_2 is the CEX severe cost burden against 0.101; the parameter h_2
 is `smallest_rental_relative_to_lowest_income`. Both are live. What is
 conceded is exactly what `SKIP` in `next_batch.py` says, and nothing else.
 
-## LIVE STATE, 1 September 22:33 -- THE ARCHIVE CAME BACK; THE STREET ARM IS OUT
+## LIVE STATE, 1 September 22:52 -- THE RUNG WORKS ON THE MARGIN AND NOT ON THE COMPOSITION
+
+Best `a6ff37446f`, MODEL 3af48ddb51, 73 points in this economy. LOSS 100.1 per
+cent, binding `emp_homeless`. Gate best on the drug block improved 45.3 -> 33.2.
+Both model changes are MEASURED equivalent (worst shift 0.12 and 0.13 per cent of
+target), so the whole archive scores.
+
+### THE ANSWER ON emp_homeless. Nine points, one base, only the rung and street.
+
+    rung   street  emp_hless  bychoice     h_1   inc/avg
+    0.3   0.00050     0.8204    0.7381  0.0002    1.8298
+    0.3   0.00200     0.9366    0.8531  0.0006    1.8974
+    0.3   0.03150     0.9743    0.9211  0.0238    2.7421
+    0.8   0.00200     0.8977    0.6506  0.0008    7.3225
+    1.2   0.01200     0.8767    0.4350  0.0012    7.5162
+    1.5   0.00200     0.8833    0.1142  0.0008   10.6728
+    targets: emp_homeless 0.460, h_1 0.00399, income of the homeless 0.191
+
+**The author's mechanism works on the margin they named and not on the one the
+moment needs.** by-choice falls from 0.99 at the benchmark to 0.1142 at a rung of
+1.5, so the rung really does convert homelessness from chosen to involuntary --
+that half is settled and it is theirs. But emp_homeless never leaves 0.82-0.99,
+and the income of the homeless goes the WRONG WAY, from 0.87 of average to 10.7
+times it against a target of 0.19.
+
+WHY: the rung is a PRICE EVERYONE FACES. Raising it does not cut the population
+at a point, it shifts the whole distribution, so at a rung of 1.5 almost nobody
+can afford the cheapest unit and who is actually homeless is decided by the same
+utility comparison as before -- a taste margin wearing an involuntary label. The
+homeless are 0.08 per cent of households with ten times average income; that is
+not a poverty phenomenon.
+
+**To make homelessness select the unemployed, something has to hit the
+unemployed's BUDGET specifically, not the price everyone pays.** That is the UI
+replacement rate and the income floor, not the housing block. PUT THIS TO THE
+AUTHOR; it is a scope question, not a calibration one.
+
+### Out now
+
+22 measurement arms off `7a11f5e8d8` plus the drug repair. The gate no longer
+returns after the repair -- that is what stopped thirteen of fourteen arms all
+evening and is why there was no progress to show.
+
+## SUPERSEDED: 1 September 22:33 -- THE ARCHIVE CAME BACK; THE STREET ARM IS OUT
 
 Best point `a6ff37446f`, MODEL 3af48ddb51, one beta, 61 points in this economy.
 LOSS 100.1 per cent, median 26.5, six of twenty-one inside ten. Binding moment
