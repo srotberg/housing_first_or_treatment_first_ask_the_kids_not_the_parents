@@ -663,50 +663,21 @@ def vector(text):
 # distinguishes them, so a stale label drops the moment and the point is simply
 # re-measured when it is next asked for.
 STALE_LABEL = {'h_2': ['smallest unit', 'above half of income'],
-               # AND THE EXPENDITURE DENOMINATOR IS STALE TOO. gamma was
-               # "housing over expenditure" against a CEX expenditure share of
-               # 0.268; on the author's instruction it is now "housing over
-               # income" against 0.202. A point measured under the old label
-               # carries a different object compared with a different target, so
-               # it is dropped rather than mixed in.
-               'gamma': ['renters', 'housing over expenditure'],
-               # cbar CHANGED DENOMINATOR. It was total food-stamp spending over
-               # model_average_labour_income, a total over a MEAN, which scaled
-               # with population and printed 0.0532 against a target of 0.0042.
-               # It is now total spending over total income, which is what "0.42
-               # per cent of income" means. A point measured under the old label
-               # carries a number thirty times larger under the same name, so
-               # mixing them would walk the search away from a target it may
-               # already be near. The old label said "labour income".
-               'cbar': ['labour income']}
-
-
-# A TARGET THAT MOVED AFTER POINTS WERE MEASURED.
-#
-# Each point records the target the Fortran printed when it ran, so retargeting a
-# moment leaves every earlier point carrying the OLD number and being scored
-# against it. That is not a stale label, which STALE_LABEL handles by dropping
-# the row -- the row is fine and the goal post moved.
-#
-# It is a real hazard rather than a tidiness point. pi_eu was retargeted from
-# 0.0485 to 0.139 on 1 September. Points measured before that read pi_eu near
-# 0.0517, which scores +6.6 per cent against the old target and -62.8 against
-# the new one, so without an override the whole pre-change archive looks BETTER
-# on pi_eu than it is and the gate would happily choose one of them as its base.
-#
-# Elasticities are unaffected either way, because they are computed from model
-# values alone and never touch the target.
-#
-# AND IT MUST NOT BE ALLOWED TO DIVERGE FROM THE MODEL. The hazard runs both
-# ways: an override that protects the archive from a retired target becomes, the
-# moment the Fortran is retargeted again, a number that silently overrides the
-# CURRENT one, and the search then chases a target the model is not reporting.
-# One number in one place is the standing rule and an override is a second
-# place, so every entry is checked against what the model actually emits and a
-# disagreement is printed loudly rather than applied quietly.
-TARGET_OVERRIDE = {
-    'pi_eu': 0.139,
+               # THE DENOMINATOR WENT BACK, so the stale label inverts with it.
+               # gamma was "housing over expenditure" against 0.268, was moved to
+               # "housing over income" against 0.202 this afternoon, and is back
+               # to expenditure against 0.268 tonight -- because a Cobb-Douglas
+               # weight IS the expenditure share, and because the ladder the
+               # author wants puts every housed household above 0.202 of income,
+               # making that target unreachable by construction.
+               #
+               # So it is the INCOME label that is stale now. Left as it was,
+               # this entry would have dropped every NEW gamma row instead of
+               # every old one, and gamma would have vanished from the scored set
+               # without a word.
+               'gamma': ['housing over income'],
 }
+
 _override_checked = set()
 
 

@@ -1548,7 +1548,7 @@
         ! divided housing by EXPENDITURE while the calibrating loop at 35847
         ! compared `model_avg_housing_spending_renters` -- housing over INCOME --
         ! against this same constant. Moment and update now measure one thing.
-        real(8), parameter :: avg_rent_to_income_data=0.202
+        real(8), parameter :: avg_rent_to_income_data=0.268
         ! GAMMA TARGETS THE AVERAGE RENT TO INCOME RATIO, which is the moment the
         ! stylized model of Section 2 uses and the one a Cobb-Douglas housing
         ! share moves most directly. It used to target the SHARE OF RENTERS above
@@ -5449,8 +5449,33 @@
             ! neither the same denominator nor the same kind of average. CEX's
             ! income based figure for the same numerator is 20.2 per cent, so
             ! the old pairing aimed the target about a third high.
-            write(*,*) "MOMENT gamma     housing over income         model=",&
-                model_avg_housing_spending_renters(1),&
+            ! BACK TO THE EXPENDITURE DENOMINATOR, on the author's instruction of
+            ! 1 September: "maybe we should still have gamma targeted to the
+            ! portion households spend on housing out of their expenditures,
+            ! which is 26.8%".
+            !
+            ! TWO REASONS, and the second only became visible tonight.
+            !
+            ! The theory one was recorded when the denominator was changed and
+            ! set aside rather than answered: a Cobb-Douglas weight equals the
+            ! EXPENDITURE share exactly, and income and expenditure differ by
+            ! saving, so an income denominator asks gamma to equal something it
+            ! is not.
+            !
+            ! The arithmetic one is new. The author wants the cheapest rung near
+            ! 0.165, which is 25.9 per cent of average labour income, so every
+            ! HOUSED household spends at least that share of income on rent. An
+            ! income-denominated target of 0.202 is then below the floor the
+            ! ladder itself imposes and is unreachable by construction. 0.268 is
+            ! not.
+            !
+            ! CHANGING THE CONSTANT ALONE WOULD REINTRODUCE THE FAULT THIS
+            ! REPLACED. 26.8 is a ratio over EXPENDITURE and
+            ! model_avg_housing_spending_renters is housing over INCOME, so the
+            ! object moves with the target. The income ratio stays below as an
+            ! UNTARGETED row against its own 0.202 so nothing is lost.
+            write(*,*) "MOMENT gamma     housing over expenditure    model=",&
+                val_hous_expend_num(1)/max(val_hous_expend_den(1),10.d0**(-14)),&
                 " target=", avg_rent_to_income_data
             write(*,*) "UNTARGETED housing over income, renters      model=",&
                 model_avg_housing_spending_renters(1), " observed=", 0.202d0
