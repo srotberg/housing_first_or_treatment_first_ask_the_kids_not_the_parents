@@ -381,8 +381,7 @@ START=$(date +%s)
 # belongs to whoever owns that file.
 SPAM='^ (labor|labor_supply_1=|distance_secant=|loop_1=|MU_1=|MU_2=|x_0=|x_1=|x_2=|addiction_index_1=|consumption_choice=|frac_spent_on_addiction=|taxable_income_1=)'
 set +o pipefail
-OMP_NUM_THREADS=$(nproc) OMP_STACKSIZE=512M GFORTRAN_UNBUFFERED_ALL=1 \
-    # A CAP ON THE LOG, BECAUSE ONE RUN WROTE 24 GB AND NEARLY FILLED THE DISK.
+# A CAP ON THE LOG, BECAUSE ONE RUN WROTE 24 GB AND NEARLY FILLED THE DISK.
     #
     # On 31 August a point at discount_factor_impatient=0.91 was still going
     # after forty two minutes with worker_727034dc25.log at 24,216,288,407
@@ -399,6 +398,26 @@ OMP_NUM_THREADS=$(nproc) OMP_STACKSIZE=512M GFORTRAN_UNBUFFERED_ALL=1 \
     # leaves its last 2 GB on disk to be read.
     #
     # 2 GB is ten thousand times a normal log, so nothing legitimate is clipped.
+    #
+    # AND THE COMMENT BLOCK GOES ABOVE THE COMMAND, NOT INSIDE IT. When this cap
+    # was added the whole block was pasted BETWEEN the line-continuation
+    # backslash and ./hftf. Bash joins a trailing backslash to the next physical
+    # line, so the environment assignments joined a COMMENT and became a
+    # no-op statement, and ./hftf then ran with none of them:
+    #
+    #   OMP_NUM_THREADS unset  -- harmless, OpenMP defaults to the core count
+    #   OMP_STACKSIZE unset    -- NOT harmless. The threads get the system
+    #                             default stack instead of 512M, and this model
+    #                             has large thread-private arrays.
+    #   GFORTRAN_UNBUFFERED_ALL unset -- stdout goes block buffered, so the log
+    #                             stops updating and a live run looks stalled
+    #                             when it is working. That is exactly how it
+    #                             presented: last write at 01:25, still at 154
+    #                             per cent CPU half an hour later.
+    #
+    # Nothing warns about this. The script runs, the model runs, and the only
+    # symptom is a log that goes quiet and a stack size nobody set.
+OMP_NUM_THREADS=$(nproc) OMP_STACKSIZE=512M GFORTRAN_UNBUFFERED_ALL=1 \
     ./hftf 2>&1 | grep -Ev "$SPAM" | head -c 2000000000 > "worker_${TAG}.log" || true
 
     if [ "$(stat -c %s "worker_${TAG}.log" 2>/dev/null || echo 0)" -ge 2000000000 ]; then
