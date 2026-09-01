@@ -214,12 +214,12 @@ fail () {
 # vector's 24, so the comparison was a judgement call, and a worker that judged
 # it wrong silently ran nothing. TAG is the md5 of the full sorted vector, which
 # is the same comparison done exactly, so the check belongs here.
-if [ -f "points/point_${TAG}.txt" ] && grep -q "END OF MOMENTS" "points/point_${TAG}.txt"; then
+if [ -f "points/point_${TAG}.txt" ] && grep -aq "END OF MOMENTS" "points/point_${TAG}.txt"; then
     echo "run_one_point: $TAG is already measured, skipping"
     exit 0
 fi
 if [ "$LEGACY_TAG" != "$TAG" ] && [ -f "points/point_${LEGACY_TAG}.txt" ] &&
-   grep -q "END OF MOMENTS" "points/point_${LEGACY_TAG}.txt"; then
+   grep -aq "END OF MOMENTS" "points/point_${LEGACY_TAG}.txt"; then
     echo "run_one_point: $TAG was measured as $LEGACY_TAG before the vector"
     echo "run_one_point: gained a name it is still at the default of, skipping"
     exit 0
@@ -379,6 +379,29 @@ START=$(date +%s)
 # THIS IS A WORKAROUND AND NOT THE FIX. The fix is in the Fortran -- fire the
 # warning once, or count it and report the count with the invariants -- and it
 # belongs to whoever owns that file.
+# EVERY grep THAT READS THE MODEL'S OUTPUT CARRIES -a, AND THIS IS NOT COSMETIC.
+#
+# THE MODEL'S STDOUT CONTAINS A BYTE GNU grep CALLS BINARY. Without -a, grep
+# stops printing matching lines and emits "binary file matches" instead. In a
+# PIPELINE that means the filter below silently throws away everything after the
+# offending byte, and the log ends mid-run with no error anywhere.
+#
+# That is exactly what happened. A point ran to completion, printed its moments,
+# and its log came out at 50,120 bytes ending in the middle of the distribution
+# sweep, while the same binary run WITHOUT the pipe produced 305,670 bytes
+# including the full moments block. Proof, on the raw log:
+#
+#   grep -Ev "$SPAM" raw_control.log | wc -c   ->  grep: binary file matches
+#                                                   0
+#
+# Zero bytes out of a 305 KB file. The runner then reported NO MOMENTS BLOCK and
+# hftf's own exit status of 0, which is true and was the tell: the model exited
+# cleanly because it HAD finished. Nothing was wrong with it at all.
+#
+# Hours went into the model looking for a fault that was in this line. The
+# symptom was visible the whole time -- "binary file matches" appeared in this
+# session's own greps of the log repeatedly -- and was read as a nuisance to work
+# around with -a rather than as the thing destroying the measurements.
 SPAM='^ (labor|labor_supply_1=|distance_secant=|loop_1=|MU_1=|MU_2=|x_0=|x_1=|x_2=|addiction_index_1=|consumption_choice=|frac_spent_on_addiction=|taxable_income_1=)'
 set +o pipefail
 # A CAP ON THE LOG, BECAUSE ONE RUN WROTE 24 GB AND NEARLY FILLED THE DISK.
@@ -418,7 +441,7 @@ set +o pipefail
     # Nothing warns about this. The script runs, the model runs, and the only
     # symptom is a log that goes quiet and a stack size nobody set.
 OMP_NUM_THREADS=$(nproc) OMP_STACKSIZE=512M GFORTRAN_UNBUFFERED_ALL=1 \
-    ./hftf 2>&1 | grep -Ev "$SPAM" | head -c 2000000000 > "worker_${TAG}.log" || true
+    ./hftf 2>&1 | grep -a -Ev "$SPAM" | head -c 2000000000 > "worker_${TAG}.log" || true
 # THE `|| true` DOES NOT DESTROY PIPESTATUS, WHICH WAS CHECKED RATHER THAN
 # ASSUMED. It was rewritten once on the theory that `true` overwrites the array
 # and made the captured status meaningless. Tested both ways in this shell:
@@ -452,11 +475,11 @@ MINS=$(( ($(date +%s) - START) / 60 ))
 # anyone thought to count the HANDOVER lines, and there were none. The model
 # prints one line per parameter it applies, so the count is the proof, and a run
 # that cannot prove it must not be recorded as a point.
-GOT=$(grep -c "HANDOVER " "worker_${TAG}.log" 2>/dev/null || true)
-IGNORED=$(grep -c "HANDOVER IGNORED" "worker_${TAG}.log" 2>/dev/null || true)
+GOT=$(grep -ac "HANDOVER " "worker_${TAG}.log" 2>/dev/null || true)
+IGNORED=$(grep -ac "HANDOVER IGNORED" "worker_${TAG}.log" 2>/dev/null || true)
 GOT=$((GOT - IGNORED))
 if [ "$IGNORED" -ne 0 ]; then
-    grep "HANDOVER IGNORED" "worker_${TAG}.log" >&2 || true
+    grep -a "HANDOVER IGNORED" "worker_${TAG}.log" >&2 || true
     fail "the model did not recognise $IGNORED of the names it was handed"
 fi
 if [ "$GOT" -ne "$WANT" ]; then
@@ -481,7 +504,7 @@ mkdir -p points
         "worker_${TAG}.log"
 } > "points/point_${TAG}.txt"
 
-grep -q "END OF MOMENTS" "points/point_${TAG}.txt" || {
+grep -aq "END OF MOMENTS" "points/point_${TAG}.txt" || {
     # HOW THE MODEL DIED, NOT JUST THAT IT DID.
     #
     # The pipeline carries `|| true` and runs under `set +o pipefail`, so the
