@@ -7230,7 +7230,7 @@
             if (h_1==2) then
 
                 sep_1=sep_1*(1+iph_1)
-                find_1=find_1/(1+iph_1)
+                find_1=find_1*(1-iph_1)
 
             end if
 
@@ -27771,7 +27771,7 @@
             end do
         
             unemployment_process(1:cutoff_age_1,2,1,1,0,:)=probability_becoming_employed
-            unemployment_process(1:cutoff_age_1,2,1,2,0,:)=probability_becoming_employed/(1+increased_prob_if_homeless)
+            unemployment_process(1:cutoff_age_1,2,1,2,0,:)=probability_becoming_employed*(1-increased_prob_if_homeless)
             unemployment_process(1:cutoff_age_1,2,2,1,0,:)=1-probability_becoming_employed
             ! WAS probability_becoming_employed1, WITH A TRAILING 1, AND THAT
             ! NAME IS DECLARED NOWHERE IN THE FILE. This subroutine has no
@@ -27785,12 +27785,12 @@
             ! The identical block six lines below, for state 3, spells it
             ! correctly, which is what settles that this is a typo and not a
             ! deliberate asymmetry.
-            unemployment_process(1:cutoff_age_1,2,2,2,0,:)=1-probability_becoming_employed/(1+increased_prob_if_homeless)
+            unemployment_process(1:cutoff_age_1,2,2,2,0,:)=1-probability_becoming_employed*(1-increased_prob_if_homeless)
             
             unemployment_process(1:cutoff_age_1,3,1,1,0,:)=probability_becoming_employed
-            unemployment_process(1:cutoff_age_1,3,1,2,0,:)=probability_becoming_employed/(1+increased_prob_if_homeless)
+            unemployment_process(1:cutoff_age_1,3,1,2,0,:)=probability_becoming_employed*(1-increased_prob_if_homeless)
             unemployment_process(1:cutoff_age_1,3,3,1,0,:)=1-probability_becoming_employed
-            unemployment_process(1:cutoff_age_1,3,3,2,0,:)=1-probability_becoming_employed/(1+increased_prob_if_homeless)
+            unemployment_process(1:cutoff_age_1,3,3,2,0,:)=1-probability_becoming_employed*(1-increased_prob_if_homeless)
                         
             cutoff_age_2=life_span-1
                         
@@ -27825,14 +27825,14 @@
             end do
             
             unemployment_process(cutoff_age_2,2,1,1,0,:)=probability_becoming_employed
-            unemployment_process(cutoff_age_2,2,1,2,0,:)=probability_becoming_employed/(1+increased_prob_if_homeless)
+            unemployment_process(cutoff_age_2,2,1,2,0,:)=probability_becoming_employed*(1-increased_prob_if_homeless)
             unemployment_process(cutoff_age_2,2,2,1,0,:)=1-probability_becoming_employed
-            unemployment_process(cutoff_age_2,2,2,2,0,:)=1-probability_becoming_employed/(1+increased_prob_if_homeless)
+            unemployment_process(cutoff_age_2,2,2,2,0,:)=1-probability_becoming_employed*(1-increased_prob_if_homeless)
             
             unemployment_process(cutoff_age_2,3,1,1,0,:)=probability_becoming_employed
-            unemployment_process(cutoff_age_2,3,1,2,0,:)=probability_becoming_employed/(1+increased_prob_if_homeless)
+            unemployment_process(cutoff_age_2,3,1,2,0,:)=probability_becoming_employed*(1-increased_prob_if_homeless)
             unemployment_process(cutoff_age_2,3,3,1,0,:)=1-probability_becoming_employed
-            unemployment_process(cutoff_age_2,3,3,2,0,:)=1-probability_becoming_employed/(1+increased_prob_if_homeless)
+            unemployment_process(cutoff_age_2,3,3,2,0,:)=1-probability_becoming_employed*(1-increased_prob_if_homeless)
                         
         else
             
@@ -27856,7 +27856,7 @@
             end do
                                         
             unemployment_process(:,3,1,1,0,:)=probability_becoming_employed
-            unemployment_process(:,3,1,2,0,:)=probability_becoming_employed/(1+increased_prob_if_homeless)
+            unemployment_process(:,3,1,2,0,:)=probability_becoming_employed*(1-increased_prob_if_homeless)
             
             ! 3 -> 2, not 3 -> 3: the insured period is the first one only, so
             ! a spell that continues moves to the state that pays nothing. Kept
@@ -27864,13 +27864,13 @@
             ! two SMI states and which verify_unemployment_process checks this
             ! block against at one.
             unemployment_process(:,3,2,1,0,:)=(1-probability_becoming_employed)
-            unemployment_process(:,3,2,2,0,:)=1-probability_becoming_employed/(1+increased_prob_if_homeless)
+            unemployment_process(:,3,2,2,0,:)=1-probability_becoming_employed*(1-increased_prob_if_homeless)
             
             unemployment_process(:,2,1,1,0,:)=probability_becoming_employed
-            unemployment_process(:,2,1,2,0,:)=probability_becoming_employed/(1+increased_prob_if_homeless)
+            unemployment_process(:,2,1,2,0,:)=probability_becoming_employed*(1-increased_prob_if_homeless)
             
             unemployment_process(:,2,2,1,0,:)=(1-probability_becoming_employed)
-            unemployment_process(:,2,2,2,0,:)=1-probability_becoming_employed/(1+increased_prob_if_homeless)
+            unemployment_process(:,2,2,2,0,:)=1-probability_becoming_employed*(1-increased_prob_if_homeless)
                 
             unemployment_process(:,4,5,1,1,:)=probability_becoming_unemployed_if_addicted*(1-probability_of_ui)
             unemployment_process(:,4,5,2,1,:)=probability_becoming_unemployed_if_addicted*(1-probability_of_ui)*&
@@ -27888,16 +27888,16 @@
             end do
                         
             unemployment_process(:,6,4,1,1,:)=probability_becoming_employed_if_addicted
-            unemployment_process(:,6,4,2,1,:)=probability_becoming_employed_if_addicted/(1+increased_prob_if_homeless)
+            unemployment_process(:,6,4,2,1,:)=probability_becoming_employed_if_addicted*(1-increased_prob_if_homeless)
             
             unemployment_process(:,6,5,1,1,:)=(1-probability_becoming_employed_if_addicted)
-            unemployment_process(:,6,5,2,1,:)=1-probability_becoming_employed_if_addicted/(1+increased_prob_if_homeless)
+            unemployment_process(:,6,5,2,1,:)=1-probability_becoming_employed_if_addicted*(1-increased_prob_if_homeless)
             
             unemployment_process(:,5,4,1,1,:)=probability_becoming_employed_if_addicted
-            unemployment_process(:,5,4,2,1,:)=probability_becoming_employed_if_addicted/(1+increased_prob_if_homeless)
+            unemployment_process(:,5,4,2,1,:)=probability_becoming_employed_if_addicted*(1-increased_prob_if_homeless)
             
             unemployment_process(:,5,5,1,1,:)=(1-probability_becoming_employed_if_addicted)
-            unemployment_process(:,5,5,2,1,:)=1-probability_becoming_employed_if_addicted/(1+increased_prob_if_homeless)
+            unemployment_process(:,5,5,2,1,:)=1-probability_becoming_employed_if_addicted*(1-increased_prob_if_homeless)
             
             !!! transition between states of addiction
             !!! this one moves from no addiction to addiction
@@ -27923,16 +27923,16 @@
             end do
                 
             unemployment_process(:,2,4,1,1,:)=probability_becoming_employed_if_addicted
-            unemployment_process(:,2,4,2,1,:)=probability_becoming_employed_if_addicted/(1+increased_prob_if_homeless)
+            unemployment_process(:,2,4,2,1,:)=probability_becoming_employed_if_addicted*(1-increased_prob_if_homeless)
                 
             unemployment_process(:,2,5,1,1,:)=(1-probability_becoming_employed_if_addicted)
-            unemployment_process(:,2,5,2,1,:)=(1-probability_becoming_employed_if_addicted/(1+increased_prob_if_homeless))
+            unemployment_process(:,2,5,2,1,:)=(1-probability_becoming_employed_if_addicted*(1-increased_prob_if_homeless))
             
             unemployment_process(:,3,5,1,1,:)=(1-probability_becoming_employed_if_addicted)
-            unemployment_process(:,3,5,2,1,:)=(1-probability_becoming_employed_if_addicted/(1+increased_prob_if_homeless))
+            unemployment_process(:,3,5,2,1,:)=(1-probability_becoming_employed_if_addicted*(1-increased_prob_if_homeless))
             
             unemployment_process(:,3,4,1,1,:)=probability_becoming_employed_if_addicted
-            unemployment_process(:,3,4,2,1,:)=probability_becoming_employed_if_addicted/(1+increased_prob_if_homeless)
+            unemployment_process(:,3,4,2,1,:)=probability_becoming_employed_if_addicted*(1-increased_prob_if_homeless)
             
             do employment_index=1,employment_grid_size
             
@@ -27956,16 +27956,16 @@
             end do
             
             unemployment_process(:,6,1,1,0,:)=probability_becoming_employed
-            unemployment_process(:,6,1,2,0,:)=probability_becoming_employed/(1+increased_prob_if_homeless)
+            unemployment_process(:,6,1,2,0,:)=probability_becoming_employed*(1-increased_prob_if_homeless)
             
             unemployment_process(:,6,2,1,0,:)=(1-probability_becoming_employed)
-            unemployment_process(:,6,2,2,0,:)=1-probability_becoming_employed/(1+increased_prob_if_homeless)
+            unemployment_process(:,6,2,2,0,:)=1-probability_becoming_employed*(1-increased_prob_if_homeless)
             
             unemployment_process(:,5,1,1,0,:)=probability_becoming_employed
-            unemployment_process(:,5,1,2,0,:)=probability_becoming_employed/(1+increased_prob_if_homeless)
+            unemployment_process(:,5,1,2,0,:)=probability_becoming_employed*(1-increased_prob_if_homeless)
             
             unemployment_process(:,5,2,1,0,:)=(1-probability_becoming_employed)
-            unemployment_process(:,5,2,2,0,:)=(1-probability_becoming_employed/(1+increased_prob_if_homeless))
+            unemployment_process(:,5,2,2,0,:)=(1-probability_becoming_employed*(1-increased_prob_if_homeless))
 
         end if
 
@@ -34793,7 +34793,14 @@
                 case ("increased_prob_if_homeless")
                     write(*,*) "HANDOVER increased_prob_if_homeless:", &
                         increased_prob_if_homeless, "->", handover_value
-                    increased_prob_if_homeless=max(min(handover_value,20.d0),0.d0)
+                    ! THE CEILING IS BELOW ONE NOW, AND THAT IS NOT A TASTE.
+                    ! The job finding rate is multiplied by (1-x) rather than
+                    ! divided by (1+x), so anything at or above one makes it
+                    ! zero or NEGATIVE -- a negative probability that the
+                    ! process verifier would catch only after a wasted solve.
+                    ! The old ceiling of 20 was safe under division and is not
+                    ! under multiplication.
+                    increased_prob_if_homeless=max(min(handover_value,0.95d0),0.d0)
 
                 ! THE EARNINGS PENALTY OF A SUBSTANCE USE DISORDER. It enters as
                 ! rho_d**(sud*include_rho_d), so it is a multiplier on the wage
