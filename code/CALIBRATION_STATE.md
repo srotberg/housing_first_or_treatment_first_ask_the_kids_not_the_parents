@@ -19,7 +19,57 @@ The moment h_2 is the CEX severe cost burden against 0.101; the parameter h_2
 is `smallest_rental_relative_to_lowest_income`. Both are live. What is
 conceded is exactly what `SKIP` in `next_batch.py` says, and nothing else.
 
-## LIVE STATE, 1 September 22:00 -- FOUR ARMS OUT, AND WHY emp_homeless FAILS
+## LIVE STATE, 1 September 22:33 -- THE ARCHIVE CAME BACK; THE STREET ARM IS OUT
+
+Best point `a6ff37446f`, MODEL 3af48ddb51, one beta, 61 points in this economy.
+LOSS 100.1 per cent, median 26.5, six of twenty-one inside ten. Binding moment
+`emp_homeless`. Seven workers out.
+
+### The archive survived two model changes, both MEASURED
+
+The Fortran changed twice this evening on the author's instruction and both times
+the same vector was re-run under the new source in a scratch copy and compared
+moment by moment, rather than the equivalence being argued:
+
+- `0e0abddab7`, the job finding rate going from `/(1+x)` to `*(1-x)`. Worst shift
+  over twenty-three scored moments: `kappa_ued` at 0.12 per cent of target.
+  Nineteen moved by under 0.005 per cent. `emp_homeless`, the moment it acts on,
+  0.96352 -> 0.96411. The homelessness rate did not move to five places.
+- `3af48ddb51`, the street's floor moving off the ratio and onto the street.
+
+Both are in `EQUIVALENT_MODELS`, so the 281 points are scoreable again.
+
+### The rung DOES create involuntary homelessness -- and it may not be enough
+
+First signal, one point at a rung of 0.2 and NOT a clean arm, so read it as a
+direction and nothing more:
+
+    homeless by choice   0.9952  ->  0.2476
+    emp_homeless         0.9635  ->  0.9045
+
+So the rung does what it was supposed to: three quarters of the homeless become
+priced out rather than choosing it. But `emp_homeless` only falls to 0.90. If
+that survives the clean arms, it says the households a dear rung prices out are
+mostly EMPLOYED low income ones, not the unemployed -- which would mean the
+bottom of the income distribution is not unemployment-driven and the whole route
+to 0.46 is blocked at a deeper level than the housing block. DO NOT report that
+as a finding until the clean arms land; it is one uncontrolled point.
+
+### What is out
+
+- `batch_street_a/b` in (rung, street) coordinates on the author's instruction to
+  raise the rung and lower the street: rung 0.30/0.80/1.50 against a base 0.055,
+  crossed with the street at 0.002 and 0.0005 against a base 0.00578.
+- the earlier fixed-ratio arm, `size_homelessness` pinned at the old floor of
+  0.01 with the rung walked 0.30 to 2.50.
+- `batch_drugfit` off `a338a40e20`, the gate repair.
+
+### Still true, and still the reason emp_homeless is hard
+
+`increased_prob_if_homeless` is exogenous at 0.2 and owns nothing. The cheapest
+rung owns `emp_homeless`. The cost burden headcount is UNOWNED and still scored.
+
+## SUPERSEDED: 1 September 22:00 -- FOUR ARMS OUT, AND WHY emp_homeless FAILS
 
 Best point `a6ff37446f`, MODEL 31818f2e83, one beta, 40 points in this economy.
 LOSS (minimax over scored) 100.1 per cent, median 26.5, six of twenty-one inside
