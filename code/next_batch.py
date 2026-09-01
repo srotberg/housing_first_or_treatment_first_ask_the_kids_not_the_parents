@@ -216,6 +216,28 @@ OWN = {
     # This is restoring an instrument removed on a false premise, not a scope
     # change. beta is banded rather than pointed, so the step aims at the band.
     'discount_factor':                                     'beta',
+    # AND THE SAME BUG, THREE MORE TIMES. beta was not a special case.
+    #
+    # A point run does not update ANY parameter internally. Eighteen parameters
+    # carry a live adjuster in the source, but the block that applies them is
+    # never reached -- a point ends at loop_count 2 -- and the check is direct:
+    # of the parameters a run prints back, size_homelessness, discount_factor and
+    # relative_share_of_leisure all come out EXACTLY as they were handed in.
+    #
+    # So every moment recorded as "calibrated internally" has in fact had no
+    # instrument at all, and the label hid it. These three are the rest of them.
+    # sd_permanent_productivity is included even though sigma_y reads -1.7 per
+    # cent: it is close by luck, not by anything holding it there, and the next
+    # time the economy moves it will drift with nothing pushing back.
+    #
+    # relative_share_of_leisure is the sharpest case. It was UNFROZEN this
+    # afternoon on the author's instruction that "omega_ell should target the 0.4
+    # as before", and unfreezing it did nothing whatever, because the adjuster it
+    # re-enabled is in a block a point never executes. omega_l has been at -26
+    # per cent since, and would have stayed there.
+    'relative_share_of_leisure':                           'omega_l',
+    'labor_income_tax_rate':                               'tau_l',
+    'sd_permanent_productivity':                           'sigma_y',
     # 'discount_factor_impatient':                         'w_bot',
     # THE MORTALITY PENALTY IS THE PRICE OF USING, so it decides WHO is willing
     # to pay it, and a high one leaves only the most desperate -- who are the
@@ -296,6 +318,9 @@ BOUNDS = {
     'max_food_cost':                                       (1e-4, 1.0),
     # A REAL SEARCH RANGE NOW: nothing calibrates this inside a point run.
     'discount_factor':                                     (0.90, 0.999),
+    'relative_share_of_leisure':                           (0.5, 12.0),
+    'labor_income_tax_rate':                               (0.30, 0.95),
+    'sd_permanent_productivity':                           (0.60, 1.30),
     'discount_factor_impatient':                           (0.50, 0.995),
     # Standardised mortality ratios for opioid use disorder run 6 to 10 in the
     # literature and 8 was the assigned midpoint. The author has authorised 4 as
