@@ -1145,6 +1145,15 @@
         ! at an assigned value assigns the counterfactual's main result.
         real(8) :: increased_prob_if_homeless=0.2
 
+        ! HOW MANY TIMES THE LABOUR SECANT MAY COMPLAIN BEFORE IT GOES QUIET.
+        ! Eleven writes inside an OpenMP region, on a stdout that
+        ! GFORTRAN_UNBUFFERED_ALL makes a syscall per line, serialises every
+        ! thread; a worker measured 1.42 MB/s of it and a factor of 500 on the
+        ! cost of a working age. Twenty occurrences is enough to diagnose one and
+        ! cannot cost anything.
+        integer :: secant_warn_count=0
+        integer, parameter :: secant_warn_cap=20
+
         real(8) :: rho_d=0.85
 
         real(8) :: distance_rho_d
@@ -5990,6 +5999,13 @@
                 mass_by_beta_type(1)/max(mass_by_beta_type(2),10.d0**(-12))
             write(*,*) "DIAG pooled mass=", pooled_mass_all, &
                 " one-type equivalent=", mass_by_beta_type(1)
+
+            ! HOW OFTEN THE LABOUR SECANT ACTUALLY FAILED TO CONVERGE, once,
+            ! rather than eleven lines every time it did. Zero is the expected
+            ! reading. A large number here is a real solver problem and the
+            ! twenty printed occurrences above are the evidence for it.
+            write(*,*) "DIAG labour secant hit its iteration cap        =",&
+                secant_warn_count
 
             write(*,*) "===== INVARIANTS ====="
             diag_fail_1=0
@@ -20880,11 +20896,47 @@
         
         end if
         
-        ! WAS abs(MU_1-MU_1), IDENTICALLY ZERO, so this warning could never
-        ! fire. It exists to say the secant left its loop without converging.
-        ! Guarded on can_consume_1==1, so both marginal utilities are defined.
-        if ((can_consume_1==1) .AND. (abs(MU_1-MU_2)>stopping_rule_secant) .AND. (x_1>0) .AND. (x_1<1)) then
-        
+        ! IT MUST TEST THE QUANTITY THE LOOP CONVERGED ON, AND IT DID NOT.
+        !
+        ! The loop above exits when distance_secant, which is abs(x_0-x_2), the
+        ! width of the BRACKET, falls under stopping_rule_secant. This warning
+        ! tested abs(MU_1-MU_2), the gap in MARGINAL UTILITY, against the same
+        ! 1e-8. Those are different quantities in different units: a bisection on
+        ! [0,1] reaches a bracket of 1e-8 in about twenty seven steps, while the
+        ! marginal utility gap at that point is whatever the function's slope
+        ! makes it and is essentially never under 1e-8. So the warning fired for
+        ! a converged solve, at essentially every working-age household state.
+        !
+        ! IT COST THE WHOLE EVENING. Eleven unbuffered writes per occurrence,
+        ! with GFORTRAN_UNBUFFERED_ALL=1 set by run_one_point.sh, serialise all
+        ! four OpenMP threads on stdout. A worker measured 1.42 MB/s of it and a
+        ! working age costing 191 seconds against 0.4 for a retired one -- a
+        ! factor of about 500 -- and 6.3 GB emitted in 73 minutes with no moments
+        ! block at the end of it. NO POINT HAS EVER BEEN MEASURED on a source at
+        ! or after the commit that made this able to fire.
+        !
+        ! Both halves are mine, from 84c1ee5: that commit changed the loop test
+        ! from the marginal utilities to the bracket, and in the same pass gave
+        ! this warning a condition that was still on the marginal utilities. Each
+        ! change was right on its own and together they are inconsistent.
+        !
+        ! LEAVING WITHOUT CONVERGING IS HITTING THE ITERATION CAP, which is what
+        ! the warning is for and what it now tests. That cannot fire on a solve
+        ! that converged, whatever the marginal utilities do. The gap is still
+        ! printed, as information rather than as the trigger.
+        !
+        ! AND IT IS THROTTLED REGARDLESS. Eleven writes inside a parallel region
+        ! is a hazard even when the condition is right, because a genuine
+        ! non-convergence at many states would cost the same hours. After
+        ! secant_warn_cap occurrences it stops printing and the count is reported
+        ! once, at the end of the run.
+        if ((can_consume_1==1) .AND. (loop_1>=max_loop_count) .AND. (x_1>0) .AND. (x_1<1)) then
+
+            !$omp atomic
+            secant_warn_count=secant_warn_count+1
+
+            if (secant_warn_count<=secant_warn_cap) then
+
             write(*,*) "labor"
             write(*,*) "distance_secant=", distance_secant
             write(*,*) "loop_1=", loop_1
@@ -20897,7 +20949,9 @@
             write(*,*) "consumption_choice=", consumption_choice
             write(*,*) "frac_spent_on_addiction=", frac_spent_on_addiction
             write(*,*) "taxable_income_1=", taxable_income_1
-            
+
+            end if
+
         end if
         
         call objective(time_period,MU_1,MU_2,labor_supply_1,after_tax_wealth_net_of_expenses_2,&
