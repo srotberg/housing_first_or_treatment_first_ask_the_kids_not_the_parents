@@ -107,6 +107,27 @@ survives a container. When it prints the table, relay the whole thing to the
 author -- not the worst few rows, not the median. They have asked for the full
 table more than once and the median hides exactly the moment that is stuck.
 
+**REPORT ONE EQUILIBRIUM. NEVER A BEST-OF ACROSS POINTS.** The author's
+instruction, 1 September: *"I want to see the best calibration points when you
+report. Not the best points you reached across simulations."*
+
+`gaps.py` is the only sanctioned report, because it prints ONE point — the best
+equilibrium — and every moment that point produces. Do not build a table whose
+rows come from different points, in any form: not "best gap ever seen for each
+moment", not a per-moment minimum over the archive, not a mixture.
+
+This was done once and it misled immediately. A reachability table said
+`emp_homeless` had been as good as 69.1 per cent, which read as progress; the
+point it came from, `b2969f8ebb`, had `lambda_d` at +1601 per cent, `b` at +775
+and `h_1` at +441. It was a wrecked equilibrium whose employed share improved as a
+side effect, and the minimax rejects it correctly. Quoting it invited the author
+to believe a rung had been climbed that nobody could stand on.
+
+A per-moment scan is a legitimate DIAGNOSTIC — it answers whether an instrument
+can move its moment at all — and it may be used to decide what to run next. It is
+not a report and it does not go to the author as one. If it must be mentioned,
+say what point each number came from and what else was true there.
+
 The loss is theirs: a MINIMAX over the scored moments, with `beta` scoring zero
 anywhere inside its 3.0–4.5 band. The median is printed beside it because the two
 moved in opposite directions more than once on 1 September, but the median is
