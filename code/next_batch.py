@@ -195,24 +195,27 @@ OWN = {
     # keeps wealth over output, which is banded rather than pointed; the
     # impatient one owns the wealth share of the bottom half, which nothing
     # could move while there was a single beta.
-    # discount_factor IS NOT HERE ANY MORE, AND beta HAS AN OWNER ALREADY.
-    # The model bisects the patient discount factor on wealth over output
-    # inside every point run -- distance_discount_factor sits in the
-    # calibration loop's while condition and the update is gated only on
-    # re_do_simulation_with_fixed_parameters, which is zero in a point. So
-    # proposing a value here was a DUPLICATE DRIVER: the search spent an arm on
-    # beta, the model overrode it, and the archived VECTOR line then recorded a
-    # discount factor the point did not actually run at. The vector value is
-    # still passed, as the bisection's starting point, which is what BOUNDS
-    # below is for.
-    # w_bot's owner, and it can only move while number_of_beta_types is 2.
-    # At one type it does nothing and the moment has no instrument.
-    # REMOVED WITH THE SECOND DISCOUNT FACTOR, 1 September. This mapping only
-    # ever worked at number_of_beta_types=2 and the author has gone back to one:
-    # "Maybe we don't even need the two betas ... we have other things that pin
-    # down the homelessness of the newborns, and the unemployment of the
-    # homeless." The parameter stays in the vector so a point records it; it
-    # owns nothing.
+    # DISCOUNT_FACTOR IS BACK, AND IT SHOULD NEVER HAVE LEFT.
+    #
+    # It was removed on the belief -- written into this file in as many words --
+    # that "the model bisects the patient discount factor on wealth over output
+    # inside every point run", so proposing a value here would be a duplicate
+    # driver. THAT IS NOT TRUE OF A POINT RUN, and it is now checked three ways:
+    # every one of the 45 points on the current model carries the identical
+    # discount_factor=0.99715, the string distance_discount_factor appears in
+    # ZERO worker logs, and the one-beta point ends its run with the discount
+    # factor exactly as it was handed in. The bisection lives in the full
+    # calibration binary; a point does not run it.
+    #
+    # So beta -- wealth over output -- has had NO instrument at all, and the
+    # error was invisible while there were two types: 0.99715 paired with an
+    # impatient 0.95 happened to give 4.44, inside the 3.0-4.5 band, so beta
+    # scored zero and nothing drew attention to it. At one type the same
+    # discount factor gives 6.42 and the moment is 114 per cent out.
+    #
+    # This is restoring an instrument removed on a false premise, not a scope
+    # change. beta is banded rather than pointed, so the step aims at the band.
+    'discount_factor':                                     'beta',
     # 'discount_factor_impatient':                         'w_bot',
     # THE MORTALITY PENALTY IS THE PRICE OF USING, so it decides WHO is willing
     # to pay it, and a high one leaves only the most desperate -- who are the
@@ -291,7 +294,7 @@ BOUNDS = {
     'largest_house_size':                                  (0.02, 1.00),
     'kappa_uem':                                           (1.0, 100.0),
     'max_food_cost':                                       (1e-4, 1.0),
-    # a SEED for the internal bisection, not a search range: see OWN above.
+    # A REAL SEARCH RANGE NOW: nothing calibrates this inside a point run.
     'discount_factor':                                     (0.90, 0.999),
     'discount_factor_impatient':                           (0.50, 0.995),
     # Standardised mortality ratios for opioid use disorder run 6 to 10 in the
