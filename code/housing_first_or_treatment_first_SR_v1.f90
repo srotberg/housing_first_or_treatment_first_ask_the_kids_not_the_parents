@@ -35318,11 +35318,43 @@
                 
             end if
             
-            previous_average_labor_income=model_average_labour_income(1)
-            previous_median_income=median_income(1)
-            previous_average_net_wealth=model_average_net_wealth(1)
-            
-            previous_inheritance_amount=inheritance_amount
+            ! CAPTURE THE PREVIOUS LOOP'S VALUES ONCE, ON THE FIRST PASS.
+            !
+            ! These four are the damping anchors: the block near the end of the
+            ! iteration blends the new value with the previous one at
+            ! weight_on_labor_income and its siblings. "Previous" means the
+            ! previous CALIBRATION LOOP. Unguarded, this sits inside
+            ! `do current_beta_type=1,number_of_beta_types` and so ran again on
+            ! the second pass -- and by then model_average_labour_income holds
+            ! what the FIRST pass left, which is a raw mass-weighted SUM, because
+            ! the division by model_total_workers is guarded to the LAST pass and
+            ! pass one skips it.
+            !
+            ! The blend downstream therefore averaged a true per-worker mean with
+            ! an undivided sum, inflating the denominator by roughly (1+W)/2 for
+            ! W the first type's worker mass. That is the factor of seventeen
+            ! that has been chased all evening: aleph read 2.61 against a target
+            ! of 80, and two lines in the SAME point implied 0.6 and 10.2 for the
+            ! same quantity.
+            !
+            ! It is not confined to a printed moment. set_SS_benefits multiplies
+            ! benefits by this, and the next iteration's solve reads it as
+            ! avg_income_to_use_1 and as the standard deduction, so a corrupted
+            ! value walks into the household's budget constraint.
+            !
+            ! At ONE beta type the division happens on the only pass and the
+            ! guard below is always true, so nothing measured at one type moves.
+            ! That matches the symptom: aleph sits still at one type and swings
+            ! at two.
+            if (accumulating_beta_types==0) then
+
+                previous_average_labor_income=model_average_labour_income(1)
+                previous_median_income=median_income(1)
+                previous_average_net_wealth=model_average_net_wealth(1)
+
+                previous_inheritance_amount=inheritance_amount
+
+            end if
             
             call stationary_equilibrium_statistics(1)
             call stationary_equilibirum_homeownership_rate(1)
