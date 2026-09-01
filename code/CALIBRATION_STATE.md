@@ -73,6 +73,66 @@ the asset grid. They are not admissible as an anchor and must not be scored.
 The four endowment-sweep workers on the old snapped mechanism were stopped: they
 answered a question that no longer exists.
 
+### THE FIRST POINT BACK CONTRADICTS MY DIAGNOSIS, AND IT IS NOT A SMALL MISS
+
+`point_2dfee07d2e`, pi_eu=0.09, MODEL a693849dcb. Against the anchor
+`point_2af18641a4`:
+
+| band | anchor | pi_eu=0.09 | observed |
+|---|---|---|---|
+| 1 | 0.9093 | **0.4726** | 0.260 |
+| 2 | 0.0262 | 0.2459 | 0.272 |
+| 3 | 0.0115 | 0.0804 | 0.210 |
+| 4 | 0.0230 | 0.1158 | 0.184 |
+| 5 | 0.0300 | 0.0853 | 0.075 |
+
+`h_share1` moved FORTY-FOUR POINTS. Four instruments through four channels had
+moved it by at most two. Bands 2 and 5 land almost exactly on the data. That is
+the moment this calibration has been blocked on all week, and something just
+moved it most of the way.
+
+**BUT THE ATTRIBUTION IS NOT MADE, AND MUST NOT BE CLAIMED.** These two points
+differ in TWO things, not one: pi_eu went 0.01546 to 0.09, AND the endowment
+mechanism changed from the SCF distribution, mean 0.0960, to a uniform snapped
+0.6721. By the liquidity hypothesis the second alone would move band 1 hard. So
+this point does not establish that unemployment is the cause; it establishes that
+ONE of the two is, and that the age profile is reachable at all, which was in
+doubt.
+
+The two clean reads are already in flight:
+- `pi_eu` at 0.05 versus 0.09, same model, same endowment -- isolates pi_eu;
+- the six-point transfer sweep on the new model at fixed pi_eu -- isolates the
+  endowment.
+
+What is NOT supported by this point: that more unemployment makes the homeless
+less employed. The employed share of the homeless went 0.9077 to 0.9223 -- the
+wrong way, and by almost nothing -- while the unemployment rate went 0.0833 to
+0.1813. `increased_prob_if_homeless` owns that moment and nothing else does.
+
+What this point costs elsewhere: `h_1` fell 0.00346 to 0.00124 against a target
+of 0.00399, so the LEVEL of homelessness is now less than a third of the data,
+and `w_bot` went 0.0297 to 0.1083 against 0.025. Both are scored. The level has
+an owner in `size_homelessness`; w_bot is the top-of-grid problem below.
+
+### THE TOP OF THE ASSET GRID HAS TO REPRESENT MORE WEALTH
+
+The author, on being told that concentrating the grid at the bottom spreads it
+at the top: "if there are too many people at the top grid point, you have to
+make the top grid point represent more wealth."
+
+That is `max_times_labour_income_saved`, 3.2 times the top labour income, and it
+is the diagnosis the code itself already reached once: "a truncated top
+understates total wealth, and every share read off that total is inflated --
+which is most of why the bottom half appeared to hold 16.9 per cent of net worth
+against 2.52 in the data." `w_bot` reads 0.1083 against 0.025 at the point above,
+which is that symptom exactly.
+
+It is only used in the grid endpoint and in printouts, no parameter expressions,
+so it can be made settable exactly as the expander was. **HELD until the six seed
+points land**, because they are all on hash 8ced112a69 and changing the source
+now would leave the seed round unable to anchor the next gate run. It is a
+prepared change, not a pending decision.
+
 ### What to do when the seed lands
 
 Compare the six by `h_share1` and by `h_1`. The prediction on record, so it can
