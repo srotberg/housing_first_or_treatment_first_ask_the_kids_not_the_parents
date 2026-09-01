@@ -546,7 +546,13 @@ def vector(text):
 # distinguishes them, so a stale label drops the moment and the point is simply
 # re-measured when it is next asked for.
 STALE_LABEL = {'h_2': ['smallest unit', 'above half of income'],
-               'gamma': ['renters'],
+               # AND THE EXPENDITURE DENOMINATOR IS STALE TOO. gamma was
+               # "housing over expenditure" against a CEX expenditure share of
+               # 0.268; on the author's instruction it is now "housing over
+               # income" against 0.202. A point measured under the old label
+               # carries a different object compared with a different target, so
+               # it is dropped rather than mixed in.
+               'gamma': ['renters', 'housing over expenditure'],
                # cbar CHANGED DENOMINATOR. It was total food-stamp spending over
                # model_average_labour_income, a total over a MEAN, which scaled
                # with population and printed 0.0532 against a target of 0.0042.

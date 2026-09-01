@@ -1458,7 +1458,24 @@
         ! share rather than a rent to income ratio because gamma is a
         ! Cobb-Douglas weight, and a Cobb-Douglas weight equals the expenditure
         ! share exactly; income and expenditure differ by saving.
-        real(8), parameter :: avg_rent_to_income_data=0.268
+        ! RETARGETED TO 0.202 ON THE AUTHOR'S INSTRUCTION, 1 September:
+        ! "retarget gamma to match the total housing costs to total income,
+        ! I think around 20%". 0.202 is the figure the model already carries as
+        ! the observed counterpart of `housing over income, renters`.
+        !
+        ! THE CONCERN, STATED ONCE AND THEN SET ASIDE. The paragraph above argued
+        ! that gamma must be an EXPENDITURE share because a Cobb-Douglas weight
+        ! equals the expenditure share exactly, and income and expenditure differ
+        ! by saving. That argument is sound on its own terms; the author has
+        ! nevertheless chosen the income denominator, so the target moves with it
+        ! rather than staying at a CEX expenditure share of 0.268 that would now
+        ! be compared against the wrong object.
+        !
+        ! It also removes a mismatch that was already there. The printed moment
+        ! divided housing by EXPENDITURE while the calibrating loop at 35847
+        ! compared `model_avg_housing_spending_renters` -- housing over INCOME --
+        ! against this same constant. Moment and update now measure one thing.
+        real(8), parameter :: avg_rent_to_income_data=0.202
         ! GAMMA TARGETS THE AVERAGE RENT TO INCOME RATIO, which is the moment the
         ! stylized model of Section 2 uses and the one a Cobb-Douglas housing
         ! share moves most directly. It used to target the SHARE OF RENTERS above
@@ -5270,8 +5287,8 @@
             ! neither the same denominator nor the same kind of average. CEX's
             ! income based figure for the same numerator is 20.2 per cent, so
             ! the old pairing aimed the target about a third high.
-            write(*,*) "MOMENT gamma     housing over expenditure    model=",&
-                val_hous_expend_num(1)/max(val_hous_expend_den(1),10.d0**(-14)),&
+            write(*,*) "MOMENT gamma     housing over income         model=",&
+                model_avg_housing_spending_renters(1),&
                 " target=", avg_rent_to_income_data
             write(*,*) "UNTARGETED housing over income, renters      model=",&
                 model_avg_housing_spending_renters(1), " observed=", 0.202d0
