@@ -719,8 +719,17 @@ def moments(text):
             r'MOMENT (\S+)\s+(.*?)model=\s*([0-9.eE+-]+)\s+target=\s*([0-9.eE+-]+)', text):
         if any(t in label for t in STALE_LABEL.get(n, ())):
             continue
+        # gamma's row on a pre-change point is the income object and is dropped
+        # by STALE_LABEL above. The expenditure object it should now be compared
+        # against is already in those points as a DIAG line, so the row is
+        # rebuilt from it rather than the point being wasted.
         _check_override(n, float(tg))
         out[n] = (float(m), TARGET_OVERRIDE.get(n, float(tg)))
+
+    if 'gamma' not in out:
+        r = re.search(r'DIAG aggregate housing / aggregate expenditure\s+=\s*([0-9.eE+-]+)', text)
+        if r:
+            out['gamma'] = (float(r.group(1)), 0.268)
 
     # THE AGE PROFILE IS SCORED, THROUGH ONE NUMBER AND NOT FIVE.
     #
@@ -796,68 +805,23 @@ def gap(name, pair):
 # ONLY ADD A HASH HERE AFTER READING THE DIFF AND CONFIRMING NOTHING THE MODEL
 # COMPUTES CHANGED. This list is a claim about the source, not a convenience.
 EQUIVALENT_MODELS = {
-    '6eeab9f2cc': {'57a80a45e9'},
-    # 33160acfdd ADDS FIVE WRITE STATEMENTS to 80b575e3c8 and nothing else. The
-    # diff, read line by line before this entry was made, is the aleph ingredient
-    # block in print_all_moments: the numerator, the denominator, the worker
-    # count behind it, the implied total labour income and the value of life per
-    # household. Every added line is a `write(*,*)`; not one assignment, guard or
-    # expression that the model computes was touched.
+    # SAME ECONOMY, DIFFERENT SOURCE. Keyed by SEMANTIC hash now, so a comment
+    # never appears here -- model_hash handles those.
     #
-    # This matters more than usual right now, because point_6c9629542c is the
-    # FIRST point ever measured with every invariant passing and the source has
-    # moved once since. Without this entry the archive is empty again and the
-    # gate has nothing to interpolate from.
-    '33160acfdd': {'80b575e3c8'},
-    # dc8abdfbce ADDS ONLY PRINTS AND DEFAULTS-PRESERVING COORDINATES to
-    # d70ad1c545, so a point measured on either is the same economy and the
-    # archive must not be thrown away for it. What changed:
-    #   - the by-age housing-margin DIAG block in print_all_moments, which is
-    #     write statements and nothing else;
-    #   - number_of_beta_types and homeless_death_risk_flat_in_age became
-    #     runtime coordinates rather than compile-time parameters, and BOTH
-    #     default to the value that reproduces the old behaviour exactly
-    #     (one type, Baggett's mortality ratios);
-    #   - freeze_beta_bisection, which defaults to 0 and gates nothing at 0.
-    # A point that passes homeless_death_risk_flat_in_age=0 on dc8abdfbce is
-    # therefore bit-comparable with one measured on d70ad1c545. A point that
-    # passes 1 or 2 is NOT, and is a different economy by intention.
-    'dc8abdfbce': {'d70ad1c545'},
-    # 033a668663 IS d70fdc10ec PLUS THREE CHANGES, AND NONE OF THEM IS READ BY A
-    # MOMENT. The diff was written in this session and read back line by line
-    # before this entry was made:
+    # 31818f2e83  the current source
+    # 1089e7258f  before gamma's printed object and target moved from the income
+    #             denominator to the expenditure one. Nothing a household faces
+    #             changed; only what is printed and what it is compared against.
+    # ddde1a91e1  before the rental ladder's ratios became parameters. They
+    #             DEFAULT to the 2.0 and 3.0 that were hard coded, so a point run
+    #             without them is byte-for-byte the same economy.
     #
-    #   1. val_life_min's reset gained the `accumulating_beta_types==0` guard
-    #      that the eleven resets around it already had. val_life_min is read at
-    #      exactly one place, the DIAG print of the lowest value of a period of
-    #      life. No moment, no invariant and no calibration update touches it.
-    #   2. The negative-value-of-life DIAG now prints a share instead of a raw
-    #      mass, with the mass and the divisor beside it. A write statement.
-    #   3. The max_food_cost update block divides by model_output rather than
-    #      model_average_labour_income, so that the internal loop optimises the
-    #      same ratio the cbar moment reports. That block is inside
-    #      calibrating_model's update section, which a point run never enters --
-    #      confirmed on point_85f8304979, which contains zero occurrences of
-    #      `distance_max_food_cost` and zero of `MOVE MODE`, both of which that
-    #      section prints unconditionally.
-    #
-    # So the nine points on d70fdc10ec measure the same economy this source
-    # does. Without this entry the archive is empty exactly at the point where b
-    # and lambda_d have finally landed inside ten per cent.
-    '033a668663': {'d70fdc10ec'},
-    # 7c5693c4e4 IS 033a668663 WITH ONE TARGET CONSTANT CHANGED and a comment
-    # block above it. unemployment_rate_data went from 0.0485 to 0.139 on the
-    # author's instruction. A target is what a moment is COMPARED WITH; it enters
-    # no household's problem, no transition, no aggregation and no invariant, and
-    # the only two places it is read are the MOMENT write statement and the
-    # calibrating loop's separation-rate update, which a point run never enters.
-    # So a point measured on either hash is the same economy to the last digit.
-    #
-    # The scoring difference is handled by TARGET_OVERRIDE above, not here: the
-    # equivalence says the ECONOMIES match, the override makes the COMPARISON
-    # consistent across points that recorded different targets.
-    '7c5693c4e4': {'033a668663', 'd70fdc10ec'},
+    # Both are behaviour-preserving, which is why forty points are admissible
+    # across them rather than thrown away. gamma is the one row that differs, and
+    # moments() reads it from the DIAG expenditure line for the older two.
+    '31818f2e83': {'1089e7258f', 'ddde1a91e1'},
 }
+
 
 
 def current_model_hash():
@@ -882,8 +846,20 @@ def archive():
     too few points the caller says so; an empty batch is a better outcome
     than a batch aimed at a model that no longer exists.
     """
-    want = current_model_hash()
-    ok = {want} | EQUIVALENT_MODELS.get(want, set())
+    # GROUP BY THE SEMANTIC HASH, not by an md5 of the whole file.
+    #
+    # A commit that changed ZERO non-comment lines invalidated forty points on
+    # 1 September and took the loss from 162.8 per cent to "no scoreable point in
+    # the current economy" -- because documentation had been written. model_hash
+    # strips comments and blank lines and rebuilds the map from git history, so
+    # old points whose stamp is a full-file hash are resolved exactly rather than
+    # guessed at. EQUIVALENT_MODELS still applies, for revisions that differ in
+    # code but are known to be the same economy.
+    import model_hash as _mh
+    _map = _mh.build_map()
+    want = _mh.current()
+    ok = {want} | {_mh.resolve(x, _map) for x in
+                   EQUIVALENT_MODELS.get(current_model_hash(), set())}
 
     # AND ONLY POINTS IN THE CURRENT ECONOMY, not merely the current source.
     #
@@ -914,7 +890,7 @@ def archive():
             continue
         t = open(f).read()
         mh = re.search(r'^MODEL (\S*)', t, re.M)
-        if not mh or mh.group(1) not in ok:
+        if not mh or _mh.resolve(mh.group(1), _map) not in ok:
             skipped += 1
             continue
         v, m = vector(t), moments(t)

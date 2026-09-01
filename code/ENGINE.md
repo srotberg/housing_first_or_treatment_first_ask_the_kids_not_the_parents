@@ -120,6 +120,26 @@ moment binds, workers alive. PushNotification (proactive, under 200 chars, one
 line, no markdown) ONLY for: the stopping rule met; the fleet stuck two firings
 running; something needing the author's decision.
 
+## THE MODEL IS FROZEN. Do not change the Fortran.
+
+On 1 September the source changed TWELVE times and the archive reset eleven of
+those, because eleven were semantic. That, and not the solver, is why the loss
+did not converge: no search ever held more than a few points on one model. A
+six-minute solve and eight workers is forty points an hour, and it bought almost
+nothing because the target kept moving.
+
+So from here the Fortran does not change. Not for a retarget, not for a better
+denominator, not for a parameter that ought to be settable. If something in the
+model looks wrong, WRITE IT DOWN in CALIBRATION_STATE.md and put it to the author
+at the end of a run rather than fixing it mid-search. A model that holds still
+for two hours is worth more than any single fix on that list.
+
+The one exception is an outright bug that makes points meaningless, and even then
+say what it invalidates before touching it.
+
+Comments are safe: `model_hash.py` strips them, so documenting the code no longer
+resets the archive. That was one of the twelve.
+
 ## Rules that do not move
 
 - Every point runs through `code/run_one_point.sh`, cold, with the HANDOVER

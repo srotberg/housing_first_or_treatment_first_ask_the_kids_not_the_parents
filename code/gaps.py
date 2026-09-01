@@ -18,15 +18,21 @@ The high-water mark lives in .gaps_best so it survives a container.
 import glob, hashlib, json, os, re, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+_MAP = {}
+_OK = set()
 SKIP = {'h_3', 'w_bot'}
-UNSCORED = {'kappa_ued', 'kappa_uem'}
+# rent50 is REPORTED, NOT SCORED. The cheapest rung is bracketed on h_2, the
+# headcount above half of total SPENDING, on the author's instruction that gamma
+# and the cost burden share a denominator. rent50 is the same headcount over
+# INCOME and pointed the OPPOSITE way -- +163 per cent against h_2's -38 -- so
+# scoring both left one parameter with two targets it could not satisfy at once.
+UNSCORED = {'kappa_ued', 'kappa_uem', 'rent50'}
 BAND = {'beta': (3.0, 4.5)}
 
 # parameter -> the moment it is bracketed on. Kept here rather than imported so
 # that a broken next_batch.py cannot stop the author seeing where things stand.
 OWN = [
     ('discount_factor', 'beta'), ('probability_becoming_unemployed', 'pi_eu'),
-    ('smallest_rental_relative_to_lowest_income', 'rent50'),
     ('size_homelessness', 'h_1'), ('newborn_endowment_scale', 'h_share1'),
     ('relative_share_of_housing', 'gamma'), ('max_food_cost', 'cbar'),
     ('relative_share_of_addiction_1', 'theta'), ('kappa_phi_d_level', 'y_u'),
@@ -39,7 +45,6 @@ OWN = [
     ('relative_share_of_leisure', 'omega_l'),
     ('labor_income_tax_rate', 'tau_l'),
     ('sd_permanent_productivity', 'sigma_y'),
-    ('smallest_rental_relative_to_lowest_income', 'h_2'),
     ('weight_on_child', 'omega_c'),
 ]
 # moments that are printed and deliberately not scored, with the reason
@@ -48,10 +53,11 @@ NOTE = {'h_3': 'conceded, a fact about a grid the model chose',
         'omega_c': 'measure_child_gap=0, so nothing measures it'}
 
 
+import model_hash as _mh   # semantic identity: comments do not change the model
+
+
 def model_hash():
-    return hashlib.md5(
-        open(os.path.join(HERE, 'housing_first_or_treatment_first_SR_v1.f90'),
-             'rb').read()).hexdigest()[:10]
+    return _mh.current()
 
 
 def config():
@@ -69,6 +75,10 @@ def load(path):
     v = dict(kv.split('=', 1) for kv in mv.group(1).split())
     m = {k: (float(a), float(b)) for k, a, b in re.findall(
         r'MOMENT (\S+)\s+(?:.*?)model=\s*([0-9.eE+-]+)\s+target=\s*([0-9.eE+-]+)', t)}
+    if 'gamma' in m and abs(m['gamma'][1] - 0.268) > 1e-9:
+        r = re.search(r'DIAG aggregate housing / aggregate expenditure\s+=\s*([0-9.eE+-]+)', t)
+        if r:
+            m['gamma'] = (float(r.group(1)), 0.268)
     for pat, key, tv in (
             (r'UNTARGETED share of the homeless, band\s+1\s+model=\s*([0-9.eE+-]+)', 'h_share1', 0.26),
             (r'UNTARGETED employed share of the homeless\s+model=\s*([0-9.eE+-]+)', 'emp_homeless', 0.46),
@@ -88,14 +98,22 @@ def gap(k, pair):
 
 
 def main():
+    global _MAP, _OK
+    _MAP = _mh.build_map()
     h, cfg = model_hash(), config()
+    # Behaviour-preserving predecessors, kept in one place with next_batch's own
+    # list: the rung ratios became parameters DEFAULTING to the values they
+    # replaced, and gamma's denominator changed what is printed rather than what
+    # a household faces. Same economy, different source.
+    _OK = {h} | {'1089e7258f', 'ddde1a91e1'}
     best = None
     n = 0
     for f in sorted(glob.glob(os.path.join(HERE, 'points', '*.txt'))):
         if f.endswith('.FAILED.txt'):
             continue
         t = open(f, encoding='utf-8', errors='replace').read()
-        if f'MODEL {h}' not in t:
+        mm = re.search(r'^MODEL (\S+)', t, re.M)
+        if not mm or _mh.resolve(mm.group(1), _MAP) not in _OK:
             continue
         v, m = load(f)
         if v is None or (cfg and v.get('number_of_beta_types', cfg) != cfg):
