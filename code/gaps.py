@@ -35,8 +35,7 @@ OWN = [
     ('discount_factor', 'beta'), ('probability_becoming_unemployed', 'pi_eu'),
     ('size_homelessness', 'h_1'), ('newborn_endowment_scale', 'h_share1'),
     ('relative_share_of_housing', 'gamma'), ('max_food_cost', 'cbar'),
-    ('relative_share_of_addiction_1', 'theta'), ('kappa_phi_d_level', 'y_u'),
-    ('value_of_life', 'aleph'), ('mu_homeless', 'mu_H'),
+    ('relative_share_of_addiction_1', 'theta'),     ('value_of_life', 'aleph'), ('mu_homeless', 'mu_H'),
     ('utility_cost_of_treatment', 'tau_u'), ('kappa_uem', 'lambda_m'),
     ('smi_onset_level', 'p_m'),
     ('probability_of_voucher_benchmark_used', 'pi_V'),
@@ -89,7 +88,8 @@ NOTE = {'h_3': 'conceded, a fact about a grid the model chose',
         'h_2': 'unowned since the cheapest rung was reassigned to emp_homeless',
         'w_bot': 'conceded with the second beta; nothing moves it at one type',
         'omega_c': 'measure_child_gap=0, so nothing measures it',
-        'rent50': 'reported, not scored: same headcount over income, opposite sign'}
+        'rent50': 'reported, not scored: same headcount over income, opposite sign',
+        'y_u': 'mortality pinned at 8 by the author; goes to a robustness run'}
 
 
 import model_hash as _mh   # semantic identity: comments do not change the model

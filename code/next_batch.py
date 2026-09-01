@@ -290,7 +290,21 @@ OWN = {
     # poorest. That is why the model has zero use in the top two income bands
     # against 7.2 and 4.8 per cent in NSDUH. Calibrated on the income of drug
     # users on the author's instruction, rather than assigned.
-    'kappa_phi_d_level':                                   'y_u',
+    # kappa_phi_d_level IS FIXED AT 8 AND OWNS NOTHING. The author, 1 September:
+    # "We can keep the mortality fixed at 8 since if it's lower the elasticity of
+    # participation might be too high."
+    #
+    # It is the SUD excess-mortality multiplier -- kappa_phi_d_by_age is
+    # 1+(kappa_phi_d_level-1)*shape_sud_profile -- and the declaration's own note
+    # records that it USED to be calibrated on the drug price participation
+    # elasticity, which is now an untargeted validation moment. Lowering it
+    # weakens the deterrent to using and pushes that elasticity back up, so the
+    # instrument cannot be spent on y_u without spending the validation moment
+    # too.
+    #
+    # y_u is therefore UNOWNED. It stays scored, at -42 per cent and nowhere near
+    # binding, and the author has put it to a robustness run at a higher income
+    # rather than into the benchmark. See CALIBRATION_STATE.md.
     # gamma's instrument, freed on the author's instruction. Its measured
     # elasticity on gamma is only 0.22 and it costs h_1 at -7.32, so it is a
     # weak and coupled instrument -- but it is the only one, and h_1 now has
