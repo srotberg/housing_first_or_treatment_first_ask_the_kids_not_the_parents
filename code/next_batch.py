@@ -648,9 +648,29 @@ STALE_LABEL = {'h_2': ['smallest unit', 'above half of income'],
 #
 # Elasticities are unaffected either way, because they are computed from model
 # values alone and never touch the target.
+#
+# AND IT MUST NOT BE ALLOWED TO DIVERGE FROM THE MODEL. The hazard runs both
+# ways: an override that protects the archive from a retired target becomes, the
+# moment the Fortran is retargeted again, a number that silently overrides the
+# CURRENT one, and the search then chases a target the model is not reporting.
+# One number in one place is the standing rule and an override is a second
+# place, so every entry is checked against what the model actually emits and a
+# disagreement is printed loudly rather than applied quietly.
 TARGET_OVERRIDE = {
     'pi_eu': 0.139,
 }
+_override_checked = set()
+
+
+def _check_override(name, emitted):
+    """Warn once per name if an override disagrees with the model's own target."""
+    if name in TARGET_OVERRIDE and name not in _override_checked:
+        _override_checked.add(name)
+        want = TARGET_OVERRIDE[name]
+        if abs(emitted - want) > 1e-6 * max(abs(want), 1.0):
+            print(f'  *** TARGET_OVERRIDE[{name!r}] is {want} but the model now '
+                  f'emits {emitted}. The override is winning. If the model is '
+                  f'right, delete the entry.')
 
 
 def moments(text):
@@ -659,6 +679,7 @@ def moments(text):
             r'MOMENT (\S+)\s+(.*?)model=\s*([0-9.eE+-]+)\s+target=\s*([0-9.eE+-]+)', text):
         if any(t in label for t in STALE_LABEL.get(n, ())):
             continue
+        _check_override(n, float(tg))
         out[n] = (float(m), TARGET_OVERRIDE.get(n, float(tg)))
 
     # THE AGE PROFILE IS SCORED, THROUGH ONE NUMBER AND NOT FIVE.
@@ -904,6 +925,41 @@ def main():
                     for tag, (v, m) in A.items()))
         print(f'GATE CLOSED. Best on max(|b gap|,|lambda_d gap|) is {best[1]} at '
               f'{100*best[0]:.1f} per cent; the gate is {100*GATE["b"]:.0f}.')
+
+        # THE DEADLOCK THIS BREAKS, found on 1 September after it had cost a
+        # whole day. Gate shut meant "no correction batch emitted", and the
+        # documented remedy was restore.py. But restore.py repairs the drug
+        # block by refitting the two-by-two Jacobian FROM THE ARCHIVE, and the
+        # archive held exactly one (lambda_addiction, addiction_scalar_1) pair
+        # on the current model -- every point ever run had the same two values.
+        # A one-point cloud has no Jacobian. So the gate stayed shut, restore.py
+        # could not open it, and the loop emitted nothing, firing after firing,
+        # while batches got built by hand instead.
+        #
+        # The escape is to emit the missing measurement rather than a step: four
+        # points, each drug parameter moved alone off the best base. That both
+        # closes b and gives the Jacobian its first local fit, after which the
+        # ordinary machinery works.
+        best_tag = best[1]
+        bv = A[best_tag][0]
+        pairs = {(pv.get('lambda_addiction'), pv.get('addiction_scalar_1'))
+                 for pv, _ in A.values()}
+        if len(pairs) < 3:
+            print(f'  and the archive holds only {len(pairs)} distinct drug pair(s), '
+                  f'so no local Jacobian can be fitted and restore.py cannot help.')
+            lines = []
+            for name in ('lambda_addiction', 'addiction_scalar_1'):
+                x = float(bv[name])
+                for f in (1.18, 0.85):
+                    d = dict(bv); d[name] = f'{x*f:.6g}'
+                    lines.append('bash code/run_one_point.sh ' +
+                                 ' '.join(f'{k}={d[k]}' for k in sorted(d)))
+            out = 'batch_drugfit.txt'
+            with open(os.path.join(HERE, out), 'w') as fh:
+                fh.write('\n'.join(lines) + '\n')
+            print(f'  EMITTED {out}: the drug 2x2 off point_{best_tag}. '
+                  f'Run it, then run the gate again.')
+            return 0
         print('Keep working the locus. No correction batch emitted.')
         return 2
 
