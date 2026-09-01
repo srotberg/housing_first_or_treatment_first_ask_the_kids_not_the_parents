@@ -953,3 +953,58 @@ DAMPED 0.7   addiction_scalar_1 0.0400 -> 0.041397
 
 Both inside ten per cent if the linearisation holds over that distance, which on
 this model's record it may not. That is what the measurement is for.
+
+# THE DAMPED 2x2 LANDS, AND A WORKER'S LADDER CORRECTS MY w_bot VERDICT
+
+## point_00a8524ec8 is the best point of the session
+
+`addiction_scalar_1` 0.041397, `lambda_addiction` 2.79953. All sixteen
+invariants PASS. **Eight moments inside ten per cent at one point.**
+
+```
+b        +6.1%   (predicted +1.3)      lambda_d  +6.6%  (predicted +5.4)
+aleph    +4.2%   y_u +6.1%   pi_eu +6.4%   p_m +7.2%   tau_l +9.5%   sigma_y +1.7%
+```
+
+The prediction was good on `lambda_d` and out by five points on `b`, which is
+about what a 1.44x extrapolation on an ill-conditioned two-by-two should cost.
+
+Remaining, worst first: `h_share1` +282 per cent (the blocker), `w_bot` +123,
+`cbar` -62, `h_1` -54, `mu_H` -49, `lambda_m` -42, `tau_u` +40, `omega_l` -25,
+`pi_V` -23, `theta` +22, `beta` -21, `gamma` -13, `h_2` -11.
+
+## I was wrong that w_bot has no usable instrument
+
+Arm 4 moved `discount_factor_impatient` 0.95 -> 0.90 and cost +239 per cent on
+`b`, and I reported the instrument as prohibitive and `w_bot` as having no path.
+A worker's three-point ladder at 0.83, 0.87 and 0.91 says otherwise:
+
+```
+beta_imp 0.83   w_bot 0.056137   b 0.427105
+beta_imp 0.87   w_bot 0.067152   b 0.422114     d ln b / d ln beta_imp = -0.25
+beta_imp 0.91   w_bot 0.079091   b 0.409723     d ln b / d ln beta_imp = -0.66
+```
+
+against my own slice:
+
+```
+beta_imp 0.90 -> 0.95                            d ln b / d ln beta_imp = -22.58
+```
+
+**The coupling is not prohibitive, it is violently nonlinear.** Below 0.91 it is
+mild -- a quarter to two thirds of an e-fold of b per e-fold of beta -- and
+between 0.90 and 0.95 it is thirty times steeper. My verdict generalised from
+the one pair I had, which sat entirely inside the steep region.
+
+`w_bot`'s elasticity to the parameter is a stable 3.6 to 3.8 across the whole
+ladder, so if the mild regime holds, `w_bot` needs
+`beta_imp` about 0.67 from that slice -- inside its bounds of 0.50 to 0.995.
+
+**The caveat is real and is why this is an arm rather than a step.** The worker's
+slice carries `b` at 0.41 to 0.43, nearly five times target, so it is a different
+drug economy. Slopes partly transfer between slices and levels do not, which is
+the standing rule, so the mildness may not survive the move to a configuration
+where `b` is 0.094. The next arm tests exactly that: `discount_factor_impatient`
+0.95 -> 0.88 from `point_00a8524ec8`, one coordinate. The two regimes predict b
+moving by four per cent or by a factor of five, so the measurement cannot be
+ambiguous.
