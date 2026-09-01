@@ -6101,3 +6101,81 @@ This also explains why the local search stalled for so long at a b/lambda_d
 ratio of 1.5: every step was built from a Jacobian that understated lambda_d's
 sensitivity threefold, so the ratio could not be moved even though b tracked
 predictions closely.
+
+## STATE AT 06:10 ON 1 SEPTEMBER: the gate is open and the archive is being seeded
+
+**The anchor is `point_9a13317e65`**, and it is the best point measured to date:
+
+```
+addiction_scalar_1 = 0.04350395    lambda_addiction = 3.24803
+b = 0.086789 (-2.5%)   lambda_d = 0.035791 (-2.7%)   ratio 2.4249 vs 2.418
+all sixteen invariants PASS
+```
+
+Nine of twenty-one scored moments are inside ten per cent: theta, tau_l, b, p_m,
+lambda_d, aleph, lambda_m, sigma_y and h_3.
+
+### The gate opened and the batch was still empty
+
+`next_batch.py` exits 0 at this point but wrote **zero** correction arms, with
+the same reason twelve times: *no controlled pair in the archive*. Every point
+measured on this model varies only `addiction_scalar_1` and `lambda_addiction`,
+so for every other instrument there is neither a bracket nor an elasticity to
+step on. **Opening the gate is not the same as having a search**, and that
+distinction cost a firing to notice.
+
+`SEED_26.txt` supplies the missing pairs: twelve arms, one coordinate each, from
+the anchor. `run_seed_batch.sh` runs them sequentially on this box and commits
+each point as it lands. Sequential rather than a fleet: the model already uses
+all four cores, so there is nothing to win locally, and every recorded fleet
+failure -- stalling at "ready to run", the permission prompt on command
+substitution, the rate limit that emptied it at 21:33 -- costs more than the
+wall clock saved. Twelve arms at about ten minutes each is roughly two hours.
+
+Step sizes come from mechanism where one exists and from a modest e-fold
+otherwise, which is the honest distinction:
+
+| parameter | moment | gap | step | where the step came from |
+|---|---|---|---|---|
+| max_food_cost | cbar | -83.4% | x2.411 | square root of the spending ratio, from the benefit formula |
+| utility_cost_of_treatment | tau_u | +308% | 0 -> 2.0 | off a corner; 2.12 was the old loop's value |
+| probability_of_voucher_benchmark_used | pi_V | -48.3% | x1.936 | coverage taken as roughly linear in the lottery |
+| discount_factor_impatient | w_bot | +101% | 0.95 -> 0.90 | direction only |
+| size_homelessness | h_1 | -62.6% | +0.30 e-folds | direction only |
+| largest_house_size | h_2 | -32.3% | +0.30 e-folds | direction only |
+| relative_share_of_housing | gamma | -27.4% | +0.30 e-folds | direction only |
+| kappa_phi_d_level | y_u | +22.5% | 8.0 -> 6.0 | direction only, inside the authorised floor of 4 |
+| probability_becoming_unemployed | pi_eu | +10.4% | -0.15 e-folds | direction only |
+| mu_homeless | mu_H | +754% | 0.8047 -> 0.95 | direction only; denominator near-empty |
+| increased_prob_if_homeless | emp_homeless | +110% | 0.2 -> 3.8 | the steady-state formula |
+| multiple_of_probabilities_of_employment_if_addicted | sud_homeless | -100% | 4 -> 8 | direction only |
+
+### Two of the worst gaps are artifacts and must not be chased as fits
+
+- **`tau_u` +308%** is a corner. Both treatment cost channels are handed over as
+  zero, so treatment is free and everyone with the disorder takes it. Arm 2
+  gives it a price for the first time.
+- **`mu_H` +754%** divides by a homeless SUD mass of 7.96e-15. The author's own
+  comment at line 13055 anticipates it: the homeless SUD mass "is exactly zero
+  whenever the housing margin has collapsed". It cannot be calibrated until the
+  homeless population contains people with the disorder.
+
+### omega_l is scored and has no owner
+
+`omega_l`, labour supply over total hours, is -17.9 per cent and is NOT in
+`SKIP`, so the stopping rule counts it -- but it has no entry in `OWN`, so no
+arm is ever generated for it and the loop can never close it.
+`relative_share_of_leisure` is in the vector, is the obvious candidate, and is
+mapped to nothing. **This needs the author's decision** rather than a silent
+mapping: either `relative_share_of_leisure` owns `omega_l`, or `omega_l` joins
+`h_3` as a concession. Flagged, not changed.
+
+### The one structural fact behind four of the misses
+
+`homeless by choice = 1.0000`, `homeless who could afford it on income =
+1.0000`, 96.8 per cent of the homeless in age band 1, 96.7 per cent employed,
+SUD share of the homeless about zero. **Every homeless household in this model
+is a young worker with no wealth choosing homelessness to avoid rent.** There is
+no involuntary channel at all, which is why the age profile, the employment
+share, the SUD share and `mu_H` are wrong together rather than separately. Arms
+11 and 12 are the first attempt to move it from inside the current model.
