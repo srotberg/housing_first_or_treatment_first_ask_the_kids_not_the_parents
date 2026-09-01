@@ -867,7 +867,31 @@ def archive():
     """
     want = current_model_hash()
     ok = {want} | EQUIVALENT_MODELS.get(want, set())
-    out, skipped = {}, 0
+
+    # AND ONLY POINTS IN THE CURRENT ECONOMY, not merely the current source.
+    #
+    # number_of_beta_types is a RUNTIME value, so switching from two discount
+    # factor types to one on 1 September changed the economy without changing
+    # the model hash -- by design, so the archive stayed scoreable. But it also
+    # meant the gate could pick a two-type point as its base and propose a step
+    # carrying number_of_beta_types=2, walking the search straight back into the
+    # economy the author had just abandoned. It nearly did: the best point on the
+    # drug block at 20:50 was ca64c6b36b, a two-type point.
+    #
+    # The MODEL line cannot catch this because the source really is identical.
+    # So the configuration is read from run_one_point.sh's own default -- one
+    # number in one place, as ever -- and points that disagree with it are
+    # skipped exactly as points from another source are.
+    cfg = None
+    try:
+        rop = open(os.path.join(HERE, 'run_one_point.sh')).read()
+        mm = re.search(r'\[number_of_beta_types\]=(\d+)', rop)
+        if mm:
+            cfg = mm.group(1)
+    except OSError:
+        pass
+
+    out, skipped, wrong_cfg = {}, 0, 0
     for f in sorted(glob.glob(os.path.join(HERE, 'points', '*.txt'))):
         if f.endswith('.FAILED.txt'):
             continue
@@ -877,8 +901,14 @@ def archive():
             skipped += 1
             continue
         v, m = vector(t), moments(t)
+        if cfg is not None and v.get('number_of_beta_types', cfg) != cfg:
+            wrong_cfg += 1
+            continue
         if v and 'b' in m and 'lambda_d' in m:
             out[os.path.basename(f)[6:-4]] = (v, m)
+    if wrong_cfg:
+        print(f'  {wrong_cfg} points skipped for running a different '
+              f'number_of_beta_types than run_one_point.sh defaults to ({cfg})')
     if skipped:
         print('  %d of %d points are on a different model (%s) and were skipped'
               % (skipped, skipped + len(out), want), file=sys.stderr)
