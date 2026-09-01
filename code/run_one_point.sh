@@ -419,6 +419,7 @@ set +o pipefail
     # symptom is a log that goes quiet and a stack size nobody set.
 OMP_NUM_THREADS=$(nproc) OMP_STACKSIZE=512M GFORTRAN_UNBUFFERED_ALL=1 \
     ./hftf 2>&1 | grep -Ev "$SPAM" | head -c 2000000000 > "worker_${TAG}.log" || true
+HFTF_STATUS=${PIPESTATUS[0]}
 
     if [ "$(stat -c %s "worker_${TAG}.log" 2>/dev/null || echo 0)" -ge 2000000000 ]; then
         echo "run_one_point: the log hit its 2 GB cap; the model was looping" >&2
@@ -468,7 +469,28 @@ mkdir -p points
 } > "points/point_${TAG}.txt"
 
 grep -q "END OF MOMENTS" "points/point_${TAG}.txt" || {
-    echo "NO MOMENTS BLOCK; tail of the log follows" >> "points/point_${TAG}.txt"
+    # HOW THE MODEL DIED, NOT JUST THAT IT DID.
+    #
+    # The pipeline carries `|| true` and runs under `set +o pipefail`, so the
+    # shell's status is grep's and hftf's is thrown away. A point that ended in a
+    # segfault, one killed by the OOM reaper and one that reached a `stop`
+    # statement all looked identical: "NO MOMENTS BLOCK" and exit 0. That cost a
+    # round of guessing at what a single number states.
+    #
+    # 139 is SIGSEGV, 137 is SIGKILL which usually means the OOM reaper, 136 is
+    # SIGFPE, 134 is abort. A small non-zero status is the model's own `stop`.
+    echo "NO MOMENTS BLOCK; hftf exit status ${HFTF_STATUS}" >> "points/point_${TAG}.txt"
+    case "${HFTF_STATUS}" in
+        139) echo "  139 = SIGSEGV, a segmentation fault" >> "points/point_${TAG}.txt" ;;
+        137) echo "  137 = SIGKILL, usually the OOM reaper" >> "points/point_${TAG}.txt" ;;
+        136) echo "  136 = SIGFPE, an arithmetic exception" >> "points/point_${TAG}.txt" ;;
+        134) echo "  134 = SIGABRT" >> "points/point_${TAG}.txt" ;;
+        0)   echo "  0 = the model exited cleanly WITHOUT printing its moments" \
+                 >> "points/point_${TAG}.txt" ;;
+        *)   echo "  a stop statement or a runtime error; see the log" \
+                 >> "points/point_${TAG}.txt" ;;
+    esac
+    echo "tail of the log follows" >> "points/point_${TAG}.txt"
     tail -30 "worker_${TAG}.log" >> "points/point_${TAG}.txt"; }
 
 cat "points/point_${TAG}.txt"
