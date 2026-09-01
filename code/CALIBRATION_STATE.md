@@ -6308,3 +6308,83 @@ make, not a conclusion: the arm is `smallest_rental_relative_to_lowest_income`
 from the best point, one coordinate, watching `homeless by choice` and
 `could afford it on income alone` for the first departure from 1.0000 in the
 whole session.
+
+# STATE AT 13:40 ON 1 SEPTEMBER: the housing block was restructured and the archive is void
+
+## What changed in the model, and why the archive no longer applies
+
+The rental ladder is now ASSIGNED off one free parameter, on the author's
+instruction:
+
+```
+h_1  street          = h_2 * size_homelessness    calibrated on the homelessness rate
+h_2  cheapest rental = smallest_rental_relative_to_lowest_income, currently 0.20
+h_3                  = 2 * h_2    ASSIGNED
+h_4                  = 3 * h_2    ASSIGNED
+```
+
+`largest_house_size` and `housing_status_grid_expander` now determine nothing and
+are held. The inverted-grid guard in `run_one_point.sh` is retired with them: it
+compared the two endpoints and fired a false positive on an inert parameter.
+
+Two targets moved as well: `pi_eu` from 0.0485 to **0.139**, and `gamma` from
+housing over expenditure at 0.268 to housing over **income** at 0.202.
+
+**This voids the archive.** The target changes were bookkeeping and were handled
+with `TARGET_OVERRIDE` and an equivalence entry. The grid change is a different
+economy, so all 170 earlier points are genuinely inapplicable and the gate has
+nothing. It must be RESEEDED, not interpolated.
+
+## The one thing that was solved today
+
+`homeless who could afford it on INCOME ALONE` and `homeless by choice` had read
+**exactly 1.0000 at every point ever measured**. Nobody could be priced out of
+housing, so all homelessness was voluntary, so only households at literal zero
+wealth chose it, so 86 per cent of the homeless were age 26 -- the entry cohort,
+which is the only group with exactly zero assets because newborn endowments are
+switched off. Every instrument tried against the age profile failed because they
+all acted on households that had already saved past the threshold.
+
+Raising the cheapest rent breaks it. Three points:
+
+```
+h_2    involuntary   employed   band 1   SUD share   h_1
+0.09         0.1%     0.9381    0.9521    0.003932   0.003431
+0.12        23.6%     0.9014    0.9151    0.003222   0.002656
+0.20        75.2%     0.9045    0.8047    0.001708   0.002251
+target                0.4600    0.2600    0.2170     0.003990
+```
+
+## What that sweep establishes, and it is not what was predicted
+
+**The level moments are calibratable. The composition moments are not.**
+`h_1` is reachable and `homeless by choice` spans 1.00 to 0.25. But the employed
+share of the homeless sits at **0.90 across a 2.2-fold range of the cheapest
+rent**, and the SUD share FALLS as the rent rises.
+
+The prediction recorded before the 0.20 point -- that composition would move once
+the priced-out were a majority -- is falsified. The reason is measured: the
+affordability constraint sorts on INCOME, and the lowest incomes in this model
+belong to young workers. Raising the rent excludes more of the same people. The
+unemployed are 7.9 per cent of working-age households, and the disorder cuts no
+wage at all with `rho_d` held at 1, so neither group is poorer than a
+twenty-six-year-old.
+
+Reaching the composition needs one of two things the model does not currently
+have: `rho_d` below one, which the author has ruled out on a double-counting
+argument, or an out-of-labour-force state with genuinely low income. The model's
+three employment states are all IN the labour force, which is why
+`DIAG participation, working age` reads 1.0000 and why the no-wage share equals
+`pi_eu` exactly.
+
+## The open decision, and the two jobs behind it
+
+The 1:2:3 ladder ties the ceiling to the floor, so pricing people out at the
+bottom drags `rent50` (0.554 -> 0.644, target 0.175) and `gamma` (0.393 -> 0.425,
+target 0.202) the wrong way. Loosening the top ratio separates them and gives
+`largest_house_size` back a job; keeping it means conceding those two.
+
+Behind that, whatever is decided: the drug block is collapsed at these housing
+values -- `b` 0.0071 against 0.089, `lambda_d` 0.0011 against 0.0368 -- and needs
+the addiction pair re-solved, which has worked before from a measured two-by-two;
+and the archive needs a full reseed on the new grid.
