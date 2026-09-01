@@ -5796,3 +5796,54 @@ Distinguish them before respawning anything:
 At 00:21 on 1 September all five live workers were mid-setup or mid-solve, the
 archive held zero points on the current hash, and respawning would have been
 exactly wrong.
+
+## WHERE A POINT ACTUALLY SPENDS ITS TIME, FROM A STACK TRACE RATHER THAN A GUESS
+
+The control point on the fixed source ran 25 minutes with a silent log and was
+about to be killed on the inference that it had hung. It had not. `gdb -p` on the
+live process:
+
+    #0  _gfortran_mminloc0_4_r8 () from libgfortran.so.5
+    #1  stationary_equilibrium_wealth_distribution_of_old (time_period=1)
+        at housing_first_or_treatment_first_SR_v1.f90:11195
+    #2  calibrating_model () at housing_first_or_treatment_first_SR_v1.f90:35274
+
+**The time is in `stationary_equilibrium_wealth_distribution_of_old`, ninth of
+the nine chain routines, and specifically in the `do while` at 11186.** That loop
+walks the wealth distribution upward one grid cell per iteration, and each
+iteration does TWO full masked scans of `wealth_matrix(time_period,:,:,:)` -- a
+`minval` and a `minloc` over the same masked array -- plus a `sum` over a slice of
+`distribution_stationary`. It is O(cells) iterations with O(cells) work in each.
+
+Live values from the same trace:
+
+    sum_of_distribution_of_old = 15.41214567938221
+    wealth_of_top_x_perc_index = 1
+    (wealth_counter_2 optimised out)
+
+The divisor looks like one type's retiree mass and not an inflated one, so the
+`save` added to it earlier tonight is NOT obviously the cause. And the routine was
+still on the FIRST of its percentile targets after 25 minutes.
+
+### WHAT THIS DOES AND DOES NOT SETTLE
+
+  - The 500x secant slowdown is genuinely fixed: the age loop is 3.5 minutes of
+    the run and working ages cost 2.49 s against 191 s.
+  - The silence is NOT buffering. `GFORTRAN_UNBUFFERED_ALL` was restored and the
+    log is still quiet, so this phase simply prints nothing. The earlier
+    attribution of the silence to the missing environment variable was wrong --
+    the variable was genuinely missing and `OMP_STACKSIZE` genuinely mattered,
+    but it was not what made the log go dark.
+  - Whether this loop is slow-but-finite or actually stuck is NOT settled. The
+    process is at 177 per cent CPU, so it is executing rather than blocked. The
+    test is whether `wealth_of_top_x_perc_index` advances past 1.
+
+**DO NOT KILL IT ON AN INFERENCE.** The previous run was killed on the buffering
+theory and the theory was wrong. Sample the index again before deciding.
+
+### THE TOOL THAT SHOULD HAVE BEEN USED HOURS AGO
+
+`gdb -p <pid> -batch -ex "thread apply 1 bt 12"` answers "where is it" in seconds
+and needs no instrumentation, no rebuild and no guessing. Two hours went into
+inferring what a stack trace states. `gdb` is installed in these containers.
+Reach for it the first time a run looks slow, not the fifth.
