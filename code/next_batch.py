@@ -1471,6 +1471,52 @@ def main():
                       100 * drift, '  repairs the base itself',
                       'bash code/run_one_point.sh ' +
                       ' '.join(f'{k}={rv[k]}' for k in sorted(rv))))
+    # A NARROW STAGE MUST NOT LEAVE THE FLEET IDLE.
+    #
+    # Staging is right and it has one cost: an open stage with two moments emits
+    # one or two lines, and a dozen workers then sit through a twenty minute
+    # round doing nothing. Stage 1 emitted exactly ONE line on 1 September.
+    #
+    # So when the open stage cannot fill a round, the NEXT stage's instruments
+    # are bracketed as PRE-MEASUREMENTS. They are arms, not steps: each moves one
+    # instrument off the same base and changes nothing about which stage is open
+    # or what the loop will step next. The point is that when the next stage does
+    # open, its brackets already exist and it can step immediately instead of
+    # spending its first two firings measuring.
+    #
+    # This does not smuggle the ordering open. A pre-measurement can never become
+    # the base -- the loop picks its base by worst-gap over the scored set, as
+    # ever -- and the moments in an unopened stage stay unstepped.
+    FLEET = 8
+    if len(lines) < FLEET and open_stages and open_stages[-1] + 1 < len(STAGES):
+        nxt = STAGES[open_stages[-1] + 1]
+        pre = 0
+        for param, mo in OWN.items():
+            if mo not in nxt or param not in v or mo not in m:
+                continue
+            if gap(mo, m[mo]) <= ACCEPT:
+                continue
+            x0 = float(v[param]); plo, phi = BOUNDS.get(param, (x0 / 50, x0 * 50))
+            for fct in (0.7, 1.4):
+                x1 = max(plo, min(phi, x0 * fct))
+                if abs(math.log(max(x1, 1e-300) / max(x0, 1e-300))) < 1e-4:
+                    continue
+                d = dict(v); d[param] = f'{x1:.7g}'
+                lines.append((f'PRE {param}', mo, x0, x1, float('nan'),
+                              100 * (m[mo][0] / m[mo][1] - 1),
+                              '  pre-measurement for the next stage, not a step',
+                              'bash code/run_one_point.sh ' +
+                              ' '.join(f'{k}={d[k]}' for k in sorted(d))))
+                pre += 1
+                if len(lines) >= FLEET:
+                    break
+            if len(lines) >= FLEET:
+                break
+        if pre:
+            print(f'  and {pre} PRE-MEASUREMENT arms for stage '
+                  f'{open_stages[-1] + 1} {nxt}, so it can step the firing it '
+                  f'opens instead of measuring first. These are arms, not steps.')
+
     # NEVER OVERWRITE A BATCH THAT IS STILL BEING CONSUMED. Workers read their
     # line out of this file and `git pull --rebase` between lines, so rewriting
     # it under them silently swaps the vectors on every line they have not
