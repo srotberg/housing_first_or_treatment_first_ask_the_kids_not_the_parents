@@ -1347,6 +1347,31 @@ def main():
     print('STAGES:'); [print(x) for x in why]
     live = {q for i in open_stages for q in STAGES[i]}
 
+    # SHOW WHICH PARAMETERS ARE IN THE CALIBRATION AND WHICH ARE STILL HELD.
+    # The author, 1 September: "you need to show me how to open the calibration
+    # each time... i want to see what parameters you add to the calibration each
+    # time." A list of moment NAMES does not answer that -- they asked about
+    # parameters, and the mapping from one to the other is the thing they cannot
+    # see from here.
+    inv = {}
+    for _p, _mo in OWN.items():
+        inv.setdefault(_mo, []).append(_p)
+    print('\nWHAT IS IN THE CALIBRATION NOW:')
+    for i, st in enumerate(STAGES):
+        state = 'OPEN ' if i in open_stages else 'HELD '
+        for _mo in st:
+            ps = inv.get(_mo)
+            gtxt = f'{100*gap(_mo, m[_mo]):+6.1f}%' if _mo in m else '    -  '
+            if not ps:
+                print(f'  {state} stage {i}  {_mo:13} {gtxt}  (no instrument)')
+            for _p in ps or []:
+                print(f'  {state} stage {i}  {_mo:13} {gtxt}  {_p} = {v.get(_p, "-")}')
+    fixed = [f'{k}={v[k]}' for k in ('increased_prob_if_homeless', 'kappa_phi_d_level')
+             if k in v]
+    if fixed:
+        print(f'  FIXED by the author, never calibrated: {", ".join(fixed)}')
+    print()
+
     lines, skipped = [], []
     for param, mom in sorted(OWN.items(), key=lambda kv: -gap(kv[1], m[kv[1]]) if kv[1] in m else 0):
         if mom not in m or gap(mom, m[mom]) <= ACCEPT:
@@ -1404,7 +1429,29 @@ def main():
                 continue
             xbest = min(cand)[1]
             lo, hi = BOUNDS.get(param, (xbest / 50, xbest * 50))
-            for fct in (0.5, 2.0):
+
+            # EXPLORE UPWARD WHERE THE AUTHOR HAS GIVEN A DIRECTION.
+            #
+            # "you need to move the cheapest rental up" -- 1 September, said
+            # after seeing the first explore bracket go to 0.0275 and 0.11, half
+            # and double around the base. Half is the direction already known to
+            # fail: at a low rung nobody is priced out and the street is a pure
+            # taste margin.
+            #
+            # A symmetric bracket is also wrong on its own terms here. "Around
+            # the best measured value" picked 0.055 because the best emp_homeless
+            # anywhere in the archive happens to sit at the benchmark rung, for
+            # reasons that have nothing to do with the rung. Within the
+            # CONTROLLED nine-point arm the best was 0.8204, at a rung of 0.30
+            # with a street of 0.0005 -- five times the base and upward.
+            #
+            # So a parameter listed here is explored upward only. This encodes an
+            # instruction, not a measurement, and it is written down as such.
+            EXPLORE_UP = {'smallest_rental_relative_to_lowest_income'}
+            steps = (2.0, 4.0, 8.0) if param in EXPLORE_UP else (0.5, 2.0)
+            if param in EXPLORE_UP:
+                xbest = max(xbest, float(v[param]))
+            for fct in steps:
                 x1 = max(lo, min(hi, xbest * fct))
                 if abs(math.log(max(x1, 1e-300) / max(float(v[param]), 1e-300))) < 1e-4:
                     continue
