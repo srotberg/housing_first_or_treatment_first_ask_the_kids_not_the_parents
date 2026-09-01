@@ -56,14 +56,49 @@ Three consequences, all of them real:
 3. **Rounding is always upward and sometimes large.** A scale of 2.0 asks for
    1.2745 and delivers 1.5558, 22 per cent more.
 
-The fix, once the bracket is in, is a lottery over the two adjacent grid points
-rather than a snap to one -- `compute_asset_lottery` already exists in the model
-and is used for the same purpose elsewhere. That makes the endowment continuous
-in the scale and therefore calibrable. It is deliberately NOT done before the
-bracket, because it changes the source and every point in the sweep has to share
-one model hash to be comparable.
+**SUPERSEDED, and by something better than what I proposed.** I was going to
+make the snap a lottery over the two adjacent grid points. The author's answer
+was to stop snapping at all: "instead of pegging them to a financial grid, just
+give them an endowment only in the first period. that would be continuous ...
+and it would show in the BC not the initialization."
+
+That is what the model now does. Newborns start at ZERO assets and receive
+`newborn_endowment_scale` times average labour income as cash in hand at age 26,
+carried as `newborn_age_transfer`, a per-age array with only element 1 nonzero,
+added at the nine sites that already add a transfer to resources. It is added
+outside the productivity scaling, because the endowment is flat.
+
+Three things the lottery would not have given:
+
+- the endowment is continuous in the scale, so it can be bisected rather than
+  only bracketed;
+- a scale of zero is a genuine zero, which the snap could not deliver;
+- the household, not the grid, decides how much of it to carry into age 27.
+
+The bequest side matches: the transfer is removed from the bequests and the rest
+goes to the government. `model_total_inheritance` accumulates the newborn
+transfer, and what the government collects is `model_bequests -
+value_of_initial_assets - model_total_inheritance`, with `value_of_initial_assets`
+now zero because nobody is endowed in the distribution any more.
+
+The grid table above still matters, just not for the endowment. It is the grid
+every household's SAVING decision is made on, and one rung between zero and a
+year's rent was an artifact sitting exactly on the margin the model measures. On
+the author's instruction -- "I think we should make the grid expander around 2
+or 3 in general" -- `financial_grid_expander_positive` is a settable parameter
+now, default 3.0, which puts five rungs below a year's rent instead of one.
 
 ## What the six running points actually deliver
+
+**These four were stopped.** They ran the snapped mechanism, which no longer
+exists, so they answer a question that has been retired. The table is kept
+because it is what showed the mechanism was wrong. The live sweep is
+`code/batch_transfer.txt`: six points at scale 0, 0.15, 0.30, 0.50, 0.75 and
+1.00, delivering 0 to 0.637 in cash at age 26 -- zero to 5.3 years of rent --
+all at expander 3.0 so they share one model. Scale 0.15 delivers 0.0956, within
+a rounding error of the 0.0960 the SCF distribution was handing newborns on
+average, so it is the no-change point of the sweep.
+
 
 | batch line | scale requested | endowment delivered | years of rent |
 |---|---|---|---|
