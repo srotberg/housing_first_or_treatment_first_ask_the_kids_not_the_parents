@@ -617,6 +617,28 @@ EQUIVALENT_MODELS = {
     # therefore bit-comparable with one measured on d70ad1c545. A point that
     # passes 1 or 2 is NOT, and is a different economy by intention.
     'dc8abdfbce': {'d70ad1c545'},
+    # 033a668663 IS d70fdc10ec PLUS THREE CHANGES, AND NONE OF THEM IS READ BY A
+    # MOMENT. The diff was written in this session and read back line by line
+    # before this entry was made:
+    #
+    #   1. val_life_min's reset gained the `accumulating_beta_types==0` guard
+    #      that the eleven resets around it already had. val_life_min is read at
+    #      exactly one place, the DIAG print of the lowest value of a period of
+    #      life. No moment, no invariant and no calibration update touches it.
+    #   2. The negative-value-of-life DIAG now prints a share instead of a raw
+    #      mass, with the mass and the divisor beside it. A write statement.
+    #   3. The max_food_cost update block divides by model_output rather than
+    #      model_average_labour_income, so that the internal loop optimises the
+    #      same ratio the cbar moment reports. That block is inside
+    #      calibrating_model's update section, which a point run never enters --
+    #      confirmed on point_85f8304979, which contains zero occurrences of
+    #      `distance_max_food_cost` and zero of `MOVE MODE`, both of which that
+    #      section prints unconditionally.
+    #
+    # So the nine points on d70fdc10ec measure the same economy this source
+    # does. Without this entry the archive is empty exactly at the point where b
+    # and lambda_d have finally landed inside ten per cent.
+    '033a668663': {'d70fdc10ec'},
 }
 
 
