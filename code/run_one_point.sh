@@ -66,7 +66,20 @@ declare -A P=(
     # 0 Baggett ratios, 1 flat excess risk, 2 flat 1.6 multiplier.
     [homeless_death_risk_flat_in_age]=0
     [homeless_excess_death_risk]=0.00396
-    [number_of_beta_types]=2
+    # ONE TYPE AGAIN, on the author's instruction of 1 September: "Maybe we don't
+    # even need the two betas. Go back having just one. I think we don't need the
+    # second anymore since we have other things that pin down the homelessness of
+    # the newborns, and the unemployment of the homeless."
+    #
+    # The second type existed to move w_bot, the wealth share of the bottom half,
+    # and the measurement is what killed it: closing w_bot needs an impatient
+    # discount factor near 0.27, a 270 per cent annual discount rate, and even at
+    # the search bound of 0.50 the moment only reaches 0.053 against a target of
+    # 0.025. A parameter that has to be absurd to work is not an instrument.
+    #
+    # It is a runtime value with a handover case, so this costs no model change
+    # and the archive stays scoreable.
+    [number_of_beta_types]=1
     [utility_cost_of_treatment]=0.0908753
     # THE PRICE OF TREATMENT, HELD AT ZERO. It replaced the utility cost on 31
     # August and was switched back the same day on the author's instruction, so
