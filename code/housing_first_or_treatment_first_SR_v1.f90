@@ -11113,9 +11113,38 @@
         ! total_homeless_1 is the name of two different locals in two
         ! different routines; merging them would pool two counts of the
         ! same population into one divisor.
-        save :: sum_of_distribution_of_old
-                
-        if (accumulating_beta_types==0) sum_of_distribution_of_old=0
+        ! ONE TYPE, BECAUSE wealth_matrix IS ONE TYPE. THIS IS A PAIRING RULE.
+        !
+        ! The reset here was guarded to the first pass, so the divisor
+        ! accumulated BOTH discount-factor types, while wealth_matrix twelve
+        ! lines below is reset UNGUARDED and so is rebuilt from the one type just
+        ! solved. The loop at 11186 walks wealth_matrix upward accumulating mass
+        ! and divides by this, so on the second pass the share it can reach tops
+        ! out at ONE HALF.
+        !
+        ! stopping_rule_wealth_dist_of_old is (0.25, 0.5, 0.75). The third target
+        ! is therefore UNREACHABLE on the second pass: the loop consumes every
+        ! cell in the array, `minloc` over an all-false mask returns zero, and
+        ! `min_wealth_index(2)-2` indexes at MINUS TWO. A hang followed by an
+        ! out-of-bounds write.
+        !
+        ! Caught on a live process, not by reading. gdb put the stack in
+        ! _gfortran_mminloc0_4_r8 inside this routine, and the locals read
+        ! sum_of_distribution_of_old=15.412 with the accumulated share at 0.186
+        ! and still climbing toward 0.25 after fifty minutes -- twice the walk it
+        ! should have been, on the first of three targets.
+        !
+        ! It is mine. The `save` added earlier tonight is what made the
+        ! cross-pass accumulation actually happen; before it the local was
+        ! undefined on entry to the second pass, which is undefined behaviour
+        ! that happened to work when the slot came up zero. The `save` is dropped
+        ! with the guard because there is now nothing to carry between calls.
+        !
+        ! THE RULE, which is the third time tonight the same mistake has been
+        ! made: a divisor must cover the same population as the object it
+        ! normalises. Check what it is paired with, not whether the accumulation
+        ! pattern looks like its neighbours'.
+        sum_of_distribution_of_old=0
         
         do i=1,2
                 
