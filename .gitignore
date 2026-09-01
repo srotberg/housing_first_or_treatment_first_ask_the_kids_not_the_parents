@@ -103,3 +103,7 @@ code/hftf_old
 # run_one_point.sh serialisation lock (per checkout, never shared)
 .run_one_point.lock
 code/.run_one_point.lock
+# Raw unpiped diagnostic run: hftf straight to a file with no grep or head in
+# the way, used to separate 'the model stopped early' from 'the pipeline ate the
+# output'. A per-container artefact like the binary, not history.
+code/raw_control.log
