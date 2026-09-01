@@ -777,10 +777,15 @@ and it misses because **every large step overshot**.
 | h_2 -2.3 per cent | -21.6 per cent | missed |
 
 The `cbar` number is the clearest. Its exponent measured **1.759** locally over a
-x2.41 step. Over the x2.77 step to 0.020292 the implied exponent is **3.583** --
-the response more than doubles its curvature within a factor of three of the
-parameter. That is not an error in the measurement; it is the measurement being
-local in a way I did not allow for.
+x2.41 step. Over the x2.77 step to 0.020292 the implied exponent is **2.447**,
+thirty-nine per cent higher, so the response steepens materially within a factor
+of three of the parameter and the local slope understates it. That is not an
+error in the measurement; it is the measurement being local in a way I did not
+allow for.
+
+(An earlier draft of this paragraph said 3.583. That figure was typed rather than
+computed and is wrong; 2.447 is what
+`log(0.0084168/0.00069678)/log(0.020292/0.007331089)` returns.)
 
 ## The correction
 
