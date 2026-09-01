@@ -97,3 +97,38 @@ pair may be closable with a much smaller drug-block repair than either alone
 would need. That is a hypothesis from two measured arms and is worth a joint
 point once the cheap arms are in, but it is not yet a measurement of the joint
 move.
+
+## A structural blind spot: a parameter at exactly zero can never be calibrated
+
+The gate now forms `max_food_cost`'s elasticity from arm 1 and writes a
+correction for it (+1.76, which is the 1.759 measured above). It still reports
+*no controlled pair* for `utility_cost_of_treatment`, even though arm 2 measured
+one, and the reason is arithmetic rather than missing data. `elasticity()` at
+line 699 discards any pair with
+
+```
+min(xa, xb, ya, yb) <= 0
+```
+
+and the anchor holds the price at exactly 0, so `log(xb/xa)` is undefined and the
+pair is thrown away. `bracket()` works in logs for the same reason.
+
+**So `tau_u` -- the worst gap in the table -- is unreachable by the search for as
+long as the anchor keeps its instrument at zero**, no matter how many arms are
+measured. This is not a bug in `next_batch.py`: log space is right for every
+other instrument, and a multiplicative step from zero has no meaning. It is a
+property of anchoring a parameter at a bound.
+
+The remedy is the anchor, not the math. Arm 2 brackets the target between a
+price of 0 and a price of 2.0 and puts the root near **1.584**, so the next
+anchor should carry a non-zero price and everything downstream then works
+normally. Recorded here rather than acted on immediately, because nine arms are
+still measuring and moving the anchor now would strand them.
+
+`CORRECT_27.txt` is committed as the record of what the gate proposed at this
+firing. It was NOT launched: it holds a single arm on `max_food_cost`, an
+instrument arm 1 has just shown moves `b` by +19.5 per cent and `lambda_d` by
++29.3 per cent, so a solo step on it would open the drug block again for a
+moment that a joint step can close more cheaply. It also would have collided
+with the seed batch, which is still writing points and committing on the same
+four cores.
