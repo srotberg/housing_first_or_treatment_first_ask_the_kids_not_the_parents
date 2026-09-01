@@ -19,7 +19,31 @@ The moment h_2 is the CEX severe cost burden against 0.101; the parameter h_2
 is `smallest_rental_relative_to_lowest_income`. Both are live. What is
 conceded is exactly what `SKIP` in `next_batch.py` says, and nothing else.
 
-## LIVE STATE, 1 September 22:52 -- THE RUNG WORKS ON THE MARGIN AND NOT ON THE COMPOSITION
+## OPEN DECISION: y_u AND THE ROBUSTNESS RUN
+
+The author, 1 September, on the income of drug users sitting at 0.43 against
+0.74: *"It might be fine. We can do a robustness with higher income too."*
+
+So `y_u` is NOT to block the benchmark. It is not conceded either -- it stays
+scored, and at -42 per cent it is nowhere near binding, so nothing needs to
+change in the loss. What is owed is a ROBUSTNESS RUN at a higher income of users
+once the benchmark is settled, and its instrument is `kappa_phi_d_level`, which
+has sat at 8.0 in every point ever run because the gate swallowed its arm.
+
+Two things to carry into that run:
+
+- The drug block and `y_u` PULL AGAINST EACH OTHER. At `eef8b7a0d0`, the point
+  about to open the gate, `y_u` is 0.325 -- a -56 per cent gap, worse than the
+  -42 at the best equilibrium. Fixing b and lambda_d through `lambda_addiction`
+  and `addiction_scalar_1` makes users poorer, because those parameters work by
+  making the disorder cheaper to fall into and the households that fall in are
+  the poor ones. A robustness run that raises `y_u` will therefore move b and
+  lambda_d and needs the same compensation any coupled instrument does.
+- Table 7 puts users at 0.74 of average in the data against 0.41 in the OLD
+  benchmark, so 0.43 is a small improvement on where the paper already is, not a
+  regression. Only a ratio above one would be a fault.
+
+## SUPERSEDED: 1 September 22:52 -- THE RUNG WORKS ON THE MARGIN AND NOT ON THE COMPOSITION
 
 Best `a6ff37446f`, MODEL 3af48ddb51, 73 points in this economy. LOSS 100.1 per
 cent, binding `emp_homeless`. Gate best on the drug block improved 45.3 -> 33.2.
