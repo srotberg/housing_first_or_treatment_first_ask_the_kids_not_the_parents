@@ -337,3 +337,39 @@ rather than by assumption.
 Almost exactly equal and opposite on b. Three of the six arms measured so far
 move the drug block in one direction and two move it in the other, which is what
 makes a joint step worth measuring rather than a sequence of repairs.
+
+## Arm 7 -- relative_share_of_housing x1.350, owns gamma. The OWN map is right after all.
+
+`point_3c6b3c9e09`, all sixteen invariants PASS. `gamma` goes 0.194661 ->
+0.218341, -27.4 per cent to -18.5 per cent.
+
+The two housing instruments both move both housing moments, so the pair has to
+be read as a two-by-two rather than as two separate arms:
+
+| instrument | d ln h_2 | d ln gamma | ratio |
+|---|---|---|---|
+| largest_house_size | 1.433 | 0.761 | 1.884 |
+| relative_share_of_housing | 0.195 | 0.383 | 0.509 |
+
+**The suspicion of a duplicate driver raised after arm 6 was wrong and is
+withdrawn.** `largest_house_size` is absolutely stronger on both moments, but
+what decides an assignment is comparative advantage, not absolute size: it is
+relatively better at `h_2` by 1.884 and `relative_share_of_housing` is
+relatively better at `gamma` by 0.509. That is exactly the assignment the `OWN`
+map already makes. The matrix is well conditioned -- the two ratios differ by a
+factor of 3.7 -- so the two moments are jointly identified rather than
+collinear.
+
+Solving the two-by-two from the anchor lands both at once:
+
+```
+largest_house_size         0.1117662 -> 0.138801   (+0.2166 e-folds)
+relative_share_of_housing  0.1527137 -> 0.228934   (+0.4049 e-folds)
+```
+
+Note this is a smaller step on `largest_house_size` than arm 6 took, because arm
+6 overshot `h_2` while carrying `gamma` most of the way; the joint solve puts
+some of that work back onto the instrument that owns `gamma`.
+
+Coupling: b +20.5 per cent, lambda_d +44.0 per cent, the largest lambda_d
+coupling of any arm except `discount_factor_impatient`.
