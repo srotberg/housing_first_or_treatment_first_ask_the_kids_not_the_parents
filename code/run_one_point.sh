@@ -89,7 +89,14 @@ declare -A P=(
     # penalty of a substance use disorder and the instrument for the SUD share of
     # them. Their defaults are the values they were assigned at.
     [increased_prob_if_homeless]=0.2
-    [rho_d]=0.85
+    # HELD AT ONE, ON THE AUTHOR'S INSTRUCTION. rho_d enters as
+    # rho_d**(sud*include_rho_d), so one is exactly no penalty. The switch stays
+    # on so the parameter is live and honest rather than a silent no-op, and the
+    # value carries the decision: a substance use disorder costs earnings by
+    # costing the JOB and not by cutting the wage of a household that keeps one.
+    # See CALIBRATION_STATE.md for why -- it is a double counting argument and
+    # the code had already reached it for rho_m.
+    [rho_d]=1.0
     # THE IMPATIENT DISCOUNT FACTOR, ADDED WITH THE TWO-TYPE MODEL. The commit
     # that split households into a patient and an impatient type taught the
     # Fortran's PARAM_HANDOVER and next_batch.py the name and did NOT teach it

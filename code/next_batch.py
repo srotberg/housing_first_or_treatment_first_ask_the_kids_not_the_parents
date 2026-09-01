@@ -77,7 +77,11 @@ OWN = {
     'probability_becoming_unemployed':                     'pi_eu',
     'relative_share_of_addiction_1':                       'theta',
     'mu_homeless':                                         'mu_H',
-    'lambda_m':                                            'lambda_m',
+    # lambda_m THE PARAMETER IS HELD, so that lambda_m the moment has ONE driver.
+    # kappa_uem took ownership just above; leaving the recovery rate pointed at
+    # the same moment would be two instruments on one target, which is the
+    # duplicate-driver mistake beta was cured of. It stays in the vector, so a
+    # point records it, and it moves by hand.
     # THE SECOND HALF OF THE SMI PAIR. The parameter lambda_m moves BOTH SMI
     # moments the same way -- raising it 0.067 to 0.12 took the share of the
     # homeless 0.154 to 0.105 AND the population share 0.045 to 0.028 -- so it
@@ -87,7 +91,19 @@ OWN = {
     # Two moments, two instruments; only one of them had ever been listed.
     'smi_onset_level':                                     'p_m',
     'value_of_life':                                       'aleph',
-    'multiple_of_probabilities_of_employment_if_addicted': 'kappa_ued',
+    # RE-POINTED ON THE AUTHOR'S INSTRUCTION, from kappa_ued to the SUD share of
+    # the homeless. The argument is double counting: a disorder that both takes
+    # the job AND cuts the wage of a household that keeps one is charging the
+    # same earnings loss twice, and the code had already reached exactly that
+    # conclusion for SMI -- "rho_m has no job left that is not already
+    # assigned". So the unemployment shock carries the whole channel and rho_d
+    # is held at one.
+    #
+    # WHAT THIS COSTS, said plainly: kappa_ued, unemployment given SUD, was a
+    # data moment at 0.1625 and the model had it at 0.1423. It no longer has an
+    # instrument and will drift. It is in UNSCORED rather than deleted, so it is
+    # still measured and reported at every point.
+    'multiple_of_probabilities_of_employment_if_addicted': 'sud_homeless',
     'probability_of_voucher_benchmark_used':               'pi_V',
     'size_homelessness':                                   'h_1',
     # NOT given a moment. homeless_excess_death_risk sets the LEVEL of the
@@ -113,7 +129,20 @@ OWN = {
     # like the bottom rung it sat in the vector with nothing mapped to it. It is
     # only 1.7 per cent off, so this closes a hole rather than fixing a gap.
     'largest_house_size':                                  'h_2',
-    'kappa_uem':                                           'kappa_uem',
+    # AND THE SAME FOR SMI. kappa_uem, the parameter, now answers to lambda_m,
+    # the SMI share of the homeless, rather than to the employment rate of the
+    # SMI population.
+    #
+    # THE COST HERE IS LARGER AND IS WORTH SEEING. The kappa_uem MOMENT --
+    # employment given SMI -- is currently hit almost exactly, 0.2999 against a
+    # target of 0.3000. Re-pointing its instrument gives that up. It is also the
+    # measurement that sits least comfortably with the premise: if seventy per
+    # cent of the SMI population is already out of work and only thirteen per
+    # cent of the homeless have SMI, then "too few unemployed with SMI" is not
+    # what is holding lambda_m down, and pushing the employment rate past its own
+    # data target may not move the homelessness share much. That is a
+    # measurement to make, not an argument for refusing the instruction.
+    'kappa_uem':                                           'lambda_m',
     # BACK, ON THE AUTHOR'S INSTRUCTION. The statutory SNAP schedule was right
     # per household and wrong by a factor of 48 in aggregate, so the programme
     # is a calibrated allotment again and cbar is a target again.
@@ -163,7 +192,7 @@ OWN = {
     # disorder impoverishing rather than more common. SMI cannot do that job --
     # its onset shape falls from 1.000 at 26 to 0.154 at 66 -- and the SUD stock
     # accumulates with age where onset does not.
-    'rho_d':                                               'sud_homeless',
+    # rho_d IS HELD AT ONE and is not calibrated; see run_one_point.sh.
 }
 BOUNDS = {
     'utility_cost_of_treatment':                            (0.0, 8.0),
@@ -194,7 +223,6 @@ BOUNDS = {
     'increased_prob_if_homeless':                          (0.0, 20.0),
     # One is no penalty; the floor is 0.05 rather than zero because zero
     # earnings for every addict is a corner and not a calibration.
-    'rho_d':                                               (0.05, 1.0),
 }
 # beta is banded on the author's instruction; h_3 is conceded.
 BAND = {'beta': (3.0, 4.5)}
@@ -223,7 +251,13 @@ SKIP = {'h_3'}
 # moment whose target the model may not be able to reach at all. The employed
 # share needs increased_prob_if_homeless near 3.8 against an assigned 0.2, and
 # what that does to h_1, pi_eu and the drug block is not yet measured.
-UNSCORED = {'emp_homeless', 'sud_homeless'}
+UNSCORED = {'emp_homeless', 'sud_homeless',
+            # ORPHANED BY THE RE-POINTING ABOVE. Both were data moments with
+            # instruments; their instruments now answer to the two homelessness
+            # shares instead, so neither can be driven and neither should hold
+            # the stopping rule open. They are still parsed, still reported, and
+            # a large drift in either is a reason to revisit the decision.
+            'kappa_ued', 'kappa_uem'}
 
 
 
