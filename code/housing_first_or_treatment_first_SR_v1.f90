@@ -4938,6 +4938,39 @@
             w2o_1=model_total_net_wealth(1)/max(model_GDP_incl_imput_rent(1),10.d0**(-12))
             vsl_1=model_value_of_life(1)/max(model_average_labour_income(1),10.d0**(-12))
 
+            ! ALEPH'S TWO INGREDIENTS, PRINTED, BECAUSE THE MOMENT HAS SWUNG BY A
+            ! FACTOR OF FORTY-FIVE ACROSS BUILDS AND NOBODY CAN SEE WHY.
+            !
+            ! It has read 58 at one discount-factor type, 119 and 121 at two, 5.06
+            ! after a normalisation was reverted, and 2.61 now, against a target of
+            ! 80. A parameter that needs moving does not do that; a construction
+            ! that keeps changing does.
+            !
+            ! The denominator is the one to watch. model_average_labour_income is
+            ! a SUM over workers divided by model_total_workers, and the treatment
+            ! price line implies it should be near 0.6 while the food-stamp lines
+            ! in the same point imply 10.2 -- a factor of seventeen, which is
+            ! about the number of workers. That is either the division not
+            ! happening or the two lines meaning different things, and one
+            ! printed pair settles it.
+            !
+            ! model_value_of_life is a mass-weighted SUM of V over the marginal
+            ! utility of consumption, already divided by the ratio of pooled mass
+            ! to the first type's, so it is on a one-type footing. Its own mass is
+            ! printed beside it so the reader can form the per-household figure
+            ! and see whether the target of 80 was set against the aggregate or
+            ! the mean.
+            write(*,*) "DIAG aleph numerator, model_value_of_life        =",&
+                model_value_of_life(1)
+            write(*,*) "DIAG aleph denominator, avg labour income        =",&
+                model_average_labour_income(1)
+            write(*,*) "DIAG   workers behind that average               =",&
+                model_total_workers(1)
+            write(*,*) "DIAG   implied TOTAL labour income               =",&
+                model_average_labour_income(1)*model_total_workers(1)
+            write(*,*) "DIAG   value of life per household               =",&
+                model_value_of_life(1)/max(pooled_mass_all,10.d0**(-12))
+
             csud_n_1=0
             csud_d_1=0
             chom_n_1=0
