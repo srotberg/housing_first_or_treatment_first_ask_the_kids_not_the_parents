@@ -14,7 +14,79 @@ led the search to a point with b exact and lambda_d at minus seventy eight.
 `beta` is banded (3.0, 4.5) on the author's instruction and scores zero inside
 it. `h_2`, the smallest-rental share, is conceded and need not be chased.
 
-## LIVE STATE, 1 September 18:25 -- MODEL 7de893e588, 19 points
+## LIVE STATE, 1 September 20:15 -- ONE BETA, DEATH PENALTY OWNS y_u
+
+The author's two decisions of the last half hour, and what each settles.
+
+**ONE DISCOUNT FACTOR TYPE.** "Go back having just one." number_of_beta_types is
+a runtime value with a handover case, so the model hash does NOT change and every
+archived point stays scoreable. run_one_point.sh defaults to 1.
+
+The second type existed for w_bot and the measurement condemned it: closing w_bot
+needs an impatient beta near 0.27, and even at the search bound of 0.50 the moment
+only reaches 0.053 against a target of 0.025. w_bot is therefore in SKIP -- a
+CONSEQUENCE of the instruction, one line to reverse, and flagged as such. Note
+also that the 2.5 per cent is the SCF bottom-half share of NET WORTH, mostly home
+equity, while include_homeownership is 0 and the only asset here is financial
+saving; retargeting it to a financial-wealth concept is a different fix.
+
+**THE DEATH PENALTY OWNS THE INCOME OF USERS.** "Adjust the death penalty to get
+the right average income." kappa_phi_d_level -> y_u was already the OWN mapping
+and the measurement says it is the right one:
+
+    kappa_phi_d_level    elasticity -0.637. 8 -> 5.64 takes y_u 0.5325 -> 0.6652
+                         against 0.7400, closing 64 per cent of the gap in ONE
+                         step. Solves near 4.8, inside the authorised (4.0, 10.0).
+    discount_factor_imp  elasticity -0.14. Would need beta near 0.09.
+
+Four and a half times the instrument, and in a range the author has already
+sanctioned. The mechanism is why: the mortality penalty is the PRICE of using, so
+lowering it lets households who are not desperate afford the risk, which is
+exactly the composition change y_u measures.
+
+`code/batch_yu.txt` runs kappa_phi_d_level=4.8 at one beta and pairs against
+batch_onebeta line 1, the same vector at 8.0, so the value is measured rather
+than extrapolated past the pair that produced it.
+
+EXPECT THE DRUG BLOCK TO OPEN WHEN IT LANDS. 8 -> 5.64 took lambda_d from +1 to
++132 per cent and b from +22 to +151. That is the nested loop restore.py exists
+for: small step on the coupled instrument, then re-close b and lambda_d on
+lambda_addiction and addiction_scalar_1. batch_onebeta lines 2-5 are that 2x2 at
+one beta, which is what gives the repair a Jacobian.
+
+### h_2 IS NOT CONCEDED. SKIP IS {h_3, w_bot}.
+
+I put the moment h_2 in SKIP on 1 September on a misreading and the author caught
+it. THE NAME MEANS TWO THINGS: the MOMENT h_2 is the CEX severe cost burden
+headcount, target 0.101, reading -18.2 per cent and among the closest in the
+table; the PARAMETER the author calls h_2 is the cheapest rental rung, which here
+is smallest_rental_relative_to_lowest_income. Their instruction was about the
+parameter. The same trap exists for h_3: the MOMENT h_3 is the share in the
+largest unit, the author's h_3 is the middle rung at twice the cheapest.
+
+The ladder is as the author specified and confirmed in the code: h_1 street,
+h_2 = housing_size(0) = 0.055 calibrated on rent50, h_3 = 2*h_2 = 0.110 assigned,
+h_4 = 3*h_2 = 0.165 assigned.
+
+### What is still in flight, and what was cancelled
+
+Running: batch_onebeta (5 points, one beta -- the re-solved best point and the
+drug 2x2 there), batch_yu (1 point), batch_recal5 (8 points).
+
+CANCELLED: the impatient beta bracket at 0.85/0.75/0.65, and the drug 2x2 at TWO
+betas. Both were measuring an economy that no longer exists. batch_recal5 is left
+to finish because slopes partly transfer even though levels do not.
+
+### The gate deadlock, fixed
+
+next_batch would not step unless b AND lambda_d were inside five per cent, and the
+documented remedy, restore.py, refits its Jacobian from an archive that held ONE
+drug pair. Gate shut, repair impossible, nothing emitted -- for a whole day, while
+batches were built by hand. next_batch now emits batch_drugfit.txt itself when the
+gate is shut and fewer than three drug pairs exist.
+
+## SUPERSEDED, 1 September 18:25
+
 
 ### STOP BUILDING MULTI-PARAMETER ANCHORS. THIS IS THE SECOND FAILURE.
 
