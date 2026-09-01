@@ -138,8 +138,11 @@ OWN = {
     # REPOINTED TO h_2 ON THE AUTHOR'S INSTRUCTION, 1 September:
     # "make the cheapest unit such that we have the right fraction of households
     # spending over 50% of their income on housing... no of total spending".
-    # h_2 is that moment, the CEX headcount above half of TOTAL EXPENDITURE,
-    # target 0.101.
+    # CORRECTED SAME DAY: the author meant over half of INCOME, not of total
+    # expenditure. The moment is `rent50`, the share of RENTERS paying more than
+    # half their income in rent, 0.3625 in the model against 0.175 observed --
+    # not h_2, which is the headcount above half of total EXPENDITURE and reads
+    # 0.0899 against 0.101 and is nearly closed already.
     #
     # It replaces h_3, which this parameter moves at -0.01 -- nothing. The
     # consequence of that mapping was not a small inefficiency: the ONE number
@@ -147,7 +150,7 @@ OWN = {
     # rather than calibrated, and then pointed at a moment that could never
     # discipline it. `homeless who could afford it on INCOME ALONE` has read
     # exactly 1.0000 at every point measured, which is the same fact.
-    'smallest_rental_relative_to_lowest_income':            'h_2',
+    'smallest_rental_relative_to_lowest_income':            'rent50',
     # AND THE TOP RUNG HAD NO INSTRUMENT EITHER. largest_house_size owns the
     # share in the largest unit -- h_4 until the author's rename, h_3 now -- and
     # like the bottom rung it sat in the vector with nothing mapped to it. It is
@@ -618,7 +621,17 @@ def moments(text):
     for pat, key in ((r'UNTARGETED employed share of the homeless\s+model=\s*'
                       r'([0-9.eE+-]+)\s+observed=\s*([0-9.eE+-]+)', 'emp_homeless'),
                      (r'UNTARGETED SUD share of the homeless\s+model=\s*'
-                      r'([0-9.eE+-]+)\s+observed=\s*([0-9.eE+-]+)', 'sud_homeless')):
+                      r'([0-9.eE+-]+)\s+observed=\s*([0-9.eE+-]+)', 'sud_homeless'),
+                     # THE COST BURDEN OVER INCOME, on the author's instruction of
+                     # 1 September: "the cheapest rental has to be such that the
+                     # right fraction of households spend over 50% of their income
+                     # on it". That is THIS line and not h_2. The two are
+                     # different objects and the model prints both: h_2 is over
+                     # half of total EXPENDITURE, 0.0899 against 0.101, while this
+                     # is over half of INCOME, 0.3625 against 0.175. Naming it
+                     # rent50 so nothing can confuse it with h_2.
+                     (r'UNTARGETED renters above 50 pct of income\s+model=\s*'
+                      r'([0-9.eE+-]+)\s+observed=\s*([0-9.eE+-]+)', 'rent50')):
         hit = re.search(pat, text)
         if hit:
             out[key] = (float(hit.group(1)), float(hit.group(2)))
