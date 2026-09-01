@@ -868,3 +868,41 @@ So the next point is a **single-coordinate arm on `addiction_scalar_1` from
 joint C**, 0.04350395 -> 0.0400. It supplies the controlled pair the archive has
 never had, and it moves the two worst moments in the right direction while doing
 it. Whether it closes them is a question for the measurement, not for me.
+
+# THE CONTROLLED addiction_scalar_1 ARM: b LANDS, AND THE -102 WAS AN ARTEFACT
+
+`point_fbb865dbc0`, all sixteen invariants PASS. One coordinate moved from joint
+C, `addiction_scalar_1` 0.04350395 -> 0.0400, a step of -0.084 e-folds.
+
+```
+b         0.037641 -> 0.092836     elasticity -10.75     target 0.089,  now  +4.3%
+lambda_d  0.015394 -> 0.043917     elasticity -12.48     target 0.0368, now +19.3%
+```
+
+**This is the first time `addiction_scalar_1` has been measured alone on this
+model**, and it settles the question the archive could not answer. The
+three-point fit returned -102 and the old-model sweep suggested -3.7; the truth
+is **-10.75**, and both earlier numbers were artefacts -- one of near-collinear
+points, one of a different model.
+
+The point is the best of the joint family: **seven moments inside ten per cent
+against joint C's five**, with `b` at +4.3 per cent from -57.7, `lambda_d` at
++19.3 from -58.2, and `y_u` at +7.1 from +22.7.
+
+`theta` moved the wrong way, +10.0 -> +37.3 per cent, and is worth noting because
+its own instrument, `relative_share_of_addiction_1`, has never been moved in this
+entire round.
+
+## What the two elasticities imply
+
+`lambda_d` is MORE sensitive to `addiction_scalar_1` than `b` is, -12.48 against
+-10.75, while the bracket between `point_85f8304979` and `point_ccd590735a` has
+`b` more sensitive to `lambda_addiction` than `lambda_d` is. The two instruments
+therefore separate the two moments, which is what a two-by-two needs, and the
+sign pattern says: raise `addiction_scalar_1` to bring `lambda_d` down, lower
+`lambda_addiction` to hold `b` up.
+
+That second elasticity has still never been measured alone on this model either.
+The next arm supplies it: `lambda_addiction` 3.24803 -> 3.6 from this point,
+one coordinate, +0.103 e-folds. With both measured locally the pair can be solved
+properly instead of extrapolated.
