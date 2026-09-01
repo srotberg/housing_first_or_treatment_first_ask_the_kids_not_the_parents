@@ -512,3 +512,49 @@ instrument works and the root is real, but **matching `mu_H` at this anchor mean
 matching the recovery hazard of a group that barely exists**, and the number will
 move sharply if the composition problem is ever fixed. Worth closing because it
 is free, not because it is informative.
+
+## Arm 11 -- increased_prob_if_homeless 0.2 -> 3.8. The formula fails and SELECTION is the reason.
+
+`point_b640a5352d`, all sixteen invariants PASS.
+
+A **nineteen-fold** increase in the job-loss risk of being homeless moved the
+employed share of the homeless by **-0.61 per cent**, from 0.966713 to 0.960854,
+against a target of 0.46.
+
+The value 3.8 was not a guess. It came from the steady-state formula
+`1/(1+(1+x)^2*(s/f))`, which was checked at the assigned x = 0.2 and predicted
+0.9316 against 0.9252 measured -- a good fit -- and then solved for the x that
+would deliver 0.46. **The formula is right where it was checked and worthless
+where it was used**, which is the standing rule about not extrapolating past the
+pair that produced it, failing on exactly the case it was written for.
+
+The reason it fails is the reason everything else in this family has failed.
+The formula treats the homeless as a population whose employment evolves by a
+transition process. In this model homelessness is a CHOICE, and the choice is
+made by employed young workers. Raise the risk of losing a job while homeless and
+the households exposed to that risk simply stop choosing homelessness: `h_1` fell
+**-21.9 per cent** in this arm. Fewer people are homeless and the ones who remain
+are the same employed young households as before. **Selection undoes the
+mechanical channel.**
+
+### Three independent channels, three failures, one explanation
+
+| arm | channel | employed share | band 1 | by choice | SUD share |
+|---|---|---|---|---|---|
+| 4 | make the poor poorer | 0.9667 -> 0.9648 | 0.968 -> 0.972 | 1.0000 | ~0 |
+| 5 | make homelessness less unpleasant | 0.9667 -> 0.9730 | 0.968 -> 0.971 | 1.0000 | ~0 |
+| 11 | make homelessness cost your job, x19 | 0.9667 -> 0.9609 | 0.968 -> 0.953 | 1.0000 | ~0 |
+
+Wealth, amenity and employment risk are three different doors into the housing
+margin and all three are shut. `homeless by choice` reads **exactly 1.0000** at
+every point measured in this entire round.
+
+**This is now a settled negative result rather than a suspicion.** The
+compositional moments -- the age profile, the employed share of the homeless, and
+the SUD share of the homeless -- cannot be calibrated in this model, because the
+model contains no way to make a household homeless against its will, and any
+instrument that makes homelessness worse for a group merely stops that group from
+choosing it. It requires a modelling decision from the author, not a better
+search.
+
+Coupling is negligible: b -0.0085 per cent, lambda_d -0.0102 per cent.
