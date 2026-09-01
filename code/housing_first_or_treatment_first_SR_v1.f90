@@ -1920,7 +1920,34 @@
         ! its instrument.
         real(8), parameter :: drug_user_income_data=0.740d0
         real(8), parameter :: voucher_coverage_data=0.266
-        real(8), parameter :: unemployment_rate_data=0.0485
+        ! RETARGETED TO 0.139 ON THE AUTHOR'S INSTRUCTION, 1 September.
+        !
+        ! It was 0.0485, the U-3 unemployment rate, which is a PERSON level rate
+        ! with the labour force as its denominator. This is a HOUSEHOLD model and
+        ! model_fraction_unemployed counts every working-age household with
+        ! emp_of /= 1 -- that is emp_of 3 on UI and emp_of 2 with nothing --
+        ! over all working-age households. Those are different numerators and
+        ! different denominators, and one state space cannot satisfy both.
+        !
+        ! The comparable figure is the one already printed beside
+        ! "DIAG households with no wage income, working age": SCF 2022 puts 13.9
+        ! per cent of households aged 26 to 64 with NO wage income. That share
+        ! already contains the unemployed, so it is 0.139 and not 0.139 plus a
+        ! separate unemployment rate; adding them would count the same households
+        ! twice.
+        !
+        ! What this buys: at 0.0485 the model had only about five per cent of
+        ! working-age households without wage income to draw the homeless from,
+        ! against 54 per cent of the homeless being out of work in the data. The
+        ! note at probability_of_ui says the same thing from the other side --
+        ! "homelessness could only ever be drawn from the 5.7 per cent
+        ! temporarily unemployed on UI, never from households with nothing".
+        !
+        ! What it does NOT buy, and this is measured rather than assumed:
+        ! joblessness is currently PROTECTIVE here, the homelessness rate among
+        ! the unemployed being 0.43 times the working-age rate. Enlarging the
+        ! pool does not by itself put anyone on the street.
+        real(8), parameter :: unemployment_rate_data=0.139
         real(8), parameter :: unemployment_rate_sud_data=0.1625
 
         real(8) :: relative_share_of_addiction_adj=5*10.d0**(-2)

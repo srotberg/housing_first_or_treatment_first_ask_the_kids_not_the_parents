@@ -531,13 +531,33 @@ STALE_LABEL = {'h_2': ['smallest unit', 'above half of income'],
                'cbar': ['labour income']}
 
 
+# A TARGET THAT MOVED AFTER POINTS WERE MEASURED.
+#
+# Each point records the target the Fortran printed when it ran, so retargeting a
+# moment leaves every earlier point carrying the OLD number and being scored
+# against it. That is not a stale label, which STALE_LABEL handles by dropping
+# the row -- the row is fine and the goal post moved.
+#
+# It is a real hazard rather than a tidiness point. pi_eu was retargeted from
+# 0.0485 to 0.139 on 1 September. Points measured before that read pi_eu near
+# 0.0517, which scores +6.6 per cent against the old target and -62.8 against
+# the new one, so without an override the whole pre-change archive looks BETTER
+# on pi_eu than it is and the gate would happily choose one of them as its base.
+#
+# Elasticities are unaffected either way, because they are computed from model
+# values alone and never touch the target.
+TARGET_OVERRIDE = {
+    'pi_eu': 0.139,
+}
+
+
 def moments(text):
     out = {}
     for n, label, m, tg in re.findall(
             r'MOMENT (\S+)\s+(.*?)model=\s*([0-9.eE+-]+)\s+target=\s*([0-9.eE+-]+)', text):
         if any(t in label for t in STALE_LABEL.get(n, ())):
             continue
-        out[n] = (float(m), float(tg))
+        out[n] = (float(m), TARGET_OVERRIDE.get(n, float(tg)))
 
     # THE AGE PROFILE IS SCORED, THROUGH ONE NUMBER AND NOT FIVE.
     #
@@ -652,6 +672,18 @@ EQUIVALENT_MODELS = {
     # does. Without this entry the archive is empty exactly at the point where b
     # and lambda_d have finally landed inside ten per cent.
     '033a668663': {'d70fdc10ec'},
+    # 7c5693c4e4 IS 033a668663 WITH ONE TARGET CONSTANT CHANGED and a comment
+    # block above it. unemployment_rate_data went from 0.0485 to 0.139 on the
+    # author's instruction. A target is what a moment is COMPARED WITH; it enters
+    # no household's problem, no transition, no aggregation and no invariant, and
+    # the only two places it is read are the MOMENT write statement and the
+    # calibrating loop's separation-rate update, which a point run never enters.
+    # So a point measured on either hash is the same economy to the last digit.
+    #
+    # The scoring difference is handled by TARGET_OVERRIDE above, not here: the
+    # equivalence says the ECONOMIES match, the override makes the COMPARISON
+    # consistent across points that recorded different targets.
+    '7c5693c4e4': {'033a668663', 'd70fdc10ec'},
 }
 
 
