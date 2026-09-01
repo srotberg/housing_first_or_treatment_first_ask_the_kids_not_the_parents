@@ -2014,9 +2014,28 @@ mass out of a two-type histogram, so it read the 25th percentile and divided by
 a doubled total. It is wrong in a direction that no simple factor undoes.
 
 **The fix.** Each of the ten mass recomputations inside the two-pass reporters
-is scaled to pooled mass, `sum_of_distribution=sum_of_distribution*(accumulating_beta_types+1)`,
-which is exact because each type carries unit mass and `beta_type_weight` is
-declared but never used, so the pooling is fifty-fifty by construction.
+is scaled to pooled mass, `sum_of_distribution=sum_of_distribution*(accumulating_beta_types+1)`.
+
+**CORRECTED 1 September, on a measurement.** This paragraph used to say the
+scaling "is exact because each type carries unit mass and `beta_type_weight` is
+declared but never used, so the pooling is fifty-fifty by construction". That is
+true of the INITIAL mass and false of the pooled statistics, and it sits where it
+reads as describing the latter. A worker measuring `point_76be6ca8af` reported
+the masses directly:
+
+```
+mass by beta type:  patient 50.243405   impatient 33.263490   ratio 1.510467
+pooled mass 83.506895               one-type equivalent 50.243405
+```
+
+Both types do start at unit mass -- the age 26 row reads 2.000000 for the pair --
+so the divergence is accumulated differential mortality, not a weighting fault:
+the impatient type carries far more of the disorder and `kappa_phi_d_level` is
+8.0. The `*(accumulating_beta_types+1)` scaling is therefore NOT exact, which is
+precisely why `pooled_mass_all` and `mass_by_beta_type` were introduced later in
+the session and why the two histogram invariants moved from 1.19 to exactly 1.0
+once they were. The sentence is corrected rather than deleted so the reasoning
+that was wrong stays visible.
 `sum_of_distribution_not_be_homeless` accumulates in the big loop like the other
 426 and is guarded instead.
 
