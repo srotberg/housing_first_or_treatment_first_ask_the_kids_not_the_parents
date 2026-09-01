@@ -5990,3 +5990,39 @@ types, and -9.83 was measured on one of them.
 diagnostic's reset; no moment, no invariant and no calibration update reads
 `val_life_min` or `val_neg_life_mass`. Points measured before and after are
 comparable on every scored quantity.
+
+## ev_table_key not keyed on treatment is correct, and comes off the deferred list
+
+It was on the deferred list as a suspected bug and it is not one. The cache key
+at line 17728 carries six fields -- age, employment, unemployment, voucher,
+housing status, years left on the mortgage -- and neither the treatment choice
+nor the addiction state appears in it. Both omissions are deliberate and both
+are safe, for different reasons.
+
+`smooth_addiction_hazard` is a `parameter` fixed at 1, so at line 17851
+`haz_1` is identically one and **the table carries no hazard at all**. Its
+second index is the future disorder STATE, and the caller forms
+
+```
+(1 - pi_d(v)) * EV(a', clean) + pi_d(v) * EV(a', disorder)
+```
+
+once the quantity is known. Treatment changes today's flow utility and today's
+recovery hazard, and it changes neither of those two continuations -- EV(a',
+clean) is the same object whether or not the household is in treatment this
+period. So the caller, not the table, is where treatment belongs, and that is
+where it is: `addiction_transition` takes `treatment_1` and applies
+`min(1, g * pi_r)` at line 6531.
+
+The folded branch, where the hazard IS inside the table and a treatment-keyed
+cache would be needed, is unreachable while `smooth_addiction_hazard` is a
+parameter equal to 1. If it is ever turned off, the key has to gain the
+treatment choice; noted here rather than guarded, because it is a compile-time
+constant and a guard would be dead code.
+
+Checked one thing on the way past, because it would have been serious: the
+continuation sum at line 17873 discounts with the bare `discount_factor`, and
+with two beta types that would solve the impatient household with the patient's
+beta. It does not. `discount_factor` is reassigned per pass at lines 35267 and
+35268 from `discount_factor_patient_saved` and `discount_factor_impatient`
+before each type is solved. Correct as written.
