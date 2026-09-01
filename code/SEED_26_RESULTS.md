@@ -473,3 +473,42 @@ Coupling is moderate and tolerable: b +6.1 per cent and lambda_d +9.3 per cent,
 which leaves both still inside ten per cent of their own targets (+3.4 and +6.3).
 This is the third usable instrument, after `size_homelessness` and the voucher
 lottery.
+
+## Arm 10 -- mu_homeless 0.8047 -> 0.95, owns mu_H. And a correction to the record.
+
+`point_0d88184946`, all sixteen invariants PASS.
+
+**First, a figure that was reported wrong.** `mu_H` was described in several
+status reports as +754 per cent and as one of the two worst gaps in the table.
+That value, 12.5896, was measured at `point_ccd590735a` and was never re-read
+after the anchor moved. **At the anchor `point_9a13317e65` `mu_H` is 1.2579,
+which is -14.6 per cent** -- one of the closer moments, not one of the worst.
+The +754 per cent figure should not have been carried forward and the status
+lines that repeated it were wrong.
+
+The arm itself:
+
+| | anchor | arm 10 | target |
+|---|---|---|---|
+| mu_H | 1.2579 (-14.6%) | 1.0491 (-28.8%) | 1.4732 |
+
+It moved **away** from target, which pins the sign: the elasticity is **-1.093**,
+so raising `mu_homeless` raises the recovery hazard of the homeless and lowers
+the housed-to-homeless ratio, exactly as the parameter's meaning implies. Closing
+`mu_H` needs `mu_homeless` to go DOWN, to **0.69646**, comfortably inside its
+bounds of 0.05 to 1.0.
+
+Coupling is negligible -- b -0.0005 per cent, lambda_d -0.0015 per cent -- so
+this is the second instrument, with `size_homelessness`, that can be moved
+freely.
+
+### The moment is still measured on almost nobody
+
+The caveat stands and is worth keeping separate from the arithmetic. The SUD
+share of the homeless is 3.37e-10 at the anchor and 5.16e-5 here, against 0.217
+observed, on a homeless mass of 0.1506 out of about 100. So the homeless leg of
+this ratio is an average over a mass of order 1e-5 of the homeless. The
+instrument works and the root is real, but **matching `mu_H` at this anchor means
+matching the recovery hazard of a group that barely exists**, and the number will
+move sharply if the composition problem is ever fixed. Worth closing because it
+is free, not because it is informative.
