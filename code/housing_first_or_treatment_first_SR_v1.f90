@@ -6060,7 +6060,12 @@
             ! wealth it is a buffer story; if it tracks the ownership rate it is
             ! a tenure story; if it tracks neither it is preferences.
             write(*,*) "DIAG --- the age profile of the housing margin ---"
-            do diag_age_1=1,life_span,3
+            ! EVERY AGE, NOT EVERY THIRD. The stride of 3 printed 26, 29, 32 and
+            ! hid 27 and 28 -- which is exactly where the age profile is decided:
+            ! homelessness falls sixty-eight fold between 26 and 29 and nobody has
+            ! seen the two steps in between. The author asked for the 26-to-27
+            ! comparison and the diagnostic could not answer it.
+            do diag_age_1=1,life_span,1
 
                 ! SUD AND MASS ARE HERE SO THE PROFILE CAN BE READ AND BANDED.
                 ! addiction_rate_by_age is the disorder rate at that age, over
