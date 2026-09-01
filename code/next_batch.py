@@ -986,6 +986,37 @@ def elasticity(A, param, moment, near):
     # deserves trust, and it degrades gracefully: with one pair it is that pair,
     # with two it is their mean, and with nine it ignores the outlier.
     es = sorted(e for e, _ in cand)
+
+    # A MEDIAN OVER ELASTICITIES OF BOTH SIGNS IS NOT AN ELASTICITY. The median
+    # above is the right answer for a noisy monotone response; it is the wrong
+    # answer, and a dangerous one, for a response that turns.
+    #
+    # emp_homeless in the cheapest rung is the case that forced this. The author
+    # saw it before any of it was measured, 1 September: "If h2 is so large that
+    # even the employed can't afford it, then the homeless would be even more of
+    # the employed... No?" They are right, and it makes the response U shaped.
+    # At a low rung nobody is priced out, the street is a taste margin and the
+    # homeless are 92 per cent employed. Raising the rung prices out the lowest
+    # income households first, who are disproportionately unemployed, so the
+    # share falls. Raise it further and the employed cannot afford it either,
+    # the priced-out group becomes a cross section of everyone, and the share
+    # climbs back toward the population employment rate.
+    #
+    # Fit a log-linear slope across the turn and the two limbs cancel: the
+    # median lands near zero and the instrument is declared dead at exactly the
+    # value where it works best. Two instruments were already wrongly declared
+    # dead on 1 September for a different reason, so this is the second way to
+    # make the same mistake.
+    #
+    # When the pairs disagree in sign there is no slope to report. Say so, and
+    # let the caller fall back on the best MEASURED point -- which is what
+    # ENGINE.md asks for anyway: prefer a measured bracket to an elasticity.
+    if es[0] < 0 < es[-1]:
+        print(f'  {param} -> {moment}: measured slopes span both signs '
+              f'({es[0]:+.3f} to {es[-1]:+.3f}), so the response turns and no '
+              f'elasticity describes it. Pick the best measured point.')
+        return None
+
     n = len(es)
     return es[n // 2] if n % 2 else 0.5 * (es[n // 2 - 1] + es[n // 2])
 
