@@ -6026,3 +6026,36 @@ with two beta types that would solve the impatient household with the patient's
 beta. It does not. `discount_factor` is reassigned per pass at lines 35267 and
 35268 from `discount_factor_patient_saved` and `discount_factor_impatient`
 before each type is solved. Correct as written.
+
+## The addiction pair is bracketed, and the step now in flight interpolates inside it
+
+Two measured points straddle both targets, which is the first time that has been
+true. At `addiction_scalar_1` = 0.0438 with `lambda_addiction` = 2.67 both
+moments are ABOVE target; at 0.0434 with 3.451 both are BELOW it.
+
+| point | as_1 | lambda_add | b | lambda_d | b/lambda_d |
+|---|---|---|---|---|---|
+| 85f8304979 | 0.0438 | 2.670 | 0.113679 | 0.044264 | 2.568 |
+| ccd590735a | 0.0434 | 3.451 | 0.082282 | 0.034287 | 2.400 |
+| target | | | 0.089000 | 0.036800 | 2.418 |
+
+Log-linear along the segment joining them, the root for `b` is at t = 0.7572 and
+the root for `lambda_d` at t = 0.7230, both inside [0,1] and 3.4 points of t
+apart. Taking t = 0.7401 gives
+
+```
+addiction_scalar_1 = 0.04350395
+lambda_addiction   = 3.24803
+```
+
+predicting b = 0.089493 (+0.55 per cent) and lambda_d = 0.036640 (-0.44 per
+cent). **This is an interpolation between two measured points, not a slope
+extrapolated past the pair that produced it**, which is the standing rule; the
+two roots agreeing to within four per cent of t is the evidence that one point
+on the segment can carry both moments.
+
+The batcher's gate is five per cent on `max(|b gap|, |lambda_d gap|)`, not the
+ten per cent acceptance rule, so ccd590735a at 7.5 per cent does not open the
+full correction batch and this step is deliberately PURE -- no other instrument
+moves in it. Anything else moved here would shift b and lambda_d and the gate
+would have to be re-earned, which is what the gate exists to prevent.
