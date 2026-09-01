@@ -25857,6 +25857,49 @@
                 housing_size=housing_size(0)+housing_status_grid_distance**(housing_status_grid_expander)
                 
             end if
+
+            ! THE WHOLE RENTAL LADDER IS ASSIGNED OFF THE BOTTOM RUNG,
+            ! EXTERNALLY, on the author's instruction of 1 September, in the
+            ! note's own indexing: "h2 match fraction spending over 50% of income
+            ! on housing, h3 being double of h2, and h4 being tripple h2".
+            !
+            !     h_1  the street          = housing_size(0)*size_homelessness,
+            !                                calibrated on the homelessness rate
+            !                                through size_homelessness. NOT set here.
+            !     h_2  cheapest rental     = housing_size(0) = smallest_house_size,
+            !                                calibrated on the share of renters
+            !                                paying over half their income
+            !     h_3  middle rental       = housing_size(1) = 2*h_2   ASSIGNED
+            !     h_4  largest rental      = housing_size(2) = 3*h_2   ASSIGNED
+            !
+            ! So ONE free parameter sets the whole rental ladder.
+            !
+            ! What that retires. largest_house_size and
+            ! housing_status_grid_expander no longer determine anything here --
+            ! the top rung is 3h and the middle is 2h whatever they hold. Both
+            ! stay in the vector so a point still records them, and both should
+            ! be held rather than calibrated; leaving either mapped to a moment
+            ! would be an instrument that cannot move its target.
+            !
+            ! It overrides whatever the expander produced for the interior
+            ! points, and it is written after that block rather than replacing it
+            ! so the endpoints are still set the same way and a grid of more than
+            ! three points still has a shape to fall back on.
+            !
+            ! Why it matters beyond tidiness. The rungs were 0.0377, 0.0937 and
+            ! 0.1498, a spread of 2.49 then 1.60, and the consequence was that
+            ! the cheapest unit was so far below the others that nobody in it was
+            ! cost burdened at all -- the burden decomposes as 0.7108 x 0.5100 =
+            ! 0.362531, the whole of it in the LARGEST unit, with the cheapest
+            ! contributing exactly zero. Fixing the middle at twice the bottom
+            ! compresses the ladder and makes the bottom rung an object the rent
+            ! burden can actually see.
+            if (housing_status_grid_size>2) then
+
+                housing_size(1)=2.d0*housing_size(0)
+                housing_size(housing_status_grid_size-1)=3.d0*housing_size(0)
+
+            end if
             
             ! ONLY WHEN THERE IS SOMETHING TO BUY. smallest_house_for_purchase
             ! is the size at which a dwelling becomes eligible for a mortgage,
