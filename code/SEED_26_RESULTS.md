@@ -420,3 +420,42 @@ not read off the batch file.
 A cross-check that the fix is sound: the gate's own bracket for
 `largest_house_size` returns 0.14664, against 0.146656 computed independently
 from arm 6's elasticity here. The same number to five significant figures.
+
+## Arm 8 -- kappa_phi_d_level 8.0 -> 6.0, owns y_u. y_u IS NOT REACHABLE IN BOUNDS.
+
+`point_320a774e5a`, all sixteen invariants PASS.
+
+The step went the wrong way and that is the useful part. `y_u` moves 0.906337 ->
+**0.954940**, from +22.5 per cent to +29.0 per cent, so lowering the mortality
+multiplier RAISES the income of drug users. The elasticity is **-0.182**: to cut
+`y_u`, `kappa_phi_d_level` has to go UP.
+
+It cannot go up far enough.
+
+```
+required from the anchor : +1.1166 e-folds  ->  kappa_phi_d_level = 24.44
+authorised bounds        : (4.0, 10.0)
+at the ceiling of 10.0   : y_u = 0.870348, still +17.6 per cent
+```
+
+**So `y_u` cannot be brought inside ten per cent by its own instrument at any
+value the evidence permits.** The bound is not arbitrary: standardised mortality
+ratios for opioid use disorder run 6 to 10 in the literature, 8 is the assigned
+midpoint, and the author authorised 4 as a floor. Reaching `y_u` needs 24.4,
+which is two and a half times the top of the published range.
+
+A second measurement says the ceiling is already too high rather than too low.
+At `kappa_phi_d_level` = 6 the model puts **42.8 per cent of deaths on drugs
+against 20 per cent observed**, already more than double. Pushing the parameter
+toward 10 to chase `y_u` would drive that further out. The instrument is being
+asked to serve a moment it barely moves while badly distorting one it moves a
+great deal.
+
+Coupling is severe as well: b **+87.9 per cent**, lambda_d **+157.1 per cent**.
+
+**This needs the author's decision.** Either `y_u` gets a different instrument,
+or it joins `h_3` as a concession, or the mortality bound is reopened against
+the evidence. It is the second moment in this round with no usable path --
+`w_bot` is the other -- and unlike `w_bot` this one is blocked by an externally
+assigned bound rather than by coupling, which makes it a scope question rather
+than a search question.
