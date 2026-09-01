@@ -14,7 +14,72 @@ led the search to a point with b exact and lambda_d at minus seventy eight.
 `beta` is banded (3.0, 4.5) on the author's instruction and scores zero inside
 it. `h_2`, the smallest-rental share, is conceded and need not be chased.
 
-## LIVE STATE, 1 September 16:50 -- MODEL 7de893e588, ZERO points on it
+## LIVE STATE, 1 September 17:25 -- MODEL 7de893e588, EIGHT points, gate CLOSED
+
+`code/batch_recal2.txt` is the live round. The gate ran and refused to emit:
+"GATE CLOSED. Best on max(|b gap|,|lambda_d gap|) is 30cbdc5ac4 at 80.6 per
+cent." The drug block is open again and it is my doing -- see below.
+
+### THE RECAL1 ANCHOR OVERSHOT, AND IT IS THE SAME MISTAKE THE RULES ALREADY NAME
+
+Seven parameters moved at once, each inside the 0.35 e-fold cap, and the errors
+compounded exactly as the two failed joint points said they would. What it won:
+
+    pi_eu   -0.3%   (was -40.5)   the measured 0.0564 landed on 13.9 exactly
+    cbar   +11.6%   (was +146)
+    aleph  -19.5%   (was +127)
+    mu_H    +2.2%   (was  +34)
+    p_m     -9.0%   sigma_y -1.7%
+
+What it broke, three of which were FINE before:
+
+    lambda_d -95.0% (was -18.5)   the drug block, from cutting theta's weight
+    b        -64.5% (was -10.8)   same cause
+    tau_u    -93.5% (was  +33)    overshot through zero
+    lambda_m -63.0% (was  +80)    overshot through zero
+    y_u      -41.9% (was  +1.6)
+    h_1     +414.6% (was  -85)    relative_share_of_housing, elasticity -9.567
+    beta      5.452 (was 4.332)   now OUTSIDE the 3.0-4.5 band
+
+The lesson is not new and that is the point: a multi-parameter step is only safe
+where the moments are separable, and theta's weight is not separable from the
+drug block. Single arms next time, or pairs that have been shown orthogonal.
+
+### THREE MOMENTS HAVE NO WORKING INSTRUMENT, NOW MEASURED AT THIS MODEL
+
+Not argued -- these are matched pairs off one anchor, one parameter each.
+
+**w_bot.** discount_factor_impatient 0.95 -> 0.90 moved w_bot from 0.10505 to
+0.10520. Elasticity -0.033. It is the owner in OWN and it does nothing. w_bot is
+320 per cent out and there is nothing pointed at it that moves it.
+
+**emp_homeless.** increased_prob_if_homeless 0.2 -> 1.0, a fivefold rise, moved
+the employed share of the homeless from 0.97661 to 0.98470 -- elasticity +0.01,
+and in the WRONG DIRECTION. This confirms at the current model what the lone
+x=3.8 point suggested on the old one. The parameter changes what happens AFTER a
+household is homeless; the composition is decided in the housing choice.
+
+**rent50.** smallest_rental 0.12 -> 0.085 gives elasticity +0.57, so closing a
+283 per cent gap needs the cheapest rental at 0.0113 -- a NINETY per cent cut,
+six times the 0.35 e-fold cap. And that runs directly against D3, where the
+author asked for the cheapest unit to be pushed UP until the unemployed are
+priced out. Both cannot be had from one parameter. THIS IS A QUESTION FOR THE
+AUTHOR, not something to resolve by choosing one and not saying.
+
+### What recal2 does
+
+Anchor: nine steps, every one either inside a measured bracket or capped at 0.35
+e-folds, with the drug block repaired first -- relative_share_of_addiction_1 back
+to 0.463, which sits inside the 0.42/0.5057 bracket that produced theta -50 and
+theta +87.
+
+Arms: the gamma/h_1 tension measured here rather than borrowed; a DELIBERATELY
+large step on discount_factor_impatient (0.75) and on increased_prob_if_homeless
+(5.0) to settle whether those two moments have any instrument at all; rent50
+extended to 0.055; the endowment bracketed at 2.30 because h_share1 needs 2.00;
+a second drug-block bracket point; and kappa_phi_d_level for y_u.
+
+## SUPERSEDED, 1 September 16:50 -- the archive was empty against 7de893e588
 
 SEED, DO NOT RUN THE GATE. `code/batch_recal1.txt`, eight points, all launched
 16:47-16:49. Line 1 is the new anchor; lines 2-8 are one arm each off it.
