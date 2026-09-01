@@ -419,6 +419,19 @@ set +o pipefail
     # symptom is a log that goes quiet and a stack size nobody set.
 OMP_NUM_THREADS=$(nproc) OMP_STACKSIZE=512M GFORTRAN_UNBUFFERED_ALL=1 \
     ./hftf 2>&1 | grep -Ev "$SPAM" | head -c 2000000000 > "worker_${TAG}.log" || true
+# THE `|| true` DOES NOT DESTROY PIPESTATUS, WHICH WAS CHECKED RATHER THAN
+# ASSUMED. It was rewritten once on the theory that `true` overwrites the array
+# and made the captured status meaningless. Tested both ways in this shell:
+#
+#   set +o pipefail; (exit 139) | cat >/dev/null || true; echo ${PIPESTATUS[0]}
+#     -> 139
+#   set +o pipefail; (exit 139) | cat >/dev/null;         echo ${PIPESTATUS[0]}
+#     -> 139
+#
+# Identical. PIPESTATUS is set by pipelines and a following simple command does
+# not clear it, so the capture below reports hftf's own status and the form above
+# is left alone. Recorded because the theory was plausible and wrong, and the
+# next reader will have it too.
 HFTF_STATUS=${PIPESTATUS[0]}
 
     if [ "$(stat -c %s "worker_${TAG}.log" 2>/dev/null || echo 0)" -ge 2000000000 ]; then
