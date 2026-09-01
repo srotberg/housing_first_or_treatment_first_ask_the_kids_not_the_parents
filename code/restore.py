@@ -43,7 +43,17 @@ BOUNDS = {'lambda_addiction': (0.5, 20000.0), 'addiction_scalar_1': (1e-30, 1.0)
 
 
 def vec(t):
+    # A FILE WITH NO VECTOR LINE IS NOT A POINT, and there are several in the
+    # archive: the .FAILED.txt records a run leaves when it dies, and the
+    # .NOMOMENTS.txt records of runs that finished without printing moments.
+    # This used to return m.group(1) unconditionally and died with
+    # "'NoneType' object has no attribute 'group'" on the first one it met,
+    # which took the whole repair down after it had already printed the gaps it
+    # was asked for. The callers all test the result for emptiness, so an empty
+    # dict is exactly what they want.
     m = re.search(r'^\s*VECTOR (.*)$', t, re.M)
+    if m is None:
+        return {}
     return dict(x.split('=', 1) for x in m.group(1).split() if '=' in x)
 
 

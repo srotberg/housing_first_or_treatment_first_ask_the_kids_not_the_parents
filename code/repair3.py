@@ -38,7 +38,13 @@ MAX_EFOLD = 0.35
 
 
 def vec(t):
+    # A FILE WITH NO VECTOR LINE IS NOT A POINT. Same fault and same fix as in
+    # restore.py: the archive holds .FAILED.txt and .NOMOMENTS.txt records that
+    # carry no VECTOR line, and this died on the first one with "'NoneType'
+    # object has no attribute 'group'". Callers test for emptiness already.
     m = re.search(r'^\s*VECTOR (.*)$', t, re.M)
+    if m is None:
+        return {}
     return dict(x.split('=', 1) for x in m.group(1).split() if '=' in x)
 
 
