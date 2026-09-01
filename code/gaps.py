@@ -193,9 +193,28 @@ def main():
     mark = os.path.join(HERE, '.gaps_best')
     prev = json.load(open(mark)) if os.path.exists(mark) else {}
     key = f'{h}|{cfg}'
-    improved = key not in prev or worst < prev[key]['worst'] - 1e-9
+
+    # PROGRESS IS LEXICOGRAPHIC, NOT JUST THE MINIMAX.
+    #
+    # The author asked to see the table whenever the loss improves, and then, an
+    # hour later, "I want to see progress" -- because they had not seen one. The
+    # reason is that a plain minimax cannot show progress while its binding
+    # moment is stuck: emp_homeless sat at +100.1 per cent all evening, so the
+    # worst gap never fell, so the table never printed, while fourteen other
+    # moments were free to move in either direction unseen.
+    #
+    # The criterion is still theirs -- the number reported as the LOSS is the
+    # minimax, and the stopping rule is still every scored moment inside ten per
+    # cent. This only changes when the table is SHOWN: the gap vector sorted
+    # worst-first is compared lexicographically, so a round that leaves the worst
+    # moment where it is and improves the second worst counts as progress and
+    # prints. That is the standard refinement of a minimax and it cannot call
+    # something progress that the minimax would call a regression.
+    vec = sorted(g.values(), reverse=True)
+    old = prev.get(key, {}).get('vec')
+    improved = old is None or vec < [float(x) for x in old]
     if improved:
-        prev[key] = {'worst': worst, 'tag': tag}
+        prev[key] = {'worst': worst, 'tag': tag, 'vec': vec}
         json.dump(prev, open(mark, 'w'), indent=1)
 
     head = (f'point_{tag}  MODEL {h}  beta types {cfg}  {n} points in this economy\n'
@@ -208,12 +227,12 @@ def main():
     # around the gate by hand each time is how a hand-computed table that
     # disagreed with the loss got shown once already.
     if not improved and '--force' not in sys.argv:
-        print(f'loss unchanged at {100*prev[key]["worst"]:.1f}% '
-              f'(best still point_{prev[key]["tag"]}); table not reprinted.')
+        print(f'no lexicographic progress; best still point_{prev[key]["tag"]} '
+              f'at {100*prev[key]["worst"]:.1f}%. Table not reprinted.')
         print(head)
         return 0
 
-    print('LOSS IMPROVED -- full table below.\n' if improved
+    print('PROGRESS -- full table below.\n' if improved
           else 'loss unchanged; table printed on request.\n')
     print(head + '\n')
     rows = []

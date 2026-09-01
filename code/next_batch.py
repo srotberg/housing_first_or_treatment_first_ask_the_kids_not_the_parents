@@ -1146,9 +1146,65 @@ def main():
                 fh.write('\n'.join(lines) + '\n')
             print(f'  restore.py fits on {_n} points; EMITTED {out}: the full, half '
                   f'and quarter step off point_{best_tag}. Run it, then run the gate again.')
+        except Exception as exc:
+            print(f'  restore.py could not step ({exc}); no drug batch emitted.')
+
+        # AND THE OTHER FOURTEEN MOMENTS GET WORKED WHILE THE GATE IS SHUT.
+        #
+        # This branch used to return here. The gate was closed for most of the
+        # evening of 1 September, so every firing emitted a drug repair and
+        # NOTHING ELSE, while cbar sat at -74 per cent, h_1 at -63, pi_V at +59
+        # and eleven others waited for a gate that the repair alone was not
+        # closing. The author asked to see progress and there was none to see,
+        # because thirteen of the fleet's fourteen possible arms were never
+        # emitted.
+        #
+        # The gate exists so that a STEP is not taken from a base whose drug
+        # block has drifted, and that is right. But an ARM is a measurement, not
+        # a step: moving cbar's instrument off a base with b forty five per cent
+        # out still measures what cbar's instrument does to cbar. The archive
+        # needs those elasticities whatever the gate says, and the compensation
+        # machinery above is what turns them into steps later.
+        #
+        # So the arms are emitted as a bracket either side, which is what
+        # ENGINE.md asks for anyway -- prefer a measured bracket to an elasticity
+        # -- and they are emitted from the same base as the repair so the round
+        # is internally consistent.
+        try:
+            bv2 = A[best_tag][0]
+            bm2 = A[best_tag][1]
+            arms = []
+            for param, mom in OWN.items():
+                if param not in bv2 or mom in SKIP or mom in UNSCORED:
+                    continue
+                if mom not in bm2 or gap(mom, bm2[mom]) <= BASE_TOL.get(mom, 0.10):
+                    continue
+                x0 = float(bv2[param])
+                lo, hi = BOUNDS.get(param, (x0 / 100, x0 * 100))
+                for f in (0.65, 1.55):
+                    x1 = max(lo, min(hi, x0 * f))
+                    if abs(math.log(max(x1, 1e-300) / max(x0, 1e-300))) < 1e-4:
+                        continue
+                    d = dict(bv2); d[param] = f'{x1:.7g}'
+                    # the street coordinate again: an arm on the rung must not
+                    # drag the street, for the reason given where the steps are
+                    # emitted below.
+                    if param == 'smallest_rental_relative_to_lowest_income' and \
+                            'size_homelessness' in d:
+                        st = x0 * float(bv2['size_homelessness'])
+                        rlo, rhi = BOUNDS['size_homelessness']
+                        d['size_homelessness'] = f'{max(rlo, min(rhi, st / x1)):.7g}'
+                    arms.append('bash code/run_one_point.sh ' +
+                                ' '.join(f'{k}={d[k]}' for k in sorted(d)))
+            if arms:
+                with open(os.path.join(HERE, 'batch_arms.txt'), 'w') as fh:
+                    fh.write('\n'.join(arms) + '\n')
+                print(f'  EMITTED batch_arms.txt: {len(arms)} measurement arms off '
+                      f'point_{best_tag}, a bracket either side of every out-of-target '
+                      f'instrument. Run these WITH the drug repair, not after it.')
             return 0
         except Exception as exc:
-            print(f'  restore.py could not step ({exc}); no correction batch emitted.')
+            print(f'  arms could not be emitted ({exc}).')
             return 2
 
     through.sort()
