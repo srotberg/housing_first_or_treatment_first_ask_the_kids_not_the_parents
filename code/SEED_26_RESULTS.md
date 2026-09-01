@@ -906,3 +906,50 @@ That second elasticity has still never been measured alone on this model either.
 The next arm supplies it: `lambda_addiction` 3.24803 -> 3.6 from this point,
 one coordinate, +0.103 e-folds. With both measured locally the pair can be solved
 properly instead of extrapolated.
+
+# THE DRUG-BLOCK 2x2 IS FINALLY MEASURED, BOTH ARMS AT THE SAME CONFIGURATION
+
+`point_bfa1fefb2d`, all sixteen invariants PASS. `lambda_addiction`
+3.24803 -> 3.6, one coordinate, from `point_fbb865dbc0`.
+
+```
+b         0.092836 -> 0.073384   (-17.5% vs target)
+lambda_d  0.043917 -> 0.035562   ( -3.4% vs target)
+```
+
+With the `addiction_scalar_1` arm this completes the first honestly measured
+Jacobian of the drug block on this model:
+
+```
+              d ln as1    d ln lambda_addiction
+b               -10.75                   -2.285
+lambda_d        -12.48                   -2.051
+```
+
+Every earlier version of this matrix was wrong. The three-point fit gave -102 for
+`addiction_scalar_1` because its points were nearly collinear; `restore.py`'s
+borrowed slopes gave -1.83 and -1.13 for `lambda_addiction`, which predicted b's
+response to within one per cent and lambda_d's at a third of its true size. The
+measured pair explains why: the two rows are nearly parallel -- the determinant
+is -6.47 against row norms near 11 and 3 -- so the system is poorly conditioned
+and a slope borrowed from elsewhere lands the well-determined combination and
+misses the other.
+
+## The step, and why it is damped
+
+Solving exactly puts both moments on target and asks `lambda_addiction` to move
+**2.06 times the span that produced the slope**, which is the extrapolation the
+standing rule forbids. Damped to 0.7 it is 1.44 times the span -- still outside,
+but the direction has independent support: `lambda_addiction` was measured at
+2.67 earlier in the session, at a different configuration, so 2.80 is inside the
+range the parameter has actually been run at even though it is outside this
+slice's pair.
+
+```
+DAMPED 0.7   addiction_scalar_1 0.0400 -> 0.041397
+             lambda_addiction 3.24803 -> 2.79953
+             predicts b +1.3%, lambda_d +5.4%
+```
+
+Both inside ten per cent if the linearisation holds over that distance, which on
+this model's record it may not. That is what the measurement is for.
