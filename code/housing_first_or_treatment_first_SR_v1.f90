@@ -2502,6 +2502,30 @@
         ! 0.24. So the rate is steeply decreasing in newborn wealth somewhere
         ! between 0.096 and 0.277, and one number placed in that interval sets it.
         real(8) :: newborn_endowment_scale=1.d0
+        ! THE ENDOWMENT ENTERS THE BUDGET CONSTRAINT, NOT THE INITIAL
+        ! DISTRIBUTION, on the author's instruction of 1 September: "instead of
+        ! pegging them to a financial grid, just give them an endowment only in
+        ! the first period. that would be continuous ... and it would show in
+        ! the BC not the initialization."
+        !
+        ! Endowing the initial distribution meant placing every newborn ON an
+        ! asset grid point, and the grid is coarse where it matters: at the
+        ! inherited curvature there was ONE rung between zero and a year's rent.
+        ! So the instrument was a step function with four usable steps, it could
+        ! not be bisected, and a scale of zero did not even deliver zero wealth,
+        ! because the snap takes the smallest point STRICTLY above the target.
+        !
+        ! A transfer received in the first period has none of that. Newborns
+        ! start at zero assets and get newborn_endowment_scale times average
+        ! labour income as cash in hand at age 26, so the endowment is continuous
+        ! in the scale, exact at zero, and the household -- not the grid --
+        ! decides how much of it to carry into age 27.
+        !
+        ! It is a per-age array rather than a scalar because that is the shape
+        ! every site that adds a transfer to resources already takes, so the
+        ! endowment rides the plumbing the inheritance transfer used before the
+        ! residual was routed to the government. Only element 1 is ever nonzero.
+        real(8), dimension(life_span) :: newborn_age_transfer=0.d0
         real(8) :: max_initial_endowment=7
         real(8) :: max_initial_endowment_adjuster=0
         real(8) :: distance_max_initial_endowment
@@ -3537,7 +3561,34 @@
         
         real(8) :: prepayment_penalty_starts_from
     
-        real(8), parameter :: financial_grid_expander_positive=1.5
+        ! THE CURVATURE OF THE POSITIVE ASSET GRID, and a free setting now
+        ! rather than a compile-time constant, on the author's suggestion of
+        ! 1 September: "maybe you need the grid to be more concentrated at the
+        ! bottom? like expander of 2 or 3?"
+        !
+        ! grid(i) = top * ((i-61)/24)**expander, so a bigger exponent pushes the
+        ! rungs down toward zero. At the inherited 1.5 there is exactly ONE grid
+        ! point between zero wealth and a year's rent on the cheapest unit --
+        ! the rungs are 0.0840 and 0.2376 and the rent is 0.1200. A household
+        ! deciding whether it can hold enough to stay housed is choosing between
+        ! two thirds of a year's rent and two years of it, with nothing in
+        ! between, which is a numerical artifact sitting exactly on the margin
+        ! the model is trying to measure.
+        !
+        !   expander   points below a year's rent   points below average income
+        !      1.5                 1                            3
+        !      2.0                 2                            6
+        !      2.5                 4                            8
+        !      3.0                 5                            9
+        !
+        ! WHAT IT COSTS, and it is not nothing. The number of positive grid
+        ! points is fixed at 24, so concentrating them at the bottom spreads
+        ! them at the top: the last gap widens from 0.611 at 1.5 to 1.184 at
+        ! 3.0. The top of the wealth distribution is where mass had already been
+        ! found piling against the edge, and wealth over output and the wealth
+        ! share of the bottom half are both scored, so a coarser top is a real
+        ! cost paid for a finer bottom. The author has accepted it.
+        real(8) :: financial_grid_expander_positive=3.0
                                 
         integer :: largest_possible_financial_index,largest_possible_mortgage_index
         real(8) :: value_of_house_without_min_down_payment
@@ -7510,7 +7561,8 @@
                         
                             if (inheritance_function_of_productivity==1) then
                         
-                                bequest_2=employment_grid(age_index,employment_index)*inheritance_amount(age_index)
+                                bequest_2=employment_grid(age_index,employment_index)*inheritance_amount(age_index)+&
+                            newborn_age_transfer(age_index)
                                 
                             else
                         
@@ -7976,7 +8028,8 @@
                     
                         if (inheritance_function_of_productivity==1) then
                         
-                            bequest_2=employment_grid(age_index,employment_index)*inheritance_amount(age_index)
+                            bequest_2=employment_grid(age_index,employment_index)*inheritance_amount(age_index)+&
+                            newborn_age_transfer(age_index)
                             
                         else
                     
@@ -9023,7 +9076,14 @@
                                     model_bequests(time_period)=model_bequests(time_period)+bequest_1*distribution_mass_used*&
                                         (1-survival_probability(age_index,is_homeless_1,is_addicted_1,smi_of(unemployment_index)))
                                         
+                                    ! THE NEWBORN ENDOWMENT IS A TRANSFER AND IS
+                                    ! COUNTED AS ONE. Without this the government
+                                    ! would collect the bequests that fund it and
+                                    ! never be charged for paying it out, which
+                                    ! would show up as a free lunch in the budget
+                                    ! rather than as a tax rate that has to clear.
                                     model_total_inheritance(time_period)=model_total_inheritance(time_period)+&
+                                        newborn_age_transfer(age_index)*distribution_mass_used+&
                                         ((1-inheritance_function_of_productivity)+&
                                         inheritance_function_of_productivity*&
                                         employment_grid(age_index,employment_index))*&
@@ -9797,6 +9857,7 @@
         mortgage_interest_rate(time_period)=risk_free_rate(time_period)+mortgage_interest_gap
                                                         
         if (current_beta_type==number_of_beta_types) model_average_labour_income(time_period)=model_average_labour_income(time_period)/max(model_total_workers(time_period),10.d0**(-14))
+        if (current_beta_type==number_of_beta_types) call set_newborn_age_transfer(time_period)
         if (current_beta_type==number_of_beta_types) model_average_income(time_period)=model_average_income(time_period)/max(sum_of_distribution,10.d0**(-14))
         if (current_beta_type==number_of_beta_types) model_average_income_plus_assets(time_period)=model_average_income_plus_assets(time_period)/max(sum_of_distribution,10.d0**(-14))
         if (current_beta_type==number_of_beta_types) then
@@ -10790,7 +10851,8 @@
                     
                         if (inheritance_function_of_productivity==1) then
                         
-                            bequest_1=employment_grid(age_index,employment_index)*inheritance_amount(age_index)
+                            bequest_1=employment_grid(age_index,employment_index)*inheritance_amount(age_index)+&
+                            newborn_age_transfer(age_index)
                     
                         else
                         
@@ -10963,6 +11025,36 @@
         
     end subroutine
     
+    ! THE LEVEL OF THE NEWBORN ENDOWMENT, refreshed wherever average labour
+    ! income is. It is a share of average labour income rather than a number in
+    ! model units so that it does not have to be re-set when anything else in
+    ! the calibration moves the scale of the economy; newborn_endowment_scale=1
+    ! hands a newborn one year of average earnings.
+    !
+    ! Only element 1 is ever nonzero. The rest of the array exists because every
+    ! site that adds a transfer to resources is indexed by age, so keeping the
+    ! shape costs nothing and means the endowment cannot leak into another age
+    ! by an indexing slip.
+    subroutine set_newborn_age_transfer(time_period)
+
+        use global_vars
+
+        implicit none
+
+        integer, intent(in) :: time_period
+
+        newborn_age_transfer=0.d0
+
+        if (uniform_newborn_endowment==1) then
+
+            newborn_age_transfer(1)=newborn_endowment_scale*&
+                (is_counterfactual*average_labor_income_calibrated+&
+                (1-is_counterfactual)*model_average_labour_income(time_period))
+
+        end if
+
+    end subroutine
+
     subroutine calculate_bequest_amount(age_index_1,bequest_1,employment_index_1)
     
         use global_vars
@@ -10978,7 +11070,11 @@
         
             if (age_index_1==inheritance_age_grid(i)) then
                                                                         
-                bequest_1=((1-inheritance_function_of_productivity)+&
+                ! THE NEWBORN ENDOWMENT IS FLAT, so it is added outside the
+                ! productivity scaling rather than inside it: every newborn gets
+                ! the same amount, which is the whole point of the instrument.
+                bequest_1=newborn_age_transfer(age_index_1)+&
+                    ((1-inheritance_function_of_productivity)+&
                     inheritance_function_of_productivity*&
                     employment_grid(age_index_1,employment_index_1))*&
                     inheritance_amount(i)
@@ -11068,7 +11164,8 @@
                     
                         if (inheritance_function_of_productivity==1) then
                         
-                            bequest_1=employment_grid(age_index,employment_index)*inheritance_amount(age_index)
+                            bequest_1=employment_grid(age_index,employment_index)*inheritance_amount(age_index)+&
+                            newborn_age_transfer(age_index)
                             
                         else
                     
@@ -11878,7 +11975,8 @@
                     
                         if (inheritance_function_of_productivity==1) then
                         
-                            bequest_1=employment_grid(age_index,employment_index)*inheritance_amount(age_index)
+                            bequest_1=employment_grid(age_index,employment_index)*inheritance_amount(age_index)+&
+                            newborn_age_transfer(age_index)
                     
                         else
                             
@@ -13712,7 +13810,7 @@
             govt_spending_on_food_stamps(time_period)-govt_spending_on_housing_vouchers(time_period)-&
             govt_spending_on_housing_vouchers_2(time_period)-govt_spending_on_drug_tests+&
             (1-include_bequests*(1-residual_bequests_to_government))*&
-            (model_bequests(time_period)-value_of_initial_assets)
+            (model_bequests(time_period)-value_of_initial_assets-model_total_inheritance(time_period))
                     
         net_govt_revenues(time_period)=clear_only_vouchers_govt_budget*(-govt_spending_on_housing_vouchers_2(time_period))+&
             (1-clear_only_vouchers_govt_budget)*govt_revenues_to_use_in_tests(time_period)
@@ -16023,7 +16121,8 @@
                                                     
                         if (inheritance_function_of_productivity==1) then
                         
-                            bequest_2=employment_grid(age_index,employment_index)*inheritance_amount(age_index)
+                            bequest_2=employment_grid(age_index,employment_index)*inheritance_amount(age_index)+&
+                            newborn_age_transfer(age_index)
                         
                         else
                                                     
@@ -21171,7 +21270,8 @@
             
         if (inheritance_function_of_productivity==1) then
                         
-            bequest_1=employment_grid(age_index,employment_index)*inheritance_amount(age_index)
+            bequest_1=employment_grid(age_index,employment_index)*inheritance_amount(age_index)+&
+                            newborn_age_transfer(age_index)
          
         else
         
@@ -21722,7 +21822,8 @@
         
         if (inheritance_function_of_productivity==1) then
                         
-            bequest_1=employment_grid(age_index,employment_index)*inheritance_amount(age_index)
+            bequest_1=employment_grid(age_index,employment_index)*inheritance_amount(age_index)+&
+                            newborn_age_transfer(age_index)
             
         else
         
@@ -22563,7 +22664,8 @@
             
         if (inheritance_function_of_productivity==1) then
                         
-            bequest_1=employment_grid(age_index,employment_index)*inheritance_amount(age_index)
+            bequest_1=employment_grid(age_index,employment_index)*inheritance_amount(age_index)+&
+                            newborn_age_transfer(age_index)
             
         else
             
@@ -23562,6 +23664,19 @@
                     fraction_with_positive_wealth=0
                 
                 elseif (uniform_newborn_endowment==1) then
+
+                    ! ZERO ASSETS AT BIRTH, and the endowment arrives in the
+                    ! first budget constraint instead -- see newborn_age_transfer.
+                    ! Endowing the distribution here would put every newborn on
+                    ! an asset grid point, which is what made the instrument a
+                    ! step function; leaving them at zero and handing them cash
+                    ! makes it continuous. value_of_initial_assets is therefore
+                    ! zero in this branch, and the transfer is funded out of the
+                    ! bequests the government now collects.
+                    relative_endowments=0
+                    fraction_with_positive_wealth=0
+
+                elseif (uniform_newborn_endowment==2) then
 
                     ! EVERY NEWBORN GETS THE SAME AMOUNT, on the author's
                     ! instruction of 1 September: "you give all newborns the same
@@ -29086,14 +29201,18 @@
             ! The curvature is unchanged; only the endpoint is now what the
             ! declaration says it is.
             financial_grid_distance_positive(i)=(real(i)-real(negative_financial_grid_size))*&
-                ((financial_grid(financial_grid_size))**(real(1)/real(financial_grid_expander_positive)))/&
+                ! real(1)/real(x) with no kind demoted BOTH to single precision,
+                ! so the exponent carried seven digits into a quantity every grid
+                ! point is built from. Harmless for an exponent that happens to
+                ! be exactly representable, silently lossy for one that is not.
+                ((financial_grid(financial_grid_size))**(1.d0/financial_grid_expander_positive))/&
                 (real(positive_financial_grid_size))
     
         end do
         
         financial_grid(negative_financial_grid_size+1:financial_grid_size)=&
             financial_grid_distance_positive(negative_financial_grid_size+1:financial_grid_size)**&
-            (real(financial_grid_expander_positive))
+            (financial_grid_expander_positive)
             
         open(unit=3,file="financial_grid_points"//trim(file_number)//".txt",action="write",status="replace")
         do i=1,financial_grid_size
@@ -34663,6 +34782,10 @@
                     multiple_of_probabilities_of_employment_if_addicted=&
                         max(min(handover_value,20.d0),1.d0)
 
+                case ("financial_grid_expander_positive")
+                    write(*,*) "HANDOVER financial_grid_expander_positive:",&
+                        financial_grid_expander_positive, "->", handover_value
+                    financial_grid_expander_positive=max(min(handover_value,6.d0),1.d0)
                 case ("newborn_endowment_scale")
                     write(*,*) "HANDOVER newborn_endowment_scale:",&
                         newborn_endowment_scale, "->", handover_value
@@ -34969,6 +35092,7 @@
         model_average_income_plus_assets(1)=average_labor_income_calibrated
         model_average_income_plus_all_assets(1)=average_labor_income_calibrated
         model_average_labour_income(1)=average_labor_income_calibrated
+        call set_newborn_age_transfer(1)
         model_average_labour_income_by_employment(1,:)=average_labor_income_by_employment_calibrated
         median_income(1)=median_income_calibrated
         model_average_financial(1)=average_financial_calibrated
@@ -35003,6 +35127,7 @@
             mortgage_interest_rate(1)=risk_free_rate(1)+mortgage_interest_gap
             
             model_average_labour_income(1)=average_labor_income_calibrated
+            call set_newborn_age_transfer(1)
             total_housing_demand(1)=calibrated_housing_stock
             
             total_rental_demand(1,:)=total_rental_supply_calibrated
