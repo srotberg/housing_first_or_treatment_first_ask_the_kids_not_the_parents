@@ -117,7 +117,30 @@
         integer, parameter :: remove_increased_death=0
         integer, parameter :: reduce_ss_by_half=0
         
-        integer, parameter :: start_assets_of_newborns_at_zero=0
+        ! SET TO 1 TO GIVE NEWBORNS WEALTH, on the author's instruction of
+        ! 1 September: "try to initiate all the newborns with some positive
+        ! wealth and see what you get".
+        !
+        ! THE NAME IS INVERTED RELATIVE TO THE BEHAVIOUR and that is worth saying
+        ! out loud, because it is a trap for anyone reading the flag to find out
+        ! what the model does. The branch at line 23469 is
+        !
+        !     if (start_assets_of_newborns_at_zero==0) then
+        !         relative_endowments=0
+        !
+        ! so the value ZERO produces zero assets, which is what the name
+        ! describes, and the value ONE switches the SCF endowment distribution
+        ! ON. A reader checking whether newborns are zeroed sees "=0" and
+        ! concludes they are not.
+        !
+        ! What switching it on buys, and why it was the blocker. Every household
+        ! entered at 26 with EXACTLY zero wealth, and zero wealth is the only
+        ! state in this model that produces homelessness: at 26 the homelessness
+        ! rate is 16.23 per cent on wealth 0.00000, and at 29 it is 0.24 per cent
+        ! on wealth 0.27705 -- with LOWER income, 0.237 against 0.290. Sixty-eight
+        ! times less likely on less income, so the driver is liquidity and not
+        ! poverty. Being born was the only route to it.
+        integer, parameter :: start_assets_of_newborns_at_zero=1
         real(8), parameter :: increase_in_newborns_bequests=0
         integer, parameter :: increase_vouchers_for_homeless_only=0
         
