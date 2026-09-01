@@ -14,7 +14,64 @@ led the search to a point with b exact and lambda_d at minus seventy eight.
 `beta` is banded (3.0, 4.5) on the author's instruction and scores zero inside
 it. `h_2`, the smallest-rental share, is conceded and need not be chased.
 
-## THE MODEL CHANGED ON 1 SEPTEMBER AND THE ARCHIVE IS EMPTY AGAINST IT
+## LIVE STATE, 1 September 16:50 -- MODEL 7de893e588, ZERO points on it
+
+SEED, DO NOT RUN THE GATE. `code/batch_recal1.txt`, eight points, all launched
+16:47-16:49. Line 1 is the new anchor; lines 2-8 are one arm each off it.
+
+### The four decisions the author made this afternoon, and what each did
+
+**D1. omega_l is calibrated again.** "omega_ell should target the 0.4 as
+before." `freeze_fitted_internals` is split into
+`freeze_sd_permanent_productivity` (still 1) and
+`freeze_relative_share_of_leisure` (now 0). The freeze was applied when BOTH
+internals were fitted; sigma_y rode every change since and still reads -1.7 per
+cent, omega_l drifted to -55 and was frozen at a value fitting a model that no
+longer exists. A frozen parameter whose moment has drifted is worse than a held
+one, because the moment is still scored.
+
+**D2. h_2 is in SKIP.** "h_2 should essentially be chosen to match the rent50
+target (that is the same as the smallest rental relative to lowest income)."
+One cost burden read two ways, one parameter setting both. It was never
+orphaned in the sense reported -- it never needed its own instrument. THE
+TRIGGER PROMPTS SAID THE OPPOSITE and both were corrected at 16:52.
+
+**D3. emp_homeless is scored again.** "you'll need to adjust both to match the
+data" -- rent50 and gamma stay on their own targets while the affordability
+channel is pushed, rather than drifting as its price.
+
+**D4. NO CHANGE. The top of the asset grid is fine.** "as long as less than 0.1%
+of households are at the top grid point, it is ok." The model already prints it:
+`DIAG mass ON the top savings grid point` reads 0.0036 to 0.0072 per cent at
+every point measured, on BOTH grids. The prepared change to
+max_times_labour_income_saved was dropped. The 2.47 per cent figure in the older
+notes predates the fix to the grid endpoint and is not true of this model.
+
+### Two things the six-point endowment sweep settled
+
+**The endowment works, but as a CLIFF.** h_share1 reads 0.894, 0.886, 0.884,
+0.866, 0.884 across scale 0 to 0.75 and then 0.402 at 1.00; age 26 homelessness
+is 14.9 per cent at zero and EXACTLY zero at 1.00. Do not interpolate across it.
+The anchor sits past it at 1.25 and the arm is 1.60.
+
+**The drug block closed itself.** b -10.8 per cent and lambda_d -18.5 at scale
+1.00, against -80 and -96 on the old grid, with y_u at +1.6. Nothing was aimed at
+them; recurving the asset grid did it. The planned drug-block re-solve may not be
+needed -- CHECK before spending a round on it.
+
+Also measured: the endowment does not touch rent50 (0.6338 to 0.6395) or gamma
+(0.4370 to 0.4338), so their instruments can work without fighting it.
+
+### The one structural doubt to put to the author
+
+gamma is 115 per cent out and its instrument is weak and coupled: elasticity
+0.22 on gamma, -9.567 on h_1. Closing gamma on relative_share_of_housing alone
+needs a 97 per cent cut, which would destroy h_1. The anchor cuts it 20 per cent,
+which is what h_1 needs and does almost nothing for gamma. If the arms confirm
+this, gamma does not close on this instrument at any step h_1 survives, and that
+is a scope question rather than a search failure.
+
+## SUPERSEDED, 1 September 16:20 -- the archive was empty against 8ced112a69 too
 
 MODEL 8ced112a69. Points on that hash: **ZERO**. The gate is NOT to be run this
 firing or any firing until a seed lands -- `next_batch.py` scores only points on
