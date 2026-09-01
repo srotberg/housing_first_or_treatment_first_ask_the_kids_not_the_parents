@@ -31,6 +31,7 @@ such pair gets no line, and says so, rather than being moved on a guess.
 """
 import glob
 import hashlib
+import json
 import math
 import os
 import re
@@ -57,6 +58,49 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 # rather than being allowed to accumulate.
 GATE = {'b': 0.05, 'lambda_d': 0.05}     # opens the phase
 BASE_TOL = {'b': 0.10, 'lambda_d': 0.10}  # admissible as a base thereafter
+
+# THE GATE OPENS IN STAGES, NOT ALL AT ONCE.
+#
+# The author, 1 September: "You might want to open gates slowly... You might want
+# to add h1 and h2 first after you have b and lambda d. Then open a bit more in
+# the next critical moments. And so on."
+#
+# The first composed step of the evening moved TEN instruments at once off the
+# newly pinned base. That is the same shape as the two hand-built anchors that
+# failed earlier the same day, where every individual step was inside the 0.35
+# e-fold cap and they still did not compose -- one took lambda_d from +1.2 to
+# +815 per cent. Capping each step is not sufficient; the cross-effects compound.
+#
+# So a stage is a set of MOMENTS. Only instruments owning a moment in an OPEN
+# stage may be stepped; everything else is held at the base. A stage opens when
+# every moment in every earlier stage is inside BASE_TOL -- or when it has
+# stalled, see STAGE_PATIENCE.
+#
+# The ordering is the author's for the first two and mine, stated, for the rest:
+# after the drug block and the housing block comes the disorder and treatment
+# block, which is the paper's own mechanism, and the aggregates last because they
+# are the ones the model reaches most easily.
+STAGES = [
+    ['b', 'lambda_d'],                                 # the gate itself
+    ['h_1', 'emp_homeless'],                           # the author's h1 and h2
+    ['theta', 'tau_u', 'mu_H', 'lambda_m', 'p_m'],     # disorder and treatment
+    ['beta', 'pi_eu', 'tau_l', 'sigma_y', 'omega_l',   # the aggregates
+     'gamma', 'cbar', 'pi_V', 'aleph', 'h_share1', 'h_2'],
+]
+
+# A STAGE THAT CANNOT BE SATISFIED MUST NOT DEADLOCK THE ONES BEHIND IT.
+#
+# emp_homeless is in stage 1 and nine controlled points say the housing block
+# cannot reach it: the rung converts homelessness from chosen to involuntary --
+# by-choice falls 0.99 to 0.11 -- while the employed share stays in 0.82 to 0.99.
+# On a strict reading stage 2 would never open and the search would stop dead
+# behind a moment the author has not yet decided about.
+#
+# So a stage also opens once it has gone STAGE_PATIENCE firings without its worst
+# moment improving. The loop says which stages are open and WHY -- satisfied or
+# stalled -- every time, so a stalled stage is visible rather than silently
+# skipped, and it stays in the loss throughout.
+STAGE_PATIENCE = 3
 RESTORE_AT = 0.05                         # emit a repair line beyond this
 ACCEPT = 0.10                             # the author's ten per cent rule
 DAMP = 0.70                               # converge slowly, do not jump
@@ -1272,9 +1316,45 @@ def main():
         print(f'drug block refit on {ndj} comparable points, '
               f'condition {np.linalg.cond(DJ):.0f}'
               + ('  (borrowed slice, steps halved)' if DJ_foreign else '')  + '\n')
+    # WHICH STAGES ARE OPEN. A stage opens when every moment in every earlier
+    # stage is inside BASE_TOL, or when it has stalled for STAGE_PATIENCE
+    # firings. Both cases are printed, so a stalled stage is visible.
+    hist_path = os.path.join(HERE, '.stage_state')
+    hist = json.load(open(hist_path)) if os.path.exists(hist_path) else {}
+    open_stages, why = [], []
+    for i, st in enumerate(STAGES):
+        open_stages.append(i)
+        worst_here = max((gap(q, m[q]) for q in st if q in m), default=0.0)
+        satisfied = all(q in m and gap(q, m[q]) <= BASE_TOL.get(q, ACCEPT) for q in st)
+        k = f'stage{i}'
+        rec = hist.get(k, {'best': worst_here, 'stale': 0})
+        if worst_here < rec['best'] - 1e-9:
+            rec = {'best': worst_here, 'stale': 0}
+        else:
+            rec['stale'] = rec.get('stale', 0) + 1
+        hist[k] = rec
+        if satisfied:
+            why.append(f'  stage {i} {st} SATISFIED, worst {100*worst_here:.1f}%')
+            continue
+        if rec['stale'] >= STAGE_PATIENCE:
+            why.append(f'  stage {i} {st} STALLED at {100*worst_here:.1f}% for '
+                       f'{rec["stale"]} firings -- opening the next anyway, and it '
+                       f'stays in the loss')
+            continue
+        why.append(f'  stage {i} {st} OPEN and working, worst {100*worst_here:.1f}%')
+        break
+    json.dump(hist, open(hist_path, 'w'), indent=1)
+    print('STAGES:'); [print(x) for x in why]
+    live = {q for i in open_stages for q in STAGES[i]}
+
     lines, skipped = [], []
     for param, mom in sorted(OWN.items(), key=lambda kv: -gap(kv[1], m[kv[1]]) if kv[1] in m else 0):
         if mom not in m or gap(mom, m[mom]) <= ACCEPT:
+            continue
+        # Only instruments owning a moment in an open stage may move; the rest
+        # are held at the base. See STAGES.
+        if mom not in live:
+            skipped.append(f'{param} (owns {mom}): held, its stage is not open yet')
             continue
         # A BRACKET BEATS AN ELASTICITY. If two archive points on this
         # instrument straddle the target, interpolate between them instead of
