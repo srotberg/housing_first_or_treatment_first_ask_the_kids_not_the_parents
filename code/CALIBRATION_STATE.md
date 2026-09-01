@@ -12,9 +12,72 @@ not a mean -- `score_points.worst()` with `ACCEPT = 0.10`. The mean is what once
 led the search to a point with b exact and lambda_d at minus seventy eight.
 
 `beta` is banded (3.0, 4.5) on the author's instruction and scores zero inside
-it. `h_2`, the smallest-rental share, is conceded and need not be chased.
+it. **`h_2` is NOT conceded.** That sentence stood here for a day after the
+author reversed it -- *"Why is h2 conceded? Isn't h2 the same as the smallest
+rental??"* -- and it is the head of the file, so it is what a reader acts on.
+The moment h_2 is the CEX severe cost burden against 0.101; the parameter h_2
+is `smallest_rental_relative_to_lowest_income`. Both are live. What is
+conceded is exactly what `SKIP` in `next_batch.py` says, and nothing else.
 
-## LIVE STATE, 1 September 20:30 -- ONE BETA, THREE BRACKETS IN FLIGHT
+## LIVE STATE, 1 September 22:00 -- FOUR ARMS OUT, AND WHY emp_homeless FAILS
+
+Best point `a6ff37446f`, MODEL 31818f2e83, one beta, 40 points in this economy.
+LOSS (minimax over scored) 100.1 per cent, median 26.5, six of twenty-one inside
+ten. The binding moment is `emp_homeless`.
+
+### emp_homeless cannot be fixed by its own instrument, and here is the evidence
+
+The author asked, 1 September: *"Why can't you get the emp of homeless to its
+true number? You have a mechanism to control it, no!"* The mechanism is
+`increased_prob_if_homeless`, and it IS live -- `include_addiction=1`, and the
+branch at 27837 onward that actually executes applies it to both directions of
+the unemployment process. It is not a wiring fault.
+
+It is the wrong margin. At `point_c947746ef0`, where the homelessness rate is
+essentially on target (0.377 against 0.399 per cent):
+
+    employed share of the homeless              0.964    data 0.460
+    income of the homeless / average            0.688    data 0.191
+    could afford the smallest unit ON INCOME    0.989
+    homeless by choice (income + assets)        0.995
+    P(homeless|unemployed) / working-age rate   0.258    data implies ~3.9
+
+**Nobody in this model is homeless because they ran out of money.** The street is
+a taste margin. `increased_prob_if_homeless` changes what happens to a household
+WHILE homeless, so making the street costly does not hold the employed there in a
+worse state -- it makes them choose a room instead, and the margin re-sorts. The
+instrument is spent on the LEVEL of homelessness, not its composition.
+
+The last row is the sharpest form: in the model an unemployed household is four
+times LESS likely to be on the street than one drawn at random; the data needs
+about four times MORE. The sign of the selection is backwards, not the size.
+
+Three moments fail for this one reason -- `emp_homeless` 0.96, income of the
+homeless 0.69, `w_bot` 0.229 against 0.025. There is no poor tail, because the
+cheapest rung is priced at `smallest_rental_relative_to_lowest_income=0.055` and
+is affordable to everyone. **The instrument for emp_homeless is h_2.**
+
+### The four arms out
+
+- `batch_ladder_a/b` -- the author's ladder (h_3 = 1.5 x h_2, h_4 = 2 x h_2,
+  which the base did NOT have; it was still on 2.0/3.0) with h_2 stepped alone at
+  0.055, 0.09, 0.13, 0.165. This is the arm that answers the above.
+- `batch_homelessemp` -- `increased_prob_if_homeless` at 1.0, 3.0, 8.0, ONE
+  parameter moving. The only pre-existing points spanning it differ in six
+  others, so the elasticity read off them was not an elasticity.
+- `batch_drugfit` -- restore.py's step off `c947746ef0` as a full/half/quarter
+  bracket, to reopen the gate.
+
+### The gate deadlock, second form
+
+Once the drug 2x2 had been run the archive held more than three pairs, so the
+branch that emitted it stopped firing -- and fell straight through to "no
+correction batch emitted", gate still shut, restore.py able to fit and step, and
+nothing calling it. next_batch now calls restore.py's own fit there and emits
+full, half and quarter steps, because restore prints a CAUTION whenever b is more
+than twenty-five per cent out, which is exactly the case that reaches it.
+
+## SUPERSEDED: LIVE STATE, 1 September 20:30 -- ONE BETA, THREE BRACKETS IN FLIGHT
 
 At one beta a solve is SIX minutes, against eleven at two types (n=2 vs n=42, so
 the one-beta figure is thin but the two-pass design predicts roughly half). That
