@@ -1377,7 +1377,51 @@ def main():
         else:
             e = elasticity(A, param, mom, v)
         if br is None and e is None:
-            skipped.append(f'{param} (owns {mom}): no controlled pair in the archive')
+            # A TURNING RESPONSE MUST BE EXPLORED, NOT DROPPED.
+            #
+            # The guard in elasticity() returns None when the measured slopes
+            # span both signs, with the comment "pick the best measured point".
+            # Nothing implemented that. This branch then treated None as "no
+            # controlled pair" and SKIPPED the instrument -- so the cheapest rung
+            # silently left the search the moment the guard fired, and three
+            # rounds of stage 1 moved the street alone with the rung pinned at
+            # 0.055 while the author had asked for the two together.
+            #
+            # The bracket path cannot rescue it either: it needs two archive
+            # points STRADDLING the target, and emp_homeless has never once been
+            # below 0.46, so there is nothing to interpolate between.
+            #
+            # When the response turns and nothing straddles, the honest move is
+            # to EXPLORE: take the value of this instrument that produced the
+            # best measured value of its moment, and bracket around it. That is
+            # a search, not a step, and it is the only thing that can find the
+            # far side of a turn.
+            cand = [(gap(mom, mm[mom]), float(vv[param]))
+                    for vv, mm in A.values()
+                    if param in vv and mom in mm and gap(mom, mm[mom]) == gap(mom, mm[mom])]
+            if not cand:
+                skipped.append(f'{param} (owns {mom}): no controlled pair in the archive')
+                continue
+            xbest = min(cand)[1]
+            lo, hi = BOUNDS.get(param, (xbest / 50, xbest * 50))
+            for fct in (0.5, 2.0):
+                x1 = max(lo, min(hi, xbest * fct))
+                if abs(math.log(max(x1, 1e-300) / max(float(v[param]), 1e-300))) < 1e-4:
+                    continue
+                d = dict(v); d[param] = f'{x1:.7g}'
+                if param == 'smallest_rental_relative_to_lowest_income' and \
+                        'size_homelessness' in d:
+                    st = float(v[param]) * float(v['size_homelessness'])
+                    rlo, rhi = BOUNDS['size_homelessness']
+                    d['size_homelessness'] = f'{max(rlo, min(rhi, st / x1)):.7g}'
+                lines.append((f'EXPLORE {param}', mom, float(v[param]), x1,
+                              float('nan'), 100 * (m[mom][0] / m[mom][1] - 1),
+                              '  response turns; exploring around the best measured value',
+                              'bash code/run_one_point.sh ' +
+                              ' '.join(f'{k}={d[k]}' for k in sorted(d))))
+            print(f'  {param} (owns {mom}): response turns and nothing straddles '
+                  f'the target, so EXPLORING around {xbest:g}, its best measured '
+                  f'value, instead of dropping it.')
             continue
         cur, tgt = m[mom]
         if br is None:
