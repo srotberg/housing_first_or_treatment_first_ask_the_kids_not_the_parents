@@ -260,3 +260,44 @@ drives households into addiction here, but it means **`w_bot` cannot be closed
 with this instrument at any step size that leaves b and lambda_d usable.** Of
 the four arms so far it is the only one that is not merely coupled but
 prohibitive.
+
+## Arm 5 -- size_homelessness x1.350, owns h_1. The cleanest instrument measured.
+
+`point_00b99e6297`, all sixteen invariants PASS.
+
+`h_1` goes 0.001493 -> **0.002084** against a target of 0.00399, so -62.6 per
+cent becomes -47.8 per cent, on an elasticity of **1.111**. Closing the rest
+needs `size_homelessness` x1.794 to **0.17956**, comfortably inside its bounds
+of 0.01 to 5.0.
+
+**It moves the drug block by five thousandths of one per cent.** b goes +0.0047
+per cent and lambda_d +0.0039 per cent -- not small, negligible. This is the
+first instrument that can be moved as far as its moment requires without any
+repair at all.
+
+| arm | instrument | b | lambda_d |
+|---|---|---|---|
+| 4 | discount_factor_impatient | +239.0% | +415.3% |
+| 2 | utility_cost_of_treatment | -46.4% | -53.2% |
+| 1 | max_food_cost | +19.5% | +29.3% |
+| 3 | voucher lottery | +5.9% | +8.3% |
+| 5 | size_homelessness | **+0.005%** | **+0.004%** |
+
+### It also confirms arm 4's negative result independently
+
+The composition of the homeless did not move here either. `homeless by choice`
+is **still exactly 1.0000**, band 1 still holds 97.1 per cent, and the employed
+share **rose** to 0.97299 from 0.96671.
+
+So two different instruments, working through two different channels -- one
+making the poor poorer, one making homelessness less unpleasant -- both raise
+the NUMBER of homeless households by tens of per cent and leave WHO they are
+completely unchanged. That is now a replicated finding rather than a single
+arm's result, and it is much harder to explain away than one measurement was.
+
+**h_1 is closable and the composition moments are not.** The homelessness rate
+can be put on target with a clean instrument at no cost to anything else. The
+age profile, the employed share and the SUD share of the homeless are a
+different matter: nothing measured so far moves them, because every homeless
+household in this model is there voluntarily and the model contains no channel
+that makes a household homeless against its will.
