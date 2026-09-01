@@ -6059,3 +6059,45 @@ ten per cent acceptance rule, so ccd590735a at 7.5 per cent does not open the
 full correction batch and this step is deliberately PURE -- no other instrument
 moves in it. Anything else moved here would shift b and lambda_d and the gate
 would have to be re-earned, which is what the gate exists to prevent.
+
+## Why restore.py's repair was NOT used this firing, and the measurement that settles it
+
+The gate exits 2 at ccd590735a, and the loop's step 3 sends exit 2 to
+`restore.py`. It was run, and its proposal is recorded in
+`RESTORE_ccd590735a.txt`, but it was not launched. The reason is a measurement,
+not a preference.
+
+restore.py refits the two-by-two drug-block Jacobian from the archive and warned
+that it could not do so locally: *"base slice too small; Jacobian borrowed from
+4 points elsewhere, so the step is halved"*. Its borrowed slopes are
+
+```
+d ln b        / d ln lambda = -1.83   / d ln as1 = -16.4
+d ln lambda_d / d ln lambda = -1.13   / d ln as1 = -22.4
+```
+
+Those slopes can now be tested, because the move from ccd590735a to
+85f8304979 is a MEASURED displacement in both parameters at once:
+`d ln lambda = -0.2566`, `d ln as1 = +0.00917`.
+
+| moment | borrowed Jacobian predicts | measured | ratio |
+|---|---|---|---|
+| b | +0.3191 | +0.3232 | **0.99** |
+| lambda_d | +0.0844 | +0.2554 | **0.33** |
+
+**The borrowed Jacobian is excellent for b and wrong by a factor of three for
+lambda_d**, and lambda_d is the moment that has been binding all along. A step
+built on it -- then halved -- moves lambda_d roughly a sixth as far as intended,
+which is why restore proposed a lambda_addiction move of -0.013 e-folds where
+the bracket says -0.062 are needed.
+
+So the standing rule decides it: PREFER A MEASURED BRACKET TO AN ELASTICITY. The
+step in flight is a straight interpolation between two measured points that
+straddle both targets, needs no Jacobian at all, and its two roots agree to
+within four points of t. `RESTORE_ccd590735a.txt` is kept as the record of what
+was rejected and why; it must not be mistaken for the live step.
+
+This also explains why the local search stalled for so long at a b/lambda_d
+ratio of 1.5: every step was built from a Jacobian that understated lambda_d's
+sensitivity threefold, so the ratio could not be moved even though b tracked
+predictions closely.
