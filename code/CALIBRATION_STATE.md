@@ -14,7 +14,68 @@ led the search to a point with b exact and lambda_d at minus seventy eight.
 `beta` is banded (3.0, 4.5) on the author's instruction and scores zero inside
 it. `h_2`, the smallest-rental share, is conceded and need not be chased.
 
-## LIVE STATE, 1 September 20:15 -- ONE BETA, DEATH PENALTY OWNS y_u
+## LIVE STATE, 1 September 20:30 -- ONE BETA, THREE BRACKETS IN FLIGHT
+
+At one beta a solve is SIX minutes, against eleven at two types (n=2 vs n=42, so
+the one-beta figure is thin but the two-pass design predicts roughly half). That
+changes what a round can be: an arm on every scored moment now fits in one round
+instead of three.
+
+### The three brackets running, and what each settles
+
+**batch_drugline.txt** -- the drug pair walked along the Newton direction of the
+first properly fitted one-beta Jacobian. Four points differing only in
+lambda_addiction and addiction_scalar_1 give
+
+    d ln b        / d ln lambda_add -3.282   / d ln as1  -7.694
+    d ln lambda_d / d ln lambda_add -3.305   / d ln as1 -10.162   cond 23.2
+
+solving at lambda_addiction 17.01, addiction_scalar_1 0.01305. That agrees with
+where the block closed on the PREVIOUS model generation, which the old trigger
+prompts recorded as "lambda_addiction near 16". Two independent sources, same
+neighbourhood. But the step is +1.80 e-folds against arms spanning +/-0.17, so it
+is walked at a third, two thirds and the whole rather than taken.
+
+**batch_beta_df.txt** -- discount_factor 0.985 / 0.975 / 0.960 for beta, which
+reads 6.42 against a 3.0-4.5 band. See the next section for why this exists.
+
+**batch_yu.txt** -- kappa_phi_d_level 4.8 for y_u, pairing against the one-beta
+point at 8.0 so the value is measured rather than extrapolated.
+
+### BETA HAD NO INSTRUMENT, AND TWO TYPES HID IT FOR WEEKS
+
+next_batch removed discount_factor from OWN on the belief, written into the file,
+that "the model bisects the patient discount factor on wealth over output inside
+every point run". Not true of a POINT run, checked three ways: all 45 points carry
+the identical discount_factor=0.99715, distance_discount_factor appears in ZERO
+worker logs, and the one-beta run ends with the value exactly as handed in. The
+bisection lives in the full calibration binary.
+
+It was invisible at two types because 0.99715 with an impatient 0.95 gives 4.44,
+inside the band, so beta scored zero. At one type it gives 6.42. Restored to OWN;
+its BOUNDS entry is a search range now, not a seed.
+
+### What one beta did to the rest, at the unchanged vector
+
+Better without being touched: mu_H +19.7 -> -0.6, pi_eu +15.4 -> -0.8, tau_l
++11.0 -> +3.0, aleph -27.1 -> -18.6.
+Worse, because the vector was calibrated for two types: lambda_d +0.0 -> -95.7,
+tau_u -14.1 -> -100, theta +41.8 -> -54.3, y_u -27.6 -> -45.5, and beta out of
+band. Every parameter needs re-solving in the new economy; the three brackets are
+the first three.
+
+### Next, once they land
+
+One WIDE round: an arm on every scored moment at once, 20 points across 8 workers
+at 2-3 each, about 20 minutes. That gives each instrument's own elasticity AND its
+cross-effects on all 19 others in a single round. The 7-instrument version of that
+table is what revealed that discount_factor_impatient, value_of_life and
+kappa_phi_d_level all pass through the drug block, which is why every hand-built
+anchor exploded. With the full table the updater can pick a step it knows will not
+wreck anything.
+
+## SUPERSEDED, 1 September 20:15
+
 
 The author's two decisions of the last half hour, and what each settles.
 
