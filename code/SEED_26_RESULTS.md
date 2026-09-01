@@ -558,3 +558,53 @@ choosing it. It requires a modelling decision from the author, not a better
 search.
 
 Coupling is negligible: b -0.0085 per cent, lambda_d -0.0102 per cent.
+
+## The gate reproduces every measured elasticity, and picks the wrong anchor
+
+At 08:21 the gate writes ten arms and its numbers agree with the ones measured
+here, independently derived from the same points:
+
+| parameter | gate | measured here |
+|---|---|---|
+| max_food_cost | +1.76 | 1.759 |
+| probability_of_voucher_benchmark_used | +0.77 | 0.773 |
+| size_homelessness | +1.11 | 1.111 |
+| largest_house_size | bracket -> 0.14664 | 0.146656 |
+| relative_share_of_housing | +0.38 | 0.383 |
+| kappa_phi_d_level | -0.20 | -0.182 |
+| mu_homeless | -1.09 | -1.093 |
+| probability_becoming_unemployed | +0.48 | 0.446 |
+
+That is a good check on both: the arms were measured and scored by hand here and
+by the gate's own fitter there, and they land in the same place.
+
+### But the anchor moved to point_b640a5352d, and it should not have
+
+The gate chooses its base by `max(|b gap|, |lambda_d gap|)` alone. Arm 11 barely
+touched the drug block -- b -0.0085 per cent -- so it ties the true anchor on
+that criterion and wins on tie-break, and every arm in `CORRECT_31.txt` is now
+stepped from it.
+
+`point_b640a5352d` carries `increased_prob_if_homeless = 3.8`, a change arm 11
+showed to be both useless and harmful: it moved its own moment by 0.6 per cent
+and cut `h_1` by 21.9 per cent. That damage propagates. `size_homelessness` is
+now told to close a -71 per cent gap rather than the -48 per cent gap at the real
+anchor, and it proposes 0.1052 where the true anchor needs 0.17956.
+
+**A base chosen on two moments is not the best point on twenty-one.** The
+objective is a minimax over every scored moment except `h_3`, and the joint step
+must be built from the point that is best on THAT, which is
+`point_9a13317e65`, not from whichever arm happened to leave b and lambda_d
+alone.
+
+### And it will chase a moment it has measured as unmovable
+
+```
+increased_prob_if_homeless   emp_homeless   +109%   -0.00   3.8 -> 5.3925
+```
+
+The gate has fitted an elasticity of **-0.00** and is proposing a step anyway.
+With no guard against a zero slope it will keep raising that parameter every
+round, buying nothing and cutting `h_1` each time. Recorded rather than patched:
+the sensible fix is for `emp_homeless` to leave the scored set once the author
+has ruled on the composition problem, and that is the author's call.
