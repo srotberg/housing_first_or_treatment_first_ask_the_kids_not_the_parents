@@ -5889,3 +5889,104 @@ rate: `lambda_d` should rise when this parameter leaves zero, and `b` with it.
 The next point therefore moves this parameter alone from the best available
 addiction pair, so the tau_u response and the b/lambda_d feedback are read off
 the same controlled step.
+
+## cbar: the food stamp formula makes spending quadratic in max_food_cost, and that pins the step
+
+The benefit is linear and tapered to zero, at line 4803:
+
+```
+snap_benefit = max(0, max_food_cost - food_stamp_taper*net_income)
+```
+
+with `food_stamp_taper` a parameter fixed at 0.30. So a household is paid
+whenever net income is below `max_food_cost/0.30`, and aggregate spending is
+
+```
+integral over y below cbar/tau of (cbar - tau*y) dF(y)
+```
+
+If the income density is roughly flat over that range -- and the range is tiny,
+0 to 0.024 of a distribution whose mean is 0.55 -- then the number of recipients
+is proportional to `max_food_cost` and the average payment is proportional to it
+as well, so **aggregate spending goes as the square of `max_food_cost` while the
+recipient share goes as the first power**.
+
+That gives one step with two independent checks, which is why it is worth
+stating before measuring rather than after:
+
+| | model at cbar = 0.007331089 | target | ratio |
+|---|---|---|---|
+| food stamps / output | 0.00072248 | 0.0042 | 5.813 |
+| households receiving food stamps | 0.049964 | 0.125 | 2.502 |
+
+The square root of 5.813 is **2.411**, and the recipient ratio is **2.502**. The
+two agree to four per cent, which is the quadratic story confirming itself out
+of numbers measured in the same run. Scaling `max_food_cost` by 2.411 predicts
+spending of 0.0042 and a recipient share of about 0.1204 against 0.125, and both
+are checkable in a single point.
+
+**So the step is `max_food_cost` = 0.007331089 x 2.411 = 0.017676**, and it
+replaces the earlier guess of "up about four times", which came from treating
+the gap as if spending were linear in the floor. If spending comes back near
+0.0042 AND recipients near 0.12, the mechanism is right and cbar is finished in
+one move; if spending overshoots while recipients land, the density is falling
+rather than flat and the exponent is between one and two.
+
+### The eligibility diagnostic compares two different objects
+
+`DIAG gross eligibility cutoff` prints `max_food_cost/food_stamp_taper` over
+average labour income, 0.0445, against 0.214872, which is 130 per cent of the
+poverty line over mean wage income. Those are not the same quantity: the model's
+number is the income at which the benefit tapers to nothing, and the data number
+is the statutory gross income screen. In the programme both exist and the
+screens bind different households. The ratio of the two diagnostics implies a
+taper of 0.184 in the data against the model's 0.30, which is not evidence the
+taper is wrong -- it is the arithmetic of comparing a benefit exhaustion point
+with an eligibility test. Left as it is, and flagged rather than changed,
+because `food_stamp_taper` is assigned at 0.30 from the programme rule.
+
+## The value of life diagnostic had two faults, and neither changes a moment
+
+The author asked whether there is a bug in the value of life estimation. There
+are two, both in the diagnostic rather than in the estimate, and both are now
+fixed.
+
+**1. `val_life_min` was reset on every beta pass.** At line 29073 the reset
+
+```
+val_life_min(time_period)=10.d0**(10)
+```
+
+carried no `if (accumulating_beta_types==0)` guard, while the eleven resets
+immediately around it -- including `val_neg_life_mass`, `val_ugoods_users` and
+`val_umass_users`, its own siblings in the same diagnostic -- all did. So the
+second pass threw away the first type's minimum and
+`DIAG lowest value of a period of life` printed the LAST beta type's minimum
+alone. This is the same bug the author already found and fixed in
+`model_largest_negative_value_of_life`, whose note at line 7763 says exactly
+this and calls the guard on its twin the reason it is an oversight rather than a
+decision. Now guarded, so the minimum is taken over both types and can only fall.
+
+**2. The negative mass was printed as a mass in a block of ratios.** It read
+
+```
+DIAG mass with a NEGATIVE value of life = 0.30321006402406536
+```
+
+which invites reading as thirty per cent of households preferring not to be
+alive -- which, on the author's own note beside it, would make the selection
+into drug use a defect rather than a mechanism. It is not thirty per cent.
+`val_neg_life_mass` accumulates `distribution_mass_used`, so it is a mass on a
+pooled population of 95.4, and the share is **0.32 per cent**. The line now
+prints the share, with the raw mass and the divisor beside it, in the same form
+the food stamp line two lines below already used.
+
+So the substantive answer is that the value of life is not broken: a third of
+one per cent of households sit below zero, not a third of the population. The
+minimum itself may move once the guard takes effect, since it can now see both
+types, and -9.83 was measured on one of them.
+
+**Neither fix touches a moment.** Both are inside diagnostic prints or a
+diagnostic's reset; no moment, no invariant and no calibration update reads
+`val_life_min` or `val_neg_life_mass`. Points measured before and after are
+comparable on every scored quantity.

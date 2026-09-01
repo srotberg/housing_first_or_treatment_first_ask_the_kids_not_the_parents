@@ -5169,8 +5169,15 @@
             ! eightfold mortality multiplier is a benefit to them rather than a
             ! cost -- which would make the selection into drug use a defect and
             ! not a mechanism.
-            write(*,*) "DIAG mass with a NEGATIVE value of life          =",&
-                val_neg_life_mass(1)
+            ! AS A SHARE, WHICH IS WHAT THE NOTE ABOVE ASKS. val_neg_life_mass
+            ! accumulates distribution_mass_used, so it is a mass on a pooled
+            ! population near 95, and printed raw it reads 0.303 where the
+            ! question is whether that is thirty per cent or a third of one per
+            ! cent. It is the latter. The raw mass is kept beside it so the
+            ! divisor is auditable, exactly as the food stamp line below does.
+            write(*,*) "DIAG share with a NEGATIVE value of life         =",&
+                val_neg_life_mass(1)/max(pooled_mass_all,10.d0**(-12)),&
+                " raw mass=", val_neg_life_mass(1), " of ", pooled_mass_all
             write(*,*) "DIAG lowest value of a period of life            =",&
                 val_life_min(1)
             write(*,*) "DIAG value of life, drug users                   =",&
@@ -29070,7 +29077,14 @@
         if (accumulating_beta_types==0) val_nowage_working(time_period)=0
         if (accumulating_beta_types==0) val_mass_working(time_period)=0
         if (accumulating_beta_types==0) val_neg_life_mass(time_period)=0
-        val_life_min(time_period)=10.d0**(10)
+        ! A MINIMUM TRACKER, AND IT HAS THE BUG ITS TWIN WAS FIXED FOR. The note
+        ! on model_largest_negative_value_of_life says it in full: resetting on
+        ! the second pass discards the first type's minimum entirely, so the
+        ! printed lowest value of a period of life was the LAST beta type's
+        ! alone. Every one of the eleven resets around this line is guarded and
+        ! this one was not, which is what makes it an oversight rather than a
+        ! decision. Guarded, so the minimum is taken over both types.
+        if (accumulating_beta_types==0) val_life_min(time_period)=10.d0**(10)
         if (accumulating_beta_types==0) val_ugoods_users(time_period)=0
         if (accumulating_beta_types==0) val_umass_users(time_period)=0
         if (accumulating_beta_types==0) val_ugoods_others(time_period)=0
@@ -37147,24 +37161,30 @@
                     write(*,*) "value_of_life=", value_of_life
                     write(*,*) "distance_value_of_life=", distance_value_of_life
 
-                    ! cbar, the food stamp floor, on food stamps over labour
-                    ! income. A higher floor pays more out, so the share rises
-                    ! in it and the update subtracts the gap.
-                    if (model_average_labour_income(1)>0) then
+                    ! cbar, the food stamp floor, on food stamps over OUTPUT.
+                    ! A higher floor pays more out, so the share rises in it and
+                    ! the update subtracts the gap.
+                    !
+                    ! THE DENOMINATOR IS OUTPUT, AND IT MUST BE THE SAME ONE THE
+                    ! MOMENT IS PRINTED WITH. food_stamps_share_data is 0.42 per
+                    ! cent of GDP, so the moment above divides by model_output,
+                    ! and this update divided by model_average_labour_income --
+                    ! two different equations on one target. Whichever loop ran
+                    ! last would move max_food_cost to satisfy the one the report
+                    ! does not score. The denominator is named once here and once
+                    ! at the moment; if one changes the other has to.
+                    if (model_output(1)>0) then
                         write(*,*) "max_food_cost=", max_food_cost
                         max_food_cost=max(min(max_food_cost-max_food_cost_adjuster*&
-                            (govt_spending_on_food_stamps(1)/model_average_labour_income(1)-&
+                            (govt_spending_on_food_stamps(1)/model_output(1)-&
                             food_stamps_share_data),1.d0),10.d0**(-4))
-                        ! PRINT THE RATIO THIS UPDATE COMPARES. The run printed
-                        ! only govt_spending_on_food_stamps/model_output, and a
-                        ! report reading that against food_stamps_share_data
-                        ! scored a 99 per cent miss on a comparison the
-                        ! calibration never makes.
-                        write(*,*) "govt_spending_on_food_stamps/model_average_labour_income=", &
-                            govt_spending_on_food_stamps(1)/model_average_labour_income(1)
+                        ! PRINT THE RATIO THIS UPDATE COMPARES, which is now the
+                        ! same ratio the moments block prints.
+                        write(*,*) "govt_spending_on_food_stamps/model_output=", &
+                            govt_spending_on_food_stamps(1)/model_output(1)
 
                         distance_max_food_cost=&
-                            abs(govt_spending_on_food_stamps(1)/model_average_labour_income(1)-food_stamps_share_data)
+                            abs(govt_spending_on_food_stamps(1)/model_output(1)-food_stamps_share_data)
                         write(*,*) "max_food_cost=", max_food_cost
                         write(*,*) "distance_max_food_cost=", distance_max_food_cost
                     end if
