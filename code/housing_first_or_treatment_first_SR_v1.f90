@@ -5169,10 +5169,19 @@
             write(*,*) "DIAG households receiving food stamps            =",&
                 model_fraction_recieving_food_stamps(1)/max(pooled_mass_all,10.d0**(-12)),&
                 " data=", 0.125d0
+            ! BOTH OF THESE COMPARED A LEVEL AGAINST A RATIO. max_food_cost is
+            ! in the model's consumption units and the figures beside it are
+            ! fractions of mean wage income -- 291 dollars a month over 88,212,
+            ! and the 130 per cent of poverty cutoff over the same. The
+            ! comparison is only valid if average labour income is one, and it is
+            ! about 0.6, so the allotment read five times too small when the
+            ! ratio says about three. Divide, and they measure what they say.
             write(*,*) "DIAG max allotment / avg labour income           =",&
-                max_food_cost, " data=", 0.039586d0
+                max_food_cost/max(model_average_labour_income(1),10.d0**(-12)),&
+                " data=", 0.039586d0
             write(*,*) "DIAG gross eligibility cutoff                     =",&
-                max_food_cost/food_stamp_taper, " data=", 0.214872d0
+                (max_food_cost/food_stamp_taper)/&
+                max(model_average_labour_income(1),10.d0**(-12)), " data=", 0.214872d0
             write(*,*) "DIAG aggregate rent / output                     =",&
                 aggregate_rent_spending(1)/max(model_output(1),10.d0**(-14))
             write(*,*) "DIAG asset grid, reachable points                =",&
@@ -5221,9 +5230,45 @@
             ! total cost, and a parameter cannot be both assigned and
             ! calibrated. So this row reports what the programme costs rather
             ! than driving anything.
-            write(*,*) "MOMENT cbar      food stamps / labour income model=",&
-                govt_spending_on_food_stamps(1)/max(model_average_labour_income(1),10.d0**(-12)),&
+            ! AN AGGREGATE OVER AN AGGREGATE, WHICH IS WHAT THE TARGET IS.
+            !
+            ! The target is 0.42 per cent of INCOME spent on food stamps -- the
+            ! author's own words, "food stamps calibrated to 0.42% of income".
+            ! That is total spending over total income, and the model was
+            ! dividing total spending by model_average_labour_income, which is a
+            ! MEAN. The ratio therefore scaled with the size of the population
+            ! rather than measuring a share of anything, and it printed 0.0532
+            ! against 0.0042: a miss of 1166 per cent that was an artefact of the
+            ! denominator, not a statement about the programme.
+            !
+            ! THE MAGNITUDE CHECK, which is what the aleph episode says to do
+            ! before believing a normalisation. Three diagnostics disagree while
+            ! the denominator is a mean and agree once it is a total. The maximum
+            ! allotment is about three times too small against SNAP's 291 dollars
+            ! over mean wage income; recipients are 3.8 per cent of households
+            ! against 12.5 in the data; and on the aggregate form spending comes
+            ! out BELOW target rather than twelve times above it. All three then
+            ! say the same thing -- the programme is too small -- where the old
+            ! form said spending was far too large while its own allotment and
+            ! coverage were far too small, which cannot all be true.
+            !
+            ! model_total_income is output plus investment income plus bequests,
+            ! accumulated over the same pooled population as the numerator, so
+            ! both sides are pooled and the ratio is invariant to the number of
+            ! discount-factor types.
+            write(*,*) "MOMENT cbar      food stamps / income        model=",&
+                govt_spending_on_food_stamps(1)/max(model_total_income(1),10.d0**(-12)),&
                 " target=", food_stamps_share_data
+
+            ! THE COMPONENTS AND THE OLD FORM, so the change above is auditable
+            ! from the point file rather than from this comment, and so the
+            ! alternative denominators can be read off without another run.
+            write(*,*) "DIAG food stamps, aggregate spending             =",&
+                govt_spending_on_food_stamps(1)
+            write(*,*) "DIAG total income, the denominator above         =",&
+                model_total_income(1), " output=", model_output(1)
+            write(*,*) "DIAG food stamps / average labour income (OLD)   =",&
+                govt_spending_on_food_stamps(1)/max(model_average_labour_income(1),10.d0**(-12))
             write(*,*) "MOMENT tau_u     treatment take up           model=",&
                 model_treatment_take_up(1), " target=", treatment_take_up_data
             write(*,*) "MOMENT mu_H      recovery housed / homeless  model=",&

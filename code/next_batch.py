@@ -506,7 +506,16 @@ def vector(text):
 # distinguishes them, so a stale label drops the moment and the point is simply
 # re-measured when it is next asked for.
 STALE_LABEL = {'h_2': ['smallest unit', 'above half of income'],
-               'gamma': ['renters']}
+               'gamma': ['renters'],
+               # cbar CHANGED DENOMINATOR. It was total food-stamp spending over
+               # model_average_labour_income, a total over a MEAN, which scaled
+               # with population and printed 0.0532 against a target of 0.0042.
+               # It is now total spending over total income, which is what "0.42
+               # per cent of income" means. A point measured under the old label
+               # carries a number thirty times larger under the same name, so
+               # mixing them would walk the search away from a target it may
+               # already be near. The old label said "labour income".
+               'cbar': ['labour income']}
 
 
 def moments(text):
