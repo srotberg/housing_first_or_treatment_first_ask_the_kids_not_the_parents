@@ -5252,12 +5252,25 @@
             ! form said spending was far too large while its own allotment and
             ! coverage were far too small, which cannot all be true.
             !
-            ! model_total_income is output plus investment income plus bequests,
-            ! accumulated over the same pooled population as the numerator, so
-            ! both sides are pooled and the ratio is invariant to the number of
-            ! discount-factor types.
+            ! THE DENOMINATOR IS GDP, WHICH IN THIS MODEL IS INCOME.
+            !
+            ! It was written as model_total_income for one commit and that was
+            ! wrong twice over. model_total_income is output PLUS investment
+            ! income PLUS bequests: the return on capital is already inside
+            ! output, so adding it counts it a second time, and a bequest is a
+            ! transfer of existing wealth rather than income at all. GDP is the
+            ! income concept in a closed economy with no foreign sector, and
+            ! model_GDP is set equal to model_output a few hundred lines above.
+            !
+            ! It also matches the target's construction: SNAP outlays near 113
+            ! billion against a GDP near 27.7 trillion is 0.0041, and the target
+            ! is 0.0042.
+            !
+            ! model_output is reset on the first pass and accumulated on every
+            ! one, exactly as the numerator is, so both sides are pooled and the
+            ! ratio does not move with the number of discount-factor types.
             write(*,*) "MOMENT cbar      food stamps / income        model=",&
-                govt_spending_on_food_stamps(1)/max(model_total_income(1),10.d0**(-12)),&
+                govt_spending_on_food_stamps(1)/max(model_output(1),10.d0**(-12)),&
                 " target=", food_stamps_share_data
 
             ! THE COMPONENTS AND THE OLD FORM, so the change above is auditable
@@ -5265,8 +5278,9 @@
             ! alternative denominators can be read off without another run.
             write(*,*) "DIAG food stamps, aggregate spending             =",&
                 govt_spending_on_food_stamps(1)
-            write(*,*) "DIAG total income, the denominator above         =",&
-                model_total_income(1), " output=", model_output(1)
+            write(*,*) "DIAG output, the denominator above               =",&
+                model_output(1), " total income, which is NOT used=",&
+                model_total_income(1)
             write(*,*) "DIAG food stamps / average labour income (OLD)   =",&
                 govt_spending_on_food_stamps(1)/max(model_average_labour_income(1),10.d0**(-12))
             write(*,*) "MOMENT tau_u     treatment take up           model=",&
