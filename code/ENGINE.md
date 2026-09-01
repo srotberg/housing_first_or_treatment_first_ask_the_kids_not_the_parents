@@ -98,6 +98,20 @@ Every worker prompt must say:
 - Never edit anything in `code/` while a solve runs — bash reads a script by byte
   offset and an edit under it resumes mid-word.
 
+**5a. SHOW THE AUTHOR THE FULL GAP TABLE WHENEVER THE LOSS IMPROVES.** Their
+instruction of 1 September: *"I want you to show me the full gaps table each time
+the loss function improves."* Run `python3 code/gaps.py` EVERY firing. It decides
+for itself: it prints the whole table when the minimax has fallen and one line
+when it has not, and it keeps the high-water mark in `.gaps_best` so the decision
+survives a container. When it prints the table, relay the whole thing to the
+author -- not the worst few rows, not the median. They have asked for the full
+table more than once and the median hides exactly the moment that is stuck.
+
+The loss is theirs: a MINIMAX over the scored moments, with `beta` scoring zero
+anywhere inside its 3.0–4.5 band. The median is printed beside it because the two
+moved in opposite directions more than once on 1 September, but the median is
+never the criterion.
+
 **6. Update `code/CALIBRATION_STATE.md`** whenever a point changes the picture,
 and commit it with the batch. That file is the handover; this one is the method.
 
