@@ -40,12 +40,14 @@ OWN = [
     ('utility_cost_of_treatment', 'tau_u'), ('kappa_uem', 'lambda_m'),
     ('smi_onset_level', 'p_m'),
     ('probability_of_voucher_benchmark_used', 'pi_V'),
-    ('increased_prob_if_homeless', 'emp_homeless'),
+    # increased_prob_if_homeless is EXOGENOUS at 0.2 on the author's
+    # instruction -- twenty per cent each way -- so it owns nothing. The
+    # cheapest rung owns emp_homeless instead; see next_batch.py for why.
+    ('smallest_rental_relative_to_lowest_income', 'emp_homeless'),
     ('lambda_addiction', 'b'), ('addiction_scalar_1', 'lambda_d'),
     ('relative_share_of_leisure', 'omega_l'),
     ('labor_income_tax_rate', 'tau_l'),
     ('sd_permanent_productivity', 'sigma_y'),
-    ('smallest_rental_relative_to_lowest_income', 'h_2'),
     ('weight_on_child', 'omega_c'),
 ]
 
@@ -79,8 +81,10 @@ def _cross_check():
         print('The loss below is over gaps.py\'s set. Reconcile the two files.\n')
 # moments that are printed and deliberately not scored, with the reason
 NOTE = {'h_3': 'conceded, a fact about a grid the model chose',
+        'h_2': 'unowned since the cheapest rung was reassigned to emp_homeless',
         'w_bot': 'conceded with the second beta; nothing moves it at one type',
-        'omega_c': 'measure_child_gap=0, so nothing measures it'}
+        'omega_c': 'measure_child_gap=0, so nothing measures it',
+        'rent50': 'reported, not scored: same headcount over income, opposite sign'}
 
 
 import model_hash as _mh   # semantic identity: comments do not change the model
@@ -208,11 +212,21 @@ def main():
                          NOTE.get(mo, '')))
         else:
             rows.append((-2.0, p, val, mo, 'not measured', '-', '-', NOTE.get(mo, '')))
-    for k in sorted(SKIP):
-        if k in m:
-            a, tv = m[k]
-            rows.append((-2.0, '(no instrument)', '-', k, f'{a:.5f}', f'{tv:.5f}',
-                         f'{(a/tv-1)*100:+.1f}%', NOTE.get(k, '')))
+    # EVERY MEASURED MOMENT GETS A ROW, not only the owned ones and the conceded
+    # ones. h_2 fell out of the table entirely the moment the cheapest rung was
+    # reassigned to emp_homeless: it was no longer in OWN, and it is not in SKIP
+    # because the author reversed its concession, so it matched neither loop and
+    # printed nowhere -- while still being SCORED and still sitting at minus
+    # twenty-seven per cent. A moment that counts against the loss and appears in
+    # no row is the worst thing this table can do.
+    shown = {mo for _, mo in OWN}
+    for k in sorted(set(m) - shown):
+        a, tv = m[k]
+        note = NOTE.get(k, '')
+        if k not in SKIP and k not in UNSCORED and not note:
+            note = 'SCORED but no parameter brackets on it'
+        rows.append((-2.0, '(no instrument)', '-', k, f'{a:.5f}', f'{tv:.5f}',
+                     f'{(a/tv-1)*100:+.1f}%', note))
     rows.sort(reverse=True)
     print(f'{"parameter":42}{"value":>12}  {"moment":12}{"model":>12}{"target":>12}{"gap":>9}')
     for s, p, val, mo, a, tv, gp, note in rows:

@@ -171,7 +171,32 @@ OWN = {
     # rent50 moves to UNSCORED. It stays parsed and reported at every point,
     # because it is the number the appendix quotes, and it is no longer a second
     # target competing for one instrument.
-    'smallest_rental_relative_to_lowest_income':            'h_2',
+    #
+    # REASSIGNED 1 September on the author's instruction: "choose h2 to match
+    # it", where "it" is the employed share of the homeless. The cheapest rung
+    # now owns emp_homeless, NOT the cost burden headcount.
+    #
+    # The reason is that emp_homeless has no other instrument, and the one it
+    # had was measured not to work. At point_c947746ef0, 98.9 per cent of the
+    # homeless could pay the cheapest rent out of income alone and 99.5 per cent
+    # out of income plus assets, so the street is a taste margin, not a budget
+    # one. increased_prob_if_homeless changes what happens to a household WHILE
+    # homeless; on a taste margin that makes the employed choose a room instead
+    # of holding them on the street, so it moves the LEVEL of homelessness and
+    # not its composition. P(homeless|unemployed) over the working age rate
+    # reads 0.258 where the data implies about 3.9 -- the SIGN of the selection
+    # is backwards, not just its size.
+    #
+    # Raising the cheapest rung is the only thing that prices anyone out of it,
+    # and the households it prices out are the low income ones, who are
+    # disproportionately the unemployed. That is what turns homelessness from a
+    # taste into a budget outcome and lets the composition move at all.
+    #
+    # THE COST BURDEN HEADCOUNT IS NOW UNOWNED. It stays scored -- the author
+    # reversed its concession explicitly -- but nothing brackets on it, so it
+    # will show as "(no instrument)" until it is given one or conceded. Say so
+    # rather than letting it look assigned.
+    'smallest_rental_relative_to_lowest_income':            'emp_homeless',
     # AND THE TOP RUNG HAD NO INSTRUMENT EITHER. largest_house_size owns the
     # share in the largest unit -- h_4 until the author's rename, h_3 now -- and
     # like the bottom rung it sat in the vector with nothing mapped to it. It is
@@ -273,14 +298,21 @@ OWN = {
     'relative_share_of_housing':                           'gamma',
     # OPENED ON THE AUTHOR'S INSTRUCTION, both previously compile-time constants.
     #
-    # increased_prob_if_homeless is the labour market cost of the street: the
-    # homeless lose a job at (1+x) times the housed rate and find one at 1/(1+x)
-    # times it. It owns the employed share of the homeless, and the ownership is
-    # not a guess -- the steady state formula 1/(1+(1+x)**2*(s/f)), with nothing
-    # in it but pi_eu and this parameter, predicts 0.9316 at the assigned 0.2
-    # against 0.9252 measured. It is also the Housing First channel itself, so
-    # leaving it assigned assigns the counterfactual's main result.
-    'increased_prob_if_homeless':                          'emp_homeless',
+    # increased_prob_if_homeless IS EXOGENOUS AGAIN, at 0.2 -- twenty per cent
+    # each way, so the homeless lose a job at 1.2 times the housed rate and find
+    # one at 1/1.2 times it. The author's instruction of 1 September: "make the
+    # increased risk of being unemployed if you are homeless exogenous like it
+    # was before. I think 20% each direction."
+    #
+    # It was opened to own emp_homeless and could not carry it. The reason is in
+    # the note on smallest_rental above: the street is a taste margin in this
+    # model, so a labour market penalty on it deters the employed from choosing
+    # it rather than holding them there, and the instrument is spent on the level
+    # of homelessness instead of its composition.
+    #
+    # It is not deleted from the vector. It stays handed in explicitly at 0.2 so
+    # that every point records the value it ran, rather than inheriting a default
+    # that could drift.
     # THE ENDOWMENT OF THE YOUNGEST IS A CALIBRATED PARAMETER NOW, on the
     # author's instruction of 1 September: "so we have one more target
     # now....the endowmenets of the youngest. and the rest is just given to the
