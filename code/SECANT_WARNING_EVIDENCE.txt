@@ -1,0 +1,57 @@
+Evidence sample, point 242b4a6c12 (addiction_scalar_1=0.028), source d08c67c178
+Tue Sep  1 01:01:47 UTC 2026
+
+=== process ===
+  PID     ELAPSED     TIME %CPU
+ 5041    01:33:01 01:50:54  119
+
+=== hftf fd 1 ===
+fd1 -> pipe:[6043]   (a pipe, NOT the log)
+pos:	0
+wchar (total bytes hftf has written): 7871625073
+
+=== pipe reader ===
+  PID STAT     ELAPSED     TIME %CPU
+ 5042 R       01:33:01 00:13:51 14.9
+grep -Ev ^ (labor|labor_supply_1=|distance_secant=|loop_1=|MU_1=|MU_2=|x_0=|x_1=|x_2=|addiction_index_1=|consumption_choice=|frac_spent_on_addiction=|taxable_income_1=) 
+
+=== log on disk ===
+-rw-r--r-- 1 root root 36864 Aug 31 23:28 worker_242b4a6c12.log
+[New LWP 5047]
+[New LWP 5046]
+[New LWP 5045]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+0x000055e0ec82cb2e in copy_housing_state_slice (to_1=<optimized out>, time_period=<optimized out>, from_1=<optimized out>) at housing_first_or_treatment_first_SR_v1.f90:16728
+16728	                frac_mov_optimal_1(k_1)%vector_transition_real(time_period,age_index,:,:,:,from_1,:)
+
+Thread 4 (Thread 0x14ccd1a376c0 (LWP 5045) "hftf"):
+#0  0x000014cd645c76ee in ?? () from /lib/x86_64-linux-gnu/libgomp.so.1
+#1  0x000014cd645c4779 in ?? () from /lib/x86_64-linux-gnu/libgomp.so.1
+#2  0x000014cd63e9caa4 in start_thread (arg=<optimized out>) at ./nptl/pthread_create.c:447
+#3  0x000014cd63f29c6c in clone3 () at ../sysdeps/unix/sysv/linux/x86_64/clone3.S:78
+
+Thread 3 (Thread 0x14ccb1a366c0 (LWP 5046) "hftf"):
+#0  0x000014cd645c76c2 in ?? () from /lib/x86_64-linux-gnu/libgomp.so.1
+#1  0x000014cd645c4779 in ?? () from /lib/x86_64-linux-gnu/libgomp.so.1
+#2  0x000014cd63e9caa4 in start_thread (arg=<optimized out>) at ./nptl/pthread_create.c:447
+#3  0x000014cd63f29c6c in clone3 () at ../sysdeps/unix/sysv/linux/x86_64/clone3.S:78
+
+Thread 2 (Thread 0x14cc91a356c0 (LWP 5047) "hftf"):
+#0  0x000014cd645c76ee in ?? () from /lib/x86_64-linux-gnu/libgomp.so.1
+#1  0x000014cd645c4779 in ?? () from /lib/x86_64-linux-gnu/libgomp.so.1
+#2  0x000014cd63e9caa4 in start_thread (arg=<optimized out>) at ./nptl/pthread_create.c:447
+#3  0x000014cd63f29c6c in clone3 () at ../sysdeps/unix/sysv/linux/x86_64/clone3.S:78
+
+Thread 1 (Thread 0x14cd6456f840 (LWP 5041) "hftf"):
+#0  0x000055e0ec82cb2e in copy_housing_state_slice (to_1=<optimized out>, time_period=<optimized out>, from_1=<optimized out>) at housing_first_or_treatment_first_SR_v1.f90:16728
+#1  solve_value_function_and_policy_functions (time_period=<optimized out>) at housing_first_or_treatment_first_SR_v1.f90:17307
+#2  0x000055e0ec8732ef in calibrating_model () at housing_first_or_treatment_first_SR_v1.f90:34922
+#3  0x000055e0ec8740fc in main_program () at housing_first_or_treatment_first_SR_v1.f90:6895
+[Inferior 1 (process 5041) detached]
