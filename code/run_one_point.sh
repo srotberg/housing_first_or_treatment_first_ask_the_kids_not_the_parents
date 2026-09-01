@@ -157,17 +157,21 @@ if [ -z "$MODEL_HASH" ]; then
     exit 1
 fi
 
-if awk -v a="${P[smallest_rental_relative_to_lowest_income]}" \
-       -v b="${P[largest_house_size]}" 'BEGIN{exit !(a+0 >= b+0)}'; then
-    echo "run_one_point: smallest_rental_relative_to_lowest_income=${P[smallest_rental_relative_to_lowest_income]}" >&2
-    echo "run_one_point: is not below largest_house_size=${P[largest_house_size]}; the housing" >&2
-    echo "run_one_point: grid would invert and every unit share would be reversed." >&2
-    mkdir -p points
-    printf 'point FAILED: inverted housing grid, smallest=%s largest=%s\n' \
-        "${P[smallest_rental_relative_to_lowest_income]}" "${P[largest_house_size]}" \
-        > "points/point_inverted_grid_$$.FAILED.txt"
-    exit 2
-fi
+# THE GUARD IS RETIRED, BECAUSE THE THING IT GUARDED NO LONGER EXISTS.
+#
+# It required smallest_rental_relative_to_lowest_income < largest_house_size,
+# because the grid used to run from the first to the second and would invert if
+# they crossed. Since 1 September the rental ladder is ASSIGNED off the bottom
+# rung -- housing_size is h, 2h, 3h -- so largest_house_size determines nothing
+# and cannot be crossed. The ladder is monotone by construction for any h > 0.
+#
+# Left as a comment rather than deleted: the failure it caught was real (a point
+# at smallest_rental=0.15 against largest_house_size=0.1118 reported h_3 = 0.295
+# and looked like a measurement), and if the assigned ladder is ever reverted the
+# guard has to come back with it.
+#
+# It fired once after the ladder change, refusing h_2 = 0.20 against an inert
+# largest_house_size of 0.162568 -- a false positive that cost a run.
 
 TAG=$(for k in "${!P[@]}"; do echo "$k=${P[$k]}"; done | sort | md5sum | cut -c1-10)
 
