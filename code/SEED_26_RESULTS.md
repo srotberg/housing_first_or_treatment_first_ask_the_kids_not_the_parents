@@ -204,3 +204,59 @@ A near-doubling of voucher coverage moves the drug block by under nine per cent
 and leaves both b and lambda_d still inside ten per cent of target (+3.3 and
 +5.4). So `pi_V` can be closed on its own instrument without a repair behind it,
 which is the first moment on the list of which that is true.
+
+## Arm 4 -- discount_factor_impatient 0.95 -> 0.90, owns w_bot. THE PREDICTION FAILED.
+
+`point_409b58e45c`, all sixteen invariants PASS. Scored against the six
+directions committed before it ran:
+
+| quantity | anchor | arm 4 | move | predicted | verdict |
+|---|---|---|---|---|---|
+| w_bot | 0.050349 | 0.045084 | -10.5% | falls toward 0.025 | **yes** |
+| h_1 | 0.001493 | 0.002187 | **+46.5%** | rises toward 0.00399 | **yes** |
+| homeless by choice | 1.0000 | 1.0000 | +0.0% | falls below 1 | **no** |
+| share in band 1 | 0.968165 | 0.972387 | +0.4% | falls | **no** |
+| employed share of the homeless | 0.966713 | 0.964754 | -0.2% | falls toward 0.46 | **no** |
+| SUD share of the homeless | ~0 | 0.008541 | off zero | rises above 0 | trivially |
+
+**Two of six. The chain as written is wrong**, and the way it is wrong is more
+useful than the way it was right.
+
+`w_bot` moves the LEVEL of homelessness and not its COMPOSITION. The elasticity
+of `h_1` to `w_bot` is **-3.46**, which is large -- a ten per cent fall in the
+bottom half's wealth share raised the homelessness rate by nearly half -- so the
+wealth channel really does gate how many people are on the street. But every
+compositional moment stood still: `homeless by choice` is **still exactly
+1.0000**, `homeless who could afford it on INCOME ALONE` is **still exactly
+1.0000**, the young still hold 97 per cent of the homeless and 96 per cent still
+work. Poorer households did not get shut out of housing. More of them CHOSE it.
+
+So the correct statement is narrower than the one committed: making the bottom
+half poorer produces more voluntary homelessness among the young, not
+involuntary homelessness among anyone. **The age profile, the employed share and
+the SUD share of the homeless are not reachable through `w_bot`**, and on this
+evidence they are not reachable through any instrument that only moves wealth.
+The model has no mechanism that puts a household on the street against its will,
+and the four moments that depend on one cannot be calibrated into existence.
+That is a model question for the author, not a calibration question.
+
+The test was weak in one specific way that should be said: `w_bot` only moved
+10.5 per cent and is still 80 per cent above target, so this does not prove the
+composition would stay frozen all the way down at 0.025. It proves the six do
+not move together, which is what was claimed.
+
+### And this instrument is unusable as it stands
+
+| | anchor | arm 4 | move |
+|---|---|---|---|
+| b | 0.086789 | 0.294197 | **+239.0%** |
+| lambda_d | 0.035791 | 0.184443 | **+415.3%** |
+| beta | 2.148398 | 2.316419 | +7.8%, toward its band |
+
+`discount_factor_impatient` is by far the most coupled instrument measured --
+five e-folds of damage to the drug block for a ten per cent move in its own
+moment. That is economically unsurprising, since impatience is the thing that
+drives households into addiction here, but it means **`w_bot` cannot be closed
+with this instrument at any step size that leaves b and lambda_d usable.** Of
+the four arms so far it is the only one that is not merely coupled but
+prohibitive.
