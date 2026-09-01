@@ -71,8 +71,13 @@ def _cross_check():
         import next_batch as _nb
     except Exception:
         return
-    mine = {m for _, m in OWN} - SKIP - UNSCORED
-    theirs = set(_nb.OWN.values()) - _nb.SKIP - _nb.UNSCORED
+    # next_batch keeps b and lambda_d OUT of OWN because the drug block is
+    # bracketed by the gate rather than by a single arm, so they must be added
+    # back before comparing or the check cries wolf about two moments both files
+    # score. omega_c is dropped from both sides: it is in OWN here so that its
+    # row prints, but measure_child_gap=0 means nothing ever measures it.
+    mine = {m for _, m in OWN} - SKIP - UNSCORED - {'omega_c'}
+    theirs = (set(_nb.OWN.values()) | set(_nb.GATE)) - _nb.SKIP - _nb.UNSCORED
     if mine != theirs:
         for m in sorted(theirs - mine):
             print(f'WARNING: next_batch.py scores {m} and gaps.py does not.')
@@ -136,11 +141,30 @@ def main():
     global _MAP, _OK
     _MAP = _mh.build_map()
     h, cfg = model_hash(), config()
-    # Behaviour-preserving predecessors, kept in one place with next_batch's own
-    # list: the rung ratios became parameters DEFAULTING to the values they
-    # replaced, and gamma's denominator changed what is printed rather than what
-    # a household faces. Same economy, different source.
-    _OK = {h} | {'1089e7258f', 'ddde1a91e1'}
+    # BEHAVIOUR-PRESERVING PREDECESSORS, READ FROM next_batch.py AND KEYED ON THE
+    # CURRENT HASH -- never a literal.
+    #
+    # This was a literal set unioned unconditionally with the current hash, and
+    # on 1 September the model changed and it kept admitting the old points and
+    # printing them under the NEW hash: "MODEL 0e0abddab7, 33 points in this
+    # economy", when not one of the 281 points in the archive had run that
+    # source. next_batch.py, keying its lookup on the current hash, correctly
+    # said "no archive" in the same minute. The two disagreed about whether an
+    # entire archive existed.
+    #
+    # That is an equivalence ASSERTED rather than measured, which is the one
+    # thing ENGINE.md says this mechanism must never be used for, and it asserted
+    # it silently at the moment the model had just changed underneath it.
+    #
+    # The fallback is {h} alone, not a remembered list: when next_batch cannot be
+    # imported the honest answer is "only points on this exact source count",
+    # which under-counts rather than over-claims.
+    try:
+        sys.path.insert(0, HERE)
+        import next_batch as _nb
+        _OK = {h} | set(_nb.EQUIVALENT_MODELS.get(h, set()))
+    except Exception:
+        _OK = {h}
     best = None
     n = 0
     for f in sorted(glob.glob(os.path.join(HERE, 'points', '*.txt'))):

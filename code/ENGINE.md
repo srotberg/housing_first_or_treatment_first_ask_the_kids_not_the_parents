@@ -137,6 +137,28 @@ for two hours is worth more than any single fix on that list.
 The one exception is an outright bug that makes points meaningless, and even then
 say what it invalidates before touching it.
 
+**The author can thaw it, and did once, on 1 September.** They asked for the
+street's labour cost to be "20% extra on the job loss and 20% less on the job
+find rate", which the divided form could not give -- one parameter cannot be 1.2
+one way and 0.8 the other under `*(1+x)` and `/(1+x)`. The finding side became
+`*(1-x)`. That is a scope change, it is theirs to make, and it was made.
+
+What the freeze still demands, and what was done that round:
+
+- **Say what it invalidates, in the commit, before it is believed.** The hash
+  moves, so every scored point stops counting.
+- **Measure whether it really invalidates them rather than assuming.** Re-run one
+  vector under the new form and compare moment by moment. If nothing moves by
+  more than about one per cent of target, the pair belongs in
+  `EQUIVALENT_MODELS` with the measured table written beside it, and the archive
+  survives. `EQUIVALENT_MODELS` is for exactly this and must never be filled in
+  from an argument about why the change ought to be small.
+- **Run that comparison in a scratch copy**, never in `code/points`. The vector
+  reproduces its own md5 tag and would overwrite the very measurement it is
+  being compared against.
+
+The freeze is back on the moment the change lands.
+
 Comments are safe: `model_hash.py` strips them, so documenting the code no longer
 resets the archive. That was one of the twelve.
 
