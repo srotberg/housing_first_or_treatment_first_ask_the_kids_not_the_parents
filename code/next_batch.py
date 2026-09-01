@@ -229,6 +229,32 @@ OWN = {
     # against 0.9252 measured. It is also the Housing First channel itself, so
     # leaving it assigned assigns the counterfactual's main result.
     'increased_prob_if_homeless':                          'emp_homeless',
+    # THE ENDOWMENT OF THE YOUNGEST IS A CALIBRATED PARAMETER NOW, on the
+    # author's instruction of 1 September: "so we have one more target
+    # now....the endowmenets of the youngest. and the rest is just given to the
+    # government."
+    #
+    # It owns h_share1, the share of the homeless aged 25 to 34, and h_share1 is
+    # the moment that has held this calibration open longest: 0.91 against 0.26
+    # in the HUD count, moved by at most two points by any of the four
+    # instruments tried against it. The reason it would not move is now measured
+    # rather than guessed. Age 26 enters with wealth 0.00000 and is homeless at
+    # 16.2 per cent; age 27 holds 0.229 and is homeless at 1.1 per cent, on
+    # LOWER income, 0.255 against 0.289. The gap between the two ages is a
+    # year's saving, not a year's earnings, so what separates them is liquidity
+    # and the only instrument that acts on liquidity at birth is the endowment.
+    #
+    # THE LEVEL AND THE SHAPE SEPARATE CLEANLY, which is why this is not a
+    # duplicate driver on size_homelessness. size_homelessness sets how much
+    # homelessness there is, at every age; newborn_endowment_scale sets how much
+    # of it sits in the first band. h_1 and h_share1 are the two moments and
+    # these are the two instruments.
+    #
+    # The justification for the paper is the author's: the endowment is what
+    # matches the homelessness rate of the young, and in the data a good part of
+    # young households' wealth is family support that no survey observes, so the
+    # SCF's own newborn distribution is a floor rather than the number.
+    'newborn_endowment_scale':                             'h_share1',
     # rho_d is the earnings penalty of a substance use disorder, switched on
     # here for the first time. It owns the SUD share of the homeless, and
     # through it the age profile: lambda_d pins the NUMBER of addicts, so the
@@ -250,6 +276,12 @@ BOUNDS = {
     'probability_of_voucher_benchmark_used':               (0.0001, 0.999),
     'size_homelessness':                                   (0.01, 5.0),
     'smallest_rental_relative_to_lowest_income':            (0.005, 0.40),
+    # In units of average labour income, so 1.0 hands every newborn a year of
+    # it. The upper end is deliberately generous: nothing yet says where the
+    # response to newborn wealth saturates, and the one thing measured -- age 27
+    # holds 0.229, which is 0.85 of a year's average income, and is barely
+    # homeless -- points at the middle of this range rather than the bottom.
+    'newborn_endowment_scale':                             (0.0, 3.0),
     'largest_house_size':                                  (0.02, 1.00),
     'kappa_uem':                                           (1.0, 100.0),
     'max_food_cost':                                       (1e-4, 1.0),

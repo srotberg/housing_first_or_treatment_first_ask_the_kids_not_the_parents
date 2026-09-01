@@ -1238,6 +1238,32 @@
         integer :: have_rent_secant=0
         integer, parameter :: include_bequest_motive=0
         integer, parameter :: include_bequests=1
+        ! THE RESIDUAL BEQUEST GOES TO THE GOVERNMENT, on the author's
+        ! instruction of 1 September: "so we have one more target now....the
+        ! endowmenets of the youngest. and the rest is just given to the
+        ! government".
+        !
+        ! What the accidental death of a household leaves behind is split in
+        ! two. The first part funds the endowment every newborn is given, which
+        ! is now a CALIBRATED instrument -- newborn_endowment_scale, pointed at
+        ! the share of the homeless who are young -- rather than a number read
+        ! off the SCF. The second part is whatever is left over,
+        ! model_bequests - value_of_initial_assets.
+        !
+        ! At 0 that residual is handed back to the living as a lump sum spread
+        ! over all sixty ages in proportion to productivity, which is RS-2024's
+        ! treatment and requires a fixed point: the transfer changes saving,
+        ! which changes the bequest, which changes the transfer. At 1 it goes
+        ! into government revenue instead, the transfer is identically zero, and
+        ! the fixed point disappears with it.
+        !
+        ! Two consequences worth naming. Every household loses a small annual
+        ! transfer it used to receive, so wealth accumulation slows a little at
+        ! every age -- and the newborn, who now receives an endowment instead,
+        ! is the one age that gains. And the government's budget picks up the
+        ! residual, so the residual is no longer neutral for the tax rate that
+        ! clears it.
+        integer, parameter :: residual_bequests_to_government=1
         
         ! RENTS ARE FIXED. THIS PAPER HAS NO ENDOGENOUS RENTAL MARKET.
         !
@@ -1734,8 +1760,10 @@
         integer, dimension(number_of_inheritance_ages), parameter :: inheritance_age_grid=&
             (/1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,&
             31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60/)
-        real(8), dimension(number_of_inheritance_ages) :: inheritance_amount=include_bequests*amount_youngest
-        real(8) :: inheritance_amount_adjuster=include_bequests*0.01
+        real(8), dimension(number_of_inheritance_ages) :: inheritance_amount=&
+            (1-residual_bequests_to_government)*include_bequests*amount_youngest
+        real(8) :: inheritance_amount_adjuster=&
+            (1-residual_bequests_to_government)*include_bequests*0.01
         real(8) :: inheritance_amount_weight=is_counterfactual*0.5+(1-is_counterfactual)*0.5
         real(8) :: distance_inheritance_amount
         real(8), dimension(number_of_inheritance_ages) :: previous_inheritance_amount
@@ -13682,7 +13710,8 @@
             govt_spending_on_ui(time_period)-govt_spending_on_di(time_period)-&
             govt_spending_on_homeless(time_period)-govt_spending_on_addicts(time_period)-&
             govt_spending_on_food_stamps(time_period)-govt_spending_on_housing_vouchers(time_period)-&
-            govt_spending_on_housing_vouchers_2(time_period)-govt_spending_on_drug_tests+(1-include_bequests)*&
+            govt_spending_on_housing_vouchers_2(time_period)-govt_spending_on_drug_tests+&
+            (1-include_bequests*(1-residual_bequests_to_government))*&
             (model_bequests(time_period)-value_of_initial_assets)
                     
         net_govt_revenues(time_period)=clear_only_vouchers_govt_budget*(-govt_spending_on_housing_vouchers_2(time_period))+&
@@ -35551,7 +35580,7 @@
             
             if (loop_count>0) then
             
-                if (include_bequests==1) then
+                if ((include_bequests==1) .AND. (residual_bequests_to_government==0)) then
             
                     if (inheritance_function_of_productivity==0) then
             
@@ -38801,7 +38830,8 @@
             call calculate_aggregate_consumption(transition_length)
             
             if ((include_bequests_in_govt_constraint==0) .AND. &
-                (partial_equilibrium==0) .AND. (adjust_inheritance==1)) then
+                (partial_equilibrium==0) .AND. (adjust_inheritance==1) .AND. &
+                (residual_bequests_to_government==0)) then
             
                 previous_inheritance_amount=inheritance_amount
             
