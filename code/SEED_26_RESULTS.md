@@ -301,3 +301,39 @@ age profile, the employed share and the SUD share of the homeless are a
 different matter: nothing measured so far moves them, because every homeless
 household in this model is there voluntarily and the model contains no channel
 that makes a household homeless against its will.
+
+## Arm 6 -- largest_house_size x1.350, owns h_2. It closed TWO moments.
+
+`point_e1830a5fc6`, all sixteen invariants PASS.
+
+| moment | anchor | arm 6 | target | was | now | elasticity |
+|---|---|---|---|---|---|---|
+| h_2 | 0.068423 | 0.105191 | 0.101 | -32.3% | **+4.1%** | 1.433 |
+| gamma | 0.194661 | 0.244576 | 0.268 | -27.4% | **-8.7%** | 0.761 |
+
+**Both are inside ten per cent off one arm**, and h_2 slightly overshot, so its
+target is bracketed. Landing h_2 exactly needs `largest_house_size` = 0.146656,
+a small step back from where the arm put it.
+
+### gamma has two instruments, not one
+
+`relative_share_of_housing` owns `gamma` in the `OWN` map, and arm 7 was launched
+to move it. But `largest_house_size` moves `gamma` at an elasticity of 0.761 and
+has now closed most of that gap on its own. Two instruments on one moment is the
+duplicate-driver problem the map was explicitly built to avoid, and it will show
+up as the two arms disagreeing about where `relative_share_of_housing` should
+sit. Arm 7 measures the other half of the pair and the two together will say
+which instrument should own `gamma` and which should be held -- that is a
+mapping decision, and it is worth making from the two measured elasticities
+rather than by assumption.
+
+### The coupling is moderate, and it points the other way from the food floor
+
+| | b | lambda_d |
+|---|---|---|
+| arm 6 largest_house_size x1.350 | -19.3% | -18.5% |
+| arm 1 max_food_cost x2.411 | +19.5% | +29.3% |
+
+Almost exactly equal and opposite on b. Three of the six arms measured so far
+move the drug block in one direction and two move it in the other, which is what
+makes a joint step worth measuring rather than a sequence of repairs.
