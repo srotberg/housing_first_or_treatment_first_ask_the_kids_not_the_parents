@@ -591,6 +591,18 @@ def gap(name, pair):
 # COMPUTES CHANGED. This list is a claim about the source, not a convenience.
 EQUIVALENT_MODELS = {
     '6eeab9f2cc': {'57a80a45e9'},
+    # 33160acfdd ADDS FIVE WRITE STATEMENTS to 80b575e3c8 and nothing else. The
+    # diff, read line by line before this entry was made, is the aleph ingredient
+    # block in print_all_moments: the numerator, the denominator, the worker
+    # count behind it, the implied total labour income and the value of life per
+    # household. Every added line is a `write(*,*)`; not one assignment, guard or
+    # expression that the model computes was touched.
+    #
+    # This matters more than usual right now, because point_6c9629542c is the
+    # FIRST point ever measured with every invariant passing and the source has
+    # moved once since. Without this entry the archive is empty again and the
+    # gate has nothing to interpolate from.
+    '33160acfdd': {'80b575e3c8'},
     # dc8abdfbce ADDS ONLY PRINTS AND DEFAULTS-PRESERVING COORDINATES to
     # d70ad1c545, so a point measured on either is the same economy and the
     # archive must not be thrown away for it. What changed:
