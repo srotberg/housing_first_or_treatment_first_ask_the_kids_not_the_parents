@@ -33,6 +33,11 @@ declare -A P=(
     # A FREE SCALE ON NEWBORN WEALTH, calibrated on the newborn homelessness
     # rate. Every newborn receives newborn_endowment_scale x average labour
     # income; 1.0 is one year's average earnings.
+    # THE RENTAL LADDER: h_3 = rung_ratio_h3 x h_2, h_4 = rung_ratio_h4 x h_2.
+    # 2 and 3 are what the author specified; they are settable so a different
+    # ladder costs a vector change rather than a model hash.
+    [rung_ratio_h3]=2.0
+    [rung_ratio_h4]=3.0
     [newborn_endowment_scale]=1.0
     # THE CURVATURE OF THE POSITIVE ASSET GRID. grid(i)=top*((i-61)/24)**e, so a
     # bigger exponent pushes the rungs toward zero. At the inherited 1.5 there

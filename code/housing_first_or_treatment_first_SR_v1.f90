@@ -2521,6 +2521,30 @@
         ! 16.2 per cent, 0.096 gives 13.4, and by age 29 wealth of 0.277 gives
         ! 0.24. So the rate is steeply decreasing in newborn wealth somewhere
         ! between 0.096 and 0.277, and one number placed in that interval sets it.
+        ! THE RENTAL LADDER'S RATIOS, SETTABLE RATHER THAN HARD CODED.
+        !
+        ! h_3 = rung_ratio_h3 x h_2 and h_4 = rung_ratio_h4 x h_2, defaulting to
+        ! the 2 and 3 the author specified on 1 September. They are runtime
+        ! values with handover cases so that a different ladder costs a vector
+        ! change and not a model hash -- the same reason number_of_beta_types is
+        ! one, and the reason the archive survived dropping the second beta.
+        !
+        ! WHY THE RATIOS ARE SUSPECT AT 2 AND 3. Measured at point_92c88c5ec8:
+        ! two thirds of renters (67.5 per cent) sit in the TOP rung, and 68.2 per
+        ! cent of those pay more than half their income in rent, while units 0
+        ! and 1 have NO cost burdened households at all. So rent50, at +163 per
+        ! cent, is manufactured entirely by the top rung's price. A household
+        ! wanting more than 0.110 of housing has to jump to 0.165 with nothing in
+        ! between, and the jump is what makes it cost burdened.
+        !
+        ! It also explains what gamma has been doing. The code DECLARES
+        ! relative_share_of_housing at 0.278; the search has driven it to 0.135,
+        ! half that, trying to pull housing over income from 0.298 down to 0.202.
+        ! It could not work: the moment is set by the grid, not by the
+        ! preference, so a defensible taste parameter was being spent to
+        ! compensate for a ladder. The author's reading, and it is the right one.
+        real(8) :: rung_ratio_h3=2.d0
+        real(8) :: rung_ratio_h4=3.d0
         real(8) :: newborn_endowment_scale=1.d0
         ! THE ENDOWMENT ENTERS THE BUDGET CONSTRAINT, NOT THE INITIAL
         ! DISTRIBUTION, on the author's instruction of 1 September: "instead of
@@ -26143,8 +26167,8 @@
             ! burden can actually see.
             if (housing_status_grid_size>2) then
 
-                housing_size(1)=2.d0*housing_size(0)
-                housing_size(housing_status_grid_size-1)=3.d0*housing_size(0)
+                housing_size(1)=rung_ratio_h3*housing_size(0)
+                housing_size(housing_status_grid_size-1)=rung_ratio_h4*housing_size(0)
 
             end if
             
@@ -34806,6 +34830,12 @@
                     write(*,*) "HANDOVER financial_grid_expander_positive:",&
                         financial_grid_expander_positive, "->", handover_value
                     financial_grid_expander_positive=max(min(handover_value,6.d0),1.d0)
+                case ("rung_ratio_h3")
+                    write(*,*) "HANDOVER rung_ratio_h3:", rung_ratio_h3, "->", handover_value
+                    rung_ratio_h3=max(min(handover_value,6.d0),1.01d0)
+                case ("rung_ratio_h4")
+                    write(*,*) "HANDOVER rung_ratio_h4:", rung_ratio_h4, "->", handover_value
+                    rung_ratio_h4=max(min(handover_value,9.d0),1.02d0)
                 case ("newborn_endowment_scale")
                     write(*,*) "HANDOVER newborn_endowment_scale:",&
                         newborn_endowment_scale, "->", handover_value
