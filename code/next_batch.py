@@ -1170,6 +1170,26 @@ def main():
         # ENGINE.md asks for anyway -- prefer a measured bracket to an elasticity
         # -- and they are emitted from the same base as the repair so the round
         # is internally consistent.
+        # NEAR THE GATE, DO NOT SPREAD. The author's ordering, 1 September: "You
+        # might need to first pin down lambda d and b and then adjust the rest."
+        #
+        # Emitting arms beside the repair was right when the gate was at 46 per
+        # cent and might stay shut for hours -- the measurements were needed and
+        # nothing else was using the fleet. It is wrong at 8.6 per cent, where
+        # the gate is a round or two from opening and every worker spent on an
+        # arm is a worker not spent closing it. The arms are also worth MORE
+        # after the gate opens, because they are then measured off a base whose
+        # drug block is pinned rather than one that will move under them.
+        #
+        # So inside four times the gate the round is the drug block alone.
+        near = best[0] <= 4 * GATE['b']
+        if near:
+            print(f'  and the gate is within four times its threshold, so this '
+                  f'round is the drug block ALONE. No arms: every worker spent '
+                  f'on one is a worker not closing the gate, and an arm measured '
+                  f'off an unpinned base has to be measured again.')
+            return 0
+
         try:
             bv2 = A[best_tag][0]
             bm2 = A[best_tag][1]

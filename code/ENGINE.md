@@ -141,6 +141,36 @@ moment binds, workers alive. PushNotification (proactive, under 200 chars, one
 line, no markdown) ONLY for: the stopping rule met; the fleet stuck two firings
 running; something needing the author's decision.
 
+## PIN b AND lambda_d FIRST, THEN ADJUST THE REST
+
+The author's ordering, 1 September: *"You might need to first pin down lambda d
+and b and then adjust the rest."* That is what the gate is for, and it is the
+right instinct for a reason worth stating: six of the nine instruments drag the
+drug block, four of them violently, so any step taken before b and lambda_d are
+pinned is measured against a moving base and has to be measured again.
+
+The rule the loop follows:
+
+- **Gate open** — both inside five per cent — emit composed steps, each
+  compensated so it does not knock the block back out. That is the only mode that
+  can produce a better equilibrium.
+- **Gate shut but within four times the threshold** — the round is the drug block
+  ALONE. No arms. The gate is a round or two away and every worker spent
+  elsewhere is a worker not closing it.
+- **Gate shut and far** — arms beside the repair, because the measurements are
+  needed, the gate may stay shut for hours, and nothing else is using the fleet.
+
+The middle case exists because the first version of this got it wrong in the
+other direction: with the gate at 8.6 per cent the loop still emitted twenty-six
+arms beside the repair and spread eighteen workers across everything.
+
+**And do not expect the reported loss to move while the gate is shut.** Every
+point in that mode is a one-parameter arm, and a one-parameter move cannot
+improve a minimax binding on a moment it does not touch. Eighty-five points
+landed on 1 September with the loss fixed at 100.1 per cent, which looked like
+failure and was the measuring phase working normally. Say so when reporting
+rather than letting a flat number read as a stall.
+
 ## THE MODEL IS FROZEN. Do not change the Fortran.
 
 On 1 September the source changed TWELVE times and the archive reset eleven of
