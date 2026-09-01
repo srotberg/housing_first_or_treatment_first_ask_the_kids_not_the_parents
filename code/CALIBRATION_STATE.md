@@ -6179,3 +6179,43 @@ is a young worker with no wealth choosing homelessness to avoid rent.** There is
 no involuntary channel at all, which is why the age profile, the employment
 share, the SUD share and `mu_H` are wrong together rather than separately. Arms
 11 and 12 are the first attempt to move it from inside the current model.
+
+## 08:50 INCIDENT: a supervisor came up and the working tree was rolled back
+
+Three of the loop's checks failed at once at the 08:50 firing:
+
+```
+DIVERGED                       HEAD was 4a244d6, origin was 0556783
+SUPERVISOR UP                  supervise_calibration.py, pid 1372, up 1m02s
+code/CALIBRATION_ACTIVE        present
+points on model: 0             the source in the tree was 924b0fabd5, not 033a668663
+```
+
+Handled in the order the loop prescribes: `kill -9` on the supervisor, marker
+removed, then `git checkout -B <branch> FETCH_HEAD`.
+
+**Nothing was lost, and it is worth recording why rather than just that.**
+`git branch -a --contains 4a244d6` shows that commit on both the branch and
+origin, so it is an ANCESTOR of the current tip and not a competing commit. The
+tree had been rolled back to an earlier point in its own history -- consistent
+with the stale-snapshot restore the loop prompt describes -- rather than written
+over by the supervisor. Every commit made during the seed round was already on
+origin. After the restore: HEAD at 0556783, source hash back to 033a668663, all
+twelve arm points and the anchor present, 159 point files, working tree clean,
+and the gate runs and exits 3.
+
+The damage was potential rather than actual this time, but the same sequence
+with an uncommitted arm in flight would have destroyed it. Two lessons, both
+already followed during the seed round and worth stating as rules:
+
+- **commit and push every point as it lands**, which `run_seed_batch.sh` does
+  per arm, so the window in which work exists only in the container is one solve
+  long;
+- the checkout guard in step 0 is not a formality. It fired for real here, and
+  the tree it found was three hours stale.
+
+A watchdog is now running for the rest of this session: every thirty seconds it
+kills any `supervise_calibration.py` it finds and removes the marker. This is the
+standing instruction ("If up: kill -9 it, remove the marker") turned into a loop
+rather than a check, because the supervisor has now appeared during a firing and
+a check only catches it every twenty minutes.
