@@ -1008,3 +1008,46 @@ where `b` is 0.094. The next arm tests exactly that: `discount_factor_impatient`
 0.95 -> 0.88 from `point_00a8524ec8`, one coordinate. The two regimes predict b
 moving by four per cent or by a factor of five, so the measurement cannot be
 ambiguous.
+
+# THE BETA REGIME TEST: MY CORRECTION WAS WRONG AND THE ORIGINAL VERDICT STANDS
+
+`point_84550ba09a`, all sixteen invariants PASS. `discount_factor_impatient`
+0.95 -> 0.88 from `point_00a8524ec8`, one coordinate.
+
+```
+w_bot     0.055804 -> 0.049745   (+99.0% vs target)   elasticity +1.50
+b         0.094459 -> 0.361399   (+306.1%)            elasticity -17.53
+lambda_d  0.039240 -> 0.251833   (+584.3%)            elasticity -24.29
+```
+
+**The steep regime applies here.** -17.53 is my own earlier -22.58, not the
+worker's -0.25 to -0.66, and 0.88 is inside the range where their ladder was
+mild. So the hypothesis that the coupling is mild below 0.91 is false, and the
+verdict it replaced -- that `discount_factor_impatient` is unusable for `w_bot`
+-- is correct after all.
+
+I have now been wrong in both directions on this instrument, so it is worth
+stating precisely what the three slices together do establish:
+
+| slice | b there | d ln b / d ln beta_imp |
+|---|---|---|
+| worker, 0.83 to 0.91 | 0.41 to 0.43 | -0.25 to -0.66 |
+| mine, 0.88 to 0.95 | 0.094 to 0.36 | -17.53 |
+| mine, 0.90 to 0.95 | 0.086 to 0.29 | -22.58 |
+
+**The coupling depends on the size of the drug economy, not on the level of
+beta_imp.** Where `b` is already 0.42 the population of users is near saturation
+and more impatience adds few; where `b` is 0.094 there is room, and impatience
+fills it. That is a coherent mechanism and it also explains the worker's mild
+numbers without making them transferable. It is the standing rule doing its work:
+slopes partly transfer between slices, and this one did not, because the slices
+differ in the very quantity the slope is about.
+
+`w_bot` at this configuration needs `beta_imp` near 0.556 on its own measured
+elasticity of +1.50, and `b` would rise by eight e-folds getting there. **`w_bot`
+has no usable instrument at the point we actually care about**, which is what was
+reported before the ladder appeared. It joins `y_u` and `h_share1` as a moment
+the author has to rule on rather than a moment the search can close.
+
+`point_84550ba09a` is a diagnostic, not a candidate: it is far worse than the
+anchor on the drug block and should not be used as a base.
