@@ -816,3 +816,55 @@ Joint B is second and cut the worst NON-composition gap from 308 per cent to 100
 per cent, but it holds fewer moments inside ten per cent than the anchor does.
 Arm 2 remains the best point, and **both of the two leaders now bind on
 `h_share1`**, which is the blocker the author has to rule on.
+
+# JOINT C: CAPPED STEPS DO NOT FIX IT EITHER, AND THE REASON IS tau_u
+
+`point_cde16bf075`, all sixteen invariants PASS. Every step capped at 0.35
+e-folds, driven from arm 2. Eight moments better, ten worse, five inside ten per
+cent against arm 2's eight. **Three joint attempts, three net regressions.**
+
+The gains are real and they are exactly the capped instruments behaving:
+
+```
+cbar   -84.5% -> -62.2%      gamma  -27.2% -> -12.0%
+pi_V   -48.3% -> -21.7%      h_2    -34.1% -> -11.9%
+h_1    -62.9% -> -55.5%      beta   -29.4% -> -22.4%
+```
+
+Nothing overshot the way joint A and joint B did. The cap works.
+
+## What is actually blocking the point
+
+Look at where arm 2 stands before any of this:
+
+```
+b        -47.7%      lambda_d  -54.5%
+```
+
+**Arm 2 is only the best point because `tau_u` dominates everywhere else, and
+its own drug block is broken.** The treatment price is what closes `tau_u`, and
+it costs about half of `b` -- that was measured in arm 2 and recorded at the
+time. So there is no point in the archive that is simultaneously good on the
+drug block and on `tau_u`, and every joint step built on arm 2 inherits a drug
+block already fifty per cent low before it starts.
+
+Joint C then made it worse, -57.7 and -58.2, because five of its seven
+instruments push `b` down.
+
+## The measurement that is missing
+
+`b` and `lambda_d` are now the two moments furthest from target at every good
+point, and **their strongest instrument has never been measured alone on this
+model.** Every addiction point in the archive moved `addiction_scalar_1` and
+`lambda_addiction` together, which is why the three-point fit returns an
+elasticity of -102 for `addiction_scalar_1` and a repair at
+`lambda_addiction` = 1.15 that is a plain extrapolation.
+
+The old-model sweep in `DRUG_UP_RESULT.md` puts the elasticity nearer -3.7, but
+that is a different model and the file itself rules that nothing be interpolated
+across the change.
+
+So the next point is a **single-coordinate arm on `addiction_scalar_1` from
+joint C**, 0.04350395 -> 0.0400. It supplies the controlled pair the archive has
+never had, and it moves the two worst moments in the right direction while doing
+it. Whether it closes them is a question for the measurement, not for me.
