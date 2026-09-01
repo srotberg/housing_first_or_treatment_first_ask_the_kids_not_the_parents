@@ -141,6 +141,10 @@
         ! times less likely on less income, so the driver is liquidity and not
         ! poverty. Being born was the only route to it.
         integer, parameter :: start_assets_of_newborns_at_zero=1
+        ! 1 = every newborn gets the SAME endowment, newborn_endowment_scale x
+        ! average labour income, calibrated on the newborn homelessness rate.
+        ! 0 = the SCF distribution of RS-2024, varying with productivity.
+        integer, parameter :: uniform_newborn_endowment=1
         real(8), parameter :: increase_in_newborns_bequests=0
         integer, parameter :: increase_vouchers_for_homeless_only=0
         
@@ -2458,6 +2462,18 @@
         real(8) :: value_of_life=(1-perceived_probability_lower)*11.0d0+perceived_probability_lower*120
         real(8) :: value_of_life_step_1=0
         
+        ! A FREE SCALE ON NEWBORN WEALTH, on the author's instruction of
+        ! 1 September: "give all newborns some initial wealth to match their
+        ! homelessness rate". max_initial_endowment is pinned to average labour
+        ! income, so the endowment had no free parameter and could not be
+        ! calibrated on anything; this multiplies it and can.
+        !
+        ! Why the homelessness rate of the young is the right target for it.
+        ! Measured: newborn wealth 0.000 gives an age-26 homelessness rate of
+        ! 16.2 per cent, 0.096 gives 13.4, and by age 29 wealth of 0.277 gives
+        ! 0.24. So the rate is steeply decreasing in newborn wealth somewhere
+        ! between 0.096 and 0.277, and one number placed in that interval sets it.
+        real(8) :: newborn_endowment_scale=1.d0
         real(8) :: max_initial_endowment=7
         real(8) :: max_initial_endowment_adjuster=0
         real(8) :: distance_max_initial_endowment
@@ -23516,6 +23532,27 @@
                     relative_endowments=0
                     fraction_with_positive_wealth=0
                 
+                elseif (uniform_newborn_endowment==1) then
+
+                    ! EVERY NEWBORN GETS THE SAME AMOUNT, on the author's
+                    ! instruction of 1 September: "you give all newborns the same
+                    ! amount of wealth so that we match the share of newborns who
+                    ! are homeless".
+                    !
+                    ! So the endowment is ONE number rather than a distribution:
+                    ! relative_endowments is 1 in every productivity bin and
+                    ! fraction_with_positive_wealth is 1, and the level is set by
+                    ! newborn_endowment_scale times average labour income. That
+                    ! makes it a single free parameter with a single target,
+                    ! which is what a calibrated instrument has to be.
+                    !
+                    ! It deliberately departs from RS-2024, whose theta(x) and
+                    ! a1(x) both vary with the productivity fixed effect from the
+                    ! 2019 SCF. That version is the branch below and is kept, so
+                    ! switching uniform_newborn_endowment to 0 restores it.
+                    relative_endowments(:)=1.d0
+                    fraction_with_positive_wealth(:)=1.d0
+
                 else
 
                     relative_endowments(9)=1.3853
@@ -23563,8 +23600,9 @@
                 
             end if
                         
-            max_initial_endowment=is_counterfactual*average_labor_income_calibrated+&
-                (1-is_counterfactual)*model_average_labour_income(time_period)
+            max_initial_endowment=newborn_endowment_scale*&
+                (is_counterfactual*average_labor_income_calibrated+&
+                (1-is_counterfactual)*model_average_labour_income(time_period))
 
             if (is_counterfactual==0) then
 
@@ -34595,6 +34633,11 @@
                         "->", handover_value
                     multiple_of_probabilities_of_employment_if_addicted=&
                         max(min(handover_value,20.d0),1.d0)
+
+                case ("newborn_endowment_scale")
+                    write(*,*) "HANDOVER newborn_endowment_scale:",&
+                        newborn_endowment_scale, "->", handover_value
+                    newborn_endowment_scale=max(min(handover_value,50.d0),0.d0)
 
                 case ("value_of_life")
                     write(*,*) "HANDOVER value_of_life:", value_of_life, "->", handover_value

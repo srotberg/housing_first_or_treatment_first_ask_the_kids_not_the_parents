@@ -30,6 +30,10 @@ cd "$(dirname "$0")"
 # held fixed.
 declare -A P=(
     [addiction_scalar_1]=0.0224532
+    # A FREE SCALE ON NEWBORN WEALTH, calibrated on the newborn homelessness
+    # rate. Every newborn receives newborn_endowment_scale x average labour
+    # income; 1.0 is one year's average earnings.
+    [newborn_endowment_scale]=1.0
     [value_of_life]=35.1001
     [lambda_addiction]=5.0554
     [relative_share_of_addiction_1]=0.530445
