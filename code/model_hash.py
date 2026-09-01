@@ -70,17 +70,30 @@ def current():
     return semantic(open(SRC, encoding='utf-8', errors='surrogateescape').read())
 
 
+_rebuilt = False
+
+
 def resolve(stamp, cache=None):
     """Semantic hash for a MODEL stamp read off a point file.
 
     Unknown stamps come back unchanged, so a point from a revision that was
     never committed still groups with itself and never with anything else.
+
+    THE REBUILD HAPPENS AT MOST ONCE PER PROCESS. Rebuilding walks every
+    revision of a 39,000 line file through `git show`, which takes seconds; the
+    first version of this called it for EVERY unknown stamp and turned a gate run
+    into a two-minute timeout. Most unknown stamps are genuinely unknown --
+    points from revisions that were never committed -- so re-walking cannot help
+    them and only costs.
     """
+    global _rebuilt
     m = cache if cache is not None else build_map()
-    if stamp not in m:
-        m = build_map(force=True)
+    if stamp not in m and not _rebuilt:
+        _rebuilt = True
+        fresh = build_map(force=True)
+        m.update(fresh)
         if cache is not None:
-            cache.update(m)
+            cache.update(fresh)
     return m.get(stamp, stamp)
 
 

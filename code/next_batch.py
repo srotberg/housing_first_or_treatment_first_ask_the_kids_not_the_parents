@@ -699,6 +699,12 @@ STALE_LABEL = {'h_2': ['smallest unit', 'above half of income'],
                'gamma': ['housing over income'],
 }
 
+# RESTORED after an over-wide edit deleted it on 1 September. The dict itself is
+# EMPTY and should stay that way unless a target genuinely has to differ from
+# what the model emits: pi_eu's entry was removed once the Fortran declared 0.139
+# itself, because one number in two places is how they drift apart. The
+# check below prints loudly if an entry ever disagrees with the model.
+TARGET_OVERRIDE = {}
 _override_checked = set()
 
 
@@ -858,8 +864,10 @@ def archive():
     import model_hash as _mh
     _map = _mh.build_map()
     want = _mh.current()
-    ok = {want} | {_mh.resolve(x, _map) for x in
-                   EQUIVALENT_MODELS.get(current_model_hash(), set())}
+    # EQUIVALENT_MODELS is keyed by SEMANTIC hash, so look it up with the
+    # semantic hash. Keying the table one way and reading it the other admitted
+    # exactly one point out of 260 and looked like a model change.
+    ok = {want} | set(EQUIVALENT_MODELS.get(want, set()))
 
     # AND ONLY POINTS IN THE CURRENT ECONOMY, not merely the current source.
     #
