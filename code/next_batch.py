@@ -135,12 +135,36 @@ OWN = {
     # actually h_1 at 2.81, but size_homelessness already owns that and the
     # food stamp floor has closed it, so it takes h_3 here. It moves h_3 at
     # -0.01, which is to say h_3 has no real instrument at all.
-    'smallest_rental_relative_to_lowest_income':            'h_3',
+    # REPOINTED TO h_2 ON THE AUTHOR'S INSTRUCTION, 1 September:
+    # "make the cheapest unit such that we have the right fraction of households
+    # spending over 50% of their income on housing... no of total spending".
+    # h_2 is that moment, the CEX headcount above half of TOTAL EXPENDITURE,
+    # target 0.101.
+    #
+    # It replaces h_3, which this parameter moves at -0.01 -- nothing. The
+    # consequence of that mapping was not a small inefficiency: the ONE number
+    # governing whether a household can be priced out of housing was assigned
+    # rather than calibrated, and then pointed at a moment that could never
+    # discipline it. `homeless who could afford it on INCOME ALONE` has read
+    # exactly 1.0000 at every point measured, which is the same fact.
+    'smallest_rental_relative_to_lowest_income':            'h_2',
     # AND THE TOP RUNG HAD NO INSTRUMENT EITHER. largest_house_size owns the
     # share in the largest unit -- h_4 until the author's rename, h_3 now -- and
     # like the bottom rung it sat in the vector with nothing mapped to it. It is
     # only 1.7 per cent off, so this closes a hole rather than fixing a gap.
-    'largest_house_size':                                  'h_2',
+    # HELD, because h_2 now belongs to the smallest rung. Keeping both pointed at
+    # h_2 would be the duplicate-driver mistake the map exists to prevent, and of
+    # the two this one is the wrong keeper: it is the TOP rung, so it cannot price
+    # anybody out of housing however it moves. It stays in the vector, so a point
+    # records it, and it moves by hand.
+    #
+    # What it costs to hold: largest_house_size moves h_2 at 1.427 and gamma at
+    # 0.760, both measured in the seed round, so gamma loses its strongest
+    # instrument. gamma's own owner, relative_share_of_housing, is separately
+    # held on an h_1 elasticity of -9.567. If gamma cannot be closed by the two
+    # remaining housing parameters that is an author decision, not something to
+    # paper over by re-pointing a grid parameter at it.
+    # 'largest_house_size':                                'h_2',
     # AND THE SAME FOR SMI. kappa_uem, the parameter, now answers to lambda_m,
     # the SMI share of the homeless, rather than to the employment rate of the
     # SMI population.
