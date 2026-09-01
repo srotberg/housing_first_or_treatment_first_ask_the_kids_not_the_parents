@@ -181,3 +181,26 @@ half's wealth is not what is gating the housing margin, and the missing
 involuntary channel has to come from somewhere else -- which would be a model
 question for the author rather than a calibration one. Either way the arm
 settles it, and the answer is worth more than the elasticity it was launched for.
+
+## Arm 3 -- probability_of_voucher_benchmark_used x1.936, owns pi_V
+
+`point_336ada07ca`, all sixteen invariants PASS.
+
+`pi_V` goes 0.137434 -> **0.228932** against a target of 0.266, so -48.3 per cent
+becomes -13.9 per cent. The linear guess predicted 0.266046, essentially the
+target exactly; the measured exponent is **0.773**, so coverage saturates in the
+lottery rather than tracking it one for one. Closing the rest needs a further
+x1.2144, to `probability_of_voucher_benchmark_used` = **0.029316**.
+
+**This is the first comparatively CLEAN instrument.**
+
+| arm | b | lambda_d |
+|---|---|---|
+| 1 max_food_cost x2.411 | +19.5% | +29.3% |
+| 2 utility_cost_of_treatment 0 -> 2.0 | -46.4% | -53.2% |
+| 3 voucher lottery x1.936 | **+5.9%** | **+8.3%** |
+
+A near-doubling of voucher coverage moves the drug block by under nine per cent
+and leaves both b and lambda_d still inside ten per cent of target (+3.3 and
++5.4). So `pi_V` can be closed on its own instrument without a repair behind it,
+which is the first moment on the list of which that is true.
