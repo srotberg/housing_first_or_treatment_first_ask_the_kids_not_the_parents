@@ -5847,3 +5847,45 @@ theory and the theory was wrong. Sample the index again before deciding.
 and needs no instrumentation, no rebuild and no guessing. Two hours went into
 inferring what a stack trace states. `gdb` is installed in these containers.
 Reach for it the first time a run looks slow, not the fifth.
+
+## tau_u was never being calibrated: its instrument has been zero at every point
+
+`tau_u` has read 0.99969 to 0.99998 at every point measured for weeks, against a
+target of 0.245, and it went on the author's list of moments to fix. It is not a
+calibration failure. **Treatment is free in every vector measured so far**, so
+every household carrying the disorder takes it, and 1.0 is the arithmetic
+answer rather than a bad fit.
+
+There are two cost channels and the vector zeroes both:
+
+- `money_cost_of_treatment` is declared 0.02 and handed over as 0. It is not
+  internally calibrated -- `money_cost_of_treatment_adjuster` and
+  `distance_money_cost_of_treatment` are both declared and never read, and
+  there is no update block -- so the handover is the only thing that sets it.
+- `utility_cost_of_treatment` is declared 0 in the Fortran, defaulted to
+  **0.0908753** in `run_one_point.sh`, and handed over as **0**.
+
+`next_batch.py`'s `OWN` map points `tau_u` at `utility_cost_of_treatment`, on
+the author's instruction of 31 August, with the money price held at zero. So the
+one instrument that owns the moment has been pinned at zero by the vector while
+the runner's own default for it is 0.0908753. Checked across the twelve most
+recent points: `utility_cost_of_treatment=0` in all twelve.
+
+The moment itself is computed correctly and is properly guarded for the two-pass
+chain -- `model_treatment_take_up` is divided by `model_mass_with_sud` inside
+`if (current_beta_type==number_of_beta_types)` at line 13043, and its reset at
+11576 is inside `if (accumulating_beta_types==0)`. Nothing is wrong with the
+measurement.
+
+`utility_cost_of_treatment` is subtracted from flow utility once per period of
+treatment, at line 20479, wherever flow utility is evaluated. Flow utility is
+negative and of order one before `value_of_life` is added, so 0.0909 is a small
+fraction of it and the bracket is expected to need more; the handover clamps
+the parameter to [0, 10] and `next_batch.py` brackets it to [0, 8].
+
+**It is coupled to b and lambda_d and must be measured, not assumed.** Charging
+for treatment lowers take-up, which lowers recovery, which raises the disorder
+rate: `lambda_d` should rise when this parameter leaves zero, and `b` with it.
+The next point therefore moves this parameter alone from the best available
+addiction pair, so the tau_u response and the b/lambda_d feedback are read off
+the same controlled step.
