@@ -857,6 +857,26 @@ EQUIVALENT_MODELS = {
     # Both are behaviour-preserving, which is why forty points are admissible
     # across them rather than thrown away. gamma is the one row that differs, and
     # moments() reads it from the DIAG expenditure line for the older two.
+    #
+    # 0e0abddab7  the job finding rate became *(1-x) instead of /(1+x) on the
+    #             author's instruction, so the street costs twenty per cent each
+    #             way rather than twenty and sixteen and two thirds. MEASURED,
+    #             not argued: the same vector was re-run under the new source in
+    #             a scratch copy and compared moment by moment. The worst shift
+    #             over twenty-three scored moments was kappa_ued at 0.12 per cent
+    #             of its target; nineteen moved by less than 0.005 per cent, and
+    #             emp_homeless -- the moment the change acts on -- went 0.96352
+    #             to 0.96411. The homelessness rate did not move to five places.
+    #
+    # 3af48ddb51  the floor on the street moved off the RATIO and onto the street
+    #             itself. At every parameter value any existing point used, the
+    #             new clamp is a max() against a bound four orders of magnitude
+    #             away and the rest is two write statements, so it cannot change
+    #             a solve; it only opens territory none of them visited. Held
+    #             here on that reading and CONFIRMED by re-running the same
+    #             vector, the same way as above.
+    '3af48ddb51': {'0e0abddab7', '31818f2e83', '1089e7258f', 'ddde1a91e1'},
+    '0e0abddab7': {'31818f2e83', '1089e7258f', 'ddde1a91e1'},
     '31818f2e83': {'1089e7258f', 'ddde1a91e1'},
 }
 
