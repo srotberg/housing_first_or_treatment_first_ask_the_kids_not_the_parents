@@ -6388,3 +6388,46 @@ Behind that, whatever is decided: the drug block is collapsed at these housing
 values -- `b` 0.0071 against 0.089, `lambda_d` 0.0011 against 0.0368 -- and needs
 the addiction pair re-solved, which has worked before from a measured two-by-two;
 and the archive needs a full reseed on the new grid.
+
+## CORRECTION: "the economy spends over 100 per cent of income on rent" was wrong
+
+At 14:45 I read `DIAG aggregate rent / aggregate income = 1.0849` and reported
+that the model was spending more than it earned on rent, calling it "not a
+sensible economy". The author pushed back that this must be a bug. It is neither
+a bug nor what I said it was, and the diagnostic's own comment at line 5113 says
+why:
+
+> aggregate_rent_spending is GROSS rent, before housing vouchers, and covers
+> housed renters only, so the homeless contribute nothing to the numerator and
+> their income is still in the denominator.
+
+So the numerator includes the part of rent paid by the government through
+vouchers, and excludes the homeless while their income stays in the denominator.
+It is not a household spending share and cannot be read as one. A ratio above one
+violates nobody's budget constraint.
+
+The household-level figure sits two lines away and is the one that matters:
+
+```
+housing over income, renters (mean of household ratios)  0.429   target 0.202
+aggregate housing / aggregate expenditure                0.327
+```
+
+**Households spend 43 per cent of income on housing, not 108.**
+
+The checks that would have made it a real bug were run and all pass:
+`aggregate_rent_spending` and `model_output` are both reset under
+`if (accumulating_beta_types==0)` and both accumulate across both beta passes, so
+the pooling is consistent; the assigned ladder holds the values it was given; and
+the rental market clears with its invariant at exactly 1.0.
+
+**What survives is the smaller true version.** `gamma` at 0.429 against 0.202
+means the ladder still makes housing about twice as expensive as it should be.
+That is the same tension as `rent50` and points the same way -- the 1:2:3 ratio
+ties the top rung to the floor -- and it is a calibration problem rather than a
+broken model.
+
+**The lesson, which is the third time today.** A diagnostic's label is not its
+definition. `mass with a NEGATIVE value of life` was a mass read as a share,
+`mu_H` at +754 per cent was a ratio over an empty set, and this was gross rent
+read as household spending. Read the accumulation before reporting the number.
