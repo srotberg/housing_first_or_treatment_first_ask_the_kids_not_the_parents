@@ -320,39 +320,35 @@ BAND = {'beta': (3.0, 4.5)}
 # it has no instrument at all.
 SKIP = {'h_3',
         # W_BOT FOLLOWS THE SECOND DISCOUNT FACTOR OUT, and this is a
-        # CONSEQUENCE of the author's instruction rather than a separate
-        # decision by me -- it is flagged here so it can be reversed in one line
-        # if they want it scored anyway.
-        #
+        # CONSEQUENCE of the author's instruction of 1 September to go back to
+        # one type rather than a separate decision -- it is one line to reverse.
         # The impatient type was the only thing that moved the wealth share of
-        # the bottom half. With one type nothing does. Leaving a moment scored
-        # when nothing in the model can move it is exactly the omega_l trap the
-        # author closed this afternoon: it holds the ten per cent rule open for
-        # ever and hides which moments are actually being worked.
+        # the bottom half; with one type nothing does, and a scored moment that
+        # nothing can move holds the ten per cent rule open for ever.
         #
-        # It is also not clear the target belongs to this model at all. The 2.5
-        # per cent is the SCF bottom-half share of NET WORTH, which for those
-        # households is mostly home equity, and include_homeownership is 0 --
-        # every household here rents and the only asset is financial saving. The
-        # model reads 0.156. Retargeting it to a financial-wealth concept would
-        # be a different fix and is the author's call.
-        'w_bot',
-        # D2, ON THE AUTHOR'S INSTRUCTION OF 1 SEPTEMBER: "h_2 should
-        # essentially be chosen to match the rent50 target (that is the same as
-        # the smallest rental relative to lowest income)."
-        #
-        # h_2 counts renters above half of total EXPENDITURE and rent50 counts
-        # renters above half of INCOME. They are the same cost burden read two
-        # ways, and one parameter sets both -- the size of the cheapest rental.
-        # h_2 was left orphaned when largest_house_size had to be held so that
-        # smallest_rental could own rent50, and the answer is that it never
-        # needed its own instrument: closing rent50 closes it.
-        #
-        # It stays parsed and reported at every point. It is simply not a second
-        # target competing with the first for one parameter, which is the
-        # duplicate-driver mistake read backwards -- one instrument, two scored
-        # moments, no way to satisfy both.
-        'h_2'}
+        # It is also not clear the target belongs to this model. The 2.5 per
+        # cent is the SCF bottom-half share of NET WORTH, mostly home equity for
+        # those households, and include_homeownership is 0 -- everyone here
+        # rents and the only asset is financial saving.
+        'w_bot'}
+
+# H_2 IS NOT CONCEDED AND MUST NOT BE PUT BACK IN SKIP. I conceded it on
+# 1 September on a misreading and the author caught it.
+#
+# THE NAME MEANS TWO DIFFERENT THINGS. The MOMENT h_2 in this file and in the
+# Fortran is "above half of spending", the CEX severe cost burden headcount with
+# a target of 0.101. The PARAMETER the author calls h_2 is the cheapest rental
+# rung, which in the code is smallest_rental_relative_to_lowest_income.
+#
+# Their instruction -- "h_2 should essentially be chosen to match the rent50
+# target (that is the same as the smallest rental relative to lowest income)" --
+# is about the PARAMETER: the cheapest rung is chosen to match rent50, which is
+# the OWN mapping that already existed. I applied it to the MOMENT and dropped
+# it, contradicting what they had said on 31 August in as many words: "no h2 has
+# to be close to 10.1%, but h3 can be off."
+#
+# The moment reads -18.2 per cent at the best point, among the closest in the
+# table. Conceding it threw away something nearly won.
 
 # MOMENTS WITH AN INSTRUMENT THAT DO NOT GATE THE STOPPING RULE.
 #
