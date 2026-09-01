@@ -269,6 +269,12 @@ SKIP = {'h_3'}
 # share needs increased_prob_if_homeless near 3.8 against an assigned 0.2, and
 # what that does to h_1, pi_eu and the drug block is not yet measured.
 UNSCORED = {'emp_homeless', 'sud_homeless',
+            # THE PROFILE IS SCORED THROUGH h_share1 ALONE, so the other four
+            # shares and all five rates are reported and not scored. h_share1 is
+            # the share of the homeless aged 25 to 34, 0.91 against 0.26; these
+            # are how anyone sees WHERE the mass went when it moves.
+            'h_age1', 'h_age2', 'h_age3', 'h_age4', 'h_age5',
+            'h_share2', 'h_share3', 'h_share4', 'h_share5',
             # OUTPUTS, ON THE AUTHOR'S INSTRUCTION, and not orphans. The
             # unemployment rate of those with a substance use disorder and the
             # employment rate of the SMI population are not known well enough to
@@ -511,29 +517,33 @@ def moments(text):
             continue
         out[n] = (float(m), float(tg))
 
-    # THE AGE PROFILE IS SCORED NOW, ON THE AUTHOR'S INSTRUCTION.
+    # THE AGE PROFILE IS SCORED, THROUGH ONE NUMBER AND NOT FIVE.
     #
-    # The five homelessness rates by age band print as UNTARGETED lines with an
-    # observed= column rather than MOMENT lines with a target=, because no
-    # single parameter owns any one of them. They are scored anyway: the author
-    # chose to put the profile itself into the minimax and to leave the employed
-    # and SUD shares of the homeless as diagnostics, which is targeting the
-    # thing wanted rather than its proximate causes.
+    # The author's choice, and the reason for it: five bands in the minimax is
+    # five constraints that no parameter owns, and the loop could never report
+    # DONE while any of them was outside ten per cent -- band one was 736 per
+    # cent out. One summary keeps the profile in the stopping rule without
+    # making the rule a test the search cannot pass.
     #
-    # They enter under h_age1..h_age5 so nothing collides with a MOMENT name,
-    # and the MOMENT/UNTARGETED distinction keeps its old meaning: a MOMENT has
-    # an instrument in OWN, these do not. The gate proposes no step for them
-    # directly; it is increased_prob_if_homeless and rho_d that move them, and
-    # these five say whether it worked.
+    # THE SUMMARY IS THE SHARE, NOT THE RATE, and that matters. The rate in band
+    # one confounds two things the model separates: how much homelessness there
+    # is, which size_homelessness owns through h_1, and how it is spread across
+    # ages, which nothing owns. The SHARE of the homeless who are 25 to 34 is
+    # scale free -- it moves if and only if the composition moves -- so h_1 keeps
+    # the level and h_share1 keeps the shape, with no double counting between
+    # them. It reads about 0.91 against 0.26 in the HUD count.
     #
-    # The band is 25-34, 35-44, 45-54, 55-64, 65+ and the HUD shares behind the
-    # observed column are 0.26, 0.272, 0.21, 0.184 and 0.075. At the point that
-    # prompted this the model needed band one to fall by a factor of eight and
-    # the four older ones to rise by 2.5 to 14.
+    # The other four shares and all five rates are parsed and reported, and sit
+    # in UNSCORED. They are how anyone reads WHERE the mass went when h_share1
+    # moves; they are simply not what the loop stops on.
     for n, m, ob in re.findall(
             r'UNTARGETED homelessness rate, band\s+(\d+)\s+model=\s*'
             r'([0-9.eE+-]+)\s+observed=\s*([0-9.eE+-]+)', text):
         out['h_age' + n] = (float(m), float(ob))
+    for n, m, ob in re.findall(
+            r'UNTARGETED share of the homeless, band\s+(\d+)\s+model=\s*'
+            r'([0-9.eE+-]+)\s+observed=\s*([0-9.eE+-]+)', text):
+        out['h_share' + n] = (float(m), float(ob))
 
     # AND THE TWO SHARES THE NEW INSTRUMENTS ANSWER TO. These are parsed so that
     # increased_prob_if_homeless and rho_d have a moment to bracket on, and they
