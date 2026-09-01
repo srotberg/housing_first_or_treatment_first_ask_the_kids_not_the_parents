@@ -14,7 +14,56 @@ led the search to a point with b exact and lambda_d at minus seventy eight.
 `beta` is banded (3.0, 4.5) on the author's instruction and scores zero inside
 it. `h_2`, the smallest-rental share, is conceded and need not be chased.
 
-## LIVE STATE, 1 September 17:25 -- MODEL 7de893e588, EIGHT points, gate CLOSED
+## LIVE STATE, 1 September 18:25 -- MODEL 7de893e588, 19 points
+
+### STOP BUILDING MULTI-PARAMETER ANCHORS. THIS IS THE SECOND FAILURE.
+
+recal1 moved seven parameters at once and broke four moments that were fine.
+recal3 moved TWELVE and was worse still: lambda_d +815 per cent from +1.2, b
++363 from +21.9, tau_u to exactly zero, h_share1 to -97.9, and pi_eu to +101 --
+in the WRONG DIRECTION, after a step that should have cut the unemployment rate.
+Every individual step was inside the 0.35 e-fold cap and inside a measured
+bracket. They still did not compose.
+
+The rule the archive now supports: an anchor moves ONE parameter, or at most a
+pair shown orthogonal by measurement. Capping each step is not sufficient. I
+wrote this down after recal1 and then did it again in recal3, which is why it is
+at the top of the file in these words.
+
+### The best points are recal2's, and w_bot binds at nearly all of them
+
+Ranked on the author's minimax over the scored set, the whole current-model
+archive is still bad -- best worst-gap 378.6 per cent. But the MEDIAN gap tells
+the real story: recal1's points sit at 54 per cent, recal2's at 32 to 42.
+4969e74993 is the best on median at 32.5, ca84c51275 next at 33.3, and
+ca84c51275 is where lambda_d is +1.2 per cent.
+
+At fourteen of the nineteen points the binding moment is w_bot or h_1.
+
+### w_bot CANNOT REACH ITS TARGET, and the reason is a fixed constant
+
+discount_factor_impatient does move it -- elasticity +1.809 measured across
+0.95 -> 0.70, where w_bot goes 0.156 -> 0.0898. My earlier "no instrument" call
+was wrong and came from a step too small to leave the flat region.
+
+But extrapolating to the parameter's own lower bound of 0.50 gives w_bot 0.049
+against a target of 0.025, still ninety-six per cent out. The instrument works
+and cannot get there.
+
+**`beta_type_weight` is the missing instrument and it is a compile-time constant
+at 0.5.** Line 2378: `real(8), parameter :: beta_type_weight=0.5d0`. It is the
+SHARE of households that are impatient, fixed at half, and it acts on w_bot
+through a different channel from the discount factor itself -- how many
+households are in the impatient type rather than how impatient that type is.
+Raising it puts more of the population in the type that does not accumulate, so
+the bottom half's wealth share falls.
+
+OPENING IT IS A SCOPE CHANGE AND THEREFORE THE AUTHOR'S CALL. It is not done and
+must not be done without them. It is recorded here because w_bot is the binding
+moment at most points in the archive and the ten per cent rule cannot be met
+while it stays shut.
+
+## SUPERSEDED, 1 September 17:25 -- recal2 launched
 
 `code/batch_recal2.txt` is the live round. The gate ran and refused to emit:
 "GATE CLOSED. Best on max(|b gap|,|lambda_d gap|) is 30cbdc5ac4 at 80.6 per
