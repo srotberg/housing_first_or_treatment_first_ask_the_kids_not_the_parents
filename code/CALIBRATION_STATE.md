@@ -14,7 +14,78 @@ led the search to a point with b exact and lambda_d at minus seventy eight.
 `beta` is banded (3.0, 4.5) on the author's instruction and scores zero inside
 it. `h_2`, the smallest-rental share, is conceded and need not be chased.
 
-## Where it stands, 30 August 12:20
+## THE MODEL CHANGED ON 1 SEPTEMBER AND THE ARCHIVE IS EMPTY AGAINST IT
+
+MODEL 8ced112a69. Points on that hash: **ZERO**. The gate is NOT to be run this
+firing or any firing until a seed lands -- `next_batch.py` scores only points on
+the current hash, so with nothing to interpolate from any batch it wrote would be
+a guess dressed as a step. Seed first. That rule is in the trigger prompt and it
+applies now.
+
+Four changes, all the author's, made within an hour of each other:
+
+1. **The newborn endowment is a first-period transfer, not an initial asset
+   holding.** Newborns start at zero assets and receive `newborn_endowment_scale`
+   times average labour income as cash in hand at age 26, carried as
+   `newborn_age_transfer` and added at the nine sites that already add a transfer
+   to resources, outside the productivity scaling because it is flat. Why it had
+   to change: endowing the distribution placed every newborn ON an asset grid
+   point, and the snap takes the smallest point STRICTLY above the target, so the
+   instrument was a four-step staircase that could not be bisected and a scale of
+   zero delivered 0.0840 rather than nothing.
+
+2. **`newborn_endowment_scale` is a calibrated parameter and owns `h_share1`.**
+   That is the moment which has held this calibration open longest -- 0.91
+   against 0.26, moved at most two points by any of four instruments through four
+   channels. It does not duplicate `size_homelessness`: that one sets the LEVEL
+   and answers to `h_1`, this one sets the SHAPE.
+
+3. **The residual bequest goes to the government.** `model_total_inheritance`
+   accumulates the newborn transfer and the government collects `model_bequests -
+   value_of_initial_assets - model_total_inheritance`, with the second term now
+   zero. The lump sum that used to be spread over all sixty ages is gone and its
+   fixed point with it, at both sites that iterated it.
+
+4. **`financial_grid_expander_positive` is settable, default 3.0.** Five grid
+   rungs below a year's rent instead of one. This is not only about the
+   instrument: it is the grid every household's SAVING decision is made on, and
+   one rung between zero wealth and a year's rent is an artifact sitting exactly
+   on the margin the model measures. The cost is at the top, where the last gap
+   widens from 0.611 to 1.184 and mass had already been found piling against the
+   edge -- so read wealth over output and the wealth share of the bottom half
+   carefully on the first points back, rather than assuming they held.
+
+### The seed round in flight
+
+`code/batch_transfer.txt`, six points, scale 0 / 0.15 / 0.30 / 0.50 / 0.75 /
+1.00, delivering 0 to 0.6372 in cash at age 26, which is zero to 5.31 years of
+rent on the cheapest unit. Scale 0.15 delivers 0.0956, within a rounding error of
+the 0.0960 the SCF distribution was handing newborns on average, so it is the
+no-change point. All six carry expander 3.0 and share one model hash.
+
+Two more workers are still running `code/batch_endowment.txt` lines 5 and 6,
+bracketing `pi_eu` at 0.05 and 0.09 because the anchor's 0.01546 was calibrated
+to the retired 4.85 per cent target and the new one is 13.9. **Those two are on
+the OLD model hash** and are kept only as a rough read on the pi_eu-to-
+unemployment mapping, which is about the employment transition chain rather than
+the asset grid. They are not admissible as an anchor and must not be scored.
+
+The four endowment-sweep workers on the old snapped mechanism were stopped: they
+answered a question that no longer exists.
+
+### What to do when the seed lands
+
+Compare the six by `h_share1` and by `h_1`. The prediction on record, so it can
+be scored rather than reconstructed later: age 27 holds 0.2287 and is homeless at
+1.13 per cent where age 26 holds 0.0960 and is homeless at 13.35 per cent, on
+HIGHER income, so a transfer near 0.23 -- scale 0.36 -- is where the age profile
+should break if liquidity is really what separates the two ages. **If h_share1
+does not move over a sweep that takes newborn cash from zero to five years of
+rent, liquidity is not the mechanism and the diagnosis has to be rebuilt from
+scratch.** That is the point of including scale 0 and scale 1.00 in the same
+round.
+
+## Where it stood, 30 August 12:20 (BEFORE the changes above)
 
 BEST ON THE AUTHOR'S MINIMAX: `point_051d242e11`, worst gap 37 per cent on h_1,
 and EVERY moment inside 37. Across the morning the worst went 164, 120, 82, 70,
