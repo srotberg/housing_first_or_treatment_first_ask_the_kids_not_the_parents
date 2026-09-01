@@ -677,3 +677,86 @@ calibration.** The options are a model change that creates involuntary
 homelessness, or moving `h_share1` into `UNSCORED` beside `h_share2` to
 `h_share5` and conceding the age profile as `h_3` was conceded. The second is a
 one-line change and is the author's to make, not mine.
+
+# THE JOINT POINT FAILED. LOG-ADDITIVITY IS FALSIFIED, AND I TESTED THE WRONG THING.
+
+`point_24cc47c110`, eight instruments moved at once to their solved values.
+It is a net regression: **eight moments better, ten worse, and six inside ten
+per cent against the anchor's eight.**
+
+| moment | anchor | joint | |
+|---|---|---|---|
+| lambda_m | -2.1% | **+300.0%** | worse |
+| h_1 | -62.6% | **-99.9%** | worse |
+| theta | +7.9% | +66.6% | worse |
+| h_2 | -32.3% | -45.9% | worse |
+| lambda_d | -2.7% | +38.8% | worse |
+| tau_u | +308.2% | **+29.9%** | better |
+| cbar | -83.4% | +52.6% | better |
+| pi_V | -48.3% | +13.9% | better |
+| y_u | +22.5% | **+4.5%** | better |
+| pi_eu | +10.4% | +2.8% | better |
+
+## The cause, and the mistake behind it
+
+`h_1` collapsed to 2.3e-6, which is homelessness essentially eliminated, and
+that cascade explains `lambda_m` = 1.0 (the whole of a near-empty homeless
+population has SMI) and `mu_H` = 3.3e10 (an empty denominator).
+
+Tracing `h_1` through every arm finds one culprit and it is not the one I
+expected:
+
+```
+ANCHOR                      1.4945e-3
+max_food_cost x2.41         1.2617e-3
+voucher x1.94               1.5236e-3
+size_homelessness x1.35     2.0840e-3
+treatment price 2.0         1.4810e-3
+largest_house_size x1.35    1.3151e-3
+relative_share_of_housing   8.4708e-5   <-- 94 per cent gone
+sep rate x0.86              1.5009e-3
+```
+
+**`relative_share_of_housing` has an `h_1` elasticity of -9.567.** I measured
+arm 7 against `gamma`, `h_2` and the drug block, pronounced the `OWN` map
+correct on comparative advantage, and never looked at `h_1`. That was the error:
+**I judged each instrument's cleanliness against b and lambda_d only, and called
+instruments clean that were destroying a moment I was not watching.** Coupling
+has to be scored against every moment, not against the drug block.
+
+## Adding h_1 reverses the arm-7 conclusion
+
+| instrument | d ln gamma | d ln h_1 | gamma per unit of h_1 damage |
+|---|---|---|---|
+| largest_house_size | 0.760 | -0.426 | 1.78 |
+| relative_share_of_housing | 0.382 | **-9.567** | 0.04 |
+
+`largest_house_size` moves `gamma` twice as hard and costs twenty-two times less
+`h_1`. **`relative_share_of_housing` should be HELD**, and the comparative
+advantage argument I endorsed after arm 7 was right about {h_2, gamma} and wrong
+about the system, because the system has three moments and I was solving two.
+
+With it held, a least squares over `h_1`, `h_2` and `gamma` in the two remaining
+instruments fits all three:
+
+```
+size_homelessness    0.074132 -> 0.263365     h_1   +0.1%
+largest_house_size   0.111766 -> 0.201201     h_2   -2.3%
+                                              gamma +4.5%
+```
+
+## The drug-block repair is NOT admissible and is not being used
+
+Joint B is predicted to leave b at -43.6 per cent and lambda_d at -39.1 per
+cent. Fitting the 2x2 addiction Jacobian from the three available points and
+solving gives `lambda_addiction` = **1.154**, against a measured range of 2.67
+to 3.451. That is a long extrapolation past the pair that produced the slope,
+and the three points span only 0.9 per cent in `addiction_scalar_1`, which is
+why its elasticity reads -102 and is not to be trusted.
+
+So the repair uses the EDGE of the measured range instead: `lambda_addiction` =
+**2.67**, the lowest value ever measured. On the slope measured between the two
+bracket points that should recover roughly +38 per cent on b and +29 per cent on
+lambda_d, leaving both near -20 per cent -- not closed, but honestly obtained,
+and the pair can then be bracketed at the new configuration exactly as it was
+before.
