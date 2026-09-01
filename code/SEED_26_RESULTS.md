@@ -373,3 +373,50 @@ some of that work back onto the instrument that owns `gamma`.
 
 Coupling: b +20.5 per cent, lambda_d +44.0 per cent, the largest lambda_d
 coupling of any arm except `discount_factor_impatient`.
+
+## The gate crashed at 07:27, and what it proposed afterwards must not be run blind
+
+`next_batch.py` died with a `ZeroDivisionError` in `bracket()` the moment arm 2
+gave `utility_cost_of_treatment` a second value:
+
+```
+near = [y for x, y in g if abs(math.log(x / x_base)) < 1e-6]
+```
+
+`x_base` is the parameter's value at the base point and the base holds it at
+zero. This is the same blind spot recorded earlier, but sharper than described:
+it is not that a zero-anchored parameter is quietly skipped, it is that once a
+second value exists the whole gate falls over and emits nothing at all. The
+group builder above already drops every `x <= 0`, and the `d` computation forty
+lines below was already written `if x_base > 0 else 0.0`, so this was the single
+unguarded site. Replaced with an absolute-or-relative closeness test, which is
+identical to the log form for positive `x_base` and defined at zero.
+
+`tau_u` still gets no bracket, and that is correct rather than a residual bug: a
+log interpolation from zero has no meaning, and the anchor has to move off the
+bound before the moment can be searched. The fix restores the honest skip in
+place of a traceback.
+
+### CORRECT_29.txt is a record, not a plan
+
+With the gate working it writes six arms. Five are reasonable. One is dangerous:
+
+```
+discount_factor_impatient   w_bot  +105%  +2.16   0.95 -> 0.75232
+```
+
+Arm 4 measured that instrument at 0.95 -> 0.90 and it moved b by +239 per cent
+and lambda_d by +415 per cent. The gate is proposing a step **five times
+larger**, because it steps every coordinate independently and has no model of
+coupling at all. Run as written it would put the drug block orders of magnitude
+off target to buy one moment.
+
+That is the general lesson from this seed round, and it is why the arms were
+worth measuring before any batch was launched: **the gate's arms are correct
+one-at-a-time steps for a system it assumes is diagonal, and the coupling
+measurements say it is not.** The joint step has to be built from the couplings,
+not read off the batch file.
+
+A cross-check that the fix is sound: the gate's own bracket for
+`largest_house_size` returns 0.14664, against 0.146656 computed independently
+from arm 6's elasticity here. The same number to five significant figures.

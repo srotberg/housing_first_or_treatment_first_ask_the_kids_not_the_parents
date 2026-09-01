@@ -446,7 +446,20 @@ def bracket(A, param, moment, target, base_v):
     for k, g in groups.items():
         if k == base_key or y_base is None:
             continue
-        near = [y for x, y in g if abs(math.log(x / x_base)) < 1e-6]
+        # NOT A LOG RATIO HERE. x_base is this parameter's value at the base
+        # point, and a parameter is allowed to sit at zero -- utility_cost_of_treatment
+        # does -- so math.log(x / x_base) raises ZeroDivisionError and takes the
+        # whole gate down with a traceback. It did, at 07:27 on 1 September, as
+        # soon as an arm gave that parameter a second value. The group builder
+        # above already drops every x <= 0, so only x_base can be zero, and the
+        # `d` computation forty lines below was already guarded with
+        # `if x_base > 0 else 0.0` -- this was the one site that was not.
+        #
+        # The absolute-or-relative form is identical to the log test whenever
+        # x_base is positive, because |log(x/x_base)| < 1e-6 is |x - x_base| <
+        # 1e-6 * x_base to first order, and it is well defined at zero.
+        near = [y for x, y in g
+                if abs(x - x_base) <= 1e-6 * max(abs(x_base), 1.0)]
         if near and abs(math.log(near[0] / y_base)) <= TRANSFER_TOL:
             ordered.append(g)
     for pts in ordered:
