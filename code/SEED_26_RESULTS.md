@@ -132,3 +132,52 @@ instrument arm 1 has just shown moves `b` by +19.5 per cent and `lambda_d` by
 moment that a joint step can close more cheaply. It also would have collided
 with the seed batch, which is still writing points and committing on the same
 four cores.
+
+## A prediction written down BEFORE arm 4 runs: w_bot is the structural instrument
+
+The comment at line 5881 states the mechanism, and it was written before `w_bot`
+became a scored moment:
+
+> THE LOWER TAIL OF WEALTH IS WHAT DECIDES WHO CAN BE SHUT OUT, and nothing in
+> the loss pins it. [...] A model can carry the right total wealth with far too
+> little of it concentrated, and then no household is ever short of the smallest
+> rent.
+
+That is exactly the state of the anchor. The bottom half holds **5.03 per cent**
+of net worth against a target of 2.50 -- twice as rich as the data -- so no
+household is ever short of the smallest rent, and every homeless household is
+homeless by choice. `homeless by choice = 1.0000` and `homeless who could afford
+it on income = 1.0000` are not two more broken moments; they are the same fact
+as `w_bot` +101 per cent, seen from the housing margin.
+
+**So `w_bot` is not one item on the list of twelve. It is the instrument for the
+structural failure the author asked about**, and one causal chain ties it to
+five separate misses:
+
+```
+bottom half too rich -> nobody priced out of the smallest rent
+                     -> all homelessness is voluntary
+                     -> only the young, who have not saved yet, choose it
+                     -> they are employed, and they are clean
+                     -> the homeless SUD mass is ~0, so mu_H divides by nothing
+```
+
+Arm 4 moves `discount_factor_impatient` from 0.95 to 0.90, which makes the
+impatient type save less and should pull the bottom half's share down. **The
+falsifiable prediction, recorded before the arm lands:** if this chain is right,
+that single arm should move all of these together and in these directions --
+
+| quantity | anchor | prediction |
+|---|---|---|
+| w_bot | 0.050349 | FALLS toward 0.025 |
+| h_1 | 0.001493 | RISES toward 0.00399 |
+| homeless by choice | 1.0000 | FALLS below 1 |
+| share of the homeless in band 1 | 0.968 | FALLS |
+| employed share of the homeless | 0.967 | FALLS toward 0.46 |
+| SUD share of the homeless | ~0 | RISES above 0 |
+
+If `w_bot` falls and the other five do NOT move, the chain is wrong: the bottom
+half's wealth is not what is gating the housing margin, and the missing
+involuntary channel has to come from somewhere else -- which would be a model
+question for the author rather than a calibration one. Either way the arm
+settles it, and the answer is worth more than the elasticity it was launched for.
