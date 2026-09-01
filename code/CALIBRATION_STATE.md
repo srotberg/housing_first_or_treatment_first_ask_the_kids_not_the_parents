@@ -5768,3 +5768,31 @@ outlays over GDP, over total labour income, or something else? Until that is
 answered, `cbar` is the binding constraint of the whole calibration on a target
 nobody can reconstruct, and there is a case for moving it to UNSCORED so the
 search is not driven by it. Not done here.
+
+## "NOTHING LANDED IN TWO FIRINGS" DOES NOT MEAN THE FLEET HAS DRAINED
+
+The engine prompt treats two quiet firings as the signal that every worker has
+finished and stopped, and tells the next firing to respawn. That rule misreads
+the commonest case, and acting on it wastes the rate limit that emptied the fleet
+once already tonight.
+
+**A fresh worker cannot produce a point for about forty minutes.** Its container
+arrives without gfortran, so it installs one (about fifteen minutes) and then
+compiles 38,000 lines at -O3 (about twenty five). Only then does the first solve
+start, and that is another twenty. Two firings thirty minutes apart therefore
+land entirely inside the setup of a round launched just before the first of them,
+and the archive is legitimately empty at both.
+
+Distinguish them before respawning anything:
+
+  - `list_sessions` and read `post_turn_summary`. A worker mid-setup says so --
+    "gfortran install + 40m Fortran compile underway", "run alive; awaiting line
+    4 (pid 2355)". A drained one says it has finished, and a rate-limited one
+    says "You've hit your session limit" with `rate_limit_info.status` at
+    `rejected`.
+  - Only a worker that is IDLE with no run in flight and no result pushed has
+    actually stopped.
+
+At 00:21 on 1 September all five live workers were mid-setup or mid-solve, the
+archive held zero points on the current hash, and respawning would have been
+exactly wrong.
