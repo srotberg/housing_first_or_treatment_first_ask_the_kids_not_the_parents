@@ -150,7 +150,28 @@ OWN = {
     # rather than calibrated, and then pointed at a moment that could never
     # discipline it. `homeless who could afford it on INCOME ALONE` has read
     # exactly 1.0000 at every point measured, which is the same fact.
-    'smallest_rental_relative_to_lowest_income':            'rent50',
+    # THE COST BURDEN ON THE SAME DENOMINATOR AS GAMMA, on the author's
+    # instruction of 1 September: "keep the 26.8% for gamma. maybe use the same
+    # statistic for h2 but % spending over 50% on housing?"
+    #
+    # h_2 is the headcount above half of total EXPENDITURE, target 0.101 from the
+    # CEX. rent50 is the same headcount over INCOME, target 0.175. One parameter
+    # sets both and they were pointing OPPOSITE WAYS:
+    #
+    #     h_2     0.0622 vs 0.101  = -38.4 per cent  -> RAISE the cheapest rung
+    #     rent50  0.4599 vs 0.175  = +163 per cent   -> LOWER it
+    #
+    # That contradiction is what had me reporting rent50's owner with the sign
+    # backwards this evening, until the author pointed out that two thirds of
+    # renters sit in the TOP rung and the burden lives entirely there. On the
+    # expenditure denominator the moment agrees with them and with gamma; on the
+    # income one it does not, and it is the income one that is inconsistent with
+    # how the Cobb-Douglas weight is defined.
+    #
+    # rent50 moves to UNSCORED. It stays parsed and reported at every point,
+    # because it is the number the appendix quotes, and it is no longer a second
+    # target competing for one instrument.
+    'smallest_rental_relative_to_lowest_income':            'h_2',
     # AND THE TOP RUNG HAD NO INSTRUMENT EITHER. largest_house_size owns the
     # share in the largest unit -- h_4 until the author's rename, h_3 now -- and
     # like the bottom rung it sat in the vector with nothing mapped to it. It is
@@ -412,7 +433,7 @@ SKIP = {'h_3',
 # instrument for it. So the moment is scored with three things acting on it and
 # its nominal owner the weakest of the three, which is worth watching rather than
 # pretending is clean.
-UNSCORED = {'sud_homeless',
+UNSCORED = {'sud_homeless', 'rent50',
             # THE PROFILE IS SCORED THROUGH h_share1 ALONE, so the other four
             # shares and all five rates are reported and not scored. h_share1 is
             # the share of the homeless aged 25 to 34, 0.91 against 0.26; these
