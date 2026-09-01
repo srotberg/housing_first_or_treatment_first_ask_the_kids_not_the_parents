@@ -1014,8 +1014,55 @@ def main():
             print(f'  EMITTED {out}: the drug 2x2 off point_{best_tag}. '
                   f'Run it, then run the gate again.')
             return 0
-        print('Keep working the locus. No correction batch emitted.')
-        return 2
+        # THE SECOND FORM OF THE SAME DEADLOCK, found on 1 September a few hours
+        # after the first. Once the drug 2x2 above had been run the archive held
+        # more than three pairs, so this branch stopped emitting the 2x2 -- and
+        # then fell straight through to "no correction batch emitted" again.
+        # The gate was still shut, restore.py could now fit a Jacobian and step,
+        # and nothing called it. Emitting nothing when a remedy exists is the
+        # bug, not the caution.
+        #
+        # So call restore.py's own fit here and emit its step. It is emitted as
+        # a BRACKET -- full, half and quarter -- because restore prints a
+        # CAUTION whenever b is more than twenty-five per cent out, which is
+        # exactly the case that reaches this branch, and a log-linear repair
+        # that far from its verified band is a direction to be trusted rather
+        # than a distance. Three points cost eighteen minutes and return a
+        # measured step size instead of a guessed one.
+        try:
+            sys.path.insert(0, HERE)
+            import importlib, math as _m
+            import numpy as _np
+            _r = importlib.import_module('restore')
+            _t = open(os.path.join(HERE, 'points', f'point_{best_tag}.txt')).read()
+            _v = _r.vec(_t)
+            _b, _d = _r.mom(_t, 'b'), _r.mom(_t, 'lambda_d')
+            _key = tuple(sorted((k, x) for k, x in _v.items() if k not in _r.FREE))
+            (_cb, _cd), _n, _foreign = _r.drug_jacobian(_key)
+            if _cb is None:
+                raise RuntimeError('no comparable points')
+            _A = _np.array([[_cb[1], _cb[2]], [_cd[1], _cd[2]]])
+            _step = _np.linalg.solve(
+                _A, _np.array([_m.log(_r.B_TARGET / _b), _m.log(_r.LD_TARGET / _d)]))
+            if _foreign:
+                _step = _step * 0.5
+            lines = []
+            for _f in (1.0, 0.5, 0.25):
+                _nv = dict(_v)
+                for _pname, _s in zip(_r.FREE, _step * _f):
+                    _x0 = float(_v[_pname]); _lo, _hi = _r.BOUNDS[_pname]
+                    _nv[_pname] = f'{max(_lo, min(_hi, _x0 * _m.exp(_s))):.7g}'
+                lines.append('bash code/run_one_point.sh ' +
+                             ' '.join(f'{k}={_nv[k]}' for k in sorted(_nv)))
+            out = 'batch_drugfit.txt'
+            with open(os.path.join(HERE, out), 'w') as fh:
+                fh.write('\n'.join(lines) + '\n')
+            print(f'  restore.py fits on {_n} points; EMITTED {out}: the full, half '
+                  f'and quarter step off point_{best_tag}. Run it, then run the gate again.')
+            return 0
+        except Exception as exc:
+            print(f'  restore.py could not step ({exc}); no correction batch emitted.')
+            return 2
 
     through.sort()
     worst, tag, v, m = through[0]
