@@ -2652,7 +2652,33 @@
         ! parameter banked at zero, which is not a result about housing, it is
         ! the model refusing to price the street. Zero was the lower end of the
         ! update's own clamp, so the traverse was allowed to walk into it.
-        real(8), parameter :: size_homelessness_floor=10.d0**(-2)
+        ! THE FLOOR MOVED OFF THE RATIO AND ONTO THE STREET ITSELF.
+        !
+        ! It was 10**(-2) and it guarded the wrong quantity. The street is
+        ! housing_size(0)*size_homelessness, a PRODUCT, so a floor on the ratio
+        ! is a floor on the street only at a fixed rung. The author asked twice,
+        ! on 1 September, for the rung substantially higher AND the street
+        ! substantially lower; with the ratio floored at 10**(-2) those two are
+        ! jointly reachable only up to a rung of about 0.55, above which the
+        ! floor forces the street back up. That is an artefact of flooring the
+        ! ratio, not a property of the model.
+        !
+        ! The danger the floor exists for is real and is ABSOLUTE: housing enters
+        ! utility as h**((1-sigma)*relative_share_of_housing) with no shifter, so
+        ! at a risk aversion above one a street of ZERO is minus infinity rather
+        ! than a very small dwelling, homelessness stops being a bad outcome and
+        ! becomes an impossible one, and the model reports exactly zero homeless
+        ! whatever else is true. That danger is at zero, not at 10**(-2).
+        !
+        ! So the ratio may now go to 10**(-6), and street_size_floor below holds
+        ! the product away from zero where it is actually built.
+        real(8), parameter :: size_homelessness_floor=10.d0**(-6)
+
+        ! The absolute floor on the street's service flow. Four orders of
+        ! magnitude below the benchmark street of 0.0058, so it never binds on
+        ! anything the search would want, and far enough from zero that the
+        ! negative exponent stays finite.
+        real(8), parameter :: street_size_floor=10.d0**(-6)
 
         ! AND ONE STEP MAY NOT CROSS THE RANGE. The adjuster is twenty and the
         ! gap is a rate: at a gap of 0.088 the step is 1.76 on a parameter
@@ -26235,7 +26261,20 @@
 
             end if
 
-            housing_size(lowest_housing_grid_point)=housing_size(0)*size_homelessness*(1+increase_homeless_size*5)
+            ! THE ABSOLUTE FLOOR IS APPLIED HERE, not on the ratio at handover.
+            ! This line runs after both the rung and the ratio are set, so it is
+            ! the only place that can see the product. A handover clamp cannot:
+            ! size_homelessness and smallest_rental arrive in whichever order the
+            ! caller wrote them, so a clamp there would depend on the order of
+            ! the command line.
+            housing_size(lowest_housing_grid_point)=max(&
+                housing_size(0)*size_homelessness*(1+increase_homeless_size*5),&
+                street_size_floor)
+
+            write(*,*) "DIAG street size, absolute                       =",&
+                housing_size(lowest_housing_grid_point)
+            write(*,*) "DIAG street as a share of the cheapest unit      =",&
+                housing_size(lowest_housing_grid_point)/max(housing_size(0),10.d0**(-14))
                         
             open(unit=3,file="housing_status_grid_points"//trim(file_number)//".txt",action="write",status="replace")
                 do i=lowest_housing_grid_point,housing_status_grid_size-1
