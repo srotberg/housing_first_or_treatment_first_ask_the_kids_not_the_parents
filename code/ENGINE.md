@@ -413,6 +413,26 @@ out of the archive and measured by an earlier worker. **A batch that needs a bas
 must re-measure the base as one of its own lines.** It costs one solve and it is
 the difference between a bracket and a coincidence.
 
+### NEVER RUN A SOLVE IN THE COORDINATOR'S OWN CONTAINER
+
+Added 2 September 22:09. The coordinator started one arm of the h_1 bracket
+locally with `run_in_background`, to save a worker slot. The container was
+restarted twenty minutes later, the solve died with it, and it left NOTHING --
+no point file, no partial, no log worth keeping. Twenty minutes of a
+twenty-five minute solve, gone, and the only reason it was noticed at once is
+that the harness prints a stopped-task notice.
+
+The coordinator's container is the one that gets restarted, because it is the
+one holding a long conversation. A worker's container is doing one thing and is
+left alone. **Every solve goes to a worker, including the one it seems wasteful
+to spend a slot on.** There are eight slots and a solve costs one; the coordinator
+should be holding none of them.
+
+The same restart is also why the coordinator must re-run step 0 of the firing
+sequence after any restart notice: the checkout survives, but nothing running
+does, and `CALIBRATION_ACTIVE` can be left behind by a supervisor that died
+mid-write.
+
 Readings taken across batches are not worthless -- 1.8e-02 is small against gaps
 of 100 or 700 per cent -- but they cannot settle anything at the ten per cent
 margin, which is exactly where the calibration now is.
