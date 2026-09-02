@@ -26,7 +26,7 @@ SKIP = {'h_3', 'w_bot'}
 # and the cost burden share a denominator. rent50 is the same headcount over
 # INCOME and pointed the OPPOSITE way -- +163 per cent against h_2's -38 -- so
 # scoring both left one parameter with two targets it could not satisfy at once.
-UNSCORED = {'kappa_ued', 'kappa_uem', 'rent50'}
+UNSCORED = {'kappa_ued', 'kappa_uem', 'rent50', 'h_2'}
 BAND = {'beta': (3.0, 4.5)}
 
 # parameter -> the moment it is bracketed on. Kept here rather than imported so
@@ -85,7 +85,7 @@ def _cross_check():
         print('The loss below is over gaps.py\'s set. Reconcile the two files.\n')
 # moments that are printed and deliberately not scored, with the reason
 NOTE = {'h_3': 'conceded, a fact about a grid the model chose',
-        'h_2': 'unowned since the cheapest rung was reassigned to emp_homeless',
+        'h_2': 'OUT OF THE LOSS: the rung targets emp_homeless on the author\'s decision',
         'w_bot': 'conceded with the second beta; nothing moves it at one type',
         'omega_c': 'measure_child_gap=0, so nothing measures it',
         'rent50': 'reported, not scored: same headcount over income, opposite sign',

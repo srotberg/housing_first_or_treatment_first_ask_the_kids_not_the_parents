@@ -121,7 +121,7 @@ STAGES = [
     # the rung and by nothing else, so judging it in a later round than the rung
     # means the rung is set without it and then scored against it afterwards.
     # It belongs in this round, unowned but measured, and the minimax sees it.
-    ['h_1', 'emp_homeless', 'h_share1', 'gamma', 'h_2'],
+    ['h_1', 'emp_homeless', 'h_share1', 'gamma'],
 
     # Then everything else. This tail is mine, not the author's, and it is
     # ordered by nothing in particular because by the time it opens the three
@@ -595,6 +595,23 @@ SKIP = {'h_3',
 # its nominal owner the weakest of the three, which is worth watching rather than
 # pretending is clean.
 UNSCORED = {'rent50',
+            # THE COST BURDEN HEADCOUNT LEAVES THE LOSS, because the author has
+            # decided twice that the cheapest rung targets emp_homeless: "we
+            # decided to set h2 such that 46% of the homeless are employed."
+            #
+            # This is forced, not a preference. The rung already HITS the cost
+            # burden target where it sits -- 0.1098 against 0.101 at a rung of
+            # 0.055, inside ten per cent -- and raising it to serve emp_homeless
+            # takes the headcount to 0.5482 at a rung of 0.4, a gap of +443 per
+            # cent. Scored, that gap dominates emp_homeless's +100 in a MINIMAX,
+            # so the loss would reject every high-rung point and the rung could
+            # never move. Keeping the moment in the loss makes the author's
+            # instruction unexecutable.
+            #
+            # It stays parsed and printed with the unscored moments so the price
+            # of the decision is visible in every table, and it can be restored
+            # in one line if the author wants it back.
+            'h_2',
             # THE PROFILE IS SCORED THROUGH h_share1 ALONE, so the other four
             # shares and all five rates are reported and not scored. h_share1 is
             # the share of the homeless aged 25 to 34, 0.91 against 0.26; these
