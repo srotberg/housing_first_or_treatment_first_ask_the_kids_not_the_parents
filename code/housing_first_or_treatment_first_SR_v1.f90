@@ -2086,7 +2086,21 @@
         ! joblessness is currently PROTECTIVE here, the homelessness rate among
         ! the unemployed being 0.43 times the working-age rate. Enlarging the
         ! pool does not by itself put anyone on the street.
-        real(8), parameter :: unemployment_rate_data=0.139
+        ! 4.9 PER CENT, on the author's instruction of 2 September. It was
+        ! 0.139, which is the SCF 2022 share of households aged 26-64 with NO
+        ! WAGE INCOME -- the figure the diagnostic at 5969 is labelled with --
+        ! and the author's reason for it then was "those are people not
+        ! working". 4.9 is the conventional unemployment rate.
+        !
+        ! WORTH CHECKING BEFORE THIS IS RELIED ON, and not checked here: whether
+        ! model_fraction_unemployed is the same OBJECT as a published
+        ! unemployment rate. It is a share of the model's population in the
+        ! unemployed state, and the model has no separate participation margin
+        ! for it, so it may be nearer the no-wage-income share than the BLS rate.
+        ! If so the two figures are both right about different things and the
+        ! model's counterpart is the 13.9. The moment stays scored either way;
+        ! this note is about which number it should be scored against.
+        real(8), parameter :: unemployment_rate_data=0.049
         real(8), parameter :: unemployment_rate_sud_data=0.1625
 
         real(8) :: relative_share_of_addiction_adj=5*10.d0**(-2)
