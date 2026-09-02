@@ -191,7 +191,18 @@ def main():
 
     mark = os.path.join(HERE, '.gaps_best')
     prev = json.load(open(mark)) if os.path.exists(mark) else {}
-    key = f'{h}|{cfg}'
+    # THE HIGH-WATER MARK IS KEYED ON THE SCORED SET, NOT JUST THE MODEL.
+    #
+    # Removing p_m on the author's instruction took the scored set from 21
+    # moments to 20, and the stored gap vector still had 21 entries. Python
+    # compares lists elementwise and then by LENGTH, so the shorter vector won
+    # and gaps.py announced "PROGRESS" for a round in which nothing had moved --
+    # the loss was 100.1 per cent before and after. A comparison across two
+    # different sets of moments is not a comparison at all.
+    #
+    # The set's signature goes in the key, so changing what is scored starts a
+    # fresh mark instead of silently beating the old one.
+    key = f'{h}|{cfg}|{",".join(sorted(g))}'
 
     # PROGRESS IS LEXICOGRAPHIC, NOT JUST THE MINIMAX.
     #
