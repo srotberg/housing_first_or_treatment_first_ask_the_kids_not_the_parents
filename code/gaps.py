@@ -144,6 +144,18 @@ def gap(k, pair):
     return abs(mo - tv) / abs(tv) if tv else float('nan')
 
 
+# Two worst gaps within EPS are a TIE and the comparison moves to the next
+# moment. See the note at the improvement test for what a strict comparison did.
+EPS = 0.01
+
+
+def _better_vec(new_v, old_v):
+    for a, b in zip(new_v, old_v):
+        if abs(a - b) > EPS:
+            return a < b
+    return len(new_v) < len(old_v)
+
+
 def main():
     _cross_check()
     global _MAP, _OK
@@ -191,11 +203,18 @@ def main():
         if not g:
             continue
         worst = max(g.values())
-        if best is None or worst < best[0]:
-            best = (worst, os.path.basename(f)[6:-4], v, m, g)
+        # THE SAME TIE TOLERANCE HAS TO APPLY HERE, and this is the line that
+        # matters: `worst < best[0]` is how the best point is CHOSEN, and it is
+        # what promoted a point whose drug block had collapsed to -96.3 per cent
+        # over one at +8.7, on a tenth of a point of emp_homeless. Fixing only
+        # the improvement test left the wrong point selected and merely stopped
+        # announcing it.
+        vv = sorted(g.values(), reverse=True)
+        if best is None or _better_vec(vv, best[5]):
+            best = (worst, os.path.basename(f)[6:-4], v, m, g, vv)
     if best is None:
         print('no scoreable point in the current economy'); return 1
-    worst, tag, v, m, g = best
+    worst, tag, v, m, g, _bv = best
     med = sorted(g.values())[len(g) // 2]
 
     mark = os.path.join(HERE, '.gaps_best')
@@ -229,9 +248,29 @@ def main():
     # moment where it is and improves the second worst counts as progress and
     # prints. That is the standard refinement of a minimax and it cannot call
     # something progress that the minimax would call a regression.
+    # THE MINIMAX NEEDS A TIE TOLERANCE OR IT WILL TRADE EVERYTHING FOR NOTHING.
+    #
+    # Strict lexicographic on the sorted gap vector compares element 0 first and
+    # stops the moment it differs. On 2 September that promoted point_2cb1dfff73
+    # over point_a6ff37446f because its worst gap was 100.0 per cent against
+    # 100.1 -- a tenth of a point on emp_homeless, which no instrument can reach
+    # anyway -- while b went from +8.7 per cent to -96.3, h_1 from -63 to -97.7,
+    # h_share1 from -27 to -95.8, the median from 26.7 to 59.5 and the count
+    # inside ten per cent from six to three. The drug block was destroyed and the
+    # tool called it PROGRESS.
+    #
+    # That is correct lexicographic behaviour and useless as a search criterion,
+    # because the binding moment is one nothing can move: any point may buy the
+    # top slot with a rounding-sized gain and pay for it anywhere it likes.
+    #
+    # So two worst gaps within EPS of each other are a TIE and the comparison
+    # moves to the next element. The author's stopping rule is untouched -- it is
+    # still every scored moment inside ten per cent -- and so is the reported
+    # LOSS. This changes only which point is called best while the search runs.
+    _better = _better_vec
     vec = sorted(g.values(), reverse=True)
     old = prev.get(key, {}).get('vec')
-    improved = old is None or vec < [float(x) for x in old]
+    improved = old is None or _better(vec, [float(x) for x in old])
     if improved:
         prev[key] = {'worst': worst, 'tag': tag, 'vec': vec}
         json.dump(prev, open(mark, 'w'), indent=1)
