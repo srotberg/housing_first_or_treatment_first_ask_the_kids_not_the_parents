@@ -143,3 +143,52 @@ unemployment: the level the SCF distribution implies under this schedule, 0.3317
 does not agree with the model's 0.224 target, because the model's units and the
 survey's are not the same object. Taking the level would silently swap the
 source; taking the relativity does not.
+
+## CORRECTION, 19:00: both of the derived numbers above were wrong
+
+The author asked how each was computed. Showing the working broke both.
+
+### The tax: 0.1142 was more than double the right answer. It is 0.0546.
+
+`sd` and the tax were both derived by "take the ratio from the SCF and apply it
+to the model's standing target". For the tax THAT METHOD IS NOT SOUND, because
+the schedule is nonlinear and the ratio is not invariant to how income is
+normalised. Varying the normalisation:
+
+    scale        whole   bottom   ratio    implied target
+    0.25x mean   0.4568  0.3231   0.7075   0.1585
+    0.50x mean   0.3973  0.2492   0.6273   0.1405
+    1.00x mean   0.3317  0.1691   0.5098   0.1142   <- what was reported
+    2.00x mean   0.2614  0.0900   0.3443   0.0771
+    4.00x mean   0.1919  0.0301   0.1568   0.0351
+
+The reported 0.1142 was an artefact of normalising by mean income, a choice made
+without justification.
+
+THE PRINCIPLED NORMALISATION is the one under which the model's OWN whole-economy
+target holds. Solving for it: **scale = 2.886 x mean income**, at which the
+whole-population rate is 0.2240 by construction and
+
+    BOTTOM-HALF AVERAGE INCOME TAX RATE = 0.0546
+
+AND THE AUTHOR'S PROPORTIONAL SCALING WAS CLOSER THAN THE "CORRECTION" TO IT.
+0.224 x 0.4012 = 0.0899 was called a quarter too low; it is in fact too HIGH,
+against 0.0546. The reason is that `T(y)=y-lambda*y^tau` with lambda=0.75 has a
+ZERO-TAX REGION at low income -- `max(y-lambda*y^tau, 0)` binds -- so at the
+bottom the schedule is far more progressive than any proportional rule, not less.
+
+### sd(log income): 0.8112 was the wrong variable. Use 0.8791.
+
+`sd_permanent_productivity` governs the dispersion of PRODUCTIVITY, so the
+sample should be earners, and the variable should be earnings:
+
+    variable   sample                         whole    bottom 50%
+    income     all households, y>0            1.0350   0.8112   <- reported
+    wageinc    positive earnings, age<65      1.0445   0.8791   <- correct
+
+`income` is total household income and includes capital income and transfers,
+which are not productivity, and it retains retirees who have no productivity draw
+in the model at all. The earnings restriction keeps 68 per cent of the bottom
+half's weight.
+
+**Revised targets: tau_l 0.0546, sd(log earnings) 0.8791.**
