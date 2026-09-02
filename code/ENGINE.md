@@ -354,3 +354,24 @@ caught it only because it was a re-measurement of a vector whose answer was
 already known. A control whose expected value is not known in advance cannot
 falsify anything. When a change is meant to be a no-op somewhere, re-measure the
 vector it should not move and state the reference value BEFORE the run.
+
+## A worker that blocks on input is lost, so brief against it
+
+A remote worker cannot be messaged from the engine session. If it ends a turn
+asking a question, it waits forever and its whole batch is dead time -- the
+`beta frontier` worker sat blocked for twelve minutes on "provide line 3 of git
+checkout -B c command", having split a git command across Bash calls and stopped
+to await the rest.
+
+Two lines in every brief prevent it:
+
+- give multi-part git as SEPARATE one-line Bash calls, spelled out, rather than
+  as a block the worker may treat as something to continue;
+- say explicitly: **every Bash call must be a complete command; never leave one
+  half-typed expecting to continue it in a later call.**
+
+And check for it. `get_session` on a worker shows `status_category: need_input`
+with the question in `needs_action`. A blocked worker looks IDLE, which is the
+same status as one that has finished, so idleness alone does not mean done.
+Relaunch rather than wait: the batch file is in the repo and a fresh worker picks
+it up from scratch.
