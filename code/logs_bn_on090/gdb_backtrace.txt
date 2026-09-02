@@ -1,0 +1,39 @@
+=== gdb attach to the hung solver (pid 2264), taken at ~03:35 and ~04:06 elapsed ===
+Process was attached read-only and detached cleanly each time; it remained in state R.
+
+--- backtrace ---
+0x00001459dfa77540 in _gfortran_mminloc0_4_r8 () from /lib/x86_64-linux-gnu/libgfortran.so.5
+#0  0x00001459dfa77540 in _gfortran_mminloc0_4_r8 () from /lib/x86_64-linux-gnu/libgfortran.so.5
+#1  0x00005594af87c426 in stationary_equilibrium_wealth_distribution_of_old (time_period=1)
+        at housing_first_or_treatment_first_SR_v1.f90:11871
+#2  0x00005594af8f7b5b in calibrating_model () at housing_first_or_treatment_first_SR_v1.f90:36246
+#3  0x00005594af8fa9ec in main_program () at housing_first_or_treatment_first_SR_v1.f90:7540
+
+--- locals in frame 1 ---
+wealth_of_top_x_perc_index = 1        <-- still the FIRST of three brackets after four hours
+financial_index            = <optimized out>
+frac_of_household_mas_to_add = <optimized out>
+sum_distribution_used      = <optimized out>
+sum_of_distribution_of_old = <optimized out>
+wealth_counter_2           = <optimized out>
+
+--- module globals read from the live process ---
+housing_price(1)               = 12.048193229648177
+housing_size                   = (0.0058109999999999993, 0.039, 0.058499999999999996, 0.078)
+housing_status_grid_size       = 3
+lowest_housing_grid_point      = -1
+max_amortization_years         = 1
+financial_grid_size            = 32
+include_unsecured_borrowing    = 1
+unsecured_borrowing_limit      = 1.5
+financial_grid                 = (-0.9558720588684082, -0.70227334937270802, -0.48768982595326948,
+                                  -0.31212148861009242, -0.17556833734317701, -0.078030372152523106,
+                                  -0.019507593038130776, 0, 0.00071449625520621479, ... 9.8771962319707143)
+
+--- derived ---
+mask floor = -housing_price(1) * housing_size(housing_status_grid_size-1)
+           = -12.048193229648177 * 0.039
+           = -0.46987953595628
+financial grid points strictly below that floor: -0.95587206, -0.70227335, -0.48768983  (3 of the 7 negative points)
+wealth_matrix cell count = financial_grid_size * (housing_status_grid_size-1 - lowest_housing_grid_point + 1) * max_amortization_years
+                         = 32 * 4 * 1 = 128 cells
