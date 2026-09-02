@@ -342,7 +342,14 @@
         ! counterfactual costs a third of a point's running time and omega is
         ! out of the loss while the parameter is not being searched, so it is
         ! switched off until the other parameters have converged.
-        integer, parameter :: measure_child_gap=0
+        ! A HANDOVER PARAMETER NOW, defaulting to zero, because the author has
+        ! put omega_c in the LAST round: "omega_c comes at the very end in stage
+        ! 5." weight_on_child cannot be calibrated while this is a compile-time
+        ! constant -- nothing measures the child gap, so gaps.py has printed
+        ! "not measured" against omega_c every round. Making it settable lets the
+        ! final round turn it on without a rebuild, and at its default of zero
+        ! every existing point is unaffected.
+        integer :: measure_child_gap=0
 
         ! WHETHER A POINT MEASURES THE TWO DRUG PRICE ELASTICITIES. They are
         ! validation moments, not targets -- the participation margin against
@@ -1001,7 +1008,17 @@
 
         ! Calibrated: earnings of workers with SMI, through the homeless income
         ! share. code/simple reached 0.55 targeting homeless income over average.
-        real(8) :: rho_m=0.55
+        ! HELD AT ONE, ON THE AUTHOR'S INSTRUCTION, 2 September: "rho_d=1,
+        ! rho_m=1. do not lower them."
+        !
+        ! rho_m enters as rho_m**(min(smi,1)*include_rho_m) and include_rho_m is
+        ! zero, so the exponent is zero and the factor is exactly one whatever
+        ! this value is. It sat at 0.55, which read as a forty five per cent
+        ! earnings penalty for serious mental illness that the model does not
+        ! apply. One is what the code actually does, and it carries the same
+        ! decision rho_d carries: the illness costs earnings by costing the JOB,
+        ! not by cutting the wage of a household that keeps one.
+        real(8) :: rho_m=1.d0
 
         ! Calibrated: employment rate given SMI, 30 percent, the midpoint of the
         ! high disability range.
@@ -2868,7 +2885,19 @@
         ! 1 = flat excess RISK, so the multiplier falls with age
         ! 2 = flat MULTIPLIER of 1.6, which external_calibration.tex quotes
         ! A vector coordinate, so all three run from one build.
-        integer :: homeless_death_risk_flat_in_age=0
+        ! ONE, ON THE AUTHOR'S INSTRUCTION, 2 September: "keep it
+        ! homeless_excess_death_risk = 0.00396" and "use =1".
+        !
+        ! Setting 1 holds the excess RISK of death flat in age at 0.00396 and
+        ! lets the MULTIPLIER fall out of it -- 4.41 at 26 down to 1.30 at 65 --
+        ! which is the only one of the three specifications that is age neutral
+        ! in the thing the household actually trades off. It was 0, the
+        ! age-varying Baggett relative-risk profile net of the share the SUD
+        ! mortality already carries.
+        !
+        ! THIS IS NOT BEHAVIOUR PRESERVING. Every point in the archive ran
+        ! setting 0 and none of them scores against this model.
+        integer :: homeless_death_risk_flat_in_age=1
         real(8) :: homeless_excess_death_risk=0.00396d0
 
         ! FOOD STAMPS PER HOUSEHOLD. cbar is the second level-over-mean moment:
@@ -34850,6 +34879,22 @@
                 case ("rho_d")
                     write(*,*) "HANDOVER rho_d:", rho_d, "->", handover_value
                     rho_d=max(min(handover_value,1.d0),0.05d0)
+
+                ! rho_m, WHICH HAD NO HANDOVER AT ALL. Same ceiling and the same
+                ! reason as rho_d: an illness that RAISES the wage is not on the
+                ! table. The author's instruction of 2 September is that both sit
+                ! at one and are not lowered, so this exists to make that
+                ! settable and visible in a point file rather than buried in a
+                ! declaration.
+                case ("rho_m")
+                    write(*,*) "HANDOVER rho_m:", rho_m, "->", handover_value
+                    rho_m=max(min(handover_value,1.d0),0.05d0)
+
+                ! THE CHILD GAP SWITCH, for omega_c in the final round.
+                case ("measure_child_gap")
+                    write(*,*) "HANDOVER measure_child_gap:", &
+                        measure_child_gap, "->", handover_value
+                    measure_child_gap=max(min(nint(handover_value),1),0)
 
                 ! THE SUD MORTALITY LEVEL, WHICH IS SETTABLE BUT WAS NOT
                 ! HANDABLE. It is assigned at 8, the midpoint of the 6 to 10

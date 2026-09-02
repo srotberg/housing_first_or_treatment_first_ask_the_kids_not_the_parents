@@ -132,7 +132,13 @@ STAGES = [
     # author has reserved the decision about it.
     # The last round, the author's own list: "then tau_u, mu_H and lambda_m in
     # the last stage." p_m is NOT in it -- see below.
-    ['tau_u', 'mu_H', 'lambda_m'],
+    ['tau_u', 'mu_H', 'lambda_m', 'sud_homeless'],
+
+    # THE LAST ROUND IS omega_c ALONE. The author, 2 September: "omega_c comes at
+    # the very end in stage 5." It needs measure_child_gap=1 handed in, which is
+    # a handover parameter as of the same day; until then nothing measures it and
+    # the round cannot close.
+    ['omega_c'],
 ]
 
 # A STAGE THAT CANNOT BE SATISFIED MUST NOT DEADLOCK THE ONES BEHIND IT.
@@ -211,7 +217,17 @@ OWN = {
     # A consequence for when the paper is written: the calibration table should
     # show this rate as CALIBRATED, with the SUD share of the homeless as its
     # target, rather than as an assigned number the model happens to reproduce.
+    # IN ROUND 4 ON THE AUTHOR'S INSTRUCTION, 2 September: "this one should be in
+    # round 4: multiple_of_probabilities_of_employment_if_addicted". It owned
+    # sud_homeless while sud_homeless was UNSCORED, so it was the one parameter
+    # that moved with nothing judging it. Both are in the loss now.
     'multiple_of_probabilities_of_employment_if_addicted': 'sud_homeless',
+    # omega_c, THE LAST ROUND. The author, 2 September: "omega_c comes at the
+    # very end in stage 5." weight_on_child was in no map at all -- it appeared
+    # in gaps.py's table so the author could see it, and in next_batch nowhere,
+    # so nothing would ever have stepped it. Its moment is only measured when
+    # measure_child_gap is handed in as 1, which is what the final round does.
+    'weight_on_child':                                     'omega_c',
     'probability_of_voucher_benchmark_used':               'pi_V',
     'size_homelessness':                                   'h_1',
     # NOT given a moment. homeless_excess_death_risk sets the LEVEL of the
@@ -474,6 +490,7 @@ BOUNDS = {
     # clamped it back to thirty times that.
     'size_homelessness':                                   (1e-6, 5.0),
     'smallest_rental_relative_to_lowest_income':            (0.005, 0.40),
+    'weight_on_child':                                     (0.0005, 0.20),
     # In units of average labour income, so 1.0 hands every newborn a year of
     # it. The upper end is deliberately generous: nothing yet says where the
     # response to newborn wealth saturates, and the one thing measured -- age 27
@@ -579,7 +596,7 @@ SKIP = {'h_3',
 # instrument for it. So the moment is scored with three things acting on it and
 # its nominal owner the weakest of the three, which is worth watching rather than
 # pretending is clean.
-UNSCORED = {'sud_homeless', 'rent50',
+UNSCORED = {'rent50',
             # p_m IS NOT USED. The author, 2 September: "p_m is not used...."
             # The SMI population share leaves the loss and smi_onset_level owns
             # nothing; the moment stays parsed and printed.

@@ -69,7 +69,7 @@ declare -A P=(
     # THE FLAT EXCESS DEATH RISK FROM THE STREET, per period. Default is
     # Baggett's implied excess at age 26, so only the age gradient is removed.
     # 0 Baggett ratios, 1 flat excess risk, 2 flat 1.6 multiplier.
-    [homeless_death_risk_flat_in_age]=0
+    [homeless_death_risk_flat_in_age]=1
     [homeless_excess_death_risk]=0.00396
     # ONE TYPE AGAIN, on the author's instruction of 1 September: "Maybe we don't
     # even need the two betas. Go back having just one. I think we don't need the
@@ -126,6 +126,17 @@ declare -A P=(
     # See CALIBRATION_STATE.md for why -- it is a double counting argument and
     # the code had already reached it for rho_m.
     [rho_d]=1.0
+    # rho_m, THE SAME DECISION FOR SERIOUS MENTAL ILLNESS. It enters as
+    # rho_m**(min(smi,1)*include_rho_m) with include_rho_m zero, so the factor is
+    # exactly one whatever the value -- but the declaration held 0.55, which
+    # READS as a forty five per cent earnings penalty the model does not apply.
+    # The author's instruction of 2 September: "rho_d=1, rho_m=1. do not lower
+    # them."
+    [rho_m]=1.0
+    # THE CHILD GAP, off by default and turned on for the final round, where
+    # omega_c is calibrated. Nothing measures the child gap while this is zero,
+    # which is why gaps.py has printed "not measured" against omega_c.
+    [measure_child_gap]=0
     # THE IMPATIENT DISCOUNT FACTOR, ADDED WITH THE TWO-TYPE MODEL. The commit
     # that split households into a patient and an impatient type taught the
     # Fortran's PARAM_HANDOVER and next_batch.py the name and did NOT teach it
