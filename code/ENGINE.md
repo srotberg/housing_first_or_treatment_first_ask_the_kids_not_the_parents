@@ -312,3 +312,45 @@ resets the archive. That was one of the twelve.
   own. That table is what revealed that `discount_factor_impatient`,
   `value_of_life` and `kappa_phi_d_level` all pass through the drug block, which
   is why the hand-built anchors kept exploding.
+
+## A bounds-checked run is part of any change that opens an array index
+
+Added 2 September, after two out-of-bounds bugs in one night.
+
+Unsecured borrowing opened twenty-five renter state loops down to a financial
+index of 1. Every renter array is allocated
+`is_owner*1+(1-is_owner)*negative_financial_grid_size:financial_grid_size`, so
+index 1 did not exist for a renter and all twenty-five loops ran past the lower
+bound of `value_function`, every `policy_function_*` and `warm_start_a_prime`.
+
+**What it looked like.** Not a crash. The borrowing-OFF control solved cleanly,
+passed every one of the seventeen invariants, and returned `w_bot` 3.269452
+against a known 0.029487, homelessness 0.0114 against 0.0842, and drug use of
+exactly zero. It looked like an economy. Hours of fleet time went into arms
+measured on it, and a controlled OFF/ON twin taken from it was reported to the
+author as evidence that borrowing was inert -- when what it actually showed was
+that the ON arm's extra states were writes into memory belonging to something
+else. A SIGSEGV on a later revision is what finally named the cause.
+
+**The rule.** Any change that widens the range of an array index -- a loop
+bound, a floor, a grid size -- gets ONE run under
+
+    gfortran ... -O1 -fcheck=bounds,pointer -g -fbacktrace
+
+before anything is measured on it. It is several times slower than the -O3
+build and it does not need to finish: the first violation is the finding. One
+such run costs less than a single 15-minute solve and would have caught both of
+these in minutes.
+
+**And the reason it is a rule rather than a habit.** The invariants cannot see
+this. They check that the histogram holds the whole distribution, that the
+rental market clears, that the age bands hold all of the homeless -- all of
+which a corrupted-but-consistent solve satisfies. Neither can `gaps.py`: an
+out-of-bounds economy has a loss, and it is a number. The only cheap detector is
+the compiler.
+
+**The corollary for controls.** The OFF control is what caught this, and it
+caught it only because it was a re-measurement of a vector whose answer was
+already known. A control whose expected value is not known in advance cannot
+falsify anything. When a change is meant to be a no-op somewhere, re-measure the
+vector it should not move and state the reference value BEFORE the run.
