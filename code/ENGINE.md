@@ -638,3 +638,18 @@ meet the rental and housing tolerances, which no grid ratio predicts.
 
 DO NOT PUBLISH A THIRD ESTIMATE. Take the measured wall-clock off the first ON
 point and put it here.
+
+## NEVER `pkill -f` FROM THE COORDINATOR
+
+Same trap as `pgrep -f`, which this file already warns about, and it bit anyway
+on 2 September: `pkill -f "hftf"` matched the shell running the command, killed
+that shell mid-script (exit 144), and killed the solver it was aimed at, which
+came back as `hftf exit status 143` -- SIGTERM -- and a point file with
+`NO MOMENTS BLOCK`. A stub was briefly read as a completed solve.
+
+Two rules out of it:
+
+- kill by PID, never by pattern, and read the PID out of the launch;
+- **a point file is only a measurement if it has a MOMENTS block.** `solved in
+  N min` is run_one_point's wall clock and is printed whether the binary
+  finished or was shot. Check for the moments before quoting anything.
