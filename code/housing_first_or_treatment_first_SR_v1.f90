@@ -1198,6 +1198,13 @@
         integer :: secant_warn_count=0
         integer, parameter :: secant_warn_cap=20
 
+        ! THIS 0.85 IS NEVER USED. run_one_point.sh hands rho_d in at 1.0 on
+        ! every run, and the author's instruction of 2 September is that both rho
+        ! parameters sit at one and are not lowered. The declaration is left as
+        ! the value the parameter was introduced at because LEGACY_DEFAULT in
+        ! run_one_point.sh matches old point tags against it; changing it here
+        ! would move the model hash for no behavioural gain and break that match.
+        ! If a run ever reaches this value, the handover did not happen.
         real(8) :: rho_d=0.85
 
         real(8) :: distance_rho_d
