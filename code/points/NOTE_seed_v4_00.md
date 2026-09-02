@@ -1,78 +1,101 @@
-# The already-measured check does not compare MODEL hashes, and there are now
-# stale points on the branch that it will serve
+# batch_s2_00: three points, measured four times, and what each source said
 
-Running `batch_s2_00.txt` (3 lines, the unsecured-borrowing triple) against the
-source with the net-worth fix, `ca9479b`. Recording a hazard found while doing
-it, because it is invisible from any point file and it will bite the next
-worker rather than announce itself.
+This session was asked to measure the three lines of `batch_s2_00.txt` -- the
+unsecured-borrowing triple -- against the net-worth fix `ca9479b`. The source
+moved three more times while it ran, and every one of those moves invalidated
+what had already been measured. Recording the sequence, because the individual
+point files do not show it and because two separate mechanisms conspired to
+make a stale measurement look like a good one.
 
-## The hazard
+## The three lines
 
-`run_one_point.sh` line 283:
+    line 1   include_unsecured_borrowing=1  limit=0.30    tag 4659380b40
+    line 2   include_unsecured_borrowing=0  limit=0.30    tag f9c16d5308   <- OFF control
+    line 3   include_unsecured_borrowing=1  limit=0.60    tag f4a40be627
 
-    if [ -f "points/point_${TAG}.txt" ] && grep -aq "END OF MOMENTS" ...; then
-        echo "run_one_point: $TAG is already measured, skipping"
-
-`TAG` is the md5 of the parameter vector ALONE (line 238). It does not include
-the model hash. The script's own comment at line 174 says so in as many words:
-"the already-measured check does not compare model hashes". That was written
-about the one-type to two-type change, where a new parameter NAME changed every
-tag and so kept stale points from being served. Nothing changed a parameter
-name this time.
-
-## Why it bites now
-
-The net-worth fix changed the source and nothing else:
+## The source moved under the batch
 
     a3f7ba4  b75ae0454f   the borrowing branch compiles
     848bc9f  51eb57a15e   disarm the latent default(none) trap
-    ca9479b  1b0babfbed   w_bot could not see the borrowing  <- the fix
+    ca9479b  1b0babfbed   w_bot could not see the borrowing        <- batch commissioned here
+    307aa35  e55e1cc855   the borrowing CHOICE was inert
+    358057d  (interim)    the EV fill range broke the economy
+    0f581bb  c823331449   renter arrays had no negative indices
 
-The parameter vectors in `batch_s2_00.txt` are unchanged across that fix, so
-every tag is unchanged. Two point files measured BEFORE the fix are on the
-branch right now:
+Lines 1 and 2 were measured on `1b0babfbed`; line 3, started later, built
+`e55e1cc855` without anything announcing that the source had changed mid-batch.
+The run log is the only place it shows, in the `built hftf from` line, and only
+if you compare it against the previous line's.
 
-    points/point_4659380b40.txt   MODEL b75ae0454f   = batch_s2_00 line 1
-    points/point_6aadbe9c3d.txt   MODEL b75ae0454f   = batch_s2_02 line 1
+## What survived: nothing, and the reasons differ
 
-Both carry `END OF MOMENTS`. A worker who pulls the branch and then asks for
-either tag gets "already measured, skipping" and a point file whose numbers
-came from the truncated net-worth formula -- the formula the fix exists to
-discard. The run completes, exits zero, and says nothing about the source it
-did not use.
+- Lines 1 and 2 on `1b0babfbed`: invalidated by `307aa35` in its own words --
+  "every borrowing arm measured so far". Both passed every invariant, which is
+  the point: the ON and OFF arms agreed because the choice never opened.
+- Line 3 on `e55e1cc855`: invalidated by `0f581bb`. It had already failed two
+  invariants here, both histograms holding 1.4954 of the distribution instead
+  of 1.0, the same number to eight figures on income and on wealth. That is the
+  out-of-bounds write `0f581bb` names, seen from the outside: a renter's
+  financial index started at the zero index in all forty-two allocations while
+  the borrowing commit had opened twenty-five renter state loops down to index
+  1. The 1.4954 is recorded in `point_f4a40be627.txt` as measured.
 
-## What happened here
+`0f581bb` withdraws the "borrowing is inert" reading too. So after four
+measurements of three points, whether anyone borrows is still unmeasured.
 
-Line 1 of this batch escaped it by timing, not by design. The run started
-before `point_4659380b40.txt` had been pulled into the working tree; the file
-arrived mid-solve, in the rebase onto `a1d8621`. The solve was already past
-line 283 and went on to overwrite the stale file with a measurement under
-`1b0babfbed`, which is the wanted outcome. Had the pull come one minute
-earlier, this session would have committed the old numbers as its result and
-reported success.
+## Two ways a stale point gets served as a good one
 
-Lines 2 and 3 are not exposed: no point file on the branch carries their
-vectors. `grep -l unsecured_borrowing_limit points/*.txt` returns exactly the
-two files above, so those two tags are the whole of the exposure today.
+Both fired in this session, and neither announces itself.
 
-## What would close it
+**1. The skip check ignores the MODEL hash.** `run_one_point.sh` line 283 skips
+when `points/point_<TAG>.txt` exists with `END OF MOMENTS`, and `TAG` (line 238)
+is the md5 of the parameter vector alone. The script's own comment at line 174
+says so: "the already-measured check does not compare model hashes". It was
+written when a new parameter NAME changed every tag; nothing changed a name
+across any of the four source moves above, so every tag stayed put while the
+economy underneath it changed three times. Line 1 escaped only by timing -- the
+stale `point_4659380b40.txt` arrived in a rebase mid-solve, after line 283 had
+already been passed. One minute earlier and this session would have committed
+the pre-fix numbers and exited zero.
 
-Not fixed here -- the instruction for this batch is to measure three points and
-not to patch the harness, and the check is load-bearing for other callers.
-Stating the options rather than choosing one:
+**2. A concurrent worker's stale point wins the rebase.** Line 3's push hit a
+conflict: another session had measured `f4a40be627` on `1b0babfbed` and pushed
+first. Both files are 240 lines and differ only in numbers; nothing but the
+`MODEL` line distinguishes the superseded economy from the current one, and
+`git` has no reason to prefer either. Resolved by reading the `MODEL` line and
+keeping `e55e1cc855`. A resolution that took "theirs" on principle, or that
+diffed the moments and picked the one that passed its invariants, would have
+kept the wrong file -- the stale one is the one that passes.
 
-- have the skip compare the recorded `MODEL` line against `MODEL_HASH` and
-  re-solve when they differ, which is the direct reading of what the check was
-  always for;
-- or put the model hash into the tag, which is honest but orphans every point
-  in `points/` on every source edit, including comment-only ones;
-- or, narrowest, delete the two stale files above, which fixes today and leaves
-  the mechanism in place for the next source fix.
+## Re-measuring
 
-The first is the only one that survives the next net-worth-shaped change.
+All three lines are being re-run on `c823331449`. Line 2, the OFF control, goes
+first rather than in file order, because `0f581bb` sets it as the gate: "The OFF
+control on this source must reproduce w_bot 0.029487 exactly. Nothing else is
+worth measuring until it does." Its result is reported below.
+
+Line 3's re-run needs `points/point_f4a40be627.txt` removed first or it will be
+skipped, per mechanism 1 above.
+
+## What would close mechanism 1
+
+Not patched here -- this batch's instruction is to measure and not to touch the
+harness, and the check is load-bearing for other callers. The options:
+
+- compare the recorded `MODEL` line against `MODEL_HASH` and re-solve when they
+  differ, which is the direct reading of what the check was always for;
+- or put the model hash in the tag, which orphans every point in `points/` on
+  every source edit, comment-only ones included;
+- or delete stale files by hand as they are found, which is what happened here
+  (`3ec5236`, `5f0eeb5`, and this session) and which does not scale to a source
+  that moves three times in an afternoon.
+
+The first is the only one that survives the next fix.
 
 ## Cross-check against the stylized model
 
-Per TRANSITION_LESSONS.md section 7: this is a harness bug, not a model bug, so
-there is no stylized counterpart to check it against. The stylized model has no
-tag cache. Recorded here rather than in that table for the same reason.
+Per TRANSITION_LESSONS.md section 7. Mechanism 1 is a harness bug with no
+stylized counterpart: the stylized model has no tag cache. The out-of-bounds
+renter arrays are quantitative-only as well -- the stylized model has no
+financial grid and no tenure-keyed allocation. Neither carries across, and both
+are recorded here rather than in that table for that reason.
