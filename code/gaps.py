@@ -47,6 +47,11 @@ OWN = [
     ('labor_income_tax_rate', 'tau_l'),
     ('sd_permanent_productivity', 'sigma_y'),
     ('smi_onset_level', 'p_m'),
+    # BOTH ADDED ON THE AUTHOR'S INSTRUCTION AND BOTH MISSED HERE. next_batch
+    # gained them and gaps.py did not, which is the third time these two files
+    # have drifted apart on the scored set in one evening -- rent50, then h_2,
+    # now these. The cross-check at the top is what caught it each time.
+    ('multiple_of_probabilities_of_employment_if_addicted', 'sud_homeless'),
     ('weight_on_child', 'omega_c'),
 ]
 
@@ -73,9 +78,12 @@ def _cross_check():
     # next_batch keeps b and lambda_d OUT of OWN because the drug block is
     # bracketed by the gate rather than by a single arm, so they must be added
     # back before comparing or the check cries wolf about two moments both files
-    # score. omega_c is dropped from both sides: it is in OWN here so that its
-    # row prints, but measure_child_gap=0 means nothing ever measures it.
-    mine = {m for _, m in OWN} - SKIP - UNSCORED - {'omega_c'}
+    # score. omega_c used to be dropped from both sides here, on the ground that
+    # measure_child_gap=0 meant nothing measured it. That stopped being true when
+    # the author put omega_c in round 5 and the flag became settable, so the
+    # exclusion was itself masking a divergence -- the check reported one and hid
+    # the other. Both sides now compare the full set.
+    mine = {m for _, m in OWN} - SKIP - UNSCORED
     theirs = (set(_nb.OWN.values()) | set(_nb.GATE)) - _nb.SKIP - _nb.UNSCORED
     if mine != theirs:
         for m in sorted(theirs - mine):
@@ -87,7 +95,7 @@ def _cross_check():
 NOTE = {'h_3': 'conceded, a fact about a grid the model chose',
         'h_2': 'OUT OF THE LOSS: the rung targets emp_homeless on the author\'s decision',
         'w_bot': 'conceded with the second beta; nothing moves it at one type',
-        'omega_c': 'measure_child_gap=0, so nothing measures it',
+        'omega_c': 'round 5 only; measured when measure_child_gap=1 is handed in',
         'rent50': 'reported, not scored: same headcount over income, opposite sign',
         'y_u': 'mortality pinned at 8 by the author; goes to a robustness run'}
 
