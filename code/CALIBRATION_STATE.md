@@ -1,4 +1,4 @@
-# READ THIS FIRST -- CURRENT STATE, 2 September 07:45
+# READ THIS FIRST -- CURRENT STATE, 2 September 10:15
 
 This file is 7,500 lines and grows by a section every firing. The sections below
 are a RECORD, newest first, and several of the older ones are now KNOWN FALSE.
@@ -6,7 +6,7 @@ Do not act on anything below without checking it against this block.
 
 ## What is true right now
 
-Model `2f7c317e75`. 26 points.
+Model `2f7c317e75`. 29 points.
 
 ROUND 1 IS EIGHT OF NINE. Point `35e8286c4e` (equally `db14af8e82`, the
 0.75/0.99980 pair). Only `beta` is out.
