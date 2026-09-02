@@ -2503,13 +2503,21 @@
         !
         ! BEA fixed assets over NIPA output puts private nonresidential fixed
         ! assets at roughly two years of GDP and all private fixed assets,
-        ! residential included, at roughly three. Three is the number the life
-        ! cycle literature uses for this sentence, so three is what is set here,
-        ! and the run reports loudly if beta pins at a bound trying to reach it.
-        ! If the number should be two, on the argument that the residential
-        ! stock is outside household wealth in this model, this is the one line
-        ! to change.
-        real(8), parameter :: wealth_to_output_data=3.0d0
+        ! residential included, at roughly three.
+        !
+        ! SET TO 2.5 ON THE AUTHOR'S INSTRUCTION, 2 September. Three was the
+        ! all-private-fixed-assets figure, which includes the residential stock;
+        ! the paragraph above already argued that stock is outside household
+        ! wealth here, because include_homeownership is 0 and the rental stock
+        ! sits on the rental companies' books. Two is the nonresidential figure
+        ! and 2.5 is between them.
+        !
+        ! What it changes: at the round 1 point beta reads 2.452826, which is
+        ! -18.2 per cent against 3.0 and -1.9 per cent against 2.5. It was the
+        ! ONE round 1 moment that could not be reached -- discount_factor was
+        ! exhausted at 0.99995 and buying beta through pi_eu cost four other
+        ! moments -- and at 2.5 it is inside ten per cent without further search.
+        real(8), parameter :: wealth_to_output_data=2.5d0
         real(8) :: wealth_to_output_model_1
         real(8) :: gap_discount_factor_1
         real(8) :: previous_gap_discount_factor=0
