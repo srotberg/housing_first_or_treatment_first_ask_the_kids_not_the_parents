@@ -1,101 +1,63 @@
-# READ THIS FIRST -- CURRENT STATE, 2 September 15:57
+# READ THIS FIRST -- CURRENT STATE, 2 September 17:13
 
-Model `f9048e2563`. The patient-borrowing restriction is MERGED, on the author's
-instruction, without waiting for the validating pair. **SEVEN scoreable points.**
+Model `6d75e61a1d`. **EIGHT scoreable points**, all borrowing OFF.
 
     LOSS (minimax over scored) 652.2%   median 28.8%   5 of 20 inside ten per cent
     best point 9d84ecf295
 
-The merge moved the hash from 841e04b785 and the archive SURVIVED it, because
-the restriction is provably inert for every point held: its whole effect sits
-inside `if (include_unsecured_borrowing==1)` and all seven ran with borrowing
-off. `model_hash.resolve_for_point` applies an INERT_CHANGES rule against the
-POINT'S OWN VECTOR, which is what a source-level equivalence table cannot do.
-It says nothing about a borrowing-ON point, deliberately: one measured before
-the merge had BOTH types on the negative grid and must never pool with one
-measured after.
+## THE BORROWING MODEL WAS BROKEN ALL DAY AND IS NOW FIXED
 
-## THE THETA x LAMBDA SQUARE IS COMPLETE, and it does not tell one story
+`min(financial_grid,0)` was read three different ways in one model:
 
-All four cells are exact vector matches, borrowing off, differing only in
-`lambda_addiction` and `relative_share_of_addiction_1`:
+    optimiser, 22598      scaled the PRINCIPAL by housing_price*housing_size
+    budget check, 24054   DROPPED it -- max(amortization_used-1,0) is 0 for a renter
+    interest, 9143 +14    treated it as an ABSOLUTE amount, times the rate
 
-                      lambda=2.79953             lambda=8.0
-    rsa1=0.463        b 0.4072  lambda_d 0.2939  b 0.3946  lambda_d 0.3335
-    (theta 0.305)     de322e4659                 9d6e69228d
-    rsa1=0.300        b 0.3516  lambda_d 0.1863  b 0.2406  lambda_d 0.1589
-    (theta 0.0585)    729d412392                 9d84ecf295
+The absolute reading is the one the grid is built in
+(`-unsecured_borrowing_limit*<average labour income>`, the limit documented in
+years of average labour income), so the other two were wrong. It was not an edge
+case: `include_homeownership=0` makes every household a renter, so the check
+dropped the debt at EVERY borrowing state -- 250,039 "budget does not clear"
+lines in one ON solve against ZERO in every OFF log, the residual equal to the
+debt -- and a renter's borrowing was priced by whichever dwelling they chose
+rather than by `unsecured_borrowing_rate`.
 
-Raising lambda 2.79953 -> 8.0:
+All three now agree. The fix branches on `choose_to_rent` in the optimiser,
+scales by the house only when `amortization_used>1` in the check, and charges
+the unsecured rate in the check's income line.
 
-    moment      high theta      low theta      replicate spread
-    b            -3.1%           -31.6%         0.5%
-    lambda_d    +13.5%           -14.7%         3.9%
+**EVERY BORROWING-ON MEASUREMENT MADE BEFORE 17:05 IS VOID.** Four landed from
+workers and all four are correctly dropped by the INERT_CHANGES condition. What
+they establish, and the only thing they establish, is that the machinery
+engages: bottom 10 pct -2.11e-02, bottom 25 pct -5.28e-02. The magnitudes are
+meaningless -- w_bot ran -0.068 to -0.487 against a +0.025 target -- because the
+debt was not priced as an unsecured loan.
 
-**On `b` the author's hypothesis is confirmed decisively.** Lambda's grip on the
-extensive margin nearly vanishes at high theta -- -3.1 against -31.6 per cent, a
-28.5 point gap, an order of magnitude past noise. Bring theta down and lambda
-starts working.
+HOW THE ARCHIVE SURVIVED THE FIX. With borrowing off, renter_floor_by_age puts a
+renter at the zero index, so `min(financial_grid,0)` is zero and every branch
+vanishes: the change is PROVABLY a no-op there. `model_hash.INERT_CHANGES`
+carries the eight OFF points across `f9048e2563 -> 6d75e61a1d` on exactly that
+condition, and refuses to carry an ON point. Eight before, eight after.
 
-**On `lambda_d` it is not attenuation but a SIGN FLIP.** 13.5 against 14.7 in
-magnitude is inside the 3.9 per cent replicate spread and is not a difference;
-the direction is. At high theta raising lambda RAISES the disorder rate, at low
-theta it lowers it, and +13.5 per cent is three and a half spreads clear of zero.
+## In flight
 
-TWO CAUTIONS ON READING THIS SQUARE, both from the worker and both right. Every
-cell is far from target -- b is 343 per cent high here and lambda_d 806. And
-neither lambda column is near the calibrated range: points at rsa1=0.463 that
-land close to b=0.089 and lambda_d=0.0368 carry lambda around 21-24, not 2.8-8.
-This is a local derivative in a region the calibration has not reached, not a
-statement about the model at its solution.
+    01LE81hy  wip/bn-on075fix   ON, limit 1.50, impatient 0.75, FIXED model
+    01FXejQo  wip/bn-on090fix   ON, limit 1.50, impatient 0.90, FIXED model
+    01X22Kdh  wip/patient-floor2  the restriction pair, timing + neutrality
 
-The cell reproduces across two independent solves: point_82a955b244 sits at the
-same rsa1 and lambda with b 0.3935 and lambda_d 0.3327, 0.3 and 0.24 per cent
-away, both inside the replicate spread.
+Both ON briefs COUNT THE BUDGET FAILURES FIRST and are told that nothing else in
+their report means anything if the count is still large. That check is now the
+gate on believing any borrowing result.
 
-## THETA'S SEARCH FLOOR EXCLUDED ITS OWN SOLUTION -- fixed 16:05
+## Still open, and unchanged by today
 
-The author asked whether lambda_d, b and theta needed wider ranges. Checked
-against measured brackets: b's instrument (lambda_addiction, 0.5 to 20000) and
-lambda_d's (addiction_scalar_1, 1e-30 to 1.0) are both adequate and both
-bracket their targets. theta's did not.
-
-`relative_share_of_addiction_1` was bounded (0.40, 0.58) in next_batch.py. theta
-falls monotonically in it and the target is bracketed at 0.463 -> 0.3050 and
-0.300 -> 0.0585, so the solution is near 0.36-0.38 -- BELOW the old floor. The
-gate could propose only the upper half of a bracket whose answer lies in the
-lower half, so no number of rounds could ever have reached theta's target. This
-is a search failure and not a modelling one, and it has been capping the drug
-block silently.
-
-Now (0.25, 0.60). The floor is 0.25 rather than lower because rsa1=0.200
-returned theta as the -1 empty-population sentinel on an older source and that
-defect is unresolved. The Fortran clamp was never the constraint: theta_lo is
-0.05, theta_hi 0.70.
-
-discount_factor_impatient searches (0.50, 0.995), which contains the 0.93 the
-author predicts, so that search is not range-limited either.
-
-## Borrowing: the OFF control is in, every ON arm is still pending
-
-point de322e4659. w_bot 0.0247429, -1.03 per cent, ON TARGET -- and NOT ONE
-bottom-percentile share is negative: +1.213e-04 / +6.064e-04 / +1.213e-03
-against data -2.250e-03 / -4.220e-03 / -4.460e-03, and the three are exactly
-1x, 5x and 10x each other, so the whole bottom decile sits at ONE grid point.
-The tail is the wrong sign AND degenerate while w_bot is within one per cent:
-**w_bot is not disciplining the bottom tail.** That is the case for borrowing.
-
-STILL NO BORROWING-ON POINT EXISTS. Three workers backgrounded their solver and
-went idle without pushing; a cloud worker cannot be messaged, so those solves
-are gone. Re-launched on the merged model:
-
-    01A67Ru9  wip/bn-on075m   ON, limit 1.50, impatient 0.75
-    01Xs23gX  wip/bn-on090m   ON, limit 1.50, impatient 0.90
-    018oVEbn  wip/patient-floor  the restriction pair, now informational only
-
-The pair is no longer a gate but its numbers still matter: it is the only thing
-that will say whether barring the patient type MOVED THE MOMENTS. If it did,
-the restriction is a model change and not a speed setting.
+- theta's search floor excluded its own solution and is fixed: rsa1 bounded
+  (0.40,0.58) while theta=0.162 sits near 0.36-0.38. Now (0.25,0.60).
+- the theta x lambda square is complete: lambda's grip on b nearly vanishes at
+  high theta, -3.1 against -31.6 per cent, and on lambda_d the sign FLIPS. Both
+  columns sit well below the calibrated lambda range of 21-24.
+- the joint round-1 + round-2 solve is authorised and not yet built.
+- rsa1=0.200 returns theta as the -1 empty-population sentinel. Unresolved.
 
 ## The record below is from 13:25, and the header above supersedes it
 
