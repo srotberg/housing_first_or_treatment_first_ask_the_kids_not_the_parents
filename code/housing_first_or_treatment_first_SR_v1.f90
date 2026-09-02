@@ -17785,7 +17785,7 @@
                                 !$omp& size_of_smallest_house_hhld_can_buy,model_average_owner_occupied_unit_size,has_house,&
                                 !$omp& in_retirement,newborn_household,lump_sum_transfer,&
                                 !$omp& scaled_household_size,one_period_before_death,median_income,&
-                                !$omp& warm_start_a_prime,warm_start_ready)
+                                !$omp& warm_start_a_prime,warm_start_ready,renter_floor_by_age)
                         
                                 do financial_index=newborn_household*negative_financial_grid_size+&
                                     (1-newborn_household)*(has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span))),&
@@ -24539,7 +24539,7 @@
                                     !$omp& price_of_addictive_good,policy_function_treatment,&
                                     !$omp& avg_income_to_use_1,avg_income_to_use_2,policy_function_labor_supply,in_retirement,&
                                     !$omp& median_income,financial_grid,risk_free_rate,median_income_calibrated,is_addicted_1,&
-                                    !$omp& unsecured_borrowing_rate,&
+                                    !$omp& unsecured_borrowing_rate,renter_floor_by_age,&
                                     !$omp& survival_probability_for_dist_iteration) &
 !
 ! voucher_index_1 IS PRIVATE, NOT SHARED. It is WRITTEN inside this loop, once
@@ -25019,7 +25019,7 @@
                                         !$omp& value_of_initial_assets,track_housing_1,addiction_probabilities,&
                                         !$omp& policy_function_frac_spent_on_addiction,policy_function_total_consumption,&
                                         !$omp& price_of_addictive_good,policy_function_treatment,&
-                                        !$omp& is_addicted_1,survival_probability_for_dist_iteration)
+                                        !$omp& is_addicted_1,survival_probability_for_dist_iteration,renter_floor_by_age)
                                                                                             
                                         do financial_index=newborn_household*negative_financial_grid_size+&
                                             (1-newborn_household)*(has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span))),&
@@ -25307,7 +25307,8 @@
                                 !$omp& shared(distribution_implied_private,distribution_implied,track_housing_1,&
                                 !$omp& total_number_of_threads,time_period,age_index,has_mortgage,has_house,&
                                 !$omp& years_left_on_mortgage_index,newborn_household,&
-                                !$omp& unemployment_index,employment_index,voucher_index,index_of_smallest_house_hhld_can_buy)
+                                !$omp& unemployment_index,employment_index,voucher_index,index_of_smallest_house_hhld_can_buy,&
+                                !$omp& renter_floor_by_age)
                                                                                     
                                 do financial_index=newborn_household*negative_financial_grid_size+&
                                     (1-newborn_household)*(has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span))),&
