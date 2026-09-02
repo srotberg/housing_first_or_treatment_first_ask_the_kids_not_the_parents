@@ -16,6 +16,30 @@ Three sequential cold runs of the one vector are in flight, writing
 points/DETERMINISM.md, reporting the spread on every targeted moment. Nothing
 should be concluded from any single-run bracket until that lands.
 
+**WHERE THE DIFFERENCE SITS, and it is evidence rather than a guess.** Diffing
+the two run files line by line, 347 lines differ by more than 1e-6 relative, and
+the largest are all in ONE place: the old-age renter wealth profile. It rises
+monotonically with age -- 10.4 per cent at 74, 18.1 at 81, 25.6 at 85 -- and
+everything else is an order of magnitude smaller. That is the output of
+stationary_equilibrium_wealth_distribution_of_old, which is the routine the
+bounds checker aborted in, and it is a walk with a stopping rule
+(stopping_rule_wealth_dist_of_old, the quartiles) whose numerator loop was
+bounded on renter_floor_by_age(min(max(age_index,1),life_span)) with age_index
+UNSET in that routine.
+
+So the two runs almost certainly disagree because that bound read different
+leftover values of age_index on different execution paths, put a different set
+of cells into wealth_matrix, and stopped the walk at a different place. w_bot is
+a wealth share, so it inherits it directly.
+
+BOTH runs are stamped c823331449, which is BEFORE the fix at d9ff1a8. The
+determinism test is running on 2f7c317e75, which is after it. The prediction is
+therefore specific and falsifiable: the three runs should agree to the 1e-4 the
+earlier REPRODUCIBILITY pair managed. If they do NOT, this explanation is wrong
+and the search moves to the outer equilibrium tolerances, which are loose enough
+to matter on their own -- rental market 2e-2, housing market 2e-2, government
+budget 1e-2, against a calibration objective of ten per cent.
+
 ### A number I reported wrongly, three times
 
 The broken revision e55e1cc855's w_bot is **0.0032694523**, not 3.269452. My
