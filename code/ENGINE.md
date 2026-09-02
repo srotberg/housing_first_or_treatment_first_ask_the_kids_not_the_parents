@@ -611,3 +611,30 @@ impatient=0` against `=1`, same vector, SAME CONTAINER, which is what
 `batch_patient_floor.txt` is. If the moments move by more than the within-
 container floor of 1.21e-03 it is a model change and belongs with the author,
 not a speed setting.
+
+## A LONG BORROWING-ON SOLVE IS NOT A HANG, and here is why that was checked
+
+The borrowing-ON arms ran past 50 minutes against a predicted 25-40, so the
+obvious worry was an unbounded loop. It is not one:
+
+- the stationary distribution loop is capped at `max_distribution_sweeps=200`
+  and stops rather than spins, carrying on with the best distribution reached;
+- `loop_count` advances once per value function solve, and every secant and
+  bisection loop in the file carries a `loop_1<max_loop_count` guard.
+
+So a slow ON solve is slow, not stuck. THE DIAGNOSTIC THAT SETTLES WHERE THE
+TIME GOES is already printed: line 36134 reports `capped =` 1 or 0 for whether
+the distribution hit its 200-sweep ceiling. Read that off the first ON point
+that lands before theorising about the cause.
+
+TWO ESTIMATES OF ON COST HAVE NOW BEEN WRONG, both mine, both too low. The
+first assumed the choice loop widens with the grid; it does not, because the
+warm start searches a +/-3 window that is independent of grid width. The second
+therefore scaled only the state loop, at x1.28. Both ignored that a warm guess
+is LEAST reliable exactly when the choice set has just been widened, and every
+window miss falls back to a full unit-stride sweep of all 32 points -- and that
+opening a borrowing margin may simply need more outer equilibrium iterations to
+meet the rental and housing tolerances, which no grid ratio predicts.
+
+DO NOT PUBLISH A THIRD ESTIMATE. Take the measured wall-clock off the first ON
+point and put it here.
