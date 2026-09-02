@@ -43,9 +43,25 @@ def _git_revs():
 
 
 def build_map(force=False):
-    """{full_hash: semantic_hash} over every committed revision, cached."""
+    """{full_hash: semantic_hash} over every committed revision, cached.
+
+    THE CACHE IS ONLY EVER ADDED TO. `force` means "walk git again", not
+    "throw away what we already know", and the difference is not cosmetic: it
+    used to start from an empty dict on force, walk whatever revisions the
+    checkout happened to have, and write THAT over the cache. In a full clone
+    the two are the same. In a SHALLOW clone -- which is what every worker
+    session gets -- git log sees seven revisions, so one gaps.py run rewrote
+    the tracked 329-entry map down to seven and a worker then pushed the
+    truncated file. Every point whose stamp lived in the discarded entries
+    stops resolving, which reads downstream as "no scoreable point in the
+    current economy": the archive looks empty when it is merely unmappable.
+
+    Merging is always safe. A mapping is from the md5 of a file's bytes to the
+    semantic hash of those same bytes, so an entry can never become wrong, and
+    two sources that disagree about one key cannot exist.
+    """
     m = {}
-    if os.path.exists(CACHE) and not force:
+    if os.path.exists(CACHE):
         try:
             m = json.load(open(CACHE))
         except Exception:

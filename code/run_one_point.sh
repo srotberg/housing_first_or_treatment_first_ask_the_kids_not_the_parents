@@ -280,12 +280,48 @@ fail () {
 # vector's 24, so the comparison was a judgement call, and a worker that judged
 # it wrong silently ran nothing. TAG is the md5 of the full sorted vector, which
 # is the same comparison done exactly, so the check belongs here.
+# ...AND THE ECONOMY HAS TO MATCH TOO. TAG is the md5 of the parameter vector
+# ALONE, so it does not move when the model does. This guard used to test the tag
+# and nothing else, and relied on a parameter RENAME to change every tag whenever
+# the Fortran changed -- see the discount_factor_impatient note above. A change
+# that renames nothing defeats that entirely: after the net-worth fix at ca9479b
+# the reseed of an already-measured vector printed "already measured, skipping"
+# and handed back the file measured on the OLD economy, silently, for as long as
+# anyone kept asking. A worker whose solve merely STRADDLES a model-changing push
+# leaves such a file behind, so this is not a rare case on a branch with a fleet
+# on it.
+#
+# So resolve BOTH the stored stamp and the current source to a semantic hash and
+# require them to agree. Going through model_hash.resolve rather than comparing
+# the raw stamps is what keeps a genuinely behaviour-preserving edit -- a comment,
+# an OpenMP clause -- from throwing away a perfectly good point.
+point_is_current () {
+    python3 - "$1" <<'PYEOF'
+import sys, re, model_hash
+try:
+    text = open(sys.argv[1], errors='surrogateescape').read()
+except OSError:
+    sys.exit(1)
+m = re.search(r'^MODEL ([0-9a-f]+)', text, re.M)
+if not m:
+    sys.exit(1)
+sys.exit(0 if model_hash.resolve(m.group(1)) == model_hash.current() else 1)
+PYEOF
+}
+
 if [ -f "points/point_${TAG}.txt" ] && grep -aq "END OF MOMENTS" "points/point_${TAG}.txt"; then
-    echo "run_one_point: $TAG is already measured, skipping"
-    exit 0
+    if point_is_current "points/point_${TAG}.txt"; then
+        echo "run_one_point: $TAG is already measured on this economy, skipping"
+        exit 0
+    fi
+    echo "run_one_point: $TAG exists but was measured on a superseded economy"
+    mkdir -p points_superseded
+    mv "points/point_${TAG}.txt" "points_superseded/point_${TAG}.$(date -u +%Y%m%dT%H%M%SZ).txt"
+    echo "run_one_point: moved it to points_superseded/ and re-solving"
 fi
 if [ "$LEGACY_TAG" != "$TAG" ] && [ -f "points/point_${LEGACY_TAG}.txt" ] &&
-   grep -aq "END OF MOMENTS" "points/point_${LEGACY_TAG}.txt"; then
+   grep -aq "END OF MOMENTS" "points/point_${LEGACY_TAG}.txt" &&
+   point_is_current "points/point_${LEGACY_TAG}.txt"; then
     echo "run_one_point: $TAG was measured as $LEGACY_TAG before the vector"
     echo "run_one_point: gained a name it is still at the default of, skipping"
     exit 0
