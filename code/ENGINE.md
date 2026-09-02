@@ -462,3 +462,37 @@ The exception is a BUG. A model that is wrong should stop the fleet at once,
 because everything it is measuring is worthless anyway. Three times tonight that
 was the right call -- the build failure, the out-of-bounds arrays, the ambient
 age_index. A target or a grid is not that.
+
+
+## A worker must push to its OWN branch, not the shared one
+
+Added 2 September, after deadlocking a worker with two rules that cannot both
+hold.
+
+The rules were "push after every line" and "never rebase mid-batch". Together
+they are impossible on a shared branch: a plain push is rejected the moment the
+branch moves, and without a rebase the worker can never make it succeed. A worker
+solved its first point at 14:15 and reported "local commits ready; retrying push
+after line 2 solve" -- and every retry failed too, because the ENGINE was pushing
+batch files and notes to the same branch every few minutes. The engine was the
+blocker, and the worker was doing exactly as told.
+
+Rebasing is not the fix. run_one_point.sh rebuilds from the working tree on every
+line, so a rebase between lines can build the next point from a different source
+and split one batch across two economies -- which is the whole reason the
+no-rebase rule exists.
+
+**The fix is a branch per worker.** Brief every worker to push with
+
+    git push origin HEAD:refs/heads/wip/<worker-name>
+
+which never conflicts because nothing else writes there, needs no fetch, no pull
+and no rebase, and leaves the checkout untouched. The engine then collects the
+points with a fetch and a checkout of the paths it wants, at a moment of its own
+choosing.
+
+Until that is in every brief, the interim rule is simpler and also correct: **the
+engine does not push to the shared branch while a batch is in flight.** Hold
+notes and batch files locally and push them when the fleet is quiet. Committing
+process notes about not disturbing running work, in a way that disturbs running
+work, is the specific failure to avoid.
