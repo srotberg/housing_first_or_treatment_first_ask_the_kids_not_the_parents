@@ -1,5 +1,14 @@
 # Two runs of one tag do not agree exactly
 
+> **Followed up in `DETERMINISM.md`.** Three cold sequential runs of one vector
+> on one source put the worst targeted moment at 5.13e-05 and the median at
+> 8.80e-06, so the model IS reproducible to well inside the calibration
+> objective. That note also resolves the separate 2.85 per cent disagreement on
+> tag `f9c16d5308`, which was a bug (an unset `age_index` in the old-age wealth
+> walk, fixed at `d9ff1a8`) and not solver noise. The residual 1e-09 this note
+> describes is still not attributed to a mechanism; the candidates ruled out are
+> listed there.
+
 A tag is the md5 of the parameter vector, and `run_one_point.sh` treats it as
 identifying a measurement: if `points/point_<tag>.txt` exists with an
 `END OF MOMENTS`, the run is skipped. The script works hard to earn that --
