@@ -96,7 +96,12 @@ STAGES = [
     # "actually you can add pi_eu, pi_V, cbar to stage 1". All three are
     # aggregates or policy levels set outside any of the blocks below, so they
     # belong with the macro round rather than in the leftover.
-    ['aleph', 'beta', 'omega_l', 'sigma_y', 'tau_l', 'pi_eu', 'pi_V', 'cbar'],
+    # w_bot JOINS ROUND 1 with the second discount factor as its instrument. The
+    # author, 2 September: "add two betas....and calibrate the impatient beta in
+    # the macro stage (stage 1). half the population needs to be impatient."
+    # beta_type_weight was already 0.5d0, so the half is unchanged.
+    ['aleph', 'beta', 'omega_l', 'sigma_y', 'tau_l', 'pi_eu', 'pi_V', 'cbar',
+     'w_bot'],
 
     # Then the drug block, with theta joining b and lambda_d. theta was in the
     # disorder stage; the author has moved it up beside the two it is coupled to.
@@ -372,6 +377,12 @@ OWN = {
     # This is restoring an instrument removed on a false premise, not a scope
     # change. beta is banded rather than pointed, so the step aims at the band.
     'discount_factor':                                     'beta',
+    # THE IMPATIENT DISCOUNT FACTOR OWNS w_bot. It was dropped when the model went
+    # to one type; the author restored the second type on 2 September because
+    # w_bot is what blocks emp_homeless. The archive already brackets the target:
+    # 0.0417 at an impatient factor of 0.90, 0.0506 at 0.93, 0.0061 at 0.95
+    # against a target of 0.025, so the answer is between 0.90 and 0.95.
+    'discount_factor_impatient':                           'w_bot',
     # AND THE SAME BUG, THREE MORE TIMES. beta was not a special case.
     #
     # A point run does not update ANY parameter internally. Eighteen parameters
@@ -532,15 +543,19 @@ SKIP = {'h_3',
         # W_BOT FOLLOWS THE SECOND DISCOUNT FACTOR OUT, and this is a
         # CONSEQUENCE of the author's instruction of 1 September to go back to
         # one type rather than a separate decision -- it is one line to reverse.
-        # The impatient type was the only thing that moved the wealth share of
-        # the bottom half; with one type nothing does, and a scored moment that
-        # nothing can move holds the ten per cent rule open for ever.
+        # W_BOT IS SCORED AGAIN. The impatient type is back, on the author's
+        # instruction of 2 September, and it owns this moment. The reason it was
+        # unscored -- "with one type nothing moves it" -- expired with that
+        # decision.
         #
-        # It is also not clear the target belongs to this model. The 2.5 per
-        # cent is the SCF bottom-half share of NET WORTH, mostly home equity for
-        # those households, and include_homeownership is 0 -- everyone here
-        # rents and the only asset is financial saving.
-        'w_bot'}
+        # The other objection recorded here stands and the author should keep it
+        # in view: the 2.5 per cent is the SCF bottom-half share of NET WORTH,
+        # which is mostly home equity for those households, and
+        # include_homeownership is 0, so everyone in this model rents and the
+        # only asset is financial saving. The target may be measuring something
+        # the model does not have. It is scored because it is the moment blocking
+        # emp_homeless, not because the mapping is clean.
+        }
 
 # H_2 IS NOT CONCEDED AND MUST NOT BE PUT BACK IN SKIP. I conceded it on
 # 1 September on a misreading and the author caught it.

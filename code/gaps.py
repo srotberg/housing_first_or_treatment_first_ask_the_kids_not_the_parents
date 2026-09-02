@@ -20,7 +20,7 @@ import glob, hashlib, json, os, re, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 _MAP = {}
 _OK = set()
-SKIP = {'h_3', 'w_bot'}
+SKIP = {'h_3'}
 # rent50 is REPORTED, NOT SCORED. The cheapest rung is bracketed on h_2, the
 # headcount above half of total SPENDING, on the author's instruction that gamma
 # and the cost burden share a denominator. rent50 is the same headcount over
@@ -32,7 +32,8 @@ BAND = {'beta': (3.0, 4.5)}
 # parameter -> the moment it is bracketed on. Kept here rather than imported so
 # that a broken next_batch.py cannot stop the author seeing where things stand.
 OWN = [
-    ('discount_factor', 'beta'), ('probability_becoming_unemployed', 'pi_eu'),
+    ('discount_factor', 'beta'),
+    ('discount_factor_impatient', 'w_bot'), ('probability_becoming_unemployed', 'pi_eu'),
     ('size_homelessness', 'h_1'), ('newborn_endowment_scale', 'h_share1'),
     ('relative_share_of_housing', 'gamma'), ('max_food_cost', 'cbar'),
     ('relative_share_of_addiction_1', 'theta'),     ('value_of_life', 'aleph'), ('mu_homeless', 'mu_H'),
@@ -94,7 +95,6 @@ def _cross_check():
 # moments that are printed and deliberately not scored, with the reason
 NOTE = {'h_3': 'conceded, a fact about a grid the model chose',
         'h_2': 'OUT OF THE LOSS: the rung targets emp_homeless on the author\'s decision',
-        'w_bot': 'conceded with the second beta; nothing moves it at one type',
         'omega_c': 'round 5 only; measured when measure_child_gap=1 is handed in',
         'rent50': 'reported, not scored: same headcount over income, opposite sign',
         'y_u': 'mortality pinned at 8 by the author; goes to a robustness run'}

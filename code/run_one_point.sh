@@ -90,7 +90,7 @@ declare -A P=(
     #
     # It is a runtime value with a handover case, so this costs no model change
     # and the archive stays scoreable.
-    [number_of_beta_types]=1
+    [number_of_beta_types]=2
     [utility_cost_of_treatment]=0.0908753
     # THE PRICE OF TREATMENT, HELD AT ZERO. It replaced the utility cost on 31
     # August and was switched back the same day on the author's instruction, so
