@@ -1,63 +1,80 @@
-# READ THIS FIRST -- CURRENT STATE, 2 September 17:13
+# READ THIS FIRST -- CURRENT STATE, 2 September 19:35
 
-Model `6d75e61a1d`. **EIGHT scoreable points**, all borrowing OFF.
+Model `6d75e61a1d`. **THIRTEEN scoreable points. TWO BETA TYPES, and staying.**
 
-    LOSS (minimax over scored) 652.2%   median 28.8%   5 of 20 inside ten per cent
-    best point 9d84ecf295
+    LOSS (minimax over scored)  652.2%   -- pinned by h_1, see below
+    OPEN STAGE minimax          119.4%   -- what the search can actually move
+    best on the open stage      e3bba3efac at +53%
 
-## THE BORROWING MODEL WAS BROKEN ALL DAY AND IS NOW FIXED
+## THE HEADLINE LOSS WAS NEVER A PROGRESS NUMBER, and that cost a day
 
-`min(financial_grid,0)` was read three different ways in one model:
+It is a minimax over all twenty scored moments, but next_batch HOLDS every
+instrument whose moment sits in an unopened stage. h_1 dominates the minimax at
++652 per cent and its instrument, `size_homelessness`, was frozen by the staging.
+Across all thirteen points it took exactly ONE value, 0.149. `addiction_scalar_1`
+took exactly one, 0.0360. The fleet was correctly working stage 0 the whole time;
+the number being reported simply could not move.
 
-    optimiser, 22598      scaled the PRINCIPAL by housing_price*housing_size
-    budget check, 24054   DROPPED it -- max(amortization_used-1,0) is 0 for a renter
-    interest, 9143 +14    treated it as an ABSOLUTE amount, times the rate
+`gaps.py` now prints the OPEN STAGE line alongside the headline. Read that one.
 
-The absolute reading is the one the grid is built in
-(`-unsecured_borrowing_limit*<average labour income>`, the limit documented in
-years of average labour income), so the other two were wrong. It was not an edge
-case: `include_homeownership=0` makes every household a renter, so the check
-dropped the debt at EVERY borrowing state -- 250,039 "budget does not clear"
-lines in one ON solve against ZERO in every OFF log, the residual equal to the
-debt -- and a renter's borrowing was priced by whichever dwelling they chose
-rather than by `unsecured_borrowing_rate`.
+STILL WRONG AND NOT YET FIXED: gaps.py picks its "best point" on the full
+minimax, so it promotes whichever probe sits lowest on a frozen moment. It
+reports 9d84ecf295, which carries `lambda_addiction=8.0` and `rsa1=0.300` --
+values chosen to test a hypothesis, not to fit anything.
 
-All three now agree. The fix branches on `choose_to_rent` in the optimiser,
-scales by the house only when `amortization_used>1` in the check, and charges
-the unsecured rate in the check's income line.
+## Stages 0, 1 and 2 are MERGED
 
-**EVERY BORROWING-ON MEASUREMENT MADE BEFORE 17:05 IS VOID.** Four landed from
-workers and all four are correctly dropped by the INERT_CHANGES condition. What
-they establish, and the only thing they establish, is that the machinery
-engages: bottom 10 pct -2.11e-02, bottom 25 pct -5.28e-02. The magnitudes are
-meaningless -- w_bot ran -0.068 to -0.487 against a +0.025 target -- because the
-debt was not priced as an unsecured loan.
+On the author's instruction: "You need to do clear adjustments on b, lambda d and
+h1." All three were held. The e-fold cap and the drug gate remain.
 
-HOW THE ARCHIVE SURVIVED THE FIX. With borrowing off, renter_floor_by_age puts a
-renter at the zero index, so `min(financial_grid,0)` is zero and every branch
-vanishes: the change is PROVABLY a no-op there. `model_hash.INERT_CHANGES`
-carries the eight OFF points across `f9048e2563 -> 6d75e61a1d` on exactly that
-condition, and refuses to carry an ON point. Eight before, eight after.
+The moment the stage opened the gate found the real obstacle: the archive holds
+only TWO distinct (lambda_addiction, addiction_scalar_1) pairs, so no local
+Jacobian can be fitted for the drug block.
 
-## In flight
+## THREE SEARCH BOUNDS EXCLUDED THEIR OWN SOLUTIONS
 
-    01LE81hy  wip/bn-on075fix   ON, limit 1.50, impatient 0.75, FIXED model
-    01FXejQo  wip/bn-on090fix   ON, limit 1.50, impatient 0.90, FIXED model
-    01X22Kdh  wip/patient-floor2  the restriction pair, timing + neutrality
+Two found today, both now open, neither region ever searched:
 
-Both ON briefs COUNT THE BUDGET FAILURES FIRST and are told that nothing else in
-their report means anything if the count is still large. That check is now the
-gate on believing any borrowing result.
+    relative_share_of_addiction_1   was (0.40, 0.58)   theta's solution is 0.36-0.38
+    discount_factor                 was (0.90, 0.999)  beta needs 1.005, measured
 
-## Still open, and unchanged by today
+`discount_factor` above one is admissible: lifetime utility is a finite 60-period
+sum solved by backward induction. The Fortran clamp was always [0.5, 1.05].
 
-- theta's search floor excluded its own solution and is fixed: rsa1 bounded
-  (0.40,0.58) while theta=0.162 sits near 0.36-0.38. Now (0.25,0.60).
-- the theta x lambda square is complete: lambda's grip on b nearly vanishes at
-  high theta, -3.1 against -31.6 per cent, and on lambda_d the sign FLIPS. Both
-  columns sit well below the calibrated lambda range of 21-24.
-- the joint round-1 + round-2 solve is authorised and not yet built.
-- rsa1=0.200 returns theta as the -1 empty-population sentinel. Unresolved.
+## In flight -- eight workers, all foreground
+
+    drugfit1-4     the drug 2x2 the gate asked for; addiction_scalar_1 moves for
+                   the first time ever
+    dfimp085/090/093/095   the impatient discount ladder off de322e4659
+
+## THE IMPATIENT DISCOUNT IS NOT SETTLED AND 0.75 MAY BE AN ARTEFACT
+
+The author does not believe 0.75 and the archive cannot defend it:
+
+    df_imp 0.55, borrowing off   w_bot 0.029486   ABOVE target
+    df_imp 0.75, borrowing off   w_bot 0.0133 to 0.0269 across seven points
+
+Lowering the discount factor RAISED the bottom half's wealth share, which is
+backwards; and the spread at a fixed 0.75 is a factor of two, as large as
+anything attributable to the parameter. Either there is a composition effect
+through differential mortality -- more impatient, poorer, more homeless, higher
+death rate, so the bottom half fills with young PATIENT households who hold more
+-- or the response is not monotone. The ladder settles it. The base is
+de322e4659 because it is the one point where w_bot is essentially exact, 0.024743
+against 0.025.
+
+## The bottom-half restructuring is CLOSED
+
+The author's decision, twice: too complex and too prone to criticism, and the
+statistics do not convert cleanly. Three of twelve targets do not: h_1's x2 rests
+on an assumption the SCF cannot test because it does not sample the homeless;
+h_2 changes survey, 0.101 in CEX against 0.0783 in SCF on the same population;
+and aleph cannot be rescaled arithmetically. The costed design and its data stay
+in `data/BOTTOM_HALF_TARGETS.md` and `data/CALIBRATION_PLAN_BOTTOM_HALF.md`.
+
+What killed it was not the data, which took minutes: 39.05 per cent of the
+bottom half by wealth OWN THEIR HOME, against a model with
+include_homeownership=0.
 
 ## The record below is from 13:25, and the header above supersedes it
 
