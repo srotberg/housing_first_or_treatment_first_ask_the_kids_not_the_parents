@@ -8,6 +8,41 @@ Do not act on anything below without checking it against this block.
 
 Model `2f7c317e75`. 26 points.
 
+ROUND 1 IS EIGHT OF NINE. Point `35e8286c4e` (equally `db14af8e82`, the
+0.75/0.99980 pair). Only `beta` is out.
+
+    aleph  -5.2 IN   pi_V   -3.8 IN   cbar   -6.3 IN
+    tau_l  +1.0 IN   pi_eu  -3.4 IN   w_bot  -2.9 IN
+    sigma_y -1.7 IN  omega_l -9.1 IN
+    beta   2.4528, -18.2 per cent UNDER the 3.0 floor
+
+Its vector: value_of_life 42.0, max_food_cost 0.0130,
+probability_of_voucher_benchmark_used 0.052, probability_becoming_unemployed
+0.0122, discount_factor 0.99980, discount_factor_impatient 0.75, everything else
+at the anchor.
+
+`w_bot` is BRACKETED, not guessed: impatient 0.62 -> 0.01745, 0.75 -> 0.02393,
+0.85 -> 0.03246 against a target of 0.0250. The 0.85 arm is only 6 of 9 -- it
+overshoots w_bot AND drags cbar to -13.4 -- so 0.75 is the arm to hold.
+
+### beta is the last one, and pi_eu is what costs it
+
+Sorting all 29 points on this economy by beta, every high one carries
+probability_becoming_unemployed at the ANCHOR's 0.0437 (best 2.9823). Dropping it
+to 0.0122 to land pi_eu costs beta about half a unit. That is precautionary
+saving -- less unemployment risk, less buffer stock, less wealth over output --
+and it means pi_eu and beta pull ONE instrument in opposite directions.
+
+discount_factor is close to exhausted on it: 0.99950 -> 2.4133, 0.99980 ->
+2.4528, a slope of 0.040 per 0.0003. Closing 0.587 at that slope wants a discount
+factor ABOVE ONE. discount_factor_impatient does not rescue it either: 0.85
+reaches only 2.4668 and costs w_bot and cbar.
+
+FOR THE AUTHOR: if beta cannot reach the band with pi_eu on target, that is a
+choice between two targets, not a bug, and it is theirs. batch_beta_frontier.txt
+prices it -- one arm trades pi_eu back to 0.0250 to show exactly what beta gains
+and pi_eu pays.
+
 TWO DIFFERENT "BEST" POINTS, and they are not the same point. Say which you mean.
 
   `846f6a0a53` -- what gaps.py names. Loss 729.4 per cent on `lambda_d`, median
