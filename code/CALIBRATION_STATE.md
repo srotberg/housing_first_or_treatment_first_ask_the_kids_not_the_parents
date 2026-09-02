@@ -225,22 +225,55 @@ pair spans two directions and CAN hit both moments. The gate's four-point ladder
 could not, because every one of its arms moved both parameters together along one
 line.
 
-## IN FLIGHT, 23:04
+## THE FIVE "STUCK" BLOCK-0 MOMENTS ARE NOT STUCK. THEIR INSTRUMENTS ALL WORK.
 
-    rung curve   h_2=0.060                        session_01QaoD3S5nNhGUzW1Jisu9yX
-    rung curve   h_2=0.078                        session_018DoUJo9jvMi6gKPsyqXyMU
-    compose      h_2=0.098, sz=0.05775            session_01BAUJrws9Y7JxrPCWpfGwQp
-    compose      h_2=0.105, sz=0.05775            session_01AuA9yBSbJcPfZye6H9uYcc
-    drug probe   as1=0.0280, lambda_addiction=4   session_01WRt9QNPB2Go8tRaXkrDe2U
-    drug probe   as1=0.0240, lambda_addiction=5   session_01KspU2FPHMaFHDnePoubbSP
+Measured 23:13 by scanning the archive for pairs of points differing in EXACTLY
+ONE coordinate. Every one of the five has clean one-coordinate evidence and a
+well-defined slope:
 
-The two compose arms are the first points that carry BOTH solved coordinates at
-once -- the h_1 street size and a rung near where w_bot and theta cross. Whether
-they compose or interfere is the open question. The drug pair are PROBES chosen
-to move along the direction the ratio above says exists; they are not tuned
-values and must not be reported as such.
+    moment   instrument                              d(moment)/d(parameter)
+    gamma    relative_share_of_housing               0.32 to 0.93
+    cbar     max_food_cost                           0.72 (three pairs agree)
+    pi_eu    probability_becoming_unemployed         7.8 to 14.2
+    pi_V     probability_of_voucher_benchmark_used   3.9 to 7.8
+    aleph    value_of_life                           1.9 to 4.0
+    omega_l  relative_share_of_leisure               -0.040 to -0.058
 
-579 points.
+An earlier note in this file said these instruments "have barely been moved".
+That was wrong and is withdrawn: gamma has taken 13 distinct values, cbar 19,
+pi_eu 23. Only `sd_permanent_productivity` has never taken a second value, and
+its moment is already inside ten per cent, so it does not matter.
+
+**What is true is that the LEVELS do not transfer between economies while the
+SLOPES do.** `probability_of_voucher_benchmark_used = 0.048` gives pi_V = 0.271
+in one economy and 0.052 gives 0.466 at the best point. So these cannot be set
+by copying a value from a good point elsewhere; they have to be stepped from
+here, which is what the joint arms do.
+
+## IN FLIGHT, 23:16
+
+    compose      h_2=0.098, sz=0.05775           session_01BAUJrws9Y7JxrPCWpfGwQp
+    compose      h_2=0.105, sz=0.05775           session_01AuA9yBSbJcPfZye6H9uYcc
+    drug probe   as1=0.0280, lambda_addiction=4  session_01WRt9QNPB2Go8tRaXkrDe2U
+    drug probe   as1=0.0240, lambda_addiction=5  session_01KspU2FPHMaFHDnePoubbSP
+    joint HALF   five instruments at 0.5x        session_01Fhj18niLWVBaGzi7PaJExa
+    joint FULL   five instruments at 1.0x        session_01LTq5ScBYsETjoiRCQrCpvL
+
+## HOW FAR BLOCK 0 ACTUALLY IS, per point, no mixing
+
+Of 74 two-beta points on this model, the best counts are:
+
+    point         block-0 minimax   inside      what binds
+    de322e4659         1031.5%      8 of 15     a wrecked equilibrium
+    7e518fbf1c          106.0%      6 of 15     emp_homeless +106, gamma -52, cbar -52
+    2bab3e6f20           97.0%      5 of 15     h_1 -97, gamma -52, cbar -51
+    5f78305512           92.8%      2 of 15     h_1 -85, pi_V +75, lambda_d -75
+
+**No point has block-0 minimax below 97 per cent.** Block 1 is worse: no point
+has more than ONE of its three moments inside ten per cent. Neither block is
+close, and the honest reading of tonight is that the STRUCTURE is now understood
+-- which instrument moves what -- while no single point yet carries more than a
+handful of the answers at once.
 
 ## THE GATE'S DRUG BASE IS ON THE OLD RUNG
 
