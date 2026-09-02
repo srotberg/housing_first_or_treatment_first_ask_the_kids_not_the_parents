@@ -93,3 +93,30 @@ them, which is a deliberate deviation from the usual commit-and-push-after-each
 on different economies answers no question at all. The pushes were deferred to
 the end instead. The 0.039 anchor needed no run: another worker had already
 measured that exact vector on this exact economy.
+
+## The borrowing-OFF twin agrees, on a different economy
+
+`H2_LADDER_OFF.md` is the same three rungs with `include_unsecured_borrowing=0`,
+run by another worker on a different source (`c823331449`). The two ladders are
+NOT comparable point by point -- different economies, different borrowing
+setting -- but they were arrived at independently and they agree on all three
+qualitative findings:
+
+| | ON (here, `6d75e61a1d`) | OFF (`c823331449`) |
+|---|---|---|
+| employed share across 0.060->0.130 | 0.98276 -> 0.98023 | 0.961461 -> 0.954226 |
+| does any pair bracket 0.46? | no, target outside the range | no, target outside the range |
+| `h_1` direction | rises, away from target | rises, away from target |
+| pair bracketing `gamma`=0.268 | (0.100, 0.130) | (0.100, 0.130) |
+
+The employed share is flat in both and falls slightly further OFF than ON
+(-0.0072 against -0.0025), so nothing about the borrowing path is holding it up.
+That the same pair brackets gamma on two different economies is the strongest
+thing in either file: the gamma crossing is a robust property of the rung,
+while the employed share's insensitivity to it is equally robust.
+
+The OFF ladder reads the decoupling the same way and adds the diagnostic this
+one lacks: the income of the homeless RISES with the rung (0.526 -> 0.881 there)
+rather than falling. Raising h_2 does not make the homeless poorer, so it cannot
+make them less employed -- it only makes housing dearer for people who were not
+choosing homelessness on price.
