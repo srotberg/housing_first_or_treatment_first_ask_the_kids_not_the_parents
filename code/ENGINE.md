@@ -537,3 +537,35 @@ real -- the grid went from 4 negative points to 8 with a new limit -- and those
 correctly killed seven points. Solving THROUGH a run of model edits is what
 wasted the two hours. Settle the source first, then launch; a solve started
 before an edit that is already coming is a solve thrown away.
+
+## A WORKER MUST NOT BACKGROUND THE SOLVER
+
+On 2 September three workers were briefed to run their point in the FOREGROUND
+and all three backgrounded it anyway, reported "4h run in flight", and ended
+their turn. Twenty-five minutes later none had woken, none had pushed a point,
+and one -- bn-on075 -- had produced no branch at all, so its entire solve existed
+only inside a container nobody could reach. Cross-session messaging cannot reach
+a cloud worker from the coordinator (`ListAgents` shows no peers and this build
+has no remote send_message), so a worker that goes idle mid-solve CANNOT BE
+NUDGED. The brief is the only control there is.
+
+Say all of this in every worker prompt, not just "foreground":
+
+- Run the solve in the FOREGROUND and do not end your turn while it runs. Do not
+  use `&`, do not use run_in_background, do not register it as a background task.
+- PUSH THE POINT FILE BEFORE WRITING ANYTHING UP. The measurement is the
+  deliverable; the findings file is commentary. A worker that writes prose first
+  and dies has produced nothing.
+- If you must wait, wait with a blocking command, and push whatever exists first.
+
+## HOW LONG A SOLVE ACTUALLY TAKES, measured
+
+Borrowing OFF, 4 cores: 13, 15, 16, 17 minutes across four points on
+841e04b785. Borrowing ON adds seven negative grid points to BOTH the state loops
+and the choice loops for every renter, so expect appreciably longer -- the 0.75
+and 0.90 arms were still solving at 26 minutes.
+
+DO NOT RESPAWN AN ARM BEFORE ITS PLAUSIBLE WINDOW HAS PASSED. Respawning at
+minute 26 of a job that may legitimately take 40 burns a container and produces a
+duplicate point with the same md5. Judge it against these numbers, not against
+impatience.
