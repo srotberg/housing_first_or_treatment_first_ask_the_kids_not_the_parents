@@ -7,7 +7,9 @@ throughout (`include_unsecured_borrowing=0`). `addiction_scalar_1` is dropped
 from this pass: `ROUND2_ARMS.md` arm 2 moved its own moment the wrong way and
 cost four round-1 moments at once.
 
-The base is the round-1 point `35e8286c4e`, the eight-of-nine point named in
+The base is the round-1 point `35e8286c4e` as solved on `MODEL b8dc1077ad`, now at
+`code/points_superseded/point_35e8286c4e.20260902T125525Z.txt` -- see the provenance
+section at the end. It is the eight-of-nine point named in
 `code/CALIBRATION_STATE.md`. Each line moves ONE round-2 instrument off it and
 nothing else.
 
@@ -21,11 +23,12 @@ nothing else.
 
 **All three points carry `MODEL b8dc1077ad`.** So does the base `35e8286c4e`, so
 do both round-2 arms quoted below as rows (`82a955b244`, `e7c7daf5ca`), and so
-does the working tree: `md5sum code/housing_first_or_treatment_first_SR_v1.f90`
+did the working tree AT THE TIME THE BATCH RAN: `md5sum code/housing_first_or_treatment_first_SR_v1.f90`
 is `b8dc1077adc90fe0d9b497289e93e7c5`, ten characters `b8dc1077ad`. Every number
 here is a within-economy comparison against a base measured on the same source.
-No source change landed mid-batch and `housing_first_or_treatment_first_SR_v1.f90`
-was not edited.
+No source change landed mid-batch. `housing_first_or_treatment_first_SR_v1.f90`
+was not edited by this batch; the head has since moved to `e550ca2c82` through two
+upstream commits, which the provenance section at the end records.
 
 All three report `HANDOVER OK: 42 of 42 parameters applied` and `INVARIANTS: all
 PASS`, 16 of 16, zero `INVARIANT FAIL`. Nothing segfaulted and no build failed.
@@ -291,6 +294,55 @@ On the lines measured here the assigned ownership does not match which instrumen
 drives which moment. That is an observation about five steps at five particular
 sizes, not a Jacobian; no step size, sign or crossing point is inferred from it,
 and none should be read into it.
+
+---
+
+## Provenance: the branch head moved under this batch, and the base file moved with it
+
+Recorded because the numbers above cannot be checked against the repository as it
+now stands without it.
+
+**Every point in this file was measured on `MODEL b8dc1077ad`**, and so was the
+base they are all differenced against. That has not changed and nothing above is
+affected. But two commits landed on
+`claude/two-period-addiction-hazard-d7gb61` while this batch was running, and the
+single rebase taken after line 3 brought them in:
+
+- `68c3578`, which **re-solved `point_35e8286c4e` on a newer source** and moved
+  the `b8dc1077ad` reading to
+  `code/points_superseded/point_35e8286c4e.20260902T125525Z.txt`. The file now at
+  `code/points/point_35e8286c4e.txt` carries `MODEL bb2cd48b81` and is NOT the
+  base used here.
+- `de9d7a3`, which changed **`unemployment_rate_data` from 0.139 to 0.049** on the
+  author's instruction, giving source `e550ca2c82`, which is what the working tree
+  holds now.
+
+**The base for every comparison in this file is
+`code/points_superseded/point_35e8286c4e.20260902T125525Z.txt`, not
+`code/points/point_35e8286c4e.txt`.** Its drug block reads `b` 0.408622,
+`lambda_d` 0.294785, `theta` 0.304601 and its `pi_eu` 0.134279 against a 0.139
+target, which is what every table above uses.
+
+### What the new `pi_eu` target does to the counts above
+
+All nine round-1 rows above are scored against the targets that each point file
+carries, which for `pi_eu` is **0.139**, the target in force when all seven points
+were solved. Under the author's new 0.049 target, `pi_eu` is out at every one of
+them -- the seven readings span 0.073962 to 0.150927, and the closest, line 2's
+0.073962, is still +50.9% above 0.049.
+
+So the eight-of-nine counts above become seven-of-nine, and the four-of-nine
+counts become three-of-nine, on the target alone. That re-scoring is arithmetic on
+the readings already in this file; **it is not a measurement.** `probability_
+becoming_unemployed` is pinned at 0.0122 in all seven vectors, so the target does
+not enter the solve at a pinned point, but `de9d7a3` also moved the semantic hash
+(`197407b07d -> 0afbde300f`) and no point in this file has been re-solved on it.
+Nothing here claims these seven points would reproduce on the current source.
+
+`de9d7a3`'s own commit message says the change is expected to pull `beta` and
+`w_bot` further down, and `beta` is already out at all seven points here and
+`w_bot` is the moment lines 1 and 2 break hardest. Those two records are worth
+reading together; this file does not combine them.
 
 ---
 
