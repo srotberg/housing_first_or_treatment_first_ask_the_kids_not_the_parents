@@ -83,35 +83,78 @@ I/O, and not deadlocked.
 
 ## The actual blocker
 
-This is a **two-type** vector (`number_of_beta_types=2`,
-`discount_factor_impatient=0.75`). `run_one_point.sh:175` records that *every*
-point in `code/points/` was measured on the ONE-type model, and the archive's
-solve times — 5 to 27 minutes, mostly 5 to 16 — are all one-type times. There is
-no precedent here for how long a two-type solve takes, and **its total runtime is
-still unknown**: the longest observation is 45 minutes, still in the serial
-phase, still short of writing a moment.
+An earlier draft of this file said two-type solves had no precedent and were
+simply slow. **That was wrong, and the archive says so.** Of the 493 points in
+`code/points/`, **201 are two-type** and they solve in 8 to 27 minutes. The
+comment at `run_one_point.sh:175` -- "every point in points/ was measured on the
+ONE-type model" -- is stale.
 
-The pair therefore needs one container to survive **at least twice an unknown
-runtime that is already over 45 minutes**. The three container lifetimes seen
-tonight were roughly 10, 48 and (attempt 1) at least 11 minutes. In seven hours
-no container has lived long enough to finish even one arm.
+Across all 493 archived points:
 
-That is the finding: not a bug in the model, and not something a different flag
-or vector would fix. The controlled pair, as specified, does not fit inside the
-container lifetime available in this environment.
+| | minutes |
+|---|---|
+| min | 0 (a crash) |
+| median | 10 |
+| p90 | 16 |
+| **max ever recorded** | **27** |
+
+Attempt 3 ran **45 minutes** without writing a moment: 1.7x the slowest point
+ever measured and 4.5x the median. So this vector is not merely "a two-type
+solve"; it is far outside anything the archive has measured.
+
+### What is unprecedented about this vector
+
+| feature | this vector | the archive |
+|---|---|---|
+| `restrict_borrowing_to_impatient` | present | **0 of 493 points** -- the flag is new in `f3fe6d9` and has never been measured |
+| `unsecured_borrowing_limit` | **1.50** | 0.30 in twelve of thirteen points, 0.60 in the thirteenth |
+| `include_unsecured_borrowing=1` | yes | 13 of 493 points |
+
+The borrowing limit is the one to look at: **1.50 is five times the largest
+value ever measured**. And solve time in the archive rises with it --
+
+```
+limit 0.30  ->  9, 10, 11, 13, 13, 13, 16, 17, 17, 17, 22 min
+limit 0.60  ->  21 min
+limit 1.50  ->  this vector, >45 min and still going
+```
+
+A bigger unsecured limit extends the negative asset grid, so a much longer solve
+is the expected cost of this vector rather than evidence of a hang. That is
+consistent with everything observed: converged distribution, 100% of one core,
+steady memory, no error.
+
+For completeness, the one borrowing point that did fail (`f62a932c11`) failed
+quite differently -- SIGSEGV in `fill_ev_table_` at
+`housing_first_or_treatment_first_SR_v1.f90:18414` with
+`housing_status_index=-1`, at 0 minutes, loudly, leaving a `.FAILED.txt`. Our
+three attempts produced no such file and no such trace. It is not the same
+failure and does not bear on this vector.
+
+### Why the pair, specifically, does not fit
+
+One arm needs **more than 45 minutes** -- the true figure is still unknown,
+because no attempt has ever reached the end. The pair needs **two** such solves
+inside **one** container, because the task's own premise is that the
+cross-container spread (1.8e-02) may exceed the effect being measured, which
+makes an arm-1-here, arm-2-there comparison worthless.
+
+Container lifetimes observed tonight: roughly 10 minutes, 48 minutes, and (the
+first) at least 11. The longest was 48. The pair needs something on the order of
+100 minutes of uninterrupted container life, and that has not been seen once in
+seven hours.
 
 ## What would make it measurable
 
-1. **The runtime of one two-type solve**, which nobody has yet. Until that is
-   known there is no way to say whether the pair needs 2 hours or 12.
-2. **An execution environment that outlives it** — a longer-lived or dedicated
-   runner. The "same container" requirement is what makes this binding: two arms
-   that could each be measured across two containers cannot be compared, because
-   the cross-container spread (1.8e-02) swamps the effect being looked for.
-3. Failing that, the question "is `restrict_borrowing_to_impatient` a model
-   change or a speed setting" could be settled on a **one-type** vector, which
-   the archive shows solves in 5-16 minutes and fits comfortably inside a
-   container's life. That changes the vector, so it was NOT done here.
+1. **An execution environment that outlives two solves of this vector** -- a
+   longer-lived or dedicated runner. This is the binding constraint, and it is
+   the only one that matters.
+2. **The runtime of one arm**, still unknown and known only to exceed 45 minutes.
+3. If the question is really "is `restrict_borrowing_to_impatient` a model change
+   or a speed setting", it could be settled far more cheaply at
+   `unsecured_borrowing_limit=0.30`, where the archive shows 9-22 minute solves
+   and a pair fits inside one container comfortably. That changes the vector, so
+   it was NOT done here -- it needs the author's say-so.
 
 ## Rules followed
 
