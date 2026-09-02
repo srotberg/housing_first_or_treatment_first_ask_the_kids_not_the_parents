@@ -180,3 +180,75 @@ NOT ESTABLISHED
     3.0-4.5 band are ALL still unmeasured. No point file has ever been produced.
   - Whether a fix to the amortization multiplier resolves it (not tested; source
     changes not permitted here).
+
+---
+
+## Corroboration from points that DID complete: borrowing-on aggregates are non-physical
+
+The claim in the previous section needed a check, because it would predict that
+unsecured-borrowing points are broken, and yet some have completed. They have:
+13 of the 501 committed points in `code/points/` carry
+`include_unsecured_borrowing=1`. That is not a refutation -- the budget check
+only PRINTS, it never aborts -- so a contaminated run still finishes and still
+writes a point file. The question is what those files contain.
+
+### Every completed borrowing-on point, w_bot and beta
+
+    POINT                 limit  dfi    w_bot                    beta
+    point_0ef155fbde      0.30   0.55   -8.09e+12                -0.891
+    point_31e7181863      0.30   0.90   -7.3507e-03               7.699e+12
+    point_4659380b40      0.30   0.55   -8.09e+12                -0.869
+    point_5168ca9757      0.30   0.70    4.1780e-02               2.735
+    point_65c5d119a5      0.30   0.50   -7.4546e-03               7.706e+12
+    point_6aadbe9c3d      0.30   0.95    7.3827e-02               2.374
+    point_8639fc153e      0.30   0.80    5.3236e-02               2.799
+    point_8967680c10      0.30   0.55   -8.09e+12                -0.869
+    point_9c386ccf18      0.30   0.55   -1.2888e-02               3.411e+12
+    point_deef8f1e37      0.30   0.55    2.9609e-02               2.675
+    point_f0635d6f87      0.30   0.55   -7.4412e-03               7.731e+12
+    point_f4a40be627      0.60   0.55   -2.0814e-02               1.137e+13
+    point_f62a932c11      0.30   0.55   (no w_bot/beta recorded)
+
+`beta` is wealth over GDP, with a target band of 3.0-4.5. Nine of these
+thirteen are not economically interpretable at all: beta of 7.7e+12 or 1.1e+13,
+or NEGATIVE beta of -0.89, and a w_bot of MINUS EIGHT TRILLION where a share is
+expected. These are not near-miss calibrations; they are broken aggregates.
+
+The four that look sane are point_5168ca9757, point_6aadbe9c3d,
+point_8639fc153e and point_deef8f1e37, with beta 2.37, 2.67, 2.73 and 2.80.
+Note that all four sit BELOW the 3.0-4.5 target band.
+
+### This matters for the negativity test specifically
+
+The task frames the bottom-percentile negativity check as the direct test that
+unsecured borrowing is genuinely held in equilibrium, with data values around
+-2.25e-03 to -4.46e-03. Four of the completed points do show a small negative
+w_bot of the right order: -7.35e-03, -7.45e-03, -1.29e-02, -2.08e-02.
+
+They cannot be used as evidence. Every one of those four is a point whose beta
+is 3.4e+12 or larger. The runs that produce a plausible-looking negative bottom
+share are exactly the runs whose wealth aggregate has blown up. A negative
+bottom share from a state where the budget identity is violated by roughly the
+borrowing limit is not evidence that borrowing is being held; it is a symptom of
+the same defect.
+
+The pattern across the nine is itself suggestive: they split into w_bot ~ -8e12
+with beta ~ -0.9, and small-negative w_bot with beta ~ +7.7e12. That is what a
+near-zero or sign-flipped wealth aggregate in a denominator looks like.
+
+### No point above limit 0.60 has ever completed
+
+Every completed borrowing-on point uses `unsecured_borrowing_limit` of 0.30,
+except one at 0.60. The point measured here uses **1.50** -- two and a half
+times the largest limit that has ever produced a point file, and five times the
+value used in twelve of the thirteen. Combined with a financial grid whose most
+negative node is -0.9559, this point sits well outside the region in which the
+borrowing configuration has ever been shown to work.
+
+### Caveat
+
+I have not established that these thirteen were intended as production
+calibrations rather than exploratory probes, and a point file records whatever
+the solve produced without asserting it converged. What can be said without
+qualification is that non-physical aggregates are the common case, not the rare
+case, among completed unsecured-borrowing points.
