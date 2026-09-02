@@ -194,13 +194,32 @@ even though `gdb` proves execution is past it: it is sitting in the unflushed
 stdout buffer. Every attempt reaches this routine, goes silent, and stays silent
 for hours. 445,382,656 bytes is simply where the output stops, in every run.
 
+### The three passes are not equal, and that settles it
+
+`stopping_rule_wealth_dist_of_old` is `(0.25, 0.5, 0.75)`
+(`housing_first_or_treatment_first_SR_v1.f90:27129-27131`), and each pass begins
+by **resetting** `wealth_matrix` from `wealth_matrix_saved`
+(line 11891) and starting again from scratch. So the passes accumulate a quarter,
+a half and three quarters of the old population's mass respectively, one grid
+point per iteration, each iteration costing a full scan of the matrix.
+
+Pass 2 therefore redoes everything pass 1 did and then more; pass 3 more again.
+Measured: **pass 1 alone had been running for more than 66 minutes and was not
+finished** (elapsed 4704s, `wealth_of_top_x_perc_index = 1`).
+
+- A hard lower bound, treating all three passes as no dearer than pass 1:
+  **> 3.3 hours** for this routine.
+- Reading the cost as proportional to the mass each pass accumulates
+  (1 + 2 + 3 = 6 x pass 1): **around 6.6 hours**, for this routine alone, which
+  is not the last thing the solve does.
+
 ### The arithmetic
 
 | quantity | value |
 |---|---|
 | slowest solve in the 493-point archive | 27 min |
-| one arm of this pair | >60 min observed, plausibly 2.5-3 h |
-| the pair, both arms, one container | plausibly 5-6 h |
+| one arm of this pair | pass 1 of 3 unfinished at 78 min; >3.3 h, likely ~7 h |
+| the pair, both arms, one container | >6.6 h, likely 13 h or more |
 | longest container life observed tonight | ~48 min |
 
 The gap is not marginal, and no amount of retrying closes it.
