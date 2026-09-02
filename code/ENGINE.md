@@ -100,6 +100,20 @@ a permission prompt. Compare batch lines against `VECTOR` lines in
 `code/points/` and respawn only what is missing. Nothing landing in two firings
 means the fleet has drained.
 
+**5-. SPLIT FILES MUST BE UNIQUE PER ROUND, LIKE THE BATCHES THEMSELVES.**
+next_batch.py already refuses to reuse a CORRECT_n name, for a reason written out
+below it: a worker reads its line, `git pull --rebase` between lines, and picks up
+whatever the file now says. On 2 September the coordinator then split every round
+into the SAME names -- `batch_st_00.txt`, `_01`, `_02` -- and reused them four
+rounds running. Three workers reported it themselves: *"batch file replaced
+upstream"*, *"file rewriting concurrently -- draining current queue"*, *"batch file
+overwritten, pt 3 new"*. The points are still valid measurements, because each
+records the vector it actually ran, but they are not the arm they were launched
+for and nothing outside the worker's chat says so.
+
+Name the split after the batch it came from -- `batch_c50_00.txt` from
+CORRECT_50 -- and never reuse a number.
+
 **5. Workers — use the whole fleet.** Up to 8 alive, up to 3 lines each, so a
 round of 24 lines fits. At one beta type a solve is about six minutes, so a full
 round lands in roughly twenty minutes. Do not run a narrow round to be careful;
