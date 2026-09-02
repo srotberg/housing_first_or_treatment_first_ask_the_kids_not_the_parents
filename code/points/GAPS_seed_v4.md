@@ -1,6 +1,6 @@
-FIRST POINT in this economy -- nothing to compare against yet.
+loss unchanged; table printed on request.
 
-point_6aadbe9c3d  MODEL fdc6078859  beta types 2  1 points in this economy
+point_6aadbe9c3d  MODEL fdc6078859  beta types 2  3 points in this economy
 LOSS (minimax over scored) 646.4%   median 36.2%   inside ten per cent 5 of 20
 
 parameter                                        value  moment             model      target      gap
