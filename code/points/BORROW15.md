@@ -10,11 +10,13 @@ measured.
 
 ## The headline questions, so far as they can be answered
 
-### Is borrowing inert? No -- households reach the limit.
+### Is borrowing inert? The solved policy reaches the limit; the mass on debt is still unmeasured.
 
-This is answerable without a completed arm, and the answer is that the
-feature is **live, not inert**. The bounds were not merely fixed; the
-behaviour changed.
+The ladder is built as declared and the policy function chooses the
+deepest rung, so the feature is not obviously dead. But the strong form of
+the claim -- that households *hold* debt, and therefore that some
+bottom-percentile wealth share turns negative -- is NOT established by
+anything measured so far. See the caveat below the ladder.
 
 The negative ladder is built exactly as declared. Recovering
 `average_labor_income_calibrated` from the deepest rung the solver printed,
@@ -35,11 +37,36 @@ The negative ladder is built exactly as declared. Recovering
 which reproduces the specified ladder
 `-1.500 -1.102 -0.765 -0.490 -0.276 -0.122 -0.031 0.000` to three decimals.
 
-Households then *use* it. The budget audit described below fires 1,016,518
-times in the 0.75 arm, and in every one of those the position being taken
-is `-0.95587205886840820` -- rung 1, the limit itself. Nobody is sitting at
-rung 7. Whether the resulting bottom-percentile wealth shares go negative
-cannot be stated, because the arm produced no moments block.
+**What the audit hits do and do not show.** The budget audit described
+below fires 1,016,518 times in the 0.75 arm, and the next-period position
+in every one is `-0.95587205886840820` -- rung 1, the limit itself, never
+rung 7 or any rung between.
+
+That call sits inside a nested sweep over the STATE SPACE (age x
+amortization x employment x voucher x housing status x unemployment x
+financial index, `SR_v1.f90:17717-17901`). It is **not mass-weighted**. So
+the count is a count of *states at which the policy function chooses to
+borrow*, not of households holding debt. It establishes that the solved
+policy goes to the limit wherever the audit fires; it does NOT establish
+how much population mass sits on debt.
+
+"Nobody borrows" and "the policy would borrow but no mass reaches those
+states" are different claims, and only the bottom-percentile wealth shares
+separate them. Those need a moments block, which this arm did not produce.
+
+Arm 2 at `discount_factor_impatient=0.90` fires the audit **exactly
+1,016,518 times as well** -- the same count to the digit, the same 19
+distinct residuals, the same single rung. Identical counts across two
+different discount factors are what a CORNER solution looks like: at 0.75
+the implied impatience is 33 per cent a year and at 0.90 it is 11 per
+cent, both far above the 5.5 per cent borrowing rate, so both types want
+the limit and the corner does not move.
+
+That reading makes a falsifiable prediction for arm 3: at 0.96 the implied
+impatience is 4.2 per cent, BELOW the 5.5 per cent borrowing rate, so the
+corner should break and the count should fall sharply. If it does not, the
+audit is firing on something structural rather than behavioural and the
+"borrowing is live" reading here has to be withdrawn.
 
 ### At which impatience does `w_bot` hold its target once debt is available?
 
