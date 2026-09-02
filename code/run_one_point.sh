@@ -36,8 +36,14 @@ declare -A P=(
     # THE RENTAL LADDER: h_3 = rung_ratio_h3 x h_2, h_4 = rung_ratio_h4 x h_2.
     # 2 and 3 are what the author specified; they are settable so a different
     # ladder costs a vector change rather than a model hash.
-    [rung_ratio_h3]=2.0
-    [rung_ratio_h4]=3.0
+    # 1.5 AND 2.0 ON THE AUTHOR'S INSTRUCTION, 1 September: "i wonder, maybe h3
+    # has to be 50% larger than h2 and h4 double h2" and then "I think you have
+    # to shift h2 to be around 0.165....and then h3 to be 50% higher and h4 to be
+    # double". The defaults were left at the old 2.0 and 3.0 for a full day, so
+    # any batch built from a base that did not carry them explicitly silently ran
+    # the old ladder. Found in the parameter audit of 2 September.
+    [rung_ratio_h3]=1.5
+    [rung_ratio_h4]=2.0
     [newborn_endowment_scale]=1.0
     # THE CURVATURE OF THE POSITIVE ASSET GRID. grid(i)=top*((i-61)/24)**e, so a
     # bigger exponent pushes the rungs toward zero. At the inherited 1.5 there
