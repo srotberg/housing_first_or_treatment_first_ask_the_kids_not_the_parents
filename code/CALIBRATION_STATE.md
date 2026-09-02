@@ -1,59 +1,78 @@
-# READ THIS FIRST -- CURRENT STATE, 2 September 15:22
+# READ THIS FIRST -- CURRENT STATE, 2 September 15:57
 
-Model `841e04b785` (was `085d8bf37b`; the hash rule changed, not the economy).
-**SIX scoreable points**, and gaps.py prints a table again.
+Model `f9048e2563`. The patient-borrowing restriction is MERGED, on the author's
+instruction, without waiting for the validating pair. **SEVEN scoreable points.**
 
     LOSS (minimax over scored) 652.2%   median 28.8%   5 of 20 inside ten per cent
     best point 9d84ecf295
 
-THE ARCHIVE CAME BACK BY A HASH FIX, NOT BY SOLVING. Three of the six were
-already on disk and were being discarded because a TARGET edit had moved the
-model stamp. semantic() now blanks the value of the constants in
-TARGET_CONSTANTS, so a target change no longer empties the archive. See the
-section in ENGINE.md before adding a name to that list -- the bar is evidence,
-not the `_data` suffix.
+The merge moved the hash from 841e04b785 and the archive SURVIVED it, because
+the restriction is provably inert for every point held: its whole effect sits
+inside `if (include_unsecured_borrowing==1)` and all seven ran with borrowing
+off. `model_hash.resolve_for_point` applies an INERT_CHANGES rule against the
+POINT'S OWN VECTOR, which is what a source-level equivalence table cannot do.
+It says nothing about a borrowing-ON point, deliberately: one measured before
+the merge had BOTH types on the negative grid and must never pool with one
+measured after.
 
-## The theta x lambda square, all four cells borrowing OFF
+## THE THETA x LAMBDA SQUARE IS COMPLETE, and it does not tell one story
 
-The author's hypothesis: lambda_d is not working because theta is too high.
-Three cells measured, the fourth in flight as session 01QZ3gKv on
-batch_lambda_at_high_theta.txt:
+All four cells are exact vector matches, borrowing off, differing only in
+`lambda_addiction` and `relative_share_of_addiction_1`:
 
                       lambda=2.79953             lambda=8.0
-    rsa1=0.463        b 0.4072  lambda_d 0.2939  IN FLIGHT
-    (theta 0.305)
+    rsa1=0.463        b 0.4072  lambda_d 0.2939  b 0.3946  lambda_d 0.3335
+    (theta 0.305)     de322e4659                 9d6e69228d
     rsa1=0.300        b 0.3516  lambda_d 0.1863  b 0.2406  lambda_d 0.1589
-    (theta 0.0585)
+    (theta 0.0585)    729d412392                 9d84ecf295
 
-At LOW theta lambda is not feeble: 2.79953 -> 8.0 takes b down 31.6 per cent and
-lambda_d down 14.7. The earlier ladder that found lambda feeble ran at high theta
-but on an older stamp, so it is suggestive and NOT a measurement. The missing
-cell is what settles it.
+Raising lambda 2.79953 -> 8.0:
 
-Four replicates at rsa1=0.463 differing only in probability_becoming_unemployed
-give a free reproducibility read on the drug block: theta spreads 1.4 per cent,
-b 0.5, lambda_d 3.9. A difference smaller than that is not a difference.
+    moment      high theta      low theta      replicate spread
+    b            -3.1%           -31.6%         0.5%
+    lambda_d    +13.5%           -14.7%         3.9%
 
-## Borrowing: the OFF control has landed and it is decisive about the tail
+**On `b` the author's hypothesis is confirmed decisively.** Lambda's grip on the
+extensive margin nearly vanishes at high theta -- -3.1 against -31.6 per cent, a
+28.5 point gap, an order of magnitude past noise. Bring theta down and lambda
+starts working.
 
-point de322e4659, findings_bn_off.md. w_bot 0.0247429, -1.03 per cent, on
-target. But NOT ONE bottom-percentile share is negative -- +1.213e-04 /
-+6.064e-04 / +1.213e-03 against data -2.250e-03 / -4.220e-03 / -4.460e-03 -- and
-the three are exactly 1x, 5x and 10x each other, so the whole bottom decile sits
-at ONE grid point. The tail is the wrong sign AND degenerate, while w_bot is
-within one per cent: **w_bot is not disciplining the bottom tail**. It is being
-hit by the 25th-to-50th percentile band.
+**On `lambda_d` it is not attenuation but a SIGN FLIP.** 13.5 against 14.7 in
+magnitude is inside the 3.9 per cent replicate spread and is not a difference;
+the direction is. At high theta raising lambda RAISES the disorder rate, at low
+theta it lowers it, and +13.5 per cent is three and a half spreads clear of zero.
 
-That is the case for borrowing, and it is stronger than the w_bot gap ever was.
+TWO CAUTIONS ON READING THIS SQUARE, both from the worker and both right. Every
+cell is far from target -- b is 343 per cent high here and lambda_d 806. And
+neither lambda column is near the calibrated range: points at rsa1=0.463 that
+land close to b=0.089 and lambda_d=0.0368 carry lambda around 21-24, not 2.8-8.
+This is a local derivative in a region the calibration has not reached, not a
+statement about the model at its solution.
 
-## Still in flight
+The cell reproduces across two independent solves: point_82a955b244 sits at the
+same rsa1 and lambda with b 0.3935 and lambda_d 0.3327, 0.3 and 0.24 per cent
+away, both inside the replicate spread.
 
-    0114Q1zE  wip/bn-on075       ON, limit 1.50, impatient 0.75   no branch yet
-    01GQPgnt  wip/bn-on090       ON, limit 1.50, impatient 0.90   branch up, no point
-    018oVEbn  wip/patient-floor  restriction off vs on, on 1bf95331b1
-    01QZ3gKv  wip/lambda-high-theta  the missing cell
+## Borrowing: the OFF control is in, every ON arm is still pending
 
-`wip/patient-no-borrow` stays UNMERGED until the borrowing arms land.
+point de322e4659. w_bot 0.0247429, -1.03 per cent, ON TARGET -- and NOT ONE
+bottom-percentile share is negative: +1.213e-04 / +6.064e-04 / +1.213e-03
+against data -2.250e-03 / -4.220e-03 / -4.460e-03, and the three are exactly
+1x, 5x and 10x each other, so the whole bottom decile sits at ONE grid point.
+The tail is the wrong sign AND degenerate while w_bot is within one per cent:
+**w_bot is not disciplining the bottom tail.** That is the case for borrowing.
+
+STILL NO BORROWING-ON POINT EXISTS. Three workers backgrounded their solver and
+went idle without pushing; a cloud worker cannot be messaged, so those solves
+are gone. Re-launched on the merged model:
+
+    01A67Ru9  wip/bn-on075m   ON, limit 1.50, impatient 0.75
+    01Xs23gX  wip/bn-on090m   ON, limit 1.50, impatient 0.90
+    018oVEbn  wip/patient-floor  the restriction pair, now informational only
+
+The pair is no longer a gate but its numbers still matter: it is the only thing
+that will say whether barring the patient type MOVED THE MOMENTS. If it did,
+the restriction is a model change and not a speed setting.
 
 ## The record below is from 13:25, and the header above supersedes it
 
