@@ -22595,9 +22595,29 @@
             fixed_cost_to_moving_1+bequest_1+food_stamps_recieved+housing_voucher_recieved+&
             housing_voucher_recieved_2
             
+        ! A NEGATIVE POSITION MEANS TWO DIFFERENT THINGS AND THIS LINE USED TO
+        ! ASSUME ONLY ONE. For an OWNER, financial_grid<0 is mortgage debt
+        ! denominated against the house, so it is right that it comes in scaled
+        ! by housing_price*housing_size. For a RENTER with unsecured borrowing
+        ! there is no house to denominate it against: the grid is built as
+        ! -unsecured_borrowing_limit*<average labour income>, an absolute
+        ! amount, and the fifteen sites that charge unsecured_borrowing_rate all
+        ! read it that way. Scaled by a dwelling, a renter's borrowing was
+        ! priced by the unit they chose -- almost free on the street, expensive
+        ! in the largest rental -- instead of by the interest rate.
+        !
+        ! choose_to_rent is already the tenure of the period the position is
+        ! carried INTO, which is the tenure that decides what the debt is.
+        !
+        ! WITH BORROWING OFF THIS IS A NO-OP, provably: renter_floor_by_age puts
+        ! a renter's floor at the zero index, so min(financial_grid,0) is zero
+        ! and both branches vanish. That is what keeps the archive valid across
+        ! the change.
         consumption_choice=(after_tax_wealth_net_of_expenses-&
-            max(financial_grid(future_financial_index_1),0.d0)-min(financial_grid(future_financial_index_1),0.d0)*&
-            housing_price(time_period)*housing_size(future_housing_status_index_1))/(1+consumption_tax)
+            max(financial_grid(future_financial_index_1),0.d0)-&
+            (1-choose_to_rent)*min(financial_grid(future_financial_index_1),0.d0)*&
+            housing_price(time_period)*housing_size(future_housing_status_index_1)-&
+            choose_to_rent*min(financial_grid(future_financial_index_1),0.d0))/(1+consumption_tax)
 
         total_consumption_choice=consumption_choice
                         
@@ -23969,7 +23989,8 @@
         real(8),intent(in) :: after_tax_wealth_net_of_expenses_1
         real(8) :: frac_used,total_consumption_used,consumption_used,&
             food_stamps_1,assets_1,avg_net_wealth_to_use_1,avg_income_to_use_1,labor_supply_used,income_1,&
-            avg_income_to_use_2,checking_criterion,frac_spent_on_addiction_used
+            avg_income_to_use_2,checking_criterion,frac_spent_on_addiction_used,&
+            neg_scale_1
         ! THE RESIDUAL WAS A MODULE VARIABLE, so every thread wrote the same one.
         ! This routine runs inside the parallel region, so one thread could
         ! overwrite the residual between another thread computing it and testing
@@ -24020,7 +24041,12 @@
         call calculate_income(unemployment_index,employment_index,income_1,&
             avg_income_to_use_1,avg_income_to_use_2,labor_supply_used,in_retirement)        
     
-        income_1=income_1+max(financial_grid(financial_index),0.d0)*risk_free_rate(time_period) 
+        ! The fifteen income sites all read this as
+        ! risk_free*max(a,0)+unsecured_borrowing_rate*min(a,0). This one charged
+        ! only the first half, so the check's income omitted the interest cost of
+        ! a renter's debt that the model itself does charge.
+        income_1=income_1+(risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)+&
+            unsecured_borrowing_rate*min(financial_grid(financial_index),0.d0))
             
         assets_1=2*threshold_for_food_stamps_as_perc_of_average_net_wealth*&
             avg_net_wealth_to_use_1
@@ -24051,10 +24077,27 @@
                                         
         end if
                                                                                                                             
+        ! THE SAME TWO MEANINGS, and this site dropped one of them outright.
+        ! max(amortization_used-1,0) is ZERO for a renter, so a renter's debt
+        ! left the identity altogether and the residual came out equal to the
+        ! debt -- 250,039 "budget does not clear" lines in one borrowing-ON solve
+        ! against zero in every borrowing-OFF log. With include_homeownership=0
+        ! every household is a renter, so this fired at every borrowing state
+        ! rather than at some of them.
+        if (amortization_used>1) then
+
+            neg_scale_1=housing_price(time_period)*housing_size(housing_status_index_used)
+
+        else
+
+            neg_scale_1=1.d0
+
+        end if
+
         budget_residual_1=after_tax_wealth_net_of_expenses_1-&
             ((frac_used*min(financial_grid(fin_index_frac_used),0.d0)+&
             (1-frac_used)*min(financial_grid(financial_index_used),0.d0))*&
-            max(amortization_used-1,0)*housing_price(time_period)*housing_size(housing_status_index_used)+&
+            neg_scale_1+&
             frac_used*max(financial_grid(fin_index_frac_used),0.d0)+&
             (1-frac_used)*max(financial_grid(financial_index_used),0.d0)+&            
             (1+consumption_tax)*(consumption_used+frac_spent_on_addiction_used*total_consumption_used))

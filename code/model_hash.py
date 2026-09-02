@@ -182,6 +182,24 @@ INERT_CHANGES = [
         'when': lambda text: re.search(r'include_unsecured_borrowing=0(?![.0-9])',
                                        text) is not None,
     },
+    {
+        'from': 'f9048e2563',
+        'to':   '6d75e61a1d',
+        'what': "a renter's negative position is unsecured debt, not a mortgage",
+        'why':  'Three sites read min(financial_grid,0) three different ways. The '
+                'optimiser scaled the principal by housing_price*housing_size, the '
+                'budget check dropped it via max(amortization_used-1,0), and the '
+                'fifteen interest sites treated it as absolute. All three now agree '
+                'with the absolute reading, which is what the grid is built in. '
+                'WITH BORROWING OFF THIS IS PROVABLY A NO-OP: renter_floor_by_age '
+                'puts a renter at the zero index, so min(financial_grid,0) is zero '
+                'and every branch vanishes.',
+        'careful': 'Says nothing about a borrowing-ON point. Every ON point measured '
+                   'before this ran an economy whose budget did not clear at 250,039 '
+                   'states, and none of them may pool with one measured after.',
+        'when': lambda text: re.search(r'include_unsecured_borrowing=0(?![.0-9])',
+                                       text) is not None,
+    },
 ]
 
 
