@@ -493,3 +493,47 @@ zeta_DI                                      --           -- --                 
 0 of 0 on target, 0 within three per cent; 25 parameters calibrated internally
 
 accounted for: 25 calibrated + 0 not calibrated = 25 parameters with a target in the Fortran
+
+===== loop 1, 2026-09-02T12:44:55Z =====
+THIS IS A SWEEP LOG, NOT A CALIBRATION LOG. A sweep point stops
+above most of the moment prints and holds every parameter fixed,
+so the rows below are mostly empty and the ones that score are
+scored on one b at frozen everything else. Read the curve in
+B_SWEEP.tsv instead, and read this table again once the joint
+loop is running.
+
+parameter                                 value     -> after moment                                                   model        target    off by  status
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+relative_share_of_addiction_1               0.4            = drug_share_weighted_by_their_population_shares              -1         0.162    717.3%  CORNER
+kappa_uem                                  34.2            = employment_rate_given_SMI                                    0           0.3    100.0%  CORNER
+addiction_scalar                       0.253696            = --                                                          --            --        --  no scalar moment
+discount_factor_on_child                    700            = --                                                          --            --        --  no scalar moment
+employment_multiplier                         4            = --                                                          --            --        --  no scalar moment
+fixed_cost_to_moving                         --           -- --                                                          --            --        --  no scalar moment
+housing_status_grid_expander                  1            = --                                                          --            --        --  no scalar moment
+labor_income_tax_rate                  0.752243            = --                                                          --            --        --  no scalar moment
+lambda_addiction                        2.79953            = --                                                          --            --        --  no scalar moment
+largest_house_size                     0.121252            = --                                                          --            --        --  no scalar moment
+max_food_cost                                --           -- --                                                          --            --        --  no scalar moment
+minimum_inheritance                           0            = --                                                          --            --        --  no scalar moment
+mu_homeless                                  --           -- --                                                          --            --        --  no scalar moment
+penalty_child_addicted                       --           -- --                                                          --            --        --  no scalar moment
+penalty_child_homeless                       --           -- --                                                          --            --        --  no scalar moment
+probability_of_becoming_addicted        2.79953            = --                                                          --            --        --  no scalar moment
+relative_share_of_housing                 0.168            = --                                                          --            --        --  no scalar moment
+separation_rate                              --           -- --                                                          --            --        --  no scalar moment
+size_homelessness                         0.149            = --                                                          --            --        --  no scalar moment
+smallest_house_size                       0.039            = --                                                          --            --        --  no scalar moment
+value_of_life                                --           -- --                                                          --            --        --  no scalar moment
+voucher_probability                          --           -- --                                                          --            --        --  no scalar moment
+weight_on_child                              --           -- --                                                          --            --        --  no scalar moment
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+0 of 2 on target, 0 within three per cent; 23 parameters calibrated internally
+
+4 parameter(s) NOT calibrated in this configuration, and therefore not rows above:
+  lambda_m                                     its adjuster is zero, nothing moves it
+  rho_d                                        include_rho_d is 0, the channel is off
+  rho_m                                        include_rho_m is 0, the channel is off
+  zeta_DI                                      its adjuster is zero, nothing moves it
+
+accounted for: 23 calibrated + 4 not calibrated = 27 parameters with a target in the Fortran
