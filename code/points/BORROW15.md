@@ -4,12 +4,17 @@ Three arms of `code/batch_borrow15.txt`: borrowing ON, limit 1.50, with
 `discount_factor_impatient` at 0.75, 0.90 and 0.96. Solved on source md5
 `64d52d8b6a`, semantic `197407b07d`, `pi_eu` target 13.9 per cent.
 
-**Status: NO ARM PRODUCED A MOMENTS BLOCK.** Arm 1 (0.75) was killed at
-4 h 06 min and arm 2 (0.90) at 2 h 32 min, both without moments; arm 3
-(0.96) is running as a confirmation probe only. Neither completed arm
-reached the code path where `discount_factor_impatient` is read, so
-**none of the three questions the batch was built to answer can be
-answered from it.** Nothing below extrapolates past what was measured.
+**Status: NO ARM PRODUCED A MOMENTS BLOCK.** All three were terminated by
+me without moments -- 4 h 06 min, 2 h 32 min and 1 h 04 min -- against a
+12 min borrowing-OFF control. **No arm reached the code path where
+`discount_factor_impatient` is read**, so the three arms are the same
+measurement three times, and none of the questions the batch was built to
+answer can be answered from it. Nothing below extrapolates past what was
+measured.
+
+Not reported, because not measured: `w_bot` at any impatience, the three
+`UNTARGETED wealth share bottom 1/5/10 pct` lines, and the nine round-1
+moments per point. There are no model values to put in those tables.
 
 ## The headline questions, so far as they can be answered
 
@@ -263,13 +268,38 @@ point, identical CPU profile -- and arm 1 had already demonstrated that
 this trajectory does not finish. Its flushed tail then proved the two runs
 were doing bit-identical work, which is the finding recorded above.
 
-## Arm 3: `discount_factor_impatient=0.96` -- RUNNING, as a probe only
+## Arm 3: `discount_factor_impatient=0.96` -- NO MOMENTS (confirmation probe)
 
-Started to confirm, rather than assume, that the patient-pass bottleneck is
-common to all arms. The check is cheap: the audit spam is written early, so
-if arm 3 reaches ~445 MB with 1,016,518 failures and the same aggregates,
-the shared-bottleneck reading is confirmed by measurement instead of by
-extrapolation. It is not expected to produce moments.
+| | |
+|---|---|
+| point tag | `383cb36ff4` |
+| outcome | **no moments block**; `hftf` exit status 143 (SIGTERM) |
+| wall time before termination | 1 h 04 min (64 min), 1 h 27 min CPU on 4 cores |
+
+Run to confirm by measurement, rather than assume by extrapolation, that
+the bottleneck is common to all arms. It was stopped as soon as it had
+answered that, because arms 1 and 2 had already shown this trajectory does
+not finish in 2.5-4 hours.
+
+It confirms it on every check available:
+
+| | arm 1 (0.75) | arm 2 (0.90) | arm 3 (0.96) |
+|---|---|---|---|
+| audit failures | 1,016,518 | 1,016,518 | 1,016,518 |
+| distinct residuals | 19 | 19 | 19 |
+| rung taken | -0.955872059 | -0.955872059 | -0.955872059 |
+| `AGE_TIME` entries | 118 | 118 | 118 |
+| `model_total_income` | 4.1868157019145498 | 4.1868157019145498 | 4.1868157019145498 |
+| `average_welfare_of_all_cohorts` | 49620.713469575305 | 49620.713469575305 | 49620.713469575305 |
+
+Stripping the million diagnostic lines, arm 3's log differs from arm 1's in
+**exactly two kinds of line**: the `HANDOVER discount_factor_impatient`
+echo, and the `AGE_TIME` wall/cpu measurements, which are not
+deterministic. Every computed value is identical.
+
+That is the confirmation. The three arms are not three measurements; they
+are the same measurement three times, because the parameter that
+distinguishes them is never reached.
 
 ## Cost note
 
