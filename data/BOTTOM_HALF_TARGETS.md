@@ -224,3 +224,55 @@ representative household is just below the income-tax threshold. That is a
 substantive feature of the population being modelled, not an artefact, and it is
 worth a sentence in the paper: the fiscal burden of these households is
 essentially all consumption tax and payroll, not income tax.
+
+## Scaling the drug-user and SUD shares: the factor is 1.26, NOT 2
+
+The author is right that `b` and `lambda_d` have to be rescaled with everything
+else, but the factor is not the 2 that homelessness gets. Computed from
+`NSDUH_2024.dta`, past-year use disorder across all six substances
+(`irpyud5mrj/coc/her/hal/inh/mth`), weighted by `analwt2_c`, with the bottom half
+taken on family income (`irfamin3`: categories 1-5 in full plus 80.6 per cent of
+category 6):
+
+    SUD prevalence, whole population        0.0793
+    SUD prevalence, bottom half by income   0.1001
+    RATIO                                   1.262
+
+    share of ALL SUD cases in the bottom half   0.632
+
+**A factor of 2 would require every drug user to be in the bottom half. Only 63
+per cent of them are.** Homelessness is different -- essentially all of it is in
+the bottom half -- which is why 2 is right there and wrong here.
+
+### AND THIS IS THE ONE PLACE THE RESTRUCTURING CAN MOVE THE GAP
+
+For homelessness the rescaling cancels: the model's rate doubles and so does the
+target, so the gap is unchanged. For SUD it does not have to cancel, because the
+MODEL's concentration of drug use in the bottom half need not equal the DATA's
+0.632.
+
+    if the model concentrates SUD more than the data   the gap WORSENS
+    if it matches the data                             the gap is unchanged
+    if it concentrates less                            the gap improves
+
+The model's own concentration has not been measured. It should be, before the
+restructuring, because it decides whether this helps the block that is actually
+failing or hurts it. A model in which drug use is a poverty phenomenon and the
+data in which a third of it sits in the top half is a real discrepancy either
+way, and worth knowing about on its own.
+
+## Government spending on the homeless and on SUD: set to ZERO
+
+On the author's instruction. `homeless_cost_govt_as_perc_of_avg_inc` 0.4286 -> 0
+and `addict_cost_govt_as_perc_of_avg_inc` 0.212 -> 0.
+
+The reason it is zero rather than rescaled: the bottom-half budget closes on the
+bottom half alone, so any such cost would be funded by households whose average
+income tax rate is 5.46 per cent and whose representative member is below the
+tax threshold entirely. Those services are financed out of general revenue in
+reality, overwhelmingly by the half of the distribution the model no longer
+contains.
+
+It also retires a number the referees objected to: the AE wrote that the fiscal
+cost of homelessness "appears high (see R3)", and 0.4286 was a raised value,
+from 0.252.
