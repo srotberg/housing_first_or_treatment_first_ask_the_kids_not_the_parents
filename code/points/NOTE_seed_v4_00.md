@@ -99,3 +99,81 @@ stylized counterpart: the stylized model has no tag cache. The out-of-bounds
 renter arrays are quantitative-only as well -- the stylized model has no
 financial grid and no tenure-keyed allocation. Neither carries across, and both
 are recorded here rather than in that table for that reason.
+
+---
+
+# The OFF control fails the gate that 0f581bb set for it
+
+Reporting the re-measurement promised above. It did not go as that section
+expected, and the result is a regression in the newest source rather than a
+result about borrowing.
+
+`0f581bb` closes with an instruction: "The OFF control on this source must
+reproduce w_bot 0.029487 exactly. Nothing else is worth measuring until it
+does." Tag `f9c16d5308` IS that control. Measured on `c823331449`, which is
+`0f581bb` itself:
+
+    OFF control, w_bot     358057d / d2563e97f3     0.0294859    passes
+                           0f581bb / c823331449     0.0303281    FAILS
+
+Both runs: handover 42 of 42, all invariants PASS, 4 cores, no warm start. The
+`d2563e97f3` figure is another session's, at `8ab9b69`; it agrees with the
+0.029487 target to 5e-07, well inside the 4.5e-06 median reproducibility
+tolerance in REPRODUCIBILITY.md. The `c823331449` figure misses it by 2.9e-03
+absolute, 2.86e-02 relative -- two orders of magnitude outside that tolerance.
+This is not the run-to-run wobble that note describes.
+
+## It is the whole economy, not one moment
+
+Nineteen of the twenty-three shared targeted moments move by more than 1e-04
+relative between the two sources. The largest:
+
+    w_bot     net worth share, bottom half     0.0294859 -> 0.0303281   2.86e-02
+    h_1       homelessness                     0.0841771 -> 0.0825255   1.96e-02
+    lambda_m                                   0.0259737 -> 0.0264241   1.73e-02
+    lambda_d                                   0.294588  -> 0.291348    1.10e-02
+    b                                          0.399897  -> 0.396316    8.96e-03
+    aleph                                      50.3331   -> 50.6677     6.65e-03
+
+REPRODUCIBILITY.md puts the worst targeted moment across two runs of one tag at
+2.8e-04 relative. Six moments here beat that by more than an order of
+magnitude, and w_bot by a hundredfold.
+
+## Why this contradicts what 0f581bb claims
+
+That commit's stated design is that the OFF economy is untouched:
+
+    "renter_array_floor, set in allocate_matrix from
+    include_unsecured_borrowing ... negative_financial_grid_size when it is
+    off, so the OFF economy keeps exactly the layout it has always had and
+    only the ON economy pays for three more points per array."
+
+`include_unsecured_borrowing=0` in this vector, so on that description this
+point should be byte-comparable with the same point on `358057d`. It is not.
+Either `renter_array_floor` is not resolving to `negative_financial_grid_size`
+in the OFF case, or something else in the commit reaches the OFF economy. Not
+diagnosed further here: this batch's instruction is to measure and not to edit
+the Fortran, and the measurement is the part that was missing.
+
+## What was NOT measured, and why
+
+Lines 1 and 3, the two borrowing-ON arms, were NOT re-run on `c823331449`.
+`0f581bb` says nothing else is worth measuring until the OFF control
+reproduces, and it does not reproduce. Two ON arms measured against a broken
+OFF control would be two more point files that look like results, pass their
+invariants, and mean nothing -- which is the exact failure mode the first half
+of this note is about. Stopping was the instruction; following it is cheaper
+than the twenty-five minutes and much cheaper than the numbers.
+
+The ON arms are ready to run the moment the control reproduces. Line 3 needs
+`points/point_f4a40be627.txt` removed first or it will be skipped, per
+mechanism 1 above.
+
+## State of the three lines
+
+    line 1  4659380b40  ON  0.30   last good measurement: none on a live-choice source
+    line 2  f9c16d5308  OFF        measured on c823331449, FAILS the gate (this note)
+    line 3  f4a40be627  ON  0.60   measured on e55e1cc855, invalidated by 0f581bb
+
+The superseded OFF measurement on `d2563e97f3`, the one that passes, is at
+commit `8ab9b69` if it is wanted as the reference.
