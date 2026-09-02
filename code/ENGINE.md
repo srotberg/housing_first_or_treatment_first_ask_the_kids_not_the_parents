@@ -210,6 +210,25 @@ landed on 1 September with the loss fixed at 100.1 per cent, which looked like
 failure and was the measuring phase working normally. Say so when reporting
 rather than letting a flat number read as a stall.
 
+## AN EARLIER ROUND'S MOMENT IS NUDGED, NOT STEPPED
+
+The author, 2 September: *"in each subsequent stage, i want all the previous
+stage's parameters to be adjusted slowly if needed if their model's moments
+drift."*
+
+Every open round's instruments stay live, so a moment that a later round knocks
+back out of ten per cent is recovered rather than abandoned. But it is recovered
+SLOWLY: a full Newton step on an earlier round's instrument undoes the round being
+worked. aleph is the case that shows why -- its full step moves b by -85 per cent
+and lambda_d by -91, which is round 2 destroyed to repair round 1.
+
+    same round as the one being worked   full step
+    one round back                       quarter step
+    two or more rounds back              one eighth
+
+The batch line says so: `earlier round (1), nudged at 0.25 step`. This replaced a
+hard-coded aleph special case; do not add another one, extend the rule.
+
 ## THE MODEL IS FROZEN. Do not change the Fortran.
 
 On 1 September the source changed TWELVE times and the archive reset eleven of

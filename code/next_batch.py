@@ -112,7 +112,7 @@ STAGES = [
     # sets aleph, round 2 re-fits the drug block to it, and aleph keeps a small
     # step here to absorb what the re-fit does back to it. It is listed again so
     # it stays live even after round 1 closes.
-    ['b', 'lambda_d', 'theta', 'aleph'],
+    ['b', 'lambda_d', 'theta'],
 
     # Then the housing block, unchanged from where the author put it.
     # gamma JOINS THE HOUSING STAGE on the author's instruction, 2 September:
@@ -1725,12 +1725,30 @@ def main():
             continue
         cur, tgt = m[mom]
         if br is None:
-            # aleph IS DAMPED HARDER ONCE THE DRUG ROUND IS OPEN, on the author's
-            # instruction to adjust it "slowly" there. Its full step moves b by
-            # -85 per cent, which the round-2 repair then has to undo; a quarter
-            # step lets the two converge together instead of chasing each other.
-            damp = DAMP * (0.25 if (mom == 'aleph' and drug_round_open) else 1.0)
+            # A MOMENT FROM AN EARLIER ROUND IS NUDGED, NOT STEPPED. The author,
+            # 2 September: "in each subsequent stage, i want all the previous
+            # stage's parameters to be adjusted slowly if needed if their model's
+            # moments drift."
+            #
+            # An earlier round's moment is one the search has already brought
+            # inside ten per cent. If a later round knocks it back out, the
+            # instrument should recover it without undoing the round that is
+            # currently being worked -- a full Newton step on aleph moves b by
+            # -85 per cent, which is round 2 being wrecked to repair round 1.
+            # A quarter step converges the two together instead of having them
+            # chase each other across rounds.
+            #
+            # This generalises the aleph case, which was the first instance and
+            # was hard-coded. The damping deepens the further back the moment
+            # comes from: one round back is a quarter step, two is an eighth.
+            _home = next((i for i, st in enumerate(STAGES) if mom in st), None)
+            _work = _open_now[-1] if _open_now else 0
+            back = 0 if _home is None else max(0, _work - _home)
+            damp = DAMP * (1.0 if back == 0 else 0.25 ** min(back, 2))
             step = damp * math.log(tgt / cur) / e
+            if back:
+                note = (note + f'  earlier round ({_home+1}), nudged at '
+                        f'{0.25 ** min(back, 2):.2g} step').lstrip()
             step = max(-MAX_EFOLD, min(MAX_EFOLD, step))
             x0 = float(v[param])
             lo, hi = BOUNDS[param]
