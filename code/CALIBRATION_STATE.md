@@ -1,3 +1,32 @@
+## 04:52 -- TWO RUNS OF ONE VECTOR ON ONE SOURCE DISAGREE BY 2.85 PER CENT
+
+This outranks everything else on the branch. Tag f9c16d5308, MODEL c823331449,
+both cold, both 4 cores, two sessions:
+
+    points/point_f9c16d5308.txt                          w_bot 0.030328095   17 min
+    points_superseded/point_f9c16d5308.on_c823331449.txt  w_bot 0.029486027   11 min
+
+Same vector byte for byte, same source md5. REPRODUCIBILITY.md documents an
+earlier pair on a different tag agreeing to a worst of 2.8e-04 and a median of
+4.5e-06, so the model reproduces tightly sometimes and not others. The objective
+is ten per cent; a 2.85 per cent measurement error eats a third of that budget,
+and every bracket measured tonight is built on single runs.
+
+Three sequential cold runs of the one vector are in flight, writing
+points/DETERMINISM.md, reporting the spread on every targeted moment. Nothing
+should be concluded from any single-run bracket until that lands.
+
+### A number I reported wrongly, three times
+
+The broken revision e55e1cc855's w_bot is **0.0032694523**, not 3.269452. My
+survey script truncated the printed value to nine characters, which cut the
+E-003 off the end, and I read the mantissa as the value. The economy was still
+plainly wrong -- homelessness 0.0114 against 0.0842, drug use exactly zero,
+by-choice saturated at 1.0000 -- but it was an order of magnitude BELOW target,
+not 111 times above it. The commit messages for 0f581bb and the ENGINE.md entry
+both carried the wrong figure; ENGINE.md is corrected, the commits stand as
+written with this note against them.
+
 ## 03:48 -- UNSECURED BORROWING WAS INERT, AND THE THIN TAIL DID NOT BUY emp_homeless
 
 **The borrowing never worked.** The 25 loops the borrowing commit opened are
