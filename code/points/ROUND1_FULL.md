@@ -202,6 +202,61 @@ three on `pi_V` (-2.5%) and `pi_eu` (-0.4%) and on `gamma` (-39.1%, against -54.
 on lines 1 and 2, which is the housing weight doing what it is for), and the worst
 of the three on `beta` (-24.6%) and `w_bot` (-33.9%).
 
+## A cross-check on the state file's "seven of nine", which is six
+
+`code/CALIBRATION_STATE.md` gained a `READ THIS FIRST` header at `2740cb6`,
+during this batch. It reports **"Round 1: seven of nine inside ten per cent on one
+point"** for `point_846f6a0a53`, and lists among the seven:
+
+    aleph   +2.3 *   pi_V   +5.1 *   w_bot  -7.0 *
+    sigma_y -1.7 *   beta   +6.7 *   omega_l -8.1 *
+    tau_l   +4.9 *
+
+`beta` should not be in that group. Read off the point file:
+
+    MOMENT beta   wealth over output   model = 2.8003658069118642   target = 3.0
+
+**2.800366 is below the 3.0 floor, not above it**, so the entry is 6.7 per cent
+*short of* the band rather than inside it, and the sign has been dropped. `beta`
+is a BAND of 3.0 to 4.5 rather than a point target, and 2.800366 is outside it on
+either edge. Counting the other eight the same way the header does, that point is
+**six of nine, not seven**: `aleph`, `sigma_y`, `tau_l`, `pi_V`, `w_bot` and
+`omega_l` inside; `beta` below the band, `cbar` +15.2 per cent and `pi_eu` +89.9
+per cent outside.
+
+This is recorded rather than corrected in place, because the header is another
+session's and the file says its own sections are to be checked before being acted
+on. It is the same arithmetic everywhere else in this note: `GAPS_0405.md` prints
+`beta` as `2.55337  3-4.5  +14.9% out`, with the `out` that the header omits.
+
+`point_846f6a0a53` is a genuine six-of-nine and the best round-1 point on this
+economy -- better than any of this batch's three. It reaches it by NOT carrying
+`pi_eu`, which is the trade this batch measures: it holds
+`probability_becoming_unemployed` at the anchor's 0.0437 and leaves `pi_eu` at
++89.9 per cent.
+
+### The emp_homeless comparisons rest on a thin street as well
+
+The header's first open decision quotes `emp_homeless` "best is 0.587 against
+0.46". That is `point_f88fc8a75f`, where `h_1` = 0.001322, sixty-seven per cent
+below its target. `point_846f6a0a53` reads `emp_homeless` = 0.867900 at `h_1` =
+5.38e-04, eighty-seven per cent below target. Line 3 of this batch reads 0.158904
+at `h_1` = 1.61e-04.
+
+| point | `relative_share_of_housing` | `h_1` | vs target | `emp_homeless` |
+|---|---|---|---|---|
+| `point_f88fc8a75f` | 0.250 | 0.001322 | -66.9% | 0.586962 |
+| `point_846f6a0a53` | 0.200 | 0.000538 | -86.5% | 0.867900 |
+| line 3, `29a9f03376` | 0.250 | 0.000161 | -96.0% | 0.158904 |
+
+`emp_homeless` and `h_1` move together and in opposite directions here, and every
+one of these three sits below the `h_1` target rather than above it. Whatever is
+concluded about `emp_homeless` from this family of points is being concluded over
+a homeless mass that is itself a long way from where it is supposed to be, and at
+line 3's 1.61e-04 there is not enough of it left to read a share off at all. The
+numbers are given so the reader can judge; which of them is usable is not this
+note's call.
+
 ## What this batch establishes
 
 1. All three lines are on one economy, `b8dc1077ad`, with full handover and no
@@ -220,6 +275,11 @@ of the three on `beta` (-24.6%) and `w_bot` (-33.9%).
    No instrument value is projected for it.
 6. Line 3's `emp_homeless` is void: the street holds 1.61e-04 of the population
    there. `h_1`, `gamma` and the rest of line 3 stand.
+7. The `READ THIS FIRST` header added to `code/CALIBRATION_STATE.md` at `2740cb6`
+   counts `point_846f6a0a53` as seven of nine by scoring `beta` = 2.800366 as
+   `+6.7` inside. It is 6.7 per cent BELOW the 3.0 floor and outside the band.
+   That point is six of nine, and it is still the best round-1 point on this
+   economy.
 
 The instrument-by-instrument arms are not additive on this economy, and the three
 moments that fail are the three that were closed on instruments which do not own
