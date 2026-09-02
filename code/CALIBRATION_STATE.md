@@ -6,9 +6,29 @@ Do not act on anything below without checking it against this block.
 
 ## What is true right now
 
-Model `2f7c317e75`. 20 points. Best point `846f6a0a53`.
-Loss 729.4 per cent (on `lambda_d`, round 2, NOT OPEN), median 25.9, nine of
-twenty moments inside ten per cent.
+Model `2f7c317e75`. 26 points.
+
+TWO DIFFERENT "BEST" POINTS, and they are not the same point. Say which you mean.
+
+  `846f6a0a53` -- what gaps.py names. Loss 729.4 per cent on `lambda_d`, median
+  25.9, nine of twenty inside. The minimax runs over ALL twenty scored moments,
+  including rounds 2 and 3 which are NOT OPEN, so it ranks on `lambda_d` and
+  `h_1` -- moments no instrument in flight is aimed at.
+
+  `990da2a08d` -- the ROUND 1 leader, and the one that matters for the work in
+  hand. SEVEN of nine inside with `pi_eu` carried. gaps.py does not name it
+  because its `h_1` is +1347 per cent, which is round 3's problem.
+
+  aleph -7.5, pi_V -4.7, sigma_y -1.7, tau_l +0.8, pi_eu -1.6, cbar -2.6,
+  omega_l -9.1 all IN; `beta` -20.9 under the 3.0 floor and `w_bot` -30.2 under
+  0.0250 are the two left.
+
+  Its vector: value_of_life 42.0, max_food_cost 0.0130, voucher 0.052,
+  probability_becoming_unemployed 0.0122, discount_factor 0.99950,
+  discount_factor_impatient 0.62, everything else at the anchor.
+
+A staged calibration and a minimax over every round do not agree about what is
+best, and reporting only the minimax hides the round actually being worked on.
 
 **Round 1 on point 846f6a0a53: SIX of nine strictly inside, seven if beta counts.**
 State the convention, never just the count -- a worker caught this header
