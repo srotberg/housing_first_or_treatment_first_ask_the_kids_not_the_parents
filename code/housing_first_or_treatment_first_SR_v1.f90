@@ -18344,7 +18344,15 @@
 
             end if
 
-            do ffi_1=negative_financial_grid_size,financial_grid_size
+            ! FILL THE WHOLE GRID, index 1 up. This table is the continuation
+            ! value the asset search reads, and it used to start at
+            ! negative_financial_grid_size -- the zero index. With the search
+            ! floor opened to unsecured borrowing, a renter can now choose a
+            ! negative a', and an entry that was never filled is not a value it
+            ! can be compared against. The three extra points cost about a tenth
+            ! of this table and remove any dependence on which floor the caller
+            ! happens to be using.
+            do ffi_1=1,financial_grid_size
 
                 acc=0
 
@@ -18429,7 +18437,7 @@
             global_search_index,optimal_financial_1,loop_over_addiction_1,check_1,allow_to_choose_addiction,&
             first_voucher_index,second_voucher_index,has_opportunity_1,can_consume_drugs,voucher_index_1,&
             allow_to_choose_homelessness,ev_slot,drug_pass_1,drug_risk_top,&
-            a_lo_1,a_hi_1,a_attempt_1,branch_argmax_1,warm_used_1,warm_guess_1,&
+            a_lo_1,a_hi_1,a_floor_1,a_attempt_1,branch_argmax_1,warm_used_1,warm_guess_1,&
             treatment_choice_1,treatment_top_1
         real(8) :: branch_best_1
         real(8) :: labor_supply_1,labor_supply_2
@@ -18576,9 +18584,26 @@
                 ! The window for this branch's a' search, and the per branch
                 ! argmax that both the window and coarse mode need.
                 branch_best_1=large_negative_num
-                branch_argmax_1=negative_financial_grid_size
 
-                a_lo_1=negative_financial_grid_size
+                ! THE FLOOR OF THE ASSET SEARCH. Opening the negative grid to the
+                ! STATE loops was only half of unsecured borrowing: this is where
+                ! a' is CHOSEN, and it was pinned at negative_financial_grid_size
+                ! -- the index of zero -- so no renter could ever select a
+                ! negative position, no renter ever arrived at one, and the whole
+                ! extension was unreachable. The controlled twin showed it: with
+                ! the limit at a full year of average income, w_bot moved from
+                ! 0.029487 to 0.029610 and the bottom one per cent's share of
+                ! wealth stayed strictly positive at +1.19e-04 against -2.25e-03
+                ! in the data. Nobody was borrowing because nobody could.
+                !
+                ! renter_floor_by_age is the same object the state loops use. It
+                ! is negative_financial_grid_size when borrowing is off and in the
+                ! final period of life, so this line is a no-op in exactly the
+                ! cases where borrowing is meant to be barred.
+                a_floor_1=renter_floor_by_age(min(max(age_index,1),life_span))
+                branch_argmax_1=a_floor_1
+
+                a_lo_1=a_floor_1
                 a_hi_1=financial_grid_size
                 warm_used_1=0
 
@@ -18589,9 +18614,9 @@
                         unemployment_index,employment_index,housing_status_index,&
                         voucher_index,future_addiction_index,future_housing_status_index)
 
-                    if (warm_guess_1>=negative_financial_grid_size) then
+                    if (warm_guess_1>=a_floor_1) then
 
-                        a_lo_1=max(warm_guess_1-warm_start_half_width,negative_financial_grid_size)
+                        a_lo_1=max(warm_guess_1-warm_start_half_width,a_floor_1)
                         a_hi_1=min(warm_guess_1+warm_start_half_width,financial_grid_size)
                         warm_used_1=1
 
@@ -18609,10 +18634,10 @@
 
                     if (warm_used_1==0) exit
 
-                    if (((branch_argmax_1>a_lo_1) .OR. (a_lo_1==negative_financial_grid_size)) .AND. &
+                    if (((branch_argmax_1>a_lo_1) .OR. (a_lo_1==a_floor_1)) .AND. &
                         ((branch_argmax_1<a_hi_1) .OR. (a_hi_1==financial_grid_size))) exit
 
-                    a_lo_1=negative_financial_grid_size
+                    a_lo_1=a_floor_1
                     a_hi_1=financial_grid_size
                     branch_best_1=large_negative_num
 
