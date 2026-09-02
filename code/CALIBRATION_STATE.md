@@ -1,3 +1,27 @@
+## 05:52 -- REPRODUCIBLE. 5.13e-05 WORST OVER 23 MOMENTS.
+
+`points/DETERMINISM.md`: three cold sequential runs of one vector on one source.
+Worst relative spread over the 23 targeted moments **5.13e-05**, median
+**8.80e-06**. The solver is deterministic and the 2.85 per cent disagreement was
+the ambient age_index bug in the old-age wealth walk, fixed at d9ff1a8, exactly
+as predicted at 05:02.
+
+**THE DECISION I PUT TO THE AUTHOR AT 05:02 IS HALF WITHDRAWN.** I raised the
+outer equilibrium tolerances -- rental and housing markets at 2e-2, government
+budget at 1e-2 -- as possibly eating a fifth of a ten per cent objective. That
+conflated two things and only one of them is real:
+
+- REPRODUCIBILITY is settled. A loose stopping rule does not make the answer
+  noisy; the path is deterministic and re-measuring lands in the same place to
+  5e-05. Nothing needs tightening for the archive to be trustworthy, and no
+  bracket measured from here needs replicates.
+- ACCURACY of the outer fixed point is still open. Stopping at 1 per cent excess
+  government revenue means the level of every moment carries that error. But it
+  is a SYSTEMATIC bias, not noise, and in a controlled pair -- which is how every
+  instrument on this branch is measured -- a systematic bias largely cancels. So
+  it is a question about the final reported benchmark, not about the search, and
+  it is much less urgent than I made it sound.
+
 ## 05:35 -- THE RUNG CANNOT DELIVER emp_homeless, AND THE AUTHOR SAID SO FIRST
 
 `points/H2_LADDER_OFF.md`, three rungs on one economy, borrowing off, every
