@@ -1,212 +1,75 @@
-# READ THIS FIRST -- CURRENT STATE, 2 September 10:15
+# READ THIS FIRST -- CURRENT STATE, 2 September 13:25
 
-This file is 7,500 lines and grows by a section every firing. The sections below
-are a RECORD, newest first, and several of the older ones are now KNOWN FALSE.
-Do not act on anything below without checking it against this block.
+Model `0afbde300f`. **ZERO scoreable points.** The archive reset and it was not
+an accident: three author-instructed changes landed inside forty minutes.
 
-## What is true right now
+    08f8470b5d   beta's target 3.0 -> 2.5
+    197407b07d   negative grid 3 points -> 7, accordion, limit 1.5x income
+    0afbde300f   unemployment target 13.9 -> 4.9 per cent
 
-Model `2f7c317e75`. 29 points.
+## What is being measured right now
 
-### 11:05 -- THE beta FRONTIER IS MEASURED, AND EIGHT OF NINE IS THE CEILING
+  grid control      the round 1 vector, borrowing still OFF, on the new grid.
+                    With borrowing off the depth is zero so all eight negative
+                    points sit at zero as all four did. If it reproduces
+                    point_35e8286c4e exactly, the old hash goes into
+                    EQUIVALENT_MODELS and 35 points carry over. Writing
+                    points/GRID_CONTROL.md.
+  borrow 1.5        three arms, borrowing ON at limit 1.5, impatient 0.75 / 0.90
+                    / 0.96. Writing points/BORROW15.md.
+  lambda down       lambda_addiction 1.0 / 0.3 / 0.05. Borrowing OFF, so the grid
+                    change should not touch it; its FINDING is valid whatever
+                    the hash says.
 
-All three frontier arms landed, off the 8-of-9 point:
+STOPPED as obsolete: the borrowing arms at limits 0.30/1.00 and 2.00/3.00. They
+were measuring the OLD three-point grid, which is exactly the coarseness the new
+grid exists to fix.
 
-    arm                       beta     pi_eu    w_bot    cbar     aleph
-    base (imp .75, .99980)  2.4528   0.1343   0.02427  0.00394  75.83
-    imp 0.78                2.4652   0.1332   0.02627  0.00388  76.62   8 of 9
-    discount_factor .99995  2.4695   0.1343   0.02477  0.00393  76.34   8 of 9
-    p_eu 0.0122 -> 0.0250   2.7239   0.1948   0.02995  0.00580  68.52   5 of 9
+## What round 1 looked like before the resets, and what it costs
 
-**discount_factor is finished as a beta instrument.** 0.99980 -> 0.99995 bought
-beta 0.0166. There is 0.00005 of the parameter left before it reaches one, and
-0.53 of beta still to find.
+Point `35e8286c4e` was NINE of nine on the 2.5 band, with `pi_eu` at 13.9:
 
-**The pi_eu trade is a straight swap, and it is a bad one.** Raising p_eu to
-0.0250 brings beta to 2.7239 -- 9.2 per cent under the floor, INSIDE ten -- but
-it takes pi_eu to +40.1, w_bot to +19.8, cbar to +38.1 and aleph to -14.4. Eight
-of nine becomes FIVE of nine. beta is bought by breaking four.
+    aleph -5.2   pi_V -3.8   cbar -6.3   tau_l +1.0   pi_eu -3.4
+    w_bot -2.9   sigma_y -1.7   omega_l -9.1   beta -1.9
 
-So round 1's ceiling on the current instrument set is EIGHT of nine, and beta is
-the one that cannot be had. This is a measurement, not an impasse to work around.
+    vector: value_of_life 42.0, max_food_cost 0.0130, voucher 0.052,
+    probability_becoming_unemployed 0.0122, discount_factor 0.99980,
+    discount_factor_impatient 0.75, borrowing OFF
 
-**ONE INSTRUMENT REMAINS UNTRIED, and it is the author's to authorise.**
-risk_free_rate is `real(8), parameter :: risk_free_rate_data=0.03`, fixed, and
-NOT in run_one_point.sh's handover -- 0 of 42 names match it. beta is wealth over
-output and the return on wealth is the obvious lever nobody has pulled. Opening
-it means editing the Fortran to make a fixed constant a runtime parameter, and
-that is a model change with a calibration target attached, so it is not mine.
+Moving the unemployment target to 4.9 breaks two of those. The flow probability
+that lands pi_eu is what sets precautionary saving: 0.0437 gives pi_eu 0.264 and
+beta about 2.95, 0.0122 gives pi_eu 0.134 and beta 2.45. 4.9 needs the flow lower
+still, so BOTH beta and w_bot fall further. They have to be re-closed, and
+borrowing is the instrument that could do it -- w_bot currently only reaches
+target because the impatient type discounts at 0.75, a 33 per cent annual rate.
 
-THE AUTHOR'S CHOICE, stated plainly:
-  a) accept beta at -18.2 per cent and call round 1 done at eight of nine;
-  b) move beta's target or widen the 3.0-4.5 band;
-  c) authorise risk_free_rate as an instrument;
-  d) accept pi_eu out instead of beta -- but that costs three more moments, so it
-     is strictly worse and is listed only for completeness.
+## The terminal borrowing constraint, since the author asked
 
-### 12:55 -- beta's TARGET MAY BE THE PROBLEM, AND THE CODE SAYS SO ITSELF
+It is in and it is the form they described. set_renter_floor leaves age life_span
+at the zero index while opening 1..life_span-1, and the choice floor keys on the
+ARRIVING age at 18697, so a household at life_span-1 picks a' against the final
+period's floor and cannot borrow into it.
 
-The author asked whether papers target a wealth-to-income ratio of 2.5 or 2.25.
-The literature check was inconclusive -- a search surfaced Kaplan-Violante (2010,
-AEJ:Macro) calibrating beta to an aggregate wealth-income ratio of 2.5 from the
-1989/1992 SCF, two follow-up searches did not reproduce that sentence, and the
-PDFs are egress-blocked from this container. NOT VERIFIED, and it should not be
-quoted as though it were. What the searches do establish is the range convention:
-models abstracting from housing target 2-3, full-net-worth HANK models target
-far higher (one cites 500 per cent of GDP).
+## Still open, and the author's
 
-THE STRONGER EVIDENCE IS IN THE FORTRAN, at line 2500, written long before
-tonight:
-
-    "the rental stock sits on the rental companies' books and not on any
-     household's, so the national accounts counterpart is nonresidential capital
-     rather than total household net worth ... BEA fixed assets over NIPA output
-     puts private nonresidential fixed assets at roughly two years of GDP and all
-     private fixed assets, residential included, at roughly three ... If the
-     number should be two, on the argument that the residential stock is outside
-     household wealth in this model, this is the one line to change."
-
-include_homeownership is 0. Every household rents. So by that note's own argument
-the counterpart is nonresidential capital and the target should not be 3.0.
-
-Priced against the measured 2.452826 at point 35e8286c4e:
-
-    target 3.00 (current)   -18.2%   OUT
-    target 2.50             - 1.9%   IN
-    target 2.25             + 9.0%   IN
-    target 2.00             +22.6%   OUT the other way
-
-AT 2.5, ROUND 1 IS NINE OF NINE WITH NO FURTHER SEARCH. The single line is
-`real(8), parameter :: wealth_to_output_data=3.0d0` at 2512.
-
-NOT CHANGED. A target is the author's, and this is recorded for them rather than
-acted on. Note it is the SAME objection as w_bot's: both targets are NET WORTH
-objects and this model has no housing wealth at all, so both may be measuring
-something the model does not contain.
-
-ROUND 1 IS EIGHT OF NINE. Point `35e8286c4e` (equally `db14af8e82`, the
-0.75/0.99980 pair). Only `beta` is out.
-
-    aleph  -5.2 IN   pi_V   -3.8 IN   cbar   -6.3 IN
-    tau_l  +1.0 IN   pi_eu  -3.4 IN   w_bot  -2.9 IN
-    sigma_y -1.7 IN  omega_l -9.1 IN
-    beta   2.4528, -18.2 per cent UNDER the 3.0 floor
-
-Its vector: value_of_life 42.0, max_food_cost 0.0130,
-probability_of_voucher_benchmark_used 0.052, probability_becoming_unemployed
-0.0122, discount_factor 0.99980, discount_factor_impatient 0.75, everything else
-at the anchor.
-
-`w_bot` is BRACKETED, not guessed: impatient 0.62 -> 0.01745, 0.75 -> 0.02393,
-0.85 -> 0.03246 against a target of 0.0250. The 0.85 arm is only 6 of 9 -- it
-overshoots w_bot AND drags cbar to -13.4 -- so 0.75 is the arm to hold.
-
-### beta is the last one, and pi_eu is what costs it
-
-Sorting all 29 points on this economy by beta, every high one carries
-probability_becoming_unemployed at the ANCHOR's 0.0437 (best 2.9823). Dropping it
-to 0.0122 to land pi_eu costs beta about half a unit. That is precautionary
-saving -- less unemployment risk, less buffer stock, less wealth over output --
-and it means pi_eu and beta pull ONE instrument in opposite directions.
-
-discount_factor is close to exhausted on it: 0.99950 -> 2.4133, 0.99980 ->
-2.4528, a slope of 0.040 per 0.0003. Closing 0.587 at that slope wants a discount
-factor ABOVE ONE. discount_factor_impatient does not rescue it either: 0.85
-reaches only 2.4668 and costs w_bot and cbar.
-
-FOR THE AUTHOR: if beta cannot reach the band with pi_eu on target, that is a
-choice between two targets, not a bug, and it is theirs. batch_beta_frontier.txt
-prices it -- one arm trades pi_eu back to 0.0250 to show exactly what beta gains
-and pi_eu pays.
-
-TWO DIFFERENT "BEST" POINTS, and they are not the same point. Say which you mean.
-
-  `846f6a0a53` -- what gaps.py names. Loss 729.4 per cent on `lambda_d`, median
-  25.9, nine of twenty inside. The minimax runs over ALL twenty scored moments,
-  including rounds 2 and 3 which are NOT OPEN, so it ranks on `lambda_d` and
-  `h_1` -- moments no instrument in flight is aimed at.
-
-  `990da2a08d` -- the ROUND 1 leader, and the one that matters for the work in
-  hand. SEVEN of nine inside with `pi_eu` carried. gaps.py does not name it
-  because its `h_1` is +1347 per cent, which is round 3's problem.
-
-  aleph -7.5, pi_V -4.7, sigma_y -1.7, tau_l +0.8, pi_eu -1.6, cbar -2.6,
-  omega_l -9.1 all IN; `beta` -20.9 under the 3.0 floor and `w_bot` -30.2 under
-  0.0250 are the two left.
-
-  Its vector: value_of_life 42.0, max_food_cost 0.0130, voucher 0.052,
-  probability_becoming_unemployed 0.0122, discount_factor 0.99950,
-  discount_factor_impatient 0.62, everything else at the anchor.
-
-A staged calibration and a minimax over every round do not agree about what is
-best, and reporting only the minimax hides the round actually being worked on.
-
-**Round 1 on point 846f6a0a53: SIX of nine strictly inside, seven if beta counts.**
-State the convention, never just the count -- a worker caught this header
-asserting "seven" with the sign on beta dropped, and it was right to.
-
-    aleph   +2.3 *   pi_V   +5.1 *   w_bot  -7.0 *
-    sigma_y -1.7 *   omega_l -8.1 *  tau_l  +4.9 *
-    beta    2.8004 -- 6.7 per cent BELOW the 3.0 floor, so OUTSIDE its band
-    cbar   +15.2     pi_eu +89.9
-
-beta is scored on a BAND, 3.0 to 4.5, not a point. gaps.py measures its gap to
-the nearest edge, gets 6.7 per cent and marks it inside the ten per cent budget;
-by the band it is outside. Both readings are defensible and they give six or
-seven. Say which is meant. The author's objective is "below ten per cent for
-everything", which is the gap reading, but a benchmark reported as having beta in
-the band would be wrong.
-
-AND THIS POINT DOES NOT CARRY pi_eu's FIX. It reaches six BY not carrying it.
-The combined point that does carry it is five of nine, because aleph, cbar and
-w_bot all broke on combining -- see ROUND1_FULL.md. No assembly of arms has yet
-beaten five once pi_eu is included.
-
-Both stragglers have measured brackets and both are in flight:
-`max_food_cost` 0.0070/0.0065 for cbar, `probability_becoming_unemployed` 0.0122
-for pi_eu (0.0080 gave 0.10972, 0.0150 gave 0.15308).
-
-The round-1 vector that produced the seven: `value_of_life=54.0`,
-`probability_of_voucher_benchmark_used=0.047`, `max_food_cost=0.0080`,
-`discount_factor=0.99900`, `discount_factor_impatient=0.55`,
-`relative_share_of_housing=0.200`, everything else at the anchor.
-
-## Sections below that are WRONG, and must not be acted on
-
-- **02:05, "TWO BETA TYPES CANNOT REACH w_bot"** -- false. w_bot is -7.0 per cent,
-  inside ten. It closed on `value_of_life`, an instrument that does not own it.
-- **04:52, "TWO RUNS OF ONE VECTOR DISAGREE BY 2.85 PER CENT"** -- resolved. That
-  was the ambient-`age_index` bug in the old-age wealth walk, fixed at d9ff1a8.
-  Three cold runs now agree to 5.13e-05 worst; see 05:52 and DETERMINISM.md.
-- **03:48, "UNSECURED BORROWING WAS INERT"** -- wrong diagnosis. It was OUT OF
-  BOUNDS, not inert: renter arrays had no negative indices. Whether anyone
-  borrows is still UNMEASURED. See 0f581bb.
-- **anything before 03:15 quoting w_bot** -- measured on a net-worth formula that
-  truncated a renter's debt at zero.
-
-## Open, and the author's to decide -- not mine
-
-1. **emp_homeless.** Best is 0.587 against 0.46. Four explanations measured:
-   wealth tail FAILED, rung h_2 FAILED, leisure FAILED, housing WEIGHT works but
-   stalls. Getting further needs a group that cannot pay the cheapest rent out of
-   income; the only remaining candidates are `probability_of_ui` (0.30) and
-   `zeta_DI` (0), which are on the INCOME side and in none of the author's
-   rounds.
-2. **`relative_share_of_housing` owns gamma in round 3 but is the only thing that
-   moves emp_homeless.** If it owns both, the round structure needs revisiting.
-3. **`utility_cost_of_treatment` at 1.537** puts tau_u at exactly 0.00000. The
-   archive says the working range is near 0.15-0.25. Round 4 must not open at
-   1.537.
-4. **Outer equilibrium tolerances** -- rental and housing 2e-2, government budget
-   1e-2. NOT a reproducibility problem (settled at 05:52); a question about the
-   accuracy of the final benchmark, and it largely cancels in controlled pairs.
+1. `emp_homeless` best 0.587 against 0.46; four explanations measured, three
+   failed. Remaining candidates are on the INCOME side, in none of the rounds.
+2. `discount_factor_impatient` 0.75 is a 33 per cent annual rate, far outside the
+   discount-heterogeneity literature. Whether borrowing removes the need for it
+   is being measured now.
+3. Whether `model_fraction_unemployed` is the same OBJECT as a published
+   unemployment rate. If it is nearer the no-wage-income share, 13.9 was the
+   matching concept and 4.9 is a stricter target of a different thing.
+4. Round 2's three instruments: two of the three were aimed the wrong way by me
+   and corrected by the author -- addiction_scalar_1 UP, lambda_addiction DOWN,
+   relative_share_of_addiction_1 DOWN.
 
 ## Standing method
 
 Report ONE equilibrium, never a best-of. Prefer a measured bracket to an
-elasticity, and never extrapolate past the pair that produced it -- that has been
-wrong every time on this branch. Any change that widens an array index gets a
-`-fcheck=bounds` run before anything is measured on it.
+elasticity and never extrapolate past the pair that produced it. Any change that
+widens an array index gets a -fcheck=bounds run first. A worker that asks a
+question is lost -- brief against it and check get_session for need_input.
 
 ---
 
