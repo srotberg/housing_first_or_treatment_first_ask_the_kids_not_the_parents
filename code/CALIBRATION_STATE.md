@@ -84,12 +84,46 @@ drug block is not the economy that fits the housing block**, and no single arm
 has yet been run that moves between them one coordinate at a time. That is the
 experiment the calibration actually needs and it has not been done.
 
-## IN FLIGHT, 22:24
+## THE DRUG PARAMETERS ARE NOT WHAT SETS THE DRUG MOMENTS
 
-    h_1 solve, sz=0.055        session_01GkNh3GipT8xJyRnaLig32D
-    drugfit full step          session_01AajfpaSkSmA8qD6EAoMdDD  (still solving)
+Found 22:33, and it is the largest thing on the board. The two families were
+diffed coordinate by coordinate. They differ in THREE places, and neither
+`lambda_addiction` nor `addiction_scalar_1` is one of them:
 
-LANDED and merged: sz=0.060, sz=0.120, drug half, drug quarter. 570 points.
+    relative_share_of_leisure                   3.050529 -> 4.72832
+    size_homelessness                           0.032283 -> 0.149
+    smallest_rental_relative_to_lowest_income   0.117    -> 0.039
+
+Same `lambda_addiction=2.79953`, same `addiction_scalar_1=0.0360`, and yet:
+
+                        b         lambda_d
+    point_5f78305512    0.03544   0.00924
+    point_eb442f7b15    0.10027   0.02993
+    TARGET              0.08900   0.03680
+
+**A factor of 2.8 on the drug moments with the drug parameters held fixed.**
+`size_homelessness` is already ruled out by the h_1 bracket above -- 43-fold on
+h_1 buys 3.8 per cent on b -- so the drug block is being carried by the LEISURE
+SHARE, the HOUSING RUNG, or both.
+
+If that is right it explains the drug gate's whole history. `next_batch.py` fits
+its Jacobian on `lambda_addiction` and `addiction_scalar_1` and steps them; the
+gate has sat between 18 and 26 per cent for a day while those two moved. It has
+been fitting the wrong instruments. Nothing is concluded until the three arms
+land -- this is one diff between two points, not a measurement.
+
+## IN FLIGHT, 22:33
+
+    families arm 1  relative_share_of_leisure=4.72832   session_01VSANBj72YfBYAkx8yqTX65
+    families arm 2  size_homelessness=0.149             session_01FzKjBbZjynZycvbJScPgTY
+    families arm 3  h_2=0.039                           session_01M7Z3cGD1GKC5cxthfjVryF
+    h_1 solve       size_homelessness=0.055             session_01GkNh3GipT8xJyRnaLig32D
+    drugfit full step                                   session_01AajfpaSkSmA8qD6EAoMdDD
+
+The three family arms are each ONE coordinate off point_5f78305512 and together
+they decompose the whole gap between the families. They are arms the gate did
+not ask for -- it wants the drug block alone -- run on idle capacity because the
+gate's own instruments look like the wrong ones and five slots were free.
 
 ## THE GATE'S DRUG BASE IS ON THE OLD RUNG
 
