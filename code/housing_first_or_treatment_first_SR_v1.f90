@@ -9082,11 +9082,31 @@
                                     
                                     end if
                                     
+                                    ! NET WORTH. The first two terms are the OWNER's
+                                    ! house and the mortgage against it, the mortgage
+                                    ! being a negative financial position expressed as
+                                    ! a fraction of the dwelling's value. The third is
+                                    ! the financial position itself.
+                                    !
+                                    ! Both are gated on has_house, and they have to be.
+                                    ! Before unsecured borrowing a renter could not hold
+                                    ! a negative position at all -- the choice loop
+                                    ! started at the zero index -- so the mortgage term
+                                    ! was identically zero for renters and truncating
+                                    ! the third term at zero cost nothing. Borrowing
+                                    ! made both live and both wrong: a renter's debt was
+                                    ! multiplied by the value of the dwelling they rent,
+                                    ! and their actual debt was then truncated away by
+                                    ! the max(). w_bot is the bottom half's share of NET
+                                    ! worth and the whole purpose of the borrowing was to
+                                    ! give that half a negative tail, so the measure was
+                                    ! broken in exactly the place it was meant to move.
                                     net_wealth_1=(max(min(amortization_used-1,1),0)*&
                                         (housing_price(time_period)*housing_size(housing_status_index_used))+&
-                                        min(financial_grid(financial_index_used),0.d0)*&
+                                        has_house*min(financial_grid(financial_index_used),0.d0)*&
                                         housing_price(time_period)*housing_size(housing_status_index_used)+&
-                                        max(financial_grid(financial_index),0.d0))
+                                        has_house*max(financial_grid(financial_index),0.d0)+&
+                                        (1-has_house)*financial_grid(financial_index))
                                                                          
                                     model_total_net_wealth(time_period)=model_total_net_wealth(time_period)+&
                                         net_wealth_1*distribution_mass_used
@@ -9174,9 +9194,14 @@
                                     
                                         if (housing_status_index_used>lowest_housing_grid_point) then
                                     
+                                            ! RAW, not truncated: this branch is
+                                            ! renters only, so a negative position is
+                                            ! unsecured debt and belongs in their net
+                                            ! worth. The max() predates borrowing,
+                                            ! when a renter could not be negative.
                                             model_net_wealth_renters(time_period)=&
                                                 model_net_wealth_renters(time_period)+&
-                                                max(financial_grid(financial_index),0.d0)*distribution_mass_used
+                                                financial_grid(financial_index)*distribution_mass_used
                                                 
                                             model_total_renters(time_period)=&
                                                 model_total_renters(time_period)+distribution_mass_used
@@ -10893,11 +10918,19 @@
                                                     
                     if (sum_distribution_used>0) then
                     
-                        net_wealth_used=max(min(years_left_on_mortgage_index-1,1),0)*&
+                        ! Gated on has_house for the same reason as net_wealth_1
+                        ! above: the middle term is an OWNER's mortgage, a negative
+                        ! position read as a fraction of the dwelling's value, and
+                        ! applying it to a renter multiplies unsecured debt by the
+                        ! value of the flat they rent. The last term is truncated
+                        ! for owners only, whose negative position is already the
+                        ! mortgage; for a renter it is the position itself.
+                        net_wealth_used=has_house*&
                             housing_price(time_period)*housing_size(housing_status_index)+&
-                            min(financial_grid(financial_index),0.d0)*&
+                            has_house*min(financial_grid(financial_index),0.d0)*&
                             housing_price(time_period)*housing_size(housing_status_index)+&
-                            max(financial_grid(financial_index),0.d0)
+                            has_house*max(financial_grid(financial_index),0.d0)+&
+                            (1-has_house)*financial_grid(financial_index)
                         
                         wealth_matrix(time_period,financial_index,housing_status_index,years_left_on_mortgage_index)=&
                             net_wealth_used
