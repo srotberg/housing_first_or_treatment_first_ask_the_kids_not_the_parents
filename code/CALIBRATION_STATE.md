@@ -38,24 +38,58 @@ does not look able to reach 0.46, and at 9x the cheapest unit costs 112 per cent
 of the lowest renter income. **The rung is not the instrument that closes
 emp_homeless. Something else has to.**
 
-## IN FLIGHT, 22:05
+## THE h_1 BRACKET CLOSED AT 22:21, and it separates cleanly from the drugs
 
-Six solves, none landed yet.
+One coordinate, `size_homelessness`, everything else at point_5f78305512
+(h_2=0.117). Three containers, so noise applies, but the spread here is orders
+of magnitude wider than the noise:
 
-    h_1 bracket, one coordinate off the best point (h_2=0.117 held)
-      size_homelessness 0.060   local, started 21:59
-      size_homelessness 0.090   worker session_01TJKr9B27xNGDDwcstWUqcQ
-      size_homelessness 0.120   worker session_01AvN3v5UMqiurzftbbdBHRP
+    size_homelessness    h_1        b        lambda_d   w_bot
+    0.032283             0.00059    0.03544  0.00924    0.01350
+    0.060000             0.00477    0.03546  0.00925    0.01315
+    0.120000             0.02535    0.03678  0.00956    0.01423
+    TARGET               0.00399
 
-    batch_drugfit.txt, the gate's own round, exit 0
-      full step     worker session_01AajfpaSkSmA8qD6EAoMdDD
-      half step     worker session_01YETswwGMp4ZpKDC3HVehxg
-      quarter step  worker session_012PXLmackexiPZ3Nq4UuBGW
+0.060 is already within +19.5 per cent. Interpolated, the target sits near
+0.055 and that point is now solving as session_01GkNh3GipT8xJyRnaLig32D.
 
-h_1 is bracketed with certainty before those land: the archive already gives
-0.0006 at size_homelessness 0.032 and 0.0060 at 0.105, and the target is 0.00399.
-b and lambda_d ride on the same three solves, because homelessness feeds
-addiction through `increased_prob_if_homeless`.
+**HOMELESSNESS DOES NOT DRIVE THE DRUG BLOCK, and the 22:05 entry said it did.**
+A 43-fold change in h_1 moves `b` by 3.8 per cent and `lambda_d` by 3.5 per cent.
+The `increased_prob_if_homeless` channel is real and negligible. The practical
+consequence is good: h_1 and the drug block are SEPARABLE and can be pinned in
+either order, so the worry recorded at 22:05 -- that arms measured before the
+drug block lands would need re-measuring -- does not apply to `size_homelessness`.
+
+`w_bot` is also flat in `size_homelessness` (0.0132 to 0.0142 across the whole
+bracket). Whatever closes w_bot, it is not the street.
+
+## TWO ECONOMIES, AND THIS IS THE REAL OBSTACLE
+
+The drug round landed too. Set the families side by side:
+
+                      sz      h_2     b        lambda_d  w_bot    theta    beta
+    h_1 family    0.032-0.12  0.117   0.035    0.0092    0.013    0.198    2.6
+    drug family   0.149       0.039   0.093    0.029     0.046    0.127    1.98
+    TARGET                            0.089    0.0368    0.025    0.162    3.0-4.5
+
+The drug family gets `b` to +4 per cent and `lambda_d` to -21, against -60 and
+-75 in the h_1 family. It also straddles `w_bot` from above where the h_1 family
+misses by -46. And it destroys `beta`, at 1.98 against a 3.0-4.5 band, and
+`theta`.
+
+These differ in four coordinates at once -- h_2, size_homelessness,
+lambda_addiction and relative_share_of_leisure -- so nothing causal is claimed
+here. What is claimed is the shape of the problem: **the economy that fits the
+drug block is not the economy that fits the housing block**, and no single arm
+has yet been run that moves between them one coordinate at a time. That is the
+experiment the calibration actually needs and it has not been done.
+
+## IN FLIGHT, 22:24
+
+    h_1 solve, sz=0.055        session_01GkNh3GipT8xJyRnaLig32D
+    drugfit full step          session_01AajfpaSkSmA8qD6EAoMdDD  (still solving)
+
+LANDED and merged: sz=0.060, sz=0.120, drug half, drug quarter. 570 points.
 
 ## THE GATE'S DRUG BASE IS ON THE OLD RUNG
 
