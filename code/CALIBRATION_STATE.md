@@ -250,30 +250,51 @@ in one economy and 0.052 gives 0.466 at the best point. So these cannot be set
 by copying a value from a good point elsewhere; they have to be stepped from
 here, which is what the joint arms do.
 
-## IN FLIGHT, 23:16
+## THE SOLVED COORDINATES COMPOSE. point_c0271ced79.
 
-    compose      h_2=0.098, sz=0.05775           session_01BAUJrws9Y7JxrPCWpfGwQp
-    compose      h_2=0.105, sz=0.05775           session_01AuA9yBSbJcPfZye6H9uYcc
-    drug probe   as1=0.0280, lambda_addiction=4  session_01WRt9QNPB2Go8tRaXkrDe2U
-    drug probe   as1=0.0240, lambda_addiction=5  session_01KspU2FPHMaFHDnePoubbSP
-    joint HALF   five instruments at 0.5x        session_01Fhj18niLWVBaGzi7PaJExa
-    joint FULL   five instruments at 1.0x        session_01LTq5ScBYsETjoiRCQrCpvL
+h_2 = 0.098 with size_homelessness = 0.05775, everything else at the old best.
+Gaps in per cent, * inside ten:
 
-## HOW FAR BLOCK 0 ACTUALLY IS, per point, no mixing
+                        h_1    w_bot   theta      b  lambda_d omega_l   beta   gamma   cbar  emp_hl
+    old best 5f78     -85.1    -46.0   +22.6  -60.2    -74.9   -41.0  -12.6  -10.0*  +37.7   +64.7
+    COMPOSE 0.098      +5.1*    +6.9*   +8.7*  -46.4    -63.0   -34.9  -20.1  -18.0   +8.6* +103.6
+    compose 0.105     +80.5     +3.7*  +29.2  -43.0    -56.7   -37.2  -22.0  -15.4  +19.1  +110.6
 
-Of 74 two-beta points on this model, the best counts are:
+**Four inside ten per cent at 0.098, against one at the old best**, and h_1,
+w_bot and theta all land together -- the three coordinates solved separately
+tonight do not interfere. 0.105 is past h_1's crossing and loses it, so 0.098
+is the value.
 
-    point         block-0 minimax   inside      what binds
-    de322e4659         1031.5%      8 of 15     a wrecked equilibrium
-    7e518fbf1c          106.0%      6 of 15     emp_homeless +106, gamma -52, cbar -52
-    2bab3e6f20           97.0%      5 of 15     h_1 -97, gamma -52, cbar -51
-    5f78305512           92.8%      2 of 15     h_1 -85, pi_V +75, lambda_d -75
+**BUT gaps.py did not promote it.** The minimax picks point_13f28ca901 instead,
+because emp_homeless at the compose point is +103.6 and that is worse than
+13f28ca901's +92.7. The loss moved 92.8 to 92.7 per cent -- a tenth of a point
+-- while the point that actually fits four moments was rejected on the ONE
+moment the author has just questioned. `emp_homeless` is now the binding
+constraint on the entire objective.
 
-**No point has block-0 minimax below 97 per cent.** Block 1 is worse: no point
-has more than ONE of its three moments inside ten per cent. Neither block is
-close, and the honest reading of tonight is that the STRUCTURE is now understood
--- which instrument moves what -- while no single point yet carries more than a
-handful of the answers at once.
+## THE DRUG PROBES BRACKETED THE TARGET, AND ONE POINT MAY CLOSE BOTH
+
+At h_2=0.095, sz=0.05775, moving addiction_scalar_1 and lambda_addiction
+together from (0.0360, 2.79953) toward (0.0280, 4.00000):
+
+    fraction   b                lambda_d
+    0.00      -48.3%           -65.6%
+    1.00      +64.6%           +99.7%
+    TARGET     crosses at 0.428  crosses at 0.397
+
+**The two crossings are 0.03 apart on a line of length one.** A single point near
+fraction 0.40 should put b AND lambda_d inside ten per cent simultaneously,
+which no point in 583 has ever done. Two arms are running, at 0.25 and 0.40, on
+the compose base rather than the probe base.
+
+## IN FLIGHT, 23:23
+
+    joint HALF   five instruments at 0.5x     session_01Fhj18niLWVBaGzi7PaJExa
+    joint FULL   five instruments at 1.0x     session_01LTq5ScBYsETjoiRCQrCpvL
+    drug solve   fraction 0.25                session_01NNVs9yF5Hu2K5hEMqpc38x
+    drug solve   fraction 0.40                session_01P9xeH1FN1xcmEmnsJpvexD
+
+583 points.
 
 ## THE GATE'S DRUG BASE IS ON THE OLD RUNG
 
