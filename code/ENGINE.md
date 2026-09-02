@@ -324,9 +324,9 @@ index 1 did not exist for a renter and all twenty-five loops ran past the lower
 bound of `value_function`, every `policy_function_*` and `warm_start_a_prime`.
 
 **What it looked like.** Not a crash. The borrowing-OFF control solved cleanly,
-passed every one of the seventeen invariants, and returned `w_bot` 3.269452
-against a known 0.029487, homelessness 0.0114 against 0.0842, and drug use of
-exactly zero. It looked like an economy. Hours of fleet time went into arms
+passed every one of the seventeen invariants, and returned `w_bot` 0.0032695
+against a known 0.029487 -- an order of magnitude BELOW the target rather than
+above it -- homelessness 0.0114 against 0.0842, and drug use of exactly zero. It looked like an economy. Hours of fleet time went into arms
 measured on it, and a controlled OFF/ON twin taken from it was reported to the
 author as evidence that borrowing was inert -- when what it actually showed was
 that the ON arm's extra states were writes into memory belonging to something
