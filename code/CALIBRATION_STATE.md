@@ -1,3 +1,51 @@
+## 07:05 -- emp_homeless 0.96 -> 0.59, AND WHY IT CANNOT GO FURTHER
+
+`points/WEIGHT_STREET.md`, three (weight, street) pairs against the anchor. The
+worker checked every row for the empty-street corner before reporting it and none
+of these is that corner -- all three carry real homeless mass.
+
+    weight  street   emp_homeless   by choice   afford on income      h_1
+     0.100   0.149     0.964216      0.980735      0.979523        0.082821
+     0.250   0.300     0.586962      1.000000      1.000000        0.001322
+     0.250   0.500     0.939750      0.999982      0.999982        0.043603
+     0.300   0.500     0.859989      1.000000      1.000000        0.013500
+    target                0.46           --            --          0.00399
+
+emp_homeless has gone 0.964 -> 0.587 and h_1 is BRACKETED (0.00132 below,
+0.01350 above). w_bot is bracketed too. gamma is not: all four sit under 0.268,
+best 0.189.
+
+**BUT LOOK AT THE by-choice COLUMN.** It goes UP, to 1.000000, on every arm that
+raises the street. That is the whole difficulty in one number. The two
+instruments work against each other:
+
+  - the housing WEIGHT makes shelter matter, which forces the poor off the
+    street and makes what homelessness remains involuntary;
+  - the street SIZE makes the street pleasant, which pulls people back onto it
+    voluntarily.
+
+Raise the weight alone and homelessness vanishes. Restore the population with
+the street size and it comes back as people who CHOSE it -- 100.0 per cent by
+choice, 100.0 per cent able to pay the rent out of income. So the population is
+back and the composition is not, and emp_homeless stalls above 0.46.
+
+**WHAT WOULD ACTUALLY PRODUCE INVOLUNTARY HOMELESSNESS** is a group that cannot
+pay the cheapest rent out of income. At the anchor 98 per cent of the homeless
+can. Neither instrument here creates such a group: the weight removes people from
+the street, the street size adds voluntary ones. The rung h_2 does create them,
+but it prices out the employed in nearly the same proportion, which is measured
+in H2_LADDER_OFF.md and was the author's own objection of 1 September.
+
+So the remaining candidates are on the INCOME side, not the housing side --
+probability_of_ui at 0.30 and zeta_DI at 0 govern what an unemployed household
+actually receives. Neither has been touched and neither is in any round of the
+author's sequence. THIS IS NOT A CHANGE I SHOULD MAKE: it reassigns a moment
+across blocks and the author set the blocks.
+
+Best point is now f88fc8a75f (weight 0.250, street 0.300): loss 733.9 per cent on
+lambda_d, median 30.8 down from 37.1, six of twenty inside ten per cent, and
+emp_homeless +27.6 where it has been over +100 all night.
+
 ## 06:33 -- tau_u's ZERO IS NOT A CORNER OF THE MODEL, IT IS THE WRONG STARTING VALUE
 
 tau_u reads exactly 0.00000 against 0.245 at the current best point, with
