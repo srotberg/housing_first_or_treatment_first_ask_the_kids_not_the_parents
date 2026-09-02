@@ -18344,15 +18344,24 @@
 
             end if
 
-            ! FILL THE WHOLE GRID, index 1 up. This table is the continuation
-            ! value the asset search reads, and it used to start at
-            ! negative_financial_grid_size -- the zero index. With the search
-            ! floor opened to unsecured borrowing, a renter can now choose a
-            ! negative a', and an entry that was never filled is not a value it
-            ! can be compared against. The three extra points cost about a tenth
-            ! of this table and remove any dependence on which floor the caller
-            ! happens to be using.
-            do ffi_1=1,financial_grid_size
+            ! THE FILL RANGE IS THE NEXT AGE'S STATE FLOOR, and it has to be
+            ! exactly that, no wider and no narrower.
+            !
+            ! This table reads value_function at age_index+1, so it can only be
+            ! filled where that function was SOLVED -- which is the state floor
+            ! at age_index+1. Filling the whole grid instead, as the first
+            ! version of this did, tabulates uncomputed entries at indices 1-3
+            ! and the result is not confined to those indices: with borrowing
+            ! OFF, where nothing can even reach them, it moved w_bot from 0.0295
+            ! to 3.27, homelessness from 0.084 to 0.011 and drug use to exactly
+            ! zero. Something downstream reads the table below the chosen index
+            ! -- the internal-grid interpolation is the candidate -- so an
+            ! unreachable entry is not an unread one.
+            !
+            ! renter_floor_by_age is negative_financial_grid_size when borrowing
+            ! is off and in the final period of life, so this is the old bound in
+            ! exactly those cases.
+            do ffi_1=renter_floor_by_age(min(max(age_index+1,1),life_span)),financial_grid_size
 
                 acc=0
 
@@ -18600,7 +18609,14 @@
                 ! is negative_financial_grid_size when borrowing is off and in the
                 ! final period of life, so this line is a no-op in exactly the
                 ! cases where borrowing is meant to be barred.
-                a_floor_1=renter_floor_by_age(min(max(age_index,1),life_span))
+                ! THE NEXT AGE'S floor, not this one's. a' is where the
+                ! household ARRIVES, so what bounds it is the state floor of the
+                ! age it arrives at. Keyed on age_index instead, a household at
+                ! life_span-1 could borrow into a final period whose value
+                ! function is not solved at negative assets at all -- the
+                ! "no borrowing in the last period" rule states the bound on the
+                ! arriving age, and this is the loop that has to honour it.
+                a_floor_1=renter_floor_by_age(min(max(age_index+1,1),life_span))
                 branch_argmax_1=a_floor_1
 
                 a_lo_1=a_floor_1
