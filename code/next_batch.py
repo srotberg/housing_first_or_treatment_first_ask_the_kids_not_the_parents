@@ -553,7 +553,7 @@ BOUNDS = {
     # earnings for every addict is a corner and not a calibration.
 }
 # beta is banded on the author's instruction; h_3 is conceded.
-BAND = {'beta': (2.5, 4.5)}   # lower edge follows wealth_to_output_data, set to 2.5 on 2 Sep
+BAND = {'beta': (3.0, 4.5)}   # lower edge follows wealth_to_output_data, back to 3.0 on 2 Sep
 # h_3 IS CONCEDED, h_2 IS NOT. The two swapped on 31 August: "no h2 has to be
 # close to 10.1%, but h3 can be off".
 #

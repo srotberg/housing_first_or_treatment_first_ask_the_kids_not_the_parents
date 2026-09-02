@@ -2519,19 +2519,33 @@
         ! assets at roughly two years of GDP and all private fixed assets,
         ! residential included, at roughly three.
         !
-        ! SET TO 2.5 ON THE AUTHOR'S INSTRUCTION, 2 September. Three was the
-        ! all-private-fixed-assets figure, which includes the residential stock;
-        ! the paragraph above already argued that stock is outside household
-        ! wealth here, because include_homeownership is 0 and the rental stock
-        ! sits on the rental companies' books. Two is the nonresidential figure
-        ! and 2.5 is between them.
+        ! BACK TO 3.0 ON THE AUTHOR'S INSTRUCTION, 2 September, having been 2.5
+        ! for about ninety minutes on the same day.
         !
-        ! What it changes: at the round 1 point beta reads 2.452826, which is
-        ! -18.2 per cent against 3.0 and -1.9 per cent against 2.5. It was the
-        ! ONE round 1 moment that could not be reached -- discount_factor was
-        ! exhausted at 0.99995 and buying beta through pi_eu cost four other
-        ! moments -- and at 2.5 it is inside ten per cent without further search.
-        real(8), parameter :: wealth_to_output_data=2.5d0
+        ! WHY IT WENT TO 2.5 AND WHY THAT WAS HALF WRONG. Two arguments were put
+        ! for lowering it. The first is the residential-stock argument above,
+        ! which is sound and stands: include_homeownership is 0, the rental stock
+        ! sits on the rental companies' books, so the counterpart is
+        ! nonresidential capital at roughly two years of GDP rather than all
+        ! private fixed assets at three. The second was that 3.0 could not be
+        ! REACHED, and that was unfounded. It rested on discount_factor being
+        ! exhausted near 0.99995, which assumed beta below one for no reason: the
+        ! model is finite-horizon backward induction, the handover has always
+        ! clamped to [0.5, 1.05], and nothing above one had ever been tried.
+        !
+        ! Measured since, all else equal:
+        !
+        !     discount_factor   beta      w_bot (target 0.0250)
+        !        0.99980       2.4528        0.0247
+        !        1.00200       2.7287        0.0250
+        !        1.00500       3.1277        0.0251
+        !        1.01500       4.3665        0.0250
+        !
+        ! 3.0 is crossed between 1.00200 and 1.00500, with no bound pinned and
+        ! nothing non-finite. w_bot does NOT pay for it -- it is a share, so more
+        ! patience lifts numerator and denominator together, and the two are close
+        ! to orthogonal in this instrument. The binding cost is aleph.
+        real(8), parameter :: wealth_to_output_data=3.0d0
         real(8) :: wealth_to_output_model_1
         real(8) :: gap_discount_factor_1
         real(8) :: previous_gap_discount_factor=0
