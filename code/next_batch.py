@@ -165,7 +165,20 @@ STAGES = [
 # moment improving. The loop says which stages are open and WHY -- satisfied or
 # stalled -- every time, so a stalled stage is visible rather than silently
 # skipped, and it stays in the loss throughout.
-STAGE_PATIENCE = 3
+# PATIENCE SCALES WITH THE ROUND'S SIZE. A flat three was set when a stage held
+# two moments; round 1 holds NINE, and three measurements cannot fit nine
+# instruments -- it was marked STALLED forty-five minutes after opening, having
+# had one measurement per three instruments. The author's ordering is "get the
+# first stage done, then we move to the second stage", and a threshold that
+# expires before a round has been measured once per instrument defeats it.
+#
+# Two measurements per instrument, floored at three. Round 1 gets eighteen; a
+# two-moment round still gets four. The deadlock guard is intact -- an
+# unreachable round still opens the next one eventually, which is what it is for
+# -- it just no longer fires before the round has been tried.
+def stage_patience(st):
+    n = sum(1 for q, mo in OWN.items() if mo in st)
+    return max(3, 2 * n)
 RESTORE_AT = 0.05                         # emit a repair line beyond this
 ACCEPT = 0.10                             # the author's ten per cent rule
 DAMP = 0.70                               # converge slowly, do not jump
@@ -1544,9 +1557,10 @@ def main():
         if satisfied:
             why.append(f'  ROUND {i+1} {st} SATISFIED, worst {100*worst_here:.1f}%')
             continue
-        if rec['stale'] >= STAGE_PATIENCE:
+        if rec['stale'] >= stage_patience(st):
             why.append(f'  ROUND {i+1} {st} STALLED at {100*worst_here:.1f}% for '
-                       f'{rec["stale"]} rounds -- opening the next anyway, and it '
+                       f'{rec["stale"]} of {stage_patience(st)} measurements -- '
+                       f'opening the next anyway, and it '
                        f'stays in the loss')
             continue
         why.append(f'  ROUND {i+1} {st} OPEN and working, worst {100*worst_here:.1f}%')
