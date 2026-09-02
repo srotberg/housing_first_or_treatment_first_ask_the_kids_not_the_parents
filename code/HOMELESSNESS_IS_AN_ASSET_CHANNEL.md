@@ -1,63 +1,64 @@
-# The model makes you homeless when you have no CASH, not when you have no INCOME
+# WITHDRAWN. Homelessness in this model is a PREFERENCE, not an asset channel.
 
-Diagnosed 2 September from point 39f903d92e, prompted by the author asking
-whether h_2 is too small and h_1 too large to weed out the employed. Both are
-right, and the diagnostics say something sharper.
+This file previously argued that homelessness here runs through an asset
+channel: a bimodal age profile, homeless with above-average income, employment
+at 95 per cent. Those numbers were right and the reading of them was wrong. They
+are not a mechanism. They are the signature of a defect, and the author named it
+on 2 September: *"we need to understand why so many of the homeless are
+employed. This is strange especially now that we have poor people with no
+wealth... That goes against everything you said about the wealth being the
+cause."*
 
-## The homeless are too rich AND too employed
+## The measurement
 
-    income of the homeless        model 0.29340   observed 0.19100   +54%
-    employed share of the homeless model 0.95471  observed 0.46000  +108%
+`model_fraction_homeless_by_choice` counts a homeless household whose income
+PLUS assets exceed the rent on the smallest dwelling -- it could have been housed
+and was not. Across every point measured on the cheapest rung, holding everything
+else at the best point:
 
-Two independent readings of the same fault: the households the model makes
-homeless are not poor.
+    h_2        h_1      by choice   could afford   income of    employed
+                                    on income      homeless     share
+    0.039      0.00012   0.995       0.995          0.297        0.305
+    0.060      0.00083   0.999       0.999          0.494        0.886
+    0.078      0.00383   1.000       1.000          0.648        0.959
+    0.095      0.00297   0.955       0.954          0.817        0.954
+    0.117      0.00059   0.980       0.955          1.107        0.758
+    0.117 with
+    sz=0.0578  0.00416   0.921       0.880          1.015        0.909
+    DATA       0.00399     --          --           0.191        0.460
 
-## Nobody in the cheapest unit is cost-burdened
+**Nowhere in the archive is anybody shut out.** Between 92 and 100 per cent of
+the homeless could have rented and chose not to. The homelessness rate among the
+UNEMPLOYED is 0.0014 to 0.0035 -- the genuinely poor are essentially never
+homeless. The model's street is free and yields positive housing services, so
+choosing it is a SAVING decision, and the households best placed to save are the
+employed. That is the whole of the mechanism.
 
-    unit 0 (cheapest)  41.8% of renters   0.0% paying over half their income
-    unit 1             10.2% of renters   0.0% paying over half their income
-    unit 2 (largest)   47.9% of renters  29.8% paying over half their income
+The Fortran itself predicted this, in a comment beside the diagnostic: *"If the
+first number is close to one, homelessness in this model is a preference and not
+a constraint."* It is close to one everywhere.
 
-At `smallest_rental_relative_to_lowest_income=0.039` the bottom rung is trivially
-affordable to anyone with a job, so NO EMPLOYED HOUSEHOLD IS EVER PRICED OUT OF
-HOUSING. That is the author's h_2 point, measured: the rung cannot select the
-homeless on income because it never binds.
+## The trade the model cannot escape
 
-## So homelessness runs through ASSETS, and the age profile proves it
+Read the table down the h_1 column and the income column together:
 
-    age 26   5.45%      age 71   4.78%
-    age 27   4.02%      age 72   4.82%
-    age 28   1.06%      age 74   4.67%
-    age 29-34 ~0.05%    age 80   6.02%   <- the single most homeless age
+- at **h_2 = 0.039** the homeless look most like the data -- income 0.297 against
+  0.191, employed 0.305 against 0.460 -- and there is almost NO homelessness,
+  0.00012 against a 0.00399 target, 97 per cent short;
+- at **h_2 = 0.117 with sz = 0.0578** the homelessness RATE is right, +4.3 per
+  cent, and the homeless earn 1.015 times the average household.
 
-BIMODAL, and the two spikes are exactly the two moments a household holds no
-assets: age 26, where `newborn_endowment_scale=0` hands everyone precisely zero
-and the DIAG confirms `renter wealth = 0.00000`; and the late seventies, where
-assets have been run down. In between, when households hold any buffer at all,
-homelessness is essentially nil.
+**The model can produce the right AMOUNT of homelessness or the right KIND, and
+not both.** No point in 581 has both. That is not a calibration gap; the
+calibration is doing what it is told, and what it is told is reachable only in
+one of the two directions at a time.
 
-THAT IS WHY THE HOMELESS ARE EMPLOYED. They are young workers with no savings,
-not low earners. `emp_homeless` at 0.955 is not a mis-set rung so much as a
-statement that the model's homelessness is a liquidity event.
+## What this bears on
 
-## Three levers, and the third is free
+The paper compares Housing First with Treatment First. A housing voucher given
+to a population that is voluntarily homeless, employed, and earning average
+income does something quite different from a voucher given to people who cannot
+afford rent. The counterfactual rests on which of those the model contains.
 
-1. **Raise h_2** -- `smallest_rental_relative_to_lowest_income`, now 0.039.
-   Prices low-income households out, so the homeless become selected on income.
-   The gate has arms at 0.02535 and 0.06045, both close in; getting from 0.955 to
-   0.460 may need far more than a +/-35 per cent bracket.
-2. **Shrink the street** -- `size_homelessness`, now 0.149. Makes homelessness a
-   worse outcome that only the destitute accept. NOTE the coupling recorded in
-   ENGINE.md: the street is a RATIO of the rung, so raising h_2 drags the street
-   up with it unless size_homelessness falls more than proportionally.
-3. **Endow newborns** -- `newborn_endowment_scale`, at 0.0 in ALL 40 points, with
-   a bound of (0, 3.0). Zero assets at 26 manufactures the young spike directly.
-   The parameter has never taken a second value and the model is sitting on the
-   corner of its range.
-
-## One thing nothing scores
-
-**Age 80 is the most homeless age in the model, at 6.02 per cent.** No target
-touches the old-age tail. US homelessness peaks in middle age and the elderly
-have Social Security, so this looks wrong on its face and is worth checking
-before the counterfactuals lean on it.
+Nothing has been changed. The street's free positive housing services are the
+proximate cause and altering that is a model change, which is the author's call.
