@@ -1148,7 +1148,8 @@ def archive():
             continue
         t = open(f).read()
         mh = re.search(r'^MODEL (\S*)', t, re.M)
-        if not mh or _mh.resolve(mh.group(1), _map) not in ok:
+        # resolve_for_point, not resolve -- see gaps.py and INERT_CHANGES.
+        if not mh or _mh.resolve_for_point(mh.group(1), t, _map) not in ok:
             skipped += 1
             continue
         v, m = vector(t), moments(t)

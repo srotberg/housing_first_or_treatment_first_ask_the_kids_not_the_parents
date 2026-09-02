@@ -3829,6 +3829,22 @@
         ! borrowing in the last period -- nothing remains to repay it from.
         integer, dimension(life_span) :: renter_floor_by_age=0
         integer :: renter_array_floor=1
+        ! ONLY THE IMPATIENT MAY BORROW. The author's instruction, given as a
+        ! speed measure: the patient type discounts at 0.9998 against a gross
+        ! borrowing rate of 1.055, so beta*R is above one for them and the
+        ! negative grid is a region their Euler equation points away from. Barring
+        ! it removes seven of the thirty-two choice points AND seven of the
+        ! thirty-two state points from the patient pass, which is half the
+        ! population, so the value function loop over that pass costs roughly
+        ! (25/32)^2 of what it did.
+        !
+        ! IT IS A RESTRICTION ON THE CHOICE SET, NOT AN IDENTITY, and it is a
+        ! handover parameter for that reason. A patient household young enough to
+        ! face a rising income profile can want to borrow even when beta*R>1, so
+        ! whether this is free has to be MEASURED at a point -- restriction off
+        ! against restriction on, same container -- and not assumed. If the
+        ! moments move, this is a model change and belongs with the author.
+        integer :: restrict_borrowing_to_impatient=1
 
         real(8) :: financial_grid_expander_positive=3.0
         ! THE SAME ACCORDION ON THE NEGATIVE SIDE. The positive grid is linear in
@@ -11403,9 +11419,32 @@
         ! reachable and no search is needed -- except in the final period of
         ! life, where the household has no future income to repay from and
         ! borrowing is barred.
+        !
+        ! AND EXCEPT FOR THE PATIENT TYPE, when restrict_borrowing_to_impatient
+        ! is on. The floor is a module array read by every state loop, every
+        ! choice loop and every distribution loop, and the two types are solved
+        ! in SEPARATE SEQUENTIAL PASSES with current_beta_type naming the pass,
+        ! so setting it here at the top of a pass is all it takes to shrink both
+        ! the states and the choices for that type alone. It is called from the
+        ! pass loop for that reason; before this it was called once at the end
+        ! of the last type's accumulation, which was enough when the floor did
+        ! not depend on the type and is not now.
+        !
+        ! The guard is number_of_beta_types>1, not current_beta_type<
+        ! number_of_beta_types: with a single type that type IS the whole
+        ! economy, and barring it would silently turn borrowing off altogether.
         if (include_unsecured_borrowing==1) then
 
-            renter_floor_by_age(1:life_span-1)=1
+            if ((restrict_borrowing_to_impatient==1) .AND. &
+                (number_of_beta_types>1) .AND. (current_beta_type==1)) then
+
+                ! patient pass: the floor stays at the zero index
+
+            else
+
+                renter_floor_by_age(1:life_span-1)=1
+
+            end if
 
         end if
 
@@ -26598,7 +26637,10 @@
             write(*,*) "DIAG unsecured borrowing limit, yrs of income   =",&
                 unsecured_borrowing_limit*include_unsecured_borrowing
             write(*,*) "DIAG borrowing floor, model units                =",&
-                financial_grid(renter_floor_by_age(1))
+                financial_grid(renter_array_floor)
+            write(*,*) "DIAG patient type barred from the negative grid   =",&
+                restrict_borrowing_to_impatient*include_unsecured_borrowing*&
+                min(max(number_of_beta_types-1,0),1)
             write(*,*) "DIAG street size, absolute                       =",&
                 housing_size(lowest_housing_grid_point)
             write(*,*) "DIAG street as a share of the cheapest unit      =",&
@@ -35241,6 +35283,11 @@
                         unsecured_borrowing_rate, "->", handover_value
                     unsecured_borrowing_rate=max(min(handover_value,0.40d0),0.d0)
 
+                case ("restrict_borrowing_to_impatient")
+                    write(*,*) "HANDOVER restrict_borrowing_to_impatient:", &
+                        restrict_borrowing_to_impatient, "->", handover_value
+                    restrict_borrowing_to_impatient=max(min(nint(handover_value),1),0)
+
                 case ("rho_m")
                     write(*,*) "HANDOVER rho_m:", rho_m, "->", handover_value
                     rho_m=max(min(handover_value,1.d0),0.05d0)
@@ -35596,6 +35643,9 @@
             separation_step_1,b_move_1,lambda_move_1
         character*1 :: string_used
         integer :: last_period_of_life,addiction_index
+        ! Its own name and not the file's shared i: the projection below runs
+        ! inside the beta-type pass loop, where i is live.
+        integer :: i_beta_floor
         integer, dimension(1) :: index_drug_1
                                 
         simulation_ended=0
@@ -36130,6 +36180,64 @@
             mass_passes=current_beta_type
             if (current_beta_type==1) discount_factor=discount_factor_patient_saved
             if (current_beta_type==2) discount_factor=discount_factor_impatient
+
+            ! THE FLOOR IS PER PASS NOW. set_renter_floor reads current_beta_type,
+            ! so it has to run after the type is set and before anything that
+            ! loops on renter_floor_by_age. Harmless when
+            ! restrict_borrowing_to_impatient is zero: it recomputes the same
+            ! array both passes.
+            call set_renter_floor(1)
+
+            ! AND THE WARM DISTRIBUTION HAS TO BE PROJECTED ONTO IT. From loop
+            ! three onward initialize_feasible_distribution is skipped and the
+            ! patient pass starts from the IMPATIENT pass's converged
+            ! distribution, which carries mass at negative indices the patient
+            ! pass no longer visits. That mass would sit untouched in the array
+            ! and still be picked up by the full-slice sum() calls that form
+            ! sum_of_distribution, inflating the denominator of every share.
+            !
+            ! Zeroing it is safe because this is only the ITERATION'S STARTING
+            ! GUESS: converge_to_stationary_equilibrium runs to 6e-4 from
+            ! whatever it is handed, so a projection changes the path and not
+            ! the fixed point. lbound is read off the array rather than
+            ! recomputed because the owner slabs start at 1 and have no negative
+            ! region to clear.
+            if ((include_unsecured_borrowing==1) .AND. &
+                (restrict_borrowing_to_impatient==1) .AND. &
+                (number_of_beta_types>1) .AND. (current_beta_type==1)) then
+
+                do i_beta_floor=1,size(distribution_guess)
+
+                    ! distribution_guess is the OPERATIVE one: the iteration
+                    ! zeroes distribution_implied every sweep and rebuilds it
+                    ! from the guess, and sum(distribution_guess) feeds both the
+                    ! convergence distance and the Aitken step. Phantom mass at
+                    ! an index the patient pass never visits would sit in that
+                    ! sum. distribution_stationary is cleared with it because
+                    ! every moment's denominator is a full-slice sum over it.
+                    if (lbound(distribution_guess(i_beta_floor)%&
+                        vector_transition_real,3)<negative_financial_grid_size) then
+
+                        distribution_guess(i_beta_floor)%vector_transition_real&
+                            (:,:,lbound(distribution_guess(i_beta_floor)%&
+                            vector_transition_real,3):negative_financial_grid_size-1,&
+                            :,:,:,:)=0
+
+                    end if
+
+                    if (lbound(distribution_stationary(i_beta_floor)%&
+                        vector_transition_real,3)<negative_financial_grid_size) then
+
+                        distribution_stationary(i_beta_floor)%vector_transition_real&
+                            (:,:,lbound(distribution_stationary(i_beta_floor)%&
+                            vector_transition_real,3):negative_financial_grid_size-1,&
+                            :,:,:,:)=0
+
+                    end if
+
+                end do
+
+            end if
 
             call solve_value_function_and_policy_functions(1)
                             

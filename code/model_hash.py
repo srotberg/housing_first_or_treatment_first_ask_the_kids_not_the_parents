@@ -149,6 +149,62 @@ def current():
 _rebuilt = False
 
 
+# A SOURCE CHANGE THAT IS INERT FOR SOME POINTS, and the machinery to say so.
+#
+# TARGET_CONSTANTS above handles a change that is inert for EVERY point. This
+# handles the other case: a change whose whole effect sits behind a flag, so it
+# is inert for exactly those points that ran with the flag off. That is a
+# property of the POINT, not of the source, which is why it cannot be a plain
+# entry in a source-to-source equivalence table and needs the point's vector.
+#
+# `when` is given the point file's text and returns True if the change could not
+# have touched that run. Keep it conservative: a rule that wrongly pools two
+# economies is far worse than one that wrongly splits them, because a split
+# costs a re-solve and a pool corrupts a comparison silently.
+INERT_CHANGES = [
+    {
+        'from': '841e04b785',
+        'to':   'f9048e2563',
+        'what': 'restrict_borrowing_to_impatient bars the patient type from the '
+                'negative asset grid',
+        'why':  'Every line of it is inside `if (include_unsecured_borrowing==1)` '
+                '-- the branch in set_renter_floor and the distribution '
+                'projection in the beta-type pass loop alike. The one addition '
+                'that runs unconditionally is a second call to set_renter_floor, '
+                'which recomputes the same constant array when borrowing is off. '
+                'So a point with borrowing off executes identically either side '
+                'of the merge.',
+        'careful': 'This says NOTHING about a borrowing-ON point. An ON point '
+                   'measured before the merge ran with BOTH types on the negative '
+                   'grid and is a different economy from one measured after. Those '
+                   'must never pool, which is exactly what the flag test below '
+                   'prevents.',
+        'when': lambda text: re.search(r'include_unsecured_borrowing=0(?![.0-9])',
+                                       text) is not None,
+    },
+]
+
+
+def resolve_for_point(stamp, text, cache=None):
+    """Semantic hash for a point, allowing for changes inert at ITS vector.
+
+    Falls back to resolve() when no inert rule applies, so a point that does not
+    meet a rule's condition groups exactly as it did before.
+    """
+    h = resolve(stamp, cache)
+    seen = set()
+    while h in seen or True:
+        seen.add(h)
+        for ch in INERT_CHANGES:
+            if h == ch['from'] and ch['when'](text):
+                h = ch['to']
+                break
+        else:
+            return h
+        if h in seen:
+            return h
+
+
 def resolve(stamp, cache=None):
     """Semantic hash for a MODEL stamp read off a point file.
 

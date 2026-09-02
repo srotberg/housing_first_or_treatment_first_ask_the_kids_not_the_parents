@@ -61,6 +61,7 @@ declare -A P=(
     [include_unsecured_borrowing]=1
     [unsecured_borrowing_limit]=1.50
     [unsecured_borrowing_rate]=0.055
+    [restrict_borrowing_to_impatient]=1
     # THE CURVATURE OF THE POSITIVE ASSET GRID. grid(i)=top*((i-61)/24)**e, so a
     # bigger exponent pushes the rungs toward zero. At the inherited 1.5 there
     # was ONE grid point between zero wealth and a year's rent on the cheapest
@@ -306,7 +307,10 @@ except OSError:
 m = re.search(r'^MODEL ([0-9a-f]+)', text, re.M)
 if not m:
     sys.exit(1)
-sys.exit(0 if model_hash.resolve(m.group(1)) == model_hash.current() else 1)
+# resolve_for_point: a change gated on a flag is inert for a point that ran
+# with the flag off, so such a point is still current and must not be moved
+# to points_superseded.
+sys.exit(0 if model_hash.resolve_for_point(m.group(1), text) == model_hash.current() else 1)
 PYEOF
 }
 

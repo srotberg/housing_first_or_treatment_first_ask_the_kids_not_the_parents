@@ -569,3 +569,45 @@ DO NOT RESPAWN AN ARM BEFORE ITS PLAUSIBLE WINDOW HAS PASSED. Respawning at
 minute 26 of a job that may legitimately take 40 burns a container and produces a
 duplicate point with the same md5. Judge it against these numbers, not against
 impatience.
+## The patient type is barred from the negative grid (restrict_borrowing_to_impatient)
+
+The author asked for it as a SPEED measure: the patient type discounts at
+0.9998 against a gross borrowing rate of 1.055, so beta*R>1 for them and the
+negative grid is a region their Euler equation points away from. The grid is
+24 positive points plus 8 negative, so barring seven of them removes about a
+fifth of the states AND a fifth of the choices from the patient pass -- roughly
+(25/32)^2 of the value function cost on half the population.
+
+It works because the two types are solved in SEPARATE SEQUENTIAL PASSES.
+`renter_floor_by_age` is a module array read by every state loop, every choice
+loop and every distribution loop, so `set_renter_floor` reading
+`current_beta_type` at the top of a pass shrinks that pass alone. It is now
+called FROM the pass loop; before this it ran once at the end of the last
+type's accumulation, which was enough only while the floor did not depend on
+the type.
+
+TWO THINGS THAT WOULD HAVE BEEN WRONG:
+
+- **The warm distribution carries mass the patient pass no longer visits.**
+  From loop three onward `initialize_feasible_distribution` is skipped and the
+  patient pass starts from the IMPATIENT pass's converged distribution.
+  `distribution_guess` is the operative array -- the iteration zeroes
+  `distribution_implied` every sweep and rebuilds it from the guess -- and
+  `sum(distribution_guess)` feeds both the convergence distance and the Aitken
+  step. Both it and `distribution_stationary` are now cleared over the negative
+  region at the top of the patient pass. Safe because it is only the starting
+  guess: the iteration runs to 6e-4 from whatever it is handed.
+
+- **The borrowing-floor DIAG read a per-pass array.** It printed
+  `financial_grid(renter_floor_by_age(1))`, which is the zero point during the
+  patient pass, so the log would have said the borrowing floor was zero in an
+  economy where borrowing was on. It reads `renter_array_floor` now, and a
+  second line states whether the patient type is barred.
+
+**IT IS A RESTRICTION ON THE CHOICE SET, NOT AN IDENTITY.** A patient household
+young enough to face a rising income profile can want to borrow even when
+beta*R>1. Whether it is free has to be MEASURED -- `restrict_borrowing_to_
+impatient=0` against `=1`, same vector, SAME CONTAINER, which is what
+`batch_patient_floor.txt` is. If the moments move by more than the within-
+container floor of 1.21e-03 it is a model change and belongs with the author,
+not a speed setting.

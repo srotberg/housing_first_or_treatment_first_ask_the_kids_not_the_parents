@@ -200,7 +200,10 @@ def main():
             continue
         t = open(f, encoding='utf-8', errors='replace').read()
         mm = re.search(r'^MODEL (\S+)', t, re.M)
-        if not mm or _mh.resolve(mm.group(1), _MAP) not in _OK:
+        # resolve_for_point, not resolve: a change gated on a flag is inert for
+        # the points that ran with the flag off, and only the point's own
+        # vector can say which those are.
+        if not mm or _mh.resolve_for_point(mm.group(1), t, _MAP) not in _OK:
             continue
         v, m = load(f)
         if v is None or (cfg and v.get('number_of_beta_types', cfg) != cfg):
