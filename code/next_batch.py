@@ -32,6 +32,7 @@ such pair gets no line, and says so, rather than being moved on a guess.
 import glob
 import hashlib
 import json
+import time
 import math
 import os
 import re
@@ -82,10 +83,15 @@ BASE_TOL = {'b': 0.10, 'lambda_d': 0.10}  # admissible as a base thereafter
 # are the ones the model reaches most easily.
 STAGES = [
     ['b', 'lambda_d'],                                 # the gate itself
-    ['h_1', 'emp_homeless'],                           # the author's h1 and h2
+    # h_share1 JOINS THE HOUSING STAGE on the author's instruction, 2 September:
+    # "i think you need to add the hshare_1". It is the share of the homeless
+    # aged 25 to 34 and its instrument is newborn_endowment_scale, so it is a
+    # composition moment about the same population as emp_homeless and belongs
+    # with it rather than among the aggregates. It was in stage 3.
+    ['h_1', 'emp_homeless', 'h_share1'],               # the author's h1 and h2
     ['theta', 'tau_u', 'mu_H', 'lambda_m', 'p_m'],     # disorder and treatment
     ['beta', 'pi_eu', 'tau_l', 'sigma_y', 'omega_l',   # the aggregates
-     'gamma', 'cbar', 'pi_V', 'aleph', 'h_share1', 'h_2'],
+     'gamma', 'cbar', 'pi_V', 'aleph', 'h_2'],
 ]
 
 # A STAGE THAT CANNOT BE SATISFIED MUST NOT DEADLOCK THE ONES BEHIND IT.
@@ -1327,7 +1333,17 @@ def main():
         worst_here = max((gap(q, m[q]) for q in st if q in m), default=0.0)
         satisfied = all(q in m and gap(q, m[q]) <= BASE_TOL.get(q, ACCEPT) for q in st)
         k = f'stage{i}'
-        rec = hist.get(k, {'best': worst_here, 'stale': 0})
+        # A STAGE WHOSE MEMBERSHIP CHANGES GETS A FRESH PATIENCE COUNT. Stage 1
+        # gained h_share1 on 2 September, and its stall had in any case been
+        # counted over three firings in which the cheapest rung was frozen out of
+        # the search by the elasticity guard -- so the stall measured a bug, not
+        # the stage. Keying the record on the stage's contents resets it whenever
+        # the author changes what a stage contains.
+        sig = ','.join(st)
+        rec = hist.get(k, {'best': worst_here, 'stale': 0, 'sig': sig})
+        if rec.get('sig') != sig:
+            rec = {'best': worst_here, 'stale': 0, 'sig': sig}
+        rec['sig'] = sig
         if worst_here < rec['best'] - 1e-9:
             rec = {'best': worst_here, 'stale': 0}
         else:
@@ -1343,7 +1359,45 @@ def main():
             continue
         why.append(f'  stage {i} {st} OPEN and working, worst {100*worst_here:.1f}%')
         break
+    # THE HISTORY OF THE OPENING, not just its current state. The author,
+    # 2 September: "i want to see every step of the opening." A snapshot says
+    # which stages are open now; it does not say WHEN each opened, what it added
+    # at that moment, or how long the one before it took. That history is the
+    # record of how the calibration was built and it was being thrown away every
+    # firing.
+    log_path = os.path.join(HERE, '.stage_log')
+    slog = json.load(open(log_path)) if os.path.exists(log_path) else []
+    seen = {e['stage'] for e in slog}
+    inv0 = {}
+    for _p, _mo in OWN.items():
+        inv0.setdefault(_mo, []).append(_p)
+    for i in open_stages:
+        if i in seen:
+            continue
+        # b and lambda_d are owned by the drug pair through the GATE rather than
+        # through OWN, so inv0 has nothing for them and stage 0 printed "(no
+        # instrument)" -- which is false and is exactly the line the author is
+        # reading to see what enters the calibration.
+        added = [q for _mo in STAGES[i] for q in inv0.get(_mo, [])]
+        if i == 0:
+            added = list(FREE)
+        slog.append({'stage': i, 'at': time.strftime('%d %b %H:%M', time.gmtime()),
+                     'moments': STAGES[i], 'added': added,
+                     'reason': 'first' if i == 0 else
+                               ('stalled' if any('STALLED' in x and f'stage {i-1} ' in x
+                                                 for x in why) else 'satisfied'),
+                     'points': len(A)})
+    json.dump(slog, open(log_path, 'w'), indent=1)
+
     json.dump(hist, open(hist_path, 'w'), indent=1)
+    print('HOW THE CALIBRATION WAS OPENED, step by step:')
+    for e in slog:
+        prev = 'the gate itself' if e['stage'] == 0 else \
+               f"stage {e['stage']-1} {e['reason']}"
+        print(f"  {e['at']}  stage {e['stage']} opened ({prev}, {e['points']} points)")
+        print(f"      moments  {', '.join(e['moments'])}")
+        print(f"      ADDED    {', '.join(e['added']) if e['added'] else '(no instrument)'}")
+    print()
     print('STAGES:'); [print(x) for x in why]
     live = {q for i in open_stages for q in STAGES[i]}
 
