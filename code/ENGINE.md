@@ -496,3 +496,44 @@ engine does not push to the shared branch while a batch is in flight.** Hold
 notes and batch files locally and push them when the fleet is quiet. Committing
 process notes about not disturbing running work, in a way that disturbs running
 work, is the specific failure to avoid.
+
+## A TARGET IS NOT A MODEL, and it used to reset the archive like one
+
+The single largest cause of "no scoreable point in the current economy" on
+2 September was not a bug and not a slow solve. Fifteen points solved between
+12:53 and 15:00 and not one was scoreable, because FOUR source changes landed in
+that window and every one of them re-stamped the model. Two of the four were
+TARGET edits the author asked for -- the wealth-to-GDP ratio to 2.5 at 12:53 and
+back to 3.0 at 13:59, ninety minutes apart.
+
+A target changes nothing about the economy. It is not in any household's
+problem, any price, or any equilibrium condition; it enters a `write` statement
+and a gap in the outer calibration stepper, and a point pins every parameter so
+the stepper has nothing left to move. The three points measured between 13:18
+and 13:59 differed from the source that followed them by EXACTLY ONE non-comment
+line in 40,000, `wealth_to_output_data=2.5d0` against `=3.0d0`, and were thrown
+away for it.
+
+`model_hash.semantic()` now blanks the VALUE of the constants in
+`TARGET_CONSTANTS` while keeping their declaration, so renaming or deleting a
+target still moves the hash and only the number is ignored. Those three points
+came back the moment it did.
+
+**THE BAR FOR ADDING A NAME TO THAT LIST IS EVIDENCE, NOT THE SUFFIX.** Thirty-six
+constants end in `_data` and most of them are NOT safe: `personal_exemption_data`
+and `standard_deduction_data` build the tax function, `avg_labor_supply_data` is
+inside a labour supply expression, `fraction_of_average_house_price_data` is in
+the household problem. Read every non-comment use of a name before adding it. If
+any use is an equilibrium object rather than a write or a stepper gap, it stays
+out.
+
+The scorer already re-applies the CURRENT target rather than the one baked into
+the point file, for `beta`, through `BAND` -- which is why a point measured at
+2.5 scores against 3.0-4.5 correctly. Anything else needing that treatment goes
+in `TARGET_OVERRIDE`.
+
+**AND THE OTHER HALF OF THE LESSON IS SCHEDULING.** Two of the four changes were
+real -- the grid went from 4 negative points to 8 with a new limit -- and those
+correctly killed seven points. Solving THROUGH a run of model edits is what
+wasted the two hours. Settle the source first, then launch; a solve started
+before an edit that is already coming is a solve thrown away.
