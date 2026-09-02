@@ -61,6 +61,74 @@ any worker whose solve straddles a model-changing push will stamp a stale
 hash, and any worker re-running that vector afterwards will be handed the
 stale file.
 
+## A second, independent bug: `gaps.py` destroys `.model_hash_map`
+
+Running `python3 code/gaps.py` on an intact, freshly-checked-out
+`code/.model_hash_map` rewrites that tracked file from **330 lines (329
+mappings) to 8 lines (7 mappings)**. This is reproducible from a clean
+checkout and is not a side effect of anything done by hand here:
+
+    git checkout HEAD -- code/.model_hash_map   # 329 mappings
+    python3 code/gaps.py                        # "no scoreable point ..."
+    wc -l < code/.model_hash_map                # 8
+
+Mechanism, in `code/model_hash.py`:
+
+- `archive()` calls `resolve(stamp, _map)`; the first stamp missing from the
+  cache sets `_rebuilt` and calls `build_map(force=True)`;
+- `build_map` starts `m = {}` and, **when `force` is set, never loads the
+  existing cache** -- the `if os.path.exists(CACHE) and not force` guard skips
+  it;
+- it then repopulates `m` from `_git_revs()` and `json.dump`s it over the
+  cache.
+
+`_git_revs()` is `git log -- code/housing_first_or_treatment_first_SR_v1.f90`.
+**This checkout is shallow** (`git rev-parse --is-shallow-repository` is
+`true`, 61 commits), so that walk sees only the handful of revisions present
+locally. The 329-entry map was accumulated when deeper history was reachable;
+one unknown stamp replaces it with the 7 revisions this clone can see, and the
+other 322 mappings are gone. Any worker that then commits the file propagates
+the loss to everyone.
+
+The truncated file was NOT committed here; it was restored with
+`git checkout HEAD -- code/.model_hash_map`. Every worker on a shallow clone
+will keep re-truncating it, so this needs a real fix. Two independent ones,
+either sufficient:
+
+- seed the map from the cache even under `force` (`m = {}` becomes a load of
+  the existing cache, with the git walk merged on top), so a rebuild is
+  additive and a shallow clone can only ever add mappings; and/or
+- `git fetch --unshallow` in the worker setup so `_git_revs()` sees the whole
+  history it assumes it has.
+
+## This bug is NOT why the archive is empty
+
+Worth stating explicitly, because the two failures look alike and the second
+one is the tempting explanation for the first. Resolving every stamp in
+`points/` against the **full, untruncated** 329-entry map gives:
+
+    points by semantic hash          count
+    <no MODEL line>                     86   (predate the stamp)
+    3af48ddb51                          78
+    ddde1a91e1                          72
+    222bb7fd3f                          52
+    31818f2e83                          24
+    671f8a037b                          24
+    ... 28 further hashes               ...
+    9caeb7a139                           1   (this run's first measurement)
+    fdc6078859  (CURRENT)                0
+
+**Not one point resolves to `fdc6078859`, with the full map in place.** The
+archive is genuinely stale: `ca9479b` changed the economy and no point had yet
+been measured on it. Restoring the map does not recover a single point, and
+fixing `build_map` will not make the loop scoreable today. Both problems are
+real; only the model change explains the empty archive.
+
+Two other things the resolution table shows, neither new: 86 points predate
+the MODEL stamp entirely, and 2 carry an empty stamp (the `code/code`
+`dirname` bug that `run_one_point.sh:204` records as fixed). Those 88 points
+can never be scored again.
+
 ## What was done about it
 
 The stale point was moved aside (it survives in git history at `45d4839`) and
