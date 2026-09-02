@@ -26,7 +26,7 @@ SKIP = {'h_3', 'w_bot'}
 # and the cost burden share a denominator. rent50 is the same headcount over
 # INCOME and pointed the OPPOSITE way -- +163 per cent against h_2's -38 -- so
 # scoring both left one parameter with two targets it could not satisfy at once.
-UNSCORED = {'kappa_ued', 'kappa_uem', 'rent50', 'p_m'}
+UNSCORED = {'kappa_ued', 'kappa_uem', 'rent50'}
 BAND = {'beta': (3.0, 4.5)}
 
 # parameter -> the moment it is bracketed on. Kept here rather than imported so
@@ -46,6 +46,7 @@ OWN = [
     ('relative_share_of_leisure', 'omega_l'),
     ('labor_income_tax_rate', 'tau_l'),
     ('sd_permanent_productivity', 'sigma_y'),
+    ('smi_onset_level', 'p_m'),
     ('weight_on_child', 'omega_c'),
 ]
 

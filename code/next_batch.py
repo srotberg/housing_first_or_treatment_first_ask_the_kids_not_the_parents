@@ -132,7 +132,7 @@ STAGES = [
     # author has reserved the decision about it.
     # The last round, the author's own list: "then tau_u, mu_H and lambda_m in
     # the last stage." p_m is NOT in it -- see below.
-    ['tau_u', 'mu_H', 'lambda_m', 'sud_homeless'],
+    ['tau_u', 'mu_H', 'lambda_m', 'sud_homeless', 'p_m'],
 
     # THE LAST ROUND IS omega_c ALONE. The author, 2 September: "omega_c comes at
     # the very end in stage 5." It needs measure_child_gap=1 handed in, which is
@@ -186,12 +186,10 @@ OWN = {
     # population share: a controlled pair moves p_m by -6 per cent for a -20 per
     # cent step while barely touching the share of the homeless, +1.25 per cent.
     # Two moments, two instruments; only one of them had ever been listed.
-    # p_m IS NOT USED. The author, 2 September: "p_m is not used...."
-    #
-    # The SMI population share leaves the calibration and smi_onset_level owns
-    # nothing. It stays PARSED and printed with the unscored moments, because it
-    # is still a fact about the model worth reading, but it is out of the loss
-    # and out of every round.
+    # p_m IS BACK. The author said "p_m is not used" and then, minutes later,
+    # asked "isn't smi_onset_level set to match the overall share of SMI?" -- it
+    # is, and that is what p_m is. Restored to round 4 with its instrument.
+    'smi_onset_level':                                     'p_m',
     'value_of_life':                                       'aleph',
     # RE-POINTED ON THE AUTHOR'S INSTRUCTION, from kappa_ued to the SUD share of
     # the homeless. The argument is double counting: a disorder that both takes
@@ -597,10 +595,6 @@ SKIP = {'h_3',
 # its nominal owner the weakest of the three, which is worth watching rather than
 # pretending is clean.
 UNSCORED = {'rent50',
-            # p_m IS NOT USED. The author, 2 September: "p_m is not used...."
-            # The SMI population share leaves the loss and smi_onset_level owns
-            # nothing; the moment stays parsed and printed.
-            'p_m',
             # THE PROFILE IS SCORED THROUGH h_share1 ALONE, so the other four
             # shares and all five rates are reported and not scored. h_share1 is
             # the share of the homeless aged 25 to 34, 0.91 against 0.26; these
