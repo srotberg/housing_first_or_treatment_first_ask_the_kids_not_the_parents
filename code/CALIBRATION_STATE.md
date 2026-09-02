@@ -8,6 +8,42 @@ Do not act on anything below without checking it against this block.
 
 Model `2f7c317e75`. 29 points.
 
+### 11:05 -- THE beta FRONTIER IS MEASURED, AND EIGHT OF NINE IS THE CEILING
+
+All three frontier arms landed, off the 8-of-9 point:
+
+    arm                       beta     pi_eu    w_bot    cbar     aleph
+    base (imp .75, .99980)  2.4528   0.1343   0.02427  0.00394  75.83
+    imp 0.78                2.4652   0.1332   0.02627  0.00388  76.62   8 of 9
+    discount_factor .99995  2.4695   0.1343   0.02477  0.00393  76.34   8 of 9
+    p_eu 0.0122 -> 0.0250   2.7239   0.1948   0.02995  0.00580  68.52   5 of 9
+
+**discount_factor is finished as a beta instrument.** 0.99980 -> 0.99995 bought
+beta 0.0166. There is 0.00005 of the parameter left before it reaches one, and
+0.53 of beta still to find.
+
+**The pi_eu trade is a straight swap, and it is a bad one.** Raising p_eu to
+0.0250 brings beta to 2.7239 -- 9.2 per cent under the floor, INSIDE ten -- but
+it takes pi_eu to +40.1, w_bot to +19.8, cbar to +38.1 and aleph to -14.4. Eight
+of nine becomes FIVE of nine. beta is bought by breaking four.
+
+So round 1's ceiling on the current instrument set is EIGHT of nine, and beta is
+the one that cannot be had. This is a measurement, not an impasse to work around.
+
+**ONE INSTRUMENT REMAINS UNTRIED, and it is the author's to authorise.**
+risk_free_rate is `real(8), parameter :: risk_free_rate_data=0.03`, fixed, and
+NOT in run_one_point.sh's handover -- 0 of 42 names match it. beta is wealth over
+output and the return on wealth is the obvious lever nobody has pulled. Opening
+it means editing the Fortran to make a fixed constant a runtime parameter, and
+that is a model change with a calibration target attached, so it is not mine.
+
+THE AUTHOR'S CHOICE, stated plainly:
+  a) accept beta at -18.2 per cent and call round 1 done at eight of nine;
+  b) move beta's target or widen the 3.0-4.5 band;
+  c) authorise risk_free_rate as an instrument;
+  d) accept pi_eu out instead of beta -- but that costs three more moments, so it
+     is strictly worse and is listed only for completeness.
+
 ROUND 1 IS EIGHT OF NINE. Point `35e8286c4e` (equally `db14af8e82`, the
 0.75/0.99980 pair). Only `beta` is out.
 
