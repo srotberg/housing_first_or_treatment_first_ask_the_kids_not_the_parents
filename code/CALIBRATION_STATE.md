@@ -112,18 +112,59 @@ gate has sat between 18 and 26 per cent for a day while those two moved. It has
 been fitting the wrong instruments. Nothing is concluded until the three arms
 land -- this is one diff between two points, not a measurement.
 
-## IN FLIGHT, 22:33
+## THE DRUG BATCH MOVES BOTH DRUG INSTRUMENTS ALONG ONE LINE, SO IT CANNOT SEPARATE THEM
+
+The full step landed at 22:41 and completes the ladder `restore.py` emitted.
+It is clean and monotone, and it is also collinear by construction -- every arm
+moves `addiction_scalar_1` and `lambda_addiction` TOGETHER:
+
+    lambda_addiction   addiction_scalar_1      b        lambda_d
+      2.79953  base      0.0360             0.10027    0.02993
+      2.89520  quarter   0.03589788         0.09747    0.02892
+      2.99414  half      0.03579606         0.09281    0.02738
+      3.20228  full      0.03559327         0.07963    0.02379
+      TARGET                                0.08900    0.03680
+
+**The two moments want the step in OPPOSITE directions.** Reading the ladder as
+a function of `lambda_addiction`: b needs about 3.05 to reach 0.089, and
+lambda_d is falling as lambda_addiction rises, so lambda_d needs it near 2.35 --
+where b would be about 0.123, or +38 per cent. One instrument cannot serve both,
+and the second instrument has never been moved on its own. Four points on one
+line give a rank-one Jacobian; the gate has been inverting it all day.
+
+Two arms now move `addiction_scalar_1` ALONE, at 0.0410 and 0.0300, with
+`lambda_addiction` held at 2.79953. That is the missing direction.
+
+## h_1 IS ONE SOLVE FROM CLOSED
+
+    size_homelessness   h_1        gap
+    0.032283            0.000594   -85.1%
+    0.055000            0.003044   -23.7%
+    0.057750            solving
+    0.060000            0.004766   +19.5%
+    TARGET              0.003990
+
+The bracket is now five thousandths wide and the interpolated point is running.
+Note that 0.055 UNDERSHOT the interpolation: h_1 is convex in the street size,
+so a linear read between 0.0323 and 0.060 put the crossing too low. The two
+inner points are the ones to interpolate from.
+
+## IN FLIGHT, 22:43
 
     families arm 1  relative_share_of_leisure=4.72832   session_01VSANBj72YfBYAkx8yqTX65
     families arm 2  size_homelessness=0.149             session_01FzKjBbZjynZycvbJScPgTY
     families arm 3  h_2=0.039                           session_01M7Z3cGD1GKC5cxthfjVryF
-    h_1 solve       size_homelessness=0.055             session_01GkNh3GipT8xJyRnaLig32D
-    drugfit full step                                   session_01AajfpaSkSmA8qD6EAoMdDD
+    h_1 close       size_homelessness=0.05775           session_01PNHyBvAKLuJC5SiaCb664s
+    drug sep        addiction_scalar_1=0.0410           session_01WcYLxAGYq1Kqm2EPpbKy7x
+    drug sep        addiction_scalar_1=0.0300           session_01FQWuWWYWtp3FfkbfXLC37g
 
-The three family arms are each ONE coordinate off point_5f78305512 and together
-they decompose the whole gap between the families. They are arms the gate did
-not ask for -- it wants the drug block alone -- run on idle capacity because the
-gate's own instruments look like the wrong ones and five slots were free.
+LANDED: sz=0.055 and the drug full step. 572 points.
+
+TAKE POINT FILES, DO NOT MERGE WORKER BRANCHES. `git checkout FETCH_HEAD --
+code/points/<file>` and commit the named path. Merging a worker branch drags in
+its `calibration_state.dat` and `B_SWEEP_GRID.txt`, both per-run scratch, both
+of which conflict; resolving one of those with `git add -A` committed conflict
+markers into a file the Fortran reads.
 
 ## THE GATE'S DRUG BASE IS ON THE OLD RUNG
 
