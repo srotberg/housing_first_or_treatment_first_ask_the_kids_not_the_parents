@@ -551,7 +551,24 @@ BOUNDS = {
     'kappa_uem':                                           (1.0, 100.0),
     'max_food_cost':                                       (1e-4, 1.0),
     # A REAL SEARCH RANGE NOW: nothing calibrates this inside a point run.
-    'discount_factor':                                     (0.90, 0.999),
+    # THE CEILING EXCLUDED THE SOLUTION, found 2 September, the same fault as
+    # relative_share_of_addiction_1's floor. beta needs a discount factor ABOVE
+    # ONE and the gate could not propose one, so it could never close beta
+    # however many rounds it ran. Measured today, three points, one coordinate:
+    #
+    #     1.00200 -> beta 2.7287     point eca09faa90
+    #     1.00500 -> beta 3.1277     point b8d36c0646   INSIDE the 3.0-4.5 band
+    #     1.01500 -> beta 4.3665
+    #
+    # and w_bot sat at 0.0250/0.0251/0.0250 across all three, so the instrument
+    # is near-orthogonal to the other moment it could have disturbed.
+    #
+    # ABOVE ONE IS ADMISSIBLE HERE and is not a modelling error: the lifetime
+    # utility is a FINITE sum over life_span=60 periods solved by backward
+    # induction, with no fixed point that a discount factor above one could stop
+    # from converging. The author made exactly this point. The Fortran clamp has
+    # always been [0.5, 1.05]; only this line was narrower.
+    'discount_factor':                                     (0.90, 1.02),
     'relative_share_of_leisure':                           (0.5, 12.0),
     'labor_income_tax_rate':                               (0.30, 0.95),
     'sd_permanent_productivity':                           (0.60, 1.30),
