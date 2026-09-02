@@ -1,3 +1,39 @@
+## 06:05 -- w_bot IS INSIDE TEN PER CENT. SIX OF ROUND 1's NINE ARE.
+
+Best point `85a8b00de2`, MODEL 2f7c317e75, four points in this economy. One
+equilibrium, not a best-of.
+
+    aleph      +1.1% *      value_of_life 38.4 -> 54.0 landed it
+    sigma_y    -1.7% *
+    tau_l      +4.3% *
+    w_bot      -5.3% *      0.02367 against 0.0250
+    omega_l    -5.6% *
+    beta      +12.1% out    2.636 against a 3.0-4.5 band
+    pi_V      -32.4%
+    pi_eu     +86.9%
+    cbar     +106.1%
+
+Six of nine inside, beta just outside. Loss 1635.3 per cent on h_1, which is
+round 3's moment and not open.
+
+**w_bot took an unexpected route.** It went 0.02949 -> 0.02367 on the
+value_of_life arm, not on anything pointed at it. aleph's instrument moved it 20
+per cent. The arms are not orthogonal and this is the clearest case yet: the
+moment that blocked this calibration for weeks was closed by an instrument that
+does not own it.
+
+**pi_eu is the one to watch.** 0.0437 -> 0.0300 moved it 0.2608 -> 0.2183, but
+the RATIO of the unemployment rate to the flow probability ROSE, 5.96 -> 7.28.
+The instrument is losing power as it falls, so there is a component of
+unemployment it does not set, and 0.139 may sit below anything it reaches. The
+ratio, not the gap, is the thing to read on the next arm.
+
+**tau_u is at EXACTLY 0.00000 against 0.245.** It read 0.29254 at the previous
+economy's best point. A discrete collapse to a corner, not a gap. It belongs to
+round 4 and is not open, but a moment sitting at exactly zero is a fact about the
+model rather than about the calibration and should be understood before that
+round opens.
+
 ## 05:52 -- REPRODUCIBLE. 5.13e-05 WORST OVER 23 MOMENTS.
 
 `points/DETERMINISM.md`: three cold sequential runs of one vector on one source.
