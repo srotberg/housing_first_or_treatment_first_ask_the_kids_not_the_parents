@@ -289,6 +289,39 @@ def main():
     head = (f'point_{tag}  MODEL {h}  beta types {cfg}  {n} points in this economy\n'
             f'LOSS (minimax over scored) {100*worst:.1f}%   median {100*med:.1f}%   '
             f'inside ten per cent {sum(1 for x in g.values() if x <= .10)} of {len(g)}')
+
+    # THE HEADLINE LOSS IS NOT A PROGRESS NUMBER WHILE THE GATE IS STAGED, and
+    # printing it alone misled the author for a full day. It is a minimax over
+    # EVERY scored moment, but next_batch holds every instrument whose moment is
+    # in a stage that has not opened, so the moments that dominate the minimax
+    # are frozen by construction. On 2 September the headline sat at 652.2 per
+    # cent, pinned by h_1 in stage 2, while the open stage's own worst gap was
+    # 119.4 -- and the fleet was correctly working the latter. Reported as one
+    # number it looked like a day of no progress on a search that was not
+    # allowed to touch what the number measured.
+    #
+    # So print the open stage too. The stage list is next_batch's, imported
+    # rather than copied, so the two cannot drift apart.
+    try:
+        import next_batch as _nb
+        _open = None
+        for _st in _nb.STAGES:
+            _in = {k: x for k, x in g.items() if k in _st}
+            # ten per cent is the author's own bar -- "once we get below 10% for
+            # everything we can stop" -- and next_batch's BASE_TOL is a per-moment
+            # dict rather than a scalar, so the objective's threshold is used here.
+            if _in and max(_in.values()) > 0.10:
+                _open = (_st, _in)
+                break
+        if _open:
+            _st, _in = _open
+            _w = max(_in.values()); _wm = max(_in, key=_in.get)
+            head += (f'\nOPEN STAGE {_nb.STAGES.index(_st)}: minimax {100*_w:.1f}% '
+                     f'(worst: {_wm})   inside ten per cent '
+                     f'{sum(1 for x in _in.values() if x <= .10)} of {len(_in)}'
+                     f'   -- the moments the search may actually move')
+    except Exception:
+        pass
     # --force PRINTS THE TABLE REGARDLESS. The gate above exists so that the
     # hourly firing does not spam an unchanged table at the author, and that is
     # the right default. But the author asks for the table directly -- "can you
