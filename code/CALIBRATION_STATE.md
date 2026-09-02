@@ -44,6 +44,46 @@ THE AUTHOR'S CHOICE, stated plainly:
   d) accept pi_eu out instead of beta -- but that costs three more moments, so it
      is strictly worse and is listed only for completeness.
 
+### 12:55 -- beta's TARGET MAY BE THE PROBLEM, AND THE CODE SAYS SO ITSELF
+
+The author asked whether papers target a wealth-to-income ratio of 2.5 or 2.25.
+The literature check was inconclusive -- a search surfaced Kaplan-Violante (2010,
+AEJ:Macro) calibrating beta to an aggregate wealth-income ratio of 2.5 from the
+1989/1992 SCF, two follow-up searches did not reproduce that sentence, and the
+PDFs are egress-blocked from this container. NOT VERIFIED, and it should not be
+quoted as though it were. What the searches do establish is the range convention:
+models abstracting from housing target 2-3, full-net-worth HANK models target
+far higher (one cites 500 per cent of GDP).
+
+THE STRONGER EVIDENCE IS IN THE FORTRAN, at line 2500, written long before
+tonight:
+
+    "the rental stock sits on the rental companies' books and not on any
+     household's, so the national accounts counterpart is nonresidential capital
+     rather than total household net worth ... BEA fixed assets over NIPA output
+     puts private nonresidential fixed assets at roughly two years of GDP and all
+     private fixed assets, residential included, at roughly three ... If the
+     number should be two, on the argument that the residential stock is outside
+     household wealth in this model, this is the one line to change."
+
+include_homeownership is 0. Every household rents. So by that note's own argument
+the counterpart is nonresidential capital and the target should not be 3.0.
+
+Priced against the measured 2.452826 at point 35e8286c4e:
+
+    target 3.00 (current)   -18.2%   OUT
+    target 2.50             - 1.9%   IN
+    target 2.25             + 9.0%   IN
+    target 2.00             +22.6%   OUT the other way
+
+AT 2.5, ROUND 1 IS NINE OF NINE WITH NO FURTHER SEARCH. The single line is
+`real(8), parameter :: wealth_to_output_data=3.0d0` at 2512.
+
+NOT CHANGED. A target is the author's, and this is recorded for them rather than
+acted on. Note it is the SAME objection as w_bot's: both targets are NET WORTH
+objects and this model has no housing wealth at all, so both may be measuring
+something the model does not contain.
+
 ROUND 1 IS EIGHT OF NINE. Point `35e8286c4e` (equally `db14af8e82`, the
 0.75/0.99980 pair). Only `beta` is out.
 
