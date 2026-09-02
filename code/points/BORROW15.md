@@ -4,19 +4,24 @@ Three arms of `code/batch_borrow15.txt`: borrowing ON, limit 1.50, with
 `discount_factor_impatient` at 0.75, 0.90 and 0.96. Solved on source md5
 `64d52d8b6a`, semantic `197407b07d`, `pi_eu` target 13.9 per cent.
 
-**Status: INCOMPLETE. Arm 1 (0.75) did not terminate and was killed at
-4h06m. Arms 2 and 3 pending.** Nothing below extrapolates past what was
-measured.
+**Status: NO ARM PRODUCED A MOMENTS BLOCK.** Arm 1 (0.75) was killed at
+4 h 06 min and arm 2 (0.90) at 2 h 32 min, both without moments; arm 3
+(0.96) is running as a confirmation probe only. Neither completed arm
+reached the code path where `discount_factor_impatient` is read, so
+**none of the three questions the batch was built to answer can be
+answered from it.** Nothing below extrapolates past what was measured.
 
 ## The headline questions, so far as they can be answered
 
-### Is borrowing inert? The solved policy reaches the limit; the mass on debt is still unmeasured.
+### Is borrowing inert? The PATIENT type's solved policy reaches the limit; the mass on debt is unmeasured.
 
-The ladder is built as declared and the policy function chooses the
-deepest rung, so the feature is not obviously dead. But the strong form of
-the claim -- that households *hold* debt, and therefore that some
-bottom-percentile wealth share turns negative -- is NOT established by
-anything measured so far. See the caveat below the ladder.
+The ladder is built as declared, and in the one pass that ran -- the
+patient type's -- the policy function chooses the deepest rung. So the
+feature is not dead in the sense of the bounds being unreachable. But the
+claim the batch was meant to test, that households *hold* debt and some
+bottom-percentile wealth share therefore turns negative, is **NOT
+established by anything measured here**, and cannot be until a run
+produces a moments block.
 
 The negative ladder is built exactly as declared. Recovering
 `average_labor_income_calibrated` from the deepest rung the solver printed,
@@ -54,23 +59,61 @@ how much population mass sits on debt.
 states" are different claims, and only the bottom-percentile wealth shares
 separate them. Those need a moments block, which this arm did not produce.
 
-Arm 2 at `discount_factor_impatient=0.90` fires the audit **exactly
-1,016,518 times as well** -- the same count to the digit, the same 19
-distinct residuals, the same single rung. Identical counts across two
-different discount factors are what a CORNER solution looks like: at 0.75
-the implied impatience is 33 per cent a year and at 0.90 it is 11 per
-cent, both far above the 5.5 per cent borrowing rate, so both types want
-the limit and the corner does not move.
+### WITHDRAWN: the "corner solution" reading of the identical audit counts
 
-That reading makes a falsifiable prediction for arm 3: at 0.96 the implied
-impatience is 4.2 per cent, BELOW the 5.5 per cent borrowing rate, so the
-corner should break and the count should fall sharply. If it does not, the
-audit is firing on something structural rather than behavioural and the
-"borrowing is live" reading here has to be withdrawn.
+An earlier version of this file read the identical audit counts across
+arms 1 and 2 as a corner solution -- both impatience levels far above the
+borrowing rate, so both types pinned at the limit -- and predicted that
+arm 3 at 0.96 would show a sharply lower count. **That is withdrawn. The
+cause is mundane and the prediction is void.**
 
-### At which impatience does `w_bot` hold its target once debt is available?
+`SR_v1.f90:36099-36104`:
 
-**Not answerable yet.** Arm 1 produced no moments. Arms 2 and 3 pending.
+    do current_beta_type=1,number_of_beta_types
+        if (current_beta_type==1) discount_factor=discount_factor_patient_saved
+        if (current_beta_type==2) discount_factor=discount_factor_impatient
+
+Beta type 1 is the **patient** type, at `discount_factor=0.99980`, which is
+identical in all three arms. `discount_factor_impatient` enters only at
+beta type 2. **Neither arm 1 nor arm 2 ever reached beta type 2**: both
+were killed inside the first type's pass.
+
+The proof is that their flushed aggregates agree to every digit printed:
+
+| | arm 1 (0.75) | arm 2 (0.90) |
+|---|---|---|
+| `sum_of_distribution` | 51.449733435841217 | 51.449733435841217 |
+| `model_total_income` | 4.1868157019145498 | 4.1868157019145498 |
+| `average_welfare_of_all_cohorts` | 49620.713469575305 | 49620.713469575305 |
+| `sum(total_rental_demand(...))` | 3.9992818297899717 | 3.9992818297899717 |
+| audit failures | 1,016,518 | 1,016,518 |
+
+Two runs at different impatience cannot agree to sixteen digits unless the
+differing parameter has not yet been used. It had not.
+
+So the 1,016,518 count is a property of the **patient** pass, common to
+every arm, and says nothing whatever about impatience. Arm 3 will show the
+same count for the same reason, and that will confirm nothing about a
+corner.
+
+### The consequence, which is the real result of this batch
+
+**The bottleneck is the patient type's borrowing-ON pass, and it is shared
+by all three arms.** No setting of `discount_factor_impatient` can avoid
+it, because it is reached before that parameter is ever read. Two runs
+spent 4 h 06 min and 2 h 32 min without getting past it, against a 12 min
+borrowing-OFF control.
+
+`discount_factor_impatient` has therefore **never been exercised in a
+borrowing-ON run**, and the question the batch was built to answer -- at
+which impatience `w_bot` holds its target once debt is available -- cannot
+be reached at all until the patient pass completes.
+
+It is also worth noting on its own account that a household discounting at
+0.99980 is choosing the borrowing limit at a million states. A nearly
+perfectly patient type going to the corner is not obviously sensible
+economics, and is one more reason to check the accounting defect below
+before trusting any borrowing result.
 
 ## Arm 1: `discount_factor_impatient=0.75` -- NO MOMENTS
 
@@ -166,13 +209,51 @@ result is trusted. The model source was not edited.
 Per `CLAUDE.md` section 7, this is a quantitative-model finding and wants
 checking against the stylized model's transition, which was not done here.
 
-## Arm 2: `discount_factor_impatient=0.90` -- PENDING
+## Arm 2: `discount_factor_impatient=0.90` -- NO MOMENTS
 
-## Arm 3: `discount_factor_impatient=0.96` -- NOT STARTED
+| | |
+|---|---|
+| point tag | `a2778b36aa` |
+| outcome | **no moments block**; `hftf` exit status 143 (SIGTERM) |
+| wall time before termination | 2 h 32 min (152 min), 2 h 55 min CPU on 4 cores |
+
+I terminated it at a bound shortened from 4 h to 2 h 30 min, because it was
+tracking arm 1 minute for minute -- identical log size, identical freeze
+point, identical CPU profile -- and arm 1 had already demonstrated that
+this trajectory does not finish. Its flushed tail then proved the two runs
+were doing bit-identical work, which is the finding recorded above.
+
+## Arm 3: `discount_factor_impatient=0.96` -- RUNNING, as a probe only
+
+Started to confirm, rather than assume, that the patient-pass bottleneck is
+common to all arms. The check is cheap: the audit spam is written early, so
+if arm 3 reaches ~445 MB with 1,016,518 failures and the same aggregates,
+the shared-bottleneck reading is confirmed by measurement instead of by
+extrapolation. It is not expected to produce moments.
 
 ## Cost note
 
-The batch budgeted 11-16 min a line. The borrowing-OFF control took 12.
-Arm 1 was killed at 246 min without finishing. If the remaining arms behave
-like arm 1, this batch is a multi-hour job per line rather than a
-quarter-hour one, and that should be planned for rather than discovered.
+The batch budgeted 11-16 min a line. The borrowing-OFF control took 12 min.
+Arm 1 ran 246 min and arm 2 ran 152 min, both killed without moments, both
+still inside the patient pass.
+
+Turning borrowing on is not a marginal change in cost. Until the patient
+pass is made to complete, adding arms to this batch buys nothing: every arm
+pays the same shared cost before it reaches the parameter that
+distinguishes it.
+
+## What would have to happen before this batch is worth re-running
+
+Not attempted here, and listed as what the measurement showed it needs:
+
+1. Establish why the patient type's borrowing-ON pass does not complete,
+   when the same pass with borrowing off takes 12 minutes.
+2. Resolve the budget audit at `SR_v1.f90:24001` -- either it is stale and
+   should be taught about unsecured borrowing, or the solve is wrong. A
+   million failures per run is not a state anything should be measured in,
+   and the 445 MB of diagnostics is itself part of the cost.
+3. Explain a household at `discount_factor=0.99980` choosing the borrowing
+   limit, and aggregate consumption at thirteen times total income.
+
+Only after those does varying `discount_factor_impatient` measure
+anything.
