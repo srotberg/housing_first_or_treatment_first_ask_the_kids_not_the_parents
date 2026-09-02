@@ -1021,6 +1021,18 @@ EQUIVALENT_MODELS = {
     #             a solve; it only opens territory none of them visited. Held
     #             here on that reading and CONFIRMED by re-running the same
     #             vector, the same way as above.
+    #
+    # 222bb7fd3f  rho_m went 0.55 -> 1 and gained a handover, measure_child_gap
+    #             became a settable variable, and the Fortran picked up comments.
+    #             All three are inert at the values every archived point ran:
+    #             rho_m is raised to the power include_rho_m, which is zero, and
+    #             the child gap defaults to off. MEASURED, not argued -- the same
+    #             vector re-run under the new source shifts the worst of
+    #             twenty-three moments by 0.129 per cent of its target, which is
+    #             kappa_ued, the same moment and the same size as the two earlier
+    #             equivalences.
+    '222bb7fd3f': {'3af48ddb51', '0e0abddab7', '31818f2e83',
+                   '1089e7258f', 'ddde1a91e1'},
     '3af48ddb51': {'0e0abddab7', '31818f2e83', '1089e7258f', 'ddde1a91e1'},
     '0e0abddab7': {'31818f2e83', '1089e7258f', 'ddde1a91e1'},
     '31818f2e83': {'1089e7258f', 'ddde1a91e1'},
