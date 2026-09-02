@@ -558,6 +558,35 @@ correctly killed seven points. Solving THROUGH a run of model edits is what
 wasted the two hours. Settle the source first, then launch; a solve started
 before an edit that is already coming is a solve thrown away.
 
+## TAKE THE POINT FILE BY NAME. DO NOT MERGE A WORKER'S BRANCH.
+
+Added 2 September 22:50. Four worker branches were merged into the coordinator's
+branch to collect their points. Every one of them also carried
+`code/calibration_state.dat` and one carried `code/B_SWEEP_GRID.txt` -- both
+per-run scratch that every worker rewrites -- and both conflicted. Resolving one
+of those conflicts with `git add -A code/` staged the conflicted file WITH ITS
+MARKERS and committed them into `B_SWEEP_GRID.txt`, which the Fortran opens and
+reads in B-sweep mode.
+
+Collect a worker's result like this instead:
+
+```
+git fetch -q origin wip/<branch>
+git checkout FETCH_HEAD -- code/points/<the point file>
+git add code/points/<the point file>
+```
+
+Name the path. The point file is the entire deliverable; nothing else on a
+worker's branch is wanted, and `git diff --diff-filter=A --name-only HEAD
+FETCH_HEAD -- code/points/` lists exactly the files the worker ADDED, which is
+not the same as the plain diff -- the plain diff also lists points that exist on
+the coordinator's side and not the worker's, and those come back empty when read.
+
+Brief the worker to commit only the named point file for the same reason.
+
+**Never resolve a conflict with `git add -A`.** Stage the paths you have actually
+looked at.
+
 ## A WORKER MUST NOT BACKGROUND THE SOLVER
 
 On 2 September three workers were briefed to run their point in the FOREGROUND

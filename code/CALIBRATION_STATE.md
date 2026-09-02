@@ -149,22 +149,57 @@ Note that 0.055 UNDERSHOT the interpolation: h_1 is convex in the street size,
 so a linear read between 0.0323 and 0.060 put the crossing too low. The two
 inner points are the ones to interpolate from.
 
-## IN FLIGHT, 22:43
+## THE CHEAPEST RUNG IS THE MASTER INSTRUMENT. THE DRUG PARAMETERS ARE NOT.
 
-    families arm 1  relative_share_of_leisure=4.72832   session_01VSANBj72YfBYAkx8yqTX65
-    families arm 2  size_homelessness=0.149             session_01FzKjBbZjynZycvbJScPgTY
-    families arm 3  h_2=0.039                           session_01M7Z3cGD1GKC5cxthfjVryF
-    h_1 close       size_homelessness=0.05775           session_01PNHyBvAKLuJC5SiaCb664s
-    drug sep        addiction_scalar_1=0.0410           session_01WcYLxAGYq1Kqm2EPpbKy7x
-    drug sep        addiction_scalar_1=0.0300           session_01FQWuWWYWtp3FfkbfXLC37g
+Measured 22:50. Three arms, each ONE coordinate off point_5f78305512, spanning
+the whole gap to point_eb442f7b15. The drug parameters are identical in every
+row below.
 
-LANDED: sz=0.055 and the drug full step. 572 points.
+                                    b   lambda_d       h_1      beta     w_bot     theta   omega_l
+    BASE housing family       0.03544    0.00924   0.00059   2.62069   0.01350   0.19861   0.23620
+    arm1 leisure 3.05->4.73   0.04574    0.01316   0.00051   2.45578   0.01041   0.24576   0.16997
+    arm2 sz 0.0323->0.149     0.03686    0.00980   0.03244   2.60080   0.01448   0.20791   0.23471
+    arm3 h_2 0.117->0.039     0.08016    0.02069   0.00012   2.18756   0.03350   0.11077   0.35528
+    ALL THREE (drug family)   0.10027    0.02993   0.01099   1.98505   0.04624   0.12927   0.29392
+    TARGET                    0.08900    0.03680   0.00399   3.00000   0.02500   0.16200   0.40000
 
-TAKE POINT FILES, DO NOT MERGE WORKER BRANCHES. `git checkout FETCH_HEAD --
-code/points/<file>` and commit the named path. Merging a worker branch drags in
-its `calibration_state.dat` and `B_SWEEP_GRID.txt`, both per-run scratch, both
-of which conflict; resolving one of those with `git add -A` committed conflict
-markers into a file the Fortran reads.
+**arm3 -- the rung alone -- carries 69 per cent of the move in `b`, 55 per cent
+of `lambda_d`, 61 per cent of `w_bot`, and takes `omega_l` from -41 per cent to
+-11 per cent.** `size_homelessness` moves h_1 and essentially nothing else. The
+leisure share moves `omega_l` and `theta` the WRONG way.
+
+As gaps, the rung alone does this:
+
+    moment      target    at h_2=0.117    at h_2=0.039
+    b           0.0890    -60.2%          -9.9%   INSIDE TEN PER CENT
+    omega_l     0.4000    -41.0%          -11.2%
+    w_bot       0.0250    -46.0%          +34.0%  TARGET NOW BRACKETED
+    lambda_d    0.0368    -74.9%          -43.8%
+    beta        3.0-4.5   -12.6%          -27.1%  worse
+    theta       0.1620    +22.6%          -31.6%  crosses
+    h_1         0.0040    -85.1%          -97.0%  worse
+
+**THIS IS THE ANSWER TO THE AUTHOR'S QUESTION ABOUT THE IMPATIENT BETA.** They
+asked why it has to be so low, and said 0.75 was hard to believe. It is low
+because `w_bot` was being chased with `discount_factor_impatient`, and `w_bot`
+is not that parameter's moment -- the rung brackets it on its own, from 0.0135
+to 0.0335 across 0.117 to 0.039, with the target at 0.025 in between and the
+discount factor never moving. The interpolated crossing is near h_2 = 0.072.
+
+Three arms at 0.060, 0.078 and 0.095 are filling the curve. `theta` and `beta`
+cross the other way over the same range, so the rung is a trade, not a free win,
+and the curve is what says where the trade is least bad.
+
+## IN FLIGHT, 22:52
+
+    h_1 close    size_homelessness=0.05775   session_01PNHyBvAKLuJC5SiaCb664s
+    drug sep     addiction_scalar_1=0.0410   session_01WcYLxAGYq1Kqm2EPpbKy7x
+    drug sep     addiction_scalar_1=0.0300   session_01FQWuWWYWtp3FfkbfXLC37g
+    rung curve   h_2=0.060                   session_01QaoD3S5nNhGUzW1Jisu9yX
+    rung curve   h_2=0.078                   session_018DoUJo9jvMi6gKPsyqXyMU
+    rung curve   h_2=0.095                   session_01BxL3Whc5VTwYP6sauiDRmZ
+
+575 points.
 
 ## THE GATE'S DRUG BASE IS ON THE OLD RUNG
 
