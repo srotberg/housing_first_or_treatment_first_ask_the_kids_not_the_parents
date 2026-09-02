@@ -3384,7 +3384,22 @@
         ! Value function cost is roughly quadratic in this dimension, since every
         ! state searches over future assets, so 41 to 25 is about 2.7 times.
         integer, parameter :: positive_financial_grid_size=24
-        integer, parameter :: negative_financial_grid_size=61
+        ! FOUR POINTS, AND THEY ARE THE BORROWING RANGE. The author, 2 September:
+        ! "You can have just 3 or 4 grid points on the negative side that align
+        ! with the max being 0.3 times average income, and fix that across
+        ! simulations."
+        !
+        ! It was 61 points spanning -(1-minimum_downpayment) to zero, a MORTGAGE
+        ! range, and unsecured borrowing was snapping its floor to whichever of
+        ! those happened to lie nearest -0.3 times average income. Four points
+        ! -- three negative and zero -- laid out on the borrowing range itself
+        ! is exact instead of snapped, and it takes the whole financial grid
+        ! from 85 points to 28, which is most of the state space.
+        !
+        ! IF include_homeownership IS EVER TURNED BACK ON this must be revisited:
+        ! a grid bottom near -0.19 cannot carry a mortgage downpayment. It is
+        ! zero today and everyone rents.
+        integer, parameter :: negative_financial_grid_size=4
         
         integer, parameter :: grid_gaps=coarse_grid*10+(1-coarse_grid)
            
@@ -11233,31 +11248,17 @@
         implicit none
 
         integer, intent(in) :: time_period
-        real(8) :: cap_1
         integer :: a_1, i_1
 
         renter_floor_by_age=negative_financial_grid_size
 
+        ! The negative grid IS the borrowing range now, so every point of it is
+        ! reachable and no search is needed -- except in the final period of
+        ! life, where the household has no future income to repay from and
+        ! borrowing is barred.
         if (include_unsecured_borrowing==1) then
 
-            cap_1=-unsecured_borrowing_limit*&
-                (is_counterfactual*average_labor_income_calibrated+&
-                (1-is_counterfactual)*model_average_labour_income(time_period))
-
-            do a_1=1,life_span-1
-
-                do i_1=1,negative_financial_grid_size
-
-                    if (financial_grid(i_1)>=cap_1) then
-
-                        renter_floor_by_age(a_1)=i_1
-                        exit
-
-                    end if
-
-                end do
-
-            end do
+            renter_floor_by_age(1:life_span-1)=1
 
         end if
 
@@ -29410,7 +29411,14 @@
         
         integer, intent(in) :: time_period
         
-        financial_grid(1)=-(1-minimum_downpayment)
+        ! THE BOTTOM OF THE GRID IS THE BORROWING LIMIT, and it is anchored on
+        ! average_labor_income_calibrated rather than on this period's average,
+        ! so the limit is the same number in the benchmark and in every
+        ! counterfactual -- the author's "fix that across simulations", and the
+        ! same anchor the income and wealth histograms already use so their bins
+        ! do not move between points.
+        financial_grid(1)=-include_unsecured_borrowing*unsecured_borrowing_limit*&
+            average_labor_income_calibrated
             
         financial_grid(negative_financial_grid_size)=0.d0
                 
