@@ -375,3 +375,44 @@ with the question in `needs_action`. A blocked worker looks IDLE, which is the
 same status as one that has finished, so idleness alone does not mean done.
 Relaunch rather than wait: the batch file is in the repo and a fresh worker picks
 it up from scratch.
+
+
+## The container is part of the measurement
+
+Added 2 September, after a control run separated two things that had been
+conflated all night.
+
+`TARGET_CHANGE_CHECK.md` was commissioned to ask whether changing
+`wealth_to_output_data` from 3.0 to 2.5 -- a calibration TARGET, not a model
+primitive -- had changed the economy. It had not. But the same run found that
+the archive could not be reproduced at all:
+
+    archive vs the same source rebuilt in another container   w_bot  1.78e-02
+    3.0 vs 2.5, both in one container                         w_bot  6.86e-04
+    one identical binary, run twice in one container          w_bot  1.21e-03
+
+The constant's own effect is SMALLER than the spread between two runs of one
+binary. What differs is the execution environment.
+
+**This qualifies the REPRODUCIBLE finding in `DETERMINISM.md`.** That measured
+5.13e-05 worst over 23 targeted moments -- three sequential cold runs IN ONE
+CONTAINER. It is a statement about one container, not about the model, and it was
+reported as though it were the latter. Another container's own floor is 1.21e-03,
+twenty-four times larger, and across containers the spread reaches 1.8e-02.
+
+**Why it matters here specifically.** Every worker runs in its own container, so
+every point in the archive was measured somewhere different. On `w_bot`, whose
+target is 0.0250 with a ten per cent budget of 0.0025, a cross-container spread
+of 1.8 per cent eats about a fifth of that budget before any parameter moves.
+
+**The rule.** A controlled pair must be measured in ONE worker. The existing
+brief already does this by accident of a different rule -- all three lines of a
+batch run in one container -- so arms WITHIN a batch are sound. What is not sound
+is the thing done constantly all night: comparing a new batch against a base read
+out of the archive and measured by an earlier worker. **A batch that needs a base
+must re-measure the base as one of its own lines.** It costs one solve and it is
+the difference between a bracket and a coincidence.
+
+Readings taken across batches are not worthless -- 1.8e-02 is small against gaps
+of 100 or 700 per cent -- but they cannot settle anything at the ten per cent
+margin, which is exactly where the calibration now is.
