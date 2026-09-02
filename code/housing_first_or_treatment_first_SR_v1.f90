@@ -3407,7 +3407,18 @@
         ! IF include_homeownership IS EVER TURNED BACK ON this must be revisited:
         ! a grid bottom near -0.19 cannot carry a mortgage downpayment. It is
         ! zero today and everyone rents.
-        integer, parameter :: negative_financial_grid_size=4
+        ! SEVEN POINTS BELOW ZERO, not three, on the author's instruction of
+        ! 2 September. This is the INDEX OF ZERO, so 8 means indices 1-7 are
+        ! strictly negative and index 8 is zero; financial_grid_size is
+        ! positive_financial_grid_size + this, so the 24 positive points are
+        ! untouched and the grid simply grows.
+        !
+        ! Three points could not represent a borrowing limit of any width. At a
+        ! limit of 0.30 of average income they sat 0.1 apart; at 3.00 they sat a
+        ! full year of income apart, so a household wanting a tenth of a year in
+        ! debt had nowhere to stand and a wide limit could look inert purely
+        ! through coarseness.
+        integer, parameter :: negative_financial_grid_size=8
         
         integer, parameter :: grid_gaps=coarse_grid*10+(1-coarse_grid)
            
@@ -3776,7 +3787,7 @@
         ! Set from include_unsecured_borrowing in set_renter_floor, so the OFF
         ! economy keeps the layout it always had and only the ON economy pays for
         ! the three extra points.
-        real(8) :: unsecured_borrowing_limit=0.30d0
+        real(8) :: unsecured_borrowing_limit=1.50d0
         ! THE RATE PAID ON A NEGATIVE BALANCE. The author asked first for a rate
         ! "high like on a credit card" and then for "the 5.5% interest rate" --
         ! but the 5.5 per cent they were quoting was US revolving credit as a
@@ -3792,6 +3803,18 @@
         integer :: renter_array_floor=1
 
         real(8) :: financial_grid_expander_positive=3.0
+        ! THE SAME ACCORDION ON THE NEGATIVE SIDE. The positive grid is linear in
+        ! index raised to financial_grid_expander_positive, which clusters points
+        ! near zero where the mass is. Debt has the same shape -- most borrowers
+        ! hold a little, a few sit against the limit -- so the negative side is
+        ! built the same way rather than uniformly.
+        !
+        ! Two rather than three: at three the deepest interior point sits at
+        ! (1/7)**3 = 0.003 of the limit, which spends six of the seven points in
+        ! the first half per cent of the range. Two keeps the clustering without
+        ! collapsing the interior onto zero. It is handed over so it can be tuned
+        ! rather than argued about.
+        real(8) :: financial_grid_expander_negative=2.0
                                 
         integer :: largest_possible_financial_index,largest_possible_mortgage_index
         real(8) :: value_of_house_without_min_down_payment
@@ -29584,10 +29607,19 @@
             
         financial_grid(negative_financial_grid_size)=0.d0
                 
+        ! ACCORDION, not a uniform ladder. Index 1 is the limit itself and index
+        ! negative_financial_grid_size is zero; in between, the distance from
+        ! zero is linear in index and raised to the expander, exactly as the
+        ! positive side does it, so the points bunch up near zero.
+        !
+        ! Written as an explicit function of i rather than a running sum, so that
+        ! no rounding accumulates along the ladder and grid(1) stays exactly the
+        ! declared limit.
         do i=2,negative_financial_grid_size-1
         
-            financial_grid(i)=financial_grid(i-1)+&
-                (financial_grid(negative_financial_grid_size)-financial_grid(1))/(negative_financial_grid_size-1)
+            financial_grid(i)=financial_grid(1)*&
+                ((real(negative_financial_grid_size-i,8)/&
+                real(negative_financial_grid_size-1,8))**financial_grid_expander_negative)
     
         end do
                                 
@@ -35290,6 +35322,11 @@
                 ! running at whatever the corner had left them: labour supply
                 ! 0.4567 against 0.400, wealth over output 4.23 against 3. A
                 ! block cannot be held if the handover cannot name it.
+                case ("financial_grid_expander_negative")
+                    write(*,*) "HANDOVER financial_grid_expander_negative:",&
+                        financial_grid_expander_negative, "->", handover_value
+                    financial_grid_expander_negative=min(max(handover_value,1.0d0),6.0d0)
+
                 case ("discount_factor")
                     write(*,*) "HANDOVER discount_factor:", discount_factor, "->", handover_value
                     discount_factor=min(max(handover_value,0.5d0),1.05d0)
