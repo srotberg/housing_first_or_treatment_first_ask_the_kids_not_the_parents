@@ -416,3 +416,21 @@ the difference between a bracket and a coincidence.
 Readings taken across batches are not worthless -- 1.8e-02 is small against gaps
 of 100 or 700 per cent -- but they cannot settle anything at the ten per cent
 margin, which is exactly where the calibration now is.
+
+
+### The author's decision on tolerances, 2 September
+
+**Leave the outer tolerances where they are and tighten at the END of the
+calibration.** In their words: "it's fine for now. We can tighten at the very end
+of the calibration. Right now we want convergence."
+
+So the rental and housing markets stay at 2e-2, the government budget at 1e-2,
+and the ~1.8e-02 cross-container spread on `w_bot` stands as a known cost rather
+than a bug to fix now. Do not propose tightening again while the search is
+running; it is a settled decision with a scheduled revisit.
+
+What still applies meanwhile is the same-worker rule above: a controlled pair is
+measured in one container, so the spread cancels within a batch and the search
+does not need the tolerances tightened to make progress. The place it will matter
+is the FINAL reported benchmark, which is exactly when the author has said to
+deal with it.
