@@ -192,3 +192,35 @@ in the model at all. The earnings restriction keeps 68 per cent of the bottom
 half's weight.
 
 **Revised targets: tau_l 0.0546, sd(log earnings) 0.8791.**
+
+## Applying the tax function to the average income: it returns exactly zero
+
+The author's suggestion -- take the bottom half's average income and put it
+through the tax function -- is worth doing, and what it returns is the finding.
+
+The schedule `T(y) = max(y - lambda*y^tau, 0)` has a ZERO-TAX THRESHOLD where
+`y - lambda*y^tau = 0`, that is `y* = lambda^(1/(1-tau))`:
+
+    y* = 0.7522432^(1/0.15) = 0.149872 in model units
+       = 0.4325 of whole-population mean income
+
+    whole-population mean income   0.3465 = 2.312 x y*
+    bottom-half mean income        0.1390 = 0.927 x y*   BELOW THE THRESHOLD
+
+So T(ybar_bot)/ybar_bot = **0.0000 exactly**. The average household in the bottom
+half of the wealth distribution pays no labour income tax at all under this
+schedule, and the bottom half's aggregate rate of 0.0546 is paid ENTIRELY BY ITS
+UPPER TAIL.
+
+WHICH NUMBER IS THE TARGET. `tau_l` is defined in the model at line 14196 as
+`govt_revenues_from_labour_income / (model_total_efficiency_units + financial
+income)` -- an AGGREGATE, revenue over income, not a rate evaluated at a mean.
+So the target is **0.0546**, the aggregate. The rate-at-the-mean is the wrong
+object for it, and the gap between the two is large even for the whole
+population: 0.1181 at the mean against 0.2240 in aggregate.
+
+THE ECONOMIC POINT IS WORTH KEEPING. A bottom-half economy is one where the
+representative household is just below the income-tax threshold. That is a
+substantive feature of the population being modelled, not an artefact, and it is
+worth a sentence in the paper: the fiscal burden of these households is
+essentially all consumption tax and payroll, not income tax.
