@@ -36,6 +36,41 @@ The vector was relaunched UNCHANGED. Retrying with a changed vector is
 forbidden and was not done; this retry is byte-identical, as the reproduced
 point hash `d42e5af187` confirms.
 
-Note for anyone scheduling these: a full point here takes longer than the
-container's idle lifetime is guaranteed to be, so a restart mid-solve is a
-live risk for every point in this batch, not a one-off.
+### Second container restart lost the second attempt too
+
+The relaunch reproduced point hash `d42e5af187` (confirming a byte-identical
+vector) and solved for roughly four minutes, 21:12 to 21:16 UTC, before the
+container was restarted again. Again no point file, again no Fortran error.
+
+A third attempt is now running, unchanged.
+
+### Diagnosis: this is the environment, not the point
+
+Two hypotheses were checked and one survived.
+
+REJECTED -- disk exhaustion. The worker log grows fast (about 200 MB in the
+first four minutes of solving), so filling the disk looked plausible. It is
+not the cause: `df` reports 30 GB available and 21 per cent used at the moment
+of the second death.
+
+STANDS -- idle reclamation. Both deaths came within minutes of this session
+ending a turn. The container is reclaimed on inactivity, and a background job
+does not count as activity, so the solve is killed while the session sleeps.
+
+This matters because there is NO mid-solve resume. `run_one_point.sh` line 313
+skips work only when a COMPLETED point file already exists (it tests for the
+`END OF MOMENTS` marker); a solve killed partway leaves nothing reusable, so
+every relaunch restarts from zero. A point needing hours, restarted from zero
+every few minutes, does not converge on this infrastructure by relaunching
+alone.
+
+Note also that `run_one_point.sh` (lines 332-346) warns that concurrent runs in
+this directory collide over shared files that are not keyed to the tag --
+`hftf`, `PARAM_HANDOVER.txt`, `B_SWEEP_GRID.txt`, `calibration_state.dat`. So
+the throughput fix is NOT to launch several attempts at once in this working
+directory; that corrupts points rather than saving them.
+
+What would actually fix it: a longer-lived or non-reclaimed runner, or
+checkpointing in the solve. Both are outside what this task permits me to
+change (no Fortran edits, no `supervise_calibration.py`), so I am flagging it
+rather than working around it.
