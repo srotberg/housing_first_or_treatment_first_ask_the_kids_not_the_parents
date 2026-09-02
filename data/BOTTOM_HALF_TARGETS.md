@@ -114,3 +114,32 @@ average federal tax rates by quintile being the usual source, where the bottom
 two quintiles are near zero or negative once refundable credits count. That
 matters a lot here: a bottom-half economy taxed at 0.224 would be paying a rate
 its own data says it does not.
+
+## The income tax, computed from the model's own schedule
+
+The SCF cannot give it directly, so the next best thing: apply the MODEL'S tax
+function to the SCF income distributions and take the relativity.
+
+The schedule is Heathcote-Storesletten-Violante, `T(y) = y - lambda*y^tau`, with
+`lambda`=0.7522432 and `tau`=0.85, and BOTH the personal exemption and the
+standard deduction are zero in this calibration, so there is nothing else in it.
+
+    average rate, whole population (SCF income distribution)   0.3317
+    average rate, bottom 50% by wealth                         0.1691
+    ratio                                                      0.5098
+
+    model's standing tau_l target                              0.2240
+    BOTTOM-HALF TARGET, scaled by that ratio                   0.1142
+
+**THE PROPORTIONAL SCALING THE AUTHOR SUGGESTED IS TOO LOW.** 0.224 x 0.4012 =
+0.0899 assumes a flat tax. The schedule is progressive -- tau=0.85 is below one
+-- so an average rate falls with income LESS than proportionally: a household at
+40 per cent of mean income pays about 51 per cent of the mean household's
+average rate, not 40. The right number is 0.1142, a quarter higher than the
+naive one.
+
+Only the RATIO is taken from this calculation, for the same reason as with
+unemployment: the level the SCF distribution implies under this schedule, 0.3317,
+does not agree with the model's 0.224 target, because the model's units and the
+survey's are not the same object. Taking the level would silently swap the
+source; taking the relativity does not.
