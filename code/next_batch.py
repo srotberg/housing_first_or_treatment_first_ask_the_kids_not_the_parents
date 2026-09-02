@@ -1340,14 +1340,22 @@ def main():
         # the stage. Keying the record on the stage's contents resets it whenever
         # the author changes what a stage contains.
         sig = ','.join(st)
-        rec = hist.get(k, {'best': worst_here, 'stale': 0, 'sig': sig})
+        rec = hist.get(k, {'best': worst_here, 'stale': 0, 'sig': sig, 'npts': -1})
         if rec.get('sig') != sig:
-            rec = {'best': worst_here, 'stale': 0, 'sig': sig}
+            rec = {'best': worst_here, 'stale': 0, 'sig': sig, 'npts': -1}
         rec['sig'] = sig
+        # THE COUNTER COUNTS ROUNDS, NOT INVOCATIONS. It incremented on every
+        # call, and this file is run many times inside one firing -- while
+        # editing it, while checking the gate, while reporting -- so stage 1 was
+        # marked STALLED within a minute of being created, having seen no new
+        # points at all. A stage has only had its chance once new points have
+        # LANDED, so the counter advances on the archive growing.
+        npts = len(A)
         if worst_here < rec['best'] - 1e-9:
-            rec = {'best': worst_here, 'stale': 0}
-        else:
+            rec = {'best': worst_here, 'stale': 0, 'sig': sig, 'npts': npts}
+        elif npts > rec.get('npts', -1):
             rec['stale'] = rec.get('stale', 0) + 1
+            rec['npts'] = npts
         hist[k] = rec
         if satisfied:
             why.append(f'  stage {i} {st} SATISFIED, worst {100*worst_here:.1f}%')
