@@ -61,11 +61,14 @@ shortfall takes essentially two values, both of them structural.
 ```
 
 The clusters at `-0.955872058868408...` are the borrowing floor itself, to every
-printed digit. The clusters at `-0.898289438909321...` differ from the floor by
-0.0575827, which is the floor times the borrowing rate 0.055 plus rounding --
-i.e. the floor carried one period forward at interest. So the states that fail
-are the ones sitting exactly on the borrowing constraint, and the shortfall is
-the whole of the borrowed balance.
+printed digit -- so those failing states are sitting exactly on the borrowing
+constraint and the shortfall is the whole of the borrowed balance.
+
+The second cluster, `-0.898289438909321...`, sits a constant 0.0575826 above the
+floor. I have not identified what that constant is, and it is worth someone
+checking: it is **not** one period of interest on the floor, which would be
+0.0525730 at the 0.055 rate. Whatever it is, it is structural rather than
+numerical -- the value repeats to sixteen digits across 393,008 occurrences.
 
 Each failure prints a diagnostic block (`housing_status_index = -1`,
 `years_left_on_mortgage_index`, `amortization_used`, the two `min(financial_grid
