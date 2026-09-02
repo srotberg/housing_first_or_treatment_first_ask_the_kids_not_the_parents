@@ -1,3 +1,51 @@
+## 03:20 -- THE AUTHOR IS RIGHT ABOUT THE ENDOWMENT, AND w_bot COULD NOT SEE THE DEBT
+
+**The endowment is not a stock.** The author's reading of it is what the code
+does. `uniform_newborn_endowment=1` takes the branch at 23926 that sets
+`relative_endowments=0`, `fraction_with_positive_wealth=0` and
+`value_of_initial_assets=0`; newborns are placed at the ZERO financial index and
+the endowment arrives as `newborn_age_transfer(1)` in the first budget
+constraint. So it holds no wealth at age 1 by construction and reaches the wealth
+distribution only through what a newborn chooses to save out of it. The comment
+at 23927 says so and gives the reason -- endowing the distribution puts every
+newborn on a grid point and makes the instrument a step function.
+
+That does NOT make it free in w_bot. What a newborn saves out of a lump sum is a
+policy-function outcome, not something the source can be read for, and the
+"~5.7 per cent of total wealth" figure quoted earlier was a stock reading and
+should not be relied on. `code/batch_endow.txt` measures it: scale 0.5, 1.0 and
+2.0 against the 0.0 anchor, controlled in every other coordinate, worker
+"endowment ladder", writing `code/points/ENDOWMENT_LADDER.md`.
+
+If it is cheap, the endowment comes back as the instrument for the youngest's
+homelessness rate, which is what the author suggested and which nothing else
+currently owns.
+
+**w_bot could not see the borrowing.** Three sites formed a renter's net worth as
+`max(financial_position, 0)`: `net_wealth_1` (the histogram and
+`model_total_net_wealth`), `net_wealth_used` (`wealth_matrix` and
+`model_total_net_wealth_1`) and `model_net_wealth_renters`. Exact before
+borrowing -- a renter could not hold a negative position, and the only negative
+positions were owners' mortgages, carried by a separate term reading them as a
+fraction of the dwelling's value. Borrowing made both halves wrong at once: a
+renter's debt was multiplied by the value of the flat they rent, and their own
+position was then truncated away. All three are now gated on `has_house`; owners
+are unchanged to the bit. Fixed at ca9479b, hash 9caeb7a139 -> fdc6078859.
+
+Same family as the estate bug at 171d293. Both are a `max(grid,0)` written when
+only owners could be negative, and both were invisible in the output. A third of
+the family is still open by choice: `model_financial` at 9076 truncates the same
+way but feeds resource accounting, so changing it could move the equilibrium and
+needs its own measurement rather than a guess. The elderly-homeless diagnostics
+at 8653 and 8671 truncate too and are cosmetic.
+
+TO CHECK AGAINST THE STYLIZED MODEL, per rule 7 of TRANSITION_LESSONS: it has no
+unsecured borrowing, so the truncation cannot bite there, but the check has not
+been run and the answer is not yet written into that table.
+
+The 03:11 seed was discarded mid-flight -- it was measuring w_bot through the
+broken formula. Reseeded at 03:19 on fdc6078859 as seed v4, same seven points.
+
 ## 03:15 -- THE MODEL DID NOT COMPILE, AND THAT IS WHY THE ARCHIVE WAS EMPTY
 
 Every point line issued since unsecured borrowing went in died in the BUILD, not
