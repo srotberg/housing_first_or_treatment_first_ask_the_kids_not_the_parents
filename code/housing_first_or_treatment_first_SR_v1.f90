@@ -24539,6 +24539,7 @@
                                     !$omp& price_of_addictive_good,policy_function_treatment,&
                                     !$omp& avg_income_to_use_1,avg_income_to_use_2,policy_function_labor_supply,in_retirement,&
                                     !$omp& median_income,financial_grid,risk_free_rate,median_income_calibrated,is_addicted_1,&
+                                    !$omp& unsecured_borrowing_rate,&
                                     !$omp& survival_probability_for_dist_iteration) &
 !
 ! voucher_index_1 IS PRIVATE, NOT SHARED. It is WRITTEN inside this loop, once
