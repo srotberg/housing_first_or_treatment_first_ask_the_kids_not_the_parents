@@ -69,9 +69,19 @@ call, not the engine's.
 
 ## OPEN, NOT CHASED
 
-- `newborn_endowment_scale` sits at 0.0 with bound (0, 3.0) while `h_share1`,
-  the newborn homeless share, is at 0.575 against 0.260 -- +121.3 per cent, the
-  largest gap on the board and an instrument that has never taken a second value.
+- `newborn_endowment_scale` is NOT an open item and the 22:05 entry above was
+  wrong to call h_share1 "the largest gap on the board". `h_share1` is in
+  UNSCORED and the parameter is parked at 0 on the author's own instruction of
+  2 September: *"Dont even target anything for newborns with the endowment for
+  now. Let's see if you can match the bottom 50% share of wealth."* It owns
+  nothing and the gate cannot step it.
+
+  WHAT HAS CHANGED SINCE THEY PARKED IT, and it is worth putting to them: they
+  parked the endowment because it INFLATED `w_bot`, and `w_bot` was then too
+  high. `w_bot` is now 0.0135 against 0.0250 -- too LOW, by 46 per cent, and it
+  is the moment the impatient discount factor is being driven to absurd values
+  to reach. The premise of the parking decision has flipped sign. Not acted on:
+  turning a parked instrument back on is the author's call.
 - `largest_house_size` is assigned at 26614 and overwritten at 26669 by
   `rung_ratio_h4*housing_size(0)`. It is dead code that still has a live adjuster
   and a slot in the outer loop's distance list, so every outer iteration spends
