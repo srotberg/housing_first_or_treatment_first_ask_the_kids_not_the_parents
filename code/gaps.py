@@ -187,8 +187,16 @@ def main():
         _OK = {h}
     best = None
     n = 0
-    for f in sorted(glob.glob(os.path.join(HERE, 'points', '*.txt'))):
+    # ONLY point_<tag>.txt. The glob used to be '*.txt' with a FAILED exclusion,
+    # which swept up anything else a worker left in points/: a determinism test
+    # renaming its replicates RUN1_point_... had them scored as separate points
+    # of the same vector, and the tag in the header came out truncated because it
+    # is cut from a fixed offset. Replicates of one vector are not independent
+    # points and must not be counted as several.
+    for f in sorted(glob.glob(os.path.join(HERE, 'points', 'point_*.txt'))):
         if f.endswith('.FAILED.txt'):
+            continue
+        if not re.fullmatch(r'point_[0-9a-f]{10}\.txt', os.path.basename(f)):
             continue
         t = open(f, encoding='utf-8', errors='replace').read()
         mm = re.search(r'^MODEL (\S+)', t, re.M)
