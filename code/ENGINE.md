@@ -137,14 +137,28 @@ Every worker prompt must say:
 - Never edit anything in `code/` while a solve runs — bash reads a script by byte
   offset and an edit under it resumes mid-word.
 
-**5a. SHOW THE AUTHOR THE FULL GAP TABLE WHENEVER THE LOSS IMPROVES.** Their
-instruction of 1 September: *"I want you to show me the full gaps table each time
-the loss function improves."* Run `python3 code/gaps.py` EVERY firing. It decides
-for itself: it prints the whole table when the minimax has fallen and one line
-when it has not, and it keeps the high-water mark in `.gaps_best` so the decision
-survives a container. When it prints the table, relay the whole thing to the
-author -- not the worst few rows, not the median. They have asked for the full
-table more than once and the median hides exactly the moment that is stuck.
+**5a. SHOW THE FULL GAP TABLE EVERY FIRING, WITHOUT EXCEPTION.**
+
+The author, 2 September: *"each time a loop finishes, i want to see the current
+best point's gaps table. it should be an automatic reporting."* This supersedes
+their earlier *"each time the loss function improves"* -- the table goes out every
+firing whether or not anything moved.
+
+    python3 code/gaps.py --force
+
+`--force` prints the table regardless of the high-water mark. The first line still
+says which of three things happened, and that line matters as much as the table:
+
+    PROGRESS                  the sorted gap vector improved lexicographically
+    loss unchanged            it did not
+    FIRST POINT in this economy   the mark was reset -- by a model change, a beta
+                              configuration change, or the scored set changing --
+                              so there is NOTHING to compare against and this is
+                              not an improvement
+
+Relay the WHOLE table: every parameter, its value, its moment, model, target and
+gap. Not the worst few rows, not the median -- the median hides exactly the moment
+that is stuck. One equilibrium, never a best-of across points.
 
 **REPORT ONE EQUILIBRIUM. NEVER A BEST-OF ACROSS POINTS.** The author's
 instruction, 1 September: *"I want to see the best calibration points when you
