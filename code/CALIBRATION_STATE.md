@@ -312,15 +312,84 @@ point move from an instrument nobody thought was in the drug block, and it is a
 strong candidate for why the drug gate never held -- other rounds were moving
 aleph underneath it.
 
-## IN FLIGHT, 23:33
+## THE GRID IS NOW SEVEN NODES. THE ARCHIVE IS RESET.
 
-    joint FULL   five instruments at 1.0x        session_01LTq5ScBYsETjoiRCQrCpvL
-    drug solve   fraction 0.25                   session_01NNVs9yF5Hu2K5hEMqpc38x
-    drug solve   fraction 0.40                   session_01P9xeH1FN1xcmEmnsJpvexD
-    pi_eu sign   prob_unemployed=0.00700         session_0197ppJvi52cyD5RfH6WqEkN
-    pi_eu sign   prob_unemployed=0.01600         session_01Ar68aRK5uBzeHx6r4xrUYC
+Done 23:54 on the author's instruction. `employment_grid_size` 17 -> 7 and
+`y_grid_kappa` 2.8 -> 3.2. **All 587 points are on the seventeen-node economy
+and none of them is comparable to anything measured from here.** They are kept,
+not deleted; the model hash separates them automatically.
 
-584 points.
+The design, and it is the author's:
+
+    node   mass %   cum %   y/mean   rent at h_2=0.039
+      1     0.198    0.20   0.0302     101.4%   priced out
+      2     1.618    1.82   0.0650      52.9%   rents when employed
+      3     4.829    6.64   0.1177      32.0%
+      4-7  93.36   100.00
+
+Node two is the mechanism: it affords rent on wages and cannot on unemployment
+benefit, so its unemployed go to the street. That is the margin the seventeen
+node grid never had.
+
+kappa had to move with N. The bottom node's mass is (1/N)**kappa, so seven nodes
+at 2.8 would have put it at 0.43 per cent, back ABOVE the 0.399 per cent
+homelessness target and into the step function that broke h_1's bracket once
+before. At 3.2 it is 0.198, below the target, so the target is reached inside
+node two rather than at a node boundary.
+
+**gfortran caught an out-of-bounds store the moment the grid shrank.** Three
+newborn-endowment profiles are written as literal indices 1..9, from the 2019
+SCF at nine bins; every index above seven became an out-of-bounds write. They
+are now clamped with min(i,employment_grid_size) -- identical at nine, safe at
+any size. That is a GUARD AND NOT A RE-MAPPING and the code says so: at seven
+nodes the top three levels collapse onto the top node. The branch is inactive
+today (uniform_newborn_endowment is on) but must be re-read onto the real grid
+before it is ever switched back on. Out-of-bounds warnings: seven before, seven
+after, none added.
+
+**NOTHING IS MEASURED ON THE NEW GRID UNTIL THE BOUNDS RUN REPORTS.**
+session_01VPCXV62ZuLW8CNz4jyEzzq is running `-O1 -fcheck=bounds,pointer -g
+-fbacktrace`. The rule is in ENGINE.md and it exists because an out-of-bounds
+economy solves cleanly, passes all seventeen invariants and returns a plausible
+loss.
+
+## WHAT THE SEVENTEEN-NODE GRID KNEW WHEN IT WAS RETIRED
+
+Worth keeping, because it is the starting guess for the new economy.
+
+**The drug block closes at fraction 0.465** on the line from (as1 0.0360,
+lambda_addiction 2.79953) to (0.0280, 4.00000): fraction 0.25 gave b -34.7 and
+lambda_d -48.7 per cent, 0.40 gave -10.8 and -14.1, and the two cross zero at
+0.468 and 0.461. One point closes both, which no point in 587 had ever done.
+session_01XqCF4yyK3bBK1G1tXxUAcU is measuring it on the OLD grid, deliberately,
+because the crossing is the best available guess for the new one.
+
+**The joint five-instrument step.** Half step: gamma closed, aleph to +11.8,
+cbar and pi_V halved, and beta and w_bot closed as side effects. Full step
+overshot: cbar -4.7 and pi_V -8.4 and beta 0.0 all inside, but gamma to +16.4
+and aleph to -23.5. The solution is between the two.
+
+**value_of_life is a drug instrument.** Across the full step, b moved 357
+percentage points and lambda_d 525 with no drug parameter touched. It prices
+the mortality risk of using. This is the strongest candidate for why the drug
+gate never held: other rounds moved aleph underneath it.
+
+**pi_eu has the wrong sign.** Cutting probability_becoming_unemployed from
+0.0122 to 0.01084 RAISED unemployment from 0.0702 to 0.0837, and the full step
+took it to +108.8 per cent. Two arms are measuring the local slope on the old
+grid; the sign question carries over to the new one.
+
+## IN FLIGHT, 23:55
+
+    OLD GRID, still valid as guesses, not as points on the new economy:
+      drug close  frac 0.465            session_01XqCF4yyK3bBK1G1tXxUAcU
+      pi_eu sign  prob_unemp 0.00700    session_0197ppJvi52cyD5RfH6WqEkN
+      pi_eu sign  prob_unemp 0.01600    session_01Ar68aRK5uBzeHx6r4xrUYC
+
+    NEW GRID:
+      BOUNDS CHECK                      session_01VPCXV62ZuLW8CNz4jyEzzq
+
+587 points, all superseded.
 
 ## THE GATE'S DRUG BASE IS ON THE OLD RUNG
 
