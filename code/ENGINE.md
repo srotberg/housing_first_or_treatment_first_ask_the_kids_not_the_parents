@@ -653,3 +653,28 @@ Two rules out of it:
 - **a point file is only a measurement if it has a MOMENTS block.** `solved in
   N min` is run_one_point's wall clock and is printed whether the binary
   finished or was shot. Check for the moments before quoting anything.
+
+## THE SLOW BORROWING-ON SOLVES WERE THE BUG, NOT THE GRID
+
+Worth stating plainly because two firings were spent estimating grid ratios that
+were never the cause.
+
+Borrowing-ON solves ran 44, 54 and 55+ minutes against 13-17 off, and the whole
+of that gap is explained by the broken budget check. It printed TEN LINES PER
+FAILING STATE, and with `include_homeownership=0` every household is a renter,
+so it failed at every borrowing state: 87 MB of log in five minutes, which at 55
+minutes is on the order of a gigabyte of text written by a solver that should
+have been doing arithmetic.
+
+So the honest account of the day's runtime is not that borrowing widens the grid
+by a factor the arithmetic got wrong twice. It is that a diagnostic was firing a
+quarter of a million times and nobody read the log until 16:45.
+
+THE PREDICTION THIS MAKES, and it is worth checking against the first fixed ON
+arm: with the check passing and the printing stopped, an ON solve should fall
+back toward the grid estimate of roughly 15-20 minutes rather than 45+. If it
+does not, there is a second cause and the grid arithmetic is still not it.
+
+THE GENERAL RULE: when a run is unexpectedly slow, read its log before modelling
+its cost. A log that is growing at megabytes per minute is telling you what is
+wrong, and no amount of reasoning about loop bounds substitutes for looking.
