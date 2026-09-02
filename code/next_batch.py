@@ -1653,6 +1653,17 @@ def main():
             fix = None
         nv = dict(v); nv[param] = f'{x1:.7g}'
 
+        # THE FINAL ROUND HAS TO TURN ITS OWN MEASUREMENT ON. omega_c's moment is
+        # a CHILD COUNTERFACTUAL -- the author, 2 September: "omega_c has a clear
+        # target, but it's in a counterfactual" -- and it is computed only when
+        # measure_child_gap is 1. The flag defaults to 0 because the
+        # counterfactual costs a second solve and there is no reason to pay it in
+        # the four rounds that come first. Without this line round 5 would emit
+        # steps for weight_on_child against a moment that reads "not measured"
+        # forever and the round could never close.
+        if mom == 'omega_c':
+            nv['measure_child_gap'] = '1'
+
         # THE SEARCH COORDINATE IS THE STREET, NOT THE RATIO.
         #
         # The author's assignment, 1 September: "H2 targets the fraction of

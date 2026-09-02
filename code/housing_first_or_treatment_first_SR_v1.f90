@@ -2885,19 +2885,18 @@
         ! 1 = flat excess RISK, so the multiplier falls with age
         ! 2 = flat MULTIPLIER of 1.6, which external_calibration.tex quotes
         ! A vector coordinate, so all three run from one build.
-        ! ONE, ON THE AUTHOR'S INSTRUCTION, 2 September: "keep it
-        ! homeless_excess_death_risk = 0.00396" and "use =1".
+        ! ZERO: THE BAGGETT RELATIVE-RISK PROFILE. The author, 2 September, first
+        ! "use =1" and then, once the three settings were laid out, "ah, then use
+        ! Baggett relative-risk profile" -- which is this one.
         !
-        ! Setting 1 holds the excess RISK of death flat in age at 0.00396 and
-        ! lets the MULTIPLIER fall out of it -- 4.41 at 26 down to 1.30 at 65 --
-        ! which is the only one of the three specifications that is age neutral
-        ! in the thing the household actually trades off. It was 0, the
-        ! age-varying Baggett relative-risk profile net of the share the SUD
-        ! mortality already carries.
-        !
-        ! THIS IS NOT BEHAVIOUR PRESERVING. Every point in the archive ran
-        ! setting 0 and none of them scores against this model.
-        integer :: homeless_death_risk_flat_in_age=1
+        ! Setting 0 uses rr_homeless_profile(age), Baggett et al.'s measured
+        ! age-varying relative risk read from us_mortality_multipliers.csv,
+        ! divided by the share of the excess that the SUD mortality already
+        ! carries so the two do not double count. Setting 1 is NOT the profile:
+        ! it holds the excess RISK flat at Baggett's implied excess AT AGE 26
+        ! alone and lets the multiplier fall out of baseline mortality. Setting 2
+        ! is a flat 1.6 from Meyer, Wyse and Logani.
+        integer :: homeless_death_risk_flat_in_age=0
         real(8) :: homeless_excess_death_risk=0.00396d0
 
         ! FOOD STAMPS PER HOUSEHOLD. cbar is the second level-over-mean moment:

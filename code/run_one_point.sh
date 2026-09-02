@@ -69,7 +69,7 @@ declare -A P=(
     # THE FLAT EXCESS DEATH RISK FROM THE STREET, per period. Default is
     # Baggett's implied excess at age 26, so only the age gradient is removed.
     # 0 Baggett ratios, 1 flat excess risk, 2 flat 1.6 multiplier.
-    [homeless_death_risk_flat_in_age]=1
+    [homeless_death_risk_flat_in_age]=0
     [homeless_excess_death_risk]=0.00396
     # ONE TYPE AGAIN, on the author's instruction of 1 September: "Maybe we don't
     # even need the two betas. Go back having just one. I think we don't need the
