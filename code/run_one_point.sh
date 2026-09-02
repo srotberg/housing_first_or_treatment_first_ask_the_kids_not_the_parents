@@ -44,7 +44,13 @@ declare -A P=(
     # the old ladder. Found in the parameter audit of 2 September.
     [rung_ratio_h3]=1.5
     [rung_ratio_h4]=2.0
-    [newborn_endowment_scale]=1.0
+    # OFF, on the author's instruction of 2 September: "Dont even target
+    # anything for newborns with the endowment for now. Let's see if you can
+    # match the bottom 50% share of wealth." It handed every newborn
+    # newborn_endowment_scale times one year of average earnings, and four
+    # controlled arms show it inflating w_bot -- 1.25 gives 0.105, 1.6 gives
+    # 0.121 -- which is the moment the author is now trying to reach.
+    [newborn_endowment_scale]=0.0
     # THE CURVATURE OF THE POSITIVE ASSET GRID. grid(i)=top*((i-61)/24)**e, so a
     # bigger exponent pushes the rungs toward zero. At the inherited 1.5 there
     # was ONE grid point between zero wealth and a year's rent on the cheapest

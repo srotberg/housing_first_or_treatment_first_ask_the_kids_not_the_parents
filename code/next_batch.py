@@ -133,7 +133,7 @@ STAGES = [
     # the rung and by nothing else, so judging it in a later round than the rung
     # means the rung is set without it and then scored against it afterwards.
     # It belongs in this round, unowned but measured, and the minimax sees it.
-    ['h_1', 'emp_homeless', 'h_share1', 'gamma'],
+    ['h_1', 'emp_homeless', 'gamma'],
 
     # Then everything else. This tail is mine, not the author's, and it is
     # ordered by nothing in particular because by the time it opens the three
@@ -493,7 +493,12 @@ OWN = {
     # matches the homelessness rate of the young, and in the data a good part of
     # young households' wealth is family support that no survey observes, so the
     # SCF's own newborn distribution is a floor rather than the number.
-    'newborn_endowment_scale':                             'h_share1',
+    # NOT TARGETED FOR NOW. The author, 2 September: "Dont even target anything
+    # for newborns with the endowment for now. Let's see if you can match the
+    # bottom 50% share of wealth." newborn_endowment_scale is 0 and owns nothing;
+    # h_share1 is reported and unscored. It inflated w_bot by roughly half the
+    # excess -- extrapolating four controlled arms to a zero endowment puts w_bot
+    # near 0.048 rather than 0.105 -- and w_bot is the moment being chased.
     # rho_d is the earnings penalty of a substance use disorder, switched on
     # here for the first time. It owns the SUD share of the homeless, and
     # through it the age profile: lambda_d pins the NUMBER of addicts, so the
@@ -629,7 +634,7 @@ SKIP = {'h_3',
 # instrument for it. So the moment is scored with three things acting on it and
 # its nominal owner the weakest of the three, which is worth watching rather than
 # pretending is clean.
-UNSCORED = {'rent50',
+UNSCORED = {'rent50', 'h_share1',
             # THE COST BURDEN HEADCOUNT LEAVES THE LOSS, because the author has
             # decided twice that the cheapest rung targets emp_homeless: "we
             # decided to set h2 such that 46% of the homeless are employed."

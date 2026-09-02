@@ -26,7 +26,7 @@ SKIP = {'h_3'}
 # and the cost burden share a denominator. rent50 is the same headcount over
 # INCOME and pointed the OPPOSITE way -- +163 per cent against h_2's -38 -- so
 # scoring both left one parameter with two targets it could not satisfy at once.
-UNSCORED = {'kappa_ued', 'kappa_uem', 'rent50', 'h_2'}
+UNSCORED = {'kappa_ued', 'kappa_uem', 'rent50', 'h_2', 'h_share1'}
 BAND = {'beta': (3.0, 4.5)}
 
 # parameter -> the moment it is bracketed on. Kept here rather than imported so
