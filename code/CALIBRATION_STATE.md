@@ -1,3 +1,46 @@
+## 06:23 -- emp_homeless HAS AN INSTRUMENT: THE WEIGHT ON HOUSING, NOT ITS PRICE
+
+Four explanations have now been tested for emp_homeless at 0.96 against 0.46.
+Three were measured and failed; the fourth works.
+
+    thin wealth tail   tail thinned 8x, by-choice fell under 2 points   FAILED
+    the rung h_2       doubled, emp_homeless moved 0.007                FAILED
+    leisure share      halved, emp_homeless moved 0.008                 FAILED
+    housing WEIGHT     doubled, emp_homeless moved 0.966 -> 0.692       WORKS
+
+    h_share  leisure  emp_homeless  by choice     h_1      gamma
+     0.100    3.05      0.96557      0.98476    0.06677   0.13078
+     0.100    1.50      0.95724      0.98263    0.06814   0.12745
+     0.200    3.05      0.69166      1.00000    0.00052   0.17788
+     0.300    3.05      CORNER         NaN      0.00000   0.19170
+    target                  0.46         --     0.00399   0.268
+
+The 0.300 row is a corner, not a reading: homelessness is exactly zero, so an
+employed share of 1.0000 is a ratio over an empty set and by-choice is NaN. It
+bounds the usable range and nothing more.
+
+**THE STRUCTURAL POINT.** Flow utility is Cobb-Douglas and multiplicative,
+H(size)*C^((1-rho)(1-a)), with a=relative_share_of_housing. At a=0.100 housing
+barely enters utility, so the street's rent saving dominates its size penalty for
+everyone and homelessness is chosen without regard to employment. Raising a makes
+housing matter, and then it is the poor who cannot afford to leave the street.
+The price of housing was never the lever. The weight on it was.
+
+**THE TENSION IT CREATES, which is the same shape as w_bot's.** emp_homeless
+wants a higher weight, h_1 wants a lower one, in one instrument. By 0.200
+homelessness is 87 per cent BELOW its target; by 0.300 there is none.
+batch_weight_street.txt pairs the weight with size_homelessness -- the street's
+size, 0.149 now -- at (0.25,0.30), (0.25,0.50), (0.30,0.50), to find whether both
+can be had at once.
+
+**FOR THE AUTHOR, when they read this.** relative_share_of_housing owns gamma and
+sits in round 3 of the sequence they specified. If it turns out to own
+emp_homeless as well, the round structure needs revisiting -- and note that gamma
+is short of its own target even at a weight of 0.300 (0.192 against 0.268), so
+the two moments this instrument would have to serve pull the same way but not far
+enough. No reorganisation has been made; this is a measurement, and the decision
+is theirs.
+
 ## 06:05 -- w_bot IS INSIDE TEN PER CENT. SIX OF ROUND 1's NINE ARE.
 
 Best point `85a8b00de2`, MODEL 2f7c317e75, four points in this economy. One
