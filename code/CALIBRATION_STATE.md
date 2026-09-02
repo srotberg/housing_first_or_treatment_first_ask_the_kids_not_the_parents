@@ -1,3 +1,59 @@
+## 05:35 -- THE RUNG CANNOT DELIVER emp_homeless, AND THE AUTHOR SAID SO FIRST
+
+`points/H2_LADDER_OFF.md`, three rungs on one economy, borrowing off, every
+other coordinate held:
+
+    rung    emp_homeless   by choice   afford on income   h_1       gamma
+    0.060     0.961461      0.960529      0.957032       0.121556  0.181004
+    0.100     0.957192      0.894284      0.878283       0.150169  0.251392
+    0.130     0.954226      0.836263      0.813543       0.158686  0.295169
+    target    0.46             --            --          0.00399   0.268
+
+The rung MORE THAN DOUBLES and emp_homeless falls by 0.0072. What is left to the
+target at the top of the ladder is sixty-eight times the whole movement the
+ladder bought, and the slope is flattening, not steepening: -0.1067 over the
+first interval, -0.0989 over the second. No pair brackets 0.46 and the target is
+outside the measured range.
+
+**The mechanism does work -- on the wrong moment.** By-choice falls 0.9605 ->
+0.8363 and the share who could pay the rent out of income falls 0.957 -> 0.814.
+Homelessness IS becoming involuntary. It is just not becoming unemployed,
+because a rent high enough to price out the jobless prices out the employed too,
+in nearly the same proportion.
+
+THE AUTHOR PREDICTED THIS, on 1 September: "But i wonder... If h2 is so large
+that even the employed can't afford it, then the homeless would be even more of
+the employed... No?" The later decision that the rung targets emp_homeless was
+taken after that objection and against it. The objection was right.
+
+**What the rung CAN do is gamma.** Housing over expenditure goes 0.181 -> 0.251
+-> 0.295 and crosses its target of 0.268 between 0.100 and 0.130 -- a genuine
+bracketing pair, crossing near 0.111. gamma currently has relative_share_of_housing
+as its owner and reads -50 per cent there.
+
+FOR THE AUTHOR TO DECIDE: emp_homeless has no working instrument. The rung was
+the last candidate and it is measured out. Either the moment is dropped from the
+scored set, or something other than the housing block has to own it.
+
+COST OF THE LADDER: h_1 moves the WRONG way throughout, 0.1216 -> 0.1587 against
+a target of 0.00399, already thirty times its target at the lowest rung.
+
+## 05:35 -- THE 2.85 PER CENT DISAGREEMENT IS GONE
+
+Two of the three determinism replicates are in, both on the fixed source
+b8dc1077ad (semantic 2f7c317e75):
+
+    RUN1  w_bot 0.029487288
+    RUN2  w_bot 0.029486834
+
+A relative difference of 1.5e-5, inside REPRODUCIBILITY.md's documented band
+(median 4.5e-6, worst 2.8e-4) and three orders of magnitude below the 2.85 per
+cent the two pre-fix runs disagreed by. Both also land on the 0.029487 reference.
+
+So the prediction recorded at 05:02 holds: the disagreement was the ambient
+age_index in the old-age wealth walk, fixed at d9ff1a8. The third replicate is
+still running and the conclusion is provisional until it lands.
+
 ## 04:52 -- TWO RUNS OF ONE VECTOR ON ONE SOURCE DISAGREE BY 2.85 PER CENT
 
 This outranks everything else on the branch. Tag f9c16d5308, MODEL c823331449,
