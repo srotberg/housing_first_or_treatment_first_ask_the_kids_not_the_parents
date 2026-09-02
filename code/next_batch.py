@@ -100,8 +100,27 @@ STAGES = [
     # author, 2 September: "add two betas....and calibrate the impatient beta in
     # the macro stage (stage 1). half the population needs to be impatient."
     # beta_type_weight was already 0.5d0, so the half is unchanged.
+    # STAGES 0, 1 AND 2 MERGED, 2 September, on the author's instruction: "You
+    # need to do clear adjustments on b, lambda d and h1." Those three sat in
+    # stages 1 and 2, so every instrument owning them was HELD -- the gate said
+    # so itself, "size_homelessness (owns h_1): held, its stage is not open
+    # yet" -- and stage 0 has never closed, so they could not open.
+    #
+    # That is why the headline loss did not move for a day. It is a minimax over
+    # all scored moments, h_1 dominates it at +652 per cent, and h_1's
+    # instrument was frozen by the staging while the fleet correctly worked
+    # stage 0. size_homelessness took exactly ONE value, 0.149, across all
+    # thirteen points; addiction_scalar_1 took exactly one, 0.0360.
+    #
+    # The author had already authorised merging the first two ("yes, merge them
+    # once the borrowing arms land") and has now asked for h_1 as well. The
+    # staging rationale above -- that a later block calibrated against a moving
+    # base is measured against nothing -- still stands and is not repealed; it is
+    # traded for reaching the moments that dominate the objective at all. The
+    # per-step e-fold cap and the drug gate remain, so the protection against
+    # steps that do not compose is unchanged.
     ['aleph', 'beta', 'omega_l', 'sigma_y', 'tau_l', 'pi_eu', 'pi_V', 'cbar',
-     'w_bot'],
+     'w_bot', 'b', 'lambda_d', 'theta', 'h_1', 'emp_homeless', 'gamma'],
 
     # Then the drug block, with theta joining b and lambda_d. theta was in the
     # disorder stage; the author has moved it up beside the two it is coupled to.
@@ -133,7 +152,7 @@ STAGES = [
     # the rung and by nothing else, so judging it in a later round than the rung
     # means the rung is set without it and then scored against it afterwards.
     # It belongs in this round, unowned but measured, and the minimax sees it.
-    ['h_1', 'emp_homeless', 'gamma'],
+    # (h_1, emp_homeless and gamma moved up into the merged stage above.)
 
     # Then everything else. This tail is mine, not the author's, and it is
     # ordered by nothing in particular because by the time it opens the three
