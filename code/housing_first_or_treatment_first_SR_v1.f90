@@ -3691,26 +3691,26 @@
         ! the homeless and the precariously housed. h_1 here is literal
         ! homelessness, shelters and the street, so the blended figure is the
         ! wrong one. It was 0.252.
-        ! SET TO ZERO ON THE AUTHOR'S INSTRUCTION, 2 September, for the
-        ! bottom-half economy.
+        ! The literally homeless figure from Abramson and Van Nieuwerburgh (2024),
+        ! \$2,500 per household per month, and not the \$1,775 they blend across
+        ! the homeless and the precariously housed. h_1 here is literal
+        ! homelessness, shelters and the street, so the blended figure is the
+        ! wrong one. It was 0.252.
         !
-        ! The reason it has to go to zero rather than be rescaled: in the
-        ! bottom-half design the government budget closes on the bottom half
-        ! alone, so every dollar of it is raised from households whose average
-        ! income tax rate is 5.46 per cent and whose representative member sits
-        ! BELOW the income tax threshold. Leaving these costs in would make that
-        ! population fund services that are in fact financed out of general
-        ! revenue, overwhelmingly by the half of the distribution the model no
-        ! longer contains.
+        ! ZEROED AND RESTORED, 2 September. Both this and the addiction cost were
+        ! set to zero for the bottom-half economy, where the budget would have
+        ! closed on households whose average income tax rate is 5.46 per cent.
+        ! The author then chose to stay with the current design, so they are back:
+        ! in the whole-economy model these costs are financed by the whole economy
+        ! and belong in the budget. Restoring them also returns the semantic hash
+        ! to 6d75e61a1d and with it the eight scoreable points.
         !
-        ! It also retires a number the referees objected to. The AE wrote that
-        ! the fiscal cost of homelessness "appears high (see R3)", and the value
-        ! below had been RAISED from 0.252 to 0.4286 -- the literally-homeless
-        ! figure of $2,500 per household per month from Abramson and Van
-        ! Nieuwerburgh (2024) rather than their $1,775 blended across the
-        ! homeless and the precariously housed. Both are now out of the budget.
-        real(8), parameter :: homeless_cost_govt_as_perc_of_avg_inc=0.d0
-        real(8), parameter :: addict_cost_govt_as_perc_of_avg_inc=0.d0
+        ! The referees' objection stands and is not addressed by this: the AE
+        ! wrote that the fiscal cost of homelessness "appears high (see R3)", and
+        ! 0.4286 is itself a raised value from 0.252. That is a live comment to
+        ! answer in the revision, not a reason to drop the term.
+        real(8), parameter :: homeless_cost_govt_as_perc_of_avg_inc=0.4286
+        real(8), parameter :: addict_cost_govt_as_perc_of_avg_inc=cost_of_addict_scaling*0.212  ! 38393
         real(8), parameter :: threshold_for_food_stamps_as_perc_of_average_net_wealth=100000 !0.015
         real(8), parameter :: fraction_of_income_spent_on_food=0.4
                                                                                               
