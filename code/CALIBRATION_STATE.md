@@ -1,4 +1,28 @@
-# READ THIS FIRST -- CURRENT STATE, 2 September 13:25
+# READ THIS FIRST -- CURRENT STATE, 2 September 15:05
+
+Model `085d8bf37b` on the shared branch. **ZERO scoreable points**, and the four
+solves that will produce the first ones are RUNNING as of 15:05 -- all four
+verified RUNNING and none blocked on input.
+
+    session 01V8n9WW...  wip/bn-off        borrowing OFF control
+    session 0114Q1zE...  wip/bn-on075      ON, limit 1.50, impatient 0.75
+    session 01GQPgnt...  wip/bn-on090      ON, limit 1.50, impatient 0.90
+    session 018oVEbn...  wip/patient-floor the restriction pair, on 1bf95331b1
+
+The first three are the borrowing arms the author has now asked for three times.
+The fourth is on `wip/patient-no-borrow`, NOT the shared branch: it measures
+restrict_borrowing_to_impatient=0 against =1 at the bn_on075 vector, both solves
+in ONE container so the wall clock and the moments are comparable.
+
+`wip/patient-no-borrow` is deliberately NOT merged. Merging it moves the semantic
+hash 085d8bf37b -> 1bf95331b1 and would supersede the three arms mid-solve. Merge
+it after they land.
+
+THE SEED RULE APPLIES AND next_batch WAS NOT RUN. ENGINE.md step 2: with zero
+points on the current model the gate has nothing to interpolate from and any
+batch it writes is a guess dressed as a step. These four ARE the seed round.
+
+## The record below is from 13:25, and the header above supersedes it
 
 Model `0afbde300f`. **ZERO scoreable points.** The archive reset and it was not
 an accident: three author-instructed changes landed inside forty minutes.
