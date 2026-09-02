@@ -10,12 +10,26 @@ Model `2f7c317e75`. 20 points. Best point `846f6a0a53`.
 Loss 729.4 per cent (on `lambda_d`, round 2, NOT OPEN), median 25.9, nine of
 twenty moments inside ten per cent.
 
-**Round 1: seven of nine inside ten per cent on one point.**
+**Round 1 on point 846f6a0a53: SIX of nine strictly inside, seven if beta counts.**
+State the convention, never just the count -- a worker caught this header
+asserting "seven" with the sign on beta dropped, and it was right to.
 
     aleph   +2.3 *   pi_V   +5.1 *   w_bot  -7.0 *
-    sigma_y -1.7 *   beta   +6.7 *   omega_l -8.1 *
-    tau_l   +4.9 *
+    sigma_y -1.7 *   omega_l -8.1 *  tau_l  +4.9 *
+    beta    2.8004 -- 6.7 per cent BELOW the 3.0 floor, so OUTSIDE its band
     cbar   +15.2     pi_eu +89.9
+
+beta is scored on a BAND, 3.0 to 4.5, not a point. gaps.py measures its gap to
+the nearest edge, gets 6.7 per cent and marks it inside the ten per cent budget;
+by the band it is outside. Both readings are defensible and they give six or
+seven. Say which is meant. The author's objective is "below ten per cent for
+everything", which is the gap reading, but a benchmark reported as having beta in
+the band would be wrong.
+
+AND THIS POINT DOES NOT CARRY pi_eu's FIX. It reaches six BY not carrying it.
+The combined point that does carry it is five of nine, because aleph, cbar and
+w_bot all broke on combining -- see ROUND1_FULL.md. No assembly of arms has yet
+beaten five once pi_eu is included.
 
 Both stragglers have measured brackets and both are in flight:
 `max_food_cost` 0.0070/0.0065 for cbar, `probability_becoming_unemployed` 0.0122
