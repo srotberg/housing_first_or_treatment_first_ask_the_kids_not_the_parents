@@ -1,8 +1,20 @@
 # The borrowing branch does not compile: `unsecured_borrowing_rate` under `default(none)`
 
-Status: OPEN. No point on this branch has been measured since unsecured
-borrowing was added. Every `run_one_point.sh` invocation dies in the build,
-before the solver starts.
+Status: CLOSED at a3f7ba4. `unsecured_borrowing_rate` was added to the
+`shared(...)` list of the region opening at 24528, exactly as the Fix section
+below prescribes, and gfortran now reports zero errors. Nothing else was behind
+it -- the compiler had stopped after the one error, so this was the only way to
+know.
+
+The semantic hash did not move (9caeb7a139 before and after): an OpenMP
+directive is a comment line and `model_hash.py` strips comments, so the archive
+tag is unaffected and points measured before and after this fix are comparable.
+The 13 `point_<tag>.FAILED.txt` records were deleted at 415bc6e -- each was
+written by a run that died in the build, not by one that failed to converge, and
+leaving them would have let a later reader confuse the two.
+
+What it cost: no point on this branch measured between the borrowing commit and
+a3f7ba4. Four workers' output in that window was FAILED records only.
 
 Re-confirmed on the current head (`code/batch_s2_01.txt` run line by line
 again, tags 30f09ca36e, deef8f1e37, 65c5d119a5): identical error, identical
