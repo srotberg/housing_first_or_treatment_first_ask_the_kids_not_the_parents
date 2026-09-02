@@ -1,0 +1,43 @@
+housing_first_or_treatment_first_SR_v1.f90:40190:26:
+
+40190 |             housing_price(transition_length-25:transition_length-1)=housing_price(transition_length)
+      |                          1
+Warning: Lower array reference at (1) is out of bounds (-24 < 1) in dimension 1
+housing_first_or_treatment_first_SR_v1.f90:40211:30:
+
+40211 |             lump_sum_transfer(transition_length-25:transition_Length-1)=lump_sum_transfer(transition_length)
+      |                              1
+Warning: Lower array reference at (1) is out of bounds (-24 < 1) in dimension 1
+housing_first_or_treatment_first_SR_v1.f90:40506:56:
+
+40506 |                 write(2,'(F10.8)') homeownership_by_age(2,:)
+      |                                                        1
+Warning: Array reference at (1) is out of bounds (2 > 1) in dimension 1
+housing_first_or_treatment_first_SR_v1.f90:40453:54:
+
+40452 |                 do i=0,transition_length
+      |                                        2              
+40453 |                     write(1,'(F15.12)') housing_price(i)
+      |                                                      1
+Warning: Array reference at (1) out of bounds (0 < 1) in loop beginning at (2)
+housing_first_or_treatment_first_SR_v1.f90:40466:54:
+
+40465 |                 do i=0,transition_length
+      |                                        2              
+40466 |                     write(1,'(F15.12)') housing_stock(i)-total_housing_demand(i)
+      |                                                      1
+Warning: Array reference at (1) out of bounds (0 < 1) in loop beginning at (2)
+housing_first_or_treatment_first_SR_v1.f90:40466:78:
+
+40465 |                 do i=0,transition_length
+      |                                        2                                      
+40466 |                     write(1,'(F15.12)') housing_stock(i)-total_housing_demand(i)
+      |                                                                              1
+Warning: Array reference at (1) out of bounds (0 < 1) in loop beginning at (2)
+housing_first_or_treatment_first_SR_v1.f90:40493:58:
+
+40492 |                 do i=0,transition_length
+      |                                         2                 
+40493 |                     write(2,'(F15.12)') lump_sum_transfer(i)
+      |                                                          1
+Warning: Array reference at (1) out of bounds (0 < 1) in loop beginning at (2)
