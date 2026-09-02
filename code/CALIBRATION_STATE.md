@@ -190,16 +190,57 @@ Three arms at 0.060, 0.078 and 0.095 are filling the curve. `theta` and `beta`
 cross the other way over the same range, so the rung is a trade, not a free win,
 and the curve is what says where the trade is least bad.
 
-## IN FLIGHT, 22:52
+## h_1 IS CLOSED
 
-    h_1 close    size_homelessness=0.05775   session_01PNHyBvAKLuJC5SiaCb664s
-    drug sep     addiction_scalar_1=0.0410   session_01WcYLxAGYq1Kqm2EPpbKy7x
-    drug sep     addiction_scalar_1=0.0300   session_01FQWuWWYWtp3FfkbfXLC37g
-    rung curve   h_2=0.060                   session_01QaoD3S5nNhGUzW1Jisu9yX
-    rung curve   h_2=0.078                   session_018DoUJo9jvMi6gKPsyqXyMU
-    rung curve   h_2=0.095                   session_01BxL3Whc5VTwYP6sauiDRmZ
+    size_homelessness   h_1        gap
+    0.032283            0.000594   -85.1%
+    0.055000            0.003044   -23.7%
+    0.057750            0.004163    +4.3%   INSIDE TEN PER CENT
+    0.060000            0.004766   +19.4%
+    0.120000            0.025354  +535.4%
 
-575 points.
+`size_homelessness = 0.057750`. The moment that dominated the open stage all
+day is solved on one coordinate, and it moves nothing else: b, lambda_d and
+w_bot are flat across the whole bracket.
+
+## THE TWO DRUG INSTRUMENTS ARE DISTINGUISHABLE AFTER ALL, and one is violent
+
+`addiction_scalar_1` alone, `lambda_addiction` held at 2.79953, off the drug base:
+
+    addiction_scalar_1        b              lambda_d          theta
+    0.0300              0.23897 (+168.5%)  0.08574 (+133.0%)  0.15956
+    0.0360  base        0.10027 ( +12.7%)  0.02993 ( -18.7%)  0.12927
+    0.0410              0.02321 ( -73.9%)  0.00420 ( -88.6%)  0.07974
+    TARGET              0.08900            0.03680
+
+A five-thousandth step cuts `b` by a factor of four. It is also nonlinear: the
+log slope doubles between the two intervals, so nothing here may be
+extrapolated far.
+
+**What makes the pair usable is the RATIO, not the direction.** Both instruments
+push b and lambda_d the same way, but `lambda_addiction` moves them in near-exact
+proportion -- log changes of -0.2305 and -0.2295 across its whole ladder -- while
+`addiction_scalar_1` moves lambda_d about 1.34 times as far as b in logs. So the
+pair spans two directions and CAN hit both moments. The gate's four-point ladder
+could not, because every one of its arms moved both parameters together along one
+line.
+
+## IN FLIGHT, 23:04
+
+    rung curve   h_2=0.060                        session_01QaoD3S5nNhGUzW1Jisu9yX
+    rung curve   h_2=0.078                        session_018DoUJo9jvMi6gKPsyqXyMU
+    compose      h_2=0.098, sz=0.05775            session_01BAUJrws9Y7JxrPCWpfGwQp
+    compose      h_2=0.105, sz=0.05775            session_01AuA9yBSbJcPfZye6H9uYcc
+    drug probe   as1=0.0280, lambda_addiction=4   session_01WRt9QNPB2Go8tRaXkrDe2U
+    drug probe   as1=0.0240, lambda_addiction=5   session_01KspU2FPHMaFHDnePoubbSP
+
+The two compose arms are the first points that carry BOTH solved coordinates at
+once -- the h_1 street size and a rung near where w_bot and theta cross. Whether
+they compose or interfere is the open question. The drug pair are PROBES chosen
+to move along the direction the ratio above says exists; they are not tuned
+values and must not be reported as such.
+
+579 points.
 
 ## THE GATE'S DRUG BASE IS ON THE OLD RUNG
 
