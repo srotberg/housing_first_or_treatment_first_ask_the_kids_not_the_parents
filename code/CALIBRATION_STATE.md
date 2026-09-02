@@ -1,23 +1,68 @@
-# Where the calibration is
+## LIVE STATE, 2 September 01:10 -- TWO BETA TYPES, ROUND 1 RUNNING
 
-Rewritten whenever a point changes the picture. The hourly engine trigger reads
-this rather than carrying the state in its own prompt, because the prompt went
-stale three times in one evening and a stale prompt sends the search backwards.
+**THE DIAGNOSIS THAT MATTERS, and it took all of 1 September to reach.** The
+calibration has been stuck behind emp_homeless at 0.92 against 0.46 for weeks. It
+is not a housing problem. The chain, all measured:
 
-## The objective
+    w_bot, bottom half's share of net worth      0.2297   target 0.0250
+    probability_of_ui                            0.30      so 70 per cent of the
+    zeta_DI                                      0         unemployed earn NOTHING
+    homeless who could afford rent on income     0.9997
+    homeless by choice                           0.9999
+    emp_homeless                                 0.92     target 0.46
 
-The author's ten per cent rule: EVERY target within ten per cent. They conceded
-the model is hard to calibrate and will say so in the paper. That is a MINIMAX,
-not a mean -- `score_points.worst()` with `ACCEPT = 0.10`. The mean is what once
-led the search to a point with b exact and lambda_d at minus seventy eight.
+Seventy per cent of the unemployed have zero income and are still not homeless,
+because the bottom half of the wealth distribution is nearly ten times too rich. A
+household that loses its job spends down a buffer and is never priced out. So
+homelessness cannot be a budget outcome for ANYONE, the street is settled by
+taste, the people on it are a cross-section and therefore mostly employed, and no
+setting of h_1 or h_2 touches it. Nine controlled points confirm the housing block
+cannot move it.
 
-`beta` is banded (3.0, 4.5) on the author's instruction and scores zero inside
-it. **`h_2` is NOT conceded.** That sentence stood here for a day after the
-author reversed it -- *"Why is h2 conceded? Isn't h2 the same as the smallest
-rental??"* -- and it is the head of the file, so it is what a reader acts on.
-The moment h_2 is the CEX severe cost burden against 0.101; the parameter h_2
-is `smallest_rental_relative_to_lowest_income`. Both are live. What is
-conceded is exactly what `SKIP` in `next_batch.py` says, and nothing else.
+**w_bot was the moment nobody was working.** It was conceded when the model went
+to one beta type -- "nothing moves it at one type" -- and it is the moment
+blocking everything else.
+
+**So the author restored two beta types on 2 September**, with
+discount_factor_impatient owning w_bot in round 1 and beta_type_weight at 0.5.
+The archive brackets the target: an impatient factor of 0.90 gives w_bot 0.0417,
+0.93 gives 0.0506, 0.95 gives 0.0061 against a target of 0.025.
+
+I ALSO GOT THIS WRONG ONCE AND THE AUTHOR CAUGHT IT. On 1 September I said hitting
+w_bot needed an impatient factor of 0.27. That was an elasticity extrapolated past
+the pair that produced it. The measured answer is between 0.90 and 0.95.
+
+### The five rounds, the author's own sequence
+
+    1  aleph beta omega_l sigma_y tau_l pi_eu pi_V cbar w_bot   the macro block
+    2  b lambda_d theta aleph(quarter step)                     the drug block
+    3  h_1 emp_homeless h_share1 gamma                          the housing block
+    4  tau_u mu_H lambda_m sud_homeless p_m                     treatment
+    5  omega_c, with measure_child_gap=1 handed in              the child gap
+
+Each opens when the one before is inside ten per cent, or stalls for three rounds.
+The gate is ADVISORY until round 2 opens and the base is ranked on the OPEN
+round's moments -- both because round 1 was being held hostage to a drug block
+that round 2 exists to set.
+
+### Standing decisions, all the author's
+
+    increased_prob_if_homeless 0.2     rho_d 1  rho_m 1   kappa_phi_d_level 8
+    homeless_death_risk_flat_in_age 0  the Baggett age profile, not the flat risk
+    ladder h_3 = 1.5 x h_2, h_4 = 2 x h_2
+    h_2 targets emp_homeless; the cost burden headcount is OUT of the loss
+    y_u goes to a robustness run at higher income, not the benchmark
+    p_m is scored, smi_onset_level owns it
+
+### Known and unfixed
+
+    the income of the homeless RATIO IS MIS-FORMED: model_avg_homeless_income
+    carries capital income and model_average_income does not. It does not touch
+    emp_homeless, which is a headcount, but it does undermine every statement
+    about the homeless being "not poor". FIX BEFORE QUOTING IT AGAIN.
+    lambda_m is a parameter AND a moment, unrelated. Rename one.
+    penalty_child_addicted 0.24 and penalty_child_homeless 0.31 are unexamined
+    and they matter for round 5.
 
 ## OPEN DECISION: y_u AND THE ROBUSTNESS RUN
 
