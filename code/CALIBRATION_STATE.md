@@ -1,3 +1,70 @@
+# READ THIS FIRST -- CURRENT STATE, 2 September 07:45
+
+This file is 7,500 lines and grows by a section every firing. The sections below
+are a RECORD, newest first, and several of the older ones are now KNOWN FALSE.
+Do not act on anything below without checking it against this block.
+
+## What is true right now
+
+Model `2f7c317e75`. 20 points. Best point `846f6a0a53`.
+Loss 729.4 per cent (on `lambda_d`, round 2, NOT OPEN), median 25.9, nine of
+twenty moments inside ten per cent.
+
+**Round 1: seven of nine inside ten per cent on one point.**
+
+    aleph   +2.3 *   pi_V   +5.1 *   w_bot  -7.0 *
+    sigma_y -1.7 *   beta   +6.7 *   omega_l -8.1 *
+    tau_l   +4.9 *
+    cbar   +15.2     pi_eu +89.9
+
+Both stragglers have measured brackets and both are in flight:
+`max_food_cost` 0.0070/0.0065 for cbar, `probability_becoming_unemployed` 0.0122
+for pi_eu (0.0080 gave 0.10972, 0.0150 gave 0.15308).
+
+The round-1 vector that produced the seven: `value_of_life=54.0`,
+`probability_of_voucher_benchmark_used=0.047`, `max_food_cost=0.0080`,
+`discount_factor=0.99900`, `discount_factor_impatient=0.55`,
+`relative_share_of_housing=0.200`, everything else at the anchor.
+
+## Sections below that are WRONG, and must not be acted on
+
+- **02:05, "TWO BETA TYPES CANNOT REACH w_bot"** -- false. w_bot is -7.0 per cent,
+  inside ten. It closed on `value_of_life`, an instrument that does not own it.
+- **04:52, "TWO RUNS OF ONE VECTOR DISAGREE BY 2.85 PER CENT"** -- resolved. That
+  was the ambient-`age_index` bug in the old-age wealth walk, fixed at d9ff1a8.
+  Three cold runs now agree to 5.13e-05 worst; see 05:52 and DETERMINISM.md.
+- **03:48, "UNSECURED BORROWING WAS INERT"** -- wrong diagnosis. It was OUT OF
+  BOUNDS, not inert: renter arrays had no negative indices. Whether anyone
+  borrows is still UNMEASURED. See 0f581bb.
+- **anything before 03:15 quoting w_bot** -- measured on a net-worth formula that
+  truncated a renter's debt at zero.
+
+## Open, and the author's to decide -- not mine
+
+1. **emp_homeless.** Best is 0.587 against 0.46. Four explanations measured:
+   wealth tail FAILED, rung h_2 FAILED, leisure FAILED, housing WEIGHT works but
+   stalls. Getting further needs a group that cannot pay the cheapest rent out of
+   income; the only remaining candidates are `probability_of_ui` (0.30) and
+   `zeta_DI` (0), which are on the INCOME side and in none of the author's
+   rounds.
+2. **`relative_share_of_housing` owns gamma in round 3 but is the only thing that
+   moves emp_homeless.** If it owns both, the round structure needs revisiting.
+3. **`utility_cost_of_treatment` at 1.537** puts tau_u at exactly 0.00000. The
+   archive says the working range is near 0.15-0.25. Round 4 must not open at
+   1.537.
+4. **Outer equilibrium tolerances** -- rental and housing 2e-2, government budget
+   1e-2. NOT a reproducibility problem (settled at 05:52); a question about the
+   accuracy of the final benchmark, and it largely cancels in controlled pairs.
+
+## Standing method
+
+Report ONE equilibrium, never a best-of. Prefer a measured bracket to an
+elasticity, and never extrapolate past the pair that produced it -- that has been
+wrong every time on this branch. Any change that widens an array index gets a
+`-fcheck=bounds` run before anything is measured on it.
+
+---
+
 ## 07:05 -- emp_homeless 0.96 -> 0.59, AND WHY IT CANNOT GO FURTHER
 
 `points/WEIGHT_STREET.md`, three (weight, street) pairs against the anchor. The
