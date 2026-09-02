@@ -434,3 +434,31 @@ measured in one container, so the spread cancels within a batch and the search
 does not need the tolerances tightened to make progress. The place it will matter
 is the FINAL reported benchmark, which is exactly when the author has said to
 deal with it.
+
+
+## Push after every line, and never change the model under a running batch
+
+Added 2 September, after losing four solved points to both mistakes at once.
+
+**Push after every line.** The no-rebase-mid-batch rule exists so a source change
+cannot split one batch across two economies. Holding the PUSH to the end was my
+own addition and has no such justification: a worker held four solved points for
+forty-five minutes, invisible, blocked behind a fourth solve, and they were lost.
+The brief must say: commit and push after EACH line, and simply never pull. If a
+push is rejected because the branch moved, leave that commit local, carry on, and
+push again after the next line -- rebasing mid-batch would rebuild the binary
+from a different source, which is the thing the rule exists to prevent.
+
+**Model changes wait for a quiet fleet.** A batch is a measurement of ONE
+economy. Three author-instructed changes landed while that batch ran -- the
+seven-point grid, the unemployment target, and beta's target going back to 3.0 --
+so its points were stale before they arrived. The author is entitled to change
+anything at any time; the engine's job is to QUEUE the change, say it is queued
+and what it is waiting on, and apply it when nothing is mid-solve. Applying a
+change immediately while eight worker-hours are in flight is not responsiveness,
+it is discarding the work without saying so.
+
+The exception is a BUG. A model that is wrong should stop the fleet at once,
+because everything it is measuring is worthless anyway. Three times tonight that
+was the right call -- the build failure, the out-of-bounds arrays, the ambient
+age_index. A target or a grid is not that.
