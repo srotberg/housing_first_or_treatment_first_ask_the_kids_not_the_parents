@@ -290,7 +290,15 @@ def main():
         print(head)
         return 0
 
-    print('PROGRESS -- full table below.\n' if improved
+    # A FIRST POINT IS NOT PROGRESS. The mark is keyed on the model, the beta
+    # configuration and the scored set, so any of those changing starts a fresh
+    # mark and the first point after it beats nothing. That printed "PROGRESS"
+    # when p_m left the scored set, again when the second beta type came back,
+    # and would print it after every model change -- three times in one evening,
+    # each time announcing an improvement that had not happened.
+    first = old is None
+    print('FIRST POINT in this economy -- nothing to compare against yet.\n' if first
+          else 'PROGRESS -- full table below.\n' if improved
           else 'loss unchanged; table printed on request.\n')
     print(head + '\n')
     rows = []
