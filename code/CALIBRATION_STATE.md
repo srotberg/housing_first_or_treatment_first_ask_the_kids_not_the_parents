@@ -7,6 +7,41 @@ an accident: three author-instructed changes landed inside forty minutes.
     197407b07d   negative grid 3 points -> 7, accordion, limit 1.5x income
     0afbde300f   unemployment target 13.9 -> 4.9 per cent
 
+## 13:45 -- ROUND 2 HAS TWO WORKING LEVERS AND BOTH DESTROY ROUND 1
+
+The sign correction was right. addiction_scalar_1 UP lowers lambda_d, monotonically,
+and a measured pair now BRACKETS the target:
+
+    addiction_scalar_1   lambda_d (target 0.0368)     round 1 count
+        0.0120             0.410701  +1016%              4 of 9
+        0.0360 (base)      0.294785   +701%              8 of 9
+        0.1000             0.122914   +234%              3 of 9
+        0.2500             0.000000   -100%  BRACKETS    2 of 9
+
+And relative_share_of_addiction_1 DOWN lands b almost exactly:
+
+    0.463 (base)  b 0.40729   lambda_d 0.29394   theta  0.30502   beta 2.453
+    0.300         b 0.35153   lambda_d 0.18628   theta  0.05852   beta 2.206
+    0.200         b 0.09112   lambda_d 0.02378   theta -1 SENTINEL beta 1.896
+    target        b 0.089     lambda_d 0.0368    theta  0.162
+
+BOTH WRECK ROUND 1, and differently. addiction_scalar_1 takes aleph 75.8 -> 110.1
+-> 145.8, +82 per cent at the bracketing end. relative_share_of_addiction_1 takes
+beta 2.453 -> 1.896 and w_bot 0.0247 -> 0.0142, and kills theta's own moment on
+the way.
+
+THE CONCLUSION THIS FORCES, and it is a method point rather than a result: the
+rounds cannot be closed in sequence. Round 1 was assembled four times because its
+own instruments are not orthogonal; round 2's instruments move round 1's moments
+harder than round 1's own do. A joint solve over both blocks is what the
+measurements have been asking for all night. That is a change to the author's
+staged sequence and it is theirs to make, so it is recorded and not acted on.
+
+WHAT IS STILL TRUE AND USEFUL: every round 2 moment now has a measured bracket or
+a near miss, which is more than was known this morning, and the directions are
+settled -- addiction_scalar_1 UP, relative_share_of_addiction_1 DOWN,
+lambda_addiction weak in both directions at the values tried.
+
 ## What is being measured right now
 
   grid control      the round 1 vector, borrowing still OFF, on the new grid.
