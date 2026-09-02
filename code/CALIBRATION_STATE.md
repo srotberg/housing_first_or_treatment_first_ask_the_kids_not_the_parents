@@ -1,3 +1,59 @@
+## 03:48 -- UNSECURED BORROWING WAS INERT, AND THE THIN TAIL DID NOT BUY emp_homeless
+
+**The borrowing never worked.** The 25 loops the borrowing commit opened are
+STATE loops. a' is CHOSEN in renter_to_renter_problem and its search floor
+a_lo_1 was pinned at negative_financial_grid_size, the index of zero, so no
+renter could select a negative position and the negative grid was unreachable.
+fill_ev_table had the same floor, so the continuation value there was never even
+computed. Fixed at the choice side; hash fdc6078859 -> 99752a3cab. The owner-side
+twin at 20552 is dead code under include_homeownership=0 and is left with a note.
+
+The controlled twin is what caught it, and it is worth keeping as the record of
+what an inert feature looks like:
+
+    borrowing OFF   w_bot 0.029487   bottom 1 pct share +1.19e-04
+    ON, limit 1.00  w_bot 0.029610   bottom 1 pct share +1.19e-04   (data -2.25e-03)
+
+Two economies agreeing to four decimals at a limit of a full year of average
+income is not a small elasticity, it is a feature that is not connected.
+
+**w_bot is nearly closed, and borrowing had nothing to do with it.** Measured, no
+borrowing, endowment at zero:
+
+    discount_factor_impatient  0.55   w_bot 0.029487   h_1 0.0842
+    discount_factor_impatient  0.70   w_bot 0.041780   h_1 0.0724
+    discount_factor_impatient  0.95   w_bot 0.073827   h_1 0.0298
+
+0.0295 against a target of 0.0250 is +18 per cent, from +195 at 0.95 and +819 at
+one beta type. What bought it was the second type and the net-worth fix, not the
+debt.
+
+**THE TENSION THE AUTHOR NEEDS TO SEE.** w_bot wants the impatient factor LOW and
+h_1 wants it HIGH, over the same measured range: 0.55 gives w_bot 0.0295 and h_1
+0.0842, 0.95 gives w_bot 0.0738 and h_1 0.0298. One parameter, opposite
+directions, and h_1 is round 3's moment with its own instrument. This is why the
+minimax best point is the 0.95 arm even though its w_bot is the worst of the
+three: h_1 is 646 per cent out there and 2010 per cent out at 0.55.
+
+**THE DIAGNOSIS DID NOT SURVIVE ITS TEST.** The thesis was that a thin wealth tail
+makes homelessness a budget outcome. The tail thinned by a factor of eight and it
+did not:
+
+                              one beta type     0.55, two types
+    homeless by choice           0.9999            0.9851
+    could afford on INCOME alone 0.9997            0.9846
+    emp_homeless                 0.92              0.9495   (target 0.46)
+
+By-choice fell by under two points and emp_homeless got WORSE. Wealth was never
+what was binding: 98 per cent of the homeless can pay the cheapest rent out of
+income alone, so the rent is the thing that is too cheap. h_2 is 0.03992 against
+a rung target of 0.101 and it is the parameter that owns emp_homeless on the
+author's decision. batch_h2_ladder.txt measures 0.060, 0.100 and 0.130.
+
+The endowment costs w_bot more than its being a flow suggests: scale 0.5 takes
+w_bot 0.0295 -> 0.0436 and h_1 0.0842 -> 0.0625. A real trade, not a free
+instrument.
+
 ## 03:20 -- THE AUTHOR IS RIGHT ABOUT THE ENDOWMENT, AND w_bot COULD NOT SEE THE DEBT
 
 **The endowment is not a stock.** The author's reading of it is what the code
