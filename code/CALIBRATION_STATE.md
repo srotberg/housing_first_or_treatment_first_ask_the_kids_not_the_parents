@@ -1,3 +1,41 @@
+## 02:05 -- TWO BETA TYPES CANNOT REACH w_bot AT HALF THE POPULATION
+
+MEASURED, six controlled arms on discount_factor_impatient, every one monotone
+INCREASING in the factor:
+
+    0.50 -> 0.065    0.55 -> 0.062    0.70 -> 0.090    0.75 -> 0.112
+    0.90 -> 0.158    0.93 -> 0.168    0.95 -> 0.179    0.995 -> 0.213
+                              target 0.025
+
+The direction is right -- more impatience, less wealth at the bottom -- and the
+"turning response" the elasticity guard reported was pooling across slices, not a
+real turn. But the LOWEST value reachable is about 0.065 at an impatient factor of
+0.50, which is the FORTRAN'S OWN CLAMP, and that is still 160 per cent above
+target. Extrapolating the measured slope, 0.025 needs a factor near 0.35.
+
+life_span is 60 over ages 26 to 85, so a period is a YEAR. An annual discount
+factor of 0.35 is not a credible parameter.
+
+**I TOLD THE AUTHOR THE OPPOSITE AN HOUR AGO AND THEY DECIDED ON IT.** I said the
+archive bracketed 0.025 between impatient factors of 0.90 and 0.95, quoting a
+point that read w_bot 0.0061 at 0.95. That point was measured on an OLDER MODEL
+and is not in the current archive; on this model 0.95 gives 0.179. The bracket
+does not exist. This is the second time I have handed them a w_bot number off a
+stale or extrapolated reading -- the first was the 0.27 they challenged.
+
+WHAT IS STILL TRUE: w_bot at one beta type was 0.2297 and nothing moved it. At two
+types the base reads 0.1067 and the instrument works. It is a large improvement
+that stops short of the target.
+
+THE AUTHOR'S DECISION, three options:
+  raise beta_type_weight above 0.5 -- but they said half the population;
+  lower the Fortran clamp below 0.5 -- a model change, and 0.35 annual is hard to
+    defend in the paper;
+  revisit the target -- 2.5 per cent is the SCF bottom-half share of NET WORTH,
+    mostly home equity, and include_homeownership is 0 here so the only asset is
+    financial saving. The two are not the same object. This is the objection kept
+    in next_batch's UNSCORED note and it is now load-bearing.
+
 ## LIVE STATE, 2 September 01:10 -- TWO BETA TYPES, ROUND 1 RUNNING
 
 **THE DIAGNOSIS THAT MATTERS, and it took all of 1 September to reach.** The
