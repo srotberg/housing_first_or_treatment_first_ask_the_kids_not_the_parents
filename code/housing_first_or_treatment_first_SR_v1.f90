@@ -9264,8 +9264,34 @@
                                                                                         
                                     else
                                 
-                                        bequest_1=(1-frac_used)*max(financial_grid(financial_index_used),0.d0)+&
-                                            frac_used*max(financial_grid(fin_frac_used),0.d0)
+                                        ! A DEBT IS PART OF THE ESTATE. The author
+                                        ! asked on 2 September whether negative
+                                        ! assets are subtracted from bequests. They
+                                        ! were not: this branch is the renter's
+                                        ! estate and it took max(grid,0), so a
+                                        ! household dying in debt left nothing and
+                                        ! the loan was forgiven.
+                                        !
+                                        ! Harmless while nobody could hold a
+                                        ! negative position -- the whole negative
+                                        ! grid was unreachable for renters. The
+                                        ! moment unsecured borrowing opened it, it
+                                        ! became a free option at EVERY age, not
+                                        ! only the last: mortality is stochastic,
+                                        ! so borrow, consume, and there is a chance
+                                        ! the debt is never repaid. Barring
+                                        ! borrowing in the terminal period does not
+                                        ! touch that, because the default happens
+                                        ! wherever death does.
+                                        !
+                                        ! The raw grid value carries the debt at
+                                        ! face value, so a negative estate reduces
+                                        ! aggregate bequests exactly as a positive
+                                        ! one raises them. The homeowner branch
+                                        ! above already did the right thing for a
+                                        ! mortgage, scaling it by the house.
+                                        bequest_1=(1-frac_used)*financial_grid(financial_index_used)+&
+                                            frac_used*financial_grid(fin_frac_used)
                                 
                                     end if
                                                                         
@@ -9290,9 +9316,14 @@
                                         employment_grid(age_index,employment_index))*&
                                         inheritance_amount(age_index)*distribution_mass_used
                                         
+                                    ! THE SAME DEBT, IN THE AGGREGATE. This is
+                                    ! the reported total of financial bequests and
+                                    ! it must net out estates that are negative,
+                                    ! or the accounting says more was inherited
+                                    ! than was left.
                                     model_financial_bequests(time_period)=model_financial_bequests(time_period)+&
-                                        ((1-frac_used)*max(financial_grid(financial_index_used),0.d0)+&
-                                        frac_used*max(financial_grid(fin_frac_used),0.d0))*distribution_mass_used*&
+                                        ((1-frac_used)*financial_grid(financial_index_used)+&
+                                        frac_used*financial_grid(fin_frac_used))*distribution_mass_used*&
                                         (1-survival_probability(age_index,is_homeless_1,is_addicted_1,smi_of(unemployment_index)))
                                     
                                     if (years_left_on_mortgage_index>1) then
