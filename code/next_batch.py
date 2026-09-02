@@ -107,7 +107,17 @@ STAGES = [
     # whether a household priced out of the cheapest unit takes the street or
     # pays, so gamma and the rung are the same decision seen from two sides. It
     # was in the leftover stage.
-    ['h_1', 'emp_homeless', 'h_share1', 'gamma'],
+    # THE MOMENT h_2 TRAVELS WITH ITS PARAMETER. The author, 2 September: "wait
+    # h2 is basically this: smallest_rental_relative_to_lowest_income."
+    #
+    # It was in the leftover round showing "(no instrument)", which is true in
+    # the narrow sense -- the rung's owner slot holds emp_homeless, because the
+    # author assigned it there -- and misleading in every sense that matters. One
+    # parameter cannot own two moments, but the cost burden headcount is moved by
+    # the rung and by nothing else, so judging it in a later round than the rung
+    # means the rung is set without it and then scored against it afterwards.
+    # It belongs in this round, unowned but measured, and the minimax sees it.
+    ['h_1', 'emp_homeless', 'h_share1', 'gamma', 'h_2'],
 
     # Then everything else. This tail is mine, not the author's, and it is
     # ordered by nothing in particular because by the time it opens the three
@@ -116,7 +126,7 @@ STAGES = [
     # NOT a considered ordering and must not be read as one; it is everything
     # left over, opened together once the three blocks above are pinned, and the
     # author has reserved the decision about it.
-    ['pi_eu', 'cbar', 'pi_V', 'tau_u', 'mu_H', 'lambda_m', 'p_m', 'h_2'],
+    ['pi_eu', 'cbar', 'pi_V', 'tau_u', 'mu_H', 'lambda_m', 'p_m'],
 ]
 
 # A STAGE THAT CANNOT BE SATISFIED MUST NOT DEADLOCK THE ONES BEHIND IT.
@@ -1449,6 +1459,20 @@ def main():
     inv = {}
     for _p, _mo in OWN.items():
         inv.setdefault(_mo, []).append(_p)
+
+    # A MOMENT CAN HAVE AN INSTRUMENT WITHOUT OWNING IT. The author, twice on
+    # 2 September: "h2 is equivalent to smallest_rental_relative_to_lowest_income."
+    #
+    # OWN is one parameter to one moment because that is what a bracket needs --
+    # the rung's owner slot holds emp_homeless, on the author's own assignment --
+    # but printing "(no instrument)" beside h_2 says the cost burden headcount is
+    # unreachable, and it is not: the rung IS its instrument and moves nothing
+    # else. The row now names the rung and says which moment it is bracketed on,
+    # so the display stops contradicting the model.
+    ALSO_MOVES = {'h_2': 'smallest_rental_relative_to_lowest_income'}
+    for _mo, _p in ALSO_MOVES.items():
+        if _mo not in inv:
+            inv[_mo] = [f'{_p} (bracketed on {OWN.get(_p, "?")})']
     print('\nWHAT IS IN THE CALIBRATION NOW:')
     for i, st in enumerate(STAGES):
         state = 'OPEN ' if i in open_stages else 'HELD '
