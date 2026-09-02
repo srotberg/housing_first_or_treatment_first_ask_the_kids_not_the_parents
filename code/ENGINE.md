@@ -16,6 +16,31 @@ stop"*. A MINIMAX over every scored moment, with `beta` scored zero inside its
 each entry carries the author's own words. **Do not add to it without them** —
 conceding a moment is a scope change.
 
+## THE HOUSING LADDER, in the author's own words
+
+Stated by them on 2 September and settled: *"the smallest unit is the street, h1.
+that targets the homelessness rate. h2 targets the share of homeless with a job.
+h3 is 50% higher than h2 and h4 is 100% larger than h2."*
+
+| rung | index | what it is | size | targets |
+|---|---|---|---|---|
+| h_1 | -1 | the street | h_2 x `size_homelessness` | the homelessness rate |
+| h_2 | 0 | cheapest rental | `smallest_rental_relative_to_lowest_income` | the employed share of the homeless |
+| h_3 | 1 | middle rental | 1.5 x h_2 | nothing; it is a ratio |
+| h_4 | 2 | largest rental | 2 x h_2 | nothing; it is a ratio |
+
+FOUR LABELS, THREE RENTAL RUNGS. h_1 is the street, so the ladder reads as four
+rentals if the labels are counted, and the author asked on 2 September why there
+were six and how to keep people out of the fourth. There is no fourth rental unit:
+`housing_size` is dimensioned -1:2 and every point prints exactly three
+`DIAG unit` lines. The moment called `h_3` is "share in the LARGEST unit", which
+is index 2, the third rental -- a label and a measurement that do not match.
+
+THE STREET IS A RATIO OF THE RUNG, not a level: `size_homelessness` multiplies
+h_2. So moving h_2 drags the street with it unless something holds it, which is
+why the stepper works in (rung, absolute street) coordinates and rescales the
+ratio underneath. Do not undo that.
+
 ## Two names mean two things
 
 Confusing them has already cost a concession.
