@@ -1,3 +1,33 @@
+## 03:15 -- THE MODEL DID NOT COMPILE, AND THAT IS WHY THE ARCHIVE WAS EMPTY
+
+Every point line issued since unsecured borrowing went in died in the BUILD, not
+in the solver. `unsecured_borrowing_rate` is a module variable referenced inside
+an `!$omp parallel do default(none)` region whose `shared(...)` list did not name
+it. One omission, one line, fixed at a3f7ba4; gfortran now reports zero errors.
+
+The cost is the honest part: four workers and roughly an hour of fleet time
+produced thirteen `point_<tag>.FAILED.txt` records and no measurement. The
+03:01 firing reported "no archive on 9caeb7a139" and read it as the estate fix
+having moved the hash. It had not. The archive was empty because nothing could
+run.
+
+The semantic hash did NOT move -- an OpenMP directive is a comment line and
+`model_hash.py` strips comments -- so the tag stays 9caeb7a139 and points either
+side of the fix are comparable. The thirteen FAILED records were deleted at
+415bc6e so that a build failure is never later read as a convergence failure.
+
+WHAT THIS MEANS FOR EVERY BORROWING NUMBER SO FAR: none of them exist. The
+limit, the rate, the four-point negative grid and the debt-in-the-estate fix
+have never been through the solver even once. `w_bot` under borrowing is
+UNMEASURED, and the ~4.4 per cent arithmetic handed to the author is arithmetic,
+not a measurement.
+
+Seeded at 03:11 on the fixed build, three workers, seven points:
+  anchor (limit 0.30, rate 0.055) | borrowing OFF, the controlled twin |
+  limit 0.60 | limit 1.00 | rate 0.20 | impatient 0.50 | impatient 0.95
+The OFF twin against the anchor is what settles whether borrowing moves w_bot
+at all. Until it lands, no w_bot number goes to the author.
+
 ## 02:05 -- TWO BETA TYPES CANNOT REACH w_bot AT HALF THE POPULATION
 
 MEASURED, six controlled arms on discount_factor_impatient, every one monotone
