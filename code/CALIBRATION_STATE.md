@@ -1,3 +1,38 @@
+## 06:33 -- tau_u's ZERO IS NOT A CORNER OF THE MODEL, IT IS THE WRONG STARTING VALUE
+
+tau_u reads exactly 0.00000 against 0.245 at the current best point, with
+utility_cost_of_treatment at 1.537. That looked like a structural corner. It is
+not.
+
+Across every archived economy, 718 of 722 readings of tau_u are POSITIVE, and
+the instrument values that produce something near the target are an order of
+magnitude below where it now sits:
+
+    utility_cost_of_treatment    tau_u        (target 0.245)
+              0.05               0.8635
+              0.1332             0.3582
+              0.1502             0.3016
+              0.1752             0.2475   <- essentially on target
+              0.2380             0.4495
+              1.537              0.0000   <- where it is now
+
+So the instrument works and the useful range is somewhere near 0.15 to 0.25.
+1.537 is roughly nine times that, far enough out that take-up is off entirely and
+the moment has no gradient to calibrate on.
+
+TWO CAUTIONS on the table above. The readings come from different economies, so
+each row varies in more than the instrument -- the column is not a response
+curve, only evidence that the instrument has a working range and roughly where.
+And within that range tau_u is violently non-monotone across those economies
+(0.1543 -> 0.100, 0.1711 -> 0.003, 0.1752 -> 0.248, 0.1929 -> 0.008), which may be
+the other parameters moving or may be the moment itself being ill-behaved. That
+distinction has not been measured and must not be assumed either way.
+
+WHAT TO DO WITH IT: round 4 should not open with utility_cost_of_treatment at
+1.537, because the moment it is pointed at is dead there. Start it near 0.2. This
+is recorded rather than acted on -- round 4 is not open and the value is the
+author's to set.
+
 ## 06:23 -- emp_homeless HAS AN INSTRUMENT: THE WEIGHT ON HOUSING, NOT ITS PRICE
 
 Four explanations have now been tested for emp_homeless at 0.96 against 0.46.
