@@ -92,7 +92,11 @@ STAGES = [
     # so calibrating the housing block against a discount factor that later moves
     # is measuring against a base that will not hold still, which is the same
     # fault the drug gate exists to prevent one stage down.
-    ['aleph', 'beta', 'omega_l', 'sigma_y', 'tau_l'],
+    # pi_eu, pi_V and cbar JOIN ROUND 1 on the author's instruction, 2 September:
+    # "actually you can add pi_eu, pi_V, cbar to stage 1". All three are
+    # aggregates or policy levels set outside any of the blocks below, so they
+    # belong with the macro round rather than in the leftover.
+    ['aleph', 'beta', 'omega_l', 'sigma_y', 'tau_l', 'pi_eu', 'pi_V', 'cbar'],
 
     # Then the drug block, with theta joining b and lambda_d. theta was in the
     # disorder stage; the author has moved it up beside the two it is coupled to.
@@ -126,7 +130,9 @@ STAGES = [
     # NOT a considered ordering and must not be read as one; it is everything
     # left over, opened together once the three blocks above are pinned, and the
     # author has reserved the decision about it.
-    ['pi_eu', 'cbar', 'pi_V', 'tau_u', 'mu_H', 'lambda_m', 'p_m'],
+    # The last round, the author's own list: "then tau_u, mu_H and lambda_m in
+    # the last stage." p_m is NOT in it -- see below.
+    ['tau_u', 'mu_H', 'lambda_m'],
 ]
 
 # A STAGE THAT CANNOT BE SATISFIED MUST NOT DEADLOCK THE ONES BEHIND IT.
@@ -174,7 +180,12 @@ OWN = {
     # population share: a controlled pair moves p_m by -6 per cent for a -20 per
     # cent step while barely touching the share of the homeless, +1.25 per cent.
     # Two moments, two instruments; only one of them had ever been listed.
-    'smi_onset_level':                                     'p_m',
+    # p_m IS NOT USED. The author, 2 September: "p_m is not used...."
+    #
+    # The SMI population share leaves the calibration and smi_onset_level owns
+    # nothing. It stays PARSED and printed with the unscored moments, because it
+    # is still a fact about the model worth reading, but it is out of the loss
+    # and out of every round.
     'value_of_life':                                       'aleph',
     # RE-POINTED ON THE AUTHOR'S INSTRUCTION, from kappa_ued to the SUD share of
     # the homeless. The argument is double counting: a disorder that both takes
@@ -569,6 +580,10 @@ SKIP = {'h_3',
 # its nominal owner the weakest of the three, which is worth watching rather than
 # pretending is clean.
 UNSCORED = {'sud_homeless', 'rent50',
+            # p_m IS NOT USED. The author, 2 September: "p_m is not used...."
+            # The SMI population share leaves the loss and smi_onset_level owns
+            # nothing; the moment stays parsed and printed.
+            'p_m',
             # THE PROFILE IS SCORED THROUGH h_share1 ALONE, so the other four
             # shares and all five rates are reported and not scored. h_share1 is
             # the share of the homeless aged 25 to 34, 0.91 against 0.26; these
@@ -1393,14 +1408,14 @@ def main():
             rec['npts'] = npts
         hist[k] = rec
         if satisfied:
-            why.append(f'  stage {i} {st} SATISFIED, worst {100*worst_here:.1f}%')
+            why.append(f'  ROUND {i+1} {st} SATISFIED, worst {100*worst_here:.1f}%')
             continue
         if rec['stale'] >= STAGE_PATIENCE:
-            why.append(f'  stage {i} {st} STALLED at {100*worst_here:.1f}% for '
-                       f'{rec["stale"]} firings -- opening the next anyway, and it '
+            why.append(f'  ROUND {i+1} {st} STALLED at {100*worst_here:.1f}% for '
+                       f'{rec["stale"]} rounds -- opening the next anyway, and it '
                        f'stays in the loss')
             continue
-        why.append(f'  stage {i} {st} OPEN and working, worst {100*worst_here:.1f}%')
+        why.append(f'  ROUND {i+1} {st} OPEN and working, worst {100*worst_here:.1f}%')
         break
     # THE HISTORY OF THE OPENING, not just its current state. The author,
     # 2 September: "i want to see every step of the opening." A snapshot says
@@ -1441,9 +1456,9 @@ def main():
     json.dump(hist, open(hist_path, 'w'), indent=1)
     print('HOW THE CALIBRATION WAS OPENED, step by step:')
     for e in slog:
-        prev = 'the gate itself' if e['stage'] == 0 else \
-               f"stage {e['stage']-1} {e['reason']}"
-        print(f"  {e['at']}  stage {e['stage']} opened ({prev}, {e['points']} points)")
+        prev = 'the first round' if e['stage'] == 0 else \
+               f"round {e['stage']} {e['reason']}"
+        print(f"  {e['at']}  ROUND {e['stage']+1} opened ({prev}, {e['points']} points)")
         print(f"      moments  {', '.join(e['moments'])}")
         print(f"      ADDED    {', '.join(e['added']) if e['added'] else '(no instrument)'}")
     print()
@@ -1480,9 +1495,9 @@ def main():
             ps = inv.get(_mo)
             gtxt = f'{100*gap(_mo, m[_mo]):+6.1f}%' if _mo in m else '    -  '
             if not ps:
-                print(f'  {state} stage {i}  {_mo:13} {gtxt}  (no instrument)')
+                print(f'  {state} round {i+1}  {_mo:13} {gtxt}  (no instrument)')
             for _p in ps or []:
-                print(f'  {state} stage {i}  {_mo:13} {gtxt}  {_p} = {v.get(_p, "-")}')
+                print(f'  {state} round {i+1}  {_mo:13} {gtxt}  {_p} = {v.get(_p, "-")}')
     fixed = [f'{k}={v[k]}' for k in ('increased_prob_if_homeless', 'kappa_phi_d_level')
              if k in v]
     if fixed:

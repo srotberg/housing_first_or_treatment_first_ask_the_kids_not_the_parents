@@ -26,7 +26,7 @@ SKIP = {'h_3', 'w_bot'}
 # and the cost burden share a denominator. rent50 is the same headcount over
 # INCOME and pointed the OPPOSITE way -- +163 per cent against h_2's -38 -- so
 # scoring both left one parameter with two targets it could not satisfy at once.
-UNSCORED = {'kappa_ued', 'kappa_uem', 'rent50'}
+UNSCORED = {'kappa_ued', 'kappa_uem', 'rent50', 'p_m'}
 BAND = {'beta': (3.0, 4.5)}
 
 # parameter -> the moment it is bracketed on. Kept here rather than imported so
@@ -37,7 +37,6 @@ OWN = [
     ('relative_share_of_housing', 'gamma'), ('max_food_cost', 'cbar'),
     ('relative_share_of_addiction_1', 'theta'),     ('value_of_life', 'aleph'), ('mu_homeless', 'mu_H'),
     ('utility_cost_of_treatment', 'tau_u'), ('kappa_uem', 'lambda_m'),
-    ('smi_onset_level', 'p_m'),
     ('probability_of_voucher_benchmark_used', 'pi_V'),
     # increased_prob_if_homeless is EXOGENOUS at 0.2 on the author's
     # instruction -- twenty per cent each way -- so it owns nothing. The
