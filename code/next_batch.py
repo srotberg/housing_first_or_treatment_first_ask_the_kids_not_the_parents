@@ -511,7 +511,23 @@ OWN = {
 BOUNDS = {
     'utility_cost_of_treatment':                            (0.0, 8.0),
     'probability_becoming_unemployed':                     (1e-6, 0.500),
-    'relative_share_of_addiction_1':                       (0.40, 0.58),
+    # THE FLOOR EXCLUDED THE SOLUTION and was found by measurement, 2 September.
+    # theta falls monotonically in this parameter and the target, 0.162, is
+    # bracketed by two points that differ in nothing else:
+    #
+    #     rsa1 0.463  ->  theta 0.3050   (+88%)   point de322e4659
+    #     rsa1 0.300  ->  theta 0.0585   (-64%)   point 729d412392
+    #
+    # so theta=0.162 sits near rsa1 0.36-0.38 -- BELOW the old floor of 0.40.
+    # The gate could propose only the upper half of the bracket and could never
+    # reach the target, however many rounds it ran. The Fortran clamp was never
+    # the constraint: theta_lo is 0.05 and theta_hi 0.70.
+    #
+    # The new floor is 0.25 and not lower because rsa1=0.200 returned theta as
+    # the -1 empty-population sentinel (point 460811e3cb, on an older source).
+    # That defect is unresolved, so the floor keeps a margin above it rather
+    # than opening the search into a region that produces sentinels.
+    'relative_share_of_addiction_1':                       (0.25, 0.60),
     'mu_homeless':                                         (0.05, 1.0),
     'lambda_m':                                            (0.046, 0.500),
     'smi_onset_level':                                     (1e-5, 0.5),
