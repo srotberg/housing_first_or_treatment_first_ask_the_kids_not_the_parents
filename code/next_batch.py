@@ -1521,7 +1521,20 @@ def main():
         # marked STALLED within a minute of being created, having seen no new
         # points at all. A stage has only had its chance once new points have
         # LANDED, so the counter advances on the archive growing.
-        npts = len(A)
+        # AND IT COUNTS POINTS THAT TESTED THIS ROUND, not points that happened
+        # to land. Counting the whole archive marked round 1 STALLED at 01:31
+        # while its own twelve points were still solving -- the counter had been
+        # advanced by a ladder sweep, a fine rung sweep and a two-beta test, none
+        # of which move a round-1 instrument. The round was declared stuck
+        # without ever having been given a measurement, and round 2 opened behind
+        # it, which is exactly the ordering the author asked to protect.
+        #
+        # A round has had its chance when a point lands carrying a DISTINCT value
+        # of one of its own instruments. That is the measurement the round asked
+        # for, and nothing else advances its patience.
+        _mine = {q for q, mo in OWN.items() if mo in st}
+        npts = len({tuple(sorted((q, vv.get(q)) for q in _mine))
+                    for vv, _ in A.values()}) if _mine else len(A)
         if worst_here < rec['best'] - 1e-9:
             rec = {'best': worst_here, 'stale': 0, 'sig': sig, 'npts': npts}
         elif npts > rec.get('npts', -1):
