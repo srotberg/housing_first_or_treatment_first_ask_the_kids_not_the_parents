@@ -10926,7 +10926,12 @@
                 
             end if
         
-            do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
+            ! renter_array_floor, not renter_floor_by_age: age_index is not set
+            ! in this routine either, and this is the same wealth_matrix walk
+            ! that aborted at 11791 with minloc over an all-false mask, when the
+            ! debt points were left out of the numerator while their mass stayed
+            ! in the divisor.
+            do financial_index=has_house*1+(1-has_house)*renter_array_floor,financial_grid_size
             
                 do housing_status_index=(1-has_house)*lowest_housing_grid_point+&
                     has_house*index_of_smallest_house_hhld_can_buy,(housing_status_grid_size-1)
@@ -11735,7 +11740,18 @@
                 
             end if
         
-            do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
+            ! renter_array_floor, NOT renter_floor_by_age. age_index is not set
+            ! in this routine, so keying the bound on it read whatever the last
+            ! routine to touch it happened to leave behind. With borrowing on
+            ! that resolves to the zero index about as often as not, and then the
+            ! three debt points never enter wealth_matrix while their mass stays
+            ! in sum_of_distribution_of_old below. The walk can never reach its
+            ! stopping rule, consumes every cell instead, and minloc over the
+            ! all-false mask returns (0,0,0) -- which a bounds-checked run
+            ! aborted on at 11791, reading distribution_stationary(0). The array
+            ! floor is exactly the set of indices a renter can occupy and it does
+            ! not depend on ambient state.
+            do financial_index=has_house*1+(1-has_house)*renter_array_floor,financial_grid_size
             
                 do housing_status_index=(1-has_house)*lowest_housing_grid_point+&
                     has_house*index_of_smallest_house_hhld_can_buy,(housing_status_grid_size-1)
@@ -11744,12 +11760,19 @@
                         vector_transition_real(time_period,life_span-retirement_span+1:life_span,&
                         financial_index,:,:,housing_status_index,:))>0) then
                         
+                        ! Gated on has_house, the fourth site of the same defect:
+                        ! the middle term is an OWNER's mortgage read as a
+                        ! fraction of the dwelling's value, and the last is
+                        ! truncated only because an owner's negative position is
+                        ! already that mortgage. A renter's net worth is their
+                        ! financial position, raw.
                         wealth_matrix(time_period,financial_index,housing_status_index,years_left_on_mortgage_index)=&
                             max(min(years_left_on_mortgage_index-1,1),0)*&
                             housing_price(time_period)*housing_size(housing_status_index)+&
-                            min(financial_grid(financial_index),0.d0)*&
+                            has_house*min(financial_grid(financial_index),0.d0)*&
                             housing_price(time_period)*housing_size(housing_status_index)+&
-                            max(financial_grid(financial_index),0.d0)
+                            has_house*max(financial_grid(financial_index),0.d0)+&
+                            (1-has_house)*financial_grid(financial_index)
                                                     
                         wealth_counter=wealth_counter+1    
                                                                
@@ -11867,7 +11890,12 @@
                 
             end if
         
-            do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
+            ! renter_array_floor, not renter_floor_by_age: age_index is not set
+            ! in this routine either, and this is the same wealth_matrix walk
+            ! that aborted at 11791 with minloc over an all-false mask, when the
+            ! debt points were left out of the numerator while their mass stayed
+            ! in the divisor.
+            do financial_index=has_house*1+(1-has_house)*renter_array_floor,financial_grid_size
             
                 do housing_status_index=(1-has_house)*lowest_housing_grid_point+&
                     has_house*index_of_smallest_house_hhld_can_buy,(housing_status_grid_size-1)
