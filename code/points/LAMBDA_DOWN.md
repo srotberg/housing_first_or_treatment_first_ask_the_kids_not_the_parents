@@ -29,7 +29,7 @@ The order asked to be told first if a drug arm breaks round 1. **All three do.**
 | `596012c614` | 0.30000 | **3 of 9** |
 | `2035b208bf` | 1.00000 | **6 of 9** |
 | `35e8286c4e` (base) | 2.79953 | **9 of 9** |
-| `82a955b244` | 8.00000 | **9 of 9** |
+| `82a955b244` (archive) | 8.00000 | **9 of 9** |
 
 And the reading the batch was ordered on does not survive the measurement.
 **Lowering `lambda_addiction` RAISES `b`.** The order's reasoning was that raising
@@ -39,46 +39,61 @@ points show instead is that `b` is monotone DECREASING in `lambda_addiction` ove
 the whole measured ladder, so going down is the direction that makes `b` worse, and
 it makes it worse fast: `b` more than doubles between 2.79953 and 0.05000.
 
-**`2.79953` is the LOWEST reading of `b` anywhere in the measured ladder except the
-8.00 arm.** Both arms taken off it in the previous batch and this one -- up to 8.00
-and down to 1.00 -- were read as "nearly inert" and "should be clean" respectively;
-the truth is that 8.00 is the only measured value that lowers `b` at all, and it
-lowers it by 0.0151 against a gap of 0.3196.
+**2.79953 is the lowest reading of `b` anywhere in the measured ladder except the
+8.00 arm.** Both arms taken off it -- up to 8.00 in the previous batch and down to
+1.00 here -- were read as "nearly inert" and "should be clean" respectively; the
+truth is that 8.00 is the only measured value that lowers `b` at all, and it lowers
+it by 0.015 against a gap of 0.318.
 
-## The three MODEL lines agree -- and they do NOT agree with the base
+## The MODEL lines, and the container question, which was settled while this ran
 
 **All three of my points carry `MODEL bb2cd48b81`.** So does the working tree:
 `md5sum code/housing_first_or_treatment_first_SR_v1.f90` cut to ten characters is
-`bb2cd48b81`. The three lines are therefore a matched set with each other.
+`bb2cd48b81`. The three lines are a matched set with each other, and they are on
+the same source as the base -- but only because the base was re-measured while
+this batch was in flight, and there is a residue that has to be stated.
 
-**They are NOT on the same source as the base or the 8.00 arm.** `35e8286c4e` and
-`82a955b244` both carry `MODEL b8dc1077ad`, and commit `5ea693e` ("beta's target is
-2.5, on the author's instruction") landed between them and this batch. This is
-stated plainly rather than smoothed over, because every cross-arm comparison in
-this file spans that boundary:
+When line 1 was fired, `35e8286c4e` and `82a955b244` both carried `MODEL
+b8dc1077ad` and the working tree carried `bb2cd48b81`, commit `5ea693e` ("beta's
+target is 2.5") having landed in between. That gap has since been closed from two
+directions:
 
-- the diff in `5ea693e` is `wealth_to_output_data` 3.0d0 -> 2.5d0 plus comment, and
-  the commit argues at length that the constant reaches the solver only through the
-  discount-factor calibration block, which is guarded off, so nothing a household
-  faces changes and only `beta`'s PRINTED target moves;
-- **that argument has not been checked against a measurement.** `code/batch_target_check.txt`
-  exists for exactly this -- it is the base vector re-run on the new source -- and
-  it has never been run: **no point in `code/points/` carries `bb2cd48b81` except
-  the three in this batch**, and 44 carry `b8dc1077ad`;
-- the pair is **not** in `EQUIVALENT_MODELS` in `code/next_batch.py`, whose own
-  comment says a hash goes in there only after the diff is read AND nothing
-  computed is confirmed unchanged.
+- **`code/points/TARGET_CHANGE_CHECK.md`** (session `013faWPk`, four runs) shows
+  `wealth_to_output_data` is print-only in this configuration -- its five
+  arithmetic references are dead code under `re_do_simulation_with_fixed_parameters`,
+  which is a compile-time `parameter` equal to 1 -- and that its isolated effect on
+  the moments, worst case `w_bot` at 6.86e-04 relative, is SMALLER than the
+  1.21e-03 spread between two runs of one identical binary here. So `5ea693e` is a
+  target change and not a model change.
+- **`point_35e8286c4e.txt` has been re-solved on `bb2cd48b81` in this container**
+  (commit `68c3578`); the old measurement is in
+  `points_superseded/point_35e8286c4e.20260902T125525Z.txt`. **Every base number in
+  this file is the new one.**
 
-The visible symptom is in the point files themselves: `35e8286c4e` and `82a955b244`
-print `MOMENT beta ... target 3.0000`, my three print `target 2.5000`. Every `beta`
-row below is scored against 2.5 uniformly, per the band in the order.
+**The residue is the 8.00 rung.** It is still `MODEL b8dc1077ad` and still from the
+original container, and `TARGET_CHANGE_CHECK.md` shows this container does not
+reproduce that one: the same source `b8dc1077ad` rebuilt here misses the archive by
+1.78e-02 relative on `w_bot`, with the constant untouched. So the 8.00 rung is
+handled as follows and the reader should hold it to that standard:
 
-So the ladder in this file is **one source boundary wide**. If `5ea693e` really is
-printed-target-only, the ladder is a single economy and every reading stands as
-written. If it is not, the two archive rungs are on a different economy from my
-three and only the three-point comparison among 1.00, 0.30 and 0.05 is safe.
-Running `code/batch_target_check.txt` settles it in one solve; it was outside this
-batch's three lines and was not run.
+- where the 8.00 arm's own MOVE is quoted, it is quoted against the **archive**
+  base `0.408622`, its own-container pair, not against the new base;
+- every other comparison in this file is within this container.
+
+For scale, on `b`, against the two bounds that file establishes:
+
+| comparison | relative move in `b` |
+|---|---|
+| two runs of one identical binary here (noise floor) | 2.94e-04 |
+| archive base vs re-solved base (the whole container effect) | 3.27e-03 |
+| 8.00 vs archive base, both original container | **3.70e-02** |
+| 1.00 vs base, both this container | **1.14e-01** |
+| 0.30 vs base, both this container | **1.22e+00** |
+| 0.05 vs base, both this container | **1.31e+00** |
+
+Every effect reported below is at least eleven times the container discrepancy and
+at least 126 times the noise floor. **No conclusion in this file turns on the
+container question.**
 
 Each `VECTOR` was diffed against the base coordinate by coordinate, all
 forty-three names on both sides:
@@ -100,14 +115,14 @@ labelled below and was not re-run.
 | 0.05000 | `9e225217bf` | 0.940247 | **+956.46%** |
 | 0.30000 | `596012c614` | 0.902885 | **+914.48%** |
 | 1.00000 | `2035b208bf` | 0.453616 | **+409.68%** |
-| 2.79953 (base) | `35e8286c4e` | 0.408622 | **+359.13%** |
-| 8.00000 (archive) | `82a955b244` | 0.393509 | **+342.15%** |
+| 2.79953 (base) | `35e8286c4e` | 0.407290 | **+357.63%** |
+| 8.00000 (archive, old container) | `82a955b244` | 0.393509 | **+342.15%** |
 
 **NO MEASURED PAIR BRACKETS 0.089. All five points lie ABOVE the target**, the
 closest by a factor of 4.4. `b` is monotone decreasing in `lambda_addiction` across
-all five rungs, so the whole ladder points the same way: the only measured
-direction that lowers `b` is UP, and over 2.79953 -> 8.00000 it lowers it by
-0.015113 against a gap of 0.319622 -- under five per cent of the distance, for
+all five rungs, so the whole ladder points one way: the only measured direction
+that lowers `b` is UP, and over 2.79953 -> 8.00000 it lowers it by 0.015113 against
+its own container's gap of 0.319622 -- under five per cent of the distance, for
 nearly a tripling of the instrument.
 
 Nothing below 0.05000 and nothing above 8.00000 is measured, and no crossing point,
@@ -124,7 +139,7 @@ lambda falls:
 | 0.05000 | 0.005160 | 0.103462 | 0.937146 |
 | 0.30000 | 0.020389 | 0.068667 | 0.885992 |
 | 1.00000 | 0.101207 | 0.106702 | 0.293415 |
-| 2.79953 (base) | 0.274011 | 0.114384 | 0.161422 |
+| 2.79953 (base) | 0.274269 | 0.114511 | 0.160543 |
 | 8.00000 (archive) | 0.607014 | 0.116748 | 0.091141 |
 
 The onset probability falls by a factor of 118 down the ladder and the share of
@@ -149,7 +164,7 @@ instrument-by-instrument, and the answer is that it cannot.
 | 0.05000 | 0.940247 | 0.049341 | 0.234060 |
 | 0.30000 | 0.902885 | 0.148176 | 0.169093 |
 | 1.00000 | 0.453616 | 0.226726 | 0.286203 |
-| 2.79953 (base) | 0.408622 | 0.294785 | 0.304601 |
+| 2.79953 (base) | 0.407290 | 0.293936 | 0.305019 |
 | 8.00000 (archive) | 0.393509 | 0.332690 | 0.253235 |
 
 as gaps:
@@ -159,30 +174,30 @@ as gaps:
 | 0.05000 | **+956.46%** | **+34.08%** | **+44.48%** |
 | 0.30000 | **+914.48%** | **+302.65%** | **+4.38%** |
 | 1.00000 | **+409.68%** | **+516.10%** | **+76.67%** |
-| 2.79953 (base) | **+359.13%** | **+701.05%** | **+88.03%** |
+| 2.79953 (base) | **+357.63%** | **+698.74%** | **+88.28%** |
 | 8.00000 (archive) | **+342.15%** | **+804.05%** | **+56.32%** |
 
 **Lowering `lambda_addiction` moves `b` AWAY from its target, `lambda_d` TOWARD
 its target, and `theta` toward it and then away again.** All three moments are
 above target at all five rungs, so none of the three brackets.
 
-- **`b`** -- away, monotonically, and by a long way. Worst reading of the five is
-  the bottom of the ladder.
+- **`b`** -- away, monotonically, and by a long way. The worst reading of the five
+  is the bottom of the ladder.
 - **`lambda_d`** -- toward, monotonically, and this is the largest useful movement
-  anywhere in the drug block so far: +701.05% at the base down to **+34.08%** at
+  anywhere in the drug block so far: +698.74% at the base down to **+34.08%** at
   0.05000, closing about 95 per cent of the gap. It does not cross; 0.049341 is
   still above 0.0368. Nothing below 0.05000 is measured and no crossing is claimed.
-- **`theta`** -- **non-monotone.** It falls 0.304601 -> 0.169093 between 2.79953 and
+- **`theta`** -- **non-monotone.** It falls 0.305019 -> 0.169093 between 2.79953 and
   0.30000, passing within **+4.38%** of its target, then REBOUNDS to 0.234060 at
-  0.05000. The minimum over the measured rungs is at 0.30000, and
-  there is a second turn at the top: `theta` climbs back to 0.304601 at the base
-  and falls again to 0.253235 at 8.00000. So 0.05000 and 8.00000 -- instrument
-  values 160 times apart -- read 0.234060 and 0.253235, within 0.02 of each other,
-  with 0.304601 in between. `theta` alone does not identify `lambda_addiction`.
+  0.05000. The minimum over the measured rungs is at 0.30000, and there is a second
+  turn at the top: `theta` climbs to 0.305019 at the base and falls again to
+  0.253235 at 8.00000. So 0.05000 and 8.00000 -- instrument values 160 times apart
+  -- read 0.234060 and 0.253235, within 0.02 of each other, with 0.305019 in
+  between. `theta` alone does not identify `lambda_addiction`.
 
 **So the drug block has to be solved jointly, not instrument-by-instrument.** One
 instrument moving one moment 95 per cent of the way to target while moving another
-596 percentage points further from it is not a coordinate that can be set on its
+599 percentage points further from it is not a coordinate that can be set on its
 own, and a non-monotone response in a third rules out inverting on that one at all.
 
 ### A correction to the premise the order gives for expecting them to move together
@@ -207,31 +222,31 @@ counts as inside ten per cent if the shortfall is within ten per cent of that fl
 Percentages elsewhere are (model - target) / target. **Bold marks a moment outside
 ten per cent.** The base is nine of nine on this convention.
 
-| moment | target | 0.05 | 0.30 | 1.00 | 2.79953 (base) | 8.00 |
+| moment | target | 0.05 | 0.30 | 1.00 | 2.79953 (base) | 8.00 (archive) |
 |---|---|---|---|---|---|---|
-| `aleph` value of life / income | 80.0 | 73.196129 | 71.411092 | 74.973898 | 75.828008 | 75.662297 |
-| `beta` wealth over output | BAND 2.5-4.5 | 1.884206 | 2.047907 | 2.342895 | 2.452826 | 2.492457 |
-| `omega_l` labour supply / hours | 0.40 | 0.360256 | 0.359544 | 0.362459 | 0.363505 | 0.364203 |
+| `aleph` value of life / income | 80.0 | 73.196129 | 71.411092 | 74.973898 | 76.067729 | 75.662297 |
+| `beta` wealth over output | BAND 2.5-4.5 | 1.884206 | 2.047907 | 2.342895 | 2.453174 | 2.492457 |
+| `omega_l` labour supply / hours | 0.40 | 0.360256 | 0.359544 | 0.362459 | 0.363507 | 0.364203 |
 | `sigma_y` bottom half earnings share | 0.172 | 0.169050 | 0.169050 | 0.169050 | 0.169050 | 0.169050 |
-| `tau_l` average labour income tax | 0.224 | 0.227160 | 0.225085 | 0.225011 | 0.226321 | 0.227453 |
-| `pi_eu` unemployment rate | 0.139 | 0.077822 | 0.098158 | 0.117212 | 0.134279 | 0.145312 |
-| `pi_V` eligibles with a voucher | 0.266 | 0.246660 | 0.255632 | 0.256817 | 0.255978 | 0.255889 |
-| `cbar` food stamps / income | 0.0042 | 0.002310 | 0.002932 | 0.003444 | 0.003935 | 0.004265 |
-| `w_bot` net worth share, bottom half | 0.0250 | 0.010435 | 0.014752 | 0.019214 | 0.024270 | 0.027391 |
+| `tau_l` average labour income tax | 0.224 | 0.227160 | 0.225085 | 0.225011 | 0.225739 | 0.227453 |
+| `pi_eu` unemployment rate | 0.139 | 0.077822 | 0.098158 | 0.117212 | 0.134265 | 0.145312 |
+| `pi_V` eligibles with a voucher | 0.266 | 0.246660 | 0.255632 | 0.256817 | 0.255606 | 0.255889 |
+| `cbar` food stamps / income | 0.0042 | 0.002310 | 0.002932 | 0.003444 | 0.003934 | 0.004265 |
+| `w_bot` net worth share, bottom half | 0.0250 | 0.010435 | 0.014752 | 0.019214 | 0.024727 | 0.027391 |
 
 and the same as gaps:
 
-| moment | 0.05 | 0.30 | 1.00 | 2.79953 (base) | 8.00 |
+| moment | 0.05 | 0.30 | 1.00 | 2.79953 (base) | 8.00 (archive) |
 |---|---|---|---|---|---|
-| `aleph` | -8.50% | **-10.74%** | -6.28% | -5.21% | -5.42% |
-| `beta` | **OUT -24.63%** | **OUT -18.08%** | OUT -6.28% | OUT -1.89% | OUT -0.30% |
+| `aleph` | -8.50% | **-10.74%** | -6.28% | -4.92% | -5.42% |
+| `beta` | **OUT -24.63%** | **OUT -18.08%** | OUT -6.28% | OUT -1.87% | OUT -0.30% |
 | `omega_l` | -9.94% | **-10.11%** | -9.39% | -9.12% | -8.95% |
 | `sigma_y` | -1.72% | -1.72% | -1.72% | -1.72% | -1.72% |
-| `tau_l` | +1.41% | +0.48% | +0.45% | +1.04% | +1.54% |
-| `pi_eu` | **-44.01%** | **-29.38%** | **-15.67%** | -3.40% | +4.54% |
-| `pi_V` | -7.27% | -3.90% | -3.45% | -3.77% | -3.80% |
-| `cbar` | **-45.01%** | **-30.19%** | **-18.01%** | -6.31% | +1.55% |
-| `w_bot` | **-58.26%** | **-40.99%** | **-23.14%** | -2.92% | +9.56% |
+| `tau_l` | +1.41% | +0.48% | +0.45% | +0.78% | +1.54% |
+| `pi_eu` | **-44.01%** | **-29.38%** | **-15.67%** | -3.41% | +4.54% |
+| `pi_V` | -7.27% | -3.90% | -3.45% | -3.91% | -3.80% |
+| `cbar` | **-45.01%** | **-30.19%** | **-18.01%** | -6.33% | +1.55% |
+| `w_bot` | **-58.26%** | **-40.99%** | **-23.14%** | -1.09% | +9.56% |
 
 **Inside ten per cent, out of nine:**
 
@@ -247,11 +262,11 @@ Three moments carry the damage and they carry it together, monotonically in the
 instrument: `pi_eu`, `cbar` and `w_bot` all fall as lambda falls, and all three are
 already out at 1.00000, the mildest arm.
 
-- **`w_bot`** is the worst, -2.92% at the base to **-58.26%** at 0.05000. The bottom
+- **`w_bot`** is the worst, -1.09% at the base to **-58.26%** at 0.05000. The bottom
   half's net worth share collapses as the population moves into drug use.
-- **`cbar`** -6.31% to **-45.01%** and **`pi_eu`** -3.40% to **-44.01%** follow the
+- **`cbar`** -6.33% to **-45.01%** and **`pi_eu`** -3.41% to **-44.01%** follow the
   same shape.
-- **`beta`** is in at the base on the 2.5 floor (-1.89%) and leaves the band's ten
+- **`beta`** is in at the base on the 2.5 floor (-1.87%) and leaves the band's ten
   per cent margin somewhere between 1.00000 and 0.30000: -6.28% at 1.00000,
   **-18.08%** at 0.30000.
 - **`aleph`** and **`omega_l`** are the two that go out ONLY at 0.30000 and come
@@ -260,10 +275,13 @@ already out at 1.00000, the mildest arm.
   percentage points from the edge anywhere -- so 0.30000's count of three should not
   be read as a cliff at that value.
 - **`sigma_y`** is identical to all sixteen digits at all five points. This
-  instrument does not touch it, exactly as the round-2 arms found.
+  instrument does not touch it, exactly as the round-2 arms found;
+  `TARGET_CHANGE_CHECK.md` notes it is frozen by
+  `freeze_sd_permanent_productivity`, which is why it does not even move with the
+  container.
 
 `h_1`, round 1's tenth moment and already far out at the base, worsens
-monotonically as lambda falls: 0.033895 (8.00), 0.045147 (base), 0.059724 (1.00),
+monotonically as lambda falls: 0.033895 (8.00), 0.044695 (base), 0.059724 (1.00),
 0.083627 (0.30), 0.107132 (0.05), against a target of 0.00399.
 
 **The best point on this ladder for round 1 is the base, and it is tied with the
@@ -282,8 +300,10 @@ Stated as what was measured, not as a plan.
   `b` ten times its target.
 - `theta` is non-monotone in this instrument with a minimum at 0.30000, so it cannot
   be inverted on `lambda_addiction` at all.
-- The `b8dc1077ad` / `bb2cd48b81` boundary is open. `code/batch_target_check.txt`
-  closes it in one solve.
+- The source-boundary question this batch opened is closed:
+  `code/points/TARGET_CHANGE_CHECK.md` settles the 2.5 constant, and the base has
+  been re-solved in this container. The 8.00 rung remains an old-container
+  measurement and is fenced accordingly above.
 
 ## What was not done
 
