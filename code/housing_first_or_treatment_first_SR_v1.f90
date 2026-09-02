@@ -2845,7 +2845,37 @@
         ! the bracket kept being discarded on. At thirteen nodes packed toward
         ! the bottom the first carries 0.164 per cent and six of them lie below
         ! the fifteenth percentile, where the housing and drug margins sit.
-        integer, parameter :: employment_grid_size=17
+        ! SEVEN NODES, on the author's instruction of 2 September: *"you can then
+        ! reduce the productivity grid size to be 7 or so where the bottom 3
+        ! cover the lower side and the top 4 the rest. It will speed it up"*.
+        !
+        ! The design is theirs and it is built around the homelessness margin.
+        ! With y_grid_kappa raised to 3.2 alongside, the bottom of the grid comes
+        ! out as
+        !
+        !     node   mass %   cum %   y/mean   rent at h_2=0.039
+        !       1     0.198    0.20   0.0302     101.4%   priced out
+        !       2     1.618    1.82   0.0650      52.9%   rents, under 80
+        !       3     4.829    6.64   0.1177      32.0%
+        !       4-7  93.36   100.00
+        !
+        ! which is the author's specification almost exactly: about 0.2 per cent
+        ! who cannot afford the cheapest rental at all, and a second poor node
+        ! that can afford it WHEN EMPLOYED and cannot on unemployment benefit.
+        ! That second margin is the one meant to put unemployed households on the
+        ! street, which the seventeen node grid never did -- 92 to 100 per cent of
+        ! its homeless were homeless BY CHOICE and earned average income.
+        !
+        ! THE RISK THIS REOPENS, and why kappa moved with it. The note below
+        ! records that a coarse grid once broke h_1's bracket: the bottom lump
+        ! carried 0.43 per cent against a 0.399 per cent target, so the attainable
+        ! homelessness rates were about zero, 0.43 and 3.04 per cent and nothing
+        ! could land on the target. At kappa 3.2 the first node carries 0.198 per
+        ! cent, BELOW the target rather than above it, so the target is reached by
+        ! node one entire plus part of node two rather than by a node boundary.
+        ! That is what makes seven nodes safe here where it was not before, and it
+        ! is the reason kappa is not left at 2.8.
+        integer, parameter :: employment_grid_size=7
         integer, parameter :: productivity_below_which_to_reduce_ss=employment_grid_size
         real(8) :: scaling_of_ss=(1-reduce_ss_by_half)*1+reduce_ss_by_half*0.5
         real(8) :: scaling_of_ss_adjuster=0
@@ -24239,28 +24269,45 @@
 
                 else
 
-                    relative_endowments(9)=1.3853
-                    relative_endowments(8)=1.3853
-                    relative_endowments(7)=1.3853
-                    relative_endowments(6)=0.8520
-                    relative_endowments(5)=0.2609
-                    relative_endowments(4)=0.1964
-                    relative_endowments(3)=0.1338
-                    relative_endowments(2)=0.1319
-                    relative_endowments(1)=0.1319
+                    ! THESE ARE A NINE NODE PROFILE AND THE GRID IS NOW SEVEN.
+                    ! The levels come from the 2019 SCF at nine productivity bins
+                    ! and were written as literal indices 1..9. Cutting the grid
+                    ! to seven made every index above seven an out of bounds
+                    ! write, which gfortran caught at once -- the branch is
+                    ! INACTIVE (uniform_newborn_endowment is on, so the live path
+                    ! is relative_endowments(:)=1) but a compile time out of
+                    ! bounds store is not something to leave in place.
+                    !
+                    ! The indices are clamped with min(i,employment_grid_size) so
+                    ! the code is safe at any grid size and IDENTICAL at nine.
+                    ! That is a guard and NOT a re-mapping: at seven nodes the
+                    ! top three levels collapse onto the top node and the profile
+                    ! is no longer the SCF's. If uniform_newborn_endowment is
+                    ! ever switched back off, these nine numbers have to be
+                    ! re-read onto the grid actually in use before the branch
+                    ! means anything.
+                    relative_endowments(min(9,employment_grid_size))=1.3853
+                    relative_endowments(min(8,employment_grid_size))=1.3853
+                    relative_endowments(min(7,employment_grid_size))=1.3853
+                    relative_endowments(min(6,employment_grid_size))=0.8520
+                    relative_endowments(min(5,employment_grid_size))=0.2609
+                    relative_endowments(min(4,employment_grid_size))=0.1964
+                    relative_endowments(min(3,employment_grid_size))=0.1338
+                    relative_endowments(min(2,employment_grid_size))=0.1319
+                    relative_endowments(min(1,employment_grid_size))=0.1319
                     
                     relative_endowments(:)=&
                         max(relative_endowments(:),relative_endowments(:)*increase_in_newborns_bequests)
 
-                    fraction_with_positive_wealth(9)=0.7690
-                    fraction_with_positive_wealth(8)=0.7690
-                    fraction_with_positive_wealth(7)=0.7690
-                    fraction_with_positive_wealth(6)=0.6654
-                    fraction_with_positive_wealth(5)=0.5946
-                    fraction_with_positive_wealth(4)=0.6482
-                    fraction_with_positive_wealth(3)=0.5171
-                    fraction_with_positive_wealth(2)=0.4779
-                    fraction_with_positive_wealth(1)=0.4779
+                    fraction_with_positive_wealth(min(9,employment_grid_size))=0.7690
+                    fraction_with_positive_wealth(min(8,employment_grid_size))=0.7690
+                    fraction_with_positive_wealth(min(7,employment_grid_size))=0.7690
+                    fraction_with_positive_wealth(min(6,employment_grid_size))=0.6654
+                    fraction_with_positive_wealth(min(5,employment_grid_size))=0.5946
+                    fraction_with_positive_wealth(min(4,employment_grid_size))=0.6482
+                    fraction_with_positive_wealth(min(3,employment_grid_size))=0.5171
+                    fraction_with_positive_wealth(min(2,employment_grid_size))=0.4779
+                    fraction_with_positive_wealth(min(1,employment_grid_size))=0.4779
                     
                     fraction_with_positive_wealth(:)=&
                         min(max(fraction_with_positive_wealth(:),&
@@ -24272,15 +24319,15 @@
                             
             else    
             
-                relative_endowments(9)=3.4658762
-                relative_endowments(8)=3.3657614
-                relative_endowments(7)=0.89245148
-                relative_endowments(6)=0.6887341
-                relative_endowments(5)=0.25194367
-                relative_endowments(4)=0.14127229
-                relative_endowments(3)=0.04659514
-                relative_endowments(2)=0
-                relative_endowments(1)=0
+                relative_endowments(min(9,employment_grid_size))=3.4658762
+                relative_endowments(min(8,employment_grid_size))=3.3657614
+                relative_endowments(min(7,employment_grid_size))=0.89245148
+                relative_endowments(min(6,employment_grid_size))=0.6887341
+                relative_endowments(min(5,employment_grid_size))=0.25194367
+                relative_endowments(min(4,employment_grid_size))=0.14127229
+                relative_endowments(min(3,employment_grid_size))=0.04659514
+                relative_endowments(min(2,employment_grid_size))=0
+                relative_endowments(min(1,employment_grid_size))=0
                 
             end if
                         
@@ -27609,7 +27656,13 @@
         ! resolution is worth paying for. At 2.5 with thirteen nodes the bottom
         ! interval carries 0.164 per cent of households, comfortably under the
         ! 0.399 per cent the homelessness target asks for.
-        real(8), parameter :: y_grid_kappa=2.8d0
+        ! 2.8 -> 3.2 WITH THE MOVE TO SEVEN NODES. The bottom node's mass is
+        ! (1/N)**kappa, so cutting N from seventeen to seven at kappa 2.8 would
+        ! have taken it from 0.036 to 0.43 per cent -- straight back above the
+        ! 0.399 per cent homelessness target and into the step function that
+        ! broke the bracket before. 3.2 puts it at 0.198 per cent. See the block
+        ! beside employment_grid_size for the whole design.
+        real(8), parameter :: y_grid_kappa=3.2d0
         real(8), dimension(employment_grid_size+1) :: p_edge_1,tail_mean_1
         real(8) :: sum_of_dist,sum_of_unconditional_unemployment
         integer, intent(in) :: time_period
