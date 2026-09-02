@@ -3716,6 +3716,39 @@
         ! found piling against the edge, and wealth over output and the wealth
         ! share of the bottom half are both scored, so a coarser top is a real
         ! cost paid for a finer bottom. The author has accepted it.
+        ! UNSECURED BORROWING, ADDED ON THE AUTHOR'S INSTRUCTION, 2 September:
+        ! "add borrowing anyway, it's a better model. Use the 5.5% interest rate."
+        !
+        ! The negative grid already existed for mortgage downpayments and was
+        ! simply UNREACHABLE for renters: every choice loop runs from
+        ! has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)), and index
+        ! negative_financial_grid_size is exactly zero. With
+        ! include_homeownership=0 everyone is a renter, so nobody could hold a
+        ! negative position -- which is why the model can produce "holds nothing"
+        ! and never "owes money", and why the bottom half's share of net worth
+        ! could not be pushed below about 4.8 per cent against an SCF figure of
+        ! 2.5 that is net of household debt.
+        !
+        ! The limit is in YEARS OF AVERAGE LABOUR INCOME. 0.30 is roughly what US
+        ! revolving credit supports for households that carry a balance; the
+        ! author was told that a limit near 1.0 would be needed to reach 2.5 per
+        ! cent on its own, which is about four times what the data bears, so this
+        ! is not expected to close that gap by itself.
+        integer :: include_unsecured_borrowing=1
+        real(8) :: unsecured_borrowing_limit=0.30d0
+        ! THE RATE PAID ON A NEGATIVE BALANCE. The author asked first for a rate
+        ! "high like on a credit card" and then for "the 5.5% interest rate" --
+        ! but the 5.5 per cent they were quoting was US revolving credit as a
+        ! share of annual disposable INCOME, a quantity and not a rate. It is a
+        ! handover parameter so the choice costs nothing to revisit; 0.055
+        ! against a risk-free 0.03 is the value they named.
+        real(8) :: unsecured_borrowing_rate=0.055d0
+        ! Set once per period from the limit and average labour income; the
+        ! lowest grid index a renter may choose. The last period of life is
+        ! forced back to zero, on the author's instruction that there is no
+        ! borrowing in the last period -- nothing remains to repay it from.
+        integer, dimension(life_span) :: renter_floor_by_age=0
+
         real(8) :: financial_grid_expander_positive=3.0
                                 
         integer :: largest_possible_financial_index,largest_possible_mortgage_index
@@ -7706,7 +7739,7 @@
                     
                 end if
                                                                 
-                do financial_index=has_house*1+(1-has_house)*negative_financial_grid_size,financial_grid_size
+                do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
                 
                     do unemployment_index=1,unemployment_grid_size
                                                                        
@@ -8195,7 +8228,7 @@
                         
                         do voucher_index=0,(1-has_house)*include_vouchers
                             
-                            do financial_index=has_house*1+(1-has_house)*negative_financial_grid_size,financial_grid_size
+                            do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
                                                
                                 do housing_status_index=(1-has_house)*lowest_housing_grid_point+&
                                     has_house*index_of_smallest_house_hhld_can_buy,housing_status_grid_size-1
@@ -8998,7 +9031,7 @@
                                             avg_income_to_use_1,avg_income_to_use_2,labor_supply_used,in_retirement)
                                                                                
                                         total_income=total_income+&
-                                            risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)
+                                            (risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)+unsecured_borrowing_rate*min(financial_grid(financial_index),0.d0))
                                                                                                                                     
                                         if (-min(financial_grid(financial_index_used),0.d0)>(1-minimum_downpayment)) then
                                                                                     
@@ -9346,7 +9379,7 @@
                                     end if
                                     
                                     model_average_income(time_period)=model_average_income(time_period)+&
-                                        risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)*&
+                                        (risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)+unsecured_borrowing_rate*min(financial_grid(financial_index),0.d0))*&
                                         distribution_mass_used
                                         
                                     model_average_income_plus_assets(time_period)=model_average_income(time_period)+&
@@ -10011,6 +10044,7 @@
                                                         
         if (current_beta_type==number_of_beta_types) model_average_labour_income(time_period)=model_average_labour_income(time_period)/max(model_total_workers(time_period),10.d0**(-14))
         if (current_beta_type==number_of_beta_types) call set_newborn_age_transfer(time_period)
+        if (current_beta_type==number_of_beta_types) call set_renter_floor(time_period)
         if (current_beta_type==number_of_beta_types) model_average_income(time_period)=model_average_income(time_period)/max(sum_of_distribution,10.d0**(-14))
         if (current_beta_type==number_of_beta_types) model_average_income_plus_assets(time_period)=model_average_income_plus_assets(time_period)/max(sum_of_distribution,10.d0**(-14))
         if (current_beta_type==number_of_beta_types) then
@@ -10165,7 +10199,7 @@
                                                     
                         do voucher_index=0,(1-has_house)*include_vouchers
                         
-                            do financial_index=has_house*1+(1-has_house)*negative_financial_grid_size,financial_grid_size
+                            do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
                                                
                                 do housing_status_index=(1-has_house)*lowest_housing_grid_point+&
                                     has_house*index_of_smallest_house_hhld_can_buy,housing_status_grid_size-1
@@ -10802,7 +10836,7 @@
                 
             end if
         
-            do financial_index=has_house*1+(1-has_house)*negative_financial_grid_size,financial_grid_size
+            do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
             
                 do housing_status_index=(1-has_house)*lowest_housing_grid_point+&
                     has_house*index_of_smallest_house_hhld_can_buy,(housing_status_grid_size-1)
@@ -11018,7 +11052,7 @@
                                            
                         do voucher_index=0,(1-has_house)*include_vouchers
                 
-                            do financial_index=has_house*1+(1-has_house)*negative_financial_grid_size,financial_grid_size
+                            do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
                             
                                 do housing_status_index=(1-has_house)*lowest_housing_grid_point+&
                                     has_house*index_of_smallest_house_hhld_can_buy,(housing_status_grid_size-1)
@@ -11188,6 +11222,47 @@
     ! site that adds a transfer to resources is indexed by age, so keeping the
     ! shape costs nothing and means the endowment cannot leak into another age
     ! by an indexing slip.
+    ! THE LOWEST GRID INDEX A RENTER MAY CHOOSE, by age. Called wherever the
+    ! newborn transfer is set, so it is refreshed whenever average labour income
+    ! is. Borrowing is barred in the final period of life: the household has no
+    ! future income to repay from and would simply consume the loan.
+    subroutine set_renter_floor(time_period)
+
+        use global_vars
+
+        implicit none
+
+        integer, intent(in) :: time_period
+        real(8) :: cap_1
+        integer :: a_1, i_1
+
+        renter_floor_by_age=negative_financial_grid_size
+
+        if (include_unsecured_borrowing==1) then
+
+            cap_1=-unsecured_borrowing_limit*&
+                (is_counterfactual*average_labor_income_calibrated+&
+                (1-is_counterfactual)*model_average_labour_income(time_period))
+
+            do a_1=1,life_span-1
+
+                do i_1=1,negative_financial_grid_size
+
+                    if (financial_grid(i_1)>=cap_1) then
+
+                        renter_floor_by_age(a_1)=i_1
+                        exit
+
+                    end if
+
+                end do
+
+            end do
+
+        end if
+
+    end subroutine
+
     subroutine set_newborn_age_transfer(time_period)
 
         use global_vars
@@ -11331,7 +11406,7 @@
                     
                         do voucher_index=0,(1-has_house)*include_vouchers
                                            
-                            do financial_index=has_house*1+(1-has_house)*negative_financial_grid_size,financial_grid_size
+                            do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
                             
                                 do housing_status_index=(1-has_house)*lowest_housing_grid_point+&
                                     has_house*index_of_smallest_house_hhld_can_buy,(housing_status_grid_size-1)
@@ -11576,7 +11651,7 @@
                 
             end if
         
-            do financial_index=has_house*1+(1-has_house)*negative_financial_grid_size,financial_grid_size
+            do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
             
                 do housing_status_index=(1-has_house)*lowest_housing_grid_point+&
                     has_house*index_of_smallest_house_hhld_can_buy,(housing_status_grid_size-1)
@@ -11708,7 +11783,7 @@
                 
             end if
         
-            do financial_index=has_house*1+(1-has_house)*negative_financial_grid_size,financial_grid_size
+            do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
             
                 do housing_status_index=(1-has_house)*lowest_housing_grid_point+&
                     has_house*index_of_smallest_house_hhld_can_buy,(housing_status_grid_size-1)
@@ -12142,7 +12217,7 @@
                             avg_income_to_use_2=is_counterfactual*average_labor_income_by_employment_calibrated(employment_index)+&
                                 (1-is_counterfactual)*model_average_labour_income_by_employment(time_period,employment_index)
                                                                 
-                            do financial_index=has_house*1+(1-has_house)*negative_financial_grid_size,financial_grid_size
+                            do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
                                                
                                 do housing_status_index=(1-has_house)*lowest_housing_grid_point+&
                                     has_house*index_of_smallest_house_hhld_can_buy,housing_status_grid_size-1
@@ -12438,7 +12513,7 @@
                                     call calculate_income(unemployment_index,employment_index,income_1,&
                                         avg_income_to_use_1,avg_income_to_use_2,labor_supply_used,in_retirement)
 
-                                    income_2=income_1+risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)  
+                                    income_2=income_1+(risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)+unsecured_borrowing_rate*min(financial_grid(financial_index),0.d0))  
                                                                         
                                     if ((addiction_consumption_1>0) .AND. &
                                         (unemployment_index<=threshold_addiction_index) .AND. &
@@ -12876,7 +12951,7 @@
                                     
                                         total_addited_1=total_addited_1+distribution_mass_used
                                                                             
-                                        income_2=income_1+risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)+&
+                                        income_2=income_1+(risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)+unsecured_borrowing_rate*min(financial_grid(financial_index),0.d0))+&
                                             bequest_1
                                             
                                         model_addicted_total_income(time_period)=&
@@ -13230,7 +13305,7 @@
                                             
                                         after_tax_income_1=&
                                             (income_1-income_tax_used+(1-investment_income_tax)*&
-                                            risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)+&
+                                            (risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)+unsecured_borrowing_rate*min(financial_grid(financial_index),0.d0))+&
                                             food_stamps_1)
                                             
                                         after_tax_income_2=after_tax_income_1-food_stamps_1
@@ -13376,7 +13451,7 @@
                                         
                                     govt_revenues_from_investment_income(time_period)=&
                                         govt_revenues_from_investment_income(time_period)+investment_income_tax*&
-                                        (risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0))*&
+                                        ((risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)+unsecured_borrowing_rate*min(financial_grid(financial_index),0.d0)))*&
                                         distribution_mass_used
                                                                          
                                     if (housing_status_index_used>=second_lowest_housing_grid_point) then
@@ -13836,7 +13911,7 @@
                         
                             do voucher_index=0,(1-has_house)*include_vouchers
                            
-                                do financial_index=has_house*1+(1-has_house)*negative_financial_grid_size,financial_grid_size
+                                do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
                                                    
                                     do housing_status_index=(1-has_house)*lowest_housing_grid_point+&
                                         has_house*index_of_smallest_house_hhld_can_buy,housing_status_grid_size-1
@@ -14098,7 +14173,7 @@
                             avg_income_to_use_2=is_counterfactual*average_labor_income_by_employment_calibrated(employment_index)+&
                                 (1-is_counterfactual)*model_average_labour_income_by_employment(time_period,employment_index)
                                                             
-                            do financial_index=has_house*1+(1-has_house)*negative_financial_grid_size,financial_grid_size
+                            do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
                     
                                 do housing_status_index=(1-has_house)*lowest_housing_grid_point+&
                                     has_house*index_of_smallest_house_hhld_can_buy,housing_status_grid_size-1
@@ -14173,7 +14248,7 @@
                                     call calculate_income(unemployment_index,employment_index,total_income,&
                                         avg_income_to_use_1,avg_income_to_use_2,labor_supply_used,in_retirement)
                                              
-                                    total_income=total_income+risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)
+                                    total_income=total_income+(risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)+unsecured_borrowing_rate*min(financial_grid(financial_index),0.d0))
                                     
                                     housing_voucher_2=0
                                     
@@ -14530,7 +14605,7 @@
                             avg_income_to_use_2=is_counterfactual*average_labor_income_by_employment_calibrated(employment_index)+&
                                 (1-is_counterfactual)*model_average_labour_income_by_employment(time_period,employment_index)
                                                             
-                            do financial_index=has_house*1+(1-has_house)*negative_financial_grid_size,financial_grid_size
+                            do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
                                                
                                 do housing_status_index=(1-has_house)*lowest_housing_grid_point+&
                                     has_house*index_of_smallest_house_hhld_can_buy,housing_status_grid_size-1
@@ -14837,7 +14912,7 @@
                             avg_income_to_use_2=is_counterfactual*average_labor_income_by_employment_calibrated(employment_index)+&
                                 (1-is_counterfactual)*model_average_labour_income_by_employment(time_period,employment_index)
                                                             
-                            do financial_index=has_house*1+(1-has_house)*negative_financial_grid_size,financial_grid_size
+                            do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
                                                
                                 do housing_status_index=(1-has_house)*lowest_housing_grid_point+&
                                     has_house*index_of_smallest_house_hhld_can_buy,housing_status_grid_size-1
@@ -15781,7 +15856,7 @@
                         do voucher_index=0,(1-has_house)*include_vouchers
 
                             do financial_index=newborn_household*negative_financial_grid_size+&
-                                 (1-newborn_household)*(has_house*1+(1-has_house)*negative_financial_grid_size),&
+                                 (1-newborn_household)*(has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span))),&
                                  include_exogenous_endowment*financial_grid_size+(1-include_exogenous_endowment)*&
                                  (newborn_household*negative_financial_grid_size+(1-newborn_household)*financial_grid_size)
 
@@ -15846,7 +15921,7 @@
                                     call calculate_income(unemployment_index,employment_index,income_1,&
                                         avg_income_to_use_1,avg_income_to_use_2,labor_supply_1,in_retirement)
 
-                                    income_1=income_1+risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)
+                                    income_1=income_1+(risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)+unsecured_borrowing_rate*min(financial_grid(financial_index),0.d0))
 
                                     future_housing_status_index_to_use_2=housing_1
 
@@ -16045,7 +16120,7 @@
                         do voucher_index=0,(1-has_house)*include_vouchers
 
                             do financial_index=newborn_household*negative_financial_grid_size+&
-                                (1-newborn_household)*(has_house*1+(1-has_house)*negative_financial_grid_size),&
+                                (1-newborn_household)*(has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span))),&
                                 include_exogenous_endowment*financial_grid_size+(1-include_exogenous_endowment)*&
                                 (newborn_household*negative_financial_grid_size+(1-newborn_household)*financial_grid_size)
 
@@ -16285,7 +16360,7 @@
 
                         do voucher_index=0,(1-has_house)*include_vouchers
                                                     
-                            do financial_index=has_house*1+(1-has_house)*negative_financial_grid_size,financial_grid_size
+                            do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
                                                
                                 do housing_status_index=(1-has_house)*lowest_housing_grid_point+&
                                     has_house*index_of_smallest_house_hhld_can_buy,housing_status_grid_size-1
@@ -16876,7 +16951,7 @@
                                         
                                         income_by_age_renter(time_period,age_index)=&
                                             income_by_age_renter(time_period,age_index)+&
-                                            risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)*&
+                                            (risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)+unsecured_borrowing_rate*min(financial_grid(financial_index),0.d0))*&
                                             distribution_mass_used
                                         
                                         consumption_by_age_renter(time_period,age_index)=&
@@ -17143,7 +17218,7 @@
                     
                         do voucher_index=0,(1-has_house)*include_vouchers
                                     
-                            do financial_index=has_house*1+(1-has_house)*negative_financial_grid_size,financial_grid_size
+                            do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
                                                
                                 do housing_status_index=(1-has_house)*lowest_housing_grid_point+&
                                     has_house*index_of_smallest_house_hhld_can_buy,housing_status_grid_size-1
@@ -17681,7 +17756,7 @@
                                 !$omp& warm_start_a_prime,warm_start_ready)
                         
                                 do financial_index=newborn_household*negative_financial_grid_size+&
-                                    (1-newborn_household)*(has_house*1+(1-has_house)*negative_financial_grid_size),&
+                                    (1-newborn_household)*(has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span))),&
                                     include_exogenous_endowment*financial_grid_size+(1-include_exogenous_endowment)*&
                                     (newborn_household*negative_financial_grid_size+&
                                     (1-newborn_household)*financial_grid_size)
@@ -23232,7 +23307,7 @@
 
             housing_voucher_recieved_3=0
 
-            income_to_use=optimal_gross_wage_income_1+risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)
+            income_to_use=optimal_gross_wage_income_1+(risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)+unsecured_borrowing_rate*min(financial_grid(financial_index),0.d0))
 
             if ((income_to_use<threshold_income_vouchers*((1-is_counterfactual)*median_income(time_period)+&
                 is_counterfactual*median_income_calibrated)) .AND. (include_vouchers==1)) then
@@ -23272,7 +23347,7 @@
 
             end if
             
-            income_to_use=optimal_gross_wage_income_1+risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)
+            income_to_use=optimal_gross_wage_income_1+(risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)+unsecured_borrowing_rate*min(financial_grid(financial_index),0.d0))
             
             call calculate_future_voucher_index_and_opportunity&
                 (has_opportunity_1,first_voucher_index,second_voucher_index,&
@@ -23344,7 +23419,7 @@
                     end if
                                                                                                 
                     if ((spending_on_housing_1/(optimal_gross_wage_income_1+&
-                        risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)))<=&
+                        (risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)+unsecured_borrowing_rate*min(financial_grid(financial_index),0.d0))))<=&
                         max_mortgage_payments_as_fraction_of_income_1) then
                         
                         can_purchase_new_house=1
@@ -24054,7 +24129,7 @@
                         
                             do voucher_index=0,(1-has_house)*include_vouchers
                                                                                         
-                                do financial_index=has_house*1+(1-has_house)*negative_financial_grid_size,financial_grid_size
+                                do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
                                                    
                                     do housing_status_index=(1-has_house)*lowest_housing_grid_point+&
                                         has_house*index_of_smallest_house_hhld_can_buy,housing_status_grid_size-1
@@ -24458,7 +24533,7 @@
                                     !$omp& private(voucher_index_1)
 !                                                                        
                                     do financial_index=newborn_household*negative_financial_grid_size+&
-                                         (1-newborn_household)*(has_house*1+(1-has_house)*negative_financial_grid_size),&
+                                         (1-newborn_household)*(has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span))),&
                                          include_exogenous_endowment*financial_grid_size+(1-include_exogenous_endowment)*&
                                          (newborn_household*negative_financial_grid_size+(1-newborn_household)*financial_grid_size)
                                 
@@ -24513,7 +24588,7 @@
                                                     avg_income_to_use_1,avg_income_to_use_2,labor_supply_to_use,in_retirement)
 
                                                 income_to_use_4=income_to_use_4+&
-                                                    risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)
+                                                    (risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)+unsecured_borrowing_rate*min(financial_grid(financial_index),0.d0))
 
                                             end if
 
@@ -24914,7 +24989,7 @@
                                         !$omp& is_addicted_1,survival_probability_for_dist_iteration)
                                                                                             
                                         do financial_index=newborn_household*negative_financial_grid_size+&
-                                            (1-newborn_household)*(has_house*1+(1-has_house)*negative_financial_grid_size),&
+                                            (1-newborn_household)*(has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span))),&
                                             include_exogenous_endowment*financial_grid_size+&
                                             (1-include_exogenous_endowment)*(newborn_household*negative_financial_grid_size+&
                                             (1-newborn_household)*financial_grid_size)
@@ -25202,7 +25277,7 @@
                                 !$omp& unemployment_index,employment_index,voucher_index,index_of_smallest_house_hhld_can_buy)
                                                                                     
                                 do financial_index=newborn_household*negative_financial_grid_size+&
-                                    (1-newborn_household)*(has_house*1+(1-has_house)*negative_financial_grid_size),&
+                                    (1-newborn_household)*(has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span))),&
                                     include_exogenous_endowment*financial_grid_size+(1-include_exogenous_endowment)*&
                                     (newborn_household*negative_financial_grid_size+(1-newborn_household)*financial_grid_size)
                                 
@@ -25745,7 +25820,7 @@
                                 do voucher_index=0,(1-has_house)*include_vouchers
                                                                              !                                                                        
                                     do financial_index=newborn_household*negative_financial_grid_size+&
-                                         (1-newborn_household)*(has_house*1+(1-has_house)*negative_financial_grid_size),&
+                                         (1-newborn_household)*(has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span))),&
                                          include_exogenous_endowment*financial_grid_size+(1-include_exogenous_endowment)*&
                                          (newborn_household*negative_financial_grid_size+(1-newborn_household)*financial_grid_size)
                                 
@@ -25779,7 +25854,7 @@
                                                     avg_income_to_use_1,avg_income_to_use_2,labor_supply_to_use,in_retirement)
 
                                                 income_to_use_4=income_to_use_4+&
-                                                    risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)
+                                                    (risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)+unsecured_borrowing_rate*min(financial_grid(financial_index),0.d0))
 
                                             end if
                                             
@@ -26306,6 +26381,10 @@
                 housing_size(0)*size_homelessness*(1+increase_homeless_size*5),&
                 street_size_floor)
 
+            write(*,*) "DIAG unsecured borrowing limit, yrs of income   =",&
+                unsecured_borrowing_limit*include_unsecured_borrowing
+            write(*,*) "DIAG borrowing floor, model units                =",&
+                financial_grid(renter_floor_by_age(1))
             write(*,*) "DIAG street size, absolute                       =",&
                 housing_size(lowest_housing_grid_point)
             write(*,*) "DIAG street as a share of the cheapest unit      =",&
@@ -29600,7 +29679,7 @@
                     
                         do voucher_index=0,(1-has_house)*include_vouchers
                                                                                                       
-                            do financial_index=has_house*1+(1-has_house)*negative_financial_grid_size,financial_grid_size
+                            do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
                             
                                 do housing_status_index=(1-has_house)*lowest_housing_grid_point+&
                                     has_house*index_of_smallest_house_hhld_can_buy,housing_status_grid_size-1
@@ -34892,6 +34971,26 @@
                 ! at one and are not lowered, so this exists to make that
                 ! settable and visible in a point file rather than buried in a
                 ! declaration.
+                ! THE UNSECURED BORROWING PARAMETERS, so the rate and the limit
+                ! can be revisited without another model change. The author named
+                ! 5.5 per cent after quoting a figure that was a debt-to-income
+                ! QUANTITY rather than a rate, so this one in particular is
+                ! expected to move.
+                case ("include_unsecured_borrowing")
+                    write(*,*) "HANDOVER include_unsecured_borrowing:", &
+                        include_unsecured_borrowing, "->", handover_value
+                    include_unsecured_borrowing=max(min(nint(handover_value),1),0)
+
+                case ("unsecured_borrowing_limit")
+                    write(*,*) "HANDOVER unsecured_borrowing_limit:", &
+                        unsecured_borrowing_limit, "->", handover_value
+                    unsecured_borrowing_limit=max(min(handover_value,3.d0),0.d0)
+
+                case ("unsecured_borrowing_rate")
+                    write(*,*) "HANDOVER unsecured_borrowing_rate:", &
+                        unsecured_borrowing_rate, "->", handover_value
+                    unsecured_borrowing_rate=max(min(handover_value,0.40d0),0.d0)
+
                 case ("rho_m")
                     write(*,*) "HANDOVER rho_m:", rho_m, "->", handover_value
                     rho_m=max(min(handover_value,1.d0),0.05d0)
@@ -35288,6 +35387,7 @@
         model_average_income_plus_all_assets(1)=average_labor_income_calibrated
         model_average_labour_income(1)=average_labor_income_calibrated
         call set_newborn_age_transfer(1)
+        call set_renter_floor(1)
         model_average_labour_income_by_employment(1,:)=average_labor_income_by_employment_calibrated
         median_income(1)=median_income_calibrated
         model_average_financial(1)=average_financial_calibrated
@@ -35323,6 +35423,8 @@
             
             model_average_labour_income(1)=average_labor_income_calibrated
             call set_newborn_age_transfer(1)
+            call set_renter_floor(1)
+        call set_renter_floor(1)
             total_housing_demand(1)=calibrated_housing_stock
             
             total_rental_demand(1,:)=total_rental_supply_calibrated

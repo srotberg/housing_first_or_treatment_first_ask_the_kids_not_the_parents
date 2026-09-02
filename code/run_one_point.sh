@@ -51,6 +51,16 @@ declare -A P=(
     # controlled arms show it inflating w_bot -- 1.25 gives 0.105, 1.6 gives
     # 0.121 -- which is the moment the author is now trying to reach.
     [newborn_endowment_scale]=0.0
+    # UNSECURED BORROWING, on the author's instruction of 2 September. The
+    # negative grid already existed for mortgages and was unreachable for
+    # renters, so with include_homeownership=0 nobody could owe anything. The
+    # limit is in years of average labour income; the rate is charged on a
+    # negative balance against a risk-free 0.03 and is expected to be revisited,
+    # because the 5.5 per cent the author named was a debt-to-income quantity
+    # rather than a rate.
+    [include_unsecured_borrowing]=1
+    [unsecured_borrowing_limit]=0.30
+    [unsecured_borrowing_rate]=0.055
     # THE CURVATURE OF THE POSITIVE ASSET GRID. grid(i)=top*((i-61)/24)**e, so a
     # bigger exponent pushes the rungs toward zero. At the inherited 1.5 there
     # was ONE grid point between zero wealth and a year's rent on the cheapest
