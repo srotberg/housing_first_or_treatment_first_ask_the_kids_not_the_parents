@@ -134,3 +134,56 @@ can never be scored again.
 The stale point was moved aside (it survives in git history at `45d4839`) and
 the same batch line was re-run against `fdc6078859`. The result of that re-run
 is recorded in the "Re-measurement" section appended below.
+
+## Re-measurement, and a noise floor worth knowing
+
+The vector was re-run against `fdc6078859`. Meanwhile another worker measured
+the same vector on the same model and pushed it as `c15d9a1`; that duplicate
+was kept and this run's own copy dropped with `git rebase --skip`, since the
+two are equally valid.
+
+Which is the useful part. Three measurements of this one vector now exist:
+
+| run | model | semantic |
+|---|---|---|
+| `45d4839` (this worker, first) | `b75ae0454f` | `9caeb7a139` |
+| this worker, re-run            | `1b0babfbed` | `fdc6078859` |
+| `c15d9a1` (other worker)       | `1b0babfbed` | `fdc6078859` |
+
+Comparing the two runs on the **same** model (`c15d9a1` vs this worker's
+re-run), `h_1` is 0.029782528635873978 against 0.029782551198649861 and
+`lambda_d` is 3.2163823662893997e-3 against 3.2155922015596108e-3. They are
+not bit-identical; `a1d8621` already records that two runs of one tag do not
+agree exactly.
+
+The addition here is the **size** of it, and the comparison it licenses. The
+run-to-run spread on an identical model is order 1e-5 relative -- and the
+spread across the `ca9479b` model change, at this vector, is **the same order
+or smaller**. Every moment agrees to five or six significant figures across
+the change that invalidated the archive.
+
+Two consequences:
+
+1. **`ca9479b` is unmeasurable at this vector.** That is not a claim that it
+   is unmeasurable everywhere -- it fixes `w_bot` for renters carrying debt,
+   and this point may simply not exercise that path hard enough. But if it
+   holds at a couple more vectors, an `EQUIVALENT_MODELS` entry pairing
+   `9caeb7a139` with `fdc6078859` would recover far more of the archive than
+   re-measuring it point by point at ~13 minutes each. That is the author's
+   call, not a worker's, which is why it is written here rather than applied.
+2. **Nothing below ~1e-5 relative is a measurement.** Any elasticity the loop
+   computes from a moment difference near that size is reading solver noise.
+   Worth keeping in view when a secant returns a very small response.
+
+## State of the loop after this run
+
+With one point on the current model, `next_batch.py` runs and writes
+`CORRECT_60.txt` -- 12 EXPLORE arms across six parameters whose response turns
+without straddling the target. `gaps.py` now exits 0 and reports:
+
+    FIRST POINT in this economy -- nothing to compare against yet.
+    LOSS (minimax over scored) 646.4%   median 36.2%   inside ten per cent 5 of 20
+
+`GAPS_seed_v3.md` in this directory holds the full table. The loss is
+dominated by `h_1` at +646% and `w_bot` at +195%; five of twenty moments are
+already inside ten per cent.
