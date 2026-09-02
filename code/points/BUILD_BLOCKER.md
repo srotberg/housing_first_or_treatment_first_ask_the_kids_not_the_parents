@@ -21,6 +21,29 @@ again, tags 30f09ca36e, deef8f1e37, 65c5d119a5): identical error, identical
 line and column, and the three `FAILED` records rewrote byte-identically over
 the committed ones.
 
+## A latent one left behind, worth knowing before editing those regions
+
+Not a blocker and not to be fixed here, but it explains why the fix was one
+word and it is a trap for the next edit.
+
+`renter_floor_by_age` is new in the same commit as `unsecured_borrowing_rate`
+(73b7a5f). It is a module array (line 3765), neither `parameter` nor
+`threadprivate`, and it is referenced inside all four `default(none)` regions
+-- at 17791, 24568, 25024 and 25312 -- while named in none of their
+`shared(...)` lists. It compiles anyway because every one of those references
+sits in the control expression of the `do` loop associated with the
+`parallel do`, and gfortran does not apply the `default(none)` check there.
+Verified with a standalone two-case test on this container's gfortran 13.3.0:
+a module variable used only in the loop bound compiles clean, and moving that
+same reference into the loop body fails with the identical `not specified in
+enclosing 'parallel'` message. The source shows it too -- 24568 sits 55 lines
+before 24623 in the same region, and gfortran walked past it.
+
+So moving any of those four references into a loop body, or adding a new use of
+`renter_floor_by_age` in one of those bodies, reproduces this whole blocker.
+`negative_financial_grid_size`, unlisted in the same bounds, is an
+`integer, parameter` (line 3402) and is exempt outright.
+
 ## The error
 
     housing_first_or_treatment_first_SR_v1.f90:24623:190:
