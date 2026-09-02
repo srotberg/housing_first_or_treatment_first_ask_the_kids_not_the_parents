@@ -105,7 +105,14 @@ STAGES = [
 
     # Then the drug block, with theta joining b and lambda_d. theta was in the
     # disorder stage; the author has moved it up beside the two it is coupled to.
-    ['b', 'lambda_d', 'theta'],
+    # aleph RIDES ALONG IN ROUND 2, damped. The author, 2 September: "you could
+    # then adjust aleph also slowly when you adjust b and lambda_d in the second
+    # stage." The value of life and the drug block are the pair that fight --
+    # the aleph arm moves b by -85 per cent and lambda_d by -91 -- so round 1
+    # sets aleph, round 2 re-fits the drug block to it, and aleph keeps a small
+    # step here to absorb what the re-fit does back to it. It is listed again so
+    # it stays live even after round 1 closes.
+    ['b', 'lambda_d', 'theta', 'aleph'],
 
     # Then the housing block, unchanged from where the author put it.
     # gamma JOINS THE HOUSING STAGE on the author's instruction, 2 September:
@@ -1221,14 +1228,73 @@ def main():
 
     # The gate: any point with BOTH b and lambda_d inside five per cent, best by
     # worst-gap over everything else.
+    # THE GATE DOES NOT BIND BEFORE THE DRUG BLOCK'S OWN ROUND. The author,
+    # 2 September: "i thought you could first fix the value of life and then get
+    # b and lambda_d to match the drug use."
+    #
+    # That is the round order, and the gate was fighting it. b and lambda_d are
+    # round 2's moments, but the gate demanded them inside five per cent before
+    # it would admit ANY base, including in round 1 -- so an aleph step, which
+    # moves b by -85 per cent and lambda_d by -91, left round 1 with nothing to
+    # step from while it waited on a repair for a block round 2 exists to set.
+    # The macro round was being held hostage to the round after it.
+    #
+    # So while the drug block's round is still HELD, the gate is advisory: a base
+    # is admitted on the round's own moments and b and lambda_d are simply
+    # reported. From the firing that opens their round onward the gate binds
+    # exactly as before, because from then on a step really would be taken off a
+    # drifted base.
+    # open_stages is computed further down, after the base is chosen, so it
+    # cannot be read here. Whether the drug round is open is decided from the
+    # ARCHIVE instead: it opens once every moment in every earlier round is
+    # inside BASE_TOL at some point, which is the same test the stage loop uses.
+    # Which rounds are open, computed from the archive so it is available before
+    # the base is chosen. The stage loop further down recomputes it against the
+    # chosen base and prints it; this is the same test.
+    _open_now = []
+    for i, st in enumerate(STAGES):
+        _open_now.append(i)
+        if not any(all(q in mm and gap(q, mm[q]) <= BASE_TOL.get(q, ACCEPT)
+                       for q in st) for _, mm in A.values()):
+            break
+
+    drug_round = next((i for i, st in enumerate(STAGES) if 'b' in st), None)
+    drug_round_open = drug_round is None or drug_round == 0 or any(
+        all(q in mm and gap(q, mm[q]) <= BASE_TOL.get(q, ACCEPT)
+            for st in STAGES[:drug_round] for q in st)
+        for _, mm in A.values())
     opened = any(all(g in m and gap(g, m[g]) <= GATE[g] for g in GATE)
                  for _, m in A.values())
-    tol = BASE_TOL if opened else GATE
+    if not drug_round_open:
+        tol = {}
+        print('  the drug block\'s round is not open yet, so the gate is advisory: '
+              'a base is admitted on the open round\'s own moments and b and '
+              'lambda_d are reported, not required.')
+    else:
+        tol = BASE_TOL if opened else GATE
     through = []
     for tag, (v, m) in A.items():
         if all(g in m and gap(g, m[g]) <= tol[g] for g in tol):
+            # THE BASE IS RANKED ON THE OPEN ROUND'S MOMENTS WHILE A ROUND IS
+            # OPEN. The author, 2 September: "we need to get the first stage
+            # done, then we move to the second stage."
+            #
+            # Ranking on ALL moments picked point_f74796c1ee, whose round-1 worst
+            # is 327 per cent, over one at 94.5 -- because it looked better once
+            # b and lambda_d were counted, and those belong to a round that has
+            # not opened. Round 1 was then being stepped from a base chosen for
+            # round 2's benefit.
+            #
+            # Everything outside the open rounds is still REPORTED and still in
+            # the loss; it just does not decide which base the open round works
+            # from. Once every round is open this is the old behaviour exactly.
+            scope = {q for i in _open_now for q in STAGES[i]} if _open_now else None
             rest = {k: gap(k, p) for k, p in m.items()
-                    if k not in SKIP and k not in UNSCORED}
+                    if k not in SKIP and k not in UNSCORED
+                    and (scope is None or k in scope)}
+            if not rest:
+                rest = {k: gap(k, p) for k, p in m.items()
+                        if k not in SKIP and k not in UNSCORED}
             through.append((max(rest.values()), tag, v, m))
     if not through:
         best = min(((max(gap('b', m['b']), gap('lambda_d', m['lambda_d'])), tag)
@@ -1659,7 +1725,12 @@ def main():
             continue
         cur, tgt = m[mom]
         if br is None:
-            step = DAMP * math.log(tgt / cur) / e
+            # aleph IS DAMPED HARDER ONCE THE DRUG ROUND IS OPEN, on the author's
+            # instruction to adjust it "slowly" there. Its full step moves b by
+            # -85 per cent, which the round-2 repair then has to undo; a quarter
+            # step lets the two converge together instead of chasing each other.
+            damp = DAMP * (0.25 if (mom == 'aleph' and drug_round_open) else 1.0)
+            step = damp * math.log(tgt / cur) / e
             step = max(-MAX_EFOLD, min(MAX_EFOLD, step))
             x0 = float(v[param])
             lo, hi = BOUNDS[param]
