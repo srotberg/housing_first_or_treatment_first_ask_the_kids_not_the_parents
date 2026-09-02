@@ -1,278 +1,138 @@
-# Bottom-50%-by-wealth targets, computed from SCF 2022
-
-For the author's restructuring: drop the patient type, model only the bottom half
-of the wealth distribution, and re-target every moment to that subpopulation.
-Computed from `data/SCF_2022.dta` with `wgt`, households ranked by `networth`,
-cut at the weighted 50th percentile.
-
-## What came out
-
-| quantity | bottom 50% by WEALTH | bottom 50% by INCOME |
-|---|---:|---:|
-| share of all income | **0.2006** | 0.1319 |
-| share of all net worth | 0.0220 | 0.1083 |
-| **net worth / their own income** | **0.8216** | 6.1526 |
-| **housing cost / their own income** | **0.2051** | 0.2299 |
-| share spending >50% of income on housing | **0.1307** | -- |
-| the same, renters only | 0.1919 | -- |
-
-Both cuts are given because they are DIFFERENT POPULATIONS and the model already
-contains a moment defined on the second one. `sigma_y` is the bottom half by
-EARNINGS at 0.172; the design here is the bottom half by WEALTH at 0.2006. Using
-one where the other belongs is a five per cent error in every income-normalised
-target.
-
-## The three replacements the author asked for
-
-- **`beta` becomes net worth over the bottom half's own income: 0.8216.** The old
-  target, wealth over GDP at 3.0, is meaningless once the top half is gone.
-- **`gamma` becomes housing cost over the bottom half's own income: 0.2051.**
-- **`w_bot` disappears.** It was the bottom half's share of total net wealth and
-  is 1.0 by construction here. Worth recording that the SCF puts it at 0.0220
-  against the model's standing target of 0.0250 -- an independent check that the
-  old target was about right.
-
-## The scaling rule for everything else
-
-    headcount shares of population        x 2
-    normalised by income                  / 0.2006, i.e. x 4.99
-    conditional on homeless/addicted/SUD  unchanged
-
-So homelessness 0.00399 -> 0.00798, and food stamps `cbar` 0.0042 -> **0.0209**.
-NOT x2 for the second class: the bottom half earns a fifth of income, not a half.
-
-## TWO THINGS THAT ARE NOT SETTLED
-
-**The income tax is NOT in this file.** The SCF summary extract has 357 columns
-and none of them is a tax measure. `tau_l`'s current 0.224 came from elsewhere,
-and the bottom half's average rate has to come from that same source rather than
-from here -- CBO average federal tax rates by quintile is the usual one, and it
-matters that the bottom two quintiles are near zero or negative once refundable
-credits are counted. Computing it from the model's own tax function applied to
-the bottom half is possible but produces an OUTPUT, not an independent target.
-
-**The housing-cost definition here is not the one behind `h_2`=0.101.** That
-number is CEX severe cost burden. This is SCF, and housing cost here is
-12*rent for renters plus 12*mortpay for owners -- no property tax, insurance or
-utilities, and a payment rather than a user cost. The whole-population version of
-the SCF measure is 0.0783 against the CEX 0.101, so the two are NOT
-interchangeable. Either recompute the bottom-half burden in CEX, or change the
-source deliberately and say so.
-
-## The author's design decisions, 18:45
-
-- **The rental market does not have to clear.** Rent is held at its benchmark;
-  the bottom-half economy is partial equilibrium in housing.
-- **The government budget is unchanged.** It funds half the economy as it stands.
-- **The income distribution is tuned to the bottom half**, not inherited whole.
-- **The unemployment rate is tuned to the bottom half** as well.
-
-## The income distribution, and what identifies the productivity spread now
-
-| | whole population | bottom 50% by wealth |
-|---|---:|---:|
-| mean income | 141,390 | 56,724 |
-| **sd(log income)** | 1.0350 | **0.8112** |
-| p10 / p50 / p90 | 20,537 / 70,259 / 248,610 | 15,133 / 44,317 / 113,496 |
-| p90/p10 | 12.11 | 7.50 |
-
-    bottom-half mean income / whole-population mean   0.4012
-    bottom-half sd(log income) / whole-population sd  0.7837
-
-`sd_permanent_productivity` currently targets `sigma_y`, the bottom half's share
-of earnings -- which is meaningless once the model IS the bottom half. **Its new
-target is the within-bottom-half income spread, sd(log income) = 0.8112.** State
-it that way rather than as a parameter value: mechanically rescaling 0.9651185 by
-0.7837 gives 0.7564, but that assumes the map from productivity dispersion to
-income dispersion is linear and that unemployment, hours and transfers contribute
-dispersion in the same proportion. The moment is the target; 0.7564 is only a
-starting guess for the search.
-
-## The unemployment rate
-
-    SCF, whole population, lf==1 & occat1==4     0.0375
-    SCF, bottom 50% by wealth                    0.0523
-    ratio                                        1.3947
-
-**The bottom-half target is 0.0683, not 0.0523.** The SCF's own whole-economy
-rate is 3.75 per cent against the 4.9 the model targets, so taking the level
-straight from the SCF would silently swap the source underneath the calibration.
-Take only the RELATIVITY from the SCF and apply it to the official 4.9:
-0.049 x 1.3947 = 0.0683.
-
-## The income tax: the SCF cannot give it, and after-tax income is not in here
-
-Asked directly whether the survey reports before- and after-tax income. It does
-not, at least not in this extract. Every income column is a PRE-TAX component:
-
-    income  wageinc  bussefarminc  intdivinc  kginc  ssretinc
-    transfothinc  norminc  equitinc
-
-There is no net-of-tax measure and no tax paid. So the bottom half's average
-income tax rate has to come from wherever `tau_l`'s 0.224 came from -- CBO
-average federal tax rates by quintile being the usual source, where the bottom
-two quintiles are near zero or negative once refundable credits count. That
-matters a lot here: a bottom-half economy taxed at 0.224 would be paying a rate
-its own data says it does not.
-
-## The income tax, computed from the model's own schedule
-
-The SCF cannot give it directly, so the next best thing: apply the MODEL'S tax
-function to the SCF income distributions and take the relativity.
-
-The schedule is Heathcote-Storesletten-Violante, `T(y) = y - lambda*y^tau`, with
-`lambda`=0.7522432 and `tau`=0.85, and BOTH the personal exemption and the
-standard deduction are zero in this calibration, so there is nothing else in it.
-
-    average rate, whole population (SCF income distribution)   0.3317
-    average rate, bottom 50% by wealth                         0.1691
-    ratio                                                      0.5098
-
-    model's standing tau_l target                              0.2240
-    BOTTOM-HALF TARGET, scaled by that ratio                   0.1142
-
-**THE PROPORTIONAL SCALING THE AUTHOR SUGGESTED IS TOO LOW.** 0.224 x 0.4012 =
-0.0899 assumes a flat tax. The schedule is progressive -- tau=0.85 is below one
--- so an average rate falls with income LESS than proportionally: a household at
-40 per cent of mean income pays about 51 per cent of the mean household's
-average rate, not 40. The right number is 0.1142, a quarter higher than the
-naive one.
-
-Only the RATIO is taken from this calculation, for the same reason as with
-unemployment: the level the SCF distribution implies under this schedule, 0.3317,
-does not agree with the model's 0.224 target, because the model's units and the
-survey's are not the same object. Taking the level would silently swap the
-source; taking the relativity does not.
-
-## CORRECTION, 19:00: both of the derived numbers above were wrong
-
-The author asked how each was computed. Showing the working broke both.
-
-### The tax: 0.1142 was more than double the right answer. It is 0.0546.
-
-`sd` and the tax were both derived by "take the ratio from the SCF and apply it
-to the model's standing target". For the tax THAT METHOD IS NOT SOUND, because
-the schedule is nonlinear and the ratio is not invariant to how income is
-normalised. Varying the normalisation:
-
-    scale        whole   bottom   ratio    implied target
-    0.25x mean   0.4568  0.3231   0.7075   0.1585
-    0.50x mean   0.3973  0.2492   0.6273   0.1405
-    1.00x mean   0.3317  0.1691   0.5098   0.1142   <- what was reported
-    2.00x mean   0.2614  0.0900   0.3443   0.0771
-    4.00x mean   0.1919  0.0301   0.1568   0.0351
-
-The reported 0.1142 was an artefact of normalising by mean income, a choice made
-without justification.
-
-THE PRINCIPLED NORMALISATION is the one under which the model's OWN whole-economy
-target holds. Solving for it: **scale = 2.886 x mean income**, at which the
-whole-population rate is 0.2240 by construction and
-
-    BOTTOM-HALF AVERAGE INCOME TAX RATE = 0.0546
-
-AND THE AUTHOR'S PROPORTIONAL SCALING WAS CLOSER THAN THE "CORRECTION" TO IT.
-0.224 x 0.4012 = 0.0899 was called a quarter too low; it is in fact too HIGH,
-against 0.0546. The reason is that `T(y)=y-lambda*y^tau` with lambda=0.75 has a
-ZERO-TAX REGION at low income -- `max(y-lambda*y^tau, 0)` binds -- so at the
-bottom the schedule is far more progressive than any proportional rule, not less.
-
-### sd(log income): 0.8112 was the wrong variable. Use 0.8791.
-
-`sd_permanent_productivity` governs the dispersion of PRODUCTIVITY, so the
-sample should be earners, and the variable should be earnings:
-
-    variable   sample                         whole    bottom 50%
-    income     all households, y>0            1.0350   0.8112   <- reported
-    wageinc    positive earnings, age<65      1.0445   0.8791   <- correct
-
-`income` is total household income and includes capital income and transfers,
-which are not productivity, and it retains retirees who have no productivity draw
-in the model at all. The earnings restriction keeps 68 per cent of the bottom
-half's weight.
-
-**Revised targets: tau_l 0.0546, sd(log earnings) 0.8791.**
-
-## Applying the tax function to the average income: it returns exactly zero
-
-The author's suggestion -- take the bottom half's average income and put it
-through the tax function -- is worth doing, and what it returns is the finding.
-
-The schedule `T(y) = max(y - lambda*y^tau, 0)` has a ZERO-TAX THRESHOLD where
-`y - lambda*y^tau = 0`, that is `y* = lambda^(1/(1-tau))`:
-
-    y* = 0.7522432^(1/0.15) = 0.149872 in model units
-       = 0.4325 of whole-population mean income
-
-    whole-population mean income   0.3465 = 2.312 x y*
-    bottom-half mean income        0.1390 = 0.927 x y*   BELOW THE THRESHOLD
-
-So T(ybar_bot)/ybar_bot = **0.0000 exactly**. The average household in the bottom
-half of the wealth distribution pays no labour income tax at all under this
-schedule, and the bottom half's aggregate rate of 0.0546 is paid ENTIRELY BY ITS
-UPPER TAIL.
-
-WHICH NUMBER IS THE TARGET. `tau_l` is defined in the model at line 14196 as
-`govt_revenues_from_labour_income / (model_total_efficiency_units + financial
-income)` -- an AGGREGATE, revenue over income, not a rate evaluated at a mean.
-So the target is **0.0546**, the aggregate. The rate-at-the-mean is the wrong
-object for it, and the gap between the two is large even for the whole
-population: 0.1181 at the mean against 0.2240 in aggregate.
-
-THE ECONOMIC POINT IS WORTH KEEPING. A bottom-half economy is one where the
-representative household is just below the income-tax threshold. That is a
-substantive feature of the population being modelled, not an artefact, and it is
-worth a sentence in the paper: the fiscal burden of these households is
-essentially all consumption tax and payroll, not income tax.
-
-## Scaling the drug-user and SUD shares: the factor is 1.26, NOT 2
-
-The author is right that `b` and `lambda_d` have to be rescaled with everything
-else, but the factor is not the 2 that homelessness gets. Computed from
-`NSDUH_2024.dta`, past-year use disorder across all six substances
-(`irpyud5mrj/coc/her/hal/inh/mth`), weighted by `analwt2_c`, with the bottom half
-taken on family income (`irfamin3`: categories 1-5 in full plus 80.6 per cent of
-category 6):
-
-    SUD prevalence, whole population        0.0793
-    SUD prevalence, bottom half by income   0.1001
-    RATIO                                   1.262
-
-    share of ALL SUD cases in the bottom half   0.632
-
-**A factor of 2 would require every drug user to be in the bottom half. Only 63
-per cent of them are.** Homelessness is different -- essentially all of it is in
-the bottom half -- which is why 2 is right there and wrong here.
-
-### AND THIS IS THE ONE PLACE THE RESTRUCTURING CAN MOVE THE GAP
-
-For homelessness the rescaling cancels: the model's rate doubles and so does the
-target, so the gap is unchanged. For SUD it does not have to cancel, because the
-MODEL's concentration of drug use in the bottom half need not equal the DATA's
-0.632.
-
-    if the model concentrates SUD more than the data   the gap WORSENS
-    if it matches the data                             the gap is unchanged
-    if it concentrates less                            the gap improves
-
-The model's own concentration has not been measured. It should be, before the
-restructuring, because it decides whether this helps the block that is actually
-failing or hurts it. A model in which drug use is a poverty phenomenon and the
-data in which a third of it sits in the top half is a real discrepancy either
-way, and worth knowing about on its own.
-
-## Government spending on the homeless and on SUD: set to ZERO
-
-On the author's instruction. `homeless_cost_govt_as_perc_of_avg_inc` 0.4286 -> 0
-and `addict_cost_govt_as_perc_of_avg_inc` 0.212 -> 0.
-
-The reason it is zero rather than rescaled: the bottom-half budget closes on the
-bottom half alone, so any such cost would be funded by households whose average
-income tax rate is 5.46 per cent and whose representative member is below the
-tax threshold entirely. Those services are financed out of general revenue in
-reality, overwhelmingly by the half of the distribution the model no longer
-contains.
-
-It also retires a number the referees objected to: the AE wrote that the fiscal
-cost of homelessness "appears high (see R3)", and 0.4286 was a raised value,
-from 0.252.
+# Bottom-half targets for the single-type restructuring
+
+**READ THE TABLE, NOT THE HISTORY.** Three of these numbers were reported wrong
+before being corrected; the corrections log at the bottom records what moved and
+why, so an older number quoted elsewhere can be traced. The table is authoritative.
+
+Population: households that cannot accumulate beyond 1.5 x average income. That
+cap admits **52.0 per cent** of households in SCF 2022 (median net worth is
+1.363 x mean income), so it delivers the bottom half without conditioning on it.
+STATE IT AS THE CAP, not as a sample cut -- being in the bottom half of wealth is
+partly caused by addiction and homelessness, so selecting on it is selecting on
+an outcome the model explains. The cap has no such problem.
+
+## The targets
+
+| moment | was | becomes | how |
+|---|---:|---:|---|
+| `beta` wealth/GDP | 3.0-4.5 | **0.8216** | SCF: bottom half's net worth / their own income |
+| `gamma` housing/expenditure | 0.268 | **0.2051** | SCF: their housing cost / their own income |
+| `h_2` >50% of income on housing | 0.101 | **0.1307** | SCF -- BUT SEE WARNING BELOW |
+| `sigma_y` bottom-half earnings share | 0.172 | **removed** | meaningless when the model IS the bottom half |
+| -- replaced by sd(log earnings) | -- | **0.8791** | SCF `wageinc`, age<65, earnings>0 |
+| `w_bot` bottom-half wealth share | 0.025 | **removed** | 1.0 by construction |
+| `pi_eu` unemployment | 0.049 | **0.0683** | SCF ratio 1.3947 x the official 4.9% |
+| `tau_l` average labour income tax | 0.224 | **0.0546** | model's own schedule, aggregate, see below |
+| `h_1` homelessness | 0.00399 | **0.00798** | x2 -- ASSUMED, not measured |
+| `cbar` food stamps / income | 0.0042 | **0.0209** | / 0.2006, their share of income |
+| `b` drug users | 0.089 | **x1.31 or x1.59** | NSDUH -- depends on the drug concept |
+| `lambda_d` disorder rate | 0.0368 | **x1.31 or x1.59** | NSDUH -- same |
+| `theta`, `emp_homeless`, `lambda_m`, `mu_H`, `tau_u`, `pi_V` | -- | **unchanged** | all conditional on homeless/addicted/eligible |
+
+Underlying quantities, SCF 2022, households ranked by `networth`, weighted by
+`wgt`, cut at the weighted median:
+
+    bottom half's share of all income      0.2006
+    bottom half's share of all net worth   0.0220   (vs the old w_bot target of 0.025)
+    their mean income / population mean    0.4012
+    their income spread p90/p10            7.50     (population 12.11)
+
+## THE SCALING RULE, and why it is not one rule
+
+    headcount shares of the population        x 2
+    anything normalised by income             / 0.2006
+    conditional on homeless/addicted/eligible unchanged
+    drug use                                  x1.31 or x1.59, NOT x2
+
+Food stamps doubles only if the bottom half earned half the income. It earns a
+fifth. And drug use scales by neither, because it is not concentrated the way
+homelessness is.
+
+## THE ONE PLACE THE RESTRUCTURING CAN MOVE A GAP
+
+For homelessness the rescaling CANCELS -- the model's rate doubles and so does
+the target, so the gap is unchanged at +652%. The restructuring buys speed and
+parsimony, NOT a fix for the block that is failing.
+
+Drug use is the exception. From NSDUH 2024, past-year use disorder:
+
+    measure                       whole   bottom half   ratio   share of cases in bottom half
+    all six substances, 12+       0.0793     0.1001      1.263        0.632
+    all six substances, 26+       0.0689     0.0906      1.314        0.657
+    HARD DRUGS only, 26+          0.0130     0.0207      1.593        0.797
+
+Only 63-80 per cent of drug use disorder is in the bottom half, so the target
+scales by ~1.3-1.6 while the MODEL's rate scales by however concentrated the
+model makes it. If the model treats drug use as more of a poverty phenomenon
+than the data does, restricting to the bottom half makes `b` and `lambda_d`
+WORSE. **The model's own concentration has never been measured and should be,
+before this is built.**
+
+## Two targets still outstanding
+
+- `p_m`, the SMI population share, needs the same treatment as drug use: SMI's
+  concentration in the bottom half, which has not been measured.
+- `aleph`, value of life over income, is income-normalised, so its target moves
+  with the denominator -- but a value of life does not shrink because the
+  household is poor, so a naive /0.2006 is probably wrong. Needs thought rather
+  than arithmetic.
+
+## Warnings that belong in the paper, not just here
+
+**THE SCF DOES NOT SAMPLE THE HOMELESS.** It surveys occupied housing units. So
+every bottom-half statistic above is the bottom half of HOUSED households, and
+the x2 for `h_1` rests on an assumption -- that essentially all homelessness is
+in the bottom half -- that this survey cannot test. The homelessness target
+itself comes from HUD point-in-time counts, a different frame. R1 already
+complained about data provenance; this needs a sentence.
+
+**`h_2` CHANGES SURVEY.** The standing 0.101 is CEX severe cost burden. The
+0.1307 above is SCF, with housing cost as 12*rent for renters plus 12*mortpay
+for owners -- no property tax, insurance or utilities, and a payment rather than
+a user cost. The whole-population SCF version is 0.0783 against the CEX 0.101,
+so THE TWO ARE NOT INTERCHANGEABLE. Either recompute the bottom-half burden in
+CEX, or change source deliberately and say so.
+
+**THE DRUG CUT IS BY INCOME, NOT WEALTH.** NSDUH has no wealth variable, so the
+1.3-1.6 factors are bottom-half-by-income. The design is bottom-half-by-wealth.
+They are different populations.
+
+**THE NSDUH MEASURE IS ILLICIT DRUGS ONLY** -- marijuana, cocaine, heroin,
+hallucinogens, inhalants, methamphetamine. No alcohol, no prescription opioid
+misuse. Whatever produced the 0.089 and 0.0368 targets needs to be checked
+against that, because marijuana alone is 0.0717 of the 0.0793.
+
+## How tau_l = 0.0546 was obtained
+
+The SCF has no after-tax income and no tax variable -- 357 columns, none of them
+tax. So the rate comes from the MODEL's own schedule,
+`T(y)=max(y-lambda*y^tau,0)` with lambda=0.7522432 and tau=0.85 and both the
+exemption and standard deduction zero, applied to the SCF income distribution.
+
+The normalisation is not free, and taking the ratio does NOT make it free: the
+schedule is nonlinear, so the bottom/whole ratio moves from 0.71 to 0.16 as the
+income scale moves from a quarter of mean income to four times it. The
+principled choice is the scale under which the model's OWN whole-economy target
+holds: **2.886 x mean income**, at which the whole-population aggregate rate is
+0.2240 by construction and the bottom half's is **0.0546**.
+
+`tau_l` is an AGGREGATE in the model -- line 14196, revenue over income -- so the
+aggregate is the right object. Evaluating the schedule AT the bottom half's mean
+income gives exactly **zero**, because the schedule's zero-tax threshold is
+`y* = lambda^(1/(1-tau))` = 0.1499 and their mean is 0.1390, 7.2 per cent below
+it. That is a real feature worth a sentence in the paper -- this population sits
+at the income tax threshold -- but it is thin, 1.1 per cent of income, so do not
+lean on the exact zero.
+
+## Corrections log
+
+- `tau_l`: reported **0.1142**, then the author's proportional 0.224x0.4012 =
+  0.0899 was called too low. Both wrong. 0.1142 was an artefact of normalising by
+  mean income; 0.0899 is too HIGH, not too low, because the schedule has a
+  zero-tax region at the bottom. **The answer is 0.0546.**
+- sd: reported **0.8112** from total household `income`, which includes capital
+  income and transfers and keeps retirees who have no productivity draw.
+  **The answer is 0.8791**, from `wageinc` restricted to earners under 65.
+- drug scaling: reported **1.26** from all six substances at ages 12+. Marijuana
+  is 90 per cent of that measure and the model starts at 26. **The answer is
+  ~1.59 for hard drugs at working age**, or 1.31 if marijuana is meant to be in.
