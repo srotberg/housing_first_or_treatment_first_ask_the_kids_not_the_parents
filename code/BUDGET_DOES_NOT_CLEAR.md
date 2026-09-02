@@ -76,3 +76,32 @@ the merged model. None of them should be read until this is resolved. The
 borrowing-OFF control `de322e4659` is untouched: zero budget failures, and its
 finding stands -- w_bot is on target while the bottom tail is positive and
 degenerate.
+
+## VERIFIED, 17:50, by measurement rather than by reasoning
+
+The fix was syntax checked and argued for but not tested, which is the trap this
+repo keeps warning about. Tested now, by running the same borrowing-ON point
+locally on the fixed source:
+
+    budget failures, broken model    250,039     log 87 MB in five minutes
+    budget failures, fixed model           0     log 156 KB
+
+Zero. The budget identity clears for a renter holding unsecured debt, and the
+diagnostic that was writing a gigabyte of text has gone silent.
+
+WHAT THAT SETTLES AND WHAT IT DOES NOT. It settles that the three sites now
+agree and that any ON point measured from here is measuring an economy whose
+budget balances. It does NOT settle the runtime question: the workers launched
+at 17:05 were still unfinished at 45 minutes. Two possibilities remain and the
+budget count in each worker's report distinguishes them, which is why that count
+is the first thing their brief asks for:
+
+- they cloned before the fix landed (pushed 17:04, sessions created 17:05:48 --
+  it is that close) and are running the broken model, in which case their
+  slowness is the old cause and their results are void;
+- they have the fix, in which case a fixed ON solve really is slow and there is
+  a second cause that neither the grid arithmetic nor the logging explains.
+
+The local run started 17:41 is the controlled read on this: same vector, known
+fixed source, and its wall clock will be the first honest number for what
+borrowing costs.
