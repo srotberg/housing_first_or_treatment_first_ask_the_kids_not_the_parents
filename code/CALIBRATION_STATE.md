@@ -53,6 +53,29 @@ The cell reproduces across two independent solves: point_82a955b244 sits at the
 same rsa1 and lambda with b 0.3935 and lambda_d 0.3327, 0.3 and 0.24 per cent
 away, both inside the replicate spread.
 
+## THETA'S SEARCH FLOOR EXCLUDED ITS OWN SOLUTION -- fixed 16:05
+
+The author asked whether lambda_d, b and theta needed wider ranges. Checked
+against measured brackets: b's instrument (lambda_addiction, 0.5 to 20000) and
+lambda_d's (addiction_scalar_1, 1e-30 to 1.0) are both adequate and both
+bracket their targets. theta's did not.
+
+`relative_share_of_addiction_1` was bounded (0.40, 0.58) in next_batch.py. theta
+falls monotonically in it and the target is bracketed at 0.463 -> 0.3050 and
+0.300 -> 0.0585, so the solution is near 0.36-0.38 -- BELOW the old floor. The
+gate could propose only the upper half of a bracket whose answer lies in the
+lower half, so no number of rounds could ever have reached theta's target. This
+is a search failure and not a modelling one, and it has been capping the drug
+block silently.
+
+Now (0.25, 0.60). The floor is 0.25 rather than lower because rsa1=0.200
+returned theta as the -1 empty-population sentinel on an older source and that
+defect is unresolved. The Fortran clamp was never the constraint: theta_lo is
+0.05, theta_hi 0.70.
+
+discount_factor_impatient searches (0.50, 0.995), which contains the 0.93 the
+author predicts, so that search is not range-limited either.
+
 ## Borrowing: the OFF control is in, every ON arm is still pending
 
 point de322e4659. w_bot 0.0247429, -1.03 per cent, ON TARGET -- and NOT ONE
