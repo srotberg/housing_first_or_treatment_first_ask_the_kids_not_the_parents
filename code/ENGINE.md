@@ -587,6 +587,23 @@ Brief the worker to commit only the named point file for the same reason.
 **Never resolve a conflict with `git add -A`.** Stage the paths you have actually
 looked at.
 
+## THE COORDINATOR MUST NOT RETYPE A LINE EITHER
+
+Added 2 September 23:33. The read-it-off-screen rule was written for workers and
+the coordinator broke it itself. A pi_eu sign test was built off a point with
+`value_of_life=34`, and the brief was typed out by hand with `value_of_life=42.0`
+in it -- and then, worse, carried the sentence "use the line above EXACTLY as
+written. Note value_of_life=42.0 in it", which would have made a worker preserve
+the error on purpose. The arm would have differed from its base in TWO
+coordinates and answered nothing.
+
+Caught before the solve started; the session was archived and relaunched.
+
+**A worker brief must not contain a hand-typed command line.** Commit the batch
+file, then tell the worker to `cat -n` it and read its assigned line off the
+screen -- the same rule the workers already follow, for the same reason. The
+coordinator has no privileged accuracy.
+
 ## A WORKER MUST NOT BACKGROUND THE SOLVER
 
 On 2 September three workers were briefed to run their point in the FOREGROUND

@@ -287,14 +287,40 @@ fraction 0.40 should put b AND lambda_d inside ten per cent simultaneously,
 which no point in 583 has ever done. Two arms are running, at 0.25 and 0.40, on
 the compose base rather than the probe base.
 
-## IN FLIGHT, 23:23
+## THE FIVE-INSTRUMENT JOINT STEP: FOUR WORK, ONE HAS THE WRONG SIGN
 
-    joint HALF   five instruments at 0.5x     session_01Fhj18niLWVBaGzi7PaJExa
-    joint FULL   five instruments at 1.0x     session_01LTq5ScBYsETjoiRCQrCpvL
-    drug solve   fraction 0.25                session_01NNVs9yF5Hu2K5hEMqpc38x
-    drug solve   fraction 0.40                session_01P9xeH1FN1xcmEmnsJpvexD
+Half step landed, point_a6088f2c56. Gaps in per cent, * inside ten:
 
-583 points.
+                    gamma    cbar   pi_eu    pi_V   aleph  ||   beta   w_bot     h_1       b lambda_d   theta
+    base            -10.0*  +37.7   +43.3   +75.4   +48.4  ||  -12.6   -46.0   -85.1   -60.2   -74.9   +22.6
+    joint HALF       -0.4*  +18.3   +71.5   +45.3   +11.8  ||   -5.6*   +6.3*  -28.7   +77.2  +118.3   +93.9
+
+`gamma` closed. `aleph` nearly closed. `cbar` and `pi_V` halved, so the full step
+should land them. And two moments NOT in the step closed as side effects: `beta`
+-12.6 to -5.6, and `w_bot` -46.0 to +6.3.
+
+**pi_eu went the wrong way.** `probability_becoming_unemployed` was cut from
+0.0122 to 0.01084 and the unemployment rate ROSE from 0.0702 to 0.0837. Either
+the local slope reverses or a general-equilibrium feedback dominates the direct
+effect. Two one-coordinate arms at 0.00700 and 0.01600 are running to settle it.
+
+**AND `value_of_life` MOVES THE DRUG BLOCK HARD.** `b` went -60.2 to +77.2 and
+`lambda_d` -74.9 to +118.3 with NO drug instrument touched. The only plausible
+carrier in the step is `value_of_life`, 42 to 34: it prices the mortality risk of
+using, so cutting it makes drug use cheap. That is a 137 and a 193 percentage
+point move from an instrument nobody thought was in the drug block, and it is a
+strong candidate for why the drug gate never held -- other rounds were moving
+aleph underneath it.
+
+## IN FLIGHT, 23:33
+
+    joint FULL   five instruments at 1.0x        session_01LTq5ScBYsETjoiRCQrCpvL
+    drug solve   fraction 0.25                   session_01NNVs9yF5Hu2K5hEMqpc38x
+    drug solve   fraction 0.40                   session_01P9xeH1FN1xcmEmnsJpvexD
+    pi_eu sign   prob_unemployed=0.00700         session_0197ppJvi52cyD5RfH6WqEkN
+    pi_eu sign   prob_unemployed=0.01600         session_01Ar68aRK5uBzeHx6r4xrUYC
+
+584 points.
 
 ## THE GATE'S DRUG BASE IS ON THE OLD RUNG
 
