@@ -1,26 +1,59 @@
-# READ THIS FIRST -- CURRENT STATE, 2 September 15:05
+# READ THIS FIRST -- CURRENT STATE, 2 September 15:22
 
-Model `085d8bf37b` on the shared branch. **ZERO scoreable points**, and the four
-solves that will produce the first ones are RUNNING as of 15:05 -- all four
-verified RUNNING and none blocked on input.
+Model `841e04b785` (was `085d8bf37b`; the hash rule changed, not the economy).
+**SIX scoreable points**, and gaps.py prints a table again.
 
-    session 01V8n9WW...  wip/bn-off        borrowing OFF control
-    session 0114Q1zE...  wip/bn-on075      ON, limit 1.50, impatient 0.75
-    session 01GQPgnt...  wip/bn-on090      ON, limit 1.50, impatient 0.90
-    session 018oVEbn...  wip/patient-floor the restriction pair, on 1bf95331b1
+    LOSS (minimax over scored) 652.2%   median 28.8%   5 of 20 inside ten per cent
+    best point 9d84ecf295
 
-The first three are the borrowing arms the author has now asked for three times.
-The fourth is on `wip/patient-no-borrow`, NOT the shared branch: it measures
-restrict_borrowing_to_impatient=0 against =1 at the bn_on075 vector, both solves
-in ONE container so the wall clock and the moments are comparable.
+THE ARCHIVE CAME BACK BY A HASH FIX, NOT BY SOLVING. Three of the six were
+already on disk and were being discarded because a TARGET edit had moved the
+model stamp. semantic() now blanks the value of the constants in
+TARGET_CONSTANTS, so a target change no longer empties the archive. See the
+section in ENGINE.md before adding a name to that list -- the bar is evidence,
+not the `_data` suffix.
 
-`wip/patient-no-borrow` is deliberately NOT merged. Merging it moves the semantic
-hash 085d8bf37b -> 1bf95331b1 and would supersede the three arms mid-solve. Merge
-it after they land.
+## The theta x lambda square, all four cells borrowing OFF
 
-THE SEED RULE APPLIES AND next_batch WAS NOT RUN. ENGINE.md step 2: with zero
-points on the current model the gate has nothing to interpolate from and any
-batch it writes is a guess dressed as a step. These four ARE the seed round.
+The author's hypothesis: lambda_d is not working because theta is too high.
+Three cells measured, the fourth in flight as session 01QZ3gKv on
+batch_lambda_at_high_theta.txt:
+
+                      lambda=2.79953             lambda=8.0
+    rsa1=0.463        b 0.4072  lambda_d 0.2939  IN FLIGHT
+    (theta 0.305)
+    rsa1=0.300        b 0.3516  lambda_d 0.1863  b 0.2406  lambda_d 0.1589
+    (theta 0.0585)
+
+At LOW theta lambda is not feeble: 2.79953 -> 8.0 takes b down 31.6 per cent and
+lambda_d down 14.7. The earlier ladder that found lambda feeble ran at high theta
+but on an older stamp, so it is suggestive and NOT a measurement. The missing
+cell is what settles it.
+
+Four replicates at rsa1=0.463 differing only in probability_becoming_unemployed
+give a free reproducibility read on the drug block: theta spreads 1.4 per cent,
+b 0.5, lambda_d 3.9. A difference smaller than that is not a difference.
+
+## Borrowing: the OFF control has landed and it is decisive about the tail
+
+point de322e4659, findings_bn_off.md. w_bot 0.0247429, -1.03 per cent, on
+target. But NOT ONE bottom-percentile share is negative -- +1.213e-04 /
++6.064e-04 / +1.213e-03 against data -2.250e-03 / -4.220e-03 / -4.460e-03 -- and
+the three are exactly 1x, 5x and 10x each other, so the whole bottom decile sits
+at ONE grid point. The tail is the wrong sign AND degenerate, while w_bot is
+within one per cent: **w_bot is not disciplining the bottom tail**. It is being
+hit by the 25th-to-50th percentile band.
+
+That is the case for borrowing, and it is stronger than the w_bot gap ever was.
+
+## Still in flight
+
+    0114Q1zE  wip/bn-on075       ON, limit 1.50, impatient 0.75   no branch yet
+    01GQPgnt  wip/bn-on090       ON, limit 1.50, impatient 0.90   branch up, no point
+    018oVEbn  wip/patient-floor  restriction off vs on, on 1bf95331b1
+    01QZ3gKv  wip/lambda-high-theta  the missing cell
+
+`wip/patient-no-borrow` stays UNMERGED until the borrowing arms land.
 
 ## The record below is from 13:25, and the header above supersedes it
 
