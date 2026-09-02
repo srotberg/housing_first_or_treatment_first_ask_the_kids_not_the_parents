@@ -607,6 +607,20 @@ mkdir -p points
     echo -n "VECTOR"
     for k in $(echo "${!P[@]}" | tr ' ' '\n' | sort); do printf ' %s=%s' "$k" "${P[$k]}"; done
     echo
+    # THE COST OF THE CHEAPEST RENTAL AT THE BOTTOM OF THE INCOME GRID.
+    # The model prints this during grid setup, long before the moments block, so
+    # the awk below never saw it and it was absent from all 583 points. It was
+    # recovered on 2 September only from a run that had been SIGKILLed with its
+    # full log intact, and it turned out to be the number the author had been
+    # asking for: at the cheapest rung ever measured the smallest rental costs
+    # 1.4955 times the LOWEST net income in the economy.
+    #
+    # Note also that `smallest_rental_relative_to_lowest_income` no longer means
+    # what it is called. It is assigned straight into smallest_house_size; the
+    # division by net_income_lowest that once made it a ratio is commented out
+    # beside it. The parameter is a SIZE. This line is the ratio.
+    grep -a "smallest_house_size\*rent" "worker_${TAG}.log" | head -1 |
+        sed 's/^ */DIAG cheapest rental over lowest net income = /'
     awk '/===== ALL TARGETED MOMENTS =====/{f=1} f{print} /===== END OF MOMENTS =====/{if(f)exit}' \
         "worker_${TAG}.log"
 } > "points/point_${TAG}.txt"
