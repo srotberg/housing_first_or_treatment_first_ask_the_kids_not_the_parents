@@ -1,10 +1,87 @@
-# READ THIS FIRST -- CURRENT STATE, 2 September 19:35
+# READ THIS FIRST -- CURRENT STATE, 2 September 22:05
 
-Model `6d75e61a1d`. **THIRTEEN scoreable points. TWO BETA TYPES, and staying.**
+Model `6d75e61a1d`. **58 scoreable points. TWO BETA TYPES, and staying.**
 
-    LOSS (minimax over scored)  652.2%   -- pinned by h_1, see below
-    OPEN STAGE minimax          119.4%   -- what the search can actually move
-    best on the open stage      e3bba3efac at +53%
+    best point                  point_5f78305512
+    LOSS (minimax over scored)   92.8%   worst: tau_u, in a closed stage
+    OPEN STAGE 0 minimax         85.1%   worst: h_1 -- what the search can move
+    inside ten per cent           3 of 20
+
+## THE RUNG IS SETTLED AT h_2 = 0.117, AND THE REASON GIVEN FOR IT WAS WRONG
+
+The nine-point rung sweep finished. The conclusion committed at ebcad070 --
+"the cost-burden mechanism does not fire" -- was read off the wrong object. The
+per-unit `DIAG unit N ... of whom over half of income` line is conditional on
+renting unit N and puts INCOME in the denominator. The moment is
+`val_burden50_expend_all / val_mass_expend_all`: unconditional, on EXPENDITURE.
+On the moment the rung is strong, monotone and brackets its target, street held
+at 0.003777:
+
+    h_2      burden moment (target 0.101)     emp_homeless (target 0.46)
+    0.0390       0.0208                           0.988
+    0.0780       0.0414                           0.959
+    0.1170       0.1092                           0.758
+    0.1560       0.1654                           0.909
+    0.2340       0.2763                           0.749
+
+0.117 is the crossing and it is the best point in the archive.
+
+**But the burden moment is OUT OF THE LOSS.** gaps.py prints it under
+`(no instrument)` with the note *"the rung targets emp_homeless on the author's
+decision"*. So bracketing it is not progress against the objective, and the
+rung's scored moment, `emp_homeless`, is still at 0.7577 against 0.46 -- +64.7
+per cent, the sixth-worst gap. `batch_rung_far` (9x, 12x, 16x) was retired on
+the ground that the burden moment would overshoot to ~0.48; that ground does
+not hold, because the burden moment is unscored. What does hold against it is
+that emp_homeless flattens near 0.75 between 0.117 and 0.234, so the rung alone
+does not look able to reach 0.46, and at 9x the cheapest unit costs 112 per cent
+of the lowest renter income. **The rung is not the instrument that closes
+emp_homeless. Something else has to.**
+
+## IN FLIGHT, 22:05
+
+Six solves, none landed yet.
+
+    h_1 bracket, one coordinate off the best point (h_2=0.117 held)
+      size_homelessness 0.060   local, started 21:59
+      size_homelessness 0.090   worker session_01TJKr9B27xNGDDwcstWUqcQ
+      size_homelessness 0.120   worker session_01AvN3v5UMqiurzftbbdBHRP
+
+    batch_drugfit.txt, the gate's own round, exit 0
+      full step     worker session_01AajfpaSkSmA8qD6EAoMdDD
+      half step     worker session_01YETswwGMp4ZpKDC3HVehxg
+      quarter step  worker session_012PXLmackexiPZ3Nq4UuBGW
+
+h_1 is bracketed with certainty before those land: the archive already gives
+0.0006 at size_homelessness 0.032 and 0.0060 at 0.105, and the target is 0.00399.
+b and lambda_d ride on the same three solves, because homelessness feeds
+addiction through `increased_prob_if_homeless`.
+
+## THE GATE'S DRUG BASE IS ON THE OLD RUNG
+
+`next_batch.py` picks its drug base on max(|b gap|, |lambda_d gap|) alone, so it
+chose eb442f7b15, which sits at h_2=0.039 and size_homelessness=0.149 -- not the
+rung that produced the best point. At 0.039 the burden moment is 0.021. The drug
+block is therefore being pinned in an economy the calibration is leaving, and
+because homelessness feeds addiction, moving the rung afterwards will move b and
+lambda_d again. Running it as the gate wrote it; the base choice is the author's
+call, not the engine's.
+
+## OPEN, NOT CHASED
+
+- `newborn_endowment_scale` sits at 0.0 with bound (0, 3.0) while `h_share1`,
+  the newborn homeless share, is at 0.575 against 0.260 -- +121.3 per cent, the
+  largest gap on the board and an instrument that has never taken a second value.
+- `largest_house_size` is assigned at 26614 and overwritten at 26669 by
+  `rung_ratio_h4*housing_size(0)`. It is dead code that still has a live adjuster
+  and a slot in the outer loop's distance list, so every outer iteration spends
+  work on it. Not removed: dropping a distance resets the archive.
+- `theta`'s -1 empty-population sentinel fires at `addiction_scalar_1=0.04248`.
+- Age 80 is the most homeless age at 6.02 per cent and nothing scores it.
+
+---
+
+# EARLIER STATE, kept for the record
 
 ## THE HEADLINE LOSS WAS NEVER A PROGRESS NUMBER, and that cost a day
 
