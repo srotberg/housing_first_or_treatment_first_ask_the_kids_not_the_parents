@@ -144,6 +144,67 @@ first) at least 11. The longest was 48. The pair needs something on the order of
 100 minutes of uninterrupted container life, and that has not been seen once in
 seven hours.
 
+## Where the time actually goes -- measured, not inferred
+
+Attempt 4 was still alive at 60 minutes, so it was sampled with `gdb`. Two
+backtraces ten seconds apart, then a third read of the frame:
+
+```
+#0  stationary_equilibrium_wealth_distribution_of_old (time_period=1)
+        at housing_first_or_treatment_first_SR_v1.f90:11907
+#1  calibrating_model ()   at housing_first_or_treatment_first_SR_v1.f90:36354
+#2  main_program ()        at housing_first_or_treatment_first_SR_v1.f90:7556
+
+wealth_of_top_x_perc_index = 1
+```
+
+Line 11907 is the `minval` over the whole four-dimensional `wealth_matrix`,
+inside this loop (11901-11913):
+
+```fortran
+do while ((distance_pop_of_top_wealth_x_perc(...)+10.d0**(-6)) <= stopping_rule_...)
+    wealth_counter_2 = wealth_counter_2+1
+    min_wealth       = minval(wealth_matrix(time_period,:,:,:), mask=wealth_matrix(...) > &
+                              -housing_price(time_period)*housing_size(housing_status_grid_size-1))
+    min_wealth_index = minloc(wealth_matrix(time_period,:,:,:), mask= ... )
+```
+
+Each pass of the `do while` scans the **entire** wealth matrix twice and admits
+the mass of **one** grid point. The number of iterations is the number of grid
+points needed to accumulate the top x per cent, so the cost is
+iterations x matrix size -- quadratic in the wealth grid. And the mask floor is
+`-housing_price * housing_size(largest)`: this loop walks the negative asset
+grid, which is precisely what `unsecured_borrowing_limit` stretches.
+
+At `unsecured_borrowing_limit=1.50` -- five times any value in the archive, with
+`financial_grid_expander_positive=3.0` on top -- both factors of that product
+grow, and a solve that takes 9-22 minutes at a limit of 0.30 does not take
+merely twice as long.
+
+**The decisive number: after ~48 minutes inside this routine, the run was still
+on `wealth_of_top_x_perc_index = 1` of a `do wealth_of_top_x_perc_index=1,3`
+loop.** One of three passes, unfinished, in a routine reached only after the
+distribution had already converged. If the three passes are comparable, this
+routine alone needs on the order of two and a half hours, and it is not the last
+thing the solve does.
+
+This also explains the identical log sizes once and for all. The write at line
+11887, `"begining wealth distribution for old"`, does **not** appear in the log
+even though `gdb` proves execution is past it: it is sitting in the unflushed
+stdout buffer. Every attempt reaches this routine, goes silent, and stays silent
+for hours. 445,382,656 bytes is simply where the output stops, in every run.
+
+### The arithmetic
+
+| quantity | value |
+|---|---|
+| slowest solve in the 493-point archive | 27 min |
+| one arm of this pair | >60 min observed, plausibly 2.5-3 h |
+| the pair, both arms, one container | plausibly 5-6 h |
+| longest container life observed tonight | ~48 min |
+
+The gap is not marginal, and no amount of retrying closes it.
+
 ## What would make it measurable
 
 1. **An execution environment that outlives two solves of this vector** -- a
