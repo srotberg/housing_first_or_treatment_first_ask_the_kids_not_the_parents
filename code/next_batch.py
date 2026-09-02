@@ -82,16 +82,41 @@ BASE_TOL = {'b': 0.10, 'lambda_d': 0.10}  # admissible as a base thereafter
 # block, which is the paper's own mechanism, and the aggregates last because they
 # are the ones the model reaches most easily.
 STAGES = [
-    ['b', 'lambda_d'],                                 # the gate itself
-    # h_share1 JOINS THE HOUSING STAGE on the author's instruction, 2 September:
-    # "i think you need to add the hshare_1". It is the share of the homeless
-    # aged 25 to 34 and its instrument is newborn_endowment_scale, so it is a
-    # composition moment about the same population as emp_homeless and belongs
-    # with it rather than among the aggregates. It was in stage 3.
-    ['h_1', 'emp_homeless', 'h_share1'],               # the author's h1 and h2
-    ['theta', 'tau_u', 'mu_H', 'lambda_m', 'p_m'],     # disorder and treatment
-    ['beta', 'pi_eu', 'tau_l', 'sigma_y', 'omega_l',   # the aggregates
-     'gamma', 'cbar', 'pi_V', 'aleph', 'h_2'],
+    # THE AUTHOR'S SEQUENCE, 2 September, given in their own words: "calibrate
+    # aleph and beta, omega_ell, sigma_y, and tau_ell. then move to b, lambda_d
+    # and theta. then h1, smallest_rental_relative_to_lowest_income, and
+    # newborn_endowment_scale."
+    #
+    # The macro block first. These five set prices, the wealth distribution and
+    # the labour supply, and everything after them is measured against those --
+    # so calibrating the housing block against a discount factor that later moves
+    # is measuring against a base that will not hold still, which is the same
+    # fault the drug gate exists to prevent one stage down.
+    ['aleph', 'beta', 'omega_l', 'sigma_y', 'tau_l'],
+
+    # Then the drug block, with theta joining b and lambda_d. theta was in the
+    # disorder stage; the author has moved it up beside the two it is coupled to.
+    ['b', 'lambda_d', 'theta'],
+
+    # Then the housing block, unchanged from where the author put it.
+    # gamma JOINS THE HOUSING STAGE on the author's instruction, 2 September:
+    # "also add gamma to the h1, smallest_rental_relative_to_lowest_income, and
+    # newborn_endowment_scale round". Its instrument is relative_share_of_housing,
+    # the weight on housing in utility, and it belongs here for the reason the
+    # rung arm made plain: the utility cost of a bad dwelling is what decides
+    # whether a household priced out of the cheapest unit takes the street or
+    # pays, so gamma and the rung are the same decision seen from two sides. It
+    # was in the leftover stage.
+    ['h_1', 'emp_homeless', 'h_share1', 'gamma'],
+
+    # Then everything else. This tail is mine, not the author's, and it is
+    # ordered by nothing in particular because by the time it opens the three
+    # blocks above are pinned.
+    # "then we can consider the rest" -- the author, 2 September. This tail is
+    # NOT a considered ordering and must not be read as one; it is everything
+    # left over, opened together once the three blocks above are pinned, and the
+    # author has reserved the decision about it.
+    ['pi_eu', 'cbar', 'pi_V', 'tau_u', 'mu_H', 'lambda_m', 'p_m', 'h_2'],
 ]
 
 # A STAGE THAT CANNOT BE SATISFIED MUST NOT DEADLOCK THE ONES BEHIND IT.
@@ -1386,9 +1411,15 @@ def main():
         # through OWN, so inv0 has nothing for them and stage 0 printed "(no
         # instrument)" -- which is false and is exactly the line the author is
         # reading to see what enters the calibration.
+        # b and lambda_d are owned by the drug pair through the GATE rather than
+        # through OWN, so inv0 has nothing for them. This used to be hard-coded
+        # as "stage 0 is the drug gate", which was true until the author put the
+        # macro block first on 2 September and then stage 0 reported the drug
+        # pair as its instruments -- on the very line they are reading to see
+        # what enters the calibration. Attach FREE to whichever stage holds b.
         added = [q for _mo in STAGES[i] for q in inv0.get(_mo, [])]
-        if i == 0:
-            added = list(FREE)
+        if 'b' in STAGES[i] or 'lambda_d' in STAGES[i]:
+            added = list(FREE) + added
         slog.append({'stage': i, 'at': time.strftime('%d %b %H:%M', time.gmtime()),
                      'moments': STAGES[i], 'added': added,
                      'reason': 'first' if i == 0 else
