@@ -164,6 +164,46 @@ type at 0.75 handed 1.5 years' income of credit and never made to repay
 it, or it may be a consequence of the accounting defect below. Separating
 them needs the source instrumented, which was out of scope here.
 
+## Where the time actually goes: NOT the household problem
+
+The model prints `AGE_TIME` per age solved, and an internal `time=` stamp
+at the end of each backward-induction sweep. Those localise the cost, and
+they rule out the obvious suspect.
+
+**The backward induction is barely affected by borrowing.**
+
+| | control (OFF) | arm 1 (ON) |
+|---|---|---|
+| age-solves recorded | 177 | 118 |
+| total `AGE_TIME` wall | 546.5 s | 580.6 s |
+| total `AGE_TIME` cpu | 1909.7 s | 1907.1 s |
+| slowest single age, wall | 5.61 s | 7.92 s |
+| last internal `time=` stamp | 752.3 s | 976.2 s |
+| **whole run** | **12 min** | **246 min, unfinished** |
+
+Per age the borrowing-ON solve costs about 40 per cent more (7.92 s against
+5.61 s at the worst age), which is roughly what going from 25 reachable
+grid points to 32 should cost. That is the expected, benign part.
+
+**Everything else is the anomaly.** Arm 1's age loop was finished at an
+internal stamp of 976 s -- 16 minutes -- and the run was still going 230
+minutes later. So **about 93 per cent of arm 1's wall time was spent after
+the backward induction**, in the aggregation and distribution phase. With
+borrowing off that same phase costs roughly 3 minutes (12 min total less
+9.1 min of age solves).
+
+So the bottleneck is not the household's problem with debt in it. It is the
+sweep that runs afterwards -- which is exactly where
+`check_budget_constraint_clears` is called from
+(`SR_v1.f90:17717-17901`, one million times, 445 MB of formatted writes).
+
+That does not by itself prove the audit is the cause: the log stopped
+growing about 30 minutes in, while the phase ran for another 200. The
+honest statement is that the cost is localised to the post-backward-
+induction sweep, and the audit is the one thing known to have changed
+there. Confirming it would mean instrumenting or silencing the audit and
+re-running, which was out of scope.
+
 ## A stale budget audit, live only when borrowing is ON
 
 `housing_first_or_treatment_first_SR_v1.f90:24001` prints `budget does not
