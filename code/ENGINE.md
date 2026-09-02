@@ -654,6 +654,28 @@ Two rules out of it:
   N min` is run_one_point's wall clock and is printed whether the binary
   finished or was shot. Check for the moments before quoting anything.
 
+## MEASURED, 18:05: BORROWING ON COSTS THE SAME AS OFF. The grid was never it.
+
+Per-age wall time, read off the logs rather than estimated:
+
+    borrowing OFF   2.16, 2.76, 3.31 s/age
+    borrowing ON    2.75 s/age        (fixed model, zero budget failures)
+
+IDENTICAL. And the outer work matches too -- 3 value function passes either way,
+98 distribution sweeps ON against 112 and 133 OFF. Widening a renter's grid from
+25 points to 32 costs essentially nothing, because the choice loop searches a
++/-3 warm-start window that does not widen and the state loop is not where the
+time is.
+
+SO THE AUTHOR WAS RIGHT AND BOTH OF MY ESTIMATES WERE WRONG. They said a
+borrowing-ON solve should be about 14-16 minutes rather than 25-40. It is: the
+same 13-17 as OFF. The x1.64 and x1.28 grid ratios were both inventions.
+
+The 44 to 55 minute runs were the broken budget check writing a gigabyte of
+diagnostics, exactly as the section below says -- that claim was withdrawn too
+early, at 36 minutes, on the strength of workers that had most likely cloned the
+pre-fix source. It stands.
+
 ## THE SLOW BORROWING-ON SOLVES WERE THE BUG, NOT THE GRID
 
 Worth stating plainly because two firings were spent estimating grid ratios that
