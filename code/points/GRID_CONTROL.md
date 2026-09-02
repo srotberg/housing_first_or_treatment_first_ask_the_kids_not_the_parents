@@ -175,6 +175,38 @@ not comparable to points carrying `197407b07d`, at any borrowing setting,
 including OFF. `point_35e8286c4e.txt` has been superseded by
 `point_de322e4659.on_64d52d8b6a.txt` as the round-1 OFF reference.
 
+## Provenance of the comparison
+
+Measured on branch head `b03b86b`, which is what
+`git fetch origin claude/two-period-addiction-hazard-d7gb61` resolved to
+when this batch started.
+
+- baseline file: `code/points/point_35e8286c4e.txt` at blob
+  `73f443d44d58e6ea1d4dd49a548961c5cb4937ad` (the version present at
+  `b03b86b`);
+- new file: `code/points/point_de322e4659.txt`, solved from source md5
+  `64d52d8b6a`, semantic `197407b07d`.
+
+While this batch was running the branch head on the remote advanced to
+`3527de0`, and two of those commits matter for reading this report:
+
+- `68c3578 measure: point_35e8286c4e re-solved on the 2.5-target source`
+  replaces the baseline file with a different blob
+  (`d849957348868dbb35158dccb4c4de09b858ef4b`). **This report compares
+  against the pre-`68c3578` blob**, which is the file that was on disk when
+  the control was launched. Anyone re-running the comparison against the
+  current file will get different numbers, and should say which blob they
+  used.
+- `de9d7a3 unemployment target 13.9 -> 4.9 per cent` moves the `pi_eu`
+  target. Both points compared here were solved on the **13.9 per cent**
+  source, and both report `target=0.13899999856948853`. The comparison is
+  internally consistent -- old and new were solved against the same target
+  -- but the `pi_eu` row should not be read against the 4.9 target.
+
+Neither of those commits is in the history this batch was measured on. They
+were not merged in mid-batch, deliberately: rebasing between lines would
+have changed the source under the remaining runs.
+
 ## A second, independent measurement of the same vector exists
 
 Rebasing this work onto the branch head produced an add/add conflict on
