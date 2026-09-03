@@ -1,4 +1,4 @@
-# Calibration state — 3 September, 19:58
+# Calibration state — 3 September, 23:55
 
 ## THE CONFIGURATION, settled today and not to be changed without the author
 
@@ -12,6 +12,86 @@
 Both are CONFIG_SWITCHES in next_batch.py and gaps.py: a point that differs on
 `number_of_beta_types` or `use_pia_formula` does not pool. 91 points are skipped
 for the first and 617 are on older source revisions.
+
+## THE ECONOMY CHANGED AT 22:00: the street is barred at the addiction cap
+
+`max_age_to_choose_addiction` is the last age a household may START using, so the
+value of ABSTAINING falls discretely there -- earlier, abstaining keeps the option
+to start later; at the cap that option is worth nothing. Use bunched at exactly the
+cap, drug spending crowded out rent, and the street was taken in the same period.
+Age 80 carried **74.2 per cent of all homelessness in the model**.
+
+MEASURED, on an isolated branch whose points were never merged, same vector at
+three caps: cap 57 put the peak at age 82 at 0.322621, cap 55 at age 80 at 0.190450.
+The spike follows the cap, so RAISING the cap relocates it and roughly doubles it.
+The author's own suggestion was implemented instead: `allow_to_choose_homelessness=0`
+at `age_index==max_age_to_choose_addiction`, at BOTH sites where that flag is set.
+The drug margin is untouched; only the street is barred, in that one period.
+
+Model hash moved to 4df7be4132 and the archive was re-seeded. **The old economy's
+46.58 per cent and this economy's numbers are NOT comparable** -- three quarters of
+the old homelessness was the artefact.
+
+## THE BINDING STRUCTURE, measured tonight and unresolved
+
+Best point `point_42ddb999fb` at **56.42 per cent**, worst `h_share1`.
+
+    ON THE STREET RAY ALONE (labor_income_tax_rate 0.752)
+    street    max|res|     h_1  h_share1
+    0.04450       58.4   -58.4     -19.0
+    0.04480       56.4   -22.7     -56.4     <- best
+    0.04500       67.6    +4.0     -67.6
+    0.04700      224.3  +224.3     -89.6
+
+h_1 lands on target at 0.04500, the first time all day. But h_1 and h_share1 move in
+OPPOSITE directions along this ray, so the minimax bottoms at 56.4 and cannot go
+lower. One instrument, two moments.
+
+    WITH THE TAX CORRECTED (labor_income_tax_rate 0.835)
+    street     h_1   h_share1
+    0.0448   -91.5      +18.8
+    0.0500   -91.3      +16.9
+    0.060    -91.0      +16.5
+
+The tax fix closes tau_l (+33.4 -> -4.2), b (+25.1 -> +2.9) and flips h_share1 to
++18.8. **And then the street goes INERT**: a 34 per cent move in a parameter whose
+elasticity was 29 an hour earlier travels half a point.
+
+WHY. Homelessness here is a MARGINAL choice and the margin is set by INCOME, not by
+the street's size. labor_income_tax_rate is the level in the Benabou function, so
+0.835 cuts the average tax from 30 per cent to about 21, and nobody is left near the
+margin for the street to act on.
+
+**So tau_l and h_1 cannot both be matched with the instruments now open.** Either the
+tax is right and there is essentially no homelessness, or the tax is wrong at +33 per
+cent and homelessness is reachable. This is a modelling question, not a tuning one.
+
+The candidates for putting households near the margin, all the author's call:
+`y_grid_kappa` (bottom node mass, fixed at 3.2, so the poorest node is 0.198 per
+cent of households); the transfer floors; the rent level, where the cheapest unit
+costs 16.55 times the LOWEST net income.
+
+## OPEN WITH THE AUTHOR
+
+1. **The newborn endowment double count**, still unfixed and now cheap: an
+   INERT_CHANGES entry keyed on `newborn_endowment_scale=0.0` would keep the archive
+   pooled, since every point has it at zero. The fix embeds a design choice --
+   delete `newborn_transfer_1`, or keep it and add it to `objective` -- and that is
+   the author's to make.
+2. **Whether to use a negative newborn endowment against the data.** The 2022 SCF
+   says every productivity node's MEAN non-housing net worth is positive, the bottom
+   quintile's at +0.044 of average wage income. 20 per cent of that quintile are
+   negative, but the model sets a mean per node and cannot represent the dispersion.
+
+## SETTLED TONIGHT
+
+- pi_eu is targeted at 0.139, verified in the Fortran parameter, the MOMENT line and
+  TARGET_OVERRIDE. The 4.85 per cent the author saw is `p_m`, the SMI population
+  share. Nothing is calibrated to it.
+- emp_homeless is inside ten per cent and the author said to leave it.
+- Ten of twelve instruments had never moved until the joint step; the author noticed
+  before the loop did. `tau_l` is now closable at labor_income_tax_rate 0.835, which
+  the Benabou algebra gives independently as 0.833.
 
 ## THE SEARCH IS A NEWTON SOLVER NOW, AND IT SPLITS THE BLOCK IN TWO
 
