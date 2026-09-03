@@ -825,7 +825,24 @@ BOUNDS = {
     # earnings for every addict is a corner and not a calibration.
 }
 # beta is banded on the author's instruction; h_3 is conceded.
-BAND = {'beta': (3.0, 4.5)}   # lower edge follows wealth_to_output_data, back to 3.0 on 2 Sep
+BAND = {'beta': (2.5, 3.0)}   # THE AUTHOR'S BAND, 3 September
+# *"If you targeted a net worth to income ratio of 2.5-3 I think you'd have less
+# homelessness because people would not sacrifice on housing in order to save a
+# bit for the future they care less about"*.
+#
+# It was (3.0, 4.5), with 3.0 the LOWER edge following wealth_to_output_data.
+# The author has put 3.0 at the TOP instead, so the band now sits at and below
+# the data point rather than at and above it. That is a target change, made on
+# their instruction and not by inference, and it moves what counts as DONE for
+# discount_factor.
+#
+# WHAT IT DOES TO THE SEARCH, which is the reason it is not a cosmetic edit: on
+# THIS economy discount_factor 0.99980 gives W/Y 5.35 and 0.95 gives 2.93, so the
+# new band is reached around 0.95 to 0.96 -- far below the 0.985 to 0.995 bracket
+# already in flight, which sits entirely above it. The measured table beside
+# wealth_to_output_data in the Fortran (0.99980 -> 2.4528) is from the FROZEN
+# grid and does not transfer: stochastic productivity more than doubled
+# aggregate wealth at the same patience.
 # h_3 IS CONCEDED, h_2 IS NOT. The two swapped on 31 August: "no h2 has to be
 # close to 10.1%, but h3 can be off".
 #
