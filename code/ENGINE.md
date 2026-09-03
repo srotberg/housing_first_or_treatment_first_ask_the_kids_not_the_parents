@@ -894,3 +894,46 @@ does not, there is a second cause and the grid arithmetic is still not it.
 THE GENERAL RULE: when a run is unexpectedly slow, read its log before modelling
 its cost. A log that is growing at megabytes per minute is telling you what is
 wrong, and no amount of reasoning about loop bounds substitutes for looking.
+
+## A 529 KILLS A WORKER BEFORE IT DOES ANYTHING, AND IT COMES IN CLUSTERS
+
+Measured on 3 September. Eight workers were launched in three groups and five
+were lost to `API Error: 529 Overloaded`, every one of them about four minutes
+in, with `current_branches: null` and nothing attempted:
+
+    13:29 launched 3  ->  all 3 dead at 13:33, 41k tokens used, no branch
+    13:42 launched 3  ->  1 alive and solving; 2 dead at 13:46, 0 tokens
+    13:43 launched 2  ->  both dead at 13:47, 41k tokens used, no branch
+
+The pattern is what matters. **The failures arrive in tight clusters** -- three
+inside one minute, then two, then two -- so a group launched in the same instant
+tends to die together, and a survivor from the same group proves the brief was
+fine. This is not the background-brief failure and not a permission prompt: the
+session reaches IDLE with `status_bucket: FAILED` and a `post_turn_summary`
+naming the 529.
+
+**Three things follow, and they are cheap.**
+
+1. **BRIEF AGAINST IT EXPLICITLY.** A worker treats a 529 as terminal unless
+   told otherwise, because it looks like an error rather than a wait. Every
+   brief now says: a 529 is transient, wait and retry the SAME call, keep
+   retrying, and do not end the turn until the solve has run or the retry has
+   been tried at least five times.
+
+2. **CONSOLIDATE RATHER THAN RESPAWN ONE-FOR-ONE.** Re-launching four dead
+   lines as four fresh sessions exposes four more containers to the same
+   cluster, and each pays a container start and a repository clone before it can
+   fail. Two workers at two lines each halves the exposure; ENGINE.md already
+   allows three lines per worker. Serial solve time is 3-5 minutes a line, which
+   is cheaper than a second wave of losses.
+
+3. **PUSH AFTER EACH LINE, NOT AFTER THE LAST.** A multi-line worker that
+   batches its pushes loses every line if it dies on the final one. The brief
+   must say push after each solve.
+
+**AND CHECK THE SESSION RECORD, NOT ONLY THE BRANCH LIST.** `git ls-remote`
+cannot distinguish "still solving" from "died eight minutes ago", and at this
+cadence that is the difference between waiting and losing a firing. `mine: true`
+on the session list gives `status_bucket`, `current_branches` and the
+`post_turn_summary` that names the cause. A branch that is absent while its
+session reads FAILED is a line to relaunch now, not a line in flight.
