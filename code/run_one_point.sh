@@ -150,6 +150,17 @@ declare -A P=(
     # of mean productivity; 0 leaves the quantile construction alone and is the
     # default. See the block beside employment_grid_size in the Fortran.
     [y_grid_kappa]=3.2
+    # SOCIAL SECURITY, now the US statute. use_pia_formula=1 gives the SSA 2024
+    # 90/32/15 bend-point schedule; 0 restores the flat 0.40 x productivity that
+    # was regressive against the net wage. ssi_floor_takeup is the DIAL for how
+    # many of the old are priced out of the cheapest rental: 0 leaves 6.6 per
+    # cent of the population priced out on the PIA alone, 1 leaves none.
+    [use_pia_formula]=1
+    [ssi_floor_takeup]=0.0
+    # UNEMPLOYMENT BY PRODUCTIVITY, from BLS 2019 by education. 1 applies the
+    # profile, 0 leaves the separation rate flat across types. Derivation in
+    # data/UNEMPLOYMENT_BY_PRODUCTIVITY.md.
+    [use_unemployment_by_productivity]=1
     [bottom_productivity_level]=0.0
     # HELD AT ONE, ON THE AUTHOR'S INSTRUCTION. rho_d enters as
     # rho_d**(sud*include_rho_d), so one is exactly no penalty. The switch stays

@@ -2876,6 +2876,7 @@
         ! That is what makes seven nodes safe here where it was not before, and it
         ! is the reason kappa is not left at 2.8.
         integer, parameter :: employment_grid_size=7
+        integer :: use_unemployment_by_productivity=1
 
         ! THE BOTTOM OF THE GRID IS NOW TWO CALIBRATED INSTRUMENTS, on the
         ! author's instruction of 3 September: *"you'd have to tinker with the
@@ -3696,6 +3697,18 @@
         ! Social security replaces this share of the productivity state, the
         ! 0.40 of eq:fincome.
         real(8), parameter :: ss_replacement_rate=0.40
+        ! THE US SOCIAL SECURITY BENEFIT FORMULA. See the block beside
+        ! model_ss_benefits for the source and the arithmetic.
+        integer :: use_pia_formula=1
+        real(8) :: ss_bend_1=0.2208d0
+        real(8) :: ss_bend_2=1.3314d0
+        real(8) :: ss_taxable_max=2.6428d0
+        real(8) :: ss_pia_rate_1=0.90d0
+        real(8) :: ss_pia_rate_2=0.32d0
+        real(8) :: ss_pia_rate_3=0.15d0
+        real(8) :: ssi_floor_level=0.1774d0
+        real(8) :: ssi_floor_takeup=0.0d0
+        real(8) :: pia_y_1
         real(8), parameter :: max_ui_as_perc_of_avg_inc=1
         ! bar pi^ue, the annual job finding rate. The note's external table sets it at
         ! 0.55; the code had 0.2974.
@@ -29033,7 +29046,38 @@
         ! comparison in verify_unemployment_process cannot discriminate on it,
         ! so that check confirms the structure of the transition and not the
         ! placement of this factor.
-        adjusted_probability_1=1
+        ! THE PROFILE IS LIVE WHEN use_unemployment_by_productivity=1, and the
+        ! numbers are from BLS rather than the formula above.
+        !
+        ! The author, 3 September: *"you can still make the unemployment
+        ! probability higher for lower productivity guys. But you have to explain
+        ! to me what data you use, and exactly how you map it to the y grid"*.
+        ! The whole derivation is in data/UNEMPLOYMENT_BY_PRODUCTIVITY.md. In
+        ! short: BLS 2019 annual averages, age 25 and over, unemployment rate by
+        ! educational attainment; education orders productivity by median
+        ! earnings so each group takes a contiguous block of the distribution as
+        ! wide as its population share; each node takes the share-weighted average
+        ! over its own quantile interval; and because this multiplies a SEPARATION
+        ! rate while BLS reports a STOCK, the average is taken over the ODDS
+        ! u/(1-u) rather than over u.
+        !
+        ! Normalised to a mass-weighted mean of one, which leaves the AGGREGATE
+        ! separation rate and therefore pi_eu's calibration undisturbed. Bottom to
+        ! top the spread is 2.57.
+        !
+        ! The formula above is DEAD and stays dead. At seven nodes it runs 3.00
+        ! down to exactly 0.00, giving the top type zero separation risk, which is
+        ! not a fact about the world.
+        if ((use_unemployment_by_productivity==1) .AND. (employment_grid_size==7)) then
+
+            adjusted_probability_1=(/1.7373d0,1.7373d0,1.7373d0,&
+                1.3345d0,1.1694d0,1.0528d0,0.6757d0/)
+
+        else
+
+            adjusted_probability_1=1
+
+        end if
                 
     end subroutine
     
@@ -29675,8 +29719,61 @@
         ! over the life cycle, so employment_grid at any age is the same y.
         do employment_index=1,employment_grid_size
 
-            model_ss_benefits(employment_index)=&
-                ss_replacement_rate*employment_grid(1,employment_index)
+            ! SOCIAL SECURITY IS THE US STATUTE NOW, not a flat replacement rate.
+            !
+            ! The author, 3 September: *"we want ... the ss to be aligned with the
+            ! statute"*, after asking why so many of the model's homeless are old.
+            ! The flat 0.40*y it replaces was REGRESSIVE against the net wage --
+            ! SS/(lambda y^tau) = 0.5318 y^0.15 rises with y, so it replaced 31.5
+            ! per cent of the bottom node's net wage and 58.7 of the top's, which
+            ! is the opposite of the real programme and the direct cause of
+            ! retirement-age homelessness at 3.75 times the observed rate.
+            !
+            ! SSA 2024 primary insurance amount: 90 per cent of the first $1,174
+            ! of monthly AIME, 32 per cent to $7,078, 15 per cent above, capped at
+            ! the $168,600 taxable maximum. Divided by the SSA average wage index
+            ! of $63,795 those become, in units of mean earnings, bends at 0.2208
+            ! and 1.3314 and a cap at 2.6428, which is what the parameters below
+            ! hold. Aggregate spending is 0.40230 against 0.40000 for the flat
+            ! rate, so this is very nearly revenue neutral and the government
+            ! budget barely moves.
+            !
+            ! AIME is career-average indexed earnings and productivity is fixed
+            ! over the life cycle here, so employment_grid IS the household's
+            ! permanent earnings level and maps to AIME directly. That is also why
+            ! the base is y rather than y*eps, as the note above already says.
+            if (use_pia_formula==1) then
+
+                pia_y_1=min(employment_grid(1,employment_index),ss_taxable_max)
+
+                model_ss_benefits(employment_index)=&
+                    ss_pia_rate_1*min(pia_y_1,ss_bend_1)+&
+                    ss_pia_rate_2*max(0.d0,min(pia_y_1,ss_bend_2)-ss_bend_1)+&
+                    ss_pia_rate_3*max(0.d0,pia_y_1-ss_bend_2)
+
+                ! SSI, the means-tested floor. It is why elderly homelessness is
+                ! the LOWEST of any age band in the data, 0.00077, and the model
+                ! has no floor at all. The 2024 federal benefit rate of $943 a
+                ! month is 0.1774 of the average wage index.
+                !
+                ! ssi_floor_takeup is a DIAL and it is the instrument for how many
+                ! of the old end up on the street. At 1 nobody is priced out of
+                ! the cheapest rental in retirement and band 5 homelessness goes
+                ! to about nothing; at 0 the floor is absent and 6.6 per cent of
+                ! the population is priced out on the PIA alone. Real SSI has a
+                ! $2,000 asset test and take-up among eligible elderly of roughly
+                ! half, so a value well below one is the empirically defensible
+                ! region rather than a fudge.
+                model_ss_benefits(employment_index)=&
+                    max(model_ss_benefits(employment_index),&
+                    ssi_floor_takeup*ssi_floor_level)
+
+            else
+
+                model_ss_benefits(employment_index)=&
+                    ss_replacement_rate*employment_grid(1,employment_index)
+
+            end if
 
         end do
         
@@ -35377,6 +35474,16 @@
                     end if
                     addiction_scalar_1=max(min(handover_value,b_hi),b_lo)
 
+                case ("ssi_floor_takeup")
+                    write(*,*) "HANDOVER ssi_floor_takeup:", ssi_floor_takeup, "->", handover_value
+                    ssi_floor_takeup=max(min(handover_value,1.d0),0.d0)
+                case ("use_pia_formula")
+                    write(*,*) "HANDOVER use_pia_formula:", use_pia_formula, "->", handover_value
+                    use_pia_formula=nint(max(min(handover_value,1.d0),0.d0))
+                case ("use_unemployment_by_productivity")
+                    write(*,*) "HANDOVER use_unemployment_by_productivity:",&
+                        use_unemployment_by_productivity, "->", handover_value
+                    use_unemployment_by_productivity=nint(max(min(handover_value,1.d0),0.d0))
                 case ("y_grid_kappa")
                     write(*,*) "HANDOVER y_grid_kappa:", y_grid_kappa, "->", handover_value
                     y_grid_kappa=max(min(handover_value,8.d0),1.d0)
