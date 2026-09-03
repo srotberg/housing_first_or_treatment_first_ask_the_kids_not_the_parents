@@ -708,7 +708,38 @@ BOUNDS = {
     # asset test and take-up among eligible elderly of roughly half, so the
     # empirically defensible region is well inside the upper bound rather than
     # at it -- which is why this is a calibrated dial and not a switch.
-    'ssi_floor_level':                                  (0.1774, 2.0),
+    # BOUNDED AT 0.30 SO SOCIAL SECURITY STAYS EARNINGS-RELATED, not at 2.0.
+    # The author, 3 September: *"You need the floor to be 1?? That means
+    # everyone has the same ss"*. They are right and the upper bound of 2.0 was
+    # wrong.
+    #
+    # PIA IS CAPPED AT 0.75082 on this grid -- nodes 6 and 7 both hit
+    # ss_taxable_max -- so any floor at or above that pays EVERY retiree the
+    # same number and the benefit spread is exactly 1.0000. It is already nearly
+    # gone below that: at a floor of 0.60, nodes 1 to 5 are all on the floor,
+    # which is 92.1 per cent of the mass, and the whole schedule spans a factor
+    # of 1.25.
+    #
+    #     floor    nodes on it        mass flat   benefit spread
+    #     0.1774   1,2,3                 0.2407           4.2324
+    #     0.30     1,2,3                 0.2407           2.5027
+    #     0.60     1,2,3,4,5             0.9211           1.2514
+    #     0.75082  1,2,3,4,5             0.9211           1.0000
+    #     0.90     all seven             1.0000           1.0000
+    #
+    # 0.30 is the last value that leaves the floor doing what a floor does:
+    # exactly the bottom three nodes, 24 per cent of the mass, which is what
+    # real SSI does. Node 4's own PIA is 0.30015 and node 4 carries 39.8 per
+    # cent, so anything above that starts flattening the middle of the
+    # distribution.
+    #
+    # THE CONSEQUENCE, STATED RATHER THAN HIDDEN: h_share5 was 0.518 at a floor
+    # of 0.60 and 0.935 at 0.1774, so inside this bound the floor CANNOT reach
+    # the 0.075 target. It is a real instrument -- the band 5 rate fell
+    # thirteenfold between those two -- but not a sufficient one, and the moment
+    # needs a parameter that scales benefits PROPORTIONALLY instead of
+    # truncating them from below. See SSI_FLOOR_ANALYSIS.md.
+    'ssi_floor_level':                                 (0.1774, 0.30),
     'utility_cost_of_treatment':                            (0.0, 8.0),
     'probability_becoming_unemployed':                     (1e-6, 0.500),
     # THE FLOOR EXCLUDED THE SOLUTION and was found by measurement, 2 September.

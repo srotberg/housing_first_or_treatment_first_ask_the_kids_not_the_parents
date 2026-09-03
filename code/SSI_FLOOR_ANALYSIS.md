@@ -73,3 +73,49 @@ cannot be calibrated without a Fortran change. If old-age homelessness is to
 have a real instrument, that is the candidate: it scales benefits at every node
 rather than only where a floor binds. Making it a variable is a small change and
 it is the author's call, not mine.
+
+## THE FLOOR CANNOT BE THE INSTRUMENT, because a high floor IS a flat pension
+
+The author, 3 September, on being shown that h_share5 needs a floor near 1.0:
+*"I don't understand... You need the floor to be 1?? That means everyone has
+the same ss"*. Correct, and it invalidates the recommendation in the section
+above. The arithmetic was in the PIA table the whole time and was not read.
+
+PIA is capped at **0.75082** on this grid, because nodes 6 and 7 both hit
+`ss_taxable_max`. The benefit is `max(PIA_i, floor)`, so:
+
+    floor     nodes on the floor   mass flat   benefit spread   what SS is
+    0.1774    1,2,3                   0.2407          4.2324   earnings-related
+    0.30      1,2,3                   0.2407          2.5027   earnings-related
+    0.60      1,2,3,4,5               0.9211          1.2514   nearly flat
+    0.75082   1,2,3,4,5               0.9211          1.0000   COMPLETELY FLAT
+    0.90      all seven               1.0000          1.0000   COMPLETELY FLAT
+    1.00      all seven               1.0000          1.0000   COMPLETELY FLAT
+
+At any floor at or above 0.75082 every retiree receives an identical benefit.
+At 0.60 the whole schedule already spans a factor of 1.25 and 92 per cent of
+the mass is on the floor. **h_share5 crosses its target between 0.60 and 1.00**,
+which is exactly the region where social security stops being a function of
+lifetime earnings.
+
+So the bracket that looked like a success is a bracket across a modelling
+boundary, not a calibration. The search bound is now (0.1774, 0.30): 0.30 is
+the last value at which the floor binds on exactly the bottom three nodes, 24
+per cent of the mass, which is what real SSI does -- node 4's own PIA is
+0.30015 and node 4 carries 39.8 per cent.
+
+## WHAT WOULD ACTUALLY WORK: scale benefits, do not truncate them
+
+The moment needs a parameter that raises retirement income PROPORTIONALLY, so
+the schedule keeps its shape. Two candidates, both requiring a one-line source
+change and both the author's call:
+
+- **`ss_replacement_rate`**, currently `real(8), parameter :: 0.40` at line
+  3834 and so unreachable. It multiplies the last working age grid point
+  directly, which preserves earnings-relatedness exactly. It is only live when
+  `use_pia_formula=0` -- and PIA=1 has independently been measured to make
+  h_share5 WORSE and to cost h_1, so reverting the flip and calibrating this is
+  the cleaner of the two.
+- **A scalar on the PIA**, or the three `ss_pia_rate_*` moved together. They
+  are already variables rather than parameters, but there is no single dial for
+  them, and moving three numbers against one moment is not identified.
