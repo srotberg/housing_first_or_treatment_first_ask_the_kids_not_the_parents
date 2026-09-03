@@ -413,11 +413,26 @@ What loses it:
 - ending the turn with "monitoring for output" and no tracked command at all,
   which is what both of these did.
 
-**So every solve brief now says, in these words:** run the solve with the Bash
-tool's `run_in_background` parameter set to true; do not run it in the
-foreground; do not poll it with sleep; do not detach it with `&` or nohup.
-Telling a worker "do not go idle" is not enough on its own -- it worked for
-line 1 and it is a hope, not a mechanism.
+**THIS SECTION CONTRADICTED THE ONE BELOW IT, AND THE ONE BELOW WINS.** The
+rule of record, from 2 September, is FOREGROUND: a worker must not background
+the solver at all. It was written after three workers ignored a foreground brief,
+backgrounded their solve, and died. This section was added on 3 September
+proposing the opposite -- background it through the Bash tool's parameter, so the
+harness re-invokes the worker when it exits -- on the reasoning that the tool's
+own tracking is a mechanism where "do not go idle" is only a hope.
+
+That reasoning is untested and the evidence is not in. Seven workers were
+briefed that way on the night of 3 September; at the time of writing none had
+woken and pushed, and the three that reported status went idle with
+"solve running (task ...)". If any of them wakes and pushes, this becomes a real
+alternative and the section below should be amended with the evidence. Until one
+does, **brief FOREGROUND, as the section below says**, and do not treat the
+harness parameter as a substitute for a brief that keeps the worker attached.
+
+What both sections agree on, and what the failures actually share: a worker must
+never end its turn with the solve unattended, and it must PUSH THE POINT FILE
+BEFORE WRITING ANY PROSE. A hand-detached `&` or `nohup` is fatal under either
+rule.
 
 **And count the launches.** Line 4 was simply never relaunched after its arm was
 invalidated. Before ending the turn that launches a batch, list the sessions
@@ -693,6 +708,21 @@ Say all of this in every worker prompt, not just "foreground":
 - If you must wait, wait with a blocking command, and push whatever exists first.
 
 ## HOW LONG A SOLVE ACTUALLY TAKES, measured
+
+**ON THE SEVEN NODE GRID, 3 September: 2 to 4 minutes, median 3.** Twenty-two
+points, every one of them at `number_of_beta_types=2` and every one passing
+16 of 16 invariants, so they are comparable runs and not short-circuited ones.
+Cutting the productivity grid from seventeen nodes to seven is what bought it.
+The `-O3` build that precedes the solve is 76 seconds, measured, and is NOT in
+the "solved in N min" figure -- the script starts its clock after the build.
+
+**Judge a run against 3 minutes, not against the numbers below.** On the night
+of 3 September a control on this grid was still solving at 13 minutes, which
+against the old figures looks ordinary and against the right one is more than
+four times over. Reading it against the stale benchmark would have hidden it.
+
+The older figures, kept because they are the benchmark for the seventeen node
+grid and for a borrowing-ON economy:
 
 Borrowing OFF, 4 cores: 13, 15, 16, 17 minutes across four points on
 841e04b785. Borrowing ON adds seven negative grid points to BOTH the state loops
