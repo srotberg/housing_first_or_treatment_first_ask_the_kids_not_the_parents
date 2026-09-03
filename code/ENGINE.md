@@ -505,7 +505,30 @@ out of the archive and measured by an earlier worker. **A batch that needs a bas
 must re-measure the base as one of its own lines.** It costs one solve and it is
 the difference between a bracket and a coincidence.
 
-### NEVER RUN A SOLVE IN THE COORDINATOR'S OWN CONTAINER
+### THE COORDINATOR MAY SOLVE, ON THE AUTHOR'S EXPLICIT AUTHORISATION OF 15:28
+
+The author, 3 September: *"Yes, solve it in your container."* Granted after
+twenty-four of twenty-eight workers were killed by API 529s and the fleet had
+landed nothing for three firings, while this session's own API calls had
+succeeded all day without a single failure.
+
+**Measured on the first authorised solve: 5 minutes 0 seconds**, two beta
+types, worker log 15:28:43 to 15:33:43. That is the honest cost of the rule
+below and it is a twentieth of what the rule was written to protect.
+
+USE IT WHEN THE FLEET IS DEGRADED AND FOR THE MEASUREMENT THAT UNBLOCKS THE
+SEARCH, not as the default. The reasons in the rule below have not stopped
+being true -- this container holds the trigger loop and the conversation, and a
+restart still loses whatever is running -- so a coordinator solve is a
+deliberate five-minute bet placed on the one line that matters most, taken in
+the FOREGROUND, never backgrounded. The original rule's failure was a
+backgrounded solve, which is the part that must never come back.
+
+Follow the same discipline demanded of a worker: `cat -n` the batch, read the
+line off the screen, issue it VERBATIM in a separate call, no command
+substitution.
+
+### NEVER RUN A SOLVE IN THE COORDINATOR'S OWN CONTAINER -- superseded above
 
 Added 2 September 22:09. The coordinator started one arm of the h_1 bracket
 locally with `run_in_background`, to save a worker slot. The container was
