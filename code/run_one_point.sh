@@ -170,6 +170,36 @@ declare -A P=(
     # so there is nothing else to set. 0.98 gives 0.9651*sqrt(1-0.98^2)=0.1921.
     [persistent_income_risk]=0
     [rho_productivity]=0.98
+    # THE PRODUCTIVITY PROCESS ITSELF, on the author's instruction of 3
+    # September: "yes, switch to my process and use it". 1 is the quantile grid
+    # built from y_grid_kappa and sd_permanent_productivity, frozen over the life
+    # cycle. 0 is the author's own KKK_process: a two component process -- a
+    # fixed effect with persistence 0.5 and innovation sd 0.309, and a persistent
+    # component with persistence 0.9 and innovation sd 0.2 -- collapsed onto ONE
+    # grid whose WIDTH grows with age. That is the fanning out: the same node
+    # index is a wider deviation from the mean at fifty than at twenty six, so
+    # within cohort inequality grows over the life cycle.
+    #
+    # NOTHING IS SHARED BETWEEN THE TWO. y_grid_kappa, bottom_productivity_level
+    # and sd_permanent_productivity are inert under KKK; the four process numbers
+    # and kkk_s_deviation_bottom are inert under the quantile grid. A point is
+    # therefore run at one or the other, never at a blend.
+    [fixed_productivity]=1
+    # THE KKK GRID'S BOTTOM WIDTH, which is what y_grid_kappa is on the quantile
+    # grid: the instrument for the mass poor enough to be priced out of the
+    # cheapest rental. 3.00 puts 0.621 per cent on the bottom node, 3.25 gives
+    # 0.318, 3.50 gives 0.155, against a design target of 0.198 from the
+    # homelessness bands.
+    [kkk_s_deviation_bottom]=3.0
+    [kkk_s_deviation_top]=3.0
+    # THE FOUR NUMBERS OF THE PROCESS, at the author's own values. Settable
+    # because the dispersion they deliver is not the dispersion sigma_y is
+    # calibrated to -- see KKK_VS_SIGMA_Y.md -- not because anything says they
+    # should be moved without a reason.
+    [persistence_fixed_employment_newborn]=0.5
+    [sd_fixed_employment_newborn]=0.309
+    [persistence_employment_surviving]=0.9
+    [sd_employment_surviving]=0.2
     [use_pia_formula]=1
     [ssi_floor_takeup]=0.0
     # UNEMPLOYMENT BY PRODUCTIVITY, from BLS 2019 by education. 1 applies the
