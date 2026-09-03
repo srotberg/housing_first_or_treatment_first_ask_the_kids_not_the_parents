@@ -528,6 +528,21 @@ Follow the same discipline demanded of a worker: `cat -n` the batch, read the
 line off the screen, issue it VERBATIM in a separate call, no command
 substitution.
 
+**AND IT DIRTIES THE SHARED WORKING TREE, which a worker's own container
+absorbs.** The first authorised solve left three tracked files modified:
+`calibration_state.dat`, `B_SWEEP_GRID.txt` and `newborn_parent_share.dat`.
+Checked before committing them, because two of the three are read back as warm
+starts: `run_one_point.sh` line 575 deletes `calibration_state.dat` and its
+distribution files at the head of EVERY run, and line 578 rewrites
+`B_SWEEP_GRID.txt` from the vector, so neither can seed a later point. That is
+what "cold" means in the standing rule and it is why the byproducts are safe to
+commit rather than needing to be reverted.
+
+Do not take that on trust after a change to `run_one_point.sh`. A coordinator
+solve writes into the same directory the next gate run reads, so if that
+deletion ever stops happening, a point measured here would seed the one after
+it and the two would not be independent.
+
 ### NEVER RUN A SOLVE IN THE COORDINATOR'S OWN CONTAINER -- superseded above
 
 Added 2 September 22:09. The coordinator started one arm of the h_1 bracket
