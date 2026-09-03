@@ -82,59 +82,57 @@ Testing whether the spike moves with the cap requires editing the source, which
 changes the model hash and unpools all 99 points in this economy. That is a real
 cost and it is the author's call, not the loop's.
 
-## THE MASS ACCOUNTING: the disorder state is not conserved across the cap
+## RETRACTED: there is no mass leak, and the state IS conserved
 
-The author, 3 September: *"We need to understand what is special about age 55....
-why they become homeless. Is it some strange mechanical error?"*
+An earlier version of this file claimed the addiction state is not conserved across
+`max_age_to_choose_addiction`, and called it a mechanical error, on the strength of
+the addicted mass falling 98.8 per cent between age 80 and 81 while total mass fell
+5 per cent. **That was wrong and it is retracted in full.**
 
-It is. Here is the arithmetic, from `point_19fa680bc0`, across index 55 to 56:
+The author, 3 September: *"At age 80 you just can't use drugs if you don't have sud
+already. But if you have sud, you still have it if you didn't recover based on the
+recovery probability."* That is the design, and it is what the code does.
 
-    age 79:  sud rate 0.000671   mass 0.588689   addicted mass 0.000395
-    age 80:  sud rate 0.436898   mass 0.561685   addicted mass 0.245399
-    age 81:  sud rate 0.005521   mass 0.533166   addicted mass 0.002944
+The error was in what the diagnostic measures. `addiction_rate_by_age` is
+accumulated from `is_addicted`, and `is_addicted` is set at line 13698 as
 
-The addicted mass falls by **98.8 per cent** in one period, 0.2454 to 0.0029.
+    is_addicted=0
+    if (addiction_consumption_1>0) is_addicted=1
 
-**They did not die.** If that mass had died, TOTAL mass would have to fall by at
-least 0.2425. It fell by 0.0285 -- eight and a half times less. The households
-survive into age 81.
+so it is **CONSUMES THIS PERIOD**, not HAS THE DISORDER. The disorder state is
+`unemployment_index>threshold_addiction_index`, which is a different quantity. The
+file says so itself in the comment at 13808-13815, which records that this exact
+conflation had already caused one bug: *"requiring is_addicted==1 here -- which
+means CONSUMES, not HAS THE DISORDER -- dropped the income and assets of every
+carrier consuming nothing"*. The warning was there and I walked past it.
 
-**They did not recover.** `probability_of_stopping_addiction = 0.025`, so at most
-0.0061 of that mass could recover in a year, forty times too little.
+So the `sud=` column of the per-age table is a CONSUMPTION FLOW. Age 80 is the last
+age at which consumption can be chosen, 43.7 per cent choose it, and at 81 the
+choice is unavailable so the flow falls to 0.55 per cent. No mass moves, nothing
+leaks, and the stock of the disorder passes the boundary untouched.
 
-So the households live, and the disorder they had at 80 is gone at 81. **The
-addiction state is not conserved across the boundary at
-`max_age_to_choose_addiction`.** That is a mechanical error, not an economic
-mechanism, and it is what makes starting to use at exactly index 55 attractive:
-the household gets the flow benefit and the state is wiped before the cost is paid.
+## What is still unexplained
 
-That also explains what the earlier reading of the choice loop could not. The loop
+The homelessness spike is real and it is not retracted: 0.190450 at age 80 against
+0.000535 at 79 and 0.004786 at 81, in four independent points, and about three
+quarters of all homelessness in the model when it appears.
 
-    do future_addiction_index=addiction_index, &
-        (1-allow_to_choose_addiction)*addiction_index+allow_to_choose_addiction*(...)
+What has changed is the QUESTION. It is no longer "why does a state vanish"; it is
+**why do 43.7 per cent of eighty year olds choose to consume drugs at the last age
+they are allowed to, and why does that put them on the street.** The second half is
+easy -- drug spending crowds out rent -- and the first half is not yet answered.
 
-freezes the state correctly when read on its own. So the fault is not in the loop
-bound; it is that the mass chosen into state 1 at index 55 does not ARRIVE in state
-1 at index 56.
+A deadline alone should not produce it. Consuming at 79 does not preclude consuming
+at 80, so waiting costs nothing and there is no option that expires. If anything
+the cap should DETER consumption at 80, since a household acquiring the disorder
+there carries it into ages where it can never feed it again.
 
-**WHERE TO LOOK, stated as a hypothesis and not as a finding.**
-`allow_to_choose_addiction` is recomputed at five separate sites -- 18986, 19609,
-20170, 20577, 21003 -- each from the local `age_index`. If the site that
-accumulates the DISTRIBUTION evaluates the flag at the age it is writing INTO
-rather than the age it is reading FROM, mass chosen to enter state 1 is written to
-state 0. That is the same family as the newborn endowment double-count found
-earlier today: a policy path and an accounting path that disagree.
-
-This has NOT been confirmed by reading that code. What is confirmed is that mass is
-conserved, households survive, and the state disappears.
+Note also that the spike is parameter dependent: the joint step's first line has
+none of it, with age 80 at 0.000324 and a smooth profile.
 
 ## Why it matters for the calibration, not just for correctness
 
-The joint step's first line has no spike at all -- age 80 sits at 0.000324 and the
-profile is smooth -- so the spike is parameter dependent and appears only where the
-drug block makes onset at the deadline attractive. But when it appears it is about
-three quarters of all homelessness, and when it does not, homelessness nearly
-vanishes: h_1 -95.9 per cent and emp_homeless -100.
-
-So the model is currently either concentrated in a mechanical artefact or has
-almost no homeless at all, and neither is a calibration the note can use.
+When the spike appears it is about three quarters of all homelessness; when it does
+not, homelessness nearly vanishes -- h_1 at -95.9 per cent and emp_homeless at -100.
+So the model is currently either concentrated on one age or nearly empty of
+homeless, and neither is a calibration the note can use.
