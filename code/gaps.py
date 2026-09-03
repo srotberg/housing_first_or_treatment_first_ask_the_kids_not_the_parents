@@ -26,7 +26,12 @@ SKIP = {'h_3'}
 # and the cost burden share a denominator. rent50 is the same headcount over
 # INCOME and pointed the OPPOSITE way -- +163 per cent against h_2's -38 -- so
 # scoring both left one parameter with two targets it could not satisfy at once.
-UNSCORED = {'kappa_ued', 'kappa_uem', 'rent50', 'h_2', 'h_share1'}
+# h_2 LEFT THIS SET on 3 September, when the rung was pointed back at it. It had
+# been unscored because the rung was standing in for emp_homeless's missing
+# instrument; emp_homeless now has bottom_productivity_level and h_2 is a target
+# again. next_batch.py scores it and this file must agree -- when they disagreed
+# the loss was computed over two different sets and the wrong point was promoted.
+UNSCORED = {'kappa_ued', 'kappa_uem', 'rent50', 'h_share1'}
 BAND = {'beta': (3.0, 4.5)}   # lower edge follows wealth_to_output_data, back to 3.0 on 2 Sep
 
 # parameter -> the moment it is bracketed on. Kept here rather than imported so
@@ -98,7 +103,6 @@ def _cross_check():
         print('The loss below is over gaps.py\'s set. Reconcile the two files.\n')
 # moments that are printed and deliberately not scored, with the reason
 NOTE = {'h_3': 'conceded, a fact about a grid the model chose',
-        'h_2': 'OUT OF THE LOSS: the rung targets emp_homeless on the author\'s decision',
         'omega_c': 'round 5 only; measured when measure_child_gap=1 is handed in',
         'rent50': 'reported, not scored: same headcount over income, opposite sign',
         'y_u': 'mortality pinned at 8 by the author; goes to a robustness run'}
