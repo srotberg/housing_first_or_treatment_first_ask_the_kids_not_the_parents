@@ -81,3 +81,60 @@ constant, not a HANDOVER variable -- so it cannot be varied from a batch line.
 Testing whether the spike moves with the cap requires editing the source, which
 changes the model hash and unpools all 99 points in this economy. That is a real
 cost and it is the author's call, not the loop's.
+
+## THE MASS ACCOUNTING: the disorder state is not conserved across the cap
+
+The author, 3 September: *"We need to understand what is special about age 55....
+why they become homeless. Is it some strange mechanical error?"*
+
+It is. Here is the arithmetic, from `point_19fa680bc0`, across index 55 to 56:
+
+    age 79:  sud rate 0.000671   mass 0.588689   addicted mass 0.000395
+    age 80:  sud rate 0.436898   mass 0.561685   addicted mass 0.245399
+    age 81:  sud rate 0.005521   mass 0.533166   addicted mass 0.002944
+
+The addicted mass falls by **98.8 per cent** in one period, 0.2454 to 0.0029.
+
+**They did not die.** If that mass had died, TOTAL mass would have to fall by at
+least 0.2425. It fell by 0.0285 -- eight and a half times less. The households
+survive into age 81.
+
+**They did not recover.** `probability_of_stopping_addiction = 0.025`, so at most
+0.0061 of that mass could recover in a year, forty times too little.
+
+So the households live, and the disorder they had at 80 is gone at 81. **The
+addiction state is not conserved across the boundary at
+`max_age_to_choose_addiction`.** That is a mechanical error, not an economic
+mechanism, and it is what makes starting to use at exactly index 55 attractive:
+the household gets the flow benefit and the state is wiped before the cost is paid.
+
+That also explains what the earlier reading of the choice loop could not. The loop
+
+    do future_addiction_index=addiction_index, &
+        (1-allow_to_choose_addiction)*addiction_index+allow_to_choose_addiction*(...)
+
+freezes the state correctly when read on its own. So the fault is not in the loop
+bound; it is that the mass chosen into state 1 at index 55 does not ARRIVE in state
+1 at index 56.
+
+**WHERE TO LOOK, stated as a hypothesis and not as a finding.**
+`allow_to_choose_addiction` is recomputed at five separate sites -- 18986, 19609,
+20170, 20577, 21003 -- each from the local `age_index`. If the site that
+accumulates the DISTRIBUTION evaluates the flag at the age it is writing INTO
+rather than the age it is reading FROM, mass chosen to enter state 1 is written to
+state 0. That is the same family as the newborn endowment double-count found
+earlier today: a policy path and an accounting path that disagree.
+
+This has NOT been confirmed by reading that code. What is confirmed is that mass is
+conserved, households survive, and the state disappears.
+
+## Why it matters for the calibration, not just for correctness
+
+The joint step's first line has no spike at all -- age 80 sits at 0.000324 and the
+profile is smooth -- so the spike is parameter dependent and appears only where the
+drug block makes onset at the deadline attractive. But when it appears it is about
+three quarters of all homelessness, and when it does not, homelessness nearly
+vanishes: h_1 -95.9 per cent and emp_homeless -100.
+
+So the model is currently either concentrated in a mechanical artefact or has
+almost no homeless at all, and neither is a calibration the note can use.
