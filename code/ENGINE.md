@@ -931,6 +931,40 @@ naming the 529.
    batches its pushes loses every line if it dies on the final one. The brief
    must say push after each solve.
 
+### THE BRIEF CANNOT FIX A 529, BECAUSE THE 529 ENDS THE TURN
+
+Updated 14:05. The first version of this section told the brief to instruct a
+retry. That was tried on four workers at 13:51-13:59 and **all four died
+anyway**, at the same 3.5 to 4 minute mark, with no branch created.
+
+The reason is mechanical and it is worth stating plainly: **the 529 terminates
+the worker session's own turn.** The worker is not choosing to give up when it
+sees an error -- it never gets another model call in which to act on the
+instruction. Telling it to be persistent is telling it something it cannot hear.
+
+Running total for 3 September: **nine of twelve workers lost**, every one of
+them before its solve began.
+
+**SO THE MITIGATION IS TO SHORTEN THE RUN-UP, NOT TO TOUGHEN THE BRIEF.** The
+danger window is the interval between launch and the first `run_one_point.sh`
+call, because that is when the worker is making model calls. Once the solver is
+running in the foreground the worker makes NO API calls for three to five
+minutes and the window has passed. Every turn spent before the solve is
+exposure.
+
+That has one concrete consequence for the brief, and it reverses standing
+advice in this file: **a one-task worker should NOT be told to read ENGINE.md
+first.** This file is 47 KB and the dead workers show 41k tokens of context
+used -- almost all of it this document -- consumed in the minutes they then
+died in. Inline the three or four constraints the line actually needs (verbatim
+line, no command substitution, foreground, no edits under `code/` mid-solve,
+the branch name) and tell the worker to start the first solve on its first tool
+call region. Reserve "read ENGINE.md" for a worker doing something structural.
+
+**AND PUSH AFTER EVERY LINE, WHICH MATTERS MORE ON A CONSOLIDATED WORKER.** A
+worker carrying three lines that batches its pushes loses all three to a 529 on
+the last one.
+
 **AND CHECK THE SESSION RECORD, NOT ONLY THE BRANCH LIST.** `git ls-remote`
 cannot distinguish "still solving" from "died eight minutes ago", and at this
 cadence that is the difference between waiting and losing a firing. `mine: true`
