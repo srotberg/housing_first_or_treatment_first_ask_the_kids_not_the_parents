@@ -15,7 +15,7 @@ Tags (md5 of the sorted vector, as `run_one_point.sh` computes them):
 The two tags differ, so neither arm can be served the other's file, and neither
 tag was present in `code/points/` beforehand: both arms genuinely solve.
 
-## STATUS: NOTHING MEASURED. Line 1 killed three times; line 2 never started.
+## STATUS: NOTHING MEASURED. Line 1 killed four times; line 2 never started.
 
 **No moment, no gap, no difference is reported below, because none was
 measured.** Line 2 was never begun: a pair needs both arms from one container,
@@ -28,6 +28,7 @@ and no arm has ever finished.
 | 1 | 15:03:55 | ~15:14 | ~11 min | — |
 | 2 | 21:12:06 | ~21:21 | ~9 min | ~10 min |
 | 3 | 21:25:05 | ~22:10 | ~45 min | ~48 min |
+| 4 | 22:14:38 | after 23:42 | >88 min | ~90 min |
 
 All three were reported to the session as "the container was restarted". No
 `point_*.txt` and no `point_*.FAILED.txt` was ever written, because the solve
@@ -243,3 +244,39 @@ The gap is not marginal, and no amount of retrying closes it.
 - The Fortran source was NOT modified.
 - `supervise_calibration.py` was not run; `code/points_pregrid/` untouched.
 - Everything committed to `wip/patient-floor` only; no rebase, no merge.
+
+## Attempt 4: the last data point, and the end of it
+
+Attempt 4 was instrumented throughout and killed by a fourth container restart
+after more than 88 minutes. Its final reading, at t=5272s:
+
+```
+t=5272s rss=1831MB wealth_of_top_x_perc_index = 1
+```
+
+**Still pass 1 of 3, at 88 minutes.** It was the longest-lived attempt and the
+longest-lived container of the night (~90 min against ~48, ~10 and ~11), and it
+still did not finish the first of three passes of a single routine.
+
+That is the strongest single number in this file. It is not a projection: at 88
+minutes of a solve whose archive-wide maximum is 27, the run had completed less
+than a third of one routine, with two dearer passes to follow.
+
+No `point_86a921e21d.txt` was ever written. The auto-commit watch never fired
+because there was never anything to commit.
+
+## Final state
+
+- Four attempts at line 1, four container restarts, no moments.
+- Line 2 never started, deliberately: a pair measured across two containers is
+  not a pair, which is the premise of the exercise.
+- No `point_*.txt` and no `point_*.FAILED.txt` exists for either tag.
+- The vector was never changed, the Fortran never modified,
+  `supervise_calibration.py` never run, `code/points_pregrid/` never touched.
+- Everything is on `wip/patient-floor`. Nothing was pushed to
+  `wip/patient-no-borrow` or `claude/two-period-addiction-hazard-d7gb61`, and
+  nothing was rebased or merged.
+
+**The question the batch was written to answer -- whether
+`restrict_borrowing_to_impatient` is a model change or a speed setting -- is
+still open, and no number in this repository bears on it.**
