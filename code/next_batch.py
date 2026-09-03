@@ -476,6 +476,19 @@ OWN = {
     'relative_share_of_leisure':                           'omega_l',
     'labor_income_tax_rate':                               'tau_l',
     'sd_permanent_productivity':                           'sigma_y',
+    # SIGMA_Y HAS A SECOND INSTRUMENT AND ONLY ONE OF THEM IS EVER LIVE.
+    # sd_permanent_productivity builds the quantile grid. Under
+    # fixed_productivity=0 the grid is the author's KKK_process and this
+    # parameter moves NOTHING; the dispersion is set by kkk_sigma_scale, the
+    # common multiplier on the two innovation sds, which the Fortran now steps
+    # against the same moment and the same target.
+    #
+    # The mapping is NOT switched here yet, deliberately. Two instruments
+    # pointed at one moment is a conflict, and which of them is live is a
+    # property of the POINT (its fixed_productivity), not of this table. It is
+    # switched when the author picks the benchmark process; the four arms in
+    # code/batch_kkk.txt are what that choice rests on. Until then a KKK point
+    # carries kkk_sigma_scale explicitly in its vector.
     # 'discount_factor_impatient':                         'w_bot',
     # THE MORTALITY PENALTY IS THE PRICE OF USING, so it decides WHO is willing
     # to pay it, and a high one leaves only the most desperate -- who are the
@@ -638,6 +651,10 @@ BOUNDS = {
     'relative_share_of_leisure':                           (0.5, 12.0),
     'labor_income_tax_rate':                               (0.30, 0.95),
     'sd_permanent_productivity':                           (0.60, 1.30),
+    # The KKK grid's dispersion instrument. 1.0 is the published GKOS sds and
+    # about 2.2 is what puts the bottom half's share on the SCF's 17.2 per cent,
+    # so the bracket is opened well either side of that.
+    'kkk_sigma_scale':                                     (0.80, 4.00),
     'discount_factor_impatient':                           (0.50, 0.995),
     # Standardised mortality ratios for opioid use disorder run 6 to 10 in the
     # literature and 8 was the assigned midpoint. The author has authorised 4 as

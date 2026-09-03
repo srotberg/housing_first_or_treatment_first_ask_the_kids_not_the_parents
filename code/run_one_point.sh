@@ -200,6 +200,20 @@ declare -A P=(
     [sd_fixed_employment_newborn]=0.309
     [persistence_employment_surviving]=0.9
     [sd_employment_surviving]=0.2
+    # THE COMMON SCALE OF THE TWO INNOVATION SDS, calibrated inside the model
+    # against the bottom half's share of earnings, on the author's instruction of
+    # 3 September: "Ok, you can calibrate sigma then". It multiplies BOTH sds, so
+    # the ratio between them -- which is what decides how much of the dispersion
+    # is a birth endowment and how much accumulates with age, the fanning out --
+    # is untouched. 1.0 is the published GKOS numbers; about 2.2 is what puts the
+    # bottom half share on the SCF's 17.2 per cent. Setting it here pins the
+    # starting value; the internal loop moves it from there.
+    #
+    # NOTE the equivalence: kkk_sigma_scale=2.20949 and the two sds at their
+    # defaults is the SAME economy as sd_fixed_employment_newborn=0.68273 with
+    # sd_employment_surviving=0.44190 and the scale at 1. Set one or the other,
+    # never both, or the scaling is applied twice.
+    [kkk_sigma_scale]=1.0
     [use_pia_formula]=1
     [ssi_floor_takeup]=0.0
     # UNEMPLOYMENT BY PRODUCTIVITY, from BLS 2019 by education. 1 applies the

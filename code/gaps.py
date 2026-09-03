@@ -61,6 +61,10 @@ OWN = [
     ('relative_share_of_leisure', 'omega_l'),
     ('labor_income_tax_rate', 'tau_l'),
     ('sd_permanent_productivity', 'sigma_y'),
+    # ONLY LIVE UNDER fixed_productivity=1. Under the author's KKK_process the
+    # instrument for sigma_y is kkk_sigma_scale and sd_permanent_productivity
+    # moves nothing. Not switched here until the benchmark process is chosen --
+    # see the same note in next_batch.py.
     ('smi_onset_level', 'p_m'),
     # BOTH ADDED ON THE AUTHOR'S INSTRUCTION AND BOTH MISSED HERE. next_batch
     # gained them and gaps.py did not, which is the third time these two files

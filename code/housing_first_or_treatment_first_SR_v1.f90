@@ -1962,6 +1962,42 @@
         ! also the HANDOVER name, so the point file and the declaration agree.
         real(8) :: kkk_s_deviation_top=3
         real(8) :: kkk_s_deviation_bottom=3
+
+        ! THE COMMON SCALE OF THE TWO INNOVATION SDS, and the instrument that
+        ! calibrates the KKK grid's dispersion. On the author's instruction of
+        ! 3 September: *"Ok, you can calibrate sigma then"*.
+        !
+        ! WHY ONE NUMBER AND NOT TWO. The bottom half's share of earnings is a
+        ! function of the DISPERSION of log income and of nothing else -- for a
+        ! lognormal it is exactly Phi(-sigma) -- so it is one moment and it can
+        ! identify one instrument. Calibrating both sds against it would be
+        ! under-identified: infinitely many pairs deliver the same sigma.
+        !
+        ! The pair therefore splits into a RATIO and a SCALE, and only the scale
+        ! is free. The ratio sigma_fixed/sigma_shock = 0.309/0.200 is Guvenen,
+        ! Karahan, Ozkan and Song's and it is what decides how much of the
+        ! dispersion is a birth endowment and how much accumulates over the life
+        ! cycle -- the FANNING OUT. Multiplying both by the same k multiplies
+        ! every var(a) by k^2 and so every sd(a) by k, which leaves sd(65)/sd(26)
+        ! at 1.122 whatever k is. The shape of the age profile is untouched; only
+        ! the level of inequality moves.
+        !
+        ! WHY IT IS NOT A FUDGE. GKOS estimate the dispersion of log earnings
+        ! RESIDUALS, net of education, occupation, experience and sector. This
+        ! model carries ONE productivity type per household, so that single
+        ! number has to carry all permanent heterogeneity, including everything
+        ! those controls removed. At the estimated sds the poorest household in
+        ! the economy earns 0.232 of mean productivity and can pay the cheapest
+        ! rent out of income, so the process as published does not merely miss an
+        ! inequality statistic -- it deletes the population that becomes homeless.
+        real(8) :: kkk_sigma_scale=1.0
+        ! ITS ADJUSTER. The share falls in sigma, so a model share above target
+        ! means the economy is too equal and the scale has to rise, which is the
+        ! same sign the sd_permanent_productivity step uses. The magnitude is set
+        ! from d(share)/d(scale) = -phi(sigma)*sigma_base, about -0.16 near the
+        ! target, so a step of 5 covers roughly three quarters of the gap in one
+        ! pass and does not overshoot.
+        real(8) :: kkk_sigma_scale_adjuster=(1-freeze_sd_permanent_productivity)*(5.d0)
         ! WHAT kkk_s_deviation_bottom BUYS, and why it is the KKK grid's version of
         ! y_grid_kappa. The bottom node's mass is the normal mass below
         ! -kkk_s_deviation_bottom + half a spacing, so widening the grid pushes
@@ -27832,9 +27868,16 @@
          
         if (loop_count<1) then
 
-            call KKK_process(persistence_fixed_employment_newborn,sd_fixed_employment_newborn,persistence_employment_surviving,&
-                sd_employment_surviving,kkk_s_deviation_top,kkk_s_deviation_bottom,employment_grid,&
-                unconditional_employment_probability,employment_process)
+            ! BOTH SDS CARRY kkk_sigma_scale. It is applied here rather than to
+            ! the declarations so that the point file's sd_fixed_employment_newborn
+            ! and sd_employment_surviving keep reading as the published GKOS
+            ! numbers and the scale reads as what it is: a separate, calibrated
+            ! statement about how much dispersion one productivity type has to
+            ! carry in a model with no other permanent heterogeneity.
+            call KKK_process(persistence_fixed_employment_newborn,&
+                kkk_sigma_scale*sd_fixed_employment_newborn,persistence_employment_surviving,&
+                kkk_sigma_scale*sd_employment_surviving,kkk_s_deviation_top,kkk_s_deviation_bottom,&
+                employment_grid,unconditional_employment_probability,employment_process)
                 
 !            employment_grid(:,1)=log(0.035)*(employment_grid(:,1)/employment_grid(1,1))  !employment_grid(:,1) ! 1.12
             ! The bottom node override does NOT go here. fixed_productivity is 1,
@@ -27846,9 +27889,10 @@
 !            employment_grid(:,3)=log(0.03) ! employment_grid(:,3) ! 1.68
 !            employment_grid(:,4)=employment_grid(:,4)
                                                                                 
-            call get_probabilities_KKK_process(persistence_fixed_employment_newborn,sd_fixed_employment_newborn,&
-                persistence_employment_surviving,sd_employment_surviving,employment_grid,&
-                unconditional_employment_probability,employment_process)
+            call get_probabilities_KKK_process(persistence_fixed_employment_newborn,&
+                kkk_sigma_scale*sd_fixed_employment_newborn,&
+                persistence_employment_surviving,kkk_sigma_scale*sd_employment_surviving,&
+                employment_grid,unconditional_employment_probability,employment_process)
 
             ! ------------------------------------------------------------------
             ! WHAT THE KKK GRID NEEDS BEFORE IT CAN BE USED ON ITS OWN.
@@ -27881,7 +27925,7 @@
             ! a lognormal over the node intervals and needs the width of the
             ! distribution the nodes were cut from; under the quantile grid that
             ! is sd_permanent_productivity, and here it is this.
-            sd_log_y_newborn=sqrt(sd_employment_surviving**2+&
+            sd_log_y_newborn=kkk_sigma_scale*sqrt(sd_employment_surviving**2+&
                 sd_fixed_employment_newborn**2/&
                 max(1.d0-persistence_fixed_employment_newborn**2,10.d0**(-12)))
 
@@ -29410,51 +29454,124 @@
     end subroutine
     
     ! THE SHARE OF LABOUR PRODUCTIVITY HELD BY THE BOTTOM HALF, which is the
-    ! moment sd_permanent_productivity is calibrated on: 17.2 per cent in the
-    ! SCF 2022, households aged 26 to 65 with positive wage and salary income.
+    ! moment the dispersion of productivity is calibrated on: 17.2 per cent in
+    ! the SCF 2022, households aged 26 to 65 with positive wage and salary
+    ! income. For a lognormal the share is exactly Phi(-sigma), so the moment IS
+    ! a statement about sigma and about nothing else.
     !
     ! The node the median falls inside is SPLIT at the median rather than
     ! assigned whole, so the share moves smoothly in the dispersion instead of
-    ! jumping node to node. Read off the age one grid and the unconditional
-    ! masses, which is what both productivity processes deliver.
+    ! jumping node to node.
     !
-    ! It lives here rather than inline because it used to sit inside the
-    ! quantile branch, where fixed_productivity=0 would have left the share at
-    ! zero and sigma_y's adjuster chasing a moment nobody filled.
+    ! IT IS POOLED OVER WORKING AGES WHEN THE GRID FANS OUT, and that is not a
+    ! refinement. The SCF number is a cross section of households aged 26 to 65.
+    ! On the frozen quantile grid every age has the same distribution and the
+    ! age one share IS the pooled share, so the distinction never arose. Under
+    ! KKK the grid widens with age: at the persistence the earnings literature
+    ! supports the age 26 share is 22.8 per cent while the pooled share is 16.9,
+    ! so reading age 26 would report a 32 per cent miss on an economy whose
+    ! dispersion is within 2 per cent of target -- and the calibrator would then
+    ! chase that phantom gap by inflating sigma.
+    !
+    ! Ages are weighted equally. Survival weights would be better and are not
+    ! available here: load_mortality_profiles runs after this on the first pass.
+    ! The SCF sample is a span of ages rather than a survival weighted cohort,
+    ! so equal weights are also the closer analogue of what is measured.
     subroutine compute_bottom_half_earnings_share()
 
         use Global_Vars
 
         implicit none
 
-        real(8) :: cum_mass_1,total_y_1
-        integer :: node_1
+        integer, parameter :: pooled_size_1=employment_grid_size*(life_span-retirement_span)
+        real(8), dimension(pooled_size_1) :: pooled_y_1,pooled_m_1
+        real(8) :: cum_mass_1,total_y_1,swap_y_1,swap_m_1
+        integer :: node_1,age_1,slot_1,scan_1,n_used_1
+
+        ! THE MASSES ARE THE SAME AT EVERY AGE. The grid at age a runs from
+        ! -s_bottom*sd(a) to +s_top*sd(a) and the marginal is N(0,var(a)), so in
+        ! standardised units the nodes and their masses do not move with age.
+        ! Only the LEVELS the nodes sit at do, which is exactly the fanning out.
+        if (fixed_productivity==0) then
+
+            n_used_1=0
+
+            do age_1=1,life_span-retirement_span
+
+                do node_1=1,employment_grid_size
+
+                    n_used_1=n_used_1+1
+                    pooled_y_1(n_used_1)=employment_grid(age_1,node_1)
+                    pooled_m_1(n_used_1)=unconditional_employment_probability(node_1)/&
+                        real(life_span-retirement_span,8)
+
+                end do
+
+            end do
+
+        else
+
+            n_used_1=employment_grid_size
+
+            do node_1=1,employment_grid_size
+
+                pooled_y_1(node_1)=employment_grid(1,node_1)
+                pooled_m_1(node_1)=unconditional_employment_probability(node_1)
+
+            end do
+
+        end if
+
+        ! SORTED ASCENDING IN PRODUCTIVITY, because "the bottom half" is defined
+        ! on the pooled distribution and the age blocks interleave: node 1 at age
+        ! 65 is poorer than node 1 at age 26, and node 7 at 65 is richer than
+        ! node 7 at 26. Insertion sort over at most 280 entries, run once per
+        ! calibration loop.
+        do slot_1=2,n_used_1
+
+            swap_y_1=pooled_y_1(slot_1)
+            swap_m_1=pooled_m_1(slot_1)
+            scan_1=slot_1-1
+
+            do while (scan_1>=1)
+
+                if (pooled_y_1(scan_1)<=swap_y_1) exit
+
+                pooled_y_1(scan_1+1)=pooled_y_1(scan_1)
+                pooled_m_1(scan_1+1)=pooled_m_1(scan_1)
+                scan_1=scan_1-1
+
+            end do
+
+            pooled_y_1(scan_1+1)=swap_y_1
+            pooled_m_1(scan_1+1)=swap_m_1
+
+        end do
 
         total_y_1=0
 
-        do node_1=1,employment_grid_size
+        do slot_1=1,n_used_1
 
-            total_y_1=total_y_1+employment_grid(1,node_1)*&
-                unconditional_employment_probability(node_1)
+            total_y_1=total_y_1+pooled_y_1(slot_1)*pooled_m_1(slot_1)
 
         end do
 
         model_bottom_half_earnings_share=0
         cum_mass_1=0
 
-        do node_1=1,employment_grid_size
+        do slot_1=1,n_used_1
 
-            if ((cum_mass_1+unconditional_employment_probability(node_1))<=0.5d0) then
+            if ((cum_mass_1+pooled_m_1(slot_1))<=0.5d0) then
 
                 model_bottom_half_earnings_share=model_bottom_half_earnings_share+&
-                    employment_grid(1,node_1)*unconditional_employment_probability(node_1)
+                    pooled_y_1(slot_1)*pooled_m_1(slot_1)
 
-                cum_mass_1=cum_mass_1+unconditional_employment_probability(node_1)
+                cum_mass_1=cum_mass_1+pooled_m_1(slot_1)
 
             else
 
                 model_bottom_half_earnings_share=model_bottom_half_earnings_share+&
-                    employment_grid(1,node_1)*(0.5d0-cum_mass_1)
+                    pooled_y_1(slot_1)*(0.5d0-cum_mass_1)
 
                 exit
 
@@ -35417,6 +35534,8 @@
             write(71,'(F30.15)') penalty_child_homeless_adjuster
             write(71,'(F30.15)') previous_gap_penalty_child_homeless
             write(71,'(I10)') have_gap_penalty_child_homeless
+            ! AT THE TAIL, for the reason the comment above gives.
+            write(71,'(F30.15)') kkk_sigma_scale
 
         close(71)
 
@@ -35741,6 +35860,7 @@
                 read(72,'(F30.15)',iostat=state_ios_1) penalty_child_homeless_adjuster
                 read(72,'(F30.15)',iostat=state_ios_1) previous_gap_penalty_child_homeless
                 read(72,'(I10)',iostat=state_ios_1) have_gap_penalty_child_homeless
+                read(72,'(F30.15)',iostat=state_ios_1) kkk_sigma_scale
 
             end if
 
@@ -35903,6 +36023,14 @@
                 ! pushes mass off the bottom node -- 3.00 gives 0.621 per cent,
                 ! 3.25 gives 0.318, 3.50 gives 0.155 -- against a design target
                 ! of 0.198 from the homelessness bands.
+                ! THE DISPERSION INSTRUMENT UNDER KKK, and the ONE number that
+                ! reconciles the process with the SCF bottom half share. It
+                ! multiplies both innovation sds, so the ratio between them --
+                ! which is what sets the fanning out -- is untouched.
+                case ("kkk_sigma_scale")
+                    write(*,*) "HANDOVER kkk_sigma_scale:", kkk_sigma_scale, "->", handover_value
+                    kkk_sigma_scale=max(min(handover_value,10.d0),0.1d0)
+
                 case ("kkk_s_deviation_bottom")
                     write(*,*) "HANDOVER kkk_s_deviation_bottom:",&
                         kkk_s_deviation_bottom, "->", handover_value
@@ -36811,15 +36939,36 @@
             ! the distribution is too equal and sigma_y has to rise. The grid is
             ! rebuilt from sigma_y at the top of every loop, so the new value is
             ! in force for the solve that follows.
-            ! NOT AN INSTRUMENT WHEN THE KKK GRID IS LIVE, and this is not a
-            ! nicety. sd_permanent_productivity builds the QUANTILE grid and
-            ! nothing else; under fixed_productivity=0 the dispersion comes from
-            ! sd_fixed_employment_newborn and sd_employment_surviving instead.
-            ! Left alone, the block below would step a number that moves no
-            ! moment, the distance would never fall under its stopping rule, and
-            ! the calibration loop would never terminate. Zeroed here so the loop
-            ! can converge on everything that IS an instrument.
-            if (fixed_productivity==0) distance_sd_permanent_productivity=0
+            ! THE DISPERSION INSTRUMENT IS WHICHEVER GRID IS LIVE, and the two
+            ! share the moment, the target and the distance slot -- so the long
+            ! do while above needs no new term and exactly one of them steps.
+            !
+            ! sd_permanent_productivity builds the QUANTILE grid and nothing
+            ! else. Under fixed_productivity=0 it moves no moment at all, and
+            ! left to run it would step a number that changes nothing while the
+            ! distance never fell under its stopping rule: the calibration would
+            ! never terminate.
+            if ((calibrate_sd_permanent_productivity==1) .AND. (loop_count>=1)&
+                .AND. (fixed_productivity==0)) then
+
+                write(*,*) "bottom half's share of productivity, pooled 26-65 =",&
+                    model_bottom_half_earnings_share,&
+                    " target =", bottom_half_earnings_share_data
+                write(*,*) "kkk_sigma_scale=", kkk_sigma_scale,&
+                    " sd of log y at age 1 =", sd_log_y_newborn
+
+                kkk_sigma_scale=max(min(kkk_sigma_scale+kkk_sigma_scale_adjuster*&
+                    (model_bottom_half_earnings_share-bottom_half_earnings_share_data),&
+                    10.d0),0.1d0)
+
+                distance_sd_permanent_productivity=&
+                    (1-freeze_sd_permanent_productivity)*&
+                    abs(model_bottom_half_earnings_share-bottom_half_earnings_share_data)
+
+                write(*,*) "kkk_sigma_scale=", kkk_sigma_scale,&
+                    " distance=", distance_sd_permanent_productivity
+
+            end if
 
             if ((calibrate_sd_permanent_productivity==1) .AND. (loop_count>=1)&
                 .AND. (fixed_productivity==1)) then
