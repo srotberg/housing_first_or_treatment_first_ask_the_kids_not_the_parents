@@ -108,7 +108,25 @@ declare -A P=(
     #
     # It is a runtime value with a handover case, so this costs no model change
     # and the archive stays scoreable.
-    [number_of_beta_types]=2
+    # ONE TYPE, on the author's instruction of 3 September: *"Yes, totally ok for
+    # the bottom 50% the have less than 2.5% of wealth. Just use one beta!"*
+    #
+    # It halves the solve. The distribution is accumulated once per beta type --
+    # DIAG pooled mass reads 101.87 at two types against 51.42 at one -- and a
+    # solve was measured at 5 minutes 0 seconds with two.
+    #
+    # WHAT IT DOES TO w_bot IS THE OPPOSITE OF WHAT WAS FEARED, and the author's
+    # concession is aimed the wrong way round. With two types the impatient half
+    # holds almost nothing and drags the bottom half's share DOWN; removing them
+    # raises it. Measured at one type: 0.03203 at discount_factor 0.965 and
+    # 0.05032 at 0.99980, both ABOVE the 0.025 target. The 0.00883 that prompted
+    # the worry came from point_6f1372662f, where both factors are 0.95 -- the
+    # impatient type is present and identical there, not absent, so that point
+    # says nothing about running one type.
+    #
+    # discount_factor_impatient and restrict_borrowing_to_impatient are inert
+    # from here. They stay in the vector so every point records what it ran.
+    [number_of_beta_types]=1
     [utility_cost_of_treatment]=0.0908753
     # THE PRICE OF TREATMENT, HELD AT ZERO. It replaced the utility cost on 31
     # August and was switched back the same day on the author's instruction, so

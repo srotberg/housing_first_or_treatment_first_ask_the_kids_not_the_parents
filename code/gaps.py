@@ -37,7 +37,23 @@ SKIP = {'h_3'}
 # parked at 0 while w_bot was too high; the seven-node grid brought h_share1 from
 # +121 per cent to +24, so the push needed is now small.
 UNSCORED = {'kappa_ued', 'kappa_uem', 'rent50'}
-BAND = {'beta': (2.5, 3.0)}   # THE AUTHOR'S BAND, 3 September
+BAND = {# w_bot IS A WIDE BAND, on the author's instruction of 3 September:
+        # *"It's ok if the bottom is not exactly 2.5%. It can be 0.8-5% no
+        # problem"*. Anything inside scores zero.
+        #
+        # Worth knowing which edge binds, because it is not the one the
+        # concession was offered for: under ONE beta type the bottom half holds
+        # too MUCH, not too little -- 0.03203 at discount_factor 0.965 and
+        # 0.05032 at 0.99980. The upper edge of 0.05 is the live constraint.
+        'w_bot': (0.008, 0.05)}
+# beta IS A POINT TARGET AGAIN, at the wealth-to-output ratio of 3 the Fortran
+# already declares in wealth_to_output_data. The author: *"Target wealth to
+# income ratio of 3 since it seems to work well"*. It was briefly a (2.5, 3.0)
+# band earlier today on their earlier instruction; a point target with the
+# standard ten per cent tolerance is 2.7 to 3.3, which is tighter and is what
+# they have now asked for. No BAND entry means gap() scores it the ordinary way
+# against the target on its own MOMENT line.
+#   THE AUTHOR'S beta BAND, 3 September
 # *"If you targeted a net worth to income ratio of 2.5-3 I think you'd have less
 # homelessness because people would not sacrifice on housing in order to save a
 # bit for the future they care less about"*.

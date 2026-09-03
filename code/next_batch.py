@@ -498,7 +498,16 @@ OWN = {
     # w_bot is what blocks emp_homeless. The archive already brackets the target:
     # 0.0417 at an impatient factor of 0.90, 0.0506 at 0.93, 0.0061 at 0.95
     # against a target of 0.025, so the answer is between 0.90 and 0.95.
-    'discount_factor_impatient':                           'w_bot',
+    # INERT FROM 3 SEPTEMBER: the author moved the model to one beta type, so
+    # there is no impatient type for this to be the discount factor OF. Left
+    # commented rather than deleted, because the parameter is still handed in on
+    # every line and a future two-type run would want the mapping back.
+    #
+    # w_bot is not left without an owner by this. It is a BAND now, zero at or
+    # below 0.025 on the author's concession, and what sets it under one type is
+    # discount_factor itself -- 0.03203 at 0.965 against 0.05032 at 0.99980 -- so
+    # it moves with beta and is read off the same instrument.
+    # 'discount_factor_impatient':                          'w_bot',
     # AND THE SAME BUG, THREE MORE TIMES. beta was not a special case.
     #
     # A point run does not update ANY parameter internally. Eighteen parameters
@@ -825,7 +834,23 @@ BOUNDS = {
     # earnings for every addict is a corner and not a calibration.
 }
 # beta is banded on the author's instruction; h_3 is conceded.
-BAND = {'beta': (2.5, 3.0)}   # THE AUTHOR'S BAND, 3 September
+BAND = {# w_bot IS A WIDE BAND, on the author's instruction of 3 September:
+        # *"It's ok if the bottom is not exactly 2.5%. It can be 0.8-5% no
+        # problem"*. Anything inside scores zero.
+        #
+        # Worth knowing which edge binds, because it is not the one the
+        # concession was offered for: under ONE beta type the bottom half holds
+        # too MUCH, not too little -- 0.03203 at discount_factor 0.965 and
+        # 0.05032 at 0.99980. The upper edge of 0.05 is the live constraint.
+        'w_bot': (0.008, 0.05)}
+# beta IS A POINT TARGET AGAIN, at the wealth-to-output ratio of 3 the Fortran
+# already declares in wealth_to_output_data. The author: *"Target wealth to
+# income ratio of 3 since it seems to work well"*. It was briefly a (2.5, 3.0)
+# band earlier today on their earlier instruction; a point target with the
+# standard ten per cent tolerance is 2.7 to 3.3, which is tighter and is what
+# they have now asked for. No BAND entry means gap() scores it the ordinary way
+# against the target on its own MOMENT line.
+#   THE AUTHOR'S beta BAND, 3 September
 # *"If you targeted a net worth to income ratio of 2.5-3 I think you'd have less
 # homelessness because people would not sacrifice on housing in order to save a
 # bit for the future they care less about"*.
