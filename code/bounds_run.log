@@ -1,0 +1,2456 @@
+================================================================================
+ BOUNDS-CHECKED RUN -- seven-node productivity grid (employment_grid_size=7,
+ y_grid_kappa=3.2), model commit 9058fb1.
+
+ Binary: gfortran -O1 -fcheck=bounds,pointer -g -fbacktrace -fimplicit-none
+         -ffree-line-length-none -mcmodel=medium -fopenmp
+ gfortran 13.3.0. Ran 23:57:15 -> 00:03:03 UTC (5 min 48 s). Exit code 0:
+ the solve RAN TO COMPLETION, it was not stopped by the 60-minute cap.
+
+ RESULT: PASS. No "Fortran runtime error", no "Index ... out of bounds", no
+ "At line NNN of file", no backtrace, no SIGSEGV anywhere in the FULL log.
+
+ THIS FILE IS TRUNCATED. The full log was 94,826,863 bytes / 1,946,062 lines,
+ sha256 9704412d72369fab4dab9280d8cec370f32af7b80d61bdd8e043dd61a7ca6c41.
+ The violation grep above was run over that FULL file, not over this excerpt.
+ It is cut because 90.4 MiB is 3x the largest file in this repo and 270x the
+ median committed log; *.log is gitignored, so this is force-added.
+ The elided middle is 1.43 million repetitions of the "budget does not clear
+ by" diagnostic already documented in BUDGET_DOES_NOT_CLEAR.md (borrowing-ON,
+ pre-existing, constant shortfall 1.9999999552965E-002). A sample of it is
+ retained below. Nothing below this header is edited.
+================================================================================
+
+--- HEAD: lines 1-2000 of 1946062 (setup, grid, invariant inputs, budget sample)
+ large_negative_num=  -17976932352.000000     
+ newborn_parent_share resumed: clean housed=   0.0000000000000000       disordered housed=   0.0000000000000000     
+ resumed from calibration_state.dat, written after loop           0
+ relative_share_of_addiction_1=  0.46300000000000002     
+ addiction_scalar_1=  0.25369575619697599     
+ lambda_addiction=   2.9941399999999998     
+ largest_house_size=  0.12125200000000000     
+ smallest_rental_relative_to_lowest_income=   3.9000000000000000E-002
+ lambda_m=   6.6368800000000006E-002
+ kappa_uem=   34.200000000000003     
+ rho_m=   1.0000000000000000     
+ rho_d=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ scaled_household_size(i)=   1.0000000000000000     
+ mortality profiles loaded, shape_sud(1)=   1.0000000000000000       rr_homeless(1)=   9.0999999999999996     
+ survival: cells clipped to zero before the last age =          10  of          472
+ survival: smallest probability before the last age =   0.0000000000000000     
+ survival: SMI multiplier is live, kappa_phi_m =   2.5000000000000000     
+ survival: clean housed vs SMI homeless with SUD at age 40 =  0.98719030618667603       0.72387201741998441     
+ survival_probability(           1 )=  0.99905741214752197     
+ survival_probability(           2 )=  0.99904716014862061     
+ survival_probability(           3 )=  0.99902850389480591     
+ survival_probability(           4 )=  0.99900209903717041     
+ survival_probability(           5 )=  0.99897074699401855     
+ survival_probability(           6 )=  0.99893724918365479     
+ survival_probability(           7 )=  0.99890083074569702     
+ survival_probability(           8 )=  0.99886250495910645     
+ survival_probability(           9 )=  0.99881988763809204     
+ survival_probability(          10 )=  0.99876528978347778     
+ survival_probability(          11 )=  0.99869775772094727     
+ survival_probability(          12 )=  0.99862253665924072     
+ survival_probability(          13 )=  0.99853926897048950     
+ survival_probability(          14 )=  0.99844282865524292     
+ survival_probability(          15 )=  0.99833661317825317     
+ survival_probability(          16 )=  0.99820739030838013     
+ survival_probability(          17 )=  0.99803751707077026     
+ survival_probability(          18 )=  0.99782264232635498     
+ survival_probability(          19 )=  0.99757695198059082     
+ survival_probability(          20 )=  0.99732422828674316     
+ survival_probability(          21 )=  0.99706876277923584     
+ survival_probability(          22 )=  0.99679464101791382     
+ survival_probability(          23 )=  0.99649488925933838     
+ survival_probability(          24 )=  0.99616980552673340     
+ survival_probability(          25 )=  0.99582326412200928     
+ survival_probability(          26 )=  0.99546527862548828     
+ survival_probability(          27 )=  0.99509662389755249     
+ survival_probability(          28 )=  0.99471634626388550     
+ survival_probability(          29 )=  0.99431568384170532     
+ survival_probability(          30 )=  0.99388259649276733     
+ survival_probability(          31 )=  0.99341058731079102     
+ survival_probability(          32 )=  0.99290531873703003     
+ survival_probability(          33 )=  0.99237418174743652     
+ survival_probability(          34 )=  0.99181956052780151     
+ survival_probability(          35 )=  0.99123322963714600     
+ survival_probability(          36 )=  0.99060297012329102     
+ survival_probability(          37 )=  0.98991507291793823     
+ survival_probability(          38 )=  0.98913735151290894     
+ survival_probability(          39 )=  0.98824220895767212     
+ survival_probability(          40 )=  0.98719030618667603     
+ survival_probability(          41 )=  0.98598861694335938     
+ survival_probability(          42 )=  0.98471021652221680     
+ survival_probability(          43 )=  0.98339885473251343     
+ survival_probability(          44 )=  0.98199546337127686     
+ survival_probability(          45 )=  0.98045170307159424     
+ survival_probability(          46 )=  0.97870552539825439     
+ survival_probability(          47 )=  0.97672456502914429     
+ survival_probability(          48 )=  0.97447198629379272     
+ survival_probability(          49 )=  0.97193926572799683     
+ survival_probability(          50 )=  0.96918034553527832     
+ survival_probability(          51 )=  0.96622496843338013     
+ survival_probability(          52 )=  0.96274757385253906     
+ survival_probability(          53 )=  0.95886403322219849     
+ survival_probability(          54 )=  0.95458924770355225     
+ survival_probability(          55 )=  0.94985377788543701     
+ survival_probability(          56 )=  0.94455510377883911     
+ survival_probability(          57 )=  0.93872749805450439     
+ survival_probability(          58 )=  0.93223595619201660     
+ survival_probability(          59 )=  0.92418217658996582     
+ survival_probability(          60 )=   0.0000000000000000     
+ total population=   51.718393671906547     
+ employment_grid
+  0.29314175589887626     
+  0.44128427988712782     
+  0.66429231508962061     
+   1.0000000000000000     
+   1.5053613857704926     
+   2.2661129017688575     
+   3.4113188581191598     
+ unconditional_employment_probability
+   6.1376898615647917E-003
+   5.5183581548274477E-002
+  0.24134640594615320     
+  0.39466464528801493     
+  0.24134640594615320     
+   5.5183581548274477E-002
+   6.1376898615649158E-003
+ employment_process(           1           1 )=  0.70673704074443555       0.29051016461915496        2.7523970535864137E-003   3.9758201357389536E-007   8.0952052437871119E-013   0.0000000000000000        0.0000000000000000     
+ employment_process(           1           2 )=   3.6562340141340750E-002  0.71273349830804766       0.24927541139086257        1.4286266504464919E-003   1.2350915325874217E-007   1.4932768860483550E-013   0.0000000000000000     
+ employment_process(           1           3 )=   7.7819773643067179E-005   6.1047484130455090E-002  0.77350006546049521       0.16480401039577094        5.7059074920920482E-004   2.9490405367212673E-008   2.1089140607923494E-014
+ employment_process(           1           4 )=   6.6534850249445975E-009   2.1505151275519725E-004  0.10295552821884060       0.79365882722983838       0.10295552821884048        2.1505151275519725E-004   6.6534851470346626E-009
+ employment_process(           1           5 )=   2.1211751890527711E-014   2.9490405367212690E-008   5.7059074920895979E-004  0.16480401039577067       0.77350006546049566        6.1047484130455118E-002   7.7819773643067220E-005
+ employment_process(           1           6 )=   0.0000000000000000        1.4932768860483550E-013   1.2350915350597343E-007   1.4286266504466155E-003  0.24927541139086257       0.71273349830804733        3.6562340141340625E-002
+ employment_process(           1           7 )=   0.0000000000000000        0.0000000000000000        8.0952052437871089E-013   3.9758201357389520E-007   2.7523970535864124E-003  0.29051016461915524       0.70673704074443522     
+ fixed productivity: sd of log y =  0.96511849999999999     
+ bottom half's share of productivity =  0.18034503947891614       target =  0.17199999999999999     
+ unconditional_employment_probability on the frozen grid
+   1.9755420215757454E-003   1.6178872941716861E-002   4.8292418143969687E-002  0.10038473972687992       0.17388266774474634       0.26990470250170928       0.38938105691940217     
+ SMI prevalence, first and last=  0.12128700000000001        9.0410000000000004E-003
+ lambda_m floor implied by the profile=   4.4127434613244310E-002
+ build_smi_onset: shape x level. level=   3.3060000278055668E-003  onset(1)=   3.3060000278055668E-003  onset(30)=   8.3921157705830411E-004  max=   3.3060000278055668E-003  lambda_m=   6.6368800000000006E-002  implied ergodic prevalence=   4.7449006333512546E-002
+ index map: accessors consistent at number_of_smi_states=           2  employed block=           4
+ index map: threshold comparison not made, number_of_smi_states=           2
+ build_smi_onset: shape x level. level=   3.3060000278055668E-003  onset(1)=   3.3060000278055668E-003  onset(30)=   8.3921157705830411E-004  max=   3.3060000278055668E-003  lambda_m=   6.6368800000000006E-002  implied ergodic prevalence=   4.7449006333512546E-002
+ unemployment_process: generic builder, number_of_smi_states=           2
+ unemployment_process onset 1->4 =   1.9266045762039719E-003  stay 1->1 =  0.98453433317253369     
+ newborn process: p(1)=  0.12128700000000001       rows not summing to one=           0  rows off p(1)=           0
+ personal_exemption=   0.0000000000000000     
+ standard_deduction=   0.0000000000000000     
+ sum(distribution_guess)=   51.718393671906512     
+ total_constrcution_profits(time_period)=  0.19023463398252818     
+ c_1=   592.93823946178941     
+ DIAG unsecured borrowing limit, yrs of income   =   1.5000000000000000     
+ DIAG borrowing floor, model units                = -0.95587205886840820     
+ DIAG patient type barred from the negative grid   =           1
+ DIAG street size, absolute                       =   1.8028999902307986E-002
+ DIAG street as a share of the cheapest unit      =  0.14899999999999999     
+ size_of_smallest_house_hhld_can_buy=  0.23000000417232513     
+ housing_size(index_of_smallest_house_hhld_can_buy)=  0.36299999803304672     
+ size_of_smallest_house_hhld_can_buy=  0.23000000417232513     
+ index_of_smallest_house_hhld_can_buy=           2
+ smallest_house_size=  0.12099999934434891     
+ housing_status_grid_expander=   1.0000000000000000     
+ total_constrcution_profits(time_period)=  0.19023463398252818     
+ c_1=   592.93823946178941     
+ DIAG unsecured borrowing limit, yrs of income   =   1.5000000000000000     
+ DIAG borrowing floor, model units                = -0.95587205886840820     
+ DIAG patient type barred from the negative grid   =           1
+ DIAG street size, absolute                       =   1.8028999902307986E-002
+ DIAG street as a share of the cheapest unit      =  0.14899999999999999     
+ size_of_smallest_house_hhld_can_buy=  0.23000000417232513     
+ housing_size(index_of_smallest_house_hhld_can_buy)=  0.36299999803304672     
+ size_of_smallest_house_hhld_can_buy=  0.23000000417232513     
+ index_of_smallest_house_hhld_can_buy=           2
+ smallest_house_size=  0.12099999934434891     
+ housing_status_grid_expander=   1.0000000000000000     
+ mortgage_deductibility=   0.0000000000000000     
+ mortgage_interest_rate=   2.9999999329447746E-002
+ risk_free_rate=   2.9999999329447746E-002
+ property_tax(1)=   0.0000000000000000     
+ infinite_elasticity_of_rental_supply=           1
+ life_span=          60
+ retirement_span=          20
+ discount_factor=  0.99980000000000002     
+ discount_factor_on_child=   700.00000000000000     
+ minimum_inheritance=   0.0000000000000000     
+ size_homelessness=  0.14899999999999999     
+ labor_income_tax_rate=  0.75224320000000000     
+ curvature_of_labor_income_taxes=  0.85000002384185791     
+ rent_to_housing_price=   8.2999996840953827E-002
+ personal_deduction=   0.0000000000000000     
+ standard_deduction=   0.0000000000000000     
+ rent=   1.0000000000000000     
+ lump_sum_transfer=   0.0000000000000000     
+ minimum_downpayment=  0.20000000298023224     
+ max_amortization_years=           1
+ model_average_owner_occupied_unit_size(1)=   3.2876092082357466     
+ smallest_house_size=  0.12099999934434891     
+ housing_size(index_of_smallest_house_hhld_can_buy)=  0.36299999803304672     
+ c_1=   592.93823946178941     
+ c_min=   7.4644536427381869     
+ cutoff_housing_investment=   1.9497986009326958E-002
+ infinite_elasticity_of_rental_supply=           1
+ calibration
+ advantage_to_owning=   0.0000000000000000     
+ unconditional_employment_probability=   1.9755420215757454E-003   1.6178872941716861E-002   4.8292418143969687E-002  0.10038473972687992       0.17388266774474634       0.26990470250170928       0.38938105691940217     
+ smallest_house_size=   3.9000000000000000E-002
+ smallest_house_size*rent(1)/net_income_lowest=   1.0143019614985944     
+ total_constrcution_profits(time_period)=  0.19023463398252818     
+ c_1=   592.93823946178941     
+ DIAG unsecured borrowing limit, yrs of income   =   1.5000000000000000     
+ DIAG borrowing floor, model units                = -0.95587205886840820     
+ DIAG patient type barred from the negative grid   =           1
+ DIAG street size, absolute                       =   5.8109999999999993E-003
+ DIAG street as a share of the cheapest unit      =  0.14899999999999999     
+ size_of_smallest_house_hhld_can_buy=  0.23000000417232513     
+ housing_size(index_of_smallest_house_hhld_can_buy)=  0.11699999999999999     
+ size_of_smallest_house_hhld_can_buy=  0.23000000417232513     
+ index_of_smallest_house_hhld_can_buy=           2
+ smallest_house_size=   3.9000000000000000E-002
+ housing_status_grid_expander=   1.0000000000000000     
+ rent=   1.0000000000000000     
+ property_tax=   0.0000000000000000     
+ max_debt_to_income_ratio=   10000.000000000000     
+ max_debt_to_income_ratio_below_80=   10000.000000000000     
+ smallest_house_size=   3.9000000000000000E-002
+ housing_size(smallest_house_to_buy)=  0.11699999999999999     
+ lowest_housing_grid_point=          -1
+ employment_grid=   3.0243652817560588E-002   6.5037369131155959E-002  0.11768529915756072       0.19815618306405092       0.33229580036967615       0.60192082519850432        1.9340209330607008     
+ value_of_initial_assets=   0.0000000000000000     
+ initial_endowment=           8           8           8           8           8           8           8
+ standard_deduction=   0.0000000000000000     
+ personal_exemption=   0.0000000000000000     
+ model_average_labour_income=  0.63724803924560547     
+ average_labor_income_calibrated=  0.63724803924560547     
+ weight_on_labor_income=  0.50000000000000000     
+ inheritance_amount=   0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000     
+ relative_share_of_leisure=   4.7283200000000001     
+ rental_management_costs=  0.57889810767075345     
+ file_number=baseline_benchmark                                                                                                                                                                                                                                                                                                                                                                                              
+ fraction_to_repay=   2.1019259548582678E-002
+ prepayment_penalty_starts_from=  0.17867215464485020     
+ file_number=baseline_benchmark                                                                                                                                                                                                                                                                                                                                                                                              
+ empirical_housing_supplpy_elasticity=  0.89999997615814209     
+ replacement_rate_ui=  0.50000000000000000     
+ size_homelessness=  0.14899999999999999     
+ model_average_financial=  0.46422621607780457     
+ model_average_net_wealth=   1.6578927040100098     
+ relative_share_of_addiction=  0.46300000000000002     
+ relative_share_of_consumption_2=  0.48329999999999995     
+ relative_share_of_housing_2=   5.3699999999999998E-002
+ relative_share_of_addiction_2=  0.46300000000000002     
+ relative_share_of_consumption_1=  0.48329999999999995     
+ relative_share_of_housing_1=   5.3699999999999998E-002
+ relative_share_of_addiction_1=  0.46300000000000002     
+ sum 2=   1.0000000000000000     
+ sum 1=   1.0000000000000000     
+ model_ss_benefits=   1.2097461307290454E-002   2.6014948040115313E-002   4.7074120364483336E-002   7.9262474406723252E-002  0.13291832212850777       0.24076833366712944       0.77360838475194338     
+ price_of_addictive_good=   1.0000000000000000     
+ hello1
+ expected_age_non_addicted=   76.718393671906540     
+ expected_age_homeless=   72.480977236000399     
+ expected_age_addicted=   55.986842698685479     
+ expected_age_homeless_and_addicted=   45.295999984281053     
+ adjusted_probability=   1.0000000000000000        1.0000000000000000        1.0000000000000000        1.0000000000000000        1.0000000000000000        1.0000000000000000        1.0000000000000000     
+ probability_of_voucher=   5.1999999999999998E-002   5.1999999999999998E-002   5.1999999999999998E-002
+ addiction_scalar_1=  0.25369575619697599     
+ employment_grid(           1 )=   3.0243652817560588E-002
+ employment_grid(           2 )=   6.5037369131155959E-002
+ employment_grid(           3 )=  0.11768529915756072     
+ employment_grid(           4 )=  0.19815618306405092     
+ employment_grid(           5 )=  0.33229580036967615     
+ employment_grid(           6 )=  0.60192082519850432     
+ employment_grid(           7 )=   1.9340209330607008     
+ employment_grid(           1 )=   3.0243652817560588E-002
+ employment_grid(           2 )=   6.5037369131155959E-002
+ employment_grid(           3 )=  0.11768529915756072     
+ employment_grid(           4 )=  0.19815618306405092     
+ employment_grid(           5 )=  0.33229580036967615     
+ employment_grid(           6 )=  0.60192082519850432     
+ employment_grid(           7 )=   1.9340209330607008     
+ increased_risk_of_death_addicted=   5.9000000953674316     
+ multiple_of_probabilities_of_employment_if_addicted=   4.0000000000000000     
+ relative_share_of_addiction_2=  0.46300000000000002     
+ relative_share_of_addiction_1=  0.46300000000000002     
+ size_of_penalty=   0.0000000000000000     
+ voucher_probabilities=   5.2000001072883606E-002   5.2000001072883606E-002   5.2000001072883606E-002
+ voucher_probabilities=   1.0000000000000000        1.0000000000000000        1.0000000000000000     
+ voucher_probabilities_benchmark=   5.1999999999999998E-002   5.1999999999999998E-002   5.1999999999999998E-002
+ voucher_probabilities_benchmark=   1.0000000000000000        1.0000000000000000        1.0000000000000000     
+ increased_risk_of_death_addicted*(1-sum(actual_survival_probability)/life_span)=  0.18160151348001952     
+ no warm start distribution, initialising from the age one cross section
+ B SWEEP:            1  points, starting at b=   3.5897880000000000E-002
+ PRIMING SOLVE: filling age one so the child term can be computed
+ expected_child_value=   0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000     
+ number of threads =            4
+ -------- asset lottery --------
+ calls                 =                     0
+ the lottery was never called
+ ------------------------------
+ age_index=          60
+ AGE_TIME age=  60  wall_s=      0.10  cpu_s=      0.38
+ age_index=          59
+ AGE_TIME age=  59  wall_s=      0.08  cpu_s=      0.30
+ age_index=          58
+ AGE_TIME age=  58  wall_s=      0.07  cpu_s=      0.30
+ age_index=          57
+ AGE_TIME age=  57  wall_s=      0.07  cpu_s=      0.29
+ age_index=          56
+ AGE_TIME age=  56  wall_s=      0.07  cpu_s=      0.29
+ age_index=          55
+ AGE_TIME age=  55  wall_s=      0.15  cpu_s=      0.59
+ age_index=          54
+ AGE_TIME age=  54  wall_s=      0.15  cpu_s=      0.59
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.49738271542017093     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.55479493183004469     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.61565057106874543     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.67998461611638705     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.74783204995307950     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.81922785555893385     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.49738271542017093     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.55479493183004469     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.61565057106874543     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.67998461611638705     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.74783204995307950     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.81922785555893385     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.49738271542017093     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.55479493183004469     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.61565057106874543     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.67998461611638705     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.74783204995307950     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.81922785555893385     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.54065877737220969     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.59572301836010888     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.65398374348214872     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.71546358878370897     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.44002920361732556     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.78018519031016542     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.84817118410689418     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.48876838447307347     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.54065877737220969     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.59572301836010888     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.65398374348214872     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.71546358878370897     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.44002920361732556     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.78018519031016542     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.48876838447307347     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.84817118410689418     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.54065877737220969     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.59572301836010888     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.65398374348214872     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.71546358878370897     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.44002920361732556     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.78018519031016542     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.48876838447307347     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.84817118410689418     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.50235833082374071     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.55977054723361441     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.62062618647231549     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.68496023151995711     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.75280766535664945     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.44835455426258158     
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.82420347096250379     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.50235833082374071     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.55977054723361441     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.62062618647231549     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.68496023151995711     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.75280766535664945     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.44835455426258158     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.82420347096250379     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.50235833082374071     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.55977054723361441     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.62062618647231549     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.68496023151995711     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.44835455426258158     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.75280766535664945     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.82420347096250379     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.54350198605320066     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.59856622704109974     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.65682695216314013     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.71830679746470050     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.44287241229831659     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.78302839899115650     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.49161159315406450     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.85101439278788571     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.54350198605320066     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.59856622704109974     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.65682695216314013     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.71830679746470050     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.44287241229831659     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.78302839899115650     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.49161159315406450     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.85101439278788571     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.54350198605320066     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.59856622704109974     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.65682695216314013     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.71830679746470050     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.44287241229831659     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.78302839899115650     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.49161159315406450     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.85101439278788571     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.50988715727172429     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.56729937368159822     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.62815501292029918     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.69248905796794091     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.45588338071056539     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.76033649180463325     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.83173229741048771     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.50988715727172429     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.56729937368159822     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.62815501292029918     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.69248905796794091     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.45588338071056539     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.76033649180463325     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.83173229741048771     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.50988715727172429     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.56729937368159822     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.62815501292029918     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.69248905796794091     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.45588338071056539     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.76033649180463325     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.83173229741048771     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.54780417241174106     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.60286841339964037     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.66112913852168032     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.40156399379911772     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.72260898382324124     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.44717459865685699     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.78733058534969713     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.49591377951260512     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.85531657914642589     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.54780417241174106     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.60286841339964037     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.66112913852168032     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.40156399379911772     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.72260898382324124     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.44717459865685699     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.78733058534969713     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.49591377951260512     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.85531657914642589     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.54780417241174106     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.60286841339964037     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.66112913852168032     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.40156399379911772     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.72260898382324124     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.44717459865685699     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.49591377951260512     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.78733058534969713     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.85531657914642589     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.52139475726177043     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.57880697367164413     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.63966261291034499     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.70399665795798660     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.46739098070061136     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.77184409179467894     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.84323989740053340     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.52139475726177043     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.57880697367164413     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.63966261291034499     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.70399665795798660     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.46739098070061136     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.77184409179467894     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.84323989740053340     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.52139475726177043     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.57880697367164413     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.63966261291034499     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.70399665795798660     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.46739098070061136     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.77184409179467894     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.84323989740053340     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.55437994355466280     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.60944418454256200     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.66770490966460183     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.40813976494203963     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.72918475496616220     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.45375036979977862     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.50248955065552658     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.84323989740053340     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.55437994355466280     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.60944418454256200     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.66770490966460183     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.40813976494203963     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.72918475496616220     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.45375036979977862     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.50248955065552658     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.84323989740053340     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.55437994355466280     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.60944418454256200     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.66770490966460183     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.72918475496616220     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.40813976494203963     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.45375036979977862     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.50248955065552658     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.84323989740053340     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.54057716192585692     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.59798937833573051     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.65884501757443181     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+ amortization_used=           1
+ years_left_on_mortgage_index=           1
+ housing_status_index=          -1
+ housing_status_index_used=           2
+ food_stamps_1=   0.0000000000000000     
+ consumption_used=  0.43594306567214447     
+ budget does not clear by   1.9999999552965164E-002
+ min(financial_grid(fin_index_frac_used),0.d0)=   0.0000000000000000     
+ min(financial_grid(financial_index_used),0.d0)=   0.0000000000000000     
+
+--- [ELIDED: lines 2001-1945309 -- the repeating budget-not-clear diagnostic] ---
+
+--- EXCERPT: lines 1945310-1945330, showing the 8 raw NUL bytes emitted after
+--- the DIST_MOM line. dist_housing_1 is dimensioned -1:2 (four elements) but
+--- the format at line 25809 carries only 3F22.15, so format reversion writes
+--- the fourth element (housing index 2, the largest rental) through the
+--- leading A descriptor as the raw bytes of a real(8). Not a bounds error;
+--- -fcheck cannot see it. Reproduced exactly in a standalone program.
+ the lottery was never called
+ ------------------------------
+ time=   446.62926200000004     
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.99893077217216186        3.1654160911255720E-006   1.0643509102307657E-003   1.7115015162285414E-006
+ newborn_productivity_draw=   1.8189411952278347E-003   1.5053283028742214E-002   4.5410724393447767E-002   9.5656757975748144E-002  0.16866918876993170       0.26857742763066139       0.40481367700624082     
+ newborn_employment_probability, clean housed, parent at the median node=   4.2657072924653927E-003   3.2586304192769422E-002   8.6600328812236449E-002  0.15559264627079844       0.22419623138008582       0.26900330679197304       0.22775547525967144     
+ newborn_employment_probability, disordered housed, parent at the median node=   9.9899236928845392E-003   5.8796455731632391E-002  0.12767059730413371       0.19246673231364037       0.23343450044088998       0.23074011326892774       0.14690167724789127     
+ DIST_MAX sweep=           0  block=           1  age=          10  fin=           1  uem=           1  emp=           7  hou=           0  vch=           0  gap=  0.31247433495902460       mass_there=   0.0000000000000000     
+ DIST_MAX sweep=           0  block=           2  age=           1  fin=           1  uem=           1  emp=           1  hou=           2  vch=           0  gap=   0.0000000000000000       mass_there=   0.0000000000000000     
+ DIST_MOM sweep=     0 mass=    51.411054714062253 wealth=     9.238561330054292 by_housing=     0.002871896872297    51.408182817189982     0.000000000000000
+        
+ distribution distance=  0.31247433495902460     
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.99893077217216186        3.1654160911255720E-006   1.0643509102307657E-003   1.7115015162285414E-006
+ newborn_productivity_draw=   1.8189411952278347E-003   1.5053283028742214E-002   4.5410724393447767E-002   9.5656757975748144E-002  0.16866918876993170       0.26857742763066139       0.40481367700624082     
+ newborn_employment_probability, clean housed, parent at the median node=   4.2657072924653927E-003   3.2586304192769422E-002   8.6600328812236449E-002  0.15559264627079844       0.22419623138008582       0.26900330679197304       0.22775547525967144     
+ newborn_employment_probability, disordered housed, parent at the median node=   9.9899236928845392E-003   5.8796455731632391E-002  0.12767059730413371       0.19246673231364037       0.23343450044088998       0.23074011326892774       0.14690167724789127     
+ distribution distance=  0.25566619492135922     
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.99893077217216186        3.1654160911255720E-006   1.0643509102307657E-003   1.7115015162285414E-006
+ newborn_productivity_draw=   1.8189411952278347E-003   1.5053283028742214E-002   4.5410724393447767E-002   9.5656757975748144E-002  0.16866918876993170       0.26857742763066139       0.40481367700624082     
+ newborn_employment_probability, clean housed, parent at the median node=   4.2657072924653927E-003   3.2586304192769422E-002   8.6600328812236449E-002  0.15559264627079844       0.22419623138008582       0.26900330679197304       0.22775547525967144     
+ newborn_employment_probability, disordered housed, parent at the median node=   9.9899236928845392E-003   5.8796455731632391E-002  0.12767059730413371       0.19246673231364037       0.23343450044088998       0.23074011326892774       0.14690167724789127     
+
+--- TAIL: lines 1945663-1946062 (age table, invariants, moments, sweep done)
+ govt_spending_on_addicts=  0.79875916335861963     
+ sum(total_rental_demand(time_period-solve_transition_dynamics,:))=   9.1843579809303240     
+ total_expendifure=   56.242299975468065     
+ model_total_income=   16.818357439922561     
+ model_total_income-model_total_expenditure=  -39.423942535545507     
+ average_welfare_of_youngest_cohort=   897.48165273564223     
+ average_welfare_of_all_cohorts=   570.95155883395921     
+ percentage of renters spending more than   0.30000001192092896       on their income on housing=  0.55070351331609446     
+ percentage of homeowners with a mortgage spending more than   0.30000001192092896       on their income on housing=                       NaN
+ percentage of renters spending more than   0.50000000000000000       on their income on housing=  0.47377672220533984     
+ percentage of homeowners with a mortgage spending more than   0.50000000000000000       on their income on housing=                       NaN
+ begining wealth distribution for old
+ file number=baseline_benchmark                                                                                                                                                                                                                                                                                                                                                                                              
+ drug quantity V=   8.1424003832245564     
+ drug_supply_shifter (normalised)=  0.23779184998022884     
+ rent(1)=   1.0000000000000000     
+ rental_supply(1)=   9.1843579809303240     
+ rental_demand(1)=   9.1843579809303240     
+ distance_rental_market(1)=   0.0000000000000000     
+ one market
+ rent(1)=   1.0000000000000000     
+ rental_market_adjuster=   1.0000000000000000E-003
+ model_mortgages(1)/model_gross_housing_wealth(1)=                       NaN
+ model_average_rental_unit_size(1)=   9.8963045196178351E-002
+ model_average_owner_occupied_unit_size(1)=   0.0000000000000000     
+ model_average_rental_unit_size(1)/model_average_owner_occupied_unit_size(1)=                  Infinity
+ model_homeownership_rate(1)=   0.0000000000000000     
+ re_do_simulation_with_fixed_parameters=           1
+ relative_share_of_housing=  0.10000000000000001     
+ relative_share_of_leisure=   4.7283200000000001     
+ discount_factor=  0.99980000000000002     
+ discount_factor_on_child=   700.00000000000000     
+ convexity_of_rental_company=   2.3499999046325679     
+ housing_status_grid_expander=   1.0000000000000000     
+ labor_income_tax_rate=  0.75224320000000000     
+ utility_improvement,   0.0000000000000000     
+ rental_management_costs=  0.57889810767075345     
+ smallest_house_size=   3.9000000000000000E-002
+ index_of_smallest_house_hhld_can_buy=           2
+ housing_size(index_of_smallest_house_hhld_can_buy)=  0.11699999999999999     
+ size_homelessness=  0.14899999999999999     
+ largest_financial_chosen_in_equilibrium=          32
+ largest_housing_size_consumed_in_equilibrium=           2
+ smallest_financial_chosen_in_equilibrium=           1
+ financial_grid(smallest_financial_chosen_in_equilibrium)= -0.95587205886840820     
+ fraction of hhlds who make it to the highest net wealth=   0.0000000000000000     
+ fraction_with_largest_housing_size_consumed_in_eqilibrium=  0.68240241731811146     
+ fraction_with_smallest_financial_in_eqilibrium=  0.45148295099550900     
+ smallest_rental_relative_to_lowest_income=   3.9000000000000000E-002
+ build_smi_onset: shape x level. level=   3.3060000278055668E-003  onset(1)=   3.3060000278055668E-003  onset(30)=   8.3921157705830411E-004  max=   3.3060000278055668E-003  lambda_m=   6.6368800000000006E-002  implied ergodic prevalence=   4.7449006333512546E-002
+ index map: accessors consistent at number_of_smi_states=           2  employed block=           4
+ index map: threshold comparison not made, number_of_smi_states=           2
+ build_smi_onset: shape x level. level=   3.3060000278055668E-003  onset(1)=   3.3060000278055668E-003  onset(30)=   8.3921157705830411E-004  max=   3.3060000278055668E-003  lambda_m=   6.6368800000000006E-002  implied ergodic prevalence=   4.7449006333512546E-002
+ unemployment_process: generic builder, number_of_smi_states=           2
+ unemployment_process onset 1->4 =   1.9266045762039719E-003  stay 1->1 =  0.98453433317253369     
+ newborn process: p(1)=  0.12128700000000001       rows not summing to one=           0  rows off p(1)=           0
+ DIAG unsecured borrowing limit, yrs of income   =   1.5000000000000000     
+ DIAG borrowing floor, model units                = -0.95587205886840820     
+ DIAG patient type barred from the negative grid   =           1
+ DIAG street size, absolute                       =   5.8109999999999993E-003
+ DIAG street as a share of the cheapest unit      =  0.14899999999999999     
+ size_of_smallest_house_hhld_can_buy=  0.23000000417232513     
+ loop_count=           3
+ model average labour income=  0.43653301527015204     
+ model_average_labour_income_tax=  0.25282434922965091     
+ model_average_net_wealth=  0.97401936516515664     
+ do_internal_computations=           1
+ model_labor_supply/model_total_hours=  0.14219459417973954     
+ distance_average_labor_income=  0.40143004795090687     
+ distance_average_net_wealth=   0.0000000000000000     
+ model_homeownership_by_age_group(1,5)=   0.0000000000000000     
+ value_of_initial_assets=   0.0000000000000000     
+ model_avg_housing_spending_owners=   0.0000000000000000     
+ model_avg_housing_spending_all=   2491062.9102985570     
+ model_avg_housing_spending_renters=  0.18680677958693268     
+ total_rent_paid/total_renters_income=   35.550456672096232     
+ distance_inheritance_amount=   0.0000000000000000     
+ average_welfare_of_youngest_cohort=   897.48165273564223     
+ mass_of_renters_at_housing_spending(1,1)=  0.55070351331609446     
+ mass_of_renters_at_housing_spending(1,2)=  0.47377672220533984     
+ model_fraction_homeless=   2.9645365060221106E-004
+ model_fraction_addicted=  0.17210064242630335     
+ model_exprimenters=   6.1829779757532725E-002
+ model_drug_use_by_age_group=  0.18355237352790180     
+ model_drug_use_by_age_group=  0.21383410303452280     
+ model_drug_use_by_age_group=  0.20320070911094221     
+ model_drug_use_by_age_group=  0.12841824598833679     
+ model_drug_use_by_age_group=   9.9074869969866169E-002
+ model_drug_use_by_age_group=   7.3962821896670958E-002
+ model_drug_use_by_age_group=   5.0476877983260768E-002
+ model_drug_use_by_age_group=   2.8222744158524021E-002
+ model_drug_use_by_age_group=   1.9257254329977980E-002
+ use rate by single age, model age 1 = data age 26:
+ USE_BY_AGE           1          26  0.50000000000000011     
+ USE_BY_AGE           2          27  0.50000000000000022     
+ USE_BY_AGE           3          28  0.49965016317650196     
+ USE_BY_AGE           4          29  0.49811936199759393     
+ USE_BY_AGE           5          30  0.49757128671803408     
+ USE_BY_AGE           6          31  0.48836804603934419     
+ USE_BY_AGE           7          32  0.45670360228483237     
+ USE_BY_AGE           8          33  0.45738404181478232     
+ USE_BY_AGE           9          34  0.45785329181117534     
+ USE_BY_AGE          10          35  0.45812586891472479     
+ USE_BY_AGE          11          36  0.45820515634363196     
+ USE_BY_AGE          12          37  0.45809316330961425     
+ USE_BY_AGE          13          38  0.45779891104212372     
+ USE_BY_AGE          14          39  0.45713845072678017     
+ USE_BY_AGE          15          40  0.35069704471553143     
+ USE_BY_AGE          16          41  0.29893728109661177     
+ USE_BY_AGE          17          42  0.28877207964845186     
+ USE_BY_AGE          18          43  0.27866085607688146     
+ USE_BY_AGE          19          44  0.26855064208918061     
+ USE_BY_AGE          20          45  0.25841549851738038     
+ USE_BY_AGE          21          46  0.24826769769769097     
+ USE_BY_AGE          22          47  0.23800427454869341     
+ USE_BY_AGE          23          48  0.22769582053762683     
+ USE_BY_AGE          24          49  0.21741817431706861     
+ USE_BY_AGE          25          50  0.20716858386796896     
+ USE_BY_AGE          26          51  0.19695333209004237     
+ USE_BY_AGE          27          52  0.18679380670323820     
+ USE_BY_AGE          28          53  0.17671384349519689     
+ USE_BY_AGE          29          54  0.16673754975012980     
+ USE_BY_AGE          30          55  0.15688147786832263     
+ USE_BY_AGE          31          56  0.14715342060059541     
+ USE_BY_AGE          32          57  0.13754509979406868     
+ USE_BY_AGE          33          58  0.12496704481360554     
+ USE_BY_AGE          34          59  0.11297788331564358     
+ USE_BY_AGE          35          60  0.10169046977502608     
+ USE_BY_AGE          36          61   9.1103146990464345E-002
+ USE_BY_AGE          37          62   8.1206577024372506E-002
+ USE_BY_AGE          38          63   7.1985672975012738E-002
+ USE_BY_AGE          39          64   6.3413621547719096E-002
+ USE_BY_AGE          40          65   5.5460765857917239E-002
+ USE_BY_AGE          41          66   4.8094640231829903E-002
+ USE_BY_AGE          42          67   4.1300599921057078E-002
+ USE_BY_AGE          43          68   3.5094052927909458E-002
+ USE_BY_AGE          44          69   2.9494408211768724E-002
+ USE_BY_AGE          45          70   2.4494857134126431E-002
+ USE_BY_AGE          46          71   2.0074734805602110E-002
+ USE_BY_AGE          47          72   1.6204560304278245E-002
+ USE_BY_AGE          48          73   1.2853005322145436E-002
+ USE_BY_AGE          49          74   9.9888792732916939E-003
+ USE_BY_AGE          50          75   7.5853861601906701E-003
+ USE_BY_AGE          51          76   5.6967084114872505E-003
+ USE_BY_AGE          52          77   4.1993131743847554E-003
+ USE_BY_AGE          53          78   2.9877351365927493E-003
+ USE_BY_AGE          54          79   2.0655366753151464E-003
+ USE_BY_AGE          55          80   2.5186699076664310E-003
+ USE_BY_AGE          56          81   8.2167046711443073E-004
+ USE_BY_AGE          57          82   4.7210069286719085E-004
+ USE_BY_AGE          58          83   2.5004333511812469E-004
+ USE_BY_AGE          59          84   1.1976298161408919E-004
+ USE_BY_AGE          60          85   4.9721804140433211E-005
+ DIAG aleph numerator, model_value_of_life        =   276.35496257864963     
+ DIAG aleph denominator, avg labour income        =  0.43653301527015204     
+ DIAG   workers behind that average               =   63.007189637385210     
+ DIAG   implied TOTAL labour income               =   27.504718476106042     
+ DIAG   value of life per household               =   2.9768897313114908     
+ ===== ALL TARGETED MOMENTS =====
+ MOMENT sigma_y   bottom half earnings share  model=  0.18034503947891614       target=  0.17199999999999999     
+ MOMENT tau_l     average labour income tax   model=  0.25282434922965091       target=  0.22400000691413879     
+ MOMENT omega_l   labour supply / total hours model=  0.14219459417973954       target=  0.40000000596046448     
+ MOMENT beta      wealth over output          model=   1.8128175720817152       target=   3.0000000000000000     
+ MOMENT h_2       above half of spending      model=   1.2120683206941384E-002  target=  0.10100000000000001     
+ MOMENT h_3       share in the largest unit   model=  0.68260477799646624       target=  0.62672300000000003     
+ DIAG unit           0  share of renters=  0.14509079860725940       of whom over half of income=   0.0000000000000000     
+ DIAG unit           1  share of renters=  0.17230442339627433       of whom over half of income=   1.5633086073247393E-003
+ DIAG unit           2  share of renters=  0.68260477799646624       of whom over half of income=  0.69367717965140818     
+ DIAG aggregate rent / aggregate income           =  0.55235132119844144     
+ DIAG aggregate housing / aggregate expenditure   =   8.3676963546103086E-002
+ DIAG over half of EXPENDITURE, all households    =   1.2120683206941384E-002
+ DIAG over half of EXPENDITURE, housed only       =   1.2124277493265192E-002
+ UNTARGETED mean age of drug users            model=   39.182568572836068       observed=   45.479999999999997     
+ UNTARGETED users aged 26-34, share           model=  0.39738647656242426       observed=  0.28404000000000001     
+ UNTARGETED users aged 35-44, share           model=  0.33161895509927902       observed=  0.25053999999999998     
+ UNTARGETED users aged 45-54, share           model=  0.17303769186653700       observed=  0.17768000000000000     
+ UNTARGETED users aged 55-64, share           model=   7.8699622141784720E-002  observed=  0.16327000000000000     
+ UNTARGETED users aged 65 plus, share         model=   1.9257254329977980E-002  observed=  0.12445000000000001     
+ DIAG income of WORKING AGE drug users / average   = -0.15505383162950828     
+ DIAG working age share of drug users             =  0.98436305426210402     
+ DIAG users band           1  use rate=  0.48409755265238164       share with the disorder=  0.48719342409722888       income/average= -0.15584042470031667     
+ DIAG users band           2  use rate=  0.37870398877866845       share with the disorder=  0.81763813636822302       income/average= -0.15323912081564808     
+ DIAG users band           3  use rate=  0.21327735861186267       share with the disorder=   1.0000000000000000       income/average= -0.15559597893535024     
+ DIAG users band           4  use rate=  0.11023246311585230       share with the disorder=   1.0000000000000000       income/average= -0.15710492940022652     
+ DIAG users band           5  use rate=   1.8288737911179586E-002  share with the disorder=  0.99733249852350625       income/average=   1.1006362639925451     
+ DIAG drug threshold, (phi/theta)*p*b            =   3.7471804328293730E-002
+ DIAG buyers: mean C                             =   1.1080090968981362     
+ DIAG non-buyers: mean C                         =  0.56428578763124471     
+ DIAG buyers: mean income                        =   8.2180511169235027E-003
+ DIAG non-buyers: mean income                    =  0.32938473306119759     
+ DIAG buyers as a share of clean households      =   7.4682724647517434E-002
+ DIAG assets of drug users / average net worth    =   4.7446223636880662E-006
+ DIAG assets of experimenters / average net worth =   1.7876686855359643E-005
+ DIAG assets with a SUD / average net worth       =   2.6727974482247122E-008
+ DIAG share with a NEGATIVE value of life         =   1.9418070716593119E-004  raw mass=   1.8026466179751673E-002  of    92.833456231816626     
+ DIAG lowest value of a period of life            =  -8.1873252859018990     
+ DIAG value of life, drug users                   =   39.555117434077935     
+ DIAG value of life, everyone else                =   33.443215862240336     
+ DIAG aleph itself, for scale                     =   42.000000000000000     
+ DIAG treatment price / average labour income     =   4.5815548545825341E-002  data outpatient=   3.4000000000000002E-002  to   6.5000000000000002E-002
+ DIAG households receiving food stamps            =  0.36436646178801579       data=  0.12500000000000000     
+ DIAG max allotment / avg labour income           =   2.9780107220423735E-002  data=   3.9586000000000003E-002
+ DIAG gross eligibility cutoff                     =   9.9267024068079121E-002  data=  0.21487200000000001     
+ DIAG aggregate rent / output                     =  0.61813275622169517     
+ DIAG asset grid, reachable points                =   25.000000000000000     
+ DIAG share in the smallest unit                  =  0.14509079860725940     
+ MOMENT gamma     housing over expenditure    model=   8.3676963546103086E-002  target=  0.26800000667572021     
+ UNTARGETED housing over income, renters      model=  0.18680677958693268       observed=  0.20200000000000001     
+ MOMENT h_1       homelessness rate           model=   2.9645365060221106E-004  target=   3.9900001138448715E-003
+ MOMENT b         total drug users            model=  0.23393042218383608       target=   8.9000001549720764E-002
+ MOMENT lambda_d  disorder rate               model=  0.17210064242630335       target=   3.6800000816583633E-002
+ MOMENT theta     drug spending share         model=   1.1186654047374938       target=  0.16200000047683716     
+ MOMENT aleph     value of life / income      model=   633.06772434525965       target=   80.000000000000000     
+ MOMENT pi_eu     unemployment rate           model=  0.11735393182690645       target=   4.8999998718500137E-002
+ MOMENT kappa_ued unemployment given SUD      model=  0.24071077672023322       target=  0.16249999403953552     
+ MOMENT kappa_uem employment given SMI        model=  0.15555051865939415       target=  0.30000001192092896     
+ MOMENT p_m       SMI population share        model=   5.1366279599024761E-002  target=   5.0283669227434297E-002
+ MOMENT lambda_m  SMI share of the homeless   model=  0.12621541446491108       target=  0.25000000000000000     
+ MOMENT pi_V      eligibles with a voucher    model=  0.47667088021785675       target=  0.26600000262260437     
+ MOMENT cbar      food stamps / income        model=   2.4680856093763286E-002  target=   4.1999998502433300E-003
+ DIAG food stamps, aggregate spending             =  0.36671380922522889     
+ DIAG output, the denominator above               =   14.858228897412332       total income, which is NOT used=   16.627746922018659     
+ DIAG food stamps / average labour income (OLD)   =  0.84005973522594857     
+ MOMENT tau_u     treatment take up           model=  0.10595399878909927       target=  0.24500000476837158     
+ MOMENT mu_H      recovery housed / homeless  model=   1.2069856300518067       target=   1.4732142857142856     
+ UNTARGETED delta_d child SUD ratio           model=  0.99883336182482230       observed=   2.0000000000000000     
+ UNTARGETED wealth share bottom  1 pct        model=  -2.9847263502948335E-002  observed=  -2.2499999999999998E-003
+ UNTARGETED wealth share bottom  5 pct        model= -0.14923631751474167       observed=  -4.2199999999999998E-003
+ UNTARGETED wealth share bottom 10 pct        model= -0.29847263502948335       observed=  -4.4600000000000004E-003
+ UNTARGETED income share bottom  1 pct        model=   5.7284213029880099E-004  observed=   9.0000000000000006E-005
+ UNTARGETED income share bottom  5 pct        model=   2.8642106514940049E-003  observed=   2.8800000000000002E-003
+ UNTARGETED income share bottom 10 pct        model=   5.7284213029880097E-003  observed=   9.2399999999999999E-003
+ DIAG income histogram mass / distribution (want 1.0) =   1.0000000000000049     
+ DIAG SUD rate, income band           1  model=  0.36503040751136129       data=  0.13650000000000001     
+ DIAG SUD rate, income band           2  model=   5.7705089842720755E-002  data=  0.13080000000000000     
+ DIAG SUD rate, income band           3  model=   3.7448591819199636E-003  data=   9.1100000000000000E-002
+ DIAG SUD rate, income band           4  model=   1.7841604653555249E-002  data=  0.10199999999999999     
+ DIAG SUD rate, income band           5  model=   3.2727446017708061E-003  data=   7.8600000000000003E-002
+ DIAG SUD rate, income band           6  model=  0.31946047713333392       data=   7.1700000000000000E-002
+ DIAG SUD rate, income band           7  model=   9.8246311745870240E-003  data=   4.8200000000000000E-002
+ UNTARGETED delta_h child homelessness ratio  model=   1.7386392176777246       observed=   2.1000000000000001     
+ DIAG homelessness rate rebuilt from the bands    =   2.9645365060221025E-004
+ UNTARGETED homelessness rate, band           1  model=   3.9940610116262044E-005  observed=   3.1610000000000002E-003
+ UNTARGETED homelessness rate, band           2  model=   1.1875823300305412E-004  observed=   3.3779999999999999E-003
+ UNTARGETED homelessness rate, band           3  model=   7.0380660939950597E-005  observed=   2.9120000000000001E-003
+ UNTARGETED homelessness rate, band           4  model=   4.9533625099909906E-005  observed=   2.4960000000000000E-003
+ UNTARGETED homelessness rate, band           5  model=   9.8582146697033827E-004  observed=   7.6999999999999996E-004
+ UNTARGETED homelessness profile, band           1  model=  0.13472800903320792       observed=   1.2807941653160453     
+ UNTARGETED homelessness profile, band           2  model=  0.40059629139938380       observed=   1.3687196110210695     
+ UNTARGETED homelessness profile, band           3  model=  0.23740864987488153       observed=   1.1799027552674231     
+ UNTARGETED homelessness profile, band           4  model=  0.16708724955583529       observed=   1.0113452188006482     
+ UNTARGETED homelessness profile, band           5  model=   3.3253814381025819       observed=  0.31199351701782818     
+ DIAG disorder rate, band           1                     =  0.23584914427380235     
+ DIAG disorder rate, band           2                     =  0.30964282362020296     
+ DIAG disorder rate, band           3                     =  0.21327735861186267     
+ DIAG disorder rate, band           4                     =  0.11023246311585230     
+ DIAG disorder rate, band           5                     =   1.8239952675798306E-002
+ DIAG SUD share of the homeless, band           1         =   0.0000000000000000     
+ DIAG SUD share of the homeless, band           2         =   0.0000000000000000     
+ DIAG SUD share of the homeless, band           3         =   0.0000000000000000     
+ DIAG SUD share of the homeless, band           4         =   0.0000000000000000     
+ DIAG SUD share of the homeless, band           5         =   2.5620453042935512E-004
+ UNTARGETED share of the homeless, band           1  model=   2.5871689659719463E-002  observed=  0.26000000000000001     
+ UNTARGETED share of the homeless, band           2  model=   8.2060299201548642E-002  observed=  0.27200000000000002     
+ UNTARGETED share of the homeless, band           3  model=   4.5058756564760119E-002  observed=  0.20999999999999999     
+ UNTARGETED share of the homeless, band           4  model=   2.7905714724286254E-002  observed=  0.18400000000000000     
+ UNTARGETED share of the homeless, band           5  model=  0.81910353984968554       observed=   7.4999999999999997E-002
+ UNTARGETED earnings share, bottom tenth      model=   1.3444054096154623E-002  observed=   9.9000000000000008E-003
+ UNTARGETED earnings share, top tenth         model=  0.19340209330607006       observed=  0.41099999999999998     
+ MOMENT w_bot     net worth share, bottom half model=  -1.4126129557074592       target=   2.5000000000000001E-002
+ UNTARGETED renters above 30 pct of income    model=  0.55070351331609446       observed=  0.40600000000000003     
+ UNTARGETED renters above 50 pct of income    model=  0.47377672220533984       observed=  0.17499999999999999     
+ UNTARGETED tenant contribution rate          model=  0.75191239846822977       observed=  0.31200000000000000     
+ UNTARGETED voucher holders, wages main       model=  0.66731701895416828       observed=  0.28000000000000003     
+ UNTARGETED participation, with a SUD         model=  0.87500335386777162       observed=  0.65800000000000003     
+ UNTARGETED participation, without a SUD      model=  0.70160447172073270       observed=  0.61499999999999999     
+ DIAG participation, with a SUD, working age      =  0.89394144358421990     
+ DIAG households with no wage income, working age =  0.11735393182690645       data=  0.13930000000000001     
+ DIAG participation, without a SUD, working age   =  0.96729542611048669     
+ UNTARGETED homeless at treatment admission   model=   0.0000000000000000       observed=  0.14499999999999999     
+ UNTARGETED SMI alongside SUD at admission    model=   6.7663657554633688E-002  observed=  0.43099999999999999     
+ UNTARGETED working, homeless in treatment    model=   0.0000000000000000       observed=   6.6000000000000003E-002
+ DIAG employed share of the homeless, working age =  0.94667003304571562     
+ DIAG working age homeless mass                   =   5.2416590113736833E-003
+ DIAG homelessness rate among the UNEMPLOYED      =   3.3368671537790439E-005
+ DIAG   ... over the working age homelessness rate=  0.45443698497417584     
+ UNTARGETED SUD share of the homeless         model=   2.0985803780021142E-004  observed=  0.21700000000000000     
+ DIAG kappa_phi_d_level, SUD mortality level      =   8.0000000000000000     
+ UNTARGETED drug deaths, share of deaths      model=  0.64822405823677653       observed=  0.20000000000000001     
+ VALIDATION NOT COMPUTED: returns to homelessness within 24 months, and the two drug price elasticities; each needs a second solve.
+ OMEGA SKIPPED    child counterfactual off by measure_child_gap
+ ELASTICITY SKIPPED  drug price elasticities off by measure_price_elasticity
+ UNTARGETED income of the homeless            model=  0.45814029359614522       observed=  0.19100000000000000     
+ UNTARGETED employed share of the homeless    model=  0.94667003304571562       observed=  0.46000000000000002     
+ DIAG homeless who could afford it on INCOME ALONE=  0.93889025252588054     
+ DIAG homeless by choice, share of the homeless   =  0.86532698256783713     
+ DIAG homeless receiving food stamps              =   5.0911209924533090E-003
+ DIAG average assets of the homeless              =   4.0170064736938814E-002
+ DIAG wealth share of the bottom 25 pct           = -0.74618158757370834     
+ DIAG mean drug quantity, users                   =  0.37493952911490441     
+ DIAG onset at the mean quantity                  =  0.67457440872647778     
+ MOMENT y_u       income of drug users        model= -0.13083870958146343       target=  0.73999999999999999     
+ UNTARGETED income with a SUD                 model= -0.12838473365489048       observed=  0.71099999999999997     
+ DIAG carriers of the disorder consuming no drugs =   4.9859714255280265E-008
+ DIAG income of experimenters / average           =   3.2155056443564131E-002
+ DIAG income of drug users / labour income        =  -7.6601754859147719E-002
+ DIAG income with a SUD / labour income           =  -7.5165032783861968E-002
+ DIAG mass ON the top savings grid point          =   1.2386117509101624E-004
+ DIAG mass in the top THREE savings grid points   =   4.0987393389806236E-003
+ DIAG histogram mass / distribution  (want 1.0)   =   1.0000000000000058     
+ DIAG histogram wealth / total wealth (want 1.0)  =   1.0000000000000389     
+ DIAG --- the age profile of the housing margin ---
+DIAG age  26  homeless=  0.000000  own=  0.00000  renter wealth=    0.00000  renter income=    0.14696  sud=  0.500000  mass=    2.000000
+DIAG age  27  homeless=  0.000000  own=  0.00000  renter wealth=    0.12906  renter income=    0.12821  sud=  0.500000  mass=    1.997772
+DIAG age  28  homeless=  0.000000  own=  0.00000  renter wealth=    0.15890  renter income=    0.12249  sud=  0.499650  mass=    1.994142
+DIAG age  29  homeless=  0.000022  own=  0.00000  renter wealth=    0.18384  renter income=    0.11990  sud=  0.498119  mass=    1.989219
+DIAG age  30  homeless=  0.000044  own=  0.00000  renter wealth=    0.20597  renter income=    0.12241  sud=  0.497571  mass=    1.983344
+DIAG age  31  homeless=  0.000068  own=  0.00000  renter wealth=    0.22736  renter income=    0.12558  sud=  0.488368  mass=    1.976742
+DIAG age  32  homeless=  0.000084  own=  0.00000  renter wealth=    0.24734  renter income=    0.13020  sud=  0.456704  mass=    1.969576
+DIAG age  33  homeless=  0.000009  own=  0.00000  renter wealth=    0.27067  renter income=    0.13383  sud=  0.457384  mass=    1.961956
+DIAG age  34  homeless=  0.000134  own=  0.00000  renter wealth=    0.29510  renter income=    0.13509  sud=  0.457853  mass=    1.953968
+DIAG age  35  homeless=  0.000127  own=  0.00000  renter wealth=    0.31465  renter income=    0.13989  sud=  0.458126  mass=    1.945650
+DIAG age  36  homeless=  0.000136  own=  0.00000  renter wealth=    0.33483  renter income=    0.14379  sud=  0.458205  mass=    1.936978
+DIAG age  37  homeless=  0.000152  own=  0.00000  renter wealth=    0.35427  renter income=    0.15300  sud=  0.458093  mass=    1.927915
+DIAG age  38  homeless=  0.000157  own=  0.00000  renter wealth=    0.38507  renter income=    0.15706  sud=  0.457799  mass=    1.918461
+DIAG age  39  homeless=  0.000213  own=  0.00000  renter wealth=    0.41573  renter income=    0.16141  sud=  0.457138  mass=    1.908616
+DIAG age  40  homeless=  0.000109  own=  0.00000  renter wealth=    0.44661  renter income=    0.16561  sud=  0.350697  mass=    1.898350
+DIAG age  41  homeless=  0.000065  own=  0.00000  renter wealth=    0.47779  renter income=    0.16906  sud=  0.298937  mass=    1.887662
+DIAG age  42  homeless=  0.000077  own=  0.00000  renter wealth=    0.50851  renter income=    0.17216  sud=  0.288772  mass=    1.876474
+DIAG age  43  homeless=  0.000073  own=  0.00000  renter wealth=    0.53836  renter income=    0.17426  sud=  0.278661  mass=    1.864589
+DIAG age  44  homeless=  0.000075  own=  0.00000  renter wealth=    0.56615  renter income=    0.17724  sud=  0.268551  mass=    1.851808
+DIAG age  45  homeless=  0.000088  own=  0.00000  renter wealth=    0.59327  renter income=    0.17931  sud=  0.258415  mass=    1.838040
+DIAG age  46  homeless=  0.000095  own=  0.00000  renter wealth=    0.61840  renter income=    0.18724  sud=  0.248268  mass=    1.823343
+DIAG age  47  homeless=  0.000092  own=  0.00000  renter wealth=    0.64946  renter income=    0.19670  sud=  0.238004  mass=    1.807801
+DIAG age  48  homeless=  0.000069  own=  0.00000  renter wealth=    0.68466  renter income=    0.19859  sud=  0.227696  mass=    1.791429
+DIAG age  49  homeless=  0.000049  own=  0.00000  renter wealth=    0.71757  renter income=    0.20101  sud=  0.217418  mass=    1.774211
+DIAG age  50  homeless=  0.000049  own=  0.00000  renter wealth=    0.74945  renter income=    0.20250  sud=  0.207169  mass=    1.756139
+DIAG age  51  homeless=  0.000066  own=  0.00000  renter wealth=    0.77842  renter income=    0.20376  sud=  0.196953  mass=    1.737233
+DIAG age  52  homeless=  0.000066  own=  0.00000  renter wealth=    0.80440  renter income=    0.20532  sud=  0.186794  mass=    1.717567
+DIAG age  53  homeless=  0.000064  own=  0.00000  renter wealth=    0.82816  renter income=    0.20605  sud=  0.176714  mass=    1.697218
+DIAG age  54  homeless=  0.000064  own=  0.00000  renter wealth=    0.84858  renter income=    0.20684  sud=  0.166738  mass=    1.676259
+DIAG age  55  homeless=  0.000060  own=  0.00000  renter wealth=    0.86619  renter income=    0.20775  sud=  0.156881  mass=    1.654731
+DIAG age  56  homeless=  0.000057  own=  0.00000  renter wealth=    0.88115  renter income=    0.20821  sud=  0.147153  mass=    1.632633
+DIAG age  57  homeless=  0.000051  own=  0.00000  renter wealth=    0.89348  renter income=    0.20828  sud=  0.137545  mass=    1.609955
+DIAG age  58  homeless=  0.000051  own=  0.00000  renter wealth=    0.90238  renter income=    0.20801  sud=  0.124967  mass=    1.586718
+DIAG age  59  homeless=  0.000047  own=  0.00000  renter wealth=    0.90711  renter income=    0.20715  sud=  0.112978  mass=    1.563240
+DIAG age  60  homeless=  0.000043  own=  0.00000  renter wealth=    0.90703  renter income=    0.20454  sud=  0.101690  mass=    1.539570
+DIAG age  61  homeless=  0.000042  own=  0.00000  renter wealth=    0.89962  renter income=    0.20245  sud=  0.091103  mass=    1.515722
+DIAG age  62  homeless=  0.000067  own=  0.00000  renter wealth=    0.88681  renter income=    0.19983  sud=  0.081207  mass=    1.491678
+DIAG age  63  homeless=  0.000037  own=  0.00000  renter wealth=    0.86779  renter income=    0.19542  sud=  0.071986  mass=    1.467389
+DIAG age  64  homeless=  0.000039  own=  0.00000  renter wealth=    0.84097  renter income=    0.19072  sud=  0.063414  mass=    1.442743
+DIAG age  65  homeless=  0.000186  own=  0.00000  renter wealth=    0.80588  renter income=    0.18639  sud=  0.055461  mass=    1.417591
+DIAG age  66  homeless=  0.000403  own=  0.00000  renter wealth=    0.76349  renter income=    8.71691  sud=  0.048095  mass=    1.391735
+DIAG age  67  homeless=  0.000356  own=  0.00000  renter wealth=    0.72925  renter income=    8.75750  sud=  0.041301  mass=    1.365032
+DIAG age  68  homeless=  0.000479  own=  0.00000  renter wealth=    0.69193  renter income=    8.79559  sud=  0.035094  mass=    1.337499
+DIAG age  69  homeless=  0.000391  own=  0.00000  renter wealth=    0.65223  renter income=    8.83075  sud=  0.029494  mass=    1.309226
+DIAG age  70  homeless=  0.000348  own=  0.00000  renter wealth=    0.60888  renter income=    8.86274  sud=  0.024495  mass=    1.280185
+DIAG age  71  homeless=  0.000567  own=  0.00000  renter wealth=    0.56258  renter income=    8.89153  sud=  0.020075  mass=    1.250279
+DIAG age  72  homeless=  0.000349  own=  0.00000  renter wealth=    0.51267  renter income=    8.91711  sud=  0.016205  mass=    1.219334
+DIAG age  73  homeless=  0.000435  own=  0.00000  renter wealth=    0.45740  renter income=    8.93947  sud=  0.012853  mass=    1.187163
+DIAG age  74  homeless=  0.000376  own=  0.00000  renter wealth=    0.40133  renter income=    8.95881  sud=  0.009989  mass=    1.153567
+DIAG age  75  homeless=  0.000424  own=  0.00000  renter wealth=    0.34463  renter income=    8.97518  sud=  0.007585  mass=    1.118378
+DIAG age  76  homeless=  0.000492  own=  0.00000  renter wealth=    0.28593  renter income=    8.98861  sud=  0.005697  mass=    1.081534
+DIAG age  77  homeless=  0.000585  own=  0.00000  renter wealth=    0.22562  renter income=    8.99939  sud=  0.004199  mass=    1.043018
+DIAG age  78  homeless=  0.000745  own=  0.00000  renter wealth=    0.16621  renter income=    9.00795  sud=  0.002988  mass=    1.002502
+DIAG age  79  homeless=  0.000971  own=  0.00000  renter wealth=    0.10808  renter income=    9.01443  sud=  0.002066  mass=    0.959898
+DIAG age  80  homeless=  0.001332  own=  0.00000  renter wealth=    0.05212  renter income=    9.01904  sud=  0.002519  mass=    0.915202
+DIAG age  81  homeless=  0.001842  own=  0.00000  renter wealth=   -0.00056  renter income=    9.02207  sud=  0.000822  mass=    0.868420
+DIAG age  82  homeless=  0.002508  own=  0.00000  renter wealth=   -0.04627  renter income=    9.02392  sud=  0.000472  mass=    0.819558
+DIAG age  83  homeless=  0.003337  own=  0.00000  renter wealth=   -0.08457  renter income=    9.02491  sud=  0.000250  mass=    0.768769
+DIAG age  84  homeless=  0.009517  own=  0.00000  renter wealth=   -0.11755  renter income=    9.02528  sud=  0.000119  mass=    0.716207
+DIAG age  85  homeless=  0.000000  own=  0.00000  renter wealth=    0.02138  renter income=    9.04489  sud=  0.000049  mass=    0.661516
+ DIAG mass by beta type:  patient=     51.411034  impatient=     41.422422  patient/impatient=  1.241140
+ DIAG pooled mass=   92.833456231816626       one-type equivalent=   51.411033934152776     
+ DIAG labour secant hit its iteration cap        =           0
+ ===== INVARIANTS =====
+ INVARIANT PASS     income histogram holds the whole distribution  =     1.0000000000
+ INVARIANT PASS     wealth histogram holds the whole distribution  =     1.0000000000
+ INVARIANT PASS     wealth histogram holds the whole of net worth  =     1.0000000000
+ INVARIANT PASS          rental market clears, demand over supply  =     1.0000000000
+ INVARIANT PASS                                 homelessness rate  =     0.0002964537
+ INVARIANT PASS                                        drug users  =     0.2339304222
+ INVARIANT PASS                                     disorder rate  =     0.1721006424
+ INVARIANT PASS                              SMI population share  =     0.0513662796
+ INVARIANT PASS                                 unemployment rate  =     0.1173539318
+ INVARIANT PASS                                homeownership rate  =     0.0000000000
+ INVARIANT PASS         homeless by choice, share of the homeless  =     0.8653269826
+ INVARIANT PASS            homeless who could afford it on income  =     0.9388902525
+ INVARIANT PASS                    employed share of the homeless  =     0.9466700330
+ INVARIANT PASS                         SMI share of the homeless  =     0.1262154145
+ INVARIANT PASS                  households receiving food stamps  =     0.3643664618
+ INVARIANT PASS       the five age bands hold all of the homeless  =     1.0000000000
+ INVARIANTS: all PASS
+ ===== END OF MOMENTS =====
+ drug share, weighted by their population shares =   1.1186654047374938       target =  0.16200000047683716     
+Note: The following floating-point exceptions are signalling: IEEE_INVALID_FLAG IEEE_DIVIDE_BY_ZERO IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+ model_value_of_life(1)=   276.35496257864963       over average labour income =   633.06772434525965       target =   80.000000000000000     
+ wealth_to_output_model =   1.8128175720817152       target =   3.0000000000000000     
+ labour supply over total hours =  0.14219459417973954       target =  0.40000000596046448     
+ B SWEEP POINT DONE at b=   3.5897880000000000E-002  participation=   6.1829779757532725E-002
