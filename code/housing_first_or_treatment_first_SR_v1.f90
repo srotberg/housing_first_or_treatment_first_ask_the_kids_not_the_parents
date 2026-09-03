@@ -17431,12 +17431,37 @@
                                             max(financial_grid(financial_index),0.d0))*distribution_mass_used
                                                                                     
                                         if (in_retirement==1) then
-                                        
+
+                                            ! A RETIREE'S OWN PENSION, NOT THE ECONOMY'S AVERAGE WAGE.
+                                            !
+                                            ! This added model_average_labour_income -- an AGGREGATE --
+                                            ! to a per-household accumulator, so every retired renter
+                                            ! was recorded with the same income regardless of the type
+                                            ! they retired as, and that income was not a pension at
+                                            ! all. In the point file the column jumped from 0.4872 at
+                                            ! age 65 to 12.2973 at 66 and then sat flat to 85, varying
+                                            ! only in the fourth decimal from the interest term below.
+                                            !
+                                            ! It read as a twenty-five-fold rise in income at
+                                            ! retirement, which is what it was mistaken for while
+                                            ! working out why the old are homeless. The model itself is
+                                            ! unaffected -- income_by_age_renter is written to the DIAG
+                                            ! line and read nowhere else -- but it is exactly the column
+                                            ! anyone would use to answer that question.
+                                            !
+                                            ! calculate_income is what the MODEL uses for a retiree, so
+                                            ! it is called here rather than the benefit being rebuilt:
+                                            ! that keeps the social security formula, the SSI floor and
+                                            ! the reductions for a retired household with a disorder in
+                                            ! one place instead of two.
+                                            call calculate_income(unemployment_index,employment_index,&
+                                                diag_gross_1,avg_income_to_use_1,avg_income_to_use_1,&
+                                                labor_supply_used,in_retirement)
+
                                             income_by_age_renter(time_period,age_index)=&
                                                 income_by_age_renter(time_period,age_index)+&
-                                                (((1-is_counterfactual)*model_average_labour_income(time_period)+&
-                                                is_counterfactual))*distribution_mass_used
-                                        
+                                                diag_gross_1*distribution_mass_used
+
                                         else
                                         
                                             if ((emp_of(unemployment_index)==1)) then

@@ -307,6 +307,26 @@ INERT_CHANGES = [
         'when': lambda text: re.search(
             r'ssi_floor_level=(?!0\.1774(?![0-9]))', text) is None,
     },
+    {
+        'from': '092d9e6232',
+        'to':   '5f2fa9f347',
+        'what': "a retired renter's DIAG income is their own pension, not the "
+                "economy's average wage",
+        'why':  'income_by_age_renter is written to the DIAG age line and read '
+                'nowhere else -- not by a policy, a price, an adjuster or an '
+                'invariant -- so correcting it cannot change any equilibrium '
+                'object. The retirement branch now calls calculate_income, the '
+                'same routine the model uses, instead of adding an aggregate to '
+                'a per-household accumulator.',
+        'careful': 'Inert for the ECONOMY, not for anyone reading the column. '
+                   'Every archived point reports each retired renter at the same '
+                   'number -- 12.2973 flat from age 66 to 85 on point_5c436e0799 '
+                   '-- which is the aggregate average labour income and not a '
+                   'pension. Do not compare that column across the change, and '
+                   'do not use it on an archived point to reason about '
+                   'retirement income at all.',
+        'when': lambda text: True,
+    },
 ]
 
 
