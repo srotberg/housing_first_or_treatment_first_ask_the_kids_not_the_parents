@@ -444,6 +444,14 @@ def main():
     # is cut from a fixed offset. Replicates of one vector are not independent
     # points and must not be counted as several.
     n_wrong_proc = 0
+    # THE OPEN STAGE'S MOMENTS, computed once so every point is ranked on the
+    # same set. Imported from next_batch rather than copied so the two files
+    # cannot drift; STAGES[0] is the open round until it closes.
+    try:
+        import next_batch as _nb0
+        _SCOPE = set(_nb0.STAGES[0]) if _nb0.STAGES else set()
+    except Exception:
+        _SCOPE = set()
     for f in sorted(glob.glob(os.path.join(HERE, 'points', 'point_*.txt'))):
         if f.endswith('.FAILED.txt'):
             continue
@@ -484,6 +492,25 @@ def main():
              if k not in SKIP and k not in UNSCORED and m[k][1]}
         if not g:
             continue
+        # RANK ON WHAT THE SEARCH MAY ACTUALLY MOVE, which next_batch does and
+        # this file did not.
+        #
+        # WHAT IT COST, measured 3 September 19:00 on two candidate points:
+        #
+        #   2b699025a0  worst 99.5% (tau_u)     then 69, 45, 40, 39   5 inside ten
+        #   d9f6fab6e8  worst 82.7% (lambda_d)  then 82, 80, 75, 73   7 inside ten
+        #
+        # This file picked d9f6fab6e8 because 82.7 < 99.5 lexicographically. But
+        # tau_u is HELD -- its stage is not open and utility_cost_of_treatment
+        # may not step -- so on every moment the round can touch, 2b699025a0 is
+        # much better: 69 against 82.7 on the open worst, with a far shorter
+        # tail. The report was naming as best a point the search would be wrong
+        # to step from, and disagreeing with the OPEN STAGE line it printed
+        # three lines later in its own header.
+        if _SCOPE:
+            _g = {k: x for k, x in g.items() if k in _SCOPE}
+            if _g:
+                g = _g
         worst = max(g.values())
         # THE SAME TIE TOLERANCE HAS TO APPLY HERE, and this is the line that
         # matters: `worst < best[0]` is how the best point is CHOSEN, and it is
