@@ -70,3 +70,64 @@ What would: making the disorder EXPENSIVE enough, or its earnings penalty
 (`rho_d`, currently 1.0, i.e. no penalty at all) large enough, that a working
 addict cannot afford rent. `rho_d` is the obvious candidate and it has never been
 moved off one.
+
+---
+
+# THE AGE PROFILE IS THE REAL DEFECT, and it explains everything above
+
+The author, 3 September: *"If some many with smi are homeless, why are the
+homeless not unemployed? Are you maybe not counting smi as unemployed even when
+they are??"*
+
+The specific suspicion is wrong -- `emp_of = mod(i-1,3)+1` gives 1 employed,
+2 unemployed without UI, 3 unemployed with UI, and the accumulator gates on
+`emp_of > 1`, so the SMI unemployed ARE counted. But the instinct that the
+numbers do not add up was right, and chasing it found something worse.
+
+## The two shares are on different populations
+
+    model_employed_share_of_homeless  =  1 - unemployed / mass_homeless_WORKING_AGE
+    model_smi_share_of_homeless       =      smi_homeless / mass_homeless_RAW
+
+One excludes retirees, the other does not. So "51 per cent of the homeless have
+SMI" and "81 per cent of the homeless are employed" were never about the same
+people, and quoting them side by side -- which this file did -- invited exactly
+the contradiction the author spotted. A comment at the guard says retirees were
+about thirty per cent of the model's homeless when it was written.
+
+## And here is why that matters so much
+
+    band     model rate    data rate   model/data
+      1        0.00486      0.00316       1.54x
+      2        0.00018      0.00338       0.05x
+      3        0.00005      0.00291       0.02x
+      4        0.00007      0.00250       0.03x
+      5        0.00289      0.00077       3.75x
+
+**Bands 2, 3 and 4 are the middle of working life, and the model puts twenty to
+fifty times fewer people on the street there than the data does.** Summed, those
+three bands carry a homelessness rate of 0.00030 against 0.00879 observed --
+a factor of twenty-nine.
+
+The model's homelessness is BIMODAL: the young, who start life with zero wealth,
+and the RETIRED, who have low income. Everyone in between has savings and rents.
+
+## This is the single explanation for the whole night
+
+- **why the homeless are employed**: the working-age homeless are almost all
+  band 1, the young, who have jobs but no assets yet;
+- **why SMI looks over-represented**: it is concentrated in band 5, the retired,
+  who are counted in the SMI share and excluded from the employment share;
+- **why SUD is absent**: people with the disorder are middle-aged, and the middle
+  of the age distribution is where the model has no homelessness at all;
+- **why bottom_productivity_level did nothing**: it makes a household poor for
+  life, and a household poor for life in this model accumulates savings anyway;
+- **why unemployment does not put anyone on the street**: a spell hits a
+  middle-aged household with a decade of assets.
+
+The instrument question -- what owns `emp_homeless` -- is downstream of this. No
+instrument that acts on WHO is poor will fix a profile that is wrong in AGE. What
+is missing is a reason for a middle-aged household with savings to end up on the
+street, and the candidates are the ones that destroy savings rather than reduce
+income: the earnings penalty of the disorder `rho_d`, still at 1.0 meaning no
+penalty, and drug spending `theta`, on target at 0.174 and evidently not enough.
