@@ -119,3 +119,72 @@ change and both the author's call:
 - **A scalar on the PIA**, or the three `ss_pia_rate_*` moved together. They
   are already variables rather than parameters, but there is no single dial for
   them, and moving three numbers against one moment is not identified.
+
+## THE AUTHOR IS RIGHT THAT SOMETHING IS WRONG, AND HERE IS HOW WRONG
+
+*"That tells you that something is very strange... Why do you need such a high
+floor?? It is very odd"*. It is, and the static algebra says the floor should
+not be needed at all.
+
+First, a correction to the number in the section above: the cheapest rental's
+cost was computed with `curvature_of_labor_income_taxes` assumed to be 1.0. It
+is **0.85** (line 3350). Redone:
+
+    net_income_lowest = 0.7522432 * 0.004^0.85 = 0.006888
+    cheapest rental   = 16.5499 * 0.006888    = 0.11400
+
+which is exactly `smallest_house_size`, so `rent(1,0)` is 1.0 by normalisation
+and the cheapest unit costs **17.9 per cent of average labour income**.
+
+### The flow trade-off says a retiree on real SSI should rent
+
+Cobb-Douglas over consumption and housing, weight 0.100, `mu_homeless` 0.911,
+street housing 7.6 per cent of the rental's and free:
+
+    income     c if rents     U rent    U street    prefers
+    0.16554       0.05154    -2.8860    -3.0045       rent    node 3 PIA
+    0.17740       0.06340    -2.6996    -2.9423       rent    real SSI floor
+    0.30015       0.18615    -1.7302    -2.4690       rent    node 4 PIA
+    0.59026       0.47626    -0.8848    -1.8603       rent    node 5 PIA
+    0.75082       0.63682    -0.6233    -1.6438       rent    the PIA cap
+
+The indifference income is **0.1568**, which is 1.38 times the rent and a
+quarter of average labour income. Every PIA in the schedule is above it, and so
+is the real SSI floor of 0.1774 -- by 13 per cent.
+
+### And it is not the housing weight
+
+Checked, because a low Cobb-Douglas weight on housing would make the street
+cheap in utility terms:
+
+    housing weight        flip income   x the rent   who is above it
+    0.100  (the model)         0.1568         1.38   nodes 3+, real SSI
+    0.229  (model gamma)       0.1330         1.17   nodes 3+, real SSI
+    0.268  (target gamma)      0.1284         1.13   nodes 3+, real SSI
+
+Raising the weight to its target moves the threshold the right way but changes
+nothing qualitative. To push the threshold up to where the observed behaviour
+would make sense, `mu_homeless` would have to go to about 20 against 0.911.
+
+### SO THE QUESTION IS NARROWED, NOT ANSWERED
+
+On flow utility, no retiree at the real SSI floor should ever choose the street,
+and 4.8 per cent of band 5 do. The margin is not large -- 0.243 in utility at
+0.1774 -- so something the static comparison does not see is flipping it. What
+this algebra cannot reach, and what has to be looked at next:
+
+- the DYNAMIC problem: assets, the continuation value, and
+  `homeless_excess_death_risk` interacting with `value_of_life` at the very end
+  of life. Band 5's homelessness RISES with age -- 0.0588 at 83, 0.0860 at 84 --
+  which is the shape of an absorbing state or of a terminal-horizon effect, not
+  of a flow choice repeated each period;
+- `max_food_cost` of 0.0130 and the food stamp rules, which change consumption
+  on both sides and are not in the comparison above;
+- whether becoming housed again is restricted once homeless, which would make
+  the old homeless a STOCK inherited from working life rather than a retirement
+  decision.
+
+**Do not calibrate `ssi_floor_level` against `h_share5` until this is
+resolved.** The instrument works -- the band 5 rate fell thirteenfold -- but if
+it is compensating for a defect rather than pricing a margin, then fitting the
+moment with it buries the defect at an implausible pension.
