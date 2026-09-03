@@ -29436,10 +29436,20 @@
             ! purely distributional. Dividing by the live mass-weighted mean
             ! costs nothing on the grid it was built for, where the mean is
             ! already one, and keeps pi_eu's calibration intact on the other.
+            ! ONLY WHERE IT DOES REAL WORK, so the quantile path is bit
+            ! identical to what the archive was measured on. The vector above was
+            ! CONSTRUCTED to have mass-weighted mean one on the quantile masses;
+            ! it comes out at 1.000017 there, and that residue is a rounding
+            ! artefact of quoting it to four decimals, not a correction. Dividing
+            ! by it would move every measured point by 1.7 parts in a hundred
+            ! thousand and, far more expensively, would put 611 archived points
+            ! on a different model hash for no gain. On the KKK grid the masses
+            ! are genuinely different -- the bottom three nodes carry 24 per cent
+            ! rather than 6.6 -- and the renormalisation is doing real work.
             mean_tilt_1=sum(unconditional_employment_probability(1:employment_grid_size)*&
                 adjusted_probability_1(1:employment_grid_size))
 
-            if (mean_tilt_1>10.d0**(-10)) then
+            if ((mean_tilt_1>10.d0**(-10)) .AND. (fixed_productivity==0)) then
 
                 adjusted_probability_1=adjusted_probability_1/mean_tilt_1
 

@@ -200,6 +200,48 @@ INERT_CHANGES = [
         'when': lambda text: re.search(r'include_unsecured_borrowing=0(?![.0-9])',
                                        text) is not None,
     },
+    {
+        'from': 'd2779837ff',
+        'to':   '5bf42a9b2c',
+        'what': "the productivity process became switchable, and KKK_process "
+                "was made usable for the first time",
+        'why':  'Every line of it is inert when fixed_productivity is 1, and it '
+                'is 1 in the declaration and in run_one_point.sh. The grid '
+                'fix-ups -- the retirement rows, the mean-one normalisation, '
+                'log_y_edge, sd_log_y_newborn -- all run before the quantile '
+                'construction, which REBUILDS employment_grid from tail_mean_1, '
+                'rebuilds unconditional_employment_probability from p_edge_1, and '
+                'overwrites log_y_edge from sd_permanent_productivity. The '
+                'newborn-parent-share initialiser, the pooled bottom-half share '
+                'and the kkk_sigma_scale calibration step are each inside '
+                '`if (fixed_productivity==0)`. The width fix in '
+                'get_probabilities_KKK_process repairs a routine whose outputs '
+                'are discarded on this path -- the masses by the quantile '
+                'construction, the transition by the identity loop that starts '
+                'at age one. The social security base moved from '
+                'employment_grid(1,i) to employment_grid(life_span-'
+                'retirement_span,i), and every row of that array is assigned '
+                'employment_grid(1,:) a few lines earlier, so the two are the '
+                'same number. compute_bottom_half_earnings_share was extracted '
+                'to a subroutine that additionally SORTS its nodes, which is a '
+                'no-op here because the quantile nodes are already ascending in '
+                'index. The state file gained one field at its tail, behind an '
+                'iostat guard, and a point starts cold.',
+        'careful': 'The one thing that was NOT inert is now gated so that it is: '
+                   'the BLS unemployment tilt is divided by its mass-weighted '
+                   'mean only when fixed_productivity is 0. On the quantile '
+                   'masses that divisor is 1.000017 -- a rounding artefact of '
+                   'quoting the vector to four decimals -- and dividing by it '
+                   'would have moved every archived point by 1.7 parts in a '
+                   'hundred thousand and split 611 of them onto a new hash for '
+                   'nothing. On the KKK grid the masses genuinely differ and the '
+                   'renormalisation does real work, which is why it is kept '
+                   'there. This rule says NOTHING about a fixed_productivity=0 '
+                   'point: those are a different economy in every respect and '
+                   'none of them existed before this change.',
+        'when': lambda text: re.search(r'fixed_productivity=0(?![.0-9])',
+                                       text) is None,
+    },
 ]
 
 
