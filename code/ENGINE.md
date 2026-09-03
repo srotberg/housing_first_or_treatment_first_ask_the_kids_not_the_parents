@@ -421,13 +421,22 @@ proposing the opposite -- background it through the Bash tool's parameter, so th
 harness re-invokes the worker when it exits -- on the reasoning that the tool's
 own tracking is a mechanism where "do not go idle" is only a hope.
 
-That reasoning is untested and the evidence is not in. Seven workers were
-briefed that way on the night of 3 September; at the time of writing none had
-woken and pushed, and the three that reported status went idle with
-"solve running (task ...)". If any of them wakes and pushes, this becomes a real
-alternative and the section below should be amended with the evidence. Until one
-does, **brief FOREGROUND, as the section below says**, and do not treat the
-harness parameter as a substitute for a brief that keeps the worker attached.
+**THE EVIDENCE IS NOW IN AND IT SETTLES IT: FOREGROUND WINS.** At 04:33 on
+3 September the two briefs were running side by side on the same model, and the
+result is not close:
+
+| brief | workers | outcome |
+|---|---|---|
+| BACKGROUND, via the tool's `run_in_background` | 5 | **0 woke. 0 pushed.** All five idle 22 to 35 minutes with "solve running (task ...)" or "solve running in background" |
+| FOREGROUND, do not end your turn | 3 | **all 3 solved and pushed**, in 2, 3 and 4 minutes |
+
+The harness parameter did not re-invoke a single one of them. Whatever the
+mechanism is meant to do, it did not do it here, and the cost was four KKK arms
+and the SSI A/B -- five containers of compute that produced nothing.
+
+So the rule below is the rule, without qualification: **brief FOREGROUND.** Do
+not brief `run_in_background`, and do not treat any harness tracking as a
+substitute for a brief that keeps the worker attached to its own solve.
 
 What both sections agree on, and what the failures actually share: a worker must
 never end its turn with the solve unattended, and it must PUSH THE POINT FILE
