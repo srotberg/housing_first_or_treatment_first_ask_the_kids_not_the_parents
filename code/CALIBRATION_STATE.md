@@ -1,122 +1,124 @@
-# Calibration state — 3 September, 13:35
+# Calibration state — 3 September, 14:22
 
-## THE ECONOMY IS STOCHASTIC PRODUCTIVITY NOW, on the author's instruction
+## THE ARCHIVE IS EMPTY ON PURPOSE. READ THIS FIRST.
 
-*"Flip it to stochastic and calibrate everything there"*, 3 September.
-`run_one_point.sh` defaults to `fixed_productivity=0` and `archive()` filters
-the archive on the process, so nothing measured on the frozen grid pools with
-anything measured now. That is why the usable archive is 68 points out of 614
-and not a fault.
+`next_batch.py` and `gaps.py` both report **no archive / no scoreable point**,
+and 69 points skipped. That is not a fault and nothing needs repairing. Two
+configuration switches moved today on the author's instruction, and a point
+either side of a switch is a different economy:
 
-The process is `KKK_process(rho_fixed=0.5, sigma_fixed=0.309, rho_shock=0.9,
-sigma_shock=0.2)` with `kkk_sigma_scale`, `kkk_s_deviation_bottom=3.35` and
-`kkk_s_deviation_top=3.0`. Two components collapsed onto one age-varying grid.
+    fixed_productivity  1 -> 0    the KKK process replaces the quantile grid
+    use_pia_formula     0 -> 1    the statute's benefit formula and SSI floor
+                                  replace a flat replacement rate
 
-## THE BEST POINT IS 71ab126acb AND THE LOSS IS BLIND TO ITS DISPERSION
+    60 points skipped on the old productivity process
+     9 points skipped on the old benefit formula
 
-    point_71ab126acb   MODEL ae10d02fc7   minimax 84.0%   median 32.0%
-    inside ten per cent 5 of 21           worst: pi_V +84.0
+`CONFIG_SWITCHES` in both files reads the live default out of
+`run_one_point.sh` and refuses to pool across either. **The seed is
+`batch_pia_1415.txt` and its LINE 1 is the anchor** — until one point lands in
+this configuration the gate has nothing to interpolate from and any batch it
+writes would be a guess.
 
-**Read this before treating it as the base.** `sigma_y` is `not measured` at
-every archived point, because its object changed this afternoon and the old
-label is dropped. So the minimax cannot see dispersion — and 71ab126acb runs
-`kkk_sigma_scale=1.0`, the UNSCALED process, whose bottom half share of
-productivity was 0.329 against a 0.172 target. It is "best" partly because the
-moment that would condemn it is invisible.
+## THE FLEET IS THE BINDING CONSTRAINT, NOT THE MODEL
 
-`point_c048025c98`, at `kkk_sigma_scale=2.20949` and
-`bottom_productivity_level=0.004`, is the better economy on the housing block:
+**Twelve of fifteen workers lost today to `API Error: 529 Overloaded`.** The
+section in `ENGINE.md` has the measurements and the two findings that came out
+of them: the brief cannot fix it, because the 529 ends the worker's own turn;
+and turn COUNT is the exposure, not elapsed time, so one line per worker in
+three tool calls beats consolidation while the rate is this high.
 
-    moment        c048025c98      71ab126acb     target
-    h_1           0.003827 (-4%)  0.000711 (-82%) 0.00399
-    h_share1      0.2409   (-7%)  0.1007   (-61%) 0.26
-    omega_l       0.2279  (-43%)  0.2408  (-40%)  0.40
+Three single-line workers are out on the PIA bracket in that shape, launched
+14:20: `wip/pia-l1-1418`, `-l2-`, `-l3-`.
 
-**MEASURING sigma_y AT THE SCALED BASE IS THE NEXT THING THAT MATTERS.** Until
-one point reports it on the new definition the gate is choosing between
-economies on an incomplete loss.
+## WHAT THE PIA BRACKET IS FOR
 
-## IN FLIGHT: the drug Jacobian step, 3 lines, 3 workers
+`h_share5` -- the share of the homeless aged 65 and over -- is the binding
+moment at **0.6447 against 0.075, plus 759.7 per cent**, and it was in
+`UNSCORED` until this afternoon because nothing could reach it. Its instrument
+is `ssi_floor_takeup`, and the reason nothing could reach it is that the floor
+sits inside `if (use_pia_formula==1)` while every point ever run carried the
+flag at 0. The floor has never executed.
 
-`batch_drugfit_1330.txt`, launched 13:29. Full, half and quarter step off
-`point_21b30a4de9` on `lambda_addiction` and `addiction_scalar_1`. Branches
-`wip/drugfit-a-1330`, `-b-`, `-c-`.
+The three rungs are take-up 0.0, 0.5 and 1.0. The Fortran's own note predicts
+the ends: at 1 nobody is priced out of the cheapest rental in retirement and
+band 5 goes to about nothing; at 0 the floor is absent and 6.6 per cent of the
+population is priced out on the PIA alone. **So rung 1 may be WORSE than the
+flat replacement rate it replaces.** Measure before stepping.
 
-The gate's own decision on the round: b is 31.6 per cent out at the best drug
-point, inside four times the threshold, so **this round is the drug block ALONE
-and no arms went out with it.** An arm measured off an unpinned base has to be
-measured again.
+This also corrects a finding recorded this morning. The A/B that set
+`ssi_floor_takeup` to 0.5 against 0 returned results identical to five decimals
+and was written up as "the SSI floor does nothing under KKK, the PIA exceeds it
+for essentially everyone". That was wrong. It does nothing because it is
+unreachable.
 
-## THE DRUG BLOCK HAS TO BE RE-PINNED, and the 2x2 that lets it is in
+## THE ONE MEASUREMENT THAT SURVIVED TODAY, AND WHAT IT CHANGED
 
-The block was closed to 7.7 per cent on the FROZEN grid and does not transfer:
-b is +32.0 per cent on this economy. The 2x2 landed at 13:20 and straddles both
-targets, which is what `restore.py` needed to fit at all:
+`point_adc68903db`, the only point ever measured on `MODEL ecf692ab24`:
 
-    point         lambda_addiction  addiction_scalar_1   b        lambda_d
-    dfda9c9942         2.69141           0.0282234    0.01388     0.00037
-    4b6ca93a36         3.17586           0.033204     0.05831     0.01407
-    a5e945af9b         2.2877            0.033204     0.12859     0.03389
-    6f02506be3         2.69141           0.0391807    0.17918     0.05874
-    target                                            0.08900     0.03680
+    MOMENT sigma_y  bottom half labour income share  0.05424  target 0.172  -68.5%
 
-`a5e945af9b` is already b +44.5, lambda_d -7.9.
+The old moment was the bottom half's share of PRODUCTIVITY and read 0.16272 at
+the same dispersion -- minus 5.4 per cent, and it looked finished. Same
+economy, two measurements: the new one carries labour supply and the age
+efficiency profile and is read off the model's own distribution. **The earnings
+distribution is three times more unequal than the productivity distribution**,
+because low productivity households also work fewer hours. That is what the
+author asked to be measured and it was not a refinement.
 
-## HOMELESSNESS IN THIS MODEL IS A TASTE MARGIN, AND THAT IS WHAT BLOCKS
-## emp_homeless
+**IT REVERSES kkk_sigma_scale.** The scale was raised to 2.20949 to bring the
+old productivity share DOWN from 0.329 to 0.172. The new moment is BELOW target
+at that scale, so it wants LESS dispersion and the answer is plausibly below
+1.0. The measurement that brackets it is scale 1.0 at the same base and it has
+been lost to 529s four times.
 
-Measured at `c048025c98`:
+## OPEN, WITH NO INSTRUMENT AND BY DECISION
+
+- **`h_share1`**, the young share, minus 7.3 per cent. The author, 3 September:
+  *"If you don't need an endowment for the youngest to get the right share of
+  homeless young, that's ok too!"* `newborn_endowment_scale` stays at 0.0. It
+  could only push the share DOWN and the share is already below target.
+- **`y_u`**, drug users' income. Mortality pinned at 8 by the author; goes to a
+  robustness run.
+
+## THE OTHER TWO THINGS THE AUTHOR RAISED AND WHERE THEY STAND
+
+**`omega_l` is minus 40 per cent and they asked for it fixed.** The bracket is
+`batch_omegal_1400.txt`, `relative_share_of_leisure` at 0.80, 1.40 and 2.00
+against 3.050529 now. Every attempt has been lost to 529s. NOTE: those three
+lines carry `use_pia_formula=0` and will not pool now -- the rsl-to-omega_l
+SHAPE they would measure is still worth having to narrow the bracket before
+re-running it in this configuration, which is cheaper than guessing at a 20 per
+cent worker yield.
+
+**`net_income_lowest` is productivity, not income.**
+
+    net_income_lowest = labor_income_tax_rate*employment_grid(1,1)**curvature
+
+No labour supply, no age-efficiency profile. So the printed
+`cheapest rental over lowest net income` of 16.55 is about 73 once the model's
+own `omega_l` of 0.228 is applied. The author raised this directly: *"you can't
+go off by productivity alone and the rent, you have to account for the labor
+supply reducing the income below what the productivity itself reads"*. The
+normalisation that used it is commented out so it survives only as a printed
+number. NOT FIXED -- it is a one-line Fortran change to a write statement and
+was deferred rather than made under a running batch.
+
+## HOMELESSNESS IS A TASTE MARGIN HERE, WHICH IS STILL UNRESOLVED
 
     DIAG homeless who could afford it on INCOME ALONE = 0.932
     DIAG homeless by choice, share of the homeless    = 0.940
 
-Ninety-four per cent of the homeless are there by choice and ninety-three per
-cent could rent the cheapest unit out of income. `bottom_productivity_level`
-moved `emp_homeless` only 0.8598 -> 0.8247 across the whole move from 0 to
-0.004 for that reason: the households the bottom node impoverishes are already
-homeless, and the ones setting the employed share are choosers, who are
-employed. **The bottom node cannot fix the composition while the choice margin
-dominates the count.** This is the open question the author should decide on.
-
-## `net_income_lowest` IS PRODUCTIVITY, NOT INCOME
-
-    net_income_lowest = labor_income_tax_rate*employment_grid(1,1)**curvature
-
-No labour supply, no age-efficiency profile. So the line every point prints,
-`cheapest rental over lowest net income`, is rent over after-tax PRODUCTIVITY:
-16.55 at `c048025c98`, where the honest hours-adjusted figure at the model's own
-`omega_l` of 0.228 is about 73. The author raised this on 3 September: *"you
-can't go off by productivity alone and the rent, you have to account for the
-labor supply reducing the income below what the productivity itself reads"*.
-The normalisation that used it is commented out, so it survives only as a
-printed number -- but it is a printed number that has been informing exactly
-this decision. NOT YET FIXED; it needs the author's call on whether to spend a
-Fortran edit on a diagnostic.
-
-## Three moments changed definition or wiring this afternoon
-
-- **sigma_y** is the bottom half share of LABOUR INCOME, walked at the median of
-  a new earnings histogram over working-age households in work, with hours and
-  the age profile in it. Target unchanged at 0.172, which was always an earnings
-  statistic. The old productivity share stays as a DIAG. Old label in
-  `STALE_LABEL`, so archived points drop the row rather than mis-compare.
-- **emp_homeless** was emitted as `UNTARGETED`; `score_points` reads `MOMENT`
-  lines only, so its owner `bottom_productivity_level` had a target it could not
-  see for a day. It is a `MOMENT` now, target 0.460.
-- **h_share1** was scored in `gaps.py` and NOT in `next_batch.py`:
-  `newborn_endowment_scale` had no entry in `OWN`, so the moment was outside
-  `OWN.values() | GATE` and the gate neither counted nor stepped it. Mapped now,
-  bound (0.0, 3.0). It does not close the gap -- the endowment only pushes
-  h_share1 DOWN and is at its floor of 0.0 with h_share1 already below target.
-
-Registered inert, `6c3b8a9a23 -> ae10d02fc7`; 64 of 581 points pooled before
-the edit and 64 after. Both gate builds clean.
+Measured at the scaled base. `bottom_productivity_level` moved `emp_homeless`
+only 0.8598 -> 0.8247 across its whole range for that reason. But the moment
+DOES straddle its target across bases -- 0.3733 at scale 1.0 against 0.8247 at
+2.209 -- so the composition moves with dispersion even though its own
+instrument barely touches it. Not escalated to the author, because a story
+about a wall is not a measurement and the bracket says the wall has a door.
 
 ## Solve time, measured on this economy
 
-3 to 4 minutes, median 3 over the stochastic points so far; the four drug
-points took 3 minutes each on 4 cores. Not the 11 minutes the frozen
-seventeen-node grid needed at two beta types.
+3 to 4 minutes, median 3. The four drug points took 3 minutes each on 4 cores.
 
 ## Not in the calibration
 
