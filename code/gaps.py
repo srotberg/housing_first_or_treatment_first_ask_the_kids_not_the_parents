@@ -36,7 +36,13 @@ SKIP = {'h_3'}
 # correct. We should calibrate it"*. Its instrument, newborn_endowment_scale, was
 # parked at 0 while w_bot was too high; the seven-node grid brought h_share1 from
 # +121 per cent to +24, so the push needed is now small.
-UNSCORED = {'kappa_ued', 'kappa_uem', 'rent50'}
+UNSCORED = {
+    # w_bot LEAVES THE LOSS, 3 September: *"We don't need the w_bot anymore...
+    # We have just one beta now!"* There is no second discount factor to aim at
+    # it. It reads 0.02097 at the base against 0.025 in the SCF, so it is right
+    # without an instrument. Printed, not scored.
+    'w_bot',
+'kappa_ued', 'kappa_uem', 'rent50'}
 BAND = {# w_bot IS A WIDE BAND, on the author's instruction of 3 September:
         # *"It's ok if the bottom is not exactly 2.5%. It can be 0.8-5% no
         # problem"*. Anything inside scores zero.

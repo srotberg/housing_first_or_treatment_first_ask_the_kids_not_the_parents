@@ -92,7 +92,23 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 # everything we can stop". The staging discipline they asked for on 1 September
 # is untouched; only the tolerance is theirs rather than mine.
 GATE = {'b': 0.10, 'lambda_d': 0.10}     # opens the phase
-BASE_TOL = {'b': 0.10, 'lambda_d': 0.10}  # admissible as a base thereafter
+# EMPTY FROM 3 SEPTEMBER: *"You should include the drug block too in block 1"*.
+#
+# This was the admission test for a base point -- b and lambda_d both inside ten
+# per cent or the round would not run -- and it is the same test as GATE, so
+# forcing `opened` open changed nothing while this stood. Emptying it lets ANY
+# archived point serve as a base, which is what calibrating the block jointly
+# requires: the drug pair is scored in the loss like every other moment and
+# gets arms like every other moment, instead of being a precondition for the
+# rest of the block being worked at all.
+#
+# THE PRICE, STATED: the drug pair is the least well identified in the model --
+# Jacobian condition number 36,711 in their two-parameter plane -- and this
+# ordering was the author's own on 1 September, "first pin down lambda d and b
+# and then adjust the rest". They have superseded it. If the joint round starts
+# thrashing on b and lambda_d, restoring {'b': 0.10, 'lambda_d': 0.10} here is
+# the one-line way back.
+BASE_TOL = {}                             # admissible as a base thereafter
 
 # THE GATE OPENS IN STAGES, NOT ALL AT ONCE.
 #
@@ -702,6 +718,12 @@ OWN = {
     # $943 a month over the average wage index, so the search may make SSI more
     # generous than the statute -- which the author owns and has to justify --
     # but not less.
+    # THE DRUG INSTRUMENTS ARE ORDINARY OWNERS NOW, so the joint round emits
+    # arms on them like any other pair. They remain in FREE as well, which is
+    # what the 2x2 and the Jacobian repair use when a plain arm cannot move
+    # them; the two mechanisms are complementary rather than exclusive.
+    'lambda_addiction':                                     'b',
+    'addiction_scalar_1':                                   'lambda_d',
     'ssi_floor_level':                                      'h_share5',
     # THE ENDOWMENT IS HELD AT ZERO AND h_share1 HAS NO INSTRUMENT. The author,
     # 3 September: *"If you don't need an endowment for the youngest to get the
@@ -967,6 +989,15 @@ SKIP = {'h_3',
 # h_share1 LEFT THIS SET on 3 September; see the note beside
 # newborn_endowment_scale above.
 UNSCORED = {'rent50',
+            # w_bot LEAVES THE LOSS on the author's instruction of 3 September:
+            # *"We don't need the w_bot anymore... We have just one beta now!"*
+            #
+            # It was the moment two discount factors existed to match, and with
+            # number_of_beta_types=1 there is no second factor to aim at it. It
+            # comes out at 0.02097 at the base anyway -- the SCF value is 0.025 --
+            # so nothing is being papered over: it is right, and it is right
+            # without an instrument. Still parsed and printed at every point.
+            'w_bot',
             # THE COST BURDEN HEADCOUNT LEAVES THE LOSS, because the author has
             # decided twice that the cheapest rung targets emp_homeless: "we
             # decided to set h2 such that 46% of the homeless are employed."
@@ -1820,8 +1851,22 @@ def main():
         all(q in mm and gap(q, mm[q]) <= BASE_TOL.get(q, ACCEPT)
             for st in STAGES[:drug_round] for q in st)
         for _, mm in A.values())
-    opened = any(all(g in m and gap(g, m[g]) <= GATE[g] for g in GATE)
-                 for _, m in A.values())
+    # THE DRUG BLOCK IS PART OF BLOCK 1 FROM 3 SEPTEMBER, on the author's
+    # instruction: *"You should include the drug block too in block 1"*.
+    #
+    # b and lambda_d were already in STAGES[0] and so already in the loss. What
+    # kept them apart was THIS: `opened` required some archived point to have
+    # both inside ten per cent before the joint round would run, so every other
+    # instrument waited on the drug pair. That was the author's own earlier
+    # ordering -- "first pin down lambda d and b and then adjust the rest" -- and
+    # they have now superseded it.
+    #
+    # Forcing it open means the round emits arms on the drug instruments
+    # ALONGSIDE the rest of the block instead of before it, which is what
+    # calibrating the block together means. The gate's own machinery is kept:
+    # `tol` still admits a base on BASE_TOL, and the drug 2x2 and Jacobian repair
+    # below still run when the pair cannot be moved by a plain arm.
+    opened = True
     if not drug_round_open:
         tol = {}
         print('  the drug block\'s round is not open yet, so the gate is advisory: '
