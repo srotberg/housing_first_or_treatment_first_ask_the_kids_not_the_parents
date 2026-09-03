@@ -76,7 +76,12 @@ BAND = {# w_bot IS A WIDE BAND, on the author's instruction of 3 September:
 # that a broken next_batch.py cannot stop the author seeing where things stand.
 OWN = [
     ('discount_factor', 'beta'),
-    ('discount_factor_impatient', 'w_bot'), ('probability_becoming_unemployed', 'pi_eu'),
+    # discount_factor_impatient RETIRED 3 September: *"We can use just one beta.
+    # Ignore the second beta."* With number_of_beta_types=1 there is no impatient
+    # type for it to be the discount factor of, so the row reported a gap against
+    # a parameter that cannot move it. w_bot is a band now, (0.008, 0.05), and
+    # discount_factor sets it -- 0.03203 at 0.965, 0.05032 at 0.99980.
+    ('probability_becoming_unemployed', 'pi_eu'),
     ('size_homelessness', 'h_1'),
     # OLD-AGE HOMELESSNESS IS SCORED FROM 3 SEPTEMBER and the SSI floor owns it.
     # The author: *"we need to make sure that the old are not homeless too much,
