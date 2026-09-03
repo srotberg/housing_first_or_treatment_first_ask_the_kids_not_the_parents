@@ -1615,6 +1615,48 @@ CONFIG_SWITCHES = {
 }
 
 
+def _apply_endowment_mapping(m, log=True):
+    """Turn the newborn endowment on only when h_share1 is ABOVE its target.
+
+    THE ENDOWMENT IS A ONE-SIDED INSTRUMENT, so its mapping is conditional on
+    the SIGN of h_share1's gap at the chosen base rather than fixed.
+
+    The author's rule, 3 September: *"If you see that you need to bring up the
+    youngest endowment since their share is too high, then you can turn on that
+    instrument. Keep it off if the share of young is below the data"*.
+
+    WHY IT IS ONE-SIDED. Measured across the newborn transfer sweep, the
+    endowment took h_share1 from 0.956 to 0.785: giving the youngest -- who are
+    almost all employed -- the liquidity to rent takes them off the street. So
+    the endowment only pushes the share DOWN, and it sits at 0.0, its floor.
+    Above target it is the right instrument; below target it is a parameter
+    pinned at a bound that can only make things worse, and mapping it there
+    would spend an arm every round on a direction that cannot help.
+
+    h_share1 STAYS SCORED either way. The loss is over every parsed moment
+    outside SKIP and UNSCORED, not over OWN.values(), so switching the mapping
+    off does not hide the moment: it prints as "(no instrument)" and still
+    counts. What the mapping decides is only whether an ARM goes out on it.
+
+    Called AFTER the base is chosen, because the sign that decides it is the
+    base's own h_share1 and no earlier point in the run knows which that is.
+    """
+    pair = m.get('h_share1')
+    if pair is None:
+        return None
+    mo_1, tg_1 = pair
+    on = mo_1 > tg_1
+    if on:
+        OWN['newborn_endowment_scale'] = 'h_share1'
+    else:
+        OWN.pop('newborn_endowment_scale', None)
+    if log:
+        print(f'  newborn endowment {"ON" if on else "OFF"}: h_share1 '
+              f'{mo_1:.5f} is {"above" if on else "at or below"} {tg_1:.5f}'
+              f'{", so the endowment can push it down" if on else " and the endowment only lowers it"}')
+    return on
+
+
 def _apply_process_mapping():
     if _live_productivity_process() == 0:
         OWN.pop('sd_permanent_productivity', None)
@@ -1868,6 +1910,8 @@ def main():
 
     through.sort()
     worst, tag, v, m = through[0]
+
+    _apply_endowment_mapping(m)
 
     # THE AUTHOR'S STOPPING RULE, 30 August: "once we get below 10% for
     # everything we can stop". The concession moved from h_2 to h_3 on 31

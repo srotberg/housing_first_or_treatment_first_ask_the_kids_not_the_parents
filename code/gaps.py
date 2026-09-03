@@ -215,6 +215,21 @@ def _cross_check():
         print('The loss below is over gaps.py\'s set. Reconcile the two files.\n')
 # moments that are printed and deliberately not scored, with the reason
 NOTE = {'h_3': 'conceded, a fact about a grid the model chose',
+        # THE ENDOWMENT'S MAPPING IS CONDITIONAL AND LIVES IN next_batch.py, so
+        # this row explains the empty instrument column rather than guessing at
+        # it. The author's rule, 3 September: *"If you see that you need to
+        # bring up the youngest endowment since their share is too high, then
+        # you can turn on that instrument. Keep it off if the share of young is
+        # below the data"*. The endowment only pushes the share DOWN -- measured
+        # 0.956 to 0.785 across the transfer sweep -- and sits at its 0.0 floor,
+        # so above target it is the instrument and below target it is a
+        # parameter that can only make things worse.
+        #
+        # The condition is NOT duplicated here on purpose: it depends on the
+        # chosen base's own h_share1, next_batch.py applies it after selecting
+        # that base, and a second copy would be a second thing to drift.
+        'h_share1': 'endowment turns ON only when the young share is ABOVE '
+                    'the data; it is one-sided and at its floor',
         'omega_c': 'round 5 only; measured when measure_child_gap=1 is handed in',
         'rent50': 'reported, not scored: same headcount over income, opposite sign',
         'y_u': 'mortality pinned at 8 by the author; goes to a robustness run'}
