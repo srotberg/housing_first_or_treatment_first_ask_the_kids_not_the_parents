@@ -330,7 +330,30 @@ TAG=$(for k in "${!P[@]}"; do echo "$k=${P[$k]}"; done | sort | md5sum | cut -c1
 # the parameter has a different value, does not qualify, and is measured -- which
 # is right, because it IS a different point. This mirrors next_batch.py's
 # IMPLICIT table and the two must be kept in step.
-declare -A LEGACY_DEFAULT=( [kappa_phi_d_level]=8.0 [increased_prob_if_homeless]=0.2 [rho_d]=0.85 )
+# THE EIGHT KKK NAMES ARE LEGACY-DEFAULTED, AND THAT IS WHAT SAVES THE ARCHIVE.
+# Adding a name to the vector changes the md5 of every future point, so a point
+# already measured is no longer recognised and is re-run. That is the right
+# price for a name that CHANGES the economy -- use_pia_formula did, and its
+# points had to be re-measured. It is the wrong price for a name that does not.
+#
+# At the eight values below the economy is exactly the one that was being
+# measured before the productivity switch existed: fixed_productivity=1 is what
+# the compile-time parameter held, and the other seven are the declared values
+# KKK_process was already being called with. A point that carries them at these
+# values IS the point that was measured without them, so it keeps its tag and
+# the archive stays readable.
+#
+# The one thing that is not bit-identical: the BLS unemployment tilt is now
+# divided by its mass-weighted mean, which on the quantile masses is 1.000017.
+# The tilt therefore moves by 1.7 parts in a hundred thousand. That is inside
+# any moment's reporting precision and far inside the 10 per cent bands, and it
+# buys the guarantee that the aggregate separation rate does not drift when the
+# grid's masses change.
+declare -A LEGACY_DEFAULT=( [kappa_phi_d_level]=8.0 [increased_prob_if_homeless]=0.2 [rho_d]=0.85 \
+    [fixed_productivity]=1 [kkk_sigma_scale]=1.0 \
+    [kkk_s_deviation_bottom]=3.0 [kkk_s_deviation_top]=3.0 \
+    [persistence_fixed_employment_newborn]=0.5 [sd_fixed_employment_newborn]=0.309 \
+    [persistence_employment_surviving]=0.9 [sd_employment_surviving]=0.2 )
 LEGACY_TAG=$(for k in "${!P[@]}"; do
     if [ -n "${LEGACY_DEFAULT[$k]+x}" ] && [ "${P[$k]}" = "${LEGACY_DEFAULT[$k]}" ]; then continue; fi
     echo "$k=${P[$k]}"
