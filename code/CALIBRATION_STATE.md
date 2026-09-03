@@ -1,4 +1,45 @@
-# Calibration state — 3 September, 14:22
+# Calibration state — 3 September, 17:50
+
+## THE AUTHOR IS RIGHT ABOUT LABOUR SUPPLY, AND IT IS MEASURED
+
+*"It could also be that there is too little labor supply.... That's why"*. Yes,
+and the size of it is already in the archive. Same economy, only
+`relative_share_of_leisure` differs:
+
+                       rsl 3.0505     rsl 1.40     target
+             omega_l      0.22645      0.34708    0.40000
+                 h_1      0.01311      0.00645    0.00399
+        emp_homeless      0.78966      0.49017    0.46000
+               w_bot      0.01988      0.03619    0.02500
+               band1      0.06647      0.04131    0.26000
+               band5      0.93063      0.95619    0.07500
+
+**More labour supply, less homelessness.** `h_1` HALVES and `emp_homeless` goes
+from plus 72 per cent to plus 6.6 -- inside ten per cent for the first time in
+this calibration, and by an instrument that is not its own.
+
+The mechanism is the flow threshold: a household prefers the street below an
+income of 0.4579, and hours are what put working-age income above it.
+
+**AND IT EXPLAINS WHY BAND 5 DOES NOT FOLLOW.** Band 5 gets slightly worse,
+0.9306 to 0.9562. Social security is computed from
+`employment_grid(life_span-retirement_span, i)` -- the household's productivity
+TYPE at the last working age -- and not from hours. So raising labour supply
+lifts the working age over the threshold and leaves retirement income exactly
+where it was. The old are then a larger share of a smaller homeless population.
+
+That is the cleanest statement yet of why the age profile has resisted
+everything: **every instrument that works through income works only on people
+who earn**, and the moment that is furthest out is about people who do not.
+
+## WHAT THIS MEANS FOR THE ORDER OF WORK
+
+`relative_share_of_leisure` is now doing three jobs at once -- omega_l, h_1 and
+emp_homeless -- so it should be pinned BEFORE the street size rather than after,
+or the street will be calibrated against a homelessness rate that the leisure
+weight is about to halve. A rung at 1.40 off the new base is in flight for
+exactly this.
+
 
 ## THE ARCHIVE IS EMPTY ON PURPOSE. READ THIS FIRST.
 
