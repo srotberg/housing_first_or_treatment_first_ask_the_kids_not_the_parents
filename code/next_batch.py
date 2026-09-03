@@ -120,7 +120,18 @@ STAGES = [
     # per-step e-fold cap and the drug gate remain, so the protection against
     # steps that do not compose is unchanged.
     ['aleph', 'beta', 'omega_l', 'sigma_y', 'tau_l', 'pi_eu', 'pi_V', 'cbar',
-     'w_bot', 'b', 'lambda_d', 'theta', 'h_1', 'emp_homeless', 'gamma'],
+     'w_bot', 'b', 'lambda_d', 'theta', 'h_1', 'emp_homeless', 'gamma',
+     # h_2 JOINS THE OPEN STAGE, 3 September. It became a scored moment again
+     # when the rung was pointed back at it, and a scored moment outside every
+     # open stage is the worst of both: it counts against the loss and its
+     # instrument is never allowed to step. That combination pinned the headline
+     # number for a full day in the h_1 case and is recorded above.
+     #
+     # The three housing moments are now one block with one instrument each:
+     #   size_homelessness                          -> h_1, the homelessness rate
+     #   smallest_rental_relative_to_lowest_income   -> h_2, the cost burdened
+     #   bottom_productivity_level                   -> emp_homeless
+     'h_2'],
 
     # Then the drug block, with theta joining b and lambda_d. theta was in the
     # disorder stage; the author has moved it up beside the two it is coupled to.
