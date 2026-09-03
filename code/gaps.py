@@ -349,6 +349,15 @@ def load(path):
         if k == 'sigma_y' and 'bottom half earnings share' in lab:
             continue
         m[k] = (float(a), float(b))
+    # pi_eu IS SCORED AGAINST 0.139, whatever the point's own MOMENT line says.
+    # The Fortran declares 0.139 from 3 September -- the SCF share of households
+    # aged 26 to 64 with no wage income, which is what model_fraction_unemployed
+    # actually measures -- but every archived point printed 0.049, the U-3 rate.
+    # next_batch.py forces the same number through TARGET_OVERRIDE; without the
+    # matching line here the two tools would score the identical model value
+    # against different targets and their tables would disagree.
+    if 'pi_eu' in m:
+        m['pi_eu'] = (m['pi_eu'][0], 0.139)
     if 'gamma' in m and abs(m['gamma'][1] - 0.268) > 1e-9:
         r = re.search(r'DIAG aggregate housing / aggregate expenditure\s+=\s*([0-9.eE+-]+)', t)
         if r:
