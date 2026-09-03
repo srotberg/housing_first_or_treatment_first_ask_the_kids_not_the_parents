@@ -576,6 +576,27 @@ was the right call -- the build failure, the out-of-bounds arrays, the ambient
 age_index. A target or a grid is not that.
 
 
+## A WORKER BRANCH NAME MUST NOT COLLIDE WITH AN OLD ONE
+
+3 September, 04:37. A worker was briefed to `git checkout -b wip/drugfit2`, and
+`origin/wip/drugfit2` already existed from an earlier session. Sweeping the live
+branches for new points then turned up `point cb276aa100`, "solved in 11 min",
+which read as the slow-solve anomaly recurring on a fresh run. It was nothing of
+the kind: `MODEL be2ff73819`, `HANDOVER OK: 44 of 44 parameters` -- an old point
+on an old model with a 44-name vector, sitting on a branch that happened to share
+the name.
+
+Two rules out of it, and the second is the general one:
+
+- Name a worker branch after the BATCH AND THE ROUND, not after the block --
+  `wip/drugfit-0431-a`, not `wip/drugfit2`. Check `git branch -r` before
+  briefing if the name is at all plausible as an old one.
+- **NEVER read a point without checking its `MODEL` stamp and its HANDOVER
+  count.** A point from another model is not a measurement of this one, and it
+  will not announce itself: it has the same file name shape, the same moment
+  labels and a plausible solve time. `next_batch.py` filters on the model hash
+  for exactly this reason; a hand sweep of branches does not.
+
 ## A worker must push to its OWN branch, not the shared one
 
 Added 2 September, after deadlocking a worker with two rules that cannot both
