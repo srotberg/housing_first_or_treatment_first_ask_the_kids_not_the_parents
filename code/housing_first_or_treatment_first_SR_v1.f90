@@ -36240,6 +36240,29 @@
                 case ("ssi_floor_takeup")
                     write(*,*) "HANDOVER ssi_floor_takeup:", ssi_floor_takeup, "->", handover_value
                     ssi_floor_takeup=max(min(handover_value,1.d0),0.d0)
+                ! THE FLOOR'S LEVEL IS SETTABLE, and until now only its TAKE-UP
+                ! was. The author, 3 September: *"maybe the floor is too low
+                ! still if so many old are homeless.... Because if the ssi was
+                ! high, no old would be homeless"*.
+                !
+                ! WHY THE TAKE-UP DIAL COULD NEVER TEST THAT. The benefit is
+                ! max(PIA_i, takeup*ssi_floor_level) and takeup is clamped to
+                ! [0,1], so the effective floor could never exceed 0.1774. On
+                ! the grid this model runs, node 4's own PIA is 0.30015 and node
+                ! 4 carries 39.8 per cent of the mass, so the floor was
+                ! structurally incapable of reaching the households that are
+                ! actually homeless in retirement -- it binds only on nodes 1 to
+                ! 3, and node 3's gain at full take-up is 7 per cent. That is
+                ! why 0.5 to 1.0 moved h_share5 by 0.005 in the wrong direction.
+                !
+                ! 0.1774 IS THE REAL BENEFIT RATE -- $943 a month in 2024 over
+                ! the average wage index -- so a CALIBRATED value above it is a
+                ! change to the policy environment and not a free parameter. It
+                ! is made settable here so the mechanism can be MEASURED; what
+                ! value the benchmark carries is the author's call.
+                case ("ssi_floor_level")
+                    write(*,*) "HANDOVER ssi_floor_level:", ssi_floor_level, "->", handover_value
+                    ssi_floor_level=max(min(handover_value,5.d0),0.d0)
                 case ("use_pia_formula")
                     write(*,*) "HANDOVER use_pia_formula:", use_pia_formula, "->", handover_value
                     use_pia_formula=nint(max(min(handover_value,1.d0),0.d0))

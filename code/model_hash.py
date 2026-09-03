@@ -283,6 +283,30 @@ INERT_CHANGES = [
                    'the correct outcome and is why this entry is safe.',
         'when': lambda text: True,
     },
+    {
+        'from': 'ae10d02fc7',
+        'to':   '092d9e6232',
+        'what': "ssi_floor_level is handed in, so the floor's LEVEL can be set "
+                "and not only its take-up",
+        'why':  'One new case in the handover select, reachable only when a '
+                'point names ssi_floor_level in its vector. Nothing else in the '
+                'source changed: the benefit arithmetic, the floor comparison '
+                'and every other declaration are byte for byte what they were, '
+                'and the variable keeps its declared 0.1774. A point that does '
+                'not hand the name in runs the identical economy, which is '
+                'every point in the archive.',
+        'careful': 'It is inert only AT THE LEGACY VALUE. 0.1774 is the 2024 '
+                   'federal benefit rate over the average wage index -- it is '
+                   'the DATA -- so a point handing in anything else is running a '
+                   'different policy environment and must not pool with one that '
+                   'is not. The condition below is what enforces that: any '
+                   'vector naming a non-legacy ssi_floor_level fails it. '
+                   'LEGACY_DEFAULT in run_one_point.sh separately keeps the name '
+                   'out of the tag at 0.1774, so no existing point changes '
+                   'identity.',
+        'when': lambda text: re.search(
+            r'ssi_floor_level=(?!0\.1774(?![0-9]))', text) is None,
+    },
 ]
 
 

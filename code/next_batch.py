@@ -655,7 +655,29 @@ OWN = {
     # A/B rather than switched silently: turning on use_pia_formula changes
     # retirement income for every household and resets the archive, which is the
     # author's call and not a side effect of wiring up a moment.
-    'ssi_floor_takeup':                                     'h_share5',
+    # THE FLOOR'S LEVEL IS THE INSTRUMENT, NOT ITS TAKE-UP. The author, 3
+    # September: *"You should allow the floor to be calibrated to match the
+    # share of old who are homeless"*.
+    #
+    # The take-up dial could never do it and the reason is arithmetic, not
+    # search. The benefit is max(PIA_i, takeup*ssi_floor_level) with takeup
+    # clamped to [0,1], so the effective floor could not exceed 0.1774 -- below
+    # node 4's own PIA of 0.30015, and node 4 carries 39.8 per cent of the mass.
+    # The floor bound only on nodes 1 to 3, and node 3's gain at full take-up
+    # was 7 per cent, which is why moving the dial 0.5 to 1.0 changed h_share5
+    # by 0.005 in the wrong direction. Measured, not inferred: see
+    # code/SSI_FLOOR_ANALYSIS.md.
+    #
+    # ONLY THE PRODUCT IS IDENTIFIED, so the take-up is HELD at 1.0 in
+    # run_one_point.sh and the level carries the calibration. That also makes
+    # the calibrated number read as what it is: the guaranteed minimum
+    # retirement income.
+    #
+    # THE LOWER BOUND IS THE DATA. 0.1774 is the 2024 federal benefit rate of
+    # $943 a month over the average wage index, so the search may make SSI more
+    # generous than the statute -- which the author owns and has to justify --
+    # but not less.
+    'ssi_floor_level':                                      'h_share5',
     # THE ENDOWMENT IS HELD AT ZERO AND h_share1 HAS NO INSTRUMENT. The author,
     # 3 September: *"If you don't need an endowment for the youngest to get the
     # right share of homeless young, that's ok too!"* -- and the measurement
@@ -686,7 +708,7 @@ BOUNDS = {
     # asset test and take-up among eligible elderly of roughly half, so the
     # empirically defensible region is well inside the upper bound rather than
     # at it -- which is why this is a calibrated dial and not a switch.
-    'ssi_floor_takeup':                                    (0.0, 1.0),
+    'ssi_floor_level':                                  (0.1774, 2.0),
     'utility_cost_of_treatment':                            (0.0, 8.0),
     'probability_becoming_unemployed':                     (1e-6, 0.500),
     # THE FLOOR EXCLUDED THE SOLUTION and was found by measurement, 2 September.

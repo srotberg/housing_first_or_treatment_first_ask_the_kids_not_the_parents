@@ -241,7 +241,27 @@ declare -A P=(
     # KKK and next_batch.py owns it from here.
     [kkk_sigma_scale]=2.20949
     [use_pia_formula]=1
-    [ssi_floor_takeup]=0.0
+    # HELD AT ONE, so that ssi_floor_level IS the effective floor. The benefit
+    # is max(PIA_i, takeup*ssi_floor_level), so only the PRODUCT of the two is
+    # identified by any moment -- calibrating both would be one object with two
+    # names. The author asked for the LEVEL to be calibrated, so the take-up is
+    # the one that is pinned, and pinning it at 1 makes the calibrated number
+    # read directly as the guaranteed minimum retirement income.
+    #
+    # The empirical take-up among eligible elderly is roughly a half, so a
+    # benchmark that wants real SSI should carry takeup 0.5 and level 0.1774,
+    # whose product is 0.0887. Any calibrated product above 0.1774 is a more
+    # generous policy than the statute, which is the author's call to make and
+    # to justify in the paper -- not a free parameter.
+    [ssi_floor_takeup]=1.0
+    # THE FLOOR'S LEVEL, not just its take-up. 0.1774 is the 2024 federal
+    # benefit rate of $943 a month over the average wage index, so this default
+    # is the DATA and a point that carries it is running real SSI. It is
+    # handed in so the level can be measured at all: the take-up dial is
+    # clamped to [0,1], which capped the effective floor at 0.1774, below the
+    # PIA of node 4 -- 39.8 per cent of the mass -- so the floor could never
+    # reach the retirees who are actually homeless. See the HANDOVER case.
+    [ssi_floor_level]=0.1774
     # UNEMPLOYMENT BY PRODUCTIVITY, from BLS 2019 by education. 1 applies the
     # profile, 0 leaves the separation rate flat across types. Derivation in
     # data/UNEMPLOYMENT_BY_PRODUCTIVITY.md.
@@ -375,7 +395,7 @@ TAG=$(for k in "${!P[@]}"; do echo "$k=${P[$k]}"; done | sort | md5sum | cut -c1
 # any moment's reporting precision and far inside the 10 per cent bands, and it
 # buys the guarantee that the aggregate separation rate does not drift when the
 # grid's masses change.
-declare -A LEGACY_DEFAULT=( [kappa_phi_d_level]=8.0 [increased_prob_if_homeless]=0.2 [rho_d]=0.85 \
+declare -A LEGACY_DEFAULT=( [ssi_floor_level]=0.1774 [kappa_phi_d_level]=8.0 [increased_prob_if_homeless]=0.2 [rho_d]=0.85 \
     [fixed_productivity]=1 [kkk_sigma_scale]=1.0 \
     [kkk_s_deviation_bottom]=3.0 [kkk_s_deviation_top]=3.0 \
     [persistence_fixed_employment_newborn]=0.5 [sd_fixed_employment_newborn]=0.309 \

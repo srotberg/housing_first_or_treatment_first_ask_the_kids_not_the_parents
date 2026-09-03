@@ -53,7 +53,11 @@ OWN = [
     # reason nothing could is in next_batch.py: the floor sits inside
     # `if (use_pia_formula==1)` and every vector carries use_pia_formula=0, so
     # the code never ran.
-    ('ssi_floor_takeup', 'h_share5'),
+    # The LEVEL owns it from 3 September, not the take-up: only the product
+    # takeup*ssi_floor_level enters the benefit, take-up is clamped to [0,1] so
+    # the effective floor could never pass 0.1774, and that is below the PIA of
+    # the node holding 39.8 per cent of the mass. See SSI_FLOOR_ANALYSIS.md.
+    ('ssi_floor_level', 'h_share5'),
     # THE ENDOWMENT NO LONGER OWNS h_share1 and h_share1 keeps its row as
     # "(no instrument)". The author, 3 September: *"If you don't need an
     # endowment for the youngest to get the right share of homeless young,
