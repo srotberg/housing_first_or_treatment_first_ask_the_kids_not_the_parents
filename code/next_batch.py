@@ -1287,16 +1287,29 @@ def archive():
     # So the configuration is read from run_one_point.sh's own default -- one
     # number in one place, as ever -- and points that disagree with it are
     # skipped exactly as points from another source are.
+    #
+    # THE PRODUCTIVITY PROCESS IS THE SAME KIND OF THING AND WAS NOT CAUGHT.
+    # fixed_productivity is a runtime value too, so flipping run_one_point.sh's
+    # default to 0 on 3 September changed the economy without changing the model
+    # hash -- and the gate carried on choosing a fixed_productivity=1 point as
+    # its base and emitting fourteen lines that all carried
+    # fixed_productivity=1. The default only governs a point run with NO explicit
+    # argument, and the gate always writes the base's full vector, so flipping it
+    # achieved exactly nothing until this filter existed.
     cfg = None
+    proc = None
     try:
         rop = open(os.path.join(HERE, 'run_one_point.sh')).read()
         mm = re.search(r'\[number_of_beta_types\]=(\d+)', rop)
         if mm:
             cfg = mm.group(1)
+        mp = re.search(r'^\s*\[fixed_productivity\]=(\d+)', rop, re.M)
+        if mp:
+            proc = mp.group(1)
     except OSError:
         pass
 
-    out, skipped, wrong_cfg = {}, 0, 0
+    out, skipped, wrong_cfg, wrong_proc = {}, 0, 0, 0
     for f in sorted(glob.glob(os.path.join(HERE, 'points', '*.txt'))):
         if f.endswith('.FAILED.txt'):
             continue
@@ -1310,11 +1323,22 @@ def archive():
         if cfg is not None and v.get('number_of_beta_types', cfg) != cfg:
             wrong_cfg += 1
             continue
+        # ABSENT MEANS ONE, NOT "assume it matches". A point that predates the
+        # name ran at the compile-time parameter, which was 1. Defaulting it to
+        # cfg the way number_of_beta_types does would admit every frozen-grid
+        # point in the archive into a stochastic round.
+        if proc is not None and str(int(float(v.get('fixed_productivity', '1')))) != proc:
+            wrong_proc += 1
+            continue
         if v and 'b' in m and 'lambda_d' in m:
             out[os.path.basename(f)[6:-4]] = (v, m)
     if wrong_cfg:
         print(f'  {wrong_cfg} points skipped for running a different '
               f'number_of_beta_types than run_one_point.sh defaults to ({cfg})')
+    if wrong_proc:
+        print(f'  {wrong_proc} points skipped for running a different '
+              f'productivity process than run_one_point.sh defaults to '
+              f'(fixed_productivity={proc})')
     if skipped:
         print('  %d of %d points are on a different model (%s) and were skipped'
               % (skipped, skipped + len(out), want), file=sys.stderr)
