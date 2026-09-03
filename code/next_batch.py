@@ -637,6 +637,22 @@ OWN = {
     # accumulates with age where onset does not.
     # rho_d IS HELD AT ONE and is not calibrated; see run_one_point.sh.
     #
+    # RESTORED 3 September, on the author's instruction: *"For band 1 of the
+    # homeless you can just use the endowment of the newborns to match the share
+    # of homeless who are young."*
+    #
+    # It was held at 0.0 earlier today under their own conditional rule -- *"Keep
+    # it off if the share of young is below the data"* -- and band 1 is 0.013 to
+    # 0.038 against a 0.26 target at every one-beta rung, far below. The
+    # endowment only pushes band 1 DOWN, by giving the youngest the liquidity to
+    # rent, so at the current street it has nothing to do.
+    #
+    # IT BINDS ONCE THE STREET SHRINKS, which is why wiring it now is right
+    # rather than premature. The street map measured today runs band 1 from
+    # 0.1930 at street 0.045 to 0.7546 at 0.030, so at whatever street size fixes
+    # h_1 the young are likely to OVERSHOOT -- and that is exactly the case the
+    # author's rule turns it on for.
+    'newborn_endowment_scale':                              'h_share1',
     # THE SSI FLOOR OWNS OLD-AGE HOMELESSNESS, and it has never been able to
     # act. The author, 3 September: *"we need to make sure that the old are not
     # homeless too much... You have an instrument for that? I think we fixed the

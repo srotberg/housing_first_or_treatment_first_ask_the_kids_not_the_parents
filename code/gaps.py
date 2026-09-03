@@ -83,6 +83,12 @@ OWN = [
     # discount_factor sets it -- 0.03203 at 0.965, 0.05032 at 0.99980.
     ('probability_becoming_unemployed', 'pi_eu'),
     ('size_homelessness', 'h_1'),
+    # RESTORED 3 September: *"For band 1 of the homeless you can just use the
+    # endowment of the newborns to match the share of homeless who are young."*
+    # It only pushes band 1 down, and band 1 is far below target at the current
+    # street size, so it binds only once the street shrinks -- which the street
+    # map says it will, band 1 running 0.193 at 0.045 to 0.755 at 0.030.
+    ('newborn_endowment_scale', 'h_share1'),
     # OLD-AGE HOMELESSNESS IS SCORED FROM 3 SEPTEMBER and the SSI floor owns it.
     # The author: *"we need to make sure that the old are not homeless too much,
     # they should have very little of the share of the homeless"*. Band 5 holds
