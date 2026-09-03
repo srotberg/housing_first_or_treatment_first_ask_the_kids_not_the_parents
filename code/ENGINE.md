@@ -342,6 +342,33 @@ build and it does not need to finish: the first violation is the finding. One
 such run costs less than a single 15-minute solve and would have caught both of
 these in minutes.
 
+**A BOUNDS CHECK IS NOT ENOUGH, AND 3 SEPTEMBER PROVED IT.** The flags above
+ran completely clean over `get_probabilities_KKK_process`, which reads a local
+array `width` that the routine never assigns -- six times, in the transition and
+in the unconditional distribution it hands back. Reading uninitialised memory is
+not an out-of-bounds access, so `-fcheck=bounds,pointer` is blind to it by
+construction. Fresh pages come back zeroed, the middle node's transition row
+summed to exactly 0, the normalisation divided by it, and the economy came back
+NaN with the employed share of the homeless at -1.97.
+
+So the standing check is now BOTH of these, and the second one is the cheaper
+of the two to run:
+
+    gfortran ... -O1 -fcheck=bounds,pointer -g -fbacktrace
+    gfortran ... -O1 -finit-real=snan -ffpe-trap=invalid,zero,overflow -g -fbacktrace
+
+The second turns every uninitialised real into a signalling NaN and traps the
+first arithmetic that touches one, with a backtrace naming the line. It would
+have found this in the first second of the run instead of after a 140-second
+solve and a full distribution iteration.
+
+**And it applies to code you did not write.** The bug had been in the file for
+as long as the routine had, and it was invisible for exactly one reason: with
+`fixed_productivity=1` both of that routine's outputs are thrown away
+downstream, the masses by the quantile construction and the transition by the
+identity loop. Turning a switch off does not make the code behind it new, but it
+does make it live for the first time, and it has to be checked as if it were.
+
 **And the reason it is a rule rather than a habit.** The invariants cannot see
 this. They check that the histogram holds the whole distribution, that the
 rental market clears, that the age bands hold all of the homeless -- all of

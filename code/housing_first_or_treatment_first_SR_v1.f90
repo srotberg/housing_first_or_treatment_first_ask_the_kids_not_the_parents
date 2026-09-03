@@ -29729,7 +29729,46 @@
             variance_by_age(i)=(rho_shock**2)*variance_by_age(i-1)+variance_eta
             
         end do
-                        
+
+        ! WIDTH WAS NEVER ASSIGNED IN THIS ROUTINE, AND IT IS READ SIX TIMES
+        ! BELOW. The loop that fills it exists in KKK_process and does not exist
+        ! here, so every use of width(i) was a read of uninitialised memory: the
+        ! three transition cells, and all three branches of the unconditional
+        ! distribution that this routine writes back into
+        ! unconditional_employment_probability.
+        !
+        ! WHY IT NEVER SHOWED UP. With fixed_productivity=1 both of this
+        ! routine's outputs are thrown away downstream -- the quantile
+        ! construction rebuilds the masses, and the identity transition loop
+        ! starts at age one and overwrites the whole of employment_process. So
+        ! the garbage was written and then covered, every run, for as long as the
+        ! frozen grid was the only grid.
+        !
+        ! WHAT IT DID WHEN THE COVER CAME OFF. Fresh pages come back zeroed, so
+        ! width reads as zero, every interior cell of the transition collapses to
+        ! temp_upper - temp_lower = 0, and a row's mass is whatever the two tail
+        ! cells hold. For a node near the middle of the grid both tails are
+        ! essentially zero, the row sum underflows, and the normalisation
+        ! immediately below divides by it. That is where batch_kkk line 4's NaN
+        ! came from: renter income went non-finite at the very first age and the
+        ! whole aggregation followed.
+        !
+        ! A BOUNDS CHECK CANNOT FIND THIS. Reading an uninitialised local is not
+        ! an out of bounds access, and -fcheck=bounds,pointer ran clean over this
+        ! exact code. -finit-real=snan with -ffpe-trap=invalid is the flag that
+        ! catches it, and it belongs in the standing check from now on.
+        !
+        ! Recovered from the grid rather than recomputed from the deviations: the
+        ! nodes are equally spaced within each age by construction, so this is
+        ! exactly the width KKK_process used, and it needs no argument this
+        ! routine was not given.
+        do i=1,life_span-retirement_span
+
+            width(i)=(z_grid_by_age(i,employment_grid_size)-z_grid_by_age(i,1))/&
+                real(employment_grid_size-1,8)
+
+        end do
+
         do i=1,life_span-retirement_span-1
         
             do j=1,employment_grid_size

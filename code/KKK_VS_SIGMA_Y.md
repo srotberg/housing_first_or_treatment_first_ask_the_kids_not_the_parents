@@ -253,3 +253,63 @@ that decides homelessness. `financial_grid_expander_positive` at 4.0 instead of
 3.0 restores it (five points below the threshold at line 3's grid top), and if
 either arm looks promising it should be re-run that way as a robustness check
 before anything is concluded from it.
+
+---
+
+# The first result: a bug in `get_probabilities_KKK_process`
+
+`batch_kkk.txt` line 4 came back a NaN economy — most moments NaN, the employed
+share of the homeless at **−1.97**, and bands 1–3 at 0.46–0.50 against a target
+near 0.003. The run exited 0 and 14 of 16 invariants failed.
+
+**Cause: `get_probabilities_KKK_process` reads a local array `width` that it
+never assigns.** The loop that fills it exists in `KKK_process` and does not
+exist in the second routine, so all six uses — the three transition cells and
+all three branches of the unconditional distribution it writes back into
+`unconditional_employment_probability` — read uninitialised memory.
+
+Fresh pages come back zeroed, so `width = 0`, and then every interior cell of
+the transition collapses to `temp_upper − temp_lower = 0`. A row's whole mass is
+whatever its two tail cells hold, and for a node in the middle of the grid both
+tails are essentially nothing. Row sums before the normalisation, at line 4's
+parameters:
+
+| | node 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+|---|---|---|---|---|---|---|---|
+| age 26, `width=0` | 2.4e−1 | 1.1e−3 | 3.2e−8 | **1.3e−14** | 4.9e−8 | 1.4e−3 | 2.6e−1 |
+| age 45, `width=0` | 2.9e−1 | 1.0e−4 | 3.1e−12 | **0.0e+00** | 4.7e−12 | 1.3e−4 | 3.1e−1 |
+| any age, fixed | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 |
+
+The line immediately below divides the row by its sum. At age 45 the middle
+node divides by **exactly zero**. That is where the NaN comes from, and renter
+income at the first age is where it first surfaced.
+
+## Why it had never been seen
+
+With `fixed_productivity=1` both of that routine's outputs are discarded
+downstream: the masses are rebuilt by the quantile construction, and the
+identity transition loop starts at age one and overwrites the whole of
+`employment_process`. The garbage was written and then covered, every run, for
+as long as the frozen grid was the only grid. Turning the switch off is what
+made the routine's output matter for the first time.
+
+## Why the bounds check did not catch it
+
+It ran clean. Reading an uninitialised local is not an out-of-bounds access, so
+`-fcheck=bounds,pointer` is blind to it by construction. `-finit-real=snan`
+with `-ffpe-trap=invalid` is the flag that finds it, and it is now part of the
+standing check in `ENGINE.md`.
+
+## The fix
+
+`width` is recovered from the grid itself — the nodes are equally spaced within
+each age, so `(z(i,N) − z(i,1))/(N−1)` is exactly the width `KKK_process`
+computed, and it needs no argument the routine was not given. Every row then
+sums to 1.0000 before normalisation, as it should.
+
+## What it invalidates
+
+**All three KKK arms.** Lines 2, 3 and 4 every one ran on the garbage
+transition; none of them measured anything and all three are being re-run.
+Line 1, the control, is unaffected — at `fixed_productivity=1` the identity loop
+overwrote the corrupted transition before it was ever used.
