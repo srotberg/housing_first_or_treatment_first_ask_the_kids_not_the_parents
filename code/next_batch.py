@@ -617,6 +617,34 @@ OWN = {
     # accumulates with age where onset does not.
     # rho_d IS HELD AT ONE and is not calibrated; see run_one_point.sh.
     #
+    # THE SSI FLOOR OWNS OLD-AGE HOMELESSNESS, and it has never been able to
+    # act. The author, 3 September: *"we need to make sure that the old are not
+    # homeless too much... You have an instrument for that? I think we fixed the
+    # ss structure to help with that, right?"*
+    #
+    # The structure IS built: PIA bend points at three replacement rates, then a
+    # means-tested floor at ssi_floor_level=0.1774 of the average wage index --
+    # the 2024 federal benefit rate of $943 a month -- taken up by a fraction
+    # ssi_floor_takeup of those eligible. The Fortran's own note says what it
+    # does: "at 1 nobody is priced out of the cheapest rental in retirement and
+    # band 5 homelessness goes to about nothing; at 0 the floor is absent and
+    # 6.6 per cent of the population is priced out on the PIA alone."
+    #
+    # AND IT IS UNREACHABLE IN EVERY POINT WE HAVE RUN, because the floor sits
+    # INSIDE `if (use_pia_formula==1)` and every vector carries
+    # use_pia_formula=0. With the flag off, benefits are a flat
+    # ss_replacement_rate times the last working age grid point and there is no
+    # floor at any take-up. That is also the correct explanation of the A/B run
+    # earlier today which set ssi_floor_takeup to 0.5 against 0 and returned
+    # results identical to five decimals: the conclusion recorded then -- "the
+    # SSI floor does nothing under KKK, the PIA exceeds it for essentially
+    # everyone" -- was WRONG. The floor code never executed.
+    #
+    # So the mapping is registered here and the flag flip is measured as its own
+    # A/B rather than switched silently: turning on use_pia_formula changes
+    # retirement income for every household and resets the archive, which is the
+    # author's call and not a side effect of wiring up a moment.
+    'ssi_floor_takeup':                                     'h_share5',
     # THE ENDOWMENT IS HELD AT ZERO AND h_share1 HAS NO INSTRUMENT. The author,
     # 3 September: *"If you don't need an endowment for the youngest to get the
     # right share of homeless young, that's ok too!"* -- and the measurement
@@ -643,6 +671,11 @@ OWN = {
     # "(no instrument)" in the table.
 }
 BOUNDS = {
+    # A take-up FRACTION, so [0, 1] is the whole domain. Real SSI has a $2,000
+    # asset test and take-up among eligible elderly of roughly half, so the
+    # empirically defensible region is well inside the upper bound rather than
+    # at it -- which is why this is a calibrated dial and not a switch.
+    'ssi_floor_takeup':                                    (0.0, 1.0),
     'utility_cost_of_treatment':                            (0.0, 8.0),
     'probability_becoming_unemployed':                     (1e-6, 0.500),
     # THE FLOOR EXCLUDED THE SOLUTION and was found by measurement, 2 September.
@@ -836,7 +869,21 @@ UNSCORED = {'rent50',
             # the share of the homeless aged 25 to 34, 0.91 against 0.26; these
             # are how anyone sees WHERE the mass went when it moves.
             'h_age1', 'h_age2', 'h_age3', 'h_age4', 'h_age5',
-            'h_share2', 'h_share3', 'h_share4', 'h_share5',
+            # h_share5 LEFT THIS SET on 3 September. The author: *"we need to
+            # make sure that the old are not homeless too much, they should have
+            # very little of the share of the homeless"*.
+            #
+            # IT IS THE WORST NUMBER IN THE MODEL AND IT WAS INVISIBLE. Band 5
+            # holds 0.7186 of the homeless against 0.075 in the HUD count, plus
+            # 858 per cent, and its homelessness RATE is 0.01009 against
+            # 0.00077, thirteen times the data -- while bands 2, 3 and 4 are all
+            # far BELOW it. The model puts homelessness at the two ends of the
+            # age distribution and almost none in the middle. Scored through
+            # h_share1 alone, none of that entered the loss.
+            #
+            # The reason it is scored NOW and was not before is that it finally
+            # has an instrument. See ssi_floor_takeup in OWN.
+            'h_share2', 'h_share3', 'h_share4',
             # OUTPUTS, ON THE AUTHOR'S INSTRUCTION, and not orphans. The
             # unemployment rate of those with a substance use disorder and the
             # employment rate of the SMI population are not known well enough to

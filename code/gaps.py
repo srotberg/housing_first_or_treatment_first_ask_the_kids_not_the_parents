@@ -45,6 +45,15 @@ OWN = [
     ('discount_factor', 'beta'),
     ('discount_factor_impatient', 'w_bot'), ('probability_becoming_unemployed', 'pi_eu'),
     ('size_homelessness', 'h_1'),
+    # OLD-AGE HOMELESSNESS IS SCORED FROM 3 SEPTEMBER and the SSI floor owns it.
+    # The author: *"we need to make sure that the old are not homeless too much,
+    # they should have very little of the share of the homeless"*. Band 5 holds
+    # 0.7186 of the homeless against 0.075 in the HUD count, the worst number in
+    # the model, and it was in UNSCORED because nothing could reach it. The
+    # reason nothing could is in next_batch.py: the floor sits inside
+    # `if (use_pia_formula==1)` and every vector carries use_pia_formula=0, so
+    # the code never ran.
+    ('ssi_floor_takeup', 'h_share5'),
     # THE ENDOWMENT NO LONGER OWNS h_share1 and h_share1 keeps its row as
     # "(no instrument)". The author, 3 September: *"If you don't need an
     # endowment for the youngest to get the right share of homeless young,
@@ -232,6 +241,7 @@ def load(path):
     # to fall back to.
     for pat, key, tv in (
             (r'UNTARGETED share of the homeless, band\s+1\s+model=\s*([0-9.eE+-]+)', 'h_share1', 0.26),
+            (r'UNTARGETED share of the homeless, band\s+5\s+model=\s*([0-9.eE+-]+)', 'h_share5', 0.075),
             (r'UNTARGETED employed share of the homeless\s+model=\s*([0-9.eE+-]+)', 'emp_homeless', 0.46),
             (r'UNTARGETED renters above 50 pct of income\s+model=\s*([0-9.eE+-]+)', 'rent50', 0.175)):
         if key in m:
@@ -299,6 +309,8 @@ def main():
     # of the same vector, and the tag in the header came out truncated because it
     # is cut from a fixed offset. Replicates of one vector are not independent
     # points and must not be counted as several.
+    proc = str(_live_productivity_process())
+    n_wrong_proc = 0
     for f in sorted(glob.glob(os.path.join(HERE, 'points', 'point_*.txt'))):
         if f.endswith('.FAILED.txt'):
             continue
@@ -313,6 +325,25 @@ def main():
             continue
         v, m = load(f)
         if v is None or (cfg and v.get('number_of_beta_types', cfg) != cfg):
+            continue
+        # THE PRODUCTIVITY PROCESS IS PART OF THE ECONOMY, and this file was
+        # missing the filter that next_batch.py's archive() has had since the
+        # flip to stochastic productivity this morning.
+        #
+        # WHAT IT COST, caught on 3 September at 14:00. With h_share5 newly
+        # scored, gaps.py selected point_e8f6f3b777 as the best point and
+        # printed a full table for it. That point carries fixed_productivity=1:
+        # it is a FROZEN GRID point, an economy the author abandoned, pooled
+        # with the stochastic ones because the MODEL hash is inert across the
+        # switch and nothing here looked at the flag. The header even said "69
+        # points in this economy" while counting two different economies.
+        #
+        # The inert registration is right and this filter is its other half:
+        # the SOURCE is unchanged across the switch, so the archive pools on the
+        # hash, and the VECTOR is what says which process a point actually ran.
+        # next_batch.py has the same test with the same reasoning beside it.
+        if str(int(float(v.get('fixed_productivity', '1')))) != proc:
+            n_wrong_proc += 1
             continue
         n += 1
         g = {k: gap(k, m[k]) for k in m
@@ -329,6 +360,10 @@ def main():
         vv = sorted(g.values(), reverse=True)
         if best is None or _better_vec(vv, best[5]):
             best = (worst, os.path.basename(f)[6:-4], v, m, g, vv)
+    if n_wrong_proc:
+        print(f'  {n_wrong_proc} points skipped for running a different '
+              f'productivity process than run_one_point.sh defaults to '
+              f'(fixed_productivity={proc})')
     if best is None:
         print('no scoreable point in the current economy'); return 1
     worst, tag, v, m, g, _bv = best
