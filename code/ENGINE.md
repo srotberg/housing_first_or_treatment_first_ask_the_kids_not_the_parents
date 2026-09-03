@@ -997,18 +997,26 @@ record for the day:
     14:20 x3      14:20:33 / :38 / :42    all died
     14:26 x3      14:26:37 / :43 / :47    FIRST survived, other two died
 
-**0 of 13 non-first workers survived; 2 of 8 first-launched did.** Treat that as
-suggestive and not established -- Fisher's exact on those counts is about 0.13,
-and six of the eight groups had no survivor at all, so being launched first is
-plainly not sufficient. What it does support is that launching a group buys
-nothing over launching one.
+**0 of 13 non-first workers survived; 2 of 8 first-launched did.** It looked
+worth acting on, and one worker was launched ALONE at 14:35 to test it.
 
-THE ARITHMETIC OF ACTING ON IT, stated honestly because it is not a speed-up.
-At roughly a quarter yield on the first worker and nothing on the rest, a group
-of three lands about 0.25 points and so does a group of one. Launching one per
-firing therefore gives the SAME expected rate at a third of the containers, and
-it tests the hypothesis cleanly: if first-launched workers keep surviving on
-their own, that is the route, and if they do not, nothing has been lost.
+**IT DIED TOO, at 14:41, 529, no solve.** So the hypothesis is FALSIFIED and
+this paragraph is kept only so that nobody spends another firing on it. Being
+launched first is neither necessary nor sufficient; the 529s are close to
+indiscriminate and the apparent pattern was eight groups' worth of noise. The
+honest reading of the whole record is a flat per-worker survival rate of about
+one in five, roughly independent across workers.
+
+**WHICH MEANS LAUNCH THE FLEET, NOT ONE.** Under independence at p roughly 0.2,
+three workers land about 0.5 measurements and one lands 0.2. Deliberately
+launching one was the wrong inference and it cost a firing. The author's
+standing instruction -- run the whole fleet, do not be timid with it -- is also
+the arithmetically correct policy at any per-worker rate, because the failures
+do not compete with each other.
+
+What DOES still hold from this section is everything about the shape of the
+brief: three tool calls, no ENGINE.md read, push chained onto the commit. That
+is about the exposure of a single worker and is unaffected.
 
 Do not read this as a reason to be timid when the fleet is healthy. The author's
 instruction is to run the whole fleet, and eight parallel workers is the right
