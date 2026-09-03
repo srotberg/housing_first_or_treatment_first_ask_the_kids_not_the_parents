@@ -350,7 +350,23 @@ OWN = {
     # reversed its concession explicitly -- but nothing brackets on it, so it
     # will show as "(no instrument)" until it is given one or conceded. Say so
     # rather than letting it look assigned.
-    'smallest_rental_relative_to_lowest_income':            'emp_homeless',
+    # THE RUNG TARGETS THE COST BURDEN AGAIN, on the author's instruction of
+    # 2-3 September. It had been pointed at emp_homeless because nothing else
+    # could reach that moment; the bottom of the productivity grid now can, so
+    # the rung goes back to the moment that is actually its own -- the CEX
+    # severe cost burden headcount, moment h_2, target 0.101.
+    'smallest_rental_relative_to_lowest_income':            'h_2',
+    # THE BOTTOM PRODUCTIVITY NODE OWNS emp_homeless. The author, 3 September:
+    # *"That grid point on y is the one that delivers the 46% employment of the
+    # homeless."* It is the level, not the mass: y_grid_kappa stays FIXED at 3.2
+    # so that one instrument faces one moment. Two dials on one target would be
+    # under-identified and reachable from absurd pairs.
+    #
+    # THE 19.1 PER CENT IS NOT A TARGET. The author, same message: *"The 19.1%
+    # average income should come out in the validation section."* Income of the
+    # homeless stays UNTARGETED and unscored, which is the stronger claim -- if
+    # the model lands near it without being asked to, that is evidence.
+    'bottom_productivity_level':                            'emp_homeless',
     # AND THE TOP RUNG HAD NO INSTRUMENT EITHER. largest_house_size owns the
     # share in the largest unit -- h_4 until the author's rename, h_3 now -- and
     # like the bottom rung it sat in the vector with nothing mapped to it. It is
@@ -559,6 +575,10 @@ BOUNDS = {
     # clamped it back to thirty times that.
     'size_homelessness':                                   (1e-6, 5.0),
     'smallest_rental_relative_to_lowest_income':            (0.005, 0.40),
+    # The bottom node's level, as a multiple of mean productivity. The quantile
+    # construction puts it at 0.0302 unaided; the floor is well below that and
+    # the ceiling is node two, since the grid must stay monotone.
+    'bottom_productivity_level':                            (0.004, 0.064),
     'weight_on_child':                                     (0.0005, 0.20),
     # In units of average labour income, so 1.0 hands every newborn a year of
     # it. The upper end is deliberately generous: nothing yet says where the
@@ -703,7 +723,9 @@ UNSCORED = {'rent50', 'h_share1',
             # It stays parsed and printed with the unscored moments so the price
             # of the decision is visible in every table, and it can be restored
             # in one line if the author wants it back.
-            'h_2',
+            # 'h_2' IS SCORED AGAIN, on the author's instruction of 2-3
+            # September, now that the rung points at it once more. Left here
+            # commented rather than deleted so the history is legible.
             # THE PROFILE IS SCORED THROUGH h_share1 ALONE, so the other four
             # shares and all five rates are reported and not scored. h_share1 is
             # the share of the homeless aged 25 to 34, 0.91 against 0.26; these

@@ -42,7 +42,11 @@ OWN = [
     # increased_prob_if_homeless is EXOGENOUS at 0.2 on the author's
     # instruction -- twenty per cent each way -- so it owns nothing. The
     # cheapest rung owns emp_homeless instead; see next_batch.py for why.
-    ('smallest_rental_relative_to_lowest_income', 'emp_homeless'),
+    ('smallest_rental_relative_to_lowest_income', 'h_2'),
+    # The bottom productivity node owns emp_homeless from 3 September; the rung
+    # went back to the cost burden. Income of the homeless stays untargeted and
+    # belongs to validation, on the author's instruction.
+    ('bottom_productivity_level', 'emp_homeless'),
     ('lambda_addiction', 'b'), ('addiction_scalar_1', 'lambda_d'),
     ('relative_share_of_leisure', 'omega_l'),
     ('labor_income_tax_rate', 'tau_l'),
