@@ -63,6 +63,31 @@ FD_ABS = {
     'discount_factor': 0.005,
 }
 TRUST    = 0.25
+# INSTRUMENTS HELD AT THEIR CURRENT VALUE, each with the reason it is held.
+#
+# newborn_endowment_scale. The author, 3 September: "Keep the newborn endowment
+# off for now." It sits at 0 with a bound of [0, 3], so every move it can make
+# ADDS wealth to the young -- and h_share1, the young share of the homeless, is
+# already 45 per cent BELOW its target, so the only direction the instrument can
+# travel is the wrong one. That is the same test the author set earlier ("keep
+# it off if the share of young is below the data"), and the share is below.
+#
+# The author's fix, same message: "You can also make it negative actually. Some
+# young people have a lot of debt!" That is the right sign -- debt pushes the
+# young ONTO the street and raises the share -- and it is feasible here, because
+# set_renter_floor opens the whole negative financial grid to every household
+# once number_of_beta_types is one, which it now is. Turning it on is three
+# changes: the HANDOVER clamp at the newborn_endowment_scale case, which floors
+# at 0.d0; the BOUNDS entry in next_batch.py; and a lower bound no deeper than
+# unsecured_borrowing_limit, 1.50 years of average labour income. None of them
+# belong in a step that is already measured and running.
+#
+# THE MOMENT STAYS IN THE RESIDUAL VECTOR. Holding an instrument is not the same
+# as forgiving its moment: h_share1 is the third worst gap and size_homelessness
+# moves it hard, so the least-squares step should go on closing it with the
+# leverage it does have. Dropping the moment would tell the solver the gap does
+# not matter, which is the opposite of what the author asked for.
+HOLD = {'newborn_endowment_scale'}
 SV_TOL   = 0.02
 STATE    = os.path.join(HERE, '.newton_state.json')
 
@@ -175,7 +200,7 @@ def main():
 
     if '--jacobian' in args:
         out = []
-        for p, m in inst:
+        for p, m in [pm for pm in inst if pm[0] not in HOLD]:
             x = float(v0[p]); lo, hi = NB.BOUNDS[p]
             if p in FD_ABS:
                 step = FD_ABS[p]
@@ -190,7 +215,8 @@ def main():
             out.append(line(vv))
             print(f'  {p:45s} {x:12.6g} -> {xn:12.6g}   for {m}')
         open(os.path.join(HERE, 'batch_newton_J.txt'), 'w').write(''.join(out))
-        json.dump({'base': tag0, 'inst': [p for p, _ in inst], 'keys': keys,
+        json.dump({'base': tag0, 'inst': [p for p, _ in inst if p not in HOLD],
+                   'all': [p for p, _ in inst], 'keys': keys,
                    'x0': {p: float(v0[p]) for p, _ in inst}},
                   open(STATE, 'w'), indent=1)
         print(f'\nwrote code/batch_newton_J.txt, {len(out)} INDEPENDENT lines')
@@ -198,7 +224,14 @@ def main():
 
     if '--step' in args:
         st = json.load(open(STATE))
-        x0 = st['x0']; keys = st['keys']; names = st['inst']
+        x0 = st['x0']; keys = st['keys']
+        names = [p for p in st['inst'] if p not in HOLD]
+        # A point is a clean perturbation of p only if EVERY OTHER instrument is
+        # at its base value -- including the held ones. Checking only the free
+        # list would let a point that moved a held instrument as well be read as
+        # a clean column for p, which is exactly the silent contamination the
+        # refusal below exists to prevent.
+        allnames = st.get('all', st['inst'])
         base = A.get(st['base'])
         if base is None:
             print('the base of the stored Jacobian is no longer in the archive'); return 1
@@ -208,7 +241,7 @@ def main():
             hit = None
             for tag, (v, m) in A.items():
                 if any(abs(float(v.get(q, x0[q])) - x0[q]) > 1e-12 * max(1, abs(x0[q]))
-                       for q in names if q != p):
+                       for q in allnames if q != p):
                     continue
                 d = float(v.get(p, x0[p])) - x0[p]
                 if abs(d) > 1e-12 * max(1, abs(x0[p])):
@@ -242,32 +275,85 @@ def main():
             return 2
         print(f'\nJacobian: {len(r0)} moments x {len(cols)} instruments')
 
-        # least-norm solve of J dx = -r0 by truncated SVD, without numpy
+        # COLUMN SCALING. A column is d(residual)/d(instrument) in the
+        # instrument's OWN RAW UNITS, and the units are incommensurable: the
+        # finite-difference step is 3.36 for value_of_life and 0.00032 for
+        # bottom_productivity_level, so the raw columns of this Jacobian span six
+        # orders of magnitude in norm. Measured 3 September, the raw diagonal of
+        # J^T J ran from 0.109 to 2.24e5, and a single ridge set from the largest
+        # of them -- 4474 -- was more than a hundred times the whole diagonal of
+        # eleven of the fifteen instruments. The step it produced moved every
+        # instrument by under one per cent from a residual of 68 per cent, with
+        # nothing capped: the ridge had annihilated the search, and it looked
+        # like a converged step rather than a broken one.
+        #
+        # The unit that makes the columns comparable is the LARGEST MOVE THE
+        # INSTRUMENT IS ALLOWED IN ONE ITERATION, because that is what a step
+        # actually spends. Writing dx = s * u, a scaled column is the residual
+        # change per full permitted move, the trust region becomes |u| <= 1 in
+        # every coordinate, and the ridge finally means what it is meant to mean.
+        # s is capped by the BOUND as well as by the trust region: scaling by a
+        # move the instrument cannot make in either direction would reinstate the
+        # same distortion in a quieter form.
         n, k = len(r0), len(cols)
-        JT = cols                                   # k rows of length n
-        # normal equations on the k-dimensional side: (J^T J) dx = -J^T r0
+        sc = []
+        for p in used:
+            x = x0[p]; lo, hi = NB.BOUNDS[p]
+            cap = TRUST * abs(x) if abs(x) > 1e-12 else TRUST * max(abs(hi), 1e-6)
+            sc.append(max(min(cap, max(hi - x, x - lo)), 1e-300))
+        JT = [[c * sc[i] for c in cols[i]] for i in range(k)]
+
+        # TRUNCATED SVD, which is what the header promises and what a uniform
+        # ridge is not. A ridge shrinks every direction, so it buys stability in
+        # the directions the data do not identify by throwing away the ones they
+        # do. Truncation drops the weak directions outright and leaves the strong
+        # ones at full length, which is the behaviour that stops the b/lambda_d
+        # oscillation without also stopping the search.
+        #
+        # J^T J is symmetric and k is fifteen, so a cyclic Jacobi rotation sweep
+        # diagonalises it exactly and needs no numpy. Its eigenvalues are the
+        # SQUARED singular values, so the cut is at SV_TOL**2 of the largest.
         JTJ = [[sum(JT[i][t] * JT[j][t] for t in range(n)) for j in range(k)] for i in range(k)]
         JTr = [-sum(JT[i][t] * r0[t] for t in range(n)) for i in range(k)]
-        # Tikhonov with the ridge set from the diagonal, which is the poor man's
-        # truncated SVD and does the same job: it suppresses directions the data
-        # do not identify instead of inverting them.
-        dmax = max((JTJ[i][i] for i in range(k)), default=0.0)
-        ridge = SV_TOL * dmax
+        V = [[1.0 if i == j else 0.0 for j in range(k)] for i in range(k)]
+        for _ in range(100):
+            off = max((abs(JTJ[i][j]) for i in range(k) for j in range(k) if i != j),
+                      default=0.0)
+            if off < 1e-14 * max(abs(JTJ[i][i]) for i in range(k)):
+                break
+            for i in range(k):
+                for j in range(i + 1, k):
+                    if abs(JTJ[i][j]) < 1e-300:
+                        continue
+                    th = 0.5 * (JTJ[j][j] - JTJ[i][i]) / JTJ[i][j]
+                    t = (1.0 if th >= 0 else -1.0) / (abs(th) + (th * th + 1.0) ** 0.5)
+                    c = 1.0 / (t * t + 1.0) ** 0.5
+                    sN = t * c
+                    for q in range(k):
+                        a, b = JTJ[q][i], JTJ[q][j]
+                        JTJ[q][i], JTJ[q][j] = c * a - sN * b, sN * a + c * b
+                    for q in range(k):
+                        a, b = JTJ[i][q], JTJ[j][q]
+                        JTJ[i][q], JTJ[j][q] = c * a - sN * b, sN * a + c * b
+                    for q in range(k):
+                        a, b = V[q][i], V[q][j]
+                        V[q][i], V[q][j] = c * a - sN * b, sN * a + c * b
+        lam = [JTJ[i][i] for i in range(k)]
+        lmax = max(lam) if lam else 0.0
+        cut = (SV_TOL ** 2) * lmax
+        kept = 0
+        u = [0.0] * k
         for i in range(k):
-            JTJ[i][i] += ridge
-        # Gaussian elimination with partial pivoting
-        M = [row[:] + [JTr[i]] for i, row in enumerate(JTJ)]
-        for c in range(k):
-            piv = max(range(c, k), key=lambda rr: abs(M[rr][c]))
-            if abs(M[piv][c]) < 1e-300:
+            if lam[i] <= cut or lam[i] <= 0.0:
                 continue
-            M[c], M[piv] = M[piv], M[c]
-            for rr in range(k):
-                if rr == c: continue
-                f = M[rr][c] / M[c][c]
-                for cc in range(c, k + 1):
-                    M[rr][cc] -= f * M[c][cc]
-        dx = [M[i][k] / M[i][i] if abs(M[i][i]) > 1e-300 else 0.0 for i in range(k)]
+            kept += 1
+            g = sum(V[q][i] * JTr[q] for q in range(k)) / lam[i]
+            for q in range(k):
+                u[q] += g * V[q][i]
+        print(f'  kept {kept} of {k} directions; '
+              f'singular values span {lmax**0.5:.4g} down to '
+              f'{min(l for l in lam if l > 0) ** 0.5:.4g}')
+        dx = [u[i] * sc[i] for i in range(k)]
 
         vv = dict(base[0]); shown = []
         for p, d in zip(used, dx):
