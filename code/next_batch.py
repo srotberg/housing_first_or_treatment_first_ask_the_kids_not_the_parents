@@ -616,8 +616,39 @@ OWN = {
     # its onset shape falls from 1.000 at 26 to 0.154 at 66 -- and the SUD stock
     # accumulates with age where onset does not.
     # rho_d IS HELD AT ONE and is not calibrated; see run_one_point.sh.
+    #
+    # THE ENDOWMENT WAS NEVER MAPPED, and that is why h_share1 has not moved.
+    # The author, 3 September: *"why can't you choose the endowment of the
+    # newborns to match their share of the homeless?"* The answer was not
+    # economics. `newborn_endowment_scale` is handed in by every point, is
+    # clamped in the Fortran, has a long note in this file explaining that it
+    # owns h_share1, and appears in STAGES beside h_2 -- and had no entry in
+    # this dict. So h_share1 was outside `OWN.values() | GATE`, which is the
+    # scored set: the gate never counted it in the loss and never stepped
+    # anything at it. gaps.py scored it and printed the gap every firing, which
+    # is why the two files disagreed and gaps.py said so at the top of every
+    # table.
+    #
+    # WHAT THIS DOES NOT FIX, and it should be read before the mapping is
+    # trusted. The endowment can only push h_share1 DOWN: measured across the
+    # newborn transfer sweep it took the share 0.956 to 0.785, by giving the
+    # youngest -- who are almost all employed -- the liquidity to rent. It is
+    # at 0.0, its floor, and h_share1 is BELOW target on the stochastic economy
+    # (0.1007 against 0.26 at point_71ab126acb, 0.2409 at point_c048025c98).
+    # So the instrument is pinned at the bound that points the wrong way, and
+    # h_share1 is currently a consequence of h_1 being 82 per cent short at the
+    # point the loss picks, not something the endowment can reach. The mapping
+    # closes a hole in the scored set; it does not close the gap.
+    'newborn_endowment_scale':                              'h_share1',
 }
 BOUNDS = {
+    # The Fortran clamps this to [0, 50]. The search bound is far tighter
+    # because the endowment is a transfer of average labour income to every
+    # newborn and it raises w_bot, which is already the moment it fights: three
+    # times average labour income at birth is past anything the SCF's newborn
+    # distribution can support, and the note in OWN records that the conflict
+    # between the two is real rather than a search failure.
+    'newborn_endowment_scale':                             (0.0, 3.0),
     'utility_cost_of_treatment':                            (0.0, 8.0),
     'probability_becoming_unemployed':                     (1e-6, 0.500),
     # THE FLOOR EXCLUDED THE SOLUTION and was found by measurement, 2 September.
