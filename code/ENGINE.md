@@ -100,6 +100,36 @@ a permission prompt. Compare batch lines against `VECTOR` lines in
 `code/points/` and respawn only what is missing. Nothing landing in two firings
 means the fleet has drained.
 
+**4a. COLLECT WHAT A BRANCH COMMITTED, NOT HOW IT DIFFERS.**
+
+This is safe only while the coordinator's own tree carries no points for the round:
+
+```
+for f in $(git diff --name-only HEAD origin/$b -- code/points/)   # WRONG, see below
+```
+
+`git diff` lists files that differ IN EITHER DIRECTION. Once the coordinator has
+committed points of its own -- which it does after every re-seed -- a file the
+branch never solved shows up because the coordinator has the NEW version and the
+worker inherited a STALE one at its branch point. Checking it out replaces the good
+file with the stale one.
+
+On 3 September this overwrote five new-economy points with old-economy copies from
+branches that had never solved them, and the count of points on the current model
+fell from 5 to 1 in one step. It was caught on the count and restored with
+`git checkout HEAD -- code/points/`.
+
+The failure is silent in the only way that matters: every file exists, every name is
+right, and only the `MODEL` line inside says the contents are from a dead economy.
+Nothing complains; the pooled set is simply wrong and the next Jacobian is built on
+it. Ask each branch what IT COMMITTED:
+
+```
+git log --format='%h %s' --name-only origin/$b --not HEAD
+```
+
+then `git checkout origin/$b -- <those files only>`.
+
 **5-. SPLIT FILES MUST BE UNIQUE PER ROUND, LIKE THE BATCHES THEMSELVES.**
 next_batch.py already refuses to reuse a CORRECT_n name, for a reason written out
 below it: a worker reads its line, `git pull --rebase` between lines, and picks up
