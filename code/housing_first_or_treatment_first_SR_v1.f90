@@ -488,7 +488,7 @@
         ! before. Holding J_E down would hide whether that is enough: at 55 the
         ! model is free to put use back in retirement if the deterrent still
         ! does not bite, and the per age profile will say so.
-        integer, parameter :: max_age_to_choose_addiction=50
+        integer, parameter :: max_age_to_choose_addiction=55
         integer, parameter :: max_age_to_choose_homelessness=59
         
         integer, parameter :: include_varying_household_size=0
