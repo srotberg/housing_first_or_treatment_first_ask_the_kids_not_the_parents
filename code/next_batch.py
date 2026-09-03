@@ -1056,6 +1056,28 @@ def vector(text):
 # distinguishes them, so a stale label drops the moment and the point is simply
 # re-measured when it is next asked for.
 STALE_LABEL = {'h_2': ['smallest unit', 'above half of income'],
+               # SIGMA_Y CHANGED OBJECT ON 3 SEPTEMBER, on the author's
+               # instruction: *"yes please target the bottom share of income
+               # (not share of productivity but share of income after you
+               # account for the labor supply....)"*.
+               #
+               # Until today it was "bottom half earnings share", the share of
+               # PRODUCTIVITY held by the bottom half of employment_grid,
+               # weighted by the ergodic masses -- no hours in it, no age
+               # efficiency profile, and read off the grid rather than off the
+               # model's distribution. It is now "bottom half labour income
+               # share", walked at the median of the model's own earnings
+               # histogram over working age households in work. Same target,
+               # 0.172 in the SCF, because that target was always an earnings
+               # statistic; different model object.
+               #
+               # Every point in the archive carries the old label, and the two
+               # numbers differ by a lot -- the frozen grid gave 0.165 on
+               # productivity where the economy's actual earnings are far more
+               # unequal. Reading them as one moment would have the gate bracket
+               # sigma_y against points measuring something else, which is the
+               # h_2 failure above repeated.
+               'sigma_y': ['bottom half earnings share'],
                # THE DENOMINATOR WENT BACK, so the stale label inverts with it.
                # gamma was "housing over expenditure" against 0.268, was moved to
                # "housing over income" against 0.202 this afternoon, and is back
@@ -1141,7 +1163,15 @@ def moments(text):
     # increased_prob_if_homeless and rho_d have a moment to bracket on, and they
     # are listed in UNSCORED so they do not gate the stopping rule: the author
     # chose to score the age profile itself and leave these as diagnostics.
-    for pat, key in ((r'UNTARGETED employed share of the homeless\s+model=\s*'
+    # emp_homeless IS A MOMENT LINE FROM 3 SEPTEMBER, not an UNTARGETED one, so
+    # the generic MOMENT parser above already picks it up. The pattern below is
+    # kept and widened to accept either form, because every point in the archive
+    # measured before today carries the UNTARGETED wording and would otherwise
+    # lose the moment entirely -- which is the same class of failure as reading a
+    # point from another model.
+    for pat, key in ((r'MOMENT emp_homeless employed share of homeless\s+model=\s*'
+                      r'([0-9.eE+-]+)\s+target=\s*([0-9.eE+-]+)', 'emp_homeless'),
+                     (r'UNTARGETED employed share of the homeless\s+model=\s*'
                       r'([0-9.eE+-]+)\s+observed=\s*([0-9.eE+-]+)', 'emp_homeless'),
                      (r'UNTARGETED SUD share of the homeless\s+model=\s*'
                       r'([0-9.eE+-]+)\s+observed=\s*([0-9.eE+-]+)', 'sud_homeless'),

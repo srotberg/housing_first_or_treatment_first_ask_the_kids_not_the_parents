@@ -259,6 +259,30 @@ INERT_CHANGES = [
         'when': lambda text: re.search(r'fixed_productivity=0(?![.0-9])',
                                        text) is None,
     },
+    {
+        'from': '6c3b8a9a23',
+        'to':   'ae10d02fc7',
+        'what': "sigma_y is scored on the bottom half's share of LABOUR INCOME, "
+                "emp_homeless is emitted as a MOMENT rather than as UNTARGETED",
+        'why':  'Neither touches the economy. The first adds a second histogram '
+                'beside the income one, filled in the same distribution sweep from '
+                'labor_supply x employment_grid x labour_deterministic_efficiency '
+                'for working-age households in work, and walks it to the median; '
+                'nothing reads it back into a policy, a price or an adjuster. The '
+                'second changes the wording of one write statement. Every state, '
+                'every policy function and every equilibrium object is bit for bit '
+                'what it was, so a point measured either side of this is the same '
+                'economy and the archive pools across it.',
+        'careful': 'INERT DOES NOT MEAN COMPARABLE, and here the distinction bites. '
+                   'sigma_y named the bottom half share of PRODUCTIVITY before this '
+                   "and the bottom half share of EARNINGS after it -- same target, "
+                   '0.172, different statistic. Pooling the model economy is right; '
+                   'pooling that MOMENT is not. STALE_LABEL in next_batch.py drops '
+                   "the old label and gaps.py does the same, so an archived point "
+                   'keeps all its other moments and loses only sigma_y, which is '
+                   'the correct outcome and is why this entry is safe.',
+        'when': lambda text: True,
+    },
 ]
 
 

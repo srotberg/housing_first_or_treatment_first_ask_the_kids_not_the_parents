@@ -894,6 +894,32 @@
         integer, parameter :: income_bins=400
         real(8), parameter :: income_bin_top=50.d0
         real(8), dimension(income_bins) :: income_hist_mass,income_hist_income
+
+        ! EARNINGS, ON THE SAME BINS, FOR WORKING AGE HOUSEHOLDS IN WORK. This
+        ! is the histogram sigma_y is scored on from 3 September. The author:
+        ! *"yes please target the bottom share of income (not share of
+        ! productivity but share of income after you account for the labor
+        ! supply....)"*.
+        !
+        ! WHY IT IS NOT income_hist. income_hist holds total_income, which is
+        ! labour income OR unemployment insurance OR disability OR social
+        ! security, plus interest, over every age including the retired. The
+        ! target is the SCF's bottom half share of EARNINGS among households
+        ! aged 26 to 65 with positive wage and salary income, so scoring the
+        ! total income histogram against it would compare two different objects
+        ! -- the error the label machinery in next_batch.py exists to stop.
+        ! This histogram is the model's counterpart of that SCF population:
+        ! working age, in work, earnings only.
+        !
+        ! What it adds over the old moment is the two things the author named.
+        ! model_bottom_half_earnings_share was built from employment_grid and
+        ! its unconditional masses: a statistic about the GRID. This one carries
+        ! hours, through labor_supply, and the age efficiency profile, and it is
+        ! read off the model's own distribution rather than off the ergodic
+        ! masses -- so two households on the same productivity node with
+        ! different hours now count differently, which is the whole point.
+        real(8), dimension(income_bins) :: earnings_hist_mass,earnings_hist_earnings
+        real(8) :: model_bottom_half_labour_income_share=0
         ! THE TILT: disorder mass in the same income bins, so the SUD rate can be
         ! read as a function of income and compared with NSDUH band for band.
         ! This is the statistic the whole question turns on. In the data, ages
@@ -918,8 +944,19 @@
         real(8), dimension(7), parameter :: nsduh_band_rate=&
             (/0.1365d0,0.1308d0,0.0911d0,0.1020d0,0.0786d0,0.0717d0,0.0482d0/)
         real(8) :: income_hist_mass_check
-        real(8), dimension(3), parameter :: bottom_percentiles=&
-            (/0.01d0,0.05d0,0.10d0/)
+        ! THE MEDIAN IS THE FOURTH ENTRY, on the author's instruction of 3
+        ! September: *"yes please target the bottom share of income (not share of
+        ! productivity but share of income after you account for the labor
+        ! supply....)"*.
+        !
+        ! sigma_y's moment was the bottom half's share of PRODUCTIVITY, computed
+        ! from employment_grid and its masses: no labour supply in it, no age
+        ! efficiency profile, and no distribution -- a statistic about the grid
+        ! rather than about the economy. The income histogram already walks the
+        ! actual distribution of household income at the bottom 1, 5 and 10 per
+        ! cent, so the bottom HALF is the same walk at a fourth cut point.
+        real(8), dimension(4), parameter :: bottom_percentiles=&
+            (/0.01d0,0.05d0,0.10d0,0.50d0/)
         real(8), dimension(:), allocatable :: smi_onset_shape_by_age
 
         ! ONSET IS NOW A LEVEL ON THAT SHAPE, AND THE LEVEL IS CALIBRATED.
@@ -4609,7 +4646,10 @@
             model_choose_addiction_when_income_is_low,model_average_drug_spending_experimenters,model_drug_threshold,&
             model_fraction_light_users
         real(8), dimension(5,transition_length) :: model_wealth_share_below
-        real(8), dimension(3,transition_length) :: model_income_share_below
+        real(8), dimension(4,transition_length) :: model_income_share_below
+        ! The bottom half of the INCOME distribution, which is what sigma_y is
+        ! scored on from 3 September. Index 4 of the array above.
+        real(8), dimension(transition_length) :: model_bottom_half_income_share=0
             
         real(8) :: distance_drug_threshold,stopping_rule_drug_threshold=10.d0**(-4)
             
@@ -5638,8 +5678,28 @@
             end do
 
             write(*,*) "===== ALL TARGETED MOMENTS ====="
-            write(*,*) "MOMENT sigma_y   bottom half earnings share  model=",&
-                model_bottom_half_earnings_share, " target=", bottom_half_earnings_share_data
+            ! SIGMA_Y IS SCORED ON INCOME, NOT ON PRODUCTIVITY, from 3
+            ! September. The author: *"yes please target the bottom share of
+            ! income (not share of productivity but share of income after you
+            ! account for the labor supply....)"*.
+            !
+            ! The old number came from employment_grid and its masses -- a
+            ! statistic about the GRID, with no labour supply in it, no age
+            ! efficiency profile and no distribution. Two households on the same
+            ! productivity node with different hours counted identically. This
+            ! one is the same walk the bottom 1, 5 and 10 per cent already use,
+            ! taken at the median, over the model's own income histogram.
+            !
+            ! The productivity version is kept as a DIAG rather than deleted: it
+            ! is what the whole archive before today was scored on, and the two
+            ! side by side say how much of the dispersion is hours rather than
+            ! wages.
+            write(*,*) "MOMENT sigma_y   bottom half labour income share model=",&
+                model_bottom_half_labour_income_share, " target=", bottom_half_earnings_share_data
+            write(*,*) "DIAG bottom half PRODUCTIVITY share (the old sigma_y) =",&
+                model_bottom_half_earnings_share
+            write(*,*) "DIAG bottom half share of TOTAL income, all ages      =",&
+                model_bottom_half_income_share(1)
             write(*,*) "MOMENT tau_l     average labour income tax   model=",&
                 model_average_labour_income_tax(1), " target=", average_labor_income_tax_data
             write(*,*) "MOMENT omega_l   labour supply / total hours model=",&
@@ -6519,8 +6579,18 @@
             write(*,*) "UNTARGETED income of the homeless            model=",&
                 model_avg_homeless_income(1)/max(model_average_income(1),10.d0**(-14)),&
                 " observed=", 0.191d0
-            write(*,*) "UNTARGETED employed share of the homeless    model=",&
-                model_employed_share_of_homeless(1), " observed=", 0.460d0
+            ! SCORED FROM 3 SEPTEMBER, on the author's instruction: *"I think you
+            ! can choose the bottom productivity level to march the share of the
+            ! employed homeless."*
+            !
+            ! bottom_productivity_level has been registered against emp_homeless
+            ! in next_batch.py's OWN table for a day, and the gate has been
+            ! reporting "response turns and nothing straddles the target" the
+            ! whole time -- because the moment was emitted as UNTARGETED and
+            ! score_points only reads MOMENT lines. The instrument had a target
+            ! it could not see. It is a MOMENT now.
+            write(*,*) "MOMENT emp_homeless employed share of homeless model=",&
+                model_employed_share_of_homeless(1), " target=", 0.460d0
             write(*,*) "DIAG homeless who could afford it on INCOME ALONE=",&
                 val_homeless_afford_on_income(1)
             write(*,*) "DIAG homeless by choice, share of the homeless   =",&
@@ -8281,14 +8351,14 @@
         
         integer :: financial_index,time_period,pay_mortgage_insurance_1,has_house,low_quality_market,is_homeless_1,&
             is_addicted_1,time_period_used,housing_status_index_used,financial_index_used,amortization_used,fin_frac_used,&
-            is_using_drugs,smi_age_1
+            is_using_drugs,smi_age_1,earnings_bin_index
         real(8) :: total_income,lived_in_size_used,labor_supply_used,value_function_used,&
             distribution_mass_used,frac_used,rent_to_income,income_to_avg_income,total_renters_to_consider,&
             bequest_1,bequest_2,housing_to_income_owners,housing_to_income_all,mortgage_to_income_owners,&
             housing_to_income_renters,total_owners_to_consider,LTV_1,avg_income_to_use_1,avg_income_to_use_2,&
             total_homeless_1,assets_1,food_stamps_1,avg_net_wealth_to_use_1,MU_1,consumption_used,addiction_consumption_1,&
             total_consumption_used,net_wealth_1,model_average_income_previous,model_average_income_plus_assets_previous,&
-            model_average_income_plus_all_assets_previous
+            model_average_income_plus_all_assets_previous,earnings_1
             
         integer, dimension(1) :: rent_to_income_index,LTV_index,median_index,income_to_avg_income_wide_index
 
@@ -8338,6 +8408,8 @@
         if (accumulating_beta_types==0) income_hist_mass=0
         if (accumulating_beta_types==0) income_hist_sud=0
         if (accumulating_beta_types==0) income_hist_income=0
+        if (accumulating_beta_types==0) earnings_hist_mass=0
+        if (accumulating_beta_types==0) earnings_hist_earnings=0
         if (accumulating_beta_types==0) diag_mass_top_financial=0
         if (accumulating_beta_types==0) diag_mass_top3_financial=0
         if (accumulating_beta_types==0) model_youngest_net_wealth_share(time_period)=0
@@ -9453,6 +9525,38 @@
                                     income_hist_income(income_bin_index)=&
                                         income_hist_income(income_bin_index)+total_income*distribution_mass_used
 
+                                    ! EARNINGS OF THE WORKING AGE IN WORK, on
+                                    ! the same bins. Built here rather than from
+                                    ! total_income because total_income has
+                                    ! interest added to it by the time it
+                                    ! reaches this line, and the target is a
+                                    ! wage and salary statistic.
+                                    !
+                                    ! emp_of==1 is the in-work state; the two
+                                    ! others are the insured and uninsured
+                                    ! non-employment states, whose income is
+                                    ! unemployment insurance or disability and
+                                    ! is not earnings. in_retirement excludes
+                                    ! the social security recipients. Together
+                                    ! they are the SCF's own population.
+                                    if ((in_retirement==0) .AND. &
+                                        (emp_of(unemployment_index)==1)) then
+
+                                        earnings_1=labor_supply_used*&
+                                            employment_grid(age_index,employment_index)*&
+                                            labour_deterministic_efficiency(age_index)
+
+                                        earnings_bin_index=min(max(1+floor(income_bins*&
+                                            (earnings_1/max(average_labor_income_calibrated,&
+                                            10.d0**(-8)))/income_bin_top),1),income_bins)
+                                        earnings_hist_mass(earnings_bin_index)=&
+                                            earnings_hist_mass(earnings_bin_index)+distribution_mass_used
+                                        earnings_hist_earnings(earnings_bin_index)=&
+                                            earnings_hist_earnings(earnings_bin_index)+&
+                                            earnings_1*distribution_mass_used
+
+                                    end if
+
                                     if (financial_index==financial_grid_size) then
                                         diag_mass_top_financial=diag_mass_top_financial+distribution_mass_used
                                     end if
@@ -10089,10 +10193,10 @@
 
         model_bottom_half_wealth_share(time_period)=model_wealth_share_below(5,time_period)
 
-        ! THE SAME WALK ON INCOME, at the bottom 1, 5 and 10 per cent. The
+        ! THE SAME WALK ON INCOME, at the bottom 1, 5, 10 and 50 per cent. The
         ! bucket that straddles each cut is split in proportion to the mass
         ! taken from it, exactly as above.
-        do percentile_index_1=1,3
+        do percentile_index_1=1,4
 
             percentile_1=bottom_percentiles(percentile_index_1)
             cumulative_mass_1=0
@@ -10132,6 +10236,39 @@
                 max(sum(income_hist_income),10.d0**(-12))
 
         end do
+
+        model_bottom_half_income_share(time_period)=model_income_share_below(4,time_period)
+
+        ! AND THE SAME WALK AT THE MEDIAN ON EARNINGS, which is what sigma_y is
+        ! scored on. The denominator is the earnings histogram's own mass, not
+        ! sum_of_distribution: this histogram deliberately covers only the
+        ! working age in work, so the median it walks to is the median of that
+        ! population and not of the economy. Using sum_of_distribution here
+        ! would ask for the earnings of the bottom half of EVERYONE, which the
+        ! retired and the non-employed would put at zero.
+        cumulative_mass_1=0
+        cumulative_income_1=0
+
+        do income_bin_index=1,income_bins
+
+            if (cumulative_mass_1+earnings_hist_mass(income_bin_index)>=&
+                0.50d0*sum(earnings_hist_mass)) then
+
+                share_of_bin_1=(0.50d0*sum(earnings_hist_mass)-cumulative_mass_1)/&
+                    max(earnings_hist_mass(income_bin_index),10.d0**(-12))
+                cumulative_income_1=cumulative_income_1+&
+                    share_of_bin_1*earnings_hist_earnings(income_bin_index)
+                exit
+
+            end if
+
+            cumulative_mass_1=cumulative_mass_1+earnings_hist_mass(income_bin_index)
+            cumulative_income_1=cumulative_income_1+earnings_hist_earnings(income_bin_index)
+
+        end do
+
+        model_bottom_half_labour_income_share=cumulative_income_1/&
+            max(sum(earnings_hist_earnings),10.d0**(-12))
 
         income_hist_mass_check=sum(income_hist_mass)/max(sum_of_distribution,10.d0**(-12))
 

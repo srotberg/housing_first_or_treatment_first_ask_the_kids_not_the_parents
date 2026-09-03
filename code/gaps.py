@@ -163,16 +163,41 @@ def load(path):
     if not mv:
         return None, None
     v = dict(kv.split('=', 1) for kv in mv.group(1).split())
-    m = {k: (float(a), float(b)) for k, a, b in re.findall(
-        r'MOMENT (\S+)\s+(?:.*?)model=\s*([0-9.eE+-]+)\s+target=\s*([0-9.eE+-]+)', t)}
+    # THE LABEL IS CAPTURED, not skipped, because sigma_y names two different
+    # statistics in this archive. Until 3 September it was "bottom half earnings
+    # share", built from employment_grid and its ergodic masses; from then it is
+    # "bottom half labour income share", walked at the median of the model's own
+    # earnings histogram with hours and the age profile in it. Same target, very
+    # different number. next_batch.py drops the old one by label in STALE_LABEL
+    # and this does the same, so a stale point does not report a gap against a
+    # moment it never measured.
+    m = {}
+    for k, lab, a, b in re.findall(
+            r'MOMENT (\S+)\s+(.*?)model=\s*([0-9.eE+-]+)\s+target=\s*([0-9.eE+-]+)', t):
+        if k == 'sigma_y' and 'bottom half earnings share' in lab:
+            continue
+        m[k] = (float(a), float(b))
     if 'gamma' in m and abs(m['gamma'][1] - 0.268) > 1e-9:
         r = re.search(r'DIAG aggregate housing / aggregate expenditure\s+=\s*([0-9.eE+-]+)', t)
         if r:
             m['gamma'] = (float(r.group(1)), 0.268)
+    # THESE ARE FALLBACKS, NOT OVERRIDES. emp_homeless is a MOMENT line from 3
+    # September and the generic parser above already has it; a point measured
+    # before today carries the UNTARGETED wording instead and is picked up here.
+    # The guard matters in the one direction: without it a point that somehow
+    # carried both wordings would have the old line win, which is the wrong way
+    # round.
+    #
+    # sigma_y is NOT in this list on purpose. Its object changed today, so an
+    # old point's number is not the new moment under a different name -- it is a
+    # different statistic, and next_batch.py drops it by label. There is nothing
+    # to fall back to.
     for pat, key, tv in (
             (r'UNTARGETED share of the homeless, band\s+1\s+model=\s*([0-9.eE+-]+)', 'h_share1', 0.26),
             (r'UNTARGETED employed share of the homeless\s+model=\s*([0-9.eE+-]+)', 'emp_homeless', 0.46),
             (r'UNTARGETED renters above 50 pct of income\s+model=\s*([0-9.eE+-]+)', 'rent50', 0.175)):
+        if key in m:
+            continue
         r = re.search(pat, t)
         if r:
             m[key] = (float(r.group(1)), tv)
