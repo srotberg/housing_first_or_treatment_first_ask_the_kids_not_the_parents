@@ -989,6 +989,32 @@ SKIP = {'h_3',
 # h_share1 LEFT THIS SET on 3 September; see the note beside
 # newborn_endowment_scale above.
 UNSCORED = {'rent50',
+            # h_share5 IS PARKED, on the author's instruction of 3 September:
+            # *"Ignore the old homelessness for now. Just calibrate the rest of
+            # the block first."*
+            #
+            # It is 765 per cent out and dominates a MINIMAX, so while it is
+            # scored the loss cannot rank points on any other margin -- which is
+            # exactly why the rest of the block has been hard to read. Parking it
+            # lets the other seventeen moments be worked.
+            #
+            # NOT CONCEDED, PARKED. ssi_floor_level still owns it and goes idle
+            # rather than being retired, and restoring the moment is deleting
+            # this one line. The open question in SSI_FLOOR_ANALYSIS.md stands:
+            # the street carries no disutility, so a household prefers it below
+            # an income of 0.4579, and retiree income runs 0.400 to 0.510.
+            #
+            # ONE THING TO CARRY INTO THAT LATER WORK, because it cuts against
+            # the natural guess. The author's reading is that the old are
+            # homeless from too little income and that low labour supply is part
+            # of it. In absolute terms that is right, but raising labour supply
+            # makes the SHARE worse, and the reason is structural: pensions are
+            # computed from employment_grid at the last working age -- the
+            # household's productivity TYPE -- and not from hours, so more hours
+            # lift the working age over the threshold and leave retirement income
+            # exactly where it was. Measured: rsl 3.05 -> 1.40 took band 5 from
+            # 0.9306 to 0.9562 while h_1 halved.
+            'h_share5',
             # w_bot LEAVES THE LOSS on the author's instruction of 3 September:
             # *"We don't need the w_bot anymore... We have just one beta now!"*
             #
