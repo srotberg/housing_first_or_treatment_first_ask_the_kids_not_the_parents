@@ -490,14 +490,54 @@ WHAT IS LEFT FOR emp_homeless: the unemployment-by-productivity profile in
 `adjusted_probability_1=1`. It is now the only untried lever that acts on the
 employed share directly rather than through affordability.
 
-## IN FLIGHT, 00:43
+## THE RUNG CURVE ON THE SEVEN-NODE GRID, six points, one coordinate
 
-    pi_eu sign 0.00700   session_0197ppJvi52cyD5RfH6WqEkN   OLD GRID, guess only
-    pi_eu sign 0.01600   session_01Ar68aRK5uBzeHx6r4xrUYC   OLD GRID, guess only
+    rung   rent/low    h_2      gap  |    h_1     emp   income  choice   w_bot    beta   gamma  sigma_y
+   0.0361     0.939  0.0190  -81.2%  | 0.00287  0.9720  0.2324  0.9999  0.0538   2.267  0.1264   0.1803
+   0.0450     1.170  0.0220  -78.2%  | 0.00214  0.9429  0.3116  0.9379  0.0491   2.314  0.1429   0.1803
+   0.0600     1.560  0.0321  -68.3%  | 0.00213  0.8988  0.2992  0.9375  0.0620   2.384  0.1667   0.1803
+   0.0900     2.341  0.0559  -44.6%  | 0.00120  0.7181  0.6003  0.9963  0.0363   2.563  0.2111   0.1803
+   0.1300     3.381  0.1323  +30.9%  | 0.00133  0.7032  0.6175  0.9911  0.0212   2.510  0.2563   0.1803
+   0.1800     4.681  0.2070 +104.9%  | 0.04024  0.1687  1.7457  0.9994  0.0061   2.342  0.2854   0.1803
+   TARGET        --  0.1010          | 0.00399  0.4600  0.1910      --  0.0250  3-4.5   0.2680   0.1720
 
-6 points on the seven-node model. SOLVE TIME: the leverage round launched 00:33:37
-and all three landed by 00:42 -- about EIGHT MINUTES including clone and build,
-which is the author's estimate met.
+**h_2 is bracketed between rungs 0.090 and 0.130 and crosses near 0.1136.** Three
+fine arms are measuring it. Interpolated at the crossing, `w_bot` lands near +10
+per cent and `gamma` near -11, so the rung may carry three moments at once.
+
+**THE RUNG ALSO CROSSES emp_homeless, BETWEEN 0.130 AND 0.180** -- 0.7032 to
+0.1687, straight through the 0.46 target. So the rung CAN hit emp_homeless. It
+cannot hit both: h_2 wants 0.114 and emp_homeless wants about 0.15, and at 0.15
+h_2 would be far past its target. That is the identification problem stated as a
+measurement rather than an argument, and it is why emp_homeless needs an
+instrument of its own.
+
+**RUNG 0.180 IS A DIFFERENT REGIME, not a solution.** h_1 jumps to 0.0402, ten
+times its target; the income of the homeless goes to 1.746, back above average;
+and emp_homeless undershoots at 0.169. Mass homelessness by everyone at once. The
+usable range ends before it.
+
+`sigma_y` is 0.1803 at every rung, unmoved by any of this, and inside ten per cent
+of 0.172. `beta` never leaves 2.27-2.56 against a 3.0-4.5 band.
+
+## IN FLIGHT, 01:03
+
+    h_2 solve  rung 0.105   session_0175h9tPxss9Rj2JXcLw17HC
+    h_2 solve  rung 0.114   session_01JA4XFDCVwhJrFTQQ8F7rR7
+    h_2 solve  rung 0.123   session_01BfrjLJeHuW2ofY2zwr6MMJ
+    pi_eu sign 0.00700      session_0197ppJvi52cyD5RfH6WqEkN   OLD GRID, guess only
+    pi_eu sign 0.01600      session_01Ar68aRK5uBzeHx6r4xrUYC   OLD GRID, guess only
+
+12 points on the seven-node model. Solve time about eight minutes including clone
+and build.
+
+## TWO QUESTIONS OUTSTANDING WITH THE AUTHOR
+
+1. `emp_homeless` needs an instrument. `bottom_productivity_level` was measured to
+   have none. The unemployment-by-productivity profile is the only untried lever
+   that acts on the employed share directly rather than through affordability.
+2. Whether to print rent over TOTAL resources -- transfers included -- since every
+   burden figure so far is on labour income alone.
 
 ## THE GATE'S DRUG BASE IS ON THE OLD RUNG
 
