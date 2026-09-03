@@ -2230,7 +2230,30 @@
         ! If so the two figures are both right about different things and the
         ! model's counterpart is the 13.9. The moment stays scored either way;
         ! this note is about which number it should be scored against.
-        real(8), parameter :: unemployment_rate_data=0.049
+        ! BACK TO 0.139 ON THE AUTHOR'S INSTRUCTION, 3 September: *"I think maybe
+        ! we need to have more unemployment. Can we revert to all those
+        ! unemployed and not in the labor force? We had 13.9% I think. That is
+        ! better than 4.9%"*.
+        !
+        ! The note above already said this and flagged it as unchecked: "whether
+        ! model_fraction_unemployed is the same OBJECT as a published
+        ! unemployment rate... it may be nearer the no-wage-income share than the
+        ! BLS rate. If so the two figures are both right about different things
+        ! and the model's counterpart is the 13.9." It is checked now, and it is.
+        ! model_fraction_unemployed counts every working-age household with
+        ! emp_of /= 1 -- on UI, or with nothing -- over all working-age
+        ! households. That is a HOUSEHOLD share with no participation margin, so
+        ! its data counterpart is the SCF 2022 share of households aged 26 to 64
+        ! with NO WAGE INCOME, 13.9 per cent, not the U-3 person rate of 4.9.
+        !
+        ! IT IS REPORT-ONLY FOR A SINGLE POINT. The one other use of this
+        ! constant is the separation-rate adjuster in the outer calibration loop,
+        ! which run_one_point.sh does not run: pi_eu sits at 0.09185 with the
+        ! handed-in probability_becoming_unemployed of 0.0122, unadjusted. So no
+        ! equilibrium object moves and the archive pools across the change.
+        !
+        ! The gap goes from +87.5 per cent against 0.049 to -33.9 against 0.139.
+        real(8), parameter :: unemployment_rate_data=0.139
         real(8), parameter :: unemployment_rate_sud_data=0.1625
 
         real(8) :: relative_share_of_addiction_adj=5*10.d0**(-2)

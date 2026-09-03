@@ -1349,7 +1349,15 @@ STALE_LABEL = {'h_2': ['smallest unit', 'above half of income'],
 # what the model emits: pi_eu's entry was removed once the Fortran declared 0.139
 # itself, because one number in two places is how they drift apart. The
 # check below prints loudly if an entry ever disagrees with the model.
-TARGET_OVERRIDE = {}
+TARGET_OVERRIDE = {
+    # pi_eu IS RE-SCORED AGAINST 0.139 ON EVERY POINT, new and archived alike.
+    # The Fortran now declares 0.139 so new points agree with this and the check
+    # below stays quiet for them; archived points print 0.049 and the override is
+    # what stops the same model VALUE being scored against two different targets
+    # depending on when it was measured. The check will warn on those, correctly,
+    # until they age out.
+    'pi_eu': 0.139,
+}
 _override_checked = set()
 
 
