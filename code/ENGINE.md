@@ -382,6 +382,47 @@ already known. A control whose expected value is not known in advance cannot
 falsify anything. When a change is meant to be a no-op somewhere, re-measure the
 vector it should not move and state the reference value BEFORE the run.
 
+## A worker that ends its turn mid-solve is lost, and the brief has to say how
+
+3 September, and it cost twenty minutes of silence that the author noticed
+before the engine did. Four arms were launched. Twenty minutes later not one
+point file had been pushed, and the reason was not the model:
+
+| worker | state | when |
+|---|---|---|
+| line 1 | RUNNING | briefed explicitly not to go idle |
+| line 2 | **IDLE**, "solve running on 4 cores; awaiting moments block" | 6 min after launch |
+| line 3 | **IDLE**, "container building Fortran; monitoring for output lines" | 1 min 43 s after launch |
+| line 4 | **never launched at all** | coordinator's omission |
+
+So one arm of four was alive. The two idle ones had working containers with
+solves in them and nothing would ever wake them, because **a remote worker
+cannot be messaged from the engine session**: there is no send_message tool for
+sibling CCR sessions, only create, interrupt and archive. An idle worker is not
+recoverable. It is a relaunch.
+
+**The mechanism that actually works.** A command started with the Bash tool's
+`run_in_background` parameter keeps running across turns and the harness
+RE-INVOKES the worker when it exits. That wake-up is the only reliable one.
+What loses it:
+
+- running the solve in the foreground -- the tool times out at 10 minutes and a
+  solve can take longer;
+- detaching it by hand with `&` or `nohup` -- the harness is not tracking it, so
+  nothing wakes anybody;
+- ending the turn with "monitoring for output" and no tracked command at all,
+  which is what both of these did.
+
+**So every solve brief now says, in these words:** run the solve with the Bash
+tool's `run_in_background` parameter set to true; do not run it in the
+foreground; do not poll it with sleep; do not detach it with `&` or nohup.
+Telling a worker "do not go idle" is not enough on its own -- it worked for
+line 1 and it is a hope, not a mechanism.
+
+**And count the launches.** Line 4 was simply never relaunched after its arm was
+invalidated. Before ending the turn that launches a batch, list the sessions
+created against the lines of the batch file and check the count matches.
+
 ## A worker that blocks on input is lost, so brief against it
 
 A remote worker cannot be messaged from the engine session. If it ends a turn
