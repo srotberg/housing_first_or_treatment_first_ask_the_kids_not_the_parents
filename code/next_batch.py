@@ -57,7 +57,41 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 # base whose drug block has drifted past five still gets repaired -- a restore
 # line is emitted alongside the arms -- so the drift is corrected in parallel
 # rather than being allowed to accumulate.
-GATE = {'b': 0.05, 'lambda_d': 0.05}     # opens the phase
+# TEN, NOT FIVE, ON THE AUTHOR'S DECISION OF 3 SEPTEMBER, and it is a
+# decision about identification rather than about patience.
+#
+# b and lambda_d are NOT SEPARATELY IDENTIFIED by the instruments in this model.
+# Fifteen points measured in the (addiction_scalar_1, lambda_addiction) plane
+# give a local Jacobian of the two gaps with a CONDITION NUMBER OF 36,711: the
+# two moments respond almost identically to both instruments, so the plane is
+# effectively one-dimensional for them. Solving it for both gaps zero points at
+# (0.034997, 2.49331), which sits beside a point already measured at gap_b -19.5
+# and gap_lam -39.2 -- what a near-singular system does.
+#
+# Across 452 measured directions between current-model points the ratio
+# |d(gap_b)/d(gap_lambda)| runs from 0.04 to 5.92. Opening a five per cent gate
+# from the best starting point needs about 10. Nothing measured comes close, and
+# the alternatives are all exhausted: theta and value_of_life are cliffs that
+# take b to zero or to +400 per cent, mu_homeless is flat, utility_cost is
+# non-monotone with its useful range spent by 2.4, and pi_eu's lambda_d slope
+# does not transfer and costs 26 per cent on the unemployment rate.
+#
+# On the searched segment the admissible intervals are literally disjoint: b
+# reaches +5 only at f above about 0.825, lambda_d holds -5 only at f below
+# about 0.748.
+#
+# It is not noise. A repeat of an identical vector in a fresh container agreed
+# to ELEVEN significant figures on b, so every difference measured is signal.
+#
+# And GATE has no patience escape -- STAGE_PATIENCE opens a stalled STAGE, not
+# the gate -- so at five the round stays the drug block alone forever while
+# seventeen other moments sit outside ten per cent. The full argument is in
+# code/GAP_TABLE.md.
+#
+# Ten is the author's own rule, stated on 30 August: "once we get below 10% for
+# everything we can stop". The staging discipline they asked for on 1 September
+# is untouched; only the tolerance is theirs rather than mine.
+GATE = {'b': 0.10, 'lambda_d': 0.10}     # opens the phase
 BASE_TOL = {'b': 0.10, 'lambda_d': 0.10}  # admissible as a base thereafter
 
 # THE GATE OPENS IN STAGES, NOT ALL AT ONCE.
