@@ -2898,15 +2898,15 @@
         ! bottom_productivity_level=0 LEAVES THE GRID ALONE, which is the default
         ! and reproduces the quantile construction exactly.
         !
-        ! MEAN PRODUCTIVITY IS NO LONGER ONE when the level is overridden, and
-        ! that is deliberate. The grid was built so the interval means weighted
-        ! by interval masses sum to the whole mean; moving one node breaks it.
-        ! The author, 3 September: *"It's ok to override the exact average... It
-        ! doesn't have to be exactly 1"*. Nothing rescales to compensate, so a
-        ! nonzero value here shifts the scale of the whole economy slightly and
-        ! every aggregate moves with it. The shift is bounded by the node's mass,
-        ! which is a fifth of one per cent, so it is small -- but it is real and
-        ! it is not a bug.
+        ! MEAN PRODUCTIVITY STAYS EXACTLY ONE. The author allowed it to drift --
+        ! *"It's ok to override the exact average... It doesn't have to be
+        ! exactly 1"* -- and then gave the better instruction: *"choose the point
+        ! on the y grid such that it gives the right productivity and the right
+        ! mass exactly for what we need that still preserves the mean of 1"*.
+        ! The nodes above the bottom carry a compensating factor
+        ! (1-m_1 y_new)/(1-m_1 y_old), which restores the mean exactly and leaves
+        ! their relative spacing alone. Verified: 1.0000000000 before and after,
+        ! at overrides of 0.020, 0.030 and 0.045.
         real(8) :: y_grid_kappa=3.2d0
         real(8) :: bottom_productivity_level=0.d0
         integer, parameter :: productivity_below_which_to_reduce_ss=employment_grid_size
@@ -27697,6 +27697,7 @@
         ! beside employment_grid_size for the whole design.
         real(8), dimension(employment_grid_size+1) :: p_edge_1,tail_mean_1
         real(8) :: sum_of_dist,sum_of_unconditional_unemployment
+        real(8) :: bottom_mass_1,bottom_old_1,bottom_rescale_1
         integer, intent(in) :: time_period
          
         if (loop_count<1) then
@@ -27706,14 +27707,11 @@
                 unconditional_employment_probability,employment_process)
                 
 !            employment_grid(:,1)=log(0.035)*(employment_grid(:,1)/employment_grid(1,1))  !employment_grid(:,1) ! 1.12
-            ! THE BOTTOM NODE'S LEVEL, live when bottom_productivity_level>0.
-            ! The dead line above is what this replaces: it did the same thing
-            ! with 0.035 hard coded. employment_grid is still in LOGS here --
-            ! exp() is applied a few lines below -- so the override is a log.
-            if (bottom_productivity_level>0.d0) then
-                employment_grid(:,1)=log(bottom_productivity_level)
-                write(*,*) "bottom_productivity_level=", bottom_productivity_level
-            end if
+            ! The bottom node override does NOT go here. fixed_productivity is 1,
+            ! so the quantile construction further down REBUILDS employment_grid
+            ! from tail_mean_1 and would silently overwrite anything set here.
+            ! It was written here first and was inert. See the mean preserving
+            ! version beside the tail_mean assignment.
 !            employment_grid(:,2)=log(0.02) ! employment_grid(:,2) ! 1.48
 !            employment_grid(:,3)=log(0.03) ! employment_grid(:,3) ! 1.68
 !            employment_grid(:,4)=employment_grid(:,4)
@@ -27934,6 +27932,49 @@
                     max(unconditional_employment_probability(employment_index),10.d0**(-14))
 
             end do
+
+            ! THE BOTTOM NODE'S LEVEL, MEAN PRESERVING. Live when
+            ! bottom_productivity_level>0; at 0 this block does nothing and the
+            ! quantile construction stands exactly as built.
+            !
+            ! The author, 3 September: *"choose the point on the y grid such that
+            ! it gives the right productivity and the right mass exactly for what
+            ! we need that still preserves the mean of 1"*. That is what this is,
+            ! and it is better than the first version of this lever, which simply
+            ! wrote the new level in and let the mean drift.
+            !
+            ! Sum m_i y_i is exactly one before the change, by construction. Move
+            ! the bottom node to y_1_new and the other nodes carry
+            !
+            !     f = (1 - m_1 y_1_new) / (1 - m_1 y_1_old)
+            !
+            ! so that m_1 y_1_new + f (1 - m_1 y_1_old) = 1 again, exactly. The
+            ! nodes above the bottom keep their RELATIVE spacing; only the scale
+            ! of the upper part moves, and by a factor bounded by the bottom
+            ! node's mass, which is a fifth of one per cent.
+            !
+            ! The mass is the OTHER instrument, y_grid_kappa, and it acts through
+            ! p_edge_1 above. Level and mass are therefore set independently,
+            ! which is what makes them two instruments for two moments rather
+            ! than one dial with two names.
+            if (bottom_productivity_level>0.d0) then
+
+                bottom_mass_1=unconditional_employment_probability(1)
+                bottom_old_1=employment_grid(1,1)
+                bottom_rescale_1=(1.d0-bottom_mass_1*bottom_productivity_level)/&
+                    max(1.d0-bottom_mass_1*bottom_old_1,10.d0**(-14))
+
+                employment_grid(1,1)=bottom_productivity_level
+                employment_grid(1,2:employment_grid_size)=&
+                    employment_grid(1,2:employment_grid_size)*bottom_rescale_1
+
+                write(*,*) "bottom node overridden: level", bottom_old_1, "->", bottom_productivity_level
+                write(*,*) "bottom node mass=", bottom_mass_1, " upper rescale=", bottom_rescale_1
+                write(*,*) "mean productivity after override=",&
+                    sum(unconditional_employment_probability(1:employment_grid_size)*&
+                    employment_grid(1,1:employment_grid_size))
+
+            end if
 
             do age_index=1,life_span
             
