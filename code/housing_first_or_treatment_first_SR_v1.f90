@@ -18981,6 +18981,38 @@
             
         end if       
         
+        ! AND NOT AT THE ADDICTION CAP ITSELF, on the author's instruction of 3
+        ! September: *"if we have bunching of drug use at the mechanical age we
+        ! might have to force no homelessness choice at that age since it seems
+        ! to be an artifact of the mechanism I put"*.
+        !
+        ! WHAT THE BUNCHING IS. max_age_to_choose_addiction is the last age at
+        ! which a household may START using, so the value of ABSTAINING falls
+        ! discretely there: at any earlier age abstaining keeps the option to
+        ! start later, and at the cap that option is worth nothing. Every
+        ! household near indifference therefore starts at exactly the cap, drug
+        ! spending crowds out rent, and they take the street in the same period.
+        ! At the cap age the model showed a homelessness rate of 0.1905 against
+        ! 0.000535 one year earlier and 0.004786 one year later, which was 74 per
+        ! cent of ALL homelessness in the model.
+        !
+        ! It is a property of having a deadline at all, not of where the deadline
+        ! is: across 774 archived points the old-age spike lands on index 55 in
+        ! 104 of them and on index 59, the HOMELESSNESS cap, in 33 more. Moving
+        ! the cap moves the spike, which is why this bars the housing margin at
+        ! the cap rather than relocating the cap.
+        !
+        ! The household may still start using at the cap; it simply may not go to
+        ! the street in that period. That leaves the drug margin the author built
+        ! alone and removes only the artefact it was producing in the housing
+        ! moments. The mechanism is already exercised above
+        ! max_age_to_choose_homelessness, so barring the street is not a new path.
+        if (age_index==max_age_to_choose_addiction) then
+        
+            allow_to_choose_homelessness=0
+            
+        end if       
+        
         allow_to_choose_addiction=1
             
         if (age_index>max_age_to_choose_addiction) then
@@ -20993,6 +21025,21 @@
         allow_to_choose_homelessness=1
         
         if (age_index>max_age_to_choose_homelessness) then
+        
+            allow_to_choose_homelessness=0
+            
+        end if
+
+        ! AND NOT AT THE ADDICTION CAP ITSELF. The reason is written out in full
+        ! at the other site, a couple of thousand lines above: the value of
+        ! abstaining falls discretely at the last age a household may start using,
+        ! so use bunches there, drug spending crowds out rent, and the street is
+        ! taken in the same period. THIS SITE MUST MATCH THAT ONE. It is the
+        ! second of the two places allow_to_choose_homelessness is set, and a
+        ! housing margin barred in one and open in the other is exactly the
+        ! policy-versus-accounting split that produced the newborn endowment
+        ! double count found earlier the same day.
+        if (age_index==max_age_to_choose_addiction) then
         
             allow_to_choose_homelessness=0
             
