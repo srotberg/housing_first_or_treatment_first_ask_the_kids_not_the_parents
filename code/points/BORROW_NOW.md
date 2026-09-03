@@ -1,31 +1,23 @@
-# Borrowing, measured now: the control is in, and BOTH borrowing arms fail to terminate
+# Borrowing, measured now: the control is in, the borrowing arms are not
 
-**ANSWER TO QUESTION ONE, UP FRONT: NOT ESTABLISHED, AND NOT BECAUSE THE SHARES
-CAME BACK POSITIVE.** Neither borrowing arm produced a point. Both were run, on
-the correct source, and both entered a phase roughly nine minutes in from which
-they never returned. So this batch cannot say whether any bottom-percentile
-share goes negative, and in particular it does **not** show that borrowing is
-still inert. That question is still open.
+**STATUS AT THE TIME OF WRITING: ONLY LINE 1, THE BORROWING-OFF CONTROL, HAS
+BEEN SOLVED.** Lines 2 and 3 -- the two arms that actually carry
+`include_unsecured_borrowing=1` -- have NOT been measured. Question one and
+question two are therefore both UNANSWERED, and nothing below should be read as
+bearing on either.
 
-**ANSWER TO QUESTION TWO: NOT ESTABLISHED.** `w_bot` at impatience 0.90 was
-never measured, for the same reason.
-
-What the batch did establish is operational and it is the reason the two
-questions are still open:
-
-> **Turning `include_unsecured_borrowing` on makes the solve non-terminating in
-> practice.** The borrowing-OFF control solved in 13 minutes. The two arms that
-> differ from it only in that switch ran **182 minutes** and **143 minutes**
-> without producing a moment, and both stopped writing anything to disk about
-> nine minutes in -- each having written the same 65,536 bytes and no more.
+This file is written and committed before the borrowing arms are in because the
+control is a real measurement and holding it costs more than publishing it
+early: a previous worker held four solved points and lost them when the source
+moved.
 
 ## What was asked and what exists
 
 | line | `include_unsecured_borrowing` | limit | `discount_factor_impatient` | point | state |
 |---|---|---|---|---|---|
 | 1 | 0 (control) | 0.30 (inert) | 0.75 | `de322e4659` | **SOLVED**, 13 min |
-| 2 | 1 | 1.50 | 0.75 | `d42e5af187` | **NOT MEASURED** -- ran **182 min**, no moments |
-| 3 | 1 | 1.50 | 0.90 | `a2778b36aa` | **NOT MEASURED** -- ran **143 min**, no moments |
+| 2 | 1 | 1.50 | 0.75 | `d42e5af187` | **NOT MEASURED** |
+| 3 | 1 | 1.50 | 0.90 | -- | **NOT MEASURED** |
 
 ## The MODEL lines
 
@@ -33,81 +25,52 @@ Only one point exists, so there is nothing yet to agree with. Line 1 was solved 
 
     MODEL 1b081ebc4d
 
-the md5 of `code/housing_first_or_treatment_first_SR_v1.f90`
-(`1b081ebc4d54ffc28733415fe67f5989`) at branch commit `4591262`, the head this
-batch started from. That md5 and `hftf.srcmd5` were re-verified at every
-interruption below and never changed, and no rebuild occurred at any point, so
-lines 2 and 3 were attempted against exactly the economy line 1 was measured on.
-**If they are ever completed they must be checked to carry this same MODEL
-line.**
+which is the md5 of `code/housing_first_or_treatment_first_SR_v1.f90` at branch
+commit `4591262`, the head this batch started from. The source in the working
+tree was verified byte-identical (`1b081ebc4d54ffc28733415fe67f5989`) at every
+restart listed below, and `hftf.srcmd5` matched it throughout, so no rebuild
+ever occurred mid-batch. **When lines 2 and 3 are measured they must be checked
+to carry this same MODEL line**; if they do not, the three points are not one
+economy and the comparison is void.
 
-`origin/claude/two-period-addiction-hazard-d7gb61` has meanwhile moved **180
-commits ahead**, and its head rewrites the Fortran source by **1180 insertions
-and 110 deletions** -- md5 `372c0fd0bfe465a41a9bf6c992202149`. Merging or
-rebasing into this working tree would have rebuilt the binary and split the
-batch across two economies. It was not done: line 1 and this file were pushed
-from a **separate clone**, so the source under the batch never moved.
+Note that `origin/claude/two-period-addiction-hazard-d7gb61` has since moved
+**180 commits ahead**, and its head rewrites the Fortran source by **1180
+insertions and 110 deletions** -- its md5 is `372c0fd0bfe465a41a9bf6c992202149`
+against this batch's `1b081ebc4d54ffc28733415fe67f5989`. Merging or rebasing
+into this working tree would rebuild the binary and split the batch across two
+economies, which is why it was not done. This file and the line 1
+point were pushed from a SEPARATE CLONE so that the source under the batch never
+moved.
 
-## The failure, in detail
+## Why lines 2 and 3 are missing
 
-This is not a build failure and not a segfault. The binary built cleanly and
-both arms ran.
+Not a build failure and not a segfault. The container running this session was
+restarted five times, killing the solver each time. Line 2 was attempted five
+times and never completed:
 
-Both borrowing arms show the same signature. The solver does about nine minutes
-of productive work, writes
-`percentage_spending_on_housingbaseline_benchmark.txt`, and then computes
-indefinitely without writing another byte:
-
-| | line 2 (0.75) | line 3 (0.90) |
+| attempt | survived | outcome |
 |---|---|---|
-| run started | 03:57:05 | 06:59:57 |
-| last file written | 04:06:07 (9 min in) | 07:08:51 (9 min in) |
-| stopped by hand at | **182 min** | **143 min** |
-| silent for | 173 min | 134 min |
-| total `write_bytes` | 65,536 | 65,536 |
-| state / threads | `R`, 4 threads | `R`, 4 threads |
-| CPU over the run | 321% falling to 110% | 319% falling to 131% |
-| resident memory | flat 678 MB of 16 GB | flat |
+| 1 | -- | container restart |
+| 2 | -- | container restart |
+| 3 | ~47 min | container restart |
+| 4 | ~4 min | container restart (run was detached with `setsid`; did not help) |
+| 5 | ~81 min | container restart, still solving |
 
-### Read the two stub point files with care
+The restarts are not caused by the run. Resident memory was sampled through
+attempt 5 and sat flat at **678 MB against 16 GB available**, with no cgroup
+limit and no OOM record; the process was in state `R` with all 4 threads live
+and CPU falling smoothly from 221% to 127% as the parallel phase gave way to a
+serial one. It was healthy when it was killed.
 
-Stopping each run left `code/points/point_d42e5af187.txt` and
-`code/points/point_a2778b36aa.txt`. They are committed because the runner writes
-a file on every exit path so that a failure is not invisible, but **they are not
-measurements, and their first line is misleading**: it reads `point ... solved
-in 182 min`, which is the script's wording for elapsed time, not success. What
-makes them stubs is the last line,
+The load-bearing fact for whoever picks this up:
 
-    NO MOMENTS BLOCK; hftf exit status 143
-
-Status 143 is SIGTERM -- me stopping them deliberately. Neither file contains an
-`END OF MOMENTS` marker or a single `MOMENT` line, so `run_one_point.sh` will
-re-solve both rather than serve them, and nothing downstream can mistake them
-for points. They are useful only as a record of the exact vector and MODEL line
-each attempt ran under.
-
-### The attempts
-
-Line 2 was attempted **six** times in all. Five attempts were cut short by
-container restarts (at roughly 47 min, 4 min and 81 min among them; one attempt
-was detached with `setsid`, which did not help, because the whole container goes
-down). The sixth ran undisturbed for 3 h 02 m and was stopped deliberately, not
-killed. Line 3 was then started to see whether the stall was particular to the
-0.75 discount factor. It is not: line 3 reproduces it at 0.90, to within two
-minutes on the same file.
-
-The restarts are not the cause and were not caused by the run: memory was flat
-at 678 MB against 16 GB, there is no cgroup limit and no OOM record, and the
-process was healthy in state `R` with all four threads live whenever it was
-inspected.
-
-**The inference, flagged as an inference:** a run that holds four threads at
-100%+ for three hours while performing no I/O, having completed the same nine
-minutes of work as its control, is very likely circling in a loop that is not
-converging rather than merely working slowly. What is *fact* is the timing, the
-silence and the two independent reproductions; that it is a non-convergent loop
-rather than a very expensive one is not proven, and the model source was not
-read or modified to find out, since this batch was instructed not to touch it.
+**THE BORROWING ARM IS AT LEAST SIX TIMES SLOWER THAN THE CONTROL.** Line 1 with
+borrowing OFF solved in 13 minutes. Line 2 differs from it in exactly two names
+-- `include_unsecured_borrowing` 0 -> 1 and `unsecured_borrowing_limit` 0.30 ->
+1.50, the latter inert when the former is 0 -- and was still solving at 81
+minutes. Turning the seven negative grid points on is what costs this. Any
+future attempt should budget well over 81 minutes per borrowing point, and the
+run has no checkpointing, so a restart loses all of it.
 
 ## Line 1: the borrowing-OFF control, point `de322e4659`
 
@@ -121,12 +84,15 @@ The lower tail, untargeted, against the data values in the brief:
     UNTARGETED wealth share bottom  5 pct   model +6.0464e-04   data -4.220e-03
     UNTARGETED wealth share bottom 10 pct   model +1.2093e-03   data -4.460e-03
 
-All three model figures POSITIVE, all three data figures NEGATIVE. This is the
-zero-wealth floor the brief describes. It is the control, with borrowing off, so
-it is the expected result and not a finding, and it says nothing about what
-borrowing would do. The three figures stand in ratio 1 : 5 : 10 -- the bottom ten
-per cent hold a share exactly proportional to their number, the signature of a
-mass of households sitting at precisely zero.
+All three model figures are POSITIVE, all three data figures NEGATIVE. This is
+the zero-wealth floor and it is exactly what the brief describes; it is the
+control, so it is the expected result and not a finding. The three figures stand
+in ratio 1 : 5 : 10, i.e. the bottom ten per cent hold a share exactly
+proportional to their number, which is the signature of a mass of households
+sitting at precisely zero.
+
+Whether borrowing moves any of these negative is the question this batch exists
+to answer, and it remains open.
 
 ### All nine round-1 moments, line 1
 
@@ -144,31 +110,34 @@ mass of households sitting at precisely zero.
 
 **Count inside ten per cent: 7 of 9.**
 
-The two that are out are `beta` and `pi_eu`, the two the brief said to expect
-out: `pi_eu`'s target moved to 0.049 today and `beta`'s band floor went back to
-3.0 today. Neither is a failure of this batch. `w_bot` is on target at 0.75
-impatience, which is the premise the batch was built to test and which it
-reconfirms.
+The two that are out are `beta` and `pi_eu`, which are the two the brief said to
+expect out: `pi_eu`'s target moved to 0.049 today and `beta`'s band floor went
+back to 3.0 today. Neither is a failure of this batch. The other seven are in,
+and `w_bot` is on target at 0.75 impatience, which is the premise the batch was
+built to test.
 
 ## What is NOT established
 
-- **Is any bottom-percentile share negative?** UNKNOWN. No point carrying
-  `include_unsecured_borrowing=1` has ever been solved -- still true after this
-  batch, and now known to be hard rather than merely undone.
-- **Where does `w_bot` land at impatience 0.90?** UNKNOWN.
-- **Is 0.75 an artefact?** UNKNOWN. Line 1 reconfirms `w_bot` on target at 0.75
-  with borrowing off, which is the situation the brief already described. It is
-  not evidence either way about debt substituting for impatience.
+Stated explicitly, because the two questions this file was commissioned to
+answer are the two it cannot answer:
 
-No extrapolation past the one arm that produced a point is offered here, and
-none should be read in. In particular, the three positive lower-tail shares
-above are the control's, and must not be quoted as the borrowing result.
+- **Question one, is any bottom-percentile share negative?** UNKNOWN. No point
+  carrying `include_unsecured_borrowing=1` has been solved. It remains true, as
+  the brief states, that borrowing has never once been measured on a sound
+  build. The control's positive shares say nothing about this either way -- with
+  borrowing off the floor is at zero by construction.
+- **Question two, where does `w_bot` land at impatience 0.90?** UNKNOWN. Line 3
+  was never started.
+- Whether 0.75 is an artefact. UNKNOWN, and it is worth being blunt: line 1
+  shows `w_bot` on target at 0.75 with borrowing off, which is the situation the
+  brief already described. It is not evidence about what borrowing does.
+
+No extrapolation past the one arm measured is offered here, and none should be
+read in.
 
 ## To finish this
 
-The blocker is now the runtime, not the batch. Someone has to decide whether the
-borrowing arm converges at all before more wall-clock is spent on it: three
-hours on one point, with no checkpointing and a container that restarts, is not
-a measurement strategy. If it is to be retried as-is, it must be on a source
-whose md5 is `1b081ebc4d54ffc28733415fe67f5989`, or line 1 has to be re-solved
-alongside it.
+Lines 2 and 3 of `code/batch_borrow_now.txt`, run from the repository root, on a
+source whose md5 is `1b081ebc4d54ffc28733415fe67f5989` -- otherwise line 1 has
+to be re-solved too. Budget over 80 minutes each and expect to lose runs to
+restarts.
