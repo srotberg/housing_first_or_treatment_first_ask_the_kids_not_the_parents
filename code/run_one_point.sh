@@ -184,13 +184,31 @@ declare -A P=(
     # and sd_permanent_productivity are inert under KKK; the four process numbers
     # and kkk_s_deviation_bottom are inert under the quantile grid. A point is
     # therefore run at one or the other, never at a blend.
-    [fixed_productivity]=1
+    # STOCHASTIC, ON THE AUTHOR'S INSTRUCTION OF 3 SEPTEMBER: "Flip it to
+    # stochastic and calibrate everything there."
+    #
+    # Their argument, and it is the right one. The macro block was never finished
+    # on the frozen grid -- one of its nine moments was inside ten per cent -- and
+    # every one of those moments is a different number once productivity varies
+    # over the life cycle. pi_eu is the unemployment rate; w_bot and beta are
+    # wealth aggregates that a fanning income process moves through the savings
+    # motive; sigma_y is DEFINED on the productivity grid and changes instrument
+    # from sd_permanent_productivity to kkk_sigma_scale. Calibrating them at
+    # fixed_productivity=1 was work that would have to be done again.
+    #
+    # WHAT THIS COSTS: the archive has no point in this economy. All 666 carry
+    # fixed_productivity=1, so the gate has nothing to interpolate from and
+    # ENGINE.md's step 2 applies -- SEED, with an anchor at the best known
+    # vector, rather than trust a batch written from nothing.
+    [fixed_productivity]=0
     # THE KKK GRID'S BOTTOM WIDTH, which is what y_grid_kappa is on the quantile
     # grid: the instrument for the mass poor enough to be priced out of the
     # cheapest rental. 3.00 puts 0.621 per cent on the bottom node, 3.25 gives
     # 0.318, 3.50 gives 0.155, against a design target of 0.198 from the
-    # homelessness bands.
-    [kkk_s_deviation_bottom]=3.0
+    # homelessness bands. 3.35 puts 0.2395 there, which is the closest to what
+    # y_grid_kappa=3.2 delivered on the quantile grid; 3.0 is a grid width rather
+    # than a calibrated choice.
+    [kkk_s_deviation_bottom]=3.35
     [kkk_s_deviation_top]=3.0
     # THE FOUR NUMBERS OF THE PROCESS, at the author's own values. Settable
     # because the dispersion they deliver is not the dispersion sigma_y is
@@ -213,7 +231,15 @@ declare -A P=(
     # defaults is the SAME economy as sd_fixed_employment_newborn=0.68273 with
     # sd_employment_surviving=0.44190 and the scale at 1. Set one or the other,
     # never both, or the scaling is applied twice.
-    [kkk_sigma_scale]=1.0
+    #
+    # 2.20949 AND NOT 1.0, now that the process is live. At the published sds the
+    # bottom half holds 33 per cent of earnings against 17.2 in the SCF and the
+    # poorest household earns 0.232 of mean productivity -- rich enough to pay
+    # the cheapest rent out of income, so that economy cannot produce
+    # homelessness at all. This is a starting value from closed-form arithmetic
+    # rather than a calibrated one; kkk_sigma_scale IS sigma_y's instrument under
+    # KKK and next_batch.py owns it from here.
+    [kkk_sigma_scale]=2.20949
     [use_pia_formula]=1
     [ssi_floor_takeup]=0.0
     # UNEMPLOYMENT BY PRODUCTIVITY, from BLS 2019 by education. 1 applies the
