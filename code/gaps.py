@@ -112,6 +112,36 @@ def _live_productivity_process():
     return int(m.group(1)) if m else 1
 
 
+def _live_switch(name, fallback='1'):
+    """run_one_point.sh's own default for a configuration switch.
+
+    Read from the script, not duplicated as a literal, for the reason the
+    numbers rule gives: one number in two places is how they drift apart.
+    """
+    try:
+        txt = open(os.path.join(HERE, 'run_one_point.sh'), errors='replace').read()
+    except OSError:
+        return fallback
+    m = re.search(r'\[' + re.escape(name) + r'\]=\s*([0-9]+)', txt)
+    return m.group(1) if m else fallback
+
+
+# THE SWITCHES THAT DEFINE THE ECONOMY. Duplicated from next_batch.py rather
+# than imported, for the same reason OWN is: a broken next_batch.py must not
+# stop the author seeing where things stand. _cross_check below is what catches
+# the two drifting apart.
+#
+# use_pia_formula joined on 3 September, on the author's *"Yes flip it to 1"*.
+# It chooses between the US statute's benefit formula with a means-tested SSI
+# floor and a flat replacement rate, so a point either side of it is a
+# different economy. ssi_floor_takeup is NOT here: it is the calibrated dial
+# inside the PIA branch, with a bracket and a target, and filtering on it would
+# discard every arm measured on it.
+CONFIG_SWITCHES = {
+    'fixed_productivity': _live_switch('fixed_productivity'),
+    'use_pia_formula': _live_switch('use_pia_formula'),
+}
+
 _DEAD_SIGMA = ('kkk_sigma_scale' if _live_productivity_process() == 1
                else 'sd_permanent_productivity')
 OWN = [(p_, m_) for p_, m_ in OWN if p_ != _DEAD_SIGMA]
@@ -309,7 +339,6 @@ def main():
     # of the same vector, and the tag in the header came out truncated because it
     # is cut from a fixed offset. Replicates of one vector are not independent
     # points and must not be counted as several.
-    proc = str(_live_productivity_process())
     n_wrong_proc = 0
     for f in sorted(glob.glob(os.path.join(HERE, 'points', 'point_*.txt'))):
         if f.endswith('.FAILED.txt'):
@@ -342,7 +371,8 @@ def main():
         # the SOURCE is unchanged across the switch, so the archive pools on the
         # hash, and the VECTOR is what says which process a point actually ran.
         # next_batch.py has the same test with the same reasoning beside it.
-        if str(int(float(v.get('fixed_productivity', '1')))) != proc:
+        if any(str(int(float(v.get(k, '1')))) != w
+               for k, w in CONFIG_SWITCHES.items()):
             n_wrong_proc += 1
             continue
         n += 1
@@ -361,9 +391,9 @@ def main():
         if best is None or _better_vec(vv, best[5]):
             best = (worst, os.path.basename(f)[6:-4], v, m, g, vv)
     if n_wrong_proc:
+        live = ', '.join(f'{k}={w}' for k, w in sorted(CONFIG_SWITCHES.items()))
         print(f'  {n_wrong_proc} points skipped for running a different '
-              f'productivity process than run_one_point.sh defaults to '
-              f'(fixed_productivity={proc})')
+              f'configuration than run_one_point.sh defaults to ({live})')
     if best is None:
         print('no scoreable point in the current economy'); return 1
     worst, tag, v, m, g, _bv = best

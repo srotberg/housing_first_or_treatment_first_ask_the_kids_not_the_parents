@@ -1412,6 +1412,7 @@ def archive():
         pass
 
     out, skipped, wrong_cfg, wrong_proc = {}, 0, 0, 0
+    wrong_names = {}
     for f in sorted(glob.glob(os.path.join(HERE, 'points', '*.txt'))):
         if f.endswith('.FAILED.txt'):
             continue
@@ -1429,8 +1430,33 @@ def archive():
         # name ran at the compile-time parameter, which was 1. Defaulting it to
         # cfg the way number_of_beta_types does would admit every frozen-grid
         # point in the archive into a stochastic round.
-        if proc is not None and str(int(float(v.get('fixed_productivity', '1')))) != proc:
+        #
+        # A CONFIGURATION SWITCH IS NOT A CALIBRATED PARAMETER, and the two have
+        # to be told apart HERE rather than trusted to the emitted line. Every
+        # batch line is the base point's FULL vector, so a switch flipped in
+        # run_one_point.sh is overridden on every line the gate writes and the
+        # flip achieves nothing at all. That has now happened twice in one day:
+        # with fixed_productivity this morning, where 14 emitted lines all
+        # carried the value the author had just abandoned, and with
+        # use_pia_formula this afternoon, whose default in run_one_point.sh has
+        # been 1 the whole time while every point ran 0 -- which is why the SSI
+        # floor was dead code and old-age homelessness had no instrument.
+        #
+        # The test is the same in both cases and belongs in one place: a point
+        # whose switch differs from the live default is a DIFFERENT ECONOMY and
+        # does not pool, so the gate is forced to emit a line at the live value
+        # because it has nothing else to interpolate from.
+        wrong_switch = False
+        for name, live in CONFIG_SWITCHES.items():
+            if live is None:
+                continue
+            if str(int(float(v.get(name, '1')))) != live:
+                wrong_switch = True
+                wrong_cfg_name = name
+                break
+        if wrong_switch:
             wrong_proc += 1
+            wrong_names[wrong_cfg_name] = wrong_names.get(wrong_cfg_name, 0) + 1
             continue
         if v and 'b' in m and 'lambda_d' in m:
             out[os.path.basename(f)[6:-4]] = (v, m)
@@ -1438,9 +1464,10 @@ def archive():
         print(f'  {wrong_cfg} points skipped for running a different '
               f'number_of_beta_types than run_one_point.sh defaults to ({cfg})')
     if wrong_proc:
+        detail = ', '.join(f'{k}={CONFIG_SWITCHES[k]} ({n} points)'
+                           for k, n in sorted(wrong_names.items()))
         print(f'  {wrong_proc} points skipped for running a different '
-              f'productivity process than run_one_point.sh defaults to '
-              f'(fixed_productivity={proc})')
+              f'configuration than run_one_point.sh defaults to: {detail}')
     if skipped:
         print('  %d of %d points are on a different model (%s) and were skipped'
               % (skipped, skipped + len(out), want), file=sys.stderr)
@@ -1540,6 +1567,41 @@ def _live_productivity_process():
         return 1
     m = re.search(r'\[fixed_productivity\]=\s*(\d+)', txt)
     return int(m.group(1)) if m else 1
+
+
+def _live_switch(name, fallback='1'):
+    """run_one_point.sh's own default for a configuration switch.
+
+    Read from the script rather than duplicated here, for the reason the
+    numbers rule in NUMBERS.md gives: one number in two places is how they
+    drift apart. A name the script does not set falls back to the Fortran's
+    compile-time value, which is what a point predating the name ran at.
+    """
+    try:
+        txt = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                'run_one_point.sh'), errors='replace').read()
+    except OSError:
+        return fallback
+    m = re.search(r'\[' + re.escape(name) + r'\]=\s*([0-9]+)', txt)
+    return m.group(1) if m else fallback
+
+
+# THE SWITCHES THAT DEFINE THE ECONOMY, as opposed to the parameters that are
+# calibrated within it. A point whose value of any of these differs from
+# run_one_point.sh's default does not pool: it is a different model, not a
+# different point in the same one.
+#
+# WHAT BELONGS HERE AND WHAT DOES NOT. fixed_productivity chooses between two
+# productivity processes; use_pia_formula chooses between the US statute's
+# benefit formula with a means-tested floor and a flat replacement rate. Both
+# change what every household faces. ssi_floor_takeup does NOT belong here even
+# though it sits beside use_pia_formula in the Fortran: it is a calibrated dial
+# with a bracket and a target, and filtering on it would throw away every arm
+# measured on it. Check whether a name is a switch or a dial before adding it.
+CONFIG_SWITCHES = {
+    'fixed_productivity': _live_switch('fixed_productivity'),
+    'use_pia_formula': _live_switch('use_pia_formula'),
+}
 
 
 def _apply_process_mapping():
