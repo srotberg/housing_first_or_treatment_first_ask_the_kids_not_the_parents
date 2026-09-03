@@ -56,3 +56,54 @@ cost 26 per cent on the unemployment rate; `theta` and `value_of_life` are
 cliffs; `mu_homeless` is flat. **The 5 per cent gate may not be reachable with
 the instruments in the model**, which is a finding about identification rather
 than a step the gate can take.
+
+---
+
+# Why the gate cannot open: b and lambda_d are not separately identified
+
+Fifteen points now sit in the `(addiction_scalar_1, lambda_addiction)` plane
+differing in nothing else. Fitting the two gaps locally on the five points
+nearest the target:
+
+    gap_b    = -32073.6 + 555412*scalar +  5067.7*lambda    residual 1.5pp
+    gap_lam  = -94960.3 + 1650850*scalar + 14913.8*lambda   residual 1.6pp
+
+**The Jacobian's condition number is 36,711.** The two moments respond almost
+identically to both instruments; the plane is effectively one-dimensional as far
+as they are concerned. Solving it for both gaps zero gives
+`scalar = 0.034997, lambda = 2.49331` — which sits beside `cfb102c1ab` at
+`(0.035725, 2.49267)`, a point already MEASURED at gap_b −19.5 and gap_lam −39.2.
+The solve points into a region known to be much worse, which is what a
+near-singular system does.
+
+## And no other direction is steep enough
+
+Across **452 measured directions** between current-model points differing in
+three names or fewer, the ratio `|d(gap_b) / d(gap_lambda)|` runs from 0.04 to
+**5.92**. Opening the gate from the best available starting point —
+`a8b4808a6d`, gap_b +8.62 and gap_lam −4.65 — requires b to fall 3.6 points
+while lambda_d gives up at most 0.35, a ratio of about **10**. Nothing measured
+comes close.
+
+## The arithmetic of the segment, for completeness
+
+The gate needs b within +5 AND lambda_d within −5. On the searched segment b
+reaches +5 only at f ≳ 0.825 and lambda_d holds −5 only at f ≲ 0.748. **The two
+admissible intervals are disjoint.**
+
+## What this is not
+
+Not noise: a repeat of an identical vector agreed to eleven significant figures
+on b. Not a bad step: six Jacobian-fitted steps and four bracket interpolations
+were solved, and the best of all of them is 7.72 per cent. Not an unexplored
+direction: theta and value_of_life are cliffs that take b to zero or to +400 per
+cent, mu_homeless is flat, utility_cost_of_treatment is non-monotone with its
+useful range spent by 2.4, and pi_eu's lambda_d slope does not transfer and
+costs 26 per cent on the unemployment rate.
+
+## The consequence for the engine
+
+`GATE` has **no patience escape**. `STAGE_PATIENCE` opens a stalled *stage*;
+the gate is a separate guard and it opens only when some point has BOTH moments
+inside 5 per cent. The round has been the drug block alone for six firings at
+7.7 per cent, and on this evidence it will stay there.
