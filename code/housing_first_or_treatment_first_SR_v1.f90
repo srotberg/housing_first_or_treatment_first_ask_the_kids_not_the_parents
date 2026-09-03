@@ -2878,6 +2878,10 @@
         ! is the reason kappa is not left at 2.8.
         integer, parameter :: employment_grid_size=7
         integer :: use_unemployment_by_productivity=1
+        ! Persistent income risk over working life. See the block beside
+        ! employment_process for why this is not fixed_productivity=0.
+        integer :: persistent_income_risk=0
+        real(8) :: rho_productivity=0.98d0
 
         ! THE BOTTOM OF THE GRID IS NOW TWO CALIBRATED INSTRUMENTS, on the
         ! author's instruction of 3 September: *"you'd have to tinker with the
@@ -27752,6 +27756,7 @@
         ! beside employment_grid_size for the whole design.
         real(8), dimension(employment_grid_size+1) :: p_edge_1,tail_mean_1
         real(8) :: sum_of_dist,sum_of_unconditional_unemployment
+        real(8) :: mu_prod_1,sigma_prod_1,mean_prod_1,row_sum_prod_1
         real(8) :: bottom_mass_1,bottom_old_1,bottom_rescale_1
         integer, intent(in) :: time_period
          
@@ -28115,7 +28120,102 @@
             
         end if
         
-        do age_index=fixed_productivity*1+(1-fixed_productivity)*(life_span-retirement_span),life_span
+        ! PERSISTENT INCOME RISK OVER THE LIFE CYCLE, on the author's instruction
+        ! of 3 September: *"I say build it with the right persistence and SD as in
+        ! guvenen et al."*
+        !
+        ! WHY THIS IS NOT fixed_productivity=0. Setting that flag to zero does not
+        ! add risk to this grid -- it abandons the grid. The quantile construction,
+        ! y_grid_kappa, the bottom node's mass and bottom_productivity_level all
+        ! live inside `if (fixed_productivity==1)`, and with the flag off the grid
+        ! comes from KKK_process instead, whose bottom node carries binomial mass
+        ! of 1.6 per cent rather than the 0.198 the design asks for. Everything
+        ! built tonight would be discarded to buy the risk.
+        !
+        ! So the grid STAYS the quantile grid and only the TRANSITION changes. The
+        ! AR(1) is discretised onto the intervals the grid already defines, using
+        ! the same construction the intergenerational draw uses a few hundred
+        ! lines above with rho_intergenerational:
+        !
+        !     mean_i    = mu + rho (log y_i - mu),   mu = -sigma_z^2/2
+        !     P(i -> j) = Phi((edge_{j+1}-mean_i)/sigma_eps)
+        !               - Phi((edge_j    -mean_i)/sigma_eps)
+        !
+        ! with sigma_eps = sigma_z sqrt(1-rho^2).
+        !
+        ! THE STATIONARY DISTRIBUTION IS PRESERVED EXACTLY, because the grid IS
+        ! the quantile partition of the stationary lognormal and the transition is
+        ! that lognormal's own conditional law. sigma_y therefore survives, which
+        ! is the thing the comment beside fixed_productivity warns is lost when
+        ! the flag is flipped.
+        !
+        ! PERSISTENCE. rho_productivity defaults to 0.98, which is the region
+        ! Guvenen, Karahan, Ozkan and Song estimate for the persistent component
+        ! of annual earnings. The innovation is then pinned, not free:
+        ! sd_permanent_productivity is 0.9651 and 0.9651*sqrt(1-0.98^2) = 0.1921,
+        ! which is almost exactly the 0.20 that sd_employment_surviving already
+        ! held. The number in the file was right all along; rho at 0.90 was what
+        ! collapsed the dispersion to 0.459.
+        !
+        ! WHAT IS NOT YET HERE. GKOS's central finding is that earnings shocks are
+        ! strongly LEPTOKURTIC and LEFT-SKEWED, and a Gaussian AR(1) has no such
+        ! tail: a one-in-a-hundred ten year path under this process lands at 0.37
+        ! times earnings, which is a bad decade and not a catastrophe. The rare
+        ! large fall is the thing that would put a middle-aged household with
+        ! savings onto the street, and it needs a mixture innovation rather than a
+        ! normal one. That is a second step and it is deliberately not in this one.
+        if ((persistent_income_risk==1) .AND. (fixed_productivity==1)) then
+
+            mu_prod_1=-sd_permanent_productivity**2/2
+            sigma_prod_1=sd_permanent_productivity*&
+                sqrt(max(1.d0-rho_productivity**2,10.d0**(-12)))
+
+            do age_index=1,life_span-retirement_span-1
+
+                do employment_index=1,employment_grid_size
+
+                    mean_prod_1=mu_prod_1+rho_productivity*&
+                        (log(employment_grid(1,employment_index))-mu_prod_1)
+
+                    do future_employment_index=1,employment_grid_size
+
+                        employment_process(age_index,employment_index,future_employment_index)=&
+                            normal_cdf((log_y_edge(future_employment_index+1)-mean_prod_1)/sigma_prod_1)-&
+                            normal_cdf((log_y_edge(future_employment_index)-mean_prod_1)/sigma_prod_1)
+
+                    end do
+
+                    ! ROWS MUST SUM TO ONE. The outer edges are set to plus and
+                    ! minus twelve rather than infinity, so the two tail cells lose
+                    ! a sliver of probability that has to go back somewhere.
+                    row_sum_prod_1=sum(employment_process(age_index,employment_index,:))
+
+                    if (row_sum_prod_1>10.d0**(-12)) then
+
+                        employment_process(age_index,employment_index,:)=&
+                            employment_process(age_index,employment_index,:)/row_sum_prod_1
+
+                    else
+
+                        employment_process(age_index,employment_index,:)=0
+                        employment_process(age_index,employment_index,employment_index)=1
+
+                    end if
+
+                end do
+
+            end do
+
+        end if
+
+        ! The identity transition. With persistent_income_risk it covers
+        ! retirement only, which is what makes social security depend on the type
+        ! the household RETIRES as -- income_1=model_ss_benefits(employment_index_1)
+        ! reads the current index and it stops moving here. The author asked for
+        ! exactly that on 3 September.
+        do age_index=(1-persistent_income_risk)*(fixed_productivity*1+&
+            (1-fixed_productivity)*(life_span-retirement_span))+&
+            persistent_income_risk*(life_span-retirement_span),life_span
         
             do employment_index=1,employment_grid_size
             
@@ -35516,6 +35616,12 @@
                     end if
                     addiction_scalar_1=max(min(handover_value,b_hi),b_lo)
 
+                case ("persistent_income_risk")
+                    write(*,*) "HANDOVER persistent_income_risk:", persistent_income_risk, "->", handover_value
+                    persistent_income_risk=nint(max(min(handover_value,1.d0),0.d0))
+                case ("rho_productivity")
+                    write(*,*) "HANDOVER rho_productivity:", rho_productivity, "->", handover_value
+                    rho_productivity=max(min(handover_value,0.999d0),0.d0)
                 case ("endowment_is_a_transfer")
                     write(*,*) "HANDOVER endowment_is_a_transfer:", endowment_is_a_transfer, "->", handover_value
                     endowment_is_a_transfer=nint(max(min(handover_value,1.d0),0.d0))

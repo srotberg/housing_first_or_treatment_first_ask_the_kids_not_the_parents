@@ -162,6 +162,14 @@ declare -A P=(
     # full amount counts as wealth before any decision, which is what inflated
     # w_bot and got newborn_endowment_scale parked on 2 September.
     [endowment_is_a_transfer]=1
+    # PERSISTENT INCOME RISK over working life, discretised onto the SAME
+    # quantile grid so y_grid_kappa, the bottom node and the stationary
+    # dispersion all survive -- which fixed_productivity=0 would not do, since it
+    # abandons the quantile construction for KKK_process. rho_productivity is the
+    # persistence; the innovation is pinned by it and sd_permanent_productivity,
+    # so there is nothing else to set. 0.98 gives 0.9651*sqrt(1-0.98^2)=0.1921.
+    [persistent_income_risk]=0
+    [rho_productivity]=0.98
     [use_pia_formula]=1
     [ssi_floor_takeup]=0.0
     # UNEMPLOYMENT BY PRODUCTIVITY, from BLS 2019 by education. 1 applies the
