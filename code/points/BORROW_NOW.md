@@ -15,16 +15,17 @@ questions are still open:
 
 > **Turning `include_unsecured_borrowing` on makes the solve non-terminating in
 > practice.** The borrowing-OFF control solved in 13 minutes. The two arms that
-> differ from it only in that switch ran 3 h 02 m and over 1 h without
-> finishing, and both stopped writing anything to disk about nine minutes in.
+> differ from it only in that switch ran **182 minutes** and **143 minutes**
+> without producing a moment, and both stopped writing anything to disk about
+> nine minutes in -- each having written the same 65,536 bytes and no more.
 
 ## What was asked and what exists
 
 | line | `include_unsecured_borrowing` | limit | `discount_factor_impatient` | point | state |
 |---|---|---|---|---|---|
 | 1 | 0 (control) | 0.30 (inert) | 0.75 | `de322e4659` | **SOLVED**, 13 min |
-| 2 | 1 | 1.50 | 0.75 | `d42e5af187` | **NOT MEASURED** -- ran 3 h 02 m, no result |
-| 3 | 1 | 1.50 | 0.90 | `a2778b36aa` | **NOT MEASURED** -- ran > 1 h, no result |
+| 2 | 1 | 1.50 | 0.75 | `d42e5af187` | **NOT MEASURED** -- ran **182 min**, no moments |
+| 3 | 1 | 1.50 | 0.90 | `a2778b36aa` | **NOT MEASURED** -- ran **143 min**, no moments |
 
 ## The MODEL lines
 
@@ -61,11 +62,31 @@ indefinitely without writing another byte:
 |---|---|---|
 | run started | 03:57:05 | 06:59:57 |
 | last file written | 04:06:07 (9 min in) | 07:08:51 (9 min in) |
-| still running at | 06:59 (**3 h 02 m**) | 08:02 (**1 h 02 m**) |
-| total `write_bytes` | 65,536 | -- |
+| stopped by hand at | **182 min** | **143 min** |
+| silent for | 173 min | 134 min |
+| total `write_bytes` | 65,536 | 65,536 |
 | state / threads | `R`, 4 threads | `R`, 4 threads |
 | CPU over the run | 321% falling to 110% | 319% falling to 131% |
 | resident memory | flat 678 MB of 16 GB | flat |
+
+### Read the two stub point files with care
+
+Stopping each run left `code/points/point_d42e5af187.txt` and
+`code/points/point_a2778b36aa.txt`. They are committed because the runner writes
+a file on every exit path so that a failure is not invisible, but **they are not
+measurements, and their first line is misleading**: it reads `point ... solved
+in 182 min`, which is the script's wording for elapsed time, not success. What
+makes them stubs is the last line,
+
+    NO MOMENTS BLOCK; hftf exit status 143
+
+Status 143 is SIGTERM -- me stopping them deliberately. Neither file contains an
+`END OF MOMENTS` marker or a single `MOMENT` line, so `run_one_point.sh` will
+re-solve both rather than serve them, and nothing downstream can mistake them
+for points. They are useful only as a record of the exact vector and MODEL line
+each attempt ran under.
+
+### The attempts
 
 Line 2 was attempted **six** times in all. Five attempts were cut short by
 container restarts (at roughly 47 min, 4 min and 81 min among them; one attempt
