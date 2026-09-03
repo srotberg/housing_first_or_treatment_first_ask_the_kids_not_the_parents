@@ -155,6 +155,13 @@ declare -A P=(
     # was regressive against the net wage. ssi_floor_takeup is the DIAL for how
     # many of the old are priced out of the cheapest rental: 0 leaves 6.6 per
     # cent of the population priced out on the PIA alone, 1 leaves none.
+    # THE NEWBORN ENDOWMENT IS A TRANSFER, not a stock. At 1 the newborn enters
+    # at the financial grid's zero index and receives the endowment as cash on
+    # hand in its first period, so only what it CHOOSES to save is measured
+    # wealth. At 0 it is placed on the grid point nearest the endowment and the
+    # full amount counts as wealth before any decision, which is what inflated
+    # w_bot and got newborn_endowment_scale parked on 2 September.
+    [endowment_is_a_transfer]=1
     [use_pia_formula]=1
     [ssi_floor_takeup]=0.0
     # UNEMPLOYMENT BY PRODUCTIVITY, from BLS 2019 by education. 1 applies the

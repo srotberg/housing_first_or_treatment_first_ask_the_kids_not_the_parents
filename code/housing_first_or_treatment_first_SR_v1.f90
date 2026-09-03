@@ -2653,6 +2653,7 @@
         ! endowment rides the plumbing the inheritance transfer used before the
         ! residual was routed to the government. Only element 1 is ever nonzero.
         real(8), dimension(life_span) :: newborn_age_transfer=0.d0
+        integer :: endowment_is_a_transfer=1
         real(8) :: max_initial_endowment=7
         real(8) :: max_initial_endowment_adjuster=0
         real(8) :: distance_max_initial_endowment
@@ -22341,6 +22342,7 @@
             housing_status_index_1,future_housing_status_index_1,pay_mortgage_insurance_1,owner_to_owner_move_1,&
             owner_to_renter_1,renter_to_owner_1,owner_to_owner_stay_1,renter_to_renter_1,time_period,&
             mortgage_index_2,deduct_MID,is_current_owner,choose_to_rent,low_quality_market,addiction_index_1
+        real(8) :: newborn_transfer_1
                     
         real(8) :: tax_liability_with_mortgage_deductions_1,tax_liability_without_mortgage_deductions_1,&
             cost_of_mortgage,cost_of_housing,deductions_claimed_1,lump_sum_transfer_given,&
@@ -22682,12 +22684,27 @@
                                                                                                 
         end if
                                                                                                                
+        ! THE NEWBORN'S TRANSFER. Received once, at age 1, and only when the
+        ! endowment is being delivered as a transfer rather than as a stock; see
+        ! the block beside initial_endowment. employment_index and age_index are
+        ! module globals fixed by the serial loops enclosing every OpenMP region
+        ! that reaches here -- employment_index appears in the shared clause at
+        ! 18047, not a private one -- so reading them is safe.
+        newborn_transfer_1=0.d0
+
+        if ((endowment_is_a_transfer==1) .AND. (age_index==1)) then
+
+            newborn_transfer_1=fraction_with_positive_wealth(employment_index)*&
+                relative_endowments(employment_index)*max_initial_endowment
+
+        end if
+
         after_tax_wealth_net_of_expenses=gross_wage_income-wage_income_tax_paid+&
             investment_income-investment_income_tax_paid+total_household_wealth-& 
             property_taxes_paid-housing_depreciation_expenditures-rent_spending-cost_of_mortgage-&
             cost_of_housing+lump_sum_transfer_given-origination_cost_1-prepayment_penalty_1-&
             fixed_cost_to_moving_1+bequest_1+food_stamps_recieved+housing_voucher_recieved+&
-            housing_voucher_recieved_2
+            housing_voucher_recieved_2+newborn_transfer_1
             
         ! A NEGATIVE POSITION MEANS TWO DIFFERENT THINGS AND THIS LINE USED TO
         ! ASSUME ONLY ONE. For an OWNER, financial_grid<0 is mortgage debt
@@ -24393,7 +24410,32 @@
 
                     if (is_counterfactual==0) then
                 
-                        if (fraction_with_positive_wealth(employment_index)>0) then
+                        ! THE ENDOWMENT IS A TRANSFER, NOT A STOCK, when
+                        ! endowment_is_a_transfer=1. The author, 3 September, asked
+                        ! that it not be counted as wealth -- *"Only the actual
+                        ! savings they have (based on the financial grid which is
+                        ! 0)"* -- and chose this reading over netting it out of the
+                        ! wealth statistics afterwards.
+                        !
+                        ! So the newborn ENTERS at the grid's zero index and
+                        ! receives the endowment as cash on hand in its first
+                        ! period, where it is consumed or saved like any other
+                        ! resource. Whatever it chooses to carry forward is its own
+                        ! saving and counts in w_bot and in wealth over output;
+                        ! the transfer itself never appears as a stock anybody
+                        ! holds. That is what makes it family support a survey does
+                        ! not see, which is the justification for having it at all.
+                        !
+                        ! The old branch below placed the newborn ON the grid point
+                        ! nearest the endowment, so the full amount was measured
+                        ! wealth before the household had made any decision. That
+                        ! is what inflated w_bot and caused the parameter to be
+                        ! parked on 2 September.
+                        if (endowment_is_a_transfer==1) then
+
+                            initial_endowment(employment_index)=negative_financial_grid_size
+
+                        else if (fraction_with_positive_wealth(employment_index)>0) then
                     
                             initial_endowment(employment_index)=&
                                 min(minloc(financial_grid(:)-relative_endowments(employment_index)*max_initial_endowment,1,&
@@ -35474,6 +35516,9 @@
                     end if
                     addiction_scalar_1=max(min(handover_value,b_hi),b_lo)
 
+                case ("endowment_is_a_transfer")
+                    write(*,*) "HANDOVER endowment_is_a_transfer:", endowment_is_a_transfer, "->", handover_value
+                    endowment_is_a_transfer=nint(max(min(handover_value,1.d0),0.d0))
                 case ("ssi_floor_takeup")
                     write(*,*) "HANDOVER ssi_floor_takeup:", ssi_floor_takeup, "->", handover_value
                     ssi_floor_takeup=max(min(handover_value,1.d0),0.d0)
