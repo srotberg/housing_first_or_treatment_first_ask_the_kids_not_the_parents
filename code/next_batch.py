@@ -170,7 +170,18 @@ STAGES = [
      # actually step. A scored moment outside every open stage counts against the
      # loss with its instrument frozen, which has cost this calibration a day
      # once already.
-     'h_share1'],
+     'h_share1',
+     # h_share5 JOINS STAGE 1 THE MOMENT IT IS SCORED, and it has to, for the
+     # reason written at the top of this list: a scored moment outside every
+     # open stage counts against the loss with its instrument FROZEN. That
+     # combination pinned the headline number for a full day in the h_1 case.
+     #
+     # h_share5 is the binding moment -- 0.6447 against 0.075, plus 759.7 per
+     # cent -- and ssi_floor_takeup is its only instrument, so leaving it out of
+     # every stage would have the loop unable to close on the very number that
+     # decides it. It belongs beside h_1, h_2 and h_share1: one housing block,
+     # one instrument each.
+     'h_share5'],
 
     # Then the drug block, with theta joining b and lambda_d. theta was in the
     # disorder stage; the author has moved it up beside the two it is coupled to.
