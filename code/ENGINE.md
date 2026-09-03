@@ -516,6 +516,22 @@ succeeded all day without a single failure.
 types, worker log 15:28:43 to 15:33:43. That is the honest cost of the rule
 below and it is a twentieth of what the rule was written to protect.
 
+**AND THE THIRD ONE WAS KILLED, exit 137, taking the session's worker process
+with it.** 16:26, the patience=0.990 rung. The container came back, the
+checkout survived, and the solve left nothing but a partial
+`calibration_state.dat` that `run_one_point.sh` would have removed at line 595
+had it reached the end. So the score on authorised coordinator solves is **2
+landed, 1 killed**, and the reason the original rule gives -- this is the
+container that gets restarted -- is not hypothetical. It happened within the
+hour.
+
+That does not withdraw the authorisation, which is the author's. It sets the
+price: a coordinator solve is a five-minute bet that loses about a third of the
+time and takes the trigger loop down with it when it does. Spend it on a
+measurement that unblocks the search and cannot wait, never on a rung a worker
+could carry, and after any kill run step 0 of the firing sequence again and
+check `git status` for a partial `.dat` left behind.
+
 USE IT WHEN THE FLEET IS DEGRADED AND FOR THE MEASUREMENT THAT UNBLOCKS THE
 SEARCH, not as the default. The reasons in the rule below have not stopped
 being true -- this container holds the trigger loop and the conversation, and a
