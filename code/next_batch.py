@@ -751,6 +751,14 @@ OWN = {
     # "(no instrument)" in the table.
 }
 BOUNDS = {
+    # THE DRUG INSTRUMENTS NEED ORDINARY BOUNDS NOW THAT THEY ARE ORDINARY
+    # OWNERS. They had FREE_BOUNDS only, which the 2x2 and the Jacobian repair
+    # use; making them owners in OWN sent them down the arm path, which reads
+    # BOUNDS, and the gate died with KeyError: 'addiction_scalar_1' after
+    # collecting 314 points. Same values as FREE_BOUNDS so the two paths cannot
+    # disagree about where the instrument may go.
+    'lambda_addiction':                                 (0.5, 20000.0),
+    'addiction_scalar_1':                               (1e-30, 1.0),
     # A take-up FRACTION, so [0, 1] is the whole domain. Real SSI has a $2,000
     # asset test and take-up among eligible elderly of roughly half, so the
     # empirically defensible region is well inside the upper bound rather than
