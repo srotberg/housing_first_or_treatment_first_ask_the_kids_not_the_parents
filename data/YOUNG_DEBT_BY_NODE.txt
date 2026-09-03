@@ -1,0 +1,58 @@
+denominator: average wage income, all households = $83,340
+net worth and debt columns are in units of that, matching newborn_endowment_scale
+node masses from ((i-1)/7)**3.2: 0.20%, 1.62%, 4.83%, 10.04%, 17.39%, 26.99%, 38.94%
+
+=== age 25-27, ranked on TOTAL income (126 households) ===
+node   mass    N   mean inc  % negative  mean if neg  med if neg  % any debt  med debt
+   1  0.20%    0                                     -- no observations --
+   2  1.62%    2      1,146        0.0%          nan         nan       14.4%     0.720
+   3  4.83%    5      7,262       43.5%       -0.126      -0.126       81.4%     0.045
+   4 10.04%   16     17,135        7.1%       -0.043      -0.017       55.9%     0.060
+   5 17.39%   21     33,004       29.0%       -0.127      -0.123       88.3%     0.120
+   6 26.99%   40     56,153       11.3%       -0.956      -0.329       76.4%     0.234
+   7 38.94%   40    152,976        5.5%       -0.342      -0.317       86.1%     0.373
+
+=== age 25-29, ranked on TOTAL income (211 households) ===
+node   mass    N   mean inc  % negative  mean if neg  med if neg  % any debt  med debt
+   1  0.20%    1          0        0.0%          nan         nan      100.0%     0.720
+   2  1.62%    4      2,793        0.0%          nan         nan       36.3%     0.003
+   3  4.83%   10      9,025       32.5%       -0.115      -0.126       59.6%     0.072
+   4 10.04%   29     22,189       25.3%       -0.089      -0.068       70.6%     0.060
+   5 17.39%   39     36,062       31.2%       -0.315      -0.118       91.3%     0.182
+   6 26.99%   59     60,376       17.2%       -0.451      -0.198       86.7%     0.240
+   7 38.94%   67    148,016       12.9%       -0.870      -0.317       89.4%     1.644
+
+=== age 25-34, ranked on TOTAL income (502 households) ===
+node   mass    N   mean inc  % negative  mean if neg  med if neg  % any debt  med debt
+   1  0.20%    1          0        0.0%          nan         nan        0.0%       nan
+   2  1.62%    8      3,101        0.0%          nan         nan       34.8%     0.098
+   3  4.83%   29      9,869       31.0%       -0.132      -0.126       58.4%     0.079
+   4 10.04%   72     25,393       36.7%       -0.237      -0.196       74.3%     0.140
+   5 17.39%   91     42,054       33.0%       -0.381      -0.236       87.1%     0.257
+   6 26.99%  131     71,222       12.7%       -0.331      -0.191       92.8%     0.504
+   7 38.94%  169    168,505       12.7%       -1.418      -0.877       92.7%     2.108
+
+
+CROSS-CHECK: the same brackets ranked on WAGE income.  The bottom nodes
+fill with zero-earners and their mean wage income is exactly zero, so the
+assignment among the ties is arbitrary -- this is why total income is used above.
+
+=== age 25-27, ranked on WAGE income (126 households) ===
+node   mass    N   mean inc  % negative  mean if neg  med if neg  % any debt  med debt
+   1  0.20%    0                                     -- no observations --
+   2  1.62%    2     19,394       32.7%       -0.126      -0.126       52.0%     0.030
+   3  4.83%    8     13,544       43.2%       -0.103      -0.126       92.1%     0.024
+   4 10.04%   14     16,890        2.3%       -0.002      -0.002       44.7%     0.071
+   5 17.39%   23     32,185       25.8%       -0.118      -0.125       85.3%     0.117
+   6 26.99%   38     56,933       14.8%       -0.573      -0.312       79.4%     0.195
+   7 38.94%   39    150,961        4.5%       -0.847      -0.324       85.2%     0.381
+
+=== age 25-34, ranked on WAGE income (502 households) ===
+node   mass    N   mean inc  % negative  mean if neg  med if neg  % any debt  med debt
+   1  0.20%    2     71,635       90.3%       -0.041      -0.059      100.0%     0.087
+   2  1.62%    8     35,081       13.2%       -0.227      -0.226       58.1%     0.098
+   3  4.83%   30     61,963       35.5%       -0.204      -0.126       88.7%     0.126
+   4 10.04%   67     23,695       20.9%       -0.181      -0.102       56.8%     0.111
+   5 17.39%   94     43,144       30.8%       -0.364      -0.236       88.8%     0.250
+   6 26.99%  133     69,313       18.0%       -0.406      -0.195       90.4%     0.442
+   7 38.94%  165    161,661       12.5%       -1.366      -0.370       93.0%     2.119
