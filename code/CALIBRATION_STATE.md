@@ -432,16 +432,72 @@ Three dials close that gap and each is now an instrument:
 The last is still switched off, and it is the only one that puts UNEMPLOYED
 households specifically on the street rather than simply more households.
 
-## IN FLIGHT, 00:15
+## THE SEVEN-NODE GRID FIXED THE INCOME OF THE HOMELESS AND NOTHING ELSE
 
-    seed7  h_2=0.0361  node1 101%, node2 53%   session_01Pb3CdYBGxvebQf1vSa9dWr
-    seed7  h_2=0.0450  node1 126%, node2 66%   session_01SVuTrymk7mgLrG8y2kJb7Y
-    seed7  h_2=0.0600  node1 169%, node2 88%   session_01TmH3Q4WiSp4ajx1y7MLGBW
-    OLD GRID, guesses only:
-      pi_eu sign 0.00700                       session_0197ppJvi52cyD5RfH6WqEkN
-      pi_eu sign 0.01600                       session_01Ar68aRK5uBzeHx6r4xrUYC
+Three seeds, 00:31. The validation moment moved enormously and the target did not
+move at all.
 
-Zero points on the new model. The three seeds are the first.
+    h_2       rent/lowest   h_1       by choice   emp share   INCOME OF HOMELESS
+    0.0361      93.9%       0.00287    0.9999      0.9720       0.2324
+    0.0450     117.0%       0.00214    0.9379      0.9429       0.3116
+    0.0600     156.0%       0.00213    0.9375      0.8988       0.2992
+    17 node       --        0.00416    0.9206      0.9094       1.0150
+    DATA          --        0.00399      --        0.4600       0.1910
+
+Income of the homeless: **1.015 -> 0.23 to 0.31 against 0.191**. That is the
+defect this whole line of work started from, and the grid design fixed it.
+sigma_y survived at 0.1803 against 0.172, still inside ten per cent.
+
+## bottom_productivity_level HAS NO LEVERAGE ON emp_homeless. THE PAIRING IS WRONG.
+
+Measured 00:41, one coordinate, a FIVEFOLD cut in the bottom node's income:
+
+    bottom level   rent/lowest   EMP SHARE   by choice   h_1        income   assets
+    0.0302 unaided    1.170       0.9429      0.9379     0.00214    0.3116   0.0119
+    0.020             1.663       0.9429      0.9376     0.00214    0.3115   0.0119
+    0.012             2.568       0.9429      0.9374     0.00214    0.3114   0.0119
+    0.006             4.628       0.9429      0.9370     0.00214    0.3112   0.0119
+
+**emp_homeless is identical to four decimal places across the whole range.** So
+is h_1, so are the assets of the homeless, so is sigma_y. by_choice moves by
+0.0009. The instrument does nothing, and an instrument that does nothing cannot
+own a moment.
+
+## AND THE REASON EXPOSES A MISTAKE IN THE WHOLE DESIGN CONVERSATION
+
+`net_income_lowest`, the denominator in every burden number quoted tonight, is
+
+    net_income_lowest = labor_income_tax_rate * employment_grid(1,1)**curvature
+
+**Labour income alone.** It contains no food stamps, no housing voucher, no
+unemployment benefit, no DI and no SS. So "node one pays 463 per cent of its
+income for the cheapest rental" is 463 per cent of its WAGE, not of its
+resources, and a household at the bottom of the productivity grid is largely
+living on transfers. That is why driving its wage to nothing changes nothing:
+the wage was never what paid its rent.
+
+Every burden figure in this file and in tonight's conversation -- 101.4 per cent,
+117 per cent, the 50 to 80 per cent band the design was built around -- is on the
+same wrong denominator. The masses are exact and unaffected. The BURDENS are not
+what they were taken to be, and the author was reasoning from them too.
+
+WHAT IS NEEDED: rent over TOTAL household resources at the bottom, which the
+model does not currently print. Until it does, no burden-based design can be
+sized.
+
+WHAT IS LEFT FOR emp_homeless: the unemployment-by-productivity profile in
+`adjusting_unemployment_probabilities_based_on_productivity`, still dead behind
+`adjusted_probability_1=1`. It is now the only untried lever that acts on the
+employed share directly rather than through affordability.
+
+## IN FLIGHT, 00:43
+
+    pi_eu sign 0.00700   session_0197ppJvi52cyD5RfH6WqEkN   OLD GRID, guess only
+    pi_eu sign 0.01600   session_01Ar68aRK5uBzeHx6r4xrUYC   OLD GRID, guess only
+
+6 points on the seven-node model. SOLVE TIME: the leverage round launched 00:33:37
+and all three landed by 00:42 -- about EIGHT MINUTES including clone and build,
+which is the author's estimate met.
 
 ## THE GATE'S DRUG BASE IS ON THE OLD RUNG
 
