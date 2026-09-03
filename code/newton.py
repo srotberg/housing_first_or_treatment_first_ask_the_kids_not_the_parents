@@ -88,6 +88,42 @@ TRUST    = 0.25
 # leverage it does have. Dropping the moment would tell the solver the gap does
 # not matter, which is the opposite of what the author asked for.
 HOLD = {'newborn_endowment_scale'}
+
+# MOMENTS WHOSE JACOBIAN ROW IS MEANINGLESS, and the instruments that own them.
+#
+# Measured at the first full step, 3 September, by comparing what the Jacobian
+# PREDICTED against what the model did.  Twelve moments came in within a few
+# points of prediction over a very large step -- b -0.3, cbar 0.5, pi_eu 0.1,
+# sigma_y 0.7, beta 0.4, gamma 0.6, omega_l 1.0, theta 1.1, tau_l 1.3, aleph
+# -2.8, lambda_d 4.6, pi_V -6.2 -- and on those Newton did exactly what it is for:
+# b, the worst moment in the block, went from 67.6 per cent to 15.8 in one step.
+#
+# These four did not:
+#
+#     h_share1      predicted   0.0   actual  +126.7
+#     h_1           predicted  -0.3   actual   -84.0
+#     emp_homeless  predicted  -9.2   actual   +46.4
+#     h_2           predicted   3.9   actual   +18.3
+#
+# That is not noise and it is not a bad finite-difference step.  At this point 94
+# per cent of the model's homeless could afford housing on income alone
+# (DIAG homeless who could afford it on INCOME ALONE = 0.9385), so who is on the
+# street is a knife-edge discrete choice: the derivative really is near zero
+# locally -- the Jacobian measured it correctly -- and then the choice flips.
+# size_homelessness moved by 2.7 per cent in that step and the homelessness rate
+# fell by 84.  No finite difference will ever describe that, so these rows must
+# not go through a linear solve, and the instruments that own them must not be
+# moved by one.
+#
+# THEY ARE NOT CONCEDED.  The moments stay in the residual vector and in every
+# report, the instruments keep their bounds, and the block is still to be closed
+# -- by a measured bracket, which is what a non-differentiable moment needs and
+# what the author's standing preference asks for.  Dropping a row from the linear
+# model is a statement about the DERIVATIVE, not about the target.
+NONSMOOTH = {'h_share1', 'h_1', 'h_2', 'emp_homeless'}
+NONSMOOTH_INST = {'newborn_endowment_scale', 'size_homelessness',
+                  'smallest_rental_relative_to_lowest_income',
+                  'bottom_productivity_level'}
 SV_TOL   = 0.02
 STATE    = os.path.join(HERE, '.newton_state.json')
 
@@ -200,7 +236,7 @@ def main():
 
     if '--jacobian' in args:
         out = []
-        for p, m in [pm for pm in inst if pm[0] not in HOLD]:
+        for p, m in [pm for pm in inst if pm[0] not in HOLD | NONSMOOTH_INST]:
             x = float(v0[p]); lo, hi = NB.BOUNDS[p]
             if p in FD_ABS:
                 step = FD_ABS[p]
@@ -215,7 +251,8 @@ def main():
             out.append(line(vv))
             print(f'  {p:45s} {x:12.6g} -> {xn:12.6g}   for {m}')
         open(os.path.join(HERE, 'batch_newton_J.txt'), 'w').write(''.join(out))
-        json.dump({'base': tag0, 'inst': [p for p, _ in inst if p not in HOLD],
+        json.dump({'base': tag0,
+                   'inst': [p for p, _ in inst if p not in HOLD | NONSMOOTH_INST],
                    'all': [p for p, _ in inst], 'keys': keys,
                    'x0': {p: float(v0[p]) for p, _ in inst}},
                   open(STATE, 'w'), indent=1)
@@ -225,7 +262,7 @@ def main():
     if '--step' in args:
         st = json.load(open(STATE))
         x0 = st['x0']; keys = st['keys']
-        names = [p for p in st['inst'] if p not in HOLD]
+        names = [p for p in st['inst'] if p not in HOLD | NONSMOOTH_INST]
         # A point is a clean perturbation of p only if EVERY OTHER instrument is
         # at its base value -- including the held ones. Checking only the free
         # list would let a point that moved a held instrument as well be read as
@@ -295,6 +332,14 @@ def main():
         # s is capped by the BOUND as well as by the trust region: scaling by a
         # move the instrument cannot make in either direction would reinstate the
         # same distortion in a quieter form.
+        # Only the smooth rows enter the linear model.  r0 and cols keep their
+        # full length everywhere else, so the printed step and the residual
+        # report still cover every moment.
+        lin = [t for t, kk in enumerate(keys) if kk not in NONSMOOTH]
+        r0 = [r0[t] for t in lin]
+        cols = [[c[t] for t in lin] for c in cols]
+        print(f'  linear model on {len(lin)} of {len(keys)} moments; '
+              f'{", ".join(sorted(NONSMOOTH))} excluded as non-differentiable')
         n, k = len(r0), len(cols)
         sc = []
         for p in used:
