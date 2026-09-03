@@ -31,7 +31,12 @@ SKIP = {'h_3'}
 # instrument; emp_homeless now has bottom_productivity_level and h_2 is a target
 # again. next_batch.py scores it and this file must agree -- when they disagreed
 # the loss was computed over two different sets and the wrong point was promoted.
-UNSCORED = {'kappa_ued', 'kappa_uem', 'rent50', 'h_share1'}
+# h_share1 IS SCORED from 3 September, on the author's instruction: *"we can now
+# bring back the wealth for the newborns to make their share of the homeless
+# correct. We should calibrate it"*. Its instrument, newborn_endowment_scale, was
+# parked at 0 while w_bot was too high; the seven-node grid brought h_share1 from
+# +121 per cent to +24, so the push needed is now small.
+UNSCORED = {'kappa_ued', 'kappa_uem', 'rent50'}
 BAND = {'beta': (3.0, 4.5)}   # lower edge follows wealth_to_output_data, back to 3.0 on 2 Sep
 
 # parameter -> the moment it is bracketed on. Kept here rather than imported so

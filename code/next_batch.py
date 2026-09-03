@@ -131,7 +131,12 @@ STAGES = [
      #   size_homelessness                          -> h_1, the homelessness rate
      #   smallest_rental_relative_to_lowest_income   -> h_2, the cost burdened
      #   bottom_productivity_level                   -> emp_homeless
-     'h_2'],
+     'h_2',
+     # h_share1 joins with h_2, so its instrument newborn_endowment_scale can
+     # actually step. A scored moment outside every open stage counts against the
+     # loss with its instrument frozen, which has cost this calibration a day
+     # once already.
+     'h_share1'],
 
     # Then the drug block, with theta joining b and lambda_d. theta was in the
     # disorder stage; the author has moved it up beside the two it is coupled to.
@@ -539,12 +544,23 @@ OWN = {
     # matches the homelessness rate of the young, and in the data a good part of
     # young households' wealth is family support that no survey observes, so the
     # SCF's own newborn distribution is a floor rather than the number.
-    # NOT TARGETED FOR NOW. The author, 2 September: "Dont even target anything
-    # for newborns with the endowment for now. Let's see if you can match the
-    # bottom 50% share of wealth." newborn_endowment_scale is 0 and owns nothing;
-    # h_share1 is reported and unscored. It inflated w_bot by roughly half the
-    # excess -- extrapolating four controlled arms to a zero endowment puts w_bot
-    # near 0.048 rather than 0.105 -- and w_bot is the moment being chased.
+    # UN-PARKED, 3 September. The author: *"I think we can now bring back the
+    # wealth for the newborns to make their share of the homeless correct. We
+    # should calibrate it"*. It replaces the note that stood here, which recorded
+    # their instruction of 2 September to leave newborns untargeted while w_bot
+    # was being chased.
+    #
+    # What changed is the size of the job. On the seventeen-node grid h_share1
+    # sat at +121 per cent and the endowment had to do violence to reach it. On
+    # the seven-node grid it is +24 -- 0.3223 against 0.26 -- so a small
+    # endowment should do, and the w_bot cost that caused the parking is
+    # correspondingly smaller.
+    #
+    # THE TENSION HAS NOT GONE AWAY, and it should be watched rather than
+    # assumed harmless: the endowment raises w_bot, and w_bot is +16.9 per cent
+    # at the point this was decided from, already above its target. If the two
+    # cannot both be met, that is a real conflict between the newborn wealth
+    # distribution and the bottom-half wealth share, not a search failure.
     # rho_d is the earnings penalty of a substance use disorder, switched on
     # here for the first time. It owns the SUD share of the homeless, and
     # through it the age profile: lambda_d pins the NUMBER of addicts, so the
@@ -717,7 +733,9 @@ SKIP = {'h_3',
 # instrument for it. So the moment is scored with three things acting on it and
 # its nominal owner the weakest of the three, which is worth watching rather than
 # pretending is clean.
-UNSCORED = {'rent50', 'h_share1',
+# h_share1 LEFT THIS SET on 3 September; see the note beside
+# newborn_endowment_scale above.
+UNSCORED = {'rent50',
             # THE COST BURDEN HEADCOUNT LEAVES THE LOSS, because the author has
             # decided twice that the cheapest rung targets emp_homeless: "we
             # decided to set h2 such that 46% of the homeless are employed."
