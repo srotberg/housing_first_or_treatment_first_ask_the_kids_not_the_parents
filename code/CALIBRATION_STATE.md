@@ -1,4 +1,4 @@
-# Calibration state — 3 September, 18:33
+# Calibration state — 3 September, 19:58
 
 ## THE CONFIGURATION, settled today and not to be changed without the author
 
@@ -13,9 +13,95 @@ Both are CONFIG_SWITCHES in next_batch.py and gaps.py: a point that differs on
 `number_of_beta_types` or `use_pia_formula` does not pool. 91 points are skipped
 for the first and 617 are on older source revisions.
 
+## THE SEARCH IS A NEWTON SOLVER NOW, AND IT SPLITS THE BLOCK IN TWO
+
+`code/newton.py`, built 3 September on the author's *"since each equilibrium is
+now fast to solve, don't you think that using a nelder mead type algorithm would
+be best now?"*.  Two phases: `--jacobian` emits sixteen INDEPENDENT perturbation
+lines, `--step` builds the Jacobian and emits a full, half and quarter step.
+
+**Two solver bugs found and fixed in the first step, both in newton.py.**
+
+1. THE RIDGE WAS ANNIHILATING THE SEARCH.  A column is d(residual)/d(instrument)
+   in raw units and the units are incommensurable -- the finite-difference step is
+   3.36 for value_of_life and 0.00032 for bottom_productivity_level -- so the raw
+   J^T J diagonal ran 0.109 to 2.24e5 and one ridge set from the largest was over
+   a hundred times the entire diagonal of eleven of fifteen instruments.  The step
+   moved everything under one per cent from a 68 per cent residual and looked
+   converged.  Columns are now scaled by the largest move the instrument is
+   allowed in one iteration, bound or trust region, whichever binds.
+2. THE TRUNCATED SVD WAS A UNIFORM RIDGE, which shrinks the identified directions
+   along with the unidentified.  It is now a real truncation by a Jacobi sweep on
+   the symmetric k-by-k matrix; the sweep reconstructs to 3e-14 and reproduces a
+   direct solve to machine precision with nothing truncated.
+
+**The first step then separated the block cleanly, and this is the finding that
+shapes everything after it.**  Predicted versus actual at the full step:
+
+    twelve moments within a few points   b -0.3, cbar 0.5, pi_eu 0.1, sigma_y 0.7,
+                                         beta 0.4, gamma 0.6, omega_l 1.0,
+                                         theta 1.1, tau_l 1.3, aleph -2.8,
+                                         lambda_d 4.6, pi_V -6.2
+    h_share1      predicted   0.0   actual  +126.7
+    h_1           predicted  -0.3   actual   -84.0
+    emp_homeless  predicted  -9.2   actual   +46.4
+    h_2           predicted   3.9   actual   +18.3
+
+On the twelve, Newton did its job: b, the worst moment in the block, went 67.6 ->
+15.8 in ONE step, and tau_l, lambda_d, pi_V and omega_l all closed inside five.
+
+The four are the homelessness moments and they are NOT DIFFERENTIABLE here.  At
+this point `DIAG homeless who could afford it on INCOME ALONE = 0.9385`: 94 per
+cent of the model's homeless can pay for housing and choose the street, so who is
+homeless is a knife-edge discrete choice.  The derivative is genuinely near zero
+locally -- the Jacobian measured it right -- and then it flips.  size_homelessness
+moved 2.7 per cent and the homelessness rate fell 84.
+
+So `NONSMOOTH` in newton.py takes those four rows out of the LINEAR SOLVE and
+holds their four instruments.  **They are not conceded**: the moments stay in the
+residual vector and in every report, the instruments keep their bounds, and the
+block is to be closed by a MEASURED BRACKET.  Dropping a row from a linear model
+is a statement about the derivative, not about the target.
+
+## THE BOTTOM PRODUCTIVITY NODE IS DESTITUTE AND EMPTY
+
+Asked by the author why homelessness is not coming from the poorest households.
+`y_grid_kappa=3.2` fixes the bottom node's mass at exactly (1/7)**3.2 = 0.198 per
+cent of households against a working-age homeless mass of 3.52 per cent, so even
+if every bottom-node household were on the street they would be 5.6 per cent of
+the homeless.  Measured, not argued: an 8 per cent move in
+bottom_productivity_level takes emp_homeless from 0.611113 to 0.611115.  It is the
+weakest of the fifteen columns by three orders of magnitude and pinned at its
+lower bound.  The instrument with leverage is the MASS, `y_grid_kappa`, and it is
+deliberately fixed -- next_batch.py:438.  Opening it is with the author.
+
+## OPEN WITH THE AUTHOR: the newborn endowment is delivered twice
+
+The author asked for a NEGATIVE newborn endowment, so the young start with debt
+and more of them become homeless.  h_share1 is below the data, so the sign is
+right and it is the one direction the instrument could not travel before.
+
+It cannot be wired up yet.  In `calculate_after_tax_wealth` (22614-23022) both
+branches at 22680-22690 put `newborn_age_transfer(age_index)` into `bequest_1`,
+and `inheritance_age_grid` runs 1..60 so age 1 is in it; then 22975-22989 add
+`newborn_transfer_1` -- the SAME quantity under the live uniform path, since
+`max_initial_endowment` (24679) and `newborn_age_transfer(1)` (11817) have the
+same definition and both scaling arrays are 1.  So the endowment enters cash on
+hand TWICE at age 1.  `objective` (22105-22612) has the bequest half only and
+never calls calculate_after_tax_wealth, so it counts it ONCE: the choice problem
+and the wealth accounting differ by one endowment.
+
+Invisible today because every live vector has newborn_endowment_scale=0.  With a
+negative scale the debt is doubled in one path and single in the other.
+
+Also: the production build is -O3 with NO -ffpe-trap, and the `consumption <= 0`
+sites only PRINT ("internal eror") -- they do not guard the utility call.  A debt
+big enough to drive consumption negative would archive garbage silently, so the
+first negative bracket must be checked in the LOG, not in the point file.
+
 ## BLOCK 1 IS ONE JOINT ROUND, AND IT IS CONVERGING
 
-The open round's worst gap today: **1188% -> 175% -> 154% -> 70%**.
+The open round's worst gap today: **1188% -> 175% -> 154% -> 70% -> 64.1%**.
 
 Best point `point_538b363d6e`, 46 points in this economy, 5 of 21 inside ten.
 
