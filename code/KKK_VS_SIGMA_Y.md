@@ -153,3 +153,103 @@ And one instrument was switched off: `sd_permanent_productivity` moves no moment
 under KKK, so its internal adjuster is skipped and its distance zeroed. Left
 running it would step a number that changes nothing and the calibration loop
 would never terminate.
+
+---
+
+# What the four arms will look like before they land
+
+Computed in closed form from the process itself, so it can be checked against
+what the runs report rather than believed. `kkk_s_deviation_bottom=3.35`,
+`kkk_s_deviation_top=3.0` in every KKK arm.
+
+## The masses are the same in all three KKK arms, and they are not the quantile masses
+
+Scaling the innovation sds moves the NODES and leaves the masses exactly where
+they are, because the grid is defined in standardised units. So the three KKK
+arms are a clean bracket. But the shape is nothing like the grid they replace:
+
+| node | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+|---|---|---|---|---|---|---|---|
+| quantile masses, % | 0.198 | 1.618 | 4.829 | 10.039 | 17.388 | 26.991 | 38.938 |
+| KKK masses, % | 0.240 | 3.660 | 20.167 | 39.773 | 28.271 | 7.216 | 0.674 |
+
+**This is the most consequential difference between the two processes and it is
+not about risk at all.** The quantile grid is bottom-weighted by construction:
+resolution is bought where the drug, housing and homelessness margins sit, and
+the top node is one fat 39 per cent lump holding everything above the 61st
+percentile. The KKK grid is a symmetric bell: 68 per cent of households sit on
+nodes 3 and 4, and the two bottom nodes together carry 3.9 per cent.
+
+The homelessness margin is at the bottom, and the KKK grid has three nodes there
+where the quantile grid has five. Whatever the risk does, this cuts the other
+way, and it should be read as part of any difference the four arms show.
+
+## The nodes
+
+| | node 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+|---|---|---|---|---|---|---|---|
+| control (quantile) | 0.0317 | 0.0676 | 0.1214 | 0.2032 | 0.3386 | 0.6089 | 1.9245 |
+| line 2, age 26 | 0.2319 | 0.3576 | 0.5512 | 0.8499 | 1.3102 | 2.0200 | 3.1143 |
+| line 2, age 65 | 0.1963 | 0.3190 | 0.5184 | 0.8425 | 1.3692 | 2.2250 | 3.6160 |
+| line 3, age 26 | 0.0311 | 0.0809 | 0.2107 | 0.5482 | 1.4268 | 3.7132 | 9.6635 |
+| line 3, age 65 | 0.0215 | 0.0629 | 0.1839 | 0.5378 | 1.5724 | 4.5974 | 13.4419 |
+| line 4, age 26 | 0.0567 | 0.1270 | 0.2847 | 0.6381 | 1.4301 | 3.2053 | 7.1842 |
+| line 4, age 65 | 0.0205 | 0.0634 | 0.1958 | 0.6051 | 1.8695 | 5.7759 | 17.8454 |
+
+Line 2's bottom node is 0.232 of mean productivity. **Nobody at 0.232 is priced
+out of anything** — the control's bottom node is 0.0317, seven times poorer.
+That alone predicts line 2 will have very little homelessness at the bottom, and
+it is the dispersion miss showing up as a level.
+
+Mean productivity is exactly 1 at age 26 by construction and drifts to 1.024
+(line 2), 1.120 (line 3) and 1.348 (line 4) by age 65. That drift IS the fan —
+a wider spread of logs has a higher mean in levels — and it sits on top of the
+deterministic age profile of earnings, which is worth remembering when reading
+the lifecycle income profile.
+
+## Two things the runs will report that need reading with care
+
+**1. The bottom-half share the Fortran prints is the AGE-26 one, and the SCF
+number is pooled over 26 to 65.** Under a frozen grid these are the same
+quantity; under a fanning one they are not.
+
+| | reported (age 26) | pooled 26–65 | target |
+|---|---|---|---|
+| line 2 | 34.52% | 33.25% | 17.20% |
+| line 3 | 18.77% | 16.89% | 17.20% |
+| line 4 | 22.77% | 16.89% | 17.20% |
+
+So line 4 will report a 32 per cent miss on `sigma_y` while its pooled
+dispersion is within 2 per cent of target. Do not read that as a failure of line
+4. `compute_bottom_half_earnings_share` should pool over working ages when the
+KKK grid is live, and it does not yet — deliberately not changed while four
+solves were in flight, since changing the source mid-batch changes the model
+hash under them.
+
+**2. `kkk_s_deviation_bottom=3.35` puts 0.2395 per cent on the bottom node, not
+the 0.198 the design asks for.** 3.42 is the value that hits 0.198. The three
+KKK arms all carry 3.35, so nothing in the comparison between them turns on it,
+but it is 21 per cent more mass on the bottom node than the control carries.
+
+## The asset grid quietly rescales with the top node, and it costs resolution at the bottom
+
+`financial_grid(top) = 3.2 * employment_grid(1, top node)`, and every rung below
+it is `top * ((i-8)/24)^expander`. So a wider top node stretches the WHOLE
+positive grid, including the rungs near zero where the decision to sleep rough
+is actually taken.
+
+Counting positive grid points between zero wealth and one year's rent on the
+cheapest unit (about 0.03 of mean productivity):
+
+| | top of the asset grid | points below a year's cheapest rent |
+|---|---|---|
+| control | 6.16 | 4 |
+| line 2 | 9.97 | 3 |
+| line 3 | 30.92 | 2 |
+| line 4 | 22.99 | 2 |
+
+Lines 3 and 4 have half the resolution the control has at exactly the margin
+that decides homelessness. `financial_grid_expander_positive` at 4.0 instead of
+3.0 restores it (five points below the threshold at line 3's grid top), and if
+either arm looks promising it should be re-run that way as a robustness check
+before anything is concluded from it.
