@@ -242,6 +242,23 @@ INERT_CHANGES = [
         'when': lambda text: re.search(r'fixed_productivity=0(?![.0-9])',
                                        text) is None,
     },
+    {
+        'from': '5bf42a9b2c',
+        'to':   '6c3b8a9a23',
+        'what': 'bottom_productivity_level applies under KKK too, at every age',
+        'why':  'The whole addition sits inside the `if (fixed_productivity==0)` '
+                'housekeeping block, which a quantile point never enters. The '
+                'quantile grid keeps its own bottom-node override, unchanged and '
+                'in its own branch a few hundred lines above. Nothing outside '
+                'that block was touched.',
+        'careful': 'Says NOTHING about a fixed_productivity=0 point. Under KKK '
+                   'this is the difference between a lever that does nothing and '
+                   'one that moves the bottom node at every age, so a KKK point '
+                   'measured before this change is a different economy from one '
+                   'measured after -- and none existed before it.',
+        'when': lambda text: re.search(r'fixed_productivity=0(?![.0-9])',
+                                       text) is None,
+    },
 ]
 
 
