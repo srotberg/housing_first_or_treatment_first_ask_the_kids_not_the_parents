@@ -188,3 +188,75 @@ this algebra cannot reach, and what has to be looked at next:
 resolved.** The instrument works -- the band 5 rate fell thirteenfold -- but if
 it is compensating for a defect rather than pricing a margin, then fitting the
 moment with it buries the defect at an implausible pension.
+
+## THE ANSWER: THERE IS NO DISUTILITY OF HOMELESSNESS IN PREFERENCES
+
+Found 16:52, and it corrects the whole of the section above.
+
+`mu_homeless` is NOT a penalty for being homeless. Line 35462 is its only use in
+the model:
+
+    mu_homeless*probability_of_stopping_addiction
+
+It is Milby's recovery hazard ratio, 4.48/6.60, and it multiplies the chance of
+stopping addiction on the street. It has nothing to do with the utility of
+being homeless, and it is clamped to [0,1] in the handover, so a bracket above
+1.0 would have run three identical solves at 1.0.
+
+**Housing enters preferences only as the dwelling's SIZE:**
+
+    housing_status_utility_function = housing_size ** ((1-risk_aversion)*relative_share_of_housing)
+
+The street is simply the smallest dwelling. It is free. Nothing else
+distinguishes it.
+
+### Redoing the flow comparison without the phantom penalty
+
+The earlier section computed the trade-off with `mu = 0.911` subtracted from
+the homeless branch. That term does not exist. Without it:
+
+    income     U rent    U street   prefers
+    0.1774    -2.6996    -2.0313    STREET     real SSI floor
+    0.4000    -1.3437    -1.2995    STREET     age 85 retiree
+    0.4500    -1.1987    -1.1935    STREET     age 75 retiree
+    0.4579    -1.1786    -1.1784    threshold
+    0.5100    -1.0509    -1.0809    rent       age 66 retiree
+    0.6000    -0.8665    -0.9346    rent       floor 0.60
+    1.0000    -0.3261    -0.4749    rent       floor 1.00
+
+**A household prefers renting only above an income of 0.4579** -- 0.72 of
+average labour income, and 4.02 times the rent itself. With a Cobb-Douglas
+housing weight of 0.100, giving up 22 per cent of consumption to buy 13 times
+the housing services is a bad trade unless consumption is already high.
+
+### This explains every measurement, exactly
+
+- **The age profile.** Measured retiree income runs 0.510 at 66 down to 0.400
+  at 85. The threshold 0.4579 sits INSIDE that range. Homelessness begins at
+  age 69 because that is where income and assets together cross it.
+- **The floor bracket.** 0.1774 is far below the threshold, 0.60 and 1.00 are
+  above it. Band 5 homelessness fell thirteenfold between them and vanished at
+  1.00. That is not the floor "working"; it is the floor buying its way past a
+  threshold that should not be there.
+- **Why nothing else moved it.** The discount factor cannot touch a static flow
+  comparison, which is why five patience rungs left h_share5 between 0.935 and
+  0.959.
+- **Why 99.74 per cent are homeless "by choice".** They are. Given these
+  preferences, choosing the street is correct for anyone below 0.46.
+
+### THE QUESTION FOR THE AUTHOR
+
+This is a specification issue and not a calibration one. In the data the
+homeless are POOR and half of them work; in the model they are comfortable and
+nearly all of them work, and they are on the street because the model gives
+them no reason not to be. Either
+
+- preferences need a direct disutility of homelessness -- a real parameter,
+  calibrated against the homelessness rate, which is what most of this
+  literature has; or
+- the street has to stop being a free dwelling with 7.6 per cent of a rental's
+  services, and instead carry the costs that make it unattractive.
+
+Until one of those exists, `h_1`, `h_share1`, `h_share5`, `emp_homeless` and
+the income of the homeless are all being asked to come right from instruments
+that cannot reach the margin that sets them.
