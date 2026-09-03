@@ -28318,6 +28318,59 @@
 
             end if
 
+            ! THE BOTTOM NODE'S LEVEL UNDER KKK, MEAN PRESERVING AT EVERY AGE.
+            !
+            ! On the author's instruction of 3 September: *"I also want the other
+            ! levers we discussed"*. bottom_productivity_level was built for the
+            ! quantile grid and lives inside `if (fixed_productivity==1)`, so
+            ! under KKK it did nothing at all and the only bottom-node control
+            ! was kkk_s_deviation_bottom -- which moves the node's MASS and its
+            ! LEVEL together and so cannot separate them.
+            !
+            ! Here it is the same construction as the quantile version and for
+            ! the same reason. Sum m_i y_i is one at age one by construction, so
+            ! moving the bottom node to y_new and scaling the rest by
+            !
+            !     f = (1 - m_1 y_new) / (1 - m_1 y_old)
+            !
+            ! restores the mean exactly. The nodes above the bottom keep their
+            ! relative spacing.
+            !
+            ! APPLIED AT EVERY AGE, not only at age one, and that is what makes
+            ! it right under a fanning grid. The masses are the same at every age
+            ! -- the grid scales with sd(a), so in standardised units the nodes
+            ! and their masses do not move -- but the LEVELS do, so each age gets
+            ! its own rescale factor computed from its own bottom node. The fan
+            ! survives: only the bottom node and the scale of the block above it
+            ! move, and they move by the same proportion at every age.
+            if (bottom_productivity_level>0.d0) then
+
+                bottom_mass_1=unconditional_employment_probability(1)
+
+                do age_index=1,life_span
+
+                    bottom_old_1=employment_grid(age_index,1)
+                    bottom_rescale_1=(1.d0-bottom_mass_1*bottom_productivity_level)/&
+                        max(1.d0-bottom_mass_1*bottom_old_1,10.d0**(-14))
+
+                    employment_grid(age_index,1)=bottom_productivity_level
+                    employment_grid(age_index,2:employment_grid_size)=&
+                        employment_grid(age_index,2:employment_grid_size)*bottom_rescale_1
+
+                end do
+
+                if (loop_count<1) then
+
+                    write(*,*) "KKK bottom node overridden to", bottom_productivity_level
+                    write(*,*) "  mass", bottom_mass_1, " mean productivity at age 1 =",&
+                        sum(unconditional_employment_probability*employment_grid(1,:))
+                    write(*,*) "  grid age 1  :", employment_grid(1,:)
+                    write(*,*) "  grid last working age:", employment_grid(life_span-retirement_span,:)
+
+                end if
+
+            end if
+
             call compute_bottom_half_earnings_share()
 
             if (loop_count<1) then
