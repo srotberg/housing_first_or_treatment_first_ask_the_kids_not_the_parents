@@ -219,6 +219,27 @@ def main():
             cols.append([(a - b) / d for a, b in zip(r1, r0)]); used.append(p)
         if not cols:
             print('no Jacobian columns; run --jacobian and solve the batch first'); return 1
+
+        # A PARTIAL JACOBIAN MUST NOT PRODUCE A STEP UNASKED.
+        #
+        # A missing column does not fail loudly: it silently drops that
+        # instrument from the step, so the search stops moving a parameter and
+        # nothing in the emitted batch says which one. Run at 19:29 with seven
+        # of sixteen columns present, this wrote a full step file that looked
+        # exactly like a real one -- nine instruments held at their base values
+        # for no reason anybody reading the batch could see.
+        #
+        # --partial is the override, and it names what is missing rather than
+        # quietly proceeding.
+        missing = [p for p in names if p not in used]
+        if missing and '--partial' not in args:
+            print(f'\nREFUSING TO STEP: {len(missing)} of {len(names)} columns are '
+                  f'missing, so those instruments would be held silently.')
+            for p in missing:
+                print(f'    {p}')
+            print('\nSolve the rest of batch_newton_J.txt, or pass --partial to step '
+                  'on what is here.')
+            return 2
         print(f'\nJacobian: {len(r0)} moments x {len(cols)} instruments')
 
         # least-norm solve of J dx = -r0 by truncated SVD, without numpy
