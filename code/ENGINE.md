@@ -982,7 +982,38 @@ That is the minimum number of model turns in which a measurement can be taken
 and landed. Consolidation is for when the fleet is healthy; when it is not, run
 one line per container and accept the extra containers.
 
-Running total for 3 September: **twelve of fifteen workers lost.**
+Running total for 3 September: **seventeen of twenty-one workers lost.**
+
+**AND ONLY THE FIRST-LAUNCHED WORKER OF A GROUP HAS EVER SURVIVED.** The launch
+record for the day:
+
+    launch group  times (s)               outcome
+    13:29 x3      13:28:59 / :05 / :12    all died
+    13:42 x3      13:42:44 / :53 / :00    FIRST survived, other two died
+    13:43 x2      13:43:57 / 13:44:09     both died
+    13:51 x2      13:51:44 / 13:52:06     both died
+    13:58 x2      13:58:58 / 13:59:17     both died
+    14:04 x2      14:04:37 / :46          both died
+    14:20 x3      14:20:33 / :38 / :42    all died
+    14:26 x3      14:26:37 / :43 / :47    FIRST survived, other two died
+
+**0 of 13 non-first workers survived; 2 of 8 first-launched did.** Treat that as
+suggestive and not established -- Fisher's exact on those counts is about 0.13,
+and six of the eight groups had no survivor at all, so being launched first is
+plainly not sufficient. What it does support is that launching a group buys
+nothing over launching one.
+
+THE ARITHMETIC OF ACTING ON IT, stated honestly because it is not a speed-up.
+At roughly a quarter yield on the first worker and nothing on the rest, a group
+of three lands about 0.25 points and so does a group of one. Launching one per
+firing therefore gives the SAME expected rate at a third of the containers, and
+it tests the hypothesis cleanly: if first-launched workers keep surviving on
+their own, that is the route, and if they do not, nothing has been lost.
+
+Do not read this as a reason to be timid when the fleet is healthy. The author's
+instruction is to run the whole fleet, and eight parallel workers is the right
+shape the moment 529s stop arriving. This is a rule for a degraded API, and the
+test of whether it still applies is the session record, not memory.
 
 **AND CHECK THE SESSION RECORD, NOT ONLY THE BRANCH LIST.** `git ls-remote`
 cannot distinguish "still solving" from "died eight minutes ago", and at this
