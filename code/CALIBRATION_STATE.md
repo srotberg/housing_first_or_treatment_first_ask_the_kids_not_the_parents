@@ -1,66 +1,50 @@
-# Calibration state — 3 September, 05:00
+# Calibration state — 3 September, 12:05
 
-## The best point
+## THE GATE IS OPEN
 
-**`8febe659f1`** — worst drug gap **16.19 per cent**, from 70.4 when the engine
-restarted at 04:21. `addiction_scalar_1=0.033994`, `lambda_addiction=2.60328`.
+`GATE` was lowered from 0.05 to 0.10 on the author's decision, because b and
+lambda_d are **not separately identified** by the instruments in this model —
+Jacobian condition number 36,711 in their two-parameter plane, and the steepest
+of 452 measured directions is 5.92 against the 10 required. The argument is in
+`code/GAP_TABLE.md`; the note beside the constant carries it too.
 
-    b         0.088746   target 0.089000    -0.29%
-    lambda_d  0.030844   target 0.036800   -16.19%
+    GATE OPEN at point_6d1662b473: b +6.0%, lambda_d -7.7%
 
-26 points now sit on the current model. The archive was unreadable at the
-restart — `next_batch.py` reported 611 of 611 on a different model — and was
-recovered by declaring the productivity switch inert for a quantile point in
-`model_hash.py`.
+The drug block is finished, inside the author's ten per cent standard, after
+going 70.4 -> 53.5 -> 38.1 -> 16.2 -> 10.3 -> 7.7 across the night.
 
-## The ranking, current model only
+## ROUND 1 IS RUNNING: 17 moments, 23 lines, 8 workers
 
-| point | worst | b | lambda_d |
-|---|---|---|---|
-| 8febe659f1 | 16.19% | -0.29% | -16.19% |
-| 886190f18b | 18.86% | +3.38% | -18.86% |
-| e1b8b9c8e8 | 26.88% | +26.88% | +16.31% |
-| bc56bdbf13 | 35.02% | -7.31% | -35.02% |
-| befe0fc5ef | 38.07% | -15.04% | -38.07% |
+`CORRECT_63.txt`, launched 12:02. A bracket either side of every instrument
+owning an out-of-target moment. The staging discipline holds:
+`utility_cost_of_treatment`, `multiple_of_probabilities_of_employment_if_addicted`,
+`kappa_uem` and `mu_homeless` are still HELD because their stage is not open.
 
-## What the round has established about the b surface
+Worst moments going in: `emp_homeless` +92.8, `pi_eu` +54.5, `h_share1` +48.4,
+`pi_V` +44.8, `aleph` +42.9, `omega_l` -35.3, `w_bot` +29.2, `theta` +21.4,
+`h_1` +20.0, `beta` -19.1, `tau_l` +12.6, `h_2` -12.3, `cbar` +10.7,
+`gamma` -10.4. Inside ten: `b`, `lambda_d`, `sigma_y`, `h_3`, `p_m`, `y_u`.
 
-**Stepping does not work here.** Six Jacobian-fitted steps were solved and all
-six landed further from target than the base they were stepped from. Two
-interpolations of measured brackets both improved on theirs.
+**Line 1 is the one to watch.** It carries `bottom_productivity_level = 0.004`,
+the mean-preserving bottom-node override, which owns `emp_homeless` — the worst
+moment in the model — and has never been measured away from zero.
 
-**Most instruments are cliffs or flat:**
+## SIX HOURS WERE LOST, 05:55 to 11:50
 
-- `value_of_life` 42 -> 65.1 takes b to 0.00032, a factor of 430. 42 -> 27.3
-  takes it to +360 per cent. A cliff on both sides.
-- `relative_share_of_addiction_1` 0.463 -> 0.30095 gives b and lambda_d EXACTLY
-  zero; 0.463 -> 0.6 gives +402 and +602 per cent. A cliff on both sides.
-- `mu_homeless` moves b by one per cent across its whole range. Flat.
-- `utility_cost_of_treatment` moves lambda_d by +5.4 per cent off one base and
-  is NON-MONOTONE and flat off another. Its slope does not transfer.
+`CORRECT_63.txt` was emitted when the gate opened and not launched: the
+coordinator's push was rejected on a concurrent update and the turn ended on the
+rebase. Thirty-six trigger firings queued unserviced. The batch was correct all
+along — the gate re-ran at 12:01 and returned "identical to CORRECT_63.txt".
 
-**The one that does transfer:** `probability_becoming_unemployed`. Lowering it
-raises both drug moments, with the same sign on two different slices. On
-`886190f18b` a single-parameter move put b at +3.4 per cent and h_1 at -2.8,
-both inside five, and halved lambda_d's gap.
+**The lesson, and it is general:** a firing that emits a batch is not finished
+until the batch is LAUNCHED. Committing it is not launching it. Check the worker
+count against the batch's line count before the turn ends.
 
-## In flight
+## Two defects in the emitted batch
 
-- `batch_cross2.txt` — minimax on the measured straddle b6eef0e3ae ->
-  8febe659f1. Predicted worst gap 6.33 per cent.
-- `batch_2d.txt` — two moments solved with two measured directions, the straddle
-  and pi_eu. Predicted to put both exactly on target. Extrapolates pi_eu to
-  0.0203 from a bracket measured over 0.00793 to 0.0122.
-- `batch_ucost.txt` — two points on utility_cost_of_treatment. Its prediction is
-  no longer believed, since the slope it rests on was shown not to transfer, but
-  the points test that directly.
-
-## The open question the gate cannot settle
-
-`pi_eu` owns the unemployment rate. The two-direction solve raises it two thirds
-above base to close the drug block, which will move the moment it is the
-instrument for. If it does, the drug block and unemployment cannot both be hit
-with the instruments in the model, and that is the author's call.
+Lines 1 and 2 of `CORRECT_63.txt` are byte-identical, and 19/20 may be. The
+duplicate was skipped rather than solved twice; one worker was told to `diff`
+its pair before spending on it.
 
 ## Not in the calibration, and waiting
 
