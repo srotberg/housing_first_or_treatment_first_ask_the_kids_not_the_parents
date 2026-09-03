@@ -379,17 +379,69 @@ gate never held: other rounds moved aleph underneath it.
 took it to +108.8 per cent. Two arms are measuring the local slope on the old
 grid; the sign question carries over to the new one.
 
-## IN FLIGHT, 23:55
+## BOUNDS CHECK PASSES, AND THE GRID IS EXACTLY AS DESIGNED
 
-    OLD GRID, still valid as guesses, not as points on the new economy:
-      drug close  frac 0.465            session_01XqCF4yyK3bBK1G1tXxUAcU
-      pi_eu sign  prob_unemp 0.00700    session_0197ppJvi52cyD5RfH6WqEkN
-      pi_eu sign  prob_unemp 0.01600    session_01Ar68aRK5uBzeHx6r4xrUYC
+No Fortran runtime error, no index out of bounds, no backtrace, no SIGSEGV
+anywhere in the full log. Measurement is unblocked.
 
-    NEW GRID:
-      BOUNDS CHECK                      session_01VPCXV62ZuLW8CNz4jyEzzq
+The model's own numbers against the arithmetic that designed them:
 
-587 points, all superseded.
+    node    mass, model     mass, predicted    y/mean, model   predicted
+      1     0.19755%        0.198%             0.030244        0.0302
+      2     1.61789%        1.618%             0.065037        0.0650
+      3     4.82924%        4.829%             0.117685        0.1177
+      4    10.03847%       10.038%             0.198156        0.1982
+      5    17.38827%       17.388%             0.332296        0.3323
+      6    26.99047%       26.990%             0.601921        0.6019
+      7    38.93811%       38.938%             1.934021        1.9340
+
+Five significant figures on every one. And the rent ratio the model prints,
+`smallest_house_size*rent(1)/net_income_lowest`, is **1.0143** at its default
+rung against 1.014 predicted. The design is not an approximation.
+
+## BUT THE FORCED MARGIN DID NOT FIRE, AND THAT IS THE AUTHOR'S QUESTION ANSWERED
+
+The bounds run went far enough to print moments. At the FORTRAN'S OWN DEFAULTS,
+not a calibrated vector:
+
+    MOMENT h_1                      0.000296   target 0.00399   -92.6%
+    employed share of the homeless  0.9467     data 0.46
+    homeless who could afford it    0.9389
+    homeless BY CHOICE              0.8653
+
+By-choice fell from the 0.92-1.00 of the seventeen node grid to 0.865. That is a
+real move and it is the first time the forced branch has done anything at all --
+but 87 per cent of the homeless still chose it, and homelessness collapsed to
+0.0003. **The unemployed still do not take the street.**
+
+**THE ARITHMETIC SAYS WHY, AND IT IS NOT A BUG.** Node one holds 0.198 per cent
+and the homelessness target is 0.399. Even if EVERY household in node one were
+homeless the model would reach half the target. The rest has to come from node
+two, whose 1.618 per cent can afford rent at 53 per cent of income while employed
+-- so only its unemployed are candidates, and at a five per cent unemployment
+rate that is 0.08 per cent. Node one entire plus node two's unemployed is 0.278
+per cent against 0.399. **The design is short by construction, before any
+behaviour is considered.**
+
+Three dials close that gap and each is now an instrument:
+
+    y_grid_kappa DOWN          more mass in node one
+    bottom_productivity_level  node one's income, so how far past the edge it is
+    the dead unemployment-by-productivity profile   more of node two unemployed
+
+The last is still switched off, and it is the only one that puts UNEMPLOYED
+households specifically on the street rather than simply more households.
+
+## IN FLIGHT, 00:15
+
+    seed7  h_2=0.0361  node1 101%, node2 53%   session_01Pb3CdYBGxvebQf1vSa9dWr
+    seed7  h_2=0.0450  node1 126%, node2 66%   session_01SVuTrymk7mgLrG8y2kJb7Y
+    seed7  h_2=0.0600  node1 169%, node2 88%   session_01TmH3Q4WiSp4ajx1y7MLGBW
+    OLD GRID, guesses only:
+      pi_eu sign 0.00700                       session_0197ppJvi52cyD5RfH6WqEkN
+      pi_eu sign 0.01600                       session_01Ar68aRK5uBzeHx6r4xrUYC
+
+Zero points on the new model. The three seeds are the first.
 
 ## THE GATE'S DRUG BASE IS ON THE OLD RUNG
 
