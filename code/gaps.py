@@ -60,11 +60,15 @@ OWN = [
     ('lambda_addiction', 'b'), ('addiction_scalar_1', 'lambda_d'),
     ('relative_share_of_leisure', 'omega_l'),
     ('labor_income_tax_rate', 'tau_l'),
+    # SIGMA_Y'S INSTRUMENT DEPENDS ON THE PROCESS, and exactly one is live.
+    # sd_permanent_productivity builds the quantile grid and moves nothing under
+    # fixed_productivity=0; kkk_sigma_scale scales both innovation sds of
+    # KKK_process and moves nothing under fixed_productivity=1. The inert one is
+    # dropped below rather than left mapped, because a row against an instrument
+    # that cannot move its moment reads as a stuck parameter when it is simply
+    # not this economy's parameter.
     ('sd_permanent_productivity', 'sigma_y'),
-    # ONLY LIVE UNDER fixed_productivity=1. Under the author's KKK_process the
-    # instrument for sigma_y is kkk_sigma_scale and sd_permanent_productivity
-    # moves nothing. Not switched here until the benchmark process is chosen --
-    # see the same note in next_batch.py.
+    ('kkk_sigma_scale', 'sigma_y'),
     ('smi_onset_level', 'p_m'),
     # BOTH ADDED ON THE AUTHOR'S INSTRUCTION AND BOTH MISSED HERE. next_batch
     # gained them and gaps.py did not, which is the third time these two files
@@ -73,6 +77,28 @@ OWN = [
     ('multiple_of_probabilities_of_employment_if_addicted', 'sud_homeless'),
     ('weight_on_child', 'omega_c'),
 ]
+
+# EXACTLY ONE DISPERSION INSTRUMENT IS LIVE, and which one is a property of the
+# economy rather than of this table. Read from run_one_point.sh's default,
+# because that is what every new point inherits unless a line overrides it.
+# The inert one is dropped rather than left in: a row against an instrument that
+# cannot move its moment reads as a stuck parameter when it is simply not this
+# economy's parameter, and next_batch.py makes the same swap from the same
+# source, so the two files agree by construction rather than by memory.
+def _live_productivity_process():
+    try:
+        txt = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                'run_one_point.sh'), errors='replace').read()
+    except OSError:
+        return 1
+    m = re.search(r'\[fixed_productivity\]=\s*(\d+)', txt)
+    return int(m.group(1)) if m else 1
+
+
+_DEAD_SIGMA = ('kkk_sigma_scale' if _live_productivity_process() == 1
+               else 'sd_permanent_productivity')
+OWN = [(p_, m_) for p_, m_ in OWN if p_ != _DEAD_SIGMA]
+
 
 
 def _cross_check():

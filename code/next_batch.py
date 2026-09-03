@@ -1360,7 +1360,39 @@ def elasticity(A, param, moment, near):
     return es[n // 2] if n % 2 else 0.5 * (es[n // 2 - 1] + es[n // 2])
 
 
+
+# WHICH PRODUCTIVITY PROCESS IS BEING CALIBRATED, and therefore which of the two
+# dispersion instruments is live. Read from run_one_point.sh's own default,
+# because that is what every new point inherits unless a line overrides it, so
+# it IS the economy the search is stepping around.
+#
+# Only one of them may be in OWN at a time. sd_permanent_productivity builds the
+# quantile grid and moves nothing under fixed_productivity=0; kkk_sigma_scale
+# scales both innovation sds of KKK_process and moves nothing under
+# fixed_productivity=1. Two instruments pointed at one moment is a conflict, and
+# leaving the inert one mapped is worse than a conflict: the search would step a
+# number that changes no moment and read the noise as a slope.
+def _live_productivity_process():
+    try:
+        txt = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                'run_one_point.sh'), errors='replace').read()
+    except OSError:
+        return 1
+    m = re.search(r'\[fixed_productivity\]=\s*(\d+)', txt)
+    return int(m.group(1)) if m else 1
+
+
+def _apply_process_mapping():
+    if _live_productivity_process() == 0:
+        OWN.pop('sd_permanent_productivity', None)
+        OWN['kkk_sigma_scale'] = 'sigma_y'
+    else:
+        OWN.pop('kkk_sigma_scale', None)
+        OWN.setdefault('sd_permanent_productivity', 'sigma_y')
+
+
 def main():
+    _apply_process_mapping()
     A = archive()
     if not A:
         print('no archive'); return 1
