@@ -142,6 +142,15 @@ declare -A P=(
     # penalty of a substance use disorder and the instrument for the SUD share of
     # them. Their defaults are the values they were assigned at.
     [increased_prob_if_homeless]=0.2
+    # THE BOTTOM OF THE PRODUCTIVITY GRID, two instruments for the two moments
+    # that say who the homeless are: the employed share (0.46) and their income
+    # (0.191 of average). y_grid_kappa sets the bottom node's mass, exactly
+    # (1/employment_grid_size)**y_grid_kappa, which at seven nodes and 3.2 is
+    # 0.198 per cent. bottom_productivity_level overrides its level as a multiple
+    # of mean productivity; 0 leaves the quantile construction alone and is the
+    # default. See the block beside employment_grid_size in the Fortran.
+    [y_grid_kappa]=3.2
+    [bottom_productivity_level]=0.0
     # HELD AT ONE, ON THE AUTHOR'S INSTRUCTION. rho_d enters as
     # rho_d**(sud*include_rho_d), so one is exactly no penalty. The switch stays
     # on so the parameter is live and honest rather than a silent no-op, and the

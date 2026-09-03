@@ -2876,6 +2876,39 @@
         ! That is what makes seven nodes safe here where it was not before, and it
         ! is the reason kappa is not left at 2.8.
         integer, parameter :: employment_grid_size=7
+
+        ! THE BOTTOM OF THE GRID IS NOW TWO CALIBRATED INSTRUMENTS, on the
+        ! author's instruction of 3 September: *"you'd have to tinker with the
+        ! lowest productivity (and its mass) such that you match the share of
+        ! the homeless who are employed....it should almost be a target for the
+        ! calibration"*.
+        !
+        !   y_grid_kappa             sets the bottom node's MASS, exactly
+        !                            (1/employment_grid_size)**y_grid_kappa
+        !   bottom_productivity_level sets the bottom node's LEVEL, as a
+        !                            multiple of mean productivity
+        !
+        ! They are the instruments for the two moments that say WHO the homeless
+        ! are, both from Meyer, Wyse, Meyer, Grunwaldt and Wu (2024), NBER 32323,
+        ! and both untargeted until now: the employed share of the homeless at
+        ! 0.46, and the income of the homeless at 0.191 of average. Two moments,
+        ! two instruments. On the seventeen node grid the model had them at 0.91
+        ! and 1.015 -- its homeless were comfortable and nearly all worked.
+        !
+        ! bottom_productivity_level=0 LEAVES THE GRID ALONE, which is the default
+        ! and reproduces the quantile construction exactly.
+        !
+        ! MEAN PRODUCTIVITY IS NO LONGER ONE when the level is overridden, and
+        ! that is deliberate. The grid was built so the interval means weighted
+        ! by interval masses sum to the whole mean; moving one node breaks it.
+        ! The author, 3 September: *"It's ok to override the exact average... It
+        ! doesn't have to be exactly 1"*. Nothing rescales to compensate, so a
+        ! nonzero value here shifts the scale of the whole economy slightly and
+        ! every aggregate moves with it. The shift is bounded by the node's mass,
+        ! which is a fifth of one per cent, so it is small -- but it is real and
+        ! it is not a bug.
+        real(8) :: y_grid_kappa=3.2d0
+        real(8) :: bottom_productivity_level=0.d0
         integer, parameter :: productivity_below_which_to_reduce_ss=employment_grid_size
         real(8) :: scaling_of_ss=(1-reduce_ss_by_half)*1+reduce_ss_by_half*0.5
         real(8) :: scaling_of_ss_adjuster=0
@@ -27662,7 +27695,6 @@
         ! 0.399 per cent homelessness target and into the step function that
         ! broke the bracket before. 3.2 puts it at 0.198 per cent. See the block
         ! beside employment_grid_size for the whole design.
-        real(8), parameter :: y_grid_kappa=3.2d0
         real(8), dimension(employment_grid_size+1) :: p_edge_1,tail_mean_1
         real(8) :: sum_of_dist,sum_of_unconditional_unemployment
         integer, intent(in) :: time_period
@@ -27674,6 +27706,14 @@
                 unconditional_employment_probability,employment_process)
                 
 !            employment_grid(:,1)=log(0.035)*(employment_grid(:,1)/employment_grid(1,1))  !employment_grid(:,1) ! 1.12
+            ! THE BOTTOM NODE'S LEVEL, live when bottom_productivity_level>0.
+            ! The dead line above is what this replaces: it did the same thing
+            ! with 0.035 hard coded. employment_grid is still in LOGS here --
+            ! exp() is applied a few lines below -- so the override is a log.
+            if (bottom_productivity_level>0.d0) then
+                employment_grid(:,1)=log(bottom_productivity_level)
+                write(*,*) "bottom_productivity_level=", bottom_productivity_level
+            end if
 !            employment_grid(:,2)=log(0.02) ! employment_grid(:,2) ! 1.48
 !            employment_grid(:,3)=log(0.03) ! employment_grid(:,3) ! 1.68
 !            employment_grid(:,4)=employment_grid(:,4)
@@ -35296,6 +35336,12 @@
                     end if
                     addiction_scalar_1=max(min(handover_value,b_hi),b_lo)
 
+                case ("y_grid_kappa")
+                    write(*,*) "HANDOVER y_grid_kappa:", y_grid_kappa, "->", handover_value
+                    y_grid_kappa=max(min(handover_value,8.d0),1.d0)
+                case ("bottom_productivity_level")
+                    write(*,*) "HANDOVER bottom_productivity_level:", bottom_productivity_level, "->", handover_value
+                    bottom_productivity_level=max(min(handover_value,1.d0),0.d0)
                 case ("size_homelessness")
                     write(*,*) "HANDOVER size_homelessness:", size_homelessness, "->", handover_value
                     size_homelessness=max(min(handover_value,0.9d0),size_homelessness_floor)
