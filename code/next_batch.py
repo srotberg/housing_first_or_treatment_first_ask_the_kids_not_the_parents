@@ -997,6 +997,27 @@ SKIP = {'h_3',
 # h_share1 LEFT THIS SET on 3 September; see the note beside
 # newborn_endowment_scale above.
 UNSCORED = {'rent50',
+            # h_share1 IS PARKED TOO, on the author's instruction of 3 September:
+            # *"Before you do anything for newborns, I suggest to leave it out for
+            # now from the calibration measure. At the end we can decide what to
+            # do."*
+            #
+            # Its only instrument, newborn_endowment_scale, is at its floor and
+            # one-sided, and the two things that would free it are both open
+            # questions the author has not ruled on: the endowment is delivered
+            # TWICE at age 1, and the 2022 SCF puts every productivity node's mean
+            # non-housing net worth POSITIVE, so a negative value is a calibration
+            # choice the data do not support as a level.
+            #
+            # While it was scored it BOUND the minimax at 56.4 per cent and nothing
+            # else could move the loss: every other gap sat below it, so the
+            # measured gains waiting to be recombined -- tau_l to -4.2 at
+            # labor_income_tax_rate 0.835, pi_eu to -2.3 at
+            # probability_becoming_unemployed 0.055 -- could not register at all.
+            #
+            # NOT CONCEDED, PARKED, exactly as h_share5 is. Restoring it is
+            # deleting this one line.
+            'h_share1',
             # h_share5 IS PARKED, on the author's instruction of 3 September:
             # *"Ignore the old homelessness for now. Just calibrate the rest of
             # the block first."*
