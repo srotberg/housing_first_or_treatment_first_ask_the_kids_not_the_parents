@@ -965,6 +965,25 @@ call region. Reserve "read ENGINE.md" for a worker doing something structural.
 worker carrying three lines that batches its pushes loses all three to a 529 on
 the last one.
 
+**BUT A PUSH IS ITSELF A TURN, AND THAT CUTS AGAINST CONSOLIDATION.** Measured
+at 14:16: the minimal-brief worker got much further than any of the others --
+it created its branch, spent 62k tokens and ran for twelve minutes, so it
+almost certainly completed one or two solves -- and then died with NOTHING on
+origin. Twelve minutes bought zero points. Its two siblings died at the usual
+3.5 minutes with zero tokens, before starting.
+
+The lesson is that turn COUNT is the exposure, not elapsed time, and a
+consolidated worker needs a turn between every solve and every push. So at a
+high 529 rate the right shape is the opposite of consolidation:
+
+**ONE LINE PER WORKER, THREE TOOL CALLS TOTAL.** Checkout-and-`cat -n` in one
+call, the solve in the second, `add && commit && push` chained in the third.
+That is the minimum number of model turns in which a measurement can be taken
+and landed. Consolidation is for when the fleet is healthy; when it is not, run
+one line per container and accept the extra containers.
+
+Running total for 3 September: **twelve of fifteen workers lost.**
+
 **AND CHECK THE SESSION RECORD, NOT ONLY THE BRANCH LIST.** `git ls-remote`
 cannot distinguish "still solving" from "died eight minutes ago", and at this
 cadence that is the difference between waiting and losing a firing. `mine: true`
