@@ -44,7 +44,15 @@ BAND = {'beta': (3.0, 4.5)}   # lower edge follows wealth_to_output_data, back t
 OWN = [
     ('discount_factor', 'beta'),
     ('discount_factor_impatient', 'w_bot'), ('probability_becoming_unemployed', 'pi_eu'),
-    ('size_homelessness', 'h_1'), ('newborn_endowment_scale', 'h_share1'),
+    ('size_homelessness', 'h_1'),
+    # THE ENDOWMENT NO LONGER OWNS h_share1 and h_share1 keeps its row as
+    # "(no instrument)". The author, 3 September: *"If you don't need an
+    # endowment for the youngest to get the right share of homeless young,
+    # that's ok too!"* -- and it is not needed: h_share1 is minus 7.3 per cent
+    # at point_c048025c98 with the endowment at 0.0. The reasoning, including
+    # why the endowment could only push the share the wrong way from here, is
+    # beside the removed OWN entry in next_batch.py.
+
     ('relative_share_of_housing', 'gamma'), ('max_food_cost', 'cbar'),
     ('relative_share_of_addiction_1', 'theta'),     ('value_of_life', 'aleph'), ('mu_homeless', 'mu_H'),
     ('utility_cost_of_treatment', 'tau_u'), ('kappa_uem', 'lambda_m'),
@@ -128,8 +136,38 @@ def _cross_check():
     # the author put omega_c in round 5 and the flag became settable, so the
     # exclusion was itself masking a divergence -- the check reported one and hid
     # the other. Both sides now compare the full set.
-    mine = {m for _, m in OWN} - SKIP - UNSCORED
-    theirs = (set(_nb.OWN.values()) | set(_nb.GATE)) - _nb.SKIP - _nb.UNSCORED
+    # THE CHECK WAS COMPARING AGAINST THE WRONG SET, and it cried wolf for it.
+    #
+    # It reconstructed next_batch's scored set as OWN.values() | GATE. That is
+    # not how next_batch scores. Its loss is
+    #
+    #     {k: gap(k, p) for k, p in m.items() if k not in SKIP and k not in UNSCORED}
+    #
+    # -- every moment the point PARSES, minus the two exclusion sets. OWN says
+    # which parameter gets an ARM aimed at a moment, which is a different
+    # question: a moment can be scored with nothing bracketing on it, and this
+    # file's own note on the cost burden headcount says so in as many words.
+    #
+    # So the reconstruction understated next_batch's set by exactly the
+    # scored-but-unowned moments, and the warning fired on a legitimate state.
+    # It said "gaps.py scores h_share1 and next_batch.py does not" all
+    # afternoon on 3 September; h_share1 was in next_batch's loss the whole
+    # time. Acting on that warning cost a wrong mapping and a wrong statement
+    # to the author.
+    #
+    # The honest comparison is the two exclusion sets themselves, plus this
+    # file's OWN-derived set against what next_batch would score on the same
+    # point. Only the first is available without a point in hand, and it is the
+    # part that actually diverges when the files drift.
+    # AND THE COMPARISON IS RESTRICTED TO THE MOMENTS THIS FILE KNOWS ABOUT.
+    # next_batch parses the four other age shares and all five band rates and
+    # excludes them in UNSCORED; this file never parses them, so it has nothing
+    # to exclude. Comparing the exclusion sets raw made that benign difference
+    # look like nine divergences. The question worth asking is narrower: for a
+    # moment BOTH files handle, do they agree on whether it is in the loss?
+    known = {m for _, m in OWN} | SKIP | UNSCORED | set(NOTE)
+    mine = known - SKIP - UNSCORED
+    theirs = known - _nb.SKIP - _nb.UNSCORED
     if mine != theirs:
         for m in sorted(theirs - mine):
             print(f'WARNING: next_batch.py scores {m} and gaps.py does not.')
