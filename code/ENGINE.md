@@ -54,6 +54,27 @@ On 1 September a statement about the parameter h_2 was applied to the moment, an
 a moment sitting at −18 per cent was conceded until the author caught it. When
 they say "h_2", work out which one they mean before acting.
 
+## THE PARALLEL ROUND IS SUSPENDED WHILE THE SERIAL SEARCH IS ALIVE
+
+On 4 September the author replaced the batch-and-fleet search with sequential
+Nelder-Mead: *"we are better off trying nelder mead sequentially"*, *"since each
+iteration is just 2.5 minutes, we are better off doing that"*, *"you can do all
+the stages combined"*.
+
+**If `nm_loop.sh` is running, do steps 0, 1 and 2 below and then STOP.** Do not
+run `next_batch.py` and do not launch workers. The serial loop owns
+`code/points/`: it asks for one trial, solves it, and reads the answer back out of
+the archive, so a worker round landing twenty points from a different search
+mid-reflection would be read as though the simplex had produced them. Report the
+loop's line -- best vertex, worst vertex, evaluations -- and that is the firing.
+
+    ps -eo args= | awk '{ n=split($2,q,"/");
+        if (q[n]=="nm_loop.sh") found=1 } END { exit found ? 0 : 1 }'
+
+`code/CALIBRATION_STATE.md` says which search is live and why. When the serial
+loop is stopped for good, delete this section rather than leaving it to be read
+as still in force.
+
 ## Each firing, in order
 
 **0. Verify the checkout.**
