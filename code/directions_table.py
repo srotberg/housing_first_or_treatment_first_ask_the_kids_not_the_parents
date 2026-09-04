@@ -1,0 +1,30 @@
+"""THE AUTHOR'S RULING ON EVERY MOMENT'S DIRECTION.
+
+Built one moment at a time on 4 September, the author ruling on each. This is the
+authority the fixed-point solver uses; the measured rays in the archive are kept
+as a CHECK on it, not as its source.
+
+The author, 4 September: *"you dont need the slope to determine the adjuster....
+you can reason it out"*. Requiring a measured ray had frozen nine of twenty-one
+instruments -- including discount_factor, max_food_cost and addiction_scalar_1,
+all of them stage 1 -- for no better reason than that the scan had not reached
+them yet.
+
+RULE reads: what to do to the PARAMETER when the MODEL MOMENT IS ABOVE TARGET.
+'raise' means the parameter and the moment move in OPPOSITE directions;
+'lower' means they move together.
+
+`check` is the sign of the measured least-squares slope over the archive's ray,
+where one exists. Agreement is recorded; a DISAGREEMENT is a finding -- either the
+ray is contaminated or the economics is not what it seems -- and is never quietly
+resolved in favour of either side.
+"""
+
+RULES = {
+    # sigma_y, bottom half's share of labour income, target 0.172.
+    # The author: *"if model has too much income at the bottom 50%, then raise
+    # sigma_y"*. kkk_sigma_scale is the common scale on both innovation standard
+    # deviations, so raising it widens the productivity distribution and shrinks
+    # the bottom half's share. Measured ray agrees: slope -0.0975 over 13 points.
+    'sigma_y': ('kkk_sigma_scale', 'raise', 'agrees'),
+}
