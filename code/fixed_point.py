@@ -72,6 +72,16 @@ FREEZE_BAND = float(os.environ.get('FP_FREEZE_BAND', '0.10'))
 # inside FREEZE_BAND; a held parameter only starts moving again once its gap
 # exceeds RELEASE_BAND. Nothing can change state twice inside that interval.
 RELEASE_BAND = float(os.environ.get('FP_RELEASE_BAND', '0.15'))
+
+
+def hold(rel, was_held):
+    """Is this parameter held this iteration, given its gap and its last state?
+
+    A moving parameter is held once |rel| is inside FREEZE_BAND. A held parameter
+    stays held until |rel| exceeds RELEASE_BAND. Pulled out of the loop so that
+    hold_test.py can drive it directly; the loop calls nothing else.
+    """
+    return abs(rel) <= (RELEASE_BAND if was_held else FREEZE_BAND)
 STATE = os.path.join(HERE, 'fixed_point_state.json')
 LOG = os.path.join(HERE, 'fixed_point.log')
 TRACE = os.path.join(HERE, 'fixed_point_trace.txt')
@@ -368,7 +378,7 @@ def main():
             model, target = mom[m]
             rel = (model - target) / target
             # STICKY: it takes FREEZE_BAND to get in and RELEASE_BAND to get out.
-            if abs(rel) <= (RELEASE_BAND if p in was_held else FREEZE_BAND):
+            if hold(rel, p in was_held):
                 held.append(m)
                 now_held.add(p)
                 continue
