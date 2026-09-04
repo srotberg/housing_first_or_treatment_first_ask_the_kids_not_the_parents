@@ -109,34 +109,25 @@ ADJUSTERS = {
 }
 DEFAULT_ADJ = 0.02
 
-# A HARD CAP ON THE STEP ITSELF, not just on the adjuster. The author, 4 September:
-# *"i think the parameters are moving too fast"*, and they are right -- their
-# original specification was *"the param does not move more than 1-2% between
-# iterations when it is 100% off"* and five parameters were at fifteen.
+# NO CAP ON ANY PARAMETER'S STEP. The author, 4 September: *"dont cap any of the
+# parameters....i saw that you cap some of them"*.
 #
-# Capping the STEP rather than the adjuster is better than lowering the adjusters,
-# because the adjuster still sets the pace near the target, where steps are small
-# and the cap never binds, while the cap bites only far away -- where a big step is
-# a guess off a secant nobody measured.
+# There was a hard ceiling here -- one to two per cent, then five, then ten -- and
+# it is gone. The step is the adjuster times the gap, and nothing else limits it.
+# bottom_productivity_level moves 15 per cent at its 104 per cent gap and
+# rr_homeless_old_level 7.5 per cent at its 50, which is what their adjusters were
+# sized to do.
 #
-# TEN PER CENT, the author's final figure on 4 September: *"i think you can adjust
-# up to 5% when you are 100% off"*, then *"maybe even 10%"*. Their first
-# specification was one to two per cent; this is where they settled.
+# TWO THINGS STILL BOUND A STEP, and neither is a choice I made:
 #
-# AT TEN PER CENT THE CAP IS NEARLY INERT at the current gaps. It binds only where
-# adjuster times gap exceeds 0.10, and the only parameter there is
-# bottom_productivity_level, whose 104 per cent gap and 0.15 adjuster would step 15
-# per cent. Everything else already steps below ten. So this setting is a ceiling
-# against a runaway rather than a brake on the current run.
-#
-# A CAP ONLY EVER REDUCES A STEP. It was claimed here that capping rescued
-# kappa_uem from 73 iterations to 30; that was wrong. kappa_uem's step is 0.83 per
-# cent, below any of these caps, so the cap does nothing for it and it still needs
-# 73 iterations to travel the 60 per cent its ray asks for. Making a parameter
-# faster takes a bigger ADJUSTER, which is a different change.
-#
-# Where it binds now: bottom_productivity_level only, 15.0 -> 10.0.
-MAX_STEP = float(os.environ.get('FP_MAX_STEP', '0.10'))
+#   the bounds     a parameter outside NB.BOUNDS is rejected by run_one_point, so
+#                  the step is clipped to the box. Only discount_factor is tight
+#                  enough for this to bite on one step, at gaps above about 66 per
+#                  cent.
+#   the gap        clamp(relgap, -1, 1) means a moment 200 per cent off steps as
+#                  though it were 100 per cent off. That is the author's own
+#                  framing -- "does not move more than X when it is 100 per cent
+#                  off" -- and it only touches emp_homeless, at 104 per cent.
 
 # NO RULE CAN BE ACTED ON. multiple_of_probabilities_of_employment_if_addicted
 # spans its whole bound range, 1 to 32, at slope -1.2e-07 while sud_homeless sits
@@ -252,7 +243,6 @@ def main():
             # THE AUTHOR'S BAND: at most ADJ of the parameter's own value when the
             # moment is 100 per cent off, proportionally less as the gap closes.
             frac = ADJUSTERS.get(p, DEFAULT_ADJ) * max(-1.0, min(1.0, rel))
-            frac = max(-MAX_STEP, min(MAX_STEP, frac))
             step = sgn * frac * max(abs(x), 1e-12)
             xn = min(max(x + step, lo), hi)
             if abs(xn - x) > 1e-12:
