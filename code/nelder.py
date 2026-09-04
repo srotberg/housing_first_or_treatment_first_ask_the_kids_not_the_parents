@@ -93,7 +93,21 @@ POOL_MULT = 2000.0
 STAGE_MOMENTS = [
     # 1: the seven already inside ten per cent -- hold them there while the
     #    simplex is small enough for the method to be reliable.
-    ['h_2', 'p_m', 'cbar', 'beta', 'gamma', 'b', 'omega_l'],
+    # sigma_y JOINS STAGE 1, on the author's instruction of 4 September: "I think
+    # you might want to add simga y to the first stage."
+    #
+    # It sets the dispersion of the income distribution everything else is built
+    # on, so calibrating it after the preference block asks stage 1 to fit beta,
+    # gamma and omega_l against a spread forty per cent too narrow, and then
+    # stage 2 to move the spread underneath them.
+    #
+    # STAGE 1 NO LONGER CONVERGES ON SIGHT, and that is the point. Its other
+    # seven moments were already inside ten per cent when the stage began, so it
+    # met its criterion on the first check twice tonight without doing any work.
+    # sigma_y reads 0.1037 against 0.1720, so the stage now has something to do.
+    # A bracket measured earlier tonight puts sigma_y on target at
+    # kkk_sigma_scale about 1.70, against 2.07 at the stage-2 best.
+    ['h_2', 'p_m', 'cbar', 'beta', 'gamma', 'b', 'omega_l', 'sigma_y'],
     # 2: plus the five the author named. aleph is the one they called very
     #    important, and it reads 54.06 against 80 -- a life worth a third less
     #    than it should be, which is why the street's mortality cost does not
@@ -104,7 +118,7 @@ STAGE_MOMENTS = [
     # statistical life and theta against the share of spending on the addictive
     # good, so leaving the drug block until stage 3 asks stage 2 to fit aleph
     # while the preference parameters it trades against are pinned.
-    ['pi_V', 'tau_l', 'aleph', 'sigma_y', 'pi_eu', 'lambda_d', 'theta'],
+    ['pi_V', 'tau_l', 'aleph', 'pi_eu', 'lambda_d', 'theta'],
     # 3: the rest, once the first two hold. h_share5 joined on 4 September when
     #    the old-age relative risk stopped being assumed and became an
     #    instrument, so the old band's share of the homeless has a target again
