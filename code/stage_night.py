@@ -87,9 +87,27 @@ def fresh():
 
 
 def scope(stage):
-    N, NB, NM = fresh()
-    inst, _ = NM.instruments_all(N, NB, stage)
-    return N, NB, NM, inst, [p for p, _ in inst], [m for _, m in inst]
+    """The instruments the search may MOVE, and the whole objective it is SCORED on.
+
+    inst/names are band-filtered -- nelder.setup() drops any instrument whose own
+    moment is already inside NM_BAND at the live best, which is the author's rule
+    of 4 September: *"every time a parameter gets into the 10%, you hold it fixed,
+    and do the projections, shrink, etc, based on the ones that are outside the
+    10%"*.
+
+    keys is NOT filtered. It is every moment of the stage, so a held parameter's
+    moment still scores: a live parameter cannot buy its own moment by pushing a
+    held one out of the band, it only makes the objective worse. That separation
+    is the whole finding of stage_test.py -- block-only scoring came in at 9.86
+    against 6.28 for the same blocks scored on the full objective.
+
+    seed() reads names from here too, so a rebuilt simplex costs one solve per
+    LIVE dimension rather than per instrument. At 4 of 12 that is five vertices
+    instead of thirteen, and it falls further as more moments arrive.
+    """
+    _, _, NM = fresh()          # pops the cached modules so a model edit is seen
+    N, NB, inst, names, keys = NM.setup()
+    return N, NB, NM, inst, names, keys
 
 
 def runner_default(name):
@@ -233,14 +251,18 @@ def state():
 NM_BAND_LABEL = '10%'
 
 
-def _live_set():
-    """The moments nelder's simplex would span right now, as a set."""
+def _live_set(stage):
+    """The moments nelder's simplex would span right now, as a set.
+
+    Returns None on any failure, and the caller treats None as "no information"
+    rather than as an empty set -- an exception here must never be read as every
+    parameter having reached the band.
+    """
     try:
-        import importlib, nelder as NM
-        importlib.reload(NM)
-        _, _, inst, _, _ = NM.setup()
+        _, _, _, inst, _, _ = scope(stage)
         return frozenset(m for _, m in inst)
-    except Exception:
+    except Exception as e:
+        say(f'  live-set read failed ({e}); leaving the simplex alone')
         return None
 
 
@@ -277,7 +299,7 @@ def main():
         say(f'=== STAGE {stage} ===')
         seed(stage)
         sh('python3 code/nelder.py --init')
-        live_set = _live_set()
+        live_set = _live_set(stage)
         best, quiet, restarts = None, 0, 0
         asks = 0
         while True:
@@ -326,7 +348,7 @@ def main():
             # Only a SHRINKING set triggers a rebuild. A moment drifting back out
             # is picked up at the next rebuild anyway, and rebuilding on every
             # wobble would spend the night re-seeding.
-            live_now = _live_set()
+            live_now = _live_set(stage)
             if live_now and live_set and live_now < live_set:
                 say(f'  {len(live_set) - len(live_now)} parameter(s) reached '
                     f'{NM_BAND_LABEL}; simplex rebuilding on {len(live_now)} '
