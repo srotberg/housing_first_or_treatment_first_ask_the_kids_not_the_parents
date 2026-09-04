@@ -206,44 +206,17 @@ DEFAULT_ADJ = 0.02
 # This only became actionable once lambda_d's sign was corrected. While b moved
 # the wrong way the pair could not have worked.
 FROZEN = {
-    # HELD AT 0.45 ON THE AUTHOR'S INSTRUCTION, 4 September 22:30: *"hold
-    # size_homelessness at 0.45 and let the rest settle"*.
+    # size_homelessness UNFROZEN 4 September 23:45 on the author's instruction:
+    # *"i suggest to allow h1 to move freely"*. It was held at 0.45 for two hours
+    # while h_1 looked near-discontinuous in it -- a factor of 28 across a seven
+    # per cent band. That reading was taken while loss_mult_homeless_1 and
+    # find_mult_homeless_1 were UNINITIALISED on the live branch, so the homeless
+    # transition probabilities were garbage in every point it was measured on and
+    # the apparent cliff cannot be trusted. It is re-measured with the search
+    # rather than assumed either way.
     #
-    # 0.45 is the value that produced the best point of the day -- it took the
-    # income of the homeless from 0.720 to 0.261 and the share who could afford
-    # rent and sleep rough anyway from 99.5 per cent to 81.
-    #
-    # WHY IT IS HELD RATHER THAN SEARCHED. h_1 is near-discontinuous in it: across
-    # a seven per cent band of this parameter the homelessness rate spans a factor
-    # of TWENTY-EIGHT and is not monotone -- 0.41930 gives 0.000407, 0.42224 gives
-    # 0.004647, 0.42726 gives 0.000430 again. Eighty-one per cent of the model's
-    # homeless can pay rent from current income, so a mass of households sits at
-    # indifference and flips together, and the housing choice being discrete makes
-    # h_1 inherit that as a cliff. Damping cannot fix a discontinuity; no step is
-    # small enough. The solver spent eleven iterations on it and its best point
-    # never improved on the seed.
-    #
-    # h_1 therefore has no live instrument while this holds.
-    'size_homelessness',
-    # FROZEN 4 September 23:05 to protect the overnight run. THIS CUTS AGAINST THE
-    # AUTHOR'S MOST RECENT WORD and is reversible by deleting this line.
-    #
-    # They said both *"the bottom y should be externally chosen and set and not
-    # moved"* and, later, *"choose the bottom income grid to match the share of
-    # employed homeless like we did before"*. This acts on the first, because the
-    # second is measurably wrecking the walk.
-    #
-    # emp_homeless does not respond to it -- its own entry in directions_table
-    # already says the ray reverses, it is near-flat, and the parameter sits ON its
-    # lower bound -- so the update pushes it every iteration and it walks away.
-    # Between the best point and the excursion at iteration 8 it MORE THAN DOUBLED,
-    # 0.004967 to 0.010646, and doubling the lowest income node collapsed h_1 by 84
-    # per cent and blew h_share5 to +427 per cent. SSR 4.03 to 20.74.
-    #
-    # It is the same failure as rr_homeless_old_level earlier tonight: an
-    # instrument that cannot reach its moment does not sit still, it runs, and it
-    # takes every other moment with it. emp_homeless has no live instrument while
-    # this holds, which is the honest position rather than a hidden one.
+    # bottom_productivity_level stays frozen: its runaway was measured BEFORE that
+    # bug existed, on clean points.
     'bottom_productivity_level',
 }
 
