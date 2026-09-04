@@ -189,15 +189,31 @@ def seed(stage, jitter=0.0):
         for pp, mm in inst:
             if mm in mom0 and mom0[mm][1]:
                 gaps[pp] = abs(mom0[mm][0] / mom0[mm][1] - 1.0)
-    for p in names:
+    # THE SIMPLEX HAS TO STRADDLE THE ANCHOR, NOT SIT ON ONE SIDE OF IT.
+    #
+    # Every displacement here was x + d. Over 1245 archived points that left
+    # kkk_sigma_scale never once measured below its anchor value of 2.20949,
+    # against a lower bound of 0.8 -- and the one clean matched pair (kkk alone,
+    # 2.20949 -> 3.09114) takes sigma_y from 0.10337 DOWN to 0.03536, while
+    # sigma_y has to rise from 0.103 to 0.172. The search had never sampled the
+    # direction the instrument needs to go.
+    #
+    # Nelder-Mead does reach both sides eventually, by making the up-vertex the
+    # worst and reflecting it through the centroid, but that costs solves and it
+    # moves every coordinate at once. Alternating the sign costs nothing and
+    # makes the initial simplex unbiased, which is what a simplex is for.
+    for i, p in enumerate(names):
         lo, hi = NB.BOUNDS[p]; x = float(base[p])
         frac = min(max(gaps.get(p, 0.10), 0.10), 0.60)
         d = frac * abs(x) if abs(x) > 1e-12 else frac * max(abs(hi), 1e-6)
+        if i % 2:
+            d = -d
         xn = min(max(x + d, lo), hi)
         if abs(xn - x) < 1e-12:
             xn = min(max(x - d, lo), hi)
         v = dict(base); v[p] = f'{xn:.8g}'
-        say(f'    {p} {x:.6g} -> {xn:.6g}  ({frac:.0%} of value)')
+        say(f'    {p} {x:.6g} -> {xn:.6g}  '
+            f'({frac:.0%} of value, {"down" if xn < x else "up"})')
         lines.append('bash code/run_one_point.sh ' +
                      ' '.join(f'{k}={v[k]}' for k in sorted(v)))
     open(os.path.join(HERE, f'batch_stage{stage}_seed.txt'), 'w').write(
