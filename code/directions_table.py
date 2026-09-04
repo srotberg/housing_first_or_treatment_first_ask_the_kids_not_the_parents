@@ -267,7 +267,23 @@ RULES = {
   # the same points, which is what makes it interpretable where the multiplier was
   # not. A homeless household with income above target is one that should be losing
   # work faster, so the moment above target calls for a RISE.
-  'y_h': ('homeless_job_penalty_pp', 'raise', 'the author ruling, percentage-point form'),
+  # y_h HAS NO INSTRUMENT. homeless_job_penalty_pp was ruled onto it and then
+  # MEASURED not to move it: delta 0.05 -> 0.30, which is job loss +25 percentage
+  # points and job finding -25 points, changes every moment by under 0.006 per
+  # cent. Both points applied 67 of 67 handover parameters, so the parameter
+  # reaches the model and the model does not care.
+  #
+  # That is the FOURTH labour-market bracket with the same answer tonight, and the
+  # reason looks structural rather than about magnitudes: the penalty acts on
+  # transitions OUT of the homeless state. A household enters homelessness
+  # employed, and the raised separation rate reaches it in the FOLLOWING period, by
+  # which time it has re-chosen housing. No labour-market parameter can change the
+  # composition of the current homeless STOCK, however large it is made -- which is
+  # also why emp_homeless sits at 0.99 in every configuration tried today.
+  #
+  # What does move y_h is size_homelessness, measured: 0.343 -> 0.45 takes it from
+  # 0.720 to 0.261. But that parameter already owns h_1, and one parameter cannot
+  # bracket two moments. Which of them it should own is the author's call.
     # pi_V, the share of eligible households receiving a housing voucher in the
     # benchmark, target 0.266. The author: *"lower if higher than data"*. Direct:
     # more voucher probability, more take-up. Measured 7-point ray agrees at slope

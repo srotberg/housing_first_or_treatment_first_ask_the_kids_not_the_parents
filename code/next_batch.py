@@ -598,7 +598,6 @@ OWN = {
     # weak and coupled instrument -- but it is the only one, and h_1 now has
     # both size_homelessness and the food stamp floor holding it.
     'relative_share_of_housing':                           'gamma',
-    'homeless_job_penalty_pp':                             'y_h',
     # OPENED ON THE AUTHOR'S INSTRUCTION, both previously compile-time constants.
     #
     # increased_prob_if_homeless IS EXOGENOUS AGAIN, at 0.2 -- twenty per cent
