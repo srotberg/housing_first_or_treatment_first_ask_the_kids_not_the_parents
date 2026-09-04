@@ -204,6 +204,51 @@ def stage_now():
         return None
 
 
+# THE SIMPLEX ONLY SPANS THE MOMENTS THAT ARE STILL OUTSIDE THE BAND.
+#
+# The author, 4 September, after the same rule was put into the fixed point: *"can
+# you do the same with the NM algorithm? when you open more stages, you keep
+# updating only the ones that are outside the 10% in the best point?"*
+#
+# THE OBJECTIVE IS UNCHANGED -- every scored moment still counts, so a held
+# parameter's moment cannot be wrecked for free. Only the DIMENSIONS of the
+# simplex shrink. That distinction is not cosmetic: stage_test.py measured the two
+# forms against each other and the block-only objective was FROZEN, identical to
+# six figures between 900 and 3000 evaluations, while the full-objective form
+# progressed 9.41 -> 6.28.
+#
+# WHY IT SHOULD HELP MORE HERE THAN ANYWHERE ELSE. nelder_test.py measures this
+# machine solving a 12-dimensional Rosenbrock to 5.22e-13 and failing a
+# 21-dimensional one at 4.42. Dimension is the binding constraint, and this makes
+# it ADAPTIVE: eleven of twenty-one moments are inside ten per cent right now, so
+# the simplex would span ten rather than twenty-one, and it shrinks further as
+# more arrive.
+#
+# The band is re-read at every --init, so a moment that drifts back out brings its
+# parameter back into the search on the next rebuild.
+NM_BAND = float(os.environ.get('NM_BAND', '0.10'))
+
+
+def outside_band(N, NB, inst, keys):
+    """The instruments whose own moment is outside NM_BAND at the live best."""
+    A = N.archive()
+    if not A:
+        return inst
+    try:
+        _, _, _, mom = N.best(A, keys)
+    except Exception:
+        return inst
+    if not mom:
+        return inst
+    out = [(p, m) for p, m in inst
+           if m not in mom or not mom[m][1]
+           or abs(mom[m][0] / mom[m][1] - 1.0) > NM_BAND]
+    # NEVER RETURN AN EMPTY SIMPLEX. If everything is inside the band the stage is
+    # converged and the caller decides that; handing back nothing would build a
+    # one-vertex simplex, which is the fault nelder_test.py caught on 4 September.
+    return out or inst
+
+
 def setup():
     import newton as N, next_batch as NB
     NB._apply_process_mapping()
@@ -211,7 +256,13 @@ def setup():
     if dead:
         print('  dropped, never measured on this economy: '
               + ', '.join(m for _, m in dead))
-    return N, NB, inst, [p for p, _ in inst], [m for _, m in inst]
+    keys = [m for _, m in inst]            # THE WHOLE OBJECTIVE, always
+    live = outside_band(N, NB, inst, keys)
+    if len(live) < len(inst):
+        held = sorted(m for _, m in inst if (_, m) not in live)
+        print(f'  simplex spans {len(live)} of {len(inst)} instruments; '
+              f'{len(inst) - len(live)} held inside {NM_BAND:.0%}')
+    return N, NB, live, [p for p, _ in live], keys
 
 
 def ssr(N, mom, keys):
