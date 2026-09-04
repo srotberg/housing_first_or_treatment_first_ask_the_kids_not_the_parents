@@ -43,6 +43,19 @@ ITERS = int(os.environ.get('FP_ITERS', '100000'))   # continuously, per the auth
 # bored". The author, 4 September: *"it should just have a loop that keeps going
 # until convergence"*.
 TOL = float(os.environ.get('FP_TOL', '0.05'))
+# A PARAMETER WHOSE MOMENT IS ALREADY INSIDE THIS BAND DOES NOT MOVE.
+#
+# The author, 4 September: *"if can stop updating parameters that are in the 10%
+# band"*, after seeing that ten of twenty-one moments were DIVERGING and that the
+# divergence was not their own instruments failing -- pi_eu's parameter moved one
+# part in ten thousand while its moment moved 9.2 points, so 1518 times the change
+# came from the other twenty parameters.
+#
+# Every iteration moves all twenty-one at once, so each moment is shoved by twenty
+# steps that are not its own. Holding the ones already home removes them from the
+# shoving without costing anything, because they have nothing left to do. It is
+# re-checked every iteration, so a moment that drifts back out resumes moving.
+FREEZE_BAND = float(os.environ.get('FP_FREEZE_BAND', '0.10'))
 STATE = os.path.join(HERE, 'fixed_point_state.json')
 LOG = os.path.join(HERE, 'fixed_point.log')
 TRACE = os.path.join(HERE, 'fixed_point_trace.txt')
@@ -277,12 +290,15 @@ def main():
             f'all-21 SSR {NM.ssr(N, mom, keys):.4f}')
 
     for it in range(start, start + ITERS):
-        moved = []
+        moved, held = [], []
         for p, (m, sgn) in R.items():
             if m not in mom or not mom[m][1] or p not in v:
                 continue
             model, target = mom[m]
             rel = (model - target) / target
+            if abs(rel) <= FREEZE_BAND:
+                held.append(m)
+                continue
             lo, hi = NB.BOUNDS[p]
             x = float(v[p])
             # THE AUTHOR'S BAND: ADJ of the parameter's own value when the moment
@@ -343,8 +359,10 @@ def main():
                 say(f'picked up a better point from the archive: {b[1]}')
             continue
         worst = max(moved, key=lambda z: abs(z[3]))
-        say(f'iteration {it}: {len(moved)} moved, worst gap '
-            f'{worst[3]:+.1f}% on {worst[0]}')
+        say(f'iteration {it}: {len(moved)} moved, {len(held)} held inside '
+            f'{FREEZE_BAND:.0%}, worst gap {worst[3]:+.1f}% on {worst[0]}')
+        if held:
+            say('   held: ' + ', '.join(sorted(held)))
         with open(TRACE, 'a') as f:
             f.write(json.dumps({'it': it, 'moved': moved}) + '\n')
         t = solve(v)
