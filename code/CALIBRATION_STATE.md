@@ -1,36 +1,45 @@
-# Calibration state — 4 September, 01:30
+# Calibration state — 4 September, 03:25
 
-## THE METHOD CHANGED AT 01:27: sequential Nelder-Mead, all stages at once
+## THE MORTALITY HOLD IS LIVE AND THE AGE PROFILE HAS FLIPPED
 
-The author, this morning: *"you claimed this method was better than nelder mead,
-and faster....but we have been stuck on it for like 12 hr"*, then *"we are better
-off trying nelder mead sequentially"*, *"since each iteration is just 2.5 minutes,
-we are better off doing that"*, and *"you can do all the stages combined"*.
+`rr_homeless_hold_age = 65`, on the author's instruction: *"i think we can just
+hold it at the 65 number.... and say that.... that would fix it"*.
 
-**The parallel firing sequence in ENGINE.md is SUSPENDED while `nm_loop.sh` is
-alive.** Do not run `next_batch.py` and do not launch a worker round: the serial
-loop owns `code/points/` for the duration, and a parallel round would fill the
-archive with points from a different search while the simplex is mid-reflection.
-Steps 0, 1 and 2 of the firing sequence (checkout, no supervisor, archive has
-points on the live model) still apply at every firing and are still worth doing.
+**The sentence for the paper.** The model holds the relative risk of death from
+sleeping rough at its age-65 value for all older ages, because beyond 65 the
+observed ratio is dominated by survivor selection and does not identify the
+causal effect the model needs. The homeless who reach 65 are unusually robust
+and the comparison group includes the frail and institutionalised, so the
+observed ratio is biased toward one; read literally Baggett's 1.1 at 65-84 says
+the street PROTECTS the old, which is why the code floors it at one.
 
-### Why Newton was abandoned
+Sixty-five is where the ratio stops being USABLE, not where it stops being
+measured. The 1.100 above 75 is Baggett's own 65-84 figure extended past its
+band midpoint at 74.5 — an earlier note here calling it padding was wrong.
 
-Three Jacobians, fifteen model solves each. **Every step landed above its own
-base**: base SSR 0.9603, full step 2.2025, quarter step 1.7283. The cause is the
-drug block — a finite-difference nudge of 0.35 per cent in `addiction_scalar_1`
-moves `lambda_d` from −4.5 per cent to −96.5 per cent, so that column is a secant
-across a cliff rather than a derivative, and being much the largest column it
-dominates the normal equations and drags every other instrument with it. A
-truncated SVD does not help, because the direction is strongly identified; it is
-simply not linear. Nelder-Mead forms no derivative at all, so the cliff costs it
-one reflection instead of a whole step.
+| | before (hold 70) | now (hold 65) | data |
+|---|---|---|---|
+| young band, share of the homeless | 0.1117 | 0.8589 | 0.2600 |
+| old band, share of the homeless | 0.8821 | 0.0001 | 0.0750 |
+| retired 66+ share | 88.2% | 0.0% | — |
+| spike | age 80, 71.9% | age 33, 47.7% | — |
 
-### The objective moved from minimax to the sum of squared residuals
+The age-80 spike is gone. It now overshoots the other way, and both errors are
+large, but homelessness is at working ages where the employment deterrent
+actually operates.
 
-On the author's instruction of 4 September. `gaps.py`, `newton.best()` and
-`nelder.py` all rank on it, so the report cannot print a gap table for one
-equilibrium and an age profile for another.
+**THE RESPONSE SATURATES ABOVE A MULTIPLIER OF ABOUT 2.7.** Measured at one
+vector: hold 70 gives an old share of 0.882, hold 65 gives 0.0003, hold 45 gives
+0.00024 and hold 26 gives 0.00021. Nothing is bought by going below 65, so 65 is
+the cheapest point on the plateau — the best place to sit for a number that has
+to be defended.
+
+**A moment the hold broke.** `sud_homeless` is now EXACTLY zero: no homeless
+household carries the disorder. The old homeless were meeting that moment — 18.9
+per cent of them had SUD — and removing them removed it. That is the worst gap in
+the table at −100 per cent and the reason SSR reads 3.16 here against 1.46 on the
+old economy. It is the objective correctly registering a moment that used to be
+met by the wrong population.
 
 ## THE CONFIGURATION, unchanged
 
