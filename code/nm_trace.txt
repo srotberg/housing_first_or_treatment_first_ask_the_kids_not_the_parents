@@ -1,0 +1,11 @@
+# Nelder-Mead, one line per model solve.  The author, 4 September:
+# "after each iteration, i want to get a reading on the new best SSR".
+#
+# Starts at the reseed to twenty instruments.  Earlier evaluations were
+# scored on a different moment set -- sud_homeless was not yet parsed --
+# so their SSRs are not comparable with these and are not carried over.
+#
+#  ev  time      what                                this SSR       best SSR  point       inside ten
+  --  --:--:--  seed, 19 vertices from the archive  this    2.1441   best    2.1441  827aa52172  inside 7/20
+   1  --:--:--  fill:smi_onset_level                this   19.0389   best    2.1441  2c4d258062  inside 3/20
+   2  --:--:--  fill:utility_cost_of_treatment      this    1.4555   best    1.4555  d74c03e55a  inside 7/20  <-- NEW BEST

@@ -245,6 +245,30 @@ def save(st):
     json.dump(st, open(STATE, 'w'), indent=1)
 
 
+TRACE = os.path.join(HERE, 'nm_trace.txt')
+
+
+def trace(st, kind, f, inside, ntot):
+    """One line per evaluation, with the BEST SSR after it.
+
+    *"and after each iteration, i want to get a reading on the new best SSR"* --
+    the author, 4 September.  The loop's own stdout carries it, but buried among
+    the solver's chatter and rewritten by every restart, so it goes to its own
+    file as well: one fixed-width line per model solve, appended, never
+    rewritten, committed with the points.  An arrow marks the evaluations that
+    actually moved the best, which is the thing being asked for -- most
+    reflections do not.
+    """
+    S = st['simplex']
+    b = S[0]['f']
+    moved = '  <-- NEW BEST' if abs(f - b) < 1e-12 else ''
+    import time
+    with open(TRACE, 'a') as fh:
+        fh.write(f'{st["evals"]:4d}  {time.strftime("%H:%M:%S")}  {kind:34s}  '
+                 f'this {f:9.4f}   best {b:9.4f}  {S[0]["tag"]}  '
+                 f'inside {inside}/{ntot}{moved}\n')
+
+
 def report(st):
     S = st['simplex']
     print(f'  simplex {len(S)} vertices   best {S[0]["f"]:.4f} ({S[0]["tag"]})   '
@@ -368,6 +392,14 @@ def main():
         second = S[-2]['f'] if len(S) > 1 else worst_f
         msg = ''
 
+        def _t():
+            # How many of the scored moments the LIVE BEST vertex has inside ten
+            # per cent, which is the author's stopping rule, alongside the SSR
+            # the search actually minimises.
+            S.sort(key=lambda d: d['f'])
+            rb = N.residual(A[S[0]['tag']][1], keys)
+            trace(st, kind, f, sum(1 for x in rb if abs(x) <= 0.10), len(rb))
+
         if kind.startswith('fill:'):
             S.append(node); msg = 'direction added'
         elif kind == 'reflect':
@@ -375,19 +407,22 @@ def main():
                 st['refl'] = node; st['phase'] = 'expand'
                 msg = 'better than the best; trying an expansion'
                 st['pending'] = None; S.sort(key=lambda d: d['f']); save(st)
-                print(f'  {kind}  SSR {f:.4f}   {msg}'); report(st); return 0
+                print(f'  {kind}  SSR {f:.4f}   {msg}')
+                _t(); report(st); return 0
             if f < second:
                 S[-1] = node; msg = 'accepted, reflection'
             elif f < worst_f:
                 st['refl'] = node; st['phase'] = 'contract_out'
                 msg = 'between the second worst and the worst; contracting outside'
                 st['pending'] = None; save(st)
-                print(f'  {kind}  SSR {f:.4f}   {msg}'); report(st); return 0
+                print(f'  {kind}  SSR {f:.4f}   {msg}')
+                _t(); report(st); return 0
             else:
                 st['refl'] = node; st['phase'] = 'contract_in'
                 msg = 'worse than the worst; contracting inside'
                 st['pending'] = None; save(st)
-                print(f'  {kind}  SSR {f:.4f}   {msg}'); report(st); return 0
+                print(f'  {kind}  SSR {f:.4f}   {msg}')
+                _t(); report(st); return 0
             st['phase'] = 'reflect'
         elif kind == 'expand':
             r = st['refl']
@@ -402,7 +437,8 @@ def main():
                 msg = 'contraction failed; shrinking'
                 st['phase'] = 'shrink'; st['shrink_i'] = 1
                 st['pending'] = None; save(st)
-                print(f'  {kind}  SSR {f:.4f}   {msg}'); report(st); return 0
+                print(f'  {kind}  SSR {f:.4f}   {msg}')
+                _t(); report(st); return 0
         elif kind.startswith('shrink:'):
             i = int(kind.split(':')[1])
             S[i] = node
@@ -411,14 +447,17 @@ def main():
             else:
                 st['phase'] = 'reflect'; msg = 'shrink complete'
                 st['pending'] = None; S.sort(key=lambda d: d['f']); save(st)
-                print(f'  {kind}  SSR {f:.4f}   {msg}'); report(st); return 0
+                print(f'  {kind}  SSR {f:.4f}   {msg}')
+                _t(); report(st); return 0
             st['pending'] = None; S.sort(key=lambda d: d['f']); save(st)
-            print(f'  {kind}  SSR {f:.4f}   {msg}'); report(st); return 0
+            print(f'  {kind}  SSR {f:.4f}   {msg}')
+            _t(); report(st); return 0
 
         st['pending'] = None
         S.sort(key=lambda d: d['f'])
         save(st)
         print(f'  {kind}  SSR {f:.4f}   {msg}')
+        _t()
         report(st)
         return 0
 

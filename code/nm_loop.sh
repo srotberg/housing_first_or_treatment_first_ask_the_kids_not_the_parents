@@ -22,7 +22,7 @@ for ((i=1; i<=N; i++)); do
     # Commit every twelfth point so a container reclaim costs at most half an
     # hour of solves.  A measurement that is not in the repo did not happen.
     if (( i % 12 == 0 )); then
-        git add -A code/points code/.nm_state.json >/dev/null 2>&1
+        git add -A code/points code/.nm_state.json code/nm_trace.txt >/dev/null 2>&1
         git commit -q -m "Nelder-Mead, through iteration $i
 
 Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
