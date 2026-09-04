@@ -69,4 +69,11 @@ RULES = {
     # disorder, so parameter and moment move together. Measured 8-point ray agrees
     # and it is the STRONGEST own-slope in the table: +5.635.
     'theta': ('relative_share_of_addiction_1', 'lower', 'agrees'),
+    # aleph, the model's implied value of a statistical life, target 80.
+    # The author: *"lower if higher than data"*. value_of_life is the flow utility
+    # of being alive traded against mortality risk, so it sets the scale the moment
+    # reads off and the two move together. Measured 7-point ray agrees: slope
+    # +2.007. Below target the street's mortality cost does not deter enough,
+    # which is why the author called this one very important.
+    'aleph': ('value_of_life', 'lower', 'agrees'),
 }
