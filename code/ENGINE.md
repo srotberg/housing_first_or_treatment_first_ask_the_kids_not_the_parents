@@ -86,6 +86,23 @@ coordinator's OWN shell and killed the tool call. Kill by checking the process
 list positionally, as the supervisor test below does, and never with a pattern
 that the running command line itself contains.
 
+**AND GET THE FIELD INDICES RIGHT, OR THE KILL SILENTLY MATCHES NOTHING.** With
+`ps -eo pid=,args=` the fields are `$1`=pid, `$2`=the command, `$3`=its first
+argument. On 4 September a kill written as `$3=="python3" && $4 ~ /stage_night/`
+matched nothing, reported nothing, and left a SECOND `stage_night.py` running for
+seventy minutes beside the intended one. Both drove nelder.py and both wrote
+`.nm_state.json` and `nm_stage.txt`, which is why the trace showed stage-1 scope
+entries timestamped after stage 2 began.
+
+`run_one_point.sh`'s flock is what stopped that being a disaster: the two took
+turns instead of racing on PARAM_HANDOVER.txt, so no point was mislabelled. Do
+not rely on it. Verify a kill worked:
+
+```
+for pid in $(ps -eo pid=,args= | awk '$2 ~ /python3/ && $3 ~ /stage_night/ {print $1}'); do kill -9 "$pid"; done
+ps -eo pid=,args= | awk '$3 ~ /stage_night/ {print "STILL UP", $1}'
+```
+
 Wait for `ps -eo args= | awk '/run_one_point/ && !/awk/'` to come back empty
 before editing anything under `code/`.
 
