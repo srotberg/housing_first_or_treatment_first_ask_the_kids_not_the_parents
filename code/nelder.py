@@ -63,7 +63,18 @@ ALPHA, GAMMA, RHO, SIGMA = 1.0, 2.0, 0.5, 0.5
 MIN_EDGE = 0.05
 
 # How much worse than the best a seed vertex may be.
-POOL_MULT = 5.0
+#
+# 5.0 WAS RIGHT FOR AN ARCHIVE-SEEDED SIMPLEX AND WRONG FOR A PURPOSE-BUILT ONE.
+# The cap exists to stop greedy Gram-Schmidt over a whole archive dragging in a
+# vertex from an abandoned corner at SSR 7202. But the rescale round builds the
+# simplex deliberately -- one instrument per vertex, ten per cent of its own
+# range -- and those displacements legitimately span SSR 1.46 to 1608 because
+# some instruments are near a corner. At 5.0 the cap admitted twelve of
+# twenty-one and left NINE DIRECTIONS UNSPANNED, which is the anisotropy problem
+# the rescale round was run to fix, returning as a filter rather than as a
+# geometry. A bad vertex costs a few contractions; a missing direction costs the
+# instrument entirely.
+POOL_MULT = 2000.0
 
 
 def instruments_all(N, NB):
