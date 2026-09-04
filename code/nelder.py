@@ -90,32 +90,44 @@ POOL_MULT = 2000.0
 #
 # It also makes seeding cheap: a stage of seven needs eight vertices, not
 # twenty-one.
-# ALL TWENTY-ONE MOMENTS IN ONE STAGE, on the author's instruction of
-# 4 September: *"i would prefer if you include all the key variables in stage 1"*.
+# TWELVE, FOUR, FIVE -- the author's shape, 4 September: *"the first stage can be
+# 12 parameters maybe... and you can do the second stage with the extra 3-4 and 3rd
+# stage with another 4-5"*, under their constraint *"you cannot hold anything in
+# stage 1 fixed on the parameters that are key"*.
 #
-# THE MEASURED RISK, stated once and then set aside because the call is the
-# author's. nelder_test.py runs this exact ask/tell machine against analytic
-# objectives: a 20-dim quadratic bowl solves to 1.2e-09 and an 8-dim Rosenbrock
-# to 4.6e-14, but a 20-dim ROSENBROCK fails at 0.187 after 3000 evaluations.
-# Nelder-Mead degrades on a curved objective as the dimension grows, and the
-# staircase existed to keep each stage inside the range where it does not.
+# WHY NOT ONE STAGE OF TWENTY-ONE. Measured, not assumed. nelder_test.py drives
+# this exact ask/tell machine against analytic objectives:
 #
-# WHAT MAKES IT WORTH TRYING ANYWAY, and it is not nothing. That failure was
-# from a generic start. This simplex is seeded from a MEASURED archive: the
-# coordinate scan gives a ray per instrument, expand.py says which moments are
-# bracketed and which are not, and seed() takes the widest independent vertices
-# inside the competitive region rather than an arbitrary spread. A simplex that
-# already straddles the answer in most coordinates is a different problem from
-# one dropped at a corner.
+#     quadratic bowl, 21-dim     3000 evals    2.4e-10        PASS
+#     ROSENBROCK,     21-dim     3000 evals    4.42           FAIL   (want < 1e-3)
+#     Rosenbrock,      8-dim      900 evals    1.2e-12        PASS
 #
-# The staircase logic in stage_night.py is unchanged and still works; there is
-# simply one stage now, so it never promotes. Restoring the stages is a matter
-# of splitting this list again.
+# The bowl says the machinery is sound at twenty-one; the Rosenbrock says
+# Nelder-Mead cannot follow a curved valley in that many dimensions. A calibration
+# is a curved valley. So one stage of twenty-one was tried on the author's
+# instruction, measured, and cut back.
+#
+# THE CUT ITSELF answers the author's objection rather than the dimension count:
+# stage 1 holds nothing that stage 1's own parameters are being fitted against.
+# The income process (sigma_y, pi_eu), the tax that turns it into net income
+# (tau_l), every preference parameter (beta, gamma, omega_l, theta), what
+# mortality is worth (aleph), both onset hazards (lambda_d, p_m), addiction
+# prevalence (b) and subsistence (cbar) move together. Twelve.
+#
+# What is deferred is DOWNSTREAM of that block, not held against it:
+#
+#  2. the housing and homelessness block, level and composition TOGETHER because
+#     they are the pair that fight -- h_1 sets how big the street is and h_share5
+#     who is on it, and moving them in turn is what produced the level/composition
+#     conflict. h_2 is the rent the choice is made against and pi_V the voucher.
+#
+#  3. the SUD and treatment margins, which only bite once a homeless population
+#     exists to measure them on: sud_homeless, emp_homeless, lambda_m, tau_u, mu_H.
 STAGE_MOMENTS = [
-    ['h_2', 'p_m', 'cbar', 'beta', 'gamma', 'b', 'omega_l', 'sigma_y',
-     'pi_eu', 'lambda_d', 'tau_l', 'aleph', 'pi_V', 'theta',
-     'sud_homeless', 'emp_homeless', 'lambda_m', 'tau_u', 'mu_H',
-     'h_1', 'h_share5'],
+    ['sigma_y', 'pi_eu', 'tau_l', 'beta', 'gamma', 'omega_l', 'theta',
+     'aleph', 'lambda_d', 'b', 'p_m', 'cbar'],
+    ['h_1', 'h_2', 'h_share5', 'pi_V'],
+    ['sud_homeless', 'emp_homeless', 'lambda_m', 'tau_u', 'mu_H'],
 ]
 
 
