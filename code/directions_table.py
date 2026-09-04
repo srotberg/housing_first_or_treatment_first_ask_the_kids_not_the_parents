@@ -254,4 +254,12 @@ RULES = {
     # comment at line 290 flags the mismatch from the other direction. Worth
     # revisiting once the calibration is closer.
     'lambda_m': ('kappa_uem', 'lower', 'agrees, and the handle is strong'),
+    # tau_u, treatment take-up among those with a substance use disorder,
+    # target 0.245. The author: *"raise it if higher than the data"*.
+    # utility_cost_of_treatment is what a household bears to enter treatment, so
+    # costlier treatment means less of it -- parameter and moment move in OPPOSITE
+    # directions. Measured 8-point ray agrees at slope -0.1082 and is monotone.
+    #
+    # SECOND-LARGEST GAP IN THE CALIBRATION at -38.7 per cent, behind pi_eu.
+    'tau_u': ('utility_cost_of_treatment', 'raise', 'agrees'),
 }
