@@ -1,3 +1,76 @@
+# Calibration state — 4 September, 20:25
+
+## THE OLD-AGE SPIKE IS ONE AGE, AND THE FIXED POINT HAS ALREADY CLOSED IT
+
+Homelessness by age at point_aa0c0bd2f9 (cap 59):
+
+    age 65        0.009996
+    age 66 to 83  0.000000     eighteen consecutive zeros
+    age 84        0.012926
+    age 85        0.000000
+
+It was never a distribution over the retired. It is a single spike at data age
+84, the last age a household may choose the street, and age 85 is terminal
+(survival is exactly zero there). A household homeless at 84 is buying one final
+year of saved rent against a higher chance of losing one final year of life.
+
+THAT IS WHY MORTALITY CANNOT REACH IT. rr_homeless_old_level runs the ladder from
+3.4 to 30 -- values at which death at 84 is capped at probability ONE -- and every
+moment moves by less than 0.05 per cent. The prize the risk threatens is a single
+terminal period, and the rent saved beats it at any multiplier.
+
+## BARRING AGES 84 AND 85 WORKS, BUT OVERSHOOTS
+
+Matched pair, same vector, only max_age_to_choose_homelessness differing:
+
+              band1    band2    band3    band4    band5      h_1
+    cap 59  0.00702  0.90792  0.00005  0.04804  0.03697  0.003198
+    cap 58  0.00728  0.94169  0.00006  0.04983  0.00114  0.003084
+    data      0.260    0.272    0.210    0.184    0.075  0.003990
+
+The spike is gone and, CONTRARY to what the addiction cap measured earlier, it
+does NOT relocate to 83: ages 66 to 85 are all zero and the mass reappears at 63
+to 64. "The spike follows the cap" is true of the addiction cap and false of this
+one; the note in the declaration should not be read as covering both.
+
+But band 5 goes from -51 per cent to -98.5 per cent, so it abolishes old
+homelessness rather than sizing it, and h_1 slips from -20 to -23 per cent.
+
+And it may not be needed: at cap 59 the fixed point took band 5 from +910 per cent
+to +8.4 per cent in two iterations, unaided (point_aa0c0bd2f9, 0.08128 against
+0.075).
+
+## THE COMPOSITION FAULT HAS MOVED TO BAND 2, AND IT IS NOT A MORTALITY MARGIN
+
+Band 2 (ages 35 to 44) holds 91 per cent of the homeless against 27 in the data.
+Set against Baggett's measured relative risks, which the model uses verbatim below
+age 65:
+
+     age  Baggett rr  model uses  homeless rate
+      34       9.100       9.100       0.000042
+      35       8.985       8.985       0.027992
+      41       7.605       7.605       0.016301
+      42       7.375       7.375       0.000010
+   45..62   6.7 -> 3.6        same      0.000004
+   75..85       1.100       2.939            0
+
+Two things follow.
+
+THE SPIKE SITS WHERE MORTALITY IS HIGHEST. Ages 35 to 41 carry a relative risk of
+9.0 falling to 7.6 and hold nearly all the homelessness; ages 45 to 62 carry 6.7
+falling to 3.6 and hold none. There is no deterrence gradient in the profile, so
+RESHAPING THE DEATH RISK BY AGE IS UNLIKELY TO MOVE IT -- the same way it did
+nothing at 84 -- and it would spend the one part of the calibration that is
+externally identified.
+
+THE EDGES ARE THRESHOLDS, NOT MARGINS. Homelessness goes from 0.000042 at 34 to
+0.027992 at 35, a factor of 670, and from 0.016301 at 41 to 0.000010 at 42, a
+factor of 1600. A smooth trade-off against mortality cannot produce that. Find
+what switches at 35 and at 42 before moving the age structure.
+
+Note also that above 65 the model already runs at 2.939 against Baggett's 1.100,
+2.7 times the measured value.
+
 # Calibration state — 4 September, 19:55
 
 ## THE AUTHOR'S METHOD HAS OVERTAKEN NELDER-MEAD, ON NELDER-MEAD'S OWN OBJECTIVE
