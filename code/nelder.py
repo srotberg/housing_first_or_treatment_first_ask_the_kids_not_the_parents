@@ -99,9 +99,13 @@ STAGE_MOMENTS = [
     #    than it should be, which is why the street's mortality cost does not
     #    deter.
     ['pi_V', 'tau_l', 'aleph', 'sigma_y', 'pi_eu'],
-    # 3: the rest, once the first two hold.
+    # 3: the rest, once the first two hold. h_share5 joined on 4 September when
+    #    the old-age relative risk stopped being assumed and became an
+    #    instrument, so the old band's share of the homeless has a target again
+    #    and it belongs with h_1 -- the level and the composition are the pair
+    #    that fight, and they should be moved together rather than in turn.
     ['sud_homeless', 'emp_homeless', 'lambda_m', 'tau_u', 'mu_H', 'lambda_d',
-     'h_1'],
+     'h_1', 'h_share5'],
 ]
 
 
