@@ -489,7 +489,24 @@
         ! model is free to put use back in retirement if the deterrent still
         ! does not bite, and the per age profile will say so.
         integer, parameter :: max_age_to_choose_addiction=55
-        integer, parameter :: max_age_to_choose_homelessness=59
+        ! SETTABLE, 4 September, on the author's instruction: "you can forbid
+        ! those at age 59 and 60 from being homeless.... inside the code".
+        !
+        ! Was a compile-time parameter, so every test of it cost a model hash and
+        ! an archive reset. It is a runtime value with a handover case now, so a
+        ! different cap costs a vector line. Index 59 is data age 84; setting 58
+        ! bars 59 and 60.
+        !
+        ! WHAT IS MEASURED ABOUT THIS, so the next test is not a surprise. The
+        ! spike sits AT the cap, which is an end-of-horizon effect: at the last
+        ! age a household may choose the street there is no future left to
+        ! protect, mortality costs nothing and the rent saved is pure gain.
+        ! Barring the top age makes the next age down terminal and the same logic
+        ! applies there. Measured on the ADDICTION cap earlier the same night:
+        ! cap 57 put the peak at data age 82, cap 55 at 80, and barring the
+        ! street at that cap relocated the bunching to 74 and 71 where it still
+        ! held 79 per cent of homelessness. The spike follows the cap.
+        integer :: max_age_to_choose_homelessness=59
         
         integer, parameter :: include_varying_household_size=0
         ! Renter model: homeownership, mortgages and negative assets are out.
@@ -36681,6 +36698,12 @@
                 case ("discount_factor")
                     write(*,*) "HANDOVER discount_factor:", discount_factor, "->", handover_value
                     discount_factor=min(max(handover_value,0.5d0),1.05d0)
+
+                case ("max_age_to_choose_homelessness")
+                    write(*,*) "HANDOVER max_age_to_choose_homelessness:",&
+                        max_age_to_choose_homelessness, "->", handover_value
+                    max_age_to_choose_homelessness=&
+                        max(min(nint(handover_value),life_span),1)
 
                 case ("rr_homeless_hold_age")
                     write(*,*) "HANDOVER rr_homeless_hold_age:",&
