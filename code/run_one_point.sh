@@ -160,6 +160,11 @@ declare -A P=(
     # penalty of a substance use disorder and the instrument for the SUD share of
     # them. Their defaults are the values they were assigned at.
     [increased_prob_if_homeless]=0.2
+    # THE NON-HOUSING CONSUMPTION PENALTY OF THE STREET. Zero reproduces the
+    # model exactly; it owns y_h, the income of the homeless. See its declaration
+    # in the Fortran for why the employment-transition instruments cannot reach
+    # that moment.
+    [consumption_penalty_homeless]=0
     # THE BOTTOM OF THE PRODUCTIVITY GRID, two instruments for the two moments
     # that say who the homeless are: the employed share (0.46) and their income
     # (0.191 of average). y_grid_kappa sets the bottom node's mass, exactly

@@ -2861,6 +2861,38 @@
         ! resumes instead of beginning again; that is not done yet, and this run
         ! having been killed once is what made it worth doing at all.
         real(8) :: size_homelessness=(1-perceived_probability_lower)*0.304+perceived_probability_lower*0.3
+
+        ! THE NON-HOUSING CONSUMPTION PENALTY OF THE STREET, psi. Consumption is
+        ! worth (1-psi) of itself to a homeless household: no storage, no cooking,
+        ! possessions lost, a higher price for everything bought in small amounts.
+        ! It is a UTILITY penalty and not a budget one -- the household still pays
+        ! for c and simply gets less from it -- so nothing in the budget constraint
+        ! or in market clearing moves with it.
+        !
+        ! WHY IT EXISTS, on the author's instruction of 4 September: *"we may want
+        ! to basically have a non-housing consumption penalty when you are homeless
+        ! (and you choose that penalty to match the average income of the
+        ! homeless)"*.
+        !
+        ! The moment it owns is y_h, income of the homeless, 0.72 of average in the
+        ! model against 0.191 in the data. Every other instrument tried on it acts
+        ! on employment TRANSITIONS and cannot reach households whose housing
+        ! choice never depended on employment -- 99.3 per cent of this model's
+        ! homeless can pay rent from current income. Measured on
+        ! increased_prob_if_homeless across its whole permitted range, 0.2 to 0.95:
+        ! y_h moved 0.8 per cent while the SMI share of the homeless fell 59 per
+        ! cent, because that parameter's two halves are a 1.3 point change in a
+        ! small probability and a 52 point change in a large one, and the large one
+        ! lands on whoever is ALREADY unemployed.
+        !
+        ! This penalty is first order and certain, which is the character of the
+        ! rent saving it has to offset, and it is PROPORTIONAL to consumption, so
+        ! it costs a comfortable household more than a poor one. That is what makes
+        ! it a composition instrument rather than another lever on the level.
+        !
+        ! ZERO REPRODUCES THE MODEL EXACTLY. Verified as a no-op before anything
+        ! was calibrated on it.
+        real(8) :: consumption_penalty_homeless=0.d0
         
         ! ON, AND IT WAS OFF. At zero the update below is size_homelessness minus
         ! zero times the gap, so the parameter never moved and the homelessness
@@ -21468,6 +21500,13 @@
             total_consumption_choice_1,consumption_choice_1
             
         real(8) :: price_of_addictive_good_to_use
+
+        ! CONSUMPTION AS THE UTILITY FUNCTION SEES IT, which is not what the
+        ! household paid for when it is on the street. See the declaration of
+        ! consumption_penalty_homeless. total_consumption_choice_1 is deliberately
+        ! NOT scaled: the penalty is on non-housing consumption, and the addictive
+        ! good is priced separately.
+        real(8) :: c_util_1
             
         real(8), intent(inout) :: flow_utility_1
         
@@ -21481,6 +21520,14 @@
         
         end if
         
+        c_util_1=consumption_choice_1
+        
+        if (future_housing_status_index_1==lowest_housing_grid_point) then
+        
+            c_util_1=consumption_choice_1*(1.d0-consumption_penalty_homeless)
+            
+        end if
+        
         if (internal_computation_1==0) then
         
             if (use_cobb_douglas==1) then
@@ -21491,7 +21538,7 @@
                         ((1-relative_share_of_addiction)*&
                         (housing_status_utility_function(future_housing_status_index_1,&
                         age_index,ownership_status_index_1,addicted_status_1)*&
-                        (consumption_choice_1**((1-risk_aversion_consumption)*&
+                        (c_util_1**((1-risk_aversion_consumption)*&
                         (1-relative_share_of_housing))))/(1-risk_aversion_consumption)+&
                         relative_share_of_addiction*((frac_spent_on_addiction_1*total_consumption_choice_1/&
                         price_of_addictive_good_to_use)**(1-risk_aversion_consumption))/(1-risk_aversion_consumption))
@@ -21501,7 +21548,7 @@
                     flow_utility_1=scaled_household_size(age_index)*&
                         ((housing_status_utility_function(future_housing_status_index_1,&
                         age_index,ownership_status_index_1,addicted_status_1)*&
-                        (consumption_choice_1**((1-risk_aversion_consumption)*&
+                        (c_util_1**((1-risk_aversion_consumption)*&
                         (1-relative_share_of_housing))))/(1-risk_aversion_consumption))
                         
                 end if
@@ -21511,7 +21558,7 @@
                 flow_utility_1=scaled_household_size(age_index)*&
                     ((housing_status_utility_function(future_housing_status_index_1,&
                     age_index,ownership_status_index_1,addicted_status_1)*&
-                    consumption_choice_1**((1-risk_aversion_consumption)*relative_share_of_consumption_2)*&
+                    c_util_1**((1-risk_aversion_consumption)*relative_share_of_consumption_2)*&
                     (b_shifter(0,housing_size(future_housing_status_index_1))+(frac_spent_on_addiction_1*total_consumption_choice_1)/price_of_addictive_good_to_use)**&
                     ((1-risk_aversion_consumption)*relative_share_of_addiction)))/(1-risk_aversion_consumption)
             
@@ -21521,7 +21568,7 @@
                         
                     flow_utility_1=scaled_household_size(age_index)*&
                         ((housing_status_utility_function(future_housing_status_index_1,age_index,ownership_status_index_1,1)*&
-                        consumption_choice_1**((1-risk_aversion_consumption)*relative_share_of_consumption_2)*&
+                        c_util_1**((1-risk_aversion_consumption)*relative_share_of_consumption_2)*&
                         ((b_shifter(1,housing_size(future_housing_status_index_1))+(frac_spent_on_addiction_1*total_consumption_choice_1)/&
                         price_of_addictive_good_to_use))**&
                         ((1-risk_aversion_consumption)*relative_share_of_addiction_2)))/(1-risk_aversion_consumption)
@@ -21530,7 +21577,7 @@
                 
                     flow_utility_1=scaled_household_size(age_index)*&
                         ((housing_status_utility_function(future_housing_status_index_1,age_index,ownership_status_index_1,0)*&
-                        consumption_choice_1**((1-risk_aversion_consumption)*relative_share_of_consumption_1)*&
+                        c_util_1**((1-risk_aversion_consumption)*relative_share_of_consumption_1)*&
                         ((b_shifter(0,housing_size(future_housing_status_index_1))+(frac_spent_on_addiction_1*total_consumption_choice_1)/&
                         price_of_addictive_good_to_use))**&
                         ((1-risk_aversion_consumption)*relative_share_of_addiction_1)))/(1-risk_aversion_consumption)
@@ -21544,7 +21591,7 @@
                     flow_utility_1=(1-utility_improvement)*sqrt_household_size(age_index)*&
                         ((housing_status_utility_function(future_housing_status_index_1,&
                         age_index,ownership_status_index_1,addicted_status_1)+&
-                        relative_share_of_consumption_2*(consumption_choice_1/&
+                        relative_share_of_consumption_2*(c_util_1/&
                         sqrt_household_size(age_index))**(power_1)+relative_share_of_addiction*&
                         (((frac_spent_on_addiction_1*total_consumption_choice_1)/price_of_addictive_good_to_use)/&
                         sqrt_household_size(age_index))**(power_3))**(power_2))/(1-risk_aversion_consumption)
@@ -21554,7 +21601,7 @@
                     flow_utility_1=sqrt_household_size(age_index)*&
                         ((housing_status_utility_function(future_housing_status_index_1,&
                         age_index,ownership_status_index_1,addicted_status_1)+(1-relative_share_of_housing)*&
-                        (consumption_choice_1/sqrt_household_size(age_index))**(power_1))**&
+                        (c_util_1/sqrt_household_size(age_index))**(power_1))**&
                         (power_2))/(1-risk_aversion_consumption)
                         
                 end if
@@ -21571,7 +21618,7 @@
                         ((1-relative_share_of_addiction)*&
                         ((space_lived_in_internal_1*(1+ownership_status_index_1*advantage_to_owning))**&
                         ((1-risk_aversion_consumption)*relative_share_of_housing)*&
-                        (consumption_choice_1)**((1-risk_aversion_consumption)*&
+                        (c_util_1)**((1-risk_aversion_consumption)*&
                         ((1-relative_share_of_housing))))/(1-risk_aversion_consumption)+&
                         relative_share_of_addiction*((frac_spent_on_addiction_1*total_consumption_choice_1)**&
                         (1-risk_aversion_consumption))/(1-risk_aversion_consumption))
@@ -21591,7 +21638,7 @@
                 flow_utility_1=scaled_household_size(age_index)*&
                     ((space_lived_in_internal_1*(1+ownership_status_index_1*advantage_to_owning))**&
                     ((1-risk_aversion_consumption)*relative_share_of_housing)*&
-                    consumption_choice_1**((1-risk_aversion_consumption)*relative_share_of_consumption_2)*&
+                    c_util_1**((1-risk_aversion_consumption)*relative_share_of_consumption_2)*&
                     (b_shifter(0,housing_size(future_housing_status_index_1))+(frac_spent_on_addiction_1*total_consumption_choice_1)/price_of_addictive_good_to_use)**&
                     ((1-risk_aversion_consumption)*relative_share_of_addiction))/(1-risk_aversion_consumption)
                     
@@ -21602,7 +21649,7 @@
                     flow_utility_1=scaled_household_size(age_index)*&
                         ((space_lived_in_internal_1*(1+ownership_status_index_1*advantage_to_owning))**&
                         ((1-risk_aversion_consumption)*relative_share_of_housing_2)*&
-                        consumption_choice_1**((1-risk_aversion_consumption)*relative_share_of_consumption_2)*&
+                        c_util_1**((1-risk_aversion_consumption)*relative_share_of_consumption_2)*&
                         ((b_shifter(1,housing_size(future_housing_status_index_1))+(frac_spent_on_addiction_1*total_consumption_choice_1)/&
                         price_of_addictive_good_to_use))**&
                         ((1-risk_aversion_consumption)*relative_share_of_addiction_2))/(1-risk_aversion_consumption)
@@ -21612,7 +21659,7 @@
                     flow_utility_1=scaled_household_size(age_index)*&
                         ((space_lived_in_internal_1*(1+ownership_status_index_1*advantage_to_owning))**&
                         ((1-risk_aversion_consumption)*relative_share_of_housing_1)*&
-                        consumption_choice_1**((1-risk_aversion_consumption)*relative_share_of_consumption_1)*&
+                        c_util_1**((1-risk_aversion_consumption)*relative_share_of_consumption_1)*&
                         ((b_shifter(0,housing_size(future_housing_status_index_1))+(frac_spent_on_addiction_1*total_consumption_choice_1)/&
                         price_of_addictive_good_to_use))**&
                         ((1-risk_aversion_consumption)*relative_share_of_addiction_1))/(1-risk_aversion_consumption)
@@ -21627,7 +21674,7 @@
                         ((relative_share_of_housing_2*((space_lived_in_internal_1*&
                         (1+ownership_status_index_1*advantage_to_owning))/&
                         sqrt_household_size(age_index))**(power_1)+&
-                        relative_share_of_consumption_2*(consumption_choice_1/&
+                        relative_share_of_consumption_2*(c_util_1/&
                         sqrt_household_size(age_index))**(power_1)+relative_share_of_addiction*&
                         (((frac_spent_on_addiction_1*total_consumption_choice_1)/price_of_addictive_good_to_use)/&
                         sqrt_household_size(age_index))**(power_3))**(power_2))/(1-risk_aversion_consumption)
@@ -36594,6 +36641,14 @@
                     ! The old ceiling of 20 was safe under division and is not
                     ! under multiplication.
                     increased_prob_if_homeless=max(min(handover_value,0.95d0),0.d0)
+
+                case ("consumption_penalty_homeless")
+                    write(*,*) "HANDOVER consumption_penalty_homeless:",&
+                        consumption_penalty_homeless, "->", handover_value
+                    ! CEILING BELOW ONE for the same reason as the line above:
+                    ! consumption enters as c**((1-sigma)*(1-gamma)), so a scale
+                    ! factor of zero or below is not a consumption level.
+                    consumption_penalty_homeless=max(min(handover_value,0.95d0),0.d0)
 
                 ! THE EARNINGS PENALTY OF A SUBSTANCE USE DISORDER. It enters as
                 ! rho_d**(sud*include_rho_d), so it is a multiplier on the wage
