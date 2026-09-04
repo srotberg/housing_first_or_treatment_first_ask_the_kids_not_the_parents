@@ -227,6 +227,46 @@ this step size.
 pre-guard `rr_homeless_old_level = 0`, at SSR 53 and 164. A lead to test, not
 evidence: the clean test is `discount_factor` alone at the current anchor.
 
+### THE SEARCH WAS ON THE WRONG ECONOMY FROM 13:18 TO 15:00
+
+`max_age_to_choose_homelessness` bars the homelessness choice above an age index:
+45 is "nobody over 70 can be homeless", 59 is "nobody over 84 can be". Those are
+two models of old-age homelessness. It is a HANDOVER parameter, so it moves
+neither the source hash nor the semantic hash, and it was not in CONFIG_SWITCHES,
+so nothing separated them and `best()` ranked all of them as one economy.
+
+The cap-walk batches (`batch_capwalk.txt`, `batch_cw_01.txt`) carried 45. The
+model change at 13:18 emptied the archive; the first points on the new hash came
+from that batch; a 45-point won the pooled ranking; `stage_night` took it as the
+anchor and the seed copied 45 into all eleven vertices. **The retired share
+reading 0.0 per cent of the homeless was MECHANICAL, not behavioural.**
+
+Now a CONFIG SWITCH, live 59 per the author (*"Make sure you allow homelessness
+at age 84-85 still"*), PREDATE 59 (the Fortran default at line 509). This EMPTIES
+the live archive: all 43 points on the current model hash carry 45.
+
+### THE COORDINATE SCAN REPLACES THE SEEDED SIMPLEX AS THE WAY IN
+
+The author, 4 September: *"all parameters should be sampled across many values so
+they have a range to go off of"*, and on `sigma_y`: *"since share of income is too
+low for bottom 50%, it means probably that sigma_y needs to be lower... Not
+higher. You need to extend it from below"*.
+
+`code/scan.py` writes one batch file per instrument, seven values spanning a wide
+range inside the hard bounds, everything else at the anchor, on the 59 economy.
+21 instruments, 139 points. `kkk_sigma_scale` now spans 0.8 to 4.0.
+
+`weight_on_child` is left out: `omega_c` is held and `measure_child_gap` is off,
+so its moment is not measured on these points.
+
+**`bottom_productivity_level` cannot be scanned downward**: its anchor 0.004 IS
+its lower bound, so the scan only samples up. That is a bounds question for the
+author, not a scan defect.
+
+`night_watch` takes a `code/PAUSE_NM` marker so the scan owns the CPU while the
+pusher keeps committing. Remove it to resume Nelder-Mead, which should then seed
+from a spanning archive rather than a one-sided simplex.
+
 ## OPEN WITH THE AUTHOR
 
 Nothing is blocking. The loop runs to 400 iterations and commits every twelfth.
