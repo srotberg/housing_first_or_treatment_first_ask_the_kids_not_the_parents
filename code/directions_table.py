@@ -165,4 +165,21 @@ RULES = {
     # half-of-income line. Parameter and moment move together; measured 8-point ray
     # agrees at slope +1.088.
     'h_2': ('smallest_rental_relative_to_lowest_income', 'lower', 'agrees'),
+    # h_share5, the oldest band's share of the homeless, target 0.075.
+    # The author: *"raise if higher than data"*. rr_homeless_old_level is the
+    # relative risk of death for an old homeless person -- Baggett's age-65 value
+    # held flat above 65 on the author's instruction -- so raising it removes old
+    # homeless households and the share falls. Parameter and moment move in
+    # OPPOSITE directions.
+    #
+    # THE RAY IS THE DENSEST WE HAVE AND IT REVERSES. Twelve points from 1 to 30:
+    # h_share5 runs 0.996 at rr=1 down to 0.332 at rr=4.66, which is the ruled
+    # direction, but the whole-range fit is -0.024 and non-monotone, so the
+    # reversal is measured rather than noise. The ruling is right about the near
+    # region; a constant adjuster will push the wrong way somewhere above it.
+    #
+    # AND IT FIGHTS h_1. Raising size_homelessness 32 per cent raised the level 45
+    # per cent and left the age composition IDENTICAL, so the level and the
+    # composition do not respond to the same handle.
+    'h_share5': ('rr_homeless_old_level', 'raise', 'agrees near the anchor, ray reverses'),
 }
