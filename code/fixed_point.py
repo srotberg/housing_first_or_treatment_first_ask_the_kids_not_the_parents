@@ -129,13 +129,24 @@ DEFAULT_ADJ = 0.02
 #                  framing -- "does not move more than X when it is 100 per cent
 #                  off" -- and it only touches emp_homeless, at 104 per cent.
 
-# NO RULE CAN BE ACTED ON. multiple_of_probabilities_of_employment_if_addicted
-# spans its whole bound range, 1 to 32, at slope -1.2e-07 while sud_homeless sits
-# at 6.1e-07 against a target of 0.217. An adjuster on it walks the parameter to a
-# bound and changes nothing. That is a structural problem -- something prevents
-# households with the disorder from becoming homeless -- and it is the author's to
-# decide, not an adjuster's to hide.
-FROZEN = {'multiple_of_probabilities_of_employment_if_addicted'}
+# M IS NOT FROZEN. It was, on the strength of a ray showing its slope on
+# sud_homeless at -1.2e-07 across the whole range 1 to 32 -- and that ray answers
+# the wrong question, because a ray HOLDS EVERYTHING ELSE FIXED.
+#
+# The author, 4 September: *"you cant just raise M and not touch b"*, and *"if
+# raising M lowers addiction, you just have to lower b so more want to be
+# addicted"*.
+#
+# With b held, raising M only deters: the disorder rate collapses 34-fold between
+# M=4 and M=5.66 and the SUD share of the homeless falls with it. With b FREE the
+# pair is a different object -- M punishes addiction, lambda_d falls, b's rule
+# fires and lowers b to restore participation, and the population that comes back
+# is a poorer one. That joint move is what could put substance use disorder into
+# homelessness, and no single-parameter ray can see it.
+#
+# This only became actionable once lambda_d's sign was corrected. While b moved
+# the wrong way the pair could not have worked.
+FROZEN = set()
 
 
 def rules(NB):
