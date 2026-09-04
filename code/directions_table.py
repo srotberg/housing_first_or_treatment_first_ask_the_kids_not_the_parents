@@ -143,4 +143,19 @@ RULES = {
     # moment move together. No measured ray yet -- its scan was still running when
     # this was ruled -- so the ray will be a check when it lands.
     'cbar': ('max_food_cost', 'lower', 'no ray yet'),
+    # h_1, the homelessness rate, target 0.00399.
+    # The author: *"lower if higher than data"*. size_homelessness scales the
+    # STREET'S HOUSING SERVICES -- the model computes h_1 = housing_size(0) *
+    # size_homelessness -- so a bigger value makes the street better and more
+    # people choose it. Parameter and moment move together; measured 7-point ray
+    # agrees at slope +0.0193.
+    #
+    # NAME COLLISION worth knowing: h_1 is BOTH the model's street housing size and
+    # the homelessness-rate moment.
+    #
+    # IT FIGHTS h_share5. Measured earlier the same day: raising size_homelessness
+    # 32 per cent raised h_1 45 per cent and left the age composition IDENTICAL.
+    # The level moves without the composition following, so these two must be
+    # driven together rather than in turn.
+    'h_1': ('size_homelessness', 'lower', 'agrees'),
 }
