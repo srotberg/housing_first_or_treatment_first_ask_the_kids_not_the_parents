@@ -230,6 +230,20 @@ def state():
     return json.load(open(f)) if os.path.exists(f) else None
 
 
+NM_BAND_LABEL = '10%'
+
+
+def _live_set():
+    """The moments nelder's simplex would span right now, as a set."""
+    try:
+        import importlib, nelder as NM
+        importlib.reload(NM)
+        _, _, inst, _, _ = NM.setup()
+        return frozenset(m for _, m in inst)
+    except Exception:
+        return None
+
+
 def band_for(stage):
     return BAND_BY_STAGE.get(stage, BAND)
 
@@ -263,6 +277,7 @@ def main():
         say(f'=== STAGE {stage} ===')
         seed(stage)
         sh('python3 code/nelder.py --init')
+        live_set = _live_set()
         best, quiet, restarts = None, 0, 0
         asks = 0
         while True:
@@ -295,6 +310,32 @@ def main():
                         f'{ins}/{tot} at {band_for(stage):.0%}')
                 else:
                     quiet += 1
+            # REBUILD THE MOMENT A PARAMETER ARRIVES INSIDE THE BAND.
+            #
+            # The author, 4 September: *"every time a parameter gets into the 10%,
+            # you hold it fixed, and do the projections, shrink, etc, based on the
+            # ones that are outside the 10%"*.
+            #
+            # nelder.outside_band decides which instruments the simplex spans, but
+            # a simplex cannot change dimension in place -- the set is fixed when
+            # it is built. So the set is watched here, and the simplex is rebuilt
+            # as soon as it shrinks. Each rebuild costs one solve per surviving
+            # dimension and each is SMALLER than the last, so the cost falls as
+            # the calibration converges rather than rising.
+            #
+            # Only a SHRINKING set triggers a rebuild. A moment drifting back out
+            # is picked up at the next rebuild anyway, and rebuilding on every
+            # wobble would spend the night re-seeding.
+            live_now = _live_set()
+            if live_now and live_set and live_now < live_set:
+                say(f'  {len(live_set) - len(live_now)} parameter(s) reached '
+                    f'{NM_BAND_LABEL}; simplex rebuilding on {len(live_now)} '
+                    f'instead of {len(live_set)}')
+                live_set = live_now
+                sh('python3 code/nelder.py --init')
+                quiet = 0
+                continue
+            live_set = live_now or live_set
             ok, ins, tot = converged(stage)
             if ok:
                 say(f'  stage {stage} CONVERGED: all {tot} moments inside '
