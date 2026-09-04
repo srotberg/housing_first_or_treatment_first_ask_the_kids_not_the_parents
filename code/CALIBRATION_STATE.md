@@ -1,3 +1,44 @@
+# Calibration state — 4 September, 22:20
+
+## h_1 IS NEAR-DISCONTINUOUS, AND THAT IS WHY THE SEARCH IS HARD
+
+Ten points on the live economy, sorted by the homelessness rate:
+
+         h_1   size_homelessness
+    0.000407             0.41930
+    0.004647             0.42224
+    0.004590             0.42494
+    0.000430             0.42726
+    0.011550             0.43533
+    0.008459             0.44371
+    0.004651             0.44685
+    0.004651             0.45000     target h_1 = 0.00399
+
+h_1 is NOT MONOTONE in its own instrument and spans a factor of TWENTY-EIGHT
+across a seven per cent band of it. From 0.41930 to 0.42224 -- a 0.7 per cent
+parameter change -- homelessness multiplies by eleven; going UP again to 0.42726
+divides it by eleven. Other parameters move between these points, so this is not a
+clean ray, but no clean ray could produce a 28-fold spread over that band either.
+
+THE CAUSE IS THE ONE ALREADY MEASURED FROM THE OTHER SIDE. Eighty-one per cent of
+the model's homeless could pay rent from current income, so a mass of households
+sits at indifference between the street and the cheapest rental and flips
+TOGETHER on any small change. The housing choice is discrete; h_1 inherits that as
+a near-discontinuity.
+
+WHAT IT MEANS FOR THE SEARCH. The fixed point is not diverging, it is being
+whipsawed: its SSR went 4.03 at the seed to 8.66 by iteration 7 while the BEST
+point remained the seed, and size_homelessness is damped to half its adjuster
+fighting what looks like overshoot and is actually a cliff. Damping cannot fix a
+discontinuity -- no step is small enough -- which is the same conclusion reached
+about rr_homeless_old_level earlier tonight, for the same underlying reason.
+
+This is a property of the model, not of the solver, and what to do about it is the
+author's call. The honest options are to accept h_1 as a moment that can only be
+bracketed rather than hit, or to reduce the mass sitting at indifference -- which
+means giving the street a cost that varies across households rather than one they
+all face equally.
+
 # Calibration state — 4 September, 21:50
 
 ## THE ECONOMY CHANGED TWICE TONIGHT. THE ARCHIVE IS ONE POINT.
