@@ -90,75 +90,31 @@ POOL_MULT = 2000.0
 #
 # It also makes seeding cheap: a stage of seven needs eight vertices, not
 # twenty-one.
+# ALL TWENTY-ONE MOMENTS IN ONE STAGE, on the author's instruction of
+# 4 September: *"i would prefer if you include all the key variables in stage 1"*.
+#
+# THE MEASURED RISK, stated once and then set aside because the call is the
+# author's. nelder_test.py runs this exact ask/tell machine against analytic
+# objectives: a 20-dim quadratic bowl solves to 1.2e-09 and an 8-dim Rosenbrock
+# to 4.6e-14, but a 20-dim ROSENBROCK fails at 0.187 after 3000 evaluations.
+# Nelder-Mead degrades on a curved objective as the dimension grows, and the
+# staircase existed to keep each stage inside the range where it does not.
+#
+# WHAT MAKES IT WORTH TRYING ANYWAY, and it is not nothing. That failure was
+# from a generic start. This simplex is seeded from a MEASURED archive: the
+# coordinate scan gives a ray per instrument, expand.py says which moments are
+# bracketed and which are not, and seed() takes the widest independent vertices
+# inside the competitive region rather than an arbitrary spread. A simplex that
+# already straddles the answer in most coordinates is a different problem from
+# one dropped at a corner.
+#
+# The staircase logic in stage_night.py is unchanged and still works; there is
+# simply one stage now, so it never promotes. Restoring the stages is a matter
+# of splitting this list again.
 STAGE_MOMENTS = [
-    # 1: the seven already inside ten per cent -- hold them there while the
-    #    simplex is small enough for the method to be reliable.
-    # sigma_y JOINS STAGE 1, on the author's instruction of 4 September: "I think
-    # you might want to add simga y to the first stage."
-    #
-    # It sets the dispersion of the income distribution everything else is built
-    # on, so calibrating it after the preference block asks stage 1 to fit beta,
-    # gamma and omega_l against a spread forty per cent too narrow, and then
-    # stage 2 to move the spread underneath them.
-    #
-    # STAGE 1 NO LONGER CONVERGES ON SIGHT, and that is the point. Its other
-    # seven moments were already inside ten per cent when the stage began, so it
-    # met its criterion on the first check twice tonight without doing any work.
-    # sigma_y reads 0.1037 against 0.1720, so the stage now has something to do.
-    # A bracket measured earlier tonight puts sigma_y on target at
-    # kkk_sigma_scale about 1.70, against 2.07 at the stage-2 best.
-    # pi_eu JOINS TOO, same instruction, same argument: "I think also the same
-    # with pieu... It should be in the first stage."
-    #
-    # sigma_y and pi_eu are both the INCOME PROCESS rather than outcomes of it --
-    # one the dispersion of productivity, the other the rate at which a job is
-    # lost -- so every preference parameter in this stage is being fitted against
-    # whatever they are set to. pi_eu reads 0.0787 against 0.1390.
-    # lambda_d JOINS TOO, on the author's instruction of 4 September, and the
-    # measurement is the reason: matched pairs differing in ONE parameter put
-    # addiction_scalar_1's elasticity on pi_eu at -1.05 to -1.11, against
-    # probability_becoming_unemployed's +0.27 to +0.51 on its own moment. The
-    # strongest driver of the unemployment rate is not the unemployment
-    # instrument.
-    #
-    # Unemployment here is largely a SUD phenomenon. The clean steady state at
-    # pbu 0.0122 is 0.0122/(0.0122+0.55) = 2.2 per cent, against 8 to 13 measured,
-    # so the difference is people with the disorder cycling through margins that
-    # are four times worse. Targeting pi_eu with lambda_d pinned in another stage
-    # asks the search to hit a moment while its strongest handle is held.
-    # tau_l AND aleph JOIN STAGE 1, on the author's question of 4 September:
-    # "how come i dont see tau_l and aleph in stage 1?"
-    #
-    # The ten-instrument cap was mine, from nelder_test.py: the real ask/tell
-    # machine solves a 20-dim quadratic bowl to 1.2e-09 and an 8-dim Rosenbrock
-    # to 4.6e-14, but FAILS a 20-dim Rosenbrock at 0.187 after 3000 evaluations.
-    # Twelve is inside the range that works; twenty is not.
-    #
-    # And leaving them out has the cost the author already fixed once. Stage 1
-    # was fitting beta, cbar and omega_l against tau_l 17.5 per cent low and
-    # aleph 10.5 per cent low -- the same error as fitting the preference block
-    # against an income spread forty per cent too narrow, which is why sigma_y
-    # was moved in. tau_l is BRACKETED by expand.py (crossing in 0.718..0.827),
-    # so it is a cheap one to have in scope rather than a risk.
     ['h_2', 'p_m', 'cbar', 'beta', 'gamma', 'b', 'omega_l', 'sigma_y',
-     'pi_eu', 'lambda_d', 'tau_l', 'aleph'],
-    # 2: plus the five the author named. aleph is the one they called very
-    #    important, and it reads 54.06 against 80 -- a life worth a third less
-    #    than it should be, which is why the street's mortality cost does not
-    #    deter.
-    # lambda_d AND theta JOIN STAGE 2, on the author's instruction of 4
-    # September: "They are very important parameters since they affect the value
-    # of life and the preferences." aleph is calibrated against the value of a
-    # statistical life and theta against the share of spending on the addictive
-    # good, so leaving the drug block until stage 3 asks stage 2 to fit aleph
-    # while the preference parameters it trades against are pinned.
-    ['pi_V', 'theta'],
-    # 3: the rest, once the first two hold. h_share5 joined on 4 September when
-    #    the old-age relative risk stopped being assumed and became an
-    #    instrument, so the old band's share of the homeless has a target again
-    #    and it belongs with h_1 -- the level and the composition are the pair
-    #    that fight, and they should be moved together rather than in turn.
-    ['sud_homeless', 'emp_homeless', 'lambda_m', 'tau_u', 'mu_H',
+     'pi_eu', 'lambda_d', 'tau_l', 'aleph', 'pi_V', 'theta',
+     'sud_homeless', 'emp_homeless', 'lambda_m', 'tau_u', 'mu_H',
      'h_1', 'h_share5'],
 ]
 
