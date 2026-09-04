@@ -107,7 +107,15 @@ STAGE_MOMENTS = [
     # sigma_y reads 0.1037 against 0.1720, so the stage now has something to do.
     # A bracket measured earlier tonight puts sigma_y on target at
     # kkk_sigma_scale about 1.70, against 2.07 at the stage-2 best.
-    ['h_2', 'p_m', 'cbar', 'beta', 'gamma', 'b', 'omega_l', 'sigma_y'],
+    # pi_eu JOINS TOO, same instruction, same argument: "I think also the same
+    # with pieu... It should be in the first stage."
+    #
+    # sigma_y and pi_eu are both the INCOME PROCESS rather than outcomes of it --
+    # one the dispersion of productivity, the other the rate at which a job is
+    # lost -- so every preference parameter in this stage is being fitted against
+    # whatever they are set to. pi_eu reads 0.0787 against 0.1390.
+    ['h_2', 'p_m', 'cbar', 'beta', 'gamma', 'b', 'omega_l', 'sigma_y',
+     'pi_eu'],
     # 2: plus the five the author named. aleph is the one they called very
     #    important, and it reads 54.06 against 80 -- a life worth a third less
     #    than it should be, which is why the street's mortality cost does not
@@ -118,7 +126,7 @@ STAGE_MOMENTS = [
     # statistical life and theta against the share of spending on the addictive
     # good, so leaving the drug block until stage 3 asks stage 2 to fit aleph
     # while the preference parameters it trades against are pinned.
-    ['pi_V', 'tau_l', 'aleph', 'pi_eu', 'lambda_d', 'theta'],
+    ['pi_V', 'tau_l', 'aleph', 'lambda_d', 'theta'],
     # 3: the rest, once the first two hold. h_share5 joined on 4 September when
     #    the old-age relative risk stopped being assumed and became an
     #    instrument, so the old band's share of the homeless has a target again
