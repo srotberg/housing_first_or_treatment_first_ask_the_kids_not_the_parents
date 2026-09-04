@@ -53,4 +53,9 @@ RULES = {
     # discount_factor scan was still running when this was ruled, so the ruling is
     # the only source and the ray will be a check when it lands.
     'beta': ('discount_factor', 'lower', 'no ray yet'),
+    # gamma, the housing share of expenditure, target 0.268.
+    # The author: *"lower if higher than data"*. relative_share_of_housing is the
+    # weight on housing in utility, so parameter and moment move together.
+    # Measured 8-point ray agrees: slope +0.1819.
+    'gamma': ('relative_share_of_housing', 'lower', 'agrees'),
 }
