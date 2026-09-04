@@ -115,17 +115,22 @@ DEFAULT_ADJ = 0.02
 # iterations when it is 100% off"* and five parameters were at fifteen.
 #
 # Capping the STEP rather than the adjuster is better than lowering the adjusters,
-# because it fixes the two failures at once. The adjuster still sets the pace near
-# the target, where steps are small and the cap never binds; the cap only bites far
-# away, where a big step is a guess off a secant that has not been measured. And it
-# rescues the parameters my sizing made too SLOW: kappa_uem must travel 60 per cent
-# of its value, which at its 5.5 per cent gap took 73 iterations, and at the cap it
-# takes 30.
+# because the adjuster still sets the pace near the target, where steps are small
+# and the cap never binds, while the cap bites only far away -- where a big step is
+# a guess off a secant nobody measured.
 #
-# Where it binds right now: bottom_productivity_level (104 per cent gap, 15.6 ->
-# 2), rr_homeless_old_level (50 per cent, 7.5 -> 2), probability_becoming_unemployed
-# (41 per cent, 2.9 -> 2).
-MAX_STEP = float(os.environ.get('FP_MAX_STEP', '0.02'))
+# FIVE PER CENT, on the author's revision of 4 September: *"i think you can adjust
+# up to 5% when you are 100% off"*.
+#
+# A CAP ONLY EVER REDUCES A STEP. It was claimed here that capping rescued
+# kappa_uem from 73 iterations to 30; that was wrong. kappa_uem's step is 0.83 per
+# cent, below any of these caps, so the cap does nothing for it and it still needs
+# 73 iterations to travel the 60 per cent its ray asks for. Making a parameter
+# faster takes a bigger ADJUSTER, which is a different change.
+#
+# Where the 5 per cent cap binds now: bottom_productivity_level (104 per cent gap,
+# 15.0 -> 5.0) and rr_homeless_old_level (50 per cent, 7.5 -> 5.0). Nothing else.
+MAX_STEP = float(os.environ.get('FP_MAX_STEP', '0.05'))
 
 # NO RULE CAN BE ACTED ON. multiple_of_probabilities_of_employment_if_addicted
 # spans its whole bound range, 1 to 32, at slope -1.2e-07 while sud_homeless sits
