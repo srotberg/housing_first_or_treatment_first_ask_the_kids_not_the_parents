@@ -2270,7 +2270,31 @@
         ! equilibrium object moves and the archive pools across the change.
         !
         ! The gap goes from +87.5 per cent against 0.049 to -33.9 against 0.139.
-        real(8), parameter :: unemployment_rate_data=0.139
+        ! RETARGETED TO 0.049 ON THE AUTHOR'S INSTRUCTION, 4 September, after the
+        ! saturation diagnosis below. Their words: *"maybe we should stay with an
+        ! unemployment rate of 4.9% then, it seems to be a better fit"*, and *"it
+        ! would allow more reasonable numbers"*.
+        !
+        ! THE OBJECTION WAS PUT AND THE AUTHOR REAFFIRMED, so it is recorded here
+        ! rather than argued again. The model has NO LABOUR FORCE PARTICIPATION
+        ! MARGIN -- emp_of is 1 employed, 2 unemployed with nothing, 3 on UI, and
+        ! there is no out-of-the-labour-force state -- so unemployed over
+        ! (employed + unemployed) IS what this moment already computes. In the data
+        ! roughly 38 per cent of the working age population is out of the labour
+        ! force and the model counts all of them as unemployed, which is why the
+        ! honest counterpart was the SCF household no-wage-income share of 13.9.
+        ! At 4.9 the model will put a wage earner in about 95 per cent of
+        ! working-age households against 86 in the data, so household joblessness
+        ! is understated roughly threefold.
+        !
+        ! WHAT IT BUYS, and it is not small. At 0.139 the only instrument was a
+        ! separation rate that had to reach 0.055, where min(pbu*kappa_uem, 1)
+        ! puts EVERY mentally ill worker at certain unemployment and employment
+        ! given SMI collapses to 1.1 per cent against its own 30 per cent target --
+        ! a moment that is computed and NOT scored, so nothing would have caught
+        ! it. At 0.049 the separation rate falls to about 0.0032, nothing
+        ! saturates, and the SMI employment margin becomes economics again.
+        real(8), parameter :: unemployment_rate_data=0.049
         real(8), parameter :: unemployment_rate_sud_data=0.1625
 
         real(8) :: relative_share_of_addiction_adj=5*10.d0**(-2)
