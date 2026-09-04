@@ -193,6 +193,40 @@ penalty on both margins — job loss `× M`, job finding `÷ M`. Its target is
   morbidity later"*. Evidence scan is in `data/MORBIDITY_EVIDENCE.md`.
 - **The newborn endowment double count**, two options offered, no decision taken.
 
+### The seed only ever displaced UPWARD, and it cost `sigma_y` the whole search
+
+Found 4 September, 14:45. `stage_night.seed()` built every vertex as `x + d`.
+Across **1245 archived points, `kkk_sigma_scale` was never once measured below
+its anchor value 2.20949**, against a lower bound of 0.8. The one clean matched
+pair -- kkk alone, 2.20949 -> 3.09114 -- takes `sigma_y` from 0.10337 DOWN to
+0.03536, and `sigma_y` has to RISE from 0.103 to 0.172. The search had never
+sampled the direction the instrument needs to go, which is why the moment looked
+frozen at -40 per cent through every restart.
+
+Fixed by alternating the sign across instruments so the initial simplex straddles
+the anchor. Nelder-Mead does reach both sides on its own, by making the up-vertex
+the worst and reflecting through the centroid, but that costs solves and moves
+every coordinate at once.
+
+**The general lesson: a seeded simplex that is one-sided is not a simplex around
+the anchor, it is a simplex in one orthant.** Check the sign coverage of any
+seeding rule before trusting a moment that will not move.
+
+### `pi_eu` is weakly handled by its own instrument
+
+Matched pair, 4 September: `probability_becoming_unemployed` 0.0122 -> 0.0173777
+(+42 per cent) moves `pi_eu` 0.08001 -> 0.08491, **+6 per cent, elasticity 0.15**
+-- below the 0.27-0.51 measured earlier, so the elasticity is falling as pbu
+rises. Closing a 74 per cent gap at that slope needs pbu near 0.075, six times
+its value. It is inside the bounds (1e-06, 0.5) so it is reachable, but not at
+this step size.
+
+`pi_eu` is NOT structurally capped near 0.08: `6624095c1b` reaches 0.1407 and
+`c35f6e74a9` reaches 0.1834. **Both are confounded** -- each carries
+`discount_factor` pulled to 0.9075/0.92625 from 0.945 AND the invalid
+pre-guard `rr_homeless_old_level = 0`, at SSR 53 and 164. A lead to test, not
+evidence: the clean test is `discount_factor` alone at the current anchor.
+
 ## OPEN WITH THE AUTHOR
 
 Nothing is blocking. The loop runs to 400 iterations and commits every twelfth.
