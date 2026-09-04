@@ -81,31 +81,43 @@ def say(s):
 # moment on target -- so every instrument aims to arrive in about thirty solves,
 # an hour and a half at three minutes each. Capped at 0.15 because the formula
 # blows up as a gap closes and that blow-up is spurious.
+#
+# AND CAPPED AT 0.10 IN THE ADJUSTER ITSELF, not by a separate ceiling. The author
+# set the band -- *"you can adjust up to 5% when you are 100% off"*, then *"maybe
+# even 10%"* -- and then removed the step cap: *"dont cap any of the parameters...
+# just let them move freely"*. With no cap, an adjuster of 0.15 moves 15 per cent
+# at a 100 per cent gap, above the band they named. Putting the band in the
+# adjuster satisfies both: nothing is clipped at run time, and no parameter can
+# move more than ten per cent of its value in one iteration.
 ADJUSTERS = {
-    'bottom_productivity_level': 0.1500,
+    'bottom_productivity_level': 0.1000,
     'discount_factor': 0.0680,
-    'kappa_uem': 0.1500,
+    'kappa_uem': 0.1000,
     'kkk_sigma_scale': 0.0225,
     'labor_income_tax_rate': 0.0100,
-    'lambda_addiction': 0.0100,
     'max_food_cost': 0.0100,
     'mu_homeless': 0.0370,
     'probability_becoming_unemployed': 0.0710,
     'probability_of_voucher_benchmark_used': 0.0428,
     'relative_share_of_addiction_1': 0.0100,
-    'relative_share_of_housing': 0.1500,
+    'relative_share_of_housing': 0.1000,
     'relative_share_of_leisure': 0.0748,
-    'rr_homeless_old_level': 0.1500,
+    'rr_homeless_old_level': 0.1000,
     'size_homelessness': 0.0423,
     'smallest_rental_relative_to_lowest_income': 0.0148,
-    'smi_onset_level': 0.1500,
+    'smi_onset_level': 0.1000,
     'utility_cost_of_treatment': 0.0100,
     'value_of_life': 0.0285,
-    # ON THE CLIFF, deliberately far below what the arithmetic asks. 0.0368 ->
-    # lambda_d 0.038198 and 0.04048 -> 0.000223: a ten per cent rise collapses the
-    # moment 99.4 per cent, and the dead region LOOKS like convergence because the
-    # moment stops responding. Nothing here may step it more than half a per cent.
-    'addiction_scalar_1': 0.0050,
+    # THE ADDICTION PAIR, RESIZED. Both were sized against the WRONG MOMENTS,
+    # because the mapping was crossed until 4 September: addiction_scalar_1 was
+    # damped to 0.005 on the strength of a "cliff" -- 0.0368 -> lambda_d 0.038198
+    # and 0.04048 -> 0.000223 -- which was not a cliff but an instrument reaching
+    # its moment through two links. Against its OWN moment, the participation
+    # threshold C > (phi/theta) p b, there is no reason to think it pathological,
+    # so it takes the ordinary rate until a ray measured on the corrected mapping
+    # says otherwise.
+    'addiction_scalar_1': 0.0200,
+    'lambda_addiction': 0.0200,
 }
 DEFAULT_ADJ = 0.02
 
