@@ -90,6 +90,18 @@ POOL_MULT = 2000.0
 #
 # It also makes seeding cheap: a stage of seven needs eight vertices, not
 # twenty-one.
+# FROZEN. The author, 4 September: *"stop restarting NM and let it run"*.
+#
+# THIS LIST MUST NOT CHANGE WHILE THE SOLVER IS RUNNING. Every edit to it forces
+# stage_night to re-init, and a re-init throws away the simplex and rebuilds
+# thirteen vertices before a single search step -- about two hours at the current
+# contention. Reading the trace for 4 September: the scope went 9 instruments, then
+# 10, then 12, then all 21, then 12/4/5, and in four hours Nelder-Mead took SEVEN
+# actual search steps and spent everything else building simplexes it then threw
+# away. It never got a run at the problem, and that was my churn, not the method.
+#
+# Any future change waits until the stage has converged or the author asks for it.
+
 # TWELVE, FOUR, FIVE -- the author's shape, 4 September: *"the first stage can be
 # 12 parameters maybe... and you can do the second stage with the extra 3-4 and 3rd
 # stage with another 4-5"*, under their constraint *"you cannot hold anything in
