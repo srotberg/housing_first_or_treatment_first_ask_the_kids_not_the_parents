@@ -248,7 +248,7 @@ def save(st):
 TRACE = os.path.join(HERE, 'nm_trace.txt')
 
 
-def trace(st, kind, f, inside, ntot):
+def trace(st, kind, f, inside, ntot, best_f, best_tag):
     """One line per evaluation, with the BEST SSR after it.
 
     *"and after each iteration, i want to get a reading on the new best SSR"* --
@@ -259,13 +259,11 @@ def trace(st, kind, f, inside, ntot):
     actually moved the best, which is the thing being asked for -- most
     reflections do not.
     """
-    S = st['simplex']
-    b = S[0]['f']
-    moved = '  <-- NEW BEST' if abs(f - b) < 1e-12 else ''
+    moved = '  <-- NEW BEST' if abs(f - best_f) < 1e-12 else ''
     import time
     with open(TRACE, 'a') as fh:
         fh.write(f'{st["evals"]:4d}  {time.strftime("%H:%M:%S")}  {kind:34s}  '
-                 f'this {f:9.4f}   best {b:9.4f}  {S[0]["tag"]}  '
+                 f'this {f:9.4f}   best {best_f:9.4f}  {best_tag}  '
                  f'inside {inside}/{ntot}{moved}\n')
 
 
@@ -360,9 +358,29 @@ def main():
             u = [min(max(c + RHO * (x - c), 0.0), 1.0) for c, x in zip(cen, w)]
             kind = 'contract_in'
         elif ph == 'shrink':
+            # THE ANCHOR IS SAVED, NOT READ OFF S[0].
+            #
+            # A shrink is the one step that addresses vertices BY INDEX across
+            # several evaluations, so it is the only one that cannot survive the
+            # simplex being reordered underneath it -- and the simplex WAS being
+            # reordered, by a sort at the end of every --tell. Measured by
+            # nelder_test.py's shrink audit on an eight-vertex simplex: four
+            # vertices were never shrunk at all and four were shrunk TWICE,
+            # landing at 0.6 of the way to the anchor instead of 0.5. Nothing in
+            # the output said so; the phase advanced and the search carried on
+            # with a simplex half of which had not moved.
+            #
+            # Reading S[0] was the second half of the same fault: a shrunk vertex
+            # that beats the incumbent becomes S[0], and the rest of the walk
+            # then contracts toward a different point than it started from.
             i = st['shrink_i']
+            # A state written before the anchor existed -- a run already
+            # mid-shrink when this was fixed -- falls back to the incumbent,
+            # which is what the old code always did.
+            anchor = st.get('shrink_anchor') or list(S[0]['u'])
+            st['shrink_anchor'] = anchor
             u = [min(max(b + SIGMA * (x - b), 0.0), 1.0)
-                 for b, x in zip(S[0]['u'], S[i]['u'])]
+                 for b, x in zip(anchor, S[i]['u'])]
             kind = f'shrink:{i}'
         else:
             print(f'unknown phase {ph}'); return 1
@@ -396,9 +414,16 @@ def main():
             # How many of the scored moments the LIVE BEST vertex has inside ten
             # per cent, which is the author's stopping rule, alongside the SSR
             # the search actually minimises.
-            S.sort(key=lambda d: d['f'])
-            rb = N.residual(A[S[0]['tag']][1], keys)
-            trace(st, kind, f, sum(1 for x in rb if abs(x) <= 0.10), len(rb))
+            #
+            # IT MUST NOT SORT. It did, and that was a second way into the shrink
+            # bug below: a trace helper quietly reordering the simplex is exactly
+            # the kind of thing the indexed shrink cannot survive. The caller
+            # sorts when sorting is correct; this only reads.
+            b = min(S, key=lambda d: d['f'])
+            e = A.get(b['tag'])
+            rb = N.residual(e[1], keys) if e else []
+            trace(st, kind, f, sum(1 for x in rb if abs(x) <= 0.10), len(rb),
+                  b['f'], b['tag'])
 
         if kind.startswith('fill:'):
             S.append(node); msg = 'direction added'
@@ -435,7 +460,9 @@ def main():
                 S[-1] = node; msg = 'contraction accepted'; st['phase'] = 'reflect'
             else:
                 msg = 'contraction failed; shrinking'
+                S.sort(key=lambda d: d['f'])
                 st['phase'] = 'shrink'; st['shrink_i'] = 1
+                st['shrink_anchor'] = list(S[0]['u'])
                 st['pending'] = None; save(st)
                 print(f'  {kind}  SSR {f:.4f}   {msg}')
                 _t(); report(st); return 0
@@ -443,13 +470,16 @@ def main():
             i = int(kind.split(':')[1])
             S[i] = node
             if i + 1 < len(S):
+                # NO SORT HERE. The walk is still running and the next index
+                # must mean the same vertex it meant when the walk started.
                 st['shrink_i'] = i + 1; msg = f'shrunk vertex {i}'
             else:
                 st['phase'] = 'reflect'; msg = 'shrink complete'
+                st.pop('shrink_anchor', None)
                 st['pending'] = None; S.sort(key=lambda d: d['f']); save(st)
                 print(f'  {kind}  SSR {f:.4f}   {msg}')
                 _t(); report(st); return 0
-            st['pending'] = None; S.sort(key=lambda d: d['f']); save(st)
+            st['pending'] = None; save(st)
             print(f'  {kind}  SSR {f:.4f}   {msg}')
             _t(); report(st); return 0
 
