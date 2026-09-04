@@ -111,6 +111,62 @@ def experiment(mode, budget, label, cycles=3):
     return best
 
 
+
+def fixed_point(budget, label, adj=0.02, lo=-2.0, hi=2.0):
+    """THE AUTHOR'S ITERATIVE SOLVER, 4 September: *"param = param + adjuster *
+    (model moment - data), adjuster small enough that the param does not move more
+    than 1-2 per cent between iterations when it is 100 per cent off"*.
+
+    It is the model's OWN method. The Fortran carries 78 adjusters and updates, for
+    instance,
+
+        kkk_sigma_scale = kkk_sigma_scale + kkk_sigma_scale_adjuster *
+                          (model_bottom_half_earnings_share - data)
+
+    clipped to bounds. run_one_point.sh does not iterate it -- a point is a single
+    fixed-parameter solve -- so the external search has been doing by simplex what
+    the model has a solver for.
+
+    WHY IT MIGHT BEAT EVERYTHING HERE: dimension does not enter. All twenty-one
+    parameters update from ONE evaluation, where Nelder-Mead spends twenty-two
+    evaluations building a simplex before it can take a single step. Against a
+    budget measured in model solves that is a twenty-fold difference in how much
+    each solve buys.
+
+    WHY IT MIGHT NOT: this is Jacobi iteration, and it converges when own-effects
+    dominate cross-effects. Measured on the real model, moving kkk_sigma_scale
+    alone from 2.21 to 1.56 moved beta by 21 points and cbar by 13 -- large
+    off-diagonals. Damping trades speed for stability against exactly that.
+
+    THE SIGN COMES FROM A MEASUREMENT, not from a guess: one finite difference per
+    parameter at the start, which is what the coordinate scan already provides for
+    the real model. A fixed-point iteration with a wrong sign runs away from the
+    answer while looking busy, which is the failure mode to be afraid of.
+    """
+    K = sum(BLOCKS)
+    x = [0.0] * K
+    f = lambda v: T.rosen(v)
+
+    # ONE finite difference per parameter for the sign of d(moment_i)/d(param_i).
+    sign = []
+    base = f(x)
+    for i in range(K):
+        y = list(x); y[i] += 1e-4
+        d = (f(y)[i] - base[i]) / 1e-4
+        sign.append(-1.0 if d > 0 else 1.0)      # move against the gap
+
+    best = sum(g * g for g in base)
+    for _ in range(budget):
+        g = f(x)
+        best = min(best, sum(t * t for t in g))
+        for i in range(K):
+            step = adj * (hi - lo) * min(abs(g[i]), 1.0)
+            x[i] = min(max(x[i] + sign[i] * step * (1 if g[i] >= 0 else -1) *
+                           (1 if sign[i] else 1), lo), hi)
+    print(f'  {label:<46} {budget:>5} evals   best {best:>12.6g}', flush=True)
+    return best
+
+
 def main():
     print('\n  Rosenbrock, 21 parameters, identical total budget,'
           ' everything scored on all 21\n')
@@ -120,6 +176,11 @@ def main():
         for m, lab in (('cycle_block', 'LADDER, block-only objective'),
                        ('cycle_full', 'LADDER, full objective, 12/4/5 blocks')):
             v = experiment(m, budget, lab)
+            print(f'  {"":46} {"":5}          vs one-shot = '
+                  f'{v / base if base else float("nan"):.3g}')
+        for a in (0.02, 0.01, 0.005):
+            v = fixed_point(budget, f'FIXED POINT, adjuster {a:.0%} per iteration',
+                            adj=a)
             print(f'  {"":46} {"":5}          vs one-shot = '
                   f'{v / base if base else float("nan"):.3g}')
         print()
