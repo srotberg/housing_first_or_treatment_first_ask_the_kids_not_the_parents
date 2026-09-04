@@ -363,6 +363,36 @@ declare -A P=(
     # data age 84. Settable since 4 September so a different cap costs a vector
     # line rather than a model hash.
     #
+    # 58 SINCE 4 SEPTEMBER, 20:40, BARRING DATA AGES 84 AND 85. This REVERSES the
+    # author's earlier instruction (*"Make sure you allow homelessness at age
+    # 84-85 still"*), on their instruction after seeing the age profile:
+    #
+    #     age 65        0.009996
+    #     age 66 to 83  0.000000     eighteen consecutive zeros
+    #     age 84        0.012926
+    #     age 85        0.000000
+    #
+    # The old-age problem was never a distribution over the retired. It was one
+    # spike at the last age the street may be chosen, and it is an end-of-horizon
+    # artefact: age 85 is terminal (survival is exactly zero), so a household
+    # homeless at 84 buys a final year of saved rent against losing a final year
+    # of life. That is why MORTALITY CANNOT REACH IT -- rr_homeless_old_level runs
+    # the whole ladder from 3.4 to 30, values at which death at 84 is capped at
+    # probability one, and every moment moves by less than 0.05 per cent.
+    #
+    # MEASURED, matched pair, only this switch differing:
+    #
+    #           band1    band2    band3    band4    band5      h_1
+    #   cap 59  0.00702  0.90792  0.00005  0.04804  0.03697  0.003198
+    #   cap 58  0.00728  0.94169  0.00006  0.04983  0.00114  0.003084
+    #   data      0.260    0.272    0.210    0.184    0.075  0.003990
+    #
+    # The spike is gone and, CONTRARY to what the addiction cap measured, it does
+    # NOT relocate to 83: ages 66 to 85 are all zero and the mass reappears at 63
+    # to 64. "The spike follows the cap" holds for the addiction cap and not for
+    # this one. It does overshoot -- band 5 goes from -51 to -98.5 per cent -- so
+    # h_share5 is a moment to watch, not to trust, on this economy.
+    #
     # IT MUST BE LISTED HERE, not only in the Fortran. Making it a handover
     # parameter without adding it to this table made run_one_point reject every
     # vector that set it -- "unknown parameter:
@@ -370,7 +400,7 @@ declare -A P=(
     # twenty-one vertices in twenty-one seconds and promoted through all three
     # stages without measuring anything. The Fortran's PARAM_HANDOVER case and
     # this array have to be added in the same commit.
-    [max_age_to_choose_homelessness]=59
+    [max_age_to_choose_homelessness]=58
     # THE OLD-AGE RELATIVE RISK, CALIBRATED. Zero keeps the hold behaviour, so
     # the default reproduces what ran before this name existed. Its moment is
     # h_share5, the old band's share of the homeless, target 0.075.
