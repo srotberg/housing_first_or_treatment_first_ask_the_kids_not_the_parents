@@ -238,7 +238,27 @@ RULES = {
   # a job to lose, which deters the middle-income households who currently make up
   # 99.4 per cent of the model's homeless, leaving the genuinely poor. So the
   # moment above target calls for a RISE.
-  'y_h': ('increased_prob_if_homeless', 'raise', 'ruled by the author; bracket at 0.2/0.5/0.95 running'),
+  # y_h HAS NO INSTRUMENT, 4 September 21:40. It was assigned to
+  # increased_prob_if_homeless on the author's ruling, and then MEASURED not to
+  # work -- four brackets, all reported:
+  #
+  #   increased_prob_if_homeless 0.2 -> 0.95 (its whole range): y_h moved 0.8 per
+  #     cent, because the parameter's two halves are a 1.3 point change in a small
+  #     probability and a 52 point change in a large one, and the large one lands
+  #     on households ALREADY unemployed. The SMI share of the homeless fell 59
+  #     per cent instead.
+  #   extra_job_loss_if_homeless, loss side alone, 10 per cent vs 20 per cent:
+  #     every moment moved by under 0.01 per cent.
+  #   consumption_penalty_homeless 0.1/0.3/0.6: abolishes homelessness by 0.3.
+  #   size_homelessness 0.343 -> 0.45: y_h 0.720 -> 0.261, and the labour-market
+  #     penalty on top of it contributes 0.001.
+  #
+  # So size_homelessness is what moves y_h, and it already owns h_1. One parameter
+  # cannot bracket two moments, and which of them it should own is the author's
+  # call, not a thing to guess overnight. Left unscored until they rule.
+  #
+  # increased_prob_if_homeless goes back to exogenous 0.2, which is the author's
+  # instruction of 1 September and what it was before tonight.
     # pi_V, the share of eligible households receiving a housing voucher in the
     # benchmark, target 0.266. The author: *"lower if higher than data"*. Direct:
     # more voucher probability, more take-up. Measured 7-point ray agrees at slope

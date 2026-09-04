@@ -598,10 +598,6 @@ OWN = {
     # weak and coupled instrument -- but it is the only one, and h_1 now has
     # both size_homelessness and the food stamp floor holding it.
     'relative_share_of_housing':                           'gamma',
-    # ITS MOMENT IS y_h, income of the homeless, from 4 September. See the
-    # bounds note above: this parameter has never had a fair test, and the
-    # note below rejecting it cites a value the Fortran's clamp forbids.
-    'increased_prob_if_homeless':                          'y_h',
     # OPENED ON THE AUTHOR'S INSTRUCTION, both previously compile-time constants.
     #
     # increased_prob_if_homeless IS EXOGENOUS AGAIN, at 0.2 -- twenty per cent
