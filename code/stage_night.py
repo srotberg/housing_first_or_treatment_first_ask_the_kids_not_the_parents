@@ -155,9 +155,24 @@ def main():
         seed(stage)
         sh('python3 code/nelder.py --init')
         best, quiet, restarts = None, 0, 0
+        asks = 0
         while True:
             if sh('python3 code/nelder.py --ask').returncode != 0:
-                break
+                # AN --ask REFUSAL IS NOT A CONVERGED STAGE. It used to break
+                # this loop, which promoted the stage instantly: on the first
+                # run all three stages went by in twenty-five seconds without a
+                # single solve. A refusal means a stale pending trial or a
+                # simplex that never seeded, so clear and re-init, and only give
+                # up if it keeps refusing.
+                asks += 1
+                say(f'  stage {stage}: --ask refused ({asks}); re-initialising')
+                sh('python3 code/nelder.py --init')
+                if asks >= 5:
+                    say(f'  stage {stage}: --ask refused five times; promoting')
+                    break
+                time.sleep(10)
+                continue
+            asks = 0
             sh('bash code/batch_nm.txt')
             sh('python3 code/nelder.py --tell')
             push(stage)

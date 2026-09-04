@@ -359,6 +359,18 @@ declare -A P=(
     # 65 the observed ratio is dominated by survivor selection and does not
     # identify the causal effect the model needs.
     [rr_homeless_hold_age]=65
+    # THE LAST AGE AT WHICH THE STREET MAY BE CHOSEN, index not data age; 59 is
+    # data age 84. Settable since 4 September so a different cap costs a vector
+    # line rather than a model hash.
+    #
+    # IT MUST BE LISTED HERE, not only in the Fortran. Making it a handover
+    # parameter without adding it to this table made run_one_point reject every
+    # vector that set it -- "unknown parameter:
+    # max_age_to_choose_homelessness" -- and the overnight run then "solved"
+    # twenty-one vertices in twenty-one seconds and promoted through all three
+    # stages without measuring anything. The Fortran's PARAM_HANDOVER case and
+    # this array have to be added in the same commit.
+    [max_age_to_choose_homelessness]=59
     # THE IMPATIENT DISCOUNT FACTOR, ADDED WITH THE TWO-TYPE MODEL. The commit
     # that split households into a patient and an impatient type taught the
     # Fortran's PARAM_HANDOVER and next_batch.py the name and did NOT teach it
