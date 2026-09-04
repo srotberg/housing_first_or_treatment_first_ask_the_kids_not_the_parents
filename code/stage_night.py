@@ -149,7 +149,17 @@ def converged(stage):
 
 
 def main():
-    for stage in (1, 2, 3):
+    # RESUME FROM WHERE THE LAST RUN GOT TO. main() used to start the staircase
+    # from stage 1 every time, so the crash at 06:00 was answered by a restart
+    # that redid stage 1 -- harmless, since its moments converge on sight, but it
+    # threw away forty minutes of stage 2 and reseeded from scratch. nm_stage.txt
+    # is written before each stage begins and is the resume point.
+    try:
+        start = int(open(os.path.join(HERE, 'nm_stage.txt')).read().strip())
+    except Exception:
+        start = 1
+    say(f'starting at stage {start}')
+    for stage in range(start, 4):
         open(os.path.join(HERE, 'nm_stage.txt'), 'w').write(f'{stage}\n')
         say(f'=== STAGE {stage} ===')
         seed(stage)
