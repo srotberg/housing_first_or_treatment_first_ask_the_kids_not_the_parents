@@ -109,6 +109,24 @@ ADJUSTERS = {
 }
 DEFAULT_ADJ = 0.02
 
+# A HARD CAP ON THE STEP ITSELF, not just on the adjuster. The author, 4 September:
+# *"i think the parameters are moving too fast"*, and they are right -- their
+# original specification was *"the param does not move more than 1-2% between
+# iterations when it is 100% off"* and five parameters were at fifteen.
+#
+# Capping the STEP rather than the adjuster is better than lowering the adjusters,
+# because it fixes the two failures at once. The adjuster still sets the pace near
+# the target, where steps are small and the cap never binds; the cap only bites far
+# away, where a big step is a guess off a secant that has not been measured. And it
+# rescues the parameters my sizing made too SLOW: kappa_uem must travel 60 per cent
+# of its value, which at its 5.5 per cent gap took 73 iterations, and at the cap it
+# takes 30.
+#
+# Where it binds right now: bottom_productivity_level (104 per cent gap, 15.6 ->
+# 2), rr_homeless_old_level (50 per cent, 7.5 -> 2), probability_becoming_unemployed
+# (41 per cent, 2.9 -> 2).
+MAX_STEP = float(os.environ.get('FP_MAX_STEP', '0.02'))
+
 # NO RULE CAN BE ACTED ON. multiple_of_probabilities_of_employment_if_addicted
 # spans its whole bound range, 1 to 32, at slope -1.2e-07 while sud_homeless sits
 # at 6.1e-07 against a target of 0.217. An adjuster on it walks the parameter to a
@@ -222,8 +240,9 @@ def main():
             x = float(v[p])
             # THE AUTHOR'S BAND: at most ADJ of the parameter's own value when the
             # moment is 100 per cent off, proportionally less as the gap closes.
-            step = sgn * ADJUSTERS.get(p, DEFAULT_ADJ) * max(-1.0, min(1.0, rel)) \
-                * max(abs(x), 1e-12)
+            frac = ADJUSTERS.get(p, DEFAULT_ADJ) * max(-1.0, min(1.0, rel))
+            frac = max(-MAX_STEP, min(MAX_STEP, frac))
+            step = sgn * frac * max(abs(x), 1e-12)
             xn = min(max(x + step, lo), hi)
             if abs(xn - x) > 1e-12:
                 v[p] = f'{xn:.8g}'
