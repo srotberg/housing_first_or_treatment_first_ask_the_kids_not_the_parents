@@ -240,11 +240,19 @@ def main():
             rel = (model - target) / target
             lo, hi = NB.BOUNDS[p]
             x = float(v[p])
-            # THE AUTHOR'S BAND: at most ADJ of the parameter's own value when the
-            # moment is 100 per cent off, proportionally less as the gap closes.
+            # THE AUTHOR'S BAND: ADJ of the parameter's own value when the moment
+            # is 100 per cent off, proportionally less as the gap closes.
             frac = ADJUSTERS.get(p, DEFAULT_ADJ) * max(-1.0, min(1.0, rel))
             step = sgn * frac * max(abs(x), 1e-12)
-            xn = min(max(x + step, lo), hi)
+            # FREE, FLOORED AT ZERO. The author, 4 September: *"just let them move
+            # freely (unless you need to cap them at 0"*. NB.BOUNDS no longer clips
+            # -- a parameter may leave the box it was given, and the log SAYS SO
+            # rather than clipping silently, which is the failure that hides a
+            # pinned parameter as a converged one. Zero stays because a negative
+            # scale, hazard or price is not a value the model can read.
+            xn = max(x + step, 0.0)
+            if xn < lo or xn > hi:
+                say(f'   {p} outside its old bounds {lo:g}..{hi:g} at {xn:.8g}')
             if abs(xn - x) > 1e-12:
                 v[p] = f'{xn:.8g}'
                 moved.append((p, x, xn, 100.0 * rel))
