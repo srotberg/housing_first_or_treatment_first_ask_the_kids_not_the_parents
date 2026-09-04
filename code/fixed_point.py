@@ -39,6 +39,10 @@ sys.path.insert(0, HERE)
 
 ADJ = float(os.environ.get('FP_ADJ', '0.02'))   # the author's 1-2 per cent band
 ITERS = int(os.environ.get('FP_ITERS', '100000'))   # continuously, per the author
+# CONVERGED means every rulable moment inside this band, not "the solver got
+# bored". The author, 4 September: *"it should just have a loop that keeps going
+# until convergence"*.
+TOL = float(os.environ.get('FP_TOL', '0.05'))
 STATE = os.path.join(HERE, 'fixed_point_state.json')
 LOG = os.path.join(HERE, 'fixed_point.log')
 TRACE = os.path.join(HERE, 'fixed_point_trace.txt')
@@ -224,8 +228,24 @@ def main():
             if abs(xn - x) > 1e-12:
                 v[p] = f'{xn:.8g}'
                 moved.append((p, x, xn, 100.0 * rel))
+        # THREE DIFFERENT ENDINGS, and they must not be reported as one.
+        gaps = {m: abs(mom[m][0] / mom[m][1] - 1.0)
+                for p_, (m, _) in R.items()
+                if m in mom and mom[m][1]}
+        worst_m = max(gaps, key=gaps.get) if gaps else None
+        if gaps and gaps[worst_m] <= TOL:
+            say(f'CONVERGED at iteration {it}: every rulable moment inside '
+                f'{TOL:.0%}, worst {worst_m} at {100*gaps[worst_m]:.1f}%')
+            return 0
         if not moved:
-            say(f'iteration {it}: nothing moved; converged or every step clipped')
+            # Not convergence. Every step was clipped, which means the parameters
+            # that still have gaps are sitting on their bounds -- a terminal state
+            # the author has to resolve, not one to keep spinning on.
+            at_bound = [p_ for p_ in R
+                        if p_ in v and float(v[p_]) in NB.BOUNDS[p_]]
+            say(f'STUCK at iteration {it}: nothing moved but {worst_m} is still '
+                f'{100*gaps[worst_m]:.1f}% off; on a bound: '
+                + (', '.join(sorted(at_bound)) or 'none'))
             return 0
         worst = max(moved, key=lambda z: abs(z[3]))
         say(f'iteration {it}: {len(moved)} moved, worst gap '
