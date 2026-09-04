@@ -165,6 +165,10 @@ declare -A P=(
     # in the Fortran for why the employment-transition instruments cannot reach
     # that moment.
     [consumption_penalty_homeless]=0
+    # THE EXTRA JOB-LOSS MULTIPLIER OF THE STREET, loss side only. Zero
+    # reproduces the model exactly; it owns emp_homeless, the employed share of
+    # the homeless, 0.46 in the data against 0.99 here.
+    [extra_job_loss_if_homeless]=0
     # THE BOTTOM OF THE PRODUCTIVITY GRID, two instruments for the two moments
     # that say who the homeless are: the employed share (0.46) and their income
     # (0.191 of average). y_grid_kappa sets the bottom node's mass, exactly

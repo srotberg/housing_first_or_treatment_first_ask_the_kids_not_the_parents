@@ -1252,6 +1252,34 @@
         ! at an assigned value assigns the counterfactual's main result.
         real(8) :: increased_prob_if_homeless=0.2
 
+        ! THE EXTRA JOB-LOSS MULTIPLIER OF THE STREET, ON THE LOSS SIDE ONLY.
+        !
+        ! increased_prob_if_homeless drives BOTH halves of the labour market
+        ! penalty from one number, and its two halves are not the same size. On
+        ! the live calibration, taking it from 0.2 to its 0.95 ceiling moves the
+        ! job-LOSS probability by 1.3 points (0.0136 to 0.0266) and the
+        ! job-FINDING probability by 52 points (0.55 to 0.0275). A FORTY-FOLD
+        ! asymmetry inside one parameter.
+        !
+        ! That is why raising it does not do what it looks like it does. The
+        ! finding side collapses by 20x and lands entirely on households ALREADY
+        ! unemployed -- measured, the SMI share of the homeless fell 59 per cent
+        ! and the young share 55 per cent -- while the loss side is a second-order
+        ! risk that cannot compete with a certain, every-period rent saving. The
+        ! income of the homeless moved 0.8 per cent across the whole range.
+        !
+        ! The loss side also cannot be pushed further, because the ceiling of 0.95
+        ! is set by the FINDING side needing to stay non-negative.
+        !
+        ! So this adds to the loss multiplier alone and leaves job finding exactly
+        ! as increased_prob_if_homeless sets it. The author, 4 September: *"maybe
+        ! we are better off just trying to first see if raising the job loss chance
+        ! by larger factors and holding the regain part fixed can solve it"*.
+        !
+        ! ZERO REPRODUCES THE MODEL EXACTLY. Its moment is emp_homeless, the
+        ! employed share of the homeless, 0.46 in the data against 0.99 here.
+        real(8) :: extra_job_loss_if_homeless=0.d0
+
         ! HOW MANY TIMES THE LABOUR SECANT MAY COMPLAIN BEFORE IT GOES QUIET.
         ! Eleven writes inside an OpenMP region, on a stdout that
         ! GFORTRAN_UNBUFFERED_ALL makes a syscall per line, serialises every
@@ -28922,6 +28950,13 @@
     
         use global_vars
         
+        ! THE LOSS-SIDE MULTIPLIER, CLAMPED SO THE SEPARATION PROBABILITY CANNOT
+        ! EXCEED ONE. The two branches below split the separation probability by
+        ! whether unemployment insurance is received, so they must be scaled by the
+        ! SAME factor or they stop summing to it; clamping the factor rather than
+        ! each branch is what preserves that.
+        real(8) :: loss_mult_homeless_1
+        
         integer :: cutoff_age_1,cutoff_age_2
         ! THIS IS AN EXTERNALLY SET PENALTY AND IT IS NOT A DIAL. 0.2 means the
         ! separation rate times 1.2 and the job finding rate divided by 1.2: a
@@ -29114,15 +29149,19 @@
         
         if (include_addiction==0) then
         
+            loss_mult_homeless_1=min(1.d0+increased_prob_if_homeless+&
+                extra_job_loss_if_homeless,&
+                1.d0/max(probability_becoming_unemployed,10.d0**(-12)))
+        
             cutoff_age_1=life_span-retirement_span-1
         
             unemployment_process(1:cutoff_age_1,1,2,1,0,:)=probability_becoming_unemployed*(1-probability_of_ui)
             unemployment_process(1:cutoff_age_1,1,2,2,0,:)=probability_becoming_unemployed*(1-probability_of_ui)*&
-                (1+increased_prob_if_homeless)
+                loss_mult_homeless_1
             
             unemployment_process(1:cutoff_age_1,1,3,1,0,:)=probability_becoming_unemployed*probability_of_ui
             unemployment_process(1:cutoff_age_1,1,3,2,0,:)=probability_becoming_unemployed*probability_of_ui*&
-                (1+increased_prob_if_homeless)
+                loss_mult_homeless_1
                 
             do employment_index=1,employment_grid_size
             
@@ -29172,11 +29211,11 @@
             
             unemployment_process(cutoff_age_2,1,2,1,0,:)=probability_becoming_unemployed*(1-probability_of_ui)
             unemployment_process(cutoff_age_2,1,2,2,0,:)=probability_becoming_unemployed*(1-probability_of_ui)*&
-                (1+increased_prob_if_homeless)
+                loss_mult_homeless_1
             
             unemployment_process(cutoff_age_2,1,3,1,0,:)=probability_becoming_unemployed*probability_of_ui
             unemployment_process(cutoff_age_2,1,3,2,0,:)=probability_becoming_unemployed*probability_of_ui*&
-                (1+increased_prob_if_homeless)
+                loss_mult_homeless_1
                 
             do employment_index=1,employment_grid_size
             
@@ -29206,13 +29245,13 @@
                     probability_becoming_unemployed*(1-probability_of_ui)*adjusted_probability(employment_index)
                     
                 unemployment_process(:,1,2,2,0,employment_index)=probability_becoming_unemployed*(1-probability_of_ui)*&
-                    (1+increased_prob_if_homeless)*adjusted_probability(employment_index)
+                    loss_mult_homeless_1*adjusted_probability(employment_index)
             
                 unemployment_process(:,1,3,1,0,employment_index)=probability_becoming_unemployed*probability_of_ui*&
                     adjusted_probability(employment_index)
                     
                 unemployment_process(:,1,3,2,0,employment_index)=probability_becoming_unemployed*probability_of_ui*&
-                    (1+increased_prob_if_homeless)*adjusted_probability(employment_index)
+                    loss_mult_homeless_1*adjusted_probability(employment_index)
                     
                 unemployment_process(:,1,1,1,0,employment_index)=1-sum(unemployment_process(1,1,2:3,1,0,employment_index))
                 unemployment_process(:,1,1,2,0,employment_index)=1-sum(unemployment_process(1,1,2:3,2,0,employment_index))
@@ -29238,11 +29277,11 @@
                 
             unemployment_process(:,4,5,1,1,:)=probability_becoming_unemployed_if_addicted*(1-probability_of_ui)
             unemployment_process(:,4,5,2,1,:)=probability_becoming_unemployed_if_addicted*(1-probability_of_ui)*&
-                (1+increased_prob_if_homeless)
+                loss_mult_homeless_1
                 
             unemployment_process(:,4,6,1,1,:)=probability_becoming_unemployed_if_addicted*probability_of_ui
             unemployment_process(:,4,6,2,1,:)=probability_becoming_unemployed_if_addicted*probability_of_ui*&
-                (1+increased_prob_if_homeless)
+                loss_mult_homeless_1
                 
             do employment_index=1,employment_grid_size
 
@@ -29271,7 +29310,7 @@
                     probability_becoming_unemployed_if_addicted*(1-probability_of_ui)*adjusted_probability(employment_index)
                     
                 unemployment_process(:,1,5,2,1,employment_index)=&
-                    probability_becoming_unemployed_if_addicted*(1-probability_of_ui)*(1+increased_prob_if_homeless)*&
+                    probability_becoming_unemployed_if_addicted*(1-probability_of_ui)*loss_mult_homeless_1*&
                     adjusted_probability(employment_index)
                     
                 unemployment_process(:,1,6,1,1,employment_index)=&
@@ -29279,7 +29318,7 @@
                 
                 unemployment_process(:,1,6,2,1,employment_index)=&
                     probability_becoming_unemployed_if_addicted*probability_of_ui*&
-                    (1+increased_prob_if_homeless)*adjusted_probability(employment_index)
+                    loss_mult_homeless_1*adjusted_probability(employment_index)
                                         
                 unemployment_process(:,1,4,1,1,employment_index)=1-sum(unemployment_process(1,1,5:6,1,1,employment_index))
                 unemployment_process(:,1,4,2,1,employment_index)=1-sum(unemployment_process(1,1,5:6,2,1,employment_index))
@@ -29305,13 +29344,13 @@
                     probability_becoming_unemployed*(1-probability_of_ui)*adjusted_probability(employment_index)
                     
                 unemployment_process(:,4,2,2,0,employment_index)=probability_becoming_unemployed*(1-probability_of_ui)*&
-                    (1+increased_prob_if_homeless)*adjusted_probability(employment_index)
+                    loss_mult_homeless_1*adjusted_probability(employment_index)
                 
                 unemployment_process(:,4,3,1,0,employment_index)=&
                     probability_becoming_unemployed*probability_of_ui*adjusted_probability(employment_index)
                 
                 unemployment_process(:,4,3,2,0,employment_index)=&
-                    probability_becoming_unemployed*probability_of_ui*(1+increased_prob_if_homeless)*&
+                    probability_becoming_unemployed*probability_of_ui*loss_mult_homeless_1*&
                     adjusted_probability(employment_index)
             
                 unemployment_process(:,4,1,1,0,employment_index)=1-sum(unemployment_process(1,4,2:3,1,0,employment_index))
@@ -36649,6 +36688,16 @@
                     ! consumption enters as c**((1-sigma)*(1-gamma)), so a scale
                     ! factor of zero or below is not a consumption level.
                     consumption_penalty_homeless=max(min(handover_value,0.95d0),0.d0)
+
+                case ("extra_job_loss_if_homeless")
+                    write(*,*) "HANDOVER extra_job_loss_if_homeless:",&
+                        extra_job_loss_if_homeless, "->", handover_value
+                    ! NO LOW CEILING HERE. This side is bounded by the separation
+                    ! probability reaching one, which the clamp in
+                    ! create_unemployment_process enforces, not by an algebraic
+                    ! sign condition. At the calibrated separation rate of 0.0136
+                    ! the clamp binds around 72.
+                    extra_job_loss_if_homeless=max(min(handover_value,200.d0),0.d0)
 
                 ! THE EARNINGS PENALTY OF A SUBSTANCE USE DISORDER. It enters as
                 ! rho_d**(sud*include_rho_d), so it is a multiplier on the wage
