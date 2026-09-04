@@ -262,4 +262,28 @@ RULES = {
     #
     # SECOND-LARGEST GAP IN THE CALIBRATION at -38.7 per cent, behind pi_eu.
     'tau_u': ('utility_cost_of_treatment', 'raise', 'agrees'),
+    # mu_H, recovery housed divided by recovery homeless, target 1.4732 --
+    # Milby et al. (2005), 6.60/4.48 weeks abstinent.
+    # The author: *"overshooting means you have to raise it"*. mu_homeless
+    # multiplies the street's recovery hazard, so raising it brings street recovery
+    # closer to housed recovery and the RATIO falls. Opposite directions, close to
+    # a 1/mu relationship.
+    #
+    # THE CLEANEST INSTRUMENT IN THE TABLE. Its 8-point ray moves its own moment
+    # nine-fold while b, lambda_d and h_1 do not budge past the fifth decimal:
+    #
+    #     mu_homeless 0.1139 -> mu_H 12.283      0.4847 -> 2.886
+    #                 0.1636 ->      8.552       0.6962 -> 2.009
+    #                 0.2349 ->      5.954       0.9110 -> 1.535  (current)
+    #                 0.3375 ->      4.145       1.0000 -> 1.399
+    #
+    # The target sits between the last two rows, so the crossing is near
+    # mu_homeless 0.94 -- a three per cent move. This moment is solvable in one step.
+    #
+    # A RESULT FOR THE PAPER, not just for the calibration: at mu_homeless = 1,
+    # where the street carries NO recovery penalty at all, mu_H is still 1.399
+    # rather than 1. The housed and homeless populations differ in composition, so
+    # the model attributes part of Milby's measured gap to WHO ENDS UP WHERE rather
+    # than to housing itself.
+    'mu_H': ('mu_homeless', 'raise', 'agrees, cleanest ray in the table'),
 }
