@@ -120,10 +120,34 @@ HOLD = {'newborn_endowment_scale'}
 # -- by a measured bracket, which is what a non-differentiable moment needs and
 # what the author's standing preference asks for.  Dropping a row from the linear
 # model is a statement about the DERIVATIVE, not about the target.
-NONSMOOTH = {'h_share1', 'h_1', 'h_2', 'emp_homeless'}
-NONSMOOTH_INST = {'newborn_endowment_scale', 'size_homelessness',
-                  'smallest_rental_relative_to_lowest_income',
-                  'bottom_productivity_level'}
+# NOTHING IS EXCLUDED FROM THE LINEAR MODEL ANY MORE, and nothing is held.
+#
+# The author, 4 September: *"You should move them all until convergence. Ignore
+# young and old homelessness for now."*  Both halves are now true by construction
+# rather than by these sets:
+#
+#   - the two age-share moments, h_share1 and h_share5, are in UNSCORED, and
+#     instruments() already skips any instrument whose moment is unscored, so
+#     newborn_endowment_scale and ssi_floor_level drop out on their own;
+#   - what remains is fifteen scored moments against their own fifteen
+#     instruments, and every one of them belongs in the step.
+#
+# WHY THE EXCLUSIONS EXISTED AND WHY THEY NO LONGER APPLY.  h_1, h_2, h_share1 and
+# emp_homeless were taken out of the linear model on 3 September because their
+# Jacobian rows were meaningless: predicted 0.0 against an actual +126.7 for
+# h_share1, -0.3 against -84.0 for h_1.  That was the age-80 spike moving under
+# them.  Since then the street curve has been mapped point by point over
+# 0.0425 to 0.070 and h_1 is smooth and monotone along it, with a stable measured
+# elasticity.  The row is differentiable now; the old measurement described an
+# artefact that is understood.
+#
+# bottom_productivity_level is measured DEAD -- an eight per cent move shifts
+# emp_homeless by two parts in a million -- but it is included rather than held,
+# because a dead column costs nothing: the truncated SVD drops it, which is
+# exactly what a truncation is for, and holding it by hand would hide from the
+# step that emp_homeless has no leverage of its own.
+NONSMOOTH = set()
+NONSMOOTH_INST = set()
 SV_TOL   = 0.02
 STATE    = os.path.join(HERE, '.newton_state.json')
 
