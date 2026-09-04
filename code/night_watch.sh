@@ -13,10 +13,15 @@ while true; do
         sleep 30
     fi
     sleep 60
-    git add -A code/points code/.nm_state.json code/nm_trace.txt code/batch_nm.txt \
-        code/nm_stage.txt code/stage_night.log code/night_watch.log \
-        code/nm_run.log code/calibration_state.dat code/B_SWEEP_GRID.txt \
-        code/batch_stage*_seed.txt >/dev/null 2>&1
+    # ADD THE WHOLE DIRECTORY, NOT A LIST OF PATHS.
+    #
+    # A named path that does not exist makes `git add` fail for the WHOLE call,
+    # so nothing is staged and the commit that follows is a silent no-op. This
+    # pusher listed code/night_watch.log, which is only created when a restart
+    # happens, so on a healthy night it never existed and the pusher never
+    # pushed anything -- seven solved points sat uncommitted while the log said
+    # nothing was wrong. The same trap cost three separate commits tonight.
+    git add -A code >/dev/null 2>&1
     git commit -q -m "Night run, $(date -u +%H:%M) UTC
 
 Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
