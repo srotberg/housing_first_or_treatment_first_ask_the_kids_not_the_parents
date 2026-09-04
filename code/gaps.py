@@ -539,16 +539,37 @@ def main():
         # over one at +8.7, on a tenth of a point of emp_homeless. Fixing only
         # the improvement test left the wrong point selected and merely stopped
         # announcing it.
+        # THE OBJECTIVE IS THE SUM OF SQUARED RESIDUALS, on the author's
+        # instruction of 4 September: *"i want you to use a better measure than
+        # minmax. use sum of squared residuals"*.
+        #
+        # WHY IT WAS CHANGED, in the evidence that prompted it.  Under a minimax
+        # one bad moment sets the score and everything behind it is invisible.
+        # sigma_y was closed to +0.9 per cent and pi_eu to -1.9 in solved points
+        # on 4 September, after sitting at -39.5 and -43.8 all day, and neither
+        # ever appeared in the table: the points carrying them scored 96 per cent
+        # on a collapsed drug block, so the reported best stayed the old one and
+        # the author reasonably asked why sigma_y was stuck.  It was not stuck.
+        #
+        # The sum of squares counts every moment, so a point that closes eleven
+        # and loses one ranks above a point that is mediocre everywhere.  It is
+        # also what the Newton step already minimises, so the report and the
+        # search now agree on what better means.
+        #
+        # `worst`, the old minimax, is still computed and still printed beside the
+        # loss, because the author's STOPPING RULE is unchanged -- everything
+        # inside ten per cent -- and that is a statement about the worst gap.
         vv = sorted(g.values(), reverse=True)
-        if best is None or _better_vec(vv, best[5]):
-            best = (worst, os.path.basename(f)[6:-4], v, m, g, vv)
+        sq = sum(x * x for x in g.values())
+        if best is None or sq < best[6]:
+            best = (worst, os.path.basename(f)[6:-4], v, m, g, vv, sq)
     if n_wrong_proc:
         live = ', '.join(f'{k}={w}' for k, w in sorted(CONFIG_SWITCHES.items()))
         print(f'  {n_wrong_proc} points skipped for running a different '
               f'configuration than run_one_point.sh defaults to ({live})')
     if best is None:
         print('no scoreable point in the current economy'); return 1
-    worst, tag, v, m, g, _bv = best
+    worst, tag, v, m, g, _bv, _sq = best
     med = sorted(g.values())[len(g) // 2]
 
     mark = os.path.join(HERE, '.gaps_best')
@@ -601,16 +622,21 @@ def main():
     # moves to the next element. The author's stopping rule is untouched -- it is
     # still every scored moment inside ten per cent -- and so is the reported
     # LOSS. This changes only which point is called best while the search runs.
-    _better = _better_vec
+    # PROGRESS IS NOW THE SUM OF SQUARES TOO, not the lexicographic worst vector.
+    # Leaving the improvement test on the old measure while the SELECTION used the
+    # new one would report "loss unchanged" on a firing that had just found a
+    # strictly better point, which is the same class of error as the one that hid
+    # sigma_y: the file would know and not say.
     vec = sorted(g.values(), reverse=True)
-    old = prev.get(key, {}).get('vec')
-    improved = old is None or _better(vec, [float(x) for x in old])
+    old_sq = prev.get(key, {}).get('sq')
+    improved = old_sq is None or _sq < float(old_sq) - 1e-12
     if improved:
-        prev[key] = {'worst': worst, 'tag': tag, 'vec': vec}
+        prev[key] = {'worst': worst, 'sq': _sq, 'tag': tag, 'vec': vec}
         json.dump(prev, open(mark, 'w'), indent=1)
 
     head = (f'point_{tag}  MODEL {h}  beta types {cfg}  {n} points in this economy\n'
-            f'LOSS (minimax over scored) {100*worst:.1f}%   median {100*med:.1f}%   '
+            f'LOSS (sum of squared residuals) {_sq:.4f}   worst {100*worst:.1f}%   '
+            f'median {100*med:.1f}%   '
             f'inside ten per cent {sum(1 for x in g.values() if x <= .10)} of {len(g)}')
 
     # THE HEADLINE LOSS IS NOT A PROGRESS NUMBER WHILE THE GATE IS STAGED, and
@@ -652,8 +678,9 @@ def main():
     # around the gate by hand each time is how a hand-computed table that
     # disagreed with the loss got shown once already.
     if not improved and '--force' not in sys.argv:
-        print(f'no lexicographic progress; best still point_{prev[key]["tag"]} '
-              f'at {100*prev[key]["worst"]:.1f}%. Table not reprinted.')
+        print(f'no progress in the sum of squares; best still '
+              f'point_{prev[key]["tag"]} at {float(prev[key].get("sq", 0)):.4f}. '
+              f'Table not reprinted.')
         print(head)
         return 0
 
@@ -663,7 +690,7 @@ def main():
     # when p_m left the scored set, again when the second beta type came back,
     # and would print it after every model change -- three times in one evening,
     # each time announcing an improvement that had not happened.
-    first = old is None
+    first = old_sq is None
     print('FIRST POINT in this economy -- nothing to compare against yet.\n' if first
           else 'PROGRESS -- full table below.\n' if improved
           else 'loss unchanged; table printed on request.\n')
