@@ -38,4 +38,13 @@ RULES = {
     # pi_eu went 0.08001 -> 0.08491, up 6. Most of this model's unemployment
     # arrives through addiction rather than through the baseline rate.
     'pi_eu': ('probability_becoming_unemployed', 'lower', 'agrees'),
+    # tau_l, the average labour income tax the model produces, target 0.224.
+    # The author: *"if the model has too much income tax, then raise tau_ell"*.
+    #
+    # NOTE THE NAME POINTS THE WRONG WAY. Despite being called
+    # labor_income_tax_rate the parameter behaves as the LEVEL term in a
+    # Heathcote-Storesletten-Violante tax function, so raising it LOWERS the
+    # average tax collected. Measured 8-point ray agrees: slope -1.044. Anyone
+    # reading the name and reasoning from it alone would get this backwards.
+    'tau_l': ('labor_income_tax_rate', 'raise', 'agrees'),
 }
