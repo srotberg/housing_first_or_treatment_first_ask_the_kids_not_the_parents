@@ -205,7 +205,27 @@ DEFAULT_ADJ = 0.02
 #
 # This only became actionable once lambda_d's sign was corrected. While b moved
 # the wrong way the pair could not have worked.
-FROZEN = set()
+FROZEN = {
+    # HELD AT 0.45 ON THE AUTHOR'S INSTRUCTION, 4 September 22:30: *"hold
+    # size_homelessness at 0.45 and let the rest settle"*.
+    #
+    # 0.45 is the value that produced the best point of the day -- it took the
+    # income of the homeless from 0.720 to 0.261 and the share who could afford
+    # rent and sleep rough anyway from 99.5 per cent to 81.
+    #
+    # WHY IT IS HELD RATHER THAN SEARCHED. h_1 is near-discontinuous in it: across
+    # a seven per cent band of this parameter the homelessness rate spans a factor
+    # of TWENTY-EIGHT and is not monotone -- 0.41930 gives 0.000407, 0.42224 gives
+    # 0.004647, 0.42726 gives 0.000430 again. Eighty-one per cent of the model's
+    # homeless can pay rent from current income, so a mass of households sits at
+    # indifference and flips together, and the housing choice being discrete makes
+    # h_1 inherit that as a cliff. Damping cannot fix a discontinuity; no step is
+    # small enough. The solver spent eleven iterations on it and its best point
+    # never improved on the seed.
+    #
+    # h_1 therefore has no live instrument while this holds.
+    'size_homelessness',
+}
 
 # DAMPING ON OSCILLATION: HALVE THE ADJUSTER OF A PARAMETER THAT KEEPS OVERSHOOTING.
 #
