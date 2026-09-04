@@ -248,11 +248,33 @@ def main():
     else:
         v = None
     if v is None:
-        tag = N.best(A, keys)[1]
+        # WARM START FROM THE BEST CORE POINT, not the best on all twenty-one.
+        #
+        # The author, 4 September: *"you might want to use some of these to
+        # warm-start my method"*, of the points Nelder-Mead had just found.
+        #
+        # Ranking on all twenty-one picks the wrong point. sud_homeless (-100 per
+        # cent) and emp_homeless (+104) contribute about 2.08 to EVERY point's SSR
+        # whatever the rest does, so they swamp the comparison: NM's best,
+        # 5d0160c022, is fourth on all twenty-one at 3.6107 while being far the
+        # best on the twelve that respond, at 0.1739. Starting from the all-21
+        # winner would begin the walk from a worse vector on every moment an
+        # adjuster can actually move.
+        #
+        # So the START is chosen on the core twelve and the WALK still optimises
+        # all twenty-one. Nothing is dropped from the objective; only the choice
+        # of where to begin stops being dominated by two moments no instrument
+        # reaches.
+        core, _ = NM.instruments_all(N, NB, 1)
+        ck = [m for _, m in core]
+        pool = [(NM.ssr(N, m, ck), t) for t, (vv, m) in A.items()
+                if all(k in m for k in ck)]
+        tag = min(pool)[1] if pool else N.best(A, keys)[1]
         v = dict(A[tag][0])
         mom = A[tag][1]
         start = 1
-        say(f'cold start from {tag}, SSR {NM.ssr(N, mom, keys):.4f}')
+        say(f'warm start from {tag}: core SSR {NM.ssr(N, mom, ck):.4f}, '
+            f'all-21 SSR {NM.ssr(N, mom, keys):.4f}')
 
     for it in range(start, start + ITERS):
         moved = []
