@@ -225,6 +225,26 @@ FROZEN = {
     #
     # h_1 therefore has no live instrument while this holds.
     'size_homelessness',
+    # FROZEN 4 September 23:05 to protect the overnight run. THIS CUTS AGAINST THE
+    # AUTHOR'S MOST RECENT WORD and is reversible by deleting this line.
+    #
+    # They said both *"the bottom y should be externally chosen and set and not
+    # moved"* and, later, *"choose the bottom income grid to match the share of
+    # employed homeless like we did before"*. This acts on the first, because the
+    # second is measurably wrecking the walk.
+    #
+    # emp_homeless does not respond to it -- its own entry in directions_table
+    # already says the ray reverses, it is near-flat, and the parameter sits ON its
+    # lower bound -- so the update pushes it every iteration and it walks away.
+    # Between the best point and the excursion at iteration 8 it MORE THAN DOUBLED,
+    # 0.004967 to 0.010646, and doubling the lowest income node collapsed h_1 by 84
+    # per cent and blew h_share5 to +427 per cent. SSR 4.03 to 20.74.
+    #
+    # It is the same failure as rr_homeless_old_level earlier tonight: an
+    # instrument that cannot reach its moment does not sit still, it runs, and it
+    # takes every other moment with it. emp_homeless has no live instrument while
+    # this holds, which is the honest position rather than a hidden one.
+    'bottom_productivity_level',
 }
 
 # DAMPING ON OSCILLATION: HALVE THE ADJUSTER OF A PARAMETER THAT KEEPS OVERSHOOTING.
