@@ -1,84 +1,83 @@
-"""The author's standing report, 4 September.
+"""The author's standing report.
 
-*"Things I want you to report as we move along are the gaps table, the homelessness
-of the young and old (and where the homelessness for the old spikes). The average
-income of users and average income of homeless."*
+*"when i ask for the gaps table, show me the ones you are actually calibrating!
+then add the homelessness stats for the young and old and average income of users.
+now the table above it very hard to read....it's not well positioned"* -- 4 September.
 
-Run with no argument to report the best point, or with a tag to report one point:
+So: ONLY the moments in the objective, columns that line up, then the age profile,
+then the incomes.  gaps.py stays the full audit of every measured moment; this is the
+working view.
 
-    python3 code/report.py
-    python3 code/report.py 50edd1ae5b
-
-It prints gaps.py's own table first -- that file stays the only sanctioned gap
-report, and this one calls it rather than reimplementing it -- then the three things
-the author asked for on top. ONE POINT, never a best-of across points.
+ONE EQUILIBRIUM, never a best-of across points, and the point is chosen by the same
+sum of squares gaps.py and newton.py now rank on.
 """
-import os, re, subprocess, sys
+import os, re, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
 
-def best_tag():
+def main():
     import newton as N, next_batch as NB
     NB._apply_process_mapping()
     A = N.archive()
-    keys = [m for _, m in N.instruments()]
-    w, tag, _, _ = N.best(A, keys)
-    return tag
+    inst = N.instruments()
+    keys = [m for _, m in inst]
+    if len(sys.argv) > 1:
+        tag = sys.argv[1]
+        v, mom = A[tag]
+    else:
+        _, tag, v, mom = N.best(A, keys)
+    r = N.residual(mom, keys)
+    ssr = sum(x * x for x in r)
+    inside = sum(1 for x in r if abs(x) <= 0.10)
 
+    print(f'\npoint_{tag}    SSR {ssr:.4f}    worst {100*max(abs(x) for x in r):.1f}%    '
+          f'inside ten {inside} of {len(r)}    ({len(A)} points in this economy)\n')
 
-def band_rows(txt, what):
-    out = {}
-    for m in re.finditer(rf'UNTARGETED {what}, band\s+(\d+)\s+model=\s*([\d.eE+-]+)\s+observed=\s*([\d.eE+-]+)', txt):
-        out[int(m.group(1))] = (float(m.group(2)), float(m.group(3)))
-    return out
+    W = 41
+    print(f'{"parameter":{W}}{"value":>12}  {"moment":<13}{"model":>10}{"target":>10}{"gap":>9}')
+    print('-' * (W + 12 + 2 + 13 + 10 + 10 + 9))
+    rows = sorted(zip(inst, r), key=lambda t: -abs(t[1]))
+    for (p, m), g in rows:
+        mo, tv = mom[m]
+        flag = ' *' if abs(g) <= 0.10 else ''
+        print(f'{p:{W}}{float(v[p]):12.6g}  {m:<13}{mo:10.5f}{tv:10.5f}{100*g:8.1f}%{flag}')
+    print(f'\n  * inside ten per cent.  {inside} of {len(r)}.')
 
+    txt = open(os.path.join(HERE, 'points', f'point_{tag}.txt'), errors='ignore').read()
 
-def one(txt, pat):
-    m = re.search(pat, txt)
-    return tuple(float(g) for g in m.groups()) if m else None
+    def band(what, b):
+        m = re.search(rf'UNTARGETED {what}, band\s+{b}\s+model=\s*([\d.eE+-]+)\s+'
+                      rf'observed=\s*([\d.eE+-]+)', txt)
+        return (float(m.group(1)), float(m.group(2))) if m else (float('nan'),) * 2
 
+    print('\nHOMELESSNESS BY AGE\n')
+    print(f'  {"":16}{"model":>10}{"data":>10}')
+    for lbl, b in (('young, band 1', 1), ('old, band 5', 5)):
+        s, so = band('share of the homeless', b)
+        rt, ro = band('homelessness rate', b)
+        print(f'  {lbl:16}{s:10.4f}{so:10.4f}   share of the homeless')
+        print(f'  {"":16}{rt:10.5f}{ro:10.5f}   homelessness rate')
 
-def main():
-    tag = sys.argv[1] if len(sys.argv) > 1 else best_tag()
-    path = os.path.join(HERE, 'points', f'point_{tag}.txt')
-    txt = open(path, errors='ignore').read()
-
-    print(subprocess.run([sys.executable, os.path.join(HERE, 'gaps.py'), '--force'],
-                         capture_output=True, text=True).stdout)
-
-    print(f'=== the age profile of homelessness, point_{tag} ===\n')
-    sh = band_rows(txt, 'share of the homeless')
-    rt = band_rows(txt, 'homelessness rate')
-    lbl = {1: 'youngest', 5: 'oldest'}
-    print(f"  {'band':>5}{'share model':>13}{'observed':>10}{'rate model':>13}{'observed':>11}")
-    for b in sorted(sh):
-        s, so = sh[b]
-        r, ro = rt.get(b, (float('nan'),) * 2)
-        print(f'  {b:>5}{s:13.4f}{so:10.4f}{r:13.5f}{ro:11.5f}   {lbl.get(b, "")}')
-
-    ages = [(int(m.group(1)), float(m.group(2)), float(m.group(3)))
-            for m in re.finditer(r'DIAG age\s+(\d+)\s+homeless=\s*([\d.eE+-]+).*?mass=\s*([\d.eE+-]+)', txt)]
+    ages = [(int(a), float(h), float(ms)) for a, h, ms in
+            re.findall(r'DIAG age\s+(\d+)\s+homeless=\s*([\d.eE+-]+).*?mass=\s*([\d.eE+-]+)', txt)]
     tot = sum(h * ms for _, h, ms in ages)
-    print('\n  WHERE THE OLD SPIKE SITS -- top five ages by share of all homelessness:')
-    for a, h, ms in sorted(ages, key=lambda r: -r[1] * r[2])[:5]:
-        print(f'    age {a:>3}  rate {h:9.5f}   {100*h*ms/tot:5.1f}% of all homelessness')
-    ret = [r for r in ages if r[0] >= 66]
-    print(f'\n    retired (66+) are {100*sum(h*ms for _, h, ms in ret)/tot:.1f}% of the homeless '
-          f'and {100*sum(ms for *_, ms in ret)/sum(ms for *_, ms in ages):.1f}% of the population')
+    a, h, ms = max(ages, key=lambda t: t[1] * t[2])
+    ret = [t for t in ages if t[0] >= 66]
+    print(f'\n  spike        age {a}, rate {h:.5f}, {100*h*ms/tot:.1f}% of all homelessness')
+    print(f'  retired 66+  {100*sum(h*ms for _, h, ms in ret)/tot:.1f}% of the homeless, '
+          f'{100*sum(ms for *_, ms in ret)/sum(ms for *_, ms in ages):.1f}% of the population')
 
-    print('\n=== incomes, relative to the average ===\n')
-    for lab, pat, note in [
-        ('income of drug users', r'MOMENT y_u\s+income of drug users\s+model=\s*([\d.eE+-]+)\s+target=\s*([\d.eE+-]+)',
-         'Table 7 puts it at 0.74 in the data against 0.41 in the old benchmark, so a RISE toward 0.74 is the model improving'),
-        ('income of the homeless', r'UNTARGETED income of the homeless\s+model=\s*([\d.eE+-]+)\s+observed=\s*([\d.eE+-]+)',
-         'Meyer et al. 2024'),
-    ]:
-        v = one(txt, pat)
-        if v:
-            print(f'  {lab:24s} model {v[0]:7.4f}   data {v[1]:7.4f}   gap {100*(v[0]/v[1]-1):+7.1f}%')
-            print(f'    {note}')
+    print('\nINCOME, relative to the average\n')
+    for lbl, pat in (('drug users', r'MOMENT y_u\s+income of drug users\s+model=\s*([\d.eE+-]+)\s+target=\s*([\d.eE+-]+)'),
+                     ('homeless', r'UNTARGETED income of the homeless\s+model=\s*([\d.eE+-]+)\s+observed=\s*([\d.eE+-]+)')):
+        mm = re.search(pat, txt)
+        if mm:
+            mo, dv = float(mm.group(1)), float(mm.group(2))
+            print(f'  {lbl:12}{mo:10.4f}{dv:10.4f}{100*(mo/dv-1):8.1f}%')
+    print('\n  drug users: 0.74 in Table 7 against 0.41 in the old benchmark, so a rise')
+    print('  toward 0.74 was the model improving; only a ratio above one is a problem.\n')
 
 
 if __name__ == '__main__':
