@@ -1410,6 +1410,29 @@ STALE_LABEL = {'h_2': ['smallest unit', 'above half of income'],
 # what the model emits: pi_eu's entry was removed once the Fortran declared 0.139
 # itself, because one number in two places is how they drift apart. The
 # check below prints loudly if an entry ever disagrees with the model.
+def _live_unemployment_target(_c=[]):
+    """unemployment_rate_data, read from the Fortran rather than pinned here.
+
+    It was a literal, and a literal mirrors whichever way the source last moved:
+    written as 0.139 on 3 September when the archive said 0.049, then stale as
+    0.139 on 4 September when the author retargeted to 0.049. gaps.py reads the
+    same constant the same way, so the two tools cannot disagree.
+    """
+    if not _c:
+        import os, re as _re
+        v = 0.139
+        try:
+            src = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                       'housing_first_or_treatment_first_SR_v1.f90')).read()
+            mm = _re.search(r'::\s*unemployment_rate_data\s*=\s*([0-9.eEdD+-]+)', src)
+            if mm:
+                v = float(mm.group(1).replace('d', 'e').replace('D', 'e'))
+        except Exception:
+            pass
+        _c.append(v)
+    return _c[0]
+
+
 TARGET_OVERRIDE = {
     # pi_eu IS RE-SCORED AGAINST 0.139 ON EVERY POINT, new and archived alike.
     # The Fortran now declares 0.139 so new points agree with this and the check
@@ -1417,7 +1440,7 @@ TARGET_OVERRIDE = {
     # what stops the same model VALUE being scored against two different targets
     # depending on when it was measured. The check will warn on those, correctly,
     # until they age out.
-    'pi_eu': 0.139,
+    'pi_eu': _live_unemployment_target(),
 }
 _override_checked = set()
 

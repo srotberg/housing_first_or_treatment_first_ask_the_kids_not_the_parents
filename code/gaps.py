@@ -455,8 +455,14 @@ def load(path):
     # next_batch.py forces the same number through TARGET_OVERRIDE; without the
     # matching line here the two tools would score the identical model value
     # against different targets and their tables would disagree.
+    # RE-READ FROM THE SOURCE, NOT PINNED. This forced 0.139 because on
+    # 3 September the Fortran said 0.139 while every archived point printed
+    # 0.049. On 4 September the author retargeted to 0.049 and the pin was stale
+    # in the OTHER direction, scoring every point against a target the model no
+    # longer uses. A pinned constant mirrors whichever way the source last moved,
+    # so it reads the source.
     if 'pi_eu' in m:
-        m['pi_eu'] = (m['pi_eu'][0], 0.139)
+        m['pi_eu'] = (m['pi_eu'][0], _live_target('pi_eu', m['pi_eu'][1]))
     if 'gamma' in m and abs(m['gamma'][1] - 0.268) > 1e-9:
         r = re.search(r'DIAG aggregate housing / aggregate expenditure\s+=\s*([0-9.eE+-]+)', t)
         if r:
