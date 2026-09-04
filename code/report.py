@@ -26,13 +26,40 @@ def main():
     # fifteen stage-0 moments while nelder.py was optimising twenty, so the
     # table left out tau_u, lambda_m, mu_H, p_m and sud_homeless -- among them
     # the two largest gaps in the problem.
-    inst, dead = NM.instruments_all(N, NB)
+    # THE STAGE'S OWN SCOPE, NOT THE WHOLE OBJECTIVE.
+    #
+    # This read instruments_all with no stage, so it ranked points on all twenty
+    # moments and printed whichever won THAT -- a different point from the one
+    # the stage in progress is working on. The author noticed on 4 September:
+    # "I also find it strange that pieu and sigma_y for example were the same
+    # values they were a while back... It looks like they are not moving at all
+    # in the calibration."
+    #
+    # They were moving. kkk_sigma_scale had gone 2.20949 to 2.0733 and
+    # probability_becoming_unemployed 0.0122 to 0.012727 in the stage-2 best;
+    # this table was simply showing a different equilibrium. A report that ranks
+    # on a scope the search is not using is worse than no report, because it
+    # reads as evidence the search is idle.
+    #
+    # STAGE=n on the command line, or the live stage from nm_stage.txt.
+    stage = None
+    for a in sys.argv[1:]:
+        if a.startswith('stage='):
+            stage = int(a.split('=')[1])
+    if stage is None:
+        try:
+            stage = int(open(os.path.join(HERE, 'nm_stage.txt')).read().strip())
+        except Exception:
+            stage = None
+    inst, dead = NM.instruments_all(N, NB, stage)
+    print(f'  scope: stage {stage}' if stage else '  scope: every stage')
     if dead:
         print('  not measured on this economy, so not scored: '
               + ', '.join(m for _, m in dead))
     keys = [m for _, m in inst]
-    if len(sys.argv) > 1:
-        tag = sys.argv[1]
+    args = [a for a in sys.argv[1:] if not a.startswith('stage=')]
+    if args:
+        tag = args[0]
         v, mom = A[tag]
     else:
         _, tag, v, mom = N.best(A, keys)

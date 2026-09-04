@@ -98,13 +98,19 @@ STAGE_MOMENTS = [
     #    important, and it reads 54.06 against 80 -- a life worth a third less
     #    than it should be, which is why the street's mortality cost does not
     #    deter.
-    ['pi_V', 'tau_l', 'aleph', 'sigma_y', 'pi_eu'],
+    # lambda_d AND theta JOIN STAGE 2, on the author's instruction of 4
+    # September: "They are very important parameters since they affect the value
+    # of life and the preferences." aleph is calibrated against the value of a
+    # statistical life and theta against the share of spending on the addictive
+    # good, so leaving the drug block until stage 3 asks stage 2 to fit aleph
+    # while the preference parameters it trades against are pinned.
+    ['pi_V', 'tau_l', 'aleph', 'sigma_y', 'pi_eu', 'lambda_d', 'theta'],
     # 3: the rest, once the first two hold. h_share5 joined on 4 September when
     #    the old-age relative risk stopped being assumed and became an
     #    instrument, so the old band's share of the homeless has a target again
     #    and it belongs with h_1 -- the level and the composition are the pair
     #    that fight, and they should be moved together rather than in turn.
-    ['sud_homeless', 'emp_homeless', 'lambda_m', 'tau_u', 'mu_H', 'lambda_d',
+    ['sud_homeless', 'emp_homeless', 'lambda_m', 'tau_u', 'mu_H',
      'h_1', 'h_share5'],
 ]
 
