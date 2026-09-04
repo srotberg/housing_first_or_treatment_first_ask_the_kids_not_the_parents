@@ -54,6 +54,20 @@ On 1 September a statement about the parameter h_2 was applied to the moment, an
 a moment sitting at −18 per cent was conceded until the author caught it. When
 they say "h_2", work out which one they mean before acting.
 
+## THE SAME VECTOR SOLVED TWICE IS A GIT CONFLICT, NOT A CORRUPTION
+
+When the local serial loop and a fleet worker both solve a vector, both write
+`point_<md5>.txt` with the SAME NAME, because the tag is the md5 of the vector.
+Git then reports a conflict on a point file. It is benign: the two files describe
+identical parameters and either may be kept. Resolve with `--theirs`, `git add`,
+`rebase --continue`, and move on.
+
+It is still WASTED COMPUTE, four minutes a time. The local loop skips a tag
+already measured, so handing the fleet a slice the local loop has not yet reached
+is free, and handing it one the loop is about to reach is not. Split from the END
+of a seed batch, not the beginning, and do not re-split a batch the loop has
+already walked into.
+
 ## NEVER EDIT code/ WHILE A SOLVE IS RUNNING -- THE COORDINATOR INCLUDED
 
 Every worker prompt carries this rule and the coordinator broke it on 4 September.
