@@ -48,6 +48,7 @@ import json, math, os, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
+MAX_PER_RUN = 2       # instruments extended per run, worst gap first
 N_EXTEND = 5          # points added when a ray is extended
 N_REFINE = 3          # points added inside a bracketing interval
 MIN_RAY = 3           # a ray shorter than this says nothing about direction
@@ -169,7 +170,14 @@ def main():
           f'{"target":>9}  verdict')
     print('  ' + '-' * 118)
     emitted = 0
-    for p, m in inst:
+    # WORST GAP FIRST, AND ONLY A FEW PER RUN. Emitting an extension for every
+    # unbracketed moment at once queues a hundred solves and the loop stops being
+    # a response to a stall and becomes a second scan. Stalled moments sort ahead
+    # of merely-large gaps, because a large gap that is still closing needs no help.
+    order = sorted(inst, key=lambda pm: (pm[1] not in stalled,
+                                         -gaps.get(pm[1], 0.0)))
+    budget = MAX_PER_RUN
+    for p, m in order:
         if p not in R:
             print(f'  {p:<45} {m:<13} {"-":>4} {"no ray":>21} {"":>9}  '
                   f'NOT SAMPLED')
@@ -190,7 +198,10 @@ def main():
             newx = extend(d['from'], lo, hi, up)
             if not newx:
                 note = f'  AT THE {"UPPER" if up else "LOWER"} BOUND, UNREACHABLE'
+            elif budget <= 0:
+                note = f'  extend {"up" if up else "down"}, QUEUED for a later run'
             else:
+                budget -= 1
                 base = dict(next(v for t, (v, mm) in A.items()
                                  if any(t == r[1] for r in ray)))
                 lines = []
