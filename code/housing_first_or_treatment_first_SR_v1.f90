@@ -3164,13 +3164,33 @@
         integer :: homeless_death_risk_flat_in_age=0
         ! HOLD BAGGETT'S RELATIVE RISK FLAT ABOVE THIS DATA AGE. Zero is off.
         !
-        ! rr_homeless in us_mortality_multipliers.csv is EXACTLY 1.100 for every
-        ! age from 75 to 85 -- eleven of sixty rows at one constant -- and it
-        ! reaches that floor down a perfect straight line from 69: 2.035, 1.865,
-        ! 1.695, 1.525, 1.355, 1.185, steps of exactly -0.17. That tail is an
-        ! interpolation to an assumed floor, which is what too few observed
-        ! deaths above 75 produces; it is not a measurement of what the street
-        ! does to an eighty year old.
+        ! CORRECTION, 4 September: this was first written here as the tail being
+        ! PADDING, an interpolation to an assumed floor. That is wrong.
+        ! make_mortality_multipliers.py builds rr_homeless from Baggett's three
+        ! band ratios -- 9.1 at 25-44, 4.5 at 45-64, 1.1 at 65-84 -- interpolated
+        ! between band MIDPOINTS and held flat past the last one at 74.5. So the
+        ! 1.100 from 75 to 85 is Baggett's own 65-84 figure, extended. It is data.
+        !
+        ! THE REASON TO OVERRIDE IT IS NOT THAT IT IS INVENTED BUT THAT IT IS THE
+        ! WRONG OBJECT, and make_mortality_multipliers.py says so itself:
+        !
+        !   "kappa_phi_h is floored at 1.0. At 65+ the arithmetic returns less
+        !    than one, which read literally says homelessness protects the old.
+        !    That is survivor selection, not causation, and the model cannot
+        !    represent selection on unobserved frailty."
+        !
+        ! Baggett's 1.1 is OBSERVATIONAL: homeless 65-84 year olds die at 1.1
+        ! times the general population's rate. What this model needs is CAUSAL:
+        ! what happens to a seventy five year old who is put on the street. The
+        ! two diverge badly at this age, and both biases push the ratio toward
+        ! one -- the homeless who REACH 65 are a heavily selected, unusually
+        ! robust group, and the 65+ comparison group includes the frail and the
+        ! institutionalised. Taken literally the number says the street is
+        ! protective, which is why the code has to floor it at one.
+        !
+        ! The same script flags the opposite bias young: selection INTO
+        ! homelessness is on adverse traits, so 9.1 at 26 probably overstates the
+        ! causal effect. Both ends are contaminated, in opposite directions.
         !
         ! The model takes it as one, and it is the biggest deterrent the model
         ! has: sleeping rough multiplies a 26 year old's death hazard by 4.41 and

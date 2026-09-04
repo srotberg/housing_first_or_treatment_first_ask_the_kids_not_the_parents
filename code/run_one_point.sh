@@ -333,18 +333,32 @@ declare -A P=(
     # instruction of 4 September: "we just hold it after age 70, let's see if
     # it works".
     #
-    # rr_homeless in us_mortality_multipliers.csv is EXACTLY 1.100 for every age
-    # from 75 to 85 and reaches it down a straight line from 69 in steps of
-    # -0.17, so the tail is an interpolation to an assumed floor rather than a
-    # measurement. The model was treating it as one, and it is the biggest
-    # deterrent the model has: the street multiplies a 26 year old's death
-    # hazard by 4.41 and an 80 year old's by 1.09.
+    # NOT BECAUSE THE TAIL IS PADDING -- it is not, and saying so here was an
+    # error. rr_homeless is built from Baggett's 9.1 / 4.5 / 1.1 band ratios
+    # interpolated between midpoints, so the 1.100 above 75 is his own 65-84
+    # figure extended past its midpoint at 74.5.
+    #
+    # It is overridden because it is the WRONG OBJECT. Baggett's 1.1 is the
+    # OBSERVED ratio for homeless 65-84 year olds; the model needs the CAUSAL
+    # effect of putting a seventy five year old on the street. Selection biases
+    # the observed ratio toward one at this age -- the homeless who reach 65 are
+    # unusually robust, and the comparison group includes the frail and the
+    # institutionalised -- and make_mortality_multipliers.py already says so:
+    # "at 65+ the arithmetic returns less than one, which read literally says
+    # homelessness protects the old. That is survivor selection, not causation."
     #
     # Averaged over 65 to 85 the effective multiplier goes from 1.44 to 1.92,
     # against the 1.6 the note's external table already carries in
     # increased_risk_of_death_homeless. Over the ages actually replaced, 71 to
     # 85, it goes from 1.17 to 1.84. Nothing at or below 70 changes.
-    [rr_homeless_hold_age]=70
+    # SIXTY-FIVE, on the author's instruction of 4 September: "i think we can
+    # just hold it at the 65 number.... and say that.... that would fix it".
+    #
+    # Sixty-five is where Baggett's ratio stops being USABLE, not where it stops
+    # being measured, and that distinction is the sentence for the paper: beyond
+    # 65 the observed ratio is dominated by survivor selection and does not
+    # identify the causal effect the model needs.
+    [rr_homeless_hold_age]=65
     # THE IMPATIENT DISCOUNT FACTOR, ADDED WITH THE TWO-TYPE MODEL. The commit
     # that split households into a patient and an impatient type taught the
     # Fortran's PARAM_HANDOVER and next_batch.py the name and did NOT teach it
