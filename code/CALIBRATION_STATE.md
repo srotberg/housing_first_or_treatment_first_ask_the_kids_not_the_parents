@@ -316,6 +316,54 @@ promotes. It has not been changed yet because which way to change it is the
 author's call, and the choice is between the full-objective ladder and dropping
 the search past stage 1 entirely in favour of brackets.
 
+### A RAY IS A PARTIAL DERIVATIVE, AND THE PAPER'S ECONOMICS IS NOT
+
+The author, 4 September: *"your rays are not correct because they are not based on
+the economics of the paper"*. They are right, and it invalidates a day's worth of
+conclusions drawn from `scan.py` and `expand.py`.
+
+Every ray holds the other twenty parameters PINNED. In this model the parameters
+are jointly identified -- `M` only means anything alongside `b`, `kkk_sigma_scale`
+alongside `discount_factor` and `max_food_cost`, the housing block alongside the
+income distribution. A ray freezes exactly the adjustment that constitutes the
+mechanism.
+
+**`M` IS THE PROOF.** Its ray reads slope -1.2e-07 on `sud_homeless` across the
+whole range 1 to 32, which is arithmetically right and economically empty: with `b`
+held, raising `M` does not punish addiction, it ABOLISHES it -- the disorder rate
+collapses 34-fold between M=4 and M=5.66. With `b` free the pair is a different
+object entirely. The author saw it in one line after the ray had been treated as
+evidence for hours.
+
+WHAT IT INVALIDATES, listed rather than left to surface later:
+
+- "M is a dead instrument" -- wrong, corrected.
+- "mu_homeless does nothing to sud_homeless" -- same defect.
+- "bottom_productivity_level moves emp_homeless by two parts in a million" -- same.
+- "rr_homeless_old_level's ray reverses" -- measured with the income distribution
+  pinned, and that distribution decides who sits near the homelessness margin.
+- "kkk_sigma_scale crosses sigma_y at 1.63" -- measured with beta and cbar frozen,
+  both of which then broke by 20 and 13 points when kkk moved. The joint crossing
+  is elsewhere.
+- EVERY ADJUSTER MAGNITUDE, since size_adjusters.py derived them from ray
+  crossings. The signs survive; the distances do not.
+
+WHAT RAYS ARE STILL GOOD FOR: a sanity check on DIRECTION, and a warning when a
+moment does not respond at all. Not magnitudes, and not proof that an instrument is
+dead.
+
+AND EVEN SIGNS NEED THE ECONOMICS. `b`'s sign was got wrong in both directions on
+the same day: the author ruled it from the name, the measured ray disagreed, the
+ray was dismissed as "a cliff, unusable", and the Fortran's own comment at line 1485
+-- *"the marginal value of the first unit is theta/b, so participation FALLS in b"*
+-- settled it against both. Three sources, and only the one nobody consulted was
+right.
+
+THE CONSEQUENCE FOR METHOD. The fixed point moves all twenty-one parameters from a
+single solve, so its trajectory IS the joint response and it never forms a partial
+derivative. Nelder-Mead likewise. That is a better argument for both than any made
+earlier today.
+
 ## OPEN WITH THE AUTHOR
 
 Nothing is blocking. The loop runs to 400 iterations and commits every twelfth.
