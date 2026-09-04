@@ -173,6 +173,49 @@ DEFAULT_ADJ = 0.02
 # the wrong way the pair could not have worked.
 FROZEN = set()
 
+# DAMPING ON OSCILLATION: HALVE THE ADJUSTER OF A PARAMETER THAT KEEPS OVERSHOOTING.
+#
+# MEASURED, not guessed. Ten iterations of this solver with a flat adjuster put
+# rr_homeless_old_level into a clean period-two limit cycle:
+#
+#     it 3   2.7102    gap +237%      it 7   2.6656    gap +609%
+#     it 4   2.9813    gap  -99%      it 8   2.9322    gap  -73%
+#     it 5   2.6853    gap +229%      it 9   2.7167    gap +182%
+#     it 6   2.9538    gap  -98%      it 10  2.9884    gap  -80%
+#
+# Every step is exactly ten per cent of the value -- the adjuster's maximum, since
+# |rel| is clipped at one -- and every step reverses the last. The parameter is not
+# converging on anything; it is bouncing between 2.68 and 2.99 forever, and each
+# bounce costs a three-minute model solve. theta, size_homelessness and
+# probability_becoming_unemployed show the same flip more weakly.
+#
+# This is the textbook failure of an undamped fixed point, and the textbook remedy:
+# when the residual CHANGES SIGN the step was too big, so halve that parameter's
+# adjuster; when it holds its sign the step was productive, so relax back toward
+# nominal. Per parameter, because the instability is per parameter -- kappa_uem
+# holds one sign for ten iterations and must keep its full step.
+#
+# It cannot stall the solver: the floor is an eighth of nominal, so a parameter
+# that oscillates all night still moves 1.25 per cent of its value each iteration
+# in the direction the gap asks for, and OSC_UP restores it the moment the sign
+# settles.
+OSC_DOWN = 0.5      # on a sign flip
+OSC_UP = 1.5        # on a sign that held
+OSC_FLOOR = 0.125   # never below an eighth of the nominal adjuster
+
+
+def damp(scale, p, rel, last):
+    """The multiplier on p's adjuster, updated from whether its residual flipped."""
+    prev = last.get(p)
+    f = scale.get(p, 1.0)
+    if prev is not None and prev * rel < 0.0:
+        f = max(f * OSC_DOWN, OSC_FLOOR)
+    elif prev is not None:
+        f = min(f * OSC_UP, 1.0)
+    scale[p] = f
+    return f
+
+
 
 def rules(NB):
     """The author's ruling per moment: which way the PARAMETER goes when the
@@ -248,6 +291,8 @@ def main():
         try:
             st = json.load(open(STATE))
             v, start = dict(st['v']), int(st['it']) + 1
+            scale = {k: float(x) for k, x in (st.get('scale') or {}).items()}
+            last = {k: float(x) for k, x in (st.get('last') or {}).items()}
             t = solve_tag_of(A, v)
             mom = A[t][1] if t else None
             if mom is None:
@@ -289,8 +334,13 @@ def main():
         say(f'warm start from {tag}: core SSR {NM.ssr(N, mom, ck):.4f}, '
             f'all-21 SSR {NM.ssr(N, mom, keys):.4f}')
 
+    # A COLD START HAS NO HISTORY, so nothing is damped on the first iteration.
+    try:
+        scale, last
+    except NameError:
+        scale, last = {}, {}
     for it in range(start, start + ITERS):
-        moved, held = [], []
+        moved, held, damped = [], [], []
         for p, (m, sgn) in R.items():
             if m not in mom or not mom[m][1] or p not in v:
                 continue
@@ -303,7 +353,12 @@ def main():
             x = float(v[p])
             # THE AUTHOR'S BAND: ADJ of the parameter's own value when the moment
             # is 100 per cent off, proportionally less as the gap closes.
-            frac = ADJUSTERS.get(p, DEFAULT_ADJ) * max(-1.0, min(1.0, rel))
+            f = damp(scale, p, rel, last)
+            last[p] = rel
+            if f < 1.0:
+                damped.append(f'{m} x{f:.3g}')
+            frac = (f * ADJUSTERS.get(p, DEFAULT_ADJ)
+                    * max(-1.0, min(1.0, rel)))
             step = sgn * frac * max(abs(x), 1e-12)
             # FREE, FLOORED AT ZERO. The author, 4 September: *"just let them move
             # freely (unless you need to cap them at 0"*. NB.BOUNDS no longer clips
@@ -363,6 +418,8 @@ def main():
             f'{FREEZE_BAND:.0%}, worst gap {worst[3]:+.1f}% on {worst[0]}')
         if held:
             say('   held: ' + ', '.join(sorted(held)))
+        if damped:
+            say('   damped for overshooting: ' + ', '.join(sorted(damped)))
         with open(TRACE, 'a') as f:
             f.write(json.dumps({'it': it, 'moved': moved}) + '\n')
         t = solve(v)
@@ -374,7 +431,8 @@ def main():
             say(f'iteration {it}: {t} not on the live economy; stopping')
             return 1
         mom = A[t][1]
-        json.dump({'it': it, 'v': v, 'tag': t}, open(STATE, 'w'), indent=1)
+        json.dump({'it': it, 'v': v, 'tag': t, 'scale': scale, 'last': last},
+                  open(STATE, 'w'), indent=1)
         say(f'iteration {it}: {t}  SSR {NM.ssr(N, mom, keys):.4f}')
     return 0
 
