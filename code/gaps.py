@@ -408,7 +408,18 @@ def load(path):
             (r'UNTARGETED share of the homeless, band\s+1\s+model=\s*([0-9.eE+-]+)', 'h_share1', 0.26),
             (r'UNTARGETED share of the homeless, band\s+5\s+model=\s*([0-9.eE+-]+)', 'h_share5', 0.075),
             (r'UNTARGETED employed share of the homeless\s+model=\s*([0-9.eE+-]+)', 'emp_homeless', 0.46),
-            (r'UNTARGETED renters above 50 pct of income\s+model=\s*([0-9.eE+-]+)', 'rent50', 0.175)):
+            (r'UNTARGETED renters above 50 pct of income\s+model=\s*([0-9.eE+-]+)', 'rent50', 0.175),
+            # THE SUD SHARE OF THE HOMELESS, the untargeted half of the same
+            # Gutwinski meta regression lambda_m is calibrated to. The model has
+            # printed it on every point ever solved and nothing here read it, so
+            # the instrument that owns it --
+            # multiple_of_probabilities_of_employment_if_addicted -- looked like a
+            # parameter with no moment and was dropped from the search as dead.
+            # It is not dead: it sits at 0.117 against 0.217, a gap of 46 per
+            # cent, on all 153 points in the archive. Adding the pattern scores
+            # them all retroactively and costs no model time.
+            (r'UNTARGETED SUD share of the homeless\s+model=\s*([0-9.eE+-]+)',
+             'sud_homeless', 0.217)):
         if key in m:
             continue
         r = re.search(pat, t)
