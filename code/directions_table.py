@@ -76,4 +76,15 @@ RULES = {
     # +2.007. Below target the street's mortality cost does not deter enough,
     # which is why the author called this one very important.
     'aleph': ('value_of_life', 'lower', 'agrees'),
+    # lambda_d, the share of the population with a substance use disorder,
+    # target 0.0368. The author: *"lower if higher than data"*. addiction_scalar_1
+    # scales the hazard of developing the disorder, so parameter and moment move
+    # together. No measured ray yet -- its scan was still running when this was
+    # ruled.
+    #
+    # IT IS ALSO pi_eu'S STRONGEST HANDLE, elasticity -1.05 to -1.11 from matched
+    # pairs, against +0.15 to +0.51 for pi_eu's own instrument. So this rule moves
+    # the unemployment rate harder than the unemployment rule does, and the two
+    # will fight unless the adjuster is damped.
+    'lambda_d': ('addiction_scalar_1', 'lower', 'no ray yet'),
 }
