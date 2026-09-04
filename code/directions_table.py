@@ -86,7 +86,25 @@ RULES = {
     # pairs, against +0.15 to +0.51 for pi_eu's own instrument. So this rule moves
     # the unemployment rate harder than the unemployment rule does, and the two
     # will fight unless the adjuster is damped.
-    'lambda_d': ('addiction_scalar_1', 'lower', 'no ray yet'),
+    # SIGN CORRECTED 4 September. The author first ruled *"lower if higher than
+    # data"*, then reached the right answer from the other direction: *"if raising
+    # M lowers addiction, you just have to lower b so more want to be addicted"*.
+    #
+    # b IS addiction_scalar_1 -- B_SWEEP_GRID.txt holds 0.0368, exactly its value
+    # -- and the Fortran states the mechanism at line 1485: *"the marginal value of
+    # the first unit is theta/b, so participation FALLS in b"*. Parameter and
+    # moment move in OPPOSITE directions.
+    #
+    # THE MEASUREMENT SAID SO AND I OVERRODE IT. The ray reads 0.0368 -> lambda_d
+    # 0.038198 and 0.04048 -> 0.000223, and I recorded it as "a cliff, unusable,
+    # the ruling stands". The cliff is real -- a ten per cent rise collapses the
+    # moment 99.4 per cent -- but the SIGN was right, and dismissing a measurement
+    # because its magnitude is implausible threw away the part that was sound.
+    #
+    # What it cost: the fixed point drove lambda_d AWAY from target for its whole
+    # run, 0.0333 down to 0.0193 against a target of 0.0368, lowering b whenever
+    # the moment was above target and raising it whenever below.
+    'lambda_d': ('addiction_scalar_1', 'raise', 'ray agrees; earlier ruling had the sign inverted'),
     # b, total drug users as a share of the population, target 0.089.
     # The author: *"raise if higher than data"* -- so parameter and moment move in
     # OPPOSITE directions, which the name does not suggest.
