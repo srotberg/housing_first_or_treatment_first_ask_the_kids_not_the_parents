@@ -129,6 +129,11 @@ def say(s):
 # adjuster satisfies both: nothing is clipped at run time, and no parameter can
 # move more than ten per cent of its value in one iteration.
 ADJUSTERS = {
+    # THE AUTHOR'S MAXIMUM, 0.10. y_h is 119 per cent out and the parameter runs
+    # 0 to 0.95 with a hard ceiling, so a 2 per cent default step from 0.2 would
+    # need well over a hundred solves to cross its own range. Ten per cent
+    # compounding crosses it in about sixteen.
+    'increased_prob_if_homeless': 0.10,
     'bottom_productivity_level': 0.1000,
     'discount_factor': 0.0680,
     'kappa_uem': 0.1000,
