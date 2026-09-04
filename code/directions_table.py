@@ -137,4 +137,10 @@ RULES = {
     # cliff into the dead region -- which LOOKS like convergence, because the
     # moment stops responding at all.
     'p_m': ('smi_onset_level', 'lower', 'agrees'),
+    # cbar, food stamps as a share of income, target 0.0042.
+    # The author: *"lower if higher than data"*. max_food_cost sets subsistence,
+    # which is what the food-stamp formula is scaled against, so parameter and
+    # moment move together. No measured ray yet -- its scan was still running when
+    # this was ruled -- so the ray will be a check when it lands.
+    'cbar': ('max_food_cost', 'lower', 'no ray yet'),
 }
