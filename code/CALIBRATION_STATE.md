@@ -1,33 +1,53 @@
-# Calibration state — 4 September, 03:47
+# Calibration state — 4 September, 04:00
 
-## NELDER-MEAD HAS NOT YET IMPROVED ANYTHING, AND THAT IS THE HEADLINE
+## THE STRUCTURAL FINDING OF THE NIGHT: THE LEVEL AND THE COMPOSITION FIGHT
 
-Eleven evaluations across two economies and **not one improvement from a search
-step**. The two gains tonight came from a fill and from fixing a scorer bug, not
-from the algorithm. The author asked twice whether the method was working; on the
-evidence so far it has not earned its keep, and the brackets have produced every
-real finding.
+At `point_8c42b1f32a`, SSR 2.9430, 7 of 20 inside ten per cent:
 
-**The cause is the simplex, not the algorithm.** nelder_test.py drives the real
-state machine to 2.4e-10 on a quadratic bowl and 4.6e-14 on Rosenbrock, so the
-reflect/expand/contract/shrink logic is right. What is wrong is the geometry:
+    h_1 on target (+11.6%)  requires size_homelessness 0.2925, sevenfold up
+    and at that value    old band = 0.8887 of the homeless, spike at age 84
 
-    best 3.1555    worst 63.0656
+    h_1 at 30 per cent of target (size_homelessness 0.0425)
+    and at that value    old band = 0.0001 of the homeless, spike at age 33
 
-The simplex is well-scaled in the PARAMETERS -- one vertex per instrument at ten
-per cent of its own range, which fixed the 4,700x anisotropy -- and badly scaled
-in the OBJECTIVE. A vertex twenty times worse than the incumbent drags the
-centroid, so every reflection is thrown somewhere useless.
+**Neither the mortality hold nor the search can resolve this.** Making the street
+big enough to hit the homelessness rate makes it attractive enough for retirees
+again, and the age-65 hold no longer keeps them off. The two requirements pull in
+opposite directions along the one instrument that sets the level.
 
-**The shrink is the automatic repair** and is running now: it halves each
-vertex's distance to the incumbent, and the first two came back at 6.92 and 14.57
-against the 63 and 67 they replaced. Twenty solves, about an hour.
+The reason is the one measured earlier: for a retiree, three of the four costs of
+the street are structurally zero -- no job to lose, mostly no disorder to fail to
+recover from, and almost no continuation value for mortality to threaten --
+leaving only the foregone housing service, which `size_homelessness` is exactly
+the parameter that shrinks. So raising the level to fix `h_1` necessarily buys
+back old-age homelessness.
 
-**THE COMMITMENT.** If the search is still not beating 3.1555 within a few
-reflections after the shrink completes, the displacement size is wrong and the
-simplex gets rebuilt with PER-INSTRUMENT steps sized to move the objective by a
-comparable amount -- of the order of 20 to 50 per cent each -- rather than by a
-uniform ten per cent of range. Same twenty-solve cost as the shrink.
+**What would resolve it** is a cost of the street that binds on a retiree: a
+morbidity state, which the author has already proposed and parked. Nothing in the
+current instrument set can do it, and this should not be chased further with the
+existing parameters.
+
+## THE SEARCH, AND WHY BOTH METHODS ARE ON THE SHELF
+
+`nelder_test.py` drives the real Nelder-Mead state machine against known minima:
+
+    quadratic bowl, 20-dim   1200 evals   1.2e-09   PASS
+    Rosenbrock,      8-dim    900 evals   4.6e-14   PASS
+    Rosenbrock,     20-dim   3000 evals   0.187     FAIL
+
+The implementation is right; the method is weak at this dimension on a curved
+objective. But it HAS improved: the shrink took 3.1555 to 2.9430, so it is not
+stuck, and the author's call is to let it run overnight and assess in the
+morning. `code/overnight.sh nm` does that -- restarts the loop if it dies and
+pushes every five minutes.
+
+`code/sweep.py` is the alternative, written and ready but NOT running: measured
+coordinate brackets on all twenty instruments per round, assembled with damping
+and accepted only against a measurement. Switch with `bash code/overnight.sh
+sweep` after stopping the current driver. THE TWO MUST NOT RUN TOGETHER on one
+container -- run_one_point.sh writes PARAM_HANDOVER.txt in `code/`, so two
+solvers interleave their handovers and each measures the other's vector. That
+happened once tonight and was caught within a minute.
 
 ## IN FLIGHT ON THE FLEET
 
