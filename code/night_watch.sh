@@ -7,7 +7,12 @@ set -uo pipefail
 cd "$(dirname "$0")/.."
 B=claude/two-period-addiction-hazard-d7gb61
 while true; do
-    if ! ps -eo args= | awk '$2 ~ /stage_night/ {f=1} END {exit f?0:1}'; then
+    # code/PAUSE_NM holds the Nelder-Mead solver off while something else owns
+    # the CPU -- a coordinate scan, a bracket -- without stopping the pusher,
+    # which still has to commit whatever those runs produce. The file is removed
+    # to resume. code/STOP is the author's marker and is not touched here.
+    if [ ! -f code/PAUSE_NM ] && \
+       ! ps -eo args= | awk '$2 ~ /stage_night/ {f=1} END {exit f?0:1}'; then
         echo "$(date -u +%H:%M) stage_night not running; starting" >> code/night_watch.log
         nohup python3 code/stage_night.py >> code/stage_night.log 2>&1 &
         sleep 30
