@@ -379,7 +379,11 @@ declare -A P=(
     # Doing one without the other is what made run_one_point reject every vector
     # that set max_age_to_choose_homelessness and "solve" twenty-one vertices in
     # twenty-one seconds.
-    [rr_homeless_old_level]=0
+    # 2.715 IS rr_homeless AT AGE 65, so the default reproduces exactly what
+    # holding at 65 produced and the parameter is continuous with the economy it
+    # replaces. Its bounds are (1.0, 30.0); a value below 1 is treated as "off"
+    # by the Fortran and is unreachable by the search, which is intended.
+    [rr_homeless_old_level]=2.715
     # THE IMPATIENT DISCOUNT FACTOR, ADDED WITH THE TWO-TYPE MODEL. The commit
     # that split households into a patient and an impatient type taught the
     # Fortran's PARAM_HANDOVER and next_batch.py the name and did NOT teach it

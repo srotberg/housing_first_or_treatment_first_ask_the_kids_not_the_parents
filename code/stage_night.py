@@ -83,6 +83,13 @@ def scope(stage):
     return N, NB, NM, inst, [p for p, _ in inst], [m for _, m in inst]
 
 
+def runner_default(name):
+    """run_one_point.sh's own default for a parameter, as a string."""
+    txt = open(os.path.join(HERE, 'run_one_point.sh'), errors='replace').read()
+    m = re.search(r'\[' + re.escape(name) + r'\]=\s*([0-9.eE+-]+)', txt)
+    return m.group(1) if m else '0'
+
+
 def seed(stage, jitter=0.0):
     """Solve the anchor and one displacement per instrument of this stage.
 
@@ -120,6 +127,16 @@ def seed(stage, jitter=0.0):
             f = 1.0 + rng.uniform(-jitter, jitter)
             base[p] = f'{min(max(x * f if abs(x) > 1e-12 else x + jitter * (hi - lo), lo), hi):.8g}'
         say(f'  RESTART: anchor moved by up to {jitter:.0%} on each instrument')
+    # AN ANCHOR CAN PREDATE AN INSTRUMENT. point_2f138e4fa0 was solved before
+    # rr_homeless_old_level existed, so its VECTOR line has no such key and
+    # float(base[p]) raised KeyError and killed the run. Any instrument missing
+    # from the anchor takes run_one_point.sh's own default, which is the value
+    # the model would have used anyway.
+    for p_ in names:
+        if p_ not in base:
+            base[p_] = runner_default(p_)
+            say(f'  anchor predates {p_}; taking the runner default '
+                f'{base[p_]}')
     lines = ['bash code/run_one_point.sh ' +
              ' '.join(f'{k}={base[k]}' for k in sorted(base))]
     for p in names:
