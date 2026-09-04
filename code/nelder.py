@@ -227,10 +227,40 @@ def stage_now():
 # The band is re-read at every --init, so a moment that drifts back out brings its
 # parameter back into the search on the next rebuild.
 NM_BAND = float(os.environ.get('NM_BAND', '0.10'))
+# A HELD parameter needs a gap this large to come back into the simplex. The
+# gap between the two is the hysteresis; equal values reproduce the old
+# single-threshold behaviour, and thrash with it.
+NM_RELEASE = float(os.environ.get('NM_RELEASE', '0.15'))
+
+
+def _previously_live():
+    """The parameters the CURRENT simplex spans, or None if there is no simplex."""
+    try:
+        return set(json.load(open(STATE))['names'])
+    except Exception:
+        return None
 
 
 def outside_band(N, NB, inst, keys):
-    """The instruments whose own moment is outside NM_BAND at the live best."""
+    """The instruments whose own moment is outside the band at the live best.
+
+    HYSTERESIS: HOLD AT NM_BAND, RELEASE AT NM_RELEASE.
+
+    With one threshold for both, a moment sitting near the line is held, released
+    and held again as the incumbent moves, and every re-entry SHRINKS the live set,
+    which is what triggers a rebuild in stage_night. A parameter hovering at 9.9
+    and 10.1 per cent would spend the night re-seeding the simplex at three model
+    solves a time and never search anything.
+
+    So the two directions have different thresholds: a LIVE parameter is held once
+    its gap is inside NM_BAND, and a HELD parameter is only released once its gap
+    exceeds NM_RELEASE. A parameter cannot change state twice inside that gap, so
+    it cannot thrash.
+
+    On a cold start there is no previous simplex and _previously_live() returns
+    None; then every instrument is judged on NM_BAND alone, which is the old
+    behaviour and the right one -- with nothing held, nothing can be released.
+    """
     A = N.archive()
     if not A:
         return inst
@@ -240,9 +270,16 @@ def outside_band(N, NB, inst, keys):
         return inst
     if not mom:
         return inst
-    out = [(p, m) for p, m in inst
-           if m not in mom or not mom[m][1]
-           or abs(mom[m][0] / mom[m][1] - 1.0) > NM_BAND]
+    was = _previously_live()
+    out = []
+    for p, m in inst:
+        if m not in mom or not mom[m][1]:
+            out.append((p, m))
+            continue
+        gap = abs(mom[m][0] / mom[m][1] - 1.0)
+        held_before = was is not None and p not in was
+        if gap > (NM_RELEASE if held_before else NM_BAND):
+            out.append((p, m))
     # NEVER RETURN AN EMPTY SIMPLEX. If everything is inside the band the stage is
     # converged and the caller decides that; handing back nothing would build a
     # one-vertex simplex, which is the fault nelder_test.py caught on 4 September.
