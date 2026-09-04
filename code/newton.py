@@ -150,7 +150,10 @@ NONSMOOTH = set()
 NONSMOOTH_INST = set()
 # What a point that predates a switch's NAME actually ran at: the Fortran's
 # compile-time default, since run_one_point.sh could not have handed it over.
-PREDATE = {'homeless_death_risk_flat_in_age': '0', 'measure_child_gap': '0'}
+PREDATE = {'homeless_death_risk_flat_in_age': '0', 'measure_child_gap': '0',
+           # the Fortran's compile-time default at line 509, which is what the
+           # 981 points that never mention the name actually ran at.
+           'max_age_to_choose_homelessness': '59'}
 SV_TOL   = 0.02
 STATE    = os.path.join(HERE, '.newton_state.json')
 

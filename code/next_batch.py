@@ -1872,6 +1872,30 @@ CONFIG_SWITCHES = {
     # needed a Fortran change to exist; this is here so that a later point run
     # with the hold OFF on the same source is still kept apart.
     'rr_homeless_hold_age': _live_switch('rr_homeless_hold_age', '0'),
+    # max_age_to_choose_homelessness IS A CONFIG SWITCH, added 4 September after
+    # it was found POOLING TWO ECONOMIES AND SILENTLY MOVING THE SEARCH BETWEEN
+    # THEM.
+    #
+    # It bars the homelessness choice above an age index, so 45 is "nobody over
+    # 70 can be homeless" and 59 is "nobody over 84 can be", and those are two
+    # different models of old-age homelessness, not two parameter values. It is
+    # a HANDOVER parameter, so it moves neither the source hash nor the semantic
+    # hash, and nothing else separated the two sets.
+    #
+    # What that cost: 42 points carried 45 and 223 carried 59, best() ranked all
+    # of them as one economy, a 45-point won, stage_night took it as the anchor,
+    # and the seed copied 45 into all eleven vertices. The search changed
+    # economies between 13:09 and 14:15 and no line of output said so. The
+    # retired share reading 0.0 per cent of the homeless was then MECHANICAL --
+    # homelessness barred from age 70 -- and not the behaviour it was read as.
+    #
+    # The live value is 59 because the author asked for it on 4 September:
+    # *"Make sure you allow homelessness at age 84-85 still"*. Index 59 is age
+    # 84 and index 60 is age 85, which the Fortran already bars.
+    #
+    # PREDATE is 59 because that is the Fortran's compile-time default at line
+    # 509, so the 981 points that never mention the name did run at 59.
+    'max_age_to_choose_homelessness': _live_switch('max_age_to_choose_homelessness'),
 }
 
 
