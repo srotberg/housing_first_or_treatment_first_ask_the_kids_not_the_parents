@@ -1,3 +1,67 @@
+# Calibration state — 4 September, 19:35
+
+## THE LIVE BEST, AND WHY ONE NUMBER IS NOT ENOUGH
+
+The archive holds 215 points on the current model hash. Two searches are running
+and they are best on DIFFERENT objectives, so a single "best" line would be a
+lie:
+
+    Nelder-Mead   ce9e6d2e03   core-12 SSR 0.1338   all-21 SSR 108.01   11 of 21 inside 10%
+    fixed point   28e401cb4c   core-12 SSR 0.2130   all-21 SSR   3.76   11 of 21 inside 10%
+
+NM wins the twelve moments it SCORES and loses the twenty-one by a factor of
+twenty-nine, because stage 1's objective is the core twelve and nothing stops it
+wrecking the other nine. It did: `h_share5` is at +1022 per cent at NM's best.
+The fixed point scores none of them but updates all twenty-one from the direction
+rules, and keeps them bounded. It reached the same eleven-inside in NINE model
+solves against roughly two hundred.
+
+**This is the case for opening stage 1's objective to all twenty-one moments.**
+`STAGE_MOMENTS` is 12/4/5 and marked frozen as the author's call, so it stands
+until they rule.
+
+The earlier line in this file -- `point_8c42b1f32a`, SSR 2.9430, 7 of 20 -- is
+superseded and kept below only for the structural finding it carries.
+
+## pi_eu IS RESOLVED
+
+It was never a flow. It is the unemployment RATE, u = s/(s+f), and only s is an
+instrument: `probability_becoming_employed` is hard-coded at 0.55. Reaching the
+old 13.9 per cent target required every SMI worker at every productivity node to
+be unemployed with probability one, because `min(pbu*kappa_uem,1)` saturates at
+pbu = 1/49.05. The author retargeted to U-3 at 4.9 per cent, and the moment now
+reads **+1.8 per cent** at the live best, from +66 per cent this morning.
+
+## THE HOLD BAND IS LIVE ON BOTH SEARCHES
+
+The author, 4 September: *"every time a parameter gets into the 10%, you hold it
+fixed, and do the projections, shrink, etc, based on the ones that are outside
+the 10%"*.
+
+  fixed point  a parameter whose own moment is inside ten per cent is not
+               updated, and is released the moment it drifts back out.
+  Nelder-Mead  `nelder.setup()` drops held instruments from the simplex,
+               `scope()` seeds only the live ones, and `stage_night` rebuilds the
+               moment the live set shrinks. Currently FOUR of twelve: cbar, p_m,
+               sigma_y, tau_l.
+
+`keys` stays the whole objective in both, so a live parameter cannot buy its own
+moment by pushing a held one out of the band.
+
+## THE FIXED POINT NEEDED DAMPING, AND IT IS MEASURED
+
+Ten iterations put `rr_homeless_old_level` in a period-two limit cycle -- 2.7102,
+2.9813, 2.6853, 2.9538, 2.6656, 2.9322, 2.7167, 2.9884 -- every step exactly ten
+per cent of the value, every step reversing the last, three minutes of solve per
+bounce. Each adjuster is now scaled by whether that parameter's own residual
+changed sign: halved on a flip, relaxed back on a sign that held, floored at an
+eighth. `damp_test.py` checks it against the two measured sequences.
+
+## max_age_to_choose_homelessness IS 59 IN THE LIVE ARCHIVE
+
+The line further down saying all 43 points carry 45 is out of date: it is a
+config switch now, the live value is 59, and the current best carries 59.
+
 # Calibration state — 4 September, 04:00
 
 ## THE STRUCTURAL FINDING OF THE NIGHT: THE LEVEL AND THE COMPOSITION FIGHT
