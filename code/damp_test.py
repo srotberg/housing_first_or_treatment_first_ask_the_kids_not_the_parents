@@ -109,9 +109,56 @@ def test_scalar():
     return ok
 
 
+
+# The gaps rr_homeless_old_level actually produced at iterations 6 to 12, live:
+# one flip, then five iterations of the SAME sign at a gap that never shrinks.
+STALLED = [909.9, -50.7, 896.5, 525.2, 611.7, 675.1]
+
+
+def test_stall():
+    """A SIGN THAT HOLDS AT A HUGE GAP MUST NOT RELAX THE DAMPING.
+
+    This is the sequence that broke the first version of the rule. It flipped once,
+    was halved, and then held one sign for five iterations while the rule relaxed
+    it 1.5x each time; the steps grew from 1.25 to 4.22 per cent and the objective
+    went from 3.41 to 48.0. The scale must never come back UP across this walk.
+    """
+    scale, last, seen = {}, {}, []
+    for g in STALLED:
+        seen.append(FP.damp(scale, 'rr', g / 100.0, last))
+        last['rr'] = g / 100.0
+    print('  stalled walk, scale each iteration: '
+          + ' '.join(f'{x:.4g}' for x in seen))
+    ok = True
+    # What the OLD rule did: relax 1.5x on every iteration that kept its sign,
+    # regardless of whether the gap moved. Stated here so the test measures the
+    # improvement rather than asserting a number out of the air.
+    oldf, prev = 1.0, None
+    for g in STALLED:
+        r = g / 100.0
+        if prev is not None:
+            oldf = max(oldf * FP.OSC_DOWN, FP.OSC_FLOOR) if prev * r < 0 \
+                else min(oldf * FP.OSC_UP, 1.0)
+        prev = r
+    print(f'  the old rule would have ended at {oldf:.4g}')
+    # 896.5 -> 525.2 IS a real reduction, so relaxing there is correct. The two
+    # iterations that follow RISE, 525.2 -> 611.7 -> 675.1, and across those the
+    # scale must not grow at all.
+    if seen[-1] != seen[3]:
+        print(f'  FAIL: the scale moved across the stalled tail '
+              f'({seen[3]:.4g} -> {seen[-1]:.4g})')
+        ok = False
+    if not seen[-1] < oldf:
+        print(f'  FAIL: no improvement on the old rule '
+              f'({seen[-1]:.4g} against {oldf:.4g})')
+        ok = False
+    print('  stall: ' + ('PASS' if ok else 'FAIL'))
+    return ok
+
+
 def main():
     print('\n  damping on oscillation\n')
-    ok = test_replay() & test_scalar()
+    ok = test_replay() & test_scalar() & test_stall()
     print()
     return 0 if ok else 1
 

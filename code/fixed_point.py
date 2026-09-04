@@ -228,15 +228,44 @@ FROZEN = set()
 OSC_DOWN = 0.5      # on a sign flip
 OSC_UP = 1.5        # on a sign that held
 OSC_FLOOR = 0.125   # never below an eighth of the nominal adjuster
+# The gap must fall by at least this fraction to count as progress worth
+# relaxing for. Model noise is about 2e-6 relative, so this is far above it.
+STALL_TOL = 0.02
 
 
 def damp(scale, p, rel, last):
-    """The multiplier on p's adjuster, updated from whether its residual flipped."""
+    """The multiplier on p's adjuster, from whether its residual flipped OR STALLED.
+
+    A SIGN THAT HOLDS IS NOT THE SAME AS PROGRESS. The first version of this rule
+    relaxed the damping on any iteration whose residual kept its sign, and that is
+    wrong in the case that actually occurred: rr_homeless_old_level flipped once at
+    iteration 7, was halved to the floor, and then held one sign at a gap of +600
+    per cent for five iterations while the rule relaxed it 1.5x each time --
+    0.125, 0.19, 0.28 -- so the steps GREW, 1.25 per cent to 4.22 per cent, and the
+    objective went 3.41 to 48.0. The parameter was not converging, it was walking
+    away in a straight line, and the rule read the straight line as success.
+
+    So relaxation now requires the gap to have actually SHRUNK. Three cases:
+
+        sign flipped          the step overshot           halve
+        same sign, |rel| fell the step is working         relax toward nominal
+        same sign, |rel| flat the parameter has no        leave it alone
+                              traction on its own moment
+
+    The third case is the one that matters. A parameter whose moment does not
+    respond is not helped by a bigger step -- rr_homeless_old_level is measured
+    INERT above 3.4, where the whole ladder from 3.4 to 30 moves every moment by
+    less than 0.05 per cent -- and giving it one only walks it further into the
+    dead region.
+    """
     prev = last.get(p)
     f = scale.get(p, 1.0)
-    if prev is not None and prev * rel < 0.0:
+    if prev is None:
+        scale[p] = f
+        return f
+    if prev * rel < 0.0:
         f = max(f * OSC_DOWN, OSC_FLOOR)
-    elif prev is not None:
+    elif abs(rel) < abs(prev) * (1.0 - STALL_TOL):
         f = min(f * OSC_UP, 1.0)
     scale[p] = f
     return f
