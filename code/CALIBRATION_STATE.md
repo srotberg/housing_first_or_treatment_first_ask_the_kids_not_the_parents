@@ -1,3 +1,85 @@
+# Calibration state — 4 September, 19:55
+
+## THE AUTHOR'S METHOD HAS OVERTAKEN NELDER-MEAD, ON NELDER-MEAD'S OWN OBJECTIVE
+
+Six iterations of the damped fixed point, with the hold rule and the oscillation
+damping both live, from a start at core-12 2.4599 / all-21 112.73:
+
+    af5640fa89   core-12 0.1429   all-21  3.83    9 of 21 inside ten per cent
+    938152d1c3   core-12 0.2354   all-21  9.46    8
+    1d5780203b   core-12 0.1266   all-21  3.80   10
+
+    NM best      ce9e6d2e03   core-12 0.1338   all-21 108.01   11
+
+`1d5780203b` is better than NM's best on the TWELVE MOMENTS NM ACTUALLY SCORES
+(0.1266 against 0.1338) and twenty-eight times better on all twenty-one. Six model
+solves against roughly two hundred.
+
+The reason is not that the fixed point searches better. It is that NM's stage-1
+objective is the core twelve, so nothing charges it for what it does to the other
+nine, and it has run `h_share5` out to +1022 per cent. The fixed point never
+scores anything, but it updates all twenty-one from the direction rules, so it
+cannot buy one moment by ruining another.
+
+**The open question for the author: is NM still worth a container?** Its own
+answer is now dominated. `STAGE_MOMENTS` being 12/4/5 is their call and stands
+until they rule.
+
+## THE HOLD BAND IS NOW STICKY, AND THAT WAS THE AUTHOR'S DIAGNOSIS
+
+They said, 4 September: *"maybe the right way is to push them into the rule when
+they pass 10%, and then only start updating them again when they leave 15%"*, and
+*"so it's not so much in and out"*.
+
+They were reading the held counts, which went 12, 9, 9, 8, 10, 9 across the run --
+parameters leaving the band as fast as they entered, so something essentially
+converged kept moving and kept injecting cross-effects. One threshold in both
+directions makes the band a revolving door.
+
+Both searches now hold at ten per cent and release at fifteen. `hold_test.py`
+(fixed point) and `hysteresis_test.py` (Nelder-Mead) each walk one gap across the
+line and count state changes: eight to two, and four rebuilds to one.
+
+THE NUMBER HELD SHOULD NOW TREND UP. If it does not over the next several
+iterations, the sticky band is not enough to break the coupling and that is worth
+telling the author rather than burying.
+
+## DAMPING, AND WHY IT WAS NEEDED
+
+Ten undamped iterations put `rr_homeless_old_level` in a period-two limit cycle:
+2.7102, 2.9813, 2.6853, 2.9538, 2.6656, 2.9322, 2.7167, 2.9884 -- every step
+exactly ten per cent of the value, every step reversing the last, one model solve
+per bounce. Each adjuster is now scaled by whether that parameter's own residual
+changed sign, halved on a flip, relaxed back on a sign that held, floored at an
+eighth. Live scales at last check: `rr_homeless_old_level` 0.75,
+`bottom_productivity_level` 0.5, `kappa_uem` 0.25.
+
+## THE HOMELESSNESS BLOCK IS PARKED BY THE AUTHOR
+
+*"those homelessness things will be fixed later"*, 4 September. `h_share5`, `h_1`,
+`sud_homeless`, `emp_homeless` and `lambda_m` are all downstream of the same
+composition fault -- the model's homeless are 84 per cent aged 65-plus against 7.5
+per cent in the data, and 88 per cent of them could afford rent on income alone.
+Do not chase any of them with the current instruments and do not read their gaps
+as evidence about the search.
+
+## RESTARTS COST MORE THAN THE CORRECTIONS THEY CARRY
+
+Nine sessions between 17:09 and 19:52; only one ran long enough to produce more
+than a couple of solves. Each restart costs about eleven minutes before the first
+iteration lands. The state file and the points are pushed every iteration, so a
+restart loses no TRAJECTORY -- a new session on the worker branch resumes from
+`fixed_point_state.json` -- but it loses the setup time every time. Batch
+corrections; do not restart to carry one.
+
+Two failure modes seen tonight, both mine:
+
+  - a brief that asserted a SNAPSHOT (`must print iteration 3`) went stale within
+    ninety seconds because the run advanced. Assert an invariant instead
+    (`it >= 3`), never a current value.
+  - `create_session` does not reliably attach the repository: fp5 came up with no
+    checkout at all and stalled. Pass `source_url` explicitly.
+
 # Calibration state — 4 September, 19:35
 
 ## THE LIVE BEST, AND WHY ONE NUMBER IS NOT ENOUGH
