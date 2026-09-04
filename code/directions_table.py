@@ -27,4 +27,15 @@ RULES = {
     # deviations, so raising it widens the productivity distribution and shrinks
     # the bottom half's share. Measured ray agrees: slope -0.0975 over 13 points.
     'sigma_y': ('kkk_sigma_scale', 'raise', 'agrees'),
+    # pi_eu, the employment-to-unemployment flow rate, target 0.139.
+    # The author: *"if model has too much unemployment, lower it"*.
+    # probability_becoming_unemployed is the baseline separation probability for a
+    # household without the disorder, so parameter and moment move together.
+    # Measured ray agrees: slope +4.458, though over only 2 points.
+    #
+    # ITS OWN HANDLE IS WEAK, which is the reason this moment has not closed. A
+    # matched pair moved the parameter 0.0122 -> 0.0173777, up 42 per cent, and
+    # pi_eu went 0.08001 -> 0.08491, up 6. Most of this model's unemployment
+    # arrives through addiction rather than through the baseline rate.
+    'pi_eu': ('probability_becoming_unemployed', 'lower', 'agrees'),
 }
