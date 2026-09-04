@@ -169,6 +169,7 @@ OWN = [
     # the effective floor could never pass 0.1774, and that is below the PIA of
     # the node holding 39.8 per cent of the mass. See SSI_FLOOR_ANALYSIS.md.
     ('ssi_floor_level', 'h_share5'),
+    ('increased_prob_if_homeless', 'y_h'),
     # THE ENDOWMENT NO LONGER OWNS h_share1 and h_share1 keeps its row as
     # "(no instrument)". The author, 3 September: *"If you don't need an
     # endowment for the youngest to get the right share of homeless young,
@@ -483,6 +484,17 @@ def load(path):
             (r'UNTARGETED share of the homeless, band\s+5\s+model=\s*([0-9.eE+-]+)', 'h_share5', 0.075),
             (r'UNTARGETED employed share of the homeless\s+model=\s*([0-9.eE+-]+)', 'emp_homeless', 0.46),
             (r'UNTARGETED renters above 50 pct of income\s+model=\s*([0-9.eE+-]+)', 'rent50', 0.175),
+            # THE INCOME OF THE HOMELESS, scored from 4 September on the author's
+            # instruction: *"you choose increased_prob_if_homeless until you match
+            # the average income of the homeless"*.
+            #
+            # It is the moment that says the model's homeless are the WRONG
+            # HOUSEHOLDS. It sits at 0.709 of average against 0.191 in the data --
+            # 271 per cent out -- while 99.4 per cent of them could pay rent from
+            # current income. Every age instrument tried so far has been asked to
+            # repair a composition fault that this one number names directly, and
+            # it was printed on every point ever solved and read by nothing.
+            (r'UNTARGETED income of the homeless\s+model=\s*([0-9.eE+-]+)', 'y_h', 0.191),
             # THE SUD SHARE OF THE HOMELESS, the untargeted half of the same
             # Gutwinski meta regression lambda_m is calibrated to. The model has
             # printed it on every point ever solved and nothing here read it, so

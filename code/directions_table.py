@@ -212,7 +212,33 @@ RULES = {
     # AND IT FIGHTS h_1. Raising size_homelessness 32 per cent raised the level 45
     # per cent and left the age composition IDENTICAL, so the level and the
     # composition do not respond to the same handle.
-    'h_share5': ('rr_homeless_old_level', 'raise', 'agrees near the anchor, ray reverses'),
+    # h_share5 HAS NO INSTRUMENT FROM 4 September, 21:00. The author:
+  # *"for the old, you hold the probability of death at its value at age 65"*.
+  # rr_homeless_old_level is set to 0, which is the Fortran's own branch for
+  # holding rr_homeless_profile at the age-65 value (2.715, Baggett's number)
+  # rather than replacing the tail with a calibrated flat level.
+  #
+  # It should never have been carrying this moment. Measured: the ladder from
+  # 3.4 to 30 moves every moment by under 0.05 per cent, so it is INERT above
+  # 3.4; its only live window is about 2.4 to 3.0, where h_share5 swings from
+  # 0.99 to 0.00; and it limit-cycled there for a dozen iterations. The old-age
+  # spike it was chasing was one age -- data age 84, the last age the street may
+  # be chosen -- and max_age_to_choose_homelessness=58 removes it directly.
+  #
+  # 'h_share5': ('rr_homeless_old_level', ...) -- RETIRED, held at the age-65 value.
+  #
+  # THE INCOME OF THE HOMELESS, from 4 September, on the author's instruction:
+  # *"if you have an income too high for the homeless, you raise the probability
+  # of losing your job if homeless, so regaining is lower too"*.
+  #
+  # The parameter is symmetric by construction -- job loss runs at
+  # (1+increased_prob_if_homeless) times the housed rate and job finding at
+  # (1-increased_prob_if_homeless) times it -- so one number sets both halves of
+  # what the author described. Raising it makes the street costly for anyone with
+  # a job to lose, which deters the middle-income households who currently make up
+  # 99.4 per cent of the model's homeless, leaving the genuinely poor. So the
+  # moment above target calls for a RISE.
+  'y_h': ('increased_prob_if_homeless', 'raise', 'ruled by the author; bracket at 0.2/0.5/0.95 running'),
     # pi_V, the share of eligible households receiving a housing voucher in the
     # benchmark, target 0.266. The author: *"lower if higher than data"*. Direct:
     # more voucher probability, more take-up. Measured 7-point ray agrees at slope
