@@ -891,7 +891,14 @@ BOUNDS = {
     # The KKK grid's dispersion instrument. 1.0 is the published GKOS sds and
     # about 2.2 is what puts the bottom half's share on the SCF's 17.2 per cent,
     # so the bracket is opened well either side of that.
-    'kkk_sigma_scale':                                     (0.80, 4.00),
+    # LOWER BOUND 1.5 ON THE AUTHOR'S INSTRUCTION, 4 September: *"You might need
+    # sigma_y even smaller than 2.21, maybe 1.5 should be the smallest"*.
+    #
+    # It does not bind. The measured ray is sigma_y 0.33122 at kkk 0.8, 0.11750 at
+    # 2.0733 and 0.10337 at the old anchor 2.20949, against a target of 0.172, so
+    # log-linear interpolation puts the crossing near 1.63. Sampling below 1.5 was
+    # overshooting the bottom half's income share by nearly a factor of two.
+    'kkk_sigma_scale':                                     (1.50, 4.00),
     'discount_factor_impatient':                           (0.50, 0.995),
     # Standardised mortality ratios for opioid use disorder run 6 to 10 in the
     # literature and 8 was the assigned midpoint. The author has authorised 4 as
