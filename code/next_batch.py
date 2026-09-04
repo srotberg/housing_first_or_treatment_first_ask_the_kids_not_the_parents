@@ -598,6 +598,7 @@ OWN = {
     # weak and coupled instrument -- but it is the only one, and h_1 now has
     # both size_homelessness and the food stamp floor holding it.
     'relative_share_of_housing':                           'gamma',
+    'homeless_job_penalty_pp':                             'y_h',
     # OPENED ON THE AUTHOR'S INSTRUCTION, both previously compile-time constants.
     #
     # increased_prob_if_homeless IS EXOGENOUS AGAIN, at 0.2 -- twenty per cent
@@ -943,6 +944,10 @@ BOUNDS = {
     # rejects this instrument on the strength of "the one point that ever moved it
     # -- 3.8, nineteen times the assigned 0.2", and no point can have run at 3.8.
     'increased_prob_if_homeless':                          (0.0, 0.95),
+    # THE PERCENTAGE-POINT PENALTY. Above probability_becoming_employed the
+    # finding rate is already floored at zero and delta only raises separations,
+    # so 0.6 is past the end of the useful range.
+    'homeless_job_penalty_pp':                             (0.0, 0.60),
     # One is no penalty; the floor is 0.05 rather than zero because zero
     # earnings for every addict is a corner and not a calibration.
 }

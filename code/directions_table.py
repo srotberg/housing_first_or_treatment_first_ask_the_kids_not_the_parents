@@ -259,6 +259,15 @@ RULES = {
   #
   # increased_prob_if_homeless goes back to exogenous 0.2, which is the author's
   # instruction of 1 September and what it was before tonight.
+  #
+  # SUPERSEDED 21:50: y_h's instrument is homeless_job_penalty_pp, the author's
+  # percentage-point form. *"the job loss chance is what we use to match the income
+  # of the homeless... so if the chance went up 10 p.p., you reduce the chance of
+  # regaining by 10 p.p. too (capped below at 0%)"*. One number moves both sides by
+  # the same points, which is what makes it interpretable where the multiplier was
+  # not. A homeless household with income above target is one that should be losing
+  # work faster, so the moment above target calls for a RISE.
+  'y_h': ('homeless_job_penalty_pp', 'raise', 'the author ruling, percentage-point form'),
     # pi_V, the share of eligible households receiving a housing voucher in the
     # benchmark, target 0.266. The author: *"lower if higher than data"*. Direct:
     # more voucher probability, more take-up. Measured 7-point ray agrees at slope

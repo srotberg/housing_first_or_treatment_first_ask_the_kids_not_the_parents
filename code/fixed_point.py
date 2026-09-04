@@ -134,6 +134,9 @@ ADJUSTERS = {
     # need well over a hundred solves to cross its own range. Ten per cent
     # compounding crosses it in about sixteen.
     'increased_prob_if_homeless': 0.10,
+    # A PROPORTIONAL STEP CANNOT LEAVE ZERO, so delta starts at 0.05 in the
+    # seed vector rather than 0 and then moves by ten per cent of itself.
+    'homeless_job_penalty_pp': 0.10,
     'bottom_productivity_level': 0.1000,
     'discount_factor': 0.0680,
     'kappa_uem': 0.1000,
