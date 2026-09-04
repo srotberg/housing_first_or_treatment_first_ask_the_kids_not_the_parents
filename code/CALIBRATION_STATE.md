@@ -1,3 +1,76 @@
+# Calibration state — 4 September, 21:50
+
+## THE ECONOMY CHANGED TWICE TONIGHT. THE ARCHIVE IS ONE POINT.
+
+Two model changes, both on the author's instruction, both verified as exact
+no-ops at their default before anything was calibrated on them:
+
+  max_age_to_choose_homelessness  59 -> 58, barring the street at data ages 84
+                                  and 85. A config switch, so it partitions.
+  homeless_job_penalty_pp         NEW. The street's labour-market penalty in
+                                  PERCENTAGE POINTS: lose = pbu + delta, find =
+                                  max(0, pbe - delta). Owns y_h.
+  consumption_penalty_homeless    NEW, parked at 0 on the author's instruction.
+  extra_job_loss_if_homeless      NEW, parked at 0; superseded by the pp form.
+
+The live seed is 2c40bae9b4: size_homelessness 0.45, delta 0.05, cap 58.
+
+    y_h            0.26142   target 0.191     +36.9%
+    h_1            0.00465   target 0.00399   +16.6%
+    emp_homeless   0.99230   target 0.46     +115.7%
+    can afford     0.81343   -- was 0.995 this morning
+
+## WHAT MOVED THE INCOME OF THE HOMELESS: size_homelessness, AND NOTHING ELSE
+
+The separating 2x2, only two switches differing:
+
+                              y_h   emp_hl       h_1   can afford
+    size 0.343, no penalty  0.720    0.992   0.00308        0.995
+    size 0.45,  no penalty  0.261    0.992   0.00465        0.813
+    size 0.343, penalty A   0.714    0.996   0.00268        0.993
+    size 0.45,  penalty A   0.260    0.999   0.00458        0.814
+
+Raising the street from 0.343 to 0.45 of the cheapest rental takes the income of
+the homeless from 0.720 to 0.261 and the share who could afford rent and sleep
+rough anyway from 99.5 per cent to 81. The labour-market penalty on top of it
+contributes 0.001.
+
+THIS CONTRADICTS THE 04:00 FINDING, which recorded that raising size_homelessness
+makes the homeless RICHER and OLDER. That was measured on the economy WITH the
+age-84 spike in it and does not carry to cap 58. Do not act on it again.
+
+## FOUR INSTRUMENTS MEASURED DEAD TONIGHT, each with a matched bracket
+
+  rr_homeless_old_level      inert above 3.4 -- the ladder from 3.4 to 30 moves
+                             every moment by under 0.05 per cent. The whole
+                             old-age problem was ONE spike at data age 84, the
+                             last age the street may be chosen, and it is an
+                             end-of-horizon artefact: age 85 is terminal, so
+                             mortality threatens a single final period. HELD at
+                             the age-65 value on the author's instruction.
+  increased_prob_if_homeless its two halves are a 1.3 point change in a small
+                             probability and a 52 point change in a large one, a
+                             forty-fold asymmetry inside one number. Raising it
+                             swept the SMI and young off the street (-59 and -55
+                             per cent) and moved y_h by 0.8. Back to exogenous 0.2.
+  extra_job_loss_if_homeless loss side alone, 10 per cent against 20 per cent:
+                             every moment moved by under 0.01 per cent.
+  consumption_penalty_homeless abolishes homelessness entirely by psi = 0.3.
+
+The common shape: every one of them DETERS someone from the street, so h_1 falls
+and the composition barely moves. None of them draws anyone in. That is why the
+author's prescription -- raise the penalty AND the street together -- is the only
+form that can change composition rather than level.
+
+## THE OPEN MOMENT IS emp_homeless
+
+0.992 against 0.46, and it has not moved for any instrument tried today. The
+model's homeless are low-productivity EMPLOYED households, not unemployed ones.
+Its owner is bottom_productivity_level, whose own entry in directions_table says
+the ray reverses, it is near-flat, and the parameter sits ON its lower bound. The
+author has asked to keep it there for now. If it has not moved by morning, the
+parameter is the thing to revisit, not the moment.
+
 # Calibration state — 4 September, 20:25
 
 ## THE OLD-AGE SPIKE IS ONE AGE, AND THE FIXED POINT HAS ALREADY CLOSED IT
