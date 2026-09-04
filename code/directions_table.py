@@ -104,7 +104,10 @@ RULES = {
     # What it cost: the fixed point drove lambda_d AWAY from target for its whole
     # run, 0.0333 down to 0.0193 against a target of 0.0368, lowering b whenever
     # the moment was above target and raising it whenever below.
-    'lambda_d': ('addiction_scalar_1', 'raise', 'ray agrees; earlier ruling had the sign inverted'),
+    # lambda_d IS THE HAZARD'S MOMENT. pi_d(v) = 1 - exp(-lambda v), so a bigger
+    # lambda_addiction means a higher chance of developing the disorder at any
+    # quantity: parameter and moment move TOGETHER. Above target, lower it.
+    'lambda_d': ('lambda_addiction', 'lower', 'hazard: pi_d(v) = 1 - exp(-lambda v)'),
     # b, total drug users as a share of the population, target 0.089.
     # The author: *"raise if higher than data"* -- so parameter and moment move in
     # OPPOSITE directions, which the name does not suggest.
@@ -120,7 +123,17 @@ RULES = {
     # a weak handle whichever way it points, and it overlaps lambda_d's population:
     # total users 0.089 against disorder 0.0368, two instruments pulling on nested
     # groups. Expect these two to fight.
-    'b': ('lambda_addiction', 'raise', 'agrees in sign, ray reverses'),
+    # b IS THE THRESHOLD'S MOMENT. A household buys only if C > (phi/theta) p b,
+    # so raising addiction_scalar_1 raises the bar and fewer households buy:
+    # parameter and moment move OPPOSITELY. Above target, raise it.
+    #
+    # AND THIS THRESHOLD IS WHY NO HOMELESS HOUSEHOLD HAS THE DISORDER. It requires
+    # consumption ABOVE a bar to use at all, and homelessness is consumption below
+    # the rental margin, far under it. The two are mutually exclusive by
+    # construction, which is why sud_homeless reads 6e-07 at every parameter
+    # setting tried. Lowering b is what brings the bar down to where poor
+    # households clear it.
+    'b': ('addiction_scalar_1', 'raise', 'threshold: C > (phi/theta) p b'),
     # p_m, the SMI POPULATION SHARE -- the stock, not the flow -- target 0.048270.
     # The author: *"lower if higher than data"*. smi_onset_level is the flow, an
     # onset hazard multiplying an age profile, and p_m is the prevalence it

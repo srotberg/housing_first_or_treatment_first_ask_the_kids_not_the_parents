@@ -735,8 +735,28 @@ OWN = {
     # arms on them like any other pair. They remain in FREE as well, which is
     # what the 2x2 and the Jacobian repair use when a plain arm cannot move
     # them; the two mechanisms are complementary rather than exclusive.
-    'lambda_addiction':                                     'b',
-    'addiction_scalar_1':                                   'lambda_d',
+    # THE ADDICTION PAIR WAS CROSSED, corrected 4 September on the author's
+    # reading: *"the disorder rate ... should be controlled by lambda_d [the
+    # hazard]"* and *"the share using drugs ... should be controlled by b!"*.
+    #
+    # lambda_addiction is the coefficient in the ADDICTION HAZARD, which the
+    # Fortran states in one place: pi_d(v) = 1 - exp(-lambda v), the probability of
+    # developing the disorder given the QUANTITY consumed. It controls the disorder
+    # rate directly.
+    #
+    # addiction_scalar_1 is b in the PARTICIPATION THRESHOLD. A household buys the
+    # addictive good only if C > (phi/theta) p b -- the code's own diagnostic
+    # prints that threshold and b_shifter = addiction_scalar_1 -- so raising it
+    # raises the bar and fewer households buy. It controls who USES, not who
+    # becomes disordered.
+    #
+    # Crossed, each instrument reached its moment only INDIRECTLY, which is why
+    # both looked pathological: addiction_scalar_1 -> lambda_d read as a cliff, a
+    # ten per cent move collapsing the moment 99.4 per cent, and lambda_addiction
+    # -> b read as a near-flat ray that reversed. Those are the signatures of an
+    # instrument acting through two links rather than one.
+    'lambda_addiction':                                     'lambda_d',
+    'addiction_scalar_1':                                   'b',
     'ssi_floor_level':                                      'h_share5',
     # THE ENDOWMENT IS HELD AT ZERO AND h_share1 HAS NO INSTRUMENT. The author,
     # 3 September: *"If you don't need an endowment for the youngest to get the
