@@ -36,7 +36,16 @@ sys.path.insert(0, HERE)
 
 STALL    = 20     # quiet evaluations before the simplex is moved somewhere else
 RESTARTS = 3      # restarts from a new location before the stage is given up on
-BAND    = 0.10    # the author's rule: inside ten per cent
+# THE BAND IS TIGHTER FOR STAGE 1, on the author's instruction of 4 September:
+# "for stage 1 we should try to converge within 5%. Stage 2 and 3 can be within
+# 10%."
+#
+# Stage 1 is the income process and the preferences the other two stages are
+# fitted on top of -- sigma_y, pi_eu, beta, gamma, omega_l -- so an error left
+# there is an error every later stage is calibrated against. Five per cent there
+# and ten per cent after.
+BAND_BY_STAGE = {1: 0.05}
+BAND    = 0.10    # the author's rule for stages 2 and 3
 LOG     = os.path.join(HERE, 'stage_night.log')
 BRANCH  = 'claude/two-period-addiction-hazard-d7gb61'
 # The best vector on the economy immediately before the current one. Used only
@@ -178,6 +187,10 @@ def state():
     return json.load(open(f)) if os.path.exists(f) else None
 
 
+def band_for(stage):
+    return BAND_BY_STAGE.get(stage, BAND)
+
+
 def converged(stage):
     """Every moment in this stage's scope inside the band, at the live best."""
     N, NB, NM, inst, names, keys = scope(stage)
@@ -186,7 +199,8 @@ def converged(stage):
         return False, 0, len(keys)
     _, tag, _, mom = N.best(A, keys)
     r = N.residual(mom, keys)
-    ins = sum(1 for x in r if abs(x) <= BAND)
+    b = band_for(stage)
+    ins = sum(1 for x in r if abs(x) <= b)
     return ins == len(r), ins, len(r)
 
 
@@ -234,19 +248,21 @@ def main():
                 if best is None or f < best - 1e-12:
                     best, quiet = f, 0
                     ok, ins, tot = converged(stage)
-                    say(f'  stage {stage}: new best {f:.4f}, inside {ins}/{tot}')
+                    say(f'  stage {stage}: new best {f:.4f}, inside '
+                        f'{ins}/{tot} at {band_for(stage):.0%}')
                 else:
                     quiet += 1
             ok, ins, tot = converged(stage)
             if ok:
                 say(f'  stage {stage} CONVERGED: all {tot} moments inside '
-                    f'{BAND:.0%}, best {best:.4f}')
+                    f'{band_for(stage):.0%}, best {best:.4f}')
                 break
             if quiet >= STALL:
                 if restarts < RESTARTS:
                     restarts += 1
                     say(f'  stage {stage} stuck for {STALL} evaluations at '
-                        f'{ins}/{tot} inside {BAND:.0%}, best {best:.4f}; '
+                        f'{ins}/{tot} inside {band_for(stage):.0%}, '
+                        f'best {best:.4f}; '
                         f'restart {restarts} of {RESTARTS} from a new location')
                     # ESCALATING, so successive restarts search further afield
                     # rather than retrying the same neighbourhood: 25, 50 then
@@ -259,7 +275,8 @@ def main():
                     quiet = 0
                     continue
                 say(f'  stage {stage} STALLED after {RESTARTS} restarts: '
-                    f'{ins}/{tot} inside {BAND:.0%}, best {best:.4f}. '
+                    f'{ins}/{tot} inside {band_for(stage):.0%}, '
+                    f'best {best:.4f}. '
                     f'Promoting so the night is not held.')
                 break
         push(stage)
