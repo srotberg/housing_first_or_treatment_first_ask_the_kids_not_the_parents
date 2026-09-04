@@ -38,7 +38,8 @@ ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 
 ADJ = float(os.environ.get('FP_ADJ', '0.02'))   # the author's 1-2 per cent band
-ITERS = int(os.environ.get('FP_ITERS', '400'))
+ITERS = int(os.environ.get('FP_ITERS', '100000'))   # continuously, per the author
+STATE = os.path.join(HERE, 'fixed_point_state.json')
 LOG = os.path.join(HERE, 'fixed_point.log')
 TRACE = os.path.join(HERE, 'fixed_point_trace.txt')
 
@@ -145,6 +146,14 @@ def solve(vec):
     return mm.group(1) if mm else None
 
 
+def solve_tag_of(A, v):
+    """The archived tag whose vector matches v on every key it carries."""
+    for t, (vv, _) in A.items():
+        if all(str(vv.get(k)) == str(x) for k, x in v.items()):
+            return t
+    return None
+
+
 def main():
     import newton as N, next_batch as NB, nelder as NM
     NB._apply_process_mapping()
@@ -163,12 +172,42 @@ def main():
     for p in sorted(FROZEN):
         say(f'   {p:<44} FROZEN, its instrument cannot move its moment')
 
-    tag = N.best(A, keys)[1]
-    v = dict(A[tag][0])
-    mom = A[tag][1]
-    say(f'starting from {tag}, SSR {NM.ssr(N, mom, keys):.4f}')
+    # RESUME WHERE IT WAS, NOT FROM THE BEST POINT.
+    #
+    # The author, 4 September: *"you should allow my method to update all the time
+    # continuously"*. A fixed point is NOT a descent method -- its iterates can get
+    # transiently worse while walking toward the answer, because closing one gap
+    # opens another before the next update closes that. Resuming from the archive's
+    # best would therefore undo every step that had temporarily cost SSR, and a
+    # restart would reset the walk rather than continue it.
+    #
+    # So the live vector is written every iteration and read back on restart. The
+    # archive's best is only the cold start, for the first run on a new economy.
+    start = 1
+    if os.path.exists(STATE):
+        try:
+            st = json.load(open(STATE))
+            v, start = dict(st['v']), int(st['it']) + 1
+            t = solve_tag_of(A, v)
+            mom = A[t][1] if t else None
+            if mom is None:
+                v = None
+            else:
+                say(f'resuming at iteration {start} from {t}, '
+                    f'SSR {NM.ssr(N, mom, keys):.4f}')
+        except Exception as e:
+            say(f'state unreadable ({e}); cold starting')
+            v = None
+    else:
+        v = None
+    if v is None:
+        tag = N.best(A, keys)[1]
+        v = dict(A[tag][0])
+        mom = A[tag][1]
+        start = 1
+        say(f'cold start from {tag}, SSR {NM.ssr(N, mom, keys):.4f}')
 
-    for it in range(1, ITERS + 1):
+    for it in range(start, start + ITERS):
         moved = []
         for p, (m, sgn) in R.items():
             if m not in mom or not mom[m][1] or p not in v:
@@ -202,6 +241,7 @@ def main():
             say(f'iteration {it}: {t} not on the live economy; stopping')
             return 1
         mom = A[t][1]
+        json.dump({'it': it, 'v': v, 'tag': t}, open(STATE, 'w'), indent=1)
         say(f'iteration {it}: {t}  SSR {NM.ssr(N, mom, keys):.4f}')
     return 0
 
