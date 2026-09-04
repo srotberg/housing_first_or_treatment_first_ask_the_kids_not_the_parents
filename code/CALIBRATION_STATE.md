@@ -55,32 +55,55 @@ describes that economy as live is out of date.
 
 | parameter | moment | why it is out |
 |---|---|---|
-| `weight_on_child` | `omega_c` | needs `measure_child_gap=1`, which costs a second full solve and converge |
+| `weight_on_child` | `omega_c` | held: *"since omega_c is so close, just keep it fixed for now, we can adjust it at the end"* — it reads 0.1622 against 0.1834 |
 | `newborn_endowment_scale` | `h_share1` | the author holds it at 0 |
 | `ssi_floor_level` | `h_share5` | the author holds the floor to the 2024 federal rate |
 
-`sud_homeless` WAS out and should not have been: the model prints
-`UNTARGETED SUD share of the homeless` on every point ever solved and `gaps.py`
-had no pattern for it, so its instrument looked like a parameter with no moment.
-It sits at 0.1166 against Gutwinski's 0.217 on all 155 archived points. Fixed
-4 September; costs no model time and applies retroactively.
+### Three scorer bugs found on 4 September, all fixed
 
-The simplex was seeded from the archive: eighteen affinely independent vertices
-out of 155 solved points, for **zero model solves**. Three directions remain, the
-instruments nothing ever moved; `--ask` fills them one solve at a time.
+1. **`sud_homeless` was never parsed.** The model prints
+   `UNTARGETED SUD share of the homeless` on every point ever solved and
+   `gaps.py` had no pattern for it, so its instrument
+   (`multiple_of_probabilities_of_employment_if_addicted`) looked like a
+   parameter with no moment and sat outside the search. It reads 0.1166 against
+   Gutwinski's 0.217. Now scored retroactively on all 155 points, no model time.
 
+2. **`omega` vs `omega_c`.** The Fortran prints `MOMENT omega`; `OWN` calls it
+   `omega_c`. Even with `measure_child_gap=1` the scorer would have filed it
+   under a key nothing reads. Aliased, so `omega_c` will work first time when it
+   is taken up at the end.
+
+3. **`archive()` enforced ONE config switch out of the table.**
+   `homeless_death_risk_flat_in_age` was added to `CONFIG_SWITCHES` on
+   4 September and had no effect at all: the two points solved with the flat 1.6
+   mortality multiplier POOLED with the 150 solved on Baggett's age profile and
+   were ranked against them as one economy. All switches enforced now, with a
+   point predating a name falling back to the Fortran's compile-time default
+   rather than the live value.
+
+### `measure_child_gap` costs 9 per cent, not 100
+
+Reported here first as a doubling, because the block runs a second solve and
+converge. Measured on the same vector: **4m06s off, 4m30s on**. The
+counterfactual starts from the converged baseline distribution. It is off again
+because `omega_c` is held, and turning it off restores the archive: it is a
+CONFIG SWITCH, so with it on exactly one point pooled and the simplex needed
+twenty-two fresh solves to rebuild.
+
+### The tension in `M`, worth knowing before it is spent
+
+`multiple_of_probabilities_of_employment_if_addicted` is the SUD employment
+penalty on both margins — job loss `× M`, job finding `÷ M`. Its target is
+`sud_homeless`, which wants it UP. The moment it controls mechanically,
+`kappa_ued`, is an untargeted OUTPUT on the author's own instruction
+(*"we don't truly know what they are so we calibrate them"*) and already reads
+0.2217 against 0.1625, **36 per cent high**. Closing `sud_homeless` drives
+`kappa_ued` further from its data counterpart. Offered to the author on
+4 September and NOT reversed: `kappa_ued` stays an output.
+
+    simplex complete, 20 vertices
     best      827aa52172   SSR 2.1441
-    worst vertex           SSR 9.8159
-
-The best rose from 1.9299 when `sud_homeless` joined the objective. That is a
-moment 46 per cent adrift being counted for the first time, not a regression.
-
-**Combining the stages changed the standing.** On stage 0 alone the best was
-0.9603; the two moments stage 0 never scored are far off and were free to drift
-the whole time:
-
-    utility_cost_of_treatment   tau_u      0.45441   0.24500   +85.5%
-    kappa_uem                   lambda_m   0.12859   0.25000   −48.6%
+    worst vertex           SSR 19.0389   (the smi_onset_level fill)
 
 ## PARKED BY THE AUTHOR
 
