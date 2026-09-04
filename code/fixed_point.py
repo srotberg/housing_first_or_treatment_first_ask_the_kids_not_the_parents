@@ -119,8 +119,15 @@ DEFAULT_ADJ = 0.02
 # and the cap never binds, while the cap bites only far away -- where a big step is
 # a guess off a secant nobody measured.
 #
-# FIVE PER CENT, on the author's revision of 4 September: *"i think you can adjust
-# up to 5% when you are 100% off"*.
+# TEN PER CENT, the author's final figure on 4 September: *"i think you can adjust
+# up to 5% when you are 100% off"*, then *"maybe even 10%"*. Their first
+# specification was one to two per cent; this is where they settled.
+#
+# AT TEN PER CENT THE CAP IS NEARLY INERT at the current gaps. It binds only where
+# adjuster times gap exceeds 0.10, and the only parameter there is
+# bottom_productivity_level, whose 104 per cent gap and 0.15 adjuster would step 15
+# per cent. Everything else already steps below ten. So this setting is a ceiling
+# against a runaway rather than a brake on the current run.
 #
 # A CAP ONLY EVER REDUCES A STEP. It was claimed here that capping rescued
 # kappa_uem from 73 iterations to 30; that was wrong. kappa_uem's step is 0.83 per
@@ -128,9 +135,8 @@ DEFAULT_ADJ = 0.02
 # 73 iterations to travel the 60 per cent its ray asks for. Making a parameter
 # faster takes a bigger ADJUSTER, which is a different change.
 #
-# Where the 5 per cent cap binds now: bottom_productivity_level (104 per cent gap,
-# 15.0 -> 5.0) and rr_homeless_old_level (50 per cent, 7.5 -> 5.0). Nothing else.
-MAX_STEP = float(os.environ.get('FP_MAX_STEP', '0.05'))
+# Where it binds now: bottom_productivity_level only, 15.0 -> 10.0.
+MAX_STEP = float(os.environ.get('FP_MAX_STEP', '0.10'))
 
 # NO RULE CAN BE ACTED ON. multiple_of_probabilities_of_employment_if_addicted
 # spans its whole bound range, 1 to 32, at slope -1.2e-07 while sud_homeless sits
