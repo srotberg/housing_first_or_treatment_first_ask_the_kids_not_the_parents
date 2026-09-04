@@ -103,4 +103,38 @@ RULES = {
     # total users 0.089 against disorder 0.0368, two instruments pulling on nested
     # groups. Expect these two to fight.
     'b': ('lambda_addiction', 'raise', 'agrees in sign, ray reverses'),
+    # p_m, the SMI POPULATION SHARE -- the stock, not the flow -- target 0.048270.
+    # The author: *"lower if higher than data"*. smi_onset_level is the flow, an
+    # onset hazard multiplying an age profile, and p_m is the prevalence it
+    # accumulates into, so the two move together. Measured 7-point ray agrees and
+    # is clean, slope +3.749:
+    #
+    #     onset 0.000345 -> p_m 0.0345      onset 0.005522 -> p_m 0.0556
+    #     onset 0.000690 -> p_m 0.0360      onset 0.011045 -> p_m 0.0760
+    #     onset 0.001381 -> p_m 0.0389      onset 0.022090 -> p_m 0.1161
+    #     onset 0.002761 -> p_m 0.0446  (current)
+    #
+    # HEAVILY DAMPED: 64 times the hazard buys 3.4 times the prevalence, so
+    # corrections here have to be large in percentage terms to move anything.
+    # The crossing sits just above the current value, near onset 0.0034.
+    # lambda_d, REVISITED: the ray DISAGREED and the ray is what is wrong.
+    #
+    # Its two points are addiction_scalar_1 0.0368 -> lambda_d 0.038198 and
+    # 0.04048 -> 0.000223. A ten per cent rise in the parameter collapses the
+    # moment by 99.4 per cent. That is not a slope, it is a CLIFF -- the same one
+    # that killed the Newton attempt earlier the same day, where a 0.35 per cent
+    # nudge swung lambda_d from -4.5 to -96.5 per cent. A fitted slope of -10.32
+    # across a discontinuity carries no information about direction.
+    #
+    # WORSE: many archived points sit at addiction_scalar_1 = 0.0368 EXACTLY and
+    # read lambda_d = 0.000000, while one reads 0.038198. Same parameter value,
+    # the moment either on target or completely dead, so lambda_d is switched on
+    # and off by something else in the vector rather than moved smoothly by its
+    # own instrument.
+    #
+    # CONSEQUENCE FOR THE SOLVER: addiction_scalar_1 needs a far harder damped
+    # adjuster than anything else here, or a fixed-point step will cross that
+    # cliff into the dead region -- which LOOKS like convergence, because the
+    # moment stops responding at all.
+    'p_m': ('smi_onset_level', 'lower', 'agrees'),
 }
