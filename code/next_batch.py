@@ -932,7 +932,17 @@ BOUNDS = {
     'relative_share_of_housing':                           (0.02, 0.60),
     # Zero is no penalty at all; the ceiling is well past the 3.8 the steady
     # state formula asks for, so the bracket is not clipped before it gets there.
-    'increased_prob_if_homeless':                          (0.0, 20.0),
+    # CEILING 0.95, NOT 20. The Fortran's handover clamps this at 0.95
+    # (max(min(handover_value,0.95d0),0.d0)) and the job-FINDING probability is
+    # built as probability_becoming_employed*(1-increased_prob_if_homeless), which
+    # is NEGATIVE for any value above one. So the old ceiling of 20 gave the search
+    # a range in which every value from 0.95 upward is the SAME point, and the
+    # archive carries vectors asking for 1.0, 2.0 and 5.0 that all ran at 0.95.
+    #
+    # That matters for what the archive is read as saying. The note further down
+    # rejects this instrument on the strength of "the one point that ever moved it
+    # -- 3.8, nineteen times the assigned 0.2", and no point can have run at 3.8.
+    'increased_prob_if_homeless':                          (0.0, 0.95),
     # One is no penalty; the floor is 0.05 rather than zero because zero
     # earnings for every addict is a corner and not a calibration.
 }
