@@ -205,4 +205,22 @@ RULES = {
     # calibration failure to be adjusted away.
     'sud_homeless': ('multiple_of_probabilities_of_employment_if_addicted',
                      'lower', 'INSTRUMENT DEAD, slope -1.2e-07 over the whole range'),
+    # emp_homeless, the employed share of the homeless, target 0.46.
+    # The author: *"raise it if higher than data"*, so parameter and moment move in
+    # OPPOSITE directions: raising the bottom productivity level lifts the poorest
+    # types out of homelessness, leaving a homeless population that is less
+    # employed rather than more.
+    #
+    # TWO PROBLEMS. Its current value 0.004 IS ITS LOWER BOUND, so it can only move
+    # up -- which happens to be the ruled direction, but it means the rule can
+    # never correct an undershoot. And the measured 7-point ray reverses at a
+    # near-flat -0.0146; earlier the same day it moved pi_eu by exactly zero and
+    # emp_homeless by two parts in a million.
+    #
+    # THE MODEL READS 0.938 AGAINST 0.46. Nearly every homeless household has a
+    # job. With sud_homeless at 6.1e-07 this says the same thing twice: the model's
+    # homeless are employed people without a disorder, close to the opposite of the
+    # data, and no adjuster on these two instruments will fix that.
+    'emp_homeless': ('bottom_productivity_level', 'raise',
+                     'ray reverses and is near-flat; parameter sits ON its lower bound'),
 }
