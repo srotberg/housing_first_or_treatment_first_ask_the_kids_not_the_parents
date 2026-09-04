@@ -158,4 +158,11 @@ RULES = {
     # The level moves without the composition following, so these two must be
     # driven together rather than in turn.
     'h_1': ('size_homelessness', 'lower', 'agrees'),
+    # h_2, the share of renters spending above half their income on housing,
+    # target 0.101. The author: *"lower if higher than data"*.
+    # smallest_rental_relative_to_lowest_income sets the cheapest unit's cost
+    # against the lowest income, so a dearer floor puts more households over the
+    # half-of-income line. Parameter and moment move together; measured 8-point ray
+    # agrees at slope +1.088.
+    'h_2': ('smallest_rental_relative_to_lowest_income', 'lower', 'agrees'),
 }
