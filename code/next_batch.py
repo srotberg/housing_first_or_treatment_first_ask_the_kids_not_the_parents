@@ -1817,6 +1817,16 @@ def _live_switch(name, fallback='1'):
 CONFIG_SWITCHES = {
     'fixed_productivity': _live_switch('fixed_productivity'),
     'use_pia_formula': _live_switch('use_pia_formula'),
+    # homeless_death_risk_flat_in_age IS A CONFIG SWITCH, added 4 September when
+    # setting it to 2 was first tested.  It is a HANDOVER parameter, so it needs no
+    # source edit and does not move the model hash -- which is exactly why it has to
+    # be listed here.  Without it a point run at 2 would POOL with the 150 points run
+    # at 0 and gaps.py would rank them against each other as one economy, when they
+    # are two: setting 0 uses Baggett's measured age profile, 9.1 times the death
+    # hazard at 26 falling to 1.1 at 82, and setting 2 uses a FLAT 1.6 multiplier at
+    # every age from Meyer, Wyse and Logani.  Those are different models of what
+    # homelessness does to an old person, not different parameter values.
+    'homeless_death_risk_flat_in_age': _live_switch('homeless_death_risk_flat_in_age'),
 }
 
 
