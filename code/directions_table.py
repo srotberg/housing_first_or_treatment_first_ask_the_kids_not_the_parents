@@ -223,4 +223,35 @@ RULES = {
     # data, and no adjuster on these two instruments will fix that.
     'emp_homeless': ('bottom_productivity_level', 'raise',
                      'ray reverses and is near-flat; parameter sits ON its lower bound'),
+    # lambda_m, the SMI share of the homeless, target 0.250.
+    # The author: *"lower it if it is higher than the data... it would then have
+    # fewer unemployed with SMI"*. kappa_uem is the SMI employment penalty on both
+    # margins -- sep_1 = sep_1*kappa_uem and find_1 = find_1/kappa_uem -- so
+    # lowering it keeps the mentally ill in work and off the street. Parameter and
+    # moment move together.
+    #
+    # CORRECTION, and it was told to the author twice before being caught: this is
+    # NOT a weak instrument. The fitted slope of +0.0071 is PER UNIT of kappa_uem,
+    # which runs from 6 to 100, so 0.0071 * 94 is roughly the whole range. The ray:
+    #
+    #     kappa_uem   6.13 -> lambda_m 0.0149      39.43 -> 0.4012
+    #                 9.76 -> 0.0845               49.05 -> 0.3743  (current)
+    #                15.55 -> 0.1434               62.80 -> 0.5604
+    #                24.76 -> 0.3961              100.00 -> 0.7115
+    #
+    # A 48-fold move in the moment. Reading a small per-unit slope as a weak handle
+    # was the error; slopes have units.
+    #
+    # TWO THINGS THE RAY SHOWS THAT THE SLOPE HID. p_m barely moves across it,
+    # 0.04458 to 0.04446, so kappa_uem changes WHICH mentally ill households end up
+    # homeless without changing how many are ill -- exactly what this instrument
+    # should do. And h_1 more than triples across the range, so it competes with
+    # size_homelessness for the homelessness level.
+    #
+    # THE INSTRUMENT IS POINTED AT A MOMENT IT WAS NOT BUILT FOR. The Fortran
+    # prints "MOMENT kappa_uem employment given SMI" -- the parameter is named for
+    # the EMPLOYMENT RATE given SMI, not the SMI share of the homeless, and the
+    # comment at line 290 flags the mismatch from the other direction. Worth
+    # revisiting once the calibration is closer.
+    'lambda_m': ('kappa_uem', 'lower', 'agrees, and the handle is strong'),
 }
