@@ -1,4 +1,48 @@
-# Calibration state — 4 September, 03:25
+# Calibration state — 4 September, 03:47
+
+## NELDER-MEAD HAS NOT YET IMPROVED ANYTHING, AND THAT IS THE HEADLINE
+
+Eleven evaluations across two economies and **not one improvement from a search
+step**. The two gains tonight came from a fill and from fixing a scorer bug, not
+from the algorithm. The author asked twice whether the method was working; on the
+evidence so far it has not earned its keep, and the brackets have produced every
+real finding.
+
+**The cause is the simplex, not the algorithm.** nelder_test.py drives the real
+state machine to 2.4e-10 on a quadratic bowl and 4.6e-14 on Rosenbrock, so the
+reflect/expand/contract/shrink logic is right. What is wrong is the geometry:
+
+    best 3.1555    worst 63.0656
+
+The simplex is well-scaled in the PARAMETERS -- one vertex per instrument at ten
+per cent of its own range, which fixed the 4,700x anisotropy -- and badly scaled
+in the OBJECTIVE. A vertex twenty times worse than the incumbent drags the
+centroid, so every reflection is thrown somewhere useless.
+
+**The shrink is the automatic repair** and is running now: it halves each
+vertex's distance to the incumbent, and the first two came back at 6.92 and 14.57
+against the 63 and 67 they replaced. Twenty solves, about an hour.
+
+**THE COMMITMENT.** If the search is still not beating 3.1555 within a few
+reflections after the shrink completes, the displacement size is wrong and the
+simplex gets rebuilt with PER-INSTRUMENT steps sized to move the objective by a
+comparable amount -- of the order of 20 to 50 per cent each -- rather than by a
+uniform ten per cent of range. Same twenty-solve cost as the shrink.
+
+## IN FLIGHT ON THE FLEET
+
+- **size_homelessness 0.07 to 0.22**, to find where h_1 reaches 0.00399 from
+  0.00121. Measured already: 0.0425 to 0.0560 raises h_1 by 45 per cent and
+  leaves the age composition untouched, so the young dominance is NOT an
+  artefact of the level -- the author's hypothesis, measured false.
+- **M from 6 to 40**, testing the author's claim that a large enough SUD
+  employment penalty must lift sud_homeless off zero. The penalty keys on
+  d_f_1>=1, the DISORDER state rather than consumption, so the mechanism is the
+  right one. Watch for sud_homeless staying at EXACTLY zero, which would mean no
+  disorder-holder reaches the street by any route and no value of M helps.
+
+Young and old composition is parked on the author's instruction: *"i think we
+can deal with the young homelessness later if needed"*.
 
 ## THE MORTALITY HOLD IS LIVE AND THE AGE PROFILE HAS FLIPPED
 
