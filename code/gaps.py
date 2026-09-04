@@ -374,6 +374,32 @@ def config():
     return m.group(1) if m else None
 
 
+# The moments whose target is a TARGET_CONSTANT in model_hash, and therefore
+# re-readable from the source rather than fixed in a point file.
+_LIVE_TARGET_OF = {'pi_eu': 'unemployment_rate_data',
+                   'beta': 'wealth_to_output_data'}
+_live_cache = {}
+
+
+def _live_target(key, fallback):
+    name = _LIVE_TARGET_OF.get(key)
+    if not name:
+        return fallback
+    if name not in _live_cache:
+        import re as _re
+        _live_cache[name] = fallback
+        try:
+            src = open(os.path.join(HERE,
+                       'housing_first_or_treatment_first_SR_v1.f90')).read()
+            mm = _re.search(r'::\s*%s\s*=\s*([0-9.eEdD+-]+)' % name, src)
+            if mm:
+                _live_cache[name] = float(mm.group(1).replace('d', 'e')
+                                          .replace('D', 'e'))
+        except Exception:
+            pass
+    return _live_cache[name]
+
+
 def load(path):
     t = open(path, encoding='utf-8', errors='replace').read()
     mv = re.search(r'^VECTOR (.*)$', t, re.M)
@@ -393,7 +419,21 @@ def load(path):
             r'MOMENT (\S+)\s+(.*?)model=\s*([0-9.eE+-]+)\s+target=\s*([0-9.eE+-]+)', t):
         if k == 'sigma_y' and 'bottom half earnings share' in lab:
             continue
-        m[k] = (float(a), float(b))
+        # THE TARGET COMES FROM THE LIVE SOURCE, NOT FROM THE POINT FILE.
+        #
+        # A point records the target it was solved against. model_hash strips the
+        # TARGET_CONSTANTS from the semantic hash precisely so a retarget does not
+        # orphan the archive -- but then the archive holds points carrying the OLD
+        # target beside points carrying the new one, and residual() scores them
+        # against different objectives while calling it one economy. That is the
+        # same class of fault as the max_age_to_choose_homelessness pooling found
+        # earlier on 4 September, and it is invisible in the output.
+        #
+        # So for exactly the constants model_hash strips, the live value wins. The
+        # model value in the file is a measurement and is kept; only the target it
+        # was compared against is re-read. Retargeting unemployment_rate_data from
+        # 0.139 to 0.049 on 4 September is what surfaced this.
+        m[k] = (float(a), _live_target(k, float(b)))
     # THE FORTRAN CALLS IT omega AND next_batch.OWN CALLS IT omega_c.
     #
     # The child-gap block prints "MOMENT omega     use rise, child term off",
