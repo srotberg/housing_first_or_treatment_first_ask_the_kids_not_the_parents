@@ -18,10 +18,18 @@ sys.path.insert(0, HERE)
 
 
 def main():
-    import newton as N, next_batch as NB
+    import newton as N, next_batch as NB, nelder as NM
     NB._apply_process_mapping()
     A = N.archive()
-    inst = N.instruments()
+    # THE SAME SET THE SEARCH MINIMISES, which since 4 September is every stage
+    # unioned rather than stage 0.  Reading N.instruments() here printed the
+    # fifteen stage-0 moments while nelder.py was optimising twenty, so the
+    # table left out tau_u, lambda_m, mu_H, p_m and sud_homeless -- among them
+    # the two largest gaps in the problem.
+    inst, dead = NM.instruments_all(N, NB)
+    if dead:
+        print('  not measured on this economy, so not scored: '
+              + ', '.join(m for _, m in dead))
     keys = [m for _, m in inst]
     if len(sys.argv) > 1:
         tag = sys.argv[1]
@@ -35,7 +43,7 @@ def main():
     print(f'\npoint_{tag}    SSR {ssr:.4f}    worst {100*max(abs(x) for x in r):.1f}%    '
           f'inside ten {inside} of {len(r)}    ({len(A)} points in this economy)\n')
 
-    W = 41
+    W = 51
     print(f'{"parameter":{W}}{"value":>12}  {"moment":<13}{"model":>10}{"target":>10}{"gap":>9}')
     print('-' * (W + 12 + 2 + 13 + 10 + 10 + 9))
     rows = sorted(zip(inst, r), key=lambda t: -abs(t[1]))
