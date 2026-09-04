@@ -49,25 +49,50 @@ def say(s):
         f.write(f'{time.strftime("%H:%M:%S")}  {s}\n')
 
 
-def slopes(N, NB, NM, E, A, inst):
-    """Least-squares slope per instrument over its measured ray, monotone only."""
-    R = E.rays(A, [p for p, _ in inst])
+# HARD-DAMPED INSTRUMENTS. Three parameters cannot take the normal step, and the
+# reasons are measured, not cautious:
+#
+#   addiction_scalar_1  a CLIFF. 0.0368 -> lambda_d 0.038198 and 0.04048 ->
+#                       0.000223: a ten per cent rise collapses the moment 99.4 per
+#                       cent. The same cliff killed the Newton attempt. A normal
+#                       step crosses into the dead region, where the moment stops
+#                       responding -- which LOOKS like convergence.
+#   lambda_addiction    ray reverses and is nearly flat, and it pulls on a
+#                       population nested inside addiction_scalar_1's.
+#   rr_homeless_old_level  the densest ray we have, twelve points, and it reverses
+#                       above the anchor. The ruling holds near the current value
+#                       only.
+DAMPED = {'addiction_scalar_1': 0.05, 'lambda_addiction': 0.25,
+          'rr_homeless_old_level': 0.25}
+
+# NO RULE CAN BE ACTED ON. multiple_of_probabilities_of_employment_if_addicted
+# spans its whole bound range, 1 to 32, at slope -1.2e-07 while sud_homeless sits
+# at 6.1e-07 against a target of 0.217. An adjuster on it walks the parameter to a
+# bound and changes nothing. That is a structural problem -- something prevents
+# households with the disorder from becoming homeless -- and it is the author's to
+# decide, not an adjuster's to hide.
+FROZEN = {'multiple_of_probabilities_of_employment_if_addicted'}
+
+
+def rules(NB):
+    """The author's ruling per moment: which way the PARAMETER goes when the
+    MODEL MOMENT IS ABOVE TARGET.
+
+    The author, 4 September: *"you dont need the slope to determine the adjuster
+    ....you can reason it out"*, and then ruled on all twenty-one moments one at a
+    time. This is the authority. The measured rays remain a CHECK -- fifteen agree,
+    and the disagreements are recorded in directions_table.py rather than resolved
+    silently in favour of either side.
+    """
+    import directions_table as D
     out = {}
-    for p, m in inst:
-        if p not in R:
+    for m, (p, rule, _) in D.RULES.items():
+        if p in FROZEN or p not in NB.BOUNDS:
             continue
-        pts = [(x, mm[m][0]) for x, _, mm in R[p] if m in mm]
-        if len(pts) < 3:
-            continue
-        xs = [a for a, _ in pts]; ys = [b for _, b in pts]
-        n = len(xs); mx = sum(xs) / n; my = sum(ys) / n
-        den = sum((a - mx) ** 2 for a in xs)
-        if den <= 0:
-            continue
-        s = sum((a - mx) * (b - my) for a, b in pts) / den
-        if s == 0 or not all((ys[i + 1] - ys[i]) * s >= 0 for i in range(n - 1)):
-            continue                      # reversing ray: no fixed sign, no rule
-        out[p] = (s, m)
+        # 'lower' means parameter and moment move together, so to close a positive
+        # gap the parameter must fall: the step carries -gap. 'raise' is the
+        # opposite sign.
+        out[p] = (m, -1.0 if rule == 'lower' else 1.0)
     return out
 
 
@@ -82,7 +107,7 @@ def solve(vec):
 
 
 def main():
-    import newton as N, next_batch as NB, nelder as NM, expand as E, gaps as G
+    import newton as N, next_batch as NB, nelder as NM
     NB._apply_process_mapping()
     A = N.archive()
     if not A:
@@ -90,41 +115,42 @@ def main():
         return 1
     inst, _ = NM.instruments_all(N, NB, None)
     keys = [m for _, m in inst]
-    S = slopes(N, NB, NM, E, A, inst)
-    say(f'{len(A)} points, {len(inst)} instruments, {len(S)} with a monotone ray')
-    for p, (s, m) in sorted(S.items()):
-        say(f'   {p:<44} {m:<13} slope {s:>11.4g}')
-    skipped = [p for p, _ in inst if p not in S]
-    if skipped:
-        say('NO RULE, left where they are: ' + ', '.join(sorted(skipped)))
+    R = rules(NB)
+    say(f'{len(A)} points, {len(inst)} instruments, {len(R)} with a ruling')
+    for p, (m, sgn) in sorted(R.items()):
+        d = f'  damped to {DAMPED[p]:.0%}' if p in DAMPED else ''
+        say(f'   {p:<44} {m:<13} {"above -> lower" if sgn < 0 else "above -> raise"}{d}')
+    for p in sorted(FROZEN):
+        say(f'   {p:<44} FROZEN, its instrument cannot move its moment')
 
-    tag, v, mom = N.best(A, keys)[1], None, None
-    v = dict(A[tag][0]) if tag in A else dict(next(iter(A.values()))[0])
-    mom = A[tag][1] if tag in A else None
-    say(f'starting from {tag}')
+    tag = N.best(A, keys)[1]
+    v = dict(A[tag][0])
+    mom = A[tag][1]
+    say(f'starting from {tag}, SSR {NM.ssr(N, mom, keys):.4f}')
 
     for it in range(1, ITERS + 1):
         moved = []
-        for p, (s, m) in S.items():
-            if m not in mom or not mom[m][1]:
+        for p, (m, sgn) in R.items():
+            if m not in mom or not mom[m][1] or p not in v:
                 continue
             model, target = mom[m]
-            g = model - target
+            rel = (model - target) / target
             lo, hi = NB.BOUNDS[p]
             x = float(v[p])
-            newton = -g / s
-            relgap = min(1.0, abs(g / target))
-            cap = ADJ * relgap * max(abs(x), 1e-9)
-            step = max(-cap, min(cap, newton))
+            # THE AUTHOR'S BAND: at most ADJ of the parameter's own value when the
+            # moment is 100 per cent off, proportionally less as the gap closes.
+            step = sgn * ADJ * DAMPED.get(p, 1.0) * max(-1.0, min(1.0, rel)) \
+                * max(abs(x), 1e-12)
             xn = min(max(x + step, lo), hi)
             if abs(xn - x) > 1e-12:
                 v[p] = f'{xn:.8g}'
-                moved.append((p, x, xn, 100.0 * g / target))
+                moved.append((p, x, xn, 100.0 * rel))
         if not moved:
-            say(f'iteration {it}: nothing moved; converged or all capped out')
+            say(f'iteration {it}: nothing moved; converged or every step clipped')
             return 0
-        say(f'iteration {it}: {len(moved)} parameters moved, '
-            f'worst gap {max(abs(z[3]) for z in moved):.1f}%')
+        worst = max(moved, key=lambda z: abs(z[3]))
+        say(f'iteration {it}: {len(moved)} moved, worst gap '
+            f'{worst[3]:+.1f}% on {worst[0]}')
         with open(TRACE, 'a') as f:
             f.write(json.dumps({'it': it, 'moved': moved}) + '\n')
         t = solve(v)
