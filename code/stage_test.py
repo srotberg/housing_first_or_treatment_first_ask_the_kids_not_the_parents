@@ -56,7 +56,27 @@ def best_on(NM, N, NB, arch, keys):
     return out
 
 
-def experiment(staged, budget, label):
+def experiment(mode, budget, label, cycles=3):
+    """mode: oneshot | staircase | cycle_block | cycle_full.
+
+    THE AUTHOR'S PROPOSAL, 4 September: *"first tighten stage 1, then open only
+    stage 2. after stage 2 is done, redo stage 1 holding stage 2 fixed... then go
+    to stage 3, tighten it, and run back stage 1 and 2"*. That is block coordinate
+    descent, and its point is that the MAXIMUM DIMENSION EVER SEARCHED IS TWELVE.
+    Nelder-Mead never meets the twenty-one it fails at.
+
+    Two forms of it, and the difference matters more than the cycling does:
+
+      cycle_block  the objective while a block is open is only THAT BLOCK'S
+                   moments. This is what "open only stage 2" reads as literally,
+                   and it lets stage 2 wreck stage 1's moments for free, because
+                   nothing is scoring them.
+      cycle_full   the objective is ALWAYS all twenty-one moments; only the block
+                   of PARAMETERS that may move changes. This is proper block
+                   coordinate descent, and a block can no longer buy its own
+                   moments by ruining someone else's.
+    """
+def _experiment(mode, budget, label, cycles=3):
     K = 21
     T.K = K
     T.NAMES = [f'p{i}' for i in range(K)]
