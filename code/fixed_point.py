@@ -62,8 +62,47 @@ def say(s):
 #   rr_homeless_old_level  the densest ray we have, twelve points, and it reverses
 #                       above the anchor. The ruling holds near the current value
 #                       only.
-DAMPED = {'addiction_scalar_1': 0.05, 'lambda_addiction': 0.25,
-          'rr_homeless_old_level': 0.25}
+# PER-PARAMETER ADJUSTERS, SIZED BY ARITHMETIC. The author, 4 September: *"make
+# sure that the adjusters are well calibrated so that parameters move slowly but
+# not too slowly"*.
+#
+# One flat rate cannot be right, because the parameters do not have to travel the
+# same distance: kkk_sigma_scale needs 16 per cent of its value, pi_eu's instrument
+# needs 88 per cent, bottom_productivity_level needs seven hundred. At a single
+# rate the first oscillates and the last never arrives.
+#
+# code/size_adjusters.py computes each one as D / (30 * relgap), where D is the
+# MEASURED distance from the ray's crossing -- the parameter value that puts the
+# moment on target -- so every instrument aims to arrive in about thirty solves,
+# an hour and a half at three minutes each. Capped at 0.15 because the formula
+# blows up as a gap closes and that blow-up is spurious.
+ADJUSTERS = {
+    'bottom_productivity_level': 0.1500,
+    'discount_factor': 0.0680,
+    'kappa_uem': 0.1500,
+    'kkk_sigma_scale': 0.0225,
+    'labor_income_tax_rate': 0.0100,
+    'lambda_addiction': 0.0100,
+    'max_food_cost': 0.0100,
+    'mu_homeless': 0.0370,
+    'probability_becoming_unemployed': 0.0710,
+    'probability_of_voucher_benchmark_used': 0.0428,
+    'relative_share_of_addiction_1': 0.0100,
+    'relative_share_of_housing': 0.1500,
+    'relative_share_of_leisure': 0.0748,
+    'rr_homeless_old_level': 0.1500,
+    'size_homelessness': 0.0423,
+    'smallest_rental_relative_to_lowest_income': 0.0148,
+    'smi_onset_level': 0.1500,
+    'utility_cost_of_treatment': 0.0100,
+    'value_of_life': 0.0285,
+    # ON THE CLIFF, deliberately far below what the arithmetic asks. 0.0368 ->
+    # lambda_d 0.038198 and 0.04048 -> 0.000223: a ten per cent rise collapses the
+    # moment 99.4 per cent, and the dead region LOOKS like convergence because the
+    # moment stops responding. Nothing here may step it more than half a per cent.
+    'addiction_scalar_1': 0.0050,
+}
+DEFAULT_ADJ = 0.02
 
 # NO RULE CAN BE ACTED ON. multiple_of_probabilities_of_employment_if_addicted
 # spans its whole bound range, 1 to 32, at slope -1.2e-07 while sud_homeless sits
@@ -118,8 +157,9 @@ def main():
     R = rules(NB)
     say(f'{len(A)} points, {len(inst)} instruments, {len(R)} with a ruling')
     for p, (m, sgn) in sorted(R.items()):
-        d = f'  damped to {DAMPED[p]:.0%}' if p in DAMPED else ''
-        say(f'   {p:<44} {m:<13} {"above -> lower" if sgn < 0 else "above -> raise"}{d}')
+        a = ADJUSTERS.get(p, DEFAULT_ADJ)
+        say(f'   {p:<44} {m:<13} '
+            f'{"above -> lower" if sgn < 0 else "above -> raise"}  adj {a:.4f}')
     for p in sorted(FROZEN):
         say(f'   {p:<44} FROZEN, its instrument cannot move its moment')
 
@@ -139,7 +179,7 @@ def main():
             x = float(v[p])
             # THE AUTHOR'S BAND: at most ADJ of the parameter's own value when the
             # moment is 100 per cent off, proportionally less as the gap closes.
-            step = sgn * ADJ * DAMPED.get(p, 1.0) * max(-1.0, min(1.0, rel)) \
+            step = sgn * ADJUSTERS.get(p, DEFAULT_ADJ) * max(-1.0, min(1.0, rel)) \
                 * max(abs(x), 1e-12)
             xn = min(max(x + step, lo), hi)
             if abs(xn - x) > 1e-12:
