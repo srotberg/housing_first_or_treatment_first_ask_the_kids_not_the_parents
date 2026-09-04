@@ -114,8 +114,20 @@ STAGE_MOMENTS = [
     # one the dispersion of productivity, the other the rate at which a job is
     # lost -- so every preference parameter in this stage is being fitted against
     # whatever they are set to. pi_eu reads 0.0787 against 0.1390.
+    # lambda_d JOINS TOO, on the author's instruction of 4 September, and the
+    # measurement is the reason: matched pairs differing in ONE parameter put
+    # addiction_scalar_1's elasticity on pi_eu at -1.05 to -1.11, against
+    # probability_becoming_unemployed's +0.27 to +0.51 on its own moment. The
+    # strongest driver of the unemployment rate is not the unemployment
+    # instrument.
+    #
+    # Unemployment here is largely a SUD phenomenon. The clean steady state at
+    # pbu 0.0122 is 0.0122/(0.0122+0.55) = 2.2 per cent, against 8 to 13 measured,
+    # so the difference is people with the disorder cycling through margins that
+    # are four times worse. Targeting pi_eu with lambda_d pinned in another stage
+    # asks the search to hit a moment while its strongest handle is held.
     ['h_2', 'p_m', 'cbar', 'beta', 'gamma', 'b', 'omega_l', 'sigma_y',
-     'pi_eu'],
+     'pi_eu', 'lambda_d'],
     # 2: plus the five the author named. aleph is the one they called very
     #    important, and it reads 54.06 against 80 -- a life worth a third less
     #    than it should be, which is why the street's mortality cost does not
@@ -126,7 +138,7 @@ STAGE_MOMENTS = [
     # statistical life and theta against the share of spending on the addictive
     # good, so leaving the drug block until stage 3 asks stage 2 to fit aleph
     # while the preference parameters it trades against are pinned.
-    ['pi_V', 'tau_l', 'aleph', 'lambda_d', 'theta'],
+    ['pi_V', 'tau_l', 'aleph', 'theta'],
     # 3: the rest, once the first two hold. h_share5 joined on 4 September when
     #    the old-age relative risk stopped being assumed and became an
     #    instrument, so the old band's share of the homeless has a target again
