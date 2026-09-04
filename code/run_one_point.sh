@@ -371,6 +371,15 @@ declare -A P=(
     # stages without measuring anything. The Fortran's PARAM_HANDOVER case and
     # this array have to be added in the same commit.
     [max_age_to_choose_homelessness]=59
+    # THE OLD-AGE RELATIVE RISK, CALIBRATED. Zero keeps the hold behaviour, so
+    # the default reproduces what ran before this name existed. Its moment is
+    # h_share5, the old band's share of the homeless, target 0.075.
+    #
+    # ADDED TO THIS TABLE IN THE SAME COMMIT AS THE FORTRAN'S HANDOVER CASE.
+    # Doing one without the other is what made run_one_point reject every vector
+    # that set max_age_to_choose_homelessness and "solve" twenty-one vertices in
+    # twenty-one seconds.
+    [rr_homeless_old_level]=0
     # THE IMPATIENT DISCOUNT FACTOR, ADDED WITH THE TWO-TYPE MODEL. The commit
     # that split households into a patient and an impatient type taught the
     # Fortran's PARAM_HANDOVER and next_batch.py the name and did NOT teach it

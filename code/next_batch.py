@@ -349,6 +349,19 @@ OWN = {
     'weight_on_child':                                     'omega_c',
     'probability_of_voucher_benchmark_used':               'pi_V',
     'size_homelessness':                                   'h_1',
+    # THE OLD-AGE RELATIVE RISK OWNS THE OLD BAND'S SHARE OF THE HOMELESS.
+    #
+    # The author, 4 September: "the probability of dying if you are homeless at
+    # 84-85 is much higher than baggetes number... We might actually need to set
+    # that number for the old to match their homelessness rate since those data
+    # are actually not reliable probably".
+    #
+    # It follows from what the age-65 hold established rather than contradicting
+    # it. Baggett's 65-84 ratio is an OBSERVED ratio dominated by survivor
+    # selection, so it does not identify the causal effect the model needs, and
+    # holding it at its age-65 value replaced an unusable number with an ASSUMED
+    # one. This gives the assumption a target instead.
+    'rr_homeless_old_level':                               'h_share5',
     # NOT given a moment. homeless_excess_death_risk sets the LEVEL of the
     # deterrent and size_homelessness already owns h_1; giving both the same
     # moment would be the duplicate-driver mistake beta was just cured of.
@@ -825,6 +838,7 @@ BOUNDS = {
     # 1.5 a street of 0.0005 is a ratio of 0.00033, and the old bound would have
     # clamped it back to thirty times that.
     'size_homelessness':                                   (1e-6, 5.0),
+    'rr_homeless_old_level':                               (1.0, 30.0),
     'smallest_rental_relative_to_lowest_income':            (0.005, 0.40),
     # The bottom node's level, as a multiple of mean productivity. The quantile
     # construction puts it at 0.0302 unaided; the floor is well below that and

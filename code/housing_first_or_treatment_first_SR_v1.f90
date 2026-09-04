@@ -3226,6 +3226,28 @@
         ! excess probability rise with age, and holding the excess probability
         ! would instead let the multiplier fall back toward one -- which is the
         ! shape being corrected, in a milder form.
+        ! THE RELATIVE RISK ABOVE THE HOLD AGE, CALIBRATED RATHER THAN ASSUMED.
+        ! Zero leaves the hold behaviour alone, so the default is unchanged.
+        !
+        ! The author, 4 September: "I think probably the issue is that the
+        ! probability of dying if you are homeless at 84-85 is much higher than
+        ! baggetes number... We might actually need to set that number for the
+        ! old to match their homelessness rate since those data are actually not
+        ! reliable probably".
+        !
+        ! That follows from what holding at 65 already established. Baggett's
+        ! 65-84 ratio is an OBSERVED ratio contaminated by survivor selection --
+        ! the homeless who reach 65 are unusually robust and the comparison group
+        ! includes the frail and the institutionalised -- so it does not identify
+        ! the causal effect the model needs, and taken literally it says the
+        ! street protects the old. Holding it at its age-65 value replaced an
+        ! unusable number with an ASSUMED one. Calibrating it replaces the
+        ! assumption with the moment it most directly controls, which is the old
+        ! band's share of the homeless.
+        !
+        ! A number that cannot be measured credibly is better calibrated than
+        ! guessed, and this one now has a target instead of a stipulation.
+        real(8) :: rr_homeless_old_level=0
         integer :: rr_homeless_hold_age=0
         real(8) :: homeless_excess_death_risk=0.00396d0
 
@@ -35389,12 +35411,21 @@
 
             do i_1=hold_i_1+1,life_span
 
-                rr_homeless_profile(i_1)=rr_homeless_profile(hold_i_1)
+                if (rr_homeless_old_level>0.d0) then
+
+                    rr_homeless_profile(i_1)=rr_homeless_old_level
+
+                else
+
+                    rr_homeless_profile(i_1)=rr_homeless_profile(hold_i_1)
+
+                end if
 
             end do
 
-            write(*,*) "rr_homeless held flat above data age", &
-                rr_homeless_hold_age, "at", rr_homeless_profile(hold_i_1)
+            write(*,*) "rr_homeless above data age", rr_homeless_hold_age, &
+                "set to", rr_homeless_profile(life_span), &
+                " (calibrated=", rr_homeless_old_level, ")"
 
         else if (rr_homeless_hold_age>0) then
 
@@ -36704,6 +36735,11 @@
                         max_age_to_choose_homelessness, "->", handover_value
                     max_age_to_choose_homelessness=&
                         max(min(nint(handover_value),life_span),1)
+
+                case ("rr_homeless_old_level")
+                    write(*,*) "HANDOVER rr_homeless_old_level:",&
+                        rr_homeless_old_level, "->", handover_value
+                    rr_homeless_old_level=max(min(handover_value,50.d0),0.d0)
 
                 case ("rr_homeless_hold_age")
                     write(*,*) "HANDOVER rr_homeless_hold_age:",&
