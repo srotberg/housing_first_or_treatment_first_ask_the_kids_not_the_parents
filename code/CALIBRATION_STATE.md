@@ -50,17 +50,30 @@ describes that economy as live is out of date.
 
 ## THE SEARCH
 
-Nineteen instruments, all stages unioned, `sud_homeless` and `omega_c` dropped
-because no point on this economy measures them and `residual()` scores an absent
-moment as zero — keeping them would add coordinates the objective is flat in.
+**Twenty instruments**, all stages unioned. Of the 23 parameter/moment pairs in
+`next_batch.OWN`, three are out and each for a different reason:
 
-The simplex was seeded from the archive: sixteen affinely independent vertices out
-of 153 solved points, for **zero model solves**. Four directions remain, the
-stage-2 instruments nothing ever moved (`kappa_uem`, `utility_cost_of_treatment`,
-`mu_homeless`, `smi_onset_level`); `--ask` fills them one solve at a time.
+| parameter | moment | why it is out |
+|---|---|---|
+| `weight_on_child` | `omega_c` | needs `measure_child_gap=1`, which costs a second full solve and converge |
+| `newborn_endowment_scale` | `h_share1` | the author holds it at 0 |
+| `ssi_floor_level` | `h_share5` | the author holds the floor to the 2024 federal rate |
 
-    best      aa3ce2361a   SSR 1.9850
-    worst vertex           SSR 9.1356
+`sud_homeless` WAS out and should not have been: the model prints
+`UNTARGETED SUD share of the homeless` on every point ever solved and `gaps.py`
+had no pattern for it, so its instrument looked like a parameter with no moment.
+It sits at 0.1166 against Gutwinski's 0.217 on all 155 archived points. Fixed
+4 September; costs no model time and applies retroactively.
+
+The simplex was seeded from the archive: eighteen affinely independent vertices
+out of 155 solved points, for **zero model solves**. Three directions remain, the
+instruments nothing ever moved; `--ask` fills them one solve at a time.
+
+    best      827aa52172   SSR 2.1441
+    worst vertex           SSR 9.8159
+
+The best rose from 1.9299 when `sud_homeless` joined the objective. That is a
+moment 46 per cent adrift being counted for the first time, not a regression.
 
 **Combining the stages changed the standing.** On stage 0 alone the best was
 0.9603; the two moments stage 0 never scored are far off and were free to drift
