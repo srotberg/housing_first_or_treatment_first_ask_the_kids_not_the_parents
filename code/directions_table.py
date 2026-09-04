@@ -58,4 +58,9 @@ RULES = {
     # weight on housing in utility, so parameter and moment move together.
     # Measured 8-point ray agrees: slope +0.1819.
     'gamma': ('relative_share_of_housing', 'lower', 'agrees'),
+    # omega_l, labour supply over total hours, target 0.40.
+    # The author: *"raise if higher than data"*. relative_share_of_leisure is the
+    # weight on leisure, so more of it means less work -- parameter and moment move
+    # in OPPOSITE directions. Measured 8-point ray agrees: slope -0.04635.
+    'omega_l': ('relative_share_of_leisure', 'raise', 'agrees'),
 }
