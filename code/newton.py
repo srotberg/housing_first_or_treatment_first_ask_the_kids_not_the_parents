@@ -222,14 +222,29 @@ def archive():
 
 
 def best(A, keys):
-    """The point with the smallest max |residual| over the open moments."""
+    """The point with the smallest SUM OF SQUARED residuals over the open moments.
+
+    Was the minimax until 4 September, when the author asked for the sum of squares
+    instead. It has to change HERE as well as in gaps.py: report.py takes its point
+    from this function and its header from gaps.py, so leaving the two on different
+    objectives printed a gap table for one equilibrium and an age profile for a
+    DIFFERENT one, in the same report, with nothing saying so.
+
+    The first element of the tuple is still the worst gap, because callers print it
+    as the headline and the author's stopping rule is about the worst gap. Only the
+    RANKING moved.
+    """
     b = None
     for tag, (v, m) in A.items():
         r = residual(m, keys)
-        w = max(abs(x) for x in r) if r else 9e9
-        if b is None or w < b[0]:
-            b = (w, tag, v, m)
-    return b
+        if not r:
+            continue
+        sq = sum(x * x for x in r)
+        if b is None or sq < b[0]:
+            b = (sq, tag, v, m, max(abs(x) for x in r))
+    if b is None:
+        return (9e9, None, None, None)
+    return (b[4], b[1], b[2], b[3])
 
 
 def line(v):
