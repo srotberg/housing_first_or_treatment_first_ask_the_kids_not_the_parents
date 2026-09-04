@@ -47,4 +47,10 @@ RULES = {
     # average tax collected. Measured 8-point ray agrees: slope -1.044. Anyone
     # reading the name and reasoning from it alone would get this backwards.
     'tau_l': ('labor_income_tax_rate', 'raise', 'agrees'),
+    # beta, wealth over output, target 3.0.
+    # The author: *"lower if higher than data"*. Less patience, less saving, less
+    # wealth -- parameter and moment move together. No measured ray yet; the
+    # discount_factor scan was still running when this was ruled, so the ruling is
+    # the only source and the ray will be a check when it lands.
+    'beta': ('discount_factor', 'lower', 'no ray yet'),
 }
