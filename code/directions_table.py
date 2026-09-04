@@ -63,4 +63,10 @@ RULES = {
     # weight on leisure, so more of it means less work -- parameter and moment move
     # in OPPOSITE directions. Measured 8-point ray agrees: slope -0.04635.
     'omega_l': ('relative_share_of_leisure', 'raise', 'agrees'),
+    # theta, the share of spending on the addictive good, target 0.162.
+    # The author: *"lower if higher than data"*. relative_share_of_addiction_1 is
+    # the weight on the addictive good in the utility of a household with the
+    # disorder, so parameter and moment move together. Measured 8-point ray agrees
+    # and it is the STRONGEST own-slope in the table: +5.635.
+    'theta': ('relative_share_of_addiction_1', 'lower', 'agrees'),
 }
