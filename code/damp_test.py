@@ -59,33 +59,51 @@ def test_replay():
     return ok
 
 
-def run(gain, damped, iters=60, x0=1.0):
-    """x_{k+1} = x_k - a*f*g(x_k), with g(x) = gain*x: the scalar caricature."""
+def run(gain, damped, iters=200, x0=0.523):
+    """x_{k+1} = x_k - a*f*clip(gain*x_k): the scalar caricature of one parameter.
+
+    The clip is the solver's own -- |rel| is capped at one, so the step can never
+    exceed the adjuster and x cannot run away to infinity. THAT IS WHY THE
+    INSTABILITY HERE IS A LIMIT CYCLE RATHER THAN A DIVERGENCE, and it is exactly
+    what rr_homeless_old_level does on the live model: 2.68, 2.99, 2.68, 2.99,
+    forever, never settling, three minutes of model solve per bounce.
+
+    So the thing to measure is the amplitude the iteration is left cycling at,
+    not whether it blew up.
+    """
+    # x0 IS DELIBERATELY NOT A MULTIPLE OF THE STEP. At x0 = 1.0 and a = 0.10 the
+    # undamped iterate lands exactly on zero in floating point and sits there for
+    # sixty iterations before rounding error walks it back out -- a fixed point of
+    # the arithmetic, not of the map, and it made this test report "settled" for a
+    # map that does not settle.
     scale, last, x = {}, {}, x0
-    a = 0.10
+    a, seen = 0.10, []
     for _ in range(iters):
         rel = gain * x
         f = FP.damp(scale, 'p', rel, last) if damped else 1.0
         last['p'] = rel
         x -= a * f * max(-1.0, min(1.0, rel))
-        if abs(x) > 1e6:
-            break
-    return abs(x)
+        seen.append(x)
+    tail = seen[-20:]
+    return max(tail) - min(tail)
 
 
 def test_scalar():
-    # A gain that makes the undamped step overshoot: the correction is
-    # a*gain*x = 2.5x, so each iteration lands further out on the other side.
+    # A gain steep enough that the clipped step always overshoots zero: with
+    # gain 25 the residual saturates for any |x| > 0.04, so every step is the
+    # full adjuster and every step crosses.
     g = 25.0
     u, d = run(g, False), run(g, True)
-    print(f'  scalar, gain {g}:  undamped |x| {u:.4g}   damped |x| {d:.4g}')
+    print(f'  scalar, gain {g}:  undamped cycle {u:.4g}   damped cycle {d:.4g}')
     ok = True
-    if u < 0.5 * 1.0:
-        print('  FAIL: the undamped iteration did not diverge, so the test is '
-              'not testing anything')
+    # The undamped cycle is the adjuster itself peak to peak: the iterate lands a
+    # half-step either side of zero and steps the full adjuster across it forever.
+    if u < 0.9 * 0.10:
+        print(f'  FAIL: the undamped iteration settled ({u:.4g}), so there is no '
+              'limit cycle to damp and the test is not testing anything')
         ok = False
-    if d >= u:
-        print('  FAIL: damping did not help')
+    if d > u / 4.0:
+        print(f'  FAIL: damping shrank the cycle by only {u / d:.3g}x')
         ok = False
     print('  scalar: ' + ('PASS' if ok else 'FAIL'))
     return ok
