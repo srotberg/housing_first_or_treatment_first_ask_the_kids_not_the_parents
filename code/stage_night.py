@@ -133,10 +133,26 @@ def seed(stage, jitter=0.0):
     # from the anchor takes run_one_point.sh's own default, which is the value
     # the model would have used anyway.
     for p_ in names:
+        lo, hi = NB.BOUNDS[p_]
         if p_ not in base:
             base[p_] = runner_default(p_)
             say(f'  anchor predates {p_}; taking the runner default '
                 f'{base[p_]}')
+        # AN ANCHOR COORDINATE OUTSIDE ITS OWN BOUNDS IS ALWAYS A BUG, and it is
+        # silent: to_u maps it to a negative u, the simplex clips it to zero, and
+        # the search starts at the BOUND rather than where the anchor said. It
+        # happened within minutes of rr_homeless_old_level existing --
+        # run_one_point's default was still 0, meaning "off", while its bounds
+        # start at 1.0, so twenty of twenty-one seed vertices carried 0 and the
+        # search would have jumped them to 1.0, which is NO excess mortality for
+        # the old: the opposite of what the parameter was added to do.
+        if not (lo <= float(base[p_]) <= hi):
+            was = base[p_]
+            base[p_] = runner_default(p_)
+            if not (lo <= float(base[p_]) <= hi):
+                base[p_] = f'{min(max(float(was), lo), hi):.8g}'
+            say(f'  anchor has {p_}={was}, outside {lo}..{hi}; '
+                f'using {base[p_]}')
     lines = ['bash code/run_one_point.sh ' +
              ' '.join(f'{k}={base[k]}' for k in sorted(base))]
     for p in names:

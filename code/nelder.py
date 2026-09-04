@@ -186,10 +186,19 @@ def ssr(N, mom, keys):
 
 
 def to_u(NB, v, names):
+    """Scaled coordinates, CLIPPED to the box.
+
+    A point whose value for an instrument lies outside that instrument's bounds
+    -- which happens when a parameter's default and its bounds disagree, as
+    rr_homeless_old_level's did on the day it was added -- otherwise produces a
+    negative or greater-than-one coordinate, and every distance and centroid
+    computed from it is then outside the box the search believes it is in.
+    """
     u = []
     for p in names:
         lo, hi = NB.BOUNDS[p]
-        u.append((float(v[p]) - lo) / (hi - lo) if hi > lo else 0.0)
+        x = (float(v[p]) - lo) / (hi - lo) if hi > lo else 0.0
+        u.append(min(max(x, 0.0), 1.0))
     return u
 
 
