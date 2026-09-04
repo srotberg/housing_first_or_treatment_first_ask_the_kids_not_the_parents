@@ -77,7 +77,43 @@ MIN_EDGE = 0.05
 POOL_MULT = 2000.0
 
 
-def instruments_all(N, NB):
+# THE AUTHOR'S STAGES, 4 September: "calibrate the seven inside 10%, then add,
+# pi_V, tau_l, aleph, sigma_y, pi_eu....and keep the rest after you finish the
+# first one. aleph is very important".
+#
+# THIS IS NOT THE OLD STAGING RETURNING. That staging existed to keep a secant
+# well conditioned and was dropped because a direct search forms no secant. This
+# staging exists for a different and better reason: DIMENSION. nelder_test.py
+# passes 8-dim Rosenbrock at 4.6e-14 and FAILS 20-dim at 0.187 with three
+# thousand evaluations, so Nelder-Mead is competent at seven or twelve
+# instruments and not at twenty. Staging puts the search back where it works.
+#
+# It also makes seeding cheap: a stage of seven needs eight vertices, not
+# twenty-one.
+STAGE_MOMENTS = [
+    # 1: the seven already inside ten per cent -- hold them there while the
+    #    simplex is small enough for the method to be reliable.
+    ['h_2', 'p_m', 'cbar', 'beta', 'gamma', 'b', 'omega_l'],
+    # 2: plus the five the author named. aleph is the one they called very
+    #    important, and it reads 54.06 against 80 -- a life worth a third less
+    #    than it should be, which is why the street's mortality cost does not
+    #    deter.
+    ['pi_V', 'tau_l', 'aleph', 'sigma_y', 'pi_eu'],
+    # 3: the rest, once the first two hold.
+    ['sud_homeless', 'emp_homeless', 'lambda_m', 'tau_u', 'mu_H', 'lambda_d',
+     'h_1'],
+]
+
+
+def stage_scope(n):
+    """The moments in scope at stage n, cumulative."""
+    out = set()
+    for i in range(min(n, len(STAGE_MOMENTS))):
+        out |= set(STAGE_MOMENTS[i])
+    return out
+
+
+def instruments_all(N, NB, stage=None):
     """Every instrument in every stage, because Nelder-Mead does not need stages.
 
     *"and in fact, with Nelder Mead, i think you can just converge on all the
@@ -97,26 +133,43 @@ def instruments_all(N, NB):
     and omega_c needs measure_child_gap=1, so both go; if the model starts
     emitting them they come back here on their own.
     """
-    scope = set()
-    for st in NB.STAGES:
-        scope |= set(st)
+    if stage:
+        scope = stage_scope(stage)
+    else:
+        scope = set()
+        for st in NB.STAGES:
+            scope |= set(st)
     scope -= set(NB.UNSCORED) | set(NB.SKIP)
     A = N.archive()
     seen = set()
     for _, m in A.values():
         seen |= set(m)
+    # A MOMENT IS ONLY DEAD IF THE ARCHIVE COULD HAVE SHOWN IT AND DID NOT.
+    # On a fresh economy the archive is empty, so `seen` is empty and every
+    # moment looks dead -- which silently produced a stage with ZERO
+    # instruments. The check is about a moment the model never emits, so it
+    # needs points to have been measured before it means anything.
     out, dead = [], []
     for p, m in sorted(NB.OWN.items()):
         if m not in scope or p not in NB.BOUNDS:
             continue
-        (out if m in seen else dead).append((p, m))
+        (out if (m in seen or not seen) else dead).append((p, m))
     return out, dead
+
+
+def stage_now():
+    """The live stage, from code/nm_stage.txt. Absent means all instruments."""
+    f = os.path.join(HERE, 'nm_stage.txt')
+    try:
+        return int(open(f).read().strip())
+    except Exception:
+        return None
 
 
 def setup():
     import newton as N, next_batch as NB
     NB._apply_process_mapping()
-    inst, dead = instruments_all(N, NB)
+    inst, dead = instruments_all(N, NB, stage_now())
     if dead:
         print('  dropped, never measured on this economy: '
               + ', '.join(m for _, m in dead))
