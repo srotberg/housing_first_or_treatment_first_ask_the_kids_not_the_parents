@@ -267,6 +267,55 @@ author, not a scan defect.
 pusher keeps committing. Remove it to resume Nelder-Mead, which should then seed
 from a spanning archive rather than a one-sided simplex.
 
+### FOUR WAYS TO SEARCH TWENTY-ONE PARAMETERS, AND NONE OF THEM WORKS
+
+Measured 4 September with `code/stage_test.py`, Rosenbrock at 21 parameters, same
+total budget, every method graded on all 21 moments at the end:
+
+    method                                   900 evals   3000 evals   vs one-shot
+    ONE SHOT, all 21 open                      7.61696      4.42097      --
+    STAIRCASE 12 -> 16 -> 21 (cumulative)      9.37109      8.51109      1.93
+    LADDER, block-only objective               9.86351      9.86351      2.23
+    LADDER, full objective, 12/4/5 blocks      9.40621      6.28463      1.42
+
+**The block-only ladder is unchanged to six figures between 900 and 3000
+evaluations.** Not slow -- FROZEN. While block 2 is open nothing scores block 1's
+moments, so block 2 wrecks them for free, block 1 undoes it, and the cycle closes
+exactly. Reading the author's *"open only stage 2"* literally would have spent a
+night going nowhere with a busy-looking trace.
+
+The full-objective form -- all 21 moments always scored, only the block of
+PARAMETERS allowed to move changes -- does progress, 9.41 -> 6.28. That is the
+difference between a method that moves and one that is precisely stuck, and it is
+the form to use if a ladder is used at all.
+
+**But the tolerance is 1e-3 and the best of four is 4.42. Every one of them
+fails.** The ranking is a ranking of failures.
+
+### WHAT THE MEASUREMENTS ACTUALLY SUPPORT
+
+    dimension   Rosenbrock       verdict
+    4           0                PASS
+    5           6.42e-14         PASS
+    12          5.22e-13         PASS      -- twelve orders inside tolerance
+    21          4.42             FAIL
+
+Twelve works and is not marginal. Twenty-one does not work by ANY arrangement
+tried. So: **search the twelve, measure the rest.** `expand.py` bracketed
+`sigma_y` (crossing in kkk 1.5..2.2095) and `tau_l` (crossing in 0.718..0.827)
+from rays alone, with no optimiser -- brackets do not care about dimension,
+curvature, or the discrete choices that make the model's moments jump.
+
+The author's premise was right and is what the evidence supports: never search
+twenty-one. What the evidence adds is that the answer to *"then what searches the
+other nine"* is *nothing does -- they get measured one at a time.*
+
+**PRODUCTION IS STILL THE CUMULATIVE STAIRCASE**, which measured 1.93 times worse
+than one-shot, and its stage 3 opens all 21. That has to change before stage 1
+promotes. It has not been changed yet because which way to change it is the
+author's call, and the choice is between the full-objective ladder and dropping
+the search past stage 1 entirely in favour of brackets.
+
 ## OPEN WITH THE AUTHOR
 
 Nothing is blocking. The loop runs to 400 iterations and commits every twelfth.
