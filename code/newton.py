@@ -148,6 +148,9 @@ HOLD = {'newborn_endowment_scale'}
 # step that emp_homeless has no leverage of its own.
 NONSMOOTH = set()
 NONSMOOTH_INST = set()
+# What a point that predates a switch's NAME actually ran at: the Fortran's
+# compile-time default, since run_one_point.sh could not have handed it over.
+PREDATE = {'homeless_death_risk_flat_in_age': '0', 'measure_child_gap': '0'}
 SV_TOL   = 0.02
 STATE    = os.path.join(HERE, '.newton_state.json')
 
@@ -215,7 +218,21 @@ def archive():
             continue
         if str(int(float(v.get('fixed_productivity', '1')))) != proc:
             continue
-        if v.get('use_pia_formula', '1') != NB.CONFIG_SWITCHES.get('use_pia_formula', '1'):
+        # EVERY CONFIG SWITCH IS ENFORCED, not just use_pia_formula.
+        #
+        # This filtered on one name out of the table and nothing said so, which
+        # is how homeless_death_risk_flat_in_age came to be added to
+        # CONFIG_SWITCHES on 4 September and have no effect at all: the two
+        # points solved with the flat 1.6 multiplier POOLED with the 150 solved
+        # on Baggett's age profile, and gaps.py ranked two different models of
+        # what homelessness does to an old person against each other as one
+        # economy.  Nothing in the output distinguished them.
+        #
+        # The fallback for a point that predates a name is the FORTRAN's
+        # compile-time default -- what such a point actually ran at -- and not
+        # the live value, which would silently admit it whatever it ran.
+        if any(v.get(nm, PREDATE.get(nm, live)) != live
+               for nm, live in NB.CONFIG_SWITCHES.items()):
             continue
         out[os.path.basename(f)[6:-4]] = (v, m)
     return out

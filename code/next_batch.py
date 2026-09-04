@@ -1827,6 +1827,20 @@ CONFIG_SWITCHES = {
     # every age from Meyer, Wyse and Logani.  Those are different models of what
     # homelessness does to an old person, not different parameter values.
     'homeless_death_risk_flat_in_age': _live_switch('homeless_death_risk_flat_in_age'),
+    # measure_child_gap IS A CONFIG SWITCH because it decides whether omega_c
+    # EXISTS on a point, and residual() scores an absent moment as ZERO.
+    #
+    # That is the trap. A point solved with the flag off has no omega_c, so it
+    # takes a free pass on a moment every new point is charged for, and it would
+    # rank above points that actually measured it. The two sets are not
+    # comparable on the objective even though they are the same economy, so they
+    # must not pool.
+    #
+    # The economics are identical either way: the child counterfactual runs
+    # AFTER the baseline equilibrium has converged and changes nothing in it.
+    # This switch separates points by WHAT WAS MEASURED, not by what was solved,
+    # and it is the only one in this table of which that is true.
+    'measure_child_gap': _live_switch('measure_child_gap'),
 }
 
 

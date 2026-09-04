@@ -380,6 +380,20 @@ def load(path):
         if k == 'sigma_y' and 'bottom half earnings share' in lab:
             continue
         m[k] = (float(a), float(b))
+    # THE FORTRAN CALLS IT omega AND next_batch.OWN CALLS IT omega_c.
+    #
+    # The child-gap block prints "MOMENT omega     use rise, child term off",
+    # so the generic parser above stores it under the key `omega`, and the
+    # instrument that owns it -- weight_on_child -- looks for `omega_c` and never
+    # finds it. That is the same shape of bug as the missing sud_homeless
+    # pattern: a moment the model measures that the scorer cannot see, and an
+    # instrument that therefore looks like a parameter with no moment.
+    #
+    # It has never bitten before because no point had ever been solved with
+    # measure_child_gap=1, so the line was never printed at all.
+    if 'omega' in m and 'omega_c' not in m:
+        m['omega_c'] = m.pop('omega')
+
     # pi_eu IS SCORED AGAINST 0.139, whatever the point's own MOMENT line says.
     # The Fortran declares 0.139 from 3 September -- the SCF share of households
     # aged 26 to 64 with no wage income, which is what model_fraction_unemployed

@@ -300,10 +300,22 @@ declare -A P=(
     # The author's instruction of 2 September: "rho_d=1, rho_m=1. do not lower
     # them."
     [rho_m]=1.0
-    # THE CHILD GAP, off by default and turned on for the final round, where
-    # omega_c is calibrated. Nothing measures the child gap while this is zero,
-    # which is why gaps.py has printed "not measured" against omega_c.
-    [measure_child_gap]=0
+    # THE CHILD GAP, ON since 4 September, on the author's instruction: *"yes,
+    # include omega_c as well"*.  It was off by default and reserved for a final
+    # round, so no point had EVER been solved with it and omega_c had never been
+    # measured -- which is why weight_on_child looked like a parameter with no
+    # moment and sat outside the search.
+    #
+    # IT COSTS 9 PER CENT, NOT 100. The block runs a second
+    # solve_value_function_and_policy_functions and converge_to_stationary_
+    # equilibrium, so it reads as a doubling, and it was reported here as one.
+    # Measured on the same vector: 4m06s off, 4m30s on. The counterfactual
+    # starts from the converged baseline distribution and converges quickly.
+    #
+    # It displaces the price-elasticity block, which prints "ELASTICITY SKIPPED
+    # omega ran first and left its distribution behind". Nothing in gaps.py
+    # scores the elasticity, so that costs no moment.
+    [measure_child_gap]=1
     # THE IMPATIENT DISCOUNT FACTOR, ADDED WITH THE TWO-TYPE MODEL. The commit
     # that split households into a patient and an impatient type taught the
     # Fortran's PARAM_HANDOVER and next_batch.py the name and did NOT teach it
