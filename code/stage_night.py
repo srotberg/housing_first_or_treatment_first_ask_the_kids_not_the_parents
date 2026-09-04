@@ -39,6 +39,10 @@ RESTARTS = 3      # restarts from a new location before the stage is given up on
 BAND    = 0.10    # the author's rule: inside ten per cent
 LOG     = os.path.join(HERE, 'stage_night.log')
 BRANCH  = 'claude/two-period-addiction-hazard-d7gb61'
+# The best vector on the economy immediately before the current one. Used only
+# when a model change has emptied the archive. 2f138e4fa0 is stage 2's best at
+# SSR 0.3195, eight of twelve moments inside ten per cent.
+FALLBACK_ANCHOR = 'point_2f138e4fa0.txt'
 
 
 def say(m):
@@ -97,7 +101,12 @@ def seed(stage, jitter=0.0):
         _, tag, _, _ = N.best(A, keys)
         base = dict(A[tag][0])
     else:
-        t = open(os.path.join(HERE, 'points', 'point_8c42b1f32a.txt'),
+        # THE FALLBACK ANCHOR IS THE BEST VECTOR FROM THE ECONOMY JUST LEFT,
+        # not a fixed name from hours ago. A model change empties the archive,
+        # and this branch is the only thing that decides where the next economy
+        # starts; pointing it at a stale point throws away every stage that has
+        # run since. FALLBACK_ANCHOR is updated whenever the model changes.
+        t = open(os.path.join(HERE, 'points', FALLBACK_ANCHOR),
                  errors='replace').read()
         base = dict(kv.split('=', 1) for kv in
                     re.search(r'^VECTOR (.*)$', t, re.M).group(1).split()
