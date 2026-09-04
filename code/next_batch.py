@@ -1841,6 +1841,12 @@ CONFIG_SWITCHES = {
     # This switch separates points by WHAT WAS MEASURED, not by what was solved,
     # and it is the only one in this table of which that is true.
     'measure_child_gap': _live_switch('measure_child_gap'),
+    # rr_homeless_hold_age CHANGES WHAT THE STREET COSTS AN OLD HOUSEHOLD, so a
+    # point run at 0 and a point run at 70 are two different models of that and
+    # must not pool. The source hash separates them anyway, since the parameter
+    # needed a Fortran change to exist; this is here so that a later point run
+    # with the hold OFF on the same source is still kept apart.
+    'rr_homeless_hold_age': _live_switch('rr_homeless_hold_age', '0'),
 }
 
 

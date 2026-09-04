@@ -3162,6 +3162,34 @@
         ! alone and lets the multiplier fall out of baseline mortality. Setting 2
         ! is a flat 1.6 from Meyer, Wyse and Logani.
         integer :: homeless_death_risk_flat_in_age=0
+        ! HOLD BAGGETT'S RELATIVE RISK FLAT ABOVE THIS DATA AGE. Zero is off.
+        !
+        ! rr_homeless in us_mortality_multipliers.csv is EXACTLY 1.100 for every
+        ! age from 75 to 85 -- eleven of sixty rows at one constant -- and it
+        ! reaches that floor down a perfect straight line from 69: 2.035, 1.865,
+        ! 1.695, 1.525, 1.355, 1.185, steps of exactly -0.17. That tail is an
+        ! interpolation to an assumed floor, which is what too few observed
+        ! deaths above 75 produces; it is not a measurement of what the street
+        ! does to an eighty year old.
+        !
+        ! The model takes it as one, and it is the biggest deterrent the model
+        ! has: sleeping rough multiplies a 26 year old's death hazard by 4.41 and
+        ! an 80 year old's by 1.09. The street is nearly free once you are old,
+        ! and 88 per cent of the model's homeless are retired against 25 per cent
+        ! of the population.
+        !
+        ! Setting this to 70 holds the relative risk at its last measured value
+        ! for every age above 70, leaving every age at or below it exactly as
+        ! Baggett measured it. The author, 4 September: "we just hold it after
+        ! age 70, let's see if it works", and "i think it's easy to say that we
+        ! just compute the death probability and hold it fixed after age 70".
+        !
+        ! It holds the MULTIPLIER, not the absolute excess probability. Baseline
+        ! mortality rises steeply after 70, so holding the multiplier lets the
+        ! excess probability rise with age, and holding the excess probability
+        ! would instead let the multiplier fall back toward one -- which is the
+        ! shape being corrected, in a milder form.
+        integer :: rr_homeless_hold_age=0
         real(8) :: homeless_excess_death_risk=0.00396d0
 
         ! FOOD STAMPS PER HOUSEHOLD. cbar is the second level-over-mean moment:
@@ -35234,7 +35262,7 @@
 
         implicit none
 
-        integer :: age_1,i_1,ios_1
+        integer :: age_1,i_1,ios_1,hold_i_1
         real(8) :: shape_1,rr_1,d1_1,d2_1,d3_1
         character(len=400) :: header_1
         logical :: file_exists_1
@@ -35263,6 +35291,8 @@
         end if
 
             read(74,'(A)') header_1
+
+            hold_i_1=0
 
             do i_1=1,life_span
 
@@ -35307,9 +35337,34 @@
                 shape_sud_profile(i_1)=1.d0
                 rr_homeless_profile(i_1)=max(rr_1,1.d0)
 
+                ! The row whose age is the hold age, found by reading the age
+                ! column rather than assuming the file starts at 26.
+                if (age_1==rr_homeless_hold_age) hold_i_1=i_1
+
             end do
 
         close(74)
+
+        ! HOLD THE RELATIVE RISK FLAT ABOVE THE HOLD AGE. See the declaration of
+        ! rr_homeless_hold_age for why the tail it replaces is not a measurement.
+        if ((rr_homeless_hold_age>0) .AND. (hold_i_1>0) .AND. &
+            (hold_i_1<life_span)) then
+
+            do i_1=hold_i_1+1,life_span
+
+                rr_homeless_profile(i_1)=rr_homeless_profile(hold_i_1)
+
+            end do
+
+            write(*,*) "rr_homeless held flat above data age", &
+                rr_homeless_hold_age, "at", rr_homeless_profile(hold_i_1)
+
+        else if (rr_homeless_hold_age>0) then
+
+            write(*,*) "rr_homeless_hold_age", rr_homeless_hold_age, &
+                "is not an age in the file; profile left as read"
+
+        end if
 
         mortality_profiles_loaded=1
 
@@ -36606,6 +36661,11 @@
                 case ("discount_factor")
                     write(*,*) "HANDOVER discount_factor:", discount_factor, "->", handover_value
                     discount_factor=min(max(handover_value,0.5d0),1.05d0)
+
+                case ("rr_homeless_hold_age")
+                    write(*,*) "HANDOVER rr_homeless_hold_age:",&
+                        rr_homeless_hold_age, "->", handover_value
+                    rr_homeless_hold_age=max(min(nint(handover_value),85),0)
 
                 case ("homeless_death_risk_flat_in_age")
                     write(*,*) "HANDOVER homeless_death_risk_flat_in_age:",&
