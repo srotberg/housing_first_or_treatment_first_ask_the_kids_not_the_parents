@@ -238,15 +238,29 @@ def main():
                 f'{TOL:.0%}, worst {worst_m} at {100*gaps[worst_m]:.1f}%')
             return 0
         if not moved:
-            # Not convergence. Every step was clipped, which means the parameters
-            # that still have gaps are sitting on their bounds -- a terminal state
-            # the author has to resolve, not one to keep spinning on.
+            # IT DOES NOT STOP. The author, 4 September: *"the loop should be such
+            # that it wont stop iterating until all parameters converged"*.
+            #
+            # Nothing moved means every remaining gap belongs to a parameter
+            # pinned on a bound, so the NEXT SOLVE WOULD BE BIT-IDENTICAL and
+            # re-running it would burn three minutes to learn nothing. So it does
+            # not solve -- it waits and re-reads the archive, because the thing
+            # that unpins it comes from OUTSIDE this loop: the author widening a
+            # bound, or Nelder-Mead finding a better point in the same archive.
+            # Then it picks up and carries on.
             at_bound = [p_ for p_ in R
                         if p_ in v and float(v[p_]) in NB.BOUNDS[p_]]
-            say(f'STUCK at iteration {it}: nothing moved but {worst_m} is still '
+            say(f'PINNED at iteration {it}: nothing can move, {worst_m} still '
                 f'{100*gaps[worst_m]:.1f}% off; on a bound: '
-                + (', '.join(sorted(at_bound)) or 'none'))
-            return 0
+                + (', '.join(sorted(at_bound)) or 'none')
+                + '  -- waiting for a bound to widen, not stopping')
+            time.sleep(300)
+            A = N.archive()
+            b = N.best(A, keys)
+            if b and b[1] in A and NM.ssr(N, A[b[1]][1], keys) < NM.ssr(N, mom, keys):
+                v, mom = dict(A[b[1]][0]), A[b[1]][1]
+                say(f'picked up a better point from the archive: {b[1]}')
+            continue
         worst = max(moved, key=lambda z: abs(z[3]))
         say(f'iteration {it}: {len(moved)} moved, worst gap '
             f'{worst[3]:+.1f}% on {worst[0]}')
