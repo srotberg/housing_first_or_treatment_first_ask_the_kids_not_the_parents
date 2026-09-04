@@ -182,4 +182,9 @@ RULES = {
     # per cent and left the age composition IDENTICAL, so the level and the
     # composition do not respond to the same handle.
     'h_share5': ('rr_homeless_old_level', 'raise', 'agrees near the anchor, ray reverses'),
+    # pi_V, the share of eligible households receiving a housing voucher in the
+    # benchmark, target 0.266. The author: *"lower if higher than data"*. Direct:
+    # more voucher probability, more take-up. Measured 7-point ray agrees at slope
+    # +1.717 and is monotone.
+    'pi_V': ('probability_of_voucher_benchmark_used', 'lower', 'agrees'),
 }
