@@ -29173,35 +29173,47 @@
                         
         unemployment_process=0
         
-        if (include_addiction==0) then
+        ! THE STREET'S LABOUR-MARKET MULTIPLIERS, SET BEFORE EITHER BRANCH.
+        !
+        ! THEY WERE SET INSIDE if (include_addiction==0) AND USED IN BOTH. This
+        ! model has include_addiction=1 as a compile-time parameter, so the setter
+        ! was DEAD CODE and the live branch read two UNINITIALISED locals. Every
+        ! value of homeless_job_penalty_pp then gave bit-identical output -- delta
+        ! 0.05, 0.30 and 0.55 agreed to seven decimals on h_1, y_h and
+        ! emp_homeless -- and that was read as the parameter having no economic
+        ! effect when it was never applied at all. The same fault silently replaced
+        ! the (1+increased_prob_if_homeless) factor on the addiction path.
+        !
+        ! Anything set here must be set for BOTH branches. Do not move it back
+        ! inside one.
+        if (homeless_job_penalty_pp>0.d0) then
         
-            if (homeless_job_penalty_pp>0.d0) then
-            
-                ! POINTS, NOT MULTIPLES. Both sides move by the same number of
-                ! percentage points, and the finding rate floors at zero.
-                loss_mult_homeless_1=(probability_becoming_unemployed+&
-                    homeless_job_penalty_pp)/&
-                    max(probability_becoming_unemployed,10.d0**(-12))
-                    
-                find_mult_homeless_1=max(0.d0,&
-                    (probability_becoming_employed-homeless_job_penalty_pp)/&
-                    max(probability_becoming_employed,10.d0**(-12)))
-                    
-            else
-            
-                loss_mult_homeless_1=1.d0+increased_prob_if_homeless+&
-                    extra_job_loss_if_homeless
-                    
-                find_mult_homeless_1=1.d0-increased_prob_if_homeless
+            ! POINTS, NOT MULTIPLES. Both sides move by the same number of
+            ! percentage points, and the finding rate floors at zero.
+            loss_mult_homeless_1=(probability_becoming_unemployed+&
+                homeless_job_penalty_pp)/&
+                max(probability_becoming_unemployed,10.d0**(-12))
                 
-            end if
+            find_mult_homeless_1=max(0.d0,&
+                (probability_becoming_employed-homeless_job_penalty_pp)/&
+                max(probability_becoming_employed,10.d0**(-12)))
+                
+        else
+        
+            loss_mult_homeless_1=1.d0+increased_prob_if_homeless+&
+                extra_job_loss_if_homeless
+                
+            find_mult_homeless_1=1.d0-increased_prob_if_homeless
             
-            ! THE SEPARATION PROBABILITY CANNOT EXCEED ONE, and the clamp is on the
-            ! FACTOR rather than per branch: the two branches split it by whether
-            ! unemployment insurance is received and must scale together or stop
-            ! summing to it.
-            loss_mult_homeless_1=min(loss_mult_homeless_1,&
-                1.d0/max(probability_becoming_unemployed,10.d0**(-12)))
+        end if
+        
+        ! THE SEPARATION PROBABILITY CANNOT EXCEED ONE, clamped on the FACTOR
+        ! rather than per branch: the branches split it by whether unemployment
+        ! insurance is received and must scale together or stop summing to it.
+        loss_mult_homeless_1=min(loss_mult_homeless_1,&
+            1.d0/max(probability_becoming_unemployed,10.d0**(-12)))
+        
+        if (include_addiction==0) then
         
             cutoff_age_1=life_span-retirement_span-1
         
