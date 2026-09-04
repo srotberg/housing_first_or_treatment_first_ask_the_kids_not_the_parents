@@ -56,6 +56,22 @@ TOL = float(os.environ.get('FP_TOL', '0.05'))
 # shoving without costing anything, because they have nothing left to do. It is
 # re-checked every iteration, so a moment that drifts back out resumes moving.
 FREEZE_BAND = float(os.environ.get('FP_FREEZE_BAND', '0.10'))
+# HYSTERESIS: A HELD PARAMETER NEEDS THIS MUCH TO START MOVING AGAIN.
+#
+# The author, 4 September: *"maybe the right way is to push them into the rule
+# when they pass 10%, and then only start updating them again when they leave
+# 15%"*, and *"so it's not so much in and out"*.
+#
+# With one threshold in both directions the band is a revolving door. A moment at
+# 9.9 per cent is held, the next solve puts it at 10.1 and it moves again, and a
+# parameter that is essentially converged keeps injecting cross-effects into the
+# ones that are not. It shows in the run: fp4 held 12 of 21 at iteration 1, then
+# 9, 9, 8 -- parameters were leaving the band as fast as they entered.
+#
+# Two thresholds make the band STICKY. A moving parameter is held once its gap is
+# inside FREEZE_BAND; a held parameter only starts moving again once its gap
+# exceeds RELEASE_BAND. Nothing can change state twice inside that interval.
+RELEASE_BAND = float(os.environ.get('FP_RELEASE_BAND', '0.15'))
 STATE = os.path.join(HERE, 'fixed_point_state.json')
 LOG = os.path.join(HERE, 'fixed_point.log')
 TRACE = os.path.join(HERE, 'fixed_point_trace.txt')
@@ -293,6 +309,7 @@ def main():
             v, start = dict(st['v']), int(st['it']) + 1
             scale = {k: float(x) for k, x in (st.get('scale') or {}).items()}
             last = {k: float(x) for k, x in (st.get('last') or {}).items()}
+            was_held = set(st.get('held') or [])
             t = solve_tag_of(A, v)
             mom = A[t][1] if t else None
             if mom is None:
@@ -339,15 +356,21 @@ def main():
         scale, last
     except NameError:
         scale, last = {}, {}
+    try:
+        was_held
+    except NameError:
+        was_held = set()
     for it in range(start, start + ITERS):
-        moved, held, damped = [], [], []
+        moved, held, damped, now_held = [], [], [], set()
         for p, (m, sgn) in R.items():
             if m not in mom or not mom[m][1] or p not in v:
                 continue
             model, target = mom[m]
             rel = (model - target) / target
-            if abs(rel) <= FREEZE_BAND:
+            # STICKY: it takes FREEZE_BAND to get in and RELEASE_BAND to get out.
+            if abs(rel) <= (RELEASE_BAND if p in was_held else FREEZE_BAND):
                 held.append(m)
+                now_held.add(p)
                 continue
             lo, hi = NB.BOUNDS[p]
             x = float(v[p])
@@ -415,9 +438,13 @@ def main():
             continue
         worst = max(moved, key=lambda z: abs(z[3]))
         say(f'iteration {it}: {len(moved)} moved, {len(held)} held inside '
-            f'{FREEZE_BAND:.0%}, worst gap {worst[3]:+.1f}% on {worst[0]}')
+            f'{FREEZE_BAND:.0%}/{RELEASE_BAND:.0%}, worst gap {worst[3]:+.1f}% on {worst[0]}')
         if held:
             say('   held: ' + ', '.join(sorted(held)))
+        freed = sorted(was_held - now_held)
+        if freed:
+            say(f'   released past {RELEASE_BAND:.0%}: ' + ', '.join(freed))
+        was_held = now_held
         if damped:
             say('   damped for overshooting: ' + ', '.join(sorted(damped)))
         with open(TRACE, 'a') as f:
@@ -431,8 +458,8 @@ def main():
             say(f'iteration {it}: {t} not on the live economy; stopping')
             return 1
         mom = A[t][1]
-        json.dump({'it': it, 'v': v, 'tag': t, 'scale': scale, 'last': last},
-                  open(STATE, 'w'), indent=1)
+        json.dump({'it': it, 'v': v, 'tag': t, 'scale': scale, 'last': last,
+                   'held': sorted(was_held)}, open(STATE, 'w'), indent=1)
         say(f'iteration {it}: {t}  SSR {NM.ssr(N, mom, keys):.4f}')
     return 0
 
