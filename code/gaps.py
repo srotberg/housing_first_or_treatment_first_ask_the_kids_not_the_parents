@@ -83,7 +83,21 @@ UNSCORED = {
             # lift the working age over the threshold and leave retirement income
             # exactly where it was. Measured: rsl 3.05 -> 1.40 took band 5 from
             # 0.9306 to 0.9562 while h_1 halved.
-            'h_share5',
+            # RESTORED 4 September. h_share5 is SCORED again, and its instrument is
+            # no longer ssi_floor_level -- which the author holds to the 2024
+            # federal rate -- but rr_homeless_old_level, the relative risk of death
+            # on the street above age 65. The author: "the probability of dying if
+            # you are homeless at 84-85 is much higher than baggetes number... We
+            # might actually need to set that number for the old to match their
+            # homelessness rate since those data are actually not reliable".
+            #
+            # The paragraph above says the street carries no disutility for a
+            # retiree and that is still true -- employment, recovery and mortality
+            # are all idle for them. The difference is that mortality NEED NOT be
+            # idle: Baggett's 65-84 ratio is dominated by survivor selection and
+            # does not identify the causal effect, so the model was free to assume
+            # it and now calibrates it. The minimax objection is also spent: the
+            # objective has been the sum of squared residuals since 4 September.
     # w_bot LEAVES THE LOSS, 3 September: *"We don't need the w_bot anymore...
     # We have just one beta now!"* There is no second discount factor to aim at
     # it. It reads 0.02097 at the base against 0.025 in the SCF, so it is right

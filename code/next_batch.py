@@ -807,7 +807,19 @@ BOUNDS = {
     # thirteenfold between those two -- but not a sufficient one, and the moment
     # needs a parameter that scales benefits PROPORTIONALLY instead of
     # truncating them from below. See SSI_FLOOR_ANALYSIS.md.
-    'ssi_floor_level':                                 (0.1774, 0.30),
+    # ssi_floor_level HAS NO BOUNDS ENTRY, WHICH IS HOW IT IS HELD.
+    #
+    # The author, 4 September: "the old retirement benefits, which should just
+    # follow the way they are structured in reality". It is the 2024 federal
+    # benefit rate and is not a dial.
+    #
+    # It still OWNS h_share5 in the table above, and that became a defect the
+    # moment h_share5 was restored to the objective: instruments_all takes every
+    # owner whose parameter has bounds, so ssi_floor_level and
+    # rr_homeless_old_level both entered, h_share5 appeared TWICE in the residual
+    # vector and was weighted double, and a parameter the author holds would have
+    # been moved by the search. Dropping the bounds entry is what holds it,
+    # because that is the test instruments_all applies.
     'utility_cost_of_treatment':                            (0.0, 8.0),
     'probability_becoming_unemployed':                     (1e-6, 0.500),
     # THE FLOOR EXCLUDED THE SOLUTION and was found by measurement, 2 September.
@@ -1057,8 +1069,7 @@ UNSCORED = {'rent50',
             # lift the working age over the threshold and leave retirement income
             # exactly where it was. Measured: rsl 3.05 -> 1.40 took band 5 from
             # 0.9306 to 0.9562 while h_1 halved.
-            'h_share5',
-            # w_bot LEAVES THE LOSS on the author's instruction of 3 September:
+                        # w_bot LEAVES THE LOSS on the author's instruction of 3 September:
             # *"We don't need the w_bot anymore... We have just one beta now!"*
             #
             # It was the moment two discount factors existed to match, and with
