@@ -164,13 +164,40 @@ def seed(stage, jitter=0.0):
                 f'using {base[p_]}')
     lines = ['bash code/run_one_point.sh ' +
              ' '.join(f'{k}={base[k]}' for k in sorted(base))]
+    # THE DISPLACEMENT IS SIZED BY HOW FAR THE MOMENT HAS TO GO.
+    #
+    # The author, 4 September: "Is it possible you are not giving them enough of
+    # a band for them?" The hard bounds are generous --
+    # probability_becoming_unemployed sits at 0.0122 in (1e-06, 0.5), which is
+    # four thousand per cent of headroom -- but the SIMPLEX was seeded at a flat
+    # ten per cent of each value, and that is the band the search actually has.
+    #
+    # pi_eu needs its instrument to move about +190 per cent: matched pairs put
+    # the elasticity at 0.27 to 0.51, and the moment has to rise 77 per cent. A
+    # ten per cent simplex is NINETEEN TIMES too small for that. Nelder-Mead can
+    # grow through expansions, but only while they keep succeeding, and each one
+    # is three minutes.
+    #
+    # So the displacement scales with the gap the instrument's own moment has to
+    # close, floored at ten per cent so a moment already on target still gets a
+    # vertex, and capped at sixty so a wildly-off moment does not throw a vertex
+    # to the bound and waste it.
+    gaps = {}
+    A2 = N.archive()
+    if A2:
+        _, _, _, mom0 = N.best(A2, keys)
+        for pp, mm in inst:
+            if mm in mom0 and mom0[mm][1]:
+                gaps[pp] = abs(mom0[mm][0] / mom0[mm][1] - 1.0)
     for p in names:
         lo, hi = NB.BOUNDS[p]; x = float(base[p])
-        d = 0.10 * abs(x) if abs(x) > 1e-12 else 0.10 * max(abs(hi), 1e-6)
+        frac = min(max(gaps.get(p, 0.10), 0.10), 0.60)
+        d = frac * abs(x) if abs(x) > 1e-12 else frac * max(abs(hi), 1e-6)
         xn = min(max(x + d, lo), hi)
         if abs(xn - x) < 1e-12:
             xn = min(max(x - d, lo), hi)
         v = dict(base); v[p] = f'{xn:.8g}'
+        say(f'    {p} {x:.6g} -> {xn:.6g}  ({frac:.0%} of value)')
         lines.append('bash code/run_one_point.sh ' +
                      ' '.join(f'{k}={v[k]}' for k in sorted(v)))
     open(os.path.join(HERE, f'batch_stage{stage}_seed.txt'), 'w').write(
