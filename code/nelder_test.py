@@ -68,6 +68,21 @@ def run(resid, x0, iters, label, tol):
     NM.STATE = os.path.join(d, 'state.json')
     NM.BATCH = os.path.join(d, 'batch.txt')
     NM.TRACE = os.path.join(d, 'trace.txt')
+    # THE STAGE SCOPE HAS TO BE STUBBED TOO, and it was not.
+    #
+    # nelder.py stopped reading NB.STAGES when staging was introduced and started
+    # filtering instruments through its own STAGE_MOMENTS, which lists the REAL
+    # moment names. The stub's moments are m0..m19, so the intersection was empty,
+    # instruments_all returned nothing, and seed() built a simplex of ONE vertex.
+    # Every run then reflected and contracted a single point until shrink indexed
+    # off the end of it: "seeded from 9 measured points, 1 vertices".
+    #
+    # The suite has therefore been failing since staging landed, and the results it
+    # is quoted for -- 20-dim bowl 1.2e-09, 8-dim Rosenbrock 4.6e-14, 20-dim
+    # Rosenbrock 0.187 -- were all measured BEFORE that and have not been
+    # reproducible since. A broken test that nobody runs is worse than no test,
+    # because its old numbers keep getting cited.
+    NM.STAGE_MOMENTS = [list(KEYS)]
 
     # A starting simplex: x0 and x0 + 0.4 e_i, all solved.
     for i in range(K + 1):
