@@ -273,9 +273,17 @@ def main():
             # rather than clipping silently, which is the failure that hides a
             # pinned parameter as a converged one. Zero stays because a negative
             # scale, hazard or price is not a value the model can read.
-            xn = max(x + step, 0.0)
-            if xn < lo or xn > hi:
-                say(f'   {p} outside its old bounds {lo:g}..{hi:g} at {xn:.8g}')
+            # FLOORED AT THE LOWER BOUND, FREE ABOVE. The author, 4 September,
+            # first *"just let them move freely (unless you need to cap them at
+            # 0"*, then named two floors explicitly: 0.05 on the addiction hazard
+            # and 1e-08 on b. So the FLOOR is enforced -- it is the "cap at 0"
+            # generalised to whatever the author set -- and the ceiling is not,
+            # which is where the freedom was wanted.
+            xn = max(x + step, lo)
+            if x + step < lo:
+                say(f'   {p} held at its floor {lo:g}')
+            if xn > hi:
+                say(f'   {p} above its old ceiling {hi:g} at {xn:.8g}')
             if abs(xn - x) > 1e-12:
                 v[p] = f'{xn:.8g}'
                 moved.append((p, x, xn, 100.0 * rel))

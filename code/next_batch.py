@@ -790,8 +790,12 @@ BOUNDS = {
     # BOUNDS, and the gate died with KeyError: 'addiction_scalar_1' after
     # collecting 314 points. Same values as FREE_BOUNDS so the two paths cannot
     # disagree about where the instrument may go.
-    'lambda_addiction':                                 (0.5, 20000.0),
-    'addiction_scalar_1':                               (1e-30, 1.0),
+    # LOWER BOUND SET BY THE AUTHOR, 4 September: 0.05.
+    # the hazard coefficient in pi_d(v) = 1 - exp(-lambda v)
+    'lambda_addiction':                                 (0.05, 20000.0),
+    # LOWER BOUND SET BY THE AUTHOR, 4 September: 1e-08.
+    # b in the participation threshold C > (phi/theta) p b; a low b brings the bar down to where poor households clear it, which is what could put substance use disorder into homelessness
+    'addiction_scalar_1':                               (1e-08, 1.0),
     # A take-up FRACTION, so [0, 1] is the whole domain. Real SSI has a $2,000
     # asset test and take-up among eligible elderly of roughly half, so the
     # empirically defensible region is well inside the upper bound rather than
