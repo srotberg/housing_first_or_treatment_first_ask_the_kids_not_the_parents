@@ -315,7 +315,20 @@ declare -A P=(
     # It displaces the price-elasticity block, which prints "ELASTICITY SKIPPED
     # omega ran first and left its distribution behind". Nothing in gaps.py
     # scores the elasticity, so that costs no moment.
-    [measure_child_gap]=1
+    #
+    # BACK OFF, an hour later, on the author's instruction: *"since omega_c is so
+    # close, just keep it fixed for now, we can adjust it at the end"*.  It read
+    # 0.1622 against 0.1834 on the one point solved with it on, a gap of 11.6 per
+    # cent, and weight_on_child is held rather than calibrated.
+    #
+    # Turning it off also restores the archive.  measure_child_gap is a CONFIG
+    # SWITCH, so with it on only the single point solved that way pooled and the
+    # simplex had to be rebuilt from scratch; with it off the 155 points already
+    # solved pool again and the seed is free.  Nothing is lost: the two scorer
+    # bugs found while turning it on -- the omega/omega_c name mismatch and
+    # archive() enforcing only one switch out of the table -- are fixed and stay
+    # fixed, so when omega_c is taken up at the end it will work first time.
+    [measure_child_gap]=0
     # THE IMPATIENT DISCOUNT FACTOR, ADDED WITH THE TWO-TYPE MODEL. The commit
     # that split households into a patient and an impatient type taught the
     # Fortran's PARAM_HANDOVER and next_batch.py the name and did NOT teach it
