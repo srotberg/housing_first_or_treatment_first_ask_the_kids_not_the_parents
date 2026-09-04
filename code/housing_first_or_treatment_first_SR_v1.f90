@@ -7914,8 +7914,31 @@
 
             if (h_1==2) then
 
-                sep_1=sep_1*(1+iph_1)
-                find_1=find_1*(1-iph_1)
+                ! THE STREET'S LABOUR-MARKET PENALTY. THIS IS THE LIVE SITE.
+                !
+                ! number_of_smi_states is 2, so build_unemployment_process_smi and
+                ! this function are what the model actually uses; the hand-written
+                ! block in create_unemployment_process is the one that gets
+                ! VERIFIED against, not the one that runs. homeless_job_penalty_pp
+                ! was added there and nowhere else, so delta 0.05, 0.30 and 0.55
+                ! produced identical output -- the live path never saw it.
+                !
+                ! In POINTS, which is the author's form: *"if the chance went up 10
+                ! p.p., you reduce the chance of regaining by 10 p.p. too (capped
+                ! below at 0%)"*. It applies exactly here, because sep_1 and find_1
+                ! are already node-level rates -- no productivity tilt to correct
+                ! for, and the caps are the real probability bounds.
+                if (homeless_job_penalty_pp>0.d0) then
+
+                    sep_1=min(sep_1+homeless_job_penalty_pp,1.d0)
+                    find_1=max(find_1-homeless_job_penalty_pp,0.d0)
+
+                else
+
+                    sep_1=sep_1*(1+iph_1+extra_job_loss_if_homeless)
+                    find_1=find_1*(1-iph_1)
+
+                end if
 
             end if
 
