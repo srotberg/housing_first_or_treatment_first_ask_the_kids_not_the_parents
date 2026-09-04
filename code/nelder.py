@@ -126,8 +126,22 @@ STAGE_MOMENTS = [
     # so the difference is people with the disorder cycling through margins that
     # are four times worse. Targeting pi_eu with lambda_d pinned in another stage
     # asks the search to hit a moment while its strongest handle is held.
+    # tau_l AND aleph JOIN STAGE 1, on the author's question of 4 September:
+    # "how come i dont see tau_l and aleph in stage 1?"
+    #
+    # The ten-instrument cap was mine, from nelder_test.py: the real ask/tell
+    # machine solves a 20-dim quadratic bowl to 1.2e-09 and an 8-dim Rosenbrock
+    # to 4.6e-14, but FAILS a 20-dim Rosenbrock at 0.187 after 3000 evaluations.
+    # Twelve is inside the range that works; twenty is not.
+    #
+    # And leaving them out has the cost the author already fixed once. Stage 1
+    # was fitting beta, cbar and omega_l against tau_l 17.5 per cent low and
+    # aleph 10.5 per cent low -- the same error as fitting the preference block
+    # against an income spread forty per cent too narrow, which is why sigma_y
+    # was moved in. tau_l is BRACKETED by expand.py (crossing in 0.718..0.827),
+    # so it is a cheap one to have in scope rather than a risk.
     ['h_2', 'p_m', 'cbar', 'beta', 'gamma', 'b', 'omega_l', 'sigma_y',
-     'pi_eu', 'lambda_d'],
+     'pi_eu', 'lambda_d', 'tau_l', 'aleph'],
     # 2: plus the five the author named. aleph is the one they called very
     #    important, and it reads 54.06 against 80 -- a life worth a third less
     #    than it should be, which is why the street's mortality cost does not
@@ -138,7 +152,7 @@ STAGE_MOMENTS = [
     # statistical life and theta against the share of spending on the addictive
     # good, so leaving the drug block until stage 3 asks stage 2 to fit aleph
     # while the preference parameters it trades against are pinned.
-    ['pi_V', 'tau_l', 'aleph', 'theta'],
+    ['pi_V', 'theta'],
     # 3: the rest, once the first two hold. h_share5 joined on 4 September when
     #    the old-age relative risk stopped being assumed and became an
     #    instrument, so the old band's share of the homeless has a target again
