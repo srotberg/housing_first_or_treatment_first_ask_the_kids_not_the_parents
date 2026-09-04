@@ -169,6 +169,10 @@ declare -A P=(
     # reproduces the model exactly; it owns emp_homeless, the employed share of
     # the homeless, 0.46 in the data against 0.99 here.
     [extra_job_loss_if_homeless]=0
+    # THE STREET'S LABOUR-MARKET PENALTY IN PERCENTAGE POINTS. Zero reproduces
+    # the model exactly and leaves increased_prob_if_homeless in charge; positive
+    # overrides both sides with lose+delta and find-delta. Owns y_h.
+    [homeless_job_penalty_pp]=0
     # THE BOTTOM OF THE PRODUCTIVITY GRID, two instruments for the two moments
     # that say who the homeless are: the employed share (0.46) and their income
     # (0.191 of average). y_grid_kappa sets the bottom node's mass, exactly
