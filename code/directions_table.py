@@ -87,4 +87,20 @@ RULES = {
     # the unemployment rate harder than the unemployment rule does, and the two
     # will fight unless the adjuster is damped.
     'lambda_d': ('addiction_scalar_1', 'lower', 'no ray yet'),
+    # b, total drug users as a share of the population, target 0.089.
+    # The author: *"raise if higher than data"* -- so parameter and moment move in
+    # OPPOSITE directions, which the name does not suggest.
+    #
+    # lambda_addiction is the DISORDER-ONSET hazard coefficient, calibrated on the
+    # NSDUH disorder rate through the onset evaluated at the mean quantity used.
+    # Raising it moves users out of the plain-user pool and into the disorder
+    # state faster, and the disorder state is the shorter-lived one, so the stock
+    # of users falls. That is the reading that squares the ruling with the
+    # mechanism; the measured 8-point ray agrees in SIGN at -0.024.
+    #
+    # BUT THE RAY REVERSES inside the sampled range and is nearly flat, so this is
+    # a weak handle whichever way it points, and it overlaps lambda_d's population:
+    # total users 0.089 against disorder 0.0368, two instruments pulling on nested
+    # groups. Expect these two to fight.
+    'b': ('lambda_addiction', 'raise', 'agrees in sign, ray reverses'),
 }
