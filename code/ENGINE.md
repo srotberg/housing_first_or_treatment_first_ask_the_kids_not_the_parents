@@ -54,6 +54,27 @@ On 1 September a statement about the parameter h_2 was applied to the moment, an
 a moment sitting at −18 per cent was conceded until the author caught it. When
 they say "h_2", work out which one they mean before acting.
 
+## NEVER EDIT code/ WHILE A SOLVE IS RUNNING -- THE COORDINATOR INCLUDED
+
+Every worker prompt carries this rule and the coordinator broke it on 4 September.
+`run_one_point.sh` was edited to change a default while a bisection was still
+running in this container. Bash reads a script BY BYTE OFFSET, so the running
+shell resumed at a stale position and the build line came apart:
+
+    code/run_one_point.sh: line 653: -O3: command not found
+
+The point died as `point_e33d8586a4.FAILED.txt` with a build failure that had
+nothing to do with the Fortran, which compiled clean throughout. One solve lost,
+and several minutes spent suspecting the source.
+
+The same call also used `pkill -f "batch_holdbisect"`, which matched the
+coordinator's OWN shell and killed the tool call. Kill by checking the process
+list positionally, as the supervisor test below does, and never with a pattern
+that the running command line itself contains.
+
+Wait for `ps -eo args= | awk '/run_one_point/ && !/awk/'` to come back empty
+before editing anything under `code/`.
+
 ## THE PARALLEL ROUND IS SUSPENDED WHILE THE SERIAL SEARCH IS ALIVE
 
 On 4 September the author replaced the batch-and-fleet search with sequential
