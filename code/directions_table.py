@@ -187,4 +187,22 @@ RULES = {
     # more voucher probability, more take-up. Measured 7-point ray agrees at slope
     # +1.717 and is monotone.
     'pi_V': ('probability_of_voucher_benchmark_used', 'lower', 'agrees'),
+    # sud_homeless, the share of the homeless with a substance use disorder,
+    # target 0.217. The author: *"lower if higher than data"*. M is the SUD
+    # employment penalty on both margins -- job loss times M, job finding divided
+    # by M -- so a harsher penalty puts more of the disordered on the street.
+    #
+    # THE INSTRUMENT IS DEAD AND THE RULE CANNOT BE ACTED ON. The model reads
+    # 6.1e-07 against a target of 0.217: the homeless population has essentially
+    # NO substance use disorder in it. The measured 8-point ray spans M from 1 to
+    # 32, its whole bound range, and the slope is -1.2e-07 -- the moment does not
+    # move at all.
+    #
+    # So a fixed-point update on this rule walks M to a bound while the moment
+    # stays at zero, which looks like a stuck parameter and is actually a
+    # structural problem: something prevents households with the disorder from
+    # becoming homeless. Flagged to the author 4 September; it is not a
+    # calibration failure to be adjusted away.
+    'sud_homeless': ('multiple_of_probabilities_of_employment_if_addicted',
+                     'lower', 'INSTRUMENT DEAD, slope -1.2e-07 over the whole range'),
 }
