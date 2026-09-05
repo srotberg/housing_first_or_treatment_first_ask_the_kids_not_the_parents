@@ -446,7 +446,36 @@ FROZEN = {'multiple_of_probabilities_of_employment_if_addicted',
           # acceptable because setting 2 puts band 5 homelessness at 3.9e-9
           # against a target of 7.7e-4: the old are simply not homeless here, and
           # no level of a bypassed profile changes that.
-          'rr_homeless_old_level'}
+          'rr_homeless_old_level',
+          # delta IS HELD AT 0.001 UNTIL THE DRUG BLOCK IS RIGHT, on the author's
+          # instruction of 5 September: *"set delta=0.001 and allow it to adjust
+          # after b and base are correct"*.
+          #
+          # WHY IT HAD TO COME DOWN. Its declaration is 0.d0 and the Fortran's own
+          # note says "DELTA ZERO REPRODUCES THE MODEL EXACTLY", so the author's
+          # original paper ran without it. The search had driven it to 0.19945,
+          # which on a baseline separation probability of 0.0046844 is a
+          # separation of 20.41 per cent a year against 0.47 housed -- a 43.6-fold
+          # hazard. emp_homeless read 0.00005 against 0.46 not because employed
+          # households preferred housing but because they were thrown off the
+          # street.
+          #
+          # IT WAS AIMED AT A MOMENT SOMETHING ELSE WAS CAUSING. delta was pointed
+          # at emp_homeless early on 5 September when that moment read 0.82.
+          # Later the same day relative_share_of_housing was pinned at its data
+          # value of 0.268, which pushes working households off the street through
+          # a completely different channel -- 22.4 per cent of consumption to
+          # accept the street against 7.1 at the old taste -- and moved
+          # emp_homeless 0.818 -> 0.038 on a one-coordinate pair by itself.
+          #
+          # WHY 0.001 AND NOT 0. The author's number. It keeps the percentage-point
+          # branch live rather than falling back to the multiplicative one, so
+          # releasing it later is a step rather than a regime change.
+          #
+          # RELEASE CONDITION: b and lambda_d within tolerance. Remove this entry
+          # then; emp_homeless has no instrument until it is removed, which is
+          # stated rather than hidden.
+          'homeless_job_penalty_pp'}
 # NOTHING IS FROZEN, 5 September. bottom_productivity_level is released on the
 # author's confirmation that it owns emp_homeless: *"We are setting the lowest
 # productivity such that 46% of the homeless are employed"*.
