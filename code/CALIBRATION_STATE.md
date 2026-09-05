@@ -1,3 +1,66 @@
+# Calibration state -- 5 September, 04:05
+
+## sud_homeless HAS NO INSTRUMENT, AND IT IS NOT FOR WANT OF LOOKING
+
+Two isolation tests on the archive, pairs differing in ONE coordinate:
+
+  * **M: 69 pairs.** sud_homeless is 0.000010 at M=1, 0.000003 at M=4 and
+    0.000002 at M=32, while b collapses 0.234 -> 0.004 across the same range. M
+    is a strong DETERRENT on the choice to use and no handle on who is homeless.
+    Frozen at 4 on the author's instruction.
+  * **size_homelessness: 331 pairs.** sud_homeless does not move at all --
+    0.00000 -> 0.00000 from a street of 0.0425 to 0.07, 0.00000 -> 0.00004 up to
+    0.22. THE EARLIER CLAIM THAT SHRINKING THE STREET RAISES IT WAS WRONG: the
+    high-sud_homeless points differ from the current economy in the rental floor
+    and kappa_uem as well, and the effect was attributed to the street without
+    isolating it. Same mistake as the delta ray's baseline.
+
+## WHAT IS RULED OUT AS A BUG
+
+  * The accumulator is correct: val_homeless_sud_band uses the same
+    `housing_status_index_used==lowest_housing_grid_point` test as
+    val_homeless_band, and the same `unemployment_index>threshold_addiction_index`
+    test as val_sud_band (~17640).
+  * The printed aggregate equals sum(band share x SUD share in band) exactly on
+    every point checked.
+  * `can_consume_drugs` is set to 1 unconditionally at every site -- vestigial.
+  * NOT mechanically disjoint. threshold_addiction_index = 3*number_of_smi_states
+    = 6 splits a 12-state index into a non-disordered block 1-6 and a disordered
+    block 7-12, with emp_of (1 employed, 2 nothing, 3 on UI) running WITHIN each.
+    Employed-and-disordered is a real state and 20.5 per cent of SUD households
+    are employed.
+
+## WHAT IS STILL ODD
+
+Among the 93.6 per cent of homeless aged 26-34 the SUD share is EXACTLY 0.0,
+while 5-8 per cent of that age group carries the disorder. Independence would
+give a small positive number.
+
+The leading non-bug explanation is strict selection, and it is the author's own:
+homelessness is chosen at one corner -- zero wealth, a particular productivity
+node -- and the consumption threshold gating drug use means no disordered
+household occupies it. If that is right, sud_homeless is unreachable by ANY
+instrument until the threshold lets poor households use, which is
+addiction_scalar_1 downward, and no labour-market parameter will ever do it.
+
+## A PROBABLE BUG, NOT TRACED: THE AGE-80 SUD SPIKE
+
+    SUD rate   79: 0.00104   80: 0.22376   81: 0.00184   (85ec3e553f)
+               79: 0.00000   80: 0.22605   81: 0.00128   (31fafe39e7)
+               79: 0.52157   80: 0.84171   81: 0.03285   (97c5e30de6)
+
+A 200-fold spike at exactly age 80, reproducible across points and economies.
+Same single-age-discontinuity shape as the age-84 homelessness spike, which was
+an end-of-horizon artefact fixed by max_age_to_choose_homelessness=58.
+
+## LATENT: emp_homeless HAS TWO TARGETS IN THE SOURCE
+
+`employed_share_of_homeless_data=0.50` (line 1330) drives the rho_d loop at
+~40020; `0.460d0` is printed on the MOMENT line at 6813 and is what gaps.py
+scores. include_rho_d=1 but rho_d is pinned at 1.0 on the author's instruction,
+so the 0.50 branch is not biting. A second copy of a constant, which is how
+three other faults started tonight.
+
 # Calibration state -- 5 September, 03:45
 
 ## THE ECONOMY RESTARTED AT rr_homeless_hold_age=64. FOUR POINTS, AND THE LOSS IS RISING
