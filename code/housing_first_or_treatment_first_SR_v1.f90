@@ -25959,12 +25959,42 @@
 
                 end if
 
+                ! NEWBORNS ENTER AT THE UNCONDITIONAL JOBLESSNESS RATE, on the
+                ! author's instruction of 5 September: *"you should start the
+                ! newborns with the unconditional unemployment rate of the target,
+                ! 13.9%"*.
+                !
+                ! EVERY NEWBORN USED TO ENTER EMPLOYED. Both draws below passed
+                ! e_1=1 to idx_of, so the entry distribution put the whole cohort
+                ! in the employed state and differed only in SMI. Combined with
+                ! zero assets at entry -- renter wealth is 0.00000 at data age 26 --
+                ! that made "no assets AND no income" a state the model COULD NOT
+                ! REACH: a household had to work at least one period, and save out
+                ! of it, before unemployment could touch it. By 27 it holds 0.109 of
+                ! average income and by 30 it holds 0.414.
+                !
+                ! It shows in the age profile: age 26 is the only age where every
+                ! household has zero wealth, and it is also the only age with
+                ! EXACTLY zero homelessness.
+                !
+                ! STATE 2, NOT 3. emp_of = mod(i-1,3)+1 gives 1 employed, 2 jobless
+                ! without UI, 3 jobless with UI. UI replaces a prior wage and a
+                ! newborn has none, so the entrant is uninsured.
+                !
+                ! The rate is read from unemployment_rate_data rather than typed, so
+                ! the entry distribution moves with the target it is meant to match.
                 newborn_state_draw(:)=0
-                newborn_state_draw(idx_of(1,0,0))=1-newborn_smi_at_birth
+                newborn_state_draw(idx_of(1,0,0))=&
+                    (1-unemployment_rate_data)*(1-newborn_smi_at_birth)
+                newborn_state_draw(idx_of(2,0,0))=&
+                    unemployment_rate_data*(1-newborn_smi_at_birth)
 
                 if (number_of_smi_states>1) then
 
-                    newborn_state_draw(idx_of(1,1,0))=newborn_smi_at_birth
+                    newborn_state_draw(idx_of(1,1,0))=&
+                        (1-unemployment_rate_data)*newborn_smi_at_birth
+                    newborn_state_draw(idx_of(2,1,0))=&
+                        unemployment_rate_data*newborn_smi_at_birth
 
                 end if
 
