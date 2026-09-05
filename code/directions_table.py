@@ -225,7 +225,19 @@ RULES = {
   # spike it was chasing was one age -- data age 84, the last age the street may
   # be chosen -- and max_age_to_choose_homelessness=58 removes it directly.
   #
-  # 'h_share5': ('rr_homeless_old_level', ...) -- RETIRED, held at the age-65 value.
+  # RESTORED 5 September on the author's instruction: *"i think you can also let
+  # the death risk after age 65 to be adjusted to hit the share of the homeless
+  # who are old"*. Starting from 2.715, which is Baggett's own measured value at
+  # age 65 and therefore continuous with the hold it replaces.
+  #
+  # WHAT IS KNOWN ABOUT IT, so its behaviour is not a surprise: it is INERT above
+  # 3.4 -- the ladder from 3.4 to 30 moves every moment by under 0.05 per cent --
+  # and its whole live window is roughly 2.4 to 3.0, where h_share5 swings from
+  # 0.99 to 0.00. It limit-cycled there for a dozen iterations earlier, which is
+  # what the sign-flip damping is for. ZERO IS NOT A VALUE, it is the switch into
+  # the hold-at-65 branch; the bound floor of 1.0 in next_batch keeps the solver
+  # away from it.
+  'h_share5': ('rr_homeless_old_level', 'raise', 'live window 2.4-3.0, inert above 3.4'),
   #
   # THE INCOME OF THE HOMELESS, from 4 September, on the author's instruction:
   # *"if you have an income too high for the homeless, you raise the probability
