@@ -1,3 +1,64 @@
+## 5 September, 20:15 -- THE HOUSING LADDER, MEASURED. THREE INSTRUMENTS, THREE MOMENTS
+
+The author's requirement: a high utility share on housing, cost-burdened renters
+in the SMALLEST rental, and overall housing spending of 26.8 per cent.
+
+MEASURED, one coordinate at a time, on model 4a12560078 with the taste pinned at
+0.268 and delta held at 0.001:
+
+    h2 (bottom rung), street ratio and h3 held
+      0.060   h_1 0.000155   burden50 0.3799   gamma 0.2802   emp_homeless 0.000
+      0.120   h_1 0.0575     burden50 0.3792   gamma 0.2634   emp_homeless 0.997
+      0.160   h_1 0.1425     burden50 0.3635   gamma 0.2442   emp_homeless 0.998
+
+    street ratio, at h2 = 0.12
+      0.30    h_1 0.000548   burden50 0.3841
+      0.5757  h_1 0.0575     burden50 0.3792
+
+THREE THINGS THE ARCHIVE NOW SAYS.
+
+1. h2 REACHES h_1, NOT burden50. It moved homelessness by a factor of 370 and
+   burden50 by 0.2 per cent. The households it strains do not stretch to pay for
+   the cheapest rental, they take the street.
+
+2. THE STREET REACHES h_1 HARDER, and only once h2 binds. At h2 = 0.060 it was
+   inert because nobody was at the margin; at 0.12 shrinking it 0.5757 -> 0.30
+   cut homelessness 105-fold. The author predicted exactly this. h_1 = 0.399 per
+   cent interpolates to a street ratio of about 0.40, elasticity 7.14.
+
+3. burden50 IS INVARIANT TO BOTH. It sits at 0.38 across every h2 and every
+   street size tried. It cannot be reached from the bottom of the ladder.
+
+WHY, AND IT IS NOT SUBTLE. 95 to 99 per cent of renters are in h3, and 38 per
+cent of THEM are burdened; h2 holds 0.9 to 5.1 per cent of renters and 0.0 to 0.2
+per cent of them are burdened. The burden is in the TOP rung, which is what the
+author diagnosed: *"those spending over 50% have to live in the smallest rental,
+not the largest"*. Raising h2 does not fix it -- h2's own burdened share FALLS to
+exactly zero as h2 rises, because anyone who would stretch leaves instead.
+
+AND THE 5.7 PER CENT WHO STOPPED BEING HOMELESS when the street shrank did NOT
+become burdened renters: burden50 moved 0.3792 -> 0.3841. So the marginal
+homeless were never poor. At a street 58 per cent the size of the cheapest
+rental and free, homelessness in this model is a GOOD DEAL taken by households
+who could afford housing, not a last resort.
+
+THE IMPLIED ASSIGNMENT, to be tested rather than assumed:
+
+    h3, absolute      -> burden50   it decides who is pushed down into h2
+    street, absolute  -> h_1        105-fold response, cleanly bracketed
+    h2                -> gamma      it sets the rent level most households face
+
+The one h3 measurement that exists agrees: moving the ladder (1.5, 2.0) ->
+(2.0, 3.0) at fixed h2 took burden50 0.5947 -> 0.7192. A bracket at h3 = 0.25 and
+0.35 is running.
+
+THE STREET IS AN ABSOLUTE LEVEL NOW, on the author's instruction: *"you should
+disentangle the homeless size from the smallest rental. it should be free to move
+alone"*. It had been housing_size(0)*size_homelessness, so the h2 sweep above
+dragged the street 0.0345 -> 0.0921 underneath itself and was never a
+one-coordinate measurement. Every old vector carries 0.5757, which as an absolute
+size exceeds both rungs, so run_one_point.sh now refuses an inverted ladder.
+
 ## 5 September, 19:40 -- WHY THE MODEL DIFFERS FROM THE ORIGINAL PAPER: delta
 
 The author: *"i keep thinking there is some mistake in the code"*, *"my original
