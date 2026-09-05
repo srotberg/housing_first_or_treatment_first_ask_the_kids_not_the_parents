@@ -345,8 +345,27 @@ CAPPED = {'relative_share_of_addiction_1',
 # per cent chasing the difference. lambda_addiction is the curvature that
 # separates them, and it is also the only thing bracketing sud_homeless, which
 # sits at 0.036 against 0.217.
+# bottom_productivity_level IS RELEASED, 5 September, on the author's reading:
+# *"i think the bottom productivity has to be raised to match the employment of
+# the homeless, no?"* -- which is correct, and the reason it was frozen has just
+# gone away.
+#
+# WHY IT RAN AWAY BEFORE. It was frozen at 23:05 after more than doubling in
+# eight iterations, 0.004967 to 0.010646, collapsing h_1 by 84 per cent while the
+# objective went 4.03 to 20.74. That happened at delta=1, where
+# find_mult_homeless = max(0,(p_find-delta)/p_find) is EXACTLY ZERO: no homeless
+# household could ever find work, so emp_homeless was pinned near zero and no
+# level of the bottom node could reach it. An instrument that cannot reach its
+# moment does not sit still, it runs.
+#
+# WHY IT CAN REACH IT NOW. delta is 0, so the street's labour penalty is the mild
+# 1.2x/0.8x fallback branch and emp_homeless measures 0.996 on the live model
+# against a target of 0.46. The moment is alive and far ABOVE target, which is
+# the one direction this rule can correct: the rule is 'raise' with parameter and
+# moment moving OPPOSITE ways -- lifting the poorest types out of homelessness
+# leaves the homeless less employed -- and the parameter sits near its 0.004
+# lower bound with room to 0.064.
 FROZEN = {'multiple_of_probabilities_of_employment_if_addicted',
-          'bottom_productivity_level',
           # delta IS ZERO AND HELD, 5 September, on the author's instruction:
           # *"set delta to 0"*, *"and dont move it"*.
           #
