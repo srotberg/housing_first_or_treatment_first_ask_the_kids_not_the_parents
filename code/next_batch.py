@@ -496,7 +496,16 @@ OWN = {
     # And SMI is a young condition here in onset AND in stock, so a lambda_m that
     # does move will move the youngest band. A measurement to make, not an
     # argument for refusing the instruction.
-    'kappa_uem':                                           'lambda_m',
+    # kappa_uem OWNS ITS OWN MOMENT, the employment rate given SMI, target 0.30.
+    # The author, 5 September: *"we need to set the unemployment rate of those
+    # with SMI to 30%"*. directions_table.py was updated then and this file was
+    # not, so the two disagreed about what this parameter is for.
+    #
+    # IT DOES NOT DRIVE lambda_m WHERE THE STREET IS REAL: over 56 archive pairs
+    # differing only in kappa_uem, the elasticity on lambda_m is +0.82 where h_1
+    # is far below target and -0.07 where h_1 is realistic, with the sign a coin
+    # flip. lambda_m has no instrument, which directions_table.py states.
+    'kappa_uem':                                           'kappa_uem',
     # BACK, ON THE AUTHOR'S INSTRUCTION. The statutory SNAP schedule was right
     # per household and wrong by a factor of 48 in aggregate, so the programme
     # is a calibrated allotment again and cbar is a target again.
@@ -1236,7 +1245,12 @@ UNSCORED = {'rent50',
             # calibrate them" -- so their parameters answer to the two
             # homelessness shares and these two are what comes out. Reported at
             # every point, never scored; a drift is information, not a miss.
-            'kappa_ued', 'kappa_uem'}
+            # kappa_uem CAME OUT OF UNSCORED, 5 September. It stopped being an
+            # output the moment the author set it a target of 0.30, and leaving
+            # it here made next_batch's loss and DONE test disagree with the
+            # gaps table the author reads -- which gaps.py warned about at the
+            # top of every run and nobody acted on.
+            'kappa_ued'}
 
 
 

@@ -399,7 +399,8 @@ RULES = {
     # any parameter rather than given one that does not move it. The measured ray
     # in the block above already said delta cannot lower y_h: y_h RISES with delta
     # over every point on it and its minimum is at delta = 0.
-    '_y_h_superseded': ('homeless_job_penalty_pp', 'raise',
+    # SUPERSEDED, kept as a comment rather than a dead dict key:
+    # '_y_h_superseded': ('homeless_job_penalty_pp', 'raise',
             "the author's ruling, restored; see the measured-ray block above"),
     # pi_V, the share of eligible households receiving a housing voucher in the
     # benchmark, target 0.266. The author: *"lower if higher than data"*. Direct:
@@ -513,7 +514,8 @@ RULES = {
     'emp_homeless': ('homeless_job_penalty_pp', 'raise',
                      'measured bracket: delta 0 -> 0.9965, delta 1 -> 0.0473, '
                      'target 0.46 strictly inside; live range [0, 0.55]'),
-    '_emp_homeless_superseded': ('bottom_productivity_level', 'raise',
+    # SUPERSEDED, kept as a comment rather than a dead dict key:
+    # '_emp_homeless_superseded': ('bottom_productivity_level', 'raise',
                      'ray reverses and is near-flat; parameter sits ON its lower bound'),
     # lambda_m, the SMI share of the homeless, target 0.250.
     # The author: *"lower it if it is higher than the data... it would then have
