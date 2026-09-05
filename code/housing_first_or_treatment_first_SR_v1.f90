@@ -2385,7 +2385,31 @@
         ! a moment that is computed and NOT scored, so nothing would have caught
         ! it. At 0.049 the separation rate falls to about 0.0032, nothing
         ! saturates, and the SMI employment margin becomes economics again.
-        real(8), parameter :: unemployment_rate_data=0.049
+        ! 0.049 -> 0.1393, ON THE AUTHOR'S INSTRUCTION of 5 September: *"maybe we
+        ! need to bring the unemployment rate back up to 13.9%?"*. This RESTORES the
+        ! earlier target and the block above explains why it was abandoned; that
+        ! reason no longer holds.
+        !
+        ! pi_eu IS THE HOUSEHOLD NO-WAGE-INCOME SHARE, not the labour force
+        ! unemployment rate: the model prints "households with no wage income,
+        ! working age" and it is the SAME NUMBER as the pi_eu moment, to every
+        ! digit. So 0.1393, the SCF share of working-age households with no wage
+        ! earner, is the concept this moment actually measures and 0.049 was the
+        ! wrong quantity attached to the right diagnostic.
+        !
+        ! WHY IT WAS BACKED OFF, AND WHY THAT IS FIXED. At 0.1393 the separation
+        ! rate must reach about 0.055, where min(pbu*kappa_uem,1) saturates and puts
+        ! EVERY mentally ill worker at certain unemployment: employment given SMI
+        ! collapses to 1.1 per cent against its 30 per cent target. The note above
+        ! says the danger was that this is *"a moment that is computed and NOT
+        ! scored, so nothing would have caught it"*.
+        !
+        ! kappa_uem IS SCORED NOW, reconciled into next_batch.py's loss on
+        ! 5 September, and it owns its own moment with a rule that LOWERS the
+        ! parameter when SMI employment falls below target. The saturation can no
+        ! longer happen silently: it is one of the nineteen gaps the walk reads
+        ! every iteration.
+        real(8), parameter :: unemployment_rate_data=0.1393
         real(8), parameter :: unemployment_rate_sud_data=0.1625
 
         real(8) :: relative_share_of_addiction_adj=5*10.d0**(-2)
