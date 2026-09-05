@@ -6612,8 +6612,37 @@
             ! costs, so it decides who is priced into paying over half their
             ! income for it; the top rung sets how much housing the bulk buy and
             ! owns gamma instead.
-            write(*,*) "MOMENT burden50  renters over half of income model=",&
-                mass_of_renters_at_housing_spending(1,2), " target=", 0.175d0
+            ! COUNTED IN THE SMALLEST RENTAL ONLY, from 5 September. The author:
+            ! *"h2 has to be a function of the fraction spending over 50% in the
+            ! smallest rental, not overall"*, and *"those spending over 50% have
+            ! to live in the smallest rental, not the largest"*.
+            !
+            ! WHY THE OVERALL COUNT MADE THE RULE INCOHERENT. Measured across
+            ! fourteen ladder configurations, the overall figure sat at about 0.38
+            ! and was generated almost entirely by h3 renters -- 40 per cent of
+            ! them against 0.02 per cent of h2's. So the moment read ABOVE target
+            ! and the rule said lower h2, while lowering h2 makes it cheaper and
+            ! puts even fewer of its occupants over the line. The level said down
+            ! and the placement said up.
+            !
+            ! Counted in h2 alone it reads about 0.0012 against 0.175, far BELOW
+            ! target, and the author's own direction applies as they stated it:
+            ! *"raise h2 if the share spending over 50% on housing is lower than
+            ! the data (making sure they are the ones in h2)"*.
+            !
+            ! THE DENOMINATOR IS ALL RENTERS, not h2's occupants. The SCF's 0.175
+            ! is a share of all renters, so hitting it requires BOTH that h2 holds
+            ! enough households AND that they are genuinely stretched. A
+            ! conditional share would need a target the data does not give.
+            !
+            ! The overall figure stays as an untargeted row directly below, so the
+            ! burden can be watched migrating between the rungs.
+            write(*,*) "MOMENT burden50  over half of income, in h2 model=",&
+                val_burden50_by_unit(1,second_lowest_housing_grid_point)/&
+                max(sum(val_mass_by_unit(1,second_lowest_housing_grid_point:)),10.d0**(-14)),&
+                " target=", 0.175d0
+            write(*,*) "UNTARGETED over half of income, all renters  model=",&
+                mass_of_renters_at_housing_spending(1,2), " observed=", 0.175d0
 
             ! THE TWO PICTURE OF SUBSIDIZED HOUSEHOLDS ROWS. The tenant
             ! contribution rate is the check on kappa_r, which is set to
