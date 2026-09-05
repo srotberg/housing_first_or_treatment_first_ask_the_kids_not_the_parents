@@ -2014,6 +2014,23 @@ CONFIG_SWITCHES = {
     # AFTER the baseline equilibrium has converged and changes nothing in it.
     # This switch separates points by WHAT WAS MEASURED, not by what was solved,
     # and it is the only one in this table of which that is true.
+    # include_unsecured_borrowing IS A CONFIG SWITCH, added 5 September on the
+    # author's instruction *"you should allow borrowing"*. It was not listed, and
+    # the archive was pooling two economies as one: 1401 points solved with the
+    # negative grid barred and 27 with it open, ranked against each other.
+    #
+    # It is not a parameter value, it is whether households have a credit market.
+    # A household that can borrow rides out an unemployment spell that would
+    # otherwise force a housing choice, so h_1, emp_homeless and the whole wealth
+    # distribution mean different things on the two sides. The bottom 1, 5 and 10
+    # per cent of the wealth distribution are NEGATIVE in the SCF and cannot be
+    # anything but zero with borrowing off, which is the direct reason this
+    # matters here.
+    #
+    # run_one_point.sh has defaulted it to 1 all along; the walker's vector was
+    # carrying 0 and overriding the default, which is how it got turned off
+    # without a decision being recorded anywhere.
+    'include_unsecured_borrowing': _live_switch('include_unsecured_borrowing'),
     'measure_child_gap': _live_switch('measure_child_gap'),
     # rr_homeless_hold_age CHANGES WHAT THE STREET COSTS AN OLD HOUSEHOLD, so a
     # point run at 0 and a point run at 70 are two different models of that and
