@@ -1,3 +1,51 @@
+# Calibration state -- 5 September, 04:15
+
+## addiction_scalar_1 IS THE KNIFE EDGE, AND sud_homeless IS REACHABLE AFTER ALL
+
+The author, 5 September: *"i remember that i actually had b being very small,
+around 10^(-6)"*, *"i adjusted it very slowly in the past"*, *"it might need to
+be very small"*, and then *"that would make the users also poor"*. All four are
+borne out by the archive's 1618 points, whose addiction_scalar_1 spans 1e-30 to
+0.25.
+
+`b_shifter = addiction_scalar_1` (line 7392) and it enters the drug utility as
+`(b + v)^theta` with v the QUANTITY consumed. A large b means a household needs a
+lot of drug before using is worth anything, so only high-consumption -- rich --
+households cross. That is the selection that keeps SUD households off the street.
+
+**HOW MANY USE, AS THE PARAMETER FALLS**
+
+    addiction_scalar_1     b = share who use     (target 0.089)
+        1e-30                    0.9999
+        9.2e-03                  0.73 - 0.78
+        1.2e-02                  0.88
+        1.47e-02 - 1.92e-02      0.08 - 0.12      <-- the workable window
+        3.44e-02 (live)          0.075
+
+SO IT CANNOT GO TO 1e-6. Below about 0.012 the whole population uses. The window
+is roughly HALF the live value.
+
+**THREE THINGS ABOUT THAT WINDOW**
+
+  1. sud_homeless IS REACHABLE THERE. At 1.469e-02, point 0a25208049 has
+     sud_homeless 0.582 with b 0.094, lambda_d 0.038 and h_1 0.0034 -- three
+     moments on target at once. It is NOT a structural zero, which is what the
+     earlier note left open.
+  2. IT IS VIOLENTLY SENSITIVE. At the single value 1.4689e-02 the archive holds
+     b = 0.0004, 0.0054, 0.029, 0.092, 0.398, 0.632 and 0.951 -- nothing to
+     everyone, at the same parameter, driven by the rest of the vector. This
+     parameter sets a knife edge; it does not pin the drug share.
+  3. THE AUTHOR'S OBJECTION HOLDS. Income of working-age drug users is about
+     0.35 against a target of 0.74 across the WHOLE window, and 1.005 at the live
+     value. y_u's target sits between, so the b that gets the right NUMBER of
+     users makes them all too poor.
+
+**AND THE 3 PER CENT STREET IS PAST THE EDGE.** The two points solved at
+size_homelessness 0.0317 and 0.0349 have loss 3.2e20 and 3.4e20, worst gap
+1.8e21 per cent on mu_H -- recovery housed / recovery homeless, whose denominator
+goes to zero when nobody chooses the street. Not a bug; the experiment saying 3
+per cent is too far. The archive's good points sat at 0.105.
+
 # Calibration state -- 5 September, 04:10
 
 ## THE AGE-80 SUD SPIKE IS max_age_to_choose_addiction, AND IT IS THE AGE-84 ARTEFACT AGAIN
