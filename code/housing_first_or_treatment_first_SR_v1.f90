@@ -3926,13 +3926,17 @@
         ! full year of income apart, so a household wanting a tenth of a year in
         ! debt had nowhere to stand and a wide limit could look inert purely
         ! through coarseness.
-        ! 8 -> 2, on the author's instruction of 5 September: *"and put only 2
-        ! grid points there"*. WITH TWO POINTS THE NEGATIVE GRID IS {-limit, 0}:
-        ! a household holds either no debt or the full limit, with nothing in
-        ! between. The block above warns about coarseness in the other direction
-        ! -- at a limit of 3.00 the eight points sat a year of income apart -- so
-        ! this is the same trade taken deliberately at the fine end.
-        integer, parameter :: negative_financial_grid_size=2
+        ! 8 -> 3, on the author's instruction of 5 September: *"and put only 2
+        ! grid points there"*, corrected to *"ah, then put 3 points"* once it was
+        ! pointed out that two points give {-limit, 0} and nothing in between.
+        !
+        ! THREE POINTS GIVE {-limit, -limit/2, 0}, so a household can hold half the
+        ! limit as well as none or all of it. That is the minimum that lets debt be
+        ! a choice of DEGREE rather than a switch, which matters because the whole
+        ! bottom half piled onto the floor at eight points and a limit of 0.30 --
+        ! the wealth shares came out in exact 1:5:10:25:50 proportion, the
+        ! signature of every household sitting at the same value.
+        integer, parameter :: negative_financial_grid_size=3
         
         integer, parameter :: grid_gaps=coarse_grid*10+(1-coarse_grid)
            
