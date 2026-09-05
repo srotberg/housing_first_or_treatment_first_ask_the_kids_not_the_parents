@@ -77,7 +77,10 @@ RULES = {
     # more spent on housing and gamma rises. Parameter and moment move TOGETHER,
     # which is 'lower'. The archive's cleanest pair agrees, 2.5 -> 3.0 carrying
     # gamma 0.2046 -> 0.2291, and a one-coordinate bracket is being run to size it.
-    'gamma': ('rung_ratio_h4', 'lower', 'archive pair agrees; bracket pending'),
+    # DIRECTION. h2 is the level of every rental rung and of the street, so
+    # raising it raises housing outlay across the whole distribution and gamma
+    # rises with it: parameter and moment move TOGETHER, which is 'lower'.
+    'gamma': ('smallest_rental_relative_to_lowest_income', 'lower', 'bracket pending'),
     # omega_l, labour supply over total hours, target 0.40.
     # The author: *"raise if higher than data"*. relative_share_of_leisure is the
     # weight on leisure, so more of it means less work -- parameter and moment move
@@ -228,7 +231,12 @@ RULES = {
     # against the lowest income, so a dearer floor puts more households over the
     # half-of-income line. Parameter and moment move together; measured 8-point ray
     # agrees at slope +1.088.
-    'h_2': ('smallest_rental_relative_to_lowest_income', 'lower', 'agrees'),
+    # h_2 HAS NO INSTRUMENT from 5 September. Its owner, the bottom rung, was
+    # moved to gamma on the author's instruction; see next_batch.py. An
+    # instrument that cannot reach its moment does not sit still, it runs, so the
+    # moment is left unowned rather than pointed at a parameter that cannot move
+    # it.
+    # 'h_2': ('smallest_rental_relative_to_lowest_income', 'lower', 'agrees'),
     # h_share5, the oldest band's share of the homeless, target 0.075.
     # The author: *"raise if higher than data"*. rr_homeless_old_level is the
     # relative risk of death for an old homeless person -- Baggett's age-65 value

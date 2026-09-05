@@ -446,7 +446,21 @@ OWN = {
     # could reach that moment; the bottom of the productivity grid now can, so
     # the rung goes back to the moment that is actually its own -- the CEX
     # severe cost burden headcount, moment h_2, target 0.101.
-    'smallest_rental_relative_to_lowest_income':            'h_2',
+    # THE BOTTOM RUNG OWNS gamma NOW, not the cost-burden moment. The author, 5
+    # September: *"i think that if the share of housing is actually 0.268,
+    # homelessness would not be a good idea for the workers....and so we set h2,
+    # h3=1.5*h2, h4=2*h2 so that at 0.268, housing spending is 26.8% of total
+    # expenditures"*. h2 sets every rung and the street together, so it is the
+    # level of the whole housing market and the natural handle on the aggregate
+    # housing expenditure share.
+    #
+    # THE COST-BURDEN MOMENT LOSES ITS INSTRUMENT, and that is stated rather than
+    # hidden: h_2 (severe cost burden, target 0.101) was this parameter's moment
+    # and now has none. One bottom rung cannot set both the aggregate housing
+    # share and the share of renters paying over half of expenditure; the ladder
+    # would need a free top rung for that, which the author has ruled against.
+    # 'smallest_rental_relative_to_lowest_income':            'h_2',
+    'smallest_rental_relative_to_lowest_income':           'gamma',
     # THE BOTTOM PRODUCTIVITY NODE OWNS emp_homeless. The author, 3 September:
     # *"That grid point on y is the one that delivers the 46% employment of the
     # homeless."* It is the level, not the mass: y_grid_kappa stays FIXED at 3.2
@@ -614,7 +628,7 @@ OWN = {
     # BOUNDS block for the 226-point measurement that says the taste cannot move
     # gamma more than 0.108 across its whole range.
     # 'relative_share_of_housing':                          'gamma',
-    'rung_ratio_h4':                                       'gamma',
+    # 'rung_ratio_h4':                                     'gamma',
     # delta's MOMENT IS emp_homeless, 5 September, on the author's instruction.
     # It brackets it on the live model -- delta 0 -> 0.9965, delta 1 -> 0.0473,
     # target 0.46 strictly inside -- which y_h never was. See directions_table.
@@ -1044,8 +1058,13 @@ BOUNDS = {
     # COINCIDE, which is exactly what makes the archive's own h3 ray
     # uninterpretable and is why h_3's owner is being bracketed rather than
     # assigned from it.
-    'rung_ratio_h4':                                       (2.0, 4.0),
-    'rung_ratio_h3':                                       (1.1, 1.9),
+    # THE RATIOS STAY FIXED at 1.5 and 2.0. The author, 5 September: *"we set h2,
+    # h3=1.5*h2, h4=2*h2 so that at 0.268, housing spending is 26.8%"*, which is
+    # also the ladder ruling already in ENGINE.md from 2 September: *"h3 is 50%
+    # higher than h2 and h4 is 100% larger than h2"*. Giving them bounds was more
+    # than was asked for and is withdrawn.
+    # 'rung_ratio_h4':                                      (2.0, 4.0),
+    # 'rung_ratio_h3':                                      (1.1, 1.9),
     # Zero is no penalty at all; the ceiling is well past the 3.8 the steady
     # state formula asks for, so the bracket is not clipped before it gets there.
     # CEILING 0.95, NOT 20. The Fortran's handover clamps this at 0.95

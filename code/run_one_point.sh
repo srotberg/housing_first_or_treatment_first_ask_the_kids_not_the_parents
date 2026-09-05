@@ -42,8 +42,8 @@ declare -A P=(
     # double". The defaults were left at the old 2.0 and 3.0 for a full day, so
     # any batch built from a base that did not carry them explicitly silently ran
     # the old ladder. Found in the parameter audit of 2 September.
-    [rung_ratio_h3]=1.5
-    [rung_ratio_h4]=2.0
+    [rung_ratio_h3]=2.0
+    [rung_ratio_h4]=3.0
     # OFF, on the author's instruction of 2 September: "Dont even target
     # anything for newborns with the endowment for now. Let's see if you can
     # match the bottom 50% share of wealth." It handed every newborn

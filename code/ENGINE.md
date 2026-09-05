@@ -25,9 +25,35 @@ h3 is 50% higher than h2 and h4 is 100% larger than h2."*
 | rung | index | what it is | size | targets |
 |---|---|---|---|---|
 | h_1 | -1 | the street | h_2 x `size_homelessness` | the homelessness rate |
-| h_2 | 0 | cheapest rental | `smallest_rental_relative_to_lowest_income` | the employed share of the homeless |
-| h_3 | 1 | middle rental | 1.5 x h_2 | nothing; it is a ratio |
-| h_4 | 2 | largest rental | 2 x h_2 | nothing; it is a ratio |
+| h_2 | 0 | cheapest rental | `smallest_rental_relative_to_lowest_income` | **gamma**, housing over expenditure |
+| h_3 | 1 | middle rental | **2 x h_2** | nothing; it is a ratio |
+| h_4 | 2 | largest rental | **3 x h_2** | nothing; it is a ratio |
+
+REVISED 5 September, twice, and the table above is the current ruling. The author:
+*"i think that if the share of housing is actually 0.268, homelessness would not
+be a good idea for the workers....and so we set h2, h3=1.5*h2, h4=2*h2 so that at
+0.268, housing spending is 26.8% of total expenditures"*, then *"you can actually
+do h2, h3=2*h2, and h4=3*h2"* and *"maybe that's a better dispersion"*.
+
+WHAT CHANGED AND WHY. `relative_share_of_housing` is pinned at 0.268 rather than
+searched, because in Cobb-Douglas the housing expenditure share EQUALS the weight
+identically and the two are the same object. It was only ever able to move gamma
+0.2239 to 0.3323 across its whole range -- a slope of 0.167 measured over 226
+archived points, where the theory gives 1.0 -- because the discrete ladder
+saturates the moment at both ends. So the LADDER is calibrated to the moment now
+and the taste is data.
+
+The bottom rung carries gamma because it sets every rung and the street at once,
+so it is the level of the whole housing market. The wider dispersion is there
+because gamma must come DOWN to 0.268 from about 0.30, h2 is what brings it down,
+and the street is size_homelessness x h2 -- a collapsing h2 would drag the street
+to nothing. Upper rungs at 2x and 3x carry the expenditure instead.
+
+THE COST-BURDEN MOMENT h_2 NOW HAS NO INSTRUMENT. It was the bottom rung's moment
+before this change. One rung cannot set both the aggregate housing share and the
+share of renters paying over half of expenditure, and the author has ruled the
+ratios fixed, so nothing else can reach it. Stated here rather than left to be
+discovered from a gap table.
 
 FOUR LABELS, THREE RENTAL RUNGS. h_1 is the street, so the ladder reads as four
 rentals if the labels are counted, and the author asked on 2 September why there
