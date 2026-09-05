@@ -509,7 +509,33 @@ RULES = {
     # the EMPLOYMENT RATE given SMI, not the SMI share of the homeless, and the
     # comment at line 290 flags the mismatch from the other direction. Worth
     # revisiting once the calibration is closer.
-    'lambda_m': ('kappa_uem', 'lower', 'agrees, and the handle is strong'),
+  # kappa_uem NOW OWNS ITS OWN MOMENT, the employment rate given SMI, target
+  # 0.30 (employment_rate_given_smi_data, line 1250). The author, 5 September:
+  # *"we need to set the unemployment rate of those with SMI to 30%"*.
+  #
+  # IT DOES NOT DRIVE lambda_m WHERE THE STREET IS REAL. Measured over 56 archive
+  # pairs differing ONLY in kappa_uem, split on the homelessness rate:
+  #
+  #     h_1 far below target (<0.0030)   n=41   elasticity +0.82   73% ruled sign
+  #     h_1 realistic        (>=0.0030)  n=15   elasticity -0.07   47% ruled sign
+  #
+  # The 48-fold ray that made it look like a strong handle -- lambda_m 0.015 at
+  # kappa_uem 6.1 to 0.712 at 100 -- runs entirely through h_1 = 0.0007 to
+  # 0.0025, the degenerate region where almost nobody is homeless and the
+  # composition moves with the level. Where h_1 is realistic the instrument is
+  # inert and its sign is a coin flip. The old note here, "agrees, and the handle
+  # is strong", was read off that ray and is withdrawn.
+  #
+  # The parameter is the SMI employment penalty, sep*kappa and find/kappa, so a
+  # higher kappa LOWERS employment: parameter and moment move in opposite
+  # directions, hence 'raise'.
+    'kappa_uem_moment': ('kappa_uem', 'raise',
+                         "the SMI employment rate, the moment the parameter is named for"),
+  # lambda_m, the SMI share of the homeless, HAS NO INSTRUMENT. It becomes an
+  # outcome of the SMI employment rate and the housing choice, in the same way
+  # sud_homeless and emp_homeless now are. Nothing measured tonight moves it in
+  # the region that matters.
+
     # tau_u, treatment take-up among those with a substance use disorder,
     # target 0.245. The author: *"raise it if higher than the data"*.
     # utility_cost_of_treatment is what a household bears to enter treatment, so
