@@ -557,6 +557,16 @@ fi
 # It fired once after the ladder change, refusing h_2 = 0.20 against an inert
 # largest_house_size of 0.162568 -- a false positive that cost a run.
 
+# THE LADDER INVERTS IF THE TOP RUNG IS NOT ABOVE THE BOTTOM, and nothing in
+# the Fortran notices: the run completes and reports the share in "the largest
+# unit" when it is really the smallest. The guard was retired on 1 September when
+# the ladder became a ratio ladder and could not cross; it comes back now that the
+# two rungs are independent absolute sizes again and can.
+if [ "$(awk -v a="${P[smallest_rental_relative_to_lowest_income]}" \
+        -v b="${P[largest_house_size]}" 'BEGIN{print (a<b)?1:0}')" != "1" ]; then
+    fail "inverted housing ladder: smallest_rental_relative_to_lowest_income=${P[smallest_rental_relative_to_lowest_income]} is not below largest_house_size=${P[largest_house_size]}"
+fi
+
 TAG=$(for k in "${!P[@]}"; do echo "$k=${P[$k]}"; done | sort | md5sum | cut -c1-10)
 
 # THE TAG OF THE SAME ECONOMICS BEFORE A NAME WAS ADDED TO THE VECTOR.
