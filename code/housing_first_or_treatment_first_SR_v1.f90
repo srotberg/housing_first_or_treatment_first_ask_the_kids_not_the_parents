@@ -2880,7 +2880,14 @@
         ! nothing non-finite. w_bot does NOT pay for it -- it is a share, so more
         ! patience lifts numerator and denominator together, and the two are close
         ! to orthogonal in this instrument. The binding cost is aleph.
-        real(8), parameter :: wealth_to_output_data=3.0d0
+        ! 2.25 ON THE AUTHOR'S INSTRUCTION, 5 September: *"i think we can even
+        ! target a wealth to output of 2.25, i think there are papers that use
+        ! that"*. No citation is attached because none was given.
+        !
+        ! HASH-INERT: wealth_to_output_data is in model_hash.TARGET_CONSTANTS,
+        ! whose values are blanked before the semantic hash is taken, so the
+        ! archive is not reset and every existing point still scores.
+        real(8), parameter :: wealth_to_output_data=2.25d0
         real(8) :: wealth_to_output_model_1
         real(8) :: gap_discount_factor_1
         real(8) :: previous_gap_discount_factor=0
