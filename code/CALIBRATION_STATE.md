@@ -1,3 +1,54 @@
+# Calibration state -- 5 September, 06:00
+
+## THE SUD RATE IS HIT. point c2e94c7aa0, b = 0.007, street 0.275
+
+    moment            model    target     gap
+    lambda_d         0.0362    0.0368    -1.6 per cent   ON TARGET
+    b                0.1635    0.0890    less than 2x, and bracketed
+    sud_homeless     0.0098    0.2170
+    h_1              0.00010   0.00399
+    emp_homeless     0.0000    0.4600
+
+lambda_d ON TARGET SETTLES THE BASE QUESTION. The author asked to raise
+addiction_onset_base because too few carried the disorder; it does not need
+raising at b = 0.007. It looked short at b = 0.01 only because b had crushed the
+drug population there -- lambda_d ran 0.0030 to 0.0117 on the three points at
+that b. At 0.007 the base at 0.01765 delivers the rate on its own.
+
+THE USE RATE IS BRACKETED AND CLOSE. b runs 0.407 at 0.005, 0.1635 at 0.007, and
+0.0118 to 0.0461 at 0.01, so 0.089 sits between 0.007 and 0.01. The three points
+at 0.01 disagree with each other -- 0.046 against 0.0118 and 0.0122 -- which is
+the near-discontinuity in this region rather than solver noise, so a single
+reading near the crossing should not be trusted.
+
+## h_1 IS UNRESPONSIVE TO ITS OWN INSTRUMENT, ACROSS A FACTOR OF THREE
+
+    street          0.100   0.153   0.167   0.275
+    h_1           0.00002- 0.00010 0.00010 0.00010
+                  0.00029
+
+Nearly threefold in size_homelessness and the homelessness rate does not move
+off 1e-4, forty times below its 0.00399 target, with emp_homeless identically
+zero on every new-model point because there is effectively nobody on the street.
+The author raised the cap from 0.1 to 0.30 for exactly this and it changed
+nothing.
+
+THIS IS NOW THE BINDING PROBLEM. Two of the author's three targets are in reach
+-- the SUD rate is hit and the use rate is within a factor of two -- and the
+third is not responding to the only instrument pointed at it.
+
+## THE TWO-PHASE PLAN, STILL RUNNING
+
+Held: relative_share_of_addiction_1 = 0.16, lambda_addiction = 0.0001, M = 4,
+bottom_productivity_level. Free: addiction_scalar_1, addiction_onset_base,
+size_homelessness and the rest of the calibration. Phase two releases theta and
+lambda once the use rate and the SUD rate are landed.
+
+NOTE THAT THE REST OF THE MODEL IS NOT STILL. kappa_uem, value_of_life,
+smi_onset_level, mu_homeless, discount_factor and a dozen others walk every
+iteration, so a change between two consecutive points is not attributable to b
+alone. That is why the isolated brackets were worth the wall clock.
+
 # Calibration state -- 5 September, 05:40
 
 ## THE b BRACKET. sud_homeless IS HUMP-SHAPED IN b AND PEAKS ON TARGET
