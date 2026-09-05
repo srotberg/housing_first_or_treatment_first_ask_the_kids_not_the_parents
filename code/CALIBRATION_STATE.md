@@ -1,3 +1,58 @@
+## 5 September, 20:20 -- NO LADDER PARAMETER CAN PUT THE COST BURDEN IN THE SMALLEST RENTAL
+
+The author's requirement: a high utility share on housing, cost-burdened renters
+in the SMALLEST rental, and overall housing spending of 26.8 per cent. The first
+and third are met. The second is not reachable from the ladder, and this is
+measured rather than argued.
+
+h2's BURDENED SHARE IS ~0.0002 IN EVERY CONFIGURATION TRIED:
+
+    h2      0.060, 0.12, 0.16          burdened share of h2 renters 0.2%, 0.04%, 0.00%
+    street  0.30, 0.5757, 0.80         unchanged
+    h3      0.1864, 0.25, 0.35         0.017%, 0.016%
+
+and raising h3 pushes households OUT of h2 rather than into it: h2's share of
+renters goes 6.9 -> 5.4 per cent as h3 goes 0.25 -> 0.35, because housing is a
+normal good with a weight of 0.2138 and a bigger top rung is more attractive.
+
+WHY. To be burdened in h2 a household must choose h2 AND pay over half its income
+for it. Any household in that position prefers the street: free, and costing
+about 40 per cent of consumption in utility at the current sizes, against
+surrendering more than half of income. So the burden never lands in h2 -- the
+households who would carry it leave instead.
+
+THE TWO INSTRUMENTS ARE COLLINEAR EVEN WHEN INDEPENDENT, measured on the
+decoupled ladder:
+
+    d burden50/d h2 = -0.164     d burden50/d h3 = 1.110
+    d gamma   /d h2 = -0.359     d gamma   /d h3 = 0.602
+
+    burden50 per unit of gamma:  via h2 +0.456, via h3 +1.845
+    needed from h3 = 0.25:       +6.714
+
+The 2x2 asks for h2 -> -0.485 and h3 -> -0.214. Infeasible, and this time it is
+NOT the chaining artifact of an hour ago: the rungs are genuinely independent now.
+
+THE BINDING FACT IS RENT RELATIVE TO INCOME, NOT THE SHAPE OF THE LADDER:
+
+    housing / expenditure          model 0.268   data 0.268   AT TARGET
+    housing / income, renters      model 0.345   data 0.202   +71 per cent
+
+No arrangement of rung sizes can change a rent-to-income ratio; it can only move
+which rung the burden sits in. And rent per unit is not free either --
+rent_to_housing_price is pinned at 0.083, the Himmelberg et al. rent-to-price
+ratio.
+
+AN ANOMALY THAT SHOULD BE CHECKED BEFORE ANY MORE LADDER WORK. Those two rows
+imply income/expenditure of 0.268/0.345 = 0.78 in the model against 0.268/0.202 =
+1.33 in the data. The model's households spend 29 per cent MORE than their
+income; the data's save 25 per cent of it. A stationary equilibrium cannot have
+aggregate expenditure exceeding aggregate income by 29 per cent, so this is
+either an accounting mismatch between the two moments -- the burden calculation
+divides by a household's own total_income, which may exclude transfers or capital
+income that fund the spending -- or a genuine fault. It would explain burden50
+sitting at 0.38 to 0.70 whatever the ladder does.
+
 ## 5 September, 20:15 -- THE HOUSING LADDER, MEASURED. THREE INSTRUMENTS, THREE MOMENTS
 
 The author's requirement: a high utility share on housing, cost-burdened renters
