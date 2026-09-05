@@ -417,8 +417,27 @@ RULES = {
     # structural problem: something prevents households with the disorder from
     # becoming homeless. Flagged to the author 4 September; it is not a
     # calibration failure to be adjusted away.
-    'sud_homeless': ('multiple_of_probabilities_of_employment_if_addicted',
-                     'lower', 'INSTRUMENT DEAD, slope -1.2e-07 over the whole range'),
+  # sud_homeless GOES TO lambda_addiction, 5 September, on the author's scheme:
+  # *"the base is chosen to match the SUD rate and lambda the share of homeless
+  # with SUD, M is fixed at 4 now since we dont need it as a target anymore"*.
+  #
+  # In base + (1-exp(-lambda v)) the base sets the LEVEL of onset and lambda sets
+  # how fast it rises with QUANTITY. A higher lambda means the disordered are
+  # selected from heavier users, who spend more and hold less, so more of them
+  # end up on the street. Parameter and moment move together, so 'lower'.
+  #
+  # M IS OUT, and it was never in: measured over 69 archive pairs differing ONLY
+  # in M, sud_homeless is 0.000010 at M=1, 0.000003 at M=4 and 0.000002 at M=32,
+  # while b collapses 0.234 -> 0.004 across the same range. M deters the choice
+  # to use and is no handle at all on who is homeless. It is frozen at 4.
+  #
+  # AND THIS IS NOT THE IDENTITY THAT WAS REJECTED. P(homeless|SUD) is
+  # P(SUD|homeless)*P(homeless)/P(SUD), implied by three moments already
+  # targeted, so adding it would carry no information. sud_homeless is
+  # P(SUD|homeless) itself, the composition of the homeless, and is not implied
+  # by h_1 and lambda_d.
+    'sud_homeless': ('lambda_addiction', 'lower',
+                     "the author's scheme; lambda selects the disordered from heavier users"),
     # emp_homeless, the employed share of the homeless, target 0.46.
     # The author: *"raise it if higher than data"*, so parameter and moment move in
     # OPPOSITE directions: raising the bottom productivity level lifts the poorest

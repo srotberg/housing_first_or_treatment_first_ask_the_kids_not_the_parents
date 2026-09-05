@@ -786,7 +786,9 @@ OWN = {
     # "(no instrument)" in the table.
 }
 BOUNDS = {
-    'addiction_onset_base':                                 (0.0, 0.95),
+    # FLOORED ABOVE ZERO: a proportional step is adjuster*gap*|x| and cannot
+    # leave zero, the trap that pinned homeless_job_penalty_pp all night.
+    'addiction_onset_base':                                 (0.001, 0.95),
     # THE DRUG INSTRUMENTS NEED ORDINARY BOUNDS NOW THAT THEY ARE ORDINARY
     # OWNERS. They had FREE_BOUNDS only, which the 2x2 and the Jacobian repair
     # use; making them owners in OWN sent them down the arm path, which reads

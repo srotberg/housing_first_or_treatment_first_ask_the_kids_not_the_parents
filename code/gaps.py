@@ -228,7 +228,7 @@ OWN = [
     # gained them and gaps.py did not, which is the third time these two files
     # have drifted apart on the scored set in one evening -- rent50, then h_2,
     # now these. The cross-check at the top is what caught it each time.
-    ('multiple_of_probabilities_of_employment_if_addicted', 'sud_homeless'),
+    ('lambda_addiction', 'sud_homeless'),
     ('weight_on_child', 'omega_c'),
 ]
 

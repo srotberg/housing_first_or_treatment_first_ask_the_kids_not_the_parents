@@ -130,7 +130,10 @@ def say(s):
 # move more than ten per cent of its value in one iteration.
 # WARM-START SEEDS, for instruments whose archive value is exactly zero. See the
 # block in main() that applies them for why zero is a trap rather than a value.
-SEED = {'homeless_job_penalty_pp': 0.05}   # the author, 5 September: seed delta at 5 per cent
+SEED = {'homeless_job_penalty_pp': 0.05,
+        # NSDUH 2024, hard drugs pooled: the SUD rate in the LIGHTEST use
+        # category is 0.134, which is what the baseline onset means.
+        'addiction_onset_base': 0.134}   # the author, 5 September: seed delta at 5 per cent
 
 ADJUSTERS = {
     # THE AUTHOR'S MAXIMUM, 0.10. y_h is 119 per cent out and the parameter runs
