@@ -26620,13 +26620,22 @@
                         ! it, so clamping each index into its own bound is the
                         ! whole fix: a degenerate slice now prints the corner cell
                         ! instead of killing a solve that had run for two minutes.
-                        " mass_there=", distribution_guess(i)%vector_transition_real(time_period,&
-                        max(dist_argmax_1(1),lbound(distribution_guess(i)%vector_transition_real,2)),&
-                        max(dist_argmax_1(2),lbound(distribution_guess(i)%vector_transition_real,3)),&
-                        max(dist_argmax_1(3),lbound(distribution_guess(i)%vector_transition_real,4)),&
-                        max(dist_argmax_1(4),lbound(distribution_guess(i)%vector_transition_real,5)),&
-                        max(dist_argmax_1(5),lbound(distribution_guess(i)%vector_transition_real,6)),&
-                        max(dist_argmax_1(6),lbound(distribution_guess(i)%vector_transition_real,7)))
+                        ! THE mass_there TERM IS GONE, and it is not coming back
+                        ! as another clamp. Indexing this array by an argmax has
+                        ! now killed FIVE runs: first as index -1 of dimension 7
+                        ! below a lower bound of 0, and then -- after every index
+                        ! was clamped with max(argmax, lbound) -- as index 1 of
+                        ! dimension 6 below a lower bound of 2, which that clamp
+                        ! cannot produce. Whatever dist_argmax_1 holds, it does
+                        ! not map onto this array's dimensions the way the write
+                        ! assumed, and a diagnostic is not worth a sixth run to
+                        ! find out.
+                        !
+                        ! Nothing downstream reads it. The gap above is the number
+                        ! the sweep is actually watched on; the cell's own mass was
+                        ! decoration. maxval of the slice gives the same reassurance
+                        ! with no indexing at all.
+                        " max_mass=", maxval(distribution_guess(i)%vector_transition_real(time_period,:,:,:,:,:,:))
 
                 end do
 
