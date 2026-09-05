@@ -1,3 +1,59 @@
+## 5 September, 23:52 -- TWO RENTAL RUNGS CANNOT CARRY h_3 AND burden50 AT ONCE
+
+Measured on the fixed model, ten ladders, street scaled to hold street/h2 = 0.40
+below h2 = 0.15:
+
+    h2     h3    street |    h_3  burden50   gamma     h_1
+    tgt                 |  0.627     0.175   0.268  0.0040
+    0.30  0.600  0.0800 |  0.075     0.346   0.284   0.492
+    0.20  0.600  0.0800 |  0.086     0.173   0.251   0.386
+    0.20  0.300  0.0800 |  0.150     0.162   0.218   0.420
+    0.20  0.260  0.0800 |  0.194     0.159   0.214   0.420
+    0.20  0.240  0.0800 |  0.215     0.157   0.211   0.420
+    0.20  0.220  0.0800 |  0.262     0.154   0.208   0.420
+    0.13  0.160  0.0520 |  0.455     0.062   0.185   0.251
+    0.10  0.190  0.0400 |  0.402     0.018   0.202   0.141
+    0.07  0.130  0.0280 |  0.706     0.015   0.177   0.079
+    0.05  0.095  0.0200 |  0.869     0.007   0.148   0.032
+
+h_3 = 0.627 IS reachable, crossing between h2 = 0.10 and 0.07, so near h2 =
+0.085; h_1 falls all the way, 0.386 to 0.032. burden50 dies getting there,
+0.173 to 0.007, and gamma drifts from 0.251 to 0.148.
+
+WHY IT IS A HARD INCOMPATIBILITY, NOT A SEARCH FAILURE. burden50 counts renters
+paying over half their income, so it is governed entirely by where h2 sits in
+the productivity grid, and that grid is discrete:
+
+    income 0.1436   cum mass 0.039   burdened only if h2 > 0.0718
+    income 0.3086   cum mass 0.241   burdened only if h2 > 0.1543
+    income 0.6633   cum mass 0.638   burdened only if h2 > 0.3317
+
+Reaching 17.5 per cent requires node 3, so h2 >= 0.154. Below that at most 3.9
+per cent of the population CAN be burdened, whatever h3, the street or the taste
+weight do -- none of them changes who is burdened. And h_3 = 0.627 requires
+h2 near 0.085. The two requirements are disjoint.
+
+WHAT RESOLVES IT: A THIRD RENTAL RUNG. With two rungs, "share in the largest
+unit" and "cost burdened in the smallest" both ride on h2, which is the whole
+problem. With three, h_3 keys on h4 and burden50 keys on h2 and they stop
+fighting: h2 about 0.16 to 0.20 burdens node 3 while h4 is set independently to
+leave 62.7 per cent in the top unit. The ladder was three rungs this morning and
+was collapsed to two; on this evidence that collapse is what made the author's
+target set unreachable. The assignment itself is sound and every instrument
+moves its own moment with the right sign.
+
+THE INCOME FLOOR IS SECOND ORDER, and still worth having. ssi_floor_level = 0.13
+leaves the poorest at 154 per cent of income for h2 = 0.20, so they sleep rough;
+a floor near 0.30 to 0.40 houses them AND leaves them paying over half, which
+moves h_1 down and burden50 up together -- the only lever that does. It does not
+touch h_3. Untested. It would take ssi_floor_level off h_share5.
+
+SIZE_HOMELESSNESS CANNOT CLOSE h_1 ALONE: an 80x cut reaches 7.2 per cent, still
+18x target, at an elasticity of 0.38, while pushing burden50 to 0.277 and beta
+to 3.67.
+
+BOTH DECISIONS ARE THE AUTHOR'S. Nothing in the ladder has been changed.
+
 ## 5 September, 23:12 -- THE VOUCHER BUG IS FIXED. WHAT IT DID AND DID NOT SOLVE.
 
 provide_vouchers is 0 as of ee0a9874; the declaration carries the full reasoning.
