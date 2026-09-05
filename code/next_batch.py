@@ -958,7 +958,11 @@ BOUNDS = {
     # THE PERCENTAGE-POINT PENALTY. Above probability_becoming_employed the
     # finding rate is already floored at zero and delta only raises separations,
     # so 0.6 is past the end of the useful range.
-    'homeless_job_penalty_pp':                             (0.0, 0.60),
+    # FLOORED AT 0.01, NOT 0, on the author's instruction 5 September: *"make
+    # sure to clamp delta at 0.01 from below"*. Zero is not a value the walk can
+    # leave -- step = adjuster * gap * |x| -- so a delta that reaches it is
+    # pinned there for good, whatever its gap does afterwards.
+    'homeless_job_penalty_pp':                             (0.01, 0.60),
     # One is no penalty; the floor is 0.05 rather than zero because zero
     # earnings for every addict is a corner and not a calibration.
 }

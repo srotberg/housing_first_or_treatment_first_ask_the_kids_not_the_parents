@@ -369,14 +369,20 @@ RULES = {
   # for y_h if and only if rr can reach age 65, which is rr_homeless_hold_age
   # 65 -> 64. Left as the author's call; the ruling below is UNCHANGED until they
   # rule, per this table's convention that a ruling is the authority.
-  # FLIPPED TO 'lower' 5 September on the measurement plus the author's *"0.366
-  # is too high"*. Under 'raise' the rule walked delta 0.25 -> 0.366 in five
-  # iterations while the gap went +250.7 -> +292.5 per cent, and from the 0.05
-  # seed it would climb back to 0.366 in about twenty-one. The ray above puts
-  # y_h's minimum at delta = 0, so 'lower' is what the measurement asks for.
-  # REVERT THIS LINE to restore the author's original ruling.
-    'y_h': ('homeless_job_penalty_pp', 'lower',
-            "flipped on the measured ray; original ruling was 'raise'"),
+  # FLIPPED TO 'lower' AND REVERTED THE SAME HOUR. The flip was made on the
+  # measured ray plus *"0.366 is too high"*; the author corrected it at once --
+  # *"no...delta is moving in the wrong direction!"* -- and 'raise' is restored.
+  #
+  # THE RULING IS THE AUTHORITY AND THE MEASUREMENT IS A CHECK. That is this
+  # table's own convention, stated at the top, and the flip broke it: a
+  # disagreement gets RECORDED, which it already was in the block above, not
+  # resolved in favour of the ray overnight. The ray is not thereby wrong -- y_h
+  # still rises with delta over every point measured -- and the reason it can be
+  # right while the ruling stands is in that block: delta cannot lower y_h while
+  # rr_homeless_hold_age=65 leaves the age-65 homeless beyond the death penalty's
+  # reach, so the ray measures a mechanism with one half disabled.
+    'y_h': ('homeless_job_penalty_pp', 'raise',
+            "the author's ruling, restored; see the measured-ray block above"),
     # pi_V, the share of eligible households receiving a housing voucher in the
     # benchmark, target 0.266. The author: *"lower if higher than data"*. Direct:
     # more voucher probability, more take-up. Measured 7-point ray agrees at slope
