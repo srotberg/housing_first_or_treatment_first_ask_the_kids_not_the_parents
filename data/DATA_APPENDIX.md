@@ -692,6 +692,13 @@ rates, unlike the household rate that h₁ is calibrated to, because the age
 distribution is only published for people; the level therefore differs from the 0.399
 percent target by construction and it is the **profile** that is the check.
 
+The band is **65 and over**, not 64 and over: "Over 64" means over the age of 64.
+The model's band 5 is `age_index` 40 to 60, data ages 65 to 85, so the two line up
+exactly and there is no off-by-one between the data and the model here. The
+off-by-one that does exist is inside the model: `rr_homeless_hold_age=65` replaces
+the mortality profile above age 65, and every old homeless household the model
+produces sits at age 65 itself.
+
 **Returns to homelessness within 24 months — 17.4 percent.** HUD System Performance
 Measures, national summary, 2024 (`raw/HUD_system_performance_measures_national_summary_2020_2024.pdf`).
 The series runs 19.7 in 2020 and 16.6 in 2022, so 2024 is not an outlier. Nothing in
