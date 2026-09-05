@@ -873,7 +873,18 @@ BOUNDS = {
     # ratio may now go far below 0.01. Its lower bound here follows: at a rung of
     # 1.5 a street of 0.0005 is a ratio of 0.00033, and the old bound would have
     # clamped it back to thirty times that.
-    'size_homelessness':                                   (1e-6, 5.0),
+    # CEILING 1.0, NOT 5.0. This is a RATIO of housing services -- the street's
+    # shelter as a fraction of the CHEAPEST RENTAL -- so at 1.0 the street equals
+    # an apartment and above it the street is better. There is no reading of a
+    # value above one, and the old bound of 5.0 permitted five times better.
+    #
+    # It matters because ceilings are not enforced by the fixed point (the author,
+    # 4 September: *"just let them move freely (unless you need to cap them at
+    # 0"*), which is right where the ceiling is a search convenience and wrong
+    # here where it is a definition. Chasing h_1 from the delta = 0.25 seed the
+    # solver walked it 0.45 -> 0.64 in nine iterations, still five times short of
+    # target, and was heading for 1.0 in about five more.
+    'size_homelessness':                                   (1e-06, 1.0),
     'rr_homeless_old_level':                               (1.0, 30.0),
     'smallest_rental_relative_to_lowest_income':            (0.005, 0.40),
     # The bottom node's level, as a multiple of mean productivity. The quantile
