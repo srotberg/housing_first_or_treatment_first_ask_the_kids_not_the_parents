@@ -54,12 +54,29 @@ CACHE = os.path.join(HERE, '.model_hash_map')
 TARGET_CONSTANTS = (
     'wealth_to_output_data',      # decl, 6 writes, and the discount_factor gap
     'unemployment_rate_data',     # decl, 1 write, and the separation_rate gap
+    # drug_spending_share_data, added 5 September when the author moved theta's
+    # target from 16.2 to 14.098 per cent. EVERY non-comment use was read before
+    # adding it, which is the bar this list demands:
+    #
+    #   2269   the declaration
+    #   6224   write, "MOMENT theta"
+    #   39567  write, "drug share, weighted ... target ="
+    #   39581  drug_share_gap_1, the theta stepper's clamped gap
+    #   39641  distance_relative_share_of_addiction_1, the stepper's distance
+    #   39656  a stepper condition, theta pinned at its ceiling
+    #   39661  write inside that condition
+    #   40580  write, "drug share ... target ="
+    #
+    # Not one of them is in a household's problem, a price or an equilibrium
+    # condition. Writes and the outer stepper's gap only, which is the same
+    # footprint as the two names already here.
+    'drug_spending_share_data',
 )
 
 # Bumped whenever semantic() changes. The cache maps file bytes to a semantic
 # hash, so a new rule makes every stored value wrong rather than merely stale --
 # the map is rebuilt from git rather than trusted when this moves.
-HASH_VERSION = 2
+HASH_VERSION = 3
 
 _TARGET_RE = re.compile(
     r'^(\s*.*::\s*(?:%s)\s*=)\s*\S+\s*$' % '|'.join(TARGET_CONSTANTS))
