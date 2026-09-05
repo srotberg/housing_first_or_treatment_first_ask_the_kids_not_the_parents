@@ -863,7 +863,24 @@ BOUNDS = {
     # the -1 empty-population sentinel (point 460811e3cb, on an older source).
     # That defect is unresolved, so the floor keeps a margin above it rather
     # than opening the search into a region that produces sentinels.
-    'relative_share_of_addiction_1':                       (0.25, 0.60),
+    # FLOOR LOWERED TO 0.05 on the author's instruction, 5 September: *"i think
+    # the issue is the really high theta"*, *"it could be that we started with a
+    # theta way too large"*, *"if b=0.001 or so, and theta is 0.16 or so, it can
+    # work"*.
+    #
+    # The 0.25 floor was keeping the search out of exactly the region being
+    # asked for, and silently: an override to 0.16 was clamped to 0.25 and only
+    # the log line "held at its floor" said so.
+    #
+    # THE SENTINEL RISK IS REAL AND IS THE REASON THE FLOOR EXISTED. theta comes
+    # back as -1, the empty-population sentinel, whenever nobody uses -- seen at
+    # weights 0.200, 0.275, 0.325, 0.375 AND 0.425, so it is not the weight
+    # itself but the population emptying. The author's combination is meant to
+    # avoid it from the other side: a low b raises the marginal value of the
+    # FIRST small quantity, so the poor keep using even when drugs are worth
+    # little overall. Watch for theta = -1 on the next points; it is a sentinel,
+    # not a value, and it must not be scored as one.
+    'relative_share_of_addiction_1':                       (0.05, 0.60),
     'mu_homeless':                                         (0.05, 1.0),
     'lambda_m':                                            (0.046, 0.500),
     'smi_onset_level':                                     (1e-5, 0.5),
