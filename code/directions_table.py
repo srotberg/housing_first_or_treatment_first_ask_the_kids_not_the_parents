@@ -436,8 +436,23 @@ RULES = {
   # targeted, so adding it would carry no information. sud_homeless is
   # P(SUD|homeless) itself, the composition of the homeless, and is not implied
   # by h_1 and lambda_d.
-    'sud_homeless': ('lambda_addiction', 'lower',
-                     "the author's scheme; lambda selects the disordered from heavier users"),
+  # DIRECTION IS 'raise', on the author's own reasoning, 5 September: *"if the
+  # SUD homeless is high, you need to raise lambda, because this makes them use
+  # less, and raises theta, which brings more high wealth people"*.
+  #
+  # A higher lambda makes each unit of the drug riskier, so users cut quantity;
+  # the marginal risk term lambda*exp(-lambda*v)*(EV_clean - EV_disorder) in the
+  # drug first-order condition is what does it. Cutting quantity per user raises
+  # the spending share needed to sustain use and pulls the user population toward
+  # households with more wealth, who are the ones who can bear it -- and they are
+  # not the ones who end up on the street. So the SUD share of the homeless
+  # FALLS as lambda rises: parameter and moment move in OPPOSITE directions.
+  #
+  # This reverses the first wiring, which had 'lower' on the opposite mechanism
+  # -- that a higher lambda selects the disordered from heavier and therefore
+  # poorer users. The author's is the ruling.
+    'sud_homeless': ('lambda_addiction', 'raise',
+                     "the author's ruling; higher lambda cuts quantity and pulls users up the wealth distribution"),
     # emp_homeless, the employed share of the homeless, target 0.46.
     # The author: *"raise it if higher than data"*, so parameter and moment move in
     # OPPOSITE directions: raising the bottom productivity level lifts the poorest
