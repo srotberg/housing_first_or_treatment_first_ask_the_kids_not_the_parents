@@ -318,6 +318,12 @@ DEFAULT_ADJ = 0.02
 HARD_CLAMP = {'homeless_job_penalty_pp': 1.0}
 
 CAPPED = {'relative_share_of_addiction_1',
+          # delta's 0.55 CEILING IS ENFORCED because 0.55 is
+          # probability_becoming_employed and above it find_mult is exactly zero:
+          # the parameter stops doing the thing emp_homeless needs and only raises
+          # separations. That dead ground is where it ran to when it was pointed at
+          # y_h, all the way past the Fortran's own clamp of 1.
+          'homeless_job_penalty_pp',
           # THE STREET IS CAPPED AT A TENTH OF THE CHEAPEST RENTAL, the author,
           # 5 September: *"h1 can rise to 0.1 times h2"*. size_homelessness is
           # already the street's housing service as a multiple of housing_size(0),
@@ -366,28 +372,17 @@ CAPPED = {'relative_share_of_addiction_1',
 # leaves the homeless less employed -- and the parameter sits near its 0.004
 # lower bound with room to 0.064.
 FROZEN = {'multiple_of_probabilities_of_employment_if_addicted',
-          # delta IS ZERO AND HELD, 5 September, on the author's instruction:
-          # *"set delta to 0"*, *"and dont move it"*.
+          # bottom_productivity_level IS EXOGENOUS, 5 September, on the author's
+          # instruction: *"maybe we need to set the bottom productivity
+          # exogenously, and set delta to match the emp_homeless?"* It was released
+          # twenty minutes earlier on the same author's reading and the reading has
+          # been superseded by their own next one.
           #
-          # IT HAS TO BE FROZEN RATHER THAN JUST SET. Its BOUNDS floor is 0.01 and
-          # the step enforces floors -- xn = max(x+step, lo) -- so a bare zero
-          # would be pushed back to 0.01 on the first iteration. The proportional
-          # step would not move it off zero on its own, but the floor would.
-          #
-          # ZERO TAKES THE OTHER BRANCH IN THE FORTRAN. `if
-          # (homeless_job_penalty_pp>0.d0)` is false, so the labour-market penalty
-          # on the street becomes
-          #     loss_mult = 1 + increased_prob_if_homeless + extra_job_loss_if_homeless
-          #     find_mult = 1 - increased_prob_if_homeless
-          # which at the exogenous 0.2 and 0 is a 1.2x separation rate and a 0.8x
-          # finding rate. That is a MILD penalty, not the absence of one.
-          #
-          # y_h HAS NO INSTRUMENT AT THIS SETTING, and the measured ray in
-          # directions_table.py says zero is where y_h is least bad anyway: over
-          # six points identical except delta, y_h RISES with delta and its
-          # minimum on the ray is delta=0 at 0.2614 against a target of 0.191,
-          # while delta=1 gives 0.448.
-          'homeless_job_penalty_pp',
+          # ITS RAY DOES NOT MOVE emp_homeless: the measured 7-point ray reverses
+          # at a near-flat -0.0146, and on an earlier day it moved the moment by
+          # two parts in a million. delta brackets it, so delta gets it and this
+          # one is held at the value it has.
+          'bottom_productivity_level',
           # lambda_addiction IS REMOVED AND FIXED AT ZERO, 5 September, on the
           # author's instruction: *"remove lambda completely for now. Set it to 0
           # and fix it."* It supersedes their release of it forty minutes earlier.
