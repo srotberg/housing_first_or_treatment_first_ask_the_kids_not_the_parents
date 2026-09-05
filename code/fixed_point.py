@@ -150,7 +150,15 @@ ADJUSTERS = {
     'relative_share_of_housing': 0.1000,
     'relative_share_of_leisure': 0.0748,
     'rr_homeless_old_level': 0.1000,
-    'size_homelessness': 0.0423,
+    # RAISED TO THE AUTHOR'S MAXIMUM 4 September on their instruction, from
+    # 0.0423. The delta = 0.25 seed put h_1 at -96 per cent and this is the
+    # parameter that has to climb to recover it; at 0.0423 it moved four per cent
+    # an iteration. The response steepens as it climbs -- the h_1 gap closed 0.35
+    # points per iteration over the first three and 8.4 at the fifth -- so bigger
+    # steps risk overshooting into the region where h_1 looks discontinuous. The
+    # sign-flip damping halves the adjuster the first time that happens, which is
+    # what makes the larger step safe to try.
+    'size_homelessness': 0.10,
     'smallest_rental_relative_to_lowest_income': 0.0148,
     'smi_onset_level': 0.1000,
     'utility_cost_of_treatment': 0.0100,
