@@ -141,15 +141,22 @@ ADJUSTERS = {
     # A PROPORTIONAL STEP CANNOT LEAVE ZERO, so delta starts at 0.05 in the
     # seed vector rather than 0 and then moves by ten per cent of itself.
     'homeless_job_penalty_pp': 0.10,
-    # M MOVES TOO SLOWLY AT TEN PER CENT. The author, 5 September: *"i think the
-    # M var has to be adjusted much more quickly than at 10%... maybe at 20%"*.
-    # Its moment sud_homeless is at a HARD CORNER -- exactly 0.0000 against 0.217
-    # -- so the gap never shrinks, the stall rule never relaxes the damper, and
-    # the scale sits at the OSC_FLOOR of 0.125. At the old default that is 0.25
-    # per cent of its value per iteration; the trace shows it crawling 4.50 ->
-    # 5.38 over twelve. At 0.20 the floored step is 2.5 per cent and the
-    # undamped step is 20.
-    'multiple_of_probabilities_of_employment_if_addicted': 0.20,
+    # M MOVES 50 PER CENT AT A 100 PER CENT GAP. The author, 5 September: *"i
+    # think the M var has to be adjusted much more quickly than at 10%"*, then
+    # *"i think M should adjust at 50% when it's at 100%"*.
+    #
+    # step = f * adjuster * min(1,|rel|) * |x|, and for this parameter f is 1.0:
+    # sud_homeless sits at exactly 0.0000 against 0.217, so rel is -1.0 every
+    # iteration, the sign NEVER flips and the damper never halves. (An earlier
+    # note here said the scale was pinned at OSC_FLOOR -- wrong; the floor is
+    # only reached by flipping.) So the adjuster IS the per-iteration fraction
+    # at a 100 per cent gap, and the trace confirms it exactly: M moved 4.5046
+    # -> 4.5947 -> 4.6866, x1.02000 each time, on the old 0.02 default.
+    #
+    # 0.50 therefore gives precisely what was asked: half its own value per
+    # iteration while the gap is 100 per cent, scaling down with min(1,|rel|)
+    # as the gap closes.
+    'multiple_of_probabilities_of_employment_if_addicted': 0.50,
     'bottom_productivity_level': 0.1000,
     'discount_factor': 0.0680,
     'kappa_uem': 0.1000,
