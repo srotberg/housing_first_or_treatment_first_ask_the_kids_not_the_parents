@@ -3926,7 +3926,13 @@
         ! full year of income apart, so a household wanting a tenth of a year in
         ! debt had nowhere to stand and a wide limit could look inert purely
         ! through coarseness.
-        integer, parameter :: negative_financial_grid_size=8
+        ! 8 -> 2, on the author's instruction of 5 September: *"and put only 2
+        ! grid points there"*. WITH TWO POINTS THE NEGATIVE GRID IS {-limit, 0}:
+        ! a household holds either no debt or the full limit, with nothing in
+        ! between. The block above warns about coarseness in the other direction
+        ! -- at a limit of 3.00 the eight points sat a year of income apart -- so
+        ! this is the same trade taken deliberately at the fine end.
+        integer, parameter :: negative_financial_grid_size=2
         
         integer, parameter :: grid_gaps=coarse_grid*10+(1-coarse_grid)
            
@@ -4325,7 +4331,12 @@
         ! Set from include_unsecured_borrowing in set_renter_floor, so the OFF
         ! economy keeps the layout it always had and only the ON economy pays for
         ! the three extra points.
-        real(8) :: unsecured_borrowing_limit=1.50d0
+        ! 1.50 -> 0.20, the author: *"maybe it should be around 0.2 times average
+        ! income"*. The declaration, run_one_point.sh's default and the walker's
+        ! vector had drifted apart -- 1.50, 1.50 and 0.30 -- and 0.30 is what was
+        ! actually solving, because the handover overrides both. All three now say
+        ! 0.20 so the source cannot be read for a value the model is not running.
+        real(8) :: unsecured_borrowing_limit=0.20d0
         ! THE RATE PAID ON A NEGATIVE BALANCE. The author asked first for a rate
         ! "high like on a credit card" and then for "the 5.5% interest rate" --
         ! but the 5.5 per cent they were quoting was US revolving credit as a

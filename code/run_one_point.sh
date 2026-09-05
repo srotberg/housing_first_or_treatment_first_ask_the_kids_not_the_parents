@@ -59,7 +59,7 @@ declare -A P=(
     # because the 5.5 per cent the author named was a debt-to-income quantity
     # rather than a rate.
     [include_unsecured_borrowing]=1
-    [unsecured_borrowing_limit]=1.50
+    [unsecured_borrowing_limit]=0.20
     [unsecured_borrowing_rate]=0.055
     [restrict_borrowing_to_impatient]=1
     # THE CURVATURE OF THE POSITIVE ASSET GRID. grid(i)=top*((i-61)/24)**e, so a
