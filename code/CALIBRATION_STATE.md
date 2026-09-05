@@ -1,3 +1,49 @@
+## 5 September, 19:36 -- THE INFEASIBILITY BELOW IS SUPERSEDED. THE AUTHOR FIXED IT.
+
+The entry immediately below records the two-rung design as infeasible on a
+measured Jacobian. That conclusion was correct about the numbers and WRONG about
+the cause, and the author found the reason: *"adjust h3 independently of h2"*,
+*"just adjust them independently"*.
+
+The two knobs were MECHANICALLY chained, not economically degenerate. h3 was
+rung_ratio_h3*h2 -- an overwrite added earlier the same day -- so cutting the
+bottom rung cut the top rung with it and both moments fell together. The Fortran
+had ALREADY been assigning housing_size(grid_size-1) = largest_house_size, an
+independent absolute size; the overwrite is what destroyed it. Restricting that
+overwrite to three rungs and above restores two independent levels.
+
+MEASURED, at the SAME h2 = 0.060:
+
+    chained     (h3 = 2.0*h2)         gamma 0.1911   -28.7 per cent
+    independent (h3 = 0.1863876)      gamma 0.2726    +1.7 per cent
+
+gamma landed on target at the author's own suggested value -- 1.5 times the
+bottom rung's previous level -- with no search at all. burden50 is 0.3717 against
+0.175 and now has a free instrument, because lowering h2 no longer drags gamma
+down with it.
+
+THE LIVE HOUSING BLOCK:
+
+    smallest_rental_relative_to_lowest_income  ->  burden50  (0.175)   at 0.060
+    largest_house_size                         ->  gamma     (0.268)   at 0.1863876
+
+with relative_share_of_housing pinned at 0.268 as data, rung_ratio_h3 held, and
+the ladder-inversion guard reinstated in run_one_point.sh because two independent
+levels can cross again where a ratio ladder could not.
+
+WHERE THE MODEL IS WORST, on point 95c6ecfcfc: b at 0.799 against 0.089, nine
+times target and the worst number in the model; lambda_d 0.131 against 0.037;
+lambda_m 0.938 against 0.25. Homelessness is 22 times too rare, 94 per cent of
+the homeless carry SMI, essentially none are employed, 90 per cent are aged 26-34
+and bands 4 and 5 are empty. sud_homeless reads 0.105 against 0.217 and has NO
+instrument, lambda_addiction being frozen at zero.
+
+A bracket on addiction_scalar_1 at 0.0090 and 0.0105 is in flight. The archive's
+dense 182-point ray on that parameter puts the whole usable range between 0.007
+and 0.010, but it was measured on model 375aed92cf and its LEVELS do not transfer:
+the current phi/theta would predict b about 0.25 there against 0.799 here. The
+shape transfers, the location does not.
+
 ## 5 September, 19:25 -- THE TWO-RUNG LADDER CANNOT HIT BOTH HOUSING TARGETS
 
 MEASURED, one coordinate at a time, three points on model eebe63e443. The author's
