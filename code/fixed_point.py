@@ -216,7 +216,11 @@ ADJUSTERS = {
     #
     # 0.002 gives about a 4 per cent move in the drug share per iteration at a
     # 100 per cent gap, which is a step the moment can actually be steered with.
-    'addiction_scalar_1': 0.0020,
+    # 0.005, not 0.002: at an elasticity of -21 that is about a 10 per cent move
+    # in the drug share per iteration, roughly 22 iterations to cross the window,
+    # where 0.002 needed 55. Twice wrong earlier tonight -- 0.05 moved the share
+    # 100 per cent a step, 0.002 crawled -- so this is sized to the job.
+    'addiction_scalar_1': 0.0050,
     'lambda_addiction': 0.0500,
 }
 DEFAULT_ADJ = 0.02
