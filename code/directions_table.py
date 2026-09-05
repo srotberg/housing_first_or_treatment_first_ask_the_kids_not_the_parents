@@ -516,7 +516,7 @@ RULES = {
                      'target 0.46 strictly inside; live range [0, 0.55]'),
     # SUPERSEDED, kept as a comment rather than a dead dict key:
     # '_emp_homeless_superseded': ('bottom_productivity_level', 'raise',
-                     'ray reverses and is near-flat; parameter sits ON its lower bound'),
+    #                  'ray reverses and is near-flat; parameter sits ON its lower bound'),
     # lambda_m, the SMI share of the homeless, target 0.250.
     # The author: *"lower it if it is higher than the data... it would then have
     # fewer unemployed with SMI"*. kappa_uem is the SMI employment penalty on both
