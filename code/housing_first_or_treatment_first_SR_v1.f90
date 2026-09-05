@@ -1530,7 +1530,48 @@
         !
         ! It is on in both arms. The two policies differ in the sobriety
         ! condition, voucher_conditional_on_clean, not in whether vouchers exist.
-        integer, parameter :: provide_vouchers=1
+        !
+        ! SWITCHED BACK OFF, 5 September, AND THE PARAGRAPH ABOVE NAMES THE WRONG
+        ! SWITCH. `provide_vouchers` gates calculate_housing_voucher -- voucher
+        ! ONE -- which is not the paper's voucher. Equation (17) is
+        !
+        !     Vch = 1{eta=1} 1{h' /= h_1} max(0, p_r h' - kappa_r y^g)
+        !
+        ! and the routine that implements it is calculate_housing_voucher_TWO:
+        ! that one carries the 1{eta=1} indicator as `voucher_index==1`, carries
+        ! the income eligibility test at threshold_income_vouchers, carries the
+        ! sobriety condition the whole Housing First against Treatment First
+        ! comparison rests on, is calibrated by probability_of_voucher_benchmark_
+        ! used, and is what pi_V measures. It is gated by `include_vouchers`,
+        ! which is 1 independently of this switch, so the paper's voucher was
+        ! ALREADY reachable and turning this one on did not make it so.
+        !
+        ! WHAT TURNING IT ON ACTUALLY DID. Voucher one has NO eta gate, NO income
+        ! test, no calibrated parameter and no moment measuring it, and it is
+        ! ADDED to the budget alongside voucher two. It pays
+        ! max(rent - 0.30*income, 0) capped at the rent, to EVERY housed renter,
+        ! computed on the household's OWN chosen dwelling. So every renter paid
+        ! exactly min(0.30*income, rent) for a unit of ANY size: housing was free
+        ! at the margin and a bigger unit cost nothing extra.
+        !
+        ! MEASURED CONSEQUENCES, all of which went away as puzzles once this was
+        ! found. 95 to 100 per cent of renters took the LARGEST unit at every
+        ! ladder tried on 5 September, including one at 25 times average income;
+        ! raising h3 pulled MORE households in rather than pricing any out; the
+        ! share in the smallest rental sat at 4 to 9 per cent across a 3.1x range
+        ! of ladder level, both voucher settings and leisure weights from 0.05 to
+        ! 1.31; gamma stuck at 0.42 to 0.51 whatever the taste weight; aggregate
+        ! rent ran to 108 per cent of aggregate income and net_govt_revenues to
+        ! -1793 at the far end; and omega_l collapsed as the ladder rose.
+        !
+        ! AND burden50 WAS ARITHMETICALLY UNREACHABLE. Net rent is capped at 30
+        ! per cent of income by this subsidy, so no household can ever pay over
+        ! half. The moment nevertheless READ 80 to 96 per cent burdened, because
+        ! its numerator is (rent*size - housing_voucher_2) and subtracts voucher
+        ! TWO only -- it measured a gross rent nobody paid. That inconsistency is
+        ! left alone here: with voucher one off, the numerator is again the rent
+        ! net of the only voucher that pays.
+        integer, parameter :: provide_vouchers=0
         ! kappa_r, the tenant contribution rate. The note's external table sets it at
         ! 0.30, which is HUD's own rule; the code had 0.44.
         real(8), parameter :: max_fraction_of_income_spent_on_housing=0.30
