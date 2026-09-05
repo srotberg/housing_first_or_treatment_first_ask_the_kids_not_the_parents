@@ -157,16 +157,28 @@ ADJUSTERS = {
     # iteration while the gap is 100 per cent, scaling down with min(1,|rel|)
     # as the gap closes.
     'multiple_of_probabilities_of_employment_if_addicted': 0.50,
+    # RAISED 5 September, from the author's repeated instruction to stop
+    # parameters crawling. These four are more than ten per cent out and were on
+    # 0.01 to 0.0225, so they moved 0.1 to 0.3 per cent of their value per
+    # iteration -- hundreds of solves to close a ten per cent gap. 0.05 is inside
+    # the band the author set themselves, *"you can adjust up to 5% when you are
+    # 100% off"*, and well under the 0.10 cap.
+    #
+    # size_adjusters.py CANNOT re-derive these and its output must not be applied.
+    # It needs a ray that BRACKETS the target and the archive has none for 19 of
+    # 22 instruments, so it returns its 0.010 lower bound for nearly everything --
+    # which would make the whole search slower, not faster. Re-run it only after
+    # the archive carries bracketing rays again.
     'bottom_productivity_level': 0.1000,
     'discount_factor': 0.0680,
     'kappa_uem': 0.1000,
-    'kkk_sigma_scale': 0.0225,
-    'labor_income_tax_rate': 0.0100,
+    'kkk_sigma_scale': 0.0500,
+    'labor_income_tax_rate': 0.0500,
     'max_food_cost': 0.0100,
     'mu_homeless': 0.0370,
     'probability_becoming_unemployed': 0.0710,
     'probability_of_voucher_benchmark_used': 0.0428,
-    'relative_share_of_addiction_1': 0.0100,
+    'relative_share_of_addiction_1': 0.0500,
     'relative_share_of_housing': 0.1000,
     'relative_share_of_leisure': 0.0748,
     'rr_homeless_old_level': 0.1000,
@@ -191,8 +203,8 @@ ADJUSTERS = {
     # threshold C > (phi/theta) p b, there is no reason to think it pathological,
     # so it takes the ordinary rate until a ray measured on the corrected mapping
     # says otherwise.
-    'addiction_scalar_1': 0.0200,
-    'lambda_addiction': 0.0200,
+    'addiction_scalar_1': 0.0500,
+    'lambda_addiction': 0.0500,
 }
 DEFAULT_ADJ = 0.02
 
