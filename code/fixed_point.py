@@ -290,7 +290,14 @@ DEFAULT_ADJ = 0.02
 # cent on every point of the night. Under the author's scheme M takes
 # emp_homeless instead, once M is shown to have grip in the new region.
 # PARAMETERS WHOSE UPPER BOUND IS ENFORCED. Everything else is floored only.
-CAPPED = {'relative_share_of_addiction_1'}
+CAPPED = {'relative_share_of_addiction_1',
+          # THE STREET IS CAPPED AT A TENTH OF THE CHEAPEST RENTAL, the author,
+          # 5 September: *"h1 can rise to 0.1 times h2"*. size_homelessness is
+          # already the street's housing service as a multiple of housing_size(0),
+          # the cheapest rental, so the cap is 0.1 on the parameter itself. It sat
+          # at 0.167 when the cap was set, so the ceiling binds immediately and
+          # the street comes DOWN to it.
+          'size_homelessness'}
 
 # theta AND lambda ARE HELD WHILE b AND THE BASE CONVERGE. The author,
 # 5 September: *"i would suggest to keep theta fixed at 0.13 and lambda at 0.05

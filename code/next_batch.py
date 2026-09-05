@@ -916,7 +916,7 @@ BOUNDS = {
     # here where it is a definition. Chasing h_1 from the delta = 0.25 seed the
     # solver walked it 0.45 -> 0.64 in nine iterations, still five times short of
     # target, and was heading for 1.0 in about five more.
-    'size_homelessness':                                   (1e-06, 1.0),
+    'size_homelessness':                                   (1e-06, 0.1),
     'rr_homeless_old_level':                               (1.0, 30.0),
     'smallest_rental_relative_to_lowest_income':            (0.005, 0.40),
     # The bottom node's level, as a multiple of mean productivity. The quantile
