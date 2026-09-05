@@ -4460,7 +4460,22 @@
         ! merely off target. It has been in next_batch.SKIP since 31 August on the
         ! author's *"h3 can be off"*, so nothing scored is lost, but the row is
         ! now meaningless rather than missed and should be read that way.
-        integer, parameter :: housing_status_grid_size=1
+        ! TWO RENTALS, on the author's instruction of 5 September: *"is there a
+        ! way to set h2 so that the share of spending over 50% of their income on
+        ! housing is like in the data? and choose h3 so that at the housing
+        ! spending is 26.8% at the chosen relative_share_of_housing of 0.268?"*
+        !
+        ! This supersedes the one-rental grid of an hour earlier. One rung had to
+        ! set both the affordability floor and the aggregate housing share, and
+        ! could not: the two moments pull on different margins. Two rungs give
+        ! each its own instrument --
+        !
+        !   h2, the bottom rung  -> renters paying over half their INCOME on
+        !                           housing, 0.175 in the SCF
+        !   h3, the top rung     -> gamma, housing over expenditure, 0.268
+        !
+        ! with relative_share_of_housing pinned at 0.268 as data throughout.
+        integer, parameter :: housing_status_grid_size=2
                          
         integer :: space_lived_in_num_of_internal=2  
                                                         
@@ -6584,8 +6599,21 @@
             ! appendix derives 40.6 and 17.5 on.
             write(*,*) "UNTARGETED renters above 30 pct of income    model=",&
                 mass_of_renters_at_housing_spending(1,1), " observed=", 0.406d0
-            write(*,*) "UNTARGETED renters above 50 pct of income    model=",&
-                mass_of_renters_at_housing_spending(1,2), " observed=", 0.175d0
+            ! SCORED FROM 5 September, on the author's instruction: *"is there a
+            ! way to set h2 so that the share of spending over 50% of their income
+            ! on housing is like in the data?"*. It was printed and never read.
+            !
+            ! NAMED burden50, NOT h_2. ENGINE.md records that conflating the h_2
+            ! MOMENT (over half of EXPENDITURE, 0.101 in the CEX) with the h_2
+            ! PARAMETER already cost a wrong concession once, and this is a third
+            ! object on a third denominator. It gets its own name.
+            !
+            ! ITS INSTRUMENT IS THE BOTTOM RUNG. h2 sets what the cheapest unit
+            ! costs, so it decides who is priced into paying over half their
+            ! income for it; the top rung sets how much housing the bulk buy and
+            ! owns gamma instead.
+            write(*,*) "MOMENT burden50  renters over half of income model=",&
+                mass_of_renters_at_housing_spending(1,2), " target=", 0.175d0
 
             ! THE TWO PICTURE OF SUBSIDIZED HOUSEHOLDS ROWS. The tenant
             ! contribution rate is the check on kappa_r, which is set to
@@ -27525,12 +27553,23 @@
             ! contributing exactly zero. Fixing the middle at twice the bottom
             ! compresses the ladder and makes the bottom rung an object the rent
             ! burden can actually see.
+            ! THE GUARD WAS WRONG FOR A TWO-RUNG LADDER. It read
+            ! `housing_status_grid_size>2`, which is FALSE at two rentals, so the
+            ! second rung would never have been assigned and housing_size(1)
+            ! would have kept whatever the grid constructor left there. Split so
+            ! that rung_ratio_h3 applies from two rungs up and rung_ratio_h4 only
+            ! from three, which leaves the three-rung behaviour exactly as it was.
+            !
+            ! The index is still clamped: gfortran cannot prove the guard protects
+            ! it and the warning would mask a real one next time.
+            if (housing_status_grid_size>1) then
+
+                housing_size(min(1,housing_status_grid_size-1))=rung_ratio_h3*housing_size(0)
+
+            end if
+
             if (housing_status_grid_size>2) then
 
-                ! The enclosing `if (housing_status_grid_size>2)` already stops
-                ! this running at one rental, but gfortran cannot prove it and
-                ! warns. Clamped so the warning does not mask a real one.
-                housing_size(min(1,housing_status_grid_size-1))=rung_ratio_h3*housing_size(0)
                 housing_size(housing_status_grid_size-1)=rung_ratio_h4*housing_size(0)
 
             end if
