@@ -1,3 +1,52 @@
+# Calibration state -- 5 September, 03:25
+
+## DELTA SWEEPS THE WORKERS OFF THE STREET AND THE DEATH PENALTY CANNOT REACH WHAT IS LEFT
+
+Measured over 52 solved points carrying delta > 0. Clean ray, `size_homelessness`
+held at 0.45 and `rr_homeless_old_level` at 2.867:
+
+    delta      y_h       h_1   band 1    band 5
+     0.05   0.2642  0.004651    0.905     0.032
+     0.15   0.7362  0.000299    0.124     0.447
+     0.25   0.7242  0.000153    0.063     0.935
+     0.30   0.6892  0.000184    0.200     0.776
+     0.55   0.7250  0.000152    0.060     0.940
+                     target
+                   0.003990              0.075
+
+**Delta does its job.** Band 1 falls 0.905 -> 0.060 and h_1 collapses to 96 per
+cent BELOW target. The author's design is right on that half: delta removes the
+workers.
+
+**The other half cannot act.** At delta = 0.30, three points with rr = 2.867, 4.0
+and 8.0 are BIT-IDENTICAL -- y_h 0.6892, h_1 0.000184, band 5 0.7759
+(45083d5a07, f56a40b55d, 81f55164ad). Tripling the death hazard changes nothing,
+because `rr_homeless_hold_age=65` puts the penalty on ages 66 AND UP while the
+model's old homeless are at age 65, the last working year before Social Security
+starts at 66.
+
+So once delta has swept the workers off, what remains is a population the death
+penalty cannot reach at any multiplier. It becomes 90+ per cent of the homeless,
+its income is Social Security, and y_h sits at 0.69-0.75 and will not fall. The
+two instruments are not independent: the second one has to work for the first one
+to help.
+
+**THE RULING WAS MADE ON THE WRONG INFORMATION.** The author said *"just keep the
+65+ the way we have been doing it"* after being told h_share5 was -1.1 per cent.
+That is true at delta = 0 and false at every delta above it. Put back to the
+author 5 September 03:25.
+
+The change is `rr_homeless_hold_age` 65 -> 64, one integer. It is a CONFIG_SWITCH,
+so the 669 archived points measured at 65 stop pooling and the archive restarts.
+Measured at fixed delta: band 5 0.0299 -> 0.0002, y_h 0.2614 -> 0.2458, h_1
+barely moves.
+
+**Reading the gap table alongside the trace is what makes this look contradictory.**
+The table reports the BEST point, which carries delta ~ 0; every delta > 0 point is
+worse on the objective and none has become best. So the table says y_h +275 per
+cent while the trace shows delta climbing. Both are correct and they are different
+points.
+
 # Calibration state -- 5 September, 03:05
 
 ## y_h HAD NO LIVE INSTRUMENT AT ALL, AND THAT IS WHY IT SAT AT +275 PER CENT
