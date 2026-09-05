@@ -1,51 +1,54 @@
-# Calibration state -- 5 September, 03:25
+# Calibration state -- 5 September, 03:40
 
-## DELTA SWEEPS THE WORKERS OFF THE STREET AND THE DEATH PENALTY CANNOT REACH WHAT IS LEFT
+## THE DELTA RAY, CORRECTED -- AND A FABRICATED NUMBER IN A TABLE SHOWN TO THE AUTHOR
 
-Measured over 52 solved points carrying delta > 0. Clean ray, `size_homelessness`
-held at 0.45 and `rr_homeless_old_level` at 2.867:
+**The error first.** In the sorted gap table shown at 03:20 the y_h row was
+printed by gaps.py as
 
-    delta      y_h       h_1   band 1    band 5
-     0.05   0.2642  0.004651    0.905     0.032
-     0.15   0.7362  0.000299    0.124     0.447
-     0.25   0.7242  0.000153    0.063     0.935
-     0.30   0.6892  0.000184    0.200     0.776
-     0.55   0.7250  0.000152    0.060     0.940
-                     target
-                   0.003990              0.075
+    y_h  +275.4%  0.71707  0.19100  homeless_job_penalty_pp  0
 
-**Delta does its job.** Band 1 falls 0.905 -> 0.060 and h_1 collapses to 96 per
-cent BELOW target. The author's design is right on that half: delta removes the
-workers.
+and it was retyped by hand as `0.3025`, the LIVE TRACE value from a different and
+still-unsolved vector. The best point `d0029f2b64` carries
+`homeless_job_penalty_pp=0`; its moments are h_1 = 0.0035300, band 5 = 0.074176,
+y_h = 0.717068. There is no point in the archive with delta = 0.25 and those
+moments. The author caught it immediately: *"you showed me a delta of 0.25 with
+y_h being 0.717, h1 giving 0.35% homelessness and h_share5 around 7.4%"*.
 
-**The other half cannot act.** At delta = 0.30, three points with rr = 2.867, 4.0
-and 8.0 are BIT-IDENTICAL -- y_h 0.6892, h_1 0.000184, band 5 0.7759
-(45083d5a07, f56a40b55d, 81f55164ad). Tripling the death hazard changes nothing,
-because `rr_homeless_hold_age=65` puts the penalty on ages 66 AND UP while the
-model's old homeless are at age 65, the last working year before Social Security
-starts at 66.
+This is the rule against mixing points inside one table, broken in the smallest
+possible way -- one cell -- and it made the model look as though delta did
+something it has never done. A parameter value in a gap table comes from THE
+POINT, never from the trace.
 
-So once delta has swept the workers off, what remains is a population the death
-penalty cannot reach at any multiplier. It becomes 90+ per cent of the homeless,
-its income is Social Security, and y_h sits at 0.69-0.75 and will not fall. The
-two instruments are not independent: the second one has to work for the first one
-to help.
+**The ray was also mis-built.** Its baseline was a delta=0.05 point differing from
+the rest in TWELVE other coordinates. Rebuilt over six points identical in every
+coordinate except delta:
 
-**THE RULING WAS MADE ON THE WRONG INFORMATION.** The author said *"just keep the
-65+ the way we have been doing it"* after being told h_share5 was -1.1 per cent.
-That is true at delta = 0 and false at every delta above it. Put back to the
-author 5 September 03:25.
+    delta   tag              y_h        h_1    band1    band5
+     0.00   43932f4d10    0.2614   0.004651   0.9080   0.0299
+     0.05   2c40bae9b4    0.7105   0.002457   0.0120   0.0529
+     0.15   a43cb9b416    0.7362   0.000299   0.1235   0.4465
+     0.25   b24474cff8    0.7242   0.000153   0.0627   0.9354
+     0.30   f56a40b55d    0.6892   0.000184   0.2003   0.7759
+     0.55   59a64035ad    0.7250   0.000152   0.0603   0.9397
+                 target   0.1910   0.003990            0.0750
 
-The change is `rr_homeless_hold_age` 65 -> 64, one integer. It is a CONFIG_SWITCH,
-so the 669 archived points measured at 65 stop pooling and the archive restarts.
-Measured at fixed delta: band 5 0.0299 -> 0.0002, y_h 0.2614 -> 0.2458, h_1
-barely moves.
+The conclusion is unchanged and sharper: THE WHOLE MOVE HAPPENS BETWEEN 0 AND
+0.05. y_h jumps 0.261 -> 0.711 on the first step, h_1 halves, band 1 collapses
+0.908 -> 0.012. Everything above 0.05 is noise around a state already reached.
 
-**Reading the gap table alongside the trace is what makes this look contradictory.**
-The table reports the BEST point, which carries delta ~ 0; every delta > 0 point is
-worse on the objective and none has become best. So the table says y_h +275 per
-cent while the trace shows delta climbing. Both are correct and they are different
-points.
+**And the death penalty cannot reach what is left.** At delta = 0.30, three points
+with rr = 2.867, 4.0 and 8.0 are BIT-IDENTICAL -- y_h 0.6892, h_1 0.000184,
+band 5 0.7759 (45083d5a07, f56a40b55d, 81f55164ad). `rr_homeless_hold_age=65`
+puts the penalty on ages 66 AND UP while the model's old homeless are at age 65,
+the last working year before Social Security starts at 66. So delta sweeps the
+workers off, the remainder is unreachable, it becomes 90+ per cent of the
+homeless, its income is Social Security, and y_h will not fall.
+
+**The ruling to revisit.** The author said *"just keep the 65+ the way we have
+been doing it"* after being told h_share5 was -1.1 per cent. That is true at
+delta = 0 and false at every delta above it. The change is
+`rr_homeless_hold_age` 65 -> 64, one integer; it is a CONFIG_SWITCH, so the 669
+points measured at 65 stop pooling.
 
 # Calibration state -- 5 September, 03:05
 
