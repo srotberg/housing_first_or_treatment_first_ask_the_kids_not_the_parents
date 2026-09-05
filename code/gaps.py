@@ -168,7 +168,15 @@ OWN = [
     # takeup*ssi_floor_level enters the benefit, take-up is clamped to [0,1] so
     # the effective floor could never pass 0.1774, and that is below the PIA of
     # the node holding 39.8 per cent of the mass. See SSI_FLOOR_ANALYSIS.md.
-    ('ssi_floor_level', 'h_share5'),
+    # h_share5's instrument is rr_homeless_old_level, NOT ssi_floor_level.
+    # ssi_floor_level appears nowhere in directions_table.RULES, so it is not in
+    # the live rule map, has never moved in a single trace iteration, and is not
+    # an instrument at all -- while this table printed it beside h_share5 as
+    # though it were the thing holding that moment at target. Same class of fault
+    # as the y_h row above: the REPORT named one parameter and the WALK moved
+    # another. The author, 5 September: *"i thought that ssi_floor_level was
+    # disabled!"* -- it is, and the table was the only thing saying otherwise.
+    ('rr_homeless_old_level', 'h_share5'),
     # y_h's instrument is homeless_job_penalty_pp, the author's separation-only
     # delta, NOT increased_prob_if_homeless. The two disagreed: this table paired
     # y_h with the symmetric multiplier while directions_table paired it with the
@@ -197,7 +205,13 @@ OWN = [
     # went back to the cost burden. Income of the homeless stays untargeted and
     # belongs to validation, on the author's instruction.
     ('bottom_productivity_level', 'emp_homeless'),
-    ('lambda_addiction', 'b'), ('addiction_scalar_1', 'lambda_d'),
+    # b AND lambda_d WERE SWAPPED HERE against directions_table's rulings, so
+    # every table printed since attributed each to the other's instrument.
+    # b is the total drug users and its threshold is C > (phi/theta) p b, which
+    # addiction_scalar_1 scales; lambda_d is the disorder rate and its hazard is
+    # pi_d(v) = 1 - exp(-lambda v), which lambda_addiction sets. The walk reads
+    # directions_table, so nothing was mis-calibrated -- only mis-labelled.
+    ('addiction_scalar_1', 'b'), ('lambda_addiction', 'lambda_d'),
     ('relative_share_of_leisure', 'omega_l'),
     ('labor_income_tax_rate', 'tau_l'),
     # SIGMA_Y'S INSTRUMENT DEPENDS ON THE PROCESS, and exactly one is live.
