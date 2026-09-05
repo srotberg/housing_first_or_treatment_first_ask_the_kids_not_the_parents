@@ -1,3 +1,41 @@
+# Calibration state -- 5 September, 05:40
+
+## THE b BRACKET. sud_homeless IS HUMP-SHAPED IN b AND PEAKS ON TARGET
+
+Five points, theta held at 0.16 and lambda_addiction at 0.0001 throughout, only
+addiction_scalar_1 varying:
+
+    b param    b     lambda_d  theta   sud_hl    h_1     assets_u   y_u
+    target   0.089   0.0368    0.162   0.217    0.00399   0.454     0.740
+    1e-06    0.968   0.158     0.131   0.046    0.00043   1.047     1.011
+    1e-06    0.969   0.166     0.132   0.046    0.00063   0.964     1.010
+    1e-05    0.970   0.158     0.133   0.223    0.00009   1.027     1.010
+    1e-04    0.961   0.156     0.133   0.189    0.00010   0.954     0.991
+    1e-03    0.830   0.140     0.132   0.096    0.00010   0.611     0.849
+
+sud_homeless runs 0.046 -> 0.223 -> 0.189 -> 0.096 and the 0.217 target sits
+between 1e-5 and 1e-4, so b is about 3e-5. THAT MOMENT WAS EXACTLY ZERO ON
+ESSENTIALLY EVERY ONE OF THE 1618 POINTS BEFORE THE HAZARD CHANGE.
+
+THE TWO 1e-06 POINTS AGREE to three figures on b and on sud_homeless, so the
+readings are solid rather than solver noise.
+
+## THREE THINGS THE BRACKET SETTLES
+
+  1. b THE MOMENT IS NOT CONTROLLED BY b THE PARAMETER in this region. Three
+     orders of magnitude move the drug share 0.97 -> 0.83 against a target of
+     0.089, a gap of +979 per cent that is now the binding moment. Its handle
+     has to be theta, in phase two.
+  2. b TRADES sud_homeless AGAINST THE POVERTY OF USERS, and they want opposite
+     ends of the range. Only 1e-3 moves assets_u toward the 0.454 benchmark
+     (0.611, against about 1.0 everywhere else) and y_u toward 0.740 (0.849),
+     and it costs half the SUD share of the homeless.
+  3. h_1 IS 0.0001 AND emp_homeless IS EXACTLY 0 ON ALL FIVE. The street is
+     empty whatever b does, so the whole bracket is composition over a
+     population that barely exists. size_homelessness has to climb before any of
+     these numbers mean much; it is free, not frozen, and was only idle because
+     the loop was stopped for the bracket.
+
 # Calibration state -- 5 September, 05:20
 
 ## THE AUTHOR'S TWO-PHASE PLAN FOR THE DRUG BLOCK
