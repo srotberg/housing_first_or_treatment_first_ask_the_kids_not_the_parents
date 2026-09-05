@@ -1,3 +1,71 @@
+# Calibration state -- 5 September, 03:45
+
+## THE ECONOMY RESTARTED AT rr_homeless_hold_age=64. FOUR POINTS, AND THE LOSS IS RISING
+
+Like-for-like over the same 23 scored moments, in solve order:
+
+    #  point         loss    worst   in 10%       M      rr
+    1  85ec3e553f    4.81   115.7%    7/23    4.505   2.867
+    2  31fafe39e7   12.34   276.8%    7/23    4.505   8.000
+    3  05337a267d   14.57   283.8%    8/23    6.757   7.831
+    4  8d1ce8987d   14.78   299.0%    7/23   10.131   7.667
+
+## THE WALK ANCHORED ON THE WRONG SEED, AND THE CRITERION CANNOT SEE WHY
+
+gaps.py ranks on the STAGE-0 set of 16 moments and picks 31fafe39e7 at 2.5879.
+That point carries rr = 8.0, which drives h_share5 to exactly 0.00000 against
+0.075 -- and h_share5 IS NOT IN THE STAGE-0 SET, so the ranking cannot see the
+damage. On the full 23 moments 85ec3e553f (rr = 2.867) is better, 4.81 against
+12.34. The loop is walking away from the better of its two seeds.
+
+This is the same shape as every other fault tonight: a criterion evaluated over
+one set while the consequence lands in another.
+
+## M IS NOT A HARD INSTRUMENT, IT IS A SELF-DEFEATING ONE
+
+The author asked how to make SUD households homeless, and whether M only works
+once b is low enough. The four points answer both:
+
+       M   addiction_scalar_1   lambda_d       b   kappa_ued   sud_homeless
+   4.505             0.036226     0.0261  0.0695       0.277         0.0000
+   6.757             0.035830     0.0011  0.0072       0.423         0.0003
+  10.131             0.034183     0.0025  0.0128       0.566         0.0053
+  target                          0.0368  0.0890       0.1625        0.2170
+
+RAISING M DESTROYS THE POPULATION THE MOMENT IS A SHARE OF. b falls to a fifth,
+lambda_d to a tenth, while sud_homeless creeps from 0 to 0.005 against 0.217.
+Drug use is a CHOICE: make the disorder catastrophic for employment and
+households stop choosing it. And M has overshot the one thing it does control --
+kappa_ued 0.277 -> 0.566 against a target of 0.1625 -- so M should come DOWN.
+
+THE AUTHOR'S READING ON b IS RIGHT AND THE MODEL SHOWS THE SELECTION. Use needs
+consumption above a threshold, so users are selected RICH: band 1 users have
+income 2.08 times average. Bands 2-4 users are poor, 0.40-0.46 of average, and
+100 per cent of them carry the disorder -- but there are almost none. The SUD
+rate by income band is 0.001-0.009 against data of 0.05-0.14, so the model has
+one to two per cent of the disorder population the data has, at every income
+level.
+
+21.7 per cent of the homeless cannot carry a disorder when 0.25 per cent of the
+population has one. THE LEVEL COMES FIRST -- lambda_d at -29 per cent and b at
+-22 per cent, via lambda_addiction and a LOWER addiction_scalar_1, which drops
+the consumption threshold and lets poor households into the user pool.
+sud_homeless is a composition moment and cannot be reached before the population
+exists.
+
+## TWO THINGS PUT TO THE AUTHOR AT 03:45, BOTH OPEN
+
+  1. Bring M down; its own moment says so.
+  2. Re-anchor the walk on 85ec3e553f rather than the rr = 8.0 point.
+
+## AND THE OLD-AGE SPIKE RELOCATED RATHER THAN CLEARING
+
+With the hold at 64 the penalty reaches age 65 -- homelessness there falls from
+0.008693 to 0.000062 -- but the mass reappears at ages 63 and 64, just below the
+new boundary. The spike follows whichever age the penalty starts at. h_share5 is
+now 0.0002 to 0.0000 against 0.075, so rr has overshot hard in the other
+direction and 8.0 is far too high.
+
 # Calibration state -- 5 September, 03:30
 
 ## THE PROOF: EVERY OLD HOMELESS HOUSEHOLD IS AT EXACTLY AGE 65
