@@ -27613,8 +27613,21 @@
                 
         if ((loop_count<1) .AND. (solve_transition_dynamics==0)) then
         
+            ! CLAMPED FOR THE ONE-RENTAL GRID. index_of_smallest_house_hhld_can_buy
+            ! is smallest_index_for_purchase, an OWNERSHIP constant fixed at 2,
+            ! while housing_size is now dimensioned -1:0. Every other use of the
+            ! index is `has_house*index` as a LOOP LOWER BOUND against
+            ! housing_status_grid_size-1, which is zero-trip for an owner and
+            ! therefore safe; this diagnostic write is the one place it is read
+            ! directly, and it read two doubles past the end of the array.
+            !
+            ! It is what the -fcheck=bounds build caught. The -O3 build did not
+            ! trap it and instead printed garbage (0.23) and segfaulted much later
+            ! inside an unrelated distribution diagnostic, which is exactly why
+            ! the bounds build is a standing check rather than an optional one.
             write(*,*) "housing_size(index_of_smallest_house_hhld_can_buy)=", & 
-                housing_size(index_of_smallest_house_hhld_can_buy)
+                housing_size(max(min(index_of_smallest_house_hhld_can_buy,&
+                housing_status_grid_size-1),lowest_housing_grid_point))
             write(*,*) "size_of_smallest_house_hhld_can_buy=", size_of_smallest_house_hhld_can_buy
             write(*,*) "index_of_smallest_house_hhld_can_buy=", index_of_smallest_house_hhld_can_buy
             write(*,*) "smallest_house_size=", smallest_house_size
