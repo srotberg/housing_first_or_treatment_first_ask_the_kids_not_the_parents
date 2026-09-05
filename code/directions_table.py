@@ -529,7 +529,7 @@ RULES = {
   # The parameter is the SMI employment penalty, sep*kappa and find/kappa, so a
   # higher kappa LOWERS employment: parameter and moment move in opposite
   # directions, hence 'raise'.
-    'kappa_uem_moment': ('kappa_uem', 'raise',
+    'kappa_uem': ('kappa_uem', 'raise',
                          "the SMI employment rate, the moment the parameter is named for"),
   # lambda_m, the SMI share of the homeless, HAS NO INSTRUMENT. It becomes an
   # outcome of the SMI employment rate and the housing choice, in the same way

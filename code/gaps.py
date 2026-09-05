@@ -103,7 +103,11 @@ UNSCORED = {
     # it. It reads 0.02097 at the base against 0.025 in the SCF, so it is right
     # without an instrument. Printed, not scored.
     'w_bot',
-'kappa_ued', 'kappa_uem', 'rent50'}
+'kappa_ued', 'rent50'}
+# kappa_uem IS A TARGET FROM 5 September, on the author's instruction to set the
+# employment rate of those with SMI to 30 per cent. It was an output because the
+# parameter of the same name was pointed at lambda_m instead; that pairing is
+# withdrawn, measured inert where the street is real.
 BAND = {# w_bot IS A WIDE BAND, on the author's instruction of 3 September:
         # *"It's ok if the bottom is not exactly 2.5%. It can be 0.8-5% no
         # problem"*. Anything inside scores zero.
@@ -195,7 +199,7 @@ OWN = [
 
     ('relative_share_of_housing', 'gamma'), ('max_food_cost', 'cbar'),
     ('relative_share_of_addiction_1', 'theta'),     ('value_of_life', 'aleph'), ('mu_homeless', 'mu_H'),
-    ('utility_cost_of_treatment', 'tau_u'), ('kappa_uem', 'lambda_m'),
+    ('utility_cost_of_treatment', 'tau_u'), ('kappa_uem', 'kappa_uem'),
     ('probability_of_voucher_benchmark_used', 'pi_V'),
     # increased_prob_if_homeless is EXOGENOUS at 0.2 on the author's
     # instruction -- twenty per cent each way -- so it owns nothing. The
