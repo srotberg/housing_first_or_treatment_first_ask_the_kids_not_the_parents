@@ -296,6 +296,19 @@ RULES = {
   # What does move y_h is size_homelessness, measured: 0.343 -> 0.45 takes it from
   # 0.720 to 0.261. But that parameter already owns h_1, and one parameter cannot
   # bracket two moments. Which of them it should own is the author's call.
+  #
+  # RESTORED 5 September on the author's confirmation: *"We set delta to match the
+  # average income of the homeless"*. THE MEASUREMENT ABOVE IS VOID -- it was taken
+  # on the SYMMETRIC delta, which cut job finding as well as raising separation,
+  # and the finding side is what deters the unemployed. Removing it entirely
+  # (iph 0.2 -> 0) raises homelessness among the unemployed FIVE-FOLD, so the
+  # symmetric version was pricing the poor off the street while we read it as
+  # having no effect on their income. Delta now acts on separation alone.
+  #
+  # DIRECTION: income of the homeless ABOVE target means too many comfortable
+  # households are choosing the street, so RAISE the separation penalty.
+    'y_h': ('homeless_job_penalty_pp', 'raise',
+            "the author's ruling; separation-only form, the symmetric bracket is void"),
     # pi_V, the share of eligible households receiving a housing voucher in the
     # benchmark, target 0.266. The author: *"lower if higher than data"*. Direct:
     # more voucher probability, more take-up. Measured 7-point ray agrees at slope
