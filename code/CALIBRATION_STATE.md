@@ -1,3 +1,53 @@
+# Calibration state -- 5 September, 03:30
+
+## THE PROOF: EVERY OLD HOMELESS HOUSEHOLD IS AT EXACTLY AGE 65
+
+The author's mechanism -- *"the death penalty for the old will remove the old
+from being homeless...and delta will remove the workers"* -- is right in logic
+and blocked by one year of indexing. Three points at delta = 0.30 differing in
+NOTHING but `rr_homeless_old_level`, age profile of the homelessness rate:
+
+    age    rr=2.867     rr=4.0      rr=8.0
+     63    0.000001    0.000001    0.000001
+     64    0.000038    0.000038    0.000038
+     65    0.008693    0.008693    0.008693
+     66    0.000000    0.000000    0.000000
+     ...
+     85    0.000000    0.000000    0.000000
+
+    f56a40b55d (2.867), 45083d5a07 (4.0), 81f55164ad (8.0)
+
+Ages 66-85 are ALREADY EMPTY, so tripling the death hazard changes nothing at
+any age to six decimals. The entire old-homeless mass is at age 65, and
+`rr_homeless_hold_age=65` replaces the profile only ABOVE 65. The instrument
+cannot reach its own population at any multiplier -- it is not too weak, it has
+nothing left to act on.
+
+AND THEY ARE NOT RETIREES. Retirement begins at `life_span-retirement_span+1` =
+age_index 41 = data age 66, so age 65 is the LAST WORKING YEAR: no wage floor
+behind it, no Social Security in front of it. The whole old-homeless population
+sits in that one-year gap.
+
+WHY THE RAY MISLEADS. y_h rising with delta is measured with rr held fixed, and
+the author's objection is correct in principle -- in the joint calibration rr
+should rise and clear the retirees. It cannot, for the reason above, so the ray
+is measuring the mechanism with one half disabled. The ray is right about what
+it measured and wrong as a guide to the mechanism.
+
+THE FIX IS ONE INTEGER: `rr_homeless_hold_age` 65 -> 64, so the penalty covers
+65+. Measured at fixed delta: band 5 0.0299 -> 0.0002, y_h 0.2614 -> 0.2458, h_1
+barely moves. Cost: it is a CONFIG_SWITCH, so the 669 points measured at 65 stop
+pooling and the archive restarts. THE AUTHOR'S CALL, still open.
+
+## DELTA: THE RULING STANDS, FLOORED AT 0.01
+
+Flipped to 'lower' on the ray and reverted the same hour -- *"no...delta is
+moving in the wrong direction!"*. The ruling is the authority and the
+measurement is a check; the flip broke that convention and it is restored.
+Floored at 0.01 rather than 0 on the author's instruction, because a
+proportional step cannot leave zero and a delta that reached it would be pinned
+there whatever its gap did.
+
 # Calibration state -- 5 September, 03:40
 
 ## THE DELTA RAY, CORRECTED -- AND A FABRICATED NUMBER IN A TABLE SHOWN TO THE AUTHOR
