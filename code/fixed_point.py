@@ -194,7 +194,13 @@ ADJUSTERS = {
     # 0.72, far above the cap. Below 0.16 the response is a CLIFF instead,
     # elasticity 11.6 between 0.1289 and 0.1607. The live value 0.1612 sits just
     # past that cliff on the flat side, which is why it barely moves its moment.
-    'relative_share_of_addiction_1': 0.0100,
+    # 0.0100 -> 0.0400, 5 September, the author: *"i think theta has to go up at
+    # a 20x rate"* -- twenty times the 0.0020 this started the day at. That is
+    # just under the 0.05 that flung theta across its whole range in an earlier
+    # round, and it is safe now for the reason that was missing then: theta is in
+    # CAPPED with an ENFORCED ceiling of 0.25, so the worst case is that it walks
+    # to the cap and stops, about forty iterations at this step.
+    'relative_share_of_addiction_1': 0.0400,
     'relative_share_of_housing': 0.1000,
     'relative_share_of_leisure': 0.0748,
     'rr_homeless_old_level': 0.1000,
