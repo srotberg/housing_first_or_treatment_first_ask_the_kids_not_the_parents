@@ -1,0 +1,38 @@
+point d0af997fc4 solved in 1 min on 4 cores
+HANDOVER OK: 68 of 68 parameters applied
+MODEL 55499cb7b8
+VECTOR addiction_onset_base=0.015101441 addiction_scalar_1=0.0079646405 bottom_productivity_level=0.006611187 consumption_penalty_homeless=0 discount_factor=0.93956875 discount_factor_impatient=0.95 endowment_is_a_transfer=1 extra_job_loss_if_homeless=0 financial_grid_expander_negative=1.0 financial_grid_expander_positive=3.0 fixed_productivity=0 homeless_death_risk_flat_in_age=2 homeless_excess_death_risk=0.00396 homeless_job_penalty_pp=0.19945108 housing_status_grid_expander=1.0 include_unsecured_borrowing=0 increased_prob_if_homeless=0.2 kappa_phi_d_level=5.64 kappa_uem=37.209747 kkk_s_deviation_bottom=3.35 kkk_s_deviation_top=3.0 kkk_sigma_scale=1.7673956 labor_income_tax_rate=0.80836574 lambda_addiction=0.0 lambda_m=0.0663688 largest_house_size=0.121252 max_age_to_choose_homelessness=58 max_food_cost=0.031118932 measure_child_gap=0 money_cost_of_treatment=0 mu_homeless=0.87330615 multiple_of_probabilities_of_employment_if_addicted=4.0 newborn_endowment_scale=0.0 number_of_beta_types=1 penalty_child_addicted=0.24 penalty_child_homeless=0.31 persistence_employment_surviving=0.9 persistence_fixed_employment_newborn=0.5 persistent_income_risk=0 probability_becoming_unemployed=0.0046843942 probability_of_voucher_benchmark_used=0.052 relative_share_of_addiction_1=0.2021362 relative_share_of_housing=0.268 relative_share_of_leisure=1.3149728 restrict_borrowing_to_impatient=1 rho_d=1.0 rho_m=1.0 rho_productivity=0.98 rr_homeless_hold_age=64 rr_homeless_old_level=5.9143915 rung_ratio_h3=2.0 rung_ratio_h4=3.0 sd_employment_surviving=0.2 sd_fixed_employment_newborn=0.309 sd_permanent_productivity=0.9651185 size_homelessness=0.57570868 smallest_rental_relative_to_lowest_income=0.1242584 smi_onset_level=0.0020915919 ssi_floor_level=0.13 ssi_floor_takeup=1.0 unsecured_borrowing_limit=0.30 unsecured_borrowing_rate=0.055 use_pia_formula=1 use_unemployment_by_productivity=1 utility_cost_of_treatment=2.8270728 value_of_life=48.253025 weight_on_child=0.007 y_grid_kappa=3.2 zeta_DI=0
+DIAG cheapest rental over lowest net income = smallest_house_size*rent(1)/net_income_lowest=   10.951670902762793     
+NO MOMENTS BLOCK; hftf exit status 139
+  139 = SIGSEGV, a segmentation fault
+tail of the log follows
+ calls                 =                     0
+ the lottery was never called
+ ------------------------------
+ time=   186.17210700000001     
+ sum(distribution_guess)=   51.718393671906590     
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=   1.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000     
+ newborn_productivity_draw=   2.9382495410316036E-003   3.6258455145242750E-002  0.19705589102486484       0.39387836495482703       0.28675316667125167        7.5716292989259609E-002   7.3995796735225579E-003
+ newborn_employment_probability, clean housed, parent at the median node=   1.4999939778830851E-003   3.1535181975288928E-002  0.20638995220349199       0.42393100432091918       0.27624491321661959        5.6731309333037716E-002   3.6676449727595095E-003
+ newborn_employment_probability, disordered housed, parent at the median node=   5.1962933953022539E-003   7.0776557382300820E-002  0.30501036492926126       0.41486808667165331       0.17895653699045555        2.4179451846769728E-002   1.0127087842570770E-003
+ DIST_MAX sweep=           0  block=           1  age=           2  fin=           3  uem=           1  emp=           4  hou=           0  vch=           0  gap=  0.39660379036172183       mass_there=  0.39735362107915273     
+
+Program received signal SIGSEGV: Segmentation fault - invalid memory reference.
+
+Backtrace for this error:
+#0  0x14d4b7a23e59 in ???
+#1  0x14d4b7a22e75 in ???
+#2  0x14d4b764532f in ???
+	at ./signal/../sysdeps/unix/sysv/linux/x86_64/libc_sigaction.c:0
+#3  0x14d4b7cc6c7b in ???
+#4  0x14d4b7cc99a6 in ???
+#5  0x14d4b7cc9e75 in ???
+#6  0x14d4b7ccb2c2 in ???
+#7  0x56223cf37b8d in converge_to_stationary_equilibrium_
+	at /home/user/housing_first_or_treatment_first/code/housing_first_or_treatment_first_SR_v1.f90:26584
+#8  0x56223cff9ecb in calibrating_model_
+	at /home/user/housing_first_or_treatment_first/code/housing_first_or_treatment_first_SR_v1.f90:38119
+#9  0x56223cffdafb in main_program
+	at /home/user/housing_first_or_treatment_first/code/housing_first_or_treatment_first_SR_v1.f90:8247
+#10  0x56223ced83ce in main
+	at /home/user/housing_first_or_treatment_first/code/housing_first_or_treatment_first_SR_v1.f90:8210
