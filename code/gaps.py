@@ -169,7 +169,14 @@ OWN = [
     # the effective floor could never pass 0.1774, and that is below the PIA of
     # the node holding 39.8 per cent of the mass. See SSI_FLOOR_ANALYSIS.md.
     ('ssi_floor_level', 'h_share5'),
-    ('increased_prob_if_homeless', 'y_h'),
+    # y_h's instrument is homeless_job_penalty_pp, the author's separation-only
+    # delta, NOT increased_prob_if_homeless. The two disagreed: this table paired
+    # y_h with the symmetric multiplier while directions_table paired it with the
+    # percentage-point form, and the multiplier is exogenous at 0.2 four lines
+    # below, so y_h had no live instrument at all and sat at +275 per cent while
+    # nothing moved. The author, 5 September: *"use delta to match the average
+    # income of the homeless"*.
+    ('homeless_job_penalty_pp', 'y_h'),
     # THE ENDOWMENT NO LONGER OWNS h_share1 and h_share1 keeps its row as
     # "(no instrument)". The author, 3 September: *"If you don't need an
     # endowment for the youngest to get the right share of homeless young,
