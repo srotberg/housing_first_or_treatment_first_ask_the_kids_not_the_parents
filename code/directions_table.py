@@ -131,6 +131,22 @@ RULES = {
     #
     # DIRECTION. Raising h3 LOWERS the share sitting in it, so parameter and moment
     # move in opposite directions: 'raise'.
+    # gamma GETS ITS INSTRUMENT BACK, 5 September. The author's full assignment:
+    # *"Share of housing to match 26.8% spending on housing. H2 to get the share
+    # spending over 50% on housing. H3 to match the share in the largest unit. And
+    # h1 to match the share homeless. And delta to match the share to employed
+    # homeless. And you also need to pick b and base addiction to match the share
+    # users and Sud, and theta to match share spent on drugs by users."*
+    #
+    # relative_share_of_housing was PINNED at 0.268 as data earlier today, on the
+    # reasoning that Cobb-Douglas makes the weight and the expenditure share the
+    # same object. Measured, they are not: with the taste held at 0.268 gamma ran
+    # 0.244 to 0.378 across ladder configurations, so the discreteness error is
+    # large and gamma needs a handle of its own. It gets this one back.
+    #
+    # DIRECTION. A bigger weight on housing means more spent on it: parameter and
+    # moment move together, which is 'lower'.
+    'gamma': ('relative_share_of_housing', 'lower', 'un-pinned 5 Sept; discreteness error is large'),
     'h_3': ('largest_house_size', 'raise', 'crossover at ratio ~4.5, measured'),
     # gamma HAS NO INSTRUMENT while this holds, and that is stated rather than
     # hidden. With relative_share_of_housing pinned at 0.268 as data, h3 taken by
@@ -206,7 +222,24 @@ RULES = {
   # implied: the share of the SUD who are homeless is
   # P(SUD|homeless)*P(homeless)/P(SUD), an identity in three targets the
   # calibration already hits.
-    'lambda_d': ('addiction_onset_base', 'lower', 'the level of onset, base + (1-exp(-lambda v))'),
+    # DIRECTION CORRECTED, 5 September, and it was measured the other way. The rule
+    # said 'lower' -- parameter and moment moving together. A one-coordinate pair
+    # says the opposite:
+    #
+    #     addiction_onset_base 0.0151 -> 0.018   (+19 per cent)
+    #     lambda_d             0.0216 -> 0.0144  (-33 per cent)
+    #     b                    0.1006 -> 0.0544  (-46 per cent)
+    #
+    # The base is the probability that using leads to the disorder, so raising it
+    # makes using DANGEROUS and fewer people use. With fewer users there are fewer
+    # disorders, and the deterrence swamps the mechanical effect. Parameter and
+    # moment move in OPPOSITE directions, which is 'raise'.
+    #
+    # It cost two collapsed points before it was measured: raising the base and the
+    # scalar together drove b to 8.9e-08 because BOTH lower participation. The
+    # working pair is base UP for the disorder rate among users, scalar DOWN to pay
+    # back the level on b.
+    'lambda_d': ('addiction_onset_base', 'raise', 'measured pair: base +19% -> lambda_d -33%'),
     # b, total drug users as a share of the population, target 0.089.
     # The author: *"raise if higher than data"* -- so parameter and moment move in
     # OPPOSITE directions, which the name does not suggest.

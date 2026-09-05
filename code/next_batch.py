@@ -477,6 +477,7 @@ OWN = {
     # the top rung makes it dearer, fewer choose it, and the households it pushes
     # out land in h2 where they can be cost burdened -- one move doing both jobs.
     'largest_house_size':                                  'h_3',
+    'relative_share_of_housing':                           'gamma',
 
     # THE BOTTOM PRODUCTIVITY NODE OWNS emp_homeless. The author, 3 September:
     # *"That grid point on y is the one that delivers the 46% employment of the
@@ -1074,7 +1075,12 @@ BOUNDS = {
     # or the street, so the expenditure share moves only by reallocating mass
     # BETWEEN rungs, and both ends are corners -- at 0.02 the share in the largest
     # unit is already 0.52, at 0.60 it is 0.98 and there is nowhere left to go.
-    # 'relative_share_of_housing':                          (0.02, 0.60),
+    # THE TASTE IS CALIBRATED AGAIN, 5 September, on the author's assignment
+    # *"Share of housing to match 26.8% spending on housing"*. Pinning it at 0.268
+    # assumed Cobb-Douglas would carry gamma there by itself; measured, gamma ran
+    # 0.244 to 0.378 across ladder configurations at a fixed taste, so the
+    # discreteness error is far too large for that to hold.
+    'relative_share_of_housing':                           (0.02, 0.60),
     # THE LADDER IS THE INSTRUMENT NOW. rung_ratio_h4 sets the top rung, where 60
     # per cent of renters live, so it dominates aggregate housing expenditure; the
     # archive's cleanest pair on it, 2.5 -> 3.0, carries gamma 0.2046 -> 0.2291.
