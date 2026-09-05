@@ -116,7 +116,29 @@ RULES = {
     #
     # DIRECTION. A bigger top rung means more housing bought where most households
     # sit, so gamma rises with it: 'lower'.
-    'gamma': ('largest_house_size', 'lower', 'independent of h2 from 5 Sept'),
+    # h3 OWNS h_3, NOT gamma, from 5 September. The author: *"I think first you
+    # need h3 to raise so that only 64% of renters are in the largest unit. And h2
+    # needs to be such that 17.5% of renters spend over 50% on housing (and they
+    # live in the smallest rental)"*.
+    #
+    # ONE MOVE DOES BOTH JOBS, which is why the ordering is theirs and not mine.
+    # Raising h3 makes the top unit dearer, so fewer choose it and h_3 falls from
+    # 0.99 toward 0.627 -- and the households it pushes out land in h2, where they
+    # can be cost burdened. The crossover is measured: with h2 = 0.060 the cost of
+    # downsizing grows as ratio**0.366 while the income it frees grows roughly
+    # linearly, so they cross at a ratio near 4.5. Every ladder tested before this
+    # was at or below 3.11, which is why burden50 looked immovable.
+    #
+    # DIRECTION. Raising h3 LOWERS the share sitting in it, so parameter and moment
+    # move in opposite directions: 'raise'.
+    'h_3': ('largest_house_size', 'raise', 'crossover at ratio ~4.5, measured'),
+    # gamma HAS NO INSTRUMENT while this holds, and that is stated rather than
+    # hidden. With relative_share_of_housing pinned at 0.268 as data, h3 taken by
+    # h_3 and h2 by burden50, nothing is left aimed at the aggregate housing share.
+    # It read 0.268 to 0.280 across the working configurations, so it may simply
+    # come out right; if it does not, it needs a fourth handle rather than one of
+    # these three back.
+    # 'gamma': ('largest_house_size', 'lower', 'independent of h2 from 5 Sept'),
     # DIRECTION, burden50. h2 is what the cheapest unit costs. Raising it prices
     # more households into paying over half their income for it, so the moment
     # rises with the parameter: 'lower' again. Measured on a fixed ladder,

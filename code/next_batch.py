@@ -472,7 +472,12 @@ OWN = {
     # 'smallest_rental_relative_to_lowest_income':            'h_2',
     'smallest_rental_relative_to_lowest_income':           'burden50',
     # 'rung_ratio_h3':                                     'gamma',
-    'largest_house_size':                                  'gamma',
+    # h3 OWNS h_3 NOW, not gamma. The author, 5 September: *"I think first you need
+    # h3 to raise so that only 64% of renters are in the largest unit"*. Raising
+    # the top rung makes it dearer, fewer choose it, and the households it pushes
+    # out land in h2 where they can be cost burdened -- one move doing both jobs.
+    'largest_house_size':                                  'h_3',
+
     # THE BOTTOM PRODUCTIVITY NODE OWNS emp_homeless. The author, 3 September:
     # *"That grid point on y is the one that delivers the 46% employment of the
     # homeless."* It is the level, not the mass: y_grid_kappa stays FIXED at 3.2
