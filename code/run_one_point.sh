@@ -371,7 +371,15 @@ declare -A P=(
     # being measured, and that distinction is the sentence for the paper: beyond
     # 65 the observed ratio is dominated by survivor selection and does not
     # identify the causal effect the model needs.
-    [rr_homeless_hold_age]=65
+    # 64, NOT 65, from 5 September. The Fortran holds the profile flat over
+    # hold_i_1+1..life_span, so 65 puts the calibrated old-age death hazard on
+    # ages 66 AND UP while the moment it is calibrated on, h_share5, is the 65+
+    # band. Every old homeless household the model produces is at exactly age 65
+    # -- the last working year, since retirement starts at 66 -- so at 65 the
+    # instrument acted only on ages that were already empty and was inert at any
+    # multiplier: three points at delta=0.30 with rr = 2.867, 4.0 and 8.0 are
+    # bit-identical at every age to six decimals. 64 makes the hold cover 65+.
+    [rr_homeless_hold_age]=64
     # THE LAST AGE AT WHICH THE STREET MAY BE CHOSEN, index not data age; 59 is
     # data age 84. Settable since 4 September so a different cap costs a vector
     # line rather than a model hash.
