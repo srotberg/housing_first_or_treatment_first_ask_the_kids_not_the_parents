@@ -1109,7 +1109,16 @@ BOUNDS = {
     # reports the share in "the largest unit" when it is really the smallest --
     # a failure ENGINE.md records as having looked like a measurement once.
     # run_one_point.sh carries the guard; these bounds keep the search clear of it.
-    'largest_house_size':                                  (0.02, 0.80),
+    # THE CEILING IS LIFTED, 5 September. The author: *"I think you need keep
+    # raising h3 much more... Don't limit it"*. It was (0.02, 0.80) and only
+    # values up to 0.35 had ever been run, so the region where h3 becomes
+    # genuinely UNAFFORDABLE rather than merely expensive was never tested. That
+    # is the region where households would have to fall back to h2 whatever their
+    # taste for housing.
+    #
+    # The floor stays above zero and the ladder-inversion guard in run_one_point.sh
+    # still requires h2 < h3, so the grid cannot inverted.
+    'largest_house_size':                                  (0.02, 4.00),
     # Zero is no penalty at all; the ceiling is well past the 3.8 the steady
     # state formula asks for, so the bracket is not clipped before it gets there.
     # CEILING 0.95, NOT 20. The Fortran's handover clamps this at 0.95
