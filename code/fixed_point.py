@@ -181,7 +181,20 @@ ADJUSTERS = {
     'mu_homeless': 0.0370,
     'probability_becoming_unemployed': 0.0710,
     'probability_of_voucher_benchmark_used': 0.0428,
-    'relative_share_of_addiction_1': 0.0020,
+    # 0.0020 -> 0.010, 5 September, on the author's instruction *"theta has to
+    # go up faster i think"*. FIVE TIMES FASTER AND STILL A FIFTH OF THE 0.05
+    # THAT RAN AWAY, and the runaway condition is gone anyway: theta is now in
+    # CAPPED with an ENFORCED ceiling of 0.25, so the step cannot walk it across
+    # its whole range the way it did when no ceiling was applied.
+    #
+    # SPEED IS NOT THE BINDING PROBLEM THOUGH. Measured over 1814 archive points,
+    # the moment's elasticity with respect to this parameter is 0.207 between the
+    # 0.16 and 0.48 clusters -- theta 0.1599 -> 0.4755 buys the moment only
+    # 0.1047 -> 0.1313 -- so reaching 0.14098 from 0.1033 would need theta near
+    # 0.72, far above the cap. Below 0.16 the response is a CLIFF instead,
+    # elasticity 11.6 between 0.1289 and 0.1607. The live value 0.1612 sits just
+    # past that cliff on the flat side, which is why it barely moves its moment.
+    'relative_share_of_addiction_1': 0.0100,
     'relative_share_of_housing': 0.1000,
     'relative_share_of_leisure': 0.0748,
     'rr_homeless_old_level': 0.1000,
@@ -193,7 +206,12 @@ ADJUSTERS = {
     # steps risk overshooting into the region where h_1 looks discontinuous. The
     # sign-flip damping halves the adjuster the first time that happens, which is
     # what makes the larger step safe to try.
-    'size_homelessness': 0.10,
+    # 0.10 -> 0.20, 5 September, the author: *"and same with h1"*. Also CAPPED,
+    # ceiling 0.6, so a doubled step is bounded. h_1's response to this parameter
+    # is strongly convex -- elasticity 1.81 over street 0.11->0.26 and 4.65 over
+    # 0.26->0.53 -- so a larger step is more likely to overshoot than to stall,
+    # and the target is now bracketed on both sides by measured points.
+    'size_homelessness': 0.20,
     'smallest_rental_relative_to_lowest_income': 0.0148,
     'smi_onset_level': 0.1000,
     'utility_cost_of_treatment': 0.0100,
