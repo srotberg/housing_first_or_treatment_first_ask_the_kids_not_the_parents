@@ -26607,9 +26607,26 @@
                         " gap=", maxval(abs(&
                         distribution_implied(i)%vector_transition_real(time_period,:,:,:,:,:,:)-&
                         distribution_guess(i)%vector_transition_real(time_period,:,:,:,:,:,:))), &
+                        ! CLAMPED, AND NOT ONLY FOR THIS GRID. dist_argmax_1 is
+                        ! built as maxloc + lbound - 1, and maxloc returns ZERO for
+                        ! a degenerate slice, so the index becomes lbound-1 and the
+                        ! read is illegal BY CONSTRUCTION whenever that happens. It
+                        ! is latent at any grid size; the one-rental run is simply
+                        ! what made it happen, and the -fcheck=bounds build named
+                        ! it as index -1 of dimension 7 below a lower bound of 0.
+                        ! The -O3 build had segfaulted here with no explanation.
+                        !
+                        ! This is a DIAGNOSTIC write and nothing downstream reads
+                        ! it, so clamping each index into its own bound is the
+                        ! whole fix: a degenerate slice now prints the corner cell
+                        ! instead of killing a solve that had run for two minutes.
                         " mass_there=", distribution_guess(i)%vector_transition_real(time_period,&
-                        dist_argmax_1(1),dist_argmax_1(2),dist_argmax_1(3),dist_argmax_1(4),&
-                        dist_argmax_1(5),dist_argmax_1(6))
+                        max(dist_argmax_1(1),lbound(distribution_guess(i)%vector_transition_real,2)),&
+                        max(dist_argmax_1(2),lbound(distribution_guess(i)%vector_transition_real,3)),&
+                        max(dist_argmax_1(3),lbound(distribution_guess(i)%vector_transition_real,4)),&
+                        max(dist_argmax_1(4),lbound(distribution_guess(i)%vector_transition_real,5)),&
+                        max(dist_argmax_1(5),lbound(distribution_guess(i)%vector_transition_real,6)),&
+                        max(dist_argmax_1(6),lbound(distribution_guess(i)%vector_transition_real,7)))
 
                 end do
 
