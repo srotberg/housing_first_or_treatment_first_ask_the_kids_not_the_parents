@@ -347,6 +347,28 @@ CAPPED = {'relative_share_of_addiction_1',
 # sits at 0.036 against 0.217.
 FROZEN = {'multiple_of_probabilities_of_employment_if_addicted',
           'bottom_productivity_level',
+          # delta IS ZERO AND HELD, 5 September, on the author's instruction:
+          # *"set delta to 0"*, *"and dont move it"*.
+          #
+          # IT HAS TO BE FROZEN RATHER THAN JUST SET. Its BOUNDS floor is 0.01 and
+          # the step enforces floors -- xn = max(x+step, lo) -- so a bare zero
+          # would be pushed back to 0.01 on the first iteration. The proportional
+          # step would not move it off zero on its own, but the floor would.
+          #
+          # ZERO TAKES THE OTHER BRANCH IN THE FORTRAN. `if
+          # (homeless_job_penalty_pp>0.d0)` is false, so the labour-market penalty
+          # on the street becomes
+          #     loss_mult = 1 + increased_prob_if_homeless + extra_job_loss_if_homeless
+          #     find_mult = 1 - increased_prob_if_homeless
+          # which at the exogenous 0.2 and 0 is a 1.2x separation rate and a 0.8x
+          # finding rate. That is a MILD penalty, not the absence of one.
+          #
+          # y_h HAS NO INSTRUMENT AT THIS SETTING, and the measured ray in
+          # directions_table.py says zero is where y_h is least bad anyway: over
+          # six points identical except delta, y_h RISES with delta and its
+          # minimum on the ray is delta=0 at 0.2614 against a target of 0.191,
+          # while delta=1 gives 0.448.
+          'homeless_job_penalty_pp',
           # lambda_addiction IS REMOVED AND FIXED AT ZERO, 5 September, on the
           # author's instruction: *"remove lambda completely for now. Set it to 0
           # and fix it."* It supersedes their release of it forty minutes earlier.
