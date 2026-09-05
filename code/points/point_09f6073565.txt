@@ -1,0 +1,243 @@
+point 09f6073565 solved in 3 min on 4 cores
+HANDOVER OK: 68 of 68 parameters applied
+MODEL 375aed92cf
+VECTOR addiction_onset_base=0.018857844 addiction_scalar_1=0.0076650694 bottom_productivity_level=0.0064499385 consumption_penalty_homeless=0 discount_factor=0.93956875 discount_factor_impatient=0.95 endowment_is_a_transfer=1 extra_job_loss_if_homeless=0 financial_grid_expander_negative=2.0 financial_grid_expander_positive=3.0 fixed_productivity=0 homeless_death_risk_flat_in_age=2 homeless_excess_death_risk=0.00396 homeless_job_penalty_pp=1 housing_status_grid_expander=1.0 include_unsecured_borrowing=0 increased_prob_if_homeless=0.2 kappa_phi_d_level=5.64 kappa_uem=25.159464 kkk_s_deviation_bottom=3.35 kkk_s_deviation_top=3.0 kkk_sigma_scale=1.7673956 labor_income_tax_rate=0.80836574 lambda_addiction=0.0001 lambda_m=0.0663688 largest_house_size=0.121252 max_age_to_choose_homelessness=58 max_food_cost=0.031118932 measure_child_gap=0 money_cost_of_treatment=0 mu_homeless=0.89768581 multiple_of_probabilities_of_employment_if_addicted=4.0 newborn_endowment_scale=0.0 number_of_beta_types=1 penalty_child_addicted=0.24 penalty_child_homeless=0.31 persistence_employment_surviving=0.9 persistence_fixed_employment_newborn=0.5 persistent_income_risk=0 probability_becoming_unemployed=0.0079573078 probability_of_voucher_benchmark_used=0.052 relative_share_of_addiction_1=0.16 relative_share_of_housing=0.10885093 relative_share_of_leisure=1.3149728 restrict_borrowing_to_impatient=1 rho_d=1.0 rho_m=1.0 rho_productivity=0.98 rr_homeless_hold_age=64 rr_homeless_old_level=5.9143915 rung_ratio_h3=1.5 rung_ratio_h4=2.0 sd_employment_surviving=0.2 sd_fixed_employment_newborn=0.309 sd_permanent_productivity=0.9651185 size_homelessness=0.6 smallest_rental_relative_to_lowest_income=0.1242584 smi_onset_level=0.0020915919 ssi_floor_level=0.1774 ssi_floor_takeup=1.0 unsecured_borrowing_limit=0.30 unsecured_borrowing_rate=0.055 use_pia_formula=1 use_unemployment_by_productivity=1 utility_cost_of_treatment=2.6208801 value_of_life=45.35431 weight_on_child=0.007 y_grid_kappa=3.2 zeta_DI=0
+DIAG cheapest rental over lowest net income = smallest_house_size*rent(1)/net_income_lowest=   11.183961740734595     
+ ===== ALL TARGETED MOMENTS =====
+ MOMENT sigma_y   bottom half labour income share model=  0.15514554197379546       target=  0.17199999999999999     
+ DIAG bottom half PRODUCTIVITY share (the old sigma_y) =  0.21631765684426046     
+ DIAG bottom half share of TOTAL income, all ages      =  0.17562584804925394     
+ MOMENT tau_l     average labour income tax   model=  0.20470815171897547       target=  0.22400000691413879     
+ MOMENT omega_l   labour supply / total hours model=  0.38597549317892815       target=  0.40000000596046448     
+ MOMENT beta      wealth over output          model=   2.7387383953075628       target=   3.0000000000000000     
+ MOMENT h_2       above half of spending      model=   9.9953512721139448E-002  target=  0.10100000000000001     
+ MOMENT h_3       share in the largest unit   model=  0.61861002059820436       target=  0.62672300000000003     
+ DIAG unit           0  share of renters=  0.35532575142709649       of whom over half of income=   4.8063154975901480E-005
+ DIAG unit           1  share of renters=   2.6064227974699174E-002  of whom over half of income=   0.0000000000000000     
+ DIAG unit           2  share of renters=  0.61861002059820436       of whom over half of income=  0.92116879245585559     
+ DIAG aggregate rent / aggregate income           =  0.37403060117102038     
+ DIAG aggregate housing / aggregate expenditure   =  0.28166906973618877     
+ DIAG over half of EXPENDITURE, all households    =   9.9953512721139448E-002
+ DIAG over half of EXPENDITURE, housed only       =  0.10003856320344992     
+ UNTARGETED mean age of drug users            model=   37.072847740964399       observed=   45.479999999999997     
+ UNTARGETED users aged 26-34, share           model=  0.71610674130893959       observed=  0.28404000000000001     
+ UNTARGETED users aged 35-44, share           model=   8.6798569771187023E-002  observed=  0.25053999999999998     
+ UNTARGETED users aged 45-54, share           model=   5.5804184578932228E-002  observed=  0.17768000000000000     
+ UNTARGETED users aged 55-64, share           model=   2.5327110343446830E-002  observed=  0.16327000000000000     
+ UNTARGETED users aged 65 plus, share         model=  0.11596339399753808       observed=  0.12445000000000001     
+ DIAG income of WORKING AGE drug users / average   =   1.0789480969542873     
+ DIAG working age share of drug users             =  0.88538200612084861     
+ DIAG users band           1  use rate=  0.36711080721388717       share with the disorder=   9.4356045221251600E-002  income/average=   1.0825558135519631     
+ DIAG users band           2  use rate=   4.0687532581353908E-002  share with the disorder=  0.99708778475638582       income/average=   1.0970461580572493     
+ DIAG users band           3  use rate=   2.7000496501407033E-002  share with the disorder=  0.99962327931984041       income/average=   1.0637581108567329     
+ DIAG users band           4  use rate=   1.3098014877669772E-002  share with the disorder=   1.0000000000000000       income/average=  0.95978056945335566     
+ DIAG users band           5  use rate=   3.8390617770370249E-002  share with the disorder=  0.11558941290029488       income/average=  0.60051350061161579     
+ DIAG drug threshold, (phi/theta)*p*b            =   3.5861277203301151E-002
+ DIAG buyers: mean C                             =  0.40004602618827451     
+ DIAG non-buyers: mean C                         =  0.49474575843133756     
+ DIAG buyers: mean income                        =  0.63739422228026454     
+ DIAG non-buyers: mean income                    =  0.59241728510229819     
+ DIAG buyers as a share of clean households      =   6.9210037090492699E-002
+ DIAG assets of drug users / average net worth    =  0.36427725698521357     
+ DIAG assets of experimenters / average net worth =  0.15119487656468886     
+ DIAG assets with a SUD / average net worth       =   1.0082236354325622     
+ DIAG share with a NEGATIVE value of life         =   0.0000000000000000       raw mass=   0.0000000000000000       of    50.976546586340319     
+ DIAG lowest value of a period of life            =   9.9254760347217825     
+ DIAG value of life, drug users                   =   41.013783899969049     
+ DIAG value of life, everyone else                =   40.064682213954626     
+ DIAG aleph itself, for scale                     =   45.354309999999998     
+ DIAG treatment price / average labour income     =   0.0000000000000000       data outpatient=   3.4000000000000002E-002  to   6.5000000000000002E-002
+ DIAG households receiving food stamps            =   8.7942919550201906E-002  data=  0.12500000000000000     
+ DIAG max allotment / avg labour income           =   4.6716034736011831E-002  data=   3.9586000000000003E-002
+ DIAG gross eligibility cutoff                     =  0.15572011578670611       data=  0.21487200000000001     
+ DIAG aggregate rent / output                     =  0.41375327869109341     
+ DIAG asset grid, reachable points                =   25.000000000000000     
+ DIAG share in the smallest unit                  =  0.35532575142709649     
+ MOMENT gamma     housing over expenditure    model=  0.28166906973618877       target=  0.26800000667572021     
+ UNTARGETED housing over income, renters      model=  0.33281496324466914       observed=  0.20200000000000001     
+ MOMENT h_1       homelessness rate           model=   8.5017696763395052E-004  target=   3.9900001138448715E-003
+ MOMENT b         total drug users            model=   9.0049413820225382E-002  target=   8.9000001549720764E-002
+ MOMENT lambda_d  disorder rate               model=   2.2388914320252477E-002  target=   3.6800000816583633E-002
+ MOMENT theta     drug spending share         model=  0.10316833671065946       target=  0.16200000047683716     
+ MOMENT aleph     value of life / income      model=   72.959740164567791       target=   80.000000000000000     
+ MOMENT pi_eu     unemployment rate           model=   5.3717863570140890E-002  target=   4.8999998718500137E-002
+ MOMENT kappa_ued unemployment given SUD      model=  0.15319014778001749       target=  0.16249999403953552     
+ MOMENT kappa_uem employment given SMI        model=  0.32809460659373973       target=  0.30000001192092896     
+ MOMENT p_m       SMI population share        model=   4.1516499409427358E-002  target=   4.8114397229384952E-002
+ MOMENT lambda_m  SMI share of the homeless   model=  0.56289035626838235       target=  0.25000000000000000     
+ MOMENT pi_V      eligibles with a voucher    model=  0.26725396965073039       target=  0.26600000262260437     
+ MOMENT cbar      food stamps / income        model=   3.8237475503155173E-003  target=   4.1999998502433300E-003
+ DIAG food stamps, aggregate spending             =   9.5433193950556508E-002
+ DIAG output, the denominator above               =   24.958026829643035       total income, which is NOT used=   27.608611162014110     
+ DIAG food stamps / average labour income (OLD)   =  0.14326521242961526     
+ MOMENT tau_u     treatment take up           model=  0.25495708199801159       target=  0.24500000476837158     
+ MOMENT mu_H      recovery housed / homeless  model=   1.3392574622987667       target=   1.4732142857142856     
+ UNTARGETED delta_d child SUD ratio           model=  0.94642751280656423       observed=   2.0000000000000000     
+ UNTARGETED wealth share bottom  1 pct        model=   4.6298857920836656E-005  observed=  -2.2499999999999998E-003
+ UNTARGETED wealth share bottom  5 pct        model=   2.3149428960418330E-004  observed=  -4.2199999999999998E-003
+ UNTARGETED wealth share bottom 10 pct        model=   4.6298857920836661E-004  observed=  -4.4600000000000004E-003
+ UNTARGETED income share bottom  1 pct        model=   4.2014075819392127E-004  observed=   9.0000000000000006E-005
+ UNTARGETED income share bottom  5 pct        model=   2.1007037909696069E-003  observed=   2.8800000000000002E-003
+ UNTARGETED income share bottom 10 pct        model=   7.3970409061843963E-003  observed=   9.2399999999999999E-003
+ DIAG income histogram mass / distribution (want 1.0) =   1.0000000000000182     
+ DIAG SUD rate, income band           1  model=   3.2254451008633153E-002  data=  0.13650000000000001     
+ DIAG SUD rate, income band           2  model=   1.3128739427250104E-002  data=  0.13080000000000000     
+ DIAG SUD rate, income band           3  model=   1.9025624382402843E-002  data=   9.1100000000000000E-002
+ DIAG SUD rate, income band           4  model=   2.1458557892514343E-002  data=  0.10199999999999999     
+ DIAG SUD rate, income band           5  model=   1.9198937920694187E-002  data=   7.8600000000000003E-002
+ DIAG SUD rate, income band           6  model=   1.2753636175307219E-002  data=   7.1700000000000000E-002
+ DIAG SUD rate, income band           7  model=   2.9628520114052526E-002  data=   4.8200000000000000E-002
+ UNTARGETED delta_h child homelessness ratio  model=   1.1737297581803923       observed=   2.1000000000000001     
+ DIAG homelessness rate rebuilt from the bands    =   8.5017696763394152E-004
+ UNTARGETED homelessness rate, band           1  model=   3.4828750684932604E-003  observed=   3.1610000000000002E-003
+ UNTARGETED homelessness rate, band           2  model=   6.9584711582486335E-004  observed=   3.3779999999999999E-003
+ UNTARGETED homelessness rate, band           3  model=   4.4484936628133792E-004  observed=   2.9120000000000001E-003
+ UNTARGETED homelessness rate, band           4  model=   5.8862481155830185E-005  observed=   2.4960000000000000E-003
+ UNTARGETED homelessness rate, band           5  model=   4.2925595537513963E-005  observed=   7.6999999999999996E-004
+ UNTARGETED homelessness profile, band           1  model=   4.0966471700429228       observed=   1.2807941653160453     
+ UNTARGETED homelessness profile, band           2  model=  0.81847326182149926       observed=   1.3687196110210695     
+ UNTARGETED homelessness profile, band           3  model=  0.52324325783532111       observed=   1.1799027552674231     
+ UNTARGETED homelessness profile, band           4  model=   6.9235563178858608E-002  observed=   1.0113452188006482     
+ UNTARGETED homelessness profile, band           5  model=   5.0490188715623177E-002  observed=  0.31199351701782818     
+ DIAG disorder rate, band           1                     =   3.4639123926683717E-002
+ DIAG disorder rate, band           2                     =   4.0569041728745446E-002
+ DIAG disorder rate, band           3                     =   2.6990324856000374E-002
+ DIAG disorder rate, band           4                     =   1.3098014877669772E-002
+ DIAG disorder rate, band           5                     =   4.4375489689567251E-003
+ DIAG SUD share of the homeless, band           1         =   3.5916716246970626E-002
+ DIAG SUD share of the homeless, band           2         =   2.9349776647327575E-002
+ DIAG SUD share of the homeless, band           3         =   9.3688360536040918E-003
+ DIAG SUD share of the homeless, band           4         =   7.8264772882232301E-003
+ DIAG SUD share of the homeless, band           5         =   2.4891083877295504E-004
+ UNTARGETED share of the homeless, band           1  model=  0.71959815939506311       observed=  0.26000000000000001     
+ UNTARGETED share of the homeless, band           2  model=  0.15723042988797339       observed=  0.27200000000000002     
+ UNTARGETED share of the homeless, band           3  model=   9.7382192311316673E-002  observed=  0.20999999999999999     
+ UNTARGETED share of the homeless, band           4  model=   1.2055640322090725E-002  observed=  0.18400000000000000     
+ UNTARGETED share of the homeless, band           5  model=   1.3733578083556052E-002  observed=   7.4999999999999997E-002
+ UNTARGETED earnings share, bottom tenth      model=   2.4104066120302275E-002  observed=   9.9000000000000008E-003
+ UNTARGETED earnings share, top tenth         model=  0.29560332345146312       observed=  0.41099999999999998     
+ MOMENT w_bot     net worth share, bottom half model=   3.3905857242135504E-002  target=   2.5000000000000001E-002
+ UNTARGETED renters above 30 pct of income    model=  0.60655425914811745       observed=  0.40600000000000003     
+ UNTARGETED renters above 50 pct of income    model=  0.56986132375220500       observed=  0.17499999999999999     
+ UNTARGETED tenant contribution rate          model=  0.86445106780491787       observed=  0.31200000000000000     
+ UNTARGETED voucher holders, wages main       model=  0.61051654149022505       observed=  0.28000000000000003     
+ UNTARGETED participation, with a SUD         model=  0.95039869218096240       observed=  0.65800000000000003     
+ UNTARGETED participation, without a SUD      model=  0.73903156558368832       observed=  0.61499999999999999     
+ DIAG participation, with a SUD, working age      =  0.99884350187023085     
+ DIAG households with no wage income, working age =   5.3717863570140890E-002  data=  0.13930000000000001     
+ DIAG participation, without a SUD, working age   =  0.99910435374313478     
+ UNTARGETED homeless at treatment admission   model=   2.6490227904813553E-004  observed=  0.14499999999999999     
+ UNTARGETED SMI alongside SUD at admission    model=   3.4551304947670315E-002  observed=  0.43099999999999999     
+ UNTARGETED working, homeless in treatment    model=   3.8301795511309126E-003  observed=   6.6000000000000003E-002
+ DIAG employed share of the homeless, working age =   4.7312246986442763E-002
+ DIAG working age homeless mass                   =   4.3338937645315323E-002
+ DIAG homelessness rate among the UNEMPLOYED      =   2.0254067080559542E-002
+ DIAG   ... over the working age homelessness rate=   17.735026855072274     
+ UNTARGETED SUD share of the homeless         model=   3.1470410328131436E-002  observed=  0.21700000000000000     
+ DIAG kappa_phi_d_level, SUD mortality level      =   5.6399999999999997     
+ UNTARGETED drug deaths, share of deaths      model=  0.14094774736893312       observed=  0.20000000000000001     
+ VALIDATION NOT COMPUTED: returns to homelessness within 24 months, and the two drug price elasticities; each needs a second solve.
+ OMEGA SKIPPED    child counterfactual off by measure_child_gap
+ ELASTICITY SKIPPED  drug price elasticities off by measure_price_elasticity
+ UNTARGETED income of the homeless            model=  0.44813342656795235       observed=  0.19100000000000000     
+ MOMENT emp_homeless employed share of homeless model=   4.7312246986442763E-002  target=  0.46000000000000002     
+ DIAG homeless who could afford it on INCOME ALONE=  0.95211254703378134     
+ DIAG homeless by choice, share of the homeless   =  0.97279620614256090     
+ DIAG homeless receiving food stamps              =   1.6548490474306747     
+ DIAG average assets of the homeless              =  0.27599618502929463     
+ DIAG wealth share of the bottom 25 pct           =   1.1574714480209164E-003
+ DIAG mean drug quantity, users                   =   6.7301812907640146E-002
+ DIAG onset at the mean quantity                  =   1.8864574158643163E-002
+ MOMENT y_u       income of drug users        model=   1.0237557594459723       target=  0.73999999999999999     
+ UNTARGETED income with a SUD                 model=   1.0587451111728226       observed=  0.71099999999999997     
+ DIAG carriers of the disorder consuming no drugs =   1.2582300618456260E-002
+ DIAG income of experimenters / average           =   1.0014918477242796     
+ DIAG income of drug users / labour income        =  0.97813399066959639     
+ DIAG income with a SUD / labour income           =   1.0115641071009291     
+ DIAG mass ON the top savings grid point          =   4.6523843487513827E-004
+ DIAG mass in the top THREE savings grid points   =   2.9624090074130247E-003
+ DIAG histogram mass / distribution  (want 1.0)   =   1.0000000000000167     
+ DIAG histogram wealth / total wealth (want 1.0)  =   1.0000000000000246     
+ DIAG --- the age profile of the housing margin ---
+DIAG age  26  homeless=  0.000000  own=  0.00000  renter wealth=    0.00000  renter income=    0.42596  sud=  0.671112  mass=    1.000000
+DIAG age  27  homeless=  0.008503  own=  0.00000  renter wealth=    0.11153  renter income=    0.42436  sud=  0.674458  mass=    0.998886
+DIAG age  28  homeless=  0.006350  own=  0.00000  renter wealth=    0.20190  renter income=    0.43259  sud=  0.677279  mass=    0.997703
+DIAG age  29  homeless=  0.004940  own=  0.00000  renter wealth=    0.29105  renter income=    0.44043  sud=  0.441160  mass=    0.996455
+DIAG age  30  homeless=  0.003658  own=  0.00000  renter wealth=    0.37646  renter income=    0.44863  sud=  0.332950  mass=    0.995130
+DIAG age  31  homeless=  0.002766  own=  0.00000  renter wealth=    0.45590  renter income=    0.45884  sud=  0.282772  mass=    0.993744
+DIAG age  32  homeless=  0.002114  own=  0.00000  renter wealth=    0.53248  renter income=    0.46924  sud=  0.116138  mass=    0.992302
+DIAG age  33  homeless=  0.001602  own=  0.00000  renter wealth=    0.60472  renter income=    0.47979  sud=  0.050013  mass=    0.990806
+DIAG age  34  homeless=  0.001377  own=  0.00000  renter wealth=    0.67501  renter income=    0.49586  sud=  0.048052  mass=    0.989279
+DIAG age  35  homeless=  0.001181  own=  0.00000  renter wealth=    0.75624  renter income=    0.50810  sud=  0.046657  mass=    0.987693
+DIAG age  36  homeless=  0.001018  own=  0.00000  renter wealth=    0.83702  renter income=    0.51799  sud=  0.044922  mass=    0.986063
+DIAG age  37  homeless=  0.000828  own=  0.00000  renter wealth=    0.91668  renter income=    0.52748  sud=  0.043492  mass=    0.984361
+DIAG age  38  homeless=  0.000660  own=  0.00000  renter wealth=    0.99404  renter income=    0.53774  sud=  0.042103  mass=    0.982580
+DIAG age  39  homeless=  0.000569  own=  0.00000  renter wealth=    1.07137  renter income=    0.54822  sud=  0.040709  mass=    0.980713
+DIAG age  40  homeless=  0.000530  own=  0.00000  renter wealth=    1.14964  renter income=    0.55830  sud=  0.039353  mass=    0.978744
+DIAG age  41  homeless=  0.000493  own=  0.00000  renter wealth=    1.22867  renter income=    0.56851  sud=  0.037975  mass=    0.976662
+DIAG age  42  homeless=  0.000476  own=  0.00000  renter wealth=    1.30906  renter income=    0.57761  sud=  0.036634  mass=    0.974443
+DIAG age  43  homeless=  0.000601  own=  0.00000  renter wealth=    1.38871  renter income=    0.58534  sud=  0.035214  mass=    0.972040
+DIAG age  44  homeless=  0.000593  own=  0.00000  renter wealth=    1.46406  renter income=    0.59514  sud=  0.033909  mass=    0.969402
+DIAG age  45  homeless=  0.000587  own=  0.00000  renter wealth=    1.54321  renter income=    0.60509  sud=  0.032609  mass=    0.966504
+DIAG age  46  homeless=  0.000551  own=  0.00000  renter wealth=    1.61637  renter income=    0.60975  sud=  0.031324  mass=    0.963334
+DIAG age  47  homeless=  0.000326  own=  0.00000  renter wealth=    1.68740  renter income=    0.60994  sud=  0.030025  mass=    0.959894
+DIAG age  48  homeless=  0.000591  own=  0.00000  renter wealth=    1.74556  renter income=    0.61919  sud=  0.028744  mass=    0.956182
+DIAG age  49  homeless=  0.000603  own=  0.00000  renter wealth=    1.80925  renter income=    0.63008  sud=  0.027461  mass=    0.952170
+DIAG age  50  homeless=  0.000526  own=  0.00000  renter wealth=    1.87565  renter income=    0.63260  sud=  0.026135  mass=    0.947839
+DIAG age  51  homeless=  0.000467  own=  0.00000  renter wealth=    1.93856  renter income=    0.63785  sud=  0.024702  mass=    0.943254
+DIAG age  52  homeless=  0.000268  own=  0.00000  renter wealth=    2.00033  renter income=    0.63867  sud=  0.023034  mass=    0.938185
+DIAG age  53  homeless=  0.000251  own=  0.00000  renter wealth=    2.06140  renter income=    0.64628  sud=  0.021375  mass=    0.932844
+DIAG age  54  homeless=  0.000265  own=  0.00000  renter wealth=    2.12214  renter income=    0.64711  sud=  0.019784  mass=    0.927174
+DIAG age  55  homeless=  0.000289  own=  0.00000  renter wealth=    2.17962  renter income=    0.64787  sud=  0.018306  mass=    0.921204
+DIAG age  56  homeless=  0.000029  own=  0.00000  renter wealth=    2.23432  renter income=    0.64798  sud=  0.016890  mass=    0.914863
+DIAG age  57  homeless=  0.000126  own=  0.00000  renter wealth=    2.28690  renter income=    0.64616  sud=  0.015537  mass=    0.908102
+DIAG age  58  homeless=  0.000024  own=  0.00000  renter wealth=    2.33155  renter income=    0.64413  sud=  0.014265  mass=    0.900962
+DIAG age  59  homeless=  0.000021  own=  0.00000  renter wealth=    2.37025  renter income=    0.64616  sud=  0.013063  mass=    0.893388
+DIAG age  60  homeless=  0.000015  own=  0.00000  renter wealth=    2.40538  renter income=    0.64163  sud=  0.011928  mass=    0.885391
+DIAG age  61  homeless=  0.000012  own=  0.00000  renter wealth=    2.43465  renter income=    0.63759  sud=  0.010861  mass=    0.876956
+DIAG age  62  homeless=  0.000013  own=  0.00000  renter wealth=    2.46197  renter income=    0.63309  sud=  0.009856  mass=    0.868057
+DIAG age  63  homeless=  0.000005  own=  0.00000  renter wealth=    2.48410  renter income=    0.62722  sud=  0.008915  mass=    0.858663
+DIAG age  64  homeless=  0.000043  own=  0.00000  renter wealth=    2.49412  renter income=    0.61957  sud=  0.008037  mass=    0.848703
+DIAG age  65  homeless=  0.000710  own=  0.00000  renter wealth=    2.49746  renter income=    0.61265  sud=  0.007207  mass=    0.838108
+DIAG age  66  homeless=  0.000000  own=  0.00000  renter wealth=    2.49697  renter income=    0.48938  sud=  0.006578  mass=    0.826792
+DIAG age  67  homeless=  0.000000  own=  0.00000  renter wealth=    2.25424  renter income=    0.48209  sud=  0.005836  mass=    0.814585
+DIAG age  68  homeless=  0.000000  own=  0.00000  renter wealth=    2.02631  renter income=    0.47526  sud=  0.005146  mass=    0.801552
+DIAG age  69  homeless=  0.000000  own=  0.00000  renter wealth=    1.80994  renter income=    0.46876  sud=  0.004509  mass=    0.787694
+DIAG age  70  homeless=  0.000000  own=  0.00000  renter wealth=    1.60633  renter income=    0.46265  sud=  0.003936  mass=    0.772990
+DIAG age  71  homeless=  0.000000  own=  0.00000  renter wealth=    1.41512  renter income=    0.45692  sud=  0.003437  mass=    0.757323
+DIAG age  72  homeless=  0.000000  own=  0.00000  renter wealth=    1.23570  renter income=    0.45154  sud=  0.002986  mass=    0.740735
+DIAG age  73  homeless=  0.000000  own=  0.00000  renter wealth=    1.06910  renter income=    0.44654  sud=  0.002582  mass=    0.723010
+DIAG age  74  homeless=  0.000000  own=  0.00000  renter wealth=    0.91512  renter income=    0.44192  sud=  0.002211  mass=    0.704104
+DIAG age  75  homeless=  0.000000  own=  0.00000  renter wealth=    0.77374  renter income=    0.43768  sud=  0.001867  mass=    0.683920
+DIAG age  76  homeless=  0.000000  own=  0.00000  renter wealth=    0.64452  renter income=    0.43381  sud=  0.001552  mass=    0.662425
+DIAG age  77  homeless=  0.000000  own=  0.00000  renter wealth=    0.52825  renter income=    0.43032  sud=  0.001267  mass=    0.639668
+DIAG age  78  homeless=  0.000000  own=  0.00000  renter wealth=    0.42489  renter income=    0.42722  sud=  0.001014  mass=    0.615483
+DIAG age  79  homeless=  0.000000  own=  0.00000  renter wealth=    0.33355  renter income=    0.42448  sud=  0.002036  mass=    0.589662
+DIAG age  80  homeless=  0.000000  own=  0.00000  renter wealth=    0.25365  renter income=    0.42208  sud=  0.835891  mass=    0.562753
+DIAG age  81  homeless=  0.000000  own=  0.00000  renter wealth=    0.18741  renter income=    0.42010  sud=  0.016223  mass=    0.534262
+DIAG age  82  homeless=  0.000000  own=  0.00000  renter wealth=    0.13111  renter income=    0.41858  sud=  0.011562  mass=    0.502228
+DIAG age  83  homeless=  0.000000  own=  0.00000  renter wealth=    0.08651  renter income=    0.41738  sud=  0.007888  mass=    0.469636
+DIAG age  84  homeless=  0.000000  own=  0.00000  renter wealth=    0.05194  renter income=    0.41645  sud=  0.005110  mass=    0.436488
+DIAG age  85  homeless=  0.000000  own=  0.00000  renter wealth=    0.02314  renter income=    0.41566  sud=  0.003092  mass=    0.402452
+ DIAG mass by beta type:  patient=     50.976547  impatient=      0.000000  patient/impatient=**********
+ DIAG pooled mass=   50.976546586340319       one-type equivalent=   50.976546586340319     
+ DIAG labour secant hit its iteration cap        =           0
+ ===== INVARIANTS =====
+ INVARIANT PASS     income histogram holds the whole distribution  =     1.0000000000
+ INVARIANT PASS     wealth histogram holds the whole distribution  =     1.0000000000
+ INVARIANT PASS     wealth histogram holds the whole of net worth  =     1.0000000000
+ INVARIANT PASS          rental market clears, demand over supply  =     1.0000000000
+ INVARIANT PASS                                 homelessness rate  =     0.0008501770
+ INVARIANT PASS                                        drug users  =     0.0900494138
+ INVARIANT PASS                                     disorder rate  =     0.0223889143
+ INVARIANT PASS                              SMI population share  =     0.0415164994
+ INVARIANT PASS                                 unemployment rate  =     0.0537178636
+ INVARIANT PASS                                homeownership rate  =     0.0000000000
+ INVARIANT PASS         homeless by choice, share of the homeless  =     0.9727962061
+ INVARIANT PASS            homeless who could afford it on income  =     0.9521125470
+ INVARIANT PASS                    employed share of the homeless  =     0.0473122470
+ INVARIANT PASS                         SMI share of the homeless  =     0.5628903563
+ INVARIANT PASS                  households receiving food stamps  =     0.0879429196
+ INVARIANT PASS       the five age bands hold all of the homeless  =     1.0000000000
+ INVARIANTS: all PASS
+ ===== END OF MOMENTS =====
