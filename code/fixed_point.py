@@ -213,20 +213,22 @@ DEFAULT_ADJ = 0.02
 #
 # This only became actionable once lambda_d's sign was corrected. While b moved
 # the wrong way the pair could not have worked.
-FROZEN = {
-    # size_homelessness UNFROZEN 4 September 23:45 on the author's instruction:
-    # *"i suggest to allow h1 to move freely"*. It was held at 0.45 for two hours
-    # while h_1 looked near-discontinuous in it -- a factor of 28 across a seven
-    # per cent band. That reading was taken while loss_mult_homeless_1 and
-    # find_mult_homeless_1 were UNINITIALISED on the live branch, so the homeless
-    # transition probabilities were garbage in every point it was measured on and
-    # the apparent cliff cannot be trusted. It is re-measured with the search
-    # rather than assumed either way.
-    #
-    # bottom_productivity_level stays frozen: its runaway was measured BEFORE that
-    # bug existed, on clean points.
-    'bottom_productivity_level',
-}
+FROZEN = set()
+# NOTHING IS FROZEN, 5 September. bottom_productivity_level is released on the
+# author's confirmation that it owns emp_homeless: *"We are setting the lowest
+# productivity such that 46% of the homeless are employed"*.
+#
+# IT WAS FROZEN AT 23:05 FOR A REASON, kept here so the next runaway is recognised
+# rather than rediscovered: chasing emp_homeless it MORE THAN DOUBLED in eight
+# iterations, 0.004967 to 0.010646, collapsing h_1 by 84 per cent and blowing
+# h_share5 to +427 while the objective went 4.03 to 20.74. An instrument that
+# cannot reach its moment does not sit still, it runs.
+#
+# What is different now: delta acts on separation only, which is the first change
+# all night that moved emp_homeless without costing something else (0.9923 ->
+# 0.9637 when the finding penalty came off). So emp_homeless may become reachable
+# and the parameter may settle. If it doubles again, that is the same failure and
+# it should go back in this set.
 
 # DAMPING ON OSCILLATION: HALVE THE ADJUSTER OF A PARAMETER THAT KEEPS OVERSHOOTING.
 #
