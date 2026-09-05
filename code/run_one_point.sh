@@ -58,7 +58,7 @@ declare -A P=(
     # negative balance against a risk-free 0.03 and is expected to be revisited,
     # because the 5.5 per cent the author named was a debt-to-income quantity
     # rather than a rate.
-    [include_unsecured_borrowing]=1
+    [include_unsecured_borrowing]=0
     [unsecured_borrowing_limit]=0.30
     [unsecured_borrowing_rate]=0.055
     [restrict_borrowing_to_impatient]=1

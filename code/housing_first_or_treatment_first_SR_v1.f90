@@ -4342,7 +4342,7 @@
         ! author was told that a limit near 1.0 would be needed to reach 2.5 per
         ! cent on its own, which is about four times what the data bears, so this
         ! is not expected to close that gap by itself.
-        integer :: include_unsecured_borrowing=1
+        integer :: include_unsecured_borrowing=0
         ! THE LOWER BOUND OF EVERY RENTER ARRAY. A renter's financial index used
         ! to start at negative_financial_grid_size -- the zero index -- because a
         ! renter could not hold a negative position, so the forty allocations
