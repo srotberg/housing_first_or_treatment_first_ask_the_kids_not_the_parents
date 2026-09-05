@@ -27527,7 +27527,10 @@
             ! burden can actually see.
             if (housing_status_grid_size>2) then
 
-                housing_size(1)=rung_ratio_h3*housing_size(0)
+                ! The enclosing `if (housing_status_grid_size>2)` already stops
+                ! this running at one rental, but gfortran cannot prove it and
+                ! warns. Clamped so the warning does not mask a real one.
+                housing_size(min(1,housing_status_grid_size-1))=rung_ratio_h3*housing_size(0)
                 housing_size(housing_status_grid_size-1)=rung_ratio_h4*housing_size(0)
 
             end if
@@ -38779,8 +38782,15 @@
                             housing_status_grid_expander_adjuster*&
                             gap_housing_status_grid_expander,1.d0),5.d0)
 
-                        distance_housing_status_grid_expander=&
-                            abs(model_housing_size_dist(1,1)-housing_size_dist_data(1))
+                        ! SAME CLAMP AS THE GAP ABOVE. This second index-1 read
+                        ! was missed when the gap was fixed and the bounds build
+                        ! caught it: the array is 0:housing_status_grid_size-1,
+                        ! which is 0:0 at one rental. The distance is forced to
+                        ! zero below two rungs so the convergence test cannot be
+                        ! held open by a rung that does not exist.
+                        distance_housing_status_grid_expander=merge(&
+                            abs(model_housing_size_dist(1,min(1,housing_status_grid_size-1))-&
+                            housing_size_dist_data(1)),0.d0,housing_status_grid_size>2)
 
                         write(*,*) "housing_status_grid_expander=", housing_status_grid_expander, &
                             " distance_housing_status_grid_expander=", &
