@@ -788,7 +788,7 @@ OWN = {
 BOUNDS = {
     # FLOORED ABOVE ZERO: a proportional step is adjuster*gap*|x| and cannot
     # leave zero, the trap that pinned homeless_job_penalty_pp all night.
-    'addiction_onset_base':                                 (0.001, 0.95),
+    'addiction_onset_base':                                 (1e-06, 0.95),
     # THE DRUG INSTRUMENTS NEED ORDINARY BOUNDS NOW THAT THEY ARE ORDINARY
     # OWNERS. They had FREE_BOUNDS only, which the 2x2 and the Jacobian repair
     # use; making them owners in OWN sent them down the arm path, which reads
@@ -806,7 +806,7 @@ BOUNDS = {
     'lambda_addiction':                                 (0.000001, 20000.0),
     # LOWER BOUND SET BY THE AUTHOR, 4 September: 1e-08.
     # b in the participation threshold C > (phi/theta) p b; a low b brings the bar down to where poor households clear it, which is what could put substance use disorder into homelessness
-    'addiction_scalar_1':                               (1e-08, 1.0),
+    'addiction_scalar_1':                               (1e-12, 1.0),
     # A take-up FRACTION, so [0, 1] is the whole domain. Real SSI has a $2,000
     # asset test and take-up among eligible elderly of roughly half, so the
     # empirically defensible region is well inside the upper bound rather than
