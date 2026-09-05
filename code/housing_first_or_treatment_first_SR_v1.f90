@@ -70,6 +70,43 @@
         ! -log(1-0.0016)/0.0585. It matters for the first backward pass only;
         ! from the first update onwards lambda is re-derived from the model's own
         ! mean quantity, so it cannot be left stranded by a change of scale.
+        ! THE BASELINE ONSET, so that USE DOES NOT CONVERT TO SUD ONE FOR ONE.
+        ! The author, 5 September: *"it needs to be partly connected but also
+        ! partly random"*, *"if you use you have some baseline probability, and
+        ! then as you use more it rises"*, *"base + (1-exp(-lambda v)), and you
+        ! choose the base to match the sud rate, and lambda to match something
+        ! else"*.
+        !
+        ! WHY THE PURE SMOOTH HAZARD FAILED. pi_d(v) = 1-exp(-lambda v) is zero at
+        ! v=0 and about lambda*v for small v, so the conversion from use to
+        ! disorder is hostage to the QUANTITY consumed. Measured on the archive:
+        ! at theta weight 0.481 the ratio lambda_d/b is 0.585, at 0.159 it is
+        ! 0.084 -- a sevenfold swing from the utility weight alone. That is why
+        ! cutting theta to let poor households use collapsed the disorder rate.
+        !
+        ! The old lookup DID have a baseline --
+        ! addiction_probabilities(0,include_addiction,1,:) =
+        ! probability_of_becoming_addicted_if_experiment -- and the smooth hazard
+        ! dropped it. This restores it in the smooth form.
+        !
+        ! IT IS IDENTIFIED, and separately from lambda. NSDUH 2024 carries both
+        ! use frequency and past-year use disorder, so the SUD rate by use
+        ! intensity is a direct read (data/NSDUH_2024.dta, weighted, hard drugs
+        ! cocaine/heroin/meth pooled, n=1679 users):
+        !
+        !     freq category    1      2      3      4      5
+        !     SUD rate      0.134  0.428  0.577  0.717  0.819
+        !
+        ! The LIGHTEST category is the base, 0.134. The slope across categories
+        ! is lambda. Overall SUD among users is 0.4509, against the model's
+        ! implied lambda_d/b of 0.4135, so the aggregate already agrees and it is
+        ! the gradient that is new information.
+        !
+        ! NOT the share of the SUD who are homeless, which was considered and
+        ! rejected: P(homeless|SUD) = P(SUD|homeless)*P(homeless)/P(SUD) is an
+        ! identity in three moments the calibration already targets, so it
+        ! carries no independent information about lambda.
+        real(8) :: addiction_onset_base=0.d0
         real(8) :: lambda_addiction=0.027364
         real(8) :: lambda_addiction_adjuster=5*10.d0**(-3)
         real(8) :: previous_onset_at_mean=0
@@ -7407,7 +7444,20 @@
 
             real(8), intent(in) :: drug_quantity_1
 
-            addiction_onset_hazard=1-exp(-lambda_addiction*max(drug_quantity_1,0.d0))
+            ! BASE ONLY IF YOU USE. A household with v=0 is not a user and its
+            ! onset stays exactly zero, which is the row the old lookup had and
+            ! what keeps abstainers clean. Any positive quantity carries the
+            ! baseline, then the exponential term on top of it.
+            if (drug_quantity_1>0.d0) then
+
+                addiction_onset_hazard=min(addiction_onset_base+&
+                    (1-exp(-lambda_addiction*drug_quantity_1)),1.d0)
+
+            else
+
+                addiction_onset_hazard=0.d0
+
+            end if
 
         end function
 
@@ -7421,8 +7471,21 @@
 
             real(8), intent(in) :: drug_quantity_1
 
-            addiction_onset_hazard_slope=&
-                lambda_addiction*exp(-lambda_addiction*max(drug_quantity_1,0.d0))
+            ! The additive base does not change d pi_d / d v, so the slope is
+            ! unchanged EXCEPT where the hazard is clamped at one, and there it
+            ! is zero. A slope that kept rising past the clamp would give the
+            ! household a marginal risk the hazard does not actually deliver.
+            if (addiction_onset_base+&
+                (1-exp(-lambda_addiction*max(drug_quantity_1,0.d0)))>=1.d0) then
+
+                addiction_onset_hazard_slope=0.d0
+
+            else
+
+                addiction_onset_hazard_slope=&
+                    lambda_addiction*exp(-lambda_addiction*max(drug_quantity_1,0.d0))
+
+            end if
 
         end function
 
@@ -36973,6 +37036,11 @@
                         max_age_to_choose_homelessness, "->", handover_value
                     max_age_to_choose_homelessness=&
                         max(min(nint(handover_value),life_span),1)
+
+                case ("addiction_onset_base")
+                    write(*,*) "HANDOVER addiction_onset_base:",&
+                        addiction_onset_base, "->", handover_value
+                    addiction_onset_base=max(min(handover_value,1.d0),0.d0)
 
                 case ("rr_homeless_old_level")
                     write(*,*) "HANDOVER rr_homeless_old_level:",&
