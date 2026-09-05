@@ -1,3 +1,40 @@
+## 5 September, 20:35 -- burden50 IS A CONSTANT OF THIS ECONOMY. MY THRESHOLD THEORY WAS WRONG.
+
+I predicted that a street below 15.1 per cent of h2 would make households stretch
+rather than leave, moving the cost burden into the smallest rental. The
+arithmetic was right about the CHOICE and wrong about WHO FACES IT. Tested at 10
+and 5 per cent, both well below the threshold:
+
+    street/h2   h_1          burden50   h2 burdened   h3 burdened
+    10%         0.0000059    0.3869     0.126%        39.6%
+    5%          0.000000     0.3869     0.126%        39.6%
+
+Homelessness goes to exactly zero and burden50 does not move at all. The by-rung
+split is identical to three decimals. The households who stop being homeless do
+not move into h2 and stretch -- 97.8 per cent of renters are in h3 and can afford
+it comfortably. There is no population at that margin.
+
+burden50 ACROSS FOURTEEN CONFIGURATIONS: 0.3799, 0.3792, 0.3635, 0.3841, 0.3896,
+0.3892, 0.3869, 0.3869, 0.5914, 0.7024 ... it moves only with h3, and only
+because h3 changes how much housing the 95-99 per cent in the top rung buy. It is
+otherwise a constant of this economy at about 0.38.
+
+WHAT burden50 ACTUALLY MEASURES HERE, which is the author's own diagnosis: the 38
+to 40 per cent of h3 renters counted as burdened are paying over half their
+income for the LARGEST unit. They are not stretched poor households, they are
+households buying a lot of housing. That is not cost burden, and matching it to
+the SCF's 0.175 is matching the wrong object.
+
+THE BINDING FACT, unchanged and now measured across fourteen points: DIAG
+aggregate rent / aggregate income is 0.342 against 0.202 in the data, 69 per cent
+too high. No rung size, street size or ladder shape changes a ratio.
+
+WHAT IS LEFT TO TRY, neither of them in the housing block:
+  - the rent level itself, pinned at the Himmelberg et al. rent_to_housing_price
+    of 0.083 and therefore external data rather than a dial;
+  - the income process, where pi_eu reads 4.3 per cent against 13.9 and the
+    annual job-loss rate is 0.47 per cent, implying an average job of 213 years.
+
 ## 5 September, 20:30 -- CORRECTION, AND A MISLABELLED MOMENT
 
 THE INCOME/EXPENDITURE ANOMALY RECORDED BELOW IS WITHDRAWN. It was built on the
