@@ -1,3 +1,50 @@
+# Calibration state -- 5 September, 04:20
+
+## sud_homeless CAME OFF ZERO. b IS THE KEY, AND THE AUTHOR CALLED IT.
+
+point_d0873c90f1, addiction_scalar_1 = 0.01785, street = 0.1155, M frozen at 4:
+
+    sud_homeless   0.31065   target 0.21700   +43.2 per cent
+    b              0.85472   target 0.08900   +860.4
+    lambda_d       0.49988   target 0.03680   +1258.4
+    h_1            0.00011   target 0.00399   +97.2
+    emp_homeless   0.00000   target 0.46000   +100.0
+    loss 247.15, 6 of 23 inside ten per cent
+
+sud_homeless has been EXACTLY ZERO on every point all night and is now above its
+target. It is not structurally unreachable and no labour-market instrument was
+ever going to do it: the consumption threshold in b_shifter was the whole story,
+as the author said from the start.
+
+## BUT 0.01785 LANDED ON THE WRONG SIDE OF THE CLIFF
+
+85 per cent of the population now uses drugs. The archive holds points at
+0.0147-0.0192 with b near 0.09 AND points at the same values with b near 0.95;
+which side you land on depends on the rest of the vector. This one went high.
+
+THE FIX IS SMALL, and the elasticity gives it directly: b must fall by a factor
+of 9.6, ln(9.6) = 2.26, over an elasticity of -21, so the parameter rises about
+11 per cent -- to roughly 0.0199. NOT back to 0.03.
+
+h_1 at 0.00011 says the street at 0.1155 is still too small for this vector and
+has to come up with it.
+
+## WHAT THE 3 PER CENT STREET COST
+
+Five solves, points 9-13, all degenerate at loss 3.2e20 to 4.3e20. At a street of
+0.03-0.046 nobody is homeless at all, so mu_H (recovery housed over recovery
+homeless) and emp_homeless both divide by zero. The walk was climbing the street
+back on its own -- 0.0317, 0.0349, 0.0384, 0.0422, 0.0464 -- when the override to
+0.105 finished the job.
+
+## THE ADJUSTER, TWICE WRONG IN ONE NIGHT
+
+0.02 -> 0.05 in a batch of "crawling instruments", which was wrong: at an
+elasticity of -21 a 5 per cent step moves the drug share 100 per cent.
+0.05 -> 0.002 on the measurement, which is too slow the other way: an 11 per cent
+move takes 55 iterations, nearly three hours. 0.005 is the size that matches the
+job -- about 10 per cent moves in the drug share, ~22 iterations.
+
 # Calibration state -- 5 September, 04:15
 
 ## addiction_scalar_1 IS THE KNIFE EDGE, AND sud_homeless IS REACHABLE AFTER ALL
