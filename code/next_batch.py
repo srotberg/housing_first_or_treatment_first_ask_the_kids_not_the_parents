@@ -1183,7 +1183,14 @@ BAND = {# w_bot IS A WIDE BAND, on the author's instruction of 3 September:
 # rather than about the world, and its only instrument
 # (smallest_rental_relative_to_lowest_income) moves it at -0.01, which is to say
 # it has no instrument at all.
-SKIP = {'h_3',
+SKIP = {# h_3 IS UN-CONCEDED, 5 September. It entered SKIP on 31 August because its
+        # only instrument moved it at -0.01 -- the author's *"h3 can be off"* --
+        # and that instrument was smallest_rental_relative_to_lowest_income.
+        # largest_house_size is an independent absolute level now and moves it
+        # properly, so the reason for the concession has expired. The author: *"I
+        # think first you need h3 to raise so that only 64% of renters are in the
+        # largest unit"*, target 0.62672 against 0.99 in the model.
+        # 'h_3',
         # W_BOT FOLLOWS THE SECOND DISCOUNT FACTOR OUT, and this is a
         # CONSEQUENCE of the author's instruction of 1 September to go back to
         # one type rather than a separate decision -- it is one line to reverse.
