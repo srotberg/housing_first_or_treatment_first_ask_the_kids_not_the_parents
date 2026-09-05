@@ -29291,15 +29291,32 @@
         ! inside one.
         if (homeless_job_penalty_pp>0.d0) then
         
-            ! POINTS, NOT MULTIPLES. Both sides move by the same number of
-            ! percentage points, and the finding rate floors at zero.
+            ! DELTA ACTS ON THE SEPARATION RATE ALONE, on the author's
+            ! instruction of 5 September: *"wait, delta does not affect the job
+            ! finding rate...."*, *"it should not"*, *"delta only affects the
+            ! separate rate...we already know that if it affects the job fining
+            ! rate it discourages the unemployed to be homeless"*.
+            !
+            ! IT WAS SYMMETRIC UNTIL NOW and that is what the ruling in
+            ! directions_table.py already said it should not be -- *"Delta now
+            ! acts on separation alone"*, recorded 5 September -- while the code
+            ! kept cutting both sides. The comment and the source disagreed for a
+            ! day and the source was what ran.
+            !
+            ! WHY THE FINDING SIDE IS THE WRONG LEVER. It falls on households
+            ! ALREADY out of work, which is exactly the group that should be
+            ! choosing the street. Measured earlier: removing the finding penalty
+            ! entirely (increased_prob_if_homeless 0.2 -> 0) raises homelessness
+            ! among the unemployed FIVE-FOLD. Cutting job finding prices the poor
+            ! off the street, which is the opposite of what delta is for.
+            !
+            ! Separation stays additive in POINTS: the homeless separation
+            ! probability is probability_becoming_unemployed + delta.
             loss_mult_homeless_1=(probability_becoming_unemployed+&
                 homeless_job_penalty_pp)/&
                 max(probability_becoming_unemployed,10.d0**(-12))
                 
-            find_mult_homeless_1=max(0.d0,&
-                (probability_becoming_employed-homeless_job_penalty_pp)/&
-                max(probability_becoming_employed,10.d0**(-12)))
+            find_mult_homeless_1=1.d0
                 
         else
         
