@@ -59,7 +59,7 @@ declare -A P=(
     # because the 5.5 per cent the author named was a debt-to-income quantity
     # rather than a rate.
     [include_unsecured_borrowing]=1
-    [unsecured_borrowing_limit]=0.20
+    [unsecured_borrowing_limit]=0.30
     [unsecured_borrowing_rate]=0.055
     [restrict_borrowing_to_impatient]=1
     # THE CURVATURE OF THE POSITIVE ASSET GRID. grid(i)=top*((i-61)/24)**e, so a
@@ -69,7 +69,7 @@ declare -A P=(
     # general". The cost is at the top, where the last gap widens from 0.611 to
     # 1.184 and mass had already been found piling against the edge.
     [financial_grid_expander_positive]=3.0
-    [financial_grid_expander_negative]=2.0
+    [financial_grid_expander_negative]=1.0
     [value_of_life]=35.1001
     # ZERO, on the author's instruction of 5 September: *"remove lambda
     # completely for now. Set it to 0 and fix it."* At zero the onset hazard
