@@ -161,7 +161,11 @@ declare -A P=(
     # treatment is charged in utility again and not on resources.
     [money_cost_of_treatment]=0
     [smallest_rental_relative_to_lowest_income]=0.0244763
-    [largest_house_size]=0.121252
+    # THE ABSOLUTE TOP RUNG, and gamma's instrument from 5 September. Seeded at
+    # 1.5 times the bottom rung's current value, which is what the author asked
+    # for: *"set h3 to whatever it is at 1.5 currently"*. It is a level now, not
+    # a multiple, so it does not move when h2 moves.
+    [largest_house_size]=0.1863876
     [weight_on_child]=0.007
     [max_food_cost]=0.00498294
     [mu_homeless]=0.708003

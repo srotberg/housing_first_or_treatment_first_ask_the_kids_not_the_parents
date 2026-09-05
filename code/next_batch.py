@@ -471,7 +471,8 @@ OWN = {
     # would need a free top rung for that, which the author has ruled against.
     # 'smallest_rental_relative_to_lowest_income':            'h_2',
     'smallest_rental_relative_to_lowest_income':           'burden50',
-    'rung_ratio_h3':                                       'gamma',
+    # 'rung_ratio_h3':                                     'gamma',
+    'largest_house_size':                                  'gamma',
     # THE BOTTOM PRODUCTIVITY NODE OWNS emp_homeless. The author, 3 September:
     # *"That grid point on y is the one that delivers the 46% employment of the
     # homeless."* It is the level, not the mass: y_grid_kappa stays FIXED at 3.2
@@ -1081,7 +1082,15 @@ BOUNDS = {
     # [1.01, 6.0]; these bounds sit inside that. The floor is above 1 so the two
     # rungs cannot collapse onto each other, which is the degeneracy that made the
     # archive's own h3 ray uninterpretable.
-    'rung_ratio_h3':                                       (1.10, 5.50),
+    # rung_ratio_h3 IS HELD AGAIN: it only assigns a rung from three rentals up,
+    # and at two the top rung is largest_house_size, an absolute size.
+    # 'rung_ratio_h3':                                     (1.10, 5.50),
+    # THE ABSOLUTE TOP RUNG OWNS gamma. It must stay strictly above the bottom
+    # rung, whose bounds are (0.005, 0.4), or the ladder inverts and the model
+    # reports the share in "the largest unit" when it is really the smallest --
+    # a failure ENGINE.md records as having looked like a measurement once.
+    # run_one_point.sh carries the guard; these bounds keep the search clear of it.
+    'largest_house_size':                                  (0.02, 0.80),
     # Zero is no penalty at all; the ceiling is well past the 3.8 the steady
     # state formula asks for, so the bracket is not clipped before it gets there.
     # CEILING 0.95, NOT 20. The Fortran's handover clamps this at 0.95

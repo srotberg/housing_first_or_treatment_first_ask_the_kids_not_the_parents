@@ -98,7 +98,25 @@ RULES = {
     # gamma rises with it: parameter and moment move TOGETHER, which is 'lower'.
     # Measured on a fixed bottom rung, the ladder 1.5/2.0 -> 2.0/3.0 carried gamma
     # 0.3156 -> 0.3902.
-    'gamma': ('rung_ratio_h3', 'lower', 'measured pair agrees; bracket pending'),
+    # gamma's INSTRUMENT IS THE ABSOLUTE TOP RUNG, not a ratio, from 5 September.
+    # The author: *"adjust h2 down until it hits 17.5%. and adjust h3
+    # independently of h2"*, and *"just adjust them independently"*.
+    #
+    # WHY THE RATIO COULD NOT DO IT. With h3 = rung_ratio_h3*h2 the two knobs were
+    # MECHANICALLY chained: cutting the bottom rung cut the top rung with it, so
+    # both moments fell together. Measured on three points, h2 delivered +3.04
+    # burden50 per unit gamma and the ratio +4.12, while the target needed -0.57.
+    # The 2x2 solve asked for a rung ratio of -0.50. Infeasible, and mechanical
+    # rather than economic -- which is why unchaining them fixes it.
+    #
+    # largest_house_size was already assigned straight into
+    # housing_size(housing_status_grid_size-1) and then overwritten by the ratio.
+    # The overwrite now runs only from three rungs up, so at two rungs the ladder
+    # is two independent absolute sizes.
+    #
+    # DIRECTION. A bigger top rung means more housing bought where most households
+    # sit, so gamma rises with it: 'lower'.
+    'gamma': ('largest_house_size', 'lower', 'independent of h2 from 5 Sept'),
     # DIRECTION, burden50. h2 is what the cheapest unit costs. Raising it prices
     # more households into paying over half their income for it, so the moment
     # rises with the parameter: 'lower' again. Measured on a fixed ladder,

@@ -27588,14 +27588,33 @@
             !
             ! The index is still clamped: gfortran cannot prove the guard protects
             ! it and the warning would mask a real one next time.
-            if (housing_status_grid_size>1) then
-
-                housing_size(min(1,housing_status_grid_size-1))=rung_ratio_h3*housing_size(0)
-
-            end if
-
+            ! AT TWO RUNGS THE TOP ONE IS AN ABSOLUTE SIZE, NOT A MULTIPLE OF THE
+            ! BOTTOM. The author, 5 September: *"adjust h2 down until it hits
+            ! 17.5%. and adjust h3 independently of h2"*.
+            !
+            ! This is what breaks the collinearity that made the two-rung design
+            ! infeasible an hour ago. Measured then: both instruments moved both
+            ! moments the same way, h2 delivering +3.04 burden50 per unit gamma
+            ! and the rung ratio +4.12, while the target needed -0.57. The cause
+            ! was MECHANICAL, not economic -- h3 was rung_ratio_h3*h2, so cutting
+            ! the bottom rung dragged the top rung down with it and both moments
+            ! fell together. Two knobs chained into one.
+            !
+            ! housing_size(housing_status_grid_size-1) is ALREADY set to
+            ! largest_house_size a few lines above, an independent absolute size.
+            ! The overwrite below was what chained them, so it now runs only from
+            ! THREE rungs up, where the ladder genuinely is a ratio ladder and the
+            ! three-rung behaviour is unchanged.
+            !
+            !   two rungs:  h2 = smallest_rental_relative_to_lowest_income -> burden50
+            !               h3 = largest_house_size                        -> gamma
+            !
+            ! THE LADDER INVERTS IF h3 <= h2, and nothing in the Fortran notices:
+            ! the run completes and reports the share in "the largest unit" when
+            ! it is really the smallest. run_one_point.sh carries the guard.
             if (housing_status_grid_size>2) then
 
+                housing_size(1)=rung_ratio_h3*housing_size(0)
                 housing_size(housing_status_grid_size-1)=rung_ratio_h4*housing_size(0)
 
             end if
