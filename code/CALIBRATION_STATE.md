@@ -1,3 +1,40 @@
+# Calibration state -- 5 September, 04:10
+
+## THE AGE-80 SUD SPIKE IS max_age_to_choose_addiction, AND IT IS THE AGE-84 ARTEFACT AGAIN
+
+`max_age_to_choose_addiction = 55` (line 491), and data age = 25 + age_index, so
+index 55 is DATA AGE 80 -- exactly where the spike sits:
+
+    SUD rate   79: 0.00104   80: 0.22376   81: 0.00184   (85ec3e553f)
+               79: 0.00000   80: 0.22605   81: 0.00128   (31fafe39e7)
+               79: 0.52157   80: 0.84171   81: 0.03285   (97c5e30de6)
+
+Age 80 is the LAST age at which addiction may be chosen. The choice set changes
+discontinuously at that one age and the policy function jumps there. Identical in
+shape and cause to the age-84 homelessness spike, which was
+max_age_to_choose_homelessness=59 and went away at 58 without relocating to 83.
+
+IT CANNOT BE FIXED THE SAME WAY. max_age_to_choose_homelessness is a HANDOVER
+variable settable per solve; max_age_to_choose_addiction is `integer, parameter`,
+a compile-time constant. Changing it edits the Fortran, which ENGINE.md freezes,
+so it is the author's call.
+
+WHAT IT CONTAMINATES: lambda_d (the disorder rate) and every "users aged 65 plus"
+moment take mass from a single spurious age.
+
+## THE AUTHOR'S TWO HYPOTHESES, BOTH DISCONFIRMED
+
+  * *"maybe you are not shocking those with SUD or SMI with unemployment"* --
+    they are, and harder than the data: kappa_ued runs 0.23 to 0.80 against a
+    target of 0.1625, so SUD households are MORE unemployed than in the data.
+  * *"maybe you are not allowing them to actually choose homelessness"* -- the
+    loop is `do future_housing_status_index = allow_to_choose_homelessness*
+    lowest_housing_grid_point, largest_house_size_hhld_can_rent` at 19322 and
+    21320, with lowest_housing_grid_point = -1, and
+    allow_to_choose_homelessness depends ONLY on
+    `age_index > max_age_to_choose_homelessness`. No dependence on the addiction
+    or SMI state anywhere. The street is offered to everyone under the age cap.
+
 # Calibration state -- 5 September, 04:05
 
 ## sud_homeless HAS NO INSTRUMENT, AND IT IS NOT FOR WANT OF LOOKING
