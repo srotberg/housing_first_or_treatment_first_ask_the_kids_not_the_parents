@@ -287,7 +287,35 @@ CONFIG_SWITCHES = {
     # every age from Meyer, Wyse and Logani.  Those are different models of what
     # homelessness does to an old person, not different parameter values.
     'homeless_death_risk_flat_in_age': _live_switch('homeless_death_risk_flat_in_age'),
+    # THE TABLE HAD DRIFTED FROM next_batch.py's AND WAS POOLING ECONOMIES.
+    #
+    # Caught 5 September. next_batch.CONFIG_SWITCHES carried six names and this
+    # copy carried three: measure_child_gap, rr_homeless_hold_age and
+    # max_age_to_choose_homelessness were missing. So newton.archive(), which
+    # enforces the full table, correctly saw 2 points on the live economy after
+    # rr_homeless_hold_age moved 65 -> 64, while this file printed a table for
+    # point_d0029f2b64 -- a hold=65 point -- under the header "34 points in this
+    # economy". The report and the walk were on DIFFERENT ECONOMIES.
+    #
+    # That is the third duplicated-table drift in one night, after y_h's
+    # instrument and the b / lambda_d swap, and the same lesson each time: a
+    # second copy of a table is a bug with a delay on it. The names are now
+    # taken FROM next_batch when it imports, and only fall back to a local list
+    # if it does not -- the fallback exists because, as the note on _cross_check
+    # says, a broken next_batch.py must not stop the author seeing where things
+    # stand.
 }
+try:
+    sys.path.insert(0, HERE)
+    import next_batch as _nb_switches
+    CONFIG_SWITCHES = dict(_nb_switches.CONFIG_SWITCHES)
+except Exception:
+    for _k in ('measure_child_gap', 'rr_homeless_hold_age',
+               'max_age_to_choose_homelessness'):
+        CONFIG_SWITCHES.setdefault(_k, _live_switch(_k))
+
+_PREDATE = {'homeless_death_risk_flat_in_age': '0', 'measure_child_gap': '0',
+            'max_age_to_choose_homelessness': '59', 'rr_homeless_hold_age': '0'}
 
 _DEAD_SIGMA = ('kkk_sigma_scale' if _live_productivity_process() == 1
                else 'sd_permanent_productivity')
@@ -632,7 +660,11 @@ def main():
         # the SOURCE is unchanged across the switch, so the archive pools on the
         # hash, and the VECTOR is what says which process a point actually ran.
         # next_batch.py has the same test with the same reasoning beside it.
-        if any(str(int(float(v.get(k, '1')))) != w
+        # PREDATE, not '1'. A point solved before a switch existed carries no
+        # such key, and judging it against the LIVE value silently admits or
+        # rejects it on a setting it never ran. newton.archive() uses the
+        # Fortran's compile-time default for exactly this and the two must agree.
+        if any(str(int(float(v.get(k, _PREDATE.get(k, w))))) != w
                for k, w in CONFIG_SWITCHES.items()):
             n_wrong_proc += 1
             continue
