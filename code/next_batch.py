@@ -1008,7 +1008,12 @@ BOUNDS = {
     # raises separations, so everything above 0.55 is dead ground -- and it is
     # where the walk ran to when delta was pointed at y_h. Floor lowered so the
     # parameter can approach zero, where emp_homeless is 0.9965.
-    'homeless_job_penalty_pp':                             (0.001, 0.55),
+    # CEILING BACK TO 0.99 NOW THAT delta IS ONE-SIDED. The 0.55 ceiling was
+    # probability_becoming_employed, above which the SYMMETRIC delta drove job
+    # finding to exactly zero. delta no longer touches finding, so that bound has
+    # no meaning; what bounds it now is the separation probability pbu+delta,
+    # which cannot exceed one.
+    'homeless_job_penalty_pp':                             (0.001, 0.99),
     # One is no penalty; the floor is 0.05 rather than zero because zero
     # earnings for every addict is a corner and not a calibration.
 }
