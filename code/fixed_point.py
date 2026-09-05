@@ -131,9 +131,20 @@ def say(s):
 # WARM-START SEEDS, for instruments whose archive value is exactly zero. See the
 # block in main() that applies them for why zero is a trap rather than a value.
 SEED = {'homeless_job_penalty_pp': 0.05,
-        # NSDUH 2024, hard drugs pooled: the SUD rate in the LIGHTEST use
-        # category is 0.134, which is what the baseline onset means.
-        'addiction_onset_base': 0.134}   # the author, 5 September: seed delta at 5 per cent
+        # 0.017625, FROM THE FLOW BALANCE, on the author's instruction: start the
+        # base from something that implies a SUD rate of 41 per cent given the
+        # recovery rate of 2.5 per cent.
+        #
+        # In the stationary two-state distribution onset*(1-s) = recovery*s, so
+        # with s = 0.0368/0.089 = 0.41348 and probability_of_stopping_addiction =
+        # 0.025 (line 4116 of the Fortran), onset = 0.025*0.41348/0.58652 =
+        # 0.017625.
+        #
+        # AND 0.134 WAS THE WRONG NUMBER, seeded here first. NSDUH's 0.134 is the
+        # share of light users who CARRY a disorder -- a prevalence, a stock --
+        # while the base is a per-period ONSET, a flow. Seeding the stock would
+        # have overshot the hazard by about eightfold.
+        'addiction_onset_base': 0.017625}   # the author, 5 September: seed delta at 5 per cent
 
 ADJUSTERS = {
     # THE AUTHOR'S MAXIMUM, 0.10. y_h is 119 per cent out and the parameter runs
