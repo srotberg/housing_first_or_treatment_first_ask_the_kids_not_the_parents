@@ -292,8 +292,15 @@ DEFAULT_ADJ = 0.02
 # PARAMETERS WHOSE UPPER BOUND IS ENFORCED. Everything else is floored only.
 CAPPED = {'relative_share_of_addiction_1'}
 
+# theta AND lambda ARE HELD WHILE b AND THE BASE CONVERGE. The author,
+# 5 September: *"i would suggest to keep theta fixed at 0.13 and lambda at 0.05
+# until at least b and the base have converged"*. Moving four drug parameters at
+# once produced a point where theta hit its ceiling, the drug population emptied
+# and every drug moment read zero or the -1 sentinel. Two at a time instead.
 FROZEN = {'multiple_of_probabilities_of_employment_if_addicted',
-          'bottom_productivity_level'}
+          'bottom_productivity_level',
+          'relative_share_of_addiction_1',
+          'lambda_addiction'}
 # NOTHING IS FROZEN, 5 September. bottom_productivity_level is released on the
 # author's confirmation that it owns emp_homeless: *"We are setting the lowest
 # productivity such that 46% of the homeless are employed"*.

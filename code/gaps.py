@@ -473,6 +473,24 @@ def load(path):
             r'MOMENT (\S+)\s+(.*?)model=\s*([0-9.eE+-]+)\s+target=\s*([0-9.eE+-]+)', t):
         if k == 'sigma_y' and 'bottom half earnings share' in lab:
             continue
+        # MINUS ONE IS AN EMPTY-POPULATION SENTINEL, NOT A VALUE, and scoring it
+        # as one corrupts the objective. ENGINE.md says so in the worker brief --
+        # *"a MOMENT theta of -1.0 is an empty-population sentinel, not a value"*
+        # -- and nothing here enforced it.
+        #
+        # WHAT IT COST, 5 September 05:10. theta pinned at its 0.200 ceiling
+        # emptied the drug population, so the Fortran returned theta = -1, and
+        # gap() computed |-1 - 0.162|/0.162 = 7.17 and reported -717.3 per cent.
+        # The point also carried b, lambda_d, sud_homeless, mu_H, y_u, kappa_ued
+        # and tau_u all at exactly zero, and the LOSS still read 56.8 -- lower
+        # than the 74.1 before it -- so a degenerate economy looked like progress.
+        #
+        # It is DROPPED rather than scored. An absent moment is a free pass,
+        # which is its own trap, but a free pass is a far smaller lie than
+        # minus seven hundred per cent, and the zeros beside it already say the
+        # point is degenerate.
+        if float(a) == -1.0 and float(b) > 0:
+            continue
         # THE TARGET COMES FROM THE LIVE SOURCE, NOT FROM THE POINT FILE.
         #
         # A point records the target it was solved against. model_hash strips the
