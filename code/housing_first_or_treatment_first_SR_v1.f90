@@ -6887,7 +6887,7 @@
             write(*,*) "DIAG mean drug quantity, users                   =",&
                 model_drugs_used_by_users_on_average(1)
             write(*,*) "DIAG onset at the mean quantity                  =",&
-                1-exp(-lambda_addiction*model_drugs_used_by_users_on_average(1))
+                addiction_onset_hazard(model_drugs_used_by_users_on_average(1))
             ! THE VALIDATION SECTION'S INCOME ROWS. The model has carried these
             ! three averages all along and never printed one of them, so the
             ! table in the note lists a data value and a source for each with no
@@ -38889,7 +38889,11 @@
 
                         if (mean_drug_quantity_1>0) then
 
-                            onset_at_mean_1=1-exp(-lambda_addiction*mean_drug_quantity_1)
+                            ! THROUGH THE FUNCTION, not the bare exponential. This
+                            ! drives the SECANT that calibrates lambda_addiction, so
+                            ! with addiction_onset_base live the bare form would have
+                            ! it solving for a hazard the model does not use.
+                            onset_at_mean_1=addiction_onset_hazard(mean_drug_quantity_1)
 
                             ! SECANT ON THE ONSET, NOT A FIXED STEP, and the
                             ! first step comes from the flow balance rather than
