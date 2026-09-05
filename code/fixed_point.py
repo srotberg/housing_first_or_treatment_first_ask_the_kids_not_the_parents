@@ -203,7 +203,20 @@ ADJUSTERS = {
     # threshold C > (phi/theta) p b, there is no reason to think it pathological,
     # so it takes the ordinary rate until a ray measured on the corrected mapping
     # says otherwise.
-    'addiction_scalar_1': 0.0500,
+    # addiction_scalar_1 IS A KNIFE EDGE AND NEEDS A TINY ADJUSTER. Measured over
+    # 83 archive pairs differing ONLY in it: 0.01461 -> 0.01484, a 1.5 per cent
+    # change, moves the drug share 0.128 -> 0.093, which is 27 per cent; 0.01447
+    # -> 0.01477 moves it 34 per cent. The elasticity is about MINUS 21.
+    #
+    # It was raised to 0.05 earlier tonight in a batch of "crawling instruments",
+    # which was wrong for this one: at that elasticity a single step moves the
+    # drug share by roughly 100 per cent and the parameter oscillates across its
+    # whole usable range every iteration. The author, 5 September: *"i adjusted
+    # it very slowly in the past"*, *"it has to be chosen carefully"*.
+    #
+    # 0.002 gives about a 4 per cent move in the drug share per iteration at a
+    # 100 per cent gap, which is a step the moment can actually be steered with.
+    'addiction_scalar_1': 0.0020,
     'lambda_addiction': 0.0500,
 }
 DEFAULT_ADJ = 0.02
