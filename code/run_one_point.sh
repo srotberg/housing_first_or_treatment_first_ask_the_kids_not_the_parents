@@ -77,7 +77,18 @@ declare -A P=(
     # The 5.0554 this replaces predates the two-part hazard.
     [lambda_addiction]=0
     [relative_share_of_addiction_1]=0.530445
-    [size_homelessness]=0.104242
+    # AN ABSOLUTE SIZE FROM 5 September, not a ratio of the bottom rung. The
+    # author: "you should disentangle the homeless size from the smallest rental.
+    # it should be free to move alone".
+    #
+    # 0.048 is 0.40 of a bottom rung of 0.12, which is where h_1 = 0.399 per cent
+    # interpolates on the measured street bracket: at h2 = 0.12 a ratio of 0.30
+    # gave h_1 = 0.000548 and 0.5757 gave 0.0575, an elasticity of 7.14.
+    #
+    # EVERY OLD VECTOR CARRIES 0.5757 AND THAT IS NOW AN ABSOLUTE SIZE larger than
+    # both rungs, which would inverting the ladder silently. The guard below
+    # refuses it.
+    [size_homelessness]=0.048
     [discount_factor]=0.993881
     [relative_share_of_leisure]=2.76316
     [labor_income_tax_rate]=0.720039
@@ -593,6 +604,14 @@ fi
 if [ "$(awk -v a="${P[smallest_rental_relative_to_lowest_income]}" \
         -v b="${P[largest_house_size]}" 'BEGIN{print (a<b)?1:0}')" != "1" ]; then
     fail "inverted housing ladder: smallest_rental_relative_to_lowest_income=${P[smallest_rental_relative_to_lowest_income]} is not below largest_house_size=${P[largest_house_size]}"
+fi
+
+# THE STREET MUST BE BELOW THE BOTTOM RUNG, now that it is an absolute size and
+# not a ratio of it. Nothing in the Fortran notices an inverted ladder: the run
+# completes and reports the share in "the largest unit" when it is really the
+# smallest, which ENGINE.md records as having once looked like a measurement.
+if [ "$(awk -v a="${P[size_homelessness]}" -v b="${P[smallest_rental_relative_to_lowest_income]}" 'BEGIN{print (a<b)?1:0}')" != "1" ]; then
+    fail "inverted ladder: size_homelessness=${P[size_homelessness]} is not below smallest_rental_relative_to_lowest_income=${P[smallest_rental_relative_to_lowest_income]} (it is an ABSOLUTE size now, not a ratio)"
 fi
 
 TAG=$(for k in "${!P[@]}"; do echo "$k=${P[$k]}"; done | sort | md5sum | cut -c1-10)

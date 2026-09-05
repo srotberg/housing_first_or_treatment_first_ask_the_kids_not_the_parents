@@ -27640,8 +27640,31 @@
             ! size_homelessness and smallest_rental arrive in whichever order the
             ! caller wrote them, so a clamp there would depend on the order of
             ! the command line.
+            ! THE STREET IS AN ABSOLUTE LEVEL, NOT A RATIO OF THE BOTTOM RUNG,
+            ! on the author's instruction of 5 September: *"you should disentangle
+            ! the homeless size from the smallest rental. it should be free to
+            ! move alone"*.
+            !
+            ! It was housing_size(0)*size_homelessness, so every move in h2
+            ! dragged the street with it -- the same mechanical chaining that made
+            ! h2 and h3 collinear until largest_house_size was freed. It is not a
+            ! small effect: the h2 sweep of 0.060 -> 0.16 run earlier today moved
+            ! the street 0.0345 -> 0.0921 underneath it, so those points were not
+            ! one-coordinate measurements at all.
+            !
+            ! ENGINE.md records the ratio form and says the stepper compensates by
+            ! working in (rung, absolute street) coordinates. That is a workaround
+            ! for the parameterisation; this removes the need for it. The ladder is
+            ! now three independent absolute levels:
+            !
+            !   street = size_homelessness            -> h_1
+            !   h2     = smallest_rental_...          -> the affordability floor
+            !   h3     = largest_house_size           -> gamma
+            !
+            ! increase_homeless_size still multiplies, and street_size_floor still
+            ! guards against zero, so the counterfactual machinery is untouched.
             housing_size(lowest_housing_grid_point)=max(&
-                housing_size(0)*size_homelessness*(1+increase_homeless_size*5),&
+                size_homelessness*(1+increase_homeless_size*5),&
                 street_size_floor)
 
             write(*,*) "DIAG unsecured borrowing limit, yrs of income   =",&
