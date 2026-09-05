@@ -1,3 +1,33 @@
+## 5 September, 20:30 -- CORRECTION, AND A MISLABELLED MOMENT
+
+THE INCOME/EXPENDITURE ANOMALY RECORDED BELOW IS WITHDRAWN. It was built on the
+row printed as "UNTARGETED housing over income, renters", and that row does not
+measure what its label says.
+
+    model_avg_housing_spending_renters  <-  housing_to_income_renters
+    housing_to_income_renters = (rent*size) / (rent*size + consumption)
+
+That is housing over EXPENDITURE, gross of the voucher. It is labelled "housing
+over income", compared against 0.202 which is an INCOME ratio, and the Fortran's
+own comment beside gamma asserts that "model_avg_housing_spending_renters is
+housing over INCOME". The comment, the label and the formula all disagree, and
+the target attached to it is on the wrong denominator.
+
+Once that is seen, 0.345 gross-of-voucher against gamma's 0.268 net-of-voucher is
+simply what vouchers covering about 22 per cent of rent looks like. There is no
+29 per cent excess of expenditure over income, and the stationary-equilibrium
+objection I raised against it does not apply.
+
+WHAT SURVIVES, through a correctly labelled row: DIAG aggregate rent / aggregate
+income reads 0.342 against 0.202 in the data, still 69 per cent too high. So the
+conclusion that burden50 is driven by rent being expensive relative to income
+stands; only the route to it was wrong.
+
+TO FIX IN THE FORTRAN, and not done because it changes a printed comparison:
+either relabel the row as an expenditure share and give it an expenditure target,
+or compute it over total_income and keep the 0.202. The second is what the
+comment and the target both assume.
+
 ## 5 September, 20:20 -- NO LADDER PARAMETER CAN PUT THE COST BURDEN IN THE SMALLEST RENTAL
 
 The author's requirement: a high utility share on housing, cost-burdened renters
