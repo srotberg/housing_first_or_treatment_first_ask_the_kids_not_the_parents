@@ -1,3 +1,58 @@
+## 5 September, 22:15 -- MOST OF TODAY'S LADDER POINTS ARE NOT VALID ECONOMIES
+
+`distance_average_labor_income` is the gap between the average labour income the
+model is indexed to and the one it produces. It sits in the outer equilibrium
+loop's own convergence condition with `stopping_rule_average_labor_income =
+1e-4`. A point run is a SINGLE PASS -- it exits at `loop_count = 2` through the
+b-sweep path -- so that distance is not driven to zero, and it measures how far
+the evaluated economy is from its own scale.
+
+OF 31 LADDER POINTS MEASURED ON 5 SEPTEMBER, FOUR COME IN UNDER 0.02:
+
+    h2     h3     rsl    share_h2   omega_l   gamma    gap
+    0.12   0.35   1.31   0.0535     0.312     0.390    0.0006
+    0.40   0.80   0.60   0.0553     0.258     0.488    0.0055
+    0.16   0.35   1.31   0.0485     0.306     0.389    0.0072
+    0.22   0.44   1.00   0.0475     0.308     0.424    0.0171
+
+Everything else is outside it, including the WHOLE `relative_share_of_leisure`
+bracket that was used to conclude rsl = 1.00 hits omega_l = 0.40 (gap 0.093),
+and the whole far-h3 sweep (gaps 0.38 to 0.64).
+
+TWO CLAIMS MADE TODAY ARE WITHDRAWN ON THIS BASIS.
+
+- "Raising h3 cannot price anyone out of the largest unit, refuted decisively by
+  the sweep to h3 = 25." The sweep points have gaps of 0.38 to 0.64. At h3 = 25
+  the model is evaluated against an income scale 250x the one it generates:
+  total income 0.131, total wealth 4.34, aggregate consumption 913.9, a rent
+  bill of 1286, labour supply 2e-06. That is not a refutation of anything. The
+  author's feasibility argument REMAINS OPEN and has not been tested.
+- "rsl = 1.00 lands omega_l on 0.3989." Measured at a gap of 0.093; re-check it.
+
+WHAT SURVIVES. In all four valid points the share of renters in the SMALLEST
+rental is 4.75 to 5.53 per cent against the 37.3 per cent the h_3 target
+implies, and ZERO per cent of its occupants are cost burdened while 80 to 96 per
+cent of the largest unit's are. At h2 = 0.30, not being burdened means income
+above 0.60, which on the productivity grid is the top 63.8 per cent of earners:
+the cheap unit houses the comfortable and the expensive unit houses the
+strained. That is inverted from the data and it is why burden50 reads zero.
+
+RULED OUT AS THE CAUSE, each by measurement rather than by reading the source:
+housing vouchers (5.01 -> 5.08 per cent with them off), the fixed cost to moving
+(zero), the rent charge in the value function (charged at the true
+`future_housing_status_index`, `renter_to_renter_1 = tenure_1 = 1`, and
+subtracted in `after_tax_wealth_net_of_expenses`), the utility form (verified as
+`housing_size**((1-sigma)*relative_share_of_housing_1)`), the consumption clamp
+(choice-side feasibility is strict), the accounting index (true policy index),
+the choice set (open), the lump-sum transfer (zero), and phantom housing wealth
+for renters (`has_house = 0` kills the term).
+
+WHAT TO DO NEXT, and it is the author's call because it changes how points run:
+re-solve each configuration so the income scale is consistent before comparing
+ladders. Until then every ladder comparison is confounded by a transfer system
+scaled to a different economy, and no housing calibration run on these points
+means anything.
+
 ## 5 September, 20:35 -- burden50 IS A CONSTANT OF THIS ECONOMY. MY THRESHOLD THEORY WAS WRONG.
 
 I predicted that a street below 15.1 per cent of h2 would make households stretch
