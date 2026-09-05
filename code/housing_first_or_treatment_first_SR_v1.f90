@@ -915,8 +915,34 @@
         ! net wealth measured in multiples of average labour income, and the
         ! cumulative mass is walked afterwards to the median, interpolating
         ! within the bucket that straddles it.
-        integer, parameter :: wealth_bins=400
+        ! THE HISTOGRAM HAD NO NEGATIVE BINS, and with borrowing switched on that
+        ! turned every percentile of the lower tail into one number. The index
+        ! below was 1+floor(bins*(a/Ybar)/top) clamped from below at 1, so every
+        ! household with negative net worth was clamped into bin 1 ALONGSIDE
+        ! everyone from zero up to one bin width -- 0.125 of average labour
+        ! income at 400 bins over [0,50]. Bin 1 then held more than half the
+        ! population and the percentile walk split it by mass, which returns
+        ! p times a constant at every p: the bottom 1, 5, 10 and 50 per cent came
+        ! out at -0.01513, -0.07567, -0.15134 and -0.75670, exactly 1:5:10:50.
+        ! A straight line through the origin is not a distribution, and the
+        ! -0.757 the author was shown was bin 1's net wealth scaled by
+        ! 0.5/(bin 1's mass), not the bottom half's share of anything.
+        !
+        ! The histogram consistency pair could not catch it, for the same reason
+        ! it could not catch the average-labour-income bug: total mass and total
+        ! wealth were both exactly right, because the error is in how wealth is
+        ! spread ACROSS bins, not in what is put into them.
+        !
+        ! The floor is set well below the deepest borrowing limit the handover
+        ! will accept (3.0 times average labour income), so nothing is clamped
+        ! into bin 1 any more, and the count is raised because the bottom half
+        ! of this model sits inside a band a fraction of an income wide: 20000
+        ! bins over [-4,50] is 0.0027 of average labour income per bucket
+        ! against 0.125 before, which is what it takes for the percentile walk
+        ! to resolve the tail rather than interpolate across it.
+        integer, parameter :: wealth_bins=20000
         real(8), parameter :: wealth_bin_top=50.d0
+        real(8), parameter :: wealth_bin_bottom=-4.d0
         real(8), dimension(wealth_bins) :: wealth_hist_mass,wealth_hist_wealth
         ! IS THE SAVINGS GRID A BINDING CAP? The author's hypothesis of 29
         ! August: a bottom half holding 16.9 per cent of net worth against 2.52
@@ -4340,7 +4366,7 @@
         ! vector had drifted apart -- 1.50, 1.50 and 0.30 -- and 0.30 is what was
         ! actually solving, because the handover overrides both. All three now say
         ! 0.20 so the source cannot be read for a value the model is not running.
-        real(8) :: unsecured_borrowing_limit=0.20d0
+        real(8) :: unsecured_borrowing_limit=0.30d0
         ! THE RATE PAID ON A NEGATIVE BALANCE. The author asked first for a rate
         ! "high like on a credit card" and then for "the 5.5% interest rate" --
         ! but the 5.5 per cent they were quoting was US revolving credit as a
@@ -4383,7 +4409,12 @@
         ! the first half per cent of the range. Two keeps the clustering without
         ! collapsing the interior onto zero. It is handed over so it can be tuned
         ! rather than argued about.
-        real(8) :: financial_grid_expander_negative=2.0
+        ! EVEN RUNGS ON THE NEGATIVE SIDE, on the author's instruction of 5
+        ! September: *"0, -0.15, and -0.3"*. The accordion raises the distance
+        ! from zero to this power, so at 2.0 and three points the middle rung
+        ! lands at -0.075, not -0.15. At 1.0 the ladder is linear and the three
+        ! points are exactly the ones asked for.
+        real(8) :: financial_grid_expander_negative=1.0
                                 
         integer :: largest_possible_financial_index,largest_possible_mortgage_index
         real(8) :: value_of_house_without_min_down_payment
@@ -9862,9 +9893,14 @@
                                     ! loop order, and it keeps the bin edges the
                                     ! same across points, which is what makes the
                                     ! shares comparable between vertices at all.
+                                    ! Measured from wealth_bin_bottom, not from
+                                    ! zero, so a household in debt lands in its
+                                    ! own bucket instead of being clamped into
+                                    ! the first one with everybody near zero.
                                     wealth_bin_index=min(max(1+floor(wealth_bins*&
-                                        (net_wealth_1/max(average_labor_income_calibrated,&
-                                        10.d0**(-8)))/wealth_bin_top),1),wealth_bins)
+                                        ((net_wealth_1/max(average_labor_income_calibrated,&
+                                        10.d0**(-8)))-wealth_bin_bottom)/&
+                                        (wealth_bin_top-wealth_bin_bottom)),1),wealth_bins)
                                     wealth_hist_mass(wealth_bin_index)=&
                                         wealth_hist_mass(wealth_bin_index)+distribution_mass_used
                                     wealth_hist_wealth(wealth_bin_index)=&
