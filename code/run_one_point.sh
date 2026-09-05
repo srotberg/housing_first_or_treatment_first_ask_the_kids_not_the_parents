@@ -350,7 +350,25 @@ declare -A P=(
     # profile, 0 leaves the separation rate flat across types. Derivation in
     # data/UNEMPLOYMENT_BY_PRODUCTIVITY.md.
     [use_unemployment_by_productivity]=1
-    [bottom_productivity_level]=0.0
+    # 0.0668 AND FROZEN, on the author's instruction of 5 September: *"set bottom
+    # productivity to 0.0668 and freeze it"*, *"also freeze the bottom
+    # productivity. do not use anything to target it"*.
+    #
+    # WHY. The KKK grid is geometric with ratio 2.1492 from node 2 upward, and the
+    # bottom node was overridden to 0.006611187 -- ten times BELOW where the grid
+    # itself puts it, 0.143629/2.1492 = 0.066829. That made the top-to-bottom
+    # productivity spread 996-fold. At 0.0668 it is 99-fold, and node 1 goes from
+    # 0.66 per cent of mean productivity to 6.68.
+    #
+    # Only the bottom node moves: it holds 0.2395 per cent of people, so the
+    # compensating rescale on the upper nodes is 0.999856 and mean productivity
+    # stays exactly 1.0000000000, verified both sides.
+    #
+    # IT WAS THE THIRD INSTRUMENT AIMED AT emp_homeless. delta was driven to a
+    # 43.6-fold job-loss hazard for the same moment, and the housing taste pinned
+    # at 0.268 moves it by a third route. All three were pointed at one moment at
+    # different times.
+    [bottom_productivity_level]=0.0668
     # HELD AT ONE, ON THE AUTHOR'S INSTRUCTION. rho_d enters as
     # rho_d**(sud*include_rho_d), so one is exactly no penalty. The switch stays
     # on so the parameter is live and honest rather than a silent no-op, and the

@@ -993,7 +993,15 @@ BOUNDS = {
     # The bottom node's level, as a multiple of mean productivity. The quantile
     # construction puts it at 0.0302 unaided; the floor is well below that and
     # the ceiling is node two, since the grid must stay monotone.
-    'bottom_productivity_level':                            (0.004, 0.064),
+    # bottom_productivity_level HAS NO BOUNDS ENTRY, which is how a parameter is
+    # held: instruments_all takes every owner in OWN whose parameter has bounds.
+    # The author, 5 September: *"also freeze the bottom productivity. do not use
+    # anything to target it"*.
+    #
+    # The old entry was (0.004, 0.064) and the author's value of 0.0668 sits
+    # OUTSIDE it, so leaving it would have clamped the number straight back down
+    # to 0.064 -- a silent override of an explicit instruction.
+    #    'bottom_productivity_level':                            (0.004, 0.064),
     'weight_on_child':                                     (0.0005, 0.20),
     # In units of average labour income, so 1.0 hands every newborn a year of
     # it. The upper end is deliberately generous: nothing yet says where the
