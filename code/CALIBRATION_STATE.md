@@ -1,3 +1,63 @@
+## 5 September, 23:12 -- THE VOUCHER BUG IS FIXED. WHAT IT DID AND DID NOT SOLVE.
+
+provide_vouchers is 0 as of ee0a9874; the declaration carries the full reasoning.
+Semantic hash is now 4346daf40c and the 1,806-point archive is orphaned.
+
+WHAT THE FIX SOLVED. burden50 was not hard to hit, it was ARITHMETICALLY
+UNREACHABLE: voucher one capped every renter's net rent at 30 per cent of income,
+so no household could ever pay over half, and the moment read 0.0000 at every
+configuration tried. Measured at the same ladder before and after, h2 = 0.20,
+h3 = 0.60, rsl = 1.00, one coordinate changed:
+
+    moment                          before    after   target
+    burden50                        0.0000   0.1727    0.175
+    gamma                           0.4630   0.2510    0.268
+    burdened IN the smallest rental 0.0000   0.1890       --
+    aggregate rent / income          1.084    0.233       --
+    omega_l                         0.1899   0.4711    0.400
+    beta                             1.835    2.647     2.25
+
+Both dead instruments now work with the right signs. burden50 rises
+monotonically in h2 -- 0.0641, 0.1727, 0.3460 at h2 = 0.13, 0.20, 0.30 -- and
+h_3 FALLS in h3, 0.410 at h3 = 0.25 against 0.086 at h3 = 0.60, which is the
+author's sign and the one the pre-fix model could not produce.
+
+WHAT IT DID NOT SOLVE, and one problem it opened.
+
+- h_1 = 0.386 against 0.0040. With free housing gone, housing has a real price
+  and a third of households take the street.
+- h_3 = 0.086 against 0.627, now inverted: 91 per cent are in the SMALLEST unit
+  and h3 must come well below 0.25, a region never measured.
+- The homeless are the wrong people: 66 to 90 per cent employed against a 0.46
+  target, and ZERO with a substance use disorder against 0.217 in the data.
+
+THE STREET CANNOT CLOSE h_1. Bracket at h2 = 0.20, h3 = 0.60, rsl = 1.00:
+
+    street    h_1    burden50   gamma  omega_l   beta  emp|hl
+    0.080   0.3855    0.1727   0.2510   0.471   2.647  0.9041
+    0.020   0.2242    0.1894   0.2807   0.504   3.112  0.8604
+    0.008   0.1529    0.2199   0.3017   0.515   3.320  0.8170
+    0.003   0.1037    0.2556   0.3161   0.523   3.499  0.7471
+    0.001   0.0721    0.2773   0.3249   0.529   3.668  0.6610
+
+An 80x cut reaches 7.2 per cent, still 18x target, at a log-log elasticity of
+about 0.38 and decaying; extrapolated, 0.4 per cent needs a street near 5e-7.
+Meanwhile burden50 overshoots to 0.277 and beta runs to 3.67.
+
+THE TENSION, AND IT IS REAL. h_1 wants h2 SMALL so everyone can afford the
+cheapest rental; burden50 wants h2 LARGE so 17.5 per cent of renters pay over
+half their income for it. With ssi_floor_level at 0.13 the poorest have income
+about 0.13, so h2 = 0.20 costs them 154 per cent of income and the street is all
+that is left. Housing them needs h2 near 0.06, at which point under 4 per cent
+are burdened and burden50 collapses to about 0.03. The street is the only thing
+separating the two targets and its elasticity is too low.
+
+CANDIDATE SEPARATOR, NOT YET TESTED AND NOT MINE TO ASSIGN: an income floor
+rather than the street. Raising ssi_floor_level houses the poor, cutting h_1,
+AND puts them in the smallest rental paying over half their income, raising
+burden50 -- the two targets move the way each needs, which nothing else does.
+It would take ssi_floor_level off h_share5, so the author decides.
+
 ## 5 September, 22:22 -- CORRECTION TO THE 22:15 ENTRY BELOW. THE 0.02 BAR WAS WRONG.
 
 The 22:15 entry said four of 31 ladder points were "valid economies" and
