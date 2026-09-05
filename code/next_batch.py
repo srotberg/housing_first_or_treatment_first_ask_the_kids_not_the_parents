@@ -181,8 +181,18 @@ STAGES = [
      #   size_homelessness                          -> h_1, the homelessness rate
      #   smallest_rental_relative_to_lowest_income   -> h_2, the cost burdened
      #   bottom_productivity_level                   -> emp_homeless
-     'h_2',
-     # h_share1 joins with h_2, so its instrument newborn_endowment_scale can
+     # h_2 LEAVES THE SCORED SET and burden50 takes its place, 5 September. The
+     # author asked for the cost burden on INCOME -- *"and h2 to match the share
+     # spending over 50% on housing"* -- and h_2 is measured on EXPENDITURE. Two
+     # cost-burden moments on two denominators with one rung between them is one
+     # too many, and h_2 lost its instrument when that rung moved to burden50.
+     #
+     # Leaving it scored would be the exact fault the comment below warns about:
+     # a scored moment with a frozen instrument counts against the loss and
+     # cannot be closed. It has cost this calibration a day once already.
+     # 'h_2',
+     'burden50',
+     # h_share1 joins with burden50, so its instrument newborn_endowment_scale can
      # actually step. A scored moment outside every open stage counts against the
      # loss with its instrument frozen, which has cost this calibration a day
      # once already.
@@ -460,7 +470,8 @@ OWN = {
     # share and the share of renters paying over half of expenditure; the ladder
     # would need a free top rung for that, which the author has ruled against.
     # 'smallest_rental_relative_to_lowest_income':            'h_2',
-    'smallest_rental_relative_to_lowest_income':           'gamma',
+    'smallest_rental_relative_to_lowest_income':           'burden50',
+    'rung_ratio_h3':                                       'gamma',
     # THE BOTTOM PRODUCTIVITY NODE OWNS emp_homeless. The author, 3 September:
     # *"That grid point on y is the one that delivers the 46% employment of the
     # homeless."* It is the level, not the mass: y_grid_kappa stays FIXED at 3.2
@@ -1063,8 +1074,14 @@ BOUNDS = {
     # also the ladder ruling already in ENGINE.md from 2 September: *"h3 is 50%
     # higher than h2 and h4 is 100% larger than h2"*. Giving them bounds was more
     # than was asked for and is withdrawn.
+    # rung_ratio_h4 STAYS HELD: there is no fourth rung at two rentals, and its
+    # assignment is guarded to grid sizes above two.
     # 'rung_ratio_h4':                                      (2.0, 4.0),
-    # 'rung_ratio_h3':                                      (1.1, 1.9),
+    # rung_ratio_h3 IS THE TOP RUNG NOW and owns gamma. The handover clamps it to
+    # [1.01, 6.0]; these bounds sit inside that. The floor is above 1 so the two
+    # rungs cannot collapse onto each other, which is the degeneracy that made the
+    # archive's own h3 ray uninterpretable.
+    'rung_ratio_h3':                                       (1.10, 5.50),
     # Zero is no penalty at all; the ceiling is well past the 3.8 the steady
     # state formula asks for, so the bracket is not clipped before it gets there.
     # CEILING 0.95, NOT 20. The Fortran's handover clamps this at 0.95

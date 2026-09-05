@@ -80,7 +80,30 @@ RULES = {
     # DIRECTION. h2 is the level of every rental rung and of the street, so
     # raising it raises housing outlay across the whole distribution and gamma
     # rises with it: parameter and moment move TOGETHER, which is 'lower'.
-    'gamma': ('smallest_rental_relative_to_lowest_income', 'lower', 'bracket pending'),
+    # THE TWO HOUSING RUNGS, one moment each, on the author's instruction of
+    # 5 September: *"is there a way to set h2 so that the share of spending over
+    # 50% of their income on housing is like in the data? and choose h3 so that
+    # at the housing spending is 26.8% at the chosen relative_share_of_housing of
+    # 0.268?"*, and *"and h2 to match the share spending over 50% on housing"*.
+    #
+    # WHY TWO RUNGS AND NOT ONE. With a single rental, gamma and the cost-burden
+    # share are both functions of h2 alone -- one instrument, two targets, no
+    # solution. The second rung is the missing degree of freedom, and the two
+    # moments load on different margins: the bottom rung decides who is priced
+    # into paying over half their income, the top rung decides how much housing
+    # the bulk of households buy and therefore the aggregate share.
+    #
+    # DIRECTION, gamma. rung_ratio_h3 is the top rung as a multiple of the bottom
+    # one. Raising it means more housing bought where most households sit, so
+    # gamma rises with it: parameter and moment move TOGETHER, which is 'lower'.
+    # Measured on a fixed bottom rung, the ladder 1.5/2.0 -> 2.0/3.0 carried gamma
+    # 0.3156 -> 0.3902.
+    'gamma': ('rung_ratio_h3', 'lower', 'measured pair agrees; bracket pending'),
+    # DIRECTION, burden50. h2 is what the cheapest unit costs. Raising it prices
+    # more households into paying over half their income for it, so the moment
+    # rises with the parameter: 'lower' again. Measured on a fixed ladder,
+    # h2 0.1243 -> 0.0710 carried burden50 0.719 -> 0.473.
+    'burden50': ('smallest_rental_relative_to_lowest_income', 'lower', 'measured pair agrees'),
     # omega_l, labour supply over total hours, target 0.40.
     # The author: *"raise if higher than data"*. relative_share_of_leisure is the
     # weight on leisure, so more of it means less work -- parameter and moment move
