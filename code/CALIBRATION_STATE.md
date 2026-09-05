@@ -1,3 +1,60 @@
+# Calibration state -- 5 September, 03:05
+
+## y_h HAD NO LIVE INSTRUMENT AT ALL, AND THAT IS WHY IT SAT AT +275 PER CENT
+
+Two separate faults, both silent, both now fixed.
+
+**The two tables disagreed about which delta owns y_h.** `gaps.py` paired it with
+`increased_prob_if_homeless` -- the SYMMETRIC multiplier, which the same file
+declares exogenous at 0.2 four lines further down -- while `directions_table.py`
+paired it with `homeless_job_penalty_pp`, the author's percentage-point,
+separation-only form. `rules()` reads directions_table, so the WALK was right and
+the REPORT was wrong; the table shown to the author named an instrument that owns
+nothing. gaps.py now agrees with directions_table.
+
+**A proportional step cannot leave zero.** `homeless_job_penalty_pp` was at
+exactly 0 and the step is `adjuster * gap * |x|`, so it could never move however
+large the gap. It read as a converged instrument rather than a pinned one -- the
+same failure mode as a clipped bound, and harder to see, because the parameter
+simply never appears in the trace's moved list.
+
+Seeding it in `fixed_point_state.json` did NOT work, and the reason matters: the
+loop warm-starts from the BEST ARCHIVE POINT, not from its own state file, so the
+restart read `homeless_job_penalty_pp=0` straight back out of `d0029f2b64`. The
+seed now lives in `fixed_point.py` as `SEED`, applied after the warm start and
+only where the value is exactly zero, so it stops firing as soon as the archive
+carries a real value. Confirmed live at 03:02:29:
+
+    seeded homeless_job_penalty_pp at 0.25; a proportional step cannot leave zero
+    it 1: homeless_job_penalty_pp 0.25 -> 0.275, gap +250.7%
+
+## THE OLD AND THE WORKERS ARE CUT BY DIFFERENT INSTRUMENTS
+
+The author's design, 5 September: *"the death penalty for the old will remove the
+old from being homeless...and delta will remove the workers"*. That answers the
+objection that raising delta pushes y_h UP by leaving retirees as the residual:
+it only does so if the old are still there, and `rr_homeless_old_level` is what
+stops that. The two are halves of one cut, not competing instruments, and y_h
+falls because what is left after both is the poor.
+
+It also means delta and `bottom_productivity_level` BOTH act on `emp_homeless`
+(+109.9%, the binding moment): the productivity node owns it in the table, but
+delta removes employed households from the street directly. Watch for the two
+fighting.
+
+## 65+ STAYS AS IT IS
+
+`rr_homeless_hold_age` stays 65 on the author's instruction, *"just keep the 65+
+the way we have been doing it"*. No archive partition; the 669 points measured at
+65 keep pooling. At the best point `h_share5` is 0.0742 against 0.075, -1.1 per
+cent, inside the band -- the 65+ share is not what is blocking the search.
+
+The corner measurement behind that is in `directions_table.py`: at the calibrated
+`rr` homelessness above age 65 is already exactly zero, so raising it removes
+nothing (which is the whole of its inertness above 3.4), and dropping it to 1.0
+puts 42-64 per cent of ages 66-70 on the street. It saturates below 1.5 too, so
+the live region is 1.5 to 2.867.
+
 # Calibration state — 4 September, 22:20
 
 ## h_1 IS NEAR-DISCONTINUOUS, AND THAT IS WHY THE SEARCH IS HARD
