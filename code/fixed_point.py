@@ -128,6 +128,10 @@ def say(s):
 # at a 100 per cent gap, above the band they named. Putting the band in the
 # adjuster satisfies both: nothing is clipped at run time, and no parameter can
 # move more than ten per cent of its value in one iteration.
+# WARM-START SEEDS, for instruments whose archive value is exactly zero. See the
+# block in main() that applies them for why zero is a trap rather than a value.
+SEED = {'homeless_job_penalty_pp': 0.25}
+
 ADJUSTERS = {
     # THE AUTHOR'S MAXIMUM, 0.10. y_h is 119 per cent out and the parameter runs
     # 0 to 0.95 with a hard ceiling, so a 2 per cent default step from 0.2 would
@@ -418,6 +422,19 @@ def main():
         v = dict(A[tag][0])
         mom = A[tag][1]
         start = 1
+        # A PROPORTIONAL STEP CANNOT LEAVE ZERO. step = adjuster * gap * |x|, so a
+        # parameter warm-started at exactly 0 stays at 0 however large its gap,
+        # and it reads as a converged instrument rather than a pinned one. The
+        # warm start comes from the best ARCHIVE point, so restarting the loop
+        # puts it straight back to zero -- which is what happened to delta at
+        # 03:00 after it had been seeded in the state file.
+        # The author, 5 September: *"i think you should let my method continue to
+        # work, and set delta=0.25 for the warm start"*.
+        for _sp, _sv in SEED.items():
+            if _sp in R and abs(float(v.get(_sp, 0.0))) < 1e-12:
+                v[_sp] = _sv
+                say(f'   seeded {_sp} at {_sv:g}; a proportional step '
+                    f'cannot leave zero')
         say(f'warm start from {tag}: core SSR {NM.ssr(N, mom, ck):.4f}, '
             f'all-21 SSR {NM.ssr(N, mom, keys):.4f}')
 
