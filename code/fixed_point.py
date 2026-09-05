@@ -292,6 +292,9 @@ DEFAULT_ADJ = 0.02
 # It owned emp_homeless and never moved it -- the moment sat at +110 to +115 per
 # cent on every point of the night. Under the author's scheme M takes
 # emp_homeless instead, once M is shown to have grip in the new region.
+# PARAMETERS WHOSE UPPER BOUND IS ENFORCED. Everything else is floored only.
+CAPPED = {'relative_share_of_addiction_1'}
+
 FROZEN = {'multiple_of_probabilities_of_employment_if_addicted',
           'bottom_productivity_level'}
 # NOTHING IS FROZEN, 5 September. bottom_productivity_level is released on the
@@ -586,7 +589,17 @@ def main():
             # and 1e-08 on b. So the FLOOR is enforced -- it is the "cap at 0"
             # generalised to whatever the author set -- and the ceiling is not,
             # which is where the freedom was wanted.
+            # THE CEILING IS ENFORCED FOR CAPPED PARAMETERS ONLY. The author's
+            # standing rule is *"dont cap any of the parameters... just let them
+            # move freely"*, and the floor is the exception they named. theta is
+            # a second exception they named explicitly on 5 September -- *"i
+            # think theta should be capped at 0.2"*, *"and below at 0.08"* --
+            # because a theta that ran to 0.48 is what made drugs half the
+            # Cobb-Douglas weight and flooded the model with users.
             xn = max(x + step, lo)
+            if p in CAPPED and xn > hi:
+                say(f'   {p} held at its ceiling {hi:g}')
+                xn = hi
             if x + step < lo:
                 say(f'   {p} held at its floor {lo:g}')
             if xn > hi:
