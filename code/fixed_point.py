@@ -347,6 +347,19 @@ CAPPED = {'relative_share_of_addiction_1',
 # sits at 0.036 against 0.217.
 FROZEN = {'multiple_of_probabilities_of_employment_if_addicted',
           'bottom_productivity_level',
+          # lambda_addiction IS REMOVED AND FIXED AT ZERO, 5 September, on the
+          # author's instruction: *"remove lambda completely for now. Set it to 0
+          # and fix it."* It supersedes their release of it forty minutes earlier.
+          #
+          # AT ZERO THE HAZARD IS THE FLAT BASE. base+(1-exp(-0*v)) = base for
+          # every v, so onset no longer depends on how much a household uses and
+          # the curvature term is gone rather than merely small.
+          #
+          # sud_homeless HAS NO INSTRUMENT AT THIS SETTING. It sits at 0.036
+          # against 0.217 and lambda_addiction was the only parameter bracketing
+          # it, so that moment is now unreachable by construction and the search
+          # will not pretend otherwise.
+          'lambda_addiction',
           # rr_homeless_old_level IS INERT AT homeless_death_risk_flat_in_age=2,
           # which run_one_point.sh now defaults to on the author's instruction of
           # 5 September. Setting 2 takes the branch

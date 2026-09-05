@@ -71,7 +71,11 @@ declare -A P=(
     [financial_grid_expander_positive]=3.0
     [financial_grid_expander_negative]=2.0
     [value_of_life]=35.1001
-    [lambda_addiction]=5.0554
+    # ZERO, on the author's instruction of 5 September: *"remove lambda
+    # completely for now. Set it to 0 and fix it."* At zero the onset hazard
+    # base+(1-exp(-lambda*v)) collapses to the flat base at every quantity.
+    # The 5.0554 this replaces predates the two-part hazard.
+    [lambda_addiction]=0
     [relative_share_of_addiction_1]=0.530445
     [size_homelessness]=0.104242
     [discount_factor]=0.993881
