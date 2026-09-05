@@ -2266,7 +2266,7 @@
         ! code/paper/drug_spending_target.py is SUPERSEDED by
         ! data/make_drug_spending_target.py and its header still describes a 0.35
         ! target and a 5.13 per cent participation rate. Do not read it as current.
-        real(8), parameter :: drug_spending_share_data=0.1620
+        real(8), parameter :: drug_spending_share_data=0.14098
         real(8) :: drug_share_experimenters_1=0
         real(8) :: drug_share_addicted_1=0
         real(8) :: drug_share_weighted_1=0
