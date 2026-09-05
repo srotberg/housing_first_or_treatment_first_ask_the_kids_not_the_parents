@@ -610,7 +610,11 @@ OWN = {
     # elasticity on gamma is only 0.22 and it costs h_1 at -7.32, so it is a
     # weak and coupled instrument -- but it is the only one, and h_1 now has
     # both size_homelessness and the food stamp floor holding it.
-    'relative_share_of_housing':                           'gamma',
+    # gamma's OWNER MOVES FROM THE TASTE TO THE TOP RUNG, 5 September. See the
+    # BOUNDS block for the 226-point measurement that says the taste cannot move
+    # gamma more than 0.108 across its whole range.
+    # 'relative_share_of_housing':                          'gamma',
+    'rung_ratio_h4':                                       'gamma',
     # delta's MOMENT IS emp_homeless, 5 September, on the author's instruction.
     # It brackets it on the live model -- delta 0 -> 0.9965, delta 1 -> 0.0473,
     # target 0.46 strictly inside -- which y_h never was. See directions_table.
@@ -1013,7 +1017,35 @@ BOUNDS = {
     # a floor if it is needed, so the bracket is opened to it rather than to the
     # literature edge.
     'kappa_phi_d_level':                                   (4.0, 10.0),
-    'relative_share_of_housing':                           (0.02, 0.60),
+    # THE TASTE PARAMETER LOSES ITS BOUNDS, 5 September, which is how a parameter
+    # is held: instruments_all takes every owner in OWN whose parameter has
+    # bounds. It is pinned at 0.268, the data housing expenditure share, because
+    # Cobb-Douglas makes the weight and the share the same object.
+    #
+    # WHY IT COULD NOT BE CALIBRATED ANYWAY. Measured over 226 archived points on
+    # one model: sweeping it 0.02 -> 0.60, a thirtyfold move, carries gamma only
+    # 0.2239 -> 0.3323. That 0.108 span is gamma's ENTIRE reachable range and the
+    # least-squares slope is 0.167 against the 1.0 a continuous Cobb-Douglas
+    # would give, so correcting a 0.01 error in gamma took a 0.06 move in a
+    # parameter whose calibrated value was 0.11. It is not scatter: with the
+    # parameter held at exactly 0.11 across 171 points gamma's interquartile span
+    # is 0.0053, so gamma is a clean function of it and an almost flat one.
+    #
+    # The flatness is the discrete ladder. A household takes one of three rungs
+    # or the street, so the expenditure share moves only by reallocating mass
+    # BETWEEN rungs, and both ends are corners -- at 0.02 the share in the largest
+    # unit is already 0.52, at 0.60 it is 0.98 and there is nowhere left to go.
+    # 'relative_share_of_housing':                          (0.02, 0.60),
+    # THE LADDER IS THE INSTRUMENT NOW. rung_ratio_h4 sets the top rung, where 60
+    # per cent of renters live, so it dominates aggregate housing expenditure; the
+    # archive's cleanest pair on it, 2.5 -> 3.0, carries gamma 0.2046 -> 0.2291.
+    # The bounds keep rung_ratio_h3 strictly below rung_ratio_h4 so the ladder can
+    # neither invert nor collapse: at h3 = h4 = 2.0 the middle and top rungs
+    # COINCIDE, which is exactly what makes the archive's own h3 ray
+    # uninterpretable and is why h_3's owner is being bracketed rather than
+    # assigned from it.
+    'rung_ratio_h4':                                       (2.0, 4.0),
+    'rung_ratio_h3':                                       (1.1, 1.9),
     # Zero is no penalty at all; the ceiling is well past the 3.8 the steady
     # state formula asks for, so the bracket is not clipped before it gets there.
     # CEILING 0.95, NOT 20. The Fortran's handover clamps this at 0.95

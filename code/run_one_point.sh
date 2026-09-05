@@ -172,7 +172,18 @@ declare -A P=(
     # relative_share_of_housing owns gamma and is searched; the grid expander's
     # adjuster is declared zero, so it is pinned here at its declared value and
     # every point now states it explicitly.
-    [relative_share_of_housing]=0.1483356
+    # PINNED AT THE DATA EXPENDITURE SHARE, 5 September, on the author's
+    # instruction: *"maybe we need to set h2, h3, h4 such that at
+    # relativel_share_of_housing=0.268 the spending on houising is 26.8%?"*
+    #
+    # In Cobb-Douglas the housing expenditure share EQUALS this weight
+    # identically -- w_h/(w_h+w_c) = gamma_h for any prices -- so 0.268 is not a
+    # free dial, it is the same number as gamma's target. Calibrating it to hit
+    # gamma was calibrating a parameter to equal a moment it already equals in
+    # theory, and the only reason the two ever differed is that the discrete
+    # housing ladder forces expenditure the household would not choose. The
+    # LADDER is what gets calibrated now; this is data.
+    [relative_share_of_housing]=0.268
     [housing_status_grid_expander]=1.0
     # THE SUD MORTALITY LEVEL, ADDED 30 AUGUST. It was settable in the Fortran
     # and not handable, so every point so far solved at its declared 8.0 --
