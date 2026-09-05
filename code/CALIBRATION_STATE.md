@@ -1,3 +1,54 @@
+## 5 September, 19:25 -- THE TWO-RUNG LADDER CANNOT HIT BOTH HOUSING TARGETS
+
+MEASURED, one coordinate at a time, three points on model eebe63e443. The author's
+design of an hour earlier -- *"set h2 so that the share of spending over 50% of
+their income on housing is like in the data ... and choose h3 so that at the
+housing spending is 26.8%"* -- is infeasible, and the reason is a Jacobian, not
+a search failure.
+
+    base   h2 0.1242584, ratio 2.0   burden50 0.5955   gamma 0.3150
+    A      h2 0.060,     ratio 2.0   burden50 0.2185   gamma 0.1911
+    B      h2 0.1242584, ratio 1.4   burden50 0.3402   gamma 0.2529
+
+    d burden50 / d h2    =  5.868      d burden50 / d ratio =  0.426
+    d gamma    / d h2    =  1.928      d gamma    / d ratio =  0.103
+    determinant = -0.2138
+
+BOTH INSTRUMENTS PUSH BOTH MOMENTS THE SAME WAY. Expressed as the change in
+burden50 per unit change in gamma, h2 delivers +3.04 and the rung ratio +4.12.
+The target, taken from point A, needs -0.57: burden50 must FALL 0.0435 while
+gamma RISES 0.0769. Solving the 2x2 asks for h2 -> 0.2341 and a rung ratio of
+-0.5030, and the ratio must exceed 1 for two distinct rungs to exist.
+
+THE ECONOMICS, stated so this is not rediscovered. Both instruments work by
+changing how BIG the rungs are, and enlarging housing raises aggregate housing
+spending and cost burden together. They are one channel wearing two names. The
+shape of the ladder cannot separate "how much housing everyone buys" from "who is
+priced into paying half their income for it".
+
+THE FRONTIER THE MODEL ACTUALLY OFFERS, which is the useful output of this:
+
+    A   h2 0.060    gamma 0.191 (-28.7%)   burden50 0.218 (+24.8%)
+    B   ratio 1.4   gamma 0.253 ( -5.6%)   burden50 0.340 (+94%)
+
+One or the other, not both.
+
+WHAT WOULD SEPARATE THEM is an instrument that cuts rent for the POOR without
+cutting housing consumption overall. The housing voucher is exactly that: it caps
+rent at 30 per cent of income, which is the cost-burden margin itself, and barely
+touches the aggregate share. probability_of_voucher_benchmark_used currently owns
+pi_V and sits at target. The other candidate is the lower tail of the income
+distribution, kkk_sigma_scale, which owns sigma_y. Both are the author's call and
+neither has been changed.
+
+WHAT DID CLOSE, in the same round and worth keeping: beta reads 2.2335 against
+its new 2.25 target (-0.7 per cent) and w_bot 0.0228 against 0.025 (-8.8), both
+of them closed by pinning relative_share_of_housing at its data value of 0.268
+rather than by tuning.
+
+SOLVE TIME at two rentals, -O3, four cores: 174s with the binary cached, and 245s
+when a rebuild is included. Not the 1-1.5 minutes hoped for.
+
 ## 5 September, 14:40 -- PHASE TWO: theta AND lambda_addiction RELEASED
 
 The author: *"release lambda_addiction and let it move. Also, allow theta to
