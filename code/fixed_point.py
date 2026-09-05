@@ -269,7 +269,13 @@ DEFAULT_ADJ = 0.02
 # ONLY in M: sud_homeless is 0.000010 at M=1, 0.000003 at M=4 and 0.000002 at
 # M=32, while b collapses from 0.234 to 0.004 across the same range. M is a
 # strong deterrent on the choice to use and no handle at all on who is homeless.
-FROZEN = {'multiple_of_probabilities_of_employment_if_addicted'}
+# bottom_productivity_level IS EXOGENOUS from 5 September, on the author's
+# instruction: *"i think the bottom productivity should be set exogenously"*.
+# It owned emp_homeless and never moved it -- the moment sat at +110 to +115 per
+# cent on every point of the night. Under the author's scheme M takes
+# emp_homeless instead, once M is shown to have grip in the new region.
+FROZEN = {'multiple_of_probabilities_of_employment_if_addicted',
+          'bottom_productivity_level'}
 # NOTHING IS FROZEN, 5 September. bottom_productivity_level is released on the
 # author's confirmation that it owns emp_homeless: *"We are setting the lowest
 # productivity such that 46% of the homeless are employed"*.
