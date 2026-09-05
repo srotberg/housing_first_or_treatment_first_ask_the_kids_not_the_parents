@@ -1,3 +1,54 @@
+## 5 September, 19:40 -- WHY THE MODEL DIFFERS FROM THE ORIGINAL PAPER: delta
+
+The author: *"i keep thinking there is some mistake in the code"*, *"my original
+paper did not have these issues"*. They are right, and the difference is
+homeless_job_penalty_pp.
+
+    real(8) :: homeless_job_penalty_pp=0.d0        <- the declaration
+    homeless_job_penalty_pp=0.19945108             <- the live vector
+
+    housed   separation probability   0.004684   (0.47 per cent a year)
+    homeless separation probability   0.204135   (20.41 per cent a year)
+    MULTIPLIER                        43.6x
+
+A homeless worker loses their job forty-four times faster than a housed one.
+That is why emp_homeless reads 0.00005 against a target of 0.46: employed
+households are not CHOOSING to leave the street, they are being thrown off it by
+a separation hazard.
+
+HOW IT GOT THERE, because it was nobody's mistake in particular. Early today
+emp_homeless was 0.82 -- far too many of the homeless were working -- and delta
+was pointed at that moment on the author's ruling that it act on separation
+alone. The search drove it to 0.199 and it is marked capped. Separately, later,
+relative_share_of_housing was pinned at its data value of 0.268, which pushes
+working households off the street by a different route: taking the street costs
+22.4 per cent of consumption at the honest taste against 7.1 at the old one.
+
+TWO INSTRUMENTS WERE AIMED AT ONE MOMENT AT DIFFERENT TIMES AND BOTH ARE NOW
+FIRING. The housing taste alone moved emp_homeless 0.818 -> 0.038 on a
+one-coordinate pair, so it can carry the moment by itself. delta is redundant and
+overshooting.
+
+RECOMMENDED, NOT DONE, because delta's role is the author's ruling: put
+homeless_job_penalty_pp back to 0, the declaration's own value and the original
+paper's, and let the housing taste carry emp_homeless.
+
+TWO MORE IN THE SAME CATEGORY, worth checking against the original paper:
+lambda_addiction is FROZEN at 0, which is also its declaration default, and that
+is why sud_homeless (0.105 against 0.217) has no instrument at all.
+rr_homeless_old_level is inert because homeless_death_risk_flat_in_age=2 takes a
+branch that never reads rr_homeless_profile, so h_share5 has no instrument
+either.
+
+THE STREET CANNOT CARRY THE HOMELESSNESS RATE AT AN HONEST HOUSING TASTE, and
+this is measured rather than argued. The street is 0.5757 of the cheapest rental
+and h_1 reads 0.000179 against 0.00399, twenty-two times too low. At the old
+taste the same street cost 7.1 per cent of consumption and gave h_1 = 0.00469,
+near target. To be equally attractive at the new taste the street would have to
+be 0.829 of the cheapest rental -- which is not a street. The homelessness rate
+has to come from the income process or the safety net, not from the size of the
+street.
+
 ## 5 September, 19:36 -- THE INFEASIBILITY BELOW IS SUPERSEDED. THE AUTHOR FIXED IT.
 
 The entry immediately below records the two-rung design as infeasible on a
