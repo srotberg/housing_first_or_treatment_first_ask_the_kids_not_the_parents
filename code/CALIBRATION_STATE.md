@@ -1,3 +1,55 @@
+## 5 September, 14:40 -- PHASE TWO: theta AND lambda_addiction RELEASED
+
+The author: *"release lambda_addiction and let it move. Also, allow theta to
+move up to 0.25. Set the death rate from homelessness to 1.6 across all ages."*
+
+THE DEATH RATE WAS ALREADY 1.6 AT EVERY AGE. `homeless_death_risk_flat_in_age=2`
+has been run_one_point.sh's default since 06:20 and takes the branch
+`kappa_phi_h_by_age(j) = 1 + increased_risk_of_death_homeless` with the constant
+fixed at 0.6 in the Fortran, so the multiplier is 1.6 flat. No change was needed
+and none was made.
+
+RELEASED. `relative_share_of_addiction_1` and `lambda_addiction` are out of
+FROZEN. theta's ceiling goes 0.20 -> 0.25 in BOUNDS; it is in CAPPED so that
+ceiling is ENFORCED. The 0.08 floor is unchanged.
+
+lambda_addiction WAS SEEDED AT 0.2763 AND HERE IS WHY. It sat at 0.0001, and the
+step is PROPORTIONAL -- `f * adjuster * min(1,|rel|) * |x|` -- so at a 1 per cent
+adjuster it moves 1e-6 an iteration. Reaching a value where the hazard actually
+curves would have taken of order a thousand solves, which is the proportional
+step trap this file has hit before. Releasing it at 0.0001 would have satisfied
+the instruction and defeated it.
+
+THE SEED IS MEASURED, NOT GUESSED. From point f07433cffe:
+
+    DIAG mean drug quantity, users        = 0.067437
+    DIAG onset at the mean quantity       = 0.0184656
+    addiction_onset_base                  = 0.0184589
+
+so the exponential term contributes 6.7e-06 -- the hazard is the flat base and
+nothing else, which is exactly why b and lambda_d moved in lockstep for eighty
+iterations. Setting `1-exp(-lambda*v_bar) = base` gives lambda = 0.2763, which
+puts the curvature on the same scale as the base and gives the walk gradient in
+both directions:
+
+    lambda      light user v=0.035    heavy user v=0.20
+    0.0001      0.00000               0.00002
+    0.2763      0.00962               0.05376
+    1.0         0.03439               0.18127
+
+Applied through `code/fixed_point_override.json`, one-shot. If the author wants
+a different starting point it is one number in that file.
+
+theta MOVES SLOWLY AND THE CEILING IS NOT THE BINDING THING. Its adjuster is
+0.002 and its gap is 35 per cent, so the step is about 0.07 per cent an
+iteration: 0.16 -> 0.25 is roughly six hundred solves. The author asked for slow
+adjusters on 5 September and that is what this is; the raised ceiling removes a
+bound that was not yet binding rather than speeding anything up.
+
+WHAT THIS IS FOR. sud_homeless is 0.036 against 0.217 and lambda_addiction is
+its only bracket. theta is 0.105 against 0.162. Both were unreachable while the
+two were frozen.
+
 ## 5 September, 06:20 -- THE DEATH RATE IS WORTH 3.6x ON h_1, NOT 30x, AND THE REST IS THE EARNINGS PROCESS
 
 The author: *"then something is very odd about the street....why does it not
