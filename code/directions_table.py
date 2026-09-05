@@ -57,7 +57,27 @@ RULES = {
     # The author: *"lower if higher than data"*. relative_share_of_housing is the
     # weight on housing in utility, so parameter and moment move together.
     # Measured 8-point ray agrees: slope +0.1819.
-    'gamma': ('relative_share_of_housing', 'lower', 'agrees'),
+    # gamma's INSTRUMENT MOVES FROM THE TASTE TO THE TOP RUNG, 5 September, on the
+    # author's instruction: *"maybe we need to set h2, h3, h4 such that at
+    # relativel_share_of_housing=0.268 the spending on houising is 26.8%?"*
+    #
+    # In Cobb-Douglas the housing expenditure share EQUALS the weight identically,
+    # so relative_share_of_housing = 0.268 IS gamma's target and is now pinned as
+    # data rather than searched. What made the two differ is the discrete ladder,
+    # and the ladder is what gets calibrated.
+    #
+    # THE TASTE COULD NOT DO IT ANYWAY, measured over 226 archived points: sweeping
+    # it 0.02 -> 0.60 carries gamma only 0.2239 -> 0.3323, a slope of 0.167 where a
+    # continuous Cobb-Douglas gives 1.0. Both ends are corners of a three-rung
+    # ladder -- the share in the largest unit is already 0.52 at 0.02 and 0.98 at
+    # 0.60 -- so the moment saturates and the parameter is barely identified.
+    #
+    # DIRECTION. rung_ratio_h4 sets the top rung, where 60 per cent of renters
+    # live, so it dominates aggregate housing expenditure: a bigger top rung means
+    # more spent on housing and gamma rises. Parameter and moment move TOGETHER,
+    # which is 'lower'. The archive's cleanest pair agrees, 2.5 -> 3.0 carrying
+    # gamma 0.2046 -> 0.2291, and a one-coordinate bracket is being run to size it.
+    'gamma': ('rung_ratio_h4', 'lower', 'archive pair agrees; bracket pending'),
     # omega_l, labour supply over total hours, target 0.40.
     # The author: *"raise if higher than data"*. relative_share_of_leisure is the
     # weight on leisure, so more of it means less work -- parameter and moment move
