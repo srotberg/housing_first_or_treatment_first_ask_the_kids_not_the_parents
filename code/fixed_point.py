@@ -290,6 +290,33 @@ DEFAULT_ADJ = 0.02
 # cent on every point of the night. Under the author's scheme M takes
 # emp_homeless instead, once M is shown to have grip in the new region.
 # PARAMETERS WHOSE UPPER BOUND IS ENFORCED. Everything else is floored only.
+# WHERE THE FORTRAN ITSELF CLAMPS, MIRRORED HERE. This is not a cap in the
+# author's sense -- their standing rule is *"dont cap any of the parameters...
+# just let them move freely"* and that still holds. It is the model's own hard
+# bound copied out of the handover so the walk stops spending three-minute
+# solves on coordinate values the Fortran has already thrown away.
+#
+# homeless_job_penalty_pp: `max(min(handover_value,1.d0),0.d0)` at line 36867,
+# and the comment beside it says the useful range ends EARLIER still, at
+# probability_becoming_employed, because
+#
+#     find_mult_homeless_1 = max(0, (p_find - delta)/p_find)
+#
+# floors the finding rate at exactly zero from there on and delta only raises
+# separations after that.
+#
+# WHY THIS WAS ADDED, 5 September. Chasing y_h (0.442 against 0.191 observed)
+# the walk took it 0.332 -> 1.146 in sixteen iterations, past its own BOUNDS
+# ceiling of 0.60, logging "above its old ceiling" eight times without effect
+# because the ceiling is advisory outside CAPPED. y_h moved 0.4417 -> 0.4461,
+# the WRONG WAY, and emp_homeless FELL 0.0598 -> 0.0437 -- the instrument
+# destroying the moment it is needed for. Everything above 1.0 was inert.
+#
+# THIS DOES NOT CONCEDE ANYTHING. y_h and emp_homeless are both still scored
+# and both still open; which of them gives way is the author's call and is not
+# taken here.
+HARD_CLAMP = {'homeless_job_penalty_pp': 1.0}
+
 CAPPED = {'relative_share_of_addiction_1',
           # THE STREET IS CAPPED AT A TENTH OF THE CHEAPEST RENTAL, the author,
           # 5 September: *"h1 can rise to 0.1 times h2"*. size_homelessness is
@@ -623,6 +650,9 @@ def main():
             # because a theta that ran to 0.48 is what made drugs half the
             # Cobb-Douglas weight and flooded the model with users.
             xn = max(x + step, lo)
+            if p in HARD_CLAMP and xn > HARD_CLAMP[p]:
+                say(f'   {p} held at the Fortran\'s own clamp {HARD_CLAMP[p]:g}')
+                xn = HARD_CLAMP[p]
             if p in CAPPED and xn > hi:
                 say(f'   {p} held at its ceiling {hi:g}')
                 xn = hi
