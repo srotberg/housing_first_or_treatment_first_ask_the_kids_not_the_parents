@@ -451,8 +451,16 @@ RULES = {
   # This reverses the first wiring, which had 'lower' on the opposite mechanism
   # -- that a higher lambda selects the disordered from heavier and therefore
   # poorer users. The author's is the ruling.
+  # AND IT WORKS THROUGH GENERAL EQUILIBRIUM, the author, 5 September: *"lambda
+  # works through GE here"*. Lambda does not move sud_homeless directly. It moves
+  # quantity per user, which moves who finds using worthwhile, which moves the
+  # wealth distribution of users, which moves who ends up on the street. A fixed
+  # direction can therefore be right locally and wrong further along that chain,
+  # which is what the sign-flip damping is for; and a measured elasticity from
+  # archive pairs is a valid reading of a full GE solve but will not be constant
+  # across the space.
     'sud_homeless': ('lambda_addiction', 'raise',
-                     "the author's ruling; higher lambda cuts quantity and pulls users up the wealth distribution"),
+                     "the author's ruling; works through GE, so the sign is local"),
     # emp_homeless, the employed share of the homeless, target 0.46.
     # The author: *"raise it if higher than data"*, so parameter and moment move in
     # OPPOSITE directions: raising the bottom productivity level lifts the poorest
