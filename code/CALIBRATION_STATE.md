@@ -1,3 +1,43 @@
+## 5 September, 22:22 -- CORRECTION TO THE 22:15 ENTRY BELOW. THE 0.02 BAR WAS WRONG.
+
+The 22:15 entry said four of 31 ladder points were "valid economies" and
+withdrew two claims on that basis. The bar it used was arbitrary and the entry
+is wrong. MEASURED ACROSS 603 ARCHIVED WORKER LOGS:
+
+    distance_average_labor_income   min 0.00061   p10 0.058
+                                    median 0.094  p90 0.189   max 0.637
+    under the model's own 1e-4 tolerance:   0 of 603  (0.0%)
+    under 0.02:                             5 of 603  (0.8%)
+
+A gap near 0.09 is the NORMAL operating condition of every point ever run here.
+A single-pass point run does not drive that distance to zero and never has. If
+0.02 disqualified today's ladder points it would disqualify the entire
+1,906-point archive equally, so it cannot be what makes today's results special.
+
+WHAT IS ACTUALLY SPECIAL, and this part of the 22:15 entry stands: the far-h3
+sweep carries gaps of 0.38 to 0.64, four to seven times the historical median
+and beyond the p90 of 0.19. Those points are outside anything this method has
+run, and the h3 = 25 accounts are visibly nonsense -- total income 0.131 against
+aggregate consumption 913.9 and a rent bill of 1286. So:
+
+- WITHDRAWN AND STILL WITHDRAWN: that the sweep to h3 = 25 refutes the author's
+  feasibility argument. It does not. That argument REMAINS UNTESTED.
+- RESTORED: rsl = 1.00 lands omega_l on 0.3989. Its gap is 0.093, which is the
+  historical median exactly, so it is as sound as anything in the archive. The
+  22:15 entry withdrew it for no good reason.
+- RESTORED: the normal-ladder points, gaps 0.03 to 0.14, are in the same
+  condition as the whole archive and are as trustworthy as the rest of it.
+
+THE FINDING THAT DOES NOT DEPEND ON ANY OF THIS. In every ladder point measured
+today, at every gap, the smallest rental holds 4.1 to 8.7 per cent of renters
+against the 37.3 per cent the h_3 target implies, and ZERO per cent of its
+occupants are cost burdened while 80 to 96 per cent of the largest unit's are.
+At h2 = 0.30, not being burdened means income above 0.60, which on the
+productivity grid is the top 63.8 per cent of earners: the cheap unit houses the
+comfortable and the expensive unit houses the strained. That is inverted from
+the data and it is why burden50 reads zero. It holds across a 3.1x range of
+ladder level, both voucher settings, and leisure weights from 0.05 to 1.31.
+
 ## 5 September, 22:15 -- MOST OF TODAY'S LADDER POINTS ARE NOT VALID ECONOMIES
 
 `distance_average_labor_income` is the gap between the average labour income the
