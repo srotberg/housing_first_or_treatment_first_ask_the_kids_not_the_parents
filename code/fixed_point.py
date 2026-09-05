@@ -245,7 +245,14 @@ DEFAULT_ADJ = 0.02
 #
 # This only became actionable once lambda_d's sign was corrected. While b moved
 # the wrong way the pair could not have worked.
-FROZEN = set()
+# M IS FIXED AT 4, on the author's instruction 5 September: *"first fix M=4 so
+# that we are aligned with the data"*. Freezing it here removes it from the rule
+# map, so sud_homeless has NO instrument -- which is the honest state, because M
+# does not move it in either direction. Measured over 69 archive pairs differing
+# ONLY in M: sud_homeless is 0.000010 at M=1, 0.000003 at M=4 and 0.000002 at
+# M=32, while b collapses from 0.234 to 0.004 across the same range. M is a
+# strong deterrent on the choice to use and no handle at all on who is homeless.
+FROZEN = {'multiple_of_probabilities_of_employment_if_addicted'}
 # NOTHING IS FROZEN, 5 September. bottom_productivity_level is released on the
 # author's confirmation that it owns emp_homeless: *"We are setting the lowest
 # productivity such that 46% of the homeless are employed"*.
