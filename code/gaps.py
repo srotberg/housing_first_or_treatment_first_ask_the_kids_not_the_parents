@@ -211,7 +211,7 @@ OWN = [
     # addiction_scalar_1 scales; lambda_d is the disorder rate and its hazard is
     # pi_d(v) = 1 - exp(-lambda v), which lambda_addiction sets. The walk reads
     # directions_table, so nothing was mis-calibrated -- only mis-labelled.
-    ('addiction_scalar_1', 'b'), ('lambda_addiction', 'lambda_d'),
+    ('addiction_scalar_1', 'b'), ('addiction_onset_base', 'lambda_d'),
     ('relative_share_of_leisure', 'omega_l'),
     ('labor_income_tax_rate', 'tau_l'),
     # SIGMA_Y'S INSTRUMENT DEPENDS ON THE PROCESS, and exactly one is live.

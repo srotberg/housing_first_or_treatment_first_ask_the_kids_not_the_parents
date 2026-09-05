@@ -293,6 +293,7 @@ OWN = {
     # so the switch is entirely in this mapping and in run_one_point's defaults.
     'utility_cost_of_treatment':                           'tau_u',
     'probability_becoming_unemployed':                     'pi_eu',
+    'addiction_onset_base':                                 'lambda_d',
     'relative_share_of_addiction_1':                       'theta',
     'mu_homeless':                                         'mu_H',
     # lambda_m THE PARAMETER IS HELD, so that lambda_m the moment has ONE driver.
@@ -785,6 +786,7 @@ OWN = {
     # "(no instrument)" in the table.
 }
 BOUNDS = {
+    'addiction_onset_base':                                 (0.0, 0.95),
     # THE DRUG INSTRUMENTS NEED ORDINARY BOUNDS NOW THAT THEY ARE ORDINARY
     # OWNERS. They had FREE_BOUNDS only, which the 2x2 and the Jacobian repair
     # use; making them owners in OWN sent them down the arm path, which reads

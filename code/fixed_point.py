@@ -169,6 +169,10 @@ ADJUSTERS = {
     # 22 instruments, so it returns its 0.010 lower bound for nearly everything --
     # which would make the whole search slower, not faster. Re-run it only after
     # the archive carries bracketing rays again.
+    # THE BASELINE ONSET owns lambda_d. NSDUH puts it at 0.134, the SUD rate in
+    # the lightest use category for hard drugs pooled, so it has a data anchor as
+    # well as a moment.
+    'addiction_onset_base': 0.0500,
     'bottom_productivity_level': 0.1000,
     'discount_factor': 0.0680,
     'kappa_uem': 0.1000,

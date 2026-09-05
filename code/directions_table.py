@@ -107,7 +107,20 @@ RULES = {
     # lambda_d IS THE HAZARD'S MOMENT. pi_d(v) = 1 - exp(-lambda v), so a bigger
     # lambda_addiction means a higher chance of developing the disorder at any
     # quantity: parameter and moment move TOGETHER. Above target, lower it.
-    'lambda_d': ('lambda_addiction', 'lower', 'hazard: pi_d(v) = 1 - exp(-lambda v)'),
+  # lambda_d NOW BELONGS TO addiction_onset_base, not lambda_addiction. The
+  # hazard is base + (1-exp(-lambda v)): the base sets the LEVEL of onset and
+  # lambda sets how fast it RISES with quantity, so the level moment belongs to
+  # the level parameter. Parameter and moment move together, so 'lower'.
+  #
+  # lambda_addiction is left without a moment on purpose. Its identifying moment
+  # is the SUD rate BY USE INTENSITY -- NSDUH 2024 gives 0.134, 0.428, 0.577,
+  # 0.717, 0.819 across the five frequency categories for hard drugs pooled --
+  # and the model does not yet report a gradient to compare against. Until it
+  # does, lambda has no scored moment and must not be handed one that is already
+  # implied: the share of the SUD who are homeless is
+  # P(SUD|homeless)*P(homeless)/P(SUD), an identity in three targets the
+  # calibration already hits.
+    'lambda_d': ('addiction_onset_base', 'lower', 'the level of onset, base + (1-exp(-lambda v))'),
     # b, total drug users as a share of the population, target 0.089.
     # The author: *"raise if higher than data"* -- so parameter and moment move in
     # OPPOSITE directions, which the name does not suggest.

@@ -379,6 +379,9 @@ declare -A P=(
     # instrument acted only on ages that were already empty and was inert at any
     # multiplier: three points at delta=0.30 with rr = 2.867, 4.0 and 8.0 are
     # bit-identical at every age to six decimals. 64 makes the hold cover 65+.
+    # THE BASELINE ONSET, base + (1-exp(-lambda v)), zero by default so a run
+    # that does not set it is bit-identical to the pure smooth hazard.
+    [addiction_onset_base]=0
     [rr_homeless_hold_age]=64
     # THE LAST AGE AT WHICH THE STREET MAY BE CHOSEN, index not data age; 59 is
     # data age 84. Settable since 4 September so a different cap costs a vector
