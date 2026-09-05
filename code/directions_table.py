@@ -401,7 +401,7 @@ RULES = {
     # over every point on it and its minimum is at delta = 0.
     # SUPERSEDED, kept as a comment rather than a dead dict key:
     # '_y_h_superseded': ('homeless_job_penalty_pp', 'raise',
-            "the author's ruling, restored; see the measured-ray block above"),
+    #         "the author's ruling, restored; see the measured-ray block above"),
     # pi_V, the share of eligible households receiving a housing voucher in the
     # benchmark, target 0.266. The author: *"lower if higher than data"*. Direct:
     # more voucher probability, more take-up. Measured 7-point ray agrees at slope
