@@ -457,7 +457,10 @@ OWN = {
     # average income should come out in the validation section."* Income of the
     # homeless stays UNTARGETED and unscored, which is the stronger claim -- if
     # the model lands near it without being asked to, that is evidence.
-    'bottom_productivity_level':                            'emp_homeless',
+    # bottom_productivity_level IS EXOGENOUS, 5 September, on the author's
+    # instruction: *"maybe we need to set the bottom productivity exogenously"*.
+    # Its ray on emp_homeless reverses at a near-flat -0.0146. Left out of the
+    # map so nothing scores it and so emp_homeless has ONE instrument.
     # AND THE TOP RUNG HAD NO INSTRUMENT EITHER. largest_house_size owns the
     # share in the largest unit -- h_4 until the author's rename, h_3 now -- and
     # like the bottom rung it sat in the vector with nothing mapped to it. It is
@@ -599,7 +602,10 @@ OWN = {
     # weak and coupled instrument -- but it is the only one, and h_1 now has
     # both size_homelessness and the food stamp floor holding it.
     'relative_share_of_housing':                           'gamma',
-    'homeless_job_penalty_pp':                             'y_h',
+    # delta's MOMENT IS emp_homeless, 5 September, on the author's instruction.
+    # It brackets it on the live model -- delta 0 -> 0.9965, delta 1 -> 0.0473,
+    # target 0.46 strictly inside -- which y_h never was. See directions_table.
+    'homeless_job_penalty_pp':                             'emp_homeless',
     # OPENED ON THE AUTHOR'S INSTRUCTION, both previously compile-time constants.
     #
     # increased_prob_if_homeless IS EXOGENOUS AGAIN, at 0.2 -- twenty per cent
@@ -997,7 +1003,12 @@ BOUNDS = {
     # sure to clamp delta at 0.01 from below"*. Zero is not a value the walk can
     # leave -- step = adjuster * gap * |x| -- so a delta that reaches it is
     # pinned there for good, whatever its gap does afterwards.
-    'homeless_job_penalty_pp':                             (0.01, 0.60),
+    # CEILING 0.60 -> 0.55, WHICH IS probability_becoming_employed. Above it
+    # find_mult = max(0,(p_find-delta)/p_find) is EXACTLY ZERO and delta only
+    # raises separations, so everything above 0.55 is dead ground -- and it is
+    # where the walk ran to when delta was pointed at y_h. Floor lowered so the
+    # parameter can approach zero, where emp_homeless is 0.9965.
+    'homeless_job_penalty_pp':                             (0.001, 0.55),
     # One is no penalty; the floor is 0.05 rather than zero because zero
     # earnings for every addict is a corner and not a calibration.
 }

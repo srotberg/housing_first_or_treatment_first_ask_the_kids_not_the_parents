@@ -208,7 +208,7 @@ OWN = [
     # The bottom productivity node owns emp_homeless from 3 September; the rung
     # went back to the cost burden. Income of the homeless stays untargeted and
     # belongs to validation, on the author's instruction.
-    ('bottom_productivity_level', 'emp_homeless'),
+    ('homeless_job_penalty_pp', 'emp_homeless'),
     # b AND lambda_d WERE SWAPPED HERE against directions_table's rulings, so
     # every table printed since attributed each to the other's instrument.
     # b is the total drug users and its threshold is C > (phi/theta) p b, which
