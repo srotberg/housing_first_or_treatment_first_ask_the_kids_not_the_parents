@@ -171,22 +171,7 @@ ADJUSTERS = {
     # iteration while the gap is 100 per cent, scaling down with min(1,|rel|)
     # as the gap closes.
     'multiple_of_probabilities_of_employment_if_addicted': 0.50,
-    # RAISED 5 September, from the author's repeated instruction to stop
-    # parameters crawling. These four are more than ten per cent out and were on
-    # 0.01 to 0.0225, so they moved 0.1 to 0.3 per cent of their value per
-    # iteration -- hundreds of solves to close a ten per cent gap. 0.05 is inside
-    # the band the author set themselves, *"you can adjust up to 5% when you are
-    # 100% off"*, and well under the 0.10 cap.
-    #
-    # size_adjusters.py CANNOT re-derive these and its output must not be applied.
-    # It needs a ray that BRACKETS the target and the archive has none for 19 of
-    # 22 instruments, so it returns its 0.010 lower bound for nearly everything --
-    # which would make the whole search slower, not faster. Re-run it only after
-    # the archive carries bracketing rays again.
-    # THE BASELINE ONSET owns lambda_d. NSDUH puts it at 0.134, the SUD rate in
-    # the lightest use category for hard drugs pooled, so it has a data anchor as
-    # well as a moment.
-    'addiction_onset_base': 0.0500,
+    'addiction_onset_base': 0.0100,
     'bottom_productivity_level': 0.1000,
     'discount_factor': 0.0680,
     'kappa_uem': 0.1000,
@@ -196,7 +181,7 @@ ADJUSTERS = {
     'mu_homeless': 0.0370,
     'probability_becoming_unemployed': 0.0710,
     'probability_of_voucher_benchmark_used': 0.0428,
-    'relative_share_of_addiction_1': 0.0500,
+    'relative_share_of_addiction_1': 0.0020,
     'relative_share_of_housing': 0.1000,
     'relative_share_of_leisure': 0.0748,
     'rr_homeless_old_level': 0.1000,
@@ -234,12 +219,24 @@ ADJUSTERS = {
     #
     # 0.002 gives about a 4 per cent move in the drug share per iteration at a
     # 100 per cent gap, which is a step the moment can actually be steered with.
-    # 0.005, not 0.002: at an elasticity of -21 that is about a 10 per cent move
-    # in the drug share per iteration, roughly 22 iterations to cross the window,
-    # where 0.002 needed 55. Twice wrong earlier tonight -- 0.05 moved the share
-    # 100 per cent a step, 0.002 crawled -- so this is sized to the job.
-    'addiction_scalar_1': 0.0050,
-    'lambda_addiction': 0.0500,
+    # THE DRUG BLOCK MOVES SLOWLY, on the author's instruction 5 September:
+    # *"the adjusters should be moving these parameters very slowly"*. Each is
+    # sized from its MEASURED elasticity so that it moves its own moment a few
+    # per cent an iteration, not across the range.
+    #
+    #   parameter                       measured elasticity        adjuster
+    #   addiction_scalar_1              -8.74 on b                 0.002 -> 1.7%
+    #   relative_share_of_addiction_1  +13.17 on b                 0.002 -> 2.6%
+    #   addiction_onset_base            about 1 on lambda_d        0.010 -> 1%
+    #   lambda_addiction                acts through GE, unmeasured 0.010
+    #
+    # The history is why this is written down: addiction_scalar_1 went 0.02 ->
+    # 0.05 in a batch of "crawling instruments", which at -21 (the elasticity
+    # measured then, on b alone) moved the drug share 100 per cent a step; then
+    # to 0.002, which crawled; then 0.005. Sizing by elasticity rather than by
+    # how far a parameter has to travel is what settles it.
+    'addiction_scalar_1': 0.0020,
+    'lambda_addiction': 0.0100,
 }
 DEFAULT_ADJ = 0.02
 
