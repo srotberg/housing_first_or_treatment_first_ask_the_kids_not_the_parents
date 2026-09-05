@@ -237,6 +237,35 @@ RULES = {
   # what the sign-flip damping is for. ZERO IS NOT A VALUE, it is the switch into
   # the hold-at-65 branch; the bound floor of 1.0 in next_batch keeps the solver
   # away from it.
+  #
+  # WHY 2.867 -> 4.0 -> 8.0 WAS BIT-IDENTICAL, measured 5 September from base
+  # point 43932f4d10 (delta=0, size_homelessness=0.45), two extra solves at
+  # rr=1.0 (point_5fa805933c) and rr=1.5 (point_c718a182fa):
+  #
+  #     rr      age 65      66        67        68        70      b5 65+
+  #     2.867   0.008454  0.000000  0.000000  0.000000  0.000000  0.0299
+  #     1.0     0.000071  0.421641  0.494990  0.552101  0.638281  0.9740
+  #     1.5     0.000071  0.421642  0.494979  0.552101  0.638281  0.9740
+  #
+  # THE PARAMETER IS AT A CORNER, not disconnected. At the calibrated value it
+  # has ALREADY driven homelessness at 66+ to exactly zero, so raising it
+  # further has nothing left to remove -- which is the whole of the inertness
+  # above 3.4. Drop it and 66-70 goes from 0 to 42-64 per cent and the 65+
+  # share goes 0.0299 -> 0.9740. The author's reading is confirmed: the death
+  # penalty is what keeps the model's retirees off the street, NOT their
+  # Social Security income. It also SATURATES at the low end -- 1.0 and 1.5
+  # agree to six figures -- so the live region is between 1.5 and 2.867.
+  #
+  # AND THE ONE AGE IT CANNOT REACH IS THE ONE THAT MATTERS. Band 5 is
+  # age_index 40-60, data ages 65-85 (see val_band_1 in the Fortran, ~17619).
+  # rr_homeless_hold_age=65 replaces the profile ABOVE data age 65, i.e. 66+.
+  # Every old homeless household in the model sits at exactly age 65 -- the
+  # LAST WORKING YEAR, since retirement starts at life_span-retirement_span+1
+  # = age_index 41 = data age 66 -- so the instrument acts on 66-85 while its
+  # target population is entirely at 65. Setting rr_homeless_hold_age=64 makes
+  # it bite: b5 0.0299 -> 0.0002 at the same rr, y_h 0.2614 -> 0.2458, h_1
+  # barely moves. That is a config switch and it partitions the archive, so it
+  # is the author's call.
   'h_share5': ('rr_homeless_old_level', 'raise', 'live window 2.4-3.0, inert above 3.4'),
   #
   # THE INCOME OF THE HOMELESS, from 4 September, on the author's instruction:
