@@ -803,7 +803,7 @@ BOUNDS = {
     # the old floor 0.01 would have been silently clamped to 0.05, which is
     # exactly what had just happened to relative_share_of_addiction_1. It stays
     # strictly positive because a proportional step cannot leave zero.
-    'lambda_addiction':                                 (0.001, 20000.0),
+    'lambda_addiction':                                 (0.000001, 20000.0),
     # LOWER BOUND SET BY THE AUTHOR, 4 September: 1e-08.
     # b in the participation threshold C > (phi/theta) p b; a low b brings the bar down to where poor households clear it, which is what could put substance use disorder into homelessness
     'addiction_scalar_1':                               (1e-08, 1.0),
