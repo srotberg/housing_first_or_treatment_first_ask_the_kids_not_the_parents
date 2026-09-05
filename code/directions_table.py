@@ -394,7 +394,12 @@ RULES = {
   # right while the ruling stands is in that block: delta cannot lower y_h while
   # rr_homeless_hold_age=65 leaves the age-65 homeless beyond the death penalty's
   # reach, so the ray measures a mechanism with one half disabled.
-    'y_h': ('homeless_job_penalty_pp', 'raise',
+    # y_h HAS NO INSTRUMENT, 5 September. homeless_job_penalty_pp has been moved
+    # to emp_homeless, which it demonstrably brackets, and y_h is left unscored by
+    # any parameter rather than given one that does not move it. The measured ray
+    # in the block above already said delta cannot lower y_h: y_h RISES with delta
+    # over every point on it and its minimum is at delta = 0.
+    '_y_h_superseded': ('homeless_job_penalty_pp', 'raise',
             "the author's ruling, restored; see the measured-ray block above"),
     # pi_V, the share of eligible households receiving a housing voucher in the
     # benchmark, target 0.266. The author: *"lower if higher than data"*. Direct:
@@ -477,7 +482,38 @@ RULES = {
     # job. With sud_homeless at 6.1e-07 this says the same thing twice: the model's
     # homeless are employed people without a disorder, close to the opposite of the
     # data, and no adjuster on these two instruments will fix that.
-    'emp_homeless': ('bottom_productivity_level', 'raise',
+    # emp_homeless's INSTRUMENT IS delta, 5 September, on the author's reading:
+    # *"maybe we need to set the bottom productivity exogenously, and set delta to
+    # match the emp_homeless?"*, *"before when delta was high, emp_homeless was
+    # very low"*, *"now it is very high"*.
+    #
+    # MEASURED ON THE LIVE MODEL, ONE COORDINATE APART, and it brackets the target:
+    #
+    #     point         delta   emp_homeless   h_1        y_h
+    #     cd3ee03441    1       0.0473         0.000848   0.4475
+    #     43bbce4f05    0       0.9965         0.2390     0.7188
+    #     target                0.4600         0.00399    0.1910
+    #
+    # 0.46 is strictly inside [0.0473, 0.9965], which no other labour-market
+    # parameter has managed. bottom_productivity_level was ruled onto this moment
+    # and MEASURED not to move it -- the 7-point ray reverses at a near-flat
+    # -0.0146 and on an earlier day it moved emp_homeless by two parts in a
+    # million -- so it goes exogenous, which is the other half of the author's
+    # instruction.
+    #
+    # DIRECTION 'raise': emp_homeless above the data means too many of the
+    # homeless are working, so raise the job penalty. Parameter and moment move in
+    # OPPOSITE directions, as the bracket shows.
+    #
+    # THE LIVE RANGE IS [0, 0.55], NOT [0, 1]. find_mult = max(0,(p_find-delta)/
+    # p_find) with probability_becoming_employed = 0.55, so job finding is EXACTLY
+    # ZERO at and above 0.55 and delta only raises separations after that. That
+    # dead ground above 0.55 is where the walk ran to when this parameter was
+    # pointed at y_h.
+    'emp_homeless': ('homeless_job_penalty_pp', 'raise',
+                     'measured bracket: delta 0 -> 0.9965, delta 1 -> 0.0473, '
+                     'target 0.46 strictly inside; live range [0, 0.55]'),
+    '_emp_homeless_superseded': ('bottom_productivity_level', 'raise',
                      'ray reverses and is near-flat; parameter sits ON its lower bound'),
     # lambda_m, the SMI share of the homeless, target 0.250.
     # The author: *"lower it if it is higher than the data... it would then have
