@@ -331,10 +331,22 @@ CAPPED = {'relative_share_of_addiction_1',
 # until at least b and the base have converged"*. Moving four drug parameters at
 # once produced a point where theta hit its ceiling, the drug population emptied
 # and every drug moment read zero or the -1 sentinel. Two at a time instead.
+# theta AND lambda_addiction ARE RELEASED, 5 September, on the author's
+# instruction: *"release lambda_addiction and let it move. Also, allow theta to
+# move up to 0.25."* This is the phase two they sequenced on 5 September --
+# *"first get b right, then adjust theta and lambda_d"* -- and b has come from
+# 0.1642 to 0.1028 against a target of 0.089.
+#
+# WHAT THEY ARE FOR. With lambda_addiction pinned at 0.0001 the onset hazard
+# base+(1-exp(-lambda*v)) is nearly FLAT in use, so use and disorder move
+# together and one instrument served two moments: measured over iterations 46
+# to 130, driving b down from 0.134 to 0.103 took lambda_d from 0.0313 to
+# 0.0253 rather than trading against it, and addiction_onset_base ran to -46
+# per cent chasing the difference. lambda_addiction is the curvature that
+# separates them, and it is also the only thing bracketing sud_homeless, which
+# sits at 0.036 against 0.217.
 FROZEN = {'multiple_of_probabilities_of_employment_if_addicted',
           'bottom_productivity_level',
-          'relative_share_of_addiction_1',
-          'lambda_addiction',
           # rr_homeless_old_level IS INERT AT homeless_death_risk_flat_in_age=2,
           # which run_one_point.sh now defaults to on the author's instruction of
           # 5 September. Setting 2 takes the branch

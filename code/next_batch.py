@@ -894,7 +894,11 @@ BOUNDS = {
     # should be capped at 0.2"*, *"and below at 0.08"*. It was (0.25, 0.60) at
     # the start of the night, which kept the search out of the whole region, and
     # briefly (0.05, 0.60) when that floor came down.
-    'relative_share_of_addiction_1':                       (0.08, 0.20),
+    # CEILING RAISED 0.20 -> 0.25, 5 September, on the author's instruction:
+    # *"allow theta to move up to 0.25"*. It supersedes their 0.20 of the same
+    # day; the 0.08 floor is unchanged. relative_share_of_addiction_1 is in
+    # CAPPED, so this ceiling is ENFORCED rather than advisory.
+    'relative_share_of_addiction_1':                       (0.08, 0.25),
     'mu_homeless':                                         (0.05, 1.0),
     'lambda_m':                                            (0.046, 0.500),
     'smi_onset_level':                                     (1e-5, 0.5),
