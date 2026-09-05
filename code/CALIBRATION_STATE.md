@@ -1,3 +1,90 @@
+# Calibration state -- 5 September, 05:10
+
+## THE HAZARD CHANGED. base + (1 - exp(-lambda v)), AND THE ARCHIVE RESET
+
+Model 375aed92cf. addiction_onset_hazard is now
+
+    v > 0 :  min(addiction_onset_base + (1 - exp(-lambda*v)), 1)
+    v = 0 :  0
+
+Both required builds pass. REGRESSION: at base=0 the new source reproduces the
+old to a max relative difference of 2.5e-4 against the model's OWN run-to-run
+variation of 2.4e-2 max and 1.4e-3 median on the same vector -- about 100 times
+smaller, so the change is inert by default. Bit-identity was never available:
+the solver is OpenMP-parallel with non-deterministic reductions.
+
+## WHY SMI ALWAYS WORKED AND SUD NEVER DID
+
+On 559 archived points with a REAL street (h_1 within 2x of target):
+
+    moment                          median    target    within 20% of target
+    lambda_m  SMI share of homeless  0.138     0.250     105 of 559
+    sud_homeless SUD share           0.012     0.217     --
+
+Eleven times worse relative to target, on the same points, with the same shape
+of instrument. The cause is the one the author named: SMI onset is EXOGENOUS,
+smi_onset_level drives p_m and nothing about the household's choices gates it,
+so the mentally ill appear across the whole wealth distribution including the
+bottom where homelessness happens. SUD onset required USE, use required
+consumption above a threshold, and the threshold selected users from the TOP.
+The baseline gives SUD the same exogenous component SMI has always had.
+
+## THE SCHEME, ALL THE AUTHOR'S
+
+    moment                        instrument                      direction
+    lambda_d   SUD rate           addiction_onset_base            lower
+    sud_homeless SUD of homeless  lambda_addiction                RAISE
+    b          share who use      addiction_scalar_1              raise
+    theta      drug spending      relative_share_of_addiction_1   lower
+    lambda_m   SMI of homeless    kappa_uem                       lower
+    h_1        homelessness       size_homelessness               lower
+
+  * M FROZEN AT 4. Its own moment agrees: kappa_ued is 0.213 against 0.1625 at
+    M=4, where it hit +390 per cent when M ran to 32.
+  * bottom_productivity_level FROZEN, exogenous. emp_homeless becomes an outcome
+    of the composition rather than a targeted moment.
+  * lambda's direction is RAISE and it acts through GENERAL EQUILIBRIUM -- it
+    moves quantity per user, which moves who uses, which moves the wealth
+    distribution of users, which moves who is homeless. The sign is local.
+
+## THE SEED IS A FLOW, NOT A STOCK
+
+addiction_onset_base starts at 0.017625, from onset*(1-s) = recovery*s with
+s = 0.0368/0.089 = 0.41348 and probability_of_stopping_addiction = 0.025. The
+first seed of 0.134 was NSDUH's share of light users who CARRY a disorder -- a
+prevalence -- and would have overshot the hazard about eightfold.
+
+## THREE FLOORS CAME DOWN, ALL OF WHICH HAD BEEN BLOCKING THIS REGION SILENTLY
+
+    relative_share_of_addiction_1   0.25 -> 0.05 -> now (0.08, 0.20) CAPPED
+    lambda_addiction                0.05 -> 0.001
+    addiction_onset_base            did not exist -> (0.001, 0.95)
+
+Each clamp was silent: an override to 0.16 became 0.25 with only a log line
+saying so. theta's CEILING is enforced, the one exception to the author's
+free-movement rule, because a theta at 0.48 made drugs half the Cobb-Douglas
+weight and flooded the model with users.
+
+## ADJUSTERS SIZED BY MEASURED ELASTICITY, NOT BY DISTANCE
+
+    addiction_scalar_1              -8.74 on b     0.002   about 1.7% a step
+    relative_share_of_addiction_1  +13.17 on b     0.002   about 2.6%
+    addiction_onset_base            ~1 on lambda_d 0.010   about 1%
+    lambda_addiction                GE, unmeasured 0.010
+
+## OPEN
+
+  * The data force a SECOND homelessness channel. 54 per cent of the homeless
+    are jobless and 21.7 per cent carry a SUD, so at least 32 points of that 54
+    must be unemployed NON-SUD households. lambda selecting the disordered onto
+    the street cannot deliver emp_homeless on its own.
+  * y_u, the income of drug users, is the expected casualty as users get poorer.
+    The author: the death penalty pinned at 8 is the lever if it collapses.
+  * lambda has no independent moment of its own. Its natural target is the SUD
+    rate BY USE INTENSITY, which NSDUH 2024 gives directly -- 0.134, 0.428,
+    0.577, 0.717, 0.819 across the five frequency categories, hard drugs pooled
+    -- but the model reports no gradient to compare against.
+
 # Calibration state -- 5 September, 04:35
 
 ## THE LOW-b LOW-THETA COMBINATION DOES NOT PRODUCE POOR USERS
