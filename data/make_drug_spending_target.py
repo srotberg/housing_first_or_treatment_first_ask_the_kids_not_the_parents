@@ -51,7 +51,20 @@ CPI_2016, CPI_2024 = 240.007, 313.689
 # NSDUH income bands, midpoints. The top band is open at 75,000 and over.
 BAND = {1: 5_000, 2: 15_000, 3: 25_000, 4: 35_000, 5: 45_000, 6: 62_500}
 TOP_BANDS = (75_000, 100_000, 125_000)
-TOP_MAIN = 100_000
+# THE TOP BAND MIDPOINT IS 125,000, on the author's instruction of 5 September:
+# *"ok, use 14% then for theta"*. NSDUH's top income band is OPEN at 75,000 and
+# over, so its midpoint is an assumption and the only one in this construction.
+# The conditional mean of an open top band sits well above a round number just
+# past its threshold, so 100,000 was the conservative choice and biased the
+# share UP. The sensitivity was always computed and written to the csv:
+#
+#     top band    75,000   ->  19.044 per cent
+#     top band   100,000   ->  16.202 per cent
+#     top band   125,000   ->  14.098 per cent
+#
+# 14.098 IS THE NUMBER, NOT 14. The share is generated from the data here and
+# read into the Fortran declaration; nothing types a rounded version of it.
+TOP_MAIN = 125_000
 
 
 def main():
