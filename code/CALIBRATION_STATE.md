@@ -1,3 +1,52 @@
+# Calibration state -- 5 September, 05:20
+
+## THE AUTHOR'S TWO-PHASE PLAN FOR THE DRUG BLOCK
+
+*"i would suggest to keep theta fixed at 0.13 and lambda at 0.05 until at least b
+and the base have converged"*, then *"first, set theta to 0.16 or so, lambda to
+0.0001, and just look for b and the base that give something good"*, then *"once
+you have users and SUD, you can start adjusting theta and lambda"*.
+
+PHASE ONE, live now. Held: relative_share_of_addiction_1 = 0.16,
+lambda_addiction = 0.0001, M = 4, bottom_productivity_level. Free:
+addiction_scalar_1 starting at 1e-6 and addiction_onset_base at 0.017625. The
+search is over two parameters, not four.
+
+PHASE TWO, once there are users and SUD: unfreeze theta and lambda and adjust
+them against theta and sud_homeless.
+
+WHY TWO PHASES. Moving four drug parameters at once produced point d13fce142f,
+where theta hit its 0.200 ceiling, the drug population emptied, and b, lambda_d,
+sud_homeless, mu_H, y_u, kappa_ued and tau_u ALL read exactly zero.
+
+## THE -1 SENTINEL WAS BEING SCORED AS A VALUE
+
+That same point returned theta = -1, the empty-population sentinel, and gap()
+computed |-1 - 0.162|/0.162 and reported -717.3 per cent. With the structural
+zeros beside it the LOSS read 56.8 against 74.1 on the point before, so a dead
+economy looked like progress. ENGINE.md states the rule in the worker brief --
+*"a MOMENT theta of -1.0 is an empty-population sentinel, not a value"* -- and
+nothing in the code enforced it. gaps.load now drops it.
+
+A dropped moment is a free pass, which is its own trap and the reason
+measure_child_gap is a CONFIG_SWITCH. It is still a far smaller lie than minus
+seven hundred per cent, and the zeros beside it already mark the point.
+
+## THREE FLOORS LOWERED, ALL SILENT CLAMPS
+
+    relative_share_of_addiction_1   0.25 -> 0.05 -> (0.08, 0.20), ceiling ENFORCED
+    lambda_addiction                0.05 -> 0.001 -> 1e-6
+    addiction_onset_base            new, (0.001, 0.95)
+
+Each had been clamping an override with only a log line to say so.
+
+## kappa_uem NOW OWNS ITS OWN MOMENT
+
+The SMI employment rate, target 0.30, out of UNSCORED. lambda_m loses its
+instrument and becomes an outcome: over 56 pairs differing only in kappa_uem,
+the elasticity of lambda_m is +0.82 where h_1 is far below target and -0.07
+where the street is real, with the ruled sign on 47 per cent of pairs there.
+
 # Calibration state -- 5 September, 05:10
 
 ## THE HAZARD CHANGED. base + (1 - exp(-lambda v)), AND THE ARCHIVE RESET
