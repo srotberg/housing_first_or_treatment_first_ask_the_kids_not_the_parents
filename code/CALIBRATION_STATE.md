@@ -1,3 +1,77 @@
+# Calibration state -- 5 September, 04:35
+
+## THE LOW-b LOW-THETA COMBINATION DOES NOT PRODUCE POOR USERS
+
+The author's hypothesis was that theta is far too large -- drugs carry 48 per
+cent of the Cobb-Douglas weight in the live branch -- so any b small enough to
+let the poor use floods the whole population, and that cutting BOTH would leave
+only the asset-poor using. Tested at theta weight 0.1586 with b = 0.001
+(point 4ffe834aed):
+
+    b (share who use)      0.9177   target 0.0890
+    theta (share spent)    0.0138   target 0.1620
+    assets of users        0.8299   benchmark 0.454
+    h_1                    0.00006  target 0.00399
+
+92 PER CENT USE AND THEY SPEND 1.4 PER CENT OF CONSUMPTION ON DRUGS, and their
+assets are FURTHER from the benchmark than before, not closer. The mechanism is
+what (b+v)^theta gives with a tiny b: the first infinitesimal quantity carries
+almost all the value, so everybody takes a sip. A small b flattens the
+consumption threshold for EVERYONE equally rather than tilting it toward the
+asset-poor. The low b overwhelms the low theta instead of complementing it.
+
+CAVEAT ON THE HOMELESS STATISTICS. h_1 is 0.00001-0.0001 on every one of these
+points, so "unemployed share of the homeless = 1.000" and sud_homeless are
+statistics over a handful of households, not results. The street is too small in
+these vectors for either number to mean anything.
+
+## THETA AND b ARE NEARLY UNIDENTIFIED, AND THE AUTHOR SAW IT FIRST
+
+*"i think there may be several places where theta and b give the same numbers"*.
+Median elasticities from isolated archive rays:
+
+                                     b      theta   lambda_d    y_u   sud_hl
+    addiction_scalar_1            -8.74     -1.24     -11.54   -0.05   -7.23
+    relative_share_of_addiction_1 +13.17    +4.11     +16.73   +0.62  +11.28
+
+The angle between the two parameter response directions is 9.2 degrees on
+(b, theta), 1.1 on (b, lambda_d), 2.3 on (b, y_u) and 1.0 on (b, sud_hl). They
+are near-collinear on every scored moment, so different (theta, b) combinations
+really do give the same numbers.
+
+THEY SEPARATE ON WEALTH, which is also the author's: *"the difference is who is
+using drugs -- low asset people in the low b low theta case and high asset people
+in the high b high theta case"*. Along the ISO-b ridge, where the share who use
+is held fixed, dln(assets of users) = -2.39 + 5.04*0.664 = +0.96 per unit
+dln(addiction_scalar_1) -- an order-one response, and the only one available.
+
+THERE IS A TARGET FOR IT. data/SUD_WEALTH.md imputes median wealth of $95,470 for
+hard-drug SUD against $210,240 for all adults, a ratio of 0.454. The model runs
+0.77 to 0.95. Mean-over-mean against median-based, so the levels are not strictly
+comparable, but a factor of two is beyond that caveat. ADDING IT AS A SCORED
+MOMENT WOULD IDENTIFY THE PAIR; that is the author's call, not a thing to do
+overnight.
+
+## TWO PARAMETERS ARE NOW EXOGENOUS
+
+  * M frozen at 4: *"first fix M=4 so that we are aligned with the data"*, and it
+    moved sud_homeless not at all over 69 isolated pairs.
+  * bottom_productivity_level frozen: *"i think the bottom productivity should be
+    set exogenously"*. It owned emp_homeless and never moved it -- the moment sat
+    at +110 to +115 per cent on every point tonight.
+
+emp_homeless therefore has NO instrument, pending the author's plan to give it to
+M: *"we can adjust M to match the share of the homeless who are unemployed"*.
+sud_homeless would then have none either, which is honest under that scheme --
+it becomes an outcome of theta and b rather than a separately targeted moment.
+
+## THETA'S FLOOR WAS HIDING THE REGION
+
+BOUNDS was (0.25, 0.60) and an override to 0.16 was CLAMPED to 0.25 with only a
+log line saying so. Lowered to (0.05, 0.60). The floor existed because theta
+returns the -1 empty-population sentinel when nobody uses; that is still a live
+risk at low theta and a -1 must not be scored as a value.
+
 # Calibration state -- 5 September, 04:20
 
 ## sud_homeless CAME OFF ZERO. b IS THE KEY, AND THE AUTHOR CALLED IT.
