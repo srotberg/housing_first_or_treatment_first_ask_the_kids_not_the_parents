@@ -469,6 +469,7 @@ def load(path):
     # and this does the same, so a stale point does not report a gap against a
     # moment it never measured.
     m = {}
+    SENTINEL = []
     for k, lab, a, b in re.findall(
             r'MOMENT (\S+)\s+(.*?)model=\s*([0-9.eE+-]+)\s+target=\s*([0-9.eE+-]+)', t):
         if k == 'sigma_y' and 'bottom half earnings share' in lab:
@@ -490,7 +491,7 @@ def load(path):
         # minus seven hundred per cent, and the zeros beside it already say the
         # point is degenerate.
         if float(a) == -1.0 and float(b) > 0:
-            continue
+            SENTINEL.append(k)
         # THE TARGET COMES FROM THE LIVE SOURCE, NOT FROM THE POINT FILE.
         #
         # A point records the target it was solved against. model_hash strips the
@@ -582,6 +583,22 @@ def load(path):
         r = re.search(pat, t)
         if r:
             m[key] = (float(r.group(1)), tv)
+
+    # A SENTINEL DISQUALIFIES THE POINT. Dropping the moment instead was worse
+    # than scoring it: an absent moment is a FREE PASS, so point_d13fce142f --
+    # theta = -1, b = 0, lambda_d = 0, sud_homeless = 0, h_1 = 0.00001, an
+    # economy with no drug users and nobody homeless -- went from loss 74.06 to
+    # 22.61 the moment the sentinel stopped being counted, and became the best
+    # point in the archive. 74.06 - 7.173**2 = 22.6, which is the whole
+    # difference.
+    #
+    # Scoring -717 per cent was a lie about the size of the error; giving it a
+    # free pass was a lie about the direction. A point whose drug population is
+    # empty is not a candidate equilibrium and is rejected here, the same way a
+    # point on a different model is.
+    if SENTINEL:
+        return None, None
+
     return v, m
 
 
