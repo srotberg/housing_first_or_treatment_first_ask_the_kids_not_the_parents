@@ -936,7 +936,29 @@ BOUNDS = {
     # solver walked it 0.45 -> 0.64 in nine iterations, still five times short of
     # target, and was heading for 1.0 in about five more.
     'size_homelessness':                                   (1e-06, 0.60),
-    'rr_homeless_old_level':                               (1.0, 30.0),
+    # rr_homeless_old_level LOSES ITS BOUNDS ENTRY, 5 September, which is how a
+    # parameter is held: instruments_all takes every owner in OWN whose parameter
+    # has bounds. It still maps to h_share5 in OWN and it is FROZEN in
+    # fixed_point.py, but leaving the bounds here would put h_share5 in the
+    # residual vector TWICE once ssi_floor_level is given bounds below -- the
+    # exact double-weighting this file already records against the pair.
+    # It is inert anyway at homeless_death_risk_flat_in_age=2.
+    # 'rr_homeless_old_level':                              (1.0, 30.0),
+    # THE SSI FLOOR GETS BOUNDS, 5 September, on the author's instruction: *"i
+    # also want the bottom ssi to be set such that the old share of homeless is
+    # 7.5%"*. This is what makes it an instrument at all -- the note further down
+    # this file records that dropping the bounds entry is precisely how it was
+    # held, so restoring one is the whole of the change.
+    #
+    # THE RANGE. 0.30 at the top is the last value that leaves the floor doing
+    # what a floor does, binding on the bottom three PIA nodes and 24 per cent of
+    # the mass; node 4's own PIA is 0.30015 and it carries 39.8 per cent, so above
+    # that the floor starts flattening the middle of the retirement distribution
+    # rather than supporting its bottom. 0 at the bottom is the floor's absence,
+    # where the Fortran's note puts 6.6 per cent of the population priced out of
+    # the cheapest rental on the PIA alone. h_share5 is 2.2e-06 against 0.075, far
+    # BELOW target, so the search will be walking this DOWN from 0.1774.
+    'ssi_floor_level':                                     (0.0, 0.30),
     'smallest_rental_relative_to_lowest_income':            (0.005, 0.40),
     # The bottom node's level, as a multiple of mean productivity. The quantile
     # construction puts it at 0.0302 unaided; the floor is well below that and

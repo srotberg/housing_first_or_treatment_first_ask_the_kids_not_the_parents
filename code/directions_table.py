@@ -279,7 +279,38 @@ RULES = {
   # it bite: b5 0.0299 -> 0.0002 at the same rr, y_h 0.2614 -> 0.2458, h_1
   # barely moves. That is a config switch and it partitions the archive, so it
   # is the author's call.
-  'h_share5': ('rr_homeless_old_level', 'raise', 'live window 2.4-3.0, inert above 3.4'),
+  # h_share5's INSTRUMENT IS THE SSI FLOOR from 5 September, on the author's
+  # instruction: *"i also want the bottom ssi to be set such that the old share
+  # of homeless is 7.5%"*. 0.075 is already the target in the Fortran -- it is
+  # val_hud_share_1(5), the HUD count's 65-and-over share -- so this changes the
+  # instrument, not the number.
+  #
+  # rr_homeless_old_level cannot own it any more and is FROZEN in fixed_point.py:
+  # at homeless_death_risk_flat_in_age=2, which run_one_point.sh now defaults to,
+  # the mortality branch is 1+increased_risk_of_death_homeless at every age and
+  # rr_homeless_profile is never read, so the level this parameter writes into
+  # that profile's tail reaches nothing.
+  #
+  # THE SSI FLOOR IS THE RIGHT HANDLE ON ARITHMETIC. Band 5 is age_index 40 to 60,
+  # data ages 65 to 85 -- exactly the retired -- and the SSI floor is retirement
+  # income and nothing else, so it acts on band 5's budget and on no other band's.
+  # It is also live now in a way it was not before: the floor sits inside
+  # `if (use_pia_formula==1)` and the vectors that made it unreachable carried
+  # use_pia_formula=0. Every current vector carries 1.
+  #
+  # DIRECTION. A higher floor buys retirement income, so fewer of the old are
+  # priced out of the cheapest rental and band 5's share falls: parameter and
+  # moment move in OPPOSITE directions, which is 'raise'. The Fortran's own note
+  # says the same -- "at 1 nobody is priced out of the cheapest rental in
+  # retirement and band 5 homelessness goes to about nothing; at 0 the floor is
+  # absent and 6.6 per cent of the population is priced out on the PIA alone".
+  #
+  # THE MEASURED RAY IS STALE AND SAYS SO. The bracket recorded in next_batch.py
+  # -- h_share5 0.935 at a floor of 0.1774 and 0.518 at 0.60 -- agrees on sign but
+  # was measured under mode 0 mortality and rr_homeless_hold_age=65. At the SAME
+  # floor of 0.1774 today the model gives h_share5 = 2.2e-06. The floor's handle
+  # in THIS economy is unmeasured, and a bracket is being run rather than assumed.
+  'h_share5': ('ssi_floor_level', 'raise', 'sign agrees; magnitude stale, bracket pending'),
   #
   # THE INCOME OF THE HOMELESS, from 4 September, on the author's instruction:
   # *"if you have an income too high for the homeless, you raise the probability
