@@ -447,35 +447,26 @@ FROZEN = {'multiple_of_probabilities_of_employment_if_addicted',
           # against a target of 7.7e-4: the old are simply not homeless here, and
           # no level of a bypassed profile changes that.
           'rr_homeless_old_level',
-          # delta IS HELD AT 0.001 UNTIL THE DRUG BLOCK IS RIGHT, on the author's
-          # instruction of 5 September: *"set delta=0.001 and allow it to adjust
-          # after b and base are correct"*.
+          # delta WAS RELEASED, 5 September, on the author's instruction: *"You can
+          # also adjust delta if needed to match the share of employed homeless"*.
+          # It was held at 0.001 until b and lambda_d were in range, which they now
+          # are (b 0.799 -> 0.101 against 0.089, lambda_d 0.131 -> 0.022 against
+          # 0.0368), so the release condition recorded when it was frozen is met.
           #
-          # WHY IT HAD TO COME DOWN. Its declaration is 0.d0 and the Fortran's own
-          # note says "DELTA ZERO REPRODUCES THE MODEL EXACTLY", so the author's
-          # original paper ran without it. The search had driven it to 0.19945,
-          # which on a baseline separation probability of 0.0046844 is a
-          # separation of 20.41 per cent a year against 0.47 housed -- a 43.6-fold
-          # hazard. emp_homeless read 0.00005 against 0.46 not because employed
-          # households preferred housing but because they were thrown off the
-          # street.
+          # READ IT AS A HAZARD MULTIPLIER, NOT AS A NUMBER. delta is added in
+          # PROBABILITY POINTS to a baseline separation of about 0.0047, so the
+          # multiplier is (0.0047+delta)/0.0047 and it is brutal:
           #
-          # IT WAS AIMED AT A MOMENT SOMETHING ELSE WAS CAUSING. delta was pointed
-          # at emp_homeless early on 5 September when that moment read 0.82.
-          # Later the same day relative_share_of_housing was pinned at its data
-          # value of 0.268, which pushes working households off the street through
-          # a completely different channel -- 22.4 per cent of consumption to
-          # accept the street against 7.1 at the old taste -- and moved
-          # emp_homeless 0.818 -> 0.038 on a one-coordinate pair by itself.
+          #     delta 0.001 -> 1.2x     delta 0.05  -> 11.7x
+          #     delta 0.01  -> 3.1x     delta 0.199 -> 43.6x   (where the search left it)
+          #     delta 0.02  -> 5.3x     delta 0.99  -> 212x    (its upper bound)
           #
-          # WHY 0.001 AND NOT 0. The author's number. It keeps the percentage-point
-          # branch live rather than falling back to the multiplicative one, so
-          # releasing it later is a step rather than a regime change.
-          #
-          # RELEASE CONDITION: b and lambda_d within tolerance. Remove this entry
-          # then; emp_homeless has no instrument until it is removed, which is
-          # stated rather than hidden.
-          'homeless_job_penalty_pp'}
+          # It reached 43.6x last time because it was aimed at a moment the housing
+          # taste was actually driving. The taste is pinned at its data value now,
+          # so delta should not need anything like that, and a value implying more
+          # than a few-fold hazard is a signal that something else is wrong rather
+          # than that delta is the answer.
+          'rr_homeless_old_level'}
 # NOTHING IS FROZEN, 5 September. bottom_productivity_level is released on the
 # author's confirmation that it owns emp_homeless: *"We are setting the lowest
 # productivity such that 46% of the homeless are employed"*.
