@@ -336,8 +336,41 @@ RULES = {
   #
   # DIRECTION: income of the homeless ABOVE target means too many comfortable
   # households are choosing the street, so RAISE the separation penalty.
+  # THE RULING AND THE MEASUREMENT DISAGREE, recorded 5 September 03:45 rather
+  # than resolved silently, which is this table's convention.
+  #
+  # Six points identical in every coordinate except delta:
+  #
+  #     delta   tag              y_h        h_1    band1    band5
+  #      0.00   43932f4d10    0.2614   0.004651   0.9080   0.0299
+  #      0.05   2c40bae9b4    0.7105   0.002457   0.0120   0.0529
+  #      0.15   a43cb9b416    0.7362   0.000299   0.1235   0.4465
+  #      0.25   b24474cff8    0.7242   0.000153   0.0627   0.9354
+  #      0.30   f56a40b55d    0.6892   0.000184   0.2003   0.7759
+  #      0.55   59a64035ad    0.7250   0.000152   0.0603   0.9397
+  #                  target   0.1910   0.003990            0.0750
+  #
+  # y_h RISES with delta and its minimum over the ray is at delta = 0. Under
+  # 'raise' the rule walks delta up and the gap climbs with it -- measured live,
+  # +250.7 -> +289.0 -> +290.6 -> +292.5 per cent over four iterations while
+  # delta went 0.25 -> 0.366 toward its bound of 0.60.
+  #
+  # SO DELTA IS ONE-SIDED AT ITS FLOOR for y_h, not an instrument for it, and the
+  # reason is mechanical: delta removes WORKERS from the street (band 1 falls
+  # 0.908 -> 0.012 on the first step), the retirees left behind are 90+ per cent
+  # of the homeless, and their Social Security income is what y_h then measures.
+  # rr_homeless_old_level cannot remove them because rr_homeless_hold_age=65 puts
+  # the death penalty on ages 66 AND UP while the model's old homeless sit at
+  # age 65, the last working year.
+  #
+  # The author's design -- *"the death penalty for the old will remove the old
+  # from being homeless...and delta will remove the workers"* -- is coherent and
+  # needs BOTH halves. Only one can currently act. Delta becomes an instrument
+  # for y_h if and only if rr can reach age 65, which is rr_homeless_hold_age
+  # 65 -> 64. Left as the author's call; the ruling below is UNCHANGED until they
+  # rule, per this table's convention that a ruling is the authority.
     'y_h': ('homeless_job_penalty_pp', 'raise',
-            "the author's ruling; separation-only form, the symmetric bracket is void"),
+            "the author's ruling; MEASURED RAY DISAGREES, see the block above"),
     # pi_V, the share of eligible households receiving a housing voucher in the
     # benchmark, target 0.266. The author: *"lower if higher than data"*. Direct:
     # more voucher probability, more take-up. Measured 7-point ray agrees at slope
