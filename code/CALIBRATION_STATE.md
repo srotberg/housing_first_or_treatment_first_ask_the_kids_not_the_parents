@@ -1,3 +1,83 @@
+## 5 September, 06:20 -- THE DEATH RATE IS WORTH 3.6x ON h_1, NOT 30x, AND THE REST IS THE EARNINGS PROCESS
+
+The author: *"then something is very odd about the street....why does it not
+raise homelessness? maybe the death rate is too high....try 60% uniform death
+rate across everyone"*.
+
+`homeless_death_risk_flat_in_age=2` IS that setting already: it bypasses
+Baggett's profile and sets `kappa_phi_h = 1 + increased_risk_of_death_homeless`
+with the parameter fixed at 0.6, flat at every age.
+
+WHAT MODE 0 WAS CHARGING. Baggett's ratio divided by the SUD term
+`((1-sud_share)+sud_share*kappa_phi_d)` = 1.139 at the best point:
+
+    data age    26     35     45     55     65+
+    multiplier  7.99   7.89   5.87   3.88   5.19   (held at rr_homeless_old_level)
+
+An eightfold death hazard on a 26 year old who sleeps rough, against
+`value_of_life` 45.35. Multiplying the street's housing service by five --
+`size_homelessness` 0.10 -> 0.494 -- moves the HOUSING term and never touches
+the MORTALITY term. That is why h_1 sat at 1.5e-4 across a fivefold range of
+the street and why `emp_homeless` was identically zero.
+
+THE ISOLATED PAIR, one coordinate, same model 375aed92cf:
+
+    point            a1a0bf3fe6   83ab786033   target
+    death mode       0 (Baggett)  2 (flat 1.6)
+    h_1              0.000149     0.000543     0.00399
+    lambda_m         0.884        0.342        0.25
+    emp_homeless     0.0000       0.000062     0.46
+    b                0.16451      0.16419      0.089
+    lambda_d         0.036469     0.036405     0.0368
+    theta            0.11052      0.11044      0.162
+    y_u              0.93398      0.93423      0.74
+
+3.6x on h_1, and `lambda_m` -- the worst gap in the whole table at 254 per
+cent -- falls to 37. Nothing else moves. Old age homelessness goes to exactly
+zero at 65 and above, so `h_share5` is solved rather than fought.
+
+A CORRECTION THAT COST NOTHING ONLY BECAUSE IT WAS CHECKED. The four archived
+mode 2 points (0f4dcaa008, 1c4b7759d4, d2e58e6afb) show h_1 at 0.0047 to
+0.0161 on streets a tenth the size, which reads as 30 to 100x. They carry
+theta near 0.48 and b near 0.037 -- a different drug block on an older model
+hash. They were never evidence about the death rate alone. ISOLATE BEFORE
+QUOTING A RATIO.
+
+WHERE THE REMAINING FACTOR OF SEVEN IS. Homelessness rate by age band, mode 2
+against the data:
+
+    band 1   0.002152    0.003161     within 32 per cent
+    band 2   0.000474    0.003378     7x low
+    band 3   0.000362    0.002912     8x low
+    band 4   0.0000198   0.002496     126x low
+    band 5   0.0000000   0.00077      zero
+
+The data's homelessness is nearly FLAT in age. The model's is a young
+household's state and nothing else: renter wealth is 0.11 at age 27 and 0.81
+by 35, and a household with savings does not take the street at ANY street
+size or ANY death rate. 96 per cent of the model's homeless could pay rent out
+of income alone.
+
+SO THE BINDING CONSTRAINT IS THE EARNINGS PROCESS, and the Fortran already
+says so in the block beside `persistent_income_risk` (line 28925): a Gaussian
+AR(1) at rho 0.98 puts a one-in-a-hundred ten year path at 0.37 times
+earnings, *"a bad decade and not a catastrophe. The rare large fall is the
+thing that would put a middle-aged household with savings onto the street, and
+it needs a mixture innovation rather than a normal one."* `persistent_income_risk`
+is 0 in the live vector AND its branch also requires `fixed_productivity==1`,
+which is 0, so the channel is off twice over.
+
+A MIXTURE INNOVATION IS A MODEL CHANGE AND THE AUTHOR'S CALL. Not started.
+
+WHAT CHANGES IF MODE 2 IS ADOPTED. `rr_homeless_old_level` becomes INERT --
+the profile is bypassed entirely -- so it must be FROZEN, and `h_share5` loses
+its instrument. `homeless_death_risk_flat_in_age` is already a CONFIG_SWITCH,
+so adopting it repartitions the archive and the 20 points on 375aed92cf at
+mode 0 stop being comparable.
+
+IN FLIGHT: mode 2 with the street back at 0.10, to test whether the street
+bites now that the mortality term is off it.
+
 # Calibration state -- 5 September, 06:00
 
 ## THE SUD RATE IS HIT. point c2e94c7aa0, b = 0.007, street 0.275
