@@ -4431,7 +4431,36 @@
         ! sizes, which is the four point grid of the written model. It was 7,
         ! which gave eight statuses, and six of the extra slots were owner states
         ! that no longer exist.
-        integer, parameter :: housing_status_grid_size=3
+        ! ONE RENTAL, on the author's instruction of 5 September: *"i suggest to
+        ! just have h2"*, *"no h3, and no h4"*, *"and just choose h2 so that
+        ! spending on housing is 26.8%"*.
+        !
+        ! WHY, in their words and in the measurement. With the housing taste
+        ! pinned at its data value of 0.268 the ladder stopped doing any work:
+        ! 82.3 per cent of households sat in the largest unit at ratios (1.5,
+        ! 2.0) and 89.5 per cent at (2.0, 3.0), against 8.1 and 5.9 per cent in
+        ! the cheapest. The author: *"it's almost like you can just have 1
+        ! rental"*. It was, so the grid now says so.
+        !
+        ! WIDENING MADE IT WORSE, WHICH IS WHY THE THIRD RUNG IS GONE RATHER THAN
+        ! RETUNED. Moving the ratios from (1.5, 2.0) to (2.0, 3.0) at a fixed
+        ! bottom rung took gamma from 0.3156 to 0.3902 and the largest unit's
+        ! share from 0.823 to 0.895. The prediction beforehand was the opposite --
+        ! that a more expensive top rung would push households DOWN -- and it was
+        ! wrong: with an honest taste, housing is a normal good and a bigger top
+        ! rung is more attractive, not less.
+        !
+        ! The grid is now index -1 for the street and index 0 for the single
+        ! rental. housing_size is dimensioned lowest_housing_grid_point to
+        ! housing_status_grid_size-1, so this is (-1:0), and the rung assignment
+        ! at initialize_housing_grid is already guarded by
+        ! `if (housing_status_grid_size>2)` and simply does not run.
+        !
+        ! h_3, "share in the largest unit", is 1.0 BY CONSTRUCTION now rather than
+        ! merely off target. It has been in next_batch.SKIP since 31 August on the
+        ! author's *"h3 can be off"*, so nothing scored is lost, but the row is
+        ! now meaningless rather than missed and should be read that way.
+        integer, parameter :: housing_status_grid_size=1
                          
         integer :: space_lived_in_num_of_internal=2  
                                                         
@@ -38662,9 +38691,12 @@
                         ! and h2: raising the expander from 1.8 to 2.17 moved the
                         ! largest share from 6 per cent to zero rather than towards
                         ! 62.7.
-                        gap_house_size_1=&
+                        ! ZEROED AT ONE RENTAL for the same reason: the single
+                        ! unit's share is 1.0 by construction, so this gap would be
+                        ! a constant 0.373 driving largest_house_size forever.
+                        gap_house_size_1=merge(&
                             model_housing_size_dist(1,housing_status_grid_size-1)-&
-                            housing_size_dist_data(2)
+                            housing_size_dist_data(2),0.d0,housing_status_grid_size>2)
 
                         if (have_gap_largest_house_size==1) then
 
@@ -38725,8 +38757,15 @@
                         ! the bottom rung: share(0) falls and share(1) rises. The
                         ! old update added the gap, which is right for a moment
                         ! that falls in e; this one subtracts it.
-                        gap_housing_status_grid_expander=&
-                            model_housing_size_dist(1,1)-housing_size_dist_data(1)
+                        ! INDEX 1 IS OUT OF BOUNDS AT ONE RENTAL. This array is
+                        ! dimensioned 0:housing_status_grid_size-1, which is 0:0
+                        ! once h_3 and h_4 are gone, and this line read index 1.
+                        ! The index is clamped so the access is legal and the gap
+                        ! is forced to zero below two rungs, so the expander
+                        ! cannot be driven by a rung that does not exist.
+                        gap_housing_status_grid_expander=merge(&
+                            model_housing_size_dist(1,min(1,housing_status_grid_size-1))-&
+                            housing_size_dist_data(1),0.d0,housing_status_grid_size>2)
 
                         call damp_on_flip(housing_status_grid_expander_adjuster,&
                             gap_housing_status_grid_expander,&
