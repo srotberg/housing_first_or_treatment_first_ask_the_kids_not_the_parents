@@ -458,6 +458,26 @@ def main():
         # 03:00 after it had been seeded in the state file.
         # The author, 5 September: *"i think you should let my method continue to
         # work, and set delta=0.25 for the warm start"*.
+        # ONE-SHOT WARM-START OVERRIDE. `code/fixed_point_override.json` lets the
+        # author put a parameter somewhere specific without editing this file --
+        # it is applied after the warm start and then DELETED, so it fires once
+        # and a later restart does not keep dragging the walk back to it. That
+        # distinction matters: SEED below is conditional on the value being zero
+        # and so is self-cancelling, but an unconditional override that survived
+        # would reset the parameter on every restart and silently undo the walk.
+        _ovp = os.path.join(ROOT, 'code', 'fixed_point_override.json')
+        if os.path.exists(_ovp):
+            try:
+                _ov = json.load(open(_ovp))
+                for _op, _oval in _ov.items():
+                    if _op in v:
+                        say(f'   override {_op}: {v[_op]} -> {_oval} (one-shot)')
+                        v[_op] = _oval
+                    else:
+                        say(f'   override {_op} IGNORED: not in the warm-start vector')
+            finally:
+                os.remove(_ovp)
+                say('   override file consumed and removed')
         for _sp, _sv in SEED.items():
             if _sp in R and abs(float(v.get(_sp, 0.0))) < 1e-12:
                 v[_sp] = _sv
