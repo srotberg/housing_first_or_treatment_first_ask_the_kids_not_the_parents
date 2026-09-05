@@ -141,6 +141,15 @@ ADJUSTERS = {
     # A PROPORTIONAL STEP CANNOT LEAVE ZERO, so delta starts at 0.05 in the
     # seed vector rather than 0 and then moves by ten per cent of itself.
     'homeless_job_penalty_pp': 0.10,
+    # M MOVES TOO SLOWLY AT TEN PER CENT. The author, 5 September: *"i think the
+    # M var has to be adjusted much more quickly than at 10%... maybe at 20%"*.
+    # Its moment sud_homeless is at a HARD CORNER -- exactly 0.0000 against 0.217
+    # -- so the gap never shrinks, the stall rule never relaxes the damper, and
+    # the scale sits at the OSC_FLOOR of 0.125. At the old default that is 0.25
+    # per cent of its value per iteration; the trace shows it crawling 4.50 ->
+    # 5.38 over twelve. At 0.20 the floored step is 2.5 per cent and the
+    # undamped step is 20.
+    'multiple_of_probabilities_of_employment_if_addicted': 0.20,
     'bottom_productivity_level': 0.1000,
     'discount_factor': 0.0680,
     'kappa_uem': 0.1000,
