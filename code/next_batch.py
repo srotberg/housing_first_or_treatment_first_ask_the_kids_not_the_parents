@@ -757,7 +757,15 @@ OWN = {
     # ten per cent move collapsing the moment 99.4 per cent, and lambda_addiction
     # -> b read as a near-flat ray that reversed. Those are the signatures of an
     # instrument acting through two links rather than one.
-    'lambda_addiction':                                     'lambda_d',
+    # FLOOR 0.05 -> 0.001, 5 September. The author had named 0.05 as the floor on
+    # the addiction hazard, but under the new hazard base + (1-exp(-lambda v))
+    # lambda is a different object: the base carries the LEVEL of onset and
+    # lambda only the gradient in quantity, so it belongs near zero. The author:
+    # *"set lambda around 0.01 so it is not 0 and doesnt move"*. At the old floor
+    # 0.01 would have been silently clamped to 0.05, which is what had just
+    # happened to theta. It stays strictly positive because a proportional step
+    # cannot leave zero.
+    'lambda_addiction':                                    (0.001, 20000.0),
     'addiction_scalar_1':                                   'b',
     'ssi_floor_level':                                      'h_share5',
     # THE ENDOWMENT IS HELD AT ZERO AND h_share1 HAS NO INSTRUMENT. The author,
