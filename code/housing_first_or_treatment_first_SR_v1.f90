@@ -7928,17 +7928,34 @@
                 ! below at 0%)"*. It applies exactly here, because sep_1 and find_1
                 ! are already node-level rates -- no productivity tilt to correct
                 ! for, and the caps are the real probability bounds.
-                if (homeless_job_penalty_pp>0.d0) then
-
-                    sep_1=min(sep_1+homeless_job_penalty_pp,1.d0)
-                    find_1=max(find_1-homeless_job_penalty_pp,0.d0)
-
-                else
-
-                    sep_1=sep_1*(1+iph_1+extra_job_loss_if_homeless)
-                    find_1=find_1*(1-iph_1)
-
-                end if
+                ! DELTA ACTS ON SEPARATION ONLY, on the author's instruction of
+                ! 5 September: *"apply delta only to the separation rate when
+                ! homeless but not to the reattachment when homeless... That should
+                ! deter the employed but not the unemployed"*.
+                !
+                ! WHY THE TWO SIDES ARE NOT SYMMETRIC IN WHO THEY HIT. Measured:
+                ! removing the job-finding penalty entirely, iph 0.2 -> 0, raises
+                ! homelessness among the UNEMPLOYED five-fold, 0.00092 to 0.00468,
+                ! and takes it from 0.147 of the working-age rate to 0.724. The
+                ! finding side costs an unemployed household eleven points of the
+                ! ONLY asset it has -- its re-employment prospect is essentially
+                ! its whole expected future income -- while the separation side
+                ! costs an employed household 0.3 points of a small probability.
+                ! So a symmetric penalty prices the poor OFF the street and leaves
+                ! the comfortable on it, which is why every bracket that raised one
+                ! moved the income of the homeless the WRONG way.
+                !
+                ! Adding delta to the separation side rather than replacing the
+                ! multiplicative form also makes the parameter CONTINUOUS at zero.
+                ! It was not: delta = 0 took the multiplicative branch with
+                ! iph = 0.2 and imposed a STRONGER job-finding penalty than
+                ! delta = 0.001 took with the pp branch, so the function ran
+                ! backwards across the origin and the delta = 0 comparison was a
+                ! branch switch rather than economics.
+                sep_1=min(sep_1*(1+iph_1+extra_job_loss_if_homeless)+&
+                    homeless_job_penalty_pp,1.d0)
+                    
+                find_1=find_1*(1-iph_1)
 
             end if
 
