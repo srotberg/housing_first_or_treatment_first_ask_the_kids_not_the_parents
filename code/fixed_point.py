@@ -458,26 +458,6 @@ def main():
         # 03:00 after it had been seeded in the state file.
         # The author, 5 September: *"i think you should let my method continue to
         # work, and set delta=0.25 for the warm start"*.
-        # ONE-SHOT WARM-START OVERRIDE. `code/fixed_point_override.json` lets the
-        # author put a parameter somewhere specific without editing this file --
-        # it is applied after the warm start and then DELETED, so it fires once
-        # and a later restart does not keep dragging the walk back to it. That
-        # distinction matters: SEED below is conditional on the value being zero
-        # and so is self-cancelling, but an unconditional override that survived
-        # would reset the parameter on every restart and silently undo the walk.
-        _ovp = os.path.join(ROOT, 'code', 'fixed_point_override.json')
-        if os.path.exists(_ovp):
-            try:
-                _ov = json.load(open(_ovp))
-                for _op, _oval in _ov.items():
-                    if _op in v:
-                        say(f'   override {_op}: {v[_op]} -> {_oval} (one-shot)')
-                        v[_op] = _oval
-                    else:
-                        say(f'   override {_op} IGNORED: not in the warm-start vector')
-            finally:
-                os.remove(_ovp)
-                say('   override file consumed and removed')
         for _sp, _sv in SEED.items():
             if _sp in R and abs(float(v.get(_sp, 0.0))) < 1e-12:
                 v[_sp] = _sv
@@ -495,6 +475,34 @@ def main():
         was_held
     except NameError:
         was_held = set()
+    # ONE-SHOT OVERRIDE, APPLIED ON BOTH PATHS. `code/fixed_point_override.json`
+    # lets the author put a parameter somewhere specific without editing this
+    # file. It is applied here, after the warm-start AND resume branches have
+    # joined, and then DELETED.
+    #
+    # IT WAS IN THE WARM-START BRANCH FIRST AND THAT WAS WRONG. The loop RESUMES
+    # from fixed_point_state.json whenever the state is fresh, so the warm-start
+    # block does not run at all on a restart -- which is why kappa_uem=40, M=20
+    # and the delta seed of 0.05 all appeared to be applied at 03:22 and none of
+    # them reached the vector. Anything that must take effect on a restart has to
+    # live below this line, not above it.
+    #
+    # One-shot matters too: an override that survived would reset the parameter on
+    # every restart and silently undo the walk.
+    _ovp = os.path.join(ROOT, 'code', 'fixed_point_override.json')
+    if os.path.exists(_ovp):
+        try:
+            _ov = json.load(open(_ovp))
+            for _op, _oval in _ov.items():
+                if _op in v:
+                    say(f'   override {_op}: {v[_op]} -> {_oval} (one-shot)')
+                    v[_op] = _oval
+                else:
+                    say(f'   override {_op} IGNORED: not in the vector')
+        finally:
+            os.remove(_ovp)
+            say('   override file consumed and removed')
+
     for it in range(start, start + ITERS):
         moved, held, damped, now_held = [], [], [], set()
         for p, (m, sgn) in R.items():
