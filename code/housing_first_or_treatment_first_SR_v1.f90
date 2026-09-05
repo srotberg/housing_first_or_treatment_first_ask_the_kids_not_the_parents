@@ -27598,7 +27598,7 @@
 !                max(index_of_smallest_house_hhld_can_buy-1,lowest_housing_grid_point)
 !            
 !            size_of_smallest_house_hhld_can_buy=&
-!                (housing_size(index_of_smallest_house_hhld_can_buy)+&
+!                (housing_size(max(min(index_of_smallest_house_hhld_can_buy,housing_status_grid_size-1),lowest_housing_grid_point))+&
 !                housing_size(index_of_smallest_house_hhld_can_buy_minus_one))/2
                 
 !            size_of_smallest_house_hhld_can_buy=0.25
@@ -33467,7 +33467,7 @@
             write(2,*) "largest_house_size=", largest_house_size
             write(2,*) "index_of_smallest_house_hhld_can_buy=", index_of_smallest_house_hhld_can_buy
             write(2,*) "housing_size(index_of_smallest_house_hhld_can_buy)=", &
-                housing_size(index_of_smallest_house_hhld_can_buy)
+                housing_size(max(min(index_of_smallest_house_hhld_can_buy,housing_status_grid_size-1),lowest_housing_grid_point))
             write(2,*) "largest_house_size_hhld_can_rent=", largest_house_size_hhld_can_rent
             write(2,*) "total_housing_demand=", total_housing_demand(j)
             write(2,*) "empirical housing_stock_elasticity=", empirical_housing_supplpy_elasticity
@@ -37622,7 +37622,7 @@
         write(*,*) "max_amortization_years=", max_amortization_years
         write(*,*) "model_average_owner_occupied_unit_size(1)=", model_average_owner_occupied_unit_size(1)
         write(*,*) "smallest_house_size=", smallest_house_size
-        write(*,*) "housing_size(index_of_smallest_house_hhld_can_buy)=", housing_size(index_of_smallest_house_hhld_can_buy)
+        write(*,*) "housing_size(index_of_smallest_house_hhld_can_buy)=", housing_size(max(min(index_of_smallest_house_hhld_can_buy,housing_status_grid_size-1),lowest_housing_grid_point))
         write(*,*) "c_1=", c_1
         write(*,*) "c_min=", c_min
         write(*,*) "cutoff_housing_investment=", cutoff_housing_investment
@@ -37655,7 +37655,7 @@
         write(*,*) "max_debt_to_income_ratio=", max_debt_to_income_ratio
         write(*,*) "max_debt_to_income_ratio_below_80=", max_debt_to_income_ratio_below_80
         write(*,*) "smallest_house_size=", smallest_house_size
-        write(*,*) "housing_size(smallest_house_to_buy)=", housing_size(index_of_smallest_house_hhld_can_buy)
+        write(*,*) "housing_size(smallest_house_to_buy)=", housing_size(max(min(index_of_smallest_house_hhld_can_buy,housing_status_grid_size-1),lowest_housing_grid_point))
         write(*,*) "lowest_housing_grid_point=", lowest_housing_grid_point
         write(*,*) "employment_grid=", employment_grid(1,:)
         write(*,*) "value_of_initial_assets=", value_of_initial_assets
@@ -38850,7 +38850,7 @@
                     write(*,*) "size_of_smallest_house_hhld_can_buy=", size_of_smallest_house_hhld_can_buy
                     write(*,*) "housing_status_grid_expander=", housing_status_grid_expander
                     write(*,*) "housing_size(index_of_smallest_house_hhld_can_buy)=", &
-                        housing_size(index_of_smallest_house_hhld_can_buy)
+                        housing_size(max(min(index_of_smallest_house_hhld_can_buy,housing_status_grid_size-1),lowest_housing_grid_point))
                     write(*,*) "model_fraction_of_homeowners_with_mortgage(1)=", model_fraction_of_homeowners_with_mortgage(1)
                     
                     if ((mortgage_deductibility>0) .OR. (property_tax_deductibility>0)) then
@@ -40577,7 +40577,7 @@
             write(*,*) "smallest_house_size=", smallest_house_size
             write(*,*) "index_of_smallest_house_hhld_can_buy=", index_of_smallest_house_hhld_can_buy
             write(*,*) "housing_size(index_of_smallest_house_hhld_can_buy)=", &
-                housing_size(index_of_smallest_house_hhld_can_buy)
+                housing_size(max(min(index_of_smallest_house_hhld_can_buy,housing_status_grid_size-1),lowest_housing_grid_point))
             write(*,*) "size_homelessness=", size_homelessness
             write(*,*) "largest_financial_chosen_in_equilibrium=", largest_financial_chosen_in_equilibrium
             write(*,*) "largest_housing_size_consumed_in_equilibrium=", largest_housing_size_consumed_in_equilibrium
