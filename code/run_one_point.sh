@@ -215,7 +215,17 @@ declare -A P=(
     # THE STREET'S LABOUR-MARKET PENALTY IN PERCENTAGE POINTS. Zero reproduces
     # the model exactly and leaves increased_prob_if_homeless in charge; positive
     # overrides both sides with lose+delta and find-delta. Owns y_h.
-    [homeless_job_penalty_pp]=0
+    # 0.001 ON THE AUTHOR'S INSTRUCTION, 5 September: *"set delta=0.001 and allow
+    # it to adjust after b and base are correct"*. It is FROZEN in fixed_point.py
+    # until then.
+    #
+    # It had been driven to 0.19945, which on a baseline separation probability of
+    # 0.0046844 is 20.41 per cent a year homeless against 0.47 housed, a 43.6-fold
+    # hazard. The declaration is 0.d0 and the Fortran's own note says "DELTA ZERO
+    # REPRODUCES THE MODEL EXACTLY", so the author's original paper ran without it.
+    # 0.001 rather than 0 keeps the percentage-point branch live, so releasing it
+    # later is a step and not a regime change.
+    [homeless_job_penalty_pp]=0.001
     # THE BOTTOM OF THE PRODUCTIVITY GRID, two instruments for the two moments
     # that say who the homeless are: the employed share (0.46) and their income
     # (0.191 of average). y_grid_kappa sets the bottom node's mass, exactly
