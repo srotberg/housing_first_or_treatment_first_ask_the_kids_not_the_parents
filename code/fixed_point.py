@@ -307,7 +307,22 @@ CAPPED = {'relative_share_of_addiction_1',
 FROZEN = {'multiple_of_probabilities_of_employment_if_addicted',
           'bottom_productivity_level',
           'relative_share_of_addiction_1',
-          'lambda_addiction'}
+          'lambda_addiction',
+          # rr_homeless_old_level IS INERT AT homeless_death_risk_flat_in_age=2,
+          # which run_one_point.sh now defaults to on the author's instruction of
+          # 5 September. Setting 2 takes the branch
+          # kappa_phi_h_by_age = 1 + increased_risk_of_death_homeless and never
+          # reads rr_homeless_profile, so the level this parameter writes into the
+          # tail of that profile is not read by anything.
+          #
+          # IT MUST BE FROZEN RATHER THAN LEFT ALONE. An instrument that cannot
+          # reach its moment does not sit still, it runs -- that is written above
+          # about bottom_productivity_level and it cost eight iterations there.
+          # h_share5 therefore has NO INSTRUMENT at this setting, which is
+          # acceptable because setting 2 puts band 5 homelessness at 3.9e-9
+          # against a target of 7.7e-4: the old are simply not homeless here, and
+          # no level of a bypassed profile changes that.
+          'rr_homeless_old_level'}
 # NOTHING IS FROZEN, 5 September. bottom_productivity_level is released on the
 # author's confirmation that it owns emp_homeless: *"We are setting the lowest
 # productivity such that 46% of the homeless are employed"*.

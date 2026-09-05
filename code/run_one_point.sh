@@ -93,7 +93,31 @@ declare -A P=(
     # THE FLAT EXCESS DEATH RISK FROM THE STREET, per period. Default is
     # Baggett's implied excess at age 26, so only the age gradient is removed.
     # 0 Baggett ratios, 1 flat excess risk, 2 flat 1.6 multiplier.
-    [homeless_death_risk_flat_in_age]=0
+    # THE STREET'S DEATH PENALTY IS A FLAT 1.6 AT EVERY AGE, on the author's
+    # instruction of 5 September: *"maybe the death rate is too high....try 60%
+    # uniform death rate across everyone"*. Setting 2 is that setting: it bypasses
+    # rr_homeless_profile entirely and uses 1+increased_risk_of_death_homeless,
+    # which is fixed at 0.6 in the Fortran (Meyer, Wyse and Logani).
+    #
+    # WHAT SETTING 0 WAS CHARGING. Baggett's ratio over the SUD term, measured at
+    # point a1a0bf3fe6: 7.99 at data age 26, 7.89 at 35, 5.87 at 45, 3.88 at 55 and
+    # 5.19 above 64. An eightfold death hazard on a twenty six year old sleeping
+    # rough, against value_of_life 45. That is what made size_homelessness inert:
+    # the street's size moves the HOUSING term and never the MORTALITY term.
+    #
+    # MEASURED IN ISOLATION, one coordinate, model 375aed92cf:
+    #
+    #                    mode 0      mode 2      target
+    #   h_1              0.000149    0.000543    0.00399
+    #   lambda_m         0.884       0.342       0.25
+    #   band 5 rate      8.7e-3      0.0         7.7e-4
+    #
+    # and the street becomes an instrument again: under mode 2, 0.10 -> 0.494 takes
+    # h_1 from 0.000165 to 0.000543, an elasticity of 0.745, where under mode 0 it
+    # did not move across the same range.
+    #
+    # rr_homeless_old_level IS INERT AT THIS SETTING and is frozen in fixed_point.py.
+    [homeless_death_risk_flat_in_age]=2
     [homeless_excess_death_risk]=0.00396
     # ONE TYPE AGAIN, on the author's instruction of 1 September: "Maybe we don't
     # even need the two betas. Go back having just one. I think we don't need the
