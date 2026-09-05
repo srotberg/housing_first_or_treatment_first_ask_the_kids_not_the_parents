@@ -154,7 +154,11 @@ ADJUSTERS = {
     'increased_prob_if_homeless': 0.10,
     # A PROPORTIONAL STEP CANNOT LEAVE ZERO, so delta starts at 0.05 in the
     # seed vector rather than 0 and then moves by ten per cent of itself.
-    'homeless_job_penalty_pp': 0.10,
+    # 0.10 -> 0.05, same instruction, and this is the one that needed it most:
+    # delta moved 9.42 per cent an iteration and drove emp_homeless from +108 per
+    # cent straight through the target to -98.2 in six steps, taking h_1 from +348
+    # to -90.5 with it.
+    'homeless_job_penalty_pp': 0.05,
     # M MOVES 50 PER CENT AT A 100 PER CENT GAP. The author, 5 September: *"i
     # think the M var has to be adjusted much more quickly than at 10%"*, then
     # *"i think M should adjust at 50% when it's at 100%"*.
@@ -200,7 +204,10 @@ ADJUSTERS = {
     # round, and it is safe now for the reason that was missing then: theta is in
     # CAPPED with an ENFORCED ceiling of 0.25, so the worst case is that it walks
     # to the cap and stops, about forty iterations at this step.
-    'relative_share_of_addiction_1': 0.0400,
+    # 0.0400 -> 0.0200, same instruction. Still ten times this morning's 0.0020.
+    # theta is HELD in any case: its moment is +6.2 per cent, inside the band, so
+    # the adjuster has not been exercised since the author jumped it to 0.2.
+    'relative_share_of_addiction_1': 0.0200,
     'relative_share_of_housing': 0.1000,
     'relative_share_of_leisure': 0.0748,
     'rr_homeless_old_level': 0.1000,
@@ -217,7 +224,8 @@ ADJUSTERS = {
     # is strongly convex -- elasticity 1.81 over street 0.11->0.26 and 4.65 over
     # 0.26->0.53 -- so a larger step is more likely to overshoot than to stall,
     # and the target is now bracketed on both sides by measured points.
-    'size_homelessness': 0.20,
+    # 0.20 -> 0.10, same instruction, back to what it was before today.
+    'size_homelessness': 0.10,
     'smallest_rental_relative_to_lowest_income': 0.0148,
     'smi_onset_level': 0.1000,
     'utility_cost_of_treatment': 0.0100,
@@ -259,7 +267,11 @@ ADJUSTERS = {
     # measured then, on b alone) moved the drug share 100 per cent a step; then
     # to 0.002, which crawled; then 0.005. Sizing by elasticity rather than by
     # how far a parameter has to travel is what settles it.
-    'addiction_scalar_1': 0.0020,
+    # 0.0020 -> 0.0010, 5 September, the author: *"I think you have to update b,
+    # theta, h1 more slowly"*, *"And delta too"*. My reading was the opposite --
+    # measured over six iterations this parameter moved 0.20 per cent an iteration
+    # against a 372 per cent gap on b -- and the author has it either way.
+    'addiction_scalar_1': 0.0010,
     'lambda_addiction': 0.0100,
 }
 DEFAULT_ADJ = 0.02
