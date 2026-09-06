@@ -317,6 +317,30 @@ RULES = {
     # would be reading a derivative off a diagonal move.
     'addiction_onset_base':                      ('lambda_d',     -2.78, 1e-06, 0.95, 0.15, 0.20),
     'addiction_scalar_1':                        ('b',            -2.32, 1e-12, 1.0, 0.15, 0.20),
+    # THREE MORE SIGNS THE AUTHOR SUPPLIED OR THE SOURCE SETTLES, 6 September.
+    # All three were assigned to their moment already and frozen only for want of
+    # a measured slope -- the method will not guess a direction -- so a sign is
+    # exactly what unfreezes them. The magnitudes are a bare 1.0 and the speeds
+    # are slow; the first controlled pair replaces them.
+    #
+    # kappa_uem. The author: *"shouldnt it go up if employment is too high?"*.
+    # Yes, and the source settles it -- kappa_uem MULTIPLIES SEPARATION, so
+    # raising it takes SMI households out of work and lowers the employment rate.
+    # Its own declaration names the target: "Calibrated: employment rate given
+    # SMI, 30 percent, the midpoint of the high disability range." At 0.633
+    # against 0.300 this is the worst live gap in the table and nothing was
+    # moving it.
+    #
+    # utility_cost_of_treatment. A utility COST of treatment can only lower
+    # take-up, so tau_u above target means the cost is too low.
+    #
+    # multiple_of_probabilities_of_employment_if_addicted. Higher means the
+    # addicted hold jobs more easily, so they stay housed and the SUD share OF
+    # THE HOMELESS falls. sud_homeless at 0.073 against 0.217 wants it lower.
+    'kappa_uem':                                 ('kappa_uem',    -1.00, 1.0, 20.0, 0.25, 0.20),
+    'utility_cost_of_treatment':                 ('tau_u',        -1.00, 0.0, 8.0, 0.25, 0.20),
+    'multiple_of_probabilities_of_employment_if_addicted':
+                                                 ('sud_homeless', -1.00, 1.0, 50.0, 0.25, 0.20),
     'newborn_endowment_scale':                   ('h_share1',     -1.00, 0.0, 3.0, 0.35, 0.20),
     'ssi_floor_level':                           ('h_share5',     -1.00, 0.0, 0.30, 0.35, 0.20),
 }
