@@ -1,3 +1,51 @@
+## 6 September, 12:03 -- NINETEEN OF TWENTY-THREE INSIDE TEN PER CENT.
+## point_8d2dbab380 IS THE BENCHMARK.
+
+  = 7f98bce381 + probability_becoming_unemployed 0.060 + kappa_uem 13.6
+    + smi_onset_level 0.0042 + addiction_scalar_1 0.0053
+    + multiple_of_probabilities_of_employment_if_addicted 1.15 + value_of_life 168
+
+  emp_homeless  0.45557   0.46000   -1.0%   h_2         0.10989  0.10100    8.8%
+  b             0.09025   0.08900    1.4%   pi_V        0.24112  0.26600   -9.4%
+  aleph        78.75243  80.00000   -1.6%   theta       0.12752  0.14098   -9.5%
+  pi_eu         0.13689   0.13930   -1.7%   cbar        0.00460  0.00420    9.6%
+  lambda_m      0.25525   0.25000    2.1%   tau_u       0.26849  0.24500    9.6%
+  kappa_ued     0.15725   0.16250   -3.2%   mu_H        1.61770  1.47321    9.8%
+  y_u           0.71307   0.74000   -3.6%   sigma_y     0.19460  0.17200   13.1%
+  burden50      0.18188   0.17500    3.9%   omega_l     0.47691  0.40000   19.2%
+  beta          2.33983   2.25000    4.0%   gamma       0.34047  0.26800   27.0%
+  p_m           0.05033   0.04840    4.0%   h_1         0.05888  0.00399 1375.8%
+  kappa_uem     0.27528   0.30000   -8.2%
+  lambda_d      0.03992   0.03680    8.5%
+  tau_l         0.20495   0.22400   -8.5%
+
+  NINETEEN of twenty-three inside ten per cent, TWENTY-ONE inside twenty.
+  Only sigma_y, omega_l, gamma and h_1 are outside ten.
+  homeless by choice 0.3360, could afford it on income 0.1688.
+  age bands 0.4711 / 0.2418 / 0.1411 / 0.0872 / 0.0588 against
+             0.2600 / 0.2720 / 0.2100 / 0.1840 / 0.0750
+
+WHY IT JUMPED FROM SIXTEEN TO NINETEEN: value_of_life 168 was added to repair
+aleph, and it ALSO pulled b back from +53.7 per cent to +1.4, because a higher
+value of life deters drug use. The two repairs cancelled each other's side
+effects. The shifter was NOT needed -- the line that added shifter 0.0056 on top
+gives fifteen, because it double-counts the same correction.
+
+THAT IS THE ONE CASE TONIGHT WHERE TWO NON-LOCAL ARMS COMPOSED BETTER THAN EITHER
+ALONE, and it happened because their side effects were opposite in the same
+moment. Worth looking for deliberately rather than stumbling on: when two arms are
+both needed and both break b, check whether they break it in opposite directions
+before reaching for the shifter.
+
+WHAT REMAINS OUTSIDE TEN PER CENT, and the state of each:
+  sigma_y  +13.1  kkk_sigma_scale 1.93 measured, NOT local -- moves emp|hl, b, h_1
+  omega_l  +19.2  relative_share_of_leisure rejected at 11:33, costs seven moments
+  gamma    +27.0  only instrument is the housing weight, in opposition to h_2
+  h_1    +1375.8  unreachable, established 09:22
+
+TWO OF THE FOUR ARE CLOSED QUESTIONS AND THE OTHER TWO HAVE NO AFFORDABLE MOVE.
+This is the stopping point unless the author reopens the ladder or the SKIP list.
+
 ## 6 September, 11:43 -- THE COMPENSATED COMBINATION GAINS TWO MOMENTS AND LOSES
 ## FOUR. THE FOUR LOSSES ARE ALL REPAIRABLE AND ARE BEING REPAIRED.
 
