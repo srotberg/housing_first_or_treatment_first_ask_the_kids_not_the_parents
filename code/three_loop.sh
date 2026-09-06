@@ -4,10 +4,17 @@
 #   "I think you need to let my method run for a while and see if the model
 #    converges"   -- 6 September
 #
-# Each pass asks three_step.py for the next iterate and solves it. The step
-# reads the NEWEST solved point carrying the author's configuration, so the loop
+# Each pass asks three_step.py for the next iterate and solves it, so the loop
 # feeds on its own output, which is the whole point: every round before this one
 # was a sample off a base picked by hand that firing, never an iteration.
+#
+# THE STEP NO LONGER TAKES THE NEWEST CONFIGURED POINT AS ITS BASE, and this
+# comment used to say that it did. The correction round's arms carry the same
+# configuration -- they are one-coordinate variations off a base that shares it --
+# so on 6 September the newest of them became the base and the iteration was
+# handed to a search that is not this one. three_step.py now records every vector
+# it asks for in code/three_step_iterates.txt and bases itself only on points
+# solved from one of them.
 #
 # SERIAL, ON PURPOSE. run_one_point.sh takes a flock and rebuilds from the working
 # tree on every line, so two of these at once would race on the handover file and
@@ -22,6 +29,24 @@ D=/home/user/housing_first_or_treatment_first
 cd "$D" || exit 1
 N=${1:-40}
 LOG="$D/code/three_loop.log"
+
+# ONE LOOP AT A TIME, ENFORCED HERE. A manual start once collided with an armed
+# wrapper and two loops iterated the same archive against each other for several
+# minutes. Tested positionally on the basename, never with pgrep -f, which would
+# match this script's own command line and every editor open on it.
+# BOTH FIELDS, because the basename lands in a different one depending on how it
+# was started: "bash code/three_loop.sh" puts it in $3, "./code/three_loop.sh"
+# in $2.
+alive=$(ps -eo pid=,args= | awk -v me=$$ '
+    $1 == me { next }
+    { for (f = 2; f <= 3; f++) {
+          n = split($f, q, "/")
+          if (q[n] == "three_loop.sh") { print $1; next }
+      } }')
+if [ -n "$alive" ]; then
+    echo "three_loop already running as pid(s) $alive; refusing to start a second" >> "$LOG"
+    exit 1
+fi
 
 echo "=== three_loop start $(date -u +%H:%M:%S), up to $N iterations ===" >> "$LOG"
 
