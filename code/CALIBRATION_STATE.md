@@ -1,3 +1,65 @@
+## 6 September, 22:14 -- THE FULL SCORING OF THE CONVERGED POINT. 11 OF 25 INSIDE
+## TEN PER CENT, AND THE FOUR BEST ARE THE FOUR THE LOOP HAS BEEN DRIVING.
+
+point_36412aab69, 21:20, the converged iterate of the four-instrument loop. Not
+at a corner: homelessness 1.32 per cent, the rental market clears, all sixteen
+invariants pass. The author asked for the whole table.
+
+    w_bot         net worth share, bottom half     0.07362   0.02500  +194.5%
+    kappa_uem     employment given SMI             0.63491   0.30000  +111.6%
+    h_3           share in the largest unit        0.09780   0.62672   -84.4%
+    kappa_ued     unemployment given SUD           0.05524   0.16250   -66.0%
+    cbar          food stamps / income             0.00163   0.00420   -61.3%
+    b             total drug users                 0.06456   0.08900   -27.5%
+    lambda_d      disorder rate                    0.02884   0.03680   -21.6%
+    h_1           homelessness rate                0.01323   0.01097   +20.6%
+    omega_l       labour supply / total hours      0.47755   0.40000   +19.4%
+    theta         drug spending share              0.11854   0.14098   -15.9%
+    h_2           above half of spending           0.11384   0.10100   +12.7%
+    aleph         value of life / income          70.41123  80.00000   -12.0%
+    lambda_m      SMI share of the homeless        0.27667   0.25000   +10.7%
+    y_u           income of drug users             0.81596   0.74000   +10.3%
+    burden50      over half of income, in h2       0.19148   0.17500    +9.4%
+    beta          wealth over output               2.45967   2.25000    +9.3%
+    gamma         housing over expenditure         0.28402   0.26800    +6.0%
+    p_m           SMI population share             0.05028   0.04822    +4.3%
+    sigma_y       bottom half labour income share  0.17929   0.17200    +4.2%
+    pi_V          eligibles with a voucher         0.25747   0.26600    -3.2%
+    tau_u         treatment take up                0.23792   0.24500    -2.9%
+    mu_H          recovery housed / homeless       1.45046   1.47321    -1.5%
+    tau_l         average labour income tax        0.22513   0.22400    +0.5%
+    emp_homeless  employed share of homeless       0.45927   0.46000    -0.2%
+    pi_eu         unemployment rate                0.04899   0.04900    -0.0%
+
+THE ORDERING IS THE FINDING. The four moments the loop has actually been driving
+are the four best-fitting in the table; everything above them drifted while
+nineteen instruments sat frozen. That is what the extension of 22:00 addresses
+and it is not evidence that those nineteen are hard.
+
+TWO THAT ARE STRUCTURAL AND WILL NOT YIELD TO A STEP SIZE.
+
+h_3 at -84 per cent. 71 per cent of renters are in the cheapest unit against 9.8
+per cent in the largest, where the data says 63. It pulls directly against h_2:
+the cheap rung that gets the cost-burden headcount right is the same thing
+emptying the upper units, and one rung parameter may not reach both.
+
+The age profile. 60 per cent of the homeless are 26-34 against 26 in the data,
+0.6 per cent are 65 plus against 7.5, and the rate falls 4.5 per cent in band 1
+to 0.03 in band 5 where the data is nearly flat. This is the open
+homeless_death_risk_flat_in_age question: a flat 1.6x mortality multiplier does
+this. The author has not ruled on the three shapes.
+
+Standing extras at this point: SUD share of the homeless 4.5 per cent against
+21.7 observed; income of the homeless 0.068 against 0.191; income of drug users
+0.816 against 0.74; 32.8 per cent of the homeless could afford the cheapest unit
+on income alone.
+
+THE 1.3 PER CENT TARGET WAS RAISED AND WITHDRAWN. At 22:05 the author suggested
+aiming h_1 at 1.3 per cent to buy emp_homeless, then withdrew it -- *"no no, keep
+the old target"* -- before anything was edited. fraction_homeless_data is
+untouched at 0.01097. Worth recording only because the model already sits at
+1.323 per cent, so that target would have been met on arrival.
+
 ## 6 September, 22:00 -- THE METHOD NOW DRIVES ALL 23 INSTRUMENTS, AND THE BASE
 ## RULE IT INHERITED WAS SILENTLY HANDING THE ITERATION TO THE GATE.
 
