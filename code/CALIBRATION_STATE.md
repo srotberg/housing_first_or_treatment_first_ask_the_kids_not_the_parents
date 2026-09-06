@@ -1,3 +1,41 @@
+## 6 September, 04:40 -- h_1 CANNOT REACH 0.4 PER CENT AT h2 = 0.130 EITHER. THE
+## STREET FLOORS AT 1.4 PER CENT AND THE DESCENT PAYS FOR IT IN emp_homeless.
+
+Five-point street sweep at h2 = 0.130, the expenditure-burden configuration,
+2x/3x ratio ladder, increased_prob_if_homeless = 0, consumption_penalty_homeless
+= 0, drug block at base = 0.015101441 and scalar = 0.0208 throughout, so the only
+thing moving is size_homelessness.
+
+  street     h_1    h2 exp  lambda_m  emp|hl   gamma      b    lambda_d
+  target   0.0040   0.1010    0.2500  0.4600  0.2680  0.0890    0.0368
+  1.1e-2   0.0568   0.0941    0.2918  0.4368  0.3389  0.0343    0.0074
+  3.0e-4   0.0215   0.1408    0.4752  0.2405  0.3483  0.0156    0.0033
+  1.0e-4   0.0183   0.1485    0.5058  0.2090  0.3487  0.0141    0.0029
+  3.0e-5   0.0160   0.1543    0.5428  0.1826  0.3498  0.0124    0.0026
+  1.0e-5   0.0143   0.1596    0.5783  0.1533  0.3491  0.0113    0.0023
+
+A THOUSAND-FOLD CUT IN THE STREET BUYS A FACTOR OF FOUR IN h_1, AND STOPS. From
+1.1e-2 to 1.0e-5 the street shrinks by 1,100 times and h_1 falls 0.0568 to 0.0143,
+still 3.6 times the 0.0040 target. The elasticity decays monotonically: 0.55 over
+the first decade, 0.10 over the last. h1 alone does not reach the target.
+
+WHAT THE DESCENT COSTS. Every other homelessness moment moves the wrong way:
+emp_homeless 0.437 to 0.153 against a target of 0.460, and lambda_m 0.292 to
+0.578 against 0.250. The widest street is the only row where either is near its
+target, and it is also the row where the expenditure burden is closest (0.0941
+against 0.1010). BEST ROW IS STILL street = 1.1e-2.
+
+WHY. This is the 03:10 finding again at a different h2. The households left on
+the street as it shrinks are the ones with no alternative -- non-employed, SMI --
+so the composition of the homeless gets poorer and sicker exactly as their number
+falls. The model has no involuntary route onto the street, so the employed
+homeless are all there by choice and they are the first to leave.
+
+DRUG USE FALLS WITH THE STREET TOO, b from 0.0343 to 0.0113 and lambda_d from
+0.0074 to 0.0023, both already far below target at the widest street. The drug
+block therefore has to be recalibrated at whatever street is chosen; it is not
+separable from the housing side.
+
 ## 6 September, 03:10 -- THE MODEL HAS NO INVOLUNTARY ROUTE ONTO THE STREET, AND
 ## THAT IS WHY emp_homeless AND h_1 CANNOT BOTH BE HIT.
 
