@@ -1,3 +1,38 @@
+## 6 September, 13:03 -- kappa_uem = 12.0 IS A FREE WIN. AND I PICKED A DIRECTION
+## BY HAND AGAIN INSTEAD OF READING directions_table.py.
+
+  run              in10  in20   med     cbar  kap_uem   tau_l       b     h_2  emp|hl
+  BENCHMARK       19/23 21/23  3.7%  0.00461   0.2752  0.2050  0.0903  0.1057  0.4527
+  food 0.0291     18/23 21/23  3.2%  0.00418   0.2753  0.2050  0.0899  0.1054  0.4511
+  kappa_uem 12.0  19/23 21/23  3.7%  0.00453   0.3001  0.2049  0.0902  0.1055  0.4599
+  tax 0.88        16/23 20/23  3.3%  0.00454   0.2757  0.1299  0.0858  0.0989  0.4623
+  target                            0.00420   0.3000  0.2240  0.0890  0.1010  0.4600
+
+kappa_uem 12.0 PUTS ITS OWN MOMENT AT 0.3001 AGAINST 0.3000 AND emp_homeless AT
+0.4599 AGAINST 0.4600, TOGETHER, WITH NOTHING LOST. Two moments to three parts in
+ten thousand on one parameter. Take it.
+
+max_food_cost 0.0291 puts cbar at -0.5 per cent and pushes theta from -9.5 to
+-10.1, so it trades one boundary moment for another and improves the median from
+3.7 to 3.2. Worth taking on the median, not on the count.
+
+THE TAX ARM WENT THE WRONG WAY AND directions_table.py SAID SO. tau_l is BELOW its
+target, so by the table's convention -- 'raise' means raise when the moment is
+ABOVE target -- the rate has to come DOWN. I raised it and the moment fell from
+0.2050 to 0.1299. THIS IS THE SECOND TIME TONIGHT, after kkk_sigma_scale at 07:31,
+and the fix is not to remember harder:
+
+  BEFORE PICKING A DIRECTION, LOOK UP THE MOMENT IN directions_table.py AND APPLY
+  THE CONVENTION: moment ABOVE target -> move the parameter the stated way;
+  moment BELOW target -> the opposite. Both errors tonight were moments BELOW
+  target where I moved the parameter as if they were above.
+
+The arm is not wasted -- it gives a slope of -1.05 per unit, putting the crossing
+at a tax rate of 0.790 -- but it cost a solve a two-second lookup would have saved.
+
+RUNNING: batch_polish5.txt, kappa_uem 12.0 with max_food_cost 0.0291 and the
+corrected tax rate, in four combinations.
+
 ## 6 September, 12:43 -- NEW BENCHMARK point_36b82511ca. STILL NINETEEN OF
 ## TWENTY-THREE, BUT THE MEDIAN GAP HALVES FROM 8.5 TO 3.7 PER CENT.
 
