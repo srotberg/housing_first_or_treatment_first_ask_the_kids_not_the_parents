@@ -1,3 +1,44 @@
+## 6 September, 07:51 -- ALL EIGHT ARMS OFF f1f8022841, AND THE CROSSINGS.
+
+  arm                              tag         moment      model  target     gap        b
+  BASE f1f8022841                                                                    0.0900
+  kkk_sigma_scale 1.55             01aebc7eed  sigma_y    0.2287   0.172  +33.0%   0.0727
+  smi_onset_level 0.00243          06914d39f3  p_m        0.0429  0.0484  -11.3%   0.0867
+  kappa_uem 9.0                    f4ae715d1b  kappa_uem  0.3623    0.30  +20.8%   0.0903
+  relative_share_of_leisure 2.10   b7baf0027a  omega_l    0.4547    0.40  +13.7%   0.0933
+  prob_voucher_used 0.0435         ba1230b154  pi_V       0.2812   0.266   +5.7%   0.0884
+  prob_becoming_unemployed 0.053   3996c26f62  pi_eu      0.1272  0.1393   -8.7%   0.0812
+  relative_share_of_addiction .225 28f3411e1b  theta      0.1433  0.1410   +1.7%   0.2082
+  relative_share_of_housing 0.300  fecde2ed03  gamma      0.3160   0.268  +17.9%   0.0777
+
+  crossings:  kkk_sigma_scale 1.96      kappa_uem 11.7      pi_V param 0.0402
+              smi_onset_level 0.0042    pi_eu param 0.0610  rel_share_addiction 0.2237
+              relative_share_of_leisure about 3.7   relative_share_of_housing about 0.200
+
+ONE ARM WENT THE WRONG WAY AND directions_table.py ALREADY SAID SO. sigma_y is the
+BOTTOM HALF'S SHARE of labour income, not dispersion, so more dispersion LOWERS it
+and kkk_sigma_scale has to RISE. The arm lowered it and the moment moved from
++13.4 to +33.0 per cent. The table's entry -- 'sigma_y': ('kkk_sigma_scale',
+'raise') -- was right. CONSULT THE TABLE BEFORE PICKING A DIRECTION; the other
+seven were checked against it afterwards and were all correct.
+
+TWO INSTRUMENTS ARE WEAK AND NEED A FACTOR OF TWO, NOT A NUDGE.
+relative_share_of_leisure has an elasticity of -0.23 on omega_l, so closing an
+18-per-cent gap needs 1.78 to about 3.7. relative_share_of_housing has a slope of
+0.48 in the moment per unit of weight, so gamma = 0.268 needs a weight near 0.200
+-- which also settles the 06:23 question: the Cobb-Douglas identity is not merely
+attenuated here, it is attenuated by half, and the weight is nothing like the
+expenditure share.
+
+theta's ARM COSTS THE MOST. relative_share_of_addiction_1 at 0.2237 lands theta at
+1.7 per cent but takes b from 0.0900 to 0.2082. gamma's and pi_eu's arms push b
+the other way, to 0.0777 and 0.0812. The net is not predictable from the arms.
+
+RUNNING: batch_composite_d.txt applies the six well-determined crossings together
+with the two weak instruments left at their measured arm values (leisure 2.10,
+housing 0.300) rather than at extrapolated ones, against a shifter ladder of
+0.0060, 0.0080, 0.0105 and 0.0135 to absorb whatever b does.
+
 ## 6 September, 07:23 -- BEST POINT OF THE NIGHT: point_f1f8022841. THIRTEEN OF
 ## TWENTY-THREE INSIDE TEN PER CENT, NINETEEN INSIDE TWENTY.
 
