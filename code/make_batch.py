@@ -20,7 +20,11 @@ def read_vector(path):
     """Full parameter dict from a point file's VECTOR line or a batch line."""
     t = open(path, errors='ignore').read()
     m = re.search(r'^VECTOR (.*)$', t, re.M)
-    src = m.group(1) if m else t.splitlines()[0].split(' ', 3)[-1]
+    # split(' ', 2) keeps EVERYTHING after 'bash code/run_one_point.sh'.
+    # It was split(' ', 3) for one revision, which silently dropped the FIRST
+    # parameter -- the same class of bug this module exists to prevent, in the
+    # module itself. The count assertions below are what caught it.
+    src = m.group(1) if m else t.splitlines()[0].split(' ', 2)[-1]
     d = {}
     for tok in src.split():
         if '=' in tok and not tok.startswith('bash') and not tok.endswith('.sh'):
