@@ -1,3 +1,47 @@
+## 6 September, 12:43 -- NEW BENCHMARK point_36b82511ca. STILL NINETEEN OF
+## TWENTY-THREE, BUT THE MEDIAN GAP HALVES FROM 8.5 TO 3.7 PER CENT.
+
+  = 8d2dbab380 + mu_homeless 0.82 + utility_cost_of_treatment 6.3
+    + probability_of_voucher_benchmark_used 0.0434
+
+  moment          model   target    gap      was        moment      model  target    gap     was
+  pi_V          0.26511  0.26600  -0.3%    -9.4%        h_2       0.10571 0.10100   4.7%    8.8%
+  tau_u         0.24627  0.24500   0.5%     9.6%        kappa_uem 0.27524 0.30000  -8.3%   -8.2%
+  mu_H          1.48345  1.47321   0.7%     9.8%        tau_l     0.20502 0.22400  -8.5%   -8.5%
+  b             0.09032  0.08900   1.5%     1.4%        lambda_d  0.04007 0.03680   8.9%    8.5%
+  aleph        78.77837 80.00000  -1.5%    -1.6%        theta     0.12763 0.14098  -9.5%   -9.5%
+  emp_homeless  0.45270  0.46000  -1.6%    -1.0%        cbar      0.00461 0.00420   9.8%    9.6%
+  pi_eu         0.13689  0.13930  -1.7%    -1.7%        sigma_y   0.19430 0.17200  13.0%   13.1%
+  burden50      0.17926  0.17500   2.4%     3.9%        omega_l   0.47638 0.40000  19.1%   19.2%
+  kappa_ued     0.15782  0.16250  -2.9%    -3.2%        gamma     0.33994 0.26800  26.8%   27.0%
+  lambda_m      0.25722  0.25000   2.9%     2.1%        h_1       0.05756 0.00399 1342.6% 1375.8%
+  y_u           0.71478  0.74000  -3.4%    -3.6%
+  beta          2.33262  2.25000   3.7%     4.0%
+  p_m           0.05033  0.04840   4.0%     4.0%
+
+  nineteen of twenty-three inside ten, twenty-one inside twenty,
+  FOURTEEN INSIDE FIVE, median |gap| 3.7 per cent against the benchmark's 8.5.
+
+THE COUNT DID NOT MOVE AND THE POINT IS MUCH BETTER, which is the clearest case
+tonight for not ranking on the count alone. Three moments that were sitting at nine
+and ten per cent -- pi_V, tau_u and mu_H -- are now at 0.3, 0.5 and 0.7.
+
+WHAT MADE IT WORK was interpolating each crossing from a PAIR THAT STRADDLES the
+target rather than extrapolating from one side. The 12:31 attempt overshot the
+treatment cost (6.8 against a crossing of 6.30) and undershot the voucher
+probability (0.0405 against 0.0434) and lost two moments; the same three moves with
+straddled crossings lost none.
+
+NEXT, all local instruments on the five moments still between eight and ten:
+  max_food_cost         0.031119 -> 0.0291   cbar  +9.8, slope measured, clean
+  kappa_uem                 13.6 -> 12.0     kappa_uem -8.3, log slope -0.70
+  labor_income_tax_rate  0.808366 -> 0.88    tau_l -8.5
+batch_polish4.txt runs each alone and all three together.
+
+theta and lambda_d are left alone: theta's instrument doubles b and lambda_d
+follows b, so both would be bought with the shifter, which is already carrying the
+drug block.
+
 ## 6 September, 12:22 -- sigma_y IS CONFIRMED UNAFFORDABLE. mu_homeless BUYS mu_H
 ## AND SELLS TWO MARGINAL MOMENTS, BOTH OF WHICH HAVE THEIR OWN LEVERS.
 
