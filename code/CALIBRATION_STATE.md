@@ -1,3 +1,28 @@
+## 6 September, 10:02 -- THE RIDGE STEP WAS OVERPAYING. REVERTING THE LABOUR
+## BLOCK IMPROVES ALL FIVE OF ITS MOMENTS AND THE HOUSING BLOCK LARGELY SURVIVES.
+
+  run                     in10  in20 kap_uem   pi_V  pi_eu    cbar sigma_y    h_1    h_2  lam_m      b
+  kfs2.17, ridge labour  12/23 17/23  0.4070 0.3577 0.0921 0.00313  0.2010 0.0352 0.0996 0.2531 0.0904
+  LINE1, labour reverted 12/23 19/23  0.3422 0.3223 0.1029 0.00352  0.1945 0.0434 0.1139 0.2469 0.0953
+  target                             0.3000 0.2660 0.1393 0.00420  0.1720 0.0040 0.1010 0.2500 0.0890
+
+kappa_uem +35.7 -> +14.1, pi_V +34.5 -> +21.2, pi_eu -33.9 -> -26.1, cbar -25.5 ->
+-16.2, sigma_y +16.8 -> +13.1. ALL FIVE IMPROVE. The cost is h_1 from 0.0352 to
+0.0434 and the cost burden from -1.4 to +12.8 per cent, and lambda_m stays at -1.2.
+
+THE COUPLING IS REAL BUT NOT TOTAL, so the ridge step's weighting bought the
+housing block at more than it needed to pay. The right vector is the reverted
+labour block with the housing weight pulled down enough to bring the cost burden
+back -- line 5 of the running batch, rsh 0.360 on the reverted vector. On the
+measured h_2 slope that should be about +4 per cent on the burden with h_1 near
+0.049.
+
+STANDING NOTE FOR THE NEXT ROUND. Every "improvement" tonight that was built by
+composing separately measured arms has had to be re-measured, and three of them
+went backwards. The two methods that worked were (i) a bracket in one parameter
+with everything else held, and (ii) a REGULARISED joint solve of the whole
+Jacobian. Nothing in between is reliable in this model.
+
 ## 6 September, 09:52 -- kappa_find_smi = 2.17 CONFIRMED. lambda_m EXACT,
 ## emp_homeless -6.4, h_1 DOWN TO 0.0352, AND NOTHING GIVEN UP.
 
