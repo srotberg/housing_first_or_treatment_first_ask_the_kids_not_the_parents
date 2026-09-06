@@ -1,3 +1,48 @@
+## 6 September, 08:13 -- THE NESTED LADDER SAYS THE INSTRUMENTS ARE COUPLED ALL
+## THE WAY DOWN. f1f8022841 IS A LOCAL OPTIMUM FOR COORDINATE MOVES.
+
+  step                          in 10%  in 20%  median  sigma_y   p_m   pi_eu  kap_uem      b     h_1
+  BASE f1f8022841               13/23   19/23    9.7%   0.1951 0.0415 0.1077  0.2512 0.0900 0.0569
+  1: +sigma 1.96 +smi 0.0042    10/23   16/23   15.6%   0.1699 0.0497 0.1458  0.1782 0.0597 0.0733
+  2: +pi_eu 0.0610              11/23   16/23   12.6%   0.1700 0.0498 0.1435  0.2150 0.0578 0.0716
+  target                                                0.1720 0.0484 0.1393  0.3000 0.0890 0.0040
+
+EVEN THE TWO MOVES I CALLED FREE ARE NOT. Step 1 puts sigma_y within 1.2 per cent
+and p_m within 2.7 -- both exactly as the arms predicted -- and it ALSO takes pi_eu
+from 0.1077 to 0.1458, fixing a moment nobody touched, while taking kappa_uem from
+-16 to -41 per cent, b from 0.0900 to 0.0597 and h_1 from 0.0569 to 0.0733. Net:
+thirteen of twenty-three becomes ten.
+
+kkk_sigma_scale MOVES THE WHOLE PRODUCTIVITY DISTRIBUTION and everything priced off
+it, and smi_onset_level ADDS TO THE SMI POPULATION, which is a population with
+worse employment. Neither is local to its own moment. There are no free moves left.
+
+f1f8022841 IS THEREFORE A LOCAL OPTIMUM UNDER COORDINATE STEPS, at thirteen of
+twenty-three inside ten per cent and a median gap of 9.7 per cent. Every
+single-parameter improvement measured today makes the whole worse.
+
+THE ANSWER IS A SIMULTANEOUS STEP, NOT MORE COORDINATES. The eight arms off
+f1f8022841 are eight columns of a Jacobian; solved together, in logs, over the nine
+moments they touch:
+
+  parameter                                    from      full step   damped 0.4
+  kkk_sigma_scale                            1.7674        2.0538       1.8768
+  smi_onset_level                          0.002092      0.003571     0.002591
+  kappa_uem                                    15.0          6.83        10.95
+  relative_share_of_leisure                    1.78         3.514        2.336
+  probability_of_voucher_benchmark_used       0.052        0.0592       0.0548
+  probability_becoming_unemployed             0.041        0.0640       0.0490
+  relative_share_of_addiction_1              0.20214        0.2166       0.2078
+  relative_share_of_housing                    0.330        0.2158       0.2785
+
+Condition number 55, so the system is solvable rather than degenerate. NOTE THAT
+THE JOINT SOLUTION SENDS probability_of_voucher_benchmark_used UP, to 0.0592, when
+its own arm said DOWN, to 0.0402. That is the coupling being paid for properly, and
+it is the clearest single demonstration that the coordinate crossings were wrong.
+
+batch_newton_f.txt measures the damped step at 0.4 and 0.7 of full, each against
+shifter 0.00538 and 0.0045.
+
 ## 6 September, 08:03 -- COMPOSITE D IS A STEP BACKWARDS. EIGHT ARMS APPLIED
 ## TOGETHER DO NOT ADD, AND NOW THAT IS MEASURED RATHER THAN ASSERTED.
 
