@@ -140,8 +140,26 @@ CONFIG = {
 
 
 def model_hash():
+    """The SEMANTIC hash, not a raw md5 of the file.
+
+    A raw md5 moves when a COMMENT moves. On 6 September the homelessness target
+    was rewritten with a long comment and the unemployment target after it, and
+    each edit orphaned every point in the loop's archive -- three_step reported
+    "no solved point carries the configuration yet" with forty iterates on disk,
+    because it was comparing against a hash that documentation had changed.
+
+    model_hash.semantic() strips comments and blank lines and blanks the VALUE of
+    the constants in TARGET_CONSTANTS, which is what makes a target change
+    hash-neutral for every other tool here. The loop must agree with them or it
+    silently disagrees about which economy a point belongs to.
+    """
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        '_mh', os.path.join(HERE, 'model_hash.py'))
+    mh = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mh)
     p = os.path.join(HERE, 'housing_first_or_treatment_first_SR_v1.f90')
-    return hashlib.md5(open(p, 'rb').read()).hexdigest()[:10]
+    return mh.semantic(open(p, errors='replace').read())
 
 
 def parse(path):
