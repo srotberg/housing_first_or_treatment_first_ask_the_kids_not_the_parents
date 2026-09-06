@@ -160,6 +160,11 @@ RULES = {
     # rises with the parameter: 'lower' again. Measured on a fixed ladder,
     # h2 0.1243 -> 0.0710 carried burden50 0.719 -> 0.473.
     'burden50': ('smallest_rental_relative_to_lowest_income', 'lower', 'measured pair agrees'),
+    # h_2, the CEX severe cost burden headcount, target 0.101, over half of
+    # EXPENDITURE rather than income. Raising the cheapest rung prices more
+    # households into paying over half for it, so parameter and moment move
+    # together: 'lower'. Same sign as burden50, measured on the street scan.
+    'h_2': ('smallest_rental_relative_to_lowest_income', 'lower', 'same sign as burden50, measured'),
     # omega_l, labour supply over total hours, target 0.40.
     # The author: *"raise if higher than data"*. relative_share_of_leisure is the
     # weight on leisure, so more of it means less work -- parameter and moment move

@@ -470,7 +470,32 @@ OWN = {
     # share and the share of renters paying over half of expenditure; the ladder
     # would need a free top rung for that, which the author has ruled against.
     # 'smallest_rental_relative_to_lowest_income':            'h_2',
-    'smallest_rental_relative_to_lowest_income':           'burden50',
+    # THE BOTTOM RUNG TARGETS THE EXPENDITURE BURDEN AGAIN, 6 September, on the
+    # author's instruction: *"let's see what happens when you target a 10.1%
+    # spending over 50% of their expenditures on housing"*. This reverts to the
+    # moment that was always this parameter's own -- h_2, the CEX severe cost
+    # burden headcount at 0.101.
+    #
+    # WHY IT IS THE BETTER OF THE TWO. Measured across the street scan, the
+    # expenditure moment is 25 per cent out where the income one is 48 per cent,
+    # and it CROSSES its target rather than sitting stuck above it:
+    #
+    #   street   burden50 (income, 0.175)   h_2 (expenditure, 0.101)
+    #   0.0300            0.2597                      0.1265
+    #   0.0100            0.2564                      0.2137
+    #   0.0030            0.2879                      0.2692
+    #   0.0001            0.3076                      0.3115
+    #
+    # It is also the internally consistent one: gamma is housing over TOTAL
+    # EXPENDITURE on the CEX definition, so the burden headcount should share
+    # that denominator. Model income excludes asset drawdown, which is what
+    # inflated the income-based measure all session.
+    #
+    # burden50 LOSES ITS INSTRUMENT and is left scored rather than conceded, so
+    # the gap table shows it as unowned instead of pretending it is assigned.
+    # The two measure the same object on different denominators, so it should
+    # probably come out of the scored list -- flagged to the author, not decided.
+    'smallest_rental_relative_to_lowest_income':           'h_2',
     # 'rung_ratio_h3':                                     'gamma',
     # h3 OWNS h_3 NOW, not gamma. The author, 5 September: *"I think first you need
     # h3 to raise so that only 64% of renters are in the largest unit"*. Raising
