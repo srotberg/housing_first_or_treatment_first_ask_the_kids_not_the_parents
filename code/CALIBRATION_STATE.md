@@ -1,3 +1,52 @@
+## 6 September, 03:10 -- THE MODEL HAS NO INVOLUNTARY ROUTE ONTO THE STREET, AND
+## THAT IS WHY emp_homeless AND h_1 CANNOT BOTH BE HIT.
+
+Full (h2, street) grid at relative_share_of_housing = 0.330, 2x/3x ratio ladder:
+
+  h2     street     h_1     h_2 exp  lambda_m  emp|hl   gamma
+  tgt              0.0040    0.101     0.250   0.460   0.268
+  0.190  3.0e-02  0.2247    0.1265    0.1394  0.6948  0.3246
+  0.190  3.0e-03  0.0897    0.2692    0.2851  0.4419  0.3634
+  0.190  1.0e-04  0.0481    0.3115    0.4754  0.2725  0.3748
+  0.170  3.5e-03  0.0709    0.2315    0.3502  0.3814  0.3410
+  0.150  3.5e-03  0.0569    0.1648    0.4068  0.3096  0.3307
+  0.130  3.5e-03  0.0470    0.1075    0.4364  0.2968  0.3180
+  0.110  3.5e-03  0.0341    0.0762    0.4043  0.3081  0.2958
+  0.110  7.4e-06  0.0133    0.1059    0.6825  0.0428  0.2989
+  0.090  1.0e-04  0.0116    0.0607    0.6761  0.0514  0.2716
+  0.090  7.4e-06  0.0096    0.0644    0.7449  0.0313  0.2712
+
+THE 5 PER CENT FLOOR REPORTED AT 02:35 WAS WRONG. It was a floor at h2 = 0.190.
+h_1's elasticity in h2 is 1.53 against the street's 0.31, so the bottom rung is
+seven times the instrument the street is, and h_1 reaches 0.0096 at h2 = 0.090.
+From 0.399 at the start of the session: a factor of 42.
+
+BEST SINGLE ROW: h2 = 0.110 with a tiny street. The expenditure burden lands at
+0.1059 against 0.101, gamma at 0.2989, h_1 at 0.0133.
+
+THE STRUCTURAL FINDING. emp_homeless is 0.30 to 0.69 whenever the street exceeds
+about 1e-3 and collapses to 0.03 to 0.05 below it. No row has both h_1 < 0.02 and
+emp_homeless > 0.3.
+
+The reason is that in this model an EMPLOYED household is homeless only BY
+CHOICE: it can afford the rung and declines it. So the only way to get 46 per
+cent of the homeless employed is to make the street attractive enough that
+working people pick it, which is exactly what produces 9 to 22 per cent
+homelessness. The data's 46 per cent comes from households made homeless
+INVOLUNTARILY -- eviction, a rent shock, a lost tenancy -- who then keep or find
+work. THIS MODEL HAS NO INVOLUNTARY ROUTE ONTO THE STREET: housing is a free
+choice every period and nobody is ever put out of a unit they could afford.
+
+That is a missing mechanism, not a calibration failure, and no parameter reaches
+it. It should be known before the paper leans on the employment composition of
+the homeless.
+
+THE ACHIEVABLE FRONTIER, therefore:
+  - h2 about 0.110 with a tiny street: burden exact, gamma 11 per cent out,
+    h_1 three times target, homeless 4 per cent employed against 46.
+  - h2 about 0.190 with street 3e-3: lambda_m 0.285 and emp_homeless 0.442 both
+    near target, h_1 = 0.090, twenty-two times target.
+
 ## 6 September, 02:35 -- THE MODEL GETS *WHO* THE HOMELESS ARE RIGHT AND *HOW
 ## MANY* WRONG. h_1 FLOORS AT ABOUT 0.05.
 
