@@ -1,3 +1,39 @@
+## 6 September, 05:12 -- THE DRUG BLOCK IS ALMOST CLOSED. b IS INSIDE TEN PER
+## CENT AND THE PREDICTED JOINT SOLUTION IS INSIDE THE BOX NOW SOLVING.
+
+Second upward box, base 0.0290/0.0400 x shifter 0.0065/0.0095, two of four landed.
+Everything else at the h2 = 0.130 / street = 0.0110 configuration.
+
+  tag            base  scalar        b    lam_d   ratio    theta      y_u      h_1
+  target                        0.0890   0.0368  0.4135   0.1410   0.7400   0.0040
+  cc897768ae   0.0230  0.0110   0.1154   0.0318  0.2760   0.1143   1.3331   0.0616
+  2812eb1466   0.0230  0.0170   0.0008   0.0002  0.3100   0.0813   3.7575   0.0566
+  2f9a9a51a9   0.0290  0.0065   0.2977   0.0917  0.3080   0.1244   0.9478   0.0748
+  70e8d15b5a   0.0290  0.0095   0.0807   0.0272  0.3372   0.1115   1.3106   0.0608
+
+BEST DRUG POINT SO FAR IS 70e8d15b5a: b at 0.0807 against 0.0890, nine per cent
+out, from sixty-two per cent out at the anchor. lambda_d at 0.0272 against 0.0368
+is still twenty-six per cent short and the conversion ratio is 0.337 against
+0.4135, so the hazard has further to rise.
+
+INTERPOLATING WITHIN THE base = 0.0290 PAIR: b crosses its target at shifter
+0.00924 and lambda_d crosses at 0.00864, so the two moments want shifters seven
+per cent apart at this hazard and the gap closes by raising the hazard, which
+lifts the ratio. Carrying that through gives base about 0.0360 with shifter about
+0.0079 -- INSIDE the box now solving on both coordinates, so the next step is an
+interpolation rather than an extrapolation for the first time.
+
+THE SURFACE IS NEARLY SINGULAR IN PLACES. 2812eb1466 at base 0.0230 and shifter
+0.0170 returned b = 0.0008: the drug block switched off entirely over a shifter
+step of fifty per cent. Nothing outside a measured bracket can be trusted here.
+
+WHAT MOVES WITH IT. theta reaches 0.124 against 0.141 and y_u falls to 0.948
+against 0.74 at the high-use corner, both untargeted. h_1 sits at 0.057 to 0.075
+across the box against 0.0568 before the drug block came alive, so THE 1.4 PER
+CENT HOMELESSNESS FLOOR MEASURED AT 04:40 WAS MEASURED ON A MODEL WITH ALMOST NO
+DRUG USE and has to be re-measured once the hazard and shifter settle. tau_u is
+0.33 to 0.52 against 0.245 and has not been touched.
+
 ## 6 September, 04:52 -- b AND lambda_d ARE SEPARATELY IDENTIFIED. THE ONSET
 ## HAZARD OWNS THE CONVERSION RATIO, THE STONE-GEARY SHIFTER OWNS THE LEVEL.
 
