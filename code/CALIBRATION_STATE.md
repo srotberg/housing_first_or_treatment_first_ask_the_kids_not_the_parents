@@ -1,3 +1,42 @@
+## 6 September, 15:23 -- THE h_2 ROUTE FAILS MECHANICALLY. FOUR INDEPENDENT
+## ROUTES TO h_1 ARE NOW MEASURED AND NONE ESCAPES.
+
+  h_2     street     in10  in20  med     h_1  gamma  h2mom burden50 emp|hl      b
+  0.130   0.01100   19/23 21/23 2.9%  0.0617 0.3343 0.0997  0.1826 0.4711 0.0899
+  0.120   0.01192   16/23 21/23 2.9%  0.0564 0.3213 0.0801  0.1743 0.4620 0.0921
+  0.113   0.01265   13/23 20/23 4.6%  0.0525 0.3214 0.0658  0.1560 0.4630 0.1003
+  0.108   0.01324   13/23 18/23 5.3%  0.0510 0.3219 0.0561  0.0956 0.4605 0.1018
+  target                             0.0040 0.2680 0.1010  0.1750 0.4600 0.0890
+
+Cutting the cheapest rent buys h_1 from 0.0617 to 0.0510, seventeen per cent when
+ninety-four is needed, and takes the expenditure burden from 0.0997 to 0.0561 and
+burden50 from 0.183 to 0.096 with it. Nineteen moments inside ten becomes thirteen.
+
+THE REASON IS DEFINITIONAL, NOT BEHAVIOURAL. The cost burden is spending on housing
+as a share of income, so cutting the rent cuts the burden by construction. h_2 is
+at once the instrument for a moment on target to 1.3 per cent and the only price
+lever on a moment fifteen times out. It cannot serve both.
+
+THE FOUR ROUTES, ALL MEASURED TODAY:
+
+  bottom_productivity_level 0.0668 -> 0.14    h_1 0.0617 -> 0.0610   -1%
+  newborn_endowment_scale   0.0    -> 0.35    h_1 0.0617 -> 0.0507  -18%, costs
+                                              emp_homeless and three moments
+  smallest_rental           0.130  -> 0.108   h_1 0.0617 -> 0.0510  -17%, costs
+                                              both burden moments and six
+  relative_share_of_housing 0.3291 -> 0.2452  gamma 0.334 -> 0.288 but h_1 DOUBLES
+                                              to 0.1139
+
+Every lever that touches h_1 moves it by under twenty per cent and pays with
+moments that are currently on target.
+
+THE FINDING, AND IT BELONGS IN THE NOTE RATHER THAN IN A CALIBRATION LOG. The model
+has ONE degree of freedom governing how much households value shelter, and h_1,
+gamma, the two cost-burden moments and sigma_y are five readings of it. The
+benchmark sits where four of the five are satisfied and the homelessness RATE is
+the one that gives. That is a statement about the model's structure, established
+across four independent instruments, not a failure of search.
+
 ## 6 September, 15:20 -- gamma TRACKS THE HOUSING WEIGHT ONE-FOR-ONE, AND THE
 ## PRICE OF HOUSING DOES NOT MOVE IT AT ALL.
 
