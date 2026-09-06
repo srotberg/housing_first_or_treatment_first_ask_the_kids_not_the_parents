@@ -262,7 +262,12 @@ RULES = {
     # The sign is measured, not assumed: -2.66 over six controlled pairs, range
     # -4.15 to -1.56, from the threshold sweep of 18:20. LOWER level, HIGHER
     # employed share, which is what the author said.
-    'bottom_productivity_level':                 ('emp_homeless', -2.66, 0.02, 1.20, 0.60, 0.25),
+    # UPPER BOUND 1.0, NOT 1.2: the Fortran clamps this at
+    # max(min(handover_value,1.d0),0.d0) at 37375, so a step past one was
+    # silently truncated and the point that came back was not the point asked
+    # for, with nothing in the trace to say so. Found in the bounds audit of
+    # 23:30, on the author's instruction to check every parameter's range.
+    'bottom_productivity_level':                 ('emp_homeless', -2.66, 0.02, 1.00, 0.60, 0.25),
     # THE NO-WAGE-INCOME SHARE, added 6 September when the author moved its
     # target from 0.1393 to 0.049: *"Let the method run with the new unemployment
     # rate target"*. Without an instrument pointed at it the target change does
