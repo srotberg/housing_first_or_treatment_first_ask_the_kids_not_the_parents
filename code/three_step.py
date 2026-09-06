@@ -165,7 +165,30 @@ def main():
     _, tag, vec, mom = pts[-1]
     print(f'# from point_{tag}', file=sys.stderr)
     nxt = dict(vec)
+
+    # THE RUNG SERVES h_1 WHILE h_1 IS FAR OFF. The author, 6 September: *"If h1
+    # gets closer then we just lower h2 a bit more and sacrifice a bit on the h2
+    # target"*. h2 there is the RUNG, the parameter; the h2 they are willing to
+    # give up is the cost-burden MOMENT. The two share a name and confusing them
+    # has already cost a concession once, so it is spelled out here.
+    #
+    # The rung moves h_1 with a measured slope of +2.06, seven times the street's
+    # +0.30, so it is the stronger of the two instruments on the homelessness
+    # rate -- it simply was not pointed at it. While h_1 is more than half again
+    # its target the rung chases h_1; inside that it reverts to the cost burden.
+    #
+    # RIGHT NOW THIS COSTS NOTHING, and that is worth recording so the "sacrifice"
+    # is not booked before it happens: the burden moment is 0.1534 against 0.101,
+    # ABOVE target, and lowering the rung lowers both. The sacrifice begins only
+    # when the rung has pushed the burden below 0.101, and the trace will show
+    # exactly when that is.
+    rung = 'smallest_rental_relative_to_lowest_income'
+    h1_gap = abs(mom['h_1'] - TARGETS['h_1']) / TARGETS['h_1']
+    serve_h1 = h1_gap > 0.50
+
     for param, (moment, fb, lo, hi) in RULES.items():
+        if param == rung and serve_h1:
+            moment, fb = 'h_1', +2.06
         cur, tgt = mom[moment], TARGETS[moment]
         e, src = slope(pts, param, moment, fb)
         if cur <= 0 or abs(e) < 1e-6:
