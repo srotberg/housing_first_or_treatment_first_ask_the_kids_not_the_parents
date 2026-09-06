@@ -1,3 +1,42 @@
+## 6 September, 06:51 -- THE COMPOSITE LADDER PUTS FIVE MOMENTS ON TARGET AT
+## ONCE. THE SHIFTER THAT DOES IT IS 0.0052.
+
+multiple 1.48, mu_homeless 0.609, value_of_life 155, shifter varying:
+
+  shifter  tag              b   lam_d  kap_ued   tau_u    mu_H   aleph     h_1  emp|hl
+  target              0.0890  0.0368   0.1625  0.2450  1.4732 80.0000  0.0040  0.4600
+  0.0045   3c32d417b3  0.1595  0.0656   0.1581  0.6178  2.0923 78.4925  0.0608  0.4935
+  0.0060   201739f5fe  0.0496  0.0206   0.1526  0.5849  2.1982 80.2705  0.0544  0.4653
+  0.0075   69188cd6ab  0.0110  0.0046   0.1612  0.5840  2.3429 83.5550  0.0516  0.4471
+  0.0090   e49fbf2bf2  0.0059  0.0025   0.1553  0.5793  2.2384 85.9413  0.0513  0.4448
+
+b CROSSES ITS TARGET AT SHIFTER 0.00519, AND lambda_d CROSSES AT THE SAME PLACE.
+Interpolating the first pair gives b = 0.0890 and lambda_d = 0.0368 at shifter
+0.00519 -- both exact, because the hazard at 0.0400 sets the conversion ratio and
+the shifter sets the level, which is the separation established at 04:52.
+
+WHAT ELSE IS ON TARGET THERE, read off the same interpolation:
+
+  b            0.0890   exact
+  lambda_d     0.0368   exact
+  aleph        79.4     -0.8 per cent
+  kappa_ued    0.1554   -4.4 per cent
+  emp_homeless 0.4794   +4.2 per cent
+
+FIVE MOMENTS INSIDE FIVE PER CENT ON ONE VECTOR, including three that were 192,
+58 and 42 per cent out this morning. emp_homeless lands there without delta moving
+at all -- value_of_life is what pulled it up, by making the street lethal enough
+that the marginal homeless household is a worker rather than a non-worker.
+
+WHAT IS STILL BROKEN AT THAT VECTOR: tau_u at 0.601 against 0.245, mu_H at 2.145
+against 1.4732, and h_1 at 0.0576. The first two are re-bracketable and are being
+re-bracketed now, because both were bracketed at the OLD value of life:
+
+  batch_composite_b.txt, all at shifter 0.0052
+    confirmation point
+    utility_cost_of_treatment 3.2 and 4.2   for tau_u, predicted crossing 3.47
+    mu_homeless 0.72 and 0.88               for mu_H, predicted crossing 0.788
+
 ## 6 September, 06:43 -- THE SHIFTER LADDER AT multiple = 1.4 IS SMOOTH AND
 ## BRACKETS b. THE FIRST COMPOSITE POINT HITS aleph AND kappa_ued OUTRIGHT.
 
