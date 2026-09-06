@@ -2938,6 +2938,23 @@ def main():
             lo, hi = BOUNDS[param]
             x1 = max(lo, min(hi, x0 * math.exp(step)))
             note = ''
+        # A PARAMETER SITTING AT ZERO CANNOT TAKE A PROPORTIONAL STEP, and the
+        # log ratio that tests for "did not move" divides by it. The BOUNDS
+        # comments already say this in the other direction -- "FLOORED ABOVE
+        # ZERO: a proportional step is adjuster*gap*|x| and cannot leave zero" --
+        # but the test itself was never guarded, so the gate died with a
+        # ZeroDivisionError at 21:25 on newborn_endowment_scale = 0, which the
+        # author has deliberately set to zero, and lambda_addiction = 0 behind it.
+        #
+        # This is the third instance of the same defect today: bracket() divided
+        # by a zero MOMENT, the arm loop read BOUNDS for a held parameter, and now
+        # this divides by a zero PARAMETER. Say what happened and carry on rather
+        # than taking the whole gate down for one instrument that is pinned by the
+        # author's own choice.
+        if x0 == 0.0:
+            skipped.append(f'{param} (owns {mom}): held at zero, a proportional '
+                           f'step cannot leave it')
+            continue
         if abs(math.log(x1 / x0)) < 1e-4:
             skipped.append(f'{param} (owns {mom}): at a bound, cannot move')
             continue
