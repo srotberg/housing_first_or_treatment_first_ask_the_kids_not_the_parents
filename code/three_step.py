@@ -432,6 +432,26 @@ def parse(path):
             mom[name] = float(val)
         except ValueError:
             pass
+    # THE BAND SHARES AND RATES, read here as well as in _file_targets. Adding
+    # them to TARGETS without adding them here stopped the loop dead at 22:37:
+    # iterates() drops any point missing a target, every point was missing
+    # h_share1, so nothing qualified, three_step returned 2 and three_loop
+    # halted. The two readers must move together -- a target with no moment is
+    # not a gap, it is an empty archive.
+    for n, val, _ob in re.findall(
+            r'UNTARGETED share of the homeless, band\s+(\d+)\s+model=\s*'
+            r'([0-9.eE+-]+)\s+observed=\s*([0-9.eE+-]+)', s):
+        try:
+            mom['h_share' + n] = float(val)
+        except ValueError:
+            pass
+    for n, val, _ob in re.findall(
+            r'UNTARGETED homelessness rate, band\s+(\d+)\s+model=\s*'
+            r'([0-9.eE+-]+)\s+observed=\s*([0-9.eE+-]+)', s):
+        try:
+            mom['h_age' + n] = float(val)
+        except ValueError:
+            pass
     return m.group(1), vec, mom, os.path.getmtime(path)
 
 
