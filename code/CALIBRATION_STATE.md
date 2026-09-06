@@ -1,3 +1,39 @@
+## 6 September, 17:25 -- size_homelessness IS A RATIO, NOT A LEVEL, AND THAT IS
+## WHY CHEAP RENT DOES NOT EMPTY THE STREET.
+
+The author's intuition -- make the cheapest rental cheap enough and homelessness
+goes to zero -- fails for a structural reason worth stating plainly. The street is
+size_homelessness x h_2. Lower the rent and the street gets cheaper by EXACTLY the
+same factor, so the relative price of the two never moves.
+
+    h_2   street ratio  street ABS  rent/street   h_1 measured
+  0.130       0.0110      0.00143         91       0.0617
+  0.110       0.0110      0.00121         91       0.0335
+  0.090       0.0110      0.00099         91       0.0236
+  0.130       0.0030      0.00039        333       0.0383
+  0.130       0.0003      0.00004       3333       0.0228
+  0.130       0.0001      0.00001      10000       0.0190
+
+EVERY ROW AT size_homelessness = 0.0110 HAS THE STREET AT ONE NINETY-FIRST OF THE
+RENT WHATEVER h_2 IS. Lowering h_2 helped only through the ABSOLUTE size of the
+street, never through affordability -- which is the third time today an
+affordability story has turned out to be something else.
+
+BOTH ROUTES TO A SMALL ABSOLUTE STREET FLOOR AT h_1 ABOUT 0.019 TO 0.024.
+
+THE CORNER NOBODY HAS MEASURED is cheap rent AND a tiny ratio together.
+batch_corner.txt: merged grid, h_2 at 0.09 and 0.05 against ratios 0.0010 and
+0.0002, so the street runs from 9.0e-5 down to 1.0e-5 absolute and the rent is
+one thousand to five thousand times the street. At those settings the street is
+essentially no shelter at all -- with sigma = 2 the utility of a vanishing
+dwelling goes to minus infinity -- so nobody should choose it and whatever
+homelessness remains is necessity.
+
+IF h_1 STILL FLOORS NEAR 0.02 THERE, THE FLOOR IS PURE NECESSITY AND NO PRICE CAN
+TOUCH IT. If it collapses toward 0.004 the ratio was the answer and the question
+becomes what it costs in emp_homeless. batch_cutoff_street.txt tests the same
+thing from the other side: everyone able to afford, street shrinking.
+
 ## 6 September, 17:10 -- FOUR ROUTES OUT OF THE h_1 PROBLEM, AND ONE OF THEM MAY
 ## NOT NEED THE MODEL CHANGED AT ALL.
 
