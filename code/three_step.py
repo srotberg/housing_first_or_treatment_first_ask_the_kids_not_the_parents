@@ -178,7 +178,17 @@ TARGETS = _gate_targets()
 # was being dragged down faster than that by the other two. It now moves at full
 # damping.
 RULES = {
-    'size_homelessness':                        ('h_1',          +0.30, 1e-4, 0.20, 0.55, 0.60),
+    # THE FLOOR IS 1e-5 ON THE AUTHOR'S INSTRUCTION, 6 September: *"lower the h1
+    # lower bound to 0.00001, and yes, that is the direction"*. It sat at 1e-4 and
+    # the instrument was PINNED THERE with h_1 still 20.6 per cent high, so the
+    # only lever pointed at homelessness had nowhere to go.
+    #
+    # IT IS NOT INERT AT 1e-5, which is the thing worth checking before moving a
+    # floor. The street's size is max(size_homelessness*(1+increase_homeless_size*5),
+    # street_size_floor) with increase_homeless_size=0 and street_size_floor=1e-6,
+    # so anything above 1e-6 passes through unclamped. The gate's own BOUNDS entry
+    # already allowed 1e-6; this table was the only thing holding it at 1e-4.
+    'size_homelessness':                        ('h_1',          +0.30, 1e-5, 0.20, 0.55, 0.60),
     'smallest_rental_relative_to_lowest_income': ('h_2',          +5.36, 5e-3, 0.40, 0.30, 0.08),
     # THE SECOND NODE'S LEVEL, NOT THE BOTTOM NODE'S MASS. The author,
     # 6 September: *"instead of choosing the bottom mass, fix it to 0.2% and

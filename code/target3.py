@@ -56,7 +56,7 @@ INSTRUMENTS = {
     'kkk_s_deviation_bottom':                    (1.0, 6.0),
     'bottom_productivity_level':                 (0.01, 3.0),
     'smallest_rental_relative_to_lowest_income':  (0.005, 0.40),
-    'size_homelessness':                         (0.0001, 0.20),
+    'size_homelessness':                         (1e-5, 0.20),
 }
 
 # Reported beside the three, never scored. gamma and the untargeted burden lines
