@@ -1,3 +1,47 @@
+## 6 September, 02:35 -- THE MODEL GETS *WHO* THE HOMELESS ARE RIGHT AND *HOW
+## MANY* WRONG. h_1 FLOORS AT ABOUT 0.05.
+
+Six-point street scan on the recalibrated model, 2x/3x ratio ladder, h2 = 0.190,
+relative_share_of_housing = 0.330, consumption_penalty_homeless = 0 on the
+author's instruction that only h1 controls the homelessness rate.
+
+  street     h_1   lambda_m  emp|hl  SMI over-rep  burden50   gamma
+  target  0.0040     0.250   0.460          6.52     0.175   0.268
+  0.0300  0.2247    0.1394  0.6948          3.47     0.260   0.325
+  0.0100  0.1380    0.2118  0.5723          5.29     0.256   0.348
+  0.0030  0.0897    0.2851  0.4419          7.12     0.288   0.363
+  0.0010  0.0625    0.3936  0.3282          9.82     0.305   0.372
+  0.0003  0.0539    0.4372  0.2977         10.89     0.305   0.374
+
+COMPOSITION IS REACHABLE AND THE LEVEL IS NOT. At a street near 0.0035 to 0.005
+three things land together: lambda_m at 0.250, emp_homeless at 0.460, and the
+SMI over-representation at 6.5x, which is the data value exactly. The homeless
+become the right people -- mentally ill at the right rate, employed at the right
+rate -- from ONE instrument with no SMI parameter touched. That vindicates the
+02:00 entry: lambda_m was a symptom of h_1 throughout.
+
+h_1 ITSELF FLOORS NEAR 0.05. The elasticity decays -- 0.44 early, 0.31 overall --
+and the last two points show saturation: a 3.3x cut in the street, 0.0010 to
+0.0003, moved h_1 only 0.0625 to 0.0539. Extrapolating to 0.0040 demands a street
+of 7e-08, which is a floor being hit rather than a number.
+
+THE FLOOR IS ECONOMICS, NOT A BUG. About five per cent of households cannot
+afford h2 = 0.190 at all -- bottom of the productivity grid, no assets. Making
+the pavement worse does not move them because they have no alternative. The
+model says that at these rents and transfers five per cent of the population is
+priced out of housing entirely; the data's 0.4 per cent reflects shelters,
+family and doubling-up, which this model does not have.
+
+THE CHOICE, AND IT IS THE AUTHOR'S. Either street about 0.0035, giving lambda_m
+and emp_homeless exactly right with h_1 at 0.085 -- 21x target but the right
+people on the street -- or push lower, reach h_1 = 0.054 at best, and overshoot
+both composition moments badly (lambda_m 0.44, emp_homeless 0.30). No setting
+gives all three. My recommendation is the first, with the level reported honestly
+and the reason stated.
+
+burden50 and gamma drift up as the street shrinks, to 0.288 and 0.363 at street
+0.0030, but both have their own instruments and are routine to recover.
+
 ## 6 September, 02:00 -- SMI HOUSEHOLDS DO BECOME HOMELESS. lambda_m IS A
 ## SYMPTOM OF h_1, NOT A BROKEN SMI CHANNEL. MY EARLIER READING WAS WRONG.
 
