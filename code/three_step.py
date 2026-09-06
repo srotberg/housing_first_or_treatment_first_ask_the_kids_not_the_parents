@@ -270,6 +270,19 @@ RULES = {
 # at 3.4113. Written into every iterate so it cannot drift.
 FIXED = {'kkk_s_deviation_bottom': 3.4113}
 
+# A PARAMETER AT ZERO CANNOT BE REACHED BY A PROPORTIONAL STEP. The step is
+# value*exp(...), so zero times anything is zero and the instrument is frozen
+# however large its gap. next_batch hits this too and says so rather than
+# stepping; here the two instruments the author asked for on 6 September both
+# start at zero, so saying so would freeze the thing they just asked for.
+#
+# The seed is a STARTING MAGNITUDE, not a calibrated value: one step of the
+# ordinary rule replaces it as soon as a controlled pair exists. 0.10 is a tenth
+# of average labour income, which is the unit newborn_endowment_scale multiplies.
+# Anything else at zero is reported, not seeded, because inventing a magnitude
+# for an instrument nobody asked about is how a base configuration drifts.
+SEED = {'newborn_endowment_scale': 0.10}
+
 # The author's configuration. A point is an iterate of THIS loop only if every one
 # of these matches: delta zero, the street's 20 per cent penalty on, the second and
 # third productivity nodes merged with the lowest left alone, and no endowment.
@@ -640,6 +653,16 @@ def main():
         if cur <= 0 or abs(e) < 1e-6:
             print(f'#   {param}: {moment} is {cur:g}, cannot step on it',
                   file=sys.stderr)
+            continue
+        if vec[param] == 0.0:
+            if param in SEED:
+                nxt[param] = SEED[param]
+                print(f'#   {param:<44}{0.0:10.5g} -> {SEED[param]:10.5g}   '
+                      f'{moment} {cur:.5f} vs {tgt:.5f}, SEEDED off zero: a '
+                      f'proportional step cannot leave it', file=sys.stderr)
+            else:
+                print(f'#   {param}: held at zero, a proportional step cannot '
+                      f'leave it', file=sys.stderr)
             continue
         step = damp * math.log(tgt / cur) / e
         step = max(-efold, min(efold, step))
