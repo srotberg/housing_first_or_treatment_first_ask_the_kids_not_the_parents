@@ -1,3 +1,49 @@
+## 6 September, 17:55 -- merge_from_node WORKS BUT IS NOT ENOUGH, AND I POINTED
+## THE MASS SWEEP AT AN INERT PARAMETER.
+
+FIRST, THE ERROR, because it wasted two containers and a claim to the author. I
+told them y_grid_kappa is the bottom node's mass instrument. It is -- ON THE
+QUANTILE GRID. The benchmark runs the author's KKK process, and the handover
+comment at line 37216 says in as many words: *"y_grid_kappa and
+bottom_productivity_level are inert under KKK"*. Two arms at kappa 2.6 and 2.9
+returned the design point to SIX DECIMALS, which is what inert looks like.
+
+UNDER KKK THE MASS INSTRUMENT IS kkk_s_deviation_bottom, and the comment eight
+lines below the one I quoted gives its calibration: 3.00 -> 0.621 per cent, 3.25
+-> 0.318, 3.50 -> 0.155. Benchmark 3.35. WIDENING PUSHES MASS OFF THE BOTTOM
+NODE, so more mass needs a LOWER value. Interpolating, the 0.399 per cent
+homelessness target sits near 3.19.
+
+Fourth wrong statement to the author today, and the worst of them, because the
+correction was two lines below the sentence I read.
+
+SECOND, THE DESIGN ITSELF. It works, in the right direction, and not nearly
+enough.
+
+ label              mfn mbn  street |     h_1   emp_hl  choice |   >30% burden50   gamma
+                                    |  .00399      .46         |  0.406    0.175   0.268  <- data
+ benchmark            -   1  0.0110 | 0.06166   0.4711  0.3673 | 0.4811   0.1826  0.3343
+ design bpl=.309      2   3  0.0110 | 0.04490   0.2843  0.3882 | 0.5385   0.1904  0.3422
+ design bpl=.25       2   3  0.0110 | 0.05362   0.4137  0.5070 | 0.4674   0.1973  0.3350
+ merge 2-4 @.663      2   4  0.0110 | 0.02895   0.0494  0.3359 | 0.4439   0.0543  0.3350
+ design+street .003   2   3  0.0030 | 0.02532   0.1026  0.1570 | 0.5446   0.2008  0.3460
+
+MERGING NODE 2 UPWARD CUTS h_1 BY 27 PER CENT, AND MERGING NODES 2 TO 4 CUTS IT BY
+53, BUT NEITHER GOES ANYWHERE NEAR 0.24 PER CENT. The reason is in the choice
+column: 37 to 51 per cent of the homeless are there BY CHOICE, and being priced
+out is not what puts them there. Lifting node 2 removes a NECESSITY pool; the
+voluntary pool and the transiently-unemployed pool are untouched and they are
+the larger part.
+
+THE STREET IS WHAT KILLS THE VOLUNTARY MARGIN, as expected and now confirmed on
+this model: the design at a street of 0.0030 takes the choice share 0.388 ->
+0.157 and h_1 0.0449 -> 0.0253.
+
+AND emp_homeless FALLS WITH EVERY MERGE -- 0.471 -> 0.284 -> 0.049 -- which is the
+whole reason the mass lever matters and the whole reason pointing it at an inert
+parameter cost something. batch_massk.txt runs the real one: kkk_s_deviation_bottom
+at 2.80, 3.10, 3.60, 4.20 off the design point.
+
 ## 6 September, 17:35 -- THE RUNG IS EXHAUSTED TOO, AND IT TURNS. h_1 FLOORS AT
 ## 0.0089 AND RISES AGAIN BELOW h_2 = 0.020.
 
