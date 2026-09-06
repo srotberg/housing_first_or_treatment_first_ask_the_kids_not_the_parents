@@ -160,7 +160,16 @@ Nelder-Mead: *"we are better off trying nelder mead sequentially"*, *"since each
 iteration is just 2.5 minutes, we are better off doing that"*, *"you can do all
 the stages combined"*.
 
-**If `nm_loop.sh` is running, do steps 0, 1 and 2 below and then STOP.** Do not
+**THE LIVE SERIAL LOOP IS NOW `three_loop.sh`, from 6 September.** The author:
+*"I think you need to let my method run for a while and see if the model
+converges"*. It iterates their three-instrument assignment -- the street on the
+homelessness rate, the cheapest rung on the cost burden, the bottom node's mass
+on the employed share of the homeless -- feeding on its own output. Test for it
+the same way, with `q[n]=="three_loop.sh"`, and read `code/three_loop.log` for
+the trace.
+
+**If `nm_loop.sh` or `three_loop.sh` is running, do steps 0, 1 and 2 below and
+then STOP.** Do not
 run `next_batch.py` and do not launch workers. The serial loop owns
 `code/points/`: it asks for one trial, solves it, and reads the answer back out of
 the archive, so a worker round landing twenty points from a different search
