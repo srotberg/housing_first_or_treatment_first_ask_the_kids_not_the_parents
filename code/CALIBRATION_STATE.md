@@ -1,3 +1,40 @@
+## 6 September, 06:43 -- THE SHIFTER LADDER AT multiple = 1.4 IS SMOOTH AND
+## BRACKETS b. THE FIRST COMPOSITE POINT HITS aleph AND kappa_ued OUTRIGHT.
+
+  run                      tag              b   lam_d  kap_ued   tau_u    mu_H   aleph     h_1
+  target                              0.0890  0.0368   0.1625  0.2450  1.4732 80.0000  0.0040
+  mult1.4 shifter 0.0090   9b8b3628db  0.2731  0.1187   0.1411  0.2319  1.2896 39.6806  0.0687
+  mult1.4 shifter 0.0105   40238616cc  0.1998  0.0879   0.1350  0.2268  1.2679 40.5671  0.0647
+  mult1.4 shifter 0.0120   b8678335c1  0.1314  0.0586   0.1309  0.2213  1.2503 40.8967  0.0621
+  mult1.4 shifter 0.0140   23fb812ce9  0.0506  0.0225   0.1290  0.2066  1.2098 42.3754  0.0588
+
+NO CLIFF AT THIS MULTIPLE. b falls smoothly 0.2731 to 0.0506 over a 56 per cent
+shifter step and brackets the target at shifter 0.01278. The 05:22 cliff was at
+multiple 4.0; cheapening the disorder moves it right, which is consistent with the
+cliff being where the disorder's cost outweighs the drug's value.
+
+FIRST COMPOSITE POINT, multiple 1.48 with mu_homeless 0.609, value_of_life 155 and
+shifter 0.0045 (3c32d417b3):
+
+  aleph      78.49  against  80.00    -1.9 per cent   HIT
+  kappa_ued  0.1581 against  0.1625   -2.7 per cent   HIT
+  b          0.1595 against  0.0890  +79 per cent     shifter has to rise
+  lambda_d   0.0656 against  0.0368  +78 per cent     follows b
+  tau_u      0.6178 against  0.2450 +152 per cent     BROKEN BY value_of_life
+  mu_H       2.0923 against  1.4732  +42 per cent     OVERSHOT
+
+value_of_life 155 DOES NOT KILL DRUG USE when the multiple is 1.48: b is 0.1595,
+not zero. The multiple pushes b up and the value of life pushes it down, and at
+these settings the first wins. That was the reason for measuring the composite
+rather than summing the arms, and it is the answer.
+
+WHAT value_of_life BREAKS. tau_u goes from 0.227 at multiple 1.4 alone to 0.618
+with the value of life at 155: a life worth more is a life worth treating, so
+take-up rises. And mu_H overshoots to 2.09 because mu_homeless = 0.609 was
+bracketed at value_of_life 76. Both need re-bracketing ON TOP of the composite --
+utility_cost_of_treatment upward for tau_u, mu_homeless upward for mu_H -- and
+utility_cost_of_treatment is now needed after all, contrary to the 06:03 note.
+
 ## 6 September, 06:23 -- THE INSTRUMENT MAP, WITH SIDE EFFECTS. EVERY ARM THAT
 ## FIXES A MOMENT MOVES b OR h_1 OR BOTH.
 
