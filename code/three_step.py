@@ -483,9 +483,21 @@ def main():
             continue
         if param == rung and serve_h1:
             moment, fb = 'h_1', +2.06
-        if moment not in TARGETS:
+        # A MISSING MOMENT IS A SKIP, NOT A CRASH. With twenty-three instruments
+        # the loop now reaches moments a given point may not print -- a solve that
+        # stops early, a moment behind an include_ flag -- and one KeyError here
+        # would lose the whole iteration including the instruments that did have
+        # their moment. Same for an instrument absent from the vector.
+        if moment not in TARGETS or moment not in mom or param not in vec:
+            print(f'#   {param:<44}{"":>10}   {moment}: not in this point, '
+                  f'not stepping', file=sys.stderr)
             continue
-        cur, tgt = mom[moment], TARGETS[moment]
+        tgt = TARGETS[moment]
+        if tgt == 0:
+            print(f'#   {param}: target for {moment} is zero, a log step '
+                  f'cannot reach it', file=sys.stderr)
+            continue
+        cur = mom[moment]
         e, src = slope(pts, param, moment, fb)
         if e is None:
             print(f'#   {param:<44}{vec[param]:10.5g}   {moment} {cur:.5f} vs '
