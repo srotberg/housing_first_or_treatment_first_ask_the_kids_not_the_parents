@@ -1494,7 +1494,7 @@ UNSCORED = {'rent50',
             # it here made next_batch's loss and DONE test disagree with the
             # gaps table the author reads -- which gaps.py warned about at the
             # top of every run and nobody acted on.
-            'kappa_ued'
+            'kappa_ued',
     # h_share1 IS SCORED AGAIN, 6 September. The author: *"i think we need to
     # add an endowment for the newborns so that their share of homelessness
     # aligns with the data"*. It was parked on 3 September -- *"leave it out for
