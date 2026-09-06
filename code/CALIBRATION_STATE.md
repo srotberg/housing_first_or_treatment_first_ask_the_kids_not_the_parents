@@ -1,38 +1,61 @@
-## 6 September, 17:25 -- size_homelessness IS A RATIO, NOT A LEVEL, AND THAT IS
-## WHY CHEAP RENT DOES NOT EMPTY THE STREET.
+## 6 September, 17:50 -- RETRACTED: size_homelessness IS ALREADY AN ABSOLUTE
+## LEVEL. THE ENTRY BELOW IT WAS WRONG AND WAS GIVEN TO THE AUTHOR.
 
-The author's intuition -- make the cheapest rental cheap enough and homelessness
-goes to zero -- fails for a structural reason worth stating plainly. The street is
-size_homelessness x h_2. Lower the rent and the street gets cheaper by EXACTLY the
-same factor, so the relative price of the two never moves.
+At 17:25 I told the author the street is size_homelessness x h_2, built a table of
+"street ABS" on that basis and explained that cheap rent cannot empty the street
+because the ratio is pinned at one ninety-first. THE SOURCE SAYS OTHERWISE. Line
+27842:
 
-    h_2   street ratio  street ABS  rent/street   h_1 measured
-  0.130       0.0110      0.00143         91       0.0617
-  0.110       0.0110      0.00121         91       0.0335
-  0.090       0.0110      0.00099         91       0.0236
-  0.130       0.0030      0.00039        333       0.0383
-  0.130       0.0003      0.00004       3333       0.0228
-  0.130       0.0001      0.00001      10000       0.0190
+    housing_size(lowest_housing_grid_point) = &
+        max(size_homelessness*(1+increase_homeless_size*5), street_size_floor)
 
-EVERY ROW AT size_homelessness = 0.0110 HAS THE STREET AT ONE NINETY-FIRST OF THE
-RENT WHATEVER h_2 IS. Lowering h_2 helped only through the ABSOLUTE size of the
-street, never through affordability -- which is the third time today an
-affordability story has turned out to be something else.
+size_homelessness IS the street, in model units, with no h_2 in it. It was a ratio
+until 5 September, when the author asked for exactly the decoupling they asked for
+again today (*"you should disentangle the homeless size from the smallest rental.
+it should be free to move alone"*), and it was done that day. I took the ratio
+claim from ENGINE.md, which had not been updated with the change. ENGINE.md is now
+fixed and carries a warning to read the source.
 
-BOTH ROUTES TO A SMALL ABSOLUTE STREET FLOOR AT h_1 ABOUT 0.019 TO 0.024.
+THE CORRECTED TABLE. Every "street ABS" figure in the retracted entry was 91 times
+too small, and the rent/street column was constant only because I made it so.
 
-THE CORNER NOBODY HAS MEASURED is cheap rent AND a tiny ratio together.
-batch_corner.txt: merged grid, h_2 at 0.09 and 0.05 against ratios 0.0010 and
-0.0002, so the street runs from 9.0e-5 down to 1.0e-5 absolute and the rent is
-one thousand to five thousand times the street. At those settings the street is
-essentially no shelter at all -- with sigma = 2 the utility of a vanishing
-dwelling goes to minus infinity -- so nobody should choose it and whatever
-homelessness remains is necessity.
+    size_homelessness  street ABS     h_2   rent/street   h_1 measured
+               0.0110      0.0110   0.130          11.8       0.0617
+               0.0110      0.0110   0.110          10.0       0.0335
+               0.0110      0.0110   0.090           8.2       0.0236
+               0.0030      0.0030   0.130          43.3       0.0383
+               0.0003      0.0003   0.130         433.3       0.0228
+               0.0001      0.0001   0.130        1300.0       0.0190
 
-IF h_1 STILL FLOORS NEAR 0.02 THERE, THE FLOOR IS PURE NECESSITY AND NO PRICE CAN
-TOUCH IT. If it collapses toward 0.004 the ratio was the answer and the question
-becomes what it costs in emp_homeless. batch_cutoff_street.txt tests the same
-thing from the other side: everyone able to afford, street shrinking.
+WHAT SURVIVES AND WHAT DOES NOT.
+
+SURVIVES: the three rows at size_homelessness = 0.0110 do show h_1 falling
+0.0617 -> 0.0335 -> 0.0236 as h_2 falls with the street held, and the three rows at
+h_2 = 0.130 show h_1 falling 0.0383 -> 0.0228 -> 0.0190 as the street shrinks with
+the rent held. BOTH ROUTES FLOOR NEAR 0.02, WHICH IS FIVE TIMES THE TARGET. That
+is the finding and it does not depend on the retracted mechanism.
+
+DOES NOT SURVIVE: the explanation. The relative price DOES move when h_2 moves --
+rent/street goes 11.8 -> 10.0 -> 8.2 in the first three rows, it is not pinned. And
+batch_h2_down.txt was NOT a clean one-coordinate test: it rescaled size_homelessness
+UP as h_2 fell in order to "hold the ratio", so it GREW the street from 0.0110 to
+0.0143 while cutting the rent. batch_merge3_h2.txt, which held size_homelessness
+fixed, is the clean one and is the source of the first three rows above.
+
+STANDING RULE. A claim about what a parameter multiplies is a claim about the
+source, and it gets read out of the source before it is said out loud. ENGINE.md
+and this file are notes; the Fortran is the model. Three of today's four wrong
+statements to the author were reasoning from memory or from a note instead of from
+a measured pair or from the declaration.
+
+THE CORNER IS STILL THE RIGHT TEST, and it is now a cleaner one than I described.
+batch_corner.txt runs h_2 at 0.09 and 0.05 against ABSOLUTE streets of 0.0010 and
+0.0002 -- a dwelling one fiftieth to one two-hundred-and-fiftieth of the cheapest
+rental. With sigma = 2 the utility of a vanishing dwelling goes to minus infinity,
+so nobody should choose it and whatever homelessness remains is necessity. IF h_1
+STILL FLOORS NEAR 0.02 THERE, NO PRICE CAN TOUCH IT. batch_cutoff_street.txt tests
+the same thing from the other side: everyone able to afford, street shrinking.
+
 
 ## 6 September, 17:10 -- FOUR ROUTES OUT OF THE h_1 PROBLEM, AND ONE OF THEM MAY
 ## NOT NEED THE MODEL CHANGED AT ALL.

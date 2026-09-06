@@ -62,10 +62,27 @@ were six and how to keep people out of the fourth. There is no fourth rental uni
 `DIAG unit` lines. The moment called `h_3` is "share in the LARGEST unit", which
 is index 2, the third rental -- a label and a measurement that do not match.
 
-THE STREET IS A RATIO OF THE RUNG, not a level: `size_homelessness` multiplies
-h_2. So moving h_2 drags the street with it unless something holds it, which is
-why the stepper works in (rung, absolute street) coordinates and rescales the
-ratio underneath. Do not undo that.
+THE STREET IS AN ABSOLUTE LEVEL, not a ratio of the rung. It WAS a ratio --
+`housing_size(0)*size_homelessness` -- and this file said so, which is why the
+stepper used to work in (rung, absolute street) coordinates and rescale the
+ratio underneath. That was undone on 5 September on the author's instruction
+(*"you should disentangle the homeless size from the smallest rental. it should
+be free to move alone"*). The assignment is now
+
+    housing_size(lowest_housing_grid_point) =
+        max(size_homelessness*(1+increase_homeless_size*5), street_size_floor)
+
+so the ladder is three independent absolute levels: `size_homelessness` -> h_1,
+`smallest_rental_relative_to_lowest_income` -> the affordability floor,
+`largest_house_size` -> gamma. Moving h_2 no longer drags the street, and a
+batch that rescales `size_homelessness` alongside h_2 to "hold the ratio" is
+now the thing that makes the test dirty, not the thing that cleans it.
+
+This paragraph was stale for a day after the change and it misled a whole
+round: an explanation of why cheap rent cannot empty the street was built on
+the ratio form and given to the author, and `batch_h2_down.txt` grew the street
+0.0110 -> 0.0143 while lowering h_2, so it was not a one-coordinate test. READ
+THE SOURCE AT LINE ~27842 BEFORE ASSERTING WHAT THE STREET IS.
 
 ## Two names mean two things
 
