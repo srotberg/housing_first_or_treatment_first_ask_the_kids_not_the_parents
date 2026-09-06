@@ -188,7 +188,21 @@ RULES = {
     # street_size_floor) with increase_homeless_size=0 and street_size_floor=1e-6,
     # so anything above 1e-6 passes through unclamped. The gate's own BOUNDS entry
     # already allowed 1e-6; this table was the only thing holding it at 1e-4.
-    'size_homelessness':                        ('h_1',          +0.30, 1e-5, 0.20, 0.55, 0.60),
+    # THE CAP IS 0.25 E-FOLDS, cut from 0.60 at 22:30 after iteration 2 overshot.
+    # The slope it steps on, +0.29, was measured from four pairs at street values
+    # of 1e-4 AND ABOVE. The floor came down to 1e-5 an hour later and the very
+    # first step went to 5.5e-5, where the REALISED slope is +0.87 -- three times
+    # steeper. The step took the cap, cut the street 45 per cent, and drove h_1
+    # 0.01323 -> 0.00787 through a target of 0.01097, with emp_homeless following
+    # it 0.459 -> 0.228.
+    #
+    # THE CAP IS THE HONEST CONTROL HERE, not a corrected slope. The response is
+    # local -- that is why this fit is documented as local -- and the loop CANNOT
+    # re-measure it: slope() takes only pairs differing in one coordinate and each
+    # iteration moves seven or more, so slopes refresh from one-coordinate arms
+    # and nowhere else. Bounding the step bounds what a stale slope can cost;
+    # replacing +0.29 with a number nothing measured would not.
+    'size_homelessness':                        ('h_1',          +0.30, 1e-5, 0.20, 0.55, 0.25),
     'smallest_rental_relative_to_lowest_income': ('h_2',          +5.36, 5e-3, 0.40, 0.30, 0.08),
     # THE SECOND NODE'S LEVEL, NOT THE BOTTOM NODE'S MASS. The author,
     # 6 September: *"instead of choosing the bottom mass, fix it to 0.2% and
