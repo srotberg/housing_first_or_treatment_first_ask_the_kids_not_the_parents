@@ -400,6 +400,7 @@ declare -A P=(
     # behaviour exactly; 2 merges nodes 1 and 2 into one node of their
     # combined mass, because neither can afford the cheapest rental.
     [merge_bottom_nodes]=1
+    [merge_from_node]=1
     # HELD AT ONE, ON THE AUTHOR'S INSTRUCTION. rho_d enters as
     # rho_d**(sud*include_rho_d), so one is exactly no penalty. The switch stays
     # on so the parameter is live and honest rather than a silent no-op, and the

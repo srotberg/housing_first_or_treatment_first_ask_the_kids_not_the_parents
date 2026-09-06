@@ -3357,6 +3357,33 @@
         ! one. It exists because node 2 carries fifteen times node 1's mass
         ! and neither can afford the cheapest rental.
         real(8) :: merge_bottom_nodes=1.d0
+
+        ! WHERE THE MERGE STARTS. The merge above collapses nodes 1..n onto one
+        ! level, so it can only ever lift the bottom node along with everything
+        ! it merges. The author, 6 September: *"keep the lowest productivity at
+        ! 0.2% of the population and add the second lowest to the 3rd lowest.
+        ! then 0.2% will be shut out of the smallest h2, and half will be
+        ! employed homeless"*.
+        !
+        ! That needs the merge to act on nodes [k..n] instead of [1..n], so node
+        ! one can stay poor and unhoused while node two is lifted out of the
+        ! priced-out region. merge_from_node=2 with merge_bottom_nodes=3 is
+        ! exactly the operation they describe.
+        !
+        ! WHY IT MATTERS FOR THE CALIBRATION, not just for the grid. The cheapest
+        ! rental costs 1.64 times the WHOLE net income of the bottom node, and
+        ! nodes one and two together are 3.9 per cent of the population against a
+        ! homelessness target of 0.4. Merging node two upward leaves 0.24 per
+        ! cent priced out, and it makes the homeless BE the bottom node, so that
+        ! node's employment rate becomes emp_homeless -- the first handle on that
+        ! moment that does not trade against h_1. Both price levers are exhausted
+        ! at h_1 near 0.008 with emp_homeless at zero, measured; this attacks the
+        ! residual from the quantity side instead.
+        !
+        ! ONE REPRODUCES THE OLD BEHAVIOUR EXACTLY. At merge_from_node=1 the
+        ! low block is empty, its sum is zero, and the rescale factor below is
+        ! algebraically the expression that was there before.
+        real(8) :: merge_from_node=1.d0
         integer, parameter :: productivity_below_which_to_reduce_ss=employment_grid_size
         real(8) :: scaling_of_ss=(1-reduce_ss_by_half)*1+reduce_ss_by_half*0.5
         real(8) :: scaling_of_ss_adjuster=0
@@ -28793,7 +28820,8 @@
         real(8) :: sum_of_dist,sum_of_unconditional_unemployment
         real(8) :: mu_prod_1,sigma_prod_1,mean_prod_1,row_sum_prod_1
         real(8) :: bottom_mass_1,bottom_old_1,bottom_rescale_1
-        integer :: merged_n_1
+        integer :: merged_n_1,merge_lo_1
+        real(8) :: low_sum_1
         integer, intent(in) :: time_period
          
         if (loop_count<1) then
@@ -29157,19 +29185,29 @@
             ! than one dial with two names.
             if (bottom_productivity_level>0.d0) then
 
-                merged_n_1=max(1,min(int(merge_bottom_nodes+0.5d0),employment_grid_size-1))
-                bottom_mass_1=sum(unconditional_employment_probability(1:merged_n_1))
-                bottom_old_1=sum(unconditional_employment_probability(1:merged_n_1)*&
-                    employment_grid(1,1:merged_n_1))/max(bottom_mass_1,10.d0**(-14))
-                bottom_rescale_1=(1.d0-bottom_mass_1*bottom_productivity_level)/&
-                    max(1.d0-bottom_mass_1*bottom_old_1,10.d0**(-14))
+                merge_lo_1=max(1,min(int(merge_from_node+0.5d0),employment_grid_size-1))
+                merged_n_1=max(merge_lo_1,min(int(merge_bottom_nodes+0.5d0),employment_grid_size-1))
+                bottom_mass_1=sum(unconditional_employment_probability(merge_lo_1:merged_n_1))
+                bottom_old_1=sum(unconditional_employment_probability(merge_lo_1:merged_n_1)*&
+                    employment_grid(1,merge_lo_1:merged_n_1))/max(bottom_mass_1,10.d0**(-14))
 
-                employment_grid(1,1:merged_n_1)=bottom_productivity_level
+                ! THE NODES BELOW merge_lo_1 ARE UNTOUCHED, so they carry their
+                ! own contribution to the mean and it must come out of both sides
+                ! of the rescale. A zero-length section sums to zero in Fortran,
+                ! so at merge_lo_1=1 this is identically the old expression.
+                low_sum_1=sum(unconditional_employment_probability(1:merge_lo_1-1)*&
+                    employment_grid(1,1:merge_lo_1-1))
+                bottom_rescale_1=(1.d0-low_sum_1-bottom_mass_1*bottom_productivity_level)/&
+                    max(1.d0-low_sum_1-bottom_mass_1*bottom_old_1,10.d0**(-14))
+
+                employment_grid(1,merge_lo_1:merged_n_1)=bottom_productivity_level
                 employment_grid(1,merged_n_1+1:employment_grid_size)=&
                     employment_grid(1,merged_n_1+1:employment_grid_size)*bottom_rescale_1
 
-                write(*,*) "bottom node overridden: level", bottom_old_1, "->", bottom_productivity_level
-                write(*,*) "bottom node mass=", bottom_mass_1, " upper rescale=", bottom_rescale_1
+                write(*,*) "merged nodes", merge_lo_1, "to", merged_n_1, ": level",&
+                    bottom_old_1, "->", bottom_productivity_level
+                write(*,*) "merged mass=", bottom_mass_1, " held below=", low_sum_1,&
+                    " upper rescale=", bottom_rescale_1
                 write(*,*) "mean productivity after override=",&
                     sum(unconditional_employment_probability(1:employment_grid_size)*&
                     employment_grid(1,1:employment_grid_size))
@@ -29277,17 +29315,23 @@
             ! move, and they move by the same proportion at every age.
             if (bottom_productivity_level>0.d0) then
 
-                merged_n_1=max(1,min(int(merge_bottom_nodes+0.5d0),employment_grid_size-1))
-                bottom_mass_1=sum(unconditional_employment_probability(1:merged_n_1))
+                merge_lo_1=max(1,min(int(merge_from_node+0.5d0),employment_grid_size-1))
+                merged_n_1=max(merge_lo_1,min(int(merge_bottom_nodes+0.5d0),employment_grid_size-1))
+                bottom_mass_1=sum(unconditional_employment_probability(merge_lo_1:merged_n_1))
 
                 do age_index=1,life_span
 
-                    bottom_old_1=sum(unconditional_employment_probability(1:merged_n_1)*&
-                        employment_grid(age_index,1:merged_n_1))/max(bottom_mass_1,10.d0**(-14))
-                    bottom_rescale_1=(1.d0-bottom_mass_1*bottom_productivity_level)/&
-                        max(1.d0-bottom_mass_1*bottom_old_1,10.d0**(-14))
+                    bottom_old_1=sum(unconditional_employment_probability(merge_lo_1:merged_n_1)*&
+                        employment_grid(age_index,merge_lo_1:merged_n_1))/max(bottom_mass_1,10.d0**(-14))
 
-                    employment_grid(age_index,1:merged_n_1)=bottom_productivity_level
+                    ! The held block is age-specific because the grid fans, so its
+                    ! sum is recomputed inside the age loop rather than hoisted.
+                    low_sum_1=sum(unconditional_employment_probability(1:merge_lo_1-1)*&
+                        employment_grid(age_index,1:merge_lo_1-1))
+                    bottom_rescale_1=(1.d0-low_sum_1-bottom_mass_1*bottom_productivity_level)/&
+                        max(1.d0-low_sum_1-bottom_mass_1*bottom_old_1,10.d0**(-14))
+
+                    employment_grid(age_index,merge_lo_1:merged_n_1)=bottom_productivity_level
                     employment_grid(age_index,merged_n_1+1:employment_grid_size)=&
                         employment_grid(age_index,merged_n_1+1:employment_grid_size)*bottom_rescale_1
 
@@ -37270,6 +37314,11 @@
                 case ("zeta_DI")
                     write(*,*) "HANDOVER zeta_DI:", zeta_DI, "->", handover_value
                     zeta_DI=max(min(handover_value,1.d0),0.d0)
+
+                case ("merge_from_node")
+                    write(*,*) "HANDOVER merge_from_node:", &
+                        merge_from_node, "->", handover_value
+                    merge_from_node=max(min(handover_value,4.d0),1.d0)
 
                 case ("merge_bottom_nodes")
                     write(*,*) "HANDOVER merge_bottom_nodes:", &
