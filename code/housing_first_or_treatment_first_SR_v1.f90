@@ -4522,7 +4522,27 @@
         ! burdened, so h2 >= 0.1543, while h_3 = 0.627 needed h2 near 0.085.
         ! Measured over ten ladders; the table is in CALIBRATION_STATE.md.
         ! With three, h2 owns burden50 and the TOP rung owns h_3.
-        integer, parameter :: housing_status_grid_size=3
+        ! FIVE RENTAL RUNGS, 6 September, on the author's instruction: *"add 2
+        ! more rungs and then space them in some predetermined way such that the
+        ! top rung gets the right share of households and the bottom rung makes
+        ! it so that there are enough cost burdened renters"*.
+        !
+        ! THE CONCERN, RECORDED BECAUSE IT MAY BE RIGHT. h_3 counts the TOP rung
+        ! only, and the middle rung of the three-rung ladder held just 7 to 16
+        ! per cent of renters across the whole taste-weight bracket -- the
+        ! desired-housing distribution is bimodal relative to the rungs. Two more
+        ! interior rungs give households two more places to stop SHORT of the
+        ! top, which mechanically pushes h_3 down.
+        !
+        ! THE GAIN THAT MAY OUTWEIGH IT. More rungs mean less discreteness, and
+        ! discreteness is what costs gamma about 0.05: it read 0.219 at a weight
+        ! of 0.268, which is why the weight had to run to 0.56 to deliver 0.268.
+        ! A finer ladder should let the weight sit near its data value.
+        !
+        ! Which dominates is open and depends on the spacing, which is why the
+        ! interior is geometric between two FREE endpoints rather than fixed
+        ! ratios of the bottom.
+        integer, parameter :: housing_status_grid_size=5
                          
         integer :: space_lived_in_num_of_internal=2  
                                                         
@@ -27707,10 +27727,33 @@
             ! rung_ratio_h3 and rung_ratio_h4 no longer determine anything. They
             ! stay in the vector so a point still records them and both should be
             ! held rather than calibrated.
+            ! THE INTERIOR IS GEOMETRIC BETWEEN TWO FREE ENDPOINTS.
+            !
+            ! housing_size(0) is smallest_rental_relative_to_lowest_income and
+            ! owns burden50; housing_size(housing_status_grid_size-1) is
+            ! largest_house_size and owns h_3. Neither is touched here. The
+            ! interior rungs carry no moment and are placed so the ladder is
+            ! monotone by construction for any 0 < bottom < top, adding no free
+            ! parameter to the search.
+            !
+            ! Geometric rather than linear because the choice is Cobb-Douglas:
+            ! utility differences between rungs go with LOG size, so equal log
+            ! spacing is equal economic spacing. At three rungs this reduces
+            ! exactly to the geometric mean it replaces, so the three-rung
+            ! behaviour is unchanged.
+            !
+            ! rung_ratio_h3 and rung_ratio_h4 determine nothing and should be
+            ! held rather than calibrated.
             if (housing_status_grid_size>2) then
 
-                housing_size(1)=sqrt(housing_size(0)*&
-                    housing_size(housing_status_grid_size-1))
+                do i=1,housing_status_grid_size-2
+
+                    housing_size(i)=housing_size(0)*&
+                        (housing_size(housing_status_grid_size-1)/&
+                        housing_size(0))**&
+                        (dble(i)/dble(housing_status_grid_size-1))
+
+                end do
 
             end if
             
