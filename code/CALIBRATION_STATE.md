@@ -1,3 +1,47 @@
+## 6 September, 14:33 -- BOTH STANDING BUILDS PASS, AND THE BOUNDS BUILD FINDS
+## SEVEN OUT-OF-BOUNDS READS IN THE TRANSITION WRITER.
+
+Run with the cores idle and nothing in flight, on the source behind
+point_9fafe247b9:
+
+  gfortran -O1 -fcheck=bounds,pointer -g -fbacktrace -fimplicit-none -fopenmp
+           -ffree-line-length-none                     -> BINARY, exit 0
+  gfortran -O1 -finit-real=snan -ffpe-trap=invalid,zero,overflow -g -fbacktrace
+           -fimplicit-none -fopenmp -ffree-line-length-none -> BINARY, exit 0
+
+NO ERRORS IN EITHER. The model the night's calibration ran on compiles clean under
+both required configurations.
+
+SEVEN COMPILE-TIME OUT-OF-BOUNDS WARNINGS, ALL IN THE TRANSITION CODE:
+
+  42334  housing_price(transition_length-25:transition_length-1)=...
+  42355  lump_sum_transfer(transition_length-25:transition_Length-1)=...
+  42597  write housing_price(i)                    in do i=0,transition_length
+  42610  write housing_stock(i)-total_housing_demand(i)   same loop form
+  42637  write lump_sum_transfer(i)                       same loop form
+  42650  write homeownership_by_age(2,:)
+
+THE CAUSE. These arrays are dimensioned
+  real(8), dimension(1-solve_transition_dynamics : transition_length)
+and line 1769 sets
+  integer, parameter :: solve_transition_dynamics = is_counterfactual*0 +
+                                                    (1-is_counterfactual)*0
+which is ZERO for every value of is_counterfactual. So the lower bound is 1, and
+every `do i=0,transition_length` loop reads index 0, one below the array.
+
+IT IS LATENT, NOT LIVE. solve_transition_dynamics = 0 means the transition is not
+being solved, so these blocks do not execute in the benchmark and no calibration
+result tonight is affected. But under the bounds-checked build they would abort at
+runtime the moment the transition is switched on, and TRANSITION_LESSONS.md is a
+standing instruction about getting that transition right BEFORE it is built rather
+than retrofitting it.
+
+NOT FIXED. Changing the model source is the author's call, and an edit would change
+the source md5 and detach every point measured tonight from the code that produced
+it. Reported here instead. The fix is either to give the arrays a 0 lower bound
+unconditionally, or to write the loops as `do i=1-solve_transition_dynamics,
+transition_length`, which is what the declarations already say.
+
 ## 6 September, 14:22 -- THE GATE CANNOT SEE TONIGHT'S WORK. IT RETURNS 3,
 ## IDENTICAL TO CORRECT_74, STILL ANCHORED ON THE DEAD-DRUG-BLOCK POINT.
 
