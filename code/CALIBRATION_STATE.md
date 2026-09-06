@@ -1,3 +1,51 @@
+## 6 September, 19:35 -- THE AUTHOR'S LOOP RAN. IT CONVERGES ON h_1 BY SPENDING
+## THE OTHER TWO, AND emp_homeless HITS ZERO WITH ITS INSTRUMENT AT THE FLOOR.
+
+Five iterations of three_loop.sh on the author's configuration -- delta 0, the
+street's 20 per cent penalty on, nodes 2 and 3 merged, no endowment.
+
+ iter       h_1       h_2    emp_hl |     street      rung    mass
+         .00399     .1010     .4600 |
+ seed   0.04384   0.14144   0.38228 |   0.004000   0.13000  3.3500
+    1   0.03502   0.14761   0.32636 |   0.002195   0.12558  3.2238
+    2   0.02707   0.15336   0.18945 |   0.001205   0.12079  3.0021
+    3   0.02683   0.16981   0.18615 |   0.000661   0.11572  2.4973
+    4   0.02061   0.22266   0.09289 |   0.000363   0.10971  2.2000
+    5   0.01328   0.18258   0.00000 |   0.000199   0.07078  2.2000
+
+ONLY ONE MOMENT IMPROVED. h_1 went from +999 to +233 per cent. The cost burden
+went from +40 to +81 and emp_homeless from -17 to -100. The loop did not fail to
+converge; it converged on the one moment the two strongest instruments were
+pointed at, and paid for it with the other two.
+
+THE STREET EXHAUSTED ITSELF AGAIN, from a third starting point. Between iterations
+2 and 3 it nearly halved, 0.001205 to 0.000661, and bought 0.9 per cent of h_1.
+By iteration 5 it is at 0.000199, a fiftieth of where it started, and the whole
+of the h_1 progress after iteration 3 came from the rung.
+
+THE MASS IS PINNED AT ITS FLOOR, 2.20, for two iterations while emp_homeless ran
+0.186 -> 0.093 -> 0.000. That floor is not a clamp to be relaxed: it is the
+measured turn, below which the moment REVERSES. So emp_homeless is not merely off
+target, IT HAS NO REMAINING INSTRUMENT, and this is the first time that has been
+demonstrated by a search rather than argued from slopes.
+
+WHY emp_homeless COLLAPSES, and it is the same mechanism every time: everything
+that lowers h_1 removes the MARGINAL homeless first, and the marginal homeless are
+the ones with jobs. What survives at a street of 0.0002 and a rung of 0.071 is the
+households who cannot hold housing under any circumstance, and none of them works.
+
+THE AUTHOR'S RULING WORKED AS SPECIFIED. *"If h1 gets closer then we just lower h2
+a bit more and sacrifice a bit on the h2 target"*. Pointing the rung at h_1 from
+iteration 5 took h_1 0.02061 -> 0.01328 in one step, the largest single move of
+the run, and the cost burden actually IMPROVED that iteration, 0.2227 -> 0.1826,
+because it was above target. The sacrifice they authorised has not yet been spent.
+
+WHAT IS NOW DECIDED, and it is a decision for them, not a calibration:
+emp_homeless = 0.46 and h_1 = 0.00399 cannot hold together in this model. Five
+iterations of their own method, with their own settings and their own priority
+ruling, drive the employed share to exactly zero while h_1 is still three times
+its target.
+
 ## 6 September, 19:15 -- THE NEWBORN ENDOWMENT WAS MINE, NOT THE AUTHOR'S, AND IT
 ## CONTAMINATED EVERY BASE AFTER 18:30. BACKED OUT.
 
