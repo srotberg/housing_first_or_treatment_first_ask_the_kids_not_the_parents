@@ -1,3 +1,37 @@
+## 6 September, 11:22 -- 7f98bce381 HOLDS AS THE BEST. THE theta COMBINATION IS
+## A WASH, AND THE LAST FOUR REACHABLE GAPS ARE BEING ARMED.
+
+  run                     in10  in20     h_2   theta       b   gamma  emp|hl   lam_m     h_1
+  rsh 0.345 (7f98bce381) 16/23 20/23  0.1074  0.1271  0.0879  0.3395  0.4996  0.2376  0.0539
+  rsh.345+theta+shifter  15/23 20/23  0.1073  0.1372  0.0927  0.3389  0.4999  0.2364  0.0544
+  target                             0.1010  0.1410  0.0890  0.2680  0.4600  0.2500  0.0040
+
+theta GOES FROM -9.8 TO -2.7 PER CENT AND b FROM -1.3 TO +4.2, AND THE COUNT FALLS
+BY ONE. It is a wash: the pair trades one moment for another at the ten-per-cent
+boundary. Not taken, but it is available if theta matters more than b for the note.
+
+BEST POINT REMAINS point_7f98bce381 at sixteen of twenty-three.
+
+RUNNING: batch_arms_d.txt, four arms off it, one coordinate each, at step sizes
+matched to the gap rather than to a fixed percentage --
+
+  smi_onset_level                 0.002092 -> 0.0042   p_m     -13.9%, elasticity 0.22
+  relative_share_of_leisure         1.7912 -> 2.60     omega_l +18.1%, elasticity -0.23
+  probability_becoming_unemployed    0.041 -> 0.060    pi_eu   -24.6%
+  max_food_cost                   0.031119 -> 0.037    cbar    -14.1%
+
+TWO OF THE FOUR ARE KNOWN WEAK -- smi_onset_level and relative_share_of_leisure
+both have elasticities near 0.2, so they need a doubling to close a fifteen per
+cent gap, and the step sizes above reflect that rather than a token perturbation.
+Both were LOCAL when measured at cb74b768f5, which is why they can be moved that
+far in one go; probability_becoming_unemployed was NOT, so its arm is diagnostic
+rather than a step to take.
+
+gamma AT +26.7 PER CENT IS THE LARGEST REACHABLE GAP AND HAS NO GOOD MOVE LEFT.
+Its only instrument is the housing weight, which is now doing double duty for the
+cost burden, and the ladder at 09:22 showed the two are in direct opposition. It
+should be reported as it stands rather than chased.
+
 ## 6 September, 11:12 -- NEW BEST: point_7f98bce381. SIXTEEN OF TWENTY-THREE
 ## INSIDE TEN PER CENT.
 
