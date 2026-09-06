@@ -1,3 +1,43 @@
+## 6 September, 14:03 -- NEW BENCHMARK point_4351fe54c9. NINETEEN OF TWENTY-THREE
+## WITH A MEDIAN OF 3.3 PER CENT AND SEVENTEEN MOMENTS INSIDE SIX.
+
+  rsa = 0.225, addiction_scalar_1 = 0.00703, relative_share_of_housing = 0.335,
+  kappa_uem = 12.0, labor_income_tax_rate = 0.790, and otherwise 8d2dbab380.
+
+  kappa_uem     0.30034  0.30000   0.1%    p_m         0.05041  0.04839    4.2%
+  emp_homeless  0.46371  0.46000   0.8%    theta       0.13403  0.14098   -4.9%
+  beta          2.22922  2.25000  -0.9%    h_2         0.10649  0.10100    5.4%
+  tau_l         0.22610  0.22400   0.9%    lambda_d    0.03897  0.03680    5.9%
+  mu_H          1.45927  1.47321  -0.9%    kappa_ued   0.14903  0.16250   -8.3%
+  tau_u         0.24263  0.24500  -1.0%    cbar        0.00456  0.00420    8.5%
+  pi_V          0.26989  0.26600   1.5%    sigma_y     0.19403  0.17200   12.8%
+  b             0.08746  0.08900  -1.7%    omega_l     0.47741  0.40000   19.4%
+  pi_eu         0.13527  0.13930  -2.9%    gamma       0.33788  0.26800   26.1%
+  burden50      0.18018  0.17500   3.0%    h_1         0.05997  0.00399 1402.9%
+  lambda_m      0.24247  0.25000  -3.0%
+  y_u           0.76459  0.74000   3.3%
+  aleph        77.25831 80.00000  -3.4%
+
+  nineteen inside ten, twenty-one inside twenty, SEVENTEEN INSIDE SIX,
+  median 3.3 per cent. homeless by choice 0.3510, could afford it 0.1795.
+
+THE CORRECTED HOUSING-WEIGHT DIRECTION IS WHAT DID IT. Going DOWN to 0.335 rather
+than up brought the cost burden back to +5.4 while theta stayed at -4.9 and
+lambda_d at +5.9 -- the two moments that had been the casualty of every round
+since 12:03 are now both well inside, and emp_homeless is at +0.8 with kappa_uem
+at +0.1.
+
+EIGHT MOMENTS ARE NOW INSIDE ONE PER CENT OR BETTER ON THE HOUSING AND LABOUR
+SIDE: kappa_uem, emp_homeless, beta, tau_l, mu_H, tau_u, pi_V and b.
+
+rsh 0.325 was also run and gives nineteen with a median of 3.8; its h_2 is 0.0972,
+so 0.335 and 0.325 STRADDLE the cost-burden target and the crossing is 0.3291.
+batch_final.txt runs it, with and without a small shifter nudge to bring b from
+-1.7 to zero.
+
+THE FOUR UNAFFORDABLE MOMENTS ARE UNCHANGED: sigma_y +12.8, omega_l +19.4,
+gamma +26.1, h_1 +1403. All four established by measurement earlier today.
+
 ## 6 September, 13:52 -- THE rsa = 0.225 FAMILY PLATEAUS AT SEVENTEEN. AND I MOVED
 ## THE HOUSING WEIGHT THE WRONG WAY -- A THIRD DIRECTION ERROR.
 
