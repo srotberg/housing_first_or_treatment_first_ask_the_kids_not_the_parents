@@ -1,3 +1,49 @@
+## 6 September, 21:00 -- THE 4.9 PER CENT POOL BUYS LESS THAN HALF OF WHAT I TOLD
+## THE AUTHOR, AND IT BREAKS THE ONE MOMENT THAT IS RIGHT.
+
+I gave them 0.049 x 0.2951 = 0.0145, "from 5.3 times out to 1.3", and it is wrong.
+It treats ALL homelessness as scaling with the no-wage-income pool. At the 0.268
+point 46.7 per cent of the homeless HAVE JOBS and shrinking a pool of jobless
+households does nothing to them.
+
+Done properly, at point_a73d47af91:
+
+    h_1                                    0.05822
+      employed homeless                    0.02721
+      non-employed homeless                0.03101
+    no-wage pool                           0.14060
+    homelessness rate within it            0.29510
+
+    pool 0.1406 -> 0.049, conditional rate held:
+      non-employed homeless   0.03101 -> 0.01081
+      employed homeless       0.02721 -> 0.02721   unchanged
+      h_1                     0.05822 -> 0.03802   target 0.01097   +247%
+      emp_homeless            0.46731 -> 0.71568   target 0.46      +56%
+
+SO IT MOVES h_1 BY LESS THAN HALF WHAT I CLAIMED AND COSTS emp_homeless, which
+was at +1.6 per cent -- the only moment that has been right all evening.
+
+AND IT EXPLAINS SOMETHING THAT HAD NO EXPLANATION. Every archived point near
+h_1 = 0.01 carries emp_homeless near 0.61 rather than 0.46, in four different
+economies. That is this mechanism seen from the other side: lowering homelessness
+by draining the non-employed always leaves the employed share too high. The
+pattern was in the frontier table hours ago and I read it as noise.
+
+THE QUANTITY THAT ACTUALLY NEEDS TO MOVE is 29.5 per cent of no-wage households
+homeless. It is independent of the pool's size, it is the number that cannot be
+defended -- nearly a third of working-age households without a wage earner on the
+street, when the great majority in the data are held up by transfers, savings, a
+partner or family -- and at 8 per cent it gives h_1 = 0.011 with the employed
+share untouched. replacement_rate_ui was made calibratable for exactly this and
+has still not been swept from a good base.
+
+THIRD VERSION OF THIS CALCULATION TODAY AND THE FIRST THAT COUNTS THE EMPLOYED
+HOMELESS. The flow-affordability threshold, then the pool arithmetic, now this.
+Every one of them treated a heterogeneous population as though one margin
+governed it. THE MODEL PRINTS THE DECOMPOSITION -- h_1, emp_homeless, and
+homelessness among the unemployed -- and a prediction that does not reconcile
+with all three at once is not arithmetic, it is a guess with numbers in it.
+
 ## 6 September, 20:25 -- THE FLOW-AFFORDABILITY ARITHMETIC IS WRONG, AND I MADE
 ## THE SAME MISTAKE TWICE IN ONE EVENING.
 
