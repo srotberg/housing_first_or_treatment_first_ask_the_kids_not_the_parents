@@ -334,13 +334,25 @@ RULES = {
     # utility_cost_of_treatment. A utility COST of treatment can only lower
     # take-up, so tau_u above target means the cost is too low.
     #
-    # multiple_of_probabilities_of_employment_if_addicted. Higher means the
-    # addicted hold jobs more easily, so they stay housed and the SUD share OF
-    # THE HOMELESS falls. sud_homeless at 0.073 against 0.217 wants it lower.
+    # multiple_of_probabilities_of_employment_if_addicted. POSITIVE, and the
+    # first version of this line had it negative, inferred from the parameter's
+    # NAME. The name is misleading and the source is not:
+    #
+    #     probability_becoming_unemployed_if_addicted = min(pi_eu * M, 1)
+    #     probability_becoming_employed_if_addicted   = min(pi_ue / M, 1)
+    #
+    # M multiplies the probability of becoming UNEMPLOYED and DIVIDES the
+    # probability of becoming employed, so raising it makes the addicted worse
+    # off, poorer, and more likely homeless -- the SUD share OF THE HOMELESS
+    # RISES. sud_homeless at 0.073 against 0.217 wants M HIGHER, and the wrong
+    # sign had already driven it onto its floor of 1.0 in one step.
+    #
+    # This is what the no-guessed-slopes rule is for. A sign taken from a name
+    # rather than from the code was wrong within one iteration.
     'kappa_uem':                                 ('kappa_uem',    -1.00, 1.0, 20.0, 0.25, 0.20),
     'utility_cost_of_treatment':                 ('tau_u',        -1.00, 0.0, 8.0, 0.25, 0.20),
     'multiple_of_probabilities_of_employment_if_addicted':
-                                                 ('sud_homeless', -1.00, 1.0, 50.0, 0.25, 0.20),
+                                                 ('sud_homeless', +1.00, 1.0, 50.0, 0.25, 0.20),
     'newborn_endowment_scale':                   ('h_share1',     -1.00, 0.0, 3.0, 0.35, 0.20),
     'ssi_floor_level':                           ('h_share5',     -1.00, 0.0, 0.30, 0.35, 0.20),
 }
