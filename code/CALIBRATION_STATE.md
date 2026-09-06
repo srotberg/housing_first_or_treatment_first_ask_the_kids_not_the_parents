@@ -1,3 +1,52 @@
+## 6 September, 22:00 -- THE METHOD NOW DRIVES ALL 23 INSTRUMENTS, AND THE BASE
+## RULE IT INHERITED WAS SILENTLY HANDING THE ITERATION TO THE GATE.
+
+The author: *"the model should now use my method to calibrate all the parameters
+as we specified to adjust them"*. `three_step.py` now reads next_batch's OWN map
+and applies the same damped one-instrument-one-moment step to every parameter in
+it. Four keep their hand-tuned speeds and measured slopes; the other nineteen get
+damping 0.45 and a cap of 0.35, deliberately slower, and NO fallback slope -- an
+instrument with no controlled pair prints `NO CONTROLLED PAIR YET -- not
+stepping` rather than moving on a guessed elasticity.
+
+Three defects found in extending it, two of them mine and one inherited.
+
+**The targets were not where I looked for them.** I read a `TARGET` block out of
+next_batch.py; there is none. The numbers live in the Fortran's `*_data`
+constants and reach the outside world only through a solve, where every MOMENT
+line prints `target=` beside `model=`. The empty dict was silent: nineteen
+instruments simply had no target and sat unstepped with no error. They are now
+read off the newest point file, which is the one place the target is guaranteed
+to be the number the point was actually scored against.
+
+**A pinned parameter was being stepped.** `kkk_s_deviation_bottom` is in the
+gate's OWN map, so the extension gave it a rule, and the trace shows it written
+at the author's 3.4113 and then overwritten to 1.202 -- the bottom node stopped
+being 0.2 per cent of the population one line after being pinned there. FIXED and
+CONFIG keys are now excluded from the extension.
+
+**THE INHERITED ONE IS THE SERIOUS ONE.** The base was "newest solved point
+carrying CONFIG". The correction round's arms carry CONFIG too -- they are
+one-coordinate variations off a base that shares it -- so from 21:35 the newest
+of them WAS the base. The first dry run of the extension started from
+`kkk_s_deviation_bottom=6` with `size_homelessness` at its floor: the fixed point
+six iterations had reached was discarded and nothing said so. The method is
+x_{n+1} = f(x_n) and the base rule did not express that.
+
+`three_step.py` now writes every vector it asks for to
+`code/three_step_iterates.txt` and takes its base only from points solved from
+one of them. Other points still supply SLOPES -- controlled pairs are exactly
+what the correction round exists to produce -- they just cannot be the base. The
+ledger is seeded with `point_36412aab69`, the converged iterate: h_1 0.01323
+(+20.6%), h_2 0.11384 (+12.7%), emp_homeless 0.45927 (-0.2%), pi_eu 0.04899
+(-0.0%).
+
+SEQUENCING. The extension is not started yet. The CORRECT_76 round has 12 of 15
+arms left, and those arms are the controlled pairs the sixteen unstepped
+instruments need; starting the loop now would both violate the serial rule and
+step nineteen parameters on no measurement at all. The loop starts when the round
+finishes.
+
 ## 6 September, 21:00 -- THE 4.9 PER CENT POOL BUYS LESS THAN HALF OF WHAT I TOLD
 ## THE AUTHOR, AND IT BREAKS THE ONE MOMENT THAT IS RIGHT.
 
