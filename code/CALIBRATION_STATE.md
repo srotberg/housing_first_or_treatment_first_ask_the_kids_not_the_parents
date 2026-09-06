@@ -1,3 +1,49 @@
+## 6 September, 15:52 -- THE MERGE PERFORMS EXACTLY LIKE EVERY OTHER LEVER. SIX
+## ROUTES TO h_1 ARE NOW MEASURED AND THE QUESTION IS CLOSED.
+
+  mergeN  bprod    in10   med     h_1   emp|hl   h2mom  burd50  sigma_y
+    -     0.0668  19/23  2.9%  0.0617   0.4711  0.0997  0.1826   0.1941  benchmark
+    1     0.0668  19/23  2.9%  0.0617   0.4711  0.0997  0.1826   0.1941  regression, exact
+    2     0.165   18/23  3.8%  0.0543   0.3991  0.1048  0.1895   0.1967
+    2     0.175   17/23  4.1%  0.0522   0.3841  0.1059  0.1918   0.1970
+    2     0.190   16/23  4.2%  0.0497   0.3679  0.1075  0.1944   0.1977
+  target                       0.0040   0.4600  0.1010  0.1750   0.1720
+
+A STRAIGHT LINE, NO CLIFF. Each rung buys two to four per cent of h_1 and costs
+about four per cent of emp_homeless and one moment. From 0.165 to 0.190: h_1 falls
+19 per cent, emp_homeless falls 20 per cent, nineteen of twenty-three becomes
+sixteen.
+
+THE SIX ROUTES, ALL MEASURED TODAY ON THE LIVE MODEL:
+
+  bottom node 0.0668 -> 0.14             h_1   -1%
+  tail compression sdev 3.35 -> 2.00     h_1    0%, slightly worse
+  housing weight 0.3291 -> 0.2452        h_1  +85%, wrong direction
+  cheapest rent 0.130 -> 0.108           h_1  -17%, costs BOTH burden moments
+  newborn endowment 0 -> 0.35            h_1  -18%, costs emp_homeless
+  merged bottom node -> 0.190            h_1  -19%, costs emp_homeless
+
+EVERY ROUTE THAT MOVES h_1 MOVES IT BY UNDER TWENTY PER CENT AND BILLS A MOMENT
+THAT IS CURRENTLY ON TARGET. The target needs a 94 per cent cut. h_1 = 0.4 per cent
+is not reachable in this model, and that is now established across six mechanisms
+rather than asserted from one.
+
+WHAT WAS LEARNED THAT OUTLIVES THE QUESTION:
+
+  1. merge_bottom_nodes is in the model, defaulted off, VERIFIED INERT at N = 1 to
+     every printed digit and all 25 moments within 0.0022 per cent, both standing
+     builds passing. If the grid needs reshaping for another reason the instrument
+     is there and it is clean.
+  2. THE HOMELESS IN THIS MODEL ARE NOT THE PERMANENTLY POOR. They are young
+     households having a bad year with no savings: 24.8 per cent homeless at age
+     27 falling monotonically to 5.1 at 47, renter wealth exactly zero at 26,
+     unemployment 13.5 per cent. That is why the age profile is too young, why the
+     newborn endowment was the strongest lever, and why every grid-based route
+     failed.
+
+BENCHMARK UNCHANGED: point_9fafe247b9, nineteen of twenty-three inside ten per
+cent, sixteen inside five, median 2.9, with h_1 the one moment that gives.
+
 ## 6 September, 15:42 -- THE PATCH IS VERIFIED AND THE AFFORDABILITY HYPOTHESIS IS
 ## DEAD. LIFTING THE BOTTOM OF THE GRID CLEAR OF THE RENT DOES NOTHING TO h_1.
 
