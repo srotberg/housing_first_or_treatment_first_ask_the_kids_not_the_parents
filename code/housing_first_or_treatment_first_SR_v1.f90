@@ -4516,7 +4516,13 @@
         !   h3, the top rung     -> gamma, housing over expenditure, 0.268
         !
         ! with relative_share_of_housing pinned at 0.268 as data throughout.
-        integer, parameter :: housing_status_grid_size=2
+        ! THREE RENTAL RUNGS, restored 6 September on the author's instruction.
+        ! Two rungs made burden50 and h_3 both ride on h2 and the productivity
+        ! grid made their requirements disjoint: burden50 = 0.175 needs node 3
+        ! burdened, so h2 >= 0.1543, while h_3 = 0.627 needed h2 near 0.085.
+        ! Measured over ten ladders; the table is in CALIBRATION_STATE.md.
+        ! With three, h2 owns burden50 and the TOP rung owns h_3.
+        integer, parameter :: housing_status_grid_size=3
                          
         integer :: space_lived_in_num_of_internal=2  
                                                         
@@ -27682,10 +27688,29 @@
             ! THE LADDER INVERTS IF h3 <= h2, and nothing in the Fortran notices:
             ! the run completes and reports the share in "the largest unit" when
             ! it is really the smallest. run_one_point.sh carries the guard.
+            ! ONLY THE MIDDLE RUNG IS ASSIGNED, AND THE TOP ONE STAYS FREE.
+            !
+            ! This block used to set BOTH interior and top rungs as multiples of
+            ! h2, which chained the top rung to the bottom one -- exactly the
+            ! collinearity that made the ladder infeasible before
+            ! largest_house_size was freed on 5 September. Restoring the third
+            ! rung with the old body would have undone that fix silently: at
+            ! three rungs the guard reactivates and housing_size(2) would go back
+            ! to rung_ratio_h4*h2.
+            !
+            ! housing_size(housing_status_grid_size-1) is already largest_house_size,
+            ! an independent absolute level, and it OWNS h_3. h2 owns burden50.
+            ! The middle rung carries no moment, so it is placed at the geometric
+            ! mean: monotone by construction for any 0 < h2 < h_top, and it adds
+            ! no free parameter to the search.
+            !
+            ! rung_ratio_h3 and rung_ratio_h4 no longer determine anything. They
+            ! stay in the vector so a point still records them and both should be
+            ! held rather than calibrated.
             if (housing_status_grid_size>2) then
 
-                housing_size(1)=rung_ratio_h3*housing_size(0)
-                housing_size(housing_status_grid_size-1)=rung_ratio_h4*housing_size(0)
+                housing_size(1)=sqrt(housing_size(0)*&
+                    housing_size(housing_status_grid_size-1))
 
             end if
             
