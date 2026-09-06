@@ -77,8 +77,35 @@ TARGETS = {'h_1': 0.00399, 'h_2': 0.101, 'emp_homeless': 0.46}
 RULES = {
     'size_homelessness':                        ('h_1',          +0.30, 1e-4, 0.20, 0.55, 0.60),
     'smallest_rental_relative_to_lowest_income': ('h_2',          +5.36, 5e-3, 0.40, 0.30, 0.08),
-    'kkk_s_deviation_bottom':                   ('emp_homeless', -2.65, 2.20, 6.00, 0.95, 0.60),
+    # THE SECOND NODE'S LEVEL, NOT THE BOTTOM NODE'S MASS. The author,
+    # 6 September: *"instead of choosing the bottom mass, fix it to 0.2% and
+    # adjust the second productivity level"*, and *"If emp homeless is too low,
+    # you lower the second productivity a bit"*.
+    #
+    # This fixes the defect that made the previous assignment stall.
+    # kkk_s_deviation_bottom moves the bottom node's LEVEL AND ITS MASS TOGETHER
+    # -- a poorer tail is necessarily a thinner one -- so it could not make the
+    # node poor enough to be priced out without also making it too small to
+    # supply 46 per cent of the homeless. The second node's level is a separate
+    # coordinate and moves only the level.
+    #
+    # Under merge_from_node=2 this parameter sets the MERGED second and third
+    # nodes, leaving the lowest alone, which is exactly the group the author
+    # means. Lowering it prices those households out of the cheapest rental even
+    # when they are working, and a working household on the street is the only
+    # thing that raises the employed share.
+    #
+    # The sign is measured, not assumed: -2.66 over six controlled pairs, range
+    # -4.15 to -1.56, from the threshold sweep of 18:20. LOWER level, HIGHER
+    # employed share, which is what the author said.
+    'bottom_productivity_level':                 ('emp_homeless', -2.66, 0.02, 1.20, 0.60, 0.25),
 }
+
+# THE BOTTOM NODE'S MASS IS FIXED AT 0.2 PER CENT, on the author's instruction.
+# The source's own calibration of the instrument reads 3.00 -> 0.621 per cent,
+# 3.25 -> 0.318, 3.50 -> 0.155, and log-interpolating those puts 0.200 per cent
+# at 3.4113. Written into every iterate so it cannot drift.
+FIXED = {'kkk_s_deviation_bottom': 3.4113}
 
 # The author's configuration. A point is an iterate of THIS loop only if every one
 # of these matches: delta zero, the street's 20 per cent penalty on, the second and
@@ -185,6 +212,12 @@ def main():
     _, tag, vec, mom = pts[-1]
     print(f'# from point_{tag}', file=sys.stderr)
     nxt = dict(vec)
+
+    for k, v in FIXED.items():
+        if abs(vec.get(k, v) - v) > 1e-9:
+            print(f'#   {k:<44}{vec[k]:10.5g} -> {v:10.5g}   held at the '
+                  f'author\'s 0.2 per cent bottom node', file=sys.stderr)
+        nxt[k] = v
 
     # THE RUNG SERVES h_1 WHILE h_1 IS FAR OFF. The author, 6 September: *"If h1
     # gets closer then we just lower h2 a bit more and sacrifice a bit on the h2
