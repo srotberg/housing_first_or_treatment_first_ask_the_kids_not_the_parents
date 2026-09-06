@@ -1,3 +1,49 @@
+## 6 September, 06:23 -- THE INSTRUMENT MAP, WITH SIDE EFFECTS. EVERY ARM THAT
+## FIXES A MOMENT MOVES b OR h_1 OR BOTH.
+
+Arms nine to eleven off 6d2b5d0f84:
+
+  arm                              tag            gamma    theta    h2exp        b      h_1
+  target                                         0.2680   0.1410   0.1010   0.0890   0.0040
+  base, rsh 0.330, rsa 0.2021      6d2b5d0f84    0.3317   0.1162   0.0854   0.0905   0.0636
+  relative_share_of_housing 0.268  8b25bfba16    0.2982   0.1183   0.0565   0.0620   0.0841
+  relative_share_of_housing 0.300  ac41a9f37a    0.3162   0.1184   0.0723   0.0747   0.0721
+  relative_share_of_addiction 0.245 831242d9bd   0.3163   0.1562   0.0668   0.4451   0.0967
+
+THE COBB-DOUGLAS IDENTITY DOES NOT HOLD IN THIS MODEL, and the 05:44 note that
+said pinning the weight at 0.268 would put gamma on target was WRONG. Measured:
+weight 0.330 gives gamma 0.3317, weight 0.300 gives 0.3162, weight 0.268 gives
+0.2982. The slope is 0.54, not 1.0, so gamma = 0.268 needs a weight near 0.213.
+ENGINE.md's own explanation is why -- the ladder is discrete, so a household
+cannot buy a marginal unit of housing and the expenditure share does not track the
+taste one for one. The earlier slope of 0.167 measured over 226 points was on the
+old ladder; the 2x/3x ratio ladder has raised it to 0.54 but not to 1.
+
+relative_share_of_addiction_1 BRACKETS theta: 0.1162 at 0.2021 and 0.1562 at 0.245
+against a target of 0.1410, crossing at about 0.229.
+
+THE MAP, as measured today. Every entry is a bracket, not an elasticity:
+
+  moment      instrument                          crossing   what it costs
+  b           addiction_scalar_1 (shifter)          varies   nothing directly
+  lambda_d    addiction_onset_base (hazard)         0.0400   sets the ratio, not the level
+  kappa_ued   multiple_of_prob_emp_if_addicted        1.48   b to 0.42
+  tau_u       the same multiple                       1.48   free, comes with kappa_ued
+  mu_H        mu_homeless                            0.609   b down 10 per cent
+  aleph       value_of_life                            155   b to EXACTLY ZERO
+  gamma       relative_share_of_housing              0.213   h_1 up, b down, h2exp down
+  theta       relative_share_of_addiction_1          0.229   b to 0.45, h_1 to 0.097
+  h_1         size_homelessness                   no cross   everything else
+  h_2 exp     smallest_rental_relative_to_lowest       0.13   held
+  emp|hl      homeless_job_penalty_pp                at 0     at its bound
+  lambda_m    kappa_find_smi                             --   held, not yet opened
+
+EVERY SINGLE ARM MOVES b, h_1 OR BOTH. The shifter and the street are the two
+compensators and they are being asked to absorb five separate moves. That is why
+one-at-a-time arms cannot be summed here and why the composite is being measured.
+
+QUEUED: batch_mult_shifter.txt then batch_composite_a.txt.
+
 ## 6 September, 06:13 -- aleph AND b FIGHT. mu_homeless IS CLEAN.
 
 Arms five to eight off 6d2b5d0f84:
