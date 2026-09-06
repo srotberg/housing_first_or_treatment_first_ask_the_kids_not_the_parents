@@ -1,3 +1,50 @@
+## 6 September, 08:52 -- THE 0.7 STEP SHARPENS THE TRADE RATHER THAN ESCAPING IT,
+## SO THE OBJECTIVE ITSELF HAS BEEN REWEIGHTED TOWARDS THE HOUSING MOMENTS.
+
+  NEWTON 0.7 ladder, all four rungs:
+
+  tag         shifter in10  b      kap_uem   pi_V   omega_l  gamma   emp|hl   h_2    lam_m    h_1
+  d39caada75  0.0057 13/23 0.0836  0.2980  0.2714  0.4228  0.2889  0.6290  0.0872  0.1745  0.1108
+  50a2acbcc1  0.0060 11/23 0.0693  0.2987  0.2729  0.4216  0.2884  0.6297  0.0867  0.1744  0.1103
+  882812a06b  0.0064 10/23 0.0488  0.2993  0.2734  0.4202  0.2881  0.6306  0.0866  0.1750  0.1094
+  c7402dff69  0.0068 11/23 0.0298  0.2997  0.2765  0.4194  0.2894  0.6099  0.0853  0.1860  0.1027
+  target             0.0890  0.3000  0.2660  0.4000  0.2680  0.4600  0.1010  0.2500  0.0040
+
+kappa_uem lands at -0.7 per cent, pi_V at +2.0, omega_l at +5.7 and gamma at +7.8 --
+the four best readings any of them have had. AND emp_homeless is +37 per cent,
+lambda_m is -30 and h_1 is 0.111. The 0.7 step is the 0.4 step with the trade
+sharpened, not resolved.
+
+THE OBJECTIVE WAS THE PROBLEM, NOT THE STEP. The Jacobian was solved over the nine
+moments the eight arms were built for, so the solver had no reason to protect
+emp_homeless, h_2 or lambda_m -- they were not in it. Extended to fourteen moments
+with those three weighted double, and with the shifter as a ninth column so b is
+handled inside the solve rather than after it.
+
+A PLAIN LEAST SQUARES ON THAT SYSTEM IS NOT USABLE: it sent
+relative_share_of_leisure to 6.1 and probability_of_voucher_benchmark_used to 0.26
+at half a step and 0.86 at full -- a probability, against a benchmark of 0.052. The
+weakly identified directions run away. Ridge-regularised instead, with the penalty
+chosen so no parameter moves more than 42 per cent in logs:
+
+  kkk_sigma_scale                        1.7674  ->  1.6753
+  smi_onset_level                      0.002092  ->  0.001912
+  kappa_uem                                  15  ->  11.02
+  relative_share_of_leisure                1.78  ->  1.802
+  probability_of_voucher_benchmark_used   0.052  ->  0.0733
+  probability_becoming_unemployed         0.041  ->  0.0325
+  relative_share_of_addiction_1         0.20214  ->  0.20698
+  relative_share_of_housing               0.330  ->  0.4273
+  addiction_scalar_1                    0.00538  ->  0.006047
+
+NOTE WHAT THE WEIGHTING DOES TO THE HOUSING WEIGHT: it sends it UP to 0.427, the
+opposite of every coordinate arm. Protecting the cost burden and the homelessness
+composition means making housing MORE valuable, and the price is gamma. That is a
+coherent trade and it is the one the author asked for in the first place -- "the
+relative share of housing to be high" -- so it is worth seeing measured.
+
+batch_weighted_g.txt runs it at half and full step, each against three shifters.
+
 ## 6 September, 08:43 -- THE COUNT AND THE SUBSTANCE DISAGREE. 642be7df48 WINS ON
 ## MOMENTS INSIDE TEN PER CENT AND LOSES ON EVERY MOMENT THE PAPER IS ABOUT.
 
