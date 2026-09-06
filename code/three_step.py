@@ -308,6 +308,22 @@ FIXED = {'kkk_s_deviation_bottom': 3.4113}
 # for an instrument nobody asked about is how a base configuration drifts.
 SEED = {'newborn_endowment_scale': 0.10}
 
+# AN INSTRUMENT WHOSE MOMENT IS INSIDE THE BAND DOES NOT MOVE, on the author's
+# instruction of 6 September: *"are you fixing the parameters that are within 10%
+# of the target? you should only adjust the ones that are outside the band"*.
+#
+# Ten per cent is their stopping rule -- *"once we get below 10% for everything we
+# can stop"* -- so an instrument already inside it has nothing left to buy, and
+# every step it takes is pure disturbance to the moments it cross-affects. gamma
+# was still being stepped at -2.0 per cent and cbar at +0.7, and each of those
+# steps moved h_1 and emp_homeless underneath the instruments that were actually
+# trying to hit them.
+#
+# It also damps the loop mechanically: fewer coordinates move per iteration, so
+# the one-instrument-one-moment approximation -- which ignores every cross term --
+# is asked to hold over a smaller step.
+BAND_TOL = 0.10
+
 # The author's configuration. A point is an iterate of THIS loop only if every one
 # of these matches: delta zero, the street's 20 per cent penalty on, the second and
 # third productivity nodes merged with the lowest left alone, and no endowment.
@@ -689,6 +705,11 @@ def main():
                   f'cannot reach it', file=sys.stderr)
             continue
         cur = mom[moment]
+        if abs(cur - tgt) <= BAND_TOL * abs(tgt):
+            print(f'#   {param:<44}{vec[param]:10.5g}   {moment} {cur:.5f} vs '
+                  f'{tgt:.5f}, {100*(cur-tgt)/tgt:+.1f}% is inside the band, '
+                  f'HOLDING', file=sys.stderr)
+            continue
         e, src = slope(pts, param, moment, fb)
         if e is None:
             print(f'#   {param:<44}{vec[param]:10.5g}   {moment} {cur:.5f} vs '
