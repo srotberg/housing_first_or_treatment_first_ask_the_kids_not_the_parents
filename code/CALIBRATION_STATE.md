@@ -1,3 +1,33 @@
+## 6 September, 13:14 -- LABEL RUNS FROM THEIR OWN VECTORS, NOT FROM POSITION IN
+## THE LOG. TWO ROWS OF THE 13:03 TABLE WERE WRONG.
+
+The runs were indexed by their order in batch_run.log and the mapping was off by
+one, so a point reported as kappa_uem + food + tax was actually kappa_uem + tax
+with the food cost untouched. Re-read from each point's own VECTOR line:
+
+  label                          tag         in10  in20   med kap_uem  tau_l    cbar  theta  lam_d
+  K=13.6 T=0.808 F=0.031119   36b82511ca   19/23 21/23  3.7%  0.2752 0.2050 0.00461 0.1276 0.0401
+  K=12.0 T=0.88  F=0.0291     00e3bf44aa   16/23 20/23  3.4%  0.3005 0.1298 0.00403 0.1361 0.0381
+  K=12.0 T=0.790 F=0.031119   3e2b4f570a   17/23 21/23  4.1%  0.3000 0.2257 0.00455 0.1247 0.0419
+  K=12.0 T=0.808 F=0.0291     6b02e41207   18/23 21/23  3.1%  0.3001 0.2049 0.00410 0.1268 0.0398
+  target                                         0.3000 0.2240 0.00420 0.1410 0.0368
+
+THE "MEDIAN 2.8 PER CENT" POINT REPORTED AT 13:13 DOES NOT EXIST. The run behind
+that number is the third row, median 4.1. THE RULE: a run's identity comes from its
+own vector, never from where it sits in a log, because batches interleave and a
+skipped tag shifts everything after it.
+
+WHAT THE CORRECTED TABLE SAYS. The tax at 0.790 lands tau_l at +0.8 per cent and
+kappa_uem at 0.0, exactly on the measured slope, and pushes theta to -11.5 and
+lambda_d to +13.8. The food cost at 0.0291 lands cbar at -2.4 and gives the best
+median so far at 3.1. The benchmark still leads on count at 19/23.
+
+theta AND lambda_d HAVE NOW BEEN THE BOUNDARY CASUALTY IN FOUR SEPARATE ROUNDS.
+Every improvement elsewhere pushes them out and nothing has been aimed at them
+since 12:11. batch_polish6.txt aims at them directly:
+relative_share_of_addiction_1 at 0.215 and 0.225, each paired with the shifter that
+should hold b and therefore lambda_d.
+
 ## 6 September, 13:03 -- kappa_uem = 12.0 IS A FREE WIN. AND I PICKED A DIRECTION
 ## BY HAND AGAIN INSTEAD OF READING directions_table.py.
 
