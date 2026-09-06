@@ -1,3 +1,34 @@
+## 6 September, 11:03 -- NEW BEST: point_50d27123d5. FIFTEEN OF TWENTY-THREE
+## INSIDE TEN PER CENT, TWENTY INSIDE TWENTY. TWO LOCAL ARMS DID COMPOSE.
+
+  run                     in10  in20 kap_uem   pi_V   theta      b    h_2 emp|hl  lam_m    h_1
+  BASE cb74b768f5        14/23 19/23  0.3430 0.3270  0.1272 0.0848 0.1021 0.4784 0.2414 0.0451
+  clean2 kuem+voucher    15/23 20/23  0.2987 0.2618  0.1271 0.0857 0.1138 0.4774 0.2510 0.0496
+  clean2 +theta +shifter 14/23 18/23  0.2962 0.2561  0.1403 0.1515 0.1100 0.4886 0.2409 0.0534
+  target                              0.3000 0.2660  0.1410 0.0890 0.1010 0.4600 0.2500 0.0040
+
+kappa_uem = 18.3 AND probability_of_voucher_benchmark_used = 0.0384 APPLIED
+TOGETHER LAND BOTH MOMENTS: kappa_uem -0.4 per cent, pi_V -1.6, and lambda_m comes
+along at +0.4. Five moments now inside two per cent -- kappa_uem, pi_V, lambda_m,
+b at -3.7 and emp_homeless at +3.8.
+
+ARMS DO COMPOSE WHEN THEY ARE LOCAL, and these two were: measured at this vector,
+each moved its own moment and nothing else beyond a thousandth. The failures
+tonight were all compositions of arms that were NOT local. That is the refinement
+to the 10:02 rule: it is not that composition never works, it is that composition
+works exactly when every arm in it is local at the base being composed from, and
+that is a property to CHECK IN THE ARM before relying on it, not to assume.
+
+WHAT IT COST: h_2 from +1.1 to +12.7 per cent, h_1 from 0.0451 to 0.0496.
+
+theta's ARM DOES NOT COMPOSE, because it is not local: it doubles b, and the
+shifter compensation of 0.0062 was too small -- b landed at 0.1515 against 0.0890.
+The shifter needs about 0.0071.
+
+RUNNING: batch_clean3.txt off 50d27123d5 -- relative_share_of_housing at 0.345 and
+0.335 to bring the cost burden back, theta's crossing with the larger shifter, and
+both together.
+
 ## 6 September, 10:23 -- THE SECOND RIDGE STEP FAILED, AND THE REASON IS A STALE
 ## JACOBIAN. FRESH ARMS ARE BEING MEASURED AT cb74b768f5.
 
