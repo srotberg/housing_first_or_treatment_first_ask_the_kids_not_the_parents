@@ -43,7 +43,76 @@ import glob, hashlib, math, os, re, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
-TARGETS = {'h_1': 0.01097, 'h_2': 0.101, 'emp_homeless': 0.46, 'pi_eu': 0.049}
+
+def _gate_tables():
+    """OWN, BOUNDS and TARGETS, read out of next_batch.py by TEXT.
+
+    Imported rather than parsed would be cleaner, but importing next_batch runs
+    its module body, which builds the revision map and reads the whole archive --
+    seconds per call inside a loop that runs every iteration. These three tables
+    are plain literals, so they are read with a regex and nothing else executes.
+
+    ONE SOURCE FOR WHO OWNS WHAT. next_batch's OWN map is the table the author has
+    been editing all week; a second copy here would drift from it silently, which
+    is exactly how emp_homeless ended up assigned to two different instruments in
+    two different files this evening.
+    """
+    src = open(os.path.join(HERE, 'next_batch.py'), errors='replace').read()
+
+    def block(name):
+        m = re.search(r'^%s\s*=\s*\{(.*?)^\}' % name, src, re.S | re.M)
+        return m.group(1) if m else ''
+
+    own = dict(re.findall(r"^\s*'([a-z_0-9]+)':\s*'([a-z_0-9]+)'",
+                          block('OWN'), re.M))
+    bounds = {}
+    for k, v in re.findall(r"^\s*'([a-z_0-9]+)':\s*\(([^)]*)\)",
+                           block('BOUNDS'), re.M):
+        try:
+            lo, hi = [float(x) for x in v.split(',')[:2]]
+            bounds[k] = (lo, hi)
+        except ValueError:
+            pass
+    targets = {}
+    for k, v in re.findall(r"^\s*'([a-z_0-9]+)':\s*([-\d.eE+]+)",
+                           block('TARGET'), re.M):
+        try:
+            targets[k] = float(v)
+        except ValueError:
+            pass
+    return own, bounds, targets
+
+
+_OWN, _BOUNDS, _GATE_TARGETS = _gate_tables()
+
+
+def _gate_targets():
+    """Every scored target, with the author's own three overridden.
+
+    h_1 is the ANNUAL figure of 6 September, not whatever the gate carries;
+    pi_eu is the 4.9 per cent they moved it to the same evening.
+    """
+    t = dict(_GATE_TARGETS)
+    t.update({'h_1': 0.01097, 'h_2': 0.101, 'emp_homeless': 0.46, 'pi_eu': 0.049})
+    return t
+
+
+
+# THE AUTHOR'S METHOD, APPLIED TO EVERY PARAMETER. Their instruction of
+# 6 September: *"the model should now use my method to calibrate all the
+# parameters as we specified to adjust them"*.
+#
+# The method is a damped coordinate map iterated on its own output -- one
+# instrument per moment, no cross terms, every step bounded, slopes only from
+# pairs that differ in a single coordinate. It was built for their four and it
+# converged on them in six iterations. This applies the same map to the whole
+# assignment.
+#
+# THE ASSIGNMENT AND THE TARGETS COME FROM next_batch, not from a second copy
+# here. Keeping two lists of what owns what is how they drift apart, and the
+# gate's OWN map is the one the author has been editing all week. Only the four
+# they named are overridden below.
+TARGETS = _gate_targets()
 
 # instrument -> (moment, fallback slope, lo, hi, damping, max e-fold per step)
 #
@@ -118,6 +187,28 @@ RULES = {
     # loosest of the four.
     'probability_becoming_unemployed':           ('pi_eu',        +0.42, 0.002, 0.50, 0.70, 0.70),
 }
+
+# EVERY OTHER INSTRUMENT THE GATE OWNS, on the author's instruction to apply the
+# method to all the parameters. The four above keep the hand-set speeds and
+# measured slopes that made them converge; the rest are added from OWN with
+# conservative defaults, because a slope guessed for twenty instruments at once
+# is twenty chances to get a sign wrong.
+#
+# NO FALLBACK SLOPE. Where the four carry a measured number, these carry None,
+# and an instrument with no CONTROLLED PAIR in the archive is skipped and says
+# so rather than stepping on an invented elasticity. That is the whole reason
+# the gate is running a seventeen-arm correction round right now: it generates
+# exactly those pairs. The two halves fit together -- the round measures, the
+# loop iterates.
+#
+# The bounds are the gate's own, so a step can never ask for a value the Fortran
+# would silently clamp. Damping 0.45 and a cap of 0.35 are deliberately slower
+# than the four: those were tuned against measured behaviour, these have not been.
+for _p, _m in sorted(_OWN.items()):
+    if _p in RULES or _p not in _BOUNDS:
+        continue
+    _lo, _hi = _BOUNDS[_p]
+    RULES[_p] = (_m, None, _lo, _hi, 0.45, 0.35)
 
 # THE BOTTOM NODE'S MASS IS FIXED AT 0.2 PER CENT, on the author's instruction.
 # The source's own calibration of the instrument reads 3.00 -> 0.621 per cent,
@@ -351,8 +442,15 @@ def main():
             continue
         if param == rung and serve_h1:
             moment, fb = 'h_1', +2.06
+        if moment not in TARGETS:
+            continue
         cur, tgt = mom[moment], TARGETS[moment]
         e, src = slope(pts, param, moment, fb)
+        if e is None:
+            print(f'#   {param:<44}{vec[param]:10.5g}   {moment} {cur:.5f} vs '
+                  f'{tgt:.5f}, NO CONTROLLED PAIR YET -- not stepping',
+                  file=sys.stderr)
+            continue
         if cur <= 0 or abs(e) < 1e-6:
             print(f'#   {param}: {moment} is {cur:g}, cannot step on it',
                   file=sys.stderr)
