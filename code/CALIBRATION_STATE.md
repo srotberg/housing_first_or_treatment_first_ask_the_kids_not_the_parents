@@ -1,3 +1,32 @@
+## 6 September, 14:22 -- THE GATE CANNOT SEE TONIGHT'S WORK. IT RETURNS 3,
+## IDENTICAL TO CORRECT_74, STILL ANCHORED ON THE DEAD-DRUG-BLOCK POINT.
+
+next_batch.py exit 3. Its anchor is unchanged since 05:33: addiction_onset_base
+0.0151, addiction_scalar_1 0.0208, value_of_life 76, mu_homeless 0.873,
+relative_share_of_housing 0.330, size_homelessness 7.05e-06 -- the vector where
+b = 0.0113 and no household carries the disorder.
+
+WHY IT WILL NOT MOVE. The gate ranks by worst relative gap. h_1 is the worst gap at
+every point in the archive, so the ranking is entirely a ranking on h_1, and the
+lowest h_1 ever measured belongs to a configuration with essentially no drug use.
+point_9fafe247b9 has h_1 = 0.0617 against that point's 0.0143, so the gate scores
+it worse even though it is better on nineteen of the other twenty-two moments and
+its median gap is 2.9 per cent against roughly 26.
+
+THIS IS NOT A BUG IN next_batch.py. It is the consequence, stated in ENGINE.md's
+own comments, of leaving an unreachable moment in a minimax. The gate will keep
+proposing arms off a dead economy until h_1 is either removed from the scored set
+or replaced by a target the model can reach.
+
+CONSEQUENCE FOR THE ENGINE: the automatic loop cannot make further progress on its
+own from here. The hand-driven search reached nineteen of twenty-three precisely by
+ignoring the minimax and ranking on the whole table. Until the author rules on h_1,
+the gate should not be launched -- its batches would spend hours re-measuring the
+economy the night's work replaced.
+
+NOTHING IS IN FLIGHT. Cores idle, no supervisor, no marker, branch level with
+origin. The session's deliverable is point_9fafe247b9 and the record above it.
+
 ## 6 September, 14:13 -- FINAL BENCHMARK OF THE SESSION: point_9fafe247b9.
 ## NINETEEN OF TWENTY-THREE INSIDE TEN, SIXTEEN INSIDE FIVE, MEDIAN 2.9 PER CENT.
 
