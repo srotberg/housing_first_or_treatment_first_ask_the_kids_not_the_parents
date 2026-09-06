@@ -162,6 +162,25 @@ def model_hash():
     return mh.semantic(open(p, errors='replace').read())
 
 
+def _mh_module():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        '_mh', os.path.join(HERE, 'model_hash.py'))
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    return m
+
+
+_RESOLVE_CACHE = {}
+
+
+def _resolve(stamp):
+    """A point's raw md5 stamp, mapped to the semantic hash of its economy."""
+    if stamp not in _RESOLVE_CACHE:
+        _RESOLVE_CACHE[stamp] = _mh_module().resolve(stamp)
+    return _RESOLVE_CACHE[stamp]
+
+
 def parse(path):
     s = open(path, errors='replace').read()
     m = re.search(r'^MODEL (\S+)', s, re.M)
@@ -202,7 +221,12 @@ def iterates():
         if not p:
             continue
         md, vec, mom, mt = p
-        if md != h or not on_config(vec):
+        # A POINT IS STAMPED WITH THE RAW md5, so it has to be RESOLVED to a
+        # semantic hash before it can be compared with one. model_hash.resolve()
+        # maps a stamp through the revision table for exactly this. Comparing the
+        # two directly matches nothing at all, which is what "no solved point
+        # carries the configuration yet" meant with forty iterates on disk.
+        if _resolve(md) != h or not on_config(vec):
             continue
         if not all(k in mom for k in TARGETS):
             continue
