@@ -1,3 +1,39 @@
+## 6 September, 16:55 -- THE 16:45 THRESHOLD STORY IS ALSO WRONG. AFFORDABILITY
+## DOES NOT BIND AT ANY MARGIN. BUT THE CUTOFF DOES DELIVER emp_homeless.
+
+kkk_s_deviation_bottom = 2.00 gives the grid 0.0668 0.3288 0.6006 1.0971 2.0039
+3.6603 6.6857. Node 1 alone -- 0.24 per cent of households -- cannot afford the
+rent; EVERY OTHER NODE CLEARS THE UNEMPLOYED THRESHOLD OF 0.3222. This is the
+configuration the 16:45 note predicted would collapse homelessness.
+
+                     h_1   emp|hl  by choice  could afford   h2mom  burd50  in10
+  benchmark       0.0617   0.4711     0.3673        0.1918  0.0997  0.1826 19/23
+  cutoff sdev2.00 0.0630   0.4908     0.3015        0.1485  0.0971  0.1587 17/23
+  target          0.0040   0.4600                           0.1010  0.1750
+
+h_1 IS UNCHANGED. 0.0630 against 0.0617. With essentially nobody unable to make
+rent even while unemployed, homelessness does not move. AFFORDABILITY IS NOT THE
+BINDING CONSTRAINT AT ANY MARGIN -- not the employed threshold of 0.1611, not the
+unemployed threshold of 0.3222. I have now built this story twice, at 15:xx on the
+employed line and at 16:45 on the unemployed line, and the data has refused it
+both times. STOP REACHING FOR AFFORDABILITY.
+
+WHAT THE CUTOFF DOES DELIVER, and it is the author's point: emp_homeless 0.4908
+against 0.46, BETTER THAN THE BENCHMARK, with both burden moments still inside ten
+per cent at 0.0971 and 0.1587. Choosing where the affordability cliff sits buys the
+employed share and the cost burden together. It does not buy the level.
+
+WHY THIS IS THE RIGHT PLACE TO ATTACK h_1 ANYWAY. At the benchmark, shrinking the
+street selected the employed out first and destroyed emp_homeless, because the
+homeless were a mix of the constrained and the choosing. Here they are nearly
+homogeneous -- all can afford housing, all are declining it -- so there is much
+less to select on and the street should cut the count closer to proportionally.
+
+RUNNING: batch_cutoff_street.txt, this cutoff with size_homelessness at 0.0040,
+0.0015, 0.0005 and 0.0002. If emp_homeless holds near 0.46 while h_1 falls, all
+three moments land close enough. If it collapses as it did at the benchmark, the
+selection is intrinsic and displacement is the only route left.
+
 ## 6 September, 16:45 -- THE BINDING AFFORDABILITY LINE IS THE UNEMPLOYED ONE,
 ## 0.3222, NOT THE EMPLOYED ONE, 0.1611. THAT IS THE THING THAT WAS MISSING.
 
