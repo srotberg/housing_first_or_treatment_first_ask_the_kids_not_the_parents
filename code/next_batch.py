@@ -704,10 +704,32 @@ OWN = {
     # gamma more than 0.108 across its whole range.
     # 'relative_share_of_housing':                          'gamma',
     # 'rung_ratio_h4':                                     'gamma',
-    # delta's MOMENT IS emp_homeless, 5 September, on the author's instruction.
-    # It brackets it on the live model -- delta 0 -> 0.9965, delta 1 -> 0.0473,
-    # target 0.46 strictly inside -- which y_h never was. See directions_table.
-    'homeless_job_penalty_pp':                             'emp_homeless',
+    # DELTA IS ZERO AND THE STREET'S PENALTY IS EXOGENOUS, 6 September, on the
+    # author's instruction: *"Set delta=0. And recalibrate based on the 20%
+    # penalty when homeless being exogenous"*.
+    #
+    # delta owned emp_homeless from 5 September because it bracketed it -- delta
+    # 0 gave 0.9965 and delta 1 gave 0.0473 with the target strictly inside. That
+    # is no longer available, and it should not be: any positive delta selects the
+    # branch that sets find_mult_homeless to exactly one, so the JOB-FINDING half
+    # of the penalty is switched off whenever delta is calibrated at all. The
+    # author asked for both halves on 4 September and the code has never applied
+    # them together.
+    #
+    # At delta = 0 with increased_prob_if_homeless = 0.20 the multiplicative
+    # branch runs: job loss x1.20 and job finding x0.80, both exogenous.
+    #    'homeless_job_penalty_pp':                          'emp_homeless',
+    #
+    # emp_homeless PASSES TO THE BOTTOM NODE'S MASS, which is the author's own
+    # assignment of 6 September: *"mass of bottom productivity --> share of
+    # homeless employed"*. Measured on 6 September, kkk_s_deviation_bottom from
+    # 4.20 to 2.80 moves emp_homeless 0.173 -> 0.385, a factor of 2.2, while
+    # moving h_1 by only 29 per cent -- strong on composition and weak on the
+    # level, which is exactly what an instrument for this moment needs.
+    # WIDENING PUSHES MASS OFF THE BOTTOM NODE, so a HIGHER value LOWERS the
+    # employed share. The sign is the opposite of what the name suggests and it
+    # is read off the measured pairs, not the name.
+    'kkk_s_deviation_bottom':                              'emp_homeless',
     # OPENED ON THE AUTHOR'S INSTRUCTION, both previously compile-time constants.
     #
     # increased_prob_if_homeless IS EXOGENOUS AGAIN, at 0.2 -- twenty per cent
