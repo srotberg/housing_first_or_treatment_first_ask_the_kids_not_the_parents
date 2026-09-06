@@ -1,3 +1,34 @@
+## 6 September, 10:23 -- THE SECOND RIDGE STEP FAILED, AND THE REASON IS A STALE
+## JACOBIAN. FRESH ARMS ARE BEING MEASURED AT cb74b768f5.
+
+  run                  in10  in20     h_2  emp|hl   lam_m       b   gamma    pi_V  kap_uem     h_1
+  BASE cb74b768f5     14/23 19/23  0.1021  0.4784  0.2414  0.0848  0.3467  0.3270   0.3430  0.0451
+  ridge2 half         11/23 17/23  0.1086  0.4210  0.2636  0.0931  0.3689  0.3503   0.3740  0.0361
+  ridge2 half x0.95   11/23 15/23  0.1087  0.4167  0.2639  0.1126  0.3686  0.3428   0.3720  0.0367
+  ridge2 full          7/23 14/23  0.1811  0.4116  0.2566  0.1086  0.3926  0.3497   0.4041  0.0323
+  target                          0.1010  0.4600  0.2500  0.0890  0.2680  0.2660   0.3000  0.0040
+
+FOURTEEN OF TWENTY-THREE BECOMES ELEVEN, AND SEVEN AT FULL STEP. gamma, pi_V and
+kappa_uem all move AWAY from target -- the step went backwards on the very
+moments it was solved to fix. Only h_1 improved.
+
+THE CAUSE IS THAT THE JACOBIAN WAS MEASURED AT f1f8022841 AND THE GAPS WERE
+EVALUATED AT cb74b768f5. Those two points differ in nine parameters, several by
+more than twenty per cent, and the derivatives simply are not the same there. The
+first ridge step worked because its Jacobian and its base were the same point.
+
+THIS IS THE THIRD TIME TONIGHT A NUMBER MEASURED AT ONE VECTOR HAS BEEN APPLIED AT
+ANOTHER AND FAILED: the coordinate crossings from the arms, the composite that
+summed them, and now the joint step on a stale Jacobian. The rule that survives
+every one of them is that A DERIVATIVE IS ONLY VALID AT THE POINT IT WAS MEASURED,
+and in this model "nearby" is a much smaller neighbourhood than it looks.
+
+batch_arms_at_best.txt therefore re-measures all nine arms AT cb74b768f5 -- the
+eight parameters plus the shifter, one coordinate each -- so the next joint step
+has a Jacobian belonging to its own base. Nine solves, about thirty-five minutes.
+cb74b768f5 REMAINS THE BENCHMARK until something beats it on a like-for-like
+comparison.
+
 ## 6 September, 10:13 -- BEST POINT OF THE SESSION: point_cb74b768f5.
 ## FOURTEEN OF TWENTY-THREE INSIDE TEN PER CENT AND THE HOUSING BLOCK INTACT.
 
