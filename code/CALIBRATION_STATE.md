@@ -1,3 +1,37 @@
+## 6 September, 13:52 -- THE rsa = 0.225 FAMILY PLATEAUS AT SEVENTEEN. AND I MOVED
+## THE HOUSING WEIGHT THE WRONG WAY -- A THIRD DIRECTION ERROR.
+
+  label                                in10  in20  med  theta  lam_d      b    h_2 emp|hl
+  rsa=0.2045 sh=0.0053  rsh=0.345     19/23 21/23 3.7% 0.1276 0.0401 0.0903 0.1057 0.4527
+  rsa=0.225  sh=0.00703 rsh=0.345     17/23 21/23 3.1% 0.1341 0.0409 0.0918 0.1129 0.4531
+  rsa=0.225  sh=0.00703 rsh=0.350     17/23 21/23 3.5% 0.1344 0.0408 0.0916 0.1142 0.4497
+  rsa=0.225  sh=0.00703 rsh=0.355     17/23 21/23 3.6% 0.1349 0.0405 0.0916 0.1163 0.4433
+  target                                   0.1410 0.0368 0.0890 0.1010 0.4600
+
+THE SHIFTER CROSSING WAS RIGHT: b lands at 0.0918, +3.1 per cent, exactly where the
+bracket said. theta reaches -4.9. AND THE FAMILY STILL ONLY SCORES SEVENTEEN,
+because fixing theta costs lambda_d, which goes to +11.1, and the cost burden,
+which goes to +11.8. The same two-for-two trade as every polish round since 12:11.
+
+I RAISED THE HOUSING WEIGHT TO LOWER THE COST BURDEN AND IT RAISES IT. The
+measured slope was already in the archive from the 12:11 ladder -- rsh 0.345 gives
+h_2 = 0.1074 and rsh 0.335 gives 0.1013 -- so lowering it is what pulls the burden
+down. All three rungs went the wrong way. THIS IS THE THIRD DIRECTION ERROR
+TONIGHT, after kkk_sigma_scale at 07:31 and the tax rate at 13:03, and all three
+have the same cause: I reasoned from memory instead of reading a slope that was
+already measured and sitting in the archive.
+
+  THE RULE, and it is now three failures old: BEFORE MOVING A PARAMETER, FIND A
+  MEASURED PAIR FOR IT IN THE ARCHIVE AND READ THE SIGN OFF THE PAIR. Not from
+  directions_table alone, not from intuition about the economics.
+
+batch_polish9.txt runs the two rungs I should have run, rsh 0.335 and 0.325.
+
+WHERE THIS LEAVES THE SESSION. point_36b82511ca stands at nineteen of twenty-three,
+median 3.7, fourteen moments inside five per cent. Six polish rounds since 12:03
+have moved the median between 2.8 and 4.5 and the count between sixteen and
+nineteen without beating it. The exploratory phase should end here.
+
 ## 6 September, 13:14 -- LABEL RUNS FROM THEIR OWN VECTORS, NOT FROM POSITION IN
 ## THE LOG. TWO ROWS OF THE 13:03 TABLE WERE WRONG.
 
