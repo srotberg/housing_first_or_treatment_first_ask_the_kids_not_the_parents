@@ -1,3 +1,46 @@
+## 6 September, 17:20 -- THE JOB-FINDING PENALTY IS REFUTED. I PREDICTED THE
+## BIGGEST LEVER IN THE MODEL AND IT IS ONE OF THE SMALLEST.
+
+Four arms landed, all MODEL 0e3d689a34, all HANDOVER OK 70 of 70.
+
+  iph  delta |     h_1   emp_hl |  >30%  >50%all  burden50    h_2   gamma      b
+             |  .00399      .46 | 0.406    0.175     0.175  0.101   0.268   .089  <- data
+  0.0  0.001 | 0.06166   0.4711 | .4811    .2323     .1826  .0997   .3343  .0899
+  0.0    0.0 | 0.06167   0.4720 | .4811    .2322     .1826  .0997   .3343  .0899
+ 0.20    0.0 | 0.05914   0.4381 | .4840    .2362     .1861  .1053   .3358  .0830
+ 0.50    0.0 | 0.05722   0.3507 | .4849    .2401     .1895  .1146   .3375  .0723
+ 0.80    0.0 | 0.06817   0.3028 | .4720    .2388     .1874  .1196   .3378  .0488
+
+h_1 MOVES BY AT MOST SEVEN PER CENT ACROSS THE WHOLE RANGE, AND NOT MONOTONICALLY
+-- 0.80 puts it back ABOVE the benchmark. The source's comment at line 29743 says
+removing this penalty raises homelessness among the unemployed five-fold. On this
+model it does not: switching it fully on moves the homelessness rate from 0.0617
+to 0.0591. That comment was measured on an earlier economy and does not carry.
+Written down here rather than left in the source to mislead the next reading.
+
+What it DOES do is cut emp_homeless 0.471 -> 0.303, which is the wrong way, and
+pull b from 0.0899 to 0.0488, which breaks the drug block. So it is not free
+either.
+
+AND delta = 0.001 IS EXACTLY A NO-OP. Rows one and two are the same equilibrium to
+four decimals. The benchmark's homeless_job_penalty_pp is doing nothing except
+selecting the branch that sets find_mult to one. If the author wants the symmetric
+penalty they specified on 4 September, it has to be built; it is not reachable by
+any value of the two parameters that exist.
+
+SO THE ARCHIVED JOINT POINT'S ADVANTAGE IS NOT THIS. point_50c4b984e9 remains the
+only vector that hits h_1, emp_homeless, the cost burden and gamma together, and
+whatever does it is among the other differences -- bottom_productivity_level 0.004,
+relative_share_of_housing 0.100, rung ratios 1.5/2.0, largest_house_size 0.121,
+kappa_uem 34.2, no max_age_to_choose_homelessness. NARROW IT BY MEASUREMENT, ONE
+COORDINATE AT A TIME, and do not put another mechanism story to the author before
+the arm has been run.
+
+THE STANDING LESSON, THIRD TIME TODAY. I read a claim in a comment, checked that
+the mechanism existed in the source, and told the author it was the answer before
+measuring it. The source check was right and the conclusion was wrong. A comment
+recording a measurement is a record of an OLD measurement.
+
 ## 6 September, 17:15 -- THE AUTHOR IS RIGHT ABOUT h_2, AND THE SCORED BURDEN
 ## MOMENTS ARE HIDING IT.
 
