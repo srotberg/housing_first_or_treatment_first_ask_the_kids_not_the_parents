@@ -1,3 +1,55 @@
+## 6 September, 17:25 -- THE STREET IS A CLEAN INSTRUMENT FOR h_1 AND IT FLOORS
+## AT 0.0072. MY MULTIPLICATIVE PREDICTION WAS WRONG, AND HIGH.
+
+batch_both landed. h_2 = 0.070 throughout, merged bottom three, only the street
+moves. All four MODEL 0e3d689a34, HANDOVER 70 of 70.
+
+ street |     h_1   emp_hl | rent/inc   >30%  >50%all burden50    h_2   gamma      b
+        |  .00399      .46 |    0.202  0.406    0.175    0.175  0.101   0.268   .089  <- data
+ 0.0110 | 0.01706   0.0327 |   0.3225  .4349    .1686    .0423  .0476   .2802  .1132
+ 0.0060 | 0.01141   0.0000 |   0.3259  .4354    .1732    .0465  .0543   .2806  .1124
+ 0.0030 | 0.00924   0.0000 |   0.3273  .4349    .1720    .0480  .0584   .2806  .1133
+ 0.0015 | 0.00818   0.0000 |   0.3275  .4331    .1697    .0489  .0590   .2802  .1127
+ 0.0008 | 0.00725   0.0000 |   0.3276  .4350    .1677    .0486  .0585   .2803  .1079
+
+TWO FACTS, AND THE SECOND IS THE ONE THAT MATTERS.
+
+THE STREET IS ALMOST PERFECTLY ORTHOGONAL. Fourteen-fold smaller and every other
+column is flat to the third decimal: rent over income 0.3225 -> 0.3276, the 30 per
+cent share 0.4349 -> 0.4350, gamma 0.2802 -> 0.2803, b 0.113 -> 0.108. Nothing
+else in the model has this property. It is the instrument h_1 should be bracketed
+on and nothing should be bracketed on it.
+
+AND IT IS EXHAUSTED. h_1 falls 0.01706 -> 0.01141 -> 0.00924 -> 0.00818 -> 0.00725
+while the street falls by successive halvings: -33, -19, -11, -11 per cent. It is
+ASYMPTOTING near 0.0072. Another factor of ten on the street buys perhaps a tenth
+of the remaining gap. THE FLOOR IS 1.8 TIMES THE TARGET, and it is a floor of
+NECESSITY -- at a dwelling one eighty-eighth of the cheapest rental, with sigma =
+2, nobody is choosing this.
+
+MY PREDICTION WAS 0.0066 AT (h_2 0.070, street 0.0030), FROM MULTIPLYING THE TWO
+SWEEPS IN LOGS. Measured 0.00924, forty per cent high, and even at a street four
+times smaller it is 0.00725, still above what I forecast for the larger one. The
+two levers are SUB-multiplicative. I flagged that as possible when I wrote the
+forecast and it is what happened; the flag is the only reason this is a
+measurement rather than a retraction.
+
+WHERE THIS LEAVES THE BLOCK, at h_2 = 0.070 with the street at 0.0008:
+
+    h_1              0.00725  target 0.00399   +81.7%   <- best ever on this model
+    renters >30%     0.4350   data   0.406      +7.1%
+    over half, all   0.1677   data   0.175      -4.2%
+    gamma            0.2803   target 0.268      +4.6%
+    rent over income 0.3276   data   0.202     +62.2%
+    emp_homeless     0.0000   target 0.46     -100.0%   <- dead
+
+h_1 IS DOWN FROM 15.5 TIMES TARGET TO 1.8, AND emp_homeless IS ZERO AT EVERY
+STREET BELOW 0.0110. Once the street is small the employed always take the rental,
+which is the model behaving correctly and is exactly the trade the whole day has
+been circling. batch_deeprung will say whether the rung can close the remaining 82
+per cent; it cannot help emp_homeless, which needs something that keeps a WORKING
+household out of a rental it can afford.
+
 ## 6 September, 17:20 -- THE JOB-FINDING PENALTY IS REFUTED. I PREDICTED THE
 ## BIGGEST LEVER IN THE MODEL AND IT IS ONE OF THE SMALLEST.
 
