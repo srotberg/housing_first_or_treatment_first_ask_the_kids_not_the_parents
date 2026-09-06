@@ -1,3 +1,49 @@
+## 6 September, 02:00 -- SMI HOUSEHOLDS DO BECOME HOMELESS. lambda_m IS A
+## SYMPTOM OF h_1, NOT A BROKEN SMI CHANNEL. MY EARLIER READING WAS WRONG.
+
+I told the author that SMI never reaches homelessness and reached for kappa_uem.
+The author pushed back -- *"if kappa_eum was already very high, and still only 7%
+were homeless with smi then it means for some reason they never become homeless
+even with no income and assets running down.... How can this be?"* -- and the
+decomposition says they were right to.
+
+    quantity                            model     data
+    SMI share of population            0.0411   0.0486
+    homelessness rate, ALL             0.3855   0.0040
+    homelessness rate, SMI HOUSEHOLDS  0.7198   0.0205
+    homelessness rate, non-SMI         0.3712   0.0032
+    relative risk, SMI vs non-SMI       1.94x    6.52x
+
+SEVENTY-TWO PER CENT of SMI households are homeless. The channel works exactly as
+the author described: kappa_uem takes them out of work, income and assets run
+down, and they end up on the street.
+
+WHY lambda_m READS 0.077 ANYWAY. It is a RATIO and the denominator is polluted.
+SMI is 4.1 per cent of the population, so even at 72 per cent homeless they are a
+thin slice of a homeless population that also contains 37 per cent of EVERYONE
+ELSE, 90 per cent of whom are employed and choosing a free room. No SMI parameter
+can make the mentally ill 25 per cent of the homeless while 37 per cent of the
+healthy employed are homeless too.
+
+WHAT THIS CHANGES.
+
+- lambda_m is mostly a symptom of h_1. Bring homelessness down from 0.386 toward
+  0.004 and the healthy employed leave FIRST -- they are the ones choosing the
+  street rather than forced onto it -- so lambda_m rises as the denominator
+  drains, with no SMI parameter touched.
+- There IS a real concentration shortfall, 1.94x against 6.52x, but it is second
+  order next to a level that is 96x too high.
+- kappa_find_smi, added this session, deepens the concentration and is worth
+  having, but it must not be asked to carry lambda_m alone.
+
+THE DOMINANT LEVER IS STILL consumption_penalty_homeless, AT ZERO ALL SESSION.
+Sleeping rough costs a household nothing but a smaller room: the street keeps
+82 per cent of the housing utility term at size 0.08 against h2 = 0.20, keeps
+100 per cent of consumption, and keeps the job at homeless_job_penalty_pp =
+0.001. Housing enters with an exponent of 0.2138, which is why an EIGHTY-FOLD
+cut in the street only took h_1 from 0.386 to 0.072. Consumption carries 0.584,
+nearly three times as much, and that penalty has never been switched on.
+
 ## 5 September, 23:52 -- TWO RENTAL RUNGS CANNOT CARRY h_3 AND burden50 AT ONCE
 
 Measured on the fixed model, ten ladders, street scaled to hold street/h2 = 0.40
