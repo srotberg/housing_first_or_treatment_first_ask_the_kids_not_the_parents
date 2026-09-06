@@ -1,3 +1,40 @@
+## 6 September, 06:03 -- ONE PARAMETER CARRIES THREE OF THE SIX WORST GAPS.
+## multiple_of_probabilities_of_employment_if_addicted MOVES kappa_ued, tau_u AND
+## mu_H AT ONCE, AND PAYS FOR IT IN b.
+
+First four arms off 6d2b5d0f84:
+
+  arm                                tag          kap_ued    tau_u    aleph     mu_H        b
+  target                                           0.1625   0.2450  80.0000   1.4732   0.0890
+  base, multiple 4.0                 6d2b5d0f84    0.4741   0.4481  33.9262   0.8593   0.0905
+  multiple 1.2                       493bce122a    0.1263   0.2252  39.1708   1.3739   0.4206
+  multiple 2.0                       9e6e9370bc    0.2326   0.2811  36.8896   1.1328   0.3399
+  utility_cost_of_treatment 5.0      fc948e883a    0.4846   0.0370  33.9243   1.0185   0.0914
+  utility_cost_of_treatment 8.0      e1ef9a6ece    0.4857   0.0000  33.9253   1.1555   0.0917
+
+THE MULTIPLE IS THE INSTRUMENT FOR kappa_ued AND IT BRACKETS THE TARGET: 0.1263 at
+1.2 and 0.2326 at 2.0 against 0.1625, so the crossing is at about 1.48. At the same
+time tau_u falls from 0.448 to 0.225 against a target of 0.245, and mu_H rises from
+0.859 to 1.374 against 1.473. Three gaps of +192, +83 and -42 per cent all close
+together on one parameter.
+
+THE PRICE IS DRUG USE. b goes 0.0905 to 0.4206, because the multiple IS the
+employment penalty for carrying the disorder and cutting it makes the disorder
+cheap. The shifter has to pay it back, which is why batch_mult_shifter.txt brackets
+the multiple at 1.4 against shifter 0.0090, 0.0105, 0.0120 and 0.0140, from 0.0065.
+The cliff at shifter 0.0095 found at 05:22 was measured at multiple 4.0 and will
+have moved right; one of these four may still land dead, which brackets it.
+
+utility_cost_of_treatment IS TOO STRONG TO BE THE tau_u INSTRUMENT HERE. It takes
+take-up from 0.448 to 0.037 at cost 5.0 and to exactly zero at 8.0, and it moves
+nothing else. Its crossing is at about 3.24, but tau_u is already at 0.225 at
+multiple 1.2 with the cost untouched, so it should be left where it is until the
+multiple settles.
+
+aleph does not respond to either: 33.93 at the base, 39.17 and 36.89 on the two
+multiple arms, against a target of 80. It needs value_of_life, whose arms are next
+in the queue.
+
 ## 6 September, 05:44 -- THE WIDE STREET IS THE BETTER ECONOMY ON 22 OF 23
 ## MOMENTS. ONLY h_1 PREFERS THE NARROW ONE, AND IT IS 377 PER CENT OUT THERE TOO.
 
