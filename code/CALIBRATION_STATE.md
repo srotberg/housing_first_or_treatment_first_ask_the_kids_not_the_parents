@@ -1,3 +1,76 @@
+## 6 September, 17:05 -- THE FOUR HOUSING MOMENTS HAVE ALREADY BEEN HIT
+## TOGETHER, ONCE, AND THE THING THAT WAS ON THERE IS OFF NOW.
+
+I have been telling the author that h_1, emp_homeless and the cost burden cannot
+be had together and that the model needs a new mechanism. The archive says
+otherwise. A sweep of all 1489 points carrying both h_1 and emp_homeless found 45
+within 35 per cent of BOTH targets, and the best of them is not close to the
+frontier I described -- it is on it.
+
+point_50c4b984e9, MODEL b2530947f0:
+
+    h_1            0.003543  target 0.003990   -11.2%
+    emp_homeless   0.438042  target 0.460000    -4.8%
+    h_2 (burden)   0.094267  target 0.101000    -6.7%
+    gamma          0.250437  target 0.268000    -6.6%
+    h_3            0.628108  target 0.626723    +0.2%
+
+ALL FOUR OF THE MOMENTS THE AUTHOR ASKED ABOUT, INSIDE TWELVE PER CENT, IN ONE
+EQUILIBRIUM. State it with what else was true there, because the rest of that
+economy is wrecked: tau_u +93.7, b +64.1, cbar -64.0, kappa_uem -43.5, pi_eu
+-41.9, lambda_m -39.9, sigma_y -39.6, theta -33.9, tau_l +33.1, aleph -31.4. It
+is not a candidate benchmark and it is on an old model with old targets. It is a
+DIAGNOSTIC, and what it diagnoses is that the housing block is jointly
+satisfiable in this model class. That is the opposite of what I concluded from
+six one-coordinate routes, and the six routes were not wrong -- they were all
+walking the same wall because they were all launched from the same place.
+
+WHAT IS DIFFERENT THERE, AND THE ONE COORDINATE WORTH TESTING FIRST. The two
+vectors differ in about thirty places, but one of them is a mechanism rather than
+a number: `increased_prob_if_homeless = 0.2` with `homeless_job_penalty_pp` unset.
+The benchmark has that exactly the other way round.
+
+Read the branch at line 29757 rather than the parameter name:
+
+    if (homeless_job_penalty_pp > 0) then
+        loss_mult_homeless_1 = (pi_eu + delta)/pi_eu
+        find_mult_homeless_1 = 1.d0                      <-- NO FINDING PENALTY
+    else
+        loss_mult_homeless_1 = 1 + increased_prob_if_homeless + extra_job_loss
+        find_mult_homeless_1 = 1 - increased_prob_if_homeless
+
+delta is 0.001 in the benchmark, which is nearly nothing on the loss side and
+switches the FINDING side off completely. So the benchmark runs with no
+job-finding penalty for the homeless at all, and the archived joint point ran with
+a twenty per cent one.
+
+THE SOURCE ITSELF PREDICTS THE SIZE OF THIS. The comment beside that branch says
+removing the finding penalty entirely, 0.2 -> 0, raises homelessness among the
+unemployed FIVE-FOLD. h_1 is 15.5 times its target at the benchmark; five-fold is
+not the whole gap but it is far larger than anything the six routes produced, and
+it has never been measured on this model.
+
+AND IT IS A DISCREPANCY WITH WHAT THE AUTHOR ASKED FOR. Their instruction, 4
+September: *"if the chance went up 10 p.p., you reduce the chance of regaining by
+10 p.p. too (capped below at 0%)"* -- symmetric, in points. The code makes delta
+act on separation ALONE, on the reasoning recorded at line 29739 that cutting job
+finding "prices the poor off the street". That reasoning may be right, but it is
+a design decision taken against an explicit instruction and the author has not
+been told. PUT IT TO THEM.
+
+CORRECTION TO WHAT I TOLD THE AUTHOR EARLIER TODAY. I said no friction on
+homelessness exists and that a security deposit was the mechanism I would build.
+The housing half of that is still true -- there is no deposit, entry cost or
+moving cost for renters anywhere in the source. The labour half was not: a
+job-finding penalty for the homeless exists, is implemented, and is switched off
+in the benchmark by a parameter that reads as though it were a small positive
+nudge.
+
+batch_finding.txt, four arms off the benchmark 09f5444996, `homeless_job_penalty_pp
+= 0` throughout so the multiplicative branch runs, with increased_prob_if_homeless
+at 0, 0.2, 0.5 and 0.8. The 0 arm is the control: no penalty on either side. On
+the fleet as wip/finding-1700-a..d.
+
 ## 6 September, 17:50 -- RETRACTED: size_homelessness IS ALREADY AN ABSOLUTE
 ## LEVEL. THE ENTRY BELOW IT WAS WRONG AND WAS GIVEN TO THE AUTHOR.
 
