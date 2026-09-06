@@ -3350,6 +3350,13 @@
         ! at overrides of 0.020, 0.030 and 0.045.
         real(8) :: y_grid_kappa=3.2d0
         real(8) :: bottom_productivity_level=0.d0
+        ! HOW MANY BOTTOM NODES bottom_productivity_level COVERS.
+        ! 1 is the old behaviour exactly. 2 sets nodes 1 and 2 to the same
+        ! level, which IS a merged node of their combined mass, and the
+        ! rescale above uses their mass-weighted mean so the grid mean stays
+        ! one. It exists because node 2 carries fifteen times node 1's mass
+        ! and neither can afford the cheapest rental.
+        real(8) :: merge_bottom_nodes=1.d0
         integer, parameter :: productivity_below_which_to_reduce_ss=employment_grid_size
         real(8) :: scaling_of_ss=(1-reduce_ss_by_half)*1+reduce_ss_by_half*0.5
         real(8) :: scaling_of_ss_adjuster=0
@@ -28786,6 +28793,7 @@
         real(8) :: sum_of_dist,sum_of_unconditional_unemployment
         real(8) :: mu_prod_1,sigma_prod_1,mean_prod_1,row_sum_prod_1
         real(8) :: bottom_mass_1,bottom_old_1,bottom_rescale_1
+        integer :: merged_n_1
         integer, intent(in) :: time_period
          
         if (loop_count<1) then
@@ -29149,14 +29157,16 @@
             ! than one dial with two names.
             if (bottom_productivity_level>0.d0) then
 
-                bottom_mass_1=unconditional_employment_probability(1)
-                bottom_old_1=employment_grid(1,1)
+                merged_n_1=max(1,min(int(merge_bottom_nodes+0.5d0),employment_grid_size-1))
+                bottom_mass_1=sum(unconditional_employment_probability(1:merged_n_1))
+                bottom_old_1=sum(unconditional_employment_probability(1:merged_n_1)*&
+                    employment_grid(1,1:merged_n_1))/max(bottom_mass_1,10.d0**(-14))
                 bottom_rescale_1=(1.d0-bottom_mass_1*bottom_productivity_level)/&
                     max(1.d0-bottom_mass_1*bottom_old_1,10.d0**(-14))
 
-                employment_grid(1,1)=bottom_productivity_level
-                employment_grid(1,2:employment_grid_size)=&
-                    employment_grid(1,2:employment_grid_size)*bottom_rescale_1
+                employment_grid(1,1:merged_n_1)=bottom_productivity_level
+                employment_grid(1,merged_n_1+1:employment_grid_size)=&
+                    employment_grid(1,merged_n_1+1:employment_grid_size)*bottom_rescale_1
 
                 write(*,*) "bottom node overridden: level", bottom_old_1, "->", bottom_productivity_level
                 write(*,*) "bottom node mass=", bottom_mass_1, " upper rescale=", bottom_rescale_1
@@ -29267,17 +29277,19 @@
             ! move, and they move by the same proportion at every age.
             if (bottom_productivity_level>0.d0) then
 
-                bottom_mass_1=unconditional_employment_probability(1)
+                merged_n_1=max(1,min(int(merge_bottom_nodes+0.5d0),employment_grid_size-1))
+                bottom_mass_1=sum(unconditional_employment_probability(1:merged_n_1))
 
                 do age_index=1,life_span
 
-                    bottom_old_1=employment_grid(age_index,1)
+                    bottom_old_1=sum(unconditional_employment_probability(1:merged_n_1)*&
+                        employment_grid(age_index,1:merged_n_1))/max(bottom_mass_1,10.d0**(-14))
                     bottom_rescale_1=(1.d0-bottom_mass_1*bottom_productivity_level)/&
                         max(1.d0-bottom_mass_1*bottom_old_1,10.d0**(-14))
 
-                    employment_grid(age_index,1)=bottom_productivity_level
-                    employment_grid(age_index,2:employment_grid_size)=&
-                        employment_grid(age_index,2:employment_grid_size)*bottom_rescale_1
+                    employment_grid(age_index,1:merged_n_1)=bottom_productivity_level
+                    employment_grid(age_index,merged_n_1+1:employment_grid_size)=&
+                        employment_grid(age_index,merged_n_1+1:employment_grid_size)*bottom_rescale_1
 
                 end do
 
@@ -37259,6 +37271,10 @@
                     write(*,*) "HANDOVER zeta_DI:", zeta_DI, "->", handover_value
                     zeta_DI=max(min(handover_value,1.d0),0.d0)
 
+                case ("merge_bottom_nodes")
+                    write(*,*) "HANDOVER merge_bottom_nodes:", &
+                        merge_bottom_nodes, "->", handover_value
+                    merge_bottom_nodes=max(min(handover_value,4.d0),1.d0)
                 case ("kappa_find_smi")
 
                     write(*,*) "HANDOVER kappa_find_smi:", &
