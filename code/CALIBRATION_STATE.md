@@ -1,3 +1,43 @@
+## 6 September, 09:52 -- kappa_find_smi = 2.17 CONFIRMED. lambda_m EXACT,
+## emp_homeless -6.4, h_1 DOWN TO 0.0352, AND NOTHING GIVEN UP.
+
+  run            in10  in20   lam_m  emp|hl     h_1     h_2   gamma       b   aleph
+  BASE kfs 4.0  10/23 18/23  0.3188  0.3853  0.0387  0.1007  0.3625  0.0901   80.39
+  rsh 0.36      12/23 19/23  0.2853  0.4428  0.0439  0.0933  0.3456  0.0873   81.41
+  kfs 2.17      12/23 17/23  0.2531  0.4305  0.0352  0.0996  0.3625  0.0904   80.82
+  kfs 1.9       12/23 17/23  0.2339  0.4356  0.0343  0.0987  0.3625  0.0902   80.97
+  target                     0.2500  0.4600  0.0040  0.1010  0.2680  0.0890   80.00
+
+GAP TABLE AT kfs 2.17, point_ae4ca60453:
+
+  aleph        80.81865  80.00000    1.0%   p_m         0.04134  0.04833  -14.4%
+  lambda_m      0.25310   0.25000    1.2%   sigma_y     0.20095  0.17200   16.8%
+  h_2           0.09956   0.10100   -1.4%   omega_l     0.46980  0.40000   17.5%
+  b             0.09036   0.08900    1.5%   kappa_ued   0.13296  0.16250  -18.2%
+  mu_H          1.53937   1.47321    4.5%   cbar        0.00313  0.00420  -25.5%
+  beta          2.12659   2.25000   -5.5%   pi_eu       0.09211  0.13930  -33.9%
+  tau_u         0.22952   0.24500   -6.3%   pi_V        0.35774  0.26600   34.5%
+  emp_homeless  0.43054   0.46000   -6.4%   gamma       0.36248  0.26800   35.3%
+  theta         0.12976   0.14098   -8.0%   kappa_uem   0.40701  0.30000   35.7%
+  burden50      0.15843   0.17500   -9.5%   h_1         0.03521  0.00399  782.3%
+  lambda_d      0.04035   0.03680    9.6%
+  y_u           0.81297   0.74000    9.9%
+  tau_l         0.20100   0.22400  -10.3%
+
+THE FIVE WORST NON-HOUSING GAPS ARE ALL PARAMETERS THE RIDGE STEP MOVED.
+kappa_uem, pi_V, pi_eu, cbar and sigma_y are at +35.7, +34.5, -33.9, -25.5 and
++16.8, and the step took kappa_uem from 15 to 12.86, the voucher probability from
+0.052 to 0.0618, the separation rate from 0.041 to 0.0365, kkk_sigma_scale from
+1.767 to 1.721 and smi_onset_level from 0.002092 to 0.002000. It bought the
+housing block by selling these, which is what the weighting told it to do.
+
+THE QUESTION WORTH ONE SOLVE: does the housing block survive if those five go back
+to their f1f8022841 values? If the coupling is mild in that direction, the answer
+is a point with the ridge step's housing block, f1f8022841's labour block and
+kappa_find_smi at 2.17 -- which would be the best of all three.
+batch_kfs_rsh.txt line 1 tests exactly that, and line 5 tests it with the housing
+weight at 0.360 as well.
+
 ## 6 September, 09:43 -- kappa_find_smi IS THE BEST INSTRUMENT FOUND TONIGHT. IT
 ## MOVES FOUR MOMENTS THE RIGHT WAY AT ONCE AND COSTS NOTHING.
 
