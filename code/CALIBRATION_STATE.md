@@ -1,3 +1,44 @@
+## 6 September, 20:25 -- THE FLOW-AFFORDABILITY ARITHMETIC IS WRONG, AND I MADE
+## THE SAME MISTAKE TWICE IN ONE EVENING.
+
+At 18:15 the threshold story was retracted: a household's PRODUCTIVITY LEVEL
+compared against rent plus food is not the test the model applies, because an
+unemployed household with savings pays the rent out of assets. That retraction is
+recorded four entries below this one.
+
+At 19:55 I rebuilt the same arithmetic inside the loop's trace, printed a column
+headed PRICED OUT computed from rung + max_food_cost against
+bottom_productivity_level, and reported to the author that emp_homeless was one or
+two iterations from coming off zero.
+
+IT DID NOT. Five iterations later the second node is at 0.0424 against a computed
+threshold of 0.0577 -- a third BELOW it by that arithmetic -- and emp_homeless is
+still exactly 0.0000. The model's own diagnostic says why:
+
+    DIAG cheapest rental over lowest net income = 0.3488
+    DIAG homeless who could afford it on INCOME ALONE = 0.0000
+    DIAG homelessness rate among the UNEMPLOYED = 0.0964
+    INVARIANT homeless by choice, share of the homeless = 0.0007
+
+THE CHEAPEST RENTAL COSTS 35 PER CENT OF THE LOWEST NODE'S NET INCOME. Nobody is
+priced out on income anywhere in this economy, at any productivity level the loop
+has tried, because net income is not the productivity level: taxes, transfers and
+the food-stamp schedule sit between them, and WEALTH covers the rest.
+
+WHAT THIS KILLS. The author's assignment -- lower the second node's level to
+raise the employed share -- is sound in logic and the instrument does not reach
+the moment. Halving the node from 0.0813 to 0.0424 moved emp_homeless not at all,
+moved h_1 the WRONG way, 0.0077 -> 0.0099, and cost the cost burden another third.
+An employed household with any accumulated assets pays rent from them, so making
+its productivity low does not put it on the street. It is an ASSET margin, which
+is the same finding that made the young and assetless the residual this afternoon.
+
+THE RULE, THIRD TIME OF ASKING. Do not compute an affordability threshold from
+parameters. The model prints its own -- "cheapest rental over lowest net income",
+"homeless who could afford it on INCOME ALONE", "homeless by choice" -- and those
+three lines answer every question this arithmetic was invented to answer. READ
+THEM INSTEAD.
+
 ## 6 September, 19:35 -- THE AUTHOR'S LOOP RAN. IT CONVERGES ON h_1 BY SPENDING
 ## THE OTHER TWO, AND emp_homeless HITS ZERO WITH ITS INSTRUMENT AT THE FLOOR.
 
