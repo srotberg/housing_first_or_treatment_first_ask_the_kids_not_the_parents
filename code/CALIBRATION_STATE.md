@@ -1,3 +1,62 @@
+## 6 September, 18:15 -- psi HAS THE MISSING SIGN AND ALMOST NO MAGNITUDE, AND
+## IT REFUTES THE THRESHOLD ARITHMETIC I GAVE THE AUTHOR AN HOUR AGO.
+
+    psi  unemp thr |     h_1   emp_hl  choice  unemp hl | burden50   gamma
+        |  .00399      .46                   |    0.175   0.268  <- data
+   0.50     0.3222 | 0.02532   0.1026  0.1570    0.2227 |   0.2008  0.3460
+   0.60     0.2685 | 0.02505   0.1020  0.1549    0.2217 |   0.2002  0.3463
+   0.70     0.2302 | 0.02474   0.1013  0.1464    0.2191 |   0.1977  0.3458
+   0.80     0.2014 | 0.02446   0.1024  0.1451    0.2163 |   0.1985  0.3458
+   0.90     0.1790 | 0.02413   0.1045  0.1414    0.2129 |   0.1984  0.3456
+
+THE SIGN IS THERE. dlog(emp)/dlog(h_1) is +0.55, +0.56, then -1.04 and -1.46:
+above psi = 0.7 the replacement rate lowers h_1 while RAISING the employed share,
+which is the direction no other lever in the model has. Every other measured
+lever ran between +1.19 and +3.99.
+
+THE MAGNITUDE IS NOT. h_1 moves 0.02532 -> 0.02413 across the whole range, 4.7 per
+cent, against a gap of 505 per cent. As an instrument for h_1 it is nothing.
+
+AND IT KILLS THE THRESHOLD STORY. The merged node sits at 0.30864. At psi = 0.50
+the unemployed affordability threshold is 0.3222, ABOVE it, so 23.8 per cent of
+the population should lose housing on unemployment; at psi = 0.60 the threshold is
+0.2685, BELOW it, so none of them should. Crossing that line moved h_1 by 0.0003.
+The arithmetic predicted 0.032.
+
+WHAT THE ARITHMETIC LEFT OUT IS WEALTH. An unemployed household with savings pays
+rent out of assets, so flow income is not the test the model applies, and a
+threshold computed from flow income alone overstates who is displaced by an order
+of magnitude. That also explains the age profile that has been visible all along
+and never explained: homelessness is 23.6 per cent at age 26, where renter wealth
+is exactly 0.00000, and falls to 9 per cent by the mid-thirties as assets
+accumulate. THE RESIDUAL IS THE YOUNG AND ASSETLESS, not the poor and not the
+unemployed as such.
+
+SO THE RUNG SWEEP'S AGREEMENT WITH THE ARITHMETIC -- 0.0663 against 0.06166 and
+0.0326 against 0.03354 -- IS NOT THE MECHANISM IT LOOKED LIKE. Two good
+predictions and one decisive failure means the fit was coincidence or the rung
+acts through something else. Do not quote those two rows as evidence again.
+
+FIFTH CORRECTION OF THE DAY. The pattern is identical every time: an arithmetic
+or a source comment is turned into a mechanism and given to the author before a
+single point tests it. The threshold story was worth having -- it produced
+batch_thresh, which is the right experiment -- but it was worth having as a
+QUESTION.
+
+## THE THREE-MOMENT DRIVER, code/target3.py
+
+The author, 18:12: *"the mass of the bottom productivity, h1, h2, productivity of
+second lowest productivity, what else can you need? and we just need 3 things"*.
+They are right that it is over-identified. What was missing was a SEARCH: every
+arm today moved one coordinate off a hand-chosen base, which is how the second
+node's level sat four per cent under a threshold for six hours.
+
+target3.py scores ONLY h_1, h_2 and emp_homeless, ranks the base on the worst of
+the three rather than a sum of squares, moves only the four instruments the author
+named, and fits slopes ONLY from pairs that differ in one coordinate. It reports
+gamma, burden50, b, beta and pi_eu beside them so a step that buys the three by
+wrecking the housing market is visible immediately.
+
 ## 6 September, 17:55 -- merge_from_node WORKS BUT IS NOT ENOUGH, AND I POINTED
 ## THE MASS SWEEP AT AN INERT PARAMETER.
 
