@@ -1,3 +1,54 @@
+## 6 September, 07:23 -- BEST POINT OF THE NIGHT: point_f1f8022841. THIRTEEN OF
+## TWENTY-THREE INSIDE TEN PER CENT, NINETEEN INSIDE TWENTY.
+
+  addiction_onset_base 0.0400   addiction_scalar_1 0.00538
+  multiple_of_probabilities_of_employment_if_addicted 1.48
+  mu_homeless 0.770   value_of_life 155   utility_cost_of_treatment 6.0
+  smallest_rental_relative_to_lowest_income 0.130   size_homelessness 0.0110
+  increased_prob_if_homeless 0   consumption_penalty_homeless 0
+  homeless_job_penalty_pp 0.001   lambda_addiction 0
+
+  aleph          79.54281   80.00000    -0.6%      theta      0.12624  0.14098  -10.5%
+  b               0.09003    0.08900     1.2%      h_2        0.08757  0.10100  -13.3%
+  beta            2.21563    2.25000    -1.5%      sigma_y    0.19506  0.17200   13.4%
+  y_u             0.75644    0.74000     2.2%      p_m        0.04154  0.04835  -14.1%
+  burden50        0.17029    0.17500    -2.7%      kappa_uem  0.25119  0.30000  -16.3%
+  emp_homeless    0.47682    0.46000     3.7%      omega_l    0.47218  0.40000   18.0%
+  mu_H            1.55030    1.47321     5.2%      pi_V       0.31921  0.26600   20.0%
+  lambda_m        0.26776    0.25000     7.1%      pi_eu      0.10766  0.13930  -22.7%
+  kappa_ued       0.14996    0.16250    -7.7%      gamma      0.33039  0.26800   23.3%
+  tau_u           0.22580    0.24500    -7.8%      h_1        0.05690  0.00399 1326.1%
+  tau_l           0.20375    0.22400    -9.0%      h_3        0.10307  0.62672  -83.6% (conceded)
+  lambda_d        0.04036    0.03680     9.7%      w_bot      0.05642  0.02500  125.7% (conceded)
+  cbar            0.00379    0.00420    -9.7%
+
+  inside 10%: 13 of 23.  inside 20%: 19 of 23.
+  Was 5 of 25 and 12 of 25 at 04:30, and 8 of 23 and 16 of 23 at 05:22.
+
+y_u AT 0.756 AGAINST 0.740 IS WORTH NOTING SEPARATELY. It was 2.04 this morning,
+two and a half times average income, which was the single most obviously wrong
+number in the table. Nothing was aimed at it; it came right when the drug block
+did.
+
+emp_homeless AT 0.477 AGAINST 0.460 IS THE OTHER ONE. The 03:10 note said the
+model had no involuntary route onto the street and therefore could not produce a
+homeless population that works, and that no parameter reached it. THAT WAS TRUE
+OF THE PARAMETERS THEN OPEN. value_of_life reaches it: raising the cost of dying
+makes the street a worse choice for the households who were choosing it, and the
+ones who remain are disproportionately those who cannot avoid it -- which raises
+the employed share without any job-loss penalty at all. delta is still 0.001.
+
+WHAT IS LEFT, and every one of them has an untouched instrument:
+
+  theta      relative_share_of_addiction_1        pi_V   probability_of_voucher_benchmark_used
+  h_2 exp    smallest_rental_relative_to_lowest   pi_eu  probability_becoming_unemployed
+  sigma_y    kkk_sigma_scale                      gamma  relative_share_of_housing
+  p_m        smi_onset_level                      h_1    size_homelessness -- NO CROSSING
+  kappa_uem  kappa_uem
+  omega_l    relative_share_of_leisure
+
+batch_arms_b.txt opens eight of them, one coordinate each, off f1f8022841.
+
 ## 6 September, 07:12 -- mu_homeless RE-BRACKETS CLEANLY AT 0.770 AND COSTS
 ## NOTHING. utility_cost_of_treatment IS FOUR TIMES WEAKER THAN IT WAS.
 
