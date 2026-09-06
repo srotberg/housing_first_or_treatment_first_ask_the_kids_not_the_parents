@@ -1,3 +1,40 @@
+## 6 September, 12:22 -- sigma_y IS CONFIRMED UNAFFORDABLE. mu_homeless BUYS mu_H
+## AND SELLS TWO MARGINAL MOMENTS, BOTH OF WHICH HAVE THEIR OWN LEVERS.
+
+Polish arms off the 19/23 benchmark:
+
+  run                in10  in20  sigma_y    mu_H   tau_u    pi_V       b  emp|hl     h_1
+  BENCHMARK         19/23 21/23   0.1946  1.6177  0.2685  0.2411  0.0902  0.4556  0.0589
+  kkk_sigma 1.95    14/23 20/23   0.1717  1.6041  0.2703  0.2544  0.1011  0.5127  0.0678
+  mu_homeless 0.82  17/23 21/23   0.1946  1.4910  0.2702  0.2410  0.0943  0.4559  0.0590
+  target                          0.1720  1.4732  0.2450  0.2660  0.0890  0.4600  0.0040
+
+kkk_sigma_scale 1.95 PUTS sigma_y AT -0.2 PER CENT, dead on, AND COSTS FIVE
+MOMENTS: b to +13.6, emp_homeless to +11.5, h_1 from 0.0589 to 0.0678. Nineteen of
+twenty-three becomes fourteen. IT WAS NOT LOCAL AT cb74b768f5 AND IT IS NOT LOCAL
+HERE, so that is now two independent vectors saying the same thing. sigma_y joins
+omega_l, gamma and h_1 as a moment this model cannot afford to fix: widening the
+productivity distribution puts households at the bottom, and the bottom is where
+homelessness and drug use live.
+
+mu_homeless 0.82 PUTS mu_H AT +1.2 PER CENT from +9.8 and loses exactly two
+moments, tau_u from 9.6 to 10.3 and lambda_d from 8.5 to 13.2, both of which were
+already sitting on the boundary. tau_u has utility_cost_of_treatment and lambda_d
+follows b, which the shifter carries, so both losses are repairable with levers
+already measured.
+
+RUNNING: batch_polish2.txt, mu_homeless 0.82 with utility_cost_of_treatment 6.8 and
+the voucher probability at 0.0405, against shifters of 0.0053, 0.0055 and 0.0057,
+plus one line at mu_homeless 0.80. If the three repairs hold, that is twenty-one or
+twenty-two of twenty-three.
+
+THE FOUR MOMENTS THAT CANNOT BE FIXED ARE NOW ALL ESTABLISHED BY MEASUREMENT
+RATHER THAN BY GIVING UP:
+  h_1      four rungs of the housing weight, 09:22 -- needs a weight above one
+  gamma    same parameter, in opposition to the cost burden
+  omega_l  relative_share_of_leisure costs seven moments to buy one, 11:33
+  sigma_y  kkk_sigma_scale costs five, at two different vectors
+
 ## 6 September, 12:03 -- NINETEEN OF TWENTY-THREE INSIDE TEN PER CENT.
 ## point_8d2dbab380 IS THE BENCHMARK.
 
