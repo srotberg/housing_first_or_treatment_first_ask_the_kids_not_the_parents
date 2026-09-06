@@ -1,3 +1,38 @@
+## 6 September, 06:13 -- aleph AND b FIGHT. mu_homeless IS CLEAN.
+
+Arms five to eight off 6d2b5d0f84:
+
+  arm                            tag             aleph     mu_H        b      h_1   emp|hl
+  target                                       80.0000   1.4732   0.0890   0.0040   0.4600
+  base, VoL 76, mu_hl 0.873      6d2b5d0f84    33.9262   0.8593   0.0905   0.0636   0.4216
+  value_of_life 130              15e16dad32    66.3433   1.1175   0.0000   0.0495   0.4033
+  value_of_life 180              fdf51b399a    93.8071   1.1227   0.0000   0.0469   0.4008
+  mu_homeless 0.45               450f283a24    33.9547   2.9181   0.0743   0.0608   0.4155
+  mu_homeless 0.62               98aa57f334    33.8464   1.4135   0.0815   0.0622   0.4230
+
+mu_homeless IS A CLEAN INSTRUMENT FOR mu_H and brackets it tightly: 1.4135 at 0.62
+and 2.9181 at 0.45 against a target of 1.4732, crossing at 0.609. It costs b ten
+per cent and nothing else. Take it.
+
+value_of_life IS A CLEAN INSTRUMENT FOR aleph -- 33.93, 66.34, 93.81 at 76, 130
+and 180, crossing 80 at about 155 -- AND IT KILLS DRUG USE OUTRIGHT. b is exactly
+0.0000 at both 130 and 180. Raising the value of life raises the cost of the
+mortality that drugs carry, and past some point no household will take it. So
+aleph and b are in direct conflict and the shifter is the only thing that can hold
+both, which makes the shifter the single most loaded parameter in the model: it is
+now paying for the multiple, for value_of_life and for its own moment.
+
+There is a compensation in it: value_of_life also takes h_1 from 0.0636 to about
+0.047, the largest fall in the homelessness rate any parameter other than the
+street has produced.
+
+QUEUED: batch_composite_a.txt, the three clean moves applied together --
+multiple 1.48, mu_homeless 0.609, value_of_life 155 -- against a shifter ladder of
+0.0045, 0.0060, 0.0075 and 0.0090. The multiple pushes b UP and value_of_life
+pushes it DOWN, so they partly cancel and the shifter may not have to move far
+from 0.0065. Combining arms measured one at a time is not additive on a surface
+this nonlinear, which is why the composite is being MEASURED rather than predicted.
+
 ## 6 September, 06:03 -- ONE PARAMETER CARRIES THREE OF THE SIX WORST GAPS.
 ## multiple_of_probabilities_of_employment_if_addicted MOVES kappa_ued, tau_u AND
 ## mu_H AT ONCE, AND PAYS FOR IT IN b.
