@@ -1,3 +1,47 @@
+## 6 September, 16:07 -- WHY NO INCOME-SIDE LEVER REACHES h_1: THIRTY-SEVEN PER
+## CENT OF THE HOMELESS ARE NOT CONSTRAINED, THEY ARE CHOOSING.
+
+The author asked why merging the bottom productivities cannot deliver the
+homelessness rate. The answer is in the composition, not the budget:
+
+  homeless by choice, share of the homeless      0.3673
+  homeless who could afford it on income         0.1918
+  employed share of the homeless                 0.4711
+  unemployment rate, population                  0.1353
+  UI replacement rate                            0.50
+
+THIRTY-SEVEN PER CENT OF THE HOMELESS CAN ALREADY AFFORD A RENTAL AND DECLINE IT.
+Enriching the bottom of the grid cannot house them -- they are not constrained --
+and it ADDS to this group rather than shrinking it, because a household lifted
+from 0.14 to 0.28 can now afford the rent and also more of everything else, facing
+the same choice with more of both.
+
+THE CHOICE IS LOPSIDED. The cheapest rental costs 0.130; the street is
+0.0110 x 0.130 = 0.00143, ninety-one times smaller and free. Renting costs 46 per
+cent of the merged node's entire income. Against a housing weight of 0.255 a large
+fraction take the street, rationally, inside the model.
+
+THAT IS WHY THE TAIL EXPERIMENT PRODUCED MORE HOMELESSNESS, NOT LESS: at
+kkk_s_deviation_bottom = 2.00 node 2 sat at 0.329 and h_1 came in at 0.0630 against
+the benchmark's 0.0578.
+
+THE OTHER HALF ARE NOT PERMANENTLY POOR EITHER. Fifty-three per cent are
+non-employed on a UI replacement rate of 0.5, so their CURRENT income is half their
+productivity whatever the grid says, and the young hold zero assets to bridge it.
+Merging the grid changes neither.
+
+SO THE ARITHMETIC THAT LOOKED DECISIVE -- 3.9 per cent cannot afford it, 6.2 per
+cent are homeless -- WAS A COINCIDENCE OF MAGNITUDES. The two groups barely
+overlap. This is the single most important thing learned today about h_1 and it
+should be stated in the note rather than left in a calibration log.
+
+WHAT WOULD ACTUALLY MOVE h_1: making the street worse relative to the rental. Two
+levers exist. size_homelessness was measured across four orders of magnitude and
+floors around 0.014 while wrecking emp_homeless and lambda_m, because the
+households who leave the street first are the employed ones.
+consumption_penalty_homeless is the other and the author ruled it out at 02:00 as
+backing a parameter out of a target.
+
 ## 6 September, 15:52 -- THE MERGE PERFORMS EXACTLY LIKE EVERY OTHER LEVER. SIX
 ## ROUTES TO h_1 ARE NOW MEASURED AND THE QUESTION IS CLOSED.
 
