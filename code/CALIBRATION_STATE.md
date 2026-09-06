@@ -1,3 +1,43 @@
+## 6 September, 15:42 -- THE PATCH IS VERIFIED AND THE AFFORDABILITY HYPOTHESIS IS
+## DEAD. LIFTING THE BOTTOM OF THE GRID CLEAR OF THE RENT DOES NOTHING TO h_1.
+
+REGRESSION, merge_bottom_nodes = 1 on the new source against the same vector on the
+old one: grid identical to every printed digit --
+  0.0668 0.14360780395268585 0.30864126614615767 0.66333046357068637
+         1.4256269402826236  3.0639512045311275  6.5850305704005985
+and across all 25 moments the largest relative difference is 0.0022 per cent
+(h_1 0.061661 vs 0.061660). The default is the previous model exactly, so every
+point measured before the edit stays comparable.
+
+THE AFFORDABILITY HYPOTHESIS IS REFUTED. kkk_s_deviation_bottom moves the whole
+lower tail without any model edit:
+
+  sdev_bot   node 2      h_1    h2mom  burden50  sigma_y  in10
+  3.35       0.1436   0.0578   0.1019    0.1858   0.1937  19/23
+  2.60       ~0.24    0.0573   0.1269    0.1205   0.1993  14/23
+  2.00       0.329    0.0630   0.0971    0.1587   0.1993  17/23
+
+At 2.00 the second node sits at 0.329, MORE THAN TWICE the 0.16112 threshold, and
+homelessness is 0.0630 -- HIGHER than the benchmark's 0.0578. Lifting the bottom of
+the grid clear of the rent does not reduce homelessness at all.
+
+SO THE MASS THAT CANNOT AFFORD THE CHEAPEST RENTAL IS NOT THE MASS THAT ENDS UP
+HOMELESS. 3.9 per cent and 6.2 per cent looked like the same households and are
+not. The 81 per cent "cannot afford it on income" figure is measured on CURRENT
+income, which is low in an unemployment spell or before any assets exist, not on
+permanent productivity. The homeless are households having a bad year with nothing
+saved, not the permanently poor.
+
+THAT RECONCILES EVERYTHING ELSE. Homelessness 24.8 per cent at age 27 falling
+monotonically to 5.1 at 47; renter wealth exactly zero at 26; unemployment 13.5
+per cent; and newborn_endowment_scale the only lever that moved h_1 at all, by 18
+per cent, the largest of the five tried.
+
+WHERE h_1 ACTUALLY LIVES, for whoever picks this up: the unemployment process, the
+newborn endowment, and the speed of asset accumulation. NOT the productivity grid,
+NOT the rent, NOT the bottom node's level. Four of those five routes are now
+measured null and the fifth costs three moments.
+
 ## 6 September, 15:36 -- MODEL EDIT, ON THE AUTHOR'S INSTRUCTION: THE BOTTOM-NODE
 ## OVERRIDE NOW COVERS THE BOTTOM N NODES. SOURCE 0014027387 -> 0e3d689a34.
 
