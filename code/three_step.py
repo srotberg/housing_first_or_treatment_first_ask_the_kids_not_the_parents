@@ -153,22 +153,28 @@ def model_hash():
     hash-neutral for every other tool here. The loop must agree with them or it
     silently disagrees about which economy a point belongs to.
     """
-    import importlib.util
-    spec = importlib.util.spec_from_file_location(
-        '_mh', os.path.join(HERE, 'model_hash.py'))
-    mh = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mh)
     p = os.path.join(HERE, 'housing_first_or_treatment_first_SR_v1.f90')
-    return mh.semantic(open(p, errors='replace').read())
+    return _mh_module().semantic(open(p, errors='replace').read())
+
+
+_MH = None
 
 
 def _mh_module():
-    import importlib.util
-    spec = importlib.util.spec_from_file_location(
-        '_mh', os.path.join(HERE, 'model_hash.py'))
-    m = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(m)
-    return m
+    """model_hash, loaded ONCE.
+
+    It was being re-imported per stamp, and importing it rebuilds a map over
+    four hundred git revisions. With forty points that is forty rebuilds and the
+    step never returned. One module, one map, cached resolutions.
+    """
+    global _MH
+    if _MH is None:
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            '_mh', os.path.join(HERE, 'model_hash.py'))
+        _MH = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(_MH)
+    return _MH
 
 
 _RESOLVE_CACHE = {}
