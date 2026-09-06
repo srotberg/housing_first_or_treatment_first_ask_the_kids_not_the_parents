@@ -352,7 +352,11 @@ RULES = {
     'kappa_uem':                                 ('kappa_uem',    -1.00, 1.0, 20.0, 0.25, 0.20),
     'utility_cost_of_treatment':                 ('tau_u',        -1.00, 0.0, 8.0, 0.25, 0.20),
     'multiple_of_probabilities_of_employment_if_addicted':
-                                                 ('sud_homeless', +1.00, 1.0, 50.0, 0.25, 0.20),
+                                                 # upper bound 20, the Fortran's own
+                                                 # handover clamp at 37615; the gate's
+                                                 # table says 50 and anything past 20
+                                                 # would be silently truncated.
+                                                 ('sud_homeless', +1.00, 1.0, 20.0, 0.25, 0.20),
     'newborn_endowment_scale':                   ('h_share1',     -1.00, 0.0, 3.0, 0.35, 0.20),
     'ssi_floor_level':                           ('h_share5',     -1.00, 0.0, 0.30, 0.35, 0.20),
 }
