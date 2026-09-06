@@ -1,3 +1,91 @@
+## 6 September, 23:20 -- THE AUTHOR REVIEWED EVERY ASSIGNMENT AND FOUR OF MY
+## SEVEN GUESSED SIGNS WERE WRONG. ALL FOUR WERE READ OFF PARAMETER NAMES.
+
+They asked to go through the instruments one at a time, *"so i know that the code
+is ready"*. The review is done and the record of it is the point of this entry:
+the errors were systematic, not scattered.
+
+EVERY SIGN I TOOK FROM A NAME WAS WRONG. Every sign I took from a measurement or
+from the point of use was right.
+
+    labor_income_tax_rate    is not a rate. net_income = rate * y**curvature, so
+                             it is a RETENTION scale and a higher value means a
+                             LOWER average tax. Author caught it.
+    multiple_of_probabilities_of_employment_if_addicted
+                             does not raise employment. It multiplies the
+                             probability of becoming UNEMPLOYED and divides the
+                             probability of becoming employed, so higher makes
+                             the addicted poorer and raises the SUD share of the
+                             homeless. My sign had already driven it onto its
+                             floor in one step.
+    sd_permanent_productivity
+                             more dispersion means a SMALLER bottom-half share,
+                             not larger. Author caught it.
+    addiction_onset_base     see below; the deepest of the four.
+
+THE ONSET BASE WAS THE REAL FINDING, and it is the author's. They said:
+*"addiction_onset_base must be selection. you have to consider
+addiction_onset_base with b at the same time"*.
+
+It was pointed at lambda_d, a share of the whole population, and measured at
+-2.78 over three controlled pairs -- raising it 0.02 to 0.08 took lambda_d from
+0.0687 to 0.0015. Real, and not what the parameter does. With lambda_addiction
+pinned at zero the hazard is min(base + (1-exp(0*q)),1) = base flat for any user
+and zero for an abstainer, so there is NO INTENSIVE MARGIN: raising the base
+makes using so risky that b collapses 0.2558 -> 0.0024, and lambda_d follows
+because only users carry the disorder.
+
+Conditioned on being a user the sign is the author's and monotone:
+
+    base 0.020   b 0.2558   lambda_d 0.0687   ratio 0.269
+    base 0.040   b 0.0576   lambda_d 0.0256   ratio 0.444
+    base 0.080   b 0.0024   lambda_d 0.0015   ratio 0.602
+
+slope +0.58. The base now owns lambda_d/b and addiction_scalar_1 owns b, which
+separates two instruments that were sharing one margin. The target is the ratio
+of the two existing targets, so no new claim about the data is made.
+
+WHAT ELSE THE REVIEW CHANGED.
+
+    h_share1, h_share5   newborn_endowment_scale and ssi_floor_level calibrated
+                         at the age profile, on the author's instruction. The
+                         band shares are printed as UNTARGETED ... observed=, so
+                         the reader was blind to them; h_share1 came out of
+                         UNSCORED; and the endowment had to be seeded off zero,
+                         which no proportional step can leave.
+    pi_V, mu_H           in the calibration on the author's instruction. Both
+                         owned their moment and were excluded only for want of a
+                         bounds entry. Ranges are the Fortran's own clamps.
+    y_u, burden50        out of the scored set on the author's instruction. Both
+                         were scored with nothing able to reach them.
+    kappa_uem            bound raised 20 -> 70. The 20 kept pbu*kappa below the
+                         cap of one at pbu = 0.041; the move to a 4.9 per cent
+                         unemployment target took pbu to 0.0128 and saturation
+                         from 24.4 to 78, so the cap was guarding a limit that
+                         had moved and the instrument sat pinned with its moment
+                         at 0.543 against 0.300, which needs about 55.
+    lambda_addiction     pinned at zero, author's instruction, so
+                         addiction_onset_base alone carries the drug block.
+    band rule            an instrument whose moment is inside ten per cent no
+                         longer steps. Fourteen of twenty-three now hold.
+
+TWO THINGS THE REVIEW ESTABLISHED THAT ARE NOT SIGNS.
+
+mu_homeless is identified analytically and carries almost no information. mu_H is
+the housed-over-homeless recovery ratio and equals 1/mu_homeless up to
+composition, so the target 1.47321 implies mu_homeless = 0.679, which is exactly
+the declared Milby ratio 4.48/6.60. The loop is walking it back to its own
+default; fixing it there would cost nothing.
+
+THE BAND RULE MADE THE LOOP SELF-MEASURING, which corrects a claim I made to the
+author earlier today. I said the loop can never produce a controlled pair because
+it moves seven coordinates at once, and used that to argue for one-coordinate
+arms. With fourteen instruments holding, iterates now differ in few enough
+coordinates that pairs DO form: emp_homeless picked up its first measured slope
+(-1.79) and h_share1 three pairs (-2.00), replacing a fallback and a guess. The
+arms are still worth running for the instruments whose moments are inside the
+band and therefore never move, but the argument I gave was wrong.
+
 ## 6 September, 22:14 -- THE FULL SCORING OF THE CONVERGED POINT. 11 OF 25 INSIDE
 ## TEN PER CENT, AND THE FOUR BEST ARE THE FOUR THE LOOP HAS BEEN DRIVING.
 
