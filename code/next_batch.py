@@ -1626,7 +1626,20 @@ def bracket(A, param, moment, target, base_v):
         # 1e-6 * x_base to first order, and it is well defined at zero.
         near = [y for x, y in g
                 if abs(x - x_base) <= 1e-6 * max(abs(x_base), 1.0)]
-        if near and abs(math.log(near[0] / y_base)) <= TRANSFER_TOL:
+        # SAME BUG, SAME LINE, THE OTHER VARIABLE. y_base is the MOMENT at the
+        # base point, and a moment is allowed to be zero: emp_homeless is exactly
+        # 0.00000 wherever the street has emptied of the employed, which the h_2
+        # sweep down to 0.050 produced. The log ratio then raises ZeroDivisionError
+        # exactly as it did for x_base, and it did, at 16:52 on 6 September, in the
+        # middle of an autonomous firing -- the gate died with a traceback and
+        # wrote no batch at all.
+        #
+        # Same remedy, with the scale taken from whichever side is larger so that
+        # a zero base does not silently accept every value: |log(y/y_base)| <= tol
+        # is |y - y_base| <= tol * y_base to first order, and this form is well
+        # defined at zero and across a sign change, which the log was not either.
+        scale = max(abs(near[0]), abs(y_base)) if near else 0.0
+        if near and (scale <= 0.0 or abs(near[0] - y_base) <= TRANSFER_TOL * scale):
             ordered.append(g)
     for pts in ordered:
         pts = sorted(set(pts))
