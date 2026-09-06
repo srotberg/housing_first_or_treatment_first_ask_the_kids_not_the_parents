@@ -1,3 +1,39 @@
+## 6 September, 09:43 -- kappa_find_smi IS THE BEST INSTRUMENT FOUND TONIGHT. IT
+## MOVES FOUR MOMENTS THE RIGHT WAY AT ONCE AND COSTS NOTHING.
+
+Arms off the sweet spot eec22a73c1:
+
+  run                     in10  in20   lam_m  emp|hl    aleph     h_1     h_2   gamma       b
+  BASE, kappa_find_smi 4  10/23 18/23  0.3188  0.3853   80.395  0.0387  0.1007  0.3625  0.0901
+  kappa_find_smi 2.5      12/23 17/23  0.2693  0.4190   80.784  0.0360  0.0997  0.3625  0.0905
+  kappa_find_smi 1.5      11/23 17/23  0.2058  0.4552   81.419  0.0331  0.0982  0.3623  0.0902
+  value_of_life 200        6/23 10/23  0.3274  0.3956  105.479  0.0362  0.1016  0.3639  0.0101
+  target                              0.2500  0.4600   80.000  0.0040  0.1010  0.2680  0.0890
+
+LOWERING kappa_find_smi FROM 4 TO 1.5 IMPROVES lambda_m FROM +27.5 TO -17.7 PER
+CENT, emp_homeless FROM -16.2 TO -1.0, h_1 FROM 0.0387 TO 0.0331 AND LEAVES b,
+gamma AND aleph WHERE THEY WERE. Four moments the right way, nothing given up.
+This is the parameter ENGINE.md lists as "held, its stage is not open yet"; it has
+never been moved and it should have been opened hours ago.
+
+WHY IT WORKS. kappa_find_smi divides the job-finding rate of the mentally ill. At
+4 they take four times as long to find work as anyone else, so they accumulate on
+the street; at 1.5 they recover employment nearly as fast as everyone else, so the
+SMI share of the homeless falls AND the employed share rises, because the people
+leaving the street are the non-employed SMI. lambda_m and emp_homeless are the
+same margin seen from two sides, which is why one parameter fixes both.
+
+CROSSING FOR lambda_m = 0.25 IS kappa_find_smi = 2.17, where emp_homeless should
+be about 0.428 and h_1 about 0.035.
+
+value_of_life 200 IS REJECTED: aleph overshoots to 105 and b collapses from 0.0901
+to 0.0101. 155 is already past the point where the mortality cost dominates the
+drug decision.
+
+RUNNING: batch_findsmi.txt -- kappa_find_smi at 2.17 and 1.9, and 2.17 paired with
+value_of_life 165 against two lower shifters to see whether a smaller nudge to the
+value of life can buy emp_homeless without killing drug use.
+
 ## 6 September, 09:33 -- THE STANDING REPORT AT THE THREE CANDIDATES, AND THE
 ## NUMBER THAT SHOULD DECIDE BETWEEN THEM IS NOT IN THE GAP TABLE.
 
