@@ -325,7 +325,12 @@ RULES = {
 # The source's own calibration of the instrument reads 3.00 -> 0.621 per cent,
 # 3.25 -> 0.318, 3.50 -> 0.155, and log-interpolating those puts 0.200 per cent
 # at 3.4113. Written into every iterate so it cannot drift.
-FIXED = {'kkk_s_deviation_bottom': 3.4113}
+FIXED = {'kkk_s_deviation_bottom': 3.4113,
+         # HELD AT ZERO on the author's instruction of 6 September: *"i think for
+         # now let's keep lambda_addiction=0 and only adjust the base"*. It is
+         # written into every iterate rather than merely left unstepped, so a
+         # base inherited from elsewhere cannot reintroduce it.
+         'lambda_addiction': 0.0}
 
 # A PARAMETER AT ZERO CANNOT BE REACHED BY A PROPORTIONAL STEP. The step is
 # value*exp(...), so zero times anything is zero and the instrument is frozen
