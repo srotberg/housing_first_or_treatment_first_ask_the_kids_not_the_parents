@@ -1,3 +1,37 @@
+## 6 September, 08:33 -- THE JOINT STEP WORKS. NEW BEST POINT, AND THE WHOLE
+## SEARCH NOW TRADES ONE MOMENT AGAINST h_1.
+
+  run                       shifter  in10  in20   med   kap_uem    pi_V  omega_l   gamma       b     h_1
+  f1f8022841                0.00538 13/23 19/23  9.7%   0.2512  0.3192   0.4722  0.3304  0.0900  0.0569
+  NEWTON 0.4  642be7df48    0.0056  14/23 20/23  9.1%   0.2765  0.2732   0.4451  0.3089  0.0863  0.0827
+  NEWTON 0.7  13331d92a3    0.00538 13/23 16/23  8.3%   0.2956  0.2686   0.4240  0.2883  0.1144  0.1122
+  target                                                0.3000  0.2660   0.4000  0.2680  0.0890  0.0040
+
+NEW BEST: 642be7df48, FOURTEEN OF TWENTY-THREE INSIDE TEN PER CENT AND TWENTY
+INSIDE TWENTY, median 9.1. b at -3.0 per cent and lambda_d at +4.3 without the
+shifter having to do anything unusual, kappa_uem from -16.3 to -7.8, pi_V from
++20.0 to +2.7, theta from -10.5 to -4.0.
+
+THE 0.7 STEP IS BETTER STILL ON THE FOUR MOMENTS THE JACOBIAN TARGETS: kappa_uem
+-1.5 per cent, pi_V +1.0, omega_l +6.0, gamma +7.6, all four inside ten for the
+first time tonight. Its b is +28 per cent because its shifter was not moved with
+it; batch_newton7_shift.txt runs 0.0057 to 0.0068 on that vector and should land
+it. If b closes there without the four moving, the point is seventeen or eighteen
+of twenty-three.
+
+AND THE WHOLE SEARCH IS NOW ONE TRADE. h_1 goes 0.0569 at the base, 0.0827 at the
+0.4 step, 0.1122 at the 0.7 step -- monotone in the step length. The Newton
+direction buys every other moment by putting people on the street. That is not an
+artefact of one parameter; it is what the model does, and it has been visible in
+every arm today.
+
+THE DECISION THIS FORCES IS THE AUTHOR'S. h_1 has a target of 0.0040 and the model
+cannot reach it: 0.0143 at best, on a configuration with almost no drug use, and
+0.057 on the best honest vector. Every improvement elsewhere costs it. Either h_1
+comes out of the scored set -- a SCOPE CHANGE, which is why it has not been done --
+or the search stops at 0.057 and the note reports a homelessness rate fourteen
+times the data.
+
 ## 6 September, 08:13 -- THE NESTED LADDER SAYS THE INSTRUMENTS ARE COUPLED ALL
 ## THE WAY DOWN. f1f8022841 IS A LOCAL OPTIMUM FOR COORDINATE MOVES.
 
