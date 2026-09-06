@@ -1,3 +1,42 @@
+## 6 September, 16:12 -- h_share5 HAS BEEN INVISIBLE ALL SESSION AND ITS TWO
+## INSTRUMENTS HAVE NEVER BEEN MOVED.
+
+The author asked whether the SSI floor is chosen so the old are 7.5 per cent of the
+homeless. IT IS NOT. ssi_floor_level has been 0.13 and rr_homeless_old_level
+5.9143915 across ALL 225 points on both model sources today.
+
+  band 1 young  0.4770  against 0.2600
+  band 2        0.2389          0.2720
+  band 3        0.1392          0.2100
+  band 4        0.0915          0.1840
+  band 5 old    0.0534          0.0750    -28.8 per cent
+
+WHY IT WAS MISSED, and it is a reporting fault not a modelling one: the age bands
+print as "UNTARGETED share of the homeless, band N", not as MOMENT lines, so they
+never appeared in any gap table shown this session even though next_batch.py scores
+h_share5 in stage 1. The gate listed ssi_floor_level and rr_homeless_old_level as
+EXPLORE arms at 05:33 and again at 14:22 and I did not act on either.
+
+  ANY MOMENT THAT DOES NOT PRINT AS "MOMENT <name>" IS INVISIBLE TO THE REPORTING
+  IN THIS SESSION. The five age bands are the ones that matter. Read the UNTARGETED
+  lines as well as the MOMENT lines before calling a table complete.
+
+directions_table has h_share5 taking ssi_floor_level 'raise' when the moment is
+ABOVE target; it is below, so the floor goes DOWN. A lower income floor for the old
+puts more of them on the street and raises band 5's share.
+
+RUNNING, batch_level_and_old.txt, seven points:
+  merged bottom-3 level 0.20, 0.35, 0.50, 0.70 with the street PRESET at 0.0110 --
+    the author's inversion, calibrating the grid level to h_1 rather than the street
+  ssi_floor_level 0.09 and 0.06, rr_homeless_old_level 9.0 -- for band 5
+
+PREDICTION, recorded before the fact: h_1 will RISE with the merged level, not
+fall. The tail experiment put node 2 at 0.329 and h_1 went 0.0578 to 0.0630, and 37
+per cent of the homeless already choose the street while able to afford a rental. A
+richer bottom means more households who can afford a rental and still prefer to
+spend the money elsewhere. If that holds, the inversion does not work: the level
+cannot deliver 0.4 per cent at any preset street because it pushes the wrong way.
+
 ## 6 September, 16:07 -- WHY NO INCOME-SIDE LEVER REACHES h_1: THIRTY-SEVEN PER
 ## CENT OF THE HOMELESS ARE NOT CONSTRAINED, THEY ARE CHOOSING.
 
