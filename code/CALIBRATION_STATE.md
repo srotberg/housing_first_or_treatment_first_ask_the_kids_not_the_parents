@@ -1,3 +1,54 @@
+## 6 September, 16:35 -- THE THREE-MOMENT PROBLEM HAS A DIAGNOSIS AND A DESIGN.
+## THE MODEL HAS NO EVICTION CHANNEL, AND THAT IS WHY h_1 AND emp_homeless FIGHT.
+
+CONFIRMED IN THE SOURCE, not inferred: there is no eviction, displacement or
+forced-homelessness code anywhere in the file. allow_to_choose_homelessness gates
+the choice, the housing choice set always contains the street, and the only thing
+that ever removes the option is max_age_to_choose_homelessness = 59. Homelessness
+is a free choice every period for everyone under sixty.
+
+THE EXCHANGE RATE, measured on the merged-grid level ladder with the housing
+weight held at the benchmark:
+
+               h_1      emp|hl
+  benchmark  0.0617     0.4711
+  level 0.35 0.0384     0.1588
+
+38 per cent of h_1 costs 66 per cent of emp_homeless. Taking h_1 the remaining
+94 per cent to target is 5.8 times that move in logs, which puts emp_homeless at
+about 0.001. TO HIT THE HOMELESSNESS RATE THIS MODEL MUST HAVE ESSENTIALLY NO
+EMPLOYED HOMELESS, against a data target of 0.46. The two moments are close to
+arithmetically incompatible under a pure-choice mechanism.
+
+WHAT THE DATA IS ACTUALLY DESCRIBING, at h_1 = 0.004, emp_homeless = 0.46 and
+unemployment 0.139:
+
+  employed and homeless       0.184 per cent of all households
+  non-employed and homeless   0.216 per cent
+  P(homeless | employed)      0.21 per cent
+  P(homeless | unemployed)    1.55 per cent          a ratio of about 7.3
+
+That is a SMALL HAZARD OF LOSING HOUSING THAT FALLS ON WORKING HOUSEHOLDS TOO.
+No choice model produces it: a household with income above the rent never picks
+the street once the street is bad enough to keep the population at 0.4 per cent.
+
+THE DESIGN, if the author wants it. An exogenous probability that a housed
+household is displaced into h_1 next period regardless of its choice, differing by
+employment status:
+
+  the overall hazard pins h_1        -- a one-period spell makes h_1 nearly the hazard
+  the ratio of the two pins emp|hl   -- two moments, two parameters, exactly identified
+  the cost burden is untouched       -- rent, rung ratios and the housing weight do not move
+  the age profile should improve free -- eviction risk does not fall with age the way
+                                        saving up from zero assets does, and band 1 is
+                                        0.477 against 0.260
+
+The voluntary channel stays alongside it; 37 per cent homeless by choice is a
+finding, not an error. NOT BUILT -- it is a model change and a change to what the
+counterfactual means, so it is the author's call. If asked, build it the way
+merge_bottom_nodes was built: defaulted off, with a regression check proving the
+default reproduces point_9fafe247b9 exactly.
+
 ## 6 September, 16:20 -- THE AFFORDABILITY STORY IS REFUTED. THE HOMELESS ARE NOT
 ## THE PERMANENTLY POOR, AND merge_bottom_nodes IS IN THE MODEL, DEFAULTED OFF.
 
