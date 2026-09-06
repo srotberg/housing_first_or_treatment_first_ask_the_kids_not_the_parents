@@ -1,3 +1,46 @@
+## 6 September, 11:43 -- THE COMPENSATED COMBINATION GAINS TWO MOMENTS AND LOSES
+## FOUR. THE FOUR LOSSES ARE ALL REPAIRABLE AND ARE BEING REPAIRED.
+
+point_56dd7d7138 = 7f98bce381 + probability_becoming_unemployed 0.060 +
+kappa_uem 13.6 + smi_onset_level 0.0042 + shifter 0.0053. Moment by moment against
+the base:
+
+  moment          base    line2            moment          base    line2
+  pi_eu         -24.6%     0.8%  GAINED    aleph          -1.2%   -10.3%  LOST
+  p_m           -13.9%     4.1%  GAINED    lambda_d        7.0%    11.6%  LOST
+  y_u             3.6%     0.7%            theta          -9.8%   -12.0%  LOST
+  lambda_m       -5.0%     1.3%            kappa_ued      -8.3%    32.0%  LOST
+  b              -1.3%     3.5%            cbar          -14.1%    12.9%
+  emp_homeless    8.6%    -3.6%            sigma_y        13.5%    13.0%
+  beta           -0.9%     4.4%            omega_l        18.1%    19.3%
+  tau_u          -7.7%    -4.6%            gamma          26.7%    27.2%
+  burden50        1.9%     5.0%            h_1          1250.4%  1393.3%
+  mu_H            5.5%     6.0%
+  tau_l          -9.2%    -8.4%
+  kappa_uem      -0.6%    -8.7%
+  h_2             6.3%     9.4%
+  pi_V           -3.6%    -9.4%
+
+Fourteen of twenty-three against the base's sixteen. THE COMPENSATIONS I PREDICTED
+WORKED -- kappa_uem held at -8.7 and b at +3.5 -- but two moments I had not
+considered went out, and kappa_ued went out badly.
+
+WHY kappa_ued BROKE: raising the aggregate separation rate raises unemployment for
+the disordered too, and kappa_ued is unemployment GIVEN the disorder. Its
+instrument is multiple_of_probabilities_of_employment_if_addicted, whose log slope
+was measured at +1.10 this morning, so 32 per cent out needs the multiple at 1.15
+from 1.48. aleph needs value_of_life at about 168 from 155.
+
+BOTH ARE KNOWN LEVERS WITH MEASURED SLOPES, which is why this is worth one more
+round rather than a retreat to 7f98bce381. batch_clean5.txt runs the multiple at
+1.15 and 1.25, with and without value_of_life 168 and a shifter of 0.0056.
+
+THE PATTERN OF THE LAST FOUR ROUNDS is that each compensated combination gains its
+targets and loses two or three moments one layer further out, and each of those
+has its own lever. It converges, but it converges by widening the set of
+parameters moved at each step, which is the joint solve arriving by hand. If this
+round does not clear seventeen, the honest stopping point is 7f98bce381.
+
 ## 6 September, 11:33 -- THREE OF THE FOUR LAST GAPS HAVE INSTRUMENTS THAT REACH
 ## THEM. NONE IS LOCAL, AND EACH BREAKS A MOMENT THAT HAS ITS OWN CLEAN LEVER.
 
