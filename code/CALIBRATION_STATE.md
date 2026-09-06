@@ -1,3 +1,57 @@
+## 6 September, 17:35 -- THE RUNG IS EXHAUSTED TOO, AND IT TURNS. h_1 FLOORS AT
+## 0.0089 AND RISES AGAIN BELOW h_2 = 0.020.
+
+The author asked whether h_2 at 0.03 or 0.02 reaches h_1. It does not. Street held
+at 0.0110, only the rung moving, all nine points MODEL 0e3d689a34:
+
+   h_2 |     h_1   emp_hl | rent/inc   >30%  >50%all burden50  h2mom   gamma      b
+       |  .00399      .46 |    0.202  0.406    0.175    0.175  0.101   0.268   .089  <- data
+ 0.130 | 0.06166   0.4711 |   0.3646  .4811    .2323    .1826  .0997   .3343  .0899
+ 0.110 | 0.03354   0.2280 |   0.3521  .5159    .2206    .1549  .0657   .3266  .0908
+ 0.090 | 0.02356   0.0603 |   0.3390  .5521    .1329    .0545  .0186   .3099  .1012
+ 0.070 | 0.01706   0.0327 |   0.3225  .4349    .1686    .0423  .0476   .2802  .1132
+ 0.050 | 0.01241   0.0000 |   0.2889  .3355    .1074    .0294  .0024   .2376  .1291
+ 0.040 | 0.01098   0.0000 |   0.2740  .3946    .1654    .0286  .0013   .2123  .1355
+ 0.030 | 0.00963   0.0000 |   0.2289  .2585    .0820    .0200  .0001   .1680  .1551
+ 0.020 | 0.00891   0.0000 |   0.1718  .1189    .0750    .0071  .0000   .1176  .1954
+ 0.015 | 0.00942   0.0000 |   0.1361  .0800    .0702    .0011  .0000   .0891  .2255
+
+THE SLOPE COLLAPSES AND CHANGES SIGN: 3.64, 1.76, 1.28, 0.95, 0.55, 0.46, 0.19,
+-0.19. h_1 MINIMISES AT 0.0089, WHICH IS 2.2 TIMES THE TARGET, and rises again
+below that. BOTH MY EXTRAPOLATIONS WERE TOO OPTIMISTIC -- 0.00267 on the whole-
+sweep slope and 0.00522 on the last-segment slope, against 0.00891 measured. I
+gave the author both and said the flat end was the better bet; even the flat end
+was 40 per cent low.
+
+WHY IT TURNS, AND IT IS NOT AN ARTEFACT. The street is held at 0.0110 ABSOLUTE
+while the rung falls to 0.015. At that point the street is 73 per cent of the
+cheapest apartment, so the street becomes a substitute for the rental again and
+homelessness recovers. The turn is the street/rung RATIO reasserting itself in a
+sweep that holds the street fixed -- which is the correct behaviour of a
+decoupled ladder, not a bug in it.
+
+AND THE HOUSING BLOCK IS DESTROYED LONG BEFORE THE FLOOR. At h_2 = 0.020, gamma is
+0.1176 against 0.268, renters over 30 per cent are 0.1189 against 0.406, and the
+severe burden moment is exactly zero. The rung buys its last 25 per cent of h_1 by
+giving up the entire housing market.
+
+## THE TWO PRICE LEVERS ARE BOTH EXHAUSTED, AND THEY AGREE.
+
+    rung alone, street 0.0110:  h_1 floors at 0.0089 (h_2 = 0.020)
+    street alone, rung 0.070 :  h_1 floors at 0.0072 (street = 0.0008)
+
+TWO INDEPENDENT PRICES, BOTH ASYMPTOTING NEAR 0.008, WHICH IS TWICE THE TARGET.
+There is a residual homelessness of about eight tenths of a per cent that no price
+in this model reaches, and emp_homeless is exactly zero everywhere in that region.
+Stop looking for a third price.
+
+THIS RAISES THE PRIORITY OF THE AUTHOR'S NODE PROPOSAL rather than lowering it.
+Their design -- keep node 1 at 0.24 per cent of the population and merge node 2
+into node 3, so only 0.24 per cent are priced out and the homeless ARE the bottom
+node -- attacks the residual from the QUANTITY side rather than the price side,
+and it is the only idea on the table that gives emp_homeless its own instrument.
+It needs merge_from_node, which does not exist yet.
+
 ## 6 September, 17:25 -- THE STREET IS A CLEAN INSTRUMENT FOR h_1 AND IT FLOORS
 ## AT 0.0072. MY MULTIPLICATIVE PREDICTION WAS WRONG, AND HIGH.
 
