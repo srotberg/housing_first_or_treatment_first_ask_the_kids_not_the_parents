@@ -366,6 +366,13 @@ RULES = {
     # RETENTION scale, not a rate. Higher means more income kept and a LOWER
     # average tax.
     'labor_income_tax_rate':                     ('tau_l',        -1.00, 0.3, 0.95, 0.35, 0.20),
+    # sigma_y. NEGATIVE, on the author's instruction of 6 September: *"sigma_y
+    # should decline if the share of income at the bottom is too low. raising it
+    # will reduce the share even more"*. sd_permanent_productivity is the
+    # DISPERSION of the permanent draw, and more dispersion puts more distance
+    # between the halves, so the bottom half's share of labour income falls. The
+    # table had this backwards.
+    'sd_permanent_productivity':                 ('sigma_y',      -1.00, 0.6, 1.3, 0.35, 0.20),
     'newborn_endowment_scale':                   ('h_share1',     -1.00, 0.0, 3.0, 0.35, 0.20),
     'ssi_floor_level':                           ('h_share5',     -1.00, 0.0, 0.30, 0.35, 0.20),
 }
