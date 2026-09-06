@@ -86,6 +86,39 @@ def _gate_tables():
 _OWN, _BOUNDS, _GATE_TARGETS = _gate_tables()
 
 
+def _file_targets():
+    """Every target the FORTRAN states, read off the newest point file.
+
+    next_batch.py has no moment-keyed table of target VALUES -- it carries who
+    owns what and the bounds, but the numbers themselves live in the Fortran's
+    *_data constants and reach the outside world only through a solve. Every
+    MOMENT line in a point file prints `target=` beside `model=`, so that is the
+    one place the target is guaranteed to be the number the point was actually
+    scored against rather than a copy that can drift from it.
+
+    The first attempt at this read a `TARGET` block out of next_batch.py, which
+    does not exist; it returned an empty dict and only the four hand-set
+    overrides below survived, so nineteen instruments sat unstepped with no
+    error printed. Reading it from the artefact the solve itself wrote is what
+    makes that failure impossible: a moment with no target simply is not there.
+    """
+    for f in sorted(glob.glob(os.path.join(HERE, 'points', 'point_*.txt')),
+                    key=os.path.getmtime, reverse=True):
+        if '.FAILED' in f:
+            continue
+        t = {}
+        for name, val in re.findall(
+                r'MOMENT\s+(\S+)\s+.*?target=\s*([-\dEe.+]+)',
+                open(f, errors='replace').read()):
+            try:
+                t[name] = float(val)
+            except ValueError:
+                pass
+        if t:
+            return t
+    return {}
+
+
 def _gate_targets():
     """Every scored target, with the author's own three overridden.
 
@@ -93,6 +126,7 @@ def _gate_targets():
     pi_eu is the 4.9 per cent they moved it to the same evening.
     """
     t = dict(_GATE_TARGETS)
+    t.update(_file_targets())
     t.update({'h_1': 0.01097, 'h_2': 0.101, 'emp_homeless': 0.46, 'pi_eu': 0.049})
     return t
 
@@ -188,28 +222,6 @@ RULES = {
     'probability_becoming_unemployed':           ('pi_eu',        +0.42, 0.002, 0.50, 0.70, 0.70),
 }
 
-# EVERY OTHER INSTRUMENT THE GATE OWNS, on the author's instruction to apply the
-# method to all the parameters. The four above keep the hand-set speeds and
-# measured slopes that made them converge; the rest are added from OWN with
-# conservative defaults, because a slope guessed for twenty instruments at once
-# is twenty chances to get a sign wrong.
-#
-# NO FALLBACK SLOPE. Where the four carry a measured number, these carry None,
-# and an instrument with no CONTROLLED PAIR in the archive is skipped and says
-# so rather than stepping on an invented elasticity. That is the whole reason
-# the gate is running a seventeen-arm correction round right now: it generates
-# exactly those pairs. The two halves fit together -- the round measures, the
-# loop iterates.
-#
-# The bounds are the gate's own, so a step can never ask for a value the Fortran
-# would silently clamp. Damping 0.45 and a cap of 0.35 are deliberately slower
-# than the four: those were tuned against measured behaviour, these have not been.
-for _p, _m in sorted(_OWN.items()):
-    if _p in RULES or _p not in _BOUNDS:
-        continue
-    _lo, _hi = _BOUNDS[_p]
-    RULES[_p] = (_m, None, _lo, _hi, 0.45, 0.35)
-
 # THE BOTTOM NODE'S MASS IS FIXED AT 0.2 PER CENT, on the author's instruction.
 # The source's own calibration of the instrument reads 3.00 -> 0.621 per cent,
 # 3.25 -> 0.318, 3.50 -> 0.155, and log-interpolating those puts 0.200 per cent
@@ -228,6 +240,35 @@ CONFIG = {
     'merge_bottom_nodes':         3.0,
     'newborn_endowment_scale':    0.0,
 }
+
+# EVERY OTHER INSTRUMENT THE GATE OWNS, on the author's instruction to apply the
+# method to all the parameters. The four above keep the hand-set speeds and
+# measured slopes that made them converge; the rest are added from OWN with
+# conservative defaults, because a slope guessed for twenty instruments at once
+# is twenty chances to get a sign wrong.
+#
+# NO FALLBACK SLOPE. Where the four carry a measured number, these carry None,
+# and an instrument with no CONTROLLED PAIR in the archive is skipped and says
+# so rather than stepping on an invented elasticity. That is the whole reason
+# the gate is running a seventeen-arm correction round right now: it generates
+# exactly those pairs. The two halves fit together -- the round measures, the
+# loop iterates.
+#
+# The bounds are the gate's own, so a step can never ask for a value the Fortran
+# would silently clamp. Damping 0.45 and a cap of 0.35 are deliberately slower
+# than the four: those were tuned against measured behaviour, these have not been.
+#
+# FIXED IS NOT AN INSTRUMENT. kkk_s_deviation_bottom is in the gate's OWN map --
+# it used to own emp_homeless -- and the first version of this loop added it here
+# and then stepped it, so the iterate written one line earlier at the author's
+# 3.4113 came back out at 1.202 and the bottom node stopped being 0.2 per cent of
+# the population. A parameter the author has pinned is skipped here, and the pin
+# below is what writes it.
+for _p, _m in sorted(_OWN.items()):
+    if _p in RULES or _p in FIXED or _p in CONFIG or _p not in _BOUNDS:
+        continue
+    _lo, _hi = _BOUNDS[_p]
+    RULES[_p] = (_m, None, _lo, _hi, 0.45, 0.35)
 
 
 def model_hash():
