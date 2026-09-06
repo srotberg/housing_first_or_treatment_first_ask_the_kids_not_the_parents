@@ -1,3 +1,33 @@
+## 6 September, 07:12 -- mu_homeless RE-BRACKETS CLEANLY AT 0.770 AND COSTS
+## NOTHING. utility_cost_of_treatment IS FOUR TIMES WEAKER THAN IT WAS.
+
+On the composite, multiple 1.48 and value_of_life 155, shifter 0.0052:
+
+  run                     tag             mu_H       b   lam_d   tau_u   aleph     h_1
+  target                              1.4732  0.0890  0.0368  0.2450 80.0000  0.0040
+  mu_homeless 0.609       fd2c1d3c4c  2.1311  0.1069  0.0442  0.5968 78.9404  0.0581
+  mu_homeless 0.72        d356b8f9d5  1.6474  0.1071  0.0441  0.6054 79.3346  0.0582
+  mu_homeless 0.88        30502eb597  1.1822  0.1076  0.0440  0.6181 79.3059  0.0584
+
+mu_homeless IS THE CLEANEST INSTRUMENT IN THE MODEL. It brackets mu_H at 0.770
+and moves b by half a per cent, lambda_d by half a per cent and h_1 by nothing.
+Nothing else in today's map is this well behaved.
+
+THE SHIFTER CROSSING IS 0.00538, NOT 0.00519. The confirmation point at 0.0052
+returned b = 0.1069 rather than the predicted 0.0890, because the ladder is convex
+between 0.0045 and 0.0060. Re-solved against the measured pair. This is the third
+time today a crossing predicted from a wider bracket has come in three to five per
+cent off; the brackets are right and the interpolations inside them are not, so
+CONFIRM EVERY CROSSING BEFORE BUILDING ON IT.
+
+utility_cost_of_treatment HAS BEEN WEAKENED BY value_of_life. Its log slope on
+tau_u is -1.06 here against -4.37 measured this morning at value_of_life 76. A
+life worth more is a life worth treating, so a bigger utility cost is needed to
+deter the same take-up. The crossing extrapolates to 6.6 from a slope measured
+between 3.2 and 4.2, so batch_composite_c.txt brackets it at 6.0, 8.0 and 11.0
+with a confirmation at the current 2.827, all at shifter 0.00538 and
+mu_homeless 0.770.
+
 ## 6 September, 06:51 -- THE COMPOSITE LADDER PUTS FIVE MOMENTS ON TARGET AT
 ## ONCE. THE SHIFTER THAT DOES IT IS 0.0052.
 
