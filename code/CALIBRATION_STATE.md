@@ -1,3 +1,50 @@
+## 6 September, 04:52 -- b AND lambda_d ARE SEPARATELY IDENTIFIED. THE ONSET
+## HAZARD OWNS THE CONVERSION RATIO, THE STONE-GEARY SHIFTER OWNS THE LEVEL.
+
+The 2x2 in (addiction_onset_base, addiction_scalar_1) is complete, lambda_addiction
+= 0 throughout so the hazard is the base and nothing else, everything else held at
+the h2 = 0.130 / street = 0.0110 configuration.
+
+  tag            base  scalar       b   lambda_d  ratio   theta     y_u     h_1
+  target                        0.0890   0.0368  0.4135  0.1410  0.7400  0.0040
+  0682b8928e  0.01510  0.0208  0.0343   0.0074  0.2160  0.0981  2.0396  0.0568
+  da5e3df036   0.0110  0.0140  0.4307   0.0550  0.1277  0.1248  1.1205  0.0683
+  36286ee056   0.0110  0.0175  0.2448   0.0343  0.1401  0.1166  1.3226  0.0620
+  100d13a2ca   0.0075  0.0140  0.7904   0.0586  0.0741  0.1368  1.0692  0.0711
+  3f9d20b2c0   0.0075  0.0175  0.5949   0.0474  0.0797  0.1287  1.1456  0.0668
+
+LOG JACOBIAN, averaged over the box:
+
+              d ln b   d ln lambda_d   d ln(lambda_d/b)
+  d ln base    -1.95         -0.51            +1.44
+  d ln scalar  -1.90         -1.53            +0.37
+
+Determinant 2.02, so the two moments are not collinear in these two parameters
+and both can be hit. THE ONSET HAZARD IS THE RATIO'S INSTRUMENT with four times
+the scalar's leverage, and the scalar is the level's. Both parameters lower drug
+use when raised: the base because it is the risk of acquiring the disorder and
+that risk deters use, the shifter because it is the Stone-Geary b in
+(b + drugs/p) and a larger b cuts the marginal value of the first unit.
+
+THE BOX IS ON THE WRONG SIDE. Every point in it has a conversion ratio between
+0.074 and 0.216 against 0.4135 in the data, and the ratio is monotone in the base,
+so the solution needs a HIGHER base than any point measured -- and then a LOWER
+shifter to bring b back up. Extrapolating from da5e3df036 the ratio needs
+d ln base = 1.175/1.44 = 0.82, which is base = 0.025, and at that base the
+predicted b is 0.088 against a target of 0.089 with the shifter left at 0.0140.
+
+Both moments may therefore close at once, at roughly base = 0.024 and shifter
+= 0.014. That is an extrapolation of a factor of 2.3 outside the measured box on a
+surface known to be convex -- the same log-linear fit under-predicts the drop in b
+at 0682b8928e by 2.8 times -- so it is NOT a result. batch_drug_up.txt brackets it
+instead: base at 0.0130 and 0.0230, shifter at 0.0110 and 0.0170, launched 04:51.
+
+theta and y_u both improved on their own as the block came to life -- theta 0.098
+to 0.125 against 0.141, y_u 2.04 to 1.12 against 0.74 -- which is the sign that
+the earlier drug block was too small to be measuring anything rather than
+mis-parameterised. h_1 rose 0.057 to 0.066-0.071, so the drug block and the
+street are not separable and the housing side will need a pass afterwards.
+
 ## 6 September, 04:40 -- h_1 CANNOT REACH 0.4 PER CENT AT h2 = 0.130 EITHER. THE
 ## STREET FLOORS AT 1.4 PER CENT AND THE DESCENT PAYS FOR IT IN emp_homeless.
 
