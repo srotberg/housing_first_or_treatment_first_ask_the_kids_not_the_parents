@@ -44,6 +44,19 @@ import glob, hashlib, math, os, re, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 
+# MOMENTS THE FORTRAN PRINTS AS "UNTARGETED ... observed=" RATHER THAN
+# "MOMENT ... target=". They are scored by the gate all the same, and a reader
+# that only knows the MOMENT form is blind to them -- which is why sud_homeless
+# reported "not in this point" while sitting at 0.035 against 0.217. The same
+# patterns next_batch uses, so the two files read the archive identically.
+_UNTARGETED_SINGLES = (
+    (r'UNTARGETED SUD share of the homeless\s+model=\s*([0-9.eE+-]+)'
+     r'\s+observed=\s*([0-9.eE+-]+)', 'sud_homeless'),
+    (r'UNTARGETED renters above 50 pct of income\s+model=\s*([0-9.eE+-]+)'
+     r'\s+observed=\s*([0-9.eE+-]+)', 'rent50'),
+)
+
+
 def _gate_tables():
     """OWN, BOUNDS and TARGETS, read out of next_batch.py by TEXT.
 
@@ -132,6 +145,10 @@ def _file_targets():
                 r'UNTARGETED homelessness rate, band\s+(\d+)\s+model=\s*'
                 r'([0-9.eE+-]+)\s+observed=\s*([0-9.eE+-]+)', src):
             t.setdefault('h_age' + n, float(ob))
+        for pat, nm in _UNTARGETED_SINGLES:
+            mm = re.search(pat, src)
+            if mm:
+                t.setdefault(nm, float(mm.group(2)))
         if t:
             return t
     return {}
@@ -387,8 +404,28 @@ CONFIG = {
 # 3.4113 came back out at 1.202 and the bottom node stopped being 0.2 per cent of
 # the population. A parameter the author has pinned is skipped here, and the pin
 # below is what writes it.
+# ONE INSTRUMENT PER MOMENT. lambda_addiction and
+# multiple_of_probabilities_of_employment_if_addicted BOTH own sud_homeless in
+# the gate's map, and two instruments chasing one moment with no cross terms
+# between them do not share the work -- they each take a full step for the whole
+# gap and overshoot together.
+#
+# The employment multiplier keeps it. lambda_addiction is the dose-response slope
+# in 1-exp(-lambda*quantity) and the source identifies it from the NSDUH SUD rate
+# BY USE FREQUENCY -- 0.134, 0.428, 0.577, 0.717, 0.819 across the five
+# categories -- so it is read from data, not fitted to a moment. It would also
+# double-target drug prevalence, which addiction_onset_base already owns through
+# lambda_d. The multiplier instead works through selection INTO homelessness
+# among the addicted, which is what a share OF THE HOMELESS measures.
+#
+# SEPARATELY, AND FOR THE AUTHOR: the vector carries lambda_addiction=0 against a
+# declared 0.027364, so 1-exp(-0*q) is zero and the dose-response channel the
+# NSDUH gradient identifies is switched off entirely. That is a modelling
+# question, not a calibration one, and it is not changed here.
+HELD = {'lambda_addiction'}
+
 for _p, _m in sorted(_OWN.items()):
-    if _p in RULES or _p in FIXED or _p in CONFIG or _p not in _BOUNDS:
+    if _p in RULES or _p in FIXED or _p in CONFIG or _p in HELD or _p not in _BOUNDS:
         continue
     _lo, _hi = _BOUNDS[_p]
     RULES[_p] = (_m, None, _lo, _hi, 0.45, 0.35)
@@ -483,6 +520,13 @@ def parse(path):
             mom['h_age' + n] = float(val)
         except ValueError:
             pass
+    for pat, nm in _UNTARGETED_SINGLES:
+        mm = re.search(pat, s)
+        if mm:
+            try:
+                mom.setdefault(nm, float(mm.group(1)))
+            except ValueError:
+                pass
     return m.group(1), vec, mom, os.path.getmtime(path)
 
 
