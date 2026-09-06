@@ -1,3 +1,47 @@
+## 6 September, 10:13 -- BEST POINT OF THE SESSION: point_cb74b768f5.
+## FOURTEEN OF TWENTY-THREE INSIDE TEN PER CENT AND THE HOUSING BLOCK INTACT.
+
+  run                  tag          in10  in20     h_1     h_2   gamma   lam_m  emp|hl     b
+  1 reverted           b2754e9730  12/23 19/23  0.0434  0.1139  0.3636  0.2469  0.4714 0.0953
+  2 rsh .360           3442123812  11/23 17/23  0.0404  0.0925  0.3451  0.2254  0.4875 0.0871
+  3 rsh .350           37bb6368b2   9/23 17/23  0.0416  0.0865  0.3390  0.2223  0.4905 0.0846
+  4 rsh .340           2ac50e3100  10/23 17/23  0.0447  0.0817  0.3347  0.2264  0.4971 0.0839
+  5 reverted+rsh .360  cb74b768f5  14/23 19/23  0.0451  0.1021  0.3467  0.2414  0.4784 0.0848
+  target                                      0.0040  0.1010  0.2680  0.2500  0.4600 0.0890
+
+GAP TABLE AT cb74b768f5:
+
+  beta          2.23343   2.25000   -0.7%   theta       0.12723  0.14098   -9.7%
+  h_2           0.10212   0.10100    1.1%   sigma_y     0.19469  0.17200   13.2%
+  aleph        78.83157  80.00000   -1.5%   kappa_uem   0.34303  0.30000   14.3%
+  lambda_d      0.03781   0.03680    2.7%   p_m         0.04087  0.04806  -15.0%
+  lambda_m      0.24140   0.25000   -3.4%   cbar        0.00351  0.00420  -16.5%
+  burden50      0.16810   0.17500   -3.9%   omega_l     0.47107  0.40000   17.8%
+  emp_homeless  0.47839   0.46000    4.0%   pi_V        0.32703  0.26600   22.9%
+  b             0.08480   0.08900   -4.7%   pi_eu       0.10250  0.13930  -26.4%
+  mu_H          1.54382   1.47321    4.8%   gamma       0.34668  0.26800   29.4%
+  y_u           0.78445   0.74000    6.0%   h_1         0.04509  0.00399 1030.0%
+  kappa_ued     0.14829   0.16250   -8.7%
+  tau_l         0.20388   0.22400   -9.0%
+  tau_u         0.22264   0.24500   -9.1%
+
+  homeless by choice 0.2525, could afford it on income 0.1185,
+  unemployment 0.1025, food stamps 0.0851,
+  age bands 0.4512 / 0.2510 / 0.1465 / 0.0891 / 0.0621 against
+             0.2600 / 0.2720 / 0.2100 / 0.1840 / 0.0750
+
+IT TIES 642be7df48 ON COUNT AND BEATS IT EVERYWHERE THAT MATTERS: the severe cost
+burden is +1.1 per cent instead of -25.2, emp_homeless +4.0 instead of +20.6,
+lambda_m -3.4 instead of -12.0, h_1 0.045 instead of 0.083, and the share of the
+homeless who are there BY CHOICE is 0.25 instead of 0.50. THIS IS THE BENCHMARK
+TO USE unless the author rules otherwise.
+
+WHAT IS LEFT: gamma +29.4, pi_eu -26.4, pi_V +22.9, omega_l +17.8, cbar -16.5,
+p_m -15.0, kappa_uem +14.3, sigma_y +13.2, theta -9.7. batch_ridge2.txt runs a
+second regularised joint step -- the same Jacobian, gaps re-evaluated at this
+point, b and the three housing moments weighted triple so the step cannot sell
+them, ridge set to a 25 per cent maximum move.
+
 ## 6 September, 10:02 -- THE RIDGE STEP WAS OVERPAYING. REVERTING THE LABOUR
 ## BLOCK IMPROVES ALL FIVE OF ITS MOMENTS AND THE HOUSING BLOCK LARGELY SURVIVES.
 
