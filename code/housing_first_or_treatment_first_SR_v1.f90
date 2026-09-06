@@ -1149,6 +1149,26 @@
         ! Calibrated: employment rate given SMI, 30 percent, the midpoint of the
         ! high disability range.
         real(8) :: kappa_uem=1.0
+        ! KAPPA_FIND_SMI SPLITS SMI'S JOB-FINDING PENALTY OFF FROM ITS SEPARATION
+        ! PENALTY, 6 September, on the author's instruction: *"how about we choose
+        ! the unemployment rate of those with smi, 30%, and choose the chance of
+        ! finding a job to match the share who are homeless? If they are
+        ! unemployed long enough they will eventually be homeless"*.
+        !
+        ! kappa_uem used to do BOTH -- sep_1*kappa_uem and find_1/kappa_uem -- so
+        ! the SMI unemployment RATE and the SMI spell DURATION were one knob. The
+        ! rate is pbu*k^2/(pbu*k^2+p_find) and the duration is k/p_find, so no
+        ! setting of a single k could put the rate at 0.30 and the duration
+        ! wherever homelessness needs it.
+        !
+        ! Split, kappa_uem sets the rate and this sets the duration: longer
+        ! spells drain wealth, and wealth depletion is what puts an SMI household
+        ! on the street. That is the channel lambda_m needs and had none of.
+        !
+        ! At 1.0 the finding margin is unpenalised, which is NOT the old
+        ! behaviour: the old code divided finding by kappa_uem. A point that wants
+        ! the old economy passes kappa_find_smi equal to kappa_uem.
+        real(8) :: kappa_find_smi=1.0
 
         ! Assigned. Standardised mortality ratios for SMI run 2 to 3.
         real(8), parameter :: kappa_phi_m=2.50
@@ -8218,7 +8238,7 @@
             if (m_f_1>=1) then
 
                 sep_1=sep_1*kappa_uem
-                find_1=find_1/kappa_uem
+                find_1=find_1/kappa_find_smi
 
             end if
 
@@ -37238,6 +37258,12 @@
                 case ("zeta_DI")
                     write(*,*) "HANDOVER zeta_DI:", zeta_DI, "->", handover_value
                     zeta_DI=max(min(handover_value,1.d0),0.d0)
+
+                case ("kappa_find_smi")
+
+                    write(*,*) "HANDOVER kappa_find_smi:", &
+                        kappa_find_smi, "->", handover_value
+                    kappa_find_smi=max(min(handover_value,100.d0),1.d0)
 
                 case ("kappa_uem")
                     write(*,*) "HANDOVER kappa_uem:", kappa_uem, "->", handover_value
