@@ -1,3 +1,41 @@
+## 6 September, 11:33 -- THREE OF THE FOUR LAST GAPS HAVE INSTRUMENTS THAT REACH
+## THEM. NONE IS LOCAL, AND EACH BREAKS A MOMENT THAT HAS ITS OWN CLEAN LEVER.
+
+  run                in10  in20     p_m  omega_l   pi_eu     cbar     h_2       b  emp|hl kap_uem
+  BASE 7f98bce381   16/23 20/23  0.0416   0.4724  0.1050  0.00361  0.1074  0.0879  0.4996  0.2983
+  smi_onset 0.0042  15/23 21/23  0.0502   0.4730  0.1114  0.00383  0.1091  0.0727  0.4797  0.2903
+  leisure 2.60       9/23 18/23  0.0417   0.4331  0.1056  0.00420  0.1168  0.0991  0.5221  0.2980
+  prob_unemp 0.060  14/23 20/23  0.0415   0.4752  0.1348  0.00459  0.1110  0.0781  0.4495  0.2436
+  target                        0.0483   0.4000  0.1393  0.00420  0.1010  0.0890  0.4600  0.3000
+
+smi_onset_level 0.0042 LANDS p_m at 0.0502 against 0.0483 -- +3.9 per cent from
+-13.9 -- and TWENTY-ONE OF TWENTY-THREE INSIDE TWENTY PER CENT, the best that
+count has been. It costs b, which falls to 0.0727, so it needs the shifter.
+
+probability_becoming_unemployed 0.060 LANDS pi_eu at 0.1348 against 0.1393, -3.2
+per cent from -24.6, AND cbar at 0.00459 against 0.00420, +9.3 from -14.1. TWO
+GAPS ON ONE ARM. It costs kappa_uem, down to 0.2436, and b, down to 0.0781.
+
+BOTH BREAKAGES HAVE CLEAN LOCAL LEVERS. kappa_uem's own parameter was the cleanest
+arm measured at this vector, with slope -0.70 in logs, so 0.2436 back to 0.30
+needs kappa_uem = 13.6. b's lever is the shifter. So the compensation is known in
+advance rather than searched for, which is the first time tonight that has been
+true of a combination.
+
+relative_share_of_leisure 2.60 IS REJECTED. omega_l improves from +18.1 to +8.3 per
+cent and NINE of twenty-three survive: it moves the cost burden, drug use,
+emp_homeless and h_1 all at once. omega_l should be left at +18 per cent; there is
+no instrument for it that this model can afford.
+
+RUNNING: batch_clean4.txt --
+  1  prob_unemp 0.060 + kappa_uem 13.6
+  2  1 + smi_onset 0.0042 + shifter 0.0053
+  3  smi_onset 0.0042 + shifter 0.0053
+  4  1 + smi_onset 0.0042 + shifter 0.0050
+
+If line 2 holds, it closes p_m, pi_eu and cbar together while keeping kappa_uem and
+b, which would be eighteen or nineteen of twenty-three.
+
 ## 6 September, 11:22 -- 7f98bce381 HOLDS AS THE BEST. THE theta COMBINATION IS
 ## A WASH, AND THE LAST FOUR REACHABLE GAPS ARE BEING ARMED.
 
