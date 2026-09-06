@@ -2771,6 +2771,19 @@ def main():
         if mom not in live:
             skipped.append(f'{param} (owns {mom}): held, its stage is not open yet')
             continue
+        # NO BOUNDS ENTRY IS HOW A PARAMETER IS HELD -- the comments beside
+        # bottom_productivity_level, rr_homeless_old_level and largest_house_size
+        # all say so in the same words, "instruments_all takes every owner in OWN
+        # whose parameter has bounds". This loop never applied that test. It
+        # iterates OWN directly and then reads BOUNDS[param] in two places, so a
+        # held owner does not get held here, it takes the gate down with a
+        # KeyError. It did, at 16:53 on 6 September, on rr_homeless_old_level,
+        # whose bounds entry was commented out the day before for exactly this
+        # purpose. The convention was real everywhere except in the one loop that
+        # writes the batch.
+        if param not in BOUNDS:
+            skipped.append(f'{param} (owns {mom}): held, no bounds entry')
+            continue
         # A BRACKET BEATS AN ELASTICITY. If two archive points on this
         # instrument straddle the target, interpolate between them instead of
         # stepping on a slope. tau_u is the case that forced this: its
