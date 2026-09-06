@@ -206,7 +206,44 @@ def main():
     h1_gap = abs(mom['h_1'] - TARGETS['h_1']) / TARGETS['h_1']
     serve_h1 = h1_gap > 0.50
 
+    # emp_homeless AT ZERO IS A CORNER, AND A LOG STEP CANNOT LEAVE ONE. The
+    # author, 6 September: *"You need to lower the mass of the bottom
+    # productivity if all the homeless are unemployed"*. They are right, and the
+    # model prints the reason:
+    #
+    #     DIAG cheapest rental over lowest net income = 0.2458
+    #
+    # At the seed that ratio was 1.64 -- the cheapest rental cost more than the
+    # WHOLE net income of the lowest node, so its households were homeless even
+    # with a job, and they were the employed homeless. The rung has since fallen
+    # 0.130 -> 0.0397 and the ratio with it, so no employed household is priced
+    # out anywhere and every homeless household is unemployed by construction.
+    #
+    # THE MEASURED SLOPE HAS THE WRONG SIGN FOR THIS REGIME. It was measured at a
+    # ratio of 1.64, where the bottom node WAS priced out and its MASS set how
+    # many always-homeless households there were, so more mass meant a higher
+    # employed share. Below the affordability line the mass does nothing at all
+    # and only the node's LEVEL relative to the rung matters. A slope is a local
+    # object and this one was carried across a regime change.
+    #
+    # RAISING kkk_s_deviation_bottom PUSHES THE BOTTOM NODE FURTHER INTO THE TAIL:
+    # poorer, and thinner, which is the author's "lower the mass". That is what
+    # gets it back below the rung and puts employed households on the street
+    # again. So at the corner the instrument steps UP by a fixed factor, and it
+    # keeps stepping until the moment is off zero and an ordinary log step works.
+    at_corner = mom.get('emp_homeless', 0.0) <= 0.0
+    if at_corner:
+        k = 'kkk_s_deviation_bottom'
+        _, _, klo, khi, _, _ = RULES[k]
+        nxt[k] = max(klo, min(khi, vec[k] * 1.15))
+        print(f'#   {k:<44}{vec[k]:10.5g} -> {nxt[k]:10.5g}   '
+              f'emp_homeless is 0 at a rental/lowest-income ratio below 1: '
+              f'thinning the bottom tail to price the employed out again',
+              file=sys.stderr)
+
     for param, (moment, fb, lo, hi, damp, efold) in RULES.items():
+        if param == 'kkk_s_deviation_bottom' and at_corner:
+            continue
         if param == rung and serve_h1:
             moment, fb = 'h_1', +2.06
         cur, tgt = mom[moment], TARGETS[moment]
