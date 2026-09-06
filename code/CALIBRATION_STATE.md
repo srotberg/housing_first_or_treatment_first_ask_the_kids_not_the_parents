@@ -1,3 +1,46 @@
+## 6 September, 05:44 -- THE WIDE STREET IS THE BETTER ECONOMY ON 22 OF 23
+## MOMENTS. ONLY h_1 PREFERS THE NARROW ONE, AND IT IS 377 PER CENT OUT THERE TOO.
+
+  point         configuration                    in 10%   in 20%   median   worst
+  6d2b5d0f84    street 0.0110, shifter 0.0065      8/23    16/23    15.5%   h_1 +1493%
+  9a087302f2    street 0.0003, shifter 0.0045      3/23     8/23    24.6%   h_1  +536%
+  bc60e9470a    street 0.0003, shifter 0.0058      1/23     9/23    25.9%   h_1  +489%
+  352e91ef4b    street 0.0003, shifter 0.0065      1/23     8/23    26.3%   h_1  +471%
+  6db029d3ad    street 0.0001, shifter 0.0065      1/23     8/23    26.7%   h_1  +377%
+
+The narrow street buys h_1 down from 1493 to 377 per cent and costs eight moments
+their ten-per-cent band and eleven points of median gap. Against the author's rule
+-- "once we get below 10% for everything we can stop" -- the wide street is ahead
+on everything except the one moment that cannot be reached at either.
+
+THE SHIFTER DOES RESTORE THE LEVEL AT A LOW STREET, as predicted: at street 3e-4,
+b goes 0.0254 to 0.0590 to 0.1459 as the shifter goes 0.0065 to 0.0058 to 0.0045,
+so the target is bracketed at shifter 0.00517. But the conversion ratio there is
+0.357 against 0.4135, so lambda_d would still be fourteen per cent short and the
+hazard would have to rise to about 0.0456. THAT REPAIR WAS NOT PURSUED, because
+the table above says the low street is the worse economy and repairing its drug
+block does not change that.
+
+RUNNING NOW: batch_arms_a.txt, twelve one-coordinate arms off 6d2b5d0f84 aimed at
+the six worst gaps that still have live instruments --
+
+  multiple_of_probabilities_of_employment_if_addicted  4.0    -> 1.2, 2.0   kappa_ued +192%
+  utility_cost_of_treatment                            2.827  -> 5.0, 8.0   tau_u      +83%
+  value_of_life                                        76     -> 130, 180   aleph      -58%
+  mu_homeless                                          0.873  -> 0.45, 0.62 mu_H       -42%
+  relative_share_of_housing                            0.330  -> 0.268, 0.30 gamma     +24%
+  relative_share_of_addiction_1                        0.202  -> 0.245, 0.28 theta     -18%
+
+FOUR OF THESE SIX ACT ONLY ON HOUSEHOLDS THAT CARRY THE DISORDER and were inert
+until 05:22. This is their first real test.
+
+ONE DISCREPANCY TO PUT TO THE AUTHOR. ENGINE.md records the ruling that
+relative_share_of_housing is PINNED at 0.268 because in Cobb-Douglas the housing
+expenditure share equals the weight identically, and that the ladder carries gamma
+instead. The live vector has it at 0.330 and gamma reads 0.3317 -- the weight and
+the moment are the same number, as the theory says, so the pin was not applied.
+Setting it to 0.268 should put gamma on target exactly; that is one of the arms.
+
 ## 6 September, 05:33 -- WITH THE DRUG BLOCK ALIVE, THE STREET DRIVES DRUG USE.
 ## THE TWO ARE NOT SEPARABLE AND THE GATE'S ANCHOR IS NOW WRONG.
 
