@@ -1074,6 +1074,18 @@ BOUNDS = {
     # the cheapest rental on the PIA alone. h_share5 is 2.2e-06 against 0.075, far
     # BELOW target, so the search will be walking this DOWN from 0.1774.
     'ssi_floor_level':                                     (0.0, 0.30),
+    # THE TWO THE AUTHOR ASSIGNED ON 6 September: *"pi_v should be the instrument
+    # to match 26.6% of eligible households recieving vouchers. mu_H should be
+    # picked to match the target"*. Both already owned their moment in OWN and
+    # were excluded from the method only for want of a bounds entry, so neither
+    # could ever step however far its moment drifted.
+    #
+    # THE RANGES ARE THE FORTRAN'S OWN CLAMPS, read off the handover cases at
+    # 37725 and 37586, so a step can never ask for a value the handover would
+    # silently truncate -- the point that came back would not be the point that
+    # was asked for, and nothing in the trace would say so.
+    'probability_of_voucher_benchmark_used':               (1e-05, 1.0),
+    'mu_homeless':                                         (0.0, 1.0),
     'smallest_rental_relative_to_lowest_income':            (0.005, 0.40),
     # The bottom node's level, as a multiple of mean productivity. The quantile
     # construction puts it at 0.0302 unaided; the floor is well below that and
@@ -1489,7 +1501,13 @@ UNSCORED = {'rent50',
     # now from the calibration measure"* -- and its instrument pinned with it;
     # both come back together, because scoring a moment nothing may move only
     # makes the minimax unreachable.
-    }
+        # NOT TARGETED, on the author's instruction of 6 September, given as the two
+    # moments at the head of the coverage audit: *"the first two in the table are
+    # should not be targeted"*. Both were scored with no instrument able to reach
+    # them -- y_u at +20.2 per cent and burden50 at +12.8 -- so they held the
+    # minimax open against nothing. They are still measured and reported.
+    'y_u', 'burden50',
+}
 
 
 
