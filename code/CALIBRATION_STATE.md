@@ -1,3 +1,60 @@
+## 6 September, 16:20 -- THE AFFORDABILITY STORY IS REFUTED. THE HOMELESS ARE NOT
+## THE PERMANENTLY POOR, AND merge_bottom_nodes IS IN THE MODEL, DEFAULTED OFF.
+
+SOURCE EDIT, md5 0014027387 -> 0e3d689a34. bottom_productivity_level moved node 1
+only; merge_bottom_nodes says how many bottom nodes it covers. At N nodes,
+
+    M      = combined mass of nodes 1..N
+    y_old  = (sum m_i y_i over 1..N)/M
+    f      = (1 - M y_new)/(1 - M y_old)   applied to nodes N+1 upward
+
+so the grid mean stays exactly one, and at N=1 the arithmetic is the old code.
+VERIFIED: at N=1 the grid prints 0.0668 0.14360780395268585 0.30864126614615767
+0.66333046357068637 1.4256269402826236 3.0639512045311275 6.5850305704005985,
+identical to the pre-edit benchmark to every digit, and the largest relative
+difference across all 25 moments is 0.0022 per cent. Both standing builds pass.
+
+THE AFFORDABILITY HYPOTHESIS IS DEAD, and it was mine as much as the author's.
+The bottom two nodes cannot pay rent plus food -- 0.0668 and 0.1436 against a
+threshold of 0.16112 -- and their combined mass is 3.9 per cent against 6.2 per
+cent homelessness. The numbers matched and the groups do not.
+
+  kkk_s_deviation_bottom 2.00 puts node 2 at 0.329, twice the threshold: h_1 0.0630
+  merge N=2 at 0.165/0.175/0.190:                                    h_1 0.0543/0.0522/0.0497
+  merge N=3 at 0.2811, nobody below the threshold at all:            h_1 0.0726/0.0924
+
+LIFTING THE WHOLE BOTTOM OF THE GRID ABOVE THE AFFORDABILITY LINE DOES NOT LOWER
+HOMELESSNESS. At merge N=3 the mass unable to afford the cheapest rental is
+EXACTLY ZERO and homelessness is HIGHER than the benchmark.
+
+WHY. Thirty-seven per cent of the homeless can already afford a rental and decline
+it, and that share rises with income. The street is 0.00143 against a cheapest
+rental of 0.130 -- ninety-one times smaller and free -- so renting costs 46 per
+cent of the merged node's income. Of the rest, 53 per cent are non-employed on a
+0.5 UI replacement rate, so their CURRENT income is half their productivity
+whatever the grid says, and the young hold no assets. h_1 is a choice and a
+transitory-risk margin, not an income-level one, and no income-side lever reaches
+a choice.
+
+merge N=3 DOES DELIVER gamma, AND ONLY gamma. With the merged grid,
+relative_share_of_housing 0.21 gives gamma = 0.2616, -2.4 per cent, the closest
+that moment has come. The crossing is about 0.215. The price: h_1 0.0617 -> 0.0726
+to 0.0924, sigma_y +12.9 -> +18.5 per cent, ten and thirteen of twenty-three
+against nineteen.
+
+AND IT DESTROYS THE OLD-AGE SHARE OF THE HOMELESS, which was not foreseen. Band 5
+collapses from 0.0534 to 0.0041 against a target of 0.075, because merging the
+bottom three removes the poor and the elderly homeless were drawn from there.
+
+h_share5 HAS BEEN INVISIBLE ALL SESSION. It prints as "UNTARGETED share of the
+homeless, band 5" rather than as a MOMENT line, so it never appeared in a single
+gap table, while the gate scored it throughout. ssi_floor_level has sat at 0.13
+and rr_homeless_old_level at 5.9143915 across all 225 points on both sources --
+NEITHER HAS EVER BEEN MOVED. Arms at ssi_floor_level 0.09 and 0.06 and
+rr_homeless_old_level 9.0 are queued on the UN-merged grid.
+
+BENCHMARK UNCHANGED: point_9fafe247b9, nineteen of twenty-three, median 2.9.
+
 ## 6 September, 16:12 -- h_share5 HAS BEEN INVISIBLE ALL SESSION AND ITS TWO
 ## INSTRUMENTS HAVE NEVER BEEN MOVED.
 
