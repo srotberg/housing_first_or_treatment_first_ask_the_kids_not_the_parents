@@ -1,3 +1,32 @@
+## 6 September, 08:43 -- THE COUNT AND THE SUBSTANCE DISAGREE. 642be7df48 WINS ON
+## MOMENTS INSIDE TEN PER CENT AND LOSES ON EVERY MOMENT THE PAPER IS ABOUT.
+
+  moment            f1f8022841   642be7df48   target
+  inside 10 per cent     13/23        14/23
+  h_1                   0.0569       0.0827   0.0040
+  emp_homeless          0.4768       0.5549   0.4600
+  h_2, cost burden      0.0876       0.0756   0.1010
+  lambda_m              0.2678       0.2199   0.2500
+  y_u                   0.7564       0.6591   0.7400
+  kappa_uem             0.2512       0.2765   0.3000
+  pi_V                  0.3192       0.2732   0.2660
+  omega_l               0.4722       0.4451   0.4000
+  gamma                 0.3304       0.3089   0.2680
+
+THE NEWTON STEP BUYS FOUR LABOUR-AND-VOUCHER MOMENTS BY SELLING FOUR
+HOUSING-AND-HOMELESSNESS MOMENTS. One extra moment inside ten per cent, and the
+four it gives up are the homelessness rate, the employed share of the homeless,
+the severe cost burden and the SMI share of the homeless.
+
+RECOMMENDATION, AND IT IS ONLY THAT: keep f1f8022841 as the benchmark. A housing
+paper is worth more with emp_homeless at +3.7 per cent than with pi_V at +2.7.
+The minimax count does not know which moments the note leans on, and this is the
+first time tonight the two have pointed different ways.
+
+THE SHIFTER LADDER ON THE 0.4 STEP IS SETTLED: 0.0056 is the crossing (b = 0.0863
+against 0.0890, and the interpolated crossing is 0.00557), and 0.0060, 0.0065 and
+0.0072 give 10, 9 and 9 of 23 as b collapses.
+
 ## 6 September, 08:33 -- THE JOINT STEP WORKS. NEW BEST POINT, AND THE WHOLE
 ## SEARCH NOW TRADES ONE MOMENT AGAINST h_1.
 
