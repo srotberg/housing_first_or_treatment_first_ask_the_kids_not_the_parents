@@ -1,3 +1,75 @@
+## 6 September, 17:15 -- THE AUTHOR IS RIGHT ABOUT h_2, AND THE SCORED BURDEN
+## MOMENTS ARE HIDING IT.
+
+They asked what the model's share of renters over 30 per cent of income is, and
+whether it is too high. It is, and so is everything around it. Every point file
+already carries the numbers, in UNTARGETED lines nobody has been reading. At the
+benchmark point_09f5444996:
+
+    housing over income, renters       0.3646   data 0.202   +80.5%
+    renters above 30 pct of income     0.4811   data 0.406   +18.5%
+    over half of income, all renters   0.2323   data 0.175   +32.7%
+
+Against the two SCORED burden moments at the same point:
+
+    h_2       over half of SPENDING, all       0.0997   target 0.101   -1.3%
+    burden50  over half of INCOME, IN h2       0.1826   target 0.175   +4.4%
+
+BOTH SCORED MOMENTS SAY DO NOT MOVE THE RUNG AND ALL THREE UNSCORED ONES SAY CUT
+IT HARD. The scored pair is not wrong, it is narrow: one is measured on
+EXPENDITURE rather than income, and the other is conditioned on the households in
+the cheapest unit. Renters as a population spend 36.5 per cent of income on
+housing against 20.2 in the data, and that never reaches the objective.
+
+THE SWEEP, WITH THE UNTARGETED COLUMNS RESTORED. Street held at 0.0110 absolute.
+
+     h2  mbn |     h_1   emp_hl | rent/inc  >30% inc  >50% all  burden50  h_2 mom   gamma
+             |  .00399      .46 |    0.202     0.406     0.175     0.175    0.101   0.268  <- data
+  0.130    1 | 0.06166   0.4711 |   0.3646    0.4811    0.2323    0.1826   0.0997  0.3343
+  0.110    3 | 0.03354   0.2280 |   0.3521    0.5159    0.2206    0.1549   0.0657  0.3266
+  0.090    3 | 0.02356   0.0603 |   0.3390    0.5521    0.1329    0.0545   0.0186  0.3099
+  0.070    3 | 0.01706   0.0327 |   0.3225    0.4349    0.1686    0.0423   0.0476  0.2802
+  0.050    3 | 0.01241   0.0000 |   0.2889    0.3355    0.1074    0.0294   0.0024  0.2376
+
+TWO THINGS IN THAT TABLE THAT WERE NOT EXPECTED.
+
+The 30 per cent share is NOT MONOTONE in the rung. It RISES 0.481 -> 0.516 ->
+0.552 as h_2 falls from 0.130 to 0.090, then falls to 0.435 and 0.336. Cheaper
+rent pulls households OFF THE STREET and into rentals, and they arrive poor, so
+they arrive burdened. The burden share peaks where the inflow peaks. Any bracket
+on this moment that assumes a monotone response will pick the wrong side.
+
+h_2 = 0.070 IS THE BEST HOUSING BLOCK MEASURED ON THIS MODEL. Renters over 30 per
+cent 0.435 against 0.406 (+7.1), over half of income 0.169 against 0.175 (-3.7),
+gamma 0.280 against 0.268 (+4.6), and h_1 down to 0.0171, which is 4.3 times the
+target instead of 15.5. The single thing broken there is emp_homeless at 0.033,
+which is what batch_finding is testing from the other side.
+
+AND THE RENT BURDEN NEVER FULLY CLOSES ON THE RUNG ALONE: renters' housing over
+income only falls 0.365 -> 0.289 across the whole sweep, against 0.202. Cutting
+the rung by 62 per cent moved that statistic from +81 per cent to +43.
+
+## 6 September, 17:15 -- CUTTING THE RUNG AND THE STREET TOGETHER HAS NEVER BEEN
+## MEASURED, AND MULTIPLIED IT LANDS NEAR THE TARGET.
+
+The author asked why both cannot be cut at once. Nothing stops it. The two sweeps
+were each run one coordinate at a time and neither was ever crossed with the
+other:
+
+    rung alone,   street 0.0110:  h_1 0.0617 -> 0.0124   (h_2 0.130 -> 0.050)
+    street alone, rung   0.130 :  h_1 0.0617 -> 0.0237   (street 0.0110 -> 0.0030)
+
+If the two act multiplicatively in logs, then at h_2 = 0.070 with the street at
+0.0030 h_1 would be about 0.0171 x (0.0237/0.0617) = 0.0066, and at a smaller
+street lower still. THE TARGET IS 0.00399. That is the first arithmetic all day
+that puts the target inside reach, and it is a PREDICTION, not a measurement --
+the interaction could just as easily be sub-additive, which is what the six
+one-coordinate routes would have suggested.
+
+batch_both.txt, four streets 0.0060 / 0.0030 / 0.0015 / 0.0008, one coordinate off
+point_28c0ad866e (h_2 = 0.070, merged bottom three). On the fleet as
+wip/both-1715-a..d, beside batch_finding's four.
+
 ## 6 September, 17:05 -- THE FOUR HOUSING MOMENTS HAVE ALREADY BEEN HIT
 ## TOGETHER, ONCE, AND THE THING THAT WAS ON THERE IS OFF NOW.
 
