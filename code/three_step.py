@@ -373,6 +373,29 @@ RULES = {
     # between the halves, so the bottom half's share of labour income falls. The
     # table had this backwards.
     'sd_permanent_productivity':                 ('sigma_y',      -1.00, 0.6, 1.3, 0.35, 0.20),
+    # THE LAST FIVE SIGNS, each read off the code rather than the parameter's
+    # name. Four of the seven signs written from names on 6 September were wrong,
+    # so every one of these was checked at its point of use:
+    #
+    #   kappa_find_smi   line 8372, find_1 = find_1 / kappa_find_smi. Higher means
+    #                    SMI households find work LESS easily, so more of them end
+    #                    up homeless and lambda_m RISES. Positive.
+    #   smi_onset_level  line 36115, smi_onset_by_age = level * shape_by_age.
+    #                    Higher onset, larger SMI population share. Positive.
+    #   discount_factor  patience; more saving, higher wealth to output. Positive.
+    #   mu_homeless      probability_of_stopping_addiction_if_homeless =
+    #                    mu_homeless * 0.025, and mu_H is the HOUSED-to-homeless
+    #                    recovery ratio, so mu_H goes as 1/mu_homeless. Negative
+    #                    and close to unit elastic; the declared 4.48/6.60 is
+    #                    Milby's raw ratio, and 1/0.679 is 1.473, which is the
+    #                    target. Composition keeps it from being exactly -1.
+    #   voucher          the probability an eligible household draws a voucher, so
+    #                    the share of eligibles holding one rises with it. Positive.
+    'kappa_find_smi':                            ('lambda_m',     +1.00, 1.0, 60.0, 0.35, 0.20),
+    'smi_onset_level':                           ('p_m',          +1.00, 1e-08, 0.5, 0.35, 0.20),
+    'discount_factor':                           ('beta',         +1.00, 0.9, 1.02, 0.35, 0.10),
+    'mu_homeless':                               ('mu_H',         -1.00, 0.0, 1.0, 0.35, 0.20),
+    'probability_of_voucher_benchmark_used':     ('pi_V',         +1.00, 1e-05, 1.0, 0.35, 0.20),
     'newborn_endowment_scale':                   ('h_share1',     -1.00, 0.0, 3.0, 0.35, 0.20),
     'ssi_floor_level':                           ('h_share5',     -1.00, 0.0, 0.30, 0.35, 0.20),
 }
