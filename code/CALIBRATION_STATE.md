@@ -1,3 +1,35 @@
+## 6 September, 09:22 -- MEASURED, NOT EXTRAPOLATED: h_1 = 0.4 PER CENT NEEDS A
+## HOUSING WEIGHT OF ABOUT 2.5, AND THE WEIGHT IS A SHARE.
+
+Housing-weight ladder off the sweet spot, nothing else changed:
+
+  rsh        tag          in10  in20     h_1     h_2   gamma       b  emp|hl   lam_m
+  0.375525   eec22a73c1  10/23 18/23  0.0387  0.1007  0.3625  0.0901  0.3853  0.3188
+  0.48       75c6140876   7/23 14/23  0.0300  0.3633  0.4376  0.1166  0.3229  0.3540
+  0.55       d79d00e665   7/23 14/23  0.0252  0.5199  0.4731  0.1137  0.2838  0.3853
+  0.63       eefc8b1375   8/23 14/23  0.0208  0.6568  0.5155  0.1096  0.2257  0.4267
+  target                        0.0040  0.1010  0.2680  0.0890  0.4600  0.2500
+
+THE ELASTICITY OF h_1 IN THE HOUSING WEIGHT IS -1.20 OVER THE WHOLE LADDER, weaker
+than the -2.06 measured over the first pair. From 0.0208 at a weight of 0.63, the
+0.4 per cent target needs the weight multiplied by 3.95: A HOUSING WEIGHT OF 2.49.
+The weight is a share of a Cobb-Douglas aggregator and cannot exceed one. The
+target is unreachable by a factor of four in a parameter that is bounded at one,
+and that is now measured across four rungs rather than extrapolated from two.
+
+THE COST OF THE DESCENT, over the same rungs: the severe cost burden goes from
+exact to +550 per cent, gamma from +35 to +92, the employed share of the homeless
+from 0.385 to 0.226, the SMI share from 0.319 to 0.427. Homelessness falls by
+half and every other housing moment is destroyed to do it.
+
+CONCLUSION FOR THE NOTE. The model cannot produce a 0.4 per cent homelessness rate
+under any admissible parameter. Its floor, holding the severe cost burden on
+target, is 0.0387. Three separate instruments have now been walked to their limits
+against this moment -- size_homelessness across four orders of magnitude,
+value_of_life, and the housing weight to twice its calibrated value -- and the
+floor moves from 0.057 to 0.039 and stops. This is a property of the model, not of
+the search.
+
 ## 6 September, 09:12 -- THE HOUSING WEIGHT HAS A SWEET SPOT AT 0.3755, AND
 ## h_1 = 0.4 PER CENT IS OUTSIDE THE PARAMETER SPACE.
 
