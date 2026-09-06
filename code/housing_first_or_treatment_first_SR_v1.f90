@@ -4246,7 +4246,42 @@
         ! link in productivity is deliberate.
         real(8), allocatable, dimension(:,:,:,:,:,:) :: newborn_unemployment_process
         
-        real(8), parameter :: replacement_rate_ui=0.5
+        ! psi, THE UNEMPLOYMENT REPLACEMENT RATE. A VARIABLE SINCE 6 SEPTEMBER,
+        ! on the author's instruction: *"cant you just build it into my method to
+        ! target these three moments with the 3 instruments?"*, *"i think the
+        ! method should allow you to deliver all 3"*.
+        !
+        ! WHY IT HAD TO STOP BEING A CONSTANT. The author's design is three
+        ! instruments for three moments -- the bottom node's mass for the employed
+        ! share of the homeless, the street for the homelessness rate, the cheapest
+        ! rung for the cost burden -- and all three were measured on 6 September.
+        ! Each does what it should. The design still could not reach h_1, and the
+        ! reason is none of them:
+        !
+        !   at street 0.0008, rung 0.070, bottom nodes merged so that nobody is
+        !   priced out on employment income, h_1 = 0.00725 with
+        !       homeless by choice                 = 0.0000
+        !       homeless who could afford it       = 0.0000
+        !       employed share of the homeless     = 0.0000
+        !       homelessness among the UNEMPLOYED  = 0.0720
+        !
+        ! EVERY REMAINING HOMELESS HOUSEHOLD IS ONE THAT LOST ITS JOB. And 0.00725
+        ! is 1.8 times the WHOLE h_1 target of 0.00399, so a COMPONENT of the
+        ! moment floors above the moment itself. No instrument that redistributes
+        ! among the housed can take a total below a component's floor, which is
+        ! why three good instruments were not enough.
+        !
+        ! AND THE FLOOR IS AN ARTEFACT OF THE PERIOD LENGTH. One period is a YEAR.
+        ! A household flagged unemployed receives psi times its capped base for the
+        ! WHOLE year. Real unemployment insurance runs about 26 weeks and mean
+        ! duration is near 22, so a worker with a spell keeps far more than half of
+        ! ANNUAL earnings. psi = 0.5 is the right statutory number attached to the
+        ! wrong horizon, and it manufactures precisely the homelessness that was
+        ! blocking the calibration.
+        !
+        ! 0.5 REPRODUCES THE OLD MODEL EXACTLY, so this widens the parameter space
+        ! rather than moving the benchmark.
+        real(8) :: replacement_rate_ui=0.5d0
 
         ! Social security replaces this share of the productivity state, the
         ! 0.40 of eq:fincome.
@@ -4263,7 +4298,12 @@
         real(8) :: ssi_floor_level=0.1774d0
         real(8) :: ssi_floor_takeup=0.0d0
         real(8) :: pia_y_1
-        real(8), parameter :: max_ui_as_perc_of_avg_inc=1
+        ! ybar, THE CAP ON THE BASE psi MULTIPLIES, in units of average income.
+        ! Freed alongside psi on 6 September: the two together are the level and
+        ! the ceiling of out-of-work income, and calibrating one while the other
+        ! is welded shut puts the whole adjustment into one margin. 1 reproduces
+        ! the old model exactly.
+        real(8) :: max_ui_as_perc_of_avg_inc=1.d0
         ! bar pi^ue, the annual job finding rate. The note's external table sets it at
         ! 0.55; the code had 0.2974.
         real(8) :: probability_becoming_employed=0.55
@@ -37314,6 +37354,21 @@
                 case ("zeta_DI")
                     write(*,*) "HANDOVER zeta_DI:", zeta_DI, "->", handover_value
                     zeta_DI=max(min(handover_value,1.d0),0.d0)
+
+                ! psi AND ITS CAP. Bounded at 1 and at 5 times average income
+                ! respectively: psi above one would pay a household more out of
+                ! work than in it, which inverts the participation margin the
+                ! model is built on, and a cap of five times average income is
+                ! already far above any real benefit schedule.
+                case ("replacement_rate_ui")
+                    write(*,*) "HANDOVER replacement_rate_ui:", &
+                        replacement_rate_ui, "->", handover_value
+                    replacement_rate_ui=max(min(handover_value,1.d0),0.d0)
+
+                case ("max_ui_as_perc_of_avg_inc")
+                    write(*,*) "HANDOVER max_ui_as_perc_of_avg_inc:", &
+                        max_ui_as_perc_of_avg_inc, "->", handover_value
+                    max_ui_as_perc_of_avg_inc=max(min(handover_value,5.d0),0.d0)
 
                 case ("merge_from_node")
                     write(*,*) "HANDOVER merge_from_node:", &

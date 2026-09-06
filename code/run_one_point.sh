@@ -401,6 +401,10 @@ declare -A P=(
     # combined mass, because neither can afford the cheapest rental.
     [merge_bottom_nodes]=1
     [merge_from_node]=1
+    # psi and its cap. 0.5 and 1 reproduce the model as it stood before
+    # 6 September, when both were compile-time constants.
+    [replacement_rate_ui]=0.5
+    [max_ui_as_perc_of_avg_inc]=1
     # HELD AT ONE, ON THE AUTHOR'S INSTRUCTION. rho_d enters as
     # rho_d**(sud*include_rho_d), so one is exactly no penalty. The switch stays
     # on so the parameter is live and honest rather than a silent no-op, and the
