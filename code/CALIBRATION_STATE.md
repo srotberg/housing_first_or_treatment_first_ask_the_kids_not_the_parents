@@ -1,3 +1,46 @@
+## 6 September, 05:33 -- WITH THE DRUG BLOCK ALIVE, THE STREET DRIVES DRUG USE.
+## THE TWO ARE NOT SEPARABLE AND THE GATE'S ANCHOR IS NOW WRONG.
+
+Street sweep off 6d2b5d0f84, hazard 0.0400 and shifter 0.0065 held:
+
+  street   tag             h_1   emp|hl   lam_m   h2 exp   gamma       b   lambda_d
+  target                0.0040   0.4600  0.2500   0.1010  0.2680  0.0890     0.0368
+  0.0110   6d2b5d0f84  0.0636   0.4216  0.2684   0.0854  0.3317  0.0905     0.0375
+  0.0030   dcbaeec7ee  0.0383   0.3520  0.3542   0.1079  0.3342  0.0585     0.0229
+  0.0010   955a7f46a2  0.0304   0.3048  0.4062   0.1217  0.3366  0.0458     0.0175
+  0.0003   352e91ef4b  0.0228   0.2197  0.4678   0.1284  0.3385  0.0254     0.0093
+
+SHRINKING THE STREET BY 37 TIMES CUTS DRUG USE BY 72 PER CENT AND THE DISORDER
+RATE BY 75. The street is not a housing parameter with a housing moment; it moves
+b and lambda_d as hard as it moves h_1, so the drug block calibrated at 05:22 is
+calibrated AT street = 0.0110 and nowhere else.
+
+WHAT SURVIVES THE DESCENT is the conversion ratio: 0.4146 at the widest street
+and 0.366 at the narrowest, against 0.4135 in the data. The hazard therefore
+still owns the ratio at any street, and only the LEVEL has to be restored, which
+is the shifter's job. batch_drug_lowstreet.txt tests exactly that: street 0.0003
+and 0.0001 against shifter 0.0045 and 0.0058, from 0.0065.
+
+h_1 REACHES 0.0228 AT STREET 3e-4, five and a half times the target, on a model
+with drug use in it. That is better than the 0.0568 of 04:30 and worse than the
+0.0143 of the dead-drug-block sweep, which is the point: drug use puts people on
+the street, so the floor rises once the block is alive.
+
+THE GATE ANCHORS ON THE WRONG POINT NOW. next_batch.py returned 0 and wrote
+CORRECT_73.txt from point_5a19715e05 -- the street = 1e-5 point of the DEAD drug
+block, where b = 0.0113. It is right by its own objective, because the minimax is
+dominated by h_1 and that point has the lowest h_1 ever measured; but its arms
+move the hazard to 0.0106 and the shifter to 0.0147, which is the direction the
+last hour refuted. CORRECT_73 WAS NOT LAUNCHED, and the reason is recorded here
+rather than left to be inferred from a missing batch.
+
+This is the failure mode ENGINE.md already names: a moment nothing can move
+distorts the minimax. h_1 cannot be reached and it now sets the anchor for every
+round. Conceding it is a SCOPE CHANGE and belongs to the author, so it has not
+been done; the fix applied instead is to keep the archive supplied with low-h_1
+points that ALSO have a live drug block, so that whichever point the gate picks
+is a real economy.
+
 ## 6 September, 05:22 -- THE DRUG BLOCK IS CLOSED. b, lambda_d AND THE
 ## CONVERSION RATIO ARE ALL INSIDE TWO PER CENT AT point_6d2b5d0f84.
 
