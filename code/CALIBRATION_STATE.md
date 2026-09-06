@@ -1,3 +1,49 @@
+## 6 September, 09:33 -- THE STANDING REPORT AT THE THREE CANDIDATES, AND THE
+## NUMBER THAT SHOULD DECIDE BETWEEN THEM IS NOT IN THE GAP TABLE.
+
+                               eec22a73c1   f1f8022841   642be7df48    data
+  moments inside ten per cent      10/23        13/23        14/23
+  homelessness rate h_1           0.0387       0.0569       0.0827   0.0040
+  employed share of homeless      0.3853       0.4768       0.5549   0.4600
+  SMI share of homeless           0.3188       0.2678       0.2199   0.2500
+  HOMELESS BY CHOICE              0.1981       0.3241       0.4969      --
+  homeless who could afford it    0.0445       0.1745       0.3386      --
+  severe cost burden, in h2       0.1581       0.1703       0.1922   0.1750
+  cost burden h_2, expenditure    0.1007       0.0876       0.0756   0.1010
+  drug users                      0.0901       0.0900       0.0863   0.0890
+  disorder rate                   0.0402       0.0404       0.0384   0.0368
+  unemployment rate               0.0974       0.1077       0.1194   0.1393
+  food stamps                     0.0800       0.0901       0.1126      --
+  income of drug users            0.8148       0.7564       0.6591   0.7400
+
+  homelessness share by age band, model against data:
+  band 1 young   0.4071  0.4601   --   against 0.2600
+  band 2         0.2855  0.2475   --   against 0.2720
+  band 3         0.1526  0.1443   --   against 0.2100
+  band 4         0.0949  0.0963   --   against 0.1840
+  band 5 old     0.0599  0.0518   --   against 0.0750
+
+  SUD share of the homeless by band, eec22a73c1:
+  0.0617  0.1091  0.0609  0.0304  0.0080   -- peaks in band 2
+
+THE HOMELESS-BY-CHOICE SHARE IS THE NUMBER THAT SHOULD DECIDE THIS. It runs 0.198,
+0.324, 0.497 across the three candidates. At 642be7df48 HALF THE HOMELESS
+POPULATION COULD AFFORD A RUNG AND DECLINES IT, and a third could afford one on
+current income alone. For a note about housing policy that is an enormous
+behavioural claim, and it is not scored, so the minimax cannot see it: the point
+with the most moments inside ten per cent is the point making the least defensible
+statement about who is on the street.
+
+It points the same way as the age profile and the cost burden. eec22a73c1 is
+closest to the data on the age distribution of the homeless (young 0.41 against
+0.26, versus 0.46), has the severe cost burden exact, and has the smallest
+by-choice share. RECOMMENDED BENCHMARK: eec22a73c1, with f1f8022841 as the
+alternative if emp_homeless is judged more important than the by-choice share.
+
+Every candidate puts too many of the homeless in the youngest band and too few in
+bands 3 and 4. No parameter opened tonight moves that profile, and h_age1 to
+h_age5 are in SKIP.
+
 ## 6 September, 09:22 -- MEASURED, NOT EXTRAPOLATED: h_1 = 0.4 PER CENT NEEDS A
 ## HOUSING WEIGHT OF ABOUT 2.5, AND THE WEIGHT IS A SHARE.
 
