@@ -37,9 +37,17 @@ LOG="$D/code/three_loop.log"
 # BOTH FIELDS, because the basename lands in a different one depending on how it
 # was started: "bash code/three_loop.sh" puts it in $3, "./code/three_loop.sh"
 # in $2.
-alive=$(ps -eo pid=,args= | awk -v me=$$ '
-    $1 == me { next }
-    { for (f = 2; f <= 3; f++) {
+#
+# AND OUR OWN CHILDREN ARE EXCLUDED BY PPID, not just our own pid. The first
+# version tested $1 != $$ only and refused to start against itself: the $( )
+# around this pipeline forks a subshell that INHERITS the script's command line,
+# so ps shows a second "bash code/three_loop.sh" with a different pid and the
+# guard matched it. Skipping ppid == $$ removes that subshell and the ps and awk
+# it spawned, and cannot hide a genuine second loop, which would be a child of
+# night_watch or of a shell, never of this one.
+alive=$(ps -eo pid=,ppid=,args= | awk -v me=$$ '
+    $1 == me || $2 == me { next }
+    { for (f = 3; f <= 4; f++) {
           n = split($f, q, "/")
           if (q[n] == "three_loop.sh") { print $1; next }
       } }')
