@@ -106,14 +106,32 @@ def _file_targets():
                     key=os.path.getmtime, reverse=True):
         if '.FAILED' in f:
             continue
+        src = open(f, errors='replace').read()
         t = {}
         for name, val in re.findall(
-                r'MOMENT\s+(\S+)\s+.*?target=\s*([-\dEe.+]+)',
-                open(f, errors='replace').read()):
+                r'MOMENT\s+(\S+)\s+.*?target=\s*([-\dEe.+]+)', src):
             try:
                 t[name] = float(val)
             except ValueError:
                 pass
+        # THE BAND SHARES AND RATES ARE PRINTED AS "UNTARGETED ... observed=",
+        # not as MOMENT ... target=, so the generic reader above cannot see them
+        # and the two instruments that answer to them sat frozen reporting
+        # "not in this point". next_batch parses them with these same two
+        # patterns; this keeps the two files reading the archive the same way.
+        #
+        # h_share<n> is the share OF THE HOMELESS in age band n -- the shares sum
+        # to one across the five bands. It is NOT the homelessness rate within a
+        # band; that is h_age<n>, and confusing the two would point an instrument
+        # at a quantity an order of magnitude away.
+        for n, _m, ob in re.findall(
+                r'UNTARGETED share of the homeless, band\s+(\d+)\s+model=\s*'
+                r'([0-9.eE+-]+)\s+observed=\s*([0-9.eE+-]+)', src):
+            t.setdefault('h_share' + n, float(ob))
+        for n, _m, ob in re.findall(
+                r'UNTARGETED homelessness rate, band\s+(\d+)\s+model=\s*'
+                r'([0-9.eE+-]+)\s+observed=\s*([0-9.eE+-]+)', src):
+            t.setdefault('h_age' + n, float(ob))
         if t:
             return t
     return {}
@@ -262,8 +280,20 @@ CONFIG = {
     'increased_prob_if_homeless': 0.20,
     'merge_from_node':            2.0,
     'merge_bottom_nodes':         3.0,
-    'newborn_endowment_scale':    0.0,
 }
+# THE ENDOWMENT IS AN INSTRUMENT AGAIN, on the author's instruction of 6
+# September: *"i think we need to add an endowment for the newborns so that
+# their share of homelessness aligns with the data"*. It was pinned at zero in
+# CONFIG because it had been added to four bases without being asked for; the
+# author has now asked for it, so the pin comes off and it enters RULES from OWN
+# like any other instrument.
+#
+# IT IS NOT DELIVERED TWICE, which the archive claimed and which would have
+# doubled whatever gets calibrated. Checked at 22:35: with
+# uniform_newborn_endowment=1 the branch at 25311 sets relative_endowments to
+# ZERO, so max_initial_endowment multiplies zero and hands out nothing through
+# the asset grid. The endowment arrives once, as newborn_age_transfer(1) in the
+# first budget constraint.
 
 # EVERY OTHER INSTRUMENT THE GATE OWNS, on the author's instruction to apply the
 # method to all the parameters. The four above keep the hand-set speeds and
