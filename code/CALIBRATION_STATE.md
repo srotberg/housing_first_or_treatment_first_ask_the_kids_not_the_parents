@@ -1,3 +1,46 @@
+## 6 September, 18:45 -- THE JOINT STEP IS MEASURED. IT BEATS ITS OWN FORECAST ON
+## h_1 AND TAKES emp_homeless TO EXACTLY ZERO. THE ANSWER IS NO.
+
+ arm            |     h_1      h_2   emp_hl |      predicted h_1/h_2/emp |   gamma
+                |  .00399     .101      .46 |                            |   0.268  <- data
+ BASE  f=0      | 0.04091   0.1002   0.2032 |                            |  0.3439
+ joint f=0.20   | 0.02032   0.0758   0.0154 |  0.02568 / 0.1004 / 0.2393 |  0.3345
+ joint f=0.32   | 0.01194   0.0490   0.0000 |  0.01942 / 0.1005 / 0.2639 |  0.3183
+
+h_1 BEATS THE LINEARISATION -- 0.01194 against a forecast of 0.01942 -- and
+emp_homeless COLLAPSES THROUGH IT, 0.2639 forecast against 0.0000 measured. The
+Jacobian was right about the level and wrong about the composition, and wrong in
+the direction that matters: the interaction terms bind the two moments together
+harder than the first derivatives say.
+
+SO THE FOUR INSTRUMENTS CANNOT DELIVER THE THREE MOMENTS, AND THIS IS NOW
+MEASURED RATHER THAN ARGUED. Taken to the edge of the parameter space in the
+direction the Jacobian itself prescribes, the best available point has h_1 at
+three times target with NO employed homeless at all and the cost burden at half
+its target. Every route tried today ends in the same place, and the joint step
+ends there faster than the one-coordinate arms did.
+
+WHAT IS ACTUALLY TRUE ABOUT THIS MODEL, stated for the author to rule on:
+
+  h_2, the cost burden, IS reachable and stays reachable. 0.1002 against 0.101 at
+  the base, and it is the one moment nothing has to be sacrificed for.
+
+  emp_homeless IS reachable ALONE. 0.4711 at the benchmark.
+
+  h_1 = 0.00399 IS NOT reachable at all: the floor is 0.00725, measured at a
+  street of 0.0008 where nobody is priced out, nobody is homeless by choice, and
+  the residual is entirely young households holding zero assets.
+
+  h_1 AND emp_homeless TOGETHER are not reachable anywhere: every instrument in
+  the model moves them the same way, ratios +1.19 to +5.11 against a required
+  -0.20, and the only negative-ratio lever found, psi, moves h_1 by 4.7 per cent
+  across its entire range.
+
+THE ONE THING STILL UNTESTED is newborn_endowment_scale, at its floor of zero and
+never swept, which is the only instrument aimed at the asset margin the residual
+actually is. batch_endow is on the local box. If it does not have a negative
+ratio, the author has a decision to make and not a calibration to run.
+
 ## 6 September, 18:15 -- psi HAS THE MISSING SIGN AND ALMOST NO MAGNITUDE, AND
 ## IT REFUTES THE THRESHOLD ARITHMETIC I GAVE THE AUTHOR AN HOUR AGO.
 
