@@ -1,3 +1,40 @@
+## 6 September, 08:03 -- COMPOSITE D IS A STEP BACKWARDS. EIGHT ARMS APPLIED
+## TOGETHER DO NOT ADD, AND NOW THAT IS MEASURED RATHER THAN ASSERTED.
+
+  shifter  tag         in 10%  in 20%  median   b      sigma_y  p_m     kap_uem  pi_eu   pi_V    h_1
+  0.0060   85931159f2  10/23   17/23   13.2%  0.1478  0.1708  0.0510   0.2126  0.1489  0.2182  0.0916
+  0.0080   59f0c309bf   8/23   14/23   14.1%  0.0336  0.1708  0.0481   0.2169  0.1417  0.2196  0.0858
+  0.0105   b06d7e52b6   7/23   13/23   15.0%  0.0000  0.1709  0.0486   0.2170  0.1397  0.2197  0.0836
+  target                                      0.0890  0.1720  0.0484   0.3000  0.1393  0.2660  0.0040
+
+  f1f8022841, the point it was built from:  13/23 inside ten per cent.
+
+THREE OF THE SIX CROSSINGS HELD EXACTLY: sigma_y at 0.1708 against 0.1720 is
+-0.7 per cent, p_m at 0.0481 against 0.0484 is -0.6, pi_eu at 0.1417 against
+0.1393 is +1.7. kkk_sigma_scale = 1.96, smi_onset_level = 0.0042 and
+probability_becoming_unemployed = 0.0610 are therefore right and can be kept.
+
+THREE DID NOT, AND TWO WENT BACKWARDS. kappa_uem was -16.3 per cent at
+f1f8022841 and is -29 per cent here despite its parameter being set to its own
+crossing. pi_V was +20 and is now -18. h_1 went from 0.0569 to 0.0916.
+
+THE CAUSE IS probability_becoming_unemployed. Raising the separation rate from
+0.041 to 0.061 lowers employment for everyone, so the employed share among the SMI
+falls whatever kappa_uem does, and voucher eligibility moves with it. pi_eu's
+instrument is not orthogonal to kappa_uem's or to pi_V's, and the one-at-a-time
+arms could not show that.
+
+batch_nested_e.txt IS A NESTED LADDER RATHER THAN ANOTHER COMPOSITE, so that each
+side effect is attributable to the move that caused it:
+
+  1  f1f8022841 + kkk_sigma_scale 1.96 + smi_onset_level 0.0042
+  2  1 + probability_becoming_unemployed 0.0610
+  3  2 + kappa_uem 11.7
+  4  3 + probability_of_voucher_benchmark_used 0.0402
+
+If step 1 lands at fifteen or sixteen of twenty-three, those two moves are free and
+the rest of the round can be spent on the ones that are not.
+
 ## 6 September, 07:51 -- ALL EIGHT ARMS OFF f1f8022841, AND THE CROSSINGS.
 
   arm                              tag         moment      model  target     gap        b
