@@ -163,6 +163,8 @@ def _gate_targets():
     t = dict(_GATE_TARGETS)
     t.update(_file_targets())
     t.update({'h_1': 0.01097, 'h_2': 0.101, 'emp_homeless': 0.46, 'pi_eu': 0.049})
+    if t.get('b'):
+        t['sud_users'] = t['lambda_d'] / t['b']
     return t
 
 
@@ -315,7 +317,7 @@ RULES = {
     # they establish is the SIGN of the error -- the step is far too big -- and
     # damping is the honest response to that, where substituting -9 for -2.32
     # would be reading a derivative off a diagonal move.
-    'addiction_onset_base':                      ('lambda_d',     -2.78, 1e-06, 0.95, 0.15, 0.20),
+    'addiction_onset_base':                      ('sud_users',    +0.58, 1e-06, 0.95, 0.15, 0.20),
     'addiction_scalar_1':                        ('b',            -2.32, 1e-12, 1.0, 0.15, 0.20),
     # THREE MORE SIGNS THE AUTHOR SUPPLIED OR THE SOURCE SETTLES, 6 September.
     # All three were assigned to their moment already and frozen only for want of
@@ -357,6 +359,13 @@ RULES = {
                                                  # table says 50 and anything past 20
                                                  # would be silently truncated.
                                                  ('sud_homeless', +1.00, 1.0, 20.0, 0.25, 0.20),
+    # tau_l. NEGATIVE, on the author's instruction of 6 September: *"tau_l should
+    # be lowered when the model is low relative to the data"*. The source agrees
+    # and explains why a value of 0.79 yields an average tax of 0.21 --
+    # net_income = labor_income_tax_rate * y**curvature, so the parameter is a
+    # RETENTION scale, not a rate. Higher means more income kept and a LOWER
+    # average tax.
+    'labor_income_tax_rate':                     ('tau_l',        -1.00, 0.3, 0.95, 0.35, 0.20),
     'newborn_endowment_scale':                   ('h_share1',     -1.00, 0.0, 3.0, 0.35, 0.20),
     'ssi_floor_level':                           ('h_share5',     -1.00, 0.0, 0.30, 0.35, 0.20),
 }
@@ -524,6 +533,43 @@ def _resolve(stamp):
     return _RESOLVE_CACHE[stamp]
 
 
+def _add_sud_users(mom):
+    """The SUD rate AMONG USERS, lambda_d / b, added as a derived moment.
+
+    THE AUTHOR, 6 September: *"addiction_onset_base must be selection. you have
+    to consider addiction_onset_base with b at the same time"*. They are right,
+    and it resolves a sign that looked backwards for a whole afternoon.
+
+    addiction_onset_base was pointed at lambda_d, a share of the WHOLE
+    POPULATION, and measured at -2.78 over three controlled pairs: raising it
+    from 0.02 to 0.08 took lambda_d from 0.0687 to 0.0015. That is real, but it
+    is not what the parameter does. With lambda_addiction pinned at zero the
+    onset hazard is min(base + (1-exp(0*q)), 1) = base flat for any user and zero
+    for an abstainer, so there is no intensive margin: raising the base makes
+    using so risky that b collapses from 0.2558 to 0.0024, and lambda_d falls
+    with it because only users can carry the disorder.
+
+    Conditioned on being a user the sign is the author's, and monotone:
+
+        base 0.020   b 0.2558   lambda_d 0.0687   ratio 0.269
+        base 0.040   b 0.0576   lambda_d 0.0256   ratio 0.444
+        base 0.080   b 0.0024   lambda_d 0.0015   ratio 0.602
+
+    slope +0.72, +0.44 and +0.58 across the three pairs. So the base owns the
+    CONDITIONAL rate and addiction_scalar_1 owns the extensive margin, which
+    separates two instruments that were otherwise chasing one margin between
+    them.
+
+    The target is the ratio of the two existing targets, 0.03680/0.08900 =
+    0.4135, so nothing new is asserted about the data -- it is the same pair of
+    numbers read as a rate rather than a share. The source records the NSDUH
+    figure for SUD among users at 0.4509 beside it.
+    """
+    b, d = mom.get('b'), mom.get('lambda_d')
+    if b and d and b > 0:
+        mom['sud_users'] = d / b
+
+
 def parse(path):
     s = open(path, errors='replace').read()
     m = re.search(r'^MODEL (\S+)', s, re.M)
@@ -572,6 +618,7 @@ def parse(path):
                 mom.setdefault(nm, float(mm.group(1)))
             except ValueError:
                 pass
+    _add_sud_users(mom)
     return m.group(1), vec, mom, os.path.getmtime(path)
 
 
