@@ -1,3 +1,46 @@
+## 6 September, 17:10 -- FOUR ROUTES OUT OF THE h_1 PROBLEM, AND ONE OF THEM MAY
+## NOT NEED THE MODEL CHANGED AT ALL.
+
+1. IS THE TARGET DEFINED ON THE MODEL'S PERIOD? One period is a YEAR, so a
+   household homeless for one month inside that year is homeless for the whole
+   period. h_1 is therefore closer to "homeless at some point during the year"
+   than to a point-in-time count, and 0.00399 is a point-in-time figure. If spells
+   average a few months the period-consistent target is two to three times higher.
+   That does not close the gap but it closes part of it for nothing, and it is far
+   cheaper to check now than after the note is written. NOT VERIFIED -- the source
+   of the 0.4 per cent needs reading; this is a question for the author, not a
+   claim.
+
+2. A SECURITY DEPOSIT, an entry cost in LIQUID WEALTH. Renting requires assets of
+   some fraction of the rent; below it a household cannot enter even though its
+   income covers the flow. VERIFIED ABSENT: no deposit, entry cost, moving cost or
+   search friction exists for renters anywhere in the source. It selects on STOCK
+   rather than FLOW, which is exactly where an employed homeless household comes
+   from, it would repair the age profile as a by-product because the young hold
+   nothing, and it gives a mechanism to the model's own "could afford it on income
+   but is homeless" statistic, which sits at 0.15 to 0.19 with nothing behind it.
+   It also makes the experiment sharper: Housing First IS the removal of an entry
+   barrier. THIS IS THE ONE I WOULD BUILD.
+
+3. A RENTAL MATCHING FRICTION. Choose to rent and with some probability no unit is
+   available. One parameter, no new state if the shock is iid. Same arithmetic as
+   displacement, better story for this paper -- the policy hands you a unit, which
+   is what relieves a matching failure.
+
+4. EXOGENOUS DISPLACEMENT, the 16:35 proposal. Simplest, and the only one whose
+   two numbers the data already pins: 0.21 per cent for the employed and 1.55 for
+   the unemployed, a ratio of 7.3.
+
+RULED OUT. A utility or consumption penalty for homelessness tuned to h_1 -- the
+author vetoed it this morning and was right, it is a parameter backed out of a
+target. And a low-housing-taste household type, which the beta-type machinery
+would make cheap but which is not a claim this paper should rest on.
+
+THE COMMON THREAD in 2, 3 and 4 is that homelessness must stop being purely a
+per-period choice. Of them the deposit keeps it a CONSEQUENCE OF CONSTRAINTS
+rather than an exogenous shock, which is the more satisfying structure and gives
+the policy something concrete to relieve.
+
 ## 6 September, 17:00 -- BAND 5 IS FIXED AND IT WAS FREE. THE MERGED-LEVEL ROUTE
 ## IS FINISHED: h_1 FLOORS AT 0.0284 WITH emp_homeless AT 0.0018.
 
