@@ -1,3 +1,50 @@
+## 6 September, 15:36 -- MODEL EDIT, ON THE AUTHOR'S INSTRUCTION: THE BOTTOM-NODE
+## OVERRIDE NOW COVERS THE BOTTOM N NODES. SOURCE 0014027387 -> 0e3d689a34.
+
+THE AUTHOR: *"Combine the least number of productivities as needed and adjust them
+up in a way to make it work"*.
+
+THE LEAST NUMBER IS TWO. Merging the bottom two gives a mass-weighted level of
+0.1389, still below the rent-plus-food threshold of 0.16112, so merging ALONE does
+not work -- but adjusted up to 0.165 or above it does, and the mass that cannot
+afford the cheapest rental goes from 0.0390 to zero. Merging three would have put
+the merged node at 0.2811 and deleted a quarter of the income distribution to fix
+a problem four per cent of it causes.
+
+THE EDIT. bottom_productivity_level already moved node 1 with a mean-preserving
+rescale; it could not reach node 2, which carries fifteen times the mass. One new
+parameter, merge_bottom_nodes, says how many bottom nodes it covers:
+
+    M     = combined mass of nodes 1..N
+    y_old = (sum m_i y_i over 1..N) / M
+    f     = (1 - M y_new) / (1 - M y_old)   applied to nodes N+1 upward
+    mean after = M y_new + (1 - M y_old) f = 1, exactly
+
+At N = 1 this is the previous code line for line, so the default changes nothing.
+Setting nodes 1 and 2 to the SAME level IS a merged node of their combined mass,
+so no array or grid-size change was needed.
+
+FIVE EDITS: the parameter beside bottom_productivity_level, an integer merged_n_1
+in create_newborn_employment_probability, both override sites (the non-KKK path and
+the live KKK path), and a handover case. Plus [merge_bottom_nodes]=1 in
+run_one_point.sh.
+
+BOTH STANDING BUILDS PASS on the patched source, bounds/pointer and
+snan/ffpe-trap, no errors.
+
+EVERY POINT MEASURED BEFORE 15:35 IS ON SOURCE 0014027387 AND THIS ONE IS NOT.
+The archive filter is `grep -l "MODEL 0e3d689a34" points/*.txt` from here on. The
+benchmark point_9fafe247b9 and its full vector are recorded in the 14:13 entry and
+can be re-run on the new source if a like-for-like comparison is wanted; the N=1
+line of batch_merge.txt is exactly that re-run and is also the REGRESSION CHECK --
+it must reproduce the grid 0.0668 0.14361 0.30864 0.66333 1.42563 3.06395 6.58503
+or the patch is wrong and nothing else in the batch means anything.
+
+RUNNING: batch_merge.txt -- N=1 regression, then N=2 at 0.165, 0.175 and 0.190.
+Watch h_1 down by up to 3.7 points, the cost burden UP toward target as those
+households become severely burdened renters rather than homeless, and sigma_y,
+already 12.9 per cent high, as the thing most likely to break.
+
 ## 6 September, 15:23 -- THE h_2 ROUTE FAILS MECHANICALLY. FOUR INDEPENDENT
 ## ROUTES TO h_1 ARE NOW MEASURED AND NONE ESCAPES.
 
