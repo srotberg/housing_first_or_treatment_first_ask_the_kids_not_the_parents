@@ -1,3 +1,62 @@
+## 6 September, 14:13 -- FINAL BENCHMARK OF THE SESSION: point_9fafe247b9.
+## NINETEEN OF TWENTY-THREE INSIDE TEN, SIXTEEN INSIDE FIVE, MEDIAN 2.9 PER CENT.
+
+THE VECTOR
+  addiction_onset_base                 0.0400      relative_share_of_housing   0.3291
+  addiction_scalar_1                   0.00695     relative_share_of_addiction_1 0.225
+  kappa_find_smi                       2.17        relative_share_of_leisure   1.79117
+  kappa_uem                            12.0        smallest_rental_rel_lowest  0.130
+  mu_homeless                          0.82        size_homelessness           0.0110
+  value_of_life                        168         smi_onset_level             0.0042
+  utility_cost_of_treatment            6.3         probability_becoming_unemp  0.060
+  mult_prob_emp_if_addicted            1.15        prob_voucher_benchmark_used 0.0434
+  labor_income_tax_rate                0.790       max_food_cost               0.031118932
+  kkk_sigma_scale                      1.7673956
+  lambda_addiction 0, consumption_penalty_homeless 0, increased_prob_if_homeless 0,
+  homeless_job_penalty_pp 0.001
+
+THE GAP TABLE
+  kappa_uem      0.30031  0.30000   0.1%    burden50    0.18263  0.17500   4.4%
+  tau_u          0.24318  0.24500  -0.7%    theta       0.13431  0.14098  -4.7%
+  pi_V           0.26826  0.26600   0.9%    lambda_m    0.23763  0.25000  -4.9%
+  mu_H           1.46044  1.47321  -0.9%    kappa_ued   0.14901  0.16250  -8.3%
+  tau_l          0.22614  0.22400   1.0%    cbar        0.00455  0.00420   8.4%
+  beta           2.22776  2.25000  -1.0%    lambda_d    0.04002  0.03680   8.8%
+  b              0.08989  0.08900   1.0%    sigma_y     0.19411  0.17200  12.9%
+  h_2            0.09971  0.10100  -1.3%    omega_l     0.47757  0.40000  19.4%
+  emp_homeless   0.47106  0.46000   2.4%    gamma       0.33426  0.26800  24.7%
+  y_u            0.75896  0.74000   2.6%    h_1         0.06166  0.00399 1445.4%
+  aleph         77.85175 80.00000  -2.7%    h_3, w_bot conceded
+  pi_eu          0.13533  0.13930  -2.9%
+  p_m            0.05045  0.04840   4.2%
+
+  EIGHT MOMENTS INSIDE ONE PER CENT. Sixteen inside five. Nineteen inside ten.
+  From FIVE of twenty-five inside ten at 04:30.
+
+COMPOSITION AND UNTARGETED
+  drug users 0.0899, disorder rate 0.0400, unemployment 0.1353, food stamps 0.1050
+  homeless by choice 0.3673, could afford it on income 0.1918
+  age bands 0.4770 / 0.2389 / 0.1392 / 0.0915 / 0.0534
+    against 0.2600 / 0.2720 / 0.2100 / 0.1840 / 0.0750
+
+WHAT IS OUT AND WHY, all four established by measurement today, not by giving up:
+  sigma_y  +12.9  kkk_sigma_scale hits it exactly and costs five moments, at two
+                  separate vectors -- widening productivity fills the bottom, and
+                  the bottom is where homelessness and drug use live
+  omega_l  +19.4  relative_share_of_leisure has elasticity -0.23 and costs seven
+                  moments to buy one
+  gamma    +24.7  its only instrument is the housing weight, which is carrying the
+                  cost burden, and the two are in direct opposition
+  h_1    +1445    needs a housing weight of about 2.5 by a four-rung measurement,
+                  and the weight is a share bounded at one
+
+TWO THINGS FOR THE AUTHOR TO DECIDE, neither of which I have taken:
+  1. h_1 is unreachable. Either it comes out of the scored set -- a scope change --
+     or the note reports a homelessness rate fifteen times the data.
+  2. The age profile of the homeless is too young at every vector tried, 0.477 in
+     band 1 against 0.260, and h_age1..h_age5 are in SKIP so nothing was aimed at
+     it. No parameter opened today moves it.
+
 ## 6 September, 14:03 -- NEW BENCHMARK point_4351fe54c9. NINETEEN OF TWENTY-THREE
 ## WITH A MEDIAN OF 3.3 PER CENT AND SEVENTEEN MOMENTS INSIDE SIX.
 
