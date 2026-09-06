@@ -285,6 +285,21 @@ RULES = {
     # binds on a bottom set and lowering it can only reach those households. The
     # count of nodes it reaches is endogenous rather than pinned at two; pinning
     # it would be a semantic change and is the author's call.
+    # THE DRUG BLOCK MOVES AT A THIRD SPEED. Both instruments step on slopes
+    # four to five times too shallow, and both oscillated with period two for
+    # four straight iterations: b went 0.065, 0.113, 0.074, 0.122, 0.068 and
+    # lambda_d 0.029, 0.049, 0.033, 0.031. Realised responses were -8.96, -9.06,
+    # -14.35, -9.47 against an assumed -2.32, and -13.30, -8.67 against -2.78.
+    #
+    # THOSE REALISED NUMBERS ARE NOT CONTROLLED and are not used as slopes. Seven
+    # coordinates moved between each pair, and these two instruments in
+    # particular cross-contaminate: onset and scale both feed b AND lambda_d, so
+    # the one-instrument-one-moment approximation is at its weakest here. What
+    # they establish is the SIGN of the error -- the step is far too big -- and
+    # damping is the honest response to that, where substituting -9 for -2.32
+    # would be reading a derivative off a diagonal move.
+    'addiction_onset_base':                      ('lambda_d',     -2.78, 1e-06, 0.95, 0.15, 0.20),
+    'addiction_scalar_1':                        ('b',            -2.32, 1e-12, 1.0, 0.15, 0.20),
     'newborn_endowment_scale':                   ('h_share1',     -1.00, 0.0, 3.0, 0.35, 0.20),
     'ssi_floor_level':                           ('h_share5',     -1.00, 0.0, 0.30, 0.35, 0.20),
 }
