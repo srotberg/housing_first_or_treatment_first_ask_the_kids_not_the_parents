@@ -1,3 +1,48 @@
+## 6 September, 11:12 -- NEW BEST: point_7f98bce381. SIXTEEN OF TWENTY-THREE
+## INSIDE TEN PER CENT.
+
+  run                  in10  in20    h_2  theta      b  gamma emp|hl  lam_m kap_uem   pi_V    h_1
+  BASE 50d27123d5     15/23 20/23 0.1138 0.1271 0.0857 0.3480 0.4774 0.2510  0.2987 0.2618 0.0496
+  rsh 0.345           16/23 20/23 0.1074 0.1271 0.0879 0.3395 0.4996 0.2376  0.2983 0.2564 0.0539
+  rsh 0.335           15/23 20/23 0.1013 0.1271 0.0806 0.3354 0.5080 0.2314  0.2984 0.2565 0.0562
+  theta+shifter       14/23 20/23 0.1168 0.1376 0.0948 0.3476 0.4766 0.2500  0.2985 0.2614 0.0499
+  target                         0.1010 0.1410 0.0890 0.2680 0.4600 0.2500  0.3000 0.2660 0.0040
+
+GAP TABLE AT 7f98bce381:
+
+  kappa_uem     0.29825   0.30000   -0.6%   emp_homeless  0.49955  0.46000    8.6%
+  beta          2.22981   2.25000   -0.9%   tau_l         0.20343  0.22400   -9.2%
+  aleph        79.00907  80.00000   -1.2%   theta         0.12713  0.14098   -9.8%
+  b             0.08787   0.08900   -1.3%   sigma_y       0.19521  0.17200   13.5%
+  burden50      0.17829   0.17500    1.9%   p_m           0.04163  0.04834  -13.9%
+  pi_V          0.25639   0.26600   -3.6%   cbar          0.00361  0.00420  -14.1%
+  y_u           0.76699   0.74000    3.6%   omega_l       0.47235  0.40000   18.1%
+  lambda_m      0.23757   0.25000   -5.0%   pi_eu         0.10505  0.13930  -24.6%
+  mu_H          1.55425   1.47321    5.5%   gamma         0.33946  0.26800   26.7%
+  h_2           0.10736   0.10100    6.3%   h_1           0.05388  0.00399 1250.4%
+  lambda_d      0.03937   0.03680    7.0%
+  tau_u         0.22625   0.24500   -7.7%
+  kappa_ued     0.14894   0.16250   -8.3%
+
+  homeless by choice 0.2720, could afford it on income 0.1450.
+
+SIX MOMENTS INSIDE TWO PER CENT: kappa_uem, beta, aleph, b, burden50 and -- one
+step away -- pi_V at -3.6. BOTH cost-burden measures are now on target at once,
+burden50 at +1.9 and the h_2 expenditure moment at +6.3, which has not happened
+before tonight: they were in opposition for most of the session.
+
+theta's ARM WORKS WITH THE LARGER SHIFTER: 0.0071 instead of 0.0062 puts theta at
+-2.4 per cent with b at +6.5. It costs h_2, so the last line of the batch tries it
+together with the housing weight at 0.345.
+
+WHAT IS LEFT, in order: h_1 (unreachable, established at 09:22), gamma +26.7,
+pi_eu -24.6, omega_l +18.1, cbar -14.1, p_m -13.9, sigma_y +13.5. FIVE OF THOSE
+SIX HAVE ARMS MEASURED AT cb74b768f5 AND NOT YET USED -- kkk_sigma_scale 1.93 for
+sigma_y, smi_onset_level for p_m, probability_becoming_unemployed for pi_eu,
+relative_share_of_leisure for omega_l -- but kkk_sigma_scale and
+probability_becoming_unemployed were NOT local there, so they go in one at a time
+with the locality checked, not composed.
+
 ## 6 September, 11:03 -- NEW BEST: point_50d27123d5. FIFTEEN OF TWENTY-THREE
 ## INSIDE TEN PER CENT, TWENTY INSIDE TWENTY. TWO LOCAL ARMS DID COMPOSE.
 
