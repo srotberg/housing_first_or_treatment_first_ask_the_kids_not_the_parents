@@ -1,3 +1,42 @@
+## 6 September, 17:00 -- BAND 5 IS FIXED AND IT WAS FREE. THE MERGED-LEVEL ROUTE
+## IS FINISHED: h_1 FLOORS AT 0.0284 WITH emp_homeless AT 0.0018.
+
+THE OLD-AGE SHARE, the moment that had never been touched in 225 points:
+
+   ssi_floor_level   in10    med     h_1   emp|hl   band5
+       0.13         19/23   2.9%  0.0617   0.4711  0.0534   benchmark
+       0.09         19/23   3.3%  0.0636   0.4707  0.0816
+       0.06         19/23   2.8%  0.0636   0.4766  0.0737
+   target                         0.0040   0.4600  0.0750
+
+ssi_floor_level = 0.06 PUTS BAND 5 AT -1.7 PER CENT FROM -28.8, KEEPS NINETEEN OF
+TWENTY-THREE, AND IMPROVES THE MEDIAN FROM 2.9 TO 2.8. It costs nothing. The
+crossing is about 0.0655. batch_ssi.txt runs it alone and paired with the sdev
+2.00 and 2.60 cutoffs.
+
+It was only found because the author asked whether it had been calibrated. It had
+not, and it never appeared in a gap table because it prints as UNTARGETED rather
+than MOMENT. THE LESSON IS ABOUT THE REPORT, NOT THE MODEL: a moment that does not
+print in the standard table gets no attention for a whole session.
+
+THE MERGED-LEVEL ROUTE IS DEAD, and the 16:20 extrapolation was right:
+
+   level   in10    med     h_1   emp|hl
+   0.35   11/23  10.4%  0.0384   0.1588
+   0.50   13/23   8.6%  0.0323   0.0198
+   0.70   11/23  10.3%  0.0284   0.0018
+
+h_1 floors at 0.0284, seven times the target, and emp_homeless reaches 0.0018.
+I forecast emp_homeless would be about 0.001 by the time h_1 neared target; at
+h_1 = 0.0284 it is 0.0018 already. The employed homeless are eliminated LONG
+BEFORE homelessness gets close.
+
+STANDING POSITION. The cutoff (kkk_s_deviation_bottom about 2.0) buys emp_homeless
+and the cost burden. ssi_floor_level about 0.0655 buys the old-age share. NOTHING
+BUYS h_1: six routes and a measured exchange rate all agree. The one open test is
+the street ladder at the good cutoff, batch_cutoff_street.txt; after that,
+displacement is the only untried idea.
+
 ## 6 September, 16:55 -- THE 16:45 THRESHOLD STORY IS ALSO WRONG. AFFORDABILITY
 ## DOES NOT BIND AT ANY MARGIN. BUT THE CUTOFF DOES DELIVER emp_homeless.
 
