@@ -47,7 +47,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 # The three moments, with the author's targets. h_2 is the cost-burden headcount
 # they named as "10.1% cost burdened households"; burden50 is the same idea
 # measured on income inside the cheapest unit and is reported, not targeted.
-TARGETS = {'h_1': 0.00399, 'h_2': 0.101, 'emp_homeless': 0.46}
+TARGETS = {'h_1': 0.01097, 'h_2': 0.101, 'emp_homeless': 0.46}
 
 # The four instruments, with the bounds the Fortran clamps them to. Exceeding a
 # clamp is worse than stopping at it: the handover silently truncates and the

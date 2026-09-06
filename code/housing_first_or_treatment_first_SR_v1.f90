@@ -1859,11 +1859,36 @@
         real(8), parameter :: fraction_itemizing_MIDs_data=0.07467241172     
         real(8), parameter :: MID_to_GDP_data=0.41
         real(8), parameter :: bequests_to_net_wealth_data=0.012
-        ! HUD point in time 2023 converted to HOUSEHOLDS: 467,020 homeless
-        ! individuals at one household each, plus 57,563 homeless family
+        ! AN ANNUAL RATE, NOT A POINT-IN-TIME ONE, from 6 September. The author:
+        ! *"Ok, so we can match 1-1.2%... Let's see if we can do that instead!"*
+        !
+        ! It was 0.00399: HUD point in time 2023 converted to HOUSEHOLDS, 467,020
+        ! homeless individuals at one household each plus 57,563 homeless family
         ! households, against 131,332,360 occupied units. The model's agent is a
-        ! household, so the person rate is the wrong denominator. It was 0.0045.
-        real(8), parameter :: fraction_homeless_data=0.00399
+        ! household, so the person rate is the wrong denominator; before that it
+        ! was 0.0045.
+        !
+        ! WHY THE POINT-IN-TIME FIGURE IS THE WRONG OBJECT. One model period is a
+        ! YEAR. A household that spends any part of a period on the street is
+        ! homeless for the whole of it, so model_fraction_homeless is "homeless at
+        ! some point during the year" and HUD's January single-night count is not.
+        ! The two differ by the ratio of annual prevalence to point prevalence,
+        ! which is above one for any positive exit rate and large here because
+        ! spells are short.
+        !
+        ! THE MULTIPLIER IS PROVISIONAL AND SAYS SO. HUD's AHAR Part 2 reports
+        ! annual SHELTERED homelessness at roughly twice the point-in-time
+        ! sheltered count, and the shelter-spell literature puts the all-in annual
+        ! figure near two and a half to three times point prevalence, since the
+        ! unsheltered turn over faster. 2.75 is the middle of that and 0.00399 x
+        ! 2.75 = 0.01097.
+        !
+        ! THIS NUMBER MUST BE REBUILT FROM AHAR PART 2 THE WAY 0.00399 WAS BUILT
+        ! FROM THE PIT TABLES -- annual homeless HOUSEHOLDS over occupied units,
+        ! not a multiplier applied to a household rate. Until then it is a
+        ! defensible order of magnitude and not a citable figure, and the paper
+        ! must not quote it as one.
+        real(8), parameter :: fraction_homeless_data=0.01097
 
         ! THE DISTRIBUTION OF HOUSEHOLDS ACROSS UNIT SIZES, from the American
         ! Community Survey 2023 table B25042, tenure by bedrooms, universe

@@ -43,7 +43,7 @@ import glob, hashlib, math, os, re, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
-TARGETS = {'h_1': 0.00399, 'h_2': 0.101, 'emp_homeless': 0.46}
+TARGETS = {'h_1': 0.01097, 'h_2': 0.101, 'emp_homeless': 0.46}
 
 # instrument -> (moment, fallback slope, lo, hi, damping, max e-fold per step)
 #

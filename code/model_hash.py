@@ -71,12 +71,32 @@ TARGET_CONSTANTS = (
     # condition. Writes and the outer stepper's gap only, which is the same
     # footprint as the two names already here.
     'drug_spending_share_data',
+    # fraction_homeless_data, added 6 September when the author moved the
+    # homelessness target from HUD's point-in-time count to an ANNUAL one. Every
+    # non-comment use read before adding, which is the bar:
+    #
+    #   1866   the declaration
+    #   6517   write, "MOMENT h_1"
+    #   40720  a stepper condition, model below target
+    #   40790  gap_size_homelessness_1, the street stepper's gap
+    #   40800  a stepper condition, gap larger than half the target
+    #   40823  write inside that condition
+    #   40854  the stepper's escape factor
+    #   40858  the same, second branch
+    #   40868  a stepper condition
+    #   40871  write, "against a target of"
+    #
+    # Everything from 40720 down is inside subroutine calibrating_model, the
+    # outer stepper, which a point pins every parameter against so it has nothing
+    # left to move. Not one use is in a household's problem, a price or an
+    # equilibrium condition.
+    'fraction_homeless_data',
 )
 
 # Bumped whenever semantic() changes. The cache maps file bytes to a semantic
 # hash, so a new rule makes every stored value wrong rather than merely stale --
 # the map is rebuilt from git rather than trusted when this moves.
-HASH_VERSION = 3
+HASH_VERSION = 4
 
 _TARGET_RE = re.compile(
     r'^(\s*.*::\s*(?:%s)\s*=)\s*\S+\s*$' % '|'.join(TARGET_CONSTANTS))
