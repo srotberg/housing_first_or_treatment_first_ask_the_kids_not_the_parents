@@ -262,6 +262,31 @@ RULES = {
     # the parameter and the step has to be large -- which is why its cap is the
     # loosest of the four.
     'probability_becoming_unemployed':           ('pi_eu',        +0.42, 0.002, 0.50, 0.70, 0.70),
+    # THE TWO AGE MOMENTS, 6 September, with the author's own directions.
+    #
+    #   *"newborn endowment should rise when young homelessness is too high"*
+    #   *"ssi should decline for the bottom 2 productivities when homelessness
+    #    share of the old is too low"*
+    #
+    # Both are NEGATIVE slopes and both signs are the AUTHOR'S, not a
+    # measurement -- which is why the magnitude is a bare 1.0 and the speeds are
+    # the slowest in the table. A slope of -1 says only "this moves that moment
+    # the other way, roughly one for one"; the first controlled pair replaces it.
+    # Arms are queued to supply exactly that.
+    #
+    # h_share1 and h_share5 are shares OF THE HOMELESS by age band, targets 0.26
+    # and 0.075, summing to one across the five bands. They are not the
+    # homelessness RATE within a band -- that is h_age<n>, an order of magnitude
+    # smaller, and pointing an instrument at the wrong one of the two would be
+    # invisible in the trace.
+    #
+    # SSI ALREADY ACTS ONLY AT THE BOTTOM without a model change: the benefit is
+    # max(PIA(node), takeup*level) and PIA rises with the node, so the floor
+    # binds on a bottom set and lowering it can only reach those households. The
+    # count of nodes it reaches is endogenous rather than pinned at two; pinning
+    # it would be a semantic change and is the author's call.
+    'newborn_endowment_scale':                   ('h_share1',     -1.00, 0.0, 3.0, 0.35, 0.20),
+    'ssi_floor_level':                           ('h_share5',     -1.00, 0.0, 0.30, 0.35, 0.20),
 }
 
 # THE BOTTOM NODE'S MASS IS FIXED AT 0.2 PER CENT, on the author's instruction.
