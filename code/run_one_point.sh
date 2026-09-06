@@ -217,7 +217,19 @@ declare -A P=(
     # instrument for the employed share of the homeless; rho_d is the earnings
     # penalty of a substance use disorder and the instrument for the SUD share of
     # them. Their defaults are the values they were assigned at.
-    [increased_prob_if_homeless]=0.2
+    # ZERO ON THE AUTHOR'S INSTRUCTION, 6 September: *"I only want delta to be
+    # adjusted to match the share of homelessness employed... I don't want that
+    # 20% penalty on top"*. It penalised the homeless on BOTH margins --
+    # separation up by iph and job finding down by iph -- which left
+    # homeless_job_penalty_pp sharing emp_homeless with a second, symmetric
+    # penalty. delta now stands alone on that moment.
+    # ZERO ON THE AUTHOR'S INSTRUCTION, 6 September: *"I only want delta to be
+    # adjusted to match the share of homelessness employed... I don't want that
+    # 20% penalty on top"*. It penalised the homeless on BOTH margins --
+    # separation up by iph, job finding down by iph -- so homeless_job_penalty_pp
+    # shared emp_homeless with a second, symmetric penalty. delta stands alone
+    # on that moment now.
+    [increased_prob_if_homeless]=0.0
     # THE NON-HOUSING CONSUMPTION PENALTY OF THE STREET. Zero reproduces the
     # model exactly; it owns y_h, the income of the homeless. See its declaration
     # in the Fortran for why the employment-transition instruments cannot reach
