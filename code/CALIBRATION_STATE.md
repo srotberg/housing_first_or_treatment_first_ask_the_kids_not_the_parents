@@ -1,3 +1,42 @@
+## 6 September, 09:03 -- THE REWEIGHTED STEP PUTS THE COST BURDEN EXACTLY ON
+## TARGET AND CUTS HOMELESSNESS BY A THIRD. THE HOUSING WEIGHT IS THE LEVER.
+
+Half of the ridge step, point_eec22a73c1, relative_share_of_housing = 0.3755,
+shifter 0.0057039:
+
+  moment              model    target      gap
+  h_2, cost burden   0.1007    0.1010    -0.3 per cent      FIRST TIME EVER ON TARGET
+  b                  0.0901    0.0890    +1.2
+  kappa_uem          0.3077    0.3000    +2.6
+  h_1                0.0387    0.0040    the LOWEST on any vector with a live drug block
+  emp_homeless       0.3853    0.4600   -16.2
+  lambda_m           0.3188    0.2500   +27.5
+  gamma              0.3625    0.2680   +35.3
+  ten of twenty-three inside ten per cent, eighteen inside twenty.
+
+TWO THINGS HAPPENED AT ONCE AND BOTH ARE NEW. The severe cost burden -- the moment
+ENGINE.md recorded as HAVING NO INSTRUMENT once the ladder ratios were fixed -- is
+on target to three decimal places. And h_1 fell from 0.0569 at f1f8022841 and
+0.0827 at the unweighted Newton step to 0.0387, a third off the best figure of the
+night, WITHOUT touching size_homelessness.
+
+THE LEVER IS relative_share_of_housing, and it moves h_1 harder than the street
+does. From 0.33 to 0.3755 -- a fourteen per cent rise in the taste for housing --
+h_1 falls by more than half. This is the author's own argument from 5 September,
+measured at last: *"if the share of housing is actually 0.268, homelessness would
+not be a good idea for the workers"*. It is true, and it runs the other way too:
+the LOW housing weight is what was keeping homelessness high all night.
+
+THE PRICE IS gamma, at +35 per cent, because in this model the expenditure share
+follows the weight at a slope of about a half rather than one. gamma and h_1 are
+therefore in DIRECT OPPOSITION through the same parameter, and no third instrument
+separates them. That is the cleanest statement of the model's central tension that
+has been produced tonight, and it belongs in the note.
+
+batch_housing_weight.txt takes relative_share_of_housing to 0.48, 0.55, 0.63 and
+0.72 off eec22a73c1, changing nothing else, to find where h_1 stops falling and
+what gamma costs at each rung.
+
 ## 6 September, 08:52 -- THE 0.7 STEP SHARPENS THE TRADE RATHER THAN ESCAPING IT,
 ## SO THE OBJECTIVE ITSELF HAS BEEN REWEIGHTED TOWARDS THE HOUSING MOMENTS.
 
