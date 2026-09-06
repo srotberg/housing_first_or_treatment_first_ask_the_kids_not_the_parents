@@ -1229,7 +1229,19 @@ BOUNDS = {
     # finding to exactly zero. delta no longer touches finding, so that bound has
     # no meaning; what bounds it now is the separation probability pbu+delta,
     # which cannot exceed one.
-    'homeless_job_penalty_pp':                             (0.001, 0.99),
+    # HELD AT ZERO SINCE 6 September. No bounds entry is how a parameter is held,
+    # and the loop that writes the batch now enforces that test rather than dying
+    # on a KeyError. The author: *"Set delta=0"*.
+    #    'homeless_job_penalty_pp':                          (0.001, 0.99),
+    #
+    # THE BOTTOM NODE'S MASS UNDER KKK, which now owns emp_homeless. The clamp in
+    # the Fortran is [1, 6] and these match it, because a handover outside the
+    # clamp is silently truncated and the point that comes back is not the point
+    # that was asked for. The instrument is well inside its range at the
+    # benchmark's 3.35, and the source's own calibration of it reads 3.00 ->
+    # 0.621 per cent of the population on the bottom node, 3.25 -> 0.318, 3.50 ->
+    # 0.155.
+    'kkk_s_deviation_bottom':                              (1.0, 6.0),
     # One is no penalty; the floor is 0.05 rather than zero because zero
     # earnings for every addict is a corner and not a calibration.
 }

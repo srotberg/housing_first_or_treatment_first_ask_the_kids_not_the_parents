@@ -229,7 +229,13 @@ declare -A P=(
     # separation up by iph, job finding down by iph -- so homeless_job_penalty_pp
     # shared emp_homeless with a second, symmetric penalty. delta stands alone
     # on that moment now.
-    [increased_prob_if_homeless]=0.0
+    # ON AT 0.20 AND EXOGENOUS SINCE 6 September, on the author's instruction:
+    # *"Set delta=0. And recalibrate based on the 20% penalty when homeless being
+    # exogenous"*, and *"add the 20% higher chance of unemployment and 20% higher
+    # chance of not regaining employment as well"*. With delta at zero the
+    # multiplicative branch runs and applies BOTH halves: job loss x1.20, job
+    # finding x0.80. It is not calibrated -- it is a statement about the world.
+    [increased_prob_if_homeless]=0.2
     # THE NON-HOUSING CONSUMPTION PENALTY OF THE STREET. Zero reproduces the
     # model exactly; it owns y_h, the income of the homeless. See its declaration
     # in the Fortran for why the employment-transition instruments cannot reach
@@ -252,7 +258,12 @@ declare -A P=(
     # REPRODUCES THE MODEL EXACTLY", so the author's original paper ran without it.
     # 0.001 rather than 0 keeps the percentage-point branch live, so releasing it
     # later is a step and not a regime change.
-    [homeless_job_penalty_pp]=0.001
+    # ZERO SINCE 6 September: *"Set delta=0"*. The 0.001 above was chosen to keep
+    # the percentage-point branch live, and that turned out to be the problem
+    # rather than the safeguard -- ANY positive delta sets find_mult_homeless to
+    # exactly one, so it silently switched off the job-finding half of the
+    # penalty. At zero the multiplicative branch runs and both halves apply.
+    [homeless_job_penalty_pp]=0
     # THE BOTTOM OF THE PRODUCTIVITY GRID, two instruments for the two moments
     # that say who the homeless are: the employed share (0.46) and their income
     # (0.191 of average). y_grid_kappa sets the bottom node's mass, exactly
