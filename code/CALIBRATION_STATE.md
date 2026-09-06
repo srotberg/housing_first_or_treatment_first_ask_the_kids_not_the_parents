@@ -1,3 +1,45 @@
+## 6 September, 15:20 -- gamma TRACKS THE HOUSING WEIGHT ONE-FOR-ONE, AND THE
+## PRICE OF HOUSING DOES NOT MOVE IT AT ALL.
+
+Every point in the archive on the CURRENT source, 216 of them, gamma against
+relative_share_of_housing:
+
+  rsh    0.2452 0.2680 0.3000 0.3291 0.3450 0.3755 0.4273 0.4800 0.7200
+  gamma  0.288  0.298  0.316  0.334  0.340  0.362  0.411  0.438  0.582
+
+THE HOUSING EXPENDITURE SHARE IS HIGH BECAUSE THE WEIGHT IS HIGH. gamma = 0.268
+needs a weight near 0.23. The weight is at 0.3291 because a high one suppresses
+homelessness -- the author's own argument of 5 September -- and the archive prices
+the reversal: at rsh 0.2452, point a24ec2260c, gamma improves to 0.288 and h_1
+goes to 0.1139, roughly double.
+
+THE PRICE OF HOUSING DOES NOT MOVE gamma. Tonight's h_2 ladder, absolute street
+held fixed at 0.00143:
+
+  h_2     0.120   0.113   0.108
+  gamma   0.3213  0.3214  0.3219
+  h_1     0.0564  0.0525  0.0510
+
+Three rungs, gamma flat to four decimals. THE DISCRETE LADDER IS WHY: cheaper
+housing does not make households spend less on housing, it makes them buy a bigger
+unit. The expenditure share is pinned by the taste and is independent of the price.
+NO STEP AT THE 0.1125 AFFORDABILITY THRESHOLD EITHER, so the threshold story is not
+the mechanism for h_1 that it looked like.
+
+A TRAP IN THE ARCHIVE, RECORDED SO IT IS NOT WALKED INTO AGAIN. There are points at
+h_2 = 0.090 with gamma = 0.2712 and h_1 = 0.0096 -- both on target. They all carry
+addiction_onset_base = 0: the dead drug block, b = 0.897, three of twenty-three
+moments inside ten per cent, median gap 44 per cent. They are the pre-fix economy
+and they look like the answer. ALWAYS CHECK addiction_onset_base AND THE MOMENT
+COUNT BEFORE BELIEVING A LOW-h_2 POINT.
+
+THE SYNTHESIS. h_1, gamma and sigma_y are three views of ONE tension: how much
+households value housing. Raise the weight and homelessness falls while the
+expenditure share and the bottom half's income share go wrong; lower it and the
+reverse. Three routes were tried today -- the street, the income of the poor, and
+the price of the cheapest unit -- and none of them escapes it, because none of them
+changes what households want.
+
 ## 6 September, 14:33 -- BOTH STANDING BUILDS PASS, AND THE BOUNDS BUILD FINDS
 ## SEVEN OUT-OF-BOUNDS READS IN THE TRANSITION WRITER.
 
