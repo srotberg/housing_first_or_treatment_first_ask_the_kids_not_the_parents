@@ -99,6 +99,24 @@ RULES = {
     # -4.15 to -1.56, from the threshold sweep of 18:20. LOWER level, HIGHER
     # employed share, which is what the author said.
     'bottom_productivity_level':                 ('emp_homeless', -2.66, 0.02, 1.20, 0.60, 0.25),
+    # THE NO-WAGE-INCOME SHARE, added 6 September when the author moved its
+    # target from 0.1393 to 0.049: *"Let the method run with the new unemployment
+    # rate target"*. Without an instrument pointed at it the target change does
+    # nothing -- the three-instrument loop would carry the old pool and simply
+    # report a bigger gap.
+    #
+    # WHY IT MATTERS MORE THAN ITS OWN MOMENT. h_1 decomposes almost exactly into
+    # the size of this pool times the homelessness rate inside it: 0.1406 x
+    # 0.2951 = 0.0415 against a measured 0.0582. It is the only lever measured
+    # all day that works through the population at risk rather than the price of
+    # the street, so it is the only one that does not drag emp_homeless down as
+    # it lowers h_1.
+    #
+    # The slope is measured over 112 controlled pairs: median +0.42, range +0.03
+    # to +0.71. WELL BELOW ONE, so the moment is far less than proportional to
+    # the parameter and the step has to be large -- which is why its cap is the
+    # loosest of the four.
+    'probability_becoming_unemployed':           ('pi_eu',        +0.42, 0.002, 0.50, 0.70, 0.70),
 }
 
 # THE BOTTOM NODE'S MASS IS FIXED AT 0.2 PER CENT, on the author's instruction.

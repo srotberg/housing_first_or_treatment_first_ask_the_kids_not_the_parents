@@ -2521,7 +2521,39 @@
         ! parameter when SMI employment falls below target. The saturation can no
         ! longer happen silently: it is one of the nineteen gaps the walk reads
         ! every iteration.
-        real(8), parameter :: unemployment_rate_data=0.1393
+        ! 0.1393 -> 0.049, ON THE AUTHOR'S INSTRUCTION of 6 September: *"Maybe
+        ! what we need is a lower unemployment rate? The 4.9%...would that help?"*
+        ! and, when the concern below was put to them, *"Let the method run with
+        ! the new unemployment rate target"*.
+        !
+        ! THE ARITHMETIC THAT MOTIVATES IT IS SOUND. At the 0.268 housing-weight
+        ! point the model has 14.06 per cent of working-age households with no
+        ! wage income and 29.51 per cent of THEM homeless, and 0.1406 x 0.2951 =
+        ! 0.0415 against a measured h_1 of 0.0582. Cutting the pool to 4.9 per
+        ! cent at the same conditional rate gives 0.0145 against the annual target
+        ! of 0.01097 -- from 5.3 times out to 1.3. It works through the population
+        ! at risk rather than the price of the street, so unlike every other lever
+        ! measured on 6 September it does not drag emp_homeless down with it.
+        !
+        ! THE CONCERN, RECORDED BECAUSE IT WAS RAISED AND OVERRULED. This moment
+        ! is the HOUSEHOLD NO-WAGE-INCOME SHARE, not the labour-force unemployment
+        ! rate: the model prints "households with no wage income, working age" and
+        ! it equals the pi_eu moment to five digits. 0.1393 is the SCF share of
+        ! working-age households with no wage earner; 0.049 is the BLS
+        ! labour-force rate, a different denominator and a different universe that
+        ! excludes everyone out of the labour force. Those households are the ones
+        ! this model puts at risk of homelessness. The author moved the target the
+        ! OTHER way on 5 September for exactly this reason, and the comment block
+        ! that used to sit here said 0.049 was "the wrong quantity attached to the
+        ! right diagnostic".
+        !
+        ! WHAT WOULD ANSWER THE CONCERN WITHOUT MOVING THE TARGET is the
+        ! CONDITIONAL rate: 29.51 per cent of no-wage households homeless is the
+        ! indefensible number, not the size of the pool. Eight per cent there
+        ! gives h_1 = 0.011 with the pool untouched. replacement_rate_ui was made
+        ! calibratable on 6 September precisely to attack it and has not been
+        ! swept from a good base.
+        real(8), parameter :: unemployment_rate_data=0.049
         real(8), parameter :: unemployment_rate_sud_data=0.1625
 
         real(8) :: relative_share_of_addiction_adj=5*10.d0**(-2)
