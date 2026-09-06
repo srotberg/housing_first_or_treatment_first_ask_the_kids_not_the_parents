@@ -1,3 +1,51 @@
+## 6 September, 05:22 -- THE DRUG BLOCK IS CLOSED. b, lambda_d AND THE
+## CONVERSION RATIO ARE ALL INSIDE TWO PER CENT AT point_6d2b5d0f84.
+
+  addiction_onset_base = 0.0400, addiction_scalar_1 = 0.0065, lambda_addiction = 0
+
+      moment        model    target     gap
+      b            0.0905    0.0890    +1.7%
+      lambda_d     0.0375    0.0368    +2.0%
+      ratio        0.4146    0.4135    +0.3%
+
+The corner at shifter 0.0095 with the same hazard, point_104d02901e, returned
+b = 0.00035 and lambda_d = 0.000034: THE BLOCK SWITCHES OFF OVER A FORTY-SIX PER
+CENT STEP IN THE SHIFTER. Only the low-shifter side of the box is alive, and the
+solution sits close to that cliff. Any later move in the hazard has to be paired
+with a shifter move measured, not extrapolated.
+
+FULL GAP TABLE AT 6d2b5d0f84, h2 = 0.130, street = 0.0110:
+
+  beta          2.26636   2.25000     0.7%     gamma        0.33171   0.26800   23.8%
+  pi_V          0.26954   0.26600     1.3%     mu_H         0.85932   1.47321  -41.7%
+  b             0.09052   0.08900     1.7%     y_u          1.10944   0.74000   49.9%
+  lambda_d      0.03753   0.03680     2.0%     aleph       33.92619  80.00000  -57.6%
+  cbar          0.00438   0.00420     4.2%     tau_u        0.44808   0.24500   82.9%
+  lambda_m      0.26844   0.25000     7.4%     h_3          0.09941   0.62672  -84.1% (conceded)
+  emp_homeless  0.42158   0.46000    -8.4%     w_bot        0.05242   0.02500  109.7% (conceded)
+  tau_l         0.20309   0.22400    -9.3%     kappa_ued    0.47411   0.16250  191.8%
+  pi_eu         0.12342   0.13930   -11.4%     h_1          0.06358   0.00399 1493.5%
+  sigma_y       0.19459   0.17200    13.1%
+  p_m           0.04141   0.04837   -14.4%
+  h_2           0.08535   0.10100   -15.5%
+  burden50      0.20251   0.17500    15.7%
+  kappa_uem     0.24969   0.30000   -16.8%
+  omega_l       0.46888   0.40000    17.2%
+  theta         0.11619   0.14098   -17.6%
+
+  inside 10%: 8 of 23; inside 20%: 16 of 23. Was 5 of 25 and 12 of 25 at 04:30.
+
+WHAT THIS UNBLOCKS. kappa_ued, tau_u, mu_H and aleph have instruments --
+multiple_of_probabilities_of_employment_if_addicted, utility_cost_of_treatment,
+mu_homeless and value_of_life -- that were MEANINGLESS while nobody carried the
+disorder. Their gaps of 192, 83, -42 and -58 per cent are the first honest
+readings any of them have had, and they should now respond. The joint search
+should be resumed from 6d2b5d0f84 as the anchor once the street is settled.
+
+IN FLIGHT: batch_street_drug.txt, size_homelessness at 0.0030, 0.0010, 0.0003 and
+0.0001 off 6d2b5d0f84, re-measuring the homelessness floor on a model that now has
+drug use in it.
+
 ## 6 September, 05:12 -- THE DRUG BLOCK IS ALMOST CLOSED. b IS INSIDE TEN PER
 ## CENT AND THE PREDICTED JOINT SOLUTION IS INSIDE THE BOX NOW SOLVING.
 
