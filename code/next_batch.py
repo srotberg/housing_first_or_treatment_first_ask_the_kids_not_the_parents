@@ -476,7 +476,11 @@ OWN = {
     # h3 to raise so that only 64% of renters are in the largest unit"*. Raising
     # the top rung makes it dearer, fewer choose it, and the households it pushes
     # out land in h2 where they can be cost burdened -- one move doing both jobs.
-    'largest_house_size':                                  'h_3',
+    # LARGEST_HOUSE_SIZE OWNS NOTHING, 6 September. The author chose the ratio
+    # ladder -- h3 = 2*h2, h4 = 3*h2 -- so the top rung is a multiple of h2 and
+    # this parameter determines nothing. Leaving it pointed at h_3 would be an
+    # instrument that cannot move its target. It is HELD.
+    # 'largest_house_size':                                'h_3',
     'relative_share_of_housing':                           'gamma',
 
     # THE BOTTOM PRODUCTIVITY NODE OWNS emp_homeless. The author, 3 September:
@@ -537,7 +541,30 @@ OWN = {
     # differing only in kappa_uem, the elasticity on lambda_m is +0.82 where h_1
     # is far below target and -0.07 where h_1 is realistic, with the sign a coin
     # flip. lambda_m has no instrument, which directions_table.py states.
-    'kappa_uem':                                           'kappa_uem',
+    # KAPPA_UEM NOW OWNS lambda_m, THE SMI SHARE OF THE HOMELESS, 6 September,
+    # on the author's instruction: *"We will choose kappa_eum to match the share
+    # of homeless with smi"*.
+    #
+    # It is pi_eu FOR THE MENTALLY ILL: the SMI separation rate is
+    # min(pbu*kappa_uem, 1), so it multiplies job loss for SMI households and is
+    # the channel that carries SMI into poverty and onto the street.
+    #
+    # lambda_m HAD NO INSTRUMENT BEFORE THIS. The parameter of the same name is
+    # the SMI recovery rate, ASSIGNED from the recovery literature rather than
+    # calibrated, so the moment sat at 0.077 against 0.250 with nothing able to
+    # move it.
+    #
+    # IT MUST STAY BELOW SATURATION. The separation rate is a probability and the
+    # code caps it at one. At the pbu = 0.041 that pi_eu wants, pbu*kappa_uem =
+    # 1.53 and the rate pins at 1: raising kappa_uem does nothing and lowering it
+    # is the only live direction. Below 24.4 it spans the whole range 0 to 1,
+    # which is why BOUNDS now caps it at 20 instead of 100.
+    'kappa_uem':                                          'lambda_m',
+    # THE OLD kappa_uem MOMENT IS ORPHANED BY THAT CHOICE. Employment given SMI
+    # read 0.324 against 0.300, eight per cent out, and its only instrument has
+    # just been repointed. Conceded in SKIP rather than left scored, because a
+    # moment nothing can move distorts the minimax. This is a CONSEQUENCE of the
+    # author's instruction, not a separate decision, and it is flagged to them.
     # BACK, ON THE AUTHOR'S INSTRUCTION. The statutory SNAP schedule was right
     # per household and wrong by a factor of 48 in aggregate, so the programme
     # is a calibrated allotment again and cbar is a target again.
@@ -1016,7 +1043,7 @@ BOUNDS = {
     # homeless -- points at the middle of this range rather than the bottom.
     'newborn_endowment_scale':                             (0.0, 3.0),
     'largest_house_size':                                  (0.02, 1.00),
-    'kappa_uem':                                           (1.0, 100.0),
+    'kappa_uem':                                           (0.5, 20.0),
     'max_food_cost':                                       (1e-4, 1.0),
     # A REAL SEARCH RANGE NOW: nothing calibrates this inside a point run.
     # THE CEILING EXCLUDED THE SOLUTION, found 2 September, the same fault as
@@ -1198,7 +1225,16 @@ BAND = {# w_bot IS A WIDE BAND, on the author's instruction of 3 September:
 # rather than about the world, and its only instrument
 # (smallest_rental_relative_to_lowest_income) moves it at -0.01, which is to say
 # it has no instrument at all.
-SKIP = {# h_3 IS UN-CONCEDED, 5 September. It entered SKIP on 31 August because its
+SKIP = {
+        # kappa_uem THE MOMENT IS CONCEDED, 6 September: its only instrument was
+        # repointed at lambda_m on the author's instruction, so nothing moves it.
+        'kappa_uem',
+        # h_3 IS CONCEDED, 6 September, on the author's instruction: *"let's go
+        # with the 2x/3x rungs and concede h_3"*. On a ratio ladder the top rung
+        # is 3*h2 and h2 is spoken for by burden50, so nothing can move the share
+        # in the largest unit. Measured: it extrapolates to about 0.025 at 3x h2
+        # against a target of 0.627.
+        'h_3',# h_3 IS UN-CONCEDED, 5 September. It entered SKIP on 31 August because its
         # only instrument moved it at -0.01 -- the author's *"h3 can be off"* --
         # and that instrument was smallest_rental_relative_to_lowest_income.
         # largest_house_size is an independent absolute level now and moves it

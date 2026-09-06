@@ -4542,7 +4542,24 @@
         ! Which dominates is open and depends on the spacing, which is why the
         ! interior is geometric between two FREE endpoints rather than fixed
         ! ratios of the bottom.
-        integer, parameter :: housing_status_grid_size=5
+        ! THREE RENTAL RUNGS ON FIXED RATIOS, 6 September, on the author's
+        ! instruction: *"let's go with the 2x/3x rungs and concede h_3... All I
+        ! want is to have the right share of cost burdened renters coming from
+        ! the bottom rung, and the relative share of housing to be high and match
+        ! the housing spending share"*.
+        !
+        ! ONE FREE PARAMETER SETS THE WHOLE RENTAL LADDER: h2 owns burden50 and
+        ! the upper rungs follow at 2h2 and 3h2. h_3 therefore has NO instrument
+        ! and is CONCEDED -- see SKIP in next_batch.py. largest_house_size
+        ! determines nothing here and must be held rather than calibrated;
+        ! leaving it mapped to h_3 would be an instrument that cannot move its
+        ! target, which is how the moment ran away before.
+        !
+        ! WHAT h_3 COSTS, measured at h2 = 0.20 on the free-top-rung ladder: the
+        ! share in the largest unit ran 0.1613, 0.1242, 0.0944, 0.0441 at top
+        ! rungs of 1.30x, 1.50x, 1.80x and 2.25x h2, a log-log slope of -2.32.
+        ! Extrapolated to 3x that is about 0.025 against a target of 0.627.
+        integer, parameter :: housing_status_grid_size=3
                          
         integer :: space_lived_in_num_of_internal=2  
                                                         
@@ -27746,14 +27763,8 @@
             ! held rather than calibrated.
             if (housing_status_grid_size>2) then
 
-                do i=1,housing_status_grid_size-2
-
-                    housing_size(i)=housing_size(0)*&
-                        (housing_size(housing_status_grid_size-1)/&
-                        housing_size(0))**&
-                        (dble(i)/dble(housing_status_grid_size-1))
-
-                end do
+                housing_size(1)=rung_ratio_h3*housing_size(0)
+                housing_size(housing_status_grid_size-1)=rung_ratio_h4*housing_size(0)
 
             end if
             
