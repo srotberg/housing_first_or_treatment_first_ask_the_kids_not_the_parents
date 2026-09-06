@@ -259,23 +259,29 @@ def main():
     # and only the node's LEVEL relative to the rung matters. A slope is a local
     # object and this one was carried across a regime change.
     #
-    # RAISING kkk_s_deviation_bottom PUSHES THE BOTTOM NODE FURTHER INTO THE TAIL:
-    # poorer, and thinner, which is the author's "lower the mass". That is what
-    # gets it back below the rung and puts employed households on the street
-    # again. So at the corner the instrument steps UP by a fixed factor, and it
-    # keeps stepping until the moment is off zero and an ordinary log step works.
+    # THE ESCAPE IS NOW THE SECOND NODE'S LEVEL, not the bottom node's tail. The
+    # first version of this rule thinned the tail with kkk_s_deviation_bottom,
+    # which does work -- the ratio climbed 0.25 -> 0.39 -> 0.52 in three rounds --
+    # but it buys the affordability by making the bottom node smaller at the same
+    # time, so the households it prices out get fewer as they get poorer. The
+    # author's fix removes that trade: hold the bottom node at 0.2 per cent and
+    # lower the SECOND node instead, which has mass to spare.
+    #
+    # So at the corner bottom_productivity_level steps DOWN by a fixed factor,
+    # and keeps stepping until employed households are priced out and the moment
+    # comes off zero, at which point the ordinary log step takes over.
     at_corner = mom.get('emp_homeless', 0.0) <= 0.0
     if at_corner:
-        k = 'kkk_s_deviation_bottom'
+        k = 'bottom_productivity_level'
         _, _, klo, khi, _, _ = RULES[k]
-        nxt[k] = max(klo, min(khi, vec[k] * 1.15))
+        nxt[k] = max(klo, min(khi, vec[k] * 0.85))
         print(f'#   {k:<44}{vec[k]:10.5g} -> {nxt[k]:10.5g}   '
-              f'emp_homeless is 0 at a rental/lowest-income ratio below 1: '
-              f'thinning the bottom tail to price the employed out again',
+              f'emp_homeless is 0: lowering the second node until working '
+              f'households are priced out of the cheapest rental',
               file=sys.stderr)
 
     for param, (moment, fb, lo, hi, damp, efold) in RULES.items():
-        if param == 'kkk_s_deviation_bottom' and at_corner:
+        if param == 'bottom_productivity_level' and at_corner:
             continue
         if param == rung and serve_h1:
             moment, fb = 'h_1', +2.06
