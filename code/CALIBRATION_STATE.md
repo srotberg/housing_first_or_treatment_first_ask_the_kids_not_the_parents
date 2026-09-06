@@ -1,3 +1,48 @@
+## 6 September, 16:45 -- THE BINDING AFFORDABILITY LINE IS THE UNEMPLOYED ONE,
+## 0.3222, NOT THE EMPLOYED ONE, 0.1611. THAT IS THE THING THAT WAS MISSING.
+
+The author asked how eviction could reduce homelessness when the bottom nodes
+cannot afford the rent. It cannot -- eviction ADDS homelessness; it fixes WHO the
+homeless are, not HOW MANY. The 16:35 note conflated the two. Chasing the
+objection found the error underneath every affordability test today.
+
+  rent + food                                   = 0.16112
+  replacement_rate_ui                           = 0.5
+  an UNEMPLOYED household therefore needs y     > 0.32224
+
+  node      y        mass    employed      unemployed
+   1     0.06680  0.00239    CANNOT        CANNOT
+   2     0.14361  0.03660    CANNOT        CANNOT
+   3     0.30864  0.20167    can afford    CANNOT
+   4     0.66333  0.39773    can afford    can afford
+
+EVERY AFFORDABILITY TEST TODAY WAS RUN AGAINST 0.1611, WHICH ONLY THE BOTTOM TWO
+NODES FAIL, 3.9 PER CENT. The line that binds is 0.3222 and the bottom THREE fail
+it: 24.1 per cent of households cannot pay rent and eat if they lose their job.
+Times the 13.5 per cent unemployment rate that is 3.25 per cent, and with the 2.3
+per cent who are homeless by choice it accounts for essentially all of the 6.2.
+
+IT PREDICTS THE TWO RESULTS THAT DID NOT MAKE SENSE:
+
+  merged level 0.2811 -> unemployed income 0.1406 < 0.1611 -> h_1 unchanged
+  merged level 0.3500 -> unemployed income 0.1750 > 0.1611 -> h_1 0.0617 -> 0.0384
+
+The merge at the mass-weighted level failed because it never crossed the line that
+matters. The drop at 0.35 is exactly where it crosses.
+
+THE RECIPE IS THEREFORE THREE STEPS, NOT ONE:
+  1  kill the NECESSITY channel -- households able to make rent while unemployed,
+     by lifting the bottom above 0.322 or by a safety net that covers rent
+  2  kill the CHOICE channel -- the street unattractive enough that the 37 per cent
+     who choose it stop
+  3  THEN add displacement at 0.4 per cent with the 7.3:1 employed-to-unemployed
+     ratio, supplying the level and the employment mix that 1 and 2 removed
+
+OPEN AND HONEST: at level 0.35 emp_homeless FELL to 0.1588. If the unemployed were
+the ones being housed it should have RISEN. The story predicts the h_1 drop and
+the composition backwards, so it is not yet the whole mechanism. Levels 0.50 and
+0.70 and the street inversion are running and should settle it.
+
 ## 6 September, 16:35 -- THE THREE-MOMENT PROBLEM HAS A DIAGNOSIS AND A DESIGN.
 ## THE MODEL HAS NO EVICTION CHANNEL, AND THAT IS WHY h_1 AND emp_homeless FIGHT.
 
