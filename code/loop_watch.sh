@@ -15,6 +15,12 @@
 # restart is a broken step, not a transient, so consecutive fast failures back
 # off and then stop, leaving the reason in the log rather than spinning.
 #
+# IT IDLES WITH sleep, NOT WITH read -t. The first version waited with
+# "read -t 60 x < /dev/zero", which does not idle at all: /dev/zero never
+# delivers a newline, so bash spins on it and the watchdog burned a full core.
+# On four cores that is a quarter of the machine taken from the solver, and the
+# solve running when it was found was at 27 minutes against a 3 minute median.
+#
 # code/STOP_LOOP stops it deliberately: the file is checked every pass and the
 # watchdog exits without starting anything. code/STOP is the author's own marker
 # and is honoured the same way.
@@ -51,10 +57,10 @@ while true; do
                 echo "$(date -u +%H:%M:%S) five fast failures; stopping. Read code/three_loop.log for the reason." >> "$LOG"
                 exit 1
             fi
-            read -t $((30 * fails)) x < /dev/zero || true
+            sleep $((30 * fails))
         else
             fails=0
         fi
     fi
-    read -t 60 x < /dev/zero || true
+    sleep 60
 done
