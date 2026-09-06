@@ -348,6 +348,65 @@ def on_config(vec):
                for k, want in CONFIG.items())
 
 
+LEDGER = os.path.join(HERE, 'three_step_iterates.txt')
+
+
+def remember(vec):
+    """Record a vector this loop asked for, so its solved point is recognisable.
+
+    THE METHOD ITERATES ON ITS OWN OUTPUT. That is what makes it the author's
+    method rather than a search: x_{n+1} = f(x_n), one instrument per moment,
+    starting from where the last iteration landed.
+
+    Matching an iterate by "newest point that carries CONFIG" does not express
+    that, and it broke the moment the gate started its correction round: those
+    arms carry CONFIG too -- they are one-coordinate variations off a base that
+    shares it -- so the newest of them became the base. The iteration restarted
+    from kkk_s_deviation_bottom=6 and size_homelessness at its floor, discarding
+    the fixed point six iterations had reached, and nothing said so.
+
+    So the loop writes down what it asked for and reads back only those. A point
+    solved from anyone else's vector is still available for SLOPES -- controlled
+    pairs are exactly what the correction round exists to produce -- it just
+    cannot be the base.
+    """
+    with open(LEDGER, 'a') as f:
+        f.write(' '.join(f'{k}={v:.10g}' for k, v in sorted(vec.items())) + '\n')
+
+
+def _ledger():
+    if not os.path.exists(LEDGER):
+        return []
+    out = []
+    for line in open(LEDGER, errors='replace'):
+        d = {}
+        for tok in line.split():
+            if '=' in tok:
+                k, v = tok.split('=', 1)
+                try:
+                    d[k] = float(v)
+                except ValueError:
+                    pass
+        if d:
+            out.append(d)
+    return out
+
+
+def is_iterate(vec, ledger):
+    """True if this point was solved from a vector THIS loop asked for.
+
+    Compared numerically and only over the keys the loop named: run_one_point
+    fills the rest from its defaults and the point echoes those too, so an exact
+    string match would never fire. The emitted values are already rounded to %g,
+    so 1e-5 relative is far looser than any real difference between two iterates.
+    """
+    for want in ledger:
+        if all(k in vec and abs(vec[k] - v) <= 1e-5 * max(abs(v), 1e-9)
+               for k, v in want.items()):
+            return True
+    return False
+
+
 def iterates():
     """Every solved point that is an iterate of this loop, newest last."""
     h = model_hash()
@@ -373,6 +432,14 @@ def iterates():
         out.append((mt, os.path.basename(f)[6:16], vec, mom))
     out.sort()
     return out
+
+
+def bases(pts):
+    """The iterates of this loop, in order. Empty before the first step."""
+    led = _ledger()
+    if not led:
+        return []
+    return [r for r in pts if is_iterate(r[2], led)]
 
 
 def slope(pts, param, moment, fallback):
@@ -407,8 +474,20 @@ def main():
         print('# no solved point carries the configuration yet; seed first',
               file=sys.stderr)
         return 2
-    _, tag, vec, mom = pts[-1]
-    print(f'# from point_{tag}', file=sys.stderr)
+    # THE BASE IS THIS LOOP'S OWN LAST ITERATE, never merely the newest point
+    # that happens to share the configuration -- see remember(). Before the first
+    # step there is no ledger, so the newest configured point seeds it; after
+    # that, a point solved from someone else's vector can supply slopes but not
+    # the base.
+    own = bases(pts)
+    if own:
+        _, tag, vec, mom = own[-1]
+        print(f'# from point_{tag}   (iterate {len(own)} of this loop)',
+              file=sys.stderr)
+    else:
+        _, tag, vec, mom = pts[-1]
+        print(f'# from point_{tag}   (SEED: no iterate of this loop yet)',
+              file=sys.stderr)
     nxt = dict(vec)
 
     for k, v in FIXED.items():
@@ -516,8 +595,10 @@ def main():
               f'{moment} {cur:.5f} vs {tgt:.5f}, slope {e:+.2f} ({src}){at}',
               file=sys.stderr)
         nxt[param] = new
+    emit = {k: float(f'{v:g}') for k, v in nxt.items()}
+    remember(emit)
     print('bash code/run_one_point.sh ' +
-          ' '.join(f'{k}={v:g}' for k, v in sorted(nxt.items())))
+          ' '.join(f'{k}={v:g}' for k, v in sorted(emit.items())))
     return 0
 
 
