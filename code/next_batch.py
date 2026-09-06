@@ -583,7 +583,13 @@ OWN = {
     # code caps it at one. At the pbu = 0.041 that pi_eu wants, pbu*kappa_uem =
     # 1.53 and the rate pins at 1: raising kappa_uem does nothing and lowering it
     # is the only live direction. Below 24.4 it spans the whole range 0 to 1,
-    # which is why BOUNDS now caps it at 20 instead of 100.
+    # which is why BOUNDS capped it at 20 instead of 100.
+    #
+    # THAT CAP EXPIRED WITH THE UNEMPLOYMENT RETARGET, 6 September. pbu is no
+    # longer 0.041 but 0.0128, so saturation moved from 24.4 to 78 and the cap
+    # was holding the instrument at 20 with its moment at 0.543 against 0.300,
+    # which needs about 55. Raised to 70, still below saturation and below the
+    # Fortran's clamp of 100.
     'kappa_uem':                                          'kappa_uem',
     # KAPPA_FIND_SMI OWNS lambda_m, 6 September. kappa_uem used to do both
     # margins, so the SMI unemployment RATE and the SMI spell DURATION were

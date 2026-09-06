@@ -351,7 +351,20 @@ RULES = {
     #
     # This is what the no-guessed-slopes rule is for. A sign taken from a name
     # rather than from the code was wrong within one iteration.
-    'kappa_uem':                                 ('kappa_uem',    -1.00, 1.0, 20.0, 0.25, 0.20),
+    # UPPER BOUND 70, RAISED FROM 20 at 23:15. The 20 was set to keep
+    # probability_becoming_unemployed * kappa_uem below the cap of one, at a pbu
+    # of 0.041 where saturation sat at 24.4. The author's move of the
+    # unemployment target to 4.9 per cent took pbu to 0.0128 and pushed
+    # saturation out to 78, so the cap was guarding a limit that had moved: the
+    # instrument pinned at 20 with employment given SMI at 0.543 against 0.300,
+    # which needs about 55. The Fortran's own clamp is 100.
+    #
+    # SATURATION IS STILL THE THING TO WATCH. Above pbu*kappa_uem = 1 the SMI
+    # separation rate pins at one and the instrument goes inert -- the trace
+    # shows it stepping while the moment does not move. At 70 that happens if pbu
+    # rises past 0.0143, which is close to where it is, so this bound is a
+    # measurement decision that expires if the unemployment target moves again.
+    'kappa_uem':                                 ('kappa_uem',    -1.00, 1.0, 70.0, 0.25, 0.20),
     'utility_cost_of_treatment':                 ('tau_u',        -1.00, 0.0, 8.0, 0.25, 0.20),
     'multiple_of_probabilities_of_employment_if_addicted':
                                                  # upper bound 20, the Fortran's own
