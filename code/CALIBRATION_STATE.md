@@ -1,3 +1,34 @@
+## 6 September, 09:12 -- THE HOUSING WEIGHT HAS A SWEET SPOT AT 0.3755, AND
+## h_1 = 0.4 PER CENT IS OUTSIDE THE PARAMETER SPACE.
+
+  run         tag             rsh  in10  in20      b  emp|hl     h_2   lam_m     h_1   gamma
+  half        eec22a73c1  0.37553 10/23 18/23 0.0901  0.3853  0.1007  0.3188  0.0387  0.3625
+  half x0.93  3b8a4fb087  0.37553  8/23 16/23 0.1137  0.3816  0.1007  0.3173  0.0391  0.3624
+  half x1.07  0dbe71ff64  0.37553  8/23 17/23 0.0691  0.3883  0.1027  0.3193  0.0382  0.3633
+  full        4fdd3ff6ef  0.42733  4/23 13/23 0.0999  0.3712  0.2361  0.3210  0.0297  0.4121
+  full x0.93  2e04b985f9  0.42733  6/23 10/23 0.1342  0.3677  0.2337  0.3225  0.0304  0.4106
+  full x1.07  bcdb82bd41  0.42733  6/23 13/23 0.0785  0.3729  0.2370  0.3239  0.0296  0.4135
+  target                          0.0890  0.4600  0.1010  0.2500  0.0040  0.2680
+
+PAST 0.3755 THE COST BURDEN OVERSHOOTS AS FAST AS HOMELESSNESS FALLS: h_2 goes
+from exact to +134 per cent and gamma to +54 while h_1 goes 0.0387 to 0.0297.
+Four of twenty-three. The sweet spot is the half step.
+
+h_1 = 0.0040 IS OUTSIDE THE PARAMETER SPACE. The elasticity of h_1 in the housing
+weight, measured between the two steps, is -2.06. From 0.0297 the target needs the
+weight multiplied by 2.65, which is a housing weight of 1.13. THE WEIGHT IS A SHARE
+AND CANNOT EXCEED ONE. So the target is not hard, it is unreachable, and this is
+the first statement of that fact tonight that rests on a measured elasticity in the
+parameter that actually moves h_1 rather than on the street, which is the weaker
+lever by a factor of three.
+
+THE BEST HONEST FIGURE IS h_1 = 0.0387 at eec22a73c1, where the severe cost burden
+is exact. Below that costs the cost burden, gamma, and the composition of the
+homeless together.
+
+batch_housing_weight.txt walks the weight to 0.48, 0.55, 0.63 and 0.72 off the
+sweet spot to replace that extrapolation with measurement.
+
 ## 6 September, 09:03 -- THE REWEIGHTED STEP PUTS THE COST BURDEN EXACTLY ON
 ## TARGET AND CUTS HOMELESSNESS BY A THIRD. THE HOUSING WEIGHT IS THE LEVER.
 
