@@ -559,7 +559,12 @@ OWN = {
     # 1.53 and the rate pins at 1: raising kappa_uem does nothing and lowering it
     # is the only live direction. Below 24.4 it spans the whole range 0 to 1,
     # which is why BOUNDS now caps it at 20 instead of 100.
-    'kappa_uem':                                          'lambda_m',
+    'kappa_uem':                                          'kappa_uem',
+    # KAPPA_FIND_SMI OWNS lambda_m, 6 September. kappa_uem used to do both
+    # margins, so the SMI unemployment RATE and the SMI spell DURATION were
+    # one knob; they are split now. kappa_uem sets the rate, this sets how
+    # long spells last, and long spells drain wealth onto the street.
+    'kappa_find_smi':                                          'lambda_m',
     # THE OLD kappa_uem MOMENT IS ORPHANED BY THAT CHOICE. Employment given SMI
     # read 0.324 against 0.300, eight per cent out, and its only instrument has
     # just been repointed. Conceded in SKIP rather than left scored, because a
@@ -1043,7 +1048,8 @@ BOUNDS = {
     # homeless -- points at the middle of this range rather than the bottom.
     'newborn_endowment_scale':                             (0.0, 3.0),
     'largest_house_size':                                  (0.02, 1.00),
-    'kappa_uem':                                           (0.5, 20.0),
+    'kappa_uem':                                           (1.0, 20.0),
+    'kappa_find_smi':                                           (1.0, 60.0),
     'max_food_cost':                                       (1e-4, 1.0),
     # A REAL SEARCH RANGE NOW: nothing calibrates this inside a point run.
     # THE CEILING EXCLUDED THE SOLUTION, found 2 September, the same fault as
@@ -1226,9 +1232,6 @@ BAND = {# w_bot IS A WIDE BAND, on the author's instruction of 3 September:
 # (smallest_rental_relative_to_lowest_income) moves it at -0.01, which is to say
 # it has no instrument at all.
 SKIP = {
-        # kappa_uem THE MOMENT IS CONCEDED, 6 September: its only instrument was
-        # repointed at lambda_m on the author's instruction, so nothing moves it.
-        'kappa_uem',
         # h_3 IS CONCEDED, 6 September, on the author's instruction: *"let's go
         # with the 2x/3x rungs and concede h_3"*. On a ratio ladder the top rung
         # is 3*h2 and h2 is spoken for by burden50, so nothing can move the share

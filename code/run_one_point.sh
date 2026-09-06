@@ -94,6 +94,10 @@ declare -A P=(
     [labor_income_tax_rate]=0.720039
     [sd_permanent_productivity]=0.953392
     [kappa_uem]=1.01931
+    # kappa_find_smi splits SMI's job-finding penalty off kappa_uem's separation
+    # penalty. At 1.0 finding is unpenalised; the old economy is kappa_find_smi
+    # equal to kappa_uem.
+    [kappa_find_smi]=1.0
     [lambda_m]=0.067
     [zeta_DI]=0.0
     [smi_onset_level]=0.003306
