@@ -45,16 +45,39 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 
 TARGETS = {'h_1': 0.00399, 'h_2': 0.101, 'emp_homeless': 0.46}
 
-# instrument -> (its moment, fallback slope, lower bound, upper bound)
+# instrument -> (moment, fallback slope, lo, hi, damping, max e-fold per step)
 #
-# The fallbacks are the median controlled slopes measured on 6 September and are
-# used only until the loop has generated a controlled pair of its own. Each is
-# recorded with the range it was measured over so a later reader can see how
-# trustworthy it is: the rung's was +3.22 to +7.86 and is the shakiest.
+# The fallback slopes are the median controlled measurements of 6 September, used
+# only until the loop has made a controlled pair of its own. The rung's was the
+# shakiest of the three, measured over a range of +3.22 to +7.86, which is part of
+# why it is now the most heavily damped.
+#
+# THE SPEEDS ARE PER INSTRUMENT, on the author's diagnosis of 6 September: *"You
+# might be updating h2 too fast ... And the mass too slowly"*. Both halves are
+# right and the trace shows why.
+#
+# THE RUNG WAS OSCILLATING, NOT CONVERGING. Its realised slope on the burden
+# moment across six iterations was -0.98, -2.38, -5.08, +0.45, +3.73, -3.40 --
+# it changes SIGN. That is not noise: the burden share is non-monotone in the
+# rung, measured independently this afternoon, because a cheaper rung pulls
+# households off the street into the cheapest unit and they arrive poor, so they
+# arrive burdened. Stepping 20 to 35 per cent at a time on an instrument like
+# that guarantees overshoot, and iteration 6 to 7 moved the burden +123 per cent
+# in one step. It now moves at most 8 per cent per iteration.
+#
+# It is also stepped on its slope for h_1 (+2.06) while its slope on the BURDEN
+# is far steeper, so a step sized for one moment was always going to overshoot
+# the other. The small cap is what reconciles the two.
+#
+# THE MASS WAS TOO SLOW AND RAN OUT OF ROOM. It took four iterations to walk
+# 3.35 -> 2.20 and hit its floor while emp_homeless fell 0.382 -> 0.000. Damping
+# 0.55 on a slope of -2.65 is a small move per round, and the moment it chases
+# was being dragged down faster than that by the other two. It now moves at full
+# damping.
 RULES = {
-    'size_homelessness':                        ('h_1',          +0.30, 1e-4, 0.20),
-    'smallest_rental_relative_to_lowest_income': ('h_2',          +5.36, 5e-3, 0.40),
-    'kkk_s_deviation_bottom':                   ('emp_homeless', -2.65, 2.20, 6.00),
+    'size_homelessness':                        ('h_1',          +0.30, 1e-4, 0.20, 0.55, 0.60),
+    'smallest_rental_relative_to_lowest_income': ('h_2',          +5.36, 5e-3, 0.40, 0.30, 0.08),
+    'kkk_s_deviation_bottom':                   ('emp_homeless', -2.65, 2.20, 6.00, 0.95, 0.60),
 }
 
 # The author's configuration. A point is an iterate of THIS loop only if every one
@@ -69,9 +92,6 @@ CONFIG = {
     'merge_bottom_nodes':         3.0,
     'newborn_endowment_scale':    0.0,
 }
-
-DAMP = 0.55          # a full step on a slope measured elsewhere overshoots
-MAX_EFOLD = 0.60     # no single move larger than a factor of 1.8
 
 
 def model_hash():
@@ -186,7 +206,7 @@ def main():
     h1_gap = abs(mom['h_1'] - TARGETS['h_1']) / TARGETS['h_1']
     serve_h1 = h1_gap > 0.50
 
-    for param, (moment, fb, lo, hi) in RULES.items():
+    for param, (moment, fb, lo, hi, damp, efold) in RULES.items():
         if param == rung and serve_h1:
             moment, fb = 'h_1', +2.06
         cur, tgt = mom[moment], TARGETS[moment]
@@ -195,8 +215,8 @@ def main():
             print(f'#   {param}: {moment} is {cur:g}, cannot step on it',
                   file=sys.stderr)
             continue
-        step = DAMP * math.log(tgt / cur) / e
-        step = max(-MAX_EFOLD, min(MAX_EFOLD, step))
+        step = damp * math.log(tgt / cur) / e
+        step = max(-efold, min(efold, step))
         new = max(lo, min(hi, vec[param] * math.exp(step)))
         at = '  AT BOUND' if new in (lo, hi) else ''
         print(f'#   {param:<44}{vec[param]:10.5g} -> {new:10.5g}   '
