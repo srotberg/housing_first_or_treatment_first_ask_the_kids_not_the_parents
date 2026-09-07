@@ -1,3 +1,53 @@
+## 23:18 UTC 7 September -- b and lambda_m JUMPED IN ONE ITERATION WITH EVERY INSTRUMENT SMOOTH. Not aleph, not the instruments. FOR THE MORNING.
+
+The author offered two explanations for the oscillation -- *"maybe because aleph
+is changing still"* and *"or the multiple if addicted moves too and affects user
+use"*. Both were tested and neither holds. What actually happened is stranger and
+should not be left to be rediscovered.
+
+THE JUMP, at the 23:09 point:
+
+            mfa       u       a1          kappa_smi    b                lambda_m
+    23:07  23.7374  8.3299  0.0028493    14.8899   0.09703 (+9.0%)   0.18003 (-28.0%)
+    23:09  23.7224  8.3423  0.0028548    14.9645   0.10665 (+19.8%)  0.17133 (-31.5%)
+    23:12  23.7076  8.3546  0.0028664    15.0395   0.10666 (+19.8%)  0.17135 (-31.5%)
+
+EVERY INSTRUMENT STEPPED NORMALLY. multiple_find_if_addicted -0.063 per cent at
+that iteration, identical to every neighbouring one; utility_cost_of_treatment
++0.15; addiction_scalar_1 +0.19; kappa_find_smi +0.50. Not one of them changed
+shape. So the author's second hypothesis is ruled out directly: mfa did not move
+differently there.
+
+AND THE SIGNS ARE WRONG, which is the part that matters. addiction_scalar_1 moved
+UP and b moved UP, against a slope measured at -2.54 over 139 controlled pairs --
+implied elasticity +52 with the wrong sign, so it cannot be a1's own effect at
+all. kappa_find_smi moved UP and lambda_m moved DOWN, against +0.438 over 13
+pairs. Both blocks inverted in the same iteration.
+
+ALEPH IS RULED OUT TOO. value_of_life moved 157.44 to 157.57 at that step, +0.08
+per cent, the same as every other step; aleph closed smoothly from -3.4 to -2.2
+per cent straight through the jump, and mu_H, tau_u and h_1 passed through
+smoothly as well. h_1 actually FELL, 0.01651 to 0.01613, while the by-choice
+share rose 18.25 to 19.15 per cent. A gradual drift cannot produce a one-step
+inversion in two blocks while every other moment continues on its line.
+
+IT PERSISTED. b has held near +19.8 for four iterations rather than snapping
+back, so it is a level shift and not a single bad solve.
+
+THIS IS NOT THE "CLIFF IN b" CLAIM, which was made twice and was wrong both
+times, and the author's correction stands: *"b is not a cliff, between 0.0037 and
+0.0047 is 27%"*. A steep monotone response is not this. This is a jump with the
+inputs smooth AND the sign inverted, which no elasticity of any size explains.
+
+WHAT IT LOOKS LIKE and what to check first in the morning: the solve settling on
+a different fixed point. The point files carry no prices, so the housing and
+rental market clearing prices and the drug price have to come out of the full
+solve log -- worker_<tag>.log, which is written per point and DOES carry the
+whole stdout. Compare the 23:07 and 23:09 logs line by line; that is the cheapest
+way to name it and it needs no new solve.
+
+NOTHING WAS CHANGED ON THE STRENGTH OF THIS. The loop is left running.
+
 ## 23:06 UTC 7 September -- multiple_find_if_addicted CLOSED as acceptable; no sweep
 
 The author: *"just keep going. if multiple_find_if_addicted is moving in the
