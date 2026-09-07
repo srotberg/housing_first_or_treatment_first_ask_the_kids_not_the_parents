@@ -1,3 +1,48 @@
+## 22:18 UTC 7 September -- h_1 CANNOT REACH ONE PER CENT ON size_homelessness ALONE, measured
+
+The author asked whether h_1 has enough room below to get to one per cent. It
+does not, and this is measured from 288 clean controlled pairs in the archive
+rather than argued.
+
+THE ELASTICITY COLLAPSES AS THE STREET SHRINKS. Pairs differing in exactly
+size_homelessness and nothing else, with a log ratio above 0.3 so the slope is
+not a division by noise, binned by the geometric mean of the two levels:
+
+    level 1e-02 to 1e+00     n=191    median E  +2.085
+    level 1e-03 to 1e-02     n= 49    median E  +0.305
+    level 1e-04 to 1e-03     n= 38    median E  +0.183
+    level 3e-05 to 1e-04     n=  6    median E  +0.121
+    level below   3e-05      n=  2    median E  +0.103
+
+WE ARE AT 3.61e-05, so the live elasticity is about 0.10 to 0.12, not the +0.30
+fallback RULES carries, and it gets SMALLER as the parameter falls, which is the
+direction it is going.
+
+THE ARITHMETIC. h_1 must fall from 0.01707 to 0.01000, which is -0.535 in logs.
+The whole remaining room in the parameter, from 3.61e-05 down to the new 2e-06
+bound, is 2.894 in logs. So:
+
+    at E = 0.103   h_1 reaches 0.01267,  +26.7 per cent
+    at E = 0.121   h_1 reaches 0.01203,  +20.3 per cent
+    break even needs E = 0.185, which is the elasticity a decade ABOVE us
+
+AND THE ARCHIVE HAS ALREADY TRIED IT. Economy 0014027387 drove size_homelessness
+all the way to 7.4e-06 and h_1 bottomed at 0.00959 -- barely under one per cent,
+in an economy whose drug block was far smaller than the one this model now has.
+Our h_1 sits at 0.01707 with participation at target, so its floor is higher than
+that one's.
+
+WHAT THIS MEANS. Emptying the street is not something the street's own size can
+do from here. The remaining gap is people with no alternative, and the rung
+cannot price them into a rental they cannot afford. Either h_1 needs a second
+instrument -- the affordability floor, or the SSI floor, something that changes
+who can afford the cheapest rental rather than how bad the street is -- or the
+target is not reachable in this economy and that is a finding rather than a
+failure. THIS IS THE AUTHOR'S CALL and nothing is being changed on it.
+
+It also means the twenty-iteration test set at 21:56 is already answered for
+h_1: the street is not lagging its instrument, the instrument cannot get there.
+
 ## 22:08 UTC 7 September -- both opened bounds confirmed stepping, and tau_u's SLOPE is out by a factor of thirty four
 
     before:  utility_cost_of_treatment   8 ->      8   tau_u 0.44820 vs 0.24500   AT BOUND
