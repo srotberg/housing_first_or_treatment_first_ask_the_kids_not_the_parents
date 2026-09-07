@@ -1080,6 +1080,8 @@ BOUNDS = {
     # the cheapest rental on the PIA alone. h_share5 is 2.2e-06 against 0.075, far
     # BELOW target, so the search will be walking this DOWN from 0.1774.
     'ssi_floor_level':                                     (0.0, 0.30),
+    # the Fortran's own handover clamp at 37644, matching kappa_find_smi's.
+    'multiple_find_if_addicted':                           (1.0, 100.0),
     # THE TWO THE AUTHOR ASSIGNED ON 6 September: *"pi_v should be the instrument
     # to match 26.6% of eligible households recieving vouchers. mu_H should be
     # picked to match the target"*. Both already owned their moment in OWN and

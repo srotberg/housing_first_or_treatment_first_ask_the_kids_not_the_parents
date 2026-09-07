@@ -439,12 +439,6 @@ RULES = {
     # rises past 0.0143, which is close to where it is, so this bound is a
     # measurement decision that expires if the unemployment target moves again.
     'utility_cost_of_treatment':                 ('tau_u',        -1.00, 0.0, 8.0, 0.25, 0.20),
-    'multiple_of_probabilities_of_employment_if_addicted':
-                                                 # upper bound 20, the Fortran's own
-                                                 # handover clamp at 37615; the gate's
-                                                 # table says 50 and anything past 20
-                                                 # would be silently truncated.
-                                                 ('sud_homeless', +1.00, 1.0, 20.0, 0.25, 0.20),
     # tau_l. NEGATIVE, on the author's instruction of 6 September: *"tau_l should
     # be lowered when the model is low relative to the data"*. The source agrees
     # and explains why a value of 0.79 yields an average tax of 0.21 --
@@ -478,6 +472,19 @@ RULES = {
     #   voucher          the probability an eligible household draws a voucher, so
     #                    the share of eligibles holding one rises with it. Positive.
     'kappa_find_smi':                            ('lambda_m',     +1.00, 1.0, 60.0, 0.35, 0.20),
+    # THE DISORDER'S JOB-FINDING PENALTY, split off its separation penalty in the
+    # Fortran on 7 September at the author's instruction: *"for Sud we might just
+    # want to have the same thing"*, then *"Let's do the split now"*.
+    #
+    # POSITIVE, and the sign is the code's, not a name's: finding enters as
+    # probability_becoming_employed / multiple_find_if_addicted, so raising it
+    # makes work harder to regain, spells longer, wealth thinner, and more
+    # households with the disorder end up on the street -- sud_homeless RISES.
+    # The same shape as kappa_find_smi, which divides finding under SMI and
+    # carries lambda_m.
+    #
+    # Bound 100, the Fortran's own handover clamp, matching kappa_find_smi's.
+    'multiple_find_if_addicted':                 ('sud_homeless', +1.00, 1.0, 100.0, 0.25, 0.20),
     'smi_onset_level':                           ('p_m',          +1.00, 1e-08, 0.5, 0.35, 0.20),
     'discount_factor':                           ('beta',         +1.00, 0.9, 1.02, 0.35, 0.10),
     'mu_homeless':                               ('mu_H',         -1.00, 0.0, 1.0, 0.35, 0.20),
@@ -549,7 +556,15 @@ FIXED = {'kkk_s_deviation_bottom': 3.4113,
          # The channel the author named on 6 September is the one that survives:
          # long spells drain wealth, and wealth depletion is what puts an SMI
          # household on the street.
-         'kappa_uem': 1.0}
+         'kappa_uem': 1.0,
+         # THE DISORDER DOES NOT COST YOU YOUR JOB EITHER, the same concession
+         # the author made for SMI and for the same reason. At 1.0 a household
+         # with the disorder loses its job at exactly the rate everyone else
+         # does, and the whole labour penalty runs through
+         # multiple_find_if_addicted, which divides job finding and carries
+         # sud_homeless. Before the split this one parameter did both margins, so
+         # the disorder's unemployment rate and its spell duration were one knob.
+         'multiple_of_probabilities_of_employment_if_addicted': 1.0}
 
 # A PARAMETER AT ZERO CANNOT BE REACHED BY A PROPORTIONAL STEP. The step is
 # value*exp(...), so zero times anything is zero and the instrument is frozen
@@ -1050,6 +1065,8 @@ def main():
         'kkk_s_deviation_bottom': "the author's 0.2 per cent bottom node",
         'lambda_addiction':       "held at zero, the base carries the drug block",
         'kappa_uem':              "SMI separation conceded; kappa_find_smi carries it",
+        'multiple_of_probabilities_of_employment_if_addicted':
+                                  "SUD separation conceded; multiple_find_if_addicted carries it",
         'ssi_floor_level':        "the SSI floor is not an instrument; band 5 untargeted",
     }
     for k, v in FIXED.items():
