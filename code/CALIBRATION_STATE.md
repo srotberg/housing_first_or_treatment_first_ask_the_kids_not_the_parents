@@ -1,3 +1,62 @@
+## 23:40 UTC 7 September -- CAN h_1 REACH ITS TARGET? No, +32 per cent, and the reason is that h_2 releases the rung before the rung has done enough
+
+The author asked directly. Measured over the last 30 points, trajectory
+co-movement rather than controlled pairs:
+
+    d log h_2         / d log rung = +1.761
+    d log involuntary / d log rung = +0.941
+
+    now: rung 0.11819   h_2 0.08331 (target 0.080)
+         h_1 0.01619 (target 0.012)   involuntary 0.01325   by choice 18.1%
+
+THE RUNG IS ONLY FALLING BECAUSE h_2 HAS NOT CONVERGED, and h_2 is nearly there.
+It needs -4.0 per cent more, which takes the rung down a further -2.3 per cent to
+0.11550, and THEN THE RUNG STOPS. That leaves the involuntary component at
+0.01297 and h_1 at 0.01584, +32 per cent against 1.2 per cent.
+
+To put h_1 ON target the involuntary part must reach 0.00982, which needs the
+rung at 0.08598 -- a further -27 per cent, far past where h_2 releases it.
+
+So h_1's only real channel is spoken for by h_2, and h_2 has almost finished
+paying out. Two hundred more iterations do not change this; it is not a rate
+problem.
+
+emp_homeless, untargeted since 22:2x, is drifting UP on its own: 0.39575 at
+23:09 to 0.40228 at 23:35, -14.0 to -12.5 per cent, with its instrument pinned
+at zero. The pin was harmless, as the 57 controlled pairs said.
+
+## THE SEVEN-NODE PROPOSAL IS OPEN AND MUST NOT BE ACTED ON SILENTLY
+
+The author, 23:41: *"let's go back to 7 grid points, i think it might help"*,
+after *"i wonder if having the 8 productivity grids is what prevents us from
+actually hitting the homelessness rate"*.
+
+IT REVERSES THEIR OWN CHANGE FROM EARLIER THE SAME DAY, and the reason recorded
+beside employment_grid_size cuts against it:
+
+    Node 4 alone carried 39.9 per cent of households at seven nodes and the gap
+    from node 3 to node 4 was a factor of 2.2, so the grid was coarsest exactly
+    where the mass is ... which is what turned a two per cent step into a
+    sixty-fold jump in drug use on 7 September.
+
+That is the same failure mode as tonight's 23:09 jump in b, only larger.
+
+THE ARGUMENT ON THE OTHER SIDE IS ALSO THEIRS and it is not weak: the seven-node
+grid was tuned around the homelessness margin, node 1 at 0.198 per cent mass
+deliberately BELOW the h_1 target so the target is reached by node one entire
+plus part of node two rather than by a node boundary. The eighth node rebuilt the
+quantile grid and may have broken that tuning, which bears directly on why h_1
+will not land.
+
+WHAT IT COSTS: employment_grid_size is a parameter with 414 uses dimensioning
+most of the model's arrays, so it moves the model hash. All 305 points on the
+live economy are ORPHANED and the loop must SEED rather than iterate. It also
+requires both standing builds, since it redimensions array indices.
+
+THE ALTERNATIVE PUT TO THE AUTHOR: keep eight nodes and restore node 1's mass
+below the h_1 target via kkk_s_deviation_bottom, which costs no archive and runs
+in minutes. AWAITING THEIR ANSWER. Nothing has been changed.
+
 ## 23:21 UTC 7 September -- THE 200-ITERATION COUNT STARTS HERE
 
 The author: *"i want to see how the gaps table looks like after 200
