@@ -764,12 +764,51 @@ def is_iterate(vec, ledger):
     return False
 
 
+_HEAD = {}
+
+
+def _head_is_this_model(path, want):
+    """True if this file's MODEL stamp resolves to the current economy.
+
+    Reads the head of the file only, and remembers the answer against the file's
+    mtime so a second call in the same process costs nothing. Point files never
+    change once written, so the mtime guard is belt and braces.
+    """
+    try:
+        st = os.stat(path)
+    except OSError:
+        return False
+    key = (path, st.st_mtime, st.st_size)
+    hit = _HEAD.get(key)
+    if hit is None:
+        try:
+            with open(path, errors='replace') as fh:
+                head = fh.read(512)
+        except OSError:
+            return False
+        m = re.search(r'^MODEL (\S+)', head, re.M)
+        hit = _HEAD[key] = (_resolve(m.group(1)) if m else None)
+    return hit == want
+
+
 def iterates():
     """Every solved point that is an iterate of this loop, newest last."""
     h = model_hash()
     out = []
     for f in glob.glob(os.path.join(HERE, 'points', 'point_*.txt')):
         if '.FAILED' in f:
+            continue
+        # THE MODEL LINE IS CHECKED BEFORE THE FILE IS READ. The archive holds
+        # 2318 points and 77 of them are on this economy, so parsing every one
+        # cost 49.8 seconds a step while the pair search it feeds cost 0.1. Over
+        # the two to three hundred iterations the author expects, that is four
+        # hours spent reading points from dead economies.
+        #
+        # MODEL is the third line of a point file, so a few hundred bytes decide
+        # it. A file whose stamp does not resolve to this economy is never opened
+        # past its head. Nothing else changes: the ones that do match are parsed
+        # exactly as before.
+        if not _head_is_this_model(f, h):
             continue
         p = parse(f)
         if not p:
