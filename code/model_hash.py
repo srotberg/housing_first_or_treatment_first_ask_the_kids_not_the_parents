@@ -71,6 +71,17 @@ TARGET_CONSTANTS = (
     # condition. Writes and the outer stepper's gap only, which is the same
     # footprint as the two names already here.
     'drug_spending_share_data',
+    # severe_cost_burden_data, added 7 September when the author moved h_2's
+    # target from 10.1 to 8 per cent. Every non-comment use read before adding,
+    # which is the bar this list demands, and there are only TWO:
+    #
+    #   1969   the declaration
+    #   6413   write, "MOMENT h_2       above half of spending ... target="
+    #
+    # A smaller footprint than any name already here: not a household's problem,
+    # not a price, not an equilibrium condition, and not even an outer stepper's
+    # gap, because h_2's instrument is stepped in Python and not in the Fortran.
+    'severe_cost_burden_data',
     # fraction_homeless_data, added 6 September when the author moved the
     # homelessness target from HUD's point-in-time count to an ANNUAL one. Every
     # non-comment use read before adding, which is the bar:

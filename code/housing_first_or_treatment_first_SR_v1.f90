@@ -1966,7 +1966,30 @@
         ! WHAT THE PAPER OWES THE READER: the calibration table should say the
         ! model counterpart is measured over total expenditure while the SCF
         ! figure is over income, rather than letting the row imply they match.
-        real(8), parameter :: severe_cost_burden_data=0.101d0
+        ! MOVED TO 0.08 ON THE AUTHOR'S INSTRUCTION, 7 September: *"maybe we have
+        ! to get h2 a bit further down...maybe we should target it to 8%"*,
+        ! *"instead of 10.1%"*, *"this way, maybe more will be able to afford h2
+        ! and h1 can get the target"*.
+        !
+        ! THE REASONING FOLLOWS THE DIAGNOSTICS. The point files say four fifths
+        ! of the homeless are not there by choice -- DIAG homeless by choice is
+        ! 0.198 -- so they are priced out of the cheapest rental, and the street's
+        ! own size cannot reach them: driving voluntary homelessness to zero still
+        ! leaves h_1 at 0.0137 against a target of 0.01. A cost-burden target of
+        ! 10.1 per cent is what holds the cheapest rung expensive. Lowering it to
+        ! 8 forces the rung down, more households can afford it, and the
+        ! involuntary four fifths is exactly who that reaches.
+        !
+        ! WHAT IS BEING GIVEN UP: 0.101 is the SCF 2022 figure for all households,
+        ! owners and renters together, and the CEX severe cost burden agrees at
+        ! 0.1013. Eight per cent is a modelling choice, not a measurement, and the
+        ! paper must state it as one wherever this target appears.
+        !
+        ! HASH-INERT, verified rather than assumed: severe_cost_burden_data was
+        ! added to model_hash's TARGET_CONSTANTS first, and the semantic hash of
+        ! the source at 0.101 and at 0.08 is a3cc3f2a9b either way, so the 102
+        ! points already solved in this economy remain valid bases.
+        real(8), parameter :: severe_cost_burden_data=0.08d0
         real(8), parameter :: fraction_light_users=0.731
         
         integer, parameter :: target_HO_of_old=1
