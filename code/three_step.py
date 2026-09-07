@@ -472,6 +472,42 @@ RULES = {
     #   voucher          the probability an eligible household draws a voucher, so
     #                    the share of eligibles holding one rises with it. Positive.
     'kappa_find_smi':                            ('lambda_m',     +1.00, 1.0, 60.0, 0.35, 0.20),
+    # THE SUD MORTALITY MULTIPLIER IS A TARGET AGAIN, on the author's instruction
+    # of 7 September once the history was traced: *"ah! ok, in that case allow
+    # that to continue to be a target"*, *"but move it only very very slowly"*.
+    #
+    # It owns the income of drug users. That assignment is the one made on
+    # 31 August -- "kappa_phi_d_level calibrated on the income of drug users" --
+    # and reversed on 1 September; the 5.64 every vector has carried since is
+    # what that calibration produced before it was cancelled.
+    #
+    # NEGATIVE, and next_batch's own note gives the mechanism: a stronger
+    # deterrent to using leaves only the most desperate, who are the poorest, so
+    # raising the multiplier LOWERS the income of drug users. y_u at 0.326
+    # against 0.740 therefore wants it lower, which is exactly the direction the
+    # cancelled calibration was moving it.
+    #
+    # VERY SLOWLY, at half a per cent a step against the two per cent everything
+    # else gets, and damping 0.10 against 0.25. The reason is in the same note:
+    # lowering it pushes the drug-price participation elasticity back up, and
+    # that elasticity is an untargeted VALIDATION moment. This instrument spends
+    # a validation result to buy a calibration target, so it should move only as
+    # far as it must.
+    #
+    # It restarts from 8.0, the author's own value, not from the 5.64 it drifted
+    # to unobserved.
+    # AT MOST ONE PER CENT A STEP, on the author's instruction of 7 September:
+    # *"kappa should move at most 1% between iterations"*, and their reading of
+    # why it matters: *"it can explain a lot about the oscillations you have
+    # seen"*. It does. Their own note of 1 September warned that a lower
+    # multiplier makes the participation elasticity too high, and it has been
+    # 5.64 against 8 for five days -- a deterrent about thirty per cent too weak,
+    # so the participation margin has been far more elastic than intended. A two
+    # per cent move in addiction_scalar_1 flipping b sixtyfold is what that looks
+    # like. Calibrating this instrument DOWN to buy y_u pushes the elasticity
+    # back up, so the cap is the thing keeping the cure from restoring the
+    # disease.
+    'kappa_phi_d_level':                         ('y_u',          -1.00, 4.0, 10.0, 0.10, 0.00995),
     # THE DISORDER'S JOB-FINDING PENALTY, split off its separation penalty in the
     # Fortran on 7 September at the author's instruction: *"for Sud we might just
     # want to have the same thing"*, then *"Let's do the split now"*.
@@ -557,25 +593,6 @@ FIXED = {'kkk_s_deviation_bottom': 3.4113,
          # long spells drain wealth, and wealth depletion is what puts an SMI
          # household on the street.
          'kappa_uem': 1.0,
-         # THE SUD MORTALITY MULTIPLIER, PINNED AT THE EIGHT THE AUTHOR SET ON
-         # 1 September and every other file in the repo already carries. The
-         # author, 7 September: *"we agreed that it was supposeed to be a flat 8
-         # across all ages too"*, *"so (1-survival)*8"*, *"for the death
-         # probability"*. That is exactly the live formula -- line 28310 is
-         # kappa_phi_d_by_age(i)*(1-survival_probability(i,...)) and
-         # shape_sud_profile is 1.0 at every age, so the multiplier is flat.
-         #
-         # IT HAD BEEN 5.64 IN EVERY VECTOR SINCE 2 September. The Fortran
-         # declares 8.0, run_one_point defaults to 8.0, next_batch's IMPLICIT
-         # says 8.0 and its own comment reads "kappa_phi_d_level IS FIXED AT 8
-         # AND OWNS NOTHING. The author, 1 September". A 5.64 entered one vector
-         # at 12:26 that day and propagated because this loop copies its base
-         # point's whole vector forward and re-emits it: 1960 points carry 5.64
-         # and none carries 8. Five days of calibration ran on it.
-         #
-         # Pinned here rather than left to the default so a vector can never
-         # reintroduce it, which is precisely how it survived.
-         'kappa_phi_d_level': 8.0,
          # THE DISORDER DOES NOT COST YOU YOUR JOB EITHER, the same concession
          # the author made for SMI and for the same reason. At 1.0 a household
          # with the disorder loses its job at exactly the rate everyone else
@@ -1131,7 +1148,6 @@ def main():
         'kkk_s_deviation_bottom': "the author's 0.2 per cent bottom node",
         'lambda_addiction':       "held at zero, the base carries the drug block",
         'kappa_uem':              "SMI separation conceded; kappa_find_smi carries it",
-        'kappa_phi_d_level':      "the author's flat 8 SUD mortality multiplier",
         'multiple_of_probabilities_of_employment_if_addicted':
                                   "SUD separation conceded; multiple_find_if_addicted carries it",
         'ssi_floor_level':        "the SSI floor is not an instrument; band 5 untargeted",

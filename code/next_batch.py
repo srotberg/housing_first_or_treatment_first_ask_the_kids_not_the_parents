@@ -1514,7 +1514,7 @@ UNSCORED = {'rent50',
     # should not be targeted"*. Both were scored with no instrument able to reach
     # them -- y_u at +20.2 per cent and burden50 at +12.8 -- so they held the
     # minimax open against nothing. They are still measured and reported.
-    'y_u', 'burden50',
+     'burden50',
     # THE AGE PROFILE IS SCORED ON RATES, NOT SHARES, 7 September. The author
     # chose it over holding the SSI floor: *"Go with 2"*. The five shares sum
     # to one, so two instruments aimed at two of them fight -- the endowment
@@ -1532,6 +1532,10 @@ UNSCORED = {'rent50',
     # on job finding. It was at its ceiling of 70 with a 74 per cent gap, so
     # nothing achievable is given up.
     'kappa_uem',
+    # y_u IS SCORED AGAIN, 7 September. It left this set earlier the same day
+    # because nothing could reach it; kappa_phi_d_level now owns it again on
+    # the author's instruction, so it has an instrument and belongs in the
+    # stopping rule.
     }
 
 
