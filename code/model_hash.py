@@ -107,7 +107,14 @@ TARGET_CONSTANTS = (
 # Bumped whenever semantic() changes. The cache maps file bytes to a semantic
 # hash, so a new rule makes every stored value wrong rather than merely stale --
 # the map is rebuilt from git rather than trusted when this moves.
-HASH_VERSION = 4
+# 5, 7 September: severe_cost_burden_data joined TARGET_CONSTANTS so h_2's
+# target could move from 10.1 to 8 per cent without moving the model. Adding a
+# NAME to that tuple is a new hash rule, not a new source: every stored value
+# was computed with the old rule and every one of them is now wrong. Forgetting
+# this bump is what took the serial loop down at 22:35 -- the archive's stamps
+# still resolved to the pre-rule semantic, no point matched the live source, and
+# three_step exited 2 with "no solved point carries the configuration yet".
+HASH_VERSION = 5
 
 _TARGET_RE = re.compile(
     r'^(\s*.*::\s*(?:%s)\s*=)\s*\S+\s*$' % '|'.join(TARGET_CONSTANTS))

@@ -1,3 +1,48 @@
+## 22:39 UTC 7 September -- ADDING A NAME TO TARGET_CONSTANTS IS A HASH RULE CHANGE AND NEEDS HASH_VERSION BUMPED. It took the loop down.
+
+WHAT HAPPENED. `severe_cost_burden_data` was added to `model_hash.TARGET_CONSTANTS`
+at 22:33 so h_2's target could move from 10.1 to 8 per cent without moving the
+model. The value change WAS hash-inert and that was verified correctly: the
+semantic hash is a3cc3f2a9b at 0.101 and at 0.08.
+
+WHAT WAS MISSED. `HASH_VERSION` was not bumped. `resolve_cache.json` held 88
+entries computed under the OLD rule, in which severe_cost_burden_data's value
+was part of the hash. So the archive's stamps kept resolving to the pre-rule
+semantic 5366f1740f while the live source computed a3cc3f2a9b, no point matched
+the running economy, and at 22:35 three_step exited 2 with "no solved point
+carries the configuration yet; seed first". three_loop stopped. loop_watch
+restarted it twice and it died each time, one failure short of the five that
+stop the watchdog for good.
+
+`build_map` says exactly this in its own comment and the mechanism was already
+there: *"A NEW HASH RULE MAKES EVERY STORED VALUE WRONG, not merely stale, so
+the merge-only discipline above does not apply across a version bump ... Drop
+the map and rebuild it from git instead."* The bump is the switch that does it.
+
+THE FIX. HASH_VERSION 4 -> 5, resolve_cache.json deleted so it rebuilds from
+git. c9ebefc35f now resolves to a3cc3f2a9b, the stepper sees 284 iterate points
+again, and the loop is solving.
+
+THE RULE, for the next time a target moves:
+
+    CHANGING A TARGET'S VALUE          -> hash-inert if the name is already in
+                                          TARGET_CONSTANTS. Nothing else to do.
+    ADDING A NAME TO TARGET_CONSTANTS  -> a NEW HASH RULE. Bump HASH_VERSION in
+                                          the same edit, always. Every cached
+                                          value is wrong, not stale.
+
+And the check that would have caught it in one line, which is now the thing to
+run after any hash-rule edit:
+
+    _resolve(<an archived stamp>) == semantic(<the live source text>)
+
+Note that `semantic()` takes the source TEXT, not a path. Passing it a filename
+hashes the filename and returns a plausible-looking wrong answer, which is how
+this change was briefly and wrongly reverted at 22:31 before being reinstated.
+
+COST: about four minutes of loop downtime, 22:35 to 22:39, and no lost point --
+the solve running at the time completed and landed as point_55c6a29437.
+
 ## 22:26 UTC 7 September -- WHY HOMELESSNESS IS SO HIGH: four fifths of it is involuntary, and the excess is entirely prime working age
 
 The author: *"i think we need to understand why homelessness is so high"*. Read
