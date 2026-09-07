@@ -1,3 +1,45 @@
+## 7 September, 01:30 -- NEW ECONOMY, NEW BASELINE. The 00:20 baseline is void.
+
+The SUD margins were split at the author's instruction and the economy changed
+with it, so the baseline recorded at 00:20 (point_bc6473b615, 15 of 23 in band)
+belongs to a model that no longer exists. THE 03:51 REPORT COMPARES AGAINST THIS
+ENTRY, not that one.
+
+    semantic economy   49cd8c9f5b   (raw c98acae0f3)
+    seed               point_6d3b07af5f, 3 min, 74 of 74 applied, invariants all PASS
+    standing           9 of 21 driven moments inside the ten per cent band
+
+THE AUTHOR'S PREDICTION WAS RIGHT AND THE NUMBER IS LARGE. They said the split
+would lengthen unemployment for those with the disorder *"But not deter people
+from user drugs since the job cost is a bit more downstream"*. Carrying the same
+finding penalty across the split -- old M 19.1663 onto multiple_find_if_addicted
+-- and conceding separation took b from 0.07794 to 0.34329, a factor of 4.4. The
+deterrence was almost entirely the up-front job loss: under the old form the cost
+of addiction was charged the moment a household chose to use, and now it is felt
+only conditional on a separation that happens 1.3 per cent of the time.
+
+That also explains the collapse of b earlier in the night, which cost an hour of
+wrong diagnosis. M climbed 3.11 -> 5.63 -> 19.17 chasing sud_homeless and took b
+from 0.093 to 0.026 with it, and I read that as addiction_scalar_1 having the
+wrong sign. It was the multiplier's separation margin deterring use, through an
+instrument aimed at a different moment entirely.
+
+TWO DISPLACEMENTS TO EXPECT, both consequences of the concessions rather than
+faults, and both with a live instrument and a known sign:
+
+    lambda_m  0.220 -> 0.0736.  kappa_uem went 70 -> 1, so SMI households no
+              longer lose jobs at seventy times the rate and far fewer reach the
+              street. kappa_find_smi at 2.08 must make all of it back on the
+              finding margin alone and will likely need to reach the tens.
+    pi_eu     0.054 -> 0.0132.  Conceding BOTH separation penalties, SMI at 70x
+              and SUD at 19x, removed a large share of every separation in the
+              economy. probability_becoming_unemployed has to rise a long way,
+              and it is the pool homelessness draws from, so h_1, emp_homeless
+              and lambda_m will all move underneath it while it does.
+
+So the band count should DIP before it climbs, and 9 of 21 is not comparable
+with the 16 of 22 reached on the old economy an hour earlier.
+
 ## 7 September, 00:20 -- THE BASELINE FOR THE LONG RUN. The author: *"Update me
 ## in 3-4 hrs"*, and before that *"We might need 200-300 iterations"*.
 
