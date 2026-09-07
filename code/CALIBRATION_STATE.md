@@ -1,3 +1,67 @@
+## 22:26 UTC 7 September -- WHY HOMELESSNESS IS SO HIGH: four fifths of it is involuntary, and the excess is entirely prime working age
+
+The author: *"i think we need to understand why homelessness is so high"*. Read
+out of the point files' own diagnostics rather than inferred.
+
+FOUR FIFTHS OF THE HOMELESS ARE NOT THERE BY CHOICE.
+
+    DIAG homeless by choice, share of the homeless = 0.198
+
+So 80 per cent are priced out of the cheapest rental rather than preferring the
+street. THIS IS THE WHOLE REASON size_homelessness CANNOT REACH THE TARGET, and
+it is arithmetic rather than an elasticity estimate: the street's size only
+prices the CHOICE margin, and even driving voluntary homelessness to zero leaves
+
+    h_1 = 0.01691 x 0.809 = 0.01367,  still +37 per cent above the 0.01 target.
+
+That is a ceiling no value of the parameter can pass. It agrees with the 288
+controlled pairs measured at 22:18, by a completely independent route.
+
+THE EXCESS IS ENTIRELY PRIME WORKING AGE. Homelessness rate by HUD age band,
+model against HUD's own:
+
+    band 1   0.01669  vs  0.00316    5.3x
+    band 2   0.03326  vs  0.00338    9.8x
+    band 3   0.02432  vs  0.00291    8.4x
+    band 4   0.01705  vs  0.00250    6.8x
+    band 5   0.00096  vs  0.00077    1.2x   <- essentially right
+
+Band 5 is the only one the model gets right, and the Fortran says why in its own
+comment at line 31634: *"SSI, the means-tested floor. It is why elderly
+homelessness is the LOWEST of any age band in the data, 0.00077, and the model
+has no floor at all."* The old have ssi_floor_level=0.1774 with takeup 1, so
+nobody is priced out in retirement. THE PRIME-AGE POOR HAVE NO FLOOR AT ALL. An
+unemployed household with no assets and no SSI has nothing between it and the
+street, and that is the model's homelessness.
+
+THE BOTTOM RUNG IS CROWDED AND DEAR. 88.4 per cent of renters are in the
+cheapest unit and 20.1 per cent of THOSE pay over half their income for it. The
+cheapest rental costs 12.4 per cent of the lowest income. Food stamp receipt is
+9.0 per cent of households against 12.5 in the data, so the net that does exist
+is under-delivering as well.
+
+AND THE COMPOSITION CONFIRMS IT. Over the last twenty points, as the by-choice
+share rose 16.9 to 19.8 per cent, the average assets of the homeless rose 0.081
+to 0.107 and their employed share FELL 0.403 to 0.364. The marginal entrant is a
+household with some assets choosing the street; the stock is people with none.
+
+h_1 HAS JUST TURNED, 0.01715 at 22:17 to 0.01691 at 22:24, the first fall of the
+night, as b's overshoot corrects. It will not turn far: the involuntary
+component has been flat at about 0.0137 for six iterations and that is the floor.
+
+WHAT WOULD ACTUALLY MOVE IT, none of which is being changed:
+
+  - an income floor for the prime-age poor, which is what the data has and the
+    model does not; ssi_floor_takeup is described in the Fortran as "the
+    instrument for how many of the old end up on the street" and there is no
+    equivalent for the young;
+  - smallest_rental_relative_to_lowest_income, making the cheapest rental
+    cheaper -- but it is spoken for by h_2 and burden50;
+  - kkk_s_deviation_bottom, pinned at 3.4113, which sets how many households sit
+    at the bottom node and therefore how many are poor enough to be priced out.
+
+THESE ARE MODEL DECISIONS AND THEY ARE THE AUTHOR'S.
+
 ## 22:22 UTC 7 September -- the street rung moves down every iteration; the homelessness rate does not follow
 
 The author: *"does h1 move down to get homelessness to 1%?"*. The two things
