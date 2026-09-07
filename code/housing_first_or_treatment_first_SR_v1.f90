@@ -3472,14 +3472,42 @@
         ! THIS IS THE MULTIPLIER MINUS ONE, not the multiplier. Survival is built
         ! as phi - k*(1 - phi) at line 16620ish, so the death probability comes out
         ! (1 + k) times the baseline. At k = 6.9 the effective mortality rate ratio
-        ! was 7.9, which is not what the written model says and not what the
-        ! stylized model's kappa was derived from. 5.9 gives an effective 6.9,
-        ! which is Hjorthoj's ratio and is what both models now use. The LEVEL is
-        ! calibrated in the second stage inside the Degenhardt range, so this is a
-        ! starting value; what matters is that the units are now the same in the
-        ! code and in the note.
+        ! was 7.9, which is not what the written model says.
+        !
+        ! SEVEN, FOR AN EFFECTIVE EIGHT, from 7 September. The author: *"wasnt the
+        ! increased risk of death when addicted supposed to be 8??"*, *"we talked
+        ! about it very extensive"*. They are right and this file was wrong.
+        !
+        ! code/stylized/stylized.py carries smr_d = 8.0 and says why: *"RAISED
+        ! FROM 6.9 TO 8.0 so the two models use the same number. The full model
+        ! calibrates kappa_phi_d externally at the MIDPOINT of the six to ten
+        ! range Hjorthoj et al. (2023) report, and citing the same source for the
+        ! same object while carrying two different values is exactly the
+        ! inconsistency the AE's letter objects to."* The stylized model was
+        ! raised; THIS ONE WAS NOT, so the two models cited Hjorthoj for the same
+        ! object at 8.0 and 6.9 -- the inconsistency the letter objects to, live
+        ! in the code. The comment this replaces asserted both models used 6.9,
+        ! which stopped being true when the stylized model moved.
+        !
+        ! CLAUDE.md's standing rule is that a bug found in one model is checked
+        ! against the other before it is closed. This is that rule failing in the
+        ! other direction: a FIX made in the stylized model was never carried
+        ! across, and nothing checked.
+        !
+        ! The LEVEL is calibrated in the second stage inside the Degenhardt range,
+        ! so this is a starting value; what matters is that the two models now
+        ! start from the same number and the units are the same in the code and
+        ! in the note.
+        !
+        ! ONE DIFFERENCE REMAINS AND IS NOT ADDRESSED HERE. The stylized model
+        ! applies the ratio to the HAZARD, phi**smr_d, which is what a ratio of
+        ! rates means; this file multiplies the death PROBABILITY by (1+k). The
+        ! two agree closely while the annual death probability is small and
+        ! diverge at old ages -- at a baseline of 0.10 the probability form gives
+        ! 0.80 and the hazard form 0.57. That is a separate correction and it
+        ! needs the author.
         real(8) :: increased_risk_of_death_addicted=&
-            have_increased_death_from_addiction*5.9+(1-have_increased_death_from_addiction)*size_of_penalty*5
+            have_increased_death_from_addiction*7.0+(1-have_increased_death_from_addiction)*size_of_penalty*5
         real(8) :: increased_risk_of_death_homeless_addicted=0
 
         ! THE MORTALITY MULTIPLIERS VARY WITH AGE, AND THE DATA FOR IT WAS
